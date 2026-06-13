@@ -80,6 +80,21 @@ def time_rust_compile(source: str, predicate: str, roots: list) -> float:
     return (end - start) * 1000  # ms
 
 
+def time_rust_check(source: str, engine: str) -> float:
+    """Time the synalog (Rust) verifier through the PyO3 extension.
+
+    Synalog runs a dedicated safety/stratification/recursion pass
+    (`synalog.check`) that Python Logica has no standalone equivalent for —
+    its analysis is folded into compilation — so this stage is Rust-only.
+    """
+    import synalog
+
+    start = time.perf_counter()
+    synalog.check(source, engine)
+    end = time.perf_counter()
+    return (end - start) * 1000  # ms
+
+
 def get_last_predicate(source: str) -> str:
     """Get the last user-defined predicate from source."""
     from logica.parser_py import parse as logica_parse
@@ -132,11 +147,12 @@ def benchmark_file(filepath: Path, roots: list, engine: str) -> dict:
         result["python_compile_ms"] = -1
         result["python_compile_error"] = str(e)
 
-    # Rust parse
+    # Rust parse (catch BaseException: a Rust panic surfaces as PanicException,
+    # which is not an Exception subclass and would otherwise abort the run).
     try:
         times = [time_rust_parse(source, roots) for _ in range(RUNS_PER_TEST)]
         result["rust_parse_ms"] = sum(times) / len(times)
-    except Exception as e:
+    except BaseException as e:
         result["rust_parse_ms"] = -1
         result["rust_parse_error"] = str(e)
 
@@ -144,9 +160,17 @@ def benchmark_file(filepath: Path, roots: list, engine: str) -> dict:
     try:
         times = [time_rust_compile(source, predicate, roots) for _ in range(RUNS_PER_TEST)]
         result["rust_compile_ms"] = sum(times) / len(times)
-    except Exception as e:
+    except BaseException as e:
         result["rust_compile_ms"] = -1
         result["rust_compile_error"] = str(e)
+
+    # Rust verify (synalog.check) — Rust-only stage, no Python counterpart.
+    try:
+        times = [time_rust_check(source, engine) for _ in range(RUNS_PER_TEST)]
+        result["rust_check_ms"] = sum(times) / len(times)
+    except BaseException as e:
+        result["rust_check_ms"] = -1
+        result["rust_check_error"] = str(e)
 
     return result
 
@@ -219,6 +243,13 @@ def run_benchmarks():
             "compile_speedup": py_compile_total / rs_compile_total if rs_compile_total > 0 else 0,
         })
 
+    valid_check = [r["rust_check_ms"] for r in all_results if r["rust_check_ms"] > 0]
+    if valid_check and "summary" in results:
+        results["summary"].update({
+            "valid_check_tests": len(valid_check),
+            "rust_check_total_ms": sum(valid_check),
+        })
+
     # Write results
     DOCS_BENCH_DIR.mkdir(parents=True, exist_ok=True)
     with open(OUTPUT_FILE, 'w') as f:
@@ -233,6 +264,7 @@ def run_benchmarks():
         print(f"Total tests: {s['total_tests']}")
         print(f"Parse speedup: {s.get('parse_speedup', 0):.2f}x")
         print(f"Compile speedup: {s.get('compile_speedup', 0):.2f}x")
+        print(f"Verify total (Rust-only): {s.get('rust_check_total_ms', 0):.0f} ms")
     print(f"\nResults written to: {OUTPUT_FILE}")
 
 
@@ -253,9 +285,15 @@ def write_summary_markdown(results):
         f"| Compile | {s.get('python_compile_total_ms', 0):.0f} ms"
         f" | {s.get('rust_compile_total_ms', 0):.0f} ms"
         f" | **{s.get('compile_speedup', 0):.1f}x** |",
+        f"| Verify | — | {s.get('rust_check_total_ms', 0):.0f} ms | Rust-only |",
         "",
-        "| Engine | Programs | Parse speedup | Compile speedup |",
-        "| --- | --- | --- | --- |",
+        "*Verification (`synalog.check` — safety, stratification, recursion"
+        " and reserved-name checks) is a Synalog-specific pass; Python Logica"
+        " folds its analysis into compilation and has no standalone equivalent,"
+        " so it is reported as a Rust-only total.*",
+        "",
+        "| Engine | Programs | Parse speedup | Compile speedup | Verify (Rust) |",
+        "| --- | --- | --- | --- | --- |",
     ]
     for engine, tests in results["engines"].items():
         valid_parse = [(t["python_parse_ms"], t["rust_parse_ms"]) for t in tests
@@ -268,9 +306,11 @@ def write_summary_markdown(results):
                          / sum(r for _, r in valid_parse))
         compile_speedup = (sum(p for p, _ in valid_compile)
                            / sum(r for _, r in valid_compile))
+        check_total = sum(t["rust_check_ms"] for t in tests
+                          if t.get("rust_check_ms", -1) > 0)
         lines.append(
             f"| {engine} | {len(tests)} | {parse_speedup:.1f}x"
-            f" | {compile_speedup:.1f}x |"
+            f" | {compile_speedup:.1f}x | {check_total:.0f} ms |"
         )
     DOCS_BENCH_DIR.mkdir(parents=True, exist_ok=True)
     SUMMARY_FILE.write_text("\n".join(lines) + "\n")
