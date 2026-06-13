@@ -176,29 +176,40 @@ pub fn check_base_cases(rules: &[&Json]) -> Vec<RecursionError> {
             continue;
         }
 
-        // For mutual recursion, we need at least one predicate in the SCC to have a base case
-        // that doesn't depend on any other predicate in the SCC
+        // Base-case-ness is a property of the SCC as a whole: the recursion is
+        // well-founded as long as ANY member has a base case (a rule that calls
+        // no predicate in the SCC). A predicate that only projects another SCC
+        // member — e.g. `ShortestPath :- ShortestPath_MultBodyAggAux` produced
+        // by the multi-body aggregation rewrite — is grounded transitively and
+        // needs no base case of its own. Only flag when the SCC has none.
         let scc_set: HashSet<&str> = scc.iter().map(|s| s.as_str()).collect();
 
-        for pred in &scc {
-            let Some(pred_rules) = rules_by_pred.get(pred) else {
-                continue;
-            };
-
-            // A base case is a rule that doesn't call any predicate in the SCC
-            let has_base_case = pred_rules.iter().any(|r| {
+        let has_base_case = |pred_rules: &[&Json]| {
+            pred_rules.iter().any(|r| {
                 if is_fact(r) {
                     return true;
                 }
                 let called = body_predicates(r);
                 !called.iter().any(|p| scc_set.contains(p.as_str()))
-            });
+            })
+        };
 
-            if !has_base_case {
-                let first_rule = pred_rules.first().unwrap();
+        let scc_has_base_case = scc
+            .iter()
+            .filter_map(|pred| rules_by_pred.get(pred))
+            .any(|pred_rules| has_base_case(pred_rules));
+
+        if scc_has_base_case {
+            continue;
+        }
+
+        // No member can bootstrap the recursion — every predicate in the SCC
+        // is ungrounded, so flag each one.
+        for pred in &scc {
+            if let Some(pred_rules) = rules_by_pred.get(pred) {
                 errors.push(RecursionError::NoBaseCase {
                     predicate: pred.clone(),
-                    rule: rule_text(first_rule),
+                    rule: rule_text(pred_rules.first().unwrap()),
                 });
             }
         }
@@ -424,10 +435,19 @@ pub fn check_unbounded_recursion(all_rules: &[&Json], normal_rules: &[&Json]) ->
     let annotated = collect_recursive_annotations(all_rules);
     let recursive_preds = find_recursive_predicates(normal_rules);
 
+    let mut seen = HashSet::new();
     for (pred, rule) in recursive_preds {
-        if !annotated.contains(&pred) {
+        // Auxiliary predicates synthesized by the multi-body aggregation rewrite
+        // (`Foo_MultBodyAggAux`) carry the recursion on behalf of their parent
+        // `Foo`; the user only ever writes `@Recursive(Foo, …)`, so that
+        // annotation covers the aux. Report against the user-facing name.
+        let parent = pred.strip_suffix("_MultBodyAggAux").unwrap_or(&pred);
+        if annotated.contains(&pred) || annotated.contains(parent) {
+            continue;
+        }
+        if seen.insert(parent.to_string()) {
             errors.push(RecursionError::UnboundedRecursion {
-                predicate: pred,
+                predicate: parent.to_string(),
                 rule,
             });
         }
@@ -647,6 +667,22 @@ mod tests {
     }
 
     #[test]
+    fn test_scc_grounded_through_projection() {
+        // `Path` has no base case of its own — it only projects `Aux`, which is
+        // grounded by `Edge`. This mirrors the `ShortestPath` /
+        // `ShortestPath_MultBodyAggAux` pair the multi-body aggregation rewrite
+        // produces; the whole SCC is well-founded, so nothing should be flagged.
+        let parsed = parse(r#"
+            Aux(x, y) :- Edge(x, y);
+            Aux(x, z) :- Path(x, y), Edge(y, z);
+            Path(x, y) :- Aux(x, y);
+        "#);
+        let rules: Vec<&Json> = parsed.as_object()["rule"].as_array().iter().collect();
+        let errors = check_base_cases(&rules);
+        assert!(errors.is_empty(), "SCC grounded via projection should not be flagged: {errors:?}");
+    }
+
+    #[test]
     fn test_mutual_recursion_unbounded() {
         // Mutual recursion needs @Recursive annotation for all predicates in SCC
         let parsed = parse(r#"
@@ -664,5 +700,26 @@ mod tests {
             .collect();
         let errors = check_unbounded_recursion(&all_rules, &normal_rules);
         assert!(errors.is_empty());
+    }
+
+    #[test]
+    fn test_annotated_multi_body_agg_recursion_ok() {
+        // The multi-body `Min=` recursion is rewritten into a
+        // `ShortestPath_MultBodyAggAux` predicate that carries the recursion.
+        // The user only annotates `ShortestPath`; that annotation must cover the
+        // synthesized aux so no spurious "missing @Recursive" is reported.
+        let parsed = parse(r#"
+            @Recursive(ShortestPath, 10);
+            ShortestPath(x, y, min_len? Min= 1) distinct :- Edge(x, y);
+            ShortestPath(x, z, min_len? Min= len) distinct :-
+              ShortestPath(x, y, min_len: prev), Edge(y, z), len == prev + 1;
+        "#);
+        let all_rules: Vec<&Json> = parsed.as_object()["rule"].as_array().iter().collect();
+        let normal_rules: Vec<&Json> = all_rules.iter()
+            .filter(|r| !r.as_object()["head"].as_object()["predicate_name"].as_str().starts_with('@'))
+            .cloned()
+            .collect();
+        let errors = check_unbounded_recursion(&all_rules, &normal_rules);
+        assert!(errors.is_empty(), "annotated parent should cover its agg-aux: {errors:?}");
     }
 }
