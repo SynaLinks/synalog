@@ -77,12 +77,16 @@ src/
     stratification.rs     # Negative cycle detection
     arity.rs              # Argument count consistency
     recursion.rs          # Recursion safety checks
+    reserved.rs           # Reserved predicate name check
 python/
   synalog/__init__.py     # Python package wrapper
+  synalog/cli.py          # The synalog command (one-shot + REPL)
+  synalog/runners.py      # Local SQL runners (duckdb, sqlite, psql)
 tests/
   compiler_tests/         # Golden SQL tests per engine
   parser_tests/           # Golden JSON tests per engine
   verifier_tests/         # Negative verification tests per engine
+  cli/                    # CLI tests (pytest)
   search_tests.rs         # Search feature integration tests
   e2e/                    # End-to-end tests against live engines
 ```

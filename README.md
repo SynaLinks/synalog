@@ -20,7 +20,7 @@
 
 # Synalog: Logic programming for AI agents
 
-Synalog is a logic programming language from the [Datalog](https://en.wikipedia.org/wiki/Datalog) family and a fork of [Logica](https://logica.dev/). It compiles to optimized **SQL** and is exposed as a Python package with a fast Rust core built on [PyO3](https://pyo3.rs/).
+Synalog is a logic programming language from the [Datalog](https://en.wikipedia.org/wiki/Datalog) family — a fork of [Logica](https://logica.dev/) with the entire engine (parser, compiler and verifier) **rewritten in Rust**. It compiles to optimized **SQL** and ships as a Python package built on [PyO3](https://pyo3.rs/): parsing is **~75x faster** and compilation **~13x faster** than the original Python implementation, so validating and compiling a program is effectively instant.
 
 Synalog was built for the AI agents era. The main idea is to bring the benefits of logic programming — in particular **composability** — to agents that reason over tables: rules are reusable, complex queries decompose into small named predicates, and an agent can accumulate rules over time as a form of structured memory.
 
@@ -32,9 +32,12 @@ In practice, this is what an agent unlocks with Synalog:
 - **Composability** — rules build on other rules, so knowledge accumulates instead of being re-derived in every query.
 - **Memory as a program** — the rule base itself is the agent's long-term memory over structured data.
 - **Recursion done right** — transitive closures and graph traversals that would be impossible to write correctly in raw SQL.
-- **Compile-time verification** — a formal verifier catches structural errors before any SQL touches a database. See [Verification](verification.md).
+- **Compile-time verification** — a formal verifier catches structural errors before any SQL touches a database. See [Verification](https://synalinks.github.io/synalog/verification/).
+- **A fast Rust engine** — check and compile sit inside the agent's inner loop (every generated rule is validated, every query compiled, often several times per step). The Rust core makes that loop cost milliseconds instead of seconds. See [Benchmark](https://synalinks.github.io/synalog/benchmark/).
 
-Because SQL engines are better optimized than logic programming engines, Synalog compiles into *optimized SQL* that runs on **SQLite**, **DuckDB**, **BigQuery**, **PostgreSQL**, **Presto**, **Trino** and **Databricks** — efficiently scaling to *petabytes of data*. See [Supported engines](engines.md).
+Because SQL engines are better optimized than logic programming engines, Synalog compiles into *optimized SQL* that runs on **SQLite**, **DuckDB**, **BigQuery**, **PostgreSQL**, **Presto**, **Trino** and **Databricks** — efficiently scaling to *petabytes of data*. See [Supported engines](https://synalinks.github.io/synalog/engines/).
+
+Full documentation: **<https://synalinks.github.io/synalog/>**
 
 ## At a glance
 
@@ -125,7 +128,7 @@ $ synalog program.l run EngineeringTeam
 - `run` executes locally on `duckdb` (needs `pip install duckdb`), `sqlite` (stdlib), or `psql` (needs `pip install psycopg` and `--dsn` or `SYNALOG_PSQL_DSN`). For other engines, use `print` and run the SQL with your own client. `pip install 'synalog[run]'` pulls in the duckdb and psycopg drivers.
 - `import path.to.file.Pred;` statements resolve `path/to/file.l` against the program file's directory, then the current directory; pass `--import-root DIR` (repeatable) to search elsewhere.
 - `--load TABLE=PATH` (repeatable) loads a csv/tsv/json/jsonl/parquet file as a table before running, e.g. `synalog senior.l run Senior --load employees=employees.csv`.
-- `synalog init` scaffolds a project (it asks for a name and description): a starter program importing a reusable `lib/` module, sample data in `data/`, and agent instructions (`AGENTS.md`, `CLAUDE.md`, `.agents/skills/synalog/SKILL.md`) so coding agents know how to use Synalog.
+- `synalog init` scaffolds a project (`uvx synalog init` runs it without installing; it asks for a name and description): a starter program importing a reusable `lib/` module, sample data in `data/`, and agent instructions (`AGENTS.md`, `CLAUDE.md`, `.agents/skills/synalog/SKILL.md`) so coding agents know how to use Synalog.
 
 Running `synalog` with no arguments starts an interactive session, in the spirit of `python` (the options above, e.g. `--engine` or `--load`, apply to it too):
 
@@ -189,11 +192,12 @@ All four functions accept an optional `engine` keyword that overrides the progra
 
 ## Language overview
 
-Synalog programs are composed of **tables**, **concepts** and **rules**. Tables declare external data sources. Concepts extract entities and relationships from tables. Rules derive new data from concepts.
+By convention, a Synalog program is organized into three sections: **tables**, **concepts** and **rules**. Tables map external data sources (a database table is referenced by its lowercase database name and mapped once to a PascalCase predicate). Concepts extract entities and relationships from tables. Rules derive new data from concepts. The section headers are plain comments — the structure is a convention, not syntax.
 
 ```logica
-# Tables (read-only declarations)
-Orders(customer_id:, product_id:, amount:, status:);
+# Tables — read-only mappings of database tables
+Orders(customer_id:, product_id:, amount:, status:) :-
+  orders(customer_id:, product_id:, amount:, status:);
 
 # Concepts — extract entities and relationships
 
@@ -398,6 +402,17 @@ RecentOrders(order_id:) :-
 
 Each engine has its own SQL dialect for string literals, array syntax, GROUP BY style, record construction, regex matching, and standard library functions.
 
+## Benchmark
+
+The Rust core is benchmarked against the original Python Logica implementation on every program of the compiler test suite (498 programs across 6 engines). Both run **in-process** — Synalog through the same PyO3 extension that `pip install synalog` ships — so the numbers measure exactly what a Python caller gets:
+
+| | Python Logica | Synalog (Rust) | Speedup |
+|---|---|---|---|
+| Parse (total) | 13.0 s | 0.17 s | **~75x** |
+| Compile (total) | 58.5 s | 4.5 s | **~13x** |
+
+The speedup is uniform across engines for parsing and ranges from ~10x (trino, presto) to ~18x (duckdb) for compilation. Per-engine tables, plots and methodology are on the [Benchmark](https://synalinks.github.io/synalog/benchmark/) page; reproduce with `python3 benchmark.py`.
+
 ## Verification
 
 Unlike Logica, which lets the database raise errors at execution time, Synalog embeds a **formal verifier** that catches issues at compile time.
@@ -410,12 +425,13 @@ Unlike Logica, which lets the database raise errors at execution time, Synalog e
 | **Stratification** | Negative recursion cycles |
 | **Arity** | Predicates used with inconsistent argument counts |
 | **Recursion** | Missing base cases, trivial loops, unbounded recursion without `@Recursive` |
+| **Reserved names** | Rules that redefine a built-in library predicate (`Num`, `Str`, `ArgMin`, `CurrentDate`, ...) |
 
 ```python
 errors = synalog.check(bad_source)
 for e in errors:
     print(e)
-# Variable 'y' in head of 'Test' is not bound in the body
+# Unbound variable 'y' in head of rule: Test(x:, y:) :- Numbers(x:)
 ```
 
 ## Differences with Datalog and Logica
@@ -499,11 +515,15 @@ src/
     stratification.rs     # Negative cycle detection
     arity.rs              # Argument count consistency
     recursion.rs          # Recursion safety checks
+    reserved.rs           # Reserved predicate name check
 python/
   synalog/__init__.py     # Python package wrapper
+  synalog/cli.py          # The synalog command (one-shot + REPL)
+  synalog/runners.py      # Local SQL runners (duckdb, sqlite, psql)
 tests/
   compiler_tests/         # Golden SQL tests per engine
   parser_tests/           # Golden JSON tests per engine
   verifier_tests/         # Negative verification tests per engine
+  cli/                    # CLI tests (pytest)
   search_tests.rs         # Search feature integration tests
 ```

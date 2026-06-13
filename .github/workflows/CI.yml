@@ -244,7 +244,10 @@ jobs:
           name: ${{ matrix.platform.artifact }}
           path: wheels
       - name: Install wheel
-        run: pip install --no-index --find-links wheels synalog
+        # --find-links serves the locally-built synalog wheel; the runtime
+        # deps (click, rich) still resolve from PyPI. Don't use --no-index:
+        # it would block dependency resolution and fail the install.
+        run: pip install --find-links wheels synalog
       - name: Smoke test
         run: |
           python -c "
