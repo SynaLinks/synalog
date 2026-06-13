@@ -1,3 +1,5 @@
+// License Apache 2.0: (c) 2025-2026 Yoan Sallami (Synalinks Team)
+
 use std::collections::BTreeMap;
 use std::fmt;
 
@@ -43,6 +45,20 @@ impl Json {
         match self {
             Json::Str(s) => s,
             _ => panic!("expected string, got {:?}", self.type_name()),
+        }
+    }
+
+    /// Coerce a `var_name` node to its string form.
+    ///
+    /// Variable names are usually strings, but positional-argument
+    /// normalization (e.g. the `@Recursive` rewrite) can leave a column's
+    /// `var_name` as an integer index. Mirrors `extract_var_name` in the
+    /// compiler so the verifier accepts the same ASTs the compiler does.
+    pub fn as_var_name(&self) -> String {
+        match self {
+            Json::Str(s) => s.clone(),
+            Json::Int(n) => n.to_string(),
+            _ => panic!("expected string or int var_name, got {:?}", self.type_name()),
         }
     }
 

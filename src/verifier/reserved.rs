@@ -1,3 +1,5 @@
+// License Apache 2.0: (c) 2025-2026 Yoan Sallami (Synalinks Team)
+
 //! Reserved predicate name check.
 //!
 //! Every dialect injects a standard library program (`Num`, `Str`, `ArgMin`,

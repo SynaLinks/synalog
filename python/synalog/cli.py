@@ -1,3 +1,5 @@
+# License Apache 2.0: (c) 2025-2026 Yoan Sallami (Synalinks Team)
+
 """Command-line interface for synalog, built on click and rich.
 
 One-shot mode (like ``logica``):

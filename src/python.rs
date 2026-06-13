@@ -1,3 +1,5 @@
+// License Apache 2.0: (c) 2025-2026 Yoan Sallami (Synalinks Team)
+
 //! Python bindings for synalog (PyO3).
 //!
 //! Exposed as the `_synalog` extension module, wrapped by the `synalog`

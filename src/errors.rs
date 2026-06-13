@@ -1,3 +1,5 @@
+// License Apache 2.0: (c) 2025-2026 Yoan Sallami (Synalinks Team)
+
 //! Unified error handling for synalog.
 //!
 //! This module provides a consistent error hierarchy across parser, compiler,

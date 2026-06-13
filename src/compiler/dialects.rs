@@ -1,3 +1,7 @@
+// Modified from: logica/compiler/dialects.py
+// Original authors: Evgeny Skvortsov et al. (Logica Team, Google LLC)
+// License Apache 2.0: (c) 2025-2026 Yoan Sallami (Synalinks Team)
+
 //! SQL dialects — port of Python's `compiler/dialects.py`.
 //!
 //! Each dialect defines built-in function templates, infix operator overrides,

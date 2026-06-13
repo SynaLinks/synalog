@@ -1,3 +1,7 @@
+// Modified from: logica/compiler/universe.py
+// Original authors: Evgeny Skvortsov et al. (Logica Team, Google LLC)
+// License Apache 2.0: (c) 2025-2026 Yoan Sallami (Synalinks Team)
+
 use std::collections::{HashMap, HashSet};
 use crate::parser::Json;
 use crate::compiler::CompileResult;
@@ -338,7 +342,7 @@ impl Annotations {
     fn extract_predicate_name(val: &Json) -> Option<String> {
         if val.is_object() {
             if let Some(var) = val.as_object().get("variable") {
-                return Some(var.as_object()["var_name"].as_str().to_string());
+                return Some(var.as_object()["var_name"].as_var_name());
             }
             if let Some(lit) = val.as_object().get("literal") {
                 if let Some(pred) = lit.as_object().get("the_predicate") {

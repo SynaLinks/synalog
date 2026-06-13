@@ -1,3 +1,5 @@
+# License Apache 2.0: (c) 2025-2026 Yoan Sallami (Synalinks Team)
+
 """SQL runners for the synalog CLI: execute compiled SQL against real engines.
 
 Each runner takes a SQL script (possibly multi-statement, as produced by

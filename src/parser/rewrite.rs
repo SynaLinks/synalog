@@ -1,3 +1,7 @@
+// Modified from: logica/parser_py/parse.py
+// Original authors: Evgeny Skvortsov et al. (Logica Team, Google LLC)
+// License Apache 2.0: (c) 2025-2026 Yoan Sallami (Synalinks Team)
+
 use crate::json_obj;
 use crate::parser::json::{Json, JsonArray, JsonObject};
 use crate::parser::span::SpanString;

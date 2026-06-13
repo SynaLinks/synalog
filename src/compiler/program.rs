@@ -1,3 +1,7 @@
+// Modified from: logica/compiler/universe.py
+// Original authors: Evgeny Skvortsov et al. (Logica Team, Google LLC)
+// License Apache 2.0: (c) 2025-2026 Yoan Sallami (Synalinks Team)
+
 use std::cell::RefCell;
 use std::collections::{HashMap, HashSet};
 use crate::parser::{Json, CompilationMode};

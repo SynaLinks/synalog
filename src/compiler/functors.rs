@@ -1,3 +1,7 @@
+// Modified from: logica/compiler/functors.py
+// Original authors: Evgeny Skvortsov et al. (Logica Team, Google LLC)
+// License Apache 2.0: (c) 2025-2026 Yoan Sallami (Synalinks Team)
+
 //! Functors library — processing @Make instructions and recursion unfolding.
 //!
 //! Matches Python's `compiler/functors.py`.

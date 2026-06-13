@@ -10,11 +10,15 @@ Both implementations run **in-process** — Synalog through the same PyO3 extens
 
 Parsing is dominated by the grammar work and speeds up uniformly across engines. Compilation includes SQL generation, so the speedup varies with how much dialect-specific rewriting each engine needs.
 
+Synalog also runs a dedicated **verification** pass (`synalog.check` — safety, stratification, recursion and reserved-name checks) before compiling. Python Logica folds the same analysis into compilation and exposes no standalone equivalent, so verification is timed on the Rust side only and reported as an absolute total rather than a speedup.
+
 ## Plots
 
 ![Total parse and compile time, Python vs Rust](benchmark/summary.png)
 
 ![Speedup by SQL engine](benchmark/speedup_by_engine.png)
+
+![Verification time by SQL engine](benchmark/verify_by_engine.png)
 
 ![Compilation time of the 20 slowest programs](benchmark/time_comparison.png)
 

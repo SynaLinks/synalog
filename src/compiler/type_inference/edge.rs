@@ -1,3 +1,7 @@
+// Modified from: logica/type_inference/types/edge.py
+// Original authors: Evgeny Skvortsov et al. (Logica Team, Google LLC)
+// License Apache 2.0: (c) 2025-2026 Yoan Sallami (Synalinks Team)
+
 //! Edge types for the type inference graph.
 //!
 //! Ported from Python: type_inference/types/edge.py

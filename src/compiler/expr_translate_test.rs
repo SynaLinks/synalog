@@ -1,3 +1,5 @@
+// License Apache 2.0: (c) 2025-2026 Yoan Sallami (Synalinks Team)
+
 use super::*;
 use crate::compiler::dialects::SqLiteDialect;
 use crate::compiler::dialects::BigQueryDialect;

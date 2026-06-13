@@ -1,3 +1,5 @@
+# License Apache 2.0: (c) 2025-2026 Yoan Sallami (Synalinks Team)
+
 """Saved connections for remote engines (`synalog connect`).
 
 Connection strings are stored per engine in a JSON file under the user

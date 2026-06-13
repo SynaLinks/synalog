@@ -1,3 +1,7 @@
+// Modified from: logica/type_inference/built_in_functions_types.py
+// Original authors: Evgeny Skvortsov et al. (Logica Team, Google LLC)
+// License Apache 2.0: (c) 2025-2026 Yoan Sallami (Synalinks Team)
+
 //! Built-in function type restrictions.
 //!
 //! Ported from Python: type_inference/built_in_functions_types.py

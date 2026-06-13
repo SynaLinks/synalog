@@ -1,3 +1,7 @@
+// Modified from: logica/type_inference/types/types_graph.py
+// Original authors: Evgeny Skvortsov et al. (Logica Team, Google LLC)
+// License Apache 2.0: (c) 2025-2026 Yoan Sallami (Synalinks Team)
+
 //! Types graph for storing expression connections.
 //!
 //! Ported from Python: type_inference/types/types_graph.py

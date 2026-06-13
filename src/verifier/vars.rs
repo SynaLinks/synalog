@@ -1,3 +1,5 @@
+// License Apache 2.0: (c) 2025-2026 Yoan Sallami (Synalinks Team)
+
 //! Variable collection utilities for Logica AST.
 //!
 //! Mirrors the Lean 4 specification for variable analysis.
@@ -27,9 +29,9 @@ impl VarCollector {
 
         // Variable
         if let Some(var_obj) = obj.get("variable") {
-            let name = var_obj.as_object()["var_name"].as_str();
+            let name = var_obj.as_object()["var_name"].as_var_name();
             if name != "_" {
-                vars.insert(name.to_string());
+                vars.insert(name);
             }
             return;
         }
@@ -99,9 +101,9 @@ impl VarCollector {
 
         // Variable
         if let Some(var_obj) = obj.get("variable") {
-            let name = var_obj.as_object()["var_name"].as_str();
+            let name = var_obj.as_object()["var_name"].as_var_name();
             if name != "_" {
-                vars.insert(name.to_string());
+                vars.insert(name);
             }
             return;
         }
@@ -444,5 +446,43 @@ impl VarCollector {
                 Self::collect_record_vars(call.as_object().get("record"), vars);
             }
         }
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::json_obj;
+
+    /// Positional-argument normalization (e.g. the `@Recursive` rewrite) can
+    /// leave a variable's `var_name` as an integer index rather than a string.
+    /// The collector must coerce it instead of panicking in `as_str`.
+    #[test]
+    fn test_collect_expr_vars_int_var_name() {
+        let expr = json_obj!("variable" => json_obj!("var_name" => Json::Int(0)));
+        let vars = VarCollector::expr_vars(&expr);
+        assert!(vars.contains("0"), "int var_name should collect as \"0\": {vars:?}");
+    }
+
+    /// `head_vars` walks the same record path that panicked on the
+    /// `35_recursive_annotated` fixture; an int-indexed head column must work.
+    #[test]
+    fn test_head_vars_int_var_name() {
+        let rule = json_obj!(
+            "head" => json_obj!(
+                "record" => json_obj!("field_value" => Json::Array(vec![
+                    json_obj!(
+                        "field" => Json::Int(0),
+                        "value" => json_obj!(
+                            "expression" => json_obj!(
+                                "variable" => json_obj!("var_name" => Json::Int(0))
+                            )
+                        )
+                    ),
+                ]))
+            )
+        );
+        let vars = VarCollector::head_vars(&rule);
+        assert!(vars.contains("0"), "int head column should collect as \"0\": {vars:?}");
     }
 }

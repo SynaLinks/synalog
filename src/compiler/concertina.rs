@@ -1,3 +1,7 @@
+// Modified from: logica/common/concertina_lib.py
+// Original authors: Evgeny Skvortsov et al. (Logica Team, Google LLC)
+// License Apache 2.0: (c) 2025-2026 Yoan Sallami (Synalinks Team)
+
 //! Concertina: workflow execution handler for Logica programs.
 //!
 //! Orchestrates the execution of compiled SQL queries in dependency order,

@@ -1,3 +1,5 @@
+// License Apache 2.0: (c) 2025-2026 Yoan Sallami (Synalinks Team)
+
 //! Recursion safety checks for Synalog rules.
 //!
 //! Detects problematic recursion patterns:
@@ -270,7 +272,7 @@ fn expr_to_repr(expr: &Json) -> ArgRepr {
 
     // Variable
     if let Some(var_obj) = obj.get("variable") {
-        return ArgRepr::Var(var_obj.as_object()["var_name"].as_str().to_string());
+        return ArgRepr::Var(var_obj.as_object()["var_name"].as_var_name());
     }
 
     // For literals and other expressions, serialize to string for comparison
@@ -365,7 +367,7 @@ fn collect_recursive_annotations(all_rules: &[&Json]) -> HashSet<String> {
                                     );
                                 }
                             } else if let Some(var) = expr.as_object().get("variable") {
-                                annotated.insert(var.as_object()["var_name"].as_str().to_string());
+                                annotated.insert(var.as_object()["var_name"].as_var_name());
                             } else if let Some(call) = expr.as_object().get("call") {
                                 annotated.insert(call.as_object()["predicate_name"].as_str().to_string());
                             }

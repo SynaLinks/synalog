@@ -1,3 +1,5 @@
+// License Apache 2.0: (c) 2025-2026 Yoan Sallami (Synalinks Team)
+
 //! Variable safety checks for Logica rules.
 //!
 //! Mirrors the Lean 4 specification:

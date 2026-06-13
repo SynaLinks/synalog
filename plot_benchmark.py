@@ -156,7 +156,7 @@ def plot_summary(results):
 
     s = results["summary"]
 
-    fig, axes = plt.subplots(1, 2, figsize=(12, 5))
+    fig, axes = plt.subplots(1, 3, figsize=(16, 5))
 
     # Parse times
     ax1 = axes[0]
@@ -184,10 +184,56 @@ def plot_summary(results):
                      xytext=(0, 3), textcoords="offset points",
                      ha='center', va='bottom', fontsize=10)
 
+    # Verify times (Rust-only — Python Logica has no standalone verifier)
+    ax3 = axes[2]
+    times = [0, s.get("rust_check_total_ms", 0)]
+    bars = ax3.bar(["Python", "Rust"], times, color=['#bdc3c7', '#2ecc71'])
+    ax3.set_ylabel('Total Time (ms)', fontsize=12)
+    ax3.set_title('Verify Time (Rust-only — no Python equivalent)',
+                  fontsize=12, fontweight='bold')
+    ax3.annotate('n/a',
+                 xy=(bars[0].get_x() + bars[0].get_width() / 2, 0),
+                 xytext=(0, 3), textcoords="offset points",
+                 ha='center', va='bottom', fontsize=10, color='#7f8c8d')
+    ax3.annotate(f'{times[1]:.0f}ms',
+                 xy=(bars[1].get_x() + bars[1].get_width() / 2, times[1]),
+                 xytext=(0, 3), textcoords="offset points",
+                 ha='center', va='bottom', fontsize=10)
+
     plt.suptitle(f'Python vs Rust Synalog Benchmark ({s["total_tests"]} tests)',
                  fontsize=14, fontweight='bold')
     plt.tight_layout()
     plt.savefig(OUTPUT_DIR / "summary.png", dpi=150)
+    plt.close()
+
+
+def plot_verify_by_engine(results):
+    """Plot the Rust-only verification time per engine."""
+    engines = []
+    check_totals = []
+    for engine, tests in results["engines"].items():
+        valid = [t["rust_check_ms"] for t in tests
+                 if t.get("rust_check_ms", -1) > 0]
+        if valid:
+            engines.append(engine.upper())
+            check_totals.append(sum(valid))
+
+    if not engines:
+        return
+
+    fig, ax = plt.subplots(figsize=(12, 6))
+    bars = ax.bar(engines, check_totals, color='#9b59b6')
+    ax.set_ylabel('Total verify time (ms)', fontsize=12)
+    ax.set_title('Synalog Verification Time by SQL Engine (Rust `synalog.check`)',
+                 fontsize=14, fontweight='bold')
+    for bar, val in zip(bars, check_totals):
+        ax.annotate(f'{val:.0f}ms',
+                    xy=(bar.get_x() + bar.get_width() / 2, val),
+                    xytext=(0, 3), textcoords="offset points",
+                    ha='center', va='bottom', fontsize=9)
+
+    plt.tight_layout()
+    plt.savefig(OUTPUT_DIR / "verify_by_engine.png", dpi=150)
     plt.close()
 
 
@@ -208,6 +254,9 @@ def main():
 
     plot_speedup_by_engine(results)
     print("  - speedup_by_engine.png")
+
+    plot_verify_by_engine(results)
+    print("  - verify_by_engine.png")
 
     plot_time_comparison(results)
     print("  - time_comparison.png")
