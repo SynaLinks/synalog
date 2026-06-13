@@ -101,7 +101,7 @@ jobs:
           args: --release --out dist
       - uses: actions/setup-python@v6
         with:
-          python-version: 3.14t
+          python-version: "3.14t"
       - name: Build free-threaded wheels
         uses: PyO3/maturin-action@v1
         with:
@@ -140,7 +140,7 @@ jobs:
           args: --release --out dist
       - uses: actions/setup-python@v6
         with:
-          python-version: 3.14t
+          python-version: "3.14t"
           architecture: ${{ matrix.platform.python_arch }}
       - name: Build free-threaded wheels
         uses: PyO3/maturin-action@v1
