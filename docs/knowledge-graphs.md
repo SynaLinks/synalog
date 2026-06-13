@@ -4,6 +4,8 @@ When your data has entities and relationships, model it as a graph: `*Node` conc
 
 These are **modeling conventions**, not language rules — the compiler attaches no meaning to the `*Node`/`*Edge` suffixes. They are the discipline that keeps a growing rule base composable, and the structure Synalog-based agent runtimes expect.
 
+Nodes and edges are how the agent builds the knowledge-graph layer of its [dynamic semantic layer](index.md): once entities and relationships are named, every later rule traverses them instead of re-joining raw tables, and a filter on one node propagates through the whole graph.
+
 ## Conventions
 
 - **Nodes are entities, edges are relationships, rules are traversals.**
