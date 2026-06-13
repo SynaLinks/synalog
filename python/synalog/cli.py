@@ -74,6 +74,21 @@ def read_source(file: str) -> str:
         fail(e)
 
 
+def _dotenv_dirs(args: tuple[str, ...], inline: str | None) -> list[str]:
+    """Directories to look for a `.env`: the program file's, then the cwd.
+
+    When a FILE argument names a real file (not stdin, not an inline program,
+    not a subcommand), its directory is the project root and wins; the current
+    directory is always searched too so subcommands and `-c`/stdin still pick up
+    a local `.env`.
+    """
+    dirs: list[str] = []
+    if inline is None and args and args[0] != "-" and os.path.isfile(args[0]):
+        dirs.append(os.path.dirname(os.path.abspath(args[0])))
+    dirs.append(os.getcwd())
+    return dirs
+
+
 def import_roots(file: str | None, flag_roots: tuple[str, ...]) -> list[str]:
     """Directories where `import` statements look up .l files.
 
@@ -273,6 +288,43 @@ def cmd_connect(args: tuple[str, ...]) -> int:
 
 
 # ---------------------------------------------------------------------------
+# Schema introspection (introspect)
+# ---------------------------------------------------------------------------
+
+
+def cmd_introspect(args: tuple[str, ...], dsn: str | None) -> int:
+    """Print `# Tables` predicates learned from a database schema.
+
+    \b
+    synalog introspect <engine>          introspect the saved connection
+    synalog introspect <engine> <dsn>    introspect an explicit connection string
+
+    The DSN is resolved like everywhere else: the argument here (or --dsn) wins,
+    then SYNALOG_<ENGINE>_DSN, then the saved connection. Output goes to stdout,
+    so redirect it into a file:  synalog introspect psql > tables.l
+    """
+    from .introspect import INTROSPECTABLE, introspect
+
+    if not args or len(args) > 2:
+        raise click.UsageError("usage: synalog introspect <engine> [dsn]")
+    engine = args[0]
+    if engine not in INTROSPECTABLE:
+        fail(
+            f"'{engine}' cannot be introspected;"
+            f" engines with a catalog: {', '.join(INTROSPECTABLE)}"
+        )
+    explicit = args[1] if len(args) > 1 else dsn
+    try:
+        text = introspect(engine, explicit)
+    except (ValueError, RunnerUnavailable, OSError) as e:
+        fail(e)
+    except Exception as e:  # surface a driver/server error without a traceback
+        fail(f"{type(e).__name__}: {e}")
+    click.echo(text, nl=False)
+    return 0
+
+
+# ---------------------------------------------------------------------------
 # Entry point
 # ---------------------------------------------------------------------------
 
@@ -336,6 +388,7 @@ def main(args, inline, engine, limit, offset, search_pattern, dsn, import_root, 
       synalog program.l run_to_csv Pred ...   execute and print CSV
       synalog init [NAME]                     scaffold a new project
       synalog connect ENGINE DSN              save a remote engine connection
+      synalog introspect ENGINE               print Tables predicates for a schema
 
     Add --search REGEX to print/run/run_to_csv to keep only rows where some
     column matches REGEX (engine-native regex, not a SQL LIKE pattern), e.g.
@@ -344,13 +397,22 @@ def main(args, inline, engine, limit, offset, search_pattern, dsn, import_root, 
     '-' as FILE reads the program from stdin; -c PROGRAM passes the program
     text inline instead of FILE. With no arguments, starts an interactive
     session (the options apply to it too).
+
+    A '.env' file at the project root (the program file's directory, then the
+    current directory) is loaded automatically; real environment variables take
+    precedence over it.
     """
+    from . import config
+
+    config.load_dotenv(*_dotenv_dirs(args, inline))
     if args and args[0] == "init" and inline is None:
         if len(args) > 2:
             raise click.UsageError("usage: synalog init [NAME]")
         sys.exit(cmd_init(args[1] if len(args) > 1 else None))
     if args and args[0] == "connect" and inline is None:
         sys.exit(cmd_connect(args[1:]))
+    if args and args[0] == "introspect" and inline is None:
+        sys.exit(cmd_introspect(args[1:], dsn))
     if inline is None:
         if not args:
             sys.exit(Repl(engine, dsn, import_roots(None, import_root), loads).run())

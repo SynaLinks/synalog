@@ -173,9 +173,9 @@ SELECT
   Subscriptions.sub_id AS sub_id,
   Subscriptions.expires AS expires
 FROM
-  t_0_Subscriptions AS Subscriptions, CurrentDate
+  t_0_Subscriptions AS Subscriptions, (SELECT strftime(current_date, '%Y-%m-%d') AS date) AS Today
 WHERE
-  (Subscriptions.expires >= CurrentDate.date) ORDER BY sub_id;
+  (Subscriptions.expires >= Today.date) ORDER BY sub_id;
 
 -- Executed on DuckDB:
 | sub_id | expires    |

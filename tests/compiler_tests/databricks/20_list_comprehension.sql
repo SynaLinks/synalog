@@ -1,13 +1,13 @@
 WITH t_0_Squares AS (SELECT
-  ARRAY_AGG(((x_9) * (x_9)) order by x_9) AS logica_value
+  TRANSFORM(ARRAY_SORT(COLLECT_LIST(STRUCT(x_7 AS arg, ((x_7) * (x_7)) AS value))), s -> s.value) AS logica_value
 FROM
-  explode(GENERATE_ARRAY(0, 5 - 1)) AS pushkin(x_9)),
+  explode(SEQUENCE(0, 5 - 1)) AS pushkin(x_7)),
 t_2_EvenSquares AS (SELECT
-  ARRAY_AGG(((x_21) * (x_21)) order by x_21) AS logica_value
+  TRANSFORM(ARRAY_SORT(COLLECT_LIST(STRUCT(x_14 AS arg, ((x_14) * (x_14)) AS value))), s -> s.value) AS logica_value
 FROM
-  explode(GENERATE_ARRAY(0, 10 - 1)) AS pushkin(x_21)
+  explode(SEQUENCE(0, 10 - 1)) AS pushkin(x_14)
 WHERE
-  ((MOD(x_21, 2)) = 0))
+  ((MOD(x_14, 2)) = 0))
 SELECT
   Squares.logica_value AS squares,
   EvenSquares.logica_value AS even_squares

@@ -18,7 +18,7 @@ WITH t_1_Names AS (SELECT * FROM (
 t_0_FormattedNames AS (SELECT
   Names.first AS first,
   UPPER(Names.first) AS upper_first,
-  ARRAY_SIZE(Names.last) AS len
+  LENGTH(Names.last) AS len
 FROM
   t_1_Names AS Names ORDER BY first)
 SELECT

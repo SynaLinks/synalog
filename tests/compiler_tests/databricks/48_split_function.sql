@@ -10,8 +10,8 @@ WITH t_1_Rows AS (SELECT * FROM (
 ) AS UNUSED_TABLE_NAME  ),
 t_0_Parsed AS (SELECT
   Rows.line AS line,
-  ARRAY_LENGTH(SPLIT(Rows.line, ",")) AS n,
-  SPLIT(Rows.line, ",")[OFFSET(0)] AS first
+  SIZE(SPLIT(Rows.line, ",")) AS n,
+  ELEMENT_AT(SPLIT(Rows.line, ","), 0 + 1) AS first
 FROM
   t_1_Rows AS Rows ORDER BY line)
 SELECT

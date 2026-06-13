@@ -14,8 +14,8 @@ WITH t_1_Lists AS (SELECT * FROM (
 ) AS UNUSED_TABLE_NAME  ),
 t_0_Concatenated AS (SELECT
   Lists.id AS id,
-  ARRAY_LENGTH(ARRAY_JOIN(Lists.a, Lists.b)) AS total_size,
-  ARRAY_JOIN(Lists.a, Lists.b)[OFFSET(0)] AS head
+  SIZE(CONCAT(Lists.a, Lists.b)) AS total_size,
+  ELEMENT_AT(CONCAT(Lists.a, Lists.b), 0 + 1) AS head
 FROM
   t_1_Lists AS Lists ORDER BY id)
 SELECT

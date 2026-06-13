@@ -16,6 +16,7 @@ mod stratification;
 mod arity;
 mod recursion;
 mod reserved;
+mod sqlexpr;
 
 pub use vars::VarCollector;
 pub use safety::{SafetyError, check_safety};
@@ -23,6 +24,7 @@ pub use stratification::{StratificationError, check_stratification};
 pub use arity::{ArityError, check_arity};
 pub use recursion::{RecursionError, check_recursion, check_unbounded_recursion};
 pub use reserved::{ReservedError, check_reserved, reserved_predicate_names};
+pub use sqlexpr::{SqlExprError, check_sqlexpr};
 
 use crate::parser::Json;
 use crate::errors::{VerifyError, VerifyResult};
@@ -35,6 +37,7 @@ pub enum CheckError {
     Arity(ArityError),
     Recursion(RecursionError),
     Reserved(ReservedError),
+    SqlExpr(SqlExprError),
 }
 
 impl std::fmt::Display for CheckError {
@@ -45,6 +48,7 @@ impl std::fmt::Display for CheckError {
             CheckError::Arity(e) => write!(f, "{}", e),
             CheckError::Recursion(e) => write!(f, "{}", e),
             CheckError::Reserved(e) => write!(f, "{}", e),
+            CheckError::SqlExpr(e) => write!(f, "{}", e),
         }
     }
 }
@@ -59,6 +63,7 @@ impl From<CheckError> for VerifyError {
             CheckError::Arity(ae) => ae.into(),
             CheckError::Recursion(re) => re.into(),
             CheckError::Reserved(re) => re.into(),
+            CheckError::SqlExpr(se) => se.into(),
         }
     }
 }
@@ -157,6 +162,11 @@ pub fn validate(parsed: &Json) -> CheckResult {
     // Check 6: Reserved predicate names (collisions with the built-in library)
     for err in reserved::check_reserved(&normal_rules) {
         result.errors.push(CheckError::Reserved(err));
+    }
+
+    // Check 7: Unsafe raw-SQL SqlExpr escape hatch in user rules
+    for err in sqlexpr::check_sqlexpr(&normal_rules) {
+        result.errors.push(CheckError::SqlExpr(err));
     }
 
     result

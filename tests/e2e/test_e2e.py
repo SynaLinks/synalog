@@ -155,3 +155,36 @@ def test_matches_duckdb(runner_for, engine, name):
     runner = runner_for(engine)
     rows = _normalize_rows(runner.run(compile_fixture(engine, name)), name)
     assert rows == _reference_rows(name)
+
+
+# ---------------------------------------------------------------------------
+# Layer 3: regex search (synalog.search) executes on every live engine
+# ---------------------------------------------------------------------------
+
+# Self-contained program (facts only) so it compiles and runs on every engine
+# without external tables.
+SEARCH_PROGRAM = """\
+@OrderBy(Customer, "name");
+Customer(name:, city:) :- Raw(name:, city:);
+Raw(name: "Acme Corp", city: "Paris");
+Raw(name: "Globex", city: "Berlin");
+Raw(name: "Initech", city: "Acmeville");
+"""
+
+# "Acme" matches "Acme Corp" by name and "Initech" by its city "Acmeville".
+# A plain literal (no inline flags) keeps the pattern portable across every
+# engine's regex flavor (POSIX ~, REGEXP, regexp_matches, REGEXP_LIKE).
+SEARCH_EXPECTED = [("Acme Corp", "Paris"), ("Initech", "Acmeville")]
+
+
+@pytest.mark.parametrize("engine", ENGINES)
+def test_search_executes_and_filters(runner_for, engine):
+    """search() must produce SQL that runs on each engine and OR-matches the
+    regex across all columns — exercising the per-dialect string cast
+    (TEXT/VARCHAR/STRING) and regex operator, and the preamble placement."""
+    import synalog
+
+    runner = runner_for(engine)
+    sql = synalog.search(SEARCH_PROGRAM, "Customer", "Acme", engine=engine)
+    rows = _normalize_rows(runner.run(sql))
+    assert rows == _normalize_rows(SEARCH_EXPECTED)

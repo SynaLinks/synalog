@@ -227,6 +227,44 @@ impl VarCollector {
         vars
     }
 
+    /// Input-argument variables of a value-function definition (`F(a, b) = v`).
+    ///
+    /// A value-function's head record carries a `logica_value` field (the
+    /// returned value); its *other* fields are input parameters, bound by the
+    /// caller rather than the body. Returns those parameter variables so the
+    /// safety checks treat them as bound. For an ordinary predicate (no
+    /// `logica_value` field) this is empty, leaving predicate checks unchanged.
+    pub fn function_input_vars(rule: &Json) -> HashSet<String> {
+        let mut vars = HashSet::new();
+        let Some(head) = rule.as_object().get("head") else {
+            return vars;
+        };
+        let Some(record) = head.as_object().get("record") else {
+            return vars;
+        };
+        let Some(fv_arr) = record.as_object().get("field_value") else {
+            return vars;
+        };
+        let fields = fv_arr.as_array();
+        let is_function = fields
+            .iter()
+            .any(|fv| matches!(fv.as_object().get("field"), Some(Json::Str(s)) if s == "logica_value"));
+        if !is_function {
+            return vars;
+        }
+        for fv in fields {
+            let is_value =
+                matches!(fv.as_object().get("field"), Some(Json::Str(s)) if s == "logica_value");
+            if is_value {
+                continue;
+            }
+            if let Some(expr) = fv.as_object().get("value").and_then(|v| v.as_object().get("expression")) {
+                Self::collect_expr_vars(expr, &mut vars);
+            }
+        }
+        vars
+    }
+
     /// Get variables appearing in rule body.
     pub fn body_vars(rule: &Json) -> HashSet<String> {
         let mut vars = HashSet::new();
@@ -484,5 +522,26 @@ mod tests {
         );
         let vars = VarCollector::head_vars(&rule);
         assert!(vars.contains("0"), "int head column should collect as \"0\": {vars:?}");
+    }
+
+    /// A value-function's input args are reported; its `logica_value` is not.
+    #[test]
+    fn test_function_input_vars() {
+        use crate::parser::parse_file;
+        let parsed = parse_file("Inc(x, y) = n :- n == x + y;", None, &[]).unwrap();
+        let rule = &parsed.as_object()["rule"].as_array()[0];
+        let inputs = VarCollector::function_input_vars(rule);
+        assert!(inputs.contains("x") && inputs.contains("y"), "args: {inputs:?}");
+        assert!(!inputs.contains("n"), "return value is not an input: {inputs:?}");
+    }
+
+    /// An ordinary predicate has no `logica_value`, so no input vars (which
+    /// keeps the head-var safety check unchanged for predicates).
+    #[test]
+    fn test_predicate_has_no_function_input_vars() {
+        use crate::parser::parse_file;
+        let parsed = parse_file("Foo(a:, b:) :- Bar(a:, b:);", None, &[]).unwrap();
+        let rule = &parsed.as_object()["rule"].as_array()[0];
+        assert!(VarCollector::function_input_vars(rule).is_empty());
     }
 }

@@ -93,7 +93,7 @@ TooManyChildren(parent_id:, n:) :- ChildCount(parent_id:, n:), n > 2;
 
 ### Temporal edges
 
-Include `start_date`/`end_date` extracted via the [temporal pipeline](language/temporal.md), then filter with `CurrentDate` for "active today" queries or use the overlap test `s1 <= e2 && s2 <= e1`.
+Include `start_date`/`end_date` extracted via the [temporal pipeline](language/temporal.md), then filter with `Today` for "active today" queries or use the overlap test `s1 <= e2 && s2 <= e1`.
 
 ## Key principles
 

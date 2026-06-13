@@ -56,7 +56,7 @@ WITH t_2_Sales AS (SELECT * FROM (
 ) AS UNUSED_TABLE_NAME  ),
 t_0_BestQuarter AS (SELECT
   Sales.col0 AS col0,
-  (ARRAY_AGG(Sales.col1 order by Sales.col2 desc))[1] AS best_quarter
+  SORT_ARRAY(COLLECT_LIST(STRUCT(Sales.col2 AS value, Sales.col1 AS arg)), false)[0].arg AS best_quarter
 FROM
   t_2_Sales AS Sales
 GROUP BY 1)

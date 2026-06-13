@@ -66,7 +66,7 @@ With `-c` there is no `FILE` argument: the positionals are the command and its p
 - **sqlite** — Python's stdlib driver; Logica's runtime UDFs (ArgMin/ArgMax, ARRAY_CONCAT, ...) are registered when the `logica` package is installed.
 - **psql** — needs `pip install psycopg` and a connection string.
 
-All three runners provide the [`CurrentDate`](language/temporal.md) built-in concept automatically when the program references it.
+The [`Today` and `Now`](language/temporal.md) built-in concepts need no runner support — the compiler inlines them per dialect, so they work on every engine.
 
 Since connections are in-memory and per-run, `--load` is how you bring data in: each `TABLE=PATH` pair is loaded before the script runs, and the program refers to it by the table name. duckdb reads csv/tsv/json/jsonl/parquet natively; the sqlite runner parses csv/tsv/json/jsonl in Python (no parquet); the psql runner cannot load files.
 

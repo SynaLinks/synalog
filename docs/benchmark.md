@@ -1,8 +1,10 @@
 # Benchmark
 
-Synalog is a fork of [Logica](https://logica.dev/) with the parser and compiler rewritten in Rust. This page tracks how the Rust core compares with the original Python implementation: every program of the [compiler test suite](development.md) is parsed and compiled with both, per engine, and the timings are averaged over several runs.
+Synalog is a fork of [Logica](https://logica.dev/) with the parser and compiler rewritten in Rust. This page tracks how the Rust core compares with the original Python implementation: every program of the [compiler test suite](development.md) is parsed and compiled with both, per engine.
 
 Both implementations run **in-process** — Synalog through the same PyO3 extension that `pip install synalog` ships, Logica through its Python modules — so the comparison measures exactly what a Python caller gets, with no process-startup overhead on either side.
+
+**How the numbers are computed.** Each program's time is the *fastest* of several runs after a discarded warm-up — the minimum is the cleanest estimator for CPU-bound work, since it is the run least disturbed by GC, the scheduler and cold caches. The headline speedup is the **geometric mean** of the per-program speedups, which weights every program equally; this is the standard way to average ratios and avoids the trap of a total-time ratio, where a few large programs would dominate the figure. The median is shown alongside it, and the summed wall-clock times are kept only as context.
 
 ## Results
 

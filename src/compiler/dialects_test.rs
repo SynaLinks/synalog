@@ -458,8 +458,16 @@ fn test_databricks_built_in_functions() {
     assert!(f.contains_key("ToInt64"), "databricks should have ToInt64");
     assert!(f.contains_key("AnyValue"), "databricks should have AnyValue");
     assert!(f.contains_key("ILike"), "databricks should have ILike");
-    assert!(f.contains_key("Length"), "databricks should have Length");
     assert!(f.contains_key("IsNull"), "databricks should have IsNull");
+    // Spark/Databricks-specific overrides of the BigQuery defaults.
+    assert_eq!(f.get("Range"), Some(&"SEQUENCE(0, %s - 1)"));
+    assert_eq!(f.get("Size"), Some(&"SIZE(%s)"));
+    assert_eq!(f.get("Element"), Some(&"ELEMENT_AT({0}, {1} + 1)"));
+    assert_eq!(f.get("Format"), Some(&"FORMAT_STRING(%s)"));
+    assert_eq!(f.get("ArrayConcat"), Some(&"CONCAT({0}, {1})"));
+    // `Length` (string length) is intentionally NOT overridden — it inherits
+    // the default LENGTH; the old ARRAY_SIZE override was wrong for strings.
+    assert!(!f.contains_key("Length"), "databricks must not override Length");
 }
 
 #[test]

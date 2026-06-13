@@ -3,7 +3,7 @@ SELECT
   (POW(x_11, 2)) AS squared,
   (POW(x_11, 3)) AS cubed
 FROM
-  explode(GENERATE_ARRAY(0, 10 - 1)) AS pushkin(x_11)
+  explode(SEQUENCE(0, 10 - 1)) AS pushkin(x_11)
 WHERE
   (x_11 > 0) AND
   (x_11 < 5) ORDER BY x;

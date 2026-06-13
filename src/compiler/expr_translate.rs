@@ -970,8 +970,8 @@ impl<'a> ExprTranslator<'a> {
                                         continue;
                                     }
                                     // Fall through for ArgMin/ArgMax to use library
-                                } else if dialect_name == "trino" || dialect_name == "presto" || dialect_name == "databricks" {
-                                    // For Trino, Presto, Databricks:
+                                } else if dialect_name == "trino" || dialect_name == "presto" {
+                                    // For Trino, Presto:
                                     // Array(i -> v) => ARRAY_AGG(v order by i)
                                     // ArgMin(i -> v) => (ARRAY_AGG(i order by v))[1]
                                     // ArgMax(i -> v) => (ARRAY_AGG(i order by v desc))[1]
@@ -981,6 +981,30 @@ impl<'a> ExprTranslator<'a> {
                                         format!("(ARRAY_AGG({} order by {}))[1]", arg_sql, value_sql)
                                     } else { // ArgMax
                                         format!("(ARRAY_AGG({} order by {} desc))[1]", arg_sql, value_sql)
+                                    };
+                                    results.push(result_sql);
+                                    continue;
+                                } else if dialect_name == "databricks" {
+                                    // Spark/Databricks COLLECT_LIST has no in-aggregate ORDER BY,
+                                    // so collect STRUCT pairs and sort the resulting array:
+                                    // Array(i -> v)  => sort by arg, project value
+                                    // ArgMin(i -> v) => sort by value asc, take first arg
+                                    // ArgMax(i -> v) => sort by value desc, take first arg
+                                    let result_sql = if pred_name == "Array" {
+                                        format!(
+                                            "TRANSFORM(ARRAY_SORT(COLLECT_LIST(STRUCT({} AS arg, {} AS value))), s -> s.value)",
+                                            arg_sql, value_sql
+                                        )
+                                    } else if pred_name == "ArgMin" {
+                                        format!(
+                                            "SORT_ARRAY(COLLECT_LIST(STRUCT({} AS value, {} AS arg)))[0].arg",
+                                            value_sql, arg_sql
+                                        )
+                                    } else { // ArgMax
+                                        format!(
+                                            "SORT_ARRAY(COLLECT_LIST(STRUCT({} AS value, {} AS arg)), false)[0].arg",
+                                            value_sql, arg_sql
+                                        )
                                     };
                                     results.push(result_sql);
                                     continue;

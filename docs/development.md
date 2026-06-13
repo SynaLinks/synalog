@@ -28,17 +28,17 @@ cargo test --test verifier_tests        # verifier tests (all engines)
 cargo test --test search_tests          # search feature tests (all engines)
 ```
 
-The repository also ships a `test.sh` orchestrator:
+The repository also ships a `shell/test.sh` orchestrator (run it from anywhere — it cd's to the repo root):
 
 ```bash
-./test.sh              # run all tests
-./test.sh unit         # unit tests only (fast)
-./test.sh golden       # golden reference tests only (parser + compiler)
-./test.sh e2e          # end-to-end tests against live SQL engines
-./test.sh quick        # unit + parser golden (no SQL compilation)
+shell/test.sh              # run all tests
+shell/test.sh unit         # unit tests only (fast)
+shell/test.sh golden       # golden reference tests only (parser + compiler)
+shell/test.sh e2e          # end-to-end tests against live SQL engines
+shell/test.sh quick        # unit + parser golden (no SQL compilation)
 ```
 
-The `e2e` step needs the Python wheel installed (`pip install .`) and starts the server engines (PostgreSQL, Trino, Presto) itself via Docker Compose.
+Python steps run through `uv run`, so the project virtualenv supplies pytest and the engine drivers. The `e2e` step builds the extension into the venv and starts the server engines (PostgreSQL, Trino, Presto, and a Spark Thrift Server standing in for Databricks) itself via Docker Compose.
 
 ## Golden test generation
 
@@ -129,7 +129,7 @@ It deploys to GitHub Pages automatically on push via `.github/workflows/docs.yml
 
 ### Documentation examples
 
-Every "Complete example" on the documentation site lives in `docs/examples/` as a `.l` program. The `run.py` harness validates each program with `synalog.check()`, compiles every predicate listed in its `# run:` header, executes the SQL on an in-memory DuckDB, and writes the combined output to the matching `.log` file. A `# load: <file>.csv as <table>` header loads a CSV from `docs/examples/` into a DuckDB table before the predicates run, and programs that reference the `CurrentDate` built-in concept get the `CurrentDate(date)` relation created automatically, mirroring the runtime:
+Every "Complete example" on the documentation site lives in `docs/examples/` as a `.l` program. The `run.py` harness validates each program with `synalog.check()`, compiles every predicate listed in its `# run:` header, executes the SQL on an in-memory DuckDB, and writes the combined output to the matching `.log` file. A `# load: <file>.csv as <table>` header loads a CSV from `docs/examples/` into a DuckDB table before the predicates run. The `Today`/`Now` built-in concepts need no special handling — the compiler inlines them per dialect:
 
 ```bash
 python3 docs/examples/run.py              # all examples

@@ -16,11 +16,11 @@ WITH t_2_Score AS (SELECT * FROM (
   
 ) AS UNUSED_TABLE_NAME  ),
 t_0_BestPlayer AS (SELECT
-  (ARRAY_AGG(Score.player order by Score.points desc))[1] AS logica_value
+  SORT_ARRAY(COLLECT_LIST(STRUCT(Score.points AS value, Score.player AS arg)), false)[0].arg AS logica_value
 FROM
   t_2_Score AS Score),
 t_3_WorstPlayer AS (SELECT
-  (ARRAY_AGG(t_4_Score.player order by t_4_Score.points))[1] AS logica_value
+  SORT_ARRAY(COLLECT_LIST(STRUCT(t_4_Score.points AS value, t_4_Score.player AS arg)))[0].arg AS logica_value
 FROM
   t_2_Score AS t_4_Score)
 SELECT

@@ -51,6 +51,28 @@ def test_run_with_sqlite_engine(program_file):
     assert "| 4" in result.stdout
 
 
+def test_run_respects_offset(program_file):
+    result = synalog(str(program_file), "run", "Doubled", "--offset", "1")
+    assert result.returncode == 0, result.stderr
+    assert "| 2" not in result.stdout  # first row skipped
+    assert "| 4" in result.stdout and "| 6" in result.stdout
+
+
+def test_run_multiple_predicates_prints_each(tmp_path):
+    program = tmp_path / "two.l"
+    program.write_text('A(x: "a");\nB(x: "b");\n')
+    result = synalog(str(program), "run", "A", "B")
+    assert result.returncode == 0, result.stderr
+    # both predicates rendered, each as its own table
+    assert "| a" in result.stdout and "| b" in result.stdout
+
+
+def test_version_flag():
+    result = synalog("--version")
+    assert result.returncode == 0
+    assert "synalog, version" in result.stdout
+
+
 def test_run_respects_limit(program_file):
     result = synalog(str(program_file), "run", "Doubled", "--limit", "1")
     assert result.returncode == 0, result.stderr
@@ -207,6 +229,37 @@ def test_connect_save_list_show_remove(tmp_path, monkeypatch):
     assert synalog("connect").stdout.strip() == "No saved connections."
 
 
+def test_connect_masks_token_only_userinfo(tmp_path, monkeypatch):
+    # Databricks DSNs carry a token-only userinfo (token:dapi...); the token is
+    # masked on display but the username half ("token") is kept for readability.
+    monkeypatch.setenv("SYNALOG_CONFIG_DIR", str(tmp_path))
+    dsn = "databricks://token:dapi-secret@host.cloud.databricks.com/sql/1.0"
+    assert synalog("connect", "databricks", dsn).returncode == 0
+    shown = synalog("connect", "databricks").stdout
+    assert "token:***@host" in shown and "dapi-secret" not in shown
+
+
+def test_connect_show_missing_engine(tmp_path, monkeypatch):
+    monkeypatch.setenv("SYNALOG_CONFIG_DIR", str(tmp_path))
+    result = synalog("connect", "trino")
+    assert result.returncode == 0
+    assert "No saved connection for trino" in result.stdout
+
+
+def test_connect_remove_usage_error(tmp_path, monkeypatch):
+    monkeypatch.setenv("SYNALOG_CONFIG_DIR", str(tmp_path))
+    result = synalog("connect", "remove")
+    assert result.returncode == 2  # click usage error
+    assert "connect remove <engine>" in result.stderr
+
+
+def test_connect_remove_missing_connection(tmp_path, monkeypatch):
+    monkeypatch.setenv("SYNALOG_CONFIG_DIR", str(tmp_path))
+    result = synalog("connect", "remove", "trino")
+    assert result.returncode == 1
+    assert "No saved connection for trino" in result.stderr
+
+
 def test_connect_rejects_local_engine(tmp_path, monkeypatch):
     monkeypatch.setenv("SYNALOG_CONFIG_DIR", str(tmp_path))
     result = synalog("connect", "duckdb", "whatever")
@@ -228,6 +281,68 @@ def test_connect_resolves_for_run(tmp_path, monkeypatch):
     assert "no local runner" not in result.stderr
 
 
+# ---------------------------------------------------------------------------
+# .env auto-loading
+# ---------------------------------------------------------------------------
+
+
+def test_dotenv_in_cwd_provides_dsn(tmp_path, monkeypatch):
+    # A .env in the working directory supplies SYNALOG_<ENGINE>_DSN: running a
+    # trino program reaches the driver/connection layer (DSN resolved), not the
+    # "needs a connection string" error.
+    monkeypatch.setenv("SYNALOG_CONFIG_DIR", str(tmp_path))
+    monkeypatch.delenv("SYNALOG_TRINO_DSN", raising=False)
+    (tmp_path / ".env").write_text(
+        "SYNALOG_TRINO_DSN=trino://nobody@127.0.0.1:1/memory/default\n"
+    )
+    (tmp_path / "p.l").write_text('@Engine("trino");\nGreeting("hi");\n')
+    result = synalog("p.l", "run", "Greeting", cwd=tmp_path)
+    assert result.returncode == 1
+    assert "needs a connection string" not in result.stderr
+    assert "no local runner" not in result.stderr
+
+
+def test_dotenv_loaded_from_program_directory(tmp_path, monkeypatch):
+    # Run from elsewhere, pointing at a program whose directory holds the .env;
+    # that directory is the project root and its .env is loaded.
+    monkeypatch.setenv("SYNALOG_CONFIG_DIR", str(tmp_path))
+    monkeypatch.delenv("SYNALOG_TRINO_DSN", raising=False)
+    project = tmp_path / "project"
+    project.mkdir()
+    (project / ".env").write_text(
+        "SYNALOG_TRINO_DSN=trino://nobody@127.0.0.1:1/memory/default\n"
+    )
+    (project / "p.l").write_text('@Engine("trino");\nGreeting("hi");\n')
+    result = synalog(str(project / "p.l"), "run", "Greeting", cwd="/")
+    assert result.returncode == 1
+    assert "needs a connection string" not in result.stderr
+
+
+def test_real_env_overrides_dotenv(tmp_path, monkeypatch):
+    # A variable already set in the environment beats the .env file.
+    monkeypatch.setenv("SYNALOG_CONFIG_DIR", str(tmp_path))
+    monkeypatch.setenv("SYNALOG_PSQL_DSN", "postgresql://nobody@127.0.0.1:1/none")
+    (tmp_path / ".env").write_text("SYNALOG_PSQL_DSN=postgresql://bogus@bogus:0/x\n")
+    # introspect echoes the connection error; the real-env host must be the one
+    # it tries (127.0.0.1), not the .env host (bogus).
+    result = synalog("introspect", "psql", cwd=tmp_path)
+    assert result.returncode == 1
+    assert "needs a connection string" not in result.stderr
+    assert "bogus" not in result.stderr
+
+
+def test_dotenv_sets_config_dir(tmp_path, monkeypatch):
+    # SYNALOG_CONFIG_DIR can come from .env, redirecting where connections save.
+    monkeypatch.delenv("SYNALOG_CONFIG_DIR", raising=False)
+    store = tmp_path / "store"
+    (tmp_path / ".env").write_text(f"SYNALOG_CONFIG_DIR={store}\n")
+    saved = synalog(
+        "connect", "trino", "trino://a:b@host:443/c/d", cwd=tmp_path
+    )
+    assert saved.returncode == 0, saved.stderr
+    assert (store / "connections.json").is_file()
+
+
 def test_missing_predicate_argument(program_file):
     result = synalog(str(program_file), "run")
     assert result.returncode == 2  # click usage error
@@ -244,6 +359,44 @@ def test_unknown_command(program_file):
     result = synalog(str(program_file), "explode")
     assert result.returncode == 2
     assert "unknown command 'explode'" in result.stderr
+
+
+def test_introspect_rejects_non_catalog_engine(tmp_path, monkeypatch):
+    monkeypatch.setenv("SYNALOG_CONFIG_DIR", str(tmp_path))
+    result = synalog("introspect", "duckdb")
+    assert result.returncode == 1
+    assert "cannot be introspected" in result.stderr
+
+
+def test_introspect_requires_connection(tmp_path, monkeypatch):
+    monkeypatch.setenv("SYNALOG_CONFIG_DIR", str(tmp_path))
+    result = synalog("introspect", "psql")
+    assert result.returncode == 1
+    assert "needs a connection string" in result.stderr
+
+
+def test_introspect_usage_error_without_engine():
+    result = synalog("introspect")
+    assert result.returncode == 2  # click usage error
+    assert "introspect <engine>" in result.stderr
+
+
+def test_introspect_usage_error_too_many_args():
+    result = synalog("introspect", "psql", "dsn-a", "dsn-b")
+    assert result.returncode == 2  # click usage error
+    assert "introspect <engine>" in result.stderr
+
+
+def test_introspect_uses_positional_dsn(tmp_path, monkeypatch):
+    # An explicit DSN argument is consumed: with a bogus one, introspection
+    # reaches the driver/connection layer (not "needs a connection string").
+    monkeypatch.setenv("SYNALOG_CONFIG_DIR", str(tmp_path))
+    result = synalog(
+        "introspect", "psql", "postgresql://nobody@127.0.0.1:1/none"
+    )
+    assert result.returncode == 1
+    assert "needs a connection string" not in result.stderr
+    assert "cannot be introspected" not in result.stderr
 
 
 def test_missing_file():
@@ -378,6 +531,8 @@ def test_init_scaffolds_project(tmp_path):
     root = tmp_path / "kb"
     assert (root / ".agents" / "skills" / "synalog" / "SKILL.md").is_file()
     assert (root / ".gitignore").is_file()
+    assert (root / ".env.template").is_file()
+    assert ".env" in (root / ".gitignore").read_text()
     agents = (root / "AGENTS.md").read_text()
     assert "# kb" in agents and "A test knowledge base" in agents
     # the starter program (with its lib/ import) validates and runs out of the box
@@ -491,3 +646,57 @@ def test_repl_search_command():
     assert result.returncode == 0, result.stderr
     assert "Globex" in result.stdout
     assert "Acme Corp" not in result.stdout
+
+
+def test_repl_help_show_and_clear():
+    session = (
+        ".help\n"
+        'Greeting("hi");\n'
+        ".show\n"
+        ".clear\n"
+        ".show\n"
+        ".exit\n"
+    )
+    result = synalog(stdin=session)
+    assert result.returncode == 0, result.stderr
+    assert ".help" in result.stdout and ".exit" in result.stdout  # help text
+    assert 'Greeting("hi");' in result.stdout  # .show before clear
+    # .clear wipes the program; the trailing .show reports it empty
+    assert "(empty program)" in result.stdout
+
+
+def test_repl_sql_usage_and_unknown_command():
+    session = ".sql\n.bogus\n.exit\n"
+    result = synalog(stdin=session)
+    assert result.returncode == 0
+    assert "usage: .sql <Predicate>" in result.stderr
+    assert "unknown command '.bogus'" in result.stderr
+
+
+def test_repl_unknown_engine_is_rejected():
+    session = ".engine martian\n.exit\n"
+    result = synalog(stdin=session)
+    assert result.returncode == 0
+    assert "unknown engine 'martian'" in result.stderr
+
+
+def test_repl_load_malformed_and_missing_file(tmp_path):
+    session = ".load onlytable\n.load t /no/such/file.csv\n.exit\n"
+    result = synalog(stdin=session, cwd=tmp_path)
+    assert result.returncode == 0
+    assert "usage: .load <table> <path>" in result.stderr
+    assert "no such file" in result.stderr
+
+
+def test_repl_clear_drops_loaded_tables(employees_csv):
+    # .clear forgets loaded tables: a query depending on the table then fails.
+    session = (
+        f".load employees {employees_csv}\n"
+        ".clear\n"
+        "High(name:) :- employees(name:, salary:), salary > 70000;\n"
+        "High\n"
+        ".exit\n"
+    )
+    result = synalog(stdin=session)
+    assert result.returncode == 0
+    assert "| Alice" not in result.stdout  # table gone, no rows produced

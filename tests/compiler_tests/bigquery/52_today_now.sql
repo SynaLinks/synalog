@@ -1,0 +1,6 @@
+SELECT
+  1 AS n
+FROM
+  (SELECT CAST(CURRENT_DATE() AS STRING) AS date) AS Today, (SELECT CURRENT_TIMESTAMP() AS timestamp) AS Now
+WHERE
+  (SUBSTR(CAST(Now.timestamp AS STRING), 1, 10) = Today.date) ORDER BY n;

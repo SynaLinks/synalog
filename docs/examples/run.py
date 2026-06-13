@@ -91,13 +91,8 @@ def run_example(path: Path) -> None:
         out += ["", f"-- Loaded {filename} into DuckDB table {table} ({count} rows)"]
     for predicate in predicates:
         sql = synalog.compile(source, predicate)
-        if "CurrentDate" in sql:
-            # The CurrentDate built-in concept compiles to a reference to a
-            # CurrentDate(date) relation supplied by the runtime.
-            conn.execute(
-                "CREATE TABLE IF NOT EXISTS CurrentDate AS"
-                " SELECT strftime(current_date, '%Y-%m-%d') AS date"
-            )
+        # The Today/Now built-in concepts are inlined per dialect by the
+        # compiler, so no runtime table needs to be created here.
         result = conn.execute(sql)
         rows = result.fetchall()
         columns = [d[0] for d in result.description]

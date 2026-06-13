@@ -1,7 +1,8 @@
 # Open-source SQL engines for synalog end-to-end tests.
 #
 # SQLite and DuckDB run in-process (no container needed); this file provides
-# the server-based engines: PostgreSQL, Trino and Presto.
+# the server-based engines: PostgreSQL, Trino, Presto and Spark (the
+# open-source stand-in for Databricks).
 #
 # Usage:
 #   docker compose -f tests/e2e/docker-compose.yml up -d --wait
@@ -12,6 +13,7 @@
 #   PostgreSQL  ${SYNALOG_E2E_PSQL_PORT:-5433}   (5433 to avoid clashing with a local postgres)
 #   Trino       ${SYNALOG_E2E_TRINO_PORT:-8080}
 #   Presto      ${SYNALOG_E2E_PRESTO_PORT:-8081}
+#   Spark       ${SYNALOG_E2E_SPARK_PORT:-10000}  (Thrift Server; Databricks stand-in)
 
 services:
   postgres:
@@ -22,6 +24,10 @@ services:
       POSTGRES_DB: logica
     ports:
       - "${SYNALOG_E2E_PSQL_PORT:-5433}:5432"
+    volumes:
+      # Seeds the `shop` and `analytics` schemas at first init so
+      # `synalog introspect psql` has a real catalog to read.
+      - ./initdb:/docker-entrypoint-initdb.d:ro
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U logica -d logica"]
       interval: 2s
@@ -45,6 +51,31 @@ services:
     healthcheck:
       # /v1/info reports {"starting": false} once the coordinator is ready.
       test: ["CMD-SHELL", "curl -fsS http://localhost:8080/v1/info | grep -q '\"starting\":false'"]
+      interval: 5s
+      timeout: 10s
+      retries: 60
+
+  spark:
+    # Apache Spark Thrift Server (HiveServer2) — open-source stand-in for
+    # Databricks. The `databricks` dialect emits Spark SQL; this executes it.
+    # NOSASL auth keeps the client (pyhive) dependency-light.
+    image: apache/spark:3.5.3
+    command: >-
+      /opt/spark/bin/spark-submit
+      --class org.apache.spark.sql.hive.thriftserver.HiveThriftServer2
+      --master local[2]
+      --conf spark.sql.warehouse.dir=/tmp/warehouse
+      --conf spark.hadoop.hive.server2.authentication=NOSASL
+      --conf spark.hadoop.hive.server2.thrift.bind.host=0.0.0.0
+      --conf spark.hadoop.hive.server2.thrift.port=10000
+      spark-internal
+    ports:
+      - "${SYNALOG_E2E_SPARK_PORT:-10000}:10000"
+    healthcheck:
+      # The Thrift server binds its port only once it is accepting sessions.
+      # (beeline's default SASL handshake mismatches the NOSASL server, so a
+      # TCP-readiness probe is used instead of an actual query.)
+      test: ["CMD-SHELL", "timeout 2 bash -c '</dev/tcp/localhost/10000' 2>/dev/null"]
       interval: 5s
       timeout: 10s
       retries: 60

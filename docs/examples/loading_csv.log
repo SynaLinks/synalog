@@ -42,8 +42,8 @@ SELECT
 FROM
   t_0_DeviceNode AS DeviceNode, smoke_tests
 WHERE
-  (DeviceNode.device = smoke_tests.device) AND
-  (E'failed' = smoke_tests.status)
+  (E'failed' = smoke_tests.status) AND
+  (DeviceNode.device = smoke_tests.device)
 GROUP BY DeviceNode.device ORDER BY failures DESC;
 
 -- Executed on DuckDB:

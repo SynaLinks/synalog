@@ -99,7 +99,10 @@ fn check_head_vars_bound(rule: &Json) -> Vec<SafetyError> {
 
     let text = rule_text(rule);
     let head_vars = VarCollector::head_vars(rule);
-    let positive_vars = VarCollector::positive_vars(rule);
+    let mut positive_vars = VarCollector::positive_vars(rule);
+    // A value-function's argument variables are inputs (bound by the caller),
+    // so they count as bound; the returned value still has to be body-bound.
+    positive_vars.extend(VarCollector::function_input_vars(rule));
 
     head_vars
         .iter()
@@ -119,7 +122,8 @@ fn check_safe_negation(rule: &Json) -> Vec<SafetyError> {
     }
 
     let text = rule_text(rule);
-    let positive_vars = VarCollector::positive_vars(rule);
+    let mut positive_vars = VarCollector::positive_vars(rule);
+    positive_vars.extend(VarCollector::function_input_vars(rule));
     let negated_vars = VarCollector::negated_vars(rule);
 
     negated_vars
@@ -139,7 +143,8 @@ fn check_safe_aggregation(rule: &Json) -> Vec<SafetyError> {
     }
 
     let text = rule_text(rule);
-    let positive_vars = VarCollector::positive_vars(rule);
+    let mut positive_vars = VarCollector::positive_vars(rule);
+    positive_vars.extend(VarCollector::function_input_vars(rule));
     let agg_vars = VarCollector::aggregation_vars(rule);
 
     agg_vars
@@ -197,5 +202,45 @@ mod tests {
         let rules = parsed.as_object()["rule"].as_array();
         let errors = check_rule_safety(&rules[0]);
         assert!(errors.iter().any(|e| matches!(e, SafetyError::UnboundHeadVar { var, .. } if var == "y")));
+    }
+
+    #[test]
+    fn test_value_function_with_body_args_are_inputs() {
+        // A value-function's argument variables are inputs, not body-bound; the
+        // returned value (here bound by `n == x + 1`) is. This must pass.
+        let parsed = parse("Inc(x) = n :- n == x + 1;");
+        let rules = parsed.as_object()["rule"].as_array();
+        assert!(
+            check_rule_safety(&rules[0]).is_empty(),
+            "value-function input args must count as bound: {:?}",
+            check_rule_safety(&rules[0])
+        );
+    }
+
+    #[test]
+    fn test_value_function_multi_arg_with_helper_call() {
+        // Mirrors the temporal `DaysInMonth(y, m)` doc helper: multiple inputs,
+        // an intermediate var, and a conditional value.
+        let parsed = parse(
+            "DaysInMonth(y, m) = n :- \
+               leap == (if y % 4 == 0 then 1 else 0), \
+               n == (if m == 2 then 28 + leap else 31);",
+        );
+        let rules = parsed.as_object()["rule"].as_array();
+        assert!(check_rule_safety(&rules[0]).is_empty());
+    }
+
+    #[test]
+    fn test_value_function_unbound_return_value_still_flagged() {
+        // The fix must not blanket-exempt function heads: a return value that
+        // the body never binds is still an error.
+        let parsed = parse("Bad(x) = n :- x > 0;");
+        let rules = parsed.as_object()["rule"].as_array();
+        assert!(
+            check_rule_safety(&rules[0])
+                .iter()
+                .any(|e| matches!(e, SafetyError::UnboundHeadVar { var, .. } if var == "n")),
+            "unbound function return value must still be flagged"
+        );
     }
 }

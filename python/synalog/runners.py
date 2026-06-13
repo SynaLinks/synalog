@@ -22,8 +22,10 @@ its own connections:
     package is installed; plain sqlite3 otherwise.
   - duckdb: an ``ARRAY_CONCAT_AGG`` macro (flatten + list).
   - psql:   an ``ARRAY_CONCAT_AGG`` aggregate (array_cat).
-  - all:    a ``CurrentDate(date)`` relation when the program references the
-    CurrentDate built-in concept.
+
+The ``Today``/``Now`` built-in concepts need no runtime setup — the compiler
+inlines them per dialect, so they work on every engine (including BigQuery and
+read-only remote catalogs).
 
 Each remote driver is an optional dependency, imported lazily so the package
 installs without it; a missing driver raises ``RunnerUnavailable`` with the
@@ -55,10 +57,6 @@ _DUCKDB_READERS = {
 
 class RunnerUnavailable(Exception):
     """The engine has no local runner or its driver is not installed."""
-
-
-def _needs_current_date(sql: str) -> bool:
-    return "CurrentDate" in sql
 
 
 def _quote(identifier: str) -> str:
@@ -172,8 +170,6 @@ def _run_sqlite(sql: str, loads) -> Result:
     try:
         for table, path in loads:
             _load_sqlite(conn, table, path)
-        if _needs_current_date(sql):
-            conn.execute("CREATE TABLE CurrentDate AS SELECT date('now') AS date")
         columns: list[str] = []
         rows: list[tuple] = []
         for statement in _split_sqlite_statements(sql):
@@ -204,11 +200,6 @@ def _run_duckdb(sql: str, loads) -> Result:
                 f" AS SELECT * FROM {reader}(?)",
                 [path],
             )
-        if _needs_current_date(sql):
-            conn.execute(
-                "CREATE TABLE CurrentDate AS"
-                " SELECT strftime(current_date, '%Y-%m-%d') AS date"
-            )
         # duckdb executes multi-statement scripts and returns the last result.
         cur = conn.execute(sql)
         columns = [col[0] for col in cur.description or []]
@@ -232,11 +223,6 @@ def _run_psql(sql: str, dsn: str | None) -> Result:
                 "CREATE OR REPLACE AGGREGATE ARRAY_CONCAT_AGG(anycompatiblearray)"
                 " (SFUNC = array_cat, STYPE = anycompatiblearray)"
             )
-            if _needs_current_date(sql):
-                cur.execute(
-                    "CREATE TABLE IF NOT EXISTS CurrentDate AS"
-                    " SELECT to_char(current_date, 'YYYY-MM-DD') AS date"
-                )
             cur.execute(sql)
             columns: list[str] = []
             rows: list[tuple] = []
@@ -292,30 +278,6 @@ def _dbapi_fetch(cur, sql: str) -> Result:
     return columns, cur.fetchall()
 
 
-# SQL that materializes the CurrentDate(date) relation as 'YYYY-MM-DD', per
-# dialect. Remote engines need a writable catalog/schema for this; if the
-# CREATE fails we surface a clear message rather than a raw driver error.
-_CURRENT_DATE_DDL = {
-    "trino": "CREATE TABLE CurrentDate AS SELECT CAST(current_date AS VARCHAR) AS date",
-    "presto": "CREATE TABLE CurrentDate AS SELECT CAST(current_date AS VARCHAR) AS date",
-    "databricks": "CREATE OR REPLACE TEMPORARY VIEW CurrentDate AS"
-    " SELECT date_format(current_date(), 'yyyy-MM-dd') AS date",
-}
-
-
-def _maybe_current_date(cur, sql: str, engine: str) -> None:
-    if not _needs_current_date(sql):
-        return
-    try:
-        cur.execute(_CURRENT_DATE_DDL[engine])
-    except Exception as e:  # read-only catalog, missing schema, etc.
-        raise RunnerUnavailable(
-            f"The {engine} engine could not create the CurrentDate relation this"
-            f" program needs ({type(e).__name__}: {e}); point --dsn at a writable"
-            " catalog/schema, or run the program on duckdb/sqlite."
-        ) from None
-
-
 def _run_trino(sql: str, dsn: str | None, loads) -> Result:
     _reject_loads(loads, "trino")
     dsn = _require_dsn("trino", dsn)
@@ -346,7 +308,6 @@ def _run_trino(sql: str, dsn: str | None, loads) -> Result:
     )
     try:
         cur = conn.cursor()
-        _maybe_current_date(cur, sql, "trino")
         return _dbapi_fetch(cur, sql)
     finally:
         conn.close()
@@ -375,7 +336,6 @@ def _run_presto(sql: str, dsn: str | None, loads) -> Result:
     )
     try:
         cur = conn.cursor()
-        _maybe_current_date(cur, sql, "presto")
         return _dbapi_fetch(cur, sql)
     finally:
         conn.close()
@@ -408,7 +368,6 @@ def _run_databricks(sql: str, dsn: str | None, loads) -> Result:
     )
     try:
         cur = conn.cursor()
-        _maybe_current_date(cur, sql, "databricks")
         return _dbapi_fetch(cur, sql)
     finally:
         conn.close()
@@ -435,12 +394,6 @@ def _run_bigquery(sql: str, dsn: str | None, loads) -> Result:
             location = dict(urllib.parse.parse_qsl(url.query)).get("location")
         else:
             project = resolved
-    if _needs_current_date(sql):
-        raise RunnerUnavailable(
-            "The bigquery runner cannot provide the CurrentDate relation this"
-            " program needs; run it on duckdb/sqlite, or materialize CurrentDate"
-            " in your dataset yourself."
-        )
     try:
         client = bigquery.Client(project=project, location=location)
         job = client.query(sql.rstrip("; \n"))

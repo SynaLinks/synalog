@@ -1,19 +1,24 @@
 #!/usr/bin/env bash
-set -euo pipefail
+set -uo pipefail
 
 # ── SynaLog Full Test Suite ──────────────────────────────
 #
-# Usage:
-#   ./test.sh              Run all tests
-#   ./test.sh unit         Unit tests only (fast)
-#   ./test.sh golden       Golden reference tests only (parser + compiler)
-#   ./test.sh cli          CLI tests (needs the wheel installed)
-#   ./test.sh e2e          End-to-end tests against live SQL engines
-#   ./test.sh quick        Unit + parser golden (no SQL compilation)
+# Usage (run from anywhere — the script cd's to the repo root):
+#   shell/test.sh              Run all tests
+#   shell/test.sh unit         Unit tests only (fast)
+#   shell/test.sh golden       Golden reference tests only (parser + compiler)
+#   shell/test.sh cli          CLI tests
+#   shell/test.sh e2e          End-to-end tests against live SQL engines
+#   shell/test.sh quick        Unit + parser golden (no SQL compilation)
 #
-# The e2e step needs the Python wheel installed (pip install .); it starts
-# the server engines itself via docker compose (see tests/e2e/README in
-# tests/e2e/conftest.py for details).
+# Python steps run through `uv run`, so the project virtualenv (.venv) provides
+# every dev dependency — pytest, logica's sqlite UDFs, and the remote-engine
+# drivers (psycopg/trino/presto/pyhive) the e2e suite needs. The e2e step builds
+# the extension into the venv and starts the engine containers via docker
+# compose (PostgreSQL, Trino, Presto, and a Spark Thrift Server standing in for
+# Databricks); see tests/e2e/conftest.py.
+
+cd "$(dirname "$0")/.."
 
 BOLD='\033[1m'
 GREEN='\033[0;32m'
@@ -36,6 +41,13 @@ run_step() {
         fail "$label"
         EXIT_CODE=1
     fi
+}
+
+# Build the synalog extension into the project venv (needed by the CLI and e2e
+# suites, which import the compiled module). Idempotent.
+build_into_venv() {
+    [ -d .venv ] || uv venv
+    uv run --with maturin maturin develop
 }
 
 # ── Unit tests ───────────────────────────────────────────
@@ -61,14 +73,17 @@ fi
 # ── CLI tests ────────────────────────────────────────────
 if [[ "$MODE" == "all" || "$MODE" == "cli" ]]; then
     header "CLI Tests"
-    run_step "pytest tests/cli" python3 -m pytest tests/cli -q
+    run_step "build synalog" build_into_venv
+    run_step "pytest tests/cli" uv run pytest tests/cli -q
 fi
 
 # ── End-to-end tests against live engines ────────────────
 if [[ "$MODE" == "all" || "$MODE" == "e2e" ]]; then
-    header "End-to-End Tests (sqlite, duckdb, psql, trino, presto)"
+    header "End-to-End Tests (sqlite, duckdb, psql, trino, presto, spark)"
+    run_step "build synalog" build_into_venv
     run_step "engines up" docker compose -f tests/e2e/docker-compose.yml up -d --wait
-    run_step "pytest tests/e2e" python3 -m pytest tests/e2e -q
+    SYNALOG_E2E_REQUIRE="psql,trino,presto,databricks" \
+        run_step "pytest tests/e2e" uv run pytest tests/e2e -q
 fi
 
 # ── Summary ──────────────────────────────────────────────

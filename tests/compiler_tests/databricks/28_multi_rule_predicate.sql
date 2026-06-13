@@ -3,7 +3,7 @@ WITH t_1_Number AS (SELECT * FROM (
     SELECT
       x_6 AS col0
     FROM
-      explode(GENERATE_ARRAY(0, 5 - 1)) AS pushkin(x_6)
+      explode(SEQUENCE(0, 5 - 1)) AS pushkin(x_6)
    UNION ALL
   
     SELECT

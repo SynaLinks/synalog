@@ -1,15 +1,15 @@
 WITH t_0_P1 AS (SELECT
   (MOD(((x_2) * (17)), 39)) AS col0
 FROM
-  explode(GENERATE_ARRAY(0, 10 - 1)) AS pushkin(x_2) ORDER BY col0),
+  explode(SEQUENCE(0, 10 - 1)) AS pushkin(x_2) ORDER BY col0),
 t_0_P2 AS (SELECT
   x_5 AS col0
 FROM
-  explode(GENERATE_ARRAY(0, 20 - 1)) AS pushkin(x_5) LIMIT 5),
+  explode(SEQUENCE(0, 20 - 1)) AS pushkin(x_5) LIMIT 5),
 t_0_P3 AS (SELECT
   x_5 AS col0
 FROM
-  explode(GENERATE_ARRAY(0, 20 - 1)) AS pushkin(x_5)
+  explode(SEQUENCE(0, 20 - 1)) AS pushkin(x_5)
 WHERE
   ((MOD(x_5, 2)) = 0) ORDER BY col0 LIMIT 3)
 SELECT * FROM (

@@ -2,7 +2,7 @@ WITH t_0_Boosted AS (SELECT
   x_8 AS x,
   x_8 * 100 + 1 AS boosted
 FROM
-  explode(GENERATE_ARRAY(0, 5 - 1)) AS pushkin(x_8) ORDER BY x)
+  explode(SEQUENCE(0, 5 - 1)) AS pushkin(x_8) ORDER BY x)
 SELECT
   Boosted.x AS x,
   Boosted.boosted AS boosted

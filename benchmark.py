@@ -17,7 +17,9 @@ Usage:
 """
 
 import json
+import math
 import os
+import statistics
 import sys
 import time
 from pathlib import Path
@@ -35,6 +37,35 @@ RUNS_PER_TEST = 3
 # Set up Python Logica - must set LOGICAPATH and chdir for imports to work
 os.environ['LOGICAPATH'] = str(COMPILER_TESTS_DIR)
 os.chdir(COMPILER_TESTS_DIR)
+
+
+def best_ms(timer, *args) -> float:
+    """Lowest of RUNS_PER_TEST timed runs, after one discarded warm-up.
+
+    The minimum is the standard estimator for CPU-bound microbenchmarks: it is
+    the run least perturbed by GC, the scheduler and cold caches, so it reflects
+    the work itself rather than ambient noise (the mean would bake that noise
+    in). The warm-up run is discarded so one-time import/caching costs never land
+    in the measurement.
+    """
+    timer(*args)  # warm-up (discarded)
+    return min(timer(*args) for _ in range(RUNS_PER_TEST))
+
+
+def geomean(values: list) -> float:
+    """Geometric mean — the correct average for ratios like per-program speedups.
+
+    Unlike a ratio of summed times (which the slowest few programs dominate) or
+    an arithmetic mean of ratios (which is biased upward for ratio data), the
+    geometric mean weights every program equally and is symmetric, so it answers
+    "the typical speedup" rather than "the batch-throughput speedup".
+    """
+    return math.exp(sum(math.log(v) for v in values) / len(values)) if values else 0.0
+
+
+def speedups(pairs: list) -> list:
+    """Per-program speedup ratios (python_ms / rust_ms) from (python, rust) pairs."""
+    return [py / rs for py, rs in pairs]
 
 
 def time_python_parse(source: str) -> float:
@@ -131,18 +162,18 @@ def benchmark_file(filepath: Path, roots: list, engine: str) -> dict:
         "predicate": predicate,
     }
 
+    # Each stage is the fastest of several warm runs (see best_ms).
+
     # Python parse
     try:
-        times = [time_python_parse(source) for _ in range(RUNS_PER_TEST)]
-        result["python_parse_ms"] = sum(times) / len(times)
+        result["python_parse_ms"] = best_ms(time_python_parse, source)
     except Exception as e:
         result["python_parse_ms"] = -1
         result["python_parse_error"] = str(e)
 
     # Python compile
     try:
-        times = [time_python_compile(source, predicate) for _ in range(RUNS_PER_TEST)]
-        result["python_compile_ms"] = sum(times) / len(times)
+        result["python_compile_ms"] = best_ms(time_python_compile, source, predicate)
     except Exception as e:
         result["python_compile_ms"] = -1
         result["python_compile_error"] = str(e)
@@ -150,24 +181,21 @@ def benchmark_file(filepath: Path, roots: list, engine: str) -> dict:
     # Rust parse (catch BaseException: a Rust panic surfaces as PanicException,
     # which is not an Exception subclass and would otherwise abort the run).
     try:
-        times = [time_rust_parse(source, roots) for _ in range(RUNS_PER_TEST)]
-        result["rust_parse_ms"] = sum(times) / len(times)
+        result["rust_parse_ms"] = best_ms(time_rust_parse, source, roots)
     except BaseException as e:
         result["rust_parse_ms"] = -1
         result["rust_parse_error"] = str(e)
 
     # Rust compile
     try:
-        times = [time_rust_compile(source, predicate, roots) for _ in range(RUNS_PER_TEST)]
-        result["rust_compile_ms"] = sum(times) / len(times)
+        result["rust_compile_ms"] = best_ms(time_rust_compile, source, predicate, roots)
     except BaseException as e:
         result["rust_compile_ms"] = -1
         result["rust_compile_error"] = str(e)
 
     # Rust verify (synalog.check) — Rust-only stage, no Python counterpart.
     try:
-        times = [time_rust_check(source, engine) for _ in range(RUNS_PER_TEST)]
-        result["rust_check_ms"] = sum(times) / len(times)
+        result["rust_check_ms"] = best_ms(time_rust_check, source, engine)
     except BaseException as e:
         result["rust_check_ms"] = -1
         result["rust_check_error"] = str(e)
@@ -223,24 +251,30 @@ def run_benchmarks():
                      if r["python_compile_ms"] > 0 and r["rust_compile_ms"] > 0]
 
     if valid_parse:
-        py_parse_total = sum(p for p, _ in valid_parse)
-        rs_parse_total = sum(r for _, r in valid_parse)
+        parse_ratios = speedups(valid_parse)
         results["summary"] = {
             "total_tests": len(all_results),
             "valid_parse_tests": len(valid_parse),
             "valid_compile_tests": len(valid_compile),
-            "python_parse_total_ms": py_parse_total,
-            "rust_parse_total_ms": rs_parse_total,
-            "parse_speedup": py_parse_total / rs_parse_total if rs_parse_total > 0 else 0,
+            "python_parse_total_ms": sum(p for p, _ in valid_parse),
+            "rust_parse_total_ms": sum(r for _, r in valid_parse),
+            # Geometric mean of per-program speedups is the headline metric: it
+            # weights every program equally, unlike the total-time ratio below.
+            "parse_speedup": geomean(parse_ratios),
+            "parse_speedup_median": statistics.median(parse_ratios),
+            "parse_speedup_total": (sum(p for p, _ in valid_parse)
+                                    / sum(r for _, r in valid_parse)),
         }
 
     if valid_compile:
-        py_compile_total = sum(p for p, _ in valid_compile)
-        rs_compile_total = sum(r for _, r in valid_compile)
+        compile_ratios = speedups(valid_compile)
         results["summary"].update({
-            "python_compile_total_ms": py_compile_total,
-            "rust_compile_total_ms": rs_compile_total,
-            "compile_speedup": py_compile_total / rs_compile_total if rs_compile_total > 0 else 0,
+            "python_compile_total_ms": sum(p for p, _ in valid_compile),
+            "rust_compile_total_ms": sum(r for _, r in valid_compile),
+            "compile_speedup": geomean(compile_ratios),
+            "compile_speedup_median": statistics.median(compile_ratios),
+            "compile_speedup_total": (sum(p for p, _ in valid_compile)
+                                      / sum(r for _, r in valid_compile)),
         })
 
     valid_check = [r["rust_check_ms"] for r in all_results if r["rust_check_ms"] > 0]
@@ -262,8 +296,12 @@ def run_benchmarks():
     if "summary" in results:
         s = results["summary"]
         print(f"Total tests: {s['total_tests']}")
-        print(f"Parse speedup: {s.get('parse_speedup', 0):.2f}x")
-        print(f"Compile speedup: {s.get('compile_speedup', 0):.2f}x")
+        print(f"Parse speedup (geomean): {s.get('parse_speedup', 0):.2f}x"
+              f"  (median {s.get('parse_speedup_median', 0):.2f}x,"
+              f" total {s.get('parse_speedup_total', 0):.2f}x)")
+        print(f"Compile speedup (geomean): {s.get('compile_speedup', 0):.2f}x"
+              f"  (median {s.get('compile_speedup_median', 0):.2f}x,"
+              f" total {s.get('compile_speedup_total', 0):.2f}x)")
         print(f"Verify total (Rust-only): {s.get('rust_check_total_ms', 0):.0f} ms")
     print(f"\nResults written to: {OUTPUT_FILE}")
 
@@ -274,23 +312,30 @@ def write_summary_markdown(results):
     s = results.get("summary", {})
     lines = [
         f"*Last run: {meta['timestamp']} — {s.get('total_tests', 0)} programs"
-        f" from the compiler test suite, {meta['runs_per_test']} runs per"
-        " measurement.*",
+        f" from the compiler test suite. Each measurement is the fastest of"
+        f" {meta['runs_per_test']} runs after a warm-up; the headline speedup is"
+        " the geometric mean of per-program speedups (every program weighted"
+        " equally).*",
         "",
-        "| | Python (total) | Rust (total) | Speedup |",
-        "| --- | --- | --- | --- |",
+        "| | Python | Rust | Speedup (geomean) | (median) |",
+        "| --- | --- | --- | --- | --- |",
         f"| Parse | {s.get('python_parse_total_ms', 0):.0f} ms"
         f" | {s.get('rust_parse_total_ms', 0):.0f} ms"
-        f" | **{s.get('parse_speedup', 0):.1f}x** |",
+        f" | **{s.get('parse_speedup', 0):.1f}x**"
+        f" | {s.get('parse_speedup_median', 0):.1f}x |",
         f"| Compile | {s.get('python_compile_total_ms', 0):.0f} ms"
         f" | {s.get('rust_compile_total_ms', 0):.0f} ms"
-        f" | **{s.get('compile_speedup', 0):.1f}x** |",
-        f"| Verify | — | {s.get('rust_check_total_ms', 0):.0f} ms | Rust-only |",
+        f" | **{s.get('compile_speedup', 0):.1f}x**"
+        f" | {s.get('compile_speedup_median', 0):.1f}x |",
+        f"| Verify | — | {s.get('rust_check_total_ms', 0):.0f} ms"
+        " | Rust-only | — |",
         "",
-        "*Verification (`synalog.check` — safety, stratification, recursion"
-        " and reserved-name checks) is a Synalog-specific pass; Python Logica"
-        " folds its analysis into compilation and has no standalone equivalent,"
-        " so it is reported as a Rust-only total.*",
+        "*The Python and Rust columns are summed wall-clock time across all"
+        " programs (context, not the headline: a few large programs dominate"
+        " that ratio). Verification (`synalog.check` — safety, stratification,"
+        " recursion and reserved-name checks) is a Synalog-specific pass; Python"
+        " Logica folds its analysis into compilation and has no standalone"
+        " equivalent, so it is reported as a Rust-only total.*",
         "",
         "| Engine | Programs | Parse speedup | Compile speedup | Verify (Rust) |",
         "| --- | --- | --- | --- | --- |",
@@ -302,10 +347,8 @@ def write_summary_markdown(results):
                          if t["python_compile_ms"] > 0 and t["rust_compile_ms"] > 0]
         if not valid_parse or not valid_compile:
             continue
-        parse_speedup = (sum(p for p, _ in valid_parse)
-                         / sum(r for _, r in valid_parse))
-        compile_speedup = (sum(p for p, _ in valid_compile)
-                           / sum(r for _, r in valid_compile))
+        parse_speedup = geomean(speedups(valid_parse))
+        compile_speedup = geomean(speedups(valid_compile))
         check_total = sum(t["rust_check_ms"] for t in tests
                           if t.get("rust_check_ms", -1) > 0)
         lines.append(

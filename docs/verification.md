@@ -14,7 +14,23 @@ This matters most for AI agents: it prevents producing programs that parse corre
 | **Stratification** | Negative recursion cycles |
 | **Arity** | Predicates used with inconsistent argument counts |
 | **Recursion** | Missing base cases, trivial loops, unbounded recursion without `@Recursive` |
-| **Reserved names** | Rules that redefine a built-in library predicate (`Num`, `Str`, `ArgMin`, `CurrentDate`, ...) |
+| **Reserved names** | Rules that redefine a built-in library predicate (`Num`, `Str`, `ArgMin`, `Today`, `Now`, ...) |
+| **Unsafe `SqlExpr`** | User rules that reach for the raw-SQL escape hatch |
+
+### Unsafe `SqlExpr`
+
+`SqlExpr("...", {...})` injects a raw SQL string straight into the compiled query — unparsed, untyped, unverified, and rarely portable across engines, defeating the guarantees Synalog exists to provide. It is reserved for the built-in library (which uses it for `ArgMin`/`ArgMax`/regex/...); user programs that call it are rejected:
+
+```python
+errors = synalog.check('''
+  TenMinutesAgo(timestamp:) :-
+    Now(timestamp: now),
+    timestamp == SqlExpr("{t} - INTERVAL 10 MINUTE", {t: now});
+''')
+# ["Unsafe SqlExpr in rule 'TenMinutesAgo': raw SQL bypasses verification and portability"]
+```
+
+The safe alternative is to express the logic in Synalog. For date/time math, stay on the string→int pipeline (`Substr` → `ToInt64` → `ToString`); see [temporal data](language/temporal.md#relative-dates-and-times).
 
 ## Usage
 

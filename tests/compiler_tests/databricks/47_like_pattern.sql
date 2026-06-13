@@ -21,7 +21,7 @@ t_0_StartsWithAl AS (SELECT
 FROM
   t_1_Names AS Names
 WHERE
-  (Names.name::string LIKE "al%") ORDER BY name)
+  (CAST(Names.name AS STRING) LIKE "al%") ORDER BY name)
 SELECT
   StartsWithAl.name AS name
 FROM

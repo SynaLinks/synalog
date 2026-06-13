@@ -32,8 +32,8 @@ WITH t_3_Score AS (SELECT * FROM (
 ) AS UNUSED_TABLE_NAME  ),
 t_0_TeamLeaders AS (SELECT
   Score.team AS team,
-  SLICE(ARRAY_AGG(Score.player order by Score.points desc), 1, 2) AS top2,
-  SLICE(ARRAY_AGG(Score.player order by Score.points), 1, 1) AS bottom1
+  TRANSFORM(SLICE(SORT_ARRAY(COLLECT_LIST(STRUCT(Score.points AS value, Score.player AS arg)), false), 1, 2), s -> s.arg) AS top2,
+  TRANSFORM(SLICE(SORT_ARRAY(COLLECT_LIST(STRUCT(Score.points AS value, Score.player AS arg))), 1, 1), s -> s.arg) AS bottom1
 FROM
   t_3_Score AS Score
 GROUP BY 1 ORDER BY team)

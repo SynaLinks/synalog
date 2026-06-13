@@ -1,7 +1,7 @@
 WITH t_0_BigNumbers AS (SELECT
   x_5 AS x
 FROM
-  explode(GENERATE_ARRAY(0, 10 - 1)) AS pushkin(x_5)
+  explode(SEQUENCE(0, 10 - 1)) AS pushkin(x_5)
 WHERE
   (x_5 > 5) ORDER BY x)
 SELECT

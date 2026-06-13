@@ -16,11 +16,11 @@ WITH t_1_Items AS (SELECT * FROM (
   
 ) AS UNUSED_TABLE_NAME  ),
 t_0_AllTags AS (SELECT
-  ARRAY_CONCAT_AGG(Items.tags) AS logica_value
+  FLATTEN(COLLECT_LIST(Items.tags)) AS logica_value
 FROM
   t_1_Items AS Items),
 t_2_FilteredTags AS (SELECT
-  ARRAY_CONCAT_AGG(CASE WHEN (ARRAY_LENGTH(t_3_Items.tags) > 1) THEN t_3_Items.tags ELSE ARRAY() END) AS logica_value
+  FLATTEN(COLLECT_LIST(CASE WHEN (SIZE(t_3_Items.tags) > 1) THEN t_3_Items.tags ELSE ARRAY() END)) AS logica_value
 FROM
   t_1_Items AS t_3_Items)
 SELECT

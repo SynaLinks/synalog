@@ -3,7 +3,7 @@
 //! Reserved predicate name check.
 //!
 //! Every dialect injects a standard library program (`Num`, `Str`, `ArgMin`,
-//! ...) into the compiled program, and the runtime provides the `CurrentDate`
+//! ...) into the compiled program, and the compiler inlines the `Today`/`Now`
 //! concept. A user rule that redefines one of these names collides with the
 //! library definition and fails at compile time with an unrelated-looking
 //! error ("Undefined variable: x_0"), so catch it here with a clear message.
@@ -39,12 +39,14 @@ impl From<ReservedError> for VerifyError {
 }
 
 /// Names of predicates defined by any dialect's library program, plus the
-/// runtime-provided `CurrentDate` built-in concept.
+/// compiler-inlined `Today` / `Now` built-in concepts.
 pub fn reserved_predicate_names() -> &'static HashSet<String> {
     static RESERVED: OnceLock<HashSet<String>> = OnceLock::new();
     RESERVED.get_or_init(|| {
         let mut names = HashSet::new();
-        names.insert("CurrentDate".to_string());
+        // Built-in temporal concepts, inlined per-dialect by the compiler.
+        names.insert("Today".to_string());
+        names.insert("Now".to_string());
         for engine in crate::compiler::dialects::SUPPORTED_ENGINES {
             let Ok(dialect) = crate::compiler::dialects::get(engine) else {
                 continue;

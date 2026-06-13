@@ -12,7 +12,7 @@ WITH t_1_Items AS (SELECT * FROM (
 ) AS UNUSED_TABLE_NAME  ),
 t_0_Labels AS (SELECT
   Items.name AS name,
-  FORMAT("%s x%s", Items.name, CAST(Items.qty AS STRING)) AS label
+  FORMAT_STRING("%s x%s", Items.name, CAST(Items.qty AS STRING)) AS label
 FROM
   t_1_Items AS Items ORDER BY name)
 SELECT

@@ -41,7 +41,14 @@
 | `IsNull(x)` | Null test as an expression |
 | `Coalesce(x, y, ...)` | First non-null argument |
 | `Constraint(expr)` | Filter rows by a boolean expression |
-| `SqlExpr(s, r)` | Raw SQL escape hatch |
+
+!!! warning "`SqlExpr` is reserved for the built-in library"
+    `SqlExpr(s, r)` injects raw, unparsed, non-portable SQL into the compiled
+    query, bypassing every verification and portability guarantee. It is used
+    *internally* by the dialect library (e.g. `ArgMin`/`ArgMax`), but the
+    [verifier rejects it in user programs](../verification.md). Express the logic
+    in Synalog instead — for date/time math, use the `Substr` → `ToInt64` →
+    `ToString` pipeline.
 
 !!! note "Indexing conventions"
     `Substr` is **1-based** (SQL convention); `Element` is **0-based** (array convention).

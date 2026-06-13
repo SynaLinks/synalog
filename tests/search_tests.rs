@@ -216,17 +216,30 @@ fn search_keeps_preamble_outside_wrapper_duckdb() {
 }
 
 // ---------------------------------------------------------------------------
-// Cast columns to TEXT — all engines
+// Cast columns to the dialect's string type — all engines
 // ---------------------------------------------------------------------------
 
+/// The string type each dialect casts a column to before regex matching —
+/// must match that engine's actual type (TEXT/VARCHAR/STRING), otherwise the
+/// generated SQL fails on Trino/Presto/BigQuery/Databricks.
+fn string_type(engine: &str) -> &'static str {
+    match engine {
+        "trino" | "presto" => "VARCHAR",
+        "bigquery" | "databricks" => "STRING",
+        _ => "TEXT",
+    }
+}
+
 #[test]
-fn search_casts_columns_to_text_all_engines() {
+fn search_casts_columns_to_dialect_string_type_all_engines() {
     for engine in ALL_ENGINES {
         let sql = search_sql(&program_for(engine), "Test", "test");
+        let expected = format!("CAST(category AS {})", string_type(engine));
         assert!(
-            sql.contains("CAST(category AS TEXT)"),
-            "{}: should cast column to TEXT, got:\n{}",
+            sql.contains(&expected),
+            "{}: should cast column to {}, got:\n{}",
             engine,
+            string_type(engine),
             sql
         );
     }
@@ -247,13 +260,13 @@ fn search_multiple_columns_uses_or_all_engines() {
             sql
         );
         assert!(
-            sql.contains("CAST(category AS TEXT)"),
+            sql.contains(&format!("CAST(category AS {})", string_type(engine))),
             "{}: should cast category, got:\n{}",
             engine,
             sql
         );
         assert!(
-            sql.contains("CAST(value AS TEXT)"),
+            sql.contains(&format!("CAST(value AS {})", string_type(engine))),
             "{}: should cast value, got:\n{}",
             engine,
             sql

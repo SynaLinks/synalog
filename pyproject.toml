@@ -53,7 +53,11 @@ all-engines = [
 [dependency-groups]
 # Dev tooling installed by `uv sync`: tests (pytest, duckdb, logica also
 # provides the sqlite runtime UDFs), benchmarks (logica, matplotlib), docs
-# (zensical builds the site, duckdb runs the examples).
+# (zensical builds the site, duckdb runs the examples). The remote-engine
+# drivers let the e2e suite reach the docker-compose servers instead of
+# skipping them: psycopg→PostgreSQL, trino→Trino, presto→Presto, and
+# pyhive+thrift→the Spark Thrift Server (the open-source Databricks stand-in,
+# reached over NOSASL).
 dev = [
     "pytest",
     "duckdb",
@@ -61,6 +65,10 @@ dev = [
     "matplotlib",
     "zensical",
     "psycopg",
+    "trino",
+    "presto-python-client",
+    "pyhive",
+    "thrift",
 ]
 
 [tool.maturin]
@@ -76,6 +84,6 @@ exclude = [
     "benchmark_plots/**",
     "dist/**",
     "/CLAUDE.md",
-    "test.sh",
+    "shell/**",
     ".github/**",
 ]

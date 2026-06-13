@@ -1476,7 +1476,7 @@ impl LogicaProgram {
         let where_clause = columns
             .iter()
             .map(|col| {
-                let cast_col = format!("CAST({} AS TEXT)", col);
+                let cast_col = dialect.string_cast(col);
                 dialect.regex_match_condition(&cast_col, pattern)
             })
             .collect::<Vec<_>>()
@@ -1810,6 +1810,17 @@ impl LogicaProgram {
         _external_vocabulary: Option<&HashMap<String, String>>,
         edge_needed: bool,
     ) -> CompileResult<String> {
+        // Built-in temporal concepts: inline a one-row relation built from the
+        // dialect's native current-date/timestamp SQL — no runtime table needed.
+        if table == "Today" || table == "Now" {
+            let dialect = dialects::get(self.annotations.engine())?;
+            return Ok(if table == "Today" {
+                dialect.today_relation_sql()
+            } else {
+                dialect.now_relation_sql()
+            });
+        }
+
         // Check table aliases
         if let Some(alias) = self.table_aliases.get(table) {
             return Ok(alias.clone());

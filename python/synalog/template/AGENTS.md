@@ -12,6 +12,7 @@ This project is a Synalog knowledge base: logic programs (`.l` files) compiled t
 - `lib/` — reusable modules imported by programs (`import lib.metrics.TotalByRegion;`).
 - `data/` — source data files (csv, tsv, json, jsonl, parquet), loaded with `--load`.
 - `.agents/skills/synalog/SKILL.md` — the Synalog skill (language + CLI reference).
+- `.env.template` — connection strings for remote engines (psql/trino/presto/databricks/bigquery). Copy to `.env` and fill in to query a live database instead of local files.
 
 ## Workflow
 

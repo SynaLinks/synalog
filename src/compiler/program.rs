@@ -547,6 +547,14 @@ impl<'a> SubqueryTranslator for ProgramSubqueryTranslator<'a> {
         predicate: &str,
         external_vocabulary: Option<&HashMap<String, String>>,
     ) -> CompileResult<String> {
+        // Built-in temporal concepts: inline a one-row relation using the
+        // dialect's native current-date/timestamp SQL. No runtime table needed.
+        match predicate {
+            "Today" => return Ok(self.program.dialect.today_relation_sql()),
+            "Now" => return Ok(self.program.dialect.now_relation_sql()),
+            _ => {}
+        }
+
         // Check table aliases
         if let Some(alias) = self.program.table_aliases.get(predicate) {
             return Ok(alias.clone());

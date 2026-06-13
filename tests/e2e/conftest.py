@@ -27,9 +27,11 @@ from runners import make_runner
 E2E_DIR = Path(__file__).parent
 FIXTURES_DIR = E2E_DIR.parent / "compiler_tests"
 
-# Open-source engines we can execute against. bigquery/databricks are
-# compile-only (no open-source server to run them on).
-ENGINES = ["sqlite", "duckdb", "psql", "trino", "presto"]
+# Open-source engines we can execute against. `databricks` runs against an
+# Apache Spark Thrift Server as an open-source stand-in (the dialect targets
+# Spark SQL; see SparkRunner). bigquery stays compile-only — no comparable
+# open-source server.
+ENGINES = ["sqlite", "duckdb", "psql", "trino", "presto", "databricks"]
 
 # Fixtures that cannot be compiled through the Python API: imports need
 # import roots, which `synalog.compile` does not expose.

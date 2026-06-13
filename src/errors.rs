@@ -607,6 +607,10 @@ pub enum VerifyError {
     #[error("Reserved predicate name '{predicate}': it is a built-in library predicate and cannot be redefined")]
     ReservedPredicateName { predicate: String },
 
+    /// Raw-SQL `SqlExpr` escape hatch used in a user rule.
+    #[error("Unsafe SqlExpr in rule '{predicate}': raw SQL bypasses verification and portability")]
+    UnsafeSqlExpr { predicate: String },
+
     /// Multiple verification errors.
     #[error("Verification failed with {} error(s)", .0.len())]
     Multiple(Vec<VerifyError>),
@@ -1057,7 +1061,7 @@ my.predicate # contains dot
 ## Why This Is An Error
 
 `{predicate}` is part of Synalog's built-in library (e.g. `Num`, `Str`,
-`ArgMin`, `ArgMax`, `CurrentDate`, ...). The library definition is injected
+`ArgMin`, `ArgMax`, `Today`, `Now`, ...). The library definition is injected
 into every compiled program, so redefining it collides with the built-in and
 compilation fails with a confusing error.
 
@@ -1072,6 +1076,38 @@ just cannot be *redefined*.
 
 # FIXED
 My{predicate}(value: 1);
+```"#,
+                    predicate = predicate
+                )
+            }
+            VerifyError::UnsafeSqlExpr { predicate } => {
+                format!(
+                    r#"Unsafe `SqlExpr` in rule: `{predicate}`
+
+## Why This Is An Error
+
+`SqlExpr` injects a raw SQL string straight into the compiled query. That
+string is **not** parsed, type-checked, or verified, and it is rarely portable
+across engines — the very guarantees Synalog exists to provide. It is reserved
+for the built-in library; user programs must not reach for it.
+
+## How To Fix
+
+Express the logic in Synalog. For temporal math, stay on the string→int
+pipeline: pull parts out with `Substr`, convert with `ToInt64`, do the
+arithmetic, and reassemble with `ToString` (see the temporal docs).
+
+```synalog
+# WRONG — raw SQL escape hatch
+TenMinutesAgo(timestamp:) :-
+  Now(timestamp: now),
+  timestamp == SqlExpr("{{t}} - INTERVAL 10 MINUTE", {{t: now}});
+
+# FIXED — arithmetic on extracted integer parts
+NowMinutes(total:) :-
+  Now(timestamp:),
+  total == ToInt64(Substr(ToString(timestamp), 12, 2)) * 60
+         + ToInt64(Substr(ToString(timestamp), 15, 2));
 ```"#,
                     predicate = predicate
                 )

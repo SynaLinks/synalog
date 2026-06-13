@@ -26,6 +26,12 @@ def load_results():
         return json.load(f)
 
 
+def _geomean(values):
+    """Geometric mean — the average used for per-program speedup ratios."""
+    values = [v for v in values if v > 0]
+    return float(np.exp(np.mean(np.log(values)))) if values else 0.0
+
+
 def plot_speedup_by_engine(results):
     """Plot speedup comparison by engine."""
     engines = []
@@ -42,13 +48,10 @@ def plot_speedup_by_engine(results):
 
         if valid_parse and valid_compile:
             engines.append(engine.upper())
-            py_parse = sum(p for p, _ in valid_parse)
-            rs_parse = sum(r for _, r in valid_parse)
-            parse_speedups.append(py_parse / rs_parse)
-
-            py_compile = sum(p for p, _ in valid_compile)
-            rs_compile = sum(r for _, r in valid_compile)
-            compile_speedups.append(py_compile / rs_compile)
+            # Geometric mean of per-program speedups, matching summary.md (each
+            # program weighted equally rather than by its absolute time).
+            parse_speedups.append(_geomean([p / r for p, r in valid_parse]))
+            compile_speedups.append(_geomean([p / r for p, r in valid_compile]))
 
     x = np.arange(len(engines))
     width = 0.35
@@ -136,7 +139,11 @@ def plot_speedup_distribution(results):
     ax.hist(speedups, bins=30, color='#3498db', edgecolor='white', alpha=0.7)
     ax.axvline(x=np.median(speedups), color='red', linestyle='--',
                label=f'Median: {np.median(speedups):.1f}x')
-    ax.axvline(x=np.mean(speedups), color='green', linestyle='--',
+    # Geometric mean is the headline aggregate (see summary.md); the arithmetic
+    # mean is shown too, as it sits higher whenever the tail is right-skewed.
+    ax.axvline(x=_geomean(speedups), color='green', linestyle='--',
+               label=f'Geomean: {_geomean(speedups):.1f}x')
+    ax.axvline(x=np.mean(speedups), color='gray', linestyle=':',
                label=f'Mean: {np.mean(speedups):.1f}x')
 
     ax.set_xlabel('Speedup (Python time / Rust time)', fontsize=12)

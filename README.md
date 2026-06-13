@@ -389,17 +389,17 @@ RecentOrders(order_id:) :-
   ToString(created_at) >= "2024-01-01";
 ```
 
-`CurrentDate` is a built-in concept (provided by the runtime, not defined by you) with a single field `date:` holding today's date as a `"YYYY-MM-DD"` string. Join against it whenever a rule needs "today":
+`Today(date:)` (today's date as `"YYYY-MM-DD"`) and `Now(timestamp:)` (the current instant as the engine's native timestamp) are built-in concepts. They are inlined per dialect by the compiler — no runtime table needed, so they work on every engine. `Now` is the most precise value; derive coarser parts (date, time, hour) from it through the `ToString` → `Substr` pipeline. Join against `Today` whenever a rule needs "today":
 
 ```logica
 @OrderBy(ThisMonthOrders, "order_id");
 ThisMonthOrders(order_id:, created_at:) :-
   Orders(order_id:, created_at:),
-  CurrentDate(date:),
+  Today(date:),
   Substr(ToString(created_at), 1, 7) == Substr(date, 1, 7);
 ```
 
-It is a reserved name: you cannot redefine, extend, or update it.
+They are reserved names: you cannot redefine, extend, or update them.
 
 ### Built-in functions
 
@@ -413,7 +413,7 @@ It is a reserved name: you cannot redefine, extend, or update it.
 
 **Other:** `Coalesce`, `IsNull`
 
-**Built-in concepts:** `CurrentDate(date:)` — today's date as `"YYYY-MM-DD"` (see Temporal data above).
+**Built-in concepts:** `Today(date:)` — today's date as `"YYYY-MM-DD"`; `Now(timestamp:)` — current instant as a native timestamp (see Temporal data above).
 
 ## Supported engines
 
@@ -452,7 +452,8 @@ Unlike Logica, which lets the database raise errors at execution time, Synalog e
 | **Stratification** | Negative recursion cycles |
 | **Arity** | Predicates used with inconsistent argument counts |
 | **Recursion** | Missing base cases, trivial loops, unbounded recursion without `@Recursive` |
-| **Reserved names** | Rules that redefine a built-in library predicate (`Num`, `Str`, `ArgMin`, `CurrentDate`, ...) |
+| **Reserved names** | Rules that redefine a built-in library predicate (`Num`, `Str`, `ArgMin`, `Today`, `Now`, ...) |
+| **Unsafe `SqlExpr`** | User rules that reach for the raw-SQL escape hatch |
 
 ```python
 errors = synalog.check(bad_source)

@@ -33,9 +33,9 @@ OrderHours(order_id:, hour:, is_evening:) :-
   hour == ToInt64(Substr(ToString(created_at), 12, 2)),
   is_evening == (if hour >= 18 then "yes" else "no");
 
-## "Today"-relative logic with the CurrentDate built-in concept.
+## "Today"-relative logic with the Today built-in concept.
 @OrderBy(ActiveSubscriptions, "sub_id");
 ActiveSubscriptions(sub_id:, expires:) :-
   Subscriptions(sub_id:, expires:),
-  CurrentDate(date:),
+  Today(date:),
   expires >= date;

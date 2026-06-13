@@ -26,6 +26,7 @@ enum ExpectedError {
     TrivialLoop,
     UnboundedRecursion,
     ReservedPredicate,
+    UnsafeSqlExpr,
 }
 
 /// Parse expected error from file content.
@@ -43,6 +44,7 @@ fn parse_expected_error(content: &str) -> Option<ExpectedError> {
                 s if s.contains("trivialLoop") => Some(ExpectedError::TrivialLoop),
                 s if s.contains("unboundedRecursion") => Some(ExpectedError::UnboundedRecursion),
                 s if s.contains("reservedPredicate") => Some(ExpectedError::ReservedPredicate),
+                s if s.contains("unsafeSqlExpr") => Some(ExpectedError::UnsafeSqlExpr),
                 _ => None,
             };
         }
@@ -62,6 +64,7 @@ fn error_matches(error: &CheckError, expected: &ExpectedError) -> bool {
         (CheckError::Recursion(RecursionError::TrivialLoop { .. }), ExpectedError::TrivialLoop) => true,
         (CheckError::Recursion(RecursionError::UnboundedRecursion { .. }), ExpectedError::UnboundedRecursion) => true,
         (CheckError::Reserved(_), ExpectedError::ReservedPredicate) => true,
+        (CheckError::SqlExpr(_), ExpectedError::UnsafeSqlExpr) => true,
         _ => false,
     }
 }

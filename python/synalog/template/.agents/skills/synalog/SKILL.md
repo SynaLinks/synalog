@@ -124,7 +124,8 @@ TotalByRegion(region:, total? += amount) distinct :- RegionNode(region:), Sales(
 - NOT — tilde: `Customers(customer_id:), ~Orders(customer_id:)`
 - Conditional: `size == (if amount > 1000 then "large" else if amount > 100 then "medium" else "small");`
 - Records: `info == {name:, email:}`.
-- `Coalesce(x, y)`, `Constraint(expr)` (filter rows), `SqlExpr(s, r)` (raw SQL escape hatch).
+- `Coalesce(x, y)`, `Constraint(expr)` (filter rows).
+- **Never use `SqlExpr`** — the raw-SQL escape hatch is unsafe and non-portable; the verifier rejects it. Use the `Substr` → `ToInt64` → `ToString` pipeline for date/time math.
 
 ## Aggregation (in the rule head, with `distinct`)
 
@@ -156,7 +157,7 @@ hour  == ToInt64(Substr(ToString(created_at), 12, 2));
 ToString(created_at) >= "2024-01-01", ToString(created_at) < "2024-02-01";  # ISO range
 ```
 
-`CurrentDate` is a built-in concept with a `date:` field ("YYYY-MM-DD") for "today" — never create, update or delete it.
+`Today` (field `date:`, "YYYY-MM-DD") and `Now` (field `timestamp:`, native timestamp) are built-in concepts — never create, update or delete them. `Now` is the most precise; derive coarser parts (date, time, hour) from it via `ToString`/`Substr`.
 
 ## Recursion
 
@@ -190,7 +191,7 @@ When data has entities and relationships, model `*Node` concepts (first column =
 - Edges join **through node concepts**, not raw tables — a node filter then applies to all edges automatically.
 - Preserve URI/URL columns in nodes (`url`, `href`, `permalink`, ...) — dropping them makes the node useless for action.
 - Symmetric edges: define one direction raw, close with `|` swapping the endpoints. Inverse edges derive from the existing edge. N-ary relations include all participants as columns.
-- Temporal edges carry `start_date`/`end_date` (via the temporal pipeline); "active today" joins `CurrentDate`.
+- Temporal edges carry `start_date`/`end_date` (via the temporal pipeline); "active today" joins `Today`.
 
 ```logica
 @OrderBy(WorksInEdge, "person_id");

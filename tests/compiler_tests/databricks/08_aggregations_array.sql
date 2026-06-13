@@ -27,7 +27,7 @@ WITH t_2_Team AS (SELECT * FROM (
 ) AS UNUSED_TABLE_NAME  ),
 t_0_SkillsByPerson AS (SELECT
   Team.name AS name,
-  ARRAY_AGG(Team.skill order by Team.skill) AS skills
+  TRANSFORM(ARRAY_SORT(COLLECT_LIST(STRUCT(Team.skill AS arg, Team.skill AS value))), s -> s.value) AS skills
 FROM
   t_2_Team AS Team
 GROUP BY 1)

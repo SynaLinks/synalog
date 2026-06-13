@@ -44,6 +44,29 @@ SYNALOG_GOLDENS = {
     ("presto", "06_arrays"), ("presto", "23_combine"), ("presto", "48_split_function"),
     ("presto", "50_array_functions"), ("presto", "51_math_functions"),
     ("psql", "23_combine"),
+    # Today/Now are synalog-only built-in temporal concepts: the compiler inlines
+    # a per-dialect one-row relation (native current date/timestamp). Upstream
+    # Logica has no such concept, so these goldens come from synalog on every
+    # engine (see DEVIATIONS.md).
+    *(("sqlite", "52_today_now"), ("duckdb", "52_today_now"), ("psql", "52_today_now"),
+      ("bigquery", "52_today_now"), ("trino", "52_today_now"), ("presto", "52_today_now"),
+      ("databricks", "52_today_now")),
+    # Databricks: synalog emits Spark/Databricks-valid SQL where upstream Logica
+    # emits BigQuery-isms that do not run on Databricks (GENERATE_ARRAY,
+    # ARRAY_LENGTH, FORMAT, OFFSET, in-aggregate ARRAY_AGG ORDER BY, ARRAY_JOIN
+    # for concat, `::` casts). Verified against Apache Spark; see DEVIATIONS.md.
+    *(("databricks", n) for n in [
+        "02_arithmetic", "03_comparison", "04_logical_operators", "06_arrays",
+        "08_aggregations_array", "09_argmin_argmax", "10_negation",
+        "11_disjunction", "12_if_then_else", "15_annotations", "19_type_casting",
+        "20_list_comprehension", "22_multi_predicate", "23_combine",
+        "25_inline_annotations", "26_builtin_functions", "27_assignment",
+        "27_boolean_ops", "28_multi_rule_predicate", "29_argmin_argmax",
+        "30_complex_expressions", "31_user_functions", "33_string_manipulation",
+        "36_range_operations", "41_edge_arithmetic", "46_constraint",
+        "47_like_pattern", "48_split_function", "50_array_functions",
+        "54_sqlexpr", "55_argmax_k", "56_format",
+    ]),
 }
 
 # Goldens intentionally absent: synalog lacks the subsystem (DEVIATIONS.md).

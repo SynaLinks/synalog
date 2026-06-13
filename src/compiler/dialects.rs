@@ -110,6 +110,27 @@ pub trait Dialect {
         let escaped = pattern.replace('\'', "''");
         format!("REGEXP_LIKE({}, '{}')", column_expr, escaped)
     }
+
+    /// Cast an arbitrary expression to this dialect's string type, so the
+    /// regex search can match any column. Mirrors the `ToString` cast target;
+    /// the default is `TEXT` (sqlite, psql, duckdb).
+    fn string_cast(&self, expr: &str) -> String {
+        format!("CAST({} AS TEXT)", expr)
+    }
+
+    /// One-row relation backing the `Today` built-in concept: a `date` column
+    /// holding the current date as a `YYYY-MM-DD` string. Inlined by the
+    /// compiler so no runtime table is required.
+    fn today_relation_sql(&self) -> String {
+        "(SELECT CAST(CURRENT_DATE() AS STRING) AS date)".to_string()
+    }
+
+    /// One-row relation backing the `Now` built-in concept: a `timestamp`
+    /// column holding the current instant as the dialect's native timestamp
+    /// type (apply the `ToString`/`Substr` pipeline to read parts of it).
+    fn now_relation_sql(&self) -> String {
+        "(SELECT CURRENT_TIMESTAMP() AS timestamp)".to_string()
+    }
 }
 
 /// SQL engines (dialects) supported by the compiler.
@@ -149,6 +170,7 @@ pub struct BigQueryDialect;
 
 impl Dialect for BigQueryDialect {
     fn name(&self) -> &'static str { "bigquery" }
+    fn string_cast(&self, expr: &str) -> String { format!("CAST({} AS STRING)", expr) }
 
     fn built_in_functions(&self) -> HashMap<&'static str, &'static str> {
         HashMap::new()
@@ -223,6 +245,12 @@ pub struct SqLiteDialect;
 
 impl Dialect for SqLiteDialect {
     fn name(&self) -> &'static str { "sqlite" }
+    fn today_relation_sql(&self) -> String {
+        "(SELECT date('now') AS date)".to_string()
+    }
+    fn now_relation_sql(&self) -> String {
+        "(SELECT datetime('now') AS timestamp)".to_string()
+    }
 
     fn built_in_functions(&self) -> HashMap<&'static str, &'static str> {
         let mut m = HashMap::new();
@@ -338,6 +366,12 @@ pub struct PostgreSqlDialect;
 
 impl Dialect for PostgreSqlDialect {
     fn name(&self) -> &'static str { "psql" }
+    fn today_relation_sql(&self) -> String {
+        "(SELECT to_char(current_date, 'YYYY-MM-DD') AS date)".to_string()
+    }
+    fn now_relation_sql(&self) -> String {
+        "(SELECT current_timestamp AS timestamp)".to_string()
+    }
 
     fn built_in_functions(&self) -> HashMap<&'static str, &'static str> {
         let mut m = HashMap::new();
@@ -441,6 +475,13 @@ pub struct TrinoDialect;
 
 impl Dialect for TrinoDialect {
     fn name(&self) -> &'static str { "trino" }
+    fn today_relation_sql(&self) -> String {
+        "(SELECT CAST(current_date AS VARCHAR) AS date)".to_string()
+    }
+    fn now_relation_sql(&self) -> String {
+        "(SELECT current_timestamp AS timestamp)".to_string()
+    }
+    fn string_cast(&self, expr: &str) -> String { format!("CAST({} AS VARCHAR)", expr) }
 
     fn built_in_functions(&self) -> HashMap<&'static str, &'static str> {
         let mut m = HashMap::new();
@@ -517,6 +558,13 @@ pub struct PrestoDialect;
 
 impl Dialect for PrestoDialect {
     fn name(&self) -> &'static str { "presto" }
+    fn today_relation_sql(&self) -> String {
+        "(SELECT CAST(current_date AS VARCHAR) AS date)".to_string()
+    }
+    fn now_relation_sql(&self) -> String {
+        "(SELECT current_timestamp AS timestamp)".to_string()
+    }
+    fn string_cast(&self, expr: &str) -> String { format!("CAST({} AS VARCHAR)", expr) }
 
     fn built_in_functions(&self) -> HashMap<&'static str, &'static str> {
         let mut m = HashMap::new();
@@ -594,6 +642,13 @@ pub struct DatabricksDialect;
 
 impl Dialect for DatabricksDialect {
     fn name(&self) -> &'static str { "databricks" }
+    fn string_cast(&self, expr: &str) -> String { format!("CAST({} AS STRING)", expr) }
+    fn today_relation_sql(&self) -> String {
+        "(SELECT CAST(current_date() AS STRING) AS date)".to_string()
+    }
+    fn now_relation_sql(&self) -> String {
+        "(SELECT current_timestamp() AS timestamp)".to_string()
+    }
 
     fn built_in_functions(&self) -> HashMap<&'static str, &'static str> {
         let mut m = HashMap::new();
@@ -601,24 +656,41 @@ impl Dialect for DatabricksDialect {
         m.insert("ToInt64", "CAST(%s AS BIGINT)");
         m.insert("ToFloat64", "CAST(%s AS DOUBLE)");
         m.insert("AnyValue", "ANY_VALUE(%s)");
-        m.insert("ILike", "({0}::string ILIKE {1})");
-        m.insert("Like", "({0}::string LIKE {1})");
-        m.insert("Replace", "REPLACE({0}::string, {1}, {2})");
-        m.insert("ArrayConcat", "ARRAY_JOIN({0}, {1})");
+        // `::` cast is unavailable on Spark and superfluous on Databricks; CAST
+        // is portable across both.
+        m.insert("ILike", "(CAST({0} AS STRING) ILIKE {1})");
+        m.insert("Like", "(CAST({0} AS STRING) LIKE {1})");
+        m.insert("Replace", "REPLACE(CAST({0} AS STRING), {1}, {2})");
+        // CONCAT concatenates arrays on Spark/Databricks; ARRAY_JOIN instead
+        // stringifies an array with a delimiter (a different function).
+        m.insert("ArrayConcat", "CONCAT({0}, {1})");
         m.insert("JsonExtract", "GET_JSON_OBJECT({0}, {1})");
         m.insert("JsonExtractScalar", "GET_JSON_OBJECT({0}, {1})");
-        m.insert("Length", "ARRAY_SIZE(%s)");
+        // Range/Size: the BigQuery defaults (GENERATE_ARRAY/ARRAY_LENGTH) do
+        // not exist on Spark SQL; `Length` (string length) inherits the default
+        // LENGTH — the previous ARRAY_SIZE override broke it for strings.
+        m.insert("Range", "SEQUENCE(0, %s - 1)");
+        m.insert("RangeOf", "SEQUENCE(0, SIZE(%s) - 1)");
+        m.insert("Size", "SIZE(%s)");
+        // ELEMENT_AT is 1-based; the default `{0}[OFFSET({1})]` is BigQuery-only.
+        m.insert("Element", "ELEMENT_AT({0}, {1} + 1)");
+        m.insert("Format", "FORMAT_STRING(%s)");
         m.insert("DateDiff", "DATEDIFF({0}, {1}, {2})");
         m.insert("IsNull", "({0} IS NULL)");
         m.insert("LogicalOr", "BOOL_OR(%s)");
-        m.insert("LogicalAnd", "BOOL AND(%s)");
+        m.insert("LogicalAnd", "BOOL_AND(%s)");
+        // `++=` array concat aggregation: BigQuery's ARRAY_CONCAT_AGG default is
+        // absent on Spark SQL.
+        m.insert("Agg++", "FLATTEN(COLLECT_LIST(%s))");
         m
     }
 
     fn infix_operators(&self) -> HashMap<&'static str, &'static str> {
         let mut m = HashMap::new();
         m.insert("++", "CONCAT(%s, %s)");
-        m.insert("in", "ARRAY_CONTAINS(%s, %s)");
+        // ARRAY_CONTAINS(array, element): the membership operands arrive as
+        // (element, array), so swap them.
+        m.insert("in", "ARRAY_CONTAINS({1}, {0})");
         m
     }
 
@@ -627,19 +699,23 @@ impl Dialect for DatabricksDialect {
     }
 
     fn library_program(&self) -> &'static str {
+        // Spark/Databricks ARRAY_AGG (COLLECT_LIST) does not accept an
+        // in-aggregate ORDER BY, so ordered aggregates are expressed by
+        // collecting STRUCT(value, arg) pairs and sorting the array. Arrays are
+        // 0-indexed via `[0]`.
         r#"
 ->(left:, right:) = {arg: left, value: right};
 ArgMin(a) = SqlExpr(
-  "(ARRAY_AGG({arg} order by {value}))[1]",
+  "SORT_ARRAY(COLLECT_LIST(STRUCT({value} AS value, {arg} AS arg)))[0].arg",
   {arg: a.arg, value: a.value});
 ArgMax(a) = SqlExpr(
-   "(ARRAY_AGG({arg} order by {value} desc))[1]",
+   "SORT_ARRAY(COLLECT_LIST(STRUCT({value} AS value, {arg} AS arg)), false)[0].arg",
   {arg: a.arg, value: a.value});
 ArgMaxK(a, l) = SqlExpr(
-  "SLICE(ARRAY_AGG({arg} order by {value} desc), 1, {lim})",
+  "TRANSFORM(SLICE(SORT_ARRAY(COLLECT_LIST(STRUCT({value} AS value, {arg} AS arg)), false), 1, {lim}), s -> s.arg)",
   {arg: a.arg, value: a.value, lim: l});
 ArgMinK(a, l) = SqlExpr(
-  "SLICE(ARRAY_AGG({arg} order by {value}), 1, {lim})",
+  "TRANSFORM(SLICE(SORT_ARRAY(COLLECT_LIST(STRUCT({value} AS value, {arg} AS arg))), 1, {lim}), s -> s.arg)",
   {arg: a.arg, value: a.value, lim: l});
 RMatch(s, p) = SqlExpr(
   "REGEXP_LIKE({s}, {p})",
@@ -649,7 +725,7 @@ RExtract(s, p, g) = SqlExpr(
   {s: s, p: p, g: g});
 
 Array(a) = SqlExpr(
-  "ARRAY_AGG({value} order by {arg})",
+  "TRANSFORM(ARRAY_SORT(COLLECT_LIST(STRUCT({arg} AS arg, {value} AS value))), s -> s.value)",
   {arg: a.arg, value: a.value});
 "#
     }
@@ -681,6 +757,13 @@ impl Dialect for DuckDbDialect {
     fn name(&self) -> &'static str { "duckdb" }
 
     fn supports_create_or_replace_table(&self) -> bool { true }
+
+    fn today_relation_sql(&self) -> String {
+        "(SELECT strftime(current_date, '%Y-%m-%d') AS date)".to_string()
+    }
+    fn now_relation_sql(&self) -> String {
+        "(SELECT current_timestamp AS timestamp)".to_string()
+    }
 
     fn built_in_functions(&self) -> HashMap<&'static str, &'static str> {
         let mut m = HashMap::new();

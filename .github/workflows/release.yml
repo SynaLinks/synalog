@@ -22,6 +22,15 @@ on:
 permissions:
   contents: read
 
+# Resilience against flaky crates.io downloads (e.g. the large libduckdb-sys
+# crate, which cargo metadata fetches even though the wheel never builds it).
+# maturin-action forwards these into the build, including the Linux container.
+env:
+  CARGO_NET_RETRY: "10"
+  CARGO_HTTP_MULTIPLEXING: "false"
+  CARGO_HTTP_CHECK_REVOKE: "false"
+  CARGO_NET_GIT_FETCH_WITH_CLI: "true"
+
 jobs:
   manylinux:
     runs-on: ubuntu-22.04

@@ -110,7 +110,9 @@ size == (if amount > 1000 then "large" else if amount > 100 then "medium" else "
 
 **Math:** `Abs`, `Floor`, `Ceil`, `Round`, `Sqrt`, `Exp`, `Log`, `Sin`, `Cos`.
 
-**Other:** `IsNull(x)`, `Coalesce(x, y, z)`, `Constraint(expr)` (filter rows), `SqlExpr(s, r)` (raw SQL escape hatch).
+**Other:** `IsNull(x)`, `Coalesce(x, y, z)`, `Constraint(expr)` (filter rows).
+
+**NEVER use `SqlExpr`** — the raw-SQL escape hatch is unsafe and non-portable, and the verifier rejects it in user programs. Express the logic in Synalog instead (for date/time math, use the `Substr` → `ToInt64` → `ToString` pipeline).
 
 ### User-defined Functions
 ```logica
@@ -193,11 +195,11 @@ ISO-format string comparison works for date ranges:
 ToString(created_at) >= "2024-01-01", ToString(created_at) < "2024-02-01";
 ```
 
-**`CurrentDate`** — built-in concept with field `date:` ("YYYY-MM-DD"). Use for "today's date". DO NOT create/update/delete it.
+**`Today`** — built-in concept with field `date:` ("YYYY-MM-DD"). **`Now`** — built-in concept with field `timestamp:` (native timestamp; run through `ToString`/`Substr` to read parts). Use for "today"/"now". Compiler-inlined per dialect — DO NOT create/update/delete them.
 ```logica
 ThisMonthOrders(order_id:, created_at:) :-
   Orders(order_id:, created_at:),
-  CurrentDate(date:),
+  Today(date:),
   Substr(ToString(created_at), 1, 7) == Substr(date, 1, 7);
 ```
 
@@ -301,7 +303,7 @@ WorksWithClientEdge(employee_id:, client_id:) distinct :-
 
 ### Temporal Edges
 Include `start_date`/`end_date` (extracted via the temporal pipeline). Then:
-- "Active today": `start_date <= date AND end_date >= date` with `CurrentDate`.
+- "Active today": `start_date <= date AND end_date >= date` with `Today`.
 - Overlap: `s1 <= e2 AND s2 <= e1`.
 - Compose temporal relations: chain through time-aware edges.
 
@@ -318,7 +320,7 @@ CurrentMember(employee:, team:) :-
   MemberOfEdge(employee_id:, team_id:, start_date:, end_date:),
   EmployeeNode(employee_id:, name: employee),
   TeamNode(team_id:, name: team),
-  CurrentDate(date:),
+  Today(date:),
   start_date <= date, end_date >= date;
 ```
 
