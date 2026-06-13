@@ -343,3 +343,95 @@ def test_init_refuses_existing_directory(tmp_path):
     result = synalog("init", "kb", stdin="\n", cwd=tmp_path)
     assert result.returncode == 1
     assert "already exists" in result.stderr
+
+
+# ---------------------------------------------------------------------------
+# --search (regex filter across columns)
+# ---------------------------------------------------------------------------
+
+CUSTOMERS = """\
+@OrderBy(Customer, "name");
+Customer(name:, city:) :- Raw(name:, city:);
+Raw(name: "Acme Corp", city: "Paris");
+Raw(name: "Globex", city: "Berlin");
+Raw(name: "Initech", city: "Acmeville");
+"""
+
+
+@pytest.fixture
+def customers_file(tmp_path):
+    path = tmp_path / "customers.l"
+    path.write_text(CUSTOMERS)
+    return path
+
+
+def test_search_filters_rows_on_duckdb(customers_file):
+    # Regresses a preamble bug: search wrapped the DuckDB setup DDL inside the
+    # subquery, so executing the SQL raised a parser error. This must run.
+    result = synalog(str(customers_file), "run", "Customer", "--search", "(?i)acme")
+    assert result.returncode == 0, result.stderr
+    # Matches "Acme Corp" by name and "Initech" by city "Acmeville"; not Globex.
+    assert "Acme Corp" in result.stdout
+    assert "Initech" in result.stdout
+    assert "Globex" not in result.stdout
+
+
+def test_search_matches_across_columns(customers_file):
+    # Pattern only present in the city column still selects the row.
+    result = synalog(str(customers_file), "run", "Customer", "--search", "Berlin")
+    assert result.returncode == 0, result.stderr
+    assert "Globex" in result.stdout
+    assert "Acme Corp" not in result.stdout
+
+
+def test_search_respects_limit(customers_file):
+    # Pagination applies to the filtered rows.
+    result = synalog(
+        str(customers_file), "run", "Customer", "--search", "(?i)acme", "--limit", "1"
+    )
+    assert result.returncode == 0, result.stderr
+    assert "Acme Corp" in result.stdout
+    assert "Initech" not in result.stdout
+
+
+def test_search_on_sqlite(customers_file):
+    result = synalog(
+        str(customers_file), "run", "Customer", "--search", "Globex", "--engine", "sqlite"
+    )
+    assert result.returncode == 0, result.stderr
+    assert "Globex" in result.stdout
+    assert "Acme Corp" not in result.stdout
+
+
+def test_print_with_search_emits_filter_sql(customers_file):
+    result = synalog(str(customers_file), "print", "Customer", "--search", "Globex")
+    assert result.returncode == 0, result.stderr
+    assert "_searched" in result.stdout
+    assert "Globex" in result.stdout
+
+
+def test_search_to_csv(customers_file):
+    result = synalog(
+        str(customers_file), "run_to_csv", "Customer", "--search", "Berlin"
+    )
+    assert result.returncode == 0, result.stderr
+    assert result.stdout.splitlines() == ["name,city", "Globex,Berlin"]
+
+
+def test_search_rejected_on_check(customers_file):
+    result = synalog(str(customers_file), "check", "--search", "x")
+    assert result.returncode == 2
+    assert "--search applies to print/run/run_to_csv only" in result.stderr
+
+
+def test_repl_search_command():
+    session = (
+        'Customer(name: "Acme Corp", city: "Paris");\n'
+        'Customer(name: "Globex", city: "Berlin");\n'
+        ".search Customer (?i)berlin\n"
+        ".exit\n"
+    )
+    result = synalog(stdin=session)
+    assert result.returncode == 0, result.stderr
+    assert "Globex" in result.stdout
+    assert "Acme Corp" not in result.stdout

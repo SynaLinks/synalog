@@ -188,6 +188,34 @@ fn search_wraps_in_subquery_all_engines() {
 }
 
 // ---------------------------------------------------------------------------
+// Regression: the engine preamble (DDL) stays OUTSIDE the search wrapper
+// ---------------------------------------------------------------------------
+
+#[test]
+fn search_keeps_preamble_outside_wrapper_duckdb() {
+    // DuckDB emits setup DDL (create schema / type / sequence) as a preamble
+    // before the query. A previous bug wrapped the *entire* formatted SQL —
+    // preamble included — in `SELECT * FROM (...) AS _searched`, producing SQL
+    // that fails to parse ("syntax error at or near create"). The preamble
+    // must come before the search wrapper, not inside it.
+    let sql = search_sql(&program_for("duckdb"), "Test", "A");
+    let create = sql.find("create schema").expect("duckdb preamble present");
+    let wrapper = sql.find("SELECT * FROM (").expect("search wrapper present");
+    assert!(
+        create < wrapper,
+        "preamble must precede the search wrapper, got:\n{}",
+        sql
+    );
+    // And the wrapped inner query must not contain the preamble DDL.
+    let inner = &sql[wrapper..sql.find("AS _searched").unwrap()];
+    assert!(
+        !inner.contains("create schema"),
+        "preamble leaked inside the _searched wrapper, got:\n{}",
+        sql
+    );
+}
+
+// ---------------------------------------------------------------------------
 // Cast columns to TEXT — all engines
 // ---------------------------------------------------------------------------
 

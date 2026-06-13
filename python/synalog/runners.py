@@ -8,6 +8,13 @@ that produced a result set. Connections are in-memory and per-call, so the
 ``loads`` argument — a list of ``(table, path)`` pairs for csv/tsv/json/
 jsonl/parquet files — is replayed on every connection before the script runs.
 
+Local, in-memory engines (``sqlite``, ``duckdb``) build the connection from
+``loads``; remote engines (``psql``, ``trino``, ``presto``, ``databricks``,
+``bigquery``) connect over the network using a connection string resolved, in
+order, from the ``--dsn`` flag, the ``SYNALOG_<ENGINE>_DSN`` environment
+variable, then the saved-connection file (see ``synalog.config``). Remote
+engines cannot ingest local ``loads`` files — load those with your own tools.
+
 Runners reproduce the runtime environment upstream Python Logica provides on
 its own connections:
   - sqlite: Logica's UDFs (ArgMin/ArgMax, ARRAY_CONCAT, IN_LIST, Split, ...)
@@ -17,6 +24,10 @@ its own connections:
   - psql:   an ``ARRAY_CONCAT_AGG`` aggregate (array_cat).
   - all:    a ``CurrentDate(date)`` relation when the program references the
     CurrentDate built-in concept.
+
+Each remote driver is an optional dependency, imported lazily so the package
+installs without it; a missing driver raises ``RunnerUnavailable`` with the
+``pip install`` hint.
 """
 
 from __future__ import annotations
@@ -25,6 +36,7 @@ import csv
 import json
 import os
 import sqlite3
+import urllib.parse
 
 Result = tuple[list[str], list[tuple]]
 
@@ -147,6 +159,16 @@ def _run_sqlite(sql: str, loads) -> Result:
         sqlite3_logica.ExtendConnectionWithLogicaFunctions(conn)
     except ImportError:
         pass  # best effort: most programs only need plain sqlite3
+
+    # `search` compiles to the SQLite REGEXP operator, which stdlib sqlite3
+    # leaves undefined. SQLite maps `X REGEXP Y` to `regexp(Y, X)`, so the
+    # function receives (pattern, value).
+    import re
+
+    def _regexp(pattern, value):
+        return value is not None and re.search(pattern, value) is not None
+
+    conn.create_function("REGEXP", 2, _regexp)
     try:
         for table, path in loads:
             _load_sqlite(conn, table, path)
@@ -203,12 +225,7 @@ def _run_psql(sql: str, dsn: str | None) -> Result:
             "The psql engine needs the 'psycopg' package: pip install psycopg"
         ) from None
 
-    dsn = dsn or os.environ.get("SYNALOG_PSQL_DSN")
-    if not dsn:
-        raise RunnerUnavailable(
-            "The psql engine needs a connection string:"
-            " pass --dsn or set SYNALOG_PSQL_DSN"
-        )
+    dsn = _require_dsn("psql", dsn)
     with psycopg.connect(dsn, autocommit=True) as conn:
         with conn.cursor() as cur:
             cur.execute(
