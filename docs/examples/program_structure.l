@@ -1,4 +1,4 @@
-# run: CustomerNode, OrderStatus, OrdersByStatus, CustomerRevenue, TopCustomers
+# run: Customer, OrderStatus, OrdersByStatus, CustomerRevenue, TopCustomers
 @Engine("duckdb");
 
 # Tables
@@ -11,8 +11,8 @@ Orders(order_id: 5, customer_id: 200, amount: 95, status: "shipped");
 # Concepts
 
 ## Customers that placed at least one order.
-@OrderBy(CustomerNode, "customer_id");
-CustomerNode(customer_id:) distinct :- Orders(customer_id:);
+@OrderBy(Customer, "customer_id");
+Customer(customer_id:) distinct :- Orders(customer_id:);
 
 ## Distinct order statuses (categorical values extracted first).
 @OrderBy(OrderStatus, "status");

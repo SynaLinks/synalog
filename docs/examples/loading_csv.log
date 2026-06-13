@@ -31,20 +31,20 @@ create schema if not exists logica_home;
 drop type if exists logicarecord893574736 cascade; create type logicarecord893574736 as struct(nirvana numeric);
 create sequence if not exists eternal_logical_sequence;
 
-WITH t_0_DeviceNode AS (SELECT
+WITH t_0_Device AS (SELECT
   t_2_smoke_tests.device AS device
 FROM
   smoke_tests AS t_2_smoke_tests
 GROUP BY t_2_smoke_tests.device ORDER BY device)
 SELECT
-  DeviceNode.device AS device,
+  Device.device AS device,
   SUM(1) AS failures
 FROM
-  t_0_DeviceNode AS DeviceNode, smoke_tests
+  t_0_Device AS Device, smoke_tests
 WHERE
   (E'failed' = smoke_tests.status) AND
-  (DeviceNode.device = smoke_tests.device)
-GROUP BY DeviceNode.device ORDER BY failures DESC;
+  (Device.device = smoke_tests.device)
+GROUP BY Device.device ORDER BY failures DESC;
 
 -- Executed on DuckDB:
 | device   | failures |

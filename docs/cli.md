@@ -6,10 +6,10 @@ If you use [uv](https://docs.astral.sh/uv/), `uvx` runs the CLI in an ephemeral 
 
 ```bash
 uvx synalog                                            # interactive session
-uvx --from 'synalog[run]' synalog program.l run Total  # with the duckdb/psycopg drivers
+uvx --from 'synalog[run]' synalog program.l run Total  # adds the psycopg (psql) driver
 ```
 
-Plain `uvx synalog` covers `parse`, `check`, `print` and execution on sqlite (Python's built-in driver); executing on duckdb or PostgreSQL needs the drivers from the `synalog[run]` extra, hence `--from`.
+Plain `uvx synalog` covers `parse`, `check`, `print` and execution on duckdb (the default engine, bundled with synalog) and sqlite (Python's built-in driver); executing on PostgreSQL needs the psycopg driver from the `synalog[run]` extra, hence `--from`.
 
 ## One-shot commands
 
@@ -63,7 +63,7 @@ With `-c` there is no `FILE` argument: the positionals are the command and its p
 
 `run` (optionally with `--csv`) executes the compiled SQL in-process:
 
-- **duckdb** — needs `pip install duckdb`.
+- **duckdb** — the default engine, bundled with synalog; nothing extra to install.
 - **sqlite** — Python's stdlib driver; Logica's runtime UDFs (ArgMin/ArgMax, ARRAY_CONCAT, ...) are registered when the `logica` package is installed.
 - **psql** — needs `pip install psycopg` and a connection string.
 
@@ -82,7 +82,7 @@ $ synalog totals.l run Total --load sales=sales.csv
 2 rows
 ```
 
-`pip install 'synalog[run]'` pulls in the duckdb and psycopg drivers. For the other engines (`bigquery`, `trino`, `presto`, `databricks`), use `print` and run the SQL with your own client.
+duckdb ships with synalog; `pip install 'synalog[run]'` adds the psycopg driver for PostgreSQL. For the other engines (`bigquery`, `trino`, `presto`, `databricks`), use `print` and run the SQL with your own client.
 
 ### Imports
 

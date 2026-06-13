@@ -1,7 +1,7 @@
 $ synalog.check('knowledge_graphs.l')
 No errors found.
 
-$ synalog.compile('knowledge_graphs.l', 'PersonNode')
+$ synalog.compile('knowledge_graphs.l', 'Person')
 -- Initializing DuckDB environment.
 create schema if not exists logica_home;
 -- Empty record, has to have a field by DuckDB syntax.
@@ -47,7 +47,7 @@ GROUP BY Employees.person_id, Employees.name, Employees.role ORDER BY person_id;
 | 3         | Alan  | engineer |
 (3 rows)
 
-$ synalog.compile('knowledge_graphs.l', 'TeamNode')
+$ synalog.compile('knowledge_graphs.l', 'Team')
 -- Initializing DuckDB environment.
 create schema if not exists logica_home;
 -- Empty record, has to have a field by DuckDB syntax.
@@ -84,7 +84,7 @@ GROUP BY TeamAssignments.team_id ORDER BY team_id;
 | platform |
 (2 rows)
 
-$ synalog.compile('knowledge_graphs.l', 'ClientNode')
+$ synalog.compile('knowledge_graphs.l', 'Client')
 -- Initializing DuckDB environment.
 create schema if not exists logica_home;
 -- Empty record, has to have a field by DuckDB syntax.
@@ -119,7 +119,7 @@ GROUP BY Engagements.client_id, Engagements.website ORDER BY client_id;
 | globex    | https://globex.example.com |
 (2 rows)
 
-$ synalog.compile('knowledge_graphs.l', 'MemberOfEdge')
+$ synalog.compile('knowledge_graphs.l', 'MemberOf')
 -- Initializing DuckDB environment.
 create schema if not exists logica_home;
 -- Empty record, has to have a field by DuckDB syntax.
@@ -149,7 +149,7 @@ WITH t_1_Employees AS (SELECT * FROM (
       2 AS manager_id
   
 ) AS UNUSED_TABLE_NAME  ),
-t_0_PersonNode AS (SELECT
+t_0_Person AS (SELECT
   Employees.person_id AS person_id,
   Employees.name AS name,
   Employees.role AS role
@@ -173,20 +173,20 @@ t_4_TeamAssignments AS (SELECT * FROM (
       E'platform' AS team_id
   
 ) AS UNUSED_TABLE_NAME  ),
-t_2_TeamNode AS (SELECT
+t_2_Team AS (SELECT
   t_3_TeamAssignments.team_id AS team_id
 FROM
   t_4_TeamAssignments AS t_3_TeamAssignments
 GROUP BY t_3_TeamAssignments.team_id ORDER BY team_id)
 SELECT
-  PersonNode.person_id AS person_id,
-  TeamNode.team_id AS team_id
+  Person.person_id AS person_id,
+  Team.team_id AS team_id
 FROM
-  t_0_PersonNode AS PersonNode, t_2_TeamNode AS TeamNode, t_4_TeamAssignments AS TeamAssignments
+  t_0_Person AS Person, t_2_Team AS Team, t_4_TeamAssignments AS TeamAssignments
 WHERE
-  (TeamAssignments.person_id = PersonNode.person_id) AND
-  (TeamAssignments.team_id = TeamNode.team_id)
-GROUP BY PersonNode.person_id, TeamNode.team_id ORDER BY person_id;
+  (TeamAssignments.person_id = Person.person_id) AND
+  (TeamAssignments.team_id = Team.team_id)
+GROUP BY Person.person_id, Team.team_id ORDER BY person_id;
 
 -- Executed on DuckDB:
 | person_id | team_id  |
@@ -196,7 +196,7 @@ GROUP BY PersonNode.person_id, TeamNode.team_id ORDER BY person_id;
 | 3         | platform |
 (3 rows)
 
-$ synalog.compile('knowledge_graphs.l', 'EngagedWithEdge')
+$ synalog.compile('knowledge_graphs.l', 'EngagedWith')
 -- Initializing DuckDB environment.
 create schema if not exists logica_home;
 -- Empty record, has to have a field by DuckDB syntax.
@@ -220,7 +220,7 @@ WITH t_1_TeamAssignments AS (SELECT * FROM (
       E'platform' AS team_id
   
 ) AS UNUSED_TABLE_NAME  ),
-t_0_TeamNode AS (SELECT
+t_0_Team AS (SELECT
   TeamAssignments.team_id AS team_id
 FROM
   t_1_TeamAssignments AS TeamAssignments
@@ -239,21 +239,21 @@ t_4_Engagements AS (SELECT * FROM (
       E'https://globex.example.com' AS website
   
 ) AS UNUSED_TABLE_NAME  ),
-t_2_ClientNode AS (SELECT
+t_2_Client AS (SELECT
   t_3_Engagements.client_id AS client_id,
   t_3_Engagements.website AS website
 FROM
   t_4_Engagements AS t_3_Engagements
 GROUP BY t_3_Engagements.client_id, t_3_Engagements.website ORDER BY client_id)
 SELECT
-  TeamNode.team_id AS team_id,
-  ClientNode.client_id AS client_id
+  Team.team_id AS team_id,
+  Client.client_id AS client_id
 FROM
-  t_0_TeamNode AS TeamNode, t_2_ClientNode AS ClientNode, t_4_Engagements AS Engagements
+  t_0_Team AS Team, t_2_Client AS Client, t_4_Engagements AS Engagements
 WHERE
-  (Engagements.team_id = TeamNode.team_id) AND
-  (Engagements.client_id = ClientNode.client_id)
-GROUP BY TeamNode.team_id, ClientNode.client_id ORDER BY team_id;
+  (Engagements.team_id = Team.team_id) AND
+  (Engagements.client_id = Client.client_id)
+GROUP BY Team.team_id, Client.client_id ORDER BY team_id;
 
 -- Executed on DuckDB:
 | team_id  | client_id |
@@ -262,7 +262,7 @@ GROUP BY TeamNode.team_id, ClientNode.client_id ORDER BY team_id;
 | platform | globex    |
 (2 rows)
 
-$ synalog.compile('knowledge_graphs.l', 'WorksWithClientEdge')
+$ synalog.compile('knowledge_graphs.l', 'WorksWithClient')
 -- Initializing DuckDB environment.
 create schema if not exists logica_home;
 -- Empty record, has to have a field by DuckDB syntax.
@@ -292,7 +292,7 @@ WITH t_2_Employees AS (SELECT * FROM (
       2 AS manager_id
   
 ) AS UNUSED_TABLE_NAME  ),
-t_1_PersonNode AS (SELECT
+t_1_Person AS (SELECT
   Employees.person_id AS person_id,
   Employees.name AS name,
   Employees.role AS role
@@ -316,20 +316,20 @@ t_5_TeamAssignments AS (SELECT * FROM (
       E'platform' AS team_id
   
 ) AS UNUSED_TABLE_NAME  ),
-t_3_TeamNode AS (SELECT
+t_3_Team AS (SELECT
   t_4_TeamAssignments.team_id AS team_id
 FROM
   t_5_TeamAssignments AS t_4_TeamAssignments
 GROUP BY t_4_TeamAssignments.team_id ORDER BY team_id),
-t_0_MemberOfEdge AS (SELECT
-  PersonNode.person_id AS person_id,
-  TeamNode.team_id AS team_id
+t_0_MemberOf AS (SELECT
+  Person.person_id AS person_id,
+  Team.team_id AS team_id
 FROM
-  t_1_PersonNode AS PersonNode, t_3_TeamNode AS TeamNode, t_5_TeamAssignments AS TeamAssignments
+  t_1_Person AS Person, t_3_Team AS Team, t_5_TeamAssignments AS TeamAssignments
 WHERE
-  (TeamAssignments.person_id = PersonNode.person_id) AND
-  (TeamAssignments.team_id = TeamNode.team_id)
-GROUP BY PersonNode.person_id, TeamNode.team_id ORDER BY person_id),
+  (TeamAssignments.person_id = Person.person_id) AND
+  (TeamAssignments.team_id = Team.team_id)
+GROUP BY Person.person_id, Team.team_id ORDER BY person_id),
 t_11_Engagements AS (SELECT * FROM (
   
     SELECT
@@ -344,29 +344,29 @@ t_11_Engagements AS (SELECT * FROM (
       E'https://globex.example.com' AS website
   
 ) AS UNUSED_TABLE_NAME  ),
-t_9_ClientNode AS (SELECT
+t_9_Client AS (SELECT
   t_10_Engagements.client_id AS client_id,
   t_10_Engagements.website AS website
 FROM
   t_11_Engagements AS t_10_Engagements
 GROUP BY t_10_Engagements.client_id, t_10_Engagements.website ORDER BY client_id),
-t_6_EngagedWithEdge AS (SELECT
-  t_7_TeamNode.team_id AS team_id,
-  ClientNode.client_id AS client_id
+t_6_EngagedWith AS (SELECT
+  t_7_Team.team_id AS team_id,
+  Client.client_id AS client_id
 FROM
-  t_3_TeamNode AS t_7_TeamNode, t_9_ClientNode AS ClientNode, t_11_Engagements AS Engagements
+  t_3_Team AS t_7_Team, t_9_Client AS Client, t_11_Engagements AS Engagements
 WHERE
-  (Engagements.team_id = t_7_TeamNode.team_id) AND
-  (Engagements.client_id = ClientNode.client_id)
-GROUP BY t_7_TeamNode.team_id, ClientNode.client_id ORDER BY team_id)
+  (Engagements.team_id = t_7_Team.team_id) AND
+  (Engagements.client_id = Client.client_id)
+GROUP BY t_7_Team.team_id, Client.client_id ORDER BY team_id)
 SELECT
-  MemberOfEdge.person_id AS person_id,
-  EngagedWithEdge.client_id AS client_id
+  MemberOf.person_id AS person_id,
+  EngagedWith.client_id AS client_id
 FROM
-  t_0_MemberOfEdge AS MemberOfEdge, t_6_EngagedWithEdge AS EngagedWithEdge
+  t_0_MemberOf AS MemberOf, t_6_EngagedWith AS EngagedWith
 WHERE
-  (EngagedWithEdge.team_id = MemberOfEdge.team_id)
-GROUP BY MemberOfEdge.person_id, EngagedWithEdge.client_id ORDER BY person_id;
+  (EngagedWith.team_id = MemberOf.team_id)
+GROUP BY MemberOf.person_id, EngagedWith.client_id ORDER BY person_id;
 
 -- Executed on DuckDB:
 | person_id | client_id |
@@ -376,7 +376,7 @@ GROUP BY MemberOfEdge.person_id, EngagedWithEdge.client_id ORDER BY person_id;
 | 3         | globex    |
 (3 rows)
 
-$ synalog.compile('knowledge_graphs.l', 'ReportsToEdge')
+$ synalog.compile('knowledge_graphs.l', 'ReportsTo')
 -- Initializing DuckDB environment.
 create schema if not exists logica_home;
 -- Empty record, has to have a field by DuckDB syntax.
@@ -406,7 +406,7 @@ WITH t_3_Employees AS (SELECT * FROM (
       2 AS manager_id
   
 ) AS UNUSED_TABLE_NAME  ),
-t_1_PersonNode AS (SELECT
+t_1_Person AS (SELECT
   t_2_Employees.person_id AS person_id,
   t_2_Employees.name AS name,
   t_2_Employees.role AS role
@@ -414,15 +414,15 @@ FROM
   t_3_Employees AS t_2_Employees
 GROUP BY t_2_Employees.person_id, t_2_Employees.name, t_2_Employees.role ORDER BY person_id)
 SELECT
-  PersonNode.person_id AS employee_id,
-  t_0_PersonNode.person_id AS manager_id
+  Person.person_id AS employee_id,
+  t_0_Person.person_id AS manager_id
 FROM
-  t_1_PersonNode AS PersonNode, t_1_PersonNode AS t_0_PersonNode, t_3_Employees AS Employees
+  t_1_Person AS Person, t_1_Person AS t_0_Person, t_3_Employees AS Employees
 WHERE
-  (t_0_PersonNode.person_id IS NOT null) AND
-  (Employees.person_id = PersonNode.person_id) AND
-  (Employees.manager_id = t_0_PersonNode.person_id)
-GROUP BY PersonNode.person_id, t_0_PersonNode.person_id ORDER BY employee_id;
+  (t_0_Person.person_id IS NOT null) AND
+  (Employees.person_id = Person.person_id) AND
+  (Employees.manager_id = t_0_Person.person_id)
+GROUP BY Person.person_id, t_0_Person.person_id ORDER BY employee_id;
 
 -- Executed on DuckDB:
 | employee_id | manager_id |

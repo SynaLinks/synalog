@@ -133,18 +133,18 @@ RecentlyCreated(order_id:) :-
 For relationships with validity periods, extract `start_date`/`end_date` through the pipeline when defining the edge, then filter with `Today`:
 
 ```logica
-@OrderBy(MemberOfEdge, "employee_id");
-MemberOfEdge(employee_id:, team_id:, start_date:, end_date:) distinct :-
-  EmployeeNode(employee_id:), TeamNode(team_id:),
+@OrderBy(MemberOf, "employee_id");
+MemberOf(employee_id:, team_id:, start_date:, end_date:) distinct :-
+  Employee(employee_id:), Team(team_id:),
   TeamAssignments(employee_id:, team_id:, started_at:, ended_at:),
   start_date == Substr(ToString(started_at), 1, 10),
   end_date   == Substr(ToString(ended_at), 1, 10);
 
 @OrderBy(CurrentMember, "employee");
 CurrentMember(employee:, team:) :-
-  MemberOfEdge(employee_id:, team_id:, start_date:, end_date:),
-  EmployeeNode(employee_id:, name: employee),
-  TeamNode(team_id:, name: team),
+  MemberOf(employee_id:, team_id:, start_date:, end_date:),
+  Employee(employee_id:, name: employee),
+  Team(team_id:, name: team),
   Today(date:),
   start_date <= date, end_date >= date;
 ```

@@ -56,8 +56,8 @@ In addition to the operators above: `Array= x -> y` (ordered array), `ArgMinK(x 
 `distinct` on its own deduplicates rows — this is how concepts extract unique entities:
 
 ```logica
-@OrderBy(CustomerNode, "customer_id");
-CustomerNode(customer_id:) distinct :- Orders(customer_id:);
+@OrderBy(Customer, "customer_id");
+Customer(customer_id:) distinct :- Orders(customer_id:);
 ```
 
 ## Complete example

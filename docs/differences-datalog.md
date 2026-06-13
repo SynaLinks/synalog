@@ -40,7 +40,7 @@ A Datalog relation is a *set* — duplicates cannot exist. Synalog inherits SQL'
 
 ```logica
 # Set semantics, as in Datalog — duplicates removed
-CustomerNode(customer_id:) distinct :- Orders(customer_id:);
+Customer(customer_id:) distinct :- Orders(customer_id:);
 ```
 
 This is why the documentation marks concepts and aggregating rules `distinct` throughout: it restores the Datalog behavior where you want it, without paying for it where you don't.

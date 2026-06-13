@@ -338,8 +338,8 @@ def cmd_import(args: tuple[str, ...]) -> int:
     synalog import ontology.owl > o.l    redirect the program into a .l file
 
     Reads any RDF serialization rdflib understands (.owl/.ttl/.rdf/.n3/JSON-LD),
-    locally or over http(s)/ftp. Classes become `*Node` concepts, object
-    properties `*Edge` concepts, and individuals are emitted as facts, so the
+    locally or over http(s)/ftp. Classes become entity concepts, object
+    properties become relationship concepts, and individuals are emitted as facts, so the
     result runs as-is.
     """
     if len(args) != 1:

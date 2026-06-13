@@ -361,7 +361,7 @@ def test_import_converts_ontology_file(tmp_path):
     )
     result = synalog("import", str(onto))
     assert result.returncode == 0, result.stderr
-    assert "PersonNode(" in result.stdout
+    assert "Person(" in result.stdout
     assert "http://ex.org/alice" in result.stdout
     # the converted program is valid Synalog
     assert synalog("-", "check", stdin=result.stdout).returncode == 0

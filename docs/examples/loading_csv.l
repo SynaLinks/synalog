@@ -10,8 +10,8 @@ SmokeTests(test_id:, device:, status:, duration_ms:, run_at:) :-
 
 # Concepts
 
-@OrderBy(DeviceNode, "device");
-DeviceNode(device:) distinct :- SmokeTests(device:);
+@OrderBy(Device, "device");
+Device(device:) distinct :- SmokeTests(device:);
 
 @OrderBy(TestStatus, "status");
 TestStatus(status:) distinct :- SmokeTests(status:);
@@ -21,7 +21,7 @@ TestStatus(status:) distinct :- SmokeTests(status:);
 ## Number of failed smoke tests per device.
 @OrderBy(FailuresByDevice, "failures DESC");
 FailuresByDevice(device:, failures? += 1) distinct :-
-  DeviceNode(device:), SmokeTests(device:, status: "failed");
+  Device(device:), SmokeTests(device:, status: "failed");
 
 ## Smoke test runs per calendar day.
 @OrderBy(RunsPerDay, "day");

@@ -24,7 +24,9 @@ classifiers = [
     "Topic :: Software Development :: Compilers",
 ]
 
-dependencies = ["click>=8.1", "rich>=13", "rdflib>=7"]
+# duckdb is a core dependency: it is the default engine, so `synalog … run`
+# works out of the box on a bare `pip install synalog`, no extra needed.
+dependencies = ["click>=8.1", "rich>=13", "rdflib>=7", "duckdb"]
 
 [project.urls]
 Repository = "https://github.com/synalinks/synalog"
@@ -33,9 +35,10 @@ Repository = "https://github.com/synalinks/synalog"
 synalog = "synalog.cli:main"
 
 [project.optional-dependencies]
-# Engines runnable from the CLI (sqlite is stdlib). The `run` extra covers the
-# zero-config local engines; remote engines each bring their own driver.
-run = ["duckdb", "psycopg"]
+# The local engines work out of the box: duckdb (core dependency, the default)
+# and sqlite (stdlib). Each remote engine brings its own driver. `run` keeps the
+# PostgreSQL driver for `--engine psql`.
+run = ["psycopg"]
 trino = ["trino"]
 presto = ["presto-python-client"]
 databricks = ["databricks-sql-connector"]

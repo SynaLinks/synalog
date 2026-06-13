@@ -227,10 +227,13 @@ jobs:
           path: dist
 
   # The wheels are abi3-py310: one wheel per platform covers every CPython
-  # >= 3.10. This job proves it by installing and exercising the built wheel
-  # on each Python version, on Linux and both macOS architectures.
-  wheel-smoke:
-    name: Wheel smoke test (py${{ matrix.python-version }}, ${{ matrix.platform.artifact }})
+  # >= 3.10. This job proves it by installing the built wheel and running the
+  # full CLI test suite on each Python version, on Linux and both macOS
+  # architectures. (The `test` job above runs the suite once, on 3.12, plus the
+  # Rust tests and the live-engine e2e tests; here we get per-version coverage
+  # of the installed wheel.)
+  wheel-tests:
+    name: Wheel tests (py${{ matrix.python-version }}, ${{ matrix.platform.artifact }})
     runs-on: ${{ matrix.platform.runner }}
     needs: [linux, macos]
     strategy:
@@ -245,6 +248,7 @@ jobs:
           - runner: macos-latest
             artifact: wheels-macos-aarch64
     steps:
+      - uses: actions/checkout@v6  # for tests/cli
       - uses: actions/setup-python@v6
         with:
           python-version: ${{ matrix.python-version }}
@@ -252,11 +256,12 @@ jobs:
         with:
           name: ${{ matrix.platform.artifact }}
           path: wheels
-      - name: Install wheel
-        # --find-links serves the locally-built synalog wheel; the runtime
-        # deps (click, rich) still resolve from PyPI. Don't use --no-index:
-        # it would block dependency resolution and fail the install.
-        run: pip install --find-links wheels synalog
+      - name: Install wheel + test deps
+        # --find-links serves the locally-built synalog wheel; its runtime deps
+        # (click, rich, rdflib, duckdb) resolve from PyPI. Don't use --no-index:
+        # it would block dependency resolution and fail the install. `logica`
+        # registers the sqlite runtime UDFs the CLI tests exercise.
+        run: pip install --find-links wheels synalog pytest logica
       - name: Smoke test
         run: |
           python -c "
@@ -267,5 +272,7 @@ jobs:
           assert 'hello' in sql, sql
           print('ok:', sql.replace(chr(10), ' '))
           "
+      - name: CLI tests
+        run: pytest tests/cli -q
 
 # Publishing to PyPI happens in release.yml, triggered by `v*` tags.

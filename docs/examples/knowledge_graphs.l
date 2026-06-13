@@ -1,4 +1,4 @@
-# run: PersonNode, TeamNode, ClientNode, MemberOfEdge, EngagedWithEdge, WorksWithClientEdge, ReportsToEdge
+# run: Person, Team, Client, MemberOf, EngagedWith, WorksWithClient, ReportsTo
 @Engine("duckdb");
 
 # Tables
@@ -16,39 +16,39 @@ Engagements(team_id: "platform", client_id: "globex", website: "https://globex.e
 # Concepts
 
 ## Nodes: primary key first, URLs preserved.
-@OrderBy(PersonNode, "person_id");
-PersonNode(person_id:, name:, role:) distinct :- Employees(person_id:, name:, role:);
+@OrderBy(Person, "person_id");
+Person(person_id:, name:, role:) distinct :- Employees(person_id:, name:, role:);
 
-@OrderBy(TeamNode, "team_id");
-TeamNode(team_id:) distinct :- TeamAssignments(team_id:);
+@OrderBy(Team, "team_id");
+Team(team_id:) distinct :- TeamAssignments(team_id:);
 
-@OrderBy(ClientNode, "client_id");
-ClientNode(client_id:, website:) distinct :- Engagements(client_id:, website:);
+@OrderBy(Client, "client_id");
+Client(client_id:, website:) distinct :- Engagements(client_id:, website:);
 
 ## Edges join through nodes, not raw tables.
-@OrderBy(MemberOfEdge, "person_id");
-MemberOfEdge(person_id:, team_id:) distinct :-
-  PersonNode(person_id:),
-  TeamNode(team_id:),
+@OrderBy(MemberOf, "person_id");
+MemberOf(person_id:, team_id:) distinct :-
+  Person(person_id:),
+  Team(team_id:),
   TeamAssignments(person_id:, team_id:);
 
-@OrderBy(EngagedWithEdge, "team_id");
-EngagedWithEdge(team_id:, client_id:) distinct :-
-  TeamNode(team_id:),
-  ClientNode(client_id:),
+@OrderBy(EngagedWith, "team_id");
+EngagedWith(team_id:, client_id:) distinct :-
+  Team(team_id:),
+  Client(client_id:),
   Engagements(team_id:, client_id:);
 
 ## Inverse edge derived from the management relation.
-@OrderBy(ReportsToEdge, "employee_id");
-ReportsToEdge(employee_id:, manager_id:) distinct :-
-  PersonNode(person_id: employee_id),
-  PersonNode(person_id: manager_id),
+@OrderBy(ReportsTo, "employee_id");
+ReportsTo(employee_id:, manager_id:) distinct :-
+  Person(person_id: employee_id),
+  Person(person_id: manager_id),
   Employees(person_id: employee_id, manager_id:), manager_id is not null;
 
 # Rules
 
 ## Edge composition: person -> team -> client gives person -> client.
-@OrderBy(WorksWithClientEdge, "person_id");
-WorksWithClientEdge(person_id:, client_id:) distinct :-
-  MemberOfEdge(person_id:, team_id:),
-  EngagedWithEdge(team_id:, client_id:);
+@OrderBy(WorksWithClient, "person_id");
+WorksWithClient(person_id:, client_id:) distinct :-
+  MemberOf(person_id:, team_id:),
+  EngagedWith(team_id:, client_id:);

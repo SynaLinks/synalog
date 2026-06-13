@@ -10,13 +10,13 @@ prints a Synalog program to stdout, ready to redirect into a `.l` file:
 
 The mapping follows the project's knowledge-graph conventions:
 
-* an OWL/RDFS **class** becomes a ``*Node`` concept keyed by the individual's
-  URI (preserved verbatim), with one column per **datatype property** whose
-  domain is that class;
-* an OWL **object property** becomes a ``*Edge`` concept joining two nodes
-  through their URIs;
+* an OWL/RDFS **class** becomes a concept (named after the class) keyed by the
+  individual's URI (preserved verbatim), with one column per **datatype
+  property** whose domain is that class;
+* an OWL **object property** becomes a concept (named after the property)
+  joining two entities through their URIs;
 * ``rdfs:subClassOf`` (and ``owl:equivalentClass``, as mutual subclassing)
-  becomes a recursive ``SubClassOfEdge`` — the transitive closure of the
+  becomes a recursive ``SubClassOf`` — the transitive closure of the
   hierarchy;
 * **individuals** (the ABox) are emitted as ``*Raw`` facts that the concepts
   build on, so the generated program runs as-is.
@@ -42,7 +42,7 @@ closures are complete on both sides.
 
 **Class/individual axioms**: ``owl:disjointWith`` → a ``DisjointWithViolation``
 predicate (individuals typed by two disjoint classes); ``owl:sameAs`` → a
-symmetric+transitive ``SameAsEdge``; ``owl:differentFrom`` → a
+symmetric+transitive ``SameAs``; ``owl:differentFrom`` → a
 ``DifferentFromViolation`` (individuals asserted different yet inferred same).
 
 Not translated (they need open-world / non-stratifiable reasoning that does not
@@ -51,7 +51,7 @@ map to a finite SQL rule): ``owl:complementOf`` and ``owl:propertyChainAxiom``.
 Datatype values keep their natural type (numbers, booleans) where rdflib can
 infer it, and strings are emitted as single-quoted literals (Synalog's string
 form that tolerates embedded double quotes). A datatype property a given
-individual lacks is filled with ``null`` so every row of a node has the same
+individual lacks is filled with ``null`` so every row of a concept has the same
 arity.
 """
 
@@ -336,28 +336,28 @@ def convert_graph(graph) -> str:
     # The output has two layers, so a class-centric ontology (lots of classes,
     # no individuals — e.g. an OBO taxonomy) and an instance-rich one (FOAF, an
     # HR model) are both useful:
-    #   * the SCHEMA layer is always emitted — every class is a row of `ClassNode`
-    #     and the `rdfs:subClassOf` hierarchy is a recursive `SubClassOfEdge`;
-    #   * the INSTANCE layer adds a per-class `*Node` (+ facts) only for classes
+    #   * the SCHEMA layer is always emitted — every class is a row of `Class`
+    #     and the `rdfs:subClassOf` hierarchy is a recursive `SubClassOf`;
+    #   * the INSTANCE layer adds a per-class concept (+ facts) only for classes
     #     that actually have individuals, so classes-as-entities don't spam the
-    #     output with thousands of empty one-row node predicates.
+    #     output with thousands of empty one-row predicates.
     entity_classes = [cls for cls in classes_sorted if members[cls]]
 
     # Reserve the fixed schema predicate names so a class literally named
     # "Class" (or a "SubClassOf" property) gets a suffixed entity-node name.
     names = _Names()
-    names.unique("ClassNode")
-    names.unique("SubClassOfEdge")
+    names.unique("Class")
+    names.unique("SubClassOf")
 
     # A node's columns are data-driven: the datatype properties declared for the
     # class PLUS any literal-valued property its individuals actually use. The
     # data-driven part is what makes inheritance work — an individual typed as a
     # subclass still gets the (super)class's properties, and properties with no
     # declared domain are picked up — rather than relying on rdfs:domain alone.
-    node_name: dict = {}  # class -> NodeName  (entity classes only)
+    node_name: dict = {}  # class -> concept name  (entity classes only)
     node_columns: dict = {}  # class -> [(field, prop), ...]  (uri implied first)
     for cls in entity_classes:
-        node_name[cls] = names.unique(_pascal(_local(cls)) + "Node")
+        node_name[cls] = names.unique(_pascal(_local(cls)))
         props = list(datatype_props.get(cls, []))
         present = set(props)
         for ind in members[cls]:
@@ -383,10 +383,10 @@ def convert_graph(graph) -> str:
     raw_name: dict = {}
     step_name: dict = {}
     for prop in obj_props_sorted:
-        e = names.unique(_pascal(_local(prop)) + "Edge")
+        e = names.unique(_pascal(_local(prop)))
         edge_name[prop] = e
-        raw_name[prop] = e[:-4] + "Raw"
-        step_name[prop] = e[:-4] + "Step"
+        raw_name[prop] = e + "Raw"
+        step_name[prop] = e + "Step"
 
     # Class labels (rdfs:label) for the schema layer; the column is only emitted
     # when at least one class carries one.
@@ -409,13 +409,13 @@ def convert_graph(graph) -> str:
         f" {n_individuals} individuals."
     ]
 
-    # --- Schema layer: every class as a node -------------------------------
+    # --- Schema layer: every class as a concept ----------------------------
     if classes_sorted:
         fields = "uri:, label:" if has_labels else "uri:"
         block = [
-            "# Schema — every class as a node (the TBox)",
-            '@OrderBy(ClassNode, "uri");',
-            f"ClassNode({fields}) distinct :- ClassRaw({fields});",
+            "# Schema — every class as a concept (the TBox)",
+            '@OrderBy(Class, "uri");',
+            f"Class({fields}) distinct :- ClassRaw({fields});",
         ]
         for cls in classes_sorted:
             values = [f"uri: {_string_literal(str(cls))}"]
@@ -441,13 +441,13 @@ def convert_graph(graph) -> str:
     if sub_pairs:
         block = [
             "# Class hierarchy (transitive subClassOf / equivalentClass),"
-            " joined through ClassNode",
-            "@Recursive(SubClassOfEdge, 100);",
-            "SubClassOfEdge(child_uri:, parent_uri:) distinct :-"
+            " joined through Class",
+            "@Recursive(SubClassOf, 100);",
+            "SubClassOf(child_uri:, parent_uri:) distinct :-"
             " SubClassOfRaw(child_uri:, parent_uri:),"
-            " ClassNode(uri: child_uri), ClassNode(uri: parent_uri);",
-            "SubClassOfEdge(child_uri:, parent_uri:) distinct :-"
-            " SubClassOfEdge(child_uri:, parent_uri: mid),"
+            " Class(uri: child_uri), Class(uri: parent_uri);",
+            "SubClassOf(child_uri:, parent_uri:) distinct :-"
+            " SubClassOf(child_uri:, parent_uri: mid),"
             " SubClassOfRaw(child_uri: mid, parent_uri:);",
         ]
         for child, parent in sorted(sub_pairs):
@@ -457,13 +457,13 @@ def convert_graph(graph) -> str:
             )
         blocks.append("\n".join(block))
 
-    # --- Instance layer: a node per class that has individuals --------------
+    # --- Instance layer: a concept per class that has individuals ----------
     if entity_classes:
-        blocks.append("# Concepts (nodes — classes that have individuals)")
+        blocks.append("# Concepts — classes that have individuals")
     for cls in entity_classes:
         name = node_name[cls]
         cols = node_columns[cls]
-        raw = name[:-4] + "Raw" if name.endswith("Node") else name + "Raw"
+        raw = name + "Raw"
         fields = ", ".join(["uri:"] + [f"{f}:" for f, _ in cols])
         block = [
             f"@OrderBy({name}, \"uri\");",
@@ -479,9 +479,9 @@ def convert_graph(graph) -> str:
             block.append(f"{raw}({', '.join(values)});")
         blocks.append("\n".join(block))
 
-    # --- Edges (object properties) between individuals ----------------------
+    # --- Object properties (relationships) between individuals --------------
     if obj_props_sorted:
-        blocks.append("# Concepts (edges — object properties)")
+        blocks.append("# Concepts — object properties (relationships)")
     for prop in obj_props_sorted:
         edge = edge_name[prop]
         raw = raw_name[prop]
@@ -570,7 +570,7 @@ def convert_graph(graph) -> str:
                 )
 
         # --- Constraint checks (a non-empty result = inconsistent data) -----
-        prefix = edge[:-4]  # edge name without the "Edge" suffix
+        prefix = edge  # the property's concept name
         if prop in functional:
             v = names.unique(prefix + "FunctionalViolation")
             block += [
@@ -611,7 +611,7 @@ def convert_graph(graph) -> str:
         if named(a) and named(b) and a != b
     )
     if sameas_pairs:
-        same = names.unique("SameAsEdge")
+        same = names.unique("SameAs")
         block = [
             "# owl:sameAs — symmetric, transitive individual equivalence",
             f"@OrderBy({same}, \"left_uri\");",

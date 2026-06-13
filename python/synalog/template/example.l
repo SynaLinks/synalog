@@ -11,8 +11,8 @@ import lib.metrics.TotalByRegion;
 Sales(region:, amount:, sold_at:) :- sales(region:, amount:, sold_at:);
 
 # Concepts — extract entities and relationships
-@OrderBy(RegionNode, "region");
-RegionNode(region:) distinct :- Sales(region:);
+@OrderBy(Region, "region");
+Region(region:) distinct :- Sales(region:);
 
 # Rules — derive insights from concepts and imported predicates
 @OrderBy(MonthlySales, "month");

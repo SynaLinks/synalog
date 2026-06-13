@@ -15,7 +15,7 @@ uv pip install synalog  # or install into the current virtualenv
 
 Requires Python 3.10+. Wheels are published for Linux (x86_64, aarch64, armv7, s390x, ppc64le; glibc and musl), Windows (x64, x86, aarch64) and macOS (x86_64, aarch64).
 
-To execute programs locally on duckdb or PostgreSQL (as in the examples below), add the `run` extra — `pip install 'synalog[run]'` or `uv add 'synalog[run]'` — which pulls in the duckdb and psycopg drivers; sqlite works out of the box.
+duckdb (the default engine) and sqlite work out of the box. To execute on PostgreSQL, add the `run` extra — `pip install 'synalog[run]'` or `uv add 'synalog[run]'` — which pulls in the psycopg driver.
 
 ## Your first program
 
@@ -95,7 +95,7 @@ synalog program.l check
 synalog program.l run EngineeringTeam
 ```
 
-Running `synalog` with no arguments starts an interactive session where you build a program rule by rule and query it as you go. With uv, `uvx` runs the CLI without installing anything: `uvx --from 'synalog[run]' synalog program.l run EngineeringTeam`. See [CLI interface](cli.md).
+Running `synalog` with no arguments starts an interactive session where you build a program rule by rule and query it as you go. With uv, `uvx` runs the CLI without installing anything: `uvx synalog program.l run EngineeringTeam` (duckdb is bundled; add `--from 'synalog[run]'` for PostgreSQL). See [CLI interface](cli.md).
 
 ### Start a project
 

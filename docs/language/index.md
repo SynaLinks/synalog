@@ -11,11 +11,11 @@ Orders(customer_id:, product_id:, amount:, status:) :-
 
 # Concepts — extract entities and relationships
 
-@OrderBy(CustomerNode, "customer_id");
-CustomerNode(customer_id:) distinct :- Orders(customer_id:);
+@OrderBy(Customer, "customer_id");
+Customer(customer_id:) distinct :- Orders(customer_id:);
 
-@OrderBy(PurchasedEdge, "customer_id");
-PurchasedEdge(customer_id:, product_id:) distinct :- Orders(customer_id:, product_id:);
+@OrderBy(Purchased, "customer_id");
+Purchased(customer_id:, product_id:) distinct :- Orders(customer_id:, product_id:);
 
 # Rules — derive insights from concepts
 
@@ -62,8 +62,8 @@ See [Querying a CSV file](../getting-started.md#querying-a-csv-file) for a compl
 
 Concepts extract the entities and relationships hidden in tables. By convention:
 
-- Entity concepts are named with the `*Node` suffix — `CustomerNode`, `ProductNode`.
-- Relationship concepts are named with the `*Edge` suffix — `PurchasedEdge`, `WorksInEdge`.
+- Entity concepts are named after the entity — `Customer`, `Product`.
+- Relationship concepts are named after the relationship — `Purchased`, `WorksIn`.
 
 See [Knowledge graphs](../knowledge-graphs.md) for the full modeling conventions.
 

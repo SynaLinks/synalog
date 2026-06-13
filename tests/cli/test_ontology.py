@@ -52,21 +52,21 @@ def test_output_is_valid_synalog(program):
 
 
 def test_classes_become_node_concepts(program):
-    assert "PersonNode(" in program
-    assert "EmployeeNode(" in program
-    assert "CompanyNode(" in program
+    assert "Person(" in program
+    assert "Employee(" in program
+    assert "Company(" in program
 
 
 def test_datatype_properties_become_columns(program):
     # Person carries its datatype properties as columns, sorted by local name.
-    assert "PersonNode(uri:, age:, name:) distinct :- PersonRaw(uri:, age:, name:);" in program
+    assert "Person(uri:, age:, name:) distinct :- PersonRaw(uri:, age:, name:);" in program
 
 
 def test_object_property_becomes_edge_joining_nodes(program):
     # worksAt joins an Employee to a Company through their node concepts.
-    assert "WorksAtEdge(subject_uri:, object_uri:) distinct :-" in program
-    assert "EmployeeNode(uri: subject_uri)" in program
-    assert "CompanyNode(uri: object_uri)" in program
+    assert "WorksAt(subject_uri:, object_uri:) distinct :-" in program
+    assert "Employee(uri: subject_uri)" in program
+    assert "Company(uri: object_uri)" in program
 
 
 def test_individuals_emitted_as_facts(program):
@@ -86,7 +86,7 @@ def test_string_values_with_quotes_are_safe(program):
 
 
 def test_subclass_hierarchy_is_recursive(program):
-    assert "@Recursive(SubClassOfEdge, 100);" in program
+    assert "@Recursive(SubClassOf, 100);" in program
     assert (
         "SubClassOfRaw(child_uri: 'http://ex.org/Employee',"
         " parent_uri: 'http://ex.org/Person');" in program
@@ -106,22 +106,22 @@ a:x a a:Thing .
 b:y a b:Thing .
 """
     program = convert(text)
-    assert "ThingNode(" in program
-    assert "ThingNode2(" in program
+    assert "Thing(" in program
+    assert "Thing2(" in program
     assert check(program) == []
 
 
 def test_schema_layer_lists_every_class_as_classnode(program):
-    # The schema (TBox) layer is always emitted: every class is a ClassNode row.
-    assert 'ClassNode(uri:, label:) distinct :- ClassRaw(uri:, label:);' not in program  # no labels here
-    assert "ClassNode(uri:) distinct :- ClassRaw(uri:);" in program
+    # The schema (TBox) layer is always emitted: every class is a Class row.
+    assert 'Class(uri:, label:) distinct :- ClassRaw(uri:, label:);' not in program  # no labels here
+    assert "Class(uri:) distinct :- ClassRaw(uri:);" in program
     for cls in ("Person", "Employee", "Company"):
         assert f"ClassRaw(uri: 'http://ex.org/{cls}');" in program
 
 
 def test_class_only_ontology_emits_schema_not_empty_entity_nodes():
     # A taxonomy (classes + subClassOf, no individuals — like an OBO ontology)
-    # produces a ClassNode graph and the hierarchy, and NO per-class entity
+    # produces a Class graph and the hierarchy, and NO per-class entity
     # nodes (which would otherwise be thousands of empty one-row predicates).
     text = """\
 @prefix : <http://ex.org/> .
@@ -131,10 +131,10 @@ def test_class_only_ontology_emits_schema_not_empty_entity_nodes():
 :Dog a owl:Class ; rdfs:label "dog" ; rdfs:subClassOf :Animal .
 """
     program = convert(text)
-    assert "ClassNode(uri:, label:) distinct :- ClassRaw(uri:, label:);" in program
+    assert "Class(uri:, label:) distinct :- ClassRaw(uri:, label:);" in program
     assert "ClassRaw(uri: 'http://ex.org/Dog', label: 'dog');" in program
-    assert "@Recursive(SubClassOfEdge, 100);" in program
-    assert "AnimalNode(" not in program and "DogNode(" not in program  # no entity nodes
+    assert "@Recursive(SubClassOf, 100);" in program
+    assert "Animal(" not in program and "Dog(" not in program  # no entity nodes
     assert check(program) == []
 
 
@@ -226,25 +226,25 @@ def test_owl_axioms_program_is_valid(axioms):
 
 
 def test_transitive_property_is_recursive_closure(axioms):
-    assert "@Recursive(AncestorOfEdge, 100);" in axioms
+    assert "@Recursive(AncestorOf, 100);" in axioms
     # alice->bob->carol entails alice->carol.
-    assert ("alice", "carol") in _run(axioms, "AncestorOfEdge")
+    assert ("alice", "carol") in _run(axioms, "AncestorOf")
 
 
 def test_symmetric_property_adds_reverse(axioms):
     assert "KnowsRaw(subject_uri: object_uri, object_uri: subject_uri)" in axioms
-    knows = _run(axioms, "KnowsEdge")
+    knows = _run(axioms, "Knows")
     assert ("alice", "bob") in knows and ("bob", "alice") in knows
 
 
 def test_inverse_property_derives_opposite_direction(axioms):
     # employs is the inverse of the asserted worksAt facts.
-    assert ("acme", "alice") in _run(axioms, "EmploysEdge")
+    assert ("acme", "alice") in _run(axioms, "Employs")
 
 
 def test_subproperty_facts_flow_into_superproperty(axioms):
     # fatherOf ⊑ parentOf, so alice fatherOf bob entails alice parentOf bob.
-    assert ("alice", "bob") in _run(axioms, "ParentOfEdge")
+    assert ("alice", "bob") in _run(axioms, "ParentOf")
 
 
 def test_functional_property_violation_detects_two_values(axioms):
@@ -264,7 +264,7 @@ def test_asymmetric_and_irreflexive_violations_emitted(axioms):
 
 def test_reflexive_property_adds_self_loops(axioms):
     assert "object_uri == subject_uri" in axioms
-    related = _run(axioms, "RelatedEdge")
+    related = _run(axioms, "Related")
     assert ("alice", "alice") in related and ("bob", "bob") in related
 
 
@@ -280,8 +280,8 @@ def test_equivalent_class_becomes_mutual_subclass(axioms):
 
 
 def test_same_as_is_symmetric_transitive_closure(axioms):
-    assert "@Recursive(SameAsEdge, 100);" in axioms
-    same = _run(axioms, "SameAsEdge")
+    assert "@Recursive(SameAs, 100);" in axioms
+    same = _run(axioms, "SameAs")
     assert ("alice", "alice2") in same and ("alice2", "alice") in same
 
 
@@ -309,15 +309,15 @@ def test_inverse_of_transitive_is_inferred_transitive():
 """
     program = convert(text)
     assert check(program) == []
-    assert "@Recursive(DescendantOfEdge, 100);" in program
+    assert "@Recursive(DescendantOf, 100);" in program
     # c descendantOf a is only reachable if the inverse is transitively closed.
-    assert ("c", "a") in _run(program, "DescendantOfEdge")
+    assert ("c", "a") in _run(program, "DescendantOf")
 
 
 def test_plain_object_property_output_is_unchanged(axioms):
     # A property with no characteristics keeps the simple single-line edge form.
     assert (
-        "WorksAtEdge(subject_uri:, object_uri:) distinct :-"
+        "WorksAt(subject_uri:, object_uri:) distinct :-"
         " WorksAtRaw(subject_uri:, object_uri:),"
-        " PersonNode(uri: subject_uri), OrgNode(uri: object_uri);" in axioms
+        " Person(uri: subject_uri), Org(uri: object_uri);" in axioms
     )

@@ -1,7 +1,7 @@
 $ synalog.check('ontology.l')
 No errors found.
 
-$ synalog.compile('ontology.l', 'ClassNode')
+$ synalog.compile('ontology.l', 'Class')
 -- Initializing DuckDB environment.
 create schema if not exists logica_home;
 -- Empty record, has to have a field by DuckDB syntax.
@@ -41,14 +41,14 @@ GROUP BY ClassRaw.uri ORDER BY uri;
 | http://example.org/hr#Person   |
 (4 rows)
 
-$ synalog.compile('ontology.l', 'SubClassOfEdge')
+$ synalog.compile('ontology.l', 'SubClassOf')
 -- Initializing DuckDB environment.
 create schema if not exists logica_home;
 -- Empty record, has to have a field by DuckDB syntax.
 drop type if exists logicarecord893574736 cascade; create type logicarecord893574736 as struct(nirvana numeric);
 create sequence if not exists eternal_logical_sequence;
 
-CREATE OR REPLACE TABLE logica_home.SubClassOfEdge_ifr0 AS WITH t_3_SubClassOfRaw AS (SELECT * FROM (
+CREATE OR REPLACE TABLE logica_home.SubClassOf_ifr0 AS WITH t_2_SubClassOfRaw AS (SELECT * FROM (
   
     SELECT
       E'http://example.org/hr#Employee' AS child_uri,
@@ -60,7 +60,7 @@ CREATE OR REPLACE TABLE logica_home.SubClassOfEdge_ifr0 AS WITH t_3_SubClassOfRa
       E'http://example.org/hr#Employee' AS parent_uri
   
 ) AS UNUSED_TABLE_NAME  ),
-t_5_ClassRaw AS (SELECT * FROM (
+t_4_ClassRaw AS (SELECT * FROM (
   
     SELECT
       E'http://example.org/hr#Company' AS uri
@@ -78,98 +78,33 @@ t_5_ClassRaw AS (SELECT * FROM (
       E'http://example.org/hr#Person' AS uri
   
 ) AS UNUSED_TABLE_NAME  ),
-t_4_ClassNode AS (SELECT
+t_3_Class AS (SELECT
   ClassRaw.uri AS uri
 FROM
-  t_5_ClassRaw AS ClassRaw
+  t_4_ClassRaw AS ClassRaw
 GROUP BY ClassRaw.uri ORDER BY uri),
-t_0_SubClassOfEdge_MultBodyAggAux_f1 AS (SELECT * FROM (
+t_0_SubClassOf_MultBodyAggAux_f1 AS (SELECT * FROM (
   
     SELECT
-      t_1_SubClassOfRaw.child_uri AS child_uri,
-      t_1_SubClassOfRaw.parent_uri AS parent_uri
-    FROM
-      t_3_SubClassOfRaw AS t_1_SubClassOfRaw, t_4_ClassNode AS ClassNode, t_4_ClassNode AS t_2_ClassNode
-    WHERE
-      (ClassNode.uri = t_1_SubClassOfRaw.child_uri) AND
-      (t_2_ClassNode.uri = t_1_SubClassOfRaw.parent_uri)
-  
-) AS UNUSED_TABLE_NAME  )
-SELECT
-  SubClassOfEdge_MultBodyAggAux_f1.child_uri AS child_uri,
-  SubClassOfEdge_MultBodyAggAux_f1.parent_uri AS parent_uri
-FROM
-  t_0_SubClassOfEdge_MultBodyAggAux_f1 AS SubClassOfEdge_MultBodyAggAux_f1
-GROUP BY SubClassOfEdge_MultBodyAggAux_f1.child_uri, SubClassOfEdge_MultBodyAggAux_f1.parent_uri;
-
--- Interacting with table logica_home.SubClassOfEdge_ifr0
-
-CREATE OR REPLACE TABLE logica_home.SubClassOfEdge_ifr1 AS WITH t_3_SubClassOfRaw AS (SELECT * FROM (
-  
-    SELECT
-      E'http://example.org/hr#Employee' AS child_uri,
-      E'http://example.org/hr#Person' AS parent_uri
-   UNION ALL
-  
-    SELECT
-      E'http://example.org/hr#Manager' AS child_uri,
-      E'http://example.org/hr#Employee' AS parent_uri
-  
-) AS UNUSED_TABLE_NAME  ),
-t_5_ClassRaw AS (SELECT * FROM (
-  
-    SELECT
-      E'http://example.org/hr#Company' AS uri
-   UNION ALL
-  
-    SELECT
-      E'http://example.org/hr#Employee' AS uri
-   UNION ALL
-  
-    SELECT
-      E'http://example.org/hr#Manager' AS uri
-   UNION ALL
-  
-    SELECT
-      E'http://example.org/hr#Person' AS uri
-  
-) AS UNUSED_TABLE_NAME  ),
-t_4_ClassNode AS (SELECT
-  ClassRaw.uri AS uri
-FROM
-  t_5_ClassRaw AS ClassRaw
-GROUP BY ClassRaw.uri ORDER BY uri),
-t_0_SubClassOfEdge_MultBodyAggAux_f2 AS (SELECT * FROM (
-  
-    SELECT
-      SubClassOfEdge_ifr0.child_uri AS child_uri,
+      SubClassOfRaw.child_uri AS child_uri,
       SubClassOfRaw.parent_uri AS parent_uri
     FROM
-      logica_home.SubClassOfEdge_ifr0 AS SubClassOfEdge_ifr0, t_3_SubClassOfRaw AS SubClassOfRaw
+      t_2_SubClassOfRaw AS SubClassOfRaw, t_3_Class AS Class, t_3_Class AS t_1_Class
     WHERE
-      (SubClassOfRaw.child_uri = SubClassOfEdge_ifr0.parent_uri)
-   UNION ALL
-  
-    SELECT
-      t_1_SubClassOfRaw.child_uri AS child_uri,
-      t_1_SubClassOfRaw.parent_uri AS parent_uri
-    FROM
-      t_3_SubClassOfRaw AS t_1_SubClassOfRaw, t_4_ClassNode AS ClassNode, t_4_ClassNode AS t_2_ClassNode
-    WHERE
-      (ClassNode.uri = t_1_SubClassOfRaw.child_uri) AND
-      (t_2_ClassNode.uri = t_1_SubClassOfRaw.parent_uri)
+      (Class.uri = SubClassOfRaw.child_uri) AND
+      (t_1_Class.uri = SubClassOfRaw.parent_uri)
   
 ) AS UNUSED_TABLE_NAME  )
 SELECT
-  SubClassOfEdge_MultBodyAggAux_f2.child_uri AS child_uri,
-  SubClassOfEdge_MultBodyAggAux_f2.parent_uri AS parent_uri
+  SubClassOf_MultBodyAggAux_f1.child_uri AS child_uri,
+  SubClassOf_MultBodyAggAux_f1.parent_uri AS parent_uri
 FROM
-  t_0_SubClassOfEdge_MultBodyAggAux_f2 AS SubClassOfEdge_MultBodyAggAux_f2
-GROUP BY SubClassOfEdge_MultBodyAggAux_f2.child_uri, SubClassOfEdge_MultBodyAggAux_f2.parent_uri;
+  t_0_SubClassOf_MultBodyAggAux_f1 AS SubClassOf_MultBodyAggAux_f1
+GROUP BY SubClassOf_MultBodyAggAux_f1.child_uri, SubClassOf_MultBodyAggAux_f1.parent_uri;
 
--- Interacting with table logica_home.SubClassOfEdge_ifr1
+-- Interacting with table logica_home.SubClassOf_ifr0
 
-CREATE OR REPLACE TABLE logica_home.SubClassOfEdge_ifr2 AS WITH t_3_SubClassOfRaw AS (SELECT * FROM (
+CREATE OR REPLACE TABLE logica_home.SubClassOf_ifr1 AS WITH t_2_SubClassOfRaw AS (SELECT * FROM (
   
     SELECT
       E'http://example.org/hr#Employee' AS child_uri,
@@ -181,7 +116,7 @@ CREATE OR REPLACE TABLE logica_home.SubClassOfEdge_ifr2 AS WITH t_3_SubClassOfRa
       E'http://example.org/hr#Employee' AS parent_uri
   
 ) AS UNUSED_TABLE_NAME  ),
-t_5_ClassRaw AS (SELECT * FROM (
+t_4_ClassRaw AS (SELECT * FROM (
   
     SELECT
       E'http://example.org/hr#Company' AS uri
@@ -199,42 +134,42 @@ t_5_ClassRaw AS (SELECT * FROM (
       E'http://example.org/hr#Person' AS uri
   
 ) AS UNUSED_TABLE_NAME  ),
-t_4_ClassNode AS (SELECT
+t_3_Class AS (SELECT
   ClassRaw.uri AS uri
 FROM
-  t_5_ClassRaw AS ClassRaw
+  t_4_ClassRaw AS ClassRaw
 GROUP BY ClassRaw.uri ORDER BY uri),
-t_0_SubClassOfEdge_MultBodyAggAux_f3 AS (SELECT * FROM (
+t_0_SubClassOf_MultBodyAggAux_f2 AS (SELECT * FROM (
   
     SELECT
-      SubClassOfEdge_ifr1.child_uri AS child_uri,
+      SubClassOfRaw.child_uri AS child_uri,
       SubClassOfRaw.parent_uri AS parent_uri
     FROM
-      logica_home.SubClassOfEdge_ifr1 AS SubClassOfEdge_ifr1, t_3_SubClassOfRaw AS SubClassOfRaw
+      t_2_SubClassOfRaw AS SubClassOfRaw, t_3_Class AS Class, t_3_Class AS t_1_Class
     WHERE
-      (SubClassOfRaw.child_uri = SubClassOfEdge_ifr1.parent_uri)
+      (Class.uri = SubClassOfRaw.child_uri) AND
+      (t_1_Class.uri = SubClassOfRaw.parent_uri)
    UNION ALL
   
     SELECT
-      t_1_SubClassOfRaw.child_uri AS child_uri,
-      t_1_SubClassOfRaw.parent_uri AS parent_uri
+      SubClassOf_ifr0.child_uri AS child_uri,
+      t_2_SubClassOfRaw.parent_uri AS parent_uri
     FROM
-      t_3_SubClassOfRaw AS t_1_SubClassOfRaw, t_4_ClassNode AS ClassNode, t_4_ClassNode AS t_2_ClassNode
+      logica_home.SubClassOf_ifr0 AS SubClassOf_ifr0, t_2_SubClassOfRaw
     WHERE
-      (ClassNode.uri = t_1_SubClassOfRaw.child_uri) AND
-      (t_2_ClassNode.uri = t_1_SubClassOfRaw.parent_uri)
+      (t_2_SubClassOfRaw.child_uri = SubClassOf_ifr0.parent_uri)
   
 ) AS UNUSED_TABLE_NAME  )
 SELECT
-  SubClassOfEdge_MultBodyAggAux_f3.child_uri AS child_uri,
-  SubClassOfEdge_MultBodyAggAux_f3.parent_uri AS parent_uri
+  SubClassOf_MultBodyAggAux_f2.child_uri AS child_uri,
+  SubClassOf_MultBodyAggAux_f2.parent_uri AS parent_uri
 FROM
-  t_0_SubClassOfEdge_MultBodyAggAux_f3 AS SubClassOfEdge_MultBodyAggAux_f3
-GROUP BY SubClassOfEdge_MultBodyAggAux_f3.child_uri, SubClassOfEdge_MultBodyAggAux_f3.parent_uri;
+  t_0_SubClassOf_MultBodyAggAux_f2 AS SubClassOf_MultBodyAggAux_f2
+GROUP BY SubClassOf_MultBodyAggAux_f2.child_uri, SubClassOf_MultBodyAggAux_f2.parent_uri;
 
--- Interacting with table logica_home.SubClassOfEdge_ifr2
+-- Interacting with table logica_home.SubClassOf_ifr1
 
-CREATE OR REPLACE TABLE logica_home.SubClassOfEdge_ifr1 AS WITH t_3_SubClassOfRaw AS (SELECT * FROM (
+CREATE OR REPLACE TABLE logica_home.SubClassOf_ifr2 AS WITH t_2_SubClassOfRaw AS (SELECT * FROM (
   
     SELECT
       E'http://example.org/hr#Employee' AS child_uri,
@@ -246,7 +181,7 @@ CREATE OR REPLACE TABLE logica_home.SubClassOfEdge_ifr1 AS WITH t_3_SubClassOfRa
       E'http://example.org/hr#Employee' AS parent_uri
   
 ) AS UNUSED_TABLE_NAME  ),
-t_5_ClassRaw AS (SELECT * FROM (
+t_4_ClassRaw AS (SELECT * FROM (
   
     SELECT
       E'http://example.org/hr#Company' AS uri
@@ -264,42 +199,42 @@ t_5_ClassRaw AS (SELECT * FROM (
       E'http://example.org/hr#Person' AS uri
   
 ) AS UNUSED_TABLE_NAME  ),
-t_4_ClassNode AS (SELECT
+t_3_Class AS (SELECT
   ClassRaw.uri AS uri
 FROM
-  t_5_ClassRaw AS ClassRaw
+  t_4_ClassRaw AS ClassRaw
 GROUP BY ClassRaw.uri ORDER BY uri),
-t_0_SubClassOfEdge_MultBodyAggAux_f4 AS (SELECT * FROM (
+t_0_SubClassOf_MultBodyAggAux_f3 AS (SELECT * FROM (
   
     SELECT
-      SubClassOfEdge_ifr2.child_uri AS child_uri,
+      SubClassOfRaw.child_uri AS child_uri,
       SubClassOfRaw.parent_uri AS parent_uri
     FROM
-      logica_home.SubClassOfEdge_ifr2 AS SubClassOfEdge_ifr2, t_3_SubClassOfRaw AS SubClassOfRaw
+      t_2_SubClassOfRaw AS SubClassOfRaw, t_3_Class AS Class, t_3_Class AS t_1_Class
     WHERE
-      (SubClassOfRaw.child_uri = SubClassOfEdge_ifr2.parent_uri)
+      (Class.uri = SubClassOfRaw.child_uri) AND
+      (t_1_Class.uri = SubClassOfRaw.parent_uri)
    UNION ALL
   
     SELECT
-      t_1_SubClassOfRaw.child_uri AS child_uri,
-      t_1_SubClassOfRaw.parent_uri AS parent_uri
+      SubClassOf_ifr1.child_uri AS child_uri,
+      t_2_SubClassOfRaw.parent_uri AS parent_uri
     FROM
-      t_3_SubClassOfRaw AS t_1_SubClassOfRaw, t_4_ClassNode AS ClassNode, t_4_ClassNode AS t_2_ClassNode
+      logica_home.SubClassOf_ifr1 AS SubClassOf_ifr1, t_2_SubClassOfRaw
     WHERE
-      (ClassNode.uri = t_1_SubClassOfRaw.child_uri) AND
-      (t_2_ClassNode.uri = t_1_SubClassOfRaw.parent_uri)
+      (t_2_SubClassOfRaw.child_uri = SubClassOf_ifr1.parent_uri)
   
 ) AS UNUSED_TABLE_NAME  )
 SELECT
-  SubClassOfEdge_MultBodyAggAux_f4.child_uri AS child_uri,
-  SubClassOfEdge_MultBodyAggAux_f4.parent_uri AS parent_uri
+  SubClassOf_MultBodyAggAux_f3.child_uri AS child_uri,
+  SubClassOf_MultBodyAggAux_f3.parent_uri AS parent_uri
 FROM
-  t_0_SubClassOfEdge_MultBodyAggAux_f4 AS SubClassOfEdge_MultBodyAggAux_f4
-GROUP BY SubClassOfEdge_MultBodyAggAux_f4.child_uri, SubClassOfEdge_MultBodyAggAux_f4.parent_uri;
+  t_0_SubClassOf_MultBodyAggAux_f3 AS SubClassOf_MultBodyAggAux_f3
+GROUP BY SubClassOf_MultBodyAggAux_f3.child_uri, SubClassOf_MultBodyAggAux_f3.parent_uri;
 
--- Interacting with table logica_home.SubClassOfEdge_ifr1
+-- Interacting with table logica_home.SubClassOf_ifr2
 
-WITH t_3_SubClassOfRaw AS (SELECT * FROM (
+CREATE OR REPLACE TABLE logica_home.SubClassOf_ifr1 AS WITH t_2_SubClassOfRaw AS (SELECT * FROM (
   
     SELECT
       E'http://example.org/hr#Employee' AS child_uri,
@@ -311,7 +246,7 @@ WITH t_3_SubClassOfRaw AS (SELECT * FROM (
       E'http://example.org/hr#Employee' AS parent_uri
   
 ) AS UNUSED_TABLE_NAME  ),
-t_5_ClassRaw AS (SELECT * FROM (
+t_4_ClassRaw AS (SELECT * FROM (
   
     SELECT
       E'http://example.org/hr#Company' AS uri
@@ -329,48 +264,113 @@ t_5_ClassRaw AS (SELECT * FROM (
       E'http://example.org/hr#Person' AS uri
   
 ) AS UNUSED_TABLE_NAME  ),
-t_4_ClassNode AS (SELECT
+t_3_Class AS (SELECT
   ClassRaw.uri AS uri
 FROM
-  t_5_ClassRaw AS ClassRaw
+  t_4_ClassRaw AS ClassRaw
 GROUP BY ClassRaw.uri ORDER BY uri),
-t_0_SubClassOfEdge_MultBodyAggAux_f5 AS (SELECT * FROM (
+t_0_SubClassOf_MultBodyAggAux_f4 AS (SELECT * FROM (
   
     SELECT
-      SubClassOfEdge_ifr3.child_uri AS child_uri,
+      SubClassOfRaw.child_uri AS child_uri,
       SubClassOfRaw.parent_uri AS parent_uri
     FROM
-      logica_home.SubClassOfEdge_ifr1 AS SubClassOfEdge_ifr3, t_3_SubClassOfRaw AS SubClassOfRaw
+      t_2_SubClassOfRaw AS SubClassOfRaw, t_3_Class AS Class, t_3_Class AS t_1_Class
     WHERE
-      (SubClassOfRaw.child_uri = SubClassOfEdge_ifr3.parent_uri)
+      (Class.uri = SubClassOfRaw.child_uri) AND
+      (t_1_Class.uri = SubClassOfRaw.parent_uri)
    UNION ALL
   
     SELECT
-      t_1_SubClassOfRaw.child_uri AS child_uri,
-      t_1_SubClassOfRaw.parent_uri AS parent_uri
+      SubClassOf_ifr2.child_uri AS child_uri,
+      t_2_SubClassOfRaw.parent_uri AS parent_uri
     FROM
-      t_3_SubClassOfRaw AS t_1_SubClassOfRaw, t_4_ClassNode AS ClassNode, t_4_ClassNode AS t_2_ClassNode
+      logica_home.SubClassOf_ifr2 AS SubClassOf_ifr2, t_2_SubClassOfRaw
     WHERE
-      (ClassNode.uri = t_1_SubClassOfRaw.child_uri) AND
-      (t_2_ClassNode.uri = t_1_SubClassOfRaw.parent_uri)
+      (t_2_SubClassOfRaw.child_uri = SubClassOf_ifr2.parent_uri)
   
 ) AS UNUSED_TABLE_NAME  )
 SELECT
-  SubClassOfEdge_MultBodyAggAux_f5.child_uri AS child_uri,
-  SubClassOfEdge_MultBodyAggAux_f5.parent_uri AS parent_uri
+  SubClassOf_MultBodyAggAux_f4.child_uri AS child_uri,
+  SubClassOf_MultBodyAggAux_f4.parent_uri AS parent_uri
 FROM
-  t_0_SubClassOfEdge_MultBodyAggAux_f5 AS SubClassOfEdge_MultBodyAggAux_f5
-GROUP BY SubClassOfEdge_MultBodyAggAux_f5.child_uri, SubClassOfEdge_MultBodyAggAux_f5.parent_uri;
+  t_0_SubClassOf_MultBodyAggAux_f4 AS SubClassOf_MultBodyAggAux_f4
+GROUP BY SubClassOf_MultBodyAggAux_f4.child_uri, SubClassOf_MultBodyAggAux_f4.parent_uri;
+
+-- Interacting with table logica_home.SubClassOf_ifr1
+
+WITH t_2_SubClassOfRaw AS (SELECT * FROM (
+  
+    SELECT
+      E'http://example.org/hr#Employee' AS child_uri,
+      E'http://example.org/hr#Person' AS parent_uri
+   UNION ALL
+  
+    SELECT
+      E'http://example.org/hr#Manager' AS child_uri,
+      E'http://example.org/hr#Employee' AS parent_uri
+  
+) AS UNUSED_TABLE_NAME  ),
+t_4_ClassRaw AS (SELECT * FROM (
+  
+    SELECT
+      E'http://example.org/hr#Company' AS uri
+   UNION ALL
+  
+    SELECT
+      E'http://example.org/hr#Employee' AS uri
+   UNION ALL
+  
+    SELECT
+      E'http://example.org/hr#Manager' AS uri
+   UNION ALL
+  
+    SELECT
+      E'http://example.org/hr#Person' AS uri
+  
+) AS UNUSED_TABLE_NAME  ),
+t_3_Class AS (SELECT
+  ClassRaw.uri AS uri
+FROM
+  t_4_ClassRaw AS ClassRaw
+GROUP BY ClassRaw.uri ORDER BY uri),
+t_0_SubClassOf_MultBodyAggAux_f5 AS (SELECT * FROM (
+  
+    SELECT
+      SubClassOfRaw.child_uri AS child_uri,
+      SubClassOfRaw.parent_uri AS parent_uri
+    FROM
+      t_2_SubClassOfRaw AS SubClassOfRaw, t_3_Class AS Class, t_3_Class AS t_1_Class
+    WHERE
+      (Class.uri = SubClassOfRaw.child_uri) AND
+      (t_1_Class.uri = SubClassOfRaw.parent_uri)
+   UNION ALL
+  
+    SELECT
+      SubClassOf_ifr3.child_uri AS child_uri,
+      t_6_SubClassOfRaw.parent_uri AS parent_uri
+    FROM
+      logica_home.SubClassOf_ifr1 AS SubClassOf_ifr3, t_2_SubClassOfRaw AS t_6_SubClassOfRaw
+    WHERE
+      (t_6_SubClassOfRaw.child_uri = SubClassOf_ifr3.parent_uri)
+  
+) AS UNUSED_TABLE_NAME  )
+SELECT
+  SubClassOf_MultBodyAggAux_f5.child_uri AS child_uri,
+  SubClassOf_MultBodyAggAux_f5.parent_uri AS parent_uri
+FROM
+  t_0_SubClassOf_MultBodyAggAux_f5 AS SubClassOf_MultBodyAggAux_f5
+GROUP BY SubClassOf_MultBodyAggAux_f5.child_uri, SubClassOf_MultBodyAggAux_f5.parent_uri;
 
 -- Executed on DuckDB:
 | child_uri                      | parent_uri                     |
 |--------------------------------|--------------------------------|
+| http://example.org/hr#Manager  | http://example.org/hr#Person   |
 | http://example.org/hr#Manager  | http://example.org/hr#Employee |
 | http://example.org/hr#Employee | http://example.org/hr#Person   |
-| http://example.org/hr#Manager  | http://example.org/hr#Person   |
 (3 rows)
 
-$ synalog.compile('ontology.l', 'PersonNode')
+$ synalog.compile('ontology.l', 'Person')
 -- Initializing DuckDB environment.
 create schema if not exists logica_home;
 -- Empty record, has to have a field by DuckDB syntax.
@@ -391,7 +391,7 @@ GROUP BY (E'http://example.org/hr#bob' || ''), null, (E'Bob' || '') ORDER BY uri
 | http://example.org/hr#bob |       | Bob  |
 (1 row)
 
-$ synalog.compile('ontology.l', 'EmployeeNode')
+$ synalog.compile('ontology.l', 'Employee')
 -- Initializing DuckDB environment.
 create schema if not exists logica_home;
 -- Empty record, has to have a field by DuckDB syntax.
@@ -413,7 +413,7 @@ GROUP BY (E'http://example.org/hr#alice' || ''), (E'alice@acme.example' || ''), 
 | http://example.org/hr#alice | alice@acme.example | Alice O'Hara | 90000  |
 (1 row)
 
-$ synalog.compile('ontology.l', 'ManagerNode')
+$ synalog.compile('ontology.l', 'Manager')
 -- Initializing DuckDB environment.
 create schema if not exists logica_home;
 -- Empty record, has to have a field by DuckDB syntax.
@@ -435,7 +435,7 @@ GROUP BY (E'http://example.org/hr#carol' || ''), (E'carol@acme.example' || ''), 
 | http://example.org/hr#carol | carol@acme.example | Carol | 150000 |
 (1 row)
 
-$ synalog.compile('ontology.l', 'CompanyNode')
+$ synalog.compile('ontology.l', 'Company')
 -- Initializing DuckDB environment.
 create schema if not exists logica_home;
 -- Empty record, has to have a field by DuckDB syntax.
@@ -455,7 +455,7 @@ GROUP BY (E'http://example.org/hr#acme' || ''), (E'Acme "Robotics"' || '') ORDER
 | http://example.org/hr#acme | Acme "Robotics" |
 (1 row)
 
-$ synalog.compile('ontology.l', 'WorksAtEdge')
+$ synalog.compile('ontology.l', 'WorksAt')
 -- Initializing DuckDB environment.
 create schema if not exists logica_home;
 -- Empty record, has to have a field by DuckDB syntax.
@@ -474,7 +474,7 @@ WITH t_0_WorksAtRaw AS (SELECT * FROM (
       E'http://example.org/hr#acme' AS object_uri
   
 ) AS UNUSED_TABLE_NAME  ),
-t_1_EmployeeNode AS (SELECT
+t_1_Employee AS (SELECT
   E'http://example.org/hr#alice' AS uri,
   E'alice@acme.example' AS email,
   E'Alice O''Hara' AS name,
@@ -482,7 +482,7 @@ t_1_EmployeeNode AS (SELECT
 FROM
   (SELECT 'singleton' as s) as unused_singleton
 GROUP BY (E'http://example.org/hr#alice' || ''), (E'alice@acme.example' || ''), (E'Alice O''Hara' || ''), 90000 + 0 ORDER BY uri),
-t_2_CompanyNode AS (SELECT
+t_2_Company AS (SELECT
   E'http://example.org/hr#acme' AS uri,
   E'Acme "Robotics"' AS name
 FROM
@@ -492,10 +492,10 @@ SELECT
   WorksAtRaw.subject_uri AS subject_uri,
   WorksAtRaw.object_uri AS object_uri
 FROM
-  t_0_WorksAtRaw AS WorksAtRaw, t_1_EmployeeNode AS EmployeeNode, t_2_CompanyNode AS CompanyNode
+  t_0_WorksAtRaw AS WorksAtRaw, t_1_Employee AS Employee, t_2_Company AS Company
 WHERE
-  (EmployeeNode.uri = WorksAtRaw.subject_uri) AND
-  (CompanyNode.uri = WorksAtRaw.object_uri)
+  (Employee.uri = WorksAtRaw.subject_uri) AND
+  (Company.uri = WorksAtRaw.object_uri)
 GROUP BY WorksAtRaw.subject_uri, WorksAtRaw.object_uri ORDER BY subject_uri;
 
 -- Executed on DuckDB:
@@ -504,7 +504,7 @@ GROUP BY WorksAtRaw.subject_uri, WorksAtRaw.object_uri ORDER BY subject_uri;
 | http://example.org/hr#alice | http://example.org/hr#acme |
 (1 row)
 
-$ synalog.compile('ontology.l', 'KnowsEdge')
+$ synalog.compile('ontology.l', 'Knows')
 -- Initializing DuckDB environment.
 create schema if not exists logica_home;
 -- Empty record, has to have a field by DuckDB syntax.
@@ -523,7 +523,7 @@ WITH t_1_KnowsRaw AS (SELECT * FROM (
       E'http://example.org/hr#alice' AS object_uri
   
 ) AS UNUSED_TABLE_NAME  ),
-t_2_PersonNode AS (SELECT
+t_2_Person AS (SELECT
   E'http://example.org/hr#bob' AS uri,
   null AS email,
   E'Bob' AS name
@@ -534,10 +534,10 @@ SELECT
   KnowsRaw.subject_uri AS subject_uri,
   KnowsRaw.object_uri AS object_uri
 FROM
-  t_1_KnowsRaw AS KnowsRaw, t_2_PersonNode AS PersonNode, t_2_PersonNode AS t_0_PersonNode
+  t_1_KnowsRaw AS KnowsRaw, t_2_Person AS Person, t_2_Person AS t_0_Person
 WHERE
-  (PersonNode.uri = KnowsRaw.subject_uri) AND
-  (t_0_PersonNode.uri = KnowsRaw.object_uri)
+  (Person.uri = KnowsRaw.subject_uri) AND
+  (t_0_Person.uri = KnowsRaw.object_uri)
 GROUP BY KnowsRaw.subject_uri, KnowsRaw.object_uri ORDER BY subject_uri;
 
 -- Executed on DuckDB:
@@ -545,14 +545,14 @@ GROUP BY KnowsRaw.subject_uri, KnowsRaw.object_uri ORDER BY subject_uri;
 |-------------|------------|
 (0 rows)
 
-$ synalog.compile('ontology.l', 'ReportsToEdge')
+$ synalog.compile('ontology.l', 'ReportsTo')
 -- Initializing DuckDB environment.
 create schema if not exists logica_home;
 -- Empty record, has to have a field by DuckDB syntax.
 drop type if exists logicarecord893574736 cascade; create type logicarecord893574736 as struct(nirvana numeric);
 create sequence if not exists eternal_logical_sequence;
 
-WITH t_0_EmployeeNode AS (SELECT
+WITH t_0_Employee AS (SELECT
   E'http://example.org/hr#alice' AS uri,
   E'alice@acme.example' AS email,
   E'Alice O''Hara' AS name,
@@ -560,7 +560,7 @@ WITH t_0_EmployeeNode AS (SELECT
 FROM
   (SELECT 'singleton' as s) as unused_singleton
 GROUP BY (E'http://example.org/hr#alice' || ''), (E'alice@acme.example' || ''), (E'Alice O''Hara' || ''), 90000 + 0 ORDER BY uri),
-t_1_ManagerNode AS (SELECT
+t_1_Manager AS (SELECT
   E'http://example.org/hr#carol' AS uri,
   E'carol@acme.example' AS email,
   E'Carol' AS name,
@@ -569,14 +569,14 @@ FROM
   (SELECT 'singleton' as s) as unused_singleton
 GROUP BY (E'http://example.org/hr#carol' || ''), (E'carol@acme.example' || ''), (E'Carol' || ''), 150000 + 0 ORDER BY uri)
 SELECT
-  EmployeeNode.uri AS subject_uri,
-  ManagerNode.uri AS object_uri
+  Employee.uri AS subject_uri,
+  Manager.uri AS object_uri
 FROM
-  t_0_EmployeeNode AS EmployeeNode, t_1_ManagerNode AS ManagerNode
+  t_0_Employee AS Employee, t_1_Manager AS Manager
 WHERE
-  (E'http://example.org/hr#alice' = EmployeeNode.uri) AND
-  (E'http://example.org/hr#carol' = ManagerNode.uri)
-GROUP BY EmployeeNode.uri, ManagerNode.uri ORDER BY subject_uri;
+  (E'http://example.org/hr#alice' = Employee.uri) AND
+  (E'http://example.org/hr#carol' = Manager.uri)
+GROUP BY Employee.uri, Manager.uri ORDER BY subject_uri;
 
 -- Executed on DuckDB:
 | subject_uri                 | object_uri                  |

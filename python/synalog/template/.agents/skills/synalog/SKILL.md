@@ -93,16 +93,16 @@ Programs have three sections. A database table is referenced by its database nam
 # Tables (read-only declarations)
 Sales(region:, amount:, sold_at:) :- sales(region:, amount:, sold_at:);
 
-# Concepts — extract entities (*Node) and relationships (*Edge)
-@OrderBy(RegionNode, "region");
-RegionNode(region:) distinct :- Sales(region:);
+# Concepts — extract entities and relationships
+@OrderBy(Region, "region");
+Region(region:) distinct :- Sales(region:);
 
 # Rules — derive insights (no suffix)
 @OrderBy(TotalByRegion, "total", "DESC");
-TotalByRegion(region:, total? += amount) distinct :- RegionNode(region:), Sales(region:, amount:);
+TotalByRegion(region:, total? += amount) distinct :- Region(region:), Sales(region:, amount:);
 ```
 
-**Naming:** entity concepts → `*Node`; relationship concepts → `*Edge`; rules → no suffix.
+**Naming:** name concepts plainly after the entity or relationship — no suffixes; rules carry no suffix either.
 
 ## Critical rules
 
@@ -186,7 +186,7 @@ SMBRevenue        := SegmentRevenue(Segment: SMBCustomer);
 
 ## Knowledge graphs
 
-When data has entities and relationships, model `*Node` concepts (first column = primary key, sorted by it) and `*Edge` concepts, then write rules that traverse.
+When data has entities and relationships, model entity concepts (first column = primary key, sorted by it) and relationship concepts, then write rules that traverse.
 
 - Edges join **through node concepts**, not raw tables — a node filter then applies to all edges automatically.
 - Preserve URI/URL columns in nodes (`url`, `href`, `permalink`, ...) — dropping them makes the node useless for action.
@@ -194,9 +194,9 @@ When data has entities and relationships, model `*Node` concepts (first column =
 - Temporal edges carry `start_date`/`end_date` (via the temporal pipeline); "active today" joins `Today`.
 
 ```logica
-@OrderBy(WorksInEdge, "person_id");
-WorksInEdge(person_id:, department_id:) distinct :-
-  PersonNode(person_id:),
-  DepartmentNode(department_id:),
+@OrderBy(WorksIn, "person_id");
+WorksIn(person_id:, department_id:) distinct :-
+  Person(person_id:),
+  Department(department_id:),
   Employees(person_id:, department_id:);
 ```

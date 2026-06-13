@@ -1,8 +1,8 @@
 # Knowledge graphs
 
-When your data has entities and relationships, model it as a graph: `*Node` concepts are the vertices, `*Edge` concepts are the connections, and rules traverse the graph.
+When your data has entities and relationships, model it as a graph: entity concepts are the vertices, relationship concepts are the connections, and rules traverse the graph.
 
-These are **modeling conventions**, not language rules — the compiler attaches no meaning to the `*Node`/`*Edge` suffixes. They are the discipline that keeps a growing rule base composable, and the structure Synalog-based agent runtimes expect.
+These are **modeling conventions**, not language rules — the compiler attaches no special meaning to a concept's name. They are the discipline that keeps a growing rule base composable, and the structure Synalog-based agent runtimes expect.
 
 Nodes and edges are how the agent builds the knowledge-graph layer of its [dynamic semantic layer](index.md): once entities and relationships are named, every later rule traverses them instead of re-joining raw tables, and a filter on one node propagates through the whole graph.
 
@@ -14,13 +14,13 @@ Nodes and edges are how the agent builds the knowledge-graph layer of its [dynam
 - **Edges join through nodes**, not raw tables. This guarantees referential integrity: a filter on a node automatically applies to every edge that references it.
 
 ```logica
-@OrderBy(PersonNode, "person_id");
-PersonNode(person_id:, name:, role:) distinct :- Employees(person_id:, name:, role:);
+@OrderBy(Person, "person_id");
+Person(person_id:, name:, role:) distinct :- Employees(person_id:, name:, role:);
 
-@OrderBy(WorksInEdge, "person_id");
-WorksInEdge(person_id:, department_id:) distinct :-
-  PersonNode(person_id:),
-  DepartmentNode(department_id:),
+@OrderBy(WorksIn, "person_id");
+WorksIn(person_id:, department_id:) distinct :-
+  Person(person_id:),
+  Department(department_id:),
   Employees(person_id:, department_id:);
 ```
 
@@ -31,8 +31,8 @@ WorksInEdge(person_id:, department_id:) distinct :-
 When more than two entities participate, include all of them as columns:
 
 ```logica
-WorksOnEdge(person_id:, project_id:, role:) distinct :-
-  PersonNode(person_id:), ProjectNode(project_id:),
+WorksOn(person_id:, project_id:, role:) distinct :-
+  Person(person_id:), Project(project_id:),
   ProjectAssignments(person_id:, project_id:, role:);
 ```
 
@@ -41,21 +41,21 @@ WorksOnEdge(person_id:, project_id:, role:) distinct :-
 Attach a numeric attribute to the relationship — often an aggregate:
 
 ```logica
-PurchasedEdge(customer_id:, product_id:, total_amount? += amount) distinct :-
-  CustomerNode(customer_id:), ProductNode(product_id:),
+Purchased(customer_id:, product_id:, total_amount? += amount) distinct :-
+  Customer(customer_id:), Product(product_id:),
   Orders(customer_id:, product_id:, amount:);
 ```
 
 ### Types and statuses as separate concepts
 
-When an entity or relationship has distinct categorical states, model one concept per state — `ActiveUserNode`, `ChurnedUserNode`, `ActiveContractEdge`, `TerminatedContractEdge` — each joined through the base node.
+When an entity or relationship has distinct categorical states, model one concept per state — `ActiveUser`, `ChurnedUser`, `ActiveContract`, `TerminatedContract` — each joined through the base node.
 
 ### Symmetric edges
 
 Define the raw direction once (e.g. with `a < b`), then close it with a union:
 
 ```logica
-CoAuthoredEdge(author_a:, author_b:, paper_id:) distinct :-
+CoAuthored(author_a:, author_b:, paper_id:) distinct :-
   CoAuthoredRaw(author_a:, author_b:, paper_id:) |
   CoAuthoredRaw(author_a: author_b, author_b: author_a, paper_id:);
 ```
@@ -65,7 +65,7 @@ CoAuthoredEdge(author_a:, author_b:, paper_id:) distinct :-
 Derive the opposite direction from an existing edge:
 
 ```logica
-ReportsToEdge(employee_id:, manager_id:) distinct :- ManagesEdge(manager_id:, employee_id:);
+ReportsTo(employee_id:, manager_id:) distinct :- Manages(manager_id:, employee_id:);
 ```
 
 ### Edge composition
@@ -73,9 +73,9 @@ ReportsToEdge(employee_id:, manager_id:) distinct :- ManagesEdge(manager_id:, em
 Chain different edge types: `A→B` via one relation and `B→C` via another gives `A→C`:
 
 ```logica
-WorksWithClientEdge(employee_id:, client_id:) distinct :-
-  MemberOfEdge(employee_id:, team_id:),
-  EngagedWithEdge(team_id:, client_id:);
+WorksWithClient(employee_id:, client_id:) distinct :-
+  MemberOf(employee_id:, team_id:),
+  EngagedWith(team_id:, client_id:);
 ```
 
 ### Chains and paths
@@ -87,7 +87,7 @@ Recursion over a single edge type (parent→child, manager→employee) computes 
 A recursive closure detects hierarchy cycles ([example](language/recursion.md#cycle-detection)). For cardinality constraints, count children per parent and filter for violations:
 
 ```logica
-ChildCount(parent_id:, n? += 1) distinct :- ParentOfEdge(parent_id:, child_id:);
+ChildCount(parent_id:, n? += 1) distinct :- ParentOf(parent_id:, child_id:);
 TooManyChildren(parent_id:, n:) :- ChildCount(parent_id:, n:), n > 2;
 ```
 

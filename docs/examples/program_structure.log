@@ -1,7 +1,7 @@
 $ synalog.check('program_structure.l')
 No errors found.
 
-$ synalog.compile('program_structure.l', 'CustomerNode')
+$ synalog.compile('program_structure.l', 'Customer')
 -- Initializing DuckDB environment.
 create schema if not exists logica_home;
 -- Empty record, has to have a field by DuckDB syntax.

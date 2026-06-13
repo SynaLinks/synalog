@@ -7,18 +7,18 @@ Tables are read-only. A database table is referenced by its database name (lower
 TableName(col1:, col2:) :- database_table(col1:, col2:);
 
 # Concepts
-@OrderBy(EntityNode, "field1");
-EntityNode(field1:, field2:) distinct :- TableName(field1:, field2:);
+@OrderBy(Entity, "field1");
+Entity(field1:, field2:) distinct :- TableName(field1:, field2:);
 
-@OrderBy(RelationEdge, "field1");
-RelationEdge(field1:, field2:) distinct :- TableName(field1:, field2:);
+@OrderBy(Relation, "field1");
+Relation(field1:, field2:) distinct :- TableName(field1:, field2:);
 
 # Rules
 @OrderBy(RuleName, "total", "desc");
 RuleName(field1:, total? += amount) distinct :- TableName(field1:, amount:);
 ```
 
-**Naming:** Entity concepts → `*Node`. Relationship concepts → `*Edge`. Rules → no suffix.
+**Naming:** name concepts plainly after the entity or relationship they represent — no suffixes (`Customer`, `Product`, `WorksAt`). Rules → no suffix either.
 
 **CRITICAL:**
 - Directives (`@OrderBy`, `@Limit`, `@Recursive`, `@Ground`) go BEFORE the rule.
@@ -230,7 +230,7 @@ OrdersByStatus(status:, count? += 1) distinct :- OrderStatus(status:), Orders(st
 
 ## KNOWLEDGE GRAPHS
 
-When the data has entities and relationships, model as a graph: `*Node` concepts (vertices) + `*Edge` concepts (connections), then rules traverse.
+When the data has entities and relationships, model as a graph: entity concepts (the vertices) + relationship concepts (the connections), then rules traverse.
 
 **Conventions:**
 - **Primary key first**: first column of every concept is its PK; sort by it with `@OrderBy`.
@@ -238,13 +238,13 @@ When the data has entities and relationships, model as a graph: `*Node` concepts
 - **Edges join through nodes**, not raw tables. Guarantees referential integrity: a node filter automatically applies to all edges.
 
 ```logica
-@OrderBy(PersonNode, "person_id");
-PersonNode(person_id:, name:, role:) distinct :- Employees(person_id:, name:, role:);
+@OrderBy(Person, "person_id");
+Person(person_id:, name:, role:) distinct :- Employees(person_id:, name:, role:);
 
-@OrderBy(WorksInEdge, "person_id");
-WorksInEdge(person_id:, department_id:) distinct :-
-  PersonNode(person_id:),
-  DepartmentNode(department_id:),
+@OrderBy(WorksIn, "person_id");
+WorksIn(person_id:, department_id:) distinct :-
+  Person(person_id:),
+  Department(department_id:),
   Employees(person_id:, department_id:);
 ```
 
@@ -252,39 +252,39 @@ WorksInEdge(person_id:, department_id:) distinct :-
 
 **N-ary** (>2 entities): include all participants as columns.
 ```logica
-WorksOnEdge(person_id:, project_id:, role:) distinct :-
-  PersonNode(person_id:), ProjectNode(project_id:),
+WorksOn(person_id:, project_id:, role:) distinct :-
+  Person(person_id:), Project(project_id:),
   ProjectAssignments(person_id:, project_id:, role:);
 ```
 
 **Weighted** — numeric attribute on the edge.
 ```logica
-PurchasedEdge(customer_id:, product_id:, total_amount? += amount) distinct :-
-  CustomerNode(customer_id:), ProductNode(product_id:),
+Purchased(customer_id:, product_id:, total_amount? += amount) distinct :-
+  Customer(customer_id:), Product(product_id:),
   Orders(customer_id:, product_id:, amount:);
 ```
 
-**Type/status as separate nodes/edges** — when an entity or relationship has distinct categorical states, model one concept per state (e.g., `ActiveUserNode`, `ChurnedUserNode`, `ActiveContractEdge`, `TerminatedContractEdge`) joined through the base node.
+**Type/status as separate nodes/edges** — when an entity or relationship has distinct categorical states, model one concept per state (e.g., `ActiveUser`, `ChurnedUser`, `ActiveContract`, `TerminatedContract`) joined through the base node.
 
 **Symmetric** — define raw direction (`a < b`), then close with `|`:
 ```logica
-CoAuthoredEdge(author_a:, author_b:, paper_id:) distinct :-
+CoAuthored(author_a:, author_b:, paper_id:) distinct :-
   CoAuthoredRaw(author_a:, author_b:, paper_id:) |
   CoAuthoredRaw(author_a: author_b, author_b: author_a, paper_id:);
 ```
 
 **Inverse** — derive opposite-direction edge from existing one:
 ```logica
-ReportsToEdge(employee_id:, manager_id:) distinct :- ManagesEdge(manager_id:, employee_id:);
+ReportsTo(employee_id:, manager_id:) distinct :- Manages(manager_id:, employee_id:);
 ```
 
 **Acyclic check** — recursive closure detects cycles:
 ```logica
 @Recursive(AncestorOf, 100);
-AncestorOf(ancestor_id:, descendant_id:) :- ParentOfEdge(parent_id: ancestor_id, child_id: descendant_id);
+AncestorOf(ancestor_id:, descendant_id:) :- ParentOf(parent_id: ancestor_id, child_id: descendant_id);
 AncestorOf(ancestor_id:, descendant_id:) :-
   AncestorOf(ancestor_id:, intermediate:),
-  ParentOfEdge(parent_id: intermediate, child_id: descendant_id);
+  ParentOf(parent_id: intermediate, child_id: descendant_id);
 HierarchyCycle(node_id:) :- AncestorOf(ancestor_id: node_id, descendant_id: node_id);
 ```
 
@@ -292,9 +292,9 @@ HierarchyCycle(node_id:) :- AncestorOf(ancestor_id: node_id, descendant_id: node
 
 **Composition** — chain different edge types: `A→B via R1`, `B→C via R2` ⇒ `A→C`.
 ```logica
-WorksWithClientEdge(employee_id:, client_id:) distinct :-
-  MemberOfEdge(employee_id:, team_id:),
-  EngagedWithEdge(team_id:, client_id:);
+WorksWithClient(employee_id:, client_id:) distinct :-
+  MemberOf(employee_id:, team_id:),
+  EngagedWith(team_id:, client_id:);
 ```
 
 **Chains** — recursive over the same edge type (parent→child, manager→employee).
@@ -308,23 +308,23 @@ Include `start_date`/`end_date` (extracted via the temporal pipeline). Then:
 - Compose temporal relations: chain through time-aware edges.
 
 ```logica
-@OrderBy(MemberOfEdge, "employee_id");
-MemberOfEdge(employee_id:, team_id:, start_date:, end_date:) distinct :-
-  EmployeeNode(employee_id:), TeamNode(team_id:),
+@OrderBy(MemberOf, "employee_id");
+MemberOf(employee_id:, team_id:, start_date:, end_date:) distinct :-
+  Employee(employee_id:), Team(team_id:),
   TeamAssignments(employee_id:, team_id:, started_at:, ended_at:),
   start_date == Substr(ToString(started_at), 1, 10),
   end_date   == Substr(ToString(ended_at), 1, 10);
 
 @OrderBy(CurrentMember, "employee");
 CurrentMember(employee:, team:) :-
-  MemberOfEdge(employee_id:, team_id:, start_date:, end_date:),
-  EmployeeNode(employee_id:, name: employee),
-  TeamNode(team_id:, name: team),
+  MemberOf(employee_id:, team_id:, start_date:, end_date:),
+  Employee(employee_id:, name: employee),
+  Team(team_id:, name: team),
   Today(date:),
   start_date <= date, end_date >= date;
 ```
 
 ### Key Principles
-- Nodes (`*Node`) = entities; Edges (`*Edge`) = relationships; Rules = traversals/queries.
+- Entity concepts = the vertices; relationship concepts = the edges; Rules = traversals/queries.
 - Every edge joins through node concepts for referential integrity.
 - Reuse aggressively — once nodes and edges exist, all rules build on them.

@@ -19,21 +19,38 @@ The output has two layers, so the command works whether an ontology is mostly a 
 
 | Ontology construct | Synalog output |
 | --- | --- |
-| Class | a row of `ClassNode` (keyed by the class URI, with a `label` from `rdfs:label`) |
-| `rdfs:subClassOf` | a recursive `SubClassOfEdge` — the transitive closure of the hierarchy |
+| Class | a row of `Class` (keyed by the class URI, with a `label` from `rdfs:label`) |
+| `rdfs:subClassOf` | a recursive `SubClassOf` — the transitive closure of the hierarchy |
 
 **Instance layer** (emitted for each class that actually has individuals — the ABox):
 
 | Ontology construct | Synalog output |
 | --- | --- |
-| Class with individuals | a `*Node` concept keyed by the individual's URI (preserved verbatim) |
-| Datatype property | a column on the node of every individual that uses it |
-| Object property | a `*Edge` concept joining two nodes through their URIs |
+| Class with individuals | a concept (named after the class) keyed by the individual's URI (preserved verbatim) |
+| Datatype property | a column on the concept of every individual that uses it |
+| Object property | a concept (named after the property) joining two entities through their URIs |
 | Individual | a `*Raw` fact the concepts build on, so the program runs as-is |
 
-Emitting per-class entity nodes only for classes that have individuals is what keeps a class-centric ontology usable: a 15,000-class taxonomy with no individuals becomes a single `ClassNode` plus its `SubClassOfEdge` hierarchy, not 15,000 empty one-row predicates.
+**OWL property axioms and characteristics** are translated to the matching rule patterns — so a transitive property is actually closed, an inverse is actually derived, and a functional property is actually checked:
 
-Datatype columns are **data-driven**: a property becomes a column of a node when an individual of that class actually uses it. That means inheritance works without reasoning over the class hierarchy — an individual typed as a subclass still gets the superclass's properties — and properties with no declared `rdfs:domain` are picked up too. Values keep their natural type (numbers, booleans) where rdflib can infer it; strings are emitted as single-quoted literals, and a property an individual lacks is filled with `null` so every row of a node has the same shape.
+| Ontology construct | Synalog output |
+| --- | --- |
+| `owl:TransitiveProperty` | a recursive `@Recursive` closure of the relationship |
+| `owl:SymmetricProperty` | the reverse direction is unioned in |
+| `owl:inverseOf` | each property's concept derives the other's inverse |
+| `rdfs:subPropertyOf` / `owl:equivalentProperty` | the super-/equivalent property includes the sub-/equivalent one |
+| `owl:ReflexiveProperty` | `(x, x)` for every individual in the domain |
+| `owl:FunctionalProperty` / `InverseFunctionalProperty` / `AsymmetricProperty` / `IrreflexiveProperty` | a `*Violation` concept that selects the individuals breaking the constraint (a non-empty result means the data is inconsistent) |
+| `owl:equivalentClass` | mutual `rdfs:subClassOf` (flows into the `SubClassOf` closure) |
+| `owl:disjointWith` | a `DisjointWithViolation` concept (individuals typed by two disjoint classes) |
+| `owl:sameAs` | a symmetric + transitive `SameAs` concept |
+| `owl:differentFrom` | a `DifferentFromViolation` (individuals asserted different yet inferred same) |
+
+Characteristics propagate across `owl:inverseOf` and `owl:equivalentProperty` (the inverse of a transitive property is transitive, of a functional one is inverse-functional; equivalents share everything), so the closures are complete on both sides. Every generated program is validated by the verifier. `owl:complementOf` and `owl:propertyChainAxiom` are not translated — they need open-world / non-stratifiable reasoning that does not map to a finite SQL rule.
+
+Emitting per-class entity concepts only for classes that have individuals is what keeps a class-centric ontology usable: a 15,000-class taxonomy with no individuals becomes a single `Class` plus its `SubClassOf` hierarchy, not 15,000 empty one-row predicates.
+
+Datatype columns are **data-driven**: a property becomes a column of a concept when an individual of that class actually uses it. That means inheritance works without reasoning over the class hierarchy — an individual typed as a subclass still gets the superclass's properties — and properties with no declared `rdfs:domain` are picked up too. Values keep their natural type (numbers, booleans) where rdflib can infer it; strings are emitted as single-quoted literals, and a property an individual lacks is filled with `null` so every row of a concept has the same shape.
 
 ## Building an ontology with Protégé
 
@@ -43,19 +60,19 @@ Datatype columns are **data-driven**: a property becomes a column of a node when
 
     ![Protégé Active Ontology tab, showing the ontology IRI bar and metrics](img/protege/active-ontology-tab.png)
 
-2. **Classes** (the *Classes* / *Entities* tab) — add a class per kind of entity (`Person`, `Company`, …). Nest a class under another to create an `rdfs:subClassOf` relationship (`Employee` under `Person`); Synalog turns the hierarchy into `SubClassOfEdge`. In the screenshot below the class hierarchy is on the left and the selected class's superclasses are in *Class Description* on the right.
+2. **Classes** (the *Classes* / *Entities* tab) — add a class per kind of entity (`Person`, `Company`, …). Nest a class under another to create an `rdfs:subClassOf` relationship (`Employee` under `Person`); Synalog turns the hierarchy into `SubClassOf`. In the screenshot below the class hierarchy is on the left and the selected class's superclasses are in *Class Description* on the right.
 
     ![Protégé Entities tab, showing the class hierarchy on the left and the class description on the right](img/protege/entities-tab.png)
 
 3. **Datatype properties** (*Data properties* tab) — add the attributes (`name`, `email`, `salary`). Set each property's **Domain** to the class it describes and its **Range** to a datatype (`xsd:string`, `xsd:integer`, …). These become node columns.
-4. **Object properties** (*Object properties* tab) — add the relationships (`worksAt`, `reportsTo`, `knows`). Set **Domain** and **Range** to the connected classes; these become `*Edge` concepts that join through the two nodes.
+4. **Object properties** (*Object properties* tab) — add the relationships (`worksAt`, `reportsTo`, `knows`). Set **Domain** and **Range** to the connected classes; these become relationship concepts that join through the two classes.
 5. **Individuals** (*Individuals* tab, optional) — add instances, assign each a *Type* (its class), and fill in property values. These become the `*Raw` facts, so the imported program runs immediately. Skip this step to import a schema-only ontology (the concepts are still generated, just without data).
 6. **Export.** *File → Save as…* and choose **RDF/XML** (`.owl`) or **Turtle** (`.ttl`) — `synalog import` reads either. Then:
 
     ```bash
     synalog import my-ontology.owl > my-ontology.l
     synalog my-ontology.l check        # validate
-    synalog my-ontology.l run PersonNode
+    synalog my-ontology.l run Person
     ```
 
 !!! tip "Don't build from scratch when a standard exists"
@@ -79,7 +96,7 @@ This small HR ontology (Turtle) has three levels of classes, a few datatype and 
     --8<-- "docs/examples/ontology.owl"
     ```
 
-`synalog import ontology.ttl` produces the program below. Note how `EmployeeNode` and `ManagerNode` carry `name`/`email` even though those properties are declared on `Person` — the columns follow the data:
+`synalog import ontology.ttl` produces the program below. Note how `Employee` and `Manager` carry `name`/`email` even though those properties are declared on `Person` — the columns follow the data:
 
 ```logica
 --8<-- "docs/examples/ontology.l"
@@ -99,13 +116,13 @@ The two-layer mapping shines on the big public ontologies, which are almost enti
 synalog import https://purl.obolibrary.org/obo/doid.owl > doid.l
 ```
 
-That 28 MB ontology has **14,703 classes**, a **17,224-edge** `subClassOf` hierarchy and **no individuals** — so the output is the schema layer only: one `ClassNode` (every disease, with its `rdfs:label`) and the recursive `SubClassOfEdge`, instead of 14,703 empty per-class predicates. An excerpt:
+That 28 MB ontology has **14,703 classes**, a **17,224-edge** `subClassOf` hierarchy and **no individuals** — so the output is the schema layer only: one `Class` (every disease, with its `rdfs:label`) and the recursive `SubClassOf`, instead of 14,703 empty per-class predicates. An excerpt:
 
 ```text
 --8<-- "docs/examples/doid_excerpt.txt"
 ```
 
-The whole thing converts in a few seconds; from there a recursive query over `SubClassOfEdge` gives you, say, every subtype of a disease by a single ancestor lookup.
+The whole thing converts in a few seconds; from there a recursive query over `SubClassOf` gives you, say, every subtype of a disease by a single ancestor lookup.
 
 ## Next steps
 

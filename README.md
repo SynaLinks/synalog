@@ -23,24 +23,24 @@
 
 Synalog is a logic programming language from the [Datalog](https://en.wikipedia.org/wiki/Datalog) family — a fork of [Logica](https://logica.dev/) with the entire engine (parser, compiler and verifier) **rewritten in Rust**. It compiles to optimized **SQL** and ships as a Python package built on [PyO3](https://pyo3.rs/): parsing is **~86.7x faster** and compilation **~13.7x faster** than the original Python implementation, so validating and compiling a program is effectively instant.
 
-Synalog was built for the AI agents era. The main idea is to give an agent a **dynamic semantic layer** over its data — a layer of named concepts and rules that the agent both reads from *and writes to* at inference time. Unlike a traditional BI semantic layer, which is modeled once by humans and frozen, Synalog's layer is authored on the fly: the agent extracts entities and relationships into **knowledge graphs**, derives meaning with composable **logical rules**, and reasons over time with **temporal reasoning** — accumulating all of it as structured, reusable memory.
+Synalog was built for the AI agents era. The main idea is to give an agent a **dynamic semantic layer** over its data — a layer of named concepts and rules that the agent both reads from *and writes to* at inference time. Unlike a traditional BI semantic layer, which is modeled once by humans and frozen, Synalog's layer is authored on the fly: the agent extracts entities and relationships into **knowledge graphs**, derives meaning with composable **logical rules**, and reasons over time with **temporal reasoning**: accumulating all of it as structured, reusable memory.
 
 ## What the agent gains
 
 A raw table is just rows; an agent has to re-interpret what they *mean* on every query. Synalog turns that meaning into a layer the agent owns:
 
-- **A shared vocabulary over raw tables** — instead of re-deriving "who is an active customer" or "what counts as revenue" in every query, the agent defines it once as a named concept and reuses it everywhere. The semantic layer is the agent's interface to the data.
-- **Instant knowledge-graph construction from raw tables** — a handful of `*Node` and `*Edge` rules turn existing relational tables into a traversable knowledge graph, with no ETL pipeline, no separate graph database, and no data movement. The graph is *virtual*: it compiles to SQL that runs directly on the source tables.
-- **Knowledge graphs the agent can traverse** — model entities as `*Node` concepts and relationships as `*Edge` concepts, then follow connections (composition, inverse, symmetric, recursive chains) without writing fragile join logic. See [Knowledge graphs](https://synalinks.github.io/synalog/knowledge-graphs/).
-- **Recursion and transitive reasoning** — transitive closures and graph traversals (org charts, taxonomies, bills of materials, referral chains, shortest paths) that are impossible to write correctly in raw SQL come out as a base case plus a recursive case, with the verifier guaranteeing termination.
-- **Logical rules that compose** — rules build on other rules, so knowledge accumulates instead of being re-derived. Complex questions decompose into small named predicates the agent can inspect, reuse, and combine.
-- **Temporal reasoning** — time-aware rules and edges (validity windows, "active today", overlap, point-in-time joins) let the agent answer *when*, not just *what* — reasoning that is notoriously error-prone to express directly in SQL.
-- **Dynamic, not static** — the layer evolves as the agent learns. New rules extend the vocabulary at runtime; the rule base itself becomes the agent's long-term memory over structured data.
-- **Auditable reasoning** — every derived fact traces back through named rules, giving full lineage from answer to source tables.
-- **Compile-time verification** — a formal verifier catches structural errors before any SQL touches a database, so a self-authored rule that parses but is unsound is rejected up front. See [Verification](https://synalinks.github.io/synalog/verification/).
-- **A fast Rust engine** — check and compile sit inside the agent's inner loop (every generated rule is validated, every query compiled, often several times per step). The Rust core makes that loop cost milliseconds instead of seconds. See [Benchmark](https://synalinks.github.io/synalog/benchmark/).
+- **A shared vocabulary over raw tables**: instead of re-deriving "who is an active customer" or "what counts as revenue" in every query, the agent defines it once as a named concept and reuses it everywhere. The semantic layer is the agent's interface to the data.
+- **Instant knowledge-graph construction from raw tables**: a handful of entity and relationship concepts turn existing relational tables into a traversable knowledge graph, with no ETL pipeline, no separate graph database, and no data movement. The graph is *virtual*: it compiles to SQL that runs directly on the source tables.
+- **Knowledge graphs the agent can traverse**: model entities and relationships as concepts, then follow connections (composition, inverse, symmetric, recursive chains) without writing fragile join logic. See [Knowledge graphs](https://synalinks.github.io/synalog/knowledge-graphs/).
+- **Recursion and transitive reasoning**: transitive closures and graph traversals (org charts, taxonomies, bills of materials, referral chains, shortest paths) that are impossible to write correctly in raw SQL come out as a base case plus a recursive case, with the verifier guaranteeing termination.
+- **Logical rules that compose**: rules build on other rules, so knowledge accumulates instead of being re-derived. Complex questions decompose into small named predicates the agent can inspect, reuse, and combine.
+- **Temporal reasoning**: time-aware rules and edges (validity windows, "active today", overlap, point-in-time joins) let the agent answer *when*, not just *what* — reasoning that is notoriously error-prone to express directly in SQL.
+- **Dynamic, not static**: the layer evolves as the agent learns. New rules extend the vocabulary at runtime; the rule base itself becomes the agent's long-term memory over structured data.
+- **Auditable reasoning**: every derived fact traces back through named rules, giving full lineage from answer to source tables.
+- **Compile-time verification**: a formal verifier catches structural errors before any SQL touches a database, so a self-authored rule that parses but is unsound is rejected up front. See [Verification](https://synalinks.github.io/synalog/verification/).
+- **A fast Rust engine**: check and compile sit inside the agent's inner loop (every generated rule is validated, every query compiled, often several times per step). The Rust core makes that loop cost milliseconds instead of seconds. See [Benchmark](https://synalinks.github.io/synalog/benchmark/).
 
-Because SQL engines are better optimized than logic programming engines, Synalog compiles into *optimized SQL* that runs on **SQLite**, **DuckDB**, **BigQuery**, **PostgreSQL**, **Presto**, **Trino** and **Databricks** — efficiently scaling to *petabytes of data*. See [Supported engines](https://synalinks.github.io/synalog/engines/).
+Because SQL engines are better optimized than logic programming engines, Synalog compiles into *optimized SQL* that runs on **SQLite**, **DuckDB**, **BigQuery**, **PostgreSQL**, **Presto**, **Trino** and **Databricks**: efficiently scaling to *petabytes of data*. See [Supported engines](https://synalinks.github.io/synalog/engines/).
 
 Full documentation: **<https://synalinks.github.io/synalog/>**
 
@@ -135,7 +135,7 @@ $ synalog program.l run EngineeringTeam
 - `run` executes locally on `duckdb` (needs `pip install duckdb`), `sqlite` (stdlib), or `psql` (needs `pip install psycopg` and `--dsn` or `SYNALOG_PSQL_DSN`). For other engines, use `print` and run the SQL with your own client. `pip install 'synalog[run]'` pulls in the duckdb and psycopg drivers.
 - `import path.to.file.Pred;` statements resolve `path/to/file.l` against the program file's directory, then the current directory; pass `--import-root DIR` (repeatable) to search elsewhere.
 - `--load TABLE=PATH` (repeatable) loads a csv/tsv/json/jsonl/parquet file as a table before running, e.g. `synalog senior.l run Senior --load employees=employees.csv`.
-- `synalog import ontology.owl` (or an `http(s)` URL) converts an OWL/RDF ontology into a Synalog knowledge graph — classes become `*Node` concepts, properties `*Edge` concepts, and individuals facts. See [Ontologies](https://synalinks.github.io/synalog/ontologies/).
+- `synalog import ontology.owl` (or an `http(s)` URL) converts an OWL/RDF ontology into a Synalog knowledge graph — classes become entity concepts, properties relationship concepts, and individuals facts. See [Ontologies](https://synalinks.github.io/synalog/ontologies/).
 - `synalog init` scaffolds a project (`uvx synalog init` runs it without installing; it asks for a name and description): a starter program importing a reusable `lib/` module, sample data in `data/`, and agent instructions (`AGENTS.md`, `CLAUDE.md`, `.agents/skills/synalog/SKILL.md`) so coding agents know how to use Synalog.
 
 Running `synalog` with no arguments starts an interactive session, in the spirit of `python` (the options above, e.g. `--engine` or `--load`, apply to it too):
@@ -217,11 +217,11 @@ Orders(customer_id:, product_id:, amount:, status:) :-
 
 # Concepts — extract entities and relationships
 
-@OrderBy(CustomerNode, "customer_id");
-CustomerNode(customer_id:) distinct :- Orders(customer_id:);
+@OrderBy(Customer, "customer_id");
+Customer(customer_id:) distinct :- Orders(customer_id:);
 
-@OrderBy(PurchasedEdge, "customer_id");
-PurchasedEdge(customer_id:, product_id:) distinct :- Orders(customer_id:, product_id:);
+@OrderBy(Purchased, "customer_id");
+Purchased(customer_id:, product_id:) distinct :- Orders(customer_id:, product_id:);
 
 # Rules — derive insights from concepts
 
@@ -434,7 +434,7 @@ Each engine has its own SQL dialect for string literals, array syntax, GROUP BY 
 
 ## Benchmark
 
-The Rust core is benchmarked against the original Python Logica implementation on every program of the compiler test suite (504 programs across 6 engines). Both run **in-process** — Synalog through the same PyO3 extension that `pip install synalog` ships — so the numbers measure exactly what a Python caller gets:
+The Rust core is benchmarked against the original Python Logica implementation on every program of the compiler test suite (504 programs across 6 engines). Both run **in-process**: Synalog through the same PyO3 extension that `pip install synalog` ships — so the numbers measure exactly what a Python caller gets:
 
 | | Python Logica | Synalog (Rust) | Speedup |
 |---|---|---|---|

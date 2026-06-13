@@ -47,10 +47,10 @@ The recursive closure of a parent/child edge detects cycles in a hierarchy — a
 
 ```logica
 @Recursive(AncestorOf, 100);
-AncestorOf(ancestor_id:, descendant_id:) :- ParentOfEdge(parent_id: ancestor_id, child_id: descendant_id);
+AncestorOf(ancestor_id:, descendant_id:) :- ParentOf(parent_id: ancestor_id, child_id: descendant_id);
 AncestorOf(ancestor_id:, descendant_id:) :-
   AncestorOf(ancestor_id:, intermediate:),
-  ParentOfEdge(parent_id: intermediate, child_id: descendant_id);
+  ParentOf(parent_id: intermediate, child_id: descendant_id);
 
 HierarchyCycle(node_id:) :- AncestorOf(ancestor_id: node_id, descendant_id: node_id);
 ```
