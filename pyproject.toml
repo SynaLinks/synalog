@@ -4,7 +4,7 @@ build-backend = "maturin"
 
 [project]
 name = "synalog"
-version = "0.2.0"
+version = "0.3.0"
 description = "Logic programming for AI agents: Datalog-family language compiling to optimized SQL"
 readme = "README.md"
 requires-python = ">=3.10"
