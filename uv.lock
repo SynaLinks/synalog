@@ -2033,6 +2033,7 @@ version = "0.2.0"
 source = { editable = "." }
 dependencies = [
     { name = "click" },
+    { name = "duckdb" },
     { name = "rdflib" },
     { name = "rich" },
 ]
@@ -2056,7 +2057,6 @@ presto = [
     { name = "presto-python-client" },
 ]
 run = [
-    { name = "duckdb" },
     { name = "psycopg" },
 ]
 trino = [
@@ -2083,8 +2083,8 @@ requires-dist = [
     { name = "click", specifier = ">=8.1" },
     { name = "databricks-sql-connector", marker = "extra == 'all-engines'" },
     { name = "databricks-sql-connector", marker = "extra == 'databricks'" },
+    { name = "duckdb" },
     { name = "duckdb", marker = "extra == 'all-engines'" },
-    { name = "duckdb", marker = "extra == 'run'" },
     { name = "google-cloud-bigquery", marker = "extra == 'all-engines'" },
     { name = "google-cloud-bigquery", marker = "extra == 'bigquery'" },
     { name = "presto-python-client", marker = "extra == 'all-engines'" },
