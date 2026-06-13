@@ -249,6 +249,219 @@ def _run_psql(sql: str, dsn: str | None) -> Result:
             return columns, rows
 
 
+# ---------------------------------------------------------------------------
+# Remote engines (network drivers, lazily imported)
+# ---------------------------------------------------------------------------
+
+
+def _resolve_dsn(engine: str, dsn: str | None) -> str | None:
+    """Connection string for `engine`: --dsn, then env, then saved config."""
+    if dsn:
+        return dsn
+    if env := os.environ.get(f"SYNALOG_{engine.upper()}_DSN"):
+        return env
+    try:
+        from .config import saved_connection
+    except ImportError:
+        return None
+    return saved_connection(engine)
+
+
+def _require_dsn(engine: str, dsn: str | None) -> str:
+    resolved = _resolve_dsn(engine, dsn)
+    if not resolved:
+        raise RunnerUnavailable(
+            f"The {engine} engine needs a connection string: pass --dsn, set"
+            f" SYNALOG_{engine.upper()}_DSN, or run 'synalog connect {engine} <dsn>'"
+        )
+    return resolved
+
+
+def _reject_loads(loads, engine: str) -> None:
+    if loads:
+        raise RunnerUnavailable(
+            f"The {engine} runner cannot load local files into the database;"
+            " load them with your own tools, or use --engine duckdb/sqlite"
+        )
+
+
+def _dbapi_fetch(cur, sql: str) -> Result:
+    """Run a single-statement script through a DBAPI cursor and fetch rows."""
+    cur.execute(sql.rstrip("; \n"))
+    columns = [col[0] for col in (cur.description or [])]
+    return columns, cur.fetchall()
+
+
+# SQL that materializes the CurrentDate(date) relation as 'YYYY-MM-DD', per
+# dialect. Remote engines need a writable catalog/schema for this; if the
+# CREATE fails we surface a clear message rather than a raw driver error.
+_CURRENT_DATE_DDL = {
+    "trino": "CREATE TABLE CurrentDate AS SELECT CAST(current_date AS VARCHAR) AS date",
+    "presto": "CREATE TABLE CurrentDate AS SELECT CAST(current_date AS VARCHAR) AS date",
+    "databricks": "CREATE OR REPLACE TEMPORARY VIEW CurrentDate AS"
+    " SELECT date_format(current_date(), 'yyyy-MM-dd') AS date",
+}
+
+
+def _maybe_current_date(cur, sql: str, engine: str) -> None:
+    if not _needs_current_date(sql):
+        return
+    try:
+        cur.execute(_CURRENT_DATE_DDL[engine])
+    except Exception as e:  # read-only catalog, missing schema, etc.
+        raise RunnerUnavailable(
+            f"The {engine} engine could not create the CurrentDate relation this"
+            f" program needs ({type(e).__name__}: {e}); point --dsn at a writable"
+            " catalog/schema, or run the program on duckdb/sqlite."
+        ) from None
+
+
+def _run_trino(sql: str, dsn: str | None, loads) -> Result:
+    _reject_loads(loads, "trino")
+    dsn = _require_dsn("trino", dsn)
+    try:
+        import trino
+    except ImportError:
+        raise RunnerUnavailable(
+            "The trino engine needs the 'trino' package: pip install trino"
+        ) from None
+
+    url = urllib.parse.urlparse(dsn)
+    query = dict(urllib.parse.parse_qsl(url.query))
+    path = [p for p in url.path.split("/") if p]
+    port = url.port or 8080
+    auth = None
+    http_scheme = query.get("http_scheme") or ("https" if port == 443 else "http")
+    if url.password:
+        auth = trino.auth.BasicAuthentication(url.username or "", url.password)
+        http_scheme = "https"
+    conn = trino.dbapi.connect(
+        host=url.hostname,
+        port=port,
+        user=url.username or query.get("user") or "synalog",
+        catalog=(path[0] if path else query.get("catalog")),
+        schema=(path[1] if len(path) > 1 else query.get("schema")),
+        http_scheme=http_scheme,
+        auth=auth,
+    )
+    try:
+        cur = conn.cursor()
+        _maybe_current_date(cur, sql, "trino")
+        return _dbapi_fetch(cur, sql)
+    finally:
+        conn.close()
+
+
+def _run_presto(sql: str, dsn: str | None, loads) -> Result:
+    _reject_loads(loads, "presto")
+    dsn = _require_dsn("presto", dsn)
+    try:
+        import prestodb
+    except ImportError:
+        raise RunnerUnavailable(
+            "The presto engine needs the 'presto-python-client' package:"
+            " pip install presto-python-client"
+        ) from None
+
+    url = urllib.parse.urlparse(dsn)
+    query = dict(urllib.parse.parse_qsl(url.query))
+    path = [p for p in url.path.split("/") if p]
+    conn = prestodb.dbapi.connect(
+        host=url.hostname,
+        port=url.port or 8080,
+        user=url.username or query.get("user") or "synalog",
+        catalog=(path[0] if path else query.get("catalog")),
+        schema=(path[1] if len(path) > 1 else query.get("schema")),
+    )
+    try:
+        cur = conn.cursor()
+        _maybe_current_date(cur, sql, "presto")
+        return _dbapi_fetch(cur, sql)
+    finally:
+        conn.close()
+
+
+def _run_databricks(sql: str, dsn: str | None, loads) -> Result:
+    _reject_loads(loads, "databricks")
+    dsn = _require_dsn("databricks", dsn)
+    try:
+        from databricks import sql as databricks_sql
+    except ImportError:
+        raise RunnerUnavailable(
+            "The databricks engine needs the 'databricks-sql-connector' package:"
+            " pip install databricks-sql-connector"
+        ) from None
+
+    url = urllib.parse.urlparse(dsn)
+    query = dict(urllib.parse.parse_qsl(url.query))
+    http_path = query.get("http_path")
+    access_token = query.get("access_token") or url.password or url.username
+    if not (url.hostname and http_path and access_token):
+        raise RunnerUnavailable(
+            "The databricks DSN needs a host, http_path and access token, e.g."
+            " databricks://<token>@<host>?http_path=/sql/1.0/warehouses/<id>"
+        )
+    conn = databricks_sql.connect(
+        server_hostname=url.hostname,
+        http_path=http_path,
+        access_token=access_token,
+    )
+    try:
+        cur = conn.cursor()
+        _maybe_current_date(cur, sql, "databricks")
+        return _dbapi_fetch(cur, sql)
+    finally:
+        conn.close()
+
+
+def _run_bigquery(sql: str, dsn: str | None, loads) -> Result:
+    _reject_loads(loads, "bigquery")
+    try:
+        from google.cloud import bigquery
+    except ImportError:
+        raise RunnerUnavailable(
+            "The bigquery engine needs the 'google-cloud-bigquery' package:"
+            " pip install google-cloud-bigquery"
+        ) from None
+
+    # BigQuery authenticates via Application Default Credentials; the DSN, when
+    # given, only names the billing project (and optional location). It is
+    # optional — ADC supplies a default project.
+    project = location = None
+    if resolved := _resolve_dsn("bigquery", dsn):
+        if "://" in resolved:
+            url = urllib.parse.urlparse(resolved)
+            project = url.hostname or url.netloc or None
+            location = dict(urllib.parse.parse_qsl(url.query)).get("location")
+        else:
+            project = resolved
+    if _needs_current_date(sql):
+        raise RunnerUnavailable(
+            "The bigquery runner cannot provide the CurrentDate relation this"
+            " program needs; run it on duckdb/sqlite, or materialize CurrentDate"
+            " in your dataset yourself."
+        )
+    try:
+        client = bigquery.Client(project=project, location=location)
+        job = client.query(sql.rstrip("; \n"))
+        result = job.result()
+        columns = [field.name for field in result.schema]
+        rows = [tuple(row.values()) for row in result]
+        return columns, rows
+    except Exception as e:
+        if isinstance(e, RunnerUnavailable):
+            raise
+        raise RunnerUnavailable(f"bigquery error ({type(e).__name__}: {e})") from None
+
+
+_REMOTE_RUNNERS = {
+    "trino": _run_trino,
+    "presto": _run_presto,
+    "databricks": _run_databricks,
+    "bigquery": _run_bigquery,
+}
+
+
 def run_sql(engine: str, sql: str, dsn: str | None = None, loads=()) -> Result:
     """Execute `sql` against `engine`, returning (column_names, rows).
 
@@ -260,14 +473,11 @@ def run_sql(engine: str, sql: str, dsn: str | None = None, loads=()) -> Result:
     if engine == "duckdb":
         return _run_duckdb(sql, loads)
     if engine == "psql":
-        if loads:
-            raise RunnerUnavailable(
-                "The psql runner cannot load files into the database; load them"
-                " with your own tools (e.g. COPY), or use --engine duckdb"
-            )
+        _reject_loads(loads, "psql")
         return _run_psql(sql, dsn)
+    if runner := _REMOTE_RUNNERS.get(engine):
+        return runner(sql, dsn, loads)
     raise RunnerUnavailable(
-        f"Engine '{engine}' has no local runner; engines runnable from the CLI:"
-        " duckdb, sqlite, psql. Use the 'print' command to get the SQL and run"
-        " it with your own client."
+        f"Engine '{engine}' has no local runner. Use the 'print' command to get"
+        " the SQL and run it with your own client."
     )

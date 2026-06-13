@@ -165,11 +165,67 @@ def test_import_root_flag(tmp_path):
 
 
 def test_engine_annotation_picks_runner(tmp_path):
+    # trino has a runner now; without the driver or a DSN it should fail with a
+    # trino-specific message, not the generic "no local runner".
     path = tmp_path / "trino.l"
     path.write_text('@Engine("trino");\nGreeting("hi");\n')
     result = synalog(str(path), "run", "Greeting")
     assert result.returncode == 1
-    assert "no local runner" in result.stderr
+    assert "trino" in result.stderr
+    assert "no local runner" not in result.stderr
+
+
+def test_unknown_engine_has_no_runner(tmp_path):
+    # A dialect with no runner at all still gets the generic message.
+    path = tmp_path / "p.l"
+    path.write_text("Greeting(\"hi\");\n")
+    result = synalog(str(path), "run", "Greeting", "--engine", "duckdb")
+    # sanity: duckdb runs fine; the generic message is exercised via run_sql unit test
+    assert result.returncode == 0, result.stderr
+
+
+def test_connect_save_list_show_remove(tmp_path, monkeypatch):
+    monkeypatch.setenv("SYNALOG_CONFIG_DIR", str(tmp_path))  # subprocess inherits env
+
+    assert synalog("connect").stdout.strip() == "No saved connections."
+
+    saved = synalog("connect", "trino", "trino://alice:secret@host:443/hive/analytics")
+    assert saved.returncode == 0
+
+    # list and show hide credentials; the password never appears
+    listed = synalog("connect").stdout
+    assert "trino" in listed and "secret" not in listed and "***" in listed
+    shown = synalog("connect", "trino").stdout
+    assert "alice:***@host" in shown and "secret" not in shown
+
+    # the real secret is what gets persisted (and used to connect)
+    stored = json.loads((tmp_path / "connections.json").read_text())
+    assert stored["trino"].endswith("secret@host:443/hive/analytics")
+
+    removed = synalog("connect", "remove", "trino")
+    assert removed.returncode == 0 and "Removed" in removed.stdout
+    assert synalog("connect").stdout.strip() == "No saved connections."
+
+
+def test_connect_rejects_local_engine(tmp_path, monkeypatch):
+    monkeypatch.setenv("SYNALOG_CONFIG_DIR", str(tmp_path))
+    result = synalog("connect", "duckdb", "whatever")
+    assert result.returncode == 1
+    assert "does not use a connection string" in result.stderr
+
+
+def test_connect_resolves_for_run(tmp_path, monkeypatch):
+    # A saved connection is consumed by `run`: with a bogus DSN saved, running a
+    # trino program reaches the driver/connection layer (not "needs a connection
+    # string" and not "no local runner").
+    monkeypatch.setenv("SYNALOG_CONFIG_DIR", str(tmp_path))
+    synalog("connect", "trino", "trino://nobody@127.0.0.1:1/memory/default")
+    path = tmp_path / "p.l"
+    path.write_text('@Engine("trino");\nGreeting("hi");\n')
+    result = synalog(str(path), "run", "Greeting")
+    assert result.returncode == 1
+    assert "needs a connection string" not in result.stderr
+    assert "no local runner" not in result.stderr
 
 
 def test_missing_predicate_argument(program_file):

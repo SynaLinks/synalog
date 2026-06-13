@@ -33,8 +33,22 @@ Repository = "https://github.com/synalinks/synalog"
 synalog = "synalog.cli:main"
 
 [project.optional-dependencies]
-# Engines runnable from the CLI (sqlite is stdlib).
+# Engines runnable from the CLI (sqlite is stdlib). The `run` extra covers the
+# zero-config local engines; remote engines each bring their own driver.
 run = ["duckdb", "psycopg"]
+trino = ["trino"]
+presto = ["presto-python-client"]
+databricks = ["databricks-sql-connector"]
+bigquery = ["google-cloud-bigquery"]
+# Every engine driver at once.
+all-engines = [
+    "duckdb",
+    "psycopg",
+    "trino",
+    "presto-python-client",
+    "databricks-sql-connector",
+    "google-cloud-bigquery",
+]
 
 [dependency-groups]
 # Dev tooling installed by `uv sync`: tests (pytest, duckdb, logica also

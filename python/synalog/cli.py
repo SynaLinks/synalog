@@ -29,6 +29,7 @@ import json
 import os
 import re
 import sys
+import urllib.parse
 
 import click
 from rich import box
@@ -184,6 +185,94 @@ def cmd_init(name: str | None) -> int:
 
 
 # ---------------------------------------------------------------------------
+# Saved connections (connect)
+# ---------------------------------------------------------------------------
+
+# Engines that connect over the network with a connection string. Local
+# engines (sqlite, duckdb) build their connection from --load and take no DSN.
+DSN_ENGINES = ("psql", "trino", "presto", "databricks", "bigquery")
+
+_SECRET_QUERY_KEYS = {"access_token", "password", "token", "secret"}
+
+
+def mask_dsn(dsn: str) -> str:
+    """Hide credentials in a connection string for display."""
+    try:
+        parts = urllib.parse.urlsplit(dsn)
+    except ValueError:
+        return dsn
+    if not parts.scheme:
+        return dsn  # bare value (e.g. a bigquery project id)
+    netloc = parts.netloc
+    if "@" in netloc:
+        userinfo, _, host = netloc.rpartition("@")
+        if ":" in userinfo:
+            user = userinfo.split(":", 1)[0]
+            userinfo = f"{user}:***"
+        elif userinfo:
+            userinfo = "***"  # token-only userinfo (e.g. databricks)
+        netloc = f"{userinfo}@{host}"
+    query = parts.query
+    if query:
+        masked = [
+            (k, "***" if k.lower() in _SECRET_QUERY_KEYS else v)
+            for k, v in urllib.parse.parse_qsl(query, keep_blank_values=True)
+        ]
+        query = urllib.parse.urlencode(masked, safe="/")
+    return urllib.parse.urlunsplit(
+        (parts.scheme, netloc, parts.path, query, parts.fragment)
+    )
+
+
+def cmd_connect(args: tuple[str, ...]) -> int:
+    """Manage saved connection strings for remote engines.
+
+    \b
+    synalog connect                     list saved connections (credentials hidden)
+    synalog connect <engine> <dsn>      save a connection string for an engine
+    synalog connect <engine>            show the saved connection for an engine
+    synalog connect remove <engine>     forget a saved connection
+    """
+    from . import config
+
+    if not args:
+        connections = config.load_connections()
+        if not connections:
+            click.echo("No saved connections.")
+            return 0
+        for engine, dsn in sorted(connections.items()):
+            click.echo(f"{engine}\t{mask_dsn(dsn)}")
+        return 0
+
+    if args[0] == "remove":
+        if len(args) != 2:
+            raise click.UsageError("usage: synalog connect remove <engine>")
+        if config.remove_connection(args[1]):
+            click.echo(f"Removed saved connection for {args[1]}.")
+            return 0
+        fail(f"No saved connection for {args[1]}.")
+
+    engine = args[0]
+    if engine not in DSN_ENGINES:
+        fail(
+            f"'{engine}' does not use a connection string;"
+            f" engines that do: {', '.join(DSN_ENGINES)}"
+        )
+    if len(args) == 1:
+        dsn = config.saved_connection(engine)
+        if dsn is None:
+            click.echo(f"No saved connection for {engine}.")
+        else:
+            click.echo(mask_dsn(dsn))
+        return 0
+    if len(args) > 2:
+        raise click.UsageError("usage: synalog connect <engine> <dsn>")
+    config.save_connection(engine, args[1])
+    click.echo(f"Saved {engine} connection to {config.config_dir()}/connections.json")
+    return 0
+
+
+# ---------------------------------------------------------------------------
 # Entry point
 # ---------------------------------------------------------------------------
 
@@ -213,7 +302,11 @@ def cmd_init(name: str | None) -> int:
     help="With print/run/run_to_csv: keep only rows where some column matches"
     " the regular expression REGEX (engine-native regex, not SQL LIKE).",
 )
-@click.option("--dsn", help="PostgreSQL connection string (or SYNALOG_PSQL_DSN).")
+@click.option(
+    "--dsn",
+    help="Connection string for the remote engine (psql/trino/presto/databricks/"
+    "bigquery); falls back to SYNALOG_<ENGINE>_DSN, then the saved connection.",
+)
 @click.option(
     "--import-root",
     "import_root",
@@ -242,6 +335,7 @@ def main(args, inline, engine, limit, offset, search_pattern, dsn, import_root, 
       synalog program.l run Predicate ...     execute and print a table
       synalog program.l run_to_csv Pred ...   execute and print CSV
       synalog init [NAME]                     scaffold a new project
+      synalog connect ENGINE DSN              save a remote engine connection
 
     Add --search REGEX to print/run/run_to_csv to keep only rows where some
     column matches REGEX (engine-native regex, not a SQL LIKE pattern), e.g.
@@ -255,6 +349,8 @@ def main(args, inline, engine, limit, offset, search_pattern, dsn, import_root, 
         if len(args) > 2:
             raise click.UsageError("usage: synalog init [NAME]")
         sys.exit(cmd_init(args[1] if len(args) > 1 else None))
+    if args and args[0] == "connect" and inline is None:
+        sys.exit(cmd_connect(args[1:]))
     if inline is None:
         if not args:
             sys.exit(Repl(engine, dsn, import_roots(None, import_root), loads).run())
