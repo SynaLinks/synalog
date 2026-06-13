@@ -15,6 +15,12 @@
   // regardless of which docs page embeds the playground.
   var SELF = document.currentScript && document.currentScript.src;
 
+  // Cache-buster for the wasm + editor bundle. Bump on any rebuild of those
+  // assets so the browser can never pair a stale cached glue (synalog.js) with a
+  // freshly rebuilt synalog_bg.wasm — a mismatch shows up as
+  // "WebAssembly.Table.get(): invalid address N in funcref table of size M".
+  var ASSET_V = "20260613a";
+
   var DEFAULT_PROGRAM = [
     "# Tables",
     "Orders(order_id:, customer_id:, amount:, created_at:) :-",
@@ -65,7 +71,7 @@
     // system relies on instanceof — so a single bundle is the only robust way
     // to guarantee one state instance. It also makes the docs work offline.
     var base = SELF || window.location.href;
-    var cmUrl = new URL("../playground/vendor/codemirror.js", base).href;
+    var cmUrl = new URL("../playground/vendor/codemirror.js?v=" + ASSET_V, base).href;
 
     var loaded = await Promise.all([import(cmUrl), loadWasm()]);
     var cm = loaded[0];
@@ -317,13 +323,27 @@
   }
 
   // Resolve and initialise the wasm-bindgen module relative to this script.
-  async function loadWasm() {
-    var base = SELF || window.location.href;
-    // javascripts/playground.js -> ../playground/pkg/synalog.js
-    var url = new URL("../playground/pkg/synalog.js", base).href;
-    var mod = await import(url);
-    await mod.default(); // run the wasm-bindgen init (fetches synalog_bg.wasm)
-    return mod;
+  // Memoised: the wasm-bindgen init() must run exactly ONCE per page lifetime.
+  // With zensical's instant navigation the script is not re-evaluated but boot()
+  // runs again on each visit; calling init() a second time re-grows the already
+  // populated externref table past its maximum and throws
+  // "WebAssembly.Table.grow(): failed to grow table by 4".
+  var wasmPromise = null;
+  function loadWasm() {
+    if (wasmPromise) return wasmPromise;
+    wasmPromise = (async function () {
+      var base = SELF || window.location.href;
+      // javascripts/playground.js -> ../playground/pkg/synalog.js
+      var glueUrl = new URL("../playground/pkg/synalog.js?v=" + ASSET_V, base).href;
+      var mod = await import(glueUrl);
+      // Pass the wasm URL explicitly (same cache-buster) — otherwise the glue
+      // resolves synalog_bg.wasm relative to its own URL and drops the query,
+      // which could load a stale binary that mismatches the glue.
+      var wasmUrl = new URL("../playground/pkg/synalog_bg.wasm?v=" + ASSET_V, base).href;
+      await mod.default({ module_or_path: wasmUrl });
+      return mod;
+    })();
+    return wasmPromise;
   }
 
   function el(tag, cls) {
