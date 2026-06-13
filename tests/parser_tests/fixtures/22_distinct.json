@@ -1,0 +1,543 @@
+{
+  "file_name": "main",
+  "imported_predicates": [],
+  "predicates_prefix": "",
+  "rule": [
+    {
+      "full_text": "@Engine(\"duckdb\")",
+      "head": {
+        "predicate_name": "@Engine",
+        "record": {
+          "field_value": [
+            {
+              "field": 0,
+              "value": {
+                "expression": {
+                  "expression_heritage": "\"duckdb\"",
+                  "literal": {
+                    "the_string": {
+                      "the_string": "duckdb"
+                    }
+                  }
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "full_text": "Data(category: \"A\", value: 1)",
+      "head": {
+        "predicate_name": "Data",
+        "record": {
+          "field_value": [
+            {
+              "field": "category",
+              "value": {
+                "expression": {
+                  "expression_heritage": "\"A\"",
+                  "literal": {
+                    "the_string": {
+                      "the_string": "A"
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "field": "value",
+              "value": {
+                "expression": {
+                  "expression_heritage": "1",
+                  "literal": {
+                    "the_number": {
+                      "number": "1"
+                    }
+                  }
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "full_text": "Data(category: \"A\", value: 2)",
+      "head": {
+        "predicate_name": "Data",
+        "record": {
+          "field_value": [
+            {
+              "field": "category",
+              "value": {
+                "expression": {
+                  "expression_heritage": "\"A\"",
+                  "literal": {
+                    "the_string": {
+                      "the_string": "A"
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "field": "value",
+              "value": {
+                "expression": {
+                  "expression_heritage": "2",
+                  "literal": {
+                    "the_number": {
+                      "number": "2"
+                    }
+                  }
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "full_text": "Data(category: \"A\", value: 1)",
+      "head": {
+        "predicate_name": "Data",
+        "record": {
+          "field_value": [
+            {
+              "field": "category",
+              "value": {
+                "expression": {
+                  "expression_heritage": "\"A\"",
+                  "literal": {
+                    "the_string": {
+                      "the_string": "A"
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "field": "value",
+              "value": {
+                "expression": {
+                  "expression_heritage": "1",
+                  "literal": {
+                    "the_number": {
+                      "number": "1"
+                    }
+                  }
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "full_text": "Data(category: \"B\", value: 1)",
+      "head": {
+        "predicate_name": "Data",
+        "record": {
+          "field_value": [
+            {
+              "field": "category",
+              "value": {
+                "expression": {
+                  "expression_heritage": "\"B\"",
+                  "literal": {
+                    "the_string": {
+                      "the_string": "B"
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "field": "value",
+              "value": {
+                "expression": {
+                  "expression_heritage": "1",
+                  "literal": {
+                    "the_number": {
+                      "number": "1"
+                    }
+                  }
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "full_text": "Data(category: \"B\", value: 1)",
+      "head": {
+        "predicate_name": "Data",
+        "record": {
+          "field_value": [
+            {
+              "field": "category",
+              "value": {
+                "expression": {
+                  "expression_heritage": "\"B\"",
+                  "literal": {
+                    "the_string": {
+                      "the_string": "B"
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "field": "value",
+              "value": {
+                "expression": {
+                  "expression_heritage": "1",
+                  "literal": {
+                    "the_number": {
+                      "number": "1"
+                    }
+                  }
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "full_text": "@OrderBy(UniqueCategories, \"category\")",
+      "head": {
+        "predicate_name": "@OrderBy",
+        "record": {
+          "field_value": [
+            {
+              "field": 0,
+              "value": {
+                "expression": {
+                  "expression_heritage": "UniqueCategories",
+                  "literal": {
+                    "the_predicate": {
+                      "predicate_name": "UniqueCategories"
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "field": 1,
+              "value": {
+                "expression": {
+                  "expression_heritage": "\"category\"",
+                  "literal": {
+                    "the_string": {
+                      "the_string": "category"
+                    }
+                  }
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "body": {
+        "conjunction": {
+          "conjunct": [
+            {
+              "predicate": {
+                "predicate_name": "Data",
+                "record": {
+                  "field_value": [
+                    {
+                      "field": "category",
+                      "value": {
+                        "expression": {
+                          "expression_heritage": "category",
+                          "variable": {
+                            "var_name": "category"
+                          }
+                        }
+                      }
+                    },
+                    {
+                      "field": "value",
+                      "value": {
+                        "expression": {
+                          "expression_heritage": "value",
+                          "variable": {
+                            "var_name": "value"
+                          }
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          ]
+        }
+      },
+      "distinct_denoted": true,
+      "full_text": "UniqueCategories(category:) distinct :- Data(category:, value:)",
+      "head": {
+        "predicate_name": "UniqueCategories",
+        "record": {
+          "field_value": [
+            {
+              "field": "category",
+              "value": {
+                "expression": {
+                  "expression_heritage": "category",
+                  "variable": {
+                    "var_name": "category"
+                  }
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "full_text": "@OrderBy(CategoryStats, \"category\")",
+      "head": {
+        "predicate_name": "@OrderBy",
+        "record": {
+          "field_value": [
+            {
+              "field": 0,
+              "value": {
+                "expression": {
+                  "expression_heritage": "CategoryStats",
+                  "literal": {
+                    "the_predicate": {
+                      "predicate_name": "CategoryStats"
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "field": 1,
+              "value": {
+                "expression": {
+                  "expression_heritage": "\"category\"",
+                  "literal": {
+                    "the_string": {
+                      "the_string": "category"
+                    }
+                  }
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "body": {
+        "conjunction": {
+          "conjunct": [
+            {
+              "predicate": {
+                "predicate_name": "Data",
+                "record": {
+                  "field_value": [
+                    {
+                      "field": "category",
+                      "value": {
+                        "expression": {
+                          "expression_heritage": "category",
+                          "variable": {
+                            "var_name": "category"
+                          }
+                        }
+                      }
+                    },
+                    {
+                      "field": "value",
+                      "value": {
+                        "expression": {
+                          "expression_heritage": "value",
+                          "variable": {
+                            "var_name": "value"
+                          }
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          ]
+        }
+      },
+      "distinct_denoted": true,
+      "full_text": "CategoryStats(category:, total? += value, count? += 1) distinct :- Data(category:, value:)",
+      "head": {
+        "predicate_name": "CategoryStats",
+        "record": {
+          "field_value": [
+            {
+              "field": "category",
+              "value": {
+                "expression": {
+                  "expression_heritage": "category",
+                  "variable": {
+                    "var_name": "category"
+                  }
+                }
+              }
+            },
+            {
+              "field": "total",
+              "value": {
+                "aggregation": {
+                  "expression": {
+                    "call": {
+                      "predicate_name": "Agg+",
+                      "record": {
+                        "field_value": [
+                          {
+                            "field": 0,
+                            "value": {
+                              "expression": {
+                                "expression_heritage": "value",
+                                "variable": {
+                                  "var_name": "value"
+                                }
+                              }
+                            }
+                          }
+                        ]
+                      }
+                    },
+                    "expression_heritage": "+= value"
+                  },
+                  "expression_heritage": "+= value"
+                }
+              }
+            },
+            {
+              "field": "count",
+              "value": {
+                "aggregation": {
+                  "expression": {
+                    "call": {
+                      "predicate_name": "Agg+",
+                      "record": {
+                        "field_value": [
+                          {
+                            "field": 0,
+                            "value": {
+                              "expression": {
+                                "expression_heritage": "1",
+                                "literal": {
+                                  "the_number": {
+                                    "number": "1"
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        ]
+                      }
+                    },
+                    "expression_heritage": "+= 1"
+                  },
+                  "expression_heritage": "+= 1"
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "full_text": "@OrderBy(Test, \"category\")",
+      "head": {
+        "predicate_name": "@OrderBy",
+        "record": {
+          "field_value": [
+            {
+              "field": 0,
+              "value": {
+                "expression": {
+                  "expression_heritage": "Test",
+                  "literal": {
+                    "the_predicate": {
+                      "predicate_name": "Test"
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "field": 1,
+              "value": {
+                "expression": {
+                  "expression_heritage": "\"category\"",
+                  "literal": {
+                    "the_string": {
+                      "the_string": "category"
+                    }
+                  }
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "body": {
+        "conjunction": {
+          "conjunct": [
+            {
+              "predicate": {
+                "predicate_name": "UniqueCategories",
+                "record": {
+                  "field_value": [
+                    {
+                      "field": "category",
+                      "value": {
+                        "expression": {
+                          "expression_heritage": "category",
+                          "variable": {
+                            "var_name": "category"
+                          }
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          ]
+        }
+      },
+      "full_text": "Test(category:) :- UniqueCategories(category:)",
+      "head": {
+        "predicate_name": "Test",
+        "record": {
+          "field_value": [
+            {
+              "field": "category",
+              "value": {
+                "expression": {
+                  "expression_heritage": "category",
+                  "variable": {
+                    "var_name": "category"
+                  }
+                }
+              }
+            }
+          ]
+        }
+      }
+    }
+  ]
+}

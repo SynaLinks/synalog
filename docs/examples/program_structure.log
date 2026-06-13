@@ -1,0 +1,306 @@
+$ synalog.check('program_structure.l')
+No errors found.
+
+$ synalog.compile('program_structure.l', 'CustomerNode')
+-- Initializing DuckDB environment.
+create schema if not exists logica_home;
+-- Empty record, has to have a field by DuckDB syntax.
+drop type if exists logicarecord893574736 cascade; create type logicarecord893574736 as struct(nirvana numeric);
+create sequence if not exists eternal_logical_sequence;
+
+WITH t_0_Orders AS (SELECT * FROM (
+  
+    SELECT
+      1 AS order_id,
+      100 AS customer_id,
+      250 AS amount,
+      E'shipped' AS status
+   UNION ALL
+  
+    SELECT
+      2 AS order_id,
+      100 AS customer_id,
+      1200 AS amount,
+      E'pending' AS status
+   UNION ALL
+  
+    SELECT
+      3 AS order_id,
+      200 AS customer_id,
+      80 AS amount,
+      E'shipped' AS status
+   UNION ALL
+  
+    SELECT
+      4 AS order_id,
+      300 AS customer_id,
+      430 AS amount,
+      E'cancelled' AS status
+   UNION ALL
+  
+    SELECT
+      5 AS order_id,
+      200 AS customer_id,
+      95 AS amount,
+      E'shipped' AS status
+  
+) AS UNUSED_TABLE_NAME  )
+SELECT
+  Orders.customer_id AS customer_id
+FROM
+  t_0_Orders AS Orders
+GROUP BY Orders.customer_id ORDER BY customer_id;
+
+-- Executed on DuckDB:
+| customer_id |
+|-------------|
+| 100         |
+| 200         |
+| 300         |
+(3 rows)
+
+$ synalog.compile('program_structure.l', 'OrderStatus')
+-- Initializing DuckDB environment.
+create schema if not exists logica_home;
+-- Empty record, has to have a field by DuckDB syntax.
+drop type if exists logicarecord893574736 cascade; create type logicarecord893574736 as struct(nirvana numeric);
+create sequence if not exists eternal_logical_sequence;
+
+WITH t_0_Orders AS (SELECT * FROM (
+  
+    SELECT
+      1 AS order_id,
+      100 AS customer_id,
+      250 AS amount,
+      E'shipped' AS status
+   UNION ALL
+  
+    SELECT
+      2 AS order_id,
+      100 AS customer_id,
+      1200 AS amount,
+      E'pending' AS status
+   UNION ALL
+  
+    SELECT
+      3 AS order_id,
+      200 AS customer_id,
+      80 AS amount,
+      E'shipped' AS status
+   UNION ALL
+  
+    SELECT
+      4 AS order_id,
+      300 AS customer_id,
+      430 AS amount,
+      E'cancelled' AS status
+   UNION ALL
+  
+    SELECT
+      5 AS order_id,
+      200 AS customer_id,
+      95 AS amount,
+      E'shipped' AS status
+  
+) AS UNUSED_TABLE_NAME  )
+SELECT
+  Orders.status AS status
+FROM
+  t_0_Orders AS Orders
+GROUP BY Orders.status ORDER BY status;
+
+-- Executed on DuckDB:
+| status    |
+|-----------|
+| cancelled |
+| pending   |
+| shipped   |
+(3 rows)
+
+$ synalog.compile('program_structure.l', 'OrdersByStatus')
+-- Initializing DuckDB environment.
+create schema if not exists logica_home;
+-- Empty record, has to have a field by DuckDB syntax.
+drop type if exists logicarecord893574736 cascade; create type logicarecord893574736 as struct(nirvana numeric);
+create sequence if not exists eternal_logical_sequence;
+
+WITH t_2_Orders AS (SELECT * FROM (
+  
+    SELECT
+      1 AS order_id,
+      100 AS customer_id,
+      250 AS amount,
+      E'shipped' AS status
+   UNION ALL
+  
+    SELECT
+      2 AS order_id,
+      100 AS customer_id,
+      1200 AS amount,
+      E'pending' AS status
+   UNION ALL
+  
+    SELECT
+      3 AS order_id,
+      200 AS customer_id,
+      80 AS amount,
+      E'shipped' AS status
+   UNION ALL
+  
+    SELECT
+      4 AS order_id,
+      300 AS customer_id,
+      430 AS amount,
+      E'cancelled' AS status
+   UNION ALL
+  
+    SELECT
+      5 AS order_id,
+      200 AS customer_id,
+      95 AS amount,
+      E'shipped' AS status
+  
+) AS UNUSED_TABLE_NAME  ),
+t_0_OrderStatus AS (SELECT
+  t_1_Orders.status AS status
+FROM
+  t_2_Orders AS t_1_Orders
+GROUP BY t_1_Orders.status ORDER BY status)
+SELECT
+  OrderStatus.status AS status,
+  SUM(1) AS count
+FROM
+  t_0_OrderStatus AS OrderStatus, t_2_Orders AS Orders
+WHERE
+  (Orders.status = OrderStatus.status)
+GROUP BY OrderStatus.status ORDER BY status;
+
+-- Executed on DuckDB:
+| status    | count |
+|-----------|-------|
+| cancelled | 1     |
+| pending   | 1     |
+| shipped   | 3     |
+(3 rows)
+
+$ synalog.compile('program_structure.l', 'CustomerRevenue')
+-- Initializing DuckDB environment.
+create schema if not exists logica_home;
+-- Empty record, has to have a field by DuckDB syntax.
+drop type if exists logicarecord893574736 cascade; create type logicarecord893574736 as struct(nirvana numeric);
+create sequence if not exists eternal_logical_sequence;
+
+WITH t_0_Orders AS (SELECT * FROM (
+  
+    SELECT
+      1 AS order_id,
+      100 AS customer_id,
+      250 AS amount,
+      E'shipped' AS status
+   UNION ALL
+  
+    SELECT
+      2 AS order_id,
+      100 AS customer_id,
+      1200 AS amount,
+      E'pending' AS status
+   UNION ALL
+  
+    SELECT
+      3 AS order_id,
+      200 AS customer_id,
+      80 AS amount,
+      E'shipped' AS status
+   UNION ALL
+  
+    SELECT
+      4 AS order_id,
+      300 AS customer_id,
+      430 AS amount,
+      E'cancelled' AS status
+   UNION ALL
+  
+    SELECT
+      5 AS order_id,
+      200 AS customer_id,
+      95 AS amount,
+      E'shipped' AS status
+  
+) AS UNUSED_TABLE_NAME  )
+SELECT
+  Orders.customer_id AS customer_id,
+  SUM(Orders.amount) AS total
+FROM
+  t_0_Orders AS Orders
+GROUP BY Orders.customer_id ORDER BY customer_id;
+
+-- Executed on DuckDB:
+| customer_id | total |
+|-------------|-------|
+| 100         | 1450  |
+| 200         | 175   |
+| 300         | 430   |
+(3 rows)
+
+$ synalog.compile('program_structure.l', 'TopCustomers')
+-- Initializing DuckDB environment.
+create schema if not exists logica_home;
+-- Empty record, has to have a field by DuckDB syntax.
+drop type if exists logicarecord893574736 cascade; create type logicarecord893574736 as struct(nirvana numeric);
+create sequence if not exists eternal_logical_sequence;
+
+WITH t_1_Orders AS (SELECT * FROM (
+  
+    SELECT
+      1 AS order_id,
+      100 AS customer_id,
+      250 AS amount,
+      E'shipped' AS status
+   UNION ALL
+  
+    SELECT
+      2 AS order_id,
+      100 AS customer_id,
+      1200 AS amount,
+      E'pending' AS status
+   UNION ALL
+  
+    SELECT
+      3 AS order_id,
+      200 AS customer_id,
+      80 AS amount,
+      E'shipped' AS status
+   UNION ALL
+  
+    SELECT
+      4 AS order_id,
+      300 AS customer_id,
+      430 AS amount,
+      E'cancelled' AS status
+   UNION ALL
+  
+    SELECT
+      5 AS order_id,
+      200 AS customer_id,
+      95 AS amount,
+      E'shipped' AS status
+  
+) AS UNUSED_TABLE_NAME  ),
+t_0_CustomerRevenue AS (SELECT
+  Orders.customer_id AS customer_id,
+  SUM(Orders.amount) AS total
+FROM
+  t_1_Orders AS Orders
+GROUP BY Orders.customer_id ORDER BY customer_id)
+SELECT
+  CustomerRevenue.customer_id AS customer_id,
+  CustomerRevenue.total AS total
+FROM
+  t_0_CustomerRevenue AS CustomerRevenue ORDER BY total DESC LIMIT 2;
+
+-- Executed on DuckDB:
+| customer_id | total |
+|-------------|-------|
+| 100         | 1450  |
+| 300         | 430   |
+(2 rows)

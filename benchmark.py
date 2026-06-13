@@ -1,0 +1,288 @@
+#!/usr/bin/env python3
+"""Benchmark the synalog Rust core against the Python logica package.
+
+Both implementations run in-process: synalog through its PyO3 extension
+(`synalog.parse` / `synalog.compile`), logica through its Python modules.
+Each compiler-test fixture is benchmarked once per engine, with the
+`@Engine` annotation prepended so both sides compile for the same dialect.
+
+Results are stored under docs/benchmark/ (raw results.json plus a generated
+summary.md) so the documentation's Benchmark page always displays the latest
+run; plot_benchmark.py renders the PNGs next to them.
+
+Usage:
+    python3 benchmark.py            # run the benchmarks and export to docs
+    python3 benchmark.py --export   # regenerate summary.md from existing results
+    python3 benchmark.py --plot     # generate plots from existing results
+"""
+
+import json
+import os
+import sys
+import time
+from pathlib import Path
+
+SCRIPT_DIR = Path(__file__).parent
+COMPILER_TESTS_DIR = SCRIPT_DIR / "tests" / "compiler_tests"
+FIXTURES_DIR = COMPILER_TESTS_DIR / "fixtures"
+DOCS_BENCH_DIR = SCRIPT_DIR / "docs" / "benchmark"
+OUTPUT_FILE = DOCS_BENCH_DIR / "results.json"
+SUMMARY_FILE = DOCS_BENCH_DIR / "summary.md"
+
+ENGINES = ["sqlite", "duckdb", "psql", "bigquery", "trino", "presto"]
+RUNS_PER_TEST = 3
+
+# Set up Python Logica - must set LOGICAPATH and chdir for imports to work
+os.environ['LOGICAPATH'] = str(COMPILER_TESTS_DIR)
+os.chdir(COMPILER_TESTS_DIR)
+
+
+def time_python_parse(source: str) -> float:
+    """Time Python Logica parser."""
+    from logica.parser_py import parse as logica_parse
+
+    start = time.perf_counter()
+    logica_parse.ParseFile(source)
+    end = time.perf_counter()
+    return (end - start) * 1000  # ms
+
+
+def time_python_compile(source: str, predicate: str) -> float:
+    """Time Python Logica compiler."""
+    from logica.parser_py import parse as logica_parse
+    from logica.compiler import universe
+
+    start = time.perf_counter()
+    parsed = logica_parse.ParseFile(source)['rule']
+    program = universe.LogicaProgram(parsed, user_flags={})
+    program.FormattedPredicateSql(predicate)
+    end = time.perf_counter()
+    return (end - start) * 1000  # ms
+
+
+def time_rust_parse(source: str, roots: list) -> float:
+    """Time the synalog (Rust) parser through the PyO3 extension."""
+    import synalog
+
+    start = time.perf_counter()
+    synalog.parse(source, import_root=roots)
+    end = time.perf_counter()
+    return (end - start) * 1000  # ms
+
+
+def time_rust_compile(source: str, predicate: str, roots: list) -> float:
+    """Time the synalog (Rust) compiler through the PyO3 extension."""
+    import synalog
+
+    start = time.perf_counter()
+    synalog.compile(source, predicate, import_root=roots)
+    end = time.perf_counter()
+    return (end - start) * 1000  # ms
+
+
+def get_last_predicate(source: str) -> str:
+    """Get the last user-defined predicate from source."""
+    from logica.parser_py import parse as logica_parse
+
+    parsed = logica_parse.ParseFile(source)['rule']
+    last = None
+    for rule in parsed:
+        if 'head' in rule and 'predicate_name' in rule['head']:
+            name = rule['head']['predicate_name']
+            if not name.startswith('@') and not name.startswith('_'):
+                # Skip imported predicates
+                parts = name.split('_')
+                if len(parts) >= 2 and parts[0][0].isupper():
+                    if any(p and p[0].isupper() for p in parts[1:]):
+                        continue
+                last = name
+    return last
+
+
+def benchmark_file(filepath: Path, roots: list, engine: str) -> dict:
+    """Benchmark a single test file for one engine."""
+    raw = filepath.read_text()
+    predicate = get_last_predicate(raw)
+
+    if not predicate:
+        return None
+
+    # Same annotated source for both implementations: each compiles for
+    # the engine declared in the program.
+    source = f'@Engine("{engine}");\n' + raw
+
+    result = {
+        "file": filepath.name,
+        "predicate": predicate,
+    }
+
+    # Python parse
+    try:
+        times = [time_python_parse(source) for _ in range(RUNS_PER_TEST)]
+        result["python_parse_ms"] = sum(times) / len(times)
+    except Exception as e:
+        result["python_parse_ms"] = -1
+        result["python_parse_error"] = str(e)
+
+    # Python compile
+    try:
+        times = [time_python_compile(source, predicate) for _ in range(RUNS_PER_TEST)]
+        result["python_compile_ms"] = sum(times) / len(times)
+    except Exception as e:
+        result["python_compile_ms"] = -1
+        result["python_compile_error"] = str(e)
+
+    # Rust parse
+    try:
+        times = [time_rust_parse(source, roots) for _ in range(RUNS_PER_TEST)]
+        result["rust_parse_ms"] = sum(times) / len(times)
+    except Exception as e:
+        result["rust_parse_ms"] = -1
+        result["rust_parse_error"] = str(e)
+
+    # Rust compile
+    try:
+        times = [time_rust_compile(source, predicate, roots) for _ in range(RUNS_PER_TEST)]
+        result["rust_compile_ms"] = sum(times) / len(times)
+    except Exception as e:
+        result["rust_compile_ms"] = -1
+        result["rust_compile_error"] = str(e)
+
+    return result
+
+
+def run_benchmarks():
+    """Run all benchmarks."""
+    roots = [str(COMPILER_TESTS_DIR)]
+    results = {
+        "metadata": {
+            "timestamp": time.strftime("%Y-%m-%d %H:%M:%S"),
+            "runs_per_test": RUNS_PER_TEST,
+        },
+        "engines": {}
+    }
+
+    # Skip the intentionally-invalid negative fixtures.
+    l_files = sorted(
+        f for f in FIXTURES_DIR.glob("*.l") if not f.stem.endswith("_fail")
+    )
+    for engine in ENGINES:
+        print(f"\n=== Benchmarking {engine} ===")
+        engine_results = []
+
+        for l_file in l_files:
+            print(f"  {l_file.name}...", end=" ", flush=True)
+            result = benchmark_file(l_file, roots, engine)
+            if result:
+                engine_results.append(result)
+                # Show speedup
+                if result["rust_compile_ms"] > 0 and result["python_compile_ms"] > 0:
+                    speedup = result["python_compile_ms"] / result["rust_compile_ms"]
+                    print(f"Rust {speedup:.1f}x faster")
+                else:
+                    print("OK")
+            else:
+                print("SKIP (no predicate)")
+
+        results["engines"][engine] = engine_results
+
+    # Calculate summary statistics
+    all_results = []
+    for engine_results in results["engines"].values():
+        all_results.extend(engine_results)
+
+    valid_parse = [(r["python_parse_ms"], r["rust_parse_ms"])
+                   for r in all_results
+                   if r["python_parse_ms"] > 0 and r["rust_parse_ms"] > 0]
+    valid_compile = [(r["python_compile_ms"], r["rust_compile_ms"])
+                     for r in all_results
+                     if r["python_compile_ms"] > 0 and r["rust_compile_ms"] > 0]
+
+    if valid_parse:
+        py_parse_total = sum(p for p, _ in valid_parse)
+        rs_parse_total = sum(r for _, r in valid_parse)
+        results["summary"] = {
+            "total_tests": len(all_results),
+            "valid_parse_tests": len(valid_parse),
+            "valid_compile_tests": len(valid_compile),
+            "python_parse_total_ms": py_parse_total,
+            "rust_parse_total_ms": rs_parse_total,
+            "parse_speedup": py_parse_total / rs_parse_total if rs_parse_total > 0 else 0,
+        }
+
+    if valid_compile:
+        py_compile_total = sum(p for p, _ in valid_compile)
+        rs_compile_total = sum(r for _, r in valid_compile)
+        results["summary"].update({
+            "python_compile_total_ms": py_compile_total,
+            "rust_compile_total_ms": rs_compile_total,
+            "compile_speedup": py_compile_total / rs_compile_total if rs_compile_total > 0 else 0,
+        })
+
+    # Write results
+    DOCS_BENCH_DIR.mkdir(parents=True, exist_ok=True)
+    with open(OUTPUT_FILE, 'w') as f:
+        json.dump(results, f, indent=2)
+    write_summary_markdown(results)
+
+    print(f"\n{'='*50}")
+    print("SUMMARY")
+    print(f"{'='*50}")
+    if "summary" in results:
+        s = results["summary"]
+        print(f"Total tests: {s['total_tests']}")
+        print(f"Parse speedup: {s.get('parse_speedup', 0):.2f}x")
+        print(f"Compile speedup: {s.get('compile_speedup', 0):.2f}x")
+    print(f"\nResults written to: {OUTPUT_FILE}")
+
+
+def write_summary_markdown(results):
+    """Write the markdown summary included by the docs Benchmark page."""
+    meta = results["metadata"]
+    s = results.get("summary", {})
+    lines = [
+        f"*Last run: {meta['timestamp']} — {s.get('total_tests', 0)} programs"
+        f" from the compiler test suite, {meta['runs_per_test']} runs per"
+        " measurement.*",
+        "",
+        "| | Python (total) | Rust (total) | Speedup |",
+        "| --- | --- | --- | --- |",
+        f"| Parse | {s.get('python_parse_total_ms', 0):.0f} ms"
+        f" | {s.get('rust_parse_total_ms', 0):.0f} ms"
+        f" | **{s.get('parse_speedup', 0):.1f}x** |",
+        f"| Compile | {s.get('python_compile_total_ms', 0):.0f} ms"
+        f" | {s.get('rust_compile_total_ms', 0):.0f} ms"
+        f" | **{s.get('compile_speedup', 0):.1f}x** |",
+        "",
+        "| Engine | Programs | Parse speedup | Compile speedup |",
+        "| --- | --- | --- | --- |",
+    ]
+    for engine, tests in results["engines"].items():
+        valid_parse = [(t["python_parse_ms"], t["rust_parse_ms"]) for t in tests
+                       if t["python_parse_ms"] > 0 and t["rust_parse_ms"] > 0]
+        valid_compile = [(t["python_compile_ms"], t["rust_compile_ms"]) for t in tests
+                         if t["python_compile_ms"] > 0 and t["rust_compile_ms"] > 0]
+        if not valid_parse or not valid_compile:
+            continue
+        parse_speedup = (sum(p for p, _ in valid_parse)
+                         / sum(r for _, r in valid_parse))
+        compile_speedup = (sum(p for p, _ in valid_compile)
+                           / sum(r for _, r in valid_compile))
+        lines.append(
+            f"| {engine} | {len(tests)} | {parse_speedup:.1f}x"
+            f" | {compile_speedup:.1f}x |"
+        )
+    DOCS_BENCH_DIR.mkdir(parents=True, exist_ok=True)
+    SUMMARY_FILE.write_text("\n".join(lines) + "\n")
+    print(f"Summary written to: {SUMMARY_FILE}")
+
+
+if __name__ == "__main__":
+    if "--plot" in sys.argv:
+        # Import plot module
+        exec(open(SCRIPT_DIR / "plot_benchmark.py").read())
+    elif "--export" in sys.argv:
+        with open(OUTPUT_FILE) as f:
+            write_summary_markdown(json.load(f))
+    else:
+        run_benchmarks()

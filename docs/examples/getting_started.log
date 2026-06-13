@@ -1,0 +1,44 @@
+$ synalog.check('getting_started.l')
+No errors found.
+
+$ synalog.compile('getting_started.l', 'EngineeringTeam')
+-- Initializing DuckDB environment.
+create schema if not exists logica_home;
+-- Empty record, has to have a field by DuckDB syntax.
+drop type if exists logicarecord893574736 cascade; create type logicarecord893574736 as struct(nirvana numeric);
+create sequence if not exists eternal_logical_sequence;
+
+WITH t_0_Employee AS (SELECT * FROM (
+  
+    SELECT
+      E'Alice' AS name,
+      E'Engineering' AS department,
+      75000 AS salary
+   UNION ALL
+  
+    SELECT
+      E'Bob' AS name,
+      E'Marketing' AS department,
+      65000 AS salary
+   UNION ALL
+  
+    SELECT
+      E'Charlie' AS name,
+      E'Engineering' AS department,
+      80000 AS salary
+  
+) AS UNUSED_TABLE_NAME  )
+SELECT
+  Employee.name AS name,
+  Employee.salary AS salary
+FROM
+  t_0_Employee AS Employee
+WHERE
+  (Employee.department = E'Engineering') ORDER BY name;
+
+-- Executed on DuckDB:
+| name    | salary |
+|---------|--------|
+| Alice   | 75000  |
+| Charlie | 80000  |
+(2 rows)

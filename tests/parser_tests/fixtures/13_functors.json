@@ -1,0 +1,669 @@
+{
+  "file_name": "main",
+  "imported_predicates": [],
+  "predicates_prefix": "",
+  "rule": [
+    {
+      "full_text": "@Engine(\"duckdb\")",
+      "head": {
+        "predicate_name": "@Engine",
+        "record": {
+          "field_value": [
+            {
+              "field": 0,
+              "value": {
+                "expression": {
+                  "expression_heritage": "\"duckdb\"",
+                  "literal": {
+                    "the_string": {
+                      "the_string": "duckdb"
+                    }
+                  }
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "full_text": "Events1(category: \"A\", count: 10)",
+      "head": {
+        "predicate_name": "Events1",
+        "record": {
+          "field_value": [
+            {
+              "field": "category",
+              "value": {
+                "expression": {
+                  "expression_heritage": "\"A\"",
+                  "literal": {
+                    "the_string": {
+                      "the_string": "A"
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "field": "count",
+              "value": {
+                "expression": {
+                  "expression_heritage": "10",
+                  "literal": {
+                    "the_number": {
+                      "number": "10"
+                    }
+                  }
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "full_text": "Events1(category: \"A\", count: 20)",
+      "head": {
+        "predicate_name": "Events1",
+        "record": {
+          "field_value": [
+            {
+              "field": "category",
+              "value": {
+                "expression": {
+                  "expression_heritage": "\"A\"",
+                  "literal": {
+                    "the_string": {
+                      "the_string": "A"
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "field": "count",
+              "value": {
+                "expression": {
+                  "expression_heritage": "20",
+                  "literal": {
+                    "the_number": {
+                      "number": "20"
+                    }
+                  }
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "full_text": "Events1(category: \"B\", count: 15)",
+      "head": {
+        "predicate_name": "Events1",
+        "record": {
+          "field_value": [
+            {
+              "field": "category",
+              "value": {
+                "expression": {
+                  "expression_heritage": "\"B\"",
+                  "literal": {
+                    "the_string": {
+                      "the_string": "B"
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "field": "count",
+              "value": {
+                "expression": {
+                  "expression_heritage": "15",
+                  "literal": {
+                    "the_number": {
+                      "number": "15"
+                    }
+                  }
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "full_text": "Events2(category: \"B\", count: 5)",
+      "head": {
+        "predicate_name": "Events2",
+        "record": {
+          "field_value": [
+            {
+              "field": "category",
+              "value": {
+                "expression": {
+                  "expression_heritage": "\"B\"",
+                  "literal": {
+                    "the_string": {
+                      "the_string": "B"
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "field": "count",
+              "value": {
+                "expression": {
+                  "expression_heritage": "5",
+                  "literal": {
+                    "the_number": {
+                      "number": "5"
+                    }
+                  }
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "full_text": "Events2(category: \"C\", count: 25)",
+      "head": {
+        "predicate_name": "Events2",
+        "record": {
+          "field_value": [
+            {
+              "field": "category",
+              "value": {
+                "expression": {
+                  "expression_heritage": "\"C\"",
+                  "literal": {
+                    "the_string": {
+                      "the_string": "C"
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "field": "count",
+              "value": {
+                "expression": {
+                  "expression_heritage": "25",
+                  "literal": {
+                    "the_number": {
+                      "number": "25"
+                    }
+                  }
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "full_text": "Events2(category: \"C\", count: 30)",
+      "head": {
+        "predicate_name": "Events2",
+        "record": {
+          "field_value": [
+            {
+              "field": "category",
+              "value": {
+                "expression": {
+                  "expression_heritage": "\"C\"",
+                  "literal": {
+                    "the_string": {
+                      "the_string": "C"
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "field": "count",
+              "value": {
+                "expression": {
+                  "expression_heritage": "30",
+                  "literal": {
+                    "the_number": {
+                      "number": "30"
+                    }
+                  }
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "body": {
+        "conjunction": {
+          "conjunct": [
+            {
+              "predicate": {
+                "predicate_name": "Events",
+                "record": {
+                  "field_value": [
+                    {
+                      "field": "category",
+                      "value": {
+                        "expression": {
+                          "expression_heritage": "category",
+                          "variable": {
+                            "var_name": "category"
+                          }
+                        }
+                      }
+                    },
+                    {
+                      "field": "count",
+                      "value": {
+                        "expression": {
+                          "expression_heritage": "count",
+                          "variable": {
+                            "var_name": "count"
+                          }
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          ]
+        }
+      },
+      "distinct_denoted": true,
+      "full_text": "TotalByCategory(category:, total? += count) distinct :- Events(category:, count:)",
+      "head": {
+        "predicate_name": "TotalByCategory",
+        "record": {
+          "field_value": [
+            {
+              "field": "category",
+              "value": {
+                "expression": {
+                  "expression_heritage": "category",
+                  "variable": {
+                    "var_name": "category"
+                  }
+                }
+              }
+            },
+            {
+              "field": "total",
+              "value": {
+                "aggregation": {
+                  "expression": {
+                    "call": {
+                      "predicate_name": "Agg+",
+                      "record": {
+                        "field_value": [
+                          {
+                            "field": 0,
+                            "value": {
+                              "expression": {
+                                "expression_heritage": "count",
+                                "variable": {
+                                  "var_name": "count"
+                                }
+                              }
+                            }
+                          }
+                        ]
+                      }
+                    },
+                    "expression_heritage": "+= count"
+                  },
+                  "expression_heritage": "+= count"
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "full_text": "@Make(Total1, TotalByCategory, {Events: Events1})",
+      "head": {
+        "predicate_name": "@Make",
+        "record": {
+          "field_value": [
+            {
+              "field": 0,
+              "value": {
+                "expression": {
+                  "expression_heritage": "Total1",
+                  "literal": {
+                    "the_predicate": {
+                      "predicate_name": "Total1"
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "field": 1,
+              "value": {
+                "expression": {
+                  "expression_heritage": "TotalByCategory",
+                  "literal": {
+                    "the_predicate": {
+                      "predicate_name": "TotalByCategory"
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "field": 2,
+              "value": {
+                "expression": {
+                  "expression_heritage": "{Events: Events1}",
+                  "record": {
+                    "field_value": [
+                      {
+                        "field": "Events",
+                        "value": {
+                          "expression": {
+                            "expression_heritage": "Events1",
+                            "literal": {
+                              "the_predicate": {
+                                "predicate_name": "Events1"
+                              }
+                            }
+                          }
+                        }
+                      }
+                    ]
+                  }
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "full_text": "@Make(Total2, TotalByCategory, {Events: Events2})",
+      "head": {
+        "predicate_name": "@Make",
+        "record": {
+          "field_value": [
+            {
+              "field": 0,
+              "value": {
+                "expression": {
+                  "expression_heritage": "Total2",
+                  "literal": {
+                    "the_predicate": {
+                      "predicate_name": "Total2"
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "field": 1,
+              "value": {
+                "expression": {
+                  "expression_heritage": "TotalByCategory",
+                  "literal": {
+                    "the_predicate": {
+                      "predicate_name": "TotalByCategory"
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "field": 2,
+              "value": {
+                "expression": {
+                  "expression_heritage": "{Events: Events2}",
+                  "record": {
+                    "field_value": [
+                      {
+                        "field": "Events",
+                        "value": {
+                          "expression": {
+                            "expression_heritage": "Events2",
+                            "literal": {
+                              "the_predicate": {
+                                "predicate_name": "Events2"
+                              }
+                            }
+                          }
+                        }
+                      }
+                    ]
+                  }
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "full_text": "@OrderBy(Test, \"source\", \"category\")",
+      "head": {
+        "predicate_name": "@OrderBy",
+        "record": {
+          "field_value": [
+            {
+              "field": 0,
+              "value": {
+                "expression": {
+                  "expression_heritage": "Test",
+                  "literal": {
+                    "the_predicate": {
+                      "predicate_name": "Test"
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "field": 1,
+              "value": {
+                "expression": {
+                  "expression_heritage": "\"source\"",
+                  "literal": {
+                    "the_string": {
+                      "the_string": "source"
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "field": 2,
+              "value": {
+                "expression": {
+                  "expression_heritage": "\"category\"",
+                  "literal": {
+                    "the_string": {
+                      "the_string": "category"
+                    }
+                  }
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "body": {
+        "conjunction": {
+          "conjunct": [
+            {
+              "predicate": {
+                "predicate_name": "Total1",
+                "record": {
+                  "field_value": [
+                    {
+                      "field": "category",
+                      "value": {
+                        "expression": {
+                          "expression_heritage": "category",
+                          "variable": {
+                            "var_name": "category"
+                          }
+                        }
+                      }
+                    },
+                    {
+                      "field": "total",
+                      "value": {
+                        "expression": {
+                          "expression_heritage": "total",
+                          "variable": {
+                            "var_name": "total"
+                          }
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          ]
+        }
+      },
+      "full_text": "Test(source: \"events1\", category:, total:) :- Total1(category:, total:)",
+      "head": {
+        "predicate_name": "Test",
+        "record": {
+          "field_value": [
+            {
+              "field": "source",
+              "value": {
+                "expression": {
+                  "expression_heritage": "\"events1\"",
+                  "literal": {
+                    "the_string": {
+                      "the_string": "events1"
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "field": "category",
+              "value": {
+                "expression": {
+                  "expression_heritage": "category",
+                  "variable": {
+                    "var_name": "category"
+                  }
+                }
+              }
+            },
+            {
+              "field": "total",
+              "value": {
+                "expression": {
+                  "expression_heritage": "total",
+                  "variable": {
+                    "var_name": "total"
+                  }
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "body": {
+        "conjunction": {
+          "conjunct": [
+            {
+              "predicate": {
+                "predicate_name": "Total2",
+                "record": {
+                  "field_value": [
+                    {
+                      "field": "category",
+                      "value": {
+                        "expression": {
+                          "expression_heritage": "category",
+                          "variable": {
+                            "var_name": "category"
+                          }
+                        }
+                      }
+                    },
+                    {
+                      "field": "total",
+                      "value": {
+                        "expression": {
+                          "expression_heritage": "total",
+                          "variable": {
+                            "var_name": "total"
+                          }
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          ]
+        }
+      },
+      "full_text": "Test(source: \"events2\", category:, total:) :- Total2(category:, total:)",
+      "head": {
+        "predicate_name": "Test",
+        "record": {
+          "field_value": [
+            {
+              "field": "source",
+              "value": {
+                "expression": {
+                  "expression_heritage": "\"events2\"",
+                  "literal": {
+                    "the_string": {
+                      "the_string": "events2"
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "field": "category",
+              "value": {
+                "expression": {
+                  "expression_heritage": "category",
+                  "variable": {
+                    "var_name": "category"
+                  }
+                }
+              }
+            },
+            {
+              "field": "total",
+              "value": {
+                "expression": {
+                  "expression_heritage": "total",
+                  "variable": {
+                    "var_name": "total"
+                  }
+                }
+              }
+            }
+          ]
+        }
+      }
+    }
+  ]
+}

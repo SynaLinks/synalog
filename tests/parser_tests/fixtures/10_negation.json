@@ -1,0 +1,927 @@
+{
+  "file_name": "main",
+  "imported_predicates": [],
+  "predicates_prefix": "",
+  "rule": [
+    {
+      "full_text": "@Engine(\"duckdb\")",
+      "head": {
+        "predicate_name": "@Engine",
+        "record": {
+          "field_value": [
+            {
+              "field": 0,
+              "value": {
+                "expression": {
+                  "expression_heritage": "\"duckdb\"",
+                  "literal": {
+                    "the_string": {
+                      "the_string": "duckdb"
+                    }
+                  }
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "body": {
+        "conjunction": {
+          "conjunct": [
+            {
+              "inclusion": {
+                "element": {
+                  "expression_heritage": "x",
+                  "variable": {
+                    "var_name": "x"
+                  }
+                },
+                "list": {
+                  "call": {
+                    "predicate_name": "Range",
+                    "record": {
+                      "field_value": [
+                        {
+                          "field": 0,
+                          "value": {
+                            "expression": {
+                              "expression_heritage": "10",
+                              "literal": {
+                                "the_number": {
+                                  "number": "10"
+                                }
+                              }
+                            }
+                          }
+                        }
+                      ]
+                    }
+                  },
+                  "expression_heritage": "Range(10)"
+                }
+              }
+            }
+          ]
+        }
+      },
+      "full_text": "Number(x) :- x in Range(10)",
+      "head": {
+        "predicate_name": "Number",
+        "record": {
+          "field_value": [
+            {
+              "field": 0,
+              "value": {
+                "expression": {
+                  "expression_heritage": "x",
+                  "variable": {
+                    "var_name": "x"
+                  }
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "body": {
+        "conjunction": {
+          "conjunct": [
+            {
+              "predicate": {
+                "predicate_name": "Number",
+                "record": {
+                  "field_value": [
+                    {
+                      "field": 0,
+                      "value": {
+                        "expression": {
+                          "expression_heritage": "x",
+                          "variable": {
+                            "var_name": "x"
+                          }
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            },
+            {
+              "unification": {
+                "left_hand_side": {
+                  "call": {
+                    "predicate_name": "%",
+                    "record": {
+                      "field_value": [
+                        {
+                          "field": "left",
+                          "value": {
+                            "expression": {
+                              "expression_heritage": "x",
+                              "variable": {
+                                "var_name": "x"
+                              }
+                            }
+                          }
+                        },
+                        {
+                          "field": "right",
+                          "value": {
+                            "expression": {
+                              "expression_heritage": "2",
+                              "literal": {
+                                "the_number": {
+                                  "number": "2"
+                                }
+                              }
+                            }
+                          }
+                        }
+                      ]
+                    }
+                  },
+                  "expression_heritage": "x % 2"
+                },
+                "right_hand_side": {
+                  "expression_heritage": "0",
+                  "literal": {
+                    "the_number": {
+                      "number": "0"
+                    }
+                  }
+                }
+              }
+            }
+          ]
+        }
+      },
+      "full_text": "Even(x) :- Number(x), x % 2 == 0",
+      "head": {
+        "predicate_name": "Even",
+        "record": {
+          "field_value": [
+            {
+              "field": 0,
+              "value": {
+                "expression": {
+                  "expression_heritage": "x",
+                  "variable": {
+                    "var_name": "x"
+                  }
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "full_text": "Prime(2)",
+      "head": {
+        "predicate_name": "Prime",
+        "record": {
+          "field_value": [
+            {
+              "field": 0,
+              "value": {
+                "expression": {
+                  "expression_heritage": "2",
+                  "literal": {
+                    "the_number": {
+                      "number": "2"
+                    }
+                  }
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "full_text": "Prime(3)",
+      "head": {
+        "predicate_name": "Prime",
+        "record": {
+          "field_value": [
+            {
+              "field": 0,
+              "value": {
+                "expression": {
+                  "expression_heritage": "3",
+                  "literal": {
+                    "the_number": {
+                      "number": "3"
+                    }
+                  }
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "full_text": "Prime(5)",
+      "head": {
+        "predicate_name": "Prime",
+        "record": {
+          "field_value": [
+            {
+              "field": 0,
+              "value": {
+                "expression": {
+                  "expression_heritage": "5",
+                  "literal": {
+                    "the_number": {
+                      "number": "5"
+                    }
+                  }
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "full_text": "Prime(7)",
+      "head": {
+        "predicate_name": "Prime",
+        "record": {
+          "field_value": [
+            {
+              "field": 0,
+              "value": {
+                "expression": {
+                  "expression_heritage": "7",
+                  "literal": {
+                    "the_number": {
+                      "number": "7"
+                    }
+                  }
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "body": {
+        "conjunction": {
+          "conjunct": [
+            {
+              "predicate": {
+                "predicate_name": "Number",
+                "record": {
+                  "field_value": [
+                    {
+                      "field": 0,
+                      "value": {
+                        "expression": {
+                          "expression_heritage": "x",
+                          "variable": {
+                            "var_name": "x"
+                          }
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            },
+            {
+              "predicate": {
+                "predicate_name": "IsNull",
+                "record": {
+                  "field_value": [
+                    {
+                      "field": 0,
+                      "value": {
+                        "expression": {
+                          "combine": {
+                            "body": {
+                              "conjunction": {
+                                "conjunct": [
+                                  {
+                                    "predicate": {
+                                      "predicate_name": "Even",
+                                      "record": {
+                                        "field_value": [
+                                          {
+                                            "field": 0,
+                                            "value": {
+                                              "expression": {
+                                                "expression_heritage": "x",
+                                                "variable": {
+                                                  "var_name": "x"
+                                                }
+                                              }
+                                            }
+                                          }
+                                        ]
+                                      }
+                                    }
+                                  }
+                                ]
+                              }
+                            },
+                            "distinct_denoted": true,
+                            "full_text": "~Even(x)",
+                            "head": {
+                              "predicate_name": "Combine",
+                              "record": {
+                                "field_value": [
+                                  {
+                                    "field": "logica_value",
+                                    "value": {
+                                      "aggregation": {
+                                        "expression": {
+                                          "call": {
+                                            "predicate_name": "Min",
+                                            "record": {
+                                              "field_value": [
+                                                {
+                                                  "field": 0,
+                                                  "value": {
+                                                    "expression": {
+                                                      "literal": {
+                                                        "the_number": {
+                                                          "number": "1"
+                                                        }
+                                                      }
+                                                    }
+                                                  }
+                                                }
+                                              ]
+                                            }
+                                          },
+                                          "expression_heritage": "~Even(x)"
+                                        },
+                                        "expression_heritage": "~Even(x)"
+                                      }
+                                    }
+                                  }
+                                ]
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          ]
+        }
+      },
+      "full_text": "Odd(x) :- Number(x), ~Even(x)",
+      "head": {
+        "predicate_name": "Odd",
+        "record": {
+          "field_value": [
+            {
+              "field": 0,
+              "value": {
+                "expression": {
+                  "expression_heritage": "x",
+                  "variable": {
+                    "var_name": "x"
+                  }
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "body": {
+        "conjunction": {
+          "conjunct": [
+            {
+              "predicate": {
+                "predicate_name": "Number",
+                "record": {
+                  "field_value": [
+                    {
+                      "field": 0,
+                      "value": {
+                        "expression": {
+                          "expression_heritage": "x",
+                          "variable": {
+                            "var_name": "x"
+                          }
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            },
+            {
+              "predicate": {
+                "predicate_name": ">",
+                "record": {
+                  "field_value": [
+                    {
+                      "field": "left",
+                      "value": {
+                        "expression": {
+                          "expression_heritage": "x",
+                          "variable": {
+                            "var_name": "x"
+                          }
+                        }
+                      }
+                    },
+                    {
+                      "field": "right",
+                      "value": {
+                        "expression": {
+                          "expression_heritage": "1",
+                          "literal": {
+                            "the_number": {
+                              "number": "1"
+                            }
+                          }
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            },
+            {
+              "predicate": {
+                "predicate_name": "IsNull",
+                "record": {
+                  "field_value": [
+                    {
+                      "field": 0,
+                      "value": {
+                        "expression": {
+                          "combine": {
+                            "body": {
+                              "conjunction": {
+                                "conjunct": [
+                                  {
+                                    "predicate": {
+                                      "predicate_name": "Prime",
+                                      "record": {
+                                        "field_value": [
+                                          {
+                                            "field": 0,
+                                            "value": {
+                                              "expression": {
+                                                "expression_heritage": "x",
+                                                "variable": {
+                                                  "var_name": "x"
+                                                }
+                                              }
+                                            }
+                                          }
+                                        ]
+                                      }
+                                    }
+                                  }
+                                ]
+                              }
+                            },
+                            "distinct_denoted": true,
+                            "full_text": "~Prime(x)",
+                            "head": {
+                              "predicate_name": "Combine",
+                              "record": {
+                                "field_value": [
+                                  {
+                                    "field": "logica_value",
+                                    "value": {
+                                      "aggregation": {
+                                        "expression": {
+                                          "call": {
+                                            "predicate_name": "Min",
+                                            "record": {
+                                              "field_value": [
+                                                {
+                                                  "field": 0,
+                                                  "value": {
+                                                    "expression": {
+                                                      "literal": {
+                                                        "the_number": {
+                                                          "number": "1"
+                                                        }
+                                                      }
+                                                    }
+                                                  }
+                                                }
+                                              ]
+                                            }
+                                          },
+                                          "expression_heritage": "~Prime(x)"
+                                        },
+                                        "expression_heritage": "~Prime(x)"
+                                      }
+                                    }
+                                  }
+                                ]
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          ]
+        }
+      },
+      "full_text": "NotPrime(x) :- Number(x), x > 1, ~Prime(x)",
+      "head": {
+        "predicate_name": "NotPrime",
+        "record": {
+          "field_value": [
+            {
+              "field": 0,
+              "value": {
+                "expression": {
+                  "expression_heritage": "x",
+                  "variable": {
+                    "var_name": "x"
+                  }
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "body": {
+        "conjunction": {
+          "conjunct": [
+            {
+              "predicate": {
+                "predicate_name": "Even",
+                "record": {
+                  "field_value": [
+                    {
+                      "field": 0,
+                      "value": {
+                        "expression": {
+                          "expression_heritage": "x",
+                          "variable": {
+                            "var_name": "x"
+                          }
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            },
+            {
+              "predicate": {
+                "predicate_name": "IsNull",
+                "record": {
+                  "field_value": [
+                    {
+                      "field": 0,
+                      "value": {
+                        "expression": {
+                          "combine": {
+                            "body": {
+                              "conjunction": {
+                                "conjunct": [
+                                  {
+                                    "predicate": {
+                                      "predicate_name": "Prime",
+                                      "record": {
+                                        "field_value": [
+                                          {
+                                            "field": 0,
+                                            "value": {
+                                              "expression": {
+                                                "expression_heritage": "x",
+                                                "variable": {
+                                                  "var_name": "x"
+                                                }
+                                              }
+                                            }
+                                          }
+                                        ]
+                                      }
+                                    }
+                                  }
+                                ]
+                              }
+                            },
+                            "distinct_denoted": true,
+                            "full_text": "~Prime(x)",
+                            "head": {
+                              "predicate_name": "Combine",
+                              "record": {
+                                "field_value": [
+                                  {
+                                    "field": "logica_value",
+                                    "value": {
+                                      "aggregation": {
+                                        "expression": {
+                                          "call": {
+                                            "predicate_name": "Min",
+                                            "record": {
+                                              "field_value": [
+                                                {
+                                                  "field": 0,
+                                                  "value": {
+                                                    "expression": {
+                                                      "literal": {
+                                                        "the_number": {
+                                                          "number": "1"
+                                                        }
+                                                      }
+                                                    }
+                                                  }
+                                                }
+                                              ]
+                                            }
+                                          },
+                                          "expression_heritage": "~Prime(x)"
+                                        },
+                                        "expression_heritage": "~Prime(x)"
+                                      }
+                                    }
+                                  }
+                                ]
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          ]
+        }
+      },
+      "full_text": "EvenNotPrime(x) :- Even(x), ~Prime(x)",
+      "head": {
+        "predicate_name": "EvenNotPrime",
+        "record": {
+          "field_value": [
+            {
+              "field": 0,
+              "value": {
+                "expression": {
+                  "expression_heritage": "x",
+                  "variable": {
+                    "var_name": "x"
+                  }
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "full_text": "@OrderBy(Test, \"test_name\", \"x\")",
+      "head": {
+        "predicate_name": "@OrderBy",
+        "record": {
+          "field_value": [
+            {
+              "field": 0,
+              "value": {
+                "expression": {
+                  "expression_heritage": "Test",
+                  "literal": {
+                    "the_predicate": {
+                      "predicate_name": "Test"
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "field": 1,
+              "value": {
+                "expression": {
+                  "expression_heritage": "\"test_name\"",
+                  "literal": {
+                    "the_string": {
+                      "the_string": "test_name"
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "field": 2,
+              "value": {
+                "expression": {
+                  "expression_heritage": "\"x\"",
+                  "literal": {
+                    "the_string": {
+                      "the_string": "x"
+                    }
+                  }
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "body": {
+        "conjunction": {
+          "conjunct": [
+            {
+              "predicate": {
+                "predicate_name": "Odd",
+                "record": {
+                  "field_value": [
+                    {
+                      "field": 0,
+                      "value": {
+                        "expression": {
+                          "expression_heritage": "x",
+                          "variable": {
+                            "var_name": "x"
+                          }
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          ]
+        }
+      },
+      "full_text": "Test(test_name: \"odd\", x:) :- Odd(x)",
+      "head": {
+        "predicate_name": "Test",
+        "record": {
+          "field_value": [
+            {
+              "field": "test_name",
+              "value": {
+                "expression": {
+                  "expression_heritage": "\"odd\"",
+                  "literal": {
+                    "the_string": {
+                      "the_string": "odd"
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "field": "x",
+              "value": {
+                "expression": {
+                  "expression_heritage": "x",
+                  "variable": {
+                    "var_name": "x"
+                  }
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "body": {
+        "conjunction": {
+          "conjunct": [
+            {
+              "predicate": {
+                "predicate_name": "NotPrime",
+                "record": {
+                  "field_value": [
+                    {
+                      "field": 0,
+                      "value": {
+                        "expression": {
+                          "expression_heritage": "x",
+                          "variable": {
+                            "var_name": "x"
+                          }
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          ]
+        }
+      },
+      "full_text": "Test(test_name: \"not_prime\", x:) :- NotPrime(x)",
+      "head": {
+        "predicate_name": "Test",
+        "record": {
+          "field_value": [
+            {
+              "field": "test_name",
+              "value": {
+                "expression": {
+                  "expression_heritage": "\"not_prime\"",
+                  "literal": {
+                    "the_string": {
+                      "the_string": "not_prime"
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "field": "x",
+              "value": {
+                "expression": {
+                  "expression_heritage": "x",
+                  "variable": {
+                    "var_name": "x"
+                  }
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "body": {
+        "conjunction": {
+          "conjunct": [
+            {
+              "predicate": {
+                "predicate_name": "EvenNotPrime",
+                "record": {
+                  "field_value": [
+                    {
+                      "field": 0,
+                      "value": {
+                        "expression": {
+                          "expression_heritage": "x",
+                          "variable": {
+                            "var_name": "x"
+                          }
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          ]
+        }
+      },
+      "full_text": "Test(test_name: \"even_not_prime\", x:) :- EvenNotPrime(x)",
+      "head": {
+        "predicate_name": "Test",
+        "record": {
+          "field_value": [
+            {
+              "field": "test_name",
+              "value": {
+                "expression": {
+                  "expression_heritage": "\"even_not_prime\"",
+                  "literal": {
+                    "the_string": {
+                      "the_string": "even_not_prime"
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "field": "x",
+              "value": {
+                "expression": {
+                  "expression_heritage": "x",
+                  "variable": {
+                    "var_name": "x"
+                  }
+                }
+              }
+            }
+          ]
+        }
+      }
+    }
+  ]
+}

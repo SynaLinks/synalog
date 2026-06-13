@@ -1,0 +1,207 @@
+{
+  "file_name": "main",
+  "imported_predicates": [],
+  "predicates_prefix": "",
+  "rule": [
+    {
+      "full_text": "@Engine(\"duckdb\")",
+      "head": {
+        "predicate_name": "@Engine",
+        "record": {
+          "field_value": [
+            {
+              "field": 0,
+              "value": {
+                "expression": {
+                  "expression_heritage": "\"duckdb\"",
+                  "literal": {
+                    "the_string": {
+                      "the_string": "duckdb"
+                    }
+                  }
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "full_text": "JsonData(\"Alice\", 30)",
+      "head": {
+        "predicate_name": "JsonData",
+        "record": {
+          "field_value": [
+            {
+              "field": 0,
+              "value": {
+                "expression": {
+                  "expression_heritage": "\"Alice\"",
+                  "literal": {
+                    "the_string": {
+                      "the_string": "Alice"
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "field": 1,
+              "value": {
+                "expression": {
+                  "expression_heritage": "30",
+                  "literal": {
+                    "the_number": {
+                      "number": "30"
+                    }
+                  }
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "full_text": "JsonData(\"Bob\", 25)",
+      "head": {
+        "predicate_name": "JsonData",
+        "record": {
+          "field_value": [
+            {
+              "field": 0,
+              "value": {
+                "expression": {
+                  "expression_heritage": "\"Bob\"",
+                  "literal": {
+                    "the_string": {
+                      "the_string": "Bob"
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "field": 1,
+              "value": {
+                "expression": {
+                  "expression_heritage": "25",
+                  "literal": {
+                    "the_number": {
+                      "number": "25"
+                    }
+                  }
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "full_text": "@OrderBy(Test, \"col0\")",
+      "head": {
+        "predicate_name": "@OrderBy",
+        "record": {
+          "field_value": [
+            {
+              "field": 0,
+              "value": {
+                "expression": {
+                  "expression_heritage": "Test",
+                  "literal": {
+                    "the_predicate": {
+                      "predicate_name": "Test"
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "field": 1,
+              "value": {
+                "expression": {
+                  "expression_heritage": "\"col0\"",
+                  "literal": {
+                    "the_string": {
+                      "the_string": "col0"
+                    }
+                  }
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "body": {
+        "conjunction": {
+          "conjunct": [
+            {
+              "predicate": {
+                "predicate_name": "JsonData",
+                "record": {
+                  "field_value": [
+                    {
+                      "field": 0,
+                      "value": {
+                        "expression": {
+                          "expression_heritage": "name",
+                          "variable": {
+                            "var_name": "name"
+                          }
+                        }
+                      }
+                    },
+                    {
+                      "field": 1,
+                      "value": {
+                        "expression": {
+                          "expression_heritage": "age",
+                          "variable": {
+                            "var_name": "age"
+                          }
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          ]
+        }
+      },
+      "full_text": "Test(name, age) :- JsonData(name, age)",
+      "head": {
+        "predicate_name": "Test",
+        "record": {
+          "field_value": [
+            {
+              "field": 0,
+              "value": {
+                "expression": {
+                  "expression_heritage": "name",
+                  "variable": {
+                    "var_name": "name"
+                  }
+                }
+              }
+            },
+            {
+              "field": 1,
+              "value": {
+                "expression": {
+                  "expression_heritage": "age",
+                  "variable": {
+                    "var_name": "age"
+                  }
+                }
+              }
+            }
+          ]
+        }
+      }
+    }
+  ]
+}

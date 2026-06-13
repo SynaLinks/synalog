@@ -1,0 +1,252 @@
+$ synalog.check('syntax.l')
+No errors found.
+
+$ synalog.compile('syntax.l', 'OrderWithTax')
+-- Initializing DuckDB environment.
+create schema if not exists logica_home;
+-- Empty record, has to have a field by DuckDB syntax.
+drop type if exists logicarecord893574736 cascade; create type logicarecord893574736 as struct(nirvana numeric);
+create sequence if not exists eternal_logical_sequence;
+
+WITH t_0_Orders AS (SELECT * FROM (
+  
+    SELECT
+      10 AS order_id,
+      1 AS customer_id,
+      1500 AS amount
+   UNION ALL
+  
+    SELECT
+      11 AS order_id,
+      2 AS customer_id,
+      240 AS amount
+   UNION ALL
+  
+    SELECT
+      12 AS order_id,
+      3 AS customer_id,
+      40 AS amount
+  
+) AS UNUSED_TABLE_NAME  )
+SELECT
+  Orders.order_id AS order_id,
+  ((Orders.amount) * (1.10)) AS total
+FROM
+  t_0_Orders AS Orders ORDER BY order_id;
+
+-- Executed on DuckDB:
+| order_id | total   |
+|----------|---------|
+| 10       | 1650.00 |
+| 11       | 264.00  |
+| 12       | 44.00   |
+(3 rows)
+
+$ synalog.compile('syntax.l', 'ContactableCustomer')
+-- Initializing DuckDB environment.
+create schema if not exists logica_home;
+-- Empty record, has to have a field by DuckDB syntax.
+drop type if exists logicarecord893574736 cascade; create type logicarecord893574736 as struct(nirvana numeric);
+create sequence if not exists eternal_logical_sequence;
+
+WITH t_1_Customers AS (SELECT * FROM (
+  
+    SELECT
+      1 AS customer_id,
+      E'Ada Lovelace' AS full_name,
+      E'ada@example.com' AS email,
+      null AS phone
+   UNION ALL
+  
+    SELECT
+      2 AS customer_id,
+      null AS full_name,
+      null AS email,
+      E'555-0102' AS phone
+   UNION ALL
+  
+    SELECT
+      3 AS customer_id,
+      E'Grace Hopper' AS full_name,
+      E'grace@example.com' AS email,
+      E'555-0103' AS phone
+  
+) AS UNUSED_TABLE_NAME  ),
+t_0_ContactableCustomer_MultBodyAggAux AS (SELECT * FROM (
+  
+    SELECT
+      Customers.customer_id AS customer_id,
+      E'email' AS channel
+    FROM
+      t_1_Customers AS Customers
+    WHERE
+      (Customers.email IS NOT null)
+   UNION ALL
+  
+    SELECT
+      t_2_Customers.customer_id AS customer_id,
+      E'phone' AS channel
+    FROM
+      t_1_Customers AS t_2_Customers
+    WHERE
+      (t_2_Customers.phone IS NOT null)
+  
+) AS UNUSED_TABLE_NAME  )
+SELECT
+  ContactableCustomer_MultBodyAggAux.customer_id AS customer_id,
+  ContactableCustomer_MultBodyAggAux.channel AS channel
+FROM
+  t_0_ContactableCustomer_MultBodyAggAux AS ContactableCustomer_MultBodyAggAux
+GROUP BY ContactableCustomer_MultBodyAggAux.customer_id, ContactableCustomer_MultBodyAggAux.channel ORDER BY customer_id;
+
+-- Executed on DuckDB:
+| customer_id | channel |
+|-------------|---------|
+| 1           | email   |
+| 2           | phone   |
+| 3           | phone   |
+| 3           | email   |
+(4 rows)
+
+$ synalog.compile('syntax.l', 'Inactive')
+-- Initializing DuckDB environment.
+create schema if not exists logica_home;
+-- Empty record, has to have a field by DuckDB syntax.
+drop type if exists logicarecord893574736 cascade; create type logicarecord893574736 as struct(nirvana numeric);
+create sequence if not exists eternal_logical_sequence;
+
+WITH t_0_Customers AS (SELECT * FROM (
+  
+    SELECT
+      1 AS customer_id,
+      E'Ada Lovelace' AS full_name,
+      E'ada@example.com' AS email,
+      null AS phone
+   UNION ALL
+  
+    SELECT
+      2 AS customer_id,
+      null AS full_name,
+      null AS email,
+      E'555-0102' AS phone
+   UNION ALL
+  
+    SELECT
+      3 AS customer_id,
+      E'Grace Hopper' AS full_name,
+      E'grace@example.com' AS email,
+      E'555-0103' AS phone
+  
+) AS UNUSED_TABLE_NAME  ),
+t_1_Logins AS (SELECT * FROM (
+  
+    SELECT
+      1 AS customer_id
+   UNION ALL
+  
+    SELECT
+      3 AS customer_id
+  
+) AS UNUSED_TABLE_NAME  )
+SELECT
+  Customers.customer_id AS customer_id
+FROM
+  t_0_Customers AS Customers
+WHERE
+  ((SELECT
+    MIN((CASE WHEN x_4.unnested_pod = 0 THEN 1 ELSE NULL END)) AS logica_value
+  FROM
+    t_1_Logins AS Logins, (select unnest([0]) as unnested_pod) as x_4
+  WHERE
+    (Logins.customer_id = Customers.customer_id)) IS NULL) ORDER BY customer_id;
+
+-- Executed on DuckDB:
+| customer_id |
+|-------------|
+| 2           |
+(1 row)
+
+$ synalog.compile('syntax.l', 'OrderSize')
+-- Initializing DuckDB environment.
+create schema if not exists logica_home;
+-- Empty record, has to have a field by DuckDB syntax.
+drop type if exists logicarecord893574736 cascade; create type logicarecord893574736 as struct(nirvana numeric);
+create sequence if not exists eternal_logical_sequence;
+
+WITH t_0_Orders AS (SELECT * FROM (
+  
+    SELECT
+      10 AS order_id,
+      1 AS customer_id,
+      1500 AS amount
+   UNION ALL
+  
+    SELECT
+      11 AS order_id,
+      2 AS customer_id,
+      240 AS amount
+   UNION ALL
+  
+    SELECT
+      12 AS order_id,
+      3 AS customer_id,
+      40 AS amount
+  
+) AS UNUSED_TABLE_NAME  )
+SELECT
+  Orders.order_id AS order_id,
+  CASE WHEN (Orders.amount > 1000) THEN E'large' WHEN (Orders.amount > 100) THEN E'medium' ELSE E'small' END AS size
+FROM
+  t_0_Orders AS Orders ORDER BY order_id;
+
+-- Executed on DuckDB:
+| order_id | size   |
+|----------|--------|
+| 10       | large  |
+| 11       | medium |
+| 12       | small  |
+(3 rows)
+
+$ synalog.compile('syntax.l', 'UserDisplay')
+-- Initializing DuckDB environment.
+create schema if not exists logica_home;
+-- Empty record, has to have a field by DuckDB syntax.
+drop type if exists logicarecord893574736 cascade; create type logicarecord893574736 as struct(nirvana numeric);
+create sequence if not exists eternal_logical_sequence;
+
+WITH t_0_Customers AS (SELECT * FROM (
+  
+    SELECT
+      1 AS customer_id,
+      E'Ada Lovelace' AS full_name,
+      E'ada@example.com' AS email,
+      null AS phone
+   UNION ALL
+  
+    SELECT
+      2 AS customer_id,
+      null AS full_name,
+      null AS email,
+      E'555-0102' AS phone
+   UNION ALL
+  
+    SELECT
+      3 AS customer_id,
+      E'Grace Hopper' AS full_name,
+      E'grace@example.com' AS email,
+      E'555-0103' AS phone
+  
+) AS UNUSED_TABLE_NAME  )
+SELECT
+  Customers.customer_id AS customer_id,
+  COALESCE(Customers.full_name, E'Anonymous') AS name
+FROM
+  t_0_Customers AS Customers ORDER BY customer_id;
+
+-- Executed on DuckDB:
+| customer_id | name         |
+|-------------|--------------|
+| 1           | Ada Lovelace |
+| 2           | Anonymous    |
+| 3           | Grace Hopper |
+(3 rows)

@@ -1,0 +1,695 @@
+{
+  "file_name": "main",
+  "imported_predicates": [],
+  "predicates_prefix": "",
+  "rule": [
+    {
+      "full_text": "@Engine(\"duckdb\")",
+      "head": {
+        "predicate_name": "@Engine",
+        "record": {
+          "field_value": [
+            {
+              "field": 0,
+              "value": {
+                "expression": {
+                  "expression_heritage": "\"duckdb\"",
+                  "literal": {
+                    "the_string": {
+                      "the_string": "duckdb"
+                    }
+                  }
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "full_text": "Orders(order_id: 1, customer_id: 101, product_id: \"P1\")",
+      "head": {
+        "predicate_name": "Orders",
+        "record": {
+          "field_value": [
+            {
+              "field": "order_id",
+              "value": {
+                "expression": {
+                  "expression_heritage": "1",
+                  "literal": {
+                    "the_number": {
+                      "number": "1"
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "field": "customer_id",
+              "value": {
+                "expression": {
+                  "expression_heritage": "101",
+                  "literal": {
+                    "the_number": {
+                      "number": "101"
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "field": "product_id",
+              "value": {
+                "expression": {
+                  "expression_heritage": "\"P1\"",
+                  "literal": {
+                    "the_string": {
+                      "the_string": "P1"
+                    }
+                  }
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "full_text": "Orders(order_id: 2, customer_id: 102, product_id: \"P2\")",
+      "head": {
+        "predicate_name": "Orders",
+        "record": {
+          "field_value": [
+            {
+              "field": "order_id",
+              "value": {
+                "expression": {
+                  "expression_heritage": "2",
+                  "literal": {
+                    "the_number": {
+                      "number": "2"
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "field": "customer_id",
+              "value": {
+                "expression": {
+                  "expression_heritage": "102",
+                  "literal": {
+                    "the_number": {
+                      "number": "102"
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "field": "product_id",
+              "value": {
+                "expression": {
+                  "expression_heritage": "\"P2\"",
+                  "literal": {
+                    "the_string": {
+                      "the_string": "P2"
+                    }
+                  }
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "full_text": "Orders(order_id: 3, customer_id: 101, product_id: \"P3\")",
+      "head": {
+        "predicate_name": "Orders",
+        "record": {
+          "field_value": [
+            {
+              "field": "order_id",
+              "value": {
+                "expression": {
+                  "expression_heritage": "3",
+                  "literal": {
+                    "the_number": {
+                      "number": "3"
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "field": "customer_id",
+              "value": {
+                "expression": {
+                  "expression_heritage": "101",
+                  "literal": {
+                    "the_number": {
+                      "number": "101"
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "field": "product_id",
+              "value": {
+                "expression": {
+                  "expression_heritage": "\"P3\"",
+                  "literal": {
+                    "the_string": {
+                      "the_string": "P3"
+                    }
+                  }
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "full_text": "Customers(customer_id: 101, name: \"Alice\")",
+      "head": {
+        "predicate_name": "Customers",
+        "record": {
+          "field_value": [
+            {
+              "field": "customer_id",
+              "value": {
+                "expression": {
+                  "expression_heritage": "101",
+                  "literal": {
+                    "the_number": {
+                      "number": "101"
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "field": "name",
+              "value": {
+                "expression": {
+                  "expression_heritage": "\"Alice\"",
+                  "literal": {
+                    "the_string": {
+                      "the_string": "Alice"
+                    }
+                  }
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "full_text": "Customers(customer_id: 102, name: \"Bob\")",
+      "head": {
+        "predicate_name": "Customers",
+        "record": {
+          "field_value": [
+            {
+              "field": "customer_id",
+              "value": {
+                "expression": {
+                  "expression_heritage": "102",
+                  "literal": {
+                    "the_number": {
+                      "number": "102"
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "field": "name",
+              "value": {
+                "expression": {
+                  "expression_heritage": "\"Bob\"",
+                  "literal": {
+                    "the_string": {
+                      "the_string": "Bob"
+                    }
+                  }
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "full_text": "Products(product_id: \"P1\", price: 100)",
+      "head": {
+        "predicate_name": "Products",
+        "record": {
+          "field_value": [
+            {
+              "field": "product_id",
+              "value": {
+                "expression": {
+                  "expression_heritage": "\"P1\"",
+                  "literal": {
+                    "the_string": {
+                      "the_string": "P1"
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "field": "price",
+              "value": {
+                "expression": {
+                  "expression_heritage": "100",
+                  "literal": {
+                    "the_number": {
+                      "number": "100"
+                    }
+                  }
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "full_text": "Products(product_id: \"P2\", price: 200)",
+      "head": {
+        "predicate_name": "Products",
+        "record": {
+          "field_value": [
+            {
+              "field": "product_id",
+              "value": {
+                "expression": {
+                  "expression_heritage": "\"P2\"",
+                  "literal": {
+                    "the_string": {
+                      "the_string": "P2"
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "field": "price",
+              "value": {
+                "expression": {
+                  "expression_heritage": "200",
+                  "literal": {
+                    "the_number": {
+                      "number": "200"
+                    }
+                  }
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "full_text": "Products(product_id: \"P3\", price: 150)",
+      "head": {
+        "predicate_name": "Products",
+        "record": {
+          "field_value": [
+            {
+              "field": "product_id",
+              "value": {
+                "expression": {
+                  "expression_heritage": "\"P3\"",
+                  "literal": {
+                    "the_string": {
+                      "the_string": "P3"
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "field": "price",
+              "value": {
+                "expression": {
+                  "expression_heritage": "150",
+                  "literal": {
+                    "the_number": {
+                      "number": "150"
+                    }
+                  }
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "full_text": "@OrderBy(OrderDetails, \"order_id\")",
+      "head": {
+        "predicate_name": "@OrderBy",
+        "record": {
+          "field_value": [
+            {
+              "field": 0,
+              "value": {
+                "expression": {
+                  "expression_heritage": "OrderDetails",
+                  "literal": {
+                    "the_predicate": {
+                      "predicate_name": "OrderDetails"
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "field": 1,
+              "value": {
+                "expression": {
+                  "expression_heritage": "\"order_id\"",
+                  "literal": {
+                    "the_string": {
+                      "the_string": "order_id"
+                    }
+                  }
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "body": {
+        "conjunction": {
+          "conjunct": [
+            {
+              "predicate": {
+                "predicate_name": "Orders",
+                "record": {
+                  "field_value": [
+                    {
+                      "field": "order_id",
+                      "value": {
+                        "expression": {
+                          "expression_heritage": "order_id",
+                          "variable": {
+                            "var_name": "order_id"
+                          }
+                        }
+                      }
+                    },
+                    {
+                      "field": "customer_id",
+                      "value": {
+                        "expression": {
+                          "expression_heritage": "customer_id",
+                          "variable": {
+                            "var_name": "customer_id"
+                          }
+                        }
+                      }
+                    },
+                    {
+                      "field": "product_id",
+                      "value": {
+                        "expression": {
+                          "expression_heritage": "product_id",
+                          "variable": {
+                            "var_name": "product_id"
+                          }
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            },
+            {
+              "predicate": {
+                "predicate_name": "Customers",
+                "record": {
+                  "field_value": [
+                    {
+                      "field": "customer_id",
+                      "value": {
+                        "expression": {
+                          "expression_heritage": "customer_id",
+                          "variable": {
+                            "var_name": "customer_id"
+                          }
+                        }
+                      }
+                    },
+                    {
+                      "field": "name",
+                      "value": {
+                        "expression": {
+                          "expression_heritage": "name",
+                          "variable": {
+                            "var_name": "name"
+                          }
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            },
+            {
+              "predicate": {
+                "predicate_name": "Products",
+                "record": {
+                  "field_value": [
+                    {
+                      "field": "product_id",
+                      "value": {
+                        "expression": {
+                          "expression_heritage": "product_id",
+                          "variable": {
+                            "var_name": "product_id"
+                          }
+                        }
+                      }
+                    },
+                    {
+                      "field": "price",
+                      "value": {
+                        "expression": {
+                          "expression_heritage": "price",
+                          "variable": {
+                            "var_name": "price"
+                          }
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          ]
+        }
+      },
+      "full_text": "OrderDetails(order_id:, customer_name: name, product_id:, price:) :-\n  Orders(order_id:, customer_id:, product_id:),\n  Customers(customer_id:, name:),\n  Products(product_id:, price:)",
+      "head": {
+        "predicate_name": "OrderDetails",
+        "record": {
+          "field_value": [
+            {
+              "field": "order_id",
+              "value": {
+                "expression": {
+                  "expression_heritage": "order_id",
+                  "variable": {
+                    "var_name": "order_id"
+                  }
+                }
+              }
+            },
+            {
+              "field": "customer_name",
+              "value": {
+                "expression": {
+                  "expression_heritage": "name",
+                  "variable": {
+                    "var_name": "name"
+                  }
+                }
+              }
+            },
+            {
+              "field": "product_id",
+              "value": {
+                "expression": {
+                  "expression_heritage": "product_id",
+                  "variable": {
+                    "var_name": "product_id"
+                  }
+                }
+              }
+            },
+            {
+              "field": "price",
+              "value": {
+                "expression": {
+                  "expression_heritage": "price",
+                  "variable": {
+                    "var_name": "price"
+                  }
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "full_text": "@OrderBy(Test, \"order_id\")",
+      "head": {
+        "predicate_name": "@OrderBy",
+        "record": {
+          "field_value": [
+            {
+              "field": 0,
+              "value": {
+                "expression": {
+                  "expression_heritage": "Test",
+                  "literal": {
+                    "the_predicate": {
+                      "predicate_name": "Test"
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "field": 1,
+              "value": {
+                "expression": {
+                  "expression_heritage": "\"order_id\"",
+                  "literal": {
+                    "the_string": {
+                      "the_string": "order_id"
+                    }
+                  }
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "body": {
+        "conjunction": {
+          "conjunct": [
+            {
+              "predicate": {
+                "predicate_name": "OrderDetails",
+                "record": {
+                  "field_value": [
+                    {
+                      "field": "order_id",
+                      "value": {
+                        "expression": {
+                          "expression_heritage": "order_id",
+                          "variable": {
+                            "var_name": "order_id"
+                          }
+                        }
+                      }
+                    },
+                    {
+                      "field": "customer_name",
+                      "value": {
+                        "expression": {
+                          "expression_heritage": "customer_name",
+                          "variable": {
+                            "var_name": "customer_name"
+                          }
+                        }
+                      }
+                    },
+                    {
+                      "field": "product_id",
+                      "value": {
+                        "expression": {
+                          "expression_heritage": "product_id",
+                          "variable": {
+                            "var_name": "product_id"
+                          }
+                        }
+                      }
+                    },
+                    {
+                      "field": "price",
+                      "value": {
+                        "expression": {
+                          "expression_heritage": "price",
+                          "variable": {
+                            "var_name": "price"
+                          }
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          ]
+        }
+      },
+      "full_text": "Test(order_id:, customer_name:, price:) :- OrderDetails(order_id:, customer_name:, product_id:, price:)",
+      "head": {
+        "predicate_name": "Test",
+        "record": {
+          "field_value": [
+            {
+              "field": "order_id",
+              "value": {
+                "expression": {
+                  "expression_heritage": "order_id",
+                  "variable": {
+                    "var_name": "order_id"
+                  }
+                }
+              }
+            },
+            {
+              "field": "customer_name",
+              "value": {
+                "expression": {
+                  "expression_heritage": "customer_name",
+                  "variable": {
+                    "var_name": "customer_name"
+                  }
+                }
+              }
+            },
+            {
+              "field": "price",
+              "value": {
+                "expression": {
+                  "expression_heritage": "price",
+                  "variable": {
+                    "var_name": "price"
+                  }
+                }
+              }
+            }
+          ]
+        }
+      }
+    }
+  ]
+}

@@ -1,0 +1,376 @@
+{
+  "file_name": "main",
+  "imported_predicates": [],
+  "predicates_prefix": "",
+  "rule": [
+    {
+      "full_text": "@Engine(\"duckdb\")",
+      "head": {
+        "predicate_name": "@Engine",
+        "record": {
+          "field_value": [
+            {
+              "field": 0,
+              "value": {
+                "expression": {
+                  "expression_heritage": "\"duckdb\"",
+                  "literal": {
+                    "the_string": {
+                      "the_string": "duckdb"
+                    }
+                  }
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "body": {
+        "conjunction": {
+          "conjunct": [
+            {
+              "inclusion": {
+                "element": {
+                  "expression_heritage": "x",
+                  "variable": {
+                    "var_name": "x"
+                  }
+                },
+                "list": {
+                  "call": {
+                    "predicate_name": "Range",
+                    "record": {
+                      "field_value": [
+                        {
+                          "field": 0,
+                          "value": {
+                            "expression": {
+                              "expression_heritage": "5",
+                              "literal": {
+                                "the_number": {
+                                  "number": "5"
+                                }
+                              }
+                            }
+                          }
+                        }
+                      ]
+                    }
+                  },
+                  "expression_heritage": "Range(5)"
+                }
+              }
+            }
+          ]
+        }
+      },
+      "distinct_denoted": true,
+      "full_text": "Squares() Array= x -> x * x :- x in Range(5)",
+      "head": {
+        "predicate_name": "Squares",
+        "record": {
+          "field_value": [
+            {
+              "field": "logica_value",
+              "value": {
+                "aggregation": {
+                  "expression": {
+                    "call": {
+                      "predicate_name": "Array",
+                      "record": {
+                        "field_value": [
+                          {
+                            "field": 0,
+                            "value": {
+                              "expression": {
+                                "call": {
+                                  "predicate_name": "->",
+                                  "record": {
+                                    "field_value": [
+                                      {
+                                        "field": "left",
+                                        "value": {
+                                          "expression": {
+                                            "expression_heritage": "x",
+                                            "variable": {
+                                              "var_name": "x"
+                                            }
+                                          }
+                                        }
+                                      },
+                                      {
+                                        "field": "right",
+                                        "value": {
+                                          "expression": {
+                                            "call": {
+                                              "predicate_name": "*",
+                                              "record": {
+                                                "field_value": [
+                                                  {
+                                                    "field": "left",
+                                                    "value": {
+                                                      "expression": {
+                                                        "expression_heritage": "x",
+                                                        "variable": {
+                                                          "var_name": "x"
+                                                        }
+                                                      }
+                                                    }
+                                                  },
+                                                  {
+                                                    "field": "right",
+                                                    "value": {
+                                                      "expression": {
+                                                        "expression_heritage": "x",
+                                                        "variable": {
+                                                          "var_name": "x"
+                                                        }
+                                                      }
+                                                    }
+                                                  }
+                                                ]
+                                              }
+                                            },
+                                            "expression_heritage": "x * x"
+                                          }
+                                        }
+                                      }
+                                    ]
+                                  }
+                                },
+                                "expression_heritage": "x -> x * x"
+                              }
+                            }
+                          }
+                        ]
+                      }
+                    },
+                    "expression_heritage": " Array= x -> x * x"
+                  },
+                  "expression_heritage": " Array= x -> x * x"
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "body": {
+        "conjunction": {
+          "conjunct": [
+            {
+              "inclusion": {
+                "element": {
+                  "expression_heritage": "x",
+                  "variable": {
+                    "var_name": "x"
+                  }
+                },
+                "list": {
+                  "call": {
+                    "predicate_name": "Range",
+                    "record": {
+                      "field_value": [
+                        {
+                          "field": 0,
+                          "value": {
+                            "expression": {
+                              "expression_heritage": "10",
+                              "literal": {
+                                "the_number": {
+                                  "number": "10"
+                                }
+                              }
+                            }
+                          }
+                        }
+                      ]
+                    }
+                  },
+                  "expression_heritage": "Range(10)"
+                }
+              }
+            },
+            {
+              "unification": {
+                "left_hand_side": {
+                  "call": {
+                    "predicate_name": "%",
+                    "record": {
+                      "field_value": [
+                        {
+                          "field": "left",
+                          "value": {
+                            "expression": {
+                              "expression_heritage": "x",
+                              "variable": {
+                                "var_name": "x"
+                              }
+                            }
+                          }
+                        },
+                        {
+                          "field": "right",
+                          "value": {
+                            "expression": {
+                              "expression_heritage": "2",
+                              "literal": {
+                                "the_number": {
+                                  "number": "2"
+                                }
+                              }
+                            }
+                          }
+                        }
+                      ]
+                    }
+                  },
+                  "expression_heritage": "x % 2"
+                },
+                "right_hand_side": {
+                  "expression_heritage": "0",
+                  "literal": {
+                    "the_number": {
+                      "number": "0"
+                    }
+                  }
+                }
+              }
+            }
+          ]
+        }
+      },
+      "distinct_denoted": true,
+      "full_text": "EvenSquares() Array= x -> x * x :- x in Range(10), x % 2 == 0",
+      "head": {
+        "predicate_name": "EvenSquares",
+        "record": {
+          "field_value": [
+            {
+              "field": "logica_value",
+              "value": {
+                "aggregation": {
+                  "expression": {
+                    "call": {
+                      "predicate_name": "Array",
+                      "record": {
+                        "field_value": [
+                          {
+                            "field": 0,
+                            "value": {
+                              "expression": {
+                                "call": {
+                                  "predicate_name": "->",
+                                  "record": {
+                                    "field_value": [
+                                      {
+                                        "field": "left",
+                                        "value": {
+                                          "expression": {
+                                            "expression_heritage": "x",
+                                            "variable": {
+                                              "var_name": "x"
+                                            }
+                                          }
+                                        }
+                                      },
+                                      {
+                                        "field": "right",
+                                        "value": {
+                                          "expression": {
+                                            "call": {
+                                              "predicate_name": "*",
+                                              "record": {
+                                                "field_value": [
+                                                  {
+                                                    "field": "left",
+                                                    "value": {
+                                                      "expression": {
+                                                        "expression_heritage": "x",
+                                                        "variable": {
+                                                          "var_name": "x"
+                                                        }
+                                                      }
+                                                    }
+                                                  },
+                                                  {
+                                                    "field": "right",
+                                                    "value": {
+                                                      "expression": {
+                                                        "expression_heritage": "x",
+                                                        "variable": {
+                                                          "var_name": "x"
+                                                        }
+                                                      }
+                                                    }
+                                                  }
+                                                ]
+                                              }
+                                            },
+                                            "expression_heritage": "x * x"
+                                          }
+                                        }
+                                      }
+                                    ]
+                                  }
+                                },
+                                "expression_heritage": "x -> x * x"
+                              }
+                            }
+                          }
+                        ]
+                      }
+                    },
+                    "expression_heritage": " Array= x -> x * x"
+                  },
+                  "expression_heritage": " Array= x -> x * x"
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "full_text": "Test(squares: Squares(), even_squares: EvenSquares())",
+      "head": {
+        "predicate_name": "Test",
+        "record": {
+          "field_value": [
+            {
+              "field": "squares",
+              "value": {
+                "expression": {
+                  "call": {
+                    "predicate_name": "Squares",
+                    "record": {
+                      "field_value": []
+                    }
+                  },
+                  "expression_heritage": "Squares()"
+                }
+              }
+            },
+            {
+              "field": "even_squares",
+              "value": {
+                "expression": {
+                  "call": {
+                    "predicate_name": "EvenSquares",
+                    "record": {
+                      "field_value": []
+                    }
+                  },
+                  "expression_heritage": "EvenSquares()"
+                }
+              }
+            }
+          ]
+        }
+      }
+    }
+  ]
+}

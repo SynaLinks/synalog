@@ -1,0 +1,240 @@
+$ synalog.check('aggregation.l')
+No errors found.
+
+$ synalog.compile('aggregation.l', 'Stats')
+-- Initializing DuckDB environment.
+create schema if not exists logica_home;
+-- Empty record, has to have a field by DuckDB syntax.
+drop type if exists logicarecord893574736 cascade; create type logicarecord893574736 as struct(nirvana numeric);
+create sequence if not exists eternal_logical_sequence;
+
+WITH t_0_Sales AS (SELECT * FROM (
+  
+    SELECT
+      E'books' AS category,
+      E'eu' AS region,
+      E'ann' AS seller,
+      120 AS amount
+   UNION ALL
+  
+    SELECT
+      E'books' AS category,
+      E'us' AS region,
+      E'bob' AS seller,
+      80 AS amount
+   UNION ALL
+  
+    SELECT
+      E'games' AS category,
+      E'eu' AS region,
+      E'ann' AS seller,
+      300 AS amount
+   UNION ALL
+  
+    SELECT
+      E'games' AS category,
+      E'eu' AS region,
+      E'cid' AS seller,
+      150 AS amount
+   UNION ALL
+  
+    SELECT
+      E'games' AS category,
+      E'us' AS region,
+      E'bob' AS seller,
+      220 AS amount
+  
+) AS UNUSED_TABLE_NAME  )
+SELECT
+  Sales.category AS category,
+  SUM(Sales.amount) AS total,
+  SUM(1) AS count
+FROM
+  t_0_Sales AS Sales
+GROUP BY Sales.category ORDER BY category;
+
+-- Executed on DuckDB:
+| category | total | count |
+|----------|-------|-------|
+| books    | 200   | 2     |
+| games    | 670   | 3     |
+(2 rows)
+
+$ synalog.compile('aggregation.l', 'PriceStats')
+-- Initializing DuckDB environment.
+create schema if not exists logica_home;
+-- Empty record, has to have a field by DuckDB syntax.
+drop type if exists logicarecord893574736 cascade; create type logicarecord893574736 as struct(nirvana numeric);
+create sequence if not exists eternal_logical_sequence;
+
+WITH t_0_Sales AS (SELECT * FROM (
+  
+    SELECT
+      E'books' AS category,
+      E'eu' AS region,
+      E'ann' AS seller,
+      120 AS amount
+   UNION ALL
+  
+    SELECT
+      E'books' AS category,
+      E'us' AS region,
+      E'bob' AS seller,
+      80 AS amount
+   UNION ALL
+  
+    SELECT
+      E'games' AS category,
+      E'eu' AS region,
+      E'ann' AS seller,
+      300 AS amount
+   UNION ALL
+  
+    SELECT
+      E'games' AS category,
+      E'eu' AS region,
+      E'cid' AS seller,
+      150 AS amount
+   UNION ALL
+  
+    SELECT
+      E'games' AS category,
+      E'us' AS region,
+      E'bob' AS seller,
+      220 AS amount
+  
+) AS UNUSED_TABLE_NAME  )
+SELECT
+  Sales.category AS category,
+  MIN(Sales.amount) AS lo,
+  MAX(Sales.amount) AS hi,
+  AVG(Sales.amount) AS avg
+FROM
+  t_0_Sales AS Sales
+GROUP BY Sales.category ORDER BY category;
+
+-- Executed on DuckDB:
+| category | lo  | hi  | avg                |
+|----------|-----|-----|--------------------|
+| books    | 80  | 120 | 100.0              |
+| games    | 150 | 300 | 223.33333333333334 |
+(2 rows)
+
+$ synalog.compile('aggregation.l', 'UniqueRegions')
+-- Initializing DuckDB environment.
+create schema if not exists logica_home;
+-- Empty record, has to have a field by DuckDB syntax.
+drop type if exists logicarecord893574736 cascade; create type logicarecord893574736 as struct(nirvana numeric);
+create sequence if not exists eternal_logical_sequence;
+
+WITH t_0_Sales AS (SELECT * FROM (
+  
+    SELECT
+      E'books' AS category,
+      E'eu' AS region,
+      E'ann' AS seller,
+      120 AS amount
+   UNION ALL
+  
+    SELECT
+      E'books' AS category,
+      E'us' AS region,
+      E'bob' AS seller,
+      80 AS amount
+   UNION ALL
+  
+    SELECT
+      E'games' AS category,
+      E'eu' AS region,
+      E'ann' AS seller,
+      300 AS amount
+   UNION ALL
+  
+    SELECT
+      E'games' AS category,
+      E'eu' AS region,
+      E'cid' AS seller,
+      150 AS amount
+   UNION ALL
+  
+    SELECT
+      E'games' AS category,
+      E'us' AS region,
+      E'bob' AS seller,
+      220 AS amount
+  
+) AS UNUSED_TABLE_NAME  )
+SELECT
+  Sales.category AS category,
+  ARRAY_AGG(DISTINCT Sales.region ORDER BY Sales.region) AS regions
+FROM
+  t_0_Sales AS Sales
+GROUP BY Sales.category ORDER BY category;
+
+-- Executed on DuckDB:
+| category | regions      |
+|----------|--------------|
+| books    | ['eu', 'us'] |
+| games    | ['eu', 'us'] |
+(2 rows)
+
+$ synalog.compile('aggregation.l', 'TopSeller')
+-- Initializing DuckDB environment.
+create schema if not exists logica_home;
+-- Empty record, has to have a field by DuckDB syntax.
+drop type if exists logicarecord893574736 cascade; create type logicarecord893574736 as struct(nirvana numeric);
+create sequence if not exists eternal_logical_sequence;
+
+WITH t_2_Sales AS (SELECT * FROM (
+  
+    SELECT
+      E'books' AS category,
+      E'eu' AS region,
+      E'ann' AS seller,
+      120 AS amount
+   UNION ALL
+  
+    SELECT
+      E'books' AS category,
+      E'us' AS region,
+      E'bob' AS seller,
+      80 AS amount
+   UNION ALL
+  
+    SELECT
+      E'games' AS category,
+      E'eu' AS region,
+      E'ann' AS seller,
+      300 AS amount
+   UNION ALL
+  
+    SELECT
+      E'games' AS category,
+      E'eu' AS region,
+      E'cid' AS seller,
+      150 AS amount
+   UNION ALL
+  
+    SELECT
+      E'games' AS category,
+      E'us' AS region,
+      E'bob' AS seller,
+      220 AS amount
+  
+) AS UNUSED_TABLE_NAME  ),
+t_1_SellerRevenue AS (SELECT
+  Sales.seller AS seller,
+  SUM(Sales.amount) AS revenue
+FROM
+  t_2_Sales AS Sales
+GROUP BY Sales.seller ORDER BY seller)
+SELECT
+  argmax(SellerRevenue.seller, SellerRevenue.revenue) AS name
+FROM
+  t_1_SellerRevenue AS SellerRevenue;
+
+-- Executed on DuckDB:
+| name |
+|------|
+| ann  |
+(1 row)

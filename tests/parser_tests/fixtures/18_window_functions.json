@@ -1,0 +1,528 @@
+{
+  "file_name": "main",
+  "imported_predicates": [],
+  "predicates_prefix": "",
+  "rule": [
+    {
+      "full_text": "@Engine(\"duckdb\")",
+      "head": {
+        "predicate_name": "@Engine",
+        "record": {
+          "field_value": [
+            {
+              "field": 0,
+              "value": {
+                "expression": {
+                  "expression_heritage": "\"duckdb\"",
+                  "literal": {
+                    "the_string": {
+                      "the_string": "duckdb"
+                    }
+                  }
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "full_text": "Sales(1, \"East\", 100)",
+      "head": {
+        "predicate_name": "Sales",
+        "record": {
+          "field_value": [
+            {
+              "field": 0,
+              "value": {
+                "expression": {
+                  "expression_heritage": "1",
+                  "literal": {
+                    "the_number": {
+                      "number": "1"
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "field": 1,
+              "value": {
+                "expression": {
+                  "expression_heritage": "\"East\"",
+                  "literal": {
+                    "the_string": {
+                      "the_string": "East"
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "field": 2,
+              "value": {
+                "expression": {
+                  "expression_heritage": "100",
+                  "literal": {
+                    "the_number": {
+                      "number": "100"
+                    }
+                  }
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "full_text": "Sales(2, \"East\", 150)",
+      "head": {
+        "predicate_name": "Sales",
+        "record": {
+          "field_value": [
+            {
+              "field": 0,
+              "value": {
+                "expression": {
+                  "expression_heritage": "2",
+                  "literal": {
+                    "the_number": {
+                      "number": "2"
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "field": 1,
+              "value": {
+                "expression": {
+                  "expression_heritage": "\"East\"",
+                  "literal": {
+                    "the_string": {
+                      "the_string": "East"
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "field": 2,
+              "value": {
+                "expression": {
+                  "expression_heritage": "150",
+                  "literal": {
+                    "the_number": {
+                      "number": "150"
+                    }
+                  }
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "full_text": "Sales(3, \"East\", 120)",
+      "head": {
+        "predicate_name": "Sales",
+        "record": {
+          "field_value": [
+            {
+              "field": 0,
+              "value": {
+                "expression": {
+                  "expression_heritage": "3",
+                  "literal": {
+                    "the_number": {
+                      "number": "3"
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "field": 1,
+              "value": {
+                "expression": {
+                  "expression_heritage": "\"East\"",
+                  "literal": {
+                    "the_string": {
+                      "the_string": "East"
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "field": 2,
+              "value": {
+                "expression": {
+                  "expression_heritage": "120",
+                  "literal": {
+                    "the_number": {
+                      "number": "120"
+                    }
+                  }
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "full_text": "Sales(1, \"West\", 200)",
+      "head": {
+        "predicate_name": "Sales",
+        "record": {
+          "field_value": [
+            {
+              "field": 0,
+              "value": {
+                "expression": {
+                  "expression_heritage": "1",
+                  "literal": {
+                    "the_number": {
+                      "number": "1"
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "field": 1,
+              "value": {
+                "expression": {
+                  "expression_heritage": "\"West\"",
+                  "literal": {
+                    "the_string": {
+                      "the_string": "West"
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "field": 2,
+              "value": {
+                "expression": {
+                  "expression_heritage": "200",
+                  "literal": {
+                    "the_number": {
+                      "number": "200"
+                    }
+                  }
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "full_text": "Sales(2, \"West\", 180)",
+      "head": {
+        "predicate_name": "Sales",
+        "record": {
+          "field_value": [
+            {
+              "field": 0,
+              "value": {
+                "expression": {
+                  "expression_heritage": "2",
+                  "literal": {
+                    "the_number": {
+                      "number": "2"
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "field": 1,
+              "value": {
+                "expression": {
+                  "expression_heritage": "\"West\"",
+                  "literal": {
+                    "the_string": {
+                      "the_string": "West"
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "field": 2,
+              "value": {
+                "expression": {
+                  "expression_heritage": "180",
+                  "literal": {
+                    "the_number": {
+                      "number": "180"
+                    }
+                  }
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "full_text": "Sales(3, \"West\", 220)",
+      "head": {
+        "predicate_name": "Sales",
+        "record": {
+          "field_value": [
+            {
+              "field": 0,
+              "value": {
+                "expression": {
+                  "expression_heritage": "3",
+                  "literal": {
+                    "the_number": {
+                      "number": "3"
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "field": 1,
+              "value": {
+                "expression": {
+                  "expression_heritage": "\"West\"",
+                  "literal": {
+                    "the_string": {
+                      "the_string": "West"
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "field": 2,
+              "value": {
+                "expression": {
+                  "expression_heritage": "220",
+                  "literal": {
+                    "the_number": {
+                      "number": "220"
+                    }
+                  }
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "body": {
+        "conjunction": {
+          "conjunct": [
+            {
+              "predicate": {
+                "predicate_name": "Sales",
+                "record": {
+                  "field_value": [
+                    {
+                      "field": 0,
+                      "value": {
+                        "expression": {
+                          "expression_heritage": "month",
+                          "variable": {
+                            "var_name": "month"
+                          }
+                        }
+                      }
+                    },
+                    {
+                      "field": 1,
+                      "value": {
+                        "expression": {
+                          "expression_heritage": "region",
+                          "variable": {
+                            "var_name": "region"
+                          }
+                        }
+                      }
+                    },
+                    {
+                      "field": 2,
+                      "value": {
+                        "expression": {
+                          "expression_heritage": "amount",
+                          "variable": {
+                            "var_name": "amount"
+                          }
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          ]
+        }
+      },
+      "distinct_denoted": true,
+      "full_text": "RegionalTotal(region:, total? += amount) distinct :- Sales(month, region, amount)",
+      "head": {
+        "predicate_name": "RegionalTotal",
+        "record": {
+          "field_value": [
+            {
+              "field": "region",
+              "value": {
+                "expression": {
+                  "expression_heritage": "region",
+                  "variable": {
+                    "var_name": "region"
+                  }
+                }
+              }
+            },
+            {
+              "field": "total",
+              "value": {
+                "aggregation": {
+                  "expression": {
+                    "call": {
+                      "predicate_name": "Agg+",
+                      "record": {
+                        "field_value": [
+                          {
+                            "field": 0,
+                            "value": {
+                              "expression": {
+                                "expression_heritage": "amount",
+                                "variable": {
+                                  "var_name": "amount"
+                                }
+                              }
+                            }
+                          }
+                        ]
+                      }
+                    },
+                    "expression_heritage": "+= amount"
+                  },
+                  "expression_heritage": "+= amount"
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "full_text": "@OrderBy(Test, \"region\")",
+      "head": {
+        "predicate_name": "@OrderBy",
+        "record": {
+          "field_value": [
+            {
+              "field": 0,
+              "value": {
+                "expression": {
+                  "expression_heritage": "Test",
+                  "literal": {
+                    "the_predicate": {
+                      "predicate_name": "Test"
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "field": 1,
+              "value": {
+                "expression": {
+                  "expression_heritage": "\"region\"",
+                  "literal": {
+                    "the_string": {
+                      "the_string": "region"
+                    }
+                  }
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "body": {
+        "conjunction": {
+          "conjunct": [
+            {
+              "predicate": {
+                "predicate_name": "RegionalTotal",
+                "record": {
+                  "field_value": [
+                    {
+                      "field": "region",
+                      "value": {
+                        "expression": {
+                          "expression_heritage": "region",
+                          "variable": {
+                            "var_name": "region"
+                          }
+                        }
+                      }
+                    },
+                    {
+                      "field": "total",
+                      "value": {
+                        "expression": {
+                          "expression_heritage": "total",
+                          "variable": {
+                            "var_name": "total"
+                          }
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          ]
+        }
+      },
+      "full_text": "Test(region:, total:) :- RegionalTotal(region:, total:)",
+      "head": {
+        "predicate_name": "Test",
+        "record": {
+          "field_value": [
+            {
+              "field": "region",
+              "value": {
+                "expression": {
+                  "expression_heritage": "region",
+                  "variable": {
+                    "var_name": "region"
+                  }
+                }
+              }
+            },
+            {
+              "field": "total",
+              "value": {
+                "expression": {
+                  "expression_heritage": "total",
+                  "variable": {
+                    "var_name": "total"
+                  }
+                }
+              }
+            }
+          ]
+        }
+      }
+    }
+  ]
+}

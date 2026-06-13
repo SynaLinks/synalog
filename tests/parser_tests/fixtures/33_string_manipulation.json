@@ -1,0 +1,411 @@
+{
+  "file_name": "main",
+  "imported_predicates": [],
+  "predicates_prefix": "",
+  "rule": [
+    {
+      "full_text": "@Engine(\"duckdb\")",
+      "head": {
+        "predicate_name": "@Engine",
+        "record": {
+          "field_value": [
+            {
+              "field": 0,
+              "value": {
+                "expression": {
+                  "expression_heritage": "\"duckdb\"",
+                  "literal": {
+                    "the_string": {
+                      "the_string": "duckdb"
+                    }
+                  }
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "full_text": "Names(first: \"alice\", last: \"smith\")",
+      "head": {
+        "predicate_name": "Names",
+        "record": {
+          "field_value": [
+            {
+              "field": "first",
+              "value": {
+                "expression": {
+                  "expression_heritage": "\"alice\"",
+                  "literal": {
+                    "the_string": {
+                      "the_string": "alice"
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "field": "last",
+              "value": {
+                "expression": {
+                  "expression_heritage": "\"smith\"",
+                  "literal": {
+                    "the_string": {
+                      "the_string": "smith"
+                    }
+                  }
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "full_text": "Names(first: \"bob\", last: \"jones\")",
+      "head": {
+        "predicate_name": "Names",
+        "record": {
+          "field_value": [
+            {
+              "field": "first",
+              "value": {
+                "expression": {
+                  "expression_heritage": "\"bob\"",
+                  "literal": {
+                    "the_string": {
+                      "the_string": "bob"
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "field": "last",
+              "value": {
+                "expression": {
+                  "expression_heritage": "\"jones\"",
+                  "literal": {
+                    "the_string": {
+                      "the_string": "jones"
+                    }
+                  }
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "full_text": "Names(first: \"charlie\", last: \"brown\")",
+      "head": {
+        "predicate_name": "Names",
+        "record": {
+          "field_value": [
+            {
+              "field": "first",
+              "value": {
+                "expression": {
+                  "expression_heritage": "\"charlie\"",
+                  "literal": {
+                    "the_string": {
+                      "the_string": "charlie"
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "field": "last",
+              "value": {
+                "expression": {
+                  "expression_heritage": "\"brown\"",
+                  "literal": {
+                    "the_string": {
+                      "the_string": "brown"
+                    }
+                  }
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "full_text": "@OrderBy(FormattedNames, \"first\")",
+      "head": {
+        "predicate_name": "@OrderBy",
+        "record": {
+          "field_value": [
+            {
+              "field": 0,
+              "value": {
+                "expression": {
+                  "expression_heritage": "FormattedNames",
+                  "literal": {
+                    "the_predicate": {
+                      "predicate_name": "FormattedNames"
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "field": 1,
+              "value": {
+                "expression": {
+                  "expression_heritage": "\"first\"",
+                  "literal": {
+                    "the_string": {
+                      "the_string": "first"
+                    }
+                  }
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "body": {
+        "conjunction": {
+          "conjunct": [
+            {
+              "predicate": {
+                "predicate_name": "Names",
+                "record": {
+                  "field_value": [
+                    {
+                      "field": "first",
+                      "value": {
+                        "expression": {
+                          "expression_heritage": "first",
+                          "variable": {
+                            "var_name": "first"
+                          }
+                        }
+                      }
+                    },
+                    {
+                      "field": "last",
+                      "value": {
+                        "expression": {
+                          "expression_heritage": "last",
+                          "variable": {
+                            "var_name": "last"
+                          }
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          ]
+        }
+      },
+      "full_text": "FormattedNames(first:, upper_first: Upper(first), len: Length(last)) :-\n  Names(first:, last:)",
+      "head": {
+        "predicate_name": "FormattedNames",
+        "record": {
+          "field_value": [
+            {
+              "field": "first",
+              "value": {
+                "expression": {
+                  "expression_heritage": "first",
+                  "variable": {
+                    "var_name": "first"
+                  }
+                }
+              }
+            },
+            {
+              "field": "upper_first",
+              "value": {
+                "expression": {
+                  "call": {
+                    "predicate_name": "Upper",
+                    "record": {
+                      "field_value": [
+                        {
+                          "field": 0,
+                          "value": {
+                            "expression": {
+                              "expression_heritage": "first",
+                              "variable": {
+                                "var_name": "first"
+                              }
+                            }
+                          }
+                        }
+                      ]
+                    }
+                  },
+                  "expression_heritage": "Upper(first)"
+                }
+              }
+            },
+            {
+              "field": "len",
+              "value": {
+                "expression": {
+                  "call": {
+                    "predicate_name": "Length",
+                    "record": {
+                      "field_value": [
+                        {
+                          "field": 0,
+                          "value": {
+                            "expression": {
+                              "expression_heritage": "last",
+                              "variable": {
+                                "var_name": "last"
+                              }
+                            }
+                          }
+                        }
+                      ]
+                    }
+                  },
+                  "expression_heritage": "Length(last)"
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "full_text": "@OrderBy(Test, \"first\")",
+      "head": {
+        "predicate_name": "@OrderBy",
+        "record": {
+          "field_value": [
+            {
+              "field": 0,
+              "value": {
+                "expression": {
+                  "expression_heritage": "Test",
+                  "literal": {
+                    "the_predicate": {
+                      "predicate_name": "Test"
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "field": 1,
+              "value": {
+                "expression": {
+                  "expression_heritage": "\"first\"",
+                  "literal": {
+                    "the_string": {
+                      "the_string": "first"
+                    }
+                  }
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "body": {
+        "conjunction": {
+          "conjunct": [
+            {
+              "predicate": {
+                "predicate_name": "FormattedNames",
+                "record": {
+                  "field_value": [
+                    {
+                      "field": "first",
+                      "value": {
+                        "expression": {
+                          "expression_heritage": "first",
+                          "variable": {
+                            "var_name": "first"
+                          }
+                        }
+                      }
+                    },
+                    {
+                      "field": "upper_first",
+                      "value": {
+                        "expression": {
+                          "expression_heritage": "upper_first",
+                          "variable": {
+                            "var_name": "upper_first"
+                          }
+                        }
+                      }
+                    },
+                    {
+                      "field": "len",
+                      "value": {
+                        "expression": {
+                          "expression_heritage": "len",
+                          "variable": {
+                            "var_name": "len"
+                          }
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          ]
+        }
+      },
+      "full_text": "Test(first:, upper_first:, len:) :- FormattedNames(first:, upper_first:, len:)",
+      "head": {
+        "predicate_name": "Test",
+        "record": {
+          "field_value": [
+            {
+              "field": "first",
+              "value": {
+                "expression": {
+                  "expression_heritage": "first",
+                  "variable": {
+                    "var_name": "first"
+                  }
+                }
+              }
+            },
+            {
+              "field": "upper_first",
+              "value": {
+                "expression": {
+                  "expression_heritage": "upper_first",
+                  "variable": {
+                    "var_name": "upper_first"
+                  }
+                }
+              }
+            },
+            {
+              "field": "len",
+              "value": {
+                "expression": {
+                  "expression_heritage": "len",
+                  "variable": {
+                    "var_name": "len"
+                  }
+                }
+              }
+            }
+          ]
+        }
+      }
+    }
+  ]
+}

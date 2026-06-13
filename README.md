@@ -1,0 +1,509 @@
+<div align="center">
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="img/synalog-dark.svg">
+  <img height=200 alt="Synalog" src="img/synalog-light.svg">
+</picture>
+</div>
+
+<div align="center">
+
+![Beta](https://img.shields.io/badge/Release-Beta-blue.svg)
+[![PyPI](https://img.shields.io/pypi/v/synalog)](https://pypi.org/project/synalog/)
+[![Downloads](https://static.pepy.tech/badge/synalog)](https://pepy.tech/project/synalog)
+[![Discord](https://img.shields.io/discord/1118241178723291219)](https://discord.gg/82nt97uXcM)
+[![CI](https://github.com/synalinks/synalog/actions/workflows/CI.yml/badge.svg)](https://github.com/synalinks/synalog/actions/workflows/CI.yml)
+[![Documentation](https://github.com/synalinks/synalog/actions/workflows/docs.yml/badge.svg)](https://github.com/synalinks/synalog/actions/workflows/docs.yml)
+[![License: Apache-2.0](https://img.shields.io/badge/License-Apache_2.0-green.svg)](https://opensource.org/license/apache-2-0)
+[![Ask DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/synalinks/synalog)
+
+</div>
+
+# Synalog: Logic programming for AI agents
+
+Synalog is a logic programming language from the [Datalog](https://en.wikipedia.org/wiki/Datalog) family and a fork of [Logica](https://logica.dev/). It compiles to optimized **SQL** and is exposed as a Python package with a fast Rust core built on [PyO3](https://pyo3.rs/).
+
+Synalog was built for the AI agents era. The main idea is to bring the benefits of logic programming — in particular **composability** — to agents that reason over tables: rules are reusable, complex queries decompose into small named predicates, and an agent can accumulate rules over time as a form of structured memory.
+
+## Why Synalog?
+
+In practice, this is what an agent unlocks with Synalog:
+
+- **Auditable reasoning** — every derived fact traces back through named rules, giving full lineage from answer to source tables.
+- **Composability** — rules build on other rules, so knowledge accumulates instead of being re-derived in every query.
+- **Memory as a program** — the rule base itself is the agent's long-term memory over structured data.
+- **Recursion done right** — transitive closures and graph traversals that would be impossible to write correctly in raw SQL.
+- **Compile-time verification** — a formal verifier catches structural errors before any SQL touches a database. See [Verification](verification.md).
+
+Because SQL engines are better optimized than logic programming engines, Synalog compiles into *optimized SQL* that runs on **SQLite**, **DuckDB**, **BigQuery**, **PostgreSQL**, **Presto**, **Trino** and **Databricks** — efficiently scaling to *petabytes of data*. See [Supported engines](engines.md).
+
+## At a glance
+
+```python
+import duckdb
+import synalog
+
+source = """
+@Engine("duckdb");
+
+Employee(name: "Alice", department: "Engineering", salary: 75000);
+Employee(name: "Bob", department: "Marketing", salary: 65000);
+Employee(name: "Charlie", department: "Engineering", salary: 80000);
+
+@OrderBy(EngineeringTeam, "name");
+EngineeringTeam(name:, salary:) :- Employee(name:, department: "Engineering", salary:);
+"""
+
+errors = synalog.check(source)
+assert errors == []
+
+sql = synalog.compile(source, "EngineeringTeam")
+rows = duckdb.sql(sql).fetchall()
+# [('Alice', 75000), ('Charlie', 80000)]
+```
+
+## Installation
+
+```bash
+pip install synalog
+```
+
+Or with [uv](https://docs.astral.sh/uv/): `uv add synalog` (or `uv pip install synalog`). The CLI also runs without installing via `uvx synalog`, or `uvx --from 'synalog[run]' synalog` to include the duckdb and psycopg drivers.
+
+Requires Python 3.10+. Wheels are published for Linux (x86_64, aarch64, armv7, s390x, ppc64le; glibc and musl), Windows (x64, x86, aarch64) and macOS (x86_64, aarch64).
+
+## Quick start
+
+```python
+import synalog
+
+source = """
+@Engine("duckdb");
+
+Employee(name: "Alice", department: "Engineering", salary: 75000);
+Employee(name: "Bob", department: "Marketing", salary: 65000);
+Employee(name: "Charlie", department: "Engineering", salary: 80000);
+
+@OrderBy(EngineeringTeam, "name");
+EngineeringTeam(name:, salary:) :- Employee(name:, department: "Engineering", salary:);
+"""
+
+errors = synalog.check(source)
+assert errors == []
+
+sql = synalog.compile(source, "EngineeringTeam")
+print(sql)
+```
+
+You can then execute the SQL with any database driver (`sqlite3`, `duckdb`, `psycopg`, `google-cloud-bigquery`, etc.).
+
+## Command-line interface
+
+Installing the package also installs a `synalog` command (also available as `python -m synalog`):
+
+```bash
+synalog program.l parse                # print the AST as JSON
+synalog program.l check                # validate; exit 1 on errors
+synalog program.l print Predicate      # print compiled SQL
+synalog program.l run Predicate        # execute and print a table
+synalog program.l run_to_csv Predicate # execute and print CSV
+```
+
+```
+$ synalog program.l run EngineeringTeam
++---------+--------+
+| name    | salary |
++---------+--------+
+| Alice   | 75000  |
+| Charlie | 80000  |
++---------+--------+
+2 rows
+```
+
+- `-` as the file reads the program from stdin; `-c PROGRAM` passes the program text inline, like `python -c`.
+- `--engine` overrides the program's `@Engine` annotation (default `duckdb`).
+- `--limit` / `--offset` paginate the result.
+- `run` executes locally on `duckdb` (needs `pip install duckdb`), `sqlite` (stdlib), or `psql` (needs `pip install psycopg` and `--dsn` or `SYNALOG_PSQL_DSN`). For other engines, use `print` and run the SQL with your own client. `pip install 'synalog[run]'` pulls in the duckdb and psycopg drivers.
+- `import path.to.file.Pred;` statements resolve `path/to/file.l` against the program file's directory, then the current directory; pass `--import-root DIR` (repeatable) to search elsewhere.
+- `--load TABLE=PATH` (repeatable) loads a csv/tsv/json/jsonl/parquet file as a table before running, e.g. `synalog senior.l run Senior --load employees=employees.csv`.
+- `synalog init` scaffolds a project (it asks for a name and description): a starter program importing a reusable `lib/` module, sample data in `data/`, and agent instructions (`AGENTS.md`, `CLAUDE.md`, `.agents/skills/synalog/SKILL.md`) so coding agents know how to use Synalog.
+
+Running `synalog` with no arguments starts an interactive session, in the spirit of `python` (the options above, e.g. `--engine` or `--load`, apply to it too):
+
+```
+$ synalog
+Synalog 0.1.0 on duckdb — type .help for help
+>>> Employee(name: "Alice", salary: 75000);
+>>> Employee(name: "Bob", salary: 65000);
+>>> Total(t? += salary) distinct :- Employee(salary:);
+>>> Total
++--------+
+| t      |
++--------+
+| 140000 |
++--------+
+1 row
+```
+
+Type a rule ending in `;` to add it to the session program (it is validated first, and rejected with an error if invalid), or a predicate name to compile and run it. `.help` lists the session commands (`.show`, `.sql <Pred>`, `.engine <name>`, `.load <table> <path>`, `.clear`, `.exit`).
+
+## Python API
+
+### `parse(source, file_name=None, engine=None, import_root=None) -> str`
+
+Parse source and return the AST as a JSON string.
+
+```python
+ast = synalog.parse(source)
+```
+
+### `compile(source, predicate, limit=None, offset=None, engine=None, import_root=None) -> str`
+
+Compile a single predicate to SQL. `limit` is combined with the `@Limit` directive: `actual = min(limit, @Limit)`.
+
+```python
+sql = synalog.compile(source, "TopCustomers", limit=20, offset=40)
+```
+
+### `compile_all(source, engine=None, import_root=None) -> dict[str, str]`
+
+Compile every defined predicate in the program. Returns a mapping `predicate_name -> sql`.
+
+```python
+sqls = synalog.compile_all(source)
+for name, sql in sqls.items():
+    print(name, sql)
+```
+
+### `check(source, engine=None, import_root=None) -> list[str]`
+
+Run structural validation. Returns a list of error messages; empty if the program is valid.
+
+```python
+errors = synalog.check(source)
+if errors:
+    for e in errors:
+        print(e)
+```
+
+All four functions accept an optional `engine` keyword that overrides the program's `@Engine` annotation (one of `sqlite`, `duckdb`, `bigquery`, `psql`, `presto`, `trino`, `databricks`; default `duckdb`) and an optional `import_root` keyword listing directories where `import` statements look up `.l` files (default: the current directory). They raise `ValueError` on syntax or compilation errors.
+
+## Language overview
+
+Synalog programs are composed of **tables**, **concepts** and **rules**. Tables declare external data sources. Concepts extract entities and relationships from tables. Rules derive new data from concepts.
+
+```logica
+# Tables (read-only declarations)
+Orders(customer_id:, product_id:, amount:, status:);
+
+# Concepts — extract entities and relationships
+
+@OrderBy(CustomerNode, "customer_id");
+CustomerNode(customer_id:) distinct :- Orders(customer_id:);
+
+@OrderBy(PurchasedEdge, "customer_id");
+PurchasedEdge(customer_id:, product_id:) distinct :- Orders(customer_id:, product_id:);
+
+# Rules — derive insights from concepts
+
+@OrderBy(CustomerSpend, "total", "DESC");
+CustomerSpend(customer_id:, total? += amount) distinct :- Orders(customer_id:, amount:);
+```
+
+### Named arguments
+
+Synalog uses **named arguments only** (no positional arguments). The left side of `:` is the column name, the right side is the variable:
+
+```logica
+# column "amount" bound to variable "total"
+Orders(amount: total)
+
+# shorthand: column and variable share the same name
+Orders(amount:)
+```
+
+### Variables and expressions
+
+Variables are defined with `==`. Arithmetic, string and comparison operators are supported:
+
+```logica
+OrderWithTax(order_id:, total:) :-
+  Orders(order_id:, amount:),
+  total == amount * 1.10;
+```
+
+**Operators**: `+`, `-`, `*`, `/`, `^` (power), `%` (modulo), `++` (string concat), `==`, `!=`, `<`, `>`, `<=`, `>=`, `&&`, `||`, `!`, `in`, `is null`, `is not null`.
+
+### Aggregation
+
+Aggregation uses the `distinct` keyword and special operators in the rule head:
+
+```logica
+# Sum
+Revenue(total? += amount) distinct :- Orders(amount:);
+
+# Count
+OrderCount(n? += 1) distinct :- Orders(order_id:);
+
+# Min / Max
+Cheapest(min_price? Min= price) distinct :- Products(price:);
+Priciest(max_price? Max= price) distinct :- Products(price:);
+
+# Average
+AvgOrder(avg? Avg= amount) distinct :- Orders(amount:);
+
+# Collect into list / set
+AllNames(names? List= name) distinct :- Users(name:);
+UniqueNames(names? Set= name) distinct :- Users(name:);
+
+# Value with max/min key
+TopSeller(name? ArgMax= name -> revenue) distinct :- Sales(name:, revenue:);
+```
+
+### Logical operators
+
+```logica
+# Conjunction (AND) — comma
+Result(x:, y:) :- TableA(x:), TableB(x:, y:);
+
+# Disjunction (OR) — pipe
+Combined(x:) distinct :- SourceA(x:) | SourceB(x:);
+
+# Negation (NOT) — tilde
+Inactive(user_id:) :- Users(user_id:), ~Logins(user_id:);
+```
+
+Multiple rule definitions for the same predicate combine results (union):
+
+```logica
+HighValue(user_id:) :- Orders(user_id:, amount:), amount > 10000;
+HighValue(user_id:) :- Referrals(user_id:, tier: "vip");
+```
+
+### Conditionals
+
+```logica
+OrderSize(order_id:, size:) :-
+  Orders(order_id:, amount:),
+  size == (if amount > 1000 then "large"
+           else if amount > 100 then "medium"
+           else "small");
+```
+
+### Directives
+
+Directives control predicate behavior and **must be placed before** the rule definition:
+
+```logica
+@OrderBy(TopCustomers, "total", "DESC");
+@Limit(TopCustomers, 10);
+TopCustomers(customer_id:, total? += amount) distinct :- Orders(customer_id:, amount:);
+```
+
+| Directive | Purpose |
+|-----------|---------|
+| `@OrderBy(Pred, col1, ...)` | Sort order. Append `"DESC"` for descending |
+| `@Limit(Pred, n)` | Maximum number of rows |
+| `@Recursive(Pred, n)` | Allow recursion with iteration limit |
+| `@Ground(Pred)` | Force materialization before dependents |
+| `@Engine(name)` | Target SQL engine |
+
+### Functors
+
+Functors let you reuse predicate logic by parameterizing input predicates:
+
+```logica
+# Define a reusable pattern
+@OrderBy(SegmentRevenue, "segment_id");
+SegmentRevenue(segment_id:, total? += amount) distinct :-
+  Segment(segment_id:, user_id:),
+  Orders(user_id:, amount:);
+
+# Apply to different segments
+EnterpriseRevenue := SegmentRevenue(Segment: EnterpriseCustomers);
+SMBRevenue := SegmentRevenue(Segment: SMBCustomers);
+```
+
+### Recursion
+
+Recursive predicates compute transitive closures — for example, finding all managers above an employee:
+
+```logica
+@Recursive(AllManagers, 20);
+
+# Base case: direct manager
+AllManagers(employee_id:, manager_id:) :- Employees(employee_id:, manager_id:);
+
+# Recursive case: manager's managers
+AllManagers(employee_id:, manager_id:) :-
+  AllManagers(employee_id:, intermediate:),
+  Employees(employee_id: intermediate, manager_id:);
+```
+
+Useful for: referral chains, org charts, product taxonomies, bill of materials.
+
+### Shortest paths
+
+Find shortest paths in weighted graphs using `Min=` aggregation:
+
+```logica
+ShippingCost("warehouse_main") = 0;
+
+ShippingCost(destination) Min= cost :-
+  ShippingRoutes(origin: "warehouse_main", destination:, cost:);
+
+ShippingCost(destination) Min= ShippingCost(hub) + cost :-
+  ShippingCost(hub),
+  ShippingRoutes(origin: hub, destination:, cost:);
+```
+
+### Temporal data
+
+When working with timestamps or dates, always convert to string first:
+
+```logica
+@OrderBy(MonthlyOrders, "month");
+MonthlyOrders(month:, count? += 1) distinct :-
+  Orders(created_at:),
+  month == Substr(ToString(created_at), 1, 7);
+
+# Filter by date range
+RecentOrders(order_id:) :-
+  Orders(order_id:, created_at:),
+  ToString(created_at) >= "2024-01-01";
+```
+
+### Built-in functions
+
+**String:** `Substr`, `Length`, `Upper`, `Lower`, `Split`, `Join`, `Like`, `Format`
+
+**Array:** `Size`, `Element`, `ArrayConcat`, `Range`
+
+**Math:** `Abs`, `Floor`, `Ceil`, `Round`, `Sqrt`, `Log`, `Exp`, `Sin`, `Cos`
+
+**Type casting:** `ToInt64`, `ToFloat64`, `ToString`
+
+**Other:** `Coalesce`, `IsNull`
+
+## Supported engines
+
+| Engine | `@Engine` value | Notes |
+|--------|-----------------|-------|
+| DuckDB | `duckdb` | Default engine |
+| SQLite | `sqlite` | |
+| PostgreSQL | `psql` | |
+| BigQuery | `bigquery` | |
+| Trino | `trino` | |
+| Presto | `presto` | |
+| Databricks | `databricks` | Double-quoted string literals |
+
+Each engine has its own SQL dialect for string literals, array syntax, GROUP BY style, record construction, regex matching, and standard library functions.
+
+## Verification
+
+Unlike Logica, which lets the database raise errors at execution time, Synalog embeds a **formal verifier** that catches issues at compile time.
+
+| Check | What it detects |
+|-------|-----------------|
+| **Safety** | Head variables not bound in the body |
+| **Safe negation** | Negated variables without a positive occurrence |
+| **Safe aggregation** | Aggregated variables not bound outside the aggregate |
+| **Stratification** | Negative recursion cycles |
+| **Arity** | Predicates used with inconsistent argument counts |
+| **Recursion** | Missing base cases, trivial loops, unbounded recursion without `@Recursive` |
+
+```python
+errors = synalog.check(bad_source)
+for e in errors:
+    print(e)
+# Variable 'y' in head of 'Test' is not bound in the body
+```
+
+## Differences with Datalog and Logica
+
+### Named attributes only
+
+Synalog doesn't support positional attributes like Logica or Datalog — it only uses *named attributes*, which reduce agent mistakes. This feature is optional in Logica; we made it mandatory.
+
+In Synalog, the compiled SQL uses actual column names, not `col{i}` format, making it compatible with existing database schemas.
+
+### Pagination
+
+Pagination is critical for AI agents with limited context windows. It also avoids loading large amounts of data into memory, enabling use on memory-constrained cloud infrastructure.
+
+Synalog applies pagination at compile time via the `limit` and `offset` arguments of `compile()`. The limit is combined with the `@Limit` directive: `actual_limit = min(limit, @Limit)`.
+
+### Compile-time verification
+
+Synalog embeds a formal verifier that catches structural errors before any SQL is generated. This prevents agents from producing programs that parse correctly but fail at execution time — a common failure mode when working with SQL directly.
+
+## Building from source
+
+The project uses [maturin](https://www.maturin.rs/) to build the Python wheel from the Rust crate.
+
+```bash
+pip install maturin
+maturin develop --release    # install into the active venv
+maturin build --release      # produce a wheel in target/wheels/
+```
+
+Run the Rust test suite:
+
+```bash
+cargo test
+```
+
+Run specific test groups:
+
+```bash
+cargo test --lib                        # unit tests
+cargo test --test compiler_tests        # compiler golden tests (all engines)
+cargo test --test parser_tests          # parser golden tests (all engines)
+cargo test --test verifier_tests        # verifier tests (all engines)
+cargo test --test search_tests          # search feature tests (all engines)
+```
+
+### Golden test generation
+
+Golden SQL files are generated by the Python Logica compiler to serve as the reference:
+
+```bash
+cd tests/compiler_tests && python3 generate_expected_sql.py
+cd tests/parser_tests && python3 generate_expected_json.py
+```
+
+Requires `pip install logica`.
+
+## Project structure
+
+```
+src/
+  lib.rs                  # Public API: parser, compiler, verifier, errors
+  errors.rs               # Unified error types with help messages
+  python.rs               # PyO3 bindings (the _synalog extension module)
+  parser/
+    parse.rs              # Logica syntax -> JSON AST
+    rewrite.rs            # AST rewrites (aggregation, multi-body)
+    json.rs               # Custom JSON implementation
+  compiler/
+    universe.rs           # LogicaProgram: AST -> SQL compilation
+    annotations.rs        # @OrderBy, @Limit, @Recursive, etc.
+    dialects.rs           # Engine-specific SQL generation
+    expr_translate.rs     # Expression -> SQL translation
+    rule_translate.rs     # Rule -> SQL translation
+    functors.rs           # Functor expansion (@Make)
+    concertina.rs         # Multi-predicate execution orchestration
+    type_inference/       # Type checking subsystem
+  verifier/
+    mod.rs                # Validation entry point
+    safety.rs             # Variable binding checks
+    stratification.rs     # Negative cycle detection
+    arity.rs              # Argument count consistency
+    recursion.rs          # Recursion safety checks
+python/
+  synalog/__init__.py     # Python package wrapper
+tests/
+  compiler_tests/         # Golden SQL tests per engine
+  parser_tests/           # Golden JSON tests per engine
+  verifier_tests/         # Negative verification tests per engine
+  search_tests.rs         # Search feature integration tests
+```

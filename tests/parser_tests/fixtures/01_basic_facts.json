@@ -1,0 +1,400 @@
+{
+  "file_name": "main",
+  "imported_predicates": [],
+  "predicates_prefix": "",
+  "rule": [
+    {
+      "full_text": "@Engine(\"duckdb\")",
+      "head": {
+        "predicate_name": "@Engine",
+        "record": {
+          "field_value": [
+            {
+              "field": 0,
+              "value": {
+                "expression": {
+                  "expression_heritage": "\"duckdb\"",
+                  "literal": {
+                    "the_string": {
+                      "the_string": "duckdb"
+                    }
+                  }
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "full_text": "Person(\"Alice\")",
+      "head": {
+        "predicate_name": "Person",
+        "record": {
+          "field_value": [
+            {
+              "field": 0,
+              "value": {
+                "expression": {
+                  "expression_heritage": "\"Alice\"",
+                  "literal": {
+                    "the_string": {
+                      "the_string": "Alice"
+                    }
+                  }
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "full_text": "Person(\"Bob\")",
+      "head": {
+        "predicate_name": "Person",
+        "record": {
+          "field_value": [
+            {
+              "field": 0,
+              "value": {
+                "expression": {
+                  "expression_heritage": "\"Bob\"",
+                  "literal": {
+                    "the_string": {
+                      "the_string": "Bob"
+                    }
+                  }
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "full_text": "Person(\"Charlie\")",
+      "head": {
+        "predicate_name": "Person",
+        "record": {
+          "field_value": [
+            {
+              "field": 0,
+              "value": {
+                "expression": {
+                  "expression_heritage": "\"Charlie\"",
+                  "literal": {
+                    "the_string": {
+                      "the_string": "Charlie"
+                    }
+                  }
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "full_text": "Employee(name: \"Alice\", department: \"Engineering\", salary: 75000)",
+      "head": {
+        "predicate_name": "Employee",
+        "record": {
+          "field_value": [
+            {
+              "field": "name",
+              "value": {
+                "expression": {
+                  "expression_heritage": "\"Alice\"",
+                  "literal": {
+                    "the_string": {
+                      "the_string": "Alice"
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "field": "department",
+              "value": {
+                "expression": {
+                  "expression_heritage": "\"Engineering\"",
+                  "literal": {
+                    "the_string": {
+                      "the_string": "Engineering"
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "field": "salary",
+              "value": {
+                "expression": {
+                  "expression_heritage": "75000",
+                  "literal": {
+                    "the_number": {
+                      "number": "75000"
+                    }
+                  }
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "full_text": "Employee(name: \"Bob\", department: \"Marketing\", salary: 65000)",
+      "head": {
+        "predicate_name": "Employee",
+        "record": {
+          "field_value": [
+            {
+              "field": "name",
+              "value": {
+                "expression": {
+                  "expression_heritage": "\"Bob\"",
+                  "literal": {
+                    "the_string": {
+                      "the_string": "Bob"
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "field": "department",
+              "value": {
+                "expression": {
+                  "expression_heritage": "\"Marketing\"",
+                  "literal": {
+                    "the_string": {
+                      "the_string": "Marketing"
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "field": "salary",
+              "value": {
+                "expression": {
+                  "expression_heritage": "65000",
+                  "literal": {
+                    "the_number": {
+                      "number": "65000"
+                    }
+                  }
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "full_text": "Employee(name: \"Charlie\", department: \"Engineering\", salary: 80000)",
+      "head": {
+        "predicate_name": "Employee",
+        "record": {
+          "field_value": [
+            {
+              "field": "name",
+              "value": {
+                "expression": {
+                  "expression_heritage": "\"Charlie\"",
+                  "literal": {
+                    "the_string": {
+                      "the_string": "Charlie"
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "field": "department",
+              "value": {
+                "expression": {
+                  "expression_heritage": "\"Engineering\"",
+                  "literal": {
+                    "the_string": {
+                      "the_string": "Engineering"
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "field": "salary",
+              "value": {
+                "expression": {
+                  "expression_heritage": "80000",
+                  "literal": {
+                    "the_number": {
+                      "number": "80000"
+                    }
+                  }
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "body": {
+        "conjunction": {
+          "conjunct": [
+            {
+              "predicate": {
+                "predicate_name": "Employee",
+                "record": {
+                  "field_value": [
+                    {
+                      "field": "name",
+                      "value": {
+                        "expression": {
+                          "expression_heritage": "name",
+                          "variable": {
+                            "var_name": "name"
+                          }
+                        }
+                      }
+                    },
+                    {
+                      "field": "department",
+                      "value": {
+                        "expression": {
+                          "expression_heritage": "\"Engineering\"",
+                          "literal": {
+                            "the_string": {
+                              "the_string": "Engineering"
+                            }
+                          }
+                        }
+                      }
+                    },
+                    {
+                      "field": "salary",
+                      "value": {
+                        "expression": {
+                          "expression_heritage": "salary",
+                          "variable": {
+                            "var_name": "salary"
+                          }
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          ]
+        }
+      },
+      "full_text": "EngineeringEmployee(name:) :- Employee(name:, department: \"Engineering\", salary:)",
+      "head": {
+        "predicate_name": "EngineeringEmployee",
+        "record": {
+          "field_value": [
+            {
+              "field": "name",
+              "value": {
+                "expression": {
+                  "expression_heritage": "name",
+                  "variable": {
+                    "var_name": "name"
+                  }
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "full_text": "@OrderBy(Test, \"name\")",
+      "head": {
+        "predicate_name": "@OrderBy",
+        "record": {
+          "field_value": [
+            {
+              "field": 0,
+              "value": {
+                "expression": {
+                  "expression_heritage": "Test",
+                  "literal": {
+                    "the_predicate": {
+                      "predicate_name": "Test"
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "field": 1,
+              "value": {
+                "expression": {
+                  "expression_heritage": "\"name\"",
+                  "literal": {
+                    "the_string": {
+                      "the_string": "name"
+                    }
+                  }
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "body": {
+        "conjunction": {
+          "conjunct": [
+            {
+              "predicate": {
+                "predicate_name": "EngineeringEmployee",
+                "record": {
+                  "field_value": [
+                    {
+                      "field": "name",
+                      "value": {
+                        "expression": {
+                          "expression_heritage": "name",
+                          "variable": {
+                            "var_name": "name"
+                          }
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          ]
+        }
+      },
+      "full_text": "Test(name:) :- EngineeringEmployee(name:)",
+      "head": {
+        "predicate_name": "Test",
+        "record": {
+          "field_value": [
+            {
+              "field": "name",
+              "value": {
+                "expression": {
+                  "expression_heritage": "name",
+                  "variable": {
+                    "var_name": "name"
+                  }
+                }
+              }
+            }
+          ]
+        }
+      }
+    }
+  ]
+}

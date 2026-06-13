@@ -1,0 +1,614 @@
+{
+  "file_name": "main",
+  "imported_predicates": [],
+  "predicates_prefix": "",
+  "rule": [
+    {
+      "full_text": "@Engine(\"duckdb\")",
+      "head": {
+        "predicate_name": "@Engine",
+        "record": {
+          "field_value": [
+            {
+              "field": 0,
+              "value": {
+                "expression": {
+                  "expression_heritage": "\"duckdb\"",
+                  "literal": {
+                    "the_string": {
+                      "the_string": "duckdb"
+                    }
+                  }
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "full_text": "Data(a: 1, b: 2, c: 3, d: \"x\")",
+      "head": {
+        "predicate_name": "Data",
+        "record": {
+          "field_value": [
+            {
+              "field": "a",
+              "value": {
+                "expression": {
+                  "expression_heritage": "1",
+                  "literal": {
+                    "the_number": {
+                      "number": "1"
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "field": "b",
+              "value": {
+                "expression": {
+                  "expression_heritage": "2",
+                  "literal": {
+                    "the_number": {
+                      "number": "2"
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "field": "c",
+              "value": {
+                "expression": {
+                  "expression_heritage": "3",
+                  "literal": {
+                    "the_number": {
+                      "number": "3"
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "field": "d",
+              "value": {
+                "expression": {
+                  "expression_heritage": "\"x\"",
+                  "literal": {
+                    "the_string": {
+                      "the_string": "x"
+                    }
+                  }
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "full_text": "Data(a: 4, b: 5, c: 6, d: \"y\")",
+      "head": {
+        "predicate_name": "Data",
+        "record": {
+          "field_value": [
+            {
+              "field": "a",
+              "value": {
+                "expression": {
+                  "expression_heritage": "4",
+                  "literal": {
+                    "the_number": {
+                      "number": "4"
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "field": "b",
+              "value": {
+                "expression": {
+                  "expression_heritage": "5",
+                  "literal": {
+                    "the_number": {
+                      "number": "5"
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "field": "c",
+              "value": {
+                "expression": {
+                  "expression_heritage": "6",
+                  "literal": {
+                    "the_number": {
+                      "number": "6"
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "field": "d",
+              "value": {
+                "expression": {
+                  "expression_heritage": "\"y\"",
+                  "literal": {
+                    "the_string": {
+                      "the_string": "y"
+                    }
+                  }
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "full_text": "Data(a: 7, b: 8, c: 9, d: \"z\")",
+      "head": {
+        "predicate_name": "Data",
+        "record": {
+          "field_value": [
+            {
+              "field": "a",
+              "value": {
+                "expression": {
+                  "expression_heritage": "7",
+                  "literal": {
+                    "the_number": {
+                      "number": "7"
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "field": "b",
+              "value": {
+                "expression": {
+                  "expression_heritage": "8",
+                  "literal": {
+                    "the_number": {
+                      "number": "8"
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "field": "c",
+              "value": {
+                "expression": {
+                  "expression_heritage": "9",
+                  "literal": {
+                    "the_number": {
+                      "number": "9"
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "field": "d",
+              "value": {
+                "expression": {
+                  "expression_heritage": "\"z\"",
+                  "literal": {
+                    "the_string": {
+                      "the_string": "z"
+                    }
+                  }
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "full_text": "@OrderBy(Transformed, \"d\")",
+      "head": {
+        "predicate_name": "@OrderBy",
+        "record": {
+          "field_value": [
+            {
+              "field": 0,
+              "value": {
+                "expression": {
+                  "expression_heritage": "Transformed",
+                  "literal": {
+                    "the_predicate": {
+                      "predicate_name": "Transformed"
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "field": 1,
+              "value": {
+                "expression": {
+                  "expression_heritage": "\"d\"",
+                  "literal": {
+                    "the_string": {
+                      "the_string": "d"
+                    }
+                  }
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "body": {
+        "conjunction": {
+          "conjunct": [
+            {
+              "predicate": {
+                "predicate_name": "Data",
+                "record": {
+                  "field_value": [
+                    {
+                      "field": "a",
+                      "value": {
+                        "expression": {
+                          "expression_heritage": "a",
+                          "variable": {
+                            "var_name": "a"
+                          }
+                        }
+                      }
+                    },
+                    {
+                      "field": "b",
+                      "value": {
+                        "expression": {
+                          "expression_heritage": "b",
+                          "variable": {
+                            "var_name": "b"
+                          }
+                        }
+                      }
+                    },
+                    {
+                      "field": "c",
+                      "value": {
+                        "expression": {
+                          "expression_heritage": "c",
+                          "variable": {
+                            "var_name": "c"
+                          }
+                        }
+                      }
+                    },
+                    {
+                      "field": "d",
+                      "value": {
+                        "expression": {
+                          "expression_heritage": "d",
+                          "variable": {
+                            "var_name": "d"
+                          }
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          ]
+        }
+      },
+      "full_text": "Transformed(a_doubled: 2 * a, c:, d:) :- Data(a:, b:, c:, d:)",
+      "head": {
+        "predicate_name": "Transformed",
+        "record": {
+          "field_value": [
+            {
+              "field": "a_doubled",
+              "value": {
+                "expression": {
+                  "call": {
+                    "predicate_name": "*",
+                    "record": {
+                      "field_value": [
+                        {
+                          "field": "left",
+                          "value": {
+                            "expression": {
+                              "expression_heritage": "2",
+                              "literal": {
+                                "the_number": {
+                                  "number": "2"
+                                }
+                              }
+                            }
+                          }
+                        },
+                        {
+                          "field": "right",
+                          "value": {
+                            "expression": {
+                              "expression_heritage": "a",
+                              "variable": {
+                                "var_name": "a"
+                              }
+                            }
+                          }
+                        }
+                      ]
+                    }
+                  },
+                  "expression_heritage": "2 * a"
+                }
+              }
+            },
+            {
+              "field": "c",
+              "value": {
+                "expression": {
+                  "expression_heritage": "c",
+                  "variable": {
+                    "var_name": "c"
+                  }
+                }
+              }
+            },
+            {
+              "field": "d",
+              "value": {
+                "expression": {
+                  "expression_heritage": "d",
+                  "variable": {
+                    "var_name": "d"
+                  }
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "full_text": "@OrderBy(Subset, \"d\")",
+      "head": {
+        "predicate_name": "@OrderBy",
+        "record": {
+          "field_value": [
+            {
+              "field": 0,
+              "value": {
+                "expression": {
+                  "expression_heritage": "Subset",
+                  "literal": {
+                    "the_predicate": {
+                      "predicate_name": "Subset"
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "field": 1,
+              "value": {
+                "expression": {
+                  "expression_heritage": "\"d\"",
+                  "literal": {
+                    "the_string": {
+                      "the_string": "d"
+                    }
+                  }
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "body": {
+        "conjunction": {
+          "conjunct": [
+            {
+              "predicate": {
+                "predicate_name": "Data",
+                "record": {
+                  "field_value": [
+                    {
+                      "field": "a",
+                      "value": {
+                        "expression": {
+                          "expression_heritage": "a",
+                          "variable": {
+                            "var_name": "a"
+                          }
+                        }
+                      }
+                    },
+                    {
+                      "field": "b",
+                      "value": {
+                        "expression": {
+                          "expression_heritage": "b",
+                          "variable": {
+                            "var_name": "b"
+                          }
+                        }
+                      }
+                    },
+                    {
+                      "field": "c",
+                      "value": {
+                        "expression": {
+                          "expression_heritage": "c",
+                          "variable": {
+                            "var_name": "c"
+                          }
+                        }
+                      }
+                    },
+                    {
+                      "field": "d",
+                      "value": {
+                        "expression": {
+                          "expression_heritage": "d",
+                          "variable": {
+                            "var_name": "d"
+                          }
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          ]
+        }
+      },
+      "full_text": "Subset(c:, d:) :- Data(a:, b:, c:, d:)",
+      "head": {
+        "predicate_name": "Subset",
+        "record": {
+          "field_value": [
+            {
+              "field": "c",
+              "value": {
+                "expression": {
+                  "expression_heritage": "c",
+                  "variable": {
+                    "var_name": "c"
+                  }
+                }
+              }
+            },
+            {
+              "field": "d",
+              "value": {
+                "expression": {
+                  "expression_heritage": "d",
+                  "variable": {
+                    "var_name": "d"
+                  }
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "full_text": "@OrderBy(Test, \"d\")",
+      "head": {
+        "predicate_name": "@OrderBy",
+        "record": {
+          "field_value": [
+            {
+              "field": 0,
+              "value": {
+                "expression": {
+                  "expression_heritage": "Test",
+                  "literal": {
+                    "the_predicate": {
+                      "predicate_name": "Test"
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "field": 1,
+              "value": {
+                "expression": {
+                  "expression_heritage": "\"d\"",
+                  "literal": {
+                    "the_string": {
+                      "the_string": "d"
+                    }
+                  }
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "body": {
+        "conjunction": {
+          "conjunct": [
+            {
+              "predicate": {
+                "predicate_name": "Subset",
+                "record": {
+                  "field_value": [
+                    {
+                      "field": "c",
+                      "value": {
+                        "expression": {
+                          "expression_heritage": "c",
+                          "variable": {
+                            "var_name": "c"
+                          }
+                        }
+                      }
+                    },
+                    {
+                      "field": "d",
+                      "value": {
+                        "expression": {
+                          "expression_heritage": "d",
+                          "variable": {
+                            "var_name": "d"
+                          }
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          ]
+        }
+      },
+      "full_text": "Test(c:, d:) :- Subset(c:, d:)",
+      "head": {
+        "predicate_name": "Test",
+        "record": {
+          "field_value": [
+            {
+              "field": "c",
+              "value": {
+                "expression": {
+                  "expression_heritage": "c",
+                  "variable": {
+                    "var_name": "c"
+                  }
+                }
+              }
+            },
+            {
+              "field": "d",
+              "value": {
+                "expression": {
+                  "expression_heritage": "d",
+                  "variable": {
+                    "var_name": "d"
+                  }
+                }
+              }
+            }
+          ]
+        }
+      }
+    }
+  ]
+}

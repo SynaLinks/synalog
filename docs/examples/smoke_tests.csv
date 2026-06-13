@@ -1,0 +1,13 @@
+test_id,device,status,duration_ms,run_at
+1,sensor-a,passed,532,2026-06-10 08:00:12
+2,sensor-b,passed,488,2026-06-10 08:00:15
+3,gateway,failed,2150,2026-06-10 08:00:21
+4,sensor-a,passed,540,2026-06-10 20:00:09
+5,sensor-b,flaky,1102,2026-06-10 20:00:14
+6,gateway,failed,2310,2026-06-10 20:00:20
+7,sensor-a,passed,529,2026-06-11 08:00:11
+8,sensor-b,passed,495,2026-06-11 08:00:13
+9,gateway,passed,1874,2026-06-11 08:00:19
+10,sensor-a,failed,1980,2026-06-11 20:00:10
+11,sensor-b,passed,501,2026-06-11 20:00:16
+12,gateway,passed,1822,2026-06-11 20:00:22

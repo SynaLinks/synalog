@@ -1,0 +1,761 @@
+{
+  "file_name": "main",
+  "imported_predicates": [],
+  "predicates_prefix": "",
+  "rule": [
+    {
+      "full_text": "@Engine(\"duckdb\")",
+      "head": {
+        "predicate_name": "@Engine",
+        "record": {
+          "field_value": [
+            {
+              "field": 0,
+              "value": {
+                "expression": {
+                  "expression_heritage": "\"duckdb\"",
+                  "literal": {
+                    "the_string": {
+                      "the_string": "duckdb"
+                    }
+                  }
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "body": {
+        "conjunction": {
+          "conjunct": [
+            {
+              "inclusion": {
+                "element": {
+                  "expression_heritage": "x",
+                  "variable": {
+                    "var_name": "x"
+                  }
+                },
+                "list": {
+                  "call": {
+                    "predicate_name": "Range",
+                    "record": {
+                      "field_value": [
+                        {
+                          "field": 0,
+                          "value": {
+                            "expression": {
+                              "expression_heritage": "15",
+                              "literal": {
+                                "the_number": {
+                                  "number": "15"
+                                }
+                              }
+                            }
+                          }
+                        }
+                      ]
+                    }
+                  },
+                  "expression_heritage": "Range(15)"
+                }
+              }
+            }
+          ]
+        }
+      },
+      "full_text": "Number(x) :- x in Range(15)",
+      "head": {
+        "predicate_name": "Number",
+        "record": {
+          "field_value": [
+            {
+              "field": 0,
+              "value": {
+                "expression": {
+                  "expression_heritage": "x",
+                  "variable": {
+                    "var_name": "x"
+                  }
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "body": {
+        "conjunction": {
+          "conjunct": [
+            {
+              "predicate": {
+                "predicate_name": "Number",
+                "record": {
+                  "field_value": [
+                    {
+                      "field": 0,
+                      "value": {
+                        "expression": {
+                          "expression_heritage": "x",
+                          "variable": {
+                            "var_name": "x"
+                          }
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            },
+            {
+              "predicate": {
+                "predicate_name": ">=",
+                "record": {
+                  "field_value": [
+                    {
+                      "field": "left",
+                      "value": {
+                        "expression": {
+                          "expression_heritage": "x",
+                          "variable": {
+                            "var_name": "x"
+                          }
+                        }
+                      }
+                    },
+                    {
+                      "field": "right",
+                      "value": {
+                        "expression": {
+                          "expression_heritage": "6",
+                          "literal": {
+                            "the_number": {
+                              "number": "6"
+                            }
+                          }
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          ]
+        }
+      },
+      "full_text": "Grade(score: x, letter: (if x >= 9 then \"A\" else \"B\")) :- Number(x), x >= 6",
+      "head": {
+        "predicate_name": "Grade",
+        "record": {
+          "field_value": [
+            {
+              "field": "score",
+              "value": {
+                "expression": {
+                  "expression_heritage": "x",
+                  "variable": {
+                    "var_name": "x"
+                  }
+                }
+              }
+            },
+            {
+              "field": "letter",
+              "value": {
+                "expression": {
+                  "expression_heritage": "if x >= 9 then \"A\" else \"B\"",
+                  "implication": {
+                    "if_then": [
+                      {
+                        "condition": {
+                          "call": {
+                            "predicate_name": ">=",
+                            "record": {
+                              "field_value": [
+                                {
+                                  "field": "left",
+                                  "value": {
+                                    "expression": {
+                                      "expression_heritage": "x",
+                                      "variable": {
+                                        "var_name": "x"
+                                      }
+                                    }
+                                  }
+                                },
+                                {
+                                  "field": "right",
+                                  "value": {
+                                    "expression": {
+                                      "expression_heritage": "9",
+                                      "literal": {
+                                        "the_number": {
+                                          "number": "9"
+                                        }
+                                      }
+                                    }
+                                  }
+                                }
+                              ]
+                            }
+                          },
+                          "expression_heritage": "x >= 9"
+                        },
+                        "consequence": {
+                          "expression_heritage": "\"A\"",
+                          "literal": {
+                            "the_string": {
+                              "the_string": "A"
+                            }
+                          }
+                        }
+                      }
+                    ],
+                    "otherwise": {
+                      "expression_heritage": "\"B\"",
+                      "literal": {
+                        "the_string": {
+                          "the_string": "B"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "body": {
+        "conjunction": {
+          "conjunct": [
+            {
+              "predicate": {
+                "predicate_name": "Number",
+                "record": {
+                  "field_value": [
+                    {
+                      "field": 0,
+                      "value": {
+                        "expression": {
+                          "expression_heritage": "x",
+                          "variable": {
+                            "var_name": "x"
+                          }
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            },
+            {
+              "unification": {
+                "left_hand_side": {
+                  "expression_heritage": "letter",
+                  "variable": {
+                    "var_name": "letter"
+                  }
+                },
+                "right_hand_side": {
+                  "expression_heritage": "if x >= 12 then \"A\"\n             else if x >= 9 then \"B\"\n             else if x >= 6 then \"C\"\n             else if x >= 3 then \"D\"\n             else \"F\"",
+                  "implication": {
+                    "if_then": [
+                      {
+                        "condition": {
+                          "call": {
+                            "predicate_name": ">=",
+                            "record": {
+                              "field_value": [
+                                {
+                                  "field": "left",
+                                  "value": {
+                                    "expression": {
+                                      "expression_heritage": "x",
+                                      "variable": {
+                                        "var_name": "x"
+                                      }
+                                    }
+                                  }
+                                },
+                                {
+                                  "field": "right",
+                                  "value": {
+                                    "expression": {
+                                      "expression_heritage": "12",
+                                      "literal": {
+                                        "the_number": {
+                                          "number": "12"
+                                        }
+                                      }
+                                    }
+                                  }
+                                }
+                              ]
+                            }
+                          },
+                          "expression_heritage": "x >= 12"
+                        },
+                        "consequence": {
+                          "expression_heritage": "\"A\"",
+                          "literal": {
+                            "the_string": {
+                              "the_string": "A"
+                            }
+                          }
+                        }
+                      },
+                      {
+                        "condition": {
+                          "call": {
+                            "predicate_name": ">=",
+                            "record": {
+                              "field_value": [
+                                {
+                                  "field": "left",
+                                  "value": {
+                                    "expression": {
+                                      "expression_heritage": "x",
+                                      "variable": {
+                                        "var_name": "x"
+                                      }
+                                    }
+                                  }
+                                },
+                                {
+                                  "field": "right",
+                                  "value": {
+                                    "expression": {
+                                      "expression_heritage": "9",
+                                      "literal": {
+                                        "the_number": {
+                                          "number": "9"
+                                        }
+                                      }
+                                    }
+                                  }
+                                }
+                              ]
+                            }
+                          },
+                          "expression_heritage": "x >= 9"
+                        },
+                        "consequence": {
+                          "expression_heritage": "\"B\"",
+                          "literal": {
+                            "the_string": {
+                              "the_string": "B"
+                            }
+                          }
+                        }
+                      },
+                      {
+                        "condition": {
+                          "call": {
+                            "predicate_name": ">=",
+                            "record": {
+                              "field_value": [
+                                {
+                                  "field": "left",
+                                  "value": {
+                                    "expression": {
+                                      "expression_heritage": "x",
+                                      "variable": {
+                                        "var_name": "x"
+                                      }
+                                    }
+                                  }
+                                },
+                                {
+                                  "field": "right",
+                                  "value": {
+                                    "expression": {
+                                      "expression_heritage": "6",
+                                      "literal": {
+                                        "the_number": {
+                                          "number": "6"
+                                        }
+                                      }
+                                    }
+                                  }
+                                }
+                              ]
+                            }
+                          },
+                          "expression_heritage": "x >= 6"
+                        },
+                        "consequence": {
+                          "expression_heritage": "\"C\"",
+                          "literal": {
+                            "the_string": {
+                              "the_string": "C"
+                            }
+                          }
+                        }
+                      },
+                      {
+                        "condition": {
+                          "call": {
+                            "predicate_name": ">=",
+                            "record": {
+                              "field_value": [
+                                {
+                                  "field": "left",
+                                  "value": {
+                                    "expression": {
+                                      "expression_heritage": "x",
+                                      "variable": {
+                                        "var_name": "x"
+                                      }
+                                    }
+                                  }
+                                },
+                                {
+                                  "field": "right",
+                                  "value": {
+                                    "expression": {
+                                      "expression_heritage": "3",
+                                      "literal": {
+                                        "the_number": {
+                                          "number": "3"
+                                        }
+                                      }
+                                    }
+                                  }
+                                }
+                              ]
+                            }
+                          },
+                          "expression_heritage": "x >= 3"
+                        },
+                        "consequence": {
+                          "expression_heritage": "\"D\"",
+                          "literal": {
+                            "the_string": {
+                              "the_string": "D"
+                            }
+                          }
+                        }
+                      }
+                    ],
+                    "otherwise": {
+                      "expression_heritage": "\"F\"",
+                      "literal": {
+                        "the_string": {
+                          "the_string": "F"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          ]
+        }
+      },
+      "full_text": "DetailedGrade(score: x, letter:) :-\n  Number(x),\n  letter == (if x >= 12 then \"A\"\n             else if x >= 9 then \"B\"\n             else if x >= 6 then \"C\"\n             else if x >= 3 then \"D\"\n             else \"F\")",
+      "head": {
+        "predicate_name": "DetailedGrade",
+        "record": {
+          "field_value": [
+            {
+              "field": "score",
+              "value": {
+                "expression": {
+                  "expression_heritage": "x",
+                  "variable": {
+                    "var_name": "x"
+                  }
+                }
+              }
+            },
+            {
+              "field": "letter",
+              "value": {
+                "expression": {
+                  "expression_heritage": "letter",
+                  "variable": {
+                    "var_name": "letter"
+                  }
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "body": {
+        "conjunction": {
+          "conjunct": [
+            {
+              "predicate": {
+                "predicate_name": "Number",
+                "record": {
+                  "field_value": [
+                    {
+                      "field": 0,
+                      "value": {
+                        "expression": {
+                          "expression_heritage": "x",
+                          "variable": {
+                            "var_name": "x"
+                          }
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          ]
+        }
+      },
+      "full_text": "Adjusted(x, value: (if x < 5 then x * 2 else x + 10)) :- Number(x)",
+      "head": {
+        "predicate_name": "Adjusted",
+        "record": {
+          "field_value": [
+            {
+              "field": 0,
+              "value": {
+                "expression": {
+                  "expression_heritage": "x",
+                  "variable": {
+                    "var_name": "x"
+                  }
+                }
+              }
+            },
+            {
+              "field": "value",
+              "value": {
+                "expression": {
+                  "expression_heritage": "if x < 5 then x * 2 else x + 10",
+                  "implication": {
+                    "if_then": [
+                      {
+                        "condition": {
+                          "call": {
+                            "predicate_name": "<",
+                            "record": {
+                              "field_value": [
+                                {
+                                  "field": "left",
+                                  "value": {
+                                    "expression": {
+                                      "expression_heritage": "x",
+                                      "variable": {
+                                        "var_name": "x"
+                                      }
+                                    }
+                                  }
+                                },
+                                {
+                                  "field": "right",
+                                  "value": {
+                                    "expression": {
+                                      "expression_heritage": "5",
+                                      "literal": {
+                                        "the_number": {
+                                          "number": "5"
+                                        }
+                                      }
+                                    }
+                                  }
+                                }
+                              ]
+                            }
+                          },
+                          "expression_heritage": "x < 5"
+                        },
+                        "consequence": {
+                          "call": {
+                            "predicate_name": "*",
+                            "record": {
+                              "field_value": [
+                                {
+                                  "field": "left",
+                                  "value": {
+                                    "expression": {
+                                      "expression_heritage": "x",
+                                      "variable": {
+                                        "var_name": "x"
+                                      }
+                                    }
+                                  }
+                                },
+                                {
+                                  "field": "right",
+                                  "value": {
+                                    "expression": {
+                                      "expression_heritage": "2",
+                                      "literal": {
+                                        "the_number": {
+                                          "number": "2"
+                                        }
+                                      }
+                                    }
+                                  }
+                                }
+                              ]
+                            }
+                          },
+                          "expression_heritage": "x * 2"
+                        }
+                      }
+                    ],
+                    "otherwise": {
+                      "call": {
+                        "predicate_name": "+",
+                        "record": {
+                          "field_value": [
+                            {
+                              "field": "left",
+                              "value": {
+                                "expression": {
+                                  "expression_heritage": "x",
+                                  "variable": {
+                                    "var_name": "x"
+                                  }
+                                }
+                              }
+                            },
+                            {
+                              "field": "right",
+                              "value": {
+                                "expression": {
+                                  "expression_heritage": "10",
+                                  "literal": {
+                                    "the_number": {
+                                      "number": "10"
+                                    }
+                                  }
+                                }
+                              }
+                            }
+                          ]
+                        }
+                      },
+                      "expression_heritage": "x + 10"
+                    }
+                  }
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "full_text": "@OrderBy(Test, \"score\")",
+      "head": {
+        "predicate_name": "@OrderBy",
+        "record": {
+          "field_value": [
+            {
+              "field": 0,
+              "value": {
+                "expression": {
+                  "expression_heritage": "Test",
+                  "literal": {
+                    "the_predicate": {
+                      "predicate_name": "Test"
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "field": 1,
+              "value": {
+                "expression": {
+                  "expression_heritage": "\"score\"",
+                  "literal": {
+                    "the_string": {
+                      "the_string": "score"
+                    }
+                  }
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "body": {
+        "conjunction": {
+          "conjunct": [
+            {
+              "predicate": {
+                "predicate_name": "DetailedGrade",
+                "record": {
+                  "field_value": [
+                    {
+                      "field": "score",
+                      "value": {
+                        "expression": {
+                          "expression_heritage": "score",
+                          "variable": {
+                            "var_name": "score"
+                          }
+                        }
+                      }
+                    },
+                    {
+                      "field": "letter",
+                      "value": {
+                        "expression": {
+                          "expression_heritage": "letter",
+                          "variable": {
+                            "var_name": "letter"
+                          }
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          ]
+        }
+      },
+      "full_text": "Test(score:, letter:) :- DetailedGrade(score:, letter:)",
+      "head": {
+        "predicate_name": "Test",
+        "record": {
+          "field_value": [
+            {
+              "field": "score",
+              "value": {
+                "expression": {
+                  "expression_heritage": "score",
+                  "variable": {
+                    "var_name": "score"
+                  }
+                }
+              }
+            },
+            {
+              "field": "letter",
+              "value": {
+                "expression": {
+                  "expression_heritage": "letter",
+                  "variable": {
+                    "var_name": "letter"
+                  }
+                }
+              }
+            }
+          ]
+        }
+      }
+    }
+  ]
+}

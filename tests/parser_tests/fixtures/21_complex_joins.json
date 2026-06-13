@@ -1,0 +1,1293 @@
+{
+  "file_name": "main",
+  "imported_predicates": [],
+  "predicates_prefix": "",
+  "rule": [
+    {
+      "full_text": "@Engine(\"duckdb\")",
+      "head": {
+        "predicate_name": "@Engine",
+        "record": {
+          "field_value": [
+            {
+              "field": 0,
+              "value": {
+                "expression": {
+                  "expression_heritage": "\"duckdb\"",
+                  "literal": {
+                    "the_string": {
+                      "the_string": "duckdb"
+                    }
+                  }
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "full_text": "Users(id: 1, name: \"Alice\", dept: 101)",
+      "head": {
+        "predicate_name": "Users",
+        "record": {
+          "field_value": [
+            {
+              "field": "id",
+              "value": {
+                "expression": {
+                  "expression_heritage": "1",
+                  "literal": {
+                    "the_number": {
+                      "number": "1"
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "field": "name",
+              "value": {
+                "expression": {
+                  "expression_heritage": "\"Alice\"",
+                  "literal": {
+                    "the_string": {
+                      "the_string": "Alice"
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "field": "dept",
+              "value": {
+                "expression": {
+                  "expression_heritage": "101",
+                  "literal": {
+                    "the_number": {
+                      "number": "101"
+                    }
+                  }
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "full_text": "Users(id: 2, name: \"Bob\", dept: 102)",
+      "head": {
+        "predicate_name": "Users",
+        "record": {
+          "field_value": [
+            {
+              "field": "id",
+              "value": {
+                "expression": {
+                  "expression_heritage": "2",
+                  "literal": {
+                    "the_number": {
+                      "number": "2"
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "field": "name",
+              "value": {
+                "expression": {
+                  "expression_heritage": "\"Bob\"",
+                  "literal": {
+                    "the_string": {
+                      "the_string": "Bob"
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "field": "dept",
+              "value": {
+                "expression": {
+                  "expression_heritage": "102",
+                  "literal": {
+                    "the_number": {
+                      "number": "102"
+                    }
+                  }
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "full_text": "Users(id: 3, name: \"Charlie\", dept: 101)",
+      "head": {
+        "predicate_name": "Users",
+        "record": {
+          "field_value": [
+            {
+              "field": "id",
+              "value": {
+                "expression": {
+                  "expression_heritage": "3",
+                  "literal": {
+                    "the_number": {
+                      "number": "3"
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "field": "name",
+              "value": {
+                "expression": {
+                  "expression_heritage": "\"Charlie\"",
+                  "literal": {
+                    "the_string": {
+                      "the_string": "Charlie"
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "field": "dept",
+              "value": {
+                "expression": {
+                  "expression_heritage": "101",
+                  "literal": {
+                    "the_number": {
+                      "number": "101"
+                    }
+                  }
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "full_text": "Departments(id: 101, name: \"Engineering\")",
+      "head": {
+        "predicate_name": "Departments",
+        "record": {
+          "field_value": [
+            {
+              "field": "id",
+              "value": {
+                "expression": {
+                  "expression_heritage": "101",
+                  "literal": {
+                    "the_number": {
+                      "number": "101"
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "field": "name",
+              "value": {
+                "expression": {
+                  "expression_heritage": "\"Engineering\"",
+                  "literal": {
+                    "the_string": {
+                      "the_string": "Engineering"
+                    }
+                  }
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "full_text": "Departments(id: 102, name: \"Marketing\")",
+      "head": {
+        "predicate_name": "Departments",
+        "record": {
+          "field_value": [
+            {
+              "field": "id",
+              "value": {
+                "expression": {
+                  "expression_heritage": "102",
+                  "literal": {
+                    "the_number": {
+                      "number": "102"
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "field": "name",
+              "value": {
+                "expression": {
+                  "expression_heritage": "\"Marketing\"",
+                  "literal": {
+                    "the_string": {
+                      "the_string": "Marketing"
+                    }
+                  }
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "full_text": "Departments(id: 103, name: \"Sales\")",
+      "head": {
+        "predicate_name": "Departments",
+        "record": {
+          "field_value": [
+            {
+              "field": "id",
+              "value": {
+                "expression": {
+                  "expression_heritage": "103",
+                  "literal": {
+                    "the_number": {
+                      "number": "103"
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "field": "name",
+              "value": {
+                "expression": {
+                  "expression_heritage": "\"Sales\"",
+                  "literal": {
+                    "the_string": {
+                      "the_string": "Sales"
+                    }
+                  }
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "full_text": "Projects(id: 1, name: \"Alpha\", lead: 1)",
+      "head": {
+        "predicate_name": "Projects",
+        "record": {
+          "field_value": [
+            {
+              "field": "id",
+              "value": {
+                "expression": {
+                  "expression_heritage": "1",
+                  "literal": {
+                    "the_number": {
+                      "number": "1"
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "field": "name",
+              "value": {
+                "expression": {
+                  "expression_heritage": "\"Alpha\"",
+                  "literal": {
+                    "the_string": {
+                      "the_string": "Alpha"
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "field": "lead",
+              "value": {
+                "expression": {
+                  "expression_heritage": "1",
+                  "literal": {
+                    "the_number": {
+                      "number": "1"
+                    }
+                  }
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "full_text": "Projects(id: 2, name: \"Beta\", lead: 2)",
+      "head": {
+        "predicate_name": "Projects",
+        "record": {
+          "field_value": [
+            {
+              "field": "id",
+              "value": {
+                "expression": {
+                  "expression_heritage": "2",
+                  "literal": {
+                    "the_number": {
+                      "number": "2"
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "field": "name",
+              "value": {
+                "expression": {
+                  "expression_heritage": "\"Beta\"",
+                  "literal": {
+                    "the_string": {
+                      "the_string": "Beta"
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "field": "lead",
+              "value": {
+                "expression": {
+                  "expression_heritage": "2",
+                  "literal": {
+                    "the_number": {
+                      "number": "2"
+                    }
+                  }
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "full_text": "Projects(id: 3, name: \"Gamma\", lead: 1)",
+      "head": {
+        "predicate_name": "Projects",
+        "record": {
+          "field_value": [
+            {
+              "field": "id",
+              "value": {
+                "expression": {
+                  "expression_heritage": "3",
+                  "literal": {
+                    "the_number": {
+                      "number": "3"
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "field": "name",
+              "value": {
+                "expression": {
+                  "expression_heritage": "\"Gamma\"",
+                  "literal": {
+                    "the_string": {
+                      "the_string": "Gamma"
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "field": "lead",
+              "value": {
+                "expression": {
+                  "expression_heritage": "1",
+                  "literal": {
+                    "the_number": {
+                      "number": "1"
+                    }
+                  }
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "full_text": "Assignments(user_id: 1, project_id: 1)",
+      "head": {
+        "predicate_name": "Assignments",
+        "record": {
+          "field_value": [
+            {
+              "field": "user_id",
+              "value": {
+                "expression": {
+                  "expression_heritage": "1",
+                  "literal": {
+                    "the_number": {
+                      "number": "1"
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "field": "project_id",
+              "value": {
+                "expression": {
+                  "expression_heritage": "1",
+                  "literal": {
+                    "the_number": {
+                      "number": "1"
+                    }
+                  }
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "full_text": "Assignments(user_id: 1, project_id: 2)",
+      "head": {
+        "predicate_name": "Assignments",
+        "record": {
+          "field_value": [
+            {
+              "field": "user_id",
+              "value": {
+                "expression": {
+                  "expression_heritage": "1",
+                  "literal": {
+                    "the_number": {
+                      "number": "1"
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "field": "project_id",
+              "value": {
+                "expression": {
+                  "expression_heritage": "2",
+                  "literal": {
+                    "the_number": {
+                      "number": "2"
+                    }
+                  }
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "full_text": "Assignments(user_id: 2, project_id: 2)",
+      "head": {
+        "predicate_name": "Assignments",
+        "record": {
+          "field_value": [
+            {
+              "field": "user_id",
+              "value": {
+                "expression": {
+                  "expression_heritage": "2",
+                  "literal": {
+                    "the_number": {
+                      "number": "2"
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "field": "project_id",
+              "value": {
+                "expression": {
+                  "expression_heritage": "2",
+                  "literal": {
+                    "the_number": {
+                      "number": "2"
+                    }
+                  }
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "full_text": "Assignments(user_id: 3, project_id: 3)",
+      "head": {
+        "predicate_name": "Assignments",
+        "record": {
+          "field_value": [
+            {
+              "field": "user_id",
+              "value": {
+                "expression": {
+                  "expression_heritage": "3",
+                  "literal": {
+                    "the_number": {
+                      "number": "3"
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "field": "project_id",
+              "value": {
+                "expression": {
+                  "expression_heritage": "3",
+                  "literal": {
+                    "the_number": {
+                      "number": "3"
+                    }
+                  }
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "body": {
+        "conjunction": {
+          "conjunct": [
+            {
+              "predicate": {
+                "predicate_name": "Users",
+                "record": {
+                  "field_value": [
+                    {
+                      "field": "id",
+                      "value": {
+                        "expression": {
+                          "expression_heritage": "id",
+                          "variable": {
+                            "var_name": "id"
+                          }
+                        }
+                      }
+                    },
+                    {
+                      "field": "name",
+                      "value": {
+                        "expression": {
+                          "expression_heritage": "user_name",
+                          "variable": {
+                            "var_name": "user_name"
+                          }
+                        }
+                      }
+                    },
+                    {
+                      "field": "dept",
+                      "value": {
+                        "expression": {
+                          "expression_heritage": "dept_id",
+                          "variable": {
+                            "var_name": "dept_id"
+                          }
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            },
+            {
+              "predicate": {
+                "predicate_name": "Departments",
+                "record": {
+                  "field_value": [
+                    {
+                      "field": "id",
+                      "value": {
+                        "expression": {
+                          "expression_heritage": "dept_id",
+                          "variable": {
+                            "var_name": "dept_id"
+                          }
+                        }
+                      }
+                    },
+                    {
+                      "field": "name",
+                      "value": {
+                        "expression": {
+                          "expression_heritage": "dept_name",
+                          "variable": {
+                            "var_name": "dept_name"
+                          }
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          ]
+        }
+      },
+      "full_text": "UserDept(user_name:, dept_name:) :-\n  Users(id:, name: user_name, dept: dept_id),\n  Departments(id: dept_id, name: dept_name)",
+      "head": {
+        "predicate_name": "UserDept",
+        "record": {
+          "field_value": [
+            {
+              "field": "user_name",
+              "value": {
+                "expression": {
+                  "expression_heritage": "user_name",
+                  "variable": {
+                    "var_name": "user_name"
+                  }
+                }
+              }
+            },
+            {
+              "field": "dept_name",
+              "value": {
+                "expression": {
+                  "expression_heritage": "dept_name",
+                  "variable": {
+                    "var_name": "dept_name"
+                  }
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "body": {
+        "conjunction": {
+          "conjunct": [
+            {
+              "predicate": {
+                "predicate_name": "Users",
+                "record": {
+                  "field_value": [
+                    {
+                      "field": "id",
+                      "value": {
+                        "expression": {
+                          "expression_heritage": "uid",
+                          "variable": {
+                            "var_name": "uid"
+                          }
+                        }
+                      }
+                    },
+                    {
+                      "field": "name",
+                      "value": {
+                        "expression": {
+                          "expression_heritage": "user_name",
+                          "variable": {
+                            "var_name": "user_name"
+                          }
+                        }
+                      }
+                    },
+                    {
+                      "field": "dept",
+                      "value": {
+                        "expression": {
+                          "expression_heritage": "dept_id",
+                          "variable": {
+                            "var_name": "dept_id"
+                          }
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            },
+            {
+              "predicate": {
+                "predicate_name": "Assignments",
+                "record": {
+                  "field_value": [
+                    {
+                      "field": "user_id",
+                      "value": {
+                        "expression": {
+                          "expression_heritage": "uid",
+                          "variable": {
+                            "var_name": "uid"
+                          }
+                        }
+                      }
+                    },
+                    {
+                      "field": "project_id",
+                      "value": {
+                        "expression": {
+                          "expression_heritage": "pid",
+                          "variable": {
+                            "var_name": "pid"
+                          }
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            },
+            {
+              "predicate": {
+                "predicate_name": "Projects",
+                "record": {
+                  "field_value": [
+                    {
+                      "field": "id",
+                      "value": {
+                        "expression": {
+                          "expression_heritage": "pid",
+                          "variable": {
+                            "var_name": "pid"
+                          }
+                        }
+                      }
+                    },
+                    {
+                      "field": "name",
+                      "value": {
+                        "expression": {
+                          "expression_heritage": "project_name",
+                          "variable": {
+                            "var_name": "project_name"
+                          }
+                        }
+                      }
+                    },
+                    {
+                      "field": "lead",
+                      "value": {
+                        "expression": {
+                          "expression_heritage": "lead",
+                          "variable": {
+                            "var_name": "lead"
+                          }
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            },
+            {
+              "predicate": {
+                "predicate_name": "Departments",
+                "record": {
+                  "field_value": [
+                    {
+                      "field": "id",
+                      "value": {
+                        "expression": {
+                          "expression_heritage": "dept_id",
+                          "variable": {
+                            "var_name": "dept_id"
+                          }
+                        }
+                      }
+                    },
+                    {
+                      "field": "name",
+                      "value": {
+                        "expression": {
+                          "expression_heritage": "dept_name",
+                          "variable": {
+                            "var_name": "dept_name"
+                          }
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          ]
+        }
+      },
+      "full_text": "UserProjects(user_name:, project_name:, dept_name:) :-\n  Users(id: uid, name: user_name, dept: dept_id),\n  Assignments(user_id: uid, project_id: pid),\n  Projects(id: pid, name: project_name, lead:),\n  Departments(id: dept_id, name: dept_name)",
+      "head": {
+        "predicate_name": "UserProjects",
+        "record": {
+          "field_value": [
+            {
+              "field": "user_name",
+              "value": {
+                "expression": {
+                  "expression_heritage": "user_name",
+                  "variable": {
+                    "var_name": "user_name"
+                  }
+                }
+              }
+            },
+            {
+              "field": "project_name",
+              "value": {
+                "expression": {
+                  "expression_heritage": "project_name",
+                  "variable": {
+                    "var_name": "project_name"
+                  }
+                }
+              }
+            },
+            {
+              "field": "dept_name",
+              "value": {
+                "expression": {
+                  "expression_heritage": "dept_name",
+                  "variable": {
+                    "var_name": "dept_name"
+                  }
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "body": {
+        "conjunction": {
+          "conjunct": [
+            {
+              "predicate": {
+                "predicate_name": "Users",
+                "record": {
+                  "field_value": [
+                    {
+                      "field": "id",
+                      "value": {
+                        "expression": {
+                          "expression_heritage": "id1",
+                          "variable": {
+                            "var_name": "id1"
+                          }
+                        }
+                      }
+                    },
+                    {
+                      "field": "name",
+                      "value": {
+                        "expression": {
+                          "expression_heritage": "user1",
+                          "variable": {
+                            "var_name": "user1"
+                          }
+                        }
+                      }
+                    },
+                    {
+                      "field": "dept",
+                      "value": {
+                        "expression": {
+                          "expression_heritage": "d",
+                          "variable": {
+                            "var_name": "d"
+                          }
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            },
+            {
+              "predicate": {
+                "predicate_name": "Users",
+                "record": {
+                  "field_value": [
+                    {
+                      "field": "id",
+                      "value": {
+                        "expression": {
+                          "expression_heritage": "id2",
+                          "variable": {
+                            "var_name": "id2"
+                          }
+                        }
+                      }
+                    },
+                    {
+                      "field": "name",
+                      "value": {
+                        "expression": {
+                          "expression_heritage": "user2",
+                          "variable": {
+                            "var_name": "user2"
+                          }
+                        }
+                      }
+                    },
+                    {
+                      "field": "dept",
+                      "value": {
+                        "expression": {
+                          "expression_heritage": "d",
+                          "variable": {
+                            "var_name": "d"
+                          }
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            },
+            {
+              "predicate": {
+                "predicate_name": "<",
+                "record": {
+                  "field_value": [
+                    {
+                      "field": "left",
+                      "value": {
+                        "expression": {
+                          "expression_heritage": "id1",
+                          "variable": {
+                            "var_name": "id1"
+                          }
+                        }
+                      }
+                    },
+                    {
+                      "field": "right",
+                      "value": {
+                        "expression": {
+                          "expression_heritage": "id2",
+                          "variable": {
+                            "var_name": "id2"
+                          }
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          ]
+        }
+      },
+      "full_text": "Colleagues(user1:, user2:) :-\n  Users(id: id1, name: user1, dept: d),\n  Users(id: id2, name: user2, dept: d),\n  id1 < id2",
+      "head": {
+        "predicate_name": "Colleagues",
+        "record": {
+          "field_value": [
+            {
+              "field": "user1",
+              "value": {
+                "expression": {
+                  "expression_heritage": "user1",
+                  "variable": {
+                    "var_name": "user1"
+                  }
+                }
+              }
+            },
+            {
+              "field": "user2",
+              "value": {
+                "expression": {
+                  "expression_heritage": "user2",
+                  "variable": {
+                    "var_name": "user2"
+                  }
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "body": {
+        "conjunction": {
+          "conjunct": [
+            {
+              "predicate": {
+                "predicate_name": "Users",
+                "record": {
+                  "field_value": [
+                    {
+                      "field": "id",
+                      "value": {
+                        "expression": {
+                          "expression_heritage": "uid",
+                          "variable": {
+                            "var_name": "uid"
+                          }
+                        }
+                      }
+                    },
+                    {
+                      "field": "name",
+                      "value": {
+                        "expression": {
+                          "expression_heritage": "user_name",
+                          "variable": {
+                            "var_name": "user_name"
+                          }
+                        }
+                      }
+                    },
+                    {
+                      "field": "dept",
+                      "value": {
+                        "expression": {
+                          "expression_heritage": "dept",
+                          "variable": {
+                            "var_name": "dept"
+                          }
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            },
+            {
+              "predicate": {
+                "predicate_name": "Projects",
+                "record": {
+                  "field_value": [
+                    {
+                      "field": "id",
+                      "value": {
+                        "expression": {
+                          "expression_heritage": "pid",
+                          "variable": {
+                            "var_name": "pid"
+                          }
+                        }
+                      }
+                    },
+                    {
+                      "field": "name",
+                      "value": {
+                        "expression": {
+                          "expression_heritage": "project_name",
+                          "variable": {
+                            "var_name": "project_name"
+                          }
+                        }
+                      }
+                    },
+                    {
+                      "field": "lead",
+                      "value": {
+                        "expression": {
+                          "expression_heritage": "uid",
+                          "variable": {
+                            "var_name": "uid"
+                          }
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            },
+            {
+              "predicate": {
+                "predicate_name": "Assignments",
+                "record": {
+                  "field_value": [
+                    {
+                      "field": "user_id",
+                      "value": {
+                        "expression": {
+                          "expression_heritage": "uid",
+                          "variable": {
+                            "var_name": "uid"
+                          }
+                        }
+                      }
+                    },
+                    {
+                      "field": "project_id",
+                      "value": {
+                        "expression": {
+                          "expression_heritage": "pid",
+                          "variable": {
+                            "var_name": "pid"
+                          }
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          ]
+        }
+      },
+      "full_text": "LeadsOwn(user_name:, project_name:) :-\n  Users(id: uid, name: user_name, dept:),\n  Projects(id: pid, name: project_name, lead: uid),\n  Assignments(user_id: uid, project_id: pid)",
+      "head": {
+        "predicate_name": "LeadsOwn",
+        "record": {
+          "field_value": [
+            {
+              "field": "user_name",
+              "value": {
+                "expression": {
+                  "expression_heritage": "user_name",
+                  "variable": {
+                    "var_name": "user_name"
+                  }
+                }
+              }
+            },
+            {
+              "field": "project_name",
+              "value": {
+                "expression": {
+                  "expression_heritage": "project_name",
+                  "variable": {
+                    "var_name": "project_name"
+                  }
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "full_text": "@OrderBy(Test, \"user_name\")",
+      "head": {
+        "predicate_name": "@OrderBy",
+        "record": {
+          "field_value": [
+            {
+              "field": 0,
+              "value": {
+                "expression": {
+                  "expression_heritage": "Test",
+                  "literal": {
+                    "the_predicate": {
+                      "predicate_name": "Test"
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "field": 1,
+              "value": {
+                "expression": {
+                  "expression_heritage": "\"user_name\"",
+                  "literal": {
+                    "the_string": {
+                      "the_string": "user_name"
+                    }
+                  }
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "body": {
+        "conjunction": {
+          "conjunct": [
+            {
+              "predicate": {
+                "predicate_name": "UserDept",
+                "record": {
+                  "field_value": [
+                    {
+                      "field": "user_name",
+                      "value": {
+                        "expression": {
+                          "expression_heritage": "user_name",
+                          "variable": {
+                            "var_name": "user_name"
+                          }
+                        }
+                      }
+                    },
+                    {
+                      "field": "dept_name",
+                      "value": {
+                        "expression": {
+                          "expression_heritage": "dept_name",
+                          "variable": {
+                            "var_name": "dept_name"
+                          }
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          ]
+        }
+      },
+      "full_text": "Test(user_name:, dept_name:) :- UserDept(user_name:, dept_name:)",
+      "head": {
+        "predicate_name": "Test",
+        "record": {
+          "field_value": [
+            {
+              "field": "user_name",
+              "value": {
+                "expression": {
+                  "expression_heritage": "user_name",
+                  "variable": {
+                    "var_name": "user_name"
+                  }
+                }
+              }
+            },
+            {
+              "field": "dept_name",
+              "value": {
+                "expression": {
+                  "expression_heritage": "dept_name",
+                  "variable": {
+                    "var_name": "dept_name"
+                  }
+                }
+              }
+            }
+          ]
+        }
+      }
+    }
+  ]
+}

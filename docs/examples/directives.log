@@ -1,0 +1,51 @@
+$ synalog.check('directives.l')
+No errors found.
+
+$ synalog.compile('directives.l', 'TopCustomers')
+-- Initializing DuckDB environment.
+create schema if not exists logica_home;
+-- Empty record, has to have a field by DuckDB syntax.
+drop type if exists logicarecord893574736 cascade; create type logicarecord893574736 as struct(nirvana numeric);
+create sequence if not exists eternal_logical_sequence;
+
+WITH t_0_Orders AS (SELECT * FROM (
+  
+    SELECT
+      100 AS customer_id,
+      250 AS amount
+   UNION ALL
+  
+    SELECT
+      100 AS customer_id,
+      1200 AS amount
+   UNION ALL
+  
+    SELECT
+      200 AS customer_id,
+      80 AS amount
+   UNION ALL
+  
+    SELECT
+      300 AS customer_id,
+      430 AS amount
+   UNION ALL
+  
+    SELECT
+      400 AS customer_id,
+      990 AS amount
+  
+) AS UNUSED_TABLE_NAME  )
+SELECT
+  Orders.customer_id AS customer_id,
+  SUM(Orders.amount) AS total
+FROM
+  t_0_Orders AS Orders
+GROUP BY Orders.customer_id ORDER BY total DESC LIMIT 3;
+
+-- Executed on DuckDB:
+| customer_id | total |
+|-------------|-------|
+| 100         | 1450  |
+| 400         | 990   |
+| 300         | 430   |
+(3 rows)

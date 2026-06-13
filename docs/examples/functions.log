@@ -1,0 +1,103 @@
+$ synalog.check('functions.l')
+No errors found.
+
+$ synalog.compile('functions.l', 'ProductLabel')
+-- Initializing DuckDB environment.
+create schema if not exists logica_home;
+-- Empty record, has to have a field by DuckDB syntax.
+drop type if exists logicarecord893574736 cascade; create type logicarecord893574736 as struct(nirvana numeric);
+create sequence if not exists eternal_logical_sequence;
+
+WITH t_0_Products AS (SELECT * FROM (
+  
+    SELECT
+      E'espresso machine' AS name,
+      249.99 AS price
+   UNION ALL
+  
+    SELECT
+      E'grinder' AS name,
+      79.5 AS price
+  
+) AS UNUSED_TABLE_NAME  )
+SELECT
+  Products.name AS name,
+  ((((((UPPER(Products.name)) || (E' ($'))) || (CAST(Products.price AS TEXT)))) || (E')')) AS label,
+  UPPER(SUBSTR(Products.name, 1, 1)) AS initial,
+  LENGTH(Products.name) AS name_length
+FROM
+  t_0_Products AS Products ORDER BY name;
+
+-- Executed on DuckDB:
+| name             | label                      | initial | name_length |
+|------------------|----------------------------|---------|-------------|
+| espresso machine | ESPRESSO MACHINE ($249.99) | E       | 16          |
+| grinder          | GRINDER ($79.50)           | G       | 7           |
+(2 rows)
+
+$ synalog.compile('functions.l', 'Rounded')
+-- Initializing DuckDB environment.
+create schema if not exists logica_home;
+-- Empty record, has to have a field by DuckDB syntax.
+drop type if exists logicarecord893574736 cascade; create type logicarecord893574736 as struct(nirvana numeric);
+create sequence if not exists eternal_logical_sequence;
+
+WITH t_0_Products AS (SELECT * FROM (
+  
+    SELECT
+      E'espresso machine' AS name,
+      249.99 AS price
+   UNION ALL
+  
+    SELECT
+      E'grinder' AS name,
+      79.5 AS price
+  
+) AS UNUSED_TABLE_NAME  )
+SELECT
+  Products.name AS name,
+  ROUND(Products.price) AS rounded,
+  FLOOR(Products.price) AS floor,
+  ROUND(SQRT(Products.price)) AS sqrt
+FROM
+  t_0_Products AS Products ORDER BY name;
+
+-- Executed on DuckDB:
+| name             | rounded | floor | sqrt |
+|------------------|---------|-------|------|
+| espresso machine | 250     | 249   | 16.0 |
+| grinder          | 80      | 79    | 9.0  |
+(2 rows)
+
+$ synalog.compile('functions.l', 'Casts')
+-- Initializing DuckDB environment.
+create schema if not exists logica_home;
+-- Empty record, has to have a field by DuckDB syntax.
+drop type if exists logicarecord893574736 cascade; create type logicarecord893574736 as struct(nirvana numeric);
+create sequence if not exists eternal_logical_sequence;
+
+WITH t_0_Products AS (SELECT * FROM (
+  
+    SELECT
+      E'espresso machine' AS name,
+      249.99 AS price
+   UNION ALL
+  
+    SELECT
+      E'grinder' AS name,
+      79.5 AS price
+  
+) AS UNUSED_TABLE_NAME  )
+SELECT
+  Products.name AS name,
+  CAST(((Products.price) * (100)) AS INT64) AS cents,
+  CAST(Products.price AS TEXT) AS as_text
+FROM
+  t_0_Products AS Products ORDER BY name;
+
+-- Executed on DuckDB:
+| name             | cents | as_text |
+|------------------|-------|---------|
+| espresso machine | 24999 | 249.99  |
+| grinder          | 7950  | 79.50   |
+(2 rows)

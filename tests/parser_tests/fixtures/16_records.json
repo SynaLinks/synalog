@@ -1,0 +1,665 @@
+{
+  "file_name": "main",
+  "imported_predicates": [],
+  "predicates_prefix": "",
+  "rule": [
+    {
+      "full_text": "@Engine(\"duckdb\")",
+      "head": {
+        "predicate_name": "@Engine",
+        "record": {
+          "field_value": [
+            {
+              "field": 0,
+              "value": {
+                "expression": {
+                  "expression_heritage": "\"duckdb\"",
+                  "literal": {
+                    "the_string": {
+                      "the_string": "duckdb"
+                    }
+                  }
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "full_text": "Person(info: {name: \"Alice\", age: 30})",
+      "head": {
+        "predicate_name": "Person",
+        "record": {
+          "field_value": [
+            {
+              "field": "info",
+              "value": {
+                "expression": {
+                  "expression_heritage": "{name: \"Alice\", age: 30}",
+                  "record": {
+                    "field_value": [
+                      {
+                        "field": "name",
+                        "value": {
+                          "expression": {
+                            "expression_heritage": "\"Alice\"",
+                            "literal": {
+                              "the_string": {
+                                "the_string": "Alice"
+                              }
+                            }
+                          }
+                        }
+                      },
+                      {
+                        "field": "age",
+                        "value": {
+                          "expression": {
+                            "expression_heritage": "30",
+                            "literal": {
+                              "the_number": {
+                                "number": "30"
+                              }
+                            }
+                          }
+                        }
+                      }
+                    ]
+                  }
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "full_text": "Person(info: {name: \"Bob\", age: 25})",
+      "head": {
+        "predicate_name": "Person",
+        "record": {
+          "field_value": [
+            {
+              "field": "info",
+              "value": {
+                "expression": {
+                  "expression_heritage": "{name: \"Bob\", age: 25}",
+                  "record": {
+                    "field_value": [
+                      {
+                        "field": "name",
+                        "value": {
+                          "expression": {
+                            "expression_heritage": "\"Bob\"",
+                            "literal": {
+                              "the_string": {
+                                "the_string": "Bob"
+                              }
+                            }
+                          }
+                        }
+                      },
+                      {
+                        "field": "age",
+                        "value": {
+                          "expression": {
+                            "expression_heritage": "25",
+                            "literal": {
+                              "the_number": {
+                                "number": "25"
+                              }
+                            }
+                          }
+                        }
+                      }
+                    ]
+                  }
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "full_text": "Employee(data: {person: {name: \"Charlie\", age: 35}, department: \"Engineering\"})",
+      "head": {
+        "predicate_name": "Employee",
+        "record": {
+          "field_value": [
+            {
+              "field": "data",
+              "value": {
+                "expression": {
+                  "expression_heritage": "{person: {name: \"Charlie\", age: 35}, department: \"Engineering\"}",
+                  "record": {
+                    "field_value": [
+                      {
+                        "field": "person",
+                        "value": {
+                          "expression": {
+                            "expression_heritage": "{name: \"Charlie\", age: 35}",
+                            "record": {
+                              "field_value": [
+                                {
+                                  "field": "name",
+                                  "value": {
+                                    "expression": {
+                                      "expression_heritage": "\"Charlie\"",
+                                      "literal": {
+                                        "the_string": {
+                                          "the_string": "Charlie"
+                                        }
+                                      }
+                                    }
+                                  }
+                                },
+                                {
+                                  "field": "age",
+                                  "value": {
+                                    "expression": {
+                                      "expression_heritage": "35",
+                                      "literal": {
+                                        "the_number": {
+                                          "number": "35"
+                                        }
+                                      }
+                                    }
+                                  }
+                                }
+                              ]
+                            }
+                          }
+                        }
+                      },
+                      {
+                        "field": "department",
+                        "value": {
+                          "expression": {
+                            "expression_heritage": "\"Engineering\"",
+                            "literal": {
+                              "the_string": {
+                                "the_string": "Engineering"
+                              }
+                            }
+                          }
+                        }
+                      }
+                    ]
+                  }
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "full_text": "Employee(data: {person: {name: \"Diana\", age: 28}, department: \"Marketing\"})",
+      "head": {
+        "predicate_name": "Employee",
+        "record": {
+          "field_value": [
+            {
+              "field": "data",
+              "value": {
+                "expression": {
+                  "expression_heritage": "{person: {name: \"Diana\", age: 28}, department: \"Marketing\"}",
+                  "record": {
+                    "field_value": [
+                      {
+                        "field": "person",
+                        "value": {
+                          "expression": {
+                            "expression_heritage": "{name: \"Diana\", age: 28}",
+                            "record": {
+                              "field_value": [
+                                {
+                                  "field": "name",
+                                  "value": {
+                                    "expression": {
+                                      "expression_heritage": "\"Diana\"",
+                                      "literal": {
+                                        "the_string": {
+                                          "the_string": "Diana"
+                                        }
+                                      }
+                                    }
+                                  }
+                                },
+                                {
+                                  "field": "age",
+                                  "value": {
+                                    "expression": {
+                                      "expression_heritage": "28",
+                                      "literal": {
+                                        "the_number": {
+                                          "number": "28"
+                                        }
+                                      }
+                                    }
+                                  }
+                                }
+                              ]
+                            }
+                          }
+                        }
+                      },
+                      {
+                        "field": "department",
+                        "value": {
+                          "expression": {
+                            "expression_heritage": "\"Marketing\"",
+                            "literal": {
+                              "the_string": {
+                                "the_string": "Marketing"
+                              }
+                            }
+                          }
+                        }
+                      }
+                    ]
+                  }
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "body": {
+        "conjunction": {
+          "conjunct": [
+            {
+              "predicate": {
+                "predicate_name": "Person",
+                "record": {
+                  "field_value": [
+                    {
+                      "field": "info",
+                      "value": {
+                        "expression": {
+                          "expression_heritage": "info",
+                          "variable": {
+                            "var_name": "info"
+                          }
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          ]
+        }
+      },
+      "full_text": "PersonName(name: info.name) :- Person(info:)",
+      "head": {
+        "predicate_name": "PersonName",
+        "record": {
+          "field_value": [
+            {
+              "field": "name",
+              "value": {
+                "expression": {
+                  "expression_heritage": "info.name",
+                  "subscript": {
+                    "record": {
+                      "expression_heritage": "info",
+                      "variable": {
+                        "var_name": "info"
+                      }
+                    },
+                    "subscript": {
+                      "literal": {
+                        "the_symbol": {
+                          "symbol": "name"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "body": {
+        "conjunction": {
+          "conjunct": [
+            {
+              "predicate": {
+                "predicate_name": "Employee",
+                "record": {
+                  "field_value": [
+                    {
+                      "field": "data",
+                      "value": {
+                        "expression": {
+                          "expression_heritage": "data",
+                          "variable": {
+                            "var_name": "data"
+                          }
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          ]
+        }
+      },
+      "full_text": "EmployeeInfo(name: data.person.name, dept: data.department) :- Employee(data:)",
+      "head": {
+        "predicate_name": "EmployeeInfo",
+        "record": {
+          "field_value": [
+            {
+              "field": "name",
+              "value": {
+                "expression": {
+                  "expression_heritage": "data.person.name",
+                  "subscript": {
+                    "record": {
+                      "expression_heritage": "data.person",
+                      "subscript": {
+                        "record": {
+                          "expression_heritage": "data",
+                          "variable": {
+                            "var_name": "data"
+                          }
+                        },
+                        "subscript": {
+                          "literal": {
+                            "the_symbol": {
+                              "symbol": "person"
+                            }
+                          }
+                        }
+                      }
+                    },
+                    "subscript": {
+                      "literal": {
+                        "the_symbol": {
+                          "symbol": "name"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "field": "dept",
+              "value": {
+                "expression": {
+                  "expression_heritage": "data.department",
+                  "subscript": {
+                    "record": {
+                      "expression_heritage": "data",
+                      "variable": {
+                        "var_name": "data"
+                      }
+                    },
+                    "subscript": {
+                      "literal": {
+                        "the_symbol": {
+                          "symbol": "department"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "body": {
+        "conjunction": {
+          "conjunct": [
+            {
+              "inclusion": {
+                "element": {
+                  "expression_heritage": "a",
+                  "variable": {
+                    "var_name": "a"
+                  }
+                },
+                "list": {
+                  "expression_heritage": "[1, 2]",
+                  "literal": {
+                    "the_list": {
+                      "element": [
+                        {
+                          "expression_heritage": "1",
+                          "literal": {
+                            "the_number": {
+                              "number": "1"
+                            }
+                          }
+                        },
+                        {
+                          "expression_heritage": "2",
+                          "literal": {
+                            "the_number": {
+                              "number": "2"
+                            }
+                          }
+                        }
+                      ]
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "inclusion": {
+                "element": {
+                  "expression_heritage": "b",
+                  "variable": {
+                    "var_name": "b"
+                  }
+                },
+                "list": {
+                  "expression_heritage": "[3, 4]",
+                  "literal": {
+                    "the_list": {
+                      "element": [
+                        {
+                          "expression_heritage": "3",
+                          "literal": {
+                            "the_number": {
+                              "number": "3"
+                            }
+                          }
+                        },
+                        {
+                          "expression_heritage": "4",
+                          "literal": {
+                            "the_number": {
+                              "number": "4"
+                            }
+                          }
+                        }
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          ]
+        }
+      },
+      "full_text": "Combined(record: {x: a, y: b, sum: a + b}) :- a in [1, 2], b in [3, 4]",
+      "head": {
+        "predicate_name": "Combined",
+        "record": {
+          "field_value": [
+            {
+              "field": "record",
+              "value": {
+                "expression": {
+                  "expression_heritage": "{x: a, y: b, sum: a + b}",
+                  "record": {
+                    "field_value": [
+                      {
+                        "field": "x",
+                        "value": {
+                          "expression": {
+                            "expression_heritage": "a",
+                            "variable": {
+                              "var_name": "a"
+                            }
+                          }
+                        }
+                      },
+                      {
+                        "field": "y",
+                        "value": {
+                          "expression": {
+                            "expression_heritage": "b",
+                            "variable": {
+                              "var_name": "b"
+                            }
+                          }
+                        }
+                      },
+                      {
+                        "field": "sum",
+                        "value": {
+                          "expression": {
+                            "call": {
+                              "predicate_name": "+",
+                              "record": {
+                                "field_value": [
+                                  {
+                                    "field": "left",
+                                    "value": {
+                                      "expression": {
+                                        "expression_heritage": "a",
+                                        "variable": {
+                                          "var_name": "a"
+                                        }
+                                      }
+                                    }
+                                  },
+                                  {
+                                    "field": "right",
+                                    "value": {
+                                      "expression": {
+                                        "expression_heritage": "b",
+                                        "variable": {
+                                          "var_name": "b"
+                                        }
+                                      }
+                                    }
+                                  }
+                                ]
+                              }
+                            },
+                            "expression_heritage": "a + b"
+                          }
+                        }
+                      }
+                    ]
+                  }
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "full_text": "@OrderBy(Test, \"name\")",
+      "head": {
+        "predicate_name": "@OrderBy",
+        "record": {
+          "field_value": [
+            {
+              "field": 0,
+              "value": {
+                "expression": {
+                  "expression_heritage": "Test",
+                  "literal": {
+                    "the_predicate": {
+                      "predicate_name": "Test"
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "field": 1,
+              "value": {
+                "expression": {
+                  "expression_heritage": "\"name\"",
+                  "literal": {
+                    "the_string": {
+                      "the_string": "name"
+                    }
+                  }
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "body": {
+        "conjunction": {
+          "conjunct": [
+            {
+              "predicate": {
+                "predicate_name": "PersonName",
+                "record": {
+                  "field_value": [
+                    {
+                      "field": "name",
+                      "value": {
+                        "expression": {
+                          "expression_heritage": "name",
+                          "variable": {
+                            "var_name": "name"
+                          }
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          ]
+        }
+      },
+      "full_text": "Test(name:) :- PersonName(name:)",
+      "head": {
+        "predicate_name": "Test",
+        "record": {
+          "field_value": [
+            {
+              "field": "name",
+              "value": {
+                "expression": {
+                  "expression_heritage": "name",
+                  "variable": {
+                    "var_name": "name"
+                  }
+                }
+              }
+            }
+          ]
+        }
+      }
+    }
+  ]
+}

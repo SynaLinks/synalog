@@ -1,0 +1,432 @@
+$ synalog.check('knowledge_graphs.l')
+No errors found.
+
+$ synalog.compile('knowledge_graphs.l', 'PersonNode')
+-- Initializing DuckDB environment.
+create schema if not exists logica_home;
+-- Empty record, has to have a field by DuckDB syntax.
+drop type if exists logicarecord893574736 cascade; create type logicarecord893574736 as struct(nirvana numeric);
+create sequence if not exists eternal_logical_sequence;
+
+WITH t_0_Employees AS (SELECT * FROM (
+  
+    SELECT
+      1 AS person_id,
+      E'Ada' AS name,
+      E'engineer' AS role,
+      2 AS manager_id
+   UNION ALL
+  
+    SELECT
+      2 AS person_id,
+      E'Grace' AS name,
+      E'lead' AS role,
+      null AS manager_id
+   UNION ALL
+  
+    SELECT
+      3 AS person_id,
+      E'Alan' AS name,
+      E'engineer' AS role,
+      2 AS manager_id
+  
+) AS UNUSED_TABLE_NAME  )
+SELECT
+  Employees.person_id AS person_id,
+  Employees.name AS name,
+  Employees.role AS role
+FROM
+  t_0_Employees AS Employees
+GROUP BY Employees.person_id, Employees.name, Employees.role ORDER BY person_id;
+
+-- Executed on DuckDB:
+| person_id | name  | role     |
+|-----------|-------|----------|
+| 1         | Ada   | engineer |
+| 2         | Grace | lead     |
+| 3         | Alan  | engineer |
+(3 rows)
+
+$ synalog.compile('knowledge_graphs.l', 'TeamNode')
+-- Initializing DuckDB environment.
+create schema if not exists logica_home;
+-- Empty record, has to have a field by DuckDB syntax.
+drop type if exists logicarecord893574736 cascade; create type logicarecord893574736 as struct(nirvana numeric);
+create sequence if not exists eternal_logical_sequence;
+
+WITH t_0_TeamAssignments AS (SELECT * FROM (
+  
+    SELECT
+      1 AS person_id,
+      E'core' AS team_id
+   UNION ALL
+  
+    SELECT
+      2 AS person_id,
+      E'core' AS team_id
+   UNION ALL
+  
+    SELECT
+      3 AS person_id,
+      E'platform' AS team_id
+  
+) AS UNUSED_TABLE_NAME  )
+SELECT
+  TeamAssignments.team_id AS team_id
+FROM
+  t_0_TeamAssignments AS TeamAssignments
+GROUP BY TeamAssignments.team_id ORDER BY team_id;
+
+-- Executed on DuckDB:
+| team_id  |
+|----------|
+| core     |
+| platform |
+(2 rows)
+
+$ synalog.compile('knowledge_graphs.l', 'ClientNode')
+-- Initializing DuckDB environment.
+create schema if not exists logica_home;
+-- Empty record, has to have a field by DuckDB syntax.
+drop type if exists logicarecord893574736 cascade; create type logicarecord893574736 as struct(nirvana numeric);
+create sequence if not exists eternal_logical_sequence;
+
+WITH t_0_Engagements AS (SELECT * FROM (
+  
+    SELECT
+      E'core' AS team_id,
+      E'acme' AS client_id,
+      E'https://acme.example.com' AS website
+   UNION ALL
+  
+    SELECT
+      E'platform' AS team_id,
+      E'globex' AS client_id,
+      E'https://globex.example.com' AS website
+  
+) AS UNUSED_TABLE_NAME  )
+SELECT
+  Engagements.client_id AS client_id,
+  Engagements.website AS website
+FROM
+  t_0_Engagements AS Engagements
+GROUP BY Engagements.client_id, Engagements.website ORDER BY client_id;
+
+-- Executed on DuckDB:
+| client_id | website                    |
+|-----------|----------------------------|
+| acme      | https://acme.example.com   |
+| globex    | https://globex.example.com |
+(2 rows)
+
+$ synalog.compile('knowledge_graphs.l', 'MemberOfEdge')
+-- Initializing DuckDB environment.
+create schema if not exists logica_home;
+-- Empty record, has to have a field by DuckDB syntax.
+drop type if exists logicarecord893574736 cascade; create type logicarecord893574736 as struct(nirvana numeric);
+create sequence if not exists eternal_logical_sequence;
+
+WITH t_1_Employees AS (SELECT * FROM (
+  
+    SELECT
+      1 AS person_id,
+      E'Ada' AS name,
+      E'engineer' AS role,
+      2 AS manager_id
+   UNION ALL
+  
+    SELECT
+      2 AS person_id,
+      E'Grace' AS name,
+      E'lead' AS role,
+      null AS manager_id
+   UNION ALL
+  
+    SELECT
+      3 AS person_id,
+      E'Alan' AS name,
+      E'engineer' AS role,
+      2 AS manager_id
+  
+) AS UNUSED_TABLE_NAME  ),
+t_0_PersonNode AS (SELECT
+  Employees.person_id AS person_id,
+  Employees.name AS name,
+  Employees.role AS role
+FROM
+  t_1_Employees AS Employees
+GROUP BY Employees.person_id, Employees.name, Employees.role ORDER BY person_id),
+t_4_TeamAssignments AS (SELECT * FROM (
+  
+    SELECT
+      1 AS person_id,
+      E'core' AS team_id
+   UNION ALL
+  
+    SELECT
+      2 AS person_id,
+      E'core' AS team_id
+   UNION ALL
+  
+    SELECT
+      3 AS person_id,
+      E'platform' AS team_id
+  
+) AS UNUSED_TABLE_NAME  ),
+t_2_TeamNode AS (SELECT
+  t_3_TeamAssignments.team_id AS team_id
+FROM
+  t_4_TeamAssignments AS t_3_TeamAssignments
+GROUP BY t_3_TeamAssignments.team_id ORDER BY team_id)
+SELECT
+  PersonNode.person_id AS person_id,
+  TeamNode.team_id AS team_id
+FROM
+  t_0_PersonNode AS PersonNode, t_2_TeamNode AS TeamNode, t_4_TeamAssignments AS TeamAssignments
+WHERE
+  (TeamAssignments.person_id = PersonNode.person_id) AND
+  (TeamAssignments.team_id = TeamNode.team_id)
+GROUP BY PersonNode.person_id, TeamNode.team_id ORDER BY person_id;
+
+-- Executed on DuckDB:
+| person_id | team_id  |
+|-----------|----------|
+| 1         | core     |
+| 2         | core     |
+| 3         | platform |
+(3 rows)
+
+$ synalog.compile('knowledge_graphs.l', 'EngagedWithEdge')
+-- Initializing DuckDB environment.
+create schema if not exists logica_home;
+-- Empty record, has to have a field by DuckDB syntax.
+drop type if exists logicarecord893574736 cascade; create type logicarecord893574736 as struct(nirvana numeric);
+create sequence if not exists eternal_logical_sequence;
+
+WITH t_1_TeamAssignments AS (SELECT * FROM (
+  
+    SELECT
+      1 AS person_id,
+      E'core' AS team_id
+   UNION ALL
+  
+    SELECT
+      2 AS person_id,
+      E'core' AS team_id
+   UNION ALL
+  
+    SELECT
+      3 AS person_id,
+      E'platform' AS team_id
+  
+) AS UNUSED_TABLE_NAME  ),
+t_0_TeamNode AS (SELECT
+  TeamAssignments.team_id AS team_id
+FROM
+  t_1_TeamAssignments AS TeamAssignments
+GROUP BY TeamAssignments.team_id ORDER BY team_id),
+t_4_Engagements AS (SELECT * FROM (
+  
+    SELECT
+      E'core' AS team_id,
+      E'acme' AS client_id,
+      E'https://acme.example.com' AS website
+   UNION ALL
+  
+    SELECT
+      E'platform' AS team_id,
+      E'globex' AS client_id,
+      E'https://globex.example.com' AS website
+  
+) AS UNUSED_TABLE_NAME  ),
+t_2_ClientNode AS (SELECT
+  t_3_Engagements.client_id AS client_id,
+  t_3_Engagements.website AS website
+FROM
+  t_4_Engagements AS t_3_Engagements
+GROUP BY t_3_Engagements.client_id, t_3_Engagements.website ORDER BY client_id)
+SELECT
+  TeamNode.team_id AS team_id,
+  ClientNode.client_id AS client_id
+FROM
+  t_0_TeamNode AS TeamNode, t_2_ClientNode AS ClientNode, t_4_Engagements AS Engagements
+WHERE
+  (Engagements.team_id = TeamNode.team_id) AND
+  (Engagements.client_id = ClientNode.client_id)
+GROUP BY TeamNode.team_id, ClientNode.client_id ORDER BY team_id;
+
+-- Executed on DuckDB:
+| team_id  | client_id |
+|----------|-----------|
+| core     | acme      |
+| platform | globex    |
+(2 rows)
+
+$ synalog.compile('knowledge_graphs.l', 'WorksWithClientEdge')
+-- Initializing DuckDB environment.
+create schema if not exists logica_home;
+-- Empty record, has to have a field by DuckDB syntax.
+drop type if exists logicarecord893574736 cascade; create type logicarecord893574736 as struct(nirvana numeric);
+create sequence if not exists eternal_logical_sequence;
+
+WITH t_2_Employees AS (SELECT * FROM (
+  
+    SELECT
+      1 AS person_id,
+      E'Ada' AS name,
+      E'engineer' AS role,
+      2 AS manager_id
+   UNION ALL
+  
+    SELECT
+      2 AS person_id,
+      E'Grace' AS name,
+      E'lead' AS role,
+      null AS manager_id
+   UNION ALL
+  
+    SELECT
+      3 AS person_id,
+      E'Alan' AS name,
+      E'engineer' AS role,
+      2 AS manager_id
+  
+) AS UNUSED_TABLE_NAME  ),
+t_1_PersonNode AS (SELECT
+  Employees.person_id AS person_id,
+  Employees.name AS name,
+  Employees.role AS role
+FROM
+  t_2_Employees AS Employees
+GROUP BY Employees.person_id, Employees.name, Employees.role ORDER BY person_id),
+t_5_TeamAssignments AS (SELECT * FROM (
+  
+    SELECT
+      1 AS person_id,
+      E'core' AS team_id
+   UNION ALL
+  
+    SELECT
+      2 AS person_id,
+      E'core' AS team_id
+   UNION ALL
+  
+    SELECT
+      3 AS person_id,
+      E'platform' AS team_id
+  
+) AS UNUSED_TABLE_NAME  ),
+t_3_TeamNode AS (SELECT
+  t_4_TeamAssignments.team_id AS team_id
+FROM
+  t_5_TeamAssignments AS t_4_TeamAssignments
+GROUP BY t_4_TeamAssignments.team_id ORDER BY team_id),
+t_0_MemberOfEdge AS (SELECT
+  PersonNode.person_id AS person_id,
+  TeamNode.team_id AS team_id
+FROM
+  t_1_PersonNode AS PersonNode, t_3_TeamNode AS TeamNode, t_5_TeamAssignments AS TeamAssignments
+WHERE
+  (TeamAssignments.person_id = PersonNode.person_id) AND
+  (TeamAssignments.team_id = TeamNode.team_id)
+GROUP BY PersonNode.person_id, TeamNode.team_id ORDER BY person_id),
+t_11_Engagements AS (SELECT * FROM (
+  
+    SELECT
+      E'core' AS team_id,
+      E'acme' AS client_id,
+      E'https://acme.example.com' AS website
+   UNION ALL
+  
+    SELECT
+      E'platform' AS team_id,
+      E'globex' AS client_id,
+      E'https://globex.example.com' AS website
+  
+) AS UNUSED_TABLE_NAME  ),
+t_9_ClientNode AS (SELECT
+  t_10_Engagements.client_id AS client_id,
+  t_10_Engagements.website AS website
+FROM
+  t_11_Engagements AS t_10_Engagements
+GROUP BY t_10_Engagements.client_id, t_10_Engagements.website ORDER BY client_id),
+t_6_EngagedWithEdge AS (SELECT
+  t_7_TeamNode.team_id AS team_id,
+  ClientNode.client_id AS client_id
+FROM
+  t_3_TeamNode AS t_7_TeamNode, t_9_ClientNode AS ClientNode, t_11_Engagements AS Engagements
+WHERE
+  (Engagements.team_id = t_7_TeamNode.team_id) AND
+  (Engagements.client_id = ClientNode.client_id)
+GROUP BY t_7_TeamNode.team_id, ClientNode.client_id ORDER BY team_id)
+SELECT
+  MemberOfEdge.person_id AS person_id,
+  EngagedWithEdge.client_id AS client_id
+FROM
+  t_0_MemberOfEdge AS MemberOfEdge, t_6_EngagedWithEdge AS EngagedWithEdge
+WHERE
+  (EngagedWithEdge.team_id = MemberOfEdge.team_id)
+GROUP BY MemberOfEdge.person_id, EngagedWithEdge.client_id ORDER BY person_id;
+
+-- Executed on DuckDB:
+| person_id | client_id |
+|-----------|-----------|
+| 1         | acme      |
+| 2         | acme      |
+| 3         | globex    |
+(3 rows)
+
+$ synalog.compile('knowledge_graphs.l', 'ReportsToEdge')
+-- Initializing DuckDB environment.
+create schema if not exists logica_home;
+-- Empty record, has to have a field by DuckDB syntax.
+drop type if exists logicarecord893574736 cascade; create type logicarecord893574736 as struct(nirvana numeric);
+create sequence if not exists eternal_logical_sequence;
+
+WITH t_3_Employees AS (SELECT * FROM (
+  
+    SELECT
+      1 AS person_id,
+      E'Ada' AS name,
+      E'engineer' AS role,
+      2 AS manager_id
+   UNION ALL
+  
+    SELECT
+      2 AS person_id,
+      E'Grace' AS name,
+      E'lead' AS role,
+      null AS manager_id
+   UNION ALL
+  
+    SELECT
+      3 AS person_id,
+      E'Alan' AS name,
+      E'engineer' AS role,
+      2 AS manager_id
+  
+) AS UNUSED_TABLE_NAME  ),
+t_1_PersonNode AS (SELECT
+  t_2_Employees.person_id AS person_id,
+  t_2_Employees.name AS name,
+  t_2_Employees.role AS role
+FROM
+  t_3_Employees AS t_2_Employees
+GROUP BY t_2_Employees.person_id, t_2_Employees.name, t_2_Employees.role ORDER BY person_id)
+SELECT
+  PersonNode.person_id AS employee_id,
+  t_0_PersonNode.person_id AS manager_id
+FROM
+  t_1_PersonNode AS PersonNode, t_1_PersonNode AS t_0_PersonNode, t_3_Employees AS Employees
+WHERE
+  (t_0_PersonNode.person_id IS NOT null) AND
+  (Employees.person_id = PersonNode.person_id) AND
+  (Employees.manager_id = t_0_PersonNode.person_id)
+GROUP BY PersonNode.person_id, t_0_PersonNode.person_id ORDER BY employee_id;
+
+-- Executed on DuckDB:
+| employee_id | manager_id |
+|-------------|------------|
+| 1           | 2          |
+| 3           | 2          |
+(2 rows)

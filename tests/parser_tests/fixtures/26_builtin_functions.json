@@ -1,0 +1,847 @@
+{
+  "file_name": "main",
+  "imported_predicates": [],
+  "predicates_prefix": "",
+  "rule": [
+    {
+      "full_text": "@Engine(\"duckdb\")",
+      "head": {
+        "predicate_name": "@Engine",
+        "record": {
+          "field_value": [
+            {
+              "field": 0,
+              "value": {
+                "expression": {
+                  "expression_heritage": "\"duckdb\"",
+                  "literal": {
+                    "the_string": {
+                      "the_string": "duckdb"
+                    }
+                  }
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "body": {
+        "conjunction": {
+          "conjunct": [
+            {
+              "inclusion": {
+                "element": {
+                  "expression_heritage": "x",
+                  "variable": {
+                    "var_name": "x"
+                  }
+                },
+                "list": {
+                  "call": {
+                    "predicate_name": "Range",
+                    "record": {
+                      "field_value": [
+                        {
+                          "field": 0,
+                          "value": {
+                            "expression": {
+                              "expression_heritage": "10",
+                              "literal": {
+                                "the_number": {
+                                  "number": "10"
+                                }
+                              }
+                            }
+                          }
+                        }
+                      ]
+                    }
+                  },
+                  "expression_heritage": "Range(10)"
+                }
+              }
+            },
+            {
+              "predicate": {
+                "predicate_name": ">",
+                "record": {
+                  "field_value": [
+                    {
+                      "field": "left",
+                      "value": {
+                        "expression": {
+                          "expression_heritage": "x",
+                          "variable": {
+                            "var_name": "x"
+                          }
+                        }
+                      }
+                    },
+                    {
+                      "field": "right",
+                      "value": {
+                        "expression": {
+                          "expression_heritage": "0",
+                          "literal": {
+                            "the_number": {
+                              "number": "0"
+                            }
+                          }
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          ]
+        }
+      },
+      "full_text": "Numbers(x) :- x in Range(10), x > 0",
+      "head": {
+        "predicate_name": "Numbers",
+        "record": {
+          "field_value": [
+            {
+              "field": 0,
+              "value": {
+                "expression": {
+                  "expression_heritage": "x",
+                  "variable": {
+                    "var_name": "x"
+                  }
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "body": {
+        "conjunction": {
+          "conjunct": [
+            {
+              "predicate": {
+                "predicate_name": "Numbers",
+                "record": {
+                  "field_value": [
+                    {
+                      "field": 0,
+                      "value": {
+                        "expression": {
+                          "expression_heritage": "x",
+                          "variable": {
+                            "var_name": "x"
+                          }
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            },
+            {
+              "unification": {
+                "left_hand_side": {
+                  "expression_heritage": "abs_val",
+                  "variable": {
+                    "var_name": "abs_val"
+                  }
+                },
+                "right_hand_side": {
+                  "call": {
+                    "predicate_name": "Abs",
+                    "record": {
+                      "field_value": [
+                        {
+                          "field": 0,
+                          "value": {
+                            "expression": {
+                              "call": {
+                                "predicate_name": "-",
+                                "record": {
+                                  "field_value": [
+                                    {
+                                      "field": "left",
+                                      "value": {
+                                        "expression": {
+                                          "expression_heritage": "x",
+                                          "variable": {
+                                            "var_name": "x"
+                                          }
+                                        }
+                                      }
+                                    },
+                                    {
+                                      "field": "right",
+                                      "value": {
+                                        "expression": {
+                                          "expression_heritage": "5",
+                                          "literal": {
+                                            "the_number": {
+                                              "number": "5"
+                                            }
+                                          }
+                                        }
+                                      }
+                                    }
+                                  ]
+                                }
+                              },
+                              "expression_heritage": "x - 5"
+                            }
+                          }
+                        }
+                      ]
+                    }
+                  },
+                  "expression_heritage": "Abs(x - 5)"
+                }
+              }
+            },
+            {
+              "unification": {
+                "left_hand_side": {
+                  "expression_heritage": "sqrt_val",
+                  "variable": {
+                    "var_name": "sqrt_val"
+                  }
+                },
+                "right_hand_side": {
+                  "call": {
+                    "predicate_name": "Sqrt",
+                    "record": {
+                      "field_value": [
+                        {
+                          "field": 0,
+                          "value": {
+                            "expression": {
+                              "call": {
+                                "predicate_name": "ToFloat64",
+                                "record": {
+                                  "field_value": [
+                                    {
+                                      "field": 0,
+                                      "value": {
+                                        "expression": {
+                                          "expression_heritage": "x",
+                                          "variable": {
+                                            "var_name": "x"
+                                          }
+                                        }
+                                      }
+                                    }
+                                  ]
+                                }
+                              },
+                              "expression_heritage": "ToFloat64(x)"
+                            }
+                          }
+                        }
+                      ]
+                    }
+                  },
+                  "expression_heritage": "Sqrt(ToFloat64(x))"
+                }
+              }
+            }
+          ]
+        }
+      },
+      "full_text": "MathOps(x, abs_val, sqrt_val) :-\n  Numbers(x),\n  abs_val == Abs(x - 5),\n  sqrt_val == Sqrt(ToFloat64(x))",
+      "head": {
+        "predicate_name": "MathOps",
+        "record": {
+          "field_value": [
+            {
+              "field": 0,
+              "value": {
+                "expression": {
+                  "expression_heritage": "x",
+                  "variable": {
+                    "var_name": "x"
+                  }
+                }
+              }
+            },
+            {
+              "field": 1,
+              "value": {
+                "expression": {
+                  "expression_heritage": "abs_val",
+                  "variable": {
+                    "var_name": "abs_val"
+                  }
+                }
+              }
+            },
+            {
+              "field": 2,
+              "value": {
+                "expression": {
+                  "expression_heritage": "sqrt_val",
+                  "variable": {
+                    "var_name": "sqrt_val"
+                  }
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "body": {
+        "conjunction": {
+          "conjunct": [
+            {
+              "inclusion": {
+                "element": {
+                  "expression_heritage": "s",
+                  "variable": {
+                    "var_name": "s"
+                  }
+                },
+                "list": {
+                  "expression_heritage": "[\"Hello\", \"World\", \"Test\"]",
+                  "literal": {
+                    "the_list": {
+                      "element": [
+                        {
+                          "expression_heritage": "\"Hello\"",
+                          "literal": {
+                            "the_string": {
+                              "the_string": "Hello"
+                            }
+                          }
+                        },
+                        {
+                          "expression_heritage": "\"World\"",
+                          "literal": {
+                            "the_string": {
+                              "the_string": "World"
+                            }
+                          }
+                        },
+                        {
+                          "expression_heritage": "\"Test\"",
+                          "literal": {
+                            "the_string": {
+                              "the_string": "Test"
+                            }
+                          }
+                        }
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          ]
+        }
+      },
+      "full_text": "Strings(s) :- s in [\"Hello\", \"World\", \"Test\"]",
+      "head": {
+        "predicate_name": "Strings",
+        "record": {
+          "field_value": [
+            {
+              "field": 0,
+              "value": {
+                "expression": {
+                  "expression_heritage": "s",
+                  "variable": {
+                    "var_name": "s"
+                  }
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "body": {
+        "conjunction": {
+          "conjunct": [
+            {
+              "predicate": {
+                "predicate_name": "Strings",
+                "record": {
+                  "field_value": [
+                    {
+                      "field": 0,
+                      "value": {
+                        "expression": {
+                          "expression_heritage": "s",
+                          "variable": {
+                            "var_name": "s"
+                          }
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            },
+            {
+              "unification": {
+                "left_hand_side": {
+                  "expression_heritage": "len",
+                  "variable": {
+                    "var_name": "len"
+                  }
+                },
+                "right_hand_side": {
+                  "call": {
+                    "predicate_name": "Length",
+                    "record": {
+                      "field_value": [
+                        {
+                          "field": 0,
+                          "value": {
+                            "expression": {
+                              "expression_heritage": "s",
+                              "variable": {
+                                "var_name": "s"
+                              }
+                            }
+                          }
+                        }
+                      ]
+                    }
+                  },
+                  "expression_heritage": "Length(s)"
+                }
+              }
+            }
+          ]
+        }
+      },
+      "full_text": "StringOps(s, len) :- Strings(s), len == Length(s)",
+      "head": {
+        "predicate_name": "StringOps",
+        "record": {
+          "field_value": [
+            {
+              "field": 0,
+              "value": {
+                "expression": {
+                  "expression_heritage": "s",
+                  "variable": {
+                    "var_name": "s"
+                  }
+                }
+              }
+            },
+            {
+              "field": 1,
+              "value": {
+                "expression": {
+                  "expression_heritage": "len",
+                  "variable": {
+                    "var_name": "len"
+                  }
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "body": {
+        "conjunction": {
+          "conjunct": [
+            {
+              "unification": {
+                "left_hand_side": {
+                  "expression_heritage": "size",
+                  "variable": {
+                    "var_name": "size"
+                  }
+                },
+                "right_hand_side": {
+                  "call": {
+                    "predicate_name": "Size",
+                    "record": {
+                      "field_value": [
+                        {
+                          "field": 0,
+                          "value": {
+                            "expression": {
+                              "expression_heritage": "[1, 2, 3, 4, 5]",
+                              "literal": {
+                                "the_list": {
+                                  "element": [
+                                    {
+                                      "expression_heritage": "1",
+                                      "literal": {
+                                        "the_number": {
+                                          "number": "1"
+                                        }
+                                      }
+                                    },
+                                    {
+                                      "expression_heritage": "2",
+                                      "literal": {
+                                        "the_number": {
+                                          "number": "2"
+                                        }
+                                      }
+                                    },
+                                    {
+                                      "expression_heritage": "3",
+                                      "literal": {
+                                        "the_number": {
+                                          "number": "3"
+                                        }
+                                      }
+                                    },
+                                    {
+                                      "expression_heritage": "4",
+                                      "literal": {
+                                        "the_number": {
+                                          "number": "4"
+                                        }
+                                      }
+                                    },
+                                    {
+                                      "expression_heritage": "5",
+                                      "literal": {
+                                        "the_number": {
+                                          "number": "5"
+                                        }
+                                      }
+                                    }
+                                  ]
+                                }
+                              }
+                            }
+                          }
+                        }
+                      ]
+                    }
+                  },
+                  "expression_heritage": "Size([1, 2, 3, 4, 5])"
+                }
+              }
+            },
+            {
+              "unification": {
+                "left_hand_side": {
+                  "expression_heritage": "first",
+                  "variable": {
+                    "var_name": "first"
+                  }
+                },
+                "right_hand_side": {
+                  "call": {
+                    "predicate_name": "Element",
+                    "record": {
+                      "field_value": [
+                        {
+                          "field": 0,
+                          "value": {
+                            "expression": {
+                              "expression_heritage": "[1, 2, 3, 4, 5]",
+                              "literal": {
+                                "the_list": {
+                                  "element": [
+                                    {
+                                      "expression_heritage": "1",
+                                      "literal": {
+                                        "the_number": {
+                                          "number": "1"
+                                        }
+                                      }
+                                    },
+                                    {
+                                      "expression_heritage": "2",
+                                      "literal": {
+                                        "the_number": {
+                                          "number": "2"
+                                        }
+                                      }
+                                    },
+                                    {
+                                      "expression_heritage": "3",
+                                      "literal": {
+                                        "the_number": {
+                                          "number": "3"
+                                        }
+                                      }
+                                    },
+                                    {
+                                      "expression_heritage": "4",
+                                      "literal": {
+                                        "the_number": {
+                                          "number": "4"
+                                        }
+                                      }
+                                    },
+                                    {
+                                      "expression_heritage": "5",
+                                      "literal": {
+                                        "the_number": {
+                                          "number": "5"
+                                        }
+                                      }
+                                    }
+                                  ]
+                                }
+                              }
+                            }
+                          }
+                        },
+                        {
+                          "field": 1,
+                          "value": {
+                            "expression": {
+                              "expression_heritage": "0",
+                              "literal": {
+                                "the_number": {
+                                  "number": "0"
+                                }
+                              }
+                            }
+                          }
+                        }
+                      ]
+                    }
+                  },
+                  "expression_heritage": "Element([1, 2, 3, 4, 5], 0)"
+                }
+              }
+            }
+          ]
+        }
+      },
+      "full_text": "ArrayOps(size, first) :-\n  size == Size([1, 2, 3, 4, 5]),\n  first == Element([1, 2, 3, 4, 5], 0)",
+      "head": {
+        "predicate_name": "ArrayOps",
+        "record": {
+          "field_value": [
+            {
+              "field": 0,
+              "value": {
+                "expression": {
+                  "expression_heritage": "size",
+                  "variable": {
+                    "var_name": "size"
+                  }
+                }
+              }
+            },
+            {
+              "field": 1,
+              "value": {
+                "expression": {
+                  "expression_heritage": "first",
+                  "variable": {
+                    "var_name": "first"
+                  }
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "full_text": "Joined() = Join([\"a\", \"b\", \"c\"], \"-\")",
+      "head": {
+        "predicate_name": "Joined",
+        "record": {
+          "field_value": [
+            {
+              "field": "logica_value",
+              "value": {
+                "expression": {
+                  "call": {
+                    "predicate_name": "Join",
+                    "record": {
+                      "field_value": [
+                        {
+                          "field": 0,
+                          "value": {
+                            "expression": {
+                              "expression_heritage": "[\"a\", \"b\", \"c\"]",
+                              "literal": {
+                                "the_list": {
+                                  "element": [
+                                    {
+                                      "expression_heritage": "\"a\"",
+                                      "literal": {
+                                        "the_string": {
+                                          "the_string": "a"
+                                        }
+                                      }
+                                    },
+                                    {
+                                      "expression_heritage": "\"b\"",
+                                      "literal": {
+                                        "the_string": {
+                                          "the_string": "b"
+                                        }
+                                      }
+                                    },
+                                    {
+                                      "expression_heritage": "\"c\"",
+                                      "literal": {
+                                        "the_string": {
+                                          "the_string": "c"
+                                        }
+                                      }
+                                    }
+                                  ]
+                                }
+                              }
+                            }
+                          }
+                        },
+                        {
+                          "field": 1,
+                          "value": {
+                            "expression": {
+                              "expression_heritage": "\"-\"",
+                              "literal": {
+                                "the_string": {
+                                  "the_string": "-"
+                                }
+                              }
+                            }
+                          }
+                        }
+                      ]
+                    }
+                  },
+                  "expression_heritage": "Join([\"a\", \"b\", \"c\"], \"-\")"
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "full_text": "@OrderBy(Test, \"col0\")",
+      "head": {
+        "predicate_name": "@OrderBy",
+        "record": {
+          "field_value": [
+            {
+              "field": 0,
+              "value": {
+                "expression": {
+                  "expression_heritage": "Test",
+                  "literal": {
+                    "the_predicate": {
+                      "predicate_name": "Test"
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "field": 1,
+              "value": {
+                "expression": {
+                  "expression_heritage": "\"col0\"",
+                  "literal": {
+                    "the_string": {
+                      "the_string": "col0"
+                    }
+                  }
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "body": {
+        "conjunction": {
+          "conjunct": [
+            {
+              "predicate": {
+                "predicate_name": "MathOps",
+                "record": {
+                  "field_value": [
+                    {
+                      "field": 0,
+                      "value": {
+                        "expression": {
+                          "expression_heritage": "x",
+                          "variable": {
+                            "var_name": "x"
+                          }
+                        }
+                      }
+                    },
+                    {
+                      "field": 1,
+                      "value": {
+                        "expression": {
+                          "expression_heritage": "abs_val",
+                          "variable": {
+                            "var_name": "abs_val"
+                          }
+                        }
+                      }
+                    },
+                    {
+                      "field": 2,
+                      "value": {
+                        "expression": {
+                          "expression_heritage": "sqrt_val",
+                          "variable": {
+                            "var_name": "sqrt_val"
+                          }
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          ]
+        }
+      },
+      "full_text": "Test(x, abs_val) :- MathOps(x, abs_val, sqrt_val)",
+      "head": {
+        "predicate_name": "Test",
+        "record": {
+          "field_value": [
+            {
+              "field": 0,
+              "value": {
+                "expression": {
+                  "expression_heritage": "x",
+                  "variable": {
+                    "var_name": "x"
+                  }
+                }
+              }
+            },
+            {
+              "field": 1,
+              "value": {
+                "expression": {
+                  "expression_heritage": "abs_val",
+                  "variable": {
+                    "var_name": "abs_val"
+                  }
+                }
+              }
+            }
+          ]
+        }
+      }
+    }
+  ]
+}

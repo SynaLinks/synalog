@@ -1,0 +1,967 @@
+{
+  "file_name": "main",
+  "imported_predicates": [],
+  "predicates_prefix": "",
+  "rule": [
+    {
+      "full_text": "@Engine(\"duckdb\")",
+      "head": {
+        "predicate_name": "@Engine",
+        "record": {
+          "field_value": [
+            {
+              "field": 0,
+              "value": {
+                "expression": {
+                  "expression_heritage": "\"duckdb\"",
+                  "literal": {
+                    "the_string": {
+                      "the_string": "duckdb"
+                    }
+                  }
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "full_text": "Phones(person: \"Alice\", phone: \"555-1234\")",
+      "head": {
+        "predicate_name": "Phones",
+        "record": {
+          "field_value": [
+            {
+              "field": "person",
+              "value": {
+                "expression": {
+                  "expression_heritage": "\"Alice\"",
+                  "literal": {
+                    "the_string": {
+                      "the_string": "Alice"
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "field": "phone",
+              "value": {
+                "expression": {
+                  "expression_heritage": "\"555-1234\"",
+                  "literal": {
+                    "the_string": {
+                      "the_string": "555-1234"
+                    }
+                  }
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "full_text": "Phones(person: \"Bob\", phone: \"555-5678\")",
+      "head": {
+        "predicate_name": "Phones",
+        "record": {
+          "field_value": [
+            {
+              "field": "person",
+              "value": {
+                "expression": {
+                  "expression_heritage": "\"Bob\"",
+                  "literal": {
+                    "the_string": {
+                      "the_string": "Bob"
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "field": "phone",
+              "value": {
+                "expression": {
+                  "expression_heritage": "\"555-5678\"",
+                  "literal": {
+                    "the_string": {
+                      "the_string": "555-5678"
+                    }
+                  }
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "full_text": "Emails(person: \"Bob\", email: \"bob@example.com\")",
+      "head": {
+        "predicate_name": "Emails",
+        "record": {
+          "field_value": [
+            {
+              "field": "person",
+              "value": {
+                "expression": {
+                  "expression_heritage": "\"Bob\"",
+                  "literal": {
+                    "the_string": {
+                      "the_string": "Bob"
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "field": "email",
+              "value": {
+                "expression": {
+                  "expression_heritage": "\"bob@example.com\"",
+                  "literal": {
+                    "the_string": {
+                      "the_string": "bob@example.com"
+                    }
+                  }
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "full_text": "Emails(person: \"Charlie\", email: \"charlie@example.com\")",
+      "head": {
+        "predicate_name": "Emails",
+        "record": {
+          "field_value": [
+            {
+              "field": "person",
+              "value": {
+                "expression": {
+                  "expression_heritage": "\"Charlie\"",
+                  "literal": {
+                    "the_string": {
+                      "the_string": "Charlie"
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "field": "email",
+              "value": {
+                "expression": {
+                  "expression_heritage": "\"charlie@example.com\"",
+                  "literal": {
+                    "the_string": {
+                      "the_string": "charlie@example.com"
+                    }
+                  }
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "full_text": "@OrderBy(ContactInfo, \"person\")",
+      "head": {
+        "predicate_name": "@OrderBy",
+        "record": {
+          "field_value": [
+            {
+              "field": 0,
+              "value": {
+                "expression": {
+                  "expression_heritage": "ContactInfo",
+                  "literal": {
+                    "the_predicate": {
+                      "predicate_name": "ContactInfo"
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "field": 1,
+              "value": {
+                "expression": {
+                  "expression_heritage": "\"person\"",
+                  "literal": {
+                    "the_string": {
+                      "the_string": "person"
+                    }
+                  }
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "body": {
+        "conjunction": {
+          "conjunct": [
+            {
+              "predicate": {
+                "predicate_name": "Phones",
+                "record": {
+                  "field_value": [
+                    {
+                      "field": "person",
+                      "value": {
+                        "expression": {
+                          "expression_heritage": "person",
+                          "variable": {
+                            "var_name": "person"
+                          }
+                        }
+                      }
+                    },
+                    {
+                      "field": "phone",
+                      "value": {
+                        "expression": {
+                          "expression_heritage": "phone",
+                          "variable": {
+                            "var_name": "phone"
+                          }
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          ]
+        }
+      },
+      "full_text": "ContactInfo(person:, phones? ++= [phone], emails? ++= []) distinct :-\n  Phones(person:, phone:)",
+      "head": {
+        "predicate_name": "ContactInfo_MultBodyAggAux",
+        "record": {
+          "field_value": [
+            {
+              "field": "person",
+              "value": {
+                "expression": {
+                  "expression_heritage": "person",
+                  "variable": {
+                    "var_name": "person"
+                  }
+                }
+              }
+            },
+            {
+              "field": "phones",
+              "value": {
+                "expression": {
+                  "expression_heritage": "[phone]",
+                  "literal": {
+                    "the_list": {
+                      "element": [
+                        {
+                          "expression_heritage": "phone",
+                          "variable": {
+                            "var_name": "phone"
+                          }
+                        }
+                      ]
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "field": "emails",
+              "value": {
+                "expression": {
+                  "expression_heritage": "[]",
+                  "literal": {
+                    "the_list": {
+                      "element": []
+                    }
+                  }
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "body": {
+        "conjunction": {
+          "conjunct": [
+            {
+              "predicate": {
+                "predicate_name": "Emails",
+                "record": {
+                  "field_value": [
+                    {
+                      "field": "person",
+                      "value": {
+                        "expression": {
+                          "expression_heritage": "person",
+                          "variable": {
+                            "var_name": "person"
+                          }
+                        }
+                      }
+                    },
+                    {
+                      "field": "email",
+                      "value": {
+                        "expression": {
+                          "expression_heritage": "email",
+                          "variable": {
+                            "var_name": "email"
+                          }
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          ]
+        }
+      },
+      "full_text": "ContactInfo(person:, phones? ++= [], emails? ++= [email]) distinct :-\n  Emails(person:, email:)",
+      "head": {
+        "predicate_name": "ContactInfo_MultBodyAggAux",
+        "record": {
+          "field_value": [
+            {
+              "field": "person",
+              "value": {
+                "expression": {
+                  "expression_heritage": "person",
+                  "variable": {
+                    "var_name": "person"
+                  }
+                }
+              }
+            },
+            {
+              "field": "phones",
+              "value": {
+                "expression": {
+                  "expression_heritage": "[]",
+                  "literal": {
+                    "the_list": {
+                      "element": []
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "field": "emails",
+              "value": {
+                "expression": {
+                  "expression_heritage": "[email]",
+                  "literal": {
+                    "the_list": {
+                      "element": [
+                        {
+                          "expression_heritage": "email",
+                          "variable": {
+                            "var_name": "email"
+                          }
+                        }
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "full_text": "@OrderBy(PersonSummary, \"person\")",
+      "head": {
+        "predicate_name": "@OrderBy",
+        "record": {
+          "field_value": [
+            {
+              "field": 0,
+              "value": {
+                "expression": {
+                  "expression_heritage": "PersonSummary",
+                  "literal": {
+                    "the_predicate": {
+                      "predicate_name": "PersonSummary"
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "field": 1,
+              "value": {
+                "expression": {
+                  "expression_heritage": "\"person\"",
+                  "literal": {
+                    "the_string": {
+                      "the_string": "person"
+                    }
+                  }
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "body": {
+        "conjunction": {
+          "conjunct": [
+            {
+              "predicate": {
+                "predicate_name": "Phones",
+                "record": {
+                  "field_value": [
+                    {
+                      "field": "person",
+                      "value": {
+                        "expression": {
+                          "expression_heritage": "person",
+                          "variable": {
+                            "var_name": "person"
+                          }
+                        }
+                      }
+                    },
+                    {
+                      "field": "phone",
+                      "value": {
+                        "expression": {
+                          "expression_heritage": "phone",
+                          "variable": {
+                            "var_name": "phone"
+                          }
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          ]
+        }
+      },
+      "full_text": "PersonSummary(person:,\n              has_phone? Max= 1,\n              has_email? Max= 0) distinct :- Phones(person:, phone:)",
+      "head": {
+        "predicate_name": "PersonSummary_MultBodyAggAux",
+        "record": {
+          "field_value": [
+            {
+              "field": "person",
+              "value": {
+                "expression": {
+                  "expression_heritage": "person",
+                  "variable": {
+                    "var_name": "person"
+                  }
+                }
+              }
+            },
+            {
+              "field": "has_phone",
+              "value": {
+                "expression": {
+                  "expression_heritage": "1",
+                  "literal": {
+                    "the_number": {
+                      "number": "1"
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "field": "has_email",
+              "value": {
+                "expression": {
+                  "expression_heritage": "0",
+                  "literal": {
+                    "the_number": {
+                      "number": "0"
+                    }
+                  }
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "body": {
+        "conjunction": {
+          "conjunct": [
+            {
+              "predicate": {
+                "predicate_name": "Emails",
+                "record": {
+                  "field_value": [
+                    {
+                      "field": "person",
+                      "value": {
+                        "expression": {
+                          "expression_heritage": "person",
+                          "variable": {
+                            "var_name": "person"
+                          }
+                        }
+                      }
+                    },
+                    {
+                      "field": "email",
+                      "value": {
+                        "expression": {
+                          "expression_heritage": "email",
+                          "variable": {
+                            "var_name": "email"
+                          }
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          ]
+        }
+      },
+      "full_text": "PersonSummary(person:,\n              has_phone? Max= 0,\n              has_email? Max= 1) distinct :- Emails(person:, email:)",
+      "head": {
+        "predicate_name": "PersonSummary_MultBodyAggAux",
+        "record": {
+          "field_value": [
+            {
+              "field": "person",
+              "value": {
+                "expression": {
+                  "expression_heritage": "person",
+                  "variable": {
+                    "var_name": "person"
+                  }
+                }
+              }
+            },
+            {
+              "field": "has_phone",
+              "value": {
+                "expression": {
+                  "expression_heritage": "0",
+                  "literal": {
+                    "the_number": {
+                      "number": "0"
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "field": "has_email",
+              "value": {
+                "expression": {
+                  "expression_heritage": "1",
+                  "literal": {
+                    "the_number": {
+                      "number": "1"
+                    }
+                  }
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "full_text": "@OrderBy(Test, \"person\")",
+      "head": {
+        "predicate_name": "@OrderBy",
+        "record": {
+          "field_value": [
+            {
+              "field": 0,
+              "value": {
+                "expression": {
+                  "expression_heritage": "Test",
+                  "literal": {
+                    "the_predicate": {
+                      "predicate_name": "Test"
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "field": 1,
+              "value": {
+                "expression": {
+                  "expression_heritage": "\"person\"",
+                  "literal": {
+                    "the_string": {
+                      "the_string": "person"
+                    }
+                  }
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "body": {
+        "conjunction": {
+          "conjunct": [
+            {
+              "predicate": {
+                "predicate_name": "ContactInfo",
+                "record": {
+                  "field_value": [
+                    {
+                      "field": "person",
+                      "value": {
+                        "expression": {
+                          "expression_heritage": "person",
+                          "variable": {
+                            "var_name": "person"
+                          }
+                        }
+                      }
+                    },
+                    {
+                      "field": "phones",
+                      "value": {
+                        "expression": {
+                          "expression_heritage": "phones",
+                          "variable": {
+                            "var_name": "phones"
+                          }
+                        }
+                      }
+                    },
+                    {
+                      "field": "emails",
+                      "value": {
+                        "expression": {
+                          "expression_heritage": "emails",
+                          "variable": {
+                            "var_name": "emails"
+                          }
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          ]
+        }
+      },
+      "full_text": "Test(person:, phones:, emails:) :- ContactInfo(person:, phones:, emails:)",
+      "head": {
+        "predicate_name": "Test",
+        "record": {
+          "field_value": [
+            {
+              "field": "person",
+              "value": {
+                "expression": {
+                  "expression_heritage": "person",
+                  "variable": {
+                    "var_name": "person"
+                  }
+                }
+              }
+            },
+            {
+              "field": "phones",
+              "value": {
+                "expression": {
+                  "expression_heritage": "phones",
+                  "variable": {
+                    "var_name": "phones"
+                  }
+                }
+              }
+            },
+            {
+              "field": "emails",
+              "value": {
+                "expression": {
+                  "expression_heritage": "emails",
+                  "variable": {
+                    "var_name": "emails"
+                  }
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "body": {
+        "conjunction": {
+          "conjunct": [
+            {
+              "predicate": {
+                "predicate_name": "ContactInfo_MultBodyAggAux",
+                "record": {
+                  "field_value": [
+                    {
+                      "field": "person",
+                      "value": {
+                        "expression": {
+                          "variable": {
+                            "var_name": "person"
+                          }
+                        }
+                      }
+                    },
+                    {
+                      "field": "phones",
+                      "value": {
+                        "expression": {
+                          "variable": {
+                            "var_name": "phones"
+                          }
+                        }
+                      }
+                    },
+                    {
+                      "field": "emails",
+                      "value": {
+                        "expression": {
+                          "variable": {
+                            "var_name": "emails"
+                          }
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          ]
+        }
+      },
+      "distinct_denoted": true,
+      "full_text": "ContactInfo(person:, phones? ++= [], emails? ++= [email]) distinct :-\n  Emails(person:, email:)",
+      "head": {
+        "predicate_name": "ContactInfo",
+        "record": {
+          "field_value": [
+            {
+              "field": "person",
+              "value": {
+                "expression": {
+                  "variable": {
+                    "var_name": "person"
+                  }
+                }
+              }
+            },
+            {
+              "field": "phones",
+              "value": {
+                "aggregation": {
+                  "expression": {
+                    "call": {
+                      "predicate_name": "Agg++",
+                      "record": {
+                        "field_value": [
+                          {
+                            "field": 0,
+                            "value": {
+                              "expression": {
+                                "variable": {
+                                  "var_name": "phones"
+                                }
+                              }
+                            }
+                          }
+                        ]
+                      }
+                    },
+                    "expression_heritage": "++= [phone]"
+                  },
+                  "expression_heritage": "++= [phone]"
+                }
+              }
+            },
+            {
+              "field": "emails",
+              "value": {
+                "aggregation": {
+                  "expression": {
+                    "call": {
+                      "predicate_name": "Agg++",
+                      "record": {
+                        "field_value": [
+                          {
+                            "field": 0,
+                            "value": {
+                              "expression": {
+                                "variable": {
+                                  "var_name": "emails"
+                                }
+                              }
+                            }
+                          }
+                        ]
+                      }
+                    },
+                    "expression_heritage": "++= []"
+                  },
+                  "expression_heritage": "++= []"
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "body": {
+        "conjunction": {
+          "conjunct": [
+            {
+              "predicate": {
+                "predicate_name": "PersonSummary_MultBodyAggAux",
+                "record": {
+                  "field_value": [
+                    {
+                      "field": "person",
+                      "value": {
+                        "expression": {
+                          "variable": {
+                            "var_name": "person"
+                          }
+                        }
+                      }
+                    },
+                    {
+                      "field": "has_phone",
+                      "value": {
+                        "expression": {
+                          "variable": {
+                            "var_name": "has_phone"
+                          }
+                        }
+                      }
+                    },
+                    {
+                      "field": "has_email",
+                      "value": {
+                        "expression": {
+                          "variable": {
+                            "var_name": "has_email"
+                          }
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          ]
+        }
+      },
+      "distinct_denoted": true,
+      "full_text": "PersonSummary(person:,\n              has_phone? Max= 0,\n              has_email? Max= 1) distinct :- Emails(person:, email:)",
+      "head": {
+        "predicate_name": "PersonSummary",
+        "record": {
+          "field_value": [
+            {
+              "field": "person",
+              "value": {
+                "expression": {
+                  "variable": {
+                    "var_name": "person"
+                  }
+                }
+              }
+            },
+            {
+              "field": "has_phone",
+              "value": {
+                "aggregation": {
+                  "expression": {
+                    "call": {
+                      "predicate_name": "Max",
+                      "record": {
+                        "field_value": [
+                          {
+                            "field": 0,
+                            "value": {
+                              "expression": {
+                                "variable": {
+                                  "var_name": "has_phone"
+                                }
+                              }
+                            }
+                          }
+                        ]
+                      }
+                    },
+                    "expression_heritage": "Max= 1"
+                  },
+                  "expression_heritage": "Max= 1"
+                }
+              }
+            },
+            {
+              "field": "has_email",
+              "value": {
+                "aggregation": {
+                  "expression": {
+                    "call": {
+                      "predicate_name": "Max",
+                      "record": {
+                        "field_value": [
+                          {
+                            "field": 0,
+                            "value": {
+                              "expression": {
+                                "variable": {
+                                  "var_name": "has_email"
+                                }
+                              }
+                            }
+                          }
+                        ]
+                      }
+                    },
+                    "expression_heritage": "Max= 0"
+                  },
+                  "expression_heritage": "Max= 0"
+                }
+              }
+            }
+          ]
+        }
+      }
+    }
+  ]
+}

@@ -1,0 +1,590 @@
+{
+  "file_name": "main",
+  "imported_predicates": [],
+  "predicates_prefix": "",
+  "rule": [
+    {
+      "full_text": "@Engine(\"duckdb\")",
+      "head": {
+        "predicate_name": "@Engine",
+        "record": {
+          "field_value": [
+            {
+              "field": 0,
+              "value": {
+                "expression": {
+                  "expression_heritage": "\"duckdb\"",
+                  "literal": {
+                    "the_string": {
+                      "the_string": "duckdb"
+                    }
+                  }
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "full_text": "Raw(v: 1)",
+      "head": {
+        "predicate_name": "Raw",
+        "record": {
+          "field_value": [
+            {
+              "field": "v",
+              "value": {
+                "expression": {
+                  "expression_heritage": "1",
+                  "literal": {
+                    "the_number": {
+                      "number": "1"
+                    }
+                  }
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "full_text": "Raw(v: 2)",
+      "head": {
+        "predicate_name": "Raw",
+        "record": {
+          "field_value": [
+            {
+              "field": "v",
+              "value": {
+                "expression": {
+                  "expression_heritage": "2",
+                  "literal": {
+                    "the_number": {
+                      "number": "2"
+                    }
+                  }
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "full_text": "Raw(v: 3)",
+      "head": {
+        "predicate_name": "Raw",
+        "record": {
+          "field_value": [
+            {
+              "field": "v",
+              "value": {
+                "expression": {
+                  "expression_heritage": "3",
+                  "literal": {
+                    "the_number": {
+                      "number": "3"
+                    }
+                  }
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "full_text": "Raw(v: 4)",
+      "head": {
+        "predicate_name": "Raw",
+        "record": {
+          "field_value": [
+            {
+              "field": "v",
+              "value": {
+                "expression": {
+                  "expression_heritage": "4",
+                  "literal": {
+                    "the_number": {
+                      "number": "4"
+                    }
+                  }
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "full_text": "Raw(v: 5)",
+      "head": {
+        "predicate_name": "Raw",
+        "record": {
+          "field_value": [
+            {
+              "field": "v",
+              "value": {
+                "expression": {
+                  "expression_heritage": "5",
+                  "literal": {
+                    "the_number": {
+                      "number": "5"
+                    }
+                  }
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "body": {
+        "conjunction": {
+          "conjunct": [
+            {
+              "predicate": {
+                "predicate_name": "Raw",
+                "record": {
+                  "field_value": [
+                    {
+                      "field": "v",
+                      "value": {
+                        "expression": {
+                          "expression_heritage": "v",
+                          "variable": {
+                            "var_name": "v"
+                          }
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          ]
+        }
+      },
+      "full_text": "Step1(v:, doubled: v * 2) :- Raw(v:)",
+      "head": {
+        "predicate_name": "Step1",
+        "record": {
+          "field_value": [
+            {
+              "field": "v",
+              "value": {
+                "expression": {
+                  "expression_heritage": "v",
+                  "variable": {
+                    "var_name": "v"
+                  }
+                }
+              }
+            },
+            {
+              "field": "doubled",
+              "value": {
+                "expression": {
+                  "call": {
+                    "predicate_name": "*",
+                    "record": {
+                      "field_value": [
+                        {
+                          "field": "left",
+                          "value": {
+                            "expression": {
+                              "expression_heritage": "v",
+                              "variable": {
+                                "var_name": "v"
+                              }
+                            }
+                          }
+                        },
+                        {
+                          "field": "right",
+                          "value": {
+                            "expression": {
+                              "expression_heritage": "2",
+                              "literal": {
+                                "the_number": {
+                                  "number": "2"
+                                }
+                              }
+                            }
+                          }
+                        }
+                      ]
+                    }
+                  },
+                  "expression_heritage": "v * 2"
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "body": {
+        "conjunction": {
+          "conjunct": [
+            {
+              "predicate": {
+                "predicate_name": "Step1",
+                "record": {
+                  "field_value": [
+                    {
+                      "field": "v",
+                      "value": {
+                        "expression": {
+                          "expression_heritage": "v",
+                          "variable": {
+                            "var_name": "v"
+                          }
+                        }
+                      }
+                    },
+                    {
+                      "field": "doubled",
+                      "value": {
+                        "expression": {
+                          "expression_heritage": "doubled",
+                          "variable": {
+                            "var_name": "doubled"
+                          }
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          ]
+        }
+      },
+      "full_text": "Step2(v:, doubled:, plus_ten: doubled + 10) :- Step1(v:, doubled:)",
+      "head": {
+        "predicate_name": "Step2",
+        "record": {
+          "field_value": [
+            {
+              "field": "v",
+              "value": {
+                "expression": {
+                  "expression_heritage": "v",
+                  "variable": {
+                    "var_name": "v"
+                  }
+                }
+              }
+            },
+            {
+              "field": "doubled",
+              "value": {
+                "expression": {
+                  "expression_heritage": "doubled",
+                  "variable": {
+                    "var_name": "doubled"
+                  }
+                }
+              }
+            },
+            {
+              "field": "plus_ten",
+              "value": {
+                "expression": {
+                  "call": {
+                    "predicate_name": "+",
+                    "record": {
+                      "field_value": [
+                        {
+                          "field": "left",
+                          "value": {
+                            "expression": {
+                              "expression_heritage": "doubled",
+                              "variable": {
+                                "var_name": "doubled"
+                              }
+                            }
+                          }
+                        },
+                        {
+                          "field": "right",
+                          "value": {
+                            "expression": {
+                              "expression_heritage": "10",
+                              "literal": {
+                                "the_number": {
+                                  "number": "10"
+                                }
+                              }
+                            }
+                          }
+                        }
+                      ]
+                    }
+                  },
+                  "expression_heritage": "doubled + 10"
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "body": {
+        "conjunction": {
+          "conjunct": [
+            {
+              "predicate": {
+                "predicate_name": "Step2",
+                "record": {
+                  "field_value": [
+                    {
+                      "field": "v",
+                      "value": {
+                        "expression": {
+                          "expression_heritage": "v",
+                          "variable": {
+                            "var_name": "v"
+                          }
+                        }
+                      }
+                    },
+                    {
+                      "field": "doubled",
+                      "value": {
+                        "expression": {
+                          "expression_heritage": "doubled",
+                          "variable": {
+                            "var_name": "doubled"
+                          }
+                        }
+                      }
+                    },
+                    {
+                      "field": "plus_ten",
+                      "value": {
+                        "expression": {
+                          "expression_heritage": "plus_ten",
+                          "variable": {
+                            "var_name": "plus_ten"
+                          }
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            },
+            {
+              "predicate": {
+                "predicate_name": ">",
+                "record": {
+                  "field_value": [
+                    {
+                      "field": "left",
+                      "value": {
+                        "expression": {
+                          "expression_heritage": "v",
+                          "variable": {
+                            "var_name": "v"
+                          }
+                        }
+                      }
+                    },
+                    {
+                      "field": "right",
+                      "value": {
+                        "expression": {
+                          "expression_heritage": "2",
+                          "literal": {
+                            "the_number": {
+                              "number": "2"
+                            }
+                          }
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          ]
+        }
+      },
+      "full_text": "Step3(v:, doubled:, plus_ten:) :- Step2(v:, doubled:, plus_ten:), v > 2",
+      "head": {
+        "predicate_name": "Step3",
+        "record": {
+          "field_value": [
+            {
+              "field": "v",
+              "value": {
+                "expression": {
+                  "expression_heritage": "v",
+                  "variable": {
+                    "var_name": "v"
+                  }
+                }
+              }
+            },
+            {
+              "field": "doubled",
+              "value": {
+                "expression": {
+                  "expression_heritage": "doubled",
+                  "variable": {
+                    "var_name": "doubled"
+                  }
+                }
+              }
+            },
+            {
+              "field": "plus_ten",
+              "value": {
+                "expression": {
+                  "expression_heritage": "plus_ten",
+                  "variable": {
+                    "var_name": "plus_ten"
+                  }
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "full_text": "@OrderBy(Test, \"v\")",
+      "head": {
+        "predicate_name": "@OrderBy",
+        "record": {
+          "field_value": [
+            {
+              "field": 0,
+              "value": {
+                "expression": {
+                  "expression_heritage": "Test",
+                  "literal": {
+                    "the_predicate": {
+                      "predicate_name": "Test"
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "field": 1,
+              "value": {
+                "expression": {
+                  "expression_heritage": "\"v\"",
+                  "literal": {
+                    "the_string": {
+                      "the_string": "v"
+                    }
+                  }
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "body": {
+        "conjunction": {
+          "conjunct": [
+            {
+              "predicate": {
+                "predicate_name": "Step3",
+                "record": {
+                  "field_value": [
+                    {
+                      "field": "v",
+                      "value": {
+                        "expression": {
+                          "expression_heritage": "v",
+                          "variable": {
+                            "var_name": "v"
+                          }
+                        }
+                      }
+                    },
+                    {
+                      "field": "doubled",
+                      "value": {
+                        "expression": {
+                          "expression_heritage": "doubled",
+                          "variable": {
+                            "var_name": "doubled"
+                          }
+                        }
+                      }
+                    },
+                    {
+                      "field": "plus_ten",
+                      "value": {
+                        "expression": {
+                          "expression_heritage": "plus_ten",
+                          "variable": {
+                            "var_name": "plus_ten"
+                          }
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          ]
+        }
+      },
+      "full_text": "Test(v:, doubled:, plus_ten:) :- Step3(v:, doubled:, plus_ten:)",
+      "head": {
+        "predicate_name": "Test",
+        "record": {
+          "field_value": [
+            {
+              "field": "v",
+              "value": {
+                "expression": {
+                  "expression_heritage": "v",
+                  "variable": {
+                    "var_name": "v"
+                  }
+                }
+              }
+            },
+            {
+              "field": "doubled",
+              "value": {
+                "expression": {
+                  "expression_heritage": "doubled",
+                  "variable": {
+                    "var_name": "doubled"
+                  }
+                }
+              }
+            },
+            {
+              "field": "plus_ten",
+              "value": {
+                "expression": {
+                  "expression_heritage": "plus_ten",
+                  "variable": {
+                    "var_name": "plus_ten"
+                  }
+                }
+              }
+            }
+          ]
+        }
+      }
+    }
+  ]
+}

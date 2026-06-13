@@ -1,0 +1,429 @@
+{
+  "file_name": "main",
+  "imported_predicates": [],
+  "predicates_prefix": "",
+  "rule": [
+    {
+      "full_text": "@Engine(\"duckdb\")",
+      "head": {
+        "predicate_name": "@Engine",
+        "record": {
+          "field_value": [
+            {
+              "field": 0,
+              "value": {
+                "expression": {
+                  "expression_heritage": "\"duckdb\"",
+                  "literal": {
+                    "the_string": {
+                      "the_string": "duckdb"
+                    }
+                  }
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "full_text": "Team(name: \"Alice\", skill: \"Python\")",
+      "head": {
+        "predicate_name": "Team",
+        "record": {
+          "field_value": [
+            {
+              "field": "name",
+              "value": {
+                "expression": {
+                  "expression_heritage": "\"Alice\"",
+                  "literal": {
+                    "the_string": {
+                      "the_string": "Alice"
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "field": "skill",
+              "value": {
+                "expression": {
+                  "expression_heritage": "\"Python\"",
+                  "literal": {
+                    "the_string": {
+                      "the_string": "Python"
+                    }
+                  }
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "full_text": "Team(name: \"Alice\", skill: \"SQL\")",
+      "head": {
+        "predicate_name": "Team",
+        "record": {
+          "field_value": [
+            {
+              "field": "name",
+              "value": {
+                "expression": {
+                  "expression_heritage": "\"Alice\"",
+                  "literal": {
+                    "the_string": {
+                      "the_string": "Alice"
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "field": "skill",
+              "value": {
+                "expression": {
+                  "expression_heritage": "\"SQL\"",
+                  "literal": {
+                    "the_string": {
+                      "the_string": "SQL"
+                    }
+                  }
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "full_text": "Team(name: \"Bob\", skill: \"Java\")",
+      "head": {
+        "predicate_name": "Team",
+        "record": {
+          "field_value": [
+            {
+              "field": "name",
+              "value": {
+                "expression": {
+                  "expression_heritage": "\"Bob\"",
+                  "literal": {
+                    "the_string": {
+                      "the_string": "Bob"
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "field": "skill",
+              "value": {
+                "expression": {
+                  "expression_heritage": "\"Java\"",
+                  "literal": {
+                    "the_string": {
+                      "the_string": "Java"
+                    }
+                  }
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "full_text": "Team(name: \"Bob\", skill: \"Python\")",
+      "head": {
+        "predicate_name": "Team",
+        "record": {
+          "field_value": [
+            {
+              "field": "name",
+              "value": {
+                "expression": {
+                  "expression_heritage": "\"Bob\"",
+                  "literal": {
+                    "the_string": {
+                      "the_string": "Bob"
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "field": "skill",
+              "value": {
+                "expression": {
+                  "expression_heritage": "\"Python\"",
+                  "literal": {
+                    "the_string": {
+                      "the_string": "Python"
+                    }
+                  }
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "full_text": "Team(name: \"Bob\", skill: \"Go\")",
+      "head": {
+        "predicate_name": "Team",
+        "record": {
+          "field_value": [
+            {
+              "field": "name",
+              "value": {
+                "expression": {
+                  "expression_heritage": "\"Bob\"",
+                  "literal": {
+                    "the_string": {
+                      "the_string": "Bob"
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "field": "skill",
+              "value": {
+                "expression": {
+                  "expression_heritage": "\"Go\"",
+                  "literal": {
+                    "the_string": {
+                      "the_string": "Go"
+                    }
+                  }
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "body": {
+        "conjunction": {
+          "conjunct": [
+            {
+              "predicate": {
+                "predicate_name": "Team",
+                "record": {
+                  "field_value": [
+                    {
+                      "field": "name",
+                      "value": {
+                        "expression": {
+                          "expression_heritage": "name",
+                          "variable": {
+                            "var_name": "name"
+                          }
+                        }
+                      }
+                    },
+                    {
+                      "field": "skill",
+                      "value": {
+                        "expression": {
+                          "expression_heritage": "skill",
+                          "variable": {
+                            "var_name": "skill"
+                          }
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          ]
+        }
+      },
+      "distinct_denoted": true,
+      "full_text": "SkillsByPerson(name:, skills? Array= skill -> skill) distinct :- Team(name:, skill:)",
+      "head": {
+        "predicate_name": "SkillsByPerson",
+        "record": {
+          "field_value": [
+            {
+              "field": "name",
+              "value": {
+                "expression": {
+                  "expression_heritage": "name",
+                  "variable": {
+                    "var_name": "name"
+                  }
+                }
+              }
+            },
+            {
+              "field": "skills",
+              "value": {
+                "aggregation": {
+                  "expression": {
+                    "call": {
+                      "predicate_name": "Array",
+                      "record": {
+                        "field_value": [
+                          {
+                            "field": 0,
+                            "value": {
+                              "expression": {
+                                "call": {
+                                  "predicate_name": "->",
+                                  "record": {
+                                    "field_value": [
+                                      {
+                                        "field": "left",
+                                        "value": {
+                                          "expression": {
+                                            "expression_heritage": "skill",
+                                            "variable": {
+                                              "var_name": "skill"
+                                            }
+                                          }
+                                        }
+                                      },
+                                      {
+                                        "field": "right",
+                                        "value": {
+                                          "expression": {
+                                            "expression_heritage": "skill",
+                                            "variable": {
+                                              "var_name": "skill"
+                                            }
+                                          }
+                                        }
+                                      }
+                                    ]
+                                  }
+                                },
+                                "expression_heritage": "skill -> skill"
+                              }
+                            }
+                          }
+                        ]
+                      }
+                    },
+                    "expression_heritage": "Array= skill -> skill"
+                  },
+                  "expression_heritage": "Array= skill -> skill"
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "full_text": "@OrderBy(Test, \"name\")",
+      "head": {
+        "predicate_name": "@OrderBy",
+        "record": {
+          "field_value": [
+            {
+              "field": 0,
+              "value": {
+                "expression": {
+                  "expression_heritage": "Test",
+                  "literal": {
+                    "the_predicate": {
+                      "predicate_name": "Test"
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "field": 1,
+              "value": {
+                "expression": {
+                  "expression_heritage": "\"name\"",
+                  "literal": {
+                    "the_string": {
+                      "the_string": "name"
+                    }
+                  }
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "body": {
+        "conjunction": {
+          "conjunct": [
+            {
+              "predicate": {
+                "predicate_name": "SkillsByPerson",
+                "record": {
+                  "field_value": [
+                    {
+                      "field": "name",
+                      "value": {
+                        "expression": {
+                          "expression_heritage": "name",
+                          "variable": {
+                            "var_name": "name"
+                          }
+                        }
+                      }
+                    },
+                    {
+                      "field": "skills",
+                      "value": {
+                        "expression": {
+                          "expression_heritage": "skills",
+                          "variable": {
+                            "var_name": "skills"
+                          }
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          ]
+        }
+      },
+      "full_text": "Test(name:, skills:) :- SkillsByPerson(name:, skills:)",
+      "head": {
+        "predicate_name": "Test",
+        "record": {
+          "field_value": [
+            {
+              "field": "name",
+              "value": {
+                "expression": {
+                  "expression_heritage": "name",
+                  "variable": {
+                    "var_name": "name"
+                  }
+                }
+              }
+            },
+            {
+              "field": "skills",
+              "value": {
+                "expression": {
+                  "expression_heritage": "skills",
+                  "variable": {
+                    "var_name": "skills"
+                  }
+                }
+              }
+            }
+          ]
+        }
+      }
+    }
+  ]
+}

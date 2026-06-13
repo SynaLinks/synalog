@@ -1,0 +1,7 @@
+$ synalog.check('verification.l')
+5 error(s) found:
+  - Unbound variable 'y' in head of rule: Test(x:, y:) :- Numbers(x:)
+  - Recursive predicate 'Loop' has no base case
+  - Trivial infinite loop: 'Loop' calls itself with same arguments
+  - Recursive predicate 'Loop' missing @Recursive annotation
+  - Reserved predicate name 'Num': it is a built-in library predicate and cannot be redefined

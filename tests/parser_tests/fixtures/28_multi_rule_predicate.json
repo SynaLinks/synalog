@@ -1,0 +1,1066 @@
+{
+  "file_name": "main",
+  "imported_predicates": [],
+  "predicates_prefix": "",
+  "rule": [
+    {
+      "full_text": "@Engine(\"duckdb\")",
+      "head": {
+        "predicate_name": "@Engine",
+        "record": {
+          "field_value": [
+            {
+              "field": 0,
+              "value": {
+                "expression": {
+                  "expression_heritage": "\"duckdb\"",
+                  "literal": {
+                    "the_string": {
+                      "the_string": "duckdb"
+                    }
+                  }
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "body": {
+        "conjunction": {
+          "conjunct": [
+            {
+              "inclusion": {
+                "element": {
+                  "expression_heritage": "x",
+                  "variable": {
+                    "var_name": "x"
+                  }
+                },
+                "list": {
+                  "call": {
+                    "predicate_name": "Range",
+                    "record": {
+                      "field_value": [
+                        {
+                          "field": 0,
+                          "value": {
+                            "expression": {
+                              "expression_heritage": "5",
+                              "literal": {
+                                "the_number": {
+                                  "number": "5"
+                                }
+                              }
+                            }
+                          }
+                        }
+                      ]
+                    }
+                  },
+                  "expression_heritage": "Range(5)"
+                }
+              }
+            }
+          ]
+        }
+      },
+      "full_text": "Number(x) :- x in Range(5)",
+      "head": {
+        "predicate_name": "Number",
+        "record": {
+          "field_value": [
+            {
+              "field": 0,
+              "value": {
+                "expression": {
+                  "expression_heritage": "x",
+                  "variable": {
+                    "var_name": "x"
+                  }
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "body": {
+        "conjunction": {
+          "conjunct": [
+            {
+              "inclusion": {
+                "element": {
+                  "expression_heritage": "x",
+                  "variable": {
+                    "var_name": "x"
+                  }
+                },
+                "list": {
+                  "expression_heritage": "[10, 11, 12, 13, 14]",
+                  "literal": {
+                    "the_list": {
+                      "element": [
+                        {
+                          "expression_heritage": "10",
+                          "literal": {
+                            "the_number": {
+                              "number": "10"
+                            }
+                          }
+                        },
+                        {
+                          "expression_heritage": "11",
+                          "literal": {
+                            "the_number": {
+                              "number": "11"
+                            }
+                          }
+                        },
+                        {
+                          "expression_heritage": "12",
+                          "literal": {
+                            "the_number": {
+                              "number": "12"
+                            }
+                          }
+                        },
+                        {
+                          "expression_heritage": "13",
+                          "literal": {
+                            "the_number": {
+                              "number": "13"
+                            }
+                          }
+                        },
+                        {
+                          "expression_heritage": "14",
+                          "literal": {
+                            "the_number": {
+                              "number": "14"
+                            }
+                          }
+                        }
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          ]
+        }
+      },
+      "full_text": "Number(x) :- x in [10, 11, 12, 13, 14]",
+      "head": {
+        "predicate_name": "Number",
+        "record": {
+          "field_value": [
+            {
+              "field": 0,
+              "value": {
+                "expression": {
+                  "expression_heritage": "x",
+                  "variable": {
+                    "var_name": "x"
+                  }
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "body": {
+        "conjunction": {
+          "conjunct": [
+            {
+              "predicate": {
+                "predicate_name": "Number",
+                "record": {
+                  "field_value": [
+                    {
+                      "field": 0,
+                      "value": {
+                        "expression": {
+                          "expression_heritage": "x",
+                          "variable": {
+                            "var_name": "x"
+                          }
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            },
+            {
+              "predicate": {
+                "predicate_name": "<",
+                "record": {
+                  "field_value": [
+                    {
+                      "field": "left",
+                      "value": {
+                        "expression": {
+                          "expression_heritage": "x",
+                          "variable": {
+                            "var_name": "x"
+                          }
+                        }
+                      }
+                    },
+                    {
+                      "field": "right",
+                      "value": {
+                        "expression": {
+                          "expression_heritage": "5",
+                          "literal": {
+                            "the_number": {
+                              "number": "5"
+                            }
+                          }
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            },
+            {
+              "unification": {
+                "left_hand_side": {
+                  "expression_heritage": "cat",
+                  "variable": {
+                    "var_name": "cat"
+                  }
+                },
+                "right_hand_side": {
+                  "expression_heritage": "\"small\"",
+                  "literal": {
+                    "the_string": {
+                      "the_string": "small"
+                    }
+                  }
+                }
+              }
+            }
+          ]
+        }
+      },
+      "full_text": "Category(x, cat) :- Number(x), x < 5, cat == \"small\"",
+      "head": {
+        "predicate_name": "Category",
+        "record": {
+          "field_value": [
+            {
+              "field": 0,
+              "value": {
+                "expression": {
+                  "expression_heritage": "x",
+                  "variable": {
+                    "var_name": "x"
+                  }
+                }
+              }
+            },
+            {
+              "field": 1,
+              "value": {
+                "expression": {
+                  "expression_heritage": "cat",
+                  "variable": {
+                    "var_name": "cat"
+                  }
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "body": {
+        "conjunction": {
+          "conjunct": [
+            {
+              "predicate": {
+                "predicate_name": "Number",
+                "record": {
+                  "field_value": [
+                    {
+                      "field": 0,
+                      "value": {
+                        "expression": {
+                          "expression_heritage": "x",
+                          "variable": {
+                            "var_name": "x"
+                          }
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            },
+            {
+              "predicate": {
+                "predicate_name": ">=",
+                "record": {
+                  "field_value": [
+                    {
+                      "field": "left",
+                      "value": {
+                        "expression": {
+                          "expression_heritage": "x",
+                          "variable": {
+                            "var_name": "x"
+                          }
+                        }
+                      }
+                    },
+                    {
+                      "field": "right",
+                      "value": {
+                        "expression": {
+                          "expression_heritage": "5",
+                          "literal": {
+                            "the_number": {
+                              "number": "5"
+                            }
+                          }
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            },
+            {
+              "predicate": {
+                "predicate_name": "<",
+                "record": {
+                  "field_value": [
+                    {
+                      "field": "left",
+                      "value": {
+                        "expression": {
+                          "expression_heritage": "x",
+                          "variable": {
+                            "var_name": "x"
+                          }
+                        }
+                      }
+                    },
+                    {
+                      "field": "right",
+                      "value": {
+                        "expression": {
+                          "expression_heritage": "10",
+                          "literal": {
+                            "the_number": {
+                              "number": "10"
+                            }
+                          }
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            },
+            {
+              "unification": {
+                "left_hand_side": {
+                  "expression_heritage": "cat",
+                  "variable": {
+                    "var_name": "cat"
+                  }
+                },
+                "right_hand_side": {
+                  "expression_heritage": "\"medium\"",
+                  "literal": {
+                    "the_string": {
+                      "the_string": "medium"
+                    }
+                  }
+                }
+              }
+            }
+          ]
+        }
+      },
+      "full_text": "Category(x, cat) :- Number(x), x >= 5, x < 10, cat == \"medium\"",
+      "head": {
+        "predicate_name": "Category",
+        "record": {
+          "field_value": [
+            {
+              "field": 0,
+              "value": {
+                "expression": {
+                  "expression_heritage": "x",
+                  "variable": {
+                    "var_name": "x"
+                  }
+                }
+              }
+            },
+            {
+              "field": 1,
+              "value": {
+                "expression": {
+                  "expression_heritage": "cat",
+                  "variable": {
+                    "var_name": "cat"
+                  }
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "body": {
+        "conjunction": {
+          "conjunct": [
+            {
+              "predicate": {
+                "predicate_name": "Number",
+                "record": {
+                  "field_value": [
+                    {
+                      "field": 0,
+                      "value": {
+                        "expression": {
+                          "expression_heritage": "x",
+                          "variable": {
+                            "var_name": "x"
+                          }
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            },
+            {
+              "predicate": {
+                "predicate_name": ">=",
+                "record": {
+                  "field_value": [
+                    {
+                      "field": "left",
+                      "value": {
+                        "expression": {
+                          "expression_heritage": "x",
+                          "variable": {
+                            "var_name": "x"
+                          }
+                        }
+                      }
+                    },
+                    {
+                      "field": "right",
+                      "value": {
+                        "expression": {
+                          "expression_heritage": "10",
+                          "literal": {
+                            "the_number": {
+                              "number": "10"
+                            }
+                          }
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            },
+            {
+              "unification": {
+                "left_hand_side": {
+                  "expression_heritage": "cat",
+                  "variable": {
+                    "var_name": "cat"
+                  }
+                },
+                "right_hand_side": {
+                  "expression_heritage": "\"large\"",
+                  "literal": {
+                    "the_string": {
+                      "the_string": "large"
+                    }
+                  }
+                }
+              }
+            }
+          ]
+        }
+      },
+      "full_text": "Category(x, cat) :- Number(x), x >= 10, cat == \"large\"",
+      "head": {
+        "predicate_name": "Category",
+        "record": {
+          "field_value": [
+            {
+              "field": 0,
+              "value": {
+                "expression": {
+                  "expression_heritage": "x",
+                  "variable": {
+                    "var_name": "x"
+                  }
+                }
+              }
+            },
+            {
+              "field": 1,
+              "value": {
+                "expression": {
+                  "expression_heritage": "cat",
+                  "variable": {
+                    "var_name": "cat"
+                  }
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "body": {
+        "conjunction": {
+          "conjunct": [
+            {
+              "predicate": {
+                "predicate_name": "Number",
+                "record": {
+                  "field_value": [
+                    {
+                      "field": 0,
+                      "value": {
+                        "expression": {
+                          "expression_heritage": "x",
+                          "variable": {
+                            "var_name": "x"
+                          }
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            },
+            {
+              "unification": {
+                "left_hand_side": {
+                  "expression_heritage": "group",
+                  "variable": {
+                    "var_name": "group"
+                  }
+                },
+                "right_hand_side": {
+                  "expression_heritage": "\"all\"",
+                  "literal": {
+                    "the_string": {
+                      "the_string": "all"
+                    }
+                  }
+                }
+              }
+            }
+          ]
+        }
+      },
+      "full_text": "Stats(group, count? += 1) distinct :- Number(x), group == \"all\"",
+      "head": {
+        "predicate_name": "Stats_MultBodyAggAux",
+        "record": {
+          "field_value": [
+            {
+              "field": 0,
+              "value": {
+                "expression": {
+                  "expression_heritage": "group",
+                  "variable": {
+                    "var_name": "group"
+                  }
+                }
+              }
+            },
+            {
+              "field": "count",
+              "value": {
+                "expression": {
+                  "expression_heritage": "1",
+                  "literal": {
+                    "the_number": {
+                      "number": "1"
+                    }
+                  }
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "body": {
+        "conjunction": {
+          "conjunct": [
+            {
+              "predicate": {
+                "predicate_name": "Number",
+                "record": {
+                  "field_value": [
+                    {
+                      "field": 0,
+                      "value": {
+                        "expression": {
+                          "expression_heritage": "x",
+                          "variable": {
+                            "var_name": "x"
+                          }
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            },
+            {
+              "unification": {
+                "left_hand_side": {
+                  "call": {
+                    "predicate_name": "%",
+                    "record": {
+                      "field_value": [
+                        {
+                          "field": "left",
+                          "value": {
+                            "expression": {
+                              "expression_heritage": "x",
+                              "variable": {
+                                "var_name": "x"
+                              }
+                            }
+                          }
+                        },
+                        {
+                          "field": "right",
+                          "value": {
+                            "expression": {
+                              "expression_heritage": "2",
+                              "literal": {
+                                "the_number": {
+                                  "number": "2"
+                                }
+                              }
+                            }
+                          }
+                        }
+                      ]
+                    }
+                  },
+                  "expression_heritage": "x % 2"
+                },
+                "right_hand_side": {
+                  "expression_heritage": "0",
+                  "literal": {
+                    "the_number": {
+                      "number": "0"
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "unification": {
+                "left_hand_side": {
+                  "expression_heritage": "group",
+                  "variable": {
+                    "var_name": "group"
+                  }
+                },
+                "right_hand_side": {
+                  "expression_heritage": "\"even\"",
+                  "literal": {
+                    "the_string": {
+                      "the_string": "even"
+                    }
+                  }
+                }
+              }
+            }
+          ]
+        }
+      },
+      "full_text": "Stats(group, count? += 1) distinct :- Number(x), x % 2 == 0, group == \"even\"",
+      "head": {
+        "predicate_name": "Stats_MultBodyAggAux",
+        "record": {
+          "field_value": [
+            {
+              "field": 0,
+              "value": {
+                "expression": {
+                  "expression_heritage": "group",
+                  "variable": {
+                    "var_name": "group"
+                  }
+                }
+              }
+            },
+            {
+              "field": "count",
+              "value": {
+                "expression": {
+                  "expression_heritage": "1",
+                  "literal": {
+                    "the_number": {
+                      "number": "1"
+                    }
+                  }
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "body": {
+        "conjunction": {
+          "conjunct": [
+            {
+              "predicate": {
+                "predicate_name": "Number",
+                "record": {
+                  "field_value": [
+                    {
+                      "field": 0,
+                      "value": {
+                        "expression": {
+                          "expression_heritage": "x",
+                          "variable": {
+                            "var_name": "x"
+                          }
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            },
+            {
+              "predicate": {
+                "predicate_name": "!=",
+                "record": {
+                  "field_value": [
+                    {
+                      "field": "left",
+                      "value": {
+                        "expression": {
+                          "call": {
+                            "predicate_name": "%",
+                            "record": {
+                              "field_value": [
+                                {
+                                  "field": "left",
+                                  "value": {
+                                    "expression": {
+                                      "expression_heritage": "x",
+                                      "variable": {
+                                        "var_name": "x"
+                                      }
+                                    }
+                                  }
+                                },
+                                {
+                                  "field": "right",
+                                  "value": {
+                                    "expression": {
+                                      "expression_heritage": "2",
+                                      "literal": {
+                                        "the_number": {
+                                          "number": "2"
+                                        }
+                                      }
+                                    }
+                                  }
+                                }
+                              ]
+                            }
+                          },
+                          "expression_heritage": "x % 2"
+                        }
+                      }
+                    },
+                    {
+                      "field": "right",
+                      "value": {
+                        "expression": {
+                          "expression_heritage": "0",
+                          "literal": {
+                            "the_number": {
+                              "number": "0"
+                            }
+                          }
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            },
+            {
+              "unification": {
+                "left_hand_side": {
+                  "expression_heritage": "group",
+                  "variable": {
+                    "var_name": "group"
+                  }
+                },
+                "right_hand_side": {
+                  "expression_heritage": "\"odd\"",
+                  "literal": {
+                    "the_string": {
+                      "the_string": "odd"
+                    }
+                  }
+                }
+              }
+            }
+          ]
+        }
+      },
+      "full_text": "Stats(group, count? += 1) distinct :- Number(x), x % 2 != 0, group == \"odd\"",
+      "head": {
+        "predicate_name": "Stats_MultBodyAggAux",
+        "record": {
+          "field_value": [
+            {
+              "field": 0,
+              "value": {
+                "expression": {
+                  "expression_heritage": "group",
+                  "variable": {
+                    "var_name": "group"
+                  }
+                }
+              }
+            },
+            {
+              "field": "count",
+              "value": {
+                "expression": {
+                  "expression_heritage": "1",
+                  "literal": {
+                    "the_number": {
+                      "number": "1"
+                    }
+                  }
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "full_text": "@OrderBy(Test, \"col0\")",
+      "head": {
+        "predicate_name": "@OrderBy",
+        "record": {
+          "field_value": [
+            {
+              "field": 0,
+              "value": {
+                "expression": {
+                  "expression_heritage": "Test",
+                  "literal": {
+                    "the_predicate": {
+                      "predicate_name": "Test"
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "field": 1,
+              "value": {
+                "expression": {
+                  "expression_heritage": "\"col0\"",
+                  "literal": {
+                    "the_string": {
+                      "the_string": "col0"
+                    }
+                  }
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "body": {
+        "conjunction": {
+          "conjunct": [
+            {
+              "predicate": {
+                "predicate_name": "Category",
+                "record": {
+                  "field_value": [
+                    {
+                      "field": 0,
+                      "value": {
+                        "expression": {
+                          "expression_heritage": "x",
+                          "variable": {
+                            "var_name": "x"
+                          }
+                        }
+                      }
+                    },
+                    {
+                      "field": 1,
+                      "value": {
+                        "expression": {
+                          "expression_heritage": "cat",
+                          "variable": {
+                            "var_name": "cat"
+                          }
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          ]
+        }
+      },
+      "full_text": "Test(x, cat) :- Category(x, cat)",
+      "head": {
+        "predicate_name": "Test",
+        "record": {
+          "field_value": [
+            {
+              "field": 0,
+              "value": {
+                "expression": {
+                  "expression_heritage": "x",
+                  "variable": {
+                    "var_name": "x"
+                  }
+                }
+              }
+            },
+            {
+              "field": 1,
+              "value": {
+                "expression": {
+                  "expression_heritage": "cat",
+                  "variable": {
+                    "var_name": "cat"
+                  }
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "body": {
+        "conjunction": {
+          "conjunct": [
+            {
+              "predicate": {
+                "predicate_name": "Stats_MultBodyAggAux",
+                "record": {
+                  "field_value": [
+                    {
+                      "field": 0,
+                      "value": {
+                        "expression": {
+                          "variable": {
+                            "var_name": 0
+                          }
+                        }
+                      }
+                    },
+                    {
+                      "field": "count",
+                      "value": {
+                        "expression": {
+                          "variable": {
+                            "var_name": "count"
+                          }
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          ]
+        }
+      },
+      "distinct_denoted": true,
+      "full_text": "Stats(group, count? += 1) distinct :- Number(x), x % 2 != 0, group == \"odd\"",
+      "head": {
+        "predicate_name": "Stats",
+        "record": {
+          "field_value": [
+            {
+              "field": 0,
+              "value": {
+                "expression": {
+                  "variable": {
+                    "var_name": 0
+                  }
+                }
+              }
+            },
+            {
+              "field": "count",
+              "value": {
+                "aggregation": {
+                  "expression": {
+                    "call": {
+                      "predicate_name": "Agg+",
+                      "record": {
+                        "field_value": [
+                          {
+                            "field": 0,
+                            "value": {
+                              "expression": {
+                                "variable": {
+                                  "var_name": "count"
+                                }
+                              }
+                            }
+                          }
+                        ]
+                      }
+                    },
+                    "expression_heritage": "+= 1"
+                  },
+                  "expression_heritage": "+= 1"
+                }
+              }
+            }
+          ]
+        }
+      }
+    }
+  ]
+}

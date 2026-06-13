@@ -1,0 +1,824 @@
+{
+  "file_name": "main",
+  "imported_predicates": [],
+  "predicates_prefix": "",
+  "rule": [
+    {
+      "full_text": "@Engine(\"duckdb\")",
+      "head": {
+        "predicate_name": "@Engine",
+        "record": {
+          "field_value": [
+            {
+              "field": 0,
+              "value": {
+                "expression": {
+                  "expression_heritage": "\"duckdb\"",
+                  "literal": {
+                    "the_string": {
+                      "the_string": "duckdb"
+                    }
+                  }
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "body": {
+        "conjunction": {
+          "conjunct": [
+            {
+              "inclusion": {
+                "element": {
+                  "expression_heritage": "x",
+                  "variable": {
+                    "var_name": "x"
+                  }
+                },
+                "list": {
+                  "call": {
+                    "predicate_name": "Range",
+                    "record": {
+                      "field_value": [
+                        {
+                          "field": 0,
+                          "value": {
+                            "expression": {
+                              "expression_heritage": "10",
+                              "literal": {
+                                "the_number": {
+                                  "number": "10"
+                                }
+                              }
+                            }
+                          }
+                        }
+                      ]
+                    }
+                  },
+                  "expression_heritage": "Range(10)"
+                }
+              }
+            }
+          ]
+        }
+      },
+      "full_text": "Numbers(x) :- x in Range(10)",
+      "head": {
+        "predicate_name": "Numbers",
+        "record": {
+          "field_value": [
+            {
+              "field": 0,
+              "value": {
+                "expression": {
+                  "expression_heritage": "x",
+                  "variable": {
+                    "var_name": "x"
+                  }
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "body": {
+        "conjunction": {
+          "conjunct": [
+            {
+              "predicate": {
+                "predicate_name": "Numbers",
+                "record": {
+                  "field_value": [
+                    {
+                      "field": 0,
+                      "value": {
+                        "expression": {
+                          "expression_heritage": "x",
+                          "variable": {
+                            "var_name": "x"
+                          }
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            },
+            {
+              "predicate": {
+                "predicate_name": ">",
+                "record": {
+                  "field_value": [
+                    {
+                      "field": "left",
+                      "value": {
+                        "expression": {
+                          "expression_heritage": "x",
+                          "variable": {
+                            "var_name": "x"
+                          }
+                        }
+                      }
+                    },
+                    {
+                      "field": "right",
+                      "value": {
+                        "expression": {
+                          "expression_heritage": "0",
+                          "literal": {
+                            "the_number": {
+                              "number": "0"
+                            }
+                          }
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          ]
+        }
+      },
+      "full_text": "Arithmetic(x:,\n           add: x + 5,\n           sub: x - 3,\n           mul: x * 2,\n           div_val: x / 2,\n           mod_val: x % 3,\n           pow_val: x ^ 2,\n           neg_val: -x) :- Numbers(x), x > 0",
+      "head": {
+        "predicate_name": "Arithmetic",
+        "record": {
+          "field_value": [
+            {
+              "field": "x",
+              "value": {
+                "expression": {
+                  "expression_heritage": "x",
+                  "variable": {
+                    "var_name": "x"
+                  }
+                }
+              }
+            },
+            {
+              "field": "add",
+              "value": {
+                "expression": {
+                  "call": {
+                    "predicate_name": "+",
+                    "record": {
+                      "field_value": [
+                        {
+                          "field": "left",
+                          "value": {
+                            "expression": {
+                              "expression_heritage": "x",
+                              "variable": {
+                                "var_name": "x"
+                              }
+                            }
+                          }
+                        },
+                        {
+                          "field": "right",
+                          "value": {
+                            "expression": {
+                              "expression_heritage": "5",
+                              "literal": {
+                                "the_number": {
+                                  "number": "5"
+                                }
+                              }
+                            }
+                          }
+                        }
+                      ]
+                    }
+                  },
+                  "expression_heritage": "x + 5"
+                }
+              }
+            },
+            {
+              "field": "sub",
+              "value": {
+                "expression": {
+                  "call": {
+                    "predicate_name": "-",
+                    "record": {
+                      "field_value": [
+                        {
+                          "field": "left",
+                          "value": {
+                            "expression": {
+                              "expression_heritage": "x",
+                              "variable": {
+                                "var_name": "x"
+                              }
+                            }
+                          }
+                        },
+                        {
+                          "field": "right",
+                          "value": {
+                            "expression": {
+                              "expression_heritage": "3",
+                              "literal": {
+                                "the_number": {
+                                  "number": "3"
+                                }
+                              }
+                            }
+                          }
+                        }
+                      ]
+                    }
+                  },
+                  "expression_heritage": "x - 3"
+                }
+              }
+            },
+            {
+              "field": "mul",
+              "value": {
+                "expression": {
+                  "call": {
+                    "predicate_name": "*",
+                    "record": {
+                      "field_value": [
+                        {
+                          "field": "left",
+                          "value": {
+                            "expression": {
+                              "expression_heritage": "x",
+                              "variable": {
+                                "var_name": "x"
+                              }
+                            }
+                          }
+                        },
+                        {
+                          "field": "right",
+                          "value": {
+                            "expression": {
+                              "expression_heritage": "2",
+                              "literal": {
+                                "the_number": {
+                                  "number": "2"
+                                }
+                              }
+                            }
+                          }
+                        }
+                      ]
+                    }
+                  },
+                  "expression_heritage": "x * 2"
+                }
+              }
+            },
+            {
+              "field": "div_val",
+              "value": {
+                "expression": {
+                  "call": {
+                    "predicate_name": "/",
+                    "record": {
+                      "field_value": [
+                        {
+                          "field": "left",
+                          "value": {
+                            "expression": {
+                              "expression_heritage": "x",
+                              "variable": {
+                                "var_name": "x"
+                              }
+                            }
+                          }
+                        },
+                        {
+                          "field": "right",
+                          "value": {
+                            "expression": {
+                              "expression_heritage": "2",
+                              "literal": {
+                                "the_number": {
+                                  "number": "2"
+                                }
+                              }
+                            }
+                          }
+                        }
+                      ]
+                    }
+                  },
+                  "expression_heritage": "x / 2"
+                }
+              }
+            },
+            {
+              "field": "mod_val",
+              "value": {
+                "expression": {
+                  "call": {
+                    "predicate_name": "%",
+                    "record": {
+                      "field_value": [
+                        {
+                          "field": "left",
+                          "value": {
+                            "expression": {
+                              "expression_heritage": "x",
+                              "variable": {
+                                "var_name": "x"
+                              }
+                            }
+                          }
+                        },
+                        {
+                          "field": "right",
+                          "value": {
+                            "expression": {
+                              "expression_heritage": "3",
+                              "literal": {
+                                "the_number": {
+                                  "number": "3"
+                                }
+                              }
+                            }
+                          }
+                        }
+                      ]
+                    }
+                  },
+                  "expression_heritage": "x % 3"
+                }
+              }
+            },
+            {
+              "field": "pow_val",
+              "value": {
+                "expression": {
+                  "call": {
+                    "predicate_name": "^",
+                    "record": {
+                      "field_value": [
+                        {
+                          "field": "left",
+                          "value": {
+                            "expression": {
+                              "expression_heritage": "x",
+                              "variable": {
+                                "var_name": "x"
+                              }
+                            }
+                          }
+                        },
+                        {
+                          "field": "right",
+                          "value": {
+                            "expression": {
+                              "expression_heritage": "2",
+                              "literal": {
+                                "the_number": {
+                                  "number": "2"
+                                }
+                              }
+                            }
+                          }
+                        }
+                      ]
+                    }
+                  },
+                  "expression_heritage": "x ^ 2"
+                }
+              }
+            },
+            {
+              "field": "neg_val",
+              "value": {
+                "expression": {
+                  "call": {
+                    "predicate_name": "-",
+                    "record": {
+                      "field_value": [
+                        {
+                          "field": 0,
+                          "value": {
+                            "expression": {
+                              "expression_heritage": "x",
+                              "variable": {
+                                "var_name": "x"
+                              }
+                            }
+                          }
+                        }
+                      ]
+                    }
+                  },
+                  "expression_heritage": "-x"
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "body": {
+        "conjunction": {
+          "conjunct": [
+            {
+              "predicate": {
+                "predicate_name": "Numbers",
+                "record": {
+                  "field_value": [
+                    {
+                      "field": 0,
+                      "value": {
+                        "expression": {
+                          "expression_heritage": "x",
+                          "variable": {
+                            "var_name": "x"
+                          }
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            },
+            {
+              "predicate": {
+                "predicate_name": ">",
+                "record": {
+                  "field_value": [
+                    {
+                      "field": "left",
+                      "value": {
+                        "expression": {
+                          "expression_heritage": "x",
+                          "variable": {
+                            "var_name": "x"
+                          }
+                        }
+                      }
+                    },
+                    {
+                      "field": "right",
+                      "value": {
+                        "expression": {
+                          "expression_heritage": "0",
+                          "literal": {
+                            "the_number": {
+                              "number": "0"
+                            }
+                          }
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          ]
+        }
+      },
+      "full_text": "Combined(x:, result: (x + 1) * 2 - x / 2) :- Numbers(x), x > 0",
+      "head": {
+        "predicate_name": "Combined",
+        "record": {
+          "field_value": [
+            {
+              "field": "x",
+              "value": {
+                "expression": {
+                  "expression_heritage": "x",
+                  "variable": {
+                    "var_name": "x"
+                  }
+                }
+              }
+            },
+            {
+              "field": "result",
+              "value": {
+                "expression": {
+                  "call": {
+                    "predicate_name": "-",
+                    "record": {
+                      "field_value": [
+                        {
+                          "field": "left",
+                          "value": {
+                            "expression": {
+                              "call": {
+                                "predicate_name": "*",
+                                "record": {
+                                  "field_value": [
+                                    {
+                                      "field": "left",
+                                      "value": {
+                                        "expression": {
+                                          "call": {
+                                            "predicate_name": "+",
+                                            "record": {
+                                              "field_value": [
+                                                {
+                                                  "field": "left",
+                                                  "value": {
+                                                    "expression": {
+                                                      "expression_heritage": "x",
+                                                      "variable": {
+                                                        "var_name": "x"
+                                                      }
+                                                    }
+                                                  }
+                                                },
+                                                {
+                                                  "field": "right",
+                                                  "value": {
+                                                    "expression": {
+                                                      "expression_heritage": "1",
+                                                      "literal": {
+                                                        "the_number": {
+                                                          "number": "1"
+                                                        }
+                                                      }
+                                                    }
+                                                  }
+                                                }
+                                              ]
+                                            }
+                                          },
+                                          "expression_heritage": "x + 1"
+                                        }
+                                      }
+                                    },
+                                    {
+                                      "field": "right",
+                                      "value": {
+                                        "expression": {
+                                          "expression_heritage": "2",
+                                          "literal": {
+                                            "the_number": {
+                                              "number": "2"
+                                            }
+                                          }
+                                        }
+                                      }
+                                    }
+                                  ]
+                                }
+                              },
+                              "expression_heritage": "(x + 1) * 2"
+                            }
+                          }
+                        },
+                        {
+                          "field": "right",
+                          "value": {
+                            "expression": {
+                              "call": {
+                                "predicate_name": "/",
+                                "record": {
+                                  "field_value": [
+                                    {
+                                      "field": "left",
+                                      "value": {
+                                        "expression": {
+                                          "expression_heritage": "x",
+                                          "variable": {
+                                            "var_name": "x"
+                                          }
+                                        }
+                                      }
+                                    },
+                                    {
+                                      "field": "right",
+                                      "value": {
+                                        "expression": {
+                                          "expression_heritage": "2",
+                                          "literal": {
+                                            "the_number": {
+                                              "number": "2"
+                                            }
+                                          }
+                                        }
+                                      }
+                                    }
+                                  ]
+                                }
+                              },
+                              "expression_heritage": "x / 2"
+                            }
+                          }
+                        }
+                      ]
+                    }
+                  },
+                  "expression_heritage": "(x + 1) * 2 - x / 2"
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "full_text": "@OrderBy(Test, \"x\")",
+      "head": {
+        "predicate_name": "@OrderBy",
+        "record": {
+          "field_value": [
+            {
+              "field": 0,
+              "value": {
+                "expression": {
+                  "expression_heritage": "Test",
+                  "literal": {
+                    "the_predicate": {
+                      "predicate_name": "Test"
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "field": 1,
+              "value": {
+                "expression": {
+                  "expression_heritage": "\"x\"",
+                  "literal": {
+                    "the_string": {
+                      "the_string": "x"
+                    }
+                  }
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "body": {
+        "conjunction": {
+          "conjunct": [
+            {
+              "predicate": {
+                "predicate_name": "Arithmetic",
+                "record": {
+                  "field_value": [
+                    {
+                      "field": "x",
+                      "value": {
+                        "expression": {
+                          "expression_heritage": "x",
+                          "variable": {
+                            "var_name": "x"
+                          }
+                        }
+                      }
+                    },
+                    {
+                      "field": "add",
+                      "value": {
+                        "expression": {
+                          "expression_heritage": "add",
+                          "variable": {
+                            "var_name": "add"
+                          }
+                        }
+                      }
+                    },
+                    {
+                      "field": "sub",
+                      "value": {
+                        "expression": {
+                          "expression_heritage": "sub",
+                          "variable": {
+                            "var_name": "sub"
+                          }
+                        }
+                      }
+                    },
+                    {
+                      "field": "mul",
+                      "value": {
+                        "expression": {
+                          "expression_heritage": "mul",
+                          "variable": {
+                            "var_name": "mul"
+                          }
+                        }
+                      }
+                    },
+                    {
+                      "field": "div_val",
+                      "value": {
+                        "expression": {
+                          "expression_heritage": "div_val",
+                          "variable": {
+                            "var_name": "div_val"
+                          }
+                        }
+                      }
+                    },
+                    {
+                      "field": "mod_val",
+                      "value": {
+                        "expression": {
+                          "expression_heritage": "mod_val",
+                          "variable": {
+                            "var_name": "mod_val"
+                          }
+                        }
+                      }
+                    },
+                    {
+                      "field": "pow_val",
+                      "value": {
+                        "expression": {
+                          "expression_heritage": "pow_val",
+                          "variable": {
+                            "var_name": "pow_val"
+                          }
+                        }
+                      }
+                    },
+                    {
+                      "field": "neg_val",
+                      "value": {
+                        "expression": {
+                          "expression_heritage": "neg_val",
+                          "variable": {
+                            "var_name": "neg_val"
+                          }
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          ]
+        }
+      },
+      "full_text": "Test(x:, add:, sub:, mul:) :- Arithmetic(x:, add:, sub:, mul:, div_val:, mod_val:, pow_val:, neg_val:)",
+      "head": {
+        "predicate_name": "Test",
+        "record": {
+          "field_value": [
+            {
+              "field": "x",
+              "value": {
+                "expression": {
+                  "expression_heritage": "x",
+                  "variable": {
+                    "var_name": "x"
+                  }
+                }
+              }
+            },
+            {
+              "field": "add",
+              "value": {
+                "expression": {
+                  "expression_heritage": "add",
+                  "variable": {
+                    "var_name": "add"
+                  }
+                }
+              }
+            },
+            {
+              "field": "sub",
+              "value": {
+                "expression": {
+                  "expression_heritage": "sub",
+                  "variable": {
+                    "var_name": "sub"
+                  }
+                }
+              }
+            },
+            {
+              "field": "mul",
+              "value": {
+                "expression": {
+                  "expression_heritage": "mul",
+                  "variable": {
+                    "var_name": "mul"
+                  }
+                }
+              }
+            }
+          ]
+        }
+      }
+    }
+  ]
+}

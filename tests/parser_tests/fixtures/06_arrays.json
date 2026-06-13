@@ -1,0 +1,460 @@
+{
+  "file_name": "main",
+  "imported_predicates": [],
+  "predicates_prefix": "",
+  "rule": [
+    {
+      "full_text": "@Engine(\"duckdb\")",
+      "head": {
+        "predicate_name": "@Engine",
+        "record": {
+          "field_value": [
+            {
+              "field": 0,
+              "value": {
+                "expression": {
+                  "expression_heritage": "\"duckdb\"",
+                  "literal": {
+                    "the_string": {
+                      "the_string": "duckdb"
+                    }
+                  }
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "full_text": "Colors() = [\"red\", \"green\", \"blue\"]",
+      "head": {
+        "predicate_name": "Colors",
+        "record": {
+          "field_value": [
+            {
+              "field": "logica_value",
+              "value": {
+                "expression": {
+                  "expression_heritage": "[\"red\", \"green\", \"blue\"]",
+                  "literal": {
+                    "the_list": {
+                      "element": [
+                        {
+                          "expression_heritage": "\"red\"",
+                          "literal": {
+                            "the_string": {
+                              "the_string": "red"
+                            }
+                          }
+                        },
+                        {
+                          "expression_heritage": "\"green\"",
+                          "literal": {
+                            "the_string": {
+                              "the_string": "green"
+                            }
+                          }
+                        },
+                        {
+                          "expression_heritage": "\"blue\"",
+                          "literal": {
+                            "the_string": {
+                              "the_string": "blue"
+                            }
+                          }
+                        }
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "body": {
+        "conjunction": {
+          "conjunct": [
+            {
+              "inclusion": {
+                "element": {
+                  "expression_heritage": "c",
+                  "variable": {
+                    "var_name": "c"
+                  }
+                },
+                "list": {
+                  "call": {
+                    "predicate_name": "Colors",
+                    "record": {
+                      "field_value": []
+                    }
+                  },
+                  "expression_heritage": "Colors()"
+                }
+              }
+            }
+          ]
+        }
+      },
+      "full_text": "Color(c) :- c in Colors()",
+      "head": {
+        "predicate_name": "Color",
+        "record": {
+          "field_value": [
+            {
+              "field": 0,
+              "value": {
+                "expression": {
+                  "expression_heritage": "c",
+                  "variable": {
+                    "var_name": "c"
+                  }
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "full_text": "FirstColor() = Element(Colors(), 0)",
+      "head": {
+        "predicate_name": "FirstColor",
+        "record": {
+          "field_value": [
+            {
+              "field": "logica_value",
+              "value": {
+                "expression": {
+                  "call": {
+                    "predicate_name": "Element",
+                    "record": {
+                      "field_value": [
+                        {
+                          "field": 0,
+                          "value": {
+                            "expression": {
+                              "call": {
+                                "predicate_name": "Colors",
+                                "record": {
+                                  "field_value": []
+                                }
+                              },
+                              "expression_heritage": "Colors()"
+                            }
+                          }
+                        },
+                        {
+                          "field": 1,
+                          "value": {
+                            "expression": {
+                              "expression_heritage": "0",
+                              "literal": {
+                                "the_number": {
+                                  "number": "0"
+                                }
+                              }
+                            }
+                          }
+                        }
+                      ]
+                    }
+                  },
+                  "expression_heritage": "Element(Colors(), 0)"
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "full_text": "SecondColor() = Element(Colors(), 1)",
+      "head": {
+        "predicate_name": "SecondColor",
+        "record": {
+          "field_value": [
+            {
+              "field": "logica_value",
+              "value": {
+                "expression": {
+                  "call": {
+                    "predicate_name": "Element",
+                    "record": {
+                      "field_value": [
+                        {
+                          "field": 0,
+                          "value": {
+                            "expression": {
+                              "call": {
+                                "predicate_name": "Colors",
+                                "record": {
+                                  "field_value": []
+                                }
+                              },
+                              "expression_heritage": "Colors()"
+                            }
+                          }
+                        },
+                        {
+                          "field": 1,
+                          "value": {
+                            "expression": {
+                              "expression_heritage": "1",
+                              "literal": {
+                                "the_number": {
+                                  "number": "1"
+                                }
+                              }
+                            }
+                          }
+                        }
+                      ]
+                    }
+                  },
+                  "expression_heritage": "Element(Colors(), 1)"
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "body": {
+        "conjunction": {
+          "conjunct": [
+            {
+              "predicate": {
+                "predicate_name": "Color",
+                "record": {
+                  "field_value": [
+                    {
+                      "field": 0,
+                      "value": {
+                        "expression": {
+                          "expression_heritage": "c",
+                          "variable": {
+                            "var_name": "c"
+                          }
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            },
+            {
+              "unification": {
+                "left_hand_side": {
+                  "expression_heritage": "is_primary",
+                  "variable": {
+                    "var_name": "is_primary"
+                  }
+                },
+                "right_hand_side": {
+                  "call": {
+                    "predicate_name": "in",
+                    "record": {
+                      "field_value": [
+                        {
+                          "field": "left",
+                          "value": {
+                            "expression": {
+                              "expression_heritage": "c",
+                              "variable": {
+                                "var_name": "c"
+                              }
+                            }
+                          }
+                        },
+                        {
+                          "field": "right",
+                          "value": {
+                            "expression": {
+                              "expression_heritage": "[\"red\", \"blue\", \"yellow\"]",
+                              "literal": {
+                                "the_list": {
+                                  "element": [
+                                    {
+                                      "expression_heritage": "\"red\"",
+                                      "literal": {
+                                        "the_string": {
+                                          "the_string": "red"
+                                        }
+                                      }
+                                    },
+                                    {
+                                      "expression_heritage": "\"blue\"",
+                                      "literal": {
+                                        "the_string": {
+                                          "the_string": "blue"
+                                        }
+                                      }
+                                    },
+                                    {
+                                      "expression_heritage": "\"yellow\"",
+                                      "literal": {
+                                        "the_string": {
+                                          "the_string": "yellow"
+                                        }
+                                      }
+                                    }
+                                  ]
+                                }
+                              }
+                            }
+                          }
+                        }
+                      ]
+                    }
+                  },
+                  "expression_heritage": "c in [\"red\", \"blue\", \"yellow\"]"
+                }
+              }
+            }
+          ]
+        }
+      },
+      "full_text": "InColors(c:, is_primary:) :- Color(c), is_primary == (c in [\"red\", \"blue\", \"yellow\"])",
+      "head": {
+        "predicate_name": "InColors",
+        "record": {
+          "field_value": [
+            {
+              "field": "c",
+              "value": {
+                "expression": {
+                  "expression_heritage": "c",
+                  "variable": {
+                    "var_name": "c"
+                  }
+                }
+              }
+            },
+            {
+              "field": "is_primary",
+              "value": {
+                "expression": {
+                  "expression_heritage": "is_primary",
+                  "variable": {
+                    "var_name": "is_primary"
+                  }
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "full_text": "@OrderBy(Test, \"c\")",
+      "head": {
+        "predicate_name": "@OrderBy",
+        "record": {
+          "field_value": [
+            {
+              "field": 0,
+              "value": {
+                "expression": {
+                  "expression_heritage": "Test",
+                  "literal": {
+                    "the_predicate": {
+                      "predicate_name": "Test"
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "field": 1,
+              "value": {
+                "expression": {
+                  "expression_heritage": "\"c\"",
+                  "literal": {
+                    "the_string": {
+                      "the_string": "c"
+                    }
+                  }
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "body": {
+        "conjunction": {
+          "conjunct": [
+            {
+              "predicate": {
+                "predicate_name": "InColors",
+                "record": {
+                  "field_value": [
+                    {
+                      "field": "c",
+                      "value": {
+                        "expression": {
+                          "expression_heritage": "c",
+                          "variable": {
+                            "var_name": "c"
+                          }
+                        }
+                      }
+                    },
+                    {
+                      "field": "is_primary",
+                      "value": {
+                        "expression": {
+                          "expression_heritage": "is_primary",
+                          "variable": {
+                            "var_name": "is_primary"
+                          }
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          ]
+        }
+      },
+      "full_text": "Test(c:, is_primary:) :- InColors(c:, is_primary:)",
+      "head": {
+        "predicate_name": "Test",
+        "record": {
+          "field_value": [
+            {
+              "field": "c",
+              "value": {
+                "expression": {
+                  "expression_heritage": "c",
+                  "variable": {
+                    "var_name": "c"
+                  }
+                }
+              }
+            },
+            {
+              "field": "is_primary",
+              "value": {
+                "expression": {
+                  "expression_heritage": "is_primary",
+                  "variable": {
+                    "var_name": "is_primary"
+                  }
+                }
+              }
+            }
+          ]
+        }
+      }
+    }
+  ]
+}

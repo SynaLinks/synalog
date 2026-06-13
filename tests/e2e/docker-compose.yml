@@ -1,0 +1,50 @@
+# Open-source SQL engines for synalog end-to-end tests.
+#
+# SQLite and DuckDB run in-process (no container needed); this file provides
+# the server-based engines: PostgreSQL, Trino and Presto.
+#
+# Usage:
+#   docker compose -f tests/e2e/docker-compose.yml up -d --wait
+#   pytest tests/e2e
+#   docker compose -f tests/e2e/docker-compose.yml down
+#
+# Host ports (override with env vars before `up` and before `pytest`):
+#   PostgreSQL  ${SYNALOG_E2E_PSQL_PORT:-5433}   (5433 to avoid clashing with a local postgres)
+#   Trino       ${SYNALOG_E2E_TRINO_PORT:-8080}
+#   Presto      ${SYNALOG_E2E_PRESTO_PORT:-8081}
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: logica
+      POSTGRES_PASSWORD: logica
+      POSTGRES_DB: logica
+    ports:
+      - "${SYNALOG_E2E_PSQL_PORT:-5433}:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U logica -d logica"]
+      interval: 2s
+      timeout: 5s
+      retries: 30
+
+  trino:
+    image: trinodb/trino:476
+    ports:
+      - "${SYNALOG_E2E_TRINO_PORT:-8080}:8080"
+    healthcheck:
+      test: ["CMD-SHELL", "trino --execute 'SELECT 1' >/dev/null 2>&1"]
+      interval: 5s
+      timeout: 10s
+      retries: 40
+
+  presto:
+    image: prestodb/presto:0.293
+    ports:
+      - "${SYNALOG_E2E_PRESTO_PORT:-8081}:8080"
+    healthcheck:
+      # /v1/info reports {"starting": false} once the coordinator is ready.
+      test: ["CMD-SHELL", "curl -fsS http://localhost:8080/v1/info | grep -q '\"starting\":false'"]
+      interval: 5s
+      timeout: 10s
+      retries: 60

@@ -1,0 +1,198 @@
+name: Release
+
+# Triggers on a version tag push (e.g. `git tag v0.1.0 && git push --tags`)
+# or manually via the Actions UI.
+#
+# Builds abi3 wheels (cp310-abi3-*) — one wheel per platform/arch covers
+# every Python 3.10+ — plus free-threaded (python3.14t) wheels.
+#
+# One-time setup:
+#   1. Create a GitHub Environment named `pypi` (Settings → Environments).
+#      Ideally restrict deployment to tags matching `v*`.
+#   2. Add `PYPI_API_TOKEN` as a secret on that environment (scoping it to
+#      the env is more restrictive than a repo-level secret).
+# To migrate to Trusted Publishing later: drop the env block, add
+# `permissions: id-token: write`, and use pypa/gh-action-pypi-publish.
+
+on:
+  push:
+    tags: ["v*"]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  manylinux:
+    runs-on: ubuntu-22.04
+    strategy:
+      fail-fast: false
+      matrix:
+        target: [x86_64, x86, aarch64, armv7, s390x, ppc64le]
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.10"
+      - name: Build wheels
+        uses: PyO3/maturin-action@v1
+        with:
+          target: ${{ matrix.target }}
+          args: --release --out dist
+          manylinux: auto
+      - name: Build free-threaded wheels
+        uses: PyO3/maturin-action@v1
+        with:
+          target: ${{ matrix.target }}
+          args: --release --out dist -i python3.14t
+          manylinux: auto
+      - uses: actions/upload-artifact@v7
+        with:
+          name: wheels-manylinux-${{ matrix.target }}
+          path: dist
+
+  musllinux:
+    runs-on: ubuntu-22.04
+    strategy:
+      fail-fast: false
+      matrix:
+        target: [x86_64, x86, aarch64, armv7]
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.10"
+      - name: Build wheels
+        uses: PyO3/maturin-action@v1
+        with:
+          target: ${{ matrix.target }}
+          args: --release --out dist
+          manylinux: musllinux_1_2
+      - name: Build free-threaded wheels
+        uses: PyO3/maturin-action@v1
+        with:
+          target: ${{ matrix.target }}
+          args: --release --out dist -i python3.14t
+          manylinux: musllinux_1_2
+      - uses: actions/upload-artifact@v7
+        with:
+          name: wheels-musllinux-${{ matrix.target }}
+          path: dist
+
+  macos:
+    runs-on: ${{ matrix.platform.runner }}
+    strategy:
+      fail-fast: false
+      matrix:
+        platform:
+          - runner: macos-15-intel
+            target: x86_64
+          - runner: macos-latest
+            target: aarch64
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.10"
+      - name: Build wheels
+        uses: PyO3/maturin-action@v1
+        with:
+          target: ${{ matrix.platform.target }}
+          args: --release --out dist
+      - uses: actions/setup-python@v6
+        with:
+          python-version: 3.14t
+      - name: Build free-threaded wheels
+        uses: PyO3/maturin-action@v1
+        with:
+          target: ${{ matrix.platform.target }}
+          args: --release --out dist -i python3.14t
+      - uses: actions/upload-artifact@v7
+        with:
+          name: wheels-macos-${{ matrix.platform.target }}
+          path: dist
+
+  windows:
+    runs-on: ${{ matrix.platform.runner }}
+    strategy:
+      fail-fast: false
+      matrix:
+        platform:
+          - runner: windows-latest
+            target: x64
+            python_arch: x64
+          - runner: windows-latest
+            target: x86
+            python_arch: x86
+          - runner: windows-11-arm
+            target: aarch64
+            python_arch: arm64
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.10"
+          architecture: ${{ matrix.platform.python_arch }}
+      - name: Build wheels
+        uses: PyO3/maturin-action@v1
+        with:
+          target: ${{ matrix.platform.target }}
+          args: --release --out dist
+      - uses: actions/setup-python@v6
+        with:
+          python-version: 3.14t
+          architecture: ${{ matrix.platform.python_arch }}
+      - name: Build free-threaded wheels
+        uses: PyO3/maturin-action@v1
+        with:
+          target: ${{ matrix.platform.target }}
+          args: --release --out dist -i python3.14t
+      - uses: actions/upload-artifact@v7
+        with:
+          name: wheels-windows-${{ matrix.platform.target }}
+          path: dist
+
+  sdist:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - name: Build sdist
+        uses: PyO3/maturin-action@v1
+        with:
+          command: sdist
+          args: --out dist
+      - uses: actions/upload-artifact@v7
+        with:
+          name: wheels-sdist
+          path: dist
+
+  release:
+    name: Publish to PyPI
+    runs-on: ubuntu-latest
+    needs: [manylinux, musllinux, macos, windows, sdist]
+    if: startsWith(github.ref, 'refs/tags/')
+    environment:
+      name: pypi
+      url: https://pypi.org/p/synalog
+    permissions:
+      contents: read
+      # Used to generate artifact attestation
+      id-token: write
+      attestations: write
+    steps:
+      - uses: actions/download-artifact@v8
+        with:
+          pattern: wheels-*
+          path: dist
+          merge-multiple: true
+      - name: Generate artifact attestation
+        uses: actions/attest-build-provenance@v3
+        with:
+          subject-path: "dist/*"
+      - name: Publish to PyPI
+        uses: PyO3/maturin-action@v1
+        env:
+          MATURIN_PYPI_TOKEN: ${{ secrets.PYPI_API_TOKEN }}
+        with:
+          command: upload
+          args: --non-interactive --skip-existing dist/*

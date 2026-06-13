@@ -1,0 +1,495 @@
+$ synalog.check('recursion.l')
+No errors found.
+
+$ synalog.compile('recursion.l', 'AllManagers')
+-- Initializing DuckDB environment.
+create schema if not exists logica_home;
+-- Empty record, has to have a field by DuckDB syntax.
+drop type if exists logicarecord893574736 cascade; create type logicarecord893574736 as struct(nirvana numeric);
+create sequence if not exists eternal_logical_sequence;
+
+CREATE OR REPLACE TABLE logica_home.AllManagers_ifr0 AS WITH t_1_Employees AS (SELECT * FROM (
+  
+    SELECT
+      1 AS employee_id,
+      null AS manager_id
+   UNION ALL
+  
+    SELECT
+      2 AS employee_id,
+      1 AS manager_id
+   UNION ALL
+  
+    SELECT
+      3 AS employee_id,
+      2 AS manager_id
+   UNION ALL
+  
+    SELECT
+      4 AS employee_id,
+      2 AS manager_id
+  
+) AS UNUSED_TABLE_NAME  )
+SELECT * FROM (
+  
+    SELECT
+      t_0_Employees.employee_id AS employee_id,
+      t_0_Employees.manager_id AS manager_id
+    FROM
+      t_1_Employees AS t_0_Employees
+    WHERE
+      (t_0_Employees.manager_id IS NOT null)
+  
+) AS UNUSED_TABLE_NAME  ORDER BY employee_id, manager_id ;
+
+-- Interacting with table logica_home.AllManagers_ifr0
+
+CREATE OR REPLACE TABLE logica_home.AllManagers_ifr1 AS WITH t_1_Employees AS (SELECT * FROM (
+  
+    SELECT
+      1 AS employee_id,
+      null AS manager_id
+   UNION ALL
+  
+    SELECT
+      2 AS employee_id,
+      1 AS manager_id
+   UNION ALL
+  
+    SELECT
+      3 AS employee_id,
+      2 AS manager_id
+   UNION ALL
+  
+    SELECT
+      4 AS employee_id,
+      2 AS manager_id
+  
+) AS UNUSED_TABLE_NAME  )
+SELECT * FROM (
+  
+    SELECT
+      AllManagers_ifr0.employee_id AS employee_id,
+      Employees.manager_id AS manager_id
+    FROM
+      logica_home.AllManagers_ifr0 AS AllManagers_ifr0, t_1_Employees AS Employees
+    WHERE
+      (Employees.manager_id IS NOT null) AND
+      (Employees.employee_id = AllManagers_ifr0.manager_id)
+   UNION ALL
+  
+    SELECT
+      t_0_Employees.employee_id AS employee_id,
+      t_0_Employees.manager_id AS manager_id
+    FROM
+      t_1_Employees AS t_0_Employees
+    WHERE
+      (t_0_Employees.manager_id IS NOT null)
+  
+) AS UNUSED_TABLE_NAME  ORDER BY employee_id, manager_id ;
+
+-- Interacting with table logica_home.AllManagers_ifr1
+
+CREATE OR REPLACE TABLE logica_home.AllManagers_ifr2 AS WITH t_1_Employees AS (SELECT * FROM (
+  
+    SELECT
+      1 AS employee_id,
+      null AS manager_id
+   UNION ALL
+  
+    SELECT
+      2 AS employee_id,
+      1 AS manager_id
+   UNION ALL
+  
+    SELECT
+      3 AS employee_id,
+      2 AS manager_id
+   UNION ALL
+  
+    SELECT
+      4 AS employee_id,
+      2 AS manager_id
+  
+) AS UNUSED_TABLE_NAME  )
+SELECT * FROM (
+  
+    SELECT
+      AllManagers_ifr1.employee_id AS employee_id,
+      Employees.manager_id AS manager_id
+    FROM
+      logica_home.AllManagers_ifr1 AS AllManagers_ifr1, t_1_Employees AS Employees
+    WHERE
+      (Employees.manager_id IS NOT null) AND
+      (Employees.employee_id = AllManagers_ifr1.manager_id)
+   UNION ALL
+  
+    SELECT
+      t_0_Employees.employee_id AS employee_id,
+      t_0_Employees.manager_id AS manager_id
+    FROM
+      t_1_Employees AS t_0_Employees
+    WHERE
+      (t_0_Employees.manager_id IS NOT null)
+  
+) AS UNUSED_TABLE_NAME  ORDER BY employee_id, manager_id ;
+
+-- Interacting with table logica_home.AllManagers_ifr2
+
+CREATE OR REPLACE TABLE logica_home.AllManagers_ifr1 AS WITH t_1_Employees AS (SELECT * FROM (
+  
+    SELECT
+      1 AS employee_id,
+      null AS manager_id
+   UNION ALL
+  
+    SELECT
+      2 AS employee_id,
+      1 AS manager_id
+   UNION ALL
+  
+    SELECT
+      3 AS employee_id,
+      2 AS manager_id
+   UNION ALL
+  
+    SELECT
+      4 AS employee_id,
+      2 AS manager_id
+  
+) AS UNUSED_TABLE_NAME  )
+SELECT * FROM (
+  
+    SELECT
+      AllManagers_ifr2.employee_id AS employee_id,
+      Employees.manager_id AS manager_id
+    FROM
+      logica_home.AllManagers_ifr2 AS AllManagers_ifr2, t_1_Employees AS Employees
+    WHERE
+      (Employees.manager_id IS NOT null) AND
+      (Employees.employee_id = AllManagers_ifr2.manager_id)
+   UNION ALL
+  
+    SELECT
+      t_0_Employees.employee_id AS employee_id,
+      t_0_Employees.manager_id AS manager_id
+    FROM
+      t_1_Employees AS t_0_Employees
+    WHERE
+      (t_0_Employees.manager_id IS NOT null)
+  
+) AS UNUSED_TABLE_NAME  ORDER BY employee_id, manager_id ;
+
+-- Interacting with table logica_home.AllManagers_ifr1
+
+WITH t_1_Employees AS (SELECT * FROM (
+  
+    SELECT
+      1 AS employee_id,
+      null AS manager_id
+   UNION ALL
+  
+    SELECT
+      2 AS employee_id,
+      1 AS manager_id
+   UNION ALL
+  
+    SELECT
+      3 AS employee_id,
+      2 AS manager_id
+   UNION ALL
+  
+    SELECT
+      4 AS employee_id,
+      2 AS manager_id
+  
+) AS UNUSED_TABLE_NAME  )
+SELECT * FROM (
+  
+    SELECT
+      AllManagers_ifr3.employee_id AS employee_id,
+      Employees.manager_id AS manager_id
+    FROM
+      logica_home.AllManagers_ifr1 AS AllManagers_ifr3, t_1_Employees AS Employees
+    WHERE
+      (Employees.manager_id IS NOT null) AND
+      (Employees.employee_id = AllManagers_ifr3.manager_id)
+   UNION ALL
+  
+    SELECT
+      Employees.employee_id AS employee_id,
+      Employees.manager_id AS manager_id
+    FROM
+      t_1_Employees AS Employees
+    WHERE
+      (Employees.manager_id IS NOT null)
+  
+) AS UNUSED_TABLE_NAME  ORDER BY employee_id, manager_id ;
+
+-- Executed on DuckDB:
+| employee_id | manager_id |
+|-------------|------------|
+| 2           | 1          |
+| 3           | 1          |
+| 3           | 2          |
+| 4           | 1          |
+| 4           | 2          |
+(5 rows)
+
+$ synalog.compile('recursion.l', 'ShippingCost')
+-- Initializing DuckDB environment.
+create schema if not exists logica_home;
+-- Empty record, has to have a field by DuckDB syntax.
+drop type if exists logicarecord893574736 cascade; create type logicarecord893574736 as struct(nirvana numeric);
+create sequence if not exists eternal_logical_sequence;
+
+CREATE OR REPLACE TABLE logica_home.RouteCost_ifr0 AS WITH t_0_ShippingRoutes AS (SELECT * FROM (
+  
+    SELECT
+      E'warehouse_main' AS origin,
+      E'rotterdam' AS destination,
+      4 AS cost
+   UNION ALL
+  
+    SELECT
+      E'rotterdam' AS origin,
+      E'oslo' AS destination,
+      3 AS cost
+   UNION ALL
+  
+    SELECT
+      E'warehouse_main' AS origin,
+      E'oslo' AS destination,
+      9 AS cost
+   UNION ALL
+  
+    SELECT
+      E'oslo' AS origin,
+      E'helsinki' AS destination,
+      2 AS cost
+  
+) AS UNUSED_TABLE_NAME  )
+SELECT * FROM (
+  
+    SELECT
+      ShippingRoutes.destination AS destination,
+      ShippingRoutes.cost AS cost
+    FROM
+      t_0_ShippingRoutes AS ShippingRoutes
+    WHERE
+      (ShippingRoutes.origin = E'warehouse_main')
+  
+) AS UNUSED_TABLE_NAME  ;
+
+-- Interacting with table logica_home.RouteCost_ifr0
+
+CREATE OR REPLACE TABLE logica_home.RouteCost_ifr1 AS WITH t_0_ShippingRoutes AS (SELECT * FROM (
+  
+    SELECT
+      E'warehouse_main' AS origin,
+      E'rotterdam' AS destination,
+      4 AS cost
+   UNION ALL
+  
+    SELECT
+      E'rotterdam' AS origin,
+      E'oslo' AS destination,
+      3 AS cost
+   UNION ALL
+  
+    SELECT
+      E'warehouse_main' AS origin,
+      E'oslo' AS destination,
+      9 AS cost
+   UNION ALL
+  
+    SELECT
+      E'oslo' AS origin,
+      E'helsinki' AS destination,
+      2 AS cost
+  
+) AS UNUSED_TABLE_NAME  )
+SELECT * FROM (
+  
+    SELECT
+      ShippingRoutes.destination AS destination,
+      ShippingRoutes.cost AS cost
+    FROM
+      t_0_ShippingRoutes AS ShippingRoutes
+    WHERE
+      (ShippingRoutes.origin = E'warehouse_main')
+   UNION ALL
+  
+    SELECT
+      t_0_ShippingRoutes.destination AS destination,
+      ((RouteCost_ifr0.cost) + (t_0_ShippingRoutes.cost)) AS cost
+    FROM
+      logica_home.RouteCost_ifr0 AS RouteCost_ifr0, t_0_ShippingRoutes
+    WHERE
+      (t_0_ShippingRoutes.origin = RouteCost_ifr0.destination)
+  
+) AS UNUSED_TABLE_NAME  ;
+
+-- Interacting with table logica_home.RouteCost_ifr1
+
+CREATE OR REPLACE TABLE logica_home.RouteCost_ifr2 AS WITH t_0_ShippingRoutes AS (SELECT * FROM (
+  
+    SELECT
+      E'warehouse_main' AS origin,
+      E'rotterdam' AS destination,
+      4 AS cost
+   UNION ALL
+  
+    SELECT
+      E'rotterdam' AS origin,
+      E'oslo' AS destination,
+      3 AS cost
+   UNION ALL
+  
+    SELECT
+      E'warehouse_main' AS origin,
+      E'oslo' AS destination,
+      9 AS cost
+   UNION ALL
+  
+    SELECT
+      E'oslo' AS origin,
+      E'helsinki' AS destination,
+      2 AS cost
+  
+) AS UNUSED_TABLE_NAME  )
+SELECT * FROM (
+  
+    SELECT
+      ShippingRoutes.destination AS destination,
+      ShippingRoutes.cost AS cost
+    FROM
+      t_0_ShippingRoutes AS ShippingRoutes
+    WHERE
+      (ShippingRoutes.origin = E'warehouse_main')
+   UNION ALL
+  
+    SELECT
+      t_0_ShippingRoutes.destination AS destination,
+      ((RouteCost_ifr1.cost) + (t_0_ShippingRoutes.cost)) AS cost
+    FROM
+      logica_home.RouteCost_ifr1 AS RouteCost_ifr1, t_0_ShippingRoutes
+    WHERE
+      (t_0_ShippingRoutes.origin = RouteCost_ifr1.destination)
+  
+) AS UNUSED_TABLE_NAME  ;
+
+-- Interacting with table logica_home.RouteCost_ifr2
+
+CREATE OR REPLACE TABLE logica_home.RouteCost_ifr1 AS WITH t_0_ShippingRoutes AS (SELECT * FROM (
+  
+    SELECT
+      E'warehouse_main' AS origin,
+      E'rotterdam' AS destination,
+      4 AS cost
+   UNION ALL
+  
+    SELECT
+      E'rotterdam' AS origin,
+      E'oslo' AS destination,
+      3 AS cost
+   UNION ALL
+  
+    SELECT
+      E'warehouse_main' AS origin,
+      E'oslo' AS destination,
+      9 AS cost
+   UNION ALL
+  
+    SELECT
+      E'oslo' AS origin,
+      E'helsinki' AS destination,
+      2 AS cost
+  
+) AS UNUSED_TABLE_NAME  )
+SELECT * FROM (
+  
+    SELECT
+      ShippingRoutes.destination AS destination,
+      ShippingRoutes.cost AS cost
+    FROM
+      t_0_ShippingRoutes AS ShippingRoutes
+    WHERE
+      (ShippingRoutes.origin = E'warehouse_main')
+   UNION ALL
+  
+    SELECT
+      t_0_ShippingRoutes.destination AS destination,
+      ((RouteCost_ifr2.cost) + (t_0_ShippingRoutes.cost)) AS cost
+    FROM
+      logica_home.RouteCost_ifr2 AS RouteCost_ifr2, t_0_ShippingRoutes
+    WHERE
+      (t_0_ShippingRoutes.origin = RouteCost_ifr2.destination)
+  
+) AS UNUSED_TABLE_NAME  ;
+
+-- Interacting with table logica_home.RouteCost_ifr1
+
+CREATE OR REPLACE TABLE logica_home.RouteCost AS WITH t_0_ShippingRoutes AS (SELECT * FROM (
+  
+    SELECT
+      E'warehouse_main' AS origin,
+      E'rotterdam' AS destination,
+      4 AS cost
+   UNION ALL
+  
+    SELECT
+      E'rotterdam' AS origin,
+      E'oslo' AS destination,
+      3 AS cost
+   UNION ALL
+  
+    SELECT
+      E'warehouse_main' AS origin,
+      E'oslo' AS destination,
+      9 AS cost
+   UNION ALL
+  
+    SELECT
+      E'oslo' AS origin,
+      E'helsinki' AS destination,
+      2 AS cost
+  
+) AS UNUSED_TABLE_NAME  )
+SELECT * FROM (
+  
+    SELECT
+      ShippingRoutes.destination AS destination,
+      ShippingRoutes.cost AS cost
+    FROM
+      t_0_ShippingRoutes AS ShippingRoutes
+    WHERE
+      (ShippingRoutes.origin = E'warehouse_main')
+   UNION ALL
+  
+    SELECT
+      t_1_ShippingRoutes.destination AS destination,
+      ((RouteCost_ifr3.cost) + (t_1_ShippingRoutes.cost)) AS cost
+    FROM
+      logica_home.RouteCost_ifr1 AS RouteCost_ifr3, t_0_ShippingRoutes AS t_1_ShippingRoutes
+    WHERE
+      (t_1_ShippingRoutes.origin = RouteCost_ifr3.destination)
+  
+) AS UNUSED_TABLE_NAME  ;
+
+-- Interacting with table logica_home.RouteCost
+
+SELECT
+  RouteCost.destination AS destination,
+  MIN(RouteCost.cost) AS total
+FROM
+  logica_home.RouteCost AS RouteCost
+GROUP BY RouteCost.destination ORDER BY destination;
+
+-- Executed on DuckDB:
+| destination | total |
+|-------------|-------|
+| helsinki    | 9     |
+| oslo        | 7     |
+| rotterdam   | 4     |
+(3 rows)

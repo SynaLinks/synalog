@@ -1,0 +1,5 @@
+SELECT
+  x_8 AS col0,
+  CAST(x_8 AS STRING) AS col1
+FROM
+  UNNEST(GENERATE_ARRAY(0, 5 - 1)) as x_8 ORDER BY col0;

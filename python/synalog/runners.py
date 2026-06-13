@@ -1,0 +1,254 @@
+"""SQL runners for the synalog CLI: execute compiled SQL against real engines.
+
+Each runner takes a SQL script (possibly multi-statement, as produced by
+``synalog.compile``) and returns ``(columns, rows)`` for the last statement
+that produced a result set. Connections are in-memory and per-call, so the
+``loads`` argument — a list of ``(table, path)`` pairs for csv/tsv/json/
+jsonl/parquet files — is replayed on every connection before the script runs.
+
+Runners reproduce the runtime environment upstream Python Logica provides on
+its own connections:
+  - sqlite: Logica's UDFs (ArgMin/ArgMax, ARRAY_CONCAT, IN_LIST, Split, ...)
+    registered via ``logica.common.sqlite3_logica`` when the ``logica``
+    package is installed; plain sqlite3 otherwise.
+  - duckdb: an ``ARRAY_CONCAT_AGG`` macro (flatten + list).
+  - psql:   an ``ARRAY_CONCAT_AGG`` aggregate (array_cat).
+  - all:    a ``CurrentDate(date)`` relation when the program references the
+    CurrentDate built-in concept.
+"""
+
+from __future__ import annotations
+
+import csv
+import json
+import os
+import sqlite3
+
+Result = tuple[list[str], list[tuple]]
+
+# File formats accepted by the `loads` argument of run_sql.
+LOAD_EXTENSIONS = {".csv", ".tsv", ".json", ".jsonl", ".ndjson", ".parquet"}
+
+_DUCKDB_READERS = {
+    ".csv": "read_csv",
+    ".tsv": "read_csv",
+    ".json": "read_json",
+    ".jsonl": "read_json",
+    ".ndjson": "read_json",
+    ".parquet": "read_parquet",
+}
+
+
+class RunnerUnavailable(Exception):
+    """The engine has no local runner or its driver is not installed."""
+
+
+def _needs_current_date(sql: str) -> bool:
+    return "CurrentDate" in sql
+
+
+def _quote(identifier: str) -> str:
+    return '"' + identifier.replace('"', '""') + '"'
+
+
+def _extension(path: str) -> str:
+    ext = os.path.splitext(path)[1].lower()
+    if ext not in LOAD_EXTENSIONS:
+        raise ValueError(
+            f"cannot load '{path}': supported formats are "
+            + ", ".join(sorted(LOAD_EXTENSIONS))
+        )
+    return ext
+
+
+def _coerce_csv_value(text: str):
+    if text == "":
+        return None
+    for cast in (int, float):
+        try:
+            return cast(text)
+        except ValueError:
+            pass
+    return text
+
+
+def _scalar(value):
+    return json.dumps(value) if isinstance(value, (dict, list)) else value
+
+
+def _file_records(path: str) -> Result:
+    """Read a data file into (columns, rows) for engines without file readers."""
+    ext = _extension(path)
+    if ext in (".csv", ".tsv"):
+        with open(path, newline="", encoding="utf-8") as f:
+            reader = csv.reader(f, delimiter="\t" if ext == ".tsv" else ",")
+            header = next(reader, None)
+            if not header:
+                raise ValueError(f"cannot load '{path}': no header row")
+            width = len(header)
+            rows = [
+                tuple(([_coerce_csv_value(v) for v in row] + [None] * width)[:width])
+                for row in reader
+            ]
+            return header, rows
+    if ext in (".json", ".jsonl", ".ndjson"):
+        with open(path, encoding="utf-8") as f:
+            if ext == ".json":
+                records = json.load(f)
+            else:
+                records = [json.loads(line) for line in f if line.strip()]
+        if not isinstance(records, list) or not all(
+            isinstance(r, dict) for r in records
+        ):
+            raise ValueError(f"cannot load '{path}': expected an array of JSON objects")
+        columns: dict[str, None] = {}
+        for record in records:
+            for key in record:
+                columns.setdefault(key, None)
+        if not columns:
+            raise ValueError(f"cannot load '{path}': no records")
+        names = list(columns)
+        return names, [tuple(_scalar(r.get(c)) for c in names) for r in records]
+    raise RunnerUnavailable(
+        f"cannot load '{path}' with this engine; parquet needs the duckdb engine"
+    )
+
+
+def _load_sqlite(conn: sqlite3.Connection, table: str, path: str) -> None:
+    columns, rows = _file_records(path)
+    column_list = ", ".join(_quote(c) for c in columns)
+    placeholders = ", ".join("?" * len(columns))
+    conn.execute(f"DROP TABLE IF EXISTS {_quote(table)}")
+    conn.execute(f"CREATE TABLE {_quote(table)} ({column_list})")
+    conn.executemany(f"INSERT INTO {_quote(table)} VALUES ({placeholders})", rows)
+
+
+def _split_sqlite_statements(sql: str) -> list[str]:
+    """Split a script into statements using sqlite's own tokenizer."""
+    statements, current = [], ""
+    for line in sql.splitlines(keepends=True):
+        current += line
+        if sqlite3.complete_statement(current):
+            if current.strip():
+                statements.append(current)
+            current = ""
+    if current.strip():
+        statements.append(current)
+    return statements
+
+
+def _run_sqlite(sql: str, loads) -> Result:
+    conn = sqlite3.connect(":memory:")
+    try:
+        from logica.common import sqlite3_logica
+
+        sqlite3_logica.ExtendConnectionWithLogicaFunctions(conn)
+    except ImportError:
+        pass  # best effort: most programs only need plain sqlite3
+    try:
+        for table, path in loads:
+            _load_sqlite(conn, table, path)
+        if _needs_current_date(sql):
+            conn.execute("CREATE TABLE CurrentDate AS SELECT date('now') AS date")
+        columns: list[str] = []
+        rows: list[tuple] = []
+        for statement in _split_sqlite_statements(sql):
+            cur = conn.execute(statement)
+            if cur.description is not None:
+                columns = [col[0] for col in cur.description]
+                rows = cur.fetchall()
+        return columns, rows
+    finally:
+        conn.close()
+
+
+def _run_duckdb(sql: str, loads) -> Result:
+    try:
+        import duckdb
+    except ImportError:
+        raise RunnerUnavailable(
+            "The duckdb engine needs the 'duckdb' package: pip install duckdb"
+        ) from None
+
+    conn = duckdb.connect(":memory:")
+    try:
+        conn.execute("CREATE MACRO ARRAY_CONCAT_AGG(x) AS flatten(list(x))")
+        for table, path in loads:
+            reader = _DUCKDB_READERS[_extension(path)]
+            conn.execute(
+                f"CREATE OR REPLACE TABLE {_quote(table)}"
+                f" AS SELECT * FROM {reader}(?)",
+                [path],
+            )
+        if _needs_current_date(sql):
+            conn.execute(
+                "CREATE TABLE CurrentDate AS"
+                " SELECT strftime(current_date, '%Y-%m-%d') AS date"
+            )
+        # duckdb executes multi-statement scripts and returns the last result.
+        cur = conn.execute(sql)
+        columns = [col[0] for col in cur.description or []]
+        return columns, cur.fetchall()
+    finally:
+        conn.close()
+
+
+def _run_psql(sql: str, dsn: str | None) -> Result:
+    try:
+        import psycopg
+    except ImportError:
+        raise RunnerUnavailable(
+            "The psql engine needs the 'psycopg' package: pip install psycopg"
+        ) from None
+
+    dsn = dsn or os.environ.get("SYNALOG_PSQL_DSN")
+    if not dsn:
+        raise RunnerUnavailable(
+            "The psql engine needs a connection string:"
+            " pass --dsn or set SYNALOG_PSQL_DSN"
+        )
+    with psycopg.connect(dsn, autocommit=True) as conn:
+        with conn.cursor() as cur:
+            cur.execute(
+                "CREATE OR REPLACE AGGREGATE ARRAY_CONCAT_AGG(anycompatiblearray)"
+                " (SFUNC = array_cat, STYPE = anycompatiblearray)"
+            )
+            if _needs_current_date(sql):
+                cur.execute(
+                    "CREATE TABLE IF NOT EXISTS CurrentDate AS"
+                    " SELECT to_char(current_date, 'YYYY-MM-DD') AS date"
+                )
+            cur.execute(sql)
+            columns: list[str] = []
+            rows: list[tuple] = []
+            while True:
+                if cur.description is not None:
+                    columns = [col[0] for col in cur.description]
+                    rows = cur.fetchall()
+                if not cur.nextset():
+                    break
+            return columns, rows
+
+
+def run_sql(engine: str, sql: str, dsn: str | None = None, loads=()) -> Result:
+    """Execute `sql` against `engine`, returning (column_names, rows).
+
+    `loads` is a sequence of (table, path) pairs; each file is loaded into
+    the connection as a table before the script runs.
+    """
+    if engine == "sqlite":
+        return _run_sqlite(sql, loads)
+    if engine == "duckdb":
+        return _run_duckdb(sql, loads)
+    if engine == "psql":
+        if loads:
+            raise RunnerUnavailable(
+                "The psql runner cannot load files into the database; load them"
+                " with your own tools (e.g. COPY), or use --engine duckdb"
+            )
+        return _run_psql(sql, dsn)
+    raise RunnerUnavailable(
+        f"Engine '{engine}' has no local runner; engines runnable from the CLI:"
+        " duckdb, sqlite, psql. Use the 'print' command to get the SQL and run"
+        " it with your own client."
+    )

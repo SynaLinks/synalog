@@ -1,0 +1,213 @@
+$ synalog.check('functors.l')
+No errors found.
+
+$ synalog.compile('functors.l', 'CustomerRevenue')
+-- Initializing DuckDB environment.
+create schema if not exists logica_home;
+-- Empty record, has to have a field by DuckDB syntax.
+drop type if exists logicarecord893574736 cascade; create type logicarecord893574736 as struct(nirvana numeric);
+create sequence if not exists eternal_logical_sequence;
+
+WITH t_2_Orders AS (SELECT * FROM (
+  
+    SELECT
+      E'John' AS customer_name,
+      1 AS user_id,
+      100 AS amount
+   UNION ALL
+  
+    SELECT
+      E'John' AS customer_name,
+      1 AS user_id,
+      250 AS amount
+   UNION ALL
+  
+    SELECT
+      E'Mary' AS customer_name,
+      2 AS user_id,
+      4000 AS amount
+   UNION ALL
+  
+    SELECT
+      E'Acme' AS customer_name,
+      3 AS user_id,
+      12000 AS amount
+  
+) AS UNUSED_TABLE_NAME  ),
+t_0_Filter AS (SELECT
+  t_1_Orders.customer_name AS customer_name
+FROM
+  t_2_Orders AS t_1_Orders
+GROUP BY t_1_Orders.customer_name)
+SELECT
+  Filter.customer_name AS customer_name,
+  SUM(Orders.amount) AS revenue
+FROM
+  t_0_Filter AS Filter, t_2_Orders AS Orders
+WHERE
+  (Orders.customer_name = Filter.customer_name)
+GROUP BY Filter.customer_name ORDER BY customer_name;
+
+-- Executed on DuckDB:
+| customer_name | revenue |
+|---------------|---------|
+| Acme          | 12000   |
+| John          | 350     |
+| Mary          | 4000    |
+(3 rows)
+
+$ synalog.compile('functors.l', 'JohnsRevenue')
+-- Initializing DuckDB environment.
+create schema if not exists logica_home;
+-- Empty record, has to have a field by DuckDB syntax.
+drop type if exists logicarecord893574736 cascade; create type logicarecord893574736 as struct(nirvana numeric);
+create sequence if not exists eternal_logical_sequence;
+
+WITH t_0_Orders AS (SELECT * FROM (
+  
+    SELECT
+      E'John' AS customer_name,
+      1 AS user_id,
+      100 AS amount
+   UNION ALL
+  
+    SELECT
+      E'John' AS customer_name,
+      1 AS user_id,
+      250 AS amount
+   UNION ALL
+  
+    SELECT
+      E'Mary' AS customer_name,
+      2 AS user_id,
+      4000 AS amount
+   UNION ALL
+  
+    SELECT
+      E'Acme' AS customer_name,
+      3 AS user_id,
+      12000 AS amount
+  
+) AS UNUSED_TABLE_NAME  )
+SELECT
+  Orders.customer_name AS customer_name,
+  SUM(Orders.amount) AS revenue
+FROM
+  t_0_Orders AS Orders
+WHERE
+  (E'John' = Orders.customer_name)
+GROUP BY Orders.customer_name ORDER BY customer_name;
+
+-- Executed on DuckDB:
+| customer_name | revenue |
+|---------------|---------|
+| John          | 350     |
+(1 row)
+
+$ synalog.compile('functors.l', 'EnterpriseRevenue')
+-- Initializing DuckDB environment.
+create schema if not exists logica_home;
+-- Empty record, has to have a field by DuckDB syntax.
+drop type if exists logicarecord893574736 cascade; create type logicarecord893574736 as struct(nirvana numeric);
+create sequence if not exists eternal_logical_sequence;
+
+WITH t_0_Orders AS (SELECT * FROM (
+  
+    SELECT
+      E'John' AS customer_name,
+      1 AS user_id,
+      100 AS amount
+   UNION ALL
+  
+    SELECT
+      E'John' AS customer_name,
+      1 AS user_id,
+      250 AS amount
+   UNION ALL
+  
+    SELECT
+      E'Mary' AS customer_name,
+      2 AS user_id,
+      4000 AS amount
+   UNION ALL
+  
+    SELECT
+      E'Acme' AS customer_name,
+      3 AS user_id,
+      12000 AS amount
+  
+) AS UNUSED_TABLE_NAME  )
+SELECT
+  E'enterprise' AS segment_id,
+  SUM(Orders.amount) AS total
+FROM
+  t_0_Orders AS Orders
+WHERE
+  (Orders.user_id = 3)
+GROUP BY (E'enterprise' || '') ORDER BY segment_id;
+
+-- Executed on DuckDB:
+| segment_id | total |
+|------------|-------|
+| enterprise | 12000 |
+(1 row)
+
+$ synalog.compile('functors.l', 'SMBRevenue')
+-- Initializing DuckDB environment.
+create schema if not exists logica_home;
+-- Empty record, has to have a field by DuckDB syntax.
+drop type if exists logicarecord893574736 cascade; create type logicarecord893574736 as struct(nirvana numeric);
+create sequence if not exists eternal_logical_sequence;
+
+WITH t_0_SMBCustomers AS (SELECT * FROM (
+  
+    SELECT
+      E'smb' AS segment_id,
+      1 AS user_id
+   UNION ALL
+  
+    SELECT
+      E'smb' AS segment_id,
+      2 AS user_id
+  
+) AS UNUSED_TABLE_NAME  ),
+t_1_Orders AS (SELECT * FROM (
+  
+    SELECT
+      E'John' AS customer_name,
+      1 AS user_id,
+      100 AS amount
+   UNION ALL
+  
+    SELECT
+      E'John' AS customer_name,
+      1 AS user_id,
+      250 AS amount
+   UNION ALL
+  
+    SELECT
+      E'Mary' AS customer_name,
+      2 AS user_id,
+      4000 AS amount
+   UNION ALL
+  
+    SELECT
+      E'Acme' AS customer_name,
+      3 AS user_id,
+      12000 AS amount
+  
+) AS UNUSED_TABLE_NAME  )
+SELECT
+  SMBCustomers.segment_id AS segment_id,
+  SUM(Orders.amount) AS total
+FROM
+  t_0_SMBCustomers AS SMBCustomers, t_1_Orders AS Orders
+WHERE
+  (Orders.user_id = SMBCustomers.user_id)
+GROUP BY SMBCustomers.segment_id ORDER BY segment_id;
+
+-- Executed on DuckDB:
+| segment_id | total |
+|------------|-------|
+| smb        | 4350  |
+(1 row)

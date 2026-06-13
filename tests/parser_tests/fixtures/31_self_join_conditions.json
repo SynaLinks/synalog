@@ -1,0 +1,489 @@
+{
+  "file_name": "main",
+  "imported_predicates": [],
+  "predicates_prefix": "",
+  "rule": [
+    {
+      "full_text": "@Engine(\"duckdb\")",
+      "head": {
+        "predicate_name": "@Engine",
+        "record": {
+          "field_value": [
+            {
+              "field": 0,
+              "value": {
+                "expression": {
+                  "expression_heritage": "\"duckdb\"",
+                  "literal": {
+                    "the_string": {
+                      "the_string": "duckdb"
+                    }
+                  }
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "full_text": "Employee(id: 1, name: \"Alice\", manager_id: 3)",
+      "head": {
+        "predicate_name": "Employee",
+        "record": {
+          "field_value": [
+            {
+              "field": "id",
+              "value": {
+                "expression": {
+                  "expression_heritage": "1",
+                  "literal": {
+                    "the_number": {
+                      "number": "1"
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "field": "name",
+              "value": {
+                "expression": {
+                  "expression_heritage": "\"Alice\"",
+                  "literal": {
+                    "the_string": {
+                      "the_string": "Alice"
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "field": "manager_id",
+              "value": {
+                "expression": {
+                  "expression_heritage": "3",
+                  "literal": {
+                    "the_number": {
+                      "number": "3"
+                    }
+                  }
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "full_text": "Employee(id: 2, name: \"Bob\", manager_id: 3)",
+      "head": {
+        "predicate_name": "Employee",
+        "record": {
+          "field_value": [
+            {
+              "field": "id",
+              "value": {
+                "expression": {
+                  "expression_heritage": "2",
+                  "literal": {
+                    "the_number": {
+                      "number": "2"
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "field": "name",
+              "value": {
+                "expression": {
+                  "expression_heritage": "\"Bob\"",
+                  "literal": {
+                    "the_string": {
+                      "the_string": "Bob"
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "field": "manager_id",
+              "value": {
+                "expression": {
+                  "expression_heritage": "3",
+                  "literal": {
+                    "the_number": {
+                      "number": "3"
+                    }
+                  }
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "full_text": "Employee(id: 3, name: \"Charlie\", manager_id: 4)",
+      "head": {
+        "predicate_name": "Employee",
+        "record": {
+          "field_value": [
+            {
+              "field": "id",
+              "value": {
+                "expression": {
+                  "expression_heritage": "3",
+                  "literal": {
+                    "the_number": {
+                      "number": "3"
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "field": "name",
+              "value": {
+                "expression": {
+                  "expression_heritage": "\"Charlie\"",
+                  "literal": {
+                    "the_string": {
+                      "the_string": "Charlie"
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "field": "manager_id",
+              "value": {
+                "expression": {
+                  "expression_heritage": "4",
+                  "literal": {
+                    "the_number": {
+                      "number": "4"
+                    }
+                  }
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "full_text": "Employee(id: 4, name: \"David\", manager_id: 4)",
+      "head": {
+        "predicate_name": "Employee",
+        "record": {
+          "field_value": [
+            {
+              "field": "id",
+              "value": {
+                "expression": {
+                  "expression_heritage": "4",
+                  "literal": {
+                    "the_number": {
+                      "number": "4"
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "field": "name",
+              "value": {
+                "expression": {
+                  "expression_heritage": "\"David\"",
+                  "literal": {
+                    "the_string": {
+                      "the_string": "David"
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "field": "manager_id",
+              "value": {
+                "expression": {
+                  "expression_heritage": "4",
+                  "literal": {
+                    "the_number": {
+                      "number": "4"
+                    }
+                  }
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "full_text": "@OrderBy(ManagerPairs, \"employee\")",
+      "head": {
+        "predicate_name": "@OrderBy",
+        "record": {
+          "field_value": [
+            {
+              "field": 0,
+              "value": {
+                "expression": {
+                  "expression_heritage": "ManagerPairs",
+                  "literal": {
+                    "the_predicate": {
+                      "predicate_name": "ManagerPairs"
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "field": 1,
+              "value": {
+                "expression": {
+                  "expression_heritage": "\"employee\"",
+                  "literal": {
+                    "the_string": {
+                      "the_string": "employee"
+                    }
+                  }
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "body": {
+        "conjunction": {
+          "conjunct": [
+            {
+              "predicate": {
+                "predicate_name": "Employee",
+                "record": {
+                  "field_value": [
+                    {
+                      "field": "id",
+                      "value": {
+                        "expression": {
+                          "expression_heritage": "e_id",
+                          "variable": {
+                            "var_name": "e_id"
+                          }
+                        }
+                      }
+                    },
+                    {
+                      "field": "name",
+                      "value": {
+                        "expression": {
+                          "expression_heritage": "e_name",
+                          "variable": {
+                            "var_name": "e_name"
+                          }
+                        }
+                      }
+                    },
+                    {
+                      "field": "manager_id",
+                      "value": {
+                        "expression": {
+                          "expression_heritage": "m_id",
+                          "variable": {
+                            "var_name": "m_id"
+                          }
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            },
+            {
+              "predicate": {
+                "predicate_name": "Employee",
+                "record": {
+                  "field_value": [
+                    {
+                      "field": "id",
+                      "value": {
+                        "expression": {
+                          "expression_heritage": "m_id",
+                          "variable": {
+                            "var_name": "m_id"
+                          }
+                        }
+                      }
+                    },
+                    {
+                      "field": "name",
+                      "value": {
+                        "expression": {
+                          "expression_heritage": "m_name",
+                          "variable": {
+                            "var_name": "m_name"
+                          }
+                        }
+                      }
+                    },
+                    {
+                      "field": "manager_id",
+                      "value": {
+                        "expression": {
+                          "expression_heritage": "manager_id",
+                          "variable": {
+                            "var_name": "manager_id"
+                          }
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          ]
+        }
+      },
+      "full_text": "ManagerPairs(employee: e_name, manager: m_name) :-\n  Employee(id: e_id, name: e_name, manager_id: m_id),\n  Employee(id: m_id, name: m_name, manager_id:)",
+      "head": {
+        "predicate_name": "ManagerPairs",
+        "record": {
+          "field_value": [
+            {
+              "field": "employee",
+              "value": {
+                "expression": {
+                  "expression_heritage": "e_name",
+                  "variable": {
+                    "var_name": "e_name"
+                  }
+                }
+              }
+            },
+            {
+              "field": "manager",
+              "value": {
+                "expression": {
+                  "expression_heritage": "m_name",
+                  "variable": {
+                    "var_name": "m_name"
+                  }
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "full_text": "@OrderBy(Test, \"employee\")",
+      "head": {
+        "predicate_name": "@OrderBy",
+        "record": {
+          "field_value": [
+            {
+              "field": 0,
+              "value": {
+                "expression": {
+                  "expression_heritage": "Test",
+                  "literal": {
+                    "the_predicate": {
+                      "predicate_name": "Test"
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "field": 1,
+              "value": {
+                "expression": {
+                  "expression_heritage": "\"employee\"",
+                  "literal": {
+                    "the_string": {
+                      "the_string": "employee"
+                    }
+                  }
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "body": {
+        "conjunction": {
+          "conjunct": [
+            {
+              "predicate": {
+                "predicate_name": "ManagerPairs",
+                "record": {
+                  "field_value": [
+                    {
+                      "field": "employee",
+                      "value": {
+                        "expression": {
+                          "expression_heritage": "employee",
+                          "variable": {
+                            "var_name": "employee"
+                          }
+                        }
+                      }
+                    },
+                    {
+                      "field": "manager",
+                      "value": {
+                        "expression": {
+                          "expression_heritage": "manager",
+                          "variable": {
+                            "var_name": "manager"
+                          }
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          ]
+        }
+      },
+      "full_text": "Test(employee:, manager:) :- ManagerPairs(employee:, manager:)",
+      "head": {
+        "predicate_name": "Test",
+        "record": {
+          "field_value": [
+            {
+              "field": "employee",
+              "value": {
+                "expression": {
+                  "expression_heritage": "employee",
+                  "variable": {
+                    "var_name": "employee"
+                  }
+                }
+              }
+            },
+            {
+              "field": "manager",
+              "value": {
+                "expression": {
+                  "expression_heritage": "manager",
+                  "variable": {
+                    "var_name": "manager"
+                  }
+                }
+              }
+            }
+          ]
+        }
+      }
+    }
+  ]
+}

@@ -1,0 +1,421 @@
+{
+  "file_name": "main",
+  "imported_predicates": [],
+  "predicates_prefix": "",
+  "rule": [
+    {
+      "full_text": "@Engine(\"duckdb\")",
+      "head": {
+        "predicate_name": "@Engine",
+        "record": {
+          "field_value": [
+            {
+              "field": 0,
+              "value": {
+                "expression": {
+                  "expression_heritage": "\"duckdb\"",
+                  "literal": {
+                    "the_string": {
+                      "the_string": "duckdb"
+                    }
+                  }
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "full_text": "Students(name: \"Alice\", grade: 85)",
+      "head": {
+        "predicate_name": "Students",
+        "record": {
+          "field_value": [
+            {
+              "field": "name",
+              "value": {
+                "expression": {
+                  "expression_heritage": "\"Alice\"",
+                  "literal": {
+                    "the_string": {
+                      "the_string": "Alice"
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "field": "grade",
+              "value": {
+                "expression": {
+                  "expression_heritage": "85",
+                  "literal": {
+                    "the_number": {
+                      "number": "85"
+                    }
+                  }
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "full_text": "Students(name: \"Bob\", grade: 72)",
+      "head": {
+        "predicate_name": "Students",
+        "record": {
+          "field_value": [
+            {
+              "field": "name",
+              "value": {
+                "expression": {
+                  "expression_heritage": "\"Bob\"",
+                  "literal": {
+                    "the_string": {
+                      "the_string": "Bob"
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "field": "grade",
+              "value": {
+                "expression": {
+                  "expression_heritage": "72",
+                  "literal": {
+                    "the_number": {
+                      "number": "72"
+                    }
+                  }
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "full_text": "Teachers(name: \"Prof Smith\", department: \"Math\")",
+      "head": {
+        "predicate_name": "Teachers",
+        "record": {
+          "field_value": [
+            {
+              "field": "name",
+              "value": {
+                "expression": {
+                  "expression_heritage": "\"Prof Smith\"",
+                  "literal": {
+                    "the_string": {
+                      "the_string": "Prof Smith"
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "field": "department",
+              "value": {
+                "expression": {
+                  "expression_heritage": "\"Math\"",
+                  "literal": {
+                    "the_string": {
+                      "the_string": "Math"
+                    }
+                  }
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "full_text": "Teachers(name: \"Prof Jones\", department: \"Science\")",
+      "head": {
+        "predicate_name": "Teachers",
+        "record": {
+          "field_value": [
+            {
+              "field": "name",
+              "value": {
+                "expression": {
+                  "expression_heritage": "\"Prof Jones\"",
+                  "literal": {
+                    "the_string": {
+                      "the_string": "Prof Jones"
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "field": "department",
+              "value": {
+                "expression": {
+                  "expression_heritage": "\"Science\"",
+                  "literal": {
+                    "the_string": {
+                      "the_string": "Science"
+                    }
+                  }
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "body": {
+        "conjunction": {
+          "conjunct": [
+            {
+              "predicate": {
+                "predicate_name": "Students",
+                "record": {
+                  "field_value": [
+                    {
+                      "field": "name",
+                      "value": {
+                        "expression": {
+                          "expression_heritage": "name",
+                          "variable": {
+                            "var_name": "name"
+                          }
+                        }
+                      }
+                    },
+                    {
+                      "field": "grade",
+                      "value": {
+                        "expression": {
+                          "expression_heritage": "grade",
+                          "variable": {
+                            "var_name": "grade"
+                          }
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          ]
+        }
+      },
+      "full_text": "People(name:, role: \"student\") :- Students(name:, grade:)",
+      "head": {
+        "predicate_name": "People",
+        "record": {
+          "field_value": [
+            {
+              "field": "name",
+              "value": {
+                "expression": {
+                  "expression_heritage": "name",
+                  "variable": {
+                    "var_name": "name"
+                  }
+                }
+              }
+            },
+            {
+              "field": "role",
+              "value": {
+                "expression": {
+                  "expression_heritage": "\"student\"",
+                  "literal": {
+                    "the_string": {
+                      "the_string": "student"
+                    }
+                  }
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "body": {
+        "conjunction": {
+          "conjunct": [
+            {
+              "predicate": {
+                "predicate_name": "Teachers",
+                "record": {
+                  "field_value": [
+                    {
+                      "field": "name",
+                      "value": {
+                        "expression": {
+                          "expression_heritage": "name",
+                          "variable": {
+                            "var_name": "name"
+                          }
+                        }
+                      }
+                    },
+                    {
+                      "field": "department",
+                      "value": {
+                        "expression": {
+                          "expression_heritage": "department",
+                          "variable": {
+                            "var_name": "department"
+                          }
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          ]
+        }
+      },
+      "full_text": "People(name:, role: \"teacher\") :- Teachers(name:, department:)",
+      "head": {
+        "predicate_name": "People",
+        "record": {
+          "field_value": [
+            {
+              "field": "name",
+              "value": {
+                "expression": {
+                  "expression_heritage": "name",
+                  "variable": {
+                    "var_name": "name"
+                  }
+                }
+              }
+            },
+            {
+              "field": "role",
+              "value": {
+                "expression": {
+                  "expression_heritage": "\"teacher\"",
+                  "literal": {
+                    "the_string": {
+                      "the_string": "teacher"
+                    }
+                  }
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "full_text": "@OrderBy(Test, \"name\")",
+      "head": {
+        "predicate_name": "@OrderBy",
+        "record": {
+          "field_value": [
+            {
+              "field": 0,
+              "value": {
+                "expression": {
+                  "expression_heritage": "Test",
+                  "literal": {
+                    "the_predicate": {
+                      "predicate_name": "Test"
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "field": 1,
+              "value": {
+                "expression": {
+                  "expression_heritage": "\"name\"",
+                  "literal": {
+                    "the_string": {
+                      "the_string": "name"
+                    }
+                  }
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "body": {
+        "conjunction": {
+          "conjunct": [
+            {
+              "predicate": {
+                "predicate_name": "People",
+                "record": {
+                  "field_value": [
+                    {
+                      "field": "name",
+                      "value": {
+                        "expression": {
+                          "expression_heritage": "name",
+                          "variable": {
+                            "var_name": "name"
+                          }
+                        }
+                      }
+                    },
+                    {
+                      "field": "role",
+                      "value": {
+                        "expression": {
+                          "expression_heritage": "role",
+                          "variable": {
+                            "var_name": "role"
+                          }
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          ]
+        }
+      },
+      "full_text": "Test(name:, role:) :- People(name:, role:)",
+      "head": {
+        "predicate_name": "Test",
+        "record": {
+          "field_value": [
+            {
+              "field": "name",
+              "value": {
+                "expression": {
+                  "expression_heritage": "name",
+                  "variable": {
+                    "var_name": "name"
+                  }
+                }
+              }
+            },
+            {
+              "field": "role",
+              "value": {
+                "expression": {
+                  "expression_heritage": "role",
+                  "variable": {
+                    "var_name": "role"
+                  }
+                }
+              }
+            }
+          ]
+        }
+      }
+    }
+  ]
+}

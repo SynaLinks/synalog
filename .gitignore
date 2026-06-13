@@ -1,0 +1,16 @@
+/target
+/dist
+__pycache__/
+*.pyc
+*.so
+.pytest_cache/
+.venv/
+.claude/settings.local.json
+
+# Benchmark outputs live in docs/benchmark/ (committed); stale root copies only
+/benchmark_results.json
+/benchmark_plots/
+
+# Zensical documentation build
+/site/
+/.cache/

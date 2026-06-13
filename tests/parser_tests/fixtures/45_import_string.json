@@ -1,0 +1,731 @@
+{
+  "file_name": "main",
+  "imported_predicates": [
+    {
+      "file": "lib.string_utils",
+      "predicate_name": "Greeting",
+      "synonym": null
+    },
+    {
+      "file": "lib.data_utils",
+      "predicate_name": "SampleNames",
+      "synonym": null
+    }
+  ],
+  "predicates_prefix": "",
+  "rule": [
+    {
+      "full_text": "@Engine(\"duckdb\")",
+      "head": {
+        "predicate_name": "@Engine",
+        "record": {
+          "field_value": [
+            {
+              "field": 0,
+              "value": {
+                "expression": {
+                  "expression_heritage": "\"duckdb\"",
+                  "literal": {
+                    "the_string": {
+                      "the_string": "duckdb"
+                    }
+                  }
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "body": {
+        "conjunction": {
+          "conjunct": [
+            {
+              "predicate": {
+                "predicate_name": "Data_utils_SampleNames",
+                "record": {
+                  "field_value": [
+                    {
+                      "field": 0,
+                      "value": {
+                        "expression": {
+                          "expression_heritage": "name",
+                          "variable": {
+                            "var_name": "name"
+                          }
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            },
+            {
+              "predicate": {
+                "predicate_name": "String_utils_Greeting",
+                "record": {
+                  "field_value": [
+                    {
+                      "field": 0,
+                      "value": {
+                        "expression": {
+                          "expression_heritage": "name",
+                          "variable": {
+                            "var_name": "name"
+                          }
+                        }
+                      }
+                    },
+                    {
+                      "field": 1,
+                      "value": {
+                        "expression": {
+                          "expression_heritage": "message",
+                          "variable": {
+                            "var_name": "message"
+                          }
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          ]
+        }
+      },
+      "full_text": "Greetings(name:, message:) :-\n  SampleNames(name),\n  Greeting(name, message)",
+      "head": {
+        "predicate_name": "Greetings",
+        "record": {
+          "field_value": [
+            {
+              "field": "name",
+              "value": {
+                "expression": {
+                  "expression_heritage": "name",
+                  "variable": {
+                    "var_name": "name"
+                  }
+                }
+              }
+            },
+            {
+              "field": "message",
+              "value": {
+                "expression": {
+                  "expression_heritage": "message",
+                  "variable": {
+                    "var_name": "message"
+                  }
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "full_text": "@OrderBy(Test, \"name\")",
+      "head": {
+        "predicate_name": "@OrderBy",
+        "record": {
+          "field_value": [
+            {
+              "field": 0,
+              "value": {
+                "expression": {
+                  "expression_heritage": "Test",
+                  "literal": {
+                    "the_predicate": {
+                      "predicate_name": "Test"
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "field": 1,
+              "value": {
+                "expression": {
+                  "expression_heritage": "\"name\"",
+                  "literal": {
+                    "the_string": {
+                      "the_string": "name"
+                    }
+                  }
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "body": {
+        "conjunction": {
+          "conjunct": [
+            {
+              "predicate": {
+                "predicate_name": "Greetings",
+                "record": {
+                  "field_value": [
+                    {
+                      "field": "name",
+                      "value": {
+                        "expression": {
+                          "expression_heritage": "name",
+                          "variable": {
+                            "var_name": "name"
+                          }
+                        }
+                      }
+                    },
+                    {
+                      "field": "message",
+                      "value": {
+                        "expression": {
+                          "expression_heritage": "message",
+                          "variable": {
+                            "var_name": "message"
+                          }
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          ]
+        }
+      },
+      "full_text": "Test(name:, message:) :- Greetings(name:, message:)",
+      "head": {
+        "predicate_name": "Test",
+        "record": {
+          "field_value": [
+            {
+              "field": "name",
+              "value": {
+                "expression": {
+                  "expression_heritage": "name",
+                  "variable": {
+                    "var_name": "name"
+                  }
+                }
+              }
+            },
+            {
+              "field": "message",
+              "value": {
+                "expression": {
+                  "expression_heritage": "message",
+                  "variable": {
+                    "var_name": "message"
+                  }
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "body": {
+        "conjunction": {
+          "conjunct": [
+            {
+              "unification": {
+                "left_hand_side": {
+                  "expression_heritage": "message",
+                  "variable": {
+                    "var_name": "message"
+                  }
+                },
+                "right_hand_side": {
+                  "call": {
+                    "predicate_name": "++",
+                    "record": {
+                      "field_value": [
+                        {
+                          "field": "left",
+                          "value": {
+                            "expression": {
+                              "call": {
+                                "predicate_name": "++",
+                                "record": {
+                                  "field_value": [
+                                    {
+                                      "field": "left",
+                                      "value": {
+                                        "expression": {
+                                          "expression_heritage": "\"Hello, \"",
+                                          "literal": {
+                                            "the_string": {
+                                              "the_string": "Hello, "
+                                            }
+                                          }
+                                        }
+                                      }
+                                    },
+                                    {
+                                      "field": "right",
+                                      "value": {
+                                        "expression": {
+                                          "expression_heritage": "name",
+                                          "variable": {
+                                            "var_name": "name"
+                                          }
+                                        }
+                                      }
+                                    }
+                                  ]
+                                }
+                              },
+                              "expression_heritage": "\"Hello, \" ++ name"
+                            }
+                          }
+                        },
+                        {
+                          "field": "right",
+                          "value": {
+                            "expression": {
+                              "expression_heritage": "\"!\"",
+                              "literal": {
+                                "the_string": {
+                                  "the_string": "!"
+                                }
+                              }
+                            }
+                          }
+                        }
+                      ]
+                    }
+                  },
+                  "expression_heritage": "\"Hello, \" ++ name ++ \"!\""
+                }
+              }
+            }
+          ]
+        }
+      },
+      "full_text": "Greeting(name, message) :- message == \"Hello, \" ++ name ++ \"!\"",
+      "head": {
+        "predicate_name": "String_utils_Greeting",
+        "record": {
+          "field_value": [
+            {
+              "field": 0,
+              "value": {
+                "expression": {
+                  "expression_heritage": "name",
+                  "variable": {
+                    "var_name": "name"
+                  }
+                }
+              }
+            },
+            {
+              "field": 1,
+              "value": {
+                "expression": {
+                  "expression_heritage": "message",
+                  "variable": {
+                    "var_name": "message"
+                  }
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "body": {
+        "conjunction": {
+          "conjunct": [
+            {
+              "unification": {
+                "left_hand_side": {
+                  "expression_heritage": "result",
+                  "variable": {
+                    "var_name": "result"
+                  }
+                },
+                "right_hand_side": {
+                  "call": {
+                    "predicate_name": "++",
+                    "record": {
+                      "field_value": [
+                        {
+                          "field": "left",
+                          "value": {
+                            "expression": {
+                              "call": {
+                                "predicate_name": "++",
+                                "record": {
+                                  "field_value": [
+                                    {
+                                      "field": "left",
+                                      "value": {
+                                        "expression": {
+                                          "expression_heritage": "prefix",
+                                          "variable": {
+                                            "var_name": "prefix"
+                                          }
+                                        }
+                                      }
+                                    },
+                                    {
+                                      "field": "right",
+                                      "value": {
+                                        "expression": {
+                                          "expression_heritage": "\": \"",
+                                          "literal": {
+                                            "the_string": {
+                                              "the_string": ": "
+                                            }
+                                          }
+                                        }
+                                      }
+                                    }
+                                  ]
+                                }
+                              },
+                              "expression_heritage": "prefix ++ \": \""
+                            }
+                          }
+                        },
+                        {
+                          "field": "right",
+                          "value": {
+                            "expression": {
+                              "expression_heritage": "value",
+                              "variable": {
+                                "var_name": "value"
+                              }
+                            }
+                          }
+                        }
+                      ]
+                    }
+                  },
+                  "expression_heritage": "prefix ++ \": \" ++ value"
+                }
+              }
+            }
+          ]
+        }
+      },
+      "full_text": "WithPrefix(prefix, value, result) :- result == prefix ++ \": \" ++ value",
+      "head": {
+        "predicate_name": "String_utils_WithPrefix",
+        "record": {
+          "field_value": [
+            {
+              "field": 0,
+              "value": {
+                "expression": {
+                  "expression_heritage": "prefix",
+                  "variable": {
+                    "var_name": "prefix"
+                  }
+                }
+              }
+            },
+            {
+              "field": 1,
+              "value": {
+                "expression": {
+                  "expression_heritage": "value",
+                  "variable": {
+                    "var_name": "value"
+                  }
+                }
+              }
+            },
+            {
+              "field": 2,
+              "value": {
+                "expression": {
+                  "expression_heritage": "result",
+                  "variable": {
+                    "var_name": "result"
+                  }
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "body": {
+        "conjunction": {
+          "conjunct": [
+            {
+              "inclusion": {
+                "element": {
+                  "expression_heritage": "x",
+                  "variable": {
+                    "var_name": "x"
+                  }
+                },
+                "list": {
+                  "expression_heritage": "[1, 2, 3, 4, 5]",
+                  "literal": {
+                    "the_list": {
+                      "element": [
+                        {
+                          "expression_heritage": "1",
+                          "literal": {
+                            "the_number": {
+                              "number": "1"
+                            }
+                          }
+                        },
+                        {
+                          "expression_heritage": "2",
+                          "literal": {
+                            "the_number": {
+                              "number": "2"
+                            }
+                          }
+                        },
+                        {
+                          "expression_heritage": "3",
+                          "literal": {
+                            "the_number": {
+                              "number": "3"
+                            }
+                          }
+                        },
+                        {
+                          "expression_heritage": "4",
+                          "literal": {
+                            "the_number": {
+                              "number": "4"
+                            }
+                          }
+                        },
+                        {
+                          "expression_heritage": "5",
+                          "literal": {
+                            "the_number": {
+                              "number": "5"
+                            }
+                          }
+                        }
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          ]
+        }
+      },
+      "full_text": "SampleNumbers(x) :- x in [1, 2, 3, 4, 5]",
+      "head": {
+        "predicate_name": "Data_utils_SampleNumbers",
+        "record": {
+          "field_value": [
+            {
+              "field": 0,
+              "value": {
+                "expression": {
+                  "expression_heritage": "x",
+                  "variable": {
+                    "var_name": "x"
+                  }
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "body": {
+        "conjunction": {
+          "conjunct": [
+            {
+              "inclusion": {
+                "element": {
+                  "expression_heritage": "name",
+                  "variable": {
+                    "var_name": "name"
+                  }
+                },
+                "list": {
+                  "expression_heritage": "[\"Alice\", \"Bob\", \"Charlie\"]",
+                  "literal": {
+                    "the_list": {
+                      "element": [
+                        {
+                          "expression_heritage": "\"Alice\"",
+                          "literal": {
+                            "the_string": {
+                              "the_string": "Alice"
+                            }
+                          }
+                        },
+                        {
+                          "expression_heritage": "\"Bob\"",
+                          "literal": {
+                            "the_string": {
+                              "the_string": "Bob"
+                            }
+                          }
+                        },
+                        {
+                          "expression_heritage": "\"Charlie\"",
+                          "literal": {
+                            "the_string": {
+                              "the_string": "Charlie"
+                            }
+                          }
+                        }
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          ]
+        }
+      },
+      "full_text": "SampleNames(name) :- name in [\"Alice\", \"Bob\", \"Charlie\"]",
+      "head": {
+        "predicate_name": "Data_utils_SampleNames",
+        "record": {
+          "field_value": [
+            {
+              "field": 0,
+              "value": {
+                "expression": {
+                  "expression_heritage": "name",
+                  "variable": {
+                    "var_name": "name"
+                  }
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "body": {
+        "conjunction": {
+          "conjunct": [
+            {
+              "predicate": {
+                "predicate_name": ">=",
+                "record": {
+                  "field_value": [
+                    {
+                      "field": "left",
+                      "value": {
+                        "expression": {
+                          "expression_heritage": "x",
+                          "variable": {
+                            "var_name": "x"
+                          }
+                        }
+                      }
+                    },
+                    {
+                      "field": "right",
+                      "value": {
+                        "expression": {
+                          "expression_heritage": "min",
+                          "variable": {
+                            "var_name": "min"
+                          }
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            },
+            {
+              "predicate": {
+                "predicate_name": "<=",
+                "record": {
+                  "field_value": [
+                    {
+                      "field": "left",
+                      "value": {
+                        "expression": {
+                          "expression_heritage": "x",
+                          "variable": {
+                            "var_name": "x"
+                          }
+                        }
+                      }
+                    },
+                    {
+                      "field": "right",
+                      "value": {
+                        "expression": {
+                          "expression_heritage": "max",
+                          "variable": {
+                            "var_name": "max"
+                          }
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          ]
+        }
+      },
+      "full_text": "InRange(x, min, max) :- x >= min, x <= max",
+      "head": {
+        "predicate_name": "Data_utils_InRange",
+        "record": {
+          "field_value": [
+            {
+              "field": 0,
+              "value": {
+                "expression": {
+                  "expression_heritage": "x",
+                  "variable": {
+                    "var_name": "x"
+                  }
+                }
+              }
+            },
+            {
+              "field": 1,
+              "value": {
+                "expression": {
+                  "expression_heritage": "min",
+                  "variable": {
+                    "var_name": "min"
+                  }
+                }
+              }
+            },
+            {
+              "field": 2,
+              "value": {
+                "expression": {
+                  "expression_heritage": "max",
+                  "variable": {
+                    "var_name": "max"
+                  }
+                }
+              }
+            }
+          ]
+        }
+      }
+    }
+  ]
+}

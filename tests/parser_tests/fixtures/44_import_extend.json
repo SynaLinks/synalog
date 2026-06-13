@@ -1,0 +1,737 @@
+{
+  "file_name": "main",
+  "imported_predicates": [
+    {
+      "file": "lib.math_utils",
+      "predicate_name": "Square",
+      "synonym": null
+    },
+    {
+      "file": "lib.math_utils",
+      "predicate_name": "Add",
+      "synonym": null
+    }
+  ],
+  "predicates_prefix": "",
+  "rule": [
+    {
+      "full_text": "@Engine(\"duckdb\")",
+      "head": {
+        "predicate_name": "@Engine",
+        "record": {
+          "field_value": [
+            {
+              "field": 0,
+              "value": {
+                "expression": {
+                  "expression_heritage": "\"duckdb\"",
+                  "literal": {
+                    "the_string": {
+                      "the_string": "duckdb"
+                    }
+                  }
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "full_text": "Values(a: 2, b: 3)",
+      "head": {
+        "predicate_name": "Values",
+        "record": {
+          "field_value": [
+            {
+              "field": "a",
+              "value": {
+                "expression": {
+                  "expression_heritage": "2",
+                  "literal": {
+                    "the_number": {
+                      "number": "2"
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "field": "b",
+              "value": {
+                "expression": {
+                  "expression_heritage": "3",
+                  "literal": {
+                    "the_number": {
+                      "number": "3"
+                    }
+                  }
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "full_text": "Values(a: 4, b: 5)",
+      "head": {
+        "predicate_name": "Values",
+        "record": {
+          "field_value": [
+            {
+              "field": "a",
+              "value": {
+                "expression": {
+                  "expression_heritage": "4",
+                  "literal": {
+                    "the_number": {
+                      "number": "4"
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "field": "b",
+              "value": {
+                "expression": {
+                  "expression_heritage": "5",
+                  "literal": {
+                    "the_number": {
+                      "number": "5"
+                    }
+                  }
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "body": {
+        "conjunction": {
+          "conjunct": [
+            {
+              "predicate": {
+                "predicate_name": "Values",
+                "record": {
+                  "field_value": [
+                    {
+                      "field": "a",
+                      "value": {
+                        "expression": {
+                          "expression_heritage": "a",
+                          "variable": {
+                            "var_name": "a"
+                          }
+                        }
+                      }
+                    },
+                    {
+                      "field": "b",
+                      "value": {
+                        "expression": {
+                          "expression_heritage": "b",
+                          "variable": {
+                            "var_name": "b"
+                          }
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            },
+            {
+              "predicate": {
+                "predicate_name": "Math_utils_Square",
+                "record": {
+                  "field_value": [
+                    {
+                      "field": 0,
+                      "value": {
+                        "expression": {
+                          "expression_heritage": "a",
+                          "variable": {
+                            "var_name": "a"
+                          }
+                        }
+                      }
+                    },
+                    {
+                      "field": 1,
+                      "value": {
+                        "expression": {
+                          "expression_heritage": "sq_a",
+                          "variable": {
+                            "var_name": "sq_a"
+                          }
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            },
+            {
+              "predicate": {
+                "predicate_name": "Math_utils_Square",
+                "record": {
+                  "field_value": [
+                    {
+                      "field": 0,
+                      "value": {
+                        "expression": {
+                          "expression_heritage": "b",
+                          "variable": {
+                            "var_name": "b"
+                          }
+                        }
+                      }
+                    },
+                    {
+                      "field": 1,
+                      "value": {
+                        "expression": {
+                          "expression_heritage": "sq_b",
+                          "variable": {
+                            "var_name": "sq_b"
+                          }
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            },
+            {
+              "predicate": {
+                "predicate_name": "Math_utils_Add",
+                "record": {
+                  "field_value": [
+                    {
+                      "field": 0,
+                      "value": {
+                        "expression": {
+                          "expression_heritage": "sq_a",
+                          "variable": {
+                            "var_name": "sq_a"
+                          }
+                        }
+                      }
+                    },
+                    {
+                      "field": 1,
+                      "value": {
+                        "expression": {
+                          "expression_heritage": "sq_b",
+                          "variable": {
+                            "var_name": "sq_b"
+                          }
+                        }
+                      }
+                    },
+                    {
+                      "field": 2,
+                      "value": {
+                        "expression": {
+                          "expression_heritage": "result",
+                          "variable": {
+                            "var_name": "result"
+                          }
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          ]
+        }
+      },
+      "full_text": "SumOfSquares(a:, b:, result:) :-\n  Values(a:, b:),\n  Square(a, sq_a),\n  Square(b, sq_b),\n  Add(sq_a, sq_b, result)",
+      "head": {
+        "predicate_name": "SumOfSquares",
+        "record": {
+          "field_value": [
+            {
+              "field": "a",
+              "value": {
+                "expression": {
+                  "expression_heritage": "a",
+                  "variable": {
+                    "var_name": "a"
+                  }
+                }
+              }
+            },
+            {
+              "field": "b",
+              "value": {
+                "expression": {
+                  "expression_heritage": "b",
+                  "variable": {
+                    "var_name": "b"
+                  }
+                }
+              }
+            },
+            {
+              "field": "result",
+              "value": {
+                "expression": {
+                  "expression_heritage": "result",
+                  "variable": {
+                    "var_name": "result"
+                  }
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "full_text": "@OrderBy(Test, \"a\")",
+      "head": {
+        "predicate_name": "@OrderBy",
+        "record": {
+          "field_value": [
+            {
+              "field": 0,
+              "value": {
+                "expression": {
+                  "expression_heritage": "Test",
+                  "literal": {
+                    "the_predicate": {
+                      "predicate_name": "Test"
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "field": 1,
+              "value": {
+                "expression": {
+                  "expression_heritage": "\"a\"",
+                  "literal": {
+                    "the_string": {
+                      "the_string": "a"
+                    }
+                  }
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "body": {
+        "conjunction": {
+          "conjunct": [
+            {
+              "predicate": {
+                "predicate_name": "SumOfSquares",
+                "record": {
+                  "field_value": [
+                    {
+                      "field": "a",
+                      "value": {
+                        "expression": {
+                          "expression_heritage": "a",
+                          "variable": {
+                            "var_name": "a"
+                          }
+                        }
+                      }
+                    },
+                    {
+                      "field": "b",
+                      "value": {
+                        "expression": {
+                          "expression_heritage": "b",
+                          "variable": {
+                            "var_name": "b"
+                          }
+                        }
+                      }
+                    },
+                    {
+                      "field": "result",
+                      "value": {
+                        "expression": {
+                          "expression_heritage": "result",
+                          "variable": {
+                            "var_name": "result"
+                          }
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          ]
+        }
+      },
+      "full_text": "Test(a:, b:, result:) :- SumOfSquares(a:, b:, result:)",
+      "head": {
+        "predicate_name": "Test",
+        "record": {
+          "field_value": [
+            {
+              "field": "a",
+              "value": {
+                "expression": {
+                  "expression_heritage": "a",
+                  "variable": {
+                    "var_name": "a"
+                  }
+                }
+              }
+            },
+            {
+              "field": "b",
+              "value": {
+                "expression": {
+                  "expression_heritage": "b",
+                  "variable": {
+                    "var_name": "b"
+                  }
+                }
+              }
+            },
+            {
+              "field": "result",
+              "value": {
+                "expression": {
+                  "expression_heritage": "result",
+                  "variable": {
+                    "var_name": "result"
+                  }
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "body": {
+        "conjunction": {
+          "conjunct": [
+            {
+              "unification": {
+                "left_hand_side": {
+                  "expression_heritage": "result",
+                  "variable": {
+                    "var_name": "result"
+                  }
+                },
+                "right_hand_side": {
+                  "call": {
+                    "predicate_name": "*",
+                    "record": {
+                      "field_value": [
+                        {
+                          "field": "left",
+                          "value": {
+                            "expression": {
+                              "expression_heritage": "x",
+                              "variable": {
+                                "var_name": "x"
+                              }
+                            }
+                          }
+                        },
+                        {
+                          "field": "right",
+                          "value": {
+                            "expression": {
+                              "expression_heritage": "2",
+                              "literal": {
+                                "the_number": {
+                                  "number": "2"
+                                }
+                              }
+                            }
+                          }
+                        }
+                      ]
+                    }
+                  },
+                  "expression_heritage": "x * 2"
+                }
+              }
+            }
+          ]
+        }
+      },
+      "full_text": "Double(x, result) :- result == x * 2",
+      "head": {
+        "predicate_name": "Math_utils_Double",
+        "record": {
+          "field_value": [
+            {
+              "field": 0,
+              "value": {
+                "expression": {
+                  "expression_heritage": "x",
+                  "variable": {
+                    "var_name": "x"
+                  }
+                }
+              }
+            },
+            {
+              "field": 1,
+              "value": {
+                "expression": {
+                  "expression_heritage": "result",
+                  "variable": {
+                    "var_name": "result"
+                  }
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "body": {
+        "conjunction": {
+          "conjunct": [
+            {
+              "unification": {
+                "left_hand_side": {
+                  "expression_heritage": "result",
+                  "variable": {
+                    "var_name": "result"
+                  }
+                },
+                "right_hand_side": {
+                  "call": {
+                    "predicate_name": "*",
+                    "record": {
+                      "field_value": [
+                        {
+                          "field": "left",
+                          "value": {
+                            "expression": {
+                              "expression_heritage": "x",
+                              "variable": {
+                                "var_name": "x"
+                              }
+                            }
+                          }
+                        },
+                        {
+                          "field": "right",
+                          "value": {
+                            "expression": {
+                              "expression_heritage": "x",
+                              "variable": {
+                                "var_name": "x"
+                              }
+                            }
+                          }
+                        }
+                      ]
+                    }
+                  },
+                  "expression_heritage": "x * x"
+                }
+              }
+            }
+          ]
+        }
+      },
+      "full_text": "Square(x, result) :- result == x * x",
+      "head": {
+        "predicate_name": "Math_utils_Square",
+        "record": {
+          "field_value": [
+            {
+              "field": 0,
+              "value": {
+                "expression": {
+                  "expression_heritage": "x",
+                  "variable": {
+                    "var_name": "x"
+                  }
+                }
+              }
+            },
+            {
+              "field": 1,
+              "value": {
+                "expression": {
+                  "expression_heritage": "result",
+                  "variable": {
+                    "var_name": "result"
+                  }
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "body": {
+        "conjunction": {
+          "conjunct": [
+            {
+              "unification": {
+                "left_hand_side": {
+                  "expression_heritage": "result",
+                  "variable": {
+                    "var_name": "result"
+                  }
+                },
+                "right_hand_side": {
+                  "call": {
+                    "predicate_name": "+",
+                    "record": {
+                      "field_value": [
+                        {
+                          "field": "left",
+                          "value": {
+                            "expression": {
+                              "expression_heritage": "a",
+                              "variable": {
+                                "var_name": "a"
+                              }
+                            }
+                          }
+                        },
+                        {
+                          "field": "right",
+                          "value": {
+                            "expression": {
+                              "expression_heritage": "b",
+                              "variable": {
+                                "var_name": "b"
+                              }
+                            }
+                          }
+                        }
+                      ]
+                    }
+                  },
+                  "expression_heritage": "a + b"
+                }
+              }
+            }
+          ]
+        }
+      },
+      "full_text": "Add(a, b, result) :- result == a + b",
+      "head": {
+        "predicate_name": "Math_utils_Add",
+        "record": {
+          "field_value": [
+            {
+              "field": 0,
+              "value": {
+                "expression": {
+                  "expression_heritage": "a",
+                  "variable": {
+                    "var_name": "a"
+                  }
+                }
+              }
+            },
+            {
+              "field": 1,
+              "value": {
+                "expression": {
+                  "expression_heritage": "b",
+                  "variable": {
+                    "var_name": "b"
+                  }
+                }
+              }
+            },
+            {
+              "field": 2,
+              "value": {
+                "expression": {
+                  "expression_heritage": "result",
+                  "variable": {
+                    "var_name": "result"
+                  }
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "body": {
+        "conjunction": {
+          "conjunct": [
+            {
+              "predicate": {
+                "predicate_name": ">",
+                "record": {
+                  "field_value": [
+                    {
+                      "field": "left",
+                      "value": {
+                        "expression": {
+                          "expression_heritage": "x",
+                          "variable": {
+                            "var_name": "x"
+                          }
+                        }
+                      }
+                    },
+                    {
+                      "field": "right",
+                      "value": {
+                        "expression": {
+                          "expression_heritage": "0",
+                          "literal": {
+                            "the_number": {
+                              "number": "0"
+                            }
+                          }
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          ]
+        }
+      },
+      "full_text": "IsPositive(x) :- x > 0",
+      "head": {
+        "predicate_name": "Math_utils_IsPositive",
+        "record": {
+          "field_value": [
+            {
+              "field": 0,
+              "value": {
+                "expression": {
+                  "expression_heritage": "x",
+                  "variable": {
+                    "var_name": "x"
+                  }
+                }
+              }
+            }
+          ]
+        }
+      }
+    }
+  ]
+}

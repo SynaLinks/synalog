@@ -1,0 +1,67 @@
+[build-system]
+requires = ["maturin>=1.7,<2.0"]
+build-backend = "maturin"
+
+[project]
+name = "synalog"
+version = "0.1.0"
+description = "Logic programming for AI agents — Datalog-family language compiling to optimized SQL"
+readme = "README.md"
+requires-python = ">=3.10"
+license = { text = "Apache-2.0" }
+authors = [{ name = "Synalinks" }]
+classifiers = [
+    "Programming Language :: Rust",
+    "Programming Language :: Python :: Implementation :: CPython",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Programming Language :: Python :: 3.14",
+    "License :: OSI Approved :: Apache Software License",
+    "Topic :: Database",
+    "Topic :: Software Development :: Compilers",
+]
+
+dependencies = ["click>=8.1", "rich>=13"]
+
+[project.urls]
+Repository = "https://github.com/synalinks/synalog"
+
+[project.scripts]
+synalog = "synalog.cli:main"
+
+[project.optional-dependencies]
+# Engines runnable from the CLI (sqlite is stdlib).
+run = ["duckdb", "psycopg"]
+
+[dependency-groups]
+# Dev tooling installed by `uv sync`: tests (pytest, duckdb, logica also
+# provides the sqlite runtime UDFs), benchmarks (logica, matplotlib), docs
+# (zensical builds the site, duckdb runs the examples).
+dev = [
+    "pytest",
+    "duckdb",
+    "logica",
+    "matplotlib",
+    "zensical",
+    "psycopg",
+]
+
+[tool.maturin]
+features = ["pyo3/extension-module"]
+module-name = "synalog._synalog"
+python-source = "python"
+# Keep the sdist lean: sources + license + readme only.
+exclude = [
+    "tests/**",
+    "benchmark.py",
+    "plot_benchmark.py",
+    "benchmark_results.json",
+    "benchmark_plots/**",
+    "dist/**",
+    "/CLAUDE.md",
+    "test.sh",
+    ".github/**",
+]

@@ -1,0 +1,382 @@
+{
+  "file_name": "main",
+  "imported_predicates": [],
+  "predicates_prefix": "",
+  "rule": [
+    {
+      "full_text": "@Engine(\"duckdb\")",
+      "head": {
+        "predicate_name": "@Engine",
+        "record": {
+          "field_value": [
+            {
+              "field": 0,
+              "value": {
+                "expression": {
+                  "expression_heritage": "\"duckdb\"",
+                  "literal": {
+                    "the_string": {
+                      "the_string": "duckdb"
+                    }
+                  }
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "full_text": "Score(player: \"Alice\", points: 85)",
+      "head": {
+        "predicate_name": "Score",
+        "record": {
+          "field_value": [
+            {
+              "field": "player",
+              "value": {
+                "expression": {
+                  "expression_heritage": "\"Alice\"",
+                  "literal": {
+                    "the_string": {
+                      "the_string": "Alice"
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "field": "points",
+              "value": {
+                "expression": {
+                  "expression_heritage": "85",
+                  "literal": {
+                    "the_number": {
+                      "number": "85"
+                    }
+                  }
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "full_text": "Score(player: \"Bob\", points: 92)",
+      "head": {
+        "predicate_name": "Score",
+        "record": {
+          "field_value": [
+            {
+              "field": "player",
+              "value": {
+                "expression": {
+                  "expression_heritage": "\"Bob\"",
+                  "literal": {
+                    "the_string": {
+                      "the_string": "Bob"
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "field": "points",
+              "value": {
+                "expression": {
+                  "expression_heritage": "92",
+                  "literal": {
+                    "the_number": {
+                      "number": "92"
+                    }
+                  }
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "full_text": "Score(player: \"Charlie\", points: 78)",
+      "head": {
+        "predicate_name": "Score",
+        "record": {
+          "field_value": [
+            {
+              "field": "player",
+              "value": {
+                "expression": {
+                  "expression_heritage": "\"Charlie\"",
+                  "literal": {
+                    "the_string": {
+                      "the_string": "Charlie"
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "field": "points",
+              "value": {
+                "expression": {
+                  "expression_heritage": "78",
+                  "literal": {
+                    "the_number": {
+                      "number": "78"
+                    }
+                  }
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "body": {
+        "conjunction": {
+          "conjunct": [
+            {
+              "predicate": {
+                "predicate_name": "Score",
+                "record": {
+                  "field_value": [
+                    {
+                      "field": "player",
+                      "value": {
+                        "expression": {
+                          "expression_heritage": "player",
+                          "variable": {
+                            "var_name": "player"
+                          }
+                        }
+                      }
+                    },
+                    {
+                      "field": "points",
+                      "value": {
+                        "expression": {
+                          "expression_heritage": "points",
+                          "variable": {
+                            "var_name": "points"
+                          }
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          ]
+        }
+      },
+      "distinct_denoted": true,
+      "full_text": "BestPlayer() ArgMax= player -> points :- Score(player:, points:)",
+      "head": {
+        "predicate_name": "BestPlayer",
+        "record": {
+          "field_value": [
+            {
+              "field": "logica_value",
+              "value": {
+                "aggregation": {
+                  "expression": {
+                    "call": {
+                      "predicate_name": "ArgMax",
+                      "record": {
+                        "field_value": [
+                          {
+                            "field": 0,
+                            "value": {
+                              "expression": {
+                                "call": {
+                                  "predicate_name": "->",
+                                  "record": {
+                                    "field_value": [
+                                      {
+                                        "field": "left",
+                                        "value": {
+                                          "expression": {
+                                            "expression_heritage": "player",
+                                            "variable": {
+                                              "var_name": "player"
+                                            }
+                                          }
+                                        }
+                                      },
+                                      {
+                                        "field": "right",
+                                        "value": {
+                                          "expression": {
+                                            "expression_heritage": "points",
+                                            "variable": {
+                                              "var_name": "points"
+                                            }
+                                          }
+                                        }
+                                      }
+                                    ]
+                                  }
+                                },
+                                "expression_heritage": "player -> points"
+                              }
+                            }
+                          }
+                        ]
+                      }
+                    },
+                    "expression_heritage": " ArgMax= player -> points"
+                  },
+                  "expression_heritage": " ArgMax= player -> points"
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "body": {
+        "conjunction": {
+          "conjunct": [
+            {
+              "predicate": {
+                "predicate_name": "Score",
+                "record": {
+                  "field_value": [
+                    {
+                      "field": "player",
+                      "value": {
+                        "expression": {
+                          "expression_heritage": "player",
+                          "variable": {
+                            "var_name": "player"
+                          }
+                        }
+                      }
+                    },
+                    {
+                      "field": "points",
+                      "value": {
+                        "expression": {
+                          "expression_heritage": "points",
+                          "variable": {
+                            "var_name": "points"
+                          }
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          ]
+        }
+      },
+      "distinct_denoted": true,
+      "full_text": "WorstPlayer() ArgMin= player -> points :- Score(player:, points:)",
+      "head": {
+        "predicate_name": "WorstPlayer",
+        "record": {
+          "field_value": [
+            {
+              "field": "logica_value",
+              "value": {
+                "aggregation": {
+                  "expression": {
+                    "call": {
+                      "predicate_name": "ArgMin",
+                      "record": {
+                        "field_value": [
+                          {
+                            "field": 0,
+                            "value": {
+                              "expression": {
+                                "call": {
+                                  "predicate_name": "->",
+                                  "record": {
+                                    "field_value": [
+                                      {
+                                        "field": "left",
+                                        "value": {
+                                          "expression": {
+                                            "expression_heritage": "player",
+                                            "variable": {
+                                              "var_name": "player"
+                                            }
+                                          }
+                                        }
+                                      },
+                                      {
+                                        "field": "right",
+                                        "value": {
+                                          "expression": {
+                                            "expression_heritage": "points",
+                                            "variable": {
+                                              "var_name": "points"
+                                            }
+                                          }
+                                        }
+                                      }
+                                    ]
+                                  }
+                                },
+                                "expression_heritage": "player -> points"
+                              }
+                            }
+                          }
+                        ]
+                      }
+                    },
+                    "expression_heritage": " ArgMin= player -> points"
+                  },
+                  "expression_heritage": " ArgMin= player -> points"
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "full_text": "Test(best: BestPlayer(), worst: WorstPlayer())",
+      "head": {
+        "predicate_name": "Test",
+        "record": {
+          "field_value": [
+            {
+              "field": "best",
+              "value": {
+                "expression": {
+                  "call": {
+                    "predicate_name": "BestPlayer",
+                    "record": {
+                      "field_value": []
+                    }
+                  },
+                  "expression_heritage": "BestPlayer()"
+                }
+              }
+            },
+            {
+              "field": "worst",
+              "value": {
+                "expression": {
+                  "call": {
+                    "predicate_name": "WorstPlayer",
+                    "record": {
+                      "field_value": []
+                    }
+                  },
+                  "expression_heritage": "WorstPlayer()"
+                }
+              }
+            }
+          ]
+        }
+      }
+    }
+  ]
+}

@@ -1,0 +1,465 @@
+{
+  "file_name": "main",
+  "imported_predicates": [],
+  "predicates_prefix": "",
+  "rule": [
+    {
+      "full_text": "@Engine(\"duckdb\")",
+      "head": {
+        "predicate_name": "@Engine",
+        "record": {
+          "field_value": [
+            {
+              "field": 0,
+              "value": {
+                "expression": {
+                  "expression_heritage": "\"duckdb\"",
+                  "literal": {
+                    "the_string": {
+                      "the_string": "duckdb"
+                    }
+                  }
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "full_text": "Names(first: \"Alice\", last: \"Smith\")",
+      "head": {
+        "predicate_name": "Names",
+        "record": {
+          "field_value": [
+            {
+              "field": "first",
+              "value": {
+                "expression": {
+                  "expression_heritage": "\"Alice\"",
+                  "literal": {
+                    "the_string": {
+                      "the_string": "Alice"
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "field": "last",
+              "value": {
+                "expression": {
+                  "expression_heritage": "\"Smith\"",
+                  "literal": {
+                    "the_string": {
+                      "the_string": "Smith"
+                    }
+                  }
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "full_text": "Names(first: \"Bob\", last: \"Jones\")",
+      "head": {
+        "predicate_name": "Names",
+        "record": {
+          "field_value": [
+            {
+              "field": "first",
+              "value": {
+                "expression": {
+                  "expression_heritage": "\"Bob\"",
+                  "literal": {
+                    "the_string": {
+                      "the_string": "Bob"
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "field": "last",
+              "value": {
+                "expression": {
+                  "expression_heritage": "\"Jones\"",
+                  "literal": {
+                    "the_string": {
+                      "the_string": "Jones"
+                    }
+                  }
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "body": {
+        "conjunction": {
+          "conjunct": [
+            {
+              "predicate": {
+                "predicate_name": "Names",
+                "record": {
+                  "field_value": [
+                    {
+                      "field": "first",
+                      "value": {
+                        "expression": {
+                          "expression_heritage": "first",
+                          "variable": {
+                            "var_name": "first"
+                          }
+                        }
+                      }
+                    },
+                    {
+                      "field": "last",
+                      "value": {
+                        "expression": {
+                          "expression_heritage": "last",
+                          "variable": {
+                            "var_name": "last"
+                          }
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          ]
+        }
+      },
+      "full_text": "FullName(name: first ++ \" \" ++ last) :- Names(first:, last:)",
+      "head": {
+        "predicate_name": "FullName",
+        "record": {
+          "field_value": [
+            {
+              "field": "name",
+              "value": {
+                "expression": {
+                  "call": {
+                    "predicate_name": "++",
+                    "record": {
+                      "field_value": [
+                        {
+                          "field": "left",
+                          "value": {
+                            "expression": {
+                              "call": {
+                                "predicate_name": "++",
+                                "record": {
+                                  "field_value": [
+                                    {
+                                      "field": "left",
+                                      "value": {
+                                        "expression": {
+                                          "expression_heritage": "first",
+                                          "variable": {
+                                            "var_name": "first"
+                                          }
+                                        }
+                                      }
+                                    },
+                                    {
+                                      "field": "right",
+                                      "value": {
+                                        "expression": {
+                                          "expression_heritage": "\" \"",
+                                          "literal": {
+                                            "the_string": {
+                                              "the_string": " "
+                                            }
+                                          }
+                                        }
+                                      }
+                                    }
+                                  ]
+                                }
+                              },
+                              "expression_heritage": "first ++ \" \""
+                            }
+                          }
+                        },
+                        {
+                          "field": "right",
+                          "value": {
+                            "expression": {
+                              "expression_heritage": "last",
+                              "variable": {
+                                "var_name": "last"
+                              }
+                            }
+                          }
+                        }
+                      ]
+                    }
+                  },
+                  "expression_heritage": "first ++ \" \" ++ last"
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "body": {
+        "conjunction": {
+          "conjunct": [
+            {
+              "predicate": {
+                "predicate_name": "Names",
+                "record": {
+                  "field_value": [
+                    {
+                      "field": "first",
+                      "value": {
+                        "expression": {
+                          "expression_heritage": "first",
+                          "variable": {
+                            "var_name": "first"
+                          }
+                        }
+                      }
+                    },
+                    {
+                      "field": "last",
+                      "value": {
+                        "expression": {
+                          "expression_heritage": "last",
+                          "variable": {
+                            "var_name": "last"
+                          }
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          ]
+        }
+      },
+      "full_text": "Greeting(msg: \"Hello, \" ++ first ++ \" \" ++ last ++ \"!\") :- Names(first:, last:)",
+      "head": {
+        "predicate_name": "Greeting",
+        "record": {
+          "field_value": [
+            {
+              "field": "msg",
+              "value": {
+                "expression": {
+                  "call": {
+                    "predicate_name": "++",
+                    "record": {
+                      "field_value": [
+                        {
+                          "field": "left",
+                          "value": {
+                            "expression": {
+                              "call": {
+                                "predicate_name": "++",
+                                "record": {
+                                  "field_value": [
+                                    {
+                                      "field": "left",
+                                      "value": {
+                                        "expression": {
+                                          "call": {
+                                            "predicate_name": "++",
+                                            "record": {
+                                              "field_value": [
+                                                {
+                                                  "field": "left",
+                                                  "value": {
+                                                    "expression": {
+                                                      "call": {
+                                                        "predicate_name": "++",
+                                                        "record": {
+                                                          "field_value": [
+                                                            {
+                                                              "field": "left",
+                                                              "value": {
+                                                                "expression": {
+                                                                  "expression_heritage": "\"Hello, \"",
+                                                                  "literal": {
+                                                                    "the_string": {
+                                                                      "the_string": "Hello, "
+                                                                    }
+                                                                  }
+                                                                }
+                                                              }
+                                                            },
+                                                            {
+                                                              "field": "right",
+                                                              "value": {
+                                                                "expression": {
+                                                                  "expression_heritage": "first",
+                                                                  "variable": {
+                                                                    "var_name": "first"
+                                                                  }
+                                                                }
+                                                              }
+                                                            }
+                                                          ]
+                                                        }
+                                                      },
+                                                      "expression_heritage": "\"Hello, \" ++ first"
+                                                    }
+                                                  }
+                                                },
+                                                {
+                                                  "field": "right",
+                                                  "value": {
+                                                    "expression": {
+                                                      "expression_heritage": "\" \"",
+                                                      "literal": {
+                                                        "the_string": {
+                                                          "the_string": " "
+                                                        }
+                                                      }
+                                                    }
+                                                  }
+                                                }
+                                              ]
+                                            }
+                                          },
+                                          "expression_heritage": "\"Hello, \" ++ first ++ \" \""
+                                        }
+                                      }
+                                    },
+                                    {
+                                      "field": "right",
+                                      "value": {
+                                        "expression": {
+                                          "expression_heritage": "last",
+                                          "variable": {
+                                            "var_name": "last"
+                                          }
+                                        }
+                                      }
+                                    }
+                                  ]
+                                }
+                              },
+                              "expression_heritage": "\"Hello, \" ++ first ++ \" \" ++ last"
+                            }
+                          }
+                        },
+                        {
+                          "field": "right",
+                          "value": {
+                            "expression": {
+                              "expression_heritage": "\"!\"",
+                              "literal": {
+                                "the_string": {
+                                  "the_string": "!"
+                                }
+                              }
+                            }
+                          }
+                        }
+                      ]
+                    }
+                  },
+                  "expression_heritage": "\"Hello, \" ++ first ++ \" \" ++ last ++ \"!\""
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "full_text": "@OrderBy(Test, \"name\")",
+      "head": {
+        "predicate_name": "@OrderBy",
+        "record": {
+          "field_value": [
+            {
+              "field": 0,
+              "value": {
+                "expression": {
+                  "expression_heritage": "Test",
+                  "literal": {
+                    "the_predicate": {
+                      "predicate_name": "Test"
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "field": 1,
+              "value": {
+                "expression": {
+                  "expression_heritage": "\"name\"",
+                  "literal": {
+                    "the_string": {
+                      "the_string": "name"
+                    }
+                  }
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "body": {
+        "conjunction": {
+          "conjunct": [
+            {
+              "predicate": {
+                "predicate_name": "FullName",
+                "record": {
+                  "field_value": [
+                    {
+                      "field": "name",
+                      "value": {
+                        "expression": {
+                          "expression_heritage": "name",
+                          "variable": {
+                            "var_name": "name"
+                          }
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          ]
+        }
+      },
+      "full_text": "Test(name:) :- FullName(name:)",
+      "head": {
+        "predicate_name": "Test",
+        "record": {
+          "field_value": [
+            {
+              "field": "name",
+              "value": {
+                "expression": {
+                  "expression_heritage": "name",
+                  "variable": {
+                    "var_name": "name"
+                  }
+                }
+              }
+            }
+          ]
+        }
+      }
+    }
+  ]
+}

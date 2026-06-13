@@ -1,0 +1,670 @@
+{
+  "file_name": "main",
+  "imported_predicates": [],
+  "predicates_prefix": "",
+  "rule": [
+    {
+      "full_text": "@Engine(\"duckdb\")",
+      "head": {
+        "predicate_name": "@Engine",
+        "record": {
+          "field_value": [
+            {
+              "field": 0,
+              "value": {
+                "expression": {
+                  "expression_heritage": "\"duckdb\"",
+                  "literal": {
+                    "the_string": {
+                      "the_string": "duckdb"
+                    }
+                  }
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "full_text": "Sales(region: \"North\", product: \"A\", amount: 100)",
+      "head": {
+        "predicate_name": "Sales",
+        "record": {
+          "field_value": [
+            {
+              "field": "region",
+              "value": {
+                "expression": {
+                  "expression_heritage": "\"North\"",
+                  "literal": {
+                    "the_string": {
+                      "the_string": "North"
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "field": "product",
+              "value": {
+                "expression": {
+                  "expression_heritage": "\"A\"",
+                  "literal": {
+                    "the_string": {
+                      "the_string": "A"
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "field": "amount",
+              "value": {
+                "expression": {
+                  "expression_heritage": "100",
+                  "literal": {
+                    "the_number": {
+                      "number": "100"
+                    }
+                  }
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "full_text": "Sales(region: \"North\", product: \"B\", amount: 150)",
+      "head": {
+        "predicate_name": "Sales",
+        "record": {
+          "field_value": [
+            {
+              "field": "region",
+              "value": {
+                "expression": {
+                  "expression_heritage": "\"North\"",
+                  "literal": {
+                    "the_string": {
+                      "the_string": "North"
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "field": "product",
+              "value": {
+                "expression": {
+                  "expression_heritage": "\"B\"",
+                  "literal": {
+                    "the_string": {
+                      "the_string": "B"
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "field": "amount",
+              "value": {
+                "expression": {
+                  "expression_heritage": "150",
+                  "literal": {
+                    "the_number": {
+                      "number": "150"
+                    }
+                  }
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "full_text": "Sales(region: \"South\", product: \"A\", amount: 200)",
+      "head": {
+        "predicate_name": "Sales",
+        "record": {
+          "field_value": [
+            {
+              "field": "region",
+              "value": {
+                "expression": {
+                  "expression_heritage": "\"South\"",
+                  "literal": {
+                    "the_string": {
+                      "the_string": "South"
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "field": "product",
+              "value": {
+                "expression": {
+                  "expression_heritage": "\"A\"",
+                  "literal": {
+                    "the_string": {
+                      "the_string": "A"
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "field": "amount",
+              "value": {
+                "expression": {
+                  "expression_heritage": "200",
+                  "literal": {
+                    "the_number": {
+                      "number": "200"
+                    }
+                  }
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "full_text": "Sales(region: \"South\", product: \"B\", amount: 75)",
+      "head": {
+        "predicate_name": "Sales",
+        "record": {
+          "field_value": [
+            {
+              "field": "region",
+              "value": {
+                "expression": {
+                  "expression_heritage": "\"South\"",
+                  "literal": {
+                    "the_string": {
+                      "the_string": "South"
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "field": "product",
+              "value": {
+                "expression": {
+                  "expression_heritage": "\"B\"",
+                  "literal": {
+                    "the_string": {
+                      "the_string": "B"
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "field": "amount",
+              "value": {
+                "expression": {
+                  "expression_heritage": "75",
+                  "literal": {
+                    "the_number": {
+                      "number": "75"
+                    }
+                  }
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "full_text": "Sales(region: \"East\", product: \"A\", amount: 300)",
+      "head": {
+        "predicate_name": "Sales",
+        "record": {
+          "field_value": [
+            {
+              "field": "region",
+              "value": {
+                "expression": {
+                  "expression_heritage": "\"East\"",
+                  "literal": {
+                    "the_string": {
+                      "the_string": "East"
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "field": "product",
+              "value": {
+                "expression": {
+                  "expression_heritage": "\"A\"",
+                  "literal": {
+                    "the_string": {
+                      "the_string": "A"
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "field": "amount",
+              "value": {
+                "expression": {
+                  "expression_heritage": "300",
+                  "literal": {
+                    "the_number": {
+                      "number": "300"
+                    }
+                  }
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "full_text": "@OrderBy(RegionStats, \"region\")",
+      "head": {
+        "predicate_name": "@OrderBy",
+        "record": {
+          "field_value": [
+            {
+              "field": 0,
+              "value": {
+                "expression": {
+                  "expression_heritage": "RegionStats",
+                  "literal": {
+                    "the_predicate": {
+                      "predicate_name": "RegionStats"
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "field": 1,
+              "value": {
+                "expression": {
+                  "expression_heritage": "\"region\"",
+                  "literal": {
+                    "the_string": {
+                      "the_string": "region"
+                    }
+                  }
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "body": {
+        "conjunction": {
+          "conjunct": [
+            {
+              "predicate": {
+                "predicate_name": "Sales",
+                "record": {
+                  "field_value": [
+                    {
+                      "field": "region",
+                      "value": {
+                        "expression": {
+                          "expression_heritage": "region",
+                          "variable": {
+                            "var_name": "region"
+                          }
+                        }
+                      }
+                    },
+                    {
+                      "field": "product",
+                      "value": {
+                        "expression": {
+                          "expression_heritage": "product",
+                          "variable": {
+                            "var_name": "product"
+                          }
+                        }
+                      }
+                    },
+                    {
+                      "field": "amount",
+                      "value": {
+                        "expression": {
+                          "expression_heritage": "amount",
+                          "variable": {
+                            "var_name": "amount"
+                          }
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          ]
+        }
+      },
+      "distinct_denoted": true,
+      "full_text": "RegionStats(region:,\n            total? += amount,\n            count? += 1,\n            max_sale? Max= amount,\n            min_sale? Min= amount) distinct :- Sales(region:, product:, amount:)",
+      "head": {
+        "predicate_name": "RegionStats",
+        "record": {
+          "field_value": [
+            {
+              "field": "region",
+              "value": {
+                "expression": {
+                  "expression_heritage": "region",
+                  "variable": {
+                    "var_name": "region"
+                  }
+                }
+              }
+            },
+            {
+              "field": "total",
+              "value": {
+                "aggregation": {
+                  "expression": {
+                    "call": {
+                      "predicate_name": "Agg+",
+                      "record": {
+                        "field_value": [
+                          {
+                            "field": 0,
+                            "value": {
+                              "expression": {
+                                "expression_heritage": "amount",
+                                "variable": {
+                                  "var_name": "amount"
+                                }
+                              }
+                            }
+                          }
+                        ]
+                      }
+                    },
+                    "expression_heritage": "+= amount"
+                  },
+                  "expression_heritage": "+= amount"
+                }
+              }
+            },
+            {
+              "field": "count",
+              "value": {
+                "aggregation": {
+                  "expression": {
+                    "call": {
+                      "predicate_name": "Agg+",
+                      "record": {
+                        "field_value": [
+                          {
+                            "field": 0,
+                            "value": {
+                              "expression": {
+                                "expression_heritage": "1",
+                                "literal": {
+                                  "the_number": {
+                                    "number": "1"
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        ]
+                      }
+                    },
+                    "expression_heritage": "+= 1"
+                  },
+                  "expression_heritage": "+= 1"
+                }
+              }
+            },
+            {
+              "field": "max_sale",
+              "value": {
+                "aggregation": {
+                  "expression": {
+                    "call": {
+                      "predicate_name": "Max",
+                      "record": {
+                        "field_value": [
+                          {
+                            "field": 0,
+                            "value": {
+                              "expression": {
+                                "expression_heritage": "amount",
+                                "variable": {
+                                  "var_name": "amount"
+                                }
+                              }
+                            }
+                          }
+                        ]
+                      }
+                    },
+                    "expression_heritage": "Max= amount"
+                  },
+                  "expression_heritage": "Max= amount"
+                }
+              }
+            },
+            {
+              "field": "min_sale",
+              "value": {
+                "aggregation": {
+                  "expression": {
+                    "call": {
+                      "predicate_name": "Min",
+                      "record": {
+                        "field_value": [
+                          {
+                            "field": 0,
+                            "value": {
+                              "expression": {
+                                "expression_heritage": "amount",
+                                "variable": {
+                                  "var_name": "amount"
+                                }
+                              }
+                            }
+                          }
+                        ]
+                      }
+                    },
+                    "expression_heritage": "Min= amount"
+                  },
+                  "expression_heritage": "Min= amount"
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "full_text": "@OrderBy(Test, \"region\")",
+      "head": {
+        "predicate_name": "@OrderBy",
+        "record": {
+          "field_value": [
+            {
+              "field": 0,
+              "value": {
+                "expression": {
+                  "expression_heritage": "Test",
+                  "literal": {
+                    "the_predicate": {
+                      "predicate_name": "Test"
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "field": 1,
+              "value": {
+                "expression": {
+                  "expression_heritage": "\"region\"",
+                  "literal": {
+                    "the_string": {
+                      "the_string": "region"
+                    }
+                  }
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "body": {
+        "conjunction": {
+          "conjunct": [
+            {
+              "predicate": {
+                "predicate_name": "RegionStats",
+                "record": {
+                  "field_value": [
+                    {
+                      "field": "region",
+                      "value": {
+                        "expression": {
+                          "expression_heritage": "region",
+                          "variable": {
+                            "var_name": "region"
+                          }
+                        }
+                      }
+                    },
+                    {
+                      "field": "total",
+                      "value": {
+                        "expression": {
+                          "expression_heritage": "total",
+                          "variable": {
+                            "var_name": "total"
+                          }
+                        }
+                      }
+                    },
+                    {
+                      "field": "count",
+                      "value": {
+                        "expression": {
+                          "expression_heritage": "count",
+                          "variable": {
+                            "var_name": "count"
+                          }
+                        }
+                      }
+                    },
+                    {
+                      "field": "max_sale",
+                      "value": {
+                        "expression": {
+                          "expression_heritage": "max_sale",
+                          "variable": {
+                            "var_name": "max_sale"
+                          }
+                        }
+                      }
+                    },
+                    {
+                      "field": "min_sale",
+                      "value": {
+                        "expression": {
+                          "expression_heritage": "min_sale",
+                          "variable": {
+                            "var_name": "min_sale"
+                          }
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          ]
+        }
+      },
+      "full_text": "Test(region:, total:, count:, max_sale:, min_sale:) :- RegionStats(region:, total:, count:, max_sale:, min_sale:)",
+      "head": {
+        "predicate_name": "Test",
+        "record": {
+          "field_value": [
+            {
+              "field": "region",
+              "value": {
+                "expression": {
+                  "expression_heritage": "region",
+                  "variable": {
+                    "var_name": "region"
+                  }
+                }
+              }
+            },
+            {
+              "field": "total",
+              "value": {
+                "expression": {
+                  "expression_heritage": "total",
+                  "variable": {
+                    "var_name": "total"
+                  }
+                }
+              }
+            },
+            {
+              "field": "count",
+              "value": {
+                "expression": {
+                  "expression_heritage": "count",
+                  "variable": {
+                    "var_name": "count"
+                  }
+                }
+              }
+            },
+            {
+              "field": "max_sale",
+              "value": {
+                "expression": {
+                  "expression_heritage": "max_sale",
+                  "variable": {
+                    "var_name": "max_sale"
+                  }
+                }
+              }
+            },
+            {
+              "field": "min_sale",
+              "value": {
+                "expression": {
+                  "expression_heritage": "min_sale",
+                  "variable": {
+                    "var_name": "min_sale"
+                  }
+                }
+              }
+            }
+          ]
+        }
+      }
+    }
+  ]
+}

@@ -1,0 +1,543 @@
+{
+  "file_name": "main",
+  "imported_predicates": [],
+  "predicates_prefix": "",
+  "rule": [
+    {
+      "full_text": "@Engine(\"duckdb\")",
+      "head": {
+        "predicate_name": "@Engine",
+        "record": {
+          "field_value": [
+            {
+              "field": 0,
+              "value": {
+                "expression": {
+                  "expression_heritage": "\"duckdb\"",
+                  "literal": {
+                    "the_string": {
+                      "the_string": "duckdb"
+                    }
+                  }
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "full_text": "Sales(category: \"Electronics\", amount: 500)",
+      "head": {
+        "predicate_name": "Sales",
+        "record": {
+          "field_value": [
+            {
+              "field": "category",
+              "value": {
+                "expression": {
+                  "expression_heritage": "\"Electronics\"",
+                  "literal": {
+                    "the_string": {
+                      "the_string": "Electronics"
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "field": "amount",
+              "value": {
+                "expression": {
+                  "expression_heritage": "500",
+                  "literal": {
+                    "the_number": {
+                      "number": "500"
+                    }
+                  }
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "full_text": "Sales(category: \"Electronics\", amount: 300)",
+      "head": {
+        "predicate_name": "Sales",
+        "record": {
+          "field_value": [
+            {
+              "field": "category",
+              "value": {
+                "expression": {
+                  "expression_heritage": "\"Electronics\"",
+                  "literal": {
+                    "the_string": {
+                      "the_string": "Electronics"
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "field": "amount",
+              "value": {
+                "expression": {
+                  "expression_heritage": "300",
+                  "literal": {
+                    "the_number": {
+                      "number": "300"
+                    }
+                  }
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "full_text": "Sales(category: \"Books\", amount: 50)",
+      "head": {
+        "predicate_name": "Sales",
+        "record": {
+          "field_value": [
+            {
+              "field": "category",
+              "value": {
+                "expression": {
+                  "expression_heritage": "\"Books\"",
+                  "literal": {
+                    "the_string": {
+                      "the_string": "Books"
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "field": "amount",
+              "value": {
+                "expression": {
+                  "expression_heritage": "50",
+                  "literal": {
+                    "the_number": {
+                      "number": "50"
+                    }
+                  }
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "full_text": "Sales(category: \"Books\", amount: 75)",
+      "head": {
+        "predicate_name": "Sales",
+        "record": {
+          "field_value": [
+            {
+              "field": "category",
+              "value": {
+                "expression": {
+                  "expression_heritage": "\"Books\"",
+                  "literal": {
+                    "the_string": {
+                      "the_string": "Books"
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "field": "amount",
+              "value": {
+                "expression": {
+                  "expression_heritage": "75",
+                  "literal": {
+                    "the_number": {
+                      "number": "75"
+                    }
+                  }
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "full_text": "Sales(category: \"Clothing\", amount: 200)",
+      "head": {
+        "predicate_name": "Sales",
+        "record": {
+          "field_value": [
+            {
+              "field": "category",
+              "value": {
+                "expression": {
+                  "expression_heritage": "\"Clothing\"",
+                  "literal": {
+                    "the_string": {
+                      "the_string": "Clothing"
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "field": "amount",
+              "value": {
+                "expression": {
+                  "expression_heritage": "200",
+                  "literal": {
+                    "the_number": {
+                      "number": "200"
+                    }
+                  }
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "full_text": "@OrderBy(CategorySummary, \"category\")",
+      "head": {
+        "predicate_name": "@OrderBy",
+        "record": {
+          "field_value": [
+            {
+              "field": 0,
+              "value": {
+                "expression": {
+                  "expression_heritage": "CategorySummary",
+                  "literal": {
+                    "the_predicate": {
+                      "predicate_name": "CategorySummary"
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "field": 1,
+              "value": {
+                "expression": {
+                  "expression_heritage": "\"category\"",
+                  "literal": {
+                    "the_string": {
+                      "the_string": "category"
+                    }
+                  }
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "body": {
+        "conjunction": {
+          "conjunct": [
+            {
+              "predicate": {
+                "predicate_name": "Sales",
+                "record": {
+                  "field_value": [
+                    {
+                      "field": "category",
+                      "value": {
+                        "expression": {
+                          "expression_heritage": "category",
+                          "variable": {
+                            "var_name": "category"
+                          }
+                        }
+                      }
+                    },
+                    {
+                      "field": "amount",
+                      "value": {
+                        "expression": {
+                          "expression_heritage": "amount",
+                          "variable": {
+                            "var_name": "amount"
+                          }
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          ]
+        }
+      },
+      "distinct_denoted": true,
+      "full_text": "CategorySummary(category:,\n                total? += amount,\n                high_value_count? += (if amount >= 200 then 1 else 0)) distinct :-\n  Sales(category:, amount:)",
+      "head": {
+        "predicate_name": "CategorySummary",
+        "record": {
+          "field_value": [
+            {
+              "field": "category",
+              "value": {
+                "expression": {
+                  "expression_heritage": "category",
+                  "variable": {
+                    "var_name": "category"
+                  }
+                }
+              }
+            },
+            {
+              "field": "total",
+              "value": {
+                "aggregation": {
+                  "expression": {
+                    "call": {
+                      "predicate_name": "Agg+",
+                      "record": {
+                        "field_value": [
+                          {
+                            "field": 0,
+                            "value": {
+                              "expression": {
+                                "expression_heritage": "amount",
+                                "variable": {
+                                  "var_name": "amount"
+                                }
+                              }
+                            }
+                          }
+                        ]
+                      }
+                    },
+                    "expression_heritage": "+= amount"
+                  },
+                  "expression_heritage": "+= amount"
+                }
+              }
+            },
+            {
+              "field": "high_value_count",
+              "value": {
+                "aggregation": {
+                  "expression": {
+                    "call": {
+                      "predicate_name": "Agg+",
+                      "record": {
+                        "field_value": [
+                          {
+                            "field": 0,
+                            "value": {
+                              "expression": {
+                                "expression_heritage": "if amount >= 200 then 1 else 0",
+                                "implication": {
+                                  "if_then": [
+                                    {
+                                      "condition": {
+                                        "call": {
+                                          "predicate_name": ">=",
+                                          "record": {
+                                            "field_value": [
+                                              {
+                                                "field": "left",
+                                                "value": {
+                                                  "expression": {
+                                                    "expression_heritage": "amount",
+                                                    "variable": {
+                                                      "var_name": "amount"
+                                                    }
+                                                  }
+                                                }
+                                              },
+                                              {
+                                                "field": "right",
+                                                "value": {
+                                                  "expression": {
+                                                    "expression_heritage": "200",
+                                                    "literal": {
+                                                      "the_number": {
+                                                        "number": "200"
+                                                      }
+                                                    }
+                                                  }
+                                                }
+                                              }
+                                            ]
+                                          }
+                                        },
+                                        "expression_heritage": "amount >= 200"
+                                      },
+                                      "consequence": {
+                                        "expression_heritage": "1",
+                                        "literal": {
+                                          "the_number": {
+                                            "number": "1"
+                                          }
+                                        }
+                                      }
+                                    }
+                                  ],
+                                  "otherwise": {
+                                    "expression_heritage": "0",
+                                    "literal": {
+                                      "the_number": {
+                                        "number": "0"
+                                      }
+                                    }
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        ]
+                      }
+                    },
+                    "expression_heritage": "+= (if amount >= 200 then 1 else 0)"
+                  },
+                  "expression_heritage": "+= (if amount >= 200 then 1 else 0)"
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "full_text": "@OrderBy(Test, \"category\")",
+      "head": {
+        "predicate_name": "@OrderBy",
+        "record": {
+          "field_value": [
+            {
+              "field": 0,
+              "value": {
+                "expression": {
+                  "expression_heritage": "Test",
+                  "literal": {
+                    "the_predicate": {
+                      "predicate_name": "Test"
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "field": 1,
+              "value": {
+                "expression": {
+                  "expression_heritage": "\"category\"",
+                  "literal": {
+                    "the_string": {
+                      "the_string": "category"
+                    }
+                  }
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "body": {
+        "conjunction": {
+          "conjunct": [
+            {
+              "predicate": {
+                "predicate_name": "CategorySummary",
+                "record": {
+                  "field_value": [
+                    {
+                      "field": "category",
+                      "value": {
+                        "expression": {
+                          "expression_heritage": "category",
+                          "variable": {
+                            "var_name": "category"
+                          }
+                        }
+                      }
+                    },
+                    {
+                      "field": "total",
+                      "value": {
+                        "expression": {
+                          "expression_heritage": "total",
+                          "variable": {
+                            "var_name": "total"
+                          }
+                        }
+                      }
+                    },
+                    {
+                      "field": "high_value_count",
+                      "value": {
+                        "expression": {
+                          "expression_heritage": "high_value_count",
+                          "variable": {
+                            "var_name": "high_value_count"
+                          }
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          ]
+        }
+      },
+      "full_text": "Test(category:, total:, high_value_count:) :- CategorySummary(category:, total:, high_value_count:)",
+      "head": {
+        "predicate_name": "Test",
+        "record": {
+          "field_value": [
+            {
+              "field": "category",
+              "value": {
+                "expression": {
+                  "expression_heritage": "category",
+                  "variable": {
+                    "var_name": "category"
+                  }
+                }
+              }
+            },
+            {
+              "field": "total",
+              "value": {
+                "expression": {
+                  "expression_heritage": "total",
+                  "variable": {
+                    "var_name": "total"
+                  }
+                }
+              }
+            },
+            {
+              "field": "high_value_count",
+              "value": {
+                "expression": {
+                  "expression_heritage": "high_value_count",
+                  "variable": {
+                    "var_name": "high_value_count"
+                  }
+                }
+              }
+            }
+          ]
+        }
+      }
+    }
+  ]
+}

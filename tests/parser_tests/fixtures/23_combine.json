@@ -1,0 +1,586 @@
+{
+  "file_name": "main",
+  "imported_predicates": [],
+  "predicates_prefix": "",
+  "rule": [
+    {
+      "full_text": "@Engine(\"duckdb\")",
+      "head": {
+        "predicate_name": "@Engine",
+        "record": {
+          "field_value": [
+            {
+              "field": 0,
+              "value": {
+                "expression": {
+                  "expression_heritage": "\"duckdb\"",
+                  "literal": {
+                    "the_string": {
+                      "the_string": "duckdb"
+                    }
+                  }
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "full_text": "Items(id: 1, tags: [\"a\", \"b\"])",
+      "head": {
+        "predicate_name": "Items",
+        "record": {
+          "field_value": [
+            {
+              "field": "id",
+              "value": {
+                "expression": {
+                  "expression_heritage": "1",
+                  "literal": {
+                    "the_number": {
+                      "number": "1"
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "field": "tags",
+              "value": {
+                "expression": {
+                  "expression_heritage": "[\"a\", \"b\"]",
+                  "literal": {
+                    "the_list": {
+                      "element": [
+                        {
+                          "expression_heritage": "\"a\"",
+                          "literal": {
+                            "the_string": {
+                              "the_string": "a"
+                            }
+                          }
+                        },
+                        {
+                          "expression_heritage": "\"b\"",
+                          "literal": {
+                            "the_string": {
+                              "the_string": "b"
+                            }
+                          }
+                        }
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "full_text": "Items(id: 2, tags: [\"c\"])",
+      "head": {
+        "predicate_name": "Items",
+        "record": {
+          "field_value": [
+            {
+              "field": "id",
+              "value": {
+                "expression": {
+                  "expression_heritage": "2",
+                  "literal": {
+                    "the_number": {
+                      "number": "2"
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "field": "tags",
+              "value": {
+                "expression": {
+                  "expression_heritage": "[\"c\"]",
+                  "literal": {
+                    "the_list": {
+                      "element": [
+                        {
+                          "expression_heritage": "\"c\"",
+                          "literal": {
+                            "the_string": {
+                              "the_string": "c"
+                            }
+                          }
+                        }
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "full_text": "Items(id: 3, tags: [\"a\", \"d\", \"e\"])",
+      "head": {
+        "predicate_name": "Items",
+        "record": {
+          "field_value": [
+            {
+              "field": "id",
+              "value": {
+                "expression": {
+                  "expression_heritage": "3",
+                  "literal": {
+                    "the_number": {
+                      "number": "3"
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "field": "tags",
+              "value": {
+                "expression": {
+                  "expression_heritage": "[\"a\", \"d\", \"e\"]",
+                  "literal": {
+                    "the_list": {
+                      "element": [
+                        {
+                          "expression_heritage": "\"a\"",
+                          "literal": {
+                            "the_string": {
+                              "the_string": "a"
+                            }
+                          }
+                        },
+                        {
+                          "expression_heritage": "\"d\"",
+                          "literal": {
+                            "the_string": {
+                              "the_string": "d"
+                            }
+                          }
+                        },
+                        {
+                          "expression_heritage": "\"e\"",
+                          "literal": {
+                            "the_string": {
+                              "the_string": "e"
+                            }
+                          }
+                        }
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "body": {
+        "conjunction": {
+          "conjunct": [
+            {
+              "predicate": {
+                "predicate_name": "Items",
+                "record": {
+                  "field_value": [
+                    {
+                      "field": "id",
+                      "value": {
+                        "expression": {
+                          "expression_heritage": "id",
+                          "variable": {
+                            "var_name": "id"
+                          }
+                        }
+                      }
+                    },
+                    {
+                      "field": "tags",
+                      "value": {
+                        "expression": {
+                          "expression_heritage": "tags",
+                          "variable": {
+                            "var_name": "tags"
+                          }
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          ]
+        }
+      },
+      "distinct_denoted": true,
+      "full_text": "AllTags() ++= tags :- Items(id:, tags:)",
+      "head": {
+        "predicate_name": "AllTags",
+        "record": {
+          "field_value": [
+            {
+              "field": "logica_value",
+              "value": {
+                "aggregation": {
+                  "expression": {
+                    "call": {
+                      "predicate_name": "Agg++",
+                      "record": {
+                        "field_value": [
+                          {
+                            "field": 0,
+                            "value": {
+                              "expression": {
+                                "expression_heritage": "tags",
+                                "variable": {
+                                  "var_name": "tags"
+                                }
+                              }
+                            }
+                          }
+                        ]
+                      }
+                    },
+                    "expression_heritage": " ++= tags"
+                  },
+                  "expression_heritage": " ++= tags"
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "body": {
+        "conjunction": {
+          "conjunct": [
+            {
+              "predicate": {
+                "predicate_name": "Items",
+                "record": {
+                  "field_value": [
+                    {
+                      "field": "id",
+                      "value": {
+                        "expression": {
+                          "expression_heritage": "id",
+                          "variable": {
+                            "var_name": "id"
+                          }
+                        }
+                      }
+                    },
+                    {
+                      "field": "tags",
+                      "value": {
+                        "expression": {
+                          "expression_heritage": "tags",
+                          "variable": {
+                            "var_name": "tags"
+                          }
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          ]
+        }
+      },
+      "distinct_denoted": true,
+      "full_text": "FilteredTags() ++= (if Size(tags) > 1 then tags else []) :- Items(id:, tags:)",
+      "head": {
+        "predicate_name": "FilteredTags",
+        "record": {
+          "field_value": [
+            {
+              "field": "logica_value",
+              "value": {
+                "aggregation": {
+                  "expression": {
+                    "call": {
+                      "predicate_name": "Agg++",
+                      "record": {
+                        "field_value": [
+                          {
+                            "field": 0,
+                            "value": {
+                              "expression": {
+                                "expression_heritage": "if Size(tags) > 1 then tags else []",
+                                "implication": {
+                                  "if_then": [
+                                    {
+                                      "condition": {
+                                        "call": {
+                                          "predicate_name": ">",
+                                          "record": {
+                                            "field_value": [
+                                              {
+                                                "field": "left",
+                                                "value": {
+                                                  "expression": {
+                                                    "call": {
+                                                      "predicate_name": "Size",
+                                                      "record": {
+                                                        "field_value": [
+                                                          {
+                                                            "field": 0,
+                                                            "value": {
+                                                              "expression": {
+                                                                "expression_heritage": "tags",
+                                                                "variable": {
+                                                                  "var_name": "tags"
+                                                                }
+                                                              }
+                                                            }
+                                                          }
+                                                        ]
+                                                      }
+                                                    },
+                                                    "expression_heritage": "Size(tags)"
+                                                  }
+                                                }
+                                              },
+                                              {
+                                                "field": "right",
+                                                "value": {
+                                                  "expression": {
+                                                    "expression_heritage": "1",
+                                                    "literal": {
+                                                      "the_number": {
+                                                        "number": "1"
+                                                      }
+                                                    }
+                                                  }
+                                                }
+                                              }
+                                            ]
+                                          }
+                                        },
+                                        "expression_heritage": "Size(tags) > 1"
+                                      },
+                                      "consequence": {
+                                        "expression_heritage": "tags",
+                                        "variable": {
+                                          "var_name": "tags"
+                                        }
+                                      }
+                                    }
+                                  ],
+                                  "otherwise": {
+                                    "expression_heritage": "[]",
+                                    "literal": {
+                                      "the_list": {
+                                        "element": []
+                                      }
+                                    }
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        ]
+                      }
+                    },
+                    "expression_heritage": " ++= (if Size(tags) > 1 then tags else [])"
+                  },
+                  "expression_heritage": " ++= (if Size(tags) > 1 then tags else [])"
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "full_text": "@OrderBy(TagsBySize, \"size\")",
+      "head": {
+        "predicate_name": "@OrderBy",
+        "record": {
+          "field_value": [
+            {
+              "field": 0,
+              "value": {
+                "expression": {
+                  "expression_heritage": "TagsBySize",
+                  "literal": {
+                    "the_predicate": {
+                      "predicate_name": "TagsBySize"
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "field": 1,
+              "value": {
+                "expression": {
+                  "expression_heritage": "\"size\"",
+                  "literal": {
+                    "the_string": {
+                      "the_string": "size"
+                    }
+                  }
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "body": {
+        "conjunction": {
+          "conjunct": [
+            {
+              "predicate": {
+                "predicate_name": "Items",
+                "record": {
+                  "field_value": [
+                    {
+                      "field": "id",
+                      "value": {
+                        "expression": {
+                          "expression_heritage": "id",
+                          "variable": {
+                            "var_name": "id"
+                          }
+                        }
+                      }
+                    },
+                    {
+                      "field": "tags",
+                      "value": {
+                        "expression": {
+                          "expression_heritage": "tags",
+                          "variable": {
+                            "var_name": "tags"
+                          }
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          ]
+        }
+      },
+      "distinct_denoted": true,
+      "full_text": "TagsBySize(size: Size(tags), all_tags? ++= tags) distinct :- Items(id:, tags:)",
+      "head": {
+        "predicate_name": "TagsBySize",
+        "record": {
+          "field_value": [
+            {
+              "field": "size",
+              "value": {
+                "expression": {
+                  "call": {
+                    "predicate_name": "Size",
+                    "record": {
+                      "field_value": [
+                        {
+                          "field": 0,
+                          "value": {
+                            "expression": {
+                              "expression_heritage": "tags",
+                              "variable": {
+                                "var_name": "tags"
+                              }
+                            }
+                          }
+                        }
+                      ]
+                    }
+                  },
+                  "expression_heritage": "Size(tags)"
+                }
+              }
+            },
+            {
+              "field": "all_tags",
+              "value": {
+                "aggregation": {
+                  "expression": {
+                    "call": {
+                      "predicate_name": "Agg++",
+                      "record": {
+                        "field_value": [
+                          {
+                            "field": 0,
+                            "value": {
+                              "expression": {
+                                "expression_heritage": "tags",
+                                "variable": {
+                                  "var_name": "tags"
+                                }
+                              }
+                            }
+                          }
+                        ]
+                      }
+                    },
+                    "expression_heritage": "++= tags"
+                  },
+                  "expression_heritage": "++= tags"
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "full_text": "Test(all_tags: AllTags(), filtered: FilteredTags())",
+      "head": {
+        "predicate_name": "Test",
+        "record": {
+          "field_value": [
+            {
+              "field": "all_tags",
+              "value": {
+                "expression": {
+                  "call": {
+                    "predicate_name": "AllTags",
+                    "record": {
+                      "field_value": []
+                    }
+                  },
+                  "expression_heritage": "AllTags()"
+                }
+              }
+            },
+            {
+              "field": "filtered",
+              "value": {
+                "expression": {
+                  "call": {
+                    "predicate_name": "FilteredTags",
+                    "record": {
+                      "field_value": []
+                    }
+                  },
+                  "expression_heritage": "FilteredTags()"
+                }
+              }
+            }
+          ]
+        }
+      }
+    }
+  ]
+}

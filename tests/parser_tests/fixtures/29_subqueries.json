@@ -1,0 +1,833 @@
+{
+  "file_name": "main",
+  "imported_predicates": [],
+  "predicates_prefix": "",
+  "rule": [
+    {
+      "full_text": "@Engine(\"duckdb\")",
+      "head": {
+        "predicate_name": "@Engine",
+        "record": {
+          "field_value": [
+            {
+              "field": 0,
+              "value": {
+                "expression": {
+                  "expression_heritage": "\"duckdb\"",
+                  "literal": {
+                    "the_string": {
+                      "the_string": "duckdb"
+                    }
+                  }
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "full_text": "Sales(product: \"A\", amount: 100)",
+      "head": {
+        "predicate_name": "Sales",
+        "record": {
+          "field_value": [
+            {
+              "field": "product",
+              "value": {
+                "expression": {
+                  "expression_heritage": "\"A\"",
+                  "literal": {
+                    "the_string": {
+                      "the_string": "A"
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "field": "amount",
+              "value": {
+                "expression": {
+                  "expression_heritage": "100",
+                  "literal": {
+                    "the_number": {
+                      "number": "100"
+                    }
+                  }
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "full_text": "Sales(product: \"A\", amount: 150)",
+      "head": {
+        "predicate_name": "Sales",
+        "record": {
+          "field_value": [
+            {
+              "field": "product",
+              "value": {
+                "expression": {
+                  "expression_heritage": "\"A\"",
+                  "literal": {
+                    "the_string": {
+                      "the_string": "A"
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "field": "amount",
+              "value": {
+                "expression": {
+                  "expression_heritage": "150",
+                  "literal": {
+                    "the_number": {
+                      "number": "150"
+                    }
+                  }
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "full_text": "Sales(product: \"B\", amount: 200)",
+      "head": {
+        "predicate_name": "Sales",
+        "record": {
+          "field_value": [
+            {
+              "field": "product",
+              "value": {
+                "expression": {
+                  "expression_heritage": "\"B\"",
+                  "literal": {
+                    "the_string": {
+                      "the_string": "B"
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "field": "amount",
+              "value": {
+                "expression": {
+                  "expression_heritage": "200",
+                  "literal": {
+                    "the_number": {
+                      "number": "200"
+                    }
+                  }
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "full_text": "Sales(product: \"C\", amount: 50)",
+      "head": {
+        "predicate_name": "Sales",
+        "record": {
+          "field_value": [
+            {
+              "field": "product",
+              "value": {
+                "expression": {
+                  "expression_heritage": "\"C\"",
+                  "literal": {
+                    "the_string": {
+                      "the_string": "C"
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "field": "amount",
+              "value": {
+                "expression": {
+                  "expression_heritage": "50",
+                  "literal": {
+                    "the_number": {
+                      "number": "50"
+                    }
+                  }
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "body": {
+        "conjunction": {
+          "conjunct": [
+            {
+              "predicate": {
+                "predicate_name": "Sales",
+                "record": {
+                  "field_value": [
+                    {
+                      "field": "product",
+                      "value": {
+                        "expression": {
+                          "expression_heritage": "product",
+                          "variable": {
+                            "var_name": "product"
+                          }
+                        }
+                      }
+                    },
+                    {
+                      "field": "amount",
+                      "value": {
+                        "expression": {
+                          "expression_heritage": "amount",
+                          "variable": {
+                            "var_name": "amount"
+                          }
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          ]
+        }
+      },
+      "distinct_denoted": true,
+      "full_text": "AvgSale() += amount :- Sales(product:, amount:)",
+      "head": {
+        "predicate_name": "AvgSale",
+        "record": {
+          "field_value": [
+            {
+              "field": "logica_value",
+              "value": {
+                "aggregation": {
+                  "expression": {
+                    "call": {
+                      "predicate_name": "Agg+",
+                      "record": {
+                        "field_value": [
+                          {
+                            "field": 0,
+                            "value": {
+                              "expression": {
+                                "expression_heritage": "amount",
+                                "variable": {
+                                  "var_name": "amount"
+                                }
+                              }
+                            }
+                          }
+                        ]
+                      }
+                    },
+                    "expression_heritage": " += amount"
+                  },
+                  "expression_heritage": " += amount"
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "body": {
+        "conjunction": {
+          "conjunct": [
+            {
+              "predicate": {
+                "predicate_name": "Sales",
+                "record": {
+                  "field_value": [
+                    {
+                      "field": "product",
+                      "value": {
+                        "expression": {
+                          "expression_heritage": "product",
+                          "variable": {
+                            "var_name": "product"
+                          }
+                        }
+                      }
+                    },
+                    {
+                      "field": "amount",
+                      "value": {
+                        "expression": {
+                          "expression_heritage": "amount",
+                          "variable": {
+                            "var_name": "amount"
+                          }
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          ]
+        }
+      },
+      "distinct_denoted": true,
+      "full_text": "CountSales() += 1 :- Sales(product:, amount:)",
+      "head": {
+        "predicate_name": "CountSales",
+        "record": {
+          "field_value": [
+            {
+              "field": "logica_value",
+              "value": {
+                "aggregation": {
+                  "expression": {
+                    "call": {
+                      "predicate_name": "Agg+",
+                      "record": {
+                        "field_value": [
+                          {
+                            "field": 0,
+                            "value": {
+                              "expression": {
+                                "expression_heritage": "1",
+                                "literal": {
+                                  "the_number": {
+                                    "number": "1"
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        ]
+                      }
+                    },
+                    "expression_heritage": " += 1"
+                  },
+                  "expression_heritage": " += 1"
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "full_text": "GlobalAvg() = AvgSale() / CountSales()",
+      "head": {
+        "predicate_name": "GlobalAvg",
+        "record": {
+          "field_value": [
+            {
+              "field": "logica_value",
+              "value": {
+                "expression": {
+                  "call": {
+                    "predicate_name": "/",
+                    "record": {
+                      "field_value": [
+                        {
+                          "field": "left",
+                          "value": {
+                            "expression": {
+                              "call": {
+                                "predicate_name": "AvgSale",
+                                "record": {
+                                  "field_value": []
+                                }
+                              },
+                              "expression_heritage": "AvgSale()"
+                            }
+                          }
+                        },
+                        {
+                          "field": "right",
+                          "value": {
+                            "expression": {
+                              "call": {
+                                "predicate_name": "CountSales",
+                                "record": {
+                                  "field_value": []
+                                }
+                              },
+                              "expression_heritage": "CountSales()"
+                            }
+                          }
+                        }
+                      ]
+                    }
+                  },
+                  "expression_heritage": "AvgSale() / CountSales()"
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "body": {
+        "conjunction": {
+          "conjunct": [
+            {
+              "predicate": {
+                "predicate_name": "Sales",
+                "record": {
+                  "field_value": [
+                    {
+                      "field": "product",
+                      "value": {
+                        "expression": {
+                          "expression_heritage": "product",
+                          "variable": {
+                            "var_name": "product"
+                          }
+                        }
+                      }
+                    },
+                    {
+                      "field": "amount",
+                      "value": {
+                        "expression": {
+                          "expression_heritage": "amount",
+                          "variable": {
+                            "var_name": "amount"
+                          }
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            },
+            {
+              "predicate": {
+                "predicate_name": ">",
+                "record": {
+                  "field_value": [
+                    {
+                      "field": "left",
+                      "value": {
+                        "expression": {
+                          "expression_heritage": "amount",
+                          "variable": {
+                            "var_name": "amount"
+                          }
+                        }
+                      }
+                    },
+                    {
+                      "field": "right",
+                      "value": {
+                        "expression": {
+                          "call": {
+                            "predicate_name": "GlobalAvg",
+                            "record": {
+                              "field_value": []
+                            }
+                          },
+                          "expression_heritage": "GlobalAvg()"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          ]
+        }
+      },
+      "full_text": "AboveAverage(product:, amount:) :- Sales(product:, amount:), amount > GlobalAvg()",
+      "head": {
+        "predicate_name": "AboveAverage",
+        "record": {
+          "field_value": [
+            {
+              "field": "product",
+              "value": {
+                "expression": {
+                  "expression_heritage": "product",
+                  "variable": {
+                    "var_name": "product"
+                  }
+                }
+              }
+            },
+            {
+              "field": "amount",
+              "value": {
+                "expression": {
+                  "expression_heritage": "amount",
+                  "variable": {
+                    "var_name": "amount"
+                  }
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "body": {
+        "conjunction": {
+          "conjunct": [
+            {
+              "predicate": {
+                "predicate_name": "Sales",
+                "record": {
+                  "field_value": [
+                    {
+                      "field": "product",
+                      "value": {
+                        "expression": {
+                          "expression_heritage": "product",
+                          "variable": {
+                            "var_name": "product"
+                          }
+                        }
+                      }
+                    },
+                    {
+                      "field": "amount",
+                      "value": {
+                        "expression": {
+                          "expression_heritage": "amount",
+                          "variable": {
+                            "var_name": "amount"
+                          }
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          ]
+        }
+      },
+      "distinct_denoted": true,
+      "full_text": "TotalByProduct(product:, total? += amount) distinct :- Sales(product:, amount:)",
+      "head": {
+        "predicate_name": "TotalByProduct",
+        "record": {
+          "field_value": [
+            {
+              "field": "product",
+              "value": {
+                "expression": {
+                  "expression_heritage": "product",
+                  "variable": {
+                    "var_name": "product"
+                  }
+                }
+              }
+            },
+            {
+              "field": "total",
+              "value": {
+                "aggregation": {
+                  "expression": {
+                    "call": {
+                      "predicate_name": "Agg+",
+                      "record": {
+                        "field_value": [
+                          {
+                            "field": 0,
+                            "value": {
+                              "expression": {
+                                "expression_heritage": "amount",
+                                "variable": {
+                                  "var_name": "amount"
+                                }
+                              }
+                            }
+                          }
+                        ]
+                      }
+                    },
+                    "expression_heritage": "+= amount"
+                  },
+                  "expression_heritage": "+= amount"
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "body": {
+        "conjunction": {
+          "conjunct": [
+            {
+              "predicate": {
+                "predicate_name": "TotalByProduct",
+                "record": {
+                  "field_value": [
+                    {
+                      "field": "product",
+                      "value": {
+                        "expression": {
+                          "expression_heritage": "product",
+                          "variable": {
+                            "var_name": "product"
+                          }
+                        }
+                      }
+                    },
+                    {
+                      "field": "total",
+                      "value": {
+                        "expression": {
+                          "expression_heritage": "total",
+                          "variable": {
+                            "var_name": "total"
+                          }
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          ]
+        }
+      },
+      "distinct_denoted": true,
+      "full_text": "MaxTotal() Max= total :- TotalByProduct(product:, total:)",
+      "head": {
+        "predicate_name": "MaxTotal",
+        "record": {
+          "field_value": [
+            {
+              "field": "logica_value",
+              "value": {
+                "aggregation": {
+                  "expression": {
+                    "call": {
+                      "predicate_name": "Max",
+                      "record": {
+                        "field_value": [
+                          {
+                            "field": 0,
+                            "value": {
+                              "expression": {
+                                "expression_heritage": "total",
+                                "variable": {
+                                  "var_name": "total"
+                                }
+                              }
+                            }
+                          }
+                        ]
+                      }
+                    },
+                    "expression_heritage": " Max= total"
+                  },
+                  "expression_heritage": " Max= total"
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "body": {
+        "conjunction": {
+          "conjunct": [
+            {
+              "predicate": {
+                "predicate_name": "TotalByProduct",
+                "record": {
+                  "field_value": [
+                    {
+                      "field": "product",
+                      "value": {
+                        "expression": {
+                          "expression_heritage": "product",
+                          "variable": {
+                            "var_name": "product"
+                          }
+                        }
+                      }
+                    },
+                    {
+                      "field": "total",
+                      "value": {
+                        "expression": {
+                          "expression_heritage": "total",
+                          "variable": {
+                            "var_name": "total"
+                          }
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            },
+            {
+              "unification": {
+                "left_hand_side": {
+                  "expression_heritage": "total",
+                  "variable": {
+                    "var_name": "total"
+                  }
+                },
+                "right_hand_side": {
+                  "call": {
+                    "predicate_name": "MaxTotal",
+                    "record": {
+                      "field_value": []
+                    }
+                  },
+                  "expression_heritage": "MaxTotal()"
+                }
+              }
+            }
+          ]
+        }
+      },
+      "full_text": "TopProduct(product:) :- TotalByProduct(product:, total:), total == MaxTotal()",
+      "head": {
+        "predicate_name": "TopProduct",
+        "record": {
+          "field_value": [
+            {
+              "field": "product",
+              "value": {
+                "expression": {
+                  "expression_heritage": "product",
+                  "variable": {
+                    "var_name": "product"
+                  }
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "full_text": "@OrderBy(Test, \"product\")",
+      "head": {
+        "predicate_name": "@OrderBy",
+        "record": {
+          "field_value": [
+            {
+              "field": 0,
+              "value": {
+                "expression": {
+                  "expression_heritage": "Test",
+                  "literal": {
+                    "the_predicate": {
+                      "predicate_name": "Test"
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "field": 1,
+              "value": {
+                "expression": {
+                  "expression_heritage": "\"product\"",
+                  "literal": {
+                    "the_string": {
+                      "the_string": "product"
+                    }
+                  }
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "body": {
+        "conjunction": {
+          "conjunct": [
+            {
+              "predicate": {
+                "predicate_name": "AboveAverage",
+                "record": {
+                  "field_value": [
+                    {
+                      "field": "product",
+                      "value": {
+                        "expression": {
+                          "expression_heritage": "product",
+                          "variable": {
+                            "var_name": "product"
+                          }
+                        }
+                      }
+                    },
+                    {
+                      "field": "amount",
+                      "value": {
+                        "expression": {
+                          "expression_heritage": "amount",
+                          "variable": {
+                            "var_name": "amount"
+                          }
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          ]
+        }
+      },
+      "full_text": "Test(product:, amount:) :- AboveAverage(product:, amount:)",
+      "head": {
+        "predicate_name": "Test",
+        "record": {
+          "field_value": [
+            {
+              "field": "product",
+              "value": {
+                "expression": {
+                  "expression_heritage": "product",
+                  "variable": {
+                    "var_name": "product"
+                  }
+                }
+              }
+            },
+            {
+              "field": "amount",
+              "value": {
+                "expression": {
+                  "expression_heritage": "amount",
+                  "variable": {
+                    "var_name": "amount"
+                  }
+                }
+              }
+            }
+          ]
+        }
+      }
+    }
+  ]
+}

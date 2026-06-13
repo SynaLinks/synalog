@@ -1,0 +1,34 @@
+[package]
+name = "synalog"
+version = "0.1.0"
+edition = "2024"
+description = "Logic programming for AI agents — Datalog-family language compiling to optimized SQL"
+license = "Apache-2.0"
+repository = "https://github.com/synalinks/synalog"
+readme = "README.md"
+
+[lib]
+name = "synalog"
+crate-type = ["cdylib", "rlib"]
+
+[features]
+default = []
+run = ["rusqlite", "duckdb", "postgres-db", "bigquery-db"]
+postgres-db = ["postgres"]
+bigquery-db = ["reqwest"]
+
+[dependencies]
+indexmap = "2"
+regex = "1.12.3"
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+thiserror = "2"
+anyhow = "1"
+pyo3 = { version = "0.29", features = ["extension-module", "abi3-py310"] }
+rusqlite = { version = "0.34", optional = true, features = ["bundled"] }
+duckdb = { version = "1.2", optional = true, features = ["bundled"] }
+postgres = { version = "0.19", optional = true }
+reqwest = { version = "0.12", optional = true, features = ["blocking", "json"] }
+
+[dev-dependencies]
+regex = "1.12.3"

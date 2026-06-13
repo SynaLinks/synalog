@@ -1,0 +1,184 @@
+$ synalog.check('temporal.l')
+No errors found.
+
+$ synalog.compile('temporal.l', 'MonthlyOrders')
+-- Initializing DuckDB environment.
+create schema if not exists logica_home;
+-- Empty record, has to have a field by DuckDB syntax.
+drop type if exists logicarecord893574736 cascade; create type logicarecord893574736 as struct(nirvana numeric);
+create sequence if not exists eternal_logical_sequence;
+
+WITH t_0_Orders AS (SELECT * FROM (
+  
+    SELECT
+      1 AS order_id,
+      E'2024-01-15 10:30:00' AS created_at
+   UNION ALL
+  
+    SELECT
+      2 AS order_id,
+      E'2024-01-28 18:05:00' AS created_at
+   UNION ALL
+  
+    SELECT
+      3 AS order_id,
+      E'2024-02-03 09:00:00' AS created_at
+   UNION ALL
+  
+    SELECT
+      4 AS order_id,
+      E'2024-02-14 22:45:00' AS created_at
+   UNION ALL
+  
+    SELECT
+      5 AS order_id,
+      E'2024-03-01 08:15:00' AS created_at
+  
+) AS UNUSED_TABLE_NAME  )
+SELECT
+  SUBSTR(CAST(Orders.created_at AS TEXT), 1, 7) AS month,
+  SUM(1) AS count
+FROM
+  t_0_Orders AS Orders
+GROUP BY SUBSTR(CAST(Orders.created_at AS TEXT), 1, 7) ORDER BY month;
+
+-- Executed on DuckDB:
+| month   | count |
+|---------|-------|
+| 2024-01 | 2     |
+| 2024-02 | 2     |
+| 2024-03 | 1     |
+(3 rows)
+
+$ synalog.compile('temporal.l', 'JanuaryOrders')
+-- Initializing DuckDB environment.
+create schema if not exists logica_home;
+-- Empty record, has to have a field by DuckDB syntax.
+drop type if exists logicarecord893574736 cascade; create type logicarecord893574736 as struct(nirvana numeric);
+create sequence if not exists eternal_logical_sequence;
+
+WITH t_0_Orders AS (SELECT * FROM (
+  
+    SELECT
+      1 AS order_id,
+      E'2024-01-15 10:30:00' AS created_at
+   UNION ALL
+  
+    SELECT
+      2 AS order_id,
+      E'2024-01-28 18:05:00' AS created_at
+   UNION ALL
+  
+    SELECT
+      3 AS order_id,
+      E'2024-02-03 09:00:00' AS created_at
+   UNION ALL
+  
+    SELECT
+      4 AS order_id,
+      E'2024-02-14 22:45:00' AS created_at
+   UNION ALL
+  
+    SELECT
+      5 AS order_id,
+      E'2024-03-01 08:15:00' AS created_at
+  
+) AS UNUSED_TABLE_NAME  )
+SELECT
+  Orders.order_id AS order_id
+FROM
+  t_0_Orders AS Orders
+WHERE
+  (CAST(Orders.created_at AS TEXT) >= E'2024-01-01') AND
+  (CAST(Orders.created_at AS TEXT) < E'2024-02-01') ORDER BY order_id;
+
+-- Executed on DuckDB:
+| order_id |
+|----------|
+| 1        |
+| 2        |
+(2 rows)
+
+$ synalog.compile('temporal.l', 'OrderHours')
+-- Initializing DuckDB environment.
+create schema if not exists logica_home;
+-- Empty record, has to have a field by DuckDB syntax.
+drop type if exists logicarecord893574736 cascade; create type logicarecord893574736 as struct(nirvana numeric);
+create sequence if not exists eternal_logical_sequence;
+
+WITH t_0_Orders AS (SELECT * FROM (
+  
+    SELECT
+      1 AS order_id,
+      E'2024-01-15 10:30:00' AS created_at
+   UNION ALL
+  
+    SELECT
+      2 AS order_id,
+      E'2024-01-28 18:05:00' AS created_at
+   UNION ALL
+  
+    SELECT
+      3 AS order_id,
+      E'2024-02-03 09:00:00' AS created_at
+   UNION ALL
+  
+    SELECT
+      4 AS order_id,
+      E'2024-02-14 22:45:00' AS created_at
+   UNION ALL
+  
+    SELECT
+      5 AS order_id,
+      E'2024-03-01 08:15:00' AS created_at
+  
+) AS UNUSED_TABLE_NAME  )
+SELECT
+  Orders.order_id AS order_id,
+  CAST(SUBSTR(CAST(Orders.created_at AS TEXT), 12, 2) AS INT64) AS hour,
+  CASE WHEN (CAST(SUBSTR(CAST(Orders.created_at AS TEXT), 12, 2) AS INT64) >= 18) THEN E'yes' ELSE E'no' END AS is_evening
+FROM
+  t_0_Orders AS Orders ORDER BY order_id;
+
+-- Executed on DuckDB:
+| order_id | hour | is_evening |
+|----------|------|------------|
+| 1        | 10   | no         |
+| 2        | 18   | yes        |
+| 3        | 9    | no         |
+| 4        | 22   | yes        |
+| 5        | 8    | no         |
+(5 rows)
+
+$ synalog.compile('temporal.l', 'ActiveSubscriptions')
+-- Initializing DuckDB environment.
+create schema if not exists logica_home;
+-- Empty record, has to have a field by DuckDB syntax.
+drop type if exists logicarecord893574736 cascade; create type logicarecord893574736 as struct(nirvana numeric);
+create sequence if not exists eternal_logical_sequence;
+
+WITH t_0_Subscriptions AS (SELECT * FROM (
+  
+    SELECT
+      1 AS sub_id,
+      E'2024-06-30' AS expires
+   UNION ALL
+  
+    SELECT
+      2 AS sub_id,
+      E'2030-06-30' AS expires
+  
+) AS UNUSED_TABLE_NAME  )
+SELECT
+  Subscriptions.sub_id AS sub_id,
+  Subscriptions.expires AS expires
+FROM
+  t_0_Subscriptions AS Subscriptions, CurrentDate
+WHERE
+  (Subscriptions.expires >= CurrentDate.date) ORDER BY sub_id;
+
+-- Executed on DuckDB:
+| sub_id | expires    |
+|--------|------------|
+| 2      | 2030-06-30 |
+(1 row)
