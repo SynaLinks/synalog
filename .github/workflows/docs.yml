@@ -20,6 +20,17 @@ jobs:
       - uses: actions/setup-python@v6
         with:
           python-version: 3.x
+      # Build the playground wasm module (docs/playground/pkg/) before the site,
+      # so zensical copies it into the published artifact.
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: wasm32-unknown-unknown
+      - name: Install wasm-bindgen + wasm-opt
+        run: |
+          cargo install wasm-bindgen-cli --version 0.2.114 --locked
+          sudo apt-get update && sudo apt-get install -y binaryen
+      - name: Build playground wasm
+        run: ./shell/build-wasm.sh
       - run: pip install zensical
       - run: zensical build --clean
       - uses: actions/upload-pages-artifact@v5

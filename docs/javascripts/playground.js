@@ -1,0 +1,347 @@
+// In-browser Synalog playground: CodeMirror 6 editor + the compiler shipped to
+// WebAssembly (docs/playground/pkg, built from src/wasm.rs). Loaded as a classic
+// script on every page; it only does work when #synalog-playground is present.
+//
+// CodeMirror is loaded at runtime via dynamic import() of a single self-hosted
+// bundle (docs/playground/vendor/codemirror.js, produced by
+// shell/build-codemirror.sh). A single bundle is required: CodeMirror's
+// extension system relies on instanceof, so every package must share ONE copy
+// of @codemirror/state — fetching the component packages separately from a CDN
+// loads multiple copies and throws "multiple instances of @codemirror/state".
+
+(function () {
+  // Capture this script's own URL now (document.currentScript is only valid
+  // during initial evaluation) so we can resolve the wasm package relative to it,
+  // regardless of which docs page embeds the playground.
+  var SELF = document.currentScript && document.currentScript.src;
+
+  var DEFAULT_PROGRAM = [
+    "# Tables",
+    "Orders(order_id:, customer_id:, amount:, created_at:) :-",
+    "  orders(order_id:, customer_id:, amount:, created_at:);",
+    "",
+    "# Concepts",
+    "@OrderBy(CustomerNode, \"customer_id\");",
+    "CustomerNode(customer_id:) distinct :- Orders(customer_id:);",
+    "",
+    "# Rules",
+    "@OrderBy(CustomerRevenue, \"total\", \"desc\");",
+    "CustomerRevenue(customer_id:, total? += amount) distinct :-",
+    "  Orders(customer_id:, amount:);",
+    "",
+  ].join("\n");
+
+  function start() {
+    var root = document.getElementById("synalog-playground");
+    if (!root || root.dataset.pgInit) return; // guard against double-init
+    root.dataset.pgInit = "1";
+    // Immediate placeholder so the pane is not blank while the wasm compiler
+    // (~2.5 MB) and editor bundle download; boot() clears it once mounted.
+    root.classList.add("pg");
+    root.innerHTML = '<p class="pg-loading">Loading the Synalog compiler…</p>';
+    boot(root).catch(function (e) {
+      root.innerHTML =
+        '<p class="pg-fatal">Failed to load the playground: ' +
+        String(e && e.message ? e.message : e) +
+        "</p>";
+    });
+  }
+
+  // zensical/Material ships `navigation.instant`, which swaps the page body
+  // without refiring DOMContentLoaded. Subscribe to the `document$` observable
+  // so the playground also initialises when reached via instant navigation;
+  // fall back to DOMContentLoaded when the observable is absent.
+  if (typeof window !== "undefined" && window.document$ && typeof window.document$.subscribe === "function") {
+    window.document$.subscribe(start);
+  } else {
+    document.addEventListener("DOMContentLoaded", start);
+  }
+
+  async function boot(root) {
+    // CodeMirror is loaded from a single SELF-HOSTED bundle (built by
+    // shell/build-codemirror.sh into docs/playground/vendor/codemirror.js).
+    // This is deliberate: pulling the component packages individually from a
+    // CDN gives multiple @codemirror/state copies, and CodeMirror's extension
+    // system relies on instanceof — so a single bundle is the only robust way
+    // to guarantee one state instance. It also makes the docs work offline.
+    var base = SELF || window.location.href;
+    var cmUrl = new URL("../playground/vendor/codemirror.js", base).href;
+
+    var loaded = await Promise.all([import(cmUrl), loadWasm()]);
+    var cm = loaded[0];
+    var wasm = loaded[1];
+
+    var EditorView = cm.EditorView;
+    var EditorState = cm.EditorState;
+    var StreamLanguage = cm.StreamLanguage;
+    var HighlightStyle = cm.HighlightStyle;
+    var syntaxHighlighting = cm.syntaxHighlighting;
+    var t = cm.tags;
+
+    // A compact stand-in for `basicSetup`: line numbers, history, bracket
+    // matching, active-line highlight, code folding and the default keymaps.
+    function baseSetup() {
+      return [
+        cm.lineNumbers(),
+        cm.highlightActiveLineGutter(),
+        cm.highlightActiveLine(),
+        cm.drawSelection(),
+        cm.history(),
+        cm.indentOnInput(),
+        cm.bracketMatching(),
+        cm.foldGutter(),
+        syntaxHighlighting(cm.defaultHighlightStyle, { fallback: true }),
+        cm.keymap.of(
+          [].concat(cm.defaultKeymap, cm.historyKeymap, [cm.indentWithTab])
+        ),
+      ];
+    }
+
+    // --- Synalog syntax mode ----------------------------------------------
+    var KEYWORDS = /^(distinct|in|is|not|null|if|then|else|import|as|true|false)\b/;
+    var synalog = StreamLanguage.define({
+      name: "synalog",
+      token: function (stream) {
+        if (stream.match(/##.*/)) return "docComment";
+        if (stream.match(/#.*/)) return "comment";
+        if (stream.match(/"(?:[^"\\]|\\.)*"/)) return "string";
+        if (stream.match(/@[A-Za-z_]\w*/)) return "meta"; // directive
+        if (stream.match(KEYWORDS)) return "keyword";
+        if (stream.match(/[A-Z]\w*/)) return "typeName"; // predicate / concept
+        if (stream.match(/[a-z_]\w*(?=\s*:)/)) return "propertyName"; // named arg
+        if (stream.match(/[0-9]+(\.[0-9]+)?/)) return "number";
+        if (stream.match(/:-|\+\+|[+\-*/^%=<>!&|~?,.()[\]{}:]/)) return "operator";
+        stream.next();
+        return null;
+      },
+    });
+
+    var highlight = HighlightStyle.define([
+      { tag: t.comment, color: "var(--pg-comment)", fontStyle: "italic" },
+      { tag: t.docComment, color: "var(--pg-doc)", fontStyle: "italic" },
+      { tag: t.string, color: "var(--pg-string)" },
+      { tag: t.number, color: "var(--pg-number)" },
+      { tag: t.keyword, color: "var(--pg-keyword)", fontWeight: "600" },
+      { tag: t.meta, color: "var(--pg-directive)", fontWeight: "600" },
+      { tag: t.typeName, color: "var(--pg-predicate)" },
+      { tag: t.propertyName, color: "var(--pg-arg)" },
+      { tag: t.operator, color: "var(--pg-operator)" },
+    ]);
+
+    // --- DOM scaffold ------------------------------------------------------
+    root.classList.add("pg");
+    root.innerHTML = "";
+
+    var toolbar = el("div", "pg-toolbar");
+    var engineSel = el("select", "pg-select");
+    engineSel.title = "Target SQL engine";
+    var predSel = el("select", "pg-select");
+    predSel.title = "Predicate to compile";
+    var verifyWrap = el("label", "pg-toggle");
+    var verifyBox = document.createElement("input");
+    verifyBox.type = "checkbox";
+    verifyWrap.appendChild(verifyBox);
+    verifyWrap.appendChild(document.createTextNode(" Verify"));
+    var runBtn = el("button", "pg-run");
+    runBtn.textContent = "Compile";
+    toolbar.appendChild(labeled("Engine", engineSel));
+    toolbar.appendChild(labeled("Predicate", predSel));
+    toolbar.appendChild(verifyWrap);
+    toolbar.appendChild(runBtn);
+
+    var panes = el("div", "pg-panes");
+    var editorPane = el("div", "pg-pane pg-editor");
+    var outPane = el("div", "pg-pane pg-output");
+    // caption + scroll container per pane (editor on top, SQL below)
+    var editorScroll = el("div", "pg-scroll");
+    var outScroll = el("div", "pg-scroll");
+    editorPane.appendChild(caption("Synalog"));
+    editorPane.appendChild(editorScroll);
+    outPane.appendChild(caption("Compiled SQL"));
+    outPane.appendChild(outScroll);
+    panes.appendChild(editorPane);
+    panes.appendChild(outPane);
+
+    root.appendChild(toolbar);
+    root.appendChild(panes);
+
+    // populate engines (duckdb first — it is the default)
+    var engines = wasm.supported_engines();
+    engines.sort(function (a, b) {
+      if (a === "duckdb") return -1;
+      if (b === "duckdb") return 1;
+      return a.localeCompare(b);
+    });
+    engines.forEach(function (e) {
+      var o = document.createElement("option");
+      o.value = o.textContent = e;
+      engineSel.appendChild(o);
+    });
+
+    // --- editor ------------------------------------------------------------
+    var view = new EditorView({
+      parent: editorScroll,
+      state: EditorState.create({
+        doc: DEFAULT_PROGRAM,
+        extensions: [
+          baseSetup(),
+          synalog,
+          syntaxHighlighting(highlight),
+          EditorView.lineWrapping,
+        ],
+      }),
+    });
+
+    // read-only SQL view
+    var sqlView = new EditorView({
+      parent: outScroll,
+      state: EditorState.create({
+        doc: "",
+        extensions: [
+          baseSetup(),
+          cm.sql(),
+          syntaxHighlighting(highlight),
+          EditorView.lineWrapping,
+          EditorState.readOnly.of(true),
+          EditorView.editable.of(false),
+        ],
+      }),
+    });
+
+    function source() {
+      return view.state.doc.toString();
+    }
+    function engine() {
+      return engineSel.value || "";
+    }
+    function setSql(text, isError) {
+      outPane.classList.toggle("pg-has-error", !!isError);
+      sqlView.dispatch({
+        changes: { from: 0, to: sqlView.state.doc.length, insert: text },
+      });
+    }
+
+    // refresh the predicate dropdown from the current source; returns true on
+    // a clean parse so callers can decide whether to also compile.
+    function refreshPredicates() {
+      var prev = predSel.value;
+      var names;
+      try {
+        names = wasm.predicates(source(), engine());
+      } catch (e) {
+        return false; // parse error — leave the picker as-is
+      }
+      predSel.innerHTML = "";
+      names.forEach(function (n) {
+        var o = document.createElement("option");
+        o.value = o.textContent = n;
+        predSel.appendChild(o);
+      });
+      if (names.indexOf(prev) !== -1) predSel.value = prev;
+      return true;
+    }
+
+    function run() {
+      var pred = predSel.value;
+      if (!pred) {
+        if (!refreshPredicates()) {
+          // surface the parse error by attempting a compile anyway
+          try {
+            wasm.predicates(source(), engine());
+          } catch (e) {
+            setSql(String(e.message || e), true);
+            return;
+          }
+        }
+        pred = predSel.value;
+        if (!pred) {
+          setSql("-- No predicates defined.", true);
+          return;
+        }
+      }
+
+      if (verifyBox.checked) {
+        var errors;
+        try {
+          errors = wasm.check(source(), engine());
+        } catch (e) {
+          setSql(String(e.message || e), true);
+          return;
+        }
+        if (errors.length) {
+          setSql(
+            errors
+              .map(function (m) {
+                return "-- ✗ " + m;
+              })
+              .join("\n"),
+            true
+          );
+          return;
+        }
+      }
+
+      try {
+        setSql(wasm.compile(source(), pred, engine()), false);
+      } catch (e) {
+        setSql(String(e.message || e), true);
+      }
+    }
+
+    // --- events ------------------------------------------------------------
+    runBtn.addEventListener("click", run);
+    engineSel.addEventListener("change", function () {
+      refreshPredicates();
+      run();
+    });
+    predSel.addEventListener("change", run);
+    verifyBox.addEventListener("change", run);
+
+    // recompute predicates as you type (debounced); does not auto-compile so
+    // typing stays cheap and the SQL pane is not flickering on every keystroke.
+    var debounce;
+    view.dom.addEventListener("keyup", function () {
+      clearTimeout(debounce);
+      debounce = setTimeout(refreshPredicates, 300);
+    });
+    // Ctrl/Cmd-Enter compiles
+    view.dom.addEventListener("keydown", function (ev) {
+      if ((ev.ctrlKey || ev.metaKey) && ev.key === "Enter") {
+        ev.preventDefault();
+        run();
+      }
+    });
+
+    refreshPredicates();
+    run();
+  }
+
+  // Resolve and initialise the wasm-bindgen module relative to this script.
+  async function loadWasm() {
+    var base = SELF || window.location.href;
+    // javascripts/playground.js -> ../playground/pkg/synalog.js
+    var url = new URL("../playground/pkg/synalog.js", base).href;
+    var mod = await import(url);
+    await mod.default(); // run the wasm-bindgen init (fetches synalog_bg.wasm)
+    return mod;
+  }
+
+  function el(tag, cls) {
+    var n = document.createElement(tag);
+    if (cls) n.className = cls;
+    return n;
+  }
+  function labeled(text, node) {
+    var w = el("span", "pg-field");
+    var l = el("span", "pg-label");
+    l.textContent = text;
+    w.appendChild(l);
+    w.appendChild(node);
+    return w;
+  }
+  function caption(text) {
+    var c = el("div", "pg-caption");
+    c.textContent = text;
+    return c;
+  }
+})();

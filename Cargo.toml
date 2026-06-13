@@ -12,7 +12,12 @@ name = "synalog"
 crate-type = ["cdylib", "rlib"]
 
 [features]
-default = []
+default = ["python"]
+# Python extension module (built by maturin). Pulls in pyo3.
+python = ["dep:pyo3"]
+# Browser playground: compiles the parser + compiler to wasm via wasm-bindgen.
+# Build with: --no-default-features --features wasm
+wasm = ["dep:wasm-bindgen"]
 run = ["rusqlite", "duckdb", "postgres-db", "bigquery-db"]
 postgres-db = ["postgres"]
 bigquery-db = ["reqwest"]
@@ -24,7 +29,8 @@ serde = { version = "1", features = ["derive"] }
 serde_json = "1"
 thiserror = "2"
 anyhow = "1"
-pyo3 = { version = "0.29", features = ["extension-module", "abi3-py310"] }
+pyo3 = { version = "0.29", optional = true, features = ["extension-module", "abi3-py310"] }
+wasm-bindgen = { version = "0.2", optional = true }
 rusqlite = { version = "0.34", optional = true, features = ["bundled"] }
 duckdb = { version = "1.2", optional = true, features = ["bundled"] }
 postgres = { version = "0.19", optional = true }

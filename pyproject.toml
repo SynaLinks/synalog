@@ -5,7 +5,7 @@ build-backend = "maturin"
 [project]
 name = "synalog"
 version = "0.1.0"
-description = "Logic programming for AI agents — Datalog-family language compiling to optimized SQL"
+description = "Logic programming for AI agents: Datalog-family language compiling to optimized SQL"
 readme = "README.md"
 requires-python = ">=3.10"
 license = { text = "Apache-2.0" }
@@ -72,7 +72,7 @@ dev = [
 ]
 
 [tool.maturin]
-features = ["pyo3/extension-module"]
+features = ["python", "pyo3/extension-module"]
 module-name = "synalog._synalog"
 python-source = "python"
 # Keep the sdist lean: sources + license + readme only.

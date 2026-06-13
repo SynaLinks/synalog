@@ -90,3 +90,144 @@
         padding: 0.4rem;
     }
 }
+
+/* --------------------------------------------------------------------------
+   Playground (docs/playground.md + javascripts/playground.js)
+   -------------------------------------------------------------------------- */
+
+.pg {
+    /* Token colors, resolved from the active Material palette so highlighting
+       follows light/dark mode. */
+    --pg-comment: var(--md-code-hl-comment-color, #6a737d);
+    --pg-doc: var(--md-default-fg-color--light, #5a6570);
+    --pg-string: var(--md-code-hl-string-color, #d14);
+    --pg-number: var(--md-code-hl-number-color, #b5690a);
+    --pg-keyword: var(--md-code-hl-keyword-color, #a626a4);
+    --pg-directive: var(--md-code-hl-special-color, #c25b00);
+    --pg-predicate: var(--md-code-hl-function-color, #2563eb);
+    --pg-arg: var(--md-code-hl-name-color, #1f7a6d);
+    --pg-operator: var(--md-code-hl-operator-color, #5c6370);
+
+    margin: 1.2em 0;
+    border: 1px solid var(--md-default-fg-color--lightest);
+    border-radius: 0.3rem;
+    overflow: hidden;
+}
+
+.pg-toolbar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    gap: 0.75rem;
+    padding: 0.6rem 0.8rem;
+    background: var(--md-default-fg-color--lightest);
+    border-bottom: 1px solid var(--md-default-fg-color--lightest);
+}
+
+.pg-field {
+    display: flex;
+    flex-direction: column;
+    gap: 0.15rem;
+}
+
+.pg-label {
+    font-size: 0.62rem;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--md-default-fg-color--light);
+}
+
+.pg-select {
+    font: inherit;
+    font-size: 0.72rem;
+    padding: 0.25rem 0.4rem;
+    border: 1px solid var(--md-default-fg-color--lighter);
+    border-radius: 0.2rem;
+    background: var(--md-default-bg-color);
+    color: var(--md-default-fg-color);
+}
+
+.pg-toggle {
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
+    font-size: 0.72rem;
+    color: var(--md-default-fg-color--light);
+    cursor: pointer;
+}
+
+.pg-run {
+    margin-left: auto;
+    font: inherit;
+    font-size: 0.74rem;
+    font-weight: 600;
+    padding: 0.35rem 0.9rem;
+    border: none;
+    border-radius: 0.2rem;
+    background: var(--md-primary-fg-color);
+    color: var(--md-primary-bg-color);
+    cursor: pointer;
+}
+
+.pg-run:hover {
+    filter: brightness(1.08);
+}
+
+/* Editor and SQL output stacked vertically (one above the other). */
+.pg-panes {
+    display: flex;
+    flex-direction: column;
+}
+
+.pg-pane {
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+}
+
+.pg-editor {
+    border-bottom: 1px solid var(--md-default-fg-color--lightest);
+}
+
+/* Small caption above each pane. */
+.pg-caption {
+    padding: 0.3rem 0.7rem;
+    font-size: 0.62rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--md-default-fg-color--light);
+    background: var(--md-default-fg-color--lightest);
+    border-bottom: 1px solid var(--md-default-fg-color--lightest);
+}
+
+.pg-scroll {
+    max-height: 300px;
+    overflow: auto;
+}
+
+.pg .cm-editor {
+    height: 100%;
+    font-size: 0.74rem;
+}
+
+.pg .cm-editor.cm-focused {
+    outline: none;
+}
+
+.pg-output.pg-has-error .cm-content {
+    color: var(--md-typeset-color, #b00020);
+}
+
+.pg-fatal {
+    padding: 1rem;
+    color: var(--md-typeset-color);
+}
+
+.pg-loading {
+    padding: 1.4rem 1rem;
+    margin: 0;
+    text-align: center;
+    font-size: 0.78rem;
+    color: var(--md-default-fg-color--light);
+}

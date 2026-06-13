@@ -1,6 +1,6 @@
 [project]
-site_name = "Synalog"
-site_description = "Logic programming for AI agents — Datalog-family language compiling to optimized SQL"
+site_name = "SynaLog"
+site_description = "Logic programming for AI agents: Datalog-family language compiling to optimized SQL"
 site_author = "Synalinks"
 site_url = "https://synalinks.github.io/synalog/"
 repo_url = "https://github.com/synalinks/synalog"
@@ -10,11 +10,12 @@ Copyright &copy; 2026 Synalinks
 """
 
 extra_css = ["stylesheets/extra.css"]
-extra_javascript = ["javascripts/summarize.js"]
+extra_javascript = ["javascripts/summarize.js", "javascripts/playground.js"]
 
 nav = [
   { "Home" = "index.md" },
   { "Getting started" = "getting-started.md" },
+  { "Playground" = "playground.md" },
   { "Language" = [
     { "Program structure" = "language/index.md" },
     { "Syntax" = "language/syntax.md" },

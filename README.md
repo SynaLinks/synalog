@@ -18,7 +18,8 @@
 
 </div>
 
-# Synalog: Logic programming for AI agents
+# Synalog
+## Logic programming for AI agents: Datalog-family language compiling to optimized SQL
 
 Synalog is a logic programming language from the [Datalog](https://en.wikipedia.org/wiki/Datalog) family — a fork of [Logica](https://logica.dev/) with the entire engine (parser, compiler and verifier) **rewritten in Rust**. It compiles to optimized **SQL** and ships as a Python package built on [PyO3](https://pyo3.rs/): parsing is **~75x faster** and compilation **~13x faster** than the original Python implementation, so validating and compiling a program is effectively instant.
 
