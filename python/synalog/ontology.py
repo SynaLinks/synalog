@@ -15,10 +15,38 @@ The mapping follows the project's knowledge-graph conventions:
   domain is that class;
 * an OWL **object property** becomes a ``*Edge`` concept joining two nodes
   through their URIs;
-* ``rdfs:subClassOf`` between named classes becomes a recursive
-  ``SubClassOfEdge`` (the transitive closure of the hierarchy);
+* ``rdfs:subClassOf`` (and ``owl:equivalentClass``, as mutual subclassing)
+  becomes a recursive ``SubClassOfEdge`` — the transitive closure of the
+  hierarchy;
 * **individuals** (the ABox) are emitted as ``*Raw`` facts that the concepts
   build on, so the generated program runs as-is.
+
+**OWL property axioms and characteristics** are translated to the matching
+Synalog rule patterns (every generated program is checked by the verifier):
+
+* ``owl:TransitiveProperty`` → a recursive ``@Recursive`` closure of the edge;
+* ``owl:SymmetricProperty`` → the reverse direction is unioned in;
+* ``owl:inverseOf`` → each property's edge derives the other's inverse;
+* ``rdfs:subPropertyOf`` / ``owl:equivalentProperty`` → the super-/equivalent
+  property's edge includes the sub-/equivalent one;
+* ``owl:ReflexiveProperty`` → ``(x, x)`` for every individual in the domain;
+* ``owl:FunctionalProperty`` / ``owl:InverseFunctionalProperty`` /
+  ``owl:AsymmetricProperty`` / ``owl:IrreflexiveProperty`` → a
+  ``*Violation`` predicate that selects the individuals breaking the constraint
+  (these are *checks*: a non-empty result means the data is inconsistent).
+
+Characteristics propagate across ``owl:inverseOf`` and ``owl:equivalentProperty``
+(the inverse of a transitive property is transitive, the inverse of a functional
+property is inverse-functional, equivalent properties share everything), so the
+closures are complete on both sides.
+
+**Class/individual axioms**: ``owl:disjointWith`` → a ``DisjointWithViolation``
+predicate (individuals typed by two disjoint classes); ``owl:sameAs`` → a
+symmetric+transitive ``SameAsEdge``; ``owl:differentFrom`` → a
+``DifferentFromViolation`` (individuals asserted different yet inferred same).
+
+Not translated (they need open-world / non-stratifiable reasoning that does not
+map to a finite SQL rule): ``owl:complementOf`` and ``owl:propertyChainAxiom``.
 
 Datatype values keep their natural type (numbers, booleans) where rdflib can
 infer it, and strings are emitted as single-quoted literals (Synalog's string
@@ -145,6 +173,7 @@ def convert(source: str) -> str:
 def convert_graph(graph) -> str:
     """Build a Synalog program from an in-memory rdflib graph."""
     import rdflib
+    from collections import defaultdict
     from rdflib.namespace import OWL, RDF, RDFS
 
     URIRef = rdflib.URIRef
@@ -152,21 +181,20 @@ def convert_graph(graph) -> str:
     def named(term) -> bool:
         return isinstance(term, URIRef)
 
+    def typed(rdf_type) -> set:
+        return {s for s in graph.subjects(RDF.type, rdf_type) if named(s)}
+
     # Classes: explicit owl:Class / rdfs:Class plus anything used as a type.
     classes: set = set()
-    for cls in graph.subjects(RDF.type, OWL.Class):
-        if named(cls):
-            classes.add(cls)
-    for cls in graph.subjects(RDF.type, RDFS.Class):
-        if named(cls):
-            classes.add(cls)
+    classes |= typed(OWL.Class)
+    classes |= typed(RDFS.Class)
+
+    datatype_prop_set = typed(OWL.DatatypeProperty)
 
     # Datatype properties grouped by their domain class; object properties with
     # their (optional) domain and range.
     datatype_props: dict = {}  # class -> [prop, ...]
-    for prop in graph.subjects(RDF.type, OWL.DatatypeProperty):
-        if not named(prop):
-            continue
+    for prop in datatype_prop_set:
         for domain in graph.objects(prop, RDFS.domain):
             if named(domain):
                 classes.add(domain)
@@ -174,25 +202,127 @@ def convert_graph(graph) -> str:
                 if prop not in datatype_props[domain]:
                     datatype_props[domain].append(prop)
 
-    object_props: list = []  # (prop, domain|None, range|None)
-    for prop in graph.subjects(RDF.type, OWL.ObjectProperty):
-        if not named(prop):
+    obj_domain: dict = {}
+    obj_range: dict = {}
+    obj_props: set = set()
+    for prop in typed(OWL.ObjectProperty):
+        obj_props.add(prop)
+        obj_domain[prop] = next(
+            (d for d in graph.objects(prop, RDFS.domain) if named(d)), None
+        )
+        obj_range[prop] = next(
+            (r for r in graph.objects(prop, RDFS.range) if named(r)), None
+        )
+
+    # --- OWL property characteristics --------------------------------------
+    transitive = typed(OWL.TransitiveProperty)
+    symmetric = typed(OWL.SymmetricProperty)
+    asymmetric = typed(OWL.AsymmetricProperty)
+    reflexive = typed(OWL.ReflexiveProperty)
+    irreflexive = typed(OWL.IrreflexiveProperty)
+    functional = typed(OWL.FunctionalProperty)
+    inverse_functional = typed(OWL.InverseFunctionalProperty)
+
+    inverse_of: dict = defaultdict(set)
+    for a, b in graph.subject_objects(OWL.inverseOf):
+        if named(a) and named(b):
+            inverse_of[a].add(b)
+            inverse_of[b].add(a)
+
+    equiv_props: dict = defaultdict(set)
+    for a, b in graph.subject_objects(OWL.equivalentProperty):
+        if named(a) and named(b) and a != b:
+            equiv_props[a].add(b)
+            equiv_props[b].add(a)
+
+    sub_props: dict = defaultdict(set)  # super -> {sub, ...}
+    for sub, sup in graph.subject_objects(RDFS.subPropertyOf):
+        if named(sub) and named(sup):
+            sub_props[sup].add(sub)
+
+    def has_named_object(prop) -> bool:
+        return any(named(o) for _, _, o in graph.triples((None, prop, None)))
+
+    # A property is treated as an object property if it is declared one, takes
+    # part in an object-only axiom (inverseOf), or simply relates named
+    # resources. Datatype properties (literal-valued) are never turned into edges.
+    candidates = (
+        transitive | symmetric | asymmetric | reflexive | irreflexive
+        | functional | inverse_functional
+    )
+    for m in (inverse_of, equiv_props, sub_props):
+        for k, vs in m.items():
+            candidates.add(k)
+            candidates.update(vs)
+    # inverseOf participants are object properties by definition.
+    for k, vs in inverse_of.items():
+        obj_props.add(k)
+        obj_props.update(vs)
+    for prop in candidates:
+        if prop in obj_props or prop in datatype_prop_set:
             continue
-        domain = next((d for d in graph.objects(prop, RDFS.domain) if named(d)), None)
-        rng = next((r for r in graph.objects(prop, RDFS.range) if named(r)), None)
-        if domain:
-            classes.add(domain)
-        if rng:
-            classes.add(rng)
-        object_props.append((prop, domain, rng))
+        if has_named_object(prop):
+            obj_props.add(prop)
+    for prop in obj_props:
+        obj_domain.setdefault(prop, None)
+        obj_range.setdefault(prop, None)
+        if obj_domain[prop]:
+            classes.add(obj_domain[prop])
+        if obj_range[prop]:
+            classes.add(obj_range[prop])
+
+    # Restrict characteristic sets to actual object properties.
+    transitive &= obj_props
+    symmetric &= obj_props
+    asymmetric &= obj_props
+    reflexive &= obj_props
+    irreflexive &= obj_props
+    functional &= obj_props
+    inverse_functional &= obj_props
+
+    # Propagate characteristics across owl:inverseOf and owl:equivalentProperty
+    # to a fixpoint (inverse of transitive is transitive; inverse of functional
+    # is inverse-functional; equivalent properties share everything).
+    symmetric_sets = (
+        transitive, symmetric, reflexive, irreflexive, asymmetric,
+        functional, inverse_functional,
+    )
+    changed = True
+    while changed:
+        changed = False
+        for p in list(obj_props):
+            for q in equiv_props.get(p, ()):  # equivalence shares all
+                if q not in obj_props:
+                    continue
+                for s in symmetric_sets:
+                    if p in s and q not in s:
+                        s.add(q)
+                        changed = True
+            for q in inverse_of.get(p, ()):
+                if q not in obj_props:
+                    continue
+                for s in (transitive, symmetric, reflexive, irreflexive, asymmetric):
+                    if p in s and q not in s:
+                        s.add(q)
+                        changed = True
+                if p in functional and q not in inverse_functional:
+                    inverse_functional.add(q)
+                    changed = True
+                if p in inverse_functional and q not in functional:
+                    functional.add(q)
+                    changed = True
 
     # Stable ordering everywhere so output is deterministic.
     classes_sorted = sorted(classes, key=str)
     for key in datatype_props:
         datatype_props[key].sort(key=str)
-    object_props.sort(key=lambda t: str(t[0]))
-
+    obj_props_sorted = sorted(obj_props, key=str)
     class_set = set(classes_sorted)
+
+    has_facts = {
+        p: any(named(s) and named(o) for s, _, o in graph.triples((None, p, None)))
+        for p in obj_props
+    }
 
     # Individuals: subjects typed as one of our classes (the ABox).
     members: dict = {cls: [] for cls in classes_sorted}  # class -> [individual]
@@ -247,6 +377,17 @@ def convert_graph(graph) -> str:
             cols.append((field, prop))
         node_columns[cls] = cols
 
+    # Deterministic predicate names for every object property, assigned up front
+    # so rules can cross-reference each other's edge/raw predicates.
+    edge_name: dict = {}
+    raw_name: dict = {}
+    step_name: dict = {}
+    for prop in obj_props_sorted:
+        e = names.unique(_pascal(_local(prop)) + "Edge")
+        edge_name[prop] = e
+        raw_name[prop] = e[:-4] + "Raw"
+        step_name[prop] = e[:-4] + "Step"
+
     # Class labels (rdfs:label) for the schema layer; the column is only emitted
     # when at least one class carries one.
     class_label: dict = {}
@@ -264,7 +405,7 @@ def convert_graph(graph) -> str:
     # a blank line between them so the generated program stays readable.
     blocks: list[str] = [
         "# Generated by `synalog import` from an OWL/RDF ontology.\n"
-        f"# {len(classes_sorted)} classes, {len(object_props)} object properties,"
+        f"# {len(classes_sorted)} classes, {len(obj_props_sorted)} object properties,"
         f" {n_individuals} individuals."
     ]
 
@@ -286,15 +427,21 @@ def convert_graph(graph) -> str:
             block.append(f"ClassRaw({', '.join(values)});")
         blocks.append("\n".join(block))
 
-    # --- Class hierarchy (rdfs:subClassOf), transitive ----------------------
-    sub_pairs = sorted(
+    # --- Class hierarchy: subClassOf (+ equivalentClass), transitive --------
+    sub_pairs = {
         (str(c), str(p))
         for c, p in graph.subject_objects(RDFS.subClassOf)
         if named(c) and named(p) and c in class_set and p in class_set
-    )
+    }
+    # owl:equivalentClass C ≡ D  ==  C ⊑ D and D ⊑ C (mutual subclassing).
+    for c, d in graph.subject_objects(OWL.equivalentClass):
+        if named(c) and named(d) and c in class_set and d in class_set and c != d:
+            sub_pairs.add((str(c), str(d)))
+            sub_pairs.add((str(d), str(c)))
     if sub_pairs:
         block = [
-            "# Class hierarchy (transitive subClassOf), joined through ClassNode",
+            "# Class hierarchy (transitive subClassOf / equivalentClass),"
+            " joined through ClassNode",
             "@Recursive(SubClassOfEdge, 100);",
             "SubClassOfEdge(child_uri:, parent_uri:) distinct :-"
             " SubClassOfRaw(child_uri:, parent_uri:),"
@@ -303,7 +450,7 @@ def convert_graph(graph) -> str:
             " SubClassOfEdge(child_uri:, parent_uri: mid),"
             " SubClassOfRaw(child_uri: mid, parent_uri:);",
         ]
-        for child, parent in sub_pairs:
+        for child, parent in sorted(sub_pairs):
             block.append(
                 f"SubClassOfRaw(child_uri: {_string_literal(child)},"
                 f" parent_uri: {_string_literal(parent)});"
@@ -333,20 +480,86 @@ def convert_graph(graph) -> str:
         blocks.append("\n".join(block))
 
     # --- Edges (object properties) between individuals ----------------------
-    if object_props:
-        blocks.append("# Concepts (edges)")
-    for prop, domain, rng in object_props:
-        edge = names.unique(_pascal(_local(prop)) + "Edge")
-        raw = edge[:-4] + "Raw"
-        body = [f"{raw}(subject_uri:, object_uri:)"]
-        if domain in node_name:
-            body.append(f"{node_name[domain]}(uri: subject_uri)")
+    if obj_props_sorted:
+        blocks.append("# Concepts (edges — object properties)")
+    for prop in obj_props_sorted:
+        edge = edge_name[prop]
+        raw = raw_name[prop]
+        step = step_name[prop]
+        dom, rng = obj_domain.get(prop), obj_range.get(prop)
+        joins = []
+        if dom in node_name:
+            joins.append(f"{node_name[dom]}(uri: subject_uri)")
         if rng in node_name:
-            body.append(f"{node_name[rng]}(uri: object_uri)")
-        block = [
-            f"@OrderBy({edge}, \"subject_uri\");",
-            f"{edge}(subject_uri:, object_uri:) distinct :- " + ", ".join(body) + ";",
-        ]
+            joins.append(f"{node_name[rng]}(uri: object_uri)")
+        join_suffix = ("".join(", " + j for j in joins))
+
+        # One-step (non-recursive) branches that make up the edge relation.
+        branches: list[str] = []
+        if has_facts[prop]:
+            branches.append(f"{raw}(subject_uri:, object_uri:)" + join_suffix)
+        if prop in symmetric and has_facts[prop]:
+            branches.append(
+                f"{raw}(subject_uri: object_uri, object_uri: subject_uri)" + join_suffix
+            )
+        for q in sorted(inverse_of.get(prop, ()), key=str):
+            if q in obj_props and has_facts[q]:  # inverse of q's asserted facts
+                branches.append(
+                    f"{raw_name[q]}(subject_uri: object_uri, object_uri: subject_uri)"
+                    + join_suffix
+                )
+        for sub in sorted(sub_props.get(prop, ()), key=str):
+            if sub in obj_props and has_facts[sub]:  # sub-property's facts flow up
+                branches.append(
+                    f"{raw_name[sub]}(subject_uri:, object_uri:)" + join_suffix
+                )
+        for q in sorted(equiv_props.get(prop, ()), key=str):
+            if q in obj_props and has_facts[q]:
+                branches.append(
+                    f"{raw_name[q]}(subject_uri:, object_uri:)" + join_suffix
+                )
+        if prop in reflexive and dom in node_name:  # (x, x) over the domain
+            branches.append(
+                f"{node_name[dom]}(uri: subject_uri), object_uri == subject_uri"
+            )
+
+        if not branches:
+            continue  # property with no facts and nothing to derive
+
+        block: list[str] = []
+        if prop in transitive:
+            # One-step relation, then its recursive transitive closure.
+            block.append(f"@OrderBy({step}, \"subject_uri\");")
+            block.append(
+                f"{step}(subject_uri:, object_uri:) distinct :-\n  "
+                + " |\n  ".join(branches)
+                + ";"
+            )
+            block.append(f"@OrderBy({edge}, \"subject_uri\");")
+            block.append(f"@Recursive({edge}, 100);")
+            block.append(
+                f"{edge}(subject_uri:, object_uri:) distinct :-"
+                f" {step}(subject_uri:, object_uri:);"
+            )
+            block.append(
+                f"{edge}(subject_uri:, object_uri:) distinct :-"
+                f" {edge}(subject_uri:, object_uri: mid),"
+                f" {step}(subject_uri: mid, object_uri:);"
+            )
+        else:
+            block.append(f"@OrderBy({edge}, \"subject_uri\");")
+            if len(branches) == 1:
+                block.append(
+                    f"{edge}(subject_uri:, object_uri:) distinct :- {branches[0]};"
+                )
+            else:
+                block.append(
+                    f"{edge}(subject_uri:, object_uri:) distinct :-\n  "
+                    + " |\n  ".join(branches)
+                    + ";"
+                )
+
+        # Raw facts for this property.
         for s, _, o in sorted(
             graph.triples((None, prop, None)), key=lambda t: (str(t[0]), str(t[2]))
         ):
@@ -355,6 +568,117 @@ def convert_graph(graph) -> str:
                     f"{raw}(subject_uri: {_string_literal(str(s))},"
                     f" object_uri: {_string_literal(str(o))});"
                 )
+
+        # --- Constraint checks (a non-empty result = inconsistent data) -----
+        prefix = edge[:-4]  # edge name without the "Edge" suffix
+        if prop in functional:
+            v = names.unique(prefix + "FunctionalViolation")
+            block += [
+                f"@OrderBy({v}, \"subject_uri\");",
+                f"{v}(subject_uri:) distinct :-"
+                f" {edge}(subject_uri:, object_uri: value_a),"
+                f" {edge}(subject_uri:, object_uri: value_b), value_a != value_b;",
+            ]
+        if prop in inverse_functional:
+            v = names.unique(prefix + "InverseFunctionalViolation")
+            block += [
+                f"@OrderBy({v}, \"object_uri\");",
+                f"{v}(object_uri:) distinct :-"
+                f" {edge}(subject_uri: subject_a, object_uri:),"
+                f" {edge}(subject_uri: subject_b, object_uri:), subject_a != subject_b;",
+            ]
+        if prop in asymmetric:
+            v = names.unique(prefix + "AsymmetricViolation")
+            block += [
+                f"@OrderBy({v}, \"subject_uri\");",
+                f"{v}(subject_uri:, object_uri:) distinct :-"
+                f" {edge}(subject_uri:, object_uri:),"
+                f" {edge}(subject_uri: object_uri, object_uri: subject_uri);",
+            ]
+        if prop in irreflexive:
+            v = names.unique(prefix + "IrreflexiveViolation")
+            block += [
+                f"@OrderBy({v}, \"uri\");",
+                f"{v}(uri:) distinct :- {edge}(subject_uri: uri, object_uri: uri);",
+            ]
+
+        blocks.append("\n".join(block))
+
+    # --- owl:sameAs (symmetric + transitive individual equivalence) ---------
+    sameas_pairs = sorted(
+        (str(a), str(b))
+        for a, b in graph.subject_objects(OWL.sameAs)
+        if named(a) and named(b) and a != b
+    )
+    if sameas_pairs:
+        same = names.unique("SameAsEdge")
+        block = [
+            "# owl:sameAs — symmetric, transitive individual equivalence",
+            f"@OrderBy({same}, \"left_uri\");",
+            f"@Recursive({same}, 100);",
+            f"{same}(left_uri:, right_uri:) distinct :-\n"
+            "  SameAsRaw(left_uri:, right_uri:) |\n"
+            "  SameAsRaw(left_uri: right_uri, right_uri: left_uri);",
+            f"{same}(left_uri:, right_uri:) distinct :-"
+            f" {same}(left_uri:, right_uri: mid),"
+            f" {same}(left_uri: mid, right_uri:);",
+        ]
+        for a, b in sameas_pairs:
+            block.append(
+                f"SameAsRaw(left_uri: {_string_literal(a)},"
+                f" right_uri: {_string_literal(b)});"
+            )
+        # owl:differentFrom — asserted different yet inferred same = violation.
+        diff_pairs = sorted(
+            (str(a), str(b))
+            for a, b in graph.subject_objects(OWL.differentFrom)
+            if named(a) and named(b) and a != b
+        )
+        if diff_pairs:
+            viol = names.unique("DifferentFromViolation")
+            block += [
+                f"@OrderBy({viol}, \"left_uri\");",
+                f"{viol}(left_uri:, right_uri:) distinct :-"
+                f" {same}(left_uri:, right_uri:),"
+                " DifferentFromRaw(left_uri:, right_uri:);",
+            ]
+            for a, b in diff_pairs:
+                block.append(
+                    f"DifferentFromRaw(left_uri: {_string_literal(a)},"
+                    f" right_uri: {_string_literal(b)});"
+                )
+        blocks.append("\n".join(block))
+
+    # --- owl:disjointWith (individuals typed by two disjoint classes) -------
+    disjoint_pairs = sorted(
+        {
+            tuple(sorted((str(c), str(d))))
+            for c, d in graph.subject_objects(OWL.disjointWith)
+            if named(c) and named(d) and c in class_set and d in class_set and c != d
+        }
+    )
+    uri_to_class = {str(c): c for c in classes_sorted}
+    detectable = [
+        (a, b)
+        for a, b in disjoint_pairs
+        if uri_to_class.get(a) in node_name and uri_to_class.get(b) in node_name
+    ]
+    if detectable:
+        bodies = []
+        for a, b in detectable:
+            na = node_name[uri_to_class[a]]
+            nb = node_name[uri_to_class[b]]
+            bodies.append(
+                f"{na}(uri:), {nb}(uri:),"
+                f" class_a == {_string_literal(a)}, class_b == {_string_literal(b)}"
+            )
+        block = [
+            "# owl:disjointWith — an individual typed by two disjoint classes",
+            '@OrderBy(DisjointWithViolation, "uri");',
+            "DisjointWithViolation(uri:, class_a:, class_b:) distinct :-\n  "
+            + " |\n  ".join(bodies)
+            + ";",
+        ]
         blocks.append("\n".join(block))
 
     return "\n\n".join(blocks) + "\n"
