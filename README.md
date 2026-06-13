@@ -21,7 +21,7 @@
 # Synalog
 ## Logic programming for AI agents: Datalog-family language compiling to optimized SQL
 
-Synalog is a logic programming language from the [Datalog](https://en.wikipedia.org/wiki/Datalog) family — a fork of [Logica](https://logica.dev/) with the entire engine (parser, compiler and verifier) **rewritten in Rust**. It compiles to optimized **SQL** and ships as a Python package built on [PyO3](https://pyo3.rs/): parsing is **~75x faster** and compilation **~13x faster** than the original Python implementation, so validating and compiling a program is effectively instant.
+Synalog is a logic programming language from the [Datalog](https://en.wikipedia.org/wiki/Datalog) family — a fork of [Logica](https://logica.dev/) with the entire engine (parser, compiler and verifier) **rewritten in Rust**. It compiles to optimized **SQL** and ships as a Python package built on [PyO3](https://pyo3.rs/): parsing is **~86.7x faster** and compilation **~13.7x faster** than the original Python implementation, so validating and compiling a program is effectively instant.
 
 Synalog was built for the AI agents era. The main idea is to give an agent a **dynamic semantic layer** over its data — a layer of named concepts and rules that the agent both reads from *and writes to* at inference time. Unlike a traditional BI semantic layer, which is modeled once by humans and frozen, Synalog's layer is authored on the fly: the agent extracts entities and relationships into **knowledge graphs**, derives meaning with composable **logical rules**, and reasons over time with **temporal reasoning** — accumulating all of it as structured, reusable memory.
 
@@ -113,7 +113,7 @@ synalog program.l parse                # print the AST as JSON
 synalog program.l check                # validate; exit 1 on errors
 synalog program.l print Predicate      # print compiled SQL
 synalog program.l run Predicate        # execute and print a table
-synalog program.l run_to_csv Predicate # execute and print CSV
+synalog program.l run Predicate --csv  # execute and print CSV
 ```
 
 ```
@@ -130,7 +130,8 @@ $ synalog program.l run EngineeringTeam
 - `-` as the file reads the program from stdin; `-c PROGRAM` passes the program text inline, like `python -c`.
 - `--engine` overrides the program's `@Engine` annotation (default `duckdb`).
 - `--limit` / `--offset` paginate the result.
-- `--search REGEX` (with `print`/`run`/`run_to_csv`) keeps only rows where some column matches the regular expression `REGEX`, e.g. `synalog program.l run Customers --search "(?i)acme"`. In the interactive session the same is `.search Customers (?i)acme`.
+- `--csv` (with `run`) prints results as CSV instead of the rendered table.
+- `--search REGEX` (with `print`/`run`) keeps only rows where some column matches the regular expression `REGEX`, e.g. `synalog program.l run Customers --search "(?i)acme"`. In the interactive session the same is `.search Customers (?i)acme`.
 - `run` executes locally on `duckdb` (needs `pip install duckdb`), `sqlite` (stdlib), or `psql` (needs `pip install psycopg` and `--dsn` or `SYNALOG_PSQL_DSN`). For other engines, use `print` and run the SQL with your own client. `pip install 'synalog[run]'` pulls in the duckdb and psycopg drivers.
 - `import path.to.file.Pred;` statements resolve `path/to/file.l` against the program file's directory, then the current directory; pass `--import-root DIR` (repeatable) to search elsewhere.
 - `--load TABLE=PATH` (repeatable) loads a csv/tsv/json/jsonl/parquet file as a table before running, e.g. `synalog senior.l run Senior --load employees=employees.csv`.
@@ -432,14 +433,19 @@ Each engine has its own SQL dialect for string literals, array syntax, GROUP BY 
 
 ## Benchmark
 
-The Rust core is benchmarked against the original Python Logica implementation on every program of the compiler test suite (498 programs across 6 engines). Both run **in-process** — Synalog through the same PyO3 extension that `pip install synalog` ships — so the numbers measure exactly what a Python caller gets:
+The Rust core is benchmarked against the original Python Logica implementation on every program of the compiler test suite (504 programs across 6 engines). Both run **in-process** — Synalog through the same PyO3 extension that `pip install synalog` ships — so the numbers measure exactly what a Python caller gets:
 
 | | Python Logica | Synalog (Rust) | Speedup |
 |---|---|---|---|
-| Parse (total) | 13.0 s | 0.17 s | **~75x** |
-| Compile (total) | 58.5 s | 4.5 s | **~13x** |
+| Parse | 13.4 s | 0.15 s | **87x** |
+| Compile | 61.3 s | 5.2 s | **13x** |
+| Verify | — | 0.16 s | Rust-only |
 
-The speedup is uniform across engines for parsing and ranges from ~10x (trino, presto) to ~18x (duckdb) for compilation. Per-engine tables, plots and methodology are on the [Benchmark](https://synalinks.github.io/synalog/benchmark/) page; reproduce with `python3 benchmark.py`.
+<p align="center">
+  <img src="https://raw.githubusercontent.com/synalinks/synalog/main/docs/benchmark/speedup_by_engine.png" alt="Synalog vs Python Logica: speedup by SQL engine" width="820">
+</p>
+
+Speedup is the geometric mean of per-program speedups (every program weighted equally). Parsing is uniformly ~85–88x faster; compilation ranges from ~11x (trino, presto) to ~19x (duckdb). Verification — safety, stratification, recursion and reserved-name checks — is a Synalog-specific pass with no standalone Python equivalent. Per-engine tables and methodology are on the [Benchmark](https://synalinks.github.io/synalog/benchmark/) page; reproduce with `python3 benchmark.py`.
 
 ## Verification
 
