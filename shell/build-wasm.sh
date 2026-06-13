@@ -9,7 +9,12 @@ set -euo pipefail
 #   rustup target add wasm32-unknown-unknown
 #   cargo install wasm-bindgen-cli --version 0.2.114   # must match Cargo.lock
 #
-# Optional (smaller wasm): install `wasm-opt` (binaryen); the script uses it when present.
+# Optional (smaller wasm): install a RECENT `wasm-opt` (binaryen); the script
+# uses it when present. It must handle the `reference-types` feature that
+# wasm-bindgen 0.2.114 emits — an older binaryen (e.g. some apt builds) mangles
+# the externref table and the module then fails at load with
+# "WebAssembly.Table.grow(): failed to grow table". When in doubt, leave it
+# uninstalled: the unoptimised module is larger but always loads.
 
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 cd "$ROOT"

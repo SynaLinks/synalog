@@ -20,10 +20,10 @@ synalog program.l parse                     # print the AST as JSON
 synalog program.l check                     # validate; exit 1 on errors
 synalog program.l print Predicate ...      # print compiled SQL
 synalog program.l run Predicate ...        # execute and print a table
-synalog program.l run_to_csv Predicate ... # execute and print CSV
+synalog program.l run Predicate --csv      # execute and print CSV
 ```
 
-`print`, `run` and `run_to_csv` accept several predicate names and process them in order. In a terminal, `print` highlights the SQL and `run` renders the table with rich formatting; piped output falls back to plain text, and `run_to_csv` is the machine-readable format.
+`print` and `run` accept several predicate names and process them in order. In a terminal, `print` highlights the SQL and `run` renders the table with rich formatting; piped output falls back to plain text. Add `--csv` to `run` for machine-readable CSV instead of the rendered table.
 
 ```console
 $ synalog program.l run EngineeringTeam
@@ -43,7 +43,8 @@ $ synalog program.l run EngineeringTeam
 | `-c PROGRAM` | Pass the program text inline instead of `FILE`, like `python -c`. |
 | `--engine <name>` | Target SQL dialect. Resolution order: this flag, then the program's `@Engine` annotation, then `duckdb`. |
 | `--limit N` / `--offset N` | Paginate the result. |
-| `--search REGEX` | With `print`/`run`/`run_to_csv`: keep only rows where some column matches the regular expression `REGEX` (engine-native regex, not a SQL `LIKE` pattern). Applies to the filtered rows before pagination. |
+| `--csv` | With `run`: print results as CSV instead of a rendered table. |
+| `--search REGEX` | With `print`/`run`: keep only rows where some column matches the regular expression `REGEX` (engine-native regex, not a SQL `LIKE` pattern). Applies to the filtered rows before pagination. |
 | `--import-root DIR` | Directory where `import` statements look up `.l` files (repeatable). |
 | `--load TABLE=PATH` | Load a csv/tsv/json/jsonl/parquet file as a table before running (repeatable). |
 | `--dsn <conninfo>` | PostgreSQL connection string for `--engine psql` (or set `SYNALOG_PSQL_DSN`). |
@@ -60,7 +61,7 @@ With `-c` there is no `FILE` argument: the positionals are the command and its p
 
 ### Executing locally
 
-`run` and `run_to_csv` execute the compiled SQL in-process:
+`run` (optionally with `--csv`) executes the compiled SQL in-process:
 
 - **duckdb** — needs `pip install duckdb`.
 - **sqlite** — Python's stdlib driver; Logica's runtime UDFs (ArgMin/ArgMax, ARRAY_CONCAT, ...) are registered when the `logica` package is installed.
@@ -142,7 +143,7 @@ Unbound variable 'y' in head of rule: A(x:, y:) :- B(x:)
 Unbound variable 'z' in head of rule: C(z:) :- D(w:)
 ```
 
-**Compile errors** come from `print`, `run` and `run_to_csv` when SQL generation fails — for example when the requested predicate does not exist:
+**Compile errors** come from `print` and `run` when SQL generation fails — for example when the requested predicate does not exist:
 
 ```console
 $ synalog -c 'Greeting("hi");' run Missing

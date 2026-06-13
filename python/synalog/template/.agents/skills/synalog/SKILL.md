@@ -16,7 +16,7 @@ Synalog is a logic programming language from the Datalog family. Programs are `.
 
 ```bash
 synalog program.l run Predicate --load sales=data/sales.csv
-synalog program.l run_to_csv Predicate --load sales=data/sales.csv   # machine-readable
+synalog program.l run Predicate --csv --load sales=data/sales.csv   # machine-readable
 ```
 
 CLI notes (argument order follows logica: FILE first, then the command):
@@ -45,7 +45,7 @@ Fix the quoted statement and re-run `check`: later syntax errors only surface on
 
 **Verification errors** (`check`, after parsing succeeds) — reported *all at once*, one per line, e.g. `Unbound variable 'y' in head of rule: A(x:, y:) :- B(x:)`. Fix the whole list in one pass, then re-check.
 
-**Compile errors** (`print`/`run`/`run_to_csv`) — SQL generation failed, e.g. `Compile error: No rules are defining 'Missing', but compilation was requested.` Usually a typo in the predicate name passed to the command, or an imported predicate run by its short name (run it from its own module instead).
+**Compile errors** (`print`/`run`) — SQL generation failed, e.g. `Compile error: No rules are defining 'Missing', but compilation was requested.` Usually a typo in the predicate name passed to the command, or an imported predicate run by its short name (run it from its own module instead).
 
 ## Project layout
 

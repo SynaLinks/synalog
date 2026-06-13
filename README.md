@@ -135,6 +135,7 @@ $ synalog program.l run EngineeringTeam
 - `run` executes locally on `duckdb` (needs `pip install duckdb`), `sqlite` (stdlib), or `psql` (needs `pip install psycopg` and `--dsn` or `SYNALOG_PSQL_DSN`). For other engines, use `print` and run the SQL with your own client. `pip install 'synalog[run]'` pulls in the duckdb and psycopg drivers.
 - `import path.to.file.Pred;` statements resolve `path/to/file.l` against the program file's directory, then the current directory; pass `--import-root DIR` (repeatable) to search elsewhere.
 - `--load TABLE=PATH` (repeatable) loads a csv/tsv/json/jsonl/parquet file as a table before running, e.g. `synalog senior.l run Senior --load employees=employees.csv`.
+- `synalog import ontology.owl` (or an `http(s)` URL) converts an OWL/RDF ontology into a Synalog knowledge graph — classes become `*Node` concepts, properties `*Edge` concepts, and individuals facts. See [Ontologies](https://synalinks.github.io/synalog/ontologies/).
 - `synalog init` scaffolds a project (`uvx synalog init` runs it without installing; it asks for a name and description): a starter program importing a reusable `lib/` module, sample data in `data/`, and agent instructions (`AGENTS.md`, `CLAUDE.md`, `.agents/skills/synalog/SKILL.md`) so coding agents know how to use Synalog.
 
 Running `synalog` with no arguments starts an interactive session, in the spirit of `python` (the options above, e.g. `--engine` or `--load`, apply to it too):

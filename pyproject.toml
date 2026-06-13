@@ -4,7 +4,7 @@ build-backend = "maturin"
 
 [project]
 name = "synalog"
-version = "0.1.0"
+version = "0.2.0"
 description = "Logic programming for AI agents: Datalog-family language compiling to optimized SQL"
 readme = "README.md"
 requires-python = ">=3.10"
@@ -24,7 +24,7 @@ classifiers = [
     "Topic :: Software Development :: Compilers",
 ]
 
-dependencies = ["click>=8.1", "rich>=13"]
+dependencies = ["click>=8.1", "rich>=13", "rdflib>=7"]
 
 [project.urls]
 Repository = "https://github.com/synalinks/synalog"

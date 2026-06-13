@@ -27,6 +27,7 @@ nav = [
     { "Temporal data" = "language/temporal.md" },
   ] },
   { "Knowledge graphs" = "knowledge-graphs.md" },
+  { "Ontologies" = "ontologies.md" },
   { "Python API" = "python-api.md" },
   { "CLI interface" = "cli.md" },
   { "Verification" = "verification.md" },

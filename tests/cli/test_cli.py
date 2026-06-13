@@ -80,10 +80,16 @@ def test_run_respects_limit(program_file):
     assert "| 4" not in result.stdout
 
 
-def test_run_to_csv(program_file):
-    result = synalog(str(program_file), "run_to_csv", "Doubled")
+def test_run_csv_flag(program_file):
+    result = synalog(str(program_file), "run", "Doubled", "--csv")
     assert result.returncode == 0, result.stderr
     assert result.stdout.splitlines() == ["doubled", "2", "4", "6"]
+
+
+def test_csv_flag_rejected_outside_run(program_file):
+    result = synalog(str(program_file), "print", "Doubled", "--csv")
+    assert result.returncode == 2
+    assert "--csv applies to run only" in result.stderr
 
 
 def test_print_outputs_sql(program_file):
@@ -126,7 +132,9 @@ def test_inline_program_run():
 
 
 def test_inline_program_run_with_limit_and_offset():
-    result = synalog("run_to_csv", "-c", PROGRAM, "Doubled", "--limit", "1", "--offset", "1")
+    result = synalog(
+        "run", "-c", PROGRAM, "Doubled", "--csv", "--limit", "1", "--offset", "1"
+    )
     assert result.returncode == 0, result.stderr
     assert result.stdout.splitlines() == ["doubled", "4"]
 
@@ -343,6 +351,34 @@ def test_dotenv_sets_config_dir(tmp_path, monkeypatch):
     assert (store / "connections.json").is_file()
 
 
+def test_import_converts_ontology_file(tmp_path):
+    onto = tmp_path / "o.ttl"
+    onto.write_text(
+        "@prefix : <http://ex.org/> .\n"
+        "@prefix owl: <http://www.w3.org/2002/07/owl#> .\n"
+        ":Person a owl:Class .\n"
+        ':alice a :Person .\n'
+    )
+    result = synalog("import", str(onto))
+    assert result.returncode == 0, result.stderr
+    assert "PersonNode(" in result.stdout
+    assert "http://ex.org/alice" in result.stdout
+    # the converted program is valid Synalog
+    assert synalog("-", "check", stdin=result.stdout).returncode == 0
+
+
+def test_import_missing_file():
+    result = synalog("import", "/no/such/ontology.owl")
+    assert result.returncode == 1
+    assert "No such file" in result.stderr
+
+
+def test_import_usage_error():
+    result = synalog("import")
+    assert result.returncode == 2
+    assert "import <ontology-file-or-url>" in result.stderr
+
+
 def test_missing_predicate_argument(program_file):
     result = synalog(str(program_file), "run")
     assert result.returncode == 2  # click usage error
@@ -539,8 +575,9 @@ def test_init_scaffolds_project(tmp_path):
     assert synalog("example.l", "check", cwd=root).returncode == 0
     run = synalog(
         "example.l",
-        "run_to_csv",
+        "run",
         "TopRegion",
+        "--csv",
         "--load",
         "sales=data/sales.csv",
         cwd=root,
@@ -623,7 +660,7 @@ def test_print_with_search_emits_filter_sql(customers_file):
 
 def test_search_to_csv(customers_file):
     result = synalog(
-        str(customers_file), "run_to_csv", "Customer", "--search", "Berlin"
+        str(customers_file), "run", "Customer", "--csv", "--search", "Berlin"
     )
     assert result.returncode == 0, result.stderr
     assert result.stdout.splitlines() == ["name,city", "Globex,Berlin"]
@@ -632,7 +669,7 @@ def test_search_to_csv(customers_file):
 def test_search_rejected_on_check(customers_file):
     result = synalog(str(customers_file), "check", "--search", "x")
     assert result.returncode == 2
-    assert "--search applies to print/run/run_to_csv only" in result.stderr
+    assert "--search applies to print/run only" in result.stderr
 
 
 def test_repl_search_command():

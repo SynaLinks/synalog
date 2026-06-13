@@ -25,10 +25,15 @@ jobs:
       - uses: dtolnay/rust-toolchain@stable
         with:
           targets: wasm32-unknown-unknown
-      - name: Install wasm-bindgen + wasm-opt
-        run: |
-          cargo install wasm-bindgen-cli --version 0.2.114 --locked
-          sudo apt-get update && sudo apt-get install -y binaryen
+      # Only wasm-bindgen — NOT wasm-opt. wasm-bindgen 0.2.114 emits a
+      # reference-types externref table; the binaryen/wasm-opt from apt mangles
+      # it, yielding a module that fails at load with
+      # "WebAssembly.Table.grow(): failed to grow table". build-wasm.sh skips
+      # wasm-opt when it isn't on PATH, so leaving it uninstalled ships the
+      # working (unoptimised) module. Re-add a recent binaryen here only if it's
+      # verified to handle reference-types.
+      - name: Install wasm-bindgen
+        run: cargo install wasm-bindgen-cli --version 0.2.114 --locked
       - name: Build playground wasm
         run: ./shell/build-wasm.sh
       - run: pip install zensical

@@ -19,7 +19,7 @@ This project is a Synalog knowledge base: logic programs (`.l` files) compiled t
 1. Put source data in `data/`.
 2. Write or edit a program.
 3. Validate: `synalog program.l check` — always check before running; fix every reported error.
-4. Run: `synalog program.l run Predicate --load table=data/file.csv` (or `run_to_csv` for machine-readable output).
+4. Run: `synalog program.l run Predicate --load table=data/file.csv` (add `--csv` for machine-readable output).
 
 Try the starter:
 

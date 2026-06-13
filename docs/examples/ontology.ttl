@@ -1,0 +1,32 @@
+# A small self-contained ontology (Turtle): a TBox (classes + properties) and
+# an ABox (individuals). `synalog import ontology.ttl > ontology.l` converts it
+# to the Synalog program in ontology.l.
+@prefix :     <http://example.org/hr#> .
+@prefix owl:  <http://www.w3.org/2002/07/owl#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .
+
+# Classes
+:Person   a owl:Class .
+:Employee a owl:Class ; rdfs:subClassOf :Person .
+:Manager  a owl:Class ; rdfs:subClassOf :Employee .
+:Company  a owl:Class .
+
+# Datatype properties (become node columns)
+:name  a owl:DatatypeProperty ; rdfs:domain :Person  ; rdfs:range xsd:string .
+:email a owl:DatatypeProperty ; rdfs:domain :Person  ; rdfs:range xsd:string .
+:salary a owl:DatatypeProperty ; rdfs:domain :Employee ; rdfs:range xsd:integer .
+
+# Object properties (become edges)
+:worksAt   a owl:ObjectProperty ; rdfs:domain :Employee ; rdfs:range :Company .
+:reportsTo a owl:ObjectProperty ; rdfs:domain :Employee ; rdfs:range :Manager .
+:knows     a owl:ObjectProperty ; rdfs:domain :Person   ; rdfs:range :Person .
+
+# Individuals (the ABox)
+:acme a :Company ; :name "Acme \"Robotics\"" .
+
+:carol a :Manager  ; :name "Carol"      ; :email "carol@acme.example" ; :salary 150000 ;
+                     :worksAt :acme .
+:alice a :Employee ; :name "Alice O'Hara" ; :email "alice@acme.example" ; :salary 90000 ;
+                     :worksAt :acme ; :reportsTo :carol ; :knows :bob .
+:bob   a :Person   ; :name "Bob" ; :knows :alice .

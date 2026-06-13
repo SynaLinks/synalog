@@ -8,7 +8,7 @@ One-shot mode (like ``logica``):
     synalog program.l check                 validate; exit 1 on errors
     synalog program.l print Predicate ...   print compiled SQL
     synalog program.l run Predicate ...     execute and print a table
-    synalog program.l run_to_csv Pred ...   execute and print CSV
+    synalog program.l run Predicate --csv   execute and print CSV
 
 ``-`` as the file reads the program from stdin; ``-c PROGRAM`` passes the
 program text inline (like ``python -c``), replacing FILE. ``--engine``
@@ -44,7 +44,7 @@ from .runners import RunnerUnavailable, run_sql
 
 DEFAULT_ENGINE = "duckdb"
 
-COMMANDS = ("parse", "check", "print", "run", "run_to_csv")
+COMMANDS = ("parse", "check", "print", "run")
 
 out = Console()
 err = Console(stderr=True)
@@ -325,6 +325,39 @@ def cmd_introspect(args: tuple[str, ...], dsn: str | None) -> int:
 
 
 # ---------------------------------------------------------------------------
+# Ontology import (import)
+# ---------------------------------------------------------------------------
+
+
+def cmd_import(args: tuple[str, ...]) -> int:
+    """Convert an OWL/RDF ontology into a Synalog program on stdout.
+
+    \b
+    synalog import ontology.owl          convert a local ontology file
+    synalog import https://…/onto.owl    download and convert a remote ontology
+    synalog import ontology.owl > o.l    redirect the program into a .l file
+
+    Reads any RDF serialization rdflib understands (.owl/.ttl/.rdf/.n3/JSON-LD),
+    locally or over http(s)/ftp. Classes become `*Node` concepts, object
+    properties `*Edge` concepts, and individuals are emitted as facts, so the
+    result runs as-is.
+    """
+    if len(args) != 1:
+        raise click.UsageError("usage: synalog import <ontology-file-or-url>")
+    from . import ontology
+
+    source = args[0]
+    if not ontology.is_url(source) and not os.path.isfile(source):
+        fail(f"No such file: {source} (pass a local path or an http(s) URL)")
+    try:
+        text = ontology.convert(source)
+    except Exception as e:  # download/parse error (incl. OSError) — name the source
+        fail(f"Could not convert '{source}': {type(e).__name__}: {e}")
+    click.echo(text, nl=False)
+    return 0
+
+
+# ---------------------------------------------------------------------------
 # Entry point
 # ---------------------------------------------------------------------------
 
@@ -348,10 +381,16 @@ def cmd_introspect(args: tuple[str, ...], dsn: str | None) -> int:
 @click.option("--limit", type=int, help="Limit result rows.")
 @click.option("--offset", type=int, help="Skip result rows.")
 @click.option(
+    "--csv",
+    "as_csv",
+    is_flag=True,
+    help="With run: print results as CSV instead of a rendered table.",
+)
+@click.option(
     "--search",
     "search_pattern",
     metavar="REGEX",
-    help="With print/run/run_to_csv: keep only rows where some column matches"
+    help="With print/run: keep only rows where some column matches"
     " the regular expression REGEX (engine-native regex, not SQL LIKE).",
 )
 @click.option(
@@ -376,7 +415,8 @@ def cmd_introspect(args: tuple[str, ...], dsn: str | None) -> int:
     help="Load a csv/tsv/json/jsonl/parquet file as TABLE before running"
     " (repeatable).",
 )
-def main(args, inline, engine, limit, offset, search_pattern, dsn, import_root, loads):
+def main(args, inline, engine, limit, offset, as_csv, search_pattern, dsn,
+         import_root, loads):
     """Synalog: logic programming compiling to SQL.
 
     \b
@@ -385,12 +425,13 @@ def main(args, inline, engine, limit, offset, search_pattern, dsn, import_root, 
       synalog program.l check                 validate; exit 1 on errors
       synalog program.l print Predicate ...   print compiled SQL
       synalog program.l run Predicate ...     execute and print a table
-      synalog program.l run_to_csv Pred ...   execute and print CSV
+      synalog program.l run Predicate --csv   execute and print CSV
       synalog init [NAME]                     scaffold a new project
       synalog connect ENGINE DSN              save a remote engine connection
       synalog introspect ENGINE               print Tables predicates for a schema
+      synalog import ONTOLOGY.owl             convert an OWL/RDF ontology to Synalog
 
-    Add --search REGEX to print/run/run_to_csv to keep only rows where some
+    Add --search REGEX to print/run to keep only rows where some
     column matches REGEX (engine-native regex, not a SQL LIKE pattern), e.g.
     'synalog program.l run Customers --search "(?i)acme"'.
 
@@ -413,6 +454,8 @@ def main(args, inline, engine, limit, offset, search_pattern, dsn, import_root, 
         sys.exit(cmd_connect(args[1:]))
     if args and args[0] == "introspect" and inline is None:
         sys.exit(cmd_introspect(args[1:], dsn))
+    if args and args[0] == "import" and inline is None:
+        sys.exit(cmd_import(args[1:]))
     if inline is None:
         if not args:
             sys.exit(Repl(engine, dsn, import_roots(None, import_root), loads).run())
@@ -436,10 +479,12 @@ def main(args, inline, engine, limit, offset, search_pattern, dsn, import_root, 
         raise click.UsageError("FILE and -c are mutually exclusive.")
     if command in ("parse", "check") and predicates:
         raise click.UsageError(f"'{command}' takes no predicate arguments")
-    if command in ("print", "run", "run_to_csv") and not predicates:
+    if command in ("print", "run") and not predicates:
         raise click.UsageError("Missing argument 'PREDICATES...'.")
-    if search_pattern is not None and command not in ("print", "run", "run_to_csv"):
-        raise click.UsageError("--search applies to print/run/run_to_csv only")
+    if search_pattern is not None and command not in ("print", "run"):
+        raise click.UsageError("--search applies to print/run only")
+    if as_csv and command != "run":
+        raise click.UsageError("--csv applies to run only")
 
     roots = import_roots(file, import_root)
 
@@ -476,17 +521,17 @@ def main(args, inline, engine, limit, offset, search_pattern, dsn, import_root, 
             for predicate in predicates:
                 sql = compile_pred(predicate, engine)
                 print_sql(sql.rstrip(";\n") + ";")
-        else:  # run / run_to_csv
+        else:  # run
             resolved = engine or program_engine(source, roots) or DEFAULT_ENGINE
             for predicate in predicates:
                 sql = compile_pred(predicate, resolved)
                 columns, rows = run_sql(resolved, sql, dsn=dsn, loads=loads)
-                if command == "run":
-                    out.print(render_table(columns, rows))
-                else:
+                if as_csv:
                     writer = csv.writer(sys.stdout)
                     writer.writerow(columns)
                     writer.writerows(rows)
+                else:
+                    out.print(render_table(columns, rows))
     except (ValueError, RunnerUnavailable, OSError) as e:
         fail(e)
 
