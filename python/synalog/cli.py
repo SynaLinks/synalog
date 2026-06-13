@@ -38,7 +38,7 @@ from rich.table import Table
 from rich.text import Text
 
 from . import __version__
-from ._synalog import SUPPORTED_ENGINES, check, compile, parse
+from ._synalog import SUPPORTED_ENGINES, check, compile, parse, search
 from .runners import RunnerUnavailable, run_sql
 
 DEFAULT_ENGINE = "duckdb"
@@ -206,6 +206,13 @@ def cmd_init(name: str | None) -> int:
 )
 @click.option("--limit", type=int, help="Limit result rows.")
 @click.option("--offset", type=int, help="Skip result rows.")
+@click.option(
+    "--search",
+    "search_pattern",
+    metavar="REGEX",
+    help="With print/run/run_to_csv: keep only rows where some column matches"
+    " the regular expression REGEX (engine-native regex, not SQL LIKE).",
+)
 @click.option("--dsn", help="PostgreSQL connection string (or SYNALOG_PSQL_DSN).")
 @click.option(
     "--import-root",
@@ -224,7 +231,7 @@ def cmd_init(name: str | None) -> int:
     help="Load a csv/tsv/json/jsonl/parquet file as TABLE before running"
     " (repeatable).",
 )
-def main(args, inline, engine, limit, offset, dsn, import_root, loads):
+def main(args, inline, engine, limit, offset, search_pattern, dsn, import_root, loads):
     """Synalog: logic programming compiling to SQL.
 
     \b
@@ -235,6 +242,10 @@ def main(args, inline, engine, limit, offset, dsn, import_root, loads):
       synalog program.l run Predicate ...     execute and print a table
       synalog program.l run_to_csv Pred ...   execute and print CSV
       synalog init [NAME]                     scaffold a new project
+
+    Add --search REGEX to print/run/run_to_csv to keep only rows where some
+    column matches REGEX (engine-native regex, not a SQL LIKE pattern), e.g.
+    'synalog program.l run Customers --search "(?i)acme"'.
 
     '-' as FILE reads the program from stdin; -c PROGRAM passes the program
     text inline instead of FILE. With no arguments, starts an interactive
@@ -269,8 +280,32 @@ def main(args, inline, engine, limit, offset, dsn, import_root, loads):
         raise click.UsageError(f"'{command}' takes no predicate arguments")
     if command in ("print", "run", "run_to_csv") and not predicates:
         raise click.UsageError("Missing argument 'PREDICATES...'.")
+    if search_pattern is not None and command not in ("print", "run", "run_to_csv"):
+        raise click.UsageError("--search applies to print/run/run_to_csv only")
 
     roots = import_roots(file, import_root)
+
+    def compile_pred(predicate: str, eng: str | None) -> str:
+        """Compile a predicate to SQL, applying --search when given."""
+        if search_pattern is not None:
+            return search(
+                source,
+                predicate,
+                search_pattern,
+                limit=limit,
+                offset=offset,
+                engine=eng,
+                import_root=roots,
+            )
+        return compile(
+            source,
+            predicate,
+            limit=limit,
+            offset=offset,
+            engine=eng,
+            import_root=roots,
+        )
+
     try:
         if command == "parse":
             click.echo(parse(source, engine=engine, import_root=roots))
@@ -281,26 +316,12 @@ def main(args, inline, engine, limit, offset, dsn, import_root, loads):
             sys.exit(1 if errors else 0)
         elif command == "print":
             for predicate in predicates:
-                sql = compile(
-                    source,
-                    predicate,
-                    limit=limit,
-                    offset=offset,
-                    engine=engine,
-                    import_root=roots,
-                )
+                sql = compile_pred(predicate, engine)
                 print_sql(sql.rstrip(";\n") + ";")
         else:  # run / run_to_csv
             resolved = engine or program_engine(source, roots) or DEFAULT_ENGINE
             for predicate in predicates:
-                sql = compile(
-                    source,
-                    predicate,
-                    limit=limit,
-                    offset=offset,
-                    engine=resolved,
-                    import_root=roots,
-                )
+                sql = compile_pred(predicate, resolved)
                 columns, rows = run_sql(resolved, sql, dsn=dsn, loads=loads)
                 if command == "run":
                     out.print(render_table(columns, rows))
@@ -324,6 +345,7 @@ Commands:
   .help              show this message
   .show              show the current program
   .sql <Pred>        print the SQL compiled for a predicate
+  .search <Pred> <re> run <Pred>, keeping rows where a column matches regex <re>
   .engine <name>     switch engine ({engines})
   .load <tbl> <path> load a csv/tsv/json/jsonl/parquet file as a table
   .clear             discard the program and loaded tables
@@ -419,11 +441,20 @@ class Repl:
             return
         self.statements.append(statement)
 
-    def query(self, predicate: str) -> None:
+    def query(self, predicate: str, pattern: str | None = None) -> None:
         try:
-            sql = compile(
-                self.source, predicate, engine=self.engine, import_root=self.roots
-            )
+            if pattern is None:
+                sql = compile(
+                    self.source, predicate, engine=self.engine, import_root=self.roots
+                )
+            else:
+                sql = search(
+                    self.source,
+                    predicate,
+                    pattern,
+                    engine=self.engine,
+                    import_root=self.roots,
+                )
             columns, rows = run_sql(self.engine, sql, dsn=self.dsn, loads=self.loads)
         except (ValueError, RunnerUnavailable, OSError) as e:
             print_error(e)
@@ -459,6 +490,13 @@ class Repl:
                     )
                 except ValueError as e:
                     print_error(e)
+        elif name == ".search":
+            predicate, _, pattern = argument.partition(" ")
+            pattern = pattern.strip()
+            if not predicate or not pattern:
+                print_error("usage: .search <Predicate> <regex>")
+            else:
+                self.query(predicate, pattern)
         elif name == ".engine":
             if argument not in SUPPORTED_ENGINES:
                 print_error(

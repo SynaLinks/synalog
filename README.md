@@ -129,6 +129,7 @@ $ synalog program.l run EngineeringTeam
 - `-` as the file reads the program from stdin; `-c PROGRAM` passes the program text inline, like `python -c`.
 - `--engine` overrides the program's `@Engine` annotation (default `duckdb`).
 - `--limit` / `--offset` paginate the result.
+- `--search REGEX` (with `print`/`run`/`run_to_csv`) keeps only rows where some column matches the regular expression `REGEX`, e.g. `synalog program.l run Customers --search "(?i)acme"`. In the interactive session the same is `.search Customers (?i)acme`.
 - `run` executes locally on `duckdb` (needs `pip install duckdb`), `sqlite` (stdlib), or `psql` (needs `pip install psycopg` and `--dsn` or `SYNALOG_PSQL_DSN`). For other engines, use `print` and run the SQL with your own client. `pip install 'synalog[run]'` pulls in the duckdb and psycopg drivers.
 - `import path.to.file.Pred;` statements resolve `path/to/file.l` against the program file's directory, then the current directory; pass `--import-root DIR` (repeatable) to search elsewhere.
 - `--load TABLE=PATH` (repeatable) loads a csv/tsv/json/jsonl/parquet file as a table before running, e.g. `synalog senior.l run Senior --load employees=employees.csv`.
@@ -171,6 +172,14 @@ Compile a single predicate to SQL. `limit` is combined with the `@Limit` directi
 sql = synalog.compile(source, "TopCustomers", limit=20, offset=40)
 ```
 
+### `search(source, predicate, pattern, limit=None, offset=None, engine=None, import_root=None) -> str`
+
+Compile a predicate to SQL that keeps only rows where **some column matches the regular expression `pattern`** (the per-column conditions are OR-ed, each column cast to text). The regex is evaluated by the target engine's native operator (`~` on PostgreSQL, `REGEXP` on SQLite, `regexp_matches` on DuckDB, `REGEXP_LIKE` elsewhere) — it is *not* a SQL `LIKE` pattern. `limit`/`offset` apply to the filtered rows.
+
+```python
+sql = synalog.search(source, "Customers", "(?i)acme", limit=20)
+```
+
 ### `compile_all(source, engine=None, import_root=None) -> dict[str, str]`
 
 Compile every defined predicate in the program. Returns a mapping `predicate_name -> sql`.
@@ -192,7 +201,7 @@ if errors:
         print(e)
 ```
 
-All four functions accept an optional `engine` keyword that overrides the program's `@Engine` annotation (one of `sqlite`, `duckdb`, `bigquery`, `psql`, `presto`, `trino`, `databricks`; default `duckdb`) and an optional `import_root` keyword listing directories where `import` statements look up `.l` files (default: the current directory). They raise `ValueError` on syntax or compilation errors.
+All of these functions accept an optional `engine` keyword that overrides the program's `@Engine` annotation (one of `sqlite`, `duckdb`, `bigquery`, `psql`, `presto`, `trino`, `databricks`; default `duckdb`) and an optional `import_root` keyword listing directories where `import` statements look up `.l` files (default: the current directory). They raise `ValueError` on syntax or compilation errors.
 
 ## Language overview
 
@@ -380,6 +389,18 @@ RecentOrders(order_id:) :-
   ToString(created_at) >= "2024-01-01";
 ```
 
+`CurrentDate` is a built-in concept (provided by the runtime, not defined by you) with a single field `date:` holding today's date as a `"YYYY-MM-DD"` string. Join against it whenever a rule needs "today":
+
+```logica
+@OrderBy(ThisMonthOrders, "order_id");
+ThisMonthOrders(order_id:, created_at:) :-
+  Orders(order_id:, created_at:),
+  CurrentDate(date:),
+  Substr(ToString(created_at), 1, 7) == Substr(date, 1, 7);
+```
+
+It is a reserved name: you cannot redefine, extend, or update it.
+
 ### Built-in functions
 
 **String:** `Substr`, `Length`, `Upper`, `Lower`, `Split`, `Join`, `Like`, `Format`
@@ -391,6 +412,8 @@ RecentOrders(order_id:) :-
 **Type casting:** `ToInt64`, `ToFloat64`, `ToString`
 
 **Other:** `Coalesce`, `IsNull`
+
+**Built-in concepts:** `CurrentDate(date:)` — today's date as `"YYYY-MM-DD"` (see Temporal data above).
 
 ## Supported engines
 

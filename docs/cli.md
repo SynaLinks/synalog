@@ -43,6 +43,7 @@ $ synalog program.l run EngineeringTeam
 | `-c PROGRAM` | Pass the program text inline instead of `FILE`, like `python -c`. |
 | `--engine <name>` | Target SQL dialect. Resolution order: this flag, then the program's `@Engine` annotation, then `duckdb`. |
 | `--limit N` / `--offset N` | Paginate the result. |
+| `--search REGEX` | With `print`/`run`/`run_to_csv`: keep only rows where some column matches the regular expression `REGEX` (engine-native regex, not a SQL `LIKE` pattern). Applies to the filtered rows before pagination. |
 | `--import-root DIR` | Directory where `import` statements look up `.l` files (repeatable). |
 | `--load TABLE=PATH` | Load a csv/tsv/json/jsonl/parquet file as a table before running (repeatable). |
 | `--dsn <conninfo>` | PostgreSQL connection string for `--engine psql` (or set `SYNALOG_PSQL_DSN`). |
@@ -226,6 +227,7 @@ Session commands:
 | `.help` | Show help. |
 | `.show` | Show the current program. |
 | `.sql <Pred>` | Print the SQL compiled for a predicate. |
+| `.search <Pred> <regex>` | Run `<Pred>`, keeping only rows where some column matches the regular expression. |
 | `.engine <name>` | Switch engine. |
 | `.load <table> <path>` | Load a csv/tsv/json/jsonl/parquet file as a table. |
 | `.clear` | Discard the program and loaded tables. |

@@ -4,7 +4,7 @@
 
 from importlib.metadata import PackageNotFoundError, version
 
-from ._synalog import SUPPORTED_ENGINES, check, compile, compile_all, parse
+from ._synalog import SUPPORTED_ENGINES, check, compile, compile_all, parse, search
 
 try:
     __version__ = version("synalog")
@@ -17,5 +17,6 @@ __all__ = [
     "compile",
     "compile_all",
     "parse",
+    "search",
     "__version__",
 ]

@@ -30,6 +30,18 @@ sql = synalog.compile(source, "TopCustomers", limit=20, offset=40)
 
 `limit` is combined with the [`@Limit` directive](language/directives.md#limit): the effective limit is `min(limit, @Limit)`. Use `limit`/`offset` for pagination — and make sure every predicate has an [`@OrderBy`](language/directives.md#orderby) so page boundaries are deterministic.
 
+## `search`
+
+```python
+search(source, predicate, pattern, limit=None, offset=None, engine=None, import_root=None) -> str
+```
+
+Compile a predicate to SQL that keeps only rows where **some column matches the regular expression `pattern`**. Each column is cast to text and matched with the OR of the per-column conditions, using the target engine's native regex operator (`~` on PostgreSQL, `REGEXP` on SQLite, `regexp_matches` on DuckDB, `REGEXP_LIKE` elsewhere) — this is a real regular expression, not a SQL `LIKE` pattern. `limit`/`offset` apply to the filtered rows.
+
+```python
+sql = synalog.search(source, "Customers", "(?i)acme", limit=20)
+```
+
 ## `compile_all`
 
 ```python

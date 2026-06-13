@@ -104,6 +104,37 @@ fn compile(
         .map_err(map_err)
 }
 
+/// Compile a predicate to SQL that keeps only rows where some column matches
+/// the regular expression `pattern` (the conditions are OR-ed across every
+/// column, each cast to text). `limit`/`offset` paginate exactly as `compile`.
+///
+/// The regex is evaluated by the target engine's native operator (`~` on
+/// PostgreSQL, `REGEXP` on SQLite, `regexp_matches` on DuckDB, `REGEXP_LIKE`
+/// elsewhere) — it is *not* a SQL `LIKE` pattern.
+///
+/// `engine` overrides the program's `@Engine` annotation (default: duckdb).
+/// `import_root` lists directories where `import` statements look up `.l` files.
+/// Raises ValueError on syntax or compilation errors.
+#[pyfunction]
+#[pyo3(signature = (source, predicate, pattern, limit=None, offset=None, engine=None, import_root=None))]
+fn search(
+    source: &str,
+    predicate: &str,
+    pattern: &str,
+    limit: Option<u64>,
+    offset: Option<u64>,
+    engine: Option<&str>,
+    import_root: Option<Vec<String>>,
+) -> PyResult<String> {
+    check_engine(engine)?;
+    let parsed = parse_source(source, None, import_root)?;
+    let program = build_program(&parsed, engine)?;
+    let pagination = Pagination { limit, offset };
+    program
+        .formatted_predicate_sql_with_search(predicate, pattern, &pagination)
+        .map_err(map_err)
+}
+
 /// Compile every defined predicate to SQL; returns {predicate_name: sql}.
 ///
 /// `engine` overrides the program's `@Engine` annotation (default: duckdb).
@@ -151,6 +182,7 @@ fn _synalog(m: &Bound<'_, PyModule>) -> PyResult<()> {
     m.add("SUPPORTED_ENGINES", dialects::SUPPORTED_ENGINES.to_vec())?;
     m.add_function(wrap_pyfunction!(parse, m)?)?;
     m.add_function(wrap_pyfunction!(compile, m)?)?;
+    m.add_function(wrap_pyfunction!(search, m)?)?;
     m.add_function(wrap_pyfunction!(compile_all, m)?)?;
     m.add_function(wrap_pyfunction!(check, m)?)?;
     Ok(())

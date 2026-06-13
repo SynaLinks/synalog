@@ -1212,13 +1212,14 @@ impl LogicaProgram {
         &self,
         name: &str,
     ) -> CompileResult<String> {
-        self.formatted_predicate_sql_impl(name, None)
+        self.formatted_predicate_sql_impl(name, None, None)
     }
 
     fn formatted_predicate_sql_impl(
         &self,
         name: &str,
         pagination: Option<&Pagination>,
+        search: Option<&str>,
     ) -> CompileResult<String> {
         let exec = self.initialize_execution(name)?;
         *self.execution.borrow_mut() = Some(exec);
@@ -1320,6 +1321,15 @@ impl LogicaProgram {
         // Apply flag substitution
         let sql = self.use_flags_as_parameters(&sql);
 
+        // Apply a caller-requested regex search filter to the final query
+        // only (again, the preamble is assembled around it below). This wraps
+        // the query before pagination so the LIMIT/OFFSET apply to the
+        // *filtered* rows.
+        let sql = match search {
+            Some(pattern) => self.search_filter_query(name, sql, pattern)?,
+            None => sql,
+        };
+
         // Apply caller-requested pagination to the final query only (the
         // preamble is assembled around it below). @Limit annotations are
         // already inlined by normal compilation; the caller's limit is
@@ -1379,7 +1389,7 @@ impl LogicaProgram {
         name: &str,
         pagination: &Pagination,
     ) -> CompileResult<String> {
-        self.formatted_predicate_sql_impl(name, Some(pagination))
+        self.formatted_predicate_sql_impl(name, Some(pagination), None)
     }
 
     /// Wrap the final query in a pagination subquery when the caller asked
@@ -1432,11 +1442,27 @@ impl LogicaProgram {
 
     /// Produce SQL for a predicate filtered by a regex pattern across all columns.
     /// Each column is cast to text and matched against the pattern.
+    ///
+    /// Goes through the same path as pagination so the engine preamble (schema,
+    /// type and sequence DDL) stays *outside* the wrapped query — only the
+    /// final SELECT is wrapped in the search filter, then paginated.
     pub fn formatted_predicate_sql_with_search(
         &self,
         name: &str,
         pattern: &str,
         pagination: &Pagination,
+    ) -> CompileResult<String> {
+        self.formatted_predicate_sql_impl(name, Some(pagination), Some(pattern))
+    }
+
+    /// Wrap a compiled query so it keeps only rows where some column matches
+    /// the regex `pattern`. Each column is cast to text and matched via the
+    /// dialect's native regex operator; the conditions are OR-ed.
+    fn search_filter_query(
+        &self,
+        name: &str,
+        query: String,
+        pattern: &str,
     ) -> CompileResult<String> {
         let columns = self.predicate_columns(name);
         if columns.is_empty() {
@@ -1446,44 +1472,20 @@ impl LogicaProgram {
             ));
         }
 
-        let base_sql = self.formatted_predicate_sql(name)?;
         let dialect = dialects::get(self.annotations.engine())?;
-
-        // Build per-column regex conditions using the dialect
-        let conditions: Vec<String> = columns
+        let where_clause = columns
             .iter()
             .map(|col| {
                 let cast_col = format!("CAST({} AS TEXT)", col);
                 dialect.regex_match_condition(&cast_col, pattern)
             })
-            .collect();
-
-        let where_clause = conditions.join(" OR ");
-
-        // Build effective limit
-        let annotation_limit = self.annotations.limit_of(name);
-        let effective_limit = match (pagination.limit, annotation_limit) {
-            (Some(pl), Some(al)) => Some(pl.min(al as u64)),
-            (Some(pl), None) => Some(pl),
-            (None, Some(al)) => Some(al as u64),
-            (None, None) => None,
-        };
-
-        let mut suffix = String::new();
-        if let Some(limit) = effective_limit {
-            suffix.push_str(&format!("\nLIMIT {}", limit));
-        }
-        if let Some(offset) = pagination.offset {
-            if offset > 0 {
-                suffix.push_str(&format!("\nOFFSET {}", offset));
-            }
-        }
+            .collect::<Vec<_>>()
+            .join(" OR ");
 
         Ok(format!(
-            "SELECT * FROM (\n{}\n) AS _searched\nWHERE {}{};",
-            base_sql.trim_end_matches(';'),
+            "SELECT * FROM (\n{}\n) AS _searched\nWHERE {}",
+            query.trim_end_matches(';'),
             where_clause,
-            suffix,
         ))
     }
 
