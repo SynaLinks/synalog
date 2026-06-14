@@ -157,7 +157,6 @@
 }
 
 .pg-run {
-    margin-left: auto;
     font: inherit;
     font-size: 0.74rem;
     font-weight: 600;
@@ -171,6 +170,75 @@
 
 .pg-run:hover {
     filter: brightness(1.08);
+}
+
+/* "Explain with AI" pill + its provider dropdown. The wrapper is the
+   right-aligned action group: its auto margin pushes Explain + Compile to the
+   far edge of the toolbar, and it anchors the absolutely-positioned dropdown. */
+.pg-explain {
+    position: relative;
+    margin-left: auto;
+    display: flex;
+    align-items: center;
+}
+
+.pg-explain-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    font: inherit;
+    font-size: 0.72rem;
+    font-weight: 600;
+    padding: 0.3rem 0.7rem;
+    border: 1px solid var(--md-default-fg-color--lighter);
+    border-radius: 0.2rem;
+    background: var(--md-default-bg-color);
+    color: var(--md-default-fg-color);
+    cursor: pointer;
+    transition: background 0.2s, border-color 0.2s;
+}
+
+.pg-explain-btn:hover,
+.pg-explain-btn:focus-visible {
+    background: var(--md-default-fg-color--lightest);
+    border-color: var(--md-default-fg-color--light);
+    outline: none;
+}
+
+.pg-explain-btn svg {
+    flex-shrink: 0;
+}
+
+.pg-explain-dropdown {
+    position: absolute;
+    top: calc(100% + 0.35rem);
+    right: 0;
+    flex-direction: column;
+    min-width: 150px;
+    background: var(--md-default-bg-color);
+    border: 1px solid var(--md-default-fg-color--lightest);
+    border-radius: 0.4rem;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+    z-index: 201;
+    overflow: hidden;
+}
+
+.pg-explain-option {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 0.8rem;
+    color: var(--md-default-fg-color);
+    text-decoration: none;
+    font-size: 0.78rem;
+}
+
+.pg-explain-option:hover {
+    background: var(--md-code-bg-color);
+}
+
+.pg-explain-option img {
+    border-radius: 3px;
 }
 
 /* Editor and SQL output stacked vertically (one above the other). */
