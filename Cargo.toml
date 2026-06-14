@@ -1,8 +1,8 @@
 [package]
 name = "synalog"
-version = "0.3.0"
+version = "0.4.0"
 edition = "2024"
-description = "Logic programming for AI agents — Datalog-family language compiling to optimized SQL"
+description = "Logic programming for AI agents: Datalog-family language compiling to optimized SQL"
 license = "Apache-2.0"
 repository = "https://github.com/synalinks/synalog"
 readme = "README.md"
