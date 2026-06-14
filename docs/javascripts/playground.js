@@ -150,9 +150,16 @@
     verifyWrap.appendChild(document.createTextNode(" Verify"));
     var runBtn = el("button", "pg-run");
     runBtn.textContent = "Compile";
+    // "Explain" hands the current program off to an AI chat (Claude / ChatGPT),
+    // mirroring the docs' Summarize button. Built once boot() has wired up the
+    // editor so its click handler can read the live source/engine/SQL.
+    var explainWrap = buildExplainMenu(function () {
+      return buildExplainPrompt(source(), engine(), sqlView, outPane);
+    });
     toolbar.appendChild(labeled("Engine", engineSel));
     toolbar.appendChild(labeled("Predicate", predSel));
     toolbar.appendChild(verifyWrap);
+    toolbar.appendChild(explainWrap);
     toolbar.appendChild(runBtn);
 
     var panes = el("div", "pg-panes");
@@ -363,5 +370,99 @@
     var c = el("div", "pg-caption");
     c.textContent = text;
     return c;
+  }
+
+  // AI chat targets for the "Explain" button. Favicons are served via
+  // DuckDuckGo's icon proxy — hot-linking claude.ai / chatgpt.com directly is
+  // unreliable behind their Cloudflare bot-mitigation (same rationale as
+  // javascripts/summarize.js).
+  var AI_PROVIDERS = [
+    {
+      name: "Claude",
+      icon: "https://icons.duckduckgo.com/ip3/claude.ai.ico",
+      buildUrl: function (prompt) {
+        return "https://claude.ai/new?q=" + encodeURIComponent(prompt);
+      },
+    },
+    {
+      name: "ChatGPT",
+      icon: "https://icons.duckduckgo.com/ip3/chatgpt.com.ico",
+      buildUrl: function (prompt) {
+        return "https://chatgpt.com/?q=" + encodeURIComponent(prompt);
+      },
+    },
+  ];
+
+  // Compose the chat prompt from the live editor state: the Synalog program,
+  // the selected engine, and the compiled SQL when the last compile succeeded.
+  function buildExplainPrompt(src, eng, sqlView, outPane) {
+    var prompt =
+      "I'm working with Synalog, a Datalog-style logic language that compiles " +
+      "to SQL. Please explain, step by step and in clear language, what the " +
+      "following Synalog program does — the concepts and rules it defines and " +
+      "the result it produces.\n\n" +
+      "Target SQL engine: " +
+      (eng || "(default)") +
+      "\n\nSynalog program:\n```\n" +
+      src +
+      "\n```\n";
+    var sql = sqlView.state.doc.toString();
+    // Skip the SQL block when the pane is showing a compile/verify error or is
+    // empty, so we never feed an error message to the model as if it were SQL.
+    if (sql && !outPane.classList.contains("pg-has-error")) {
+      prompt += "\nWhich Synalog compiles to this SQL:\n```sql\n" + sql + "\n```\n";
+    }
+    return prompt;
+  }
+
+  // Build the "Explain" pill plus its provider dropdown. getPrompt is called
+  // lazily on each provider click so it always reflects the current editor.
+  function buildExplainMenu(getPrompt) {
+    var wrap = el("div", "pg-explain");
+
+    var button = el("button", "pg-explain-btn");
+    button.type = "button";
+    button.setAttribute("aria-label", "Explain with AI");
+    button.setAttribute("title", "Explain this program with an AI chat");
+    button.innerHTML =
+      "<span>Explain</span>" +
+      '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="16" height="16" fill="currentColor" aria-hidden="true">' +
+      '<path d="M7.5 5.6 10 7 8.6 4.5 10 2 7.5 3.4 5 2l1.4 2.5L5 7zm12 9.8L17 14l1.4 2.5L17 19l2.5-1.4L22 19l-1.4-2.5L22 14zM22 2l-2.5 1.4L17 2l1.4 2.5L17 7l2.5-1.4L22 7l-1.4-2.5zm-7.63 5.29c-.39-.39-1.02-.39-1.41 0L1.29 18.96c-.39.39-.39 1.02 0 1.41l2.34 2.34c.39.39 1.02.39 1.41 0L16.7 11.05c.39-.39.39-1.02 0-1.41zm-1.03 5.49-2.12-2.12 2.44-2.44 2.12 2.12z"/>' +
+      "</svg>";
+
+    var dropdown = el("div", "pg-explain-dropdown");
+    dropdown.style.display = "none";
+
+    AI_PROVIDERS.forEach(function (provider) {
+      var option = el("a", "pg-explain-option");
+      option.href = "#";
+      option.innerHTML =
+        '<img src="' +
+        provider.icon +
+        '" alt="" width="18" height="18" />' +
+        "<span>" +
+        provider.name +
+        "</span>";
+      option.addEventListener("click", function (e) {
+        e.preventDefault();
+        e.stopPropagation();
+        window.open(provider.buildUrl(getPrompt()), "_blank", "noopener");
+        dropdown.style.display = "none";
+      });
+      dropdown.appendChild(option);
+    });
+
+    button.addEventListener("click", function (e) {
+      e.stopPropagation();
+      dropdown.style.display =
+        dropdown.style.display === "flex" ? "none" : "flex";
+    });
+    document.addEventListener("click", function () {
+      dropdown.style.display = "none";
+    });
+
+    wrap.appendChild(button);
+    wrap.appendChild(dropdown);
+    return wrap;
   }
 })();
