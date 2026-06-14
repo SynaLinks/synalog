@@ -31,20 +31,7 @@ The output has two layers, so the command works whether an ontology is mostly a 
 | Object property | a concept (named after the property) joining two entities through their URIs |
 | Individual | a `*Raw` fact the concepts build on, so the program runs as-is |
 
-**OWL property axioms and characteristics** are translated to the matching rule patterns — so a transitive property is actually closed, an inverse is actually derived, and a functional property is actually checked:
-
-| Ontology construct | Synalog output |
-| --- | --- |
-| `owl:TransitiveProperty` | a recursive `@Recursive` closure of the relationship |
-| `owl:SymmetricProperty` | the reverse direction is unioned in |
-| `owl:inverseOf` | each property's concept derives the other's inverse |
-| `rdfs:subPropertyOf` / `owl:equivalentProperty` | the super-/equivalent property includes the sub-/equivalent one |
-| `owl:ReflexiveProperty` | `(x, x)` for every individual in the domain |
-| `owl:FunctionalProperty` / `InverseFunctionalProperty` / `AsymmetricProperty` / `IrreflexiveProperty` | a `*Violation` concept that selects the individuals breaking the constraint (a non-empty result means the data is inconsistent) |
-| `owl:equivalentClass` | mutual `rdfs:subClassOf` (flows into the `SubClassOf` closure) |
-| `owl:disjointWith` | a `DisjointWithViolation` concept (individuals typed by two disjoint classes) |
-| `owl:sameAs` | a symmetric + transitive `SameAs` concept |
-| `owl:differentFrom` | a `DifferentFromViolation` (individuals asserted different yet inferred same) |
+**OWL property axioms and characteristics** are translated to the matching rule patterns — so a transitive property is actually *closed*, an inverse is actually *derived*, and a functional property is actually *checked*. Rather than tabulate them, [Every OWL axiom, by example](#every-owl-axiom-by-example) below shows each construct end-to-end: the OWL declaration and the exact Synalog `import` generates from it.
 
 Characteristics propagate across `owl:inverseOf` and `owl:equivalentProperty` (the inverse of a transitive property is transitive, of a functional one is inverse-functional; equivalents share everything), so the closures are complete on both sides. Every generated program is validated by the verifier. `owl:complementOf` and `owl:propertyChainAxiom` are not translated — they need open-world / non-stratifiable reasoning that does not map to a finite SQL rule.
 
@@ -106,6 +93,163 @@ This small HR ontology (Turtle) has three levels of classes, a few datatype and 
 
     ```text
     --8<-- "docs/examples/ontology.log"
+    ```
+
+## Every OWL axiom, by example
+
+The HR ontology above stays deliberately simple. This second one is the opposite: it packs **every** OWL axiom and property characteristic `import` translates into a single file, so you can read the exact Synalog each produces. A few assertions are intentionally inconsistent (flagged inline) so the generated `*Violation` concepts return rows:
+
+```turtle
+--8<-- "docs/examples/axioms.ttl"
+```
+
+`synalog import axioms.ttl` turns it into the program below; the rest of this section walks through it construct by construct.
+
+```logica
+--8<-- "docs/examples/axioms.l"
+```
+
+### Class axioms
+
+`rdfs:subClassOf` and `owl:equivalentClass` both feed one recursive `SubClassOf` — an equivalence is just subclassing both ways (`Human` ⊑ `Person` **and** `Person` ⊑ `Human`):
+
+```turtle
+:Person a owl:Class ; rdfs:subClassOf :Agent .
+:Human  a owl:Class ; owl:equivalentClass :Person .
+```
+
+```logica
+@Recursive(SubClassOf, 100);
+SubClassOf(child_uri:, parent_uri:) distinct :- SubClassOfRaw(child_uri:, parent_uri:), Class(uri: child_uri), Class(uri: parent_uri);
+SubClassOf(child_uri:, parent_uri:) distinct :- SubClassOf(child_uri:, parent_uri: mid), SubClassOfRaw(child_uri: mid, parent_uri:);
+SubClassOfRaw(child_uri: 'http://example.org/co#Person', parent_uri: 'http://example.org/co#Agent');
+SubClassOfRaw(child_uri: 'http://example.org/co#Human', parent_uri: 'http://example.org/co#Person');
+SubClassOfRaw(child_uri: 'http://example.org/co#Person', parent_uri: 'http://example.org/co#Human');
+```
+
+`owl:disjointWith` becomes a check — an individual that lands in both classes is a contradiction. `:dave` is typed as both, so the concept returns him:
+
+```turtle
+:Employee owl:disjointWith :Contractor .
+:dave a :Employee, :Contractor .
+```
+
+```logica
+@OrderBy(DisjointWithViolation, "uri");
+DisjointWithViolation(uri:, class_a:, class_b:) distinct :-
+  Contractor(uri:), Employee(uri:), class_a == 'http://example.org/co#Contractor', class_b == 'http://example.org/co#Employee';
+```
+
+### Property characteristics
+
+**`owl:TransitiveProperty`** — a one-step `…Step` predicate plus its `@Recursive` closure, so `alice ancestorOf bob` and `bob ancestorOf carol` entail `alice ancestorOf carol`:
+
+```turtle
+:ancestorOf a owl:ObjectProperty, owl:TransitiveProperty ; rdfs:domain :Person ; rdfs:range :Person .
+```
+
+```logica
+AncestorOfStep(subject_uri:, object_uri:) distinct :-
+  AncestorOfRaw(subject_uri:, object_uri:), Person(uri: subject_uri), Person(uri: object_uri);
+@Recursive(AncestorOf, 100);
+AncestorOf(subject_uri:, object_uri:) distinct :- AncestorOfStep(subject_uri:, object_uri:);
+AncestorOf(subject_uri:, object_uri:) distinct :- AncestorOf(subject_uri:, object_uri: mid), AncestorOfStep(subject_uri: mid, object_uri:);
+```
+
+**`owl:SymmetricProperty`** — the reverse direction is unioned in, so the single asserted `alice knows bob` yields both directions:
+
+```logica
+Knows(subject_uri:, object_uri:) distinct :-
+  KnowsRaw(subject_uri:, object_uri:), Person(uri: subject_uri), Person(uri: object_uri) |
+  KnowsRaw(subject_uri: object_uri, object_uri: subject_uri), Person(uri: subject_uri), Person(uri: object_uri);
+```
+
+**`owl:ReflexiveProperty`** — `(x, x)` for every individual in the domain:
+
+```logica
+SameTeamAs(subject_uri:, object_uri:) distinct :- Person(uri: subject_uri), object_uri == subject_uri;
+```
+
+**`owl:FunctionalProperty` / `owl:InverseFunctionalProperty`** — a check for a subject (resp. object) that appears with two different values. `:alice` has two desks, so the functional check flags her:
+
+```turtle
+:hasDesk a owl:ObjectProperty, owl:FunctionalProperty, owl:InverseFunctionalProperty ;
+         rdfs:domain :Person ; rdfs:range :Desk .
+```
+
+```logica
+HasDeskFunctionalViolation(subject_uri:) distinct :- HasDesk(subject_uri:, object_uri: value_a), HasDesk(subject_uri:, object_uri: value_b), value_a != value_b;
+HasDeskInverseFunctionalViolation(object_uri:) distinct :- HasDesk(subject_uri: subject_a, object_uri:), HasDesk(subject_uri: subject_b, object_uri:), subject_a != subject_b;
+```
+
+**`owl:AsymmetricProperty` / `owl:IrreflexiveProperty`** — a check for a pair that holds both ways (resp. a self-loop). `:alice` and `:bob` supervise each other and `:carol` supervises herself, so both fire:
+
+```turtle
+:supervises a owl:ObjectProperty, owl:AsymmetricProperty, owl:IrreflexiveProperty ;
+            rdfs:domain :Person ; rdfs:range :Person .
+```
+
+```logica
+SupervisesAsymmetricViolation(subject_uri:, object_uri:) distinct :- Supervises(subject_uri:, object_uri:), Supervises(subject_uri: object_uri, object_uri: subject_uri);
+SupervisesIrreflexiveViolation(uri:) distinct :- Supervises(subject_uri: uri, object_uri: uri);
+```
+
+### Relations between properties
+
+**`owl:inverseOf`** — `employs` derives its rows by swapping the subject and object of `worksAt`'s facts:
+
+```turtle
+:employs a owl:ObjectProperty ; owl:inverseOf :worksAt .
+```
+
+```logica
+Employs(subject_uri:, object_uri:) distinct :- WorksAtRaw(subject_uri: object_uri, object_uri: subject_uri);
+```
+
+**`rdfs:subPropertyOf`** — `fatherOf`'s facts flow up into `parentOf`:
+
+```turtle
+:fatherOf a owl:ObjectProperty ; rdfs:subPropertyOf :parentOf .
+```
+
+```logica
+ParentOf(subject_uri:, object_uri:) distinct :- FatherOfRaw(subject_uri:, object_uri:), Person(uri: subject_uri), Person(uri: object_uri);
+```
+
+**`owl:equivalentProperty`** — `acquaintedWith` includes `knows`'s facts:
+
+```turtle
+:acquaintedWith a owl:ObjectProperty ; owl:equivalentProperty :knows .
+```
+
+```logica
+AcquaintedWith(subject_uri:, object_uri:) distinct :- KnowsRaw(subject_uri:, object_uri:);
+```
+
+### Individual axioms
+
+**`owl:sameAs`** — a symmetric, transitive `SameAs` concept (the same closure shape as a transitive property):
+
+```logica
+@Recursive(SameAs, 100);
+SameAs(left_uri:, right_uri:) distinct :-
+  SameAsRaw(left_uri:, right_uri:) |
+  SameAsRaw(left_uri: right_uri, right_uri: left_uri);
+SameAs(left_uri:, right_uri:) distinct :- SameAs(left_uri:, right_uri: mid), SameAs(left_uri: mid, right_uri:);
+```
+
+**`owl:differentFrom`** — a check: two individuals asserted different yet inferred `SameAs` are inconsistent (none are, here):
+
+```logica
+DifferentFromViolation(left_uri:, right_uri:) distinct :- SameAs(left_uri:, right_uri:), DifferentFromRaw(left_uri:, right_uri:);
+```
+
+Running the headline predicates shows the closures filled in and the `*Violation` checks firing on the inconsistent rows:
+
+??? example "Generated SQL and execution results"
+
+    ```text
+    --8<-- "docs/examples/axioms.log"
     ```
 
 ## Large, real-world ontologies

@@ -1,0 +1,68 @@
+# An ontology that exercises EVERY OWL axiom and property characteristic
+# `synalog import` translates. `synalog import axioms.ttl > axioms.l` turns each
+# construct below into the matching Synalog rule pattern (closures, derived
+# inverses, constraint checks). A few assertions are deliberately inconsistent
+# (flagged inline) so the generated *Violation concepts return rows.
+@prefix :     <http://example.org/co#> .
+@prefix owl:  <http://www.w3.org/2002/07/owl#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .
+
+# --- Classes ---------------------------------------------------------------
+:Agent        a owl:Class .
+:Person       a owl:Class ; rdfs:subClassOf :Agent .          # rdfs:subClassOf
+:Organization a owl:Class ; rdfs:subClassOf :Agent .
+:Human        a owl:Class ; owl:equivalentClass :Person .     # owl:equivalentClass
+:Desk         a owl:Class .
+
+:Employee   a owl:Class ; rdfs:subClassOf :Person .
+:Contractor a owl:Class ; rdfs:subClassOf :Person .
+:Employee   owl:disjointWith :Contractor .                    # owl:disjointWith
+
+# --- Datatype properties (become node columns) -----------------------------
+:name  a owl:DatatypeProperty ; rdfs:domain :Agent  ; rdfs:range xsd:string .
+:email a owl:DatatypeProperty ; rdfs:domain :Person ; rdfs:range xsd:string .
+
+# --- Object properties + characteristics -----------------------------------
+:ancestorOf     a owl:ObjectProperty, owl:TransitiveProperty ;          # transitive closure
+                rdfs:domain :Person ; rdfs:range :Person .
+:knows          a owl:ObjectProperty, owl:SymmetricProperty ;           # reverse unioned in
+                rdfs:domain :Person ; rdfs:range :Person .
+:acquaintedWith a owl:ObjectProperty ; owl:equivalentProperty :knows .  # shares knows' facts
+:worksAt        a owl:ObjectProperty ; rdfs:domain :Person ; rdfs:range :Organization .
+:employs        a owl:ObjectProperty ; owl:inverseOf :worksAt .         # derived opposite direction
+:parentOf       a owl:ObjectProperty ; rdfs:domain :Person ; rdfs:range :Person .
+:fatherOf       a owl:ObjectProperty ; rdfs:subPropertyOf :parentOf .   # facts flow up to parentOf
+:sameTeamAs     a owl:ObjectProperty, owl:ReflexiveProperty ;           # (x, x) over the domain
+                rdfs:domain :Person ; rdfs:range :Person .
+:hasDesk        a owl:ObjectProperty,
+                  owl:FunctionalProperty, owl:InverseFunctionalProperty ;  # one desk/person & vice-versa
+                rdfs:domain :Person ; rdfs:range :Desk .
+:supervises     a owl:ObjectProperty,
+                  owl:AsymmetricProperty, owl:IrreflexiveProperty ;     # both-ways & self-loops are violations
+                rdfs:domain :Person ; rdfs:range :Person .
+
+# --- Individuals (the ABox) ------------------------------------------------
+# A concept is keyed by the type an individual is asserted with (membership is
+# data-driven, not inferred through subClassOf), so the people who take part in
+# the Person→Person properties are typed :Person directly. :Employee / :Contractor
+# carry a single individual each, only to demonstrate the owl:disjointWith check.
+:acme a :Organization ; :name "Acme" .
+
+:alice a :Person ; :name "Alice" ; :email "alice@acme.example" ;
+       :worksAt :acme ; :knows :bob ;
+       :ancestorOf :bob ; :fatherOf :carol ;
+       :hasDesk :d1 , :d2 ;             # two desks — owl:FunctionalProperty violation
+       :supervises :bob .
+:bob   a :Person ; :name "Bob" ;
+       :ancestorOf :carol ;            # alice→bob→carol entails alice ancestorOf carol
+       :supervises :alice .            # alice⇄bob — owl:AsymmetricProperty violation
+:carol a :Person ; :name "Carol" ;
+       :supervises :carol .            # self-loop — owl:IrreflexiveProperty violation
+:dave  a :Employee, :Contractor ;      # both disjoint classes — owl:disjointWith violation
+       :name "Dave" .
+
+:d1 a :Desk . :d2 a :Desk .
+
+:alice owl:sameAs :alice2 .            # symmetric + transitive SameAs
+:alice owl:differentFrom :bob .        # asserted distinct (consistent here)

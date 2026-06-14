@@ -1,0 +1,997 @@
+$ synalog.check('axioms.l')
+No errors found.
+
+$ synalog.compile('axioms.l', 'AncestorOf')
+-- Initializing DuckDB environment.
+create schema if not exists logica_home;
+-- Empty record, has to have a field by DuckDB syntax.
+drop type if exists logicarecord893574736 cascade; create type logicarecord893574736 as struct(nirvana numeric);
+create sequence if not exists eternal_logical_sequence;
+
+CREATE OR REPLACE TABLE logica_home.AncestorOf_ifr0 AS WITH t_3_AncestorOfRaw AS (SELECT * FROM (
+  
+    SELECT
+      E'http://example.org/co#alice' AS subject_uri,
+      E'http://example.org/co#bob' AS object_uri
+   UNION ALL
+  
+    SELECT
+      E'http://example.org/co#bob' AS subject_uri,
+      E'http://example.org/co#carol' AS object_uri
+  
+) AS UNUSED_TABLE_NAME  ),
+t_5_PersonRaw AS (SELECT * FROM (
+  
+    SELECT
+      E'http://example.org/co#alice' AS uri,
+      E'alice@acme.example' AS email,
+      E'Alice' AS name
+   UNION ALL
+  
+    SELECT
+      E'http://example.org/co#bob' AS uri,
+      null AS email,
+      E'Bob' AS name
+   UNION ALL
+  
+    SELECT
+      E'http://example.org/co#carol' AS uri,
+      null AS email,
+      E'Carol' AS name
+  
+) AS UNUSED_TABLE_NAME  ),
+t_4_Person AS (SELECT
+  PersonRaw.uri AS uri,
+  PersonRaw.email AS email,
+  PersonRaw.name AS name
+FROM
+  t_5_PersonRaw AS PersonRaw
+GROUP BY PersonRaw.uri, PersonRaw.email, PersonRaw.name ORDER BY uri),
+t_1_AncestorOfStep AS (SELECT
+  AncestorOfRaw.subject_uri AS subject_uri,
+  AncestorOfRaw.object_uri AS object_uri
+FROM
+  t_3_AncestorOfRaw AS AncestorOfRaw, t_4_Person AS Person, t_4_Person AS t_2_Person
+WHERE
+  (Person.uri = AncestorOfRaw.subject_uri) AND
+  (t_2_Person.uri = AncestorOfRaw.object_uri)
+GROUP BY AncestorOfRaw.subject_uri, AncestorOfRaw.object_uri ORDER BY subject_uri),
+t_0_AncestorOf_MultBodyAggAux_f1 AS (SELECT * FROM (
+  
+    SELECT
+      AncestorOfStep.subject_uri AS subject_uri,
+      AncestorOfStep.object_uri AS object_uri
+    FROM
+      t_1_AncestorOfStep AS AncestorOfStep
+  
+) AS UNUSED_TABLE_NAME  )
+SELECT
+  AncestorOf_MultBodyAggAux_f1.subject_uri AS subject_uri,
+  AncestorOf_MultBodyAggAux_f1.object_uri AS object_uri
+FROM
+  t_0_AncestorOf_MultBodyAggAux_f1 AS AncestorOf_MultBodyAggAux_f1
+GROUP BY AncestorOf_MultBodyAggAux_f1.subject_uri, AncestorOf_MultBodyAggAux_f1.object_uri ORDER BY subject_uri;
+
+-- Interacting with table logica_home.AncestorOf_ifr0
+
+CREATE OR REPLACE TABLE logica_home.AncestorOf_ifr1 AS WITH t_3_AncestorOfRaw AS (SELECT * FROM (
+  
+    SELECT
+      E'http://example.org/co#alice' AS subject_uri,
+      E'http://example.org/co#bob' AS object_uri
+   UNION ALL
+  
+    SELECT
+      E'http://example.org/co#bob' AS subject_uri,
+      E'http://example.org/co#carol' AS object_uri
+  
+) AS UNUSED_TABLE_NAME  ),
+t_5_PersonRaw AS (SELECT * FROM (
+  
+    SELECT
+      E'http://example.org/co#alice' AS uri,
+      E'alice@acme.example' AS email,
+      E'Alice' AS name
+   UNION ALL
+  
+    SELECT
+      E'http://example.org/co#bob' AS uri,
+      null AS email,
+      E'Bob' AS name
+   UNION ALL
+  
+    SELECT
+      E'http://example.org/co#carol' AS uri,
+      null AS email,
+      E'Carol' AS name
+  
+) AS UNUSED_TABLE_NAME  ),
+t_4_Person AS (SELECT
+  PersonRaw.uri AS uri,
+  PersonRaw.email AS email,
+  PersonRaw.name AS name
+FROM
+  t_5_PersonRaw AS PersonRaw
+GROUP BY PersonRaw.uri, PersonRaw.email, PersonRaw.name ORDER BY uri),
+t_1_AncestorOfStep AS (SELECT
+  AncestorOfRaw.subject_uri AS subject_uri,
+  AncestorOfRaw.object_uri AS object_uri
+FROM
+  t_3_AncestorOfRaw AS AncestorOfRaw, t_4_Person AS Person, t_4_Person AS t_2_Person
+WHERE
+  (Person.uri = AncestorOfRaw.subject_uri) AND
+  (t_2_Person.uri = AncestorOfRaw.object_uri)
+GROUP BY AncestorOfRaw.subject_uri, AncestorOfRaw.object_uri ORDER BY subject_uri),
+t_0_AncestorOf_MultBodyAggAux_f2 AS (SELECT * FROM (
+  
+    SELECT
+      AncestorOfStep.subject_uri AS subject_uri,
+      AncestorOfStep.object_uri AS object_uri
+    FROM
+      t_1_AncestorOfStep AS AncestorOfStep
+   UNION ALL
+  
+    SELECT
+      AncestorOf_ifr0.subject_uri AS subject_uri,
+      t_2_AncestorOfStep.object_uri AS object_uri
+    FROM
+      logica_home.AncestorOf_ifr0 AS AncestorOf_ifr0, t_1_AncestorOfStep AS t_2_AncestorOfStep
+    WHERE
+      (t_2_AncestorOfStep.subject_uri = AncestorOf_ifr0.object_uri)
+  
+) AS UNUSED_TABLE_NAME  )
+SELECT
+  AncestorOf_MultBodyAggAux_f2.subject_uri AS subject_uri,
+  AncestorOf_MultBodyAggAux_f2.object_uri AS object_uri
+FROM
+  t_0_AncestorOf_MultBodyAggAux_f2 AS AncestorOf_MultBodyAggAux_f2
+GROUP BY AncestorOf_MultBodyAggAux_f2.subject_uri, AncestorOf_MultBodyAggAux_f2.object_uri ORDER BY subject_uri;
+
+-- Interacting with table logica_home.AncestorOf_ifr1
+
+CREATE OR REPLACE TABLE logica_home.AncestorOf_ifr2 AS WITH t_3_AncestorOfRaw AS (SELECT * FROM (
+  
+    SELECT
+      E'http://example.org/co#alice' AS subject_uri,
+      E'http://example.org/co#bob' AS object_uri
+   UNION ALL
+  
+    SELECT
+      E'http://example.org/co#bob' AS subject_uri,
+      E'http://example.org/co#carol' AS object_uri
+  
+) AS UNUSED_TABLE_NAME  ),
+t_5_PersonRaw AS (SELECT * FROM (
+  
+    SELECT
+      E'http://example.org/co#alice' AS uri,
+      E'alice@acme.example' AS email,
+      E'Alice' AS name
+   UNION ALL
+  
+    SELECT
+      E'http://example.org/co#bob' AS uri,
+      null AS email,
+      E'Bob' AS name
+   UNION ALL
+  
+    SELECT
+      E'http://example.org/co#carol' AS uri,
+      null AS email,
+      E'Carol' AS name
+  
+) AS UNUSED_TABLE_NAME  ),
+t_4_Person AS (SELECT
+  PersonRaw.uri AS uri,
+  PersonRaw.email AS email,
+  PersonRaw.name AS name
+FROM
+  t_5_PersonRaw AS PersonRaw
+GROUP BY PersonRaw.uri, PersonRaw.email, PersonRaw.name ORDER BY uri),
+t_1_AncestorOfStep AS (SELECT
+  AncestorOfRaw.subject_uri AS subject_uri,
+  AncestorOfRaw.object_uri AS object_uri
+FROM
+  t_3_AncestorOfRaw AS AncestorOfRaw, t_4_Person AS Person, t_4_Person AS t_2_Person
+WHERE
+  (Person.uri = AncestorOfRaw.subject_uri) AND
+  (t_2_Person.uri = AncestorOfRaw.object_uri)
+GROUP BY AncestorOfRaw.subject_uri, AncestorOfRaw.object_uri ORDER BY subject_uri),
+t_0_AncestorOf_MultBodyAggAux_f3 AS (SELECT * FROM (
+  
+    SELECT
+      AncestorOfStep.subject_uri AS subject_uri,
+      AncestorOfStep.object_uri AS object_uri
+    FROM
+      t_1_AncestorOfStep AS AncestorOfStep
+   UNION ALL
+  
+    SELECT
+      AncestorOf_ifr1.subject_uri AS subject_uri,
+      t_2_AncestorOfStep.object_uri AS object_uri
+    FROM
+      logica_home.AncestorOf_ifr1 AS AncestorOf_ifr1, t_1_AncestorOfStep AS t_2_AncestorOfStep
+    WHERE
+      (t_2_AncestorOfStep.subject_uri = AncestorOf_ifr1.object_uri)
+  
+) AS UNUSED_TABLE_NAME  )
+SELECT
+  AncestorOf_MultBodyAggAux_f3.subject_uri AS subject_uri,
+  AncestorOf_MultBodyAggAux_f3.object_uri AS object_uri
+FROM
+  t_0_AncestorOf_MultBodyAggAux_f3 AS AncestorOf_MultBodyAggAux_f3
+GROUP BY AncestorOf_MultBodyAggAux_f3.subject_uri, AncestorOf_MultBodyAggAux_f3.object_uri ORDER BY subject_uri;
+
+-- Interacting with table logica_home.AncestorOf_ifr2
+
+CREATE OR REPLACE TABLE logica_home.AncestorOf_ifr1 AS WITH t_3_AncestorOfRaw AS (SELECT * FROM (
+  
+    SELECT
+      E'http://example.org/co#alice' AS subject_uri,
+      E'http://example.org/co#bob' AS object_uri
+   UNION ALL
+  
+    SELECT
+      E'http://example.org/co#bob' AS subject_uri,
+      E'http://example.org/co#carol' AS object_uri
+  
+) AS UNUSED_TABLE_NAME  ),
+t_5_PersonRaw AS (SELECT * FROM (
+  
+    SELECT
+      E'http://example.org/co#alice' AS uri,
+      E'alice@acme.example' AS email,
+      E'Alice' AS name
+   UNION ALL
+  
+    SELECT
+      E'http://example.org/co#bob' AS uri,
+      null AS email,
+      E'Bob' AS name
+   UNION ALL
+  
+    SELECT
+      E'http://example.org/co#carol' AS uri,
+      null AS email,
+      E'Carol' AS name
+  
+) AS UNUSED_TABLE_NAME  ),
+t_4_Person AS (SELECT
+  PersonRaw.uri AS uri,
+  PersonRaw.email AS email,
+  PersonRaw.name AS name
+FROM
+  t_5_PersonRaw AS PersonRaw
+GROUP BY PersonRaw.uri, PersonRaw.email, PersonRaw.name ORDER BY uri),
+t_1_AncestorOfStep AS (SELECT
+  AncestorOfRaw.subject_uri AS subject_uri,
+  AncestorOfRaw.object_uri AS object_uri
+FROM
+  t_3_AncestorOfRaw AS AncestorOfRaw, t_4_Person AS Person, t_4_Person AS t_2_Person
+WHERE
+  (Person.uri = AncestorOfRaw.subject_uri) AND
+  (t_2_Person.uri = AncestorOfRaw.object_uri)
+GROUP BY AncestorOfRaw.subject_uri, AncestorOfRaw.object_uri ORDER BY subject_uri),
+t_0_AncestorOf_MultBodyAggAux_f4 AS (SELECT * FROM (
+  
+    SELECT
+      AncestorOfStep.subject_uri AS subject_uri,
+      AncestorOfStep.object_uri AS object_uri
+    FROM
+      t_1_AncestorOfStep AS AncestorOfStep
+   UNION ALL
+  
+    SELECT
+      AncestorOf_ifr2.subject_uri AS subject_uri,
+      t_2_AncestorOfStep.object_uri AS object_uri
+    FROM
+      logica_home.AncestorOf_ifr2 AS AncestorOf_ifr2, t_1_AncestorOfStep AS t_2_AncestorOfStep
+    WHERE
+      (t_2_AncestorOfStep.subject_uri = AncestorOf_ifr2.object_uri)
+  
+) AS UNUSED_TABLE_NAME  )
+SELECT
+  AncestorOf_MultBodyAggAux_f4.subject_uri AS subject_uri,
+  AncestorOf_MultBodyAggAux_f4.object_uri AS object_uri
+FROM
+  t_0_AncestorOf_MultBodyAggAux_f4 AS AncestorOf_MultBodyAggAux_f4
+GROUP BY AncestorOf_MultBodyAggAux_f4.subject_uri, AncestorOf_MultBodyAggAux_f4.object_uri ORDER BY subject_uri;
+
+-- Interacting with table logica_home.AncestorOf_ifr1
+
+WITH t_3_AncestorOfRaw AS (SELECT * FROM (
+  
+    SELECT
+      E'http://example.org/co#alice' AS subject_uri,
+      E'http://example.org/co#bob' AS object_uri
+   UNION ALL
+  
+    SELECT
+      E'http://example.org/co#bob' AS subject_uri,
+      E'http://example.org/co#carol' AS object_uri
+  
+) AS UNUSED_TABLE_NAME  ),
+t_5_PersonRaw AS (SELECT * FROM (
+  
+    SELECT
+      E'http://example.org/co#alice' AS uri,
+      E'alice@acme.example' AS email,
+      E'Alice' AS name
+   UNION ALL
+  
+    SELECT
+      E'http://example.org/co#bob' AS uri,
+      null AS email,
+      E'Bob' AS name
+   UNION ALL
+  
+    SELECT
+      E'http://example.org/co#carol' AS uri,
+      null AS email,
+      E'Carol' AS name
+  
+) AS UNUSED_TABLE_NAME  ),
+t_4_Person AS (SELECT
+  PersonRaw.uri AS uri,
+  PersonRaw.email AS email,
+  PersonRaw.name AS name
+FROM
+  t_5_PersonRaw AS PersonRaw
+GROUP BY PersonRaw.uri, PersonRaw.email, PersonRaw.name ORDER BY uri),
+t_1_AncestorOfStep AS (SELECT
+  AncestorOfRaw.subject_uri AS subject_uri,
+  AncestorOfRaw.object_uri AS object_uri
+FROM
+  t_3_AncestorOfRaw AS AncestorOfRaw, t_4_Person AS Person, t_4_Person AS t_2_Person
+WHERE
+  (Person.uri = AncestorOfRaw.subject_uri) AND
+  (t_2_Person.uri = AncestorOfRaw.object_uri)
+GROUP BY AncestorOfRaw.subject_uri, AncestorOfRaw.object_uri ORDER BY subject_uri),
+t_0_AncestorOf_MultBodyAggAux_f5 AS (SELECT * FROM (
+  
+    SELECT
+      AncestorOfStep.subject_uri AS subject_uri,
+      AncestorOfStep.object_uri AS object_uri
+    FROM
+      t_1_AncestorOfStep AS AncestorOfStep
+   UNION ALL
+  
+    SELECT
+      AncestorOf_ifr3.subject_uri AS subject_uri,
+      t_7_AncestorOfStep.object_uri AS object_uri
+    FROM
+      logica_home.AncestorOf_ifr1 AS AncestorOf_ifr3, t_1_AncestorOfStep AS t_7_AncestorOfStep
+    WHERE
+      (t_7_AncestorOfStep.subject_uri = AncestorOf_ifr3.object_uri)
+  
+) AS UNUSED_TABLE_NAME  )
+SELECT
+  AncestorOf_MultBodyAggAux_f5.subject_uri AS subject_uri,
+  AncestorOf_MultBodyAggAux_f5.object_uri AS object_uri
+FROM
+  t_0_AncestorOf_MultBodyAggAux_f5 AS AncestorOf_MultBodyAggAux_f5
+GROUP BY AncestorOf_MultBodyAggAux_f5.subject_uri, AncestorOf_MultBodyAggAux_f5.object_uri ORDER BY subject_uri;
+
+-- Executed on DuckDB:
+| subject_uri                 | object_uri                  |
+|-----------------------------|-----------------------------|
+| http://example.org/co#alice | http://example.org/co#carol |
+| http://example.org/co#alice | http://example.org/co#bob   |
+| http://example.org/co#bob   | http://example.org/co#carol |
+(3 rows)
+
+$ synalog.compile('axioms.l', 'Knows')
+-- Initializing DuckDB environment.
+create schema if not exists logica_home;
+-- Empty record, has to have a field by DuckDB syntax.
+drop type if exists logicarecord893574736 cascade; create type logicarecord893574736 as struct(nirvana numeric);
+create sequence if not exists eternal_logical_sequence;
+
+WITH t_3_PersonRaw AS (SELECT * FROM (
+  
+    SELECT
+      E'http://example.org/co#alice' AS uri,
+      E'alice@acme.example' AS email,
+      E'Alice' AS name
+   UNION ALL
+  
+    SELECT
+      E'http://example.org/co#bob' AS uri,
+      null AS email,
+      E'Bob' AS name
+   UNION ALL
+  
+    SELECT
+      E'http://example.org/co#carol' AS uri,
+      null AS email,
+      E'Carol' AS name
+  
+) AS UNUSED_TABLE_NAME  ),
+t_2_Person AS (SELECT
+  PersonRaw.uri AS uri,
+  PersonRaw.email AS email,
+  PersonRaw.name AS name
+FROM
+  t_3_PersonRaw AS PersonRaw
+GROUP BY PersonRaw.uri, PersonRaw.email, PersonRaw.name ORDER BY uri),
+t_0_Knows_MultBodyAggAux AS (SELECT * FROM (
+  
+    SELECT
+      Person.uri AS subject_uri,
+      t_1_Person.uri AS object_uri
+    FROM
+      t_2_Person AS Person, t_2_Person AS t_1_Person
+    WHERE
+      (E'http://example.org/co#alice' = Person.uri) AND
+      (E'http://example.org/co#bob' = t_1_Person.uri)
+   UNION ALL
+  
+    SELECT
+      t_6_Person.uri AS subject_uri,
+      t_7_Person.uri AS object_uri
+    FROM
+      t_2_Person AS t_6_Person, t_2_Person AS t_7_Person
+    WHERE
+      (E'http://example.org/co#alice' = t_7_Person.uri) AND
+      (E'http://example.org/co#bob' = t_6_Person.uri)
+  
+) AS UNUSED_TABLE_NAME  )
+SELECT
+  Knows_MultBodyAggAux.subject_uri AS subject_uri,
+  Knows_MultBodyAggAux.object_uri AS object_uri
+FROM
+  t_0_Knows_MultBodyAggAux AS Knows_MultBodyAggAux
+GROUP BY Knows_MultBodyAggAux.subject_uri, Knows_MultBodyAggAux.object_uri ORDER BY subject_uri;
+
+-- Executed on DuckDB:
+| subject_uri                 | object_uri                  |
+|-----------------------------|-----------------------------|
+| http://example.org/co#alice | http://example.org/co#bob   |
+| http://example.org/co#bob   | http://example.org/co#alice |
+(2 rows)
+
+$ synalog.compile('axioms.l', 'Employs')
+-- Initializing DuckDB environment.
+create schema if not exists logica_home;
+-- Empty record, has to have a field by DuckDB syntax.
+drop type if exists logicarecord893574736 cascade; create type logicarecord893574736 as struct(nirvana numeric);
+create sequence if not exists eternal_logical_sequence;
+
+SELECT
+  E'http://example.org/co#acme' AS subject_uri,
+  E'http://example.org/co#alice' AS object_uri
+FROM
+  (SELECT 'singleton' as s) as unused_singleton
+GROUP BY (E'http://example.org/co#acme' || ''), (E'http://example.org/co#alice' || '') ORDER BY subject_uri;
+
+-- Executed on DuckDB:
+| subject_uri                | object_uri                  |
+|----------------------------|-----------------------------|
+| http://example.org/co#acme | http://example.org/co#alice |
+(1 row)
+
+$ synalog.compile('axioms.l', 'ParentOf')
+-- Initializing DuckDB environment.
+create schema if not exists logica_home;
+-- Empty record, has to have a field by DuckDB syntax.
+drop type if exists logicarecord893574736 cascade; create type logicarecord893574736 as struct(nirvana numeric);
+create sequence if not exists eternal_logical_sequence;
+
+WITH t_2_PersonRaw AS (SELECT * FROM (
+  
+    SELECT
+      E'http://example.org/co#alice' AS uri,
+      E'alice@acme.example' AS email,
+      E'Alice' AS name
+   UNION ALL
+  
+    SELECT
+      E'http://example.org/co#bob' AS uri,
+      null AS email,
+      E'Bob' AS name
+   UNION ALL
+  
+    SELECT
+      E'http://example.org/co#carol' AS uri,
+      null AS email,
+      E'Carol' AS name
+  
+) AS UNUSED_TABLE_NAME  ),
+t_1_Person AS (SELECT
+  PersonRaw.uri AS uri,
+  PersonRaw.email AS email,
+  PersonRaw.name AS name
+FROM
+  t_2_PersonRaw AS PersonRaw
+GROUP BY PersonRaw.uri, PersonRaw.email, PersonRaw.name ORDER BY uri)
+SELECT
+  Person.uri AS subject_uri,
+  t_0_Person.uri AS object_uri
+FROM
+  t_1_Person AS Person, t_1_Person AS t_0_Person
+WHERE
+  (E'http://example.org/co#alice' = Person.uri) AND
+  (E'http://example.org/co#carol' = t_0_Person.uri)
+GROUP BY Person.uri, t_0_Person.uri ORDER BY subject_uri;
+
+-- Executed on DuckDB:
+| subject_uri                 | object_uri                  |
+|-----------------------------|-----------------------------|
+| http://example.org/co#alice | http://example.org/co#carol |
+(1 row)
+
+$ synalog.compile('axioms.l', 'SameTeamAs')
+-- Initializing DuckDB environment.
+create schema if not exists logica_home;
+-- Empty record, has to have a field by DuckDB syntax.
+drop type if exists logicarecord893574736 cascade; create type logicarecord893574736 as struct(nirvana numeric);
+create sequence if not exists eternal_logical_sequence;
+
+WITH t_1_PersonRaw AS (SELECT * FROM (
+  
+    SELECT
+      E'http://example.org/co#alice' AS uri,
+      E'alice@acme.example' AS email,
+      E'Alice' AS name
+   UNION ALL
+  
+    SELECT
+      E'http://example.org/co#bob' AS uri,
+      null AS email,
+      E'Bob' AS name
+   UNION ALL
+  
+    SELECT
+      E'http://example.org/co#carol' AS uri,
+      null AS email,
+      E'Carol' AS name
+  
+) AS UNUSED_TABLE_NAME  ),
+t_0_Person AS (SELECT
+  PersonRaw.uri AS uri,
+  PersonRaw.email AS email,
+  PersonRaw.name AS name
+FROM
+  t_1_PersonRaw AS PersonRaw
+GROUP BY PersonRaw.uri, PersonRaw.email, PersonRaw.name ORDER BY uri)
+SELECT
+  Person.uri AS subject_uri,
+  Person.uri AS object_uri
+FROM
+  t_0_Person AS Person
+GROUP BY Person.uri, Person.uri ORDER BY subject_uri;
+
+-- Executed on DuckDB:
+| subject_uri                 | object_uri                  |
+|-----------------------------|-----------------------------|
+| http://example.org/co#alice | http://example.org/co#alice |
+| http://example.org/co#bob   | http://example.org/co#bob   |
+| http://example.org/co#carol | http://example.org/co#carol |
+(3 rows)
+
+$ synalog.compile('axioms.l', 'HasDeskFunctionalViolation')
+-- Initializing DuckDB environment.
+create schema if not exists logica_home;
+-- Empty record, has to have a field by DuckDB syntax.
+drop type if exists logicarecord893574736 cascade; create type logicarecord893574736 as struct(nirvana numeric);
+create sequence if not exists eternal_logical_sequence;
+
+WITH t_2_HasDeskRaw AS (SELECT * FROM (
+  
+    SELECT
+      E'http://example.org/co#alice' AS subject_uri,
+      E'http://example.org/co#d1' AS object_uri
+   UNION ALL
+  
+    SELECT
+      E'http://example.org/co#alice' AS subject_uri,
+      E'http://example.org/co#d2' AS object_uri
+  
+) AS UNUSED_TABLE_NAME  ),
+t_4_PersonRaw AS (SELECT * FROM (
+  
+    SELECT
+      E'http://example.org/co#alice' AS uri,
+      E'alice@acme.example' AS email,
+      E'Alice' AS name
+   UNION ALL
+  
+    SELECT
+      E'http://example.org/co#bob' AS uri,
+      null AS email,
+      E'Bob' AS name
+   UNION ALL
+  
+    SELECT
+      E'http://example.org/co#carol' AS uri,
+      null AS email,
+      E'Carol' AS name
+  
+) AS UNUSED_TABLE_NAME  ),
+t_3_Person AS (SELECT
+  PersonRaw.uri AS uri,
+  PersonRaw.email AS email,
+  PersonRaw.name AS name
+FROM
+  t_4_PersonRaw AS PersonRaw
+GROUP BY PersonRaw.uri, PersonRaw.email, PersonRaw.name ORDER BY uri),
+t_6_DeskRaw AS (SELECT * FROM (
+  
+    SELECT
+      E'http://example.org/co#d1' AS uri
+   UNION ALL
+  
+    SELECT
+      E'http://example.org/co#d2' AS uri
+  
+) AS UNUSED_TABLE_NAME  ),
+t_5_Desk AS (SELECT
+  DeskRaw.uri AS uri
+FROM
+  t_6_DeskRaw AS DeskRaw
+GROUP BY DeskRaw.uri ORDER BY uri),
+t_1_HasDesk AS (SELECT
+  HasDeskRaw.subject_uri AS subject_uri,
+  HasDeskRaw.object_uri AS object_uri
+FROM
+  t_2_HasDeskRaw AS HasDeskRaw, t_3_Person AS Person, t_5_Desk AS Desk
+WHERE
+  (Person.uri = HasDeskRaw.subject_uri) AND
+  (Desk.uri = HasDeskRaw.object_uri)
+GROUP BY HasDeskRaw.subject_uri, HasDeskRaw.object_uri ORDER BY subject_uri)
+SELECT
+  HasDesk.subject_uri AS subject_uri
+FROM
+  t_1_HasDesk AS HasDesk, t_1_HasDesk AS t_0_HasDesk
+WHERE
+  (HasDesk.object_uri != t_0_HasDesk.object_uri) AND
+  (t_0_HasDesk.subject_uri = HasDesk.subject_uri)
+GROUP BY HasDesk.subject_uri ORDER BY subject_uri;
+
+-- Executed on DuckDB:
+| subject_uri                 |
+|-----------------------------|
+| http://example.org/co#alice |
+(1 row)
+
+$ synalog.compile('axioms.l', 'SupervisesAsymmetricViolation')
+-- Initializing DuckDB environment.
+create schema if not exists logica_home;
+-- Empty record, has to have a field by DuckDB syntax.
+drop type if exists logicarecord893574736 cascade; create type logicarecord893574736 as struct(nirvana numeric);
+create sequence if not exists eternal_logical_sequence;
+
+WITH t_3_SupervisesRaw AS (SELECT * FROM (
+  
+    SELECT
+      E'http://example.org/co#alice' AS subject_uri,
+      E'http://example.org/co#bob' AS object_uri
+   UNION ALL
+  
+    SELECT
+      E'http://example.org/co#bob' AS subject_uri,
+      E'http://example.org/co#alice' AS object_uri
+   UNION ALL
+  
+    SELECT
+      E'http://example.org/co#carol' AS subject_uri,
+      E'http://example.org/co#carol' AS object_uri
+  
+) AS UNUSED_TABLE_NAME  ),
+t_5_PersonRaw AS (SELECT * FROM (
+  
+    SELECT
+      E'http://example.org/co#alice' AS uri,
+      E'alice@acme.example' AS email,
+      E'Alice' AS name
+   UNION ALL
+  
+    SELECT
+      E'http://example.org/co#bob' AS uri,
+      null AS email,
+      E'Bob' AS name
+   UNION ALL
+  
+    SELECT
+      E'http://example.org/co#carol' AS uri,
+      null AS email,
+      E'Carol' AS name
+  
+) AS UNUSED_TABLE_NAME  ),
+t_4_Person AS (SELECT
+  PersonRaw.uri AS uri,
+  PersonRaw.email AS email,
+  PersonRaw.name AS name
+FROM
+  t_5_PersonRaw AS PersonRaw
+GROUP BY PersonRaw.uri, PersonRaw.email, PersonRaw.name ORDER BY uri),
+t_1_Supervises AS (SELECT
+  SupervisesRaw.subject_uri AS subject_uri,
+  SupervisesRaw.object_uri AS object_uri
+FROM
+  t_3_SupervisesRaw AS SupervisesRaw, t_4_Person AS Person, t_4_Person AS t_2_Person
+WHERE
+  (Person.uri = SupervisesRaw.subject_uri) AND
+  (t_2_Person.uri = SupervisesRaw.object_uri)
+GROUP BY SupervisesRaw.subject_uri, SupervisesRaw.object_uri ORDER BY subject_uri)
+SELECT
+  Supervises.subject_uri AS subject_uri,
+  Supervises.object_uri AS object_uri
+FROM
+  t_1_Supervises AS Supervises, t_1_Supervises AS t_0_Supervises
+WHERE
+  (t_0_Supervises.subject_uri = Supervises.object_uri) AND
+  (t_0_Supervises.object_uri = Supervises.subject_uri)
+GROUP BY Supervises.subject_uri, Supervises.object_uri ORDER BY subject_uri;
+
+-- Executed on DuckDB:
+| subject_uri                 | object_uri                  |
+|-----------------------------|-----------------------------|
+| http://example.org/co#alice | http://example.org/co#bob   |
+| http://example.org/co#bob   | http://example.org/co#alice |
+| http://example.org/co#carol | http://example.org/co#carol |
+(3 rows)
+
+$ synalog.compile('axioms.l', 'SupervisesIrreflexiveViolation')
+-- Initializing DuckDB environment.
+create schema if not exists logica_home;
+-- Empty record, has to have a field by DuckDB syntax.
+drop type if exists logicarecord893574736 cascade; create type logicarecord893574736 as struct(nirvana numeric);
+create sequence if not exists eternal_logical_sequence;
+
+WITH t_2_SupervisesRaw AS (SELECT * FROM (
+  
+    SELECT
+      E'http://example.org/co#alice' AS subject_uri,
+      E'http://example.org/co#bob' AS object_uri
+   UNION ALL
+  
+    SELECT
+      E'http://example.org/co#bob' AS subject_uri,
+      E'http://example.org/co#alice' AS object_uri
+   UNION ALL
+  
+    SELECT
+      E'http://example.org/co#carol' AS subject_uri,
+      E'http://example.org/co#carol' AS object_uri
+  
+) AS UNUSED_TABLE_NAME  ),
+t_4_PersonRaw AS (SELECT * FROM (
+  
+    SELECT
+      E'http://example.org/co#alice' AS uri,
+      E'alice@acme.example' AS email,
+      E'Alice' AS name
+   UNION ALL
+  
+    SELECT
+      E'http://example.org/co#bob' AS uri,
+      null AS email,
+      E'Bob' AS name
+   UNION ALL
+  
+    SELECT
+      E'http://example.org/co#carol' AS uri,
+      null AS email,
+      E'Carol' AS name
+  
+) AS UNUSED_TABLE_NAME  ),
+t_3_Person AS (SELECT
+  PersonRaw.uri AS uri,
+  PersonRaw.email AS email,
+  PersonRaw.name AS name
+FROM
+  t_4_PersonRaw AS PersonRaw
+GROUP BY PersonRaw.uri, PersonRaw.email, PersonRaw.name ORDER BY uri),
+t_0_Supervises AS (SELECT
+  SupervisesRaw.subject_uri AS subject_uri,
+  SupervisesRaw.object_uri AS object_uri
+FROM
+  t_2_SupervisesRaw AS SupervisesRaw, t_3_Person AS Person, t_3_Person AS t_1_Person
+WHERE
+  (Person.uri = SupervisesRaw.subject_uri) AND
+  (t_1_Person.uri = SupervisesRaw.object_uri)
+GROUP BY SupervisesRaw.subject_uri, SupervisesRaw.object_uri ORDER BY subject_uri)
+SELECT
+  Supervises.subject_uri AS uri
+FROM
+  t_0_Supervises AS Supervises
+WHERE
+  (Supervises.object_uri = Supervises.subject_uri)
+GROUP BY Supervises.subject_uri ORDER BY uri;
+
+-- Executed on DuckDB:
+| uri                         |
+|-----------------------------|
+| http://example.org/co#carol |
+(1 row)
+
+$ synalog.compile('axioms.l', 'DisjointWithViolation')
+-- Initializing DuckDB environment.
+create schema if not exists logica_home;
+-- Empty record, has to have a field by DuckDB syntax.
+drop type if exists logicarecord893574736 cascade; create type logicarecord893574736 as struct(nirvana numeric);
+create sequence if not exists eternal_logical_sequence;
+
+WITH t_0_Contractor AS (SELECT
+  E'http://example.org/co#dave' AS uri,
+  E'Dave' AS name
+FROM
+  (SELECT 'singleton' as s) as unused_singleton
+GROUP BY (E'http://example.org/co#dave' || ''), (E'Dave' || '') ORDER BY uri),
+t_1_Employee AS (SELECT
+  E'http://example.org/co#dave' AS uri,
+  E'Dave' AS name
+FROM
+  (SELECT 'singleton' as s) as unused_singleton
+GROUP BY (E'http://example.org/co#dave' || ''), (E'Dave' || '') ORDER BY uri)
+SELECT
+  Contractor.uri AS uri,
+  E'http://example.org/co#Contractor' AS class_a,
+  E'http://example.org/co#Employee' AS class_b
+FROM
+  t_0_Contractor AS Contractor, t_1_Employee AS Employee
+WHERE
+  (Employee.uri = Contractor.uri)
+GROUP BY Contractor.uri, (E'http://example.org/co#Contractor' || ''), (E'http://example.org/co#Employee' || '') ORDER BY uri;
+
+-- Executed on DuckDB:
+| uri                        | class_a                          | class_b                        |
+|----------------------------|----------------------------------|--------------------------------|
+| http://example.org/co#dave | http://example.org/co#Contractor | http://example.org/co#Employee |
+(1 row)
+
+$ synalog.compile('axioms.l', 'SameAs')
+-- Initializing DuckDB environment.
+create schema if not exists logica_home;
+-- Empty record, has to have a field by DuckDB syntax.
+drop type if exists logicarecord893574736 cascade; create type logicarecord893574736 as struct(nirvana numeric);
+create sequence if not exists eternal_logical_sequence;
+
+CREATE OR REPLACE TABLE logica_home.SameAs_ifr0 AS WITH t_0_SameAs_MultBodyAggAux_f6 AS (SELECT * FROM (
+  
+    SELECT
+      E'http://example.org/co#alice' AS left_uri,
+      E'http://example.org/co#alice2' AS right_uri
+   UNION ALL
+  
+    SELECT
+      E'http://example.org/co#alice2' AS left_uri,
+      E'http://example.org/co#alice' AS right_uri
+  
+) AS UNUSED_TABLE_NAME  )
+SELECT
+  SameAs_MultBodyAggAux_f6.left_uri AS left_uri,
+  SameAs_MultBodyAggAux_f6.right_uri AS right_uri
+FROM
+  t_0_SameAs_MultBodyAggAux_f6 AS SameAs_MultBodyAggAux_f6
+GROUP BY SameAs_MultBodyAggAux_f6.left_uri, SameAs_MultBodyAggAux_f6.right_uri ORDER BY left_uri;
+
+-- Interacting with table logica_home.SameAs_ifr0
+
+CREATE OR REPLACE TABLE logica_home.SameAs_ifr1 AS WITH t_0_SameAs_MultBodyAggAux_f7 AS (SELECT * FROM (
+  
+    SELECT
+      E'http://example.org/co#alice' AS left_uri,
+      E'http://example.org/co#alice2' AS right_uri
+   UNION ALL
+  
+    SELECT
+      E'http://example.org/co#alice2' AS left_uri,
+      E'http://example.org/co#alice' AS right_uri
+   UNION ALL
+  
+    SELECT
+      SameAs_ifr0.left_uri AS left_uri,
+      t_2_SameAs_ifr0.right_uri AS right_uri
+    FROM
+      logica_home.SameAs_ifr0 AS SameAs_ifr0, logica_home.SameAs_ifr0 AS t_2_SameAs_ifr0
+    WHERE
+      (t_2_SameAs_ifr0.left_uri = SameAs_ifr0.right_uri)
+  
+) AS UNUSED_TABLE_NAME  )
+SELECT
+  SameAs_MultBodyAggAux_f7.left_uri AS left_uri,
+  SameAs_MultBodyAggAux_f7.right_uri AS right_uri
+FROM
+  t_0_SameAs_MultBodyAggAux_f7 AS SameAs_MultBodyAggAux_f7
+GROUP BY SameAs_MultBodyAggAux_f7.left_uri, SameAs_MultBodyAggAux_f7.right_uri ORDER BY left_uri;
+
+-- Interacting with table logica_home.SameAs_ifr1
+
+CREATE OR REPLACE TABLE logica_home.SameAs_ifr2 AS WITH t_0_SameAs_MultBodyAggAux_f8 AS (SELECT * FROM (
+  
+    SELECT
+      E'http://example.org/co#alice' AS left_uri,
+      E'http://example.org/co#alice2' AS right_uri
+   UNION ALL
+  
+    SELECT
+      E'http://example.org/co#alice2' AS left_uri,
+      E'http://example.org/co#alice' AS right_uri
+   UNION ALL
+  
+    SELECT
+      SameAs_ifr1.left_uri AS left_uri,
+      t_2_SameAs_ifr1.right_uri AS right_uri
+    FROM
+      logica_home.SameAs_ifr1 AS SameAs_ifr1, logica_home.SameAs_ifr1 AS t_2_SameAs_ifr1
+    WHERE
+      (t_2_SameAs_ifr1.left_uri = SameAs_ifr1.right_uri)
+  
+) AS UNUSED_TABLE_NAME  )
+SELECT
+  SameAs_MultBodyAggAux_f8.left_uri AS left_uri,
+  SameAs_MultBodyAggAux_f8.right_uri AS right_uri
+FROM
+  t_0_SameAs_MultBodyAggAux_f8 AS SameAs_MultBodyAggAux_f8
+GROUP BY SameAs_MultBodyAggAux_f8.left_uri, SameAs_MultBodyAggAux_f8.right_uri ORDER BY left_uri;
+
+-- Interacting with table logica_home.SameAs_ifr2
+
+CREATE OR REPLACE TABLE logica_home.SameAs_ifr1 AS WITH t_0_SameAs_MultBodyAggAux_f9 AS (SELECT * FROM (
+  
+    SELECT
+      E'http://example.org/co#alice' AS left_uri,
+      E'http://example.org/co#alice2' AS right_uri
+   UNION ALL
+  
+    SELECT
+      E'http://example.org/co#alice2' AS left_uri,
+      E'http://example.org/co#alice' AS right_uri
+   UNION ALL
+  
+    SELECT
+      SameAs_ifr2.left_uri AS left_uri,
+      t_2_SameAs_ifr2.right_uri AS right_uri
+    FROM
+      logica_home.SameAs_ifr2 AS SameAs_ifr2, logica_home.SameAs_ifr2 AS t_2_SameAs_ifr2
+    WHERE
+      (t_2_SameAs_ifr2.left_uri = SameAs_ifr2.right_uri)
+  
+) AS UNUSED_TABLE_NAME  )
+SELECT
+  SameAs_MultBodyAggAux_f9.left_uri AS left_uri,
+  SameAs_MultBodyAggAux_f9.right_uri AS right_uri
+FROM
+  t_0_SameAs_MultBodyAggAux_f9 AS SameAs_MultBodyAggAux_f9
+GROUP BY SameAs_MultBodyAggAux_f9.left_uri, SameAs_MultBodyAggAux_f9.right_uri ORDER BY left_uri;
+
+-- Interacting with table logica_home.SameAs_ifr1
+
+WITH t_0_SameAs_MultBodyAggAux_f10 AS (SELECT * FROM (
+  
+    SELECT
+      E'http://example.org/co#alice' AS left_uri,
+      E'http://example.org/co#alice2' AS right_uri
+   UNION ALL
+  
+    SELECT
+      E'http://example.org/co#alice2' AS left_uri,
+      E'http://example.org/co#alice' AS right_uri
+   UNION ALL
+  
+    SELECT
+      SameAs_ifr3.left_uri AS left_uri,
+      t_2_SameAs_ifr3.right_uri AS right_uri
+    FROM
+      logica_home.SameAs_ifr1 AS SameAs_ifr3, logica_home.SameAs_ifr1 AS t_2_SameAs_ifr3
+    WHERE
+      (t_2_SameAs_ifr3.left_uri = SameAs_ifr3.right_uri)
+  
+) AS UNUSED_TABLE_NAME  )
+SELECT
+  SameAs_MultBodyAggAux_f10.left_uri AS left_uri,
+  SameAs_MultBodyAggAux_f10.right_uri AS right_uri
+FROM
+  t_0_SameAs_MultBodyAggAux_f10 AS SameAs_MultBodyAggAux_f10
+GROUP BY SameAs_MultBodyAggAux_f10.left_uri, SameAs_MultBodyAggAux_f10.right_uri ORDER BY left_uri;
+
+-- Executed on DuckDB:
+| left_uri                     | right_uri                    |
+|------------------------------|------------------------------|
+| http://example.org/co#alice  | http://example.org/co#alice  |
+| http://example.org/co#alice  | http://example.org/co#alice2 |
+| http://example.org/co#alice2 | http://example.org/co#alice  |
+| http://example.org/co#alice2 | http://example.org/co#alice2 |
+(4 rows)
