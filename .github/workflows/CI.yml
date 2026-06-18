@@ -268,7 +268,7 @@ jobs:
         run: |
           python -c "
           import synalog
-          src = 'Greeting(\"hello\");'
+          src = 'Greeting(msg: \"hello\");'
           assert synalog.check(src) == []
           sql = synalog.compile(src, 'Greeting', engine='sqlite')
           assert 'hello' in sql, sql
