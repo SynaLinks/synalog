@@ -16,20 +16,20 @@ drop type if exists logicarecord519939597 cascade; create type logicarecord51993
 WITH t_0_Employee AS (SELECT * FROM (
   
     SELECT
-      E'Alice' AS name,
-      E'Engineering' AS department,
+      'Alice' AS name,
+      'Engineering' AS department,
       75000 AS salary
    UNION ALL
   
     SELECT
-      E'Bob' AS name,
-      E'Marketing' AS department,
+      'Bob' AS name,
+      'Marketing' AS department,
       65000 AS salary
    UNION ALL
   
     SELECT
-      E'Charlie' AS name,
-      E'Engineering' AS department,
+      'Charlie' AS name,
+      'Engineering' AS department,
       80000 AS salary
   
 ) AS UNUSED_TABLE_NAME  )
@@ -38,4 +38,4 @@ SELECT
 FROM
   t_0_Employee AS Employee
 WHERE
-  (Employee.department = E'Engineering') ORDER BY name;
+  (Employee.department = 'Engineering') ORDER BY name;

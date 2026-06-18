@@ -12,7 +12,7 @@ use pyo3::prelude::*;
 
 use crate::compiler::dialects;
 use crate::compiler::universe::{LogicaProgram, Pagination};
-use crate::parser::{parse_file, CompilationMode, Json};
+use crate::parser::{parse_file, Json};
 use crate::verifier::validate;
 
 fn map_err<E: std::fmt::Display>(e: E) -> PyErr {
@@ -49,11 +49,10 @@ fn check_engine(engine: Option<&str>) -> PyResult<()> {
 /// When `engine` is `None`, the engine is read from the source (defaulting to
 /// `duckdb`), preserving the previous behavior.
 fn build_program(parsed: &Json, engine: Option<&str>) -> PyResult<LogicaProgram> {
-    LogicaProgram::new_with_mode_and_engine(
+    LogicaProgram::new_with_engine(
         parsed,
         HashMap::new(),
         HashMap::new(),
-        CompilationMode::Logica,
         engine,
     )
     .map_err(map_err)

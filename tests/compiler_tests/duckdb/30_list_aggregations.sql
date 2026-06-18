@@ -16,38 +16,38 @@ drop type if exists logicarecord519939597 cascade; create type logicarecord51993
 WITH t_1_Tags AS (SELECT * FROM (
   
     SELECT
-      E'post1' AS col0,
-      E'tech' AS col1
+      'post1' AS col0,
+      'tech' AS col1
    UNION ALL
   
     SELECT
-      E'post1' AS col0,
-      E'news' AS col1
+      'post1' AS col0,
+      'news' AS col1
    UNION ALL
   
     SELECT
-      E'post1' AS col0,
-      E'featured' AS col1
+      'post1' AS col0,
+      'featured' AS col1
    UNION ALL
   
     SELECT
-      E'post2' AS col0,
-      E'tech' AS col1
+      'post2' AS col0,
+      'tech' AS col1
    UNION ALL
   
     SELECT
-      E'post2' AS col0,
-      E'tutorial' AS col1
+      'post2' AS col0,
+      'tutorial' AS col1
    UNION ALL
   
     SELECT
-      E'post3' AS col0,
-      E'news' AS col1
+      'post3' AS col0,
+      'news' AS col1
    UNION ALL
   
     SELECT
-      E'post3' AS col0,
-      E'news' AS col1
+      'post3' AS col0,
+      'news' AS col1
   
 ) AS UNUSED_TABLE_NAME  ),
 t_0_TagCount AS (SELECT

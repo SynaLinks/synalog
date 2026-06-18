@@ -16,18 +16,18 @@ drop type if exists logicarecord519939597 cascade; create type logicarecord51993
 WITH t_1_Items AS (SELECT * FROM (
   
     SELECT
-      E'apple' AS name,
+      'apple' AS name,
       5 AS qty
    UNION ALL
   
     SELECT
-      E'pear' AS name,
+      'pear' AS name,
       2 AS qty
   
 ) AS UNUSED_TABLE_NAME  ),
 t_0_Labels AS (SELECT
   Items.name AS name,
-  Printf(E'%s x%s', Items.name, CAST(Items.qty AS TEXT)) AS label
+  Printf('%s x%s', Items.name, CAST(Items.qty AS TEXT)) AS label
 FROM
   t_1_Items AS Items ORDER BY name)
 SELECT

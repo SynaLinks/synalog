@@ -74,6 +74,14 @@ fn normalize_sql_for_comparison(sql: &str) -> String {
     let type_cast_re = regex::Regex::new(r"::\w+\[\]").unwrap();
     let no_casts = type_cast_re.replace_all(&joined, "");
 
+    // Remove scalar composite-type casts like `::logicarecord462007516`.
+    // The `logicarecordNNN` suffix is an arbitrary per-type hash that differs
+    // between upstream Logica and synalog; the type *definitions* are already
+    // stripped above (preamble lines / DO $$ blocks), so dropping the inline
+    // cast keeps the comparison about query logic, not the hash identifier.
+    let composite_cast_re = regex::Regex::new(r"::logicarecord\d+").unwrap();
+    let no_casts = composite_cast_re.replace_all(&no_casts, "");
+
     // Normalize variable names (x_N) to consistent placeholder
     // Python and Rust may generate different variable numbers
     let var_re = regex::Regex::new(r"\bx_\d+\b").unwrap();

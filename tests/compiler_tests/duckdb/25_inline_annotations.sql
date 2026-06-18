@@ -30,21 +30,21 @@ WHERE
 SELECT * FROM (
   
     SELECT
-      E'ordered' AS col0,
+      'ordered' AS col0,
       P1.col0 AS col1
     FROM
       t_0_P1 AS P1
    UNION ALL
   
     SELECT
-      E'limited' AS col0,
+      'limited' AS col0,
       P2.col0 AS col1
     FROM
       t_0_P2 AS P2
    UNION ALL
   
     SELECT
-      E'both' AS col0,
+      'both' AS col0,
       P3.col0 AS col1
     FROM
       t_0_P3 AS P3

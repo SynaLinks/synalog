@@ -17,6 +17,7 @@ mod arity;
 mod recursion;
 mod reserved;
 mod sqlexpr;
+mod positional;
 
 pub use vars::VarCollector;
 pub use safety::{SafetyError, check_safety};
@@ -25,6 +26,7 @@ pub use arity::{ArityError, check_arity};
 pub use recursion::{RecursionError, check_recursion, check_unbounded_recursion};
 pub use reserved::{ReservedError, check_reserved, reserved_predicate_names};
 pub use sqlexpr::{SqlExprError, check_sqlexpr};
+pub use positional::{PositionalError, check_positional};
 
 use crate::parser::Json;
 use crate::errors::{VerifyError, VerifyResult};
@@ -38,6 +40,7 @@ pub enum CheckError {
     Recursion(RecursionError),
     Reserved(ReservedError),
     SqlExpr(SqlExprError),
+    Positional(PositionalError),
 }
 
 impl std::fmt::Display for CheckError {
@@ -49,6 +52,7 @@ impl std::fmt::Display for CheckError {
             CheckError::Recursion(e) => write!(f, "{}", e),
             CheckError::Reserved(e) => write!(f, "{}", e),
             CheckError::SqlExpr(e) => write!(f, "{}", e),
+            CheckError::Positional(e) => write!(f, "{}", e),
         }
     }
 }
@@ -64,6 +68,7 @@ impl From<CheckError> for VerifyError {
             CheckError::Recursion(re) => re.into(),
             CheckError::Reserved(re) => re.into(),
             CheckError::SqlExpr(se) => se.into(),
+            CheckError::Positional(pe) => pe.into(),
         }
     }
 }
@@ -167,6 +172,11 @@ pub fn validate(parsed: &Json) -> CheckResult {
     // Check 7: Unsafe raw-SQL SqlExpr escape hatch in user rules
     for err in sqlexpr::check_sqlexpr(&normal_rules) {
         result.errors.push(CheckError::SqlExpr(err));
+    }
+
+    // Check 8: Positional arguments (Synalog requires named arguments)
+    for err in positional::check_positional(&normal_rules) {
+        result.errors.push(CheckError::Positional(err));
     }
 
     result

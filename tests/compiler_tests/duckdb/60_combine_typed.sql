@@ -16,19 +16,19 @@ drop type if exists logicarecord519939597 cascade; create type logicarecord51993
 WITH t_0_Words AS (SELECT * FROM (
   
     SELECT
-      E'apple' AS word
+      'apple' AS word
    UNION ALL
   
     SELECT
-      E'banana' AS word
+      'banana' AS word
    UNION ALL
   
     SELECT
-      E'cherry' AS word
+      'cherry' AS word
   
 ) AS UNUSED_TABLE_NAME  )
 SELECT
   (SELECT
   MAX((CASE WHEN x_6.unnested_pod = 0 THEN Words.word ELSE NULL END)) AS logica_value
 FROM
-  t_0_Words AS Words, (select unnest([0]::double[]) as unnested_pod) as x_6) AS longest ORDER BY longest;
+  t_0_Words AS Words, (select unnest([0]::numeric[]) as unnested_pod) as x_6) AS longest ORDER BY longest;

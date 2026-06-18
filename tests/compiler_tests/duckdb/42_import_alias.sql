@@ -18,4 +18,4 @@ SELECT
   ((x_15.unnested_pod) * (2)) AS doubled,
   ((x_15.unnested_pod) * (x_15.unnested_pod)) AS squared
 FROM
-  (select unnest([5, 6, 7]::double[]) as unnested_pod) as x_15 ORDER BY x;
+  (select unnest([5, 6, 7]::numeric[]) as unnested_pod) as x_15 ORDER BY x;

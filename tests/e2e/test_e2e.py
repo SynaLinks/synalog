@@ -29,9 +29,7 @@ XFAIL_EXECUTE: dict[str, dict[str, str]] = {
     "duckdb": {},
     "psql": {},
     "trino": {},
-    "presto": {
-        "56_format": "PrestoDB has no FORMAT/printf-style function",
-    },
+    "presto": {},
 }
 
 

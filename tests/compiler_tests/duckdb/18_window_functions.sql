@@ -17,37 +17,37 @@ WITH t_1_Sales AS (SELECT * FROM (
   
     SELECT
       1 AS col0,
-      E'East' AS col1,
+      'East' AS col1,
       100 AS col2
    UNION ALL
   
     SELECT
       2 AS col0,
-      E'East' AS col1,
+      'East' AS col1,
       150 AS col2
    UNION ALL
   
     SELECT
       3 AS col0,
-      E'East' AS col1,
+      'East' AS col1,
       120 AS col2
    UNION ALL
   
     SELECT
       1 AS col0,
-      E'West' AS col1,
+      'West' AS col1,
       200 AS col2
    UNION ALL
   
     SELECT
       2 AS col0,
-      E'West' AS col1,
+      'West' AS col1,
       180 AS col2
    UNION ALL
   
     SELECT
       3 AS col0,
-      E'West' AS col1,
+      'West' AS col1,
       220 AS col2
   
 ) AS UNUSED_TABLE_NAME  ),

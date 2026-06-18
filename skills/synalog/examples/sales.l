@@ -1,6 +1,6 @@
-# Starter Synalog program. Validate, then run:
-#   synalog example.l check
-#   synalog example.l run TopRegion MonthlySales --load sales=data/sales.csv
+# Tables + concepts + rules, imports, aggregation and the temporal pipeline.
+# run validates the program first, then executes (data from examples/data/sales.csv):
+#   synalog sales.l run TopRegion MonthlySales --load sales=data/sales.csv
 
 @Engine("duckdb");
 
@@ -14,7 +14,8 @@ Sales(region:, amount:, sold_at:) :- sales(region:, amount:, sold_at:);
 @OrderBy(Region, "region");
 Region(region:) distinct :- Sales(region:);
 
-# Rules — derive insights from concepts and imported predicates
+# Rules — derive insights from concepts and imported predicates.
+# Temporal columns go through ToString -> Substr, never raw arithmetic.
 @OrderBy(MonthlySales, "month");
 MonthlySales(month:, total? += amount) distinct :-
   Sales(amount:, sold_at:),

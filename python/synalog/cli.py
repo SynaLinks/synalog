@@ -4,11 +4,12 @@
 
 One-shot mode (like ``logica``):
 
-    synalog program.l parse                 print the AST as JSON
-    synalog program.l check                 validate; exit 1 on errors
     synalog program.l print Predicate ...   print compiled SQL
     synalog program.l run Predicate ...     execute and print a table
     synalog program.l run Predicate --csv   execute and print CSV
+
+Both ``print`` and ``run`` validate the whole program first and abort with the
+verifier's errors if it is invalid.
 
 ``-`` as the file reads the program from stdin; ``-c PROGRAM`` passes the
 program text inline (like ``python -c``), replacing FILE. ``--engine``
@@ -44,7 +45,7 @@ from .runners import RunnerUnavailable, run_sql
 
 DEFAULT_ENGINE = "duckdb"
 
-COMMANDS = ("parse", "check", "print", "run")
+COMMANDS = ("print", "run")
 
 out = Console()
 err = Console(stderr=True)
@@ -154,49 +155,6 @@ def _load_callback(ctx, param, value):
             raise click.BadParameter(f"no such file: {path}")
         loads.append((table, path))
     return loads
-
-
-# ---------------------------------------------------------------------------
-# Project scaffolding (init)
-# ---------------------------------------------------------------------------
-
-TEMPLATE_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "template")
-
-# Files that build tools would mangle are shipped under a safe name.
-_TEMPLATE_RENAMES = {"gitignore": ".gitignore"}
-
-
-def cmd_init(name: str | None) -> int:
-    """Scaffold a new project directory from the packaged template."""
-    name = name or click.prompt("Project name", default="synalog-project")
-    description = click.prompt("Description", default="A Synalog knowledge base")
-    target = os.path.abspath(name)
-    if os.path.exists(target):
-        fail(f"'{name}' already exists")
-
-    created = []
-    for root, dirs, files in os.walk(TEMPLATE_DIR):
-        dirs[:] = [d for d in dirs if d != "__pycache__"]
-        relative = os.path.relpath(root, TEMPLATE_DIR)
-        directory = target if relative == "." else os.path.join(target, relative)
-        os.makedirs(directory, exist_ok=True)
-        for file in files:
-            with open(os.path.join(root, file), encoding="utf-8") as f:
-                text = f.read()
-            text = text.replace("{{name}}", name)
-            text = text.replace("{{description}}", description)
-            destination = os.path.join(directory, _TEMPLATE_RENAMES.get(file, file))
-            with open(destination, "w", encoding="utf-8") as f:
-                f.write(text)
-            created.append(os.path.relpath(destination, target))
-
-    click.echo(f"Created {name}/")
-    for path in sorted(created):
-        click.echo(f"  {path}")
-    click.echo("\nNext steps:")
-    click.echo(f"  cd {name}")
-    click.echo("  synalog example.l run TopRegion MonthlySales --load sales=data/sales.csv")
-    return 0
 
 
 # ---------------------------------------------------------------------------
@@ -325,39 +283,6 @@ def cmd_introspect(args: tuple[str, ...], dsn: str | None) -> int:
 
 
 # ---------------------------------------------------------------------------
-# Ontology import (import)
-# ---------------------------------------------------------------------------
-
-
-def cmd_import(args: tuple[str, ...]) -> int:
-    """Convert an OWL/RDF ontology into a Synalog program on stdout.
-
-    \b
-    synalog import ontology.owl          convert a local ontology file
-    synalog import https://…/onto.owl    download and convert a remote ontology
-    synalog import ontology.owl > o.l    redirect the program into a .l file
-
-    Reads any RDF serialization rdflib understands (.owl/.ttl/.rdf/.n3/JSON-LD),
-    locally or over http(s)/ftp. Classes become entity concepts, object
-    properties become relationship concepts, and individuals are emitted as facts, so the
-    result runs as-is.
-    """
-    if len(args) != 1:
-        raise click.UsageError("usage: synalog import <ontology-file-or-url>")
-    from . import ontology
-
-    source = args[0]
-    if not ontology.is_url(source) and not os.path.isfile(source):
-        fail(f"No such file: {source} (pass a local path or an http(s) URL)")
-    try:
-        text = ontology.convert(source)
-    except Exception as e:  # download/parse error (incl. OSError) — name the source
-        fail(f"Could not convert '{source}': {type(e).__name__}: {e}")
-    click.echo(text, nl=False)
-    return 0
-
-
-# ---------------------------------------------------------------------------
 # Entry point
 # ---------------------------------------------------------------------------
 
@@ -421,15 +346,14 @@ def main(args, inline, engine, limit, offset, as_csv, search_pattern, dsn,
 
     \b
     One-shot commands, in logica's FILE-first order:
-      synalog program.l parse                 print the AST as JSON
-      synalog program.l check                 validate; exit 1 on errors
       synalog program.l print Predicate ...   print compiled SQL
       synalog program.l run Predicate ...     execute and print a table
       synalog program.l run Predicate --csv   execute and print CSV
-      synalog init [NAME]                     scaffold a new project
       synalog connect ENGINE DSN              save a remote engine connection
       synalog introspect ENGINE               print Tables predicates for a schema
-      synalog import ONTOLOGY.owl             convert an OWL/RDF ontology to Synalog
+
+    print and run validate the whole program first, aborting with the verifier's
+    errors if it is invalid.
 
     Add --search REGEX to print/run to keep only rows where some
     column matches REGEX (engine-native regex, not a SQL LIKE pattern), e.g.
@@ -446,16 +370,10 @@ def main(args, inline, engine, limit, offset, as_csv, search_pattern, dsn,
     from . import config
 
     config.load_dotenv(*_dotenv_dirs(args, inline))
-    if args and args[0] == "init" and inline is None:
-        if len(args) > 2:
-            raise click.UsageError("usage: synalog init [NAME]")
-        sys.exit(cmd_init(args[1] if len(args) > 1 else None))
     if args and args[0] == "connect" and inline is None:
         sys.exit(cmd_connect(args[1:]))
     if args and args[0] == "introspect" and inline is None:
         sys.exit(cmd_introspect(args[1:], dsn))
-    if args and args[0] == "import" and inline is None:
-        sys.exit(cmd_import(args[1:]))
     if inline is None:
         if not args:
             sys.exit(Repl(engine, dsn, import_roots(None, import_root), loads).run())
@@ -477,12 +395,8 @@ def main(args, inline, engine, limit, offset, as_csv, search_pattern, dsn,
         )
     if inline is not None and predicates and os.path.exists(predicates[0]):
         raise click.UsageError("FILE and -c are mutually exclusive.")
-    if command in ("parse", "check") and predicates:
-        raise click.UsageError(f"'{command}' takes no predicate arguments")
-    if command in ("print", "run") and not predicates:
+    if not predicates:
         raise click.UsageError("Missing argument 'PREDICATES...'.")
-    if search_pattern is not None and command not in ("print", "run"):
-        raise click.UsageError("--search applies to print/run only")
     if as_csv and command != "run":
         raise click.UsageError("--csv applies to run only")
 
@@ -509,20 +423,23 @@ def main(args, inline, engine, limit, offset, as_csv, search_pattern, dsn,
             import_root=roots,
         )
 
-    try:
-        if command == "parse":
-            click.echo(parse(source, engine=engine, import_root=roots))
-        elif command == "check":
-            errors = check(source, engine=engine, import_root=roots)
+    def validate_or_fail(eng: str | None) -> None:
+        """Run the verifier over the whole program; abort on any error."""
+        errors = check(source, engine=eng, import_root=roots)
+        if errors:
             for error in errors:
                 print_error(error)
-            sys.exit(1 if errors else 0)
-        elif command == "print":
+            sys.exit(1)
+
+    try:
+        if command == "print":
+            validate_or_fail(engine)
             for predicate in predicates:
                 sql = compile_pred(predicate, engine)
                 print_sql(sql.rstrip(";\n") + ";")
         else:  # run
             resolved = engine or program_engine(source, roots) or DEFAULT_ENGINE
+            validate_or_fail(resolved)
             for predicate in predicates:
                 sql = compile_pred(predicate, resolved)
                 columns, rows = run_sql(resolved, sql, dsn=dsn, loads=loads)

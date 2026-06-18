@@ -611,6 +611,10 @@ pub enum VerifyError {
     #[error("Unsafe SqlExpr in rule '{predicate}': raw SQL bypasses verification and portability")]
     UnsafeSqlExpr { predicate: String },
 
+    /// Positional arguments used where named arguments are required.
+    #[error("Positional arguments in '{predicate}': Synalog requires named arguments — use `field_name: value` instead of positional arguments")]
+    PositionalArguments { predicate: String },
+
     /// Multiple verification errors.
     #[error("Verification failed with {} error(s)", .0.len())]
     Multiple(Vec<VerifyError>),
@@ -1109,6 +1113,36 @@ NowMinutes(total:) :-
   total == ToInt64(Substr(ToString(timestamp), 12, 2)) * 60
          + ToInt64(Substr(ToString(timestamp), 15, 2));
 ```"#,
+                    predicate = predicate
+                )
+            }
+            VerifyError::PositionalArguments { predicate } => {
+                format!(
+                    r#"Positional arguments in: `{predicate}`
+
+## Why This Is An Error
+
+Synalog uses **named** arguments only. Positional arguments compile to synthetic
+`col0`, `col1`, … column names that do not match real database schemas, which
+defeats the point of compiling to portable SQL. Naming every argument also keeps
+the rule readable and lets the verifier catch column typos.
+
+## How To Fix
+
+Give every argument an explicit `field_name: value`. Use the shorthand
+`Predicate(field:)` when the variable shares the column's name.
+
+```synalog
+# WRONG — positional arguments
+Customer(id, name) :- customers(id, name);
+
+# FIXED — named arguments
+Customer(id:, name:) :- customers(id:, name:);
+```
+
+Note: function calls (`Substr(s, 1, 2)`) and annotations (`@OrderBy(P, "c")`)
+are not affected — only rule heads and predicate references must be named.
+"#,
                     predicate = predicate
                 )
             }

@@ -15,6 +15,6 @@ drop type if exists logicarecord383307722 cascade; create type logicarecord38330
 drop type if exists logicarecord519939597 cascade; create type logicarecord519939597 as struct(args text[], predicate text);
 SELECT
   x_8.unnested_pod AS x,
-  CASE WHEN (x_8.unnested_pod > 7) THEN E'very_high' WHEN (x_8.unnested_pod > 4) THEN E'high' WHEN (x_8.unnested_pod > 1) THEN E'medium' ELSE E'low' END AS cat
+  CASE WHEN (x_8.unnested_pod > 7) THEN 'very_high' WHEN (x_8.unnested_pod > 4) THEN 'high' WHEN (x_8.unnested_pod > 1) THEN 'medium' ELSE 'low' END AS cat
 FROM
   (select unnest(Range(10)) as unnested_pod) as x_8 ORDER BY x;

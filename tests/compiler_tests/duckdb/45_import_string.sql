@@ -15,6 +15,6 @@ drop type if exists logicarecord383307722 cascade; create type logicarecord38330
 drop type if exists logicarecord519939597 cascade; create type logicarecord519939597 as struct(args text[], predicate text);
 SELECT
   x_10.unnested_pod AS name,
-  ((((E'Hello, ') || (x_10.unnested_pod))) || (E'!')) AS message
+  (((('Hello, ') || (x_10.unnested_pod))) || ('!')) AS message
 FROM
-  (select unnest([E'Alice', E'Bob', E'Charlie']::text[]) as unnested_pod) as x_10 ORDER BY name;
+  (select unnest(['Alice', 'Bob', 'Charlie']::text[]) as unnested_pod) as x_10 ORDER BY name;

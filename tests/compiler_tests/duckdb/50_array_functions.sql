@@ -17,14 +17,14 @@ WITH t_1_Lists AS (SELECT * FROM (
   
     SELECT
       1 AS id,
-      [1, 2]::double[] AS a,
-      [3, 4]::double[] AS b
+      [1, 2]::numeric[] AS a,
+      [3, 4]::numeric[] AS b
    UNION ALL
   
     SELECT
       2 AS id,
-      [5]::double[] AS a,
-      [6, 7, 8]::double[] AS b
+      [5]::numeric[] AS a,
+      [6, 7, 8]::numeric[] AS b
   
 ) AS UNUSED_TABLE_NAME  ),
 t_0_Concatenated AS (SELECT

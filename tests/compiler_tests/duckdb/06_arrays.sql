@@ -15,6 +15,6 @@ drop type if exists logicarecord383307722 cascade; create type logicarecord38330
 drop type if exists logicarecord519939597 cascade; create type logicarecord519939597 as struct(args text[], predicate text);
 SELECT
   x_9.unnested_pod AS c,
-  (list_contains([E'red', E'blue', E'yellow']::text[], x_9.unnested_pod)) AS is_primary
+  (list_contains(['red', 'blue', 'yellow']::text[], x_9.unnested_pod)) AS is_primary
 FROM
-  (select unnest([E'red', E'green', E'blue']::text[]) as unnested_pod) as x_9 ORDER BY c;
+  (select unnest(['red', 'green', 'blue']::text[]) as unnested_pod) as x_9 ORDER BY c;

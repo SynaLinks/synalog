@@ -9,7 +9,7 @@ create sequence if not exists eternal_logical_sequence;
 drop type if exists logicarecord481217614 cascade; create type logicarecord481217614 as struct(r logicarecord893574736);
 
 -- Logica type: logicarecord907268285
-drop type if exists logicarecord907268285 cascade; create type logicarecord907268285 as struct(x double);
+drop type if exists logicarecord907268285 cascade; create type logicarecord907268285 as struct(x numeric);
 
 -- Logica type: logicarecord383307722
 drop type if exists logicarecord383307722 cascade; create type logicarecord383307722 as struct(a timestamp);

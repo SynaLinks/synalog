@@ -1,7 +1,7 @@
 // License Apache 2.0: (c) 2025-2026 Yoan Sallami (Synalinks Team)
 
 use super::*;
-use crate::parser::{parse_file, CompilationMode};
+use crate::parser::parse_file;
 
 fn parse_annotations(source: &str) -> Annotations {
     let parsed = parse_file(source, None, &[]).unwrap();
@@ -15,7 +15,7 @@ fn parse_annotations(source: &str) -> Annotations {
             (name, r.clone())
         })
         .collect();
-    Annotations::extract(&rules, CompilationMode::Logica).unwrap()
+    Annotations::extract(&rules).unwrap()
 }
 
 // ── engine ──
@@ -371,7 +371,7 @@ fn test_define_flag_empty_default() {
 
 #[test]
 fn test_extract_empty_rules() {
-    let ann = Annotations::extract(&[], CompilationMode::Logica).unwrap();
+    let ann = Annotations::extract(&[]).unwrap();
     assert_eq!(ann.engine(), "duckdb");
     assert!(ann.annotations.is_empty());
     assert!(ann.flag_values.is_empty());

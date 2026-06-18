@@ -18,47 +18,47 @@ WITH t_1_Orders AS (SELECT * FROM (
     SELECT
       1 AS order_id,
       101 AS customer_id,
-      E'P1' AS product_id
+      'P1' AS product_id
    UNION ALL
   
     SELECT
       2 AS order_id,
       102 AS customer_id,
-      E'P2' AS product_id
+      'P2' AS product_id
    UNION ALL
   
     SELECT
       3 AS order_id,
       101 AS customer_id,
-      E'P3' AS product_id
+      'P3' AS product_id
   
 ) AS UNUSED_TABLE_NAME  ),
 t_2_Customers AS (SELECT * FROM (
   
     SELECT
       101 AS customer_id,
-      E'Alice' AS name
+      'Alice' AS name
    UNION ALL
   
     SELECT
       102 AS customer_id,
-      E'Bob' AS name
+      'Bob' AS name
   
 ) AS UNUSED_TABLE_NAME  ),
 t_3_Products AS (SELECT * FROM (
   
     SELECT
-      E'P1' AS product_id,
+      'P1' AS product_id,
       100 AS price
    UNION ALL
   
     SELECT
-      E'P2' AS product_id,
+      'P2' AS product_id,
       200 AS price
    UNION ALL
   
     SELECT
-      E'P3' AS product_id,
+      'P3' AS product_id,
       150 AS price
   
 ) AS UNUSED_TABLE_NAME  ),

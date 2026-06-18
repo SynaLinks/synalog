@@ -12,41 +12,14 @@ pub mod universe;
 
 use std::fmt;
 
-// Re-export CompilationMode from parser for use in compiler
-pub use crate::parser::CompilationMode;
-
-/// Get the schema/database prefix based on compilation mode.
-/// - Synalog mode: "synalog_home", "synalog_test"
-/// - Logica mode: "logica_home", "logica_test"
-pub fn schema_prefix(mode: CompilationMode) -> &'static str {
-    match mode {
-        CompilationMode::Synalog => "synalog",
-        CompilationMode::Logica => "logica",
-    }
+/// The "home" schema name (where user predicates materialize).
+pub fn home_schema() -> &'static str {
+    "logica_home"
 }
 
-/// Get the "home" schema name based on compilation mode.
-pub fn home_schema(mode: CompilationMode) -> &'static str {
-    match mode {
-        CompilationMode::Synalog => "synalog_home",
-        CompilationMode::Logica => "logica_home",
-    }
-}
-
-/// Get the "test" schema name based on compilation mode.
-pub fn test_schema(mode: CompilationMode) -> &'static str {
-    match mode {
-        CompilationMode::Synalog => "synalog_test",
-        CompilationMode::Logica => "logica_test",
-    }
-}
-
-/// Get the "value" field name based on compilation mode.
-pub fn value_field(mode: CompilationMode) -> &'static str {
-    match mode {
-        CompilationMode::Synalog => "synalog_value",
-        CompilationMode::Logica => "logica_value",
-    }
+/// The "test" schema name (in-memory schema for `@Ground` on SQLite).
+pub fn test_schema() -> &'static str {
+    "logica_test"
 }
 
 /// Compilation error with source context (legacy type).

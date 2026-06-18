@@ -4,7 +4,7 @@ build-backend = "maturin"
 
 [project]
 name = "synalog"
-version = "0.4.0"
+version = "1.0.0"
 description = "Logic programming for AI agents: Datalog-family language compiling to optimized SQL"
 readme = "README.md"
 requires-python = ">=3.10"
@@ -26,7 +26,7 @@ classifiers = [
 
 # duckdb is a core dependency: it is the default engine, so `synalog … run`
 # works out of the box on a bare `pip install synalog`, no extra needed.
-dependencies = ["click>=8.1", "rich>=13", "rdflib>=7", "duckdb"]
+dependencies = ["click>=8.1", "rich>=13", "duckdb"]
 
 [project.urls]
 Repository = "https://github.com/synalinks/synalog"

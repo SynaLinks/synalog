@@ -12,49 +12,49 @@ drop type if exists logicarecord481217614 cascade; create type logicarecord48121
 drop type if exists logicarecord383307722 cascade; create type logicarecord383307722 as struct(a timestamp);
 
 -- Logica type: logicarecord183863755
-drop type if exists logicarecord183863755 cascade; create type logicarecord183863755 as struct(arg text, value double);
+drop type if exists logicarecord183863755 cascade; create type logicarecord183863755 as struct(arg text, value numeric);
 
 -- Logica type: logicarecord519939597
 drop type if exists logicarecord519939597 cascade; create type logicarecord519939597 as struct(args text[], predicate text);
 WITH t_0_Scores AS (SELECT * FROM (
   
     SELECT
-      E'Alice' AS col0,
+      'Alice' AS col0,
       95 AS col1
    UNION ALL
   
     SELECT
-      E'Bob' AS col0,
+      'Bob' AS col0,
       87 AS col1
    UNION ALL
   
     SELECT
-      E'Charlie' AS col0,
+      'Charlie' AS col0,
       92 AS col1
    UNION ALL
   
     SELECT
-      E'Diana' AS col0,
+      'Diana' AS col0,
       88 AS col1
    UNION ALL
   
     SELECT
-      E'Eve' AS col0,
+      'Eve' AS col0,
       91 AS col1
    UNION ALL
   
     SELECT
-      E'Frank' AS col0,
+      'Frank' AS col0,
       85 AS col1
    UNION ALL
   
     SELECT
-      E'Grace' AS col0,
+      'Grace' AS col0,
       93 AS col1
    UNION ALL
   
     SELECT
-      E'Henry' AS col0,
+      'Henry' AS col0,
       89 AS col1
   
 ) AS UNUSED_TABLE_NAME  )

@@ -12,7 +12,7 @@ drop type if exists logicarecord481217614 cascade; create type logicarecord48121
 drop type if exists logicarecord383307722 cascade; create type logicarecord383307722 as struct(a timestamp);
 
 -- Logica type: logicarecord922751334
-drop type if exists logicarecord922751334 cascade; create type logicarecord922751334 as struct(a double, b double, c double);
+drop type if exists logicarecord922751334 cascade; create type logicarecord922751334 as struct(a numeric, b numeric, c numeric);
 
 -- Logica type: logicarecord519939597
 drop type if exists logicarecord519939597 cascade; create type logicarecord519939597 as struct(args text[], predicate text);

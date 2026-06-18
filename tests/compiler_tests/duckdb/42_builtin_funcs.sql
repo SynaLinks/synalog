@@ -17,4 +17,4 @@ SELECT
   x_12.unnested_pod AS x,
   SQRT(CAST(x_12.unnested_pod AS DOUBLE)) AS sqrt_x
 FROM
-  (select unnest([1, 4, 9, 16, 25]::double[]) as unnested_pod) as x_12 ORDER BY x;
+  (select unnest([1, 4, 9, 16, 25]::numeric[]) as unnested_pod) as x_12 ORDER BY x;

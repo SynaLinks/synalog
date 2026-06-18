@@ -16,17 +16,17 @@ drop type if exists logicarecord519939597 cascade; create type logicarecord51993
 WITH t_1_Rows AS (SELECT * FROM (
   
     SELECT
-      E'a,b,c' AS line
+      'a,b,c' AS line
    UNION ALL
   
     SELECT
-      E'x,y' AS line
+      'x,y' AS line
   
 ) AS UNUSED_TABLE_NAME  ),
 t_0_Parsed AS (SELECT
   Rows.line AS line,
-  LEN(SPLIT(Rows.line, E',')) AS n,
-  array_extract(SPLIT(Rows.line, E','),  CAST(0+1 AS BIGINT)) AS first
+  LEN(SPLIT(Rows.line, ',')) AS n,
+  array_extract(SPLIT(Rows.line, ','),  CAST(0+1 AS BIGINT)) AS first
 FROM
   t_1_Rows AS Rows ORDER BY line)
 SELECT

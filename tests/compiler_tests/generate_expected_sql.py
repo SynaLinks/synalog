@@ -43,7 +43,24 @@ SYNALOG_GOLDENS = {
     ("trino", "50_array_functions"), ("trino", "51_math_functions"),
     ("presto", "06_arrays"), ("presto", "23_combine"), ("presto", "48_split_function"),
     ("presto", "50_array_functions"), ("presto", "51_math_functions"),
+    # PrestoDB has no FORMAT/printf; synalog lowers Format(...) to a `||` concat
+    # chain (see DEVIATIONS.md). Trino keeps the native FORMAT.
+    ("presto", "56_format"),
     ("psql", "23_combine"),
+    # DuckDB recursion: upstream routes DuckDB to the iterative flat path, which
+    # needs a runtime fixpoint loop and truncates the closure under synalog's
+    # static single-script compilation. synalog uses the inline unrolling (like
+    # every other engine), which is correct; see DEVIATIONS.md.
+    ("duckdb", "35_recursive_annotated"),
+    # DuckDB `LOG(x)` is base-10; Logica's `Log` is natural log, so synalog emits
+    # `LN(x)` (upstream's `LOG` is numerically wrong here). Same fix as trino/presto.
+    ("duckdb", "51_math_functions"),
+    # When one base table feeds multiple @Ground predicates, upstream globally
+    # numbers its alias (t_1_Sales, t_2_Sales) while synalog aliases each as the
+    # predicate name (Sales). Cosmetic only — both are valid and produce identical
+    # results on every engine (verified in tests/e2e); see DEVIATIONS.md.
+    *(((e, "62_multi_ground_join") for e in
+       ["bigquery", "sqlite", "psql", "duckdb", "trino", "presto", "databricks"])),
     # Today/Now are synalog-only built-in temporal concepts: the compiler inlines
     # a per-dialect one-row relation (native current date/timestamp). Upstream
     # Logica has no such concept, so these goldens come from synalog on every
@@ -69,11 +86,9 @@ SYNALOG_GOLDENS = {
     ]),
 }
 
-# Goldens intentionally absent: synalog lacks the subsystem (DEVIATIONS.md).
-ABSENT_GOLDENS = {
-    ("duckdb", "35_recursive_annotated"),
-    ("psql", "29_argmin_argmax"),
-}
+# Goldens intentionally absent because synalog lacks the subsystem
+# (DEVIATIONS.md). Currently none.
+ABSENT_GOLDENS = set()
 
 
 def user_predicates_from_rules(rules):

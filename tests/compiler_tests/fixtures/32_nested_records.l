@@ -27,4 +27,4 @@ Summary(id, summary) :-
   summary == {person_name: info.name, person_email: info.contact.email};
 
 @OrderBy(Test, "id");
-Test(id, name, email) :- ContactInfo(id, name, email, phone);
+Test(id:, name:, email:) :- ContactInfo(id, name, email, phone);

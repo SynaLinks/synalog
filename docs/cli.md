@@ -9,21 +9,19 @@ uvx synalog                                            # interactive session
 uvx --from 'synalog[run]' synalog program.l run Total  # adds the psycopg (psql) driver
 ```
 
-Plain `uvx synalog` covers `parse`, `check`, `print` and execution on duckdb (the default engine, bundled with synalog) and sqlite (Python's built-in driver); executing on PostgreSQL needs the psycopg driver from the `synalog[run]` extra, hence `--from`.
+Plain `uvx synalog` covers `print` and execution on duckdb (the default engine, bundled with synalog) and sqlite (Python's built-in driver); executing on PostgreSQL needs the psycopg driver from the `synalog[run]` extra, hence `--from`.
 
 ## One-shot commands
 
 The argument order follows `logica`: the program file first, then the command.
 
 ```bash
-synalog program.l parse                     # print the AST as JSON
-synalog program.l check                     # validate; exit 1 on errors
 synalog program.l print Predicate ...      # print compiled SQL
 synalog program.l run Predicate ...        # execute and print a table
 synalog program.l run Predicate --csv      # execute and print CSV
 ```
 
-`print` and `run` accept several predicate names and process them in order. In a terminal, `print` highlights the SQL and `run` renders the table with rich formatting; piped output falls back to plain text. Add `--csv` to `run` for machine-readable CSV instead of the rendered table.
+Both `print` and `run` validate the whole program first and exit 1 with the verifier's errors if it is invalid — there is no separate `check` step to forget. `print` and `run` accept several predicate names and process them in order. In a terminal, `print` highlights the SQL and `run` renders the table with rich formatting; piped output falls back to plain text. Add `--csv` to `run` for machine-readable CSV instead of the rendered table.
 
 ```console
 $ synalog program.l run EngineeringTeam
@@ -122,10 +120,10 @@ $ synalog report.l run TopRegion --load sales=sales.csv
 
 Errors go to stderr (shown in red in a terminal) and exit with code 1; usage mistakes (unknown option, missing argument) exit with code 2. There are three layers, surfaced in the order the program is processed:
 
-**Syntax errors** come from the parser. Every command reports them the same way, quoting the offending statement with a marker at the position where parsing stopped:
+**Syntax errors** come from the parser. Both commands report them the same way, quoting the offending statement with a marker at the position where parsing stopped:
 
 ```console
-$ synalog -c 'Bad(x) :- x ==;' check
+$ synalog -c 'Bad(x) :- x ==;' print Bad
 Parsing:
 Bad(x) :- x ==<EMPTY>
 
@@ -134,11 +132,11 @@ $ echo $?
 1
 ```
 
-**Verification errors** come from `check`, which runs the structural [verifier](verification.md) and reports *all* problems at once, one per line:
+**Verification errors** come from the formal [verifier](verification.md), which `print` and `run` run over the whole program before compiling, reporting *all* problems at once, one per line:
 
 ```console
 $ synalog -c 'A(x:, y:) :- B(x:);
-C(z:) :- D(w:);' check
+C(z:) :- D(w:);' print A
 Unbound variable 'y' in head of rule: A(x:, y:) :- B(x:)
 Unbound variable 'z' in head of rule: C(z:) :- D(w:)
 ```
@@ -152,34 +150,19 @@ Compile error: No rules are defining 'Missing', but compilation was requested.
 
 A failing program never produces partial output: `run` either prints the table or the error.
 
-## Starting a project
+## Add the skill to your coding agent
 
-`synalog init` scaffolds a project directory (`uvx synalog init` runs it without installing). It asks for a name and a description, then creates the files a coding agent needs to work with Synalog:
+Synalog ships an [Agent Skill](https://agentskills.io): a `SKILL.md` that teaches a coding agent the language, the CLI and the conventions, so it can write and run programs correctly. The skill follows the open Agent Skills standard, so it works with Claude Code, Cursor, Codex, OpenCode, Cline, Windsurf and many other agents.
+
+Install it with the [`skills`](https://www.npmjs.com/package/skills) CLI (GitHub is the registry — nothing to publish or install first):
 
 ```console
-$ synalog init
-Project name [synalog-project]: demo-kb
-Description [A Synalog knowledge base]: Sales analytics for the demo team
-Created demo-kb/
-  .agents/skills/synalog/SKILL.md
-  .gitignore
-  AGENTS.md
-  CLAUDE.md
-  data/sales.csv
-  example.l
-  lib/metrics.l
-
-Next steps:
-  cd demo-kb
-  synalog example.l run TopRegion MonthlySales --load sales=data/sales.csv
+$ npx skills add SynaLinks/synalog               # this project (./.claude/skills, ./.agents/skills, …)
+$ npx skills add SynaLinks/synalog -g            # user-wide (~/.claude/skills, …)
+$ npx skills add SynaLinks/synalog -a cursor codex   # only specific agents
 ```
 
-- `.agents/skills/synalog/SKILL.md` — an agent skill with the Synalog language reference, CLI usage and conventions, so coding agents know how to write and run programs.
-- `AGENTS.md` — project instructions (name, description, layout, workflow) pointing to the skill; `CLAUDE.md` imports it for Claude Code.
-- `example.l`, `lib/metrics.l` and `data/sales.csv` — a working starter: a program that imports a reusable metric from a `lib/` module and runs over the sample data.
-- `data/` — where source data files (csv, tsv, json, jsonl, parquet) live, loaded with `--load`.
-
-`synalog init NAME` skips the name prompt. The command refuses to overwrite an existing directory.
+The skill is maintained in the repository at [`skills/synalog/SKILL.md`](https://github.com/SynaLinks/synalog/blob/main/skills/synalog/SKILL.md); `npx skills add` copies it into the right location for each agent.
 
 ## Interactive session
 

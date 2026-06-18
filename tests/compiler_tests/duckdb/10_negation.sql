@@ -34,7 +34,7 @@ WITH t_0_Prime AS (SELECT * FROM (
 SELECT * FROM (
   
     SELECT
-      E'odd' AS test_name,
+      'odd' AS test_name,
       x_5.unnested_pod AS x
     FROM
       (select unnest(Range(10)) as unnested_pod) as x_5
@@ -42,14 +42,14 @@ SELECT * FROM (
       ((SELECT
         MIN((CASE WHEN x_8.unnested_pod = 0 THEN 1 ELSE NULL END)) AS logica_value
       FROM
-        (select unnest(Range(10)) as unnested_pod) as x_12, (select unnest([0]::double[]) as unnested_pod) as x_8
+        (select unnest(Range(10)) as unnested_pod) as x_12, (select unnest([0]::numeric[]) as unnested_pod) as x_8
       WHERE
         (((x_5.unnested_pod) % (2)) = 0) AND
         (x_5.unnested_pod = x_12.unnested_pod)) IS NULL)
    UNION ALL
   
     SELECT
-      E'not_prime' AS test_name,
+      'not_prime' AS test_name,
       x_5.unnested_pod AS x
     FROM
       (select unnest(Range(10)) as unnested_pod) as x_5
@@ -58,13 +58,13 @@ SELECT * FROM (
       ((SELECT
         MIN((CASE WHEN x_8.unnested_pod = 0 THEN 1 ELSE NULL END)) AS logica_value
       FROM
-        t_0_Prime AS Prime, (select unnest([0]::double[]) as unnested_pod) as x_8
+        t_0_Prime AS Prime, (select unnest([0]::numeric[]) as unnested_pod) as x_8
       WHERE
         (Prime.col0 = x_5.unnested_pod)) IS NULL)
    UNION ALL
   
     SELECT
-      E'even_not_prime' AS test_name,
+      'even_not_prime' AS test_name,
       x_7.unnested_pod AS x
     FROM
       (select unnest(Range(10)) as unnested_pod) as x_7
@@ -72,7 +72,7 @@ SELECT * FROM (
       ((SELECT
         MIN((CASE WHEN x_10.unnested_pod = 0 THEN 1 ELSE NULL END)) AS logica_value
       FROM
-        t_0_Prime AS Prime, (select unnest([0]::double[]) as unnested_pod) as x_10
+        t_0_Prime AS Prime, (select unnest([0]::numeric[]) as unnested_pod) as x_10
       WHERE
         (Prime.col0 = x_7.unnested_pod)) IS NULL) AND
       (((x_7.unnested_pod) % (2)) = 0)

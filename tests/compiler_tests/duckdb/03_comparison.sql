@@ -16,7 +16,7 @@ drop type if exists logicarecord519939597 cascade; create type logicarecord51993
 SELECT * FROM (
   
     SELECT
-      E'equal' AS test_name,
+      'equal' AS test_name,
       5 AS x
     FROM
       (select unnest(Range(10)) as unnested_pod) as x_5
@@ -25,7 +25,7 @@ SELECT * FROM (
    UNION ALL
   
     SELECT
-      E'not_equal' AS test_name,
+      'not_equal' AS test_name,
       x_5.unnested_pod AS x
     FROM
       (select unnest(Range(10)) as unnested_pod) as x_5
@@ -34,7 +34,7 @@ SELECT * FROM (
    UNION ALL
   
     SELECT
-      E'less_than' AS test_name,
+      'less_than' AS test_name,
       x_5.unnested_pod AS x
     FROM
       (select unnest(Range(10)) as unnested_pod) as x_5
@@ -43,7 +43,7 @@ SELECT * FROM (
    UNION ALL
   
     SELECT
-      E'in_range' AS test_name,
+      'in_range' AS test_name,
       x_5.unnested_pod AS x
     FROM
       (select unnest(Range(10)) as unnested_pod) as x_5

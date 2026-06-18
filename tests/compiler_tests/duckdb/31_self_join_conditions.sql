@@ -17,25 +17,25 @@ WITH t_2_Employee AS (SELECT * FROM (
   
     SELECT
       1 AS id,
-      E'Alice' AS name,
+      'Alice' AS name,
       3 AS manager_id
    UNION ALL
   
     SELECT
       2 AS id,
-      E'Bob' AS name,
+      'Bob' AS name,
       3 AS manager_id
    UNION ALL
   
     SELECT
       3 AS id,
-      E'Charlie' AS name,
+      'Charlie' AS name,
       4 AS manager_id
    UNION ALL
   
     SELECT
       4 AS id,
-      E'David' AS name,
+      'David' AS name,
       4 AS manager_id
   
 ) AS UNUSED_TABLE_NAME  ),

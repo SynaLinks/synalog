@@ -1,7 +1,6 @@
 // License Apache 2.0: (c) 2025-2026 Yoan Sallami (Synalinks Team)
 
 use super::*;
-use crate::parser::CompilationMode;
 
 // ── format_sql ──
 
@@ -206,7 +205,7 @@ fn test_logica_with_for_udf() {
 #[test]
 fn test_logica_with_for_with_annotations() {
     let mut l = Logica::new();
-    let mut ann = Annotations::extract(&[], CompilationMode::Logica).unwrap();
+    let mut ann = Annotations::extract(&[]).unwrap();
     let mut pred_anns = HashMap::new();
     pred_anns.insert("with".to_string(), Json::Bool(false));
     ann.annotations.insert("T".to_string(), pred_anns);

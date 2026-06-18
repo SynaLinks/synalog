@@ -16,19 +16,19 @@ drop type if exists logicarecord519939597 cascade; create type logicarecord51993
 WITH t_1_Names AS (SELECT * FROM (
   
     SELECT
-      E'alice' AS name
+      'alice' AS name
    UNION ALL
   
     SELECT
-      E'alan' AS name
+      'alan' AS name
    UNION ALL
   
     SELECT
-      E'bob' AS name
+      'bob' AS name
    UNION ALL
   
     SELECT
-      E'albert' AS name
+      'albert' AS name
   
 ) AS UNUSED_TABLE_NAME  ),
 t_0_StartsWithAl AS (SELECT
@@ -36,7 +36,7 @@ t_0_StartsWithAl AS (SELECT
 FROM
   t_1_Names AS Names
 WHERE
-  (Names.name LIKE E'al%') ORDER BY name)
+  (Names.name LIKE 'al%') ORDER BY name)
 SELECT
   StartsWithAl.name AS name
 FROM

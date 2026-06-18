@@ -16,23 +16,23 @@ drop type if exists logicarecord519939597 cascade; create type logicarecord51993
 WITH t_0_Person AS (SELECT * FROM (
   
     SELECT
-      E'John' AS col0,
-      E'Doe' AS col1
+      'John' AS col0,
+      'Doe' AS col1
    UNION ALL
   
     SELECT
-      E'Jane' AS col0,
-      E'Smith' AS col1
+      'Jane' AS col0,
+      'Smith' AS col1
    UNION ALL
   
     SELECT
-      E'Bob' AS col0,
-      E'' AS col1
+      'Bob' AS col0,
+      '' AS col1
   
 ) AS UNUSED_TABLE_NAME  )
 SELECT
   Person.col0 AS first,
   Person.col1 AS last,
-  ((((Person.col0) || (E' '))) || (Person.col1)) AS full_name
+  ((((Person.col0) || (' '))) || (Person.col1)) AS full_name
 FROM
   t_0_Person AS Person ORDER BY full_name;

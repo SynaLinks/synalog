@@ -18,7 +18,7 @@ WITH t_0_AllSquares AS (SELECT * FROM (
     SELECT
       x_15.unnested_pod AS x,
       ((x_15.unnested_pod) * (x_15.unnested_pod)) AS sq,
-      E'even' AS type
+      'even' AS type
     FROM
       (select unnest(Range(10)) as unnested_pod) as x_15
     WHERE
@@ -28,7 +28,7 @@ WITH t_0_AllSquares AS (SELECT * FROM (
     SELECT
       x_25.unnested_pod AS x,
       ((x_25.unnested_pod) * (x_25.unnested_pod)) AS sq,
-      E'odd' AS type
+      'odd' AS type
     FROM
       (select unnest(Range(10)) as unnested_pod) as x_25
     WHERE

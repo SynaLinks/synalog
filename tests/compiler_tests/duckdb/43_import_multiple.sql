@@ -17,6 +17,6 @@ SELECT
   x_11.unnested_pod AS x,
   ((x_11.unnested_pod) * (2)) AS doubled
 FROM
-  (select unnest([1, 2, 3, 4, 5]::double[]) as unnested_pod) as x_11
+  (select unnest([1, 2, 3, 4, 5]::numeric[]) as unnested_pod) as x_11
 WHERE
   (x_11.unnested_pod > 0) ORDER BY x;

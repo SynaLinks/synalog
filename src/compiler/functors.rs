@@ -1311,7 +1311,15 @@ pub fn unfold_recursion(rules: &[Json], engine: &str) -> CompileResult<Vec<Json>
         }
     }
 
-    let default_iterative = engine == "duckdb";
+    // Upstream defaults DuckDB to the *iterative* flat-recursion path, which
+    // relies on the runtime re-executing the `@Iteration` block until a stop
+    // signal (fixpoint). synalog compiles to a single static SQL script with no
+    // runtime loop, so the concertina can only expand `@Iteration` a fixed
+    // `repetitions` times — short of `depth` — which truncates the closure
+    // (e.g. a 6-hop path is dropped). The inline `horizontal` unrolling every
+    // other engine uses fully expands to `depth` at compile time and is
+    // correct, so DuckDB uses it too.
+    let default_iterative = false;
     let default_depth: i64 = if engine == "duckdb" { 32 } else { 8 };
 
     let mut functors = Functors::new(rules);
