@@ -13,7 +13,24 @@
 // controls whether it's called from universe.rs during combine processing.
 
 use std::collections::HashMap;
+use std::collections::hash_map::DefaultHasher;
+use std::hash::{Hash, Hasher};
 use crate::compiler::CompileError;
+use crate::compiler::type_inference::Type;
+
+/// Deterministic composite-type name for a record shape.
+///
+/// Used by PostgreSQL, which (unlike trino/presto's inline `CAST(ROW … AS ROW(…))`)
+/// can only expose *named* record fields through a declared composite type. The
+/// name is content-addressed from the record's canonical shape (`Type`'s Display
+/// sorts fields), so the `ROW(…)::name` literal and the `CREATE TYPE name …`
+/// preamble agree without any shared state. Prefixed `logicarecord` so the
+/// golden-test normalizer strips the generated DDL like the existing placeholder.
+pub fn record_type_name(ty: &Type) -> String {
+    let mut hasher = DefaultHasher::new();
+    format!("{}", ty).hash(&mut hasher);
+    format!("logicarecord{}", hasher.finish())
+}
 
 // ---------------------------------------------------------------------------
 // GroupBySpec + Dialect trait
@@ -34,6 +51,14 @@ pub trait Dialect {
     /// Additional built-in functions: Logica name → SQL template.
     /// Templates use `%s` for single-arg or `{0}`, `{1}` for multi-arg.
     fn built_in_functions(&self) -> HashMap<&'static str, &'static str>;
+
+    /// Whether `Format(fmt, args…)` must be lowered to a string-concatenation
+    /// chain because the engine has no printf-style function. PrestoDB 0.293
+    /// registers neither `FORMAT` nor `printf`, so it overrides this to `true`;
+    /// every other engine emits its native formatting function.
+    fn format_uses_concat(&self) -> bool {
+        false
+    }
 
     /// Infix operator overrides: Logica operator → SQL template.
     fn infix_operators(&self) -> HashMap<&'static str, &'static str>;
@@ -86,8 +111,41 @@ pub trait Dialect {
         }
     }
 
-    /// Record/struct construction SQL.
-    fn record_literal(&self, fields: &[(&str, &str)]) -> String;
+    /// Record/struct construction SQL. Each field is `(name, value_sql, type)`;
+    /// the type lets typed dialects (trino/presto `CAST(ROW … AS ROW(…))`, psql
+    /// composite types) declare field types. Dialects with self-describing
+    /// struct literals ignore it.
+    fn record_literal(&self, fields: &[(&str, &str, &Type)]) -> String;
+
+    /// SQL type name for an atomic (non-record) value, used when building typed
+    /// record literals. The default suits ANSI-ish engines (trino/presto);
+    /// PostgreSQL overrides with its own spellings.
+    fn scalar_sql_type(&self, ty: &Type) -> String {
+        match ty {
+            Type::Number => "double".to_string(),
+            Type::Bool => "boolean".to_string(),
+            Type::List(inner) => format!("array({})", self.scalar_sql_type(inner)),
+            _ => "varchar".to_string(),
+        }
+    }
+
+    /// Inline SQL type for a record field, recursing into nested records as
+    /// `ROW(field type, …)` (trino/presto). Fields are emitted in canonical
+    /// (sorted) order so the type matches the value emitted by `record_literal`.
+    fn row_field_type(&self, ty: &Type) -> String {
+        match ty {
+            Type::Record { fields, .. } => {
+                let mut items: Vec<(&String, &Type)> = fields.iter().collect();
+                items.sort_by(|a, b| a.0.cmp(b.0));
+                let parts: Vec<String> = items
+                    .iter()
+                    .map(|(k, t)| format!("{} {}", k, self.row_field_type(t)))
+                    .collect();
+                format!("ROW({})", parts.join(", "))
+            }
+            _ => self.scalar_sql_type(ty),
+        }
+    }
 
     /// String literal formatting.
     fn str_literal(&self, s: &str) -> String {
@@ -228,9 +286,9 @@ Array(a) = SqlExpr(
         format!("STRUCT(\"{}\" AS predicate_name)", name)
     }
 
-    fn record_literal(&self, fields: &[(&str, &str)]) -> String {
+    fn record_literal(&self, fields: &[(&str, &str, &Type)]) -> String {
         let pairs: Vec<String> = fields.iter()
-            .map(|(k, v)| format!("{} AS {}", v, k)).collect();
+            .map(|(k, v, _)| format!("{} AS {}", v, k)).collect();
         format!("STRUCT({})", pairs.join(", "))
     }
 
@@ -346,9 +404,9 @@ Char(code) = SqlExpr("CHAR({code})", {code:});
     fn array_phrase(&self) -> &'static str { "JSON_ARRAY(%s)" }
     fn group_by_spec_by(&self) -> GroupBySpec { GroupBySpec::Expr }
 
-    fn record_literal(&self, fields: &[(&str, &str)]) -> String {
+    fn record_literal(&self, fields: &[(&str, &str, &Type)]) -> String {
         let pairs: Vec<String> = fields.iter()
-            .map(|(k, v)| format!("'{}', {}", k, v)).collect();
+            .map(|(k, v, _)| format!("'{}', {}", k, v)).collect();
         format!("JSON_OBJECT({})", pairs.join(", "))
     }
 
@@ -455,10 +513,29 @@ Str(a) = a;
         "'{}'".to_string()
     }
 
-    fn record_literal(&self, fields: &[(&str, &str)]) -> String {
-        let pairs: Vec<String> = fields.iter()
-            .map(|(k, v)| format!("{} AS {}", v, k)).collect();
-        format!("ROW({})", pairs.join(", "))
+    fn record_literal(&self, fields: &[(&str, &str, &Type)]) -> String {
+        // PostgreSQL exposes named record fields only through a declared
+        // composite type (`(record).field`). The `CREATE TYPE` for this shape is
+        // emitted in the preamble (see `record_type_definitions`); here we emit
+        // `ROW(v1, …)::<type-name>`. Fields are sorted into the canonical order
+        // the type declaration uses so values line up positionally.
+        let mut fs: Vec<(&str, &str, &Type)> = fields.to_vec();
+        fs.sort_by(|a, b| a.0.cmp(b.0));
+        let vals: Vec<&str> = fs.iter().map(|t| t.1).collect();
+        let ty = Type::Record {
+            fields: fs.iter().map(|t| (t.0.to_string(), t.2.clone())).collect(),
+            is_opened: false,
+        };
+        format!("ROW({})::{}", vals.join(", "), record_type_name(&ty))
+    }
+
+    fn scalar_sql_type(&self, ty: &Type) -> String {
+        match ty {
+            Type::Number => "numeric".to_string(),
+            Type::Bool => "boolean".to_string(),
+            Type::List(inner) => format!("{}[]", self.scalar_sql_type(inner)),
+            _ => "text".to_string(),
+        }
     }
 
     fn regex_match_condition(&self, column_expr: &str, pattern: &str) -> String {
@@ -544,10 +621,19 @@ Array(a) = SqlExpr(
     fn group_by_spec_by(&self) -> GroupBySpec { GroupBySpec::Index }
     fn decorate_combine_rule(&self) -> bool { false }
 
-    fn record_literal(&self, fields: &[(&str, &str)]) -> String {
-        let pairs: Vec<String> = fields.iter()
-            .map(|(k, v)| format!("{} AS {}", v, k)).collect();
-        format!("ROW({})", pairs.join(", "))
+    fn record_literal(&self, fields: &[(&str, &str, &Type)]) -> String {
+        // Named record fields require an explicit row type:
+        // `CAST(ROW(v1, …) AS ROW(field type, …))`. Sort fields into a canonical
+        // order so the value list and the type list line up at every nesting
+        // level (nested records recurse through `row_field_type`, which sorts too).
+        let mut fs: Vec<(&str, &str, &Type)> = fields.to_vec();
+        fs.sort_by(|a, b| a.0.cmp(b.0));
+        let vals: Vec<&str> = fs.iter().map(|t| t.1).collect();
+        let types: Vec<String> = fs
+            .iter()
+            .map(|t| format!("{} {}", t.0, self.row_field_type(t.2)))
+            .collect();
+        format!("CAST(ROW({}) AS ROW({}))", vals.join(", "), types.join(", "))
     }
 }
 
@@ -558,6 +644,7 @@ pub struct PrestoDialect;
 
 impl Dialect for PrestoDialect {
     fn name(&self) -> &'static str { "presto" }
+    fn format_uses_concat(&self) -> bool { true }
     fn today_relation_sql(&self) -> String {
         "(SELECT CAST(current_date AS VARCHAR) AS date)".to_string()
     }
@@ -627,10 +714,19 @@ Array(a) = SqlExpr(
     fn group_by_spec_by(&self) -> GroupBySpec { GroupBySpec::Index }
     fn decorate_combine_rule(&self) -> bool { false }
 
-    fn record_literal(&self, fields: &[(&str, &str)]) -> String {
-        let pairs: Vec<String> = fields.iter()
-            .map(|(k, v)| format!("{} AS {}", v, k)).collect();
-        format!("ROW({})", pairs.join(", "))
+    fn record_literal(&self, fields: &[(&str, &str, &Type)]) -> String {
+        // Named record fields require an explicit row type:
+        // `CAST(ROW(v1, …) AS ROW(field type, …))`. Sort fields into a canonical
+        // order so the value list and the type list line up at every nesting
+        // level (nested records recurse through `row_field_type`, which sorts too).
+        let mut fs: Vec<(&str, &str, &Type)> = fields.to_vec();
+        fs.sort_by(|a, b| a.0.cmp(b.0));
+        let vals: Vec<&str> = fs.iter().map(|t| t.1).collect();
+        let types: Vec<String> = fs
+            .iter()
+            .map(|t| format!("{} {}", t.0, self.row_field_type(t.2)))
+            .collect();
+        format!("CAST(ROW({}) AS ROW({}))", vals.join(", "), types.join(", "))
     }
 }
 
@@ -735,9 +831,9 @@ Array(a) = SqlExpr(
     fn group_by_spec_by(&self) -> GroupBySpec { GroupBySpec::Index }
     fn decorate_combine_rule(&self) -> bool { false }
 
-    fn record_literal(&self, fields: &[(&str, &str)]) -> String {
+    fn record_literal(&self, fields: &[(&str, &str, &Type)]) -> String {
         let pairs: Vec<String> = fields.iter()
-            .map(|(k, v)| format!("{} AS {}", v, k)).collect();
+            .map(|(k, v, _)| format!("{} AS {}", v, k)).collect();
         format!("STRUCT({})", pairs.join(", "))
     }
 
@@ -755,8 +851,6 @@ pub struct DuckDbDialect;
 
 impl Dialect for DuckDbDialect {
     fn name(&self) -> &'static str { "duckdb" }
-
-    fn supports_create_or_replace_table(&self) -> bool { true }
 
     fn today_relation_sql(&self) -> String {
         "(SELECT strftime(current_date, '%Y-%m-%d') AS date)".to_string()
@@ -927,20 +1021,10 @@ ISum(x) = SqlExpr("SUM({x})", {x:}) :- Error("ISum is to be used only in Clingo.
     fn group_by_spec_by(&self) -> GroupBySpec { GroupBySpec::Expr }
     fn is_postgresqlish(&self) -> bool { true }
 
-    fn record_literal(&self, fields: &[(&str, &str)]) -> String {
+    fn record_literal(&self, fields: &[(&str, &str, &Type)]) -> String {
         let pairs: Vec<String> = fields.iter()
-            .map(|(k, v)| format!("{}: {}", k, v)).collect();
+            .map(|(k, v, _)| format!("{}: {}", k, v)).collect();
         format!("{{{}}}", pairs.join(", "))
-    }
-
-    fn str_literal(&self, s: &str) -> String {
-        // DuckDB uses E'...' escape-string literals (matches logica's DuckDB dialect).
-        let escaped = s
-            .replace('\\', "\\\\")
-            .replace('\'', "''")
-            .replace('\t', "\\t")
-            .replace('\n', "\\n");
-        format!("E'{}'", escaped)
     }
 
     fn regex_match_condition(&self, column_expr: &str, pattern: &str) -> String {

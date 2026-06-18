@@ -16,25 +16,25 @@ drop type if exists logicarecord519939597 cascade; create type logicarecord51993
 WITH t_1_Phones AS (SELECT * FROM (
   
     SELECT
-      E'Alice' AS person,
-      E'555-1234' AS phone
+      'Alice' AS person,
+      '555-1234' AS phone
    UNION ALL
   
     SELECT
-      E'Bob' AS person,
-      E'555-5678' AS phone
+      'Bob' AS person,
+      '555-5678' AS phone
   
 ) AS UNUSED_TABLE_NAME  ),
 t_2_Emails AS (SELECT * FROM (
   
     SELECT
-      E'Bob' AS person,
-      E'bob@example.com' AS email
+      'Bob' AS person,
+      'bob@example.com' AS email
    UNION ALL
   
     SELECT
-      E'Charlie' AS person,
-      E'charlie@example.com' AS email
+      'Charlie' AS person,
+      'charlie@example.com' AS email
   
 ) AS UNUSED_TABLE_NAME  ),
 t_0_PersonSummary_MultBodyAggAux AS (SELECT * FROM (

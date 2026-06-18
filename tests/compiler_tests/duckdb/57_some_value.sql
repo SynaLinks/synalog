@@ -16,20 +16,20 @@ drop type if exists logicarecord519939597 cascade; create type logicarecord51993
 WITH t_1_Readings AS (SELECT * FROM (
   
     SELECT
-      E's1' AS sensor,
-      E'C' AS unit,
+      's1' AS sensor,
+      'C' AS unit,
       20 AS value
    UNION ALL
   
     SELECT
-      E's1' AS sensor,
-      E'C' AS unit,
+      's1' AS sensor,
+      'C' AS unit,
       22 AS value
    UNION ALL
   
     SELECT
-      E's2' AS sensor,
-      E'F' AS unit,
+      's2' AS sensor,
+      'F' AS unit,
       70 AS value
   
 ) AS UNUSED_TABLE_NAME  ),

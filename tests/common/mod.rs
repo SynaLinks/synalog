@@ -1,4 +1,11 @@
 //! Shared test utilities for integration tests.
+//!
+//! This module is compiled into every integration-test binary that does `mod
+//! common;`, but each binary uses only the subset of helpers it needs, so the
+//! rest read as dead code *in that binary*. That is inherent to the shared
+//! `tests/common` pattern, so suppress `dead_code` module-wide rather than
+//! per-item.
+#![allow(dead_code)]
 
 use std::path::PathBuf;
 use std::process::Command;

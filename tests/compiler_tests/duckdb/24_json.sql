@@ -16,12 +16,12 @@ drop type if exists logicarecord519939597 cascade; create type logicarecord51993
 WITH t_0_JsonData AS (SELECT * FROM (
   
     SELECT
-      E'Alice' AS col0,
+      'Alice' AS col0,
       30 AS col1
    UNION ALL
   
     SELECT
-      E'Bob' AS col0,
+      'Bob' AS col0,
       25 AS col1
   
 ) AS UNUSED_TABLE_NAME  )

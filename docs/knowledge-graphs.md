@@ -114,5 +114,3 @@ A small employee/team/client graph: nodes with primary keys and preserved URLs, 
     ```text
     --8<-- "docs/examples/knowledge_graphs.log"
     ```
-
-To turn an existing **OWL/RDF ontology** into a knowledge graph like this automatically, see [Ontologies](ontologies.md).

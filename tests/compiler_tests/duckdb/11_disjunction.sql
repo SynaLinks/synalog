@@ -17,7 +17,7 @@ WITH t_0_Classification AS (SELECT * FROM (
   
     SELECT
       x_8.unnested_pod AS col0,
-      E'small' AS col1
+      'small' AS col1
     FROM
       (select unnest(Range(10)) as unnested_pod) as x_8
     WHERE
@@ -26,7 +26,7 @@ WITH t_0_Classification AS (SELECT * FROM (
   
     SELECT
       x_13.unnested_pod AS col0,
-      E'medium' AS col1
+      'medium' AS col1
     FROM
       (select unnest(Range(10)) as unnested_pod) as x_13
     WHERE
@@ -36,7 +36,7 @@ WITH t_0_Classification AS (SELECT * FROM (
   
     SELECT
       x_18.unnested_pod AS col0,
-      E'large' AS col1
+      'large' AS col1
     FROM
       (select unnest(Range(10)) as unnested_pod) as x_18
     WHERE

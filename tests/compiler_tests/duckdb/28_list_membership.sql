@@ -16,32 +16,32 @@ drop type if exists logicarecord519939597 cascade; create type logicarecord51993
 WITH t_0_Items AS (SELECT * FROM (
   
     SELECT
-      E'apple' AS col0,
-      E'fruit' AS col1,
+      'apple' AS col0,
+      'fruit' AS col1,
       1.50 AS col2
    UNION ALL
   
     SELECT
-      E'banana' AS col0,
-      E'fruit' AS col1,
+      'banana' AS col0,
+      'fruit' AS col1,
       0.75 AS col2
    UNION ALL
   
     SELECT
-      E'carrot' AS col0,
-      E'vegetable' AS col1,
+      'carrot' AS col0,
+      'vegetable' AS col1,
       0.50 AS col2
    UNION ALL
   
     SELECT
-      E'milk' AS col0,
-      E'dairy' AS col1,
+      'milk' AS col0,
+      'dairy' AS col1,
       2.00 AS col2
    UNION ALL
   
     SELECT
-      E'bread' AS col0,
-      E'grain' AS col1,
+      'bread' AS col0,
+      'grain' AS col1,
       1.25 AS col2
   
 ) AS UNUSED_TABLE_NAME  )
@@ -49,6 +49,6 @@ SELECT
   Items.col0 AS name,
   Items.col2 AS price
 FROM
-  t_0_Items AS Items, (select unnest([E'fruit', E'vegetable']::text[]) as unnested_pod) as x_9
+  t_0_Items AS Items, (select unnest(['fruit', 'vegetable']::text[]) as unnested_pod) as x_9
 WHERE
   (Items.col1 = x_9.unnested_pod) ORDER BY name;

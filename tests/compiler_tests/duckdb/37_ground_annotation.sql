@@ -13,41 +13,42 @@ drop type if exists logicarecord383307722 cascade; create type logicarecord38330
 
 -- Logica type: logicarecord519939597
 drop type if exists logicarecord519939597 cascade; create type logicarecord519939597 as struct(args text[], predicate text);
-CREATE OR REPLACE TABLE logica_home.QuarterTotals AS WITH t_0_Sales AS (SELECT * FROM (
+DROP TABLE IF EXISTS logica_home.QuarterTotals;
+CREATE TABLE logica_home.QuarterTotals AS WITH t_0_Sales AS (SELECT * FROM (
   
     SELECT
-      E'Q1' AS col0,
-      E'North' AS col1,
+      'Q1' AS col0,
+      'North' AS col1,
       100 AS col2
    UNION ALL
   
     SELECT
-      E'Q1' AS col0,
-      E'South' AS col1,
+      'Q1' AS col0,
+      'South' AS col1,
       150 AS col2
    UNION ALL
   
     SELECT
-      E'Q2' AS col0,
-      E'North' AS col1,
+      'Q2' AS col0,
+      'North' AS col1,
       120 AS col2
    UNION ALL
   
     SELECT
-      E'Q2' AS col0,
-      E'South' AS col1,
+      'Q2' AS col0,
+      'South' AS col1,
       180 AS col2
    UNION ALL
   
     SELECT
-      E'Q3' AS col0,
-      E'North' AS col1,
+      'Q3' AS col0,
+      'North' AS col1,
       110 AS col2
    UNION ALL
   
     SELECT
-      E'Q3' AS col0,
-      E'South' AS col1,
+      'Q3' AS col0,
+      'South' AS col1,
       160 AS col2
   
 ) AS UNUSED_TABLE_NAME  )

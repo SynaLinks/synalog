@@ -17,19 +17,19 @@ WITH t_0_Users AS (SELECT * FROM (
   
     SELECT
       1 AS id,
-      E'Alice' AS name,
+      'Alice' AS name,
       101 AS dept
    UNION ALL
   
     SELECT
       2 AS id,
-      E'Bob' AS name,
+      'Bob' AS name,
       102 AS dept
    UNION ALL
   
     SELECT
       3 AS id,
-      E'Charlie' AS name,
+      'Charlie' AS name,
       101 AS dept
   
 ) AS UNUSED_TABLE_NAME  ),
@@ -37,17 +37,17 @@ t_1_Departments AS (SELECT * FROM (
   
     SELECT
       101 AS id,
-      E'Engineering' AS name
+      'Engineering' AS name
    UNION ALL
   
     SELECT
       102 AS id,
-      E'Marketing' AS name
+      'Marketing' AS name
    UNION ALL
   
     SELECT
       103 AS id,
-      E'Sales' AS name
+      'Sales' AS name
   
 ) AS UNUSED_TABLE_NAME  )
 SELECT

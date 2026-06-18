@@ -86,40 +86,26 @@ print(result)
 # [('Alice', 75000), ('Charlie', 80000)]
 ```
 
-## The command line
+## The CLI
 
-Everything above also works without writing Python. Installing the package installs a `synalog` command that validates, compiles and runs predicates in one step:
+Everything above also works without writing Python. Installing the package installs a `synalog` command that validates, compiles and runs predicates in one step — `run` (and `print`) verify the whole program first and stop with the verifier's errors if it is invalid:
 
 ```bash
-synalog program.l check
 synalog program.l run EngineeringTeam
 ```
 
 Running `synalog` with no arguments starts an interactive session where you build a program rule by rule and query it as you go. With uv, `uvx` runs the CLI without installing anything: `uvx synalog program.l run EngineeringTeam` (duckdb is bundled; add `--from 'synalog[run]'` for PostgreSQL). See [CLI interface](cli.md).
 
-### Start a project
+### Add the skill to your coding agent
 
-The fastest way to start: `synalog init` scaffolds a project — with uv you don't even need to install anything first, `uvx synalog init` runs it straight away. It asks for a name and a description, then creates a runnable starter program, sample data, and agent instructions (`AGENTS.md`, `CLAUDE.md` and a Synalog skill in `.agents/skills/synalog/`) so coding agents know how to use Synalog:
+Synalog ships an [Agent Skill](https://agentskills.io) — a `SKILL.md` that teaches a coding agent the language, the CLI and the conventions. It follows the open Agent Skills standard, so it works with Claude Code, Cursor, Codex, OpenCode and many other agents. Install it with the [`skills`](https://www.npmjs.com/package/skills) CLI (GitHub is the registry — nothing to publish or install first):
 
 ```console
-$ synalog init
-Project name [synalog-project]: demo-kb
-Description [A Synalog knowledge base]: Sales analytics for the demo team
-Created demo-kb/
-  .agents/skills/synalog/SKILL.md
-  .gitignore
-  AGENTS.md
-  CLAUDE.md
-  data/sales.csv
-  example.l
-  lib/metrics.l
-
-Next steps:
-  cd demo-kb
-  synalog example.l run TopRegion MonthlySales --load sales=data/sales.csv
+$ npx skills add SynaLinks/synalog        # this project
+$ npx skills add SynaLinks/synalog -g     # user-wide, across all projects
 ```
 
-Put your data files in `data/`, keep reusable predicates in `lib/` modules, and write one top-level program per analysis. See [Starting a project](cli.md#starting-a-project) for what each generated file does.
+Then put your data files in `data/`, keep reusable predicates in `lib/` modules, and write one top-level program per analysis. See [Add the skill to your coding agent](cli.md#add-the-skill-to-your-coding-agent) for the per-agent options.
 
 ## Querying a CSV file
 

@@ -16,39 +16,39 @@ drop type if exists logicarecord519939597 cascade; create type logicarecord51993
 WITH t_1_Students AS (SELECT * FROM (
   
     SELECT
-      E'Alice' AS name,
+      'Alice' AS name,
       85 AS grade
    UNION ALL
   
     SELECT
-      E'Bob' AS name,
+      'Bob' AS name,
       72 AS grade
   
 ) AS UNUSED_TABLE_NAME  ),
 t_2_Teachers AS (SELECT * FROM (
   
     SELECT
-      E'Prof Smith' AS name,
-      E'Math' AS department
+      'Prof Smith' AS name,
+      'Math' AS department
    UNION ALL
   
     SELECT
-      E'Prof Jones' AS name,
-      E'Science' AS department
+      'Prof Jones' AS name,
+      'Science' AS department
   
 ) AS UNUSED_TABLE_NAME  ),
 t_0_People AS (SELECT * FROM (
   
     SELECT
       Students.name AS name,
-      E'student' AS role
+      'student' AS role
     FROM
       t_1_Students AS Students
    UNION ALL
   
     SELECT
       Teachers.name AS name,
-      E'teacher' AS role
+      'teacher' AS role
     FROM
       t_2_Teachers AS Teachers
   

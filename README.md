@@ -79,6 +79,69 @@ Or with [uv](https://docs.astral.sh/uv/): `uv add synalog` (or `uv pip install s
 
 Requires Python 3.10+. Wheels are published for Linux (x86_64, aarch64, armv7, s390x, ppc64le; glibc and musl), Windows (x64, x86, aarch64) and macOS (x86_64, aarch64).
 
+## Add the skill to your coding agent
+
+Synalog ships an [Agent Skill](https://agentskills.io) — a `SKILL.md` that teaches a coding agent the language, the CLI and the conventions, so it writes and runs programs correctly. It follows the open Agent Skills standard, so it works with Claude Code, Cursor, Codex, OpenCode, Cline, Windsurf and 70+ other agents. Install it with the [`skills`](https://www.npmjs.com/package/skills) CLI — GitHub is the registry, so there is nothing to publish or install first:
+
+```bash
+npx skills add SynaLinks/synalog              # this project (./.claude/skills, ./.agents/skills, …)
+npx skills add SynaLinks/synalog -g           # user-wide (~/.claude/skills, …)
+npx skills add SynaLinks/synalog -a cursor codex   # only specific agents
+```
+
+The skill is maintained in this repo at [`skills/synalog/SKILL.md`](skills/synalog/SKILL.md); `npx skills add` copies it into the right place for each agent.
+
+## Command-line interface
+
+Installing the package also installs a `synalog` command (also available as `python -m synalog`):
+
+```bash
+synalog program.l print Predicate      # print compiled SQL
+synalog program.l run Predicate        # execute and print a table
+synalog program.l run Predicate --csv  # execute and print CSV
+```
+
+Both `print` and `run` validate the whole program first and exit 1 with the verifier's errors if it is invalid, so verification always happens before any SQL is produced or executed.
+
+```
+$ synalog program.l run EngineeringTeam
++---------+--------+
+| name    | salary |
++---------+--------+
+| Alice   | 75000  |
+| Charlie | 80000  |
++---------+--------+
+2 rows
+```
+
+- `-` as the file reads the program from stdin; `-c PROGRAM` passes the program text inline, like `python -c`.
+- `--engine` overrides the program's `@Engine` annotation (default `duckdb`).
+- `--limit` / `--offset` paginate the result.
+- `--csv` (with `run`) prints results as CSV instead of the rendered table.
+- `--search REGEX` (with `print`/`run`) keeps only rows where some column matches the regular expression `REGEX`, e.g. `synalog program.l run Customers --search "(?i)acme"`. In the interactive session the same is `.search Customers (?i)acme`.
+- `run` executes locally on `duckdb` (needs `pip install duckdb`), `sqlite` (stdlib), or `psql` (needs `pip install psycopg` and `--dsn` or `SYNALOG_PSQL_DSN`). For other engines, use `print` and run the SQL with your own client. `pip install 'synalog[run]'` pulls in the duckdb and psycopg drivers.
+- `import path.to.file.Pred;` statements resolve `path/to/file.l` against the program file's directory, then the current directory; pass `--import-root DIR` (repeatable) to search elsewhere.
+- `--load TABLE=PATH` (repeatable) loads a csv/tsv/json/jsonl/parquet file as a table before running, e.g. `synalog senior.l run Senior --load employees=employees.csv`.
+
+Running `synalog` with no arguments starts an interactive session, in the spirit of `python` (the options above, e.g. `--engine` or `--load`, apply to it too):
+
+```
+$ synalog
+Synalog 0.1.0 on duckdb — type .help for help
+>>> Employee(name: "Alice", salary: 75000);
+>>> Employee(name: "Bob", salary: 65000);
+>>> Total(t? += salary) distinct :- Employee(salary:);
+>>> Total
++--------+
+| t      |
++--------+
+| 140000 |
++--------+
+1 row
+```
+
+Type a rule ending in `;` to add it to the session program (it is validated first, and rejected with an error if invalid), or a predicate name to compile and run it. `.help` lists the session commands (`.show`, `.sql <Pred>`, `.engine <name>`, `.load <table> <path>`, `.clear`, `.exit`).
+
 ## Quick start
 
 ```python
@@ -103,59 +166,6 @@ print(sql)
 ```
 
 You can then execute the SQL with any database driver (`sqlite3`, `duckdb`, `psycopg`, `google-cloud-bigquery`, etc.).
-
-## Command-line interface
-
-Installing the package also installs a `synalog` command (also available as `python -m synalog`):
-
-```bash
-synalog program.l parse                # print the AST as JSON
-synalog program.l check                # validate; exit 1 on errors
-synalog program.l print Predicate      # print compiled SQL
-synalog program.l run Predicate        # execute and print a table
-synalog program.l run Predicate --csv  # execute and print CSV
-```
-
-```
-$ synalog program.l run EngineeringTeam
-+---------+--------+
-| name    | salary |
-+---------+--------+
-| Alice   | 75000  |
-| Charlie | 80000  |
-+---------+--------+
-2 rows
-```
-
-- `-` as the file reads the program from stdin; `-c PROGRAM` passes the program text inline, like `python -c`.
-- `--engine` overrides the program's `@Engine` annotation (default `duckdb`).
-- `--limit` / `--offset` paginate the result.
-- `--csv` (with `run`) prints results as CSV instead of the rendered table.
-- `--search REGEX` (with `print`/`run`) keeps only rows where some column matches the regular expression `REGEX`, e.g. `synalog program.l run Customers --search "(?i)acme"`. In the interactive session the same is `.search Customers (?i)acme`.
-- `run` executes locally on `duckdb` (needs `pip install duckdb`), `sqlite` (stdlib), or `psql` (needs `pip install psycopg` and `--dsn` or `SYNALOG_PSQL_DSN`). For other engines, use `print` and run the SQL with your own client. `pip install 'synalog[run]'` pulls in the duckdb and psycopg drivers.
-- `import path.to.file.Pred;` statements resolve `path/to/file.l` against the program file's directory, then the current directory; pass `--import-root DIR` (repeatable) to search elsewhere.
-- `--load TABLE=PATH` (repeatable) loads a csv/tsv/json/jsonl/parquet file as a table before running, e.g. `synalog senior.l run Senior --load employees=employees.csv`.
-- `synalog import ontology.owl` (or an `http(s)` URL) converts an OWL/RDF ontology into a Synalog knowledge graph — classes become entity concepts, properties relationship concepts, and individuals facts. See [Ontologies](https://synalinks.github.io/synalog/ontologies/).
-- `synalog init` scaffolds a project (`uvx synalog init` runs it without installing; it asks for a name and description): a starter program importing a reusable `lib/` module, sample data in `data/`, and agent instructions (`AGENTS.md`, `CLAUDE.md`, `.agents/skills/synalog/SKILL.md`) so coding agents know how to use Synalog.
-
-Running `synalog` with no arguments starts an interactive session, in the spirit of `python` (the options above, e.g. `--engine` or `--load`, apply to it too):
-
-```
-$ synalog
-Synalog 0.1.0 on duckdb — type .help for help
->>> Employee(name: "Alice", salary: 75000);
->>> Employee(name: "Bob", salary: 65000);
->>> Total(t? += salary) distinct :- Employee(salary:);
->>> Total
-+--------+
-| t      |
-+--------+
-| 140000 |
-+--------+
-1 row
-```
-
-Type a rule ending in `;` to add it to the session program (it is validated first, and rejected with an error if invalid), or a predicate name to compile and run it. `.help` lists the session commands (`.show`, `.sql <Pred>`, `.engine <name>`, `.load <table> <path>`, `.clear`, `.exit`).
 
 ## Python API
 

@@ -17,17 +17,17 @@ WITH t_1_Items AS (SELECT * FROM (
   
     SELECT
       1 AS id,
-      [E'a', E'b']::text[] AS tags
+      ['a', 'b']::text[] AS tags
    UNION ALL
   
     SELECT
       2 AS id,
-      [E'c']::text[] AS tags
+      ['c']::text[] AS tags
    UNION ALL
   
     SELECT
       3 AS id,
-      [E'a', E'd', E'e']::text[] AS tags
+      ['a', 'd', 'e']::text[] AS tags
   
 ) AS UNUSED_TABLE_NAME  ),
 t_0_AllTags AS (SELECT

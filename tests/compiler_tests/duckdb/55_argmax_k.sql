@@ -12,42 +12,42 @@ drop type if exists logicarecord481217614 cascade; create type logicarecord48121
 drop type if exists logicarecord383307722 cascade; create type logicarecord383307722 as struct(a timestamp);
 
 -- Logica type: logicarecord183863755
-drop type if exists logicarecord183863755 cascade; create type logicarecord183863755 as struct(arg text, value double);
+drop type if exists logicarecord183863755 cascade; create type logicarecord183863755 as struct(arg text, value numeric);
 
 -- Logica type: logicarecord519939597
 drop type if exists logicarecord519939597 cascade; create type logicarecord519939597 as struct(args text[], predicate text);
 
 -- Logica type: logicarecord909294181
-drop type if exists logicarecord909294181 cascade; create type logicarecord909294181 as struct(arg_1 text, lim double, value_1 double);
+drop type if exists logicarecord909294181 cascade; create type logicarecord909294181 as struct(arg_1 text, lim numeric, value_1 numeric);
 WITH t_3_Score AS (SELECT * FROM (
   
     SELECT
-      E'A' AS team,
-      E'p1' AS player,
+      'A' AS team,
+      'p1' AS player,
       10 AS points
    UNION ALL
   
     SELECT
-      E'A' AS team,
-      E'p2' AS player,
+      'A' AS team,
+      'p2' AS player,
       30 AS points
    UNION ALL
   
     SELECT
-      E'A' AS team,
-      E'p3' AS player,
+      'A' AS team,
+      'p3' AS player,
       20 AS points
    UNION ALL
   
     SELECT
-      E'B' AS team,
-      E'p4' AS player,
+      'B' AS team,
+      'p4' AS player,
       50 AS points
    UNION ALL
   
     SELECT
-      E'B' AS team,
-      E'p5' AS player,
+      'B' AS team,
+      'p5' AS player,
       40 AS points
   
 ) AS UNUSED_TABLE_NAME  ),

@@ -16,27 +16,27 @@ drop type if exists logicarecord519939597 cascade; create type logicarecord51993
 WITH t_1_Sales AS (SELECT * FROM (
   
     SELECT
-      E'Electronics' AS category,
+      'Electronics' AS category,
       500 AS amount
    UNION ALL
   
     SELECT
-      E'Electronics' AS category,
+      'Electronics' AS category,
       300 AS amount
    UNION ALL
   
     SELECT
-      E'Books' AS category,
+      'Books' AS category,
       50 AS amount
    UNION ALL
   
     SELECT
-      E'Books' AS category,
+      'Books' AS category,
       75 AS amount
    UNION ALL
   
     SELECT
-      E'Clothing' AS category,
+      'Clothing' AS category,
       200 AS amount
   
 ) AS UNUSED_TABLE_NAME  ),

@@ -19,28 +19,28 @@ drop type if exists logicarecord519939597 cascade; create type logicarecord51993
 WITH t_2_Team AS (SELECT * FROM (
   
     SELECT
-      E'Alice' AS name,
-      E'Python' AS skill
+      'Alice' AS name,
+      'Python' AS skill
    UNION ALL
   
     SELECT
-      E'Alice' AS name,
-      E'SQL' AS skill
+      'Alice' AS name,
+      'SQL' AS skill
    UNION ALL
   
     SELECT
-      E'Bob' AS name,
-      E'Java' AS skill
+      'Bob' AS name,
+      'Java' AS skill
    UNION ALL
   
     SELECT
-      E'Bob' AS name,
-      E'Python' AS skill
+      'Bob' AS name,
+      'Python' AS skill
    UNION ALL
   
     SELECT
-      E'Bob' AS name,
-      E'Go' AS skill
+      'Bob' AS name,
+      'Go' AS skill
   
 ) AS UNUSED_TABLE_NAME  ),
 t_0_SkillsByPerson AS (SELECT

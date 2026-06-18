@@ -16,32 +16,32 @@ drop type if exists logicarecord519939597 cascade; create type logicarecord51993
 WITH t_1_Sales AS (SELECT * FROM (
   
     SELECT
-      E'North' AS region,
-      E'A' AS product,
+      'North' AS region,
+      'A' AS product,
       100 AS amount
    UNION ALL
   
     SELECT
-      E'North' AS region,
-      E'B' AS product,
+      'North' AS region,
+      'B' AS product,
       150 AS amount
    UNION ALL
   
     SELECT
-      E'South' AS region,
-      E'A' AS product,
+      'South' AS region,
+      'A' AS product,
       200 AS amount
    UNION ALL
   
     SELECT
-      E'South' AS region,
-      E'B' AS product,
+      'South' AS region,
+      'B' AS product,
       75 AS amount
    UNION ALL
   
     SELECT
-      E'East' AS region,
-      E'A' AS product,
+      'East' AS region,
+      'A' AS product,
       300 AS amount
   
 ) AS UNUSED_TABLE_NAME  ),

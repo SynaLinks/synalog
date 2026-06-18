@@ -14,7 +14,7 @@ use wasm_bindgen::prelude::*;
 
 use crate::compiler::dialects;
 use crate::compiler::universe::{LogicaProgram, Pagination};
-use crate::parser::{parse_file, CompilationMode, Json};
+use crate::parser::{parse_file, Json};
 use crate::verifier::validate;
 
 fn err(e: impl std::fmt::Display) -> JsValue {
@@ -41,11 +41,10 @@ fn parse(source: &str) -> Result<Json, JsValue> {
 }
 
 fn build(parsed: &Json, engine: Option<&str>) -> Result<LogicaProgram, JsValue> {
-    LogicaProgram::new_with_mode_and_engine(
+    LogicaProgram::new_with_engine(
         parsed,
         HashMap::new(),
         HashMap::new(),
-        CompilationMode::Logica,
         engine,
     )
     .map_err(err)

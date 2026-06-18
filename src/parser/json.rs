@@ -271,11 +271,14 @@ impl From<JsonObject> for Json {
 /// Helper to build a JsonObject from key-value pairs.
 #[macro_export]
 macro_rules! json_obj {
-    ($($key:expr => $val:expr),* $(,)?) => {{
+    () => {{
+        $crate::parser::Json::Object($crate::parser::JsonObject::new())
+    }};
+    ($($key:expr => $val:expr),+ $(,)?) => {{
         let mut map = $crate::parser::JsonObject::new();
         $(
             map.insert($key.to_string(), $crate::parser::Json::from($val));
-        )*
+        )+
         $crate::parser::Json::Object(map)
     }};
 }

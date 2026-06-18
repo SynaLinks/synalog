@@ -16,18 +16,18 @@ drop type if exists logicarecord519939597 cascade; create type logicarecord51993
 WITH t_1_Names AS (SELECT * FROM (
   
     SELECT
-      E'alice' AS first,
-      E'smith' AS last
+      'alice' AS first,
+      'smith' AS last
    UNION ALL
   
     SELECT
-      E'bob' AS first,
-      E'jones' AS last
+      'bob' AS first,
+      'jones' AS last
    UNION ALL
   
     SELECT
-      E'charlie' AS first,
-      E'brown' AS last
+      'charlie' AS first,
+      'brown' AS last
   
 ) AS UNUSED_TABLE_NAME  ),
 t_0_FormattedNames AS (SELECT

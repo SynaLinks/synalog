@@ -16,34 +16,34 @@ drop type if exists logicarecord519939597 cascade; create type logicarecord51993
 WITH t_1_Products AS (SELECT * FROM (
   
     SELECT
-      E'laptop' AS col0,
+      'laptop' AS col0,
       1000 AS col1,
-      E'electronics' AS col2
+      'electronics' AS col2
    UNION ALL
   
     SELECT
-      E'phone' AS col0,
+      'phone' AS col0,
       500 AS col1,
-      E'electronics' AS col2
+      'electronics' AS col2
    UNION ALL
   
     SELECT
-      E'book' AS col0,
+      'book' AS col0,
       20 AS col1,
-      E'media' AS col2
+      'media' AS col2
    UNION ALL
   
     SELECT
-      E'headphones' AS col0,
+      'headphones' AS col0,
       150 AS col1,
-      E'electronics' AS col2
+      'electronics' AS col2
   
 ) AS UNUSED_TABLE_NAME  ),
 t_0_SpecialProducts AS (SELECT * FROM (
   
     SELECT
       Products.col0 AS col0,
-      E'expensive' AS col1
+      'expensive' AS col1
     FROM
       t_1_Products AS Products
     WHERE
@@ -52,11 +52,11 @@ t_0_SpecialProducts AS (SELECT * FROM (
   
     SELECT
       t_2_Products.col0 AS col0,
-      E'media_item' AS col1
+      'media_item' AS col1
     FROM
       t_1_Products AS t_2_Products
     WHERE
-      (t_2_Products.col2 = E'media')
+      (t_2_Products.col2 = 'media')
   
 ) AS UNUSED_TABLE_NAME  )
 SELECT

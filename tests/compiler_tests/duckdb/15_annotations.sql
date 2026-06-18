@@ -32,21 +32,21 @@ WHERE
 SELECT * FROM (
   
     SELECT
-      E'sorted' AS col0,
+      'sorted' AS col0,
       Sorted.col0 AS col1
     FROM
       t_0_Sorted AS Sorted
    UNION ALL
   
     SELECT
-      E'top5' AS col0,
+      'top5' AS col0,
       Top5.col0 AS col1
     FROM
       t_0_Top5 AS Top5
    UNION ALL
   
     SELECT
-      E'top_even' AS col0,
+      'top_even' AS col0,
       TopEven.col0 AS col1
     FROM
       t_0_TopEven AS TopEven

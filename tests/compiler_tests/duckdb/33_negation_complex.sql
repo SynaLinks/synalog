@@ -17,26 +17,26 @@ WITH t_0_Users AS (SELECT * FROM (
   
     SELECT
       1 AS col0,
-      E'Alice' AS col1,
-      E'admin' AS col2
+      'Alice' AS col1,
+      'admin' AS col2
    UNION ALL
   
     SELECT
       2 AS col0,
-      E'Bob' AS col1,
-      E'user' AS col2
+      'Bob' AS col1,
+      'user' AS col2
    UNION ALL
   
     SELECT
       3 AS col0,
-      E'Charlie' AS col1,
-      E'user' AS col2
+      'Charlie' AS col1,
+      'user' AS col2
    UNION ALL
   
     SELECT
       4 AS col0,
-      E'Diana' AS col1,
-      E'guest' AS col2
+      'Diana' AS col1,
+      'guest' AS col2
   
 ) AS UNUSED_TABLE_NAME  ),
 t_1_Orders AS (SELECT * FROM (
@@ -65,6 +65,6 @@ WHERE
   ((SELECT
     MIN((CASE WHEN x_13.unnested_pod = 0 THEN 1 ELSE NULL END)) AS logica_value
   FROM
-    t_1_Orders AS Orders, (select unnest([0]::double[]) as unnested_pod) as x_13
+    t_1_Orders AS Orders, (select unnest([0]::numeric[]) as unnested_pod) as x_13
   WHERE
     (Orders.col0 = Users.col0)) IS NULL) ORDER BY id;

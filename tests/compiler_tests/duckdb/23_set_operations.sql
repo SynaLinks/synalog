@@ -16,6 +16,6 @@ drop type if exists logicarecord519939597 cascade; create type logicarecord51993
 SELECT
   x_6.unnested_pod AS x
 FROM
-  (select unnest([1, 2, 3, 4, 5]::double[]) as unnested_pod) as x_6, (select unnest([3, 4, 5, 6, 7]::double[]) as unnested_pod) as x_8
+  (select unnest([1, 2, 3, 4, 5]::numeric[]) as unnested_pod) as x_6, (select unnest([3, 4, 5, 6, 7]::numeric[]) as unnested_pod) as x_8
 WHERE
   (x_8.unnested_pod = x_6.unnested_pod) ORDER BY x;

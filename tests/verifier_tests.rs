@@ -27,6 +27,7 @@ enum ExpectedError {
     UnboundedRecursion,
     ReservedPredicate,
     UnsafeSqlExpr,
+    PositionalArguments,
 }
 
 /// Parse expected error from file content.
@@ -45,6 +46,7 @@ fn parse_expected_error(content: &str) -> Option<ExpectedError> {
                 s if s.contains("unboundedRecursion") => Some(ExpectedError::UnboundedRecursion),
                 s if s.contains("reservedPredicate") => Some(ExpectedError::ReservedPredicate),
                 s if s.contains("unsafeSqlExpr") => Some(ExpectedError::UnsafeSqlExpr),
+                s if s.contains("positionalArguments") => Some(ExpectedError::PositionalArguments),
                 _ => None,
             };
         }
@@ -65,6 +67,7 @@ fn error_matches(error: &CheckError, expected: &ExpectedError) -> bool {
         (CheckError::Recursion(RecursionError::UnboundedRecursion { .. }), ExpectedError::UnboundedRecursion) => true,
         (CheckError::Reserved(_), ExpectedError::ReservedPredicate) => true,
         (CheckError::SqlExpr(_), ExpectedError::UnsafeSqlExpr) => true,
+        (CheckError::Positional(_), ExpectedError::PositionalArguments) => true,
         _ => false,
     }
 }

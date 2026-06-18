@@ -227,50 +227,82 @@ fn test_group_by_specs() {
 #[test]
 fn test_record_literal_bigquery() {
     let d = get("bigquery").unwrap();
-    let fields = [("a", "1"), ("b", "'x'")];
+    let fields = [("a", "1", &Type::Number), ("b", "'x'", &Type::String)];
     assert_eq!(d.record_literal(&fields), "STRUCT(1 AS a, 'x' AS b)");
 }
 
 #[test]
 fn test_record_literal_sqlite() {
     let d = get("sqlite").unwrap();
-    let fields = [("a", "1"), ("b", "'x'")];
+    let fields = [("a", "1", &Type::Number), ("b", "'x'", &Type::String)];
     assert_eq!(d.record_literal(&fields), "JSON_OBJECT('a', 1, 'b', 'x')");
 }
 
 #[test]
 fn test_record_literal_duckdb() {
     let d = get("duckdb").unwrap();
-    let fields = [("a", "1"), ("b", "'x'")];
+    let fields = [("a", "1", &Type::Number), ("b", "'x'", &Type::String)];
     assert_eq!(d.record_literal(&fields), "{a: 1, b: 'x'}");
 }
 
 #[test]
 fn test_record_literal_psql() {
+    // PostgreSQL casts to a declared composite type (defined in the preamble);
+    // values are ordered to match the type's canonical (sorted) field order.
     let d = get("psql").unwrap();
-    let fields = [("a", "1"), ("b", "'x'")];
-    assert_eq!(d.record_literal(&fields), "ROW(1 AS a, 'x' AS b)");
+    let fields = [("a", "1", &Type::Number), ("b", "'x'", &Type::String)];
+    let ty = Type::Record {
+        fields: [("a".to_string(), Type::Number), ("b".to_string(), Type::String)]
+            .into_iter()
+            .collect(),
+        is_opened: false,
+    };
+    assert_eq!(
+        d.record_literal(&fields),
+        format!("ROW(1, 'x')::{}", record_type_name(&ty))
+    );
 }
 
 #[test]
 fn test_record_literal_trino() {
     let d = get("trino").unwrap();
-    let fields = [("a", "1")];
-    assert_eq!(d.record_literal(&fields), "ROW(1 AS a)");
+    let fields = [("a", "1", &Type::Number)];
+    assert_eq!(d.record_literal(&fields), "CAST(ROW(1) AS ROW(a double))");
 }
 
 #[test]
 fn test_record_literal_presto() {
     let d = get("presto").unwrap();
-    let fields = [("a", "1")];
-    assert_eq!(d.record_literal(&fields), "ROW(1 AS a)");
+    let fields = [("a", "1", &Type::Number)];
+    assert_eq!(d.record_literal(&fields), "CAST(ROW(1) AS ROW(a double))");
 }
 
 #[test]
 fn test_record_literal_databricks() {
     let d = get("databricks").unwrap();
-    let fields = [("a", "1")];
+    let fields = [("a", "1", &Type::Number)];
     assert_eq!(d.record_literal(&fields), "STRUCT(1 AS a)");
+}
+
+#[test]
+fn test_record_literal_trino_nested() {
+    // Nested records recurse into ROW(...) types, fields canonically sorted.
+    let d = get("trino").unwrap();
+    let contact = Type::Record {
+        fields: [("email".to_string(), Type::String), ("phone".to_string(), Type::String)]
+            .into_iter()
+            .collect(),
+        is_opened: false,
+    };
+    let fields = [
+        ("name", "'Alice'", &Type::String),
+        ("contact", "CAST(ROW('e', 'p') AS ROW(email varchar, phone varchar))", &contact),
+    ];
+    assert_eq!(
+        d.record_literal(&fields),
+        "CAST(ROW(CAST(ROW('e', 'p') AS ROW(email varchar, phone varchar)), 'Alice') \
+         AS ROW(contact ROW(email varchar, phone varchar), name varchar))"
+    );
 }
 
 // ── unnest_phrase ──
@@ -326,8 +358,10 @@ fn test_str_literal_default() {
 #[test]
 fn test_str_literal_escapes_quotes() {
     let d = get("duckdb").unwrap();
-    // DuckDB uses E'...' escape-string literals (matches logica's DuckDB dialect).
-    assert_eq!(d.str_literal("it's"), "E'it''s'");
+    // DuckDB uses standard `'...'` literals with `''` quote escaping (matches
+    // upstream and every other engine; the old non-standard `E'...'` prefix was
+    // removed — see DEVIATIONS.md).
+    assert_eq!(d.str_literal("it's"), "'it''s'");
 }
 
 #[test]

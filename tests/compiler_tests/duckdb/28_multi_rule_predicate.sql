@@ -24,20 +24,20 @@ WITH t_1_Number AS (SELECT * FROM (
     SELECT
       x_8.unnested_pod AS col0
     FROM
-      (select unnest([10, 11, 12, 13, 14]::double[]) as unnested_pod) as x_8
+      (select unnest([10, 11, 12, 13, 14]::numeric[]) as unnested_pod) as x_8
   
 ) AS UNUSED_TABLE_NAME  ),
 t_0_Stats_MultBodyAggAux AS (SELECT * FROM (
   
     SELECT
-      E'all' AS col0,
+      'all' AS col0,
       1 AS count
     FROM
       t_1_Number AS Number
    UNION ALL
   
     SELECT
-      E'even' AS col0,
+      'even' AS col0,
       1 AS count
     FROM
       t_1_Number AS t_2_Number
@@ -46,7 +46,7 @@ t_0_Stats_MultBodyAggAux AS (SELECT * FROM (
    UNION ALL
   
     SELECT
-      E'odd' AS col0,
+      'odd' AS col0,
       1 AS count
     FROM
       t_1_Number AS t_3_Number

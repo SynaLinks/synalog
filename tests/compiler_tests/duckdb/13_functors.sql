@@ -16,17 +16,17 @@ drop type if exists logicarecord519939597 cascade; create type logicarecord51993
 WITH t_1_Events1 AS (SELECT * FROM (
   
     SELECT
-      E'A' AS category,
+      'A' AS category,
       10 AS count
    UNION ALL
   
     SELECT
-      E'A' AS category,
+      'A' AS category,
       20 AS count
    UNION ALL
   
     SELECT
-      E'B' AS category,
+      'B' AS category,
       15 AS count
   
 ) AS UNUSED_TABLE_NAME  ),
@@ -39,17 +39,17 @@ GROUP BY Events1.category),
 t_1_Events2 AS (SELECT * FROM (
   
     SELECT
-      E'B' AS category,
+      'B' AS category,
       5 AS count
    UNION ALL
   
     SELECT
-      E'C' AS category,
+      'C' AS category,
       25 AS count
    UNION ALL
   
     SELECT
-      E'C' AS category,
+      'C' AS category,
       30 AS count
   
 ) AS UNUSED_TABLE_NAME  ),
@@ -62,7 +62,7 @@ GROUP BY Events2.category)
 SELECT * FROM (
   
     SELECT
-      E'events1' AS source,
+      'events1' AS source,
       Total1.category AS category,
       Total1.total AS total
     FROM
@@ -70,7 +70,7 @@ SELECT * FROM (
    UNION ALL
   
     SELECT
-      E'events2' AS source,
+      'events2' AS source,
       Total2.category AS category,
       Total2.total AS total
     FROM

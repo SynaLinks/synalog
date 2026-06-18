@@ -26,7 +26,7 @@ use std::collections::{HashMap, HashSet};
 use std::cell::RefCell;
 use indexmap::IndexMap;
 
-use crate::parser::{Json, JsonObject, CompilationMode};
+use crate::parser::{Json, JsonObject};
 use crate::compiler::{CompileResult, CompileError};
 use crate::compiler::annotations::{Annotations, Ground};
 use crate::compiler::dialects::{self, Dialect};
@@ -303,6 +303,109 @@ impl Logica {
 }
 
 // ---------------------------------------------------------------------------
+// Record-type collection (PostgreSQL composite-type DDL)
+// ---------------------------------------------------------------------------
+
+/// Recursively find record-literal nodes anywhere in `node` and register their
+/// (and any nested) record types into `out`, keyed by content-addressed name.
+fn collect_record_types(node: &Json, out: &mut IndexMap<String, Type>) {
+    match node {
+        Json::Object(o) => {
+            for key in ["record", "the_record"] {
+                if let Some(rec) = o.get(key) {
+                    if rec.is_object() && record_is_all_named(rec) {
+                        let ty = crate::compiler::expr_translate::record_literal_type(rec);
+                        register_record_type(&ty, out);
+                    }
+                }
+            }
+            for v in o.values() {
+                collect_record_types(v, out);
+            }
+        }
+        Json::Array(items) => items.iter().for_each(|it| collect_record_types(it, out)),
+        _ => {}
+    }
+}
+
+/// True if `rec` is a record node whose fields are all named (string `field`).
+/// Positional/synthetic records (e.g. negation's `Combine`) are not composite
+/// types and must be skipped.
+fn record_is_all_named(rec: &Json) -> bool {
+    rec.as_object()
+        .get("field_value")
+        .map(|fvs| {
+            let arr = fvs.as_array();
+            !arr.is_empty()
+                && arr.iter().all(|fv| {
+                    fv.as_object()
+                        .get("field")
+                        .map(|f| f.is_string())
+                        .unwrap_or(false)
+                })
+        })
+        .unwrap_or(false)
+}
+
+/// Register a record `Type` and all nested record types (dependencies first).
+/// Empty records (no named fields) are skipped — they are not valid composites.
+fn register_record_type(ty: &Type, out: &mut IndexMap<String, Type>) {
+    if let Type::Record { fields, .. } = ty {
+        if fields.is_empty() {
+            return;
+        }
+        for t in fields.values() {
+            register_record_type(t, out);
+        }
+        out.entry(dialects::record_type_name(ty))
+            .or_insert_with(|| ty.clone());
+    }
+}
+
+/// Emit the `CREATE TYPE` for `name`, recursing into nested record types first
+/// so dependencies are declared before the types that use them. Idempotent and
+/// single-line so the golden-test normalizer strips it.
+fn emit_record_type(
+    name: &str,
+    types: &IndexMap<String, Type>,
+    dialect: &dyn Dialect,
+    emitted: &mut HashSet<String>,
+    out: &mut String,
+) {
+    if !emitted.insert(name.to_string()) {
+        return;
+    }
+    let Some(Type::Record { fields, .. }) = types.get(name) else {
+        return;
+    };
+    for t in fields.values() {
+        if matches!(t, Type::Record { .. }) {
+            emit_record_type(&dialects::record_type_name(t), types, dialect, emitted, out);
+        }
+    }
+    // Canonical (sorted) field order, matching the value order in record_literal.
+    let mut items: Vec<(&String, &Type)> = fields.iter().collect();
+    items.sort_by(|a, b| a.0.cmp(b.0));
+    let cols: Vec<String> = items
+        .iter()
+        .map(|(k, t)| {
+            let col_type = match t {
+                Type::Record { .. } => dialects::record_type_name(t),
+                other => dialect.scalar_sql_type(other),
+            };
+            // Quote the field identifier so reserved words (e.g. `left`) are
+            // legal; lowercase names fold identically to unquoted field access.
+            format!("\"{}\" {}", k, col_type)
+        })
+        .collect();
+    out.push_str(&format!(
+        "DO $$ BEGIN if not exists (select 1 from pg_type where typname = '{name}') \
+         then create type {name} as ({}); end if; END $$;\n",
+        cols.join(", ")
+    ));
+}
+
+// ---------------------------------------------------------------------------
 // LogicaProgram — full program compilation (Python's `class LogicaProgram`)
 // ---------------------------------------------------------------------------
 
@@ -355,8 +458,6 @@ pub struct LogicaProgram {
     pub predicate_types: HashMap<String, HashMap<String, Type>>,
     /// Required type definitions from type inference.
     pub required_type_definitions: HashMap<String, String>,
-    /// Compilation mode (Synalog or Logica).
-    pub mode: CompilationMode,
 }
 
 impl LogicaProgram {
@@ -373,30 +474,18 @@ impl LogicaProgram {
         table_aliases: HashMap<String, String>,
         user_flags: HashMap<String, String>,
     ) -> CompileResult<Self> {
-        Self::new_with_mode(parsed, table_aliases, user_flags, CompilationMode::Logica)
+        Self::new_with_engine(parsed, table_aliases, user_flags, None)
     }
 
-    /// Create a new program with explicit compilation mode.
-    pub fn new_with_mode(
-        parsed: &Json,
-        table_aliases: HashMap<String, String>,
-        user_flags: HashMap<String, String>,
-        mode: CompilationMode,
-    ) -> CompileResult<Self> {
-        Self::new_with_mode_and_engine(parsed, table_aliases, user_flags, mode, None)
-    }
-
-    /// Create a new program with explicit compilation mode and an optional
-    /// engine override.
+    /// Create a new program with an optional engine override.
     ///
     /// When `engine_override` is `Some`, it takes precedence over any `@Engine`
     /// annotation in the source (and over the default engine). This lets callers
     /// select the SQL dialect programmatically instead of writing `@Engine(...)`.
-    pub fn new_with_mode_and_engine(
+    pub fn new_with_engine(
         parsed: &Json,
         table_aliases: HashMap<String, String>,
         user_flags: HashMap<String, String>,
-        mode: CompilationMode,
         engine_override: Option<&str>,
     ) -> CompileResult<Self> {
         let po = parsed.as_object();
@@ -412,7 +501,7 @@ impl LogicaProgram {
                 (name, r.clone())
             })
             .collect();
-        let temp_annotations = Annotations::extract(&temp_rules, mode)?;
+        let temp_annotations = Annotations::extract(&temp_rules)?;
         let engine = match engine_override {
             Some(e) => e.to_string(),
             None => temp_annotations.engine().to_string(),
@@ -455,7 +544,7 @@ impl LogicaProgram {
         let dollar_params = Self::extract_dollar_params_from_rules(&all_rules);
 
         // Extract annotations (recompute after functors added rules)
-        let mut annotations = Annotations::extract(&rules, mode)?;
+        let mut annotations = Annotations::extract(&rules)?;
         // An explicit engine override wins over any `@Engine` annotation so that
         // dialect-dependent behavior (dataset selection, type-checking, SQLite
         // specifics) stays consistent with the dialect chosen above.
@@ -523,7 +612,6 @@ impl LogicaProgram {
             predicate_signatures,
             predicate_types,
             required_type_definitions: HashMap::new(),
-            mode,
         })
     }
 
@@ -1215,6 +1303,39 @@ impl LogicaProgram {
         self.formatted_predicate_sql_impl(name, None, None)
     }
 
+    /// PostgreSQL composite-type DDL for every record shape in the program.
+    ///
+    /// psql exposes named record fields only through declared composite types,
+    /// so each `ROW(…)::logicarecordNNN` literal emitted by `record_literal`
+    /// needs a matching `CREATE TYPE`. We scan every record node in the program
+    /// (over-collecting head/argument records is harmless: the DDL is idempotent
+    /// and unreferenced types are simply never used), then emit dependency types
+    /// before the types that nest them. Names are content-addressed
+    /// (`dialects::record_type_name`), so they line up with the casts without any
+    /// shared state. Emitted as single-line `DO $$ … logicarecord … END $$;`
+    /// blocks, which the golden-test normalizer strips like the placeholder type.
+    fn record_type_definitions(&self, dialect: &dyn Dialect, body_sql: &str) -> String {
+        let mut types: IndexMap<String, Type> = IndexMap::new();
+        for (_, rule) in &self.rules {
+            collect_record_types(rule, &mut types);
+        }
+        // Emit only the types actually cast in the compiled body (`::name`), plus
+        // their nested dependencies (pulled in by `emit_record_type`'s recursion).
+        // This skips library-helper and other-rule records that the query never
+        // builds — some of which use SQL reserved words as field names.
+        let referenced: Vec<String> = types
+            .keys()
+            .filter(|n| body_sql.contains(&format!("::{}", n)))
+            .cloned()
+            .collect();
+        let mut emitted: HashSet<String> = HashSet::new();
+        let mut out = String::new();
+        for name in &referenced {
+            emit_record_type(name, &types, dialect, &mut emitted, &mut out);
+        }
+        out
+    }
+
     fn formatted_predicate_sql_impl(
         &self,
         name: &str,
@@ -1355,10 +1476,16 @@ impl LogicaProgram {
             result.push_str(&self.use_flags_as_parameters(&exec_ref.preamble));
         }
 
-        // Type definitions from type inference (only for engines that need explicit types)
+        // Type definitions. PostgreSQL exposes named record fields only through
+        // declared composite types, so generate `CREATE TYPE` DDL for every
+        // record shape the program builds (see `record_type_definitions`). Other
+        // engines either inline their record types (trino/presto/duckdb) or have
+        // none.
         let engine = self.annotations.engine();
-        let needs_type_definitions = engine == "duckdb" || engine == "psql";
-        if needs_type_definitions && !self.typing_preamble.is_empty() {
+        if engine == "psql" {
+            let dialect = dialects::get(engine)?;
+            result.push_str(&self.record_type_definitions(dialect.as_ref(), &sql));
+        } else if engine == "duckdb" && !self.typing_preamble.is_empty() {
             result.push_str(&self.typing_preamble);
         }
 

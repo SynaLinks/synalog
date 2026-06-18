@@ -11,67 +11,67 @@ drop type if exists logicarecord481217614 cascade; create type logicarecord48121
 -- Logica type: logicarecord383307722
 drop type if exists logicarecord383307722 cascade; create type logicarecord383307722 as struct(a timestamp);
 
--- Logica type: logicarecord848101342
-drop type if exists logicarecord848101342 cascade; create type logicarecord848101342 as struct(a text, v double);
-
 -- Logica type: logicarecord183863755
-drop type if exists logicarecord183863755 cascade; create type logicarecord183863755 as struct(arg text, value double);
+drop type if exists logicarecord183863755 cascade; create type logicarecord183863755 as struct(arg text, value numeric);
 
 -- Logica type: logicarecord519939597
 drop type if exists logicarecord519939597 cascade; create type logicarecord519939597 as struct(args text[], predicate text);
+
+-- Logica type: logicarecord848101342
+drop type if exists logicarecord848101342 cascade; create type logicarecord848101342 as struct(a text, v numeric);
 WITH t_2_Sales AS (SELECT * FROM (
   
     SELECT
-      E'North' AS col0,
-      E'Q1' AS col1,
+      'North' AS col0,
+      'Q1' AS col1,
       100 AS col2
    UNION ALL
   
     SELECT
-      E'North' AS col0,
-      E'Q2' AS col1,
+      'North' AS col0,
+      'Q2' AS col1,
       150 AS col2
    UNION ALL
   
     SELECT
-      E'North' AS col0,
-      E'Q3' AS col1,
+      'North' AS col0,
+      'Q3' AS col1,
       120 AS col2
    UNION ALL
   
     SELECT
-      E'South' AS col0,
-      E'Q1' AS col1,
+      'South' AS col0,
+      'Q1' AS col1,
       200 AS col2
    UNION ALL
   
     SELECT
-      E'South' AS col0,
-      E'Q2' AS col1,
+      'South' AS col0,
+      'Q2' AS col1,
       180 AS col2
    UNION ALL
   
     SELECT
-      E'South' AS col0,
-      E'Q3' AS col1,
+      'South' AS col0,
+      'Q3' AS col1,
       220 AS col2
    UNION ALL
   
     SELECT
-      E'East' AS col0,
-      E'Q1' AS col1,
+      'East' AS col0,
+      'Q1' AS col1,
       90 AS col2
    UNION ALL
   
     SELECT
-      E'East' AS col0,
-      E'Q2' AS col1,
+      'East' AS col0,
+      'Q2' AS col1,
       110 AS col2
    UNION ALL
   
     SELECT
-      E'East' AS col0,
-      E'Q3' AS col1,
+      'East' AS col0,
+      'Q3' AS col1,
       95 AS col2
   
 ) AS UNUSED_TABLE_NAME  ),

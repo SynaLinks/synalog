@@ -4,7 +4,7 @@
 
 use std::cell::RefCell;
 use std::collections::{HashMap, HashSet};
-use crate::parser::{Json, CompilationMode};
+use crate::parser::Json;
 use crate::compiler::{CompileResult, CompileError};
 use crate::compiler::annotations::Annotations;
 use crate::compiler::dialects::{self, Dialect};
@@ -66,7 +66,7 @@ impl LogicaProgram {
             let name = r.as_object()["head"].as_object()["predicate_name"].as_str().to_string();
             (name, r.clone())
         }).collect();
-        let temp_annotations = Annotations::extract(&temp_rules, CompilationMode::Logica)?;
+        let temp_annotations = Annotations::extract(&temp_rules)?;
         let engine = temp_annotations.engine().to_string();
 
         let unfolded_rules = crate::compiler::functors::unfold_recursion(&raw_rule_list, &engine)?;
@@ -95,7 +95,7 @@ impl LogicaProgram {
         }
 
         // Extract annotations (recompute after functors added rules)
-        let annotations = Annotations::extract(&rules, CompilationMode::Logica)?;
+        let annotations = Annotations::extract(&rules)?;
 
         // Build defined predicates set (non-annotation)
         let defined_predicates: HashSet<String> = rules

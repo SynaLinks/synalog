@@ -16,17 +16,17 @@ drop type if exists logicarecord519939597 cascade; create type logicarecord51993
 WITH t_0_Sales AS (SELECT * FROM (
   
     SELECT
-      E'N' AS region,
+      'N' AS region,
       10 AS amount
    UNION ALL
   
     SELECT
-      E'N' AS region,
+      'N' AS region,
       20 AS amount
    UNION ALL
   
     SELECT
-      E'S' AS region,
+      'S' AS region,
       30 AS amount
   
 ) AS UNUSED_TABLE_NAME  )
@@ -34,4 +34,4 @@ SELECT
   (SELECT
   SUM((CASE WHEN x_6.unnested_pod = 0 THEN Sales.amount ELSE NULL END)) AS logica_value
 FROM
-  t_0_Sales AS Sales, (select unnest([0]::double[]) as unnested_pod) as x_6) AS total ORDER BY total;
+  t_0_Sales AS Sales, (select unnest([0]::numeric[]) as unnested_pod) as x_6) AS total ORDER BY total;

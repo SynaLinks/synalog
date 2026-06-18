@@ -78,8 +78,9 @@ fn test_string_literal() {
 fn test_string_literal_with_quote() {
     let ql = make_duckdb_translator();
     let expr = crate::json_obj!("literal" => crate::json_obj!("the_string" => "it's"));
-    // DuckDB uses E'...' escape-string literals (matches logica's DuckDB dialect).
-    assert_eq!(ql.convert_to_sql(&expr).unwrap(), "E'it''s'");
+    // DuckDB uses standard `'...'` literals with `''` quote escaping (the old
+    // non-standard `E'...'` prefix was removed — see DEVIATIONS.md).
+    assert_eq!(ql.convert_to_sql(&expr).unwrap(), "'it''s'");
 }
 
 #[test]

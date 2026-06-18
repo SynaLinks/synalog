@@ -16,7 +16,7 @@ drop type if exists logicarecord519939597 cascade; create type logicarecord51993
 SELECT * FROM (
   
     SELECT
-      E'and' AS test_name,
+      'and' AS test_name,
       x_5.unnested_pod AS x
     FROM
       (select unnest(Range(10)) as unnested_pod) as x_5
@@ -25,7 +25,7 @@ SELECT * FROM (
    UNION ALL
   
     SELECT
-      E'complex' AS test_name,
+      'complex' AS test_name,
       x_5.unnested_pod AS x
     FROM
       (select unnest(Range(10)) as unnested_pod) as x_5

@@ -7,7 +7,7 @@ use crate::parser::Json;
 use crate::compiler::CompileResult;
 use crate::compiler::CompileError;
 use crate::compiler::universe::IterationDef;
-use crate::compiler::{CompilationMode, home_schema, test_schema};
+use crate::compiler::{home_schema, test_schema};
 
 /// Known annotating predicates (matches Python's ANNOTATING_PREDICATES).
 const ANNOTATING_PREDICATES: &[&str] = &[
@@ -38,8 +38,6 @@ pub struct Annotations {
     pub bare_aggregation: HashMap<String, String>,
     /// Engine sub-keys (motherduck, threads, type_checking, clingo).
     pub engine_options: HashMap<String, Json>,
-    /// Compilation mode (Synalog or Logica).
-    pub mode: CompilationMode,
 }
 
 #[derive(Debug, Clone)]
@@ -74,7 +72,7 @@ fn extract_string_literal(expr: &Json) -> Option<String> {
 impl Annotations {
     /// Extract annotations from parsed rules.
     /// Follows Python's two-pass approach: first @DefineFlag/@ResetFlagValue, then the rest.
-    pub fn extract(rules: &[(String, Json)], mode: CompilationMode) -> CompileResult<Self> {
+    pub fn extract(rules: &[(String, Json)]) -> CompileResult<Self> {
         let mut engine = "duckdb".to_string();
         let mut engine_options: HashMap<String, Json> = HashMap::new();
         let mut flag_defaults: HashMap<String, String> = HashMap::new();
@@ -311,7 +309,6 @@ impl Annotations {
             compile_as_tvf,
             bare_aggregation,
             engine_options,
-            mode,
         })
     }
 
@@ -410,8 +407,8 @@ impl Annotations {
         if let Some(ref ds) = self.dataset_override {
             return ds.clone();
         }
-        let home = home_schema(self.mode);
-        let test = test_schema(self.mode);
+        let home = home_schema();
+        let test = test_schema();
         match self.engine.as_str() {
             "psql" | "duckdb" => home.to_string(),
             "sqlite" if self.user_attached_databases.contains_key(home) => home.to_string(),
@@ -427,7 +424,7 @@ impl Annotations {
             .map(|(k, v)| (k.clone(), v.clone()))
             .collect();
         // Auto-attach test schema for SQLite when @Ground is used and not user-attached
-        let test = test_schema(self.mode);
+        let test = test_schema();
         if self.engine == "sqlite"
             && !self.user_attached_databases.contains_key(test)
             && !self.grounded_predicates().is_empty()
@@ -469,7 +466,7 @@ impl Annotations {
             preamble.push_str(&attach);
             preamble.push_str("\n\n");
         }
-        let home = home_schema(self.mode);
+        let home = home_schema();
         match self.engine.as_str() {
             "psql" => {
                 preamble.push_str(&format!(

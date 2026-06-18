@@ -19,48 +19,48 @@ WITH t_0_Orders AS (SELECT * FROM (
       1 AS order_id,
       101 AS customer_id,
       50 AS amount,
-      E'shipped' AS status
+      'shipped' AS status
    UNION ALL
   
     SELECT
       2 AS order_id,
       102 AS customer_id,
       75 AS amount,
-      E'pending' AS status
+      'pending' AS status
    UNION ALL
   
     SELECT
       3 AS order_id,
       101 AS customer_id,
       100 AS amount,
-      E'shipped' AS status
+      'shipped' AS status
    UNION ALL
   
     SELECT
       4 AS order_id,
       103 AS customer_id,
       25 AS amount,
-      E'cancelled' AS status
+      'cancelled' AS status
   
 ) AS UNUSED_TABLE_NAME  ),
 t_1_Customers AS (SELECT * FROM (
   
     SELECT
       101 AS customer_id,
-      E'Alice' AS name,
-      E'gold' AS tier
+      'Alice' AS name,
+      'gold' AS tier
    UNION ALL
   
     SELECT
       102 AS customer_id,
-      E'Bob' AS name,
-      E'silver' AS tier
+      'Bob' AS name,
+      'silver' AS tier
    UNION ALL
   
     SELECT
       103 AS customer_id,
-      E'Charlie' AS name,
-      E'bronze' AS tier
+      'Charlie' AS name,
+      'bronze' AS tier
   
 ) AS UNUSED_TABLE_NAME  )
 SELECT

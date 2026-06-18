@@ -12,43 +12,19 @@ use crate::parser::rewrite;
 use crate::parser::span::SpanString;
 use crate::parser::traverse::*;
 
-/// Compilation mode for Synalog.
-/// - `Synalog`: Strict mode - only named arguments allowed, SQL uses actual column names
-/// - `Logica`: Compatibility mode - positional arguments allowed, SQL uses col{i} format
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Default)]
-pub enum CompilationMode {
-    Synalog,
-    #[default]
-    Logica,
-}
-
 // Incantation mode: when the magic string is found in the source,
 // extra user-defined infix operators and generic-call characters are enabled.
 thread_local! {
     static FUN_MODE: Cell<bool> = const { Cell::new(false) };
-    // Default to Logica mode for backward compatibility with existing tests/code
-    static COMPILATION_MODE: Cell<CompilationMode> = const { Cell::new(CompilationMode::Logica) };
 }
 
 fn is_fun_mode() -> bool {
     FUN_MODE.with(|c| c.get())
 }
 
-fn is_logica_mode() -> bool {
-    COMPILATION_MODE.with(|c| c.get() == CompilationMode::Logica)
-}
-
-fn set_compilation_mode(mode: CompilationMode) {
-    COMPILATION_MODE.with(|c| c.set(mode));
-}
-
-/// Get the value field name based on current compilation mode.
+/// The internal value field name used for the value of a function-style rule.
 fn value_field_name() -> &'static str {
-    if is_logica_mode() {
-        "logica_value"
-    } else {
-        "synalog_value"
-    }
+    "logica_value"
 }
 
 fn enact_incantations(code: &str) {
@@ -339,7 +315,6 @@ pub fn parse_record(input: &SpanString) -> ParseResult<Option<Json>> {
             &s.slice(1, s.len() - 1),
             true,
             false,
-            false, // Record literals: no positional args in Synalog mode
         )?));
     }
     Ok(None)
@@ -349,7 +324,6 @@ pub fn parse_record_internals(
     input: &SpanString,
     is_record_literal: bool,
     is_aggregation_allowed: bool,
-    allow_positional: bool,
 ) -> ParseResult<Json> {
     let s = strip(input);
     if split(&s, ":-")?.len() > 1 {
@@ -468,14 +442,11 @@ pub fn parse_record_internals(
                             result.push(Json::Object(fv));
                         }
                         Ok(_) => {
-                            // In Synalog mode, positional arguments are not allowed
-                            // (unless allow_positional is true, e.g., for annotations)
-                            if !is_logica_mode() && !allow_positional {
-                                return Err(ParsingException::new(
-                                    "Synalog requires named arguments. Use `field_name: value` syntax instead of positional arguments.",
-                                    field_value.clone(),
-                                ));
-                            }
+                            // Positional arguments parse to `col{i}` fields. They
+                            // are rejected later by the verifier's positional
+                            // check (Synalog requires named arguments); parsing
+                            // them keeps that error in the verifier, reported
+                            // alongside the other structural errors.
                             if positional_ok {
                                 let mut fv = JsonObject::new();
                                 fv.insert("field".into(), Json::Int(idx as i64));
@@ -636,7 +607,7 @@ fn parse_infix(
             if (op == "!" || op == "-") && left.is_empty() {
                 let mut call = JsonObject::new();
                 call.insert("predicate_name".into(), Json::Str(op.to_string()));
-                call.insert("record".into(), parse_record_internals(&right, false, false, false)?);
+                call.insert("record".into(), parse_record_internals(&right, false, false)?);
                 return Ok(Some(Json::Object(call)));
             }
             if op == "~" && left.is_empty() {
@@ -853,9 +824,7 @@ pub fn parse_call(s: &SpanString, is_aggregation_allowed: bool) -> ParseResult<O
     match generic {
         None => Ok(None),
         Some((pred_name, args_span)) => {
-            // Annotations (predicates starting with @) always allow positional arguments
-            let is_annotation = pred_name.starts_with('@');
-            let args = parse_record_internals(&args_span, false, is_aggregation_allowed, is_annotation)?;
+            let args = parse_record_internals(&args_span, false, is_aggregation_allowed)?;
             let mut call = JsonObject::new();
             call.insert("predicate_name".into(), Json::Str(pred_name));
             call.insert("record".into(), args);
@@ -870,7 +839,7 @@ fn parse_array_sub(s: &SpanString) -> ParseResult<Option<Json>> {
         None => Ok(None),
         Some((pred_name, args_span)) => {
             // Array subscripts always use positional indices
-            let args = parse_record_internals(&args_span, false, false, true)?;
+            let args = parse_record_internals(&args_span, false, false)?;
             let array = parse_expression(&SpanString::new(pred_name))?;
             Ok(Some(nested_element(s, &array, &args)?))
         }
@@ -1415,7 +1384,7 @@ fn grab_denotation(
                     head.clone(),
                 ));
             }
-            let args = parse_record_internals(&arg, false, false, false)?;
+            let args = parse_record_internals(&arg, false, false)?;
             return Ok((head_parts[0].clone(), true, Some(args)));
         }
         return Ok((head.clone(), false, None));
@@ -1960,24 +1929,10 @@ fn parse_import(
     Ok(parsed)
 }
 
-/// Parse a Synalog/Logica program file and return the AST as JSON.
-/// Uses Logica mode by default for backward compatibility.
+/// Parse a Synalog program file and return the AST as JSON.
 pub fn parse_file(content: &str, file_name: Option<&str>, import_root: &[String]) -> ParseResult<Json> {
-    parse_file_with_mode(content, file_name, import_root, CompilationMode::Logica)
-}
-
-/// Parse a Synalog/Logica program file with explicit compilation mode.
-/// - `Synalog`: Strict mode - only named arguments allowed
-/// - `Logica`: Compatibility mode - positional arguments allowed
-pub fn parse_file_with_mode(
-    content: &str,
-    file_name: Option<&str>,
-    import_root: &[String],
-    mode: CompilationMode,
-) -> ParseResult<Json> {
-    // Reset fun mode and set compilation mode for each top-level parse.
+    // Reset fun mode for each top-level parse.
     FUN_MODE.with(|c| c.set(false));
-    set_compilation_mode(mode);
     let mut parsed_imports = BTreeMap::new();
     let mut in_progress = BTreeSet::new();
     let fname = file_name.unwrap_or("main");

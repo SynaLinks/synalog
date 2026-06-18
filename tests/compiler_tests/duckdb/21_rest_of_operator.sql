@@ -19,21 +19,21 @@ WITH t_1_Data AS (SELECT * FROM (
       1 AS a,
       2 AS b,
       3 AS c,
-      E'x' AS d
+      'x' AS d
    UNION ALL
   
     SELECT
       4 AS a,
       5 AS b,
       6 AS c,
-      E'y' AS d
+      'y' AS d
    UNION ALL
   
     SELECT
       7 AS a,
       8 AS b,
       9 AS c,
-      E'z' AS d
+      'z' AS d
   
 ) AS UNUSED_TABLE_NAME  ),
 t_0_Subset AS (SELECT

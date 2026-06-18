@@ -11,8 +11,8 @@ WITH t_0_Person AS (SELECT * FROM (
   
 ) AS UNUSED_TABLE_NAME  )
 SELECT
-  Person.id AS col0,
-  JSON_EXTRACT(Person.info, "$.name") AS col1,
-  JSON_EXTRACT(JSON_EXTRACT(Person.info, "$.contact"), "$.email") AS col2
+  Person.id AS id,
+  JSON_EXTRACT(Person.info, "$.name") AS name,
+  JSON_EXTRACT(JSON_EXTRACT(Person.info, "$.contact"), "$.email") AS email
 FROM
   t_0_Person AS Person ORDER BY id;

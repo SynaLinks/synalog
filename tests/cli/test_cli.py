@@ -98,35 +98,40 @@ def test_print_outputs_sql(program_file):
     assert "SELECT" in result.stdout
 
 
-def test_parse_outputs_json(program_file):
-    result = synalog(str(program_file), "parse")
-    assert result.returncode == 0, result.stderr
-    ast = json.loads(result.stdout)
-    assert any(r["head"]["predicate_name"] == "Doubled" for r in ast["rule"])
+def test_parse_and_check_are_not_commands(program_file):
+    # parse/check are no longer exposed; only print/run remain.
+    for removed in ("parse", "check"):
+        result = synalog(str(program_file), removed)
+        assert result.returncode == 2
+        assert f"unknown command '{removed}'" in result.stderr
 
 
-def test_check_valid_program(program_file):
-    result = synalog(str(program_file), "check")
-    assert result.returncode == 0
-    assert result.stderr == ""
-
-
-def test_check_invalid_program(tmp_path):
+def test_run_validates_before_executing(tmp_path):
+    # A program that parses but fails verification must be rejected by run,
+    # surfacing the verifier's error rather than reaching the engine.
     path = tmp_path / "bad.l"
-    path.write_text('Bad(x) :- nonsense !!;\n')
-    result = synalog(str(path), "check")
+    path.write_text('Bad(x:) distinct :- x == SqlExpr("1", {});\n')
+    result = synalog(str(path), "run", "Bad")
     assert result.returncode == 1
-    assert result.stderr != ""
+    assert "SqlExpr" in result.stderr
+
+
+def test_print_validates_before_compiling(tmp_path):
+    path = tmp_path / "bad.l"
+    path.write_text('Bad(x:) distinct :- x == SqlExpr("1", {});\n')
+    result = synalog(str(path), "print", "Bad")
+    assert result.returncode == 1
+    assert "SqlExpr" in result.stderr
 
 
 def test_stdin_program():
-    result = synalog("-", "print", "Greeting", stdin='Greeting("hi");\n')
+    result = synalog("-", "print", "Greeting", stdin='Greeting(text: "hi");\n')
     assert result.returncode == 0, result.stderr
     assert "SELECT" in result.stdout
 
 
 def test_inline_program_run():
-    result = synalog("run", "-c", 'Greeting("hi");', "Greeting")
+    result = synalog("run", "-c", 'Greeting(text: "hi");', "Greeting")
     assert result.returncode == 0, result.stderr
     assert "| hi" in result.stdout
 
@@ -141,26 +146,27 @@ def test_inline_program_run_with_limit_and_offset():
 
 def test_inline_program_predicate_before_option():
     # click may bind the first positional to FILE; with -c it is a predicate.
-    result = synalog("print", "Greeting", "-c", 'Greeting("hi");')
+    result = synalog("print", "Greeting", "-c", 'Greeting(text: "hi");')
     assert result.returncode == 0, result.stderr
     assert "SELECT" in result.stdout
 
 
-def test_inline_program_check():
-    assert synalog("check", "-c", 'Greeting("hi");').returncode == 0
-    bad = synalog("check", "-c", "Bad(x) :- nonsense !!;")
+def test_inline_program_validated_on_run():
+    ok = synalog("run", "-c", 'Greeting(text: "hi");', "Greeting")
+    assert ok.returncode == 0, ok.stderr
+    bad = synalog("run", "-c", 'Bad(x:) distinct :- x == SqlExpr("1", {});', "Bad")
     assert bad.returncode == 1
-    assert bad.stderr != ""
+    assert "SqlExpr" in bad.stderr
 
 
 def test_inline_program_and_file_conflict(program_file):
-    result = synalog(str(program_file), "check", "-c", 'Greeting("hi");')
+    result = synalog(str(program_file), "run", "-c", 'Greeting(text: "hi");')
     assert result.returncode == 2
     assert "mutually exclusive" in result.stderr
 
 
 def test_inline_program_missing_predicates():
-    result = synalog("run", "-c", 'Greeting("hi");')
+    result = synalog("run", "-c", 'Greeting(text: "hi");')
     assert result.returncode == 2
     assert "PREDICATES" in result.stderr
 
@@ -186,10 +192,10 @@ def test_import_root_flag(tmp_path):
     (tmp_path / "elsewhere").mkdir()
     main = tmp_path / "elsewhere" / "main.l"
     main.write_text("import lib.util.T;\nOut(y:) :- T(x:), y == x;\n")
-    failing = synalog(str(main), "check", cwd="/")
+    failing = synalog(str(main), "print", "Out", cwd="/")
     assert failing.returncode == 1
     passing = synalog(
-        str(main), "check", "--import-root", str(tmp_path / "roots"), cwd="/"
+        str(main), "print", "Out", "--import-root", str(tmp_path / "roots"), cwd="/"
     )
     assert passing.returncode == 0, passing.stderr
 
@@ -198,7 +204,7 @@ def test_engine_annotation_picks_runner(tmp_path):
     # trino has a runner now; without the driver or a DSN it should fail with a
     # trino-specific message, not the generic "no local runner".
     path = tmp_path / "trino.l"
-    path.write_text('@Engine("trino");\nGreeting("hi");\n')
+    path.write_text('@Engine("trino");\nGreeting(text: "hi");\n')
     result = synalog(str(path), "run", "Greeting")
     assert result.returncode == 1
     assert "trino" in result.stderr
@@ -208,7 +214,7 @@ def test_engine_annotation_picks_runner(tmp_path):
 def test_unknown_engine_has_no_runner(tmp_path):
     # A dialect with no runner at all still gets the generic message.
     path = tmp_path / "p.l"
-    path.write_text("Greeting(\"hi\");\n")
+    path.write_text("Greeting(text: \"hi\");\n")
     result = synalog(str(path), "run", "Greeting", "--engine", "duckdb")
     # sanity: duckdb runs fine; the generic message is exercised via run_sql unit test
     assert result.returncode == 0, result.stderr
@@ -282,7 +288,7 @@ def test_connect_resolves_for_run(tmp_path, monkeypatch):
     monkeypatch.setenv("SYNALOG_CONFIG_DIR", str(tmp_path))
     synalog("connect", "trino", "trino://nobody@127.0.0.1:1/memory/default")
     path = tmp_path / "p.l"
-    path.write_text('@Engine("trino");\nGreeting("hi");\n')
+    path.write_text('@Engine("trino");\nGreeting(text: "hi");\n')
     result = synalog(str(path), "run", "Greeting")
     assert result.returncode == 1
     assert "needs a connection string" not in result.stderr
@@ -303,7 +309,7 @@ def test_dotenv_in_cwd_provides_dsn(tmp_path, monkeypatch):
     (tmp_path / ".env").write_text(
         "SYNALOG_TRINO_DSN=trino://nobody@127.0.0.1:1/memory/default\n"
     )
-    (tmp_path / "p.l").write_text('@Engine("trino");\nGreeting("hi");\n')
+    (tmp_path / "p.l").write_text('@Engine("trino");\nGreeting(text: "hi");\n')
     result = synalog("p.l", "run", "Greeting", cwd=tmp_path)
     assert result.returncode == 1
     assert "needs a connection string" not in result.stderr
@@ -320,7 +326,7 @@ def test_dotenv_loaded_from_program_directory(tmp_path, monkeypatch):
     (project / ".env").write_text(
         "SYNALOG_TRINO_DSN=trino://nobody@127.0.0.1:1/memory/default\n"
     )
-    (project / "p.l").write_text('@Engine("trino");\nGreeting("hi");\n')
+    (project / "p.l").write_text('@Engine("trino");\nGreeting(text: "hi");\n')
     result = synalog(str(project / "p.l"), "run", "Greeting", cwd="/")
     assert result.returncode == 1
     assert "needs a connection string" not in result.stderr
@@ -349,34 +355,6 @@ def test_dotenv_sets_config_dir(tmp_path, monkeypatch):
     )
     assert saved.returncode == 0, saved.stderr
     assert (store / "connections.json").is_file()
-
-
-def test_import_converts_ontology_file(tmp_path):
-    onto = tmp_path / "o.ttl"
-    onto.write_text(
-        "@prefix : <http://ex.org/> .\n"
-        "@prefix owl: <http://www.w3.org/2002/07/owl#> .\n"
-        ":Person a owl:Class .\n"
-        ':alice a :Person .\n'
-    )
-    result = synalog("import", str(onto))
-    assert result.returncode == 0, result.stderr
-    assert "Person(" in result.stdout
-    assert "http://ex.org/alice" in result.stdout
-    # the converted program is valid Synalog
-    assert synalog("-", "check", stdin=result.stdout).returncode == 0
-
-
-def test_import_missing_file():
-    result = synalog("import", "/no/such/ontology.owl")
-    assert result.returncode == 1
-    assert "No such file" in result.stderr
-
-
-def test_import_usage_error():
-    result = synalog("import")
-    assert result.returncode == 2
-    assert "import <ontology-file-or-url>" in result.stderr
 
 
 def test_missing_predicate_argument(program_file):
@@ -441,15 +419,9 @@ def test_missing_file():
     assert "No such file" in result.stderr
 
 
-def test_parse_takes_no_predicates(program_file):
-    result = synalog(str(program_file), "parse", "Doubled")
-    assert result.returncode == 2
-    assert "takes no predicate arguments" in result.stderr
-
-
 def test_repl_session():
     session = (
-        'Greeting("Hello world");\n'
+        'Greeting(text: "Hello world");\n'
         "Greeting\n"
         "Bad(x) :- nonsense !!;\n"
         ".show\n"
@@ -496,7 +468,7 @@ def test_load_flag(tmp_path, employees_csv, engine):
 
 def test_load_flag_malformed(tmp_path):
     program = tmp_path / "p.l"
-    program.write_text('Greeting("hi");\n')
+    program.write_text('Greeting(text: "hi");\n')
     result = synalog(str(program), "run", "Greeting", "--load", "employees")
     assert result.returncode == 2
     assert "TABLE=PATH" in result.stderr
@@ -549,7 +521,7 @@ def test_compile_all_excludes_library_predicates():
 
 def test_repl_engine_switch_and_sql():
     session = (
-        "Digit(x) :- x in [1, 2];\n"
+        "Digit(x:) :- x in [1, 2];\n"
         ".engine sqlite\n"
         ".sql Digit\n"
         "Digit\n"
@@ -559,38 +531,6 @@ def test_repl_engine_switch_and_sql():
     assert result.returncode == 0, result.stderr
     assert "SELECT" in result.stdout
     assert "| 1" in result.stdout and "| 2" in result.stdout
-
-
-def test_init_scaffolds_project(tmp_path):
-    result = synalog("init", stdin="kb\nA test knowledge base\n", cwd=tmp_path)
-    assert result.returncode == 0, result.stderr
-    root = tmp_path / "kb"
-    assert (root / ".agents" / "skills" / "synalog" / "SKILL.md").is_file()
-    assert (root / ".gitignore").is_file()
-    assert (root / ".env.template").is_file()
-    assert ".env" in (root / ".gitignore").read_text()
-    agents = (root / "AGENTS.md").read_text()
-    assert "# kb" in agents and "A test knowledge base" in agents
-    # the starter program (with its lib/ import) validates and runs out of the box
-    assert synalog("example.l", "check", cwd=root).returncode == 0
-    run = synalog(
-        "example.l",
-        "run",
-        "TopRegion",
-        "--csv",
-        "--load",
-        "sales=data/sales.csv",
-        cwd=root,
-    )
-    assert run.returncode == 0, run.stderr
-    assert "south,20" in run.stdout
-
-
-def test_init_refuses_existing_directory(tmp_path):
-    (tmp_path / "kb").mkdir()
-    result = synalog("init", "kb", stdin="\n", cwd=tmp_path)
-    assert result.returncode == 1
-    assert "already exists" in result.stderr
 
 
 # ---------------------------------------------------------------------------
@@ -666,12 +606,6 @@ def test_search_to_csv(customers_file):
     assert result.stdout.splitlines() == ["name,city", "Globex,Berlin"]
 
 
-def test_search_rejected_on_check(customers_file):
-    result = synalog(str(customers_file), "check", "--search", "x")
-    assert result.returncode == 2
-    assert "--search applies to print/run only" in result.stderr
-
-
 def test_repl_search_command():
     session = (
         'Customer(name: "Acme Corp", city: "Paris");\n'
@@ -688,7 +622,7 @@ def test_repl_search_command():
 def test_repl_help_show_and_clear():
     session = (
         ".help\n"
-        'Greeting("hi");\n'
+        'Greeting(text: "hi");\n'
         ".show\n"
         ".clear\n"
         ".show\n"
@@ -697,7 +631,7 @@ def test_repl_help_show_and_clear():
     result = synalog(stdin=session)
     assert result.returncode == 0, result.stderr
     assert ".help" in result.stdout and ".exit" in result.stdout  # help text
-    assert 'Greeting("hi");' in result.stdout  # .show before clear
+    assert 'Greeting(text: "hi");' in result.stdout  # .show before clear
     # .clear wipes the program; the trailing .show reports it empty
     assert "(empty program)" in result.stdout
 

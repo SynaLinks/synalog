@@ -11,7 +11,7 @@ Synalog is a logic programming language from the Datalog family. Programs are `.
 
 1. Put source data files (csv, tsv, json, jsonl, parquet) in `data/`.
 2. Write rules in a `.l` program.
-3. **Always validate before running**: `synalog program.l check`. It reports all structural errors at once (unbound head variables, unsafe negation/aggregation, missing base cases, arity mismatches, unbounded recursion). Fix and re-check until it exits 0 (see *Reading errors* below).
+3. **Validation is automatic**: `run` (and `print`) verify the whole program before doing anything else, reporting all structural errors at once (unbound head variables, unsafe negation/aggregation, missing base cases, arity mismatches, unbounded recursion) and exiting 1 without producing SQL or output. There is no separate `check` step — fix the reported errors and re-run until it succeeds (see *Reading errors* below).
 4. Execute a predicate:
 
 ```bash
@@ -28,11 +28,22 @@ CLI notes (argument order follows logica: FILE first, then the command):
 - Quick experiments without a file: `synalog -c 'Digit(d) :- d in [1, 2, 3];' run Digit`
 - `-` as FILE reads the program from stdin.
 
+## Examples
+
+Runnable programs ship with this skill under [`examples/`](examples/). Each one validates clean and runs; read them alongside the sections below, or run them directly (`cd` into `examples/` first):
+
+| File | Shows | Run |
+| --- | --- | --- |
+| [`examples/sales.l`](examples/sales.l) | Tables → concepts → rules, imports, aggregation, the temporal pipeline | `synalog sales.l run TopRegion MonthlySales --load sales=data/sales.csv` |
+| [`examples/lib/metrics.l`](examples/lib/metrics.l) | A reusable `lib/` module imported by `sales.l` | `synalog lib/metrics.l run TotalByRegion --load sales=data/sales.csv` |
+| [`examples/knowledge_graph.l`](examples/knowledge_graph.l) | Nodes + edges + traversal (self-contained facts) | `synalog knowledge_graph.l run TeamMate` |
+| [`examples/recursion.l`](examples/recursion.l) | `@Recursive` transitive closure over an org chart | `synalog recursion.l run AllManagers` |
+
 ## Reading errors
 
 Errors go to stderr; exit code 1 means a program error, 2 a CLI usage mistake. A failing `run` produces no partial output. There are three layers, in processing order:
 
-**Syntax errors** (any command) — the parser stops at the *first* error and echoes the broken statement with a marker at the failure point (`<EMPTY>` where something was expected):
+**Syntax errors** — the parser stops at the *first* error and echoes the broken statement with a marker at the failure point (`<EMPTY>` where something was expected):
 
 ```
 Parsing:
@@ -41,9 +52,9 @@ Bad(x) :- x ==<EMPTY>
 [ Error ] Could not parse expression of a value.
 ```
 
-Fix the quoted statement and re-run `check`: later syntax errors only surface once earlier ones are fixed, so loop until it parses.
+Fix the quoted statement and re-run: later syntax errors only surface once earlier ones are fixed, so loop until it parses.
 
-**Verification errors** (`check`, after parsing succeeds) — reported *all at once*, one per line, e.g. `Unbound variable 'y' in head of rule: A(x:, y:) :- B(x:)`. Fix the whole list in one pass, then re-check.
+**Verification errors** (after parsing succeeds, before any SQL) — reported *all at once*, one per line, e.g. `Unbound variable 'y' in head of rule: A(x:, y:) :- B(x:)`. Fix the whole list in one pass, then re-run.
 
 **Compile errors** (`print`/`run`) — SQL generation failed, e.g. `Compile error: No rules are defining 'Missing', but compilation was requested.` Usually a typo in the predicate name passed to the command, or an imported predicate run by its short name (run it from its own module instead).
 
@@ -61,7 +72,7 @@ Keep reusable predicates in `lib/` modules and import them from top-level progra
 
 ## Imports
 
-`import path.to.file.Pred;` imports a predicate from another module: the dotted path maps to the file `path/to/file.l`, resolved against the importing file's directory, then the current directory (override with `--import-root DIR`, repeatable).
+`import path.to.file.Pred;` imports a predicate from another module: the dotted path maps to the file `path/to/file.l`, resolved against the importing file's directory, then the current directory (override with `--import-root DIR`, repeatable). [`examples/sales.l`](examples/sales.l) imports from [`examples/lib/metrics.l`](examples/lib/metrics.l) exactly this way.
 
 ```logica
 # lib/metrics.l
@@ -85,7 +96,7 @@ TopRegion(region:, total:) :- TotalByRegion(region:, total:);
 
 ## Program structure
 
-Programs have three sections. A database table is referenced by its database name (lowercase); the `# Tables` section maps it once to a PascalCase table predicate, and everything else builds on the predicate.
+Programs have three sections. A database table is referenced by its database name (lowercase); the `# Tables` section maps it once to a PascalCase table predicate, and everything else builds on the predicate. See [`examples/sales.l`](examples/sales.l) for a complete program with all three sections.
 
 ```logica
 @Engine("duckdb");
@@ -161,7 +172,7 @@ ToString(created_at) >= "2024-01-01", ToString(created_at) < "2024-02-01";  # IS
 
 ## Recursion
 
-Base case + recursive case, with `@Recursive(Pred, iterations)` before the rules. Use for org charts, taxonomies, BOM, referral chains. The iteration limit bounds path length, so cyclic graphs terminate.
+Base case + recursive case, with `@Recursive(Pred, iterations)` before the rules. Use for org charts, taxonomies, BOM, referral chains. The iteration limit bounds path length, so cyclic graphs terminate. Full runnable version: [`examples/recursion.l`](examples/recursion.l).
 
 ```logica
 @Recursive(AllManagers, 20);
@@ -186,7 +197,7 @@ SMBRevenue        := SegmentRevenue(Segment: SMBCustomer);
 
 ## Knowledge graphs
 
-When data has entities and relationships, model entity concepts (first column = primary key, sorted by it) and relationship concepts, then write rules that traverse.
+When data has entities and relationships, model entity concepts (first column = primary key, sorted by it) and relationship concepts, then write rules that traverse. Worked example: [`examples/knowledge_graph.l`](examples/knowledge_graph.l).
 
 - Edges join **through node concepts**, not raw tables — a node filter then applies to all edges automatically.
 - Preserve URI/URL columns in nodes (`url`, `href`, `permalink`, ...) — dropping them makes the node useless for action.

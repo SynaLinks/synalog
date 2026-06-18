@@ -7,6 +7,55 @@ use crate::parser::Json;
 use crate::compiler::CompileResult;
 use crate::compiler::CompileError;
 use crate::compiler::dialects::Dialect;
+use crate::compiler::type_inference::Type;
+
+/// Best-effort SQL type of a record-literal field, read from its value
+/// expression AST node. Typed dialects (trino/presto/psql) need a field type to
+/// build named record literals; literal-valued fields — the only ones that
+/// reach a compiled query — resolve precisely, and anything else (variables,
+/// calls) falls back to `String`, a type every engine accepts for a column that
+/// is constructed but, lacking inference here, not otherwise constrained.
+fn record_field_type(expr: &Json) -> Type {
+    let obj = expr.as_object();
+    if let Some(rec) = obj.get("record") {
+        return record_literal_type(rec);
+    }
+    if let Some(lit) = obj.get("literal") {
+        let lo = lit.as_object();
+        if let Some(rec) = lo.get("the_record") {
+            return record_literal_type(rec);
+        }
+        if lo.contains_key("the_number") {
+            return Type::Number;
+        }
+        if lo.contains_key("the_bool") {
+            return Type::Bool;
+        }
+        if lo.contains_key("the_string") {
+            return Type::String;
+        }
+    }
+    Type::String
+}
+
+/// Build a `Type::Record` from a `record` AST node by typing each field value.
+/// Positional (non-string) fields are skipped: only named-field records become
+/// SQL records here (synthetic nodes like negation's `IsNull(Combine= …)` carry
+/// a positional field and are not record literals).
+pub(crate) fn record_literal_type(record: &Json) -> Type {
+    let mut fields = HashMap::new();
+    for fv in record.as_object()["field_value"].as_array() {
+        let fo = fv.as_object();
+        let Some(field) = fo.get("field").filter(|f| f.is_string()) else {
+            continue;
+        };
+        let name = field.as_str().to_string();
+        let val = &fo["value"];
+        let e = val.as_object().get("expression").unwrap_or(val);
+        fields.insert(name, record_field_type(e));
+    }
+    Type::Record { fields, is_opened: false }
+}
 
 // Remaining missing features from Python expr_translate.py:
 //   - VariableMaybeTableSQLite(): SQLite table-to-record expansion using type inference.
@@ -515,8 +564,8 @@ impl<'a> ExprTranslator<'a> {
             TemplateParens(String),
             /// Format as array literal.
             ArrayLiteral(String),
-            /// Format as record/struct literal with given field names.
-            Record(Vec<String>),
+            /// Format as record/struct literal with given (field name, type) pairs.
+            Record(Vec<(String, Type)>),
             /// Subscript access. sub_str=Some → pop 1; None → pop 2.
             Subscript { sub_str: Option<String>, record_is_table: bool },
             /// Build CASE WHEN ... THEN ... ELSE ... END.
@@ -536,6 +585,11 @@ impl<'a> ExprTranslator<'a> {
             Analytic(String),
             /// Join N results with ", ".
             JoinComma,
+            /// Lower `Format(fmt, args…)` to a `||` concatenation chain for
+            /// engines without a printf-style function (PrestoDB). The first
+            /// result is the format-string literal; the rest fill its `%s`
+            /// placeholders.
+            FormatConcat,
         }
 
         enum Task<'b> {
@@ -616,13 +670,14 @@ impl<'a> ExprTranslator<'a> {
                         }
                         if let Some(record) = lo.get("the_record") {
                             let fvs = record.as_object()["field_value"].as_array();
-                            let mut fields = Vec::with_capacity(fvs.len());
+                            let mut fields: Vec<(String, Type)> = Vec::with_capacity(fvs.len());
                             let mut exprs: Vec<&Json> = Vec::with_capacity(fvs.len());
                             for fv in fvs {
                                 let fo = fv.as_object();
-                                fields.push(fo["field"].as_str().to_string());
                                 let val = &fo["value"];
-                                exprs.push(val.as_object().get("expression").unwrap_or(val));
+                                let e = val.as_object().get("expression").unwrap_or(val);
+                                fields.push((fo["field"].as_str().to_string(), record_field_type(e)));
+                                exprs.push(e);
                             }
                             let n = exprs.len();
                             tasks.push(Task::Combine(CK::Record(fields), n));
@@ -1027,6 +1082,10 @@ impl<'a> ExprTranslator<'a> {
                             // subtraction, not unary negation).
                             let tmpl = &self.built_in_infix_operators[pred_name];
                             tasks.push(Task::Combine(CK::TemplateParens(tmpl.clone()), 2));
+                        } else if pred_name == "Format" && self.dialect.format_uses_concat() {
+                            // PrestoDB has no FORMAT/printf function; lower
+                            // `Format("…%s…", a, …)` to a `||` concat chain.
+                            tasks.push(Task::Combine(CK::FormatConcat, num_args));
                         } else if let Some(tmpl) = self.built_in_functions.get(pred_name) {
                             // Validate arity range for built-in functions.
                             if let Some((min_arity, max_arity)) = Self::built_in_function_arity_range(pred_name) {
@@ -1081,13 +1140,14 @@ impl<'a> ExprTranslator<'a> {
                     // ── Record ──
                     if let Some(record) = obj.get("record") {
                         let fvs = record.as_object()["field_value"].as_array();
-                        let mut fields = Vec::with_capacity(fvs.len());
+                        let mut fields: Vec<(String, Type)> = Vec::with_capacity(fvs.len());
                         let mut exprs: Vec<&Json> = Vec::with_capacity(fvs.len());
                         for fv in fvs {
                             let fo = fv.as_object();
-                            fields.push(fo["field"].as_str().to_string());
                             let val = &fo["value"];
-                            exprs.push(val.as_object().get("expression").unwrap_or(val));
+                            let e = val.as_object().get("expression").unwrap_or(val);
+                            fields.push((fo["field"].as_str().to_string(), record_field_type(e)));
+                            exprs.push(e);
                         }
                         let n = exprs.len();
                         tasks.push(Task::Combine(CK::Record(fields), n));
@@ -1252,9 +1312,9 @@ impl<'a> ExprTranslator<'a> {
                         // Note: PostgreSQL ROW type casting is handled via type inference.
                         // JSON_OBJECT style output is dialect-specific (handled in Dialect trait).
                         CK::Record(fields) => {
-                            let pairs: Vec<(&str, &str)> = fields.iter()
+                            let pairs: Vec<(&str, &str, &Type)> = fields.iter()
                                 .zip(args.iter())
-                                .map(|(f, v)| (f.as_str(), v.as_str()))
+                                .map(|((f, t), v)| (f.as_str(), v.as_str(), t))
                                 .collect();
                             results.push(self.dialect.record_literal(&pairs));
                         }
@@ -1348,6 +1408,56 @@ impl<'a> ExprTranslator<'a> {
                         }
                         CK::JoinComma => {
                             results.push(args.join(", "));
+                        }
+                        CK::FormatConcat => {
+                            // args[0] is the format-string literal; args[1..]
+                            // are the SQL expressions for its placeholders.
+                            let fmt_sql = &args[0];
+                            let values = &args[1..];
+                            if !(fmt_sql.len() >= 2
+                                && fmt_sql.starts_with('\'')
+                                && fmt_sql.ends_with('\''))
+                            {
+                                return Err(CompileError::new(
+                                    "Format on this engine requires a literal format string",
+                                    "",
+                                ));
+                            }
+                            // Strip the surrounding quotes and undo SQL '' escaping.
+                            let inner = fmt_sql[1..fmt_sql.len() - 1].replace("''", "'");
+                            let segments: Vec<&str> = inner.split("%s").collect();
+                            // A stray '%' in any segment means an unsupported
+                            // specifier (%d, %f, %%, …) we cannot render as concat.
+                            if segments.iter().any(|s| s.contains('%')) {
+                                return Err(CompileError::new(
+                                    "Format on this engine supports only %s placeholders",
+                                    "",
+                                ));
+                            }
+                            if segments.len() - 1 != values.len() {
+                                return Err(CompileError::new(
+                                    format!(
+                                        "Format expects {} argument(s) for its placeholders, got {}",
+                                        segments.len() - 1,
+                                        values.len()
+                                    ),
+                                    "",
+                                ));
+                            }
+                            let mut parts: Vec<String> = Vec::new();
+                            for (i, seg) in segments.iter().enumerate() {
+                                if !seg.is_empty() {
+                                    parts.push(self.dialect.str_literal(seg));
+                                }
+                                if i < values.len() {
+                                    parts.push(values[i].clone());
+                                }
+                            }
+                            results.push(if parts.is_empty() {
+                                self.dialect.str_literal("")
+                            } else {
+                                parts.join(" || ")
+                            });
                         }
                     }
                 }

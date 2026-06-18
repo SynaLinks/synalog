@@ -1107,6 +1107,8 @@ fn test_get_tree_of_combines_basic() {
     );
     let tree = get_tree_of_combines(&rule);
     assert!(tree.variables.contains("x"));
+    // A rule with no `combine` expression yields no subtrees.
+    assert!(tree.subtrees.is_empty());
 }
 
 // ── unifications_to_constraints with constant comparison ──
