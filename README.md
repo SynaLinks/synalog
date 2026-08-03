@@ -1,16 +1,16 @@
 <div align="center">
 <picture>
-  <source media="(prefers-color-scheme: dark)" srcset="img/synalog-dark.svg">
-  <img height=200 alt="Synalog" src="img/synalog-light.svg">
+  <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/synalinks/synalog/main/img/synalog-dark.svg">
+  <img height="200" alt="Synalog" src="https://raw.githubusercontent.com/synalinks/synalog/main/img/synalog-light.svg">
 </picture>
 </div>
 
 <div align="center">
 
 ![Beta](https://img.shields.io/badge/Release-Beta-blue.svg)
-[![PyPI](https://img.shields.io/pypi/v/synalog)](https://pypi.org/project/synalog/)
+[![PyPI](https://img.shields.io/pypi/v/synalog?logo=pypi&logoColor=white&cacheSeconds=86400)](https://pypi.org/project/synalog/)
 [![Downloads](https://static.pepy.tech/badge/synalog)](https://pepy.tech/project/synalog)
-[![Discord](https://img.shields.io/discord/1118241178723291219)](https://discord.gg/82nt97uXcM)
+[![Discord](https://img.shields.io/discord/1118241178723291219?logo=discord&logoColor=white&label=Discord&cacheSeconds=3600)](https://discord.gg/82nt97uXcM)
 [![CI](https://github.com/synalinks/synalog/actions/workflows/CI.yml/badge.svg)](https://github.com/synalinks/synalog/actions/workflows/CI.yml)
 [![Documentation](https://github.com/synalinks/synalog/actions/workflows/docs.yml/badge.svg)](https://github.com/synalinks/synalog/actions/workflows/docs.yml)
 [![License: Apache-2.0](https://img.shields.io/badge/License-Apache_2.0-green.svg)](https://opensource.org/license/apache-2-0)
@@ -91,7 +91,7 @@ npx skills add SynaLinks/synalog -g           # user-wide (~/.claude/skills, …
 npx skills add SynaLinks/synalog -a cursor codex   # only specific agents
 ```
 
-The skill is maintained in this repo at [`skills/synalog/SKILL.md`](skills/synalog/SKILL.md); `npx skills add` copies it into the right place for each agent.
+The skill is maintained in this repo at [`skills/synalog/SKILL.md`](https://github.com/synalinks/synalog/blob/main/skills/synalog/SKILL.md); `npx skills add` copies it into the right place for each agent.
 
 ## Command-line interface
 
@@ -572,7 +572,7 @@ Files derived from Logica carry an `// Original work: Copyright 2020 Google LLC`
 
 # License
 
-Synalog is licensed under the **Apache License, Version 2.0** see [`LICENSE`](LICENSE) and [`NOTICE`](NOTICE).
+Synalog is licensed under the **Apache License, Version 2.0** see [`LICENSE`](https://github.com/synalinks/synalog/blob/main/LICENSE) and [`NOTICE`](https://github.com/synalinks/synalog/blob/main/NOTICE).
 
 - Original Logica work: Copyright 2020 Google LLC, licensed under Apache 2.0.
 - Modifications and new code: Copyright 2025-2026 Yoan Sallami (Synalinks Team), licensed under Apache 2.0.
