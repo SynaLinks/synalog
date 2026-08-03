@@ -18,6 +18,7 @@ mod recursion;
 mod reserved;
 mod sqlexpr;
 mod positional;
+mod undefined;
 
 pub use vars::VarCollector;
 pub use safety::{SafetyError, check_safety};
@@ -27,6 +28,7 @@ pub use recursion::{RecursionError, check_recursion, check_unbounded_recursion};
 pub use reserved::{ReservedError, check_reserved, reserved_predicate_names};
 pub use sqlexpr::{SqlExprError, check_sqlexpr};
 pub use positional::{PositionalError, check_positional};
+pub use undefined::{UndefinedError, check_undefined};
 
 use crate::parser::Json;
 use crate::errors::{VerifyError, VerifyResult};
@@ -41,6 +43,7 @@ pub enum CheckError {
     Reserved(ReservedError),
     SqlExpr(SqlExprError),
     Positional(PositionalError),
+    Undefined(UndefinedError),
 }
 
 impl std::fmt::Display for CheckError {
@@ -53,6 +56,7 @@ impl std::fmt::Display for CheckError {
             CheckError::Reserved(e) => write!(f, "{}", e),
             CheckError::SqlExpr(e) => write!(f, "{}", e),
             CheckError::Positional(e) => write!(f, "{}", e),
+            CheckError::Undefined(e) => write!(f, "{}", e),
         }
     }
 }
@@ -69,6 +73,7 @@ impl From<CheckError> for VerifyError {
             CheckError::Reserved(re) => re.into(),
             CheckError::SqlExpr(se) => se.into(),
             CheckError::Positional(pe) => pe.into(),
+            CheckError::Undefined(ue) => ue.into(),
         }
     }
 }
@@ -177,6 +182,11 @@ pub fn validate(parsed: &Json) -> CheckResult {
     // Check 8: Positional arguments (Synalog requires named arguments)
     for err in positional::check_positional(&normal_rules) {
         result.errors.push(CheckError::Positional(err));
+    }
+
+    // Check 9: Undefined predicate references (typo detection with suggestions)
+    for err in undefined::check_undefined(&normal_rules) {
+        result.errors.push(CheckError::Undefined(err));
     }
 
     result

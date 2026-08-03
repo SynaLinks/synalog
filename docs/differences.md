@@ -4,13 +4,13 @@ Synalog is a fork of [Logica](https://logica.dev/) with a fast Rust core. It kee
 
 ## Named attributes only
 
-Synalog doesn't support positional attributes like Logica or Datalog — it only uses **named attributes**, which reduce agent mistakes. This feature is optional in Logica; Synalog makes it mandatory.
+Synalog doesn't support positional attributes like Logica or Datalog: it only uses **named attributes**, which reduce agent mistakes. This feature is optional in Logica; Synalog makes it mandatory.
 
 ```logica
-# Synalog — always named
+# Synalog: always named
 Employee(name:, salary:)
 
-# Logica/Datalog positional style — not supported
+# Logica/Datalog positional style, not supported
 Employee(x, y)
 ```
 
@@ -24,8 +24,8 @@ Synalog applies pagination at compile time via the `limit` and `offset` argument
 
 ## Compile-time verification
 
-Synalog embeds a [formal verifier](verification.md) that catches structural errors before any SQL is generated — variable safety, safe negation and aggregation, stratification, arity consistency, and recursion safety. Logica defers these to the database at execution time.
+Synalog embeds a [formal verifier](verification.md) that catches structural errors before any SQL is generated: variable safety, safe negation and aggregation, stratification, arity consistency, and recursion safety. Logica defers these to the database at execution time.
 
 ## Performance
 
-The compiler is written in Rust and exposed via PyO3, dramatically reducing compilation time compared to the Python implementation — which matters when an agent compiles programs inside a reasoning loop.
+The compiler is written in Rust and exposed via PyO3, dramatically reducing compilation time compared to the Python implementation, which matters when an agent compiles programs inside a reasoning loop.

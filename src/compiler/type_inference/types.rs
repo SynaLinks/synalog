@@ -1,6 +1,7 @@
 // Modified from: logica/type_inference/research/reference_algebra.py
 // Original authors: Evgeny Skvortsov et al. (Logica Team, Google LLC)
-// License Apache 2.0: (c) 2025-2026 Yoan Sallami (Synalinks Team)
+// Original work: Copyright 2020 Google LLC, licensed under the Apache License, Version 2.0.
+// Modifications: Copyright 2025-2026 Yoan Sallami (Synalinks Team), licensed under the Apache License, Version 2.0.
 
 //! Type definitions for the Logica type inference system.
 //!

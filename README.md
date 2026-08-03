@@ -21,9 +21,11 @@
 # Synalog
 ## Logic programming for AI agents: Datalog-family language compiling to optimized SQL
 
-Synalog is a logic programming language from the [Datalog](https://en.wikipedia.org/wiki/Datalog) family — a fork of [Logica](https://logica.dev/) with the entire engine (parser, compiler and verifier) **rewritten in Rust**. It compiles to optimized **SQL** and ships as a Python package built on [PyO3](https://pyo3.rs/): parsing is **~86.7x faster** and compilation **~13.7x faster** than the original Python implementation, so validating and compiling a program is effectively instant.
+Synalog is a logic programming language from the [Datalog](https://en.wikipedia.org/wiki/Datalog) family, a fork of [Logica](https://logica.dev/) with the entire engine (parser, compiler and verifier) **rewritten in Rust**. It compiles to optimized **SQL** and ships as a Python package built on [PyO3](https://pyo3.rs/): parsing is **~86.7x faster** and compilation **~13.7x faster** than the original Python implementation, so validating and compiling a program is effectively instant.
 
-Synalog was built for the AI agents era. The main idea is to give an agent a **dynamic semantic layer** over its data — a layer of named concepts and rules that the agent both reads from *and writes to* at inference time. Unlike a traditional BI semantic layer, which is modeled once by humans and frozen, Synalog's layer is authored on the fly: the agent extracts entities and relationships into **knowledge graphs**, derives meaning with composable **logical rules**, and reasons over time with **temporal reasoning**: accumulating all of it as structured, reusable memory.
+Synalog was built for the AI agents era. The main idea is to give an agent a **dynamic semantic layer** over its data: a layer of named concepts and rules that the agent both reads from *and writes to* at inference time. Unlike a traditional BI semantic layer, which is modeled once by humans and frozen, Synalog's layer is authored on the fly: the agent extracts entities and relationships into **knowledge graphs**, derives meaning with composable **logical rules**, and reasons over time with **temporal reasoning**: accumulating all of it as structured, reusable memory.
+
+New here, or deciding whether this belongs in your stack? [Why Synalog](https://synalinks.github.io/synalog/why/) makes the case in business terms, including the trade-offs and the cases where another tool wins.
 
 ## What the agent gains
 
@@ -34,7 +36,7 @@ A raw table is just rows; an agent has to re-interpret what they *mean* on every
 - **Knowledge graphs the agent can traverse**: model entities and relationships as concepts, then follow connections (composition, inverse, symmetric, recursive chains) without writing fragile join logic. See [Knowledge graphs](https://synalinks.github.io/synalog/knowledge-graphs/).
 - **Recursion and transitive reasoning**: transitive closures and graph traversals (org charts, taxonomies, bills of materials, referral chains, shortest paths) that are impossible to write correctly in raw SQL come out as a base case plus a recursive case, with the verifier guaranteeing termination.
 - **Logical rules that compose**: rules build on other rules, so knowledge accumulates instead of being re-derived. Complex questions decompose into small named predicates the agent can inspect, reuse, and combine.
-- **Temporal reasoning**: time-aware rules and edges (validity windows, "active today", overlap, point-in-time joins) let the agent answer *when*, not just *what* — reasoning that is notoriously error-prone to express directly in SQL.
+- **Temporal reasoning**: time-aware rules and edges (validity windows, "active today", overlap, point-in-time joins) let the agent answer *when*, not just *what*. That kind of reasoning is notoriously error-prone to express directly in SQL, and it extends to **bitemporal** graphs, which separate when a fact was true from when the agent believed it.
 - **Dynamic, not static**: the layer evolves as the agent learns. New rules extend the vocabulary at runtime; the rule base itself becomes the agent's long-term memory over structured data.
 - **Auditable reasoning**: every derived fact traces back through named rules, giving full lineage from answer to source tables.
 - **Compile-time verification**: a formal verifier catches structural errors before any SQL touches a database, so a self-authored rule that parses but is unsound is rejected up front. See [Verification](https://synalinks.github.io/synalog/verification/).
@@ -81,7 +83,7 @@ Requires Python 3.10+. Wheels are published for Linux (x86_64, aarch64, armv7, s
 
 ## Add the skill to your coding agent
 
-Synalog ships an [Agent Skill](https://agentskills.io) — a `SKILL.md` that teaches a coding agent the language, the CLI and the conventions, so it writes and runs programs correctly. It follows the open Agent Skills standard, so it works with Claude Code, Cursor, Codex, OpenCode, Cline, Windsurf and 70+ other agents. Install it with the [`skills`](https://www.npmjs.com/package/skills) CLI — GitHub is the registry, so there is nothing to publish or install first:
+Synalog ships an [Agent Skill](https://agentskills.io), a `SKILL.md` that teaches a coding agent the language, the CLI and the conventions, so it writes and runs programs correctly. It follows the open Agent Skills standard, so it works with Claude Code, Cursor, Codex, OpenCode, Cline, Windsurf and 70+ other agents. Install it with the [`skills`](https://www.npmjs.com/package/skills) CLI (GitHub is the registry, so there is nothing to publish or install first):
 
 ```bash
 npx skills add SynaLinks/synalog              # this project (./.claude/skills, ./.agents/skills, …)
@@ -127,7 +129,7 @@ Running `synalog` with no arguments starts an interactive session, in the spirit
 
 ```
 $ synalog
-Synalog 0.1.0 on duckdb — type .help for help
+Synalog 0.1.0 on duckdb, type .help for help
 >>> Employee(name: "Alice", salary: 75000);
 >>> Employee(name: "Bob", salary: 65000);
 >>> Total(t? += salary) distinct :- Employee(salary:);
@@ -187,7 +189,7 @@ sql = synalog.compile(source, "TopCustomers", limit=20, offset=40)
 
 ### `search(source, predicate, pattern, limit=None, offset=None, engine=None, import_root=None) -> str`
 
-Compile a predicate to SQL that keeps only rows where **some column matches the regular expression `pattern`** (the per-column conditions are OR-ed, each column cast to text). The regex is evaluated by the target engine's native operator (`~` on PostgreSQL, `REGEXP` on SQLite, `regexp_matches` on DuckDB, `REGEXP_LIKE` elsewhere) — it is *not* a SQL `LIKE` pattern. `limit`/`offset` apply to the filtered rows.
+Compile a predicate to SQL that keeps only rows where **some column matches the regular expression `pattern`** (the per-column conditions are OR-ed, each column cast to text). The regex is evaluated by the target engine's native operator (`~` on PostgreSQL, `REGEXP` on SQLite, `regexp_matches` on DuckDB, `REGEXP_LIKE` elsewhere). It is *not* a SQL `LIKE` pattern. `limit`/`offset` apply to the filtered rows.
 
 ```python
 sql = synalog.search(source, "Customers", "(?i)acme", limit=20)
@@ -218,14 +220,14 @@ All of these functions accept an optional `engine` keyword that overrides the pr
 
 ## Language overview
 
-By convention, a Synalog program is organized into three sections: **tables**, **concepts** and **rules**. Tables map external data sources (a database table is referenced by its lowercase database name and mapped once to a PascalCase predicate). Concepts extract entities and relationships from tables. Rules derive new data from concepts. The section headers are plain comments — the structure is a convention, not syntax.
+By convention, a Synalog program is organized into three sections: **tables**, **concepts** and **rules**. Tables map external data sources (a database table is referenced by its lowercase database name and mapped once to a PascalCase predicate). Concepts extract entities and relationships from tables. Rules derive new data from concepts. The section headers are plain comments: the structure is a convention, not syntax.
 
 ```logica
-# Tables — read-only mappings of database tables
+# Tables: read-only mappings of database tables
 Orders(customer_id:, product_id:, amount:, status:) :-
   orders(customer_id:, product_id:, amount:, status:);
 
-# Concepts — extract entities and relationships
+# Concepts: extract entities and relationships
 
 @OrderBy(Customer, "customer_id");
 Customer(customer_id:) distinct :- Orders(customer_id:);
@@ -233,7 +235,7 @@ Customer(customer_id:) distinct :- Orders(customer_id:);
 @OrderBy(Purchased, "customer_id");
 Purchased(customer_id:, product_id:) distinct :- Orders(customer_id:, product_id:);
 
-# Rules — derive insights from concepts
+# Rules: derive insights from concepts
 
 @OrderBy(CustomerSpend, "total", "DESC");
 CustomerSpend(customer_id:, total? += amount) distinct :- Orders(customer_id:, amount:);
@@ -292,13 +294,13 @@ TopSeller(name? ArgMax= name -> revenue) distinct :- Sales(name:, revenue:);
 ### Logical operators
 
 ```logica
-# Conjunction (AND) — comma
+# Conjunction (AND), comma
 Result(x:, y:) :- TableA(x:), TableB(x:, y:);
 
-# Disjunction (OR) — pipe
+# Disjunction (OR), pipe
 Combined(x:) distinct :- SourceA(x:) | SourceB(x:);
 
-# Negation (NOT) — tilde
+# Negation (NOT), tilde
 Inactive(user_id:) :- Users(user_id:), ~Logins(user_id:);
 ```
 
@@ -355,7 +357,7 @@ SMBRevenue := SegmentRevenue(Segment: SMBCustomers);
 
 ### Recursion
 
-Recursive predicates compute transitive closures — for example, finding all managers above an employee:
+Recursive predicates compute transitive closures, for example finding all managers above an employee:
 
 ```logica
 @Recursive(AllManagers, 20);
@@ -402,7 +404,7 @@ RecentOrders(order_id:) :-
   ToString(created_at) >= "2024-01-01";
 ```
 
-`Today(date:)` (today's date as `"YYYY-MM-DD"`) and `Now(timestamp:)` (the current instant as the engine's native timestamp) are built-in concepts. They are inlined per dialect by the compiler — no runtime table needed, so they work on every engine. `Now` is the most precise value; derive coarser parts (date, time, hour) from it through the `ToString` → `Substr` pipeline. Join against `Today` whenever a rule needs "today":
+`Today(date:)` (today's date as `"YYYY-MM-DD"`) and `Now(timestamp:)` (the current instant as the engine's native timestamp) are built-in concepts. They are inlined per dialect by the compiler, with no runtime table needed, so they work on every engine. `Now` is the most precise value; derive coarser parts (date, time, hour) from it through the `ToString` → `Substr` pipeline. Join against `Today` whenever a rule needs "today":
 
 ```logica
 @OrderBy(ThisMonthOrders, "order_id");
@@ -413,6 +415,34 @@ ThisMonthOrders(order_id:, created_at:) :-
 ```
 
 They are reserved names: you cannot redefine, extend, or update them.
+
+### Knowledge graphs
+
+Entities and relationships become node and edge concepts, and rules traverse them. Edges join **through** the node concepts rather than the raw table, so a filter on a node applies to every edge built on it:
+
+```logica
+@OrderBy(Person, "person_id");
+Person(person_id:, name:, profile_url:) distinct :- Employees(person_id:, name:, profile_url:);
+
+@OrderBy(WorksIn, "person_id");
+WorksIn(person_id:, department_id:) distinct :-
+  Person(person_id:),
+  Department(department_id:),
+  Employees(person_id:, department_id:);
+```
+
+Relationships with a lifetime carry it as a half-open interval `[valid_from, valid_to)`, using `"9999-12-31"` as the open end so ISO strings compare correctly. A **bitemporal** edge adds `recorded_from`/`recorded_to`, separating when a fact was true in the world from when the database believed it, which is what makes corrections auditable and past answers reproducible:
+
+```logica
+@OrderBy(CurrentEmployment, "person_id");
+CurrentEmployment(person_id:, company_id:, role:) distinct :-
+  EmployedAt(person_id:, company_id:, role:,
+             valid_from:, valid_to:, recorded_to: "9999-12-31"),
+  Today(date:),
+  valid_from <= date, date < valid_to;
+```
+
+Node and edge patterns, temporal and bitemporal modeling, as-of queries and time-respecting traversals are covered in [Knowledge graphs](https://synalinks.github.io/synalog/knowledge-graphs/).
 
 ### Built-in functions
 
@@ -426,7 +456,7 @@ They are reserved names: you cannot redefine, extend, or update them.
 
 **Other:** `Coalesce`, `IsNull`
 
-**Built-in concepts:** `Today(date:)` — today's date as `"YYYY-MM-DD"`; `Now(timestamp:)` — current instant as a native timestamp (see Temporal data above).
+**Built-in concepts:** `Today(date:)` is today's date as `"YYYY-MM-DD"`; `Now(timestamp:)` is the current instant as a native timestamp (see Temporal data above).
 
 ## Supported engines
 
@@ -444,19 +474,19 @@ Each engine has its own SQL dialect for string literals, array syntax, GROUP BY 
 
 ## Benchmark
 
-The Rust core is benchmarked against the original Python Logica implementation on every program of the compiler test suite (504 programs across 6 engines). Both run **in-process**: Synalog through the same PyO3 extension that `pip install synalog` ships — so the numbers measure exactly what a Python caller gets:
+The Rust core is benchmarked against the original Python Logica implementation on every program of the compiler test suite (504 programs across 6 engines). Both run **in-process**: Synalog through the same PyO3 extension that `pip install synalog` ships, so the numbers measure exactly what a Python caller gets:
 
 | | Python Logica | Synalog (Rust) | Speedup |
 |---|---|---|---|
 | Parse | 13.4 s | 0.15 s | **87x** |
 | Compile | 61.3 s | 5.2 s | **13x** |
-| Verify | — | 0.16 s | Rust-only |
+| Verify | n/a | 0.16 s | Rust-only |
 
 <p align="center">
   <img src="https://raw.githubusercontent.com/synalinks/synalog/main/docs/benchmark/speedup_by_engine.png" alt="Synalog vs Python Logica: speedup by SQL engine" width="820">
 </p>
 
-Speedup is the geometric mean of per-program speedups (every program weighted equally). Parsing is uniformly ~85–88x faster; compilation ranges from ~11x (trino, presto) to ~19x (duckdb). Verification — safety, stratification, recursion and reserved-name checks — is a Synalog-specific pass with no standalone Python equivalent. Per-engine tables and methodology are on the [Benchmark](https://synalinks.github.io/synalog/benchmark/) page; reproduce with `python3 benchmark.py`.
+Speedup is the geometric mean of per-program speedups (every program weighted equally). Parsing is uniformly ~85x to ~88x faster; compilation ranges from ~11x (trino, presto) to ~19x (duckdb). Verification (safety, stratification, recursion and reserved-name checks) is a Synalog-specific pass with no standalone Python equivalent. Per-engine tables and methodology are on the [Benchmark](https://synalinks.github.io/synalog/benchmark/) page; reproduce with `python3 benchmark.py`.
 
 ## Verification
 
@@ -484,7 +514,7 @@ for e in errors:
 
 ### Named attributes only
 
-Synalog doesn't support positional attributes like Logica or Datalog — it only uses *named attributes*, which reduce agent mistakes. This feature is optional in Logica; we made it mandatory.
+Synalog doesn't support positional attributes like Logica or Datalog: it only uses *named attributes*, which reduce agent mistakes. This feature is optional in Logica; we made it mandatory.
 
 In Synalog, the compiled SQL uses actual column names, not `col{i}` format, making it compatible with existing database schemas.
 
@@ -496,7 +526,7 @@ Synalog applies pagination at compile time via the `limit` and `offset` argument
 
 ### Compile-time verification
 
-Synalog embeds a formal verifier that catches structural errors before any SQL is generated. This prevents agents from producing programs that parse correctly but fail at execution time — a common failure mode when working with SQL directly.
+Synalog embeds a formal verifier that catches structural errors before any SQL is generated. This prevents agents from producing programs that parse correctly but fail at execution time, a common failure mode when working with SQL directly.
 
 ## Building from source
 
@@ -524,52 +554,26 @@ cargo test --test verifier_tests        # verifier tests (all engines)
 cargo test --test search_tests          # search feature tests (all engines)
 ```
 
-### Golden test generation
+### Tests
 
-Golden SQL files are generated by the Python Logica compiler to serve as the reference:
-
-```bash
-cd tests/compiler_tests && python3 generate_expected_sql.py
-cd tests/parser_tests && python3 generate_expected_json.py
+```shell
+cd synalog
+./shell/test.sh
 ```
 
-Requires `pip install logica`.
+# Credits
 
-## Project structure
+Synalog is a fork of [**Logica**](https://logica.dev/), the logic programming language created by **Evgeny Skvortsov** and the Logica team at **Google LLC**. The parser, compiler, and type-inference engine were rewritten in Rust, but the language design, semantics, and a large part of the algorithms originate from their work. Synalog would not exist without it, heartfelt thanks to the Logica authors for their amazing work.
 
-```
-src/
-  lib.rs                  # Public API: parser, compiler, verifier, errors
-  errors.rs               # Unified error types with help messages
-  python.rs               # PyO3 bindings (the _synalog extension module)
-  parser/
-    parse.rs              # Logica syntax -> JSON AST
-    rewrite.rs            # AST rewrites (aggregation, multi-body)
-    json.rs               # Custom JSON implementation
-  compiler/
-    universe.rs           # LogicaProgram: AST -> SQL compilation
-    annotations.rs        # @OrderBy, @Limit, @Recursive, etc.
-    dialects.rs           # Engine-specific SQL generation
-    expr_translate.rs     # Expression -> SQL translation
-    rule_translate.rs     # Rule -> SQL translation
-    functors.rs           # Functor expansion (@Make)
-    concertina.rs         # Multi-predicate execution orchestration
-    type_inference/       # Type checking subsystem
-  verifier/
-    mod.rs                # Validation entry point
-    safety.rs             # Variable binding checks
-    stratification.rs     # Negative cycle detection
-    arity.rs              # Argument count consistency
-    recursion.rs          # Recursion safety checks
-    reserved.rs           # Reserved predicate name check
-python/
-  synalog/__init__.py     # Python package wrapper
-  synalog/cli.py          # The synalog command (one-shot + REPL)
-  synalog/runners.py      # Local SQL runners (duckdb, sqlite, psql)
-tests/
-  compiler_tests/         # Golden SQL tests per engine
-  parser_tests/           # Golden JSON tests per engine
-  verifier_tests/         # Negative verification tests per engine
-  cli/                    # CLI tests (pytest)
-  search_tests.rs         # Search feature integration tests
-```
+- Logica: https://github.com/EvgSkv/logica
+- Logica documentation: https://logica.dev/
+
+Files derived from Logica carry an `// Original work: Copyright 2020 Google LLC` header and a note describing the modifications, as required by the Apache License 2.0.
+
+# License
+
+Synalog is licensed under the **Apache License, Version 2.0** see [`LICENSE`](LICENSE) and [`NOTICE`](NOTICE).
+
+- Original Logica work: Copyright 2020 Google LLC, licensed under Apache 2.0.
+- Modifications and new code: Copyright 2025-2026 Yoan Sallami (Synalinks Team), licensed under Apache 2.0.
+

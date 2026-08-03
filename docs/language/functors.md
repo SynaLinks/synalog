@@ -41,11 +41,11 @@ JohnFilter(customer_name: "John");
 JohnsRevenue := CustomerRevenue(Filter: JohnFilter);
 ```
 
-This keeps the aggregation logic in one place while allowing any number of filtered variants — ideal for ephemeral, per-question queries layered on top of a stable rule base.
+This keeps the aggregation logic in one place while allowing any number of filtered variants, ideal for ephemeral, per-question queries layered on top of a stable rule base.
 
 ## Complete example
 
-Both patterns together — the filter pattern (`JohnsRevenue`) and segment parameterization (`EnterpriseRevenue`, `SMBRevenue`):
+Both patterns together: the filter pattern (`JohnsRevenue`) and segment parameterization (`EnterpriseRevenue`, `SMBRevenue`):
 
 ```logica
 --8<-- "docs/examples/functors.l"

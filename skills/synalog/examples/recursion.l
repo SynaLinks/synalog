@@ -1,6 +1,6 @@
 # Recursion: transitive closure over an org chart. Base case + recursive
 # case, with @Recursive bounding the path length so cycles terminate.
-# Self-contained — no --load needed (run validates the program first):
+# Self-contained, no --load needed (run validates the program first):
 #   synalog recursion.l run AllManagers
 
 @Engine("duckdb");

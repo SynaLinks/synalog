@@ -2,9 +2,9 @@
 
 Synalog is a fork of [Logica](https://logica.dev/) with the parser and compiler rewritten in Rust. This page tracks how the Rust core compares with the original Python implementation: every program of the [compiler test suite](development.md) is parsed and compiled with both, per engine.
 
-Both implementations run **in-process** — Synalog through the same PyO3 extension that `pip install synalog` ships, Logica through its Python modules — so the comparison measures exactly what a Python caller gets, with no process-startup overhead on either side.
+Both implementations run **in-process**: Synalog through the same PyO3 extension that `pip install synalog` ships, Logica through its Python modules, so the comparison measures exactly what a Python caller gets, with no process-startup overhead on either side.
 
-**How the numbers are computed.** Each program's time is the *fastest* of several runs after a discarded warm-up — the minimum is the cleanest estimator for CPU-bound work, since it is the run least disturbed by GC, the scheduler and cold caches. The headline speedup is the **geometric mean** of the per-program speedups, which weights every program equally; this is the standard way to average ratios and avoids the trap of a total-time ratio, where a few large programs would dominate the figure. The median is shown alongside it, and the summed wall-clock times are kept only as context.
+**How the numbers are computed.** Each program's time is the *fastest* of several runs after a discarded warm-up. The minimum is the cleanest estimator for CPU-bound work, since it is the run least disturbed by GC, the scheduler and cold caches. The headline speedup is the **geometric mean** of the per-program speedups, which weights every program equally; this is the standard way to average ratios and avoids the trap of a total-time ratio, where a few large programs would dominate the figure. The median is shown alongside it, and the summed wall-clock times are kept only as context.
 
 ## Results
 
@@ -12,7 +12,7 @@ Both implementations run **in-process** — Synalog through the same PyO3 extens
 
 Parsing is dominated by the grammar work and speeds up uniformly across engines. Compilation includes SQL generation, so the speedup varies with how much dialect-specific rewriting each engine needs.
 
-Synalog also runs a dedicated **verification** pass (`synalog.check` — safety, stratification, recursion and reserved-name checks) before compiling. Python Logica folds the same analysis into compilation and exposes no standalone equivalent, so verification is timed on the Rust side only and reported as an absolute total rather than a speedup.
+Synalog also runs a dedicated **verification** pass (`synalog.check`: safety, stratification, recursion and reserved-name checks) before compiling. Python Logica folds the same analysis into compilation and exposes no standalone equivalent, so verification is timed on the Rust side only and reported as an absolute total rather than a speedup.
 
 ## Plots
 
@@ -35,4 +35,4 @@ python3 benchmark.py          # run everything, write docs/benchmark/
 python3 plot_benchmark.py     # regenerate the plots
 ```
 
-Raw timings are stored in [`docs/benchmark/results.json`](benchmark/results.json), and the tables above come from the generated `docs/benchmark/summary.md` — both are rewritten on every run, so this page always shows the latest results.
+Raw timings are stored in [`docs/benchmark/results.json`](benchmark/results.json), and the tables above come from the generated `docs/benchmark/summary.md`; both are rewritten on every run, so this page always shows the latest results.

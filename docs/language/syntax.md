@@ -2,7 +2,7 @@
 
 ## Named arguments
 
-Synalog uses **named arguments only** — there are no positional arguments. In `Predicate(column_name: variable)`, the left side of `:` is the **column name** in the predicate, and the right side is **your variable name**:
+Synalog uses **named arguments only**: there are no positional arguments. In `Predicate(column_name: variable)`, the left side of `:` is the **column name** in the predicate, and the right side is **your variable name**:
 
 ```logica
 # column "amount" bound to variable "total"
@@ -13,7 +13,7 @@ Orders(amount:)
 ```
 
 !!! danger "Left side is the column, right side is the variable"
-    `Orders(total: amount)` does **not** bind the `amount` column to `total` — it looks for a column named `total`. When in doubt, write the column name on the left.
+    `Orders(total: amount)` does **not** bind the `amount` column to `total`; it looks for a column named `total`. When in doubt, write the column name on the left.
 
 ## Variables and expressions
 
@@ -41,32 +41,32 @@ OrderWithTax(order_id:, total:) :-
 
 ## Logical operators
 
-**Conjunction (AND)** — comma `,` joins predicates:
+**Conjunction (AND)**: comma `,` joins predicates:
 
 ```logica
 Result(x:, y:) :- TableA(x:), TableB(x:, y:);
 ```
 
-**Disjunction (OR)** — pipe `|` combines results (UNION ALL semantics; add `distinct` to deduplicate):
+**Disjunction (OR)**: pipe `|` combines results (UNION ALL semantics; add `distinct` to deduplicate):
 
 ```logica
 Combined(x:) distinct :- SourceA(x:) | SourceB(x:);
 ```
 
-**Negation (NOT)** — tilde `~`:
+**Negation (NOT)**: tilde `~`:
 
 ```logica
 Inactive(user_id:) :- Users(user_id:), ~Logins(user_id:);
 ```
 
-**Multiple rule definitions** — defining the same predicate several times unions the bodies:
+**Multiple rule definitions**: defining the same predicate several times unions the bodies:
 
 ```logica
 HighValue(user_id:) :- Orders(user_id:, amount:), amount > 10000;
 HighValue(user_id:) :- Referrals(user_id:, tier: "vip");
 ```
 
-A practical combination — contact customers by email when available, otherwise by phone:
+A practical combination: contact customers by email when available, otherwise by phone:
 
 ```logica
 @OrderBy(ContactableCustomer, "customer_id");

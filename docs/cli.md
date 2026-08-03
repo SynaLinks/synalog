@@ -21,7 +21,7 @@ synalog program.l run Predicate ...        # execute and print a table
 synalog program.l run Predicate --csv      # execute and print CSV
 ```
 
-Both `print` and `run` validate the whole program first and exit 1 with the verifier's errors if it is invalid — there is no separate `check` step to forget. `print` and `run` accept several predicate names and process them in order. In a terminal, `print` highlights the SQL and `run` renders the table with rich formatting; piped output falls back to plain text. Add `--csv` to `run` for machine-readable CSV instead of the rendered table.
+Both `print` and `run` validate the whole program first and exit 1 with the verifier's errors if it is invalid, so there is no separate `check` step to forget. `print` and `run` accept several predicate names and process them in order. In a terminal, `print` highlights the SQL and `run` renders the table with rich formatting; piped output falls back to plain text. Add `--csv` to `run` for machine-readable CSV instead of the rendered table.
 
 ```console
 $ synalog program.l run EngineeringTeam
@@ -47,7 +47,7 @@ $ synalog program.l run EngineeringTeam
 | `--load TABLE=PATH` | Load a csv/tsv/json/jsonl/parquet file as a table before running (repeatable). |
 | `--dsn <conninfo>` | PostgreSQL connection string for `--engine psql` (or set `SYNALOG_PSQL_DSN`). |
 
-Passing `-` as the file reads the program from stdin, and `-c` takes the program text directly — both compose with the other options:
+Passing `-` as the file reads the program from stdin, and `-c` takes the program text directly, and both compose with the other options:
 
 ```bash
 echo 'Greeting("hi");' | synalog - print Greeting
@@ -61,11 +61,11 @@ With `-c` there is no `FILE` argument: the positionals are the command and its p
 
 `run` (optionally with `--csv`) executes the compiled SQL in-process:
 
-- **duckdb** — the default engine, bundled with synalog; nothing extra to install.
-- **sqlite** — Python's stdlib driver; Logica's runtime UDFs (ArgMin/ArgMax, ARRAY_CONCAT, ...) are registered when the `logica` package is installed.
-- **psql** — needs `pip install psycopg` and a connection string.
+- **duckdb**: the default engine, bundled with synalog; nothing extra to install.
+- **sqlite**: Python's stdlib driver; Logica's runtime UDFs (ArgMin/ArgMax, ARRAY_CONCAT, ...) are registered when the `logica` package is installed.
+- **psql**: needs `pip install psycopg` and a connection string.
 
-The [`Today` and `Now`](language/temporal.md) built-in concepts need no runner support — the compiler inlines them per dialect, so they work on every engine.
+The [`Today` and `Now`](language/temporal.md) built-in concepts need no runner support, since the compiler inlines them per dialect, so they work on every engine.
 
 Since connections are in-memory and per-run, `--load` is how you bring data in: each `TABLE=PATH` pair is loaded before the script runs, and the program refers to it by the table name. duckdb reads csv/tsv/json/jsonl/parquet natively; the sqlite runner parses csv/tsv/json/jsonl in Python (no parquet); the psql runner cannot load files.
 
@@ -141,7 +141,7 @@ Unbound variable 'y' in head of rule: A(x:, y:) :- B(x:)
 Unbound variable 'z' in head of rule: C(z:) :- D(w:)
 ```
 
-**Compile errors** come from `print` and `run` when SQL generation fails — for example when the requested predicate does not exist:
+**Compile errors** come from `print` and `run` when SQL generation fails, for example when the requested predicate does not exist:
 
 ```console
 $ synalog -c 'Greeting("hi");' run Missing
@@ -154,7 +154,7 @@ A failing program never produces partial output: `run` either prints the table o
 
 Synalog ships an [Agent Skill](https://agentskills.io): a `SKILL.md` that teaches a coding agent the language, the CLI and the conventions, so it can write and run programs correctly. The skill follows the open Agent Skills standard, so it works with Claude Code, Cursor, Codex, OpenCode, Cline, Windsurf and many other agents.
 
-Install it with the [`skills`](https://www.npmjs.com/package/skills) CLI (GitHub is the registry — nothing to publish or install first):
+Install it with the [`skills`](https://www.npmjs.com/package/skills) CLI (GitHub is the registry, so there is nothing to publish or install first):
 
 ```console
 $ npx skills add SynaLinks/synalog               # this project (./.claude/skills, ./.agents/skills, …)
@@ -170,7 +170,7 @@ Running `synalog` with no arguments starts a REPL, in the spirit of `python`:
 
 ```console
 $ synalog
-Synalog 0.1.0 on duckdb — type .help for help
+Synalog 0.1.0 on duckdb, type .help for help
 >>> Employee(name: "Alice", salary: 75000);
 >>> Employee(name: "Bob", salary: 65000);
 >>> Total(t? += salary) distinct :- Employee(salary:);
@@ -183,9 +183,9 @@ Synalog 0.1.0 on duckdb — type .help for help
 1 row
 ```
 
-Type a rule ending in `;` to add it to the session program — it is validated first and rejected with an error if invalid, leaving the program untouched. A statement can span several lines: the prompt switches to `...` until the closing `;`. Type a predicate name to compile and run it.
+Type a rule ending in `;` to add it to the session program. It is validated first and rejected with an error if invalid, leaving the program untouched. A statement can span several lines: the prompt switches to `...` until the closing `;`. Type a predicate name to compile and run it.
 
-Errors never end the session — the offending input is simply not added, as `.show` confirms:
+Errors never end the session: the offending input is simply not added, as `.show` confirms:
 
 ```console
 >>> Greeting("hi");

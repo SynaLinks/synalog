@@ -27,7 +27,7 @@ def load_results():
 
 
 def _geomean(values):
-    """Geometric mean — the average used for per-program speedup ratios."""
+    """Geometric mean: the average used for per-program speedup ratios."""
     values = [v for v in values if v > 0]
     return float(np.exp(np.mean(np.log(values)))) if values else 0.0
 
@@ -191,12 +191,12 @@ def plot_summary(results):
                      xytext=(0, 3), textcoords="offset points",
                      ha='center', va='bottom', fontsize=10)
 
-    # Verify times (Rust-only — Python Logica has no standalone verifier)
+    # Verify times (Rust-only: Python Logica has no standalone verifier)
     ax3 = axes[2]
     times = [0, s.get("rust_check_total_ms", 0)]
     bars = ax3.bar(["Python", "Rust"], times, color=['#bdc3c7', '#2ecc71'])
     ax3.set_ylabel('Total Time (ms)', fontsize=12)
-    ax3.set_title('Verify Time (Rust-only — no Python equivalent)',
+    ax3.set_title('Verify Time (Rust-only, no Python equivalent)',
                   fontsize=12, fontweight='bold')
     ax3.annotate('n/a',
                  xy=(bars[0].get_x() + bars[0].get_width() / 2, 0),

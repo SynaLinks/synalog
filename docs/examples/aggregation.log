@@ -11,37 +11,37 @@ create sequence if not exists eternal_logical_sequence;
 WITH t_0_Sales AS (SELECT * FROM (
   
     SELECT
-      E'books' AS category,
-      E'eu' AS region,
-      E'ann' AS seller,
+      'books' AS category,
+      'eu' AS region,
+      'ann' AS seller,
       120 AS amount
    UNION ALL
   
     SELECT
-      E'books' AS category,
-      E'us' AS region,
-      E'bob' AS seller,
+      'books' AS category,
+      'us' AS region,
+      'bob' AS seller,
       80 AS amount
    UNION ALL
   
     SELECT
-      E'games' AS category,
-      E'eu' AS region,
-      E'ann' AS seller,
+      'games' AS category,
+      'eu' AS region,
+      'ann' AS seller,
       300 AS amount
    UNION ALL
   
     SELECT
-      E'games' AS category,
-      E'eu' AS region,
-      E'cid' AS seller,
+      'games' AS category,
+      'eu' AS region,
+      'cid' AS seller,
       150 AS amount
    UNION ALL
   
     SELECT
-      E'games' AS category,
-      E'us' AS region,
-      E'bob' AS seller,
+      'games' AS category,
+      'us' AS region,
+      'bob' AS seller,
       220 AS amount
   
 ) AS UNUSED_TABLE_NAME  )
@@ -70,37 +70,37 @@ create sequence if not exists eternal_logical_sequence;
 WITH t_0_Sales AS (SELECT * FROM (
   
     SELECT
-      E'books' AS category,
-      E'eu' AS region,
-      E'ann' AS seller,
+      'books' AS category,
+      'eu' AS region,
+      'ann' AS seller,
       120 AS amount
    UNION ALL
   
     SELECT
-      E'books' AS category,
-      E'us' AS region,
-      E'bob' AS seller,
+      'books' AS category,
+      'us' AS region,
+      'bob' AS seller,
       80 AS amount
    UNION ALL
   
     SELECT
-      E'games' AS category,
-      E'eu' AS region,
-      E'ann' AS seller,
+      'games' AS category,
+      'eu' AS region,
+      'ann' AS seller,
       300 AS amount
    UNION ALL
   
     SELECT
-      E'games' AS category,
-      E'eu' AS region,
-      E'cid' AS seller,
+      'games' AS category,
+      'eu' AS region,
+      'cid' AS seller,
       150 AS amount
    UNION ALL
   
     SELECT
-      E'games' AS category,
-      E'us' AS region,
-      E'bob' AS seller,
+      'games' AS category,
+      'us' AS region,
+      'bob' AS seller,
       220 AS amount
   
 ) AS UNUSED_TABLE_NAME  )
@@ -130,37 +130,37 @@ create sequence if not exists eternal_logical_sequence;
 WITH t_0_Sales AS (SELECT * FROM (
   
     SELECT
-      E'books' AS category,
-      E'eu' AS region,
-      E'ann' AS seller,
+      'books' AS category,
+      'eu' AS region,
+      'ann' AS seller,
       120 AS amount
    UNION ALL
   
     SELECT
-      E'books' AS category,
-      E'us' AS region,
-      E'bob' AS seller,
+      'books' AS category,
+      'us' AS region,
+      'bob' AS seller,
       80 AS amount
    UNION ALL
   
     SELECT
-      E'games' AS category,
-      E'eu' AS region,
-      E'ann' AS seller,
+      'games' AS category,
+      'eu' AS region,
+      'ann' AS seller,
       300 AS amount
    UNION ALL
   
     SELECT
-      E'games' AS category,
-      E'eu' AS region,
-      E'cid' AS seller,
+      'games' AS category,
+      'eu' AS region,
+      'cid' AS seller,
       150 AS amount
    UNION ALL
   
     SELECT
-      E'games' AS category,
-      E'us' AS region,
-      E'bob' AS seller,
+      'games' AS category,
+      'us' AS region,
+      'bob' AS seller,
       220 AS amount
   
 ) AS UNUSED_TABLE_NAME  )
@@ -188,37 +188,37 @@ create sequence if not exists eternal_logical_sequence;
 WITH t_2_Sales AS (SELECT * FROM (
   
     SELECT
-      E'books' AS category,
-      E'eu' AS region,
-      E'ann' AS seller,
+      'books' AS category,
+      'eu' AS region,
+      'ann' AS seller,
       120 AS amount
    UNION ALL
   
     SELECT
-      E'books' AS category,
-      E'us' AS region,
-      E'bob' AS seller,
+      'books' AS category,
+      'us' AS region,
+      'bob' AS seller,
       80 AS amount
    UNION ALL
   
     SELECT
-      E'games' AS category,
-      E'eu' AS region,
-      E'ann' AS seller,
+      'games' AS category,
+      'eu' AS region,
+      'ann' AS seller,
       300 AS amount
    UNION ALL
   
     SELECT
-      E'games' AS category,
-      E'eu' AS region,
-      E'cid' AS seller,
+      'games' AS category,
+      'eu' AS region,
+      'cid' AS seller,
       150 AS amount
    UNION ALL
   
     SELECT
-      E'games' AS category,
-      E'us' AS region,
-      E'bob' AS seller,
+      'games' AS category,
+      'us' AS region,
+      'bob' AS seller,
       220 AS amount
   
 ) AS UNUSED_TABLE_NAME  ),

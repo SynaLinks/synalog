@@ -1,0 +1,22 @@
+Synalog
+Copyright 2025-2026 Yoan Sallami (Synalinks Team)
+
+This product includes software derived from Logica
+(https://github.com/EvgSkv/logica), the logic programming language created by
+Evgeny Skvortsov and the Logica team at Google LLC.
+
+  Logica
+  Copyright 2020 Google LLC
+
+Logica is licensed under the Apache License, Version 2.0. Portions of Synalog's
+parser, compiler, and type-inference engine are derived from Logica's Python
+implementation and have been rewritten in Rust. Files containing such derived
+code carry a header identifying the original Logica source, the original
+copyright, and a description of the modifications, as required by Section 4 of
+the Apache License, Version 2.0.
+
+This software is licensed under the Apache License, Version 2.0 (the "License");
+you may not use these files except in compliance with the License. You may
+obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0

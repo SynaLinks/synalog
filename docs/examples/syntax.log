@@ -53,8 +53,8 @@ WITH t_1_Customers AS (SELECT * FROM (
   
     SELECT
       1 AS customer_id,
-      E'Ada Lovelace' AS full_name,
-      E'ada@example.com' AS email,
+      'Ada Lovelace' AS full_name,
+      'ada@example.com' AS email,
       null AS phone
    UNION ALL
   
@@ -62,21 +62,21 @@ WITH t_1_Customers AS (SELECT * FROM (
       2 AS customer_id,
       null AS full_name,
       null AS email,
-      E'555-0102' AS phone
+      '555-0102' AS phone
    UNION ALL
   
     SELECT
       3 AS customer_id,
-      E'Grace Hopper' AS full_name,
-      E'grace@example.com' AS email,
-      E'555-0103' AS phone
+      'Grace Hopper' AS full_name,
+      'grace@example.com' AS email,
+      '555-0103' AS phone
   
 ) AS UNUSED_TABLE_NAME  ),
 t_0_ContactableCustomer_MultBodyAggAux AS (SELECT * FROM (
   
     SELECT
       Customers.customer_id AS customer_id,
-      E'email' AS channel
+      'email' AS channel
     FROM
       t_1_Customers AS Customers
     WHERE
@@ -85,7 +85,7 @@ t_0_ContactableCustomer_MultBodyAggAux AS (SELECT * FROM (
   
     SELECT
       t_2_Customers.customer_id AS customer_id,
-      E'phone' AS channel
+      'phone' AS channel
     FROM
       t_1_Customers AS t_2_Customers
     WHERE
@@ -119,8 +119,8 @@ WITH t_0_Customers AS (SELECT * FROM (
   
     SELECT
       1 AS customer_id,
-      E'Ada Lovelace' AS full_name,
-      E'ada@example.com' AS email,
+      'Ada Lovelace' AS full_name,
+      'ada@example.com' AS email,
       null AS phone
    UNION ALL
   
@@ -128,14 +128,14 @@ WITH t_0_Customers AS (SELECT * FROM (
       2 AS customer_id,
       null AS full_name,
       null AS email,
-      E'555-0102' AS phone
+      '555-0102' AS phone
    UNION ALL
   
     SELECT
       3 AS customer_id,
-      E'Grace Hopper' AS full_name,
-      E'grace@example.com' AS email,
-      E'555-0103' AS phone
+      'Grace Hopper' AS full_name,
+      'grace@example.com' AS email,
+      '555-0103' AS phone
   
 ) AS UNUSED_TABLE_NAME  ),
 t_1_Logins AS (SELECT * FROM (
@@ -195,7 +195,7 @@ WITH t_0_Orders AS (SELECT * FROM (
 ) AS UNUSED_TABLE_NAME  )
 SELECT
   Orders.order_id AS order_id,
-  CASE WHEN (Orders.amount > 1000) THEN E'large' WHEN (Orders.amount > 100) THEN E'medium' ELSE E'small' END AS size
+  CASE WHEN (Orders.amount > 1000) THEN 'large' WHEN (Orders.amount > 100) THEN 'medium' ELSE 'small' END AS size
 FROM
   t_0_Orders AS Orders ORDER BY order_id;
 
@@ -218,8 +218,8 @@ WITH t_0_Customers AS (SELECT * FROM (
   
     SELECT
       1 AS customer_id,
-      E'Ada Lovelace' AS full_name,
-      E'ada@example.com' AS email,
+      'Ada Lovelace' AS full_name,
+      'ada@example.com' AS email,
       null AS phone
    UNION ALL
   
@@ -227,19 +227,19 @@ WITH t_0_Customers AS (SELECT * FROM (
       2 AS customer_id,
       null AS full_name,
       null AS email,
-      E'555-0102' AS phone
+      '555-0102' AS phone
    UNION ALL
   
     SELECT
       3 AS customer_id,
-      E'Grace Hopper' AS full_name,
-      E'grace@example.com' AS email,
-      E'555-0103' AS phone
+      'Grace Hopper' AS full_name,
+      'grace@example.com' AS email,
+      '555-0103' AS phone
   
 ) AS UNUSED_TABLE_NAME  )
 SELECT
   Customers.customer_id AS customer_id,
-  COALESCE(Customers.full_name, E'Anonymous') AS name
+  COALESCE(Customers.full_name, 'Anonymous') AS name
 FROM
   t_0_Customers AS Customers ORDER BY customer_id;
 

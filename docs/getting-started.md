@@ -15,7 +15,7 @@ uv pip install synalog  # or install into the current virtualenv
 
 Requires Python 3.10+. Wheels are published for Linux (x86_64, aarch64, armv7, s390x, ppc64le; glibc and musl), Windows (x64, x86, aarch64) and macOS (x86_64, aarch64).
 
-duckdb (the default engine) and sqlite work out of the box. To execute on PostgreSQL, add the `run` extra — `pip install 'synalog[run]'` or `uv add 'synalog[run]'` — which pulls in the psycopg driver.
+duckdb (the default engine) and sqlite work out of the box. To execute on PostgreSQL, add the `run` extra (`pip install 'synalog[run]'` or `uv add 'synalog[run]'`), which pulls in the psycopg driver.
 
 ## Your first program
 
@@ -35,7 +35,7 @@ Employee(name: "Charlie", department: "Engineering", salary: 80000);
 EngineeringTeam(name:, salary:) :- Employee(name:, department: "Engineering", salary:);
 """
 
-# 1. Validate the program — returns a list of error messages
+# 1. Validate the program: returns a list of error messages
 errors = synalog.check(source)
 assert errors == []
 
@@ -44,23 +44,23 @@ sql = synalog.compile(source, "EngineeringTeam")
 print(sql)
 ```
 
-Output (the DuckDB initialization preamble is omitted here — the [complete example](#complete-example) below shows the full, unedited output):
+Output (the DuckDB initialization preamble is omitted here; the [complete example](#complete-example) below shows the full, unedited output):
 
 ```sql
 WITH t_0_Employee AS (SELECT * FROM (
     SELECT
-      E'Alice' AS name,
-      E'Engineering' AS department,
+      'Alice' AS name,
+      'Engineering' AS department,
       75000 AS salary
    UNION ALL
     SELECT
-      E'Bob' AS name,
-      E'Marketing' AS department,
+      'Bob' AS name,
+      'Marketing' AS department,
       65000 AS salary
    UNION ALL
     SELECT
-      E'Charlie' AS name,
-      E'Engineering' AS department,
+      'Charlie' AS name,
+      'Engineering' AS department,
       80000 AS salary
 ) AS UNUSED_TABLE_NAME  )
 SELECT
@@ -69,14 +69,14 @@ SELECT
 FROM
   t_0_Employee AS Employee
 WHERE
-  (Employee.department = E'Engineering') ORDER BY name;
+  (Employee.department = 'Engineering') ORDER BY name;
 ```
 
 Inline facts compile to a `WITH` clause; a real database table compiles to a plain `FROM` over that table, as in [Querying a CSV file](#querying-a-csv-file) below.
 
 ## Executing the SQL
 
-Synalog produces plain SQL strings, so you can execute them with any driver for your engine — `sqlite3`, `duckdb`, `psycopg`, `google-cloud-bigquery`, and so on:
+Synalog produces plain SQL strings, so you can execute them with any driver for your engine: `sqlite3`, `duckdb`, `psycopg`, `google-cloud-bigquery`, and so on:
 
 ```python
 import duckdb
@@ -88,7 +88,7 @@ print(result)
 
 ## The CLI
 
-Everything above also works without writing Python. Installing the package installs a `synalog` command that validates, compiles and runs predicates in one step — `run` (and `print`) verify the whole program first and stop with the verifier's errors if it is invalid:
+Everything above also works without writing Python. Installing the package installs a `synalog` command that validates, compiles and runs predicates in one step. `run` (and `print`) verify the whole program first and stop with the verifier's errors if it is invalid:
 
 ```bash
 synalog program.l run EngineeringTeam
@@ -98,7 +98,7 @@ Running `synalog` with no arguments starts an interactive session where you buil
 
 ### Add the skill to your coding agent
 
-Synalog ships an [Agent Skill](https://agentskills.io) — a `SKILL.md` that teaches a coding agent the language, the CLI and the conventions. It follows the open Agent Skills standard, so it works with Claude Code, Cursor, Codex, OpenCode and many other agents. Install it with the [`skills`](https://www.npmjs.com/package/skills) CLI (GitHub is the registry — nothing to publish or install first):
+Synalog ships an [Agent Skill](https://agentskills.io), a `SKILL.md` that teaches a coding agent the language, the CLI and the conventions. It follows the open Agent Skills standard, so it works with Claude Code, Cursor, Codex, OpenCode and many other agents. Install it with the [`skills`](https://www.npmjs.com/package/skills) CLI (GitHub is the registry, so there is nothing to publish or install first):
 
 ```console
 $ npx skills add SynaLinks/synalog        # this project
@@ -136,7 +136,7 @@ print(conn.execute(sql).fetchall())
 # [('gateway', 2), ('sensor-a', 1)]
 ```
 
-The program maps the `smoke_tests` table once, extracts the device and status concepts, and derives failure counts and daily run totals — note the [temporal pipeline](language/temporal.md) (`ToString` → `Substr`) on the `run_at` timestamp:
+The program maps the `smoke_tests` table once, extracts the device and status concepts, and derives failure counts and daily run totals. Note the [temporal pipeline](language/temporal.md) (`ToString` → `Substr`) on the `run_at` timestamp:
 
 ```logica
 --8<-- "docs/examples/loading_csv.l"

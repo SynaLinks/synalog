@@ -8,36 +8,37 @@ create schema if not exists logica_home;
 drop type if exists logicarecord893574736 cascade; create type logicarecord893574736 as struct(nirvana numeric);
 create sequence if not exists eternal_logical_sequence;
 
-CREATE OR REPLACE TABLE logica_home.AncestorOf_ifr0 AS WITH t_3_AncestorOfRaw AS (SELECT * FROM (
+DROP TABLE IF EXISTS logica_home.AncestorOf_ifr0;
+CREATE TABLE logica_home.AncestorOf_ifr0 AS WITH t_3_AncestorOfRaw AS (SELECT * FROM (
   
     SELECT
-      E'http://example.org/co#alice' AS subject_uri,
-      E'http://example.org/co#bob' AS object_uri
+      'http://example.org/co#alice' AS subject_uri,
+      'http://example.org/co#bob' AS object_uri
    UNION ALL
   
     SELECT
-      E'http://example.org/co#bob' AS subject_uri,
-      E'http://example.org/co#carol' AS object_uri
+      'http://example.org/co#bob' AS subject_uri,
+      'http://example.org/co#carol' AS object_uri
   
 ) AS UNUSED_TABLE_NAME  ),
 t_5_PersonRaw AS (SELECT * FROM (
   
     SELECT
-      E'http://example.org/co#alice' AS uri,
-      E'alice@acme.example' AS email,
-      E'Alice' AS name
+      'http://example.org/co#alice' AS uri,
+      'alice@acme.example' AS email,
+      'Alice' AS name
    UNION ALL
   
     SELECT
-      E'http://example.org/co#bob' AS uri,
+      'http://example.org/co#bob' AS uri,
       null AS email,
-      E'Bob' AS name
+      'Bob' AS name
    UNION ALL
   
     SELECT
-      E'http://example.org/co#carol' AS uri,
+      'http://example.org/co#carol' AS uri,
       null AS email,
-      E'Carol' AS name
+      'Carol' AS name
   
 ) AS UNUSED_TABLE_NAME  ),
 t_4_Person AS (SELECT
@@ -74,36 +75,37 @@ GROUP BY AncestorOf_MultBodyAggAux_f1.subject_uri, AncestorOf_MultBodyAggAux_f1.
 
 -- Interacting with table logica_home.AncestorOf_ifr0
 
-CREATE OR REPLACE TABLE logica_home.AncestorOf_ifr1 AS WITH t_3_AncestorOfRaw AS (SELECT * FROM (
+DROP TABLE IF EXISTS logica_home.AncestorOf_ifr1;
+CREATE TABLE logica_home.AncestorOf_ifr1 AS WITH t_3_AncestorOfRaw AS (SELECT * FROM (
   
     SELECT
-      E'http://example.org/co#alice' AS subject_uri,
-      E'http://example.org/co#bob' AS object_uri
+      'http://example.org/co#alice' AS subject_uri,
+      'http://example.org/co#bob' AS object_uri
    UNION ALL
   
     SELECT
-      E'http://example.org/co#bob' AS subject_uri,
-      E'http://example.org/co#carol' AS object_uri
+      'http://example.org/co#bob' AS subject_uri,
+      'http://example.org/co#carol' AS object_uri
   
 ) AS UNUSED_TABLE_NAME  ),
 t_5_PersonRaw AS (SELECT * FROM (
   
     SELECT
-      E'http://example.org/co#alice' AS uri,
-      E'alice@acme.example' AS email,
-      E'Alice' AS name
+      'http://example.org/co#alice' AS uri,
+      'alice@acme.example' AS email,
+      'Alice' AS name
    UNION ALL
   
     SELECT
-      E'http://example.org/co#bob' AS uri,
+      'http://example.org/co#bob' AS uri,
       null AS email,
-      E'Bob' AS name
+      'Bob' AS name
    UNION ALL
   
     SELECT
-      E'http://example.org/co#carol' AS uri,
+      'http://example.org/co#carol' AS uri,
       null AS email,
-      E'Carol' AS name
+      'Carol' AS name
   
 ) AS UNUSED_TABLE_NAME  ),
 t_4_Person AS (SELECT
@@ -149,36 +151,37 @@ GROUP BY AncestorOf_MultBodyAggAux_f2.subject_uri, AncestorOf_MultBodyAggAux_f2.
 
 -- Interacting with table logica_home.AncestorOf_ifr1
 
-CREATE OR REPLACE TABLE logica_home.AncestorOf_ifr2 AS WITH t_3_AncestorOfRaw AS (SELECT * FROM (
+DROP TABLE IF EXISTS logica_home.AncestorOf_ifr2;
+CREATE TABLE logica_home.AncestorOf_ifr2 AS WITH t_3_AncestorOfRaw AS (SELECT * FROM (
   
     SELECT
-      E'http://example.org/co#alice' AS subject_uri,
-      E'http://example.org/co#bob' AS object_uri
+      'http://example.org/co#alice' AS subject_uri,
+      'http://example.org/co#bob' AS object_uri
    UNION ALL
   
     SELECT
-      E'http://example.org/co#bob' AS subject_uri,
-      E'http://example.org/co#carol' AS object_uri
+      'http://example.org/co#bob' AS subject_uri,
+      'http://example.org/co#carol' AS object_uri
   
 ) AS UNUSED_TABLE_NAME  ),
 t_5_PersonRaw AS (SELECT * FROM (
   
     SELECT
-      E'http://example.org/co#alice' AS uri,
-      E'alice@acme.example' AS email,
-      E'Alice' AS name
+      'http://example.org/co#alice' AS uri,
+      'alice@acme.example' AS email,
+      'Alice' AS name
    UNION ALL
   
     SELECT
-      E'http://example.org/co#bob' AS uri,
+      'http://example.org/co#bob' AS uri,
       null AS email,
-      E'Bob' AS name
+      'Bob' AS name
    UNION ALL
   
     SELECT
-      E'http://example.org/co#carol' AS uri,
+      'http://example.org/co#carol' AS uri,
       null AS email,
-      E'Carol' AS name
+      'Carol' AS name
   
 ) AS UNUSED_TABLE_NAME  ),
 t_4_Person AS (SELECT
@@ -224,36 +227,37 @@ GROUP BY AncestorOf_MultBodyAggAux_f3.subject_uri, AncestorOf_MultBodyAggAux_f3.
 
 -- Interacting with table logica_home.AncestorOf_ifr2
 
-CREATE OR REPLACE TABLE logica_home.AncestorOf_ifr1 AS WITH t_3_AncestorOfRaw AS (SELECT * FROM (
+DROP TABLE IF EXISTS logica_home.AncestorOf_ifr1;
+CREATE TABLE logica_home.AncestorOf_ifr1 AS WITH t_3_AncestorOfRaw AS (SELECT * FROM (
   
     SELECT
-      E'http://example.org/co#alice' AS subject_uri,
-      E'http://example.org/co#bob' AS object_uri
+      'http://example.org/co#alice' AS subject_uri,
+      'http://example.org/co#bob' AS object_uri
    UNION ALL
   
     SELECT
-      E'http://example.org/co#bob' AS subject_uri,
-      E'http://example.org/co#carol' AS object_uri
+      'http://example.org/co#bob' AS subject_uri,
+      'http://example.org/co#carol' AS object_uri
   
 ) AS UNUSED_TABLE_NAME  ),
 t_5_PersonRaw AS (SELECT * FROM (
   
     SELECT
-      E'http://example.org/co#alice' AS uri,
-      E'alice@acme.example' AS email,
-      E'Alice' AS name
+      'http://example.org/co#alice' AS uri,
+      'alice@acme.example' AS email,
+      'Alice' AS name
    UNION ALL
   
     SELECT
-      E'http://example.org/co#bob' AS uri,
+      'http://example.org/co#bob' AS uri,
       null AS email,
-      E'Bob' AS name
+      'Bob' AS name
    UNION ALL
   
     SELECT
-      E'http://example.org/co#carol' AS uri,
+      'http://example.org/co#carol' AS uri,
       null AS email,
-      E'Carol' AS name
+      'Carol' AS name
   
 ) AS UNUSED_TABLE_NAME  ),
 t_4_Person AS (SELECT
@@ -302,33 +306,33 @@ GROUP BY AncestorOf_MultBodyAggAux_f4.subject_uri, AncestorOf_MultBodyAggAux_f4.
 WITH t_3_AncestorOfRaw AS (SELECT * FROM (
   
     SELECT
-      E'http://example.org/co#alice' AS subject_uri,
-      E'http://example.org/co#bob' AS object_uri
+      'http://example.org/co#alice' AS subject_uri,
+      'http://example.org/co#bob' AS object_uri
    UNION ALL
   
     SELECT
-      E'http://example.org/co#bob' AS subject_uri,
-      E'http://example.org/co#carol' AS object_uri
+      'http://example.org/co#bob' AS subject_uri,
+      'http://example.org/co#carol' AS object_uri
   
 ) AS UNUSED_TABLE_NAME  ),
 t_5_PersonRaw AS (SELECT * FROM (
   
     SELECT
-      E'http://example.org/co#alice' AS uri,
-      E'alice@acme.example' AS email,
-      E'Alice' AS name
+      'http://example.org/co#alice' AS uri,
+      'alice@acme.example' AS email,
+      'Alice' AS name
    UNION ALL
   
     SELECT
-      E'http://example.org/co#bob' AS uri,
+      'http://example.org/co#bob' AS uri,
       null AS email,
-      E'Bob' AS name
+      'Bob' AS name
    UNION ALL
   
     SELECT
-      E'http://example.org/co#carol' AS uri,
+      'http://example.org/co#carol' AS uri,
       null AS email,
-      E'Carol' AS name
+      'Carol' AS name
   
 ) AS UNUSED_TABLE_NAME  ),
 t_4_Person AS (SELECT
@@ -375,8 +379,8 @@ GROUP BY AncestorOf_MultBodyAggAux_f5.subject_uri, AncestorOf_MultBodyAggAux_f5.
 -- Executed on DuckDB:
 | subject_uri                 | object_uri                  |
 |-----------------------------|-----------------------------|
-| http://example.org/co#alice | http://example.org/co#carol |
 | http://example.org/co#alice | http://example.org/co#bob   |
+| http://example.org/co#alice | http://example.org/co#carol |
 | http://example.org/co#bob   | http://example.org/co#carol |
 (3 rows)
 
@@ -390,21 +394,21 @@ create sequence if not exists eternal_logical_sequence;
 WITH t_3_PersonRaw AS (SELECT * FROM (
   
     SELECT
-      E'http://example.org/co#alice' AS uri,
-      E'alice@acme.example' AS email,
-      E'Alice' AS name
+      'http://example.org/co#alice' AS uri,
+      'alice@acme.example' AS email,
+      'Alice' AS name
    UNION ALL
   
     SELECT
-      E'http://example.org/co#bob' AS uri,
+      'http://example.org/co#bob' AS uri,
       null AS email,
-      E'Bob' AS name
+      'Bob' AS name
    UNION ALL
   
     SELECT
-      E'http://example.org/co#carol' AS uri,
+      'http://example.org/co#carol' AS uri,
       null AS email,
-      E'Carol' AS name
+      'Carol' AS name
   
 ) AS UNUSED_TABLE_NAME  ),
 t_2_Person AS (SELECT
@@ -422,8 +426,8 @@ t_0_Knows_MultBodyAggAux AS (SELECT * FROM (
     FROM
       t_2_Person AS Person, t_2_Person AS t_1_Person
     WHERE
-      (E'http://example.org/co#alice' = Person.uri) AND
-      (E'http://example.org/co#bob' = t_1_Person.uri)
+      ('http://example.org/co#alice' = Person.uri) AND
+      ('http://example.org/co#bob' = t_1_Person.uri)
    UNION ALL
   
     SELECT
@@ -432,8 +436,8 @@ t_0_Knows_MultBodyAggAux AS (SELECT * FROM (
     FROM
       t_2_Person AS t_6_Person, t_2_Person AS t_7_Person
     WHERE
-      (E'http://example.org/co#alice' = t_7_Person.uri) AND
-      (E'http://example.org/co#bob' = t_6_Person.uri)
+      ('http://example.org/co#alice' = t_7_Person.uri) AND
+      ('http://example.org/co#bob' = t_6_Person.uri)
   
 ) AS UNUSED_TABLE_NAME  )
 SELECT
@@ -458,11 +462,11 @@ drop type if exists logicarecord893574736 cascade; create type logicarecord89357
 create sequence if not exists eternal_logical_sequence;
 
 SELECT
-  E'http://example.org/co#acme' AS subject_uri,
-  E'http://example.org/co#alice' AS object_uri
+  'http://example.org/co#acme' AS subject_uri,
+  'http://example.org/co#alice' AS object_uri
 FROM
   (SELECT 'singleton' as s) as unused_singleton
-GROUP BY (E'http://example.org/co#acme' || ''), (E'http://example.org/co#alice' || '') ORDER BY subject_uri;
+GROUP BY ('http://example.org/co#acme' || ''), ('http://example.org/co#alice' || '') ORDER BY subject_uri;
 
 -- Executed on DuckDB:
 | subject_uri                | object_uri                  |
@@ -480,21 +484,21 @@ create sequence if not exists eternal_logical_sequence;
 WITH t_2_PersonRaw AS (SELECT * FROM (
   
     SELECT
-      E'http://example.org/co#alice' AS uri,
-      E'alice@acme.example' AS email,
-      E'Alice' AS name
+      'http://example.org/co#alice' AS uri,
+      'alice@acme.example' AS email,
+      'Alice' AS name
    UNION ALL
   
     SELECT
-      E'http://example.org/co#bob' AS uri,
+      'http://example.org/co#bob' AS uri,
       null AS email,
-      E'Bob' AS name
+      'Bob' AS name
    UNION ALL
   
     SELECT
-      E'http://example.org/co#carol' AS uri,
+      'http://example.org/co#carol' AS uri,
       null AS email,
-      E'Carol' AS name
+      'Carol' AS name
   
 ) AS UNUSED_TABLE_NAME  ),
 t_1_Person AS (SELECT
@@ -510,8 +514,8 @@ SELECT
 FROM
   t_1_Person AS Person, t_1_Person AS t_0_Person
 WHERE
-  (E'http://example.org/co#alice' = Person.uri) AND
-  (E'http://example.org/co#carol' = t_0_Person.uri)
+  ('http://example.org/co#alice' = Person.uri) AND
+  ('http://example.org/co#carol' = t_0_Person.uri)
 GROUP BY Person.uri, t_0_Person.uri ORDER BY subject_uri;
 
 -- Executed on DuckDB:
@@ -530,21 +534,21 @@ create sequence if not exists eternal_logical_sequence;
 WITH t_1_PersonRaw AS (SELECT * FROM (
   
     SELECT
-      E'http://example.org/co#alice' AS uri,
-      E'alice@acme.example' AS email,
-      E'Alice' AS name
+      'http://example.org/co#alice' AS uri,
+      'alice@acme.example' AS email,
+      'Alice' AS name
    UNION ALL
   
     SELECT
-      E'http://example.org/co#bob' AS uri,
+      'http://example.org/co#bob' AS uri,
       null AS email,
-      E'Bob' AS name
+      'Bob' AS name
    UNION ALL
   
     SELECT
-      E'http://example.org/co#carol' AS uri,
+      'http://example.org/co#carol' AS uri,
       null AS email,
-      E'Carol' AS name
+      'Carol' AS name
   
 ) AS UNUSED_TABLE_NAME  ),
 t_0_Person AS (SELECT
@@ -579,33 +583,33 @@ create sequence if not exists eternal_logical_sequence;
 WITH t_2_HasDeskRaw AS (SELECT * FROM (
   
     SELECT
-      E'http://example.org/co#alice' AS subject_uri,
-      E'http://example.org/co#d1' AS object_uri
+      'http://example.org/co#alice' AS subject_uri,
+      'http://example.org/co#d1' AS object_uri
    UNION ALL
   
     SELECT
-      E'http://example.org/co#alice' AS subject_uri,
-      E'http://example.org/co#d2' AS object_uri
+      'http://example.org/co#alice' AS subject_uri,
+      'http://example.org/co#d2' AS object_uri
   
 ) AS UNUSED_TABLE_NAME  ),
 t_4_PersonRaw AS (SELECT * FROM (
   
     SELECT
-      E'http://example.org/co#alice' AS uri,
-      E'alice@acme.example' AS email,
-      E'Alice' AS name
+      'http://example.org/co#alice' AS uri,
+      'alice@acme.example' AS email,
+      'Alice' AS name
    UNION ALL
   
     SELECT
-      E'http://example.org/co#bob' AS uri,
+      'http://example.org/co#bob' AS uri,
       null AS email,
-      E'Bob' AS name
+      'Bob' AS name
    UNION ALL
   
     SELECT
-      E'http://example.org/co#carol' AS uri,
+      'http://example.org/co#carol' AS uri,
       null AS email,
-      E'Carol' AS name
+      'Carol' AS name
   
 ) AS UNUSED_TABLE_NAME  ),
 t_3_Person AS (SELECT
@@ -618,11 +622,11 @@ GROUP BY PersonRaw.uri, PersonRaw.email, PersonRaw.name ORDER BY uri),
 t_6_DeskRaw AS (SELECT * FROM (
   
     SELECT
-      E'http://example.org/co#d1' AS uri
+      'http://example.org/co#d1' AS uri
    UNION ALL
   
     SELECT
-      E'http://example.org/co#d2' AS uri
+      'http://example.org/co#d2' AS uri
   
 ) AS UNUSED_TABLE_NAME  ),
 t_5_Desk AS (SELECT
@@ -664,38 +668,38 @@ create sequence if not exists eternal_logical_sequence;
 WITH t_3_SupervisesRaw AS (SELECT * FROM (
   
     SELECT
-      E'http://example.org/co#alice' AS subject_uri,
-      E'http://example.org/co#bob' AS object_uri
+      'http://example.org/co#alice' AS subject_uri,
+      'http://example.org/co#bob' AS object_uri
    UNION ALL
   
     SELECT
-      E'http://example.org/co#bob' AS subject_uri,
-      E'http://example.org/co#alice' AS object_uri
+      'http://example.org/co#bob' AS subject_uri,
+      'http://example.org/co#alice' AS object_uri
    UNION ALL
   
     SELECT
-      E'http://example.org/co#carol' AS subject_uri,
-      E'http://example.org/co#carol' AS object_uri
+      'http://example.org/co#carol' AS subject_uri,
+      'http://example.org/co#carol' AS object_uri
   
 ) AS UNUSED_TABLE_NAME  ),
 t_5_PersonRaw AS (SELECT * FROM (
   
     SELECT
-      E'http://example.org/co#alice' AS uri,
-      E'alice@acme.example' AS email,
-      E'Alice' AS name
+      'http://example.org/co#alice' AS uri,
+      'alice@acme.example' AS email,
+      'Alice' AS name
    UNION ALL
   
     SELECT
-      E'http://example.org/co#bob' AS uri,
+      'http://example.org/co#bob' AS uri,
       null AS email,
-      E'Bob' AS name
+      'Bob' AS name
    UNION ALL
   
     SELECT
-      E'http://example.org/co#carol' AS uri,
+      'http://example.org/co#carol' AS uri,
       null AS email,
-      E'Carol' AS name
+      'Carol' AS name
   
 ) AS UNUSED_TABLE_NAME  ),
 t_4_Person AS (SELECT
@@ -742,38 +746,38 @@ create sequence if not exists eternal_logical_sequence;
 WITH t_2_SupervisesRaw AS (SELECT * FROM (
   
     SELECT
-      E'http://example.org/co#alice' AS subject_uri,
-      E'http://example.org/co#bob' AS object_uri
+      'http://example.org/co#alice' AS subject_uri,
+      'http://example.org/co#bob' AS object_uri
    UNION ALL
   
     SELECT
-      E'http://example.org/co#bob' AS subject_uri,
-      E'http://example.org/co#alice' AS object_uri
+      'http://example.org/co#bob' AS subject_uri,
+      'http://example.org/co#alice' AS object_uri
    UNION ALL
   
     SELECT
-      E'http://example.org/co#carol' AS subject_uri,
-      E'http://example.org/co#carol' AS object_uri
+      'http://example.org/co#carol' AS subject_uri,
+      'http://example.org/co#carol' AS object_uri
   
 ) AS UNUSED_TABLE_NAME  ),
 t_4_PersonRaw AS (SELECT * FROM (
   
     SELECT
-      E'http://example.org/co#alice' AS uri,
-      E'alice@acme.example' AS email,
-      E'Alice' AS name
+      'http://example.org/co#alice' AS uri,
+      'alice@acme.example' AS email,
+      'Alice' AS name
    UNION ALL
   
     SELECT
-      E'http://example.org/co#bob' AS uri,
+      'http://example.org/co#bob' AS uri,
       null AS email,
-      E'Bob' AS name
+      'Bob' AS name
    UNION ALL
   
     SELECT
-      E'http://example.org/co#carol' AS uri,
+      'http://example.org/co#carol' AS uri,
       null AS email,
-      E'Carol' AS name
+      'Carol' AS name
   
 ) AS UNUSED_TABLE_NAME  ),
 t_3_Person AS (SELECT
@@ -814,26 +818,26 @@ drop type if exists logicarecord893574736 cascade; create type logicarecord89357
 create sequence if not exists eternal_logical_sequence;
 
 WITH t_0_Contractor AS (SELECT
-  E'http://example.org/co#dave' AS uri,
-  E'Dave' AS name
+  'http://example.org/co#dave' AS uri,
+  'Dave' AS name
 FROM
   (SELECT 'singleton' as s) as unused_singleton
-GROUP BY (E'http://example.org/co#dave' || ''), (E'Dave' || '') ORDER BY uri),
+GROUP BY ('http://example.org/co#dave' || ''), ('Dave' || '') ORDER BY uri),
 t_1_Employee AS (SELECT
-  E'http://example.org/co#dave' AS uri,
-  E'Dave' AS name
+  'http://example.org/co#dave' AS uri,
+  'Dave' AS name
 FROM
   (SELECT 'singleton' as s) as unused_singleton
-GROUP BY (E'http://example.org/co#dave' || ''), (E'Dave' || '') ORDER BY uri)
+GROUP BY ('http://example.org/co#dave' || ''), ('Dave' || '') ORDER BY uri)
 SELECT
   Contractor.uri AS uri,
-  E'http://example.org/co#Contractor' AS class_a,
-  E'http://example.org/co#Employee' AS class_b
+  'http://example.org/co#Contractor' AS class_a,
+  'http://example.org/co#Employee' AS class_b
 FROM
   t_0_Contractor AS Contractor, t_1_Employee AS Employee
 WHERE
   (Employee.uri = Contractor.uri)
-GROUP BY Contractor.uri, (E'http://example.org/co#Contractor' || ''), (E'http://example.org/co#Employee' || '') ORDER BY uri;
+GROUP BY Contractor.uri, ('http://example.org/co#Contractor' || ''), ('http://example.org/co#Employee' || '') ORDER BY uri;
 
 -- Executed on DuckDB:
 | uri                        | class_a                          | class_b                        |
@@ -848,16 +852,17 @@ create schema if not exists logica_home;
 drop type if exists logicarecord893574736 cascade; create type logicarecord893574736 as struct(nirvana numeric);
 create sequence if not exists eternal_logical_sequence;
 
-CREATE OR REPLACE TABLE logica_home.SameAs_ifr0 AS WITH t_0_SameAs_MultBodyAggAux_f6 AS (SELECT * FROM (
+DROP TABLE IF EXISTS logica_home.SameAs_ifr0;
+CREATE TABLE logica_home.SameAs_ifr0 AS WITH t_0_SameAs_MultBodyAggAux_f6 AS (SELECT * FROM (
   
     SELECT
-      E'http://example.org/co#alice' AS left_uri,
-      E'http://example.org/co#alice2' AS right_uri
+      'http://example.org/co#alice' AS left_uri,
+      'http://example.org/co#alice2' AS right_uri
    UNION ALL
   
     SELECT
-      E'http://example.org/co#alice2' AS left_uri,
-      E'http://example.org/co#alice' AS right_uri
+      'http://example.org/co#alice2' AS left_uri,
+      'http://example.org/co#alice' AS right_uri
   
 ) AS UNUSED_TABLE_NAME  )
 SELECT
@@ -869,16 +874,17 @@ GROUP BY SameAs_MultBodyAggAux_f6.left_uri, SameAs_MultBodyAggAux_f6.right_uri O
 
 -- Interacting with table logica_home.SameAs_ifr0
 
-CREATE OR REPLACE TABLE logica_home.SameAs_ifr1 AS WITH t_0_SameAs_MultBodyAggAux_f7 AS (SELECT * FROM (
+DROP TABLE IF EXISTS logica_home.SameAs_ifr1;
+CREATE TABLE logica_home.SameAs_ifr1 AS WITH t_0_SameAs_MultBodyAggAux_f7 AS (SELECT * FROM (
   
     SELECT
-      E'http://example.org/co#alice' AS left_uri,
-      E'http://example.org/co#alice2' AS right_uri
+      'http://example.org/co#alice' AS left_uri,
+      'http://example.org/co#alice2' AS right_uri
    UNION ALL
   
     SELECT
-      E'http://example.org/co#alice2' AS left_uri,
-      E'http://example.org/co#alice' AS right_uri
+      'http://example.org/co#alice2' AS left_uri,
+      'http://example.org/co#alice' AS right_uri
    UNION ALL
   
     SELECT
@@ -899,16 +905,17 @@ GROUP BY SameAs_MultBodyAggAux_f7.left_uri, SameAs_MultBodyAggAux_f7.right_uri O
 
 -- Interacting with table logica_home.SameAs_ifr1
 
-CREATE OR REPLACE TABLE logica_home.SameAs_ifr2 AS WITH t_0_SameAs_MultBodyAggAux_f8 AS (SELECT * FROM (
+DROP TABLE IF EXISTS logica_home.SameAs_ifr2;
+CREATE TABLE logica_home.SameAs_ifr2 AS WITH t_0_SameAs_MultBodyAggAux_f8 AS (SELECT * FROM (
   
     SELECT
-      E'http://example.org/co#alice' AS left_uri,
-      E'http://example.org/co#alice2' AS right_uri
+      'http://example.org/co#alice' AS left_uri,
+      'http://example.org/co#alice2' AS right_uri
    UNION ALL
   
     SELECT
-      E'http://example.org/co#alice2' AS left_uri,
-      E'http://example.org/co#alice' AS right_uri
+      'http://example.org/co#alice2' AS left_uri,
+      'http://example.org/co#alice' AS right_uri
    UNION ALL
   
     SELECT
@@ -929,16 +936,17 @@ GROUP BY SameAs_MultBodyAggAux_f8.left_uri, SameAs_MultBodyAggAux_f8.right_uri O
 
 -- Interacting with table logica_home.SameAs_ifr2
 
-CREATE OR REPLACE TABLE logica_home.SameAs_ifr1 AS WITH t_0_SameAs_MultBodyAggAux_f9 AS (SELECT * FROM (
+DROP TABLE IF EXISTS logica_home.SameAs_ifr1;
+CREATE TABLE logica_home.SameAs_ifr1 AS WITH t_0_SameAs_MultBodyAggAux_f9 AS (SELECT * FROM (
   
     SELECT
-      E'http://example.org/co#alice' AS left_uri,
-      E'http://example.org/co#alice2' AS right_uri
+      'http://example.org/co#alice' AS left_uri,
+      'http://example.org/co#alice2' AS right_uri
    UNION ALL
   
     SELECT
-      E'http://example.org/co#alice2' AS left_uri,
-      E'http://example.org/co#alice' AS right_uri
+      'http://example.org/co#alice2' AS left_uri,
+      'http://example.org/co#alice' AS right_uri
    UNION ALL
   
     SELECT
@@ -962,13 +970,13 @@ GROUP BY SameAs_MultBodyAggAux_f9.left_uri, SameAs_MultBodyAggAux_f9.right_uri O
 WITH t_0_SameAs_MultBodyAggAux_f10 AS (SELECT * FROM (
   
     SELECT
-      E'http://example.org/co#alice' AS left_uri,
-      E'http://example.org/co#alice2' AS right_uri
+      'http://example.org/co#alice' AS left_uri,
+      'http://example.org/co#alice2' AS right_uri
    UNION ALL
   
     SELECT
-      E'http://example.org/co#alice2' AS left_uri,
-      E'http://example.org/co#alice' AS right_uri
+      'http://example.org/co#alice2' AS left_uri,
+      'http://example.org/co#alice' AS right_uri
    UNION ALL
   
     SELECT
@@ -990,8 +998,8 @@ GROUP BY SameAs_MultBodyAggAux_f10.left_uri, SameAs_MultBodyAggAux_f10.right_uri
 -- Executed on DuckDB:
 | left_uri                     | right_uri                    |
 |------------------------------|------------------------------|
-| http://example.org/co#alice  | http://example.org/co#alice  |
 | http://example.org/co#alice  | http://example.org/co#alice2 |
+| http://example.org/co#alice  | http://example.org/co#alice  |
 | http://example.org/co#alice2 | http://example.org/co#alice  |
 | http://example.org/co#alice2 | http://example.org/co#alice2 |
 (4 rows)

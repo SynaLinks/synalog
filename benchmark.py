@@ -53,7 +53,7 @@ def best_ms(timer, *args) -> float:
 
 
 def geomean(values: list) -> float:
-    """Geometric mean — the correct average for ratios like per-program speedups.
+    """Geometric mean: the correct average for ratios like per-program speedups.
 
     Unlike a ratio of summed times (which the slowest few programs dominate) or
     an arithmetic mean of ratios (which is biased upward for ratio data), the
@@ -115,8 +115,8 @@ def time_rust_check(source: str, engine: str) -> float:
     """Time the synalog (Rust) verifier through the PyO3 extension.
 
     Synalog runs a dedicated safety/stratification/recursion pass
-    (`synalog.check`) that Python Logica has no standalone equivalent for —
-    its analysis is folded into compilation — so this stage is Rust-only.
+    (`synalog.check`) that Python Logica has no standalone equivalent for:
+    its analysis is folded into compilation, so this stage is Rust-only.
     """
     import synalog
 
@@ -193,7 +193,7 @@ def benchmark_file(filepath: Path, roots: list, engine: str) -> dict:
         result["rust_compile_ms"] = -1
         result["rust_compile_error"] = str(e)
 
-    # Rust verify (synalog.check) — Rust-only stage, no Python counterpart.
+    # Rust verify (synalog.check): Rust-only stage, no Python counterpart.
     try:
         result["rust_check_ms"] = best_ms(time_rust_check, source, engine)
     except BaseException as e:
@@ -311,7 +311,7 @@ def write_summary_markdown(results):
     meta = results["metadata"]
     s = results.get("summary", {})
     lines = [
-        f"*Last run: {meta['timestamp']} — {s.get('total_tests', 0)} programs"
+        f"*Last run: {meta['timestamp']}, {s.get('total_tests', 0)} programs"
         f" from the compiler test suite. Each measurement is the fastest of"
         f" {meta['runs_per_test']} runs after a warm-up; the headline speedup is"
         " the geometric mean of per-program speedups (every program weighted"
@@ -327,12 +327,12 @@ def write_summary_markdown(results):
         f" | {s.get('rust_compile_total_ms', 0):.0f} ms"
         f" | **{s.get('compile_speedup', 0):.1f}x**"
         f" | {s.get('compile_speedup_median', 0):.1f}x |",
-        f"| Verify | — | {s.get('rust_check_total_ms', 0):.0f} ms"
-        " | Rust-only | — |",
+        f"| Verify | n/a | {s.get('rust_check_total_ms', 0):.0f} ms"
+        " | Rust-only | n/a |",
         "",
         "*The Python and Rust columns are summed wall-clock time across all"
         " programs (context, not the headline: a few large programs dominate"
-        " that ratio). Verification (`synalog.check` — safety, stratification,"
+        " that ratio). Verification (`synalog.check`: safety, stratification,"
         " recursion and reserved-name checks) is a Synalog-specific pass; Python"
         " Logica folds its analysis into compilation and has no standalone"
         " equivalent, so it is reported as a Rust-only total.*",

@@ -1,6 +1,6 @@
 # Recursion
 
-Recursive predicates compute **transitive closures** — relationships that span an arbitrary number of hops. This is the kind of query that is impossible to write correctly in plain SQL without engine-specific recursive CTEs.
+Recursive predicates compute **transitive closures**, relationships that span an arbitrary number of hops. This is the kind of query that is impossible to write correctly in plain SQL without engine-specific recursive CTEs.
 
 Typical uses: org charts, referral chains, product taxonomies, bill of materials, dependency graphs.
 
@@ -43,7 +43,7 @@ The `@Recursive` iteration limit bounds the path length, so cyclic route graphs 
 
 ## Cycle detection
 
-The recursive closure of a parent/child edge detects cycles in a hierarchy — a node that is its own ancestor:
+The recursive closure of a parent/child edge detects cycles in a hierarchy: a node that is its own ancestor:
 
 ```logica
 @Recursive(AncestorOf, 100);

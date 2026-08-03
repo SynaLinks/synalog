@@ -32,8 +32,8 @@ Each engine has its own SQL generation for:
 - regex matching,
 - standard library function names and arities.
 
-Synalog handles these differences in the compiler, so the same program compiles for every engine. The portable subset of the language is the whole language — with one caveat: a few standard library functions have no equivalent on some engines (for example, Presto has no printf-style `Format` function). The compiler maps what it can; genuinely missing functions fail on the engine at execution time.
+Synalog handles these differences in the compiler, so the same program compiles for every engine. The portable subset of the language is the whole language, with one caveat: a few standard library functions have no equivalent on some engines (for example, Presto has no printf-style `Format` function). The compiler maps what it can; genuinely missing functions fail on the engine at execution time.
 
 ## Scaling
 
-Because the heavy lifting is done by the SQL engine, Synalog inherits its performance characteristics: in-process analytics with DuckDB, embedded with SQLite, warehouse-scale with BigQuery, Trino, Presto or Databricks — efficiently scaling to petabytes of data.
+Because the heavy lifting is done by the SQL engine, Synalog inherits its performance characteristics: in-process analytics with DuckDB, embedded with SQLite, warehouse-scale with BigQuery, Trino, Presto or Databricks, efficiently scaling to petabytes of data.

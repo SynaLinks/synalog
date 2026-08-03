@@ -399,7 +399,7 @@
     var prompt =
       "I'm working with Synalog, a Datalog-style logic language that compiles " +
       "to SQL. Please explain, step by step and in clear language, what the " +
-      "following Synalog program does — the concepts and rules it defines and " +
+      "following Synalog program does: the concepts and rules it defines and " +
       "the result it produces.\n\n" +
       "Target SQL engine: " +
       (eng || "(default)") +
