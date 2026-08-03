@@ -14,35 +14,35 @@ WITH t_0_Orders AS (SELECT * FROM (
       1 AS order_id,
       100 AS customer_id,
       250 AS amount,
-      E'shipped' AS status
+      'shipped' AS status
    UNION ALL
   
     SELECT
       2 AS order_id,
       100 AS customer_id,
       1200 AS amount,
-      E'pending' AS status
+      'pending' AS status
    UNION ALL
   
     SELECT
       3 AS order_id,
       200 AS customer_id,
       80 AS amount,
-      E'shipped' AS status
+      'shipped' AS status
    UNION ALL
   
     SELECT
       4 AS order_id,
       300 AS customer_id,
       430 AS amount,
-      E'cancelled' AS status
+      'cancelled' AS status
    UNION ALL
   
     SELECT
       5 AS order_id,
       200 AS customer_id,
       95 AS amount,
-      E'shipped' AS status
+      'shipped' AS status
   
 ) AS UNUSED_TABLE_NAME  )
 SELECT
@@ -72,35 +72,35 @@ WITH t_0_Orders AS (SELECT * FROM (
       1 AS order_id,
       100 AS customer_id,
       250 AS amount,
-      E'shipped' AS status
+      'shipped' AS status
    UNION ALL
   
     SELECT
       2 AS order_id,
       100 AS customer_id,
       1200 AS amount,
-      E'pending' AS status
+      'pending' AS status
    UNION ALL
   
     SELECT
       3 AS order_id,
       200 AS customer_id,
       80 AS amount,
-      E'shipped' AS status
+      'shipped' AS status
    UNION ALL
   
     SELECT
       4 AS order_id,
       300 AS customer_id,
       430 AS amount,
-      E'cancelled' AS status
+      'cancelled' AS status
    UNION ALL
   
     SELECT
       5 AS order_id,
       200 AS customer_id,
       95 AS amount,
-      E'shipped' AS status
+      'shipped' AS status
   
 ) AS UNUSED_TABLE_NAME  )
 SELECT
@@ -130,35 +130,35 @@ WITH t_2_Orders AS (SELECT * FROM (
       1 AS order_id,
       100 AS customer_id,
       250 AS amount,
-      E'shipped' AS status
+      'shipped' AS status
    UNION ALL
   
     SELECT
       2 AS order_id,
       100 AS customer_id,
       1200 AS amount,
-      E'pending' AS status
+      'pending' AS status
    UNION ALL
   
     SELECT
       3 AS order_id,
       200 AS customer_id,
       80 AS amount,
-      E'shipped' AS status
+      'shipped' AS status
    UNION ALL
   
     SELECT
       4 AS order_id,
       300 AS customer_id,
       430 AS amount,
-      E'cancelled' AS status
+      'cancelled' AS status
    UNION ALL
   
     SELECT
       5 AS order_id,
       200 AS customer_id,
       95 AS amount,
-      E'shipped' AS status
+      'shipped' AS status
   
 ) AS UNUSED_TABLE_NAME  ),
 t_0_OrderStatus AS (SELECT
@@ -196,35 +196,35 @@ WITH t_0_Orders AS (SELECT * FROM (
       1 AS order_id,
       100 AS customer_id,
       250 AS amount,
-      E'shipped' AS status
+      'shipped' AS status
    UNION ALL
   
     SELECT
       2 AS order_id,
       100 AS customer_id,
       1200 AS amount,
-      E'pending' AS status
+      'pending' AS status
    UNION ALL
   
     SELECT
       3 AS order_id,
       200 AS customer_id,
       80 AS amount,
-      E'shipped' AS status
+      'shipped' AS status
    UNION ALL
   
     SELECT
       4 AS order_id,
       300 AS customer_id,
       430 AS amount,
-      E'cancelled' AS status
+      'cancelled' AS status
    UNION ALL
   
     SELECT
       5 AS order_id,
       200 AS customer_id,
       95 AS amount,
-      E'shipped' AS status
+      'shipped' AS status
   
 ) AS UNUSED_TABLE_NAME  )
 SELECT
@@ -255,35 +255,35 @@ WITH t_1_Orders AS (SELECT * FROM (
       1 AS order_id,
       100 AS customer_id,
       250 AS amount,
-      E'shipped' AS status
+      'shipped' AS status
    UNION ALL
   
     SELECT
       2 AS order_id,
       100 AS customer_id,
       1200 AS amount,
-      E'pending' AS status
+      'pending' AS status
    UNION ALL
   
     SELECT
       3 AS order_id,
       200 AS customer_id,
       80 AS amount,
-      E'shipped' AS status
+      'shipped' AS status
    UNION ALL
   
     SELECT
       4 AS order_id,
       300 AS customer_id,
       430 AS amount,
-      E'cancelled' AS status
+      'cancelled' AS status
    UNION ALL
   
     SELECT
       5 AS order_id,
       200 AS customer_id,
       95 AS amount,
-      E'shipped' AS status
+      'shipped' AS status
   
 ) AS UNUSED_TABLE_NAME  ),
 t_0_CustomerRevenue AS (SELECT

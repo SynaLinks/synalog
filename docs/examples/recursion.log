@@ -8,7 +8,7 @@ create schema if not exists logica_home;
 drop type if exists logicarecord893574736 cascade; create type logicarecord893574736 as struct(nirvana numeric);
 create sequence if not exists eternal_logical_sequence;
 
-CREATE OR REPLACE TABLE logica_home.AllManagers_ifr0 AS WITH t_1_Employees AS (SELECT * FROM (
+WITH t_41_Employees AS (SELECT * FROM (
   
     SELECT
       1 AS employee_id,
@@ -29,198 +29,434 @@ CREATE OR REPLACE TABLE logica_home.AllManagers_ifr0 AS WITH t_1_Employees AS (S
       4 AS employee_id,
       2 AS manager_id
   
-) AS UNUSED_TABLE_NAME  )
-SELECT * FROM (
+) AS UNUSED_TABLE_NAME  ),
+t_38_AllManagers_r0 AS (SELECT * FROM (
   
     SELECT
-      t_0_Employees.employee_id AS employee_id,
-      t_0_Employees.manager_id AS manager_id
+      t_40_Employees.employee_id AS employee_id,
+      t_40_Employees.manager_id AS manager_id
     FROM
-      t_1_Employees AS t_0_Employees
+      t_41_Employees AS t_40_Employees
     WHERE
-      (t_0_Employees.manager_id IS NOT null)
+      (t_40_Employees.manager_id IS NOT null)
   
-) AS UNUSED_TABLE_NAME  ORDER BY employee_id, manager_id ;
-
--- Interacting with table logica_home.AllManagers_ifr0
-
-CREATE OR REPLACE TABLE logica_home.AllManagers_ifr1 AS WITH t_1_Employees AS (SELECT * FROM (
+) AS UNUSED_TABLE_NAME  ORDER BY employee_id, manager_id ),
+t_36_AllManagers_r1 AS (SELECT * FROM (
   
     SELECT
-      1 AS employee_id,
-      null AS manager_id
+      AllManagers_r0.employee_id AS employee_id,
+      t_37_Employees.manager_id AS manager_id
+    FROM
+      t_38_AllManagers_r0 AS AllManagers_r0, t_41_Employees AS t_37_Employees
+    WHERE
+      (t_37_Employees.manager_id IS NOT null) AND
+      (t_37_Employees.employee_id = AllManagers_r0.manager_id)
    UNION ALL
   
     SELECT
-      2 AS employee_id,
-      1 AS manager_id
+      t_42_Employees.employee_id AS employee_id,
+      t_42_Employees.manager_id AS manager_id
+    FROM
+      t_41_Employees AS t_42_Employees
+    WHERE
+      (t_42_Employees.manager_id IS NOT null)
+  
+) AS UNUSED_TABLE_NAME  ORDER BY employee_id, manager_id ),
+t_34_AllManagers_r2 AS (SELECT * FROM (
+  
+    SELECT
+      AllManagers_r1.employee_id AS employee_id,
+      t_35_Employees.manager_id AS manager_id
+    FROM
+      t_36_AllManagers_r1 AS AllManagers_r1, t_41_Employees AS t_35_Employees
+    WHERE
+      (t_35_Employees.manager_id IS NOT null) AND
+      (t_35_Employees.employee_id = AllManagers_r1.manager_id)
    UNION ALL
   
     SELECT
-      3 AS employee_id,
-      2 AS manager_id
+      t_43_Employees.employee_id AS employee_id,
+      t_43_Employees.manager_id AS manager_id
+    FROM
+      t_41_Employees AS t_43_Employees
+    WHERE
+      (t_43_Employees.manager_id IS NOT null)
+  
+) AS UNUSED_TABLE_NAME  ORDER BY employee_id, manager_id ),
+t_32_AllManagers_r3 AS (SELECT * FROM (
+  
+    SELECT
+      AllManagers_r2.employee_id AS employee_id,
+      t_33_Employees.manager_id AS manager_id
+    FROM
+      t_34_AllManagers_r2 AS AllManagers_r2, t_41_Employees AS t_33_Employees
+    WHERE
+      (t_33_Employees.manager_id IS NOT null) AND
+      (t_33_Employees.employee_id = AllManagers_r2.manager_id)
    UNION ALL
   
     SELECT
-      4 AS employee_id,
-      2 AS manager_id
+      t_44_Employees.employee_id AS employee_id,
+      t_44_Employees.manager_id AS manager_id
+    FROM
+      t_41_Employees AS t_44_Employees
+    WHERE
+      (t_44_Employees.manager_id IS NOT null)
   
-) AS UNUSED_TABLE_NAME  )
+) AS UNUSED_TABLE_NAME  ORDER BY employee_id, manager_id ),
+t_30_AllManagers_r4 AS (SELECT * FROM (
+  
+    SELECT
+      AllManagers_r3.employee_id AS employee_id,
+      t_31_Employees.manager_id AS manager_id
+    FROM
+      t_32_AllManagers_r3 AS AllManagers_r3, t_41_Employees AS t_31_Employees
+    WHERE
+      (t_31_Employees.manager_id IS NOT null) AND
+      (t_31_Employees.employee_id = AllManagers_r3.manager_id)
+   UNION ALL
+  
+    SELECT
+      t_45_Employees.employee_id AS employee_id,
+      t_45_Employees.manager_id AS manager_id
+    FROM
+      t_41_Employees AS t_45_Employees
+    WHERE
+      (t_45_Employees.manager_id IS NOT null)
+  
+) AS UNUSED_TABLE_NAME  ORDER BY employee_id, manager_id ),
+t_28_AllManagers_r5 AS (SELECT * FROM (
+  
+    SELECT
+      AllManagers_r4.employee_id AS employee_id,
+      t_29_Employees.manager_id AS manager_id
+    FROM
+      t_30_AllManagers_r4 AS AllManagers_r4, t_41_Employees AS t_29_Employees
+    WHERE
+      (t_29_Employees.manager_id IS NOT null) AND
+      (t_29_Employees.employee_id = AllManagers_r4.manager_id)
+   UNION ALL
+  
+    SELECT
+      t_46_Employees.employee_id AS employee_id,
+      t_46_Employees.manager_id AS manager_id
+    FROM
+      t_41_Employees AS t_46_Employees
+    WHERE
+      (t_46_Employees.manager_id IS NOT null)
+  
+) AS UNUSED_TABLE_NAME  ORDER BY employee_id, manager_id ),
+t_26_AllManagers_r6 AS (SELECT * FROM (
+  
+    SELECT
+      AllManagers_r5.employee_id AS employee_id,
+      t_27_Employees.manager_id AS manager_id
+    FROM
+      t_28_AllManagers_r5 AS AllManagers_r5, t_41_Employees AS t_27_Employees
+    WHERE
+      (t_27_Employees.manager_id IS NOT null) AND
+      (t_27_Employees.employee_id = AllManagers_r5.manager_id)
+   UNION ALL
+  
+    SELECT
+      t_47_Employees.employee_id AS employee_id,
+      t_47_Employees.manager_id AS manager_id
+    FROM
+      t_41_Employees AS t_47_Employees
+    WHERE
+      (t_47_Employees.manager_id IS NOT null)
+  
+) AS UNUSED_TABLE_NAME  ORDER BY employee_id, manager_id ),
+t_24_AllManagers_r7 AS (SELECT * FROM (
+  
+    SELECT
+      AllManagers_r6.employee_id AS employee_id,
+      t_25_Employees.manager_id AS manager_id
+    FROM
+      t_26_AllManagers_r6 AS AllManagers_r6, t_41_Employees AS t_25_Employees
+    WHERE
+      (t_25_Employees.manager_id IS NOT null) AND
+      (t_25_Employees.employee_id = AllManagers_r6.manager_id)
+   UNION ALL
+  
+    SELECT
+      t_48_Employees.employee_id AS employee_id,
+      t_48_Employees.manager_id AS manager_id
+    FROM
+      t_41_Employees AS t_48_Employees
+    WHERE
+      (t_48_Employees.manager_id IS NOT null)
+  
+) AS UNUSED_TABLE_NAME  ORDER BY employee_id, manager_id ),
+t_22_AllManagers_r8 AS (SELECT * FROM (
+  
+    SELECT
+      AllManagers_r7.employee_id AS employee_id,
+      t_23_Employees.manager_id AS manager_id
+    FROM
+      t_24_AllManagers_r7 AS AllManagers_r7, t_41_Employees AS t_23_Employees
+    WHERE
+      (t_23_Employees.manager_id IS NOT null) AND
+      (t_23_Employees.employee_id = AllManagers_r7.manager_id)
+   UNION ALL
+  
+    SELECT
+      t_49_Employees.employee_id AS employee_id,
+      t_49_Employees.manager_id AS manager_id
+    FROM
+      t_41_Employees AS t_49_Employees
+    WHERE
+      (t_49_Employees.manager_id IS NOT null)
+  
+) AS UNUSED_TABLE_NAME  ORDER BY employee_id, manager_id ),
+t_20_AllManagers_r9 AS (SELECT * FROM (
+  
+    SELECT
+      AllManagers_r8.employee_id AS employee_id,
+      t_21_Employees.manager_id AS manager_id
+    FROM
+      t_22_AllManagers_r8 AS AllManagers_r8, t_41_Employees AS t_21_Employees
+    WHERE
+      (t_21_Employees.manager_id IS NOT null) AND
+      (t_21_Employees.employee_id = AllManagers_r8.manager_id)
+   UNION ALL
+  
+    SELECT
+      t_50_Employees.employee_id AS employee_id,
+      t_50_Employees.manager_id AS manager_id
+    FROM
+      t_41_Employees AS t_50_Employees
+    WHERE
+      (t_50_Employees.manager_id IS NOT null)
+  
+) AS UNUSED_TABLE_NAME  ORDER BY employee_id, manager_id ),
+t_18_AllManagers_r10 AS (SELECT * FROM (
+  
+    SELECT
+      AllManagers_r9.employee_id AS employee_id,
+      t_19_Employees.manager_id AS manager_id
+    FROM
+      t_20_AllManagers_r9 AS AllManagers_r9, t_41_Employees AS t_19_Employees
+    WHERE
+      (t_19_Employees.manager_id IS NOT null) AND
+      (t_19_Employees.employee_id = AllManagers_r9.manager_id)
+   UNION ALL
+  
+    SELECT
+      t_51_Employees.employee_id AS employee_id,
+      t_51_Employees.manager_id AS manager_id
+    FROM
+      t_41_Employees AS t_51_Employees
+    WHERE
+      (t_51_Employees.manager_id IS NOT null)
+  
+) AS UNUSED_TABLE_NAME  ORDER BY employee_id, manager_id ),
+t_16_AllManagers_r11 AS (SELECT * FROM (
+  
+    SELECT
+      AllManagers_r10.employee_id AS employee_id,
+      t_17_Employees.manager_id AS manager_id
+    FROM
+      t_18_AllManagers_r10 AS AllManagers_r10, t_41_Employees AS t_17_Employees
+    WHERE
+      (t_17_Employees.manager_id IS NOT null) AND
+      (t_17_Employees.employee_id = AllManagers_r10.manager_id)
+   UNION ALL
+  
+    SELECT
+      t_52_Employees.employee_id AS employee_id,
+      t_52_Employees.manager_id AS manager_id
+    FROM
+      t_41_Employees AS t_52_Employees
+    WHERE
+      (t_52_Employees.manager_id IS NOT null)
+  
+) AS UNUSED_TABLE_NAME  ORDER BY employee_id, manager_id ),
+t_14_AllManagers_r12 AS (SELECT * FROM (
+  
+    SELECT
+      AllManagers_r11.employee_id AS employee_id,
+      t_15_Employees.manager_id AS manager_id
+    FROM
+      t_16_AllManagers_r11 AS AllManagers_r11, t_41_Employees AS t_15_Employees
+    WHERE
+      (t_15_Employees.manager_id IS NOT null) AND
+      (t_15_Employees.employee_id = AllManagers_r11.manager_id)
+   UNION ALL
+  
+    SELECT
+      t_53_Employees.employee_id AS employee_id,
+      t_53_Employees.manager_id AS manager_id
+    FROM
+      t_41_Employees AS t_53_Employees
+    WHERE
+      (t_53_Employees.manager_id IS NOT null)
+  
+) AS UNUSED_TABLE_NAME  ORDER BY employee_id, manager_id ),
+t_12_AllManagers_r13 AS (SELECT * FROM (
+  
+    SELECT
+      AllManagers_r12.employee_id AS employee_id,
+      t_13_Employees.manager_id AS manager_id
+    FROM
+      t_14_AllManagers_r12 AS AllManagers_r12, t_41_Employees AS t_13_Employees
+    WHERE
+      (t_13_Employees.manager_id IS NOT null) AND
+      (t_13_Employees.employee_id = AllManagers_r12.manager_id)
+   UNION ALL
+  
+    SELECT
+      t_54_Employees.employee_id AS employee_id,
+      t_54_Employees.manager_id AS manager_id
+    FROM
+      t_41_Employees AS t_54_Employees
+    WHERE
+      (t_54_Employees.manager_id IS NOT null)
+  
+) AS UNUSED_TABLE_NAME  ORDER BY employee_id, manager_id ),
+t_10_AllManagers_r14 AS (SELECT * FROM (
+  
+    SELECT
+      AllManagers_r13.employee_id AS employee_id,
+      t_11_Employees.manager_id AS manager_id
+    FROM
+      t_12_AllManagers_r13 AS AllManagers_r13, t_41_Employees AS t_11_Employees
+    WHERE
+      (t_11_Employees.manager_id IS NOT null) AND
+      (t_11_Employees.employee_id = AllManagers_r13.manager_id)
+   UNION ALL
+  
+    SELECT
+      t_55_Employees.employee_id AS employee_id,
+      t_55_Employees.manager_id AS manager_id
+    FROM
+      t_41_Employees AS t_55_Employees
+    WHERE
+      (t_55_Employees.manager_id IS NOT null)
+  
+) AS UNUSED_TABLE_NAME  ORDER BY employee_id, manager_id ),
+t_8_AllManagers_r15 AS (SELECT * FROM (
+  
+    SELECT
+      AllManagers_r14.employee_id AS employee_id,
+      t_9_Employees.manager_id AS manager_id
+    FROM
+      t_10_AllManagers_r14 AS AllManagers_r14, t_41_Employees AS t_9_Employees
+    WHERE
+      (t_9_Employees.manager_id IS NOT null) AND
+      (t_9_Employees.employee_id = AllManagers_r14.manager_id)
+   UNION ALL
+  
+    SELECT
+      t_56_Employees.employee_id AS employee_id,
+      t_56_Employees.manager_id AS manager_id
+    FROM
+      t_41_Employees AS t_56_Employees
+    WHERE
+      (t_56_Employees.manager_id IS NOT null)
+  
+) AS UNUSED_TABLE_NAME  ORDER BY employee_id, manager_id ),
+t_6_AllManagers_r16 AS (SELECT * FROM (
+  
+    SELECT
+      AllManagers_r15.employee_id AS employee_id,
+      t_7_Employees.manager_id AS manager_id
+    FROM
+      t_8_AllManagers_r15 AS AllManagers_r15, t_41_Employees AS t_7_Employees
+    WHERE
+      (t_7_Employees.manager_id IS NOT null) AND
+      (t_7_Employees.employee_id = AllManagers_r15.manager_id)
+   UNION ALL
+  
+    SELECT
+      t_57_Employees.employee_id AS employee_id,
+      t_57_Employees.manager_id AS manager_id
+    FROM
+      t_41_Employees AS t_57_Employees
+    WHERE
+      (t_57_Employees.manager_id IS NOT null)
+  
+) AS UNUSED_TABLE_NAME  ORDER BY employee_id, manager_id ),
+t_4_AllManagers_r17 AS (SELECT * FROM (
+  
+    SELECT
+      AllManagers_r16.employee_id AS employee_id,
+      t_5_Employees.manager_id AS manager_id
+    FROM
+      t_6_AllManagers_r16 AS AllManagers_r16, t_41_Employees AS t_5_Employees
+    WHERE
+      (t_5_Employees.manager_id IS NOT null) AND
+      (t_5_Employees.employee_id = AllManagers_r16.manager_id)
+   UNION ALL
+  
+    SELECT
+      t_58_Employees.employee_id AS employee_id,
+      t_58_Employees.manager_id AS manager_id
+    FROM
+      t_41_Employees AS t_58_Employees
+    WHERE
+      (t_58_Employees.manager_id IS NOT null)
+  
+) AS UNUSED_TABLE_NAME  ORDER BY employee_id, manager_id ),
+t_2_AllManagers_r18 AS (SELECT * FROM (
+  
+    SELECT
+      AllManagers_r17.employee_id AS employee_id,
+      t_3_Employees.manager_id AS manager_id
+    FROM
+      t_4_AllManagers_r17 AS AllManagers_r17, t_41_Employees AS t_3_Employees
+    WHERE
+      (t_3_Employees.manager_id IS NOT null) AND
+      (t_3_Employees.employee_id = AllManagers_r17.manager_id)
+   UNION ALL
+  
+    SELECT
+      t_59_Employees.employee_id AS employee_id,
+      t_59_Employees.manager_id AS manager_id
+    FROM
+      t_41_Employees AS t_59_Employees
+    WHERE
+      (t_59_Employees.manager_id IS NOT null)
+  
+) AS UNUSED_TABLE_NAME  ORDER BY employee_id, manager_id ),
+t_0_AllManagers_r19 AS (SELECT * FROM (
+  
+    SELECT
+      AllManagers_r18.employee_id AS employee_id,
+      t_1_Employees.manager_id AS manager_id
+    FROM
+      t_2_AllManagers_r18 AS AllManagers_r18, t_41_Employees AS t_1_Employees
+    WHERE
+      (t_1_Employees.manager_id IS NOT null) AND
+      (t_1_Employees.employee_id = AllManagers_r18.manager_id)
+   UNION ALL
+  
+    SELECT
+      t_60_Employees.employee_id AS employee_id,
+      t_60_Employees.manager_id AS manager_id
+    FROM
+      t_41_Employees AS t_60_Employees
+    WHERE
+      (t_60_Employees.manager_id IS NOT null)
+  
+) AS UNUSED_TABLE_NAME  ORDER BY employee_id, manager_id )
 SELECT * FROM (
   
     SELECT
-      AllManagers_ifr0.employee_id AS employee_id,
+      AllManagers_r19.employee_id AS employee_id,
       Employees.manager_id AS manager_id
     FROM
-      logica_home.AllManagers_ifr0 AS AllManagers_ifr0, t_1_Employees AS Employees
+      t_0_AllManagers_r19 AS AllManagers_r19, t_41_Employees AS Employees
     WHERE
       (Employees.manager_id IS NOT null) AND
-      (Employees.employee_id = AllManagers_ifr0.manager_id)
-   UNION ALL
-  
-    SELECT
-      t_0_Employees.employee_id AS employee_id,
-      t_0_Employees.manager_id AS manager_id
-    FROM
-      t_1_Employees AS t_0_Employees
-    WHERE
-      (t_0_Employees.manager_id IS NOT null)
-  
-) AS UNUSED_TABLE_NAME  ORDER BY employee_id, manager_id ;
-
--- Interacting with table logica_home.AllManagers_ifr1
-
-CREATE OR REPLACE TABLE logica_home.AllManagers_ifr2 AS WITH t_1_Employees AS (SELECT * FROM (
-  
-    SELECT
-      1 AS employee_id,
-      null AS manager_id
-   UNION ALL
-  
-    SELECT
-      2 AS employee_id,
-      1 AS manager_id
-   UNION ALL
-  
-    SELECT
-      3 AS employee_id,
-      2 AS manager_id
-   UNION ALL
-  
-    SELECT
-      4 AS employee_id,
-      2 AS manager_id
-  
-) AS UNUSED_TABLE_NAME  )
-SELECT * FROM (
-  
-    SELECT
-      AllManagers_ifr1.employee_id AS employee_id,
-      Employees.manager_id AS manager_id
-    FROM
-      logica_home.AllManagers_ifr1 AS AllManagers_ifr1, t_1_Employees AS Employees
-    WHERE
-      (Employees.manager_id IS NOT null) AND
-      (Employees.employee_id = AllManagers_ifr1.manager_id)
-   UNION ALL
-  
-    SELECT
-      t_0_Employees.employee_id AS employee_id,
-      t_0_Employees.manager_id AS manager_id
-    FROM
-      t_1_Employees AS t_0_Employees
-    WHERE
-      (t_0_Employees.manager_id IS NOT null)
-  
-) AS UNUSED_TABLE_NAME  ORDER BY employee_id, manager_id ;
-
--- Interacting with table logica_home.AllManagers_ifr2
-
-CREATE OR REPLACE TABLE logica_home.AllManagers_ifr1 AS WITH t_1_Employees AS (SELECT * FROM (
-  
-    SELECT
-      1 AS employee_id,
-      null AS manager_id
-   UNION ALL
-  
-    SELECT
-      2 AS employee_id,
-      1 AS manager_id
-   UNION ALL
-  
-    SELECT
-      3 AS employee_id,
-      2 AS manager_id
-   UNION ALL
-  
-    SELECT
-      4 AS employee_id,
-      2 AS manager_id
-  
-) AS UNUSED_TABLE_NAME  )
-SELECT * FROM (
-  
-    SELECT
-      AllManagers_ifr2.employee_id AS employee_id,
-      Employees.manager_id AS manager_id
-    FROM
-      logica_home.AllManagers_ifr2 AS AllManagers_ifr2, t_1_Employees AS Employees
-    WHERE
-      (Employees.manager_id IS NOT null) AND
-      (Employees.employee_id = AllManagers_ifr2.manager_id)
-   UNION ALL
-  
-    SELECT
-      t_0_Employees.employee_id AS employee_id,
-      t_0_Employees.manager_id AS manager_id
-    FROM
-      t_1_Employees AS t_0_Employees
-    WHERE
-      (t_0_Employees.manager_id IS NOT null)
-  
-) AS UNUSED_TABLE_NAME  ORDER BY employee_id, manager_id ;
-
--- Interacting with table logica_home.AllManagers_ifr1
-
-WITH t_1_Employees AS (SELECT * FROM (
-  
-    SELECT
-      1 AS employee_id,
-      null AS manager_id
-   UNION ALL
-  
-    SELECT
-      2 AS employee_id,
-      1 AS manager_id
-   UNION ALL
-  
-    SELECT
-      3 AS employee_id,
-      2 AS manager_id
-   UNION ALL
-  
-    SELECT
-      4 AS employee_id,
-      2 AS manager_id
-  
-) AS UNUSED_TABLE_NAME  )
-SELECT * FROM (
-  
-    SELECT
-      AllManagers_ifr3.employee_id AS employee_id,
-      Employees.manager_id AS manager_id
-    FROM
-      logica_home.AllManagers_ifr1 AS AllManagers_ifr3, t_1_Employees AS Employees
-    WHERE
-      (Employees.manager_id IS NOT null) AND
-      (Employees.employee_id = AllManagers_ifr3.manager_id)
+      (Employees.employee_id = AllManagers_r19.manager_id)
    UNION ALL
   
     SELECT
       Employees.employee_id AS employee_id,
       Employees.manager_id AS manager_id
     FROM
-      t_1_Employees AS Employees
+      t_41_Employees AS Employees
     WHERE
       (Employees.manager_id IS NOT null)
   
@@ -243,247 +479,248 @@ create schema if not exists logica_home;
 drop type if exists logicarecord893574736 cascade; create type logicarecord893574736 as struct(nirvana numeric);
 create sequence if not exists eternal_logical_sequence;
 
-CREATE OR REPLACE TABLE logica_home.RouteCost_ifr0 AS WITH t_0_ShippingRoutes AS (SELECT * FROM (
+WITH t_1_ShippingRoutes AS (SELECT * FROM (
   
     SELECT
-      E'warehouse_main' AS origin,
-      E'rotterdam' AS destination,
+      'warehouse_main' AS origin,
+      'rotterdam' AS destination,
       4 AS cost
    UNION ALL
   
     SELECT
-      E'rotterdam' AS origin,
-      E'oslo' AS destination,
+      'rotterdam' AS origin,
+      'oslo' AS destination,
       3 AS cost
    UNION ALL
   
     SELECT
-      E'warehouse_main' AS origin,
-      E'oslo' AS destination,
+      'warehouse_main' AS origin,
+      'oslo' AS destination,
       9 AS cost
    UNION ALL
   
     SELECT
-      E'oslo' AS origin,
-      E'helsinki' AS destination,
+      'oslo' AS origin,
+      'helsinki' AS destination,
       2 AS cost
   
-) AS UNUSED_TABLE_NAME  )
-SELECT * FROM (
+) AS UNUSED_TABLE_NAME  ),
+t_30_RouteCost_r0 AS (SELECT * FROM (
+  
+    SELECT
+      t_31_ShippingRoutes.destination AS destination,
+      t_31_ShippingRoutes.cost AS cost
+    FROM
+      t_1_ShippingRoutes AS t_31_ShippingRoutes
+    WHERE
+      (t_31_ShippingRoutes.origin = 'warehouse_main')
+  
+) AS UNUSED_TABLE_NAME  ),
+t_27_RouteCost_r1 AS (SELECT * FROM (
+  
+    SELECT
+      t_28_ShippingRoutes.destination AS destination,
+      t_28_ShippingRoutes.cost AS cost
+    FROM
+      t_1_ShippingRoutes AS t_28_ShippingRoutes
+    WHERE
+      (t_28_ShippingRoutes.origin = 'warehouse_main')
+   UNION ALL
+  
+    SELECT
+      t_29_ShippingRoutes.destination AS destination,
+      ((RouteCost_r0.cost) + (t_29_ShippingRoutes.cost)) AS cost
+    FROM
+      t_30_RouteCost_r0 AS RouteCost_r0, t_1_ShippingRoutes AS t_29_ShippingRoutes
+    WHERE
+      (t_29_ShippingRoutes.origin = RouteCost_r0.destination)
+  
+) AS UNUSED_TABLE_NAME  ),
+t_24_RouteCost_r2 AS (SELECT * FROM (
+  
+    SELECT
+      t_25_ShippingRoutes.destination AS destination,
+      t_25_ShippingRoutes.cost AS cost
+    FROM
+      t_1_ShippingRoutes AS t_25_ShippingRoutes
+    WHERE
+      (t_25_ShippingRoutes.origin = 'warehouse_main')
+   UNION ALL
+  
+    SELECT
+      t_26_ShippingRoutes.destination AS destination,
+      ((RouteCost_r1.cost) + (t_26_ShippingRoutes.cost)) AS cost
+    FROM
+      t_27_RouteCost_r1 AS RouteCost_r1, t_1_ShippingRoutes AS t_26_ShippingRoutes
+    WHERE
+      (t_26_ShippingRoutes.origin = RouteCost_r1.destination)
+  
+) AS UNUSED_TABLE_NAME  ),
+t_21_RouteCost_r3 AS (SELECT * FROM (
+  
+    SELECT
+      t_22_ShippingRoutes.destination AS destination,
+      t_22_ShippingRoutes.cost AS cost
+    FROM
+      t_1_ShippingRoutes AS t_22_ShippingRoutes
+    WHERE
+      (t_22_ShippingRoutes.origin = 'warehouse_main')
+   UNION ALL
+  
+    SELECT
+      t_23_ShippingRoutes.destination AS destination,
+      ((RouteCost_r2.cost) + (t_23_ShippingRoutes.cost)) AS cost
+    FROM
+      t_24_RouteCost_r2 AS RouteCost_r2, t_1_ShippingRoutes AS t_23_ShippingRoutes
+    WHERE
+      (t_23_ShippingRoutes.origin = RouteCost_r2.destination)
+  
+) AS UNUSED_TABLE_NAME  ),
+t_18_RouteCost_r4 AS (SELECT * FROM (
+  
+    SELECT
+      t_19_ShippingRoutes.destination AS destination,
+      t_19_ShippingRoutes.cost AS cost
+    FROM
+      t_1_ShippingRoutes AS t_19_ShippingRoutes
+    WHERE
+      (t_19_ShippingRoutes.origin = 'warehouse_main')
+   UNION ALL
+  
+    SELECT
+      t_20_ShippingRoutes.destination AS destination,
+      ((RouteCost_r3.cost) + (t_20_ShippingRoutes.cost)) AS cost
+    FROM
+      t_21_RouteCost_r3 AS RouteCost_r3, t_1_ShippingRoutes AS t_20_ShippingRoutes
+    WHERE
+      (t_20_ShippingRoutes.origin = RouteCost_r3.destination)
+  
+) AS UNUSED_TABLE_NAME  ),
+t_15_RouteCost_r5 AS (SELECT * FROM (
+  
+    SELECT
+      t_16_ShippingRoutes.destination AS destination,
+      t_16_ShippingRoutes.cost AS cost
+    FROM
+      t_1_ShippingRoutes AS t_16_ShippingRoutes
+    WHERE
+      (t_16_ShippingRoutes.origin = 'warehouse_main')
+   UNION ALL
+  
+    SELECT
+      t_17_ShippingRoutes.destination AS destination,
+      ((RouteCost_r4.cost) + (t_17_ShippingRoutes.cost)) AS cost
+    FROM
+      t_18_RouteCost_r4 AS RouteCost_r4, t_1_ShippingRoutes AS t_17_ShippingRoutes
+    WHERE
+      (t_17_ShippingRoutes.origin = RouteCost_r4.destination)
+  
+) AS UNUSED_TABLE_NAME  ),
+t_12_RouteCost_r6 AS (SELECT * FROM (
+  
+    SELECT
+      t_13_ShippingRoutes.destination AS destination,
+      t_13_ShippingRoutes.cost AS cost
+    FROM
+      t_1_ShippingRoutes AS t_13_ShippingRoutes
+    WHERE
+      (t_13_ShippingRoutes.origin = 'warehouse_main')
+   UNION ALL
+  
+    SELECT
+      t_14_ShippingRoutes.destination AS destination,
+      ((RouteCost_r5.cost) + (t_14_ShippingRoutes.cost)) AS cost
+    FROM
+      t_15_RouteCost_r5 AS RouteCost_r5, t_1_ShippingRoutes AS t_14_ShippingRoutes
+    WHERE
+      (t_14_ShippingRoutes.origin = RouteCost_r5.destination)
+  
+) AS UNUSED_TABLE_NAME  ),
+t_9_RouteCost_r7 AS (SELECT * FROM (
+  
+    SELECT
+      t_10_ShippingRoutes.destination AS destination,
+      t_10_ShippingRoutes.cost AS cost
+    FROM
+      t_1_ShippingRoutes AS t_10_ShippingRoutes
+    WHERE
+      (t_10_ShippingRoutes.origin = 'warehouse_main')
+   UNION ALL
+  
+    SELECT
+      t_11_ShippingRoutes.destination AS destination,
+      ((RouteCost_r6.cost) + (t_11_ShippingRoutes.cost)) AS cost
+    FROM
+      t_12_RouteCost_r6 AS RouteCost_r6, t_1_ShippingRoutes AS t_11_ShippingRoutes
+    WHERE
+      (t_11_ShippingRoutes.origin = RouteCost_r6.destination)
+  
+) AS UNUSED_TABLE_NAME  ),
+t_6_RouteCost_r8 AS (SELECT * FROM (
+  
+    SELECT
+      t_7_ShippingRoutes.destination AS destination,
+      t_7_ShippingRoutes.cost AS cost
+    FROM
+      t_1_ShippingRoutes AS t_7_ShippingRoutes
+    WHERE
+      (t_7_ShippingRoutes.origin = 'warehouse_main')
+   UNION ALL
+  
+    SELECT
+      t_8_ShippingRoutes.destination AS destination,
+      ((RouteCost_r7.cost) + (t_8_ShippingRoutes.cost)) AS cost
+    FROM
+      t_9_RouteCost_r7 AS RouteCost_r7, t_1_ShippingRoutes AS t_8_ShippingRoutes
+    WHERE
+      (t_8_ShippingRoutes.origin = RouteCost_r7.destination)
+  
+) AS UNUSED_TABLE_NAME  ),
+t_3_RouteCost_r9 AS (SELECT * FROM (
+  
+    SELECT
+      t_4_ShippingRoutes.destination AS destination,
+      t_4_ShippingRoutes.cost AS cost
+    FROM
+      t_1_ShippingRoutes AS t_4_ShippingRoutes
+    WHERE
+      (t_4_ShippingRoutes.origin = 'warehouse_main')
+   UNION ALL
+  
+    SELECT
+      t_5_ShippingRoutes.destination AS destination,
+      ((RouteCost_r8.cost) + (t_5_ShippingRoutes.cost)) AS cost
+    FROM
+      t_6_RouteCost_r8 AS RouteCost_r8, t_1_ShippingRoutes AS t_5_ShippingRoutes
+    WHERE
+      (t_5_ShippingRoutes.origin = RouteCost_r8.destination)
+  
+) AS UNUSED_TABLE_NAME  ),
+t_0_RouteCost AS (SELECT * FROM (
   
     SELECT
       ShippingRoutes.destination AS destination,
       ShippingRoutes.cost AS cost
     FROM
-      t_0_ShippingRoutes AS ShippingRoutes
+      t_1_ShippingRoutes AS ShippingRoutes
     WHERE
-      (ShippingRoutes.origin = E'warehouse_main')
-  
-) AS UNUSED_TABLE_NAME  ;
-
--- Interacting with table logica_home.RouteCost_ifr0
-
-CREATE OR REPLACE TABLE logica_home.RouteCost_ifr1 AS WITH t_0_ShippingRoutes AS (SELECT * FROM (
-  
-    SELECT
-      E'warehouse_main' AS origin,
-      E'rotterdam' AS destination,
-      4 AS cost
+      (ShippingRoutes.origin = 'warehouse_main')
    UNION ALL
   
     SELECT
-      E'rotterdam' AS origin,
-      E'oslo' AS destination,
-      3 AS cost
-   UNION ALL
-  
-    SELECT
-      E'warehouse_main' AS origin,
-      E'oslo' AS destination,
-      9 AS cost
-   UNION ALL
-  
-    SELECT
-      E'oslo' AS origin,
-      E'helsinki' AS destination,
-      2 AS cost
+      t_2_ShippingRoutes.destination AS destination,
+      ((RouteCost_r9.cost) + (t_2_ShippingRoutes.cost)) AS cost
+    FROM
+      t_3_RouteCost_r9 AS RouteCost_r9, t_1_ShippingRoutes AS t_2_ShippingRoutes
+    WHERE
+      (t_2_ShippingRoutes.origin = RouteCost_r9.destination)
   
 ) AS UNUSED_TABLE_NAME  )
-SELECT * FROM (
-  
-    SELECT
-      ShippingRoutes.destination AS destination,
-      ShippingRoutes.cost AS cost
-    FROM
-      t_0_ShippingRoutes AS ShippingRoutes
-    WHERE
-      (ShippingRoutes.origin = E'warehouse_main')
-   UNION ALL
-  
-    SELECT
-      t_0_ShippingRoutes.destination AS destination,
-      ((RouteCost_ifr0.cost) + (t_0_ShippingRoutes.cost)) AS cost
-    FROM
-      logica_home.RouteCost_ifr0 AS RouteCost_ifr0, t_0_ShippingRoutes
-    WHERE
-      (t_0_ShippingRoutes.origin = RouteCost_ifr0.destination)
-  
-) AS UNUSED_TABLE_NAME  ;
-
--- Interacting with table logica_home.RouteCost_ifr1
-
-CREATE OR REPLACE TABLE logica_home.RouteCost_ifr2 AS WITH t_0_ShippingRoutes AS (SELECT * FROM (
-  
-    SELECT
-      E'warehouse_main' AS origin,
-      E'rotterdam' AS destination,
-      4 AS cost
-   UNION ALL
-  
-    SELECT
-      E'rotterdam' AS origin,
-      E'oslo' AS destination,
-      3 AS cost
-   UNION ALL
-  
-    SELECT
-      E'warehouse_main' AS origin,
-      E'oslo' AS destination,
-      9 AS cost
-   UNION ALL
-  
-    SELECT
-      E'oslo' AS origin,
-      E'helsinki' AS destination,
-      2 AS cost
-  
-) AS UNUSED_TABLE_NAME  )
-SELECT * FROM (
-  
-    SELECT
-      ShippingRoutes.destination AS destination,
-      ShippingRoutes.cost AS cost
-    FROM
-      t_0_ShippingRoutes AS ShippingRoutes
-    WHERE
-      (ShippingRoutes.origin = E'warehouse_main')
-   UNION ALL
-  
-    SELECT
-      t_0_ShippingRoutes.destination AS destination,
-      ((RouteCost_ifr1.cost) + (t_0_ShippingRoutes.cost)) AS cost
-    FROM
-      logica_home.RouteCost_ifr1 AS RouteCost_ifr1, t_0_ShippingRoutes
-    WHERE
-      (t_0_ShippingRoutes.origin = RouteCost_ifr1.destination)
-  
-) AS UNUSED_TABLE_NAME  ;
-
--- Interacting with table logica_home.RouteCost_ifr2
-
-CREATE OR REPLACE TABLE logica_home.RouteCost_ifr1 AS WITH t_0_ShippingRoutes AS (SELECT * FROM (
-  
-    SELECT
-      E'warehouse_main' AS origin,
-      E'rotterdam' AS destination,
-      4 AS cost
-   UNION ALL
-  
-    SELECT
-      E'rotterdam' AS origin,
-      E'oslo' AS destination,
-      3 AS cost
-   UNION ALL
-  
-    SELECT
-      E'warehouse_main' AS origin,
-      E'oslo' AS destination,
-      9 AS cost
-   UNION ALL
-  
-    SELECT
-      E'oslo' AS origin,
-      E'helsinki' AS destination,
-      2 AS cost
-  
-) AS UNUSED_TABLE_NAME  )
-SELECT * FROM (
-  
-    SELECT
-      ShippingRoutes.destination AS destination,
-      ShippingRoutes.cost AS cost
-    FROM
-      t_0_ShippingRoutes AS ShippingRoutes
-    WHERE
-      (ShippingRoutes.origin = E'warehouse_main')
-   UNION ALL
-  
-    SELECT
-      t_0_ShippingRoutes.destination AS destination,
-      ((RouteCost_ifr2.cost) + (t_0_ShippingRoutes.cost)) AS cost
-    FROM
-      logica_home.RouteCost_ifr2 AS RouteCost_ifr2, t_0_ShippingRoutes
-    WHERE
-      (t_0_ShippingRoutes.origin = RouteCost_ifr2.destination)
-  
-) AS UNUSED_TABLE_NAME  ;
-
--- Interacting with table logica_home.RouteCost_ifr1
-
-CREATE OR REPLACE TABLE logica_home.RouteCost AS WITH t_0_ShippingRoutes AS (SELECT * FROM (
-  
-    SELECT
-      E'warehouse_main' AS origin,
-      E'rotterdam' AS destination,
-      4 AS cost
-   UNION ALL
-  
-    SELECT
-      E'rotterdam' AS origin,
-      E'oslo' AS destination,
-      3 AS cost
-   UNION ALL
-  
-    SELECT
-      E'warehouse_main' AS origin,
-      E'oslo' AS destination,
-      9 AS cost
-   UNION ALL
-  
-    SELECT
-      E'oslo' AS origin,
-      E'helsinki' AS destination,
-      2 AS cost
-  
-) AS UNUSED_TABLE_NAME  )
-SELECT * FROM (
-  
-    SELECT
-      ShippingRoutes.destination AS destination,
-      ShippingRoutes.cost AS cost
-    FROM
-      t_0_ShippingRoutes AS ShippingRoutes
-    WHERE
-      (ShippingRoutes.origin = E'warehouse_main')
-   UNION ALL
-  
-    SELECT
-      t_1_ShippingRoutes.destination AS destination,
-      ((RouteCost_ifr3.cost) + (t_1_ShippingRoutes.cost)) AS cost
-    FROM
-      logica_home.RouteCost_ifr1 AS RouteCost_ifr3, t_0_ShippingRoutes AS t_1_ShippingRoutes
-    WHERE
-      (t_1_ShippingRoutes.origin = RouteCost_ifr3.destination)
-  
-) AS UNUSED_TABLE_NAME  ;
-
--- Interacting with table logica_home.RouteCost
-
 SELECT
   RouteCost.destination AS destination,
   MIN(RouteCost.cost) AS total
 FROM
-  logica_home.RouteCost AS RouteCost
+  t_0_RouteCost AS RouteCost
 GROUP BY RouteCost.destination ORDER BY destination;
 
 -- Executed on DuckDB:

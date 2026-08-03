@@ -12,22 +12,22 @@ WITH t_0_Employees AS (SELECT * FROM (
   
     SELECT
       1 AS person_id,
-      E'Ada' AS name,
-      E'engineer' AS role,
+      'Ada' AS name,
+      'engineer' AS role,
       2 AS manager_id
    UNION ALL
   
     SELECT
       2 AS person_id,
-      E'Grace' AS name,
-      E'lead' AS role,
+      'Grace' AS name,
+      'lead' AS role,
       null AS manager_id
    UNION ALL
   
     SELECT
       3 AS person_id,
-      E'Alan' AS name,
-      E'engineer' AS role,
+      'Alan' AS name,
+      'engineer' AS role,
       2 AS manager_id
   
 ) AS UNUSED_TABLE_NAME  )
@@ -58,17 +58,17 @@ WITH t_0_TeamAssignments AS (SELECT * FROM (
   
     SELECT
       1 AS person_id,
-      E'core' AS team_id
+      'core' AS team_id
    UNION ALL
   
     SELECT
       2 AS person_id,
-      E'core' AS team_id
+      'core' AS team_id
    UNION ALL
   
     SELECT
       3 AS person_id,
-      E'platform' AS team_id
+      'platform' AS team_id
   
 ) AS UNUSED_TABLE_NAME  )
 SELECT
@@ -94,15 +94,15 @@ create sequence if not exists eternal_logical_sequence;
 WITH t_0_Engagements AS (SELECT * FROM (
   
     SELECT
-      E'core' AS team_id,
-      E'acme' AS client_id,
-      E'https://acme.example.com' AS website
+      'core' AS team_id,
+      'acme' AS client_id,
+      'https://acme.example.com' AS website
    UNION ALL
   
     SELECT
-      E'platform' AS team_id,
-      E'globex' AS client_id,
-      E'https://globex.example.com' AS website
+      'platform' AS team_id,
+      'globex' AS client_id,
+      'https://globex.example.com' AS website
   
 ) AS UNUSED_TABLE_NAME  )
 SELECT
@@ -130,22 +130,22 @@ WITH t_1_Employees AS (SELECT * FROM (
   
     SELECT
       1 AS person_id,
-      E'Ada' AS name,
-      E'engineer' AS role,
+      'Ada' AS name,
+      'engineer' AS role,
       2 AS manager_id
    UNION ALL
   
     SELECT
       2 AS person_id,
-      E'Grace' AS name,
-      E'lead' AS role,
+      'Grace' AS name,
+      'lead' AS role,
       null AS manager_id
    UNION ALL
   
     SELECT
       3 AS person_id,
-      E'Alan' AS name,
-      E'engineer' AS role,
+      'Alan' AS name,
+      'engineer' AS role,
       2 AS manager_id
   
 ) AS UNUSED_TABLE_NAME  ),
@@ -160,17 +160,17 @@ t_4_TeamAssignments AS (SELECT * FROM (
   
     SELECT
       1 AS person_id,
-      E'core' AS team_id
+      'core' AS team_id
    UNION ALL
   
     SELECT
       2 AS person_id,
-      E'core' AS team_id
+      'core' AS team_id
    UNION ALL
   
     SELECT
       3 AS person_id,
-      E'platform' AS team_id
+      'platform' AS team_id
   
 ) AS UNUSED_TABLE_NAME  ),
 t_2_Team AS (SELECT
@@ -207,17 +207,17 @@ WITH t_1_TeamAssignments AS (SELECT * FROM (
   
     SELECT
       1 AS person_id,
-      E'core' AS team_id
+      'core' AS team_id
    UNION ALL
   
     SELECT
       2 AS person_id,
-      E'core' AS team_id
+      'core' AS team_id
    UNION ALL
   
     SELECT
       3 AS person_id,
-      E'platform' AS team_id
+      'platform' AS team_id
   
 ) AS UNUSED_TABLE_NAME  ),
 t_0_Team AS (SELECT
@@ -228,15 +228,15 @@ GROUP BY TeamAssignments.team_id ORDER BY team_id),
 t_4_Engagements AS (SELECT * FROM (
   
     SELECT
-      E'core' AS team_id,
-      E'acme' AS client_id,
-      E'https://acme.example.com' AS website
+      'core' AS team_id,
+      'acme' AS client_id,
+      'https://acme.example.com' AS website
    UNION ALL
   
     SELECT
-      E'platform' AS team_id,
-      E'globex' AS client_id,
-      E'https://globex.example.com' AS website
+      'platform' AS team_id,
+      'globex' AS client_id,
+      'https://globex.example.com' AS website
   
 ) AS UNUSED_TABLE_NAME  ),
 t_2_Client AS (SELECT
@@ -273,22 +273,22 @@ WITH t_2_Employees AS (SELECT * FROM (
   
     SELECT
       1 AS person_id,
-      E'Ada' AS name,
-      E'engineer' AS role,
+      'Ada' AS name,
+      'engineer' AS role,
       2 AS manager_id
    UNION ALL
   
     SELECT
       2 AS person_id,
-      E'Grace' AS name,
-      E'lead' AS role,
+      'Grace' AS name,
+      'lead' AS role,
       null AS manager_id
    UNION ALL
   
     SELECT
       3 AS person_id,
-      E'Alan' AS name,
-      E'engineer' AS role,
+      'Alan' AS name,
+      'engineer' AS role,
       2 AS manager_id
   
 ) AS UNUSED_TABLE_NAME  ),
@@ -303,17 +303,17 @@ t_5_TeamAssignments AS (SELECT * FROM (
   
     SELECT
       1 AS person_id,
-      E'core' AS team_id
+      'core' AS team_id
    UNION ALL
   
     SELECT
       2 AS person_id,
-      E'core' AS team_id
+      'core' AS team_id
    UNION ALL
   
     SELECT
       3 AS person_id,
-      E'platform' AS team_id
+      'platform' AS team_id
   
 ) AS UNUSED_TABLE_NAME  ),
 t_3_Team AS (SELECT
@@ -333,15 +333,15 @@ GROUP BY Person.person_id, Team.team_id ORDER BY person_id),
 t_11_Engagements AS (SELECT * FROM (
   
     SELECT
-      E'core' AS team_id,
-      E'acme' AS client_id,
-      E'https://acme.example.com' AS website
+      'core' AS team_id,
+      'acme' AS client_id,
+      'https://acme.example.com' AS website
    UNION ALL
   
     SELECT
-      E'platform' AS team_id,
-      E'globex' AS client_id,
-      E'https://globex.example.com' AS website
+      'platform' AS team_id,
+      'globex' AS client_id,
+      'https://globex.example.com' AS website
   
 ) AS UNUSED_TABLE_NAME  ),
 t_9_Client AS (SELECT
@@ -387,22 +387,22 @@ WITH t_3_Employees AS (SELECT * FROM (
   
     SELECT
       1 AS person_id,
-      E'Ada' AS name,
-      E'engineer' AS role,
+      'Ada' AS name,
+      'engineer' AS role,
       2 AS manager_id
    UNION ALL
   
     SELECT
       2 AS person_id,
-      E'Grace' AS name,
-      E'lead' AS role,
+      'Grace' AS name,
+      'lead' AS role,
       null AS manager_id
    UNION ALL
   
     SELECT
       3 AS person_id,
-      E'Alan' AS name,
-      E'engineer' AS role,
+      'Alan' AS name,
+      'engineer' AS role,
       2 AS manager_id
   
 ) AS UNUSED_TABLE_NAME  ),

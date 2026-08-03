@@ -7,7 +7,7 @@ Aggregation happens in the rule **head**, together with the `distinct` keyword. 
 Stats(category:, total? += amount, count? += 1) distinct :- Sales(category:, amount:);
 ```
 
-Non-aggregated head columns (`category` above) become the grouping key — like `GROUP BY` in SQL.
+Non-aggregated head columns (`category` above) become the grouping key, like `GROUP BY` in SQL.
 
 ## Aggregation operators
 
@@ -45,7 +45,7 @@ TopSeller(name? ArgMax= name -> revenue) distinct :- Sales(name:, revenue:);
 ```
 
 !!! danger "Counting"
-    Never use `Count()` — use `count? += 1` instead.
+    Never use `Count()`. Use `count? += 1` instead.
 
 ## More aggregating functions
 
@@ -53,7 +53,7 @@ In addition to the operators above: `Array= x -> y` (ordered array), `ArgMinK(x 
 
 ## Deduplication without aggregation
 
-`distinct` on its own deduplicates rows — this is how concepts extract unique entities:
+`distinct` on its own deduplicates rows, and this is how concepts extract unique entities:
 
 ```logica
 @OrderBy(Customer, "customer_id");

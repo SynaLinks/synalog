@@ -19,7 +19,7 @@ This matters most for AI agents: it prevents producing programs that parse corre
 
 ### Unsafe `SqlExpr`
 
-`SqlExpr("...", {...})` injects a raw SQL string straight into the compiled query — unparsed, untyped, unverified, and rarely portable across engines, defeating the guarantees Synalog exists to provide. It is reserved for the built-in library (which uses it for `ArgMin`/`ArgMax`/regex/...); user programs that call it are rejected:
+`SqlExpr("...", {...})` injects a raw SQL string straight into the compiled query: unparsed, untyped, unverified and rarely portable across engines, defeating the guarantees Synalog exists to provide. It is reserved for the built-in library (which uses it for `ArgMin`/`ArgMax`/regex/...); user programs that call it are rejected:
 
 ```python
 errors = synalog.check('''
@@ -52,11 +52,11 @@ for e in errors:
 An empty list means the program is structurally valid and safe to compile.
 
 !!! tip "Check before you compile"
-    In an agent loop, always run `check()` first and feed the error messages back to the model. The messages are written to be actionable — they name the predicate, the variable, and the violated rule.
+    In an agent loop, always run `check()` first and feed the error messages back to the model. The messages are written to be actionable: they name the predicate, the variable, and the violated rule.
 
 ## Complete example
 
-An intentionally invalid program — an unbound head variable, an unbounded self-recursion and a reserved predicate name — and everything the verifier reports for it:
+An intentionally invalid program (an unbound head variable, an unbounded self-recursion and a reserved predicate name), and everything the verifier reports for it:
 
 ```logica
 --8<-- "docs/examples/verification.l"

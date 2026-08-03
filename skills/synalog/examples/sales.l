@@ -10,11 +10,11 @@ import lib.metrics.TotalByRegion;
 # Tables (read-only declarations of external data)
 Sales(region:, amount:, sold_at:) :- sales(region:, amount:, sold_at:);
 
-# Concepts — extract entities and relationships
+# Concepts: extract entities and relationships
 @OrderBy(Region, "region");
 Region(region:) distinct :- Sales(region:);
 
-# Rules — derive insights from concepts and imported predicates.
+# Rules: derive insights from concepts and imported predicates.
 # Temporal columns go through ToString -> Substr, never raw arithmetic.
 @OrderBy(MonthlySales, "month");
 MonthlySales(month:, total? += amount) distinct :-

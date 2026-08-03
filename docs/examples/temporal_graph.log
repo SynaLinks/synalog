@@ -1,0 +1,836 @@
+$ synalog.check('temporal_graph.l')
+No errors found.
+
+$ synalog.compile('temporal_graph.l', 'MemberOf')
+-- Initializing DuckDB environment.
+create schema if not exists logica_home;
+-- Empty record, has to have a field by DuckDB syntax.
+drop type if exists logicarecord893574736 cascade; create type logicarecord893574736 as struct(nirvana numeric);
+create sequence if not exists eternal_logical_sequence;
+
+WITH t_2_People AS (SELECT * FROM (
+  
+    SELECT
+      1 AS person_id,
+      'Ada' AS name
+   UNION ALL
+  
+    SELECT
+      2 AS person_id,
+      'Grace' AS name
+   UNION ALL
+  
+    SELECT
+      3 AS person_id,
+      'Alan' AS name
+  
+) AS UNUSED_TABLE_NAME  ),
+t_1_Person AS (SELECT
+  People.person_id AS person_id,
+  People.name AS name
+FROM
+  t_2_People AS People
+GROUP BY People.person_id, People.name ORDER BY person_id),
+t_4_Teams AS (SELECT * FROM (
+  
+    SELECT
+      'core' AS team_id
+   UNION ALL
+  
+    SELECT
+      'platform' AS team_id
+   UNION ALL
+  
+    SELECT
+      'support' AS team_id
+  
+) AS UNUSED_TABLE_NAME  ),
+t_3_Team AS (SELECT
+  Teams.team_id AS team_id
+FROM
+  t_4_Teams AS Teams
+GROUP BY Teams.team_id ORDER BY team_id),
+t_5_Assignments AS (SELECT * FROM (
+  
+    SELECT
+      1 AS person_id,
+      'core' AS team_id,
+      '2024-01-01' AS changed_at
+   UNION ALL
+  
+    SELECT
+      1 AS person_id,
+      'platform' AS team_id,
+      '2026-02-01' AS changed_at
+   UNION ALL
+  
+    SELECT
+      2 AS person_id,
+      'core' AS team_id,
+      '2023-05-01' AS changed_at
+   UNION ALL
+  
+    SELECT
+      3 AS person_id,
+      'platform' AS team_id,
+      '2024-09-01' AS changed_at
+  
+) AS UNUSED_TABLE_NAME  ),
+t_6_NextChange AS (SELECT
+  t_7_Assignments.person_id AS person_id,
+  t_7_Assignments.changed_at AS changed_at,
+  MIN(t_8_Assignments.changed_at) AS next
+FROM
+  t_5_Assignments AS t_7_Assignments, t_5_Assignments AS t_8_Assignments
+WHERE
+  (t_8_Assignments.changed_at > t_7_Assignments.changed_at) AND
+  (t_8_Assignments.person_id = t_7_Assignments.person_id)
+GROUP BY t_7_Assignments.person_id, t_7_Assignments.changed_at ORDER BY person_id, changed_at),
+t_0_MemberOf_MultBodyAggAux AS (SELECT * FROM (
+  
+    SELECT
+      Person.person_id AS person_id,
+      Team.team_id AS team_id,
+      Assignments.changed_at AS valid_from,
+      NextChange.next AS valid_to
+    FROM
+      t_1_Person AS Person, t_3_Team AS Team, t_5_Assignments AS Assignments, t_6_NextChange AS NextChange
+    WHERE
+      (Assignments.person_id = Person.person_id) AND
+      (Assignments.team_id = Team.team_id) AND
+      (NextChange.person_id = Person.person_id) AND
+      (NextChange.changed_at = Assignments.changed_at)
+   UNION ALL
+  
+    SELECT
+      t_9_Person.person_id AS person_id,
+      t_10_Team.team_id AS team_id,
+      t_11_Assignments.changed_at AS valid_from,
+      '9999-12-31' AS valid_to
+    FROM
+      t_1_Person AS t_9_Person, t_3_Team AS t_10_Team, t_5_Assignments AS t_11_Assignments
+    WHERE
+      ((SELECT
+        MIN((CASE WHEN x_50.unnested_pod = 0 THEN 1 ELSE NULL END)) AS logica_value
+      FROM
+        t_6_NextChange AS t_14_NextChange, (select unnest([0]) as unnested_pod) as x_50
+      WHERE
+        (t_14_NextChange.person_id = t_9_Person.person_id) AND
+        (t_14_NextChange.changed_at = t_11_Assignments.changed_at)) IS NULL) AND
+      (t_11_Assignments.person_id = t_9_Person.person_id) AND
+      (t_11_Assignments.team_id = t_10_Team.team_id)
+  
+) AS UNUSED_TABLE_NAME  )
+SELECT
+  MemberOf_MultBodyAggAux.person_id AS person_id,
+  MemberOf_MultBodyAggAux.team_id AS team_id,
+  MemberOf_MultBodyAggAux.valid_from AS valid_from,
+  MemberOf_MultBodyAggAux.valid_to AS valid_to
+FROM
+  t_0_MemberOf_MultBodyAggAux AS MemberOf_MultBodyAggAux
+GROUP BY MemberOf_MultBodyAggAux.person_id, MemberOf_MultBodyAggAux.team_id, MemberOf_MultBodyAggAux.valid_from, MemberOf_MultBodyAggAux.valid_to ORDER BY person_id, valid_from;
+
+-- Executed on DuckDB:
+| person_id | team_id  | valid_from | valid_to   |
+|-----------|----------|------------|------------|
+| 1         | core     | 2024-01-01 | 2026-02-01 |
+| 1         | platform | 2026-02-01 | 9999-12-31 |
+| 2         | core     | 2023-05-01 | 9999-12-31 |
+| 3         | platform | 2024-09-01 | 9999-12-31 |
+(4 rows)
+
+$ synalog.compile('temporal_graph.l', 'ActiveMember')
+-- Initializing DuckDB environment.
+create schema if not exists logica_home;
+-- Empty record, has to have a field by DuckDB syntax.
+drop type if exists logicarecord893574736 cascade; create type logicarecord893574736 as struct(nirvana numeric);
+create sequence if not exists eternal_logical_sequence;
+
+WITH t_4_People AS (SELECT * FROM (
+  
+    SELECT
+      1 AS person_id,
+      'Ada' AS name
+   UNION ALL
+  
+    SELECT
+      2 AS person_id,
+      'Grace' AS name
+   UNION ALL
+  
+    SELECT
+      3 AS person_id,
+      'Alan' AS name
+  
+) AS UNUSED_TABLE_NAME  ),
+t_3_Person AS (SELECT
+  People.person_id AS person_id,
+  People.name AS name
+FROM
+  t_4_People AS People
+GROUP BY People.person_id, People.name ORDER BY person_id),
+t_6_Teams AS (SELECT * FROM (
+  
+    SELECT
+      'core' AS team_id
+   UNION ALL
+  
+    SELECT
+      'platform' AS team_id
+   UNION ALL
+  
+    SELECT
+      'support' AS team_id
+  
+) AS UNUSED_TABLE_NAME  ),
+t_5_Team AS (SELECT
+  Teams.team_id AS team_id
+FROM
+  t_6_Teams AS Teams
+GROUP BY Teams.team_id ORDER BY team_id),
+t_7_Assignments AS (SELECT * FROM (
+  
+    SELECT
+      1 AS person_id,
+      'core' AS team_id,
+      '2024-01-01' AS changed_at
+   UNION ALL
+  
+    SELECT
+      1 AS person_id,
+      'platform' AS team_id,
+      '2026-02-01' AS changed_at
+   UNION ALL
+  
+    SELECT
+      2 AS person_id,
+      'core' AS team_id,
+      '2023-05-01' AS changed_at
+   UNION ALL
+  
+    SELECT
+      3 AS person_id,
+      'platform' AS team_id,
+      '2024-09-01' AS changed_at
+  
+) AS UNUSED_TABLE_NAME  ),
+t_8_NextChange AS (SELECT
+  t_9_Assignments.person_id AS person_id,
+  t_9_Assignments.changed_at AS changed_at,
+  MIN(t_10_Assignments.changed_at) AS next
+FROM
+  t_7_Assignments AS t_9_Assignments, t_7_Assignments AS t_10_Assignments
+WHERE
+  (t_10_Assignments.changed_at > t_9_Assignments.changed_at) AND
+  (t_10_Assignments.person_id = t_9_Assignments.person_id)
+GROUP BY t_9_Assignments.person_id, t_9_Assignments.changed_at ORDER BY person_id, changed_at),
+t_1_MemberOf_MultBodyAggAux AS (SELECT * FROM (
+  
+    SELECT
+      t_2_Person.person_id AS person_id,
+      Team.team_id AS team_id,
+      Assignments.changed_at AS valid_from,
+      NextChange.next AS valid_to
+    FROM
+      t_3_Person AS t_2_Person, t_5_Team AS Team, t_7_Assignments AS Assignments, t_8_NextChange AS NextChange
+    WHERE
+      (Assignments.person_id = t_2_Person.person_id) AND
+      (Assignments.team_id = Team.team_id) AND
+      (NextChange.person_id = t_2_Person.person_id) AND
+      (NextChange.changed_at = Assignments.changed_at)
+   UNION ALL
+  
+    SELECT
+      t_11_Person.person_id AS person_id,
+      t_12_Team.team_id AS team_id,
+      t_13_Assignments.changed_at AS valid_from,
+      '9999-12-31' AS valid_to
+    FROM
+      t_3_Person AS t_11_Person, t_5_Team AS t_12_Team, t_7_Assignments AS t_13_Assignments
+    WHERE
+      ((SELECT
+        MIN((CASE WHEN x_60.unnested_pod = 0 THEN 1 ELSE NULL END)) AS logica_value
+      FROM
+        t_8_NextChange AS t_16_NextChange, (select unnest([0]) as unnested_pod) as x_60
+      WHERE
+        (t_16_NextChange.person_id = t_11_Person.person_id) AND
+        (t_16_NextChange.changed_at = t_13_Assignments.changed_at)) IS NULL) AND
+      (t_13_Assignments.person_id = t_11_Person.person_id) AND
+      (t_13_Assignments.team_id = t_12_Team.team_id)
+  
+) AS UNUSED_TABLE_NAME  ),
+t_0_MemberOf AS (SELECT
+  MemberOf_MultBodyAggAux.person_id AS person_id,
+  MemberOf_MultBodyAggAux.team_id AS team_id,
+  MemberOf_MultBodyAggAux.valid_from AS valid_from,
+  MemberOf_MultBodyAggAux.valid_to AS valid_to
+FROM
+  t_1_MemberOf_MultBodyAggAux AS MemberOf_MultBodyAggAux
+GROUP BY MemberOf_MultBodyAggAux.person_id, MemberOf_MultBodyAggAux.team_id, MemberOf_MultBodyAggAux.valid_from, MemberOf_MultBodyAggAux.valid_to ORDER BY person_id, valid_from)
+SELECT
+  MemberOf.person_id AS person_id,
+  Person.name AS name,
+  MemberOf.team_id AS team_id
+FROM
+  t_0_MemberOf AS MemberOf, t_3_Person AS Person, (SELECT strftime(current_date, '%Y-%m-%d') AS date) AS Today
+WHERE
+  (MemberOf.valid_from <= Today.date) AND
+  (Today.date < MemberOf.valid_to) AND
+  (Person.person_id = MemberOf.person_id)
+GROUP BY MemberOf.person_id, Person.name, MemberOf.team_id ORDER BY person_id;
+
+-- Executed on DuckDB:
+| person_id | name  | team_id  |
+|-----------|-------|----------|
+| 1         | Ada   | platform |
+| 2         | Grace | core     |
+| 3         | Alan  | platform |
+(3 rows)
+
+$ synalog.compile('temporal_graph.l', 'Colleague')
+-- Initializing DuckDB environment.
+create schema if not exists logica_home;
+-- Empty record, has to have a field by DuckDB syntax.
+drop type if exists logicarecord893574736 cascade; create type logicarecord893574736 as struct(nirvana numeric);
+create sequence if not exists eternal_logical_sequence;
+
+WITH t_4_People AS (SELECT * FROM (
+  
+    SELECT
+      1 AS person_id,
+      'Ada' AS name
+   UNION ALL
+  
+    SELECT
+      2 AS person_id,
+      'Grace' AS name
+   UNION ALL
+  
+    SELECT
+      3 AS person_id,
+      'Alan' AS name
+  
+) AS UNUSED_TABLE_NAME  ),
+t_3_Person AS (SELECT
+  People.person_id AS person_id,
+  People.name AS name
+FROM
+  t_4_People AS People
+GROUP BY People.person_id, People.name ORDER BY person_id),
+t_6_Teams AS (SELECT * FROM (
+  
+    SELECT
+      'core' AS team_id
+   UNION ALL
+  
+    SELECT
+      'platform' AS team_id
+   UNION ALL
+  
+    SELECT
+      'support' AS team_id
+  
+) AS UNUSED_TABLE_NAME  ),
+t_5_Team AS (SELECT
+  Teams.team_id AS team_id
+FROM
+  t_6_Teams AS Teams
+GROUP BY Teams.team_id ORDER BY team_id),
+t_7_Assignments AS (SELECT * FROM (
+  
+    SELECT
+      1 AS person_id,
+      'core' AS team_id,
+      '2024-01-01' AS changed_at
+   UNION ALL
+  
+    SELECT
+      1 AS person_id,
+      'platform' AS team_id,
+      '2026-02-01' AS changed_at
+   UNION ALL
+  
+    SELECT
+      2 AS person_id,
+      'core' AS team_id,
+      '2023-05-01' AS changed_at
+   UNION ALL
+  
+    SELECT
+      3 AS person_id,
+      'platform' AS team_id,
+      '2024-09-01' AS changed_at
+  
+) AS UNUSED_TABLE_NAME  ),
+t_8_NextChange AS (SELECT
+  t_9_Assignments.person_id AS person_id,
+  t_9_Assignments.changed_at AS changed_at,
+  MIN(t_10_Assignments.changed_at) AS next
+FROM
+  t_7_Assignments AS t_9_Assignments, t_7_Assignments AS t_10_Assignments
+WHERE
+  (t_10_Assignments.changed_at > t_9_Assignments.changed_at) AND
+  (t_10_Assignments.person_id = t_9_Assignments.person_id)
+GROUP BY t_9_Assignments.person_id, t_9_Assignments.changed_at ORDER BY person_id, changed_at),
+t_2_MemberOf_MultBodyAggAux AS (SELECT * FROM (
+  
+    SELECT
+      Person.person_id AS person_id,
+      Team.team_id AS team_id,
+      Assignments.changed_at AS valid_from,
+      NextChange.next AS valid_to
+    FROM
+      t_3_Person AS Person, t_5_Team AS Team, t_7_Assignments AS Assignments, t_8_NextChange AS NextChange
+    WHERE
+      (Assignments.person_id = Person.person_id) AND
+      (Assignments.team_id = Team.team_id) AND
+      (NextChange.person_id = Person.person_id) AND
+      (NextChange.changed_at = Assignments.changed_at)
+   UNION ALL
+  
+    SELECT
+      t_11_Person.person_id AS person_id,
+      t_12_Team.team_id AS team_id,
+      t_13_Assignments.changed_at AS valid_from,
+      '9999-12-31' AS valid_to
+    FROM
+      t_3_Person AS t_11_Person, t_5_Team AS t_12_Team, t_7_Assignments AS t_13_Assignments
+    WHERE
+      ((SELECT
+        MIN((CASE WHEN x_63.unnested_pod = 0 THEN 1 ELSE NULL END)) AS logica_value
+      FROM
+        t_8_NextChange AS t_16_NextChange, (select unnest([0]) as unnested_pod) as x_63
+      WHERE
+        (t_16_NextChange.person_id = t_11_Person.person_id) AND
+        (t_16_NextChange.changed_at = t_13_Assignments.changed_at)) IS NULL) AND
+      (t_13_Assignments.person_id = t_11_Person.person_id) AND
+      (t_13_Assignments.team_id = t_12_Team.team_id)
+  
+) AS UNUSED_TABLE_NAME  ),
+t_1_MemberOf AS (SELECT
+  MemberOf_MultBodyAggAux.person_id AS person_id,
+  MemberOf_MultBodyAggAux.team_id AS team_id,
+  MemberOf_MultBodyAggAux.valid_from AS valid_from,
+  MemberOf_MultBodyAggAux.valid_to AS valid_to
+FROM
+  t_2_MemberOf_MultBodyAggAux AS MemberOf_MultBodyAggAux
+GROUP BY MemberOf_MultBodyAggAux.person_id, MemberOf_MultBodyAggAux.team_id, MemberOf_MultBodyAggAux.valid_from, MemberOf_MultBodyAggAux.valid_to ORDER BY person_id, valid_from)
+SELECT
+  MemberOf.person_id AS person_a,
+  t_0_MemberOf.person_id AS person_b,
+  MemberOf.team_id AS team_id,
+  CASE WHEN (MemberOf.valid_from > t_0_MemberOf.valid_from) THEN MemberOf.valid_from ELSE t_0_MemberOf.valid_from END AS valid_from,
+  CASE WHEN (MemberOf.valid_to < t_0_MemberOf.valid_to) THEN MemberOf.valid_to ELSE t_0_MemberOf.valid_to END AS valid_to
+FROM
+  t_1_MemberOf AS MemberOf, t_1_MemberOf AS t_0_MemberOf
+WHERE
+  (MemberOf.person_id < t_0_MemberOf.person_id) AND
+  (CASE WHEN (MemberOf.valid_from > t_0_MemberOf.valid_from) THEN MemberOf.valid_from ELSE t_0_MemberOf.valid_from END < CASE WHEN (MemberOf.valid_to < t_0_MemberOf.valid_to) THEN MemberOf.valid_to ELSE t_0_MemberOf.valid_to END) AND
+  (t_0_MemberOf.team_id = MemberOf.team_id)
+GROUP BY MemberOf.person_id, t_0_MemberOf.person_id, MemberOf.team_id, CASE WHEN (MemberOf.valid_from > t_0_MemberOf.valid_from) THEN MemberOf.valid_from ELSE t_0_MemberOf.valid_from END, CASE WHEN (MemberOf.valid_to < t_0_MemberOf.valid_to) THEN MemberOf.valid_to ELSE t_0_MemberOf.valid_to END ORDER BY person_a, person_b;
+
+-- Executed on DuckDB:
+| person_a | person_b | team_id  | valid_from | valid_to   |
+|----------|----------|----------|------------|------------|
+| 1        | 2        | core     | 2024-01-01 | 2026-02-01 |
+| 1        | 3        | platform | 2026-02-01 | 9999-12-31 |
+(2 rows)
+
+$ synalog.compile('temporal_graph.l', 'ReachedBy')
+-- Initializing DuckDB environment.
+create schema if not exists logica_home;
+-- Empty record, has to have a field by DuckDB syntax.
+drop type if exists logicarecord893574736 cascade; create type logicarecord893574736 as struct(nirvana numeric);
+create sequence if not exists eternal_logical_sequence;
+
+WITH t_4_Teams AS (SELECT * FROM (
+  
+    SELECT
+      'core' AS team_id
+   UNION ALL
+  
+    SELECT
+      'platform' AS team_id
+   UNION ALL
+  
+    SELECT
+      'support' AS team_id
+  
+) AS UNUSED_TABLE_NAME  ),
+t_3_Team AS (SELECT
+  Teams.team_id AS team_id
+FROM
+  t_4_Teams AS Teams
+GROUP BY Teams.team_id ORDER BY team_id),
+t_6_Handovers AS (SELECT * FROM (
+  
+    SELECT
+      'core' AS source,
+      'platform' AS target,
+      '2024-01-01' AS valid_from,
+      '2027-01-01' AS valid_to
+   UNION ALL
+  
+    SELECT
+      'platform' AS source,
+      'support' AS target,
+      '2025-06-01' AS valid_from,
+      '2027-01-01' AS valid_to
+   UNION ALL
+  
+    SELECT
+      'support' AS source,
+      'core' AS target,
+      '2020-01-01' AS valid_from,
+      '2021-01-01' AS valid_to
+  
+) AS UNUSED_TABLE_NAME  ),
+t_1_HandedOver AS (SELECT
+  Team.team_id AS source,
+  t_2_Team.team_id AS target,
+  Handovers.valid_from AS valid_from,
+  Handovers.valid_to AS valid_to
+FROM
+  t_3_Team AS Team, t_3_Team AS t_2_Team, t_6_Handovers AS Handovers
+WHERE
+  (Handovers.source = Team.team_id) AND
+  (Handovers.target = t_2_Team.team_id)
+GROUP BY Team.team_id, t_2_Team.team_id, Handovers.valid_from, Handovers.valid_to ORDER BY source, valid_from),
+t_48_ReachedBy_MultBodyAggAux_recursive_head_f1 AS (SELECT * FROM (
+  
+    SELECT
+      t_49_HandedOver.source AS source,
+      t_49_HandedOver.target AS target,
+      t_49_HandedOver.valid_from AS valid_from,
+      t_49_HandedOver.valid_to AS valid_to
+    FROM
+      t_1_HandedOver AS t_49_HandedOver
+  
+) AS UNUSED_TABLE_NAME  ),
+t_47_ReachedBy_r0 AS (SELECT
+  ReachedBy_MultBodyAggAux_recursive_head_f1.source AS source,
+  ReachedBy_MultBodyAggAux_recursive_head_f1.target AS target,
+  ReachedBy_MultBodyAggAux_recursive_head_f1.valid_from AS valid_from,
+  ReachedBy_MultBodyAggAux_recursive_head_f1.valid_to AS valid_to
+FROM
+  t_48_ReachedBy_MultBodyAggAux_recursive_head_f1 AS ReachedBy_MultBodyAggAux_recursive_head_f1
+GROUP BY ReachedBy_MultBodyAggAux_recursive_head_f1.source, ReachedBy_MultBodyAggAux_recursive_head_f1.target, ReachedBy_MultBodyAggAux_recursive_head_f1.valid_from, ReachedBy_MultBodyAggAux_recursive_head_f1.valid_to ORDER BY source, target),
+t_44_ReachedBy_MultBodyAggAux_recursive_head_f2 AS (SELECT * FROM (
+  
+    SELECT
+      t_45_HandedOver.source AS source,
+      t_45_HandedOver.target AS target,
+      t_45_HandedOver.valid_from AS valid_from,
+      t_45_HandedOver.valid_to AS valid_to
+    FROM
+      t_1_HandedOver AS t_45_HandedOver
+   UNION ALL
+  
+    SELECT
+      ReachedBy_r0.source AS source,
+      t_46_HandedOver.target AS target,
+      CASE WHEN (ReachedBy_r0.valid_from > t_46_HandedOver.valid_from) THEN ReachedBy_r0.valid_from ELSE t_46_HandedOver.valid_from END AS valid_from,
+      CASE WHEN (ReachedBy_r0.valid_to < t_46_HandedOver.valid_to) THEN ReachedBy_r0.valid_to ELSE t_46_HandedOver.valid_to END AS valid_to
+    FROM
+      t_47_ReachedBy_r0 AS ReachedBy_r0, t_1_HandedOver AS t_46_HandedOver
+    WHERE
+      (CASE WHEN (ReachedBy_r0.valid_from > t_46_HandedOver.valid_from) THEN ReachedBy_r0.valid_from ELSE t_46_HandedOver.valid_from END < CASE WHEN (ReachedBy_r0.valid_to < t_46_HandedOver.valid_to) THEN ReachedBy_r0.valid_to ELSE t_46_HandedOver.valid_to END) AND
+      (t_46_HandedOver.source = ReachedBy_r0.target)
+  
+) AS UNUSED_TABLE_NAME  ),
+t_43_ReachedBy_r1 AS (SELECT
+  ReachedBy_MultBodyAggAux_recursive_head_f2.source AS source,
+  ReachedBy_MultBodyAggAux_recursive_head_f2.target AS target,
+  ReachedBy_MultBodyAggAux_recursive_head_f2.valid_from AS valid_from,
+  ReachedBy_MultBodyAggAux_recursive_head_f2.valid_to AS valid_to
+FROM
+  t_44_ReachedBy_MultBodyAggAux_recursive_head_f2 AS ReachedBy_MultBodyAggAux_recursive_head_f2
+GROUP BY ReachedBy_MultBodyAggAux_recursive_head_f2.source, ReachedBy_MultBodyAggAux_recursive_head_f2.target, ReachedBy_MultBodyAggAux_recursive_head_f2.valid_from, ReachedBy_MultBodyAggAux_recursive_head_f2.valid_to ORDER BY source, target),
+t_40_ReachedBy_MultBodyAggAux_recursive_head_f3 AS (SELECT * FROM (
+  
+    SELECT
+      t_41_HandedOver.source AS source,
+      t_41_HandedOver.target AS target,
+      t_41_HandedOver.valid_from AS valid_from,
+      t_41_HandedOver.valid_to AS valid_to
+    FROM
+      t_1_HandedOver AS t_41_HandedOver
+   UNION ALL
+  
+    SELECT
+      ReachedBy_r1.source AS source,
+      t_42_HandedOver.target AS target,
+      CASE WHEN (ReachedBy_r1.valid_from > t_42_HandedOver.valid_from) THEN ReachedBy_r1.valid_from ELSE t_42_HandedOver.valid_from END AS valid_from,
+      CASE WHEN (ReachedBy_r1.valid_to < t_42_HandedOver.valid_to) THEN ReachedBy_r1.valid_to ELSE t_42_HandedOver.valid_to END AS valid_to
+    FROM
+      t_43_ReachedBy_r1 AS ReachedBy_r1, t_1_HandedOver AS t_42_HandedOver
+    WHERE
+      (CASE WHEN (ReachedBy_r1.valid_from > t_42_HandedOver.valid_from) THEN ReachedBy_r1.valid_from ELSE t_42_HandedOver.valid_from END < CASE WHEN (ReachedBy_r1.valid_to < t_42_HandedOver.valid_to) THEN ReachedBy_r1.valid_to ELSE t_42_HandedOver.valid_to END) AND
+      (t_42_HandedOver.source = ReachedBy_r1.target)
+  
+) AS UNUSED_TABLE_NAME  ),
+t_39_ReachedBy_r2 AS (SELECT
+  ReachedBy_MultBodyAggAux_recursive_head_f3.source AS source,
+  ReachedBy_MultBodyAggAux_recursive_head_f3.target AS target,
+  ReachedBy_MultBodyAggAux_recursive_head_f3.valid_from AS valid_from,
+  ReachedBy_MultBodyAggAux_recursive_head_f3.valid_to AS valid_to
+FROM
+  t_40_ReachedBy_MultBodyAggAux_recursive_head_f3 AS ReachedBy_MultBodyAggAux_recursive_head_f3
+GROUP BY ReachedBy_MultBodyAggAux_recursive_head_f3.source, ReachedBy_MultBodyAggAux_recursive_head_f3.target, ReachedBy_MultBodyAggAux_recursive_head_f3.valid_from, ReachedBy_MultBodyAggAux_recursive_head_f3.valid_to ORDER BY source, target),
+t_36_ReachedBy_MultBodyAggAux_recursive_head_f4 AS (SELECT * FROM (
+  
+    SELECT
+      t_37_HandedOver.source AS source,
+      t_37_HandedOver.target AS target,
+      t_37_HandedOver.valid_from AS valid_from,
+      t_37_HandedOver.valid_to AS valid_to
+    FROM
+      t_1_HandedOver AS t_37_HandedOver
+   UNION ALL
+  
+    SELECT
+      ReachedBy_r2.source AS source,
+      t_38_HandedOver.target AS target,
+      CASE WHEN (ReachedBy_r2.valid_from > t_38_HandedOver.valid_from) THEN ReachedBy_r2.valid_from ELSE t_38_HandedOver.valid_from END AS valid_from,
+      CASE WHEN (ReachedBy_r2.valid_to < t_38_HandedOver.valid_to) THEN ReachedBy_r2.valid_to ELSE t_38_HandedOver.valid_to END AS valid_to
+    FROM
+      t_39_ReachedBy_r2 AS ReachedBy_r2, t_1_HandedOver AS t_38_HandedOver
+    WHERE
+      (CASE WHEN (ReachedBy_r2.valid_from > t_38_HandedOver.valid_from) THEN ReachedBy_r2.valid_from ELSE t_38_HandedOver.valid_from END < CASE WHEN (ReachedBy_r2.valid_to < t_38_HandedOver.valid_to) THEN ReachedBy_r2.valid_to ELSE t_38_HandedOver.valid_to END) AND
+      (t_38_HandedOver.source = ReachedBy_r2.target)
+  
+) AS UNUSED_TABLE_NAME  ),
+t_35_ReachedBy_r3 AS (SELECT
+  ReachedBy_MultBodyAggAux_recursive_head_f4.source AS source,
+  ReachedBy_MultBodyAggAux_recursive_head_f4.target AS target,
+  ReachedBy_MultBodyAggAux_recursive_head_f4.valid_from AS valid_from,
+  ReachedBy_MultBodyAggAux_recursive_head_f4.valid_to AS valid_to
+FROM
+  t_36_ReachedBy_MultBodyAggAux_recursive_head_f4 AS ReachedBy_MultBodyAggAux_recursive_head_f4
+GROUP BY ReachedBy_MultBodyAggAux_recursive_head_f4.source, ReachedBy_MultBodyAggAux_recursive_head_f4.target, ReachedBy_MultBodyAggAux_recursive_head_f4.valid_from, ReachedBy_MultBodyAggAux_recursive_head_f4.valid_to ORDER BY source, target),
+t_32_ReachedBy_MultBodyAggAux_recursive_head_f5 AS (SELECT * FROM (
+  
+    SELECT
+      t_33_HandedOver.source AS source,
+      t_33_HandedOver.target AS target,
+      t_33_HandedOver.valid_from AS valid_from,
+      t_33_HandedOver.valid_to AS valid_to
+    FROM
+      t_1_HandedOver AS t_33_HandedOver
+   UNION ALL
+  
+    SELECT
+      ReachedBy_r3.source AS source,
+      t_34_HandedOver.target AS target,
+      CASE WHEN (ReachedBy_r3.valid_from > t_34_HandedOver.valid_from) THEN ReachedBy_r3.valid_from ELSE t_34_HandedOver.valid_from END AS valid_from,
+      CASE WHEN (ReachedBy_r3.valid_to < t_34_HandedOver.valid_to) THEN ReachedBy_r3.valid_to ELSE t_34_HandedOver.valid_to END AS valid_to
+    FROM
+      t_35_ReachedBy_r3 AS ReachedBy_r3, t_1_HandedOver AS t_34_HandedOver
+    WHERE
+      (CASE WHEN (ReachedBy_r3.valid_from > t_34_HandedOver.valid_from) THEN ReachedBy_r3.valid_from ELSE t_34_HandedOver.valid_from END < CASE WHEN (ReachedBy_r3.valid_to < t_34_HandedOver.valid_to) THEN ReachedBy_r3.valid_to ELSE t_34_HandedOver.valid_to END) AND
+      (t_34_HandedOver.source = ReachedBy_r3.target)
+  
+) AS UNUSED_TABLE_NAME  ),
+t_31_ReachedBy_r4 AS (SELECT
+  ReachedBy_MultBodyAggAux_recursive_head_f5.source AS source,
+  ReachedBy_MultBodyAggAux_recursive_head_f5.target AS target,
+  ReachedBy_MultBodyAggAux_recursive_head_f5.valid_from AS valid_from,
+  ReachedBy_MultBodyAggAux_recursive_head_f5.valid_to AS valid_to
+FROM
+  t_32_ReachedBy_MultBodyAggAux_recursive_head_f5 AS ReachedBy_MultBodyAggAux_recursive_head_f5
+GROUP BY ReachedBy_MultBodyAggAux_recursive_head_f5.source, ReachedBy_MultBodyAggAux_recursive_head_f5.target, ReachedBy_MultBodyAggAux_recursive_head_f5.valid_from, ReachedBy_MultBodyAggAux_recursive_head_f5.valid_to ORDER BY source, target),
+t_28_ReachedBy_MultBodyAggAux_recursive_head_f6 AS (SELECT * FROM (
+  
+    SELECT
+      t_29_HandedOver.source AS source,
+      t_29_HandedOver.target AS target,
+      t_29_HandedOver.valid_from AS valid_from,
+      t_29_HandedOver.valid_to AS valid_to
+    FROM
+      t_1_HandedOver AS t_29_HandedOver
+   UNION ALL
+  
+    SELECT
+      ReachedBy_r4.source AS source,
+      t_30_HandedOver.target AS target,
+      CASE WHEN (ReachedBy_r4.valid_from > t_30_HandedOver.valid_from) THEN ReachedBy_r4.valid_from ELSE t_30_HandedOver.valid_from END AS valid_from,
+      CASE WHEN (ReachedBy_r4.valid_to < t_30_HandedOver.valid_to) THEN ReachedBy_r4.valid_to ELSE t_30_HandedOver.valid_to END AS valid_to
+    FROM
+      t_31_ReachedBy_r4 AS ReachedBy_r4, t_1_HandedOver AS t_30_HandedOver
+    WHERE
+      (CASE WHEN (ReachedBy_r4.valid_from > t_30_HandedOver.valid_from) THEN ReachedBy_r4.valid_from ELSE t_30_HandedOver.valid_from END < CASE WHEN (ReachedBy_r4.valid_to < t_30_HandedOver.valid_to) THEN ReachedBy_r4.valid_to ELSE t_30_HandedOver.valid_to END) AND
+      (t_30_HandedOver.source = ReachedBy_r4.target)
+  
+) AS UNUSED_TABLE_NAME  ),
+t_27_ReachedBy_r5 AS (SELECT
+  ReachedBy_MultBodyAggAux_recursive_head_f6.source AS source,
+  ReachedBy_MultBodyAggAux_recursive_head_f6.target AS target,
+  ReachedBy_MultBodyAggAux_recursive_head_f6.valid_from AS valid_from,
+  ReachedBy_MultBodyAggAux_recursive_head_f6.valid_to AS valid_to
+FROM
+  t_28_ReachedBy_MultBodyAggAux_recursive_head_f6 AS ReachedBy_MultBodyAggAux_recursive_head_f6
+GROUP BY ReachedBy_MultBodyAggAux_recursive_head_f6.source, ReachedBy_MultBodyAggAux_recursive_head_f6.target, ReachedBy_MultBodyAggAux_recursive_head_f6.valid_from, ReachedBy_MultBodyAggAux_recursive_head_f6.valid_to ORDER BY source, target),
+t_24_ReachedBy_MultBodyAggAux_recursive_head_f7 AS (SELECT * FROM (
+  
+    SELECT
+      t_25_HandedOver.source AS source,
+      t_25_HandedOver.target AS target,
+      t_25_HandedOver.valid_from AS valid_from,
+      t_25_HandedOver.valid_to AS valid_to
+    FROM
+      t_1_HandedOver AS t_25_HandedOver
+   UNION ALL
+  
+    SELECT
+      ReachedBy_r5.source AS source,
+      t_26_HandedOver.target AS target,
+      CASE WHEN (ReachedBy_r5.valid_from > t_26_HandedOver.valid_from) THEN ReachedBy_r5.valid_from ELSE t_26_HandedOver.valid_from END AS valid_from,
+      CASE WHEN (ReachedBy_r5.valid_to < t_26_HandedOver.valid_to) THEN ReachedBy_r5.valid_to ELSE t_26_HandedOver.valid_to END AS valid_to
+    FROM
+      t_27_ReachedBy_r5 AS ReachedBy_r5, t_1_HandedOver AS t_26_HandedOver
+    WHERE
+      (CASE WHEN (ReachedBy_r5.valid_from > t_26_HandedOver.valid_from) THEN ReachedBy_r5.valid_from ELSE t_26_HandedOver.valid_from END < CASE WHEN (ReachedBy_r5.valid_to < t_26_HandedOver.valid_to) THEN ReachedBy_r5.valid_to ELSE t_26_HandedOver.valid_to END) AND
+      (t_26_HandedOver.source = ReachedBy_r5.target)
+  
+) AS UNUSED_TABLE_NAME  ),
+t_23_ReachedBy_r6 AS (SELECT
+  ReachedBy_MultBodyAggAux_recursive_head_f7.source AS source,
+  ReachedBy_MultBodyAggAux_recursive_head_f7.target AS target,
+  ReachedBy_MultBodyAggAux_recursive_head_f7.valid_from AS valid_from,
+  ReachedBy_MultBodyAggAux_recursive_head_f7.valid_to AS valid_to
+FROM
+  t_24_ReachedBy_MultBodyAggAux_recursive_head_f7 AS ReachedBy_MultBodyAggAux_recursive_head_f7
+GROUP BY ReachedBy_MultBodyAggAux_recursive_head_f7.source, ReachedBy_MultBodyAggAux_recursive_head_f7.target, ReachedBy_MultBodyAggAux_recursive_head_f7.valid_from, ReachedBy_MultBodyAggAux_recursive_head_f7.valid_to ORDER BY source, target),
+t_20_ReachedBy_MultBodyAggAux_recursive_head_f8 AS (SELECT * FROM (
+  
+    SELECT
+      t_21_HandedOver.source AS source,
+      t_21_HandedOver.target AS target,
+      t_21_HandedOver.valid_from AS valid_from,
+      t_21_HandedOver.valid_to AS valid_to
+    FROM
+      t_1_HandedOver AS t_21_HandedOver
+   UNION ALL
+  
+    SELECT
+      ReachedBy_r6.source AS source,
+      t_22_HandedOver.target AS target,
+      CASE WHEN (ReachedBy_r6.valid_from > t_22_HandedOver.valid_from) THEN ReachedBy_r6.valid_from ELSE t_22_HandedOver.valid_from END AS valid_from,
+      CASE WHEN (ReachedBy_r6.valid_to < t_22_HandedOver.valid_to) THEN ReachedBy_r6.valid_to ELSE t_22_HandedOver.valid_to END AS valid_to
+    FROM
+      t_23_ReachedBy_r6 AS ReachedBy_r6, t_1_HandedOver AS t_22_HandedOver
+    WHERE
+      (CASE WHEN (ReachedBy_r6.valid_from > t_22_HandedOver.valid_from) THEN ReachedBy_r6.valid_from ELSE t_22_HandedOver.valid_from END < CASE WHEN (ReachedBy_r6.valid_to < t_22_HandedOver.valid_to) THEN ReachedBy_r6.valid_to ELSE t_22_HandedOver.valid_to END) AND
+      (t_22_HandedOver.source = ReachedBy_r6.target)
+  
+) AS UNUSED_TABLE_NAME  ),
+t_19_ReachedBy_r7 AS (SELECT
+  ReachedBy_MultBodyAggAux_recursive_head_f8.source AS source,
+  ReachedBy_MultBodyAggAux_recursive_head_f8.target AS target,
+  ReachedBy_MultBodyAggAux_recursive_head_f8.valid_from AS valid_from,
+  ReachedBy_MultBodyAggAux_recursive_head_f8.valid_to AS valid_to
+FROM
+  t_20_ReachedBy_MultBodyAggAux_recursive_head_f8 AS ReachedBy_MultBodyAggAux_recursive_head_f8
+GROUP BY ReachedBy_MultBodyAggAux_recursive_head_f8.source, ReachedBy_MultBodyAggAux_recursive_head_f8.target, ReachedBy_MultBodyAggAux_recursive_head_f8.valid_from, ReachedBy_MultBodyAggAux_recursive_head_f8.valid_to ORDER BY source, target),
+t_16_ReachedBy_MultBodyAggAux_recursive_head_f9 AS (SELECT * FROM (
+  
+    SELECT
+      t_17_HandedOver.source AS source,
+      t_17_HandedOver.target AS target,
+      t_17_HandedOver.valid_from AS valid_from,
+      t_17_HandedOver.valid_to AS valid_to
+    FROM
+      t_1_HandedOver AS t_17_HandedOver
+   UNION ALL
+  
+    SELECT
+      ReachedBy_r7.source AS source,
+      t_18_HandedOver.target AS target,
+      CASE WHEN (ReachedBy_r7.valid_from > t_18_HandedOver.valid_from) THEN ReachedBy_r7.valid_from ELSE t_18_HandedOver.valid_from END AS valid_from,
+      CASE WHEN (ReachedBy_r7.valid_to < t_18_HandedOver.valid_to) THEN ReachedBy_r7.valid_to ELSE t_18_HandedOver.valid_to END AS valid_to
+    FROM
+      t_19_ReachedBy_r7 AS ReachedBy_r7, t_1_HandedOver AS t_18_HandedOver
+    WHERE
+      (CASE WHEN (ReachedBy_r7.valid_from > t_18_HandedOver.valid_from) THEN ReachedBy_r7.valid_from ELSE t_18_HandedOver.valid_from END < CASE WHEN (ReachedBy_r7.valid_to < t_18_HandedOver.valid_to) THEN ReachedBy_r7.valid_to ELSE t_18_HandedOver.valid_to END) AND
+      (t_18_HandedOver.source = ReachedBy_r7.target)
+  
+) AS UNUSED_TABLE_NAME  ),
+t_15_ReachedBy_r8 AS (SELECT
+  ReachedBy_MultBodyAggAux_recursive_head_f9.source AS source,
+  ReachedBy_MultBodyAggAux_recursive_head_f9.target AS target,
+  ReachedBy_MultBodyAggAux_recursive_head_f9.valid_from AS valid_from,
+  ReachedBy_MultBodyAggAux_recursive_head_f9.valid_to AS valid_to
+FROM
+  t_16_ReachedBy_MultBodyAggAux_recursive_head_f9 AS ReachedBy_MultBodyAggAux_recursive_head_f9
+GROUP BY ReachedBy_MultBodyAggAux_recursive_head_f9.source, ReachedBy_MultBodyAggAux_recursive_head_f9.target, ReachedBy_MultBodyAggAux_recursive_head_f9.valid_from, ReachedBy_MultBodyAggAux_recursive_head_f9.valid_to ORDER BY source, target),
+t_9_ReachedBy_MultBodyAggAux_recursive_head_f10 AS (SELECT * FROM (
+  
+    SELECT
+      t_10_HandedOver.source AS source,
+      t_10_HandedOver.target AS target,
+      t_10_HandedOver.valid_from AS valid_from,
+      t_10_HandedOver.valid_to AS valid_to
+    FROM
+      t_1_HandedOver AS t_10_HandedOver
+   UNION ALL
+  
+    SELECT
+      ReachedBy_r8.source AS source,
+      t_14_HandedOver.target AS target,
+      CASE WHEN (ReachedBy_r8.valid_from > t_14_HandedOver.valid_from) THEN ReachedBy_r8.valid_from ELSE t_14_HandedOver.valid_from END AS valid_from,
+      CASE WHEN (ReachedBy_r8.valid_to < t_14_HandedOver.valid_to) THEN ReachedBy_r8.valid_to ELSE t_14_HandedOver.valid_to END AS valid_to
+    FROM
+      t_15_ReachedBy_r8 AS ReachedBy_r8, t_1_HandedOver AS t_14_HandedOver
+    WHERE
+      (CASE WHEN (ReachedBy_r8.valid_from > t_14_HandedOver.valid_from) THEN ReachedBy_r8.valid_from ELSE t_14_HandedOver.valid_from END < CASE WHEN (ReachedBy_r8.valid_to < t_14_HandedOver.valid_to) THEN ReachedBy_r8.valid_to ELSE t_14_HandedOver.valid_to END) AND
+      (t_14_HandedOver.source = ReachedBy_r8.target)
+  
+) AS UNUSED_TABLE_NAME  ),
+t_8_ReachedBy_r9 AS (SELECT
+  ReachedBy_MultBodyAggAux_recursive_head_f10.source AS source,
+  ReachedBy_MultBodyAggAux_recursive_head_f10.target AS target,
+  ReachedBy_MultBodyAggAux_recursive_head_f10.valid_from AS valid_from,
+  ReachedBy_MultBodyAggAux_recursive_head_f10.valid_to AS valid_to
+FROM
+  t_9_ReachedBy_MultBodyAggAux_recursive_head_f10 AS ReachedBy_MultBodyAggAux_recursive_head_f10
+GROUP BY ReachedBy_MultBodyAggAux_recursive_head_f10.source, ReachedBy_MultBodyAggAux_recursive_head_f10.target, ReachedBy_MultBodyAggAux_recursive_head_f10.valid_from, ReachedBy_MultBodyAggAux_recursive_head_f10.valid_to ORDER BY source, target),
+t_0_ReachedBy_MultBodyAggAux_recursive_head_f11 AS (SELECT * FROM (
+  
+    SELECT
+      HandedOver.source AS source,
+      HandedOver.target AS target,
+      HandedOver.valid_from AS valid_from,
+      HandedOver.valid_to AS valid_to
+    FROM
+      t_1_HandedOver AS HandedOver
+   UNION ALL
+  
+    SELECT
+      ReachedBy_r9.source AS source,
+      t_7_HandedOver.target AS target,
+      CASE WHEN (ReachedBy_r9.valid_from > t_7_HandedOver.valid_from) THEN ReachedBy_r9.valid_from ELSE t_7_HandedOver.valid_from END AS valid_from,
+      CASE WHEN (ReachedBy_r9.valid_to < t_7_HandedOver.valid_to) THEN ReachedBy_r9.valid_to ELSE t_7_HandedOver.valid_to END AS valid_to
+    FROM
+      t_8_ReachedBy_r9 AS ReachedBy_r9, t_1_HandedOver AS t_7_HandedOver
+    WHERE
+      (CASE WHEN (ReachedBy_r9.valid_from > t_7_HandedOver.valid_from) THEN ReachedBy_r9.valid_from ELSE t_7_HandedOver.valid_from END < CASE WHEN (ReachedBy_r9.valid_to < t_7_HandedOver.valid_to) THEN ReachedBy_r9.valid_to ELSE t_7_HandedOver.valid_to END) AND
+      (t_7_HandedOver.source = ReachedBy_r9.target)
+  
+) AS UNUSED_TABLE_NAME  )
+SELECT
+  ReachedBy_MultBodyAggAux_recursive_head_f11.source AS source,
+  ReachedBy_MultBodyAggAux_recursive_head_f11.target AS target,
+  ReachedBy_MultBodyAggAux_recursive_head_f11.valid_from AS valid_from,
+  ReachedBy_MultBodyAggAux_recursive_head_f11.valid_to AS valid_to
+FROM
+  t_0_ReachedBy_MultBodyAggAux_recursive_head_f11 AS ReachedBy_MultBodyAggAux_recursive_head_f11
+GROUP BY ReachedBy_MultBodyAggAux_recursive_head_f11.source, ReachedBy_MultBodyAggAux_recursive_head_f11.target, ReachedBy_MultBodyAggAux_recursive_head_f11.valid_from, ReachedBy_MultBodyAggAux_recursive_head_f11.valid_to ORDER BY source, target;
+
+-- Executed on DuckDB:
+| source   | target   | valid_from | valid_to   |
+|----------|----------|------------|------------|
+| core     | platform | 2024-01-01 | 2027-01-01 |
+| core     | support  | 2025-06-01 | 2027-01-01 |
+| platform | support  | 2025-06-01 | 2027-01-01 |
+| support  | core     | 2020-01-01 | 2021-01-01 |
+(4 rows)

@@ -52,14 +52,14 @@
 :alice a :Person ; :name "Alice" ; :email "alice@acme.example" ;
        :worksAt :acme ; :knows :bob ;
        :ancestorOf :bob ; :fatherOf :carol ;
-       :hasDesk :d1 , :d2 ;             # two desks — owl:FunctionalProperty violation
+       :hasDesk :d1 , :d2 ;             # two desks: owl:FunctionalProperty violation
        :supervises :bob .
 :bob   a :Person ; :name "Bob" ;
        :ancestorOf :carol ;            # alice→bob→carol entails alice ancestorOf carol
-       :supervises :alice .            # alice⇄bob — owl:AsymmetricProperty violation
+       :supervises :alice .            # alice/bob cycle: owl:AsymmetricProperty violation
 :carol a :Person ; :name "Carol" ;
-       :supervises :carol .            # self-loop — owl:IrreflexiveProperty violation
-:dave  a :Employee, :Contractor ;      # both disjoint classes — owl:disjointWith violation
+       :supervises :carol .            # self-loop: owl:IrreflexiveProperty violation
+:dave  a :Employee, :Contractor ;      # both disjoint classes: owl:disjointWith violation
        :name "Dave" .
 
 :d1 a :Desk . :d2 a :Desk .

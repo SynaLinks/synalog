@@ -46,7 +46,7 @@ The full signature is `@Recursive(Pred, iterations, stop?, satellites?)`. See [R
 
 ## `@Ground`
 
-Forces a predicate to be materialized before its dependents are evaluated — useful when a predicate is reused by many rules and recomputing it inline would be wasteful:
+Forces a predicate to be materialized before its dependents are evaluated, useful when a predicate is reused by many rules and recomputing it inline would be wasteful:
 
 ```logica
 @Ground(CustomerRevenue);
@@ -64,7 +64,7 @@ The `engine` keyword of the [Python API](../python-api.md) functions overrides t
 
 ## Complete example
 
-`@OrderBy` and `@Limit` combined — the top 3 customers by total spend:
+`@OrderBy` and `@Limit` combined: the top 3 customers by total spend:
 
 ```logica
 --8<-- "docs/examples/directives.l"

@@ -43,7 +43,7 @@ FROM
   t_0_Device AS Device, smoke_tests
 WHERE
   (Device.device = smoke_tests.device) AND
-  (E'failed' = smoke_tests.status)
+  ('failed' = smoke_tests.status)
 GROUP BY Device.device ORDER BY failures DESC;
 
 -- Executed on DuckDB:

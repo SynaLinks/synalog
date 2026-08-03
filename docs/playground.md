@@ -1,7 +1,7 @@
 # Playground
 
 Write Synalog up top, pick a target engine, and see the compiled SQL below.
-Everything runs **in your browser** — the parser, compiler and verifier are
+Everything runs **in your browser**: the parser, compiler and verifier are
 the very same Rust code shipped to WebAssembly, with no server and no data leaving
 the page. There is no database attached, so the SQL is generated but not executed.
 

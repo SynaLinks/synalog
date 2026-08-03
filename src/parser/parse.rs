@@ -1,8 +1,8 @@
 // Modified from: logica/parser_py/parse.py
 // Original authors: Evgeny Skvortsov et al. (Logica Team, Google LLC)
-// License Apache 2.0: (c) 2025-2026 Yoan Sallami (Synalinks Team)
+// Original work: Copyright 2020 Google LLC, licensed under the Apache License, Version 2.0.
+// Modifications: Copyright 2025-2026 Yoan Sallami (Synalinks Team), licensed under the Apache License, Version 2.0.
 
-use std::cell::Cell;
 use std::collections::{BTreeMap, BTreeSet};
 use std::sync::Arc;
 
@@ -12,25 +12,9 @@ use crate::parser::rewrite;
 use crate::parser::span::SpanString;
 use crate::parser::traverse::*;
 
-// Incantation mode: when the magic string is found in the source,
-// extra user-defined infix operators and generic-call characters are enabled.
-thread_local! {
-    static FUN_MODE: Cell<bool> = const { Cell::new(false) };
-}
-
-fn is_fun_mode() -> bool {
-    FUN_MODE.with(|c| c.get())
-}
-
 /// The internal value field name used for the value of a function-style rule.
 fn value_field_name() -> &'static str {
     "logica_value"
-}
-
-fn enact_incantations(code: &str) {
-    if code.contains("Signa inter verba conjugo, symbolum infixus evoco!") {
-        FUN_MODE.with(|c| c.set(true));
-    }
 }
 
 fn span_ref_json(s: &SpanString) -> Json {
@@ -509,9 +493,7 @@ fn parse_generic_call(
                 let pred = pred_span.view();
 
                 let all_good = pred.bytes().all(|c| {
-                    c.is_ascii_alphanumeric()
-                        || b"@_.${}+-`".contains(&c)
-                        || (is_fun_mode() && b"*^%/".contains(&c))
+                    c.is_ascii_alphanumeric() || b"@_.${}+-`".contains(&c)
                 });
 
                 if (found_idx > 0 && all_good)
@@ -557,8 +539,6 @@ const DEFAULT_OPS: &[&str] = &[
     " is ", "++?", "++", "+", "-", "*", "/", "%", "^", "!",
 ];
 
-const FUN_OPS: &[&str] = &["---", "-+-", "-*-", "-/-", "-%-", "-^-"];
-
 static EMPTY_DISALLOW: BTreeSet<String> = BTreeSet::new();
 
 fn parse_infix(
@@ -566,15 +546,7 @@ fn parse_infix(
     operators: Option<&[&str]>,
     disallow: Option<&BTreeSet<String>>,
 ) -> ParseResult<Option<Json>> {
-    let default_ops: Vec<&str>;
-    let ops = if let Some(ops) = operators {
-        ops
-    } else if is_fun_mode() {
-        default_ops = FUN_OPS.iter().chain(DEFAULT_OPS.iter()).copied().collect();
-        &default_ops
-    } else {
-        DEFAULT_OPS
-    };
+    let ops = operators.unwrap_or(DEFAULT_OPS);
     let dis = disallow.unwrap_or(&EMPTY_DISALLOW);
 
     for &op in ops {
@@ -1063,24 +1035,6 @@ fn parse_propositional_implication(s: &SpanString) -> ParseResult<Option<Json>> 
     Ok(Some(propositional_implication(s, &parts[1], &cond, &cons)))
 }
 
-fn parse_propositional_equivalence(s: &SpanString) -> ParseResult<Option<Json>> {
-    let parts = split(s, "<=>")?;
-    if parts.len() != 2 {
-        return Ok(None);
-    }
-    let left1 = parse_proposition(&parts[0])?;
-    let right1 = parse_proposition(&parts[1])?;
-    let left2 = parse_proposition(&parts[0])?;
-    let right2 = parse_proposition(&parts[1])?;
-    let a = propositional_implication(s, &parts[1], &left1, &right1);
-    let b = propositional_implication(s, &parts[0], &right2, &left2);
-    Ok(Some(json_obj!(
-        "conjunction" => json_obj!(
-            "conjunct" => Json::Array(vec![a, b])
-        )
-    )))
-}
-
 pub fn parse_proposition(s: &SpanString) -> ParseResult<Json> {
     if let Some(c) = parse_disjunction(s)? {
         return Ok(json_obj!("disjunction" => c));
@@ -1090,14 +1044,6 @@ pub fn parse_proposition(s: &SpanString) -> ParseResult<Json> {
     if let Some(c) = parse_conjunction(s, false)? {
         if str_conjuncts.len() > 1 {
             return Ok(json_obj!("conjunction" => c));
-        }
-    }
-
-    if is_fun_mode() {
-        if let Some(c) = parse_propositional_equivalence(s)? {
-            return Ok(json_obj!("conjunction" => json_obj!(
-                "conjunct" => Json::Array(vec![c])
-            )));
         }
     }
 
@@ -1661,11 +1607,6 @@ fn parse_file_internal(
     let mut chain = import_chain;
     chain.push(this_file_name.to_string());
 
-    // Check for incantation (enables extended operator syntax).
-    if this_file_name == "main" {
-        enact_incantations(content);
-    }
-
     let s = SpanString::new(remove_comments(&SpanString::new(content.to_string()))?);
     let statements = split(&s, ";")?;
     let mut rules = JsonArray::new();
@@ -1931,8 +1872,6 @@ fn parse_import(
 
 /// Parse a Synalog program file and return the AST as JSON.
 pub fn parse_file(content: &str, file_name: Option<&str>, import_root: &[String]) -> ParseResult<Json> {
-    // Reset fun mode for each top-level parse.
-    FUN_MODE.with(|c| c.set(false));
     let mut parsed_imports = BTreeMap::new();
     let mut in_progress = BTreeSet::new();
     let fname = file_name.unwrap_or("main");

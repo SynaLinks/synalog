@@ -4,9 +4,9 @@ Synalog has one rule for `TIMESTAMP`, `DATE`, `DATETIME` and `TIME` columns: **n
 
 ## The pipeline
 
-1. `ToString(x)` — convert the temporal value to its ISO string form.
-2. `Substr(s, i, l)` — extract the part you need (**1-based** indexing).
-3. `ToInt64(x)` — only if you need arithmetic on the part.
+1. `ToString(x)`: convert the temporal value to its ISO string form.
+2. `Substr(s, i, l)`: extract the part you need (**1-based** indexing).
+3. `ToInt64(x)`: only if you need arithmetic on the part.
 
 ```logica
 # Year-month for grouping
@@ -48,12 +48,12 @@ MonthlyOrders(month:, count? += 1) distinct :-
 
 Two built-in concepts read the engine's clock:
 
-- `Today(date:)` — today's date as a `"YYYY-MM-DD"` string.
-- `Now(timestamp:)` — the current instant as the dialect's native timestamp.
+- `Today(date:)`: today's date as a `"YYYY-MM-DD"` string.
+- `Now(timestamp:)`: the current instant as the dialect's native timestamp.
 
-`Now` is deliberately the **most precise** value the engine offers; every coarser part — date, time of day, hour, minute — is *derived* from it through the [pipeline](#the-pipeline) (`ToString` → `Substr`), so there is no separate `time:` or `date:` field to keep in sync.
+`Now` is deliberately the **most precise** value the engine offers; every coarser part (date, time of day, hour, minute) is *derived* from it through the [pipeline](#the-pipeline) (`ToString` → `Substr`), so there is no separate `time:` or `date:` field to keep in sync.
 
-Use them for any "today"- or "now"-relative logic. Do not create, update or delete them — the compiler inlines a one-row relation per dialect (using each engine's native current-date/timestamp SQL), so they need no runtime table and work on every engine, including BigQuery and read-only remote catalogs.
+Use them for any "today"- or "now"-relative logic. Do not create, update or delete them: the compiler inlines a one-row relation per dialect (using each engine's native current-date/timestamp SQL), so they need no runtime table and work on every engine, including BigQuery and read-only remote catalogs.
 
 ```logica
 ThisMonthOrders(order_id:, created_at:) :-
@@ -78,9 +78,9 @@ Within one statement the engine reads `Today` and `Now` from the same clock, so 
 
 ### Relative dates and times
 
-"Yesterday" and "ten minutes ago" need date/timestamp **arithmetic**. Do it the same portable way as everything else: pull the parts out with `Substr`, turn them into integers with `ToInt64`, do the math, and reassemble with `ToString`. **Never reach for `SqlExpr`** to subtract an interval — raw SQL is unsafe and non-portable, and the [verifier rejects it](../verification.md). Integer division is also not portable, so use `%` (exact) and conditionals instead.
+"Yesterday" and "ten minutes ago" need date/timestamp **arithmetic**. Do it the same portable way as everything else: pull the parts out with `Substr`, turn them into integers with `ToInt64`, do the math, and reassemble with `ToString`. **Never reach for `SqlExpr`** to subtract an interval: raw SQL is unsafe and non-portable, and the [verifier rejects it](../verification.md). Integer division is also not portable, so use `%` (exact) and conditionals instead.
 
-Two small helpers — month length (with the leap-year rule) and two-digit zero-padding:
+Two small helpers, month length (with the leap-year rule) and two-digit zero-padding:
 
 ```logica
 DaysInMonth(y, m) = n :-
@@ -149,7 +149,9 @@ CurrentMember(employee:, team:) :-
   start_date <= date, end_date >= date;
 ```
 
-Two periods `[s1, e1]` and `[s2, e2]` **overlap** when `s1 <= e2 && s2 <= e1`.
+Two periods `[s1, e1]` and `[s2, e2]` **overlap** when `s1 <= e2 && s2 <= e1`. With half-open periods `[s, e)`, which is the convention used for graph edges, the test is `s1 < e2 && s2 < e1`.
+
+Temporal edges, interval closing from an event log, time-respecting traversals and **bitemporal** modeling (separating when a fact was true from when the database believed it) are covered in [Knowledge graphs](../knowledge-graphs.md#temporal-graphs).
 
 ## Complete example
 

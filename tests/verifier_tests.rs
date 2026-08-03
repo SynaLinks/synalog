@@ -28,6 +28,7 @@ enum ExpectedError {
     ReservedPredicate,
     UnsafeSqlExpr,
     PositionalArguments,
+    UndefinedPredicate,
 }
 
 /// Parse expected error from file content.
@@ -47,6 +48,7 @@ fn parse_expected_error(content: &str) -> Option<ExpectedError> {
                 s if s.contains("reservedPredicate") => Some(ExpectedError::ReservedPredicate),
                 s if s.contains("unsafeSqlExpr") => Some(ExpectedError::UnsafeSqlExpr),
                 s if s.contains("positionalArguments") => Some(ExpectedError::PositionalArguments),
+                s if s.contains("undefinedPredicate") => Some(ExpectedError::UndefinedPredicate),
                 _ => None,
             };
         }
@@ -68,6 +70,7 @@ fn error_matches(error: &CheckError, expected: &ExpectedError) -> bool {
         (CheckError::Reserved(_), ExpectedError::ReservedPredicate) => true,
         (CheckError::SqlExpr(_), ExpectedError::UnsafeSqlExpr) => true,
         (CheckError::Positional(_), ExpectedError::PositionalArguments) => true,
+        (CheckError::Undefined(_), ExpectedError::UndefinedPredicate) => true,
         _ => false,
     }
 }
