@@ -13,7 +13,7 @@ use pyo3::prelude::*;
 use crate::compiler::dialects;
 use crate::compiler::universe::{LogicaProgram, Pagination};
 use crate::parser::{parse_file, Json};
-use crate::verifier::validate;
+use crate::verifier::{builtin_function_names, reserved_predicate_names, validate};
 
 fn map_err<E: std::fmt::Display>(e: E) -> PyErr {
     PyValueError::new_err(e.to_string())
@@ -176,6 +176,37 @@ fn check(
     Ok(result.errors.iter().map(|e| e.to_string()).collect())
 }
 
+/// Predicate names Synalog defines itself, sorted.
+///
+/// The built-in temporal concepts (`Today`, `Now`) plus every head of every
+/// dialect's library program (`Num`, `Str`, `Epoch`, `ArgMax`, ...). A program
+/// may *reference* these but must not define them.
+///
+/// Exposed because embedders resolve references against their own catalogue of
+/// predicates — a host that stores rules in a database rather than in `.l`
+/// files cannot use `check` alone to spot a typo, and needs to know which names
+/// are already spoken for.
+#[pyfunction]
+fn reserved_predicates() -> Vec<String> {
+    let mut names: Vec<String> = reserved_predicate_names().iter().cloned().collect();
+    names.sort();
+    names
+}
+
+/// Function and operator names Synalog compiles to SQL, sorted.
+///
+/// Every dialect's built-ins (`Substr`, `ToString`, `Like`, `IsNull`, ...).
+/// These occupy a different namespace from predicates: they appear in call
+/// position, and an unknown call name is compiled as a SQL passthrough rather
+/// than treated as a relation. An embedder checking references must skip them,
+/// or `Substr(s, 1, 7)` reads as a reference to a missing table.
+#[pyfunction]
+fn builtin_functions() -> Vec<String> {
+    let mut names: Vec<String> = builtin_function_names().iter().cloned().collect();
+    names.sort();
+    names
+}
+
 #[pymodule]
 fn _synalog(m: &Bound<'_, PyModule>) -> PyResult<()> {
     m.add("SUPPORTED_ENGINES", dialects::SUPPORTED_ENGINES.to_vec())?;
@@ -184,5 +215,7 @@ fn _synalog(m: &Bound<'_, PyModule>) -> PyResult<()> {
     m.add_function(wrap_pyfunction!(search, m)?)?;
     m.add_function(wrap_pyfunction!(compile_all, m)?)?;
     m.add_function(wrap_pyfunction!(check, m)?)?;
+    m.add_function(wrap_pyfunction!(reserved_predicates, m)?)?;
+    m.add_function(wrap_pyfunction!(builtin_functions, m)?)?;
     Ok(())
 }

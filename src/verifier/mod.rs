@@ -28,7 +28,7 @@ pub use recursion::{RecursionError, check_recursion, check_unbounded_recursion};
 pub use reserved::{ReservedError, check_reserved, reserved_predicate_names};
 pub use sqlexpr::{SqlExprError, check_sqlexpr};
 pub use positional::{PositionalError, check_positional};
-pub use undefined::{UndefinedError, check_undefined};
+pub use undefined::{UndefinedError, builtin_function_names, check_undefined};
 
 use crate::parser::Json;
 use crate::errors::{VerifyError, VerifyResult};

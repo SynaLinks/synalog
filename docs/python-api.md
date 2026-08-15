@@ -1,6 +1,6 @@
 # Python API
 
-The `synalog` package exposes four functions. All of them accept an optional `engine` keyword that overrides the program's `@Engine` annotation (one of `sqlite`, `duckdb`, `bigquery`, `psql`, `presto`, `trino`, `databricks`; default `duckdb`) and an optional `import_root` keyword listing directories where `import` statements look up `.l` files (default: the current directory). They raise `ValueError` on syntax or compilation errors.
+The `synalog` package exposes five functions that take a program (`parse`, `compile`, `search`, `compile_all`, `check`) and two that take nothing and return the names Synalog has already reserved (`reserved_predicates`, `builtin_functions`). The program functions all accept an optional `engine` keyword that overrides the program's `@Engine` annotation (one of `sqlite`, `duckdb`, `bigquery`, `psql`, `presto`, `trino`, `databricks`; default `duckdb`) and an optional `import_root` keyword listing directories where `import` statements look up `.l` files (default: the current directory). They raise `ValueError` on syntax or compilation errors.
 
 ## `parse`
 
@@ -69,6 +69,29 @@ errors = synalog.check(source)
 if errors:
     for e in errors:
         print(e)
+```
+
+## `reserved_predicates`
+
+```python
+reserved_predicates() -> list[str]
+```
+
+The predicate names Synalog defines itself, sorted: the [built-in temporal concepts](language/temporal.md) (`Today`, `Now`) and every head of every dialect's library program (`Num`, `Str`, `Epoch`, `ArgMax`, ...). A program may reference these but must not [define](verification.md) them.
+
+## `builtin_functions`
+
+```python
+builtin_functions() -> list[str]
+```
+
+The function and operator names Synalog compiles to SQL, sorted (`Substr`, `ToString`, `Like`, `IsNull`, ...). These live in a different namespace from predicates: they appear in call position, not as relations.
+
+Both lists exist for hosts that resolve references themselves. If your rules live in a database rather than in `.l` files, `check` alone cannot tell a typo from a predicate defined elsewhere, so you need to know which names are already taken — and which of them are function calls rather than relational references:
+
+```python
+reserved = set(synalog.reserved_predicates()) | set(synalog.builtin_functions())
+unknown = [name for name in referenced_names(rule) if name not in reserved | defined_in_catalogue]
 ```
 
 ## Executing the generated SQL
