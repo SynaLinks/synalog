@@ -17,7 +17,7 @@ A raw table is just rows; an agent has to re-interpret what they *mean* on every
 - **Knowledge graphs the agent can traverse**: model entities and relationships as concepts, then follow connections (composition, inverse, symmetric, recursive chains) without writing fragile join logic. See [Knowledge graphs](knowledge-graphs.md).
 - **Recursion and transitive reasoning**: transitive closures and graph traversals (org charts, taxonomies, bills of materials, referral chains, shortest paths) that are impossible to write correctly in raw SQL come out as a base case plus a recursive case, with the verifier guaranteeing termination.
 - **Logical rules that compose**: rules build on other rules, so knowledge accumulates instead of being re-derived. Complex questions decompose into small named predicates the agent can inspect, reuse, and combine.
-- **Temporal reasoning**: time-aware rules and edges (validity windows, "active today", overlap, point-in-time joins) let the agent answer *when*, not just *what*. That kind of reasoning is notoriously error-prone to express directly in SQL, and Synalog extends it to **bitemporal** graphs, which separate when a fact was true from when the agent believed it.
+- **Temporal reasoning**: time-aware rules and edges (validity windows, "active today", overlap, point-in-time joins) let the agent answer *when*, not just *what*. That kind of reasoning is notoriously error-prone to express directly in SQL.
 - **Dynamic, not static**: the layer evolves as the agent learns. New rules extend the vocabulary at runtime; the rule base itself becomes the agent's long-term memory over structured data.
 - **Auditable reasoning**: every derived fact traces back through named rules, giving full lineage from answer to source tables.
 - **Compile-time verification**: a formal verifier catches structural errors before any SQL touches a database, so a self-authored rule that parses but is unsound is rejected up front. See [Verification](verification.md).
@@ -54,7 +54,7 @@ rows = duckdb.sql(sql).fetchall()
 - [Why Synalog](why.md): the problem it solves, what it costs, and when another tool is the right one. Start here if you are evaluating it.
 - [Getting started](getting-started.md): install Synalog and run your first program.
 - [Language](language/index.md): the full language reference.
-- [Knowledge graphs](knowledge-graphs.md): model entities and relationships as nodes and edges, including temporal and bitemporal graphs.
+- [Knowledge graphs](knowledge-graphs.md): model entities and relationships as nodes and edges, including temporal graphs.
 - [Python API](python-api.md): `parse`, `compile`, `compile_all`, `check`.
 - [CLI interface](cli.md): the `synalog` command and the interactive session.
 - [Differences with Datalog](differences-datalog.md): how Synalog departs from classical Datalog.

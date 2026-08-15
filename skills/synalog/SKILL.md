@@ -244,28 +244,17 @@ MemberOf(person_id:, team_id:, valid_from:, valid_to:) distinct :-
 ```
 
 - Time-respecting traversal: carry the interval intersection through the recursive rule, so a path only exists when its hops are valid simultaneously.
-
-### Bitemporal edges
-
-Add `recorded_from`/`recorded_to` (when the database believed the fact) next to `valid_from`/`valid_to` (when the fact was true in the world). Valid time is editable, transaction time is append-only: correct a fact by closing `recorded_to` on the old version and inserting a new version, never by overwriting.
-
-- Current view: match `recorded_to: "9999-12-31"` in the argument list, then test valid time against `Today`.
-- As-of queries: put the vantage point in a swappable predicate and move it with a functor.
+- Point-in-time queries: put the vantage date in a swappable predicate and move it with a functor.
 
 ```logica
-AsOf(valid_date:, known_date:) :-
-  Today(date:), valid_date == date, known_date == date;
+AsOf(valid_date:) :- Today(date:), valid_date == date;
 
 @OrderBy(EmploymentSnapshot, "person_id");
 EmploymentSnapshot(person_id:, role:) distinct :-
-  AsOf(valid_date:, known_date:),
-  EmployedAt(person_id:, role:, valid_from:, valid_to:, recorded_from:, recorded_to:),
-  valid_from <= valid_date, valid_date < valid_to,
-  recorded_from <= known_date, known_date < recorded_to;
+  AsOf(valid_date:),
+  EmployedAt(person_id:, role:, valid_from:, valid_to:),
+  valid_from <= valid_date, valid_date < valid_to;
 
-March2026(valid_date: "2026-03-01", known_date: "2026-03-01");
-EmploymentAsKnownInMarch := EmploymentSnapshot(AsOf: March2026);
+March2026(valid_date: "2026-03-01");
+EmploymentInMarch := EmploymentSnapshot(AsOf: March2026);
 ```
-
-- A closed `recorded_to` with a successor version is a correction; with no successor it is a retraction. Ending a fact in the world moves `valid_to`, never `recorded_to`.
-- Composing two bitemporal edges intersects both axes, and both intersections must be non-empty.

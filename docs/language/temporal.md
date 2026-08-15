@@ -151,7 +151,7 @@ CurrentMember(employee:, team:) :-
 
 Two periods `[s1, e1]` and `[s2, e2]` **overlap** when `s1 <= e2 && s2 <= e1`. With half-open periods `[s, e)`, which is the convention used for graph edges, the test is `s1 < e2 && s2 < e1`.
 
-Temporal edges, interval closing from an event log, time-respecting traversals and **bitemporal** modeling (separating when a fact was true from when the database believed it) are covered in [Knowledge graphs](../knowledge-graphs.md#temporal-graphs).
+Temporal edges, interval closing from an event log and time-respecting traversals are covered in [Knowledge graphs](../knowledge-graphs.md#temporal-graphs).
 
 ## Complete example
 

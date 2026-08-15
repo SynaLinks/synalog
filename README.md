@@ -36,7 +36,7 @@ A raw table is just rows; an agent has to re-interpret what they *mean* on every
 - **Knowledge graphs the agent can traverse**: model entities and relationships as concepts, then follow connections (composition, inverse, symmetric, recursive chains) without writing fragile join logic. See [Knowledge graphs](https://synalinks.github.io/synalog/knowledge-graphs/).
 - **Recursion and transitive reasoning**: transitive closures and graph traversals (org charts, taxonomies, bills of materials, referral chains, shortest paths) that are impossible to write correctly in raw SQL come out as a base case plus a recursive case, with the verifier guaranteeing termination.
 - **Logical rules that compose**: rules build on other rules, so knowledge accumulates instead of being re-derived. Complex questions decompose into small named predicates the agent can inspect, reuse, and combine.
-- **Temporal reasoning**: time-aware rules and edges (validity windows, "active today", overlap, point-in-time joins) let the agent answer *when*, not just *what*. That kind of reasoning is notoriously error-prone to express directly in SQL, and it extends to **bitemporal** graphs, which separate when a fact was true from when the agent believed it.
+- **Temporal reasoning**: time-aware rules and edges (validity windows, "active today", overlap, point-in-time joins) let the agent answer *when*, not just *what*. That kind of reasoning is notoriously error-prone to express directly in SQL.
 - **Dynamic, not static**: the layer evolves as the agent learns. New rules extend the vocabulary at runtime; the rule base itself becomes the agent's long-term memory over structured data.
 - **Auditable reasoning**: every derived fact traces back through named rules, giving full lineage from answer to source tables.
 - **Compile-time verification**: a formal verifier catches structural errors before any SQL touches a database, so a self-authored rule that parses but is unsound is rejected up front. See [Verification](https://synalinks.github.io/synalog/verification/).
@@ -431,18 +431,17 @@ WorksIn(person_id:, department_id:) distinct :-
   Employees(person_id:, department_id:);
 ```
 
-Relationships with a lifetime carry it as a half-open interval `[valid_from, valid_to)`, using `"9999-12-31"` as the open end so ISO strings compare correctly. A **bitemporal** edge adds `recorded_from`/`recorded_to`, separating when a fact was true in the world from when the database believed it, which is what makes corrections auditable and past answers reproducible:
+Relationships with a lifetime carry it as a half-open interval `[valid_from, valid_to)`, using `"9999-12-31"` as the open end so ISO strings compare correctly, and `Today` supplies the clock for point-in-time questions:
 
 ```logica
 @OrderBy(CurrentEmployment, "person_id");
 CurrentEmployment(person_id:, company_id:, role:) distinct :-
-  EmployedAt(person_id:, company_id:, role:,
-             valid_from:, valid_to:, recorded_to: "9999-12-31"),
+  EmployedAt(person_id:, company_id:, role:, valid_from:, valid_to:),
   Today(date:),
   valid_from <= date, date < valid_to;
 ```
 
-Node and edge patterns, temporal and bitemporal modeling, as-of queries and time-respecting traversals are covered in [Knowledge graphs](https://synalinks.github.io/synalog/knowledge-graphs/).
+Node and edge patterns, temporal modeling, point-in-time queries and time-respecting traversals are covered in [Knowledge graphs](https://synalinks.github.io/synalog/knowledge-graphs/).
 
 ### Built-in functions
 
