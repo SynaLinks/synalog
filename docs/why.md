@@ -59,7 +59,7 @@ Nothing moves. The rule base is text, versioned like code, and it is the only ne
 | A bad rule is discovered when a human notices the number looks odd. | A structurally bad rule is rejected at compile time, before the query runs. |
 | "Where does this number come from?" ends in generated SQL. | It ends in a chain of named rules leading back to source tables. |
 | Relationship questions ("who is exposed to this supplier?") are bespoke join chains. | They are traversals over [entities and relationships](knowledge-graphs.md) modeled once. |
-| "What did we think in March?" is unanswerable. | It is a [point on the bitemporal plane](knowledge-graphs.md#bitemporal-graphs), reachable by changing one line. |
+| "What did this look like in March?" is a bespoke query written from scratch. | It is a [point-in-time filter](knowledge-graphs.md#temporal-graphs) over edges that already carry their validity period. |
 | Agent knowledge resets between sessions. | The rule base *is* the memory, and it compounds. |
 
 The compounding is the part that matters commercially. The first ten questions cost more than they would with direct SQL generation, because concepts are being defined. The next thousand cost dramatically less, because they are being reused. A semantic layer is an asset with a payback period, not a running expense.
@@ -68,7 +68,7 @@ The compounding is the part that matters commercially. The first ten questions c
 
 Synalog earns its place where questions are **relational, definitional or historical**:
 
-- **Regulated reporting.** Numbers have to be reproducible months later, including reproducing the number *as it was published*, before a correction. See [bitemporal graphs](knowledge-graphs.md#bitemporal-graphs).
+- **Regulated reporting.** Numbers have to be reproducible months later, from a definition that is written down rather than reconstructed. See [temporal graphs](knowledge-graphs.md#temporal-graphs).
 - **Risk and exposure.** "Which customers depend on this supplier, directly or through two hops?" is a traversal, and a fragile one to write by hand each time.
 - **Access, org and entitlement questions.** Hierarchies, delegation chains and approval paths are recursive by nature and notoriously wrong in hand-written SQL.
 - **Customer and account views.** The same entity assembled from a CRM, a billing system and a support tool, defined once instead of per query.
@@ -111,7 +111,7 @@ It is deliberately incremental. Nothing here requires a migration.
 1. **Point it at one schema.** Pick a domain where questions are frequent and definitions are argued about. Define ten to twenty concepts: the entities, the two or three relationships that matter, the handful of contested metrics.
 2. **Let the agent extend it.** Every question that cannot be answered from existing concepts produces new ones. Those are validated automatically and reviewed by a human before being promoted to trusted status.
 3. **Add relationships once the entities settle.** Turning existing tables into a [knowledge graph](knowledge-graphs.md) is a modeling step, not a migration; the graph is virtual and always as fresh as the tables.
-4. **Add time where it pays.** Most relations never need it. A few (the ones subject to corrections, disputes or reporting obligations) justify [validity periods or a full bitemporal model](knowledge-graphs.md#choosing-a-time-model).
+4. **Add time where it pays.** Most relations never need it. A few (the ones subject to disputes or reporting obligations) justify [validity periods](knowledge-graphs.md#choosing-a-time-model).
 5. **Treat the rule base as code.** Version it, review it, test it. It is the most valuable artifact the project produces, and it outlives whichever model is generating queries this year.
 
 ## Where to go next

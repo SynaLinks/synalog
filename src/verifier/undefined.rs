@@ -87,7 +87,12 @@ impl From<UndefinedError> for crate::errors::SynalogError {
 /// operators (`Substr`, `Range`, `IsNull`, `Constraint`, `MagicalEntangle`, …).
 /// Unioned over all dialects like the reserved-name check, so a dialect-specific
 /// built-in is never mistaken for a user predicate.
-fn builtin_function_names() -> &'static HashSet<String> {
+///
+/// Public because embedders resolve references themselves: a host that stores
+/// predicates outside a `.l` file (and so cannot rely on this check) still has
+/// to tell a function call apart from a relational reference, and rebuilding
+/// the list by hand guarantees it drifts.
+pub fn builtin_function_names() -> &'static HashSet<String> {
     static BUILTINS: OnceLock<HashSet<String>> = OnceLock::new();
     BUILTINS.get_or_init(|| {
         let mut names = HashSet::new();
@@ -383,5 +388,31 @@ mod tests {
         assert_eq!(levenshtein("abc", "abc"), 0);
         assert_eq!(levenshtein("", "abc"), 3);
         assert_eq!(levenshtein("kitten", "sitting"), 3);
+    }
+
+    /// The exported list is what embedders resolve references against, so the
+    /// string-manipulation built-ins a rule reaches for must be in it.
+    #[test]
+    fn test_builtin_function_names_exported() {
+        let builtins = builtin_function_names();
+        for name in ["Substr", "ToString", "Like", "Upper", "Length", "IsNull"] {
+            assert!(builtins.contains(name), "{name} missing from built-in functions");
+        }
+        // Predicates are a different namespace: they belong to the reserved
+        // list, and mixing the two would let a program redefine `Today`.
+        assert!(!builtins.contains("Customer"));
+    }
+
+    /// A call to a built-in is not a relational reference — the regression
+    /// behind hosts reporting `Substr` as an unknown predicate.
+    #[test]
+    fn test_builtin_calls_are_not_references() {
+        let errors = check(
+            r#"
+            Sale(id:, day:) :- sales(id:, created_at:), day == Substr(ToString(created_at), 1, 10);
+            Invoice(id:) :- sales(id:, subject:), Like(subject, "Facture%") == true;
+        "#,
+        );
+        assert!(errors.is_empty(), "{errors:?}");
     }
 }

@@ -295,22 +295,20 @@ A small employee, team and client graph: nodes with primary keys and preserved U
 
 ## Choosing a time model
 
-Before adding date columns to anything, decide what kind of time question the relation actually has to answer. Three questions settle it:
+Before adding date columns to anything, decide what kind of time question the relation actually has to answer. Two questions settle it:
 
 1. Does anyone ever ask what this looked like at an earlier date?
-2. Does this data ever get **corrected** after the fact, backdated, or restated?
-3. Does anyone ever have to reproduce an answer *as it was given*, not as it is now understood?
+2. Does anyone ever have to inspect what the database held at an earlier date?
 
 | Model | Extra columns | Answers | Cost | Typical use |
 |---|---|---|---|---|
 | **Snapshot** (no time) | none | What is true now | None | Reference data, categories, anything that only ever gains rows |
 | **Valid time** | `valid_from`, `valid_to` | What was true on a given date | Interval maintenance, overlap logic in joins | Employments, contracts, assignments, prices, subscriptions |
 | **Transaction time** | `recorded_from`, `recorded_to` | What the database held on a given date | Append-only writes, versions accumulate | Audit trails, agent memory, anything a regulator may inspect |
-| **Bitemporal** | all four | Both, independently | Both of the above, plus care in every query | Late-arriving or corrected data with reporting obligations |
 
-Answer "no" to all three and use a snapshot; the cheapest correct model is a real design win, not a shortcut. Answer "yes" only to the first and valid time is enough. Reach for bitemporality when the second and third are also yes.
+Answer "no" to both and use a snapshot; the cheapest correct model is a real design win, not a shortcut. Valid time is the usual answer when history matters at all; reach for transaction time only where the record of what was believed is itself the requirement.
 
-This is a decision **per relation**, not per graph. A graph where employments are bitemporal, team memberships carry valid time and job titles are a plain snapshot is normal and correct. Mixed models compose: a uni-temporal edge joins with a bitemporal one as long as the missing axis is treated as always valid.
+This is a decision **per relation**, not per graph. A graph where employments carry valid time, agent-written conclusions carry transaction time and job titles are a plain snapshot is normal and correct.
 
 !!! tip "Start smaller than you think"
     Time columns are easy to add to a relation later and hard to remove once rules depend on them. Model the handful of relations where history is genuinely consequential, and leave the rest as snapshots until a real question forces the change.
@@ -420,190 +418,10 @@ Interval closing from an event log, "active today", the overlap join and the tim
     --8<-- "docs/examples/temporal_graph.log"
     ```
 
-## Bitemporal graphs
-
-A temporal edge answers *when was this true*. It cannot answer *when did we believe it*, and those are different questions. A salary correction backdated to January, a contract entered a week late, a source system that restates yesterday's export: in all three cases the world did not change, our knowledge of it did.
-
-A **bitemporal** graph tracks both axes.
-
-| Axis | Columns | Question it answers |
-|------|---------|---------------------|
-| **Valid time** (world time) | `valid_from`, `valid_to` | When was the fact true in the world? |
-| **Transaction time** (system time) | `recorded_from`, `recorded_to` | When did the database hold it to be true? |
-
-Valid time is decided by the business and can be edited freely, including into the past and the future. Transaction time is decided by the clock and is **append-only**: a version is never modified, only superseded. That is what makes the graph auditable, and what lets an agent reproduce an answer it gave last month instead of quietly overwriting it.
-
-!!! tip "Why an agent wants both"
-    An agent that writes to its own semantic layer is a source of restatements. Transaction time keeps every belief it ever held, so a wrong conclusion can be traced, explained and reversed rather than lost. Valid time keeps the corrected history clean, so today's answer is right even when the data arrived late.
-
-### Where the two clocks pay for themselves
-
-The distinction sounds academic until it is someone's job. In each of these cases, a single time axis loses information the business is required to keep:
-
-- **Restated reporting.** A quarter is published, then a correction lands. Finance now needs two numbers that are both right: what the corrected books say, and what was published at the time. With valid time alone, publishing the correction destroys the ability to reproduce the original filing.
-- **Backdated changes.** A raise effective 1 January, approved in March. Payroll owes back pay (a valid-time fact) and the March payroll run was still correct given what was known then (a transaction-time fact). Overwriting the row makes the earlier run look like an error.
-- **Late-arriving data.** A policy is bound on the 3rd and reaches the warehouse on the 11th. Every report between those dates was right on the evidence available. Without transaction time there is no way to demonstrate that, and the gap looks like a data quality failure.
-- **Disputes and approvals.** "Was this within limits when it was approved?" is a question about what was known at approval time, not about the corrected record. Credit decisions, underwriting and access reviews all live here.
-- **Regulatory reproducibility.** Several regimes require that a figure be reproducible as reported. That is a transaction-time requirement, and it cannot be bolted on after the fact: the versions have to have been kept.
-- **Agent trust.** When an agent gives an answer that later turns out to be wrong, the useful question is whether it reasoned badly or was working from data that has since been corrected. Only transaction time can tell the two apart, and the difference decides whether you fix the rule or the source.
-
-The common thread: **a correction is not an edit.** Treating it as one destroys evidence that someone eventually asks for, usually under time pressure and usually in front of an auditor.
-
-### Modeling
-
-One row per **version** of a fact, four interval columns, half-open on both axes, with `"9999-12-31"` as the open end:
-
-```logica
-@OrderBy(EmployedAt, "person_id", "recorded_from");
-EmployedAt(person_id:, company_id:, role:,
-           valid_from:, valid_to:, recorded_from:, recorded_to:) distinct :-
-  Person(person_id:),
-  Company(company_id:),
-  EmploymentVersions(person_id:, company_id:, role:,
-                     valid_from:, valid_to:, recorded_from:, recorded_to:);
-```
-
-The edge still joins through `Person` and `Company`. Versioning is a property of the relationship, not a reason to abandon the graph conventions.
-
-A correction to Ada's role is two rows: the old version keeps its valid time but has its `recorded_to` closed, and a new version opens with the corrected value.
-
-| role | valid_from | valid_to | recorded_from | recorded_to |
-|------|------------|----------|---------------|-------------|
-| engineer | 2024-01-01 | 9999-12-31 | 2024-01-05 | 2026-04-01 |
-| lead | 2024-01-01 | 9999-12-31 | 2026-04-01 | 9999-12-31 |
-
-Both rows say the fact was true from January 2024. They disagree about *what* the fact is, and the transaction interval says which answer was in force when.
-
-### The current view
-
-Believed now, true now. This is the view most rules should build on:
-
-```logica
-@OrderBy(CurrentEmployment, "person_id");
-CurrentEmployment(person_id:, company_id:, role:) distinct :-
-  EmployedAt(person_id:, company_id:, role:,
-             valid_from:, valid_to:, recorded_to: "9999-12-31"),
-  Today(date:),
-  valid_from <= date, date < valid_to;
-```
-
-Matching `recorded_to: "9999-12-31"` directly in the argument list is the whole "latest version" filter. No window function, no ranking, no correlated subquery.
-
-### As-of queries
-
-Make the vantage point a predicate instead of a constant, and every point on the bitemporal plane becomes reachable by [functor](language/functors.md) application. The default is "now, as we know it now":
-
-```logica
-AsOf(valid_date:, known_date:) :-
-  Today(date:), valid_date == date, known_date == date;
-
-@OrderBy(EmploymentSnapshot, "person_id");
-EmploymentSnapshot(person_id:, company_id:, role:) distinct :-
-  AsOf(valid_date:, known_date:),
-  EmployedAt(person_id:, company_id:, role:,
-             valid_from:, valid_to:, recorded_from:, recorded_to:),
-  valid_from <= valid_date, valid_date < valid_to,
-  recorded_from <= known_date, known_date < recorded_to;
-
-## What the database said in March 2026 about March 2026.
-March2026(valid_date: "2026-03-01", known_date: "2026-03-01");
-EmploymentAsKnownInMarch := EmploymentSnapshot(AsOf: March2026);
-```
-
-Three vantage points, one rule:
-
-- `valid_date` moves, `known_date` stays at today: the corrected history, as we understand it now.
-- `known_date` moves, `valid_date` stays at today: what we would have answered back then.
-- Both move: a faithful replay of a past answer about a past moment, which is what an audit asks for.
-
-Every rule layered on `EmploymentSnapshot` inherits the vantage point, so a whole analysis can be rewound by swapping one predicate.
-
-### Corrections and retractions
-
-The audit trail falls out of the versions themselves. A closed transaction interval with a successor is a **correction**:
-
-```logica
-@OrderBy(Correction, "person_id", "corrected_at");
-Correction(person_id:, old_role:, new_role:, corrected_at:) distinct :-
-  EmployedAt(person_id:, role: old_role, recorded_to: corrected_at),
-  corrected_at != "9999-12-31",
-  EmployedAt(person_id:, role: new_role, recorded_from: corrected_at);
-```
-
-A closed transaction interval with no successor is a **retraction**, an edge we no longer believe ever existed:
-
-```logica
-@OrderBy(Retracted, "person_id");
-Retracted(person_id:, role:, retracted_at:) distinct :-
-  EmployedAt(person_id:, role:, recorded_to: retracted_at),
-  retracted_at != "9999-12-31",
-  ~EmployedAt(person_id:, recorded_from: retracted_at);
-```
-
-Note what a retraction is *not*: it is not `valid_to` moving to today. Ending an employment is a fact about the world and belongs to valid time. Deciding the employment never happened is a fact about our knowledge and belongs to transaction time. Keeping the two apart is the entire benefit of the model.
-
-### Joining bitemporal edges
-
-A composition of two bitemporal edges is valid only where both are valid *and* both were believed. Intersect on both axes and keep the result only if both intervals are non-empty:
-
-```logica
-@OrderBy(WorkedWithClient, "person_id", "valid_from");
-WorkedWithClient(person_id:, client_id:, valid_from:, valid_to:,
-                 recorded_from:, recorded_to:) distinct :-
-  MemberOf(person_id:, team_id:, valid_from: m_vf, valid_to: m_vt,
-           recorded_from: m_rf, recorded_to: m_rt),
-  EngagedWith(team_id:, client_id:, valid_from: e_vf, valid_to: e_vt,
-              recorded_from: e_rf, recorded_to: e_rt),
-  valid_from    == (if m_vf > e_vf then m_vf else e_vf),
-  valid_to      == (if m_vt < e_vt then m_vt else e_vt),
-  recorded_from == (if m_rf > e_rf then m_rf else e_rf),
-  recorded_to   == (if m_rt < e_rt then m_rt else e_rt),
-  valid_from < valid_to,
-  recorded_from < recorded_to;
-```
-
-The derived edge is itself bitemporal, so it composes further and can be queried through the same `AsOf` vantage point.
-
-### Filling the axes from real sources
-
-Few tables arrive with four interval columns. The usual shapes:
-
-- **Slowly changing dimension, type 2.** `effective_from` / `effective_to` are valid time. If the warehouse also keeps a load timestamp, that is transaction time; close its intervals with the [event-log technique](#closing-intervals-from-an-event-log) over `recorded_from`.
-- **Change data capture.** One row per change with a commit timestamp and no end: that timestamp is `recorded_from`, and the next change for the same key closes it. Valid time comes from the business columns, or equals transaction time when the source has no notion of it.
-- **Append-only event log.** Events carry only transaction time. Derive valid time from the event's own fields (`effective_date`, `signed_on`) when they exist, and be explicit when they do not: a fact that is only known, never dated, has valid time equal to transaction time.
-
-When only one axis exists in the source, model that one honestly rather than inventing the other. A uni-temporal edge composes with bitemporal ones as long as the missing axis is treated as always valid.
-
-### What bitemporality costs
-
-Bitemporality is the most expensive modeling choice in this document, and it should be made deliberately:
-
-- **Writes become append-only.** Nothing is ever updated in place: a change is a closed version plus a new one. Any process that writes to the relation has to be taught this, and a single `UPDATE` that slips through silently destroys the audit trail the model exists to provide.
-- **Rows multiply.** A relation with frequent corrections grows with every restatement. Usually cheap relative to fact tables, occasionally not.
-- **Every query must state a vantage point.** Forgetting the `recorded_to` filter returns every version of every fact and inflates counts, quietly. The mitigation is structural: build a [current view](#the-current-view) and an [`AsOf` predicate](#as-of-queries) early, and have ordinary rules go through them rather than touching the versioned edge directly.
-- **The sources often do not cooperate.** Many systems overwrite in place and simply do not record when they learned something. You cannot reconstruct transaction time retroactively; you can only start capturing it from today. That argues for deciding early on the few relations that will need it.
-- **It is harder to explain.** Two people looking at the same relation on different vantage points get different, both-correct answers. That confuses stakeholders until the distinction is explained once, properly.
-
-The proportionate answer is rarely "make the graph bitemporal". It is to identify the two or three relations where corrections carry consequences, version those, and leave the rest as valid-time or snapshot concepts.
-
-### Complete example
-
-The bitemporal edge with a real correction, the current view, the `AsOf` vantage point replaying the pre-correction answer, and the audit trail:
-
-```logica
---8<-- "docs/examples/bitemporal.l"
-```
-
-??? example "Generated SQL and execution results"
-
-    ```text
-    --8<-- "docs/examples/bitemporal.log"
-    ```
-
 ## Key principles
 
 - Entity concepts are the vertices, relationship concepts are the edges, rules are traversals.
 - Every edge joins through node concepts, so referential integrity and every node-level filter come for free.
 - Reuse aggressively. Once nodes and edges exist, all rules build on them instead of going back to raw tables.
-- Keep the two time axes separate: valid time is what the world did, transaction time is what we knew.
+- Model time only where it is genuinely asked for, and carry it as half-open intervals with a sentinel open end.
 - The graph *is* the agent's memory. Each new concept or rule extends what every later query can express.
