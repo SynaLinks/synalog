@@ -93,7 +93,7 @@ tests/
 
 ## Releasing
 
-Publishing to PyPI is automated by `.github/workflows/release.yml`, which triggers on a version tag:
+Publishing to PyPI and crates.io is automated by `.github/workflows/release.yml`, which triggers on a version tag. Bump `version` in both `Cargo.toml` and `pyproject.toml` first; the crates.io job refuses a tag that does not match `Cargo.toml`.
 
 ```bash
 git tag v0.1.0
@@ -107,7 +107,19 @@ One-time setup on the GitHub repository:
 1. Create an Environment named `pypi` (Settings → Environments), ideally restricted to tags matching `v*`.
 2. Add the `PYPI_API_TOKEN` secret on that environment.
 
-The release can also be launched manually from the Actions UI (`workflow_dispatch`); only tag builds reach the publish step.
+The release can also be launched manually from the Actions UI (`workflow_dispatch`); only tag builds reach the publish steps.
+
+### crates.io
+
+The Rust core is published as the [`synalog` crate](https://crates.io/crates/synalog) by the `crates-io` job of the same workflow, using crates.io [Trusted Publishing](https://crates.io/docs/trusted-publishing) (GitHub OIDC, no long-lived token). The crate ships only `src/`, `Cargo.toml`, the readme and the license files (see `include` in `Cargo.toml`), and has no default features: `cargo add synalog` gives the parser, verifier and compiler without pyo3. The `CI.yml` workflow runs `cargo package` and a warning-free `cargo doc` on every push so packaging problems surface before tagging.
+
+One-time setup:
+
+1. Publish the first version by hand, since Trusted Publishing can only be configured on an existing crate: `cargo login`, then `cargo publish` from a clean checkout of the tagged commit.
+2. On <https://crates.io/crates/synalog/settings>, add a Trusted Publisher: repository owner `synalinks`, repository `synalog`, workflow filename `release.yml`, environment `crates-io`.
+3. Create a GitHub Environment named `crates-io` (Settings → Environments), restricted to tags matching `v*`.
+
+To check locally what a release would publish: `cargo package --list` shows the files, `cargo publish --dry-run` builds the packaged crate.
 
 ## Documentation
 
