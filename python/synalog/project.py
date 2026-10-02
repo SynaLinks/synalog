@@ -307,7 +307,9 @@ def _write_env(folder: Path, values: dict[str, str]) -> None:
     os.chmod(path, 0o600)
 
 
-def _ensure_gitignore(folder: Path) -> None:
+def ensure_gitignore(folder: str | os.PathLike) -> None:
+    """List the secret files in the folder's ``.gitignore``, keeping its other lines."""
+    folder = Path(folder)
     path = folder / ".gitignore"
     lines = path.read_text(encoding="utf-8").splitlines() if path.exists() else []
     missing = [name for name in SECRET_FILES if name not in lines]
@@ -344,7 +346,7 @@ def write(folder: str | os.PathLike, engine: str, details: dict) -> Path:
     connection(path)  # every required field given
     if secrets_:
         _write_env(folder, secrets_)
-    _ensure_gitignore(folder)
+    ensure_gitignore(folder)
     return path
 
 
