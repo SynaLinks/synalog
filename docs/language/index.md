@@ -85,7 +85,7 @@ CustomerSpend(customer_id:, total? += amount) distinct :- Orders(customer_id:, a
 
 ## Front matter
 
-A program file may open with YAML front matter, as in Markdown: a first line `---`, the YAML, and a closing `---` line. It carries metadata for the tools around your programs (a description, keywords, ownership, ...). Synalog does not interpret it and parses the file as if the block were not there, so error line numbers stay those of the file. It must be the very first thing in the file; an opening `---` that is never closed is an error.
+A program file may open with YAML front matter, as in Markdown: a first line `---`, the YAML, and a closing `---` line. It carries metadata for the tools around your programs (a description, keywords, ownership, ...). Synalog checks that it is well-formed YAML — a syntax error is reported on its line — but does not interpret it: any YAML is accepted, and the file parses as if the block were not there, so error line numbers stay those of the file. It must be the very first thing in the file; an opening `---` that is never closed is an error.
 
 ```logica
 ---

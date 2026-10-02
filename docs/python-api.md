@@ -100,7 +100,7 @@ unknown = [name for name in referenced_names(rule) if name not in reserved | def
 front_matter(source: str) -> str | None
 ```
 
-The YAML [front matter](language/index.md#front-matter) opening a program file, verbatim (without its `---` delimiters), or `None` when the file has none. Synalog itself ignores the block when parsing; this lets a host read its metadata and agree with the parser on where the block ends. The YAML is not parsed — use your YAML library:
+The YAML [front matter](language/index.md#front-matter) opening a program file, verbatim (without its `---` delimiters), or `None` when the file has none. Synalog checks that the block is well-formed YAML when it parses a file (`parse`, `compile`, `check` report a syntax error on its line) but never interprets it; this function lets a host read the metadata and agree with the parser on where the block ends. Load the values with your YAML library:
 
 ```python
 import yaml, synalog

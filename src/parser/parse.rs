@@ -1615,6 +1615,13 @@ fn parse_file_internal(
             SpanString::new(content.to_string()).slice(0, 3),
         ));
     }
+    if let Some(fm) = front_matter(content) {
+        check_front_matter(&fm).map_err(|e| {
+            let source = SpanString::new(content.to_string());
+            let (start, end) = line_bounds(content, e.line);
+            ParsingException::new(format!("Invalid front matter YAML: {}.", e.message), source.slice(start, end))
+        })?;
+    }
     let content = blank_front_matter(content);
     let s = SpanString::new(remove_comments(&SpanString::new(content))?);
     let statements = split(&s, ";")?;
@@ -1880,6 +1887,18 @@ fn parse_import(
 }
 
 /// Parse a Synalog program file and return the AST as JSON.
+/// Byte range of the 1-based `line` of `content` (without its newline).
+fn line_bounds(content: &str, line: usize) -> (usize, usize) {
+    let mut start = 0;
+    for (i, text) in content.split_inclusive('\n').enumerate() {
+        if i + 1 == line {
+            return (start, start + text.trim_end_matches(['\n', '\r']).len());
+        }
+        start += text.len();
+    }
+    (0, 0)
+}
+
 pub fn parse_file(content: &str, file_name: Option<&str>, import_root: &[String]) -> ParseResult<Json> {
     let mut parsed_imports = BTreeMap::new();
     let mut in_progress = BTreeSet::new();

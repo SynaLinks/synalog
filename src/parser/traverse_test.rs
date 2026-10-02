@@ -218,3 +218,25 @@ fn test_front_matter_bom_and_crlf() {
     assert_eq!(fm.yaml, "k: v\r\n");
     assert_eq!(blank_front_matter(content), "\n\n\nA(x: 1);\r\n");
 }
+
+#[test]
+fn test_front_matter_yaml_is_checked_not_interpreted() {
+    // Any well-formed YAML passes, whatever its shape.
+    for yaml in ["description: x\nkeywords: [a, b]\n", "- a list\n- is fine\n", "just a scalar\n", ""] {
+        let content = format!("---\n{yaml}---\nA(x: 1);\n");
+        assert!(check_front_matter(&front_matter(&content).unwrap()).is_ok(), "{yaml:?}");
+    }
+}
+
+#[test]
+fn test_front_matter_yaml_error_line() {
+    // Line 1 is `---`, so the YAML's second line is the file's third.
+    let content = "---\nk: v\nx: 1\n  y: 2\n---\nA(x: 1);\n";
+    let err = check_front_matter(&front_matter(content).unwrap()).unwrap_err();
+    assert_eq!(err.line, 4);
+    assert!(err.message.contains("mapping values"), "{}", err.message);
+    // An error only found at the end of the YAML lands on the closing `---`.
+    let content = "---\nbad: [1, 2\n---\nA(x: 1);\n";
+    let err = check_front_matter(&front_matter(content).unwrap()).unwrap_err();
+    assert_eq!(err.line, 3);
+}

@@ -538,3 +538,9 @@ fn test_imported_module_with_front_matter() {
     let parsed = parsed.unwrap();
     assert!(!parsed.as_object()["rule"].as_array().is_empty());
 }
+
+#[test]
+fn test_parse_file_invalid_front_matter_yaml_is_an_error() {
+    let err = parse_file("---\ndescription: ok\nkeywords: [a, b\n---\nA(x: 1);\n", None, &[]).unwrap_err();
+    assert!(err.message.starts_with("Invalid front matter YAML:"), "{}", err.message);
+}

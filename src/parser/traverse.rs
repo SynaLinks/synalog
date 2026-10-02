@@ -328,6 +328,29 @@ pub fn front_matter(content: &str) -> Option<FrontMatter> {
     None
 }
 
+/// A YAML syntax error in front matter: what is wrong, and the 1-based line
+/// of the file it is on.
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct FrontMatterError {
+    pub message: String,
+    pub line: usize,
+}
+
+/// Load the front matter's YAML to catch syntax errors. The values are not
+/// interpreted: well-formed YAML of any shape is accepted.
+pub fn check_front_matter(fm: &FrontMatter) -> Result<(), FrontMatterError> {
+    match yaml_rust2::YamlLoader::load_from_str(&fm.yaml) {
+        Ok(_) => Ok(()),
+        Err(e) => Err(FrontMatterError {
+            message: e.info().to_string(),
+            // The scanner counts the YAML's lines from 1; the opening `---`
+            // is the file's line 1. An error found at the end of the YAML
+            // lands on the closing `---`.
+            line: (e.marker().line() + 1).min(fm.lines),
+        }),
+    }
+}
+
 /// `content` with its front matter replaced by as many empty lines, so the
 /// program parses as if it were not there and error positions keep their
 /// line numbers. Content without front matter is returned unchanged.
