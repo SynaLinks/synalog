@@ -30,6 +30,7 @@ from __future__ import annotations
 import json
 import os
 import sys
+from collections.abc import Mapping
 from dataclasses import asdict, dataclass, field
 from pathlib import Path
 from urllib.parse import quote, urlencode
@@ -174,14 +175,16 @@ def connection(path: str | os.PathLike) -> dict | None:
     return conn
 
 
-def details(conn: dict) -> dict:
+def details(conn: dict, env: Mapping[str, str] | None = None) -> dict:
     """A connection's fields with defaults filled in and secrets read from
-    the environment. Raises when a required secret is unset."""
+    ``env`` (the process environment by default). Raises when a required
+    secret is unset."""
     engine = conn["engine"]
+    env = os.environ if env is None else env
     out = {}
     for f in ENGINES[engine].fields:
         if f.secret:
-            value = os.environ.get(secret_env(engine, f.key))
+            value = env.get(secret_env(engine, f.key))
             if value is None and f.required:
                 raise ProjectError(f"The {engine} connection needs {secret_env(engine, f.key)} (set it in the project's .env)")
         else:
@@ -227,13 +230,13 @@ def dsn(engine: str, details: dict) -> str:
     raise ProjectError(f"{engine!r} takes no connection")
 
 
-def project_dsn(path: str | os.PathLike, engine: str) -> str | None:
+def project_dsn(path: str | os.PathLike, engine: str, env: Mapping[str, str] | None = None) -> str | None:
     """The connection string of the project file at ``path`` for ``engine``,
     or ``None`` when the project connects to another engine, or none."""
     conn = connection(path)
     if conn is None or conn["engine"] != engine:
         return None
-    return dsn(engine, details(conn))
+    return dsn(engine, details(conn, env))
 
 
 # -- writing -------------------------------------------------------------------
