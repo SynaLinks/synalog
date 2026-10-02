@@ -23,7 +23,7 @@ CLI notes (argument order follows logica: FILE first, then the command):
 
 - `--load TABLE=PATH` (repeatable) loads a data file as a database table; the program refers to it by the lowercase table name. duckdb reads csv/tsv/json/jsonl/parquet; sqlite csv/tsv/json/jsonl (no parquet).
 - `--limit N` / `--offset N` paginate results; use them instead of reading huge outputs.
-- `--engine <name>` overrides the program's `@Engine` annotation (default duckdb).
+- `--engine <name>` overrides the program's `@Engine` annotation; without either, the project's `synalog.toml` decides (see *Projects and connections*), else duckdb.
 - `synalog program.l print Predicate` shows the compiled SQL without executing.
 - Quick experiments without a file: `synalog -c 'Digit(d) :- d in [1, 2, 3];' run Digit`
 - `-` as FILE reads the program from stdin.
@@ -38,6 +38,44 @@ Runnable programs ship with this skill under [`examples/`](examples/). Each one 
 | [`examples/lib/metrics.l`](examples/lib/metrics.l) | A reusable `lib/` module imported by `sales.l` | `synalog lib/metrics.l run TotalByRegion --load sales=data/sales.csv` |
 | [`examples/knowledge_graph.l`](examples/knowledge_graph.l) | Nodes + edges + traversal (self-contained facts) | `synalog knowledge_graph.l run TeamMate` |
 | [`examples/recursion.l`](examples/recursion.l) | `@Recursive` transitive closure over an org chart | `synalog recursion.l run AllManagers` |
+
+## Projects and connections
+
+A folder with a `synalog.toml` is a project. synalog finds it from the program's folder or the current directory, and their parents; its `[connection]` gives the engine and the database as plain fields, and `run`, `print` and `introspect` use them — no `--engine`, no connection string:
+
+```toml
+[project]
+name = "sales"
+description = "Orders and customers."
+
+[connection]
+engine = "psql"
+host = "db.example.com"
+port = 5432
+database = "sales"
+user = "analyst"
+schema = "public"
+```
+
+- **Secrets never go in the file** — synalog refuses it and names the variable to use. They come from the environment as `SYNALOG_<ENGINE>_<FIELD>` (`SYNALOG_PSQL_PASSWORD`, `SYNALOG_DATABRICKS_ACCESS_TOKEN`; `GOOGLE_APPLICATION_CREDENTIALS` for BigQuery's key file), usually from the project's `.env`, which synalog loads and git must ignore. Never read or print `.env`.
+- Fields per engine: `psql` host, port, database, user, password, sslmode, schema; `trino`/`presto` host, port, scheme, catalog, schema, user, auth, password; `databricks` server_hostname, http_path, access_token, catalog, schema; `bigquery` project, dataset, credentials, location.
+- Precedence: `--engine` and `@Engine` over the project's engine; `--dsn`, then `SYNALOG_<ENGINE>_DSN`, then `synalog.toml`, then a connection saved with `synalog connect <engine> <dsn>`.
+- `[project]` (`name`, `description`) is for the tools around synalog; synalog ignores it.
+- `synalog introspect` (no engine, inside a project) prints `# Tables` declarations for the project's database.
+
+## Front matter
+
+A `.l` file may open with YAML front matter between `---` lines: what the file defines, in words. synalog checks that it is valid YAML (a value holding `: ` must be quoted) and otherwise ignores it.
+
+```
+---
+name: ActiveCustomer
+description: Customers with at least one delivered order.
+keywords: [active, engaged]
+---
+import concepts.Customer.Customer;
+...
+```
 
 ## Reading errors
 
@@ -63,6 +101,8 @@ Fix the quoted statement and re-run: later syntax errors only surface once earli
 ```
 AGENTS.md / CLAUDE.md       agent instructions for this project
 .agents/skills/synalog/     this skill
+synalog.toml                the project's engine and database (committed)
+.env                        its secrets (git-ignored)
 data/                       source data files, loaded with --load
 lib/                        reusable modules (shared tables, metrics, graph concepts)
 *.l                         top-level programs at the root, one per analysis or report
@@ -147,7 +187,15 @@ TotalByRegion(region:, total? += amount) distinct :- Region(region:), Sales(regi
 Stats(category:, total? += amount, count? += 1) distinct :- Sales(category:, amount:);
 ```
 
-Operators: `+=` (sum/count), `Min=`, `Max=`, `Avg=`, `List=` (all), `Set=` (distinct), `ArgMax= item -> score`, `ArgMin=`, `ArgMaxK(x->y, k)`, `ArgMinK`, `StringAgg=`.
+Operators: `+=` (sum/count), `Min=`, `Max=`, `Avg=`, `List=` (all), `Set=` (distinct), `ArgMax= item -> score`, `ArgMin=`, `StringAgg=`.
+
+Top k: define an aggregating alias, then use it as the operator:
+
+```logica
+TopThree(x) = ArgMaxK(x, 3);
+@OrderBy(TopProducts, "category");
+TopProducts(category:, products? TopThree= product -> sold) distinct :- Sales(category:, product:, sold:);
+```
 
 ## Built-in functions
 
@@ -194,6 +242,8 @@ SegmentRevenue(segment_id:, total? += amount) distinct :-
 EnterpriseRevenue := SegmentRevenue(Segment: EnterpriseCustomer);
 SMBRevenue        := SegmentRevenue(Segment: SMBCustomer);
 ```
+
+Write the generic rule and its instances in the same module: a functor applied to an **imported** predicate has no effect (synalog only warns, and the instance returns the generic rule's rows).
 
 ## Knowledge graphs
 
