@@ -125,6 +125,22 @@ $ synalog program.l run EngineeringTeam
 - `import path.to.file.Pred;` statements resolve `path/to/file.l` against the program file's directory, then the current directory; pass `--import-root DIR` (repeatable) to search elsewhere.
 - `--load TABLE=PATH` (repeatable) loads a csv/tsv/json/jsonl/parquet file as a table before running, e.g. `synalog senior.l run Senior --load employees=employees.csv`.
 
+### Projects: `synalog.toml`
+
+A folder with a `synalog.toml` is a project. Its `[connection]` says which database its programs run on, as plain fields — commit it:
+
+```toml
+[connection]
+engine = "psql"
+host = "db.example.com"
+port = 5432
+database = "sales"
+user = "analyst"
+schema = "public"
+```
+
+Secrets never go in the file (synalog refuses it): each comes from the environment as `SYNALOG_<ENGINE>_<FIELD>` — `SYNALOG_PSQL_PASSWORD`, `SYNALOG_DATABRICKS_ACCESS_TOKEN`, or `GOOGLE_APPLICATION_CREDENTIALS` for BigQuery — usually from the project's `.env`, kept out of git. Inside the project (from the program's folder or the current directory, and their parents), `run`, `print` and `introspect` use that engine and connection; `--engine`, an `@Engine` annotation, `--dsn` and `SYNALOG_<ENGINE>_DSN` still take precedence. The fields of every engine are in `synalog.project.ENGINES`.
+
 Running `synalog` with no arguments starts an interactive session, in the spirit of `python` (the options above, e.g. `--engine` or `--load`, apply to it too):
 
 ```
