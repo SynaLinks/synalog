@@ -171,3 +171,72 @@ fn test_parsing_exception_show_message() {
     assert!(msg.contains("Something went wrong"));
     assert!(msg.contains("error"));
 }
+
+// ====== Front matter ======
+
+#[test]
+fn test_front_matter_is_read() {
+    let content = "---\ndescription: Active customers\nkeywords: [sales]\n---\nA(x:) :- B(x:);\n";
+    let fm = front_matter(content).unwrap();
+    assert_eq!(fm.yaml, "description: Active customers\nkeywords: [sales]\n");
+    assert_eq!(fm.lines, 4);
+}
+
+#[test]
+fn test_no_front_matter() {
+    assert_eq!(front_matter("A(x:) :- B(x:);\n"), None);
+    assert!(!opens_front_matter("A(x:) :- B(x:);\n"));
+    // Only the very first line can open it.
+    assert_eq!(front_matter("\n---\nk: v\n---\nA(x: 1);\n"), None);
+}
+
+#[test]
+fn test_unclosed_front_matter() {
+    let content = "---\ndescription: never closed\nA(x: 1);\n";
+    assert!(opens_front_matter(content));
+    assert_eq!(front_matter(content), None);
+}
+
+#[test]
+fn test_empty_front_matter() {
+    let fm = front_matter("---\n---\nA(x: 1);\n").unwrap();
+    assert_eq!(fm.yaml, "");
+    assert_eq!(fm.lines, 2);
+}
+
+#[test]
+fn test_blank_front_matter_keeps_lines() {
+    let content = "---\nk: v\n---\nA(x: 1);\n";
+    assert_eq!(blank_front_matter(content), "\n\n\nA(x: 1);\n");
+    assert_eq!(blank_front_matter("A(x: 1);\n"), "A(x: 1);\n");
+}
+
+#[test]
+fn test_front_matter_bom_and_crlf() {
+    let content = "\u{feff}---\r\nk: v\r\n---\r\nA(x: 1);\r\n";
+    let fm = front_matter(content).unwrap();
+    assert_eq!(fm.yaml, "k: v\r\n");
+    assert_eq!(blank_front_matter(content), "\n\n\nA(x: 1);\r\n");
+}
+
+#[test]
+fn test_front_matter_yaml_is_checked_not_interpreted() {
+    // Any well-formed YAML passes, whatever its shape.
+    for yaml in ["description: x\nkeywords: [a, b]\n", "- a list\n- is fine\n", "just a scalar\n", ""] {
+        let content = format!("---\n{yaml}---\nA(x: 1);\n");
+        assert!(check_front_matter(&front_matter(&content).unwrap()).is_ok(), "{yaml:?}");
+    }
+}
+
+#[test]
+fn test_front_matter_yaml_error_line() {
+    // Line 1 is `---`, so the YAML's second line is the file's third.
+    let content = "---\nk: v\nx: 1\n  y: 2\n---\nA(x: 1);\n";
+    let err = check_front_matter(&front_matter(content).unwrap()).unwrap_err();
+    assert_eq!(err.line, 4);
+    assert!(err.message.contains("mapping values"), "{}", err.message);
+    // An error only found at the end of the YAML lands on the closing `---`.
+    let content = "---\nbad: [1, 2\n---\nA(x: 1);\n";
+    let err = check_front_matter(&front_matter(content).unwrap()).unwrap_err();
+    assert_eq!(err.line, 3);
+}

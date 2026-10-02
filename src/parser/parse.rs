@@ -1607,7 +1607,23 @@ fn parse_file_internal(
     let mut chain = import_chain;
     chain.push(this_file_name.to_string());
 
-    let s = SpanString::new(remove_comments(&SpanString::new(content.to_string()))?);
+    // Front matter is the host's metadata, not Synalog: blank it out (line
+    // numbers kept) before anything else reads the program.
+    if opens_front_matter(content) && front_matter(content).is_none() {
+        return Err(ParsingException::new(
+            "Front matter opened with `---` on the first line is never closed: end it with a `---` line.",
+            SpanString::new(content.to_string()).slice(0, 3),
+        ));
+    }
+    if let Some(fm) = front_matter(content) {
+        check_front_matter(&fm).map_err(|e| {
+            let source = SpanString::new(content.to_string());
+            let (start, end) = line_bounds(content, e.line);
+            ParsingException::new(format!("Invalid front matter YAML: {}.", e.message), source.slice(start, end))
+        })?;
+    }
+    let content = blank_front_matter(content);
+    let s = SpanString::new(remove_comments(&SpanString::new(content))?);
     let statements = split(&s, ";")?;
     let mut rules = JsonArray::new();
     let mut imported_predicates = JsonArray::new();
@@ -1871,6 +1887,18 @@ fn parse_import(
 }
 
 /// Parse a Synalog program file and return the AST as JSON.
+/// Byte range of the 1-based `line` of `content` (without its newline).
+fn line_bounds(content: &str, line: usize) -> (usize, usize) {
+    let mut start = 0;
+    for (i, text) in content.split_inclusive('\n').enumerate() {
+        if i + 1 == line {
+            return (start, start + text.trim_end_matches(['\n', '\r']).len());
+        }
+        start += text.len();
+    }
+    (0, 0)
+}
+
 pub fn parse_file(content: &str, file_name: Option<&str>, import_root: &[String]) -> ParseResult<Json> {
     let mut parsed_imports = BTreeMap::new();
     let mut in_progress = BTreeSet::new();
