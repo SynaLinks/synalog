@@ -145,3 +145,17 @@ Sales`). Each occurrence is in its own statement, so there is no collision and
 both forms are valid and produce identical results on every engine. The
 `62_multi_ground_join.sql` goldens (all 7 engines) are generated from synalog and
 verified end-to-end (`tests/e2e`), where every engine's rows match.
+
+## Functors applied to imported predicates
+
+`63_functor_imported` applies a functor to a predicate imported from another
+module: `EnterpriseRevenue := SegmentRevenue(Segment: Enterprise)`, with
+`SegmentRevenue` and `Segment` defined in `lib/segments.l`. Importing prefixes
+every predicate of the module (`Segments_Segment`), but the argument keeps
+its plain name, so upstream finds no `Segment` to replace: it only warns,
+and the functor returns the generic rule's rows — the revenue of every
+customer (107) instead of the enterprise one (100). synalog resolves an
+argument to the predicate of that name in the applied predicate's module,
+and an argument that still names nothing it depends on is an error. The
+goldens are generated from synalog on every engine.
+

@@ -37,6 +37,12 @@ Our verifier catches these errors **before** compilation.
 | `34_self_negation_direct.l` | `StratificationError` | Predicate directly negates itself |
 | `35_mixed_positive_negative_cycle.l` | `StratificationError` | Cycle with mixed positive/negative edges |
 
+### Unsafe Aggregation (Python Logica: compiles, Our Verifier: catches)
+
+| File | Error | Description |
+|------|-------|-------------|
+| `41_unsafe_aggregation_in_head.l` | `unsafeAggregation` | Head aggregate over a variable the body never binds |
+
 ### Unbounded Recursion (Python Logica: compiles, Our Verifier: catches)
 
 | File | Error | Description |

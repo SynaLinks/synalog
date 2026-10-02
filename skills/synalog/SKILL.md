@@ -243,7 +243,7 @@ EnterpriseRevenue := SegmentRevenue(Segment: EnterpriseCustomer);
 SMBRevenue        := SegmentRevenue(Segment: SMBCustomer);
 ```
 
-Write the generic rule and its instances in the same module: a functor applied to an **imported** predicate has no effect (synalog only warns, and the instance returns the generic rule's rows).
+The generic rule can live in another module: import it, and name its arguments by their plain names (`Segment:`), as above. An argument that names nothing the rule depends on is an error.
 
 ## Knowledge graphs
 
