@@ -544,3 +544,35 @@ fn test_parse_file_invalid_front_matter_yaml_is_an_error() {
     let err = parse_file("---\ndescription: ok\nkeywords: [a, b\n---\nA(x: 1);\n", None, &[]).unwrap_err();
     assert!(err.message.starts_with("Invalid front matter YAML:"), "{}", err.message);
 }
+
+#[test]
+fn test_front_matter_name_must_be_defined_by_the_file() {
+    // The named predicate, beside a helper: fine.
+    let ok = "---\nname: Adult\n---\nPerson(name: \"Alice\", age: 40);\nAdult(name:) :- Person(name:, age:), age >= 18;\n";
+    assert!(parse_file(ok, None, &[]).is_ok());
+    // A name the file does not define is an error, naming what it defines.
+    let err = parse_file("---\nname: Adults\n---\nPerson(name: \"Alice\");\nAdult(name:) :- Person(name:);\n", None, &[])
+        .unwrap_err();
+    assert!(err.message.contains("Front matter names 'Adults'"), "{}", err.message);
+    assert!(err.message.contains("Adult, Person"), "{}", err.message);
+    // No name: nothing to check.
+    assert!(parse_file("---\ndescription: x\n---\nA(x: 1);\n", None, &[]).is_ok());
+}
+
+#[test]
+fn test_front_matter_name_can_be_a_functor_result() {
+    let src = "---\nname: Big\n---\nN(x:) :- x in [1, 200];\nSmall(x:) :- N(x:), x < 100;\n\
+               Total(t? += x) distinct :- Small(x:);\nLarge(x:) :- N(x:), x >= 100;\nBig := Total(Small: Large);\n";
+    assert!(parse_file(src, None, &[]).is_ok());
+}
+
+#[test]
+fn test_front_matter_name_of_an_imported_module_is_checked_too() {
+    let root = std::env::temp_dir().join(format!("synalog_fm_name_{}", std::process::id()));
+    std::fs::create_dir_all(root.join("concepts")).unwrap();
+    std::fs::write(root.join("concepts").join("people.l"), "---\nname: Persons\n---\nPerson(name: \"Alice\");\n").unwrap();
+    let roots = vec![root.to_string_lossy().to_string()];
+    let err = parse_file("import concepts.people.Person;\nKnown(name:) :- Person(name:);\n", None, &roots);
+    std::fs::remove_dir_all(&root).ok();
+    assert!(err.unwrap_err().message.contains("Front matter names 'Persons'"));
+}

@@ -274,3 +274,86 @@ def secrets(engine: str, details: dict) -> dict[str, str]:
         for f in ENGINES[engine].fields
         if f.secret and details.get(f.key) not in (None, "")
     }
+
+
+# -- writing a project's connection ---------------------------------------------
+
+#: Written next to synalog.toml by `write`, never committed.
+SECRET_FILES = (".env", "bigquery-credentials.json")
+_KEY_FILE = "bigquery-credentials.json"
+
+
+def _without_connection(text: str) -> str:
+    """The project file's text without its ``[connection]`` table."""
+    kept, skipping = [], False
+    for line in text.splitlines(keepends=True):
+        header = line.strip()
+        if header.startswith("[") and header.endswith("]"):
+            skipping = header == "[connection]"
+        if not skipping:
+            kept.append(line)
+    return "".join(kept).rstrip("\n")
+
+
+def _write_env(folder: Path, values: dict[str, str]) -> None:
+    """Set ``values`` in the folder's ``.env``, keeping its other lines;
+    owner-only. Values are quoted: ``parse_dotenv`` strips exactly one pair."""
+    from .config import parse_dotenv
+
+    path = folder / ".env"
+    lines = path.read_text(encoding="utf-8").splitlines() if path.exists() else []
+    keep = [line for line in lines if not any(k in values for k, _ in parse_dotenv(line))]
+    path.write_text("".join(f"{line}\n" for line in [*keep, *(f'{k}="{v}"' for k, v in values.items())]), encoding="utf-8")
+    os.chmod(path, 0o600)
+
+
+def _ensure_gitignore(folder: Path) -> None:
+    path = folder / ".gitignore"
+    lines = path.read_text(encoding="utf-8").splitlines() if path.exists() else []
+    missing = [name for name in SECRET_FILES if name not in lines]
+    if missing:
+        path.write_text("".join(f"{line}\n" for line in [*lines, *missing]), encoding="utf-8")
+
+
+def write(folder: str | os.PathLike, engine: str, details: dict) -> Path:
+    """Give the project in ``folder`` a connection: its ``[connection]`` in
+    ``synalog.toml`` (the file's other tables are kept), its secrets in
+    ``.env`` (other lines kept, owner-only), BigQuery's key — given as the
+    key's JSON — in a key file next to it, and both listed in ``.gitignore``.
+    Raises ``ProjectError`` for an unknown engine or field, or a missing
+    required field. Returns the project file's path."""
+    folder = Path(folder)
+    if engine not in ENGINES:
+        raise ProjectError(f"engine must be one of {', '.join(ENGINES)}, not {engine!r}")
+    keys = {f.key for f in ENGINES[engine].fields}
+    unknown = sorted(set(details) - keys)
+    if unknown:
+        raise ProjectError(f"{engine} has no field {', '.join(unknown)} (fields: {', '.join(sorted(keys))})")
+    details = {k: v for k, v in details.items() if v not in (None, "")}
+    folder.mkdir(parents=True, exist_ok=True)
+    secrets_ = {}
+    if isinstance(details.get("credentials"), dict):  # BigQuery's key, as JSON
+        key = folder / _KEY_FILE
+        key.write_text(json.dumps(details.pop("credentials"), indent=2) + "\n", encoding="utf-8")
+        os.chmod(key, 0o600)
+        secrets_[secret_env(engine, "credentials")] = str(key.resolve())
+    secrets_.update(secrets(engine, details))
+    path = folder / PROJECT_FILE
+    others = _without_connection(path.read_text(encoding="utf-8")) if path.exists() else ""
+    path.write_text((others + "\n\n" if others else "") + dumps(engine, details), encoding="utf-8")
+    connection(path)  # every required field given
+    if secrets_:
+        _write_env(folder, secrets_)
+    _ensure_gitignore(folder)
+    return path
+
+
+def clear(folder: str | os.PathLike) -> None:
+    """Remove the project's connection — back to an in-memory engine: the
+    ``[connection]`` table (other tables kept) and the secret files."""
+    folder = Path(folder)
+    path = folder / PROJECT_FILE
+    if path.exists():
+        path.write_text(_without_connection(path.read_text(encoding="utf-8")) + "\n", encoding="utf-8")
+    for name in SECRET_FILES:
+        (folder / name).unlink(missing_ok=True)

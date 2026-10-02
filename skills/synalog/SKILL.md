@@ -79,7 +79,7 @@ import concepts.Customer.Customer;
 
 ## Reading errors
 
-Errors go to stderr; exit code 1 means a program error, 2 a CLI usage mistake. A failing `run` produces no partial output. There are three layers, in processing order:
+Errors go to stderr; exit code 1 means a program error, 2 a CLI usage mistake. A failing `run` produces no partial output. There are three layers, in processing order.
 
 **Syntax errors**: the parser stops at the *first* error and echoes the broken statement with a marker at the failure point (`<EMPTY>` where something was expected):
 
@@ -90,11 +90,42 @@ Bad(x) :- x ==<EMPTY>
 [ Error ] Could not parse expression of a value.
 ```
 
-Fix the quoted statement and re-run: later syntax errors only surface once earlier ones are fixed, so loop until it parses.
+Fix the quoted statement and re-run: later syntax errors only surface once earlier ones are fixed, so loop until it parses. Usual causes: a missing `;`, a missing `:` after an argument name (`Orders(amount)` instead of `Orders(amount:)`), an unbalanced parenthesis or quote. Front matter is checked here too:
 
-**Verification errors** (after parsing succeeds, before any SQL) are reported *all at once*, one per line, e.g. `Unbound variable 'y' in head of rule: A(x:, y:) :- B(x:)`. Fix the whole list in one pass, then re-run.
+| Message | Fix |
+|---|---|
+| `Invalid front matter YAML: …` | quote a value that holds `: ` — `description: "A thing: details"` — or reword it |
+| `Front matter names 'X', which this file does not define (A, B).` | `name` is the predicate the file is about: a rule's head or a functor's result in the file, not an import |
+| `Front matter opened with --- … is never closed` | end it with a `---` line |
+| `Predicate imported but not used.` | remove the import |
+
+**Verification errors** (after parsing succeeds, before any SQL) are reported *all at once*, one per line. Fix the whole list in one pass, then re-run.
+
+| Message | Means | Fix |
+|---|---|---|
+| `Unbound variable 'y' in head of rule: …` | a column of the head gets no value from the body | bind it in the body (`Orders(amount: y)`) or drop it from the head |
+| `Unsafe negation: variable 'x' only appears negated in: …` | a negated atom introduces a variable | bind `x` in a positive atom first: `Customer(customer_id: x), ~Orders(customer_id: x)` |
+| `Unsafe aggregation: variable 'v' not bound outside aggregate in: …` | an aggregate over a variable the body never binds | bind it in the body: `Orders(amount: v)` |
+| `Undefined predicate 'Nope': not defined and not a built-in` | a misspelt name, or a missing import | import it or fix the name |
+| `Unknown column 'y' for predicate 'A'` | a column the predicate does not have | use the predicate's own column names |
+| `Recursive predicate 'R' missing @Recursive annotation` | recursion without a depth | add `@Recursive(R, 20);` before its rules |
+| `Trivial infinite loop: 'R' calls itself with same arguments` | the recursive case adds nothing | join the recursive atom with another predicate on a *different* variable |
+| `Negative recursion cycle detected: P` | `P` depends on `~P` through recursion | negate a predicate computed beforehand, not the recursive one |
+| `Unsafe SqlExpr in rule 'A': …` | raw SQL | write it with synalog functions instead |
 
 **Compile errors** (`print`/`run`) mean SQL generation failed, e.g. `Compile error: No rules are defining 'Missing', but compilation was requested.` Usually a typo in the predicate name passed to the command, or an imported predicate run by its short name (run it from its own module instead).
+
+**Connection errors** come from the project's `synalog.toml` and environment:
+
+| Message | Fix |
+|---|---|
+| `synalog.toml: password is a secret — remove it from the file and set SYNALOG_PSQL_PASSWORD …` | move the secret to `.env`; never commit it |
+| `The databricks connection needs SYNALOG_DATABRICKS_ACCESS_TOKEN` | the secret is missing from `.env`: ask the user for it |
+| `synalog.toml: psql has no field 'hots' (fields: …)` | use one of the fields listed |
+| `The psql engine needs the 'psycopg' package: pip install psycopg` | run with the driver: `uvx --with psycopg synalog …` |
+| `The psql engine needs a connection string: …` | give the project a `[connection]`, or pass `--dsn` |
+
+A query that runs but returns nothing is not an error: check the filter values against the data before concluding there is none.
 
 ## Project layout
 

@@ -10,6 +10,11 @@ import json
 import subprocess
 import sys
 
+if sys.version_info >= (3, 11):
+    import tomllib
+else:
+    import tomli as tomllib
+
 import pytest
 
 PROGRAM = """\
@@ -778,3 +783,34 @@ def test_introspect_defaults_to_the_project(tmp_path):
     assert result.returncode == 1  # past usage and resolution: the bogus server
     assert "usage" not in result.stderr.lower()
     assert "needs a connection string" not in result.stderr
+
+
+def test_project_write_keeps_other_tables_and_lines(tmp_path):
+    from synalog import config, project
+
+    (tmp_path / "synalog.toml").write_text('[project]\nname = "sales"\n\n[connection]\nengine = "trino"\nhost = "old"\n')
+    (tmp_path / ".env").write_text('OTHER=1\nSYNALOG_PSQL_PASSWORD="old"\n')
+    project.write(tmp_path, "psql", {"host": "h", "database": "d", "user": "u", "password": 'p"w'})
+    data = tomllib.loads((tmp_path / "synalog.toml").read_text())
+    assert data["project"] == {"name": "sales"}
+    assert data["connection"]["engine"] == "psql" and "password" not in data["connection"]
+    assert (tmp_path / ".env").read_text() == 'OTHER=1\nSYNALOG_PSQL_PASSWORD="p"w"\n'
+    assert config.parse_dotenv((tmp_path / ".env").read_text())[-1] == ("SYNALOG_PSQL_PASSWORD", 'p"w')
+    assert oct((tmp_path / ".env").stat().st_mode & 0o777) == "0o600"
+    assert {".env", "bigquery-credentials.json"} <= set((tmp_path / ".gitignore").read_text().split())
+    with pytest.raises(project.ProjectError, match="no field hots"):
+        project.write(tmp_path, "psql", {"hots": "x"})
+    with pytest.raises(project.ProjectError, match="needs database, user"):
+        project.write(tmp_path, "psql", {"host": "h"})
+
+
+def test_project_write_bigquery_key_and_clear(tmp_path):
+    from synalog import project
+
+    project.write(tmp_path, "bigquery", {"project": "acme", "dataset": "sales", "credentials": {"type": "service_account"}})
+    key = tmp_path / "bigquery-credentials.json"
+    assert json.loads(key.read_text()) == {"type": "service_account"}
+    assert f'GOOGLE_APPLICATION_CREDENTIALS="{key.resolve()}"' in (tmp_path / ".env").read_text()
+    project.clear(tmp_path)
+    assert "connection" not in tomllib.loads((tmp_path / "synalog.toml").read_text())
+    assert not key.exists() and not (tmp_path / ".env").exists()

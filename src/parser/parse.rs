@@ -1615,13 +1615,16 @@ fn parse_file_internal(
             SpanString::new(content.to_string()).slice(0, 3),
         ));
     }
+    let mut named: Option<(String, usize)> = None;
     if let Some(fm) = front_matter(content) {
         check_front_matter(&fm).map_err(|e| {
             let source = SpanString::new(content.to_string());
             let (start, end) = line_bounds(content, e.line);
             ParsingException::new(format!("Invalid front matter YAML: {}.", e.message), source.slice(start, end))
         })?;
+        named = front_matter_name(&fm);
     }
+    let original = content;
     let content = blank_front_matter(content);
     let s = SpanString::new(remove_comments(&SpanString::new(content))?);
     let statements = split(&s, ";")?;
@@ -1685,6 +1688,26 @@ fn parse_file_internal(
         }
         if let Some(r) = rule {
             rules.push(r);
+        }
+    }
+
+    // The front matter's `name` is the predicate the file is about: the file
+    // must define it — a rule's head or a functor's result, not an import.
+    if let Some((name, line)) = &named {
+        let mut defined = defined_predicates(&rules);
+        defined.extend(made_predicates(&rules));
+        defined.retain(|p| !p.starts_with('@'));
+        if !defined.contains(name) {
+            let listed: Vec<&str> = defined.iter().map(|s| s.as_str()).collect();
+            let (start, end) = line_bounds(original, *line);
+            return Err(ParsingException::new(
+                format!(
+                    "Front matter names '{}', which this file does not define ({}).",
+                    name,
+                    if listed.is_empty() { "it defines nothing".to_string() } else { listed.join(", ") }
+                ),
+                SpanString::new(original.to_string()).slice(start, end),
+            ));
         }
     }
 
