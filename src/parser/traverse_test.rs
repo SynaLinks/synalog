@@ -171,3 +171,50 @@ fn test_parsing_exception_show_message() {
     assert!(msg.contains("Something went wrong"));
     assert!(msg.contains("error"));
 }
+
+// ====== Front matter ======
+
+#[test]
+fn test_front_matter_is_read() {
+    let content = "---\ndescription: Active customers\nkeywords: [sales]\n---\nA(x:) :- B(x:);\n";
+    let fm = front_matter(content).unwrap();
+    assert_eq!(fm.yaml, "description: Active customers\nkeywords: [sales]\n");
+    assert_eq!(fm.lines, 4);
+}
+
+#[test]
+fn test_no_front_matter() {
+    assert_eq!(front_matter("A(x:) :- B(x:);\n"), None);
+    assert!(!opens_front_matter("A(x:) :- B(x:);\n"));
+    // Only the very first line can open it.
+    assert_eq!(front_matter("\n---\nk: v\n---\nA(x: 1);\n"), None);
+}
+
+#[test]
+fn test_unclosed_front_matter() {
+    let content = "---\ndescription: never closed\nA(x: 1);\n";
+    assert!(opens_front_matter(content));
+    assert_eq!(front_matter(content), None);
+}
+
+#[test]
+fn test_empty_front_matter() {
+    let fm = front_matter("---\n---\nA(x: 1);\n").unwrap();
+    assert_eq!(fm.yaml, "");
+    assert_eq!(fm.lines, 2);
+}
+
+#[test]
+fn test_blank_front_matter_keeps_lines() {
+    let content = "---\nk: v\n---\nA(x: 1);\n";
+    assert_eq!(blank_front_matter(content), "\n\n\nA(x: 1);\n");
+    assert_eq!(blank_front_matter("A(x: 1);\n"), "A(x: 1);\n");
+}
+
+#[test]
+fn test_front_matter_bom_and_crlf() {
+    let content = "\u{feff}---\r\nk: v\r\n---\r\nA(x: 1);\r\n";
+    let fm = front_matter(content).unwrap();
+    assert_eq!(fm.yaml, "k: v\r\n");
+    assert_eq!(blank_front_matter(content), "\n\n\nA(x: 1);\r\n");
+}

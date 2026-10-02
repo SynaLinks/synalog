@@ -94,6 +94,22 @@ reserved = set(synalog.reserved_predicates()) | set(synalog.builtin_functions())
 unknown = [name for name in referenced_names(rule) if name not in reserved | defined_in_catalogue]
 ```
 
+## `front_matter`
+
+```python
+front_matter(source: str) -> str | None
+```
+
+The YAML [front matter](language/index.md#front-matter) opening a program file, verbatim (without its `---` delimiters), or `None` when the file has none. Synalog itself ignores the block when parsing; this lets a host read its metadata and agree with the parser on where the block ends. The YAML is not parsed — use your YAML library:
+
+```python
+import yaml, synalog
+
+source = open("concepts/ActiveCustomer.l").read()
+meta = yaml.safe_load(synalog.front_matter(source) or "") or {}
+meta.get("description")  # "Customers with at least one delivered order."
+```
+
 ## Executing the generated SQL
 
 Synalog returns SQL strings; execution is up to you. Any driver works: `sqlite3`, `duckdb`, `psycopg`, `google-cloud-bigquery`, `trino`, `databricks-sql-connector`:

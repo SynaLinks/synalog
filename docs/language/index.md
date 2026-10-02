@@ -83,6 +83,23 @@ Rules derive new data from concepts (and other rules). Rules carry no suffix: `C
 CustomerSpend(customer_id:, total? += amount) distinct :- Orders(customer_id:, amount:);
 ```
 
+## Front matter
+
+A program file may open with YAML front matter, as in Markdown: a first line `---`, the YAML, and a closing `---` line. It carries metadata for the tools around your programs (a description, keywords, ownership, ...). Synalog does not interpret it and parses the file as if the block were not there, so error line numbers stay those of the file. It must be the very first thing in the file; an opening `---` that is never closed is an error.
+
+```logica
+---
+description: Customers with at least one delivered order.
+keywords: [customers, orders]
+---
+import tables.Orders.Orders;
+
+@OrderBy(ActiveCustomer, "customer_id");
+ActiveCustomer(customer_id:) distinct :- Orders(customer_id:, status: "delivered");
+```
+
+Imported files may have front matter too. To read it from Python, use [`front_matter`](../python-api.md#front_matter).
+
 ## Reuse and compose predicates
 
 The power of logic programming is composition: define a predicate once and build on it everywhere. Avoid recomputing the same expression in multiple rules.

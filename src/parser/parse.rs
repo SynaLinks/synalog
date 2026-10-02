@@ -1607,7 +1607,16 @@ fn parse_file_internal(
     let mut chain = import_chain;
     chain.push(this_file_name.to_string());
 
-    let s = SpanString::new(remove_comments(&SpanString::new(content.to_string()))?);
+    // Front matter is the host's metadata, not Synalog: blank it out (line
+    // numbers kept) before anything else reads the program.
+    if opens_front_matter(content) && front_matter(content).is_none() {
+        return Err(ParsingException::new(
+            "Front matter opened with `---` on the first line is never closed: end it with a `---` line.",
+            SpanString::new(content.to_string()).slice(0, 3),
+        ));
+    }
+    let content = blank_front_matter(content);
+    let s = SpanString::new(remove_comments(&SpanString::new(content))?);
     let statements = split(&s, ";")?;
     let mut rules = JsonArray::new();
     let mut imported_predicates = JsonArray::new();

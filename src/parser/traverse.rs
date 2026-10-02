@@ -286,6 +286,62 @@ impl Traverser {
     }
 }
 
+/// YAML front matter opening a program file, as in Markdown or an Agent
+/// Skill's `SKILL.md`: a first line `---`, the YAML, and a closing `---` line.
+///
+/// It is metadata for the host (a description, keywords, ...): Synalog does
+/// not interpret it, the parser blanks it out (see `blank_front_matter`).
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct FrontMatter {
+    /// The YAML between the delimiters, verbatim.
+    pub yaml: String,
+    /// Lines the block spans, both delimiters included.
+    pub lines: usize,
+}
+
+fn is_delimiter(line: &str) -> bool {
+    line.trim_end_matches(['\n', '\r']).trim_end() == "---"
+}
+
+/// Whether the first line of `content` opens front matter (a byte-order
+/// mark before it is tolerated).
+pub fn opens_front_matter(content: &str) -> bool {
+    let content = content.strip_prefix('\u{feff}').unwrap_or(content);
+    content.split_inclusive('\n').next().is_some_and(is_delimiter)
+}
+
+/// The front matter opening `content`, or `None` when there is none (or it
+/// is never closed — `opens_front_matter` tells the two apart).
+pub fn front_matter(content: &str) -> Option<FrontMatter> {
+    let content = content.strip_prefix('\u{feff}').unwrap_or(content);
+    let mut lines = content.split_inclusive('\n');
+    if !lines.next().is_some_and(is_delimiter) {
+        return None;
+    }
+    let mut yaml = String::new();
+    for (i, line) in lines.enumerate() {
+        if is_delimiter(line) {
+            return Some(FrontMatter { yaml, lines: i + 2 });
+        }
+        yaml.push_str(line);
+    }
+    None
+}
+
+/// `content` with its front matter replaced by as many empty lines, so the
+/// program parses as if it were not there and error positions keep their
+/// line numbers. Content without front matter is returned unchanged.
+pub fn blank_front_matter(content: &str) -> String {
+    match front_matter(content) {
+        None => content.to_string(),
+        Some(fm) => {
+            let body = content.strip_prefix('\u{feff}').unwrap_or(content);
+            let rest: String = body.split_inclusive('\n').skip(fm.lines).collect();
+            "\n".repeat(fm.lines) + &rest
+        }
+    }
+}
+
 pub fn remove_comments(s: &SpanString) -> ParseResult<String> {
     let mut bytes = Vec::with_capacity(s.len());
     let mut t = Traverser::new(s.clone());

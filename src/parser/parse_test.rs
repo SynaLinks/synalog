@@ -499,3 +499,42 @@ fn test_positional_after_named_error() {
     let s = SpanString::new("Foo(name: x, y)".to_string());
     assert!(parse_call(&s, false).is_err());
 }
+
+// ====== Front matter ======
+
+#[test]
+fn test_parse_file_with_front_matter() {
+    let body = "Person(name: \"Alice\");\nAdult(name:) :- Person(name:);\n";
+    let with = format!("---\ndescription: People\nkeywords: [people, demo]\n---\n{body}");
+    let plain = parse_file(body, None, &[]).unwrap();
+    let parsed = parse_file(&with, None, &[]).unwrap();
+    let names = |j: &crate::parser::json::Json| -> Vec<String> {
+        j.as_object()["rule"].as_array().iter()
+            .map(|r| r.as_object()["head"].as_object()["predicate_name"].as_str().to_string())
+            .collect()
+    };
+    assert_eq!(names(&parsed), names(&plain));
+}
+
+#[test]
+fn test_parse_file_unclosed_front_matter_is_an_error() {
+    let err = parse_file("---\ndescription: oops\nA(x: 1);\n", None, &[]).unwrap_err();
+    assert!(err.message.contains("never closed"), "{}", err.message);
+}
+
+#[test]
+fn test_imported_module_with_front_matter() {
+    let root = std::env::temp_dir().join(format!("synalog_fm_{}", std::process::id()));
+    std::fs::create_dir_all(root.join("concepts")).unwrap();
+    std::fs::write(
+        root.join("concepts").join("people.l"),
+        "---\ndescription: Everyone we know\n---\nPerson(name: \"Alice\");\n",
+    )
+    .unwrap();
+    let main = "---\nkeywords: [demo]\n---\nimport concepts.people.Person;\nKnown(name:) :- Person(name:);\n";
+    let roots = vec![root.to_string_lossy().to_string()];
+    let parsed = parse_file(main, None, &roots);
+    std::fs::remove_dir_all(&root).ok();
+    let parsed = parsed.unwrap();
+    assert!(!parsed.as_object()["rule"].as_array().is_empty());
+}

@@ -12,7 +12,7 @@ use pyo3::prelude::*;
 
 use crate::compiler::dialects;
 use crate::compiler::universe::{LogicaProgram, Pagination};
-use crate::parser::{parse_file, Json};
+use crate::parser::{front_matter as read_front_matter, parse_file, Json};
 use crate::verifier::{builtin_function_names, reserved_predicate_names, validate};
 
 fn map_err<E: std::fmt::Display>(e: E) -> PyErr {
@@ -207,6 +207,17 @@ fn builtin_functions() -> Vec<String> {
     names
 }
 
+/// The YAML front matter opening a program file, verbatim, or None.
+///
+/// A file may start with a `---` line, YAML, and a closing `---` line (as
+/// in Markdown or an Agent Skill's `SKILL.md`). Synalog ignores it when it
+/// parses; a host reads its metadata (a description, keywords, ...) here, so
+/// both agree on where the block ends. The YAML itself is not parsed.
+#[pyfunction]
+fn front_matter(source: &str) -> Option<String> {
+    read_front_matter(source).map(|fm| fm.yaml)
+}
+
 #[pymodule]
 fn _synalog(m: &Bound<'_, PyModule>) -> PyResult<()> {
     m.add("SUPPORTED_ENGINES", dialects::SUPPORTED_ENGINES.to_vec())?;
@@ -217,5 +228,6 @@ fn _synalog(m: &Bound<'_, PyModule>) -> PyResult<()> {
     m.add_function(wrap_pyfunction!(check, m)?)?;
     m.add_function(wrap_pyfunction!(reserved_predicates, m)?)?;
     m.add_function(wrap_pyfunction!(builtin_functions, m)?)?;
+    m.add_function(wrap_pyfunction!(front_matter, m)?)?;
     Ok(())
 }
