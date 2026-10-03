@@ -1,15 +1,20 @@
 """Self-checking programs: every ``.l`` file under ``tests/programs/`` states
 what synalog must do with it, in ``# Expect:`` lines, and runs on an in-memory
-DuckDB with the facts it defines itself. Adding a test is adding a file.
+DuckDB and SQLite with the facts it defines itself: both engines must give
+the same answer. Adding a test is adding a file.
 
     # Expect: valid                        the verifier finds no error
     # Expect: error <text>                 an error (parse or verifier) contains <text>
     # Expect: warning <text>               a warning contains <text>
     # Expect: rows <Pred> = <rows>         running <Pred> returns exactly <rows> (a Python literal)
-    # Expect: holds <Pred>.<name>          the assertion has no counterexample
+    # Expect: holds <Pred>.<name>          the assertion has no counterexample, and <Pred> has rows
     # Expect: violated <Pred>.<name> <n>   the assertion has exactly <n> counterexamples
+    # Expect: counterexamples <Pred>.<name> = <rows>   exactly these counterexamples
     # Expect: status <Pred>.<name> <s>     the assertion's status: pending, unchecked, unsupported
     # Expect: same-sql <Pred>              <Pred> compiles to the same SQL without the @Assert lines
+    # Expect: page <Pred> <limit> <offset> = <rows>    compile(limit=, offset=) returns <rows>
+    # Expect: search <Pred> <pattern> = <rows>         search(pattern) returns <rows>
+    # Expect: compile-error <Pred> <text>  compile() refuses <Pred> with an error containing <text>
 
 Run with: python -m pytest tests/cli/test_programs.py
 """
@@ -27,6 +32,7 @@ import synalog
 from synalog.runners import run_sql
 
 PROGRAMS = Path(__file__).resolve().parents[1] / "programs"
+ENGINES = ("duckdb", "sqlite")
 EXPECT = re.compile(r"^#\s*Expect:\s*([\w-]+)\s*(.*)$")
 
 
@@ -67,10 +73,34 @@ def assertion(source: str, root: str, ref: str) -> dict:
     raise AssertionError(f"no assertion {ref} in the program")
 
 
+def rows(source: str, root: str, predicate: str, query=None) -> list[tuple]:
+    """The rows of ``predicate``, the same on every engine. ``query(engine)``
+    gives the SQL; by default ``compile``."""
+    query = query or (lambda engine: synalog.compile(source, predicate, engine=engine, import_root=[root]))
+    found = {}
+    for engine in ENGINES:
+        sql = query(engine)
+        found[engine] = [tuple(row) for row in run_sql(engine, sql)[1]]
+    first, *others = ENGINES
+    for engine in others:
+        # Engines agree on the rows; their order is the expectation's to check.
+        assert same(sorted(found[engine], key=repr), sorted(found[first], key=repr)), (
+            f"{predicate}: {engine} {found[engine]} != {first} {found[first]}"
+        )
+    return found[first]
+
+
 def counterexamples(source: str, root: str, ref: str) -> list[tuple]:
+    """The counterexamples of an assertion, the same on every engine."""
     predicate, name = ref.split(".", 1)
-    sql = synalog.counterexamples(source, predicate, name, engine="duckdb", import_root=[root])
-    return run_sql("duckdb", sql)[1]
+    found = {}
+    for engine in ENGINES:
+        sql = synalog.counterexamples(source, predicate, name, engine=engine, import_root=[root])
+        found[engine] = sorted(tuple(row) for row in run_sql(engine, sql)[1])
+    first, *others = ENGINES
+    for engine in others:
+        assert same(found[engine], found[first]), f"{ref}: {engine} {found[engine]} != {first} {found[first]}"
+    return found[first]
 
 
 @pytest.mark.parametrize("path", programs(), ids=lambda p: str(p.relative_to(PROGRAMS)))
@@ -90,20 +120,58 @@ def test_program(path: Path):
         elif kind == "rows":
             predicate, literal = (part.strip() for part in rest.split("=", 1))
             assert errors == [], f"the program does not verify: {errors}"
-            sql = synalog.compile(source, predicate, engine="duckdb", import_root=[root])
-            rows = [tuple(row) for row in run_sql("duckdb", sql)[1]]
+            got = rows(source, root, predicate)
             want = [tuple(row) for row in ast.literal_eval(literal)]
-            assert same(rows, want), f"{predicate}: got {rows}, expected {want}"
+            assert same(got, want), f"{predicate}: got {got}, expected {want}"
         elif kind == "holds":
             assert errors == [], f"the program does not verify: {errors}"
             assert assertion(source, root, rest)["status"] == "unchecked"
             found = counterexamples(source, root, rest)
             assert found == [], f"{rest} has counterexamples {found}"
+            predicate = rest.split(".", 1)[0]
+            assert rows(source, root, predicate), f"{rest} holds only because {predicate} is empty"
         elif kind == "violated":
             ref, count = rest.rsplit(" ", 1)
             assert errors == [], f"the program does not verify: {errors}"
             found = counterexamples(source, root, ref)
             assert len(found) == int(count), f"{ref}: {len(found)} counterexamples {found}, expected {count}"
+        elif kind == "counterexamples":
+            ref, literal = (part.strip() for part in rest.split("=", 1))
+            assert errors == [], f"the program does not verify: {errors}"
+            found = counterexamples(source, root, ref)
+            want = sorted(tuple(row) for row in ast.literal_eval(literal))
+            assert same(found, want), f"{ref}: got {found}, expected {want}"
+        elif kind == "page":
+            spec, literal = (part.strip() for part in rest.split("=", 1))
+            predicate, limit, offset = spec.split()
+            assert errors == [], f"the program does not verify: {errors}"
+            got = rows(
+                source,
+                root,
+                predicate,
+                lambda engine: synalog.compile(
+                    source, predicate, limit=int(limit), offset=int(offset), engine=engine, import_root=[root]
+                ),
+            )
+            want = [tuple(row) for row in ast.literal_eval(literal)]
+            assert same(got, want), f"{spec}: got {got}, expected {want}"
+        elif kind == "search":
+            spec, literal = (part.strip() for part in rest.split("=", 1))
+            predicate, pattern = spec.split(" ", 1)
+            assert errors == [], f"the program does not verify: {errors}"
+            got = rows(
+                source,
+                root,
+                predicate,
+                lambda engine: synalog.search(source, predicate, pattern, engine=engine, import_root=[root]),
+            )
+            want = [tuple(row) for row in ast.literal_eval(literal)]
+            assert same(got, want), f"{spec}: got {got}, expected {want}"
+        elif kind == "compile-error":
+            predicate, text = rest.split(" ", 1)
+            with pytest.raises(ValueError) as refused:
+                synalog.compile(source, predicate, engine="duckdb", import_root=[root])
+            assert text in str(refused.value), f"{refused.value}"
         elif kind == "same-sql":
             bare = "\n".join(line for line in source.splitlines() if not line.lstrip().startswith("@Assert"))
             with_assertions = synalog.compile(source, rest, engine="duckdb", import_root=[root])

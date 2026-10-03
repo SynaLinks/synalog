@@ -1,5 +1,6 @@
 # With @Recursive, it verifies.
 # Expect: valid
+# Expect: rows Path = [(1, 2)]
 
 @Recursive(Path, 10);
 Edge(a: 1, b: 2);

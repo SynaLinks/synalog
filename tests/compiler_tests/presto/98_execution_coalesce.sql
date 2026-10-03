@@ -1,0 +1,2 @@
+SELECT
+  COALESCE(null, 7) AS x;

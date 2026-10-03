@@ -1,0 +1,3 @@
+SELECT
+  CAST(12 AS VARCHAR) AS s,
+  ((CAST('12' AS BIGINT)) + (1)) AS n;

@@ -1,5 +1,6 @@
 # d has no child.
 # Expect: violated Person.has_child 1
+# Expect: counterexamples Person.has_child = [("d",)]
 
 @Assert(Person, has_child: "∀ p, Person p → ∃ c, Parent p c");
 Parent(x: "a", y: "b");

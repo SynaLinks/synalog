@@ -1,5 +1,6 @@
 # Total is off by one for both orders.
 # Expect: violated Total.definition 2
+# Expect: counterexamples Total.definition = [(1,), (2,)]
 
 @Assert(Total, definition: "∀ o, Total o = Price o * Qty o");
 Price(order_id: 1, price: 4);

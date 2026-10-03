@@ -1,0 +1,2 @@
+SELECT
+  ((CAST(1 AS DOUBLE)) / (CAST(2 AS DOUBLE))) AS r;

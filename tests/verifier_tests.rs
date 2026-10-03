@@ -7,7 +7,7 @@
 use std::path::PathBuf;
 
 use synalog::parser::parse_file;
-use synalog::verifier::{validate, CheckError, SafetyError, RecursionError, AssertionError};
+use synalog::verifier::{validate, ArityError, AssertionError, CheckError, RecursionError, SafetyError};
 
 /// Path to the verifier fixtures directory.
 fn fixtures_dir() -> PathBuf {
@@ -33,6 +33,10 @@ enum ExpectedError {
     MissingDescription,
     MissingName,
     InvalidFunctor,
+    InvalidDirective,
+    UnboundComparedVar,
+    DuplicateColumn,
+    UnknownColumn,
     MalformedAssertion,
     InvalidAssertion,
     DuplicateAssertion,
@@ -60,6 +64,10 @@ fn parse_expected_error(content: &str) -> Option<ExpectedError> {
                 s if s.contains("missingDescription") => Some(ExpectedError::MissingDescription),
                 s if s.contains("missingName") => Some(ExpectedError::MissingName),
                 s if s.contains("invalidFunctor") => Some(ExpectedError::InvalidFunctor),
+                s if s.contains("invalidDirective") => Some(ExpectedError::InvalidDirective),
+                s if s.contains("unboundComparedVar") => Some(ExpectedError::UnboundComparedVar),
+                s if s.contains("duplicateColumn") => Some(ExpectedError::DuplicateColumn),
+                s if s.contains("unknownColumn") => Some(ExpectedError::UnknownColumn),
                 s if s.contains("malformedAssertion") => Some(ExpectedError::MalformedAssertion),
                 s if s.contains("invalidAssertion") => Some(ExpectedError::InvalidAssertion),
                 s if s.contains("duplicateAssertion") => Some(ExpectedError::DuplicateAssertion),
@@ -89,6 +97,10 @@ fn error_matches(error: &CheckError, expected: &ExpectedError) -> bool {
         (CheckError::Description(_), ExpectedError::MissingDescription) => true,
         (CheckError::Name(_), ExpectedError::MissingName) => true,
         (CheckError::Functor(_), ExpectedError::InvalidFunctor) => true,
+        (CheckError::Directive(_), ExpectedError::InvalidDirective) => true,
+        (CheckError::Safety(SafetyError::UnboundComparedVar { .. }), ExpectedError::UnboundComparedVar) => true,
+        (CheckError::Arity(ArityError::DuplicateColumn { .. }), ExpectedError::DuplicateColumn) => true,
+        (CheckError::Arity(ArityError::UnknownColumn { .. }), ExpectedError::UnknownColumn) => true,
         (CheckError::Assert(AssertionError::Malformed { .. }), ExpectedError::MalformedAssertion) => true,
         (CheckError::Assert(AssertionError::Statement { .. }), ExpectedError::InvalidAssertion) => true,
         (CheckError::Assert(AssertionError::DuplicateAssertion { .. }), ExpectedError::DuplicateAssertion) => true,

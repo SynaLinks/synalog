@@ -1,0 +1,4 @@
+SELECT
+  x_1.value AS x
+FROM
+  JSON_EACH(JSON_ARRAY(1, 2)) as x_1 LIMIT 0;

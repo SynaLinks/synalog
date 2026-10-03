@@ -1,5 +1,6 @@
 # A cycle a→b→a makes a and b their own ancestors.
 # Expect: violated Ancestor.irreflexive 2
+# Expect: counterexamples Ancestor.irreflexive = [("a",), ("b",)]
 
 @Assert(Ancestor, irreflexive: "∀ x, ¬ Ancestor x x");
 Parent(x: "a", y: "b");

@@ -16,47 +16,49 @@ drop type if exists logicarecord519939597 cascade; create type logicarecord51993
 WITH t_1_Number AS (SELECT * FROM (
   
     SELECT
-      x_6.unnested_pod AS col0
-    FROM
-      (select unnest(Range(5)) as unnested_pod) as x_6
-   UNION ALL
-  
-    SELECT
       x_8.unnested_pod AS col0
     FROM
-      (select unnest([10, 11, 12, 13, 14]::numeric[]) as unnested_pod) as x_8
-  
-) AS UNUSED_TABLE_NAME  ),
-t_0_Stats_MultBodyAggAux AS (SELECT * FROM (
-  
-    SELECT
-      'all' AS col0,
-      1 AS count
-    FROM
-      t_1_Number AS Number
+      (select unnest(Range(5)) as unnested_pod) as x_8
    UNION ALL
   
     SELECT
-      'even' AS col0,
-      1 AS count
+      x_10.unnested_pod AS col0
+    FROM
+      (select unnest([10, 11, 12, 13, 14]::numeric[]) as unnested_pod) as x_10
+  
+) AS UNUSED_TABLE_NAME  ),
+t_0_Category AS (SELECT * FROM (
+  
+    SELECT
+      Number.col0 AS col0,
+      'small' AS col1
+    FROM
+      t_1_Number AS Number
+    WHERE
+      (Number.col0 < 5)
+   UNION ALL
+  
+    SELECT
+      t_2_Number.col0 AS col0,
+      'medium' AS col1
     FROM
       t_1_Number AS t_2_Number
     WHERE
-      (((t_2_Number.col0) % (2)) = 0)
+      (t_2_Number.col0 >= 5) AND
+      (t_2_Number.col0 < 10)
    UNION ALL
   
     SELECT
-      'odd' AS col0,
-      1 AS count
+      t_3_Number.col0 AS col0,
+      'large' AS col1
     FROM
       t_1_Number AS t_3_Number
     WHERE
-      (((t_3_Number.col0) % (2)) != 0)
+      (t_3_Number.col0 >= 10)
   
 ) AS UNUSED_TABLE_NAME  )
 SELECT
-  Stats_MultBodyAggAux.col0 AS col0,
-  SUM(Stats_MultBodyAggAux.count) AS count
+  Category.col0 AS col0,
+  Category.col1 AS col1
 FROM
-  t_0_Stats_MultBodyAggAux AS Stats_MultBodyAggAux
-GROUP BY Stats_MultBodyAggAux.col0;
+  t_0_Category AS Category ORDER BY col0;

@@ -77,30 +77,34 @@ def same_program_as_duckdb(engine: str, name: str) -> bool:
     return mine == duckdbs or mine.read_text() == duckdbs.read_text()
 
 
-def is_imported_predicate(name: str) -> bool:
-    """An imported module's predicate, renamed with its module prefix
-    (`Math_utils_Square`): two underscore-separated parts that both start
-    uppercase — same rule as tests/common/mod.rs."""
-    parts = name.split("_")
-    return len(parts) >= 2 and parts[0][:1].isupper() and any(p[:1].isupper() for p in parts[1:])
-
-
 def last_predicate(source: str, import_root: list[str] | None = None) -> str:
-    """Last user-defined predicate in the program — same convention as the
-    Rust golden tests (tests/common/mod.rs). An imported module's rules come
-    after the program's own, so they are skipped."""
+    """The predicate of the last rule the fixture itself writes — same
+    convention as the Rust golden tests (tests/common/mod.rs), which explain
+    it: by the position of each rule's text (`full_text`) in the source."""
     import synalog
 
     parsed = json.loads(synalog.parse(source, import_root=import_root))
-    last = None
+    last, last_position = None, 0
     for rule in parsed.get("rule", []):
         head = rule.get("head", {})
         name = head.get("predicate_name") or head.get("call", {}).get("predicate_name")
-        if name and not name.startswith("@") and not name.startswith("_") and not is_imported_predicate(name):
-            last = name
+        if name == "@Make":
+            name = made_predicate(head)
+        position = source.find(rule.get("full_text", "\0"))
+        if position >= last_position and name and not name.startswith(("@", "_")):
+            last, last_position = name, position
     if last is None:
         raise ValueError("No user-defined predicate found")
     return last
+
+
+def made_predicate(head):
+    """The predicate an `@Make` head (`F := G(...)`) defines: its first argument."""
+    try:
+        value = head["record"]["field_value"][0]["value"]
+        return value.get("expression", value)["literal"]["the_predicate"]["predicate_name"]
+    except (KeyError, IndexError, TypeError):
+        return None
 
 
 def compile_fixture(engine: str, name: str) -> str:

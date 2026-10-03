@@ -157,6 +157,77 @@ numbered alias (`t_1_Values AS t_2_Values`). The goldens of both fixtures are
 generated from synalog on every engine; `tests/programs/execution` runs
 predicates named `Order`, `Group`, `Select` and `Table` on DuckDB.
 
+## Fixtures from `tests/programs`
+
+Fixtures numbered from 67 come from the self-checking programs of
+`tests/programs` (each names its source on its first line), where they also run
+on DuckDB and SQLite and their rows are checked. Their goldens are upstream's
+except for the reasons below and the deviations above (keywords, deep
+recursion, DuckDB recursion, Databricks, `x in arr` on Presto/Trino), all listed
+in `generate_expected_sql.py:SYNALOG_GOLDENS`.
+
+- **`@Limit(P, 0)`.** Upstream treats a limit of 0 as no limit and returns every
+  row; synalog emits `LIMIT 0` (`81_directives_limit_zero`).
+- **Front matter and `@Assert`.** Upstream has neither: it does not parse a file
+  opening with front matter, and refuses `@Assert`. Neither changes the SQL of
+  the predicate, which synalog's golden holds.
+- **A keyword inside an underscored name** (`Count_distinct_items`,
+  `Foo_distinct_ends`): upstream splits the rule at `distinct`; synalog reads
+  `distinct` as a keyword only as a whole word.
+- **Predicates named like library functions** (`Count`, `Range`, `Abs`,
+  `Size`). Predicates and functions are separate namespaces in synalog: a
+  predicate `Abs` is a relation, `Abs(x)` in a value is still `ABS`
+  (`execution_predicate_named_like_a_function`). On DuckDB and PostgreSQL,
+  whose SQL upstream types, upstream's type inference conflates them and fails
+  (`KeyError: 'expression'`, or "inconsistent rules" against its own `Abs`).
+
+## Which predicate a fixture tests
+
+A fixture tests the predicate of the last rule it writes. The harnesses
+(`tests/common/mod.rs`, `tests/e2e/conftest.py`, `generate_expected_sql.py`)
+used to take the last rule of the parsed program and to skip names shaped
+like an import (`Module_Pred`). The parser appends rules of its own — a
+predicate with several aggregating rules becomes `P_MultBodyAggAux` and a `P`
+rule at the end — so `17_outer_join`, `28_multi_rule_predicate`,
+`35_recursive_annotated` (and psql's `14_recursion`) tested that aggregate
+instead of `Test`; and a predicate the program names `Assert_P_name` or
+`Foo_Bar` could never be tested, nor a functor's result (`F := G(...)`). The
+harnesses now take the rule written last in the source (by the position of
+each rule's verbatim text) and count `F := G(...)` as defining `F`. The goldens
+of those fixtures now hold `Test`. Where synalog deviates from upstream on
+them, the golden is synalog's, for a reason documented here: `17_outer_join`
+concatenates arrays (`ARRAY_CONCAT_AGG` exists only on BigQuery, see above;
+psql writes empty arrays `'{}'`, see PostgreSQL).
+
+`32_nested_records` (Presto, Trino, psql) and psql's `51_math_functions` were
+synalog goldens without being listed as such, so regenerating from upstream
+replaced them: upstream writes `STRUCT(...)`, which Presto and Trino do not
+have (synalog casts `ROW(...)`), and psql's `LOG` is base 10 where Logica's
+`Log` is natural (synalog emits `LN`). They are listed now.
+
+## Columns named after SQL keywords
+
+Upstream writes column names as they are: a column `order` yields
+`1 AS order` and `R.order`, which SQLite, PostgreSQL and BigQuery refuse (a
+table with an `order` or `group` column is common). synalog quotes a column
+that is a keyword or not a plain identifier, in the dialect's quotes
+(backticks on BigQuery and Databricks, where double quotes make a string),
+also in `ORDER BY` and in `search()`. `64_keyword_columns` is generated from
+synalog on every engine.
+
+## Deep recursion as a script
+
+Past 20 steps, `@Recursive` is compiled as upstream compiles it: a few steps
+into tables, then an `@Iteration` recomputing two of them from each other.
+Upstream's runner loops over that iteration; a SQL script runs each
+statement once, so upstream's script stops after a few steps (`@Recursive(P,
+40)` reached 4) and, with mutual recursion, reads tables before they are
+computed. synalog writes the run out: each table after the tables it reads,
+the iteration repeated as many times as upstream's runner would, and what
+reads its result after the last repetition. A depth of -1 (until
+convergence) cannot be written out and is refused. `65_deep_recursion` and
+`66_deep_mutual_recursion` are generated from synalog on every engine.
+
 ## Functors applied to imported predicates
 
 `63_functor_imported` applies a functor to a predicate imported from another

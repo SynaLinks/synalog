@@ -23,7 +23,7 @@ use std::time::Duration;
 use synalog::compiler::universe::LogicaProgram;
 use synalog::parser::parse_file;
 
-use common::{last_predicate, strip_engine};
+use common::{last_predicate, strip_engine, with_engine};
 
 /// Strip type preamble definitions from SQL and normalize for comparison.
 ///
@@ -235,7 +235,7 @@ fn run_compiler_feature_tests(engine: &str) {
 
         // Strip existing engine annotation and add the correct one
         let clean = strip_engine(&source);
-        let full_source = format!("@Engine(\"{}\");\n{}", engine, clean);
+        let full_source = with_engine(&clean, engine);
 
         let full_source_clone = full_source.clone();
         let stem_str = stem.to_string();
@@ -248,7 +248,7 @@ fn run_compiler_feature_tests(engine: &str) {
                 let result = std::panic::catch_unwind(std::panic::AssertUnwindSafe(|| {
                     let parsed =
                         parse_file(&full_source_clone, None, &roots).expect("parse failed");
-                    let pred = last_predicate(&parsed)
+                    let pred = last_predicate(&parsed, &full_source_clone)
                         .unwrap_or_else(|| panic!("No predicate found in {}", stem_str));
                     let program = LogicaProgram::new(&parsed, HashMap::new(), HashMap::new())
                         .expect("program creation failed");
@@ -389,7 +389,7 @@ fn run_compiler_fail_tests(engine: &str) {
 
         // Strip existing engine annotation and add the correct one
         let clean = strip_engine(&source);
-        let full_source = format!("@Engine(\"{}\");\n{}", engine, clean);
+        let full_source = with_engine(&clean, engine);
 
         let full_source_clone = full_source.clone();
         let roots = import_roots();
@@ -401,7 +401,7 @@ fn run_compiler_fail_tests(engine: &str) {
                 let result = std::panic::catch_unwind(std::panic::AssertUnwindSafe(|| {
                     let parsed =
                         parse_file(&full_source_clone, None, &roots).expect("parse failed");
-                    let pred = last_predicate(&parsed).unwrap_or("Test".to_string());
+                    let pred = last_predicate(&parsed, &full_source_clone).unwrap_or("Test".to_string());
                     let program = LogicaProgram::new(&parsed, HashMap::new(), HashMap::new())
                         .expect("program creation failed");
                     let _sql = program

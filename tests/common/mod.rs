@@ -101,50 +101,62 @@ pub fn strip_engine(source: &str) -> String {
     re.replace_all(source, "").to_string()
 }
 
-/// Check if a predicate name looks like an imported predicate (Module_Name_Pred pattern).
-fn is_imported_predicate(name: &str) -> bool {
-    let parts: Vec<&str> = name.split('_').collect();
-    if parts.len() >= 2 {
-        // Check if first part starts with uppercase and at least one other part starts with uppercase
-        let first_upper = parts[0].chars().next().map(|c| c.is_uppercase()).unwrap_or(false);
-        let later_upper = parts[1..].iter().any(|p| {
-            p.chars().next().map(|c| c.is_uppercase()).unwrap_or(false)
-        });
-        first_upper && later_upper
-    } else {
-        false
+/// `source` targeting `engine`: an `@Engine` line first, after the YAML front
+/// matter when the file opens with one (front matter must open the file).
+pub fn with_engine(source: &str, engine: &str) -> String {
+    let annotation = format!("@Engine(\"{}\");\n", engine);
+    let mut lines = source.split_inclusive('\n');
+    if lines.next().is_some_and(|first| first.trim_end() == "---") {
+        let mut split = source.split_inclusive('\n').next().unwrap().len();
+        for line in lines {
+            split += line.len();
+            if line.trim_end() == "---" {
+                return format!("{}{}{}", &source[..split], annotation, &source[split..]);
+            }
+        }
     }
+    format!("{}{}", annotation, source)
 }
 
-/// Find the last user-defined predicate from parsed output ({"rule": [...]}).
-/// Excludes imported predicates (which have Module_Name_Pred format).
-pub fn last_predicate(parsed: &synalog::parser::Json) -> Option<String> {
-    let rules = parsed.as_object().get("rule")?;
-    let arr = rules.as_array();
+/// The predicate of the last rule the fixture itself writes: what a fixture
+/// tests. A rule is the fixture's when its text (`full_text`, verbatim) is in
+/// `source`, not merged in from an imported file; the last one is the one
+/// written last. The parser appends rules of its own (a predicate with several
+/// aggregating rules becomes `P_MultBodyAggAux` and a `P` rule at the end),
+/// carrying the text of the rule they come from: of the rules at the latest
+/// position, the last parsed holds the written name. A functor application
+/// (`F := G(...)`, an `@Make` rule) defines `F`.
+pub fn last_predicate(parsed: &synalog::parser::Json, source: &str) -> Option<String> {
     let mut last = None;
-    for rule in arr {
-        let head = match rule.as_object().get("head") {
-            Some(h) => h,
-            None => continue,
+    let mut last_position = 0;
+    for rule in parsed.as_object().get("rule")?.as_array() {
+        let rule = rule.as_object();
+        let Some(head) = rule.get("head") else { continue };
+        let head = head.as_object();
+        let name = match head.get("call") {
+            Some(call) => call.as_object().get("predicate_name").map(|p| p.as_str().to_string()),
+            None => head.get("predicate_name").map(|p| p.as_str().to_string()),
         };
-        let head_obj = head.as_object();
-        let name = if let Some(call) = head_obj.get("call") {
-            call.as_object()
-                .get("predicate_name")
-                .map(|p| p.as_str().to_string())
-        } else {
-            head_obj
-                .get("predicate_name")
-                .map(|p| p.as_str().to_string())
-        };
-        if let Some(name) = name {
-            // Skip annotations, internal predicates, and imported predicates
-            if !name.starts_with('@') && !name.starts_with('_') && !is_imported_predicate(&name) {
+        let name = if name.as_deref() == Some("@Make") { made_predicate(head) } else { name };
+        let position = rule.get("full_text").and_then(|text| source.find(text.as_str()));
+        if let (Some(name), Some(position)) = (name, position) {
+            if !name.starts_with('@') && !name.starts_with('_') && position >= last_position {
                 last = Some(name);
+                last_position = position;
             }
         }
     }
     last
+}
+
+/// The predicate an `@Make` head defines: its first argument.
+fn made_predicate(head: &synalog::parser::JsonObject) -> Option<String> {
+    let first = head.get("record")?.as_object().get("field_value")?.as_array().first()?;
+    let value = &first.as_object()["value"];
+    let expression = value.as_object().get("expression").unwrap_or(value);
+    let literal = expression.as_object().get("literal")?;
+    let predicate = literal.as_object().get("the_predicate")?;
+    Some(predicate.as_object().get("predicate_name")?.as_str().to_string())
 }
 
 /// Execute SQL in SQLite via Python, return sorted rows.

@@ -1,5 +1,6 @@
 # A functor swaps a predicate.
 # Expect: valid
+# Expect: rows OddCount = [(2,)]
 
 All(c:) :- c in [1, 2, 3];
 Odd(c:) :- c in [1, 3];

@@ -1,0 +1,4 @@
+SELECT
+  APPROX_COUNT_DISTINCT(x_2) AS n
+FROM
+  UNNEST(ARRAY[1, 1, 2]) as pushkin(x_2);

@@ -1,5 +1,6 @@
 # Order 4 references customer 12, who does not exist.
 # Expect: violated Order.known_customer 1
+# Expect: counterexamples Order.known_customer = [(4, 12, 20)]
 
 @Assert(Order, known_customer: "∀ o c a, Order o c a → ∃ k, Customer c k");
 Order(order_id: 1, customer_id: 10, amount: 100);

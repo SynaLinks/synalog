@@ -13,7 +13,7 @@ drop type if exists logicarecord383307722 cascade; create type logicarecord38330
 
 -- Logica type: logicarecord519939597
 drop type if exists logicarecord519939597 cascade; create type logicarecord519939597 as struct(args text[], predicate text);
-WITH t_1_Phones AS (SELECT * FROM (
+WITH t_2_Phones AS (SELECT * FROM (
   
     SELECT
       'Alice' AS person,
@@ -25,7 +25,7 @@ WITH t_1_Phones AS (SELECT * FROM (
       '555-5678' AS phone
   
 ) AS UNUSED_TABLE_NAME  ),
-t_2_Emails AS (SELECT * FROM (
+t_3_Emails AS (SELECT * FROM (
   
     SELECT
       'Bob' AS person,
@@ -37,28 +37,34 @@ t_2_Emails AS (SELECT * FROM (
       'charlie@example.com' AS email
   
 ) AS UNUSED_TABLE_NAME  ),
-t_0_PersonSummary_MultBodyAggAux AS (SELECT * FROM (
+t_1_ContactInfo_MultBodyAggAux AS (SELECT * FROM (
   
     SELECT
       Phones.person AS person,
-      1 AS has_phone,
-      0 AS has_email
+      [Phones.phone]::text[] AS phones,
+      []::text[] AS emails
     FROM
-      t_1_Phones AS Phones
+      t_2_Phones AS Phones
    UNION ALL
   
     SELECT
       Emails.person AS person,
-      0 AS has_phone,
-      1 AS has_email
+      []::text[] AS phones,
+      [Emails.email]::text[] AS emails
     FROM
-      t_2_Emails AS Emails
+      t_3_Emails AS Emails
   
-) AS UNUSED_TABLE_NAME  )
-SELECT
-  PersonSummary_MultBodyAggAux.person AS person,
-  MAX(PersonSummary_MultBodyAggAux.has_phone) AS has_phone,
-  MAX(PersonSummary_MultBodyAggAux.has_email) AS has_email
+) AS UNUSED_TABLE_NAME  ),
+t_0_ContactInfo AS (SELECT
+  ContactInfo_MultBodyAggAux.person AS person,
+  ARRAY_CONCAT_AGG(ContactInfo_MultBodyAggAux.phones) AS phones,
+  ARRAY_CONCAT_AGG(ContactInfo_MultBodyAggAux.emails) AS emails
 FROM
-  t_0_PersonSummary_MultBodyAggAux AS PersonSummary_MultBodyAggAux
-GROUP BY PersonSummary_MultBodyAggAux.person ORDER BY person;
+  t_1_ContactInfo_MultBodyAggAux AS ContactInfo_MultBodyAggAux
+GROUP BY ContactInfo_MultBodyAggAux.person ORDER BY person)
+SELECT
+  ContactInfo.person AS person,
+  ContactInfo.phones AS phones,
+  ContactInfo.emails AS emails
+FROM
+  t_0_ContactInfo AS ContactInfo ORDER BY person;

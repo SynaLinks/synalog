@@ -1,0 +1,3 @@
+SELECT
+  CAST(12 AS TEXT) AS s,
+  ((CAST('12' AS INT64)) + (1)) AS n;
