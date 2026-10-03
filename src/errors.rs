@@ -201,6 +201,26 @@ pub enum VerifyError {
         suggestion: Option<String>,
         rule: String,
     },
+
+    /// `@Assert` not shaped as `(Predicate, name: "text", ...)`.
+    #[error("Malformed {annotation}: {reason}")]
+    MalformedAssertion {
+        annotation: String,
+        reason: String,
+        rule: String,
+    },
+
+    /// `@Assert` statement that does not parse or contradicts the program.
+    #[error("Invalid assertion '{predicate}.{name}': {reason}")]
+    InvalidAssertion {
+        predicate: String,
+        name: String,
+        reason: String,
+    },
+
+    /// The same assertion name stated twice for a predicate.
+    #[error("Duplicate assertion '{predicate}.{name}': it is stated more than once")]
+    DuplicateAssertion { predicate: String, name: String },
 }
 
 // ============================================================================

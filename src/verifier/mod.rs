@@ -11,6 +11,7 @@
 //! - Recursion safety (base cases, no trivial loops)
 //! - Ordering (the predicate a file's front matter names has `@OrderBy`)
 //! - Front matter (a name and a description)
+//! - Assertions (`@Assert` statements)
 
 mod vars;
 mod safety;
@@ -23,6 +24,7 @@ mod positional;
 mod undefined;
 mod orderby;
 mod front_matter;
+mod assertions;
 
 pub use vars::VarCollector;
 pub use safety::{SafetyError, check_safety};
@@ -35,6 +37,7 @@ pub use positional::{PositionalError, check_positional};
 pub use undefined::{UndefinedError, builtin_function_names, check_undefined};
 pub use orderby::{OrderByError, check_order_by};
 pub use front_matter::{DescriptionError, NameError, check_description, check_name};
+pub use assertions::{AssertionError, AssertionReport, AssertionStatus, check_assertions, assertion_check};
 
 use crate::parser::Json;
 use crate::errors::{VerifyError, VerifyResult};
@@ -53,6 +56,7 @@ pub enum CheckError {
     OrderBy(OrderByError),
     Name(NameError),
     Description(DescriptionError),
+    Assert(AssertionError),
 }
 
 impl std::fmt::Display for CheckError {
@@ -69,6 +73,7 @@ impl std::fmt::Display for CheckError {
             CheckError::OrderBy(e) => write!(f, "{}", e),
             CheckError::Name(e) => write!(f, "{}", e),
             CheckError::Description(e) => write!(f, "{}", e),
+            CheckError::Assert(e) => write!(f, "{}", e),
         }
     }
 }
@@ -89,6 +94,7 @@ impl From<CheckError> for VerifyError {
             CheckError::OrderBy(oe) => oe.into(),
             CheckError::Name(ne) => ne.into(),
             CheckError::Description(de) => de.into(),
+            CheckError::Assert(se) => se.into(),
         }
     }
 }
@@ -104,6 +110,8 @@ impl From<CheckError> for crate::errors::SynalogError {
 pub struct CheckResult {
     pub errors: Vec<CheckError>,
     pub warnings: Vec<String>,
+    /// Every `@Assert` of the program and where it stands.
+    pub assertions: Vec<AssertionReport>,
 }
 
 impl CheckResult {
@@ -114,6 +122,7 @@ impl CheckResult {
     pub fn merge(&mut self, other: CheckResult) {
         self.errors.extend(other.errors);
         self.warnings.extend(other.warnings);
+        self.assertions.extend(other.assertions);
     }
 
     /// Convert to the unified VerifyResult type.
@@ -218,6 +227,23 @@ pub fn validate(parsed: &Json) -> CheckResult {
     if let Some(err) = front_matter::check_description(parsed) {
         result.errors.push(CheckError::Description(err));
     }
+
+    // Check 13: Assertions (@Assert statements)
+    let (assertions, spec_errors) = assertions::check_assertions(&all_rules);
+    for err in spec_errors {
+        result.errors.push(CheckError::Assert(err));
+    }
+    for assertion in &assertions {
+        if assertion.status == AssertionStatus::Unsupported {
+            if let Some(reason) = &assertion.detail {
+                result.warnings.push(format!(
+                    "Assertion '{}.{}' cannot be checked: {}",
+                    assertion.predicate, assertion.name, reason
+                ));
+            }
+        }
+    }
+    result.assertions = assertions;
 
     result
 }

@@ -16,6 +16,7 @@ const ANNOTATING_PREDICATES: &[&str] = &[
     "@NoInject", "@Make", "@CompileAsTvf", "@With", "@NoWith",
     "@CompileAsUdf", "@ResetFlagValue", "@Dataset", "@AttachDatabase",
     "@Engine", "@Recursive", "@Iteration", "@BareAggregation",
+    "@Assert",
 ];
 
 /// Parsed annotations from a Logica program.
@@ -296,6 +297,7 @@ impl Annotations {
                 }
                 // @Make, @Recursive are handled by functors.rs directly from raw rules
                 // @Flag is just a marker
+                // @Assert is read by the verifier and does not affect the SQL
                 _ => {}
             }
         }

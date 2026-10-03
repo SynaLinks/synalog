@@ -38,7 +38,7 @@ def test_each_table_is_described_and_ordered():
     ) in text
     # A capitalized column orders by its field name.
     assert '## User id.\n@OrderBy(CrmUserId, "UserId");' in text
-    assert check(text, engine="psql") == []
+    assert check(text, engine="psql")[0] == []
 
 
 @pytest.mark.parametrize(
@@ -59,7 +59,7 @@ def test_table_description_comes_from_the_name(table, description):
 def test_predicates_are_valid_logica():
     rows = [("public", "users", "id"), ("public", "users", "name")]
     prog = predicates("psql", rows) + "\nDemo(id:) :- PublicUsers(id:);\n"
-    assert check(prog, engine="psql") == []
+    assert check(prog, engine="psql")[0] == []
 
 
 def test_predicates_qualify_by_schema():
@@ -76,7 +76,7 @@ def test_predicates_capitalized_column_uses_explicit_mapping():
     rows = [("public", "t", "UserId")]
     text = predicates("psql", rows)
     assert "PublicT(UserId: userid) :- public.t(UserId: userid);" in text
-    assert check(text, engine="psql") == []
+    assert check(text, engine="psql")[0] == []
 
 
 def test_predicates_skip_unquotable_columns_with_comment():
@@ -153,7 +153,7 @@ def test_databricks_falls_back_to_show_without_information_schema():
     assert "ShopCustomers(id:, full_name:) :- shop.customers(id:, full_name:);" in text
     assert "ShopOrders(id:, amount:) :- shop.orders(id:, amount:);" in text
     assert "information_schema" not in text  # system schema excluded
-    assert check(text, engine="databricks") == []
+    assert check(text, engine="databricks")[0] == []
 
 
 def test_introspect_rejects_unknown_engine():

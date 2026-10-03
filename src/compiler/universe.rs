@@ -1546,7 +1546,7 @@ impl LogicaProgram {
             query
         } else {
             format!(
-                "SELECT * FROM (\n{}\n) AS _paginated{};",
+                "SELECT * FROM (\n{}\n) AS _paginated{}",
                 query.trim_end_matches(';'),
                 pagination_clause
             )

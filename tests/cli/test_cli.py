@@ -104,7 +104,7 @@ def test_print_outputs_sql(program_file):
 
 
 def test_parse_and_check_are_not_commands(program_file):
-    # parse/check are no longer exposed; only print/run remain.
+    # parse/check are no longer exposed; only print/run/verify remain.
     for removed in ("parse", "check"):
         result = synalog(str(program_file), removed)
         assert result.returncode == 2
@@ -127,6 +127,91 @@ def test_print_validates_before_compiling(tmp_path):
     result = synalog(str(path), "print", "Bad")
     assert result.returncode == 1
     assert "SqlExpr" in result.stderr
+
+
+ASSERT_PROGRAM = """\
+@Assert(Near, transitive: "forall x y z, Near x y -> Near y z -> Near x z",
+            irreflexive: "forall x, not Near x x");
+Parent(x: "a", y: "b");
+Parent(x: "b", y: "c");
+Parent(x: "c", y: "d");
+Near(x:, y:) :- Parent(x:, y:);
+Near(x:, y: z) :- Parent(x:, y:), Parent(x: y, y: z);
+"""
+
+
+@pytest.mark.parametrize("engine", ["duckdb", "sqlite"])
+def test_verify_prints_counterexamples_and_fails(tmp_path, engine):
+    path = tmp_path / "assertion.l"
+    path.write_text(ASSERT_PROGRAM)
+    result = synalog(str(path), "verify", "--engine", engine)
+    assert result.returncode == 1
+    assert "Near.transitive is violated" in result.stdout
+    assert "2 counterexamples" in result.stdout
+    assert "Near.irreflexive holds" in result.stdout
+
+
+def test_verify_passes_when_every_spec_holds(tmp_path):
+    path = tmp_path / "assertion.l"
+    path.write_text(ASSERT_PROGRAM.replace("Near y z -> Near x z", "Near y z -> Near x z \\/ x != z"))
+    result = synalog(str(path), "verify")
+    assert result.returncode == 0, result.stdout + result.stderr
+    assert "Near.transitive holds" in result.stdout
+
+
+def test_verify_limits_the_counterexamples_shown(tmp_path):
+    path = tmp_path / "assertion.l"
+    path.write_text(ASSERT_PROGRAM)
+    result = synalog(str(path), "verify", "Near", "--limit", "1")
+    assert result.returncode == 1
+    assert "at least 1 counterexample:" in result.stdout
+
+
+def test_verify_reports_uncheckable_and_pending_specs(tmp_path):
+    path = tmp_path / "assertion.l"
+    path.write_text(
+        ASSERT_PROGRAM
+        + '@Assert(Near, positive: "forall x, x > 0");\n'
+        + '@Assert(Far, symmetric: "forall x y, Far x y -> Far y x");\n'
+    )
+    result = synalog(str(path), "verify", "Far")
+    assert result.returncode == 0
+    assert "Far.symmetric pending: waiting for Far" in result.stdout
+    # The uncheckable assertion is a verifier warning on every command.
+    assert "Assertion 'Near.positive' cannot be checked" in result.stderr
+
+
+def test_run_refuses_a_violated_assertion(tmp_path):
+    path = tmp_path / "spec.l"
+    path.write_text(ASSERT_PROGRAM)
+    result = synalog(str(path), "run", "Parent", "--csv")
+    assert result.returncode == 1
+    assert "Assertion 'Near.transitive' is violated" in result.stderr
+    assert "counterexamples (x, y, z):" in result.stderr
+    assert result.stdout == ""
+
+
+def test_print_does_not_run_assertions(tmp_path):
+    path = tmp_path / "spec.l"
+    path.write_text(ASSERT_PROGRAM)
+    result = synalog(str(path), "print", "Near")
+    assert result.returncode == 0, result.stderr
+    assert "SELECT" in result.stdout
+
+
+def test_verify_unknown_predicate(tmp_path):
+    path = tmp_path / "assertion.l"
+    path.write_text(ASSERT_PROGRAM)
+    result = synalog(str(path), "verify", "Parent")
+    assert result.returncode == 1
+    assert "No assertion for Parent" in result.stderr
+
+
+def test_run_with_limit_on_sqlite(program_file):
+    # A paginated query used to end in ";;", which sqlite refuses to execute.
+    result = synalog(str(program_file), "run", "Doubled", "--engine", "sqlite", "--limit", "2", "--csv")
+    assert result.returncode == 0, result.stderr
+    assert result.stdout.splitlines() == ["doubled", "2", "4"]
 
 
 def test_stdin_program():

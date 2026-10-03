@@ -19,9 +19,25 @@ The argument order follows `logica`: the program file first, then the command.
 synalog program.l print Predicate ...      # print compiled SQL
 synalog program.l run Predicate ...        # execute and print a table
 synalog program.l run Predicate --csv      # execute and print CSV
+synalog program.l verify [Predicate ...]   # check the @Assert statements
 ```
 
-Both `print` and `run` validate the whole program first and exit 1 with the verifier's errors if it is invalid, so there is no separate `check` step to forget. `print` and `run` accept several predicate names and process them in order. In a terminal, `print` highlights the SQL and `run` renders the table with rich formatting; piped output falls back to plain text. Add `--csv` to `run` for machine-readable CSV instead of the rendered table.
+`print`, `run` and `verify` validate the whole program first and exit 1 with the verifier's errors if it is invalid, so there is no separate `check` step to forget. Verifier warnings, such as an [assertion](verification.md#assertions) that cannot be checked, are printed to stderr and do not stop the command. `run` also checks the program's assertions against the database and exits 1, printing a few counterexamples, if one is violated; `print` stays offline. `print` and `run` accept several predicate names and process them in order. In a terminal, `print` highlights the SQL and `run` renders the table with rich formatting; piped output falls back to plain text. Add `--csv` to `run` for machine-readable CSV instead of the rendered table.
+
+`verify` runs every [assertion](verification.md#assertions) of the program, or only those of the given predicates, against the database. It prints the counterexamples of each assertion that does not hold (5 by default, `--limit` to change) and exits 1 if any assertion is violated. Assertions that are pending or cannot be checked are listed and skipped.
+
+```console
+$ synalog family.l verify
+✓ Ancestor.transitive holds
+✗ Near.transitive is violated: ∀ x y z, Near x y → Near y z → Near x z
+  2 counterexamples:
++---+---+---+
+| x | y | z |
++---+---+---+
+| a | b | d |
+| a | c | d |
++---+---+---+
+```
 
 ```console
 $ synalog program.l run EngineeringTeam

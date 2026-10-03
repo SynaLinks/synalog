@@ -15,6 +15,7 @@ TopCustomers(customer_id:, total? += amount) distinct :- Orders(customer_id:, am
 | `@Recursive(Pred, n)` | Allow recursion with an iteration limit. See [Recursion](recursion.md). |
 | `@Ground(Pred)` | Force materialization before dependents (performance). |
 | `@Engine(name)` | Target SQL engine. See [Supported engines](../engines.md). |
+| `@Assert(Pred, name: "statement")` | State a property the predicate must satisfy. See [Assertions](../verification.md#assertions). |
 
 ## `@OrderBy`
 
@@ -61,6 +62,20 @@ Selects the target SQL dialect for the whole program:
 ```
 
 The `engine` keyword of the [Python API](../python-api.md) functions overrides this annotation.
+
+## `@Assert`
+
+States a property of a predicate in first-order logic. Each property has a name, given as a named argument:
+
+```logica
+@Assert(Ancestor, transitive: "∀ x y z, Ancestor x y → Ancestor y z → Ancestor x z");
+
+@Recursive(Ancestor, 20);
+Ancestor(x:, y:) :- Parent(x:, y:);
+Ancestor(x:, y: z) :- Ancestor(x:, y:), Parent(x: y, y: z);
+```
+
+Unlike the other directives, it does not change the generated SQL, and it can be written before its predicate exists. Assertions are checked against a database with [`verify`](../cli.md). See [Assertions](../verification.md#assertions).
 
 ## Complete example
 

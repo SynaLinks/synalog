@@ -7,7 +7,7 @@
 use std::path::PathBuf;
 
 use synalog::parser::parse_file;
-use synalog::verifier::{validate, CheckError, SafetyError, RecursionError};
+use synalog::verifier::{validate, CheckError, SafetyError, RecursionError, AssertionError};
 
 /// Path to the verifier fixtures directory.
 fn fixtures_dir() -> PathBuf {
@@ -32,6 +32,9 @@ enum ExpectedError {
     MissingOrderBy,
     MissingDescription,
     MissingName,
+    MalformedAssertion,
+    InvalidAssertion,
+    DuplicateAssertion,
 }
 
 /// Parse expected error from file content.
@@ -55,6 +58,9 @@ fn parse_expected_error(content: &str) -> Option<ExpectedError> {
                 s if s.contains("missingOrderBy") => Some(ExpectedError::MissingOrderBy),
                 s if s.contains("missingDescription") => Some(ExpectedError::MissingDescription),
                 s if s.contains("missingName") => Some(ExpectedError::MissingName),
+                s if s.contains("malformedAssertion") => Some(ExpectedError::MalformedAssertion),
+                s if s.contains("invalidAssertion") => Some(ExpectedError::InvalidAssertion),
+                s if s.contains("duplicateAssertion") => Some(ExpectedError::DuplicateAssertion),
                 _ => None,
             };
         }
@@ -80,6 +86,9 @@ fn error_matches(error: &CheckError, expected: &ExpectedError) -> bool {
         (CheckError::OrderBy(_), ExpectedError::MissingOrderBy) => true,
         (CheckError::Description(_), ExpectedError::MissingDescription) => true,
         (CheckError::Name(_), ExpectedError::MissingName) => true,
+        (CheckError::Assert(AssertionError::Malformed { .. }), ExpectedError::MalformedAssertion) => true,
+        (CheckError::Assert(AssertionError::Statement { .. }), ExpectedError::InvalidAssertion) => true,
+        (CheckError::Assert(AssertionError::DuplicateAssertion { .. }), ExpectedError::DuplicateAssertion) => true,
         _ => false,
     }
 }

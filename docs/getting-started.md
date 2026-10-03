@@ -36,7 +36,7 @@ EngineeringTeam(name:, salary:) :- Employee(name:, department: "Engineering", sa
 """
 
 # 1. Validate the program: returns a list of error messages
-errors = synalog.check(source)
+errors, warnings = synalog.check(source)
 assert errors == []
 
 # 2. Compile a predicate to SQL
@@ -129,7 +129,8 @@ conn.execute(
 )
 
 source = open("loading_csv.l").read()
-assert synalog.check(source) == []
+errors, warnings = synalog.check(source)
+assert errors == []
 
 sql = synalog.compile(source, "FailuresByDevice")
 print(conn.execute(sql).fetchall())

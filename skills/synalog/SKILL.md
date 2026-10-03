@@ -11,7 +11,7 @@ Synalog is a logic programming language from the Datalog family. Programs are `.
 
 1. Put source data files (csv, tsv, json, jsonl, parquet) in `data/`.
 2. Write rules in a `.l` program.
-3. **Validation is automatic**: `run` (and `print`) verify the whole program before doing anything else, reporting all structural errors at once (unbound head variables, unsafe negation/aggregation, missing base cases, arity mismatches, unbounded recursion) and exiting 1 without producing SQL or output. There is no separate `check` step: fix the reported errors and re-run until it succeeds (see *Reading errors* below).
+3. **Validation is automatic**: `run` (and `print`) verify the whole program before doing anything else, reporting all structural errors at once (unbound head variables, unsafe negation/aggregation, missing base cases, arity mismatches, unbounded recursion) and exiting 1 without producing SQL or output. There is no separate `check` step: fix the reported errors and re-run until it succeeds (see *Reading errors* below). `run` also checks the program's `@Assert` statements against the database first, and refuses a program that violates one (see *Assertions*).
 4. Execute a predicate:
 
 ```bash
@@ -25,6 +25,7 @@ CLI notes (argument order follows logica: FILE first, then the command):
 - `--limit N` / `--offset N` paginate results; use them instead of reading huge outputs.
 - `--engine <name>` overrides the program's `@Engine` annotation; without either, the project's `synalog.toml` decides (see *Projects and connections*), else duckdb.
 - `synalog program.l print Predicate` shows the compiled SQL without executing.
+- `synalog program.l verify` runs every `@Assert` against the database and prints the counterexamples of those that fail.
 - Quick experiments without a file: `synalog -c 'Digit(d) :- d in [1, 2, 3];' run Digit`
 - `-` as FILE reads the program from stdin.
 
@@ -117,6 +118,11 @@ Fix the quoted statement and re-run: later syntax errors only surface once earli
 | `The front matter has no name: …` | the front matter does not say which predicate the file is about | add `name:` with the predicate that runs |
 | `The front matter has no description for 'A': …` | the front matter has no `description`, or an empty one | add `description:` saying what the rows are, in the words a user would search for |
 | `Missing @OrderBy for 'A', the predicate this file is about: …` | the front matter names `A`, and nothing orders it | add `@OrderBy(A, "column");` before its rules |
+| `Invalid assertion 'A.name': …` | the statement does not parse, or applies a predicate to the wrong number of arguments | fix the statement (see *Assertions*) |
+| `Duplicate assertion 'A.name': …` | the same name is stated twice for `A` | give each property its own name |
+| `Malformed @Assert: …` | the annotation is not `@Assert(A, name: "statement", ...)` | one named argument per property |
+
+**Violated assertions** (`run`, `verify`, and `check` inside a connected project): `Assertion 'A.name' is violated: …` quotes a few counterexamples, rows of the data the statement is false for. The rule computes something other than what it claims: fix the rule, or the assertion if it was wrong. A warning `Assertion 'A.name' cannot be checked: …` means the statement is well-formed but cannot be checked on data (a variable no predicate binds, a raw table).
 
 **Compile errors** (`print`/`run`) mean SQL generation failed, e.g. `Compile error: No rules are defining 'Missing', but compilation was requested.` Usually a typo in the predicate name passed to the command, or an imported predicate run by its short name (run it from its own module instead).
 
@@ -267,6 +273,26 @@ AllManagers(employee_id:, manager_id:) :-
 ```
 
 Shortest paths: enumerate route costs recursively, then keep `Min=` per destination in a separate aggregating rule.
+
+## Assertions
+
+`@Assert` states what a predicate must satisfy, in first-order logic rather than Synalog, so a mistake in a rule is unlikely to be repeated in its assertion. Write the contract first, then the rules:
+
+```logica
+@Assert(Ancestor,
+      transitive:  "∀ x y z, Ancestor x y → Ancestor y z → Ancestor x z",
+      irreflexive: "∀ x, ¬ Ancestor x x");
+
+@Recursive(Ancestor, 20);
+@OrderBy(Ancestor, "x");
+Ancestor(x:, y:) :- Parent(x:, y:);
+Ancestor(x:, y: z) :- Ancestor(x:, y:), Parent(x: y, y: z);
+```
+
+- Statements use Lean notation, each symbol with an ASCII spelling: `∀`/`forall`, `∃`/`exists`, `→`/`->`, `↔`/`<->`, `∧`/`/\`, `∨`/`\/`, `¬`/`not`, `≠`/`!=`, `≤`/`<=`, `≥`/`>=`, `∑ x, t`/`sum x, t`.
+- Predicates are applied positionally, their columns in the order the first rule declares them: `Ancestor x y` is `Ancestor(x: x, y: y)`. Applied to all but the last column, a predicate is a function: with `Share(h:, e:, p:)`, `Share h e` is `p`, so `∀ e, ∑ h, Share h e = 1`.
+- Every variable must be bound by a predicate (`∀ x, x > 0` ranges over nothing). A raw table cannot be applied: wrap it in a predicate.
+- An assertion is checked by searching the data for counterexamples: holding means *no counterexample in this data*, not a proof. It does not change the generated SQL.
 
 ## Functors (parameterize predicates)
 
