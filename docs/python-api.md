@@ -62,7 +62,7 @@ for name, sql in sqls.items():
 check(source, engine=None, import_root=None, assertions=True, dsn=None) -> tuple[list[str], list[str]]
 ```
 
-Run structural [verification](verification.md). Returns `(errors, warnings)`, two lists of messages. The program is valid when `errors` is empty. Warnings do not make it invalid: they report [assertions](verification.md#assertions) that are well-formed but cannot be checked against a database.
+Run structural [verification](verification.md). Returns `(errors, warnings)`, two lists of messages. The program is valid when `errors` is empty. Warnings do not make it invalid: they report [assertions](assertions.md) that are well-formed but cannot be checked against a database.
 
 The verifier needs no database. When the program passes it and a database is known, `check` also runs the program's `@Assert` statements there: each violated assertion is an error quoting a few counterexamples. A database is known when `dsn` is given, when `SYNALOG_<ENGINE>_DSN` is set, or when the current directory is inside a [project](cli.md) whose `synalog.toml` has a `[connection]`. Otherwise `check` stays offline.
 
@@ -83,7 +83,7 @@ for w in warnings:
 assertions(source, engine=None, import_root=None) -> list[dict]
 ```
 
-Every [`@Assert`](verification.md#assertions) of the program and where it stands, in source order. Each dict has the keys `predicate`, `name`, `statement`, `status` (`"pending"`, `"unchecked"` or `"unsupported"`) and `detail` (what a pending assertion waits for, or why an assertion is unsupported).
+Every [`@Assert`](assertions.md) of the program and where it stands, in source order. Each dict has the keys `predicate`, `name`, `statement`, `status` (`"pending"`, `"unchecked"` or `"unsupported"`) and `detail` (what a pending assertion waits for, or why an assertion is unsupported).
 
 ```python
 for assertion in synalog.assertions(source):

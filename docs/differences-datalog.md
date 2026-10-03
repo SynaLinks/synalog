@@ -13,6 +13,7 @@ Synalog belongs to the [Datalog](https://en.wikipedia.org/wiki/Datalog) family: 
 | Recursion | Least fixpoint, always terminates | Bounded by an explicit `@Recursive` iteration limit |
 | Result order | Unordered | `@OrderBy` / `@Limit`, deterministic pagination |
 | Safety checks | Engine-dependent | Compile-time [verifier](verification.md) |
+| Properties of a predicate | Not expressible in the language | [`@Assert`](assertions.md), first-order statements checked against the data (new in Synalog 2.0) |
 
 ## Named arguments, not positional
 
@@ -106,6 +107,18 @@ This is resolved at compile time, and the result is still ordinary SQL, but it g
 ## Safety enforced at compile time
 
 The classic Datalog safety conditions, range restriction (every head variable bound in the body), safe negation and stratification, are usually enforced by the evaluation engine, if at all. Synalog enforces them in a compile-time [verifier](verification.md), together with checks Datalog never needed (arity consistency, recursion bounds). Errors are reported before any SQL is generated, with messages written to be fed back to an agent.
+
+## Assertions (new in Synalog)
+
+Datalog has no way to state, next to a predicate, what it should satisfy; some engines accept integrity constraints, written as Datalog rules that must derive nothing. New in Synalog 2.0, and found in neither Datalog nor Logica, `@Assert` states a property in first-order logic, with quantifiers, implication and sums, in a notation distinct from the rules:
+
+```logica
+@Assert(Ancestor,
+      transitive:  "∀ x y z, Ancestor x y → Ancestor y z → Ancestor x z",
+      irreflexive: "∀ x, ¬ Ancestor x x");
+```
+
+Synalog compiles the search for counterexamples to SQL and runs it on the data: `verify` reports each violated assertion with its counterexamples, and `run` refuses a program that violates one. An assertion that holds has no counterexample in that data; it is a check, not a proof. See [Assertions](assertions.md).
 
 ## What stays the same
 

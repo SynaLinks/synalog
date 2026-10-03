@@ -15,7 +15,7 @@ TopCustomers(customer_id:, total? += amount) distinct :- Orders(customer_id:, am
 | `@Recursive(Pred, n)` | Allow recursion with an iteration limit. See [Recursion](recursion.md). |
 | `@Ground(Pred)` | Force materialization before dependents (performance). |
 | `@Engine(name)` | Target SQL engine. See [Supported engines](../engines.md). |
-| `@Assert(Pred, name: "statement")` | State a property the predicate must satisfy. See [Assertions](../verification.md#assertions). |
+| `@Assert(Pred, name: "statement")` | State a property the predicate must satisfy. See [Assertions](../assertions.md). |
 
 ## `@OrderBy`
 
@@ -75,7 +75,7 @@ Ancestor(x:, y:) :- Parent(x:, y:);
 Ancestor(x:, y: z) :- Ancestor(x:, y:), Parent(x: y, y: z);
 ```
 
-Unlike the other directives, it does not change the generated SQL, and it can be written before its predicate exists. Assertions are checked against a database with [`verify`](../cli.md). See [Assertions](../verification.md#assertions).
+Unlike the other directives, it does not change the generated SQL, and it can be written before its predicate exists. Assertions are checked against a database with [`verify`](../cli.md). See [Assertions](../assertions.md).
 
 ## Complete example
 
