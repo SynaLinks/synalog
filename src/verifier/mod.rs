@@ -9,7 +9,7 @@
 //! - Stratification (no negative recursion cycles)
 //! - Arity consistency (predicates used with consistent argument counts)
 //! - Recursion safety (base cases, no trivial loops)
-//! - Specs and proofs (`@Spec` / `@Proof` pairing)
+//! - Specs (`@Spec` statements, `@Proof` pairing)
 
 mod vars;
 mod safety;
@@ -31,7 +31,7 @@ pub use reserved::{ReservedError, check_reserved, reserved_predicate_names};
 pub use sqlexpr::{SqlExprError, check_sqlexpr};
 pub use positional::{PositionalError, check_positional};
 pub use undefined::{UndefinedError, builtin_function_names, check_undefined};
-pub use specs::{SpecError, SpecReport, SpecStatus, check_specs};
+pub use specs::{SpecError, SpecReport, SpecStatus, check_specs, spec_check};
 
 use crate::parser::Json;
 use crate::errors::{VerifyError, VerifyResult};
@@ -198,22 +198,19 @@ pub fn validate(parsed: &Json) -> CheckResult {
         result.errors.push(CheckError::Undefined(err));
     }
 
-    // Check 10: Specs and proofs (@Spec / @Proof pairing)
+    // Check 10: Specs (@Spec statements, @Proof pairing)
     let (specs, spec_errors) = specs::check_specs(&all_rules);
     for err in spec_errors {
         result.errors.push(CheckError::Spec(err));
     }
     for spec in &specs {
-        match spec.status {
-            SpecStatus::Pending => {}
-            SpecStatus::Unproven => result.warnings.push(format!(
-                "Spec '{}.{}' is unproven: no matching @Proof",
-                spec.predicate, spec.name
-            )),
-            SpecStatus::Unverified => result.warnings.push(format!(
-                "Proof of '{}.{}' is unverified: proofs are not checked yet",
-                spec.predicate, spec.name
-            )),
+        if spec.status == SpecStatus::Unsupported {
+            if let Some(reason) = &spec.detail {
+                result.warnings.push(format!(
+                    "Spec '{}.{}' cannot be checked: {}",
+                    spec.predicate, spec.name, reason
+                ));
+            }
         }
     }
     result.specs = specs;

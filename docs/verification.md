@@ -16,7 +16,7 @@ This matters most for AI agents: it prevents producing programs that parse corre
 | **Recursion** | Missing base cases, trivial loops, unbounded recursion without `@Recursive` |
 | **Reserved names** | Rules that redefine a built-in library predicate (`Num`, `Str`, `ArgMin`, `Today`, `Now`, ...) |
 | **Unsafe `SqlExpr`** | User rules that reach for the raw-SQL escape hatch |
-| **Specs and proofs** | A `@Proof` with no matching `@Spec`, a spec stated or proved twice, malformed `@Spec` / `@Proof` |
+| **Specs** | A `@Spec` statement that does not parse or contradicts the program, a spec stated twice, a `@Proof` with no matching `@Spec` |
 
 ### Unsafe `SqlExpr`
 
@@ -33,66 +33,108 @@ errors, warnings = synalog.check('''
 
 The safe alternative is to express the logic in Synalog. For date/time math, stay on the string→int pipeline (`Substr` → `ToInt64` → `ToString`); see [temporal data](language/temporal.md#relative-dates-and-times).
 
-## Specs and proofs
+## Specs
 
-A program can state properties of its predicates with `@Spec` and justify them with `@Proof`. The statement and the proof are written in [Lean](https://lean-lang.org/):
+A program can state, with `@Spec`, what its predicates are meant to compute. The statement is first-order logic with arithmetic and sums, not Synalog, so a mistake in a rule is unlikely to be repeated in its spec:
 
 ```logica
 # 1. The contract, written first
 @Spec(Ancestor,
-      transitive: "∀ x y z, Ancestor x y → Ancestor y z → Ancestor x z",
-      grounded:   "∀ x y, Ancestor x y → ∃ w, parent x w");
+      transitive:  "∀ x y z, Ancestor x y → Ancestor y z → Ancestor x z",
+      irreflexive: "∀ x, ¬ Ancestor x x",
+      grounded:    "∀ x y, Ancestor x y → ∃ w, Parent x w");
 
 # 2. The predicate
 @Recursive(Ancestor, 20);
-Ancestor(x:, y:) :- parent(x:, y:);
-Ancestor(x:, y: z) :- Ancestor(x:, y:), parent(x: y, y: z);
-
-# 3. The evidence
-@Proof(Ancestor, transitive: "intro x y z h1 h2; induction h2 <;> aesop");
+Ancestor(x:, y:) :- Parent(x:, y:);
+Ancestor(x:, y: z) :- Ancestor(x:, y:), Parent(x: y, y: z);
 ```
 
-Both take the predicate first, then one named argument per property. The name pairs a proof with its spec. Use a triple-quoted string (`"""..."""`) for text that spans several lines.
+`@Spec` takes the predicate the properties are about, then one named argument per property. Use a triple-quoted string (`"""..."""`) for a statement that spans several lines.
 
-The two are separate on purpose. The statement lives only in `@Spec`, so whoever writes the proof, typically an agent, cannot weaken what is being proved.
+### The statement language
 
-!!! warning "Proofs are not checked yet"
-    Synalog pairs specs with proofs and reports where each spec stands, but it does not run Lean yet. A spec with a proof is reported as `unverified`, never as proven.
+Statements are written as [Lean](https://lean-lang.org/) propositions, with the same operator precedence. Every symbol has an ASCII spelling:
 
-[`specs()`](python-api.md#specs) reports every spec and its status:
+| Symbol | ASCII | Meaning |
+|--------|-------|---------|
+| `∀ x y, F` | `forall x y, F` | `F` holds for all `x`, `y` |
+| `∃ x, F` | `exists x, F` | `F` holds for some `x` |
+| `F → G` | `F -> G` | if `F` then `G` (associates to the right) |
+| `F ↔ G` | `F <-> G` | `F` exactly when `G` |
+| `F ∧ G`, `F ∨ G`, `¬ F` | `F /\ G`, `F \/ G`, `not F` | and, or, not |
+| `=`, `≠`, `<`, `≤`, `>`, `≥` | `=`, `!=`, `<`, `<=`, `>`, `>=` | comparisons |
+| `+`, `-`, `*`, `/` | | arithmetic |
+| `∑ x, t` | `sum x, t` | sum of `t` over `x` |
+
+Statements are positional while Synalog predicates have named columns. The arguments of a predicate are its columns in the order its first rule declares them:
+
+- applied to all its columns, a predicate is a relation: `Ancestor x y` reads `Ancestor(x: x, y: y)`;
+- applied to all but the last, it is a function returning the last one: with `Posterior(h:, e:, p:)`, the term `Posterior h e` is `p`.
+
+```logica
+@Spec(Posterior,
+      definition: "∀ h e, Posterior h e = Joint h e / Evidence e",
+      normalised: "∀ e, ∑ h, Posterior h e = 1",
+      bounded:    "∀ h e, 0 ≤ Posterior h e ∧ Posterior h e ≤ 1");
+```
+
+A name bound by a quantifier is a variable; an unbound lowercase name is universally quantified. Literals are numbers and double-quoted strings.
+
+### Checking a spec
+
+A spec is checked against a database by looking for its counterexamples. Synalog compiles that search to SQL like any predicate, one column per universally quantified variable; the spec holds on the database when the query returns no row.
+
+```python
+sql = synalog.counterexamples(source, "Ancestor", "transitive")
+```
+
+From the command line, [`verify`](cli.md) runs every spec and prints the counterexamples of those that do not hold:
+
+```text
+$ synalog family.l verify
+✓ Ancestor.transitive holds
+✓ Ancestor.irreflexive holds
+✗ Near.transitive is violated: ∀ x y z, Near x y → Near y z → Near x z
+  2 counterexamples:
+| x | y | z |
+| a | b | d |
+| a | c | d |
+```
+
+!!! warning "A check, not a proof"
+    A spec that holds has no counterexample *in the data it was run on*. It says nothing about other data.
+
+Counterexamples are searched in the database, which bounds what can be checked:
+
+- every variable must be bound by a predicate: `∀ x, x > 0` ranges over nothing and cannot be checked;
+- a statement cannot apply a raw table, whose columns are not declared: wrap the table in a predicate;
+- an equation between functions is checked where both sides are defined, so a missing row is not a counterexample;
+- equality between computed numbers (arithmetic, sums) is checked up to `1e-9`.
+
+### Status
+
+[`specs()`](python-api.md#specs) reports every spec and where it stands:
 
 | Status | Meaning |
 |--------|---------|
-| `pending` | The predicate is not defined yet. A spec can be written before its predicate. |
-| `unproven` | The predicate is defined but the spec has no `@Proof`. |
-| `unverified` | A `@Proof` is written but has not been checked. |
+| `pending` | A predicate the spec names is not defined yet. A spec can be written before its predicates. |
+| `unchecked` | The statement can be checked against a database. |
+| `unsupported` | The statement is well-formed but cannot be checked against a database. |
 
-```python
-for spec in synalog.specs(source):
-    print(spec["predicate"], spec["name"], spec["status"])
-# Ancestor transitive unverified
-# Ancestor grounded unproven
-```
-
-None of these statuses is an error. `check()` reports `unproven` and `unverified` specs as warnings, which the CLI prints on `print` and `run` without failing:
-
-```python
-errors, warnings = synalog.check(source)
-# errors:   []
-# warnings: ["Proof of 'Ancestor.transitive' is unverified: proofs are not checked yet",
-#            "Spec 'Ancestor.grounded' is unproven: no matching @Proof"]
-```
-
-As errors, `check()` only rejects annotations that can never become valid:
+`check()` reports an `unsupported` spec as a warning, and as errors only the specs that can never become valid:
 
 | Error | Cause |
 |-------|-------|
-| `Proof of 'P.name' has no matching @Spec` | A `@Proof` names a property that no `@Spec` of that predicate states |
+| `Invalid spec 'P.name'` | The statement does not parse, or applies a predicate to the wrong number of arguments |
 | `Duplicate spec 'P.name'` | The same name is stated twice for a predicate |
-| `Duplicate proof of 'P.name'` | The same name is proved twice for a predicate |
-| `Malformed @Spec` / `Malformed @Proof` | The annotation is not `(Predicate, name: "text", ...)` |
+| `Malformed @Spec` | The annotation is not `(Predicate, name: "text", ...)` |
 
-Specs and proofs do not change the generated SQL. Those of an imported predicate travel with it.
+Specs do not change the generated SQL.
+
+### Proofs
+
+`@Proof(Predicate, name: "...")` attaches a proof text to the spec of the same predicate and name. It is recorded and returned by `specs()`, but not checked. A `@Proof` with no matching `@Spec` is an error.
 
 ## Usage
 

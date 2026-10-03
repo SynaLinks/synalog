@@ -19,9 +19,25 @@ The argument order follows `logica`: the program file first, then the command.
 synalog program.l print Predicate ...      # print compiled SQL
 synalog program.l run Predicate ...        # execute and print a table
 synalog program.l run Predicate --csv      # execute and print CSV
+synalog program.l verify [Predicate ...]   # check the @Spec statements
 ```
 
-Both `print` and `run` validate the whole program first and exit 1 with the verifier's errors if it is invalid, so there is no separate `check` step to forget. Verifier warnings, such as a [spec](verification.md#specs-and-proofs) without a proof, are printed to stderr and do not stop the command. `print` and `run` accept several predicate names and process them in order. In a terminal, `print` highlights the SQL and `run` renders the table with rich formatting; piped output falls back to plain text. Add `--csv` to `run` for machine-readable CSV instead of the rendered table.
+`print`, `run` and `verify` validate the whole program first and exit 1 with the verifier's errors if it is invalid, so there is no separate `check` step to forget. Verifier warnings, such as a [spec](verification.md#specs) that cannot be checked, are printed to stderr and do not stop the command. `print` and `run` accept several predicate names and process them in order. In a terminal, `print` highlights the SQL and `run` renders the table with rich formatting; piped output falls back to plain text. Add `--csv` to `run` for machine-readable CSV instead of the rendered table.
+
+`verify` runs every [spec](verification.md#specs) of the program, or only those of the given predicates, against the database. It prints the counterexamples of each spec that does not hold (5 by default, `--limit` to change) and exits 1 if any spec is violated. Specs that are pending or cannot be checked are listed and skipped.
+
+```console
+$ synalog family.l verify
+✓ Ancestor.transitive holds
+✗ Near.transitive is violated: ∀ x y z, Near x y → Near y z → Near x z
+  2 counterexamples:
++---+---+---+
+| x | y | z |
++---+---+---+
+| a | b | d |
+| a | c | d |
++---+---+---+
+```
 
 ```console
 $ synalog program.l run EngineeringTeam

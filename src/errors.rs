@@ -198,6 +198,14 @@ pub enum VerifyError {
         rule: String,
     },
 
+    /// `@Spec` statement that does not parse or contradicts the program.
+    #[error("Invalid spec '{predicate}.{name}': {reason}")]
+    InvalidSpec {
+        predicate: String,
+        name: String,
+        reason: String,
+    },
+
     /// The same spec name stated twice for a predicate.
     #[error("Duplicate spec '{predicate}.{name}': it is stated more than once")]
     DuplicateSpec { predicate: String, name: String },

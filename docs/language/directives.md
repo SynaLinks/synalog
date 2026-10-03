@@ -15,8 +15,7 @@ TopCustomers(customer_id:, total? += amount) distinct :- Orders(customer_id:, am
 | `@Recursive(Pred, n)` | Allow recursion with an iteration limit. See [Recursion](recursion.md). |
 | `@Ground(Pred)` | Force materialization before dependents (performance). |
 | `@Engine(name)` | Target SQL engine. See [Supported engines](../engines.md). |
-| `@Spec(Pred, name: "statement")` | State a property the predicate must satisfy. See [Specs and proofs](../verification.md#specs-and-proofs). |
-| `@Proof(Pred, name: "proof")` | Prove the property a `@Spec` states under the same name. |
+| `@Spec(Pred, name: "statement")` | State a property the predicate must satisfy. See [Specs](../verification.md#specs). |
 
 ## `@OrderBy`
 
@@ -64,21 +63,19 @@ Selects the target SQL dialect for the whole program:
 
 The `engine` keyword of the [Python API](../python-api.md) functions overrides this annotation.
 
-## `@Spec` and `@Proof`
+## `@Spec`
 
-`@Spec` states a property of a predicate, `@Proof` justifies it. Each property has a name, given as a named argument, and a `@Proof` refers to the spec of the same predicate with the same name:
+States a property of a predicate in first-order logic. Each property has a name, given as a named argument:
 
 ```logica
 @Spec(Ancestor, transitive: "∀ x y z, Ancestor x y → Ancestor y z → Ancestor x z");
 
 @Recursive(Ancestor, 20);
-Ancestor(x:, y:) :- parent(x:, y:);
-Ancestor(x:, y: z) :- Ancestor(x:, y:), parent(x: y, y: z);
-
-@Proof(Ancestor, transitive: "intro x y z h1 h2; induction h2 <;> aesop");
+Ancestor(x:, y:) :- Parent(x:, y:);
+Ancestor(x:, y: z) :- Ancestor(x:, y:), Parent(x: y, y: z);
 ```
 
-Unlike the other directives, they do not change the generated SQL. A spec can be written before its predicate exists. See [Specs and proofs](../verification.md#specs-and-proofs).
+Unlike the other directives, it does not change the generated SQL, and it can be written before its predicate exists. Specs are checked against a database with [`verify`](../cli.md). See [Specs](../verification.md#specs).
 
 ## Complete example
 

@@ -341,8 +341,8 @@ fn test_spec_and_proof_do_not_change_sql() {
     "#;
     let annotated = format!(
         "{}{}",
-        r#"@Spec(Ancestor, grounded: "∀ x y, Ancestor x y → parent x y");
-           @Proof(Ancestor, grounded: "intro x y h; cases h; assumption");"#,
+        r#"@Spec(Ancestor, irreflexive: "∀ x, ¬ Ancestor x x");
+           @Proof(Ancestor, irreflexive: "intro x h; cases h");"#,
         rules
     );
     let plain = compile_predicate(&make_universe_program(rules), "Ancestor").unwrap();

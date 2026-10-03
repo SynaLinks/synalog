@@ -13,7 +13,7 @@ use pyo3::prelude::*;
 use crate::compiler::dialects;
 use crate::compiler::universe::{LogicaProgram, Pagination};
 use crate::parser::{front_matter as read_front_matter, parse_file, Json};
-use crate::verifier::{builtin_function_names, reserved_predicate_names, validate};
+use crate::verifier::{builtin_function_names, reserved_predicate_names, spec_check, validate};
 
 fn map_err<E: std::fmt::Display>(e: E) -> PyErr {
     PyValueError::new_err(e.to_string())
@@ -185,15 +185,18 @@ fn check(
 /// Every `@Spec` of a program and where it stands.
 ///
 /// Returns one dict per spec, in source order, with the keys `predicate`,
-/// `name`, `statement`, `proof` (None when no `@Proof` is written) and
-/// `status`:
+/// `name`, `statement`, `proof` (None when no `@Proof` is written), `status`
+/// and `detail`:
 ///
-/// - `"pending"`: the predicate the spec is about is not defined yet;
-/// - `"unproven"`: the predicate is defined but the spec has no `@Proof`;
-/// - `"unverified"`: a `@Proof` is written but has not been checked.
+/// - `"pending"`: a predicate the spec is about is not defined yet (`detail`
+///   names what it waits for);
+/// - `"unchecked"`: the statement can be checked against a database, see
+///   `counterexamples`;
+/// - `"unsupported"`: the statement is well-formed but cannot be checked
+///   against a database (`detail` says why).
 ///
-/// Annotation errors (a proof without a spec, a duplicate, ...) are reported
-/// by `check`, not here. Raises ValueError on syntax errors.
+/// Invalid specs (a statement that does not parse, a proof without a spec,
+/// ...) are reported by `check`, not here. Raises ValueError on syntax errors.
 #[pyfunction]
 #[pyo3(signature = (source, engine=None, import_root=None))]
 fn specs(
@@ -213,9 +216,44 @@ fn specs(
                 ("statement", Some(spec.statement)),
                 ("proof", spec.proof),
                 ("status", Some(spec.status.to_string())),
+                ("detail", spec.detail),
             ])
         })
         .collect())
+}
+
+/// Compile the search for the counterexamples of a spec to SQL.
+///
+/// The spec `name` of `predicate` holds on a database when this query returns
+/// no row there; each row it returns is a counterexample, one column per
+/// universally quantified variable of the statement. `limit`/`offset` paginate
+/// as in `compile`.
+///
+/// Raises ValueError if there is no such spec, if it is pending or cannot be
+/// checked, and on syntax or compilation errors.
+#[pyfunction]
+#[pyo3(signature = (source, predicate, name, limit=None, offset=None, engine=None, import_root=None))]
+fn counterexamples(
+    source: &str,
+    predicate: &str,
+    name: &str,
+    limit: Option<u64>,
+    offset: Option<u64>,
+    engine: Option<&str>,
+    import_root: Option<Vec<String>>,
+) -> PyResult<String> {
+    check_engine(engine)?;
+    let parsed = parse_source(source, None, import_root.clone())?;
+    let rules: Vec<&Json> = parsed.as_object()["rule"].as_array().iter().collect();
+    let translation = spec_check(&rules, predicate, name).map_err(PyValueError::new_err)?;
+    // The counterexamples are a predicate of the program like any other.
+    let extended = format!("{}\n{}\n", source, translation.rules);
+    let parsed = parse_source(&extended, None, import_root)?;
+    let program = build_program(&parsed, engine)?;
+    let pagination = Pagination { limit, offset };
+    program
+        .formatted_predicate_sql_with_pagination(&translation.predicate, &pagination)
+        .map_err(map_err)
 }
 
 /// Predicate names Synalog defines itself, sorted.
@@ -269,6 +307,7 @@ fn _synalog(m: &Bound<'_, PyModule>) -> PyResult<()> {
     m.add_function(wrap_pyfunction!(compile_all, m)?)?;
     m.add_function(wrap_pyfunction!(check, m)?)?;
     m.add_function(wrap_pyfunction!(specs, m)?)?;
+    m.add_function(wrap_pyfunction!(counterexamples, m)?)?;
     m.add_function(wrap_pyfunction!(reserved_predicates, m)?)?;
     m.add_function(wrap_pyfunction!(builtin_functions, m)?)?;
     m.add_function(wrap_pyfunction!(front_matter, m)?)?;

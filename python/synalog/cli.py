@@ -41,12 +41,23 @@ from rich.table import Table
 from rich.text import Text
 
 from . import __version__, project
-from ._synalog import SUPPORTED_ENGINES, check, compile, parse, search
+from ._synalog import (
+    SUPPORTED_ENGINES,
+    check,
+    compile,
+    counterexamples,
+    parse,
+    search,
+    specs,
+)
 from .runners import RunnerUnavailable, run_sql
 
 DEFAULT_ENGINE = "duckdb"
 
-COMMANDS = ("print", "run")
+COMMANDS = ("print", "run", "verify")
+
+#: Counterexamples shown per violated spec by `verify`, unless --limit is given.
+VERIFY_LIMIT = 5
 
 out = Console()
 err = Console(stderr=True)
@@ -380,11 +391,16 @@ def main(args, inline, engine, limit, offset, as_csv, search_pattern, dsn,
       synalog program.l print Predicate ...   print compiled SQL
       synalog program.l run Predicate ...     execute and print a table
       synalog program.l run Predicate --csv   execute and print CSV
+      synalog program.l verify [Predicate ...] check the @Spec statements
       synalog connect ENGINE DSN              save a remote engine connection
       synalog introspect ENGINE               print Tables predicates for a schema
 
-    print and run validate the whole program first, aborting with the verifier's
-    errors if it is invalid.
+    print, run and verify validate the whole program first, aborting with the
+    verifier's errors if it is invalid.
+
+    verify runs every @Spec of the program (or of the given predicates) against
+    the database and prints the counterexamples of those that do not hold
+    (--limit of them, 5 by default); it exits 1 if any spec is violated.
 
     Add --search REGEX to print/run to keep only rows where some
     column matches REGEX (engine-native regex, not a SQL LIKE pattern), e.g.
@@ -442,7 +458,7 @@ def main(args, inline, engine, limit, offset, as_csv, search_pattern, dsn,
         )
     if inline is not None and predicates and os.path.exists(predicates[0]):
         raise click.UsageError("FILE and -c are mutually exclusive.")
-    if not predicates:
+    if not predicates and command != "verify":
         raise click.UsageError("Missing argument 'PREDICATES...'.")
     if as_csv and command != "run":
         raise click.UsageError("--csv applies to run only")
@@ -480,8 +496,57 @@ def main(args, inline, engine, limit, offset, as_csv, search_pattern, dsn,
                 print_error(error)
             sys.exit(1)
 
+    def verify(eng: str, run_dsn: str | None) -> bool:
+        """Run the specs against the database; False if any is violated."""
+        selected = [
+            spec
+            for spec in specs(source, engine=eng, import_root=roots)
+            if not predicates or spec["predicate"] in predicates
+        ]
+        unknown = set(predicates) - {spec["predicate"] for spec in selected}
+        if unknown:
+            raise ValueError(f"No spec for {', '.join(sorted(unknown))}")
+        shown = VERIFY_LIMIT if limit is None else limit
+        ok = True
+        for spec in selected:
+            label = f"{spec['predicate']}.{spec['name']}"
+            if spec["status"] != "unchecked":
+                detail = f": {spec['detail']}" if spec["detail"] else ""
+                out.print(f"- {label} {spec['status']}{detail}", style="yellow", markup=False, highlight=False)
+                continue
+            # One row past the limit tells whether there are more.
+            sql = counterexamples(
+                source,
+                spec["predicate"],
+                spec["name"],
+                limit=shown + 1,
+                engine=eng,
+                import_root=roots,
+            )
+            columns, rows = run_sql(eng, sql, dsn=run_dsn, loads=loads)
+            if not rows:
+                out.print(f"✓ {label} holds", style="green", markup=False, highlight=False)
+                continue
+            ok = False
+            more = "at least " if len(rows) > shown else ""
+            count = min(len(rows), shown)
+            out.print(
+                f"✗ {label} is violated: {spec['statement']}\n"
+                f"  {more}{count} counterexample{'' if count == 1 else 's'}:",
+                style="red",
+                markup=False,
+                highlight=False,
+            )
+            out.print(render_table(columns, rows[:shown]))
+        return ok
+
     try:
-        if command == "print":
+        if command == "verify":
+            resolved = engine or program_engine(source, roots) or default_engine or DEFAULT_ENGINE
+            validate_or_fail(resolved)
+            if not verify(resolved, _resolve_dsn(resolved, dsn, project_file)):
+                sys.exit(1)
+        elif command == "print":
             dialect = engine or default_engine
             validate_or_fail(dialect)
             for predicate in predicates:

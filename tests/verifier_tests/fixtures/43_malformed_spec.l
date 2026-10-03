@@ -1,9 +1,9 @@
 # Verifier Test: Spec without a name
 # Expected Error: malformedSpec
 #
-# A spec is `@Spec(Predicate, name: "statement")`: the name is what a `@Proof`
-# refers to, so a statement passed positionally cannot be proved.
+# A spec is `@Spec(Predicate, name: "statement")`: the name identifies the
+# property, so a statement passed positionally cannot be referred to.
 
-@Spec(Ancestor, "∀ x y, Ancestor x y → ∃ w, parent x w");
+@Spec(Ancestor, "∀ x, ¬ Ancestor x x");
 
 Ancestor(x:, y:) :- parent(x:, y:);

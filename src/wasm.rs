@@ -105,8 +105,8 @@ pub fn check(source: &str, engine: &str) -> Result<CheckOutcome, JsValue> {
 }
 
 /// Every `@Spec` of `source` and where it stands, as a JSON array of
-/// `{predicate, name, statement, proof, status}` objects in source order
-/// (`proof` is null when no `@Proof` is written). Raises on syntax errors.
+/// `{predicate, name, statement, proof, status, detail}` objects in source
+/// order (`proof` is null when no `@Proof` is written). Raises on syntax errors.
 #[wasm_bindgen]
 pub fn specs(source: &str, engine: &str) -> Result<String, JsValue> {
     engine_arg(engine)?;
@@ -121,6 +121,7 @@ pub fn specs(source: &str, engine: &str) -> Result<String, JsValue> {
                 "statement": spec.statement,
                 "proof": spec.proof,
                 "status": spec.status.as_str(),
+                "detail": spec.detail,
             })
         })
         .collect();
