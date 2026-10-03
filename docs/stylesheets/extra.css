@@ -299,3 +299,8 @@
     font-size: 0.78rem;
     color: var(--md-default-fg-color--light);
 }
+
+/* The logo's dark version on the dark scheme (zensical.toml names the light one). */
+[data-md-color-scheme="slate"] .md-logo img {
+  content: url("../assets/synalog-dark.svg");
+}
