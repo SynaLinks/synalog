@@ -1,18 +1,18 @@
 // License Apache 2.0: (c) 2025-2026 Yoan Sallami (Synalinks Team)
 
-//! Translation of a spec statement into the rules that look for its
+//! Translation of an assertion statement into the rules that look for its
 //! counterexamples.
 //!
 //! A statement `∀ x̄, F` holds on a database when no assignment of `x̄`
 //! falsifies `F`. The translation builds the predicate of those assignments:
 //! it negates `F`, pushes the negation down to the atoms, and writes each
-//! alternative of the result as one rule. The spec holds when that predicate
+//! alternative of the result as one rule. The assertion holds when that predicate
 //! is empty, and each of its rows is a counterexample.
 //!
 //! ```text
 //! ∀ x y z, Ancestor x y → Ancestor y z → Ancestor x z
 //!
-//! Spec_Ancestor_transitive(x: x, y: y, z: z) distinct :-
+//! Assert_Ancestor_transitive(x: x, y: y, z: z) distinct :-
 //!   Ancestor(x: x, y: y), Ancestor(x: y, y: z), ~Ancestor(x: x, y: z);
 //! ```
 //!
@@ -247,7 +247,7 @@ impl Resolver {
                     if !args.is_empty() {
                         return invalid(format!(
                             "'{}' is not a predicate: a raw table has no declared columns, \
-                             wrap it in a predicate to state a spec about it",
+                             wrap it in a predicate to state an assertion about it",
                             name
                         ));
                     }
@@ -695,18 +695,18 @@ mod tests {
     }
 
     fn rules(statement: &str) -> String {
-        translate(&parse(statement).unwrap(), &schema(), "Spec").unwrap().rules
+        translate(&parse(statement).unwrap(), &schema(), "Assert").unwrap().rules
     }
 
     fn error(statement: &str) -> TranslateError {
-        translate(&parse(statement).unwrap(), &schema(), "Spec").unwrap_err()
+        translate(&parse(statement).unwrap(), &schema(), "Assert").unwrap_err()
     }
 
     #[test]
     fn test_implication_chain() {
         assert_eq!(
             rules("∀ x y z, Ancestor x y → Ancestor y z → Ancestor x z"),
-            "Spec(x: x, y: y, z: z) distinct :- \
+            "Assert(x: x, y: y, z: z) distinct :- \
              Ancestor(x: x, y: y), Ancestor(x: y, y: z), ~Ancestor(x: x, y: z);"
         );
     }
@@ -721,15 +721,15 @@ mod tests {
 
     #[test]
     fn test_negated_atom() {
-        assert_eq!(rules("∀ x, ¬ Ancestor x x"), "Spec(x: x) distinct :- Ancestor(x: x, y: x);");
+        assert_eq!(rules("∀ x, ¬ Ancestor x x"), "Assert(x: x) distinct :- Ancestor(x: x, y: x);");
     }
 
     #[test]
     fn test_existential_conclusion_becomes_a_helper() {
         assert_eq!(
             rules("∀ x y, Ancestor x y → ∃ w, Parent x w"),
-            "Spec_1(x: x) distinct :- Parent(x: x, y: w__1);\n\
-             Spec(x: x, y: y) distinct :- Ancestor(x: x, y: y), ~Spec_1(x: x);"
+            "Assert_1(x: x) distinct :- Parent(x: x, y: w__1);\n\
+             Assert(x: x, y: y) distinct :- Ancestor(x: x, y: y), ~Assert_1(x: x);"
         );
     }
 
@@ -737,8 +737,8 @@ mod tests {
     fn test_conjunctive_conclusion_gives_one_rule_per_way_to_fail() {
         assert_eq!(
             rules("∀ h e, 0 ≤ Posterior h e ∧ Posterior h e ≤ 1"),
-            "Spec(h: h, e: e) distinct :- Posterior(h: h, e: e, p: s__1), 0 > s__1;\n\
-             Spec(h: h, e: e) distinct :- Posterior(h: h, e: e, p: s__2), s__2 > 1;"
+            "Assert(h: h, e: e) distinct :- Posterior(h: h, e: e, p: s__1), 0 > s__1;\n\
+             Assert(h: h, e: e) distinct :- Posterior(h: h, e: e, p: s__2), s__2 > 1;"
         );
     }
 
@@ -746,7 +746,7 @@ mod tests {
     fn test_equation_between_functions() {
         assert_eq!(
             rules("∀ h e, Posterior h e = Joint h e / Evidence e"),
-            "Spec(h: h, e: e) distinct :- Posterior(h: h, e: e, p: s__1), \
+            "Assert(h: h, e: e) distinct :- Posterior(h: h, e: e, p: s__1), \
              Joint(h: h, e: e, p: s__2), Evidence(e: e, p: s__3), \
              Abs(s__1 - (s__2 / s__3)) > 0.000000001;"
         );
@@ -756,8 +756,8 @@ mod tests {
     fn test_sum_becomes_an_aggregating_helper() {
         assert_eq!(
             rules("∀ e, ∑ h, Posterior h e = 1"),
-            "Spec_1(e: e, total? += s__1) distinct :- Posterior(h: h__1, e: e, p: s__1);\n\
-             Spec(e: e) distinct :- Spec_1(e: e, total: s__2), Abs(s__2 - 1) > 0.000000001;"
+            "Assert_1(e: e, total? += s__1) distinct :- Posterior(h: h__1, e: e, p: s__1);\n\
+             Assert(e: e) distinct :- Assert_1(e: e, total: s__2), Abs(s__2 - 1) > 0.000000001;"
         );
     }
 
@@ -765,8 +765,8 @@ mod tests {
     fn test_closed_statement() {
         assert_eq!(
             rules("∃ x, Ancestor x x"),
-            "Spec_1(holds: 1) distinct :- Ancestor(x: x__1, y: x__1);\n\
-             Spec(violated: 1) distinct :- ~Spec_1(holds: 1);"
+            "Assert_1(holds: 1) distinct :- Ancestor(x: x__1, y: x__1);\n\
+             Assert(violated: 1) distinct :- ~Assert_1(holds: 1);"
         );
     }
 
@@ -774,7 +774,7 @@ mod tests {
     fn test_constants() {
         assert_eq!(
             rules("∀ y, Parent \"a\" y → y ≠ \"a\""),
-            "Spec(y: y) distinct :- Parent(x: \"a\", y: y), y == \"a\";"
+            "Assert(y: y) distinct :- Parent(x: \"a\", y: y), y == \"a\";"
         );
     }
 

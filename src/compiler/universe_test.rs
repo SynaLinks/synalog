@@ -331,7 +331,7 @@ fn compile_predicate(program: &LogicaProgram, name: &str) -> crate::compiler::Co
     program.predicate_sql(name)
 }
 
-/// `@Spec` is read by the verifier only: the SQL is the same with or without
+/// `@Assert` is read by the verifier only: the SQL is the same with or without
 /// it.
 #[test]
 fn test_spec_does_not_change_sql() {
@@ -341,7 +341,7 @@ fn test_spec_does_not_change_sql() {
     "#;
     let annotated = format!(
         "{}{}",
-        r#"@Spec(Ancestor, irreflexive: "∀ x, ¬ Ancestor x x");"#,
+        r#"@Assert(Ancestor, irreflexive: "∀ x, ¬ Ancestor x x");"#,
         rules
     );
     let plain = compile_predicate(&make_universe_program(rules), "Ancestor").unwrap();

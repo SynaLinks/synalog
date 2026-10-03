@@ -16,7 +16,7 @@ This matters most for AI agents: it prevents producing programs that parse corre
 | **Recursion** | Missing base cases, trivial loops, unbounded recursion without `@Recursive` |
 | **Reserved names** | Rules that redefine a built-in library predicate (`Num`, `Str`, `ArgMin`, `Today`, `Now`, ...) |
 | **Unsafe `SqlExpr`** | User rules that reach for the raw-SQL escape hatch |
-| **Specs** | A `@Spec` statement that does not parse or contradicts the program, a spec stated twice |
+| **Assertions** | An `@Assert` statement that does not parse or contradicts the program, an assertion stated twice |
 
 ### Unsafe `SqlExpr`
 
@@ -33,13 +33,13 @@ errors, warnings = synalog.check('''
 
 The safe alternative is to express the logic in Synalog. For date/time math, stay on the string→int pipeline (`Substr` → `ToInt64` → `ToString`); see [temporal data](language/temporal.md#relative-dates-and-times).
 
-## Specs
+## Assertions
 
-A program can state, with `@Spec`, what its predicates are meant to compute. The statement is first-order logic with arithmetic and sums, not Synalog, so a mistake in a rule is unlikely to be repeated in its spec:
+A program can state, with `@Assert`, what its predicates are meant to compute. The statement is first-order logic with arithmetic and sums, not Synalog, so a mistake in a rule is unlikely to be repeated in its assertion:
 
 ```logica
 # 1. The contract, written first
-@Spec(Ancestor,
+@Assert(Ancestor,
       transitive:  "∀ x y z, Ancestor x y → Ancestor y z → Ancestor x z",
       irreflexive: "∀ x, ¬ Ancestor x x",
       grounded:    "∀ x y, Ancestor x y → ∃ w, Parent x w");
@@ -50,7 +50,7 @@ Ancestor(x:, y:) :- Parent(x:, y:);
 Ancestor(x:, y: z) :- Ancestor(x:, y:), Parent(x: y, y: z);
 ```
 
-`@Spec` takes the predicate the properties are about, then one named argument per property. Use a triple-quoted string (`"""..."""`) for a statement that spans several lines.
+`@Assert` takes the predicate the properties are about, then one named argument per property. Use a triple-quoted string (`"""..."""`) for a statement that spans several lines.
 
 ### The statement language
 
@@ -73,7 +73,7 @@ Statements are positional while Synalog predicates have named columns. The argum
 - applied to all but the last, it is a function returning the last one: with `Posterior(h:, e:, p:)`, the term `Posterior h e` is `p`.
 
 ```logica
-@Spec(Posterior,
+@Assert(Posterior,
       definition: "∀ h e, Posterior h e = Joint h e / Evidence e",
       normalised: "∀ e, ∑ h, Posterior h e = 1",
       bounded:    "∀ h e, 0 ≤ Posterior h e ∧ Posterior h e ≤ 1");
@@ -81,15 +81,15 @@ Statements are positional while Synalog predicates have named columns. The argum
 
 A name bound by a quantifier is a variable; an unbound lowercase name is universally quantified. Literals are numbers and double-quoted strings.
 
-### Checking a spec
+### Checking an assertion
 
-A spec is checked against a database by looking for its counterexamples. Synalog compiles that search to SQL like any predicate, one column per universally quantified variable; the spec holds on the database when the query returns no row.
+An assertion is checked against a database by looking for its counterexamples. Synalog compiles that search to SQL like any predicate, one column per universally quantified variable; the assertion holds on the database when the query returns no row.
 
 ```python
 sql = synalog.counterexamples(source, "Ancestor", "transitive")
 ```
 
-From the command line, [`verify`](cli.md) runs every spec and prints the counterexamples of those that do not hold:
+From the command line, [`verify`](cli.md) runs every assertion and prints the counterexamples of those that do not hold:
 
 ```text
 $ synalog family.l verify
@@ -103,7 +103,7 @@ $ synalog family.l verify
 ```
 
 !!! warning "A check, not a proof"
-    A spec that holds has no counterexample *in the data it was run on*. It says nothing about other data.
+    An assertion that holds has no counterexample *in the data it was run on*. It says nothing about other data.
 
 Counterexamples are searched in the database, which bounds what can be checked:
 
@@ -114,23 +114,23 @@ Counterexamples are searched in the database, which bounds what can be checked:
 
 ### Status
 
-[`specs()`](python-api.md#specs) reports every spec and where it stands:
+[`assertions()`](python-api.md#assertions) reports every assertion and where it stands:
 
 | Status | Meaning |
 |--------|---------|
-| `pending` | A predicate the spec names is not defined yet. A spec can be written before its predicates. |
+| `pending` | A predicate the assertion names is not defined yet. An assertion can be written before its predicates. |
 | `unchecked` | The statement can be checked against a database. |
 | `unsupported` | The statement is well-formed but cannot be checked against a database. |
 
-`check()` reports an `unsupported` spec as a warning, and as errors only the specs that can never become valid:
+`check()` reports an `unsupported` assertion as a warning, and as errors only the assertions that can never become valid:
 
 | Error | Cause |
 |-------|-------|
-| `Invalid spec 'P.name'` | The statement does not parse, or applies a predicate to the wrong number of arguments |
-| `Duplicate spec 'P.name'` | The same name is stated twice for a predicate |
-| `Malformed @Spec` | The annotation is not `(Predicate, name: "text", ...)` |
+| `Invalid assertion 'P.name'` | The statement does not parse, or applies a predicate to the wrong number of arguments |
+| `Duplicate assertion 'P.name'` | The same name is stated twice for a predicate |
+| `Malformed @Assert` | The annotation is not `(Predicate, name: "text", ...)` |
 
-Specs do not change the generated SQL.
+Assertions do not change the generated SQL.
 
 ## Usage
 

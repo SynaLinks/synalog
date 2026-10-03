@@ -1,28 +1,28 @@
 // License Apache 2.0: (c) 2025-2026 Yoan Sallami (Synalinks Team)
 
-//! Specifications (`@Spec`).
+//! Specifications (`@Assert`).
 //!
-//! A program states properties of its predicates with `@Spec`. Each property
+//! A program states properties of its predicates with `@Assert`. Each property
 //! is anchored to a predicate and named by a named argument; its statement is
 //! a first-order formula in the syntax of a Lean proposition (see
-//! [`crate::spec`]):
+//! [`crate::assertion`]):
 //!
 //! ```text
-//! @Spec(Ancestor, transitive: "∀ x y z, Ancestor x y → Ancestor y z → Ancestor x z");
+//! @Assert(Ancestor, transitive: "∀ x y z, Ancestor x y → Ancestor y z → Ancestor x z");
 //! ```
 //!
 //! The statement says what the rules are meant to compute in a notation that
 //! is not Synalog, so a mistake in the rules is unlikely to be repeated in it.
 //! It is checked against a database: its counterexamples are a predicate like
-//! any other, compiled to SQL (see [`spec_check`]).
+//! any other, compiled to SQL (see [`assertion_check`]).
 //!
-//! A spec is meant to be written *before* the predicates it constrains, so a
+//! An assertion is meant to be written *before* the predicates it constrains, so a
 //! statement naming a predicate that does not exist yet is not an error: the
-//! spec is [`SpecStatus::Pending`].
+//! assertion is [`AssertionStatus::Pending`].
 //!
 //! ## What is checked
 //!
-//! Errors are reserved for specs that can never become valid: a statement that
+//! Errors are reserved for assertions that can never become valid: a statement that
 //! does not parse or contradicts the program (wrong number of arguments), a
 //! name stated twice, and annotations that are not shaped as
 //! `(Predicate, name: "text", ...)`. A well-formed
@@ -32,13 +32,13 @@ use std::collections::{HashMap, HashSet};
 
 use crate::errors::VerifyError;
 use crate::parser::Json;
-use crate::spec::{self, Schema, TranslateError, Translation};
+use crate::assertion::{self, Schema, TranslateError, Translation};
 
 use super::reserved::reserved_predicate_names;
 
-/// Where a spec stands.
+/// Where an assertion stands.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum SpecStatus {
+pub enum AssertionStatus {
     /// The anchor predicate, or a predicate the statement names, is not
     /// defined yet.
     Pending,
@@ -48,39 +48,39 @@ pub enum SpecStatus {
     Unsupported,
 }
 
-impl SpecStatus {
+impl AssertionStatus {
     pub fn as_str(&self) -> &'static str {
         match self {
-            SpecStatus::Pending => "pending",
-            SpecStatus::Unchecked => "unchecked",
-            SpecStatus::Unsupported => "unsupported",
+            AssertionStatus::Pending => "pending",
+            AssertionStatus::Unchecked => "unchecked",
+            AssertionStatus::Unsupported => "unsupported",
         }
     }
 }
 
-impl std::fmt::Display for SpecStatus {
+impl std::fmt::Display for AssertionStatus {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         f.write_str(self.as_str())
     }
 }
 
-/// One named spec of a predicate.
+/// One named assertion of a predicate.
 #[derive(Debug, Clone)]
-pub struct SpecReport {
+pub struct AssertionReport {
     /// The anchor predicate.
     pub predicate: String,
-    /// The spec's name (the named argument of `@Spec`).
+    /// The assertion's name (the named argument of `@Assert`).
     pub name: String,
     /// The statement, verbatim.
     pub statement: String,
-    pub status: SpecStatus,
-    /// Why the spec is pending (the predicates it waits for) or unsupported.
+    pub status: AssertionStatus,
+    /// Why the assertion is pending (the predicates it waits for) or unsupported.
     pub detail: Option<String>,
 }
 
-/// `@Spec` annotation error.
+/// `@Assert` annotation error.
 #[derive(Debug, Clone)]
-pub enum SpecError {
+pub enum AssertionError {
     /// The annotation is not shaped as `(Predicate, name: "text", ...)`.
     Malformed {
         annotation: String,
@@ -93,71 +93,71 @@ pub enum SpecError {
         name: String,
         reason: String,
     },
-    /// The same spec name is stated twice for a predicate.
-    DuplicateSpec { predicate: String, name: String },
+    /// The same assertion name is stated twice for a predicate.
+    DuplicateAssertion { predicate: String, name: String },
 }
 
-impl std::fmt::Display for SpecError {
+impl std::fmt::Display for AssertionError {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match self {
-            SpecError::Malformed { annotation, reason, .. } => {
+            AssertionError::Malformed { annotation, reason, .. } => {
                 write!(f, "Malformed {}: {}", annotation, reason)
             }
-            SpecError::Statement { predicate, name, reason } => {
-                write!(f, "Invalid spec '{}.{}': {}", predicate, name, reason)
+            AssertionError::Statement { predicate, name, reason } => {
+                write!(f, "Invalid assertion '{}.{}': {}", predicate, name, reason)
             }
-            SpecError::DuplicateSpec { predicate, name } => {
-                write!(f, "Duplicate spec '{}.{}': it is stated more than once", predicate, name)
+            AssertionError::DuplicateAssertion { predicate, name } => {
+                write!(f, "Duplicate assertion '{}.{}': it is stated more than once", predicate, name)
             }
         }
     }
 }
 
-impl std::error::Error for SpecError {}
+impl std::error::Error for AssertionError {}
 
-impl From<SpecError> for VerifyError {
-    fn from(e: SpecError) -> Self {
+impl From<AssertionError> for VerifyError {
+    fn from(e: AssertionError) -> Self {
         match e {
-            SpecError::Malformed { annotation, reason, rule } => {
-                VerifyError::MalformedSpecAnnotation { annotation, reason, rule }
+            AssertionError::Malformed { annotation, reason, rule } => {
+                VerifyError::MalformedAssertion { annotation, reason, rule }
             }
-            SpecError::Statement { predicate, name, reason } => {
-                VerifyError::InvalidSpec { predicate, name, reason }
+            AssertionError::Statement { predicate, name, reason } => {
+                VerifyError::InvalidAssertion { predicate, name, reason }
             }
-            SpecError::DuplicateSpec { predicate, name } => {
-                VerifyError::DuplicateSpec { predicate, name }
+            AssertionError::DuplicateAssertion { predicate, name } => {
+                VerifyError::DuplicateAssertion { predicate, name }
             }
         }
     }
 }
 
-impl From<SpecError> for crate::errors::SynalogError {
-    fn from(e: SpecError) -> Self {
+impl From<AssertionError> for crate::errors::SynalogError {
+    fn from(e: AssertionError) -> Self {
         crate::errors::SynalogError::Verify(e.into())
     }
 }
 
-/// One `(predicate, name) -> statement` entry of a `@Spec` annotation.
+/// One `(predicate, name) -> statement` entry of an `@Assert` annotation.
 struct Entry {
     predicate: String,
     name: String,
     text: String,
 }
 
-/// Report where each `@Spec` of the program stands.
+/// Report where each `@Assert` of the program stands.
 ///
 /// `rules` must include the annotation rules. Reports come back in source
-/// order of the `@Spec` annotations.
-pub fn check_specs(rules: &[&Json]) -> (Vec<SpecReport>, Vec<SpecError>) {
+/// order of the `@Assert` annotations.
+pub fn check_assertions(rules: &[&Json]) -> (Vec<AssertionReport>, Vec<AssertionError>) {
     let mut errors = Vec::new();
     let mut defined = HashSet::new();
-    let mut specs = Vec::new();
-    let schema = spec::schema(rules);
+    let mut assertions = Vec::new();
+    let schema = assertion::schema(rules);
 
     for rule in rules {
         let name = rule.as_object()["head"].as_object()["predicate_name"].as_str();
         match name {
-            "@Spec" => specs.extend(read_annotation(rule, name, &mut errors)),
+            "@Assert" => assertions.extend(read_annotation(rule, name, &mut errors)),
             // A functor application (`P := F(A: B)`) defines `P` without a rule head.
             "@Make" => defined.extend(made_predicate(rule)),
             _ if !name.starts_with('@') => {
@@ -167,38 +167,38 @@ pub fn check_specs(rules: &[&Json]) -> (Vec<SpecReport>, Vec<SpecError>) {
         }
     }
 
-    let mut reports: Vec<SpecReport> = Vec::new();
+    let mut reports: Vec<AssertionReport> = Vec::new();
     let mut index: HashMap<(String, String), usize> = HashMap::new();
-    for spec in specs {
-        let key = (spec.predicate.clone(), spec.name.clone());
+    for assertion in assertions {
+        let key = (assertion.predicate.clone(), assertion.name.clone());
         if index.contains_key(&key) {
-            errors.push(SpecError::DuplicateSpec {
-                predicate: spec.predicate,
-                name: spec.name,
+            errors.push(AssertionError::DuplicateAssertion {
+                predicate: assertion.predicate,
+                name: assertion.name,
             });
             continue;
         }
         index.insert(key, reports.len());
-        let (status, detail) = match translate_spec(&spec, &defined, &schema) {
-            Ok(_) => (SpecStatus::Unchecked, None),
+        let (status, detail) = match translate_assertion(&assertion, &defined, &schema) {
+            Ok(_) => (AssertionStatus::Unchecked, None),
             Err(TranslateError::Missing(missing)) => (
-                SpecStatus::Pending,
+                AssertionStatus::Pending,
                 Some(format!("waiting for {}", missing.join(", "))),
             ),
-            Err(TranslateError::Unsupported(reason)) => (SpecStatus::Unsupported, Some(reason)),
+            Err(TranslateError::Unsupported(reason)) => (AssertionStatus::Unsupported, Some(reason)),
             Err(TranslateError::Invalid(reason)) => {
-                errors.push(SpecError::Statement {
-                    predicate: spec.predicate.clone(),
-                    name: spec.name.clone(),
+                errors.push(AssertionError::Statement {
+                    predicate: assertion.predicate.clone(),
+                    name: assertion.name.clone(),
                     reason,
                 });
-                (SpecStatus::Unsupported, None)
+                (AssertionStatus::Unsupported, None)
             }
         };
-        reports.push(SpecReport {
-            predicate: spec.predicate,
-            name: spec.name,
-            statement: spec.text,
+        reports.push(AssertionReport {
+            predicate: assertion.predicate,
+            name: assertion.name,
+            statement: assertion.text,
             status,
             detail,
         });
@@ -207,35 +207,35 @@ pub fn check_specs(rules: &[&Json]) -> (Vec<SpecReport>, Vec<SpecError>) {
     (reports, errors)
 }
 
-/// Translate the statement of `spec` into the rules of its counterexamples.
-fn translate_spec(
-    spec: &Entry,
+/// Translate the statement of `assertion` into the rules of its counterexamples.
+fn translate_assertion(
+    assertion: &Entry,
     defined: &HashSet<String>,
     schema: &Schema,
 ) -> Result<Translation, TranslateError> {
-    let statement = spec::parse(&spec.text).map_err(|e| TranslateError::Invalid(e.to_string()))?;
-    let translation = spec::translate(
+    let statement = assertion::parse(&assertion.text).map_err(|e| TranslateError::Invalid(e.to_string()))?;
+    let translation = assertion::translate(
         &statement,
         schema,
-        &spec::check_predicate(&spec.predicate, &spec.name),
+        &assertion::check_predicate(&assertion.predicate, &assertion.name),
     )?;
-    if !is_defined(&spec.predicate, defined) {
-        return Err(TranslateError::Missing(vec![spec.predicate.clone()]));
+    if !is_defined(&assertion.predicate, defined) {
+        return Err(TranslateError::Missing(vec![assertion.predicate.clone()]));
     }
     Ok(translation)
 }
 
-/// The rules that find the counterexamples of the spec `name` of `predicate`:
-/// the spec holds on a database when the translation's predicate is empty
+/// The rules that find the counterexamples of the assertion `name` of `predicate`:
+/// the assertion holds on a database when the translation's predicate is empty
 /// there. `rules` must include the annotation rules.
-pub fn spec_check(rules: &[&Json], predicate: &str, name: &str) -> Result<Translation, String> {
+pub fn assertion_check(rules: &[&Json], predicate: &str, name: &str) -> Result<Translation, String> {
     let mut errors = Vec::new();
     let mut defined = HashSet::new();
     let mut found = None;
     for rule in rules {
         let head = rule.as_object()["head"].as_object()["predicate_name"].as_str();
         match head {
-            "@Spec" => {
+            "@Assert" => {
                 for entry in read_annotation(rule, head, &mut errors) {
                     if entry.predicate == predicate && entry.name == name && found.is_none() {
                         found = Some(entry);
@@ -250,18 +250,18 @@ pub fn spec_check(rules: &[&Json], predicate: &str, name: &str) -> Result<Transl
         }
     }
     let Some(entry) = found else {
-        return Err(format!("No spec '{}.{}'", predicate, name));
+        return Err(format!("No assertion '{}.{}'", predicate, name));
     };
-    translate_spec(&entry, &defined, &spec::schema(rules)).map_err(|e| match e {
+    translate_assertion(&entry, &defined, &assertion::schema(rules)).map_err(|e| match e {
         TranslateError::Missing(missing) => format!(
-            "Spec '{}.{}' is pending: waiting for {}",
+            "Assertion '{}.{}' is pending: waiting for {}",
             predicate,
             name,
             missing.join(", ")
         ),
-        TranslateError::Invalid(reason) => format!("Invalid spec '{}.{}': {}", predicate, name, reason),
+        TranslateError::Invalid(reason) => format!("Invalid assertion '{}.{}': {}", predicate, name, reason),
         TranslateError::Unsupported(reason) => {
-            format!("Spec '{}.{}' cannot be checked: {}", predicate, name, reason)
+            format!("Assertion '{}.{}' cannot be checked: {}", predicate, name, reason)
         }
     })
 }
@@ -282,11 +282,11 @@ fn made_predicate(rule: &Json) -> Option<String> {
     predicate_name(value.as_object().get("expression").unwrap_or(value))
 }
 
-/// Read the entries of one `@Spec` annotation rule, reporting a
+/// Read the entries of one `@Assert` annotation rule, reporting a
 /// malformed annotation into `errors`.
-fn read_annotation(rule: &Json, annotation: &str, errors: &mut Vec<SpecError>) -> Vec<Entry> {
+fn read_annotation(rule: &Json, annotation: &str, errors: &mut Vec<AssertionError>) -> Vec<Entry> {
     let mut malformed = |reason: String| {
-        errors.push(SpecError::Malformed {
+        errors.push(AssertionError::Malformed {
             annotation: annotation.to_string(),
             reason,
             rule: rule_text(rule),
@@ -380,13 +380,13 @@ mod tests {
     use crate::parser::parse_file;
 
     const TRANSITIVE: &str =
-        r#"@Spec(Ancestor, transitive: "∀ x y z, Ancestor x y → Ancestor y z → Ancestor x z");"#;
+        r#"@Assert(Ancestor, transitive: "∀ x y z, Ancestor x y → Ancestor y z → Ancestor x z");"#;
     const RULE: &str = "Ancestor(x:, y:) :- parent(x:, y:);";
 
-    fn check(code: &str) -> (Vec<SpecReport>, Vec<SpecError>) {
+    fn check(code: &str) -> (Vec<AssertionReport>, Vec<AssertionError>) {
         let parsed = parse_file(code, None, &[]).unwrap();
         let rules: Vec<&Json> = parsed.as_object()["rule"].as_array().iter().collect();
-        check_specs(&rules)
+        check_assertions(&rules)
     }
 
     #[test]
@@ -397,7 +397,7 @@ mod tests {
         assert_eq!(reports[0].predicate, "Ancestor");
         assert_eq!(reports[0].name, "transitive");
         assert_eq!(reports[0].statement, "∀ x y z, Ancestor x y → Ancestor y z → Ancestor x z");
-        assert_eq!(reports[0].status, SpecStatus::Pending);
+        assert_eq!(reports[0].status, AssertionStatus::Pending);
         assert_eq!(reports[0].detail.as_deref(), Some("waiting for Ancestor"));
     }
 
@@ -405,10 +405,10 @@ mod tests {
     fn test_spec_waits_for_every_predicate_it_names() {
         let (reports, errors) = check(&format!(
             "{RULE}\n{}",
-            r#"@Spec(Ancestor, known: "∀ x y, Ancestor x y → Person x ∧ Person y");"#
+            r#"@Assert(Ancestor, known: "∀ x y, Ancestor x y → Person x ∧ Person y");"#
         ));
         assert!(errors.is_empty(), "{errors:?}");
-        assert_eq!(reports[0].status, SpecStatus::Pending);
+        assert_eq!(reports[0].status, AssertionStatus::Pending);
         assert_eq!(reports[0].detail.as_deref(), Some("waiting for Person"));
     }
 
@@ -416,7 +416,7 @@ mod tests {
     fn test_spec_of_defined_predicate_is_unchecked() {
         let (reports, errors) = check(&format!("{TRANSITIVE}\n{RULE}"));
         assert!(errors.is_empty(), "{errors:?}");
-        assert_eq!(reports[0].status, SpecStatus::Unchecked);
+        assert_eq!(reports[0].status, AssertionStatus::Unchecked);
         assert_eq!(reports[0].detail, None);
     }
 
@@ -425,20 +425,20 @@ mod tests {
         let (reports, errors) = check(&format!(
             "{}\n{RULE}",
             r#"
-            @Spec(Ancestor, transitive: "Ancestor x y → Ancestor y z → Ancestor x z",
+            @Assert(Ancestor, transitive: "Ancestor x y → Ancestor y z → Ancestor x z",
                             irreflexive: "¬ Ancestor x x");
-            @Spec(Ancestor, positive: "∀ x, x > 0");
+            @Assert(Ancestor, positive: "∀ x, x > 0");
             "#
         ));
         assert!(errors.is_empty(), "{errors:?}");
-        let got: Vec<(&str, SpecStatus)> =
+        let got: Vec<(&str, AssertionStatus)> =
             reports.iter().map(|r| (r.name.as_str(), r.status)).collect();
         assert_eq!(
             got,
             vec![
-                ("transitive", SpecStatus::Unchecked),
-                ("irreflexive", SpecStatus::Unchecked),
-                ("positive", SpecStatus::Unsupported),
+                ("transitive", AssertionStatus::Unchecked),
+                ("irreflexive", AssertionStatus::Unchecked),
+                ("positive", AssertionStatus::Unsupported),
             ]
         );
         assert!(reports[2].detail.as_deref().unwrap().contains("variable 'x' is not bound"));
@@ -450,24 +450,24 @@ mod tests {
         // can be anchored to it but cannot apply it.
         let (reports, errors) = check(
             r#"
-            @Spec(Managers, closed: "∀ x y, Reports x y → Reports x y");
+            @Assert(Managers, closed: "∀ x y, Reports x y → Reports x y");
             Closure(x:, y:) :- Edge(x:, y:);
             Reports(x:, y:) :- reports(x:, y:);
             Managers := Closure(Edge: Reports);
         "#,
         );
         assert!(errors.is_empty(), "{errors:?}");
-        assert_ne!(reports[0].status, SpecStatus::Pending);
+        assert_ne!(reports[0].status, AssertionStatus::Pending);
     }
 
     #[test]
     fn test_statement_that_does_not_parse() {
         let (_, errors) = check(&format!(
             "{RULE}\n{}",
-            r#"@Spec(Ancestor, transitive: "∀ x y, Ancestor x y →");"#
+            r#"@Assert(Ancestor, transitive: "∀ x y, Ancestor x y →");"#
         ));
         assert!(
-            matches!(&errors[..], [SpecError::Statement { reason, .. }]
+            matches!(&errors[..], [AssertionError::Statement { reason, .. }]
                 if reason.contains("end of the statement")),
             "{errors:?}"
         );
@@ -477,10 +477,10 @@ mod tests {
     fn test_statement_with_wrong_number_of_arguments() {
         let (_, errors) = check(&format!(
             "{RULE}\n{}",
-            r#"@Spec(Ancestor, irreflexive: "∀ x, ¬ Ancestor x");"#
+            r#"@Assert(Ancestor, irreflexive: "∀ x, ¬ Ancestor x");"#
         ));
         assert!(
-            matches!(&errors[..], [SpecError::Statement { reason, .. }]
+            matches!(&errors[..], [AssertionError::Statement { reason, .. }]
                 if reason.contains("'Ancestor' has 2 columns (x, y)")),
             "{errors:?}"
         );
@@ -490,64 +490,64 @@ mod tests {
     fn test_spec_check_gives_the_counterexample_rules() {
         let parsed = parse_file(&format!("{TRANSITIVE}\n{RULE}"), None, &[]).unwrap();
         let rules: Vec<&Json> = parsed.as_object()["rule"].as_array().iter().collect();
-        let translation = spec_check(&rules, "Ancestor", "transitive").unwrap();
-        assert_eq!(translation.predicate, "Spec_Ancestor_transitive");
+        let translation = assertion_check(&rules, "Ancestor", "transitive").unwrap();
+        assert_eq!(translation.predicate, "Assert_Ancestor_transitive");
         assert_eq!(translation.columns, vec!["x", "y", "z"]);
         assert_eq!(
             translation.rules,
-            "Spec_Ancestor_transitive(x: x, y: y, z: z) distinct :- \
+            "Assert_Ancestor_transitive(x: x, y: y, z: z) distinct :- \
              Ancestor(x: x, y: y), Ancestor(x: y, y: z), ~Ancestor(x: x, y: z);"
         );
 
-        let err = spec_check(&rules, "Ancestor", "symmetric").unwrap_err();
-        assert_eq!(err, "No spec 'Ancestor.symmetric'");
+        let err = assertion_check(&rules, "Ancestor", "symmetric").unwrap_err();
+        assert_eq!(err, "No assertion 'Ancestor.symmetric'");
     }
 
     #[test]
     fn test_spec_check_of_a_pending_spec() {
         let parsed = parse_file(TRANSITIVE, None, &[]).unwrap();
         let rules: Vec<&Json> = parsed.as_object()["rule"].as_array().iter().collect();
-        let err = spec_check(&rules, "Ancestor", "transitive").unwrap_err();
-        assert_eq!(err, "Spec 'Ancestor.transitive' is pending: waiting for Ancestor");
+        let err = assertion_check(&rules, "Ancestor", "transitive").unwrap_err();
+        assert_eq!(err, "Assertion 'Ancestor.transitive' is pending: waiting for Ancestor");
     }
 
     #[test]
     fn test_triple_quoted_statement() {
         let (reports, errors) = check(&format!(
             "{RULE}\n{}",
-            "@Spec(Ancestor, transitive: \"\"\"∀ x y z,\n  Ancestor x y →\n  Ancestor y z →\n  Ancestor x z\"\"\");"
+            "@Assert(Ancestor, transitive: \"\"\"∀ x y z,\n  Ancestor x y →\n  Ancestor y z →\n  Ancestor x z\"\"\");"
         ));
         assert!(errors.is_empty(), "{errors:?}");
-        assert_eq!(reports[0].status, SpecStatus::Unchecked);
+        assert_eq!(reports[0].status, AssertionStatus::Unchecked);
     }
 
     #[test]
     fn test_duplicate_spec() {
         let (reports, errors) = check(
             r#"
-            @Spec(Ancestor, irreflexive: "¬ Ancestor x x");
-            @Spec(Ancestor, irreflexive: "∀ x, ¬ Ancestor x x");
+            @Assert(Ancestor, irreflexive: "¬ Ancestor x x");
+            @Assert(Ancestor, irreflexive: "∀ x, ¬ Ancestor x x");
         "#,
         );
         assert_eq!(reports.len(), 1);
         assert_eq!(reports[0].statement, "¬ Ancestor x x");
-        assert!(matches!(&errors[..], [SpecError::DuplicateSpec { .. }]), "{errors:?}");
+        assert!(matches!(&errors[..], [AssertionError::DuplicateAssertion { .. }]), "{errors:?}");
     }
 
     #[test]
     fn test_malformed_annotations() {
         for code in [
-            r#"@Spec(Ancestor);"#,
-            r#"@Spec(Ancestor, "Ancestor x y");"#,
-            r#"@Spec(transitive: "Ancestor x y");"#,
-            r#"@Spec("Ancestor", transitive: "Ancestor x y");"#,
-            r#"@Spec(Ancestor, transitive: 1);"#,
-            r#"@Spec(Ancestor, transitive: Ancestor);"#,
+            r#"@Assert(Ancestor);"#,
+            r#"@Assert(Ancestor, "Ancestor x y");"#,
+            r#"@Assert(transitive: "Ancestor x y");"#,
+            r#"@Assert("Ancestor", transitive: "Ancestor x y");"#,
+            r#"@Assert(Ancestor, transitive: 1);"#,
+            r#"@Assert(Ancestor, transitive: Ancestor);"#,
         ] {
             let (reports, errors) = check(code);
             assert!(reports.is_empty(), "{code}: {reports:?}");
             assert!(
-                matches!(&errors[..], [SpecError::Malformed { .. }]),
+                matches!(&errors[..], [AssertionError::Malformed { .. }]),
                 "{code}: {errors:?}"
             );
         }

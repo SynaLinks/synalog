@@ -4,7 +4,7 @@ pub mod errors;
 pub mod parser;
 pub mod compiler;
 pub mod verifier;
-pub mod spec;
+pub mod assertion;
 
 #[cfg(feature = "python")]
 mod python;

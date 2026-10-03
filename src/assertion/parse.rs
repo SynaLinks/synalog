@@ -1,6 +1,6 @@
 // License Apache 2.0: (c) 2025-2026 Yoan Sallami (Synalinks Team)
 
-//! Parser for spec statements.
+//! Parser for assertion statements.
 //!
 //! A statement is a first-order formula with arithmetic and sums, written in
 //! the syntax of a Lean proposition:
@@ -415,7 +415,7 @@ impl Parser {
     }
 }
 
-/// Parse a spec statement.
+/// Parse an assertion statement.
 pub fn parse(text: &str) -> Result<Expr, SyntaxError> {
     let tokens = tokenize(text)?;
     let mut parser = Parser {

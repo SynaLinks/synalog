@@ -9,7 +9,7 @@
 //! - Stratification (no negative recursion cycles)
 //! - Arity consistency (predicates used with consistent argument counts)
 //! - Recursion safety (base cases, no trivial loops)
-//! - Specs (`@Spec` statements)
+//! - Assertions (`@Assert` statements)
 
 mod vars;
 mod safety;
@@ -20,7 +20,7 @@ mod reserved;
 mod sqlexpr;
 mod positional;
 mod undefined;
-mod specs;
+mod assertions;
 
 pub use vars::VarCollector;
 pub use safety::{SafetyError, check_safety};
@@ -31,7 +31,7 @@ pub use reserved::{ReservedError, check_reserved, reserved_predicate_names};
 pub use sqlexpr::{SqlExprError, check_sqlexpr};
 pub use positional::{PositionalError, check_positional};
 pub use undefined::{UndefinedError, builtin_function_names, check_undefined};
-pub use specs::{SpecError, SpecReport, SpecStatus, check_specs, spec_check};
+pub use assertions::{AssertionError, AssertionReport, AssertionStatus, check_assertions, assertion_check};
 
 use crate::parser::Json;
 use crate::errors::{VerifyError, VerifyResult};
@@ -47,7 +47,7 @@ pub enum CheckError {
     SqlExpr(SqlExprError),
     Positional(PositionalError),
     Undefined(UndefinedError),
-    Spec(SpecError),
+    Assert(AssertionError),
 }
 
 impl std::fmt::Display for CheckError {
@@ -61,7 +61,7 @@ impl std::fmt::Display for CheckError {
             CheckError::SqlExpr(e) => write!(f, "{}", e),
             CheckError::Positional(e) => write!(f, "{}", e),
             CheckError::Undefined(e) => write!(f, "{}", e),
-            CheckError::Spec(e) => write!(f, "{}", e),
+            CheckError::Assert(e) => write!(f, "{}", e),
         }
     }
 }
@@ -79,7 +79,7 @@ impl From<CheckError> for VerifyError {
             CheckError::SqlExpr(se) => se.into(),
             CheckError::Positional(pe) => pe.into(),
             CheckError::Undefined(ue) => ue.into(),
-            CheckError::Spec(se) => se.into(),
+            CheckError::Assert(se) => se.into(),
         }
     }
 }
@@ -95,8 +95,8 @@ impl From<CheckError> for crate::errors::SynalogError {
 pub struct CheckResult {
     pub errors: Vec<CheckError>,
     pub warnings: Vec<String>,
-    /// Every `@Spec` of the program and where it stands.
-    pub specs: Vec<SpecReport>,
+    /// Every `@Assert` of the program and where it stands.
+    pub assertions: Vec<AssertionReport>,
 }
 
 impl CheckResult {
@@ -107,7 +107,7 @@ impl CheckResult {
     pub fn merge(&mut self, other: CheckResult) {
         self.errors.extend(other.errors);
         self.warnings.extend(other.warnings);
-        self.specs.extend(other.specs);
+        self.assertions.extend(other.assertions);
     }
 
     /// Convert to the unified VerifyResult type.
@@ -198,22 +198,22 @@ pub fn validate(parsed: &Json) -> CheckResult {
         result.errors.push(CheckError::Undefined(err));
     }
 
-    // Check 10: Specs (@Spec statements)
-    let (specs, spec_errors) = specs::check_specs(&all_rules);
+    // Check 10: Assertions (@Assert statements)
+    let (assertions, spec_errors) = assertions::check_assertions(&all_rules);
     for err in spec_errors {
-        result.errors.push(CheckError::Spec(err));
+        result.errors.push(CheckError::Assert(err));
     }
-    for spec in &specs {
-        if spec.status == SpecStatus::Unsupported {
-            if let Some(reason) = &spec.detail {
+    for assertion in &assertions {
+        if assertion.status == AssertionStatus::Unsupported {
+            if let Some(reason) = &assertion.detail {
                 result.warnings.push(format!(
-                    "Spec '{}.{}' cannot be checked: {}",
-                    spec.predicate, spec.name, reason
+                    "Assertion '{}.{}' cannot be checked: {}",
+                    assertion.predicate, assertion.name, reason
                 ));
             }
         }
     }
-    result.specs = specs;
+    result.assertions = assertions;
 
     result
 }

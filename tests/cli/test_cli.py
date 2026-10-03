@@ -129,8 +129,8 @@ def test_print_validates_before_compiling(tmp_path):
     assert "SqlExpr" in result.stderr
 
 
-SPEC_PROGRAM = """\
-@Spec(Near, transitive: "forall x y z, Near x y -> Near y z -> Near x z",
+ASSERT_PROGRAM = """\
+@Assert(Near, transitive: "forall x y z, Near x y -> Near y z -> Near x z",
             irreflexive: "forall x, not Near x x");
 Parent(x: "a", y: "b");
 Parent(x: "b", y: "c");
@@ -142,8 +142,8 @@ Near(x:, y: z) :- Parent(x:, y:), Parent(x: y, y: z);
 
 @pytest.mark.parametrize("engine", ["duckdb", "sqlite"])
 def test_verify_prints_counterexamples_and_fails(tmp_path, engine):
-    path = tmp_path / "spec.l"
-    path.write_text(SPEC_PROGRAM)
+    path = tmp_path / "assertion.l"
+    path.write_text(ASSERT_PROGRAM)
     result = synalog(str(path), "verify", "--engine", engine)
     assert result.returncode == 1
     assert "Near.transitive is violated" in result.stdout
@@ -152,41 +152,41 @@ def test_verify_prints_counterexamples_and_fails(tmp_path, engine):
 
 
 def test_verify_passes_when_every_spec_holds(tmp_path):
-    path = tmp_path / "spec.l"
-    path.write_text(SPEC_PROGRAM.replace("Near y z -> Near x z", "Near y z -> Near x z \\/ x != z"))
+    path = tmp_path / "assertion.l"
+    path.write_text(ASSERT_PROGRAM.replace("Near y z -> Near x z", "Near y z -> Near x z \\/ x != z"))
     result = synalog(str(path), "verify")
     assert result.returncode == 0, result.stdout + result.stderr
     assert "Near.transitive holds" in result.stdout
 
 
 def test_verify_limits_the_counterexamples_shown(tmp_path):
-    path = tmp_path / "spec.l"
-    path.write_text(SPEC_PROGRAM)
+    path = tmp_path / "assertion.l"
+    path.write_text(ASSERT_PROGRAM)
     result = synalog(str(path), "verify", "Near", "--limit", "1")
     assert result.returncode == 1
     assert "at least 1 counterexample:" in result.stdout
 
 
 def test_verify_reports_uncheckable_and_pending_specs(tmp_path):
-    path = tmp_path / "spec.l"
+    path = tmp_path / "assertion.l"
     path.write_text(
-        SPEC_PROGRAM
-        + '@Spec(Near, positive: "forall x, x > 0");\n'
-        + '@Spec(Far, symmetric: "forall x y, Far x y -> Far y x");\n'
+        ASSERT_PROGRAM
+        + '@Assert(Near, positive: "forall x, x > 0");\n'
+        + '@Assert(Far, symmetric: "forall x y, Far x y -> Far y x");\n'
     )
     result = synalog(str(path), "verify", "Far")
     assert result.returncode == 0
     assert "Far.symmetric pending: waiting for Far" in result.stdout
-    # The uncheckable spec is a verifier warning on every command.
-    assert "Spec 'Near.positive' cannot be checked" in result.stderr
+    # The uncheckable assertion is a verifier warning on every command.
+    assert "Assertion 'Near.positive' cannot be checked" in result.stderr
 
 
 def test_verify_unknown_predicate(tmp_path):
-    path = tmp_path / "spec.l"
-    path.write_text(SPEC_PROGRAM)
+    path = tmp_path / "assertion.l"
+    path.write_text(ASSERT_PROGRAM)
     result = synalog(str(path), "verify", "Parent")
     assert result.returncode == 1
-    assert "No spec for Parent" in result.stderr
+    assert "No assertion for Parent" in result.stderr
 
 
 def test_run_with_limit_on_sqlite(program_file):

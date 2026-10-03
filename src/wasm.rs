@@ -84,7 +84,7 @@ pub fn compile(source: &str, predicate: &str, engine: &str) -> Result<String, Js
 }
 
 /// What the verifier reports for a program: it is valid when `errors` is
-/// empty. Warnings do not make it invalid (a `@Spec` that cannot be checked
+/// empty. Warnings do not make it invalid (an `@Assert` that cannot be checked
 /// against a database).
 #[wasm_bindgen(getter_with_clone)]
 pub struct CheckOutcome {
@@ -104,25 +104,25 @@ pub fn check(source: &str, engine: &str) -> Result<CheckOutcome, JsValue> {
     })
 }
 
-/// Every `@Spec` of `source` and where it stands, as a JSON array of
+/// Every `@Assert` of `source` and where it stands, as a JSON array of
 /// `{predicate, name, statement, status, detail}` objects in source order.
 /// Raises on syntax errors.
 #[wasm_bindgen]
-pub fn specs(source: &str, engine: &str) -> Result<String, JsValue> {
+pub fn assertions(source: &str, engine: &str) -> Result<String, JsValue> {
     engine_arg(engine)?;
     let parsed = parse(source)?;
-    let specs: Vec<serde_json::Value> = validate(&parsed)
-        .specs
+    let assertions: Vec<serde_json::Value> = validate(&parsed)
+        .assertions
         .into_iter()
-        .map(|spec| {
+        .map(|assertion| {
             serde_json::json!({
-                "predicate": spec.predicate,
-                "name": spec.name,
-                "statement": spec.statement,
-                "status": spec.status.as_str(),
-                "detail": spec.detail,
+                "predicate": assertion.predicate,
+                "name": assertion.name,
+                "statement": assertion.statement,
+                "status": assertion.status.as_str(),
+                "detail": assertion.detail,
             })
         })
         .collect();
-    Ok(serde_json::Value::Array(specs).to_string())
+    Ok(serde_json::Value::Array(assertions).to_string())
 }

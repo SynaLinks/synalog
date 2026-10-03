@@ -13,7 +13,7 @@ use pyo3::prelude::*;
 use crate::compiler::dialects;
 use crate::compiler::universe::{LogicaProgram, Pagination};
 use crate::parser::{front_matter as read_front_matter, parse_file, Json};
-use crate::verifier::{builtin_function_names, reserved_predicate_names, spec_check, validate};
+use crate::verifier::{builtin_function_names, reserved_predicate_names, assertion_check, validate};
 
 fn map_err<E: std::fmt::Display>(e: E) -> PyErr {
     PyValueError::new_err(e.to_string())
@@ -163,7 +163,7 @@ fn compile_all(
 /// messages.
 ///
 /// The program is valid when `errors` is empty. Warnings do not make it
-/// invalid: they report specs that are well-formed but cannot be checked
+/// invalid: they report assertions that are well-formed but cannot be checked
 /// against a database.
 ///
 /// `engine` overrides the program's `@Engine` annotation (default: duckdb).
@@ -182,23 +182,23 @@ fn check(
     Ok((errors, result.warnings))
 }
 
-/// Every `@Spec` of a program and where it stands.
+/// Every `@Assert` of a program and where it stands.
 ///
-/// Returns one dict per spec, in source order, with the keys `predicate`,
+/// Returns one dict per assertion, in source order, with the keys `predicate`,
 /// `name`, `statement`, `status` and `detail`:
 ///
-/// - `"pending"`: a predicate the spec is about is not defined yet (`detail`
+/// - `"pending"`: a predicate the assertion is about is not defined yet (`detail`
 ///   names what it waits for);
 /// - `"unchecked"`: the statement can be checked against a database, see
 ///   `counterexamples`;
 /// - `"unsupported"`: the statement is well-formed but cannot be checked
 ///   against a database (`detail` says why).
 ///
-/// Invalid specs (a statement that does not parse, a duplicate, ...) are
+/// Invalid assertions (a statement that does not parse, a duplicate, ...) are
 /// reported by `check`, not here. Raises ValueError on syntax errors.
 #[pyfunction]
 #[pyo3(signature = (source, engine=None, import_root=None))]
-fn specs(
+fn assertions(
     source: &str,
     engine: Option<&str>,
     import_root: Option<Vec<String>>,
@@ -206,28 +206,28 @@ fn specs(
     check_engine(engine)?;
     let parsed = parse_source(source, None, import_root)?;
     Ok(validate(&parsed)
-        .specs
+        .assertions
         .into_iter()
-        .map(|spec| {
+        .map(|assertion| {
             HashMap::from([
-                ("predicate", Some(spec.predicate)),
-                ("name", Some(spec.name)),
-                ("statement", Some(spec.statement)),
-                ("status", Some(spec.status.to_string())),
-                ("detail", spec.detail),
+                ("predicate", Some(assertion.predicate)),
+                ("name", Some(assertion.name)),
+                ("statement", Some(assertion.statement)),
+                ("status", Some(assertion.status.to_string())),
+                ("detail", assertion.detail),
             ])
         })
         .collect())
 }
 
-/// Compile the search for the counterexamples of a spec to SQL.
+/// Compile the search for the counterexamples of an assertion to SQL.
 ///
-/// The spec `name` of `predicate` holds on a database when this query returns
+/// The assertion `name` of `predicate` holds on a database when this query returns
 /// no row there; each row it returns is a counterexample, one column per
 /// universally quantified variable of the statement. `limit`/`offset` paginate
 /// as in `compile`.
 ///
-/// Raises ValueError if there is no such spec, if it is pending or cannot be
+/// Raises ValueError if there is no such assertion, if it is pending or cannot be
 /// checked, and on syntax or compilation errors.
 #[pyfunction]
 #[pyo3(signature = (source, predicate, name, limit=None, offset=None, engine=None, import_root=None))]
@@ -243,7 +243,7 @@ fn counterexamples(
     check_engine(engine)?;
     let parsed = parse_source(source, None, import_root.clone())?;
     let rules: Vec<&Json> = parsed.as_object()["rule"].as_array().iter().collect();
-    let translation = spec_check(&rules, predicate, name).map_err(PyValueError::new_err)?;
+    let translation = assertion_check(&rules, predicate, name).map_err(PyValueError::new_err)?;
     // The counterexamples are a predicate of the program like any other.
     let extended = format!("{}\n{}\n", source, translation.rules);
     let parsed = parse_source(&extended, None, import_root)?;
@@ -304,7 +304,7 @@ fn _synalog(m: &Bound<'_, PyModule>) -> PyResult<()> {
     m.add_function(wrap_pyfunction!(search, m)?)?;
     m.add_function(wrap_pyfunction!(compile_all, m)?)?;
     m.add_function(wrap_pyfunction!(check, m)?)?;
-    m.add_function(wrap_pyfunction!(specs, m)?)?;
+    m.add_function(wrap_pyfunction!(assertions, m)?)?;
     m.add_function(wrap_pyfunction!(counterexamples, m)?)?;
     m.add_function(wrap_pyfunction!(reserved_predicates, m)?)?;
     m.add_function(wrap_pyfunction!(builtin_functions, m)?)?;

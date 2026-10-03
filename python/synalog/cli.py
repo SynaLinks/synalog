@@ -48,7 +48,7 @@ from ._synalog import (
     counterexamples,
     parse,
     search,
-    specs,
+    assertions,
 )
 from .runners import RunnerUnavailable, run_sql
 
@@ -56,7 +56,7 @@ DEFAULT_ENGINE = "duckdb"
 
 COMMANDS = ("print", "run", "verify")
 
-#: Counterexamples shown per violated spec by `verify`, unless --limit is given.
+#: Counterexamples shown per violated assertion by `verify`, unless --limit is given.
 VERIFY_LIMIT = 5
 
 out = Console()
@@ -391,16 +391,16 @@ def main(args, inline, engine, limit, offset, as_csv, search_pattern, dsn,
       synalog program.l print Predicate ...   print compiled SQL
       synalog program.l run Predicate ...     execute and print a table
       synalog program.l run Predicate --csv   execute and print CSV
-      synalog program.l verify [Predicate ...] check the @Spec statements
+      synalog program.l verify [Predicate ...] check the @Assert statements
       synalog connect ENGINE DSN              save a remote engine connection
       synalog introspect ENGINE               print Tables predicates for a schema
 
     print, run and verify validate the whole program first, aborting with the
     verifier's errors if it is invalid.
 
-    verify runs every @Spec of the program (or of the given predicates) against
+    verify runs every @Assert of the program (or of the given predicates) against
     the database and prints the counterexamples of those that do not hold
-    (--limit of them, 5 by default); it exits 1 if any spec is violated.
+    (--limit of them, 5 by default); it exits 1 if any assertion is violated.
 
     Add --search REGEX to print/run to keep only rows where some
     column matches REGEX (engine-native regex, not a SQL LIKE pattern), e.g.
@@ -497,28 +497,28 @@ def main(args, inline, engine, limit, offset, as_csv, search_pattern, dsn,
             sys.exit(1)
 
     def verify(eng: str, run_dsn: str | None) -> bool:
-        """Run the specs against the database; False if any is violated."""
+        """Run the assertions against the database; False if any is violated."""
         selected = [
-            spec
-            for spec in specs(source, engine=eng, import_root=roots)
-            if not predicates or spec["predicate"] in predicates
+            assertion
+            for assertion in assertions(source, engine=eng, import_root=roots)
+            if not predicates or assertion["predicate"] in predicates
         ]
-        unknown = set(predicates) - {spec["predicate"] for spec in selected}
+        unknown = set(predicates) - {assertion["predicate"] for assertion in selected}
         if unknown:
-            raise ValueError(f"No spec for {', '.join(sorted(unknown))}")
+            raise ValueError(f"No assertion for {', '.join(sorted(unknown))}")
         shown = VERIFY_LIMIT if limit is None else limit
         ok = True
-        for spec in selected:
-            label = f"{spec['predicate']}.{spec['name']}"
-            if spec["status"] != "unchecked":
-                detail = f": {spec['detail']}" if spec["detail"] else ""
-                out.print(f"- {label} {spec['status']}{detail}", style="yellow", markup=False, highlight=False)
+        for assertion in selected:
+            label = f"{assertion['predicate']}.{assertion['name']}"
+            if assertion["status"] != "unchecked":
+                detail = f": {assertion['detail']}" if assertion["detail"] else ""
+                out.print(f"- {label} {assertion['status']}{detail}", style="yellow", markup=False, highlight=False)
                 continue
             # One row past the limit tells whether there are more.
             sql = counterexamples(
                 source,
-                spec["predicate"],
-                spec["name"],
+                assertion["predicate"],
+                assertion["name"],
                 limit=shown + 1,
                 engine=eng,
                 import_root=roots,
@@ -531,7 +531,7 @@ def main(args, inline, engine, limit, offset, as_csv, search_pattern, dsn,
             more = "at least " if len(rows) > shown else ""
             count = min(len(rows), shown)
             out.print(
-                f"✗ {label} is violated: {spec['statement']}\n"
+                f"✗ {label} is violated: {assertion['statement']}\n"
                 f"  {more}{count} counterexample{'' if count == 1 else 's'}:",
                 style="red",
                 markup=False,

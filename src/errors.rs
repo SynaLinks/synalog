@@ -190,25 +190,25 @@ pub enum VerifyError {
         rule: String,
     },
 
-    /// `@Spec` not shaped as `(Predicate, name: "text", ...)`.
+    /// `@Assert` not shaped as `(Predicate, name: "text", ...)`.
     #[error("Malformed {annotation}: {reason}")]
-    MalformedSpecAnnotation {
+    MalformedAssertion {
         annotation: String,
         reason: String,
         rule: String,
     },
 
-    /// `@Spec` statement that does not parse or contradicts the program.
-    #[error("Invalid spec '{predicate}.{name}': {reason}")]
-    InvalidSpec {
+    /// `@Assert` statement that does not parse or contradicts the program.
+    #[error("Invalid assertion '{predicate}.{name}': {reason}")]
+    InvalidAssertion {
         predicate: String,
         name: String,
         reason: String,
     },
 
-    /// The same spec name stated twice for a predicate.
-    #[error("Duplicate spec '{predicate}.{name}': it is stated more than once")]
-    DuplicateSpec { predicate: String, name: String },
+    /// The same assertion name stated twice for a predicate.
+    #[error("Duplicate assertion '{predicate}.{name}': it is stated more than once")]
+    DuplicateAssertion { predicate: String, name: String },
 }
 
 // ============================================================================

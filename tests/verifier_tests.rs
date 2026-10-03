@@ -7,7 +7,7 @@
 use std::path::PathBuf;
 
 use synalog::parser::parse_file;
-use synalog::verifier::{validate, CheckError, SafetyError, RecursionError, SpecError};
+use synalog::verifier::{validate, CheckError, SafetyError, RecursionError, AssertionError};
 
 /// Path to the verifier fixtures directory.
 fn fixtures_dir() -> PathBuf {
@@ -29,9 +29,9 @@ enum ExpectedError {
     UnsafeSqlExpr,
     PositionalArguments,
     UndefinedPredicate,
-    MalformedSpec,
-    InvalidSpec,
-    DuplicateSpec,
+    MalformedAssertion,
+    InvalidAssertion,
+    DuplicateAssertion,
 }
 
 /// Parse expected error from file content.
@@ -52,9 +52,9 @@ fn parse_expected_error(content: &str) -> Option<ExpectedError> {
                 s if s.contains("unsafeSqlExpr") => Some(ExpectedError::UnsafeSqlExpr),
                 s if s.contains("positionalArguments") => Some(ExpectedError::PositionalArguments),
                 s if s.contains("undefinedPredicate") => Some(ExpectedError::UndefinedPredicate),
-                s if s.contains("malformedSpec") => Some(ExpectedError::MalformedSpec),
-                s if s.contains("invalidSpec") => Some(ExpectedError::InvalidSpec),
-                s if s.contains("duplicateSpec") => Some(ExpectedError::DuplicateSpec),
+                s if s.contains("malformedAssertion") => Some(ExpectedError::MalformedAssertion),
+                s if s.contains("invalidAssertion") => Some(ExpectedError::InvalidAssertion),
+                s if s.contains("duplicateAssertion") => Some(ExpectedError::DuplicateAssertion),
                 _ => None,
             };
         }
@@ -77,9 +77,9 @@ fn error_matches(error: &CheckError, expected: &ExpectedError) -> bool {
         (CheckError::SqlExpr(_), ExpectedError::UnsafeSqlExpr) => true,
         (CheckError::Positional(_), ExpectedError::PositionalArguments) => true,
         (CheckError::Undefined(_), ExpectedError::UndefinedPredicate) => true,
-        (CheckError::Spec(SpecError::Malformed { .. }), ExpectedError::MalformedSpec) => true,
-        (CheckError::Spec(SpecError::Statement { .. }), ExpectedError::InvalidSpec) => true,
-        (CheckError::Spec(SpecError::DuplicateSpec { .. }), ExpectedError::DuplicateSpec) => true,
+        (CheckError::Assert(AssertionError::Malformed { .. }), ExpectedError::MalformedAssertion) => true,
+        (CheckError::Assert(AssertionError::Statement { .. }), ExpectedError::InvalidAssertion) => true,
+        (CheckError::Assert(AssertionError::DuplicateAssertion { .. }), ExpectedError::DuplicateAssertion) => true,
         _ => false,
     }
 }

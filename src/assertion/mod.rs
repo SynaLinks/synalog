@@ -1,6 +1,6 @@
 // License Apache 2.0: (c) 2025-2026 Yoan Sallami (Synalinks Team)
 
-//! The language of `@Spec` statements.
+//! The language of `@Assert` statements.
 //!
 //! A statement is a first-order formula over the program's predicates, in the
 //! syntax of a Lean proposition ([`parse`]). It is checked against a database
@@ -47,7 +47,7 @@ pub fn schema(rules: &[&Json]) -> Schema {
     schema
 }
 
-/// Name of the predicate holding the counterexamples of a spec.
+/// Name of the predicate holding the counterexamples of an assertion.
 pub fn check_predicate(predicate: &str, name: &str) -> String {
-    format!("Spec_{}_{}", predicate, name)
+    format!("Assert_{}_{}", predicate, name)
 }

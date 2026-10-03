@@ -1,6 +1,6 @@
 # Python API
 
-The `synalog` package exposes seven functions that take a program (`parse`, `compile`, `search`, `compile_all`, `check`, `specs`, `counterexamples`) and two that take nothing and return the names Synalog has already reserved (`reserved_predicates`, `builtin_functions`). The program functions all accept an optional `engine` keyword that overrides the program's `@Engine` annotation (one of `sqlite`, `duckdb`, `bigquery`, `psql`, `presto`, `trino`, `databricks`; default `duckdb`) and an optional `import_root` keyword listing directories where `import` statements look up `.l` files (default: the current directory). They raise `ValueError` on syntax or compilation errors.
+The `synalog` package exposes seven functions that take a program (`parse`, `compile`, `search`, `compile_all`, `check`, `assertions`, `counterexamples`) and two that take nothing and return the names Synalog has already reserved (`reserved_predicates`, `builtin_functions`). The program functions all accept an optional `engine` keyword that overrides the program's `@Engine` annotation (one of `sqlite`, `duckdb`, `bigquery`, `psql`, `presto`, `trino`, `databricks`; default `duckdb`) and an optional `import_root` keyword listing directories where `import` statements look up `.l` files (default: the current directory). They raise `ValueError` on syntax or compilation errors.
 
 ## `parse`
 
@@ -62,7 +62,7 @@ for name, sql in sqls.items():
 check(source, engine=None, import_root=None) -> tuple[list[str], list[str]]
 ```
 
-Run structural [verification](verification.md). Returns `(errors, warnings)`, two lists of messages. The program is valid when `errors` is empty. Warnings do not make it invalid: they report [specs](verification.md#specs) that are well-formed but cannot be checked against a database.
+Run structural [verification](verification.md). Returns `(errors, warnings)`, two lists of messages. The program is valid when `errors` is empty. Warnings do not make it invalid: they report [assertions](verification.md#assertions) that are well-formed but cannot be checked against a database.
 
 ```python
 errors, warnings = synalog.check(source)
@@ -72,20 +72,20 @@ for w in warnings:
     print("warning:", w)
 ```
 
-## `specs`
+## `assertions`
 
 ```python
-specs(source, engine=None, import_root=None) -> list[dict]
+assertions(source, engine=None, import_root=None) -> list[dict]
 ```
 
-Every [`@Spec`](verification.md#specs) of the program and where it stands, in source order. Each dict has the keys `predicate`, `name`, `statement`, `status` (`"pending"`, `"unchecked"` or `"unsupported"`) and `detail` (what a pending spec waits for, or why a spec is unsupported).
+Every [`@Assert`](verification.md#assertions) of the program and where it stands, in source order. Each dict has the keys `predicate`, `name`, `statement`, `status` (`"pending"`, `"unchecked"` or `"unsupported"`) and `detail` (what a pending assertion waits for, or why an assertion is unsupported).
 
 ```python
-for spec in synalog.specs(source):
-    print(f"{spec['predicate']}.{spec['name']}: {spec['status']}")
+for assertion in synalog.assertions(source):
+    print(f"{assertion['predicate']}.{assertion['name']}: {assertion['status']}")
 ```
 
-Invalid specs, such as a statement that does not parse, are reported by `check`, not here.
+Invalid assertions, such as a statement that does not parse, are reported by `check`, not here.
 
 ## `counterexamples`
 
@@ -93,14 +93,14 @@ Invalid specs, such as a statement that does not parse, are reported by `check`,
 counterexamples(source, predicate, name, limit=None, offset=None, engine=None, import_root=None) -> str
 ```
 
-Compile the search for the counterexamples of a spec to SQL. The spec `name` of `predicate` holds on a database when the query returns no row there; each row is a counterexample, with one column per universally quantified variable of the statement. `limit` and `offset` paginate as in `compile`.
+Compile the search for the counterexamples of an assertion to SQL. The assertion `name` of `predicate` holds on a database when the query returns no row there; each row is a counterexample, with one column per universally quantified variable of the statement. `limit` and `offset` paginate as in `compile`.
 
 ```python
 sql = synalog.counterexamples(source, "Ancestor", "transitive", limit=5)
-rows = duckdb.sql(sql).fetchall()   # [] when the spec holds
+rows = duckdb.sql(sql).fetchall()   # [] when the assertion holds
 ```
 
-Raises `ValueError` if there is no such spec, or if it is pending or unsupported.
+Raises `ValueError` if there is no such assertion, or if it is pending or unsupported.
 
 ## `reserved_predicates`
 
