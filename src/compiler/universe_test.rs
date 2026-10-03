@@ -331,18 +331,17 @@ fn compile_predicate(program: &LogicaProgram, name: &str) -> crate::compiler::Co
     program.predicate_sql(name)
 }
 
-/// `@Spec` / `@Proof` are read by the verifier only: the SQL is the same
-/// with or without them.
+/// `@Spec` is read by the verifier only: the SQL is the same with or without
+/// it.
 #[test]
-fn test_spec_and_proof_do_not_change_sql() {
+fn test_spec_does_not_change_sql() {
     let rules = r#"
         @Engine("sqlite");
         Ancestor(x:, y:) :- parent(x:, y:);
     "#;
     let annotated = format!(
         "{}{}",
-        r#"@Spec(Ancestor, irreflexive: "∀ x, ¬ Ancestor x x");
-           @Proof(Ancestor, irreflexive: "intro x h; cases h");"#,
+        r#"@Spec(Ancestor, irreflexive: "∀ x, ¬ Ancestor x x");"#,
         rules
     );
     let plain = compile_predicate(&make_universe_program(rules), "Ancestor").unwrap();

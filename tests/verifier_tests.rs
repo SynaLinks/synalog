@@ -32,8 +32,6 @@ enum ExpectedError {
     MalformedSpec,
     InvalidSpec,
     DuplicateSpec,
-    DuplicateProof,
-    OrphanProof,
 }
 
 /// Parse expected error from file content.
@@ -57,8 +55,6 @@ fn parse_expected_error(content: &str) -> Option<ExpectedError> {
                 s if s.contains("malformedSpec") => Some(ExpectedError::MalformedSpec),
                 s if s.contains("invalidSpec") => Some(ExpectedError::InvalidSpec),
                 s if s.contains("duplicateSpec") => Some(ExpectedError::DuplicateSpec),
-                s if s.contains("duplicateProof") => Some(ExpectedError::DuplicateProof),
-                s if s.contains("orphanProof") => Some(ExpectedError::OrphanProof),
                 _ => None,
             };
         }
@@ -84,8 +80,6 @@ fn error_matches(error: &CheckError, expected: &ExpectedError) -> bool {
         (CheckError::Spec(SpecError::Malformed { .. }), ExpectedError::MalformedSpec) => true,
         (CheckError::Spec(SpecError::Statement { .. }), ExpectedError::InvalidSpec) => true,
         (CheckError::Spec(SpecError::DuplicateSpec { .. }), ExpectedError::DuplicateSpec) => true,
-        (CheckError::Spec(SpecError::DuplicateProof { .. }), ExpectedError::DuplicateProof) => true,
-        (CheckError::Spec(SpecError::OrphanProof { .. }), ExpectedError::OrphanProof) => true,
         _ => false,
     }
 }

@@ -163,8 +163,8 @@ fn compile_all(
 /// messages.
 ///
 /// The program is valid when `errors` is empty. Warnings do not make it
-/// invalid: they report specs that are not established yet — a `@Spec` with no
-/// `@Proof`, and a `@Proof` that has not been checked.
+/// invalid: they report specs that are well-formed but cannot be checked
+/// against a database.
 ///
 /// `engine` overrides the program's `@Engine` annotation (default: duckdb).
 /// Raises ValueError on syntax errors.
@@ -185,8 +185,7 @@ fn check(
 /// Every `@Spec` of a program and where it stands.
 ///
 /// Returns one dict per spec, in source order, with the keys `predicate`,
-/// `name`, `statement`, `proof` (None when no `@Proof` is written), `status`
-/// and `detail`:
+/// `name`, `statement`, `status` and `detail`:
 ///
 /// - `"pending"`: a predicate the spec is about is not defined yet (`detail`
 ///   names what it waits for);
@@ -195,8 +194,8 @@ fn check(
 /// - `"unsupported"`: the statement is well-formed but cannot be checked
 ///   against a database (`detail` says why).
 ///
-/// Invalid specs (a statement that does not parse, a proof without a spec,
-/// ...) are reported by `check`, not here. Raises ValueError on syntax errors.
+/// Invalid specs (a statement that does not parse, a duplicate, ...) are
+/// reported by `check`, not here. Raises ValueError on syntax errors.
 #[pyfunction]
 #[pyo3(signature = (source, engine=None, import_root=None))]
 fn specs(
@@ -214,7 +213,6 @@ fn specs(
                 ("predicate", Some(spec.predicate)),
                 ("name", Some(spec.name)),
                 ("statement", Some(spec.statement)),
-                ("proof", spec.proof),
                 ("status", Some(spec.status.to_string())),
                 ("detail", spec.detail),
             ])

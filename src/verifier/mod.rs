@@ -9,7 +9,7 @@
 //! - Stratification (no negative recursion cycles)
 //! - Arity consistency (predicates used with consistent argument counts)
 //! - Recursion safety (base cases, no trivial loops)
-//! - Specs (`@Spec` statements, `@Proof` pairing)
+//! - Specs (`@Spec` statements)
 
 mod vars;
 mod safety;
@@ -198,7 +198,7 @@ pub fn validate(parsed: &Json) -> CheckResult {
         result.errors.push(CheckError::Undefined(err));
     }
 
-    // Check 10: Specs (@Spec statements, @Proof pairing)
+    // Check 10: Specs (@Spec statements)
     let (specs, spec_errors) = specs::check_specs(&all_rules);
     for err in spec_errors {
         result.errors.push(CheckError::Spec(err));

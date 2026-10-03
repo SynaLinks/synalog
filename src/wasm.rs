@@ -84,8 +84,8 @@ pub fn compile(source: &str, predicate: &str, engine: &str) -> Result<String, Js
 }
 
 /// What the verifier reports for a program: it is valid when `errors` is
-/// empty. Warnings do not make it invalid (a `@Spec` with no `@Proof`, a
-/// `@Proof` that has not been checked).
+/// empty. Warnings do not make it invalid (a `@Spec` that cannot be checked
+/// against a database).
 #[wasm_bindgen(getter_with_clone)]
 pub struct CheckOutcome {
     pub errors: Vec<String>,
@@ -105,8 +105,8 @@ pub fn check(source: &str, engine: &str) -> Result<CheckOutcome, JsValue> {
 }
 
 /// Every `@Spec` of `source` and where it stands, as a JSON array of
-/// `{predicate, name, statement, proof, status, detail}` objects in source
-/// order (`proof` is null when no `@Proof` is written). Raises on syntax errors.
+/// `{predicate, name, statement, status, detail}` objects in source order.
+/// Raises on syntax errors.
 #[wasm_bindgen]
 pub fn specs(source: &str, engine: &str) -> Result<String, JsValue> {
     engine_arg(engine)?;
@@ -119,7 +119,6 @@ pub fn specs(source: &str, engine: &str) -> Result<String, JsValue> {
                 "predicate": spec.predicate,
                 "name": spec.name,
                 "statement": spec.statement,
-                "proof": spec.proof,
                 "status": spec.status.as_str(),
                 "detail": spec.detail,
             })

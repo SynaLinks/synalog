@@ -78,7 +78,7 @@ for w in warnings:
 specs(source, engine=None, import_root=None) -> list[dict]
 ```
 
-Every [`@Spec`](verification.md#specs) of the program and where it stands, in source order. Each dict has the keys `predicate`, `name`, `statement`, `proof` (`None` when no `@Proof` is written), `status` (`"pending"`, `"unchecked"` or `"unsupported"`) and `detail` (what a pending spec waits for, or why a spec is unsupported).
+Every [`@Spec`](verification.md#specs) of the program and where it stands, in source order. Each dict has the keys `predicate`, `name`, `statement`, `status` (`"pending"`, `"unchecked"` or `"unsupported"`) and `detail` (what a pending spec waits for, or why a spec is unsupported).
 
 ```python
 for spec in synalog.specs(source):

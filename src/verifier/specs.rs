@@ -1,6 +1,6 @@
 // License Apache 2.0: (c) 2025-2026 Yoan Sallami (Synalinks Team)
 
-//! Specifications (`@Spec`) and proofs (`@Proof`).
+//! Specifications (`@Spec`).
 //!
 //! A program states properties of its predicates with `@Spec`. Each property
 //! is anchored to a predicate and named by a named argument; its statement is
@@ -20,15 +20,12 @@
 //! statement naming a predicate that does not exist yet is not an error: the
 //! spec is [`SpecStatus::Pending`].
 //!
-//! `@Proof` attaches a proof text to a spec of the same predicate and name.
-//! Proofs are recorded, not checked.
-//!
 //! ## What is checked
 //!
 //! Errors are reserved for specs that can never become valid: a statement that
 //! does not parse or contradicts the program (wrong number of arguments), a
-//! proof with no matching spec, a name stated or proved twice, and annotations
-//! that are not shaped as `(Predicate, name: "text", ...)`. A well-formed
+//! name stated twice, and annotations that are not shaped as
+//! `(Predicate, name: "text", ...)`. A well-formed
 //! statement that cannot be checked on a database is a warning.
 
 use std::collections::{HashMap, HashSet};
@@ -67,7 +64,7 @@ impl std::fmt::Display for SpecStatus {
     }
 }
 
-/// One named spec of a predicate, with its proof if one is written.
+/// One named spec of a predicate.
 #[derive(Debug, Clone)]
 pub struct SpecReport {
     /// The anchor predicate.
@@ -76,14 +73,12 @@ pub struct SpecReport {
     pub name: String,
     /// The statement, verbatim.
     pub statement: String,
-    /// The proof text from the matching `@Proof`, verbatim.
-    pub proof: Option<String>,
     pub status: SpecStatus,
     /// Why the spec is pending (the predicates it waits for) or unsupported.
     pub detail: Option<String>,
 }
 
-/// `@Spec` / `@Proof` annotation error.
+/// `@Spec` annotation error.
 #[derive(Debug, Clone)]
 pub enum SpecError {
     /// The annotation is not shaped as `(Predicate, name: "text", ...)`.
@@ -100,10 +95,6 @@ pub enum SpecError {
     },
     /// The same spec name is stated twice for a predicate.
     DuplicateSpec { predicate: String, name: String },
-    /// The same spec name is proved twice for a predicate.
-    DuplicateProof { predicate: String, name: String },
-    /// A `@Proof` names a spec that no `@Spec` states.
-    OrphanProof { predicate: String, name: String },
 }
 
 impl std::fmt::Display for SpecError {
@@ -118,14 +109,6 @@ impl std::fmt::Display for SpecError {
             SpecError::DuplicateSpec { predicate, name } => {
                 write!(f, "Duplicate spec '{}.{}': it is stated more than once", predicate, name)
             }
-            SpecError::DuplicateProof { predicate, name } => {
-                write!(f, "Duplicate proof of '{}.{}': it is proved more than once", predicate, name)
-            }
-            SpecError::OrphanProof { predicate, name } => write!(
-                f,
-                "Proof of '{}.{}' has no matching @Spec: state it with @Spec({}, {}: \"...\")",
-                predicate, name, predicate, name
-            ),
         }
     }
 }
@@ -144,12 +127,6 @@ impl From<SpecError> for VerifyError {
             SpecError::DuplicateSpec { predicate, name } => {
                 VerifyError::DuplicateSpec { predicate, name }
             }
-            SpecError::DuplicateProof { predicate, name } => {
-                VerifyError::DuplicateProof { predicate, name }
-            }
-            SpecError::OrphanProof { predicate, name } => {
-                VerifyError::OrphanProof { predicate, name }
-            }
         }
     }
 }
@@ -160,14 +137,14 @@ impl From<SpecError> for crate::errors::SynalogError {
     }
 }
 
-/// One `(predicate, name) -> text` entry of a `@Spec` or `@Proof` annotation.
+/// One `(predicate, name) -> statement` entry of a `@Spec` annotation.
 struct Entry {
     predicate: String,
     name: String,
     text: String,
 }
 
-/// Pair every `@Spec` with its `@Proof` and report where each spec stands.
+/// Report where each `@Spec` of the program stands.
 ///
 /// `rules` must include the annotation rules. Reports come back in source
 /// order of the `@Spec` annotations.
@@ -175,14 +152,12 @@ pub fn check_specs(rules: &[&Json]) -> (Vec<SpecReport>, Vec<SpecError>) {
     let mut errors = Vec::new();
     let mut defined = HashSet::new();
     let mut specs = Vec::new();
-    let mut proofs = Vec::new();
     let schema = spec::schema(rules);
 
     for rule in rules {
         let name = rule.as_object()["head"].as_object()["predicate_name"].as_str();
         match name {
             "@Spec" => specs.extend(read_annotation(rule, name, &mut errors)),
-            "@Proof" => proofs.extend(read_annotation(rule, name, &mut errors)),
             // A functor application (`P := F(A: B)`) defines `P` without a rule head.
             "@Make" => defined.extend(made_predicate(rule)),
             _ if !name.starts_with('@') => {
@@ -224,30 +199,9 @@ pub fn check_specs(rules: &[&Json]) -> (Vec<SpecReport>, Vec<SpecError>) {
             predicate: spec.predicate,
             name: spec.name,
             statement: spec.text,
-            proof: None,
             status,
             detail,
         });
-    }
-
-    for proof in proofs {
-        let key = (proof.predicate.clone(), proof.name.clone());
-        let Some(&i) = index.get(&key) else {
-            errors.push(SpecError::OrphanProof {
-                predicate: proof.predicate,
-                name: proof.name,
-            });
-            continue;
-        };
-        let report = &mut reports[i];
-        if report.proof.is_some() {
-            errors.push(SpecError::DuplicateProof {
-                predicate: proof.predicate,
-                name: proof.name,
-            });
-            continue;
-        }
-        report.proof = Some(proof.text);
     }
 
     (reports, errors)
@@ -328,7 +282,7 @@ fn made_predicate(rule: &Json) -> Option<String> {
     predicate_name(value.as_object().get("expression").unwrap_or(value))
 }
 
-/// Read the entries of one `@Spec` / `@Proof` annotation rule, reporting a
+/// Read the entries of one `@Spec` annotation rule, reporting a
 /// malformed annotation into `errors`.
 fn read_annotation(rule: &Json, annotation: &str, errors: &mut Vec<SpecError>) -> Vec<Entry> {
     let mut malformed = |reason: String| {
@@ -464,18 +418,6 @@ mod tests {
         assert!(errors.is_empty(), "{errors:?}");
         assert_eq!(reports[0].status, SpecStatus::Unchecked);
         assert_eq!(reports[0].detail, None);
-        assert_eq!(reports[0].proof, None);
-    }
-
-    #[test]
-    fn test_proof_is_recorded() {
-        let (reports, errors) = check(&format!(
-            "{TRANSITIVE}\n{RULE}\n{}",
-            r#"@Proof(Ancestor, transitive: "intro h1 h2; induction h2 <;> aesop");"#
-        ));
-        assert!(errors.is_empty(), "{errors:?}");
-        assert_eq!(reports[0].status, SpecStatus::Unchecked);
-        assert_eq!(reports[0].proof.as_deref(), Some("intro h1 h2; induction h2 <;> aesop"));
     }
 
     #[test]
@@ -580,39 +522,16 @@ mod tests {
     }
 
     #[test]
-    fn test_orphan_proof() {
-        let (reports, errors) = check(&format!(
-            "{RULE}\n{}",
-            r#"@Proof(Ancestor, transitive: "aesop");"#
-        ));
-        assert!(reports.is_empty());
-        assert!(
-            matches!(&errors[..], [SpecError::OrphanProof { predicate, name }]
-                if predicate == "Ancestor" && name == "transitive"),
-            "{errors:?}"
-        );
-    }
-
-    #[test]
-    fn test_duplicate_spec_and_proof() {
+    fn test_duplicate_spec() {
         let (reports, errors) = check(
             r#"
             @Spec(Ancestor, irreflexive: "¬ Ancestor x x");
             @Spec(Ancestor, irreflexive: "∀ x, ¬ Ancestor x x");
-            @Proof(Ancestor, irreflexive: "aesop");
-            @Proof(Ancestor, irreflexive: "simp");
         "#,
         );
         assert_eq!(reports.len(), 1);
         assert_eq!(reports[0].statement, "¬ Ancestor x x");
-        assert_eq!(reports[0].proof.as_deref(), Some("aesop"));
-        assert!(
-            matches!(
-                &errors[..],
-                [SpecError::DuplicateSpec { .. }, SpecError::DuplicateProof { .. }]
-            ),
-            "{errors:?}"
-        );
+        assert!(matches!(&errors[..], [SpecError::DuplicateSpec { .. }]), "{errors:?}");
     }
 
     #[test]
@@ -623,7 +542,7 @@ mod tests {
             r#"@Spec(transitive: "Ancestor x y");"#,
             r#"@Spec("Ancestor", transitive: "Ancestor x y");"#,
             r#"@Spec(Ancestor, transitive: 1);"#,
-            r#"@Proof(Ancestor, transitive: Ancestor);"#,
+            r#"@Spec(Ancestor, transitive: Ancestor);"#,
         ] {
             let (reports, errors) = check(code);
             assert!(reports.is_empty(), "{code}: {reports:?}");

@@ -16,7 +16,7 @@ This matters most for AI agents: it prevents producing programs that parse corre
 | **Recursion** | Missing base cases, trivial loops, unbounded recursion without `@Recursive` |
 | **Reserved names** | Rules that redefine a built-in library predicate (`Num`, `Str`, `ArgMin`, `Today`, `Now`, ...) |
 | **Unsafe `SqlExpr`** | User rules that reach for the raw-SQL escape hatch |
-| **Specs** | A `@Spec` statement that does not parse or contradicts the program, a spec stated twice, a `@Proof` with no matching `@Spec` |
+| **Specs** | A `@Spec` statement that does not parse or contradicts the program, a spec stated twice |
 
 ### Unsafe `SqlExpr`
 
@@ -131,10 +131,6 @@ Counterexamples are searched in the database, which bounds what can be checked:
 | `Malformed @Spec` | The annotation is not `(Predicate, name: "text", ...)` |
 
 Specs do not change the generated SQL.
-
-### Proofs
-
-`@Proof(Predicate, name: "...")` attaches a proof text to the spec of the same predicate and name. It is recorded and returned by `specs()`, but not checked. A `@Proof` with no matching `@Spec` is an error.
 
 ## Usage
 

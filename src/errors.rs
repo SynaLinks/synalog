@@ -190,7 +190,7 @@ pub enum VerifyError {
         rule: String,
     },
 
-    /// `@Spec` / `@Proof` not shaped as `(Predicate, name: "text", ...)`.
+    /// `@Spec` not shaped as `(Predicate, name: "text", ...)`.
     #[error("Malformed {annotation}: {reason}")]
     MalformedSpecAnnotation {
         annotation: String,
@@ -209,14 +209,6 @@ pub enum VerifyError {
     /// The same spec name stated twice for a predicate.
     #[error("Duplicate spec '{predicate}.{name}': it is stated more than once")]
     DuplicateSpec { predicate: String, name: String },
-
-    /// The same spec name proved twice for a predicate.
-    #[error("Duplicate proof of '{predicate}.{name}': it is proved more than once")]
-    DuplicateProof { predicate: String, name: String },
-
-    /// `@Proof` naming a spec that no `@Spec` states.
-    #[error("Proof of '{predicate}.{name}' has no matching @Spec")]
-    OrphanProof { predicate: String, name: String },
 }
 
 // ============================================================================

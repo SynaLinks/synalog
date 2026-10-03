@@ -70,7 +70,6 @@ def test_report_holds_the_statement():
         "predicate": "Near",
         "name": "transitive",
         "statement": "∀ x y z, Near x y → Near y z → Near x z",
-        "proof": None,
         "status": "unchecked",
         "detail": None,
     }
@@ -133,14 +132,6 @@ def test_counterexamples_of_a_pending_or_unknown_spec():
         synalog.counterexamples(SPEC, "Near", "transitive")
     with pytest.raises(ValueError, match="No spec 'Near.symmetric'"):
         synalog.counterexamples(SPEC + PARENT + NEAR, "Near", "symmetric")
-
-
-def test_proof_without_spec_is_an_error():
-    errors, _ = synalog.check(PARENT + NEAR + '@Proof(Near, transitive: "aesop");')
-    assert errors == [
-        "Proof of 'Near.transitive' has no matching @Spec: "
-        'state it with @Spec(Near, transitive: "...")'
-    ]
 
 
 def test_specs_do_not_change_the_sql():
