@@ -37,7 +37,7 @@ jobs:
           python-version: '3.12'
       - name: Install Python test dependencies
         run: |
-          pip install pytest duckdb "psycopg[binary]" trino presto-python-client pyhive thrift logica
+          pip install pytest pytest-xdist duckdb "psycopg[binary]" trino presto-python-client pyhive thrift logica
       - name: Rust tests (unit, parser, compiler golden, search, verifier)
         run: cargo test
       - name: Build and install synalog wheel
@@ -47,7 +47,8 @@ jobs:
       - name: Start SQL engines (PostgreSQL, Trino, Presto, Spark)
         run: docker compose -f tests/e2e/docker-compose.yml up -d --wait
       - name: End-to-end tests against live engines
-        run: pytest tests/e2e -q
+        # One worker per engine (see tests/e2e/conftest.py): the engines run in parallel.
+        run: pytest tests/e2e -q -n 6 --dist loadgroup --durations=15
         env:
           SYNALOG_E2E_REQUIRE: psql,trino,presto,databricks
       - name: Stop SQL engines

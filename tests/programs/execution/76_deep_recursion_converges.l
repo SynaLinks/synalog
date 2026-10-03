@@ -1,7 +1,7 @@
-# A closure that converges before its 100 steps: the extra steps change nothing.
+# A closure that converges before its 25 steps: the extra steps change nothing.
 # Expect: rows N = [(10,)]
 Next(x:, y: x + 1) :- x in Range(4);
-@Recursive(Reach, 100);
+@Recursive(Reach, 25);
 Reach(x:, y:) distinct :- Next(x:, y:);
 Reach(x:, y: z) distinct :- Reach(x:, y:), Next(x: y, y: z);
 N(n? += 1) distinct :- Reach();

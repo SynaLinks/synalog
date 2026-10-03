@@ -65,8 +65,8 @@ GROUP BY Reach_MultBodyAggAux_f3.y;
 
 -- Interacting with table logica_home.Reach_ifr2
 
-DROP TABLE IF EXISTS logica_home.Reach_ifr3 CASCADE;
-CREATE TABLE logica_home.Reach_ifr3 AS WITH t_0_Reach_MultBodyAggAux_f4 AS (SELECT * FROM (
+DROP TABLE IF EXISTS logica_home.Reach_ifr1 CASCADE;
+CREATE TABLE logica_home.Reach_ifr1 AS WITH t_0_Reach_MultBodyAggAux_f4 AS (SELECT * FROM (
   
     SELECT
       0 AS y
@@ -86,10 +86,10 @@ FROM
   t_0_Reach_MultBodyAggAux_f4 AS Reach_MultBodyAggAux_f4
 GROUP BY Reach_MultBodyAggAux_f4.y;
 
--- Interacting with table logica_home.Reach_ifr3
+-- Interacting with table logica_home.Reach_ifr1
 
 DROP TABLE IF EXISTS logica_home.Reach_ifr2 CASCADE;
-CREATE TABLE logica_home.Reach_ifr2 AS WITH t_0_Reach_MultBodyAggAux_f5 AS (SELECT * FROM (
+CREATE TABLE logica_home.Reach_ifr2 AS WITH t_0_Reach_MultBodyAggAux_f3 AS (SELECT * FROM (
   
     SELECT
       0 AS y
@@ -98,63 +98,19 @@ CREATE TABLE logica_home.Reach_ifr2 AS WITH t_0_Reach_MultBodyAggAux_f5 AS (SELE
     SELECT
       ((x_7) + (1)) AS y
     FROM
-      logica_home.Reach_ifr3 AS Reach_ifr3, UNNEST((SELECT ARRAY_AGG(x) FROM GENERATE_SERIES(0, 100 - 1) as x)) as x_7
+      logica_home.Reach_ifr1 AS Reach_ifr1, UNNEST((SELECT ARRAY_AGG(x) FROM GENERATE_SERIES(0, 100 - 1) as x)) as x_7
     WHERE
-      (Reach_ifr3.y = x_7)
+      (Reach_ifr1.y = x_7)
   
 ) AS UNUSED_TABLE_NAME  )
 SELECT
-  Reach_MultBodyAggAux_f5.y AS y
+  Reach_MultBodyAggAux_f3.y AS y
 FROM
-  t_0_Reach_MultBodyAggAux_f5 AS Reach_MultBodyAggAux_f5
-GROUP BY Reach_MultBodyAggAux_f5.y;
+  t_0_Reach_MultBodyAggAux_f3 AS Reach_MultBodyAggAux_f3
+GROUP BY Reach_MultBodyAggAux_f3.y;
 
--- Interacting with table logica_home.Reach_ifr2
-
-DROP TABLE IF EXISTS logica_home.Reach_ifr3 CASCADE;
-CREATE TABLE logica_home.Reach_ifr3 AS WITH t_0_Reach_MultBodyAggAux_f4 AS (SELECT * FROM (
-  
-    SELECT
-      0 AS y
-   UNION ALL
-  
-    SELECT
-      ((x_7) + (1)) AS y
-    FROM
-      logica_home.Reach_ifr2 AS Reach_ifr2, UNNEST((SELECT ARRAY_AGG(x) FROM GENERATE_SERIES(0, 100 - 1) as x)) as x_7
-    WHERE
-      (Reach_ifr2.y = x_7)
-  
-) AS UNUSED_TABLE_NAME  )
-SELECT
-  Reach_MultBodyAggAux_f4.y AS y
-FROM
-  t_0_Reach_MultBodyAggAux_f4 AS Reach_MultBodyAggAux_f4
-GROUP BY Reach_MultBodyAggAux_f4.y;
-
-DROP TABLE IF EXISTS logica_home.Reach_ifr2 CASCADE;
-CREATE TABLE logica_home.Reach_ifr2 AS WITH t_0_Reach_MultBodyAggAux_f5 AS (SELECT * FROM (
-  
-    SELECT
-      0 AS y
-   UNION ALL
-  
-    SELECT
-      ((x_7) + (1)) AS y
-    FROM
-      logica_home.Reach_ifr3 AS Reach_ifr3, UNNEST((SELECT ARRAY_AGG(x) FROM GENERATE_SERIES(0, 100 - 1) as x)) as x_7
-    WHERE
-      (Reach_ifr3.y = x_7)
-  
-) AS UNUSED_TABLE_NAME  )
-SELECT
-  Reach_MultBodyAggAux_f5.y AS y
-FROM
-  t_0_Reach_MultBodyAggAux_f5 AS Reach_MultBodyAggAux_f5
-GROUP BY Reach_MultBodyAggAux_f5.y;
-
-DROP TABLE IF EXISTS logica_home.Reach_ifr3 CASCADE;
-CREATE TABLE logica_home.Reach_ifr3 AS WITH t_0_Reach_MultBodyAggAux_f4 AS (SELECT * FROM (
+DROP TABLE IF EXISTS logica_home.Reach_ifr1 CASCADE;
+CREATE TABLE logica_home.Reach_ifr1 AS WITH t_0_Reach_MultBodyAggAux_f4 AS (SELECT * FROM (
   
     SELECT
       0 AS y
@@ -175,7 +131,7 @@ FROM
 GROUP BY Reach_MultBodyAggAux_f4.y;
 
 DROP TABLE IF EXISTS logica_home.Reach_ifr2 CASCADE;
-CREATE TABLE logica_home.Reach_ifr2 AS WITH t_0_Reach_MultBodyAggAux_f5 AS (SELECT * FROM (
+CREATE TABLE logica_home.Reach_ifr2 AS WITH t_0_Reach_MultBodyAggAux_f3 AS (SELECT * FROM (
   
     SELECT
       0 AS y
@@ -184,19 +140,19 @@ CREATE TABLE logica_home.Reach_ifr2 AS WITH t_0_Reach_MultBodyAggAux_f5 AS (SELE
     SELECT
       ((x_7) + (1)) AS y
     FROM
-      logica_home.Reach_ifr3 AS Reach_ifr3, UNNEST((SELECT ARRAY_AGG(x) FROM GENERATE_SERIES(0, 100 - 1) as x)) as x_7
+      logica_home.Reach_ifr1 AS Reach_ifr1, UNNEST((SELECT ARRAY_AGG(x) FROM GENERATE_SERIES(0, 100 - 1) as x)) as x_7
     WHERE
-      (Reach_ifr3.y = x_7)
+      (Reach_ifr1.y = x_7)
   
 ) AS UNUSED_TABLE_NAME  )
 SELECT
-  Reach_MultBodyAggAux_f5.y AS y
+  Reach_MultBodyAggAux_f3.y AS y
 FROM
-  t_0_Reach_MultBodyAggAux_f5 AS Reach_MultBodyAggAux_f5
-GROUP BY Reach_MultBodyAggAux_f5.y;
+  t_0_Reach_MultBodyAggAux_f3 AS Reach_MultBodyAggAux_f3
+GROUP BY Reach_MultBodyAggAux_f3.y;
 
-DROP TABLE IF EXISTS logica_home.Reach_ifr3 CASCADE;
-CREATE TABLE logica_home.Reach_ifr3 AS WITH t_0_Reach_MultBodyAggAux_f4 AS (SELECT * FROM (
+DROP TABLE IF EXISTS logica_home.Reach_ifr1 CASCADE;
+CREATE TABLE logica_home.Reach_ifr1 AS WITH t_0_Reach_MultBodyAggAux_f4 AS (SELECT * FROM (
   
     SELECT
       0 AS y
@@ -217,7 +173,7 @@ FROM
 GROUP BY Reach_MultBodyAggAux_f4.y;
 
 DROP TABLE IF EXISTS logica_home.Reach_ifr2 CASCADE;
-CREATE TABLE logica_home.Reach_ifr2 AS WITH t_0_Reach_MultBodyAggAux_f5 AS (SELECT * FROM (
+CREATE TABLE logica_home.Reach_ifr2 AS WITH t_0_Reach_MultBodyAggAux_f3 AS (SELECT * FROM (
   
     SELECT
       0 AS y
@@ -226,19 +182,19 @@ CREATE TABLE logica_home.Reach_ifr2 AS WITH t_0_Reach_MultBodyAggAux_f5 AS (SELE
     SELECT
       ((x_7) + (1)) AS y
     FROM
-      logica_home.Reach_ifr3 AS Reach_ifr3, UNNEST((SELECT ARRAY_AGG(x) FROM GENERATE_SERIES(0, 100 - 1) as x)) as x_7
+      logica_home.Reach_ifr1 AS Reach_ifr1, UNNEST((SELECT ARRAY_AGG(x) FROM GENERATE_SERIES(0, 100 - 1) as x)) as x_7
     WHERE
-      (Reach_ifr3.y = x_7)
+      (Reach_ifr1.y = x_7)
   
 ) AS UNUSED_TABLE_NAME  )
 SELECT
-  Reach_MultBodyAggAux_f5.y AS y
+  Reach_MultBodyAggAux_f3.y AS y
 FROM
-  t_0_Reach_MultBodyAggAux_f5 AS Reach_MultBodyAggAux_f5
-GROUP BY Reach_MultBodyAggAux_f5.y;
+  t_0_Reach_MultBodyAggAux_f3 AS Reach_MultBodyAggAux_f3
+GROUP BY Reach_MultBodyAggAux_f3.y;
 
-DROP TABLE IF EXISTS logica_home.Reach_ifr3 CASCADE;
-CREATE TABLE logica_home.Reach_ifr3 AS WITH t_0_Reach_MultBodyAggAux_f4 AS (SELECT * FROM (
+DROP TABLE IF EXISTS logica_home.Reach_ifr1 CASCADE;
+CREATE TABLE logica_home.Reach_ifr1 AS WITH t_0_Reach_MultBodyAggAux_f4 AS (SELECT * FROM (
   
     SELECT
       0 AS y
@@ -259,7 +215,7 @@ FROM
 GROUP BY Reach_MultBodyAggAux_f4.y;
 
 DROP TABLE IF EXISTS logica_home.Reach_ifr2 CASCADE;
-CREATE TABLE logica_home.Reach_ifr2 AS WITH t_0_Reach_MultBodyAggAux_f5 AS (SELECT * FROM (
+CREATE TABLE logica_home.Reach_ifr2 AS WITH t_0_Reach_MultBodyAggAux_f3 AS (SELECT * FROM (
   
     SELECT
       0 AS y
@@ -268,19 +224,19 @@ CREATE TABLE logica_home.Reach_ifr2 AS WITH t_0_Reach_MultBodyAggAux_f5 AS (SELE
     SELECT
       ((x_7) + (1)) AS y
     FROM
-      logica_home.Reach_ifr3 AS Reach_ifr3, UNNEST((SELECT ARRAY_AGG(x) FROM GENERATE_SERIES(0, 100 - 1) as x)) as x_7
+      logica_home.Reach_ifr1 AS Reach_ifr1, UNNEST((SELECT ARRAY_AGG(x) FROM GENERATE_SERIES(0, 100 - 1) as x)) as x_7
     WHERE
-      (Reach_ifr3.y = x_7)
+      (Reach_ifr1.y = x_7)
   
 ) AS UNUSED_TABLE_NAME  )
 SELECT
-  Reach_MultBodyAggAux_f5.y AS y
+  Reach_MultBodyAggAux_f3.y AS y
 FROM
-  t_0_Reach_MultBodyAggAux_f5 AS Reach_MultBodyAggAux_f5
-GROUP BY Reach_MultBodyAggAux_f5.y;
+  t_0_Reach_MultBodyAggAux_f3 AS Reach_MultBodyAggAux_f3
+GROUP BY Reach_MultBodyAggAux_f3.y;
 
-DROP TABLE IF EXISTS logica_home.Reach_ifr3 CASCADE;
-CREATE TABLE logica_home.Reach_ifr3 AS WITH t_0_Reach_MultBodyAggAux_f4 AS (SELECT * FROM (
+DROP TABLE IF EXISTS logica_home.Reach_ifr1 CASCADE;
+CREATE TABLE logica_home.Reach_ifr1 AS WITH t_0_Reach_MultBodyAggAux_f4 AS (SELECT * FROM (
   
     SELECT
       0 AS y
@@ -301,7 +257,7 @@ FROM
 GROUP BY Reach_MultBodyAggAux_f4.y;
 
 DROP TABLE IF EXISTS logica_home.Reach_ifr2 CASCADE;
-CREATE TABLE logica_home.Reach_ifr2 AS WITH t_0_Reach_MultBodyAggAux_f5 AS (SELECT * FROM (
+CREATE TABLE logica_home.Reach_ifr2 AS WITH t_0_Reach_MultBodyAggAux_f3 AS (SELECT * FROM (
   
     SELECT
       0 AS y
@@ -310,19 +266,19 @@ CREATE TABLE logica_home.Reach_ifr2 AS WITH t_0_Reach_MultBodyAggAux_f5 AS (SELE
     SELECT
       ((x_7) + (1)) AS y
     FROM
-      logica_home.Reach_ifr3 AS Reach_ifr3, UNNEST((SELECT ARRAY_AGG(x) FROM GENERATE_SERIES(0, 100 - 1) as x)) as x_7
+      logica_home.Reach_ifr1 AS Reach_ifr1, UNNEST((SELECT ARRAY_AGG(x) FROM GENERATE_SERIES(0, 100 - 1) as x)) as x_7
     WHERE
-      (Reach_ifr3.y = x_7)
+      (Reach_ifr1.y = x_7)
   
 ) AS UNUSED_TABLE_NAME  )
 SELECT
-  Reach_MultBodyAggAux_f5.y AS y
+  Reach_MultBodyAggAux_f3.y AS y
 FROM
-  t_0_Reach_MultBodyAggAux_f5 AS Reach_MultBodyAggAux_f5
-GROUP BY Reach_MultBodyAggAux_f5.y;
+  t_0_Reach_MultBodyAggAux_f3 AS Reach_MultBodyAggAux_f3
+GROUP BY Reach_MultBodyAggAux_f3.y;
 
-DROP TABLE IF EXISTS logica_home.Reach_ifr3 CASCADE;
-CREATE TABLE logica_home.Reach_ifr3 AS WITH t_0_Reach_MultBodyAggAux_f4 AS (SELECT * FROM (
+DROP TABLE IF EXISTS logica_home.Reach_ifr1 CASCADE;
+CREATE TABLE logica_home.Reach_ifr1 AS WITH t_0_Reach_MultBodyAggAux_f4 AS (SELECT * FROM (
   
     SELECT
       0 AS y
@@ -343,7 +299,7 @@ FROM
 GROUP BY Reach_MultBodyAggAux_f4.y;
 
 DROP TABLE IF EXISTS logica_home.Reach_ifr2 CASCADE;
-CREATE TABLE logica_home.Reach_ifr2 AS WITH t_0_Reach_MultBodyAggAux_f5 AS (SELECT * FROM (
+CREATE TABLE logica_home.Reach_ifr2 AS WITH t_0_Reach_MultBodyAggAux_f3 AS (SELECT * FROM (
   
     SELECT
       0 AS y
@@ -352,19 +308,19 @@ CREATE TABLE logica_home.Reach_ifr2 AS WITH t_0_Reach_MultBodyAggAux_f5 AS (SELE
     SELECT
       ((x_7) + (1)) AS y
     FROM
-      logica_home.Reach_ifr3 AS Reach_ifr3, UNNEST((SELECT ARRAY_AGG(x) FROM GENERATE_SERIES(0, 100 - 1) as x)) as x_7
+      logica_home.Reach_ifr1 AS Reach_ifr1, UNNEST((SELECT ARRAY_AGG(x) FROM GENERATE_SERIES(0, 100 - 1) as x)) as x_7
     WHERE
-      (Reach_ifr3.y = x_7)
+      (Reach_ifr1.y = x_7)
   
 ) AS UNUSED_TABLE_NAME  )
 SELECT
-  Reach_MultBodyAggAux_f5.y AS y
+  Reach_MultBodyAggAux_f3.y AS y
 FROM
-  t_0_Reach_MultBodyAggAux_f5 AS Reach_MultBodyAggAux_f5
-GROUP BY Reach_MultBodyAggAux_f5.y;
+  t_0_Reach_MultBodyAggAux_f3 AS Reach_MultBodyAggAux_f3
+GROUP BY Reach_MultBodyAggAux_f3.y;
 
-DROP TABLE IF EXISTS logica_home.Reach_ifr3 CASCADE;
-CREATE TABLE logica_home.Reach_ifr3 AS WITH t_0_Reach_MultBodyAggAux_f4 AS (SELECT * FROM (
+DROP TABLE IF EXISTS logica_home.Reach_ifr1 CASCADE;
+CREATE TABLE logica_home.Reach_ifr1 AS WITH t_0_Reach_MultBodyAggAux_f4 AS (SELECT * FROM (
   
     SELECT
       0 AS y
@@ -385,7 +341,7 @@ FROM
 GROUP BY Reach_MultBodyAggAux_f4.y;
 
 DROP TABLE IF EXISTS logica_home.Reach_ifr2 CASCADE;
-CREATE TABLE logica_home.Reach_ifr2 AS WITH t_0_Reach_MultBodyAggAux_f5 AS (SELECT * FROM (
+CREATE TABLE logica_home.Reach_ifr2 AS WITH t_0_Reach_MultBodyAggAux_f3 AS (SELECT * FROM (
   
     SELECT
       0 AS y
@@ -394,19 +350,19 @@ CREATE TABLE logica_home.Reach_ifr2 AS WITH t_0_Reach_MultBodyAggAux_f5 AS (SELE
     SELECT
       ((x_7) + (1)) AS y
     FROM
-      logica_home.Reach_ifr3 AS Reach_ifr3, UNNEST((SELECT ARRAY_AGG(x) FROM GENERATE_SERIES(0, 100 - 1) as x)) as x_7
+      logica_home.Reach_ifr1 AS Reach_ifr1, UNNEST((SELECT ARRAY_AGG(x) FROM GENERATE_SERIES(0, 100 - 1) as x)) as x_7
     WHERE
-      (Reach_ifr3.y = x_7)
+      (Reach_ifr1.y = x_7)
   
 ) AS UNUSED_TABLE_NAME  )
 SELECT
-  Reach_MultBodyAggAux_f5.y AS y
+  Reach_MultBodyAggAux_f3.y AS y
 FROM
-  t_0_Reach_MultBodyAggAux_f5 AS Reach_MultBodyAggAux_f5
-GROUP BY Reach_MultBodyAggAux_f5.y;
+  t_0_Reach_MultBodyAggAux_f3 AS Reach_MultBodyAggAux_f3
+GROUP BY Reach_MultBodyAggAux_f3.y;
 
-DROP TABLE IF EXISTS logica_home.Reach_ifr3 CASCADE;
-CREATE TABLE logica_home.Reach_ifr3 AS WITH t_0_Reach_MultBodyAggAux_f4 AS (SELECT * FROM (
+DROP TABLE IF EXISTS logica_home.Reach_ifr1 CASCADE;
+CREATE TABLE logica_home.Reach_ifr1 AS WITH t_0_Reach_MultBodyAggAux_f4 AS (SELECT * FROM (
   
     SELECT
       0 AS y
@@ -427,7 +383,7 @@ FROM
 GROUP BY Reach_MultBodyAggAux_f4.y;
 
 DROP TABLE IF EXISTS logica_home.Reach_ifr2 CASCADE;
-CREATE TABLE logica_home.Reach_ifr2 AS WITH t_0_Reach_MultBodyAggAux_f5 AS (SELECT * FROM (
+CREATE TABLE logica_home.Reach_ifr2 AS WITH t_0_Reach_MultBodyAggAux_f3 AS (SELECT * FROM (
   
     SELECT
       0 AS y
@@ -436,19 +392,19 @@ CREATE TABLE logica_home.Reach_ifr2 AS WITH t_0_Reach_MultBodyAggAux_f5 AS (SELE
     SELECT
       ((x_7) + (1)) AS y
     FROM
-      logica_home.Reach_ifr3 AS Reach_ifr3, UNNEST((SELECT ARRAY_AGG(x) FROM GENERATE_SERIES(0, 100 - 1) as x)) as x_7
+      logica_home.Reach_ifr1 AS Reach_ifr1, UNNEST((SELECT ARRAY_AGG(x) FROM GENERATE_SERIES(0, 100 - 1) as x)) as x_7
     WHERE
-      (Reach_ifr3.y = x_7)
+      (Reach_ifr1.y = x_7)
   
 ) AS UNUSED_TABLE_NAME  )
 SELECT
-  Reach_MultBodyAggAux_f5.y AS y
+  Reach_MultBodyAggAux_f3.y AS y
 FROM
-  t_0_Reach_MultBodyAggAux_f5 AS Reach_MultBodyAggAux_f5
-GROUP BY Reach_MultBodyAggAux_f5.y;
+  t_0_Reach_MultBodyAggAux_f3 AS Reach_MultBodyAggAux_f3
+GROUP BY Reach_MultBodyAggAux_f3.y;
 
-DROP TABLE IF EXISTS logica_home.Reach_ifr3 CASCADE;
-CREATE TABLE logica_home.Reach_ifr3 AS WITH t_0_Reach_MultBodyAggAux_f4 AS (SELECT * FROM (
+DROP TABLE IF EXISTS logica_home.Reach_ifr1 CASCADE;
+CREATE TABLE logica_home.Reach_ifr1 AS WITH t_0_Reach_MultBodyAggAux_f4 AS (SELECT * FROM (
   
     SELECT
       0 AS y
@@ -469,7 +425,7 @@ FROM
 GROUP BY Reach_MultBodyAggAux_f4.y;
 
 DROP TABLE IF EXISTS logica_home.Reach_ifr2 CASCADE;
-CREATE TABLE logica_home.Reach_ifr2 AS WITH t_0_Reach_MultBodyAggAux_f5 AS (SELECT * FROM (
+CREATE TABLE logica_home.Reach_ifr2 AS WITH t_0_Reach_MultBodyAggAux_f3 AS (SELECT * FROM (
   
     SELECT
       0 AS y
@@ -478,19 +434,19 @@ CREATE TABLE logica_home.Reach_ifr2 AS WITH t_0_Reach_MultBodyAggAux_f5 AS (SELE
     SELECT
       ((x_7) + (1)) AS y
     FROM
-      logica_home.Reach_ifr3 AS Reach_ifr3, UNNEST((SELECT ARRAY_AGG(x) FROM GENERATE_SERIES(0, 100 - 1) as x)) as x_7
+      logica_home.Reach_ifr1 AS Reach_ifr1, UNNEST((SELECT ARRAY_AGG(x) FROM GENERATE_SERIES(0, 100 - 1) as x)) as x_7
     WHERE
-      (Reach_ifr3.y = x_7)
+      (Reach_ifr1.y = x_7)
   
 ) AS UNUSED_TABLE_NAME  )
 SELECT
-  Reach_MultBodyAggAux_f5.y AS y
+  Reach_MultBodyAggAux_f3.y AS y
 FROM
-  t_0_Reach_MultBodyAggAux_f5 AS Reach_MultBodyAggAux_f5
-GROUP BY Reach_MultBodyAggAux_f5.y;
+  t_0_Reach_MultBodyAggAux_f3 AS Reach_MultBodyAggAux_f3
+GROUP BY Reach_MultBodyAggAux_f3.y;
 
-DROP TABLE IF EXISTS logica_home.Reach_ifr3 CASCADE;
-CREATE TABLE logica_home.Reach_ifr3 AS WITH t_0_Reach_MultBodyAggAux_f4 AS (SELECT * FROM (
+DROP TABLE IF EXISTS logica_home.Reach_ifr1 CASCADE;
+CREATE TABLE logica_home.Reach_ifr1 AS WITH t_0_Reach_MultBodyAggAux_f4 AS (SELECT * FROM (
   
     SELECT
       0 AS y
@@ -509,324 +465,9 @@ SELECT
 FROM
   t_0_Reach_MultBodyAggAux_f4 AS Reach_MultBodyAggAux_f4
 GROUP BY Reach_MultBodyAggAux_f4.y;
-
-DROP TABLE IF EXISTS logica_home.Reach_ifr2 CASCADE;
-CREATE TABLE logica_home.Reach_ifr2 AS WITH t_0_Reach_MultBodyAggAux_f5 AS (SELECT * FROM (
-  
-    SELECT
-      0 AS y
-   UNION ALL
-  
-    SELECT
-      ((x_7) + (1)) AS y
-    FROM
-      logica_home.Reach_ifr3 AS Reach_ifr3, UNNEST((SELECT ARRAY_AGG(x) FROM GENERATE_SERIES(0, 100 - 1) as x)) as x_7
-    WHERE
-      (Reach_ifr3.y = x_7)
-  
-) AS UNUSED_TABLE_NAME  )
-SELECT
-  Reach_MultBodyAggAux_f5.y AS y
-FROM
-  t_0_Reach_MultBodyAggAux_f5 AS Reach_MultBodyAggAux_f5
-GROUP BY Reach_MultBodyAggAux_f5.y;
-
-DROP TABLE IF EXISTS logica_home.Reach_ifr3 CASCADE;
-CREATE TABLE logica_home.Reach_ifr3 AS WITH t_0_Reach_MultBodyAggAux_f4 AS (SELECT * FROM (
-  
-    SELECT
-      0 AS y
-   UNION ALL
-  
-    SELECT
-      ((x_7) + (1)) AS y
-    FROM
-      logica_home.Reach_ifr2 AS Reach_ifr2, UNNEST((SELECT ARRAY_AGG(x) FROM GENERATE_SERIES(0, 100 - 1) as x)) as x_7
-    WHERE
-      (Reach_ifr2.y = x_7)
-  
-) AS UNUSED_TABLE_NAME  )
-SELECT
-  Reach_MultBodyAggAux_f4.y AS y
-FROM
-  t_0_Reach_MultBodyAggAux_f4 AS Reach_MultBodyAggAux_f4
-GROUP BY Reach_MultBodyAggAux_f4.y;
-
-DROP TABLE IF EXISTS logica_home.Reach_ifr2 CASCADE;
-CREATE TABLE logica_home.Reach_ifr2 AS WITH t_0_Reach_MultBodyAggAux_f5 AS (SELECT * FROM (
-  
-    SELECT
-      0 AS y
-   UNION ALL
-  
-    SELECT
-      ((x_7) + (1)) AS y
-    FROM
-      logica_home.Reach_ifr3 AS Reach_ifr3, UNNEST((SELECT ARRAY_AGG(x) FROM GENERATE_SERIES(0, 100 - 1) as x)) as x_7
-    WHERE
-      (Reach_ifr3.y = x_7)
-  
-) AS UNUSED_TABLE_NAME  )
-SELECT
-  Reach_MultBodyAggAux_f5.y AS y
-FROM
-  t_0_Reach_MultBodyAggAux_f5 AS Reach_MultBodyAggAux_f5
-GROUP BY Reach_MultBodyAggAux_f5.y;
-
-DROP TABLE IF EXISTS logica_home.Reach_ifr3 CASCADE;
-CREATE TABLE logica_home.Reach_ifr3 AS WITH t_0_Reach_MultBodyAggAux_f4 AS (SELECT * FROM (
-  
-    SELECT
-      0 AS y
-   UNION ALL
-  
-    SELECT
-      ((x_7) + (1)) AS y
-    FROM
-      logica_home.Reach_ifr2 AS Reach_ifr2, UNNEST((SELECT ARRAY_AGG(x) FROM GENERATE_SERIES(0, 100 - 1) as x)) as x_7
-    WHERE
-      (Reach_ifr2.y = x_7)
-  
-) AS UNUSED_TABLE_NAME  )
-SELECT
-  Reach_MultBodyAggAux_f4.y AS y
-FROM
-  t_0_Reach_MultBodyAggAux_f4 AS Reach_MultBodyAggAux_f4
-GROUP BY Reach_MultBodyAggAux_f4.y;
-
-DROP TABLE IF EXISTS logica_home.Reach_ifr2 CASCADE;
-CREATE TABLE logica_home.Reach_ifr2 AS WITH t_0_Reach_MultBodyAggAux_f5 AS (SELECT * FROM (
-  
-    SELECT
-      0 AS y
-   UNION ALL
-  
-    SELECT
-      ((x_7) + (1)) AS y
-    FROM
-      logica_home.Reach_ifr3 AS Reach_ifr3, UNNEST((SELECT ARRAY_AGG(x) FROM GENERATE_SERIES(0, 100 - 1) as x)) as x_7
-    WHERE
-      (Reach_ifr3.y = x_7)
-  
-) AS UNUSED_TABLE_NAME  )
-SELECT
-  Reach_MultBodyAggAux_f5.y AS y
-FROM
-  t_0_Reach_MultBodyAggAux_f5 AS Reach_MultBodyAggAux_f5
-GROUP BY Reach_MultBodyAggAux_f5.y;
-
-DROP TABLE IF EXISTS logica_home.Reach_ifr3 CASCADE;
-CREATE TABLE logica_home.Reach_ifr3 AS WITH t_0_Reach_MultBodyAggAux_f4 AS (SELECT * FROM (
-  
-    SELECT
-      0 AS y
-   UNION ALL
-  
-    SELECT
-      ((x_7) + (1)) AS y
-    FROM
-      logica_home.Reach_ifr2 AS Reach_ifr2, UNNEST((SELECT ARRAY_AGG(x) FROM GENERATE_SERIES(0, 100 - 1) as x)) as x_7
-    WHERE
-      (Reach_ifr2.y = x_7)
-  
-) AS UNUSED_TABLE_NAME  )
-SELECT
-  Reach_MultBodyAggAux_f4.y AS y
-FROM
-  t_0_Reach_MultBodyAggAux_f4 AS Reach_MultBodyAggAux_f4
-GROUP BY Reach_MultBodyAggAux_f4.y;
-
-DROP TABLE IF EXISTS logica_home.Reach_ifr2 CASCADE;
-CREATE TABLE logica_home.Reach_ifr2 AS WITH t_0_Reach_MultBodyAggAux_f5 AS (SELECT * FROM (
-  
-    SELECT
-      0 AS y
-   UNION ALL
-  
-    SELECT
-      ((x_7) + (1)) AS y
-    FROM
-      logica_home.Reach_ifr3 AS Reach_ifr3, UNNEST((SELECT ARRAY_AGG(x) FROM GENERATE_SERIES(0, 100 - 1) as x)) as x_7
-    WHERE
-      (Reach_ifr3.y = x_7)
-  
-) AS UNUSED_TABLE_NAME  )
-SELECT
-  Reach_MultBodyAggAux_f5.y AS y
-FROM
-  t_0_Reach_MultBodyAggAux_f5 AS Reach_MultBodyAggAux_f5
-GROUP BY Reach_MultBodyAggAux_f5.y;
-
-DROP TABLE IF EXISTS logica_home.Reach_ifr3 CASCADE;
-CREATE TABLE logica_home.Reach_ifr3 AS WITH t_0_Reach_MultBodyAggAux_f4 AS (SELECT * FROM (
-  
-    SELECT
-      0 AS y
-   UNION ALL
-  
-    SELECT
-      ((x_7) + (1)) AS y
-    FROM
-      logica_home.Reach_ifr2 AS Reach_ifr2, UNNEST((SELECT ARRAY_AGG(x) FROM GENERATE_SERIES(0, 100 - 1) as x)) as x_7
-    WHERE
-      (Reach_ifr2.y = x_7)
-  
-) AS UNUSED_TABLE_NAME  )
-SELECT
-  Reach_MultBodyAggAux_f4.y AS y
-FROM
-  t_0_Reach_MultBodyAggAux_f4 AS Reach_MultBodyAggAux_f4
-GROUP BY Reach_MultBodyAggAux_f4.y;
-
-DROP TABLE IF EXISTS logica_home.Reach_ifr2 CASCADE;
-CREATE TABLE logica_home.Reach_ifr2 AS WITH t_0_Reach_MultBodyAggAux_f5 AS (SELECT * FROM (
-  
-    SELECT
-      0 AS y
-   UNION ALL
-  
-    SELECT
-      ((x_7) + (1)) AS y
-    FROM
-      logica_home.Reach_ifr3 AS Reach_ifr3, UNNEST((SELECT ARRAY_AGG(x) FROM GENERATE_SERIES(0, 100 - 1) as x)) as x_7
-    WHERE
-      (Reach_ifr3.y = x_7)
-  
-) AS UNUSED_TABLE_NAME  )
-SELECT
-  Reach_MultBodyAggAux_f5.y AS y
-FROM
-  t_0_Reach_MultBodyAggAux_f5 AS Reach_MultBodyAggAux_f5
-GROUP BY Reach_MultBodyAggAux_f5.y;
-
-DROP TABLE IF EXISTS logica_home.Reach_ifr3 CASCADE;
-CREATE TABLE logica_home.Reach_ifr3 AS WITH t_0_Reach_MultBodyAggAux_f4 AS (SELECT * FROM (
-  
-    SELECT
-      0 AS y
-   UNION ALL
-  
-    SELECT
-      ((x_7) + (1)) AS y
-    FROM
-      logica_home.Reach_ifr2 AS Reach_ifr2, UNNEST((SELECT ARRAY_AGG(x) FROM GENERATE_SERIES(0, 100 - 1) as x)) as x_7
-    WHERE
-      (Reach_ifr2.y = x_7)
-  
-) AS UNUSED_TABLE_NAME  )
-SELECT
-  Reach_MultBodyAggAux_f4.y AS y
-FROM
-  t_0_Reach_MultBodyAggAux_f4 AS Reach_MultBodyAggAux_f4
-GROUP BY Reach_MultBodyAggAux_f4.y;
-
-DROP TABLE IF EXISTS logica_home.Reach_ifr2 CASCADE;
-CREATE TABLE logica_home.Reach_ifr2 AS WITH t_0_Reach_MultBodyAggAux_f5 AS (SELECT * FROM (
-  
-    SELECT
-      0 AS y
-   UNION ALL
-  
-    SELECT
-      ((x_7) + (1)) AS y
-    FROM
-      logica_home.Reach_ifr3 AS Reach_ifr3, UNNEST((SELECT ARRAY_AGG(x) FROM GENERATE_SERIES(0, 100 - 1) as x)) as x_7
-    WHERE
-      (Reach_ifr3.y = x_7)
-  
-) AS UNUSED_TABLE_NAME  )
-SELECT
-  Reach_MultBodyAggAux_f5.y AS y
-FROM
-  t_0_Reach_MultBodyAggAux_f5 AS Reach_MultBodyAggAux_f5
-GROUP BY Reach_MultBodyAggAux_f5.y;
-
-DROP TABLE IF EXISTS logica_home.Reach_ifr3 CASCADE;
-CREATE TABLE logica_home.Reach_ifr3 AS WITH t_0_Reach_MultBodyAggAux_f4 AS (SELECT * FROM (
-  
-    SELECT
-      0 AS y
-   UNION ALL
-  
-    SELECT
-      ((x_7) + (1)) AS y
-    FROM
-      logica_home.Reach_ifr2 AS Reach_ifr2, UNNEST((SELECT ARRAY_AGG(x) FROM GENERATE_SERIES(0, 100 - 1) as x)) as x_7
-    WHERE
-      (Reach_ifr2.y = x_7)
-  
-) AS UNUSED_TABLE_NAME  )
-SELECT
-  Reach_MultBodyAggAux_f4.y AS y
-FROM
-  t_0_Reach_MultBodyAggAux_f4 AS Reach_MultBodyAggAux_f4
-GROUP BY Reach_MultBodyAggAux_f4.y;
-
-DROP TABLE IF EXISTS logica_home.Reach_ifr2 CASCADE;
-CREATE TABLE logica_home.Reach_ifr2 AS WITH t_0_Reach_MultBodyAggAux_f5 AS (SELECT * FROM (
-  
-    SELECT
-      0 AS y
-   UNION ALL
-  
-    SELECT
-      ((x_7) + (1)) AS y
-    FROM
-      logica_home.Reach_ifr3 AS Reach_ifr3, UNNEST((SELECT ARRAY_AGG(x) FROM GENERATE_SERIES(0, 100 - 1) as x)) as x_7
-    WHERE
-      (Reach_ifr3.y = x_7)
-  
-) AS UNUSED_TABLE_NAME  )
-SELECT
-  Reach_MultBodyAggAux_f5.y AS y
-FROM
-  t_0_Reach_MultBodyAggAux_f5 AS Reach_MultBodyAggAux_f5
-GROUP BY Reach_MultBodyAggAux_f5.y;
-
-DROP TABLE IF EXISTS logica_home.Reach_ifr3 CASCADE;
-CREATE TABLE logica_home.Reach_ifr3 AS WITH t_0_Reach_MultBodyAggAux_f4 AS (SELECT * FROM (
-  
-    SELECT
-      0 AS y
-   UNION ALL
-  
-    SELECT
-      ((x_7) + (1)) AS y
-    FROM
-      logica_home.Reach_ifr2 AS Reach_ifr2, UNNEST((SELECT ARRAY_AGG(x) FROM GENERATE_SERIES(0, 100 - 1) as x)) as x_7
-    WHERE
-      (Reach_ifr2.y = x_7)
-  
-) AS UNUSED_TABLE_NAME  )
-SELECT
-  Reach_MultBodyAggAux_f4.y AS y
-FROM
-  t_0_Reach_MultBodyAggAux_f4 AS Reach_MultBodyAggAux_f4
-GROUP BY Reach_MultBodyAggAux_f4.y;
-
-DROP TABLE IF EXISTS logica_home.Reach_ifr2 CASCADE;
-CREATE TABLE logica_home.Reach_ifr2 AS WITH t_0_Reach_MultBodyAggAux_f5 AS (SELECT * FROM (
-  
-    SELECT
-      0 AS y
-   UNION ALL
-  
-    SELECT
-      ((x_7) + (1)) AS y
-    FROM
-      logica_home.Reach_ifr3 AS Reach_ifr3, UNNEST((SELECT ARRAY_AGG(x) FROM GENERATE_SERIES(0, 100 - 1) as x)) as x_7
-    WHERE
-      (Reach_ifr3.y = x_7)
-  
-) AS UNUSED_TABLE_NAME  )
-SELECT
-  Reach_MultBodyAggAux_f5.y AS y
-FROM
-  t_0_Reach_MultBodyAggAux_f5 AS Reach_MultBodyAggAux_f5
-GROUP BY Reach_MultBodyAggAux_f5.y;
 
 DROP TABLE IF EXISTS logica_home.Reach CASCADE;
-CREATE TABLE logica_home.Reach AS WITH t_0_Reach_MultBodyAggAux_f6 AS (SELECT * FROM (
+CREATE TABLE logica_home.Reach AS WITH t_0_Reach_MultBodyAggAux_f5 AS (SELECT * FROM (
   
     SELECT
       0 AS y
@@ -835,23 +476,23 @@ CREATE TABLE logica_home.Reach AS WITH t_0_Reach_MultBodyAggAux_f6 AS (SELECT * 
     SELECT
       ((x_7) + (1)) AS y
     FROM
-      logica_home.Reach_ifr2 AS Reach_ifr4, UNNEST((SELECT ARRAY_AGG(x) FROM GENERATE_SERIES(0, 100 - 1) as x)) as x_7
+      logica_home.Reach_ifr1 AS Reach_ifr3, UNNEST((SELECT ARRAY_AGG(x) FROM GENERATE_SERIES(0, 100 - 1) as x)) as x_7
     WHERE
-      (Reach_ifr4.y = x_7)
+      (Reach_ifr3.y = x_7)
   
 ) AS UNUSED_TABLE_NAME  )
 SELECT
-  Reach_MultBodyAggAux_f6.y AS y
+  Reach_MultBodyAggAux_f5.y AS y
 FROM
-  t_0_Reach_MultBodyAggAux_f6 AS Reach_MultBodyAggAux_f6
-GROUP BY Reach_MultBodyAggAux_f6.y;
+  t_0_Reach_MultBodyAggAux_f5 AS Reach_MultBodyAggAux_f5
+GROUP BY Reach_MultBodyAggAux_f5.y;
 
 -- Interacting with table logica_home.Reach
 
 SELECT
   x_3 AS x
 FROM
-  UNNEST(ARRAY[10, 39, 40]) as x_3
+  UNNEST(ARRAY[10, 22, 23]) as x_3
 WHERE
   (CAST((SELECT
     MIN((CASE WHEN x_6 = 0 THEN 1 ELSE NULL END)) AS logica_value

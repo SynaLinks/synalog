@@ -70,11 +70,11 @@ all-engines = [
 # reached over NOSASL).
 dev = [
     "pytest",
+    "pytest-xdist",
     "duckdb",
     "logica",
     "matplotlib",
     "zensical",
-    "psycopg",
     "trino",
     "presto-python-client",
     "pyhive",

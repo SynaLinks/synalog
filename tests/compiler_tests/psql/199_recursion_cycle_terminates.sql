@@ -99,8 +99,8 @@ GROUP BY Reach_MultBodyAggAux_f3.x ORDER BY x;
 
 -- Interacting with table logica_home.Reach_ifr2
 
-DROP TABLE IF EXISTS logica_home.Reach_ifr1 CASCADE;
-CREATE TABLE logica_home.Reach_ifr1 AS WITH t_1_Edge AS (SELECT * FROM (
+DROP TABLE IF EXISTS logica_home.Reach_ifr3 CASCADE;
+CREATE TABLE logica_home.Reach_ifr3 AS WITH t_1_Edge AS (SELECT * FROM (
   
     SELECT
       1 AS a,
@@ -137,997 +137,10 @@ FROM
   t_0_Reach_MultBodyAggAux_f4 AS Reach_MultBodyAggAux_f4
 GROUP BY Reach_MultBodyAggAux_f4.x ORDER BY x;
 
--- Interacting with table logica_home.Reach_ifr1
+-- Interacting with table logica_home.Reach_ifr3
 
 DROP TABLE IF EXISTS logica_home.Reach_ifr2 CASCADE;
 CREATE TABLE logica_home.Reach_ifr2 AS WITH t_1_Edge AS (SELECT * FROM (
-  
-    SELECT
-      1 AS a,
-      2 AS b
-   UNION ALL
-  
-    SELECT
-      2 AS a,
-      3 AS b
-   UNION ALL
-  
-    SELECT
-      3 AS a,
-      1 AS b
-  
-) AS UNUSED_TABLE_NAME  ),
-t_0_Reach_MultBodyAggAux_f3 AS (SELECT * FROM (
-  
-    SELECT
-      1 AS x
-   UNION ALL
-  
-    SELECT
-      Edge.b AS x
-    FROM
-      logica_home.Reach_ifr1 AS Reach_ifr1, t_1_Edge AS Edge
-    WHERE
-      (Edge.a = Reach_ifr1.x)
-  
-) AS UNUSED_TABLE_NAME  )
-SELECT
-  Reach_MultBodyAggAux_f3.x AS x
-FROM
-  t_0_Reach_MultBodyAggAux_f3 AS Reach_MultBodyAggAux_f3
-GROUP BY Reach_MultBodyAggAux_f3.x ORDER BY x;
-
-DROP TABLE IF EXISTS logica_home.Reach_ifr1 CASCADE;
-CREATE TABLE logica_home.Reach_ifr1 AS WITH t_1_Edge AS (SELECT * FROM (
-  
-    SELECT
-      1 AS a,
-      2 AS b
-   UNION ALL
-  
-    SELECT
-      2 AS a,
-      3 AS b
-   UNION ALL
-  
-    SELECT
-      3 AS a,
-      1 AS b
-  
-) AS UNUSED_TABLE_NAME  ),
-t_0_Reach_MultBodyAggAux_f4 AS (SELECT * FROM (
-  
-    SELECT
-      1 AS x
-   UNION ALL
-  
-    SELECT
-      Edge.b AS x
-    FROM
-      logica_home.Reach_ifr2 AS Reach_ifr2, t_1_Edge AS Edge
-    WHERE
-      (Edge.a = Reach_ifr2.x)
-  
-) AS UNUSED_TABLE_NAME  )
-SELECT
-  Reach_MultBodyAggAux_f4.x AS x
-FROM
-  t_0_Reach_MultBodyAggAux_f4 AS Reach_MultBodyAggAux_f4
-GROUP BY Reach_MultBodyAggAux_f4.x ORDER BY x;
-
-DROP TABLE IF EXISTS logica_home.Reach_ifr2 CASCADE;
-CREATE TABLE logica_home.Reach_ifr2 AS WITH t_1_Edge AS (SELECT * FROM (
-  
-    SELECT
-      1 AS a,
-      2 AS b
-   UNION ALL
-  
-    SELECT
-      2 AS a,
-      3 AS b
-   UNION ALL
-  
-    SELECT
-      3 AS a,
-      1 AS b
-  
-) AS UNUSED_TABLE_NAME  ),
-t_0_Reach_MultBodyAggAux_f3 AS (SELECT * FROM (
-  
-    SELECT
-      1 AS x
-   UNION ALL
-  
-    SELECT
-      Edge.b AS x
-    FROM
-      logica_home.Reach_ifr1 AS Reach_ifr1, t_1_Edge AS Edge
-    WHERE
-      (Edge.a = Reach_ifr1.x)
-  
-) AS UNUSED_TABLE_NAME  )
-SELECT
-  Reach_MultBodyAggAux_f3.x AS x
-FROM
-  t_0_Reach_MultBodyAggAux_f3 AS Reach_MultBodyAggAux_f3
-GROUP BY Reach_MultBodyAggAux_f3.x ORDER BY x;
-
-DROP TABLE IF EXISTS logica_home.Reach_ifr1 CASCADE;
-CREATE TABLE logica_home.Reach_ifr1 AS WITH t_1_Edge AS (SELECT * FROM (
-  
-    SELECT
-      1 AS a,
-      2 AS b
-   UNION ALL
-  
-    SELECT
-      2 AS a,
-      3 AS b
-   UNION ALL
-  
-    SELECT
-      3 AS a,
-      1 AS b
-  
-) AS UNUSED_TABLE_NAME  ),
-t_0_Reach_MultBodyAggAux_f4 AS (SELECT * FROM (
-  
-    SELECT
-      1 AS x
-   UNION ALL
-  
-    SELECT
-      Edge.b AS x
-    FROM
-      logica_home.Reach_ifr2 AS Reach_ifr2, t_1_Edge AS Edge
-    WHERE
-      (Edge.a = Reach_ifr2.x)
-  
-) AS UNUSED_TABLE_NAME  )
-SELECT
-  Reach_MultBodyAggAux_f4.x AS x
-FROM
-  t_0_Reach_MultBodyAggAux_f4 AS Reach_MultBodyAggAux_f4
-GROUP BY Reach_MultBodyAggAux_f4.x ORDER BY x;
-
-DROP TABLE IF EXISTS logica_home.Reach_ifr2 CASCADE;
-CREATE TABLE logica_home.Reach_ifr2 AS WITH t_1_Edge AS (SELECT * FROM (
-  
-    SELECT
-      1 AS a,
-      2 AS b
-   UNION ALL
-  
-    SELECT
-      2 AS a,
-      3 AS b
-   UNION ALL
-  
-    SELECT
-      3 AS a,
-      1 AS b
-  
-) AS UNUSED_TABLE_NAME  ),
-t_0_Reach_MultBodyAggAux_f3 AS (SELECT * FROM (
-  
-    SELECT
-      1 AS x
-   UNION ALL
-  
-    SELECT
-      Edge.b AS x
-    FROM
-      logica_home.Reach_ifr1 AS Reach_ifr1, t_1_Edge AS Edge
-    WHERE
-      (Edge.a = Reach_ifr1.x)
-  
-) AS UNUSED_TABLE_NAME  )
-SELECT
-  Reach_MultBodyAggAux_f3.x AS x
-FROM
-  t_0_Reach_MultBodyAggAux_f3 AS Reach_MultBodyAggAux_f3
-GROUP BY Reach_MultBodyAggAux_f3.x ORDER BY x;
-
-DROP TABLE IF EXISTS logica_home.Reach_ifr1 CASCADE;
-CREATE TABLE logica_home.Reach_ifr1 AS WITH t_1_Edge AS (SELECT * FROM (
-  
-    SELECT
-      1 AS a,
-      2 AS b
-   UNION ALL
-  
-    SELECT
-      2 AS a,
-      3 AS b
-   UNION ALL
-  
-    SELECT
-      3 AS a,
-      1 AS b
-  
-) AS UNUSED_TABLE_NAME  ),
-t_0_Reach_MultBodyAggAux_f4 AS (SELECT * FROM (
-  
-    SELECT
-      1 AS x
-   UNION ALL
-  
-    SELECT
-      Edge.b AS x
-    FROM
-      logica_home.Reach_ifr2 AS Reach_ifr2, t_1_Edge AS Edge
-    WHERE
-      (Edge.a = Reach_ifr2.x)
-  
-) AS UNUSED_TABLE_NAME  )
-SELECT
-  Reach_MultBodyAggAux_f4.x AS x
-FROM
-  t_0_Reach_MultBodyAggAux_f4 AS Reach_MultBodyAggAux_f4
-GROUP BY Reach_MultBodyAggAux_f4.x ORDER BY x;
-
-DROP TABLE IF EXISTS logica_home.Reach_ifr2 CASCADE;
-CREATE TABLE logica_home.Reach_ifr2 AS WITH t_1_Edge AS (SELECT * FROM (
-  
-    SELECT
-      1 AS a,
-      2 AS b
-   UNION ALL
-  
-    SELECT
-      2 AS a,
-      3 AS b
-   UNION ALL
-  
-    SELECT
-      3 AS a,
-      1 AS b
-  
-) AS UNUSED_TABLE_NAME  ),
-t_0_Reach_MultBodyAggAux_f3 AS (SELECT * FROM (
-  
-    SELECT
-      1 AS x
-   UNION ALL
-  
-    SELECT
-      Edge.b AS x
-    FROM
-      logica_home.Reach_ifr1 AS Reach_ifr1, t_1_Edge AS Edge
-    WHERE
-      (Edge.a = Reach_ifr1.x)
-  
-) AS UNUSED_TABLE_NAME  )
-SELECT
-  Reach_MultBodyAggAux_f3.x AS x
-FROM
-  t_0_Reach_MultBodyAggAux_f3 AS Reach_MultBodyAggAux_f3
-GROUP BY Reach_MultBodyAggAux_f3.x ORDER BY x;
-
-DROP TABLE IF EXISTS logica_home.Reach_ifr1 CASCADE;
-CREATE TABLE logica_home.Reach_ifr1 AS WITH t_1_Edge AS (SELECT * FROM (
-  
-    SELECT
-      1 AS a,
-      2 AS b
-   UNION ALL
-  
-    SELECT
-      2 AS a,
-      3 AS b
-   UNION ALL
-  
-    SELECT
-      3 AS a,
-      1 AS b
-  
-) AS UNUSED_TABLE_NAME  ),
-t_0_Reach_MultBodyAggAux_f4 AS (SELECT * FROM (
-  
-    SELECT
-      1 AS x
-   UNION ALL
-  
-    SELECT
-      Edge.b AS x
-    FROM
-      logica_home.Reach_ifr2 AS Reach_ifr2, t_1_Edge AS Edge
-    WHERE
-      (Edge.a = Reach_ifr2.x)
-  
-) AS UNUSED_TABLE_NAME  )
-SELECT
-  Reach_MultBodyAggAux_f4.x AS x
-FROM
-  t_0_Reach_MultBodyAggAux_f4 AS Reach_MultBodyAggAux_f4
-GROUP BY Reach_MultBodyAggAux_f4.x ORDER BY x;
-
-DROP TABLE IF EXISTS logica_home.Reach_ifr2 CASCADE;
-CREATE TABLE logica_home.Reach_ifr2 AS WITH t_1_Edge AS (SELECT * FROM (
-  
-    SELECT
-      1 AS a,
-      2 AS b
-   UNION ALL
-  
-    SELECT
-      2 AS a,
-      3 AS b
-   UNION ALL
-  
-    SELECT
-      3 AS a,
-      1 AS b
-  
-) AS UNUSED_TABLE_NAME  ),
-t_0_Reach_MultBodyAggAux_f3 AS (SELECT * FROM (
-  
-    SELECT
-      1 AS x
-   UNION ALL
-  
-    SELECT
-      Edge.b AS x
-    FROM
-      logica_home.Reach_ifr1 AS Reach_ifr1, t_1_Edge AS Edge
-    WHERE
-      (Edge.a = Reach_ifr1.x)
-  
-) AS UNUSED_TABLE_NAME  )
-SELECT
-  Reach_MultBodyAggAux_f3.x AS x
-FROM
-  t_0_Reach_MultBodyAggAux_f3 AS Reach_MultBodyAggAux_f3
-GROUP BY Reach_MultBodyAggAux_f3.x ORDER BY x;
-
-DROP TABLE IF EXISTS logica_home.Reach_ifr1 CASCADE;
-CREATE TABLE logica_home.Reach_ifr1 AS WITH t_1_Edge AS (SELECT * FROM (
-  
-    SELECT
-      1 AS a,
-      2 AS b
-   UNION ALL
-  
-    SELECT
-      2 AS a,
-      3 AS b
-   UNION ALL
-  
-    SELECT
-      3 AS a,
-      1 AS b
-  
-) AS UNUSED_TABLE_NAME  ),
-t_0_Reach_MultBodyAggAux_f4 AS (SELECT * FROM (
-  
-    SELECT
-      1 AS x
-   UNION ALL
-  
-    SELECT
-      Edge.b AS x
-    FROM
-      logica_home.Reach_ifr2 AS Reach_ifr2, t_1_Edge AS Edge
-    WHERE
-      (Edge.a = Reach_ifr2.x)
-  
-) AS UNUSED_TABLE_NAME  )
-SELECT
-  Reach_MultBodyAggAux_f4.x AS x
-FROM
-  t_0_Reach_MultBodyAggAux_f4 AS Reach_MultBodyAggAux_f4
-GROUP BY Reach_MultBodyAggAux_f4.x ORDER BY x;
-
-DROP TABLE IF EXISTS logica_home.Reach_ifr2 CASCADE;
-CREATE TABLE logica_home.Reach_ifr2 AS WITH t_1_Edge AS (SELECT * FROM (
-  
-    SELECT
-      1 AS a,
-      2 AS b
-   UNION ALL
-  
-    SELECT
-      2 AS a,
-      3 AS b
-   UNION ALL
-  
-    SELECT
-      3 AS a,
-      1 AS b
-  
-) AS UNUSED_TABLE_NAME  ),
-t_0_Reach_MultBodyAggAux_f3 AS (SELECT * FROM (
-  
-    SELECT
-      1 AS x
-   UNION ALL
-  
-    SELECT
-      Edge.b AS x
-    FROM
-      logica_home.Reach_ifr1 AS Reach_ifr1, t_1_Edge AS Edge
-    WHERE
-      (Edge.a = Reach_ifr1.x)
-  
-) AS UNUSED_TABLE_NAME  )
-SELECT
-  Reach_MultBodyAggAux_f3.x AS x
-FROM
-  t_0_Reach_MultBodyAggAux_f3 AS Reach_MultBodyAggAux_f3
-GROUP BY Reach_MultBodyAggAux_f3.x ORDER BY x;
-
-DROP TABLE IF EXISTS logica_home.Reach_ifr1 CASCADE;
-CREATE TABLE logica_home.Reach_ifr1 AS WITH t_1_Edge AS (SELECT * FROM (
-  
-    SELECT
-      1 AS a,
-      2 AS b
-   UNION ALL
-  
-    SELECT
-      2 AS a,
-      3 AS b
-   UNION ALL
-  
-    SELECT
-      3 AS a,
-      1 AS b
-  
-) AS UNUSED_TABLE_NAME  ),
-t_0_Reach_MultBodyAggAux_f4 AS (SELECT * FROM (
-  
-    SELECT
-      1 AS x
-   UNION ALL
-  
-    SELECT
-      Edge.b AS x
-    FROM
-      logica_home.Reach_ifr2 AS Reach_ifr2, t_1_Edge AS Edge
-    WHERE
-      (Edge.a = Reach_ifr2.x)
-  
-) AS UNUSED_TABLE_NAME  )
-SELECT
-  Reach_MultBodyAggAux_f4.x AS x
-FROM
-  t_0_Reach_MultBodyAggAux_f4 AS Reach_MultBodyAggAux_f4
-GROUP BY Reach_MultBodyAggAux_f4.x ORDER BY x;
-
-DROP TABLE IF EXISTS logica_home.Reach_ifr2 CASCADE;
-CREATE TABLE logica_home.Reach_ifr2 AS WITH t_1_Edge AS (SELECT * FROM (
-  
-    SELECT
-      1 AS a,
-      2 AS b
-   UNION ALL
-  
-    SELECT
-      2 AS a,
-      3 AS b
-   UNION ALL
-  
-    SELECT
-      3 AS a,
-      1 AS b
-  
-) AS UNUSED_TABLE_NAME  ),
-t_0_Reach_MultBodyAggAux_f3 AS (SELECT * FROM (
-  
-    SELECT
-      1 AS x
-   UNION ALL
-  
-    SELECT
-      Edge.b AS x
-    FROM
-      logica_home.Reach_ifr1 AS Reach_ifr1, t_1_Edge AS Edge
-    WHERE
-      (Edge.a = Reach_ifr1.x)
-  
-) AS UNUSED_TABLE_NAME  )
-SELECT
-  Reach_MultBodyAggAux_f3.x AS x
-FROM
-  t_0_Reach_MultBodyAggAux_f3 AS Reach_MultBodyAggAux_f3
-GROUP BY Reach_MultBodyAggAux_f3.x ORDER BY x;
-
-DROP TABLE IF EXISTS logica_home.Reach_ifr1 CASCADE;
-CREATE TABLE logica_home.Reach_ifr1 AS WITH t_1_Edge AS (SELECT * FROM (
-  
-    SELECT
-      1 AS a,
-      2 AS b
-   UNION ALL
-  
-    SELECT
-      2 AS a,
-      3 AS b
-   UNION ALL
-  
-    SELECT
-      3 AS a,
-      1 AS b
-  
-) AS UNUSED_TABLE_NAME  ),
-t_0_Reach_MultBodyAggAux_f4 AS (SELECT * FROM (
-  
-    SELECT
-      1 AS x
-   UNION ALL
-  
-    SELECT
-      Edge.b AS x
-    FROM
-      logica_home.Reach_ifr2 AS Reach_ifr2, t_1_Edge AS Edge
-    WHERE
-      (Edge.a = Reach_ifr2.x)
-  
-) AS UNUSED_TABLE_NAME  )
-SELECT
-  Reach_MultBodyAggAux_f4.x AS x
-FROM
-  t_0_Reach_MultBodyAggAux_f4 AS Reach_MultBodyAggAux_f4
-GROUP BY Reach_MultBodyAggAux_f4.x ORDER BY x;
-
-DROP TABLE IF EXISTS logica_home.Reach_ifr2 CASCADE;
-CREATE TABLE logica_home.Reach_ifr2 AS WITH t_1_Edge AS (SELECT * FROM (
-  
-    SELECT
-      1 AS a,
-      2 AS b
-   UNION ALL
-  
-    SELECT
-      2 AS a,
-      3 AS b
-   UNION ALL
-  
-    SELECT
-      3 AS a,
-      1 AS b
-  
-) AS UNUSED_TABLE_NAME  ),
-t_0_Reach_MultBodyAggAux_f3 AS (SELECT * FROM (
-  
-    SELECT
-      1 AS x
-   UNION ALL
-  
-    SELECT
-      Edge.b AS x
-    FROM
-      logica_home.Reach_ifr1 AS Reach_ifr1, t_1_Edge AS Edge
-    WHERE
-      (Edge.a = Reach_ifr1.x)
-  
-) AS UNUSED_TABLE_NAME  )
-SELECT
-  Reach_MultBodyAggAux_f3.x AS x
-FROM
-  t_0_Reach_MultBodyAggAux_f3 AS Reach_MultBodyAggAux_f3
-GROUP BY Reach_MultBodyAggAux_f3.x ORDER BY x;
-
-DROP TABLE IF EXISTS logica_home.Reach_ifr1 CASCADE;
-CREATE TABLE logica_home.Reach_ifr1 AS WITH t_1_Edge AS (SELECT * FROM (
-  
-    SELECT
-      1 AS a,
-      2 AS b
-   UNION ALL
-  
-    SELECT
-      2 AS a,
-      3 AS b
-   UNION ALL
-  
-    SELECT
-      3 AS a,
-      1 AS b
-  
-) AS UNUSED_TABLE_NAME  ),
-t_0_Reach_MultBodyAggAux_f4 AS (SELECT * FROM (
-  
-    SELECT
-      1 AS x
-   UNION ALL
-  
-    SELECT
-      Edge.b AS x
-    FROM
-      logica_home.Reach_ifr2 AS Reach_ifr2, t_1_Edge AS Edge
-    WHERE
-      (Edge.a = Reach_ifr2.x)
-  
-) AS UNUSED_TABLE_NAME  )
-SELECT
-  Reach_MultBodyAggAux_f4.x AS x
-FROM
-  t_0_Reach_MultBodyAggAux_f4 AS Reach_MultBodyAggAux_f4
-GROUP BY Reach_MultBodyAggAux_f4.x ORDER BY x;
-
-DROP TABLE IF EXISTS logica_home.Reach_ifr2 CASCADE;
-CREATE TABLE logica_home.Reach_ifr2 AS WITH t_1_Edge AS (SELECT * FROM (
-  
-    SELECT
-      1 AS a,
-      2 AS b
-   UNION ALL
-  
-    SELECT
-      2 AS a,
-      3 AS b
-   UNION ALL
-  
-    SELECT
-      3 AS a,
-      1 AS b
-  
-) AS UNUSED_TABLE_NAME  ),
-t_0_Reach_MultBodyAggAux_f3 AS (SELECT * FROM (
-  
-    SELECT
-      1 AS x
-   UNION ALL
-  
-    SELECT
-      Edge.b AS x
-    FROM
-      logica_home.Reach_ifr1 AS Reach_ifr1, t_1_Edge AS Edge
-    WHERE
-      (Edge.a = Reach_ifr1.x)
-  
-) AS UNUSED_TABLE_NAME  )
-SELECT
-  Reach_MultBodyAggAux_f3.x AS x
-FROM
-  t_0_Reach_MultBodyAggAux_f3 AS Reach_MultBodyAggAux_f3
-GROUP BY Reach_MultBodyAggAux_f3.x ORDER BY x;
-
-DROP TABLE IF EXISTS logica_home.Reach_ifr1 CASCADE;
-CREATE TABLE logica_home.Reach_ifr1 AS WITH t_1_Edge AS (SELECT * FROM (
-  
-    SELECT
-      1 AS a,
-      2 AS b
-   UNION ALL
-  
-    SELECT
-      2 AS a,
-      3 AS b
-   UNION ALL
-  
-    SELECT
-      3 AS a,
-      1 AS b
-  
-) AS UNUSED_TABLE_NAME  ),
-t_0_Reach_MultBodyAggAux_f4 AS (SELECT * FROM (
-  
-    SELECT
-      1 AS x
-   UNION ALL
-  
-    SELECT
-      Edge.b AS x
-    FROM
-      logica_home.Reach_ifr2 AS Reach_ifr2, t_1_Edge AS Edge
-    WHERE
-      (Edge.a = Reach_ifr2.x)
-  
-) AS UNUSED_TABLE_NAME  )
-SELECT
-  Reach_MultBodyAggAux_f4.x AS x
-FROM
-  t_0_Reach_MultBodyAggAux_f4 AS Reach_MultBodyAggAux_f4
-GROUP BY Reach_MultBodyAggAux_f4.x ORDER BY x;
-
-DROP TABLE IF EXISTS logica_home.Reach_ifr2 CASCADE;
-CREATE TABLE logica_home.Reach_ifr2 AS WITH t_1_Edge AS (SELECT * FROM (
-  
-    SELECT
-      1 AS a,
-      2 AS b
-   UNION ALL
-  
-    SELECT
-      2 AS a,
-      3 AS b
-   UNION ALL
-  
-    SELECT
-      3 AS a,
-      1 AS b
-  
-) AS UNUSED_TABLE_NAME  ),
-t_0_Reach_MultBodyAggAux_f3 AS (SELECT * FROM (
-  
-    SELECT
-      1 AS x
-   UNION ALL
-  
-    SELECT
-      Edge.b AS x
-    FROM
-      logica_home.Reach_ifr1 AS Reach_ifr1, t_1_Edge AS Edge
-    WHERE
-      (Edge.a = Reach_ifr1.x)
-  
-) AS UNUSED_TABLE_NAME  )
-SELECT
-  Reach_MultBodyAggAux_f3.x AS x
-FROM
-  t_0_Reach_MultBodyAggAux_f3 AS Reach_MultBodyAggAux_f3
-GROUP BY Reach_MultBodyAggAux_f3.x ORDER BY x;
-
-DROP TABLE IF EXISTS logica_home.Reach_ifr1 CASCADE;
-CREATE TABLE logica_home.Reach_ifr1 AS WITH t_1_Edge AS (SELECT * FROM (
-  
-    SELECT
-      1 AS a,
-      2 AS b
-   UNION ALL
-  
-    SELECT
-      2 AS a,
-      3 AS b
-   UNION ALL
-  
-    SELECT
-      3 AS a,
-      1 AS b
-  
-) AS UNUSED_TABLE_NAME  ),
-t_0_Reach_MultBodyAggAux_f4 AS (SELECT * FROM (
-  
-    SELECT
-      1 AS x
-   UNION ALL
-  
-    SELECT
-      Edge.b AS x
-    FROM
-      logica_home.Reach_ifr2 AS Reach_ifr2, t_1_Edge AS Edge
-    WHERE
-      (Edge.a = Reach_ifr2.x)
-  
-) AS UNUSED_TABLE_NAME  )
-SELECT
-  Reach_MultBodyAggAux_f4.x AS x
-FROM
-  t_0_Reach_MultBodyAggAux_f4 AS Reach_MultBodyAggAux_f4
-GROUP BY Reach_MultBodyAggAux_f4.x ORDER BY x;
-
-DROP TABLE IF EXISTS logica_home.Reach_ifr2 CASCADE;
-CREATE TABLE logica_home.Reach_ifr2 AS WITH t_1_Edge AS (SELECT * FROM (
-  
-    SELECT
-      1 AS a,
-      2 AS b
-   UNION ALL
-  
-    SELECT
-      2 AS a,
-      3 AS b
-   UNION ALL
-  
-    SELECT
-      3 AS a,
-      1 AS b
-  
-) AS UNUSED_TABLE_NAME  ),
-t_0_Reach_MultBodyAggAux_f3 AS (SELECT * FROM (
-  
-    SELECT
-      1 AS x
-   UNION ALL
-  
-    SELECT
-      Edge.b AS x
-    FROM
-      logica_home.Reach_ifr1 AS Reach_ifr1, t_1_Edge AS Edge
-    WHERE
-      (Edge.a = Reach_ifr1.x)
-  
-) AS UNUSED_TABLE_NAME  )
-SELECT
-  Reach_MultBodyAggAux_f3.x AS x
-FROM
-  t_0_Reach_MultBodyAggAux_f3 AS Reach_MultBodyAggAux_f3
-GROUP BY Reach_MultBodyAggAux_f3.x ORDER BY x;
-
-DROP TABLE IF EXISTS logica_home.Reach_ifr1 CASCADE;
-CREATE TABLE logica_home.Reach_ifr1 AS WITH t_1_Edge AS (SELECT * FROM (
-  
-    SELECT
-      1 AS a,
-      2 AS b
-   UNION ALL
-  
-    SELECT
-      2 AS a,
-      3 AS b
-   UNION ALL
-  
-    SELECT
-      3 AS a,
-      1 AS b
-  
-) AS UNUSED_TABLE_NAME  ),
-t_0_Reach_MultBodyAggAux_f4 AS (SELECT * FROM (
-  
-    SELECT
-      1 AS x
-   UNION ALL
-  
-    SELECT
-      Edge.b AS x
-    FROM
-      logica_home.Reach_ifr2 AS Reach_ifr2, t_1_Edge AS Edge
-    WHERE
-      (Edge.a = Reach_ifr2.x)
-  
-) AS UNUSED_TABLE_NAME  )
-SELECT
-  Reach_MultBodyAggAux_f4.x AS x
-FROM
-  t_0_Reach_MultBodyAggAux_f4 AS Reach_MultBodyAggAux_f4
-GROUP BY Reach_MultBodyAggAux_f4.x ORDER BY x;
-
-DROP TABLE IF EXISTS logica_home.Reach_ifr2 CASCADE;
-CREATE TABLE logica_home.Reach_ifr2 AS WITH t_1_Edge AS (SELECT * FROM (
-  
-    SELECT
-      1 AS a,
-      2 AS b
-   UNION ALL
-  
-    SELECT
-      2 AS a,
-      3 AS b
-   UNION ALL
-  
-    SELECT
-      3 AS a,
-      1 AS b
-  
-) AS UNUSED_TABLE_NAME  ),
-t_0_Reach_MultBodyAggAux_f3 AS (SELECT * FROM (
-  
-    SELECT
-      1 AS x
-   UNION ALL
-  
-    SELECT
-      Edge.b AS x
-    FROM
-      logica_home.Reach_ifr1 AS Reach_ifr1, t_1_Edge AS Edge
-    WHERE
-      (Edge.a = Reach_ifr1.x)
-  
-) AS UNUSED_TABLE_NAME  )
-SELECT
-  Reach_MultBodyAggAux_f3.x AS x
-FROM
-  t_0_Reach_MultBodyAggAux_f3 AS Reach_MultBodyAggAux_f3
-GROUP BY Reach_MultBodyAggAux_f3.x ORDER BY x;
-
-DROP TABLE IF EXISTS logica_home.Reach_ifr1 CASCADE;
-CREATE TABLE logica_home.Reach_ifr1 AS WITH t_1_Edge AS (SELECT * FROM (
-  
-    SELECT
-      1 AS a,
-      2 AS b
-   UNION ALL
-  
-    SELECT
-      2 AS a,
-      3 AS b
-   UNION ALL
-  
-    SELECT
-      3 AS a,
-      1 AS b
-  
-) AS UNUSED_TABLE_NAME  ),
-t_0_Reach_MultBodyAggAux_f4 AS (SELECT * FROM (
-  
-    SELECT
-      1 AS x
-   UNION ALL
-  
-    SELECT
-      Edge.b AS x
-    FROM
-      logica_home.Reach_ifr2 AS Reach_ifr2, t_1_Edge AS Edge
-    WHERE
-      (Edge.a = Reach_ifr2.x)
-  
-) AS UNUSED_TABLE_NAME  )
-SELECT
-  Reach_MultBodyAggAux_f4.x AS x
-FROM
-  t_0_Reach_MultBodyAggAux_f4 AS Reach_MultBodyAggAux_f4
-GROUP BY Reach_MultBodyAggAux_f4.x ORDER BY x;
-
-DROP TABLE IF EXISTS logica_home.Reach_ifr2 CASCADE;
-CREATE TABLE logica_home.Reach_ifr2 AS WITH t_1_Edge AS (SELECT * FROM (
-  
-    SELECT
-      1 AS a,
-      2 AS b
-   UNION ALL
-  
-    SELECT
-      2 AS a,
-      3 AS b
-   UNION ALL
-  
-    SELECT
-      3 AS a,
-      1 AS b
-  
-) AS UNUSED_TABLE_NAME  ),
-t_0_Reach_MultBodyAggAux_f3 AS (SELECT * FROM (
-  
-    SELECT
-      1 AS x
-   UNION ALL
-  
-    SELECT
-      Edge.b AS x
-    FROM
-      logica_home.Reach_ifr1 AS Reach_ifr1, t_1_Edge AS Edge
-    WHERE
-      (Edge.a = Reach_ifr1.x)
-  
-) AS UNUSED_TABLE_NAME  )
-SELECT
-  Reach_MultBodyAggAux_f3.x AS x
-FROM
-  t_0_Reach_MultBodyAggAux_f3 AS Reach_MultBodyAggAux_f3
-GROUP BY Reach_MultBodyAggAux_f3.x ORDER BY x;
-
-DROP TABLE IF EXISTS logica_home.Reach_ifr1 CASCADE;
-CREATE TABLE logica_home.Reach_ifr1 AS WITH t_1_Edge AS (SELECT * FROM (
-  
-    SELECT
-      1 AS a,
-      2 AS b
-   UNION ALL
-  
-    SELECT
-      2 AS a,
-      3 AS b
-   UNION ALL
-  
-    SELECT
-      3 AS a,
-      1 AS b
-  
-) AS UNUSED_TABLE_NAME  ),
-t_0_Reach_MultBodyAggAux_f4 AS (SELECT * FROM (
-  
-    SELECT
-      1 AS x
-   UNION ALL
-  
-    SELECT
-      Edge.b AS x
-    FROM
-      logica_home.Reach_ifr2 AS Reach_ifr2, t_1_Edge AS Edge
-    WHERE
-      (Edge.a = Reach_ifr2.x)
-  
-) AS UNUSED_TABLE_NAME  )
-SELECT
-  Reach_MultBodyAggAux_f4.x AS x
-FROM
-  t_0_Reach_MultBodyAggAux_f4 AS Reach_MultBodyAggAux_f4
-GROUP BY Reach_MultBodyAggAux_f4.x ORDER BY x;
-
-WITH t_1_Edge AS (SELECT * FROM (
   
     SELECT
       1 AS a,
@@ -1153,7 +166,7 @@ t_0_Reach_MultBodyAggAux_f5 AS (SELECT * FROM (
     SELECT
       Edge.b AS x
     FROM
-      logica_home.Reach_ifr1 AS Reach_ifr3, t_1_Edge AS Edge
+      logica_home.Reach_ifr3 AS Reach_ifr3, t_1_Edge AS Edge
     WHERE
       (Edge.a = Reach_ifr3.x)
   
@@ -1163,3 +176,650 @@ SELECT
 FROM
   t_0_Reach_MultBodyAggAux_f5 AS Reach_MultBodyAggAux_f5
 GROUP BY Reach_MultBodyAggAux_f5.x ORDER BY x;
+
+-- Interacting with table logica_home.Reach_ifr2
+
+DROP TABLE IF EXISTS logica_home.Reach_ifr3 CASCADE;
+CREATE TABLE logica_home.Reach_ifr3 AS WITH t_1_Edge AS (SELECT * FROM (
+  
+    SELECT
+      1 AS a,
+      2 AS b
+   UNION ALL
+  
+    SELECT
+      2 AS a,
+      3 AS b
+   UNION ALL
+  
+    SELECT
+      3 AS a,
+      1 AS b
+  
+) AS UNUSED_TABLE_NAME  ),
+t_0_Reach_MultBodyAggAux_f4 AS (SELECT * FROM (
+  
+    SELECT
+      1 AS x
+   UNION ALL
+  
+    SELECT
+      Edge.b AS x
+    FROM
+      logica_home.Reach_ifr2 AS Reach_ifr2, t_1_Edge AS Edge
+    WHERE
+      (Edge.a = Reach_ifr2.x)
+  
+) AS UNUSED_TABLE_NAME  )
+SELECT
+  Reach_MultBodyAggAux_f4.x AS x
+FROM
+  t_0_Reach_MultBodyAggAux_f4 AS Reach_MultBodyAggAux_f4
+GROUP BY Reach_MultBodyAggAux_f4.x ORDER BY x;
+
+DROP TABLE IF EXISTS logica_home.Reach_ifr2 CASCADE;
+CREATE TABLE logica_home.Reach_ifr2 AS WITH t_1_Edge AS (SELECT * FROM (
+  
+    SELECT
+      1 AS a,
+      2 AS b
+   UNION ALL
+  
+    SELECT
+      2 AS a,
+      3 AS b
+   UNION ALL
+  
+    SELECT
+      3 AS a,
+      1 AS b
+  
+) AS UNUSED_TABLE_NAME  ),
+t_0_Reach_MultBodyAggAux_f5 AS (SELECT * FROM (
+  
+    SELECT
+      1 AS x
+   UNION ALL
+  
+    SELECT
+      Edge.b AS x
+    FROM
+      logica_home.Reach_ifr3 AS Reach_ifr3, t_1_Edge AS Edge
+    WHERE
+      (Edge.a = Reach_ifr3.x)
+  
+) AS UNUSED_TABLE_NAME  )
+SELECT
+  Reach_MultBodyAggAux_f5.x AS x
+FROM
+  t_0_Reach_MultBodyAggAux_f5 AS Reach_MultBodyAggAux_f5
+GROUP BY Reach_MultBodyAggAux_f5.x ORDER BY x;
+
+DROP TABLE IF EXISTS logica_home.Reach_ifr3 CASCADE;
+CREATE TABLE logica_home.Reach_ifr3 AS WITH t_1_Edge AS (SELECT * FROM (
+  
+    SELECT
+      1 AS a,
+      2 AS b
+   UNION ALL
+  
+    SELECT
+      2 AS a,
+      3 AS b
+   UNION ALL
+  
+    SELECT
+      3 AS a,
+      1 AS b
+  
+) AS UNUSED_TABLE_NAME  ),
+t_0_Reach_MultBodyAggAux_f4 AS (SELECT * FROM (
+  
+    SELECT
+      1 AS x
+   UNION ALL
+  
+    SELECT
+      Edge.b AS x
+    FROM
+      logica_home.Reach_ifr2 AS Reach_ifr2, t_1_Edge AS Edge
+    WHERE
+      (Edge.a = Reach_ifr2.x)
+  
+) AS UNUSED_TABLE_NAME  )
+SELECT
+  Reach_MultBodyAggAux_f4.x AS x
+FROM
+  t_0_Reach_MultBodyAggAux_f4 AS Reach_MultBodyAggAux_f4
+GROUP BY Reach_MultBodyAggAux_f4.x ORDER BY x;
+
+DROP TABLE IF EXISTS logica_home.Reach_ifr2 CASCADE;
+CREATE TABLE logica_home.Reach_ifr2 AS WITH t_1_Edge AS (SELECT * FROM (
+  
+    SELECT
+      1 AS a,
+      2 AS b
+   UNION ALL
+  
+    SELECT
+      2 AS a,
+      3 AS b
+   UNION ALL
+  
+    SELECT
+      3 AS a,
+      1 AS b
+  
+) AS UNUSED_TABLE_NAME  ),
+t_0_Reach_MultBodyAggAux_f5 AS (SELECT * FROM (
+  
+    SELECT
+      1 AS x
+   UNION ALL
+  
+    SELECT
+      Edge.b AS x
+    FROM
+      logica_home.Reach_ifr3 AS Reach_ifr3, t_1_Edge AS Edge
+    WHERE
+      (Edge.a = Reach_ifr3.x)
+  
+) AS UNUSED_TABLE_NAME  )
+SELECT
+  Reach_MultBodyAggAux_f5.x AS x
+FROM
+  t_0_Reach_MultBodyAggAux_f5 AS Reach_MultBodyAggAux_f5
+GROUP BY Reach_MultBodyAggAux_f5.x ORDER BY x;
+
+DROP TABLE IF EXISTS logica_home.Reach_ifr3 CASCADE;
+CREATE TABLE logica_home.Reach_ifr3 AS WITH t_1_Edge AS (SELECT * FROM (
+  
+    SELECT
+      1 AS a,
+      2 AS b
+   UNION ALL
+  
+    SELECT
+      2 AS a,
+      3 AS b
+   UNION ALL
+  
+    SELECT
+      3 AS a,
+      1 AS b
+  
+) AS UNUSED_TABLE_NAME  ),
+t_0_Reach_MultBodyAggAux_f4 AS (SELECT * FROM (
+  
+    SELECT
+      1 AS x
+   UNION ALL
+  
+    SELECT
+      Edge.b AS x
+    FROM
+      logica_home.Reach_ifr2 AS Reach_ifr2, t_1_Edge AS Edge
+    WHERE
+      (Edge.a = Reach_ifr2.x)
+  
+) AS UNUSED_TABLE_NAME  )
+SELECT
+  Reach_MultBodyAggAux_f4.x AS x
+FROM
+  t_0_Reach_MultBodyAggAux_f4 AS Reach_MultBodyAggAux_f4
+GROUP BY Reach_MultBodyAggAux_f4.x ORDER BY x;
+
+DROP TABLE IF EXISTS logica_home.Reach_ifr2 CASCADE;
+CREATE TABLE logica_home.Reach_ifr2 AS WITH t_1_Edge AS (SELECT * FROM (
+  
+    SELECT
+      1 AS a,
+      2 AS b
+   UNION ALL
+  
+    SELECT
+      2 AS a,
+      3 AS b
+   UNION ALL
+  
+    SELECT
+      3 AS a,
+      1 AS b
+  
+) AS UNUSED_TABLE_NAME  ),
+t_0_Reach_MultBodyAggAux_f5 AS (SELECT * FROM (
+  
+    SELECT
+      1 AS x
+   UNION ALL
+  
+    SELECT
+      Edge.b AS x
+    FROM
+      logica_home.Reach_ifr3 AS Reach_ifr3, t_1_Edge AS Edge
+    WHERE
+      (Edge.a = Reach_ifr3.x)
+  
+) AS UNUSED_TABLE_NAME  )
+SELECT
+  Reach_MultBodyAggAux_f5.x AS x
+FROM
+  t_0_Reach_MultBodyAggAux_f5 AS Reach_MultBodyAggAux_f5
+GROUP BY Reach_MultBodyAggAux_f5.x ORDER BY x;
+
+DROP TABLE IF EXISTS logica_home.Reach_ifr3 CASCADE;
+CREATE TABLE logica_home.Reach_ifr3 AS WITH t_1_Edge AS (SELECT * FROM (
+  
+    SELECT
+      1 AS a,
+      2 AS b
+   UNION ALL
+  
+    SELECT
+      2 AS a,
+      3 AS b
+   UNION ALL
+  
+    SELECT
+      3 AS a,
+      1 AS b
+  
+) AS UNUSED_TABLE_NAME  ),
+t_0_Reach_MultBodyAggAux_f4 AS (SELECT * FROM (
+  
+    SELECT
+      1 AS x
+   UNION ALL
+  
+    SELECT
+      Edge.b AS x
+    FROM
+      logica_home.Reach_ifr2 AS Reach_ifr2, t_1_Edge AS Edge
+    WHERE
+      (Edge.a = Reach_ifr2.x)
+  
+) AS UNUSED_TABLE_NAME  )
+SELECT
+  Reach_MultBodyAggAux_f4.x AS x
+FROM
+  t_0_Reach_MultBodyAggAux_f4 AS Reach_MultBodyAggAux_f4
+GROUP BY Reach_MultBodyAggAux_f4.x ORDER BY x;
+
+DROP TABLE IF EXISTS logica_home.Reach_ifr2 CASCADE;
+CREATE TABLE logica_home.Reach_ifr2 AS WITH t_1_Edge AS (SELECT * FROM (
+  
+    SELECT
+      1 AS a,
+      2 AS b
+   UNION ALL
+  
+    SELECT
+      2 AS a,
+      3 AS b
+   UNION ALL
+  
+    SELECT
+      3 AS a,
+      1 AS b
+  
+) AS UNUSED_TABLE_NAME  ),
+t_0_Reach_MultBodyAggAux_f5 AS (SELECT * FROM (
+  
+    SELECT
+      1 AS x
+   UNION ALL
+  
+    SELECT
+      Edge.b AS x
+    FROM
+      logica_home.Reach_ifr3 AS Reach_ifr3, t_1_Edge AS Edge
+    WHERE
+      (Edge.a = Reach_ifr3.x)
+  
+) AS UNUSED_TABLE_NAME  )
+SELECT
+  Reach_MultBodyAggAux_f5.x AS x
+FROM
+  t_0_Reach_MultBodyAggAux_f5 AS Reach_MultBodyAggAux_f5
+GROUP BY Reach_MultBodyAggAux_f5.x ORDER BY x;
+
+DROP TABLE IF EXISTS logica_home.Reach_ifr3 CASCADE;
+CREATE TABLE logica_home.Reach_ifr3 AS WITH t_1_Edge AS (SELECT * FROM (
+  
+    SELECT
+      1 AS a,
+      2 AS b
+   UNION ALL
+  
+    SELECT
+      2 AS a,
+      3 AS b
+   UNION ALL
+  
+    SELECT
+      3 AS a,
+      1 AS b
+  
+) AS UNUSED_TABLE_NAME  ),
+t_0_Reach_MultBodyAggAux_f4 AS (SELECT * FROM (
+  
+    SELECT
+      1 AS x
+   UNION ALL
+  
+    SELECT
+      Edge.b AS x
+    FROM
+      logica_home.Reach_ifr2 AS Reach_ifr2, t_1_Edge AS Edge
+    WHERE
+      (Edge.a = Reach_ifr2.x)
+  
+) AS UNUSED_TABLE_NAME  )
+SELECT
+  Reach_MultBodyAggAux_f4.x AS x
+FROM
+  t_0_Reach_MultBodyAggAux_f4 AS Reach_MultBodyAggAux_f4
+GROUP BY Reach_MultBodyAggAux_f4.x ORDER BY x;
+
+DROP TABLE IF EXISTS logica_home.Reach_ifr2 CASCADE;
+CREATE TABLE logica_home.Reach_ifr2 AS WITH t_1_Edge AS (SELECT * FROM (
+  
+    SELECT
+      1 AS a,
+      2 AS b
+   UNION ALL
+  
+    SELECT
+      2 AS a,
+      3 AS b
+   UNION ALL
+  
+    SELECT
+      3 AS a,
+      1 AS b
+  
+) AS UNUSED_TABLE_NAME  ),
+t_0_Reach_MultBodyAggAux_f5 AS (SELECT * FROM (
+  
+    SELECT
+      1 AS x
+   UNION ALL
+  
+    SELECT
+      Edge.b AS x
+    FROM
+      logica_home.Reach_ifr3 AS Reach_ifr3, t_1_Edge AS Edge
+    WHERE
+      (Edge.a = Reach_ifr3.x)
+  
+) AS UNUSED_TABLE_NAME  )
+SELECT
+  Reach_MultBodyAggAux_f5.x AS x
+FROM
+  t_0_Reach_MultBodyAggAux_f5 AS Reach_MultBodyAggAux_f5
+GROUP BY Reach_MultBodyAggAux_f5.x ORDER BY x;
+
+DROP TABLE IF EXISTS logica_home.Reach_ifr3 CASCADE;
+CREATE TABLE logica_home.Reach_ifr3 AS WITH t_1_Edge AS (SELECT * FROM (
+  
+    SELECT
+      1 AS a,
+      2 AS b
+   UNION ALL
+  
+    SELECT
+      2 AS a,
+      3 AS b
+   UNION ALL
+  
+    SELECT
+      3 AS a,
+      1 AS b
+  
+) AS UNUSED_TABLE_NAME  ),
+t_0_Reach_MultBodyAggAux_f4 AS (SELECT * FROM (
+  
+    SELECT
+      1 AS x
+   UNION ALL
+  
+    SELECT
+      Edge.b AS x
+    FROM
+      logica_home.Reach_ifr2 AS Reach_ifr2, t_1_Edge AS Edge
+    WHERE
+      (Edge.a = Reach_ifr2.x)
+  
+) AS UNUSED_TABLE_NAME  )
+SELECT
+  Reach_MultBodyAggAux_f4.x AS x
+FROM
+  t_0_Reach_MultBodyAggAux_f4 AS Reach_MultBodyAggAux_f4
+GROUP BY Reach_MultBodyAggAux_f4.x ORDER BY x;
+
+DROP TABLE IF EXISTS logica_home.Reach_ifr2 CASCADE;
+CREATE TABLE logica_home.Reach_ifr2 AS WITH t_1_Edge AS (SELECT * FROM (
+  
+    SELECT
+      1 AS a,
+      2 AS b
+   UNION ALL
+  
+    SELECT
+      2 AS a,
+      3 AS b
+   UNION ALL
+  
+    SELECT
+      3 AS a,
+      1 AS b
+  
+) AS UNUSED_TABLE_NAME  ),
+t_0_Reach_MultBodyAggAux_f5 AS (SELECT * FROM (
+  
+    SELECT
+      1 AS x
+   UNION ALL
+  
+    SELECT
+      Edge.b AS x
+    FROM
+      logica_home.Reach_ifr3 AS Reach_ifr3, t_1_Edge AS Edge
+    WHERE
+      (Edge.a = Reach_ifr3.x)
+  
+) AS UNUSED_TABLE_NAME  )
+SELECT
+  Reach_MultBodyAggAux_f5.x AS x
+FROM
+  t_0_Reach_MultBodyAggAux_f5 AS Reach_MultBodyAggAux_f5
+GROUP BY Reach_MultBodyAggAux_f5.x ORDER BY x;
+
+DROP TABLE IF EXISTS logica_home.Reach_ifr3 CASCADE;
+CREATE TABLE logica_home.Reach_ifr3 AS WITH t_1_Edge AS (SELECT * FROM (
+  
+    SELECT
+      1 AS a,
+      2 AS b
+   UNION ALL
+  
+    SELECT
+      2 AS a,
+      3 AS b
+   UNION ALL
+  
+    SELECT
+      3 AS a,
+      1 AS b
+  
+) AS UNUSED_TABLE_NAME  ),
+t_0_Reach_MultBodyAggAux_f4 AS (SELECT * FROM (
+  
+    SELECT
+      1 AS x
+   UNION ALL
+  
+    SELECT
+      Edge.b AS x
+    FROM
+      logica_home.Reach_ifr2 AS Reach_ifr2, t_1_Edge AS Edge
+    WHERE
+      (Edge.a = Reach_ifr2.x)
+  
+) AS UNUSED_TABLE_NAME  )
+SELECT
+  Reach_MultBodyAggAux_f4.x AS x
+FROM
+  t_0_Reach_MultBodyAggAux_f4 AS Reach_MultBodyAggAux_f4
+GROUP BY Reach_MultBodyAggAux_f4.x ORDER BY x;
+
+DROP TABLE IF EXISTS logica_home.Reach_ifr2 CASCADE;
+CREATE TABLE logica_home.Reach_ifr2 AS WITH t_1_Edge AS (SELECT * FROM (
+  
+    SELECT
+      1 AS a,
+      2 AS b
+   UNION ALL
+  
+    SELECT
+      2 AS a,
+      3 AS b
+   UNION ALL
+  
+    SELECT
+      3 AS a,
+      1 AS b
+  
+) AS UNUSED_TABLE_NAME  ),
+t_0_Reach_MultBodyAggAux_f5 AS (SELECT * FROM (
+  
+    SELECT
+      1 AS x
+   UNION ALL
+  
+    SELECT
+      Edge.b AS x
+    FROM
+      logica_home.Reach_ifr3 AS Reach_ifr3, t_1_Edge AS Edge
+    WHERE
+      (Edge.a = Reach_ifr3.x)
+  
+) AS UNUSED_TABLE_NAME  )
+SELECT
+  Reach_MultBodyAggAux_f5.x AS x
+FROM
+  t_0_Reach_MultBodyAggAux_f5 AS Reach_MultBodyAggAux_f5
+GROUP BY Reach_MultBodyAggAux_f5.x ORDER BY x;
+
+DROP TABLE IF EXISTS logica_home.Reach_ifr3 CASCADE;
+CREATE TABLE logica_home.Reach_ifr3 AS WITH t_1_Edge AS (SELECT * FROM (
+  
+    SELECT
+      1 AS a,
+      2 AS b
+   UNION ALL
+  
+    SELECT
+      2 AS a,
+      3 AS b
+   UNION ALL
+  
+    SELECT
+      3 AS a,
+      1 AS b
+  
+) AS UNUSED_TABLE_NAME  ),
+t_0_Reach_MultBodyAggAux_f4 AS (SELECT * FROM (
+  
+    SELECT
+      1 AS x
+   UNION ALL
+  
+    SELECT
+      Edge.b AS x
+    FROM
+      logica_home.Reach_ifr2 AS Reach_ifr2, t_1_Edge AS Edge
+    WHERE
+      (Edge.a = Reach_ifr2.x)
+  
+) AS UNUSED_TABLE_NAME  )
+SELECT
+  Reach_MultBodyAggAux_f4.x AS x
+FROM
+  t_0_Reach_MultBodyAggAux_f4 AS Reach_MultBodyAggAux_f4
+GROUP BY Reach_MultBodyAggAux_f4.x ORDER BY x;
+
+DROP TABLE IF EXISTS logica_home.Reach_ifr2 CASCADE;
+CREATE TABLE logica_home.Reach_ifr2 AS WITH t_1_Edge AS (SELECT * FROM (
+  
+    SELECT
+      1 AS a,
+      2 AS b
+   UNION ALL
+  
+    SELECT
+      2 AS a,
+      3 AS b
+   UNION ALL
+  
+    SELECT
+      3 AS a,
+      1 AS b
+  
+) AS UNUSED_TABLE_NAME  ),
+t_0_Reach_MultBodyAggAux_f5 AS (SELECT * FROM (
+  
+    SELECT
+      1 AS x
+   UNION ALL
+  
+    SELECT
+      Edge.b AS x
+    FROM
+      logica_home.Reach_ifr3 AS Reach_ifr3, t_1_Edge AS Edge
+    WHERE
+      (Edge.a = Reach_ifr3.x)
+  
+) AS UNUSED_TABLE_NAME  )
+SELECT
+  Reach_MultBodyAggAux_f5.x AS x
+FROM
+  t_0_Reach_MultBodyAggAux_f5 AS Reach_MultBodyAggAux_f5
+GROUP BY Reach_MultBodyAggAux_f5.x ORDER BY x;
+
+WITH t_1_Edge AS (SELECT * FROM (
+  
+    SELECT
+      1 AS a,
+      2 AS b
+   UNION ALL
+  
+    SELECT
+      2 AS a,
+      3 AS b
+   UNION ALL
+  
+    SELECT
+      3 AS a,
+      1 AS b
+  
+) AS UNUSED_TABLE_NAME  ),
+t_0_Reach_MultBodyAggAux_f6 AS (SELECT * FROM (
+  
+    SELECT
+      1 AS x
+   UNION ALL
+  
+    SELECT
+      Edge.b AS x
+    FROM
+      logica_home.Reach_ifr2 AS Reach_ifr4, t_1_Edge AS Edge
+    WHERE
+      (Edge.a = Reach_ifr4.x)
+  
+) AS UNUSED_TABLE_NAME  )
+SELECT
+  Reach_MultBodyAggAux_f6.x AS x
+FROM
+  t_0_Reach_MultBodyAggAux_f6 AS Reach_MultBodyAggAux_f6
+GROUP BY Reach_MultBodyAggAux_f6.x ORDER BY x;

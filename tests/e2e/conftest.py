@@ -152,3 +152,13 @@ def runner_for():
         return make_runner(engine)
 
     return get
+
+
+def pytest_collection_modifyitems(items):
+    """With pytest-xdist (`-n auto --dist loadgroup`), each engine's tests run
+    in one worker: engines run in parallel, and a fixture's rows, computed
+    once per worker, serve both layers."""
+    for item in items:
+        engine = getattr(getattr(item, "callspec", None), "params", {}).get("engine")
+        if engine:
+            item.add_marker(pytest.mark.xdist_group(engine))
