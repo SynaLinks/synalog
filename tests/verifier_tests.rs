@@ -29,6 +29,7 @@ enum ExpectedError {
     UnsafeSqlExpr,
     PositionalArguments,
     UndefinedPredicate,
+    MissingOrderBy,
 }
 
 /// Parse expected error from file content.
@@ -49,6 +50,7 @@ fn parse_expected_error(content: &str) -> Option<ExpectedError> {
                 s if s.contains("unsafeSqlExpr") => Some(ExpectedError::UnsafeSqlExpr),
                 s if s.contains("positionalArguments") => Some(ExpectedError::PositionalArguments),
                 s if s.contains("undefinedPredicate") => Some(ExpectedError::UndefinedPredicate),
+                s if s.contains("missingOrderBy") => Some(ExpectedError::MissingOrderBy),
                 _ => None,
             };
         }
@@ -71,6 +73,7 @@ fn error_matches(error: &CheckError, expected: &ExpectedError) -> bool {
         (CheckError::SqlExpr(_), ExpectedError::UnsafeSqlExpr) => true,
         (CheckError::Positional(_), ExpectedError::PositionalArguments) => true,
         (CheckError::Undefined(_), ExpectedError::UndefinedPredicate) => true,
+        (CheckError::OrderBy(_), ExpectedError::MissingOrderBy) => true,
         _ => false,
     }
 }

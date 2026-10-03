@@ -175,6 +175,10 @@ pub enum VerifyError {
     #[error("Unsafe SqlExpr in rule '{predicate}': raw SQL bypasses verification and portability")]
     UnsafeSqlExpr { predicate: String },
 
+    /// The predicate a file's front matter names has no `@OrderBy`.
+    #[error("Missing @OrderBy for '{predicate}', the predicate this file is about: without it its rows come back in no stable order and pages differ between runs; add @OrderBy({predicate}, \"column\"); before its rules")]
+    MissingOrderBy { predicate: String },
+
     /// Positional arguments used where named arguments are required.
     #[error("Positional arguments in '{predicate}': Synalog requires named arguments; use `field_name: value` instead of positional arguments")]
     PositionalArguments { predicate: String },

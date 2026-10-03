@@ -16,6 +16,7 @@ This matters most for AI agents: it prevents producing programs that parse corre
 | **Recursion** | Missing base cases, trivial loops, unbounded recursion without `@Recursive` |
 | **Reserved names** | Rules that redefine a built-in library predicate (`Num`, `Str`, `ArgMin`, `Today`, `Now`, ...) |
 | **Unsafe `SqlExpr`** | User rules that reach for the raw-SQL escape hatch |
+| **Ordering** | A file whose front matter names a predicate, without an `@OrderBy` for it |
 
 ### Unsafe `SqlExpr`
 
@@ -31,6 +32,20 @@ errors = synalog.check('''
 ```
 
 The safe alternative is to express the logic in Synalog. For date/time math, stay on the string→int pipeline (`Substr` → `ToInt64` → `ToString`); see [temporal data](language/temporal.md#relative-dates-and-times).
+
+### Ordering
+
+A file whose front matter names a predicate (`name: TopCustomers`) is about that predicate: it is what runs, and its results are read page by page. Without `@OrderBy`, rows come back in whatever order the engine picks, so the same page differs between runs. The named predicate must be ordered; the file's helpers need not be, and a program without front matter is not checked.
+
+```python
+errors = synalog.check('''---
+name: TopCustomers
+---
+Spent(customer_id:, spent:) :- customer_id in Range(3), spent == 1;
+TopCustomers(customer_id:) :- Spent(customer_id:);
+''')
+# ['Missing @OrderBy for 'TopCustomers', the predicate this file is about: ... add @OrderBy(TopCustomers, "column"); before its rules']
+```
 
 ## Usage
 

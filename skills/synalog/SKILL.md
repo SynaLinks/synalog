@@ -112,6 +112,7 @@ Fix the quoted statement and re-run: later syntax errors only surface once earli
 | `Trivial infinite loop: 'R' calls itself with same arguments` | the recursive case adds nothing | join the recursive atom with another predicate on a *different* variable |
 | `Negative recursion cycle detected: P` | `P` depends on `~P` through recursion | negate a predicate computed beforehand, not the recursive one |
 | `Unsafe SqlExpr in rule 'A': …` | raw SQL | write it with synalog functions instead |
+| `Missing @OrderBy for 'A', the predicate this file is about: …` | the front matter names `A`, and nothing orders it | add `@OrderBy(A, "column");` before its rules |
 
 **Compile errors** (`print`/`run`) mean SQL generation failed, e.g. `Compile error: No rules are defining 'Missing', but compilation was requested.` Usually a typo in the predicate name passed to the command, or an imported predicate run by its short name (run it from its own module instead).
 

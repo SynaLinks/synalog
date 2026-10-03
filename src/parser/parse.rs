@@ -1839,6 +1839,12 @@ fn parse_file_internal(
     out.insert("imported_predicates".into(), Json::Array(imported_predicates));
     out.insert("predicates_prefix".into(), Json::Str(prefix));
     out.insert("file_name".into(), Json::Str(this_file_name.to_string()));
+    // The predicate the program is about, for the verifier (it must be ordered).
+    if this_file_name == "main" {
+        if let Some((name, _)) = &named {
+            out.insert("front_matter_name".into(), Json::Str(name.clone()));
+        }
+    }
     Ok(Json::Object(out))
 }
 
