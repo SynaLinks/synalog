@@ -138,7 +138,7 @@ user = "analyst"
 schema = "public"
 ```
 
-Secrets never go in the file (synalog refuses it): each comes from the environment as `SYNALOG_<ENGINE>_<FIELD>` — `SYNALOG_PSQL_PASSWORD`, `SYNALOG_DATABRICKS_ACCESS_TOKEN`, or `GOOGLE_APPLICATION_CREDENTIALS` for BigQuery — usually from the project's `.env`, kept out of git. Inside the project (from the program's folder or the current directory, and their parents), `run`, `print` and `introspect` use that engine and connection; `--engine`, an `@Engine` annotation, `--dsn` and `SYNALOG_<ENGINE>_DSN` still take precedence. The fields of every engine are in `synalog.project.ENGINES`.
+Secrets never go in the file (synalog refuses it): each comes from the environment as `SYNALOG_<ENGINE>_<FIELD>` — `SYNALOG_PSQL_PASSWORD`, `SYNALOG_DATABRICKS_ACCESS_TOKEN`, or `GOOGLE_APPLICATION_CREDENTIALS` for BigQuery — usually from the project's `.env`, kept out of git. Inside the project (from the program's folder or the current directory, and their parents), `run`, `print` and `verify` use that engine and connection, imports resolve from the project's folder, and `synalog introspect` writes the project's `tables/`, one file per table of the database; `--engine`, an `@Engine` annotation, `--dsn` and `SYNALOG_<ENGINE>_DSN` still take precedence. The fields of every engine are in `synalog.project.ENGINES`.
 
 Running `synalog` with no arguments starts an interactive session, in the spirit of `python` (the options above, e.g. `--engine` or `--load`, apply to it too):
 
@@ -235,26 +235,60 @@ All of these functions accept an optional `engine` keyword that overrides the pr
 
 ## Language overview
 
-By convention, a Synalog program is organized into three sections: **tables**, **concepts** and **rules**. Tables map external data sources (a database table is referenced by its lowercase database name and mapped once to a PascalCase predicate). Concepts extract entities and relationships from tables. Rules derive new data from concepts. The section headers are plain comments: the structure is a convention, not syntax.
+A Synalog program is a **project**: a folder with a `synalog.toml`, holding one predicate per file in three folders, the layout of [semantic layers](https://github.com/SynaLinks/semantic-layers):
+
+```
+shop/
+├── tables/Orders.l               # the data: one file per database table
+├── concepts/Customer.l           # entities and relationships extracted from tables
+├── rules/CustomerRevenue.l       # insights derived from concepts
+├── rules/TopCustomers.l
+└── synalog.toml                  # the project's name, description and database
+```
+
+Each file is named after its predicate and opens with front matter (`name`, the predicate; `description`, what its rows are), then imports what it builds on by folder, file and predicate, then orders its predicate with `@OrderBy`. A database table is referenced by its lowercase database name in `tables/`, and everything else builds on the PascalCase predicate that maps it:
+
+`tables/Orders.l`
 
 ```logica
-# Tables: read-only mappings of database tables
-Orders(customer_id:, product_id:, amount:, status:) :-
-  orders(customer_id:, product_id:, amount:, status:);
+---
+name: Orders
+description: One row per order, with its customer, amount and status.
+---
+@OrderBy(Orders, "order_id");
+Orders(order_id:, customer_id:, amount:, status:) :-
+  orders(order_id:, customer_id:, amount:, status:);
+```
 
-# Concepts: extract entities and relationships
+`concepts/Customer.l`
+
+```logica
+---
+name: Customer
+description: Every customer who placed at least one order.
+---
+import tables.Orders.Orders;
 
 @OrderBy(Customer, "customer_id");
 Customer(customer_id:) distinct :- Orders(customer_id:);
-
-@OrderBy(Purchased, "customer_id");
-Purchased(customer_id:, product_id:) distinct :- Orders(customer_id:, product_id:);
-
-# Rules: derive insights from concepts
-
-@OrderBy(CustomerSpend, "total", "DESC");
-CustomerSpend(customer_id:, total? += amount) distinct :- Orders(customer_id:, amount:);
 ```
+
+`rules/CustomerRevenue.l`
+
+```logica
+---
+name: CustomerRevenue
+description: Total amount ordered by each customer, all statuses included.
+---
+import concepts.Customer.Customer;
+import tables.Orders.Orders;
+
+@OrderBy(CustomerRevenue, "customer_id");
+CustomerRevenue(customer_id:, total? += amount) distinct :-
+  Customer(customer_id:), Orders(customer_id:, amount:);
+```
+
+Imports resolve from the project's folder, so every file runs on its own: `synalog rules/CustomerRevenue.l run CustomerRevenue`. The snippets below show the language itself, one rule at a time.
 
 ### Named arguments
 

@@ -918,3 +918,27 @@ def test_run_reports_a_missing_table_without_traceback(tmp_path):
     assert result.returncode == 1
     assert "missing_table" in result.stderr + result.stdout
     assert "Traceback" not in result.stderr
+
+
+def test_imports_resolve_from_the_project_folder(tmp_path):
+    # In a project, `import tables.Orders.Orders;` reads the project's
+    # tables/Orders.l from any of its files, wherever the CLI runs from.
+    (tmp_path / "synalog.toml").write_text('[project]\nname = "shop"\ndescription = "Orders."\n')
+    (tmp_path / "tables").mkdir()
+    (tmp_path / "rules").mkdir()
+    (tmp_path / "tables" / "Orders.l").write_text(
+        "---\nname: Orders\ndescription: One row per order.\n---\n"
+        '@OrderBy(Orders, "order_id");\nOrders(order_id:, amount:) :- orders(order_id:, amount:);\n'
+    )
+    (tmp_path / "rules" / "BigOrder.l").write_text(
+        "---\nname: BigOrder\ndescription: Orders over 100.\n---\nimport tables.Orders.Orders;\n\n"
+        '@OrderBy(BigOrder, "order_id");\nBigOrder(order_id:) :- Orders(order_id:, amount:), amount > 100;\n'
+    )
+    (tmp_path / "orders.csv").write_text("order_id,amount\n1,50\n2,500\n")
+    for cwd in (tmp_path, tmp_path / "rules"):
+        result = synalog(
+            str(tmp_path / "rules" / "BigOrder.l"), "run", "BigOrder", "--csv",
+            "--load", f"orders={tmp_path / 'orders.csv'}", cwd=cwd,
+        )
+        assert result.returncode == 0, result.stderr
+        assert result.stdout.splitlines() == ["order_id", "2"]

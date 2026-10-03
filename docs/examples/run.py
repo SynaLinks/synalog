@@ -1,6 +1,12 @@
 #!/usr/bin/env python3
 """Run every documentation example and capture its output.
 
+Each folder holding a ``synalog.toml`` is a project, laid out as every
+Synalog project is: ``tables/``, ``concepts/`` and ``rules/``, one predicate per
+file named in its front matter, and its data in ``data/<table>.csv``. Every file
+is checked, then its predicate runs on an in-memory DuckDB holding the data;
+the results go to ``<project>.log``.
+
 Each ``.l`` file in this directory is a self-contained Synalog program with a
 small header:
 
@@ -103,12 +109,44 @@ def run_example(path: Path) -> None:
     path.with_suffix(".log").write_text("\n".join(out) + "\n")
 
 
+FOLDERS = ("tables", "concepts", "rules")
+
+
+def run_project(folder: Path) -> None:
+    """Check and run every file of a project, in the order of its folders."""
+    conn = duckdb.connect()
+    out: list[str] = []
+    for csv_path in sorted((folder / "data").glob("*.csv")):
+        conn.execute(f"CREATE TABLE {csv_path.stem} AS SELECT * FROM read_csv('{csv_path}')")
+        count = conn.execute(f"SELECT count(*) FROM {csv_path.stem}").fetchone()[0]
+        out.append(f"-- Loaded data/{csv_path.name} into DuckDB table {csv_path.stem} ({count} rows)")
+    for kind in FOLDERS:
+        for path in sorted((folder / kind).glob("*.l")):
+            source = path.read_text()
+            relative = path.relative_to(folder)
+            errors, _ = synalog.check(source, import_root=[str(folder)], assertions=False)
+            if errors:
+                raise AssertionError(f"{relative}: check() failed: {errors}")
+            name = re.search(r"^name:\s*(\w+)", synalog.front_matter(source) or "", re.M)
+            if not name:
+                raise AssertionError(f"{relative}: no name in its front matter")
+            result = conn.execute(synalog.compile(source, name.group(1), import_root=[str(folder)]))
+            rows = result.fetchall()
+            columns = [d[0] for d in result.description]
+            out += ["", f"$ synalog {relative} run {name.group(1)}", format_table(columns, rows)]
+    conn.close()
+    folder.with_suffix(".log").write_text("\n".join(out) + "\n")
+
+
 def main() -> int:
     names = sys.argv[1:]
     files = sorted(
         p for p in HERE.glob("*.l") if not names or p.stem in names
     )
-    if not files:
+    projects = sorted(
+        p.parent for p in HERE.glob("*/synalog.toml") if not names or p.parent.name in names
+    )
+    if not files and not projects:
         print("no examples found", file=sys.stderr)
         return 1
     failed = 0
@@ -118,6 +156,13 @@ def main() -> int:
             print(f"ok   {path.name}")
         except Exception as exc:  # noqa: BLE001 - report and keep going
             print(f"FAIL {path.name}: {exc}")
+            failed += 1
+    for folder in projects:
+        try:
+            run_project(folder)
+            print(f"ok   {folder.name}/")
+        except Exception as exc:  # noqa: BLE001 - report and keep going
+            print(f"FAIL {folder.name}/: {exc}")
             failed += 1
     return 1 if failed else 0
 

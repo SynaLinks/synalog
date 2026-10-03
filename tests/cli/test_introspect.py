@@ -173,3 +173,40 @@ def test_introspectable_matches_connectable_engines():
     from synalog.cli import DSN_ENGINES
 
     assert set(INTROSPECTABLE) == set(DSN_ENGINES)
+
+
+def test_write_tables_writes_one_checked_file_per_table(tmp_path):
+    import synalog
+
+    found, _ = introspect.tables([("public", "orders", "order_id"), ("public", "orders", "amount")])
+    result = introspect.write_tables(tmp_path / "tables", found)
+    assert result == {"written": ["PublicOrders"], "gone": []}
+    source = (tmp_path / "tables" / "PublicOrders.l").read_text()
+    assert source.startswith("---\nname: PublicOrders\ndescription: Orders.\n---\n")
+    assert synalog.check(source, assertions=False) == ([], [])
+
+
+def test_write_tables_keeps_the_front_matter_written_by_hand(tmp_path):
+    folder = tmp_path / "tables"
+    folder.mkdir()
+    (folder / "PublicOrders.l").write_text(
+        "---\nname: PublicOrders\ndescription: Every order, net of refunds.\nkeywords: [sale]\n---\n"
+        '@OrderBy(PublicOrders, "order_id");\nPublicOrders(order_id:) :- public.orders(order_id:);\n'
+    )
+    (folder / "PublicLegacy.l").write_text("---\nname: PublicLegacy\ndescription: Old.\n---\n")
+    found, _ = introspect.tables([("public", "orders", "order_id"), ("public", "orders", "amount")])
+    result = introspect.write_tables(folder, found)
+    source = (folder / "PublicOrders.l").read_text()
+    assert "description: Every order, net of refunds.\nkeywords: [sale]\n" in source
+    assert "PublicOrders(order_id:, amount:) :- public.orders(order_id:, amount:);" in source
+    assert result["gone"] == ["PublicLegacy"]
+    assert (folder / "PublicLegacy.l").exists()
+
+
+def test_a_description_that_plain_yaml_would_misread_is_quoted(tmp_path):
+    import synalog
+
+    table = introspect.Table("A", "Orders: all of them.", '@OrderBy(A, "x");', "A(x:) :- t(x:);")
+    introspect.write_tables(tmp_path, [table])
+    source = (tmp_path / "A.l").read_text()
+    assert synalog.check(source, assertions=False) == ([], [])

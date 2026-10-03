@@ -104,8 +104,8 @@ GROUP BY ContactableCustomer_MultBodyAggAux.customer_id, ContactableCustomer_Mul
 |-------------|---------|
 | 1           | email   |
 | 2           | phone   |
-| 3           | phone   |
 | 3           | email   |
+| 3           | phone   |
 (4 rows)
 
 $ synalog.compile('syntax.l', 'Inactive')

@@ -24,8 +24,7 @@ SubClassOfRaw(child_uri: 'http://example.org/co#Organization', parent_uri: 'http
 SubClassOfRaw(child_uri: 'http://example.org/co#Person', parent_uri: 'http://example.org/co#Agent');
 SubClassOfRaw(child_uri: 'http://example.org/co#Person', parent_uri: 'http://example.org/co#Human');
 
-# Concepts: classes that have individuals
-
+# Classes that have individuals.
 @OrderBy(Contractor, "uri");
 Contractor(uri:, name:) distinct :- ContractorRaw(uri:, name:);
 ContractorRaw(uri: 'http://example.org/co#dave', name: 'Dave');
@@ -49,8 +48,7 @@ PersonRaw(uri: 'http://example.org/co#alice', email: 'alice@acme.example', name:
 PersonRaw(uri: 'http://example.org/co#bob', email: null, name: 'Bob');
 PersonRaw(uri: 'http://example.org/co#carol', email: null, name: 'Carol');
 
-# Concepts: object properties (relationships)
-
+# Object properties (relationships).
 @OrderBy(AcquaintedWith, "subject_uri");
 AcquaintedWith(subject_uri:, object_uri:) distinct :- KnowsRaw(subject_uri:, object_uri:);
 

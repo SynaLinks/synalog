@@ -109,15 +109,22 @@ def _dotenv_dirs(args: tuple[str, ...], inline: str | None) -> list[str]:
 def import_roots(file: str | None, flag_roots: tuple[str, ...]) -> list[str]:
     """Directories where `import` statements look up .l files.
 
-    Explicit --import-root flags win; otherwise the program file's directory
-    and the current directory are searched, in that order.
+    Explicit --import-root flags win. Otherwise the project's folder comes
+    first — the one holding the `synalog.toml` of the program's folder or of
+    the current directory — so `import tables.Orders.Orders;` reads the
+    project's `tables/Orders.l` from any of its files; then the program file's
+    directory and the current directory.
     """
     if flag_roots:
         return list(flag_roots)
+    program_dir = os.path.dirname(os.path.abspath(file)) if file and file != "-" else None
     roots = []
-    if file and file != "-":
-        roots.append(os.path.dirname(os.path.abspath(file)))
-    roots.append(os.getcwd())
+    project_file = project.find(*([program_dir] if program_dir else []), os.getcwd())
+    if project_file is not None:
+        roots.append(str(project_file.parent))
+    for directory in (program_dir, os.getcwd()):
+        if directory and directory not in roots:
+            roots.append(directory)
     return roots
 
 
@@ -250,7 +257,7 @@ def cmd_connect(args: tuple[str, ...]) -> int:
 
 
 def cmd_introspect(args: tuple[str, ...], dsn: str | None, project_file: Path | None) -> int:
-    """Print `# Tables` predicates learned from a database schema.
+    """Write the project's table files from its database's schema.
 
     \b
     synalog introspect                   introspect the project's connection (synalog.toml)
@@ -259,9 +266,10 @@ def cmd_introspect(args: tuple[str, ...], dsn: str | None, project_file: Path | 
 
     The DSN is resolved like everywhere else: the argument here (or --dsn) wins,
     then SYNALOG_<ENGINE>_DSN, then synalog.toml, then the saved connection.
-    Output goes to stdout, so redirect it into a file:  synalog introspect > tables.l
+    In a project, each table becomes a file of its tables/ folder (a file that
+    exists keeps its front matter); elsewhere, the declarations are printed.
     """
-    from .introspect import INTROSPECTABLE, introspect
+    from .introspect import INTROSPECTABLE, catalog, predicates, tables, write_tables
 
     if len(args) > 2:
         raise click.UsageError("usage: synalog introspect [engine] [dsn]")
@@ -278,12 +286,25 @@ def cmd_introspect(args: tuple[str, ...], dsn: str | None, project_file: Path | 
         )
     explicit = args[1] if len(args) > 1 else dsn
     try:
-        text = introspect(engine, _resolve_dsn(engine, explicit, project_file))
+        rows = catalog(engine, _resolve_dsn(engine, explicit, project_file))
+        if project_file is None:
+            click.echo(predicates(engine, rows), nl=False)
+            return 0
+        found, skipped = tables(rows)
+        folder = project_file.parent / "tables"
+        result = write_tables(folder, found)
     except (ValueError, RunnerUnavailable, OSError) as e:
         fail(e)
     except Exception as e:  # surface a driver/server error without a traceback
         fail(f"{type(e).__name__}: {e}")
-    click.echo(text, nl=False)
+    click.echo(f"Wrote {len(result['written'])} table file(s) to {folder}")
+    for note in skipped:
+        click.echo(note)
+    if result["gone"]:
+        click.echo(
+            "Not in the database any more (kept, other files may import them): "
+            + ", ".join(result["gone"])
+        )
     return 0
 
 
@@ -357,7 +378,7 @@ def main(args, inline, engine, limit, offset, as_csv, search_pattern, dsn,
       synalog program.l run Predicate --csv   execute and print CSV
       synalog program.l verify [Predicate ...] check the @Assert statements
       synalog connect ENGINE DSN              save a remote engine connection
-      synalog introspect ENGINE               print Tables predicates for a schema
+      synalog introspect [ENGINE]             write a project's tables/ from its database
 
     print, run and verify validate the whole program first, aborting with the
     verifier's errors if it is invalid. run also checks the @Assert statements

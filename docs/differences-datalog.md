@@ -31,7 +31,7 @@ Positions can't be silently swapped, predicates read like schemas, and the compi
 
 ## Evaluation: compiled to SQL, not a fixpoint engine
 
-A classical Datalog system loads facts into its own engine and computes the least fixpoint bottom-up (semi-naive evaluation). Synalog has no resident engine: [`compile()`](python-api.md#compile) translates the program to SQL and the database evaluates it. The extensional database is your existing tables, declared read-only in the [`# Tables` section](language/index.md#tables), so facts never have to be exported, loaded or kept in sync.
+A classical Datalog system loads facts into its own engine and computes the least fixpoint bottom-up (semi-naive evaluation). Synalog has no resident engine: [`compile()`](python-api.md#compile) translates the program to SQL and the database evaluates it. The extensional database is your existing tables, mapped read-only in the project's [`tables/`](language/index.md#tables), so facts never have to be exported, loaded or kept in sync.
 
 The trade is deliberate: you give up an incremental in-memory engine and gain the optimizers, indexes and scale of **SQLite**, **DuckDB**, **BigQuery**, **PostgreSQL**, **Presto**, **Trino** and **Databricks**. See [Supported engines](engines.md).
 

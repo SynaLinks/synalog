@@ -1,9 +1,7 @@
 # run: MemberOf, ActiveMember, Colleague, ReachedBy
 @Engine("duckdb");
 
-# Tables
-
-## An event log: one row per role change, no end date.
+# An event log: one row per role change, no end date.
 Assignments(person_id: 1, team_id: "core", changed_at: "2024-01-01");
 Assignments(person_id: 1, team_id: "platform", changed_at: "2026-02-01");
 Assignments(person_id: 2, team_id: "core", changed_at: "2023-05-01");
@@ -17,12 +15,10 @@ Teams(team_id: "core");
 Teams(team_id: "platform");
 Teams(team_id: "support");
 
-## Directed handovers between teams, each valid over a period.
+# Directed handovers between teams, each valid over a period.
 Handovers(source: "core", target: "platform", valid_from: "2024-01-01", valid_to: "2027-01-01");
 Handovers(source: "platform", target: "support", valid_from: "2025-06-01", valid_to: "2027-01-01");
 Handovers(source: "support", target: "core", valid_from: "2020-01-01", valid_to: "2021-01-01");
-
-# Concepts
 
 @OrderBy(Person, "person_id");
 Person(person_id:, name:) distinct :- People(person_id:, name:);
@@ -30,15 +26,15 @@ Person(person_id:, name:) distinct :- People(person_id:, name:);
 @OrderBy(Team, "team_id");
 Team(team_id:) distinct :- Teams(team_id:);
 
-## The next change for a person, if there is one.
+# The next change for a person, if there is one.
 @OrderBy(NextChange, "person_id", "changed_at");
 NextChange(person_id:, changed_at:, next? Min= later) distinct :-
   Assignments(person_id:, changed_at:),
   Assignments(person_id:, changed_at: later),
   later > changed_at;
 
-## A valid-time edge, half-open: [valid_from, valid_to).
-## An assignment ends where the next one starts, or never.
+# A valid-time edge, half-open: [valid_from, valid_to).
+# An assignment ends where the next one starts, or never.
 @OrderBy(MemberOf, "person_id", "valid_from");
 MemberOf(person_id:, team_id:, valid_from:, valid_to:) distinct :-
   Person(person_id:),
@@ -58,9 +54,7 @@ HandedOver(source:, target:, valid_from:, valid_to:) distinct :-
   Team(team_id: target),
   Handovers(source:, target:, valid_from:, valid_to:);
 
-# Rules
-
-## Edges valid right now.
+# Edges valid right now.
 @OrderBy(ActiveMember, "person_id");
 ActiveMember(person_id:, name:, team_id:) distinct :-
   MemberOf(person_id:, team_id:, valid_from:, valid_to:),
@@ -68,8 +62,8 @@ ActiveMember(person_id:, name:, team_id:) distinct :-
   Today(date:),
   valid_from <= date, date < valid_to;
 
-## Two memberships that overlap in time: the derived edge carries the
-## intersection [max(starts), min(ends)) and exists only if it is non-empty.
+# Two memberships that overlap in time: the derived edge carries the
+# intersection [max(starts), min(ends)) and exists only if it is non-empty.
 @OrderBy(Colleague, "person_a", "person_b");
 Colleague(person_a:, person_b:, team_id:, valid_from:, valid_to:) distinct :-
   MemberOf(person_id: person_a, team_id:, valid_from: a_from, valid_to: a_to),
@@ -79,8 +73,8 @@ Colleague(person_a:, person_b:, team_id:, valid_from:, valid_to:) distinct :-
   valid_to == (if a_to < b_to then a_to else b_to),
   valid_from < valid_to;
 
-## Time-respecting reachability: a path exists only if every hop shares a
-## common validity window, so the intersection is carried along the recursion.
+# Time-respecting reachability: a path exists only if every hop shares a
+# common validity window, so the intersection is carried along the recursion.
 @Recursive(ReachedBy, 10);
 @OrderBy(ReachedBy, "source", "target");
 ReachedBy(source:, target:, valid_from:, valid_to:) distinct :-

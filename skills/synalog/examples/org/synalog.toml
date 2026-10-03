@@ -1,0 +1,3 @@
+[project]
+name = "org"
+description = "The org chart: who reports to whom, directly or up the chain."

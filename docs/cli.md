@@ -100,37 +100,26 @@ duckdb and the PostgreSQL driver ship with synalog. For the other engines (`bigq
 
 ### Imports
 
-`import path.to.file.Pred;` statements resolve `path/to/file.l` against the program file's directory, then the current directory. Pass `--import-root DIR` (repeatable) to search elsewhere; explicit roots replace the defaults.
+In a project, `import <folder>.<Name>.<Name>;` statements resolve from the project's folder (the one holding `synalog.toml`), whichever file runs and wherever from: `import tables.Orders.Orders;` reads the project's `tables/Orders.l`. The program file's directory and the current directory come next. Pass `--import-root DIR` (repeatable) to search elsewhere; explicit roots replace the defaults.
 
-For example, with a reusable metric in `lib/metrics.l`:
-
-```logica
-@OrderBy(RegionTotal, "region");
-RegionTotal(region:, total? += amount) distinct :- sales(region:, amount:);
-```
-
-a program next to the `lib/` directory imports it by its dotted path and builds on it:
+In the [`shop` project](language/index.md), `rules/TopCustomers.l` builds on `rules/CustomerRevenue.l`:
 
 ```logica
-# report.l
-import lib.metrics.RegionTotal;
-
-@OrderBy(TopRegion, "total DESC");
-@Limit(TopRegion, 1);
-TopRegion(region:, total:) :- RegionTotal(region:, total:);
+--8<-- "docs/examples/shop/rules/TopCustomers.l"
 ```
 
 ```console
-$ synalog report.l run TopRegion --load sales=sales.csv
-+--------+-------+
-| region | total |
-+--------+-------+
-| south  | 20    |
-+--------+-------+
-1 row
+$ synalog rules/TopCustomers.l run TopCustomers --load orders=data/orders.csv
++-------------+-------+
+| customer_id | total |
++-------------+-------+
+| 100         | 1450  |
+| 300         | 430   |
++-------------+-------+
+2 rows
 ```
 
-`import lib.metrics.RegionTotal as Totals;` imports the same predicate under another name. Directives attached to an imported predicate (its `@OrderBy` here) travel with it.
+`import rules.CustomerRevenue.CustomerRevenue as Revenue;` imports the same predicate under another name. Directives attached to an imported predicate (its `@OrderBy` here) travel with it.
 
 ### Errors
 
@@ -165,6 +154,46 @@ Compile error: No rules are defining 'Missing', but compilation was requested.
 ```
 
 A failing program never produces partial output: `run` either prints the table or the error.
+
+## Projects: `synalog.toml`
+
+A Synalog program is a [project](language/index.md): a folder with a `synalog.toml`, its predicates in `tables/`, `concepts/` and `rules/`, one per file. The file names and describes the project, and its `[connection]` says which database it runs on, as plain fields — commit it:
+
+```toml
+[project]
+name = "sales"
+description = "Orders and customers: revenue, active customers, countries."
+
+[connection]
+engine = "psql"
+host = "db.example.com"
+port = 5432
+database = "sales"
+user = "analyst"
+schema = "public"
+```
+
+Secrets never go in the file (synalog refuses it): each comes from the environment as `SYNALOG_<ENGINE>_<FIELD>` — `SYNALOG_PSQL_PASSWORD`, `SYNALOG_DATABRICKS_ACCESS_TOKEN`, or `GOOGLE_APPLICATION_CREDENTIALS` for BigQuery — usually from the project's `.env`, kept out of git. Anywhere in the project, `run`, `print`, `verify` and `introspect` use that engine and connection, and [imports](#imports) resolve from the project's folder; `--engine`, an `@Engine` annotation, `--dsn` and `SYNALOG_<ENGINE>_DSN` still take precedence. The fields of every engine are in `synalog.project.ENGINES`.
+
+### Introspect
+
+`synalog introspect` reads the database's schema and writes the project's `tables/`: one file per table, `tables/<Schema><Table>.l`, mapping the table to a predicate ordered by its first column, with a description made from the table's name (`public.order_items` → "Order items.") until someone writes a better one.
+
+```console
+$ synalog introspect
+Wrote 2 table file(s) to /path/to/sales/tables
+```
+
+```logica
+---
+name: PublicOrders
+description: Orders.
+---
+@OrderBy(PublicOrders, "order_id");
+PublicOrders(order_id:, customer_id:, amount:, status:) :- public.orders(order_id:, customer_id:, amount:, status:);
+```
+
+Run it again when the schema changes: the declarations are regenerated, and a file's front matter (its description, keywords, ...) is kept as written. A table the database no longer has keeps its file, since concepts may import it, and is listed. Outside a project, `synalog introspect <engine> [dsn]` prints the declarations instead. PostgreSQL, Trino, Presto, Databricks and BigQuery can be introspected.
 
 ## Add the skill to your coding agent
 
