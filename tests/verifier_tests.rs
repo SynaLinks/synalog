@@ -31,6 +31,7 @@ enum ExpectedError {
     UndefinedPredicate,
     MissingOrderBy,
     MissingDescription,
+    MissingName,
 }
 
 /// Parse expected error from file content.
@@ -53,6 +54,7 @@ fn parse_expected_error(content: &str) -> Option<ExpectedError> {
                 s if s.contains("undefinedPredicate") => Some(ExpectedError::UndefinedPredicate),
                 s if s.contains("missingOrderBy") => Some(ExpectedError::MissingOrderBy),
                 s if s.contains("missingDescription") => Some(ExpectedError::MissingDescription),
+                s if s.contains("missingName") => Some(ExpectedError::MissingName),
                 _ => None,
             };
         }
@@ -77,6 +79,7 @@ fn error_matches(error: &CheckError, expected: &ExpectedError) -> bool {
         (CheckError::Undefined(_), ExpectedError::UndefinedPredicate) => true,
         (CheckError::OrderBy(_), ExpectedError::MissingOrderBy) => true,
         (CheckError::Description(_), ExpectedError::MissingDescription) => true,
+        (CheckError::Name(_), ExpectedError::MissingName) => true,
         _ => false,
     }
 }

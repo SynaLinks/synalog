@@ -10,7 +10,7 @@
 //! - Arity consistency (predicates used with consistent argument counts)
 //! - Recursion safety (base cases, no trivial loops)
 //! - Ordering (the predicate a file's front matter names has `@OrderBy`)
-//! - Description (front matter says what the file is about)
+//! - Front matter (a name and a description)
 
 mod vars;
 mod safety;
@@ -22,7 +22,7 @@ mod sqlexpr;
 mod positional;
 mod undefined;
 mod orderby;
-mod description;
+mod front_matter;
 
 pub use vars::VarCollector;
 pub use safety::{SafetyError, check_safety};
@@ -34,7 +34,7 @@ pub use sqlexpr::{SqlExprError, check_sqlexpr};
 pub use positional::{PositionalError, check_positional};
 pub use undefined::{UndefinedError, builtin_function_names, check_undefined};
 pub use orderby::{OrderByError, check_order_by};
-pub use description::{DescriptionError, check_description};
+pub use front_matter::{DescriptionError, NameError, check_description, check_name};
 
 use crate::parser::Json;
 use crate::errors::{VerifyError, VerifyResult};
@@ -51,6 +51,7 @@ pub enum CheckError {
     Positional(PositionalError),
     Undefined(UndefinedError),
     OrderBy(OrderByError),
+    Name(NameError),
     Description(DescriptionError),
 }
 
@@ -66,6 +67,7 @@ impl std::fmt::Display for CheckError {
             CheckError::Positional(e) => write!(f, "{}", e),
             CheckError::Undefined(e) => write!(f, "{}", e),
             CheckError::OrderBy(e) => write!(f, "{}", e),
+            CheckError::Name(e) => write!(f, "{}", e),
             CheckError::Description(e) => write!(f, "{}", e),
         }
     }
@@ -85,6 +87,7 @@ impl From<CheckError> for VerifyError {
             CheckError::Positional(pe) => pe.into(),
             CheckError::Undefined(ue) => ue.into(),
             CheckError::OrderBy(oe) => oe.into(),
+            CheckError::Name(ne) => ne.into(),
             CheckError::Description(de) => de.into(),
         }
     }
@@ -206,8 +209,13 @@ pub fn validate(parsed: &Json) -> CheckResult {
         result.errors.push(CheckError::OrderBy(err));
     }
 
-    // Check 11: Front matter says what the file is about (a description)
-    if let Some(err) = description::check_description(parsed) {
+    // Check 11: Front matter names the predicate the file is about
+    if let Some(err) = front_matter::check_name(parsed) {
+        result.errors.push(CheckError::Name(err));
+    }
+
+    // Check 12: Front matter says what its rows are (a description)
+    if let Some(err) = front_matter::check_description(parsed) {
         result.errors.push(CheckError::Description(err));
     }
 
