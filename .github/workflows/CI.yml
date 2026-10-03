@@ -258,18 +258,17 @@ jobs:
           path: wheels
       - name: Install wheel + test deps
         # --find-links serves the locally-built synalog wheel; its runtime deps
-        # (click, rich, rdflib, duckdb) resolve from PyPI. Don't use --no-index:
+        # (click, rich, duckdb, psycopg) resolve from PyPI. Don't use --no-index:
         # it would block dependency resolution and fail the install. `logica`
-        # registers the sqlite runtime UDFs the CLI tests exercise; psycopg lets
-        # the one psql runner-ordering test reach its DSN check (the other remote
-        # engines' tests run driver-free).
-        run: pip install --find-links wheels synalog pytest logica "psycopg[binary]"
+        # registers the sqlite runtime UDFs the CLI tests exercise.
+        run: pip install --find-links wheels synalog pytest logica
       - name: Smoke test
         run: |
           python -c "
           import synalog
           src = 'Greeting(msg: \"hello\");'
-          assert synalog.check(src) == []
+          assert synalog.check(src, assertions=False) == ([], [])
+          import psycopg  # a dependency, with its libpq on every platform
           sql = synalog.compile(src, 'Greeting', engine='sqlite')
           assert 'hello' in sql, sql
           print('ok:', sql.replace(chr(10), ' '))
