@@ -129,6 +129,16 @@ def test_print_validates_before_compiling(tmp_path):
     assert "SqlExpr" in result.stderr
 
 
+def test_warnings_are_printed_without_failing(tmp_path):
+    # An unproven spec is a warning: it goes to stderr and the run proceeds.
+    path = tmp_path / "spec.l"
+    path.write_text('@Spec(Doubled, even: "∀ d, Doubled d → d % 2 = 0");\n' + PROGRAM)
+    result = synalog(str(path), "run", "Doubled", "--csv")
+    assert result.returncode == 0
+    assert "Spec 'Doubled.even' is unproven" in result.stderr
+    assert result.stdout.splitlines() == ["doubled", "2", "4", "6"]
+
+
 def test_stdin_program():
     result = synalog("-", "print", "Greeting", stdin='Greeting(text: "hi");\n')
     assert result.returncode == 0, result.stderr

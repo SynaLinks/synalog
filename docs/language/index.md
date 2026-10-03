@@ -47,7 +47,8 @@ import duckdb
 import synalog
 
 source = open("program.l").read()
-assert synalog.check(source) == []
+errors, warnings = synalog.check(source)
+assert errors == []
 
 conn = duckdb.connect()
 conn.execute("CREATE TABLE orders AS SELECT * FROM read_csv('orders.csv')")

@@ -41,7 +41,7 @@ Employee(name: "Charlie", department: "Engineering", salary: 80000);
 EngineeringTeam(name:, salary:) :- Employee(name:, department: "Engineering", salary:);
 """
 
-errors = synalog.check(source)
+errors, warnings = synalog.check(source)
 assert errors == []
 
 sql = synalog.compile(source, "EngineeringTeam")

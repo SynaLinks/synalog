@@ -14,6 +14,7 @@ from ._synalog import (
     parse,
     reserved_predicates,
     search,
+    specs,
 )
 
 try:
@@ -31,5 +32,6 @@ __all__ = [
     "parse",
     "reserved_predicates",
     "search",
+    "specs",
     "__version__",
 ]

@@ -159,7 +159,12 @@ fn compile_all(
     Ok(out)
 }
 
-/// Validate a Synalog program; returns a list of error messages (empty = valid).
+/// Validate a Synalog program; returns `(errors, warnings)`, two lists of
+/// messages.
+///
+/// The program is valid when `errors` is empty. Warnings do not make it
+/// invalid: they report specs that are not established yet — a `@Spec` with no
+/// `@Proof`, and a `@Proof` that has not been checked.
 ///
 /// `engine` overrides the program's `@Engine` annotation (default: duckdb).
 /// Raises ValueError on syntax errors.
@@ -169,11 +174,48 @@ fn check(
     source: &str,
     engine: Option<&str>,
     import_root: Option<Vec<String>>,
-) -> PyResult<Vec<String>> {
+) -> PyResult<(Vec<String>, Vec<String>)> {
     check_engine(engine)?;
     let parsed = parse_source(source, None, import_root)?;
     let result = validate(&parsed);
-    Ok(result.errors.iter().map(|e| e.to_string()).collect())
+    let errors = result.errors.iter().map(|e| e.to_string()).collect();
+    Ok((errors, result.warnings))
+}
+
+/// Every `@Spec` of a program and where it stands.
+///
+/// Returns one dict per spec, in source order, with the keys `predicate`,
+/// `name`, `statement`, `proof` (None when no `@Proof` is written) and
+/// `status`:
+///
+/// - `"pending"`: the predicate the spec is about is not defined yet;
+/// - `"unproven"`: the predicate is defined but the spec has no `@Proof`;
+/// - `"unverified"`: a `@Proof` is written but has not been checked.
+///
+/// Annotation errors (a proof without a spec, a duplicate, ...) are reported
+/// by `check`, not here. Raises ValueError on syntax errors.
+#[pyfunction]
+#[pyo3(signature = (source, engine=None, import_root=None))]
+fn specs(
+    source: &str,
+    engine: Option<&str>,
+    import_root: Option<Vec<String>>,
+) -> PyResult<Vec<HashMap<&'static str, Option<String>>>> {
+    check_engine(engine)?;
+    let parsed = parse_source(source, None, import_root)?;
+    Ok(validate(&parsed)
+        .specs
+        .into_iter()
+        .map(|spec| {
+            HashMap::from([
+                ("predicate", Some(spec.predicate)),
+                ("name", Some(spec.name)),
+                ("statement", Some(spec.statement)),
+                ("proof", spec.proof),
+                ("status", Some(spec.status.to_string())),
+            ])
+        })
+        .collect())
 }
 
 /// Predicate names Synalog defines itself, sorted.
@@ -226,6 +268,7 @@ fn _synalog(m: &Bound<'_, PyModule>) -> PyResult<()> {
     m.add_function(wrap_pyfunction!(search, m)?)?;
     m.add_function(wrap_pyfunction!(compile_all, m)?)?;
     m.add_function(wrap_pyfunction!(check, m)?)?;
+    m.add_function(wrap_pyfunction!(specs, m)?)?;
     m.add_function(wrap_pyfunction!(reserved_predicates, m)?)?;
     m.add_function(wrap_pyfunction!(builtin_functions, m)?)?;
     m.add_function(wrap_pyfunction!(front_matter, m)?)?;

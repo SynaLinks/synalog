@@ -1,6 +1,6 @@
 # Python API
 
-The `synalog` package exposes five functions that take a program (`parse`, `compile`, `search`, `compile_all`, `check`) and two that take nothing and return the names Synalog has already reserved (`reserved_predicates`, `builtin_functions`). The program functions all accept an optional `engine` keyword that overrides the program's `@Engine` annotation (one of `sqlite`, `duckdb`, `bigquery`, `psql`, `presto`, `trino`, `databricks`; default `duckdb`) and an optional `import_root` keyword listing directories where `import` statements look up `.l` files (default: the current directory). They raise `ValueError` on syntax or compilation errors.
+The `synalog` package exposes six functions that take a program (`parse`, `compile`, `search`, `compile_all`, `check`, `specs`) and two that take nothing and return the names Synalog has already reserved (`reserved_predicates`, `builtin_functions`). The program functions all accept an optional `engine` keyword that overrides the program's `@Engine` annotation (one of `sqlite`, `duckdb`, `bigquery`, `psql`, `presto`, `trino`, `databricks`; default `duckdb`) and an optional `import_root` keyword listing directories where `import` statements look up `.l` files (default: the current directory). They raise `ValueError` on syntax or compilation errors.
 
 ## `parse`
 
@@ -59,17 +59,34 @@ for name, sql in sqls.items():
 ## `check`
 
 ```python
-check(source, engine=None, import_root=None) -> list[str]
+check(source, engine=None, import_root=None) -> tuple[list[str], list[str]]
 ```
 
-Run structural [verification](verification.md). Returns a list of error messages; empty if the program is valid.
+Run structural [verification](verification.md). Returns `(errors, warnings)`, two lists of messages. The program is valid when `errors` is empty. Warnings do not make it invalid: they report [specs](verification.md#specs-and-proofs) that are not established yet, a `@Spec` with no `@Proof` and a `@Proof` that has not been checked.
 
 ```python
-errors = synalog.check(source)
-if errors:
-    for e in errors:
-        print(e)
+errors, warnings = synalog.check(source)
+for e in errors:
+    print("error:", e)
+for w in warnings:
+    print("warning:", w)
 ```
+
+## `specs`
+
+```python
+specs(source, engine=None, import_root=None) -> list[dict]
+```
+
+Every [`@Spec`](verification.md#specs-and-proofs) of the program and where it stands, in source order. Each dict has the keys `predicate`, `name`, `statement`, `proof` (`None` when no `@Proof` is written) and `status` (`"pending"`, `"unproven"` or `"unverified"`).
+
+```python
+for spec in synalog.specs(source):
+    if spec["status"] != "unverified":
+        print(f"{spec['predicate']}.{spec['name']}: {spec['status']}")
+```
+
+Annotation errors, such as a proof without a spec, are reported by `check`, not here.
 
 ## `reserved_predicates`
 

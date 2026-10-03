@@ -67,7 +67,7 @@ def run_example(path: Path) -> None:
     predicates, loads, expect_errors = parse_header(source)
     out: list[str] = [f"$ synalog.check('{path.name}')"]
 
-    errors = synalog.check(source)
+    errors, _ = synalog.check(source)
     if expect_errors:
         if not errors:
             raise AssertionError(f"{path.name}: expected check() errors, got none")

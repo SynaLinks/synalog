@@ -7,7 +7,7 @@
 use std::path::PathBuf;
 
 use synalog::parser::parse_file;
-use synalog::verifier::{validate, CheckError, SafetyError, RecursionError};
+use synalog::verifier::{validate, CheckError, SafetyError, RecursionError, SpecError};
 
 /// Path to the verifier fixtures directory.
 fn fixtures_dir() -> PathBuf {
@@ -29,6 +29,10 @@ enum ExpectedError {
     UnsafeSqlExpr,
     PositionalArguments,
     UndefinedPredicate,
+    MalformedSpec,
+    DuplicateSpec,
+    DuplicateProof,
+    OrphanProof,
 }
 
 /// Parse expected error from file content.
@@ -49,6 +53,10 @@ fn parse_expected_error(content: &str) -> Option<ExpectedError> {
                 s if s.contains("unsafeSqlExpr") => Some(ExpectedError::UnsafeSqlExpr),
                 s if s.contains("positionalArguments") => Some(ExpectedError::PositionalArguments),
                 s if s.contains("undefinedPredicate") => Some(ExpectedError::UndefinedPredicate),
+                s if s.contains("malformedSpec") => Some(ExpectedError::MalformedSpec),
+                s if s.contains("duplicateSpec") => Some(ExpectedError::DuplicateSpec),
+                s if s.contains("duplicateProof") => Some(ExpectedError::DuplicateProof),
+                s if s.contains("orphanProof") => Some(ExpectedError::OrphanProof),
                 _ => None,
             };
         }
@@ -71,6 +79,10 @@ fn error_matches(error: &CheckError, expected: &ExpectedError) -> bool {
         (CheckError::SqlExpr(_), ExpectedError::UnsafeSqlExpr) => true,
         (CheckError::Positional(_), ExpectedError::PositionalArguments) => true,
         (CheckError::Undefined(_), ExpectedError::UndefinedPredicate) => true,
+        (CheckError::Spec(SpecError::Malformed { .. }), ExpectedError::MalformedSpec) => true,
+        (CheckError::Spec(SpecError::DuplicateSpec { .. }), ExpectedError::DuplicateSpec) => true,
+        (CheckError::Spec(SpecError::DuplicateProof { .. }), ExpectedError::DuplicateProof) => true,
+        (CheckError::Spec(SpecError::OrphanProof { .. }), ExpectedError::OrphanProof) => true,
         _ => false,
     }
 }

@@ -9,6 +9,7 @@
 //! - Stratification (no negative recursion cycles)
 //! - Arity consistency (predicates used with consistent argument counts)
 //! - Recursion safety (base cases, no trivial loops)
+//! - Specs and proofs (`@Spec` / `@Proof` pairing)
 
 mod vars;
 mod safety;
@@ -19,6 +20,7 @@ mod reserved;
 mod sqlexpr;
 mod positional;
 mod undefined;
+mod specs;
 
 pub use vars::VarCollector;
 pub use safety::{SafetyError, check_safety};
@@ -29,6 +31,7 @@ pub use reserved::{ReservedError, check_reserved, reserved_predicate_names};
 pub use sqlexpr::{SqlExprError, check_sqlexpr};
 pub use positional::{PositionalError, check_positional};
 pub use undefined::{UndefinedError, builtin_function_names, check_undefined};
+pub use specs::{SpecError, SpecReport, SpecStatus, check_specs};
 
 use crate::parser::Json;
 use crate::errors::{VerifyError, VerifyResult};
@@ -44,6 +47,7 @@ pub enum CheckError {
     SqlExpr(SqlExprError),
     Positional(PositionalError),
     Undefined(UndefinedError),
+    Spec(SpecError),
 }
 
 impl std::fmt::Display for CheckError {
@@ -57,6 +61,7 @@ impl std::fmt::Display for CheckError {
             CheckError::SqlExpr(e) => write!(f, "{}", e),
             CheckError::Positional(e) => write!(f, "{}", e),
             CheckError::Undefined(e) => write!(f, "{}", e),
+            CheckError::Spec(e) => write!(f, "{}", e),
         }
     }
 }
@@ -74,6 +79,7 @@ impl From<CheckError> for VerifyError {
             CheckError::SqlExpr(se) => se.into(),
             CheckError::Positional(pe) => pe.into(),
             CheckError::Undefined(ue) => ue.into(),
+            CheckError::Spec(se) => se.into(),
         }
     }
 }
@@ -89,6 +95,8 @@ impl From<CheckError> for crate::errors::SynalogError {
 pub struct CheckResult {
     pub errors: Vec<CheckError>,
     pub warnings: Vec<String>,
+    /// Every `@Spec` of the program and where it stands.
+    pub specs: Vec<SpecReport>,
 }
 
 impl CheckResult {
@@ -99,6 +107,7 @@ impl CheckResult {
     pub fn merge(&mut self, other: CheckResult) {
         self.errors.extend(other.errors);
         self.warnings.extend(other.warnings);
+        self.specs.extend(other.specs);
     }
 
     /// Convert to the unified VerifyResult type.
@@ -188,6 +197,26 @@ pub fn validate(parsed: &Json) -> CheckResult {
     for err in undefined::check_undefined(&normal_rules) {
         result.errors.push(CheckError::Undefined(err));
     }
+
+    // Check 10: Specs and proofs (@Spec / @Proof pairing)
+    let (specs, spec_errors) = specs::check_specs(&all_rules);
+    for err in spec_errors {
+        result.errors.push(CheckError::Spec(err));
+    }
+    for spec in &specs {
+        match spec.status {
+            SpecStatus::Pending => {}
+            SpecStatus::Unproven => result.warnings.push(format!(
+                "Spec '{}.{}' is unproven: no matching @Proof",
+                spec.predicate, spec.name
+            )),
+            SpecStatus::Unverified => result.warnings.push(format!(
+                "Proof of '{}.{}' is unverified: proofs are not checked yet",
+                spec.predicate, spec.name
+            )),
+        }
+    }
+    result.specs = specs;
 
     result
 }

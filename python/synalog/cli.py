@@ -56,6 +56,10 @@ def print_error(message: object) -> None:
     err.print(str(message), style="red", markup=False, highlight=False, soft_wrap=True)
 
 
+def print_warning(message: object) -> None:
+    err.print(str(message), style="yellow", markup=False, highlight=False, soft_wrap=True)
+
+
 def fail(message: object) -> None:
     print_error(message)
     sys.exit(1)
@@ -468,7 +472,9 @@ def main(args, inline, engine, limit, offset, as_csv, search_pattern, dsn,
 
     def validate_or_fail(eng: str | None) -> None:
         """Run the verifier over the whole program; abort on any error."""
-        errors = check(source, engine=eng, import_root=roots)
+        errors, warnings = check(source, engine=eng, import_root=roots)
+        for warning in warnings:
+            print_warning(warning)
         if errors:
             for error in errors:
                 print_error(error)
@@ -591,7 +597,7 @@ class Repl:
     def add_statement(self, statement: str) -> None:
         candidate = self.source + "\n" + statement if self.statements else statement
         try:
-            errors = check(candidate, engine=self.engine, import_root=self.roots)
+            errors, _ = check(candidate, engine=self.engine, import_root=self.roots)
         except ValueError as e:
             # An import is only "used" once a later rule references it; in an
             # interactive session that rule comes after, so defer this check.

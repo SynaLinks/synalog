@@ -276,7 +276,7 @@
       if (verifyBox.checked) {
         var errors;
         try {
-          errors = wasm.check(source(), engine());
+          errors = wasm.check(source(), engine()).errors;
         } catch (e) {
           setSql(String(e.message || e), true);
           return;

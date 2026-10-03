@@ -63,7 +63,7 @@ Employee(name: "Charlie", department: "Engineering", salary: 80000);
 EngineeringTeam(name:, salary:) :- Employee(name:, department: "Engineering", salary:);
 """
 
-errors = synalog.check(source)
+errors, warnings = synalog.check(source)
 assert errors == []
 
 sql = synalog.compile(source, "EngineeringTeam")
@@ -176,7 +176,7 @@ Employee(name: "Charlie", department: "Engineering", salary: 80000);
 EngineeringTeam(name:, salary:) :- Employee(name:, department: "Engineering", salary:);
 """
 
-errors = synalog.check(source)
+errors, warnings = synalog.check(source)
 assert errors == []
 
 sql = synalog.compile(source, "EngineeringTeam")
@@ -221,12 +221,12 @@ for name, sql in sqls.items():
     print(name, sql)
 ```
 
-### `check(source, engine=None, import_root=None) -> list[str]`
+### `check(source, engine=None, import_root=None) -> tuple[list[str], list[str]]`
 
-Run structural validation. Returns a list of error messages; empty if the program is valid.
+Run structural validation. Returns the error messages and the warning messages, as two lists. The program is valid when there is no error; warnings do not make it invalid.
 
 ```python
-errors = synalog.check(source)
+errors, warnings = synalog.check(source)
 if errors:
     for e in errors:
         print(e)
@@ -519,7 +519,7 @@ Unlike Logica, which lets the database raise errors at execution time, Synalog e
 | **Unsafe `SqlExpr`** | User rules that reach for the raw-SQL escape hatch |
 
 ```python
-errors = synalog.check(bad_source)
+errors, warnings = synalog.check(bad_source)
 for e in errors:
     print(e)
 # Unbound variable 'y' in head of rule: Test(x:, y:) :- Numbers(x:)

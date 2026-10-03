@@ -50,6 +50,6 @@ def test_reserved_names_are_not_user_predicates():
             "Typo(id:) :- Saless(id:);",
         ]
     )
-    errors = synalog.check(program)
+    errors, _ = synalog.check(program)
     assert any("Saless" in e for e in errors)
     assert not any("Substr" in e or "ToString" in e for e in errors)
