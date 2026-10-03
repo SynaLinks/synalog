@@ -91,6 +91,22 @@ def test_no_counterexample_of_a_right_rule():
     assert violations(ASSERTION + PARENT + CLOSURE, "Near", "transitive") == []
 
 
+def test_report_quotes_the_statement_as_written_across_imports(tmp_path):
+    # An import renames the predicates it brings in; the report must not show it.
+    (tmp_path / "lib").mkdir()
+    (tmp_path / "lib" / "family.l").write_text(PARENT + "Person(x:) distinct :- Parent(x:);\n")
+    statement = "∀ x, Root x → Person x"
+    source = (
+        "import lib.family.Parent;\nimport lib.family.Person;\n"
+        f'@Assert(Root, known: "{statement}");\n'
+        'Root(x:) :- Parent(x:), x == "a";\n'
+    )
+    (assertion,) = synalog.assertions(source, import_root=[str(tmp_path)])
+    assert (assertion["statement"], assertion["status"]) == (statement, "unchecked")
+    sql = synalog.counterexamples(source, "Root", "known", import_root=[str(tmp_path)])
+    assert duckdb.sql(sql).fetchall() == []
+
+
 def test_arithmetic_and_sums():
     for assertion in synalog.assertions(BAYES):
         assert assertion["status"] == "unchecked", assertion

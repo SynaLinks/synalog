@@ -141,7 +141,10 @@ impl From<AssertionError> for crate::errors::SynalogError {
 struct Entry {
     predicate: String,
     name: String,
+    /// The statement to translate: its predicates carry the names imports gave them.
     text: String,
+    /// The statement as it was written, for reports.
+    source: String,
 }
 
 /// Report where each `@Assert` of the program stands.
@@ -198,7 +201,7 @@ pub fn check_assertions(rules: &[&Json]) -> (Vec<AssertionReport>, Vec<Assertion
         reports.push(AssertionReport {
             predicate: assertion.predicate,
             name: assertion.name,
-            statement: assertion.text,
+            statement: assertion.source,
             status,
             detail,
         });
@@ -316,7 +319,10 @@ fn read_annotation(rule: &Json, annotation: &str, errors: &mut Vec<AssertionErro
         } else {
             let name = field.as_str().to_string();
             match string_literal(value) {
-                Some(text) => named.push((name, text)),
+                Some(text) => {
+                    let source = statement_source(value).unwrap_or_else(|| text.clone());
+                    named.push((name, text, source));
+                }
                 None => return malformed(format!("'{}' must be a string", name)),
             }
         }
@@ -331,10 +337,11 @@ fn read_annotation(rule: &Json, annotation: &str, errors: &mut Vec<AssertionErro
 
     named
         .into_iter()
-        .map(|(name, text)| Entry {
+        .map(|(name, text, source)| Entry {
             predicate: predicate.clone(),
             name,
             text,
+            source,
         })
         .collect()
 }
@@ -351,6 +358,15 @@ pub(super) fn predicate_name(value: &Json) -> Option<String> {
     }
     let pred = obj.get("literal")?.as_object().get("the_predicate")?;
     Some(pred.as_object()["predicate_name"].as_str().to_string())
+}
+
+/// The statement of a string literal as it was written, when an import renamed
+/// the predicates it names.
+fn statement_source(value: &Json) -> Option<String> {
+    let literal = value.as_object().get("literal")?.as_object();
+    let string = literal.get("the_string")?;
+    let holder = if string.is_object() { string.as_object() } else { literal };
+    holder.get("statement_source").map(|s| s.as_str().to_string())
 }
 
 /// The text of a string literal expression.
