@@ -71,6 +71,7 @@ all-engines = [
 dev = [
     "pytest",
     "pytest-xdist",
+    "pytest-timeout",
     "duckdb",
     "logica",
     "matplotlib",

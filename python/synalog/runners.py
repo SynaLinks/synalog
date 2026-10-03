@@ -565,14 +565,20 @@ def run_sql(engine: str, sql: str, dsn: str | None = None, loads=()) -> Result:
         return s.run(sql)
 
 
+#: Past this many repetitions, a loop is not run without its convergence check.
+UNROLLED_REPETITIONS = 1000
+
+
 def run_plan(steps: list[dict], s: Session) -> Result:
     """Run the steps of a plan (``synalog.plan``) in a session; the rows of the
     last step.
 
     A loop runs its body again until its ``changed`` query returns 0 — the
     recursion has converged — or its repetitions are spent. When an engine
-    cannot answer that query (a column type it cannot compare), the loop runs
-    every repetition instead: slower, the same rows.
+    cannot answer that query (a column type it cannot compare), a loop of a
+    bounded depth runs every repetition instead: slower, the same rows; one
+    that recurses until nothing changes (``-1``) cannot, and raises the
+    engine's error.
     """
     result: Result = ([], [])
     for step in steps:
@@ -586,6 +592,8 @@ def run_plan(steps: list[dict], s: Session) -> Result:
                     try:
                         changed = s.run(step["changed"])[1]
                     except Exception:  # noqa: BLE001 - see the docstring
+                        if step["repetitions"] > UNROLLED_REPETITIONS:
+                            raise
                         check = False
                     else:
                         if changed and int(changed[0][0] or 0) == 0:
