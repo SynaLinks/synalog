@@ -68,6 +68,11 @@ SYNALOG_GOLDENS = {
     *(("sqlite", "52_today_now"), ("duckdb", "52_today_now"), ("psql", "52_today_now"),
       ("bigquery", "52_today_now"), ("trino", "52_today_now"), ("presto", "52_today_now"),
       ("databricks", "52_today_now")),
+    # A predicate named after an SQL keyword (`Values`, `Rows`): upstream uses
+    # the name as a bare table alias (`t_1_Values AS Values`), which no engine
+    # parses; synalog falls back to its numbered alias. See DEVIATIONS.md.
+    *(((e, f) for e in ["bigquery", "sqlite", "psql", "duckdb", "trino", "presto", "databricks"]
+       for f in ["44_import_extend", "48_split_function"])),
     # Databricks: synalog emits Spark/Databricks-valid SQL where upstream Logica
     # emits BigQuery-isms that do not run on Databricks (GENERATE_ARRAY,
     # ARRAY_LENGTH, FORMAT, OFFSET, in-aggregate ARRAY_AGG ORDER BY, ARRAY_JOIN

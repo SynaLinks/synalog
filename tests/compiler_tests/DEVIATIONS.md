@@ -146,6 +146,17 @@ both forms are valid and produce identical results on every engine. The
 `62_multi_ground_join.sql` goldens (all 7 engines) are generated from synalog and
 verified end-to-end (`tests/e2e`), where every engine's rows match.
 
+## Predicates named after SQL keywords
+
+A predicate's name is the table alias of its rows in the generated SQL. Upstream
+uses it as is, so a predicate named after an SQL keyword — `Values` in
+`44_import_extend`, `Rows` in `48_split_function`, and as plausibly `Order`,
+`Group` or `Select` — yields `FROM t_1_Values AS Values`, which no engine
+parses. synalog never aliases a table with a keyword: it falls back to its
+numbered alias (`t_1_Values AS t_2_Values`). The goldens of both fixtures are
+generated from synalog on every engine; `tests/programs/execution` runs
+predicates named `Order`, `Group`, `Select` and `Table` on DuckDB.
+
 ## Functors applied to imported predicates
 
 `63_functor_imported` applies a functor to a predicate imported from another

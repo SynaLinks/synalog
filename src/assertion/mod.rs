@@ -44,6 +44,38 @@ pub fn schema(rules: &[&Json]) -> Schema {
             schema.insert(name.to_string(), columns);
         }
     }
+    // A functor's result (`Big := Revenue(Segment: Large)`) has no rule head:
+    // it has the columns of the predicate it instantiates. Repeat for a
+    // functor applied to another functor's result.
+    let made: Vec<(String, String)> = rules
+        .iter()
+        .filter_map(|rule| {
+            let head = rule.as_object()["head"].as_object();
+            if head["predicate_name"].as_str() != "@Make" {
+                return None;
+            }
+            let fvs = head.get("record")?.as_object().get("field_value")?.as_array();
+            let predicate = |i: usize| -> Option<String> {
+                let literal = fvs.get(i)?.as_object().get("value")?.as_object().get("expression")?.as_object().get("literal")?;
+                Some(literal.as_object().get("the_predicate")?.as_object().get("predicate_name")?.as_str().to_string())
+            };
+            Some((predicate(0)?, predicate(1)?))
+        })
+        .collect();
+    loop {
+        let mut changed = false;
+        for (result, applied) in &made {
+            if !schema.contains_key(result) {
+                if let Some(columns) = schema.get(applied).cloned() {
+                    schema.insert(result.clone(), columns);
+                    changed = true;
+                }
+            }
+        }
+        if !changed {
+            break;
+        }
+    }
     schema
 }
 

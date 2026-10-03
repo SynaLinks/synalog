@@ -183,6 +183,10 @@ pub enum VerifyError {
     #[error("The front matter has no description{}: say what {} — in the words someone would search for (description: ...)", match predicate { Some(p) => format!(" for '{}'", p), None => String::new() }, match predicate { Some(_) => "its rows are", None => "this file is about" })]
     MissingDescription { predicate: Option<String> },
 
+    /// A functor the compiler cannot apply (an argument the predicate does not depend on).
+    #[error("{message}")]
+    InvalidFunctor { message: String },
+
     /// The predicate a file's front matter names has no `@OrderBy`.
     #[error("Missing @OrderBy for '{predicate}', the predicate this file is about: without it its rows come back in no stable order and pages differ between runs; add @OrderBy({predicate}, \"column\"); before its rules")]
     MissingOrderBy { predicate: String },

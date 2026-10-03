@@ -576,3 +576,22 @@ fn test_front_matter_name_of_an_imported_module_is_checked_too() {
     std::fs::remove_dir_all(&root).ok();
     assert!(err.unwrap_err().message.contains("Front matter names 'Persons'"));
 }
+
+#[test]
+fn test_keyword_inside_an_underscored_name_is_not_a_keyword() {
+    // `distinct` and `in` split a rule only as whole words; `_` is part of a
+    // word, so these names stay names.
+    for source in [
+        "Foo_distinct_ends(x:) distinct :- x in [1, 2];",
+        "Foo_distinct_ends(x:) :- x in [1, 2];",
+        "Is_in_stock(x:) :- x in [1, 2];",
+        "A(x:) :- Is_in_stock(x:), stock_in == 1, stock_in == x;",
+    ] {
+        let parsed = parse_file(source, None, &[]);
+        assert!(parsed.is_ok(), "{source}: {:?}", parsed.err().map(|e| e.message));
+    }
+    // The keyword itself still splits.
+    let parsed = parse_file("Distinct(x:) distinct :- x in [1, 2];", None, &[]).unwrap();
+    let rule = &parsed.as_object()["rule"].as_array()[0];
+    assert!(rule.as_object().get("distinct_denoted").is_some());
+}

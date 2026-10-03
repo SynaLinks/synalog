@@ -45,6 +45,26 @@ pub struct NamesAllocator {
     pub custom_udfs: HashMap<String, String>,
 }
 
+/// SQL keywords no engine accepts as a bare table alias (the union of the
+/// reserved words of the engines Synalog compiles to that a predicate name
+/// can plausibly collide with).
+const SQL_KEYWORDS: &[&str] = &[
+    "ALL", "ALTER", "AND", "ANY", "ARRAY", "AS", "ASC", "BETWEEN", "BOTH", "BY", "CASE", "CAST",
+    "CHECK", "COLLATE", "COLUMN", "CONSTRAINT", "CREATE", "CROSS", "CURRENT_DATE", "CURRENT_TIME",
+    "CURRENT_TIMESTAMP", "CURRENT_USER", "DEFAULT", "DELETE", "DESC", "DISTINCT", "DO", "DROP",
+    "ELSE", "END", "EXCEPT", "EXISTS", "FALSE", "FETCH", "FOR", "FOREIGN", "FROM", "FULL", "GRANT",
+    "GROUP", "GROUPING", "HAVING", "IN", "INNER", "INSERT", "INTERSECT", "INTERVAL", "INTO", "IS",
+    "JOIN", "LATERAL", "LEADING", "LEFT", "LIKE", "LIMIT", "NATURAL", "NOT", "NULL", "OFFSET", "ON",
+    "ONLY", "OR", "ORDER", "OUTER", "OVER", "PARTITION", "PRIMARY", "QUALIFY", "RANGE", "REFERENCES",
+    "RIGHT", "ROW", "ROWS", "SELECT", "SESSION_USER", "SET", "SOME", "TABLE", "THEN", "TO",
+    "TRAILING", "TRUE", "UNION", "UNIQUE", "UNNEST", "UPDATE", "USER", "USING", "VALUES", "WHEN",
+    "WHERE", "WINDOW", "WITH",
+];
+
+fn is_sql_keyword(name: &str) -> bool {
+    SQL_KEYWORDS.iter().any(|k| k.eq_ignore_ascii_case(name))
+}
+
 impl NamesAllocator {
     pub fn new() -> Self {
         Self::default()
@@ -69,7 +89,9 @@ impl NamesAllocator {
     }
 
     /// Allocate a table alias, using the hint if it's unique and valid.
-    /// Matches Python's AllocateTable logic.
+    /// Matches Python's AllocateTable logic, except that a hint which is an
+    /// SQL keyword (a predicate named `Order`, `Group`, `Select`, ...) is not
+    /// used as is: `FROM t AS Order` does not parse on any engine.
     pub fn alloc_table(&mut self, hint: Option<&str>) -> String {
         let suffix = hint
             .filter(|h| h.len() < 100)
@@ -84,6 +106,7 @@ impl NamesAllocator {
         let name = if !suffix.is_empty()
             && !self.allocated_tables.contains(&suffix)
             && !suffix.chars().next().unwrap_or('0').is_ascii_digit()
+            && !is_sql_keyword(&suffix)
         {
             suffix
         } else {

@@ -499,8 +499,11 @@ pub fn split_raw(s: &SpanString, separator: &str) -> ParseResult<Vec<SpanString>
             }
 
             if sep_alphanum {
-                let left_ok = !(i > 0 && v[i - 1].is_ascii_alphanumeric());
-                let right_ok = !((i + l) < v.len() && v[i + l].is_ascii_alphanumeric());
+                // A keyword separator (`distinct`, `in`, ...) is a whole word:
+                // `_` belongs to the word, so `Foo_distinct_ends` is a name.
+                let word = |b: u8| b.is_ascii_alphanumeric() || b == b'_';
+                let left_ok = !(i > 0 && word(v[i - 1]));
+                let right_ok = !((i + l) < v.len() && word(v[i + l]));
                 if !left_ok || !right_ok {
                     continue;
                 }

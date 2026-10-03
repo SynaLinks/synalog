@@ -445,6 +445,28 @@ mod tests {
     }
 
     #[test]
+    fn test_spec_applying_a_functor_result_is_unchecked() {
+        // A functor's result has the columns of the predicate it instantiates,
+        // so a statement can apply it, through a chain of functors too.
+        let (reports, errors) = check(
+            r#"
+            @Assert(Big, positive: "∀ r, Big r → r > 0");
+            @Assert(Bigger, positive: "∀ r, Bigger r → r > 0");
+            Large(customer_id:) :- customer_id in [1, 2];
+            Larger(customer_id:) :- customer_id in [2];
+            Revenue(revenue? += 1) distinct :- Segment(customer_id:);
+            Segment(customer_id:) :- customer_id in [1, 2, 3];
+            Big := Revenue(Segment: Large);
+            Bigger := Big(Large: Larger);
+        "#,
+        );
+        assert!(errors.is_empty(), "{errors:?}");
+        for report in &reports {
+            assert_eq!(report.status, AssertionStatus::Unchecked, "{report:?}");
+        }
+    }
+
+    #[test]
     fn test_spec_on_functor_made_predicate_is_not_pending() {
         // `Managers` has no rule head, so its columns are unknown: a statement
         // can be anchored to it but cannot apply it.

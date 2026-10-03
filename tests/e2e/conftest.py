@@ -33,15 +33,9 @@ FIXTURES_DIR = E2E_DIR.parent / "compiler_tests"
 # open-source server.
 ENGINES = ["sqlite", "duckdb", "psql", "trino", "presto", "databricks"]
 
-# Fixtures that cannot be compiled through the Python API: imports need
-# import roots, which `synalog.compile` does not expose.
-SKIP_COMPILE = {
-    "41_import_basic",
-    "42_import_alias",
-    "43_import_multiple",
-    "44_import_extend",
-    "45_import_string",
-}
+# Fixtures that cannot be compiled through the Python API (none: imports
+# resolve through `import_root`, see compile_fixture).
+SKIP_COMPILE: set[str] = set()
 
 
 def fixture_path(engine: str, name: str) -> Path:
@@ -83,9 +77,18 @@ def same_program_as_duckdb(engine: str, name: str) -> bool:
     return mine == duckdbs or mine.read_text() == duckdbs.read_text()
 
 
+def is_imported_predicate(name: str) -> bool:
+    """An imported module's predicate, renamed with its module prefix
+    (`Math_utils_Square`): two underscore-separated parts that both start
+    uppercase — same rule as tests/common/mod.rs."""
+    parts = name.split("_")
+    return len(parts) >= 2 and parts[0][:1].isupper() and any(p[:1].isupper() for p in parts[1:])
+
+
 def last_predicate(source: str, import_root: list[str] | None = None) -> str:
     """Last user-defined predicate in the program — same convention as the
-    Rust golden tests (tests/common/mod.rs)."""
+    Rust golden tests (tests/common/mod.rs). An imported module's rules come
+    after the program's own, so they are skipped."""
     import synalog
 
     parsed = json.loads(synalog.parse(source, import_root=import_root))
@@ -93,7 +96,7 @@ def last_predicate(source: str, import_root: list[str] | None = None) -> str:
     for rule in parsed.get("rule", []):
         head = rule.get("head", {})
         name = head.get("predicate_name") or head.get("call", {}).get("predicate_name")
-        if name and not name.startswith("@") and not name.startswith("_"):
+        if name and not name.startswith("@") and not name.startswith("_") and not is_imported_predicate(name):
             last = name
     if last is None:
         raise ValueError("No user-defined predicate found")

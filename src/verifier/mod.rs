@@ -11,6 +11,7 @@
 //! - Recursion safety (base cases, no trivial loops)
 //! - Ordering (the predicate a file's front matter names has `@OrderBy`)
 //! - Front matter (a name and a description)
+//! - Functors (each argument a predicate the functor depends on)
 //! - Assertions (`@Assert` statements)
 
 mod vars;
@@ -24,6 +25,7 @@ mod positional;
 mod undefined;
 mod orderby;
 mod front_matter;
+mod functors;
 mod assertions;
 
 pub use vars::VarCollector;
@@ -37,6 +39,7 @@ pub use positional::{PositionalError, check_positional};
 pub use undefined::{UndefinedError, builtin_function_names, check_undefined};
 pub use orderby::{OrderByError, check_order_by};
 pub use front_matter::{DescriptionError, NameError, check_description, check_name};
+pub use functors::{FunctorError, check_functors};
 pub use assertions::{AssertionError, AssertionReport, AssertionStatus, check_assertions, assertion_check};
 
 use crate::parser::Json;
@@ -56,6 +59,7 @@ pub enum CheckError {
     OrderBy(OrderByError),
     Name(NameError),
     Description(DescriptionError),
+    Functor(FunctorError),
     Assert(AssertionError),
 }
 
@@ -73,6 +77,7 @@ impl std::fmt::Display for CheckError {
             CheckError::OrderBy(e) => write!(f, "{}", e),
             CheckError::Name(e) => write!(f, "{}", e),
             CheckError::Description(e) => write!(f, "{}", e),
+            CheckError::Functor(e) => write!(f, "{}", e),
             CheckError::Assert(e) => write!(f, "{}", e),
         }
     }
@@ -94,6 +99,7 @@ impl From<CheckError> for VerifyError {
             CheckError::OrderBy(oe) => oe.into(),
             CheckError::Name(ne) => ne.into(),
             CheckError::Description(de) => de.into(),
+            CheckError::Functor(fe) => fe.into(),
             CheckError::Assert(se) => se.into(),
         }
     }
@@ -228,7 +234,12 @@ pub fn validate(parsed: &Json) -> CheckResult {
         result.errors.push(CheckError::Description(err));
     }
 
-    // Check 13: Assertions (@Assert statements)
+    // Check 13: Functors (each argument a predicate the functor depends on)
+    if let Some(err) = functors::check_functors(&all_rules) {
+        result.errors.push(CheckError::Functor(err));
+    }
+
+    // Check 14: Assertions (@Assert statements)
     let (assertions, spec_errors) = assertions::check_assertions(&all_rules);
     for err in spec_errors {
         result.errors.push(CheckError::Assert(err));

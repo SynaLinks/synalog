@@ -18,6 +18,7 @@ This matters most for AI agents: it prevents producing programs that parse corre
 | **Unsafe `SqlExpr`** | User rules that reach for the raw-SQL escape hatch |
 | **Ordering** | A file whose front matter names a predicate, without an `@OrderBy` for it |
 | **Front matter** | A file with front matter but no `name`, or no `description` (or an empty one) |
+| **Functors** | A functor argument the applied predicate does not depend on: `F := Count(Nope: Odd)` when `Count` never reads `Nope` |
 | **Assertions** | An `@Assert` statement that does not parse or contradicts the program, an assertion stated twice |
 
 ### Unsafe `SqlExpr`

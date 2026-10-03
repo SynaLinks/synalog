@@ -1,4 +1,4 @@
-WITH t_1_Rows AS (SELECT * FROM (
+WITH t_2_Rows AS (SELECT * FROM (
   
     SELECT
       "a,b,c" AS line
@@ -9,11 +9,11 @@ WITH t_1_Rows AS (SELECT * FROM (
   
 ) AS UNUSED_TABLE_NAME  ),
 t_0_Parsed AS (SELECT
-  Rows.line AS line,
-  SIZE(SPLIT(Rows.line, ",")) AS n,
-  ELEMENT_AT(SPLIT(Rows.line, ","), 0 + 1) AS first
+  t_1_Rows.line AS line,
+  SIZE(SPLIT(t_1_Rows.line, ",")) AS n,
+  ELEMENT_AT(SPLIT(t_1_Rows.line, ","), 0 + 1) AS first
 FROM
-  t_1_Rows AS Rows ORDER BY line)
+  t_2_Rows AS t_1_Rows ORDER BY line)
 SELECT
   Parsed.line AS line,
   Parsed.n AS n,

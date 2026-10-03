@@ -1,4 +1,4 @@
-WITH t_1_Values AS (SELECT * FROM (
+WITH t_2_Values AS (SELECT * FROM (
   
     SELECT
       2 AS a,
@@ -11,8 +11,8 @@ WITH t_1_Values AS (SELECT * FROM (
   
 ) AS UNUSED_TABLE_NAME  )
 SELECT
-  Values.a AS a,
-  Values.b AS b,
-  ((((Values.a) * (Values.a))) + (((Values.b) * (Values.b)))) AS result
+  t_0_Values.a AS a,
+  t_0_Values.b AS b,
+  ((((t_0_Values.a) * (t_0_Values.a))) + (((t_0_Values.b) * (t_0_Values.b)))) AS result
 FROM
-  t_1_Values AS Values ORDER BY a;
+  t_2_Values AS t_0_Values ORDER BY a;
