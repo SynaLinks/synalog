@@ -257,8 +257,9 @@ def _require_dsn(engine: str, dsn: str | None) -> str:
     resolved = _resolve_dsn(engine, dsn)
     if not resolved:
         raise RunnerUnavailable(
-            f"The {engine} engine needs a connection string: pass --dsn, set"
-            f" SYNALOG_{engine.upper()}_DSN, or run 'synalog connect {engine} <dsn>'"
+            f"The {engine} engine needs a connection string: give the project a"
+            f" [connection] in synalog.toml, pass --dsn, set SYNALOG_{engine.upper()}_DSN, or run"
+            f" 'synalog connect {engine} <dsn>'"
         )
     return resolved
 

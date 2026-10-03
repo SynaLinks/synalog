@@ -20,7 +20,7 @@ import os
 from pathlib import Path
 
 
-def _parse_dotenv(text: str) -> list[tuple[str, str]]:
+def parse_dotenv(text: str) -> list[tuple[str, str]]:
     """Parse a .env file's ``KEY=VALUE`` lines into pairs.
 
     Blank lines and ``#`` comments are ignored; a leading ``export`` is allowed;
@@ -57,7 +57,7 @@ def load_dotenv(*directories: str | os.PathLike) -> None:
             text = (Path(directory) / ".env").read_text(encoding="utf-8")
         except OSError:
             continue
-        for key, value in _parse_dotenv(text):
+        for key, value in parse_dotenv(text):
             os.environ.setdefault(key, value)
 
 

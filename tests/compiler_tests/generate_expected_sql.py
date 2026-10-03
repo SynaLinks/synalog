@@ -72,6 +72,12 @@ SYNALOG_GOLDENS = {
     # emits BigQuery-isms that do not run on Databricks (GENERATE_ARRAY,
     # ARRAY_LENGTH, FORMAT, OFFSET, in-aggregate ARRAY_AGG ORDER BY, ARRAY_JOIN
     # for concat, `::` casts). Verified against Apache Spark; see DEVIATIONS.md.
+    # A functor applied to an imported predicate: upstream Logica leaves the
+    # argument unresolved (the module prefixed its predicates), so the functor
+    # silently returns the generic rule's rows. synalog resolves it; see
+    # DEVIATIONS.md.
+    *(((e, "63_functor_imported") for e in
+       ["bigquery", "sqlite", "psql", "duckdb", "trino", "presto", "databricks"])),
     *(("databricks", n) for n in [
         "02_arithmetic", "03_comparison", "04_logical_operators", "06_arrays",
         "08_aggregations_array", "09_argmin_argmax", "10_negation",

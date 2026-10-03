@@ -412,6 +412,20 @@ impl VarCollector {
         if let Some(body) = rule.as_object().get("body") {
             Self::collect_aggregation_vars_body(body, &mut vars);
         }
+        // Aggregates are usually in the head: `Total(t? += amount) distinct :- ...`.
+        if let Some(fields) = rule.as_object().get("head")
+            .and_then(|h| h.as_object().get("record"))
+            .and_then(|r| r.as_object().get("field_value"))
+        {
+            for fv in fields.as_array() {
+                if let Some(agg) = fv.as_object().get("value")
+                    .and_then(|v| v.as_object().get("aggregation"))
+                    .and_then(|a| a.as_object().get("expression"))
+                {
+                    Self::collect_expr_vars(agg, &mut vars);
+                }
+            }
+        }
         vars
     }
 

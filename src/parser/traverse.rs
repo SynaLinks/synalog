@@ -351,6 +351,15 @@ pub fn check_front_matter(fm: &FrontMatter) -> Result<(), FrontMatterError> {
     }
 }
 
+/// The `name` the front matter gives — the predicate the file is about — with
+/// the file's line it is on. `None` without one, or when it is not a string.
+pub fn front_matter_name(fm: &FrontMatter) -> Option<(String, usize)> {
+    let docs = yaml_rust2::YamlLoader::load_from_str(&fm.yaml).ok()?;
+    let name = docs.first()?["name"].as_str()?.to_string();
+    let line = fm.yaml.lines().position(|l| l.trim_start().starts_with("name:")).map_or(1, |i| i + 2);
+    Some((name, line))
+}
+
 /// `content` with its front matter replaced by as many empty lines, so the
 /// program parses as if it were not there and error positions keep their
 /// line numbers. Content without front matter is returned unchanged.

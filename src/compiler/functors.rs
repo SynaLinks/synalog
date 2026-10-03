@@ -494,19 +494,26 @@ impl Functors {
         &mut self,
         name: &str,
         applicant: &str,
-        args_map: &HashMap<String, String>,
+        given_args: &HashMap<String, String>,
     ) -> CompileResult<()> {
-        // Validate args: all provided args must be in the applicant's args_of.
-        // Note: this is a warning, not an error, because args_of computation may
-        // differ slightly from Python's. Python raises FunctorError here.
+        // Every argument must be a predicate the applicant depends on.
         let applicant_args = self.args_of(applicant);
-        let bad_args: Vec<&String> = args_map.keys()
+        let args_map = &resolve_functor_args(applicant, &applicant_args, given_args);
+        let mut bad_args: Vec<&str> = args_map.keys()
             .filter(|k| !applicant_args.contains(*k))
+            .map(|s| s.as_str())
             .collect();
         if !bad_args.is_empty() {
-            let bad_str: Vec<&str> = bad_args.iter().map(|s| s.as_str()).collect();
-            eprintln!("[WARNING] Functor {} is applied to arguments {}, which it does not have.",
-                applicant, bad_str.join(","));
+            // Applying it anyway would silently return the generic rule's rows.
+            bad_args.sort();
+            return Err(CompileError::new(
+                format!(
+                    "Functor {} is applied to {}, which it does not depend on.",
+                    applicant,
+                    bad_args.join(", ")
+                ),
+                name,
+            ));
         }
 
         // Increment creation_count at start of every call_functor (matches Python)
@@ -1481,3 +1488,34 @@ pub fn run_makes_with_deps(
 #[cfg(test)]
 #[path = "functors_test.rs"]
 mod functors_test;
+
+
+/// The functor's arguments, each naming a predicate the applicant depends on.
+///
+/// An imported predicate carries its module's prefix (`Segmentrevenue_SegmentRevenue`),
+/// and so do the predicates of its module (`Segmentrevenue_Segment`). The
+/// importing file still names an argument by its plain name (`Segment:`):
+/// resolve it to the predicate of the applicant's module with that name.
+pub(crate) fn resolve_functor_args(
+    applicant: &str,
+    applicant_args: &HashSet<String>,
+    given: &HashMap<String, String>,
+) -> HashMap<String, String> {
+    given
+        .iter()
+        .map(|(arg, value)| {
+            if applicant_args.contains(arg) {
+                return (arg.clone(), value.clone());
+            }
+            let in_module = applicant_args.iter().find(|candidate| {
+                candidate.len() > arg.len()
+                    && candidate.ends_with(arg.as_str())
+                    && {
+                        let prefix = &candidate[..candidate.len() - arg.len()];
+                        prefix.ends_with('_') && applicant.starts_with(prefix)
+                    }
+            });
+            (in_module.cloned().unwrap_or_else(|| arg.clone()), value.clone())
+        })
+        .collect()
+}

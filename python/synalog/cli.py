@@ -31,6 +31,7 @@ import os
 import re
 import sys
 import urllib.parse
+from pathlib import Path
 
 import click
 from rich import box
@@ -39,7 +40,7 @@ from rich.syntax import Syntax
 from rich.table import Table
 from rich.text import Text
 
-from . import __version__
+from . import __version__, project
 from ._synalog import SUPPORTED_ENGINES, check, compile, parse, search
 from .runners import RunnerUnavailable, run_sql
 
@@ -88,6 +89,25 @@ def _dotenv_dirs(args: tuple[str, ...], inline: str | None) -> list[str]:
         dirs.append(os.path.dirname(os.path.abspath(args[0])))
     dirs.append(os.getcwd())
     return dirs
+
+
+def _project_engine(project_file: Path | None) -> str | None:
+    """The engine the project connects to, if it has a connection."""
+    if project_file is None:
+        return None
+    conn = project.connection(project_file)
+    return conn["engine"] if conn else None
+
+
+def _resolve_dsn(engine: str, dsn: str | None, project_file: Path | None) -> str | None:
+    """--dsn, else SYNALOG_<ENGINE>_DSN (the runner reads it), else the
+    project's connection for this engine; the runner falls back to the saved
+    connection when this is None."""
+    if dsn or os.environ.get(f"SYNALOG_{engine.upper()}_DSN") or project_file is None:
+        return dsn
+    if engine not in project.ENGINES:
+        return None
+    return project.project_dsn(project_file, engine)
 
 
 def import_roots(file: str | None, flag_roots: tuple[str, ...]) -> list[str]:
@@ -250,22 +270,28 @@ def cmd_connect(args: tuple[str, ...]) -> int:
 # ---------------------------------------------------------------------------
 
 
-def cmd_introspect(args: tuple[str, ...], dsn: str | None) -> int:
+def cmd_introspect(args: tuple[str, ...], dsn: str | None, project_file: Path | None) -> int:
     """Print `# Tables` predicates learned from a database schema.
 
     \b
-    synalog introspect <engine>          introspect the saved connection
+    synalog introspect                   introspect the project's connection (synalog.toml)
+    synalog introspect <engine>          introspect the connection for an engine
     synalog introspect <engine> <dsn>    introspect an explicit connection string
 
     The DSN is resolved like everywhere else: the argument here (or --dsn) wins,
-    then SYNALOG_<ENGINE>_DSN, then the saved connection. Output goes to stdout,
-    so redirect it into a file:  synalog introspect psql > tables.l
+    then SYNALOG_<ENGINE>_DSN, then synalog.toml, then the saved connection.
+    Output goes to stdout, so redirect it into a file:  synalog introspect > tables.l
     """
     from .introspect import INTROSPECTABLE, introspect
 
-    if not args or len(args) > 2:
-        raise click.UsageError("usage: synalog introspect <engine> [dsn]")
-    engine = args[0]
+    if len(args) > 2:
+        raise click.UsageError("usage: synalog introspect [engine] [dsn]")
+    try:
+        engine = args[0] if args else _project_engine(project_file)
+    except ValueError as e:
+        fail(e)
+    if engine is None:
+        raise click.UsageError("usage: synalog introspect <engine> [dsn] (or run it in a project with a synalog.toml)")
     if engine not in INTROSPECTABLE:
         fail(
             f"'{engine}' cannot be introspected;"
@@ -273,7 +299,7 @@ def cmd_introspect(args: tuple[str, ...], dsn: str | None) -> int:
         )
     explicit = args[1] if len(args) > 1 else dsn
     try:
-        text = introspect(engine, explicit)
+        text = introspect(engine, _resolve_dsn(engine, explicit, project_file))
     except (ValueError, RunnerUnavailable, OSError) as e:
         fail(e)
     except Exception as e:  # surface a driver/server error without a traceback
@@ -321,7 +347,8 @@ def cmd_introspect(args: tuple[str, ...], dsn: str | None) -> int:
 @click.option(
     "--dsn",
     help="Connection string for the remote engine (psql/trino/presto/databricks/"
-    "bigquery); falls back to SYNALOG_<ENGINE>_DSN, then the saved connection.",
+    "bigquery); falls back to SYNALOG_<ENGINE>_DSN, then the project's"
+    " synalog.toml, then the saved connection.",
 )
 @click.option(
     "--import-root",
@@ -363,20 +390,36 @@ def main(args, inline, engine, limit, offset, as_csv, search_pattern, dsn,
     text inline instead of FILE. With no arguments, starts an interactive
     session (the options apply to it too).
 
-    A '.env' file at the project root (the program file's directory, then the
-    current directory) is loaded automatically; real environment variables take
-    precedence over it.
+    A project is a folder with a 'synalog.toml' (found from the program file's
+    directory, then the current directory, and their parents): its
+    [connection] gives the engine and the connection details, its secrets come
+    from the environment (SYNALOG_<ENGINE>_<FIELD>). A '.env' file in the
+    program file's directory, the project's or the current directory is loaded
+    automatically; real environment variables take precedence over it.
     """
     from . import config
 
-    config.load_dotenv(*_dotenv_dirs(args, inline))
+    dirs = _dotenv_dirs(args, inline)
+    project_file = project.find(*dirs)
+    if project_file is not None:
+        dirs.insert(1 if len(dirs) > 1 else 0, str(project_file.parent))
+    config.load_dotenv(*dirs)
     if args and args[0] == "connect" and inline is None:
         sys.exit(cmd_connect(args[1:]))
     if args and args[0] == "introspect" and inline is None:
-        sys.exit(cmd_introspect(args[1:], dsn))
+        sys.exit(cmd_introspect(args[1:], dsn, project_file))
+    try:
+        default_engine = _project_engine(project_file)
+    except ValueError as e:
+        fail(e)
     if inline is None:
         if not args:
-            sys.exit(Repl(engine, dsn, import_roots(None, import_root), loads).run())
+            repl_engine = engine or default_engine or DEFAULT_ENGINE
+            try:
+                repl_dsn = _resolve_dsn(repl_engine, dsn, project_file)
+            except ValueError as e:
+                fail(e)
+            sys.exit(Repl(repl_engine, repl_dsn, import_roots(None, import_root), loads).run())
         file = args[0]
         if len(args) < 2:
             raise click.UsageError(f"missing command (one of: {', '.join(COMMANDS)})")
@@ -433,16 +476,18 @@ def main(args, inline, engine, limit, offset, as_csv, search_pattern, dsn,
 
     try:
         if command == "print":
-            validate_or_fail(engine)
+            dialect = engine or default_engine
+            validate_or_fail(dialect)
             for predicate in predicates:
-                sql = compile_pred(predicate, engine)
+                sql = compile_pred(predicate, dialect)
                 print_sql(sql.rstrip(";\n") + ";")
         else:  # run
-            resolved = engine or program_engine(source, roots) or DEFAULT_ENGINE
+            resolved = engine or program_engine(source, roots) or default_engine or DEFAULT_ENGINE
             validate_or_fail(resolved)
+            run_dsn = _resolve_dsn(resolved, dsn, project_file)
             for predicate in predicates:
                 sql = compile_pred(predicate, resolved)
-                columns, rows = run_sql(resolved, sql, dsn=dsn, loads=loads)
+                columns, rows = run_sql(resolved, sql, dsn=run_dsn, loads=loads)
                 if as_csv:
                     writer = csv.writer(sys.stdout)
                     writer.writerow(columns)

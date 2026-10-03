@@ -83,12 +83,12 @@ def same_program_as_duckdb(engine: str, name: str) -> bool:
     return mine == duckdbs or mine.read_text() == duckdbs.read_text()
 
 
-def last_predicate(source: str) -> str:
+def last_predicate(source: str, import_root: list[str] | None = None) -> str:
     """Last user-defined predicate in the program — same convention as the
     Rust golden tests (tests/common/mod.rs)."""
     import synalog
 
-    parsed = json.loads(synalog.parse(source))
+    parsed = json.loads(synalog.parse(source, import_root=import_root))
     last = None
     for rule in parsed.get("rule", []):
         head = rule.get("head", {})
@@ -104,10 +104,14 @@ def compile_fixture(engine: str, name: str) -> str:
     """Compile a fixture's last predicate to SQL for `engine`."""
     import synalog
 
-    source = fixture_path(engine, name).read_text()
+    path = fixture_path(engine, name)
+    source = path.read_text()
+    # Imports (`import lib.segments.X`) resolve from the compiler tests'
+    # folder, as in the Rust golden tests (tests/compiler_tests.rs).
+    import_root = [str(FIXTURES_DIR)]
     # Pass the engine explicitly: canonical fixtures are engine-independent
     # and carry no @Engine line (same as the golden SQL generator).
-    return synalog.compile(source, last_predicate(source), engine=engine)
+    return synalog.compile(source, last_predicate(source, import_root), engine=engine, import_root=import_root)
 
 
 @functools.cache
