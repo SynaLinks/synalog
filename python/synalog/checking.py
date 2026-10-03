@@ -16,7 +16,7 @@ import os
 from pathlib import Path
 
 from . import _synalog, config, project
-from .runners import run_sql
+from .runners import Session, run_plan, session
 
 DEFAULT_ENGINE = "duckdb"
 
@@ -78,24 +78,34 @@ def violated_assertions(
     import_root: list[str] | None = None,
     dsn: str | None = None,
     loads=(),
+    open_session: Session | None = None,
 ) -> list[str]:
     """Run every assertion of the program on ``engine``; one message, quoting
     a few counterexamples, per assertion that does not hold. Pending and
-    unsupported assertions are skipped."""
+    unsupported assertions are skipped. ``open_session`` runs them in a
+    session already open (``dsn`` and ``loads`` are then its own)."""
+    checked = [
+        assertion
+        for assertion in _synalog.assertions(source, engine=engine, import_root=import_root)
+        if assertion["status"] == "unchecked"
+    ]
+    if not checked:
+        return []
+    if open_session is None:
+        with session(engine, dsn, loads) as s:
+            return violated_assertions(source, engine, import_root, open_session=s)
     errors = []
-    for assertion in _synalog.assertions(source, engine=engine, import_root=import_root):
-        if assertion["status"] != "unchecked":
-            continue
+    for assertion in checked:
         # One row past what is quoted tells whether there are more.
-        sql = _synalog.counterexamples(
+        steps = _synalog.plan(
             source,
             assertion["predicate"],
-            assertion["name"],
             limit=SHOWN + 1,
             engine=engine,
             import_root=import_root,
+            assertion=assertion["name"],
         )
-        columns, rows = run_sql(engine, sql, dsn=dsn, loads=loads)
+        columns, rows = run_plan(steps, open_session)
         if rows:
             errors.append(_violation(assertion, columns, rows))
     return errors

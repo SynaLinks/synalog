@@ -188,6 +188,60 @@ pub struct Logica {
 }
 
 /// Definition of an @Iteration block.
+/// One step of a plan (see `LogicaProgram::formatted_predicate_plan`).
+#[derive(Debug, Clone, PartialEq)]
+pub enum PlanStep {
+    /// The engine's setup (schema, types, functions): a script of its own.
+    Setup(String),
+    /// One statement to run. The plan's last step is the query whose rows are
+    /// the predicate's.
+    Sql(String),
+    /// A recursion's iteration: its `body` statements run again, at most
+    /// `repetitions` times, until `changed` (a query returning one number)
+    /// returns 0.
+    Loop { body: Vec<String>, repetitions: i64, changed: String },
+}
+
+/// Most repetitions a script writes out: past this, it would be huge.
+const MAX_SCRIPT_REPETITIONS: i64 = 1000;
+
+/// A plan as one SQL script: each loop written out, every repetition of it,
+/// since a script cannot stop when nothing changes.
+pub fn script_of(plan: &[PlanStep]) -> CompileResult<String> {
+    let mut setup = String::new();
+    let mut statements: Vec<String> = Vec::new();
+    for step in plan {
+        match step {
+            PlanStep::Setup(sql) => setup.push_str(sql),
+            PlanStep::Sql(sql) => statements.push(sql.clone()),
+            PlanStep::Loop { body, repetitions, .. } => {
+                if *repetitions + 1 > MAX_SCRIPT_REPETITIONS {
+                    return Err(CompileError::new(
+                        format!(
+                            "This recursion takes more steps than a SQL script can hold (about {} at most): \
+                             run it with synalog (`synalog ... run`, `synalog.execute()`), which stops \
+                             when the recursion converges, or give @Recursive fewer steps.",
+                            2 * MAX_SCRIPT_REPETITIONS
+                        ),
+                        "",
+                    ));
+                }
+                for _ in 0..*repetitions {
+                    statements.extend(body.iter().cloned());
+                }
+            }
+        }
+    }
+    let last = statements.pop().unwrap_or_default();
+    let mut script = setup;
+    if !statements.is_empty() {
+        script.push_str(&statements.join("\n\n"));
+        script.push_str("\n\n");
+    }
+    script.push_str(&last);
+    Ok(script)
+}
+
 #[derive(Debug, Clone)]
 pub struct IterationDef {
     pub predicates: Vec<String>,
@@ -1343,6 +1397,20 @@ impl LogicaProgram {
         pagination: Option<&Pagination>,
         search: Option<&str>,
     ) -> CompileResult<String> {
+        script_of(&self.formatted_predicate_plan(name, pagination, search)?)
+    }
+
+    /// The steps that compute a predicate, in order: SQL to run, and a loop
+    /// for each deep recursion, whose last step returns the predicate's rows.
+    /// A runner that executes the plan stops each loop as soon as it changes
+    /// nothing, so a recursion costs the steps its data needs, whatever its
+    /// declared depth; `formatted_predicate_sql` writes the loops out instead.
+    pub fn formatted_predicate_plan(
+        &self,
+        name: &str,
+        pagination: Option<&Pagination>,
+        search: Option<&str>,
+    ) -> CompileResult<Vec<PlanStep>> {
         let exec = self.initialize_execution(name)?;
         *self.execution.borrow_mut() = Some(exec);
 
@@ -1466,6 +1534,7 @@ impl LogicaProgram {
         let exec_ref = exec.as_ref().unwrap();
 
         let mut result = String::new();
+        let mut steps: Vec<PlanStep> = Vec::new();
 
         // Flags comment
         if !exec_ref.flags_comment.is_empty() {
@@ -1497,30 +1566,39 @@ impl LogicaProgram {
             result.push_str("\n\n");
         }
 
-        // Defines and exports
-        if !exec_ref.defines_and_exports.is_empty() {
-            let statements = self.script_statements(exec_ref)?;
-            result.push_str(&statements.join("\n\n"));
-            result.push_str("\n\n");
+        if !result.is_empty() {
+            steps.push(PlanStep::Setup(self.use_flags_as_parameters(&result)));
         }
 
-        result.push_str(&format_sql(&sql));
-        Ok(self.use_flags_as_parameters(&result))
+        // Defines and exports
+        if !exec_ref.defines_and_exports.is_empty() {
+            for step in self.plan_statements(exec_ref)? {
+                steps.push(match step {
+                    PlanStep::Setup(sql) => PlanStep::Setup(self.use_flags_as_parameters(&sql)),
+                    PlanStep::Sql(sql) => PlanStep::Sql(self.use_flags_as_parameters(&sql)),
+                    PlanStep::Loop { body, repetitions, changed } => PlanStep::Loop {
+                        body: body.iter().map(|sql| self.use_flags_as_parameters(sql)).collect(),
+                        repetitions,
+                        changed,
+                    },
+                });
+            }
+        }
+
+        steps.push(PlanStep::Sql(self.use_flags_as_parameters(&format_sql(&sql))));
+        Ok(steps)
     }
 
-    /// The statements that create the program's tables, in an order a script
-    /// can run them, with every `@Iteration` written out.
+    /// The statements that create the program's tables, in an order they can
+    /// run in, each `@Iteration` as a loop.
     ///
     /// Deep recursion (`@Recursive` over 20 steps) is compiled as Logica does:
     /// a few steps into tables, then an iteration that recomputes some of those
-    /// tables from each other `repetitions` times. Logica's runner schedules the
-    /// tables and loops; a script cannot loop, so this plans the run instead:
-    /// each table after the tables it reads, the iteration's statements
-    /// repeated `repetitions` times, and anything reading the iteration after
-    /// its last repetition. Without iterations, the order is the compiler's.
-    fn script_statements(&self, exec: &Logica) -> CompileResult<Vec<String>> {
-        /// Most repetitions written out: past this, the script would be huge.
-        const MAX_REPETITIONS: i64 = 1000;
+    /// tables from each other, `repetitions` times at most. Each table comes
+    /// after the tables it reads, the iteration's loop after its first run, and
+    /// anything reading the iteration after its loop. Without iterations, the
+    /// order is the compiler's.
+    fn plan_statements(&self, exec: &Logica) -> CompileResult<Vec<PlanStep>> {
         let exports = &exec.table_to_export_map;
         let mut iterations: Vec<(String, IterationDef)> = self
             .annotations
@@ -1528,25 +1606,11 @@ impl LogicaProgram {
             .into_iter()
             .filter(|(_, it)| it.predicates.iter().all(|p| exports.contains_key(p)))
             .collect();
+        let as_steps = |statements: &[String]| statements.iter().cloned().map(PlanStep::Sql).collect();
         if iterations.is_empty() {
-            return Ok(exec.defines_and_exports.clone());
+            return Ok(as_steps(&exec.defines_and_exports));
         }
         iterations.sort_by(|a, b| a.0.cmp(&b.0));
-        for (name, iteration) in &iterations {
-            if iteration.repetitions > MAX_REPETITIONS {
-                let recursive = name.split("_ifr").next().unwrap_or(name).to_string();
-                return Err(CompileError::new(
-                    format!(
-                        "@Recursive({}, ...) asks for more steps than a SQL script can hold: \
-                         a depth of -1 (until convergence) needs a runner that loops; \
-                         give a number of steps instead (about {} at most)",
-                        recursive,
-                        2 * MAX_REPETITIONS
-                    ),
-                    name,
-                ));
-            }
-        }
 
         // The tables, in the compiler's order, each with the statements that
         // follow its creation (its `-- Interacting` comment, a COPY).
@@ -1578,9 +1642,9 @@ impl LogicaProgram {
             .filter_map(|(p, i)| table_set.get(p).map(|t| (*t, i)))
             .collect();
 
-        let mut order: Vec<String> = leading;
+        let mut order: Vec<PlanStep> = as_steps(&leading);
         let mut done: HashSet<&String> = HashSet::new();
-        // Iterations whose every table ran once, and which are written out.
+        // Iterations whose every table ran once, and whose loop is planned.
         let mut finished: HashSet<usize> = HashSet::new();
         while done.len() < tables.len() {
             let ready = tables.iter().find(|t| {
@@ -1589,7 +1653,7 @@ impl LogicaProgram {
                         reqs.iter().all(|r| {
                             done.contains(r)
                                 // Outside an iteration, its tables are ready
-                                // once it is written out.
+                                // once its loop is planned.
                                 && match (iteration_of.get(r), iteration_of.get(t)) {
                                     (Some(i), Some(j)) if i == j => true,
                                     (Some(i), _) => finished.contains(i),
@@ -1600,22 +1664,58 @@ impl LogicaProgram {
             });
             let Some(table) = ready else {
                 // A cycle the dependencies do not resolve: keep the compiler's order.
-                return Ok(exec.defines_and_exports.clone());
+                return Ok(as_steps(&exec.defines_and_exports));
             };
             done.insert(table);
-            order.push(exports[table].clone());
-            order.extend(trailing.get(table).cloned().unwrap_or_default());
+            order.push(PlanStep::Sql(exports[table].clone()));
+            order.extend(as_steps(&trailing.get(table).cloned().unwrap_or_default()));
             if let Some(&i) = iteration_of.get(table) {
                 let iteration = &iterations[i].1;
                 if iteration.predicates.iter().all(|p| table_set.get(p).is_some_and(|t| done.contains(t))) {
-                    for _ in 1..iteration.repetitions {
-                        order.extend(iteration.predicates.iter().map(|p| exports[p].clone()));
-                    }
+                    order.push(PlanStep::Loop {
+                        body: iteration.predicates.iter().map(|p| exports[p].clone()).collect(),
+                        repetitions: iteration.repetitions - 1,
+                        changed: self.iteration_changed_query(&iteration.predicates)?,
+                    });
                     finished.insert(i);
                 }
             }
         }
         Ok(order)
+    }
+
+    /// The query telling whether one more repetition of an iteration would
+    /// change anything: the number of rows that differ between its two halves.
+    ///
+    /// One repetition computes two consecutive steps of the recursion, each
+    /// predicate's upper table from the lower one and the lower from the upper.
+    /// When every upper table holds the rows of its lower one, the step
+    /// changes nothing: the recursion has converged, and further repetitions
+    /// would recompute the same tables.
+    fn iteration_changed_query(&self, predicates: &[String]) -> CompileResult<String> {
+        let dialect = dialects::get(self.annotations.engine())?;
+        let except = dialect.except_distinct();
+        let table = |p: &String| {
+            self.annotations
+                .ground(p)
+                .map(|g| g.table_name)
+                .ok_or_else(|| CompileError::new(format!("The iteration's table {} is not grounded.", p), p))
+        };
+        let (upper, lower) = predicates.split_at(predicates.len() / 2);
+        let mut counts = Vec::new();
+        for (u, l) in upper.iter().zip(lower) {
+            let (u, l) = (table(u)?, table(l)?);
+            for (a, b) in [(&u, &l), (&l, &u)] {
+                counts.push(format!(
+                    "(SELECT COUNT(*) FROM (SELECT * FROM {} {} SELECT * FROM {}) AS synalog_changed_{})",
+                    a,
+                    except,
+                    b,
+                    counts.len()
+                ));
+            }
+        }
+        Ok(format!("SELECT {} AS changed", counts.join(" + ")))
     }
 
     /// Print top-level formatted SQL with pagination.

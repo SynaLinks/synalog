@@ -11,7 +11,7 @@ use pyo3::exceptions::PyValueError;
 use pyo3::prelude::*;
 
 use crate::compiler::dialects;
-use crate::compiler::universe::{LogicaProgram, Pagination};
+use crate::compiler::universe::{LogicaProgram, Pagination, PlanStep};
 use crate::parser::{front_matter as read_front_matter, parse_file, Json};
 use crate::verifier::{builtin_function_names, reserved_predicate_names, assertion_check, validate};
 
@@ -254,6 +254,73 @@ fn counterexamples(
         .map_err(map_err)
 }
 
+/// The steps that compute a predicate, for a runner that executes them.
+///
+/// Each step is a dict: `{"kind": "setup", "sql": ...}` (the engine's setup, a
+/// script), `{"kind": "sql", "sql": ...}` (one statement; the last step's rows
+/// are the predicate's), or `{"kind": "loop", "body": [...], "repetitions": n,
+/// "changed": ...}`: a deep recursion's iteration, whose `body` statements run
+/// again, at most `repetitions` times, until the `changed` query returns 0.
+/// `synalog.execute` runs plans; `compile` writes the loops out instead.
+///
+/// With `assertion`, the plan computes the counterexamples of the assertion of
+/// that name of `predicate`; with `pattern`, the predicate's rows matching it,
+/// as `search`. `limit`/`offset` paginate as in `compile`.
+#[pyfunction]
+#[pyo3(signature = (source, predicate, limit=None, offset=None, engine=None, import_root=None, pattern=None, assertion=None))]
+#[allow(clippy::too_many_arguments)]
+fn plan(
+    py: Python<'_>,
+    source: &str,
+    predicate: &str,
+    limit: Option<u64>,
+    offset: Option<u64>,
+    engine: Option<&str>,
+    import_root: Option<Vec<String>>,
+    pattern: Option<&str>,
+    assertion: Option<&str>,
+) -> PyResult<Vec<Py<PyAny>>> {
+    check_engine(engine)?;
+    let (source, predicate) = match assertion {
+        Some(name) => {
+            let parsed = parse_source(source, None, import_root.clone())?;
+            let rules: Vec<&Json> = parsed.as_object()["rule"].as_array().iter().collect();
+            let translation = assertion_check(&rules, predicate, name).map_err(PyValueError::new_err)?;
+            (format!("{}\n{}\n", source, translation.rules), translation.predicate)
+        }
+        None => (source.to_string(), predicate.to_string()),
+    };
+    let parsed = parse_source(&source, None, import_root)?;
+    let program = build_program(&parsed, engine)?;
+    let pagination = Pagination { limit, offset };
+    let steps = program
+        .formatted_predicate_plan(&predicate, Some(&pagination), pattern)
+        .map_err(map_err)?;
+    steps
+        .into_iter()
+        .map(|step| {
+            let dict = pyo3::types::PyDict::new(py);
+            match step {
+                PlanStep::Setup(sql) => {
+                    dict.set_item("kind", "setup")?;
+                    dict.set_item("sql", sql)?;
+                }
+                PlanStep::Sql(sql) => {
+                    dict.set_item("kind", "sql")?;
+                    dict.set_item("sql", sql)?;
+                }
+                PlanStep::Loop { body, repetitions, changed } => {
+                    dict.set_item("kind", "loop")?;
+                    dict.set_item("body", body)?;
+                    dict.set_item("repetitions", repetitions)?;
+                    dict.set_item("changed", changed)?;
+                }
+            }
+            Ok(dict.into_any().unbind())
+        })
+        .collect()
+}
+
 /// Predicate names Synalog defines itself, sorted.
 ///
 /// The built-in temporal concepts (`Today`, `Now`) plus every head of every
@@ -306,6 +373,7 @@ fn _synalog(m: &Bound<'_, PyModule>) -> PyResult<()> {
     m.add_function(wrap_pyfunction!(check, m)?)?;
     m.add_function(wrap_pyfunction!(assertions, m)?)?;
     m.add_function(wrap_pyfunction!(counterexamples, m)?)?;
+    m.add_function(wrap_pyfunction!(plan, m)?)?;
     m.add_function(wrap_pyfunction!(reserved_predicates, m)?)?;
     m.add_function(wrap_pyfunction!(builtin_functions, m)?)?;
     m.add_function(wrap_pyfunction!(front_matter, m)?)?;

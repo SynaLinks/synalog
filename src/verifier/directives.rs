@@ -55,6 +55,25 @@ fn arguments(rule: &Json) -> Vec<&Json> {
         .unwrap_or_default()
 }
 
+/// True if `depth` is a number of steps (1 or more) or -1 (until nothing
+/// changes), as `@Recursive` takes.
+fn is_recursion_depth(depth: &Json) -> bool {
+    if limit_number(depth).is_some_and(|n| n >= 1) {
+        return true;
+    }
+    // -1 parses as the negation of 1.
+    let text = source_text(depth);
+    text.replace(char::is_whitespace, "") == "-1"
+}
+
+/// The source text of an expression, as the parser kept it.
+fn source_text(expr: &Json) -> String {
+    expr.as_object()
+        .get("expression_heritage")
+        .map(|h| h.as_str().to_string())
+        .unwrap_or_default()
+}
+
 /// Every directive of the program that cannot apply.
 pub fn check_directives(rules: &[&Json]) -> Vec<DirectiveError> {
     let mut defined: HashSet<String> = HashSet::new();
@@ -126,15 +145,14 @@ pub fn check_directives(rules: &[&Json]) -> Vec<DirectiveError> {
                 }
             }
             "@Recursive" => {
-                // The depth is optional; given, it is a number of steps. -1
-                // (until convergence) needs a runner that loops, which a SQL
-                // script is not.
+                // The depth is optional; given, it is a number of steps, or -1:
+                // until nothing changes.
                 if let Some(depth) = args.get(1) {
-                    if limit_number(depth).is_none_or(|n| n < 1) {
+                    if !is_recursion_depth(depth) {
                         errors.push(DirectiveError {
                             message: format!(
-                                "@Recursive({}): the depth must be a whole number of steps, 1 or more \
-                                 (-1, until convergence, cannot be written as one SQL script)",
+                                "@Recursive({}): the depth is a whole number of steps, 1 or more, \
+                                 or -1 to recurse until nothing changes",
                                 target
                             ),
                         });
@@ -188,11 +206,17 @@ mod tests {
     }
 
     #[test]
-    fn recursion_until_convergence_is_refused() {
+    fn recursion_until_convergence_is_accepted() {
         let source = "@Recursive(R, -1);\nE(a: 1, b: 2);\nR(x:) distinct :- E(a: x);\nR(x: b) distinct :- R(x: a), E(a:, b:);\n";
+        assert!(directive_errors(source).is_empty(), "{:?}", directive_errors(source));
+    }
+
+    #[test]
+    fn recursion_depth_zero_is_refused() {
+        let source = "@Recursive(R, 0);\nE(a: 1, b: 2);\nR(x:) distinct :- E(a: x);\nR(x: b) distinct :- R(x: a), E(a:, b:);\n";
         let errors = directive_errors(source);
         assert_eq!(errors.len(), 1, "{:?}", errors);
-        assert!(errors[0].contains("cannot be written as one SQL script"), "{}", errors[0]);
+        assert!(errors[0].contains("or -1 to recurse until nothing changes"), "{}", errors[0]);
     }
 
     #[test]

@@ -126,6 +126,11 @@ pub trait Dialect {
         ""
     }
 
+    /// The set difference of two queries' rows.
+    fn except_distinct(&self) -> &'static str {
+        "EXCEPT"
+    }
+
     /// `name` quoted as an identifier (standard SQL: double quotes).
     fn quote_identifier(&self, name: &str) -> String {
         format!("\"{}\"", name.replace('"', "\"\""))
@@ -265,6 +270,10 @@ pub fn get(engine: &str) -> Result<Box<dyn Dialect>, CompileError> {
 pub struct BigQueryDialect;
 
 impl Dialect for BigQueryDialect {
+    fn except_distinct(&self) -> &'static str {
+        "EXCEPT DISTINCT"
+    }
+
     fn quote_identifier(&self, name: &str) -> String {
         // Double quotes make a string here: identifiers take backticks.
         format!("`{}`", name.replace('`', "\\`"))

@@ -1,7 +1,7 @@
 """Self-checking programs: every ``.l`` file under ``tests/programs/`` states
 what synalog must do with it, in ``# Expect:`` lines, and runs on an in-memory
-DuckDB and SQLite with the facts it defines itself: both engines must give
-the same answer. Adding a test is adding a file.
+DuckDB and SQLite with the facts it defines itself, executed by synalog
+(`synalog.execute`): both engines must give the same answer. Adding a test is adding a file.
 
     # Expect: valid                        the verifier finds no error
     # Expect: error <text>                 an error (parse or verifier) contains <text>
@@ -29,7 +29,6 @@ from pathlib import Path
 import pytest
 
 import synalog
-from synalog.runners import run_sql
 
 PROGRAMS = Path(__file__).resolve().parents[1] / "programs"
 ENGINES = ("duckdb", "sqlite")
@@ -73,14 +72,13 @@ def assertion(source: str, root: str, ref: str) -> dict:
     raise AssertionError(f"no assertion {ref} in the program")
 
 
-def rows(source: str, root: str, predicate: str, query=None) -> list[tuple]:
-    """The rows of ``predicate``, the same on every engine. ``query(engine)``
-    gives the SQL; by default ``compile``."""
-    query = query or (lambda engine: synalog.compile(source, predicate, engine=engine, import_root=[root]))
+def rows(source: str, root: str, predicate: str, **options) -> list[tuple]:
+    """The rows of ``predicate``, executed by synalog (``options`` as
+    ``synalog.execute``'s), the same on every engine."""
     found = {}
     for engine in ENGINES:
-        sql = query(engine)
-        found[engine] = [tuple(row) for row in run_sql(engine, sql)[1]]
+        result = synalog.execute(source, predicate, engine=engine, import_root=[root], **options)
+        found[engine] = [tuple(row) for row in result[1]]
     first, *others = ENGINES
     for engine in others:
         # Engines agree on the rows; their order is the expectation's to check.
@@ -95,8 +93,8 @@ def counterexamples(source: str, root: str, ref: str) -> list[tuple]:
     predicate, name = ref.split(".", 1)
     found = {}
     for engine in ENGINES:
-        sql = synalog.counterexamples(source, predicate, name, engine=engine, import_root=[root])
-        found[engine] = sorted(tuple(row) for row in run_sql(engine, sql)[1])
+        result = synalog.execute(source, predicate, engine=engine, import_root=[root], assertion=name)
+        found[engine] = sorted(tuple(row) for row in result[1])
     first, *others = ENGINES
     for engine in others:
         assert same(found[engine], found[first]), f"{ref}: {engine} {found[engine]} != {first} {found[first]}"
@@ -145,26 +143,14 @@ def test_program(path: Path):
             spec, literal = (part.strip() for part in rest.split("=", 1))
             predicate, limit, offset = spec.split()
             assert errors == [], f"the program does not verify: {errors}"
-            got = rows(
-                source,
-                root,
-                predicate,
-                lambda engine: synalog.compile(
-                    source, predicate, limit=int(limit), offset=int(offset), engine=engine, import_root=[root]
-                ),
-            )
+            got = rows(source, root, predicate, limit=int(limit), offset=int(offset))
             want = [tuple(row) for row in ast.literal_eval(literal)]
             assert same(got, want), f"{spec}: got {got}, expected {want}"
         elif kind == "search":
             spec, literal = (part.strip() for part in rest.split("=", 1))
             predicate, pattern = spec.split(" ", 1)
             assert errors == [], f"the program does not verify: {errors}"
-            got = rows(
-                source,
-                root,
-                predicate,
-                lambda engine: synalog.search(source, predicate, pattern, engine=engine, import_root=[root]),
-            )
+            got = rows(source, root, predicate, pattern=pattern)
             want = [tuple(row) for row in ast.literal_eval(literal)]
             assert same(got, want), f"{spec}: got {got}, expected {want}"
         elif kind == "compile-error":

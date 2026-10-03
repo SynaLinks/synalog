@@ -13,10 +13,12 @@ from ._synalog import (
     counterexamples,
     front_matter,
     parse,
+    plan,
     reserved_predicates,
     search,
 )
 from .checking import check
+from .execution import execute
 
 try:
     __version__ = version("synalog")
@@ -31,8 +33,10 @@ __all__ = [
     "compile",
     "compile_all",
     "counterexamples",
+    "execute",
     "front_matter",
     "parse",
+    "plan",
     "reserved_predicates",
     "search",
     "__version__",

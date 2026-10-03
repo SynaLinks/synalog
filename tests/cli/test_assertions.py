@@ -14,6 +14,7 @@ import duckdb
 import pytest
 
 import synalog
+from synalog.runners import DuckDbSession
 
 ASSERTION = '@Assert(Near, transitive: "∀ x y z, Near x y → Near y z → Near x z");'
 PARENT = """\
@@ -154,20 +155,19 @@ def project_db(tmp_path, monkeypatch):
     (tmp_path / "synalog.toml").write_text(PSQL_PROJECT)
     monkeypatch.chdir(tmp_path)
     sent = []
-    compile_for = synalog.counterexamples
+    plan_for = synalog.plan
 
-    def counterexamples(source, predicate, name, limit=None, engine=None, import_root=None):
+    def plan(source, predicate, engine=None, **kwargs):
         assert engine == "psql"
-        return compile_for(source, predicate, name, limit=limit, engine="duckdb", import_root=import_root)
+        return plan_for(source, predicate, engine="duckdb", **kwargs)
 
-    monkeypatch.setattr("synalog.checking._synalog.counterexamples", counterexamples)
+    monkeypatch.setattr("synalog.checking._synalog.plan", plan)
 
-    def run_sql(engine, sql, dsn=None, loads=()):
+    def session(engine, dsn=None, loads=()):
         sent.append((engine, dsn))
-        cur = duckdb.connect(":memory:").execute(sql)
-        return [col[0] for col in cur.description], cur.fetchall()
+        return DuckDbSession()
 
-    monkeypatch.setattr("synalog.checking.run_sql", run_sql)
+    monkeypatch.setattr("synalog.checking.session", session)
     return sent
 
 
@@ -217,7 +217,7 @@ def test_check_without_assertions_does_not_reach_the_database(project_db):
 
 def test_check_outside_a_project_is_offline(tmp_path, monkeypatch):
     monkeypatch.chdir(tmp_path)
-    monkeypatch.setattr("synalog.checking.run_sql", lambda *a, **k: pytest.fail("database reached"))
+    monkeypatch.setattr("synalog.checking.session", lambda *a, **k: pytest.fail("database reached"))
     assert synalog.check(ASSERTION + PARENT + NEAR) == ([], [])
 
 
@@ -225,10 +225,10 @@ def test_unreachable_database_is_a_warning(tmp_path, monkeypatch):
     (tmp_path / "synalog.toml").write_text(PSQL_PROJECT)
     monkeypatch.chdir(tmp_path)
 
-    def run_sql(engine, sql, dsn=None, loads=()):
+    def session(engine, dsn=None, loads=()):
         raise OSError("could not connect to server")
 
-    monkeypatch.setattr("synalog.checking.run_sql", run_sql)
+    monkeypatch.setattr("synalog.checking.session", session)
     assert synalog.check(ASSERTION + PARENT + NEAR) == (
         [],
         ["Assertions not checked: could not connect to server"],
@@ -239,11 +239,17 @@ def test_explicit_dsn_is_a_database(tmp_path, monkeypatch):
     monkeypatch.chdir(tmp_path)
     sent = []
 
-    def run_sql(engine, sql, dsn=None, loads=()):
-        sent.append((engine, dsn))
-        return ["x", "y", "z"], []
+    plan_for = synalog.plan
+    monkeypatch.setattr(
+        "synalog.checking._synalog.plan",
+        lambda source, predicate, engine=None, **kwargs: plan_for(source, predicate, engine="duckdb", **kwargs),
+    )
 
-    monkeypatch.setattr("synalog.checking.run_sql", run_sql)
-    source = ASSERTION + PARENT + NEAR
+    def session(engine, dsn=None, loads=()):
+        sent.append((engine, dsn))
+        return DuckDbSession()
+
+    monkeypatch.setattr("synalog.checking.session", session)
+    source = ASSERTION + PARENT + CLOSURE
     assert synalog.check(source, engine="psql", dsn="postgresql://h/d") == ([], [])
     assert sent == [("psql", "postgresql://h/d")]

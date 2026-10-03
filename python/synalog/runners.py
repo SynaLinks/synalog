@@ -149,92 +149,207 @@ def _split_sqlite_statements(sql: str) -> list[str]:
     return statements
 
 
-def _run_sqlite(sql: str, loads) -> Result:
-    conn = sqlite3.connect(":memory:")
-    try:
-        from logica.common import sqlite3_logica
+def split_statements(sql: str) -> list[str]:
+    """The statements of a script: split on semicolons outside quotes
+    ('...', "...", `...`), dollar-quoted blocks ($$...$$) and comments."""
+    statements, current, i, n = [], [], 0, len(sql)
+    while i < n:
+        ch = sql[i]
+        if ch in "'\"`":
+            j = i + 1
+            while j < n:
+                if sql[j] == ch:
+                    if j + 1 < n and sql[j + 1] == ch:  # an escaped quote
+                        j += 2
+                        continue
+                    break
+                j += 1
+            current.append(sql[i : j + 1])
+            i = j + 1
+        elif sql.startswith("$$", i):
+            j = sql.find("$$", i + 2)
+            j = n if j < 0 else j + 2
+            current.append(sql[i:j])
+            i = j
+        elif sql.startswith("--", i):
+            j = sql.find("\n", i)
+            j = n if j < 0 else j + 1
+            current.append(sql[i:j])
+            i = j
+        elif ch == ";":
+            statement = "".join(current).strip()
+            if _has_code(statement):
+                statements.append(statement)
+            current = []
+            i += 1
+        else:
+            current.append(ch)
+            i += 1
+    tail = "".join(current).strip()
+    if _has_code(tail):
+        statements.append(tail)
+    return statements
 
-        sqlite3_logica.ExtendConnectionWithLogicaFunctions(conn)
-    except ImportError:
-        pass  # best effort: most programs only need plain sqlite3
 
-    # `search` compiles to the SQLite REGEXP operator, which stdlib sqlite3
-    # leaves undefined. SQLite maps `X REGEXP Y` to `regexp(Y, X)`, so the
-    # function receives (pattern, value).
-    import re
+def _has_code(statement: str) -> bool:
+    """True if a statement holds more than comments."""
+    return any(line.strip() and not line.strip().startswith("--") for line in statement.splitlines())
 
-    def _regexp(pattern, value):
-        return value is not None and re.search(pattern, value) is not None
 
-    conn.create_function("REGEXP", 2, _regexp)
-    try:
-        for table, path in loads:
-            _load_sqlite(conn, table, path)
+class Session:
+    """A connection to an engine, kept open across the statements of a plan.
+
+    ``run(script)`` runs every statement of a script and returns the
+    ``(columns, rows)`` of the last one that produced rows.
+    """
+
+    engine = ""
+
+    def run(self, script: str) -> Result:
         columns: list[str] = []
         rows: list[tuple] = []
-        for statement in _split_sqlite_statements(sql):
-            cur = conn.execute(statement)
-            if cur.description is not None:
-                columns = [col[0] for col in cur.description]
-                rows = cur.fetchall()
+        for statement in split_statements(script):
+            result = self.execute(statement)
+            if result is not None:
+                columns, rows = result
         return columns, rows
-    finally:
-        conn.close()
+
+    def execute(self, statement: str) -> Result | None:
+        """Run one statement; its ``(columns, rows)`` if it returns rows."""
+        raise NotImplementedError
+
+    def close(self) -> None:
+        pass
+
+    def __enter__(self):
+        return self
+
+    def __exit__(self, *exc):
+        self.close()
 
 
-def _run_duckdb(sql: str, loads) -> Result:
-    try:
-        import duckdb
-    except ImportError:
-        raise RunnerUnavailable(
-            "The duckdb engine needs the 'duckdb' package: pip install duckdb"
-        ) from None
+class SqliteSession(Session):
+    engine = "sqlite"
 
-    conn = duckdb.connect(":memory:")
-    try:
-        conn.execute("CREATE MACRO ARRAY_CONCAT_AGG(x) AS flatten(list(x))")
+    def __init__(self, loads=()):
+        self.conn = sqlite3.connect(":memory:")
+        try:
+            from logica.common import sqlite3_logica
+
+            sqlite3_logica.ExtendConnectionWithLogicaFunctions(self.conn)
+        except ImportError:
+            pass  # best effort: most programs only need plain sqlite3
+
+        # `search` compiles to the SQLite REGEXP operator, which stdlib sqlite3
+        # leaves undefined. SQLite maps `X REGEXP Y` to `regexp(Y, X)`, so the
+        # function receives (pattern, value).
+        import re
+
+        def _regexp(pattern, value):
+            return value is not None and re.search(pattern, value) is not None
+
+        self.conn.create_function("REGEXP", 2, _regexp)
+        for table, path in loads:
+            _load_sqlite(self.conn, table, path)
+
+    def run(self, script: str) -> Result:
+        # sqlite's own tokenizer knows its statements best.
+        columns: list[str] = []
+        rows: list[tuple] = []
+        for statement in _split_sqlite_statements(script):
+            result = self.execute(statement)
+            if result is not None:
+                columns, rows = result
+        return columns, rows
+
+    def execute(self, statement: str) -> Result | None:
+        cur = self.conn.execute(statement)
+        if cur.description is None:
+            return None
+        return [col[0] for col in cur.description], cur.fetchall()
+
+    def close(self) -> None:
+        self.conn.close()
+
+
+class DuckDbSession(Session):
+    engine = "duckdb"
+
+    def __init__(self, loads=()):
+        try:
+            import duckdb
+        except ImportError:
+            raise RunnerUnavailable(
+                "The duckdb engine needs the 'duckdb' package: pip install duckdb"
+            ) from None
+        self.conn = duckdb.connect(":memory:")
+        self.conn.execute("CREATE MACRO ARRAY_CONCAT_AGG(x) AS flatten(list(x))")
         for table, path in loads:
             reader = _DUCKDB_READERS[_extension(path)]
-            conn.execute(
-                f"CREATE OR REPLACE TABLE {_quote(table)}"
-                f" AS SELECT * FROM {reader}(?)",
+            self.conn.execute(
+                f"CREATE OR REPLACE TABLE {_quote(table)} AS SELECT * FROM {reader}(?)",
                 [path],
             )
-        # duckdb executes multi-statement scripts and returns the last result.
-        cur = conn.execute(sql)
-        columns = [col[0] for col in cur.description or []]
-        return columns, cur.fetchall()
-    finally:
-        conn.close()
+
+    def run(self, script: str) -> Result:
+        # duckdb executes multi-statement scripts and returns the last result
+        # (no cursor at all for a script of comments).
+        cur = self.conn.execute(script)
+        if cur is None or cur.description is None:
+            return [], []
+        return [col[0] for col in cur.description], cur.fetchall()
+
+    def execute(self, statement: str) -> Result | None:
+        cur = self.conn.execute(statement)
+        if cur is None or cur.description is None:
+            return None
+        return [col[0] for col in cur.description], cur.fetchall()
+
+    def close(self) -> None:
+        self.conn.close()
 
 
-def _run_psql(sql: str, dsn: str | None) -> Result:
-    # The connection string first: without one, the driver is beside the point.
-    dsn = _require_dsn("psql", dsn)
-    try:
-        import psycopg
-    except ImportError as e:
-        # psycopg[binary] is a dependency of synalog; plain psycopg without the
-        # system's libpq fails here with "no pq wrapper available".
-        raise RunnerUnavailable(
-            f"The psql engine needs psycopg with its libpq ({e}): pip install 'psycopg[binary]'"
-        ) from None
-    with psycopg.connect(dsn, autocommit=True) as conn:
-        with conn.cursor() as cur:
-            cur.execute(
-                "CREATE OR REPLACE AGGREGATE ARRAY_CONCAT_AGG(anycompatiblearray)"
-                " (SFUNC = array_cat, STYPE = anycompatiblearray)"
-            )
-            cur.execute(sql)
-            columns: list[str] = []
-            rows: list[tuple] = []
-            while True:
-                if cur.description is not None:
-                    columns = [col[0] for col in cur.description]
-                    rows = cur.fetchall()
-                if not cur.nextset():
-                    break
-            return columns, rows
+class PsqlSession(Session):
+    engine = "psql"
+
+    def __init__(self, dsn: str | None, loads=()):
+        _reject_loads(loads, "psql")
+        # The connection string first: without one, the driver is beside the point.
+        dsn = _require_dsn("psql", dsn)
+        try:
+            import psycopg
+        except ImportError as e:
+            # psycopg[binary] is a dependency of synalog; plain psycopg without the
+            # system's libpq fails here with "no pq wrapper available".
+            raise RunnerUnavailable(
+                f"The psql engine needs psycopg with its libpq ({e}): pip install 'psycopg[binary]'"
+            ) from None
+        self.conn = psycopg.connect(dsn, autocommit=True)
+        self.cur = self.conn.cursor()
+        self.cur.execute(
+            "CREATE OR REPLACE AGGREGATE ARRAY_CONCAT_AGG(anycompatiblearray)"
+            " (SFUNC = array_cat, STYPE = anycompatiblearray)"
+        )
+
+    def run(self, script: str) -> Result:
+        # PostgreSQL runs a whole script in one call; keep the last result set.
+        self.cur.execute(script)
+        columns: list[str] = []
+        rows: list[tuple] = []
+        while True:
+            if self.cur.description is not None:
+                columns = [col[0] for col in self.cur.description]
+                rows = self.cur.fetchall()
+            if not self.cur.nextset():
+                break
+        return columns, rows
+
+    def execute(self, statement: str) -> Result | None:
+        columns, rows = self.run(statement)
+        return (columns, rows) if columns else None
+
+    def close(self) -> None:
+        self.conn.close()
 
 
 # ---------------------------------------------------------------------------
@@ -274,14 +389,25 @@ def _reject_loads(loads, engine: str) -> None:
         )
 
 
-def _dbapi_fetch(cur, sql: str) -> Result:
-    """Run a single-statement script through a DBAPI cursor and fetch rows."""
-    cur.execute(sql.rstrip("; \n"))
-    columns = [col[0] for col in (cur.description or [])]
-    return columns, cur.fetchall()
+class DbapiSession(Session):
+    """A DB-API connection whose client takes one statement per call."""
+
+    def __init__(self, engine: str, conn):
+        self.engine = engine
+        self.conn = conn
+        self.cur = conn.cursor()
+
+    def execute(self, statement: str) -> Result | None:
+        self.cur.execute(statement)
+        if self.cur.description is None:
+            return None
+        return [col[0] for col in self.cur.description], self.cur.fetchall()
+
+    def close(self) -> None:
+        self.conn.close()
 
 
-def _run_trino(sql: str, dsn: str | None, loads) -> Result:
+def _trino_session(dsn: str | None, loads) -> Session:
     _reject_loads(loads, "trino")
     dsn = _require_dsn("trino", dsn)
     try:
@@ -309,14 +435,10 @@ def _run_trino(sql: str, dsn: str | None, loads) -> Result:
         http_scheme=http_scheme,
         auth=auth,
     )
-    try:
-        cur = conn.cursor()
-        return _dbapi_fetch(cur, sql)
-    finally:
-        conn.close()
+    return DbapiSession("trino", conn)
 
 
-def _run_presto(sql: str, dsn: str | None, loads) -> Result:
+def _presto_session(dsn: str | None, loads) -> Session:
     _reject_loads(loads, "presto")
     dsn = _require_dsn("presto", dsn)
     try:
@@ -337,14 +459,10 @@ def _run_presto(sql: str, dsn: str | None, loads) -> Result:
         catalog=(path[0] if path else query.get("catalog")),
         schema=(path[1] if len(path) > 1 else query.get("schema")),
     )
-    try:
-        cur = conn.cursor()
-        return _dbapi_fetch(cur, sql)
-    finally:
-        conn.close()
+    return DbapiSession("presto", conn)
 
 
-def _run_databricks(sql: str, dsn: str | None, loads) -> Result:
+def _databricks_session(dsn: str | None, loads) -> Session:
     _reject_loads(loads, "databricks")
     dsn = _require_dsn("databricks", dsn)
     try:
@@ -369,71 +487,109 @@ def _run_databricks(sql: str, dsn: str | None, loads) -> Result:
         http_path=http_path,
         access_token=access_token,
     )
-    try:
-        cur = conn.cursor()
-        return _dbapi_fetch(cur, sql)
-    finally:
-        conn.close()
+    return DbapiSession("databricks", conn)
 
 
-def _run_bigquery(sql: str, dsn: str | None, loads) -> Result:
-    _reject_loads(loads, "bigquery")
-    try:
-        from google.cloud import bigquery
-    except ImportError:
-        raise RunnerUnavailable(
-            "The bigquery engine needs the 'google-cloud-bigquery' package:"
-            " pip install google-cloud-bigquery"
-        ) from None
+class BigQuerySession(Session):
+    """BigQuery through its client, which runs a multi-statement script as one
+    job: the tables a script creates live in the dataset, so the steps of a
+    plan see one another's."""
 
-    # BigQuery authenticates via Application Default Credentials; the DSN, when
-    # given, only names the billing project (and optional location). It is
-    # optional — ADC supplies a default project.
-    project = location = None
-    if resolved := _resolve_dsn("bigquery", dsn):
-        if "://" in resolved:
-            url = urllib.parse.urlparse(resolved)
-            project = url.hostname or url.netloc or None
-            location = dict(urllib.parse.parse_qsl(url.query)).get("location")
-        else:
-            project = resolved
-    try:
-        client = bigquery.Client(project=project, location=location)
-        job = client.query(sql.rstrip("; \n"))
-        result = job.result()
-        columns = [field.name for field in result.schema]
-        rows = [tuple(row.values()) for row in result]
-        return columns, rows
-    except Exception as e:
-        if isinstance(e, RunnerUnavailable):
-            raise
-        raise RunnerUnavailable(f"bigquery error ({type(e).__name__}: {e})") from None
+    engine = "bigquery"
+
+    def __init__(self, dsn: str | None, loads=()):
+        _reject_loads(loads, "bigquery")
+        try:
+            from google.cloud import bigquery
+        except ImportError:
+            raise RunnerUnavailable(
+                "The bigquery engine needs the 'google-cloud-bigquery' package:"
+                " pip install google-cloud-bigquery"
+            ) from None
+        # BigQuery authenticates via Application Default Credentials; the DSN,
+        # when given, only names the billing project (and optional location).
+        project = location = None
+        if resolved := _resolve_dsn("bigquery", dsn):
+            if "://" in resolved:
+                url = urllib.parse.urlparse(resolved)
+                project = url.hostname or url.netloc or None
+                location = dict(urllib.parse.parse_qsl(url.query)).get("location")
+            else:
+                project = resolved
+        try:
+            self.client = bigquery.Client(project=project, location=location)
+        except Exception as e:
+            raise RunnerUnavailable(f"bigquery error ({type(e).__name__}: {e})") from None
+
+    def run(self, script: str) -> Result:
+        return self.execute(script) or ([], [])
+
+    def execute(self, statement: str) -> Result | None:
+        result = self.client.query(statement.rstrip("; \n")).result()
+        if not result.schema:
+            return None
+        return [field.name for field in result.schema], [tuple(row.values()) for row in result]
 
 
-_REMOTE_RUNNERS = {
-    "trino": _run_trino,
-    "presto": _run_presto,
-    "databricks": _run_databricks,
-    "bigquery": _run_bigquery,
-}
-
-
-def run_sql(engine: str, sql: str, dsn: str | None = None, loads=()) -> Result:
-    """Execute `sql` against `engine`, returning (column_names, rows).
-
-    `loads` is a sequence of (table, path) pairs; each file is loaded into
-    the connection as a table before the script runs.
-    """
+def session(engine: str, dsn: str | None = None, loads=()) -> Session:
+    """Open a session on `engine`. `loads` is a sequence of (table, path)
+    pairs; each file is loaded into the session as a table (local engines)."""
     if engine == "sqlite":
-        return _run_sqlite(sql, loads)
+        return SqliteSession(loads)
     if engine == "duckdb":
-        return _run_duckdb(sql, loads)
+        return DuckDbSession(loads)
     if engine == "psql":
-        _reject_loads(loads, "psql")
-        return _run_psql(sql, dsn)
-    if runner := _REMOTE_RUNNERS.get(engine):
-        return runner(sql, dsn, loads)
+        return PsqlSession(dsn, loads)
+    if engine == "trino":
+        return _trino_session(dsn, loads)
+    if engine == "presto":
+        return _presto_session(dsn, loads)
+    if engine == "databricks":
+        return _databricks_session(dsn, loads)
+    if engine == "bigquery":
+        return BigQuerySession(dsn, loads)
     raise RunnerUnavailable(
         f"Engine '{engine}' has no local runner. Use the 'print' command to get"
         " the SQL and run it with your own client."
     )
+
+
+def run_sql(engine: str, sql: str, dsn: str | None = None, loads=()) -> Result:
+    """Execute `sql` against `engine`, returning (column_names, rows) of its
+    last statement that produced rows.
+
+    `loads` is a sequence of (table, path) pairs; each file is loaded into
+    the connection as a table before the script runs.
+    """
+    with session(engine, dsn, loads) as s:
+        return s.run(sql)
+
+
+def run_plan(steps: list[dict], s: Session) -> Result:
+    """Run the steps of a plan (``synalog.plan``) in a session; the rows of the
+    last step.
+
+    A loop runs its body again until its ``changed`` query returns 0 — the
+    recursion has converged — or its repetitions are spent. When an engine
+    cannot answer that query (a column type it cannot compare), the loop runs
+    every repetition instead: slower, the same rows.
+    """
+    result: Result = ([], [])
+    for step in steps:
+        if step["kind"] in ("setup", "sql"):
+            if _has_code(step["sql"]):
+                result = s.run(step["sql"])
+        else:
+            check = True
+            for _ in range(step["repetitions"]):
+                if check:
+                    try:
+                        changed = s.run(step["changed"])[1]
+                    except Exception:  # noqa: BLE001 - see the docstring
+                        check = False
+                    else:
+                        if changed and int(changed[0][0] or 0) == 0:
+                            break
+                for statement in step["body"]:
+                    s.run(statement)
+    return result

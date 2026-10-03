@@ -44,13 +44,13 @@ from ._synalog import (
     SUPPORTED_ENGINES,
     check,
     compile,
-    counterexamples,
     parse,
+    plan,
     search,
     assertions,
 )
 from .checking import program_engine, project_engine as _project_engine, resolve_dsn as _resolve_dsn, violated_assertions
-from .runners import RunnerUnavailable, run_sql
+from .runners import RunnerUnavailable, run_plan, run_sql, session
 
 DEFAULT_ENGINE = "duckdb"
 
@@ -482,7 +482,22 @@ def main(args, inline, engine, limit, offset, as_csv, search_pattern, dsn,
                 print_error(error)
             sys.exit(1)
 
-    def verify(eng: str, run_dsn: str | None) -> bool:
+    def run_pred(predicate: str, eng: str, open_session, assertion: str | None = None, rows_limit=None):
+        """Run a predicate's plan (or an assertion's counterexamples) in the
+        session: each recursion stops as soon as it converges."""
+        steps = plan(
+            source,
+            predicate,
+            limit=limit if rows_limit is None else rows_limit,
+            offset=offset if assertion is None else None,
+            engine=eng,
+            import_root=roots,
+            pattern=search_pattern if assertion is None else None,
+            assertion=assertion,
+        )
+        return run_plan(steps, open_session)
+
+    def verify(eng: str, open_session) -> bool:
         """Run the assertions against the database; False if any is violated."""
         selected = [
             assertion
@@ -501,15 +516,9 @@ def main(args, inline, engine, limit, offset, as_csv, search_pattern, dsn,
                 out.print(f"- {label} {assertion['status']}{detail}", style="yellow", markup=False, highlight=False)
                 continue
             # One row past the limit tells whether there are more.
-            sql = counterexamples(
-                source,
-                assertion["predicate"],
-                assertion["name"],
-                limit=shown + 1,
-                engine=eng,
-                import_root=roots,
+            columns, rows = run_pred(
+                assertion["predicate"], eng, open_session, assertion=assertion["name"], rows_limit=shown + 1
             )
-            columns, rows = run_sql(eng, sql, dsn=run_dsn, loads=loads)
             if not rows:
                 out.print(f"✓ {label} holds", style="green", markup=False, highlight=False)
                 continue
@@ -530,7 +539,9 @@ def main(args, inline, engine, limit, offset, as_csv, search_pattern, dsn,
         if command == "verify":
             resolved = engine or program_engine(source, roots) or default_engine or DEFAULT_ENGINE
             validate_or_fail(resolved)
-            if not verify(resolved, _resolve_dsn(resolved, dsn, project_file)):
+            with session(resolved, _resolve_dsn(resolved, dsn, project_file), loads) as s:
+                ok = verify(resolved, s)
+            if not ok:
                 sys.exit(1)
         elif command == "print":
             dialect = engine or default_engine
@@ -542,21 +553,21 @@ def main(args, inline, engine, limit, offset, as_csv, search_pattern, dsn,
             resolved = engine or program_engine(source, roots) or default_engine or DEFAULT_ENGINE
             validate_or_fail(resolved)
             run_dsn = _resolve_dsn(resolved, dsn, project_file)
-            # run has a database: a violated assertion refuses the program.
-            violated = violated_assertions(source, resolved, roots, run_dsn, loads)
-            if violated:
-                for error in violated:
-                    print_error(error)
-                sys.exit(1)
-            for predicate in predicates:
-                sql = compile_pred(predicate, resolved)
-                columns, rows = run_sql(resolved, sql, dsn=run_dsn, loads=loads)
-                if as_csv:
-                    writer = csv.writer(sys.stdout)
-                    writer.writerow(columns)
-                    writer.writerows(rows)
-                else:
-                    out.print(render_table(columns, rows))
+            with session(resolved, run_dsn, loads) as s:
+                # run has a database: a violated assertion refuses the program.
+                violated = violated_assertions(source, resolved, roots, open_session=s)
+                if violated:
+                    for error in violated:
+                        print_error(error)
+                    sys.exit(1)
+                for predicate in predicates:
+                    columns, rows = run_pred(predicate, resolved, s)
+                    if as_csv:
+                        writer = csv.writer(sys.stdout)
+                        writer.writerow(columns)
+                        writer.writerows(rows)
+                    else:
+                        out.print(render_table(columns, rows))
     except (ValueError, RunnerUnavailable, OSError) as e:
         fail(e)
     except Exception as e:  # a driver or server error: report it, no traceback
@@ -673,19 +684,11 @@ class Repl:
 
     def query(self, predicate: str, pattern: str | None = None) -> None:
         try:
-            if pattern is None:
-                sql = compile(
-                    self.source, predicate, engine=self.engine, import_root=self.roots
-                )
-            else:
-                sql = search(
-                    self.source,
-                    predicate,
-                    pattern,
-                    engine=self.engine,
-                    import_root=self.roots,
-                )
-            columns, rows = run_sql(self.engine, sql, dsn=self.dsn, loads=self.loads)
+            steps = plan(
+                self.source, predicate, engine=self.engine, import_root=self.roots, pattern=pattern
+            )
+            with session(self.engine, self.dsn, self.loads) as s:
+                columns, rows = run_plan(steps, s)
         except (ValueError, RunnerUnavailable, OSError) as e:
             print_error(e)
             return
