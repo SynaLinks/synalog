@@ -61,11 +61,11 @@ schema = "public"
 - Fields per engine: `psql` host, port, database, user, password, sslmode, schema; `trino`/`presto` host, port, scheme, catalog, schema, user, auth, password; `databricks` server_hostname, http_path, access_token, catalog, schema; `bigquery` project, dataset, credentials, location.
 - Precedence: `--engine` and `@Engine` over the project's engine; `--dsn`, then `SYNALOG_<ENGINE>_DSN`, then `synalog.toml`, then a connection saved with `synalog connect <engine> <dsn>`.
 - `[project]` (`name`, `description`) is for the tools around synalog; synalog ignores it.
-- `synalog introspect` (no engine, inside a project) prints `# Tables` declarations for the project's database.
+- `synalog introspect` (no engine, inside a project) prints `# Tables` declarations for the project's database, each after a `##` description made from the table's name (`order_items` → "Order items.") and an `@OrderBy` on its first column.
 
 ## Front matter
 
-A `.l` file may open with YAML front matter between `---` lines: what the file defines, in words. synalog checks that it is valid YAML (a value holding `: ` must be quoted) and otherwise ignores it.
+A `.l` file may open with YAML front matter between `---` lines: what the file defines, in words. synalog checks that it is valid YAML (a value holding `: ` must be quoted), that it has a `name` — a predicate the file defines and orders with `@OrderBy` — and a `description` with text in it; the other keys are the host's.
 
 ```
 ---
@@ -74,6 +74,8 @@ description: Customers with at least one delivered order.
 keywords: [active, engaged]
 ---
 import concepts.Customer.Customer;
+
+@OrderBy(ActiveCustomer, "customer_id");
 ...
 ```
 
@@ -112,6 +114,9 @@ Fix the quoted statement and re-run: later syntax errors only surface once earli
 | `Trivial infinite loop: 'R' calls itself with same arguments` | the recursive case adds nothing | join the recursive atom with another predicate on a *different* variable |
 | `Negative recursion cycle detected: P` | `P` depends on `~P` through recursion | negate a predicate computed beforehand, not the recursive one |
 | `Unsafe SqlExpr in rule 'A': …` | raw SQL | write it with synalog functions instead |
+| `The front matter has no name: …` | the front matter does not say which predicate the file is about | add `name:` with the predicate that runs |
+| `The front matter has no description for 'A': …` | the front matter has no `description`, or an empty one | add `description:` saying what the rows are, in the words a user would search for |
+| `Missing @OrderBy for 'A', the predicate this file is about: …` | the front matter names `A`, and nothing orders it | add `@OrderBy(A, "column");` before its rules |
 
 **Compile errors** (`print`/`run`) mean SQL generation failed, e.g. `Compile error: No rules are defining 'Missing', but compilation was requested.` Usually a typo in the predicate name passed to the command, or an imported predicate run by its short name (run it from its own module instead).
 

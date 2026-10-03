@@ -1616,6 +1616,9 @@ fn parse_file_internal(
         ));
     }
     let mut named: Option<(String, usize)> = None;
+    // The front matter's description, for the verifier: None without front
+    // matter, Some(None) when it gives none (or not as text).
+    let mut described: Option<Option<String>> = None;
     if let Some(fm) = front_matter(content) {
         check_front_matter(&fm).map_err(|e| {
             let source = SpanString::new(content.to_string());
@@ -1623,6 +1626,7 @@ fn parse_file_internal(
             ParsingException::new(format!("Invalid front matter YAML: {}.", e.message), source.slice(start, end))
         })?;
         named = front_matter_name(&fm);
+        described = Some(front_matter_description(&fm));
     }
     let original = content;
     let content = blank_front_matter(content);
@@ -1839,6 +1843,16 @@ fn parse_file_internal(
     out.insert("imported_predicates".into(), Json::Array(imported_predicates));
     out.insert("predicates_prefix".into(), Json::Str(prefix));
     out.insert("file_name".into(), Json::Str(this_file_name.to_string()));
+    // The main file's front matter, for the verifier: the predicate it is
+    // about must be ordered, and it must say what it is (description).
+    if this_file_name == "main" {
+        if let Some(description) = &described {
+            let mut fm = JsonObject::new();
+            fm.insert("name".into(), named.as_ref().map_or(Json::Null, |(n, _)| Json::Str(n.clone())));
+            fm.insert("description".into(), description.as_ref().map_or(Json::Null, |d| Json::Str(d.clone())));
+            out.insert("front_matter".into(), Json::Object(fm));
+        }
+    }
     Ok(Json::Object(out))
 }
 

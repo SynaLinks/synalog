@@ -352,12 +352,27 @@ pub fn check_front_matter(fm: &FrontMatter) -> Result<(), FrontMatterError> {
 }
 
 /// The `name` the front matter gives — the predicate the file is about — with
-/// the file's line it is on. `None` without one, or when it is not a string.
+/// the file's line it is on. `None` without one, when it is blank, or when it
+/// is not a string.
 pub fn front_matter_name(fm: &FrontMatter) -> Option<(String, usize)> {
     let docs = yaml_rust2::YamlLoader::load_from_str(&fm.yaml).ok()?;
-    let name = docs.first()?["name"].as_str()?.to_string();
+    let name = docs.first()?["name"].as_str()?.trim().to_string();
+    if name.is_empty() {
+        return None;
+    }
     let line = fm.yaml.lines().position(|l| l.trim_start().starts_with("name:")).map_or(1, |i| i + 2);
     Some((name, line))
+}
+
+/// The `description` the front matter gives, trimmed: `Some("")` when it is
+/// empty, `None` without one or when it is not text.
+pub fn front_matter_description(fm: &FrontMatter) -> Option<String> {
+    let docs = yaml_rust2::YamlLoader::load_from_str(&fm.yaml).ok()?;
+    match &docs.first()?["description"] {
+        yaml_rust2::Yaml::String(s) => Some(s.trim().to_string()),
+        yaml_rust2::Yaml::Null => Some(String::new()),
+        _ => None,
+    }
 }
 
 /// `content` with its front matter replaced by as many empty lines, so the

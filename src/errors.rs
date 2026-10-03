@@ -175,6 +175,18 @@ pub enum VerifyError {
     #[error("Unsafe SqlExpr in rule '{predicate}': raw SQL bypasses verification and portability")]
     UnsafeSqlExpr { predicate: String },
 
+    /// A file's front matter does not name the predicate it is about.
+    #[error("The front matter has no name: give the predicate this file is about, the one that runs (name: ...)")]
+    MissingName,
+
+    /// A file's front matter has no description, or an empty one.
+    #[error("The front matter has no description{}: say what {} — in the words someone would search for (description: ...)", match predicate { Some(p) => format!(" for '{}'", p), None => String::new() }, match predicate { Some(_) => "its rows are", None => "this file is about" })]
+    MissingDescription { predicate: Option<String> },
+
+    /// The predicate a file's front matter names has no `@OrderBy`.
+    #[error("Missing @OrderBy for '{predicate}', the predicate this file is about: without it its rows come back in no stable order and pages differ between runs; add @OrderBy({predicate}, \"column\"); before its rules")]
+    MissingOrderBy { predicate: String },
+
     /// Positional arguments used where named arguments are required.
     #[error("Positional arguments in '{predicate}': Synalog requires named arguments; use `field_name: value` instead of positional arguments")]
     PositionalArguments { predicate: String },

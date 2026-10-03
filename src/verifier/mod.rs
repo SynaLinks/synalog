@@ -9,6 +9,8 @@
 //! - Stratification (no negative recursion cycles)
 //! - Arity consistency (predicates used with consistent argument counts)
 //! - Recursion safety (base cases, no trivial loops)
+//! - Ordering (the predicate a file's front matter names has `@OrderBy`)
+//! - Front matter (a name and a description)
 
 mod vars;
 mod safety;
@@ -19,6 +21,8 @@ mod reserved;
 mod sqlexpr;
 mod positional;
 mod undefined;
+mod orderby;
+mod front_matter;
 
 pub use vars::VarCollector;
 pub use safety::{SafetyError, check_safety};
@@ -29,6 +33,8 @@ pub use reserved::{ReservedError, check_reserved, reserved_predicate_names};
 pub use sqlexpr::{SqlExprError, check_sqlexpr};
 pub use positional::{PositionalError, check_positional};
 pub use undefined::{UndefinedError, builtin_function_names, check_undefined};
+pub use orderby::{OrderByError, check_order_by};
+pub use front_matter::{DescriptionError, NameError, check_description, check_name};
 
 use crate::parser::Json;
 use crate::errors::{VerifyError, VerifyResult};
@@ -44,6 +50,9 @@ pub enum CheckError {
     SqlExpr(SqlExprError),
     Positional(PositionalError),
     Undefined(UndefinedError),
+    OrderBy(OrderByError),
+    Name(NameError),
+    Description(DescriptionError),
 }
 
 impl std::fmt::Display for CheckError {
@@ -57,6 +66,9 @@ impl std::fmt::Display for CheckError {
             CheckError::SqlExpr(e) => write!(f, "{}", e),
             CheckError::Positional(e) => write!(f, "{}", e),
             CheckError::Undefined(e) => write!(f, "{}", e),
+            CheckError::OrderBy(e) => write!(f, "{}", e),
+            CheckError::Name(e) => write!(f, "{}", e),
+            CheckError::Description(e) => write!(f, "{}", e),
         }
     }
 }
@@ -74,6 +86,9 @@ impl From<CheckError> for VerifyError {
             CheckError::SqlExpr(se) => se.into(),
             CheckError::Positional(pe) => pe.into(),
             CheckError::Undefined(ue) => ue.into(),
+            CheckError::OrderBy(oe) => oe.into(),
+            CheckError::Name(ne) => ne.into(),
+            CheckError::Description(de) => de.into(),
         }
     }
 }
@@ -187,6 +202,21 @@ pub fn validate(parsed: &Json) -> CheckResult {
     // Check 9: Undefined predicate references (typo detection with suggestions)
     for err in undefined::check_undefined(&normal_rules) {
         result.errors.push(CheckError::Undefined(err));
+    }
+
+    // Check 10: The predicate the front matter names is ordered (@OrderBy)
+    if let Some(err) = orderby::check_order_by(parsed, &all_rules) {
+        result.errors.push(CheckError::OrderBy(err));
+    }
+
+    // Check 11: Front matter names the predicate the file is about
+    if let Some(err) = front_matter::check_name(parsed) {
+        result.errors.push(CheckError::Name(err));
+    }
+
+    // Check 12: Front matter says what its rows are (a description)
+    if let Some(err) = front_matter::check_description(parsed) {
+        result.errors.push(CheckError::Description(err));
     }
 
     result
