@@ -26,7 +26,6 @@ options above also apply to the session.
 from __future__ import annotations
 
 import csv
-import json
 import os
 import re
 import sys
@@ -50,6 +49,7 @@ from ._synalog import (
     search,
     assertions,
 )
+from .checking import program_engine, project_engine as _project_engine, resolve_dsn as _resolve_dsn, violated_assertions
 from .runners import RunnerUnavailable, run_sql
 
 DEFAULT_ENGINE = "duckdb"
@@ -106,25 +106,6 @@ def _dotenv_dirs(args: tuple[str, ...], inline: str | None) -> list[str]:
     return dirs
 
 
-def _project_engine(project_file: Path | None) -> str | None:
-    """The engine the project connects to, if it has a connection."""
-    if project_file is None:
-        return None
-    conn = project.connection(project_file)
-    return conn["engine"] if conn else None
-
-
-def _resolve_dsn(engine: str, dsn: str | None, project_file: Path | None) -> str | None:
-    """--dsn, else SYNALOG_<ENGINE>_DSN (the runner reads it), else the
-    project's connection for this engine; the runner falls back to the saved
-    connection when this is None."""
-    if dsn or os.environ.get(f"SYNALOG_{engine.upper()}_DSN") or project_file is None:
-        return dsn
-    if engine not in project.ENGINES:
-        return None
-    return project.project_dsn(project_file, engine)
-
-
 def import_roots(file: str | None, flag_roots: tuple[str, ...]) -> list[str]:
     """Directories where `import` statements look up .l files.
 
@@ -138,23 +119,6 @@ def import_roots(file: str | None, flag_roots: tuple[str, ...]) -> list[str]:
         roots.append(os.path.dirname(os.path.abspath(file)))
     roots.append(os.getcwd())
     return roots
-
-
-def program_engine(source: str, roots: list[str]) -> str | None:
-    """Return the engine declared via @Engine, or None."""
-    ast = json.loads(parse(source, import_root=roots))
-    for rule in ast.get("rule", []):
-        head = rule.get("head", {})
-        if head.get("predicate_name") != "@Engine":
-            continue
-        for field_value in head.get("record", {}).get("field_value", []):
-            literal = (
-                field_value.get("value", {}).get("expression", {}).get("literal", {})
-            )
-            name = literal.get("the_string", {}).get("the_string")
-            if name:
-                return name
-    return None
 
 
 def render_table(columns: list[str], rows: list[tuple]) -> Table:
@@ -396,7 +360,8 @@ def main(args, inline, engine, limit, offset, as_csv, search_pattern, dsn,
       synalog introspect ENGINE               print Tables predicates for a schema
 
     print, run and verify validate the whole program first, aborting with the
-    verifier's errors if it is invalid.
+    verifier's errors if it is invalid. run also checks the @Assert statements
+    against the database and refuses a program that violates one.
 
     verify runs every @Assert of the program (or of the given predicates) against
     the database and prints the counterexamples of those that do not hold
@@ -556,6 +521,12 @@ def main(args, inline, engine, limit, offset, as_csv, search_pattern, dsn,
             resolved = engine or program_engine(source, roots) or default_engine or DEFAULT_ENGINE
             validate_or_fail(resolved)
             run_dsn = _resolve_dsn(resolved, dsn, project_file)
+            # run has a database: a violated assertion refuses the program.
+            violated = violated_assertions(source, resolved, roots, run_dsn, loads)
+            if violated:
+                for error in violated:
+                    print_error(error)
+                sys.exit(1)
             for predicate in predicates:
                 sql = compile_pred(predicate, resolved)
                 columns, rows = run_sql(resolved, sql, dsn=run_dsn, loads=loads)

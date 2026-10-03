@@ -59,10 +59,15 @@ for name, sql in sqls.items():
 ## `check`
 
 ```python
-check(source, engine=None, import_root=None) -> tuple[list[str], list[str]]
+check(source, engine=None, import_root=None, assertions=True, dsn=None) -> tuple[list[str], list[str]]
 ```
 
 Run structural [verification](verification.md). Returns `(errors, warnings)`, two lists of messages. The program is valid when `errors` is empty. Warnings do not make it invalid: they report [assertions](verification.md#assertions) that are well-formed but cannot be checked against a database.
+
+The verifier needs no database. When the program passes it and a database is known, `check` also runs the program's `@Assert` statements there: each violated assertion is an error quoting a few counterexamples. A database is known when `dsn` is given, when `SYNALOG_<ENGINE>_DSN` is set, or when the current directory is inside a [project](cli.md) whose `synalog.toml` has a `[connection]`. Otherwise `check` stays offline.
+
+- `assertions=False` skips the database, for callers that need the instant, offline answer.
+- A database that cannot be reached is a warning (`Assertions not checked: ...`), not an error.
 
 ```python
 errors, warnings = synalog.check(source)

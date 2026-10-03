@@ -181,6 +181,24 @@ def test_verify_reports_uncheckable_and_pending_specs(tmp_path):
     assert "Assertion 'Near.positive' cannot be checked" in result.stderr
 
 
+def test_run_refuses_a_violated_assertion(tmp_path):
+    path = tmp_path / "spec.l"
+    path.write_text(ASSERT_PROGRAM)
+    result = synalog(str(path), "run", "Parent", "--csv")
+    assert result.returncode == 1
+    assert "Assertion 'Near.transitive' is violated" in result.stderr
+    assert "counterexamples (x, y, z):" in result.stderr
+    assert result.stdout == ""
+
+
+def test_print_does_not_run_assertions(tmp_path):
+    path = tmp_path / "spec.l"
+    path.write_text(ASSERT_PROGRAM)
+    result = synalog(str(path), "print", "Near")
+    assert result.returncode == 0, result.stderr
+    assert "SELECT" in result.stdout
+
+
 def test_verify_unknown_predicate(tmp_path):
     path = tmp_path / "assertion.l"
     path.write_text(ASSERT_PROGRAM)

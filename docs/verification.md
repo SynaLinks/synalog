@@ -89,7 +89,18 @@ An assertion is checked against a database by looking for its counterexamples. S
 sql = synalog.counterexamples(source, "Ancestor", "transitive")
 ```
 
-From the command line, [`verify`](cli.md) runs every assertion and prints the counterexamples of those that do not hold:
+Where the database is known, a violated assertion refuses the program:
+
+- [`check()`](python-api.md#check) runs the assertions when called inside a project whose `synalog.toml` has a `[connection]` (or when given a `dsn`), and reports each violated one as an error. Outside a project it stays offline.
+- `synalog program.l run` checks them before it prints anything, and exits 1 if one is violated. `print` never touches the database.
+
+```python
+errors, warnings = synalog.check(source)
+# errors: ["Assertion 'Near.transitive' is violated: ∀ x y z, Near x y → Near y z → Near x z
+#            counterexamples (x, y, z): (a, b, d), (a, c, d)"]
+```
+
+[`verify`](cli.md) runs every assertion and prints the full counterexamples of those that do not hold:
 
 ```text
 $ synalog family.l verify

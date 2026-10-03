@@ -137,3 +137,113 @@ def test_counterexamples_of_a_pending_or_unknown_spec():
 def test_specs_do_not_change_the_sql():
     plain = synalog.compile(PARENT + NEAR, "Near")
     assert synalog.compile(ASSERTION + PARENT + NEAR, "Near") == plain
+
+
+# ---------------------------------------------------------------------------
+# check() inside a project: assertions run against its database
+# ---------------------------------------------------------------------------
+
+PSQL_PROJECT = '[connection]\nengine = "psql"\nhost = "db.example.com"\ndatabase = "d"\nuser = "u"\n'
+
+
+@pytest.fixture
+def project_db(tmp_path, monkeypatch):
+    """A project connected to psql, with duckdb standing in for the server:
+    the queries `check` sends are recorded, and executed in memory in duckdb's
+    dialect."""
+    (tmp_path / "synalog.toml").write_text(PSQL_PROJECT)
+    monkeypatch.chdir(tmp_path)
+    sent = []
+    compile_for = synalog.counterexamples
+
+    def counterexamples(source, predicate, name, limit=None, engine=None, import_root=None):
+        assert engine == "psql"
+        return compile_for(source, predicate, name, limit=limit, engine="duckdb", import_root=import_root)
+
+    monkeypatch.setattr("synalog.checking._synalog.counterexamples", counterexamples)
+
+    def run_sql(engine, sql, dsn=None, loads=()):
+        sent.append((engine, dsn))
+        cur = duckdb.connect(":memory:").execute(sql)
+        return [col[0] for col in cur.description], cur.fetchall()
+
+    monkeypatch.setattr("synalog.checking.run_sql", run_sql)
+    return sent
+
+
+def test_check_refuses_a_violated_assertion_in_a_project(project_db):
+    errors, warnings = synalog.check(ASSERTION + PARENT + NEAR)
+    assert warnings == []
+    assert len(errors) == 1
+    head, counterexamples = errors[0].split("\n")
+    assert head == (
+        "Assertion 'Near.transitive' is violated: ∀ x y z, Near x y → Near y z → Near x z"
+    )
+    assert counterexamples.startswith("  counterexamples (x, y, z): ")
+    assert "(a, b, d)" in counterexamples and "(a, c, d)" in counterexamples
+    # It ran on the project's engine, through the project's connection.
+    ((engine, dsn),) = project_db
+    assert engine == "psql" and dsn.startswith("postgresql://u@db.example.com:5432/d?")
+
+
+def test_check_accepts_assertions_that_hold_in_a_project(project_db):
+    assert synalog.check(ASSERTION + PARENT + CLOSURE) == ([], [])
+    assert len(project_db) == 1
+
+
+def test_check_quotes_a_few_counterexamples(project_db):
+    # Six parents, none of them a parent of itself... asserted to be.
+    facts = "".join(f'Parent(x: "p{i}", y: "c{i}");\n' for i in range(6))
+    errors, _ = synalog.check('@Assert(Parent, reflexive: "∀ x y, Parent x y → Parent x x");\n' + facts)
+    assert errors[0].count("(p") == 3
+    assert errors[0].endswith(", ...")
+
+
+def test_check_can_skip_the_database(project_db):
+    assert synalog.check(ASSERTION + PARENT + NEAR, assertions=False) == ([], [])
+    assert project_db == []
+
+
+def test_check_does_not_reach_the_database_for_an_invalid_program(project_db):
+    errors, _ = synalog.check(ASSERTION + PARENT + NEAR + "Bad(x:, y:) :- Parent(x:);\n")
+    assert len(errors) == 1 and "Unbound variable 'y'" in errors[0]
+    assert project_db == []
+
+
+def test_check_without_assertions_does_not_reach_the_database(project_db):
+    assert synalog.check(PARENT + NEAR) == ([], [])
+    assert project_db == []
+
+
+def test_check_outside_a_project_is_offline(tmp_path, monkeypatch):
+    monkeypatch.chdir(tmp_path)
+    monkeypatch.setattr("synalog.checking.run_sql", lambda *a, **k: pytest.fail("database reached"))
+    assert synalog.check(ASSERTION + PARENT + NEAR) == ([], [])
+
+
+def test_unreachable_database_is_a_warning(tmp_path, monkeypatch):
+    (tmp_path / "synalog.toml").write_text(PSQL_PROJECT)
+    monkeypatch.chdir(tmp_path)
+
+    def run_sql(engine, sql, dsn=None, loads=()):
+        raise OSError("could not connect to server")
+
+    monkeypatch.setattr("synalog.checking.run_sql", run_sql)
+    assert synalog.check(ASSERTION + PARENT + NEAR) == (
+        [],
+        ["Assertions not checked: could not connect to server"],
+    )
+
+
+def test_explicit_dsn_is_a_database(tmp_path, monkeypatch):
+    monkeypatch.chdir(tmp_path)
+    sent = []
+
+    def run_sql(engine, sql, dsn=None, loads=()):
+        sent.append((engine, dsn))
+        return ["x", "y", "z"], []
+
+    monkeypatch.setattr("synalog.checking.run_sql", run_sql)
+    source = ASSERTION + PARENT + NEAR
+    assert synalog.check(source, engine="psql", dsn="postgresql://h/d") == ([], [])
+    assert sent == [("psql", "postgresql://h/d")]

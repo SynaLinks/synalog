@@ -6,8 +6,8 @@ from importlib.metadata import PackageNotFoundError, version
 
 from ._synalog import (
     SUPPORTED_ENGINES,
+    assertions,
     builtin_functions,
-    check,
     compile,
     compile_all,
     counterexamples,
@@ -15,8 +15,8 @@ from ._synalog import (
     parse,
     reserved_predicates,
     search,
-    assertions,
 )
+from .checking import check
 
 try:
     __version__ = version("synalog")
@@ -25,6 +25,7 @@ except PackageNotFoundError:  # running from a source tree without install
 
 __all__ = [
     "SUPPORTED_ENGINES",
+    "assertions",
     "builtin_functions",
     "check",
     "compile",
@@ -34,6 +35,5 @@ __all__ = [
     "parse",
     "reserved_predicates",
     "search",
-    "assertions",
     "__version__",
 ]
