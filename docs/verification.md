@@ -17,6 +17,7 @@ This matters most for AI agents: it prevents producing programs that parse corre
 | **Reserved names** | Rules that redefine a built-in library predicate (`Num`, `Str`, `ArgMin`, `Today`, `Now`, ...) |
 | **Unsafe `SqlExpr`** | User rules that reach for the raw-SQL escape hatch |
 | **Ordering** | A file whose front matter names a predicate, without an `@OrderBy` for it |
+| **Description** | A file with front matter but no `description`, or an empty one |
 
 ### Unsafe `SqlExpr`
 
@@ -45,6 +46,20 @@ Spent(customer_id:, spent:) :- customer_id in Range(3), spent == 1;
 TopCustomers(customer_id:) :- Spent(customer_id:);
 ''')
 # ['Missing @OrderBy for 'TopCustomers', the predicate this file is about: ... add @OrderBy(TopCustomers, "column"); before its rules']
+```
+
+### Description
+
+Front matter is how a file says what it is: `name` is the predicate it is about, `description` what that predicate's rows are — the words someone searches for to find it. A file that opens front matter must have a `description` with text in it; an empty or blank one, or one that is not text, is refused. A program without front matter is not checked.
+
+```python
+errors = synalog.check('''---
+name: TopCustomers
+---
+@OrderBy(TopCustomers, "customer_id");
+TopCustomers(customer_id:) :- customer_id in Range(3);
+''')
+# ["The front matter has no description for 'TopCustomers': say what its rows are — in the words someone would search for (description: ...)"]
 ```
 
 ## Usage

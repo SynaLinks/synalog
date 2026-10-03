@@ -30,6 +30,7 @@ enum ExpectedError {
     PositionalArguments,
     UndefinedPredicate,
     MissingOrderBy,
+    MissingDescription,
 }
 
 /// Parse expected error from file content.
@@ -51,6 +52,7 @@ fn parse_expected_error(content: &str) -> Option<ExpectedError> {
                 s if s.contains("positionalArguments") => Some(ExpectedError::PositionalArguments),
                 s if s.contains("undefinedPredicate") => Some(ExpectedError::UndefinedPredicate),
                 s if s.contains("missingOrderBy") => Some(ExpectedError::MissingOrderBy),
+                s if s.contains("missingDescription") => Some(ExpectedError::MissingDescription),
                 _ => None,
             };
         }
@@ -74,6 +76,7 @@ fn error_matches(error: &CheckError, expected: &ExpectedError) -> bool {
         (CheckError::Positional(_), ExpectedError::PositionalArguments) => true,
         (CheckError::Undefined(_), ExpectedError::UndefinedPredicate) => true,
         (CheckError::OrderBy(_), ExpectedError::MissingOrderBy) => true,
+        (CheckError::Description(_), ExpectedError::MissingDescription) => true,
         _ => false,
     }
 }

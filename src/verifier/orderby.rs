@@ -44,7 +44,11 @@ fn ordered_predicate(rule: &Json) -> Option<&str> {
 /// `Some(error)` when the program's front matter names a predicate that no
 /// `@OrderBy` orders.
 pub fn check_order_by(parsed: &Json, rules: &[&Json]) -> Option<OrderByError> {
-    let name = parsed.as_object().get("front_matter_name")?.as_str();
+    let name = parsed.as_object().get("front_matter")?.as_object().get("name")?;
+    if !name.is_string() {
+        return None;
+    }
+    let name = name.as_str();
     if rules.iter().any(|r| ordered_predicate(r) == Some(name)) {
         None
     } else {
