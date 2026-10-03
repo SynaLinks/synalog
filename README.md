@@ -76,7 +76,7 @@ rows = duckdb.sql(sql).fetchall()
 pip install synalog
 ```
 
-Or with [uv](https://docs.astral.sh/uv/): `uv add synalog` (or `uv pip install synalog`). The CLI also runs without installing via `uvx synalog`, or `uvx --from 'synalog[run]' synalog` to include the duckdb and psycopg drivers.
+Or with [uv](https://docs.astral.sh/uv/): `uv add synalog` (or `uv pip install synalog`). The CLI also runs without installing via `uvx synalog`.
 
 Requires Python 3.10+. Wheels are published for Linux (x86_64, aarch64, armv7, s390x, ppc64le; glibc and musl), Windows (x64, x86, aarch64) and macOS (x86_64, aarch64).
 
@@ -120,7 +120,7 @@ $ synalog program.l run EngineeringTeam
 - `--limit` / `--offset` paginate the result.
 - `--csv` (with `run`) prints results as CSV instead of the rendered table.
 - `--search REGEX` (with `print`/`run`) keeps only rows where some column matches the regular expression `REGEX`, e.g. `synalog program.l run Customers --search "(?i)acme"`. In the interactive session the same is `.search Customers (?i)acme`.
-- `run` executes locally on `duckdb` (needs `pip install duckdb`), `sqlite` (stdlib), or `psql` (needs `pip install psycopg` and `--dsn` or `SYNALOG_PSQL_DSN`). For other engines, use `print` and run the SQL with your own client. `pip install 'synalog[run]'` pulls in the duckdb and psycopg drivers.
+- `run` executes on `duckdb` (the default), `sqlite` (stdlib) or `psql` (with `--dsn` or `SYNALOG_PSQL_DSN`) out of the box: synalog depends on duckdb and on psycopg with its bundled libpq, on macOS and Linux alike. For other engines, install their driver (`pip install 'synalog[trino]'`, ...) or use `print` and run the SQL with your own client.
 - `import path.to.file.Pred;` statements resolve `path/to/file.l` against the program file's directory, then the current directory; pass `--import-root DIR` (repeatable) to search elsewhere.
 - `--load TABLE=PATH` (repeatable) loads a csv/tsv/json/jsonl/parquet file as a table before running, e.g. `synalog senior.l run Senior --load employees=employees.csv`.
 

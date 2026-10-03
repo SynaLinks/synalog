@@ -24,9 +24,20 @@ classifiers = [
     "Topic :: Software Development :: Compilers",
 ]
 
-# duckdb is a core dependency: it is the default engine, so `synalog … run`
-# works out of the box on a bare `pip install synalog`, no extra needed.
-dependencies = ["click>=8.1", "rich>=13", "duckdb", "tomli>=1.1; python_version < '3.11'"]
+# duckdb (the default engine) and psycopg (PostgreSQL) are core dependencies,
+# so `synalog … run` works out of the box on a bare `pip install synalog`.
+# psycopg[binary] bundles libpq in its wheels, which exist for CPython on
+# x86_64 and arm64 (macOS, Linux glibc and musl, Windows): plain psycopg needs
+# the system's libpq, which macOS lacks. Elsewhere (armv7, s390x, ppc64le,
+# PyPy) psycopg-binary has no wheel, so plain psycopg and the system's libpq.
+dependencies = [
+    "click>=8.1",
+    "rich>=13",
+    "duckdb",
+    "psycopg[binary]>=3.1; platform_python_implementation == 'CPython' and platform_machine in 'x86_64 AMD64 arm64 aarch64'",
+    "psycopg>=3.1; platform_python_implementation != 'CPython' or platform_machine not in 'x86_64 AMD64 arm64 aarch64'",
+    "tomli>=1.1; python_version < '3.11'",
+]
 
 [project.urls]
 Repository = "https://github.com/synalinks/synalog"
@@ -35,18 +46,14 @@ Repository = "https://github.com/synalinks/synalog"
 synalog = "synalog.cli:main"
 
 [project.optional-dependencies]
-# The local engines work out of the box: duckdb (core dependency, the default)
-# and sqlite (stdlib). Each remote engine brings its own driver. `run` keeps the
-# PostgreSQL driver for `--engine psql`.
-run = ["psycopg"]
+# duckdb, sqlite (stdlib) and psql work out of the box. Each other remote
+# engine brings its own driver.
 trino = ["trino"]
 presto = ["presto-python-client"]
 databricks = ["databricks-sql-connector"]
 bigquery = ["google-cloud-bigquery"]
 # Every engine driver at once.
 all-engines = [
-    "duckdb",
-    "psycopg",
     "trino",
     "presto-python-client",
     "databricks-sql-connector",

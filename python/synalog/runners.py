@@ -209,14 +209,16 @@ def _run_duckdb(sql: str, loads) -> Result:
 
 
 def _run_psql(sql: str, dsn: str | None) -> Result:
+    # The connection string first: without one, the driver is beside the point.
+    dsn = _require_dsn("psql", dsn)
     try:
         import psycopg
-    except ImportError:
+    except ImportError as e:
+        # psycopg[binary] is a dependency of synalog; plain psycopg without the
+        # system's libpq fails here with "no pq wrapper available".
         raise RunnerUnavailable(
-            "The psql engine needs the 'psycopg' package: pip install psycopg"
+            f"The psql engine needs psycopg with its libpq ({e}): pip install 'psycopg[binary]'"
         ) from None
-
-    dsn = _require_dsn("psql", dsn)
     with psycopg.connect(dsn, autocommit=True) as conn:
         with conn.cursor() as cur:
             cur.execute(

@@ -899,3 +899,22 @@ def test_project_write_bigquery_key_and_clear(tmp_path):
     project.clear(tmp_path)
     assert "connection" not in tomllib.loads((tmp_path / "synalog.toml").read_text())
     assert not key.exists() and not (tmp_path / ".env").exists()
+
+
+def test_run_reports_a_driver_error_without_traceback(tmp_path):
+    # A server that refuses the connection is reported as one error line.
+    program = tmp_path / "p.l"
+    program.write_text("V(x:) :- x in [1, 2];\n")
+    result = synalog(str(program), "run", "V", "--engine", "psql", "--dsn", "postgresql://nobody@127.0.0.1:1/x")
+    assert result.returncode == 1
+    assert "OperationalError" in result.stderr + result.stdout
+    assert "Traceback" not in result.stderr
+
+
+def test_run_reports_a_missing_table_without_traceback(tmp_path):
+    program = tmp_path / "p.l"
+    program.write_text("V(x:) :- missing_table(x:);\n")
+    result = synalog(str(program), "run", "V")
+    assert result.returncode == 1
+    assert "missing_table" in result.stderr + result.stdout
+    assert "Traceback" not in result.stderr

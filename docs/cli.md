@@ -5,11 +5,11 @@ Installing the package also installs a `synalog` command (also available as `pyt
 If you use [uv](https://docs.astral.sh/uv/), `uvx` runs the CLI in an ephemeral environment without installing anything:
 
 ```bash
-uvx synalog                                            # interactive session
-uvx --from 'synalog[run]' synalog program.l run Total  # adds the psycopg (psql) driver
+uvx synalog                          # interactive session
+uvx synalog program.l run Total      # on duckdb, the default engine
 ```
 
-Plain `uvx synalog` covers `print` and execution on duckdb (the default engine, bundled with synalog) and sqlite (Python's built-in driver); executing on PostgreSQL needs the psycopg driver from the `synalog[run]` extra, hence `--from`.
+`uvx synalog` covers `print` and execution on duckdb (the default engine), sqlite (Python's built-in driver) and PostgreSQL: synalog depends on duckdb and on psycopg with its bundled libpq, so nothing else is needed on macOS or Linux.
 
 ## One-shot commands
 
@@ -79,7 +79,7 @@ With `-c` there is no `FILE` argument: the positionals are the command and its p
 
 - **duckdb**: the default engine, bundled with synalog; nothing extra to install.
 - **sqlite**: Python's stdlib driver; Logica's runtime UDFs (ArgMin/ArgMax, ARRAY_CONCAT, ...) are registered when the `logica` package is installed.
-- **psql**: needs `pip install psycopg` and a connection string.
+- **psql**: bundled with synalog (psycopg with its own libpq); needs a connection string.
 
 The [`Today` and `Now`](language/temporal.md) built-in concepts need no runner support, since the compiler inlines them per dialect, so they work on every engine.
 
@@ -96,7 +96,7 @@ $ synalog totals.l run Total --load sales=sales.csv
 2 rows
 ```
 
-duckdb ships with synalog; `pip install 'synalog[run]'` adds the psycopg driver for PostgreSQL. For the other engines (`bigquery`, `trino`, `presto`, `databricks`), use `print` and run the SQL with your own client.
+duckdb and the PostgreSQL driver ship with synalog. For the other engines (`bigquery`, `trino`, `presto`, `databricks`), install their driver (`pip install 'synalog[trino]'`, ...) or use `print` and run the SQL with your own client.
 
 ### Imports
 

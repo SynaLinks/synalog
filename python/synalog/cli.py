@@ -538,6 +538,8 @@ def main(args, inline, engine, limit, offset, as_csv, search_pattern, dsn,
                     out.print(render_table(columns, rows))
     except (ValueError, RunnerUnavailable, OSError) as e:
         fail(e)
+    except Exception as e:  # a driver or server error: report it, no traceback
+        fail(f"{type(e).__name__}: {e}")
 
 
 # ---------------------------------------------------------------------------

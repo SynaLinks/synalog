@@ -133,7 +133,7 @@ Fix the quoted statement and re-run: later syntax errors only surface once earli
 | `synalog.toml: password is a secret — remove it from the file and set SYNALOG_PSQL_PASSWORD …` | move the secret to `.env`; never commit it |
 | `The databricks connection needs SYNALOG_DATABRICKS_ACCESS_TOKEN` | the secret is missing from `.env`: ask the user for it |
 | `synalog.toml: psql has no field 'hots' (fields: …)` | use one of the fields listed |
-| `The psql engine needs the 'psycopg' package: pip install psycopg` | run with the driver: `uvx --with psycopg synalog …` |
+| `The psql engine needs psycopg with its libpq (...)` | the driver ships with synalog; reinstall it with its libpq: `pip install 'psycopg[binary]'` |
 | `The psql engine needs a connection string: …` | give the project a `[connection]`, or pass `--dsn` |
 
 A query that runs but returns nothing is not an error: check the filter values against the data before concluding there is none.
