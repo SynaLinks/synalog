@@ -49,7 +49,7 @@ Enables recursion on a predicate, with a maximum number of iterations:
 
 The full signature is `@Recursive(Pred, iterations, stop?, satellites?)`. See [Recursion](recursion.md) for usage.
 
-The number of iterations is a whole number, 1 or more. Up to 20, the recursion is unrolled into one query; past 20, it is computed into tables, step by step, and the generated script runs every step (about 2000 at most). Logica's `-1`, which iterates until nothing changes, needs a runner that loops: a single SQL script cannot, so Synalog refuses it. Give a number of steps larger than the longest path instead.
+The number of iterations is a whole number, 1 or more, or `-1`: until a step changes nothing. It bounds the recursion; Synalog stops earlier when the recursion converges. See [how recursion runs](recursion.md#how-recursion-runs).
 
 ## `@Ground`
 

@@ -14,7 +14,7 @@ from decimal import Decimal
 
 import pytest
 
-from conftest import ENGINES, compile_fixture, fixture_names, same_program_as_duckdb
+from conftest import ENGINES, fixture_names, plan_fixture, same_program_as_duckdb
 
 # ---------------------------------------------------------------------------
 # Layer 1: every fixture executes on its engine
@@ -55,7 +55,7 @@ def _engine_rows(engine: str, name: str) -> list[tuple]:
     layers read them (a fixture's script can be long on the JVM engines)."""
     from runners import make_runner
 
-    return make_runner(engine).run(compile_fixture(engine, name))
+    return make_runner(engine).run_plan(plan_fixture(engine, name))
 
 
 @pytest.mark.parametrize(("engine", "name"), _params(ENGINES, [XFAIL_EXECUTE]))
@@ -124,9 +124,7 @@ def _normalize_rows(rows: list[tuple], name: str | None = None) -> list[tuple]:
 def _reference_rows(name: str) -> list[tuple]:
     from runners import make_runner
 
-    return _normalize_rows(
-        make_runner("duckdb").run(compile_fixture("duckdb", name)), name
-    )
+    return _normalize_rows(make_runner("duckdb").run_plan(plan_fixture("duckdb", name)), name)
 
 
 def _cross_engine_params():

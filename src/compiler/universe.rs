@@ -247,6 +247,10 @@ pub struct IterationDef {
     pub predicates: Vec<String>,
     pub repetitions: i64,
     pub stop_signal: Option<String>,
+    /// Semi-naive evaluation: the table every step's new rows are added to.
+    /// The iteration's predicates are then the new rows and the next delta,
+    /// and it converges when the delta is empty.
+    pub accumulate: Option<String>,
 }
 
 impl Default for Logica {
@@ -1638,8 +1642,15 @@ impl LogicaProgram {
         let iteration_of: HashMap<&String, usize> = iterations
             .iter()
             .enumerate()
-            .flat_map(|(i, (_, it))| it.predicates.iter().map(move |p| (p, i)))
+            .flat_map(|(i, (_, it))| it.predicates.iter().chain(it.accumulate.iter()).map(move |p| (p, i)))
             .filter_map(|(p, i)| table_set.get(p).map(|t| (*t, i)))
+            .collect();
+        // A semi-naive iteration's predicates run only inside its loop.
+        let loop_only: HashSet<&String> = iterations
+            .iter()
+            .filter(|(_, it)| it.accumulate.is_some())
+            .flat_map(|(_, it)| it.predicates.iter())
+            .filter_map(|p| table_set.get(p).copied())
             .collect();
 
         let mut order: Vec<PlanStep> = as_steps(&leading);
@@ -1666,12 +1677,26 @@ impl LogicaProgram {
                 // A cycle the dependencies do not resolve: keep the compiler's order.
                 return Ok(as_steps(&exec.defines_and_exports));
             };
+            if loop_only.contains(table) {
+                let i = iteration_of[table];
+                let iteration = &iterations[i].1;
+                order.push(self.semi_naive_loop(iteration, exports)?);
+                for p in &iteration.predicates {
+                    if let Some(t) = table_set.get(p) {
+                        done.insert(*t);
+                    }
+                }
+                finished.insert(i);
+                continue;
+            }
             done.insert(table);
             order.push(PlanStep::Sql(exports[table].clone()));
             order.extend(as_steps(&trailing.get(table).cloned().unwrap_or_default()));
             if let Some(&i) = iteration_of.get(table) {
                 let iteration = &iterations[i].1;
-                if iteration.predicates.iter().all(|p| table_set.get(p).is_some_and(|t| done.contains(t))) {
+                if iteration.accumulate.is_none()
+                    && iteration.predicates.iter().all(|p| table_set.get(p).is_some_and(|t| done.contains(t)))
+                {
                     order.push(PlanStep::Loop {
                         body: iteration.predicates.iter().map(|p| exports[p].clone()).collect(),
                         repetitions: iteration.repetitions - 1,
@@ -1682,6 +1707,29 @@ impl LogicaProgram {
             }
         }
         Ok(order)
+    }
+
+    /// The loop of a semi-naive iteration: the new rows from the delta, added
+    /// to the accumulated table, then made the next delta; until the delta is
+    /// empty, `repetitions` times at most.
+    fn semi_naive_loop(&self, iteration: &IterationDef, exports: &HashMap<String, String>) -> CompileResult<PlanStep> {
+        let table = |p: &String| {
+            self.annotations
+                .ground(p)
+                .map(|g| g.table_name)
+                .ok_or_else(|| CompileError::new(format!("The iteration's table {} is not grounded.", p), p))
+        };
+        let (new, next) = (&iteration.predicates[0], &iteration.predicates[1]);
+        let full = iteration.accumulate.as_ref().expect("a semi-naive iteration");
+        Ok(PlanStep::Loop {
+            body: vec![
+                exports[new].clone(),
+                format!("INSERT INTO {} SELECT * FROM {};", table(full)?, table(new)?),
+                exports[next].clone(),
+            ],
+            repetitions: iteration.repetitions,
+            changed: format!("SELECT COUNT(*) AS changed FROM {}", table(next)?),
+        })
     }
 
     /// The query telling whether one more repetition of an iteration would
@@ -1838,14 +1886,20 @@ impl LogicaProgram {
             exec_ref.table_to_defined_table_map.keys().cloned().collect()
         };
 
+        // In name order: the order they compile in numbers their tables.
         let iterations: Vec<IterationDef> = {
             let exec = self.execution.borrow();
             let exec_ref = exec.as_ref().unwrap();
-            exec_ref.iterations.values().cloned().collect()
+            let mut named: Vec<(&String, &IterationDef)> = exec_ref.iterations.iter().collect();
+            named.sort_by(|a, b| a.0.cmp(b.0));
+            named.into_iter().map(|(_, it)| it.clone()).collect()
         };
 
         for iteration in &iterations {
+            // A semi-naive iteration's accumulated table is what the rest of
+            // the program reads: compiling it brings in the iteration.
             let iteration_preds: HashSet<&str> = iteration.predicates.iter()
+                .chain(iteration.accumulate.iter())
                 .map(|s| s.as_str()).collect();
             for p in &participating_predicates {
                 if iteration_preds.contains(p.as_str()) {

@@ -1,6 +1,6 @@
 # Python API
 
-The `synalog` package exposes seven functions that take a program (`parse`, `compile`, `search`, `compile_all`, `check`, `assertions`, `counterexamples`) and two that take nothing and return the names Synalog has already reserved (`reserved_predicates`, `builtin_functions`). The program functions all accept an optional `engine` keyword that overrides the program's `@Engine` annotation (one of `sqlite`, `duckdb`, `bigquery`, `psql`, `presto`, `trino`, `databricks`; default `duckdb`) and an optional `import_root` keyword listing directories where `import` statements look up `.l` files (default: the current directory). They raise `ValueError` on syntax or compilation errors.
+The `synalog` package exposes nine functions that take a program (`parse`, `compile`, `search`, `compile_all`, `check`, `assertions`, `counterexamples`, `plan`, `execute`) and two that take nothing and return the names Synalog has already reserved (`reserved_predicates`, `builtin_functions`). The program functions all accept an optional `engine` keyword that overrides the program's `@Engine` annotation (one of `sqlite`, `duckdb`, `bigquery`, `psql`, `presto`, `trino`, `databricks`; default `duckdb`) and an optional `import_root` keyword listing directories where `import` statements look up `.l` files (default: the current directory). They raise `ValueError` on syntax or compilation errors.
 
 ## `parse`
 
@@ -29,6 +29,8 @@ sql = synalog.compile(source, "TopCustomers", limit=20, offset=40)
 ```
 
 `limit` is combined with the [`@Limit` directive](language/directives.md#limit): the effective limit is `min(limit, @Limit)`. Use `limit`/`offset` for pagination, and make sure every predicate has an [`@OrderBy`](language/directives.md#orderby) so page boundaries are deterministic.
+
+The SQL is one script, for clients that run SQL themselves. A script cannot loop, so a [deep recursion](language/recursion.md#how-recursion-runs) is written out step by step, up to the depth `@Recursive` declares, and a recursion too deep to write out (`@Recursive(P, -1)`, or thousands of steps) raises `ValueError`. [`execute`](#execute) runs it instead, stopping when it converges.
 
 ## `search`
 
@@ -107,6 +109,39 @@ rows = duckdb.sql(sql).fetchall()   # [] when the assertion holds
 
 Raises `ValueError` if there is no such assertion, or if it is pending or unsupported.
 
+## `execute`
+
+```python
+execute(source, predicate, engine=None, dsn=None, import_root=None, limit=None, offset=None, pattern=None, assertion=None, loads=()) -> tuple[list[str], list[tuple]]
+```
+
+Run a predicate on its database and return `(columns, rows)`. Synalog runs the predicate's [plan](#plan) in one connection, so each [recursion](language/recursion.md#how-recursion-runs) stops as soon as a step changes nothing: it costs the steps its data needs, whatever the depth `@Recursive` declares, and `@Recursive(P, -1)` (until nothing changes) runs on every engine.
+
+```python
+columns, rows = synalog.execute(source, "TopCustomers", limit=20)
+```
+
+- The engine is `engine`, else the program's `@Engine`, else the [project](cli.md#projects-synalogtoml)'s, else duckdb; the connection `dsn`, else `SYNALOG_<ENGINE>_DSN`, else the project's `[connection]`.
+- `pattern` keeps the rows where some column matches it, as [`search`](#search); `limit`/`offset` paginate as in `compile`.
+- `assertion` returns the counterexamples of the assertion of that name of `predicate` instead of its rows.
+- `loads` is a sequence of `(table, path)` pairs: csv/tsv/json/jsonl/parquet files loaded as tables first (duckdb and sqlite).
+
+## `plan`
+
+```python
+plan(source, predicate, limit=None, offset=None, engine=None, import_root=None, pattern=None, assertion=None) -> list[dict]
+```
+
+The steps that compute a predicate, for a host that runs them itself. Each step is a dict:
+
+| Step | Run it |
+|---|---|
+| `{"kind": "setup", "sql": ...}` | the engine's setup: a script |
+| `{"kind": "sql", "sql": ...}` | a statement; the last step's rows are the predicate's |
+| `{"kind": "loop", "body": [...], "repetitions": n, "changed": ...}` | a recursion: run `changed`, a query returning one number; while it is not 0, run the `body` statements, `n` times at most |
+
+All the steps run in one connection: the loops write tables the later steps read. `synalog.runners.run_plan(steps, session)` runs a plan in a [`synalog.runners.session`](cli.md#executing-locally).
+
 ## `reserved_predicates`
 
 ```python
@@ -148,7 +183,7 @@ meta.get("description")  # "Customers with at least one delivered order."
 
 ## Executing the generated SQL
 
-Synalog returns SQL strings; execution is up to you. Any driver works: `sqlite3`, `duckdb`, `psycopg`, `google-cloud-bigquery`, `trino`, `databricks-sql-connector`:
+[`execute`](#execute) runs a predicate for you. With `compile`, execution is up to you, and any driver works: `sqlite3`, `duckdb`, `psycopg`, `google-cloud-bigquery`, `trino`, `databricks-sql-connector`:
 
 ```python
 import duckdb

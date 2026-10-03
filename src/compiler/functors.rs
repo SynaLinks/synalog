@@ -991,6 +991,13 @@ impl Functors {
             }
         }
 
+        // Whether semi-naive evaluation applies, read from the rules as written.
+        let semi_naive = if iterative && stop.is_none() {
+            semi_naive_fields(cover, &simplified_cover, rules)
+        } else {
+            None
+        };
+
         // Rename in existing rules
         for r in rules.iter_mut() {
             let head_pred = r.as_object()["head"].as_object()["predicate_name"]
@@ -1015,8 +1022,12 @@ impl Functors {
             }
         }
 
-        // Generate flat recursion functor program
-        let lib = if iterative {
+        // Generate flat recursion functor program: semi-naive when it computes
+        // the same rows, else every step recomputed.
+        let lib = if let Some(fields) = semi_naive {
+            let p = simplified_cover.iter().next().expect("one predicate");
+            get_semi_naive_recursion_functor(depth, p, &fields)
+        } else if iterative {
             get_flat_iterative_recursion_functor(
                 depth, &simplified_cover, &direct_args, ignition_steps, stop,
             )
@@ -1144,6 +1155,118 @@ fn get_recursion_functor(depth: i64, predicate: &str) -> String {
     }
     lines.push(format!("{0} := {0}_r{1}();", predicate, depth));
     lines.join("\n")
+}
+
+/// The columns of a recursion that semi-naive evaluation computes exactly, or
+/// `None`. Semi-naive evaluation derives each step from the previous step's
+/// new rows only, which gives the rows the full recomputation gives when
+/// every rule references the recursion at most once (linear recursion), with
+/// set semantics: one recursive predicate, `distinct`, without aggregation.
+/// The rules are those of the program before the recursion is unfolded.
+fn semi_naive_fields(cover: &HashSet<String>, visible: &BTreeSet<String>, rules: &[Json]) -> Option<Vec<Json>> {
+    if visible.len() != 1 {
+        return None;
+    }
+    let p = visible.iter().next()?;
+    /// References to the cover in `json`: how many, and whether one sits in a
+    /// subquery (an aggregate or a negation), which semi-naive cannot split.
+    fn references(json: &Json, cover: &HashSet<String>, in_combine: bool, count: &mut usize, nested: &mut bool) {
+        match json {
+            Json::Object(o) => {
+                if let Some(name) = o.get("predicate_name") {
+                    if name.is_string() && cover.contains(name.as_str()) {
+                        *count += 1;
+                        *nested |= in_combine;
+                    }
+                }
+                for (key, value) in o.iter() {
+                    references(value, cover, in_combine || key == "combine", count, nested);
+                }
+            }
+            Json::Array(items) => items.iter().for_each(|i| references(i, cover, in_combine, count, nested)),
+            _ => {}
+        }
+    }
+    let mut fields: Option<Vec<Json>> = None;
+    for rule in rules {
+        let head = rule.as_object()["head"].as_object();
+        let name = head["predicate_name"].as_str();
+        if !cover.contains(name) {
+            continue;
+        }
+        let (mut count, mut nested) = (0, false);
+        if let Some(body) = rule.as_object().get("body") {
+            references(body, cover, false, &mut count, &mut nested);
+        }
+        if count > 1 || nested {
+            return None;
+        }
+        if name != p {
+            continue;
+        }
+        if !rule.as_object().contains_key("distinct_denoted") {
+            return None;
+        }
+        let values = head.get("record")?.as_object().get("field_value")?.as_array();
+        let mut keys = Vec::new();
+        for fv in values {
+            let fv = fv.as_object();
+            if fv["value"].as_object().contains_key("aggregation") {
+                return None;
+            }
+            let field = &fv["field"];
+            if field.is_string() && field.as_str() == "logica_value" {
+                return None;
+            }
+            keys.push(field.clone());
+        }
+        if *fields.get_or_insert_with(|| keys.clone()) != keys {
+            return None;
+        }
+    }
+    fields
+}
+
+/// Generate semi-naive recursion functor program text.
+///
+/// `P_sn_delta` holds the rows the last step added (the base rows first),
+/// `P_sn_full` every row so far. Each repetition of the iteration computes
+/// `P_sn_new`, the rows one step derives from the delta that `P_sn_full`
+/// does not hold yet, adds them to `P_sn_full` (an INSERT the plan writes, see
+/// `IterationDef::accumulate`), and makes them the next delta (`P_sn_next`,
+/// stored in the delta's table). The recursion has converged when the delta
+/// is empty; `depth` repetitions at most compute the rows the full
+/// recomputation computes in `depth` steps.
+fn get_semi_naive_recursion_functor(depth: i64, p: &str, fields: &[Json]) -> String {
+    let args = fields
+        .iter()
+        .enumerate()
+        .map(|(i, field)| {
+            if field.is_string() {
+                format!("{}: v{}", field.as_str(), i)
+            } else {
+                format!("v{}", i)
+            }
+        })
+        .collect::<Vec<_>>()
+        .join(", ");
+    [
+        format!("{p}_sn_delta := {p}_ROne({p}_RZero: nil);"),
+        format!("@Ground({p}_sn_delta);"),
+        format!("{p}_sn_full({args}) :- {p}_sn_delta({args});"),
+        format!("@Ground({p}_sn_full);"),
+        format!("{p}_sn_step := {p}_ROne({p}_RZero: {p}_sn_delta);"),
+        format!("{p}_sn_new({args}) distinct :- {p}_sn_step({args}), ~{p}_sn_full({args});"),
+        format!("@Ground({p}_sn_new);"),
+        format!("{p}_sn_next({args}) :- {p}_sn_new({args});"),
+        format!("@Ground({p}_sn_next, {p}_sn_delta);"),
+        // A rule, not a copy (`:=`): it reads the table the loop adds to.
+        format!("{p}({args}) :- {p}_sn_full({args});"),
+        format!(
+            "@Iteration({p}_sn_delta, predicates: [{p}_sn_new, {p}_sn_next], repetitions: {depth}, accumulate: {p}_sn_full);"
+        ),
+    ]
+    .join("\n")
 }
 
 /// Generate flat recursion functor program text.

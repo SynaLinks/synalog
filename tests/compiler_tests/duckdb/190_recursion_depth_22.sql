@@ -4,8 +4,8 @@ create schema if not exists logica_home;
 drop type if exists logicarecord893574736 cascade; create type logicarecord893574736 as struct(nirvana numeric);
 create sequence if not exists eternal_logical_sequence;
 
-DROP TABLE IF EXISTS logica_home.Reach_ifr0;
-CREATE TABLE logica_home.Reach_ifr0 AS WITH t_0_Reach_MultBodyAggAux_f1 AS (SELECT * FROM (
+DROP TABLE IF EXISTS logica_home.Reach_sn_delta;
+CREATE TABLE logica_home.Reach_sn_delta AS WITH t_0_Reach_MultBodyAggAux_f1 AS (SELECT * FROM (
   
     SELECT
       0 AS y
@@ -17,479 +17,919 @@ FROM
   t_0_Reach_MultBodyAggAux_f1 AS Reach_MultBodyAggAux_f1
 GROUP BY Reach_MultBodyAggAux_f1.y;
 
--- Interacting with table logica_home.Reach_ifr0
+-- Interacting with table logica_home.Reach_sn_delta
 
-DROP TABLE IF EXISTS logica_home.Reach_ifr1;
-CREATE TABLE logica_home.Reach_ifr1 AS WITH t_0_Reach_MultBodyAggAux_f2 AS (SELECT * FROM (
+DROP TABLE IF EXISTS logica_home.Reach_sn_full;
+CREATE TABLE logica_home.Reach_sn_full AS SELECT
+  Reach_sn_delta.y AS y
+FROM
+  logica_home.Reach_sn_delta AS Reach_sn_delta;
+
+-- Interacting with table logica_home.Reach_sn_full
+
+DROP TABLE IF EXISTS logica_home.Reach_sn_new;
+CREATE TABLE logica_home.Reach_sn_new AS WITH t_1_Reach_MultBodyAggAux_f2 AS (SELECT * FROM (
   
     SELECT
       0 AS y
    UNION ALL
   
     SELECT
-      ((x_7.unnested_pod) + (1)) AS y
+      ((x_9.unnested_pod) + (1)) AS y
     FROM
-      logica_home.Reach_ifr0 AS Reach_ifr0, (select unnest(Range(200)) as unnested_pod) as x_7
+      logica_home.Reach_sn_delta AS Reach_sn_delta, (select unnest(Range(200)) as unnested_pod) as x_9
     WHERE
-      (Reach_ifr0.y = x_7.unnested_pod)
+      (Reach_sn_delta.y = x_9.unnested_pod)
   
-) AS UNUSED_TABLE_NAME  )
-SELECT
+) AS UNUSED_TABLE_NAME  ),
+t_0_Reach_sn_step AS (SELECT
   Reach_MultBodyAggAux_f2.y AS y
 FROM
-  t_0_Reach_MultBodyAggAux_f2 AS Reach_MultBodyAggAux_f2
-GROUP BY Reach_MultBodyAggAux_f2.y;
+  t_1_Reach_MultBodyAggAux_f2 AS Reach_MultBodyAggAux_f2
+GROUP BY Reach_MultBodyAggAux_f2.y)
+SELECT
+  Reach_sn_step.y AS y
+FROM
+  t_0_Reach_sn_step AS Reach_sn_step
+WHERE
+  ((SELECT
+    MIN((CASE WHEN x_12.unnested_pod = 0 THEN 1 ELSE NULL END)) AS logica_value
+  FROM
+    logica_home.Reach_sn_full AS Reach_sn_full, (select unnest([0]) as unnested_pod) as x_12
+  WHERE
+    (Reach_sn_full.y = Reach_sn_step.y)) IS NULL)
+GROUP BY Reach_sn_step.y;
 
--- Interacting with table logica_home.Reach_ifr1
+INSERT INTO logica_home.Reach_sn_full SELECT * FROM logica_home.Reach_sn_new;
 
-DROP TABLE IF EXISTS logica_home.Reach_ifr2;
-CREATE TABLE logica_home.Reach_ifr2 AS WITH t_0_Reach_MultBodyAggAux_f3 AS (SELECT * FROM (
+DROP TABLE IF EXISTS logica_home.Reach_sn_delta;
+CREATE TABLE logica_home.Reach_sn_delta AS SELECT
+  Reach_sn_new.y AS y
+FROM
+  logica_home.Reach_sn_new AS Reach_sn_new;
+
+DROP TABLE IF EXISTS logica_home.Reach_sn_new;
+CREATE TABLE logica_home.Reach_sn_new AS WITH t_1_Reach_MultBodyAggAux_f2 AS (SELECT * FROM (
   
     SELECT
       0 AS y
    UNION ALL
   
     SELECT
-      ((x_7.unnested_pod) + (1)) AS y
+      ((x_9.unnested_pod) + (1)) AS y
     FROM
-      logica_home.Reach_ifr1 AS Reach_ifr1, (select unnest(Range(200)) as unnested_pod) as x_7
+      logica_home.Reach_sn_delta AS Reach_sn_delta, (select unnest(Range(200)) as unnested_pod) as x_9
     WHERE
-      (Reach_ifr1.y = x_7.unnested_pod)
+      (Reach_sn_delta.y = x_9.unnested_pod)
   
-) AS UNUSED_TABLE_NAME  )
-SELECT
-  Reach_MultBodyAggAux_f3.y AS y
+) AS UNUSED_TABLE_NAME  ),
+t_0_Reach_sn_step AS (SELECT
+  Reach_MultBodyAggAux_f2.y AS y
 FROM
-  t_0_Reach_MultBodyAggAux_f3 AS Reach_MultBodyAggAux_f3
-GROUP BY Reach_MultBodyAggAux_f3.y;
+  t_1_Reach_MultBodyAggAux_f2 AS Reach_MultBodyAggAux_f2
+GROUP BY Reach_MultBodyAggAux_f2.y)
+SELECT
+  Reach_sn_step.y AS y
+FROM
+  t_0_Reach_sn_step AS Reach_sn_step
+WHERE
+  ((SELECT
+    MIN((CASE WHEN x_12.unnested_pod = 0 THEN 1 ELSE NULL END)) AS logica_value
+  FROM
+    logica_home.Reach_sn_full AS Reach_sn_full, (select unnest([0]) as unnested_pod) as x_12
+  WHERE
+    (Reach_sn_full.y = Reach_sn_step.y)) IS NULL)
+GROUP BY Reach_sn_step.y;
 
--- Interacting with table logica_home.Reach_ifr2
+INSERT INTO logica_home.Reach_sn_full SELECT * FROM logica_home.Reach_sn_new;
 
-DROP TABLE IF EXISTS logica_home.Reach_ifr1;
-CREATE TABLE logica_home.Reach_ifr1 AS WITH t_0_Reach_MultBodyAggAux_f4 AS (SELECT * FROM (
+DROP TABLE IF EXISTS logica_home.Reach_sn_delta;
+CREATE TABLE logica_home.Reach_sn_delta AS SELECT
+  Reach_sn_new.y AS y
+FROM
+  logica_home.Reach_sn_new AS Reach_sn_new;
+
+DROP TABLE IF EXISTS logica_home.Reach_sn_new;
+CREATE TABLE logica_home.Reach_sn_new AS WITH t_1_Reach_MultBodyAggAux_f2 AS (SELECT * FROM (
   
     SELECT
       0 AS y
    UNION ALL
   
     SELECT
-      ((x_7.unnested_pod) + (1)) AS y
+      ((x_9.unnested_pod) + (1)) AS y
     FROM
-      logica_home.Reach_ifr2 AS Reach_ifr2, (select unnest(Range(200)) as unnested_pod) as x_7
+      logica_home.Reach_sn_delta AS Reach_sn_delta, (select unnest(Range(200)) as unnested_pod) as x_9
     WHERE
-      (Reach_ifr2.y = x_7.unnested_pod)
+      (Reach_sn_delta.y = x_9.unnested_pod)
   
-) AS UNUSED_TABLE_NAME  )
-SELECT
-  Reach_MultBodyAggAux_f4.y AS y
+) AS UNUSED_TABLE_NAME  ),
+t_0_Reach_sn_step AS (SELECT
+  Reach_MultBodyAggAux_f2.y AS y
 FROM
-  t_0_Reach_MultBodyAggAux_f4 AS Reach_MultBodyAggAux_f4
-GROUP BY Reach_MultBodyAggAux_f4.y;
+  t_1_Reach_MultBodyAggAux_f2 AS Reach_MultBodyAggAux_f2
+GROUP BY Reach_MultBodyAggAux_f2.y)
+SELECT
+  Reach_sn_step.y AS y
+FROM
+  t_0_Reach_sn_step AS Reach_sn_step
+WHERE
+  ((SELECT
+    MIN((CASE WHEN x_12.unnested_pod = 0 THEN 1 ELSE NULL END)) AS logica_value
+  FROM
+    logica_home.Reach_sn_full AS Reach_sn_full, (select unnest([0]) as unnested_pod) as x_12
+  WHERE
+    (Reach_sn_full.y = Reach_sn_step.y)) IS NULL)
+GROUP BY Reach_sn_step.y;
 
--- Interacting with table logica_home.Reach_ifr1
+INSERT INTO logica_home.Reach_sn_full SELECT * FROM logica_home.Reach_sn_new;
 
-DROP TABLE IF EXISTS logica_home.Reach_ifr2;
-CREATE TABLE logica_home.Reach_ifr2 AS WITH t_0_Reach_MultBodyAggAux_f3 AS (SELECT * FROM (
+DROP TABLE IF EXISTS logica_home.Reach_sn_delta;
+CREATE TABLE logica_home.Reach_sn_delta AS SELECT
+  Reach_sn_new.y AS y
+FROM
+  logica_home.Reach_sn_new AS Reach_sn_new;
+
+DROP TABLE IF EXISTS logica_home.Reach_sn_new;
+CREATE TABLE logica_home.Reach_sn_new AS WITH t_1_Reach_MultBodyAggAux_f2 AS (SELECT * FROM (
   
     SELECT
       0 AS y
    UNION ALL
   
     SELECT
-      ((x_7.unnested_pod) + (1)) AS y
+      ((x_9.unnested_pod) + (1)) AS y
     FROM
-      logica_home.Reach_ifr1 AS Reach_ifr1, (select unnest(Range(200)) as unnested_pod) as x_7
+      logica_home.Reach_sn_delta AS Reach_sn_delta, (select unnest(Range(200)) as unnested_pod) as x_9
     WHERE
-      (Reach_ifr1.y = x_7.unnested_pod)
+      (Reach_sn_delta.y = x_9.unnested_pod)
   
-) AS UNUSED_TABLE_NAME  )
-SELECT
-  Reach_MultBodyAggAux_f3.y AS y
+) AS UNUSED_TABLE_NAME  ),
+t_0_Reach_sn_step AS (SELECT
+  Reach_MultBodyAggAux_f2.y AS y
 FROM
-  t_0_Reach_MultBodyAggAux_f3 AS Reach_MultBodyAggAux_f3
-GROUP BY Reach_MultBodyAggAux_f3.y;
+  t_1_Reach_MultBodyAggAux_f2 AS Reach_MultBodyAggAux_f2
+GROUP BY Reach_MultBodyAggAux_f2.y)
+SELECT
+  Reach_sn_step.y AS y
+FROM
+  t_0_Reach_sn_step AS Reach_sn_step
+WHERE
+  ((SELECT
+    MIN((CASE WHEN x_12.unnested_pod = 0 THEN 1 ELSE NULL END)) AS logica_value
+  FROM
+    logica_home.Reach_sn_full AS Reach_sn_full, (select unnest([0]) as unnested_pod) as x_12
+  WHERE
+    (Reach_sn_full.y = Reach_sn_step.y)) IS NULL)
+GROUP BY Reach_sn_step.y;
 
-DROP TABLE IF EXISTS logica_home.Reach_ifr1;
-CREATE TABLE logica_home.Reach_ifr1 AS WITH t_0_Reach_MultBodyAggAux_f4 AS (SELECT * FROM (
+INSERT INTO logica_home.Reach_sn_full SELECT * FROM logica_home.Reach_sn_new;
+
+DROP TABLE IF EXISTS logica_home.Reach_sn_delta;
+CREATE TABLE logica_home.Reach_sn_delta AS SELECT
+  Reach_sn_new.y AS y
+FROM
+  logica_home.Reach_sn_new AS Reach_sn_new;
+
+DROP TABLE IF EXISTS logica_home.Reach_sn_new;
+CREATE TABLE logica_home.Reach_sn_new AS WITH t_1_Reach_MultBodyAggAux_f2 AS (SELECT * FROM (
   
     SELECT
       0 AS y
    UNION ALL
   
     SELECT
-      ((x_7.unnested_pod) + (1)) AS y
+      ((x_9.unnested_pod) + (1)) AS y
     FROM
-      logica_home.Reach_ifr2 AS Reach_ifr2, (select unnest(Range(200)) as unnested_pod) as x_7
+      logica_home.Reach_sn_delta AS Reach_sn_delta, (select unnest(Range(200)) as unnested_pod) as x_9
     WHERE
-      (Reach_ifr2.y = x_7.unnested_pod)
+      (Reach_sn_delta.y = x_9.unnested_pod)
   
-) AS UNUSED_TABLE_NAME  )
-SELECT
-  Reach_MultBodyAggAux_f4.y AS y
+) AS UNUSED_TABLE_NAME  ),
+t_0_Reach_sn_step AS (SELECT
+  Reach_MultBodyAggAux_f2.y AS y
 FROM
-  t_0_Reach_MultBodyAggAux_f4 AS Reach_MultBodyAggAux_f4
-GROUP BY Reach_MultBodyAggAux_f4.y;
+  t_1_Reach_MultBodyAggAux_f2 AS Reach_MultBodyAggAux_f2
+GROUP BY Reach_MultBodyAggAux_f2.y)
+SELECT
+  Reach_sn_step.y AS y
+FROM
+  t_0_Reach_sn_step AS Reach_sn_step
+WHERE
+  ((SELECT
+    MIN((CASE WHEN x_12.unnested_pod = 0 THEN 1 ELSE NULL END)) AS logica_value
+  FROM
+    logica_home.Reach_sn_full AS Reach_sn_full, (select unnest([0]) as unnested_pod) as x_12
+  WHERE
+    (Reach_sn_full.y = Reach_sn_step.y)) IS NULL)
+GROUP BY Reach_sn_step.y;
 
-DROP TABLE IF EXISTS logica_home.Reach_ifr2;
-CREATE TABLE logica_home.Reach_ifr2 AS WITH t_0_Reach_MultBodyAggAux_f3 AS (SELECT * FROM (
+INSERT INTO logica_home.Reach_sn_full SELECT * FROM logica_home.Reach_sn_new;
+
+DROP TABLE IF EXISTS logica_home.Reach_sn_delta;
+CREATE TABLE logica_home.Reach_sn_delta AS SELECT
+  Reach_sn_new.y AS y
+FROM
+  logica_home.Reach_sn_new AS Reach_sn_new;
+
+DROP TABLE IF EXISTS logica_home.Reach_sn_new;
+CREATE TABLE logica_home.Reach_sn_new AS WITH t_1_Reach_MultBodyAggAux_f2 AS (SELECT * FROM (
   
     SELECT
       0 AS y
    UNION ALL
   
     SELECT
-      ((x_7.unnested_pod) + (1)) AS y
+      ((x_9.unnested_pod) + (1)) AS y
     FROM
-      logica_home.Reach_ifr1 AS Reach_ifr1, (select unnest(Range(200)) as unnested_pod) as x_7
+      logica_home.Reach_sn_delta AS Reach_sn_delta, (select unnest(Range(200)) as unnested_pod) as x_9
     WHERE
-      (Reach_ifr1.y = x_7.unnested_pod)
+      (Reach_sn_delta.y = x_9.unnested_pod)
   
-) AS UNUSED_TABLE_NAME  )
-SELECT
-  Reach_MultBodyAggAux_f3.y AS y
+) AS UNUSED_TABLE_NAME  ),
+t_0_Reach_sn_step AS (SELECT
+  Reach_MultBodyAggAux_f2.y AS y
 FROM
-  t_0_Reach_MultBodyAggAux_f3 AS Reach_MultBodyAggAux_f3
-GROUP BY Reach_MultBodyAggAux_f3.y;
+  t_1_Reach_MultBodyAggAux_f2 AS Reach_MultBodyAggAux_f2
+GROUP BY Reach_MultBodyAggAux_f2.y)
+SELECT
+  Reach_sn_step.y AS y
+FROM
+  t_0_Reach_sn_step AS Reach_sn_step
+WHERE
+  ((SELECT
+    MIN((CASE WHEN x_12.unnested_pod = 0 THEN 1 ELSE NULL END)) AS logica_value
+  FROM
+    logica_home.Reach_sn_full AS Reach_sn_full, (select unnest([0]) as unnested_pod) as x_12
+  WHERE
+    (Reach_sn_full.y = Reach_sn_step.y)) IS NULL)
+GROUP BY Reach_sn_step.y;
 
-DROP TABLE IF EXISTS logica_home.Reach_ifr1;
-CREATE TABLE logica_home.Reach_ifr1 AS WITH t_0_Reach_MultBodyAggAux_f4 AS (SELECT * FROM (
+INSERT INTO logica_home.Reach_sn_full SELECT * FROM logica_home.Reach_sn_new;
+
+DROP TABLE IF EXISTS logica_home.Reach_sn_delta;
+CREATE TABLE logica_home.Reach_sn_delta AS SELECT
+  Reach_sn_new.y AS y
+FROM
+  logica_home.Reach_sn_new AS Reach_sn_new;
+
+DROP TABLE IF EXISTS logica_home.Reach_sn_new;
+CREATE TABLE logica_home.Reach_sn_new AS WITH t_1_Reach_MultBodyAggAux_f2 AS (SELECT * FROM (
   
     SELECT
       0 AS y
    UNION ALL
   
     SELECT
-      ((x_7.unnested_pod) + (1)) AS y
+      ((x_9.unnested_pod) + (1)) AS y
     FROM
-      logica_home.Reach_ifr2 AS Reach_ifr2, (select unnest(Range(200)) as unnested_pod) as x_7
+      logica_home.Reach_sn_delta AS Reach_sn_delta, (select unnest(Range(200)) as unnested_pod) as x_9
     WHERE
-      (Reach_ifr2.y = x_7.unnested_pod)
+      (Reach_sn_delta.y = x_9.unnested_pod)
   
-) AS UNUSED_TABLE_NAME  )
-SELECT
-  Reach_MultBodyAggAux_f4.y AS y
+) AS UNUSED_TABLE_NAME  ),
+t_0_Reach_sn_step AS (SELECT
+  Reach_MultBodyAggAux_f2.y AS y
 FROM
-  t_0_Reach_MultBodyAggAux_f4 AS Reach_MultBodyAggAux_f4
-GROUP BY Reach_MultBodyAggAux_f4.y;
+  t_1_Reach_MultBodyAggAux_f2 AS Reach_MultBodyAggAux_f2
+GROUP BY Reach_MultBodyAggAux_f2.y)
+SELECT
+  Reach_sn_step.y AS y
+FROM
+  t_0_Reach_sn_step AS Reach_sn_step
+WHERE
+  ((SELECT
+    MIN((CASE WHEN x_12.unnested_pod = 0 THEN 1 ELSE NULL END)) AS logica_value
+  FROM
+    logica_home.Reach_sn_full AS Reach_sn_full, (select unnest([0]) as unnested_pod) as x_12
+  WHERE
+    (Reach_sn_full.y = Reach_sn_step.y)) IS NULL)
+GROUP BY Reach_sn_step.y;
 
-DROP TABLE IF EXISTS logica_home.Reach_ifr2;
-CREATE TABLE logica_home.Reach_ifr2 AS WITH t_0_Reach_MultBodyAggAux_f3 AS (SELECT * FROM (
+INSERT INTO logica_home.Reach_sn_full SELECT * FROM logica_home.Reach_sn_new;
+
+DROP TABLE IF EXISTS logica_home.Reach_sn_delta;
+CREATE TABLE logica_home.Reach_sn_delta AS SELECT
+  Reach_sn_new.y AS y
+FROM
+  logica_home.Reach_sn_new AS Reach_sn_new;
+
+DROP TABLE IF EXISTS logica_home.Reach_sn_new;
+CREATE TABLE logica_home.Reach_sn_new AS WITH t_1_Reach_MultBodyAggAux_f2 AS (SELECT * FROM (
   
     SELECT
       0 AS y
    UNION ALL
   
     SELECT
-      ((x_7.unnested_pod) + (1)) AS y
+      ((x_9.unnested_pod) + (1)) AS y
     FROM
-      logica_home.Reach_ifr1 AS Reach_ifr1, (select unnest(Range(200)) as unnested_pod) as x_7
+      logica_home.Reach_sn_delta AS Reach_sn_delta, (select unnest(Range(200)) as unnested_pod) as x_9
     WHERE
-      (Reach_ifr1.y = x_7.unnested_pod)
+      (Reach_sn_delta.y = x_9.unnested_pod)
   
-) AS UNUSED_TABLE_NAME  )
-SELECT
-  Reach_MultBodyAggAux_f3.y AS y
+) AS UNUSED_TABLE_NAME  ),
+t_0_Reach_sn_step AS (SELECT
+  Reach_MultBodyAggAux_f2.y AS y
 FROM
-  t_0_Reach_MultBodyAggAux_f3 AS Reach_MultBodyAggAux_f3
-GROUP BY Reach_MultBodyAggAux_f3.y;
+  t_1_Reach_MultBodyAggAux_f2 AS Reach_MultBodyAggAux_f2
+GROUP BY Reach_MultBodyAggAux_f2.y)
+SELECT
+  Reach_sn_step.y AS y
+FROM
+  t_0_Reach_sn_step AS Reach_sn_step
+WHERE
+  ((SELECT
+    MIN((CASE WHEN x_12.unnested_pod = 0 THEN 1 ELSE NULL END)) AS logica_value
+  FROM
+    logica_home.Reach_sn_full AS Reach_sn_full, (select unnest([0]) as unnested_pod) as x_12
+  WHERE
+    (Reach_sn_full.y = Reach_sn_step.y)) IS NULL)
+GROUP BY Reach_sn_step.y;
 
-DROP TABLE IF EXISTS logica_home.Reach_ifr1;
-CREATE TABLE logica_home.Reach_ifr1 AS WITH t_0_Reach_MultBodyAggAux_f4 AS (SELECT * FROM (
+INSERT INTO logica_home.Reach_sn_full SELECT * FROM logica_home.Reach_sn_new;
+
+DROP TABLE IF EXISTS logica_home.Reach_sn_delta;
+CREATE TABLE logica_home.Reach_sn_delta AS SELECT
+  Reach_sn_new.y AS y
+FROM
+  logica_home.Reach_sn_new AS Reach_sn_new;
+
+DROP TABLE IF EXISTS logica_home.Reach_sn_new;
+CREATE TABLE logica_home.Reach_sn_new AS WITH t_1_Reach_MultBodyAggAux_f2 AS (SELECT * FROM (
   
     SELECT
       0 AS y
    UNION ALL
   
     SELECT
-      ((x_7.unnested_pod) + (1)) AS y
+      ((x_9.unnested_pod) + (1)) AS y
     FROM
-      logica_home.Reach_ifr2 AS Reach_ifr2, (select unnest(Range(200)) as unnested_pod) as x_7
+      logica_home.Reach_sn_delta AS Reach_sn_delta, (select unnest(Range(200)) as unnested_pod) as x_9
     WHERE
-      (Reach_ifr2.y = x_7.unnested_pod)
+      (Reach_sn_delta.y = x_9.unnested_pod)
   
-) AS UNUSED_TABLE_NAME  )
-SELECT
-  Reach_MultBodyAggAux_f4.y AS y
+) AS UNUSED_TABLE_NAME  ),
+t_0_Reach_sn_step AS (SELECT
+  Reach_MultBodyAggAux_f2.y AS y
 FROM
-  t_0_Reach_MultBodyAggAux_f4 AS Reach_MultBodyAggAux_f4
-GROUP BY Reach_MultBodyAggAux_f4.y;
+  t_1_Reach_MultBodyAggAux_f2 AS Reach_MultBodyAggAux_f2
+GROUP BY Reach_MultBodyAggAux_f2.y)
+SELECT
+  Reach_sn_step.y AS y
+FROM
+  t_0_Reach_sn_step AS Reach_sn_step
+WHERE
+  ((SELECT
+    MIN((CASE WHEN x_12.unnested_pod = 0 THEN 1 ELSE NULL END)) AS logica_value
+  FROM
+    logica_home.Reach_sn_full AS Reach_sn_full, (select unnest([0]) as unnested_pod) as x_12
+  WHERE
+    (Reach_sn_full.y = Reach_sn_step.y)) IS NULL)
+GROUP BY Reach_sn_step.y;
 
-DROP TABLE IF EXISTS logica_home.Reach_ifr2;
-CREATE TABLE logica_home.Reach_ifr2 AS WITH t_0_Reach_MultBodyAggAux_f3 AS (SELECT * FROM (
+INSERT INTO logica_home.Reach_sn_full SELECT * FROM logica_home.Reach_sn_new;
+
+DROP TABLE IF EXISTS logica_home.Reach_sn_delta;
+CREATE TABLE logica_home.Reach_sn_delta AS SELECT
+  Reach_sn_new.y AS y
+FROM
+  logica_home.Reach_sn_new AS Reach_sn_new;
+
+DROP TABLE IF EXISTS logica_home.Reach_sn_new;
+CREATE TABLE logica_home.Reach_sn_new AS WITH t_1_Reach_MultBodyAggAux_f2 AS (SELECT * FROM (
   
     SELECT
       0 AS y
    UNION ALL
   
     SELECT
-      ((x_7.unnested_pod) + (1)) AS y
+      ((x_9.unnested_pod) + (1)) AS y
     FROM
-      logica_home.Reach_ifr1 AS Reach_ifr1, (select unnest(Range(200)) as unnested_pod) as x_7
+      logica_home.Reach_sn_delta AS Reach_sn_delta, (select unnest(Range(200)) as unnested_pod) as x_9
     WHERE
-      (Reach_ifr1.y = x_7.unnested_pod)
+      (Reach_sn_delta.y = x_9.unnested_pod)
   
-) AS UNUSED_TABLE_NAME  )
-SELECT
-  Reach_MultBodyAggAux_f3.y AS y
+) AS UNUSED_TABLE_NAME  ),
+t_0_Reach_sn_step AS (SELECT
+  Reach_MultBodyAggAux_f2.y AS y
 FROM
-  t_0_Reach_MultBodyAggAux_f3 AS Reach_MultBodyAggAux_f3
-GROUP BY Reach_MultBodyAggAux_f3.y;
+  t_1_Reach_MultBodyAggAux_f2 AS Reach_MultBodyAggAux_f2
+GROUP BY Reach_MultBodyAggAux_f2.y)
+SELECT
+  Reach_sn_step.y AS y
+FROM
+  t_0_Reach_sn_step AS Reach_sn_step
+WHERE
+  ((SELECT
+    MIN((CASE WHEN x_12.unnested_pod = 0 THEN 1 ELSE NULL END)) AS logica_value
+  FROM
+    logica_home.Reach_sn_full AS Reach_sn_full, (select unnest([0]) as unnested_pod) as x_12
+  WHERE
+    (Reach_sn_full.y = Reach_sn_step.y)) IS NULL)
+GROUP BY Reach_sn_step.y;
 
-DROP TABLE IF EXISTS logica_home.Reach_ifr1;
-CREATE TABLE logica_home.Reach_ifr1 AS WITH t_0_Reach_MultBodyAggAux_f4 AS (SELECT * FROM (
+INSERT INTO logica_home.Reach_sn_full SELECT * FROM logica_home.Reach_sn_new;
+
+DROP TABLE IF EXISTS logica_home.Reach_sn_delta;
+CREATE TABLE logica_home.Reach_sn_delta AS SELECT
+  Reach_sn_new.y AS y
+FROM
+  logica_home.Reach_sn_new AS Reach_sn_new;
+
+DROP TABLE IF EXISTS logica_home.Reach_sn_new;
+CREATE TABLE logica_home.Reach_sn_new AS WITH t_1_Reach_MultBodyAggAux_f2 AS (SELECT * FROM (
   
     SELECT
       0 AS y
    UNION ALL
   
     SELECT
-      ((x_7.unnested_pod) + (1)) AS y
+      ((x_9.unnested_pod) + (1)) AS y
     FROM
-      logica_home.Reach_ifr2 AS Reach_ifr2, (select unnest(Range(200)) as unnested_pod) as x_7
+      logica_home.Reach_sn_delta AS Reach_sn_delta, (select unnest(Range(200)) as unnested_pod) as x_9
     WHERE
-      (Reach_ifr2.y = x_7.unnested_pod)
+      (Reach_sn_delta.y = x_9.unnested_pod)
   
-) AS UNUSED_TABLE_NAME  )
-SELECT
-  Reach_MultBodyAggAux_f4.y AS y
+) AS UNUSED_TABLE_NAME  ),
+t_0_Reach_sn_step AS (SELECT
+  Reach_MultBodyAggAux_f2.y AS y
 FROM
-  t_0_Reach_MultBodyAggAux_f4 AS Reach_MultBodyAggAux_f4
-GROUP BY Reach_MultBodyAggAux_f4.y;
+  t_1_Reach_MultBodyAggAux_f2 AS Reach_MultBodyAggAux_f2
+GROUP BY Reach_MultBodyAggAux_f2.y)
+SELECT
+  Reach_sn_step.y AS y
+FROM
+  t_0_Reach_sn_step AS Reach_sn_step
+WHERE
+  ((SELECT
+    MIN((CASE WHEN x_12.unnested_pod = 0 THEN 1 ELSE NULL END)) AS logica_value
+  FROM
+    logica_home.Reach_sn_full AS Reach_sn_full, (select unnest([0]) as unnested_pod) as x_12
+  WHERE
+    (Reach_sn_full.y = Reach_sn_step.y)) IS NULL)
+GROUP BY Reach_sn_step.y;
 
-DROP TABLE IF EXISTS logica_home.Reach_ifr2;
-CREATE TABLE logica_home.Reach_ifr2 AS WITH t_0_Reach_MultBodyAggAux_f3 AS (SELECT * FROM (
+INSERT INTO logica_home.Reach_sn_full SELECT * FROM logica_home.Reach_sn_new;
+
+DROP TABLE IF EXISTS logica_home.Reach_sn_delta;
+CREATE TABLE logica_home.Reach_sn_delta AS SELECT
+  Reach_sn_new.y AS y
+FROM
+  logica_home.Reach_sn_new AS Reach_sn_new;
+
+DROP TABLE IF EXISTS logica_home.Reach_sn_new;
+CREATE TABLE logica_home.Reach_sn_new AS WITH t_1_Reach_MultBodyAggAux_f2 AS (SELECT * FROM (
   
     SELECT
       0 AS y
    UNION ALL
   
     SELECT
-      ((x_7.unnested_pod) + (1)) AS y
+      ((x_9.unnested_pod) + (1)) AS y
     FROM
-      logica_home.Reach_ifr1 AS Reach_ifr1, (select unnest(Range(200)) as unnested_pod) as x_7
+      logica_home.Reach_sn_delta AS Reach_sn_delta, (select unnest(Range(200)) as unnested_pod) as x_9
     WHERE
-      (Reach_ifr1.y = x_7.unnested_pod)
+      (Reach_sn_delta.y = x_9.unnested_pod)
   
-) AS UNUSED_TABLE_NAME  )
-SELECT
-  Reach_MultBodyAggAux_f3.y AS y
+) AS UNUSED_TABLE_NAME  ),
+t_0_Reach_sn_step AS (SELECT
+  Reach_MultBodyAggAux_f2.y AS y
 FROM
-  t_0_Reach_MultBodyAggAux_f3 AS Reach_MultBodyAggAux_f3
-GROUP BY Reach_MultBodyAggAux_f3.y;
+  t_1_Reach_MultBodyAggAux_f2 AS Reach_MultBodyAggAux_f2
+GROUP BY Reach_MultBodyAggAux_f2.y)
+SELECT
+  Reach_sn_step.y AS y
+FROM
+  t_0_Reach_sn_step AS Reach_sn_step
+WHERE
+  ((SELECT
+    MIN((CASE WHEN x_12.unnested_pod = 0 THEN 1 ELSE NULL END)) AS logica_value
+  FROM
+    logica_home.Reach_sn_full AS Reach_sn_full, (select unnest([0]) as unnested_pod) as x_12
+  WHERE
+    (Reach_sn_full.y = Reach_sn_step.y)) IS NULL)
+GROUP BY Reach_sn_step.y;
 
-DROP TABLE IF EXISTS logica_home.Reach_ifr1;
-CREATE TABLE logica_home.Reach_ifr1 AS WITH t_0_Reach_MultBodyAggAux_f4 AS (SELECT * FROM (
+INSERT INTO logica_home.Reach_sn_full SELECT * FROM logica_home.Reach_sn_new;
+
+DROP TABLE IF EXISTS logica_home.Reach_sn_delta;
+CREATE TABLE logica_home.Reach_sn_delta AS SELECT
+  Reach_sn_new.y AS y
+FROM
+  logica_home.Reach_sn_new AS Reach_sn_new;
+
+DROP TABLE IF EXISTS logica_home.Reach_sn_new;
+CREATE TABLE logica_home.Reach_sn_new AS WITH t_1_Reach_MultBodyAggAux_f2 AS (SELECT * FROM (
   
     SELECT
       0 AS y
    UNION ALL
   
     SELECT
-      ((x_7.unnested_pod) + (1)) AS y
+      ((x_9.unnested_pod) + (1)) AS y
     FROM
-      logica_home.Reach_ifr2 AS Reach_ifr2, (select unnest(Range(200)) as unnested_pod) as x_7
+      logica_home.Reach_sn_delta AS Reach_sn_delta, (select unnest(Range(200)) as unnested_pod) as x_9
     WHERE
-      (Reach_ifr2.y = x_7.unnested_pod)
+      (Reach_sn_delta.y = x_9.unnested_pod)
   
-) AS UNUSED_TABLE_NAME  )
-SELECT
-  Reach_MultBodyAggAux_f4.y AS y
+) AS UNUSED_TABLE_NAME  ),
+t_0_Reach_sn_step AS (SELECT
+  Reach_MultBodyAggAux_f2.y AS y
 FROM
-  t_0_Reach_MultBodyAggAux_f4 AS Reach_MultBodyAggAux_f4
-GROUP BY Reach_MultBodyAggAux_f4.y;
+  t_1_Reach_MultBodyAggAux_f2 AS Reach_MultBodyAggAux_f2
+GROUP BY Reach_MultBodyAggAux_f2.y)
+SELECT
+  Reach_sn_step.y AS y
+FROM
+  t_0_Reach_sn_step AS Reach_sn_step
+WHERE
+  ((SELECT
+    MIN((CASE WHEN x_12.unnested_pod = 0 THEN 1 ELSE NULL END)) AS logica_value
+  FROM
+    logica_home.Reach_sn_full AS Reach_sn_full, (select unnest([0]) as unnested_pod) as x_12
+  WHERE
+    (Reach_sn_full.y = Reach_sn_step.y)) IS NULL)
+GROUP BY Reach_sn_step.y;
 
-DROP TABLE IF EXISTS logica_home.Reach_ifr2;
-CREATE TABLE logica_home.Reach_ifr2 AS WITH t_0_Reach_MultBodyAggAux_f3 AS (SELECT * FROM (
+INSERT INTO logica_home.Reach_sn_full SELECT * FROM logica_home.Reach_sn_new;
+
+DROP TABLE IF EXISTS logica_home.Reach_sn_delta;
+CREATE TABLE logica_home.Reach_sn_delta AS SELECT
+  Reach_sn_new.y AS y
+FROM
+  logica_home.Reach_sn_new AS Reach_sn_new;
+
+DROP TABLE IF EXISTS logica_home.Reach_sn_new;
+CREATE TABLE logica_home.Reach_sn_new AS WITH t_1_Reach_MultBodyAggAux_f2 AS (SELECT * FROM (
   
     SELECT
       0 AS y
    UNION ALL
   
     SELECT
-      ((x_7.unnested_pod) + (1)) AS y
+      ((x_9.unnested_pod) + (1)) AS y
     FROM
-      logica_home.Reach_ifr1 AS Reach_ifr1, (select unnest(Range(200)) as unnested_pod) as x_7
+      logica_home.Reach_sn_delta AS Reach_sn_delta, (select unnest(Range(200)) as unnested_pod) as x_9
     WHERE
-      (Reach_ifr1.y = x_7.unnested_pod)
+      (Reach_sn_delta.y = x_9.unnested_pod)
   
-) AS UNUSED_TABLE_NAME  )
-SELECT
-  Reach_MultBodyAggAux_f3.y AS y
+) AS UNUSED_TABLE_NAME  ),
+t_0_Reach_sn_step AS (SELECT
+  Reach_MultBodyAggAux_f2.y AS y
 FROM
-  t_0_Reach_MultBodyAggAux_f3 AS Reach_MultBodyAggAux_f3
-GROUP BY Reach_MultBodyAggAux_f3.y;
+  t_1_Reach_MultBodyAggAux_f2 AS Reach_MultBodyAggAux_f2
+GROUP BY Reach_MultBodyAggAux_f2.y)
+SELECT
+  Reach_sn_step.y AS y
+FROM
+  t_0_Reach_sn_step AS Reach_sn_step
+WHERE
+  ((SELECT
+    MIN((CASE WHEN x_12.unnested_pod = 0 THEN 1 ELSE NULL END)) AS logica_value
+  FROM
+    logica_home.Reach_sn_full AS Reach_sn_full, (select unnest([0]) as unnested_pod) as x_12
+  WHERE
+    (Reach_sn_full.y = Reach_sn_step.y)) IS NULL)
+GROUP BY Reach_sn_step.y;
 
-DROP TABLE IF EXISTS logica_home.Reach_ifr1;
-CREATE TABLE logica_home.Reach_ifr1 AS WITH t_0_Reach_MultBodyAggAux_f4 AS (SELECT * FROM (
+INSERT INTO logica_home.Reach_sn_full SELECT * FROM logica_home.Reach_sn_new;
+
+DROP TABLE IF EXISTS logica_home.Reach_sn_delta;
+CREATE TABLE logica_home.Reach_sn_delta AS SELECT
+  Reach_sn_new.y AS y
+FROM
+  logica_home.Reach_sn_new AS Reach_sn_new;
+
+DROP TABLE IF EXISTS logica_home.Reach_sn_new;
+CREATE TABLE logica_home.Reach_sn_new AS WITH t_1_Reach_MultBodyAggAux_f2 AS (SELECT * FROM (
   
     SELECT
       0 AS y
    UNION ALL
   
     SELECT
-      ((x_7.unnested_pod) + (1)) AS y
+      ((x_9.unnested_pod) + (1)) AS y
     FROM
-      logica_home.Reach_ifr2 AS Reach_ifr2, (select unnest(Range(200)) as unnested_pod) as x_7
+      logica_home.Reach_sn_delta AS Reach_sn_delta, (select unnest(Range(200)) as unnested_pod) as x_9
     WHERE
-      (Reach_ifr2.y = x_7.unnested_pod)
+      (Reach_sn_delta.y = x_9.unnested_pod)
   
-) AS UNUSED_TABLE_NAME  )
-SELECT
-  Reach_MultBodyAggAux_f4.y AS y
+) AS UNUSED_TABLE_NAME  ),
+t_0_Reach_sn_step AS (SELECT
+  Reach_MultBodyAggAux_f2.y AS y
 FROM
-  t_0_Reach_MultBodyAggAux_f4 AS Reach_MultBodyAggAux_f4
-GROUP BY Reach_MultBodyAggAux_f4.y;
+  t_1_Reach_MultBodyAggAux_f2 AS Reach_MultBodyAggAux_f2
+GROUP BY Reach_MultBodyAggAux_f2.y)
+SELECT
+  Reach_sn_step.y AS y
+FROM
+  t_0_Reach_sn_step AS Reach_sn_step
+WHERE
+  ((SELECT
+    MIN((CASE WHEN x_12.unnested_pod = 0 THEN 1 ELSE NULL END)) AS logica_value
+  FROM
+    logica_home.Reach_sn_full AS Reach_sn_full, (select unnest([0]) as unnested_pod) as x_12
+  WHERE
+    (Reach_sn_full.y = Reach_sn_step.y)) IS NULL)
+GROUP BY Reach_sn_step.y;
 
-DROP TABLE IF EXISTS logica_home.Reach_ifr2;
-CREATE TABLE logica_home.Reach_ifr2 AS WITH t_0_Reach_MultBodyAggAux_f3 AS (SELECT * FROM (
+INSERT INTO logica_home.Reach_sn_full SELECT * FROM logica_home.Reach_sn_new;
+
+DROP TABLE IF EXISTS logica_home.Reach_sn_delta;
+CREATE TABLE logica_home.Reach_sn_delta AS SELECT
+  Reach_sn_new.y AS y
+FROM
+  logica_home.Reach_sn_new AS Reach_sn_new;
+
+DROP TABLE IF EXISTS logica_home.Reach_sn_new;
+CREATE TABLE logica_home.Reach_sn_new AS WITH t_1_Reach_MultBodyAggAux_f2 AS (SELECT * FROM (
   
     SELECT
       0 AS y
    UNION ALL
   
     SELECT
-      ((x_7.unnested_pod) + (1)) AS y
+      ((x_9.unnested_pod) + (1)) AS y
     FROM
-      logica_home.Reach_ifr1 AS Reach_ifr1, (select unnest(Range(200)) as unnested_pod) as x_7
+      logica_home.Reach_sn_delta AS Reach_sn_delta, (select unnest(Range(200)) as unnested_pod) as x_9
     WHERE
-      (Reach_ifr1.y = x_7.unnested_pod)
+      (Reach_sn_delta.y = x_9.unnested_pod)
   
-) AS UNUSED_TABLE_NAME  )
-SELECT
-  Reach_MultBodyAggAux_f3.y AS y
+) AS UNUSED_TABLE_NAME  ),
+t_0_Reach_sn_step AS (SELECT
+  Reach_MultBodyAggAux_f2.y AS y
 FROM
-  t_0_Reach_MultBodyAggAux_f3 AS Reach_MultBodyAggAux_f3
-GROUP BY Reach_MultBodyAggAux_f3.y;
+  t_1_Reach_MultBodyAggAux_f2 AS Reach_MultBodyAggAux_f2
+GROUP BY Reach_MultBodyAggAux_f2.y)
+SELECT
+  Reach_sn_step.y AS y
+FROM
+  t_0_Reach_sn_step AS Reach_sn_step
+WHERE
+  ((SELECT
+    MIN((CASE WHEN x_12.unnested_pod = 0 THEN 1 ELSE NULL END)) AS logica_value
+  FROM
+    logica_home.Reach_sn_full AS Reach_sn_full, (select unnest([0]) as unnested_pod) as x_12
+  WHERE
+    (Reach_sn_full.y = Reach_sn_step.y)) IS NULL)
+GROUP BY Reach_sn_step.y;
 
-DROP TABLE IF EXISTS logica_home.Reach_ifr1;
-CREATE TABLE logica_home.Reach_ifr1 AS WITH t_0_Reach_MultBodyAggAux_f4 AS (SELECT * FROM (
+INSERT INTO logica_home.Reach_sn_full SELECT * FROM logica_home.Reach_sn_new;
+
+DROP TABLE IF EXISTS logica_home.Reach_sn_delta;
+CREATE TABLE logica_home.Reach_sn_delta AS SELECT
+  Reach_sn_new.y AS y
+FROM
+  logica_home.Reach_sn_new AS Reach_sn_new;
+
+DROP TABLE IF EXISTS logica_home.Reach_sn_new;
+CREATE TABLE logica_home.Reach_sn_new AS WITH t_1_Reach_MultBodyAggAux_f2 AS (SELECT * FROM (
   
     SELECT
       0 AS y
    UNION ALL
   
     SELECT
-      ((x_7.unnested_pod) + (1)) AS y
+      ((x_9.unnested_pod) + (1)) AS y
     FROM
-      logica_home.Reach_ifr2 AS Reach_ifr2, (select unnest(Range(200)) as unnested_pod) as x_7
+      logica_home.Reach_sn_delta AS Reach_sn_delta, (select unnest(Range(200)) as unnested_pod) as x_9
     WHERE
-      (Reach_ifr2.y = x_7.unnested_pod)
+      (Reach_sn_delta.y = x_9.unnested_pod)
   
-) AS UNUSED_TABLE_NAME  )
-SELECT
-  Reach_MultBodyAggAux_f4.y AS y
+) AS UNUSED_TABLE_NAME  ),
+t_0_Reach_sn_step AS (SELECT
+  Reach_MultBodyAggAux_f2.y AS y
 FROM
-  t_0_Reach_MultBodyAggAux_f4 AS Reach_MultBodyAggAux_f4
-GROUP BY Reach_MultBodyAggAux_f4.y;
+  t_1_Reach_MultBodyAggAux_f2 AS Reach_MultBodyAggAux_f2
+GROUP BY Reach_MultBodyAggAux_f2.y)
+SELECT
+  Reach_sn_step.y AS y
+FROM
+  t_0_Reach_sn_step AS Reach_sn_step
+WHERE
+  ((SELECT
+    MIN((CASE WHEN x_12.unnested_pod = 0 THEN 1 ELSE NULL END)) AS logica_value
+  FROM
+    logica_home.Reach_sn_full AS Reach_sn_full, (select unnest([0]) as unnested_pod) as x_12
+  WHERE
+    (Reach_sn_full.y = Reach_sn_step.y)) IS NULL)
+GROUP BY Reach_sn_step.y;
 
-DROP TABLE IF EXISTS logica_home.Reach_ifr2;
-CREATE TABLE logica_home.Reach_ifr2 AS WITH t_0_Reach_MultBodyAggAux_f3 AS (SELECT * FROM (
+INSERT INTO logica_home.Reach_sn_full SELECT * FROM logica_home.Reach_sn_new;
+
+DROP TABLE IF EXISTS logica_home.Reach_sn_delta;
+CREATE TABLE logica_home.Reach_sn_delta AS SELECT
+  Reach_sn_new.y AS y
+FROM
+  logica_home.Reach_sn_new AS Reach_sn_new;
+
+DROP TABLE IF EXISTS logica_home.Reach_sn_new;
+CREATE TABLE logica_home.Reach_sn_new AS WITH t_1_Reach_MultBodyAggAux_f2 AS (SELECT * FROM (
   
     SELECT
       0 AS y
    UNION ALL
   
     SELECT
-      ((x_7.unnested_pod) + (1)) AS y
+      ((x_9.unnested_pod) + (1)) AS y
     FROM
-      logica_home.Reach_ifr1 AS Reach_ifr1, (select unnest(Range(200)) as unnested_pod) as x_7
+      logica_home.Reach_sn_delta AS Reach_sn_delta, (select unnest(Range(200)) as unnested_pod) as x_9
     WHERE
-      (Reach_ifr1.y = x_7.unnested_pod)
+      (Reach_sn_delta.y = x_9.unnested_pod)
   
-) AS UNUSED_TABLE_NAME  )
-SELECT
-  Reach_MultBodyAggAux_f3.y AS y
+) AS UNUSED_TABLE_NAME  ),
+t_0_Reach_sn_step AS (SELECT
+  Reach_MultBodyAggAux_f2.y AS y
 FROM
-  t_0_Reach_MultBodyAggAux_f3 AS Reach_MultBodyAggAux_f3
-GROUP BY Reach_MultBodyAggAux_f3.y;
+  t_1_Reach_MultBodyAggAux_f2 AS Reach_MultBodyAggAux_f2
+GROUP BY Reach_MultBodyAggAux_f2.y)
+SELECT
+  Reach_sn_step.y AS y
+FROM
+  t_0_Reach_sn_step AS Reach_sn_step
+WHERE
+  ((SELECT
+    MIN((CASE WHEN x_12.unnested_pod = 0 THEN 1 ELSE NULL END)) AS logica_value
+  FROM
+    logica_home.Reach_sn_full AS Reach_sn_full, (select unnest([0]) as unnested_pod) as x_12
+  WHERE
+    (Reach_sn_full.y = Reach_sn_step.y)) IS NULL)
+GROUP BY Reach_sn_step.y;
 
-DROP TABLE IF EXISTS logica_home.Reach_ifr1;
-CREATE TABLE logica_home.Reach_ifr1 AS WITH t_0_Reach_MultBodyAggAux_f4 AS (SELECT * FROM (
+INSERT INTO logica_home.Reach_sn_full SELECT * FROM logica_home.Reach_sn_new;
+
+DROP TABLE IF EXISTS logica_home.Reach_sn_delta;
+CREATE TABLE logica_home.Reach_sn_delta AS SELECT
+  Reach_sn_new.y AS y
+FROM
+  logica_home.Reach_sn_new AS Reach_sn_new;
+
+DROP TABLE IF EXISTS logica_home.Reach_sn_new;
+CREATE TABLE logica_home.Reach_sn_new AS WITH t_1_Reach_MultBodyAggAux_f2 AS (SELECT * FROM (
   
     SELECT
       0 AS y
    UNION ALL
   
     SELECT
-      ((x_7.unnested_pod) + (1)) AS y
+      ((x_9.unnested_pod) + (1)) AS y
     FROM
-      logica_home.Reach_ifr2 AS Reach_ifr2, (select unnest(Range(200)) as unnested_pod) as x_7
+      logica_home.Reach_sn_delta AS Reach_sn_delta, (select unnest(Range(200)) as unnested_pod) as x_9
     WHERE
-      (Reach_ifr2.y = x_7.unnested_pod)
+      (Reach_sn_delta.y = x_9.unnested_pod)
   
-) AS UNUSED_TABLE_NAME  )
-SELECT
-  Reach_MultBodyAggAux_f4.y AS y
+) AS UNUSED_TABLE_NAME  ),
+t_0_Reach_sn_step AS (SELECT
+  Reach_MultBodyAggAux_f2.y AS y
 FROM
-  t_0_Reach_MultBodyAggAux_f4 AS Reach_MultBodyAggAux_f4
-GROUP BY Reach_MultBodyAggAux_f4.y;
+  t_1_Reach_MultBodyAggAux_f2 AS Reach_MultBodyAggAux_f2
+GROUP BY Reach_MultBodyAggAux_f2.y)
+SELECT
+  Reach_sn_step.y AS y
+FROM
+  t_0_Reach_sn_step AS Reach_sn_step
+WHERE
+  ((SELECT
+    MIN((CASE WHEN x_12.unnested_pod = 0 THEN 1 ELSE NULL END)) AS logica_value
+  FROM
+    logica_home.Reach_sn_full AS Reach_sn_full, (select unnest([0]) as unnested_pod) as x_12
+  WHERE
+    (Reach_sn_full.y = Reach_sn_step.y)) IS NULL)
+GROUP BY Reach_sn_step.y;
 
-DROP TABLE IF EXISTS logica_home.Reach_ifr2;
-CREATE TABLE logica_home.Reach_ifr2 AS WITH t_0_Reach_MultBodyAggAux_f3 AS (SELECT * FROM (
+INSERT INTO logica_home.Reach_sn_full SELECT * FROM logica_home.Reach_sn_new;
+
+DROP TABLE IF EXISTS logica_home.Reach_sn_delta;
+CREATE TABLE logica_home.Reach_sn_delta AS SELECT
+  Reach_sn_new.y AS y
+FROM
+  logica_home.Reach_sn_new AS Reach_sn_new;
+
+DROP TABLE IF EXISTS logica_home.Reach_sn_new;
+CREATE TABLE logica_home.Reach_sn_new AS WITH t_1_Reach_MultBodyAggAux_f2 AS (SELECT * FROM (
   
     SELECT
       0 AS y
    UNION ALL
   
     SELECT
-      ((x_7.unnested_pod) + (1)) AS y
+      ((x_9.unnested_pod) + (1)) AS y
     FROM
-      logica_home.Reach_ifr1 AS Reach_ifr1, (select unnest(Range(200)) as unnested_pod) as x_7
+      logica_home.Reach_sn_delta AS Reach_sn_delta, (select unnest(Range(200)) as unnested_pod) as x_9
     WHERE
-      (Reach_ifr1.y = x_7.unnested_pod)
+      (Reach_sn_delta.y = x_9.unnested_pod)
   
-) AS UNUSED_TABLE_NAME  )
-SELECT
-  Reach_MultBodyAggAux_f3.y AS y
+) AS UNUSED_TABLE_NAME  ),
+t_0_Reach_sn_step AS (SELECT
+  Reach_MultBodyAggAux_f2.y AS y
 FROM
-  t_0_Reach_MultBodyAggAux_f3 AS Reach_MultBodyAggAux_f3
-GROUP BY Reach_MultBodyAggAux_f3.y;
+  t_1_Reach_MultBodyAggAux_f2 AS Reach_MultBodyAggAux_f2
+GROUP BY Reach_MultBodyAggAux_f2.y)
+SELECT
+  Reach_sn_step.y AS y
+FROM
+  t_0_Reach_sn_step AS Reach_sn_step
+WHERE
+  ((SELECT
+    MIN((CASE WHEN x_12.unnested_pod = 0 THEN 1 ELSE NULL END)) AS logica_value
+  FROM
+    logica_home.Reach_sn_full AS Reach_sn_full, (select unnest([0]) as unnested_pod) as x_12
+  WHERE
+    (Reach_sn_full.y = Reach_sn_step.y)) IS NULL)
+GROUP BY Reach_sn_step.y;
 
-DROP TABLE IF EXISTS logica_home.Reach_ifr1;
-CREATE TABLE logica_home.Reach_ifr1 AS WITH t_0_Reach_MultBodyAggAux_f4 AS (SELECT * FROM (
+INSERT INTO logica_home.Reach_sn_full SELECT * FROM logica_home.Reach_sn_new;
+
+DROP TABLE IF EXISTS logica_home.Reach_sn_delta;
+CREATE TABLE logica_home.Reach_sn_delta AS SELECT
+  Reach_sn_new.y AS y
+FROM
+  logica_home.Reach_sn_new AS Reach_sn_new;
+
+DROP TABLE IF EXISTS logica_home.Reach_sn_new;
+CREATE TABLE logica_home.Reach_sn_new AS WITH t_1_Reach_MultBodyAggAux_f2 AS (SELECT * FROM (
   
     SELECT
       0 AS y
    UNION ALL
   
     SELECT
-      ((x_7.unnested_pod) + (1)) AS y
+      ((x_9.unnested_pod) + (1)) AS y
     FROM
-      logica_home.Reach_ifr2 AS Reach_ifr2, (select unnest(Range(200)) as unnested_pod) as x_7
+      logica_home.Reach_sn_delta AS Reach_sn_delta, (select unnest(Range(200)) as unnested_pod) as x_9
     WHERE
-      (Reach_ifr2.y = x_7.unnested_pod)
+      (Reach_sn_delta.y = x_9.unnested_pod)
   
-) AS UNUSED_TABLE_NAME  )
-SELECT
-  Reach_MultBodyAggAux_f4.y AS y
+) AS UNUSED_TABLE_NAME  ),
+t_0_Reach_sn_step AS (SELECT
+  Reach_MultBodyAggAux_f2.y AS y
 FROM
-  t_0_Reach_MultBodyAggAux_f4 AS Reach_MultBodyAggAux_f4
-GROUP BY Reach_MultBodyAggAux_f4.y;
+  t_1_Reach_MultBodyAggAux_f2 AS Reach_MultBodyAggAux_f2
+GROUP BY Reach_MultBodyAggAux_f2.y)
+SELECT
+  Reach_sn_step.y AS y
+FROM
+  t_0_Reach_sn_step AS Reach_sn_step
+WHERE
+  ((SELECT
+    MIN((CASE WHEN x_12.unnested_pod = 0 THEN 1 ELSE NULL END)) AS logica_value
+  FROM
+    logica_home.Reach_sn_full AS Reach_sn_full, (select unnest([0]) as unnested_pod) as x_12
+  WHERE
+    (Reach_sn_full.y = Reach_sn_step.y)) IS NULL)
+GROUP BY Reach_sn_step.y;
 
-DROP TABLE IF EXISTS logica_home.Reach;
-CREATE TABLE logica_home.Reach AS WITH t_0_Reach_MultBodyAggAux_f5 AS (SELECT * FROM (
+INSERT INTO logica_home.Reach_sn_full SELECT * FROM logica_home.Reach_sn_new;
+
+DROP TABLE IF EXISTS logica_home.Reach_sn_delta;
+CREATE TABLE logica_home.Reach_sn_delta AS SELECT
+  Reach_sn_new.y AS y
+FROM
+  logica_home.Reach_sn_new AS Reach_sn_new;
+
+DROP TABLE IF EXISTS logica_home.Reach_sn_new;
+CREATE TABLE logica_home.Reach_sn_new AS WITH t_1_Reach_MultBodyAggAux_f2 AS (SELECT * FROM (
   
     SELECT
       0 AS y
    UNION ALL
   
     SELECT
-      ((x_7.unnested_pod) + (1)) AS y
+      ((x_9.unnested_pod) + (1)) AS y
     FROM
-      logica_home.Reach_ifr1 AS Reach_ifr3, (select unnest(Range(200)) as unnested_pod) as x_7
+      logica_home.Reach_sn_delta AS Reach_sn_delta, (select unnest(Range(200)) as unnested_pod) as x_9
     WHERE
-      (Reach_ifr3.y = x_7.unnested_pod)
+      (Reach_sn_delta.y = x_9.unnested_pod)
   
-) AS UNUSED_TABLE_NAME  )
-SELECT
-  Reach_MultBodyAggAux_f5.y AS y
+) AS UNUSED_TABLE_NAME  ),
+t_0_Reach_sn_step AS (SELECT
+  Reach_MultBodyAggAux_f2.y AS y
 FROM
-  t_0_Reach_MultBodyAggAux_f5 AS Reach_MultBodyAggAux_f5
-GROUP BY Reach_MultBodyAggAux_f5.y;
+  t_1_Reach_MultBodyAggAux_f2 AS Reach_MultBodyAggAux_f2
+GROUP BY Reach_MultBodyAggAux_f2.y)
+SELECT
+  Reach_sn_step.y AS y
+FROM
+  t_0_Reach_sn_step AS Reach_sn_step
+WHERE
+  ((SELECT
+    MIN((CASE WHEN x_12.unnested_pod = 0 THEN 1 ELSE NULL END)) AS logica_value
+  FROM
+    logica_home.Reach_sn_full AS Reach_sn_full, (select unnest([0]) as unnested_pod) as x_12
+  WHERE
+    (Reach_sn_full.y = Reach_sn_step.y)) IS NULL)
+GROUP BY Reach_sn_step.y;
 
--- Interacting with table logica_home.Reach
+INSERT INTO logica_home.Reach_sn_full SELECT * FROM logica_home.Reach_sn_new;
+
+DROP TABLE IF EXISTS logica_home.Reach_sn_delta;
+CREATE TABLE logica_home.Reach_sn_delta AS SELECT
+  Reach_sn_new.y AS y
+FROM
+  logica_home.Reach_sn_new AS Reach_sn_new;
 
 SELECT
-  MAX(Reach.y) AS m
+  MAX(Reach_sn_full.y) AS m
 FROM
-  logica_home.Reach AS Reach;
+  logica_home.Reach_sn_full AS Reach_sn_full;

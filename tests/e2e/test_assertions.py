@@ -3,7 +3,7 @@
 
 Each program states what its assertions must find (`# Expect: holds`,
 `violated <n>`, `counterexamples <rows>`); `tests/cli/test_programs.py` checks
-it on DuckDB and SQLite. Here the counterexample search compiled for every
+it on DuckDB and SQLite. Here the counterexample search planned for every
 engine runs on that engine and must find the same.
 """
 
@@ -49,10 +49,10 @@ def test_assertion_counterexamples(runner_for, engine, path, ref, kind, rest):
 
     runner = runner_for(engine)
     predicate, name = ref.split(".", 1)
-    sql = synalog.counterexamples(
-        path.read_text(), predicate, name, engine=engine, import_root=[str(path.parent)]
+    steps = synalog.plan(
+        path.read_text(), predicate, engine=engine, import_root=[str(path.parent)], assertion=name
     )
-    found = _normalize_rows(runner.run(sql))
+    found = _normalize_rows(runner.run_plan(steps))
     if kind == "holds":
         assert found == [], f"{ref} has counterexamples {found}"
     elif kind == "violated":

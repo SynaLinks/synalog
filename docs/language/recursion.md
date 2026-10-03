@@ -55,6 +55,14 @@ AncestorOf(ancestor_id:, descendant_id:) :-
 HierarchyCycle(node_id:) :- AncestorOf(ancestor_id: node_id, descendant_id: node_id);
 ```
 
+## How recursion runs
+
+Up to 20 steps, a recursion is unrolled into a single query. Past 20 steps, or with `@Recursive(P, -1)`, it is computed into tables, step by step:
+
+- **Until it converges.** When Synalog runs a predicate (`synalog ... run`, [`synalog.execute`](../python-api.md#execute)), it stops a recursion as soon as a step changes nothing. A recursion costs the steps its data needs: `@Recursive(AncestorOf, 100)` over a hierarchy 6 levels deep takes 6 steps, and `@Recursive(P, -1)` recurses until nothing changes, on every engine.
+- **One step, the new rows.** A recursion of one `distinct` predicate, without aggregation, whose rules reference it at most once (the transitive closures above) is evaluated semi-naively: each step derives rows only from the rows the previous step added, so a step costs what changed, not the whole relation. Other recursions (an aggregate such as `Min=` in the recursion, mutual recursion, a rule joining the recursion with itself) recompute the relation at every step.
+- **A script.** [`synalog.compile`](../python-api.md#compile) returns one SQL script, which cannot stop by itself: it writes every step out, up to the declared depth, and refuses a recursion too deep to write out. Run deep recursions with Synalog.
+
 ## Safety
 
 The [verifier](../verification.md) checks recursive programs at compile time: missing base cases, trivial loops, and unbounded recursion without `@Recursive` are all reported as errors before any SQL is generated.

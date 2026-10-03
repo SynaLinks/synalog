@@ -1,5 +1,5 @@
-DROP TABLE IF EXISTS logica_test.A_ifr0;
-CREATE TABLE logica_test.A_ifr0 AS WITH t_0_A_MultBodyAggAux_f1 AS (SELECT * FROM (
+DROP TABLE IF EXISTS logica_test.A_sn_delta;
+CREATE TABLE logica_test.A_sn_delta AS WITH t_0_A_MultBodyAggAux_f1 AS (SELECT * FROM (
   
     SELECT
       0 AS y
@@ -11,946 +11,1804 @@ FROM
   t_0_A_MultBodyAggAux_f1 AS A_MultBodyAggAux_f1
 GROUP BY 1;
 
--- Interacting with table logica_test.A_ifr0
+-- Interacting with table logica_test.A_sn_delta
 
-DROP TABLE IF EXISTS logica_test.A_ifr1;
-CREATE TABLE logica_test.A_ifr1 AS WITH t_0_A_MultBodyAggAux_f2 AS (SELECT * FROM (
+DROP TABLE IF EXISTS logica_test.A_sn_full;
+CREATE TABLE logica_test.A_sn_full AS SELECT
+  A_sn_delta.y AS y
+FROM
+  logica_test.A_sn_delta AS A_sn_delta;
+
+-- Interacting with table logica_test.A_sn_full
+
+DROP TABLE IF EXISTS logica_test.B_sn_delta;
+CREATE TABLE logica_test.B_sn_delta AS WITH t_0_B_MultBodyAggAux_f3 AS (SELECT * FROM (
+  
+    SELECT
+      0 AS y
+  
+) AS UNUSED_TABLE_NAME  )
+SELECT
+  B_MultBodyAggAux_f3.y AS y
+FROM
+  t_0_B_MultBodyAggAux_f3 AS B_MultBodyAggAux_f3
+GROUP BY 1;
+
+-- Interacting with table logica_test.B_sn_delta
+
+DROP TABLE IF EXISTS logica_test.B_sn_full;
+CREATE TABLE logica_test.B_sn_full AS SELECT
+  B_sn_delta.y AS y
+FROM
+  logica_test.B_sn_delta AS B_sn_delta;
+
+-- Interacting with table logica_test.B_sn_full
+
+DROP TABLE IF EXISTS logica_test.A_sn_new;
+CREATE TABLE logica_test.A_sn_new AS WITH t_1_A_MultBodyAggAux_f2 AS (SELECT * FROM (
   
     SELECT
       0 AS y
    UNION ALL
   
     SELECT
-      ((x_7) + (1)) AS y
+      ((x_9) + (1)) AS y
     FROM
-      logica_test.A_ifr0 AS A_ifr0, UNNEST(SEQUENCE(0, 100 - 1)) as pushkin(x_7)
+      logica_test.A_sn_delta AS A_sn_delta, UNNEST(SEQUENCE(0, 100 - 1)) as pushkin(x_9)
     WHERE
-      (A_ifr0.y = x_7)
+      (A_sn_delta.y = x_9)
   
-) AS UNUSED_TABLE_NAME  )
-SELECT
+) AS UNUSED_TABLE_NAME  ),
+t_0_A_sn_step AS (SELECT
   A_MultBodyAggAux_f2.y AS y
 FROM
-  t_0_A_MultBodyAggAux_f2 AS A_MultBodyAggAux_f2
+  t_1_A_MultBodyAggAux_f2 AS A_MultBodyAggAux_f2
+GROUP BY 1)
+SELECT
+  A_sn_step.y AS y
+FROM
+  t_0_A_sn_step AS A_sn_step
+WHERE
+  ((SELECT
+    MIN(1) AS logica_value
+  FROM
+    logica_test.A_sn_full AS A_sn_full
+  WHERE
+    (A_sn_full.y = A_sn_step.y)) IS NULL)
 GROUP BY 1;
 
--- Interacting with table logica_test.A_ifr1
+INSERT INTO logica_test.A_sn_full SELECT * FROM logica_test.A_sn_new;
 
-DROP TABLE IF EXISTS logica_test.A_ifr2;
-CREATE TABLE logica_test.A_ifr2 AS WITH t_0_A_MultBodyAggAux_f3 AS (SELECT * FROM (
+DROP TABLE IF EXISTS logica_test.A_sn_delta;
+CREATE TABLE logica_test.A_sn_delta AS SELECT
+  A_sn_new.y AS y
+FROM
+  logica_test.A_sn_new AS A_sn_new;
+
+DROP TABLE IF EXISTS logica_test.A_sn_new;
+CREATE TABLE logica_test.A_sn_new AS WITH t_1_A_MultBodyAggAux_f2 AS (SELECT * FROM (
   
     SELECT
       0 AS y
    UNION ALL
   
     SELECT
-      ((x_7) + (1)) AS y
+      ((x_9) + (1)) AS y
     FROM
-      logica_test.A_ifr1 AS A_ifr1, UNNEST(SEQUENCE(0, 100 - 1)) as pushkin(x_7)
+      logica_test.A_sn_delta AS A_sn_delta, UNNEST(SEQUENCE(0, 100 - 1)) as pushkin(x_9)
     WHERE
-      (A_ifr1.y = x_7)
+      (A_sn_delta.y = x_9)
   
-) AS UNUSED_TABLE_NAME  )
-SELECT
-  A_MultBodyAggAux_f3.y AS y
+) AS UNUSED_TABLE_NAME  ),
+t_0_A_sn_step AS (SELECT
+  A_MultBodyAggAux_f2.y AS y
 FROM
-  t_0_A_MultBodyAggAux_f3 AS A_MultBodyAggAux_f3
+  t_1_A_MultBodyAggAux_f2 AS A_MultBodyAggAux_f2
+GROUP BY 1)
+SELECT
+  A_sn_step.y AS y
+FROM
+  t_0_A_sn_step AS A_sn_step
+WHERE
+  ((SELECT
+    MIN(1) AS logica_value
+  FROM
+    logica_test.A_sn_full AS A_sn_full
+  WHERE
+    (A_sn_full.y = A_sn_step.y)) IS NULL)
 GROUP BY 1;
 
--- Interacting with table logica_test.A_ifr2
+INSERT INTO logica_test.A_sn_full SELECT * FROM logica_test.A_sn_new;
 
-DROP TABLE IF EXISTS logica_test.A_ifr3;
-CREATE TABLE logica_test.A_ifr3 AS WITH t_0_A_MultBodyAggAux_f4 AS (SELECT * FROM (
+DROP TABLE IF EXISTS logica_test.A_sn_delta;
+CREATE TABLE logica_test.A_sn_delta AS SELECT
+  A_sn_new.y AS y
+FROM
+  logica_test.A_sn_new AS A_sn_new;
+
+DROP TABLE IF EXISTS logica_test.A_sn_new;
+CREATE TABLE logica_test.A_sn_new AS WITH t_1_A_MultBodyAggAux_f2 AS (SELECT * FROM (
   
     SELECT
       0 AS y
    UNION ALL
   
     SELECT
-      ((x_7) + (1)) AS y
+      ((x_9) + (1)) AS y
     FROM
-      logica_test.A_ifr2 AS A_ifr2, UNNEST(SEQUENCE(0, 100 - 1)) as pushkin(x_7)
+      logica_test.A_sn_delta AS A_sn_delta, UNNEST(SEQUENCE(0, 100 - 1)) as pushkin(x_9)
     WHERE
-      (A_ifr2.y = x_7)
+      (A_sn_delta.y = x_9)
   
-) AS UNUSED_TABLE_NAME  )
-SELECT
-  A_MultBodyAggAux_f4.y AS y
+) AS UNUSED_TABLE_NAME  ),
+t_0_A_sn_step AS (SELECT
+  A_MultBodyAggAux_f2.y AS y
 FROM
-  t_0_A_MultBodyAggAux_f4 AS A_MultBodyAggAux_f4
+  t_1_A_MultBodyAggAux_f2 AS A_MultBodyAggAux_f2
+GROUP BY 1)
+SELECT
+  A_sn_step.y AS y
+FROM
+  t_0_A_sn_step AS A_sn_step
+WHERE
+  ((SELECT
+    MIN(1) AS logica_value
+  FROM
+    logica_test.A_sn_full AS A_sn_full
+  WHERE
+    (A_sn_full.y = A_sn_step.y)) IS NULL)
 GROUP BY 1;
 
--- Interacting with table logica_test.A_ifr3
+INSERT INTO logica_test.A_sn_full SELECT * FROM logica_test.A_sn_new;
 
-DROP TABLE IF EXISTS logica_test.A_ifr2;
-CREATE TABLE logica_test.A_ifr2 AS WITH t_0_A_MultBodyAggAux_f5 AS (SELECT * FROM (
+DROP TABLE IF EXISTS logica_test.A_sn_delta;
+CREATE TABLE logica_test.A_sn_delta AS SELECT
+  A_sn_new.y AS y
+FROM
+  logica_test.A_sn_new AS A_sn_new;
+
+DROP TABLE IF EXISTS logica_test.A_sn_new;
+CREATE TABLE logica_test.A_sn_new AS WITH t_1_A_MultBodyAggAux_f2 AS (SELECT * FROM (
   
     SELECT
       0 AS y
    UNION ALL
   
     SELECT
-      ((x_7) + (1)) AS y
+      ((x_9) + (1)) AS y
     FROM
-      logica_test.A_ifr3 AS A_ifr3, UNNEST(SEQUENCE(0, 100 - 1)) as pushkin(x_7)
+      logica_test.A_sn_delta AS A_sn_delta, UNNEST(SEQUENCE(0, 100 - 1)) as pushkin(x_9)
     WHERE
-      (A_ifr3.y = x_7)
+      (A_sn_delta.y = x_9)
   
-) AS UNUSED_TABLE_NAME  )
-SELECT
-  A_MultBodyAggAux_f5.y AS y
+) AS UNUSED_TABLE_NAME  ),
+t_0_A_sn_step AS (SELECT
+  A_MultBodyAggAux_f2.y AS y
 FROM
-  t_0_A_MultBodyAggAux_f5 AS A_MultBodyAggAux_f5
+  t_1_A_MultBodyAggAux_f2 AS A_MultBodyAggAux_f2
+GROUP BY 1)
+SELECT
+  A_sn_step.y AS y
+FROM
+  t_0_A_sn_step AS A_sn_step
+WHERE
+  ((SELECT
+    MIN(1) AS logica_value
+  FROM
+    logica_test.A_sn_full AS A_sn_full
+  WHERE
+    (A_sn_full.y = A_sn_step.y)) IS NULL)
 GROUP BY 1;
 
--- Interacting with table logica_test.A_ifr2
+INSERT INTO logica_test.A_sn_full SELECT * FROM logica_test.A_sn_new;
 
-DROP TABLE IF EXISTS logica_test.A_ifr3;
-CREATE TABLE logica_test.A_ifr3 AS WITH t_0_A_MultBodyAggAux_f4 AS (SELECT * FROM (
+DROP TABLE IF EXISTS logica_test.A_sn_delta;
+CREATE TABLE logica_test.A_sn_delta AS SELECT
+  A_sn_new.y AS y
+FROM
+  logica_test.A_sn_new AS A_sn_new;
+
+DROP TABLE IF EXISTS logica_test.A_sn_new;
+CREATE TABLE logica_test.A_sn_new AS WITH t_1_A_MultBodyAggAux_f2 AS (SELECT * FROM (
   
     SELECT
       0 AS y
    UNION ALL
   
     SELECT
-      ((x_7) + (1)) AS y
+      ((x_9) + (1)) AS y
     FROM
-      logica_test.A_ifr2 AS A_ifr2, UNNEST(SEQUENCE(0, 100 - 1)) as pushkin(x_7)
+      logica_test.A_sn_delta AS A_sn_delta, UNNEST(SEQUENCE(0, 100 - 1)) as pushkin(x_9)
     WHERE
-      (A_ifr2.y = x_7)
+      (A_sn_delta.y = x_9)
   
-) AS UNUSED_TABLE_NAME  )
-SELECT
-  A_MultBodyAggAux_f4.y AS y
+) AS UNUSED_TABLE_NAME  ),
+t_0_A_sn_step AS (SELECT
+  A_MultBodyAggAux_f2.y AS y
 FROM
-  t_0_A_MultBodyAggAux_f4 AS A_MultBodyAggAux_f4
+  t_1_A_MultBodyAggAux_f2 AS A_MultBodyAggAux_f2
+GROUP BY 1)
+SELECT
+  A_sn_step.y AS y
+FROM
+  t_0_A_sn_step AS A_sn_step
+WHERE
+  ((SELECT
+    MIN(1) AS logica_value
+  FROM
+    logica_test.A_sn_full AS A_sn_full
+  WHERE
+    (A_sn_full.y = A_sn_step.y)) IS NULL)
 GROUP BY 1;
 
-DROP TABLE IF EXISTS logica_test.A_ifr2;
-CREATE TABLE logica_test.A_ifr2 AS WITH t_0_A_MultBodyAggAux_f5 AS (SELECT * FROM (
+INSERT INTO logica_test.A_sn_full SELECT * FROM logica_test.A_sn_new;
+
+DROP TABLE IF EXISTS logica_test.A_sn_delta;
+CREATE TABLE logica_test.A_sn_delta AS SELECT
+  A_sn_new.y AS y
+FROM
+  logica_test.A_sn_new AS A_sn_new;
+
+DROP TABLE IF EXISTS logica_test.A_sn_new;
+CREATE TABLE logica_test.A_sn_new AS WITH t_1_A_MultBodyAggAux_f2 AS (SELECT * FROM (
   
     SELECT
       0 AS y
    UNION ALL
   
     SELECT
-      ((x_7) + (1)) AS y
+      ((x_9) + (1)) AS y
     FROM
-      logica_test.A_ifr3 AS A_ifr3, UNNEST(SEQUENCE(0, 100 - 1)) as pushkin(x_7)
+      logica_test.A_sn_delta AS A_sn_delta, UNNEST(SEQUENCE(0, 100 - 1)) as pushkin(x_9)
     WHERE
-      (A_ifr3.y = x_7)
+      (A_sn_delta.y = x_9)
   
-) AS UNUSED_TABLE_NAME  )
-SELECT
-  A_MultBodyAggAux_f5.y AS y
+) AS UNUSED_TABLE_NAME  ),
+t_0_A_sn_step AS (SELECT
+  A_MultBodyAggAux_f2.y AS y
 FROM
-  t_0_A_MultBodyAggAux_f5 AS A_MultBodyAggAux_f5
+  t_1_A_MultBodyAggAux_f2 AS A_MultBodyAggAux_f2
+GROUP BY 1)
+SELECT
+  A_sn_step.y AS y
+FROM
+  t_0_A_sn_step AS A_sn_step
+WHERE
+  ((SELECT
+    MIN(1) AS logica_value
+  FROM
+    logica_test.A_sn_full AS A_sn_full
+  WHERE
+    (A_sn_full.y = A_sn_step.y)) IS NULL)
 GROUP BY 1;
 
-DROP TABLE IF EXISTS logica_test.A_ifr3;
-CREATE TABLE logica_test.A_ifr3 AS WITH t_0_A_MultBodyAggAux_f4 AS (SELECT * FROM (
+INSERT INTO logica_test.A_sn_full SELECT * FROM logica_test.A_sn_new;
+
+DROP TABLE IF EXISTS logica_test.A_sn_delta;
+CREATE TABLE logica_test.A_sn_delta AS SELECT
+  A_sn_new.y AS y
+FROM
+  logica_test.A_sn_new AS A_sn_new;
+
+DROP TABLE IF EXISTS logica_test.A_sn_new;
+CREATE TABLE logica_test.A_sn_new AS WITH t_1_A_MultBodyAggAux_f2 AS (SELECT * FROM (
   
     SELECT
       0 AS y
    UNION ALL
   
     SELECT
-      ((x_7) + (1)) AS y
+      ((x_9) + (1)) AS y
     FROM
-      logica_test.A_ifr2 AS A_ifr2, UNNEST(SEQUENCE(0, 100 - 1)) as pushkin(x_7)
+      logica_test.A_sn_delta AS A_sn_delta, UNNEST(SEQUENCE(0, 100 - 1)) as pushkin(x_9)
     WHERE
-      (A_ifr2.y = x_7)
+      (A_sn_delta.y = x_9)
   
-) AS UNUSED_TABLE_NAME  )
-SELECT
-  A_MultBodyAggAux_f4.y AS y
+) AS UNUSED_TABLE_NAME  ),
+t_0_A_sn_step AS (SELECT
+  A_MultBodyAggAux_f2.y AS y
 FROM
-  t_0_A_MultBodyAggAux_f4 AS A_MultBodyAggAux_f4
+  t_1_A_MultBodyAggAux_f2 AS A_MultBodyAggAux_f2
+GROUP BY 1)
+SELECT
+  A_sn_step.y AS y
+FROM
+  t_0_A_sn_step AS A_sn_step
+WHERE
+  ((SELECT
+    MIN(1) AS logica_value
+  FROM
+    logica_test.A_sn_full AS A_sn_full
+  WHERE
+    (A_sn_full.y = A_sn_step.y)) IS NULL)
 GROUP BY 1;
 
-DROP TABLE IF EXISTS logica_test.A_ifr2;
-CREATE TABLE logica_test.A_ifr2 AS WITH t_0_A_MultBodyAggAux_f5 AS (SELECT * FROM (
+INSERT INTO logica_test.A_sn_full SELECT * FROM logica_test.A_sn_new;
+
+DROP TABLE IF EXISTS logica_test.A_sn_delta;
+CREATE TABLE logica_test.A_sn_delta AS SELECT
+  A_sn_new.y AS y
+FROM
+  logica_test.A_sn_new AS A_sn_new;
+
+DROP TABLE IF EXISTS logica_test.A_sn_new;
+CREATE TABLE logica_test.A_sn_new AS WITH t_1_A_MultBodyAggAux_f2 AS (SELECT * FROM (
   
     SELECT
       0 AS y
    UNION ALL
   
     SELECT
-      ((x_7) + (1)) AS y
+      ((x_9) + (1)) AS y
     FROM
-      logica_test.A_ifr3 AS A_ifr3, UNNEST(SEQUENCE(0, 100 - 1)) as pushkin(x_7)
+      logica_test.A_sn_delta AS A_sn_delta, UNNEST(SEQUENCE(0, 100 - 1)) as pushkin(x_9)
     WHERE
-      (A_ifr3.y = x_7)
+      (A_sn_delta.y = x_9)
   
-) AS UNUSED_TABLE_NAME  )
-SELECT
-  A_MultBodyAggAux_f5.y AS y
+) AS UNUSED_TABLE_NAME  ),
+t_0_A_sn_step AS (SELECT
+  A_MultBodyAggAux_f2.y AS y
 FROM
-  t_0_A_MultBodyAggAux_f5 AS A_MultBodyAggAux_f5
+  t_1_A_MultBodyAggAux_f2 AS A_MultBodyAggAux_f2
+GROUP BY 1)
+SELECT
+  A_sn_step.y AS y
+FROM
+  t_0_A_sn_step AS A_sn_step
+WHERE
+  ((SELECT
+    MIN(1) AS logica_value
+  FROM
+    logica_test.A_sn_full AS A_sn_full
+  WHERE
+    (A_sn_full.y = A_sn_step.y)) IS NULL)
 GROUP BY 1;
 
-DROP TABLE IF EXISTS logica_test.A_ifr3;
-CREATE TABLE logica_test.A_ifr3 AS WITH t_0_A_MultBodyAggAux_f4 AS (SELECT * FROM (
+INSERT INTO logica_test.A_sn_full SELECT * FROM logica_test.A_sn_new;
+
+DROP TABLE IF EXISTS logica_test.A_sn_delta;
+CREATE TABLE logica_test.A_sn_delta AS SELECT
+  A_sn_new.y AS y
+FROM
+  logica_test.A_sn_new AS A_sn_new;
+
+DROP TABLE IF EXISTS logica_test.A_sn_new;
+CREATE TABLE logica_test.A_sn_new AS WITH t_1_A_MultBodyAggAux_f2 AS (SELECT * FROM (
   
     SELECT
       0 AS y
    UNION ALL
   
     SELECT
-      ((x_7) + (1)) AS y
+      ((x_9) + (1)) AS y
     FROM
-      logica_test.A_ifr2 AS A_ifr2, UNNEST(SEQUENCE(0, 100 - 1)) as pushkin(x_7)
+      logica_test.A_sn_delta AS A_sn_delta, UNNEST(SEQUENCE(0, 100 - 1)) as pushkin(x_9)
     WHERE
-      (A_ifr2.y = x_7)
+      (A_sn_delta.y = x_9)
   
-) AS UNUSED_TABLE_NAME  )
-SELECT
-  A_MultBodyAggAux_f4.y AS y
+) AS UNUSED_TABLE_NAME  ),
+t_0_A_sn_step AS (SELECT
+  A_MultBodyAggAux_f2.y AS y
 FROM
-  t_0_A_MultBodyAggAux_f4 AS A_MultBodyAggAux_f4
+  t_1_A_MultBodyAggAux_f2 AS A_MultBodyAggAux_f2
+GROUP BY 1)
+SELECT
+  A_sn_step.y AS y
+FROM
+  t_0_A_sn_step AS A_sn_step
+WHERE
+  ((SELECT
+    MIN(1) AS logica_value
+  FROM
+    logica_test.A_sn_full AS A_sn_full
+  WHERE
+    (A_sn_full.y = A_sn_step.y)) IS NULL)
 GROUP BY 1;
 
-DROP TABLE IF EXISTS logica_test.A_ifr2;
-CREATE TABLE logica_test.A_ifr2 AS WITH t_0_A_MultBodyAggAux_f5 AS (SELECT * FROM (
+INSERT INTO logica_test.A_sn_full SELECT * FROM logica_test.A_sn_new;
+
+DROP TABLE IF EXISTS logica_test.A_sn_delta;
+CREATE TABLE logica_test.A_sn_delta AS SELECT
+  A_sn_new.y AS y
+FROM
+  logica_test.A_sn_new AS A_sn_new;
+
+DROP TABLE IF EXISTS logica_test.A_sn_new;
+CREATE TABLE logica_test.A_sn_new AS WITH t_1_A_MultBodyAggAux_f2 AS (SELECT * FROM (
   
     SELECT
       0 AS y
    UNION ALL
   
     SELECT
-      ((x_7) + (1)) AS y
+      ((x_9) + (1)) AS y
     FROM
-      logica_test.A_ifr3 AS A_ifr3, UNNEST(SEQUENCE(0, 100 - 1)) as pushkin(x_7)
+      logica_test.A_sn_delta AS A_sn_delta, UNNEST(SEQUENCE(0, 100 - 1)) as pushkin(x_9)
     WHERE
-      (A_ifr3.y = x_7)
+      (A_sn_delta.y = x_9)
   
-) AS UNUSED_TABLE_NAME  )
-SELECT
-  A_MultBodyAggAux_f5.y AS y
+) AS UNUSED_TABLE_NAME  ),
+t_0_A_sn_step AS (SELECT
+  A_MultBodyAggAux_f2.y AS y
 FROM
-  t_0_A_MultBodyAggAux_f5 AS A_MultBodyAggAux_f5
+  t_1_A_MultBodyAggAux_f2 AS A_MultBodyAggAux_f2
+GROUP BY 1)
+SELECT
+  A_sn_step.y AS y
+FROM
+  t_0_A_sn_step AS A_sn_step
+WHERE
+  ((SELECT
+    MIN(1) AS logica_value
+  FROM
+    logica_test.A_sn_full AS A_sn_full
+  WHERE
+    (A_sn_full.y = A_sn_step.y)) IS NULL)
 GROUP BY 1;
 
-DROP TABLE IF EXISTS logica_test.A_ifr3;
-CREATE TABLE logica_test.A_ifr3 AS WITH t_0_A_MultBodyAggAux_f4 AS (SELECT * FROM (
+INSERT INTO logica_test.A_sn_full SELECT * FROM logica_test.A_sn_new;
+
+DROP TABLE IF EXISTS logica_test.A_sn_delta;
+CREATE TABLE logica_test.A_sn_delta AS SELECT
+  A_sn_new.y AS y
+FROM
+  logica_test.A_sn_new AS A_sn_new;
+
+DROP TABLE IF EXISTS logica_test.A_sn_new;
+CREATE TABLE logica_test.A_sn_new AS WITH t_1_A_MultBodyAggAux_f2 AS (SELECT * FROM (
   
     SELECT
       0 AS y
    UNION ALL
   
     SELECT
-      ((x_7) + (1)) AS y
+      ((x_9) + (1)) AS y
     FROM
-      logica_test.A_ifr2 AS A_ifr2, UNNEST(SEQUENCE(0, 100 - 1)) as pushkin(x_7)
+      logica_test.A_sn_delta AS A_sn_delta, UNNEST(SEQUENCE(0, 100 - 1)) as pushkin(x_9)
     WHERE
-      (A_ifr2.y = x_7)
+      (A_sn_delta.y = x_9)
   
-) AS UNUSED_TABLE_NAME  )
-SELECT
-  A_MultBodyAggAux_f4.y AS y
+) AS UNUSED_TABLE_NAME  ),
+t_0_A_sn_step AS (SELECT
+  A_MultBodyAggAux_f2.y AS y
 FROM
-  t_0_A_MultBodyAggAux_f4 AS A_MultBodyAggAux_f4
+  t_1_A_MultBodyAggAux_f2 AS A_MultBodyAggAux_f2
+GROUP BY 1)
+SELECT
+  A_sn_step.y AS y
+FROM
+  t_0_A_sn_step AS A_sn_step
+WHERE
+  ((SELECT
+    MIN(1) AS logica_value
+  FROM
+    logica_test.A_sn_full AS A_sn_full
+  WHERE
+    (A_sn_full.y = A_sn_step.y)) IS NULL)
 GROUP BY 1;
 
-DROP TABLE IF EXISTS logica_test.A_ifr2;
-CREATE TABLE logica_test.A_ifr2 AS WITH t_0_A_MultBodyAggAux_f5 AS (SELECT * FROM (
+INSERT INTO logica_test.A_sn_full SELECT * FROM logica_test.A_sn_new;
+
+DROP TABLE IF EXISTS logica_test.A_sn_delta;
+CREATE TABLE logica_test.A_sn_delta AS SELECT
+  A_sn_new.y AS y
+FROM
+  logica_test.A_sn_new AS A_sn_new;
+
+DROP TABLE IF EXISTS logica_test.A_sn_new;
+CREATE TABLE logica_test.A_sn_new AS WITH t_1_A_MultBodyAggAux_f2 AS (SELECT * FROM (
   
     SELECT
       0 AS y
    UNION ALL
   
     SELECT
-      ((x_7) + (1)) AS y
+      ((x_9) + (1)) AS y
     FROM
-      logica_test.A_ifr3 AS A_ifr3, UNNEST(SEQUENCE(0, 100 - 1)) as pushkin(x_7)
+      logica_test.A_sn_delta AS A_sn_delta, UNNEST(SEQUENCE(0, 100 - 1)) as pushkin(x_9)
     WHERE
-      (A_ifr3.y = x_7)
+      (A_sn_delta.y = x_9)
   
-) AS UNUSED_TABLE_NAME  )
-SELECT
-  A_MultBodyAggAux_f5.y AS y
+) AS UNUSED_TABLE_NAME  ),
+t_0_A_sn_step AS (SELECT
+  A_MultBodyAggAux_f2.y AS y
 FROM
-  t_0_A_MultBodyAggAux_f5 AS A_MultBodyAggAux_f5
+  t_1_A_MultBodyAggAux_f2 AS A_MultBodyAggAux_f2
+GROUP BY 1)
+SELECT
+  A_sn_step.y AS y
+FROM
+  t_0_A_sn_step AS A_sn_step
+WHERE
+  ((SELECT
+    MIN(1) AS logica_value
+  FROM
+    logica_test.A_sn_full AS A_sn_full
+  WHERE
+    (A_sn_full.y = A_sn_step.y)) IS NULL)
 GROUP BY 1;
 
-DROP TABLE IF EXISTS logica_test.A_ifr3;
-CREATE TABLE logica_test.A_ifr3 AS WITH t_0_A_MultBodyAggAux_f4 AS (SELECT * FROM (
+INSERT INTO logica_test.A_sn_full SELECT * FROM logica_test.A_sn_new;
+
+DROP TABLE IF EXISTS logica_test.A_sn_delta;
+CREATE TABLE logica_test.A_sn_delta AS SELECT
+  A_sn_new.y AS y
+FROM
+  logica_test.A_sn_new AS A_sn_new;
+
+DROP TABLE IF EXISTS logica_test.A_sn_new;
+CREATE TABLE logica_test.A_sn_new AS WITH t_1_A_MultBodyAggAux_f2 AS (SELECT * FROM (
   
     SELECT
       0 AS y
    UNION ALL
   
     SELECT
-      ((x_7) + (1)) AS y
+      ((x_9) + (1)) AS y
     FROM
-      logica_test.A_ifr2 AS A_ifr2, UNNEST(SEQUENCE(0, 100 - 1)) as pushkin(x_7)
+      logica_test.A_sn_delta AS A_sn_delta, UNNEST(SEQUENCE(0, 100 - 1)) as pushkin(x_9)
     WHERE
-      (A_ifr2.y = x_7)
+      (A_sn_delta.y = x_9)
   
-) AS UNUSED_TABLE_NAME  )
-SELECT
-  A_MultBodyAggAux_f4.y AS y
+) AS UNUSED_TABLE_NAME  ),
+t_0_A_sn_step AS (SELECT
+  A_MultBodyAggAux_f2.y AS y
 FROM
-  t_0_A_MultBodyAggAux_f4 AS A_MultBodyAggAux_f4
+  t_1_A_MultBodyAggAux_f2 AS A_MultBodyAggAux_f2
+GROUP BY 1)
+SELECT
+  A_sn_step.y AS y
+FROM
+  t_0_A_sn_step AS A_sn_step
+WHERE
+  ((SELECT
+    MIN(1) AS logica_value
+  FROM
+    logica_test.A_sn_full AS A_sn_full
+  WHERE
+    (A_sn_full.y = A_sn_step.y)) IS NULL)
 GROUP BY 1;
 
-DROP TABLE IF EXISTS logica_test.A_ifr2;
-CREATE TABLE logica_test.A_ifr2 AS WITH t_0_A_MultBodyAggAux_f5 AS (SELECT * FROM (
+INSERT INTO logica_test.A_sn_full SELECT * FROM logica_test.A_sn_new;
+
+DROP TABLE IF EXISTS logica_test.A_sn_delta;
+CREATE TABLE logica_test.A_sn_delta AS SELECT
+  A_sn_new.y AS y
+FROM
+  logica_test.A_sn_new AS A_sn_new;
+
+DROP TABLE IF EXISTS logica_test.A_sn_new;
+CREATE TABLE logica_test.A_sn_new AS WITH t_1_A_MultBodyAggAux_f2 AS (SELECT * FROM (
   
     SELECT
       0 AS y
    UNION ALL
   
     SELECT
-      ((x_7) + (1)) AS y
+      ((x_9) + (1)) AS y
     FROM
-      logica_test.A_ifr3 AS A_ifr3, UNNEST(SEQUENCE(0, 100 - 1)) as pushkin(x_7)
+      logica_test.A_sn_delta AS A_sn_delta, UNNEST(SEQUENCE(0, 100 - 1)) as pushkin(x_9)
     WHERE
-      (A_ifr3.y = x_7)
+      (A_sn_delta.y = x_9)
   
-) AS UNUSED_TABLE_NAME  )
-SELECT
-  A_MultBodyAggAux_f5.y AS y
+) AS UNUSED_TABLE_NAME  ),
+t_0_A_sn_step AS (SELECT
+  A_MultBodyAggAux_f2.y AS y
 FROM
-  t_0_A_MultBodyAggAux_f5 AS A_MultBodyAggAux_f5
+  t_1_A_MultBodyAggAux_f2 AS A_MultBodyAggAux_f2
+GROUP BY 1)
+SELECT
+  A_sn_step.y AS y
+FROM
+  t_0_A_sn_step AS A_sn_step
+WHERE
+  ((SELECT
+    MIN(1) AS logica_value
+  FROM
+    logica_test.A_sn_full AS A_sn_full
+  WHERE
+    (A_sn_full.y = A_sn_step.y)) IS NULL)
 GROUP BY 1;
 
-DROP TABLE IF EXISTS logica_test.A_ifr3;
-CREATE TABLE logica_test.A_ifr3 AS WITH t_0_A_MultBodyAggAux_f4 AS (SELECT * FROM (
+INSERT INTO logica_test.A_sn_full SELECT * FROM logica_test.A_sn_new;
+
+DROP TABLE IF EXISTS logica_test.A_sn_delta;
+CREATE TABLE logica_test.A_sn_delta AS SELECT
+  A_sn_new.y AS y
+FROM
+  logica_test.A_sn_new AS A_sn_new;
+
+DROP TABLE IF EXISTS logica_test.A_sn_new;
+CREATE TABLE logica_test.A_sn_new AS WITH t_1_A_MultBodyAggAux_f2 AS (SELECT * FROM (
   
     SELECT
       0 AS y
    UNION ALL
   
     SELECT
-      ((x_7) + (1)) AS y
+      ((x_9) + (1)) AS y
     FROM
-      logica_test.A_ifr2 AS A_ifr2, UNNEST(SEQUENCE(0, 100 - 1)) as pushkin(x_7)
+      logica_test.A_sn_delta AS A_sn_delta, UNNEST(SEQUENCE(0, 100 - 1)) as pushkin(x_9)
     WHERE
-      (A_ifr2.y = x_7)
+      (A_sn_delta.y = x_9)
   
-) AS UNUSED_TABLE_NAME  )
-SELECT
-  A_MultBodyAggAux_f4.y AS y
+) AS UNUSED_TABLE_NAME  ),
+t_0_A_sn_step AS (SELECT
+  A_MultBodyAggAux_f2.y AS y
 FROM
-  t_0_A_MultBodyAggAux_f4 AS A_MultBodyAggAux_f4
+  t_1_A_MultBodyAggAux_f2 AS A_MultBodyAggAux_f2
+GROUP BY 1)
+SELECT
+  A_sn_step.y AS y
+FROM
+  t_0_A_sn_step AS A_sn_step
+WHERE
+  ((SELECT
+    MIN(1) AS logica_value
+  FROM
+    logica_test.A_sn_full AS A_sn_full
+  WHERE
+    (A_sn_full.y = A_sn_step.y)) IS NULL)
 GROUP BY 1;
 
-DROP TABLE IF EXISTS logica_test.A_ifr2;
-CREATE TABLE logica_test.A_ifr2 AS WITH t_0_A_MultBodyAggAux_f5 AS (SELECT * FROM (
+INSERT INTO logica_test.A_sn_full SELECT * FROM logica_test.A_sn_new;
+
+DROP TABLE IF EXISTS logica_test.A_sn_delta;
+CREATE TABLE logica_test.A_sn_delta AS SELECT
+  A_sn_new.y AS y
+FROM
+  logica_test.A_sn_new AS A_sn_new;
+
+DROP TABLE IF EXISTS logica_test.A_sn_new;
+CREATE TABLE logica_test.A_sn_new AS WITH t_1_A_MultBodyAggAux_f2 AS (SELECT * FROM (
   
     SELECT
       0 AS y
    UNION ALL
   
     SELECT
-      ((x_7) + (1)) AS y
+      ((x_9) + (1)) AS y
     FROM
-      logica_test.A_ifr3 AS A_ifr3, UNNEST(SEQUENCE(0, 100 - 1)) as pushkin(x_7)
+      logica_test.A_sn_delta AS A_sn_delta, UNNEST(SEQUENCE(0, 100 - 1)) as pushkin(x_9)
     WHERE
-      (A_ifr3.y = x_7)
+      (A_sn_delta.y = x_9)
   
-) AS UNUSED_TABLE_NAME  )
-SELECT
-  A_MultBodyAggAux_f5.y AS y
+) AS UNUSED_TABLE_NAME  ),
+t_0_A_sn_step AS (SELECT
+  A_MultBodyAggAux_f2.y AS y
 FROM
-  t_0_A_MultBodyAggAux_f5 AS A_MultBodyAggAux_f5
+  t_1_A_MultBodyAggAux_f2 AS A_MultBodyAggAux_f2
+GROUP BY 1)
+SELECT
+  A_sn_step.y AS y
+FROM
+  t_0_A_sn_step AS A_sn_step
+WHERE
+  ((SELECT
+    MIN(1) AS logica_value
+  FROM
+    logica_test.A_sn_full AS A_sn_full
+  WHERE
+    (A_sn_full.y = A_sn_step.y)) IS NULL)
 GROUP BY 1;
 
-DROP TABLE IF EXISTS logica_test.A_ifr3;
-CREATE TABLE logica_test.A_ifr3 AS WITH t_0_A_MultBodyAggAux_f4 AS (SELECT * FROM (
+INSERT INTO logica_test.A_sn_full SELECT * FROM logica_test.A_sn_new;
+
+DROP TABLE IF EXISTS logica_test.A_sn_delta;
+CREATE TABLE logica_test.A_sn_delta AS SELECT
+  A_sn_new.y AS y
+FROM
+  logica_test.A_sn_new AS A_sn_new;
+
+DROP TABLE IF EXISTS logica_test.A_sn_new;
+CREATE TABLE logica_test.A_sn_new AS WITH t_1_A_MultBodyAggAux_f2 AS (SELECT * FROM (
   
     SELECT
       0 AS y
    UNION ALL
   
     SELECT
-      ((x_7) + (1)) AS y
+      ((x_9) + (1)) AS y
     FROM
-      logica_test.A_ifr2 AS A_ifr2, UNNEST(SEQUENCE(0, 100 - 1)) as pushkin(x_7)
+      logica_test.A_sn_delta AS A_sn_delta, UNNEST(SEQUENCE(0, 100 - 1)) as pushkin(x_9)
     WHERE
-      (A_ifr2.y = x_7)
+      (A_sn_delta.y = x_9)
   
-) AS UNUSED_TABLE_NAME  )
-SELECT
-  A_MultBodyAggAux_f4.y AS y
+) AS UNUSED_TABLE_NAME  ),
+t_0_A_sn_step AS (SELECT
+  A_MultBodyAggAux_f2.y AS y
 FROM
-  t_0_A_MultBodyAggAux_f4 AS A_MultBodyAggAux_f4
+  t_1_A_MultBodyAggAux_f2 AS A_MultBodyAggAux_f2
+GROUP BY 1)
+SELECT
+  A_sn_step.y AS y
+FROM
+  t_0_A_sn_step AS A_sn_step
+WHERE
+  ((SELECT
+    MIN(1) AS logica_value
+  FROM
+    logica_test.A_sn_full AS A_sn_full
+  WHERE
+    (A_sn_full.y = A_sn_step.y)) IS NULL)
 GROUP BY 1;
 
-DROP TABLE IF EXISTS logica_test.A_ifr2;
-CREATE TABLE logica_test.A_ifr2 AS WITH t_0_A_MultBodyAggAux_f5 AS (SELECT * FROM (
+INSERT INTO logica_test.A_sn_full SELECT * FROM logica_test.A_sn_new;
+
+DROP TABLE IF EXISTS logica_test.A_sn_delta;
+CREATE TABLE logica_test.A_sn_delta AS SELECT
+  A_sn_new.y AS y
+FROM
+  logica_test.A_sn_new AS A_sn_new;
+
+DROP TABLE IF EXISTS logica_test.A_sn_new;
+CREATE TABLE logica_test.A_sn_new AS WITH t_1_A_MultBodyAggAux_f2 AS (SELECT * FROM (
   
     SELECT
       0 AS y
    UNION ALL
   
     SELECT
-      ((x_7) + (1)) AS y
+      ((x_9) + (1)) AS y
     FROM
-      logica_test.A_ifr3 AS A_ifr3, UNNEST(SEQUENCE(0, 100 - 1)) as pushkin(x_7)
+      logica_test.A_sn_delta AS A_sn_delta, UNNEST(SEQUENCE(0, 100 - 1)) as pushkin(x_9)
     WHERE
-      (A_ifr3.y = x_7)
+      (A_sn_delta.y = x_9)
   
-) AS UNUSED_TABLE_NAME  )
-SELECT
-  A_MultBodyAggAux_f5.y AS y
+) AS UNUSED_TABLE_NAME  ),
+t_0_A_sn_step AS (SELECT
+  A_MultBodyAggAux_f2.y AS y
 FROM
-  t_0_A_MultBodyAggAux_f5 AS A_MultBodyAggAux_f5
+  t_1_A_MultBodyAggAux_f2 AS A_MultBodyAggAux_f2
+GROUP BY 1)
+SELECT
+  A_sn_step.y AS y
+FROM
+  t_0_A_sn_step AS A_sn_step
+WHERE
+  ((SELECT
+    MIN(1) AS logica_value
+  FROM
+    logica_test.A_sn_full AS A_sn_full
+  WHERE
+    (A_sn_full.y = A_sn_step.y)) IS NULL)
 GROUP BY 1;
 
-DROP TABLE IF EXISTS logica_test.A_ifr3;
-CREATE TABLE logica_test.A_ifr3 AS WITH t_0_A_MultBodyAggAux_f4 AS (SELECT * FROM (
+INSERT INTO logica_test.A_sn_full SELECT * FROM logica_test.A_sn_new;
+
+DROP TABLE IF EXISTS logica_test.A_sn_delta;
+CREATE TABLE logica_test.A_sn_delta AS SELECT
+  A_sn_new.y AS y
+FROM
+  logica_test.A_sn_new AS A_sn_new;
+
+DROP TABLE IF EXISTS logica_test.A_sn_new;
+CREATE TABLE logica_test.A_sn_new AS WITH t_1_A_MultBodyAggAux_f2 AS (SELECT * FROM (
   
     SELECT
       0 AS y
    UNION ALL
   
     SELECT
-      ((x_7) + (1)) AS y
+      ((x_9) + (1)) AS y
     FROM
-      logica_test.A_ifr2 AS A_ifr2, UNNEST(SEQUENCE(0, 100 - 1)) as pushkin(x_7)
+      logica_test.A_sn_delta AS A_sn_delta, UNNEST(SEQUENCE(0, 100 - 1)) as pushkin(x_9)
     WHERE
-      (A_ifr2.y = x_7)
+      (A_sn_delta.y = x_9)
   
-) AS UNUSED_TABLE_NAME  )
-SELECT
-  A_MultBodyAggAux_f4.y AS y
+) AS UNUSED_TABLE_NAME  ),
+t_0_A_sn_step AS (SELECT
+  A_MultBodyAggAux_f2.y AS y
 FROM
-  t_0_A_MultBodyAggAux_f4 AS A_MultBodyAggAux_f4
+  t_1_A_MultBodyAggAux_f2 AS A_MultBodyAggAux_f2
+GROUP BY 1)
+SELECT
+  A_sn_step.y AS y
+FROM
+  t_0_A_sn_step AS A_sn_step
+WHERE
+  ((SELECT
+    MIN(1) AS logica_value
+  FROM
+    logica_test.A_sn_full AS A_sn_full
+  WHERE
+    (A_sn_full.y = A_sn_step.y)) IS NULL)
 GROUP BY 1;
 
-DROP TABLE IF EXISTS logica_test.A_ifr2;
-CREATE TABLE logica_test.A_ifr2 AS WITH t_0_A_MultBodyAggAux_f5 AS (SELECT * FROM (
+INSERT INTO logica_test.A_sn_full SELECT * FROM logica_test.A_sn_new;
+
+DROP TABLE IF EXISTS logica_test.A_sn_delta;
+CREATE TABLE logica_test.A_sn_delta AS SELECT
+  A_sn_new.y AS y
+FROM
+  logica_test.A_sn_new AS A_sn_new;
+
+DROP TABLE IF EXISTS logica_test.A_sn_new;
+CREATE TABLE logica_test.A_sn_new AS WITH t_1_A_MultBodyAggAux_f2 AS (SELECT * FROM (
   
     SELECT
       0 AS y
    UNION ALL
   
     SELECT
-      ((x_7) + (1)) AS y
+      ((x_9) + (1)) AS y
     FROM
-      logica_test.A_ifr3 AS A_ifr3, UNNEST(SEQUENCE(0, 100 - 1)) as pushkin(x_7)
+      logica_test.A_sn_delta AS A_sn_delta, UNNEST(SEQUENCE(0, 100 - 1)) as pushkin(x_9)
     WHERE
-      (A_ifr3.y = x_7)
+      (A_sn_delta.y = x_9)
   
-) AS UNUSED_TABLE_NAME  )
-SELECT
-  A_MultBodyAggAux_f5.y AS y
+) AS UNUSED_TABLE_NAME  ),
+t_0_A_sn_step AS (SELECT
+  A_MultBodyAggAux_f2.y AS y
 FROM
-  t_0_A_MultBodyAggAux_f5 AS A_MultBodyAggAux_f5
+  t_1_A_MultBodyAggAux_f2 AS A_MultBodyAggAux_f2
+GROUP BY 1)
+SELECT
+  A_sn_step.y AS y
+FROM
+  t_0_A_sn_step AS A_sn_step
+WHERE
+  ((SELECT
+    MIN(1) AS logica_value
+  FROM
+    logica_test.A_sn_full AS A_sn_full
+  WHERE
+    (A_sn_full.y = A_sn_step.y)) IS NULL)
 GROUP BY 1;
 
-DROP TABLE IF EXISTS logica_test.A;
-CREATE TABLE logica_test.A AS WITH t_0_A_MultBodyAggAux_f6 AS (SELECT * FROM (
+INSERT INTO logica_test.A_sn_full SELECT * FROM logica_test.A_sn_new;
+
+DROP TABLE IF EXISTS logica_test.A_sn_delta;
+CREATE TABLE logica_test.A_sn_delta AS SELECT
+  A_sn_new.y AS y
+FROM
+  logica_test.A_sn_new AS A_sn_new;
+
+DROP TABLE IF EXISTS logica_test.A_sn_new;
+CREATE TABLE logica_test.A_sn_new AS WITH t_1_A_MultBodyAggAux_f2 AS (SELECT * FROM (
   
     SELECT
       0 AS y
    UNION ALL
   
     SELECT
-      ((x_7) + (1)) AS y
+      ((x_9) + (1)) AS y
     FROM
-      logica_test.A_ifr2 AS A_ifr4, UNNEST(SEQUENCE(0, 100 - 1)) as pushkin(x_7)
+      logica_test.A_sn_delta AS A_sn_delta, UNNEST(SEQUENCE(0, 100 - 1)) as pushkin(x_9)
     WHERE
-      (A_ifr4.y = x_7)
+      (A_sn_delta.y = x_9)
   
-) AS UNUSED_TABLE_NAME  )
-SELECT
-  A_MultBodyAggAux_f6.y AS y
+) AS UNUSED_TABLE_NAME  ),
+t_0_A_sn_step AS (SELECT
+  A_MultBodyAggAux_f2.y AS y
 FROM
-  t_0_A_MultBodyAggAux_f6 AS A_MultBodyAggAux_f6
+  t_1_A_MultBodyAggAux_f2 AS A_MultBodyAggAux_f2
+GROUP BY 1)
+SELECT
+  A_sn_step.y AS y
+FROM
+  t_0_A_sn_step AS A_sn_step
+WHERE
+  ((SELECT
+    MIN(1) AS logica_value
+  FROM
+    logica_test.A_sn_full AS A_sn_full
+  WHERE
+    (A_sn_full.y = A_sn_step.y)) IS NULL)
 GROUP BY 1;
 
--- Interacting with table logica_test.A
+INSERT INTO logica_test.A_sn_full SELECT * FROM logica_test.A_sn_new;
 
-DROP TABLE IF EXISTS logica_test.B_ifr0;
-CREATE TABLE logica_test.B_ifr0 AS WITH t_0_B_MultBodyAggAux_f7 AS (SELECT * FROM (
-  
-    SELECT
-      0 AS y
-  
-) AS UNUSED_TABLE_NAME  )
-SELECT
-  B_MultBodyAggAux_f7.y AS y
+DROP TABLE IF EXISTS logica_test.A_sn_delta;
+CREATE TABLE logica_test.A_sn_delta AS SELECT
+  A_sn_new.y AS y
 FROM
-  t_0_B_MultBodyAggAux_f7 AS B_MultBodyAggAux_f7
-GROUP BY 1;
+  logica_test.A_sn_new AS A_sn_new;
 
--- Interacting with table logica_test.B_ifr0
-
-DROP TABLE IF EXISTS logica_test.B_ifr1;
-CREATE TABLE logica_test.B_ifr1 AS WITH t_0_B_MultBodyAggAux_f8 AS (SELECT * FROM (
-  
-    SELECT
-      0 AS y
-   UNION ALL
-  
-    SELECT
-      ((x_7) + (1)) AS y
-    FROM
-      logica_test.B_ifr0 AS B_ifr0, UNNEST(SEQUENCE(0, 100 - 1)) as pushkin(x_7)
-    WHERE
-      (B_ifr0.y = x_7)
-  
-) AS UNUSED_TABLE_NAME  )
-SELECT
-  B_MultBodyAggAux_f8.y AS y
-FROM
-  t_0_B_MultBodyAggAux_f8 AS B_MultBodyAggAux_f8
-GROUP BY 1;
-
--- Interacting with table logica_test.B_ifr1
-
-DROP TABLE IF EXISTS logica_test.B_ifr2;
-CREATE TABLE logica_test.B_ifr2 AS WITH t_0_B_MultBodyAggAux_f9 AS (SELECT * FROM (
+DROP TABLE IF EXISTS logica_test.B_sn_new;
+CREATE TABLE logica_test.B_sn_new AS WITH t_1_B_MultBodyAggAux_f4 AS (SELECT * FROM (
   
     SELECT
       0 AS y
    UNION ALL
   
     SELECT
-      ((x_7) + (1)) AS y
+      ((x_9) + (1)) AS y
     FROM
-      logica_test.B_ifr1 AS B_ifr1, UNNEST(SEQUENCE(0, 100 - 1)) as pushkin(x_7)
+      logica_test.B_sn_delta AS B_sn_delta, UNNEST(SEQUENCE(0, 100 - 1)) as pushkin(x_9)
     WHERE
-      (B_ifr1.y = x_7)
+      (B_sn_delta.y = x_9)
   
-) AS UNUSED_TABLE_NAME  )
-SELECT
-  B_MultBodyAggAux_f9.y AS y
+) AS UNUSED_TABLE_NAME  ),
+t_0_B_sn_step AS (SELECT
+  B_MultBodyAggAux_f4.y AS y
 FROM
-  t_0_B_MultBodyAggAux_f9 AS B_MultBodyAggAux_f9
+  t_1_B_MultBodyAggAux_f4 AS B_MultBodyAggAux_f4
+GROUP BY 1)
+SELECT
+  B_sn_step.y AS y
+FROM
+  t_0_B_sn_step AS B_sn_step
+WHERE
+  ((SELECT
+    MIN(1) AS logica_value
+  FROM
+    logica_test.B_sn_full AS B_sn_full
+  WHERE
+    (B_sn_full.y = B_sn_step.y)) IS NULL)
 GROUP BY 1;
 
--- Interacting with table logica_test.B_ifr2
+INSERT INTO logica_test.B_sn_full SELECT * FROM logica_test.B_sn_new;
 
-DROP TABLE IF EXISTS logica_test.B_ifr1;
-CREATE TABLE logica_test.B_ifr1 AS WITH t_0_B_MultBodyAggAux_f10 AS (SELECT * FROM (
+DROP TABLE IF EXISTS logica_test.B_sn_delta;
+CREATE TABLE logica_test.B_sn_delta AS SELECT
+  B_sn_new.y AS y
+FROM
+  logica_test.B_sn_new AS B_sn_new;
+
+DROP TABLE IF EXISTS logica_test.B_sn_new;
+CREATE TABLE logica_test.B_sn_new AS WITH t_1_B_MultBodyAggAux_f4 AS (SELECT * FROM (
   
     SELECT
       0 AS y
    UNION ALL
   
     SELECT
-      ((x_7) + (1)) AS y
+      ((x_9) + (1)) AS y
     FROM
-      logica_test.B_ifr2 AS B_ifr2, UNNEST(SEQUENCE(0, 100 - 1)) as pushkin(x_7)
+      logica_test.B_sn_delta AS B_sn_delta, UNNEST(SEQUENCE(0, 100 - 1)) as pushkin(x_9)
     WHERE
-      (B_ifr2.y = x_7)
+      (B_sn_delta.y = x_9)
   
-) AS UNUSED_TABLE_NAME  )
-SELECT
-  B_MultBodyAggAux_f10.y AS y
+) AS UNUSED_TABLE_NAME  ),
+t_0_B_sn_step AS (SELECT
+  B_MultBodyAggAux_f4.y AS y
 FROM
-  t_0_B_MultBodyAggAux_f10 AS B_MultBodyAggAux_f10
+  t_1_B_MultBodyAggAux_f4 AS B_MultBodyAggAux_f4
+GROUP BY 1)
+SELECT
+  B_sn_step.y AS y
+FROM
+  t_0_B_sn_step AS B_sn_step
+WHERE
+  ((SELECT
+    MIN(1) AS logica_value
+  FROM
+    logica_test.B_sn_full AS B_sn_full
+  WHERE
+    (B_sn_full.y = B_sn_step.y)) IS NULL)
 GROUP BY 1;
 
--- Interacting with table logica_test.B_ifr1
+INSERT INTO logica_test.B_sn_full SELECT * FROM logica_test.B_sn_new;
 
-DROP TABLE IF EXISTS logica_test.B_ifr2;
-CREATE TABLE logica_test.B_ifr2 AS WITH t_0_B_MultBodyAggAux_f9 AS (SELECT * FROM (
+DROP TABLE IF EXISTS logica_test.B_sn_delta;
+CREATE TABLE logica_test.B_sn_delta AS SELECT
+  B_sn_new.y AS y
+FROM
+  logica_test.B_sn_new AS B_sn_new;
+
+DROP TABLE IF EXISTS logica_test.B_sn_new;
+CREATE TABLE logica_test.B_sn_new AS WITH t_1_B_MultBodyAggAux_f4 AS (SELECT * FROM (
   
     SELECT
       0 AS y
    UNION ALL
   
     SELECT
-      ((x_7) + (1)) AS y
+      ((x_9) + (1)) AS y
     FROM
-      logica_test.B_ifr1 AS B_ifr1, UNNEST(SEQUENCE(0, 100 - 1)) as pushkin(x_7)
+      logica_test.B_sn_delta AS B_sn_delta, UNNEST(SEQUENCE(0, 100 - 1)) as pushkin(x_9)
     WHERE
-      (B_ifr1.y = x_7)
+      (B_sn_delta.y = x_9)
   
-) AS UNUSED_TABLE_NAME  )
-SELECT
-  B_MultBodyAggAux_f9.y AS y
+) AS UNUSED_TABLE_NAME  ),
+t_0_B_sn_step AS (SELECT
+  B_MultBodyAggAux_f4.y AS y
 FROM
-  t_0_B_MultBodyAggAux_f9 AS B_MultBodyAggAux_f9
+  t_1_B_MultBodyAggAux_f4 AS B_MultBodyAggAux_f4
+GROUP BY 1)
+SELECT
+  B_sn_step.y AS y
+FROM
+  t_0_B_sn_step AS B_sn_step
+WHERE
+  ((SELECT
+    MIN(1) AS logica_value
+  FROM
+    logica_test.B_sn_full AS B_sn_full
+  WHERE
+    (B_sn_full.y = B_sn_step.y)) IS NULL)
 GROUP BY 1;
 
-DROP TABLE IF EXISTS logica_test.B_ifr1;
-CREATE TABLE logica_test.B_ifr1 AS WITH t_0_B_MultBodyAggAux_f10 AS (SELECT * FROM (
+INSERT INTO logica_test.B_sn_full SELECT * FROM logica_test.B_sn_new;
+
+DROP TABLE IF EXISTS logica_test.B_sn_delta;
+CREATE TABLE logica_test.B_sn_delta AS SELECT
+  B_sn_new.y AS y
+FROM
+  logica_test.B_sn_new AS B_sn_new;
+
+DROP TABLE IF EXISTS logica_test.B_sn_new;
+CREATE TABLE logica_test.B_sn_new AS WITH t_1_B_MultBodyAggAux_f4 AS (SELECT * FROM (
   
     SELECT
       0 AS y
    UNION ALL
   
     SELECT
-      ((x_7) + (1)) AS y
+      ((x_9) + (1)) AS y
     FROM
-      logica_test.B_ifr2 AS B_ifr2, UNNEST(SEQUENCE(0, 100 - 1)) as pushkin(x_7)
+      logica_test.B_sn_delta AS B_sn_delta, UNNEST(SEQUENCE(0, 100 - 1)) as pushkin(x_9)
     WHERE
-      (B_ifr2.y = x_7)
+      (B_sn_delta.y = x_9)
   
-) AS UNUSED_TABLE_NAME  )
-SELECT
-  B_MultBodyAggAux_f10.y AS y
+) AS UNUSED_TABLE_NAME  ),
+t_0_B_sn_step AS (SELECT
+  B_MultBodyAggAux_f4.y AS y
 FROM
-  t_0_B_MultBodyAggAux_f10 AS B_MultBodyAggAux_f10
+  t_1_B_MultBodyAggAux_f4 AS B_MultBodyAggAux_f4
+GROUP BY 1)
+SELECT
+  B_sn_step.y AS y
+FROM
+  t_0_B_sn_step AS B_sn_step
+WHERE
+  ((SELECT
+    MIN(1) AS logica_value
+  FROM
+    logica_test.B_sn_full AS B_sn_full
+  WHERE
+    (B_sn_full.y = B_sn_step.y)) IS NULL)
 GROUP BY 1;
 
-DROP TABLE IF EXISTS logica_test.B_ifr2;
-CREATE TABLE logica_test.B_ifr2 AS WITH t_0_B_MultBodyAggAux_f9 AS (SELECT * FROM (
+INSERT INTO logica_test.B_sn_full SELECT * FROM logica_test.B_sn_new;
+
+DROP TABLE IF EXISTS logica_test.B_sn_delta;
+CREATE TABLE logica_test.B_sn_delta AS SELECT
+  B_sn_new.y AS y
+FROM
+  logica_test.B_sn_new AS B_sn_new;
+
+DROP TABLE IF EXISTS logica_test.B_sn_new;
+CREATE TABLE logica_test.B_sn_new AS WITH t_1_B_MultBodyAggAux_f4 AS (SELECT * FROM (
   
     SELECT
       0 AS y
    UNION ALL
   
     SELECT
-      ((x_7) + (1)) AS y
+      ((x_9) + (1)) AS y
     FROM
-      logica_test.B_ifr1 AS B_ifr1, UNNEST(SEQUENCE(0, 100 - 1)) as pushkin(x_7)
+      logica_test.B_sn_delta AS B_sn_delta, UNNEST(SEQUENCE(0, 100 - 1)) as pushkin(x_9)
     WHERE
-      (B_ifr1.y = x_7)
+      (B_sn_delta.y = x_9)
   
-) AS UNUSED_TABLE_NAME  )
-SELECT
-  B_MultBodyAggAux_f9.y AS y
+) AS UNUSED_TABLE_NAME  ),
+t_0_B_sn_step AS (SELECT
+  B_MultBodyAggAux_f4.y AS y
 FROM
-  t_0_B_MultBodyAggAux_f9 AS B_MultBodyAggAux_f9
+  t_1_B_MultBodyAggAux_f4 AS B_MultBodyAggAux_f4
+GROUP BY 1)
+SELECT
+  B_sn_step.y AS y
+FROM
+  t_0_B_sn_step AS B_sn_step
+WHERE
+  ((SELECT
+    MIN(1) AS logica_value
+  FROM
+    logica_test.B_sn_full AS B_sn_full
+  WHERE
+    (B_sn_full.y = B_sn_step.y)) IS NULL)
 GROUP BY 1;
 
-DROP TABLE IF EXISTS logica_test.B_ifr1;
-CREATE TABLE logica_test.B_ifr1 AS WITH t_0_B_MultBodyAggAux_f10 AS (SELECT * FROM (
+INSERT INTO logica_test.B_sn_full SELECT * FROM logica_test.B_sn_new;
+
+DROP TABLE IF EXISTS logica_test.B_sn_delta;
+CREATE TABLE logica_test.B_sn_delta AS SELECT
+  B_sn_new.y AS y
+FROM
+  logica_test.B_sn_new AS B_sn_new;
+
+DROP TABLE IF EXISTS logica_test.B_sn_new;
+CREATE TABLE logica_test.B_sn_new AS WITH t_1_B_MultBodyAggAux_f4 AS (SELECT * FROM (
   
     SELECT
       0 AS y
    UNION ALL
   
     SELECT
-      ((x_7) + (1)) AS y
+      ((x_9) + (1)) AS y
     FROM
-      logica_test.B_ifr2 AS B_ifr2, UNNEST(SEQUENCE(0, 100 - 1)) as pushkin(x_7)
+      logica_test.B_sn_delta AS B_sn_delta, UNNEST(SEQUENCE(0, 100 - 1)) as pushkin(x_9)
     WHERE
-      (B_ifr2.y = x_7)
+      (B_sn_delta.y = x_9)
   
-) AS UNUSED_TABLE_NAME  )
-SELECT
-  B_MultBodyAggAux_f10.y AS y
+) AS UNUSED_TABLE_NAME  ),
+t_0_B_sn_step AS (SELECT
+  B_MultBodyAggAux_f4.y AS y
 FROM
-  t_0_B_MultBodyAggAux_f10 AS B_MultBodyAggAux_f10
+  t_1_B_MultBodyAggAux_f4 AS B_MultBodyAggAux_f4
+GROUP BY 1)
+SELECT
+  B_sn_step.y AS y
+FROM
+  t_0_B_sn_step AS B_sn_step
+WHERE
+  ((SELECT
+    MIN(1) AS logica_value
+  FROM
+    logica_test.B_sn_full AS B_sn_full
+  WHERE
+    (B_sn_full.y = B_sn_step.y)) IS NULL)
 GROUP BY 1;
 
-DROP TABLE IF EXISTS logica_test.B_ifr2;
-CREATE TABLE logica_test.B_ifr2 AS WITH t_0_B_MultBodyAggAux_f9 AS (SELECT * FROM (
+INSERT INTO logica_test.B_sn_full SELECT * FROM logica_test.B_sn_new;
+
+DROP TABLE IF EXISTS logica_test.B_sn_delta;
+CREATE TABLE logica_test.B_sn_delta AS SELECT
+  B_sn_new.y AS y
+FROM
+  logica_test.B_sn_new AS B_sn_new;
+
+DROP TABLE IF EXISTS logica_test.B_sn_new;
+CREATE TABLE logica_test.B_sn_new AS WITH t_1_B_MultBodyAggAux_f4 AS (SELECT * FROM (
   
     SELECT
       0 AS y
    UNION ALL
   
     SELECT
-      ((x_7) + (1)) AS y
+      ((x_9) + (1)) AS y
     FROM
-      logica_test.B_ifr1 AS B_ifr1, UNNEST(SEQUENCE(0, 100 - 1)) as pushkin(x_7)
+      logica_test.B_sn_delta AS B_sn_delta, UNNEST(SEQUENCE(0, 100 - 1)) as pushkin(x_9)
     WHERE
-      (B_ifr1.y = x_7)
+      (B_sn_delta.y = x_9)
   
-) AS UNUSED_TABLE_NAME  )
-SELECT
-  B_MultBodyAggAux_f9.y AS y
+) AS UNUSED_TABLE_NAME  ),
+t_0_B_sn_step AS (SELECT
+  B_MultBodyAggAux_f4.y AS y
 FROM
-  t_0_B_MultBodyAggAux_f9 AS B_MultBodyAggAux_f9
+  t_1_B_MultBodyAggAux_f4 AS B_MultBodyAggAux_f4
+GROUP BY 1)
+SELECT
+  B_sn_step.y AS y
+FROM
+  t_0_B_sn_step AS B_sn_step
+WHERE
+  ((SELECT
+    MIN(1) AS logica_value
+  FROM
+    logica_test.B_sn_full AS B_sn_full
+  WHERE
+    (B_sn_full.y = B_sn_step.y)) IS NULL)
 GROUP BY 1;
 
-DROP TABLE IF EXISTS logica_test.B_ifr1;
-CREATE TABLE logica_test.B_ifr1 AS WITH t_0_B_MultBodyAggAux_f10 AS (SELECT * FROM (
+INSERT INTO logica_test.B_sn_full SELECT * FROM logica_test.B_sn_new;
+
+DROP TABLE IF EXISTS logica_test.B_sn_delta;
+CREATE TABLE logica_test.B_sn_delta AS SELECT
+  B_sn_new.y AS y
+FROM
+  logica_test.B_sn_new AS B_sn_new;
+
+DROP TABLE IF EXISTS logica_test.B_sn_new;
+CREATE TABLE logica_test.B_sn_new AS WITH t_1_B_MultBodyAggAux_f4 AS (SELECT * FROM (
   
     SELECT
       0 AS y
    UNION ALL
   
     SELECT
-      ((x_7) + (1)) AS y
+      ((x_9) + (1)) AS y
     FROM
-      logica_test.B_ifr2 AS B_ifr2, UNNEST(SEQUENCE(0, 100 - 1)) as pushkin(x_7)
+      logica_test.B_sn_delta AS B_sn_delta, UNNEST(SEQUENCE(0, 100 - 1)) as pushkin(x_9)
     WHERE
-      (B_ifr2.y = x_7)
+      (B_sn_delta.y = x_9)
   
-) AS UNUSED_TABLE_NAME  )
-SELECT
-  B_MultBodyAggAux_f10.y AS y
+) AS UNUSED_TABLE_NAME  ),
+t_0_B_sn_step AS (SELECT
+  B_MultBodyAggAux_f4.y AS y
 FROM
-  t_0_B_MultBodyAggAux_f10 AS B_MultBodyAggAux_f10
+  t_1_B_MultBodyAggAux_f4 AS B_MultBodyAggAux_f4
+GROUP BY 1)
+SELECT
+  B_sn_step.y AS y
+FROM
+  t_0_B_sn_step AS B_sn_step
+WHERE
+  ((SELECT
+    MIN(1) AS logica_value
+  FROM
+    logica_test.B_sn_full AS B_sn_full
+  WHERE
+    (B_sn_full.y = B_sn_step.y)) IS NULL)
 GROUP BY 1;
 
-DROP TABLE IF EXISTS logica_test.B_ifr2;
-CREATE TABLE logica_test.B_ifr2 AS WITH t_0_B_MultBodyAggAux_f9 AS (SELECT * FROM (
+INSERT INTO logica_test.B_sn_full SELECT * FROM logica_test.B_sn_new;
+
+DROP TABLE IF EXISTS logica_test.B_sn_delta;
+CREATE TABLE logica_test.B_sn_delta AS SELECT
+  B_sn_new.y AS y
+FROM
+  logica_test.B_sn_new AS B_sn_new;
+
+DROP TABLE IF EXISTS logica_test.B_sn_new;
+CREATE TABLE logica_test.B_sn_new AS WITH t_1_B_MultBodyAggAux_f4 AS (SELECT * FROM (
   
     SELECT
       0 AS y
    UNION ALL
   
     SELECT
-      ((x_7) + (1)) AS y
+      ((x_9) + (1)) AS y
     FROM
-      logica_test.B_ifr1 AS B_ifr1, UNNEST(SEQUENCE(0, 100 - 1)) as pushkin(x_7)
+      logica_test.B_sn_delta AS B_sn_delta, UNNEST(SEQUENCE(0, 100 - 1)) as pushkin(x_9)
     WHERE
-      (B_ifr1.y = x_7)
+      (B_sn_delta.y = x_9)
   
-) AS UNUSED_TABLE_NAME  )
-SELECT
-  B_MultBodyAggAux_f9.y AS y
+) AS UNUSED_TABLE_NAME  ),
+t_0_B_sn_step AS (SELECT
+  B_MultBodyAggAux_f4.y AS y
 FROM
-  t_0_B_MultBodyAggAux_f9 AS B_MultBodyAggAux_f9
+  t_1_B_MultBodyAggAux_f4 AS B_MultBodyAggAux_f4
+GROUP BY 1)
+SELECT
+  B_sn_step.y AS y
+FROM
+  t_0_B_sn_step AS B_sn_step
+WHERE
+  ((SELECT
+    MIN(1) AS logica_value
+  FROM
+    logica_test.B_sn_full AS B_sn_full
+  WHERE
+    (B_sn_full.y = B_sn_step.y)) IS NULL)
 GROUP BY 1;
 
-DROP TABLE IF EXISTS logica_test.B_ifr1;
-CREATE TABLE logica_test.B_ifr1 AS WITH t_0_B_MultBodyAggAux_f10 AS (SELECT * FROM (
+INSERT INTO logica_test.B_sn_full SELECT * FROM logica_test.B_sn_new;
+
+DROP TABLE IF EXISTS logica_test.B_sn_delta;
+CREATE TABLE logica_test.B_sn_delta AS SELECT
+  B_sn_new.y AS y
+FROM
+  logica_test.B_sn_new AS B_sn_new;
+
+DROP TABLE IF EXISTS logica_test.B_sn_new;
+CREATE TABLE logica_test.B_sn_new AS WITH t_1_B_MultBodyAggAux_f4 AS (SELECT * FROM (
   
     SELECT
       0 AS y
    UNION ALL
   
     SELECT
-      ((x_7) + (1)) AS y
+      ((x_9) + (1)) AS y
     FROM
-      logica_test.B_ifr2 AS B_ifr2, UNNEST(SEQUENCE(0, 100 - 1)) as pushkin(x_7)
+      logica_test.B_sn_delta AS B_sn_delta, UNNEST(SEQUENCE(0, 100 - 1)) as pushkin(x_9)
     WHERE
-      (B_ifr2.y = x_7)
+      (B_sn_delta.y = x_9)
   
-) AS UNUSED_TABLE_NAME  )
-SELECT
-  B_MultBodyAggAux_f10.y AS y
+) AS UNUSED_TABLE_NAME  ),
+t_0_B_sn_step AS (SELECT
+  B_MultBodyAggAux_f4.y AS y
 FROM
-  t_0_B_MultBodyAggAux_f10 AS B_MultBodyAggAux_f10
+  t_1_B_MultBodyAggAux_f4 AS B_MultBodyAggAux_f4
+GROUP BY 1)
+SELECT
+  B_sn_step.y AS y
+FROM
+  t_0_B_sn_step AS B_sn_step
+WHERE
+  ((SELECT
+    MIN(1) AS logica_value
+  FROM
+    logica_test.B_sn_full AS B_sn_full
+  WHERE
+    (B_sn_full.y = B_sn_step.y)) IS NULL)
 GROUP BY 1;
 
-DROP TABLE IF EXISTS logica_test.B_ifr2;
-CREATE TABLE logica_test.B_ifr2 AS WITH t_0_B_MultBodyAggAux_f9 AS (SELECT * FROM (
+INSERT INTO logica_test.B_sn_full SELECT * FROM logica_test.B_sn_new;
+
+DROP TABLE IF EXISTS logica_test.B_sn_delta;
+CREATE TABLE logica_test.B_sn_delta AS SELECT
+  B_sn_new.y AS y
+FROM
+  logica_test.B_sn_new AS B_sn_new;
+
+DROP TABLE IF EXISTS logica_test.B_sn_new;
+CREATE TABLE logica_test.B_sn_new AS WITH t_1_B_MultBodyAggAux_f4 AS (SELECT * FROM (
   
     SELECT
       0 AS y
    UNION ALL
   
     SELECT
-      ((x_7) + (1)) AS y
+      ((x_9) + (1)) AS y
     FROM
-      logica_test.B_ifr1 AS B_ifr1, UNNEST(SEQUENCE(0, 100 - 1)) as pushkin(x_7)
+      logica_test.B_sn_delta AS B_sn_delta, UNNEST(SEQUENCE(0, 100 - 1)) as pushkin(x_9)
     WHERE
-      (B_ifr1.y = x_7)
+      (B_sn_delta.y = x_9)
   
-) AS UNUSED_TABLE_NAME  )
-SELECT
-  B_MultBodyAggAux_f9.y AS y
+) AS UNUSED_TABLE_NAME  ),
+t_0_B_sn_step AS (SELECT
+  B_MultBodyAggAux_f4.y AS y
 FROM
-  t_0_B_MultBodyAggAux_f9 AS B_MultBodyAggAux_f9
+  t_1_B_MultBodyAggAux_f4 AS B_MultBodyAggAux_f4
+GROUP BY 1)
+SELECT
+  B_sn_step.y AS y
+FROM
+  t_0_B_sn_step AS B_sn_step
+WHERE
+  ((SELECT
+    MIN(1) AS logica_value
+  FROM
+    logica_test.B_sn_full AS B_sn_full
+  WHERE
+    (B_sn_full.y = B_sn_step.y)) IS NULL)
 GROUP BY 1;
 
-DROP TABLE IF EXISTS logica_test.B_ifr1;
-CREATE TABLE logica_test.B_ifr1 AS WITH t_0_B_MultBodyAggAux_f10 AS (SELECT * FROM (
+INSERT INTO logica_test.B_sn_full SELECT * FROM logica_test.B_sn_new;
+
+DROP TABLE IF EXISTS logica_test.B_sn_delta;
+CREATE TABLE logica_test.B_sn_delta AS SELECT
+  B_sn_new.y AS y
+FROM
+  logica_test.B_sn_new AS B_sn_new;
+
+DROP TABLE IF EXISTS logica_test.B_sn_new;
+CREATE TABLE logica_test.B_sn_new AS WITH t_1_B_MultBodyAggAux_f4 AS (SELECT * FROM (
   
     SELECT
       0 AS y
    UNION ALL
   
     SELECT
-      ((x_7) + (1)) AS y
+      ((x_9) + (1)) AS y
     FROM
-      logica_test.B_ifr2 AS B_ifr2, UNNEST(SEQUENCE(0, 100 - 1)) as pushkin(x_7)
+      logica_test.B_sn_delta AS B_sn_delta, UNNEST(SEQUENCE(0, 100 - 1)) as pushkin(x_9)
     WHERE
-      (B_ifr2.y = x_7)
+      (B_sn_delta.y = x_9)
   
-) AS UNUSED_TABLE_NAME  )
-SELECT
-  B_MultBodyAggAux_f10.y AS y
+) AS UNUSED_TABLE_NAME  ),
+t_0_B_sn_step AS (SELECT
+  B_MultBodyAggAux_f4.y AS y
 FROM
-  t_0_B_MultBodyAggAux_f10 AS B_MultBodyAggAux_f10
+  t_1_B_MultBodyAggAux_f4 AS B_MultBodyAggAux_f4
+GROUP BY 1)
+SELECT
+  B_sn_step.y AS y
+FROM
+  t_0_B_sn_step AS B_sn_step
+WHERE
+  ((SELECT
+    MIN(1) AS logica_value
+  FROM
+    logica_test.B_sn_full AS B_sn_full
+  WHERE
+    (B_sn_full.y = B_sn_step.y)) IS NULL)
 GROUP BY 1;
 
-DROP TABLE IF EXISTS logica_test.B_ifr2;
-CREATE TABLE logica_test.B_ifr2 AS WITH t_0_B_MultBodyAggAux_f9 AS (SELECT * FROM (
+INSERT INTO logica_test.B_sn_full SELECT * FROM logica_test.B_sn_new;
+
+DROP TABLE IF EXISTS logica_test.B_sn_delta;
+CREATE TABLE logica_test.B_sn_delta AS SELECT
+  B_sn_new.y AS y
+FROM
+  logica_test.B_sn_new AS B_sn_new;
+
+DROP TABLE IF EXISTS logica_test.B_sn_new;
+CREATE TABLE logica_test.B_sn_new AS WITH t_1_B_MultBodyAggAux_f4 AS (SELECT * FROM (
   
     SELECT
       0 AS y
    UNION ALL
   
     SELECT
-      ((x_7) + (1)) AS y
+      ((x_9) + (1)) AS y
     FROM
-      logica_test.B_ifr1 AS B_ifr1, UNNEST(SEQUENCE(0, 100 - 1)) as pushkin(x_7)
+      logica_test.B_sn_delta AS B_sn_delta, UNNEST(SEQUENCE(0, 100 - 1)) as pushkin(x_9)
     WHERE
-      (B_ifr1.y = x_7)
+      (B_sn_delta.y = x_9)
   
-) AS UNUSED_TABLE_NAME  )
-SELECT
-  B_MultBodyAggAux_f9.y AS y
+) AS UNUSED_TABLE_NAME  ),
+t_0_B_sn_step AS (SELECT
+  B_MultBodyAggAux_f4.y AS y
 FROM
-  t_0_B_MultBodyAggAux_f9 AS B_MultBodyAggAux_f9
+  t_1_B_MultBodyAggAux_f4 AS B_MultBodyAggAux_f4
+GROUP BY 1)
+SELECT
+  B_sn_step.y AS y
+FROM
+  t_0_B_sn_step AS B_sn_step
+WHERE
+  ((SELECT
+    MIN(1) AS logica_value
+  FROM
+    logica_test.B_sn_full AS B_sn_full
+  WHERE
+    (B_sn_full.y = B_sn_step.y)) IS NULL)
 GROUP BY 1;
 
-DROP TABLE IF EXISTS logica_test.B_ifr1;
-CREATE TABLE logica_test.B_ifr1 AS WITH t_0_B_MultBodyAggAux_f10 AS (SELECT * FROM (
+INSERT INTO logica_test.B_sn_full SELECT * FROM logica_test.B_sn_new;
+
+DROP TABLE IF EXISTS logica_test.B_sn_delta;
+CREATE TABLE logica_test.B_sn_delta AS SELECT
+  B_sn_new.y AS y
+FROM
+  logica_test.B_sn_new AS B_sn_new;
+
+DROP TABLE IF EXISTS logica_test.B_sn_new;
+CREATE TABLE logica_test.B_sn_new AS WITH t_1_B_MultBodyAggAux_f4 AS (SELECT * FROM (
   
     SELECT
       0 AS y
    UNION ALL
   
     SELECT
-      ((x_7) + (1)) AS y
+      ((x_9) + (1)) AS y
     FROM
-      logica_test.B_ifr2 AS B_ifr2, UNNEST(SEQUENCE(0, 100 - 1)) as pushkin(x_7)
+      logica_test.B_sn_delta AS B_sn_delta, UNNEST(SEQUENCE(0, 100 - 1)) as pushkin(x_9)
     WHERE
-      (B_ifr2.y = x_7)
+      (B_sn_delta.y = x_9)
   
-) AS UNUSED_TABLE_NAME  )
-SELECT
-  B_MultBodyAggAux_f10.y AS y
+) AS UNUSED_TABLE_NAME  ),
+t_0_B_sn_step AS (SELECT
+  B_MultBodyAggAux_f4.y AS y
 FROM
-  t_0_B_MultBodyAggAux_f10 AS B_MultBodyAggAux_f10
+  t_1_B_MultBodyAggAux_f4 AS B_MultBodyAggAux_f4
+GROUP BY 1)
+SELECT
+  B_sn_step.y AS y
+FROM
+  t_0_B_sn_step AS B_sn_step
+WHERE
+  ((SELECT
+    MIN(1) AS logica_value
+  FROM
+    logica_test.B_sn_full AS B_sn_full
+  WHERE
+    (B_sn_full.y = B_sn_step.y)) IS NULL)
 GROUP BY 1;
 
-DROP TABLE IF EXISTS logica_test.B_ifr2;
-CREATE TABLE logica_test.B_ifr2 AS WITH t_0_B_MultBodyAggAux_f9 AS (SELECT * FROM (
+INSERT INTO logica_test.B_sn_full SELECT * FROM logica_test.B_sn_new;
+
+DROP TABLE IF EXISTS logica_test.B_sn_delta;
+CREATE TABLE logica_test.B_sn_delta AS SELECT
+  B_sn_new.y AS y
+FROM
+  logica_test.B_sn_new AS B_sn_new;
+
+DROP TABLE IF EXISTS logica_test.B_sn_new;
+CREATE TABLE logica_test.B_sn_new AS WITH t_1_B_MultBodyAggAux_f4 AS (SELECT * FROM (
   
     SELECT
       0 AS y
    UNION ALL
   
     SELECT
-      ((x_7) + (1)) AS y
+      ((x_9) + (1)) AS y
     FROM
-      logica_test.B_ifr1 AS B_ifr1, UNNEST(SEQUENCE(0, 100 - 1)) as pushkin(x_7)
+      logica_test.B_sn_delta AS B_sn_delta, UNNEST(SEQUENCE(0, 100 - 1)) as pushkin(x_9)
     WHERE
-      (B_ifr1.y = x_7)
+      (B_sn_delta.y = x_9)
   
-) AS UNUSED_TABLE_NAME  )
-SELECT
-  B_MultBodyAggAux_f9.y AS y
+) AS UNUSED_TABLE_NAME  ),
+t_0_B_sn_step AS (SELECT
+  B_MultBodyAggAux_f4.y AS y
 FROM
-  t_0_B_MultBodyAggAux_f9 AS B_MultBodyAggAux_f9
+  t_1_B_MultBodyAggAux_f4 AS B_MultBodyAggAux_f4
+GROUP BY 1)
+SELECT
+  B_sn_step.y AS y
+FROM
+  t_0_B_sn_step AS B_sn_step
+WHERE
+  ((SELECT
+    MIN(1) AS logica_value
+  FROM
+    logica_test.B_sn_full AS B_sn_full
+  WHERE
+    (B_sn_full.y = B_sn_step.y)) IS NULL)
 GROUP BY 1;
 
-DROP TABLE IF EXISTS logica_test.B_ifr1;
-CREATE TABLE logica_test.B_ifr1 AS WITH t_0_B_MultBodyAggAux_f10 AS (SELECT * FROM (
+INSERT INTO logica_test.B_sn_full SELECT * FROM logica_test.B_sn_new;
+
+DROP TABLE IF EXISTS logica_test.B_sn_delta;
+CREATE TABLE logica_test.B_sn_delta AS SELECT
+  B_sn_new.y AS y
+FROM
+  logica_test.B_sn_new AS B_sn_new;
+
+DROP TABLE IF EXISTS logica_test.B_sn_new;
+CREATE TABLE logica_test.B_sn_new AS WITH t_1_B_MultBodyAggAux_f4 AS (SELECT * FROM (
   
     SELECT
       0 AS y
    UNION ALL
   
     SELECT
-      ((x_7) + (1)) AS y
+      ((x_9) + (1)) AS y
     FROM
-      logica_test.B_ifr2 AS B_ifr2, UNNEST(SEQUENCE(0, 100 - 1)) as pushkin(x_7)
+      logica_test.B_sn_delta AS B_sn_delta, UNNEST(SEQUENCE(0, 100 - 1)) as pushkin(x_9)
     WHERE
-      (B_ifr2.y = x_7)
+      (B_sn_delta.y = x_9)
   
-) AS UNUSED_TABLE_NAME  )
-SELECT
-  B_MultBodyAggAux_f10.y AS y
+) AS UNUSED_TABLE_NAME  ),
+t_0_B_sn_step AS (SELECT
+  B_MultBodyAggAux_f4.y AS y
 FROM
-  t_0_B_MultBodyAggAux_f10 AS B_MultBodyAggAux_f10
+  t_1_B_MultBodyAggAux_f4 AS B_MultBodyAggAux_f4
+GROUP BY 1)
+SELECT
+  B_sn_step.y AS y
+FROM
+  t_0_B_sn_step AS B_sn_step
+WHERE
+  ((SELECT
+    MIN(1) AS logica_value
+  FROM
+    logica_test.B_sn_full AS B_sn_full
+  WHERE
+    (B_sn_full.y = B_sn_step.y)) IS NULL)
 GROUP BY 1;
 
-DROP TABLE IF EXISTS logica_test.B_ifr2;
-CREATE TABLE logica_test.B_ifr2 AS WITH t_0_B_MultBodyAggAux_f9 AS (SELECT * FROM (
+INSERT INTO logica_test.B_sn_full SELECT * FROM logica_test.B_sn_new;
+
+DROP TABLE IF EXISTS logica_test.B_sn_delta;
+CREATE TABLE logica_test.B_sn_delta AS SELECT
+  B_sn_new.y AS y
+FROM
+  logica_test.B_sn_new AS B_sn_new;
+
+DROP TABLE IF EXISTS logica_test.B_sn_new;
+CREATE TABLE logica_test.B_sn_new AS WITH t_1_B_MultBodyAggAux_f4 AS (SELECT * FROM (
   
     SELECT
       0 AS y
    UNION ALL
   
     SELECT
-      ((x_7) + (1)) AS y
+      ((x_9) + (1)) AS y
     FROM
-      logica_test.B_ifr1 AS B_ifr1, UNNEST(SEQUENCE(0, 100 - 1)) as pushkin(x_7)
+      logica_test.B_sn_delta AS B_sn_delta, UNNEST(SEQUENCE(0, 100 - 1)) as pushkin(x_9)
     WHERE
-      (B_ifr1.y = x_7)
+      (B_sn_delta.y = x_9)
   
-) AS UNUSED_TABLE_NAME  )
-SELECT
-  B_MultBodyAggAux_f9.y AS y
+) AS UNUSED_TABLE_NAME  ),
+t_0_B_sn_step AS (SELECT
+  B_MultBodyAggAux_f4.y AS y
 FROM
-  t_0_B_MultBodyAggAux_f9 AS B_MultBodyAggAux_f9
+  t_1_B_MultBodyAggAux_f4 AS B_MultBodyAggAux_f4
+GROUP BY 1)
+SELECT
+  B_sn_step.y AS y
+FROM
+  t_0_B_sn_step AS B_sn_step
+WHERE
+  ((SELECT
+    MIN(1) AS logica_value
+  FROM
+    logica_test.B_sn_full AS B_sn_full
+  WHERE
+    (B_sn_full.y = B_sn_step.y)) IS NULL)
 GROUP BY 1;
 
-DROP TABLE IF EXISTS logica_test.B_ifr1;
-CREATE TABLE logica_test.B_ifr1 AS WITH t_0_B_MultBodyAggAux_f10 AS (SELECT * FROM (
+INSERT INTO logica_test.B_sn_full SELECT * FROM logica_test.B_sn_new;
+
+DROP TABLE IF EXISTS logica_test.B_sn_delta;
+CREATE TABLE logica_test.B_sn_delta AS SELECT
+  B_sn_new.y AS y
+FROM
+  logica_test.B_sn_new AS B_sn_new;
+
+DROP TABLE IF EXISTS logica_test.B_sn_new;
+CREATE TABLE logica_test.B_sn_new AS WITH t_1_B_MultBodyAggAux_f4 AS (SELECT * FROM (
   
     SELECT
       0 AS y
    UNION ALL
   
     SELECT
-      ((x_7) + (1)) AS y
+      ((x_9) + (1)) AS y
     FROM
-      logica_test.B_ifr2 AS B_ifr2, UNNEST(SEQUENCE(0, 100 - 1)) as pushkin(x_7)
+      logica_test.B_sn_delta AS B_sn_delta, UNNEST(SEQUENCE(0, 100 - 1)) as pushkin(x_9)
     WHERE
-      (B_ifr2.y = x_7)
+      (B_sn_delta.y = x_9)
   
-) AS UNUSED_TABLE_NAME  )
-SELECT
-  B_MultBodyAggAux_f10.y AS y
+) AS UNUSED_TABLE_NAME  ),
+t_0_B_sn_step AS (SELECT
+  B_MultBodyAggAux_f4.y AS y
 FROM
-  t_0_B_MultBodyAggAux_f10 AS B_MultBodyAggAux_f10
+  t_1_B_MultBodyAggAux_f4 AS B_MultBodyAggAux_f4
+GROUP BY 1)
+SELECT
+  B_sn_step.y AS y
+FROM
+  t_0_B_sn_step AS B_sn_step
+WHERE
+  ((SELECT
+    MIN(1) AS logica_value
+  FROM
+    logica_test.B_sn_full AS B_sn_full
+  WHERE
+    (B_sn_full.y = B_sn_step.y)) IS NULL)
 GROUP BY 1;
 
-DROP TABLE IF EXISTS logica_test.B_ifr2;
-CREATE TABLE logica_test.B_ifr2 AS WITH t_0_B_MultBodyAggAux_f9 AS (SELECT * FROM (
+INSERT INTO logica_test.B_sn_full SELECT * FROM logica_test.B_sn_new;
+
+DROP TABLE IF EXISTS logica_test.B_sn_delta;
+CREATE TABLE logica_test.B_sn_delta AS SELECT
+  B_sn_new.y AS y
+FROM
+  logica_test.B_sn_new AS B_sn_new;
+
+DROP TABLE IF EXISTS logica_test.B_sn_new;
+CREATE TABLE logica_test.B_sn_new AS WITH t_1_B_MultBodyAggAux_f4 AS (SELECT * FROM (
   
     SELECT
       0 AS y
    UNION ALL
   
     SELECT
-      ((x_7) + (1)) AS y
+      ((x_9) + (1)) AS y
     FROM
-      logica_test.B_ifr1 AS B_ifr1, UNNEST(SEQUENCE(0, 100 - 1)) as pushkin(x_7)
+      logica_test.B_sn_delta AS B_sn_delta, UNNEST(SEQUENCE(0, 100 - 1)) as pushkin(x_9)
     WHERE
-      (B_ifr1.y = x_7)
+      (B_sn_delta.y = x_9)
   
-) AS UNUSED_TABLE_NAME  )
-SELECT
-  B_MultBodyAggAux_f9.y AS y
+) AS UNUSED_TABLE_NAME  ),
+t_0_B_sn_step AS (SELECT
+  B_MultBodyAggAux_f4.y AS y
 FROM
-  t_0_B_MultBodyAggAux_f9 AS B_MultBodyAggAux_f9
+  t_1_B_MultBodyAggAux_f4 AS B_MultBodyAggAux_f4
+GROUP BY 1)
+SELECT
+  B_sn_step.y AS y
+FROM
+  t_0_B_sn_step AS B_sn_step
+WHERE
+  ((SELECT
+    MIN(1) AS logica_value
+  FROM
+    logica_test.B_sn_full AS B_sn_full
+  WHERE
+    (B_sn_full.y = B_sn_step.y)) IS NULL)
 GROUP BY 1;
 
-DROP TABLE IF EXISTS logica_test.B_ifr1;
-CREATE TABLE logica_test.B_ifr1 AS WITH t_0_B_MultBodyAggAux_f10 AS (SELECT * FROM (
+INSERT INTO logica_test.B_sn_full SELECT * FROM logica_test.B_sn_new;
+
+DROP TABLE IF EXISTS logica_test.B_sn_delta;
+CREATE TABLE logica_test.B_sn_delta AS SELECT
+  B_sn_new.y AS y
+FROM
+  logica_test.B_sn_new AS B_sn_new;
+
+DROP TABLE IF EXISTS logica_test.B_sn_new;
+CREATE TABLE logica_test.B_sn_new AS WITH t_1_B_MultBodyAggAux_f4 AS (SELECT * FROM (
   
     SELECT
       0 AS y
    UNION ALL
   
     SELECT
-      ((x_7) + (1)) AS y
+      ((x_9) + (1)) AS y
     FROM
-      logica_test.B_ifr2 AS B_ifr2, UNNEST(SEQUENCE(0, 100 - 1)) as pushkin(x_7)
+      logica_test.B_sn_delta AS B_sn_delta, UNNEST(SEQUENCE(0, 100 - 1)) as pushkin(x_9)
     WHERE
-      (B_ifr2.y = x_7)
+      (B_sn_delta.y = x_9)
   
-) AS UNUSED_TABLE_NAME  )
-SELECT
-  B_MultBodyAggAux_f10.y AS y
+) AS UNUSED_TABLE_NAME  ),
+t_0_B_sn_step AS (SELECT
+  B_MultBodyAggAux_f4.y AS y
 FROM
-  t_0_B_MultBodyAggAux_f10 AS B_MultBodyAggAux_f10
+  t_1_B_MultBodyAggAux_f4 AS B_MultBodyAggAux_f4
+GROUP BY 1)
+SELECT
+  B_sn_step.y AS y
+FROM
+  t_0_B_sn_step AS B_sn_step
+WHERE
+  ((SELECT
+    MIN(1) AS logica_value
+  FROM
+    logica_test.B_sn_full AS B_sn_full
+  WHERE
+    (B_sn_full.y = B_sn_step.y)) IS NULL)
 GROUP BY 1;
 
-DROP TABLE IF EXISTS logica_test.B;
-CREATE TABLE logica_test.B AS WITH t_0_B_MultBodyAggAux_f11 AS (SELECT * FROM (
+INSERT INTO logica_test.B_sn_full SELECT * FROM logica_test.B_sn_new;
+
+DROP TABLE IF EXISTS logica_test.B_sn_delta;
+CREATE TABLE logica_test.B_sn_delta AS SELECT
+  B_sn_new.y AS y
+FROM
+  logica_test.B_sn_new AS B_sn_new;
+
+DROP TABLE IF EXISTS logica_test.B_sn_new;
+CREATE TABLE logica_test.B_sn_new AS WITH t_1_B_MultBodyAggAux_f4 AS (SELECT * FROM (
   
     SELECT
       0 AS y
    UNION ALL
   
     SELECT
-      ((x_7) + (1)) AS y
+      ((x_9) + (1)) AS y
     FROM
-      logica_test.B_ifr1 AS B_ifr3, UNNEST(SEQUENCE(0, 100 - 1)) as pushkin(x_7)
+      logica_test.B_sn_delta AS B_sn_delta, UNNEST(SEQUENCE(0, 100 - 1)) as pushkin(x_9)
     WHERE
-      (B_ifr3.y = x_7)
+      (B_sn_delta.y = x_9)
   
-) AS UNUSED_TABLE_NAME  )
-SELECT
-  B_MultBodyAggAux_f11.y AS y
+) AS UNUSED_TABLE_NAME  ),
+t_0_B_sn_step AS (SELECT
+  B_MultBodyAggAux_f4.y AS y
 FROM
-  t_0_B_MultBodyAggAux_f11 AS B_MultBodyAggAux_f11
+  t_1_B_MultBodyAggAux_f4 AS B_MultBodyAggAux_f4
+GROUP BY 1)
+SELECT
+  B_sn_step.y AS y
+FROM
+  t_0_B_sn_step AS B_sn_step
+WHERE
+  ((SELECT
+    MIN(1) AS logica_value
+  FROM
+    logica_test.B_sn_full AS B_sn_full
+  WHERE
+    (B_sn_full.y = B_sn_step.y)) IS NULL)
 GROUP BY 1;
 
--- Interacting with table logica_test.B
+INSERT INTO logica_test.B_sn_full SELECT * FROM logica_test.B_sn_new;
+
+DROP TABLE IF EXISTS logica_test.B_sn_delta;
+CREATE TABLE logica_test.B_sn_delta AS SELECT
+  B_sn_new.y AS y
+FROM
+  logica_test.B_sn_new AS B_sn_new;
+
+DROP TABLE IF EXISTS logica_test.B_sn_new;
+CREATE TABLE logica_test.B_sn_new AS WITH t_1_B_MultBodyAggAux_f4 AS (SELECT * FROM (
+  
+    SELECT
+      0 AS y
+   UNION ALL
+  
+    SELECT
+      ((x_9) + (1)) AS y
+    FROM
+      logica_test.B_sn_delta AS B_sn_delta, UNNEST(SEQUENCE(0, 100 - 1)) as pushkin(x_9)
+    WHERE
+      (B_sn_delta.y = x_9)
+  
+) AS UNUSED_TABLE_NAME  ),
+t_0_B_sn_step AS (SELECT
+  B_MultBodyAggAux_f4.y AS y
+FROM
+  t_1_B_MultBodyAggAux_f4 AS B_MultBodyAggAux_f4
+GROUP BY 1)
+SELECT
+  B_sn_step.y AS y
+FROM
+  t_0_B_sn_step AS B_sn_step
+WHERE
+  ((SELECT
+    MIN(1) AS logica_value
+  FROM
+    logica_test.B_sn_full AS B_sn_full
+  WHERE
+    (B_sn_full.y = B_sn_step.y)) IS NULL)
+GROUP BY 1;
+
+INSERT INTO logica_test.B_sn_full SELECT * FROM logica_test.B_sn_new;
+
+DROP TABLE IF EXISTS logica_test.B_sn_delta;
+CREATE TABLE logica_test.B_sn_delta AS SELECT
+  B_sn_new.y AS y
+FROM
+  logica_test.B_sn_new AS B_sn_new;
 
 SELECT
-  MAX(A.y) AS a,
-  MAX(B.y) AS b
+  MAX(A_sn_full.y) AS a,
+  MAX(B_sn_full.y) AS b
 FROM
-  logica_test.A AS A, logica_test.B AS B;
+  logica_test.A_sn_full AS A_sn_full, logica_test.B_sn_full AS B_sn_full;

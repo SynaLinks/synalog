@@ -808,10 +808,18 @@ impl Annotations {
             // Extract optional stop_signal
             let stop_signal = annot.get("stop_signal").and_then(extract_string_literal);
 
+            // Semi-naive evaluation's accumulated table (see IterationDef).
+            let accumulate = annot.get("accumulate").and_then(|v| {
+                let l = literal(v)?;
+                let p = l.as_object().get("the_predicate")?;
+                Some(p.as_object().get("predicate_name")?.as_str().to_string())
+            });
+
             result.insert(iteration_name, IterationDef {
                 predicates,
                 repetitions,
                 stop_signal,
+                accumulate,
             });
         }
 

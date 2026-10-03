@@ -1,5 +1,5 @@
-DROP TABLE IF EXISTS logica_test.Reach_ifr0;
-CREATE TABLE logica_test.Reach_ifr0 AS WITH t_0_Reach_MultBodyAggAux_f1 AS (SELECT * FROM (
+DROP TABLE IF EXISTS logica_test.Reach_sn_delta;
+CREATE TABLE logica_test.Reach_sn_delta AS WITH t_0_Reach_MultBodyAggAux_f1 AS (SELECT * FROM (
   
     SELECT
       x_9 AS x,
@@ -15,565 +15,1047 @@ FROM
   t_0_Reach_MultBodyAggAux_f1 AS Reach_MultBodyAggAux_f1
 GROUP BY 1, 2;
 
--- Interacting with table logica_test.Reach_ifr0
+-- Interacting with table logica_test.Reach_sn_delta
 
-DROP TABLE IF EXISTS logica_test.Reach_ifr1;
-CREATE TABLE logica_test.Reach_ifr1 AS WITH t_0_Reach_MultBodyAggAux_f2 AS (SELECT * FROM (
+DROP TABLE IF EXISTS logica_test.Reach_sn_full;
+CREATE TABLE logica_test.Reach_sn_full AS SELECT
+  Reach_sn_delta.x AS x,
+  Reach_sn_delta.y AS y
+FROM
+  logica_test.Reach_sn_delta AS Reach_sn_delta;
+
+-- Interacting with table logica_test.Reach_sn_full
+
+DROP TABLE IF EXISTS logica_test.Reach_sn_new;
+CREATE TABLE logica_test.Reach_sn_new AS WITH t_1_Reach_MultBodyAggAux_f2 AS (SELECT * FROM (
   
     SELECT
-      x_9 AS x,
-      ((x_9) + (1)) AS y
+      x_13 AS x,
+      ((x_13) + (1)) AS y
     FROM
-      explode(SEQUENCE(0, 4 - 1)) AS pushkin(x_9)
+      explode(SEQUENCE(0, 4 - 1)) AS pushkin(x_13)
    UNION ALL
   
     SELECT
-      Reach_ifr0.x AS x,
-      ((x_17) + (1)) AS y
+      Reach_sn_delta.x AS x,
+      ((x_21) + (1)) AS y
     FROM
-      logica_test.Reach_ifr0 AS Reach_ifr0, explode(SEQUENCE(0, 4 - 1)) AS pushkin(x_17)
+      logica_test.Reach_sn_delta AS Reach_sn_delta, explode(SEQUENCE(0, 4 - 1)) AS pushkin(x_21)
     WHERE
-      (Reach_ifr0.y = x_17)
+      (Reach_sn_delta.y = x_21)
   
-) AS UNUSED_TABLE_NAME  )
-SELECT
+) AS UNUSED_TABLE_NAME  ),
+t_0_Reach_sn_step AS (SELECT
   Reach_MultBodyAggAux_f2.x AS x,
   Reach_MultBodyAggAux_f2.y AS y
 FROM
-  t_0_Reach_MultBodyAggAux_f2 AS Reach_MultBodyAggAux_f2
+  t_1_Reach_MultBodyAggAux_f2 AS Reach_MultBodyAggAux_f2
+GROUP BY 1, 2)
+SELECT
+  Reach_sn_step.x AS x,
+  Reach_sn_step.y AS y
+FROM
+  t_0_Reach_sn_step AS Reach_sn_step
+WHERE
+  ((SELECT
+    MIN(1) AS logica_value
+  FROM
+    logica_test.Reach_sn_full AS Reach_sn_full
+  WHERE
+    (Reach_sn_full.x = Reach_sn_step.x) AND
+    (Reach_sn_full.y = Reach_sn_step.y)) IS NULL)
 GROUP BY 1, 2;
 
--- Interacting with table logica_test.Reach_ifr1
+INSERT INTO logica_test.Reach_sn_full SELECT * FROM logica_test.Reach_sn_new;
 
-DROP TABLE IF EXISTS logica_test.Reach_ifr2;
-CREATE TABLE logica_test.Reach_ifr2 AS WITH t_0_Reach_MultBodyAggAux_f3 AS (SELECT * FROM (
+DROP TABLE IF EXISTS logica_test.Reach_sn_delta;
+CREATE TABLE logica_test.Reach_sn_delta AS SELECT
+  Reach_sn_new.x AS x,
+  Reach_sn_new.y AS y
+FROM
+  logica_test.Reach_sn_new AS Reach_sn_new;
+
+DROP TABLE IF EXISTS logica_test.Reach_sn_new;
+CREATE TABLE logica_test.Reach_sn_new AS WITH t_1_Reach_MultBodyAggAux_f2 AS (SELECT * FROM (
   
     SELECT
-      x_9 AS x,
-      ((x_9) + (1)) AS y
+      x_13 AS x,
+      ((x_13) + (1)) AS y
     FROM
-      explode(SEQUENCE(0, 4 - 1)) AS pushkin(x_9)
+      explode(SEQUENCE(0, 4 - 1)) AS pushkin(x_13)
    UNION ALL
   
     SELECT
-      Reach_ifr1.x AS x,
-      ((x_17) + (1)) AS y
+      Reach_sn_delta.x AS x,
+      ((x_21) + (1)) AS y
     FROM
-      logica_test.Reach_ifr1 AS Reach_ifr1, explode(SEQUENCE(0, 4 - 1)) AS pushkin(x_17)
+      logica_test.Reach_sn_delta AS Reach_sn_delta, explode(SEQUENCE(0, 4 - 1)) AS pushkin(x_21)
     WHERE
-      (Reach_ifr1.y = x_17)
+      (Reach_sn_delta.y = x_21)
   
-) AS UNUSED_TABLE_NAME  )
-SELECT
-  Reach_MultBodyAggAux_f3.x AS x,
-  Reach_MultBodyAggAux_f3.y AS y
+) AS UNUSED_TABLE_NAME  ),
+t_0_Reach_sn_step AS (SELECT
+  Reach_MultBodyAggAux_f2.x AS x,
+  Reach_MultBodyAggAux_f2.y AS y
 FROM
-  t_0_Reach_MultBodyAggAux_f3 AS Reach_MultBodyAggAux_f3
+  t_1_Reach_MultBodyAggAux_f2 AS Reach_MultBodyAggAux_f2
+GROUP BY 1, 2)
+SELECT
+  Reach_sn_step.x AS x,
+  Reach_sn_step.y AS y
+FROM
+  t_0_Reach_sn_step AS Reach_sn_step
+WHERE
+  ((SELECT
+    MIN(1) AS logica_value
+  FROM
+    logica_test.Reach_sn_full AS Reach_sn_full
+  WHERE
+    (Reach_sn_full.x = Reach_sn_step.x) AND
+    (Reach_sn_full.y = Reach_sn_step.y)) IS NULL)
 GROUP BY 1, 2;
 
--- Interacting with table logica_test.Reach_ifr2
+INSERT INTO logica_test.Reach_sn_full SELECT * FROM logica_test.Reach_sn_new;
 
-DROP TABLE IF EXISTS logica_test.Reach_ifr3;
-CREATE TABLE logica_test.Reach_ifr3 AS WITH t_0_Reach_MultBodyAggAux_f4 AS (SELECT * FROM (
+DROP TABLE IF EXISTS logica_test.Reach_sn_delta;
+CREATE TABLE logica_test.Reach_sn_delta AS SELECT
+  Reach_sn_new.x AS x,
+  Reach_sn_new.y AS y
+FROM
+  logica_test.Reach_sn_new AS Reach_sn_new;
+
+DROP TABLE IF EXISTS logica_test.Reach_sn_new;
+CREATE TABLE logica_test.Reach_sn_new AS WITH t_1_Reach_MultBodyAggAux_f2 AS (SELECT * FROM (
   
     SELECT
-      x_9 AS x,
-      ((x_9) + (1)) AS y
+      x_13 AS x,
+      ((x_13) + (1)) AS y
     FROM
-      explode(SEQUENCE(0, 4 - 1)) AS pushkin(x_9)
+      explode(SEQUENCE(0, 4 - 1)) AS pushkin(x_13)
    UNION ALL
   
     SELECT
-      Reach_ifr2.x AS x,
-      ((x_17) + (1)) AS y
+      Reach_sn_delta.x AS x,
+      ((x_21) + (1)) AS y
     FROM
-      logica_test.Reach_ifr2 AS Reach_ifr2, explode(SEQUENCE(0, 4 - 1)) AS pushkin(x_17)
+      logica_test.Reach_sn_delta AS Reach_sn_delta, explode(SEQUENCE(0, 4 - 1)) AS pushkin(x_21)
     WHERE
-      (Reach_ifr2.y = x_17)
+      (Reach_sn_delta.y = x_21)
   
-) AS UNUSED_TABLE_NAME  )
-SELECT
-  Reach_MultBodyAggAux_f4.x AS x,
-  Reach_MultBodyAggAux_f4.y AS y
+) AS UNUSED_TABLE_NAME  ),
+t_0_Reach_sn_step AS (SELECT
+  Reach_MultBodyAggAux_f2.x AS x,
+  Reach_MultBodyAggAux_f2.y AS y
 FROM
-  t_0_Reach_MultBodyAggAux_f4 AS Reach_MultBodyAggAux_f4
+  t_1_Reach_MultBodyAggAux_f2 AS Reach_MultBodyAggAux_f2
+GROUP BY 1, 2)
+SELECT
+  Reach_sn_step.x AS x,
+  Reach_sn_step.y AS y
+FROM
+  t_0_Reach_sn_step AS Reach_sn_step
+WHERE
+  ((SELECT
+    MIN(1) AS logica_value
+  FROM
+    logica_test.Reach_sn_full AS Reach_sn_full
+  WHERE
+    (Reach_sn_full.x = Reach_sn_step.x) AND
+    (Reach_sn_full.y = Reach_sn_step.y)) IS NULL)
 GROUP BY 1, 2;
 
--- Interacting with table logica_test.Reach_ifr3
+INSERT INTO logica_test.Reach_sn_full SELECT * FROM logica_test.Reach_sn_new;
 
-DROP TABLE IF EXISTS logica_test.Reach_ifr2;
-CREATE TABLE logica_test.Reach_ifr2 AS WITH t_0_Reach_MultBodyAggAux_f5 AS (SELECT * FROM (
+DROP TABLE IF EXISTS logica_test.Reach_sn_delta;
+CREATE TABLE logica_test.Reach_sn_delta AS SELECT
+  Reach_sn_new.x AS x,
+  Reach_sn_new.y AS y
+FROM
+  logica_test.Reach_sn_new AS Reach_sn_new;
+
+DROP TABLE IF EXISTS logica_test.Reach_sn_new;
+CREATE TABLE logica_test.Reach_sn_new AS WITH t_1_Reach_MultBodyAggAux_f2 AS (SELECT * FROM (
   
     SELECT
-      x_9 AS x,
-      ((x_9) + (1)) AS y
+      x_13 AS x,
+      ((x_13) + (1)) AS y
     FROM
-      explode(SEQUENCE(0, 4 - 1)) AS pushkin(x_9)
+      explode(SEQUENCE(0, 4 - 1)) AS pushkin(x_13)
    UNION ALL
   
     SELECT
-      Reach_ifr3.x AS x,
-      ((x_17) + (1)) AS y
+      Reach_sn_delta.x AS x,
+      ((x_21) + (1)) AS y
     FROM
-      logica_test.Reach_ifr3 AS Reach_ifr3, explode(SEQUENCE(0, 4 - 1)) AS pushkin(x_17)
+      logica_test.Reach_sn_delta AS Reach_sn_delta, explode(SEQUENCE(0, 4 - 1)) AS pushkin(x_21)
     WHERE
-      (Reach_ifr3.y = x_17)
+      (Reach_sn_delta.y = x_21)
   
-) AS UNUSED_TABLE_NAME  )
-SELECT
-  Reach_MultBodyAggAux_f5.x AS x,
-  Reach_MultBodyAggAux_f5.y AS y
+) AS UNUSED_TABLE_NAME  ),
+t_0_Reach_sn_step AS (SELECT
+  Reach_MultBodyAggAux_f2.x AS x,
+  Reach_MultBodyAggAux_f2.y AS y
 FROM
-  t_0_Reach_MultBodyAggAux_f5 AS Reach_MultBodyAggAux_f5
+  t_1_Reach_MultBodyAggAux_f2 AS Reach_MultBodyAggAux_f2
+GROUP BY 1, 2)
+SELECT
+  Reach_sn_step.x AS x,
+  Reach_sn_step.y AS y
+FROM
+  t_0_Reach_sn_step AS Reach_sn_step
+WHERE
+  ((SELECT
+    MIN(1) AS logica_value
+  FROM
+    logica_test.Reach_sn_full AS Reach_sn_full
+  WHERE
+    (Reach_sn_full.x = Reach_sn_step.x) AND
+    (Reach_sn_full.y = Reach_sn_step.y)) IS NULL)
 GROUP BY 1, 2;
 
--- Interacting with table logica_test.Reach_ifr2
+INSERT INTO logica_test.Reach_sn_full SELECT * FROM logica_test.Reach_sn_new;
 
-DROP TABLE IF EXISTS logica_test.Reach_ifr3;
-CREATE TABLE logica_test.Reach_ifr3 AS WITH t_0_Reach_MultBodyAggAux_f4 AS (SELECT * FROM (
+DROP TABLE IF EXISTS logica_test.Reach_sn_delta;
+CREATE TABLE logica_test.Reach_sn_delta AS SELECT
+  Reach_sn_new.x AS x,
+  Reach_sn_new.y AS y
+FROM
+  logica_test.Reach_sn_new AS Reach_sn_new;
+
+DROP TABLE IF EXISTS logica_test.Reach_sn_new;
+CREATE TABLE logica_test.Reach_sn_new AS WITH t_1_Reach_MultBodyAggAux_f2 AS (SELECT * FROM (
   
     SELECT
-      x_9 AS x,
-      ((x_9) + (1)) AS y
+      x_13 AS x,
+      ((x_13) + (1)) AS y
     FROM
-      explode(SEQUENCE(0, 4 - 1)) AS pushkin(x_9)
+      explode(SEQUENCE(0, 4 - 1)) AS pushkin(x_13)
    UNION ALL
   
     SELECT
-      Reach_ifr2.x AS x,
-      ((x_17) + (1)) AS y
+      Reach_sn_delta.x AS x,
+      ((x_21) + (1)) AS y
     FROM
-      logica_test.Reach_ifr2 AS Reach_ifr2, explode(SEQUENCE(0, 4 - 1)) AS pushkin(x_17)
+      logica_test.Reach_sn_delta AS Reach_sn_delta, explode(SEQUENCE(0, 4 - 1)) AS pushkin(x_21)
     WHERE
-      (Reach_ifr2.y = x_17)
+      (Reach_sn_delta.y = x_21)
   
-) AS UNUSED_TABLE_NAME  )
-SELECT
-  Reach_MultBodyAggAux_f4.x AS x,
-  Reach_MultBodyAggAux_f4.y AS y
+) AS UNUSED_TABLE_NAME  ),
+t_0_Reach_sn_step AS (SELECT
+  Reach_MultBodyAggAux_f2.x AS x,
+  Reach_MultBodyAggAux_f2.y AS y
 FROM
-  t_0_Reach_MultBodyAggAux_f4 AS Reach_MultBodyAggAux_f4
+  t_1_Reach_MultBodyAggAux_f2 AS Reach_MultBodyAggAux_f2
+GROUP BY 1, 2)
+SELECT
+  Reach_sn_step.x AS x,
+  Reach_sn_step.y AS y
+FROM
+  t_0_Reach_sn_step AS Reach_sn_step
+WHERE
+  ((SELECT
+    MIN(1) AS logica_value
+  FROM
+    logica_test.Reach_sn_full AS Reach_sn_full
+  WHERE
+    (Reach_sn_full.x = Reach_sn_step.x) AND
+    (Reach_sn_full.y = Reach_sn_step.y)) IS NULL)
 GROUP BY 1, 2;
 
-DROP TABLE IF EXISTS logica_test.Reach_ifr2;
-CREATE TABLE logica_test.Reach_ifr2 AS WITH t_0_Reach_MultBodyAggAux_f5 AS (SELECT * FROM (
+INSERT INTO logica_test.Reach_sn_full SELECT * FROM logica_test.Reach_sn_new;
+
+DROP TABLE IF EXISTS logica_test.Reach_sn_delta;
+CREATE TABLE logica_test.Reach_sn_delta AS SELECT
+  Reach_sn_new.x AS x,
+  Reach_sn_new.y AS y
+FROM
+  logica_test.Reach_sn_new AS Reach_sn_new;
+
+DROP TABLE IF EXISTS logica_test.Reach_sn_new;
+CREATE TABLE logica_test.Reach_sn_new AS WITH t_1_Reach_MultBodyAggAux_f2 AS (SELECT * FROM (
   
     SELECT
-      x_9 AS x,
-      ((x_9) + (1)) AS y
+      x_13 AS x,
+      ((x_13) + (1)) AS y
     FROM
-      explode(SEQUENCE(0, 4 - 1)) AS pushkin(x_9)
+      explode(SEQUENCE(0, 4 - 1)) AS pushkin(x_13)
    UNION ALL
   
     SELECT
-      Reach_ifr3.x AS x,
-      ((x_17) + (1)) AS y
+      Reach_sn_delta.x AS x,
+      ((x_21) + (1)) AS y
     FROM
-      logica_test.Reach_ifr3 AS Reach_ifr3, explode(SEQUENCE(0, 4 - 1)) AS pushkin(x_17)
+      logica_test.Reach_sn_delta AS Reach_sn_delta, explode(SEQUENCE(0, 4 - 1)) AS pushkin(x_21)
     WHERE
-      (Reach_ifr3.y = x_17)
+      (Reach_sn_delta.y = x_21)
   
-) AS UNUSED_TABLE_NAME  )
-SELECT
-  Reach_MultBodyAggAux_f5.x AS x,
-  Reach_MultBodyAggAux_f5.y AS y
+) AS UNUSED_TABLE_NAME  ),
+t_0_Reach_sn_step AS (SELECT
+  Reach_MultBodyAggAux_f2.x AS x,
+  Reach_MultBodyAggAux_f2.y AS y
 FROM
-  t_0_Reach_MultBodyAggAux_f5 AS Reach_MultBodyAggAux_f5
+  t_1_Reach_MultBodyAggAux_f2 AS Reach_MultBodyAggAux_f2
+GROUP BY 1, 2)
+SELECT
+  Reach_sn_step.x AS x,
+  Reach_sn_step.y AS y
+FROM
+  t_0_Reach_sn_step AS Reach_sn_step
+WHERE
+  ((SELECT
+    MIN(1) AS logica_value
+  FROM
+    logica_test.Reach_sn_full AS Reach_sn_full
+  WHERE
+    (Reach_sn_full.x = Reach_sn_step.x) AND
+    (Reach_sn_full.y = Reach_sn_step.y)) IS NULL)
 GROUP BY 1, 2;
 
-DROP TABLE IF EXISTS logica_test.Reach_ifr3;
-CREATE TABLE logica_test.Reach_ifr3 AS WITH t_0_Reach_MultBodyAggAux_f4 AS (SELECT * FROM (
+INSERT INTO logica_test.Reach_sn_full SELECT * FROM logica_test.Reach_sn_new;
+
+DROP TABLE IF EXISTS logica_test.Reach_sn_delta;
+CREATE TABLE logica_test.Reach_sn_delta AS SELECT
+  Reach_sn_new.x AS x,
+  Reach_sn_new.y AS y
+FROM
+  logica_test.Reach_sn_new AS Reach_sn_new;
+
+DROP TABLE IF EXISTS logica_test.Reach_sn_new;
+CREATE TABLE logica_test.Reach_sn_new AS WITH t_1_Reach_MultBodyAggAux_f2 AS (SELECT * FROM (
   
     SELECT
-      x_9 AS x,
-      ((x_9) + (1)) AS y
+      x_13 AS x,
+      ((x_13) + (1)) AS y
     FROM
-      explode(SEQUENCE(0, 4 - 1)) AS pushkin(x_9)
+      explode(SEQUENCE(0, 4 - 1)) AS pushkin(x_13)
    UNION ALL
   
     SELECT
-      Reach_ifr2.x AS x,
-      ((x_17) + (1)) AS y
+      Reach_sn_delta.x AS x,
+      ((x_21) + (1)) AS y
     FROM
-      logica_test.Reach_ifr2 AS Reach_ifr2, explode(SEQUENCE(0, 4 - 1)) AS pushkin(x_17)
+      logica_test.Reach_sn_delta AS Reach_sn_delta, explode(SEQUENCE(0, 4 - 1)) AS pushkin(x_21)
     WHERE
-      (Reach_ifr2.y = x_17)
+      (Reach_sn_delta.y = x_21)
   
-) AS UNUSED_TABLE_NAME  )
-SELECT
-  Reach_MultBodyAggAux_f4.x AS x,
-  Reach_MultBodyAggAux_f4.y AS y
+) AS UNUSED_TABLE_NAME  ),
+t_0_Reach_sn_step AS (SELECT
+  Reach_MultBodyAggAux_f2.x AS x,
+  Reach_MultBodyAggAux_f2.y AS y
 FROM
-  t_0_Reach_MultBodyAggAux_f4 AS Reach_MultBodyAggAux_f4
+  t_1_Reach_MultBodyAggAux_f2 AS Reach_MultBodyAggAux_f2
+GROUP BY 1, 2)
+SELECT
+  Reach_sn_step.x AS x,
+  Reach_sn_step.y AS y
+FROM
+  t_0_Reach_sn_step AS Reach_sn_step
+WHERE
+  ((SELECT
+    MIN(1) AS logica_value
+  FROM
+    logica_test.Reach_sn_full AS Reach_sn_full
+  WHERE
+    (Reach_sn_full.x = Reach_sn_step.x) AND
+    (Reach_sn_full.y = Reach_sn_step.y)) IS NULL)
 GROUP BY 1, 2;
 
-DROP TABLE IF EXISTS logica_test.Reach_ifr2;
-CREATE TABLE logica_test.Reach_ifr2 AS WITH t_0_Reach_MultBodyAggAux_f5 AS (SELECT * FROM (
+INSERT INTO logica_test.Reach_sn_full SELECT * FROM logica_test.Reach_sn_new;
+
+DROP TABLE IF EXISTS logica_test.Reach_sn_delta;
+CREATE TABLE logica_test.Reach_sn_delta AS SELECT
+  Reach_sn_new.x AS x,
+  Reach_sn_new.y AS y
+FROM
+  logica_test.Reach_sn_new AS Reach_sn_new;
+
+DROP TABLE IF EXISTS logica_test.Reach_sn_new;
+CREATE TABLE logica_test.Reach_sn_new AS WITH t_1_Reach_MultBodyAggAux_f2 AS (SELECT * FROM (
   
     SELECT
-      x_9 AS x,
-      ((x_9) + (1)) AS y
+      x_13 AS x,
+      ((x_13) + (1)) AS y
     FROM
-      explode(SEQUENCE(0, 4 - 1)) AS pushkin(x_9)
+      explode(SEQUENCE(0, 4 - 1)) AS pushkin(x_13)
    UNION ALL
   
     SELECT
-      Reach_ifr3.x AS x,
-      ((x_17) + (1)) AS y
+      Reach_sn_delta.x AS x,
+      ((x_21) + (1)) AS y
     FROM
-      logica_test.Reach_ifr3 AS Reach_ifr3, explode(SEQUENCE(0, 4 - 1)) AS pushkin(x_17)
+      logica_test.Reach_sn_delta AS Reach_sn_delta, explode(SEQUENCE(0, 4 - 1)) AS pushkin(x_21)
     WHERE
-      (Reach_ifr3.y = x_17)
+      (Reach_sn_delta.y = x_21)
   
-) AS UNUSED_TABLE_NAME  )
-SELECT
-  Reach_MultBodyAggAux_f5.x AS x,
-  Reach_MultBodyAggAux_f5.y AS y
+) AS UNUSED_TABLE_NAME  ),
+t_0_Reach_sn_step AS (SELECT
+  Reach_MultBodyAggAux_f2.x AS x,
+  Reach_MultBodyAggAux_f2.y AS y
 FROM
-  t_0_Reach_MultBodyAggAux_f5 AS Reach_MultBodyAggAux_f5
+  t_1_Reach_MultBodyAggAux_f2 AS Reach_MultBodyAggAux_f2
+GROUP BY 1, 2)
+SELECT
+  Reach_sn_step.x AS x,
+  Reach_sn_step.y AS y
+FROM
+  t_0_Reach_sn_step AS Reach_sn_step
+WHERE
+  ((SELECT
+    MIN(1) AS logica_value
+  FROM
+    logica_test.Reach_sn_full AS Reach_sn_full
+  WHERE
+    (Reach_sn_full.x = Reach_sn_step.x) AND
+    (Reach_sn_full.y = Reach_sn_step.y)) IS NULL)
 GROUP BY 1, 2;
 
-DROP TABLE IF EXISTS logica_test.Reach_ifr3;
-CREATE TABLE logica_test.Reach_ifr3 AS WITH t_0_Reach_MultBodyAggAux_f4 AS (SELECT * FROM (
+INSERT INTO logica_test.Reach_sn_full SELECT * FROM logica_test.Reach_sn_new;
+
+DROP TABLE IF EXISTS logica_test.Reach_sn_delta;
+CREATE TABLE logica_test.Reach_sn_delta AS SELECT
+  Reach_sn_new.x AS x,
+  Reach_sn_new.y AS y
+FROM
+  logica_test.Reach_sn_new AS Reach_sn_new;
+
+DROP TABLE IF EXISTS logica_test.Reach_sn_new;
+CREATE TABLE logica_test.Reach_sn_new AS WITH t_1_Reach_MultBodyAggAux_f2 AS (SELECT * FROM (
   
     SELECT
-      x_9 AS x,
-      ((x_9) + (1)) AS y
+      x_13 AS x,
+      ((x_13) + (1)) AS y
     FROM
-      explode(SEQUENCE(0, 4 - 1)) AS pushkin(x_9)
+      explode(SEQUENCE(0, 4 - 1)) AS pushkin(x_13)
    UNION ALL
   
     SELECT
-      Reach_ifr2.x AS x,
-      ((x_17) + (1)) AS y
+      Reach_sn_delta.x AS x,
+      ((x_21) + (1)) AS y
     FROM
-      logica_test.Reach_ifr2 AS Reach_ifr2, explode(SEQUENCE(0, 4 - 1)) AS pushkin(x_17)
+      logica_test.Reach_sn_delta AS Reach_sn_delta, explode(SEQUENCE(0, 4 - 1)) AS pushkin(x_21)
     WHERE
-      (Reach_ifr2.y = x_17)
+      (Reach_sn_delta.y = x_21)
   
-) AS UNUSED_TABLE_NAME  )
-SELECT
-  Reach_MultBodyAggAux_f4.x AS x,
-  Reach_MultBodyAggAux_f4.y AS y
+) AS UNUSED_TABLE_NAME  ),
+t_0_Reach_sn_step AS (SELECT
+  Reach_MultBodyAggAux_f2.x AS x,
+  Reach_MultBodyAggAux_f2.y AS y
 FROM
-  t_0_Reach_MultBodyAggAux_f4 AS Reach_MultBodyAggAux_f4
+  t_1_Reach_MultBodyAggAux_f2 AS Reach_MultBodyAggAux_f2
+GROUP BY 1, 2)
+SELECT
+  Reach_sn_step.x AS x,
+  Reach_sn_step.y AS y
+FROM
+  t_0_Reach_sn_step AS Reach_sn_step
+WHERE
+  ((SELECT
+    MIN(1) AS logica_value
+  FROM
+    logica_test.Reach_sn_full AS Reach_sn_full
+  WHERE
+    (Reach_sn_full.x = Reach_sn_step.x) AND
+    (Reach_sn_full.y = Reach_sn_step.y)) IS NULL)
 GROUP BY 1, 2;
 
-DROP TABLE IF EXISTS logica_test.Reach_ifr2;
-CREATE TABLE logica_test.Reach_ifr2 AS WITH t_0_Reach_MultBodyAggAux_f5 AS (SELECT * FROM (
+INSERT INTO logica_test.Reach_sn_full SELECT * FROM logica_test.Reach_sn_new;
+
+DROP TABLE IF EXISTS logica_test.Reach_sn_delta;
+CREATE TABLE logica_test.Reach_sn_delta AS SELECT
+  Reach_sn_new.x AS x,
+  Reach_sn_new.y AS y
+FROM
+  logica_test.Reach_sn_new AS Reach_sn_new;
+
+DROP TABLE IF EXISTS logica_test.Reach_sn_new;
+CREATE TABLE logica_test.Reach_sn_new AS WITH t_1_Reach_MultBodyAggAux_f2 AS (SELECT * FROM (
   
     SELECT
-      x_9 AS x,
-      ((x_9) + (1)) AS y
+      x_13 AS x,
+      ((x_13) + (1)) AS y
     FROM
-      explode(SEQUENCE(0, 4 - 1)) AS pushkin(x_9)
+      explode(SEQUENCE(0, 4 - 1)) AS pushkin(x_13)
    UNION ALL
   
     SELECT
-      Reach_ifr3.x AS x,
-      ((x_17) + (1)) AS y
+      Reach_sn_delta.x AS x,
+      ((x_21) + (1)) AS y
     FROM
-      logica_test.Reach_ifr3 AS Reach_ifr3, explode(SEQUENCE(0, 4 - 1)) AS pushkin(x_17)
+      logica_test.Reach_sn_delta AS Reach_sn_delta, explode(SEQUENCE(0, 4 - 1)) AS pushkin(x_21)
     WHERE
-      (Reach_ifr3.y = x_17)
+      (Reach_sn_delta.y = x_21)
   
-) AS UNUSED_TABLE_NAME  )
-SELECT
-  Reach_MultBodyAggAux_f5.x AS x,
-  Reach_MultBodyAggAux_f5.y AS y
+) AS UNUSED_TABLE_NAME  ),
+t_0_Reach_sn_step AS (SELECT
+  Reach_MultBodyAggAux_f2.x AS x,
+  Reach_MultBodyAggAux_f2.y AS y
 FROM
-  t_0_Reach_MultBodyAggAux_f5 AS Reach_MultBodyAggAux_f5
+  t_1_Reach_MultBodyAggAux_f2 AS Reach_MultBodyAggAux_f2
+GROUP BY 1, 2)
+SELECT
+  Reach_sn_step.x AS x,
+  Reach_sn_step.y AS y
+FROM
+  t_0_Reach_sn_step AS Reach_sn_step
+WHERE
+  ((SELECT
+    MIN(1) AS logica_value
+  FROM
+    logica_test.Reach_sn_full AS Reach_sn_full
+  WHERE
+    (Reach_sn_full.x = Reach_sn_step.x) AND
+    (Reach_sn_full.y = Reach_sn_step.y)) IS NULL)
 GROUP BY 1, 2;
 
-DROP TABLE IF EXISTS logica_test.Reach_ifr3;
-CREATE TABLE logica_test.Reach_ifr3 AS WITH t_0_Reach_MultBodyAggAux_f4 AS (SELECT * FROM (
+INSERT INTO logica_test.Reach_sn_full SELECT * FROM logica_test.Reach_sn_new;
+
+DROP TABLE IF EXISTS logica_test.Reach_sn_delta;
+CREATE TABLE logica_test.Reach_sn_delta AS SELECT
+  Reach_sn_new.x AS x,
+  Reach_sn_new.y AS y
+FROM
+  logica_test.Reach_sn_new AS Reach_sn_new;
+
+DROP TABLE IF EXISTS logica_test.Reach_sn_new;
+CREATE TABLE logica_test.Reach_sn_new AS WITH t_1_Reach_MultBodyAggAux_f2 AS (SELECT * FROM (
   
     SELECT
-      x_9 AS x,
-      ((x_9) + (1)) AS y
+      x_13 AS x,
+      ((x_13) + (1)) AS y
     FROM
-      explode(SEQUENCE(0, 4 - 1)) AS pushkin(x_9)
+      explode(SEQUENCE(0, 4 - 1)) AS pushkin(x_13)
    UNION ALL
   
     SELECT
-      Reach_ifr2.x AS x,
-      ((x_17) + (1)) AS y
+      Reach_sn_delta.x AS x,
+      ((x_21) + (1)) AS y
     FROM
-      logica_test.Reach_ifr2 AS Reach_ifr2, explode(SEQUENCE(0, 4 - 1)) AS pushkin(x_17)
+      logica_test.Reach_sn_delta AS Reach_sn_delta, explode(SEQUENCE(0, 4 - 1)) AS pushkin(x_21)
     WHERE
-      (Reach_ifr2.y = x_17)
+      (Reach_sn_delta.y = x_21)
   
-) AS UNUSED_TABLE_NAME  )
-SELECT
-  Reach_MultBodyAggAux_f4.x AS x,
-  Reach_MultBodyAggAux_f4.y AS y
+) AS UNUSED_TABLE_NAME  ),
+t_0_Reach_sn_step AS (SELECT
+  Reach_MultBodyAggAux_f2.x AS x,
+  Reach_MultBodyAggAux_f2.y AS y
 FROM
-  t_0_Reach_MultBodyAggAux_f4 AS Reach_MultBodyAggAux_f4
+  t_1_Reach_MultBodyAggAux_f2 AS Reach_MultBodyAggAux_f2
+GROUP BY 1, 2)
+SELECT
+  Reach_sn_step.x AS x,
+  Reach_sn_step.y AS y
+FROM
+  t_0_Reach_sn_step AS Reach_sn_step
+WHERE
+  ((SELECT
+    MIN(1) AS logica_value
+  FROM
+    logica_test.Reach_sn_full AS Reach_sn_full
+  WHERE
+    (Reach_sn_full.x = Reach_sn_step.x) AND
+    (Reach_sn_full.y = Reach_sn_step.y)) IS NULL)
 GROUP BY 1, 2;
 
-DROP TABLE IF EXISTS logica_test.Reach_ifr2;
-CREATE TABLE logica_test.Reach_ifr2 AS WITH t_0_Reach_MultBodyAggAux_f5 AS (SELECT * FROM (
+INSERT INTO logica_test.Reach_sn_full SELECT * FROM logica_test.Reach_sn_new;
+
+DROP TABLE IF EXISTS logica_test.Reach_sn_delta;
+CREATE TABLE logica_test.Reach_sn_delta AS SELECT
+  Reach_sn_new.x AS x,
+  Reach_sn_new.y AS y
+FROM
+  logica_test.Reach_sn_new AS Reach_sn_new;
+
+DROP TABLE IF EXISTS logica_test.Reach_sn_new;
+CREATE TABLE logica_test.Reach_sn_new AS WITH t_1_Reach_MultBodyAggAux_f2 AS (SELECT * FROM (
   
     SELECT
-      x_9 AS x,
-      ((x_9) + (1)) AS y
+      x_13 AS x,
+      ((x_13) + (1)) AS y
     FROM
-      explode(SEQUENCE(0, 4 - 1)) AS pushkin(x_9)
+      explode(SEQUENCE(0, 4 - 1)) AS pushkin(x_13)
    UNION ALL
   
     SELECT
-      Reach_ifr3.x AS x,
-      ((x_17) + (1)) AS y
+      Reach_sn_delta.x AS x,
+      ((x_21) + (1)) AS y
     FROM
-      logica_test.Reach_ifr3 AS Reach_ifr3, explode(SEQUENCE(0, 4 - 1)) AS pushkin(x_17)
+      logica_test.Reach_sn_delta AS Reach_sn_delta, explode(SEQUENCE(0, 4 - 1)) AS pushkin(x_21)
     WHERE
-      (Reach_ifr3.y = x_17)
+      (Reach_sn_delta.y = x_21)
   
-) AS UNUSED_TABLE_NAME  )
-SELECT
-  Reach_MultBodyAggAux_f5.x AS x,
-  Reach_MultBodyAggAux_f5.y AS y
+) AS UNUSED_TABLE_NAME  ),
+t_0_Reach_sn_step AS (SELECT
+  Reach_MultBodyAggAux_f2.x AS x,
+  Reach_MultBodyAggAux_f2.y AS y
 FROM
-  t_0_Reach_MultBodyAggAux_f5 AS Reach_MultBodyAggAux_f5
+  t_1_Reach_MultBodyAggAux_f2 AS Reach_MultBodyAggAux_f2
+GROUP BY 1, 2)
+SELECT
+  Reach_sn_step.x AS x,
+  Reach_sn_step.y AS y
+FROM
+  t_0_Reach_sn_step AS Reach_sn_step
+WHERE
+  ((SELECT
+    MIN(1) AS logica_value
+  FROM
+    logica_test.Reach_sn_full AS Reach_sn_full
+  WHERE
+    (Reach_sn_full.x = Reach_sn_step.x) AND
+    (Reach_sn_full.y = Reach_sn_step.y)) IS NULL)
 GROUP BY 1, 2;
 
-DROP TABLE IF EXISTS logica_test.Reach_ifr3;
-CREATE TABLE logica_test.Reach_ifr3 AS WITH t_0_Reach_MultBodyAggAux_f4 AS (SELECT * FROM (
+INSERT INTO logica_test.Reach_sn_full SELECT * FROM logica_test.Reach_sn_new;
+
+DROP TABLE IF EXISTS logica_test.Reach_sn_delta;
+CREATE TABLE logica_test.Reach_sn_delta AS SELECT
+  Reach_sn_new.x AS x,
+  Reach_sn_new.y AS y
+FROM
+  logica_test.Reach_sn_new AS Reach_sn_new;
+
+DROP TABLE IF EXISTS logica_test.Reach_sn_new;
+CREATE TABLE logica_test.Reach_sn_new AS WITH t_1_Reach_MultBodyAggAux_f2 AS (SELECT * FROM (
   
     SELECT
-      x_9 AS x,
-      ((x_9) + (1)) AS y
+      x_13 AS x,
+      ((x_13) + (1)) AS y
     FROM
-      explode(SEQUENCE(0, 4 - 1)) AS pushkin(x_9)
+      explode(SEQUENCE(0, 4 - 1)) AS pushkin(x_13)
    UNION ALL
   
     SELECT
-      Reach_ifr2.x AS x,
-      ((x_17) + (1)) AS y
+      Reach_sn_delta.x AS x,
+      ((x_21) + (1)) AS y
     FROM
-      logica_test.Reach_ifr2 AS Reach_ifr2, explode(SEQUENCE(0, 4 - 1)) AS pushkin(x_17)
+      logica_test.Reach_sn_delta AS Reach_sn_delta, explode(SEQUENCE(0, 4 - 1)) AS pushkin(x_21)
     WHERE
-      (Reach_ifr2.y = x_17)
+      (Reach_sn_delta.y = x_21)
   
-) AS UNUSED_TABLE_NAME  )
-SELECT
-  Reach_MultBodyAggAux_f4.x AS x,
-  Reach_MultBodyAggAux_f4.y AS y
+) AS UNUSED_TABLE_NAME  ),
+t_0_Reach_sn_step AS (SELECT
+  Reach_MultBodyAggAux_f2.x AS x,
+  Reach_MultBodyAggAux_f2.y AS y
 FROM
-  t_0_Reach_MultBodyAggAux_f4 AS Reach_MultBodyAggAux_f4
+  t_1_Reach_MultBodyAggAux_f2 AS Reach_MultBodyAggAux_f2
+GROUP BY 1, 2)
+SELECT
+  Reach_sn_step.x AS x,
+  Reach_sn_step.y AS y
+FROM
+  t_0_Reach_sn_step AS Reach_sn_step
+WHERE
+  ((SELECT
+    MIN(1) AS logica_value
+  FROM
+    logica_test.Reach_sn_full AS Reach_sn_full
+  WHERE
+    (Reach_sn_full.x = Reach_sn_step.x) AND
+    (Reach_sn_full.y = Reach_sn_step.y)) IS NULL)
 GROUP BY 1, 2;
 
-DROP TABLE IF EXISTS logica_test.Reach_ifr2;
-CREATE TABLE logica_test.Reach_ifr2 AS WITH t_0_Reach_MultBodyAggAux_f5 AS (SELECT * FROM (
+INSERT INTO logica_test.Reach_sn_full SELECT * FROM logica_test.Reach_sn_new;
+
+DROP TABLE IF EXISTS logica_test.Reach_sn_delta;
+CREATE TABLE logica_test.Reach_sn_delta AS SELECT
+  Reach_sn_new.x AS x,
+  Reach_sn_new.y AS y
+FROM
+  logica_test.Reach_sn_new AS Reach_sn_new;
+
+DROP TABLE IF EXISTS logica_test.Reach_sn_new;
+CREATE TABLE logica_test.Reach_sn_new AS WITH t_1_Reach_MultBodyAggAux_f2 AS (SELECT * FROM (
   
     SELECT
-      x_9 AS x,
-      ((x_9) + (1)) AS y
+      x_13 AS x,
+      ((x_13) + (1)) AS y
     FROM
-      explode(SEQUENCE(0, 4 - 1)) AS pushkin(x_9)
+      explode(SEQUENCE(0, 4 - 1)) AS pushkin(x_13)
    UNION ALL
   
     SELECT
-      Reach_ifr3.x AS x,
-      ((x_17) + (1)) AS y
+      Reach_sn_delta.x AS x,
+      ((x_21) + (1)) AS y
     FROM
-      logica_test.Reach_ifr3 AS Reach_ifr3, explode(SEQUENCE(0, 4 - 1)) AS pushkin(x_17)
+      logica_test.Reach_sn_delta AS Reach_sn_delta, explode(SEQUENCE(0, 4 - 1)) AS pushkin(x_21)
     WHERE
-      (Reach_ifr3.y = x_17)
+      (Reach_sn_delta.y = x_21)
   
-) AS UNUSED_TABLE_NAME  )
-SELECT
-  Reach_MultBodyAggAux_f5.x AS x,
-  Reach_MultBodyAggAux_f5.y AS y
+) AS UNUSED_TABLE_NAME  ),
+t_0_Reach_sn_step AS (SELECT
+  Reach_MultBodyAggAux_f2.x AS x,
+  Reach_MultBodyAggAux_f2.y AS y
 FROM
-  t_0_Reach_MultBodyAggAux_f5 AS Reach_MultBodyAggAux_f5
+  t_1_Reach_MultBodyAggAux_f2 AS Reach_MultBodyAggAux_f2
+GROUP BY 1, 2)
+SELECT
+  Reach_sn_step.x AS x,
+  Reach_sn_step.y AS y
+FROM
+  t_0_Reach_sn_step AS Reach_sn_step
+WHERE
+  ((SELECT
+    MIN(1) AS logica_value
+  FROM
+    logica_test.Reach_sn_full AS Reach_sn_full
+  WHERE
+    (Reach_sn_full.x = Reach_sn_step.x) AND
+    (Reach_sn_full.y = Reach_sn_step.y)) IS NULL)
 GROUP BY 1, 2;
 
-DROP TABLE IF EXISTS logica_test.Reach_ifr3;
-CREATE TABLE logica_test.Reach_ifr3 AS WITH t_0_Reach_MultBodyAggAux_f4 AS (SELECT * FROM (
+INSERT INTO logica_test.Reach_sn_full SELECT * FROM logica_test.Reach_sn_new;
+
+DROP TABLE IF EXISTS logica_test.Reach_sn_delta;
+CREATE TABLE logica_test.Reach_sn_delta AS SELECT
+  Reach_sn_new.x AS x,
+  Reach_sn_new.y AS y
+FROM
+  logica_test.Reach_sn_new AS Reach_sn_new;
+
+DROP TABLE IF EXISTS logica_test.Reach_sn_new;
+CREATE TABLE logica_test.Reach_sn_new AS WITH t_1_Reach_MultBodyAggAux_f2 AS (SELECT * FROM (
   
     SELECT
-      x_9 AS x,
-      ((x_9) + (1)) AS y
+      x_13 AS x,
+      ((x_13) + (1)) AS y
     FROM
-      explode(SEQUENCE(0, 4 - 1)) AS pushkin(x_9)
+      explode(SEQUENCE(0, 4 - 1)) AS pushkin(x_13)
    UNION ALL
   
     SELECT
-      Reach_ifr2.x AS x,
-      ((x_17) + (1)) AS y
+      Reach_sn_delta.x AS x,
+      ((x_21) + (1)) AS y
     FROM
-      logica_test.Reach_ifr2 AS Reach_ifr2, explode(SEQUENCE(0, 4 - 1)) AS pushkin(x_17)
+      logica_test.Reach_sn_delta AS Reach_sn_delta, explode(SEQUENCE(0, 4 - 1)) AS pushkin(x_21)
     WHERE
-      (Reach_ifr2.y = x_17)
+      (Reach_sn_delta.y = x_21)
   
-) AS UNUSED_TABLE_NAME  )
-SELECT
-  Reach_MultBodyAggAux_f4.x AS x,
-  Reach_MultBodyAggAux_f4.y AS y
+) AS UNUSED_TABLE_NAME  ),
+t_0_Reach_sn_step AS (SELECT
+  Reach_MultBodyAggAux_f2.x AS x,
+  Reach_MultBodyAggAux_f2.y AS y
 FROM
-  t_0_Reach_MultBodyAggAux_f4 AS Reach_MultBodyAggAux_f4
+  t_1_Reach_MultBodyAggAux_f2 AS Reach_MultBodyAggAux_f2
+GROUP BY 1, 2)
+SELECT
+  Reach_sn_step.x AS x,
+  Reach_sn_step.y AS y
+FROM
+  t_0_Reach_sn_step AS Reach_sn_step
+WHERE
+  ((SELECT
+    MIN(1) AS logica_value
+  FROM
+    logica_test.Reach_sn_full AS Reach_sn_full
+  WHERE
+    (Reach_sn_full.x = Reach_sn_step.x) AND
+    (Reach_sn_full.y = Reach_sn_step.y)) IS NULL)
 GROUP BY 1, 2;
 
-DROP TABLE IF EXISTS logica_test.Reach_ifr2;
-CREATE TABLE logica_test.Reach_ifr2 AS WITH t_0_Reach_MultBodyAggAux_f5 AS (SELECT * FROM (
+INSERT INTO logica_test.Reach_sn_full SELECT * FROM logica_test.Reach_sn_new;
+
+DROP TABLE IF EXISTS logica_test.Reach_sn_delta;
+CREATE TABLE logica_test.Reach_sn_delta AS SELECT
+  Reach_sn_new.x AS x,
+  Reach_sn_new.y AS y
+FROM
+  logica_test.Reach_sn_new AS Reach_sn_new;
+
+DROP TABLE IF EXISTS logica_test.Reach_sn_new;
+CREATE TABLE logica_test.Reach_sn_new AS WITH t_1_Reach_MultBodyAggAux_f2 AS (SELECT * FROM (
   
     SELECT
-      x_9 AS x,
-      ((x_9) + (1)) AS y
+      x_13 AS x,
+      ((x_13) + (1)) AS y
     FROM
-      explode(SEQUENCE(0, 4 - 1)) AS pushkin(x_9)
+      explode(SEQUENCE(0, 4 - 1)) AS pushkin(x_13)
    UNION ALL
   
     SELECT
-      Reach_ifr3.x AS x,
-      ((x_17) + (1)) AS y
+      Reach_sn_delta.x AS x,
+      ((x_21) + (1)) AS y
     FROM
-      logica_test.Reach_ifr3 AS Reach_ifr3, explode(SEQUENCE(0, 4 - 1)) AS pushkin(x_17)
+      logica_test.Reach_sn_delta AS Reach_sn_delta, explode(SEQUENCE(0, 4 - 1)) AS pushkin(x_21)
     WHERE
-      (Reach_ifr3.y = x_17)
+      (Reach_sn_delta.y = x_21)
   
-) AS UNUSED_TABLE_NAME  )
-SELECT
-  Reach_MultBodyAggAux_f5.x AS x,
-  Reach_MultBodyAggAux_f5.y AS y
+) AS UNUSED_TABLE_NAME  ),
+t_0_Reach_sn_step AS (SELECT
+  Reach_MultBodyAggAux_f2.x AS x,
+  Reach_MultBodyAggAux_f2.y AS y
 FROM
-  t_0_Reach_MultBodyAggAux_f5 AS Reach_MultBodyAggAux_f5
+  t_1_Reach_MultBodyAggAux_f2 AS Reach_MultBodyAggAux_f2
+GROUP BY 1, 2)
+SELECT
+  Reach_sn_step.x AS x,
+  Reach_sn_step.y AS y
+FROM
+  t_0_Reach_sn_step AS Reach_sn_step
+WHERE
+  ((SELECT
+    MIN(1) AS logica_value
+  FROM
+    logica_test.Reach_sn_full AS Reach_sn_full
+  WHERE
+    (Reach_sn_full.x = Reach_sn_step.x) AND
+    (Reach_sn_full.y = Reach_sn_step.y)) IS NULL)
 GROUP BY 1, 2;
 
-DROP TABLE IF EXISTS logica_test.Reach_ifr3;
-CREATE TABLE logica_test.Reach_ifr3 AS WITH t_0_Reach_MultBodyAggAux_f4 AS (SELECT * FROM (
+INSERT INTO logica_test.Reach_sn_full SELECT * FROM logica_test.Reach_sn_new;
+
+DROP TABLE IF EXISTS logica_test.Reach_sn_delta;
+CREATE TABLE logica_test.Reach_sn_delta AS SELECT
+  Reach_sn_new.x AS x,
+  Reach_sn_new.y AS y
+FROM
+  logica_test.Reach_sn_new AS Reach_sn_new;
+
+DROP TABLE IF EXISTS logica_test.Reach_sn_new;
+CREATE TABLE logica_test.Reach_sn_new AS WITH t_1_Reach_MultBodyAggAux_f2 AS (SELECT * FROM (
   
     SELECT
-      x_9 AS x,
-      ((x_9) + (1)) AS y
+      x_13 AS x,
+      ((x_13) + (1)) AS y
     FROM
-      explode(SEQUENCE(0, 4 - 1)) AS pushkin(x_9)
+      explode(SEQUENCE(0, 4 - 1)) AS pushkin(x_13)
    UNION ALL
   
     SELECT
-      Reach_ifr2.x AS x,
-      ((x_17) + (1)) AS y
+      Reach_sn_delta.x AS x,
+      ((x_21) + (1)) AS y
     FROM
-      logica_test.Reach_ifr2 AS Reach_ifr2, explode(SEQUENCE(0, 4 - 1)) AS pushkin(x_17)
+      logica_test.Reach_sn_delta AS Reach_sn_delta, explode(SEQUENCE(0, 4 - 1)) AS pushkin(x_21)
     WHERE
-      (Reach_ifr2.y = x_17)
+      (Reach_sn_delta.y = x_21)
   
-) AS UNUSED_TABLE_NAME  )
-SELECT
-  Reach_MultBodyAggAux_f4.x AS x,
-  Reach_MultBodyAggAux_f4.y AS y
+) AS UNUSED_TABLE_NAME  ),
+t_0_Reach_sn_step AS (SELECT
+  Reach_MultBodyAggAux_f2.x AS x,
+  Reach_MultBodyAggAux_f2.y AS y
 FROM
-  t_0_Reach_MultBodyAggAux_f4 AS Reach_MultBodyAggAux_f4
+  t_1_Reach_MultBodyAggAux_f2 AS Reach_MultBodyAggAux_f2
+GROUP BY 1, 2)
+SELECT
+  Reach_sn_step.x AS x,
+  Reach_sn_step.y AS y
+FROM
+  t_0_Reach_sn_step AS Reach_sn_step
+WHERE
+  ((SELECT
+    MIN(1) AS logica_value
+  FROM
+    logica_test.Reach_sn_full AS Reach_sn_full
+  WHERE
+    (Reach_sn_full.x = Reach_sn_step.x) AND
+    (Reach_sn_full.y = Reach_sn_step.y)) IS NULL)
 GROUP BY 1, 2;
 
-DROP TABLE IF EXISTS logica_test.Reach_ifr2;
-CREATE TABLE logica_test.Reach_ifr2 AS WITH t_0_Reach_MultBodyAggAux_f5 AS (SELECT * FROM (
+INSERT INTO logica_test.Reach_sn_full SELECT * FROM logica_test.Reach_sn_new;
+
+DROP TABLE IF EXISTS logica_test.Reach_sn_delta;
+CREATE TABLE logica_test.Reach_sn_delta AS SELECT
+  Reach_sn_new.x AS x,
+  Reach_sn_new.y AS y
+FROM
+  logica_test.Reach_sn_new AS Reach_sn_new;
+
+DROP TABLE IF EXISTS logica_test.Reach_sn_new;
+CREATE TABLE logica_test.Reach_sn_new AS WITH t_1_Reach_MultBodyAggAux_f2 AS (SELECT * FROM (
   
     SELECT
-      x_9 AS x,
-      ((x_9) + (1)) AS y
+      x_13 AS x,
+      ((x_13) + (1)) AS y
     FROM
-      explode(SEQUENCE(0, 4 - 1)) AS pushkin(x_9)
+      explode(SEQUENCE(0, 4 - 1)) AS pushkin(x_13)
    UNION ALL
   
     SELECT
-      Reach_ifr3.x AS x,
-      ((x_17) + (1)) AS y
+      Reach_sn_delta.x AS x,
+      ((x_21) + (1)) AS y
     FROM
-      logica_test.Reach_ifr3 AS Reach_ifr3, explode(SEQUENCE(0, 4 - 1)) AS pushkin(x_17)
+      logica_test.Reach_sn_delta AS Reach_sn_delta, explode(SEQUENCE(0, 4 - 1)) AS pushkin(x_21)
     WHERE
-      (Reach_ifr3.y = x_17)
+      (Reach_sn_delta.y = x_21)
   
-) AS UNUSED_TABLE_NAME  )
-SELECT
-  Reach_MultBodyAggAux_f5.x AS x,
-  Reach_MultBodyAggAux_f5.y AS y
+) AS UNUSED_TABLE_NAME  ),
+t_0_Reach_sn_step AS (SELECT
+  Reach_MultBodyAggAux_f2.x AS x,
+  Reach_MultBodyAggAux_f2.y AS y
 FROM
-  t_0_Reach_MultBodyAggAux_f5 AS Reach_MultBodyAggAux_f5
+  t_1_Reach_MultBodyAggAux_f2 AS Reach_MultBodyAggAux_f2
+GROUP BY 1, 2)
+SELECT
+  Reach_sn_step.x AS x,
+  Reach_sn_step.y AS y
+FROM
+  t_0_Reach_sn_step AS Reach_sn_step
+WHERE
+  ((SELECT
+    MIN(1) AS logica_value
+  FROM
+    logica_test.Reach_sn_full AS Reach_sn_full
+  WHERE
+    (Reach_sn_full.x = Reach_sn_step.x) AND
+    (Reach_sn_full.y = Reach_sn_step.y)) IS NULL)
 GROUP BY 1, 2;
 
-DROP TABLE IF EXISTS logica_test.Reach_ifr3;
-CREATE TABLE logica_test.Reach_ifr3 AS WITH t_0_Reach_MultBodyAggAux_f4 AS (SELECT * FROM (
+INSERT INTO logica_test.Reach_sn_full SELECT * FROM logica_test.Reach_sn_new;
+
+DROP TABLE IF EXISTS logica_test.Reach_sn_delta;
+CREATE TABLE logica_test.Reach_sn_delta AS SELECT
+  Reach_sn_new.x AS x,
+  Reach_sn_new.y AS y
+FROM
+  logica_test.Reach_sn_new AS Reach_sn_new;
+
+DROP TABLE IF EXISTS logica_test.Reach_sn_new;
+CREATE TABLE logica_test.Reach_sn_new AS WITH t_1_Reach_MultBodyAggAux_f2 AS (SELECT * FROM (
   
     SELECT
-      x_9 AS x,
-      ((x_9) + (1)) AS y
+      x_13 AS x,
+      ((x_13) + (1)) AS y
     FROM
-      explode(SEQUENCE(0, 4 - 1)) AS pushkin(x_9)
+      explode(SEQUENCE(0, 4 - 1)) AS pushkin(x_13)
    UNION ALL
   
     SELECT
-      Reach_ifr2.x AS x,
-      ((x_17) + (1)) AS y
+      Reach_sn_delta.x AS x,
+      ((x_21) + (1)) AS y
     FROM
-      logica_test.Reach_ifr2 AS Reach_ifr2, explode(SEQUENCE(0, 4 - 1)) AS pushkin(x_17)
+      logica_test.Reach_sn_delta AS Reach_sn_delta, explode(SEQUENCE(0, 4 - 1)) AS pushkin(x_21)
     WHERE
-      (Reach_ifr2.y = x_17)
+      (Reach_sn_delta.y = x_21)
   
-) AS UNUSED_TABLE_NAME  )
-SELECT
-  Reach_MultBodyAggAux_f4.x AS x,
-  Reach_MultBodyAggAux_f4.y AS y
+) AS UNUSED_TABLE_NAME  ),
+t_0_Reach_sn_step AS (SELECT
+  Reach_MultBodyAggAux_f2.x AS x,
+  Reach_MultBodyAggAux_f2.y AS y
 FROM
-  t_0_Reach_MultBodyAggAux_f4 AS Reach_MultBodyAggAux_f4
+  t_1_Reach_MultBodyAggAux_f2 AS Reach_MultBodyAggAux_f2
+GROUP BY 1, 2)
+SELECT
+  Reach_sn_step.x AS x,
+  Reach_sn_step.y AS y
+FROM
+  t_0_Reach_sn_step AS Reach_sn_step
+WHERE
+  ((SELECT
+    MIN(1) AS logica_value
+  FROM
+    logica_test.Reach_sn_full AS Reach_sn_full
+  WHERE
+    (Reach_sn_full.x = Reach_sn_step.x) AND
+    (Reach_sn_full.y = Reach_sn_step.y)) IS NULL)
 GROUP BY 1, 2;
 
-DROP TABLE IF EXISTS logica_test.Reach_ifr2;
-CREATE TABLE logica_test.Reach_ifr2 AS WITH t_0_Reach_MultBodyAggAux_f5 AS (SELECT * FROM (
+INSERT INTO logica_test.Reach_sn_full SELECT * FROM logica_test.Reach_sn_new;
+
+DROP TABLE IF EXISTS logica_test.Reach_sn_delta;
+CREATE TABLE logica_test.Reach_sn_delta AS SELECT
+  Reach_sn_new.x AS x,
+  Reach_sn_new.y AS y
+FROM
+  logica_test.Reach_sn_new AS Reach_sn_new;
+
+DROP TABLE IF EXISTS logica_test.Reach_sn_new;
+CREATE TABLE logica_test.Reach_sn_new AS WITH t_1_Reach_MultBodyAggAux_f2 AS (SELECT * FROM (
   
     SELECT
-      x_9 AS x,
-      ((x_9) + (1)) AS y
+      x_13 AS x,
+      ((x_13) + (1)) AS y
     FROM
-      explode(SEQUENCE(0, 4 - 1)) AS pushkin(x_9)
+      explode(SEQUENCE(0, 4 - 1)) AS pushkin(x_13)
    UNION ALL
   
     SELECT
-      Reach_ifr3.x AS x,
-      ((x_17) + (1)) AS y
+      Reach_sn_delta.x AS x,
+      ((x_21) + (1)) AS y
     FROM
-      logica_test.Reach_ifr3 AS Reach_ifr3, explode(SEQUENCE(0, 4 - 1)) AS pushkin(x_17)
+      logica_test.Reach_sn_delta AS Reach_sn_delta, explode(SEQUENCE(0, 4 - 1)) AS pushkin(x_21)
     WHERE
-      (Reach_ifr3.y = x_17)
+      (Reach_sn_delta.y = x_21)
   
-) AS UNUSED_TABLE_NAME  )
-SELECT
-  Reach_MultBodyAggAux_f5.x AS x,
-  Reach_MultBodyAggAux_f5.y AS y
+) AS UNUSED_TABLE_NAME  ),
+t_0_Reach_sn_step AS (SELECT
+  Reach_MultBodyAggAux_f2.x AS x,
+  Reach_MultBodyAggAux_f2.y AS y
 FROM
-  t_0_Reach_MultBodyAggAux_f5 AS Reach_MultBodyAggAux_f5
+  t_1_Reach_MultBodyAggAux_f2 AS Reach_MultBodyAggAux_f2
+GROUP BY 1, 2)
+SELECT
+  Reach_sn_step.x AS x,
+  Reach_sn_step.y AS y
+FROM
+  t_0_Reach_sn_step AS Reach_sn_step
+WHERE
+  ((SELECT
+    MIN(1) AS logica_value
+  FROM
+    logica_test.Reach_sn_full AS Reach_sn_full
+  WHERE
+    (Reach_sn_full.x = Reach_sn_step.x) AND
+    (Reach_sn_full.y = Reach_sn_step.y)) IS NULL)
 GROUP BY 1, 2;
 
-DROP TABLE IF EXISTS logica_test.Reach;
-CREATE TABLE logica_test.Reach AS WITH t_0_Reach_MultBodyAggAux_f6 AS (SELECT * FROM (
+INSERT INTO logica_test.Reach_sn_full SELECT * FROM logica_test.Reach_sn_new;
+
+DROP TABLE IF EXISTS logica_test.Reach_sn_delta;
+CREATE TABLE logica_test.Reach_sn_delta AS SELECT
+  Reach_sn_new.x AS x,
+  Reach_sn_new.y AS y
+FROM
+  logica_test.Reach_sn_new AS Reach_sn_new;
+
+DROP TABLE IF EXISTS logica_test.Reach_sn_new;
+CREATE TABLE logica_test.Reach_sn_new AS WITH t_1_Reach_MultBodyAggAux_f2 AS (SELECT * FROM (
   
     SELECT
-      x_9 AS x,
-      ((x_9) + (1)) AS y
+      x_13 AS x,
+      ((x_13) + (1)) AS y
     FROM
-      explode(SEQUENCE(0, 4 - 1)) AS pushkin(x_9)
+      explode(SEQUENCE(0, 4 - 1)) AS pushkin(x_13)
    UNION ALL
   
     SELECT
-      Reach_ifr4.x AS x,
-      ((x_17) + (1)) AS y
+      Reach_sn_delta.x AS x,
+      ((x_21) + (1)) AS y
     FROM
-      logica_test.Reach_ifr2 AS Reach_ifr4, explode(SEQUENCE(0, 4 - 1)) AS pushkin(x_17)
+      logica_test.Reach_sn_delta AS Reach_sn_delta, explode(SEQUENCE(0, 4 - 1)) AS pushkin(x_21)
     WHERE
-      (Reach_ifr4.y = x_17)
+      (Reach_sn_delta.y = x_21)
   
-) AS UNUSED_TABLE_NAME  )
-SELECT
-  Reach_MultBodyAggAux_f6.x AS x,
-  Reach_MultBodyAggAux_f6.y AS y
+) AS UNUSED_TABLE_NAME  ),
+t_0_Reach_sn_step AS (SELECT
+  Reach_MultBodyAggAux_f2.x AS x,
+  Reach_MultBodyAggAux_f2.y AS y
 FROM
-  t_0_Reach_MultBodyAggAux_f6 AS Reach_MultBodyAggAux_f6
+  t_1_Reach_MultBodyAggAux_f2 AS Reach_MultBodyAggAux_f2
+GROUP BY 1, 2)
+SELECT
+  Reach_sn_step.x AS x,
+  Reach_sn_step.y AS y
+FROM
+  t_0_Reach_sn_step AS Reach_sn_step
+WHERE
+  ((SELECT
+    MIN(1) AS logica_value
+  FROM
+    logica_test.Reach_sn_full AS Reach_sn_full
+  WHERE
+    (Reach_sn_full.x = Reach_sn_step.x) AND
+    (Reach_sn_full.y = Reach_sn_step.y)) IS NULL)
 GROUP BY 1, 2;
 
--- Interacting with table logica_test.Reach
+INSERT INTO logica_test.Reach_sn_full SELECT * FROM logica_test.Reach_sn_new;
+
+DROP TABLE IF EXISTS logica_test.Reach_sn_delta;
+CREATE TABLE logica_test.Reach_sn_delta AS SELECT
+  Reach_sn_new.x AS x,
+  Reach_sn_new.y AS y
+FROM
+  logica_test.Reach_sn_new AS Reach_sn_new;
 
 SELECT
   SUM(1) AS n
 FROM
-  logica_test.Reach AS Reach;
+  logica_test.Reach_sn_full AS Reach_sn_full;

@@ -220,6 +220,14 @@ for name, sql in sqls.items():
     print(name, sql)
 ```
 
+### `execute(source, predicate, engine=None, dsn=None, import_root=None, limit=None, offset=None, pattern=None, assertion=None, loads=()) -> tuple[list[str], list[tuple]]`
+
+Run a predicate on its database (the program's or project's engine and connection) and return `(columns, rows)`. Each recursion stops as soon as a step changes nothing, so it costs the steps its data needs, and `@Recursive(P, -1)` (until nothing changes) runs on every engine. `plan()` returns the same steps for a host that runs them itself.
+
+```python
+columns, rows = synalog.execute(source, "TopCustomers", limit=20)
+```
+
 ### `check(source, engine=None, import_root=None, assertions=True, dsn=None) -> tuple[list[str], list[str]]`
 
 Run structural validation. Returns the error messages and the warning messages, as two lists. The program is valid when there is no error; warnings do not make it invalid. Inside a project whose `synalog.toml` has a `[connection]` (or given a `dsn`), it also runs the program's `@Assert` statements against the database and reports each violated one as an error; `assertions=False` keeps it offline.

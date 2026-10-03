@@ -1,7 +1,7 @@
 ATTACH DATABASE ':memory:' AS logica_test;
 
-DROP TABLE IF EXISTS logica_test.Reach_ifr0;
-CREATE TABLE logica_test.Reach_ifr0 AS WITH t_0_Reach_MultBodyAggAux_f1 AS (SELECT * FROM (
+DROP TABLE IF EXISTS logica_test.Reach_sn_delta;
+CREATE TABLE logica_test.Reach_sn_delta AS WITH t_0_Reach_MultBodyAggAux_f1 AS (SELECT * FROM (
   
     SELECT
       0 AS "to"
@@ -13,544 +13,1042 @@ FROM
   t_0_Reach_MultBodyAggAux_f1 AS Reach_MultBodyAggAux_f1
 GROUP BY Reach_MultBodyAggAux_f1."to";
 
--- Interacting with table logica_test.Reach_ifr0
+-- Interacting with table logica_test.Reach_sn_delta
 
-DROP TABLE IF EXISTS logica_test.Reach_ifr1;
-CREATE TABLE logica_test.Reach_ifr1 AS WITH t_0_Reach_MultBodyAggAux_f2 AS (SELECT * FROM (
+DROP TABLE IF EXISTS logica_test.Reach_sn_full;
+CREATE TABLE logica_test.Reach_sn_full AS SELECT
+  Reach_sn_delta."to" AS "to"
+FROM
+  logica_test.Reach_sn_delta AS Reach_sn_delta;
+
+-- Interacting with table logica_test.Reach_sn_full
+
+DROP TABLE IF EXISTS logica_test.Reach_sn_new;
+CREATE TABLE logica_test.Reach_sn_new AS WITH t_1_Reach_MultBodyAggAux_f2 AS (SELECT * FROM (
   
     SELECT
       0 AS "to"
    UNION ALL
   
     SELECT
-      ((x_7.value) + (1)) AS "to"
+      ((x_9.value) + (1)) AS "to"
     FROM
-      logica_test.Reach_ifr0 AS Reach_ifr0, JSON_EACH((select json_group_array(n) from (with recursive t as(select 0 as n union all select n + 1 as n from t where n + 1 < 100) select n from t) where n < 100)) as x_7
+      logica_test.Reach_sn_delta AS Reach_sn_delta, JSON_EACH((select json_group_array(n) from (with recursive t as(select 0 as n union all select n + 1 as n from t where n + 1 < 100) select n from t) where n < 100)) as x_9
     WHERE
-      (Reach_ifr0."to" = x_7.value)
+      (Reach_sn_delta."to" = x_9.value)
   
-) AS UNUSED_TABLE_NAME  )
-SELECT
+) AS UNUSED_TABLE_NAME  ),
+t_0_Reach_sn_step AS (SELECT
   Reach_MultBodyAggAux_f2."to" AS "to"
 FROM
-  t_0_Reach_MultBodyAggAux_f2 AS Reach_MultBodyAggAux_f2
-GROUP BY Reach_MultBodyAggAux_f2."to";
+  t_1_Reach_MultBodyAggAux_f2 AS Reach_MultBodyAggAux_f2
+GROUP BY Reach_MultBodyAggAux_f2."to")
+SELECT
+  Reach_sn_step."to" AS "to"
+FROM
+  t_0_Reach_sn_step AS Reach_sn_step
+WHERE
+  ((SELECT
+    MIN(MagicalEntangle(1, x_12.value)) AS logica_value
+  FROM
+    logica_test.Reach_sn_full AS Reach_sn_full, JSON_EACH(JSON_ARRAY(0)) as x_12
+  WHERE
+    (Reach_sn_full."to" = Reach_sn_step."to")) IS NULL)
+GROUP BY Reach_sn_step."to";
 
--- Interacting with table logica_test.Reach_ifr1
+INSERT INTO logica_test.Reach_sn_full SELECT * FROM logica_test.Reach_sn_new;
 
-DROP TABLE IF EXISTS logica_test.Reach_ifr2;
-CREATE TABLE logica_test.Reach_ifr2 AS WITH t_0_Reach_MultBodyAggAux_f3 AS (SELECT * FROM (
+DROP TABLE IF EXISTS logica_test.Reach_sn_delta;
+CREATE TABLE logica_test.Reach_sn_delta AS SELECT
+  Reach_sn_new."to" AS "to"
+FROM
+  logica_test.Reach_sn_new AS Reach_sn_new;
+
+DROP TABLE IF EXISTS logica_test.Reach_sn_new;
+CREATE TABLE logica_test.Reach_sn_new AS WITH t_1_Reach_MultBodyAggAux_f2 AS (SELECT * FROM (
   
     SELECT
       0 AS "to"
    UNION ALL
   
     SELECT
-      ((x_7.value) + (1)) AS "to"
+      ((x_9.value) + (1)) AS "to"
     FROM
-      logica_test.Reach_ifr1 AS Reach_ifr1, JSON_EACH((select json_group_array(n) from (with recursive t as(select 0 as n union all select n + 1 as n from t where n + 1 < 100) select n from t) where n < 100)) as x_7
+      logica_test.Reach_sn_delta AS Reach_sn_delta, JSON_EACH((select json_group_array(n) from (with recursive t as(select 0 as n union all select n + 1 as n from t where n + 1 < 100) select n from t) where n < 100)) as x_9
     WHERE
-      (Reach_ifr1."to" = x_7.value)
+      (Reach_sn_delta."to" = x_9.value)
   
-) AS UNUSED_TABLE_NAME  )
-SELECT
-  Reach_MultBodyAggAux_f3."to" AS "to"
+) AS UNUSED_TABLE_NAME  ),
+t_0_Reach_sn_step AS (SELECT
+  Reach_MultBodyAggAux_f2."to" AS "to"
 FROM
-  t_0_Reach_MultBodyAggAux_f3 AS Reach_MultBodyAggAux_f3
-GROUP BY Reach_MultBodyAggAux_f3."to";
+  t_1_Reach_MultBodyAggAux_f2 AS Reach_MultBodyAggAux_f2
+GROUP BY Reach_MultBodyAggAux_f2."to")
+SELECT
+  Reach_sn_step."to" AS "to"
+FROM
+  t_0_Reach_sn_step AS Reach_sn_step
+WHERE
+  ((SELECT
+    MIN(MagicalEntangle(1, x_12.value)) AS logica_value
+  FROM
+    logica_test.Reach_sn_full AS Reach_sn_full, JSON_EACH(JSON_ARRAY(0)) as x_12
+  WHERE
+    (Reach_sn_full."to" = Reach_sn_step."to")) IS NULL)
+GROUP BY Reach_sn_step."to";
 
--- Interacting with table logica_test.Reach_ifr2
+INSERT INTO logica_test.Reach_sn_full SELECT * FROM logica_test.Reach_sn_new;
 
-DROP TABLE IF EXISTS logica_test.Reach_ifr3;
-CREATE TABLE logica_test.Reach_ifr3 AS WITH t_0_Reach_MultBodyAggAux_f4 AS (SELECT * FROM (
+DROP TABLE IF EXISTS logica_test.Reach_sn_delta;
+CREATE TABLE logica_test.Reach_sn_delta AS SELECT
+  Reach_sn_new."to" AS "to"
+FROM
+  logica_test.Reach_sn_new AS Reach_sn_new;
+
+DROP TABLE IF EXISTS logica_test.Reach_sn_new;
+CREATE TABLE logica_test.Reach_sn_new AS WITH t_1_Reach_MultBodyAggAux_f2 AS (SELECT * FROM (
   
     SELECT
       0 AS "to"
    UNION ALL
   
     SELECT
-      ((x_7.value) + (1)) AS "to"
+      ((x_9.value) + (1)) AS "to"
     FROM
-      logica_test.Reach_ifr2 AS Reach_ifr2, JSON_EACH((select json_group_array(n) from (with recursive t as(select 0 as n union all select n + 1 as n from t where n + 1 < 100) select n from t) where n < 100)) as x_7
+      logica_test.Reach_sn_delta AS Reach_sn_delta, JSON_EACH((select json_group_array(n) from (with recursive t as(select 0 as n union all select n + 1 as n from t where n + 1 < 100) select n from t) where n < 100)) as x_9
     WHERE
-      (Reach_ifr2."to" = x_7.value)
+      (Reach_sn_delta."to" = x_9.value)
   
-) AS UNUSED_TABLE_NAME  )
-SELECT
-  Reach_MultBodyAggAux_f4."to" AS "to"
+) AS UNUSED_TABLE_NAME  ),
+t_0_Reach_sn_step AS (SELECT
+  Reach_MultBodyAggAux_f2."to" AS "to"
 FROM
-  t_0_Reach_MultBodyAggAux_f4 AS Reach_MultBodyAggAux_f4
-GROUP BY Reach_MultBodyAggAux_f4."to";
+  t_1_Reach_MultBodyAggAux_f2 AS Reach_MultBodyAggAux_f2
+GROUP BY Reach_MultBodyAggAux_f2."to")
+SELECT
+  Reach_sn_step."to" AS "to"
+FROM
+  t_0_Reach_sn_step AS Reach_sn_step
+WHERE
+  ((SELECT
+    MIN(MagicalEntangle(1, x_12.value)) AS logica_value
+  FROM
+    logica_test.Reach_sn_full AS Reach_sn_full, JSON_EACH(JSON_ARRAY(0)) as x_12
+  WHERE
+    (Reach_sn_full."to" = Reach_sn_step."to")) IS NULL)
+GROUP BY Reach_sn_step."to";
 
--- Interacting with table logica_test.Reach_ifr3
+INSERT INTO logica_test.Reach_sn_full SELECT * FROM logica_test.Reach_sn_new;
 
-DROP TABLE IF EXISTS logica_test.Reach_ifr2;
-CREATE TABLE logica_test.Reach_ifr2 AS WITH t_0_Reach_MultBodyAggAux_f5 AS (SELECT * FROM (
+DROP TABLE IF EXISTS logica_test.Reach_sn_delta;
+CREATE TABLE logica_test.Reach_sn_delta AS SELECT
+  Reach_sn_new."to" AS "to"
+FROM
+  logica_test.Reach_sn_new AS Reach_sn_new;
+
+DROP TABLE IF EXISTS logica_test.Reach_sn_new;
+CREATE TABLE logica_test.Reach_sn_new AS WITH t_1_Reach_MultBodyAggAux_f2 AS (SELECT * FROM (
   
     SELECT
       0 AS "to"
    UNION ALL
   
     SELECT
-      ((x_7.value) + (1)) AS "to"
+      ((x_9.value) + (1)) AS "to"
     FROM
-      logica_test.Reach_ifr3 AS Reach_ifr3, JSON_EACH((select json_group_array(n) from (with recursive t as(select 0 as n union all select n + 1 as n from t where n + 1 < 100) select n from t) where n < 100)) as x_7
+      logica_test.Reach_sn_delta AS Reach_sn_delta, JSON_EACH((select json_group_array(n) from (with recursive t as(select 0 as n union all select n + 1 as n from t where n + 1 < 100) select n from t) where n < 100)) as x_9
     WHERE
-      (Reach_ifr3."to" = x_7.value)
+      (Reach_sn_delta."to" = x_9.value)
   
-) AS UNUSED_TABLE_NAME  )
-SELECT
-  Reach_MultBodyAggAux_f5."to" AS "to"
+) AS UNUSED_TABLE_NAME  ),
+t_0_Reach_sn_step AS (SELECT
+  Reach_MultBodyAggAux_f2."to" AS "to"
 FROM
-  t_0_Reach_MultBodyAggAux_f5 AS Reach_MultBodyAggAux_f5
-GROUP BY Reach_MultBodyAggAux_f5."to";
+  t_1_Reach_MultBodyAggAux_f2 AS Reach_MultBodyAggAux_f2
+GROUP BY Reach_MultBodyAggAux_f2."to")
+SELECT
+  Reach_sn_step."to" AS "to"
+FROM
+  t_0_Reach_sn_step AS Reach_sn_step
+WHERE
+  ((SELECT
+    MIN(MagicalEntangle(1, x_12.value)) AS logica_value
+  FROM
+    logica_test.Reach_sn_full AS Reach_sn_full, JSON_EACH(JSON_ARRAY(0)) as x_12
+  WHERE
+    (Reach_sn_full."to" = Reach_sn_step."to")) IS NULL)
+GROUP BY Reach_sn_step."to";
 
--- Interacting with table logica_test.Reach_ifr2
+INSERT INTO logica_test.Reach_sn_full SELECT * FROM logica_test.Reach_sn_new;
 
-DROP TABLE IF EXISTS logica_test.Reach_ifr3;
-CREATE TABLE logica_test.Reach_ifr3 AS WITH t_0_Reach_MultBodyAggAux_f4 AS (SELECT * FROM (
+DROP TABLE IF EXISTS logica_test.Reach_sn_delta;
+CREATE TABLE logica_test.Reach_sn_delta AS SELECT
+  Reach_sn_new."to" AS "to"
+FROM
+  logica_test.Reach_sn_new AS Reach_sn_new;
+
+DROP TABLE IF EXISTS logica_test.Reach_sn_new;
+CREATE TABLE logica_test.Reach_sn_new AS WITH t_1_Reach_MultBodyAggAux_f2 AS (SELECT * FROM (
   
     SELECT
       0 AS "to"
    UNION ALL
   
     SELECT
-      ((x_7.value) + (1)) AS "to"
+      ((x_9.value) + (1)) AS "to"
     FROM
-      logica_test.Reach_ifr2 AS Reach_ifr2, JSON_EACH((select json_group_array(n) from (with recursive t as(select 0 as n union all select n + 1 as n from t where n + 1 < 100) select n from t) where n < 100)) as x_7
+      logica_test.Reach_sn_delta AS Reach_sn_delta, JSON_EACH((select json_group_array(n) from (with recursive t as(select 0 as n union all select n + 1 as n from t where n + 1 < 100) select n from t) where n < 100)) as x_9
     WHERE
-      (Reach_ifr2."to" = x_7.value)
+      (Reach_sn_delta."to" = x_9.value)
   
-) AS UNUSED_TABLE_NAME  )
-SELECT
-  Reach_MultBodyAggAux_f4."to" AS "to"
+) AS UNUSED_TABLE_NAME  ),
+t_0_Reach_sn_step AS (SELECT
+  Reach_MultBodyAggAux_f2."to" AS "to"
 FROM
-  t_0_Reach_MultBodyAggAux_f4 AS Reach_MultBodyAggAux_f4
-GROUP BY Reach_MultBodyAggAux_f4."to";
+  t_1_Reach_MultBodyAggAux_f2 AS Reach_MultBodyAggAux_f2
+GROUP BY Reach_MultBodyAggAux_f2."to")
+SELECT
+  Reach_sn_step."to" AS "to"
+FROM
+  t_0_Reach_sn_step AS Reach_sn_step
+WHERE
+  ((SELECT
+    MIN(MagicalEntangle(1, x_12.value)) AS logica_value
+  FROM
+    logica_test.Reach_sn_full AS Reach_sn_full, JSON_EACH(JSON_ARRAY(0)) as x_12
+  WHERE
+    (Reach_sn_full."to" = Reach_sn_step."to")) IS NULL)
+GROUP BY Reach_sn_step."to";
 
-DROP TABLE IF EXISTS logica_test.Reach_ifr2;
-CREATE TABLE logica_test.Reach_ifr2 AS WITH t_0_Reach_MultBodyAggAux_f5 AS (SELECT * FROM (
+INSERT INTO logica_test.Reach_sn_full SELECT * FROM logica_test.Reach_sn_new;
+
+DROP TABLE IF EXISTS logica_test.Reach_sn_delta;
+CREATE TABLE logica_test.Reach_sn_delta AS SELECT
+  Reach_sn_new."to" AS "to"
+FROM
+  logica_test.Reach_sn_new AS Reach_sn_new;
+
+DROP TABLE IF EXISTS logica_test.Reach_sn_new;
+CREATE TABLE logica_test.Reach_sn_new AS WITH t_1_Reach_MultBodyAggAux_f2 AS (SELECT * FROM (
   
     SELECT
       0 AS "to"
    UNION ALL
   
     SELECT
-      ((x_7.value) + (1)) AS "to"
+      ((x_9.value) + (1)) AS "to"
     FROM
-      logica_test.Reach_ifr3 AS Reach_ifr3, JSON_EACH((select json_group_array(n) from (with recursive t as(select 0 as n union all select n + 1 as n from t where n + 1 < 100) select n from t) where n < 100)) as x_7
+      logica_test.Reach_sn_delta AS Reach_sn_delta, JSON_EACH((select json_group_array(n) from (with recursive t as(select 0 as n union all select n + 1 as n from t where n + 1 < 100) select n from t) where n < 100)) as x_9
     WHERE
-      (Reach_ifr3."to" = x_7.value)
+      (Reach_sn_delta."to" = x_9.value)
   
-) AS UNUSED_TABLE_NAME  )
-SELECT
-  Reach_MultBodyAggAux_f5."to" AS "to"
+) AS UNUSED_TABLE_NAME  ),
+t_0_Reach_sn_step AS (SELECT
+  Reach_MultBodyAggAux_f2."to" AS "to"
 FROM
-  t_0_Reach_MultBodyAggAux_f5 AS Reach_MultBodyAggAux_f5
-GROUP BY Reach_MultBodyAggAux_f5."to";
+  t_1_Reach_MultBodyAggAux_f2 AS Reach_MultBodyAggAux_f2
+GROUP BY Reach_MultBodyAggAux_f2."to")
+SELECT
+  Reach_sn_step."to" AS "to"
+FROM
+  t_0_Reach_sn_step AS Reach_sn_step
+WHERE
+  ((SELECT
+    MIN(MagicalEntangle(1, x_12.value)) AS logica_value
+  FROM
+    logica_test.Reach_sn_full AS Reach_sn_full, JSON_EACH(JSON_ARRAY(0)) as x_12
+  WHERE
+    (Reach_sn_full."to" = Reach_sn_step."to")) IS NULL)
+GROUP BY Reach_sn_step."to";
 
-DROP TABLE IF EXISTS logica_test.Reach_ifr3;
-CREATE TABLE logica_test.Reach_ifr3 AS WITH t_0_Reach_MultBodyAggAux_f4 AS (SELECT * FROM (
+INSERT INTO logica_test.Reach_sn_full SELECT * FROM logica_test.Reach_sn_new;
+
+DROP TABLE IF EXISTS logica_test.Reach_sn_delta;
+CREATE TABLE logica_test.Reach_sn_delta AS SELECT
+  Reach_sn_new."to" AS "to"
+FROM
+  logica_test.Reach_sn_new AS Reach_sn_new;
+
+DROP TABLE IF EXISTS logica_test.Reach_sn_new;
+CREATE TABLE logica_test.Reach_sn_new AS WITH t_1_Reach_MultBodyAggAux_f2 AS (SELECT * FROM (
   
     SELECT
       0 AS "to"
    UNION ALL
   
     SELECT
-      ((x_7.value) + (1)) AS "to"
+      ((x_9.value) + (1)) AS "to"
     FROM
-      logica_test.Reach_ifr2 AS Reach_ifr2, JSON_EACH((select json_group_array(n) from (with recursive t as(select 0 as n union all select n + 1 as n from t where n + 1 < 100) select n from t) where n < 100)) as x_7
+      logica_test.Reach_sn_delta AS Reach_sn_delta, JSON_EACH((select json_group_array(n) from (with recursive t as(select 0 as n union all select n + 1 as n from t where n + 1 < 100) select n from t) where n < 100)) as x_9
     WHERE
-      (Reach_ifr2."to" = x_7.value)
+      (Reach_sn_delta."to" = x_9.value)
   
-) AS UNUSED_TABLE_NAME  )
-SELECT
-  Reach_MultBodyAggAux_f4."to" AS "to"
+) AS UNUSED_TABLE_NAME  ),
+t_0_Reach_sn_step AS (SELECT
+  Reach_MultBodyAggAux_f2."to" AS "to"
 FROM
-  t_0_Reach_MultBodyAggAux_f4 AS Reach_MultBodyAggAux_f4
-GROUP BY Reach_MultBodyAggAux_f4."to";
+  t_1_Reach_MultBodyAggAux_f2 AS Reach_MultBodyAggAux_f2
+GROUP BY Reach_MultBodyAggAux_f2."to")
+SELECT
+  Reach_sn_step."to" AS "to"
+FROM
+  t_0_Reach_sn_step AS Reach_sn_step
+WHERE
+  ((SELECT
+    MIN(MagicalEntangle(1, x_12.value)) AS logica_value
+  FROM
+    logica_test.Reach_sn_full AS Reach_sn_full, JSON_EACH(JSON_ARRAY(0)) as x_12
+  WHERE
+    (Reach_sn_full."to" = Reach_sn_step."to")) IS NULL)
+GROUP BY Reach_sn_step."to";
 
-DROP TABLE IF EXISTS logica_test.Reach_ifr2;
-CREATE TABLE logica_test.Reach_ifr2 AS WITH t_0_Reach_MultBodyAggAux_f5 AS (SELECT * FROM (
+INSERT INTO logica_test.Reach_sn_full SELECT * FROM logica_test.Reach_sn_new;
+
+DROP TABLE IF EXISTS logica_test.Reach_sn_delta;
+CREATE TABLE logica_test.Reach_sn_delta AS SELECT
+  Reach_sn_new."to" AS "to"
+FROM
+  logica_test.Reach_sn_new AS Reach_sn_new;
+
+DROP TABLE IF EXISTS logica_test.Reach_sn_new;
+CREATE TABLE logica_test.Reach_sn_new AS WITH t_1_Reach_MultBodyAggAux_f2 AS (SELECT * FROM (
   
     SELECT
       0 AS "to"
    UNION ALL
   
     SELECT
-      ((x_7.value) + (1)) AS "to"
+      ((x_9.value) + (1)) AS "to"
     FROM
-      logica_test.Reach_ifr3 AS Reach_ifr3, JSON_EACH((select json_group_array(n) from (with recursive t as(select 0 as n union all select n + 1 as n from t where n + 1 < 100) select n from t) where n < 100)) as x_7
+      logica_test.Reach_sn_delta AS Reach_sn_delta, JSON_EACH((select json_group_array(n) from (with recursive t as(select 0 as n union all select n + 1 as n from t where n + 1 < 100) select n from t) where n < 100)) as x_9
     WHERE
-      (Reach_ifr3."to" = x_7.value)
+      (Reach_sn_delta."to" = x_9.value)
   
-) AS UNUSED_TABLE_NAME  )
-SELECT
-  Reach_MultBodyAggAux_f5."to" AS "to"
+) AS UNUSED_TABLE_NAME  ),
+t_0_Reach_sn_step AS (SELECT
+  Reach_MultBodyAggAux_f2."to" AS "to"
 FROM
-  t_0_Reach_MultBodyAggAux_f5 AS Reach_MultBodyAggAux_f5
-GROUP BY Reach_MultBodyAggAux_f5."to";
+  t_1_Reach_MultBodyAggAux_f2 AS Reach_MultBodyAggAux_f2
+GROUP BY Reach_MultBodyAggAux_f2."to")
+SELECT
+  Reach_sn_step."to" AS "to"
+FROM
+  t_0_Reach_sn_step AS Reach_sn_step
+WHERE
+  ((SELECT
+    MIN(MagicalEntangle(1, x_12.value)) AS logica_value
+  FROM
+    logica_test.Reach_sn_full AS Reach_sn_full, JSON_EACH(JSON_ARRAY(0)) as x_12
+  WHERE
+    (Reach_sn_full."to" = Reach_sn_step."to")) IS NULL)
+GROUP BY Reach_sn_step."to";
 
-DROP TABLE IF EXISTS logica_test.Reach_ifr3;
-CREATE TABLE logica_test.Reach_ifr3 AS WITH t_0_Reach_MultBodyAggAux_f4 AS (SELECT * FROM (
+INSERT INTO logica_test.Reach_sn_full SELECT * FROM logica_test.Reach_sn_new;
+
+DROP TABLE IF EXISTS logica_test.Reach_sn_delta;
+CREATE TABLE logica_test.Reach_sn_delta AS SELECT
+  Reach_sn_new."to" AS "to"
+FROM
+  logica_test.Reach_sn_new AS Reach_sn_new;
+
+DROP TABLE IF EXISTS logica_test.Reach_sn_new;
+CREATE TABLE logica_test.Reach_sn_new AS WITH t_1_Reach_MultBodyAggAux_f2 AS (SELECT * FROM (
   
     SELECT
       0 AS "to"
    UNION ALL
   
     SELECT
-      ((x_7.value) + (1)) AS "to"
+      ((x_9.value) + (1)) AS "to"
     FROM
-      logica_test.Reach_ifr2 AS Reach_ifr2, JSON_EACH((select json_group_array(n) from (with recursive t as(select 0 as n union all select n + 1 as n from t where n + 1 < 100) select n from t) where n < 100)) as x_7
+      logica_test.Reach_sn_delta AS Reach_sn_delta, JSON_EACH((select json_group_array(n) from (with recursive t as(select 0 as n union all select n + 1 as n from t where n + 1 < 100) select n from t) where n < 100)) as x_9
     WHERE
-      (Reach_ifr2."to" = x_7.value)
+      (Reach_sn_delta."to" = x_9.value)
   
-) AS UNUSED_TABLE_NAME  )
-SELECT
-  Reach_MultBodyAggAux_f4."to" AS "to"
+) AS UNUSED_TABLE_NAME  ),
+t_0_Reach_sn_step AS (SELECT
+  Reach_MultBodyAggAux_f2."to" AS "to"
 FROM
-  t_0_Reach_MultBodyAggAux_f4 AS Reach_MultBodyAggAux_f4
-GROUP BY Reach_MultBodyAggAux_f4."to";
+  t_1_Reach_MultBodyAggAux_f2 AS Reach_MultBodyAggAux_f2
+GROUP BY Reach_MultBodyAggAux_f2."to")
+SELECT
+  Reach_sn_step."to" AS "to"
+FROM
+  t_0_Reach_sn_step AS Reach_sn_step
+WHERE
+  ((SELECT
+    MIN(MagicalEntangle(1, x_12.value)) AS logica_value
+  FROM
+    logica_test.Reach_sn_full AS Reach_sn_full, JSON_EACH(JSON_ARRAY(0)) as x_12
+  WHERE
+    (Reach_sn_full."to" = Reach_sn_step."to")) IS NULL)
+GROUP BY Reach_sn_step."to";
 
-DROP TABLE IF EXISTS logica_test.Reach_ifr2;
-CREATE TABLE logica_test.Reach_ifr2 AS WITH t_0_Reach_MultBodyAggAux_f5 AS (SELECT * FROM (
+INSERT INTO logica_test.Reach_sn_full SELECT * FROM logica_test.Reach_sn_new;
+
+DROP TABLE IF EXISTS logica_test.Reach_sn_delta;
+CREATE TABLE logica_test.Reach_sn_delta AS SELECT
+  Reach_sn_new."to" AS "to"
+FROM
+  logica_test.Reach_sn_new AS Reach_sn_new;
+
+DROP TABLE IF EXISTS logica_test.Reach_sn_new;
+CREATE TABLE logica_test.Reach_sn_new AS WITH t_1_Reach_MultBodyAggAux_f2 AS (SELECT * FROM (
   
     SELECT
       0 AS "to"
    UNION ALL
   
     SELECT
-      ((x_7.value) + (1)) AS "to"
+      ((x_9.value) + (1)) AS "to"
     FROM
-      logica_test.Reach_ifr3 AS Reach_ifr3, JSON_EACH((select json_group_array(n) from (with recursive t as(select 0 as n union all select n + 1 as n from t where n + 1 < 100) select n from t) where n < 100)) as x_7
+      logica_test.Reach_sn_delta AS Reach_sn_delta, JSON_EACH((select json_group_array(n) from (with recursive t as(select 0 as n union all select n + 1 as n from t where n + 1 < 100) select n from t) where n < 100)) as x_9
     WHERE
-      (Reach_ifr3."to" = x_7.value)
+      (Reach_sn_delta."to" = x_9.value)
   
-) AS UNUSED_TABLE_NAME  )
-SELECT
-  Reach_MultBodyAggAux_f5."to" AS "to"
+) AS UNUSED_TABLE_NAME  ),
+t_0_Reach_sn_step AS (SELECT
+  Reach_MultBodyAggAux_f2."to" AS "to"
 FROM
-  t_0_Reach_MultBodyAggAux_f5 AS Reach_MultBodyAggAux_f5
-GROUP BY Reach_MultBodyAggAux_f5."to";
+  t_1_Reach_MultBodyAggAux_f2 AS Reach_MultBodyAggAux_f2
+GROUP BY Reach_MultBodyAggAux_f2."to")
+SELECT
+  Reach_sn_step."to" AS "to"
+FROM
+  t_0_Reach_sn_step AS Reach_sn_step
+WHERE
+  ((SELECT
+    MIN(MagicalEntangle(1, x_12.value)) AS logica_value
+  FROM
+    logica_test.Reach_sn_full AS Reach_sn_full, JSON_EACH(JSON_ARRAY(0)) as x_12
+  WHERE
+    (Reach_sn_full."to" = Reach_sn_step."to")) IS NULL)
+GROUP BY Reach_sn_step."to";
 
-DROP TABLE IF EXISTS logica_test.Reach_ifr3;
-CREATE TABLE logica_test.Reach_ifr3 AS WITH t_0_Reach_MultBodyAggAux_f4 AS (SELECT * FROM (
+INSERT INTO logica_test.Reach_sn_full SELECT * FROM logica_test.Reach_sn_new;
+
+DROP TABLE IF EXISTS logica_test.Reach_sn_delta;
+CREATE TABLE logica_test.Reach_sn_delta AS SELECT
+  Reach_sn_new."to" AS "to"
+FROM
+  logica_test.Reach_sn_new AS Reach_sn_new;
+
+DROP TABLE IF EXISTS logica_test.Reach_sn_new;
+CREATE TABLE logica_test.Reach_sn_new AS WITH t_1_Reach_MultBodyAggAux_f2 AS (SELECT * FROM (
   
     SELECT
       0 AS "to"
    UNION ALL
   
     SELECT
-      ((x_7.value) + (1)) AS "to"
+      ((x_9.value) + (1)) AS "to"
     FROM
-      logica_test.Reach_ifr2 AS Reach_ifr2, JSON_EACH((select json_group_array(n) from (with recursive t as(select 0 as n union all select n + 1 as n from t where n + 1 < 100) select n from t) where n < 100)) as x_7
+      logica_test.Reach_sn_delta AS Reach_sn_delta, JSON_EACH((select json_group_array(n) from (with recursive t as(select 0 as n union all select n + 1 as n from t where n + 1 < 100) select n from t) where n < 100)) as x_9
     WHERE
-      (Reach_ifr2."to" = x_7.value)
+      (Reach_sn_delta."to" = x_9.value)
   
-) AS UNUSED_TABLE_NAME  )
-SELECT
-  Reach_MultBodyAggAux_f4."to" AS "to"
+) AS UNUSED_TABLE_NAME  ),
+t_0_Reach_sn_step AS (SELECT
+  Reach_MultBodyAggAux_f2."to" AS "to"
 FROM
-  t_0_Reach_MultBodyAggAux_f4 AS Reach_MultBodyAggAux_f4
-GROUP BY Reach_MultBodyAggAux_f4."to";
+  t_1_Reach_MultBodyAggAux_f2 AS Reach_MultBodyAggAux_f2
+GROUP BY Reach_MultBodyAggAux_f2."to")
+SELECT
+  Reach_sn_step."to" AS "to"
+FROM
+  t_0_Reach_sn_step AS Reach_sn_step
+WHERE
+  ((SELECT
+    MIN(MagicalEntangle(1, x_12.value)) AS logica_value
+  FROM
+    logica_test.Reach_sn_full AS Reach_sn_full, JSON_EACH(JSON_ARRAY(0)) as x_12
+  WHERE
+    (Reach_sn_full."to" = Reach_sn_step."to")) IS NULL)
+GROUP BY Reach_sn_step."to";
 
-DROP TABLE IF EXISTS logica_test.Reach_ifr2;
-CREATE TABLE logica_test.Reach_ifr2 AS WITH t_0_Reach_MultBodyAggAux_f5 AS (SELECT * FROM (
+INSERT INTO logica_test.Reach_sn_full SELECT * FROM logica_test.Reach_sn_new;
+
+DROP TABLE IF EXISTS logica_test.Reach_sn_delta;
+CREATE TABLE logica_test.Reach_sn_delta AS SELECT
+  Reach_sn_new."to" AS "to"
+FROM
+  logica_test.Reach_sn_new AS Reach_sn_new;
+
+DROP TABLE IF EXISTS logica_test.Reach_sn_new;
+CREATE TABLE logica_test.Reach_sn_new AS WITH t_1_Reach_MultBodyAggAux_f2 AS (SELECT * FROM (
   
     SELECT
       0 AS "to"
    UNION ALL
   
     SELECT
-      ((x_7.value) + (1)) AS "to"
+      ((x_9.value) + (1)) AS "to"
     FROM
-      logica_test.Reach_ifr3 AS Reach_ifr3, JSON_EACH((select json_group_array(n) from (with recursive t as(select 0 as n union all select n + 1 as n from t where n + 1 < 100) select n from t) where n < 100)) as x_7
+      logica_test.Reach_sn_delta AS Reach_sn_delta, JSON_EACH((select json_group_array(n) from (with recursive t as(select 0 as n union all select n + 1 as n from t where n + 1 < 100) select n from t) where n < 100)) as x_9
     WHERE
-      (Reach_ifr3."to" = x_7.value)
+      (Reach_sn_delta."to" = x_9.value)
   
-) AS UNUSED_TABLE_NAME  )
-SELECT
-  Reach_MultBodyAggAux_f5."to" AS "to"
+) AS UNUSED_TABLE_NAME  ),
+t_0_Reach_sn_step AS (SELECT
+  Reach_MultBodyAggAux_f2."to" AS "to"
 FROM
-  t_0_Reach_MultBodyAggAux_f5 AS Reach_MultBodyAggAux_f5
-GROUP BY Reach_MultBodyAggAux_f5."to";
+  t_1_Reach_MultBodyAggAux_f2 AS Reach_MultBodyAggAux_f2
+GROUP BY Reach_MultBodyAggAux_f2."to")
+SELECT
+  Reach_sn_step."to" AS "to"
+FROM
+  t_0_Reach_sn_step AS Reach_sn_step
+WHERE
+  ((SELECT
+    MIN(MagicalEntangle(1, x_12.value)) AS logica_value
+  FROM
+    logica_test.Reach_sn_full AS Reach_sn_full, JSON_EACH(JSON_ARRAY(0)) as x_12
+  WHERE
+    (Reach_sn_full."to" = Reach_sn_step."to")) IS NULL)
+GROUP BY Reach_sn_step."to";
 
-DROP TABLE IF EXISTS logica_test.Reach_ifr3;
-CREATE TABLE logica_test.Reach_ifr3 AS WITH t_0_Reach_MultBodyAggAux_f4 AS (SELECT * FROM (
+INSERT INTO logica_test.Reach_sn_full SELECT * FROM logica_test.Reach_sn_new;
+
+DROP TABLE IF EXISTS logica_test.Reach_sn_delta;
+CREATE TABLE logica_test.Reach_sn_delta AS SELECT
+  Reach_sn_new."to" AS "to"
+FROM
+  logica_test.Reach_sn_new AS Reach_sn_new;
+
+DROP TABLE IF EXISTS logica_test.Reach_sn_new;
+CREATE TABLE logica_test.Reach_sn_new AS WITH t_1_Reach_MultBodyAggAux_f2 AS (SELECT * FROM (
   
     SELECT
       0 AS "to"
    UNION ALL
   
     SELECT
-      ((x_7.value) + (1)) AS "to"
+      ((x_9.value) + (1)) AS "to"
     FROM
-      logica_test.Reach_ifr2 AS Reach_ifr2, JSON_EACH((select json_group_array(n) from (with recursive t as(select 0 as n union all select n + 1 as n from t where n + 1 < 100) select n from t) where n < 100)) as x_7
+      logica_test.Reach_sn_delta AS Reach_sn_delta, JSON_EACH((select json_group_array(n) from (with recursive t as(select 0 as n union all select n + 1 as n from t where n + 1 < 100) select n from t) where n < 100)) as x_9
     WHERE
-      (Reach_ifr2."to" = x_7.value)
+      (Reach_sn_delta."to" = x_9.value)
   
-) AS UNUSED_TABLE_NAME  )
-SELECT
-  Reach_MultBodyAggAux_f4."to" AS "to"
+) AS UNUSED_TABLE_NAME  ),
+t_0_Reach_sn_step AS (SELECT
+  Reach_MultBodyAggAux_f2."to" AS "to"
 FROM
-  t_0_Reach_MultBodyAggAux_f4 AS Reach_MultBodyAggAux_f4
-GROUP BY Reach_MultBodyAggAux_f4."to";
+  t_1_Reach_MultBodyAggAux_f2 AS Reach_MultBodyAggAux_f2
+GROUP BY Reach_MultBodyAggAux_f2."to")
+SELECT
+  Reach_sn_step."to" AS "to"
+FROM
+  t_0_Reach_sn_step AS Reach_sn_step
+WHERE
+  ((SELECT
+    MIN(MagicalEntangle(1, x_12.value)) AS logica_value
+  FROM
+    logica_test.Reach_sn_full AS Reach_sn_full, JSON_EACH(JSON_ARRAY(0)) as x_12
+  WHERE
+    (Reach_sn_full."to" = Reach_sn_step."to")) IS NULL)
+GROUP BY Reach_sn_step."to";
 
-DROP TABLE IF EXISTS logica_test.Reach_ifr2;
-CREATE TABLE logica_test.Reach_ifr2 AS WITH t_0_Reach_MultBodyAggAux_f5 AS (SELECT * FROM (
+INSERT INTO logica_test.Reach_sn_full SELECT * FROM logica_test.Reach_sn_new;
+
+DROP TABLE IF EXISTS logica_test.Reach_sn_delta;
+CREATE TABLE logica_test.Reach_sn_delta AS SELECT
+  Reach_sn_new."to" AS "to"
+FROM
+  logica_test.Reach_sn_new AS Reach_sn_new;
+
+DROP TABLE IF EXISTS logica_test.Reach_sn_new;
+CREATE TABLE logica_test.Reach_sn_new AS WITH t_1_Reach_MultBodyAggAux_f2 AS (SELECT * FROM (
   
     SELECT
       0 AS "to"
    UNION ALL
   
     SELECT
-      ((x_7.value) + (1)) AS "to"
+      ((x_9.value) + (1)) AS "to"
     FROM
-      logica_test.Reach_ifr3 AS Reach_ifr3, JSON_EACH((select json_group_array(n) from (with recursive t as(select 0 as n union all select n + 1 as n from t where n + 1 < 100) select n from t) where n < 100)) as x_7
+      logica_test.Reach_sn_delta AS Reach_sn_delta, JSON_EACH((select json_group_array(n) from (with recursive t as(select 0 as n union all select n + 1 as n from t where n + 1 < 100) select n from t) where n < 100)) as x_9
     WHERE
-      (Reach_ifr3."to" = x_7.value)
+      (Reach_sn_delta."to" = x_9.value)
   
-) AS UNUSED_TABLE_NAME  )
-SELECT
-  Reach_MultBodyAggAux_f5."to" AS "to"
+) AS UNUSED_TABLE_NAME  ),
+t_0_Reach_sn_step AS (SELECT
+  Reach_MultBodyAggAux_f2."to" AS "to"
 FROM
-  t_0_Reach_MultBodyAggAux_f5 AS Reach_MultBodyAggAux_f5
-GROUP BY Reach_MultBodyAggAux_f5."to";
+  t_1_Reach_MultBodyAggAux_f2 AS Reach_MultBodyAggAux_f2
+GROUP BY Reach_MultBodyAggAux_f2."to")
+SELECT
+  Reach_sn_step."to" AS "to"
+FROM
+  t_0_Reach_sn_step AS Reach_sn_step
+WHERE
+  ((SELECT
+    MIN(MagicalEntangle(1, x_12.value)) AS logica_value
+  FROM
+    logica_test.Reach_sn_full AS Reach_sn_full, JSON_EACH(JSON_ARRAY(0)) as x_12
+  WHERE
+    (Reach_sn_full."to" = Reach_sn_step."to")) IS NULL)
+GROUP BY Reach_sn_step."to";
 
-DROP TABLE IF EXISTS logica_test.Reach_ifr3;
-CREATE TABLE logica_test.Reach_ifr3 AS WITH t_0_Reach_MultBodyAggAux_f4 AS (SELECT * FROM (
+INSERT INTO logica_test.Reach_sn_full SELECT * FROM logica_test.Reach_sn_new;
+
+DROP TABLE IF EXISTS logica_test.Reach_sn_delta;
+CREATE TABLE logica_test.Reach_sn_delta AS SELECT
+  Reach_sn_new."to" AS "to"
+FROM
+  logica_test.Reach_sn_new AS Reach_sn_new;
+
+DROP TABLE IF EXISTS logica_test.Reach_sn_new;
+CREATE TABLE logica_test.Reach_sn_new AS WITH t_1_Reach_MultBodyAggAux_f2 AS (SELECT * FROM (
   
     SELECT
       0 AS "to"
    UNION ALL
   
     SELECT
-      ((x_7.value) + (1)) AS "to"
+      ((x_9.value) + (1)) AS "to"
     FROM
-      logica_test.Reach_ifr2 AS Reach_ifr2, JSON_EACH((select json_group_array(n) from (with recursive t as(select 0 as n union all select n + 1 as n from t where n + 1 < 100) select n from t) where n < 100)) as x_7
+      logica_test.Reach_sn_delta AS Reach_sn_delta, JSON_EACH((select json_group_array(n) from (with recursive t as(select 0 as n union all select n + 1 as n from t where n + 1 < 100) select n from t) where n < 100)) as x_9
     WHERE
-      (Reach_ifr2."to" = x_7.value)
+      (Reach_sn_delta."to" = x_9.value)
   
-) AS UNUSED_TABLE_NAME  )
-SELECT
-  Reach_MultBodyAggAux_f4."to" AS "to"
+) AS UNUSED_TABLE_NAME  ),
+t_0_Reach_sn_step AS (SELECT
+  Reach_MultBodyAggAux_f2."to" AS "to"
 FROM
-  t_0_Reach_MultBodyAggAux_f4 AS Reach_MultBodyAggAux_f4
-GROUP BY Reach_MultBodyAggAux_f4."to";
+  t_1_Reach_MultBodyAggAux_f2 AS Reach_MultBodyAggAux_f2
+GROUP BY Reach_MultBodyAggAux_f2."to")
+SELECT
+  Reach_sn_step."to" AS "to"
+FROM
+  t_0_Reach_sn_step AS Reach_sn_step
+WHERE
+  ((SELECT
+    MIN(MagicalEntangle(1, x_12.value)) AS logica_value
+  FROM
+    logica_test.Reach_sn_full AS Reach_sn_full, JSON_EACH(JSON_ARRAY(0)) as x_12
+  WHERE
+    (Reach_sn_full."to" = Reach_sn_step."to")) IS NULL)
+GROUP BY Reach_sn_step."to";
 
-DROP TABLE IF EXISTS logica_test.Reach_ifr2;
-CREATE TABLE logica_test.Reach_ifr2 AS WITH t_0_Reach_MultBodyAggAux_f5 AS (SELECT * FROM (
+INSERT INTO logica_test.Reach_sn_full SELECT * FROM logica_test.Reach_sn_new;
+
+DROP TABLE IF EXISTS logica_test.Reach_sn_delta;
+CREATE TABLE logica_test.Reach_sn_delta AS SELECT
+  Reach_sn_new."to" AS "to"
+FROM
+  logica_test.Reach_sn_new AS Reach_sn_new;
+
+DROP TABLE IF EXISTS logica_test.Reach_sn_new;
+CREATE TABLE logica_test.Reach_sn_new AS WITH t_1_Reach_MultBodyAggAux_f2 AS (SELECT * FROM (
   
     SELECT
       0 AS "to"
    UNION ALL
   
     SELECT
-      ((x_7.value) + (1)) AS "to"
+      ((x_9.value) + (1)) AS "to"
     FROM
-      logica_test.Reach_ifr3 AS Reach_ifr3, JSON_EACH((select json_group_array(n) from (with recursive t as(select 0 as n union all select n + 1 as n from t where n + 1 < 100) select n from t) where n < 100)) as x_7
+      logica_test.Reach_sn_delta AS Reach_sn_delta, JSON_EACH((select json_group_array(n) from (with recursive t as(select 0 as n union all select n + 1 as n from t where n + 1 < 100) select n from t) where n < 100)) as x_9
     WHERE
-      (Reach_ifr3."to" = x_7.value)
+      (Reach_sn_delta."to" = x_9.value)
   
-) AS UNUSED_TABLE_NAME  )
-SELECT
-  Reach_MultBodyAggAux_f5."to" AS "to"
+) AS UNUSED_TABLE_NAME  ),
+t_0_Reach_sn_step AS (SELECT
+  Reach_MultBodyAggAux_f2."to" AS "to"
 FROM
-  t_0_Reach_MultBodyAggAux_f5 AS Reach_MultBodyAggAux_f5
-GROUP BY Reach_MultBodyAggAux_f5."to";
+  t_1_Reach_MultBodyAggAux_f2 AS Reach_MultBodyAggAux_f2
+GROUP BY Reach_MultBodyAggAux_f2."to")
+SELECT
+  Reach_sn_step."to" AS "to"
+FROM
+  t_0_Reach_sn_step AS Reach_sn_step
+WHERE
+  ((SELECT
+    MIN(MagicalEntangle(1, x_12.value)) AS logica_value
+  FROM
+    logica_test.Reach_sn_full AS Reach_sn_full, JSON_EACH(JSON_ARRAY(0)) as x_12
+  WHERE
+    (Reach_sn_full."to" = Reach_sn_step."to")) IS NULL)
+GROUP BY Reach_sn_step."to";
 
-DROP TABLE IF EXISTS logica_test.Reach_ifr3;
-CREATE TABLE logica_test.Reach_ifr3 AS WITH t_0_Reach_MultBodyAggAux_f4 AS (SELECT * FROM (
+INSERT INTO logica_test.Reach_sn_full SELECT * FROM logica_test.Reach_sn_new;
+
+DROP TABLE IF EXISTS logica_test.Reach_sn_delta;
+CREATE TABLE logica_test.Reach_sn_delta AS SELECT
+  Reach_sn_new."to" AS "to"
+FROM
+  logica_test.Reach_sn_new AS Reach_sn_new;
+
+DROP TABLE IF EXISTS logica_test.Reach_sn_new;
+CREATE TABLE logica_test.Reach_sn_new AS WITH t_1_Reach_MultBodyAggAux_f2 AS (SELECT * FROM (
   
     SELECT
       0 AS "to"
    UNION ALL
   
     SELECT
-      ((x_7.value) + (1)) AS "to"
+      ((x_9.value) + (1)) AS "to"
     FROM
-      logica_test.Reach_ifr2 AS Reach_ifr2, JSON_EACH((select json_group_array(n) from (with recursive t as(select 0 as n union all select n + 1 as n from t where n + 1 < 100) select n from t) where n < 100)) as x_7
+      logica_test.Reach_sn_delta AS Reach_sn_delta, JSON_EACH((select json_group_array(n) from (with recursive t as(select 0 as n union all select n + 1 as n from t where n + 1 < 100) select n from t) where n < 100)) as x_9
     WHERE
-      (Reach_ifr2."to" = x_7.value)
+      (Reach_sn_delta."to" = x_9.value)
   
-) AS UNUSED_TABLE_NAME  )
-SELECT
-  Reach_MultBodyAggAux_f4."to" AS "to"
+) AS UNUSED_TABLE_NAME  ),
+t_0_Reach_sn_step AS (SELECT
+  Reach_MultBodyAggAux_f2."to" AS "to"
 FROM
-  t_0_Reach_MultBodyAggAux_f4 AS Reach_MultBodyAggAux_f4
-GROUP BY Reach_MultBodyAggAux_f4."to";
+  t_1_Reach_MultBodyAggAux_f2 AS Reach_MultBodyAggAux_f2
+GROUP BY Reach_MultBodyAggAux_f2."to")
+SELECT
+  Reach_sn_step."to" AS "to"
+FROM
+  t_0_Reach_sn_step AS Reach_sn_step
+WHERE
+  ((SELECT
+    MIN(MagicalEntangle(1, x_12.value)) AS logica_value
+  FROM
+    logica_test.Reach_sn_full AS Reach_sn_full, JSON_EACH(JSON_ARRAY(0)) as x_12
+  WHERE
+    (Reach_sn_full."to" = Reach_sn_step."to")) IS NULL)
+GROUP BY Reach_sn_step."to";
 
-DROP TABLE IF EXISTS logica_test.Reach_ifr2;
-CREATE TABLE logica_test.Reach_ifr2 AS WITH t_0_Reach_MultBodyAggAux_f5 AS (SELECT * FROM (
+INSERT INTO logica_test.Reach_sn_full SELECT * FROM logica_test.Reach_sn_new;
+
+DROP TABLE IF EXISTS logica_test.Reach_sn_delta;
+CREATE TABLE logica_test.Reach_sn_delta AS SELECT
+  Reach_sn_new."to" AS "to"
+FROM
+  logica_test.Reach_sn_new AS Reach_sn_new;
+
+DROP TABLE IF EXISTS logica_test.Reach_sn_new;
+CREATE TABLE logica_test.Reach_sn_new AS WITH t_1_Reach_MultBodyAggAux_f2 AS (SELECT * FROM (
   
     SELECT
       0 AS "to"
    UNION ALL
   
     SELECT
-      ((x_7.value) + (1)) AS "to"
+      ((x_9.value) + (1)) AS "to"
     FROM
-      logica_test.Reach_ifr3 AS Reach_ifr3, JSON_EACH((select json_group_array(n) from (with recursive t as(select 0 as n union all select n + 1 as n from t where n + 1 < 100) select n from t) where n < 100)) as x_7
+      logica_test.Reach_sn_delta AS Reach_sn_delta, JSON_EACH((select json_group_array(n) from (with recursive t as(select 0 as n union all select n + 1 as n from t where n + 1 < 100) select n from t) where n < 100)) as x_9
     WHERE
-      (Reach_ifr3."to" = x_7.value)
+      (Reach_sn_delta."to" = x_9.value)
   
-) AS UNUSED_TABLE_NAME  )
-SELECT
-  Reach_MultBodyAggAux_f5."to" AS "to"
+) AS UNUSED_TABLE_NAME  ),
+t_0_Reach_sn_step AS (SELECT
+  Reach_MultBodyAggAux_f2."to" AS "to"
 FROM
-  t_0_Reach_MultBodyAggAux_f5 AS Reach_MultBodyAggAux_f5
-GROUP BY Reach_MultBodyAggAux_f5."to";
+  t_1_Reach_MultBodyAggAux_f2 AS Reach_MultBodyAggAux_f2
+GROUP BY Reach_MultBodyAggAux_f2."to")
+SELECT
+  Reach_sn_step."to" AS "to"
+FROM
+  t_0_Reach_sn_step AS Reach_sn_step
+WHERE
+  ((SELECT
+    MIN(MagicalEntangle(1, x_12.value)) AS logica_value
+  FROM
+    logica_test.Reach_sn_full AS Reach_sn_full, JSON_EACH(JSON_ARRAY(0)) as x_12
+  WHERE
+    (Reach_sn_full."to" = Reach_sn_step."to")) IS NULL)
+GROUP BY Reach_sn_step."to";
 
-DROP TABLE IF EXISTS logica_test.Reach_ifr3;
-CREATE TABLE logica_test.Reach_ifr3 AS WITH t_0_Reach_MultBodyAggAux_f4 AS (SELECT * FROM (
+INSERT INTO logica_test.Reach_sn_full SELECT * FROM logica_test.Reach_sn_new;
+
+DROP TABLE IF EXISTS logica_test.Reach_sn_delta;
+CREATE TABLE logica_test.Reach_sn_delta AS SELECT
+  Reach_sn_new."to" AS "to"
+FROM
+  logica_test.Reach_sn_new AS Reach_sn_new;
+
+DROP TABLE IF EXISTS logica_test.Reach_sn_new;
+CREATE TABLE logica_test.Reach_sn_new AS WITH t_1_Reach_MultBodyAggAux_f2 AS (SELECT * FROM (
   
     SELECT
       0 AS "to"
    UNION ALL
   
     SELECT
-      ((x_7.value) + (1)) AS "to"
+      ((x_9.value) + (1)) AS "to"
     FROM
-      logica_test.Reach_ifr2 AS Reach_ifr2, JSON_EACH((select json_group_array(n) from (with recursive t as(select 0 as n union all select n + 1 as n from t where n + 1 < 100) select n from t) where n < 100)) as x_7
+      logica_test.Reach_sn_delta AS Reach_sn_delta, JSON_EACH((select json_group_array(n) from (with recursive t as(select 0 as n union all select n + 1 as n from t where n + 1 < 100) select n from t) where n < 100)) as x_9
     WHERE
-      (Reach_ifr2."to" = x_7.value)
+      (Reach_sn_delta."to" = x_9.value)
   
-) AS UNUSED_TABLE_NAME  )
-SELECT
-  Reach_MultBodyAggAux_f4."to" AS "to"
+) AS UNUSED_TABLE_NAME  ),
+t_0_Reach_sn_step AS (SELECT
+  Reach_MultBodyAggAux_f2."to" AS "to"
 FROM
-  t_0_Reach_MultBodyAggAux_f4 AS Reach_MultBodyAggAux_f4
-GROUP BY Reach_MultBodyAggAux_f4."to";
+  t_1_Reach_MultBodyAggAux_f2 AS Reach_MultBodyAggAux_f2
+GROUP BY Reach_MultBodyAggAux_f2."to")
+SELECT
+  Reach_sn_step."to" AS "to"
+FROM
+  t_0_Reach_sn_step AS Reach_sn_step
+WHERE
+  ((SELECT
+    MIN(MagicalEntangle(1, x_12.value)) AS logica_value
+  FROM
+    logica_test.Reach_sn_full AS Reach_sn_full, JSON_EACH(JSON_ARRAY(0)) as x_12
+  WHERE
+    (Reach_sn_full."to" = Reach_sn_step."to")) IS NULL)
+GROUP BY Reach_sn_step."to";
 
-DROP TABLE IF EXISTS logica_test.Reach_ifr2;
-CREATE TABLE logica_test.Reach_ifr2 AS WITH t_0_Reach_MultBodyAggAux_f5 AS (SELECT * FROM (
+INSERT INTO logica_test.Reach_sn_full SELECT * FROM logica_test.Reach_sn_new;
+
+DROP TABLE IF EXISTS logica_test.Reach_sn_delta;
+CREATE TABLE logica_test.Reach_sn_delta AS SELECT
+  Reach_sn_new."to" AS "to"
+FROM
+  logica_test.Reach_sn_new AS Reach_sn_new;
+
+DROP TABLE IF EXISTS logica_test.Reach_sn_new;
+CREATE TABLE logica_test.Reach_sn_new AS WITH t_1_Reach_MultBodyAggAux_f2 AS (SELECT * FROM (
   
     SELECT
       0 AS "to"
    UNION ALL
   
     SELECT
-      ((x_7.value) + (1)) AS "to"
+      ((x_9.value) + (1)) AS "to"
     FROM
-      logica_test.Reach_ifr3 AS Reach_ifr3, JSON_EACH((select json_group_array(n) from (with recursive t as(select 0 as n union all select n + 1 as n from t where n + 1 < 100) select n from t) where n < 100)) as x_7
+      logica_test.Reach_sn_delta AS Reach_sn_delta, JSON_EACH((select json_group_array(n) from (with recursive t as(select 0 as n union all select n + 1 as n from t where n + 1 < 100) select n from t) where n < 100)) as x_9
     WHERE
-      (Reach_ifr3."to" = x_7.value)
+      (Reach_sn_delta."to" = x_9.value)
   
-) AS UNUSED_TABLE_NAME  )
-SELECT
-  Reach_MultBodyAggAux_f5."to" AS "to"
+) AS UNUSED_TABLE_NAME  ),
+t_0_Reach_sn_step AS (SELECT
+  Reach_MultBodyAggAux_f2."to" AS "to"
 FROM
-  t_0_Reach_MultBodyAggAux_f5 AS Reach_MultBodyAggAux_f5
-GROUP BY Reach_MultBodyAggAux_f5."to";
+  t_1_Reach_MultBodyAggAux_f2 AS Reach_MultBodyAggAux_f2
+GROUP BY Reach_MultBodyAggAux_f2."to")
+SELECT
+  Reach_sn_step."to" AS "to"
+FROM
+  t_0_Reach_sn_step AS Reach_sn_step
+WHERE
+  ((SELECT
+    MIN(MagicalEntangle(1, x_12.value)) AS logica_value
+  FROM
+    logica_test.Reach_sn_full AS Reach_sn_full, JSON_EACH(JSON_ARRAY(0)) as x_12
+  WHERE
+    (Reach_sn_full."to" = Reach_sn_step."to")) IS NULL)
+GROUP BY Reach_sn_step."to";
 
-DROP TABLE IF EXISTS logica_test.Reach_ifr3;
-CREATE TABLE logica_test.Reach_ifr3 AS WITH t_0_Reach_MultBodyAggAux_f4 AS (SELECT * FROM (
+INSERT INTO logica_test.Reach_sn_full SELECT * FROM logica_test.Reach_sn_new;
+
+DROP TABLE IF EXISTS logica_test.Reach_sn_delta;
+CREATE TABLE logica_test.Reach_sn_delta AS SELECT
+  Reach_sn_new."to" AS "to"
+FROM
+  logica_test.Reach_sn_new AS Reach_sn_new;
+
+DROP TABLE IF EXISTS logica_test.Reach_sn_new;
+CREATE TABLE logica_test.Reach_sn_new AS WITH t_1_Reach_MultBodyAggAux_f2 AS (SELECT * FROM (
   
     SELECT
       0 AS "to"
    UNION ALL
   
     SELECT
-      ((x_7.value) + (1)) AS "to"
+      ((x_9.value) + (1)) AS "to"
     FROM
-      logica_test.Reach_ifr2 AS Reach_ifr2, JSON_EACH((select json_group_array(n) from (with recursive t as(select 0 as n union all select n + 1 as n from t where n + 1 < 100) select n from t) where n < 100)) as x_7
+      logica_test.Reach_sn_delta AS Reach_sn_delta, JSON_EACH((select json_group_array(n) from (with recursive t as(select 0 as n union all select n + 1 as n from t where n + 1 < 100) select n from t) where n < 100)) as x_9
     WHERE
-      (Reach_ifr2."to" = x_7.value)
+      (Reach_sn_delta."to" = x_9.value)
   
-) AS UNUSED_TABLE_NAME  )
-SELECT
-  Reach_MultBodyAggAux_f4."to" AS "to"
+) AS UNUSED_TABLE_NAME  ),
+t_0_Reach_sn_step AS (SELECT
+  Reach_MultBodyAggAux_f2."to" AS "to"
 FROM
-  t_0_Reach_MultBodyAggAux_f4 AS Reach_MultBodyAggAux_f4
-GROUP BY Reach_MultBodyAggAux_f4."to";
+  t_1_Reach_MultBodyAggAux_f2 AS Reach_MultBodyAggAux_f2
+GROUP BY Reach_MultBodyAggAux_f2."to")
+SELECT
+  Reach_sn_step."to" AS "to"
+FROM
+  t_0_Reach_sn_step AS Reach_sn_step
+WHERE
+  ((SELECT
+    MIN(MagicalEntangle(1, x_12.value)) AS logica_value
+  FROM
+    logica_test.Reach_sn_full AS Reach_sn_full, JSON_EACH(JSON_ARRAY(0)) as x_12
+  WHERE
+    (Reach_sn_full."to" = Reach_sn_step."to")) IS NULL)
+GROUP BY Reach_sn_step."to";
 
-DROP TABLE IF EXISTS logica_test.Reach_ifr2;
-CREATE TABLE logica_test.Reach_ifr2 AS WITH t_0_Reach_MultBodyAggAux_f5 AS (SELECT * FROM (
+INSERT INTO logica_test.Reach_sn_full SELECT * FROM logica_test.Reach_sn_new;
+
+DROP TABLE IF EXISTS logica_test.Reach_sn_delta;
+CREATE TABLE logica_test.Reach_sn_delta AS SELECT
+  Reach_sn_new."to" AS "to"
+FROM
+  logica_test.Reach_sn_new AS Reach_sn_new;
+
+DROP TABLE IF EXISTS logica_test.Reach_sn_new;
+CREATE TABLE logica_test.Reach_sn_new AS WITH t_1_Reach_MultBodyAggAux_f2 AS (SELECT * FROM (
   
     SELECT
       0 AS "to"
    UNION ALL
   
     SELECT
-      ((x_7.value) + (1)) AS "to"
+      ((x_9.value) + (1)) AS "to"
     FROM
-      logica_test.Reach_ifr3 AS Reach_ifr3, JSON_EACH((select json_group_array(n) from (with recursive t as(select 0 as n union all select n + 1 as n from t where n + 1 < 100) select n from t) where n < 100)) as x_7
+      logica_test.Reach_sn_delta AS Reach_sn_delta, JSON_EACH((select json_group_array(n) from (with recursive t as(select 0 as n union all select n + 1 as n from t where n + 1 < 100) select n from t) where n < 100)) as x_9
     WHERE
-      (Reach_ifr3."to" = x_7.value)
+      (Reach_sn_delta."to" = x_9.value)
   
-) AS UNUSED_TABLE_NAME  )
-SELECT
-  Reach_MultBodyAggAux_f5."to" AS "to"
+) AS UNUSED_TABLE_NAME  ),
+t_0_Reach_sn_step AS (SELECT
+  Reach_MultBodyAggAux_f2."to" AS "to"
 FROM
-  t_0_Reach_MultBodyAggAux_f5 AS Reach_MultBodyAggAux_f5
-GROUP BY Reach_MultBodyAggAux_f5."to";
+  t_1_Reach_MultBodyAggAux_f2 AS Reach_MultBodyAggAux_f2
+GROUP BY Reach_MultBodyAggAux_f2."to")
+SELECT
+  Reach_sn_step."to" AS "to"
+FROM
+  t_0_Reach_sn_step AS Reach_sn_step
+WHERE
+  ((SELECT
+    MIN(MagicalEntangle(1, x_12.value)) AS logica_value
+  FROM
+    logica_test.Reach_sn_full AS Reach_sn_full, JSON_EACH(JSON_ARRAY(0)) as x_12
+  WHERE
+    (Reach_sn_full."to" = Reach_sn_step."to")) IS NULL)
+GROUP BY Reach_sn_step."to";
 
-DROP TABLE IF EXISTS logica_test.Reach_ifr3;
-CREATE TABLE logica_test.Reach_ifr3 AS WITH t_0_Reach_MultBodyAggAux_f4 AS (SELECT * FROM (
+INSERT INTO logica_test.Reach_sn_full SELECT * FROM logica_test.Reach_sn_new;
+
+DROP TABLE IF EXISTS logica_test.Reach_sn_delta;
+CREATE TABLE logica_test.Reach_sn_delta AS SELECT
+  Reach_sn_new."to" AS "to"
+FROM
+  logica_test.Reach_sn_new AS Reach_sn_new;
+
+DROP TABLE IF EXISTS logica_test.Reach_sn_new;
+CREATE TABLE logica_test.Reach_sn_new AS WITH t_1_Reach_MultBodyAggAux_f2 AS (SELECT * FROM (
   
     SELECT
       0 AS "to"
    UNION ALL
   
     SELECT
-      ((x_7.value) + (1)) AS "to"
+      ((x_9.value) + (1)) AS "to"
     FROM
-      logica_test.Reach_ifr2 AS Reach_ifr2, JSON_EACH((select json_group_array(n) from (with recursive t as(select 0 as n union all select n + 1 as n from t where n + 1 < 100) select n from t) where n < 100)) as x_7
+      logica_test.Reach_sn_delta AS Reach_sn_delta, JSON_EACH((select json_group_array(n) from (with recursive t as(select 0 as n union all select n + 1 as n from t where n + 1 < 100) select n from t) where n < 100)) as x_9
     WHERE
-      (Reach_ifr2."to" = x_7.value)
+      (Reach_sn_delta."to" = x_9.value)
   
-) AS UNUSED_TABLE_NAME  )
-SELECT
-  Reach_MultBodyAggAux_f4."to" AS "to"
+) AS UNUSED_TABLE_NAME  ),
+t_0_Reach_sn_step AS (SELECT
+  Reach_MultBodyAggAux_f2."to" AS "to"
 FROM
-  t_0_Reach_MultBodyAggAux_f4 AS Reach_MultBodyAggAux_f4
-GROUP BY Reach_MultBodyAggAux_f4."to";
+  t_1_Reach_MultBodyAggAux_f2 AS Reach_MultBodyAggAux_f2
+GROUP BY Reach_MultBodyAggAux_f2."to")
+SELECT
+  Reach_sn_step."to" AS "to"
+FROM
+  t_0_Reach_sn_step AS Reach_sn_step
+WHERE
+  ((SELECT
+    MIN(MagicalEntangle(1, x_12.value)) AS logica_value
+  FROM
+    logica_test.Reach_sn_full AS Reach_sn_full, JSON_EACH(JSON_ARRAY(0)) as x_12
+  WHERE
+    (Reach_sn_full."to" = Reach_sn_step."to")) IS NULL)
+GROUP BY Reach_sn_step."to";
 
-DROP TABLE IF EXISTS logica_test.Reach_ifr2;
-CREATE TABLE logica_test.Reach_ifr2 AS WITH t_0_Reach_MultBodyAggAux_f5 AS (SELECT * FROM (
+INSERT INTO logica_test.Reach_sn_full SELECT * FROM logica_test.Reach_sn_new;
+
+DROP TABLE IF EXISTS logica_test.Reach_sn_delta;
+CREATE TABLE logica_test.Reach_sn_delta AS SELECT
+  Reach_sn_new."to" AS "to"
+FROM
+  logica_test.Reach_sn_new AS Reach_sn_new;
+
+DROP TABLE IF EXISTS logica_test.Reach_sn_new;
+CREATE TABLE logica_test.Reach_sn_new AS WITH t_1_Reach_MultBodyAggAux_f2 AS (SELECT * FROM (
   
     SELECT
       0 AS "to"
    UNION ALL
   
     SELECT
-      ((x_7.value) + (1)) AS "to"
+      ((x_9.value) + (1)) AS "to"
     FROM
-      logica_test.Reach_ifr3 AS Reach_ifr3, JSON_EACH((select json_group_array(n) from (with recursive t as(select 0 as n union all select n + 1 as n from t where n + 1 < 100) select n from t) where n < 100)) as x_7
+      logica_test.Reach_sn_delta AS Reach_sn_delta, JSON_EACH((select json_group_array(n) from (with recursive t as(select 0 as n union all select n + 1 as n from t where n + 1 < 100) select n from t) where n < 100)) as x_9
     WHERE
-      (Reach_ifr3."to" = x_7.value)
+      (Reach_sn_delta."to" = x_9.value)
   
-) AS UNUSED_TABLE_NAME  )
-SELECT
-  Reach_MultBodyAggAux_f5."to" AS "to"
+) AS UNUSED_TABLE_NAME  ),
+t_0_Reach_sn_step AS (SELECT
+  Reach_MultBodyAggAux_f2."to" AS "to"
 FROM
-  t_0_Reach_MultBodyAggAux_f5 AS Reach_MultBodyAggAux_f5
-GROUP BY Reach_MultBodyAggAux_f5."to";
+  t_1_Reach_MultBodyAggAux_f2 AS Reach_MultBodyAggAux_f2
+GROUP BY Reach_MultBodyAggAux_f2."to")
+SELECT
+  Reach_sn_step."to" AS "to"
+FROM
+  t_0_Reach_sn_step AS Reach_sn_step
+WHERE
+  ((SELECT
+    MIN(MagicalEntangle(1, x_12.value)) AS logica_value
+  FROM
+    logica_test.Reach_sn_full AS Reach_sn_full, JSON_EACH(JSON_ARRAY(0)) as x_12
+  WHERE
+    (Reach_sn_full."to" = Reach_sn_step."to")) IS NULL)
+GROUP BY Reach_sn_step."to";
 
-DROP TABLE IF EXISTS logica_test.Reach;
-CREATE TABLE logica_test.Reach AS WITH t_0_Reach_MultBodyAggAux_f6 AS (SELECT * FROM (
+INSERT INTO logica_test.Reach_sn_full SELECT * FROM logica_test.Reach_sn_new;
+
+DROP TABLE IF EXISTS logica_test.Reach_sn_delta;
+CREATE TABLE logica_test.Reach_sn_delta AS SELECT
+  Reach_sn_new."to" AS "to"
+FROM
+  logica_test.Reach_sn_new AS Reach_sn_new;
+
+DROP TABLE IF EXISTS logica_test.Reach_sn_new;
+CREATE TABLE logica_test.Reach_sn_new AS WITH t_1_Reach_MultBodyAggAux_f2 AS (SELECT * FROM (
   
     SELECT
       0 AS "to"
    UNION ALL
   
     SELECT
-      ((x_7.value) + (1)) AS "to"
+      ((x_9.value) + (1)) AS "to"
     FROM
-      logica_test.Reach_ifr2 AS Reach_ifr4, JSON_EACH((select json_group_array(n) from (with recursive t as(select 0 as n union all select n + 1 as n from t where n + 1 < 100) select n from t) where n < 100)) as x_7
+      logica_test.Reach_sn_delta AS Reach_sn_delta, JSON_EACH((select json_group_array(n) from (with recursive t as(select 0 as n union all select n + 1 as n from t where n + 1 < 100) select n from t) where n < 100)) as x_9
     WHERE
-      (Reach_ifr4."to" = x_7.value)
+      (Reach_sn_delta."to" = x_9.value)
   
-) AS UNUSED_TABLE_NAME  )
-SELECT
-  Reach_MultBodyAggAux_f6."to" AS "to"
+) AS UNUSED_TABLE_NAME  ),
+t_0_Reach_sn_step AS (SELECT
+  Reach_MultBodyAggAux_f2."to" AS "to"
 FROM
-  t_0_Reach_MultBodyAggAux_f6 AS Reach_MultBodyAggAux_f6
-GROUP BY Reach_MultBodyAggAux_f6."to";
+  t_1_Reach_MultBodyAggAux_f2 AS Reach_MultBodyAggAux_f2
+GROUP BY Reach_MultBodyAggAux_f2."to")
+SELECT
+  Reach_sn_step."to" AS "to"
+FROM
+  t_0_Reach_sn_step AS Reach_sn_step
+WHERE
+  ((SELECT
+    MIN(MagicalEntangle(1, x_12.value)) AS logica_value
+  FROM
+    logica_test.Reach_sn_full AS Reach_sn_full, JSON_EACH(JSON_ARRAY(0)) as x_12
+  WHERE
+    (Reach_sn_full."to" = Reach_sn_step."to")) IS NULL)
+GROUP BY Reach_sn_step."to";
 
--- Interacting with table logica_test.Reach
+INSERT INTO logica_test.Reach_sn_full SELECT * FROM logica_test.Reach_sn_new;
+
+DROP TABLE IF EXISTS logica_test.Reach_sn_delta;
+CREATE TABLE logica_test.Reach_sn_delta AS SELECT
+  Reach_sn_new."to" AS "to"
+FROM
+  logica_test.Reach_sn_new AS Reach_sn_new;
 
 SELECT
-  MAX(Reach."to") AS m
+  MAX(Reach_sn_full."to") AS m
 FROM
-  logica_test.Reach AS Reach;
+  logica_test.Reach_sn_full AS Reach_sn_full;

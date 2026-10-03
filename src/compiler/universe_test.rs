@@ -1497,3 +1497,71 @@ fn test_injected_fact_compiles_the_same_every_time() {
         assert_eq!(compile(), first);
     }
 }
+
+fn plan_of(source: &str, predicate: &str) -> Vec<PlanStep> {
+    let parsed = crate::parser::parse_file(source, None, &[]).unwrap();
+    let program = LogicaProgram::new(&parsed, HashMap::new(), HashMap::new()).unwrap();
+    program.formatted_predicate_plan(predicate, None, None).unwrap()
+}
+
+fn loops(plan: &[PlanStep]) -> Vec<(&Vec<String>, i64, &String)> {
+    plan.iter()
+        .filter_map(|step| match step {
+            PlanStep::Loop { body, repetitions, changed } => Some((body, *repetitions, changed)),
+            _ => None,
+        })
+        .collect()
+}
+
+const CHAIN: &str = "Next(x:, y: x + 1) :- x in Range(10);\n";
+
+#[test]
+fn test_a_linear_distinct_recursion_is_semi_naive() {
+    let source = format!(
+        "{CHAIN}@Recursive(Reach, 40);\nReach(y: 0) distinct;\nReach(y:) distinct :- Reach(y: x), Next(x:, y:);\n"
+    );
+    let plan = plan_of(&source, "Reach");
+    let found = loops(&plan);
+    assert_eq!(found.len(), 1);
+    let (body, repetitions, changed) = found[0];
+    // One step per repetition: the new rows, added to every row so far, made
+    // the next delta; until the delta is empty.
+    assert_eq!(repetitions, 40);
+    assert!(body[1].starts_with("INSERT INTO logica_home.Reach_sn_full SELECT * FROM logica_home.Reach_sn_new"), "{}", body[1]);
+    assert_eq!(changed, "SELECT COUNT(*) AS changed FROM logica_home.Reach_sn_delta");
+}
+
+#[test]
+fn test_recursions_semi_naive_cannot_split_recompute_every_step() {
+    let cases = [
+        // An aggregate: a new row can change a value already found.
+        "Edge(a: 0, b: 1);\n@Recursive(Dist, 30);\nDist(node: 0, d? Min= 0) distinct;\n\
+         Dist(node: b, d? Min= d + 1) distinct :- Dist(node: a, d:), Edge(a:, b:);\n",
+        // Two references: a step joins the new rows with all the others.
+        "Edge(a: 0, b: 1);\n@Recursive(Path, 30);\nPath(a:, b:) distinct :- Edge(a:, b:);\n\
+         Path(a:, b: c) distinct :- Path(a:, b:), Path(a: b, b: c);\n",
+    ];
+    for (source, predicate) in cases.iter().zip(["Dist", "Path"]) {
+        let plan = plan_of(source, predicate);
+        let found = loops(&plan);
+        assert_eq!(found.len(), 1, "{predicate}");
+        assert!(found[0].2.contains("EXCEPT"), "{predicate}: {}", found[0].2);
+        assert!(!found[0].0.iter().any(|s| s.starts_with("INSERT")), "{predicate}");
+    }
+}
+
+#[test]
+fn test_compile_writes_the_loop_out_and_refuses_one_too_long() {
+    let source = format!(
+        "{CHAIN}@Recursive(Reach, 30);\nReach(y: 0) distinct;\nReach(y:) distinct :- Reach(y: x), Next(x:, y:);\n"
+    );
+    let parsed = crate::parser::parse_file(&source, None, &[]).unwrap();
+    let program = LogicaProgram::new(&parsed, HashMap::new(), HashMap::new()).unwrap();
+    let sql = program.formatted_predicate_sql("Reach").unwrap();
+    assert_eq!(sql.matches("INSERT INTO logica_home.Reach_sn_full").count(), 30);
+    let deep = source.replace("@Recursive(Reach, 30)", "@Recursive(Reach, -1)");
+    let parsed = crate::parser::parse_file(&deep, None, &[]).unwrap();
+    let program = LogicaProgram::new(&parsed, HashMap::new(), HashMap::new()).unwrap();
+    let error = program.formatted_predicate_sql("Reach").unwrap_err();
+    assert!(error.message.contains("more steps than a SQL script can hold"), "{}", error.message);
+}

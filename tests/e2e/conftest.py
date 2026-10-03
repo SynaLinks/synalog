@@ -34,7 +34,7 @@ FIXTURES_DIR = E2E_DIR.parent / "compiler_tests"
 ENGINES = ["sqlite", "duckdb", "psql", "trino", "presto", "databricks"]
 
 # Fixtures that cannot be compiled through the Python API (none: imports
-# resolve through `import_root`, see compile_fixture).
+# resolve through `import_root`, see plan_fixture).
 SKIP_COMPILE: set[str] = set()
 
 
@@ -107,18 +107,15 @@ def made_predicate(head):
         return None
 
 
-def compile_fixture(engine: str, name: str) -> str:
-    """Compile a fixture's last predicate to SQL for `engine`."""
+def plan_fixture(engine: str, name: str) -> list[dict]:
+    """The plan of a fixture's last predicate for `engine` (``synalog.plan``):
+    executed, each recursion stops as soon as it converges."""
     import synalog
 
     path = fixture_path(engine, name)
     source = path.read_text()
-    # Imports (`import lib.segments.X`) resolve from the compiler tests'
-    # folder, as in the Rust golden tests (tests/compiler_tests.rs).
     import_root = [str(FIXTURES_DIR)]
-    # Pass the engine explicitly: canonical fixtures are engine-independent
-    # and carry no @Engine line (same as the golden SQL generator).
-    return synalog.compile(source, last_predicate(source, import_root), engine=engine, import_root=import_root)
+    return synalog.plan(source, last_predicate(source, import_root), engine=engine, import_root=import_root)
 
 
 @functools.cache

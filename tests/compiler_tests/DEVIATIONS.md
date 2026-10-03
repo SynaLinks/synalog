@@ -215,18 +215,25 @@ that is a keyword or not a plain identifier, in the dialect's quotes
 also in `ORDER BY` and in `search()`. `64_keyword_columns` is generated from
 synalog on every engine.
 
-## Deep recursion as a script
+## Deep recursion
 
-Past 20 steps, `@Recursive` is compiled as upstream compiles it: a few steps
-into tables, then an `@Iteration` recomputing two of them from each other.
-Upstream's runner loops over that iteration; a SQL script runs each
-statement once, so upstream's script stops after a few steps (`@Recursive(P,
-40)` reached 4) and, with mutual recursion, reads tables before they are
-computed. synalog writes the run out: each table after the tables it reads,
-the iteration repeated as many times as upstream's runner would, and what
-reads its result after the last repetition. A depth of -1 (until
-convergence) cannot be written out and is refused. `65_deep_recursion` and
-`66_deep_mutual_recursion` are generated from synalog on every engine.
+Past 20 steps, upstream compiles `@Recursive` into tables: a few steps, then an
+`@Iteration` recomputing two of them from each other, which its runner loops
+over. A SQL script runs each statement once, so upstream's script stops after
+a few steps (`@Recursive(P, 40)` reached 4) and, with mutual recursion, reads
+tables before they are computed.
+
+synalog plans the run instead (`synalog.plan`): each table after the tables it
+reads, a loop per recursion, and what reads its result after the loop.
+`synalog.execute` stops each loop as soon as it converges; `compile` writes
+the loop out, up to the declared depth. A recursion of one `distinct`
+predicate, without aggregation, whose rules reference it at most once, is
+evaluated semi-naively: each step derives only the rows new at the previous
+step (`P_sn_delta`), adds them to the rows so far (`P_sn_full`, an `INSERT`),
+and the recursion has converged when a step adds nothing. Other recursions
+(mutual recursion, aggregation in the recursion) recompute every step. The
+deep-recursion fixtures (`65_deep_recursion`, `66_deep_mutual_recursion`,
+`148_` to `199_`) are generated from synalog on every engine.
 
 ## Functors applied to imported predicates
 

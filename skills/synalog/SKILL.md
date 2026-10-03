@@ -253,7 +253,7 @@ ToString(created_at) >= "2024-01-01", ToString(created_at) < "2024-02-01";  # IS
 
 ## Recursion
 
-Base case + recursive case, with `@Recursive(Pred, iterations)` before the rules. Use for org charts, taxonomies, BOM, referral chains. The iteration limit bounds path length, so cyclic graphs terminate. Full runnable version: [`examples/org/concepts/AllManagers.l`](examples/org/concepts/AllManagers.l).
+Base case + recursive case, with `@Recursive(Pred, iterations)` before the rules. Use for org charts, taxonomies, BOM, referral chains. The iteration limit bounds path length, so cyclic graphs terminate; `run` stops earlier, as soon as a step adds nothing, so a generous limit costs nothing, and `@Recursive(Pred, -1)` recurses until nothing changes. Keep recursive rules linear (the recursive predicate once per rule, `distinct`, no aggregate in it): each step then only derives from the rows the last step added. `print` shows a script that writes every step out; it refuses `-1`. Full runnable version: [`examples/org/concepts/AllManagers.l`](examples/org/concepts/AllManagers.l).
 
 ```logica
 @Recursive(AllManagers, 20);
