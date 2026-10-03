@@ -275,7 +275,7 @@ fn is_defined(predicate: &str, defined: &HashSet<String>) -> bool {
 }
 
 /// The predicate a `@Make` functor application defines (its first argument).
-fn made_predicate(rule: &Json) -> Option<String> {
+pub(super) fn made_predicate(rule: &Json) -> Option<String> {
     let head = rule.as_object()["head"].as_object();
     let first = head.get("record")?.as_object().get("field_value")?.as_array().first()?;
     let value = &first.as_object()["value"];
@@ -341,7 +341,7 @@ fn read_annotation(rule: &Json, annotation: &str, errors: &mut Vec<AssertionErro
 
 /// The predicate an annotation argument names (`Ancestor`, or a lowercase raw
 /// table, which parses as a variable).
-fn predicate_name(value: &Json) -> Option<String> {
+pub(super) fn predicate_name(value: &Json) -> Option<String> {
     if !value.is_object() {
         return None;
     }
@@ -354,7 +354,7 @@ fn predicate_name(value: &Json) -> Option<String> {
 }
 
 /// The text of a string literal expression.
-fn string_literal(value: &Json) -> Option<String> {
+pub(super) fn string_literal(value: &Json) -> Option<String> {
     if !value.is_object() {
         return None;
     }

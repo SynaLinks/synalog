@@ -351,6 +351,35 @@ impl VarCollector {
         }
     }
 
+    /// Variables of the comparisons (`x > 2`) of a rule body, in every
+    /// branch of its disjunctions.
+    pub fn compared_vars(rule: &Json) -> HashSet<String> {
+        fn walk(body: &Json, vars: &mut HashSet<String>) {
+            let Some(conj) = body.as_object().get("conjunction") else { return };
+            let Some(conjuncts) = conj.as_object().get("conjunct") else { return };
+            for conjunct in conjuncts.as_array() {
+                let obj = conjunct.as_object();
+                if let Some(pred) = obj.get("predicate") {
+                    let name = pred.as_object()["predicate_name"].as_str();
+                    if COMPARISON_OPS.contains(&name) {
+                        VarCollector::collect_record_vars(pred.as_object().get("record"), vars);
+                    }
+                } else if let Some(disj) = obj.get("disjunction") {
+                    if let Some(branches) = disj.as_object().get("disjunct") {
+                        for branch in branches.as_array() {
+                            walk(branch, vars);
+                        }
+                    }
+                }
+            }
+        }
+        let mut vars = HashSet::new();
+        if let Some(body) = rule.as_object().get("body") {
+            walk(body, &mut vars);
+        }
+        vars
+    }
+
     /// Get variables appearing in negated predicates.
     pub fn negated_vars(rule: &Json) -> HashSet<String> {
         let mut vars = HashSet::new();

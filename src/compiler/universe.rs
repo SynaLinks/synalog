@@ -1156,8 +1156,8 @@ impl LogicaProgram {
                         .iter()
                         .map(|(k, v)| (k.clone(), v.clone()))
                         .collect();
-                    let mut new_vars_map = HashMap::new();
-                    let mut new_inv_vars_map: HashMap<String, (String, String)> = s.inv_vars_map
+                    let mut new_vars_map = IndexMap::new();
+                    let mut new_inv_vars_map: IndexMap<String, (String, String)> = s.inv_vars_map
                         .iter()
                         .filter(|(_, (tbl, _))| tbl.is_empty())
                         .map(|(k, v)| (k.clone(), v.clone()))
@@ -1499,12 +1499,123 @@ impl LogicaProgram {
 
         // Defines and exports
         if !exec_ref.defines_and_exports.is_empty() {
-            result.push_str(&exec_ref.defines_and_exports.join("\n\n"));
+            let statements = self.script_statements(exec_ref)?;
+            result.push_str(&statements.join("\n\n"));
             result.push_str("\n\n");
         }
 
         result.push_str(&format_sql(&sql));
         Ok(self.use_flags_as_parameters(&result))
+    }
+
+    /// The statements that create the program's tables, in an order a script
+    /// can run them, with every `@Iteration` written out.
+    ///
+    /// Deep recursion (`@Recursive` over 20 steps) is compiled as Logica does:
+    /// a few steps into tables, then an iteration that recomputes some of those
+    /// tables from each other `repetitions` times. Logica's runner schedules the
+    /// tables and loops; a script cannot loop, so this plans the run instead:
+    /// each table after the tables it reads, the iteration's statements
+    /// repeated `repetitions` times, and anything reading the iteration after
+    /// its last repetition. Without iterations, the order is the compiler's.
+    fn script_statements(&self, exec: &Logica) -> CompileResult<Vec<String>> {
+        /// Most repetitions written out: past this, the script would be huge.
+        const MAX_REPETITIONS: i64 = 1000;
+        let exports = &exec.table_to_export_map;
+        let mut iterations: Vec<(String, IterationDef)> = self
+            .annotations
+            .iterations()?
+            .into_iter()
+            .filter(|(_, it)| it.predicates.iter().all(|p| exports.contains_key(p)))
+            .collect();
+        if iterations.is_empty() {
+            return Ok(exec.defines_and_exports.clone());
+        }
+        iterations.sort_by(|a, b| a.0.cmp(&b.0));
+        for (name, iteration) in &iterations {
+            if iteration.repetitions > MAX_REPETITIONS {
+                let recursive = name.split("_ifr").next().unwrap_or(name).to_string();
+                return Err(CompileError::new(
+                    format!(
+                        "@Recursive({}, ...) asks for more steps than a SQL script can hold: \
+                         a depth of -1 (until convergence) needs a runner that loops; \
+                         give a number of steps instead (about {} at most)",
+                        recursive,
+                        2 * MAX_REPETITIONS
+                    ),
+                    name,
+                ));
+            }
+        }
+
+        // The tables, in the compiler's order, each with the statements that
+        // follow its creation (its `-- Interacting` comment, a COPY).
+        let mut tables: Vec<String> = Vec::new();
+        let mut leading: Vec<String> = Vec::new();
+        let mut trailing: HashMap<String, Vec<String>> = HashMap::new();
+        for statement in &exec.defines_and_exports {
+            match exports.iter().find(|(_, stmt)| *stmt == statement) {
+                Some((table, _)) if !tables.contains(table) => tables.push(table.clone()),
+                _ => match tables.last() {
+                    Some(last) => trailing.entry(last.clone()).or_default().push(statement.clone()),
+                    None => leading.push(statement.clone()),
+                },
+            }
+        }
+        let table_set: HashSet<&String> = tables.iter().collect();
+        let mut requires: HashMap<&String, HashSet<&String>> = HashMap::new();
+        for (source, target) in exec.dependency_edges.iter().chain(exec.data_dependency_edges.iter()) {
+            if let (Some(s), Some(t)) = (table_set.get(source), table_set.get(target)) {
+                if s != t {
+                    requires.entry(*t).or_default().insert(*s);
+                }
+            }
+        }
+        let iteration_of: HashMap<&String, usize> = iterations
+            .iter()
+            .enumerate()
+            .flat_map(|(i, (_, it))| it.predicates.iter().map(move |p| (p, i)))
+            .filter_map(|(p, i)| table_set.get(p).map(|t| (*t, i)))
+            .collect();
+
+        let mut order: Vec<String> = leading;
+        let mut done: HashSet<&String> = HashSet::new();
+        // Iterations whose every table ran once, and which are written out.
+        let mut finished: HashSet<usize> = HashSet::new();
+        while done.len() < tables.len() {
+            let ready = tables.iter().find(|t| {
+                !done.contains(t)
+                    && requires.get(t).is_none_or(|reqs| {
+                        reqs.iter().all(|r| {
+                            done.contains(r)
+                                // Outside an iteration, its tables are ready
+                                // once it is written out.
+                                && match (iteration_of.get(r), iteration_of.get(t)) {
+                                    (Some(i), Some(j)) if i == j => true,
+                                    (Some(i), _) => finished.contains(i),
+                                    _ => true,
+                                }
+                        })
+                    })
+            });
+            let Some(table) = ready else {
+                // A cycle the dependencies do not resolve: keep the compiler's order.
+                return Ok(exec.defines_and_exports.clone());
+            };
+            done.insert(table);
+            order.push(exports[table].clone());
+            order.extend(trailing.get(table).cloned().unwrap_or_default());
+            if let Some(&i) = iteration_of.get(table) {
+                let iteration = &iterations[i].1;
+                if iteration.predicates.iter().all(|p| table_set.get(p).is_some_and(|t| done.contains(t))) {
+                    for _ in 1..iteration.repetitions {
+                        order.extend(iteration.predicates.iter().map(|p| exports[p].clone()));
+                    }
+                    finished.insert(i);
+                }
+            }
+        }
+        Ok(order)
     }
 
     /// Print top-level formatted SQL with pagination.
@@ -1604,7 +1715,7 @@ impl LogicaProgram {
         let where_clause = columns
             .iter()
             .map(|col| {
-                let cast_col = dialect.string_cast(col);
+                let cast_col = dialect.string_cast(&dialects::sql_column(col, dialect.as_ref()));
                 dialect.regex_match_condition(&cast_col, pattern)
             })
             .collect::<Vec<_>>()

@@ -75,7 +75,7 @@ Datalog recursion always terminates because the Herbrand universe is finite: no 
 @Recursive(AllManagers, 20);
 AllManagers(employee_id:, manager_id:) :- Employees(employee_id:, manager_id:);
 AllManagers(employee_id:, manager_id:) :-
-  AllManagers(employee_id:, intermediate:),
+  AllManagers(employee_id:, manager_id: intermediate),
   Employees(employee_id: intermediate, manager_id:);
 ```
 

@@ -24,6 +24,8 @@ TopCustomers(customer_id:, total? += amount) distinct :- Orders(customer_id:, am
 @OrderBy(TopCustomers, "total", "DESC");
 ```
 
+Each item is a column of the predicate, optionally followed by `ASC` or `DESC` and by `NULLS FIRST` or `NULLS LAST` (in any case): `"total DESC"`, `"name"`, `"score desc nulls last"`. Anything else, such as an expression (`"x * 2"`), is refused by both the verifier and the compiler, since the item is written into the SQL's `ORDER BY`. To order by a computed value, compute it in a column of the rule.
+
 !!! warning "`@OrderBy` is mandatory in practice"
     Put `@OrderBy` on **every concept and rule**. Without a stable sort order, pagination (`limit`/`offset` in [`compile()`](../python-api.md#compile)) returns rows in a non-deterministic order between calls.
 
@@ -32,6 +34,8 @@ TopCustomers(customer_id:, total? += amount) distinct :- Orders(customer_id:, am
 ```logica
 @Limit(TopCustomers, 10);
 ```
+
+The limit is a whole number of rows, 0 or more. It is part of what the predicate holds: a rule that uses `TopCustomers` sees only its 10 rows, and so do its [assertions](../assertions.md).
 
 `@Limit` combines with the `limit` argument of `compile()`: the effective limit is `min(limit, @Limit)`.
 
@@ -44,6 +48,8 @@ Enables recursion on a predicate, with a maximum number of iterations:
 ```
 
 The full signature is `@Recursive(Pred, iterations, stop?, satellites?)`. See [Recursion](recursion.md) for usage.
+
+The number of iterations is a whole number, 1 or more. Up to 20, the recursion is unrolled into one query; past 20, it is computed into tables, step by step, and the generated script runs every step (about 2000 at most). Logica's `-1`, which iterates until nothing changes, needs a runner that loops: a single SQL script cannot, so Synalog refuses it. Give a number of steps larger than the longest path instead.
 
 ## `@Ground`
 

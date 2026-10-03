@@ -5,6 +5,7 @@
 
 use std::cell::RefCell;
 use std::collections::{HashMap, HashSet};
+use indexmap::IndexMap;
 use crate::parser::Json;
 use crate::compiler::{CompileResult, CompileError};
 use crate::compiler::annotations::Annotations;
@@ -314,8 +315,8 @@ impl LogicaProgram {
 
                     // Handle variable mappings: replace table references
                     // Preserve inv_vars_map entries not in vars_map (e.g. unnesting vars)
-                    let mut new_vars_map = HashMap::new();
-                    let mut new_inv_vars_map: HashMap<String, (String, String)> = s.inv_vars_map
+                    let mut new_vars_map = IndexMap::new();
+                    let mut new_inv_vars_map: IndexMap<String, (String, String)> = s.inv_vars_map
                         .iter()
                         .filter(|(_, (tbl, _))| tbl.is_empty()) // Keep unnesting entries
                         .map(|(k, v)| (k.clone(), v.clone()))

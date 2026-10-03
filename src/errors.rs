@@ -20,6 +20,7 @@
 //! │   └── Generic { message, rule }
 //! ├── Verify(VerifyError)
 //! │   ├── UnboundHeadVar { var, rule }
+//! │   ├── UnboundComparedVar { var, rule }
 //! │   ├── UnsafeNegation { var, rule }
 //! │   ├── UnsafeAggregation { var, rule }
 //! │   ├── NegativeCycle { predicates }
@@ -131,6 +132,10 @@ pub enum VerifyError {
     #[error("Unbound variable '{var}' in head of rule: {rule}")]
     UnboundHeadVar { var: String, rule: String },
 
+    /// Variable compared in the body but never given a value.
+    #[error("Unbound variable '{var}': it is compared but never given a value in: {rule}")]
+    UnboundComparedVar { var: String, rule: String },
+
     /// Variable only appears in negated context.
     #[error("Unsafe negation: variable '{var}' only appears negated in: {rule}")]
     UnsafeNegation { var: String, rule: String },
@@ -167,6 +172,10 @@ pub enum VerifyError {
     #[error("Unknown column '{column}' for predicate '{predicate}'")]
     UnknownColumn { predicate: String, column: String },
 
+    /// A head names the same column twice.
+    #[error("Column '{column}' appears twice in the head of '{predicate}'")]
+    DuplicateColumn { predicate: String, column: String },
+
     /// Predicate name collides with a built-in library predicate.
     #[error("Reserved predicate name '{predicate}': it is a built-in library predicate and cannot be redefined")]
     ReservedPredicateName { predicate: String },
@@ -182,6 +191,10 @@ pub enum VerifyError {
     /// A file's front matter has no description, or an empty one.
     #[error("The front matter has no description{}: say what {} — in the words someone would search for (description: ...)", match predicate { Some(p) => format!(" for '{}'", p), None => String::new() }, match predicate { Some(_) => "its rows are", None => "this file is about" })]
     MissingDescription { predicate: Option<String> },
+
+    /// A directive (`@OrderBy`, `@Limit`, ...) that cannot apply.
+    #[error("{message}")]
+    InvalidDirective { message: String },
 
     /// A functor the compiler cannot apply (an argument the predicate does not depend on).
     #[error("{message}")]

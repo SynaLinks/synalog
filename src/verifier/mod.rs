@@ -12,6 +12,7 @@
 //! - Ordering (the predicate a file's front matter names has `@OrderBy`)
 //! - Front matter (a name and a description)
 //! - Functors (each argument a predicate the functor depends on)
+//! - Directives (@OrderBy, @Limit, ... about a defined predicate and its columns)
 //! - Assertions (`@Assert` statements)
 
 mod vars;
@@ -26,6 +27,7 @@ mod undefined;
 mod orderby;
 mod front_matter;
 mod functors;
+mod directives;
 mod assertions;
 
 pub use vars::VarCollector;
@@ -40,6 +42,7 @@ pub use undefined::{UndefinedError, builtin_function_names, check_undefined};
 pub use orderby::{OrderByError, check_order_by};
 pub use front_matter::{DescriptionError, NameError, check_description, check_name};
 pub use functors::{FunctorError, check_functors};
+pub use directives::{DirectiveError, check_directives};
 pub use assertions::{AssertionError, AssertionReport, AssertionStatus, check_assertions, assertion_check};
 
 use crate::parser::Json;
@@ -60,6 +63,7 @@ pub enum CheckError {
     Name(NameError),
     Description(DescriptionError),
     Functor(FunctorError),
+    Directive(DirectiveError),
     Assert(AssertionError),
 }
 
@@ -78,6 +82,7 @@ impl std::fmt::Display for CheckError {
             CheckError::Name(e) => write!(f, "{}", e),
             CheckError::Description(e) => write!(f, "{}", e),
             CheckError::Functor(e) => write!(f, "{}", e),
+            CheckError::Directive(e) => write!(f, "{}", e),
             CheckError::Assert(e) => write!(f, "{}", e),
         }
     }
@@ -100,6 +105,7 @@ impl From<CheckError> for VerifyError {
             CheckError::Name(ne) => ne.into(),
             CheckError::Description(de) => de.into(),
             CheckError::Functor(fe) => fe.into(),
+            CheckError::Directive(de) => de.into(),
             CheckError::Assert(se) => se.into(),
         }
     }
@@ -235,11 +241,16 @@ pub fn validate(parsed: &Json) -> CheckResult {
     }
 
     // Check 13: Functors (each argument a predicate the functor depends on)
-    if let Some(err) = functors::check_functors(&all_rules) {
+    for err in functors::check_functors(&all_rules) {
         result.errors.push(CheckError::Functor(err));
     }
 
-    // Check 14: Assertions (@Assert statements)
+    // Check 14: Directives (@OrderBy, @Limit, ... about what the program defines)
+    for err in directives::check_directives(&all_rules) {
+        result.errors.push(CheckError::Directive(err));
+    }
+
+    // Check 15: Assertions (@Assert statements)
     let (assertions, spec_errors) = assertions::check_assertions(&all_rules);
     for err in spec_errors {
         result.errors.push(CheckError::Assert(err));

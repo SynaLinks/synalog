@@ -30,6 +30,12 @@ pub enum ArityError {
         actual: usize,
         rule: String,
     },
+    /// A head names the same column twice.
+    DuplicateColumn {
+        predicate: String,
+        column: String,
+        rule: String,
+    },
     /// Named call references a column the definition does not provide.
     UnknownColumn {
         predicate: String,
@@ -64,6 +70,11 @@ impl std::fmt::Display for ArityError {
                     "Arity mismatch for '{}': expected {} arguments, got {}",
                     predicate, expected, actual
                 )
+            }
+            ArityError::DuplicateColumn {
+                predicate, column, ..
+            } => {
+                write!(f, "Column '{}' appears twice in the head of '{}'", column, predicate)
             }
             ArityError::UnknownColumn {
                 predicate, column, ..
@@ -103,6 +114,9 @@ impl From<ArityError> for VerifyError {
                 expected,
                 actual,
             },
+            ArityError::DuplicateColumn {
+                predicate, column, ..
+            } => VerifyError::DuplicateColumn { predicate, column },
             ArityError::UnknownColumn {
                 predicate, column, ..
             } => VerifyError::UnknownColumn { predicate, column },
@@ -197,7 +211,12 @@ fn check_call_shape(
 ) {
     let shape = field_shape(call);
 
-    if shape.positional_arity > 0 && shape.positional_arity != def.positional_arity {
+    // A positional call to a predicate defined by name has no positional arity
+    // to compare with: the positional-arguments check reports it.
+    if shape.positional_arity > 0
+        && def.positional_arity > 0
+        && shape.positional_arity != def.positional_arity
+    {
         errors.push(ArityError::Mismatch {
             predicate: pred_name.to_string(),
             expected: def.positional_arity,
@@ -245,6 +264,20 @@ pub fn check_consistent_definitions(rules: &[&Json]) -> Vec<ArityError> {
 
         let arity = count_head_args(head);
         let rule_txt = rule_text(rule);
+
+        let mut seen = HashSet::new();
+        if let Some(fvs) = head.as_object().get("record").and_then(|r| r.as_object().get("field_value")) {
+            for fv in fvs.as_array() {
+                let field = &fv.as_object()["field"];
+                if field.is_string() && !seen.insert(field.as_str().to_string()) {
+                    errors.push(ArityError::DuplicateColumn {
+                        predicate: pred_name.to_string(),
+                        column: field.as_str().to_string(),
+                        rule: rule_txt.clone(),
+                    });
+                }
+            }
+        }
 
         if let Some(first) = first_definition.get(pred_name) {
             if first.arity != arity {
@@ -317,6 +350,9 @@ fn collect_conjunct_usage_errors(
     if let Some(pred) = obj.get("predicate") {
         let pred_name = pred.as_object()["predicate_name"].as_str();
 
+        // A negation `~P(...)` is `IsNull(combine ...)`: P is in the argument.
+        collect_expr_usage_errors(pred, definitions, rule_txt, errors);
+
         // Skip built-ins and comparisons
         if pred_name.starts_with('@') || is_builtin(pred_name) {
             return;
@@ -354,7 +390,16 @@ fn collect_expr_usage_errors(
     rule_txt: &str,
     errors: &mut Vec<ArityError>,
 ) {
-    let obj = expr.as_object();
+    let obj = match expr {
+        Json::Object(obj) => obj,
+        Json::Array(items) => {
+            for item in items {
+                collect_expr_usage_errors(item, definitions, rule_txt, errors);
+            }
+            return;
+        }
+        _ => return,
+    };
 
     // Call expression
     if let Some(call) = obj.get("call") {
@@ -371,6 +416,14 @@ fn collect_expr_usage_errors(
     if let Some(combine) = obj.get("combine") {
         if let Some(body) = combine.as_object().get("body") {
             collect_usage_errors(body, definitions, rule_txt, errors);
+        }
+        return;
+    }
+
+    // Anything else: a combine may sit deeper, in an argument.
+    for (key, value) in obj.iter() {
+        if key != "combine" {
+            collect_expr_usage_errors(value, definitions, rule_txt, errors);
         }
     }
 }
@@ -441,6 +494,42 @@ mod tests {
             ArityError::InconsistentDefinition { predicate, first_arity: 2, second_arity: 3, .. }
             if predicate == "Multi"
         ));
+    }
+
+    #[test]
+    fn test_positional_call_to_a_named_predicate_is_not_an_arity_mismatch() {
+        let parsed = parse(
+            r#"
+            Item(x:) :- x in [1, 2];
+            Total(x:) :- Item(x);
+        "#,
+        );
+        let rules: Vec<&Json> = parsed.as_object()["rule"].as_array().iter().collect();
+        assert!(check_usage_arity(&rules).is_empty());
+    }
+
+    #[test]
+    fn test_unknown_column_inside_negation() {
+        let parsed = parse(
+            r#"
+            Edge(a: 1, b: 2);
+            Node(x:) :- x in [1];
+            Sink(x:) :- Node(x:), ~Edge(nope: x);
+        "#,
+        );
+        let rules: Vec<&Json> = parsed.as_object()["rule"].as_array().iter().collect();
+        let errors = check_usage_arity(&rules);
+        assert_eq!(errors.len(), 1, "{:?}", errors);
+        assert!(matches!(&errors[0], ArityError::UnknownColumn { column, .. } if column == "nope"));
+    }
+
+    #[test]
+    fn test_duplicate_column_in_head() {
+        let parsed = parse("V(x:, x:) :- x in [1];");
+        let rules: Vec<&Json> = parsed.as_object()["rule"].as_array().iter().collect();
+        let errors = check_consistent_definitions(&rules);
+        assert_eq!(errors.len(), 1, "{:?}", errors);
+        assert_eq!(errors[0].to_string(), "Column 'x' appears twice in the head of 'V'");
     }
 
     #[test]

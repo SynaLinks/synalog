@@ -21,6 +21,11 @@ pub enum SafetyError {
         rule: String,
         var: String,
     },
+    /// Variable compared in the body but bound by nothing.
+    UnboundComparedVar {
+        rule: String,
+        var: String,
+    },
     /// Variable only appears in negated context.
     UnsafeNegation {
         rule: String,
@@ -39,6 +44,9 @@ impl std::fmt::Display for SafetyError {
             SafetyError::UnboundHeadVar { rule, var } => {
                 write!(f, "Unbound variable '{}' in head of rule: {}", var, rule)
             }
+            SafetyError::UnboundComparedVar { rule, var } => {
+                write!(f, "Unbound variable '{}': it is compared but never given a value in: {}", var, rule)
+            }
             SafetyError::UnsafeNegation { rule, var } => {
                 write!(f, "Unsafe negation: variable '{}' only appears negated in: {}", var, rule)
             }
@@ -56,6 +64,9 @@ impl From<SafetyError> for VerifyError {
         match e {
             SafetyError::UnboundHeadVar { rule, var } => {
                 VerifyError::UnboundHeadVar { var, rule }
+            }
+            SafetyError::UnboundComparedVar { rule, var } => {
+                VerifyError::UnboundComparedVar { var, rule }
             }
             SafetyError::UnsafeNegation { rule, var } => {
                 VerifyError::UnsafeNegation { var, rule }
@@ -157,10 +168,31 @@ fn check_safe_aggregation(rule: &Json) -> Vec<SafetyError> {
         .collect()
 }
 
+/// Check 4: a variable compared in the body (`x > 2`) must get its value from
+/// somewhere else in the body: a comparison filters, it does not bind.
+fn check_compared_vars_bound(rule: &Json) -> Vec<SafetyError> {
+    if is_fact(rule) {
+        return vec![];
+    }
+    let text = rule_text(rule);
+    let mut positive_vars = VarCollector::positive_vars(rule);
+    positive_vars.extend(VarCollector::function_input_vars(rule));
+    // A head variable that is not bound is already reported, once.
+    let head_vars = VarCollector::head_vars(rule);
+    let mut compared: Vec<String> = VarCollector::compared_vars(rule).into_iter().collect();
+    compared.sort();
+    compared
+        .into_iter()
+        .filter(|v| v != "_" && !positive_vars.contains(v) && !head_vars.contains(v))
+        .map(|v| SafetyError::UnboundComparedVar { rule: text.clone(), var: v })
+        .collect()
+}
+
 /// Run all safety checks on a single rule.
 pub fn check_rule_safety(rule: &Json) -> Vec<SafetyError> {
     let mut errors = Vec::new();
     errors.extend(check_head_vars_bound(rule));
+    errors.extend(check_compared_vars_bound(rule));
     errors.extend(check_safe_negation(rule));
     errors.extend(check_safe_aggregation(rule));
     errors
@@ -194,6 +226,20 @@ mod tests {
         let rules = parsed.as_object()["rule"].as_array();
         let errors = check_rule_safety(&rules[0]);
         assert!(errors.is_empty());
+    }
+
+    #[test]
+    fn test_compared_but_unbound_var() {
+        let parsed = parse("V(y:) :- y in [1], x > 2;");
+        let errors = check_rule_safety(&parsed.as_object()["rule"].as_array()[0]);
+        assert_eq!(errors.len(), 1, "{:?}", errors);
+        assert!(matches!(&errors[0], SafetyError::UnboundComparedVar { var, .. } if var == "x"));
+    }
+
+    #[test]
+    fn test_compared_and_bound_var() {
+        let parsed = parse("V(y:) :- y in [1, 3], y > 2;");
+        assert!(check_rule_safety(&parsed.as_object()["rule"].as_array()[0]).is_empty());
     }
 
     #[test]

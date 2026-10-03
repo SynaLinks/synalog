@@ -241,6 +241,8 @@ fn collect_conjunct_refs(conjunct: &Json, out: &mut BTreeSet<String>) {
     if let Some(pred) = obj.get("predicate") {
         let name = pred.as_object()["predicate_name"].as_str();
         out.insert(name.to_string());
+        // A negation `~P(...)` is `IsNull(combine ...)`: P is in the argument.
+        collect_expr_refs(pred, out);
         return;
     }
 
@@ -267,11 +269,20 @@ fn collect_conjunct_refs(conjunct: &Json, out: &mut BTreeSet<String>) {
 /// live inside aggregating `combine` subqueries. Plain `call` function names are
 /// not collected (they are SQL passthroughs, not relational references).
 fn collect_expr_refs(expr: &Json, out: &mut BTreeSet<String>) {
-    let obj = expr.as_object();
-    if let Some(combine) = obj.get("combine") {
-        if let Some(body) = combine.as_object().get("body") {
-            collect_body_refs(body, out);
+    match expr {
+        Json::Object(obj) => {
+            if let Some(combine) = obj.get("combine") {
+                if let Some(body) = combine.as_object().get("body") {
+                    collect_body_refs(body, out);
+                }
+                return;
+            }
+            for (_, value) in obj.iter() {
+                collect_expr_refs(value, out);
+            }
         }
+        Json::Array(items) => items.iter().for_each(|item| collect_expr_refs(item, out)),
+        _ => {}
     }
 }
 
@@ -379,6 +390,13 @@ mod tests {
         "#,
         );
         assert_eq!(errors.len(), 1, "{:?}", errors);
+    }
+
+    #[test]
+    fn test_reference_inside_negation() {
+        let errors = check("Node(x:) :- x in [1];\nSink(x:) :- Node(x:), ~Edeg(a: x);");
+        assert_eq!(errors.len(), 1);
+        assert_eq!(errors[0].predicate, "Edeg");
     }
 
     #[test]

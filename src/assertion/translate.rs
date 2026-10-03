@@ -165,10 +165,23 @@ fn variable_name(var: &str) -> String {
             c => name.push_str(&format!("_u{:x}", c as u32)),
         }
     }
-    if !name.chars().next().is_some_and(|c| c.is_ascii_lowercase()) {
+    // Synalog variables start lowercase, and `x_` is reserved to the compiler.
+    if !name.chars().next().is_some_and(|c| c.is_ascii_lowercase()) || name.starts_with("x_") {
         name.insert_str(0, "v_");
     }
     name
+}
+
+/// A variable bound inside the statement, renamed so that it shadows nothing:
+/// `x` becomes `q1__x`. The number comes first, so the name never starts with
+/// the reserved `x_`.
+fn bound_name(var: &str, n: usize) -> String {
+    format!("q{}__{}", n, variable_name(var))
+}
+
+/// A variable as the statement wrote it, for messages.
+fn display(var: &str) -> &str {
+    var.rsplit("__").next().unwrap_or(var)
 }
 
 /// Collect the predicates `expr` names that `schema` does not define. Names
@@ -268,7 +281,7 @@ impl Resolver {
         let mut names = Vec::new();
         for var in vars {
             self.renamed += 1;
-            let name = format!("{}__{}", variable_name(var), self.renamed);
+            let name = bound_name(var, self.renamed);
             self.scope.push((var.clone(), name.clone()));
             names.push(name);
         }
@@ -423,6 +436,27 @@ struct Body {
     bound: HashSet<String>,
     /// Variables used by a filter, which must end up bound.
     used: Vec<String>,
+    /// `v = t` with `v` a variable: `v` gets its value from `t` once the
+    /// variables of `t` are bound, as `v == t` does in a rule.
+    equalities: Vec<(String, Vec<String>)>,
+}
+
+impl Body {
+    /// Bind what the equalities give a value to, until nothing changes.
+    fn bind_equalities(&mut self) {
+        loop {
+            let mut changed = false;
+            for (var, deps) in &self.equalities {
+                if !self.bound.contains(var) && deps.iter().all(|d| self.bound.contains(d)) {
+                    self.bound.insert(var.clone());
+                    changed = true;
+                }
+            }
+            if !changed {
+                break;
+            }
+        }
+    }
 }
 
 impl Emitter<'_> {
@@ -494,11 +528,12 @@ impl Emitter<'_> {
             }
         }
 
+        body.bind_equalities();
         for var in head_vars.iter().chain(body.used.iter()) {
             if !body.bound.contains(var) {
                 return unsupported(format!(
                     "variable '{}' is not bound by a predicate, so it has no values to check",
-                    var.split("__").next().unwrap_or(var)
+                    display(var)
                 ));
             }
         }
@@ -600,7 +635,7 @@ impl Emitter<'_> {
                     if !inner.bound.contains(var) {
                         return unsupported(format!(
                             "variable '{}' of a sum is not bound by a predicate",
-                            var.split("__").next().unwrap_or(var)
+                            display(var)
                         ));
                     }
                 }
@@ -632,6 +667,14 @@ impl Emitter<'_> {
         // Computed numbers are compared up to a tolerance: a sum of floats
         // that should be 1 is rarely exactly 1.
         let approximate = is_computed(left) || is_computed(right);
+        if op == BinOp::Eq && !approximate {
+            if let Expr::Var(var) = left {
+                body.equalities.push((var.clone(), free_vars(right)));
+            }
+            if let Expr::Var(var) = right {
+                body.equalities.push((var.clone(), free_vars(left)));
+            }
+        }
         Ok(match op {
             BinOp::Eq if approximate => format!("Abs({} - {}) <= {}", l, r, TOLERANCE),
             BinOp::Ne if approximate => format!("Abs({} - {}) > {}", l, r, TOLERANCE),
@@ -660,7 +703,7 @@ fn show(expr: &Expr) -> String {
     match expr {
         Expr::App(name, args) if args.is_empty() => name.clone(),
         Expr::App(name, _) => format!("{} ...", name),
-        Expr::Var(name) => name.split("__").next().unwrap_or(name).to_string(),
+        Expr::Var(name) => display(name).to_string(),
         Expr::Num(n) => n.clone(),
         Expr::Str(s) => format!("\"{}\"", s),
         Expr::Forall(..) => "∀ ...".into(),
@@ -728,7 +771,7 @@ mod tests {
     fn test_existential_conclusion_becomes_a_helper() {
         assert_eq!(
             rules("∀ x y, Ancestor x y → ∃ w, Parent x w"),
-            "Assert_1(x: x) distinct :- Parent(x: x, y: w__1);\n\
+            "Assert_1(x: x) distinct :- Parent(x: x, y: q1__w);\n\
              Assert(x: x, y: y) distinct :- Ancestor(x: x, y: y), ~Assert_1(x: x);"
         );
     }
@@ -756,7 +799,7 @@ mod tests {
     fn test_sum_becomes_an_aggregating_helper() {
         assert_eq!(
             rules("∀ e, ∑ h, Posterior h e = 1"),
-            "Assert_1(e: e, total? += s__1) distinct :- Posterior(h: h__1, e: e, p: s__1);\n\
+            "Assert_1(e: e, total? += s__1) distinct :- Posterior(h: q1__h, e: e, p: s__1);\n\
              Assert(e: e) distinct :- Assert_1(e: e, total: s__2), Abs(s__2 - 1) > 0.000000001;"
         );
     }
@@ -765,7 +808,7 @@ mod tests {
     fn test_closed_statement() {
         assert_eq!(
             rules("∃ x, Ancestor x x"),
-            "Assert_1(holds: 1) distinct :- Ancestor(x: x__1, y: x__1);\n\
+            "Assert_1(holds: 1) distinct :- Ancestor(x: q1__x, y: q1__x);\n\
              Assert(violated: 1) distinct :- ~Assert_1(holds: 1);"
         );
     }
@@ -819,5 +862,24 @@ mod tests {
             panic!("expected an unsupported statement");
         };
         assert!(message.contains("variable 'y' is not bound"), "{message}");
+    }
+
+    #[test]
+    fn test_no_variable_takes_the_reserved_prefix() {
+        let rules = rules("∀ x_1, Parent x_1 x_1 → ∃ x, Ancestor x x_1");
+        for word in rules.split(|c: char| !(c.is_alphanumeric() || c == '_')) {
+            assert!(!word.starts_with("x_"), "{word} in {rules}");
+        }
+    }
+
+    #[test]
+    fn test_an_equality_binds_an_outer_variable() {
+        // p is bound outside the ∃: inside, `a = p` gives it its value.
+        assert_eq!(
+            rules("∀ p, Ancestor p p → ∃ a b, Parent a b ∧ (a = p ∨ b = p)"),
+            "Assert_1(p: p) distinct :- Parent(x: q1__a, y: q2__b), q1__a == p;\n\
+             Assert_1(p: p) distinct :- Parent(x: q1__a, y: q2__b), q2__b == p;\n\
+             Assert(p: p) distinct :- Ancestor(x: p, y: p), ~Assert_1(p: p);"
+        );
     }
 }

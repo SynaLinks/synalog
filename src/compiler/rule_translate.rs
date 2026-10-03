@@ -7,8 +7,8 @@ use std::collections::{HashMap, HashSet};
 use indexmap::IndexMap;
 use crate::parser::{Json, JsonObject};
 use crate::compiler::{CompileResult, CompileError};
-use crate::compiler::dialects::{Dialect, GroupBySpec};
-use crate::compiler::expr_translate::{ExprTranslator, SubqueryTranslator, logica_field_to_sql_field};
+use crate::compiler::dialects::{is_sql_keyword, sql_column, Dialect, GroupBySpec};
+use crate::compiler::expr_translate::{ExprTranslator, SubqueryTranslator};
 
 use crate::compiler::universe::indent2;
 
@@ -43,26 +43,6 @@ pub struct NamesAllocator {
     allocated_tables: HashSet<String>,
     /// Custom UDF format strings: function_name -> format string (e.g., "my_func({col0}, {col1})")
     pub custom_udfs: HashMap<String, String>,
-}
-
-/// SQL keywords no engine accepts as a bare table alias (the union of the
-/// reserved words of the engines Synalog compiles to that a predicate name
-/// can plausibly collide with).
-const SQL_KEYWORDS: &[&str] = &[
-    "ALL", "ALTER", "AND", "ANY", "ARRAY", "AS", "ASC", "BETWEEN", "BOTH", "BY", "CASE", "CAST",
-    "CHECK", "COLLATE", "COLUMN", "CONSTRAINT", "CREATE", "CROSS", "CURRENT_DATE", "CURRENT_TIME",
-    "CURRENT_TIMESTAMP", "CURRENT_USER", "DEFAULT", "DELETE", "DESC", "DISTINCT", "DO", "DROP",
-    "ELSE", "END", "EXCEPT", "EXISTS", "FALSE", "FETCH", "FOR", "FOREIGN", "FROM", "FULL", "GRANT",
-    "GROUP", "GROUPING", "HAVING", "IN", "INNER", "INSERT", "INTERSECT", "INTERVAL", "INTO", "IS",
-    "JOIN", "LATERAL", "LEADING", "LEFT", "LIKE", "LIMIT", "NATURAL", "NOT", "NULL", "OFFSET", "ON",
-    "ONLY", "OR", "ORDER", "OUTER", "OVER", "PARTITION", "PRIMARY", "QUALIFY", "RANGE", "REFERENCES",
-    "RIGHT", "ROW", "ROWS", "SELECT", "SESSION_USER", "SET", "SOME", "TABLE", "THEN", "TO",
-    "TRAILING", "TRUE", "UNION", "UNIQUE", "UNNEST", "UPDATE", "USER", "USING", "VALUES", "WHEN",
-    "WHERE", "WINDOW", "WITH",
-];
-
-fn is_sql_keyword(name: &str) -> bool {
-    SQL_KEYWORDS.iter().any(|k| k.eq_ignore_ascii_case(name))
 }
 
 impl NamesAllocator {
@@ -136,9 +116,9 @@ pub struct RuleStructure {
     /// table_alias → predicate_name
     pub tables: IndexMap<String, String>,
     /// (table_alias, field) → generated variable name
-    pub vars_map: HashMap<(String, String), String>,
+    pub vars_map: IndexMap<(String, String), String>,
     /// generated variable name → (table_alias, field)
-    pub inv_vars_map: HashMap<String, (String, String)>,
+    pub inv_vars_map: IndexMap<String, (String, String)>,
     /// Variable unifications: [{left: expr, right: expr}]
     pub vars_unification: Vec<(Json, Json)>,
     /// Constraint expressions (become WHERE clauses)
@@ -168,8 +148,8 @@ impl RuleStructure {
         RuleStructure {
             this_predicate_name: String::new(),
             tables: IndexMap::new(),
-            vars_map: HashMap::new(),
-            inv_vars_map: HashMap::new(),
+            vars_map: IndexMap::new(),
+            inv_vars_map: IndexMap::new(),
             vars_unification: Vec::new(),
             constraints: Vec::new(),
             select: IndexMap::new(),
@@ -227,7 +207,7 @@ impl RuleStructure {
             vocab.extend(ext.clone());
         }
         for (var_name, (table, field)) in &self.inv_vars_map {
-            let sql_field = logica_field_to_sql_field(field);
+            let sql_field = sql_column(field, dialect);
             if table.is_empty() {
                 vocab.insert(var_name.clone(), sql_field);
             } else if field == "*" {
@@ -653,7 +633,7 @@ impl RuleStructure {
         let mut fields = Vec::with_capacity(self.select.len());
         for (field_name, expression) in &self.select {
             let sql_expr = ql.convert_to_sql(expression)?;
-            let sql_field = logica_field_to_sql_field(field_name);
+            let sql_field = sql_column(field_name, dialect);
             if field_name == "*" || sql_expr.ends_with(".*") {
                 fields.push(sql_expr);
             } else {
@@ -730,7 +710,7 @@ impl RuleStructure {
             let group_items: Vec<String> = match group_spec {
                 GroupBySpec::Name => {
                     self.distinct_vars.iter()
-                        .map(|v| logica_field_to_sql_field(v))
+                        .map(|v| sql_column(v, dialect))
                         .collect()
                 }
                 GroupBySpec::Index => {

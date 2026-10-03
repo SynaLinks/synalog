@@ -1696,15 +1696,6 @@ fn sub_if_struct(implication: &Json, subscript: &str) -> Option<Json> {
     Some(Json::Object(result))
 }
 
-/// Convert a Logica field name to a safe SQL column name.
-pub fn logica_field_to_sql_field(field: &str) -> String {
-    if field.chars().all(|c| c.is_ascii_alphanumeric() || c == '_') {
-        field.to_string()
-    } else {
-        format!("\"{}\"", field)
-    }
-}
-
 #[cfg(test)]
 #[path = "expr_translate_test.rs"]
 mod expr_translate_test;

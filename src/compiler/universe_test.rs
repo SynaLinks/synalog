@@ -1479,3 +1479,21 @@ fn test_formatted_predicate_sql_single_fact_no_with() {
     assert!(!sql.contains("WITH"), "Single fact should not have WITH: {}", sql);
     assert!(sql.contains("hello"), "SQL: {}", sql);
 }
+
+#[test]
+fn test_injected_fact_compiles_the_same_every_time() {
+    // A negated single fact is injected as one equality per column; their
+    // order followed a HashMap, so the SQL changed from one compilation to
+    // the next.
+    let source = "Want(a: 1, b: 2);\nWant(a: 1, b: 3);\nHave(a: 1, b: 3);\n\
+                  Missing(a:, b:) :- Want(a:, b:), ~Have(a:, b:);\n";
+    let compile = || {
+        let parsed = crate::parser::parse_file(source, None, &[]).unwrap();
+        let program = LogicaProgram::new(&parsed, HashMap::new(), HashMap::new()).unwrap();
+        program.formatted_predicate_sql("Missing").unwrap()
+    };
+    let first = compile();
+    for _ in 0..30 {
+        assert_eq!(compile(), first);
+    }
+}

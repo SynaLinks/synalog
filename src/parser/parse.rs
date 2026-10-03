@@ -1498,8 +1498,56 @@ fn made_predicates(rules: &JsonArray) -> BTreeSet<String> {
     out
 }
 
+/// True if `rule` is an `@Assert` annotation, whose statements are strings.
+fn is_assert_rule(rule: &Json) -> bool {
+    rule.as_object()
+        .get("head")
+        .and_then(|h| h.as_object().get("predicate_name"))
+        .is_some_and(|n| n.is_string() && n.as_str() == "@Assert")
+}
+
+/// `old_name` replaced by `new_name` wherever it is a whole identifier of an
+/// `@Assert` statement (identifiers as Lean reads them: letters, digits, `_`,
+/// `'` and subscripts).
+fn rename_in_statement(statement: &str, old_name: &str, new_name: &str) -> (String, i32) {
+    let is_ident = |c: char| c.is_alphanumeric() || c == '_' || c == '\'' || ('\u{2080}'..='\u{209c}').contains(&c);
+    let mut out = String::with_capacity(statement.len());
+    let mut count = 0;
+    let mut chars = statement.char_indices().peekable();
+    let mut in_string = false;
+    while let Some((start, c)) = chars.next() {
+        if c == '"' {
+            in_string = !in_string;
+            out.push(c);
+            continue;
+        }
+        if in_string || !is_ident(c) {
+            out.push(c);
+            continue;
+        }
+        let mut end = start + c.len_utf8();
+        while let Some(&(i, next)) = chars.peek() {
+            if !is_ident(next) {
+                break;
+            }
+            end = i + next.len_utf8();
+            chars.next();
+        }
+        let word = &statement[start..end];
+        if word == old_name {
+            out.push_str(new_name);
+            count += 1;
+        } else {
+            out.push_str(word);
+        }
+    }
+    (out, count)
+}
+
 fn rename_predicate(e: &mut Json, old_name: &str, new_name: &str) -> i32 {
     let mut count = 0;
+    // An @Assert names predicates inside its statements too.
+    let in_assert = is_assert_rule(e);
     let mut stack: Vec<*mut Json> = vec![e as *mut Json];
 
     while let Some(ptr) = stack.pop() {
@@ -1518,6 +1566,17 @@ fn rename_predicate(e: &mut Json, old_name: &str, new_name: &str) -> i32 {
                     if v.is_string() && v.as_str() == old_name {
                         *v = Json::Str(new_name.to_string());
                         count += 1;
+                    }
+                }
+                if in_assert {
+                    if let Some(v) = o.get_mut("the_string") {
+                        if v.is_string() {
+                            let (renamed, n) = rename_in_statement(v.as_str(), old_name, new_name);
+                            if n > 0 {
+                                *v = Json::Str(renamed);
+                                count += n;
+                            }
+                        }
                     }
                 }
                 for (_, v) in o.iter_mut() {

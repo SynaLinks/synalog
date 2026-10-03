@@ -335,26 +335,30 @@ fn test_apply_template_extra_percent_s() {
     );
 }
 
-// ── logica_field_to_sql_field ──
+// ── sql_column ──
 
 #[test]
-fn test_logica_field_to_sql_field_simple() {
-    assert_eq!(logica_field_to_sql_field("col0"), "col0");
+fn test_sql_column_plain() {
+    let duckdb = crate::compiler::dialects::get("duckdb").unwrap();
+    assert_eq!(crate::compiler::dialects::sql_column("my_field", duckdb.as_ref()), "my_field");
 }
 
 #[test]
-fn test_logica_field_to_sql_field_underscore() {
-    assert_eq!(logica_field_to_sql_field("my_field"), "my_field");
+fn test_sql_column_special_chars() {
+    let duckdb = crate::compiler::dialects::get("duckdb").unwrap();
+    assert_eq!(crate::compiler::dialects::sql_column("my field", duckdb.as_ref()), "\"my field\"");
 }
 
 #[test]
-fn test_logica_field_to_sql_field_special_chars() {
-    assert_eq!(logica_field_to_sql_field("col-name"), "\"col-name\"");
+fn test_sql_column_keyword_is_quoted() {
+    let duckdb = crate::compiler::dialects::get("duckdb").unwrap();
+    assert_eq!(crate::compiler::dialects::sql_column("order", duckdb.as_ref()), "\"order\"");
 }
 
 #[test]
-fn test_logica_field_to_sql_field_spaces() {
-    assert_eq!(logica_field_to_sql_field("my field"), "\"my field\"");
+fn test_sql_column_bigquery_quotes_with_backticks() {
+    let bigquery = crate::compiler::dialects::get("bigquery").unwrap();
+    assert_eq!(crate::compiler::dialects::sql_column("order", bigquery.as_ref()), "`order`");
 }
 
 // ── Non-object expression error ──

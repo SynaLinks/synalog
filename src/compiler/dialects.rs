@@ -46,6 +46,38 @@ pub enum GroupBySpec {
 }
 
 /// Abstraction over SQL dialect differences.
+/// SQL keywords no engine accepts as a bare identifier (the union of the
+/// reserved words of the engines Synalog compiles to that a predicate or a
+/// column name can plausibly collide with).
+const SQL_KEYWORDS: &[&str] = &[
+    "ALL", "ALTER", "AND", "ANY", "ARRAY", "AS", "ASC", "BETWEEN", "BOTH", "BY", "CASE", "CAST",
+    "CHECK", "COLLATE", "COLUMN", "CONSTRAINT", "CREATE", "CROSS", "CURRENT_DATE", "CURRENT_TIME",
+    "CURRENT_TIMESTAMP", "CURRENT_USER", "DEFAULT", "DELETE", "DESC", "DISTINCT", "DO", "DROP",
+    "ELSE", "END", "EXCEPT", "EXISTS", "FALSE", "FETCH", "FOR", "FOREIGN", "FROM", "FULL", "GRANT",
+    "GROUP", "GROUPING", "HAVING", "IN", "INNER", "INSERT", "INTERSECT", "INTERVAL", "INTO", "IS",
+    "JOIN", "LATERAL", "LEADING", "LEFT", "LIKE", "LIMIT", "NATURAL", "NOT", "NULL", "OFFSET", "ON",
+    "ONLY", "OR", "ORDER", "OUTER", "OVER", "PARTITION", "PRIMARY", "QUALIFY", "RANGE", "REFERENCES",
+    "RIGHT", "ROW", "ROWS", "SELECT", "SESSION_USER", "SET", "SOME", "TABLE", "THEN", "TO",
+    "TRAILING", "TRUE", "UNION", "UNIQUE", "UNNEST", "UPDATE", "USER", "USING", "VALUES", "WHEN",
+    "WHERE", "WINDOW", "WITH",
+];
+
+pub fn is_sql_keyword(name: &str) -> bool {
+    SQL_KEYWORDS.iter().any(|k| k.eq_ignore_ascii_case(name))
+}
+
+/// A column name as SQL reads it: as is when it is a plain identifier, quoted
+/// by the dialect when it is a keyword (`order`) or holds other characters.
+pub fn sql_column(field: &str, dialect: &dyn Dialect) -> String {
+    let plain = field.chars().next().is_some_and(|c| c.is_ascii_alphabetic() || c == '_')
+        && field.chars().all(|c| c.is_ascii_alphanumeric() || c == '_');
+    if plain && !is_sql_keyword(field) {
+        field.to_string()
+    } else {
+        dialect.quote_identifier(field)
+    }
+}
+
 pub trait Dialect {
     fn name(&self) -> &'static str;
 
@@ -92,6 +124,11 @@ pub trait Dialect {
     /// CASCADE keyword for DROP statements.
     fn cascading_deletion_word(&self) -> &'static str {
         ""
+    }
+
+    /// `name` quoted as an identifier (standard SQL: double quotes).
+    fn quote_identifier(&self, name: &str) -> String {
+        format!("\"{}\"", name.replace('"', "\"\""))
     }
 
     /// Whether table materialization uses `CREATE OR REPLACE TABLE` instead
@@ -228,6 +265,11 @@ pub fn get(engine: &str) -> Result<Box<dyn Dialect>, CompileError> {
 pub struct BigQueryDialect;
 
 impl Dialect for BigQueryDialect {
+    fn quote_identifier(&self, name: &str) -> String {
+        // Double quotes make a string here: identifiers take backticks.
+        format!("`{}`", name.replace('`', "\\`"))
+    }
+
     fn name(&self) -> &'static str { "bigquery" }
     fn string_cast(&self, expr: &str) -> String { format!("CAST({} AS STRING)", expr) }
 
@@ -738,6 +780,11 @@ Array(a) = SqlExpr(
 pub struct DatabricksDialect;
 
 impl Dialect for DatabricksDialect {
+    fn quote_identifier(&self, name: &str) -> String {
+        // Double quotes make a string here: identifiers take backticks.
+        format!("`{}`", name.replace('`', "\\`"))
+    }
+
     fn name(&self) -> &'static str { "databricks" }
     fn string_cast(&self, expr: &str) -> String { format!("CAST({} AS STRING)", expr) }
     fn today_relation_sql(&self) -> String {

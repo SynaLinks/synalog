@@ -382,7 +382,7 @@ AllManagers(employee_id:, manager_id:) :- Employees(employee_id:, manager_id:);
 
 # Recursive case: manager's managers
 AllManagers(employee_id:, manager_id:) :-
-  AllManagers(employee_id:, intermediate:),
+  AllManagers(employee_id:, manager_id: intermediate),
   Employees(employee_id: intermediate, manager_id:);
 ```
 
@@ -390,17 +390,21 @@ Useful for: referral chains, org charts, product taxonomies, bill of materials.
 
 ### Shortest paths
 
-Find shortest paths in weighted graphs using `Min=` aggregation:
+Find shortest paths in weighted graphs by enumerating route costs recursively, then keeping the minimum per destination with a `Min=` aggregation:
 
 ```logica
-ShippingCost("warehouse_main") = 0;
-
-ShippingCost(destination) Min= cost :-
+# Enumerate route costs from the origin, hop by hop.
+@Recursive(RouteCost, 10);
+RouteCost(destination:, cost:) :-
   ShippingRoutes(origin: "warehouse_main", destination:, cost:);
+RouteCost(destination:, cost: total) :-
+  RouteCost(destination: hub, cost: hub_cost),
+  ShippingRoutes(origin: hub, destination:, cost:),
+  total == hub_cost + cost;
 
-ShippingCost(destination) Min= ShippingCost(hub) + cost :-
-  ShippingCost(hub),
-  ShippingRoutes(origin: hub, destination:, cost:);
+# Keep the cheapest cost per destination.
+@OrderBy(ShippingCost, "destination");
+ShippingCost(destination:, total? Min= cost) distinct :- RouteCost(destination:, cost:);
 ```
 
 ### Temporal data

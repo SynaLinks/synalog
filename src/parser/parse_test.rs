@@ -595,3 +595,15 @@ fn test_keyword_inside_an_underscored_name_is_not_a_keyword() {
     let rule = &parsed.as_object()["rule"].as_array()[0];
     assert!(rule.as_object().get("distinct_denoted").is_some());
 }
+
+#[test]
+fn test_rename_in_statement_renames_whole_identifiers_only() {
+    let (out, n) = super::rename_in_statement(
+        "∀ x, Numbers x → NumbersBis x ∧ x ≠ \"Numbers\"",
+        "Numbers",
+        "Lib_Numbers",
+    );
+    assert_eq!(out, "∀ x, Lib_Numbers x → NumbersBis x ∧ x ≠ \"Numbers\"");
+    assert_eq!(n, 1);
+}
+

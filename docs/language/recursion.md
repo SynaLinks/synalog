@@ -16,7 +16,7 @@ AllManagers(employee_id:, manager_id:) :- Employees(employee_id:, manager_id:);
 
 # Recursive case: manager's managers
 AllManagers(employee_id:, manager_id:) :-
-  AllManagers(employee_id:, intermediate:),
+  AllManagers(employee_id:, manager_id: intermediate),
   Employees(employee_id: intermediate, manager_id:);
 ```
 
@@ -49,7 +49,7 @@ The recursive closure of a parent/child edge detects cycles in a hierarchy: a no
 @Recursive(AncestorOf, 100);
 AncestorOf(ancestor_id:, descendant_id:) :- ParentOf(parent_id: ancestor_id, child_id: descendant_id);
 AncestorOf(ancestor_id:, descendant_id:) :-
-  AncestorOf(ancestor_id:, intermediate:),
+  AncestorOf(ancestor_id:, descendant_id: intermediate),
   ParentOf(parent_id: intermediate, child_id: descendant_id);
 
 HierarchyCycle(node_id:) :- AncestorOf(ancestor_id: node_id, descendant_id: node_id);

@@ -8,17 +8,18 @@ This matters most for AI agents: it prevents producing programs that parse corre
 
 | Check | What it detects |
 |-------|-----------------|
-| **Safety** | Head variables not bound in the body |
+| **Safety** | Head variables not bound in the body, and variables only compared (`x > 2`) but never given a value |
 | **Safe negation** | Negated variables without a positive occurrence |
 | **Safe aggregation** | Aggregated variables not bound outside the aggregate |
 | **Stratification** | Negative recursion cycles |
-| **Arity** | Predicates used with inconsistent argument counts |
+| **Arity** | Predicates used with inconsistent argument counts, columns a predicate does not have (also inside a negation), a column named twice in a head |
 | **Recursion** | Missing base cases, trivial loops, unbounded recursion without `@Recursive` |
 | **Reserved names** | Rules that redefine a built-in library predicate (`Num`, `Str`, `ArgMin`, `Today`, `Now`, ...) |
 | **Unsafe `SqlExpr`** | User rules that reach for the raw-SQL escape hatch |
 | **Ordering** | A file whose front matter names a predicate, without an `@OrderBy` for it |
 | **Front matter** | A file with front matter but no `name`, or no `description` (or an empty one) |
-| **Functors** | A functor argument the applied predicate does not depend on: `F := Count(Nope: Odd)` when `Count` never reads `Nope` |
+| **Functors** | A functor naming a predicate that does not exist, or an argument the applied predicate does not depend on: `F := Count(Nope: Odd)` when `Count` never reads `Nope` |
+| **Directives** | `@OrderBy`, `@Limit`, `@Recursive` or `@Ground` about a predicate the program does not define; an `@OrderBy` item that is not a column of the predicate; an `@Limit` that is not a whole number of rows; an `@Recursive` depth below 1 |
 | **Assertions** | An `@Assert` statement that does not parse or contradicts the program, an assertion stated twice |
 
 ### Unsafe `SqlExpr`
