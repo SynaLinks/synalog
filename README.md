@@ -14,7 +14,6 @@
 [![CI](https://github.com/synalinks/synalog/actions/workflows/CI.yml/badge.svg)](https://github.com/synalinks/synalog/actions/workflows/CI.yml)
 [![Documentation](https://github.com/synalinks/synalog/actions/workflows/docs.yml/badge.svg)](https://github.com/synalinks/synalog/actions/workflows/docs.yml)
 [![License: Apache-2.0](https://img.shields.io/badge/License-Apache_2.0-green.svg)](https://opensource.org/license/apache-2-0)
-[![Ask DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/synalinks/synalog)
 
 </div>
 
