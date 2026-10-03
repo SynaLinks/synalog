@@ -29,6 +29,33 @@ def test_predicates_basic_shape():
     assert text.startswith("# Tables")
 
 
+def test_each_table_is_described_and_ordered():
+    rows = [("public", "order_items", "order_id"), ("public", "order_items", "sku"), ("crm", "UserId", "UserId")]
+    text = predicates("psql", rows)
+    assert (
+        '## Order items.\n@OrderBy(PublicOrderItems, "order_id");\n'
+        "PublicOrderItems(order_id:, sku:) :- public.order_items(order_id:, sku:);"
+    ) in text
+    # A capitalized column orders by its field name.
+    assert '## User id.\n@OrderBy(CrmUserId, "UserId");' in text
+    assert check(text, engine="psql") == []
+
+
+@pytest.mark.parametrize(
+    ("table", "description"),
+    [
+        ("order_items", "Order items."),
+        ("public.order_items", "Order items."),
+        ("CustomerAccounts", "Customer accounts."),
+        ("ticket-events_2024", "Ticket events 2024."),
+        ("orders", "Orders."),
+        ("_", "A table of the database."),
+    ],
+)
+def test_table_description_comes_from_the_name(table, description):
+    assert introspect.table_description(table) == description
+
+
 def test_predicates_are_valid_logica():
     rows = [("public", "users", "id"), ("public", "users", "name")]
     prog = predicates("psql", rows) + "\nDemo(id:) :- PublicUsers(id:);\n"

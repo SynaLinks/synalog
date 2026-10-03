@@ -61,11 +61,11 @@ schema = "public"
 - Fields per engine: `psql` host, port, database, user, password, sslmode, schema; `trino`/`presto` host, port, scheme, catalog, schema, user, auth, password; `databricks` server_hostname, http_path, access_token, catalog, schema; `bigquery` project, dataset, credentials, location.
 - Precedence: `--engine` and `@Engine` over the project's engine; `--dsn`, then `SYNALOG_<ENGINE>_DSN`, then `synalog.toml`, then a connection saved with `synalog connect <engine> <dsn>`.
 - `[project]` (`name`, `description`) is for the tools around synalog; synalog ignores it.
-- `synalog introspect` (no engine, inside a project) prints `# Tables` declarations for the project's database.
+- `synalog introspect` (no engine, inside a project) prints `# Tables` declarations for the project's database, each after a `##` description made from the table's name (`order_items` → "Order items.") and an `@OrderBy` on its first column.
 
 ## Front matter
 
-A `.l` file may open with YAML front matter between `---` lines: what the file defines, in words. synalog checks that it is valid YAML (a value holding `: ` must be quoted) and otherwise ignores it.
+A `.l` file may open with YAML front matter between `---` lines: what the file defines, in words. synalog checks that it is valid YAML (a value holding `: ` must be quoted), that it has a `description` with text in it, and that its `name`, when given, is a predicate the file defines and orders with `@OrderBy`; the other keys are the host's.
 
 ```
 ---
@@ -74,6 +74,8 @@ description: Customers with at least one delivered order.
 keywords: [active, engaged]
 ---
 import concepts.Customer.Customer;
+
+@OrderBy(ActiveCustomer, "customer_id");
 ...
 ```
 

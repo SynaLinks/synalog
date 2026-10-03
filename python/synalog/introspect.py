@@ -11,7 +11,9 @@ the rest of a program can build on:
 
 Each database table becomes one predicate mapping the physical, schema-qualified
 table to a PascalCase Tables predicate, following the project convention
-``SchemaTable(col1:, col2:) :- schema.table(col1:, col2:);``. Predicate names are
+``SchemaTable(col1:, col2:) :- schema.table(col1:, col2:);`` — after a ``##``
+description made from the table's name and an ``@OrderBy`` on its first column
+(usually its key), so its rows come back in the same order on every run. Predicate names are
 qualified by schema so tables of the same name in different schemas never clash.
 
 The catalog comes from ``information_schema.columns`` for PostgreSQL, Trino and
@@ -144,6 +146,16 @@ def _pascal(name: str) -> str:
     return "".join(p[:1].upper() + p[1:] for p in parts if p)
 
 
+def table_description(table: str) -> str:
+    """A table's description from its name, until someone writes a better
+    one: ``public.order_items`` reads "Order items.", ``CustomerAccounts``
+    "Customer accounts."."""
+    name = table.split(".")[-1]
+    words = re.sub(r"(?<=[a-z0-9])(?=[A-Z])", " ", name).replace("_", " ").replace("-", " ").split()
+    text = " ".join(words).lower()
+    return (text[:1].upper() + text[1:] + ".") if text else "A table of the database."
+
+
 def _safe_var(column: str) -> str:
     var = re.sub(r"[^0-9A-Za-z]+", "_", column).strip("_").lower()
     if not var or var[0].isdigit():
@@ -204,7 +216,13 @@ def predicates(engine: str, rows: list[tuple]) -> str:
         else:
             used[name] = 1
         joined = ", ".join(fields)
-        lines.append(f"{name}({joined}) :- {schema}.{table}({joined});")
+        first = fields[0].split(":")[0]
+        lines += [
+            "",
+            f"## {table_description(table)}",
+            f'@OrderBy({name}, "{first}");',
+            f"{name}({joined}) :- {schema}.{table}({joined});",
+        ]
 
     if skipped:
         lines.append("")

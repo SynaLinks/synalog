@@ -85,10 +85,11 @@ CustomerSpend(customer_id:, total? += amount) distinct :- Orders(customer_id:, a
 
 ## Front matter
 
-A program file may open with YAML front matter, as in Markdown: a first line `---`, the YAML, and a closing `---` line. It carries metadata for the tools around your programs (a description, keywords, ownership, ...). Synalog checks that it is well-formed YAML — a syntax error is reported on its line — but does not interpret it: any YAML is accepted, and the file parses as if the block were not there, so error line numbers stay those of the file. It must be the very first thing in the file; an opening `---` that is never closed is an error.
+A program file may open with YAML front matter, as in Markdown: a first line `---`, the YAML, and a closing `---` line. It says what the file is, and carries metadata for the tools around your programs (keywords, ownership, ...). Synalog checks that it is well-formed YAML — a syntax error is reported on its line — and reads two keys: `description` is required and must hold text (what the rows are, in the words someone would search for), and `name`, when given, must be a predicate the file defines and orders with `@OrderBy` (see [verification](../verification.md#ordering)). Other keys are left to the host, and the file parses as if the block were not there, so error line numbers stay those of the file. It must be the very first thing in the file; an opening `---` that is never closed is an error.
 
 ```logica
 ---
+name: ActiveCustomer
 description: Customers with at least one delivered order.
 keywords: [customers, orders]
 ---
