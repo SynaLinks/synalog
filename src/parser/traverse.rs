@@ -360,6 +360,17 @@ pub fn front_matter_name(fm: &FrontMatter) -> Option<(String, usize)> {
     Some((name, line))
 }
 
+/// The `description` the front matter gives, trimmed: `Some("")` when it is
+/// empty, `None` without one or when it is not text.
+pub fn front_matter_description(fm: &FrontMatter) -> Option<String> {
+    let docs = yaml_rust2::YamlLoader::load_from_str(&fm.yaml).ok()?;
+    match &docs.first()?["description"] {
+        yaml_rust2::Yaml::String(s) => Some(s.trim().to_string()),
+        yaml_rust2::Yaml::Null => Some(String::new()),
+        _ => None,
+    }
+}
+
 /// `content` with its front matter replaced by as many empty lines, so the
 /// program parses as if it were not there and error positions keep their
 /// line numbers. Content without front matter is returned unchanged.
