@@ -227,8 +227,16 @@ class PrestoRunner(TrinoRunner):
     def connect(self):
         import prestodb
 
+        # One driver per task: the container's per-node memory (about 100MB)
+        # otherwise goes to each join's buffers, 16 drivers each, before any
+        # row is read — enough to refuse a plan of a few dozen joins.
         return prestodb.dbapi.connect(
-            host=self.host, port=self.port, user="e2e", catalog="memory", schema="default"
+            host=self.host,
+            port=self.port,
+            user="e2e",
+            catalog="memory",
+            schema="default",
+            session_properties={"task_concurrency": "1"},
         )
 
     def decode(self, rows, description) -> list[tuple]:

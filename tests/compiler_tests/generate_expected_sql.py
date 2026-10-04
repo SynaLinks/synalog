@@ -503,6 +503,22 @@ SYNALOG_GOLDENS = {
     ("databricks", "157_execution_float_comparison"),
     ("presto", "157_execution_float_comparison"),
     ("trino", "157_execution_float_comparison"),
+    # Count= is exact everywhere; psql's ArgMin/ArgMax keep the value's type
+    # (see DEVIATIONS.md).
+    ("bigquery", "112_execution_list_aggregate"),
+    ("bigquery", "131_execution_count_distinct_value"),
+    ("presto", "112_execution_list_aggregate"),
+    ("presto", "131_execution_count_distinct_value"),
+    ("trino", "112_execution_list_aggregate"),
+    ("trino", "131_execution_count_distinct_value"),
+    ("databricks", "112_execution_list_aggregate"),
+    ("databricks", "131_execution_count_distinct_value"),
+    ("psql", "09_argmin_argmax"),
+    ("psql", "102_execution_argmax"),
+    ("psql", "132_execution_argmin"),
+    ("psql", "185_keywords_keyword_column_argmax"),
+    ("psql", "29_argmin_argmax"),
+    ("psql", "55_argmax_k"),
 }
 
 # Goldens intentionally absent because synalog lacks the subsystem

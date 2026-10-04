@@ -215,6 +215,25 @@ that is a keyword or not a plain identifier, in the dialect's quotes
 also in `ORDER BY` and in `search()`. `64_keyword_columns` is generated from
 synalog on every engine.
 
+## `Count=` is exact
+
+Upstream compiles `Count=` (the number of distinct values) to BigQuery's
+`APPROX_COUNT_DISTINCT` on every engine but SQLite, PostgreSQL and DuckDB:
+Trino and Presto have no such function (their query fails), and BigQuery and
+Databricks return an estimate. synalog compiles it to `COUNT(DISTINCT x)` on
+every engine, so a count is the same wherever it runs
+(`112_execution_list_aggregate`, `131_execution_count_distinct_value`).
+
+## `ArgMin=` / `ArgMax=` on PostgreSQL
+
+Upstream wraps the value in a one-field composite type, declared from the
+library's generic definition, where its type is unknown: the field is `text`,
+and `ArgMax= id -> score` returns the id as text. synalog aggregates the value
+itself, `(ARRAY_AGG(id ORDER BY score DESC NULLS LAST))[1]`, which keeps its
+type; `NULLS LAST`, since PostgreSQL sorts nulls first in descending order, so
+a row without a score is never the maximum. The PostgreSQL variant of
+`09_argmin_argmax`, simplified to avoid them, is removed.
+
 ## Numbers with a decimal point
 
 `1.5` is a float in Synalog, but a `DECIMAL` on Trino, Presto and

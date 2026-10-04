@@ -390,7 +390,8 @@ fn base_built_in_functions() -> HashMap<&'static str, &'static str> {
     m.insert("1", "MIN(%s)");
     m.insert("Agg+", "SUM(%s)");
     m.insert("Agg++", "ARRAY_CONCAT_AGG(%s)");
-    m.insert("Count", "APPROX_COUNT_DISTINCT(%s)");
+    // `Count=` counts the distinct values, exactly, on every engine.
+    m.insert("Count", "COUNT(DISTINCT %s)");
     m.insert("ExactCount", "COUNT(DISTINCT %s)");
     m.insert("List", "ARRAY_AGG(%s)");
     m.insert("Set", "ARRAY_AGG(DISTINCT %s)");
