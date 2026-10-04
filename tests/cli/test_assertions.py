@@ -107,6 +107,36 @@ def test_report_quotes_the_statement_as_written_across_imports(tmp_path):
     assert duckdb.sql(sql).fetchall() == []
 
 
+def test_imported_predicates_go_by_their_written_name(tmp_path):
+    (tmp_path / "lib").mkdir()
+    (tmp_path / "lib" / "family.l").write_text(
+        '@Assert(Person, named: "∀ x, Person x → Parent x x");\n' + PARENT + "Person(x:) distinct :- Parent(x:);\n"
+    )
+    source = "import lib.family.Person as Someone;\nUse(x:) :- Someone(x:);\n"
+    roots = [str(tmp_path)]
+    (assertion,) = synalog.assertions(source, import_root=roots)
+    assert (assertion["predicate"], assertion["statement"]) == ("Someone", "∀ x, Person x → Parent x x")
+    # The written name is the one the commands take.
+    assert "Family_Parent" in synalog.compile(source, "Someone", import_root=roots)
+    sql = synalog.counterexamples(source, "Someone", "named", import_root=roots)
+    assert len(duckdb.sql(sql).fetchall()) == 3
+    # An error names it the same way.
+    wrong = 'import lib.family.Parent;\n@Assert(Use, arity: "∀ x, Use x → Parent x");\nUse(x:) :- Parent(x:);\n'
+    errors, _ = synalog.check(wrong, import_root=roots, assertions=False)
+    assert errors == ["Invalid assertion 'Use.arity': 'Parent' has 2 columns (x, y) but is applied to 1 argument"]
+
+
+def test_a_written_name_already_taken_keeps_its_prefix(tmp_path):
+    # `Small` is the main file's: the one an imported file defines for itself keeps its prefix.
+    (tmp_path / "lib").mkdir()
+    (tmp_path / "lib" / "sizes.l").write_text(
+        '@Assert(Small, bounded: "∀ x, Small x → x < 3");\nSmall(x:) :- x in [1, 2];\nBig(x:) :- Small(x: y), x == y + 10;\n'
+    )
+    source = "import lib.sizes.Big;\nSmall(x:) :- Big(x:);\n"
+    (assertion,) = synalog.assertions(source, import_root=[str(tmp_path)])
+    assert assertion["predicate"] == "Sizes_Small"
+
+
 def test_arithmetic_and_sums():
     for assertion in synalog.assertions(BAYES):
         assert assertion["status"] == "unchecked", assertion

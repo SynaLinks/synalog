@@ -1886,6 +1886,43 @@ fn parse_file_internal(
         }
     }
 
+    // The names imported predicates were written with, for errors and reports.
+    // One the main file imports goes by the name it imports it under; any
+    // other by its own name in its file, unless that name is already taken —
+    // it then keeps its prefix.
+    let mut predicate_names = JsonObject::new();
+    if this_file_name == "main" {
+        let mut taken = defined_predicates(&rules);
+        for ipj in &imported_predicates {
+            let ip = ipj.as_object();
+            let name = ip["predicate_name"].as_str();
+            let import_prefix = parsed_imports[ip["file"].as_str()].as_object()["predicates_prefix"].as_str();
+            let written = if ip["synonym"].is_null() { name } else { ip["synonym"].as_str() };
+            predicate_names.insert(format!("{}{}", import_prefix, name), Json::Str(written.to_string()));
+            taken.insert(written.to_string());
+        }
+        let mut others: BTreeMap<String, Vec<String>> = BTreeMap::new();
+        for (_, v) in parsed_imports.iter() {
+            let import = v.as_object();
+            let import_prefix = import["predicates_prefix"].as_str();
+            let irules = import["rule"].as_array();
+            let mut own = defined_predicates(irules);
+            own.extend(made_predicates(irules));
+            for p in own {
+                let Some(name) = p.strip_prefix(import_prefix) else { continue };
+                if import_prefix.is_empty() || name.is_empty() || predicate_names.contains_key(&p) {
+                    continue;
+                }
+                others.entry(name.to_string()).or_default().push(p.clone());
+            }
+        }
+        for (name, internals) in others {
+            if internals.len() == 1 && !taken.contains(&name) {
+                predicate_names.insert(internals[0].clone(), Json::Str(name));
+            }
+        }
+    }
+
     // Main assembles all rules
     if this_file_name == "main" {
         let mut defined = defined_predicates(&rules);
@@ -1910,6 +1947,9 @@ fn parse_file_internal(
     out.insert("imported_predicates".into(), Json::Array(imported_predicates));
     out.insert("predicates_prefix".into(), Json::Str(prefix));
     out.insert("file_name".into(), Json::Str(this_file_name.to_string()));
+    if !predicate_names.is_empty() {
+        out.insert(super::PREDICATE_NAMES.into(), Json::Object(predicate_names));
+    }
     // The main file's front matter, for the verifier: the predicate it is
     // about must be ordered, and it must say what it is (description).
     if this_file_name == "main" {

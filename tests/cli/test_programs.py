@@ -11,6 +11,7 @@ DuckDB and SQLite with the facts it defines itself, executed by synalog
     # Expect: violated <Pred>.<name> <n>   the assertion has exactly <n> counterexamples
     # Expect: counterexamples <Pred>.<name> = <rows>   exactly these counterexamples
     # Expect: status <Pred>.<name> <s>     the assertion's status: pending, unchecked, unsupported
+    # Expect: statement <Pred>.<name> = <text>   the assertion is reported with exactly this statement
     # Expect: same-sql <Pred>              <Pred> compiles to the same SQL without the @Assert lines
     # Expect: page <Pred> <limit> <offset> = <rows>    compile(limit=, offset=) returns <rows>
     # Expect: search <Pred> <pattern> = <rows>         search(pattern) returns <rows>
@@ -165,6 +166,9 @@ def test_program(path: Path):
         elif kind == "status":
             ref, status = rest.rsplit(" ", 1)
             assert assertion(source, root, ref)["status"] == status
+        elif kind == "statement":
+            ref, text = (part.strip() for part in rest.split("=", 1))
+            assert assertion(source, root, ref)["statement"] == text
         else:
             raise AssertionError(f"unknown expectation {kind!r}")
 
