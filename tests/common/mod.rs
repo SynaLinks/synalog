@@ -78,6 +78,8 @@ fn strip_parser_metadata(v: &mut serde_json::Value) {
             // Remove top-level metadata
             obj.remove("file_name");
             obj.remove("imported_predicates");
+            // Synalog's own: the names imported predicates were written with.
+            obj.remove("predicate_names");
             obj.remove("predicates_prefix");
             // Remove expression_heritage (source text, differs between parsers)
             obj.remove("expression_heritage");

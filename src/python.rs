@@ -12,11 +12,16 @@ use pyo3::prelude::*;
 
 use crate::compiler::dialects;
 use crate::compiler::universe::{LogicaProgram, Pagination, PlanStep};
-use crate::parser::{front_matter as read_front_matter, parse_file, Json};
+use crate::parser::{front_matter as read_front_matter, parse_file, Json, PredicateNames};
 use crate::verifier::{builtin_function_names, reserved_predicate_names, assertion_check, validate};
 
 fn map_err<E: std::fmt::Display>(e: E) -> PyErr {
     PyValueError::new_err(e.to_string())
+}
+
+/// An error that names predicates as they were written, not as imports renamed them.
+fn written_err<E: std::fmt::Display>(names: &PredicateNames) -> impl Fn(E) -> PyErr + '_ {
+    move |e| PyValueError::new_err(names.written(&e.to_string()))
 }
 
 fn parse_source(
@@ -96,11 +101,12 @@ fn compile(
 ) -> PyResult<String> {
     check_engine(engine)?;
     let parsed = parse_source(source, None, import_root)?;
+    let names = PredicateNames::of(&parsed);
     let program = build_program(&parsed, engine)?;
     let pagination = Pagination { limit, offset };
     program
-        .formatted_predicate_sql_with_pagination(predicate, &pagination)
-        .map_err(map_err)
+        .formatted_predicate_sql_with_pagination(&names.internal(predicate), &pagination)
+        .map_err(written_err(&names))
 }
 
 /// Compile a predicate to SQL that keeps only rows where some column matches
@@ -127,11 +133,12 @@ fn search(
 ) -> PyResult<String> {
     check_engine(engine)?;
     let parsed = parse_source(source, None, import_root)?;
+    let names = PredicateNames::of(&parsed);
     let program = build_program(&parsed, engine)?;
     let pagination = Pagination { limit, offset };
     program
-        .formatted_predicate_sql_with_search(predicate, pattern, &pagination)
-        .map_err(map_err)
+        .formatted_predicate_sql_with_search(&names.internal(predicate), pattern, &pagination)
+        .map_err(written_err(&names))
 }
 
 /// Compile every defined predicate to SQL; returns {predicate_name: sql}.
@@ -177,9 +184,11 @@ fn check(
 ) -> PyResult<(Vec<String>, Vec<String>)> {
     check_engine(engine)?;
     let parsed = parse_source(source, None, import_root)?;
+    let names = PredicateNames::of(&parsed);
     let result = validate(&parsed);
-    let errors = result.errors.iter().map(|e| e.to_string()).collect();
-    Ok((errors, result.warnings))
+    let errors = result.errors.iter().map(|e| names.written(&e.to_string())).collect();
+    let warnings = result.warnings.iter().map(|w| names.written(w)).collect();
+    Ok((errors, warnings))
 }
 
 /// Every `@Assert` of a program and where it stands.
@@ -205,16 +214,17 @@ fn assertions(
 ) -> PyResult<Vec<HashMap<&'static str, Option<String>>>> {
     check_engine(engine)?;
     let parsed = parse_source(source, None, import_root)?;
+    let names = PredicateNames::of(&parsed);
     Ok(validate(&parsed)
         .assertions
         .into_iter()
         .map(|assertion| {
             HashMap::from([
-                ("predicate", Some(assertion.predicate)),
+                ("predicate", Some(names.written(&assertion.predicate))),
                 ("name", Some(assertion.name)),
                 ("statement", Some(assertion.statement)),
                 ("status", Some(assertion.status.to_string())),
-                ("detail", assertion.detail),
+                ("detail", assertion.detail.map(|detail| names.written(&detail))),
             ])
         })
         .collect())
@@ -242,8 +252,9 @@ fn counterexamples(
 ) -> PyResult<String> {
     check_engine(engine)?;
     let parsed = parse_source(source, None, import_root.clone())?;
+    let names = PredicateNames::of(&parsed);
     let rules: Vec<&Json> = parsed.as_object()["rule"].as_array().iter().collect();
-    let translation = assertion_check(&rules, predicate, name).map_err(PyValueError::new_err)?;
+    let translation = assertion_check(&rules, &names.internal(predicate), name).map_err(written_err(&names))?;
     // The counterexamples are a predicate of the program like any other.
     let extended = format!("{}\n{}\n", source, translation.rules);
     let parsed = parse_source(&extended, None, import_root)?;
@@ -284,18 +295,21 @@ fn plan(
     let (source, predicate) = match assertion {
         Some(name) => {
             let parsed = parse_source(source, None, import_root.clone())?;
+            let names = PredicateNames::of(&parsed);
             let rules: Vec<&Json> = parsed.as_object()["rule"].as_array().iter().collect();
-            let translation = assertion_check(&rules, predicate, name).map_err(PyValueError::new_err)?;
+            let translation =
+                assertion_check(&rules, &names.internal(predicate), name).map_err(written_err(&names))?;
             (format!("{}\n{}\n", source, translation.rules), translation.predicate)
         }
         None => (source.to_string(), predicate.to_string()),
     };
     let parsed = parse_source(&source, None, import_root)?;
+    let names = PredicateNames::of(&parsed);
     let program = build_program(&parsed, engine)?;
     let pagination = Pagination { limit, offset };
     let steps = program
-        .formatted_predicate_plan(&predicate, Some(&pagination), pattern)
-        .map_err(map_err)?;
+        .formatted_predicate_plan(&names.internal(&predicate), Some(&pagination), pattern)
+        .map_err(written_err(&names))?;
     steps
         .into_iter()
         .map(|step| {
