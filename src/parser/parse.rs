@@ -1569,13 +1569,21 @@ fn rename_predicate(e: &mut Json, old_name: &str, new_name: &str) -> i32 {
                     }
                 }
                 if in_assert {
+                    let mut source = None;
                     if let Some(v) = o.get_mut("the_string") {
                         if v.is_string() {
                             let (renamed, n) = rename_in_statement(v.as_str(), old_name, new_name);
                             if n > 0 {
+                                source = Some(v.as_str().to_string());
                                 *v = Json::Str(renamed);
                                 count += n;
                             }
+                        }
+                    }
+                    // Reports quote the statement as it was written, not as imports renamed it.
+                    if let Some(source) = source {
+                        if !o.contains_key("statement_source") {
+                            o.insert("statement_source".into(), Json::Str(source));
                         }
                     }
                 }
