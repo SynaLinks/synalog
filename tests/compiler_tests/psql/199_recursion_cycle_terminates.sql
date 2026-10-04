@@ -20,15 +20,63 @@ GROUP BY Reach_MultBodyAggAux_f1.x ORDER BY x;
 -- Interacting with table logica_home.Reach_sn_delta
 
 DROP TABLE IF EXISTS logica_home.Reach_sn_full CASCADE;
-CREATE TABLE logica_home.Reach_sn_full AS SELECT
-  Reach_sn_delta.x AS x
+CREATE TABLE logica_home.Reach_sn_full AS WITH t_3_Edge AS (SELECT * FROM (
+  
+    SELECT
+      1 AS a,
+      2 AS b
+   UNION ALL
+  
+    SELECT
+      2 AS a,
+      3 AS b
+   UNION ALL
+  
+    SELECT
+      3 AS a,
+      1 AS b
+  
+) AS UNUSED_TABLE_NAME  ),
+t_1_Reach_MultBodyAggAux_f2 AS (SELECT * FROM (
+  
+    SELECT
+      1 AS x
+   UNION ALL
+  
+    SELECT
+      Edge.b AS x
+    FROM
+      logica_home.Reach_sn_delta AS t_2_Reach_sn_delta, t_3_Edge AS Edge
+    WHERE
+      (Edge.a = t_2_Reach_sn_delta.x)
+  
+) AS UNUSED_TABLE_NAME  ),
+t_0_Reach_sn_step AS (SELECT
+  Reach_MultBodyAggAux_f2.x AS x
 FROM
-  logica_home.Reach_sn_delta AS Reach_sn_delta;
+  t_1_Reach_MultBodyAggAux_f2 AS Reach_MultBodyAggAux_f2
+GROUP BY Reach_MultBodyAggAux_f2.x ORDER BY x)
+SELECT * FROM (
+  
+    SELECT
+      Reach_sn_delta.x AS x
+    FROM
+      logica_home.Reach_sn_delta AS Reach_sn_delta
+   UNION ALL
+  
+    SELECT
+      Reach_sn_step.x AS x
+    FROM
+      t_0_Reach_sn_step AS Reach_sn_step
+    WHERE
+      (1 = 0)
+  
+) AS UNUSED_TABLE_NAME  ;
 
 -- Interacting with table logica_home.Reach_sn_full
 
 DROP TABLE IF EXISTS logica_home.Reach_sn_new CASCADE;
-CREATE TABLE logica_home.Reach_sn_new AS WITH t_2_Edge AS (SELECT * FROM (
+CREATE TABLE logica_home.Reach_sn_new AS WITH t_3_Edge AS (SELECT * FROM (
   
     SELECT
       1 AS a,
@@ -54,9 +102,9 @@ t_1_Reach_MultBodyAggAux_f2 AS (SELECT * FROM (
     SELECT
       Edge.b AS x
     FROM
-      logica_home.Reach_sn_delta AS Reach_sn_delta, t_2_Edge AS Edge
+      logica_home.Reach_sn_delta AS t_2_Reach_sn_delta, t_3_Edge AS Edge
     WHERE
-      (Edge.a = Reach_sn_delta.x)
+      (Edge.a = t_2_Reach_sn_delta.x)
   
 ) AS UNUSED_TABLE_NAME  ),
 t_0_Reach_sn_step AS (SELECT
@@ -86,7 +134,7 @@ FROM
   logica_home.Reach_sn_new AS Reach_sn_new;
 
 DROP TABLE IF EXISTS logica_home.Reach_sn_new CASCADE;
-CREATE TABLE logica_home.Reach_sn_new AS WITH t_2_Edge AS (SELECT * FROM (
+CREATE TABLE logica_home.Reach_sn_new AS WITH t_3_Edge AS (SELECT * FROM (
   
     SELECT
       1 AS a,
@@ -112,9 +160,9 @@ t_1_Reach_MultBodyAggAux_f2 AS (SELECT * FROM (
     SELECT
       Edge.b AS x
     FROM
-      logica_home.Reach_sn_delta AS Reach_sn_delta, t_2_Edge AS Edge
+      logica_home.Reach_sn_delta AS t_2_Reach_sn_delta, t_3_Edge AS Edge
     WHERE
-      (Edge.a = Reach_sn_delta.x)
+      (Edge.a = t_2_Reach_sn_delta.x)
   
 ) AS UNUSED_TABLE_NAME  ),
 t_0_Reach_sn_step AS (SELECT
@@ -144,7 +192,7 @@ FROM
   logica_home.Reach_sn_new AS Reach_sn_new;
 
 DROP TABLE IF EXISTS logica_home.Reach_sn_new CASCADE;
-CREATE TABLE logica_home.Reach_sn_new AS WITH t_2_Edge AS (SELECT * FROM (
+CREATE TABLE logica_home.Reach_sn_new AS WITH t_3_Edge AS (SELECT * FROM (
   
     SELECT
       1 AS a,
@@ -170,9 +218,9 @@ t_1_Reach_MultBodyAggAux_f2 AS (SELECT * FROM (
     SELECT
       Edge.b AS x
     FROM
-      logica_home.Reach_sn_delta AS Reach_sn_delta, t_2_Edge AS Edge
+      logica_home.Reach_sn_delta AS t_2_Reach_sn_delta, t_3_Edge AS Edge
     WHERE
-      (Edge.a = Reach_sn_delta.x)
+      (Edge.a = t_2_Reach_sn_delta.x)
   
 ) AS UNUSED_TABLE_NAME  ),
 t_0_Reach_sn_step AS (SELECT
@@ -202,7 +250,7 @@ FROM
   logica_home.Reach_sn_new AS Reach_sn_new;
 
 DROP TABLE IF EXISTS logica_home.Reach_sn_new CASCADE;
-CREATE TABLE logica_home.Reach_sn_new AS WITH t_2_Edge AS (SELECT * FROM (
+CREATE TABLE logica_home.Reach_sn_new AS WITH t_3_Edge AS (SELECT * FROM (
   
     SELECT
       1 AS a,
@@ -228,9 +276,9 @@ t_1_Reach_MultBodyAggAux_f2 AS (SELECT * FROM (
     SELECT
       Edge.b AS x
     FROM
-      logica_home.Reach_sn_delta AS Reach_sn_delta, t_2_Edge AS Edge
+      logica_home.Reach_sn_delta AS t_2_Reach_sn_delta, t_3_Edge AS Edge
     WHERE
-      (Edge.a = Reach_sn_delta.x)
+      (Edge.a = t_2_Reach_sn_delta.x)
   
 ) AS UNUSED_TABLE_NAME  ),
 t_0_Reach_sn_step AS (SELECT
@@ -260,7 +308,7 @@ FROM
   logica_home.Reach_sn_new AS Reach_sn_new;
 
 DROP TABLE IF EXISTS logica_home.Reach_sn_new CASCADE;
-CREATE TABLE logica_home.Reach_sn_new AS WITH t_2_Edge AS (SELECT * FROM (
+CREATE TABLE logica_home.Reach_sn_new AS WITH t_3_Edge AS (SELECT * FROM (
   
     SELECT
       1 AS a,
@@ -286,9 +334,9 @@ t_1_Reach_MultBodyAggAux_f2 AS (SELECT * FROM (
     SELECT
       Edge.b AS x
     FROM
-      logica_home.Reach_sn_delta AS Reach_sn_delta, t_2_Edge AS Edge
+      logica_home.Reach_sn_delta AS t_2_Reach_sn_delta, t_3_Edge AS Edge
     WHERE
-      (Edge.a = Reach_sn_delta.x)
+      (Edge.a = t_2_Reach_sn_delta.x)
   
 ) AS UNUSED_TABLE_NAME  ),
 t_0_Reach_sn_step AS (SELECT
@@ -318,7 +366,7 @@ FROM
   logica_home.Reach_sn_new AS Reach_sn_new;
 
 DROP TABLE IF EXISTS logica_home.Reach_sn_new CASCADE;
-CREATE TABLE logica_home.Reach_sn_new AS WITH t_2_Edge AS (SELECT * FROM (
+CREATE TABLE logica_home.Reach_sn_new AS WITH t_3_Edge AS (SELECT * FROM (
   
     SELECT
       1 AS a,
@@ -344,9 +392,9 @@ t_1_Reach_MultBodyAggAux_f2 AS (SELECT * FROM (
     SELECT
       Edge.b AS x
     FROM
-      logica_home.Reach_sn_delta AS Reach_sn_delta, t_2_Edge AS Edge
+      logica_home.Reach_sn_delta AS t_2_Reach_sn_delta, t_3_Edge AS Edge
     WHERE
-      (Edge.a = Reach_sn_delta.x)
+      (Edge.a = t_2_Reach_sn_delta.x)
   
 ) AS UNUSED_TABLE_NAME  ),
 t_0_Reach_sn_step AS (SELECT
@@ -376,7 +424,7 @@ FROM
   logica_home.Reach_sn_new AS Reach_sn_new;
 
 DROP TABLE IF EXISTS logica_home.Reach_sn_new CASCADE;
-CREATE TABLE logica_home.Reach_sn_new AS WITH t_2_Edge AS (SELECT * FROM (
+CREATE TABLE logica_home.Reach_sn_new AS WITH t_3_Edge AS (SELECT * FROM (
   
     SELECT
       1 AS a,
@@ -402,9 +450,9 @@ t_1_Reach_MultBodyAggAux_f2 AS (SELECT * FROM (
     SELECT
       Edge.b AS x
     FROM
-      logica_home.Reach_sn_delta AS Reach_sn_delta, t_2_Edge AS Edge
+      logica_home.Reach_sn_delta AS t_2_Reach_sn_delta, t_3_Edge AS Edge
     WHERE
-      (Edge.a = Reach_sn_delta.x)
+      (Edge.a = t_2_Reach_sn_delta.x)
   
 ) AS UNUSED_TABLE_NAME  ),
 t_0_Reach_sn_step AS (SELECT
@@ -434,7 +482,7 @@ FROM
   logica_home.Reach_sn_new AS Reach_sn_new;
 
 DROP TABLE IF EXISTS logica_home.Reach_sn_new CASCADE;
-CREATE TABLE logica_home.Reach_sn_new AS WITH t_2_Edge AS (SELECT * FROM (
+CREATE TABLE logica_home.Reach_sn_new AS WITH t_3_Edge AS (SELECT * FROM (
   
     SELECT
       1 AS a,
@@ -460,9 +508,9 @@ t_1_Reach_MultBodyAggAux_f2 AS (SELECT * FROM (
     SELECT
       Edge.b AS x
     FROM
-      logica_home.Reach_sn_delta AS Reach_sn_delta, t_2_Edge AS Edge
+      logica_home.Reach_sn_delta AS t_2_Reach_sn_delta, t_3_Edge AS Edge
     WHERE
-      (Edge.a = Reach_sn_delta.x)
+      (Edge.a = t_2_Reach_sn_delta.x)
   
 ) AS UNUSED_TABLE_NAME  ),
 t_0_Reach_sn_step AS (SELECT
@@ -492,7 +540,7 @@ FROM
   logica_home.Reach_sn_new AS Reach_sn_new;
 
 DROP TABLE IF EXISTS logica_home.Reach_sn_new CASCADE;
-CREATE TABLE logica_home.Reach_sn_new AS WITH t_2_Edge AS (SELECT * FROM (
+CREATE TABLE logica_home.Reach_sn_new AS WITH t_3_Edge AS (SELECT * FROM (
   
     SELECT
       1 AS a,
@@ -518,9 +566,9 @@ t_1_Reach_MultBodyAggAux_f2 AS (SELECT * FROM (
     SELECT
       Edge.b AS x
     FROM
-      logica_home.Reach_sn_delta AS Reach_sn_delta, t_2_Edge AS Edge
+      logica_home.Reach_sn_delta AS t_2_Reach_sn_delta, t_3_Edge AS Edge
     WHERE
-      (Edge.a = Reach_sn_delta.x)
+      (Edge.a = t_2_Reach_sn_delta.x)
   
 ) AS UNUSED_TABLE_NAME  ),
 t_0_Reach_sn_step AS (SELECT
@@ -550,7 +598,7 @@ FROM
   logica_home.Reach_sn_new AS Reach_sn_new;
 
 DROP TABLE IF EXISTS logica_home.Reach_sn_new CASCADE;
-CREATE TABLE logica_home.Reach_sn_new AS WITH t_2_Edge AS (SELECT * FROM (
+CREATE TABLE logica_home.Reach_sn_new AS WITH t_3_Edge AS (SELECT * FROM (
   
     SELECT
       1 AS a,
@@ -576,9 +624,9 @@ t_1_Reach_MultBodyAggAux_f2 AS (SELECT * FROM (
     SELECT
       Edge.b AS x
     FROM
-      logica_home.Reach_sn_delta AS Reach_sn_delta, t_2_Edge AS Edge
+      logica_home.Reach_sn_delta AS t_2_Reach_sn_delta, t_3_Edge AS Edge
     WHERE
-      (Edge.a = Reach_sn_delta.x)
+      (Edge.a = t_2_Reach_sn_delta.x)
   
 ) AS UNUSED_TABLE_NAME  ),
 t_0_Reach_sn_step AS (SELECT
@@ -608,7 +656,7 @@ FROM
   logica_home.Reach_sn_new AS Reach_sn_new;
 
 DROP TABLE IF EXISTS logica_home.Reach_sn_new CASCADE;
-CREATE TABLE logica_home.Reach_sn_new AS WITH t_2_Edge AS (SELECT * FROM (
+CREATE TABLE logica_home.Reach_sn_new AS WITH t_3_Edge AS (SELECT * FROM (
   
     SELECT
       1 AS a,
@@ -634,9 +682,9 @@ t_1_Reach_MultBodyAggAux_f2 AS (SELECT * FROM (
     SELECT
       Edge.b AS x
     FROM
-      logica_home.Reach_sn_delta AS Reach_sn_delta, t_2_Edge AS Edge
+      logica_home.Reach_sn_delta AS t_2_Reach_sn_delta, t_3_Edge AS Edge
     WHERE
-      (Edge.a = Reach_sn_delta.x)
+      (Edge.a = t_2_Reach_sn_delta.x)
   
 ) AS UNUSED_TABLE_NAME  ),
 t_0_Reach_sn_step AS (SELECT
@@ -666,7 +714,7 @@ FROM
   logica_home.Reach_sn_new AS Reach_sn_new;
 
 DROP TABLE IF EXISTS logica_home.Reach_sn_new CASCADE;
-CREATE TABLE logica_home.Reach_sn_new AS WITH t_2_Edge AS (SELECT * FROM (
+CREATE TABLE logica_home.Reach_sn_new AS WITH t_3_Edge AS (SELECT * FROM (
   
     SELECT
       1 AS a,
@@ -692,9 +740,9 @@ t_1_Reach_MultBodyAggAux_f2 AS (SELECT * FROM (
     SELECT
       Edge.b AS x
     FROM
-      logica_home.Reach_sn_delta AS Reach_sn_delta, t_2_Edge AS Edge
+      logica_home.Reach_sn_delta AS t_2_Reach_sn_delta, t_3_Edge AS Edge
     WHERE
-      (Edge.a = Reach_sn_delta.x)
+      (Edge.a = t_2_Reach_sn_delta.x)
   
 ) AS UNUSED_TABLE_NAME  ),
 t_0_Reach_sn_step AS (SELECT
@@ -724,7 +772,7 @@ FROM
   logica_home.Reach_sn_new AS Reach_sn_new;
 
 DROP TABLE IF EXISTS logica_home.Reach_sn_new CASCADE;
-CREATE TABLE logica_home.Reach_sn_new AS WITH t_2_Edge AS (SELECT * FROM (
+CREATE TABLE logica_home.Reach_sn_new AS WITH t_3_Edge AS (SELECT * FROM (
   
     SELECT
       1 AS a,
@@ -750,9 +798,9 @@ t_1_Reach_MultBodyAggAux_f2 AS (SELECT * FROM (
     SELECT
       Edge.b AS x
     FROM
-      logica_home.Reach_sn_delta AS Reach_sn_delta, t_2_Edge AS Edge
+      logica_home.Reach_sn_delta AS t_2_Reach_sn_delta, t_3_Edge AS Edge
     WHERE
-      (Edge.a = Reach_sn_delta.x)
+      (Edge.a = t_2_Reach_sn_delta.x)
   
 ) AS UNUSED_TABLE_NAME  ),
 t_0_Reach_sn_step AS (SELECT
@@ -782,7 +830,7 @@ FROM
   logica_home.Reach_sn_new AS Reach_sn_new;
 
 DROP TABLE IF EXISTS logica_home.Reach_sn_new CASCADE;
-CREATE TABLE logica_home.Reach_sn_new AS WITH t_2_Edge AS (SELECT * FROM (
+CREATE TABLE logica_home.Reach_sn_new AS WITH t_3_Edge AS (SELECT * FROM (
   
     SELECT
       1 AS a,
@@ -808,9 +856,9 @@ t_1_Reach_MultBodyAggAux_f2 AS (SELECT * FROM (
     SELECT
       Edge.b AS x
     FROM
-      logica_home.Reach_sn_delta AS Reach_sn_delta, t_2_Edge AS Edge
+      logica_home.Reach_sn_delta AS t_2_Reach_sn_delta, t_3_Edge AS Edge
     WHERE
-      (Edge.a = Reach_sn_delta.x)
+      (Edge.a = t_2_Reach_sn_delta.x)
   
 ) AS UNUSED_TABLE_NAME  ),
 t_0_Reach_sn_step AS (SELECT
@@ -840,7 +888,7 @@ FROM
   logica_home.Reach_sn_new AS Reach_sn_new;
 
 DROP TABLE IF EXISTS logica_home.Reach_sn_new CASCADE;
-CREATE TABLE logica_home.Reach_sn_new AS WITH t_2_Edge AS (SELECT * FROM (
+CREATE TABLE logica_home.Reach_sn_new AS WITH t_3_Edge AS (SELECT * FROM (
   
     SELECT
       1 AS a,
@@ -866,9 +914,9 @@ t_1_Reach_MultBodyAggAux_f2 AS (SELECT * FROM (
     SELECT
       Edge.b AS x
     FROM
-      logica_home.Reach_sn_delta AS Reach_sn_delta, t_2_Edge AS Edge
+      logica_home.Reach_sn_delta AS t_2_Reach_sn_delta, t_3_Edge AS Edge
     WHERE
-      (Edge.a = Reach_sn_delta.x)
+      (Edge.a = t_2_Reach_sn_delta.x)
   
 ) AS UNUSED_TABLE_NAME  ),
 t_0_Reach_sn_step AS (SELECT
@@ -898,7 +946,7 @@ FROM
   logica_home.Reach_sn_new AS Reach_sn_new;
 
 DROP TABLE IF EXISTS logica_home.Reach_sn_new CASCADE;
-CREATE TABLE logica_home.Reach_sn_new AS WITH t_2_Edge AS (SELECT * FROM (
+CREATE TABLE logica_home.Reach_sn_new AS WITH t_3_Edge AS (SELECT * FROM (
   
     SELECT
       1 AS a,
@@ -924,9 +972,9 @@ t_1_Reach_MultBodyAggAux_f2 AS (SELECT * FROM (
     SELECT
       Edge.b AS x
     FROM
-      logica_home.Reach_sn_delta AS Reach_sn_delta, t_2_Edge AS Edge
+      logica_home.Reach_sn_delta AS t_2_Reach_sn_delta, t_3_Edge AS Edge
     WHERE
-      (Edge.a = Reach_sn_delta.x)
+      (Edge.a = t_2_Reach_sn_delta.x)
   
 ) AS UNUSED_TABLE_NAME  ),
 t_0_Reach_sn_step AS (SELECT
@@ -956,7 +1004,7 @@ FROM
   logica_home.Reach_sn_new AS Reach_sn_new;
 
 DROP TABLE IF EXISTS logica_home.Reach_sn_new CASCADE;
-CREATE TABLE logica_home.Reach_sn_new AS WITH t_2_Edge AS (SELECT * FROM (
+CREATE TABLE logica_home.Reach_sn_new AS WITH t_3_Edge AS (SELECT * FROM (
   
     SELECT
       1 AS a,
@@ -982,9 +1030,9 @@ t_1_Reach_MultBodyAggAux_f2 AS (SELECT * FROM (
     SELECT
       Edge.b AS x
     FROM
-      logica_home.Reach_sn_delta AS Reach_sn_delta, t_2_Edge AS Edge
+      logica_home.Reach_sn_delta AS t_2_Reach_sn_delta, t_3_Edge AS Edge
     WHERE
-      (Edge.a = Reach_sn_delta.x)
+      (Edge.a = t_2_Reach_sn_delta.x)
   
 ) AS UNUSED_TABLE_NAME  ),
 t_0_Reach_sn_step AS (SELECT
@@ -1014,7 +1062,7 @@ FROM
   logica_home.Reach_sn_new AS Reach_sn_new;
 
 DROP TABLE IF EXISTS logica_home.Reach_sn_new CASCADE;
-CREATE TABLE logica_home.Reach_sn_new AS WITH t_2_Edge AS (SELECT * FROM (
+CREATE TABLE logica_home.Reach_sn_new AS WITH t_3_Edge AS (SELECT * FROM (
   
     SELECT
       1 AS a,
@@ -1040,9 +1088,9 @@ t_1_Reach_MultBodyAggAux_f2 AS (SELECT * FROM (
     SELECT
       Edge.b AS x
     FROM
-      logica_home.Reach_sn_delta AS Reach_sn_delta, t_2_Edge AS Edge
+      logica_home.Reach_sn_delta AS t_2_Reach_sn_delta, t_3_Edge AS Edge
     WHERE
-      (Edge.a = Reach_sn_delta.x)
+      (Edge.a = t_2_Reach_sn_delta.x)
   
 ) AS UNUSED_TABLE_NAME  ),
 t_0_Reach_sn_step AS (SELECT
@@ -1072,7 +1120,7 @@ FROM
   logica_home.Reach_sn_new AS Reach_sn_new;
 
 DROP TABLE IF EXISTS logica_home.Reach_sn_new CASCADE;
-CREATE TABLE logica_home.Reach_sn_new AS WITH t_2_Edge AS (SELECT * FROM (
+CREATE TABLE logica_home.Reach_sn_new AS WITH t_3_Edge AS (SELECT * FROM (
   
     SELECT
       1 AS a,
@@ -1098,9 +1146,9 @@ t_1_Reach_MultBodyAggAux_f2 AS (SELECT * FROM (
     SELECT
       Edge.b AS x
     FROM
-      logica_home.Reach_sn_delta AS Reach_sn_delta, t_2_Edge AS Edge
+      logica_home.Reach_sn_delta AS t_2_Reach_sn_delta, t_3_Edge AS Edge
     WHERE
-      (Edge.a = Reach_sn_delta.x)
+      (Edge.a = t_2_Reach_sn_delta.x)
   
 ) AS UNUSED_TABLE_NAME  ),
 t_0_Reach_sn_step AS (SELECT
@@ -1130,7 +1178,7 @@ FROM
   logica_home.Reach_sn_new AS Reach_sn_new;
 
 DROP TABLE IF EXISTS logica_home.Reach_sn_new CASCADE;
-CREATE TABLE logica_home.Reach_sn_new AS WITH t_2_Edge AS (SELECT * FROM (
+CREATE TABLE logica_home.Reach_sn_new AS WITH t_3_Edge AS (SELECT * FROM (
   
     SELECT
       1 AS a,
@@ -1156,9 +1204,9 @@ t_1_Reach_MultBodyAggAux_f2 AS (SELECT * FROM (
     SELECT
       Edge.b AS x
     FROM
-      logica_home.Reach_sn_delta AS Reach_sn_delta, t_2_Edge AS Edge
+      logica_home.Reach_sn_delta AS t_2_Reach_sn_delta, t_3_Edge AS Edge
     WHERE
-      (Edge.a = Reach_sn_delta.x)
+      (Edge.a = t_2_Reach_sn_delta.x)
   
 ) AS UNUSED_TABLE_NAME  ),
 t_0_Reach_sn_step AS (SELECT
@@ -1188,7 +1236,7 @@ FROM
   logica_home.Reach_sn_new AS Reach_sn_new;
 
 DROP TABLE IF EXISTS logica_home.Reach_sn_new CASCADE;
-CREATE TABLE logica_home.Reach_sn_new AS WITH t_2_Edge AS (SELECT * FROM (
+CREATE TABLE logica_home.Reach_sn_new AS WITH t_3_Edge AS (SELECT * FROM (
   
     SELECT
       1 AS a,
@@ -1214,9 +1262,9 @@ t_1_Reach_MultBodyAggAux_f2 AS (SELECT * FROM (
     SELECT
       Edge.b AS x
     FROM
-      logica_home.Reach_sn_delta AS Reach_sn_delta, t_2_Edge AS Edge
+      logica_home.Reach_sn_delta AS t_2_Reach_sn_delta, t_3_Edge AS Edge
     WHERE
-      (Edge.a = Reach_sn_delta.x)
+      (Edge.a = t_2_Reach_sn_delta.x)
   
 ) AS UNUSED_TABLE_NAME  ),
 t_0_Reach_sn_step AS (SELECT

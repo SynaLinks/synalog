@@ -492,6 +492,17 @@ SYNALOG_GOLDENS = {
     # x in arr: CONTAINS on Presto/Trino.
     ("presto", "99_execution_in_list"),
     ("trino", "99_execution_in_list"),
+    # Numbers with a decimal point are DOUBLE on Trino, Presto and Databricks
+    # (see DEVIATIONS.md).
+    ("databricks", "28_list_membership"),
+    ("presto", "28_list_membership"),
+    ("trino", "28_list_membership"),
+    ("databricks", "121_execution_float_sum"),
+    ("presto", "121_execution_float_sum"),
+    ("trino", "121_execution_float_sum"),
+    ("databricks", "157_execution_float_comparison"),
+    ("presto", "157_execution_float_comparison"),
+    ("trino", "157_execution_float_comparison"),
 }
 
 # Goldens intentionally absent because synalog lacks the subsystem

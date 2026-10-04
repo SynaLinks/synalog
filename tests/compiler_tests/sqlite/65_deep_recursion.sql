@@ -16,10 +16,41 @@ GROUP BY Test_MultBodyAggAux_f1.y;
 -- Interacting with table logica_test.Test_sn_delta
 
 DROP TABLE IF EXISTS logica_test.Test_sn_full;
-CREATE TABLE logica_test.Test_sn_full AS SELECT
-  Test_sn_delta.y AS y
+CREATE TABLE logica_test.Test_sn_full AS WITH t_1_Test_MultBodyAggAux_f2 AS (SELECT * FROM (
+  
+    SELECT
+      0 AS y
+   UNION ALL
+  
+    SELECT
+      ((x_11.value) + (1)) AS y
+    FROM
+      logica_test.Test_sn_delta AS t_2_Test_sn_delta, JSON_EACH((select json_group_array(n) from (with recursive t as(select 0 as n union all select n + 1 as n from t where n + 1 < 100) select n from t) where n < 100)) as x_11
+    WHERE
+      (t_2_Test_sn_delta.y = x_11.value)
+  
+) AS UNUSED_TABLE_NAME  ),
+t_0_Test_sn_step AS (SELECT
+  Test_MultBodyAggAux_f2.y AS y
 FROM
-  logica_test.Test_sn_delta AS Test_sn_delta;
+  t_1_Test_MultBodyAggAux_f2 AS Test_MultBodyAggAux_f2
+GROUP BY Test_MultBodyAggAux_f2.y)
+SELECT * FROM (
+  
+    SELECT
+      Test_sn_delta.y AS y
+    FROM
+      logica_test.Test_sn_delta AS Test_sn_delta
+   UNION ALL
+  
+    SELECT
+      Test_sn_step.y AS y
+    FROM
+      t_0_Test_sn_step AS Test_sn_step
+    WHERE
+      (1 = 0)
+  
+) AS UNUSED_TABLE_NAME  ;
 
 -- Interacting with table logica_test.Test_sn_full
 
@@ -31,11 +62,11 @@ CREATE TABLE logica_test.Test_sn_new AS WITH t_1_Test_MultBodyAggAux_f2 AS (SELE
    UNION ALL
   
     SELECT
-      ((x_9.value) + (1)) AS y
+      ((x_11.value) + (1)) AS y
     FROM
-      logica_test.Test_sn_delta AS Test_sn_delta, JSON_EACH((select json_group_array(n) from (with recursive t as(select 0 as n union all select n + 1 as n from t where n + 1 < 100) select n from t) where n < 100)) as x_9
+      logica_test.Test_sn_delta AS t_2_Test_sn_delta, JSON_EACH((select json_group_array(n) from (with recursive t as(select 0 as n union all select n + 1 as n from t where n + 1 < 100) select n from t) where n < 100)) as x_11
     WHERE
-      (Test_sn_delta.y = x_9.value)
+      (t_2_Test_sn_delta.y = x_11.value)
   
 ) AS UNUSED_TABLE_NAME  ),
 t_0_Test_sn_step AS (SELECT
@@ -72,11 +103,11 @@ CREATE TABLE logica_test.Test_sn_new AS WITH t_1_Test_MultBodyAggAux_f2 AS (SELE
    UNION ALL
   
     SELECT
-      ((x_9.value) + (1)) AS y
+      ((x_11.value) + (1)) AS y
     FROM
-      logica_test.Test_sn_delta AS Test_sn_delta, JSON_EACH((select json_group_array(n) from (with recursive t as(select 0 as n union all select n + 1 as n from t where n + 1 < 100) select n from t) where n < 100)) as x_9
+      logica_test.Test_sn_delta AS t_2_Test_sn_delta, JSON_EACH((select json_group_array(n) from (with recursive t as(select 0 as n union all select n + 1 as n from t where n + 1 < 100) select n from t) where n < 100)) as x_11
     WHERE
-      (Test_sn_delta.y = x_9.value)
+      (t_2_Test_sn_delta.y = x_11.value)
   
 ) AS UNUSED_TABLE_NAME  ),
 t_0_Test_sn_step AS (SELECT
@@ -113,11 +144,11 @@ CREATE TABLE logica_test.Test_sn_new AS WITH t_1_Test_MultBodyAggAux_f2 AS (SELE
    UNION ALL
   
     SELECT
-      ((x_9.value) + (1)) AS y
+      ((x_11.value) + (1)) AS y
     FROM
-      logica_test.Test_sn_delta AS Test_sn_delta, JSON_EACH((select json_group_array(n) from (with recursive t as(select 0 as n union all select n + 1 as n from t where n + 1 < 100) select n from t) where n < 100)) as x_9
+      logica_test.Test_sn_delta AS t_2_Test_sn_delta, JSON_EACH((select json_group_array(n) from (with recursive t as(select 0 as n union all select n + 1 as n from t where n + 1 < 100) select n from t) where n < 100)) as x_11
     WHERE
-      (Test_sn_delta.y = x_9.value)
+      (t_2_Test_sn_delta.y = x_11.value)
   
 ) AS UNUSED_TABLE_NAME  ),
 t_0_Test_sn_step AS (SELECT
@@ -154,11 +185,11 @@ CREATE TABLE logica_test.Test_sn_new AS WITH t_1_Test_MultBodyAggAux_f2 AS (SELE
    UNION ALL
   
     SELECT
-      ((x_9.value) + (1)) AS y
+      ((x_11.value) + (1)) AS y
     FROM
-      logica_test.Test_sn_delta AS Test_sn_delta, JSON_EACH((select json_group_array(n) from (with recursive t as(select 0 as n union all select n + 1 as n from t where n + 1 < 100) select n from t) where n < 100)) as x_9
+      logica_test.Test_sn_delta AS t_2_Test_sn_delta, JSON_EACH((select json_group_array(n) from (with recursive t as(select 0 as n union all select n + 1 as n from t where n + 1 < 100) select n from t) where n < 100)) as x_11
     WHERE
-      (Test_sn_delta.y = x_9.value)
+      (t_2_Test_sn_delta.y = x_11.value)
   
 ) AS UNUSED_TABLE_NAME  ),
 t_0_Test_sn_step AS (SELECT
@@ -195,11 +226,11 @@ CREATE TABLE logica_test.Test_sn_new AS WITH t_1_Test_MultBodyAggAux_f2 AS (SELE
    UNION ALL
   
     SELECT
-      ((x_9.value) + (1)) AS y
+      ((x_11.value) + (1)) AS y
     FROM
-      logica_test.Test_sn_delta AS Test_sn_delta, JSON_EACH((select json_group_array(n) from (with recursive t as(select 0 as n union all select n + 1 as n from t where n + 1 < 100) select n from t) where n < 100)) as x_9
+      logica_test.Test_sn_delta AS t_2_Test_sn_delta, JSON_EACH((select json_group_array(n) from (with recursive t as(select 0 as n union all select n + 1 as n from t where n + 1 < 100) select n from t) where n < 100)) as x_11
     WHERE
-      (Test_sn_delta.y = x_9.value)
+      (t_2_Test_sn_delta.y = x_11.value)
   
 ) AS UNUSED_TABLE_NAME  ),
 t_0_Test_sn_step AS (SELECT
@@ -236,11 +267,11 @@ CREATE TABLE logica_test.Test_sn_new AS WITH t_1_Test_MultBodyAggAux_f2 AS (SELE
    UNION ALL
   
     SELECT
-      ((x_9.value) + (1)) AS y
+      ((x_11.value) + (1)) AS y
     FROM
-      logica_test.Test_sn_delta AS Test_sn_delta, JSON_EACH((select json_group_array(n) from (with recursive t as(select 0 as n union all select n + 1 as n from t where n + 1 < 100) select n from t) where n < 100)) as x_9
+      logica_test.Test_sn_delta AS t_2_Test_sn_delta, JSON_EACH((select json_group_array(n) from (with recursive t as(select 0 as n union all select n + 1 as n from t where n + 1 < 100) select n from t) where n < 100)) as x_11
     WHERE
-      (Test_sn_delta.y = x_9.value)
+      (t_2_Test_sn_delta.y = x_11.value)
   
 ) AS UNUSED_TABLE_NAME  ),
 t_0_Test_sn_step AS (SELECT
@@ -277,11 +308,11 @@ CREATE TABLE logica_test.Test_sn_new AS WITH t_1_Test_MultBodyAggAux_f2 AS (SELE
    UNION ALL
   
     SELECT
-      ((x_9.value) + (1)) AS y
+      ((x_11.value) + (1)) AS y
     FROM
-      logica_test.Test_sn_delta AS Test_sn_delta, JSON_EACH((select json_group_array(n) from (with recursive t as(select 0 as n union all select n + 1 as n from t where n + 1 < 100) select n from t) where n < 100)) as x_9
+      logica_test.Test_sn_delta AS t_2_Test_sn_delta, JSON_EACH((select json_group_array(n) from (with recursive t as(select 0 as n union all select n + 1 as n from t where n + 1 < 100) select n from t) where n < 100)) as x_11
     WHERE
-      (Test_sn_delta.y = x_9.value)
+      (t_2_Test_sn_delta.y = x_11.value)
   
 ) AS UNUSED_TABLE_NAME  ),
 t_0_Test_sn_step AS (SELECT
@@ -318,11 +349,11 @@ CREATE TABLE logica_test.Test_sn_new AS WITH t_1_Test_MultBodyAggAux_f2 AS (SELE
    UNION ALL
   
     SELECT
-      ((x_9.value) + (1)) AS y
+      ((x_11.value) + (1)) AS y
     FROM
-      logica_test.Test_sn_delta AS Test_sn_delta, JSON_EACH((select json_group_array(n) from (with recursive t as(select 0 as n union all select n + 1 as n from t where n + 1 < 100) select n from t) where n < 100)) as x_9
+      logica_test.Test_sn_delta AS t_2_Test_sn_delta, JSON_EACH((select json_group_array(n) from (with recursive t as(select 0 as n union all select n + 1 as n from t where n + 1 < 100) select n from t) where n < 100)) as x_11
     WHERE
-      (Test_sn_delta.y = x_9.value)
+      (t_2_Test_sn_delta.y = x_11.value)
   
 ) AS UNUSED_TABLE_NAME  ),
 t_0_Test_sn_step AS (SELECT
@@ -359,11 +390,11 @@ CREATE TABLE logica_test.Test_sn_new AS WITH t_1_Test_MultBodyAggAux_f2 AS (SELE
    UNION ALL
   
     SELECT
-      ((x_9.value) + (1)) AS y
+      ((x_11.value) + (1)) AS y
     FROM
-      logica_test.Test_sn_delta AS Test_sn_delta, JSON_EACH((select json_group_array(n) from (with recursive t as(select 0 as n union all select n + 1 as n from t where n + 1 < 100) select n from t) where n < 100)) as x_9
+      logica_test.Test_sn_delta AS t_2_Test_sn_delta, JSON_EACH((select json_group_array(n) from (with recursive t as(select 0 as n union all select n + 1 as n from t where n + 1 < 100) select n from t) where n < 100)) as x_11
     WHERE
-      (Test_sn_delta.y = x_9.value)
+      (t_2_Test_sn_delta.y = x_11.value)
   
 ) AS UNUSED_TABLE_NAME  ),
 t_0_Test_sn_step AS (SELECT
@@ -400,11 +431,11 @@ CREATE TABLE logica_test.Test_sn_new AS WITH t_1_Test_MultBodyAggAux_f2 AS (SELE
    UNION ALL
   
     SELECT
-      ((x_9.value) + (1)) AS y
+      ((x_11.value) + (1)) AS y
     FROM
-      logica_test.Test_sn_delta AS Test_sn_delta, JSON_EACH((select json_group_array(n) from (with recursive t as(select 0 as n union all select n + 1 as n from t where n + 1 < 100) select n from t) where n < 100)) as x_9
+      logica_test.Test_sn_delta AS t_2_Test_sn_delta, JSON_EACH((select json_group_array(n) from (with recursive t as(select 0 as n union all select n + 1 as n from t where n + 1 < 100) select n from t) where n < 100)) as x_11
     WHERE
-      (Test_sn_delta.y = x_9.value)
+      (t_2_Test_sn_delta.y = x_11.value)
   
 ) AS UNUSED_TABLE_NAME  ),
 t_0_Test_sn_step AS (SELECT
@@ -441,11 +472,11 @@ CREATE TABLE logica_test.Test_sn_new AS WITH t_1_Test_MultBodyAggAux_f2 AS (SELE
    UNION ALL
   
     SELECT
-      ((x_9.value) + (1)) AS y
+      ((x_11.value) + (1)) AS y
     FROM
-      logica_test.Test_sn_delta AS Test_sn_delta, JSON_EACH((select json_group_array(n) from (with recursive t as(select 0 as n union all select n + 1 as n from t where n + 1 < 100) select n from t) where n < 100)) as x_9
+      logica_test.Test_sn_delta AS t_2_Test_sn_delta, JSON_EACH((select json_group_array(n) from (with recursive t as(select 0 as n union all select n + 1 as n from t where n + 1 < 100) select n from t) where n < 100)) as x_11
     WHERE
-      (Test_sn_delta.y = x_9.value)
+      (t_2_Test_sn_delta.y = x_11.value)
   
 ) AS UNUSED_TABLE_NAME  ),
 t_0_Test_sn_step AS (SELECT
@@ -482,11 +513,11 @@ CREATE TABLE logica_test.Test_sn_new AS WITH t_1_Test_MultBodyAggAux_f2 AS (SELE
    UNION ALL
   
     SELECT
-      ((x_9.value) + (1)) AS y
+      ((x_11.value) + (1)) AS y
     FROM
-      logica_test.Test_sn_delta AS Test_sn_delta, JSON_EACH((select json_group_array(n) from (with recursive t as(select 0 as n union all select n + 1 as n from t where n + 1 < 100) select n from t) where n < 100)) as x_9
+      logica_test.Test_sn_delta AS t_2_Test_sn_delta, JSON_EACH((select json_group_array(n) from (with recursive t as(select 0 as n union all select n + 1 as n from t where n + 1 < 100) select n from t) where n < 100)) as x_11
     WHERE
-      (Test_sn_delta.y = x_9.value)
+      (t_2_Test_sn_delta.y = x_11.value)
   
 ) AS UNUSED_TABLE_NAME  ),
 t_0_Test_sn_step AS (SELECT
@@ -523,11 +554,11 @@ CREATE TABLE logica_test.Test_sn_new AS WITH t_1_Test_MultBodyAggAux_f2 AS (SELE
    UNION ALL
   
     SELECT
-      ((x_9.value) + (1)) AS y
+      ((x_11.value) + (1)) AS y
     FROM
-      logica_test.Test_sn_delta AS Test_sn_delta, JSON_EACH((select json_group_array(n) from (with recursive t as(select 0 as n union all select n + 1 as n from t where n + 1 < 100) select n from t) where n < 100)) as x_9
+      logica_test.Test_sn_delta AS t_2_Test_sn_delta, JSON_EACH((select json_group_array(n) from (with recursive t as(select 0 as n union all select n + 1 as n from t where n + 1 < 100) select n from t) where n < 100)) as x_11
     WHERE
-      (Test_sn_delta.y = x_9.value)
+      (t_2_Test_sn_delta.y = x_11.value)
   
 ) AS UNUSED_TABLE_NAME  ),
 t_0_Test_sn_step AS (SELECT
@@ -564,11 +595,11 @@ CREATE TABLE logica_test.Test_sn_new AS WITH t_1_Test_MultBodyAggAux_f2 AS (SELE
    UNION ALL
   
     SELECT
-      ((x_9.value) + (1)) AS y
+      ((x_11.value) + (1)) AS y
     FROM
-      logica_test.Test_sn_delta AS Test_sn_delta, JSON_EACH((select json_group_array(n) from (with recursive t as(select 0 as n union all select n + 1 as n from t where n + 1 < 100) select n from t) where n < 100)) as x_9
+      logica_test.Test_sn_delta AS t_2_Test_sn_delta, JSON_EACH((select json_group_array(n) from (with recursive t as(select 0 as n union all select n + 1 as n from t where n + 1 < 100) select n from t) where n < 100)) as x_11
     WHERE
-      (Test_sn_delta.y = x_9.value)
+      (t_2_Test_sn_delta.y = x_11.value)
   
 ) AS UNUSED_TABLE_NAME  ),
 t_0_Test_sn_step AS (SELECT
@@ -605,11 +636,11 @@ CREATE TABLE logica_test.Test_sn_new AS WITH t_1_Test_MultBodyAggAux_f2 AS (SELE
    UNION ALL
   
     SELECT
-      ((x_9.value) + (1)) AS y
+      ((x_11.value) + (1)) AS y
     FROM
-      logica_test.Test_sn_delta AS Test_sn_delta, JSON_EACH((select json_group_array(n) from (with recursive t as(select 0 as n union all select n + 1 as n from t where n + 1 < 100) select n from t) where n < 100)) as x_9
+      logica_test.Test_sn_delta AS t_2_Test_sn_delta, JSON_EACH((select json_group_array(n) from (with recursive t as(select 0 as n union all select n + 1 as n from t where n + 1 < 100) select n from t) where n < 100)) as x_11
     WHERE
-      (Test_sn_delta.y = x_9.value)
+      (t_2_Test_sn_delta.y = x_11.value)
   
 ) AS UNUSED_TABLE_NAME  ),
 t_0_Test_sn_step AS (SELECT
@@ -646,11 +677,11 @@ CREATE TABLE logica_test.Test_sn_new AS WITH t_1_Test_MultBodyAggAux_f2 AS (SELE
    UNION ALL
   
     SELECT
-      ((x_9.value) + (1)) AS y
+      ((x_11.value) + (1)) AS y
     FROM
-      logica_test.Test_sn_delta AS Test_sn_delta, JSON_EACH((select json_group_array(n) from (with recursive t as(select 0 as n union all select n + 1 as n from t where n + 1 < 100) select n from t) where n < 100)) as x_9
+      logica_test.Test_sn_delta AS t_2_Test_sn_delta, JSON_EACH((select json_group_array(n) from (with recursive t as(select 0 as n union all select n + 1 as n from t where n + 1 < 100) select n from t) where n < 100)) as x_11
     WHERE
-      (Test_sn_delta.y = x_9.value)
+      (t_2_Test_sn_delta.y = x_11.value)
   
 ) AS UNUSED_TABLE_NAME  ),
 t_0_Test_sn_step AS (SELECT
@@ -687,11 +718,11 @@ CREATE TABLE logica_test.Test_sn_new AS WITH t_1_Test_MultBodyAggAux_f2 AS (SELE
    UNION ALL
   
     SELECT
-      ((x_9.value) + (1)) AS y
+      ((x_11.value) + (1)) AS y
     FROM
-      logica_test.Test_sn_delta AS Test_sn_delta, JSON_EACH((select json_group_array(n) from (with recursive t as(select 0 as n union all select n + 1 as n from t where n + 1 < 100) select n from t) where n < 100)) as x_9
+      logica_test.Test_sn_delta AS t_2_Test_sn_delta, JSON_EACH((select json_group_array(n) from (with recursive t as(select 0 as n union all select n + 1 as n from t where n + 1 < 100) select n from t) where n < 100)) as x_11
     WHERE
-      (Test_sn_delta.y = x_9.value)
+      (t_2_Test_sn_delta.y = x_11.value)
   
 ) AS UNUSED_TABLE_NAME  ),
 t_0_Test_sn_step AS (SELECT
@@ -728,11 +759,11 @@ CREATE TABLE logica_test.Test_sn_new AS WITH t_1_Test_MultBodyAggAux_f2 AS (SELE
    UNION ALL
   
     SELECT
-      ((x_9.value) + (1)) AS y
+      ((x_11.value) + (1)) AS y
     FROM
-      logica_test.Test_sn_delta AS Test_sn_delta, JSON_EACH((select json_group_array(n) from (with recursive t as(select 0 as n union all select n + 1 as n from t where n + 1 < 100) select n from t) where n < 100)) as x_9
+      logica_test.Test_sn_delta AS t_2_Test_sn_delta, JSON_EACH((select json_group_array(n) from (with recursive t as(select 0 as n union all select n + 1 as n from t where n + 1 < 100) select n from t) where n < 100)) as x_11
     WHERE
-      (Test_sn_delta.y = x_9.value)
+      (t_2_Test_sn_delta.y = x_11.value)
   
 ) AS UNUSED_TABLE_NAME  ),
 t_0_Test_sn_step AS (SELECT
@@ -769,11 +800,11 @@ CREATE TABLE logica_test.Test_sn_new AS WITH t_1_Test_MultBodyAggAux_f2 AS (SELE
    UNION ALL
   
     SELECT
-      ((x_9.value) + (1)) AS y
+      ((x_11.value) + (1)) AS y
     FROM
-      logica_test.Test_sn_delta AS Test_sn_delta, JSON_EACH((select json_group_array(n) from (with recursive t as(select 0 as n union all select n + 1 as n from t where n + 1 < 100) select n from t) where n < 100)) as x_9
+      logica_test.Test_sn_delta AS t_2_Test_sn_delta, JSON_EACH((select json_group_array(n) from (with recursive t as(select 0 as n union all select n + 1 as n from t where n + 1 < 100) select n from t) where n < 100)) as x_11
     WHERE
-      (Test_sn_delta.y = x_9.value)
+      (t_2_Test_sn_delta.y = x_11.value)
   
 ) AS UNUSED_TABLE_NAME  ),
 t_0_Test_sn_step AS (SELECT
@@ -810,11 +841,11 @@ CREATE TABLE logica_test.Test_sn_new AS WITH t_1_Test_MultBodyAggAux_f2 AS (SELE
    UNION ALL
   
     SELECT
-      ((x_9.value) + (1)) AS y
+      ((x_11.value) + (1)) AS y
     FROM
-      logica_test.Test_sn_delta AS Test_sn_delta, JSON_EACH((select json_group_array(n) from (with recursive t as(select 0 as n union all select n + 1 as n from t where n + 1 < 100) select n from t) where n < 100)) as x_9
+      logica_test.Test_sn_delta AS t_2_Test_sn_delta, JSON_EACH((select json_group_array(n) from (with recursive t as(select 0 as n union all select n + 1 as n from t where n + 1 < 100) select n from t) where n < 100)) as x_11
     WHERE
-      (Test_sn_delta.y = x_9.value)
+      (t_2_Test_sn_delta.y = x_11.value)
   
 ) AS UNUSED_TABLE_NAME  ),
 t_0_Test_sn_step AS (SELECT
@@ -851,11 +882,11 @@ CREATE TABLE logica_test.Test_sn_new AS WITH t_1_Test_MultBodyAggAux_f2 AS (SELE
    UNION ALL
   
     SELECT
-      ((x_9.value) + (1)) AS y
+      ((x_11.value) + (1)) AS y
     FROM
-      logica_test.Test_sn_delta AS Test_sn_delta, JSON_EACH((select json_group_array(n) from (with recursive t as(select 0 as n union all select n + 1 as n from t where n + 1 < 100) select n from t) where n < 100)) as x_9
+      logica_test.Test_sn_delta AS t_2_Test_sn_delta, JSON_EACH((select json_group_array(n) from (with recursive t as(select 0 as n union all select n + 1 as n from t where n + 1 < 100) select n from t) where n < 100)) as x_11
     WHERE
-      (Test_sn_delta.y = x_9.value)
+      (t_2_Test_sn_delta.y = x_11.value)
   
 ) AS UNUSED_TABLE_NAME  ),
 t_0_Test_sn_step AS (SELECT
@@ -892,11 +923,11 @@ CREATE TABLE logica_test.Test_sn_new AS WITH t_1_Test_MultBodyAggAux_f2 AS (SELE
    UNION ALL
   
     SELECT
-      ((x_9.value) + (1)) AS y
+      ((x_11.value) + (1)) AS y
     FROM
-      logica_test.Test_sn_delta AS Test_sn_delta, JSON_EACH((select json_group_array(n) from (with recursive t as(select 0 as n union all select n + 1 as n from t where n + 1 < 100) select n from t) where n < 100)) as x_9
+      logica_test.Test_sn_delta AS t_2_Test_sn_delta, JSON_EACH((select json_group_array(n) from (with recursive t as(select 0 as n union all select n + 1 as n from t where n + 1 < 100) select n from t) where n < 100)) as x_11
     WHERE
-      (Test_sn_delta.y = x_9.value)
+      (t_2_Test_sn_delta.y = x_11.value)
   
 ) AS UNUSED_TABLE_NAME  ),
 t_0_Test_sn_step AS (SELECT
@@ -933,11 +964,11 @@ CREATE TABLE logica_test.Test_sn_new AS WITH t_1_Test_MultBodyAggAux_f2 AS (SELE
    UNION ALL
   
     SELECT
-      ((x_9.value) + (1)) AS y
+      ((x_11.value) + (1)) AS y
     FROM
-      logica_test.Test_sn_delta AS Test_sn_delta, JSON_EACH((select json_group_array(n) from (with recursive t as(select 0 as n union all select n + 1 as n from t where n + 1 < 100) select n from t) where n < 100)) as x_9
+      logica_test.Test_sn_delta AS t_2_Test_sn_delta, JSON_EACH((select json_group_array(n) from (with recursive t as(select 0 as n union all select n + 1 as n from t where n + 1 < 100) select n from t) where n < 100)) as x_11
     WHERE
-      (Test_sn_delta.y = x_9.value)
+      (t_2_Test_sn_delta.y = x_11.value)
   
 ) AS UNUSED_TABLE_NAME  ),
 t_0_Test_sn_step AS (SELECT
@@ -974,11 +1005,11 @@ CREATE TABLE logica_test.Test_sn_new AS WITH t_1_Test_MultBodyAggAux_f2 AS (SELE
    UNION ALL
   
     SELECT
-      ((x_9.value) + (1)) AS y
+      ((x_11.value) + (1)) AS y
     FROM
-      logica_test.Test_sn_delta AS Test_sn_delta, JSON_EACH((select json_group_array(n) from (with recursive t as(select 0 as n union all select n + 1 as n from t where n + 1 < 100) select n from t) where n < 100)) as x_9
+      logica_test.Test_sn_delta AS t_2_Test_sn_delta, JSON_EACH((select json_group_array(n) from (with recursive t as(select 0 as n union all select n + 1 as n from t where n + 1 < 100) select n from t) where n < 100)) as x_11
     WHERE
-      (Test_sn_delta.y = x_9.value)
+      (t_2_Test_sn_delta.y = x_11.value)
   
 ) AS UNUSED_TABLE_NAME  ),
 t_0_Test_sn_step AS (SELECT
@@ -1015,11 +1046,11 @@ CREATE TABLE logica_test.Test_sn_new AS WITH t_1_Test_MultBodyAggAux_f2 AS (SELE
    UNION ALL
   
     SELECT
-      ((x_9.value) + (1)) AS y
+      ((x_11.value) + (1)) AS y
     FROM
-      logica_test.Test_sn_delta AS Test_sn_delta, JSON_EACH((select json_group_array(n) from (with recursive t as(select 0 as n union all select n + 1 as n from t where n + 1 < 100) select n from t) where n < 100)) as x_9
+      logica_test.Test_sn_delta AS t_2_Test_sn_delta, JSON_EACH((select json_group_array(n) from (with recursive t as(select 0 as n union all select n + 1 as n from t where n + 1 < 100) select n from t) where n < 100)) as x_11
     WHERE
-      (Test_sn_delta.y = x_9.value)
+      (t_2_Test_sn_delta.y = x_11.value)
   
 ) AS UNUSED_TABLE_NAME  ),
 t_0_Test_sn_step AS (SELECT
@@ -1056,11 +1087,11 @@ CREATE TABLE logica_test.Test_sn_new AS WITH t_1_Test_MultBodyAggAux_f2 AS (SELE
    UNION ALL
   
     SELECT
-      ((x_9.value) + (1)) AS y
+      ((x_11.value) + (1)) AS y
     FROM
-      logica_test.Test_sn_delta AS Test_sn_delta, JSON_EACH((select json_group_array(n) from (with recursive t as(select 0 as n union all select n + 1 as n from t where n + 1 < 100) select n from t) where n < 100)) as x_9
+      logica_test.Test_sn_delta AS t_2_Test_sn_delta, JSON_EACH((select json_group_array(n) from (with recursive t as(select 0 as n union all select n + 1 as n from t where n + 1 < 100) select n from t) where n < 100)) as x_11
     WHERE
-      (Test_sn_delta.y = x_9.value)
+      (t_2_Test_sn_delta.y = x_11.value)
   
 ) AS UNUSED_TABLE_NAME  ),
 t_0_Test_sn_step AS (SELECT
@@ -1097,11 +1128,11 @@ CREATE TABLE logica_test.Test_sn_new AS WITH t_1_Test_MultBodyAggAux_f2 AS (SELE
    UNION ALL
   
     SELECT
-      ((x_9.value) + (1)) AS y
+      ((x_11.value) + (1)) AS y
     FROM
-      logica_test.Test_sn_delta AS Test_sn_delta, JSON_EACH((select json_group_array(n) from (with recursive t as(select 0 as n union all select n + 1 as n from t where n + 1 < 100) select n from t) where n < 100)) as x_9
+      logica_test.Test_sn_delta AS t_2_Test_sn_delta, JSON_EACH((select json_group_array(n) from (with recursive t as(select 0 as n union all select n + 1 as n from t where n + 1 < 100) select n from t) where n < 100)) as x_11
     WHERE
-      (Test_sn_delta.y = x_9.value)
+      (t_2_Test_sn_delta.y = x_11.value)
   
 ) AS UNUSED_TABLE_NAME  ),
 t_0_Test_sn_step AS (SELECT
@@ -1138,11 +1169,11 @@ CREATE TABLE logica_test.Test_sn_new AS WITH t_1_Test_MultBodyAggAux_f2 AS (SELE
    UNION ALL
   
     SELECT
-      ((x_9.value) + (1)) AS y
+      ((x_11.value) + (1)) AS y
     FROM
-      logica_test.Test_sn_delta AS Test_sn_delta, JSON_EACH((select json_group_array(n) from (with recursive t as(select 0 as n union all select n + 1 as n from t where n + 1 < 100) select n from t) where n < 100)) as x_9
+      logica_test.Test_sn_delta AS t_2_Test_sn_delta, JSON_EACH((select json_group_array(n) from (with recursive t as(select 0 as n union all select n + 1 as n from t where n + 1 < 100) select n from t) where n < 100)) as x_11
     WHERE
-      (Test_sn_delta.y = x_9.value)
+      (t_2_Test_sn_delta.y = x_11.value)
   
 ) AS UNUSED_TABLE_NAME  ),
 t_0_Test_sn_step AS (SELECT
@@ -1179,11 +1210,11 @@ CREATE TABLE logica_test.Test_sn_new AS WITH t_1_Test_MultBodyAggAux_f2 AS (SELE
    UNION ALL
   
     SELECT
-      ((x_9.value) + (1)) AS y
+      ((x_11.value) + (1)) AS y
     FROM
-      logica_test.Test_sn_delta AS Test_sn_delta, JSON_EACH((select json_group_array(n) from (with recursive t as(select 0 as n union all select n + 1 as n from t where n + 1 < 100) select n from t) where n < 100)) as x_9
+      logica_test.Test_sn_delta AS t_2_Test_sn_delta, JSON_EACH((select json_group_array(n) from (with recursive t as(select 0 as n union all select n + 1 as n from t where n + 1 < 100) select n from t) where n < 100)) as x_11
     WHERE
-      (Test_sn_delta.y = x_9.value)
+      (t_2_Test_sn_delta.y = x_11.value)
   
 ) AS UNUSED_TABLE_NAME  ),
 t_0_Test_sn_step AS (SELECT
@@ -1220,11 +1251,11 @@ CREATE TABLE logica_test.Test_sn_new AS WITH t_1_Test_MultBodyAggAux_f2 AS (SELE
    UNION ALL
   
     SELECT
-      ((x_9.value) + (1)) AS y
+      ((x_11.value) + (1)) AS y
     FROM
-      logica_test.Test_sn_delta AS Test_sn_delta, JSON_EACH((select json_group_array(n) from (with recursive t as(select 0 as n union all select n + 1 as n from t where n + 1 < 100) select n from t) where n < 100)) as x_9
+      logica_test.Test_sn_delta AS t_2_Test_sn_delta, JSON_EACH((select json_group_array(n) from (with recursive t as(select 0 as n union all select n + 1 as n from t where n + 1 < 100) select n from t) where n < 100)) as x_11
     WHERE
-      (Test_sn_delta.y = x_9.value)
+      (t_2_Test_sn_delta.y = x_11.value)
   
 ) AS UNUSED_TABLE_NAME  ),
 t_0_Test_sn_step AS (SELECT

@@ -126,6 +126,11 @@ pub trait Dialect {
         ""
     }
 
+    /// A number written with a decimal point (`1.5`), which is a float.
+    fn float_literal(&self, text: &str) -> String {
+        text.to_string()
+    }
+
     /// The set difference of two queries' rows.
     fn except_distinct(&self) -> &'static str {
         "EXCEPT"
@@ -603,6 +608,12 @@ Str(a) = a;
 pub struct TrinoDialect;
 
 impl Dialect for TrinoDialect {
+    fn float_literal(&self, text: &str) -> String {
+        // `1.5` is a DECIMAL here, and decimal division rounds to the
+        // operands' scale (1.0 / 3.0 = 0.3); the exponent form is a DOUBLE.
+        if text.contains(['e', 'E']) { text.to_string() } else { format!("{}E0", text) }
+    }
+
     fn name(&self) -> &'static str { "trino" }
     fn today_relation_sql(&self) -> String {
         "(SELECT CAST(current_date AS VARCHAR) AS date)".to_string()
@@ -695,6 +706,12 @@ Array(a) = SqlExpr(
 pub struct PrestoDialect;
 
 impl Dialect for PrestoDialect {
+    fn float_literal(&self, text: &str) -> String {
+        // `1.5` is a DECIMAL here, and decimal division rounds to the
+        // operands' scale (1.0 / 3.0 = 0.3); the exponent form is a DOUBLE.
+        if text.contains(['e', 'E']) { text.to_string() } else { format!("{}E0", text) }
+    }
+
     fn name(&self) -> &'static str { "presto" }
     fn format_uses_concat(&self) -> bool { true }
     fn today_relation_sql(&self) -> String {
@@ -789,6 +806,12 @@ Array(a) = SqlExpr(
 pub struct DatabricksDialect;
 
 impl Dialect for DatabricksDialect {
+    fn float_literal(&self, text: &str) -> String {
+        // `1.5` is a DECIMAL here, and decimal division rounds to the
+        // operands' scale (1.0 / 3.0 = 0.3); the exponent form is a DOUBLE.
+        if text.contains(['e', 'E']) { text.to_string() } else { format!("{}E0", text) }
+    }
+
     fn quote_identifier(&self, name: &str) -> String {
         // Double quotes make a string here: identifiers take backticks.
         format!("`{}`", name.replace('`', "\\`"))

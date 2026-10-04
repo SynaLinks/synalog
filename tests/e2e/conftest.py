@@ -151,10 +151,13 @@ def runner_for():
     return get
 
 
+@pytest.hookimpl(tryfirst=True)
 def pytest_collection_modifyitems(items):
-    """With pytest-xdist (`-n auto --dist loadgroup`), each engine's tests run
-    in one worker: engines run in parallel, and a fixture's rows, computed
-    once per worker, serve both layers."""
+    """With pytest-xdist (`-n 6 --dist loadgroup`), each engine's tests run in
+    one worker: the engines run in parallel, the tests of an engine one after
+    the other (they write the same tables), and a fixture's rows, computed
+    once per worker, serve both layers. First: xdist reads the marker in its
+    own hook of this name, to group the tests."""
     for item in items:
         engine = getattr(getattr(item, "callspec", None), "params", {}).get("engine")
         if engine:

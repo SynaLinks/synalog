@@ -620,7 +620,7 @@ impl<'a> ExprTranslator<'a> {
                     if let Some(lit) = obj.get("literal") {
                         let lo = lit.as_object();
                         if let Some(n) = lo.get("the_number") {
-                            results.push(if n.is_int() {
+                            let text = if n.is_int() {
                                 n.as_int().to_string()
                             } else if n.is_object() {
                                 n.as_object().get("number")
@@ -628,7 +628,8 @@ impl<'a> ExprTranslator<'a> {
                                     .unwrap_or_else(|| n.to_string_fmt(false))
                             } else {
                                 n.to_string_fmt(false)
-                            });
+                            };
+                            results.push(if text.contains('.') { self.dialect.float_literal(&text) } else { text });
                             continue;
                         }
                         if let Some(s) = lo.get("the_string") {

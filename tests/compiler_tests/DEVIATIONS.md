@@ -215,6 +215,18 @@ that is a keyword or not a plain identifier, in the dialect's quotes
 also in `ORDER BY` and in `search()`. `64_keyword_columns` is generated from
 synalog on every engine.
 
+## Numbers with a decimal point
+
+`1.5` is a float in Synalog, but a `DECIMAL` on Trino, Presto and
+Databricks (Spark SQL), where decimal division rounds to the operands' scale:
+`1.0 / 3.0` is `0.3` on Trino and Presto, `0.333333` on Spark, and an
+assertion comparing it within 1e-9 fails. synalog writes such a literal in
+exponent form there (`1.5E0`), which those engines read as a `DOUBLE`. Other
+engines keep `1.5`: BigQuery reads it as a float, DuckDB divides decimals as
+floats, and PostgreSQL's `numeric` keeps full precision. The goldens of
+`28_list_membership`, `121_execution_float_sum` and
+`157_execution_float_comparison` on those three engines are synalog's.
+
 ## Deep recursion
 
 Past 20 steps, upstream compiles `@Recursive` into tables: a few steps, then an

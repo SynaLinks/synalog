@@ -1253,7 +1253,10 @@ fn get_semi_naive_recursion_functor(depth: i64, p: &str, fields: &[Json]) -> Str
     [
         format!("{p}_sn_delta := {p}_ROne({p}_RZero: nil);"),
         format!("@Ground({p}_sn_delta);"),
-        format!("{p}_sn_full({args}) :- {p}_sn_delta({args});"),
+        // Created from the base rows, with the column types of a step's rows
+        // (an empty step: `1 == 0`), so the INSERT of every step's new rows
+        // fits strictly typed engines (an integer base, `y + 1` a bigint).
+        format!("{p}_sn_full({args}) :- {p}_sn_delta({args}) | ({p}_sn_step({args}), 1 == 0);"),
         format!("@Ground({p}_sn_full);"),
         format!("{p}_sn_step := {p}_ROne({p}_RZero: {p}_sn_delta);"),
         format!("{p}_sn_new({args}) distinct :- {p}_sn_step({args}), ~{p}_sn_full({args});"),

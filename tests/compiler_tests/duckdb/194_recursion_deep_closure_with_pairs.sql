@@ -24,11 +24,48 @@ GROUP BY Reach_MultBodyAggAux_f1.x, Reach_MultBodyAggAux_f1.y;
 -- Interacting with table logica_home.Reach_sn_delta
 
 DROP TABLE IF EXISTS logica_home.Reach_sn_full;
-CREATE TABLE logica_home.Reach_sn_full AS SELECT
-  Reach_sn_delta.x AS x,
-  Reach_sn_delta.y AS y
+CREATE TABLE logica_home.Reach_sn_full AS WITH t_1_Reach_MultBodyAggAux_f2 AS (SELECT * FROM (
+  
+    SELECT
+      x_17.unnested_pod AS x,
+      ((x_17.unnested_pod) + (1)) AS y
+    FROM
+      (select unnest(Range(4)) as unnested_pod) as x_17
+   UNION ALL
+  
+    SELECT
+      t_2_Reach_sn_delta.x AS x,
+      ((x_25.unnested_pod) + (1)) AS y
+    FROM
+      logica_home.Reach_sn_delta AS t_2_Reach_sn_delta, (select unnest(Range(4)) as unnested_pod) as x_25
+    WHERE
+      (t_2_Reach_sn_delta.y = x_25.unnested_pod)
+  
+) AS UNUSED_TABLE_NAME  ),
+t_0_Reach_sn_step AS (SELECT
+  Reach_MultBodyAggAux_f2.x AS x,
+  Reach_MultBodyAggAux_f2.y AS y
 FROM
-  logica_home.Reach_sn_delta AS Reach_sn_delta;
+  t_1_Reach_MultBodyAggAux_f2 AS Reach_MultBodyAggAux_f2
+GROUP BY Reach_MultBodyAggAux_f2.x, Reach_MultBodyAggAux_f2.y)
+SELECT * FROM (
+  
+    SELECT
+      Reach_sn_delta.x AS x,
+      Reach_sn_delta.y AS y
+    FROM
+      logica_home.Reach_sn_delta AS Reach_sn_delta
+   UNION ALL
+  
+    SELECT
+      Reach_sn_step.x AS x,
+      Reach_sn_step.y AS y
+    FROM
+      t_0_Reach_sn_step AS Reach_sn_step
+    WHERE
+      (1 = 0)
+  
+) AS UNUSED_TABLE_NAME  ;
 
 -- Interacting with table logica_home.Reach_sn_full
 
@@ -36,19 +73,19 @@ DROP TABLE IF EXISTS logica_home.Reach_sn_new;
 CREATE TABLE logica_home.Reach_sn_new AS WITH t_1_Reach_MultBodyAggAux_f2 AS (SELECT * FROM (
   
     SELECT
-      x_13.unnested_pod AS x,
-      ((x_13.unnested_pod) + (1)) AS y
+      x_17.unnested_pod AS x,
+      ((x_17.unnested_pod) + (1)) AS y
     FROM
-      (select unnest(Range(4)) as unnested_pod) as x_13
+      (select unnest(Range(4)) as unnested_pod) as x_17
    UNION ALL
   
     SELECT
-      Reach_sn_delta.x AS x,
-      ((x_21.unnested_pod) + (1)) AS y
+      t_2_Reach_sn_delta.x AS x,
+      ((x_25.unnested_pod) + (1)) AS y
     FROM
-      logica_home.Reach_sn_delta AS Reach_sn_delta, (select unnest(Range(4)) as unnested_pod) as x_21
+      logica_home.Reach_sn_delta AS t_2_Reach_sn_delta, (select unnest(Range(4)) as unnested_pod) as x_25
     WHERE
-      (Reach_sn_delta.y = x_21.unnested_pod)
+      (t_2_Reach_sn_delta.y = x_25.unnested_pod)
   
 ) AS UNUSED_TABLE_NAME  ),
 t_0_Reach_sn_step AS (SELECT
@@ -85,19 +122,19 @@ DROP TABLE IF EXISTS logica_home.Reach_sn_new;
 CREATE TABLE logica_home.Reach_sn_new AS WITH t_1_Reach_MultBodyAggAux_f2 AS (SELECT * FROM (
   
     SELECT
-      x_13.unnested_pod AS x,
-      ((x_13.unnested_pod) + (1)) AS y
+      x_17.unnested_pod AS x,
+      ((x_17.unnested_pod) + (1)) AS y
     FROM
-      (select unnest(Range(4)) as unnested_pod) as x_13
+      (select unnest(Range(4)) as unnested_pod) as x_17
    UNION ALL
   
     SELECT
-      Reach_sn_delta.x AS x,
-      ((x_21.unnested_pod) + (1)) AS y
+      t_2_Reach_sn_delta.x AS x,
+      ((x_25.unnested_pod) + (1)) AS y
     FROM
-      logica_home.Reach_sn_delta AS Reach_sn_delta, (select unnest(Range(4)) as unnested_pod) as x_21
+      logica_home.Reach_sn_delta AS t_2_Reach_sn_delta, (select unnest(Range(4)) as unnested_pod) as x_25
     WHERE
-      (Reach_sn_delta.y = x_21.unnested_pod)
+      (t_2_Reach_sn_delta.y = x_25.unnested_pod)
   
 ) AS UNUSED_TABLE_NAME  ),
 t_0_Reach_sn_step AS (SELECT
@@ -134,19 +171,19 @@ DROP TABLE IF EXISTS logica_home.Reach_sn_new;
 CREATE TABLE logica_home.Reach_sn_new AS WITH t_1_Reach_MultBodyAggAux_f2 AS (SELECT * FROM (
   
     SELECT
-      x_13.unnested_pod AS x,
-      ((x_13.unnested_pod) + (1)) AS y
+      x_17.unnested_pod AS x,
+      ((x_17.unnested_pod) + (1)) AS y
     FROM
-      (select unnest(Range(4)) as unnested_pod) as x_13
+      (select unnest(Range(4)) as unnested_pod) as x_17
    UNION ALL
   
     SELECT
-      Reach_sn_delta.x AS x,
-      ((x_21.unnested_pod) + (1)) AS y
+      t_2_Reach_sn_delta.x AS x,
+      ((x_25.unnested_pod) + (1)) AS y
     FROM
-      logica_home.Reach_sn_delta AS Reach_sn_delta, (select unnest(Range(4)) as unnested_pod) as x_21
+      logica_home.Reach_sn_delta AS t_2_Reach_sn_delta, (select unnest(Range(4)) as unnested_pod) as x_25
     WHERE
-      (Reach_sn_delta.y = x_21.unnested_pod)
+      (t_2_Reach_sn_delta.y = x_25.unnested_pod)
   
 ) AS UNUSED_TABLE_NAME  ),
 t_0_Reach_sn_step AS (SELECT
@@ -183,19 +220,19 @@ DROP TABLE IF EXISTS logica_home.Reach_sn_new;
 CREATE TABLE logica_home.Reach_sn_new AS WITH t_1_Reach_MultBodyAggAux_f2 AS (SELECT * FROM (
   
     SELECT
-      x_13.unnested_pod AS x,
-      ((x_13.unnested_pod) + (1)) AS y
+      x_17.unnested_pod AS x,
+      ((x_17.unnested_pod) + (1)) AS y
     FROM
-      (select unnest(Range(4)) as unnested_pod) as x_13
+      (select unnest(Range(4)) as unnested_pod) as x_17
    UNION ALL
   
     SELECT
-      Reach_sn_delta.x AS x,
-      ((x_21.unnested_pod) + (1)) AS y
+      t_2_Reach_sn_delta.x AS x,
+      ((x_25.unnested_pod) + (1)) AS y
     FROM
-      logica_home.Reach_sn_delta AS Reach_sn_delta, (select unnest(Range(4)) as unnested_pod) as x_21
+      logica_home.Reach_sn_delta AS t_2_Reach_sn_delta, (select unnest(Range(4)) as unnested_pod) as x_25
     WHERE
-      (Reach_sn_delta.y = x_21.unnested_pod)
+      (t_2_Reach_sn_delta.y = x_25.unnested_pod)
   
 ) AS UNUSED_TABLE_NAME  ),
 t_0_Reach_sn_step AS (SELECT
@@ -232,19 +269,19 @@ DROP TABLE IF EXISTS logica_home.Reach_sn_new;
 CREATE TABLE logica_home.Reach_sn_new AS WITH t_1_Reach_MultBodyAggAux_f2 AS (SELECT * FROM (
   
     SELECT
-      x_13.unnested_pod AS x,
-      ((x_13.unnested_pod) + (1)) AS y
+      x_17.unnested_pod AS x,
+      ((x_17.unnested_pod) + (1)) AS y
     FROM
-      (select unnest(Range(4)) as unnested_pod) as x_13
+      (select unnest(Range(4)) as unnested_pod) as x_17
    UNION ALL
   
     SELECT
-      Reach_sn_delta.x AS x,
-      ((x_21.unnested_pod) + (1)) AS y
+      t_2_Reach_sn_delta.x AS x,
+      ((x_25.unnested_pod) + (1)) AS y
     FROM
-      logica_home.Reach_sn_delta AS Reach_sn_delta, (select unnest(Range(4)) as unnested_pod) as x_21
+      logica_home.Reach_sn_delta AS t_2_Reach_sn_delta, (select unnest(Range(4)) as unnested_pod) as x_25
     WHERE
-      (Reach_sn_delta.y = x_21.unnested_pod)
+      (t_2_Reach_sn_delta.y = x_25.unnested_pod)
   
 ) AS UNUSED_TABLE_NAME  ),
 t_0_Reach_sn_step AS (SELECT
@@ -281,19 +318,19 @@ DROP TABLE IF EXISTS logica_home.Reach_sn_new;
 CREATE TABLE logica_home.Reach_sn_new AS WITH t_1_Reach_MultBodyAggAux_f2 AS (SELECT * FROM (
   
     SELECT
-      x_13.unnested_pod AS x,
-      ((x_13.unnested_pod) + (1)) AS y
+      x_17.unnested_pod AS x,
+      ((x_17.unnested_pod) + (1)) AS y
     FROM
-      (select unnest(Range(4)) as unnested_pod) as x_13
+      (select unnest(Range(4)) as unnested_pod) as x_17
    UNION ALL
   
     SELECT
-      Reach_sn_delta.x AS x,
-      ((x_21.unnested_pod) + (1)) AS y
+      t_2_Reach_sn_delta.x AS x,
+      ((x_25.unnested_pod) + (1)) AS y
     FROM
-      logica_home.Reach_sn_delta AS Reach_sn_delta, (select unnest(Range(4)) as unnested_pod) as x_21
+      logica_home.Reach_sn_delta AS t_2_Reach_sn_delta, (select unnest(Range(4)) as unnested_pod) as x_25
     WHERE
-      (Reach_sn_delta.y = x_21.unnested_pod)
+      (t_2_Reach_sn_delta.y = x_25.unnested_pod)
   
 ) AS UNUSED_TABLE_NAME  ),
 t_0_Reach_sn_step AS (SELECT
@@ -330,19 +367,19 @@ DROP TABLE IF EXISTS logica_home.Reach_sn_new;
 CREATE TABLE logica_home.Reach_sn_new AS WITH t_1_Reach_MultBodyAggAux_f2 AS (SELECT * FROM (
   
     SELECT
-      x_13.unnested_pod AS x,
-      ((x_13.unnested_pod) + (1)) AS y
+      x_17.unnested_pod AS x,
+      ((x_17.unnested_pod) + (1)) AS y
     FROM
-      (select unnest(Range(4)) as unnested_pod) as x_13
+      (select unnest(Range(4)) as unnested_pod) as x_17
    UNION ALL
   
     SELECT
-      Reach_sn_delta.x AS x,
-      ((x_21.unnested_pod) + (1)) AS y
+      t_2_Reach_sn_delta.x AS x,
+      ((x_25.unnested_pod) + (1)) AS y
     FROM
-      logica_home.Reach_sn_delta AS Reach_sn_delta, (select unnest(Range(4)) as unnested_pod) as x_21
+      logica_home.Reach_sn_delta AS t_2_Reach_sn_delta, (select unnest(Range(4)) as unnested_pod) as x_25
     WHERE
-      (Reach_sn_delta.y = x_21.unnested_pod)
+      (t_2_Reach_sn_delta.y = x_25.unnested_pod)
   
 ) AS UNUSED_TABLE_NAME  ),
 t_0_Reach_sn_step AS (SELECT
@@ -379,19 +416,19 @@ DROP TABLE IF EXISTS logica_home.Reach_sn_new;
 CREATE TABLE logica_home.Reach_sn_new AS WITH t_1_Reach_MultBodyAggAux_f2 AS (SELECT * FROM (
   
     SELECT
-      x_13.unnested_pod AS x,
-      ((x_13.unnested_pod) + (1)) AS y
+      x_17.unnested_pod AS x,
+      ((x_17.unnested_pod) + (1)) AS y
     FROM
-      (select unnest(Range(4)) as unnested_pod) as x_13
+      (select unnest(Range(4)) as unnested_pod) as x_17
    UNION ALL
   
     SELECT
-      Reach_sn_delta.x AS x,
-      ((x_21.unnested_pod) + (1)) AS y
+      t_2_Reach_sn_delta.x AS x,
+      ((x_25.unnested_pod) + (1)) AS y
     FROM
-      logica_home.Reach_sn_delta AS Reach_sn_delta, (select unnest(Range(4)) as unnested_pod) as x_21
+      logica_home.Reach_sn_delta AS t_2_Reach_sn_delta, (select unnest(Range(4)) as unnested_pod) as x_25
     WHERE
-      (Reach_sn_delta.y = x_21.unnested_pod)
+      (t_2_Reach_sn_delta.y = x_25.unnested_pod)
   
 ) AS UNUSED_TABLE_NAME  ),
 t_0_Reach_sn_step AS (SELECT
@@ -428,19 +465,19 @@ DROP TABLE IF EXISTS logica_home.Reach_sn_new;
 CREATE TABLE logica_home.Reach_sn_new AS WITH t_1_Reach_MultBodyAggAux_f2 AS (SELECT * FROM (
   
     SELECT
-      x_13.unnested_pod AS x,
-      ((x_13.unnested_pod) + (1)) AS y
+      x_17.unnested_pod AS x,
+      ((x_17.unnested_pod) + (1)) AS y
     FROM
-      (select unnest(Range(4)) as unnested_pod) as x_13
+      (select unnest(Range(4)) as unnested_pod) as x_17
    UNION ALL
   
     SELECT
-      Reach_sn_delta.x AS x,
-      ((x_21.unnested_pod) + (1)) AS y
+      t_2_Reach_sn_delta.x AS x,
+      ((x_25.unnested_pod) + (1)) AS y
     FROM
-      logica_home.Reach_sn_delta AS Reach_sn_delta, (select unnest(Range(4)) as unnested_pod) as x_21
+      logica_home.Reach_sn_delta AS t_2_Reach_sn_delta, (select unnest(Range(4)) as unnested_pod) as x_25
     WHERE
-      (Reach_sn_delta.y = x_21.unnested_pod)
+      (t_2_Reach_sn_delta.y = x_25.unnested_pod)
   
 ) AS UNUSED_TABLE_NAME  ),
 t_0_Reach_sn_step AS (SELECT
@@ -477,19 +514,19 @@ DROP TABLE IF EXISTS logica_home.Reach_sn_new;
 CREATE TABLE logica_home.Reach_sn_new AS WITH t_1_Reach_MultBodyAggAux_f2 AS (SELECT * FROM (
   
     SELECT
-      x_13.unnested_pod AS x,
-      ((x_13.unnested_pod) + (1)) AS y
+      x_17.unnested_pod AS x,
+      ((x_17.unnested_pod) + (1)) AS y
     FROM
-      (select unnest(Range(4)) as unnested_pod) as x_13
+      (select unnest(Range(4)) as unnested_pod) as x_17
    UNION ALL
   
     SELECT
-      Reach_sn_delta.x AS x,
-      ((x_21.unnested_pod) + (1)) AS y
+      t_2_Reach_sn_delta.x AS x,
+      ((x_25.unnested_pod) + (1)) AS y
     FROM
-      logica_home.Reach_sn_delta AS Reach_sn_delta, (select unnest(Range(4)) as unnested_pod) as x_21
+      logica_home.Reach_sn_delta AS t_2_Reach_sn_delta, (select unnest(Range(4)) as unnested_pod) as x_25
     WHERE
-      (Reach_sn_delta.y = x_21.unnested_pod)
+      (t_2_Reach_sn_delta.y = x_25.unnested_pod)
   
 ) AS UNUSED_TABLE_NAME  ),
 t_0_Reach_sn_step AS (SELECT
@@ -526,19 +563,19 @@ DROP TABLE IF EXISTS logica_home.Reach_sn_new;
 CREATE TABLE logica_home.Reach_sn_new AS WITH t_1_Reach_MultBodyAggAux_f2 AS (SELECT * FROM (
   
     SELECT
-      x_13.unnested_pod AS x,
-      ((x_13.unnested_pod) + (1)) AS y
+      x_17.unnested_pod AS x,
+      ((x_17.unnested_pod) + (1)) AS y
     FROM
-      (select unnest(Range(4)) as unnested_pod) as x_13
+      (select unnest(Range(4)) as unnested_pod) as x_17
    UNION ALL
   
     SELECT
-      Reach_sn_delta.x AS x,
-      ((x_21.unnested_pod) + (1)) AS y
+      t_2_Reach_sn_delta.x AS x,
+      ((x_25.unnested_pod) + (1)) AS y
     FROM
-      logica_home.Reach_sn_delta AS Reach_sn_delta, (select unnest(Range(4)) as unnested_pod) as x_21
+      logica_home.Reach_sn_delta AS t_2_Reach_sn_delta, (select unnest(Range(4)) as unnested_pod) as x_25
     WHERE
-      (Reach_sn_delta.y = x_21.unnested_pod)
+      (t_2_Reach_sn_delta.y = x_25.unnested_pod)
   
 ) AS UNUSED_TABLE_NAME  ),
 t_0_Reach_sn_step AS (SELECT
@@ -575,19 +612,19 @@ DROP TABLE IF EXISTS logica_home.Reach_sn_new;
 CREATE TABLE logica_home.Reach_sn_new AS WITH t_1_Reach_MultBodyAggAux_f2 AS (SELECT * FROM (
   
     SELECT
-      x_13.unnested_pod AS x,
-      ((x_13.unnested_pod) + (1)) AS y
+      x_17.unnested_pod AS x,
+      ((x_17.unnested_pod) + (1)) AS y
     FROM
-      (select unnest(Range(4)) as unnested_pod) as x_13
+      (select unnest(Range(4)) as unnested_pod) as x_17
    UNION ALL
   
     SELECT
-      Reach_sn_delta.x AS x,
-      ((x_21.unnested_pod) + (1)) AS y
+      t_2_Reach_sn_delta.x AS x,
+      ((x_25.unnested_pod) + (1)) AS y
     FROM
-      logica_home.Reach_sn_delta AS Reach_sn_delta, (select unnest(Range(4)) as unnested_pod) as x_21
+      logica_home.Reach_sn_delta AS t_2_Reach_sn_delta, (select unnest(Range(4)) as unnested_pod) as x_25
     WHERE
-      (Reach_sn_delta.y = x_21.unnested_pod)
+      (t_2_Reach_sn_delta.y = x_25.unnested_pod)
   
 ) AS UNUSED_TABLE_NAME  ),
 t_0_Reach_sn_step AS (SELECT
@@ -624,19 +661,19 @@ DROP TABLE IF EXISTS logica_home.Reach_sn_new;
 CREATE TABLE logica_home.Reach_sn_new AS WITH t_1_Reach_MultBodyAggAux_f2 AS (SELECT * FROM (
   
     SELECT
-      x_13.unnested_pod AS x,
-      ((x_13.unnested_pod) + (1)) AS y
+      x_17.unnested_pod AS x,
+      ((x_17.unnested_pod) + (1)) AS y
     FROM
-      (select unnest(Range(4)) as unnested_pod) as x_13
+      (select unnest(Range(4)) as unnested_pod) as x_17
    UNION ALL
   
     SELECT
-      Reach_sn_delta.x AS x,
-      ((x_21.unnested_pod) + (1)) AS y
+      t_2_Reach_sn_delta.x AS x,
+      ((x_25.unnested_pod) + (1)) AS y
     FROM
-      logica_home.Reach_sn_delta AS Reach_sn_delta, (select unnest(Range(4)) as unnested_pod) as x_21
+      logica_home.Reach_sn_delta AS t_2_Reach_sn_delta, (select unnest(Range(4)) as unnested_pod) as x_25
     WHERE
-      (Reach_sn_delta.y = x_21.unnested_pod)
+      (t_2_Reach_sn_delta.y = x_25.unnested_pod)
   
 ) AS UNUSED_TABLE_NAME  ),
 t_0_Reach_sn_step AS (SELECT
@@ -673,19 +710,19 @@ DROP TABLE IF EXISTS logica_home.Reach_sn_new;
 CREATE TABLE logica_home.Reach_sn_new AS WITH t_1_Reach_MultBodyAggAux_f2 AS (SELECT * FROM (
   
     SELECT
-      x_13.unnested_pod AS x,
-      ((x_13.unnested_pod) + (1)) AS y
+      x_17.unnested_pod AS x,
+      ((x_17.unnested_pod) + (1)) AS y
     FROM
-      (select unnest(Range(4)) as unnested_pod) as x_13
+      (select unnest(Range(4)) as unnested_pod) as x_17
    UNION ALL
   
     SELECT
-      Reach_sn_delta.x AS x,
-      ((x_21.unnested_pod) + (1)) AS y
+      t_2_Reach_sn_delta.x AS x,
+      ((x_25.unnested_pod) + (1)) AS y
     FROM
-      logica_home.Reach_sn_delta AS Reach_sn_delta, (select unnest(Range(4)) as unnested_pod) as x_21
+      logica_home.Reach_sn_delta AS t_2_Reach_sn_delta, (select unnest(Range(4)) as unnested_pod) as x_25
     WHERE
-      (Reach_sn_delta.y = x_21.unnested_pod)
+      (t_2_Reach_sn_delta.y = x_25.unnested_pod)
   
 ) AS UNUSED_TABLE_NAME  ),
 t_0_Reach_sn_step AS (SELECT
@@ -722,19 +759,19 @@ DROP TABLE IF EXISTS logica_home.Reach_sn_new;
 CREATE TABLE logica_home.Reach_sn_new AS WITH t_1_Reach_MultBodyAggAux_f2 AS (SELECT * FROM (
   
     SELECT
-      x_13.unnested_pod AS x,
-      ((x_13.unnested_pod) + (1)) AS y
+      x_17.unnested_pod AS x,
+      ((x_17.unnested_pod) + (1)) AS y
     FROM
-      (select unnest(Range(4)) as unnested_pod) as x_13
+      (select unnest(Range(4)) as unnested_pod) as x_17
    UNION ALL
   
     SELECT
-      Reach_sn_delta.x AS x,
-      ((x_21.unnested_pod) + (1)) AS y
+      t_2_Reach_sn_delta.x AS x,
+      ((x_25.unnested_pod) + (1)) AS y
     FROM
-      logica_home.Reach_sn_delta AS Reach_sn_delta, (select unnest(Range(4)) as unnested_pod) as x_21
+      logica_home.Reach_sn_delta AS t_2_Reach_sn_delta, (select unnest(Range(4)) as unnested_pod) as x_25
     WHERE
-      (Reach_sn_delta.y = x_21.unnested_pod)
+      (t_2_Reach_sn_delta.y = x_25.unnested_pod)
   
 ) AS UNUSED_TABLE_NAME  ),
 t_0_Reach_sn_step AS (SELECT
@@ -771,19 +808,19 @@ DROP TABLE IF EXISTS logica_home.Reach_sn_new;
 CREATE TABLE logica_home.Reach_sn_new AS WITH t_1_Reach_MultBodyAggAux_f2 AS (SELECT * FROM (
   
     SELECT
-      x_13.unnested_pod AS x,
-      ((x_13.unnested_pod) + (1)) AS y
+      x_17.unnested_pod AS x,
+      ((x_17.unnested_pod) + (1)) AS y
     FROM
-      (select unnest(Range(4)) as unnested_pod) as x_13
+      (select unnest(Range(4)) as unnested_pod) as x_17
    UNION ALL
   
     SELECT
-      Reach_sn_delta.x AS x,
-      ((x_21.unnested_pod) + (1)) AS y
+      t_2_Reach_sn_delta.x AS x,
+      ((x_25.unnested_pod) + (1)) AS y
     FROM
-      logica_home.Reach_sn_delta AS Reach_sn_delta, (select unnest(Range(4)) as unnested_pod) as x_21
+      logica_home.Reach_sn_delta AS t_2_Reach_sn_delta, (select unnest(Range(4)) as unnested_pod) as x_25
     WHERE
-      (Reach_sn_delta.y = x_21.unnested_pod)
+      (t_2_Reach_sn_delta.y = x_25.unnested_pod)
   
 ) AS UNUSED_TABLE_NAME  ),
 t_0_Reach_sn_step AS (SELECT
@@ -820,19 +857,19 @@ DROP TABLE IF EXISTS logica_home.Reach_sn_new;
 CREATE TABLE logica_home.Reach_sn_new AS WITH t_1_Reach_MultBodyAggAux_f2 AS (SELECT * FROM (
   
     SELECT
-      x_13.unnested_pod AS x,
-      ((x_13.unnested_pod) + (1)) AS y
+      x_17.unnested_pod AS x,
+      ((x_17.unnested_pod) + (1)) AS y
     FROM
-      (select unnest(Range(4)) as unnested_pod) as x_13
+      (select unnest(Range(4)) as unnested_pod) as x_17
    UNION ALL
   
     SELECT
-      Reach_sn_delta.x AS x,
-      ((x_21.unnested_pod) + (1)) AS y
+      t_2_Reach_sn_delta.x AS x,
+      ((x_25.unnested_pod) + (1)) AS y
     FROM
-      logica_home.Reach_sn_delta AS Reach_sn_delta, (select unnest(Range(4)) as unnested_pod) as x_21
+      logica_home.Reach_sn_delta AS t_2_Reach_sn_delta, (select unnest(Range(4)) as unnested_pod) as x_25
     WHERE
-      (Reach_sn_delta.y = x_21.unnested_pod)
+      (t_2_Reach_sn_delta.y = x_25.unnested_pod)
   
 ) AS UNUSED_TABLE_NAME  ),
 t_0_Reach_sn_step AS (SELECT
@@ -869,19 +906,19 @@ DROP TABLE IF EXISTS logica_home.Reach_sn_new;
 CREATE TABLE logica_home.Reach_sn_new AS WITH t_1_Reach_MultBodyAggAux_f2 AS (SELECT * FROM (
   
     SELECT
-      x_13.unnested_pod AS x,
-      ((x_13.unnested_pod) + (1)) AS y
+      x_17.unnested_pod AS x,
+      ((x_17.unnested_pod) + (1)) AS y
     FROM
-      (select unnest(Range(4)) as unnested_pod) as x_13
+      (select unnest(Range(4)) as unnested_pod) as x_17
    UNION ALL
   
     SELECT
-      Reach_sn_delta.x AS x,
-      ((x_21.unnested_pod) + (1)) AS y
+      t_2_Reach_sn_delta.x AS x,
+      ((x_25.unnested_pod) + (1)) AS y
     FROM
-      logica_home.Reach_sn_delta AS Reach_sn_delta, (select unnest(Range(4)) as unnested_pod) as x_21
+      logica_home.Reach_sn_delta AS t_2_Reach_sn_delta, (select unnest(Range(4)) as unnested_pod) as x_25
     WHERE
-      (Reach_sn_delta.y = x_21.unnested_pod)
+      (t_2_Reach_sn_delta.y = x_25.unnested_pod)
   
 ) AS UNUSED_TABLE_NAME  ),
 t_0_Reach_sn_step AS (SELECT
@@ -918,19 +955,19 @@ DROP TABLE IF EXISTS logica_home.Reach_sn_new;
 CREATE TABLE logica_home.Reach_sn_new AS WITH t_1_Reach_MultBodyAggAux_f2 AS (SELECT * FROM (
   
     SELECT
-      x_13.unnested_pod AS x,
-      ((x_13.unnested_pod) + (1)) AS y
+      x_17.unnested_pod AS x,
+      ((x_17.unnested_pod) + (1)) AS y
     FROM
-      (select unnest(Range(4)) as unnested_pod) as x_13
+      (select unnest(Range(4)) as unnested_pod) as x_17
    UNION ALL
   
     SELECT
-      Reach_sn_delta.x AS x,
-      ((x_21.unnested_pod) + (1)) AS y
+      t_2_Reach_sn_delta.x AS x,
+      ((x_25.unnested_pod) + (1)) AS y
     FROM
-      logica_home.Reach_sn_delta AS Reach_sn_delta, (select unnest(Range(4)) as unnested_pod) as x_21
+      logica_home.Reach_sn_delta AS t_2_Reach_sn_delta, (select unnest(Range(4)) as unnested_pod) as x_25
     WHERE
-      (Reach_sn_delta.y = x_21.unnested_pod)
+      (t_2_Reach_sn_delta.y = x_25.unnested_pod)
   
 ) AS UNUSED_TABLE_NAME  ),
 t_0_Reach_sn_step AS (SELECT
@@ -967,19 +1004,19 @@ DROP TABLE IF EXISTS logica_home.Reach_sn_new;
 CREATE TABLE logica_home.Reach_sn_new AS WITH t_1_Reach_MultBodyAggAux_f2 AS (SELECT * FROM (
   
     SELECT
-      x_13.unnested_pod AS x,
-      ((x_13.unnested_pod) + (1)) AS y
+      x_17.unnested_pod AS x,
+      ((x_17.unnested_pod) + (1)) AS y
     FROM
-      (select unnest(Range(4)) as unnested_pod) as x_13
+      (select unnest(Range(4)) as unnested_pod) as x_17
    UNION ALL
   
     SELECT
-      Reach_sn_delta.x AS x,
-      ((x_21.unnested_pod) + (1)) AS y
+      t_2_Reach_sn_delta.x AS x,
+      ((x_25.unnested_pod) + (1)) AS y
     FROM
-      logica_home.Reach_sn_delta AS Reach_sn_delta, (select unnest(Range(4)) as unnested_pod) as x_21
+      logica_home.Reach_sn_delta AS t_2_Reach_sn_delta, (select unnest(Range(4)) as unnested_pod) as x_25
     WHERE
-      (Reach_sn_delta.y = x_21.unnested_pod)
+      (t_2_Reach_sn_delta.y = x_25.unnested_pod)
   
 ) AS UNUSED_TABLE_NAME  ),
 t_0_Reach_sn_step AS (SELECT
@@ -1016,19 +1053,19 @@ DROP TABLE IF EXISTS logica_home.Reach_sn_new;
 CREATE TABLE logica_home.Reach_sn_new AS WITH t_1_Reach_MultBodyAggAux_f2 AS (SELECT * FROM (
   
     SELECT
-      x_13.unnested_pod AS x,
-      ((x_13.unnested_pod) + (1)) AS y
+      x_17.unnested_pod AS x,
+      ((x_17.unnested_pod) + (1)) AS y
     FROM
-      (select unnest(Range(4)) as unnested_pod) as x_13
+      (select unnest(Range(4)) as unnested_pod) as x_17
    UNION ALL
   
     SELECT
-      Reach_sn_delta.x AS x,
-      ((x_21.unnested_pod) + (1)) AS y
+      t_2_Reach_sn_delta.x AS x,
+      ((x_25.unnested_pod) + (1)) AS y
     FROM
-      logica_home.Reach_sn_delta AS Reach_sn_delta, (select unnest(Range(4)) as unnested_pod) as x_21
+      logica_home.Reach_sn_delta AS t_2_Reach_sn_delta, (select unnest(Range(4)) as unnested_pod) as x_25
     WHERE
-      (Reach_sn_delta.y = x_21.unnested_pod)
+      (t_2_Reach_sn_delta.y = x_25.unnested_pod)
   
 ) AS UNUSED_TABLE_NAME  ),
 t_0_Reach_sn_step AS (SELECT
