@@ -159,3 +159,11 @@ def pytest_collection_modifyitems(items):
         engine = getattr(getattr(item, "callspec", None), "params", {}).get("engine")
         if engine:
             item.add_marker(pytest.mark.xdist_group(engine))
+
+
+def pytest_runtest_logreport(report):
+    """Print a failure as soon as it happens (SYNALOG_E2E_PRINT_FAILURES=1):
+    a run that is cut short still says which tests failed, and why."""
+    if report.failed and os.environ.get("SYNALOG_E2E_PRINT_FAILURES"):
+        print(f"\n=== FAILED {report.nodeid} ({report.when}, {report.duration:.0f}s)", flush=True)
+        print(report.longreprtext[-4000:], flush=True)

@@ -48,12 +48,19 @@ jobs:
         run: docker compose -f tests/e2e/docker-compose.yml up -d --wait
       - name: End-to-end tests against live engines
         # One worker per engine (see tests/e2e/conftest.py): the engines run in
-        # parallel. A test stuck past --timeout fails with the stacks of its
-        # threads, and the step cannot outlive timeout-minutes.
+        # parallel. A test stuck past --timeout fails, failures print as they
+        # happen, and the step cannot outlive timeout-minutes.
         timeout-minutes: 45
-        run: pytest tests/e2e -q -rfE -n 6 --dist loadgroup --durations=15 --timeout=600 --timeout-method=thread
         env:
           SYNALOG_E2E_REQUIRE: psql,trino,presto,databricks
+          SYNALOG_E2E_PRINT_FAILURES: "1"
+        run: pytest tests/e2e -q -rfE -n 6 --dist loadgroup --durations=15 --timeout=600 --timeout-method=signal
+      - name: Engines after the e2e tests
+        if: always()
+        run: |
+          free -m
+          docker compose -f tests/e2e/docker-compose.yml ps
+          docker stats --no-stream
       - name: Stop SQL engines
         if: always()
         run: docker compose -f tests/e2e/docker-compose.yml down
