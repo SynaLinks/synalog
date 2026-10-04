@@ -1,0 +1,4 @@
+SELECT
+  x_2.value AS x
+FROM
+  JSON_EACH(JSON_ARRAY(3, 1)) as x_2 ORDER BY x;

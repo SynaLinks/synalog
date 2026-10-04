@@ -1,0 +1,2 @@
+SELECT
+  ELEMENT_AT(SEQUENCE(0, 5 - 1), 4 + 1) AS e;

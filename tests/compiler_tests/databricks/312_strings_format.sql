@@ -1,0 +1,2 @@
+SELECT
+  FORMAT_STRING("%s-%s", "a", CAST(3 AS STRING)) AS s;

@@ -146,8 +146,15 @@ pub fn check_directives(rules: &[&Json]) -> Vec<DirectiveError> {
             }
             "@Recursive" => {
                 // The depth is optional; given, it is a number of steps, or -1:
-                // until nothing changes.
-                if let Some(depth) = args.get(1) {
+                // until nothing changes. Nothing else configures a recursion.
+                if args.len() > 2 {
+                    errors.push(DirectiveError {
+                        message: format!(
+                            "@Recursive({}): takes the predicate and its depth only",
+                            target
+                        ),
+                    });
+                } else if let Some(depth) = args.get(1) {
                     if !is_recursion_depth(depth) {
                         errors.push(DirectiveError {
                             message: format!(
@@ -184,6 +191,14 @@ mod tests {
     fn valid_directives_pass() {
         let source = "@OrderBy(V, \"x\", \"y DESC\", \"x desc nulls last\");\n@Limit(V, 3);\nV(x:, y:) :- x in [1], y in [2];\n";
         assert!(directive_errors(source).is_empty(), "{:?}", directive_errors(source));
+    }
+
+    #[test]
+    fn recursive_takes_a_depth_only() {
+        let errors = directive_errors(
+            "@Recursive(R, 3, iterative: true);\nE(a: 1, b: 2);\nR(x:) distinct :- E(a: x);\nR(x: b) distinct :- R(x: a), E(a:, b:);\n",
+        );
+        assert_eq!(errors, vec!["@Recursive(R): takes the predicate and its depth only".to_string()]);
     }
 
     #[test]

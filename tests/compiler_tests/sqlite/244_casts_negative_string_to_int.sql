@@ -1,0 +1,2 @@
+SELECT
+  (CASE WHEN typeof('-5') = 'real' THEN CAST(ROUND('-5') AS INTEGER) ELSE CAST('-5' AS INTEGER) END) AS n;

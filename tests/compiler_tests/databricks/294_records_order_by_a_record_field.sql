@@ -1,0 +1,14 @@
+WITH t_0_R AS (SELECT * FROM (
+  
+    SELECT
+      STRUCT(2 AS k) AS r
+   UNION ALL
+  
+    SELECT
+      STRUCT(1 AS k) AS r
+  
+) AS UNUSED_TABLE_NAME  )
+SELECT
+  R.r.k AS k
+FROM
+  t_0_R AS R ORDER BY k;

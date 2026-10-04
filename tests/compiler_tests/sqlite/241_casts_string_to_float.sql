@@ -1,0 +1,2 @@
+SELECT
+  ((CAST('1.5' AS FLOAT64)) * (2)) AS x;

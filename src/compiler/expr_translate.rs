@@ -401,7 +401,9 @@ fn base_built_in_functions() -> HashMap<&'static str, &'static str> {
     m.insert("Avg", "AVG(%s)");
     m.insert("Sum", "SUM(%s)");
     m.insert("Array", "ARRAY_AGG(%s)");
-    m.insert("StringAgg", "GROUP_CONCAT(%s)");
+    // The values joined with `,`, as text; null when they all are (SQLite's
+    // GROUP_CONCAT, which the other dialects follow).
+    m.insert("StringAgg", "STRING_AGG(CAST({0} AS STRING), ',')");
     m.insert("Median", "APPROX_QUANTILES(%s, 2)[OFFSET(1)]");
     m.insert("!", "NOT %s");
     m.insert("-", "- %s");

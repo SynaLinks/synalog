@@ -1,0 +1,2 @@
+SELECT
+  ARRAY[1, 2][OFFSET(5)] AS e;

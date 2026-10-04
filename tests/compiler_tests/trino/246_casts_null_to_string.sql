@@ -1,0 +1,2 @@
+SELECT
+  CAST(null AS VARCHAR) AS s;

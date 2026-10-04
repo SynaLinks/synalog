@@ -1,0 +1,4 @@
+SELECT
+  CAST(x_3.value AS TEXT) AS s
+FROM
+  JSON_EACH(JSON_ARRAY(9, 10)) as x_3 ORDER BY s;

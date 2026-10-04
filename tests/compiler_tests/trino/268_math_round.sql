@@ -1,0 +1,4 @@
+SELECT
+  ROUND(2.6E0) AS a,
+  ROUND(-2.6E0) AS b,
+  ROUND(2.4E0) AS c;

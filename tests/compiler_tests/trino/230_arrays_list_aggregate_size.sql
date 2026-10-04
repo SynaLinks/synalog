@@ -1,0 +1,8 @@
+WITH t_0_L AS (SELECT
+  ARRAY_AGG(x_3) AS l
+FROM
+  UNNEST(ARRAY[1, 1, 2]) as pushkin(x_3))
+SELECT
+  CARDINALITY(L.l) AS n
+FROM
+  t_0_L AS L;

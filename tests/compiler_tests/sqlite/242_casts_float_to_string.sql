@@ -1,0 +1,2 @@
+SELECT
+  CAST(1.5 AS TEXT) AS s;

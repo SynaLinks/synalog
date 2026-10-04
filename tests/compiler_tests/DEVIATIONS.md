@@ -124,6 +124,10 @@ generated from synalog (`generate_expected_sql.py:SYNALOG_GOLDENS`) and verified
 end-to-end against live DuckDB, matching the other engines' results
 (`tests/e2e`).
 
+`Set=` sorts its values on DuckDB, `ARRAY_AGG(DISTINCT x ORDER BY x)`, so a set
+compares equal however its rows were scanned; upstream leaves it unordered
+(`231_arrays_set_aggregate_size`).
+
 ## PostgreSQL
 
 Empty array literals: upstream annotates them with their inferred element type
@@ -246,6 +250,41 @@ floats, and PostgreSQL's `numeric` keeps full precision. The goldens of
 `28_list_membership`, `121_execution_float_sum` and
 `157_execution_float_comparison` on those three engines are synalog's.
 
+## `ToInt64` rounds
+
+`ToInt64(2.9)` is 3 on BigQuery, PostgreSQL, DuckDB, Trino and Presto, whose
+casts round, but 2 with upstream's `CAST(x AS INTEGER)` on SQLite and
+`CAST(x AS BIGINT)` on Databricks, which truncate. synalog rounds a float
+first on those two (`ROUND`, applied on SQLite only to a `real` value, so a
+text such as `'42'` still converts), so the result is the same everywhere. The
+goldens of `61_date_arithmetic` and `122_execution_to_string_and_back` on
+SQLite and Databricks are synalog's.
+
+## Record fields named after SQL keywords
+
+Like columns, a record field that is a keyword or not a plain identifier
+(`{inner: 1}`, `r.inner`) is quoted in the dialect's quotes, in record
+literals, row types and subscripts; upstream writes it as is, which the
+engines refuse. SQLite records are JSON objects, whose keys need no quoting.
+
+## `StringAgg=`
+
+Upstream writes `GROUP_CONCAT(x)` on SQLite and DuckDB, and `STRING_AGG(x)`
+elsewhere: PostgreSQL's needs a delimiter, BigQuery's a string, and Trino,
+Presto and Spark have none. synalog follows SQLite everywhere, the values as
+text joined with `,`, null when they all are: `STRING_AGG(CAST(x AS TEXT), ',')`
+on PostgreSQL and BigQuery, `ARRAY_JOIN` of the collected values on Trino,
+Presto and Databricks (`226_aggregation_string_agg_single`).
+
+## Trivially true comparisons
+
+A rule matching a constant against the same constant (`P(city: "paris")` and
+`C(city: "paris", ...)` joined on `city`) leaves `'paris' = 'paris'`, which
+upstream drops, except on DuckDB and PostgreSQL: there its type inference
+annotates the two sides differently and they no longer compare equal. synalog
+drops it everywhere (`258_joins_three_way`,
+`277_negation_negation_with_a_constant`). Cosmetic only.
+
 ## Deep recursion
 
 Past 20 steps, upstream compiles `@Recursive` into tables: a few steps, then an
@@ -265,6 +304,37 @@ and the recursion has converged when a step adds nothing. Other recursions
 (mutual recursion, aggregation in the recursion) recompute every step. The
 deep-recursion fixtures (`65_deep_recursion`, `66_deep_mutual_recursion`,
 `148_` to `199_`) are generated from synalog on every engine.
+
+## Recursion on Presto
+
+Presto plans an unrolled recursion in time exponential in its steps: depth 10
+took minutes for a mutual recursion, depth 20 exceeded its 3-minute planning
+timeout. Each step is an aggregation over a union of the previous step's
+rows, and Presto's distributed planning revisits the whole chain below it at
+each level (with `single_node_execution_enabled` it plans in milliseconds; a
+`FULL JOIN` instead of the union also does, but does not express rules with
+several bodies). synalog computes every recursion into tables on Presto, as
+past 20 steps elsewhere, so each step is one short query. A depth shorter than
+the iteration's first steps is written out step by step, each in its own
+table. The goldens of the recursive fixtures on Presto are synalog's.
+
+## What a step of recursion is
+
+A step applies every rule of the recursion once. Upstream unrolls mutual
+recursion up to 20 steps vertically, the other predicates inlined into each
+step of the first, so a step applies the whole cycle (`@Recursive(Even, 5)`
+over `Even` and `Odd` reached 10), while its iterated recursion past 20 steps
+applies each rule once (depth 22 reached 22). synalog unrolls mutual
+recursion horizontally at every depth (`139_execution_mutual_recursion`).
+The iterated recursion starts with a few steps (4 to 6) before it loops, so
+it computes more steps than a shorter depth asks; synalog writes such a depth
+out step by step, which matters to a recursion that does not only grow
+(`210_verifier_recursion_through_aggregate`, whose value cycles).
+
+`@Recursive` takes the predicate and its depth only (upstream also takes
+`iterative`, `ignition`, `stop` and `satellites`, which synalog ignored
+silently; the verifier now refuses them), and its default depth is 8 on every
+engine (upstream: 32 on DuckDB).
 
 ## Functors applied to imported predicates
 

@@ -49,7 +49,7 @@ TopSeller(name? ArgMax= name -> revenue) distinct :- Sales(name:, revenue:);
 
 ## More aggregating functions
 
-In addition to the operators above: `Array= x -> y` (ordered array), `ArgMinK(x -> y, k)` and `ArgMaxK(x -> y, k)` (top-k), `StringAgg= x` (string concatenation), `1= x` (any single value).
+In addition to the operators above: `Array= x -> y` (ordered array), `ArgMinK(x -> y, k)` and `ArgMaxK(x -> y, k)` (top-k), `StringAgg= x` (the values as text, joined with `,`, in no particular order; null when they are all null), `1= x` (any single value).
 
 ## Deduplication without aggregation
 
