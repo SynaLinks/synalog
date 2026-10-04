@@ -832,17 +832,17 @@ impl Functors {
                 }
             }
 
-            let explicit_iterative = depth_map.get(&p)
-                .and_then(|m| m.get("iterative"))
-                .and_then(|v| v.as_bool());
-
-            // Python logic: iterate if explicitly requested, or if unspecified and depth > 20
-            let use_iterative = explicit_iterative.unwrap_or(default_iterative)
-                || (explicit_iterative.is_none() && depth > 20);
+            // Past 20 steps a recursion is iterated, a table per step.
+            let use_iterative = default_iterative || depth > 20;
 
             if use_iterative {
                 should_recurse.insert(p, "iterative_horizontal".to_string());
-            } else if self.is_cut_of_cover(&p, c) {
+            } else if visible_count(c) == 1 && self.is_cut_of_cover(&p, c) {
+                // Upstream also unrolls mutual recursion vertically, the other
+                // predicates inlined into each step of `p`: a step then
+                // applies the rules of the whole cycle, where a step of the
+                // iterated recursion applies each rule once. One predicate
+                // only, so a depth means the same steps either way.
                 should_recurse.insert(p, "vertical".to_string());
             } else {
                 should_recurse.insert(p, "horizontal".to_string());
@@ -1027,12 +1027,15 @@ impl Functors {
         let lib = if let Some(fields) = semi_naive {
             let p = simplified_cover.iter().next().expect("one predicate");
             get_semi_naive_recursion_functor(depth, p, &fields)
-        } else if iterative {
+        } else if iterative && depth >= ignition_steps {
             get_flat_iterative_recursion_functor(
                 depth, &simplified_cover, &direct_args, ignition_steps, stop,
             )
         } else {
-            get_flat_recursion_functor(depth, &simplified_cover, &direct_args)
+            // Fewer steps than the iteration's ignition, which computes at
+            // least that many: each step written out, in its own table when
+            // iterating (on Presto every recursion is iterated).
+            get_flat_recursion_functor(depth, &simplified_cover, &direct_args, iterative)
         };
         for r in parse_rules(&lib)? {
             rules.push(r);
@@ -1114,6 +1117,12 @@ impl Functors {
 
         Ok(new_rules)
     }
+}
+
+/// The predicates of a recursion as written, without the helpers the
+/// compiler adds for rules with several bodies.
+fn visible_count(cover: &HashSet<String>) -> usize {
+    cover.iter().filter(|p| !p.contains("_MultBodyAggAux")).count()
 }
 
 /// Simple enum for depth_map values (int or bool).
@@ -1277,6 +1286,7 @@ fn get_flat_recursion_functor(
     depth: i64,
     cover: &BTreeSet<String>,
     direct_args_of: &HashMap<String, Vec<String>>,
+    ground: bool,
 ) -> String {
     let cover_set: HashSet<&String> = cover.iter().collect();
     let mut result_rules = Vec::new();
@@ -1301,6 +1311,9 @@ fn get_flat_recursion_functor(
             }
             let args_str = args.join(", ");
             result_rules.push(format!("{}_fr{} := {}_ROne({});", p, i, p, args_str));
+            if ground {
+                result_rules.push(format!("@Ground({}_fr{});", p, i));
+            }
         }
         result_rules.push(format!("{} := {}_fr{}();", p, p, depth));
     }
@@ -1445,16 +1458,16 @@ pub fn unfold_recursion(rules: &[Json], engine: &str) -> CompileResult<Vec<Json>
         }
     }
 
-    // Upstream defaults DuckDB to the *iterative* flat-recursion path, which
-    // relies on the runtime re-executing the `@Iteration` block until a stop
-    // signal (fixpoint). synalog compiles to a single static SQL script with no
-    // runtime loop, so the concertina can only expand `@Iteration` a fixed
-    // `repetitions` times — short of `depth` — which truncates the closure
-    // (e.g. a 6-hop path is dropped). The inline `horizontal` unrolling every
-    // other engine uses fully expands to `depth` at compile time and is
-    // correct, so DuckDB uses it too.
-    let default_iterative = false;
-    let default_depth: i64 = if engine == "duckdb" { 32 } else { 8 };
+    // Upstream defaults DuckDB to the iterative path; synalog unrolls DuckDB
+    // inline like the other engines (see DEVIATIONS.md). Presto iterates every
+    // recursion: it inlines each CTE where it is read, and an unrolled step
+    // reads the previous one twice, so the query it plans doubles with each
+    // step (depth 20 took minutes to plan). The iterative path stores each
+    // step in a table, which the run loops over (`synalog.plan`).
+    let default_iterative = engine == "presto";
+    // Upstream's default is 32 steps on DuckDB; 8 everywhere here, so a
+    // program means the same on every engine.
+    let default_depth: i64 = 8;
 
     let mut functors = Functors::new(rules);
     functors.unfold_recursions(&mut depth_map, default_iterative, default_depth)

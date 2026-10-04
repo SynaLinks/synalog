@@ -78,6 +78,10 @@ class SqliteRunner(Runner):
             2,
             lambda pattern, value: value is not None and re.search(pattern, value) is not None,
         )
+        # As synalog's own SQLite sessions: Unicode UPPER/LOWER, case-sensitive LIKE.
+        from synalog.runners import sqlite_semantics
+
+        sqlite_semantics(conn)
 
         class Session(_Session):
             split = staticmethod(SqliteRunner._split)

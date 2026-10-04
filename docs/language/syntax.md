@@ -36,6 +36,14 @@ OrderWithTax(order_id:, total:) :-
 | Membership | `x in [1, 2, 3]` |
 | Null tests | `x is null`, `x is not null` |
 
+### Strings
+
+A string is written in double quotes, `"north"`, single quotes, `'north'`, or triple double quotes, `"""north"""`. Only single-quoted strings take backslash escapes (`'it\'s'`, `'a\tb'`); a double-quoted string ends at the next `"`, so to put a double quote in a string, single-quote it or triple-quote it:
+
+```logica
+Quote(a: 'say "hi"', b: """say "hi" there""", c: 'it\'s');
+```
+
 !!! danger "Never compare against null with `!=`"
     `x != null` is silently broken (it follows SQL three-valued logic and never matches). Always use `x is null` / `x is not null`.
 

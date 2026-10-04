@@ -4,274 +4,136 @@ create schema if not exists logica_home;
 -- Empty logica type: logicarecord893574736;
 DO $$ BEGIN if not exists (select 'I(am) :- I(think)' from pg_type where typname = 'logicarecord893574736') then create type logicarecord893574736 as (nirvana numeric); end if; END $$;
 
-
-DO $$
-BEGIN
--- Logica type: logicarecord481217614
-if not exists (select 'I(am) :- I(think)' from pg_type where typname = 'logicarecord481217614') then create type logicarecord481217614 as (r logicarecord893574736); end if;
--- Logica type: logicarecord86796764
-if not exists (select 'I(am) :- I(think)' from pg_type where typname = 'logicarecord86796764') then create type logicarecord86796764 as (s text); end if;
-END $$;
-WITH t_30_Even_MultBodyAggAux_recursive_head_f1 AS (SELECT * FROM (
+WITH t_15_Even_MultBodyAggAux_f1 AS (SELECT * FROM (
   
     SELECT
       0 AS n
   
 ) AS UNUSED_TABLE_NAME  ),
-t_29_Even_r0 AS (SELECT
-  Even_MultBodyAggAux_recursive_head_f1.n AS n
+t_14_Even_fr0 AS (SELECT
+  Even_MultBodyAggAux_f1.n AS n
 FROM
-  t_30_Even_MultBodyAggAux_recursive_head_f1 AS Even_MultBodyAggAux_recursive_head_f1
-GROUP BY Even_MultBodyAggAux_recursive_head_f1.n ORDER BY n),
-t_28_Odd_recursive_head_f2 AS (SELECT
-  ((Even_r0.n) + (1)) AS n
+  t_15_Even_MultBodyAggAux_f1 AS Even_MultBodyAggAux_f1
+GROUP BY Even_MultBodyAggAux_f1.n ORDER BY n),
+t_13_Odd_fr1 AS (SELECT
+  ((Even_fr0.n) + (1)) AS n
 FROM
-  t_29_Even_r0 AS Even_r0
+  t_14_Even_fr0 AS Even_fr0
 WHERE
-  (Even_r0.n < 4)
-GROUP BY ((Even_r0.n) + (1))),
-t_27_Even_MultBodyAggAux_recursive_head_f2 AS (SELECT * FROM (
+  (Even_fr0.n < 4)
+GROUP BY ((Even_fr0.n) + (1))),
+t_12_Even_MultBodyAggAux_f5 AS (SELECT * FROM (
   
     SELECT
-      ((Odd_recursive_head_f2.n) + (1)) AS n
+      ((Odd_fr1.n) + (1)) AS n
     FROM
-      t_28_Odd_recursive_head_f2 AS Odd_recursive_head_f2
+      t_13_Odd_fr1 AS Odd_fr1
     WHERE
-      (Odd_recursive_head_f2.n < 4)
+      (Odd_fr1.n < 4)
    UNION ALL
   
     SELECT
       0 AS n
   
 ) AS UNUSED_TABLE_NAME  ),
-t_26_Even_r1 AS (SELECT
-  Even_MultBodyAggAux_recursive_head_f2.n AS n
+t_11_Even_fr2 AS (SELECT
+  Even_MultBodyAggAux_f5.n AS n
 FROM
-  t_27_Even_MultBodyAggAux_recursive_head_f2 AS Even_MultBodyAggAux_recursive_head_f2
-GROUP BY Even_MultBodyAggAux_recursive_head_f2.n ORDER BY n),
-t_25_Odd_recursive_head_f3 AS (SELECT
-  ((Even_r1.n) + (1)) AS n
+  t_12_Even_MultBodyAggAux_f5 AS Even_MultBodyAggAux_f5
+GROUP BY Even_MultBodyAggAux_f5.n ORDER BY n),
+t_10_Odd_fr3 AS (SELECT
+  ((Even_fr2.n) + (1)) AS n
 FROM
-  t_26_Even_r1 AS Even_r1
+  t_11_Even_fr2 AS Even_fr2
 WHERE
-  (Even_r1.n < 4)
-GROUP BY ((Even_r1.n) + (1))),
-t_24_Even_MultBodyAggAux_recursive_head_f3 AS (SELECT * FROM (
+  (Even_fr2.n < 4)
+GROUP BY ((Even_fr2.n) + (1))),
+t_9_Even_MultBodyAggAux_f9 AS (SELECT * FROM (
   
     SELECT
-      ((Odd_recursive_head_f3.n) + (1)) AS n
+      ((Odd_fr3.n) + (1)) AS n
     FROM
-      t_25_Odd_recursive_head_f3 AS Odd_recursive_head_f3
+      t_10_Odd_fr3 AS Odd_fr3
     WHERE
-      (Odd_recursive_head_f3.n < 4)
+      (Odd_fr3.n < 4)
    UNION ALL
   
     SELECT
       0 AS n
   
 ) AS UNUSED_TABLE_NAME  ),
-t_23_Even_r2 AS (SELECT
-  Even_MultBodyAggAux_recursive_head_f3.n AS n
+t_8_Even_fr4 AS (SELECT
+  Even_MultBodyAggAux_f9.n AS n
 FROM
-  t_24_Even_MultBodyAggAux_recursive_head_f3 AS Even_MultBodyAggAux_recursive_head_f3
-GROUP BY Even_MultBodyAggAux_recursive_head_f3.n ORDER BY n),
-t_22_Odd_recursive_head_f4 AS (SELECT
-  ((Even_r2.n) + (1)) AS n
+  t_9_Even_MultBodyAggAux_f9 AS Even_MultBodyAggAux_f9
+GROUP BY Even_MultBodyAggAux_f9.n ORDER BY n),
+t_7_Odd_fr5 AS (SELECT
+  ((Even_fr4.n) + (1)) AS n
 FROM
-  t_23_Even_r2 AS Even_r2
+  t_8_Even_fr4 AS Even_fr4
 WHERE
-  (Even_r2.n < 4)
-GROUP BY ((Even_r2.n) + (1))),
-t_21_Even_MultBodyAggAux_recursive_head_f4 AS (SELECT * FROM (
+  (Even_fr4.n < 4)
+GROUP BY ((Even_fr4.n) + (1))),
+t_6_Even_MultBodyAggAux_f13 AS (SELECT * FROM (
   
     SELECT
-      ((Odd_recursive_head_f4.n) + (1)) AS n
+      ((Odd_fr5.n) + (1)) AS n
     FROM
-      t_22_Odd_recursive_head_f4 AS Odd_recursive_head_f4
+      t_7_Odd_fr5 AS Odd_fr5
     WHERE
-      (Odd_recursive_head_f4.n < 4)
+      (Odd_fr5.n < 4)
    UNION ALL
   
     SELECT
       0 AS n
   
 ) AS UNUSED_TABLE_NAME  ),
-t_20_Even_r3 AS (SELECT
-  Even_MultBodyAggAux_recursive_head_f4.n AS n
+t_5_Even_fr6 AS (SELECT
+  Even_MultBodyAggAux_f13.n AS n
 FROM
-  t_21_Even_MultBodyAggAux_recursive_head_f4 AS Even_MultBodyAggAux_recursive_head_f4
-GROUP BY Even_MultBodyAggAux_recursive_head_f4.n ORDER BY n),
-t_19_Odd_recursive_head_f5 AS (SELECT
-  ((Even_r3.n) + (1)) AS n
+  t_6_Even_MultBodyAggAux_f13 AS Even_MultBodyAggAux_f13
+GROUP BY Even_MultBodyAggAux_f13.n ORDER BY n),
+t_4_Odd_fr7 AS (SELECT
+  ((Even_fr6.n) + (1)) AS n
 FROM
-  t_20_Even_r3 AS Even_r3
+  t_5_Even_fr6 AS Even_fr6
 WHERE
-  (Even_r3.n < 4)
-GROUP BY ((Even_r3.n) + (1))),
-t_18_Even_MultBodyAggAux_recursive_head_f5 AS (SELECT * FROM (
+  (Even_fr6.n < 4)
+GROUP BY ((Even_fr6.n) + (1))),
+t_3_Even_MultBodyAggAux_f17 AS (SELECT * FROM (
   
     SELECT
-      ((Odd_recursive_head_f5.n) + (1)) AS n
+      ((Odd_fr7.n) + (1)) AS n
     FROM
-      t_19_Odd_recursive_head_f5 AS Odd_recursive_head_f5
+      t_4_Odd_fr7 AS Odd_fr7
     WHERE
-      (Odd_recursive_head_f5.n < 4)
+      (Odd_fr7.n < 4)
    UNION ALL
   
     SELECT
       0 AS n
   
 ) AS UNUSED_TABLE_NAME  ),
-t_17_Even_r4 AS (SELECT
-  Even_MultBodyAggAux_recursive_head_f5.n AS n
+t_2_Even_fr8 AS (SELECT
+  Even_MultBodyAggAux_f17.n AS n
 FROM
-  t_18_Even_MultBodyAggAux_recursive_head_f5 AS Even_MultBodyAggAux_recursive_head_f5
-GROUP BY Even_MultBodyAggAux_recursive_head_f5.n ORDER BY n),
-t_16_Odd_recursive_head_f6 AS (SELECT
-  ((Even_r4.n) + (1)) AS n
+  t_3_Even_MultBodyAggAux_f17 AS Even_MultBodyAggAux_f17
+GROUP BY Even_MultBodyAggAux_f17.n ORDER BY n),
+t_1_Odd_fr9 AS (SELECT
+  ((Even_fr8.n) + (1)) AS n
 FROM
-  t_17_Even_r4 AS Even_r4
+  t_2_Even_fr8 AS Even_fr8
 WHERE
-  (Even_r4.n < 4)
-GROUP BY ((Even_r4.n) + (1))),
-t_15_Even_MultBodyAggAux_recursive_head_f6 AS (SELECT * FROM (
+  (Even_fr8.n < 4)
+GROUP BY ((Even_fr8.n) + (1))),
+t_0_Even_MultBodyAggAux_f20 AS (SELECT * FROM (
   
     SELECT
-      ((Odd_recursive_head_f6.n) + (1)) AS n
+      ((Odd_fr9.n) + (1)) AS n
     FROM
-      t_16_Odd_recursive_head_f6 AS Odd_recursive_head_f6
+      t_1_Odd_fr9 AS Odd_fr9
     WHERE
-      (Odd_recursive_head_f6.n < 4)
-   UNION ALL
-  
-    SELECT
-      0 AS n
-  
-) AS UNUSED_TABLE_NAME  ),
-t_14_Even_r5 AS (SELECT
-  Even_MultBodyAggAux_recursive_head_f6.n AS n
-FROM
-  t_15_Even_MultBodyAggAux_recursive_head_f6 AS Even_MultBodyAggAux_recursive_head_f6
-GROUP BY Even_MultBodyAggAux_recursive_head_f6.n ORDER BY n),
-t_13_Odd_recursive_head_f7 AS (SELECT
-  ((Even_r5.n) + (1)) AS n
-FROM
-  t_14_Even_r5 AS Even_r5
-WHERE
-  (Even_r5.n < 4)
-GROUP BY ((Even_r5.n) + (1))),
-t_12_Even_MultBodyAggAux_recursive_head_f7 AS (SELECT * FROM (
-  
-    SELECT
-      ((Odd_recursive_head_f7.n) + (1)) AS n
-    FROM
-      t_13_Odd_recursive_head_f7 AS Odd_recursive_head_f7
-    WHERE
-      (Odd_recursive_head_f7.n < 4)
-   UNION ALL
-  
-    SELECT
-      0 AS n
-  
-) AS UNUSED_TABLE_NAME  ),
-t_11_Even_r6 AS (SELECT
-  Even_MultBodyAggAux_recursive_head_f7.n AS n
-FROM
-  t_12_Even_MultBodyAggAux_recursive_head_f7 AS Even_MultBodyAggAux_recursive_head_f7
-GROUP BY Even_MultBodyAggAux_recursive_head_f7.n ORDER BY n),
-t_10_Odd_recursive_head_f8 AS (SELECT
-  ((Even_r6.n) + (1)) AS n
-FROM
-  t_11_Even_r6 AS Even_r6
-WHERE
-  (Even_r6.n < 4)
-GROUP BY ((Even_r6.n) + (1))),
-t_9_Even_MultBodyAggAux_recursive_head_f8 AS (SELECT * FROM (
-  
-    SELECT
-      ((Odd_recursive_head_f8.n) + (1)) AS n
-    FROM
-      t_10_Odd_recursive_head_f8 AS Odd_recursive_head_f8
-    WHERE
-      (Odd_recursive_head_f8.n < 4)
-   UNION ALL
-  
-    SELECT
-      0 AS n
-  
-) AS UNUSED_TABLE_NAME  ),
-t_8_Even_r7 AS (SELECT
-  Even_MultBodyAggAux_recursive_head_f8.n AS n
-FROM
-  t_9_Even_MultBodyAggAux_recursive_head_f8 AS Even_MultBodyAggAux_recursive_head_f8
-GROUP BY Even_MultBodyAggAux_recursive_head_f8.n ORDER BY n),
-t_7_Odd_recursive_head_f9 AS (SELECT
-  ((Even_r7.n) + (1)) AS n
-FROM
-  t_8_Even_r7 AS Even_r7
-WHERE
-  (Even_r7.n < 4)
-GROUP BY ((Even_r7.n) + (1))),
-t_6_Even_MultBodyAggAux_recursive_head_f9 AS (SELECT * FROM (
-  
-    SELECT
-      ((Odd_recursive_head_f9.n) + (1)) AS n
-    FROM
-      t_7_Odd_recursive_head_f9 AS Odd_recursive_head_f9
-    WHERE
-      (Odd_recursive_head_f9.n < 4)
-   UNION ALL
-  
-    SELECT
-      0 AS n
-  
-) AS UNUSED_TABLE_NAME  ),
-t_5_Even_r8 AS (SELECT
-  Even_MultBodyAggAux_recursive_head_f9.n AS n
-FROM
-  t_6_Even_MultBodyAggAux_recursive_head_f9 AS Even_MultBodyAggAux_recursive_head_f9
-GROUP BY Even_MultBodyAggAux_recursive_head_f9.n ORDER BY n),
-t_4_Odd_recursive_head_f10 AS (SELECT
-  ((Even_r8.n) + (1)) AS n
-FROM
-  t_5_Even_r8 AS Even_r8
-WHERE
-  (Even_r8.n < 4)
-GROUP BY ((Even_r8.n) + (1))),
-t_3_Even_MultBodyAggAux_recursive_head_f10 AS (SELECT * FROM (
-  
-    SELECT
-      ((Odd_recursive_head_f10.n) + (1)) AS n
-    FROM
-      t_4_Odd_recursive_head_f10 AS Odd_recursive_head_f10
-    WHERE
-      (Odd_recursive_head_f10.n < 4)
-   UNION ALL
-  
-    SELECT
-      0 AS n
-  
-) AS UNUSED_TABLE_NAME  ),
-t_2_Even_r9 AS (SELECT
-  Even_MultBodyAggAux_recursive_head_f10.n AS n
-FROM
-  t_3_Even_MultBodyAggAux_recursive_head_f10 AS Even_MultBodyAggAux_recursive_head_f10
-GROUP BY Even_MultBodyAggAux_recursive_head_f10.n ORDER BY n),
-t_1_Odd_recursive_head_f11 AS (SELECT
-  ((Even_r9.n) + (1)) AS n
-FROM
-  t_2_Even_r9 AS Even_r9
-WHERE
-  (Even_r9.n < 4)
-GROUP BY ((Even_r9.n) + (1))),
-t_0_Even_MultBodyAggAux_recursive_head_f11 AS (SELECT * FROM (
-  
-    SELECT
-      ((Odd_recursive_head_f11.n) + (1)) AS n
-    FROM
-      t_1_Odd_recursive_head_f11 AS Odd_recursive_head_f11
-    WHERE
-      (Odd_recursive_head_f11.n < 4)
+      (Odd_fr9.n < 4)
    UNION ALL
   
     SELECT
@@ -279,7 +141,7 @@ t_0_Even_MultBodyAggAux_recursive_head_f11 AS (SELECT * FROM (
   
 ) AS UNUSED_TABLE_NAME  )
 SELECT
-  Even_MultBodyAggAux_recursive_head_f11.n AS n
+  Even_MultBodyAggAux_f20.n AS n
 FROM
-  t_0_Even_MultBodyAggAux_recursive_head_f11 AS Even_MultBodyAggAux_recursive_head_f11
-GROUP BY Even_MultBodyAggAux_recursive_head_f11.n ORDER BY n;
+  t_0_Even_MultBodyAggAux_f20 AS Even_MultBodyAggAux_f20
+GROUP BY Even_MultBodyAggAux_f20.n ORDER BY n;

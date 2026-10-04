@@ -1,0 +1,2 @@
+SELECT
+  ELEMENT_AT(ARRAY[1, 2], 5 + 1) AS e;

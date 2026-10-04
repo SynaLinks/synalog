@@ -1,0 +1,4 @@
+SELECT
+  CAST(x_3 AS VARCHAR) AS s
+FROM
+  UNNEST(ARRAY[9, 10]) as pushkin(x_3) ORDER BY s;

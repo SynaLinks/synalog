@@ -1,3 +1,3 @@
 SELECT
   CAST(12 AS STRING) AS s,
-  ((CAST("12" AS BIGINT)) + (1)) AS n;
+  ((CAST(ROUND("12") AS BIGINT)) + (1)) AS n;

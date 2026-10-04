@@ -99,6 +99,19 @@ pub trait Dialect {
     /// Field/subscript access on a record or table.
     fn subscript(&self, record: &str, subscript: &str, record_is_table: bool) -> String;
 
+    /// A record's field name as the dialect writes it in a record literal, a
+    /// row type and a field access: quoted when it is a keyword (`inner`) or
+    /// not a plain identifier, like a column.
+    fn record_field(&self, name: &str) -> String {
+        let plain = name.chars().next().is_some_and(|c| c.is_ascii_alphabetic() || c == '_')
+            && name.chars().all(|c| c.is_ascii_alphanumeric() || c == '_');
+        if name == "*" || (plain && !is_sql_keyword(name)) {
+            name.to_string()
+        } else {
+            self.quote_identifier(name)
+        }
+    }
+
     /// Logica source code for the dialect's standard library.
     fn library_program(&self) -> &'static str;
 
@@ -187,7 +200,7 @@ pub trait Dialect {
                 items.sort_by(|a, b| a.0.cmp(b.0));
                 let parts: Vec<String> = items
                     .iter()
-                    .map(|(k, t)| format!("{} {}", k, self.row_field_type(t)))
+                    .map(|(k, t)| format!("{} {}", self.record_field(k), self.row_field_type(t)))
                     .collect();
                 format!("ROW({})", parts.join(", "))
             }
@@ -304,7 +317,7 @@ impl Dialect for BigQueryDialect {
     }
 
     fn subscript(&self, record: &str, subscript: &str, _record_is_table: bool) -> String {
-        format!("{}.{}", record, subscript)
+        format!("{}.{}", record, self.record_field(subscript))
     }
 
     fn library_program(&self) -> &'static str {
@@ -345,7 +358,7 @@ Array(a) = SqlExpr(
 
     fn record_literal(&self, fields: &[(&str, &str, &Type)]) -> String {
         let pairs: Vec<String> = fields.iter()
-            .map(|(k, v, _)| format!("{} AS {}", v, k)).collect();
+            .map(|(k, v, _)| format!("{} AS {}", v, self.record_field(k))).collect();
         format!("STRUCT({})", pairs.join(", "))
     }
 
@@ -369,6 +382,13 @@ impl Dialect for SqLiteDialect {
 
     fn built_in_functions(&self) -> HashMap<&'static str, &'static str> {
         let mut m = HashMap::new();
+        // SQLite's CAST truncates a fraction; the other engines round it (half
+        // away from zero). Only a float is rounded: an integer goes through
+        // as it is, without passing through a double.
+        m.insert(
+            "ToInt64",
+            "(CASE WHEN typeof({0}) = 'real' THEN CAST(ROUND({0}) AS INTEGER) ELSE CAST({0} AS INTEGER) END)",
+        );
         m.insert("Set", "DistinctListAgg({0})");
         m.insert("Element", "JSON_EXTRACT({0}, '$[' || {1} || ']')");
         m.insert("Range", "(select json_group_array(n) from (with recursive t as(select 0 as n union all select n + 1 as n from t where n + 1 < {0}) select n from t) where n < {0})");
@@ -397,6 +417,11 @@ impl Dialect for SqLiteDialect {
         m.insert("%", "(%s) % (%s)");
         m.insert("in", "IN_LIST(%s, %s)");
         m
+    }
+
+    fn record_field(&self, name: &str) -> String {
+        // A record is a JSON object: its field names are keys, never quoted.
+        name.to_string()
     }
 
     fn subscript(&self, record: &str, subscript: &str, record_is_table: bool) -> String {
@@ -492,6 +517,7 @@ impl Dialect for PostgreSqlDialect {
         let mut m = HashMap::new();
         m.insert("Range", "(SELECT ARRAY_AGG(x) FROM GENERATE_SERIES(0, {0} - 1) as x)");
         m.insert("RangeOf", "(SELECT ARRAY_AGG(x) FROM GENERATE_SERIES(0, ARRAY_LENGTH({0}, 1) - 1) as x)");
+        m.insert("StringAgg", "STRING_AGG(CAST({0} AS TEXT), ',')");
         m.insert("ToString", "CAST(%s AS TEXT)");
         m.insert("ToInt64", "CAST(%s AS BIGINT)");
         m.insert("ToFloat64", "CAST(%s AS double precision)");
@@ -514,7 +540,7 @@ impl Dialect for PostgreSqlDialect {
     }
 
     fn subscript(&self, record: &str, subscript: &str, _record_is_table: bool) -> String {
-        format!("({}).{}", record, subscript)
+        format!("({}).{}", record, self.record_field(subscript))
     }
 
     fn library_program(&self) -> &'static str {
@@ -627,6 +653,7 @@ impl Dialect for TrinoDialect {
         let mut m = HashMap::new();
         m.insert("Range", "SEQUENCE(0, %s - 1)");
         m.insert("ToString", "CAST(%s AS VARCHAR)");
+        m.insert("StringAgg", "(CASE WHEN COUNT({0}) > 0 THEN ARRAY_JOIN(ARRAY_AGG(CAST({0} AS VARCHAR)), ',') END)");
         m.insert("ToInt64", "CAST(%s AS BIGINT)");
         m.insert("ToFloat64", "CAST(%s AS DOUBLE)");
         m.insert("AnyValue", "ARBITRARY(%s)");
@@ -650,7 +677,7 @@ impl Dialect for TrinoDialect {
     }
 
     fn subscript(&self, record: &str, subscript: &str, _record_is_table: bool) -> String {
-        format!("{}.{}", record, subscript)
+        format!("{}.{}", record, self.record_field(subscript))
     }
 
     fn library_program(&self) -> &'static str {
@@ -694,7 +721,7 @@ Array(a) = SqlExpr(
         let vals: Vec<&str> = fs.iter().map(|t| t.1).collect();
         let types: Vec<String> = fs
             .iter()
-            .map(|t| format!("{} {}", t.0, self.row_field_type(t.2)))
+            .map(|t| format!("{} {}", self.record_field(t.0), self.row_field_type(t.2)))
             .collect();
         format!("CAST(ROW({}) AS ROW({}))", vals.join(", "), types.join(", "))
     }
@@ -726,6 +753,7 @@ impl Dialect for PrestoDialect {
         let mut m = HashMap::new();
         m.insert("Range", "SEQUENCE(0, %s - 1)");
         m.insert("ToString", "CAST(%s AS VARCHAR)");
+        m.insert("StringAgg", "(CASE WHEN COUNT({0}) > 0 THEN ARRAY_JOIN(ARRAY_AGG(CAST({0} AS VARCHAR)), ',') END)");
         m.insert("ToInt64", "CAST(%s AS BIGINT)");
         m.insert("ToFloat64", "CAST(%s AS DOUBLE)");
         m.insert("AnyValue", "ARBITRARY(%s)");
@@ -749,7 +777,7 @@ impl Dialect for PrestoDialect {
     }
 
     fn subscript(&self, record: &str, subscript: &str, _record_is_table: bool) -> String {
-        format!("{}.{}", record, subscript)
+        format!("{}.{}", record, self.record_field(subscript))
     }
 
     fn library_program(&self) -> &'static str {
@@ -793,7 +821,7 @@ Array(a) = SqlExpr(
         let vals: Vec<&str> = fs.iter().map(|t| t.1).collect();
         let types: Vec<String> = fs
             .iter()
-            .map(|t| format!("{} {}", t.0, self.row_field_type(t.2)))
+            .map(|t| format!("{} {}", self.record_field(t.0), self.row_field_type(t.2)))
             .collect();
         format!("CAST(ROW({}) AS ROW({}))", vals.join(", "), types.join(", "))
     }
@@ -829,7 +857,10 @@ impl Dialect for DatabricksDialect {
     fn built_in_functions(&self) -> HashMap<&'static str, &'static str> {
         let mut m = HashMap::new();
         m.insert("ToString", "CAST(%s AS STRING)");
-        m.insert("ToInt64", "CAST(%s AS BIGINT)");
+        m.insert("StringAgg", "(CASE WHEN COUNT({0}) > 0 THEN ARRAY_JOIN(COLLECT_LIST(CAST({0} AS STRING)), ',') END)");
+        // Spark's CAST truncates a fraction; the other engines round it (half
+        // away from zero), as ROUND does. ROUND keeps an integer as it is.
+        m.insert("ToInt64", "CAST(ROUND({0}) AS BIGINT)");
         m.insert("ToFloat64", "CAST(%s AS DOUBLE)");
         m.insert("AnyValue", "ANY_VALUE(%s)");
         // `::` cast is unavailable on Spark and superfluous on Databricks; CAST
@@ -871,7 +902,7 @@ impl Dialect for DatabricksDialect {
     }
 
     fn subscript(&self, record: &str, subscript: &str, _record_is_table: bool) -> String {
-        format!("{}.{}", record, subscript)
+        format!("{}.{}", record, self.record_field(subscript))
     }
 
     fn library_program(&self) -> &'static str {
@@ -913,7 +944,7 @@ Array(a) = SqlExpr(
 
     fn record_literal(&self, fields: &[(&str, &str, &Type)]) -> String {
         let pairs: Vec<String> = fields.iter()
-            .map(|(k, v, _)| format!("{} AS {}", v, k)).collect();
+            .map(|(k, v, _)| format!("{} AS {}", v, self.record_field(k))).collect();
         format!("STRUCT({})", pairs.join(", "))
     }
 
@@ -974,7 +1005,7 @@ impl Dialect for DuckDbDialect {
     }
 
     fn subscript(&self, record: &str, subscript: &str, _record_is_table: bool) -> String {
-        format!("{}.{}", record, subscript)
+        format!("{}.{}", record, self.record_field(subscript))
     }
 
     fn library_program(&self) -> &'static str {
@@ -1103,7 +1134,7 @@ ISum(x) = SqlExpr("SUM({x})", {x:}) :- Error("ISum is to be used only in Clingo.
 
     fn record_literal(&self, fields: &[(&str, &str, &Type)]) -> String {
         let pairs: Vec<String> = fields.iter()
-            .map(|(k, v, _)| format!("{}: {}", k, v)).collect();
+            .map(|(k, v, _)| format!("{}: {}", self.record_field(k), v)).collect();
         format!("{{{}}}", pairs.join(", "))
     }
 

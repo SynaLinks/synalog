@@ -1,0 +1,2 @@
+SELECT
+  (CONCAT("n=", CAST(42 AS STRING))) AS s;

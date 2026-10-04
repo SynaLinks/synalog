@@ -1,0 +1,2 @@
+SELECT
+  ((CAST(ROUND("42") AS BIGINT)) + (1)) AS n;

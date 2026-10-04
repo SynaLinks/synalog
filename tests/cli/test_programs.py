@@ -23,6 +23,7 @@ Run with: python -m pytest tests/cli/test_programs.py
 from __future__ import annotations
 
 import ast
+import json
 import math
 import re
 from pathlib import Path
@@ -53,8 +54,19 @@ def check(source: str, root: str) -> tuple[list[str], list[str]]:
         return [str(e)], []
 
 
+def decoded(value):
+    """SQLite returns a list as JSON text: the list itself."""
+    if isinstance(value, str) and value.startswith("["):
+        try:
+            return json.loads(value)
+        except ValueError:
+            return value
+    return value
+
+
 def same(actual, expected) -> bool:
-    """Rows equal, floats up to 1e-9."""
+    """Rows equal, floats up to 1e-9, lists whatever their representation."""
+    actual, expected = decoded(actual), decoded(expected)
     if isinstance(actual, (list, tuple)) and isinstance(expected, (list, tuple)):
         return len(actual) == len(expected) and all(same(a, e) for a, e in zip(actual, expected))
     if isinstance(actual, float) or isinstance(expected, float):

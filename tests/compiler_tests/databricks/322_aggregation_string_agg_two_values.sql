@@ -1,0 +1,19 @@
+WITH t_1_V AS (SELECT * FROM (
+  
+    SELECT
+      "a" AS s
+   UNION ALL
+  
+    SELECT
+      "b" AS s
+  
+) AS UNUSED_TABLE_NAME  ),
+t_0_J AS (SELECT
+  (CASE WHEN COUNT(V.s) > 0 THEN ARRAY_JOIN(COLLECT_LIST(CAST(V.s AS STRING)), ',') END) AS j
+FROM
+  t_1_V AS V)
+SELECT
+  SIZE(SPLIT(J.j, ",")) AS parts,
+  LENGTH(J.j) AS length
+FROM
+  t_0_J AS J;

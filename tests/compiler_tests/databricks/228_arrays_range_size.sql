@@ -1,0 +1,2 @@
+SELECT
+  SIZE(SEQUENCE(0, 5 - 1)) AS n;

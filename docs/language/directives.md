@@ -47,9 +47,7 @@ Enables recursion on a predicate, with a maximum number of iterations:
 @Recursive(AllManagers, 20);
 ```
 
-The full signature is `@Recursive(Pred, iterations, stop?, satellites?)`. See [Recursion](recursion.md) for usage.
-
-The number of iterations is a whole number, 1 or more, or `-1`: until a step changes nothing. It bounds the recursion; Synalog stops earlier when the recursion converges. See [how recursion runs](recursion.md#how-recursion-runs).
+It takes the predicate and the number of iterations, nothing else. The number of iterations is optional (8 by default), a whole number, 1 or more, or `-1`: until a step changes nothing. It bounds the recursion; Synalog stops earlier when the recursion converges. See [how recursion runs](recursion.md#how-recursion-runs).
 
 ## `@Ground`
 

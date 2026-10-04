@@ -228,6 +228,15 @@ class Session:
         self.close()
 
 
+def sqlite_semantics(conn: sqlite3.Connection) -> None:
+    """Make SQLite's string functions behave as on the other engines: UPPER and
+    LOWER convert every letter, not only ASCII ones (`Upper("café")`), and
+    LIKE tells upper from lower case."""
+    conn.create_function("UPPER", 1, lambda s: s.upper() if isinstance(s, str) else s, deterministic=True)
+    conn.create_function("LOWER", 1, lambda s: s.lower() if isinstance(s, str) else s, deterministic=True)
+    conn.execute("PRAGMA case_sensitive_like = ON")
+
+
 class SqliteSession(Session):
     engine = "sqlite"
 
@@ -249,6 +258,7 @@ class SqliteSession(Session):
             return value is not None and re.search(pattern, value) is not None
 
         self.conn.create_function("REGEXP", 2, _regexp)
+        sqlite_semantics(self.conn)
         for table, path in loads:
             _load_sqlite(self.conn, table, path)
 
