@@ -1,0 +1,30 @@
+# The component of 11, named by its smallest node.
+# Expect: rows Q = [(11,)]
+Node(n: 1);
+Node(n: 2);
+Node(n: 3);
+Node(n: 4);
+Node(n: 5);
+Node(n: 6);
+Node(n: 7);
+Node(n: 8);
+Node(n: 9);
+Node(n: 10);
+Node(n: 11);
+Node(n: 12);
+E(a: 1, b: 2);
+E(a: 2, b: 3);
+E(a: 3, b: 1);
+E(a: 3, b: 4);
+E(a: 5, b: 6);
+E(a: 6, b: 7);
+E(a: 7, b: 8);
+E(a: 8, b: 5);
+E(a: 9, b: 10);
+E(a: 4, b: 2);
+U(a:, b:) distinct :- E(a:, b:) | E(a: b, b: a);
+@Recursive(Conn, 12);
+Conn(a:, b:) distinct :- U(a:, b:);
+Conn(a:, b: c) distinct :- Conn(a:, b:), U(a: b, b: c);
+Comp(n:, c? Min= m) distinct :- Node(n:), (Conn(a: n, b: m) | m == n);
+Q(c:) :- Comp(n: 11, c:);

@@ -415,6 +415,42 @@ fn dnf(formula: &Nnf) -> Result<Vec<Vec<Lit>>> {
     Ok(alternatives)
 }
 
+/// A function (a predicate applied to all its columns but the last) and a
+/// column that `var` is an argument of in `lit`, at any depth: a function is
+/// partial, so `var` ranges over where it is defined. A relation gives no such
+/// range: `∀ y, Parent x y` is about every `y`, not those of `Parent`.
+fn domain_of(lit: &Lit, var: &str, schema: &Schema) -> Option<(String, String)> {
+    fn in_expr(expr: &Expr, var: &str, schema: &Schema) -> Option<(String, String)> {
+        match expr {
+            Expr::App(pred, args) => {
+                let columns = schema.get(pred)?;
+                let as_function = args.len() + 1 == columns.len();
+                args.iter()
+                    .position(|a| as_function && matches!(a, Expr::Var(v) if v == var))
+                    .and_then(|i| columns.get(i).map(|c| (pred.clone(), c.clone())))
+                    .or_else(|| args.iter().find_map(|a| in_expr(a, var, schema)))
+            }
+            Expr::Binary(_, left, right) => in_expr(left, var, schema).or_else(|| in_expr(right, var, schema)),
+            Expr::Not(inner) | Expr::Neg(inner) => in_expr(inner, var, schema),
+            Expr::Forall(vars, body) | Expr::Exists(vars, body) | Expr::Sum(vars, body) => {
+                if vars.iter().any(|v| v == var) { None } else { in_expr(body, var, schema) }
+            }
+            Expr::Var(_) | Expr::Num(_) | Expr::Str(_) => None,
+        }
+    }
+    fn in_nnf(nnf: &Nnf, var: &str, schema: &Schema) -> Option<(String, String)> {
+        match nnf {
+            Nnf::And(parts) | Nnf::Or(parts) => parts.iter().find_map(|p| in_nnf(p, var, schema)),
+            Nnf::Lit(lit) => domain_of(lit, var, schema),
+        }
+    }
+    match lit {
+        Lit::Atom { args, .. } => args.iter().find_map(|a| in_expr(a, var, schema)),
+        Lit::Cmp { left, right, .. } => in_expr(left, var, schema).or_else(|| in_expr(right, var, schema)),
+        Lit::NotExists { inner, .. } => in_nnf(inner, var, schema),
+    }
+}
+
 /// Writes rules. One conjunction of literals becomes one rule body.
 struct Emitter<'a> {
     schema: &'a Schema,
@@ -476,7 +512,29 @@ impl Emitter<'_> {
 
     /// Write `lits` as a rule body whose head exposes `head_vars`.
     fn conjunct(&mut self, lits: &[Lit], head_vars: &[String]) -> Result<Vec<String>> {
-        let mut body = Body::default();
+        self.conjunct_seeded(lits, head_vars, &Body::default())?.map_err(|var| {
+            TranslateError::Unsupported(format!(
+                "variable '{}' is not bound by a predicate, so it has no values to check",
+                display(&var)
+            ))
+        })
+    }
+
+    /// Write `lits` as a rule body after the literals of `seed`, or name a
+    /// variable the body cannot give a value to.
+    fn conjunct_seeded(
+        &mut self,
+        lits: &[Lit],
+        head_vars: &[String],
+        seed: &Body,
+    ) -> Result<std::result::Result<Vec<String>, String>> {
+        let mut body = Body {
+            atoms: seed.atoms.clone(),
+            filters: seed.filters.clone(),
+            bound: seed.bound.clone(),
+            used: Vec::new(),
+            equalities: seed.equalities.clone(),
+        };
         // Positive atoms first: they bind what the other literals use.
         for lit in lits {
             if let Lit::Atom { pred, args, positive: true } = lit {
@@ -510,8 +568,31 @@ impl Emitter<'_> {
                     } else {
                         params.iter().map(|p| format!("{}: {}", p, p)).collect::<Vec<_>>().join(", ")
                     };
+                    // A variable the nested formula shares with this rule but
+                    // only compares (`∃ u, P u ∧ u ≠ x`) takes its values from
+                    // this rule's literals so far: the helper then ranges over
+                    // this rule's rows, which is all its result is joined with.
+                    body.bind_equalities();
+                    let seed = Body {
+                        atoms: body.atoms.clone(),
+                        filters: body.filters.clone(),
+                        bound: body.bound.clone(),
+                        used: Vec::new(),
+                        equalities: body.equalities.clone(),
+                    };
                     for conjunct in dnf(inner)? {
-                        let inner_body = self.conjunct(&conjunct, params)?;
+                        let saved = (self.helpers, self.fresh, self.rules.len());
+                        let inner_body = match self.conjunct_seeded(&conjunct, params, &Body::default())? {
+                            Ok(inner_body) => inner_body,
+                            Err(_) => {
+                                (self.helpers, self.fresh) = (saved.0, saved.1);
+                                self.rules.truncate(saved.2);
+                                match self.conjunct_seeded(&conjunct, params, &seed)? {
+                                    Ok(inner_body) => inner_body,
+                                    Err(var) => return Ok(Err(var)),
+                                }
+                            }
+                        };
                         if inner_body.is_empty() {
                             return unsupported("a quantifier ranges over no predicate");
                         }
@@ -529,16 +610,21 @@ impl Emitter<'_> {
         }
 
         body.bind_equalities();
-        for var in head_vars.iter().chain(body.used.iter()) {
-            if !body.bound.contains(var) {
-                return unsupported(format!(
-                    "variable '{}' is not bound by a predicate, so it has no values to check",
-                    display(var)
-                ));
+        for var in head_vars.iter().chain(body.used.iter()).cloned().collect::<Vec<_>>() {
+            if body.bound.contains(&var) {
+                continue;
             }
+            // A variable that only a nested formula applies a predicate to
+            // (`∀ e, ∃ o, Pay o ≥ Pay e`) ranges over where it is defined.
+            let Some((pred, column)) = lits.iter().find_map(|l| domain_of(l, &var, self.schema)) else {
+                return Ok(Err(var));
+            };
+            body.atoms.push(format!("{}({}: {})", pred, column, var));
+            body.bound.insert(var);
+            body.bind_equalities();
         }
         body.atoms.append(&mut body.filters);
-        Ok(body.atoms)
+        Ok(Ok(body.atoms))
     }
 
     /// `pred` applied to all its columns.
@@ -743,6 +829,27 @@ mod tests {
 
     fn error(statement: &str) -> TranslateError {
         translate(&parse(statement).unwrap(), &schema(), "Assert").unwrap_err()
+    }
+
+    #[test]
+    fn a_nested_formula_comparing_an_outer_variable_is_checked() {
+        // `x` is only compared inside the ∃: the helper takes it from the
+        // outer atom.
+        let r = rules("∀ x y, Parent x y → ∃ u v, Parent u v ∧ u ≠ x");
+        assert!(r.contains("Assert_1(x: x) distinct :- Parent(x: x, y: y), Parent(x: q1__u, y: q2__v), q1__u != x;"), "{r}");
+        // A ∀ inside an ∃.
+        let r = rules("∀ x y, Parent x y → ∃ z, Ancestor x z ∧ ∀ w, Ancestor x w → Ancestor z w ∨ z = w");
+        assert!(r.contains("~Assert_"), "{r}");
+        // A variable only a nested function applies to ranges over where the
+        // function is defined.
+        let r = rules("∀ h, ∃ e, Prior e ≥ Prior h");
+        assert!(r.contains("Prior(h: h)"), "{r}");
+        let r = rules("∃ m, ∀ o, Prior o ≤ Prior m");
+        assert!(r.contains("Prior(h: q1__m)"), "{r}");
+        // A variable only compared still ranges over nothing.
+        assert!(matches!(error("∀ x, x > 0"), TranslateError::Unsupported(_)));
+        // A variable bound nowhere is still refused.
+        assert!(matches!(error("∀ x y, Parent x y → ∃ u, u ≠ x"), TranslateError::Unsupported(_)));
     }
 
     #[test]

@@ -50,7 +50,7 @@ pub enum GroupBySpec {
 /// reserved words of the engines Synalog compiles to that a predicate or a
 /// column name can plausibly collide with).
 const SQL_KEYWORDS: &[&str] = &[
-    "ALL", "ALTER", "AND", "ANY", "ARRAY", "AS", "ASC", "BETWEEN", "BOTH", "BY", "CASE", "CAST",
+    "ALL", "ALTER", "AND", "ANY", "ARRAY", "AS", "ASC", "AT", "BETWEEN", "BOTH", "BY", "CASE", "CAST",
     "CHECK", "COLLATE", "COLUMN", "CONSTRAINT", "CREATE", "CROSS", "CURRENT_DATE", "CURRENT_TIME",
     "CURRENT_TIMESTAMP", "CURRENT_USER", "DEFAULT", "DELETE", "DESC", "DISTINCT", "DO", "DROP",
     "ELSE", "END", "EXCEPT", "EXISTS", "FALSE", "FETCH", "FOR", "FOREIGN", "FROM", "FULL", "GRANT",
@@ -101,11 +101,19 @@ pub trait Dialect {
         false
     }
 
-    /// `ToInt64` of an argument that is text by its form, where the general
-    /// `ToInt64` (which rounds a fraction) nests too deep: SQLite before 3.46
-    /// has a fixed parser stack, which nested conversions overflowed. A
-    /// template of `{0}`.
+    /// `ToInt64` of an argument with no fraction by its form (text, a whole
+    /// number written out), where the general `ToInt64` (which rounds a
+    /// fraction) does not fit: SQLite before 3.46 has a fixed parser stack,
+    /// which its nested conversions overflowed; DuckDB's ROUND takes no text;
+    /// PostgreSQL's round goes through numeric. A template of `{0}`.
     fn int64_of_text(&self) -> Option<&'static str> {
+        None
+    }
+
+    /// `Round(x, digits)`, where the one-argument `Round` template does not
+    /// fit (PostgreSQL rounds a double only to a whole number). A template of
+    /// `{0}` and `{1}`.
+    fn round_to_digits(&self) -> Option<&'static str> {
         None
     }
 
@@ -560,6 +568,12 @@ Char(code) = SqlExpr("CHAR({code})", {code:});
 pub struct PostgreSqlDialect;
 
 impl Dialect for PostgreSqlDialect {
+    fn int64_of_text(&self) -> Option<&'static str> {
+        Some("CAST({0} AS BIGINT)")
+    }
+    fn round_to_digits(&self) -> Option<&'static str> {
+        Some("ROUND(CAST({0} AS numeric), {1})")
+    }
     fn nulls_first_by_default(&self, descending: bool) -> bool { descending }
     fn format_uses_concat(&self) -> bool { true }
     fn name(&self) -> &'static str { "psql" }
@@ -577,7 +591,10 @@ impl Dialect for PostgreSqlDialect {
         m.insert("RangeOf", "(SELECT ARRAY_AGG(x) FROM GENERATE_SERIES(0, ARRAY_LENGTH({0}, 1) - 1) as x)");
         m.insert("StringAgg", "STRING_AGG(CAST({0} AS TEXT), ',')");
         m.insert("ToString", "CAST(%s AS TEXT)");
-        m.insert("ToInt64", "CAST(%s AS BIGINT)");
+        // A double rounds half to even here (2.5 to 2); a numeric rounds half
+        // away from zero, as on the other engines (2.5 to 3).
+        m.insert("ToInt64", "CAST(ROUND(CAST(%s AS numeric)) AS BIGINT)");
+        m.insert("Round", "ROUND(CAST(%s AS numeric))");
         m.insert("ToFloat64", "CAST(%s AS double precision)");
         m.insert("Element", "({0})[{1} + 1]");
         // 0 for an empty array, null for a null one (ARRAY_LENGTH is null
@@ -958,6 +975,10 @@ impl Dialect for DatabricksDialect {
         m.insert("ToString", "CAST(%s AS STRING)");
         m.insert("StringAgg", "(CASE WHEN COUNT({0}) > 0 THEN ARRAY_JOIN(COLLECT_LIST(CAST({0} AS STRING)), ',') END)");
         m.insert("Join", "ARRAY_JOIN({0}, {1})");
+        // Spark's SPLIT takes a regular expression: `.` would split at every
+        // character. A backslash before each character that is not a letter
+        // or a digit makes the separator literal (`\E` too, unlike `\Q…\E`).
+        m.insert("Split", r"SPLIT({0}, REGEXP_REPLACE({1}, '([^a-zA-Z0-9])', '\\\\$1'))");
         // Spark's CAST truncates a fraction; the other engines round it (half
         // away from zero), as ROUND does. ROUND keeps an integer as it is.
         m.insert("ToInt64", "CAST(ROUND({0}) AS BIGINT)");
@@ -1066,6 +1087,9 @@ pub struct DuckDbDialect;
 
 impl Dialect for DuckDbDialect {
     fn name(&self) -> &'static str { "duckdb" }
+    fn int64_of_text(&self) -> Option<&'static str> {
+        Some("CAST({0} AS BIGINT)")
+    }
 
     fn today_relation_sql(&self) -> String {
         "(SELECT strftime(current_date, '%Y-%m-%d') AS date)".to_string()
@@ -1077,6 +1101,9 @@ impl Dialect for DuckDbDialect {
     fn built_in_functions(&self) -> HashMap<&'static str, &'static str> {
         let mut m = HashMap::new();
         m.insert("Element", "array_extract({0},  CAST({1}+1 AS BIGINT))");
+        // A cast rounds a double half to even (2.5 to 2); ROUND rounds half
+        // away from zero, as the other engines (2.5 to 3).
+        m.insert("ToInt64", "CAST(ROUND(%s) AS BIGINT)");
         m.insert("Range", "Range({0})");
         m.insert("ValueOfUnnested", "{0}.unnested_pod");
         m.insert("Size", "LEN({0})");

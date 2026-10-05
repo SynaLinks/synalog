@@ -521,6 +521,8 @@ pub struct LogicaProgram {
     pub predicate_types: HashMap<String, HashMap<String, Type>>,
     /// Required type definitions from type inference.
     pub required_type_definitions: HashMap<String, String>,
+    /// The record types compiled queries build (PostgreSQL declares them).
+    pub built_record_types: RefCell<IndexMap<String, Type>>,
 }
 
 impl LogicaProgram {
@@ -718,6 +720,7 @@ impl LogicaProgram {
             predicate_signatures,
             predicate_types,
             required_type_definitions: HashMap::new(),
+            built_record_types: RefCell::new(IndexMap::new()),
         })
     }
 
@@ -1460,6 +1463,9 @@ impl LogicaProgram {
         let mut types: IndexMap<String, Type> = IndexMap::new();
         for (_, rule) in &self.rules {
             collect_record_types(rule, &mut types);
+        }
+        for (name, ty) in self.built_record_types.borrow().iter() {
+            types.entry(name.clone()).or_insert_with(|| ty.clone());
         }
         // Emit only the types actually cast in the compiled body (`::name`), plus
         // their nested dependencies (pulled in by `emit_record_type`'s recursion).
@@ -2411,13 +2417,21 @@ impl<'a> SubqueryTranslator for UniverseSubqueryTranslator<'a> {
         if self.program.annotations.engine() != "psql" {
             return None;
         }
+        self.column_type(predicate, column).as_ref().and_then(type_to_psql)
+    }
+
+    fn column_type(&self, predicate: &str, column: &str) -> Option<Type> {
         let base = predicate.split("_MultBodyAggAux").next().unwrap_or(predicate);
         self.program
             .predicate_types
             .get(predicate)
             .or_else(|| self.program.predicate_types.get(base))
             .and_then(|fields| fields.get(column))
-            .and_then(type_to_psql)
+            .cloned()
+    }
+
+    fn register_record_type(&self, ty: &Type) {
+        register_record_type(ty, &mut self.program.built_record_types.borrow_mut());
     }
 }
 

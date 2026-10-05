@@ -326,6 +326,17 @@ class DuckDbSession(Session):
         self.conn.close()
 
 
+
+# `ARRAY_CONCAT_AGG` for `++=`, created once per database. Two sessions
+# replacing it at once collide ("tuple concurrently updated"), so it is created
+# only when missing, and one created meanwhile by another session is as good.
+PSQL_ARRAY_CONCAT_AGG = """DO $$ BEGIN
+  IF NOT EXISTS (SELECT 1 FROM pg_proc WHERE proname = 'array_concat_agg') THEN
+    CREATE AGGREGATE ARRAY_CONCAT_AGG(anycompatiblearray) (SFUNC = array_cat, STYPE = anycompatiblearray);
+  END IF;
+EXCEPTION WHEN duplicate_function OR unique_violation THEN NULL;
+END $$"""
+
 class PsqlSession(Session):
     engine = "psql"
 
@@ -343,10 +354,7 @@ class PsqlSession(Session):
             ) from None
         self.conn = psycopg.connect(dsn, autocommit=True)
         self.cur = self.conn.cursor()
-        self.cur.execute(
-            "CREATE OR REPLACE AGGREGATE ARRAY_CONCAT_AGG(anycompatiblearray)"
-            " (SFUNC = array_cat, STYPE = anycompatiblearray)"
-        )
+        self.cur.execute(PSQL_ARRAY_CONCAT_AGG)
 
     def run(self, script: str) -> Result:
         # PostgreSQL runs a whole script in one call; keep the last result set.

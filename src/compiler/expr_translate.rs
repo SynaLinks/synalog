@@ -10,12 +10,9 @@ use crate::compiler::CompileError;
 use crate::compiler::dialects::Dialect;
 use crate::compiler::type_inference::Type;
 
-/// Best-effort SQL type of a record-literal field, read from its value
-/// expression AST node. Typed dialects (trino/presto/psql) need a field type to
-/// build named record literals; literal-valued fields — the only ones that
-/// reach a compiled query — resolve precisely, and anything else (variables,
-/// calls) falls back to `String`, a type every engine accepts for a column that
-/// is constructed but, lacking inference here, not otherwise constrained.
+/// The type of a record-literal field read from its value alone: a literal,
+/// or a nested record. Used where no rule is at hand (the PostgreSQL types a
+/// program declares); `ExprTranslator::value_type` knows a rule's variables.
 fn record_field_type(expr: &Json) -> Type {
     let obj = expr.as_object();
     if let Some(rec) = obj.get("record") {
@@ -497,6 +494,15 @@ pub trait SubqueryTranslator {
     fn column_psql_type(&self, _predicate: &str, _column: &str) -> Option<String> {
         None
     }
+
+    /// The inferred type of a predicate's column. Default: unknown.
+    fn column_type(&self, _predicate: &str, _column: &str) -> Option<Type> {
+        None
+    }
+
+    /// Note a record type a query builds, for dialects that declare record
+    /// types (PostgreSQL). Default: nothing to do.
+    fn register_record_type(&self, _ty: &Type) {}
 }
 
 /// Expression-to-SQL translator.
@@ -513,6 +519,9 @@ pub struct ExprTranslator<'a> {
     pub subquery_translator: Option<&'a dyn SubqueryTranslator>,
     /// The value field name based on compilation mode ("logica_value" or "synalog_value")
     pub value_field: &'static str,
+    /// The types of the rule's variables that are known: a column of a
+    /// table, an element of a list. A record built from them has their types.
+    pub variable_types: HashMap<String, Type>,
 }
 
 impl<'a> ExprTranslator<'a> {
@@ -557,6 +566,7 @@ impl<'a> ExprTranslator<'a> {
             dialect,
             built_in_functions: functions,
             built_in_infix_operators: infix,
+            variable_types: HashMap::new(),
             flag_values,
             subquery_translator: None,
             value_field,
@@ -687,7 +697,7 @@ impl<'a> ExprTranslator<'a> {
                                 let fo = fv.as_object();
                                 let val = &fo["value"];
                                 let e = val.as_object().get("expression").unwrap_or(val);
-                                fields.push((fo["field"].as_str().to_string(), record_field_type(e)));
+                                fields.push((fo["field"].as_str().to_string(), self.value_type(e)));
                                 exprs.push(e);
                             }
                             let n = exprs.len();
@@ -709,17 +719,32 @@ impl<'a> ExprTranslator<'a> {
                         let co = call.as_object();
                         let pred_name = co["predicate_name"].as_str();
 
-                        // Text to an integer: no fraction to round.
+                        // Text (by its form or its column's type) or a whole number to
+                        // an integer: no fraction to round.
                         if pred_name == "ToInt64" {
                             if let Some(template) = self.dialect.int64_of_text() {
                                 let fvs = co["record"].as_object()["field_value"].as_array();
                                 let arg = fvs.first()
                                     .and_then(|fv| fv.as_object()["value"].as_object().get("expression"));
-                                if let Some(arg) = arg.filter(|a| is_text_expression(a)) {
+                                if let Some(arg) = arg.filter(|a| is_text_expression(a) || is_whole_number_literal(a) || self.value_type(a) == Type::String) {
                                     tasks.push(Task::Combine(CK::Template(template.to_string()), 1));
                                     tasks.push(Task::Eval(arg));
                                     continue;
                                 }
+                            }
+                        }
+
+                        if pred_name == "Round" {
+                            let fvs = co["record"].as_object()["field_value"].as_array();
+                            if let (2, Some(template)) = (fvs.len(), self.dialect.round_to_digits()) {
+                                let args: Vec<&Json> = fvs.iter()
+                                    .filter_map(|fv| fv.as_object()["value"].as_object().get("expression"))
+                                    .collect();
+                                tasks.push(Task::Combine(CK::Template(template.to_string()), 2));
+                                for arg in args.into_iter().rev() {
+                                    tasks.push(Task::Eval(arg));
+                                }
+                                continue;
                             }
                         }
 
@@ -1223,7 +1248,7 @@ impl<'a> ExprTranslator<'a> {
                             let fo = fv.as_object();
                             let val = &fo["value"];
                             let e = val.as_object().get("expression").unwrap_or(val);
-                            fields.push((fo["field"].as_str().to_string(), record_field_type(e)));
+                            fields.push((fo["field"].as_str().to_string(), self.value_type(e)));
                             exprs.push(e);
                         }
                         let n = exprs.len();
@@ -1393,6 +1418,12 @@ impl<'a> ExprTranslator<'a> {
                                 .zip(args.iter())
                                 .map(|((f, t), v)| (f.as_str(), v.as_str(), t))
                                 .collect();
+                            if let Some(st) = self.subquery_translator {
+                                st.register_record_type(&Type::Record {
+                                    fields: fields.iter().cloned().collect(),
+                                    is_opened: false,
+                                });
+                            }
                             results.push(self.dialect.record_literal(&pairs));
                         }
                         // Subscript optimizations (record literal extraction, SubIfStruct) are in Eval phase above.
@@ -1893,6 +1924,128 @@ mod format_tests {
     fn format_pieces_refuse_other_conversions() {
         assert!(format_pieces("%x").is_err());
     }
+}
+
+impl<'a> ExprTranslator<'a> {
+    /// The type of a value, from its form and the types of the rule's
+    /// variables: a typed dialect declares a record's field types
+    /// (`CAST(ROW(x) AS ROW(a double))`), and a number declared text comes
+    /// back as text. `Any` when unknown.
+    pub fn value_type(&self, expr: &Json) -> Type {
+        if !expr.is_object() {
+            return Type::Any;
+        }
+        let o = expr.as_object();
+        if let Some(rec) = o.get("record") {
+            return self.record_type(rec);
+        }
+        if let Some(lit) = o.get("literal") {
+            let lo = lit.as_object();
+            if let Some(rec) = lo.get("the_record") {
+                return self.record_type(rec);
+            }
+            if let Some(list) = lo.get("the_list") {
+                let element = list.as_object().get("element").map(|e| {
+                    e.as_array().iter().map(|x| self.value_type(x)).find(|t| *t != Type::Any)
+                });
+                return Type::List(Box::new(element.flatten().unwrap_or(Type::Any)));
+            }
+            if lo.contains_key("the_number") {
+                return Type::Number;
+            }
+            if lo.contains_key("the_bool") {
+                return Type::Bool;
+            }
+            if lo.contains_key("the_string") {
+                return Type::String;
+            }
+            return Type::Any;
+        }
+        if let Some(v) = o.get("variable") {
+            let n = &v.as_object()["var_name"];
+            let name = if n.is_string() { n.as_str().to_string() } else { n.to_string() };
+            return self.variable_types.get(&name).cloned().unwrap_or(Type::Any);
+        }
+        if let Some(sub) = o.get("subscript") {
+            let so = sub.as_object();
+            let field = so.get("subscript")
+                .and_then(|s| s.as_object().get("literal"))
+                .and_then(|l| l.as_object().get("the_symbol"))
+                .map(|s| s.as_object()["symbol"].as_str().to_string());
+            if let (Some(field), Some(record)) = (field, so.get("record")) {
+                if let Type::Record { fields, .. } = self.value_type(record) {
+                    return fields.get(&field).cloned().unwrap_or(Type::Any);
+                }
+            }
+            return Type::Any;
+        }
+        if let Some(imp) = o.get("implication") {
+            let io = imp.as_object();
+            let branches = io.get("if_then").map(|b| b.as_array().clone()).unwrap_or_default();
+            let consequences = branches
+                .iter()
+                .filter_map(|b| b.as_object().get("consequence").cloned())
+                .chain(io.get("otherwise").cloned());
+            return consequences.map(|c| self.value_type(&c)).find(|t| *t != Type::Any).unwrap_or(Type::Any);
+        }
+        if is_boolean_expression(expr) {
+            return Type::Bool;
+        }
+        if is_text_expression(expr) {
+            return Type::String;
+        }
+        let Some(call) = o.get("call").filter(|c| c.is_object()) else { return Type::Any };
+        let name = call.as_object()["predicate_name"].as_str().to_string();
+        match name.as_str() {
+            "+" | "-" | "*" | "/" | "%" | "^" | "Length" | "Size" | "ToInt64" | "ToFloat64" | "Abs"
+            | "Round" | "Floor" | "Ceil" | "Sqrt" | "Exp" | "Log" | "Pow" | "Sin" | "Cos" => Type::Number,
+            "Split" => Type::List(Box::new(Type::String)),
+            "Range" => Type::List(Box::new(Type::Number)),
+            "Coalesce" | "Least" | "Greatest" | "ArrayConcat" | "ValueOfUnnested" => call.as_object()
+                .get("record")
+                .and_then(|r| r.as_object().get("field_value"))
+                .map(|fvs| {
+                    fvs.as_array().iter()
+                        .filter_map(|fv| fv.as_object()["value"].as_object().get("expression").cloned())
+                        .map(|e| self.value_type(&e))
+                        .find(|t| *t != Type::Any)
+                        .unwrap_or(Type::Any)
+                })
+                .unwrap_or(Type::Any),
+            "Element" => match call.as_object()
+                .get("record")
+                .and_then(|r| r.as_object().get("field_value"))
+                .and_then(|fvs| fvs.as_array().first().cloned())
+                .and_then(|fv| fv.as_object()["value"].as_object().get("expression").cloned())
+                .map(|e| self.value_type(&e))
+            {
+                Some(Type::List(inner)) => *inner,
+                _ => Type::Any,
+            },
+            _ => Type::Any,
+        }
+    }
+
+    fn record_type(&self, record: &Json) -> Type {
+        let mut fields = HashMap::new();
+        for fv in record.as_object()["field_value"].as_array() {
+            let fo = fv.as_object();
+            let Some(field) = fo.get("field").filter(|f| f.is_string()) else { continue };
+            let val = &fo["value"];
+            let e = val.as_object().get("expression").unwrap_or(val);
+            fields.insert(field.as_str().to_string(), self.value_type(e));
+        }
+        Type::Record { fields, is_opened: false }
+    }
+}
+
+/// Whether an expression is a number literal without a fraction (`65536`).
+fn is_whole_number_literal(expr: &Json) -> bool {
+    expr.is_object()
+        && expr.as_object().get("literal")
+            .and_then(|l| l.as_object().get("the_number"))
+            .map(|n| if n.is_object() { n.as_object()["number"].as_str().to_string() } else { n.to_string() })
+            .is_some_and(|n| n.trim_start_matches('-').bytes().all(|b| b.is_ascii_digit()))
 }
 
 /// Whether an expression is a boolean by its form: a boolean literal, a

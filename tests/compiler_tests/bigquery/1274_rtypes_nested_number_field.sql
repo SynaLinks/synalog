@@ -1,0 +1,4 @@
+SELECT
+  STRUCT(x_1 AS n).n AS n
+FROM
+  UNNEST(ARRAY[10, 9]) as x_1 ORDER BY n;

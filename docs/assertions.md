@@ -136,7 +136,7 @@ Here `known_customer` finds a real problem in the data: an order of customer 12,
 
 ## Checking assertions
 
-An assertion is checked by looking for its counterexamples: Synalog compiles that search to SQL, one column per universally quantified variable, and runs it on the database like any predicate. The assertion holds when the query returns no row.
+An assertion is checked by looking for its counterexamples: Synalog compiles that search to SQL, one column per variable of the statement's leading `∀` (and per name it quantifies implicitly), and runs it on the database like any predicate. The assertion holds when the query returns no row.
 
 | Where | What happens |
 |---|---|
@@ -168,6 +168,7 @@ sql = synalog.counterexamples(source, "Revenue", "known_customer")
 Counterexamples are searched in the database, which bounds what a statement can say:
 
 - every variable must be bound by a predicate: `∀ x, x > 0` ranges over nothing and cannot be checked;
+- a variable that a predicate is applied to only inside a nested formula ranges over where that predicate is defined: `∀ e, ∃ o, Pay o ≥ Pay e + 10` is checked for every `e` with a `Pay`;
 - a statement cannot apply a raw table, whose columns are not declared: wrap the table in a predicate (`Order` above, over `orders`);
 - an equation between functions is checked where both sides are defined, so a missing row is not a counterexample;
 - equality between computed numbers (arithmetic, sums) is checked up to `1e-9`.

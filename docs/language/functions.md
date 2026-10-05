@@ -8,7 +8,7 @@
 | `Substr(s, i, l)` | Substring (**1-based** index) |
 | `Length(s)` | String length |
 | `Upper(s)` / `Lower(s)` | Case conversion |
-| `Split(s, sep)` | Split into an array |
+| `Split(s, sep)` | Split into an array at each `sep`, taken as text |
 | `Join(list, sep)` | Join array into a string |
 | `Like(s, pattern)` | SQL pattern match (`%` wildcard) |
 | `Format(fmt, ...)` | printf-style formatting |

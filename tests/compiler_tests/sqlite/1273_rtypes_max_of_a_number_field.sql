@@ -1,0 +1,4 @@
+SELECT
+  MAX(x_1.value) AS m
+FROM
+  JSON_EACH(JSON_ARRAY(100, 9, 10)) as x_1;

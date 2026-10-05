@@ -325,6 +325,14 @@ mod tests {
     }
 
     #[test]
+    fn test_a_combine_compared_binds_its_own_variables() {
+        let errors = program_safety("V(g: 1, x: 2);\nQ(g:) :- V(g:, x:), x > (combine Avg= w :- V(g:, x: w));");
+        assert!(errors.is_empty(), "{:?}", errors);
+        let errors = program_safety("V(g: 1, x: 2);\nQ(g:) :- V(g:), (combine Min= x :- V(g:, x:)) > 1;");
+        assert!(errors.is_empty(), "{:?}", errors);
+    }
+
+    #[test]
     fn test_compared_and_bound_var() {
         let parsed = parse("V(y:) :- y in [1, 3], y > 2;");
         assert!(check_rule_safety(&parsed.as_object()["rule"].as_array()[0]).is_empty());

@@ -1,0 +1,4 @@
+SELECT
+  ROUND((CAST(5 AS DOUBLE) / (2))) AS a,
+  ROUND(- (CAST(5 AS DOUBLE) / (2))) AS b,
+  ROUND((CAST(7 AS DOUBLE) / (2))) AS c;

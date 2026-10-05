@@ -1,0 +1,5 @@
+SELECT
+  CAST(ROUND(((5) / (2))) AS BIGINT) AS a,
+  CAST(ROUND(- ((5) / (2))) AS BIGINT) AS b,
+  CAST(ROUND(3.7E0) AS BIGINT) AS c,
+  CAST(ROUND(((9) / (4))) AS BIGINT) AS d;

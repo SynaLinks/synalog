@@ -1,0 +1,6 @@
+SELECT
+  x_3 AS x
+FROM
+  UNNEST(ARRAY[0, 1]) as x_3
+WHERE
+  (STRUCT(x_3 AS a) = STRUCT(x_3 AS a)) ORDER BY x;

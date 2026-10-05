@@ -1,0 +1,2 @@
+SELECT
+  (CAST(100 AS REAL) / (8)) AS v;

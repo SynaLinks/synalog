@@ -101,7 +101,7 @@ fn comparisons(body: &Json) -> Vec<(Term, &'static str, Term, String)> {
 /// Whether the comparisons can never all hold.
 fn contradictory(cmps: &[(Term, &'static str, Term, String)]) -> bool {
     let mut nodes: Vec<Term> = Vec::new();
-    let mut index = |t: &Term, nodes: &mut Vec<Term>| -> usize {
+    let index = |t: &Term, nodes: &mut Vec<Term>| -> usize {
         nodes.iter().position(|n| n == t).unwrap_or_else(|| {
             nodes.push(t.clone());
             nodes.len() - 1

@@ -362,7 +362,10 @@ impl VarCollector {
                 if let Some(pred) = obj.get("predicate") {
                     let name = pred.as_object()["predicate_name"].as_str();
                     if COMPARISON_OPS.contains(&name) {
-                        VarCollector::collect_record_vars(pred.as_object().get("record"), vars);
+                        // A combine's variables are its own, given values by
+                        // its body (`kg > (combine Avg= w :- Ship(kg: w))`).
+                        let record = pred.as_object().get("record").map(without_combines);
+                        VarCollector::collect_record_vars(record.as_ref(), vars);
                     }
                 } else if let Some(disj) = obj.get("disjunction") {
                     if let Some(branches) = disj.as_object().get("disjunct") {
@@ -586,5 +589,23 @@ mod tests {
         let parsed = parse_file("Foo(a:, b:) :- Bar(a:, b:);", None, &[]).unwrap();
         let rule = &parsed.as_object()["rule"].as_array()[0];
         assert!(VarCollector::function_input_vars(rule).is_empty());
+    }
+}
+
+/// `json` with every combine expression replaced by a null literal.
+fn without_combines(json: &Json) -> Json {
+    match json {
+        Json::Object(o) if o.contains_key("combine") => crate::json_obj! {
+            "literal" => crate::json_obj! { "the_null" => Json::Str("null".to_string()) }
+        },
+        Json::Object(o) => {
+            let mut out = o.clone();
+            for (_, v) in out.iter_mut() {
+                *v = without_combines(v);
+            }
+            Json::Object(out)
+        }
+        Json::Array(items) => Json::Array(items.iter().map(without_combines).collect()),
+        other => other.clone(),
     }
 }

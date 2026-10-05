@@ -100,7 +100,7 @@ Invalid assertions, such as a statement that does not parse, are reported by `ch
 counterexamples(source, predicate, name, limit=None, offset=None, engine=None, import_root=None) -> str
 ```
 
-Compile the search for the counterexamples of an assertion to SQL. The assertion `name` of `predicate` holds on a database when the query returns no row there; each row is a counterexample, with one column per universally quantified variable of the statement. `limit` and `offset` paginate as in `compile`.
+Compile the search for the counterexamples of an assertion to SQL. The assertion `name` of `predicate` holds on a database when the query returns no row there; each row is a counterexample, with one column per variable of the statement's leading `∀` (a `∀` nested in a consequent adds none). `limit` and `offset` paginate as in `compile`.
 
 ```python
 sql = synalog.counterexamples(source, "Ancestor", "transitive", limit=5)

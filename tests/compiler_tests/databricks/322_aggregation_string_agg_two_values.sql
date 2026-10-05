@@ -7,7 +7,7 @@ t_1_J AS (SELECT
 FROM
   t_2_V AS V)
 SELECT
-  ARRAY_SIZE(SPLIT(t_0_J.j, ",")) AS parts,
+  ARRAY_SIZE(SPLIT(t_0_J.j, REGEXP_REPLACE(",", '([^a-zA-Z0-9])', '\\\\$1'))) AS parts,
   LENGTH(t_0_J.j) AS length
 FROM
   t_1_J AS t_0_J;

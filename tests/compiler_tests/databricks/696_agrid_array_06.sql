@@ -1,2 +1,2 @@
 SELECT
-  ARRAY_SIZE(SPLIT("", ",")) AS v;
+  ARRAY_SIZE(SPLIT("", REGEXP_REPLACE(",", '([^a-zA-Z0-9])', '\\\\$1'))) AS v;

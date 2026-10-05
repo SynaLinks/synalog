@@ -1,0 +1,3 @@
+SELECT
+  CAST('12' AS BIGINT) AS a,
+  CAST(SUBSTR('x7', 2, 1) AS BIGINT) AS b;

@@ -384,6 +384,14 @@ fn test_sqlite_built_in_functions() {
 }
 
 #[test]
+fn databricks_split_reads_its_separator_literally() {
+    // Spark's SPLIT takes a regular expression; the separator is escaped.
+    let d = get("databricks").unwrap();
+    let f = d.built_in_functions();
+    assert!(f["Split"].contains("REGEXP_REPLACE({1}"), "{}", f["Split"]);
+}
+
+#[test]
 fn test_psql_built_in_functions() {
     let d = get("psql").unwrap();
     let f = d.built_in_functions();

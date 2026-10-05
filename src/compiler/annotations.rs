@@ -587,6 +587,17 @@ impl Annotations {
     }
 
     /// Get ground table name for a predicate, if any.
+    /// The table of a grounded predicate given no table: the predicate's
+    /// name in the dataset, `_table` added to a name that is an SQL keyword
+    /// (`logica_home.Order` does not parse).
+    fn default_table(&self, pred_name: &str) -> String {
+        if crate::compiler::dialects::is_sql_keyword(pred_name) {
+            format!("{}.{}_table", self.dataset(), pred_name)
+        } else {
+            format!("{}.{}", self.dataset(), pred_name)
+        }
+    }
+
     pub fn ground(&self, pred_name: &str) -> Option<Ground> {
         let a = self.annotations.get(pred_name)?;
         let v = a.get("ground")?;
@@ -596,7 +607,7 @@ impl Annotations {
         // prepend the default dataset. Matches Python:
         //   table_name = annotation.get('1', self.Dataset() + '.' + predicate_name)
         let table_name = if raw == pred_name {
-            format!("{}.{}", self.dataset(), raw)
+            self.default_table(&raw)
         } else {
             // Could be another predicate reference — check if it's grounded
             if let Some(other_ground) = self.annotations
@@ -605,7 +616,7 @@ impl Annotations {
             {
                 let other_raw = other_ground.as_str().to_string();
                 if other_raw == raw {
-                    format!("{}.{}", self.dataset(), other_raw)
+                    self.default_table(&other_raw)
                 } else {
                     other_raw
                 }

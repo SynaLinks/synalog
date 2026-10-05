@@ -9,6 +9,7 @@ use crate::parser::{Json, JsonObject};
 use crate::compiler::{CompileResult, CompileError};
 use crate::compiler::dialects::{is_sql_keyword, sql_column, Dialect, GroupBySpec};
 use crate::compiler::expr_translate::{ExprTranslator, SubqueryTranslator};
+use crate::compiler::type_inference::Type;
 
 use crate::compiler::universe::indent2;
 
@@ -461,13 +462,6 @@ impl RuleStructure {
                 i += 1;
             }
 
-            // Remove self-referential unifications
-            if unfold_records {
-                self.vars_unification.retain(|(l, r)| {
-                    !is_self_referential_unification(l, r)
-                });
-            }
-
             if done {
                 break;
             }
@@ -636,6 +630,18 @@ impl RuleStructure {
         let vocabulary = self.vars_vocabulary(dialect);
         let mut ql = ExprTranslator::new(vocabulary, dialect, flag_values);
         ql.subquery_translator = Some(subquery_translator);
+        // The types of the variables: a column has its predicate's, an
+        // element its list's.
+        for (var, (alias, field)) in &self.inv_vars_map {
+            if let Some(t) = self.tables.get(alias).and_then(|p| subquery_translator.column_type(p, field)) {
+                ql.variable_types.insert(var.clone(), t);
+            }
+        }
+        for (element, list) in &self.unnestings {
+            if let Type::List(inner) = ql.value_type(list) {
+                ql.variable_types.insert(element.clone(), *inner);
+            }
+        }
 
         // SELECT clause
         let mut fields = Vec::with_capacity(self.select.len());
@@ -1094,21 +1100,6 @@ fn try_expand_record_pair(left: &Json, right: &Json) -> Option<Vec<(Json, Json)>
     }
 
     Some(result)
-}
-
-/// Check if a unification is self-referential: one side is a simple variable
-/// that also appears inside the other side (e.g., `x == {f: x.f}`).
-fn is_self_referential_unification(left: &Json, right: &Json) -> bool {
-    for (a, b) in [(left, right), (right, left)] {
-        if let Some(var_name) = extract_var_name(a) {
-            let mut vars = HashSet::new();
-            all_mentioned_variables(b, &mut vars);
-            if vars.contains(&var_name) {
-                return true;
-            }
-        }
-    }
-    false
 }
 
 /// Extract a rule's structure from its parsed JSON AST.

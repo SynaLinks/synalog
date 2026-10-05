@@ -50,6 +50,7 @@ SQL plus extensions. synalog emits Spark/Databricks-valid SQL instead:
 | `Length(s)` (string) | `ARRAY_SIZE(s)` (wrong — array fn) | `LENGTH(s)` (default) |
 | `Element(arr, i)`| `arr[OFFSET(i)]`      | `ELEMENT_AT(arr, i + 1)`    |
 | `Format(...)`    | `FORMAT(...)`         | `FORMAT_STRING(...)`        |
+| `Split(s, sep)`  | `SPLIT(s, sep)` (`sep` a regular expression: `.` splits everywhere) | `SPLIT(s, REGEXP_REPLACE(sep, '([^a-zA-Z0-9])', '\\\\$1'))` |
 | `ArrayConcat(a, b)` | `ARRAY_JOIN(a, b)` (wrong — stringifies) | `CONCAT(a, b)` |
 | `++=` / ArrayConcatAgg | `ARRAY_CONCAT_AGG(x)` | `FLATTEN(COLLECT_LIST(x))` |
 | `x in arr`       | `ARRAY_CONTAINS(x, arr)` (args reversed) | `ARRAY_CONTAINS(arr, x)` |
@@ -62,6 +63,10 @@ the resulting array. Verified by executing every fixture against an Apache Spark
 Thrift Server (the open-source Databricks stand-in; see `tests/e2e`) and
 comparing results to DuckDB. Affected goldens are generated from synalog, not
 upstream (32 fixtures, listed in `generate_expected_sql.py:SYNALOG_GOLDENS`).
+
+A field of a field (`r.pay.base`) fails in upstream's `databricks` dialect
+(`Subscript() takes 3 positional arguments but 4 were given`): the goldens of
+`rtypes_nested_number_field` and the nested `records2` fixtures are synalog's.
 
 ## `Today` / `Now` built-in concepts (synalog-only)
 
@@ -165,6 +170,11 @@ numbered alias (`t_1_Values AS t_2_Values`). The goldens of both fixtures are
 generated from synalog on every engine; `tests/programs/execution` runs
 predicates named `Order`, `Group`, `Select` and `Table` on DuckDB.
 
+The same holds for the table of a grounded predicate: `@Ground(Order)` (or a
+reused predicate grounded on Presto and Trino, `In`) writes
+`logica_home.Order_table`, not `logica_home.Order`, which SQLite, Presto and
+Trino do not parse.
+
 ## Fixtures from `tests/programs`
 
 Fixtures numbered from 67 come from the self-checking programs of
@@ -187,7 +197,7 @@ in `generate_expected_sql.py:SYNALOG_GOLDENS`.
   the built-in, ignoring the definition. A relation of that name leaves the
   built-in as is (below).
 - **Predicates named like library functions** (`Count`, `Range`, `Abs`,
-  `Size`). Predicates and functions are separate namespaces in synalog: a
+  `Size`, `Sum`). Predicates and functions are separate namespaces in synalog: a
   predicate `Abs` is a relation, `Abs(x)` in a value is still `ABS`
   (`execution_predicate_named_like_a_function`). On DuckDB and PostgreSQL,
   whose SQL upstream types, upstream's type inference conflates them and fails
@@ -226,6 +236,10 @@ that is a keyword or not a plain identifier, in the dialect's quotes
 (backticks on BigQuery and Databricks, where double quotes make a string),
 also in `ORDER BY` and in `search()`. `64_keyword_columns` is generated from
 synalog on every engine.
+
+A column `at` is quoted too: DuckDB reads `ORDER BY at desc` as the start of
+`AT TIME ZONE` and refuses it (the `dates2`, `joins2`, `order2` and
+`distinct2` fixtures, whose events have a time `at`).
 
 ## `Count=` is exact
 
@@ -280,6 +294,15 @@ first on those two (`ROUND`, applied on SQLite only to a `real` value, so a
 text such as `'42'` still converts), so the result is the same everywhere. The
 goldens of `61_date_arithmetic` and `122_execution_to_string_and_back` on
 SQLite and Databricks are synalog's.
+
+A half is a further difference: DuckDB's and PostgreSQL's casts of a double,
+and PostgreSQL's `round` of a double, round it to even (`ToInt64(5 / 2)` and
+`Round(5 / 2)` are 2), the other engines away from zero (3). synalog rounds
+with DuckDB's `ROUND` and PostgreSQL's numeric `round` before the cast, so a
+half goes away from zero everywhere (`tests/programs/rounding`); PostgreSQL's
+`Round(x, digits)`, which exists only for a numeric, casts `x` to numeric.
+Text and whole numbers written out convert with a plain cast. The goldens of
+the fixtures with `ToInt64` or `Round` on DuckDB and PostgreSQL are synalog's.
 
 ## Record fields named after SQL keywords
 
@@ -454,6 +477,11 @@ three times copied it three times, past Trino's 150 stages
 the iteration's first steps is written out step by step, each in its own
 table. The goldens of the recursive fixtures on Presto are synalog's.
 
+A functor applied to such a recursion (`R := Reach(Edge: Route)`) copies its
+loop too: the iteration's predicates, read by no rule of the recursion but by
+its loop, are renamed with the rest, or the copy ran the original's loop over
+the original's edges (`functors2_reach_from_*`).
+
 ## What a step of recursion is
 
 A step applies every rule of the recursion once. Upstream unrolls mutual
@@ -485,3 +513,46 @@ argument to the predicate of that name in the applied predicate's module,
 and an argument that still names nothing it depends on is an error. The
 goldens are generated from synalog on every engine.
 
+## The types of a record's fields
+
+Presto and Trino build a record as `CAST(ROW(...) AS ROW(field type, ...))`,
+PostgreSQL as `ROW(...)::type` of a declared composite type: both need each
+field's type. A field has the type of its value: a literal's, a column's (as
+type inference gives it), a list's element, a number for arithmetic, text for
+string functions, a boolean for a comparison. Synalog used to type every field
+that was not a literal as text, so `{n: x}` with `x` a number came back as
+`'9'`, and sorted after `'10'` (`tests/programs/rtypes`). Upstream writes
+`(SELECT x AS n)` on Presto and Trino, which is not a record.
+
+## Records compared field by field
+
+`{a: x} == {a: x * x}` compares the fields, `x = x * x`; upstream compares the
+two records whole (`JSON_OBJECT(...) = JSON_OBJECT(...)` on SQLite). The same
+rows (`selfref_records_of_themselves`).
+
+## Escapes in single-quoted strings
+
+A single-quoted string takes backslash escapes (`'it\'s'`, `'a\tb'`),
+which upstream does not parse. The goldens of the `quotes` fixtures, which
+hold such strings, are synalog's.
+
+## Comparisons in a value after `=`
+
+A head's value follows its first `=`: `F(x) = if x >= 4 then 1 else 2`,
+`n? += if x != 0 then 1 else 0`. Upstream splits the head at every `=`, the
+`=` of `>=`, `<=`, `==` and `!=` too, and refuses such a value ("Too many '='
+in predicate value"). The goldens of the fixtures with one are synalog's.
+
+## Table numbers after `Array=`
+
+Compiling `Array= x -> y` spends one table number more than upstream, so the
+tables after it are numbered one higher (`t_3_Sale` for upstream's
+`t_2_Sale`). Cosmetic (`agg3_ids_by_qty_in_*`).
+
+## A combine as a function's argument
+
+`Coalesce((combine += 1 :- U(a: n)), 0)`: upstream strips the parentheses of
+the argument and reads the colon of `:-` as a field's, refusing it
+("Positional argument can not go after non-positional arguments"), or
+misreads it in second position. synalog takes a colon as a field's only after
+a field name. The goldens of the fixtures with one are synalog's.

@@ -149,10 +149,9 @@ class PostgresRunner(Runner):
 
         conn = psycopg.connect(self.dsn, autocommit=True)
         cur = conn.cursor()
-        cur.execute(
-            "CREATE OR REPLACE AGGREGATE ARRAY_CONCAT_AGG(anycompatiblearray)"
-            " (SFUNC = array_cat, STYPE = anycompatiblearray)"
-        )
+        from synalog.runners import PSQL_ARRAY_CONCAT_AGG
+
+        cur.execute(PSQL_ARRAY_CONCAT_AGG)
 
         class Session(_Session):
             def run(self, script):

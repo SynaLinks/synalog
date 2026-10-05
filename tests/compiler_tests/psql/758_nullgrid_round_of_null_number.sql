@@ -18,6 +18,6 @@ WITH t_0_V AS (SELECT * FROM (
 ) AS UNUSED_TABLE_NAME  )
 SELECT
   V.k AS k,
-  (ROUND(V.x) IS NULL) AS n
+  (ROUND(CAST(V.x AS numeric)) IS NULL) AS n
 FROM
   t_0_V AS V ORDER BY k;

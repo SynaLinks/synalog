@@ -321,6 +321,28 @@ impl Functors {
         }
     }
 
+    /// The predicates an `@Iteration` of `target` names: its `predicates`
+    /// and the one it `accumulate`s into.
+    fn iteration_companions(&self, target: &str) -> Vec<String> {
+        let mut out = Vec::new();
+        for rule in self.rules_of.get("@Iteration").into_iter().flatten() {
+            let Some(rec) = rule.as_object()["head"].as_object().get("record") else { continue };
+            let names = extract_predicate_names(rec);
+            let fvs = rec.as_object()["field_value"].as_array();
+            let first = fvs.first()
+                .and_then(|fv| fv.as_object()["value"].as_object().get("expression"))
+                .and_then(|e| e.as_object().get("literal"))
+                .and_then(|l| l.as_object().get("the_predicate"))
+                .map(|p| p.as_object()["predicate_name"].as_str().to_string());
+            if first.as_deref() == Some(target) {
+                out.extend(names.into_iter().filter(|n| n != target));
+            }
+        }
+        out.sort();
+        out.dedup();
+        out
+    }
+
     fn args_of(&self, functor: &str) -> HashSet<String> {
         self.args_of.get(functor).cloned().unwrap_or_default()
     }
@@ -520,6 +542,31 @@ impl Functors {
         self.creation_count += 1;
 
         let mut rules = self.all_rules_of(applicant)?;
+        // An iteration's predicates (`@Iteration(P_sn_delta, predicates:
+        // [P_sn_new, P_sn_next], accumulate: P_sn_full)`) are read by no rule
+        // of what the iteration computes, only by its loop: they are copied
+        // with it, or the copy would loop over the original's.
+        let mut heads: HashSet<String> = rules.iter()
+            .map(|r| r.as_object()["head"].as_object()["predicate_name"].as_str().to_string())
+            .collect();
+        loop {
+            let companions: Vec<String> = heads.iter()
+                .flat_map(|h| self.iteration_companions(h))
+                .filter(|c| !heads.contains(c))
+                .collect();
+            if companions.is_empty() {
+                break;
+            }
+            for c in companions {
+                for r in self.all_rules_of(&c)? {
+                    heads.insert(r.as_object()["head"].as_object()["predicate_name"].as_str().to_string());
+                    rules.push(r);
+                }
+                heads.insert(c);
+            }
+        }
+        let mut seen = HashSet::new();
+        rules.retain(|r| seen.insert(r.to_string_fmt(false)));
 
         let args: HashSet<String> = args_map.keys().cloned().collect();
 

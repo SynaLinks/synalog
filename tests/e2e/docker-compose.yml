@@ -40,11 +40,14 @@ services:
     # join whose conditions contradict each other (an assertion's
     # counterexamples of `a < b`: `a < b AND a >= b`) never produces one, so
     # the query hung. Production connectors bound the wait; this one does not.
+    # The JVM takes 80% of the machine for its heap by default, which beside
+    # the other engines gets the container killed: 3 GB, as Presto.
     command:
       - sh
       - -c
       - |
         echo 'memory.enable-lazy-dynamic-filtering=false' >> /etc/trino/catalog/memory.properties
+        sed -i 's/-XX:InitialRAMPercentage=80/-Xms1G/; s/-XX:MaxRAMPercentage=80/-Xmx3G/' /etc/trino/jvm.config
         exec /usr/lib/trino/bin/run-trino
     ports:
       - "${SYNALOG_E2E_TRINO_PORT:-8080}:8080"

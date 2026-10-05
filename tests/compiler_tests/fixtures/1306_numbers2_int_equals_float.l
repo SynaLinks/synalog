@@ -1,0 +1,9 @@
+# Test: 3 equals 3.0. (from tests/programs/numbers2/int_equals_float.l)
+
+N(x: -7);
+N(x: -2);
+N(x: 0);
+N(x: 3);
+N(x: 12);
+N(x: 1099511627776);
+Q(x:) :- N(x:), x == 3.0;

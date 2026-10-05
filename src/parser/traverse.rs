@@ -527,6 +527,18 @@ pub fn split(s: &SpanString, separator: &str) -> ParseResult<Vec<SpanString>> {
     Ok(raw.into_iter().map(|p| strip(&p)).collect())
 }
 
+/// The text before and after the first top-level `separator`, stripped; None
+/// without one. An operator's `=` comes first (`+= x`, `Max= x`), and the
+/// value after it may hold more (`x >= 4`, `x == 4`).
+pub fn split_at_first(s: &SpanString, separator: &str) -> ParseResult<Option<(SpanString, SpanString)>> {
+    let pieces = split_raw(s, separator)?;
+    if pieces.len() == 1 {
+        return Ok(None);
+    }
+    let at = pieces[0].len();
+    Ok(Some((strip(&s.slice(0, at)), strip(&s.slice(at + separator.len(), s.len())))))
+}
+
 pub fn split_in_two(s: &SpanString, separator: &str) -> ParseResult<(SpanString, SpanString)> {
     let mut parts = split(s, separator)?;
     if parts.len() != 2 {

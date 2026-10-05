@@ -1,0 +1,14 @@
+WITH t_3_L AS (SELECT * FROM VALUES
+  (1, ARRAY(3, 1, 2)),
+  (2, ARRAY()),
+  (3, ARRAY(5)),
+  (4, ARRAY(7, 7, 8, 9))
+AS UNUSED_TABLE_NAME(id, l)),
+t_1_All AS (SELECT
+  ARRAY_AGG(x_2) AS xs
+FROM
+  t_3_L AS t_2_L, LATERAL (SELECT explode(t_2_L.l) AS x_2) AS pushkin)
+SELECT
+  ARRAY_SIZE(t_0_All.xs) AS n
+FROM
+  t_1_All AS t_0_All;

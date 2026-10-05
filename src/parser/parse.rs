@@ -362,7 +362,12 @@ pub fn parse_record_internals(
             }
 
             let observed_field;
-            let colon_result = split_in_one_or_two(field_value, ":")?;
+            // A field is named by an identifier before its colon; a colon
+            // elsewhere belongs to the value (`(combine += x :- P(x:))`).
+            let colon_result = match split_in_one_or_two(field_value, ":")? {
+                Err((field, _)) if !is_field_name(field.view()) => Ok(field_value.clone()),
+                other => other,
+            };
 
             match colon_result {
                 Err((field, value)) => {
@@ -414,8 +419,12 @@ pub fn parse_record_internals(
                                     field_value.clone(),
                                 ));
                             }
-                            let (op, expr) = split_in_two(&value, "=")?;
-                            let op = strip(&op);
+                            let Some((op, expr)) = split_at_first(&value, "=")? else {
+                                return Err(ParsingException::new(
+                                    "An aggregated field needs an operator: `n? += x`.",
+                                    value.clone(),
+                                ));
+                            };
                             let mut agg = JsonObject::new();
                             agg.insert("operator".into(), Json::Str(op.to_string()));
                             agg.insert("argument".into(), parse_expression(&expr)?);
@@ -455,6 +464,15 @@ pub fn parse_record_internals(
         }
     }
     Ok(json_obj!("field_value" => Json::Array(result)))
+}
+
+/// Whether `name` can name a record field: an identifier, a number (a
+/// positional field), or a backquoted name.
+fn is_field_name(name: &str) -> bool {
+    let name = name.trim();
+    !name.is_empty()
+        && (name.starts_with('`') && name.ends_with('`')
+            || name.bytes().all(|b| b.is_ascii_alphanumeric() || b == b'_'))
 }
 
 fn parse_generic_call(
@@ -661,8 +679,12 @@ fn parse_combine(input: &SpanString) -> ParseResult<Option<Json>> {
         Ok(v) => (v, None),
         Err((v, b)) => (v, Some(b)),
     };
-    let (op, expr) = split_in_two(&value, "=")?;
-    let op = strip(&op);
+    let Some((op, expr)) = split_at_first(&value, "=")? else {
+        return Err(ParsingException::new(
+            "A combine needs an operator: `combine += x`.",
+            value.clone(),
+        ));
+    };
     let parsed_expression = parse_expression(&expr)?;
 
     let parsed_body = if let Some(b) = &body {
@@ -709,12 +731,14 @@ fn parse_implication(s: &SpanString) -> ParseResult<Option<Json>> {
 }
 
 fn parse_concise_combine(s: &SpanString) -> ParseResult<Option<Json>> {
-    let parts = split(s, "=")?;
-    if parts.len() != 2 {
+    let Some((lhs_and_op, combine)) = split_at_first(s, "=")? else {
+        return Ok(None);
+    };
+    // `x + 1 == y` compares.
+    if combine.starts_with("=") {
         return Ok(None);
     }
-    let lhs_and_op = &parts[0];
-    let combine = &parts[1];
+    let (lhs_and_op, combine) = (&lhs_and_op, &combine);
     let left_parts = split_on_whitespace(lhs_and_op)?;
     if left_parts.len() <= 1 {
         return Ok(None);
@@ -1215,26 +1239,21 @@ fn parse_head_call(s: &SpanString, distinct_from_outside: bool) -> ParseResult<(
         Ok(())
     };
 
-    let op_expr = split(&post_call_str, "=")?;
-    if op_expr.len() == 1 {
-        if !op_expr[0].is_empty() {
+    // The value follows the first `=` (`= x`, `+= x`, `Max= x`); the value
+    // itself may compare (`if x >= 4 then ...`, `x == 4`).
+    let Some((op_str, expr_str)) = split_at_first(&post_call_str, "=")? else {
+        let rest = strip(&post_call_str);
+        if !rest.is_empty() {
             return Err(ParsingException::new(
                 "Unexpected text in the head of a rule.",
-                op_expr[0].clone(),
+                rest,
             ));
         }
         check_agg(&call)?;
         return Ok((call, false));
-    }
-    if op_expr.len() > 2 {
-        return Err(ParsingException::new(
-            "Too many '=' in predicate value.",
-            post_call_str,
-        ));
-    }
-
-    let op_str = &op_expr[0];
-    let expr_str = &op_expr[1];
+    };
+    let op_str = &op_str;
+    let expr_str = &expr_str;
 
     if op_str.is_empty() {
         let fvs = call.as_object_mut().get_mut("record").unwrap().as_object_mut()

@@ -57,6 +57,8 @@ Forces a predicate to be materialized before its dependents are evaluated, usefu
 @Ground(CustomerRevenue);
 ```
 
+The table is named after the predicate, in Synalog's schema (`CustomerRevenue`); a predicate named after an SQL keyword gets `_table` added (`Order_table`), since `Order` does not parse as a table name.
+
 ## `@Engine`
 
 Selects the target SQL dialect for the whole program:

@@ -1,0 +1,4 @@
+SELECT
+  ROUND((CAST(7 AS REAL) / (3)), 3) AS a,
+  ROUND(2.567, 2) AS b,
+  ROUND((CAST(1 AS REAL) / (8)), 1) AS c;
