@@ -1,0 +1,31 @@
+WITH t_2_S AS (SELECT * FROM VALUES
+  ("north", 1, 5),
+  ("north", 2, 8),
+  ("north", 3, 3),
+  ("north", 5, 9),
+  ("north", 6, 1),
+  ("south", 1, 7),
+  ("south", 2, 7),
+  ("south", 4, 2),
+  ("south", 5, 6),
+  ("east", 2, 4),
+  ("east", 3, 11),
+  ("east", 4, 6),
+  ("east", 5, 10),
+  ("east", 7, 3)
+AS UNUSED_TABLE_NAME(r, d, v))
+SELECT
+  S.d AS d,
+  ((1) + (COALESCE((SELECT
+  SUM(1) AS logica_value
+FROM
+  t_2_S AS t_0_S, t_2_S AS t_1_S
+WHERE
+  (t_1_S.v > t_0_S.v) AND
+  (t_0_S.r = "east") AND
+  (t_0_S.d = S.d) AND
+  (t_1_S.r = "east")), 0))) AS rank
+FROM
+  t_2_S AS S
+WHERE
+  (S.r = "east") ORDER BY d NULLS LAST, rank NULLS LAST;

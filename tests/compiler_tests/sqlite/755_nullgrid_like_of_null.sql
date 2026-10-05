@@ -12,6 +12,6 @@ WITH t_1_V AS (SELECT * FROM (
 ) AS UNUSED_TABLE_NAME  )
 SELECT
   t_0_V.k AS k,
-  CASE WHEN (t_0_V.k = 1) THEN CASE WHEN ((t_0_V.s LIKE 'a%') IS NULL) THEN null ELSE 'bad' END ELSE 'ok' END AS v
+  CASE WHEN (t_0_V.k = 1) THEN CASE WHEN ((t_0_V.s LIKE 'a%' ESCAPE '\') IS NULL) THEN null ELSE 'bad' END ELSE 'ok' END AS v
 FROM
   t_1_V AS t_0_V ORDER BY k NULLS LAST;

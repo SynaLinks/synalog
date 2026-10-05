@@ -410,10 +410,23 @@ fn test_duckdb_built_in_functions() {
 }
 
 #[test]
-fn test_bigquery_empty_built_in_functions() {
+fn test_bigquery_built_in_functions() {
+    // BigQuery uses the base functions but Like, whose LIKE has no ESCAPE
+    // clause (a backslash escapes already).
     let d = get("bigquery").unwrap();
     let f = d.built_in_functions();
-    assert!(f.is_empty(), "BigQuery uses all base functions");
+    assert_eq!(f.keys().collect::<Vec<_>>(), vec![&"Like"]);
+    assert!(!f["Like"].contains("ESCAPE"));
+}
+
+#[test]
+fn like_escapes_with_a_backslash() {
+    for engine in ["sqlite", "duckdb", "psql", "trino", "presto", "databricks"] {
+        let d = get(engine).unwrap();
+        let like = d.built_in_functions().get("Like").map(|s| s.to_string())
+            .unwrap_or_else(|| crate::compiler::expr_translate::base_built_in_functions()["Like"].to_string());
+        assert!(like.contains("ESCAPE"), "{engine}: {like}");
+    }
 }
 
 // ── infix_operators ──
@@ -601,10 +614,11 @@ fn test_duckdb_regex_match_condition() {
 
 #[test]
 fn test_bigquery_regex_match_condition() {
+    // The pattern is the dialect's string literal: double-quoted here.
     let d = get("bigquery").unwrap();
     assert_eq!(
         d.regex_match_condition("CAST(name AS TEXT)", "foo.*bar"),
-        "REGEXP_LIKE(CAST(name AS TEXT), 'foo.*bar')"
+        "REGEXP_LIKE(CAST(name AS TEXT), \"foo.*bar\")"
     );
 }
 
@@ -628,10 +642,11 @@ fn test_presto_regex_match_condition() {
 
 #[test]
 fn test_databricks_regex_match_condition() {
+    // The pattern is the dialect's string literal: double-quoted here.
     let d = get("databricks").unwrap();
     assert_eq!(
         d.regex_match_condition("CAST(name AS TEXT)", "foo.*bar"),
-        "REGEXP_LIKE(CAST(name AS TEXT), 'foo.*bar')"
+        "REGEXP_LIKE(CAST(name AS TEXT), \"foo.*bar\")"
     );
 }
 
@@ -643,10 +658,11 @@ fn test_regex_match_condition_escapes_single_quotes() {
     ];
     for engine in &engines {
         let d = get(engine).unwrap();
+        // The pattern is written as the dialect's string literal.
         let result = d.regex_match_condition("col", "it's");
         assert!(
-            result.contains("it''s"),
-            "{} should escape single quotes, got: {}",
+            result.contains(&d.str_literal("it's")),
+            "{} should write the pattern as a literal, got: {}",
             engine,
             result
         );
@@ -668,5 +684,38 @@ fn nulls_sort_last_on_every_engine() {
         let d = crate::compiler::dialects::get(engine).unwrap();
         assert_eq!(d.nulls_first_by_default(false), ascending_first, "{engine} ascending");
         assert_eq!(d.nulls_first_by_default(true), descending_first, "{engine} descending");
+    }
+}
+
+#[test]
+fn a_string_literal_ends_where_any_statement_splitter_thinks() {
+    // Whatever splits a script at semicolons outside quotes, knowing the
+    // engine's backslash escapes or not, must find each literal's end at its
+    // last character: otherwise text of the value would run as SQL.
+    let payloads = [
+        "'; DROP TABLE t; --", "\"; DROP TABLE t; --", "\\'; DROP TABLE t; --", "\\\"; DROP",
+        "\\", "a\\", "''", "\"\"", "\\u0022; DROP", "$$; DROP $$", "`; DROP; `", "E'\\''",
+    ];
+    for engine in ["sqlite", "duckdb", "psql", "bigquery", "trino", "presto", "databricks"] {
+        let d = get(engine).unwrap();
+        for p in payloads {
+            let lit = d.str_literal(p);
+            let body = lit.strip_prefix('E').unwrap_or(&lit);
+            let chars: Vec<char> = body.chars().collect();
+            let quote = chars[0];
+            // A naive scan: a doubled quote is one quote, a backslash is a character.
+            let mut i = 1;
+            let end = loop {
+                if chars[i] == quote {
+                    if i + 1 < chars.len() && chars[i + 1] == quote {
+                        i += 2;
+                        continue;
+                    }
+                    break i;
+                }
+                i += 1;
+            };
+            assert_eq!(end, chars.len() - 1, "{engine}: {p:?} written {lit}");
+        }
     }
 }

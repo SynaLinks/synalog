@@ -1,6 +1,6 @@
 WITH t_1_W AS (SELECT * FROM VALUES
   (1, "it's"),
-  (2, "say \"hi\""),
+  (2, "say \u0022hi\u0022"),
   (3, "café"),
   (4, "naïve"),
   (5, "a\\b"),

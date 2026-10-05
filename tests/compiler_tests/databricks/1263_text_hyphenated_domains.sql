@@ -11,4 +11,4 @@ SELECT
 FROM
   t_0_Customer AS Customer
 WHERE
-  (CAST(Customer.email AS STRING) LIKE "%-%");
+  (CAST(Customer.email AS STRING) LIKE "%-%" ESCAPE '\\');

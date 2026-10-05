@@ -21,6 +21,7 @@ This matters most for AI agents: it prevents producing programs that parse corre
 | **Functors** | A functor naming a predicate that does not exist, or an argument the applied predicate does not depend on: `F := Count(Nope: Odd)` when `Count` never reads `Nope` |
 | **Directives** | `@OrderBy`, `@Limit`, `@Recursive` or `@Ground` about a predicate the program does not define; an `@OrderBy` item that is not a column of the predicate; an `@Limit` that is not a whole number of rows; an `@Recursive` depth below 1 |
 | **Assertions** | An `@Assert` statement that does not parse or contradicts the program, an assertion stated twice |
+| **Disjunction inside** | A disjunction inside a negation `~(A \| B)` or a `combine`, which does not compile: its alternatives go in a predicate of their own |
 | **Contradictions** (warning) | A rule whose comparisons can never all hold (`a < b, a >= b`; `x > 10, x < 5`; `k == 1, k == 2`), so it gives no row |
 
 ### Unsafe `SqlExpr`
@@ -51,6 +52,18 @@ TopCustomers(customer_id:) :- Spent(customer_id:);
 ''')
 # errors: ['Missing @OrderBy for 'TopCustomers', the predicate this file is about: ... add @OrderBy(TopCustomers, "column"); before its rules']
 ```
+
+### Text never becomes SQL
+
+A program's text reaches SQL only as values or as checked names, so no string can add a statement or change one:
+
+- every string (a fact, a pattern for `Like` or `search`, a `Format`) is a literal in the engine's own escapes; on Databricks and BigQuery, whose literals take backslash escapes, a quote of the value is written `\u0022`, so a literal holds no quote but its own two, and whatever splits a script into statements finds its end;
+- on PostgreSQL, a string with a backslash is an `E'...'` literal, read the same whatever `standard_conforming_strings` says;
+- names (predicates, columns, fields) are identifiers, quoted when they are keywords; `@OrderBy` takes columns, `@Limit` a number, `@Dataset` a schema name of letters, digits, `_` and `-`: anything else is refused;
+- `SqlExpr`, raw SQL, is refused in a program;
+- a grounded table lives in Synalog's dataset, also when `@Ground` names it: a program cannot drop or replace a table elsewhere.
+
+`tests/programs/injection` holds the attempts this is checked against, on every engine.
 
 ### Contradictions
 

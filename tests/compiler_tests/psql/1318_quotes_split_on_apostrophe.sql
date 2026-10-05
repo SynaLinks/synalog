@@ -28,7 +28,7 @@ WITH t_1_W AS (SELECT * FROM (
   
     SELECT
       5 AS id,
-      'a\b' AS w
+      E'a\\b' AS w
    UNION ALL
   
     SELECT
@@ -51,5 +51,5 @@ SELECT
 FROM
   t_1_W AS t_0_W, UNNEST((CASE WHEN t_0_W.w = '' THEN ARRAY[''] ELSE STRING_TO_ARRAY(t_0_W.w, '''') END)) as x_2
 WHERE
-  (t_0_W.w LIKE '%''%')
+  (t_0_W.w LIKE '%''%' ESCAPE '\')
 GROUP BY x_2 ORDER BY part;

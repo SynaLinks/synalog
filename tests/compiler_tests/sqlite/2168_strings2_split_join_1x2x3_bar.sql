@@ -1,0 +1,2 @@
+SELECT
+  JOIN_STRINGS(SPLIT('1|2|3', '|'), '|') AS s;

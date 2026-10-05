@@ -28,7 +28,7 @@ WITH t_2_W AS (SELECT * FROM (
   
     SELECT
       5 AS id,
-      'a\b' AS w
+      E'a\\b' AS w
    UNION ALL
   
     SELECT

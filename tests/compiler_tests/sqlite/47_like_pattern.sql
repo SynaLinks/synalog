@@ -21,8 +21,8 @@ t_0_StartsWithAl AS (SELECT
 FROM
   t_1_Names AS Names
 WHERE
-  (Names.name LIKE 'al%') ORDER BY name)
+  (Names.name LIKE 'al%' ESCAPE '\') ORDER BY name NULLS LAST)
 SELECT
   StartsWithAl.name AS name
 FROM
-  t_0_StartsWithAl AS StartsWithAl ORDER BY name;
+  t_0_StartsWithAl AS StartsWithAl ORDER BY name NULLS LAST;

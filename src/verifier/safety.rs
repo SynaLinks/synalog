@@ -41,6 +41,9 @@ pub enum SafetyError {
         rule: String,
         function: String,
     },
+    DisjunctionInside {
+        rule: String,
+    },
 }
 
 impl std::fmt::Display for SafetyError {
@@ -60,6 +63,9 @@ impl std::fmt::Display for SafetyError {
             }
             SafetyError::FunctionAsCondition { rule, function } => {
                 write!(f, "{}", crate::errors::function_as_condition_message(function, rule))
+            }
+            SafetyError::DisjunctionInside { rule } => {
+                write!(f, "{}", VerifyError::DisjunctionInside { rule: rule.clone() })
             }
         }
     }
@@ -85,6 +91,7 @@ impl From<SafetyError> for VerifyError {
             SafetyError::FunctionAsCondition { rule, function } => {
                 VerifyError::FunctionAsCondition { function, rule }
             }
+            SafetyError::DisjunctionInside { rule } => VerifyError::DisjunctionInside { rule },
         }
     }
 }
@@ -213,7 +220,35 @@ pub fn check_rule_safety(rule: &Json) -> Vec<SafetyError> {
 pub fn check_safety(rules: &[&Json]) -> Vec<SafetyError> {
     let mut errors: Vec<SafetyError> = rules.iter().flat_map(|r| check_rule_safety(r)).collect();
     errors.extend(check_functions_as_conditions(rules));
+    errors.extend(check_disjunctions_inside(rules));
     errors
+}
+
+/// A disjunction among the conditions of a combine (an aggregate expression,
+/// or a negation `~(A | B)`, which is one): the compiler writes each combine
+/// as one query and cannot split it into alternatives.
+fn check_disjunctions_inside(rules: &[&Json]) -> Vec<SafetyError> {
+    fn has_disjunction_in_combine(json: &Json) -> bool {
+        match json {
+            Json::Object(o) => {
+                if let Some(combine) = o.get("combine") {
+                    let conjuncts = combine.as_object().get("body")
+                        .and_then(|b| b.as_object().get("conjunction"))
+                        .and_then(|c| c.as_object().get("conjunct"));
+                    if conjuncts.is_some_and(|cs| cs.as_array().iter().any(|c| c.as_object().contains_key("disjunction"))) {
+                        return true;
+                    }
+                }
+                o.values().any(has_disjunction_in_combine)
+            }
+            Json::Array(items) => items.iter().any(has_disjunction_in_combine),
+            _ => false,
+        }
+    }
+    rules.iter()
+        .filter(|r| has_disjunction_in_combine(r))
+        .map(|r| SafetyError::DisjunctionInside { rule: rule_text(r) })
+        .collect()
 }
 
 /// A function (`F(x) = ...`) written as a condition, `F(x)` in a body: a
@@ -285,6 +320,16 @@ mod tests {
         let parsed = parse(code);
         let rules: Vec<&Json> = parsed.as_object()["rule"].as_array().iter().collect();
         check_safety(&rules).iter().map(|e| e.to_string()).collect()
+    }
+
+    #[test]
+    fn test_a_disjunction_inside_a_combine_is_refused() {
+        let errors = program_safety("V(x: 1);\nQ(x:) :- V(x:), ~(V(x: 2) | V(x: 3));");
+        assert!(errors.iter().any(|e| e.contains("A disjunction inside a negation or a combine")), "{errors:?}");
+        let errors = program_safety("V(x: 1);\nQ(t:) :- t == (combine += 1 :- V(x:), (x == 1 | x == 2));");
+        assert!(errors.iter().any(|e| e.contains("A disjunction inside")), "{errors:?}");
+        // At the top of a body, a disjunction is alternatives of the rule.
+        assert!(program_safety("V(x: 1);\nQ(x:) :- V(x:), (x == 1 | x == 2);").is_empty());
     }
 
     #[test]

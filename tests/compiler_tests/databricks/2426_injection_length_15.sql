@@ -1,0 +1,2 @@
+SELECT
+  LENGTH("');ATTACH DATABASE 'x' AS y;--") AS n;

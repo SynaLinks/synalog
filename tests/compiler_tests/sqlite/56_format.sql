@@ -12,11 +12,11 @@ WITH t_1_Items AS (SELECT * FROM (
 ) AS UNUSED_TABLE_NAME  ),
 t_0_Labels AS (SELECT
   Items.name AS name,
-  Printf('%s x%s', Items.name, CAST(Items.qty AS TEXT)) AS label
+  Printf('%s x%s', Items.name, (SELECT (CASE WHEN synalog_v IS NULL THEN NULL WHEN abs(synalog_v) < 0.0000000000000005 THEN '0' WHEN synalog_v = CAST(synalog_v AS INTEGER) AND abs(synalog_v) < 1e18 THEN CAST(CAST(synalog_v AS INTEGER) AS TEXT) WHEN abs(synalog_v) >= 1e38 THEN CAST(synalog_v AS TEXT) WHEN abs(synalog_v) >= 1e15 THEN (CASE WHEN synalog_v < 0 THEN '-' ELSE '' END) || substr(printf('%.14e', abs(synalog_v)), 1, 1) || substr(printf('%.14e', abs(synalog_v)), 3, 14) || substr('0000000000000000000000000', 1, CAST(substr(printf('%.14e', abs(synalog_v)), instr(printf('%.14e', abs(synalog_v)), 'e') + 1) AS INTEGER) - 14) ELSE rtrim(rtrim(printf('%.*f', max(1, min(15, 14 - CAST(floor(log10(coalesce(nullif(abs(synalog_v), 0), 1))) AS INTEGER))), synalog_v), '0'), '.') END) FROM (SELECT Items.qty AS synalog_v))) AS label
 FROM
-  t_1_Items AS Items ORDER BY name)
+  t_1_Items AS Items ORDER BY name NULLS LAST)
 SELECT
   Labels.name AS name,
   Labels.label AS label
 FROM
-  t_0_Labels AS Labels ORDER BY name;
+  t_0_Labels AS Labels ORDER BY name NULLS LAST;

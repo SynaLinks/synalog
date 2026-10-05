@@ -3,4 +3,4 @@ SELECT
 FROM
   UNNEST(ARRAY['cat', 'cart', 'scat', 'Cat', 'ct', 'c_t']) as pushkin(x_3)
 WHERE
-  (x_3 LIKE 'c%t') ORDER BY w;
+  (x_3 LIKE 'c%t' ESCAPE '\') ORDER BY w;

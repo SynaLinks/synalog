@@ -47,4 +47,4 @@ SELECT
 FROM
   t_0_Customer AS Customer
 WHERE
-  (Customer.email LIKE '%-%');
+  (Customer.email LIKE '%-%' ESCAPE '\');

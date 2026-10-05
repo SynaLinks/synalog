@@ -144,6 +144,10 @@ pub enum VerifyError {
     #[error("Unsafe aggregation: variable '{var}' not bound outside aggregate in: {rule}")]
     UnsafeAggregation { var: String, rule: String },
 
+    /// A disjunction inside a negation or a combine, which does not compile.
+    #[error("A disjunction inside a negation or a combine is not supported: write the alternatives as rules of a predicate of their own and use it there, in: {rule}")]
+    DisjunctionInside { rule: String },
+
     /// A function used as a condition, which holds whatever its value.
     #[error("{}", function_as_condition_message(function, rule))]
     FunctionAsCondition { function: String, rule: String },

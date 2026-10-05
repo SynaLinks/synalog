@@ -28,7 +28,7 @@ WITH t_1_W AS (SELECT * FROM (
   
     SELECT
       5 AS id,
-      'a\b' AS w
+      E'a\\b' AS w
    UNION ALL
   
     SELECT
@@ -51,4 +51,4 @@ SELECT
 FROM
   t_1_W AS t_0_W
 WHERE
-  (t_0_W.w LIKE '%''%') ORDER BY id;
+  (t_0_W.w LIKE '%''%' ESCAPE '\') ORDER BY id;

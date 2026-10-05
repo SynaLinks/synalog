@@ -1,6 +1,6 @@
 WITH t_1_W AS (SELECT * FROM VALUES
   (1, "it's"),
-  (2, "say \"hi\""),
+  (2, "say \u0022hi\u0022"),
   (3, "café"),
   (4, "naïve"),
   (5, "a\\b"),
@@ -13,4 +13,4 @@ SELECT
 FROM
   t_1_W AS t_0_W
 WHERE
-  (CAST(t_0_W.w AS STRING) LIKE "%'%") ORDER BY id NULLS LAST;
+  (CAST(t_0_W.w AS STRING) LIKE "%'%" ESCAPE '\\') ORDER BY id NULLS LAST;

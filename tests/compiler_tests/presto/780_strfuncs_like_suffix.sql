@@ -3,4 +3,4 @@ SELECT
 FROM
   UNNEST(ARRAY['Apple', 'kiwi', 'Banana']) as pushkin(x_3)
 WHERE
-  (x_3 LIKE '%na');
+  (x_3 LIKE '%na' ESCAPE '\');

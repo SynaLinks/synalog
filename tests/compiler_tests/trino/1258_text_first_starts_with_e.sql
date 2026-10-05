@@ -47,4 +47,4 @@ SELECT
 FROM
   t_0_Customer AS Customer
 WHERE
-  (LOWER(Customer.first) LIKE 'e%');
+  (LOWER(Customer.first) LIKE 'e%' ESCAPE '\');

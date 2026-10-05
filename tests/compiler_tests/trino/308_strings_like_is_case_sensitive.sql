@@ -3,4 +3,4 @@ SELECT
 FROM
   UNNEST(ARRAY['abc', 'ABC']) as pushkin(x_3)
 WHERE
-  (x_3 LIKE 'abc') ORDER BY w;
+  (x_3 LIKE 'abc' ESCAPE '\') ORDER BY w;

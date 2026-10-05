@@ -48,8 +48,9 @@ from ._synalog import (
     plan,
     search,
     assertions,
+    statement_text,
 )
-from .checking import program_engine, project_engine as _project_engine, resolve_dsn as _resolve_dsn, violated_assertions
+from .checking import program_engine, project_engine as _project_engine, resolve_dsn as _resolve_dsn, shown_value, violated_assertions
 from .runners import RunnerUnavailable, run_plan, run_sql, session
 
 DEFAULT_ENGINE = "duckdb"
@@ -526,13 +527,14 @@ def main(args, inline, engine, limit, offset, as_csv, search_pattern, dsn,
             more = "at least " if len(rows) > shown else ""
             count = min(len(rows), shown)
             out.print(
-                f"✗ {label} is violated: {assertion['statement']}\n"
+                f"✗ {label} is violated: {statement_text(assertion['statement'])}\n"
                 f"  {more}{count} counterexample{'' if count == 1 else 's'}:",
                 style="red",
                 markup=False,
                 highlight=False,
             )
-            out.print(render_table(columns, rows[:shown]))
+            # Values from the database read as values, never as report text.
+            out.print(render_table(columns, [tuple(shown_value(v) for v in row) for row in rows[:shown]]))
         return ok
 
     try:

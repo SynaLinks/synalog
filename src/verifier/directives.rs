@@ -91,6 +91,26 @@ pub fn check_directives(rules: &[&Json]) -> Vec<DirectiveError> {
     let mut errors = Vec::new();
     for rule in rules {
         let directive = rule.as_object()["head"].as_object()["predicate_name"].as_str();
+        // @Dataset is written into the SQL as a schema: a name, never text.
+        if directive == "@Dataset" {
+            let args = arguments(rule);
+            let name = args.first().map(|a| {
+                let o = a.as_object();
+                o.get("literal")
+                    .and_then(|l| l.as_object().get("the_string"))
+                    .map(|t| if t.is_object() { t.as_object()["the_string"].as_str().to_string() } else { t.as_str().to_string() })
+                    .unwrap_or_else(|| source_text(a))
+            });
+            if let Some(name) = name.filter(|n| !crate::compiler::annotations::is_schema_name(n)) {
+                errors.push(DirectiveError {
+                    message: format!(
+                        "@Dataset: '{}' is not a schema name: write names of letters, digits, '_' and '-', joined by '.'",
+                        name
+                    ),
+                });
+            }
+            continue;
+        }
         if !DIRECTIVES.contains(&directive) {
             continue;
         }

@@ -42,6 +42,15 @@ pub fn built_in_restrictions(predicate_name: &str, field: &str) -> Option<Type> 
         | ("<=", "logica_value")
         | (">=", "logica_value") => Some(Type::Bool),
 
+        // Results whose type the function fixes, whatever its arguments: a
+        // number's text, for one, is written the same on every engine only
+        // when the compiler knows it is a number.
+        ("-" | "*" | "/" | "%" | "^" | "Agg+" | "Avg" | "Count" | "Length" | "Size" | "ToInt64"
+            | "ToFloat64" | "Abs" | "Round" | "Floor" | "Ceil" | "Sqrt" | "Exp" | "Log" | "Pow",
+            "logica_value") => Some(Type::Number),
+        ("ToString" | "Upper" | "Lower" | "Substr" | "Format" | "Join" | "StringAgg", "logica_value") => Some(Type::String),
+        ("==" | "!=" | "&&" | "||" | "!" | "Like" | "IsNull", "logica_value") => Some(Type::Bool),
+
         _ => None,
     }
 }

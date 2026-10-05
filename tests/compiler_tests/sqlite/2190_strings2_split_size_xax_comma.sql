@@ -1,0 +1,2 @@
+SELECT
+  JSON_ARRAY_LENGTH(SPLIT(',a,', ',')) AS n;

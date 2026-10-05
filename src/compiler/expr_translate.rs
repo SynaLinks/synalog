@@ -378,7 +378,7 @@ var_samp,VAR_SAMP";
 /// Built-in functions: Logica name → SQL template.
 /// These override bulk functions for Logica-specific semantics.
 // Note: SomeValue uses ANY_VALUE in Rust vs ARRAY_AGG(... IGNORE NULLS LIMIT 1)[OFFSET(0)] in Python.
-fn base_built_in_functions() -> HashMap<&'static str, &'static str> {
+pub(crate) fn base_built_in_functions() -> HashMap<&'static str, &'static str> {
     let mut m = HashMap::new();
     m.insert("ToFloat64", "CAST(%s AS FLOAT64)");
     m.insert("ToInt64", "CAST(%s AS INT64)");
@@ -410,7 +410,9 @@ fn base_built_in_functions() -> HashMap<&'static str, &'static str> {
     m.insert("Element", "{0}[OFFSET({1})]");
     m.insert("IsNull", "(%s IS NULL)");
     m.insert("Join", "ARRAY_TO_STRING(%s)");
-    m.insert("Like", "({0} LIKE {1})");
+    // A backslash escapes `%`, `_` and itself in a pattern on every engine;
+    // without ESCAPE, only PostgreSQL and Spark would read it so.
+    m.insert("Like", "({0} LIKE {1} ESCAPE '\\')");
     m.insert("Range", "GENERATE_ARRAY(0, %s - 1)");
     m.insert("RangeOf", "GENERATE_ARRAY(0, ARRAY_LENGTH(%s) - 1)");
     m.insert("Size", "ARRAY_LENGTH(%s)");
@@ -745,6 +747,20 @@ impl<'a> ExprTranslator<'a> {
                                     tasks.push(Task::Eval(arg));
                                 }
                                 continue;
+                            }
+                        }
+
+                        // A number as text: the same text on every engine.
+                        if pred_name == "ToString" {
+                            if let Some(template) = self.dialect.number_to_string() {
+                                let fvs = co["record"].as_object()["field_value"].as_array();
+                                let arg = fvs.first()
+                                    .and_then(|fv| fv.as_object()["value"].as_object().get("expression"));
+                                if let Some(arg) = arg.filter(|a| self.value_type(a) == Type::Number) {
+                                    tasks.push(Task::Combine(CK::Template(template.to_string()), 1));
+                                    tasks.push(Task::Eval(arg));
+                                    continue;
+                                }
                             }
                         }
 

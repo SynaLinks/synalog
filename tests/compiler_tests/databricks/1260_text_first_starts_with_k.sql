@@ -11,4 +11,4 @@ SELECT
 FROM
   t_0_Customer AS Customer
 WHERE
-  (CAST(LOWER(Customer.first) AS STRING) LIKE "k%");
+  (CAST(LOWER(Customer.first) AS STRING) LIKE "k%" ESCAPE '\\');

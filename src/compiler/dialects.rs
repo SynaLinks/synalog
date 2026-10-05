@@ -19,6 +19,17 @@ use std::hash::{Hash, Hasher};
 use crate::compiler::CompileError;
 use crate::compiler::type_inference::Type;
 
+/// A double-quoted string literal for engines whose literals take backslash
+/// escapes (Spark, BigQuery). A quote of the value is written `\u0022`, never
+/// `\"`: the literal then holds no quote but its own two, so whatever splits a
+/// script into statements at semicolons outside quotes, knowing these escapes
+/// or not, never ends it early (`"\"; DROP TABLE t; --"` would end at the
+/// escaped quote for one that does not, and run `DROP TABLE t`).
+pub fn backslash_escaped_literal(s: &str) -> String {
+    let escaped = s.replace('\\', "\\\\").replace('"', "\\u0022");
+    format!("\"{}\"", escaped)
+}
+
 /// Deterministic composite-type name for a record shape.
 ///
 /// Used by PostgreSQL, which (unlike trino/presto's inline `CAST(ROW … AS ROW(…))`)
@@ -107,6 +118,19 @@ pub trait Dialect {
     /// which its nested conversions overflowed; DuckDB's ROUND takes no text;
     /// PostgreSQL's round goes through numeric. A template of `{0}`.
     fn int64_of_text(&self) -> Option<&'static str> {
+        None
+    }
+
+    /// `ToString` of a number, the same text on every engine: a whole number
+    /// without a decimal point (`5`), every digit below 10^18; any other
+    /// number with at most 15 significant digits (what a double holds
+    /// reliably) in plain decimal, trailing zeros trimmed (`0.1 + 0.2` is
+    /// `0.3`), at most 15 decimals; the engine's own form from 10^38. Large
+    /// numbers round in DECIMAL, where engines agree. The value is named
+    /// once (a lambda's or a one-row subquery's `synalog_v`): written out at
+    /// each use, nested conversions would grow exponentially. A template of
+    /// `{0}`.
+    fn number_to_string(&self) -> Option<&'static str> {
         None
     }
 
@@ -276,8 +300,9 @@ pub trait Dialect {
     /// Generate a SQL condition that tests whether `column_expr` matches a regex `pattern`.
     /// Default uses REGEXP_LIKE (BigQuery, Trino, Presto, Databricks).
     fn regex_match_condition(&self, column_expr: &str, pattern: &str) -> String {
-        let escaped = pattern.replace('\'', "''");
-        format!("REGEXP_LIKE({}, '{}')", column_expr, escaped)
+        // The pattern is a string literal like any other: the dialect's own
+        // escapes (a backslash ends a literal on Spark and BigQuery otherwise).
+        format!("REGEXP_LIKE({}, {})", column_expr, self.str_literal(pattern))
     }
 
     /// Cast an arbitrary expression to this dialect's string type, so the
@@ -338,6 +363,9 @@ pub fn get(engine: &str) -> Result<Box<dyn Dialect>, CompileError> {
 pub struct BigQueryDialect;
 
 impl Dialect for BigQueryDialect {
+    fn number_to_string(&self) -> Option<&'static str> {
+        Some("(SELECT (CASE WHEN synalog_v IS NULL THEN NULL WHEN ABS(synalog_v) < 0.0000000000000005 THEN '0' WHEN synalog_v = FLOOR(synalog_v) AND ABS(synalog_v) < 1e18 THEN CAST(CAST(synalog_v AS INT64) AS STRING) WHEN ABS(synalog_v) >= 1e38 THEN CAST(synalog_v AS STRING) WHEN ABS(synalog_v) >= 1e15 THEN CAST(ROUND(CAST(synalog_v AS BIGNUMERIC), 14 - CAST(FLOOR(LOG10(COALESCE(NULLIF(ABS(synalog_v), 0), 1))) AS INT64)) AS STRING) ELSE CAST(ROUND(CAST(synalog_v AS BIGNUMERIC), 14 - CAST(FLOOR(LOG10(COALESCE(NULLIF(ABS(synalog_v), 0), 1))) AS INT64)) AS STRING) END) FROM UNNEST([{0}]) AS synalog_v)")
+    }
     fn nulls_first_by_default(&self, descending: bool) -> bool { !descending }
     fn except_distinct(&self) -> &'static str {
         "EXCEPT DISTINCT"
@@ -352,7 +380,10 @@ impl Dialect for BigQueryDialect {
     fn string_cast(&self, expr: &str) -> String { format!("CAST({} AS STRING)", expr) }
 
     fn built_in_functions(&self) -> HashMap<&'static str, &'static str> {
-        HashMap::new()
+        let mut m = HashMap::new();
+        // LIKE has no ESCAPE clause here: a backslash escapes already.
+        m.insert("Like", "({0} LIKE {1})");
+        m
     }
 
     fn infix_operators(&self) -> HashMap<&'static str, &'static str> {
@@ -363,8 +394,7 @@ impl Dialect for BigQueryDialect {
 
     fn str_literal(&self, s: &str) -> String {
         // BigQuery uses double-quoted string literals (matching Python's json.dumps).
-        let escaped = s.replace('\\', "\\\\").replace('"', "\\\"");
-        format!("\"{}\"", escaped)
+        backslash_escaped_literal(s)
     }
 
     fn subscript(&self, record: &str, subscript: &str, _record_is_table: bool) -> String {
@@ -423,6 +453,9 @@ Array(a) = SqlExpr(
 pub struct SqLiteDialect;
 
 impl Dialect for SqLiteDialect {
+    fn number_to_string(&self) -> Option<&'static str> {
+        Some("(SELECT (CASE WHEN synalog_v IS NULL THEN NULL WHEN abs(synalog_v) < 0.0000000000000005 THEN '0' WHEN synalog_v = CAST(synalog_v AS INTEGER) AND abs(synalog_v) < 1e18 THEN CAST(CAST(synalog_v AS INTEGER) AS TEXT) WHEN abs(synalog_v) >= 1e38 THEN CAST(synalog_v AS TEXT) WHEN abs(synalog_v) >= 1e15 THEN (CASE WHEN synalog_v < 0 THEN '-' ELSE '' END) || substr(printf('%.14e', abs(synalog_v)), 1, 1) || substr(printf('%.14e', abs(synalog_v)), 3, 14) || substr('0000000000000000000000000', 1, CAST(substr(printf('%.14e', abs(synalog_v)), instr(printf('%.14e', abs(synalog_v)), 'e') + 1) AS INTEGER) - 14) ELSE rtrim(rtrim(printf('%.*f', max(1, min(15, 14 - CAST(floor(log10(coalesce(nullif(abs(synalog_v), 0), 1))) AS INTEGER))), synalog_v), '0'), '.') END) FROM (SELECT {0} AS synalog_v))")
+    }
     fn int64_of_text(&self) -> Option<&'static str> {
         Some("CAST({0} AS INTEGER)")
     }
@@ -556,8 +589,9 @@ Char(code) = SqlExpr("CHAR({code})", {code:});
     }
 
     fn regex_match_condition(&self, column_expr: &str, pattern: &str) -> String {
-        let escaped = pattern.replace('\'', "''");
-        format!("{} REGEXP '{}'", column_expr, escaped)
+        // The pattern is a string literal like any other: the dialect's own
+        // escapes (a backslash ends a literal on Spark and BigQuery otherwise).
+        format!("{} REGEXP {}", column_expr, self.str_literal(pattern))
     }
 }
 
@@ -568,6 +602,20 @@ Char(code) = SqlExpr("CHAR({code})", {code:});
 pub struct PostgreSqlDialect;
 
 impl Dialect for PostgreSqlDialect {
+    fn number_to_string(&self) -> Option<&'static str> {
+        Some("(SELECT (CASE WHEN synalog_v IS NULL THEN NULL WHEN ABS(CAST(synalog_v AS numeric)) < 0.0000000000000005 THEN '0' WHEN CAST(synalog_v AS numeric) = FLOOR(CAST(synalog_v AS numeric)) AND ABS(CAST(synalog_v AS numeric)) < 1e18 THEN CAST(CAST(CAST(synalog_v AS numeric) AS BIGINT) AS TEXT) WHEN ABS(CAST(synalog_v AS numeric)) >= 1e38 THEN CAST(CAST(synalog_v AS numeric) AS TEXT) WHEN ABS(CAST(synalog_v AS numeric)) >= 1e15 THEN CAST(ROUND(CAST(CAST(synalog_v AS numeric) AS DECIMAL(38,0)), 14 - CAST(FLOOR(LOG(COALESCE(NULLIF(ABS(CAST(synalog_v AS numeric)), 0), 1))) AS INTEGER)) AS TEXT) ELSE TRIM(TRAILING '.' FROM TRIM(TRAILING '0' FROM CAST(CAST(ROUND(CAST(synalog_v AS numeric), 14 - CAST(FLOOR(LOG(COALESCE(NULLIF(ABS(CAST(synalog_v AS numeric)), 0), 1))) AS INTEGER)) AS DECIMAL(38,15)) AS TEXT))) END) FROM (SELECT {0} AS synalog_v) AS synalog_n)")
+    }
+    fn str_literal(&self, s: &str) -> String {
+        // A server with standard_conforming_strings off reads a backslash in
+        // '...' as an escape, which could end the literal: E'...' reads it as
+        // one whatever the setting, so a backslash is written doubled there.
+        let escaped = s.replace('\'', "''");
+        if s.contains('\\') {
+            format!("E'{}'", escaped.replace('\\', "\\\\"))
+        } else {
+            format!("'{}'", escaped)
+        }
+    }
     fn int64_of_text(&self) -> Option<&'static str> {
         Some("CAST({0} AS BIGINT)")
     }
@@ -703,8 +751,9 @@ Str(a) = a;
     }
 
     fn regex_match_condition(&self, column_expr: &str, pattern: &str) -> String {
-        let escaped = pattern.replace('\'', "''");
-        format!("{} ~ '{}'", column_expr, escaped)
+        // The pattern is a string literal like any other: the dialect's own
+        // escapes (a backslash ends a literal on Spark and BigQuery otherwise).
+        format!("{} ~ {}", column_expr, self.str_literal(pattern))
     }
 }
 
@@ -715,6 +764,9 @@ Str(a) = a;
 pub struct TrinoDialect;
 
 impl Dialect for TrinoDialect {
+    fn number_to_string(&self) -> Option<&'static str> {
+        Some("element_at(transform(ARRAY[{0}], synalog_v -> (CASE WHEN synalog_v IS NULL THEN NULL WHEN ABS(synalog_v) < 0.0000000000000005 THEN '0' WHEN synalog_v = FLOOR(synalog_v) AND ABS(synalog_v) < 1e18 THEN CAST(CAST(synalog_v AS BIGINT) AS VARCHAR) WHEN ABS(synalog_v) >= 1e38 THEN CAST(synalog_v AS VARCHAR) WHEN ABS(synalog_v) >= 1e15 THEN CAST(ROUND(CAST(synalog_v AS DECIMAL(38,0)), 14 - CAST(FLOOR(LOG10(COALESCE(NULLIF(ABS(synalog_v), 0), 1))) AS INTEGER)) AS VARCHAR) ELSE TRIM(TRAILING '.' FROM TRIM(TRAILING '0' FROM CAST(CAST(ROUND(synalog_v, 14 - CAST(FLOOR(LOG10(COALESCE(NULLIF(ABS(synalog_v), 0), 1))) AS INTEGER)) AS DECIMAL(38,15)) AS VARCHAR))) END)), 1)")
+    }
     fn pagination_clause(&self, limit: Option<u64>, offset: Option<u64>) -> String {
         let mut clause = String::new();
         if let Some(offset) = offset {
@@ -835,6 +887,9 @@ Array(a) = SqlExpr(
 pub struct PrestoDialect;
 
 impl Dialect for PrestoDialect {
+    fn number_to_string(&self) -> Option<&'static str> {
+        Some("element_at(transform(ARRAY[{0}], synalog_v -> (CASE WHEN synalog_v IS NULL THEN NULL WHEN ABS(synalog_v) < 0.0000000000000005 THEN '0' WHEN synalog_v = FLOOR(synalog_v) AND ABS(synalog_v) < 1e18 THEN CAST(CAST(synalog_v AS BIGINT) AS VARCHAR) WHEN ABS(synalog_v) >= 1e38 THEN CAST(synalog_v AS VARCHAR) WHEN ABS(synalog_v) >= 1e15 THEN CAST(ROUND(CAST(synalog_v AS DECIMAL(38,0)), 14 - CAST(FLOOR(LOG10(COALESCE(NULLIF(ABS(synalog_v), 0), 1))) AS INTEGER)) AS VARCHAR) ELSE rtrim(rtrim(CAST(CAST(ROUND(synalog_v, 14 - CAST(FLOOR(LOG10(COALESCE(NULLIF(ABS(synalog_v), 0), 1))) AS INTEGER)) AS DECIMAL(38,15)) AS VARCHAR), '0'), '.') END)), 1)")
+    }
     fn supports_offset(&self) -> bool { false }
     fn pagination_clause(&self, limit: Option<u64>, offset: Option<u64>) -> String {
         let mut clause = String::new();
@@ -952,6 +1007,12 @@ Array(a) = SqlExpr(
 pub struct DatabricksDialect;
 
 impl Dialect for DatabricksDialect {
+    // Spark rounds to a constant number of digits only: a double is
+    // formatted to the digits it needs, a large number built from its
+    // exponent form.
+    fn number_to_string(&self) -> Option<&'static str> {
+        Some("transform(array({0}), synalog_v -> (CASE WHEN synalog_v IS NULL THEN NULL WHEN ABS(synalog_v) < 0.0000000000000005 THEN '0' WHEN synalog_v = FLOOR(synalog_v) AND ABS(synalog_v) < 1e18 THEN CAST(CAST(synalog_v AS BIGINT) AS STRING) WHEN ABS(synalog_v) >= 1e38 THEN CAST(synalog_v AS STRING) WHEN ABS(synalog_v) >= 1e15 THEN concat(CASE WHEN synalog_v < 0 THEN '-' ELSE '' END, substr(format_string('%.14e', ABS(CAST(synalog_v AS DOUBLE))), 1, 1), substr(format_string('%.14e', ABS(CAST(synalog_v AS DOUBLE))), 3, 14), repeat('0', CAST(substr(format_string('%.14e', ABS(CAST(synalog_v AS DOUBLE))), instr(format_string('%.14e', ABS(CAST(synalog_v AS DOUBLE))), 'e') + 1) AS INT) - 14)) ELSE TRIM(TRAILING '.' FROM TRIM(TRAILING '0' FROM format_string(concat('%.', CAST(GREATEST(1, LEAST(15, 14 - CAST(FLOOR(LOG10(COALESCE(NULLIF(ABS(synalog_v), 0), 1))) AS INT))) AS STRING), 'f'), CAST(synalog_v AS DOUBLE)))) END))[0]")
+    }
     fn nulls_first_by_default(&self, descending: bool) -> bool { !descending }
     fn float_literal(&self, text: &str) -> String {
         // `1.5` is a DECIMAL here, and decimal division rounds to the
@@ -989,8 +1050,9 @@ impl Dialect for DatabricksDialect {
         m.insert("AnyValue", "ANY_VALUE(%s)");
         // `::` cast is unavailable on Spark and superfluous on Databricks; CAST
         // is portable across both.
-        m.insert("ILike", "(CAST({0} AS STRING) ILIKE {1})");
-        m.insert("Like", "(CAST({0} AS STRING) LIKE {1})");
+        // A string literal takes backslash escapes here: '\\' is one backslash.
+        m.insert("ILike", "(CAST({0} AS STRING) ILIKE {1} ESCAPE '\\\\')");
+        m.insert("Like", "(CAST({0} AS STRING) LIKE {1} ESCAPE '\\\\')");
         m.insert("Replace", "REPLACE(CAST({0} AS STRING), {1}, {2})");
         // CONCAT concatenates arrays on Spark/Databricks; ARRAY_JOIN instead
         // stringifies an array with a delimiter (a different function).
@@ -1077,8 +1139,7 @@ Array(a) = SqlExpr(
     }
 
     fn str_literal(&self, s: &str) -> String {
-        let escaped = s.replace('\\', "\\\\").replace('"', "\\\"");
-        format!("\"{}\"", escaped)
+        backslash_escaped_literal(s)
     }
 }
 
@@ -1089,6 +1150,12 @@ Array(a) = SqlExpr(
 pub struct DuckDbDialect;
 
 impl Dialect for DuckDbDialect {
+    // DuckDB rounds a DECIMAL to a constant number of digits only: a double
+    // is formatted to the digits it needs, a large number built from its
+    // exponent form.
+    fn number_to_string(&self) -> Option<&'static str> {
+        Some("list_transform([{0}], synalog_v -> (CASE WHEN synalog_v IS NULL THEN NULL WHEN ABS(synalog_v) < 0.0000000000000005 THEN '0' WHEN synalog_v = FLOOR(synalog_v) AND ABS(synalog_v) < 1e18 THEN CAST(CAST(synalog_v AS BIGINT) AS VARCHAR) WHEN ABS(synalog_v) >= 1e38 THEN CAST(synalog_v AS VARCHAR) WHEN ABS(synalog_v) >= 1e15 THEN (CASE WHEN synalog_v < 0 THEN '-' ELSE '' END) || substr(format('{:.14e}', ABS(CAST(synalog_v AS DOUBLE))), 1, 1) || substr(format('{:.14e}', ABS(CAST(synalog_v AS DOUBLE))), 3, 14) || repeat('0', CAST(substr(format('{:.14e}', ABS(CAST(synalog_v AS DOUBLE))), strpos(format('{:.14e}', ABS(CAST(synalog_v AS DOUBLE))), 'e') + 1) AS INTEGER) - 14) ELSE TRIM(TRAILING '.' FROM TRIM(TRAILING '0' FROM format('{:.{}f}', CAST(synalog_v AS DOUBLE), GREATEST(1, LEAST(15, 14 - CAST(FLOOR(LOG10(COALESCE(NULLIF(ABS(synalog_v), 0), 1))) AS INTEGER)))))) END))[1]")
+    }
     fn name(&self) -> &'static str { "duckdb" }
     fn int64_of_text(&self) -> Option<&'static str> {
         Some("CAST({0} AS BIGINT)")
@@ -1273,8 +1340,9 @@ ISum(x) = SqlExpr("SUM({x})", {x:}) :- Error("ISum is to be used only in Clingo.
     }
 
     fn regex_match_condition(&self, column_expr: &str, pattern: &str) -> String {
-        let escaped = pattern.replace('\'', "''");
-        format!("regexp_matches({}, '{}')", column_expr, escaped)
+        // The pattern is a string literal like any other: the dialect's own
+        // escapes (a backslash ends a literal on Spark and BigQuery otherwise).
+        format!("regexp_matches({}, {})", column_expr, self.str_literal(pattern))
     }
 }
 

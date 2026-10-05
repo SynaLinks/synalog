@@ -11,4 +11,4 @@ SELECT
 FROM
   t_0_Customer AS Customer
 WHERE
-  (CAST(Customer.email AS STRING) LIKE "%.edu") ORDER BY id NULLS LAST;
+  (CAST(Customer.email AS STRING) LIKE "%.edu" ESCAPE '\\') ORDER BY id NULLS LAST;

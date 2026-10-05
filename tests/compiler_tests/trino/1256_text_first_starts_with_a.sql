@@ -47,4 +47,4 @@ SELECT
 FROM
   t_0_Customer AS Customer
 WHERE
-  (LOWER(Customer.first) LIKE 'a%') ORDER BY id;
+  (LOWER(Customer.first) LIKE 'a%' ESCAPE '\') ORDER BY id;

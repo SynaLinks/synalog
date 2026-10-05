@@ -9,7 +9,7 @@ t_0_StartsWithAl AS (SELECT
 FROM
   t_1_Names AS Names
 WHERE
-  (CAST(Names.name AS STRING) LIKE "al%") ORDER BY name NULLS LAST)
+  (CAST(Names.name AS STRING) LIKE "al%" ESCAPE '\\') ORDER BY name NULLS LAST)
 SELECT
   StartsWithAl.name AS name
 FROM

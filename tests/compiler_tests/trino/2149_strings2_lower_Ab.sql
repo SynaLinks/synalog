@@ -1,0 +1,2 @@
+SELECT
+  LOWER('Ab') AS s;

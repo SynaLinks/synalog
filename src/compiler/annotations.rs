@@ -305,9 +305,16 @@ impl Annotations {
                 "Dataset" => {
                     // @Dataset("name") — singleton, first positional arg is the dataset name
                     if let Some((_, val)) = fvs.iter().find(|(k, _)| k == "0") {
-                        if let Some(s) = extract_string_literal(val) {
-                            dataset_override = Some(s);
-                        } else if let Some(name) = Self::extract_predicate_name(val) {
+                        let name = extract_string_literal(val).or_else(|| Self::extract_predicate_name(val));
+                        if let Some(name) = name {
+                            // It is written into the SQL as a schema: a name,
+                            // never text that could end the statement.
+                            if !is_schema_name(&name) {
+                                return Err(CompileError::new(
+                                    format!("@Dataset: '{}' is not a schema name: write names of letters, digits, '_' and '-', joined by '.'", name),
+                                    "@Dataset",
+                                ));
+                            }
                             dataset_override = Some(name);
                         }
                     }
@@ -523,7 +530,7 @@ impl Annotations {
             } else {
                 ""
             };
-            lines.push(format!("ATTACH DATABASE '{}' AS {}{};", v, k, type_sqlite));
+            lines.push(format!("ATTACH DATABASE '{}' AS {}{};", v.replace('\'', "''"), k, type_sqlite));
         }
         lines.join("\n")
     }
@@ -621,7 +628,9 @@ impl Annotations {
                     other_raw
                 }
             } else {
-                raw
+                // A table named in @Ground lives in Synalog's dataset too:
+                // grounding never drops or replaces a table elsewhere.
+                self.default_table(&raw)
             }
         };
 
@@ -861,3 +870,14 @@ impl Annotations {
 #[cfg(test)]
 #[path = "annotations_test.rs"]
 mod annotations_test;
+
+/// Whether `name` can be written into SQL as a schema (or a BigQuery
+/// `project.dataset`): names of letters, digits, `_` and `-`, joined by `.`.
+pub fn is_schema_name(name: &str) -> bool {
+    !name.is_empty()
+        && name.split('.').all(|part| {
+            !part.is_empty()
+                && part.chars().next().is_some_and(|c| c.is_ascii_alphanumeric() || c == '_')
+                && part.chars().all(|c| c.is_ascii_alphanumeric() || c == '_' || c == '-')
+        })
+}

@@ -45,5 +45,5 @@ SELECT
 FROM
   t_1_W AS t_0_W, UNNEST(SPLIT(t_0_W.w, '''')) as pushkin(x_2)
 WHERE
-  (t_0_W.w LIKE '%''%')
+  (t_0_W.w LIKE '%''%' ESCAPE '\')
 GROUP BY 1 ORDER BY part;

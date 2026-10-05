@@ -2283,7 +2283,7 @@ impl LogicaProgram {
         if let Some(ref copy_file) = ground.copy_to_file {
             let copy_stmt = format!(
                 "COPY {} TO '{}' (FORMAT 'json', ARRAY true);",
-                ground.table_name, copy_file
+                ground.table_name, copy_file.replace('\'', "''")
             );
             let mut exec = self.execution.borrow_mut();
             let exec_ref = exec.as_mut().unwrap();

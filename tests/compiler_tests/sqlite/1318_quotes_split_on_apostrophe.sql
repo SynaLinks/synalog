@@ -45,5 +45,5 @@ SELECT
 FROM
   t_1_W AS t_0_W, JSON_EACH(SPLIT(t_0_W.w, '''')) as x_2
 WHERE
-  (t_0_W.w LIKE '%''%')
+  (t_0_W.w LIKE '%''%' ESCAPE '\')
 GROUP BY x_2.value ORDER BY part NULLS LAST;

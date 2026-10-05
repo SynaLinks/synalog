@@ -45,4 +45,4 @@ SELECT
 FROM
   t_1_W AS t_0_W
 WHERE
-  (t_0_W.w LIKE '%''%') ORDER BY id NULLS LAST;
+  (t_0_W.w LIKE '%''%' ESCAPE '\') ORDER BY id NULLS LAST;

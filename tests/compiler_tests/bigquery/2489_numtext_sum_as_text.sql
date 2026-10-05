@@ -1,0 +1,22 @@
+WITH t_2_V AS (SELECT * FROM (
+  
+    SELECT
+      0.1 AS x
+   UNION ALL
+  
+    SELECT
+      0.2 AS x
+   UNION ALL
+  
+    SELECT
+      0.3 AS x
+  
+) AS UNUSED_TABLE_NAME  ),
+t_1_T AS (SELECT
+  SUM(V.x) AS t
+FROM
+  t_2_V AS V)
+SELECT
+  (SELECT (CASE WHEN synalog_v IS NULL THEN NULL WHEN ABS(synalog_v) < 0.0000000000000005 THEN '0' WHEN synalog_v = FLOOR(synalog_v) AND ABS(synalog_v) < 1e18 THEN CAST(CAST(synalog_v AS INT64) AS STRING) WHEN ABS(synalog_v) >= 1e38 THEN CAST(synalog_v AS STRING) WHEN ABS(synalog_v) >= 1e15 THEN CAST(ROUND(CAST(synalog_v AS BIGNUMERIC), 14 - CAST(FLOOR(LOG10(COALESCE(NULLIF(ABS(synalog_v), 0), 1))) AS INT64)) AS STRING) ELSE CAST(ROUND(CAST(synalog_v AS BIGNUMERIC), 14 - CAST(FLOOR(LOG10(COALESCE(NULLIF(ABS(synalog_v), 0), 1))) AS INT64)) AS STRING) END) FROM UNNEST([t_0_T.t]) AS synalog_v) AS s
+FROM
+  t_1_T AS t_0_T;

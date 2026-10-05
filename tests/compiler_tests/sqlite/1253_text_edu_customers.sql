@@ -47,4 +47,4 @@ SELECT
 FROM
   t_0_Customer AS Customer
 WHERE
-  (Customer.email LIKE '%.edu') ORDER BY id;
+  (Customer.email LIKE '%.edu' ESCAPE '\') ORDER BY id NULLS LAST;

@@ -14,8 +14,10 @@ from ._synalog import (
     front_matter,
     parse,
     plan,
+    quote_value,
     reserved_predicates,
     search,
+    statement_text,
 )
 from .checking import check
 from .execution import execute
@@ -37,7 +39,9 @@ __all__ = [
     "front_matter",
     "parse",
     "plan",
+    "quote_value",
     "reserved_predicates",
     "search",
+    "statement_text",
     "__version__",
 ]

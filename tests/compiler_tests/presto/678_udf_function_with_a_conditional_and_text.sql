@@ -1,5 +1,5 @@
 SELECT
   x_7 AS n,
-  (CONCAT(CAST(x_7 AS VARCHAR), CASE WHEN (x_7 = 1) THEN 'st' WHEN (x_7 = 2) THEN 'nd' ELSE 'th' END)) AS o
+  (CONCAT(element_at(transform(ARRAY[x_7], synalog_v -> (CASE WHEN synalog_v IS NULL THEN NULL WHEN ABS(synalog_v) < 0.0000000000000005 THEN '0' WHEN synalog_v = FLOOR(synalog_v) AND ABS(synalog_v) < 1e18 THEN CAST(CAST(synalog_v AS BIGINT) AS VARCHAR) WHEN ABS(synalog_v) >= 1e38 THEN CAST(synalog_v AS VARCHAR) WHEN ABS(synalog_v) >= 1e15 THEN CAST(ROUND(CAST(synalog_v AS DECIMAL(38,0)), 14 - CAST(FLOOR(LOG10(COALESCE(NULLIF(ABS(synalog_v), 0), 1))) AS INTEGER)) AS VARCHAR) ELSE rtrim(rtrim(CAST(CAST(ROUND(synalog_v, 14 - CAST(FLOOR(LOG10(COALESCE(NULLIF(ABS(synalog_v), 0), 1))) AS INTEGER)) AS DECIMAL(38,15)) AS VARCHAR), '0'), '.') END)), 1), CASE WHEN (x_7 = 1) THEN 'st' WHEN (x_7 = 2) THEN 'nd' ELSE 'th' END)) AS o
 FROM
   UNNEST(ARRAY[1, 2, 4]) as pushkin(x_7) ORDER BY n;

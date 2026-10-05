@@ -7,7 +7,7 @@ WITH t_1_W AS (SELECT * FROM (
   
     SELECT
       2 AS id,
-      "say \"hi\"" AS w
+      "say \u0022hi\u0022" AS w
    UNION ALL
   
     SELECT

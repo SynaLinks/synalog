@@ -3,4 +3,4 @@ SELECT
 FROM
   JSON_EACH(JSON_ARRAY('cat', 'cart', 'scat', 'Cat', 'ct', 'c_t')) as x_3
 WHERE
-  (x_3.value LIKE 'C%') ORDER BY w;
+  (x_3.value LIKE 'C%' ESCAPE '\') ORDER BY w NULLS LAST;

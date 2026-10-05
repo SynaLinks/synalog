@@ -562,3 +562,42 @@ the argument and reads the colon of `:-` as a field's, refusing it
 ("Positional argument can not go after non-positional arguments"), or
 misreads it in second position. synalog takes a colon as a field's only after
 a field name. The goldens of the fixtures with one are synalog's.
+
+## A backslash escapes in `Like`
+
+`Like("a_c", "a\_c")`: PostgreSQL and Spark read a backslash in a pattern as
+an escape by default, DuckDB, SQLite, Trino and Presto do not, so the same
+program matched on some engines only. synalog writes `ESCAPE '\'` (`'\\'`
+on Databricks, whose literals take escapes; BigQuery's LIKE escapes with a
+backslash already). The goldens of the fixtures with `Like` are synalog's.
+
+## String literals that no statement splitter misreads
+
+A program's text reaches SQL as literals and checked names only
+(docs/verification.md, "Text never becomes SQL"; `tests/programs/injection`).
+
+- Databricks and BigQuery literals take backslash escapes: a quote of the
+  value is written `\u0022`, not `\"`, so a literal holds no quote but its own
+  two, and a script split at semicolons outside quotes never cuts one
+  (`"\"; DROP TABLE t; --"` would end at `\"` for a splitter that does not
+  know these escapes).
+- PostgreSQL: a string with a backslash is `E'...'`, read the same whatever
+  `standard_conforming_strings` says.
+- `search()` writes its pattern as such a literal; upstream doubled quotes only.
+- `@Dataset` takes a schema name; `@AttachDatabase` and `copy_to_file` paths are
+  escaped literals; a table named in `@Ground` lives in Synalog's dataset.
+
+The goldens of the fixtures with such strings are synalog's.
+
+## A number's text
+
+Engines write a number as text each their own way: `0.30000000000000004` or
+`0.3`, `1e+20`, `1.0E20` or `100000000000000000000`, `5.0` or `5`. synalog's
+`ToString` of a number gives one text everywhere: a whole number without a
+decimal point, every digit below 10^18; any other number with at most 15
+significant digits (what a double holds reliably), in plain decimal, trailing
+zeros trimmed, at most 15 decimals; the engine's own form from 10^38. Large
+numbers round in DECIMAL, or from the exponent form where an engine rounds
+only to a constant number of digits (DuckDB, Spark, SQLite)
+(`tests/programs/numtext`). The goldens of the fixtures with `ToString` of a
+number are synalog's.

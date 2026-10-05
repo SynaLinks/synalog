@@ -1,0 +1,2 @@
+SELECT
+  LENGTH('`; DROP TABLE t; `') AS n;

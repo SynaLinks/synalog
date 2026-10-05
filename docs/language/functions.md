@@ -10,7 +10,7 @@
 | `Upper(s)` / `Lower(s)` | Case conversion |
 | `Split(s, sep)` | Split into an array at each `sep`, taken as text |
 | `Join(list, sep)` | Join array into a string |
-| `Like(s, pattern)` | SQL pattern match (`%` wildcard) |
+| `Like(s, pattern)` | SQL pattern match: `%` any text, `_` one character, a backslash escapes them (`"50\%"`) |
 | `Format(fmt, ...)` | printf-style formatting |
 
 ## Array functions
@@ -34,7 +34,7 @@ Integer literals are 32-bit on DuckDB, PostgreSQL, Trino, Presto and Databricks,
 |----------|-------------|
 | `ToInt64(x)` | Cast to a 64-bit integer (a fraction is rounded) |
 | `ToFloat64(x)` | Cast to float |
-| `ToString(x)` | Cast to string |
+| `ToString(x)` | Cast to string. A number's text is the same on every engine: a whole number has no decimal point (`5`, every digit below 10^18); any other has at most 15 significant digits, in plain decimal, without trailing zeros (`ToString(0.1 + 0.2)` is `"0.3"`, `ToString(1 / 3)` is `"0.333333333333333"`, `ToString(1e20)` is `"100000000000000000000"`) |
 
 ## Other
 

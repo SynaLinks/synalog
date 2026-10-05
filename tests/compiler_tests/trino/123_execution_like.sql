@@ -3,4 +3,4 @@ SELECT
 FROM
   UNNEST(ARRAY['apple', 'banana', 'apricot']) as pushkin(x_3)
 WHERE
-  (x_3 LIKE 'ap%') ORDER BY w;
+  (x_3 LIKE 'ap%' ESCAPE '\') ORDER BY w;

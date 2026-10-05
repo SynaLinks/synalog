@@ -8,6 +8,7 @@
 //! predicate ([`translate`]).
 
 pub mod parse;
+pub mod report;
 pub mod translate;
 
 pub use parse::{parse, Expr, SyntaxError};

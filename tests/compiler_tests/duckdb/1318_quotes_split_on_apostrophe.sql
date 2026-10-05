@@ -51,5 +51,5 @@ SELECT
 FROM
   t_1_W AS t_0_W, (select unnest(SPLIT(t_0_W.w, '''')) as unnested_pod) as x_2
 WHERE
-  (t_0_W.w LIKE '%''%')
+  (t_0_W.w LIKE '%''%' ESCAPE '\')
 GROUP BY x_2.unnested_pod ORDER BY part;

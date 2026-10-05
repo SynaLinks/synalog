@@ -6,4 +6,4 @@ DO $$ BEGIN if not exists (select 'I(am) :- I(think)' from pg_type where typname
 
 SELECT
   LENGTH('	') AS a,
-  LENGTH('a\b') AS b;
+  LENGTH(E'a\\b') AS b;

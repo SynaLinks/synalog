@@ -365,9 +365,11 @@ fn search_without_pagination_all_engines() {
 #[test]
 fn search_escapes_single_quotes_all_engines() {
     for engine in ALL_ENGINES {
+        // A quote of the pattern is escaped: doubled in a single-quoted
+        // literal, or inside a double-quoted one (Databricks, BigQuery).
         let sql = search_sql(&program_for(engine), "Test", "it's");
         assert!(
-            sql.contains("it''s"),
+            sql.contains("it''s") || sql.contains("\"it's\""),
             "{}: single quotes in pattern should be escaped, got:\n{}",
             engine,
             sql
@@ -388,5 +390,21 @@ fn search_nonexistent_predicate_returns_error_all_engines() {
             "{}: should error on nonexistent predicate",
             engine
         );
+    }
+}
+
+#[test]
+fn a_search_pattern_never_ends_its_literal() {
+    // On Databricks and BigQuery a backslash escapes in a literal: a pattern
+    // ending a literal with `\'` or `\"` would run what follows as SQL.
+    for engine in ALL_ENGINES {
+        for pattern in ["\\'); DROP TABLE t; --", "\\\"); DROP TABLE t; --", "'); DROP TABLE t; --"] {
+            let sql = search_sql(&program_for(engine), "Test", pattern);
+            let statements = sql.matches("DROP TABLE t").count();
+            assert_eq!(statements, 1, "{engine}: {sql}");
+            if matches!(*engine, "databricks" | "bigquery") {
+                assert!(!sql.contains("\\\"); DROP"), "{engine}: a quote is written \\u0022 there:\n{sql}");
+            }
+        }
     }
 }

@@ -1,0 +1,22 @@
+WITH t_2_V AS (SELECT * FROM (
+  
+    SELECT
+      0.1E0 AS x
+   UNION ALL
+  
+    SELECT
+      0.2E0 AS x
+   UNION ALL
+  
+    SELECT
+      0.3E0 AS x
+  
+) AS UNUSED_TABLE_NAME  ),
+t_1_T AS (SELECT
+  SUM(V.x) AS t
+FROM
+  t_2_V AS V)
+SELECT
+  element_at(transform(ARRAY[t_0_T.t], synalog_v -> (CASE WHEN synalog_v IS NULL THEN NULL WHEN ABS(synalog_v) < 0.0000000000000005 THEN '0' WHEN synalog_v = FLOOR(synalog_v) AND ABS(synalog_v) < 1e18 THEN CAST(CAST(synalog_v AS BIGINT) AS VARCHAR) WHEN ABS(synalog_v) >= 1e38 THEN CAST(synalog_v AS VARCHAR) WHEN ABS(synalog_v) >= 1e15 THEN CAST(ROUND(CAST(synalog_v AS DECIMAL(38,0)), 14 - CAST(FLOOR(LOG10(COALESCE(NULLIF(ABS(synalog_v), 0), 1))) AS INTEGER)) AS VARCHAR) ELSE rtrim(rtrim(CAST(CAST(ROUND(synalog_v, 14 - CAST(FLOOR(LOG10(COALESCE(NULLIF(ABS(synalog_v), 0), 1))) AS INTEGER)) AS DECIMAL(38,15)) AS VARCHAR), '0'), '.') END)), 1) AS s
+FROM
+  t_1_T AS t_0_T;
