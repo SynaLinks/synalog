@@ -86,11 +86,39 @@ pub trait Dialect {
     fn built_in_functions(&self) -> HashMap<&'static str, &'static str>;
 
     /// Whether `Format(fmt, args…)` must be lowered to a string-concatenation
-    /// chain because the engine has no printf-style function. PrestoDB 0.293
-    /// registers neither `FORMAT` nor `printf`, so it overrides this to `true`;
-    /// every other engine emits its native formatting function.
+    /// chain because the engine has no printf-style function: PrestoDB 0.293
+    /// registers neither `FORMAT` nor `printf`, PostgreSQL's `format` takes
+    /// only `%s`, and Trino's needs an argument. Every other engine emits its
+    /// native formatting function.
     fn format_uses_concat(&self) -> bool {
         false
+    }
+
+    /// Whether the engine sorts nulls first in this direction by default.
+    /// Synalog sorts them last in both directions, which most engines do;
+    /// `ORDER BY` says so where an engine would not.
+    fn nulls_first_by_default(&self, _descending: bool) -> bool {
+        false
+    }
+
+    /// Whether `OFFSET` can skip rows. PrestoDB disables it by default
+    /// (`offset_clause_enabled`): a page past its first row is then taken
+    /// by numbering the rows.
+    fn supports_offset(&self) -> bool {
+        true
+    }
+
+    /// The clause that takes a page of rows: `LIMIT` before `OFFSET`, as
+    /// SQLite requires; Trino and Presto take `OFFSET` first.
+    fn pagination_clause(&self, limit: Option<u64>, offset: Option<u64>) -> String {
+        let mut clause = String::new();
+        if let Some(limit) = limit {
+            clause.push_str(&format!("\nLIMIT {}", limit));
+        }
+        if let Some(offset) = offset {
+            clause.push_str(&format!("\nOFFSET {}", offset));
+        }
+        clause
     }
 
     /// Infix operator overrides: Logica operator → SQL template.
@@ -288,6 +316,7 @@ pub fn get(engine: &str) -> Result<Box<dyn Dialect>, CompileError> {
 pub struct BigQueryDialect;
 
 impl Dialect for BigQueryDialect {
+    fn nulls_first_by_default(&self, descending: bool) -> bool { !descending }
     fn except_distinct(&self) -> &'static str {
         "EXCEPT DISTINCT"
     }
@@ -372,6 +401,7 @@ Array(a) = SqlExpr(
 pub struct SqLiteDialect;
 
 impl Dialect for SqLiteDialect {
+    fn nulls_first_by_default(&self, descending: bool) -> bool { !descending }
     fn name(&self) -> &'static str { "sqlite" }
     fn today_relation_sql(&self) -> String {
         "(SELECT date('now') AS date)".to_string()
@@ -387,7 +417,9 @@ impl Dialect for SqLiteDialect {
         // as it is, without passing through a double.
         m.insert(
             "ToInt64",
-            "(CASE WHEN typeof({0}) = 'real' THEN CAST(ROUND({0}) AS INTEGER) ELSE CAST({0} AS INTEGER) END)",
+            // The value is named once: written three times, nested calls
+            // grow exponentially (SQLite's parser overflows).
+            "(SELECT CASE WHEN typeof(v) = 'real' THEN CAST(ROUND(v) AS INTEGER) ELSE CAST(v AS INTEGER) END FROM (SELECT {0} AS v))",
         );
         m.insert("Set", "DistinctListAgg({0})");
         m.insert("Element", "JSON_EXTRACT({0}, '$[' || {1} || ']')");
@@ -413,6 +445,9 @@ impl Dialect for SqLiteDialect {
 
     fn infix_operators(&self) -> HashMap<&'static str, &'static str> {
         let mut m = HashMap::new();
+        // `/` divides exactly, as BigQuery, DuckDB and Spark do: this engine
+        // divides integers to an integer (7 / 2 = 3).
+        m.insert("/", "CAST(%s AS REAL) / (%s)");
         m.insert("++", "(%s) || (%s)");
         m.insert("%", "(%s) % (%s)");
         m.insert("in", "IN_LIST(%s, %s)");
@@ -505,6 +540,8 @@ Char(code) = SqlExpr("CHAR({code})", {code:});
 pub struct PostgreSqlDialect;
 
 impl Dialect for PostgreSqlDialect {
+    fn nulls_first_by_default(&self, descending: bool) -> bool { descending }
+    fn format_uses_concat(&self) -> bool { true }
     fn name(&self) -> &'static str { "psql" }
     fn today_relation_sql(&self) -> String {
         "(SELECT to_char(current_date, 'YYYY-MM-DD') AS date)".to_string()
@@ -515,7 +552,8 @@ impl Dialect for PostgreSqlDialect {
 
     fn built_in_functions(&self) -> HashMap<&'static str, &'static str> {
         let mut m = HashMap::new();
-        m.insert("Range", "(SELECT ARRAY_AGG(x) FROM GENERATE_SERIES(0, {0} - 1) as x)");
+        // ARRAY_AGG of no rows is null: Range(0) is the empty array.
+        m.insert("Range", "COALESCE((SELECT ARRAY_AGG(x) FROM GENERATE_SERIES(0, {0} - 1) as x), '{}')");
         m.insert("RangeOf", "(SELECT ARRAY_AGG(x) FROM GENERATE_SERIES(0, ARRAY_LENGTH({0}, 1) - 1) as x)");
         m.insert("StringAgg", "STRING_AGG(CAST({0} AS TEXT), ',')");
         m.insert("ToString", "CAST(%s AS TEXT)");
@@ -534,6 +572,9 @@ impl Dialect for PostgreSqlDialect {
 
     fn infix_operators(&self) -> HashMap<&'static str, &'static str> {
         let mut m = HashMap::new();
+        // `/` divides exactly, as BigQuery, DuckDB and Spark do: this engine
+        // divides integers to an integer (7 / 2 = 3).
+        m.insert("/", "CAST(%s AS double precision) / (%s)");
         m.insert("++", "%s || %s");
         m.insert("in", "%s = ANY(%s)");
         m
@@ -634,6 +675,17 @@ Str(a) = a;
 pub struct TrinoDialect;
 
 impl Dialect for TrinoDialect {
+    fn pagination_clause(&self, limit: Option<u64>, offset: Option<u64>) -> String {
+        let mut clause = String::new();
+        if let Some(offset) = offset {
+            clause.push_str(&format!("\nOFFSET {}", offset));
+        }
+        if let Some(limit) = limit {
+            clause.push_str(&format!("\nLIMIT {}", limit));
+        }
+        clause
+    }
+    fn format_uses_concat(&self) -> bool { true }
     fn float_literal(&self, text: &str) -> String {
         // `1.5` is a DECIMAL here, and decimal division rounds to the
         // operands' scale (1.0 / 3.0 = 0.3); the exponent form is a DOUBLE.
@@ -651,9 +703,13 @@ impl Dialect for TrinoDialect {
 
     fn built_in_functions(&self) -> HashMap<&'static str, &'static str> {
         let mut m = HashMap::new();
-        m.insert("Range", "SEQUENCE(0, %s - 1)");
-        m.insert("ToString", "CAST(%s AS VARCHAR)");
+        // SEQUENCE(0, -1) counts down, [0, -1]: Range(0) is empty.
+        m.insert("Range", "FILTER(SEQUENCE(0, {0}), x -> x < {0})");
+        // CAST writes a DOUBLE in scientific notation (1.5E0); format does
+        // not, but writes a null as 'null': only non-null values are formatted.
+        m.insert("ToString", "element_at(transform(filter(ARRAY[{0}], v -> v IS NOT NULL), v -> format('%s', v)), 1)");
         m.insert("StringAgg", "(CASE WHEN COUNT({0}) > 0 THEN ARRAY_JOIN(ARRAY_AGG(CAST({0} AS VARCHAR)), ',') END)");
+        m.insert("Join", "ARRAY_JOIN({0}, {1})");
         m.insert("ToInt64", "CAST(%s AS BIGINT)");
         m.insert("ToFloat64", "CAST(%s AS DOUBLE)");
         m.insert("AnyValue", "ARBITRARY(%s)");
@@ -670,6 +726,9 @@ impl Dialect for TrinoDialect {
 
     fn infix_operators(&self) -> HashMap<&'static str, &'static str> {
         let mut m = HashMap::new();
+        // `/` divides exactly, as BigQuery, DuckDB and Spark do: this engine
+        // divides integers to an integer (7 / 2 = 3).
+        m.insert("/", "CAST(%s AS DOUBLE) / (%s)");
         m.insert("++", "CONCAT(%s, %s)");
         // Deviation: upstream emits `x IN UNNEST(arr)` (BigQuery syntax).
         m.insert("in", "CONTAINS({1}, {0})");
@@ -733,6 +792,17 @@ Array(a) = SqlExpr(
 pub struct PrestoDialect;
 
 impl Dialect for PrestoDialect {
+    fn supports_offset(&self) -> bool { false }
+    fn pagination_clause(&self, limit: Option<u64>, offset: Option<u64>) -> String {
+        let mut clause = String::new();
+        if let Some(offset) = offset {
+            clause.push_str(&format!("\nOFFSET {}", offset));
+        }
+        if let Some(limit) = limit {
+            clause.push_str(&format!("\nLIMIT {}", limit));
+        }
+        clause
+    }
     fn float_literal(&self, text: &str) -> String {
         // `1.5` is a DECIMAL here, and decimal division rounds to the
         // operands' scale (1.0 / 3.0 = 0.3); the exponent form is a DOUBLE.
@@ -751,9 +821,11 @@ impl Dialect for PrestoDialect {
 
     fn built_in_functions(&self) -> HashMap<&'static str, &'static str> {
         let mut m = HashMap::new();
-        m.insert("Range", "SEQUENCE(0, %s - 1)");
+        // SEQUENCE(0, -1) counts down, [0, -1]: Range(0) is empty.
+        m.insert("Range", "FILTER(SEQUENCE(0, {0}), x -> x < {0})");
         m.insert("ToString", "CAST(%s AS VARCHAR)");
         m.insert("StringAgg", "(CASE WHEN COUNT({0}) > 0 THEN ARRAY_JOIN(ARRAY_AGG(CAST({0} AS VARCHAR)), ',') END)");
+        m.insert("Join", "ARRAY_JOIN({0}, {1})");
         m.insert("ToInt64", "CAST(%s AS BIGINT)");
         m.insert("ToFloat64", "CAST(%s AS DOUBLE)");
         m.insert("AnyValue", "ARBITRARY(%s)");
@@ -770,6 +842,9 @@ impl Dialect for PrestoDialect {
 
     fn infix_operators(&self) -> HashMap<&'static str, &'static str> {
         let mut m = HashMap::new();
+        // `/` divides exactly, as BigQuery, DuckDB and Spark do: this engine
+        // divides integers to an integer (7 / 2 = 3).
+        m.insert("/", "CAST(%s AS DOUBLE) / (%s)");
         m.insert("++", "CONCAT(%s, %s)");
         // Deviation: upstream emits `x IN UNNEST(arr)` (BigQuery syntax).
         m.insert("in", "CONTAINS({1}, {0})");
@@ -834,6 +909,7 @@ Array(a) = SqlExpr(
 pub struct DatabricksDialect;
 
 impl Dialect for DatabricksDialect {
+    fn nulls_first_by_default(&self, descending: bool) -> bool { !descending }
     fn float_literal(&self, text: &str) -> String {
         // `1.5` is a DECIMAL here, and decimal division rounds to the
         // operands' scale (1.0 / 3.0 = 0.3); the exponent form is a DOUBLE.
@@ -858,6 +934,7 @@ impl Dialect for DatabricksDialect {
         let mut m = HashMap::new();
         m.insert("ToString", "CAST(%s AS STRING)");
         m.insert("StringAgg", "(CASE WHEN COUNT({0}) > 0 THEN ARRAY_JOIN(COLLECT_LIST(CAST({0} AS STRING)), ',') END)");
+        m.insert("Join", "ARRAY_JOIN({0}, {1})");
         // Spark's CAST truncates a fraction; the other engines round it (half
         // away from zero), as ROUND does. ROUND keeps an integer as it is.
         m.insert("ToInt64", "CAST(ROUND({0}) AS BIGINT)");
@@ -876,7 +953,8 @@ impl Dialect for DatabricksDialect {
         // Range/Size: the BigQuery defaults (GENERATE_ARRAY/ARRAY_LENGTH) do
         // not exist on Spark SQL; `Length` (string length) inherits the default
         // LENGTH — the previous ARRAY_SIZE override broke it for strings.
-        m.insert("Range", "SEQUENCE(0, %s - 1)");
+        // SEQUENCE(0, -1) counts down, [0, -1]: Range(0) is empty.
+        m.insert("Range", "FILTER(SEQUENCE(0, {0}), x -> x < {0})");
         m.insert("RangeOf", "SEQUENCE(0, SIZE(%s) - 1)");
         m.insert("Size", "SIZE(%s)");
         // ELEMENT_AT is 1-based; the default `{0}[OFFSET({1})]` is BigQuery-only.
@@ -937,7 +1015,9 @@ Array(a) = SqlExpr(
 "#
     }
 
-    fn unnest_phrase(&self) -> &'static str { "explode({0}) AS pushkin({1})" }
+    // A LATERAL subquery: Spark does not resolve a column of an earlier
+    // table inside a table function of the FROM list (`explode(t.l)`).
+    fn unnest_phrase(&self) -> &'static str { "LATERAL (SELECT explode({0}) AS {1}) AS pushkin" }
     fn array_phrase(&self) -> &'static str { "ARRAY(%s)" }
     fn group_by_spec_by(&self) -> GroupBySpec { GroupBySpec::Index }
     fn decorate_combine_rule(&self) -> bool { false }

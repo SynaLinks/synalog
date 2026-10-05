@@ -1,0 +1,4 @@
+SELECT
+  x_1.value AS x
+FROM
+  JSON_EACH(JSON_ARRAY(40, 10, 30, 20)) as x_1 ORDER BY x LIMIT 2;

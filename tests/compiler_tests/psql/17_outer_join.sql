@@ -4,7 +4,7 @@ create schema if not exists logica_home;
 -- Empty logica type: logicarecord893574736;
 DO $$ BEGIN if not exists (select 'I(am) :- I(think)' from pg_type where typname = 'logicarecord893574736') then create type logicarecord893574736 as (nirvana numeric); end if; END $$;
 
-WITH t_2_Phones AS (SELECT * FROM (
+WITH t_3_Phones AS (SELECT * FROM (
   
     SELECT
       'Alice' AS person,
@@ -16,7 +16,7 @@ WITH t_2_Phones AS (SELECT * FROM (
       '555-5678' AS phone
   
 ) AS UNUSED_TABLE_NAME  ),
-t_3_Emails AS (SELECT * FROM (
+t_5_Emails AS (SELECT * FROM (
   
     SELECT
       'Bob' AS person,
@@ -31,19 +31,19 @@ t_3_Emails AS (SELECT * FROM (
 t_1_ContactInfo_MultBodyAggAux AS (SELECT * FROM (
   
     SELECT
-      Phones.person AS person,
-      ARRAY[Phones.phone] AS phones,
+      t_2_Phones.person AS person,
+      ARRAY[t_2_Phones.phone] AS phones,
       '{}' AS emails
     FROM
-      t_2_Phones AS Phones
+      t_3_Phones AS t_2_Phones
    UNION ALL
   
     SELECT
-      Emails.person AS person,
+      t_4_Emails.person AS person,
       '{}' AS phones,
-      ARRAY[Emails.email] AS emails
+      ARRAY[t_4_Emails.email] AS emails
     FROM
-      t_3_Emails AS Emails
+      t_5_Emails AS t_4_Emails
   
 ) AS UNUSED_TABLE_NAME  ),
 t_0_ContactInfo AS (SELECT

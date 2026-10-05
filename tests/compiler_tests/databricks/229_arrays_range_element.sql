@@ -1,2 +1,2 @@
 SELECT
-  ELEMENT_AT(SEQUENCE(0, 5 - 1), 4 + 1) AS e;
+  ELEMENT_AT(FILTER(SEQUENCE(0, 5), x -> x < 5), 4 + 1) AS e;

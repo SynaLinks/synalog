@@ -1,8 +1,8 @@
-WITH t_0_L AS (SELECT
+WITH t_1_L AS (SELECT
   ARRAY_AGG(DISTINCT x_3) AS l
 FROM
-  explode(ARRAY(1, 1, 2)) AS pushkin(x_3))
+  LATERAL (SELECT explode(ARRAY(1, 1, 2)) AS x_3) AS pushkin)
 SELECT
-  SIZE(L.l) AS n
+  SIZE(t_0_L.l) AS n
 FROM
-  t_0_L AS L;
+  t_1_L AS t_0_L;

@@ -1,4 +1,4 @@
 SELECT
   MIN(x_2) AS m
 FROM
-  explode(ARRAY("pear", "apple", "fig")) AS pushkin(x_2);
+  LATERAL (SELECT explode(ARRAY("pear", "apple", "fig")) AS x_2) AS pushkin;

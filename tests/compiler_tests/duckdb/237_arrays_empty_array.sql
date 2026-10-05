@@ -5,4 +5,4 @@ drop type if exists logicarecord893574736 cascade; create type logicarecord89357
 create sequence if not exists eternal_logical_sequence;
 
 SELECT
-  LEN([]) AS n;
+  0 AS n;

@@ -4,28 +4,18 @@ create schema if not exists logica_home;
 -- Empty logica type: logicarecord893574736;
 DO $$ BEGIN if not exists (select 'I(am) :- I(think)' from pg_type where typname = 'logicarecord893574736') then create type logicarecord893574736 as (nirvana numeric); end if; END $$;
 
-
-DO $$
-BEGIN
--- Logica type: logicarecord481217614
-if not exists (select 'I(am) :- I(think)' from pg_type where typname = 'logicarecord481217614') then create type logicarecord481217614 as (r logicarecord893574736); end if;
--- Logica type: logicarecord86796764
-if not exists (select 'I(am) :- I(think)' from pg_type where typname = 'logicarecord86796764') then create type logicarecord86796764 as (s text); end if;
--- Logica type: logicarecord884343024
-if not exists (select 'I(am) :- I(think)' from pg_type where typname = 'logicarecord884343024') then create type logicarecord884343024 as (arg numeric, value numeric); end if;
-END $$;
-WITH t_0_Squares AS (SELECT
-  ARRAY_AGG(((x_9) * (x_9)) order by x_9) AS logica_value
+WITH t_1_Squares AS (SELECT
+  ARRAY_AGG(((x_7) * (x_7)) order by x_7) AS logica_value
 FROM
-  UNNEST((SELECT ARRAY_AGG(x) FROM GENERATE_SERIES(0, 5 - 1) as x)) as x_9),
-t_2_EvenSquares AS (SELECT
-  ARRAY_AGG(((x_21) * (x_21)) order by x_21) AS logica_value
+  UNNEST(COALESCE((SELECT ARRAY_AGG(x) FROM GENERATE_SERIES(0, 5 - 1) as x), '{}')) as x_7),
+t_3_EvenSquares AS (SELECT
+  ARRAY_AGG(((x_14) * (x_14)) order by x_14) AS logica_value
 FROM
-  UNNEST((SELECT ARRAY_AGG(x) FROM GENERATE_SERIES(0, 10 - 1) as x)) as x_21
+  UNNEST(COALESCE((SELECT ARRAY_AGG(x) FROM GENERATE_SERIES(0, 10 - 1) as x), '{}')) as x_14
 WHERE
-  ((MOD(x_21, 2)) = 0))
+  ((MOD(x_14, 2)) = 0))
 SELECT
-  Squares.logica_value AS squares,
+  t_0_Squares.logica_value AS squares,
   EvenSquares.logica_value AS even_squares
 FROM
-  t_0_Squares AS Squares, t_2_EvenSquares AS EvenSquares;
+  t_1_Squares AS t_0_Squares, t_3_EvenSquares AS EvenSquares;

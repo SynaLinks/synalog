@@ -1,4 +1,4 @@
-WITH t_1_R AS (SELECT * FROM (
+WITH t_2_R AS (SELECT * FROM (
   
     SELECT
       "a" AS k,
@@ -10,26 +10,26 @@ WITH t_1_R AS (SELECT * FROM (
       1 AS v
   
 ) AS UNUSED_TABLE_NAME  ),
-t_0_K AS (SELECT
+t_1_K AS (SELECT
   R.k AS k
 FROM
-  t_1_R AS R
+  t_2_R AS R
 GROUP BY 1),
-t_2_Loud AS (SELECT
-  t_3_R.k AS k
+t_3_Loud AS (SELECT
+  t_4_R.k AS k
 FROM
-  t_1_R AS t_3_R
+  t_2_R AS t_4_R
 WHERE
-  (t_3_R.v > 5)
+  (t_4_R.v > 5)
 GROUP BY 1)
 SELECT
-  K.k AS k
+  t_0_K.k AS k
 FROM
-  t_0_K AS K
+  t_1_K AS t_0_K
 WHERE
   ((SELECT
     MIN(1) AS logica_value
   FROM
-    t_2_Loud AS Loud
+    t_3_Loud AS Loud
   WHERE
-    (Loud.k = K.k)) IS NULL) ORDER BY k;
+    (Loud.k = t_0_K.k)) IS NULL) ORDER BY k NULLS LAST;

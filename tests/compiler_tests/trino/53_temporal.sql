@@ -16,7 +16,7 @@ WITH t_1_Orders AS (SELECT * FROM (
   
 ) AS UNUSED_TABLE_NAME  ),
 t_0_MonthlyCount AS (SELECT
-  SUBSTR(CAST(Orders.created_at AS VARCHAR), 1, 7) AS month,
+  SUBSTR(element_at(transform(filter(ARRAY[Orders.created_at], v -> v IS NOT NULL), v -> format('%s', v)), 1), 1, 7) AS month,
   SUM(1) AS count
 FROM
   t_1_Orders AS Orders

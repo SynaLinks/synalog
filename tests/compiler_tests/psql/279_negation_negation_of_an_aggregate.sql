@@ -4,15 +4,7 @@ create schema if not exists logica_home;
 -- Empty logica type: logicarecord893574736;
 DO $$ BEGIN if not exists (select 'I(am) :- I(think)' from pg_type where typname = 'logicarecord893574736') then create type logicarecord893574736 as (nirvana numeric); end if; END $$;
 
-
-DO $$
-BEGIN
--- Logica type: logicarecord481217614
-if not exists (select 'I(am) :- I(think)' from pg_type where typname = 'logicarecord481217614') then create type logicarecord481217614 as (r logicarecord893574736); end if;
--- Logica type: logicarecord86796764
-if not exists (select 'I(am) :- I(think)' from pg_type where typname = 'logicarecord86796764') then create type logicarecord86796764 as (s text); end if;
-END $$;
-WITH t_1_R AS (SELECT * FROM (
+WITH t_2_R AS (SELECT * FROM (
   
     SELECT
       'a' AS k,
@@ -24,26 +16,26 @@ WITH t_1_R AS (SELECT * FROM (
       1 AS v
   
 ) AS UNUSED_TABLE_NAME  ),
-t_0_K AS (SELECT
+t_1_K AS (SELECT
   R.k AS k
 FROM
-  t_1_R AS R
+  t_2_R AS R
 GROUP BY R.k),
-t_2_Loud AS (SELECT
-  t_3_R.k AS k
+t_3_Loud AS (SELECT
+  t_4_R.k AS k
 FROM
-  t_1_R AS t_3_R
+  t_2_R AS t_4_R
 WHERE
-  (t_3_R.v > 5)
-GROUP BY t_3_R.k)
+  (t_4_R.v > 5)
+GROUP BY t_4_R.k)
 SELECT
-  K.k AS k
+  t_0_K.k AS k
 FROM
-  t_0_K AS K
+  t_1_K AS t_0_K
 WHERE
   (CAST((SELECT
     MIN((CASE WHEN x_6 = 0 THEN 1 ELSE NULL END)) AS logica_value
   FROM
-    t_2_Loud AS Loud, UNNEST(ARRAY[0]::numeric[]) as x_6
+    t_3_Loud AS Loud, UNNEST(ARRAY[0]) as x_6
   WHERE
-    (Loud.k = K.k)) AS numeric) IS NULL) ORDER BY k;
+    (Loud.k = t_0_K.k)) AS numeric) IS NULL) ORDER BY k;

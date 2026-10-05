@@ -24,10 +24,14 @@ Upstream emits BigQuery-style constructs that do not exist on Trino/Presto:
 | `ArrayConcat(a, b)` (Presto) | `ARRAY_CONCAT(a, b)` | `a \|\| b` (matches upstream's Trino mapping) |
 | `Format(fmt, …)` (Presto) | `FORMAT(fmt, …)` | `seg \|\| arg \|\| seg …` (PrestoDB 0.293 registers no `FORMAT`/`printf`) |
 
-`Format` on Presto is lowered at compile time to a `\|\|` concatenation chain by
-splitting the literal format string on `%s`; only `%s` placeholders over a
-literal format string are supported (anything else is a compile error). Trino
-keeps the native `FORMAT(...)`, which it does support.
+`Format` on Presto, PostgreSQL and Trino is lowered at compile time to a `\|\|`
+concatenation chain over its literal format string: PrestoDB has no printf,
+PostgreSQL's `format` takes only `%s` (`%d` fails), and Trino's needs at least
+one argument (`Format("100%%")` fails). Each placeholder is rendered in SQL:
+`%s`, `%d` (as a `BIGINT`), `%.Nf` (a `DECIMAL(38, N)`, which keeps its zeros),
+a width padded with zeros after the sign or with spaces (`-` aligns left, and
+a longer value is not cut), and `%%`; any other placeholder is a compile
+error. The goldens of the `Format` fixtures on those engines are synalog's.
 
 Affected goldens (generated from synalog, not upstream):
 `trino/{06_arrays,23_combine,48_split_function,50_array_functions,51_math_functions}.sql`
@@ -305,7 +309,87 @@ and the recursion has converged when a step adds nothing. Other recursions
 deep-recursion fixtures (`65_deep_recursion`, `66_deep_mutual_recursion`,
 `148_` to `199_`) are generated from synalog on every engine.
 
-## Recursion on Presto
+## Division is exact
+
+`/` is BigQuery's, which divides exactly (`7 / 2` is 3.5), as DuckDB and Spark
+do; SQLite, PostgreSQL, Trino and Presto divide integers to an integer (3), so
+upstream's `/` depended on the engine. synalog makes the dividend a float on
+those four (`CAST(a AS REAL) / (b)` on SQLite, `double precision` on
+PostgreSQL, `DOUBLE` on Trino and Presto), and every engine returns 3.5.
+
+## A minus after an operator
+
+Upstream cannot parse a minus right after an operator (`2 * -3`, `7 % -3`,
+`2 ^ -1`, `2 - -3`, though `2 + -3` parses): it splits the expression at its
+last minus, leaving `2 *`. synalog does not split at a minus that follows an
+operator, which negates its operand.
+
+## Functions as conditions
+
+A function written as a condition (`E(x:) :- V(x:), IsEven(x)`) holds for every
+`x`, as a function has a row for each argument, whatever its value; upstream
+returns every row. The verifier refuses it, pointing to `IsEven(x) == true`.
+
+## Ordering and limit of a recursion
+
+Upstream moves a recursive predicate's directives onto each step of the
+recursion, so `@Limit(P, 2)` cut every step to 2 rows: the next step started
+from those (a closure with `"x desc"` and limit 2 over 1 → 5 returned 5 and 1),
+and a recursion until convergence could oscillate forever. synalog applies
+`@OrderBy` and `@Limit` to the result only; the semi-naive result also kept
+no ordering at all. The goldens of the recursive fixtures with an ordering are
+synalog's.
+
+## Pages and searches keep the order
+
+`compile(limit=, offset=)` and `search()` wrap the predicate's query in a
+subquery, whose `ORDER BY` need not survive it: Trino and Presto drop it, and
+returned a page of unordered rows. The outer query orders again by the
+predicate's `@OrderBy`. Trino and Presto also take `OFFSET` before `LIMIT`
+(`LIMIT 2 OFFSET 1` does not parse there).
+
+## Nulls sort last
+
+Engines order nulls differently: last ascending on PostgreSQL, Trino, Presto
+and DuckDB, first on SQLite, Spark and BigQuery; first descending on
+PostgreSQL only. synalog sorts nulls last in both directions, adding
+`NULLS LAST` where the engine would not, unless the ordering says where nulls
+go (`"x nulls first"`).
+
+## Engine functions
+
+- Unnesting on Databricks is a `LATERAL (SELECT explode(x) AS v)` subquery:
+  Spark does not resolve a column of an earlier table inside a table function
+  of the `FROM` list (`explode(L.l)`), so membership in a list column failed.
+- `Join` is `ARRAY_JOIN` on Trino, Presto and Databricks, which have no
+  `ARRAY_TO_STRING`.
+- `ToString` of a `DOUBLE` on Trino is scientific with `CAST` (`1.5E0`);
+  synalog formats it (`format('%s', x)`, which writes a null as `'null'`, so
+  only non-null values are formatted).
+- `Range(n)` with `n` 0 or less is empty: `SEQUENCE(0, -1)` counts down on
+  Trino, Presto and Spark (synalog filters `SEQUENCE(0, n)` below `n`), and
+  `ARRAY_AGG` of no rows is null on PostgreSQL.
+- `Size` of a list written out is its length, and `ArrayConcat` with an empty
+  list written out is the other list: PostgreSQL, Trino and Presto cannot type
+  a lone empty array.
+- `ToInt64` on SQLite names its argument once, in a one-row subquery: written
+  three times, nested conversions grow exponentially, and SQLite's parser
+  overflowed (`61_date_arithmetic`).
+
+## Inlining and correlation
+
+A predicate of one rule is inlined where it is read. In a negation's subquery,
+an inlined predicate whose body holds a negation of its own put that negation
+two levels below the table it reads, which Trino, Presto and Spark cannot
+correlate ("Given correlated subquery is not supported"). Such a predicate is
+a table (a `WITH`) instead.
+
+A table alias is the predicate's name, and Trino and Presto read names without
+case: inside a subquery, `K.k` read `K` as the column `k` of the subquery's own
+table ("Expression K is not of type ROW"). An alias that equals a column name
+of the program, ignoring case, is numbered instead (`t_0_K`).
+
+## Recursion on Presto and Databricks
 
 Presto plans an unrolled recursion in time exponential in its steps: depth 10
 took minutes for a mutual recursion, depth 20 exceeded its 3-minute planning
@@ -313,8 +397,10 @@ timeout. Each step is an aggregation over a union of the previous step's
 rows, and Presto's distributed planning revisits the whole chain below it at
 each level (with `single_node_execution_enabled` it plans in milliseconds; a
 `FULL JOIN` instead of the union also does, but does not express rules with
-several bodies). synalog computes every recursion into tables on Presto, as
-past 20 steps elsewhere, so each step is one short query. A depth shorter than
+several bodies). Spark (Databricks) has the same trouble: its optimizer took 6 seconds for an
+assertion over a recursion of depth 10 and minutes for depth 12. synalog
+computes every recursion into tables on Presto and Databricks, as past 20
+steps elsewhere, so each step is one short query. A depth shorter than
 the iteration's first steps is written out step by step, each in its own
 table. The goldens of the recursive fixtures on Presto are synalog's.
 

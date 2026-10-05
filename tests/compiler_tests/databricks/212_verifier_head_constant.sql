@@ -2,4 +2,4 @@ SELECT
   x_1 AS x,
   "one" AS label
 FROM
-  explode(ARRAY(1)) AS pushkin(x_1);
+  LATERAL (SELECT explode(ARRAY(1)) AS x_1) AS pushkin;

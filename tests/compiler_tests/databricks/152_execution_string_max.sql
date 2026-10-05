@@ -1,4 +1,4 @@
 SELECT
   MAX(x_2) AS n
 FROM
-  explode(ARRAY("apple", "pear", "fig")) AS pushkin(x_2);
+  LATERAL (SELECT explode(ARRAY("apple", "pear", "fig")) AS x_2) AS pushkin;

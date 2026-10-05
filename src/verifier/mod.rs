@@ -179,10 +179,8 @@ pub fn validate(parsed: &Json) -> CheckResult {
         .collect();
 
     // Check 1: Variable safety for each rule
-    for rule in &normal_rules {
-        for err in safety::check_rule_safety(rule) {
-            result.errors.push(CheckError::Safety(err));
-        }
+    for err in safety::check_safety(&normal_rules) {
+        result.errors.push(CheckError::Safety(err));
     }
 
     // Check 2: Stratification (no negative cycles)
@@ -221,7 +219,8 @@ pub fn validate(parsed: &Json) -> CheckResult {
     }
 
     // Check 9: Undefined predicate references (typo detection with suggestions)
-    for err in undefined::check_undefined(&normal_rules) {
+    // All rules: a functor application (`D := F(...)`, an @Make) defines D.
+    for err in undefined::check_undefined(&all_rules) {
         result.errors.push(CheckError::Undefined(err));
     }
 

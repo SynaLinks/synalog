@@ -1,4 +1,4 @@
 SELECT
   SUM(1) AS n
 FROM
-  explode(ARRAY(1, 3)) AS pushkin(x_2);
+  LATERAL (SELECT explode(ARRAY(1, 3)) AS x_2) AS pushkin;

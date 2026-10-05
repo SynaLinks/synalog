@@ -23,7 +23,7 @@ CREATE TABLE logica_test.Test_sn_full AS WITH t_1_Test_MultBodyAggAux_f2 AS (SEL
     SELECT
       ((x_11) + (1)) AS y
     FROM
-      logica_test.Test_sn_delta AS t_2_Test_sn_delta, UNNEST(SEQUENCE(0, 100 - 1)) as pushkin(x_11)
+      logica_test.Test_sn_delta AS t_2_Test_sn_delta, UNNEST(FILTER(SEQUENCE(0, 100), x -> x < 100)) as pushkin(x_11)
     WHERE
       (t_2_Test_sn_delta.y = x_11)
   
@@ -62,7 +62,7 @@ CREATE TABLE logica_test.Test_sn_new AS WITH t_1_Test_MultBodyAggAux_f2 AS (SELE
     SELECT
       ((x_11) + (1)) AS y
     FROM
-      logica_test.Test_sn_delta AS t_2_Test_sn_delta, UNNEST(SEQUENCE(0, 100 - 1)) as pushkin(x_11)
+      logica_test.Test_sn_delta AS t_2_Test_sn_delta, UNNEST(FILTER(SEQUENCE(0, 100), x -> x < 100)) as pushkin(x_11)
     WHERE
       (t_2_Test_sn_delta.y = x_11)
   
@@ -103,7 +103,7 @@ CREATE TABLE logica_test.Test_sn_new AS WITH t_1_Test_MultBodyAggAux_f2 AS (SELE
     SELECT
       ((x_11) + (1)) AS y
     FROM
-      logica_test.Test_sn_delta AS t_2_Test_sn_delta, UNNEST(SEQUENCE(0, 100 - 1)) as pushkin(x_11)
+      logica_test.Test_sn_delta AS t_2_Test_sn_delta, UNNEST(FILTER(SEQUENCE(0, 100), x -> x < 100)) as pushkin(x_11)
     WHERE
       (t_2_Test_sn_delta.y = x_11)
   
@@ -144,7 +144,7 @@ CREATE TABLE logica_test.Test_sn_new AS WITH t_1_Test_MultBodyAggAux_f2 AS (SELE
     SELECT
       ((x_11) + (1)) AS y
     FROM
-      logica_test.Test_sn_delta AS t_2_Test_sn_delta, UNNEST(SEQUENCE(0, 100 - 1)) as pushkin(x_11)
+      logica_test.Test_sn_delta AS t_2_Test_sn_delta, UNNEST(FILTER(SEQUENCE(0, 100), x -> x < 100)) as pushkin(x_11)
     WHERE
       (t_2_Test_sn_delta.y = x_11)
   
@@ -185,7 +185,7 @@ CREATE TABLE logica_test.Test_sn_new AS WITH t_1_Test_MultBodyAggAux_f2 AS (SELE
     SELECT
       ((x_11) + (1)) AS y
     FROM
-      logica_test.Test_sn_delta AS t_2_Test_sn_delta, UNNEST(SEQUENCE(0, 100 - 1)) as pushkin(x_11)
+      logica_test.Test_sn_delta AS t_2_Test_sn_delta, UNNEST(FILTER(SEQUENCE(0, 100), x -> x < 100)) as pushkin(x_11)
     WHERE
       (t_2_Test_sn_delta.y = x_11)
   
@@ -226,7 +226,7 @@ CREATE TABLE logica_test.Test_sn_new AS WITH t_1_Test_MultBodyAggAux_f2 AS (SELE
     SELECT
       ((x_11) + (1)) AS y
     FROM
-      logica_test.Test_sn_delta AS t_2_Test_sn_delta, UNNEST(SEQUENCE(0, 100 - 1)) as pushkin(x_11)
+      logica_test.Test_sn_delta AS t_2_Test_sn_delta, UNNEST(FILTER(SEQUENCE(0, 100), x -> x < 100)) as pushkin(x_11)
     WHERE
       (t_2_Test_sn_delta.y = x_11)
   
@@ -267,7 +267,7 @@ CREATE TABLE logica_test.Test_sn_new AS WITH t_1_Test_MultBodyAggAux_f2 AS (SELE
     SELECT
       ((x_11) + (1)) AS y
     FROM
-      logica_test.Test_sn_delta AS t_2_Test_sn_delta, UNNEST(SEQUENCE(0, 100 - 1)) as pushkin(x_11)
+      logica_test.Test_sn_delta AS t_2_Test_sn_delta, UNNEST(FILTER(SEQUENCE(0, 100), x -> x < 100)) as pushkin(x_11)
     WHERE
       (t_2_Test_sn_delta.y = x_11)
   
@@ -308,7 +308,7 @@ CREATE TABLE logica_test.Test_sn_new AS WITH t_1_Test_MultBodyAggAux_f2 AS (SELE
     SELECT
       ((x_11) + (1)) AS y
     FROM
-      logica_test.Test_sn_delta AS t_2_Test_sn_delta, UNNEST(SEQUENCE(0, 100 - 1)) as pushkin(x_11)
+      logica_test.Test_sn_delta AS t_2_Test_sn_delta, UNNEST(FILTER(SEQUENCE(0, 100), x -> x < 100)) as pushkin(x_11)
     WHERE
       (t_2_Test_sn_delta.y = x_11)
   
@@ -349,7 +349,7 @@ CREATE TABLE logica_test.Test_sn_new AS WITH t_1_Test_MultBodyAggAux_f2 AS (SELE
     SELECT
       ((x_11) + (1)) AS y
     FROM
-      logica_test.Test_sn_delta AS t_2_Test_sn_delta, UNNEST(SEQUENCE(0, 100 - 1)) as pushkin(x_11)
+      logica_test.Test_sn_delta AS t_2_Test_sn_delta, UNNEST(FILTER(SEQUENCE(0, 100), x -> x < 100)) as pushkin(x_11)
     WHERE
       (t_2_Test_sn_delta.y = x_11)
   
@@ -390,7 +390,7 @@ CREATE TABLE logica_test.Test_sn_new AS WITH t_1_Test_MultBodyAggAux_f2 AS (SELE
     SELECT
       ((x_11) + (1)) AS y
     FROM
-      logica_test.Test_sn_delta AS t_2_Test_sn_delta, UNNEST(SEQUENCE(0, 100 - 1)) as pushkin(x_11)
+      logica_test.Test_sn_delta AS t_2_Test_sn_delta, UNNEST(FILTER(SEQUENCE(0, 100), x -> x < 100)) as pushkin(x_11)
     WHERE
       (t_2_Test_sn_delta.y = x_11)
   
@@ -431,7 +431,7 @@ CREATE TABLE logica_test.Test_sn_new AS WITH t_1_Test_MultBodyAggAux_f2 AS (SELE
     SELECT
       ((x_11) + (1)) AS y
     FROM
-      logica_test.Test_sn_delta AS t_2_Test_sn_delta, UNNEST(SEQUENCE(0, 100 - 1)) as pushkin(x_11)
+      logica_test.Test_sn_delta AS t_2_Test_sn_delta, UNNEST(FILTER(SEQUENCE(0, 100), x -> x < 100)) as pushkin(x_11)
     WHERE
       (t_2_Test_sn_delta.y = x_11)
   
@@ -472,7 +472,7 @@ CREATE TABLE logica_test.Test_sn_new AS WITH t_1_Test_MultBodyAggAux_f2 AS (SELE
     SELECT
       ((x_11) + (1)) AS y
     FROM
-      logica_test.Test_sn_delta AS t_2_Test_sn_delta, UNNEST(SEQUENCE(0, 100 - 1)) as pushkin(x_11)
+      logica_test.Test_sn_delta AS t_2_Test_sn_delta, UNNEST(FILTER(SEQUENCE(0, 100), x -> x < 100)) as pushkin(x_11)
     WHERE
       (t_2_Test_sn_delta.y = x_11)
   
@@ -513,7 +513,7 @@ CREATE TABLE logica_test.Test_sn_new AS WITH t_1_Test_MultBodyAggAux_f2 AS (SELE
     SELECT
       ((x_11) + (1)) AS y
     FROM
-      logica_test.Test_sn_delta AS t_2_Test_sn_delta, UNNEST(SEQUENCE(0, 100 - 1)) as pushkin(x_11)
+      logica_test.Test_sn_delta AS t_2_Test_sn_delta, UNNEST(FILTER(SEQUENCE(0, 100), x -> x < 100)) as pushkin(x_11)
     WHERE
       (t_2_Test_sn_delta.y = x_11)
   
@@ -554,7 +554,7 @@ CREATE TABLE logica_test.Test_sn_new AS WITH t_1_Test_MultBodyAggAux_f2 AS (SELE
     SELECT
       ((x_11) + (1)) AS y
     FROM
-      logica_test.Test_sn_delta AS t_2_Test_sn_delta, UNNEST(SEQUENCE(0, 100 - 1)) as pushkin(x_11)
+      logica_test.Test_sn_delta AS t_2_Test_sn_delta, UNNEST(FILTER(SEQUENCE(0, 100), x -> x < 100)) as pushkin(x_11)
     WHERE
       (t_2_Test_sn_delta.y = x_11)
   
@@ -595,7 +595,7 @@ CREATE TABLE logica_test.Test_sn_new AS WITH t_1_Test_MultBodyAggAux_f2 AS (SELE
     SELECT
       ((x_11) + (1)) AS y
     FROM
-      logica_test.Test_sn_delta AS t_2_Test_sn_delta, UNNEST(SEQUENCE(0, 100 - 1)) as pushkin(x_11)
+      logica_test.Test_sn_delta AS t_2_Test_sn_delta, UNNEST(FILTER(SEQUENCE(0, 100), x -> x < 100)) as pushkin(x_11)
     WHERE
       (t_2_Test_sn_delta.y = x_11)
   
@@ -636,7 +636,7 @@ CREATE TABLE logica_test.Test_sn_new AS WITH t_1_Test_MultBodyAggAux_f2 AS (SELE
     SELECT
       ((x_11) + (1)) AS y
     FROM
-      logica_test.Test_sn_delta AS t_2_Test_sn_delta, UNNEST(SEQUENCE(0, 100 - 1)) as pushkin(x_11)
+      logica_test.Test_sn_delta AS t_2_Test_sn_delta, UNNEST(FILTER(SEQUENCE(0, 100), x -> x < 100)) as pushkin(x_11)
     WHERE
       (t_2_Test_sn_delta.y = x_11)
   
@@ -677,7 +677,7 @@ CREATE TABLE logica_test.Test_sn_new AS WITH t_1_Test_MultBodyAggAux_f2 AS (SELE
     SELECT
       ((x_11) + (1)) AS y
     FROM
-      logica_test.Test_sn_delta AS t_2_Test_sn_delta, UNNEST(SEQUENCE(0, 100 - 1)) as pushkin(x_11)
+      logica_test.Test_sn_delta AS t_2_Test_sn_delta, UNNEST(FILTER(SEQUENCE(0, 100), x -> x < 100)) as pushkin(x_11)
     WHERE
       (t_2_Test_sn_delta.y = x_11)
   
@@ -718,7 +718,7 @@ CREATE TABLE logica_test.Test_sn_new AS WITH t_1_Test_MultBodyAggAux_f2 AS (SELE
     SELECT
       ((x_11) + (1)) AS y
     FROM
-      logica_test.Test_sn_delta AS t_2_Test_sn_delta, UNNEST(SEQUENCE(0, 100 - 1)) as pushkin(x_11)
+      logica_test.Test_sn_delta AS t_2_Test_sn_delta, UNNEST(FILTER(SEQUENCE(0, 100), x -> x < 100)) as pushkin(x_11)
     WHERE
       (t_2_Test_sn_delta.y = x_11)
   
@@ -759,7 +759,7 @@ CREATE TABLE logica_test.Test_sn_new AS WITH t_1_Test_MultBodyAggAux_f2 AS (SELE
     SELECT
       ((x_11) + (1)) AS y
     FROM
-      logica_test.Test_sn_delta AS t_2_Test_sn_delta, UNNEST(SEQUENCE(0, 100 - 1)) as pushkin(x_11)
+      logica_test.Test_sn_delta AS t_2_Test_sn_delta, UNNEST(FILTER(SEQUENCE(0, 100), x -> x < 100)) as pushkin(x_11)
     WHERE
       (t_2_Test_sn_delta.y = x_11)
   
@@ -800,7 +800,7 @@ CREATE TABLE logica_test.Test_sn_new AS WITH t_1_Test_MultBodyAggAux_f2 AS (SELE
     SELECT
       ((x_11) + (1)) AS y
     FROM
-      logica_test.Test_sn_delta AS t_2_Test_sn_delta, UNNEST(SEQUENCE(0, 100 - 1)) as pushkin(x_11)
+      logica_test.Test_sn_delta AS t_2_Test_sn_delta, UNNEST(FILTER(SEQUENCE(0, 100), x -> x < 100)) as pushkin(x_11)
     WHERE
       (t_2_Test_sn_delta.y = x_11)
   
@@ -841,7 +841,7 @@ CREATE TABLE logica_test.Test_sn_new AS WITH t_1_Test_MultBodyAggAux_f2 AS (SELE
     SELECT
       ((x_11) + (1)) AS y
     FROM
-      logica_test.Test_sn_delta AS t_2_Test_sn_delta, UNNEST(SEQUENCE(0, 100 - 1)) as pushkin(x_11)
+      logica_test.Test_sn_delta AS t_2_Test_sn_delta, UNNEST(FILTER(SEQUENCE(0, 100), x -> x < 100)) as pushkin(x_11)
     WHERE
       (t_2_Test_sn_delta.y = x_11)
   
@@ -882,7 +882,7 @@ CREATE TABLE logica_test.Test_sn_new AS WITH t_1_Test_MultBodyAggAux_f2 AS (SELE
     SELECT
       ((x_11) + (1)) AS y
     FROM
-      logica_test.Test_sn_delta AS t_2_Test_sn_delta, UNNEST(SEQUENCE(0, 100 - 1)) as pushkin(x_11)
+      logica_test.Test_sn_delta AS t_2_Test_sn_delta, UNNEST(FILTER(SEQUENCE(0, 100), x -> x < 100)) as pushkin(x_11)
     WHERE
       (t_2_Test_sn_delta.y = x_11)
   
@@ -923,7 +923,7 @@ CREATE TABLE logica_test.Test_sn_new AS WITH t_1_Test_MultBodyAggAux_f2 AS (SELE
     SELECT
       ((x_11) + (1)) AS y
     FROM
-      logica_test.Test_sn_delta AS t_2_Test_sn_delta, UNNEST(SEQUENCE(0, 100 - 1)) as pushkin(x_11)
+      logica_test.Test_sn_delta AS t_2_Test_sn_delta, UNNEST(FILTER(SEQUENCE(0, 100), x -> x < 100)) as pushkin(x_11)
     WHERE
       (t_2_Test_sn_delta.y = x_11)
   
@@ -964,7 +964,7 @@ CREATE TABLE logica_test.Test_sn_new AS WITH t_1_Test_MultBodyAggAux_f2 AS (SELE
     SELECT
       ((x_11) + (1)) AS y
     FROM
-      logica_test.Test_sn_delta AS t_2_Test_sn_delta, UNNEST(SEQUENCE(0, 100 - 1)) as pushkin(x_11)
+      logica_test.Test_sn_delta AS t_2_Test_sn_delta, UNNEST(FILTER(SEQUENCE(0, 100), x -> x < 100)) as pushkin(x_11)
     WHERE
       (t_2_Test_sn_delta.y = x_11)
   
@@ -1005,7 +1005,7 @@ CREATE TABLE logica_test.Test_sn_new AS WITH t_1_Test_MultBodyAggAux_f2 AS (SELE
     SELECT
       ((x_11) + (1)) AS y
     FROM
-      logica_test.Test_sn_delta AS t_2_Test_sn_delta, UNNEST(SEQUENCE(0, 100 - 1)) as pushkin(x_11)
+      logica_test.Test_sn_delta AS t_2_Test_sn_delta, UNNEST(FILTER(SEQUENCE(0, 100), x -> x < 100)) as pushkin(x_11)
     WHERE
       (t_2_Test_sn_delta.y = x_11)
   
@@ -1046,7 +1046,7 @@ CREATE TABLE logica_test.Test_sn_new AS WITH t_1_Test_MultBodyAggAux_f2 AS (SELE
     SELECT
       ((x_11) + (1)) AS y
     FROM
-      logica_test.Test_sn_delta AS t_2_Test_sn_delta, UNNEST(SEQUENCE(0, 100 - 1)) as pushkin(x_11)
+      logica_test.Test_sn_delta AS t_2_Test_sn_delta, UNNEST(FILTER(SEQUENCE(0, 100), x -> x < 100)) as pushkin(x_11)
     WHERE
       (t_2_Test_sn_delta.y = x_11)
   
@@ -1087,7 +1087,7 @@ CREATE TABLE logica_test.Test_sn_new AS WITH t_1_Test_MultBodyAggAux_f2 AS (SELE
     SELECT
       ((x_11) + (1)) AS y
     FROM
-      logica_test.Test_sn_delta AS t_2_Test_sn_delta, UNNEST(SEQUENCE(0, 100 - 1)) as pushkin(x_11)
+      logica_test.Test_sn_delta AS t_2_Test_sn_delta, UNNEST(FILTER(SEQUENCE(0, 100), x -> x < 100)) as pushkin(x_11)
     WHERE
       (t_2_Test_sn_delta.y = x_11)
   
@@ -1128,7 +1128,7 @@ CREATE TABLE logica_test.Test_sn_new AS WITH t_1_Test_MultBodyAggAux_f2 AS (SELE
     SELECT
       ((x_11) + (1)) AS y
     FROM
-      logica_test.Test_sn_delta AS t_2_Test_sn_delta, UNNEST(SEQUENCE(0, 100 - 1)) as pushkin(x_11)
+      logica_test.Test_sn_delta AS t_2_Test_sn_delta, UNNEST(FILTER(SEQUENCE(0, 100), x -> x < 100)) as pushkin(x_11)
     WHERE
       (t_2_Test_sn_delta.y = x_11)
   
@@ -1169,7 +1169,7 @@ CREATE TABLE logica_test.Test_sn_new AS WITH t_1_Test_MultBodyAggAux_f2 AS (SELE
     SELECT
       ((x_11) + (1)) AS y
     FROM
-      logica_test.Test_sn_delta AS t_2_Test_sn_delta, UNNEST(SEQUENCE(0, 100 - 1)) as pushkin(x_11)
+      logica_test.Test_sn_delta AS t_2_Test_sn_delta, UNNEST(FILTER(SEQUENCE(0, 100), x -> x < 100)) as pushkin(x_11)
     WHERE
       (t_2_Test_sn_delta.y = x_11)
   
@@ -1210,7 +1210,7 @@ CREATE TABLE logica_test.Test_sn_new AS WITH t_1_Test_MultBodyAggAux_f2 AS (SELE
     SELECT
       ((x_11) + (1)) AS y
     FROM
-      logica_test.Test_sn_delta AS t_2_Test_sn_delta, UNNEST(SEQUENCE(0, 100 - 1)) as pushkin(x_11)
+      logica_test.Test_sn_delta AS t_2_Test_sn_delta, UNNEST(FILTER(SEQUENCE(0, 100), x -> x < 100)) as pushkin(x_11)
     WHERE
       (t_2_Test_sn_delta.y = x_11)
   
@@ -1251,7 +1251,7 @@ CREATE TABLE logica_test.Test_sn_new AS WITH t_1_Test_MultBodyAggAux_f2 AS (SELE
     SELECT
       ((x_11) + (1)) AS y
     FROM
-      logica_test.Test_sn_delta AS t_2_Test_sn_delta, UNNEST(SEQUENCE(0, 100 - 1)) as pushkin(x_11)
+      logica_test.Test_sn_delta AS t_2_Test_sn_delta, UNNEST(FILTER(SEQUENCE(0, 100), x -> x < 100)) as pushkin(x_11)
     WHERE
       (t_2_Test_sn_delta.y = x_11)
   

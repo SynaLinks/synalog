@@ -1,0 +1,2 @@
+SELECT
+  SIZE(FILTER(SEQUENCE(0, 0), x -> x < 0)) AS n;

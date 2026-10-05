@@ -915,7 +915,12 @@ impl Functors {
                         walk_replace_predicate(r, c, &format!("{}_recursive_head", c));
                     }
                 }
-            } else if head_pred.starts_with('@') && head_pred != "@Make" {
+            } else if head_pred.starts_with('@')
+                && head_pred != "@Make"
+                // The ordering and limit are the result's, not each step's.
+                && head_pred != "@OrderBy"
+                && head_pred != "@Limit"
+            {
                 walk_replace_predicate(r, predicate, &new_predicate_head_name);
                 for c in cover {
                     if c != predicate {
@@ -1015,7 +1020,13 @@ impl Functors {
                 for c in &simplified_cover {
                     walk_replace_predicate(r, c, &format!("{}_RZero", c));
                 }
-            } else if head_pred.starts_with('@') && head_pred != "@Make" {
+            } else if head_pred.starts_with('@')
+                && head_pred != "@Make"
+                // The ordering and limit are the result's: on each step a
+                // limit would cut what the next step starts from.
+                && head_pred != "@OrderBy"
+                && head_pred != "@Limit"
+            {
                 for c in cover {
                     walk_replace_predicate(r, c, &format!("{}_ROne", c));
                 }
@@ -1459,12 +1470,13 @@ pub fn unfold_recursion(rules: &[Json], engine: &str) -> CompileResult<Vec<Json>
     }
 
     // Upstream defaults DuckDB to the iterative path; synalog unrolls DuckDB
-    // inline like the other engines (see DEVIATIONS.md). Presto iterates every
-    // recursion: it inlines each CTE where it is read, and an unrolled step
-    // reads the previous one twice, so the query it plans doubles with each
-    // step (depth 20 took minutes to plan). The iterative path stores each
-    // step in a table, which the run loops over (`synalog.plan`).
-    let default_iterative = engine == "presto";
+    // inline like the other engines (see DEVIATIONS.md). Presto and Spark
+    // (Databricks) iterate every recursion: their planners take time
+    // exponential in the steps of an unrolled recursion (Presto: depth 20
+    // exceeded its 3-minute planning timeout; Spark: depth 12 took minutes).
+    // The iterative path stores each step in a table, which the run loops
+    // over (`synalog.plan`).
+    let default_iterative = engine == "presto" || engine == "databricks";
     // Upstream's default is 32 steps on DuckDB; 8 everywhere here, so a
     // program means the same on every engine.
     let default_depth: i64 = 8;

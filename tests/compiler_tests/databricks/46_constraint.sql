@@ -1,10 +1,10 @@
 WITH t_0_BigNumbers AS (SELECT
   x_5 AS x
 FROM
-  explode(SEQUENCE(0, 10 - 1)) AS pushkin(x_5)
+  LATERAL (SELECT explode(FILTER(SEQUENCE(0, 10), x -> x < 10)) AS x_5) AS pushkin
 WHERE
-  (x_5 > 5) ORDER BY x)
+  (x_5 > 5) ORDER BY x NULLS LAST)
 SELECT
   BigNumbers.x AS x
 FROM
-  t_0_BigNumbers AS BigNumbers ORDER BY x;
+  t_0_BigNumbers AS BigNumbers ORDER BY x NULLS LAST;

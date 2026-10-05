@@ -502,6 +502,8 @@ pub struct LogicaProgram {
     pub custom_udf_definitions: IndexMap<String, String>,
     /// Execution state (set during `formatted_predicate_sql`).
     pub execution: RefCell<Option<Logica>>,
+    /// The column names of the program, lowercase, which table aliases avoid.
+    pub column_names: HashSet<String>,
     /// Shared names allocator for the current compilation pass.
     /// Set at start of `formatted_predicate_sql`, shared across all sub-compilations.
     pub allocator: RefCell<NamesAllocator>,
@@ -649,6 +651,20 @@ impl LogicaProgram {
             .map(|(pred, sg)| (pred.clone(), sg.clone()))
             .collect();
 
+        let column_names: HashSet<String> = rules
+            .iter()
+            .filter_map(|(_, rule)| rule.as_object()["head"].as_object().get("record").cloned())
+            .flat_map(|record| {
+                record.as_object().get("field_value").map(|f| f.as_array().clone()).unwrap_or_default()
+            })
+            .filter_map(|fv| {
+                let field = &fv.as_object()["field"];
+                field.is_string().then(|| field.as_str().to_ascii_lowercase())
+            })
+            .collect();
+        let mut allocator = NamesAllocator::new();
+        allocator.reserved_aliases = column_names.clone();
+
         Ok(LogicaProgram {
             raw_rules: raw_rule_list,
             preparsed_rules: unfolded_rules.clone(),
@@ -664,7 +680,8 @@ impl LogicaProgram {
             custom_aggregation_semigroup,
             custom_udf_definitions: IndexMap::new(),
             execution: RefCell::new(None),
-            allocator: RefCell::new(NamesAllocator::new()),
+            allocator: RefCell::new(allocator),
+            column_names,
             user_flags,
             functors_args_of,
             typing_preamble,
@@ -927,7 +944,9 @@ impl LogicaProgram {
         let udfs: HashMap<String, String> = self.custom_udfs.iter()
             .map(|(k, v)| (k.clone(), v.clone()))
             .collect();
-        NamesAllocator::with_custom_udfs(udfs)
+        let mut allocator = NamesAllocator::with_custom_udfs(udfs);
+        allocator.reserved_aliases = self.column_names.clone();
+        allocator
     }
 
     /// Yield rules for a given predicate.
@@ -1192,8 +1211,16 @@ impl LogicaProgram {
             for (table_name_rsql, table_predicate_rsql) in &old_tables {
                 let rules = self.get_predicate_rules(table_predicate_rsql);
 
+                // In a subquery (a negation's, which reads the query around
+                // it), a rule with a subquery in its body is not inlined: its
+                // subquery would read a table two levels up, which Trino,
+                // Presto and Spark cannot correlate. As a table, each level
+                // reads its parent.
+                let nests_a_subquery = s.external_vocabulary.as_ref().is_some_and(|v| !v.is_empty())
+                    && rules[0].as_object().get("body").is_some_and(has_subquery);
                 let is_injectable = rules.len() == 1
                     && !rules[0].as_object().contains_key("distinct_denoted")
+                    && !nests_a_subquery
                     && self.annotations.ok_injection(table_predicate_rsql);
 
                 if is_injectable {
@@ -1791,25 +1818,42 @@ impl LogicaProgram {
             (None, _) => None,
         };
 
-        let mut pagination_clause = String::new();
-        if let Some(limit) = effective_limit {
-            pagination_clause.push_str(&format!("\nLIMIT {}", limit));
+        let offset = pagination.offset.filter(|o| *o > 0);
+        if effective_limit.is_none() && offset.is_none() {
+            return query;
         }
-        if let Some(offset) = pagination.offset {
-            if offset > 0 {
-                pagination_clause.push_str(&format!("\nOFFSET {}", offset));
+        let dialect = dialects::get(self.annotations.engine()).ok();
+        if let (Some(d), Some(skip)) = (dialect.as_ref(), offset) {
+            if !d.supports_offset() {
+                // The rows numbered in order; the page is the numbers after
+                // the offset, up to the limit.
+                let columns: Vec<String> = self
+                    .predicate_columns(name)
+                    .iter()
+                    .map(|c| dialects::sql_column(c, d.as_ref()))
+                    .collect();
+                let order = self.annotations.order_by_clause(name);
+                let upto = effective_limit.map(|l| format!(" AND synalog_row <= {}", skip + l)).unwrap_or_default();
+                return format!(
+                    "SELECT {cols} FROM (\nSELECT *, ROW_NUMBER() OVER ({order}) AS synalog_row FROM (\n{query}\n) AS _numbered\n) AS _paginated\nWHERE synalog_row > {skip}{upto}\nORDER BY synalog_row",
+                    cols = columns.join(", "),
+                    order = order.trim(),
+                    query = query.trim_end_matches(';'),
+                );
             }
         }
-
-        if pagination_clause.is_empty() {
-            query
-        } else {
-            format!(
-                "SELECT * FROM (\n{}\n) AS _paginated{}",
-                query.trim_end_matches(';'),
-                pagination_clause
-            )
-        }
+        let pagination_clause = match dialect {
+            Some(d) => d.pagination_clause(effective_limit, offset),
+            None => String::new(),
+        };
+        // A subquery's ORDER BY need not survive it (Trino and Presto drop
+        // it): the page is taken from the rows ordered again.
+        format!(
+            "SELECT * FROM (\n{}\n) AS _paginated{}{}",
+            query.trim_end_matches(';'),
+            self.annotations.order_by_clause(name),
+            pagination_clause
+        )
     }
 
     /// Get the column names for a predicate from its rule head(s).
@@ -1869,10 +1913,12 @@ impl LogicaProgram {
             .collect::<Vec<_>>()
             .join(" OR ");
 
+        // Ordered again: the subquery's ORDER BY need not survive it.
         Ok(format!(
-            "SELECT * FROM (\n{}\n) AS _searched\nWHERE {}",
+            "SELECT * FROM (\n{}\n) AS _searched\nWHERE {}{}",
             query.trim_end_matches(';'),
             where_clause,
+            self.annotations.order_by_clause(name),
         ))
     }
 
@@ -2412,3 +2458,12 @@ fn select_as_record(select: &IndexMap<String, Json>) -> Json {
 #[cfg(test)]
 #[path = "universe_test.rs"]
 mod universe_test;
+
+/// Whether a rule body holds a subquery: a negation or another `combine`.
+fn has_subquery(json: &Json) -> bool {
+    match json {
+        Json::Object(o) => o.iter().any(|(key, value)| key == "combine" || has_subquery(value)),
+        Json::Array(items) => items.iter().any(has_subquery),
+        _ => false,
+    }
+}

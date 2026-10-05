@@ -1,7 +1,7 @@
 SELECT
   x_3 AS x
 FROM
-  explode(ARRAY(1, 2)) AS pushkin(x_3)
+  LATERAL (SELECT explode(ARRAY(1, 2)) AS x_3) AS pushkin
 WHERE
   ((SELECT
     MIN(1) AS logica_value

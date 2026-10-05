@@ -494,7 +494,7 @@ fn test_databricks_built_in_functions() {
     assert!(f.contains_key("ILike"), "databricks should have ILike");
     assert!(f.contains_key("IsNull"), "databricks should have IsNull");
     // Spark/Databricks-specific overrides of the BigQuery defaults.
-    assert_eq!(f.get("Range"), Some(&"SEQUENCE(0, %s - 1)"));
+    assert_eq!(f.get("Range"), Some(&"FILTER(SEQUENCE(0, {0}), x -> x < {0})"));
     assert_eq!(f.get("Size"), Some(&"SIZE(%s)"));
     assert_eq!(f.get("Element"), Some(&"ELEMENT_AT({0}, {1} + 1)"));
     assert_eq!(f.get("Format"), Some(&"FORMAT_STRING(%s)"));
@@ -642,5 +642,23 @@ fn test_regex_match_condition_escapes_single_quotes() {
             engine,
             result
         );
+    }
+}
+
+#[test]
+fn nulls_sort_last_on_every_engine() {
+    // Engines sorting nulls first in a direction get `NULLS LAST` there.
+    for (engine, ascending_first, descending_first) in [
+        ("sqlite", true, false),
+        ("databricks", true, false),
+        ("bigquery", true, false),
+        ("psql", false, true),
+        ("duckdb", false, false),
+        ("trino", false, false),
+        ("presto", false, false),
+    ] {
+        let d = crate::compiler::dialects::get(engine).unwrap();
+        assert_eq!(d.nulls_first_by_default(false), ascending_first, "{engine} ascending");
+        assert_eq!(d.nulls_first_by_default(true), descending_first, "{engine} descending");
     }
 }

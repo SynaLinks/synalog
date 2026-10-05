@@ -41,6 +41,10 @@ pub struct NamesAllocator {
     table_count: usize,
     var_count: usize,
     allocated_tables: HashSet<String>,
+    /// Names a table alias must not take, lowercase: the program's columns.
+    /// Engines with case-insensitive names (Trino, Presto) read an alias
+    /// `K` as the column `k` of the subquery's own table.
+    pub reserved_aliases: HashSet<String>,
     /// Custom UDF format strings: function_name -> format string (e.g., "my_func({col0}, {col1})")
     pub custom_udfs: HashMap<String, String>,
 }
@@ -87,6 +91,7 @@ impl NamesAllocator {
             && !self.allocated_tables.contains(&suffix)
             && !suffix.chars().next().unwrap_or('0').is_ascii_digit()
             && !is_sql_keyword(&suffix)
+            && !self.reserved_aliases.contains(&suffix.to_ascii_lowercase())
         {
             suffix
         } else {

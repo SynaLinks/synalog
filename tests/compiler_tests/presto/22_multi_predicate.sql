@@ -5,7 +5,7 @@ WITH t_0_AllSquares AS (SELECT * FROM (
       ((x_15) * (x_15)) AS sq,
       'even' AS type
     FROM
-      UNNEST(SEQUENCE(0, 10 - 1)) as pushkin(x_15)
+      UNNEST(FILTER(SEQUENCE(0, 10), x -> x < 10)) as pushkin(x_15)
     WHERE
       ((MOD(x_15, 2)) = 0)
    UNION ALL
@@ -15,7 +15,7 @@ WITH t_0_AllSquares AS (SELECT * FROM (
       ((x_25) * (x_25)) AS sq,
       'odd' AS type
     FROM
-      UNNEST(SEQUENCE(0, 10 - 1)) as pushkin(x_25)
+      UNNEST(FILTER(SEQUENCE(0, 10), x -> x < 10)) as pushkin(x_25)
     WHERE
       ((MOD(x_25, 2)) = 1)
   

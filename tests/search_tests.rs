@@ -307,12 +307,9 @@ fn search_with_offset_all_engines() {
             None,
             Some(5),
         );
-        assert!(
-            sql.contains("OFFSET 5"),
-            "{}: should have OFFSET, got:\n{}",
-            engine,
-            sql
-        );
+        // PrestoDB disables OFFSET: the rows are numbered instead.
+        let skips = if *engine == "presto" { sql.contains("synalog_row > 5") } else { sql.contains("OFFSET 5") };
+        assert!(skips, "{}: should skip 5 rows, got:\n{}", engine, sql);
     }
 }
 
@@ -326,18 +323,13 @@ fn search_with_limit_and_offset_all_engines() {
             Some(10),
             Some(5),
         );
-        assert!(
-            sql.contains("LIMIT 10"),
-            "{}: should have LIMIT, got:\n{}",
-            engine,
-            sql
-        );
-        assert!(
-            sql.contains("OFFSET 5"),
-            "{}: should have OFFSET, got:\n{}",
-            engine,
-            sql
-        );
+        // PrestoDB disables OFFSET: the rows are numbered instead.
+        let (takes, skips) = if *engine == "presto" {
+            (sql.contains("synalog_row <= 15"), sql.contains("synalog_row > 5"))
+        } else {
+            (sql.contains("LIMIT 10"), sql.contains("OFFSET 5"))
+        };
+        assert!(takes && skips, "{}: should take rows 6 to 15, got:\n{}", engine, sql);
     }
 }
 

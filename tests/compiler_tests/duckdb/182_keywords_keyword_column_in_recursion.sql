@@ -30,7 +30,7 @@ t_19_Reach_r0 AS (SELECT
   Reach_MultBodyAggAux_recursive_head_f1."to" AS "to"
 FROM
   t_20_Reach_MultBodyAggAux_recursive_head_f1 AS Reach_MultBodyAggAux_recursive_head_f1
-GROUP BY Reach_MultBodyAggAux_recursive_head_f1."to" ORDER BY "to"),
+GROUP BY Reach_MultBodyAggAux_recursive_head_f1."to"),
 t_16_Reach_MultBodyAggAux_recursive_head_f2 AS (SELECT * FROM (
   
     SELECT
@@ -53,7 +53,7 @@ t_15_Reach_r1 AS (SELECT
   Reach_MultBodyAggAux_recursive_head_f2."to" AS "to"
 FROM
   t_16_Reach_MultBodyAggAux_recursive_head_f2 AS Reach_MultBodyAggAux_recursive_head_f2
-GROUP BY Reach_MultBodyAggAux_recursive_head_f2."to" ORDER BY "to"),
+GROUP BY Reach_MultBodyAggAux_recursive_head_f2."to"),
 t_12_Reach_MultBodyAggAux_recursive_head_f3 AS (SELECT * FROM (
   
     SELECT
@@ -76,7 +76,7 @@ t_11_Reach_r2 AS (SELECT
   Reach_MultBodyAggAux_recursive_head_f3."to" AS "to"
 FROM
   t_12_Reach_MultBodyAggAux_recursive_head_f3 AS Reach_MultBodyAggAux_recursive_head_f3
-GROUP BY Reach_MultBodyAggAux_recursive_head_f3."to" ORDER BY "to"),
+GROUP BY Reach_MultBodyAggAux_recursive_head_f3."to"),
 t_8_Reach_MultBodyAggAux_recursive_head_f4 AS (SELECT * FROM (
   
     SELECT
@@ -99,7 +99,7 @@ t_7_Reach_r3 AS (SELECT
   Reach_MultBodyAggAux_recursive_head_f4."to" AS "to"
 FROM
   t_8_Reach_MultBodyAggAux_recursive_head_f4 AS Reach_MultBodyAggAux_recursive_head_f4
-GROUP BY Reach_MultBodyAggAux_recursive_head_f4."to" ORDER BY "to"),
+GROUP BY Reach_MultBodyAggAux_recursive_head_f4."to"),
 t_4_Reach_MultBodyAggAux_recursive_head_f5 AS (SELECT * FROM (
   
     SELECT
@@ -122,7 +122,7 @@ t_3_Reach_r4 AS (SELECT
   Reach_MultBodyAggAux_recursive_head_f5."to" AS "to"
 FROM
   t_4_Reach_MultBodyAggAux_recursive_head_f5 AS Reach_MultBodyAggAux_recursive_head_f5
-GROUP BY Reach_MultBodyAggAux_recursive_head_f5."to" ORDER BY "to"),
+GROUP BY Reach_MultBodyAggAux_recursive_head_f5."to"),
 t_0_Reach_MultBodyAggAux_recursive_head_f6 AS (SELECT * FROM (
   
     SELECT

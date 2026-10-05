@@ -1,4 +1,4 @@
 SELECT
   x_1 AS x
 FROM
-  UNNEST(SEQUENCE(0, 3 - 1)) as pushkin(x_1) ORDER BY x;
+  UNNEST(FILTER(SEQUENCE(0, 3), x -> x < 3)) as pushkin(x_1) ORDER BY x;

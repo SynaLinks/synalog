@@ -1,4 +1,4 @@
-WITH t_1_S AS (SELECT * FROM (
+WITH t_2_S AS (SELECT * FROM (
   
     SELECT
       1 AS "order",
@@ -11,6 +11,6 @@ WITH t_1_S AS (SELECT * FROM (
   
 ) AS UNUSED_TABLE_NAME  )
 SELECT
-  JSON_EXTRACT(ArgMax(S."order", S.s, 1), '$[' || 0 || ']') AS "order"
+  JSON_EXTRACT(ArgMax(t_0_S."order", t_0_S.s, 1), '$[' || 0 || ']') AS "order"
 FROM
-  t_1_S AS S;
+  t_2_S AS t_0_S;

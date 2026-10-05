@@ -1,2 +1,2 @@
 SELECT
-  ARRAY_LENGTH(ARRAY[]) AS n;
+  0 AS n;

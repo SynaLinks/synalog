@@ -2,6 +2,6 @@ SELECT
   x_7 AS x,
   ((x_7) * (x_7)) AS squared
 FROM
-  explode(SEQUENCE(0, 5 - 1)) AS pushkin(x_7)
+  LATERAL (SELECT explode(FILTER(SEQUENCE(0, 5), x -> x < 5)) AS x_7) AS pushkin
 WHERE
-  (x_7 > 1) ORDER BY x;
+  (x_7 > 1) ORDER BY x NULLS LAST;

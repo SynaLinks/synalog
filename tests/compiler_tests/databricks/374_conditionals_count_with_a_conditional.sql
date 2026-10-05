@@ -1,0 +1,4 @@
+SELECT
+  SUM(CASE WHEN (x_2 > 2) THEN 1 ELSE 0 END) AS n
+FROM
+  LATERAL (SELECT explode(ARRAY(1, 2, 3, 4)) AS x_2) AS pushkin;

@@ -4,16 +4,7 @@ create schema if not exists logica_home;
 drop type if exists logicarecord893574736 cascade; create type logicarecord893574736 as struct(nirvana numeric);
 create sequence if not exists eternal_logical_sequence;
 
-
--- Logica type: logicarecord481217614
-drop type if exists logicarecord481217614 cascade; create type logicarecord481217614 as struct(r logicarecord893574736);
-
--- Logica type: logicarecord383307722
-drop type if exists logicarecord383307722 cascade; create type logicarecord383307722 as struct(a timestamp);
-
--- Logica type: logicarecord519939597
-drop type if exists logicarecord519939597 cascade; create type logicarecord519939597 as struct(args text[], predicate text);
-WITH t_2_Phones AS (SELECT * FROM (
+WITH t_3_Phones AS (SELECT * FROM (
   
     SELECT
       'Alice' AS person,
@@ -25,7 +16,7 @@ WITH t_2_Phones AS (SELECT * FROM (
       '555-5678' AS phone
   
 ) AS UNUSED_TABLE_NAME  ),
-t_3_Emails AS (SELECT * FROM (
+t_5_Emails AS (SELECT * FROM (
   
     SELECT
       'Bob' AS person,
@@ -40,19 +31,19 @@ t_3_Emails AS (SELECT * FROM (
 t_1_ContactInfo_MultBodyAggAux AS (SELECT * FROM (
   
     SELECT
-      Phones.person AS person,
-      [Phones.phone]::text[] AS phones,
-      []::text[] AS emails
+      t_2_Phones.person AS person,
+      [t_2_Phones.phone] AS phones,
+      [] AS emails
     FROM
-      t_2_Phones AS Phones
+      t_3_Phones AS t_2_Phones
    UNION ALL
   
     SELECT
-      Emails.person AS person,
-      []::text[] AS phones,
-      [Emails.email]::text[] AS emails
+      t_4_Emails.person AS person,
+      [] AS phones,
+      [t_4_Emails.email] AS emails
     FROM
-      t_3_Emails AS Emails
+      t_5_Emails AS t_4_Emails
   
 ) AS UNUSED_TABLE_NAME  ),
 t_0_ContactInfo AS (SELECT

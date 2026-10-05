@@ -9,7 +9,7 @@ SELECT
   Even_MultBodyAggAux_f1.n AS n
 FROM
   t_0_Even_MultBodyAggAux_f1 AS Even_MultBodyAggAux_f1
-GROUP BY 1 ORDER BY n;
+GROUP BY 1;
 
 -- Interacting with table logica_test.Even_ifr0
 
@@ -43,7 +43,7 @@ SELECT
   Even_MultBodyAggAux_f5.n AS n
 FROM
   t_0_Even_MultBodyAggAux_f5 AS Even_MultBodyAggAux_f5
-GROUP BY 1 ORDER BY n;
+GROUP BY 1;
 
 -- Interacting with table logica_test.Even_ifr2
 
@@ -77,7 +77,7 @@ SELECT
   Even_MultBodyAggAux_f9.n AS n
 FROM
   t_0_Even_MultBodyAggAux_f9 AS Even_MultBodyAggAux_f9
-GROUP BY 1 ORDER BY n;
+GROUP BY 1;
 
 -- Interacting with table logica_test.Even_ifr4
 
@@ -103,7 +103,7 @@ SELECT
   Even_MultBodyAggAux_f4.n AS n
 FROM
   t_0_Even_MultBodyAggAux_f4 AS Even_MultBodyAggAux_f4
-GROUP BY 1 ORDER BY n;
+GROUP BY 1;
 
 -- Interacting with table logica_test.Even_ifr1
 
@@ -137,7 +137,7 @@ SELECT
   Even_MultBodyAggAux_f8.n AS n
 FROM
   t_0_Even_MultBodyAggAux_f8 AS Even_MultBodyAggAux_f8
-GROUP BY 1 ORDER BY n;
+GROUP BY 1;
 
 -- Interacting with table logica_test.Even_ifr3
 
@@ -171,7 +171,7 @@ SELECT
   Even_MultBodyAggAux_f12.n AS n
 FROM
   t_0_Even_MultBodyAggAux_f12 AS Even_MultBodyAggAux_f12
-GROUP BY 1 ORDER BY n;
+GROUP BY 1;
 
 -- Interacting with table logica_test.Even_ifr3
 
@@ -194,7 +194,7 @@ SELECT
   Even_MultBodyAggAux_f9.n AS n
 FROM
   t_0_Even_MultBodyAggAux_f9 AS Even_MultBodyAggAux_f9
-GROUP BY 1 ORDER BY n;
+GROUP BY 1;
 
 DROP TABLE IF EXISTS logica_test.Odd_ifr4;
 CREATE TABLE logica_test.Odd_ifr4 AS SELECT
@@ -224,7 +224,7 @@ SELECT
   Even_MultBodyAggAux_f12.n AS n
 FROM
   t_0_Even_MultBodyAggAux_f12 AS Even_MultBodyAggAux_f12
-GROUP BY 1 ORDER BY n;
+GROUP BY 1;
 
 DROP TABLE IF EXISTS logica_test.Odd_ifr3;
 CREATE TABLE logica_test.Odd_ifr3 AS SELECT
@@ -254,7 +254,7 @@ SELECT
   Even_MultBodyAggAux_f9.n AS n
 FROM
   t_0_Even_MultBodyAggAux_f9 AS Even_MultBodyAggAux_f9
-GROUP BY 1 ORDER BY n;
+GROUP BY 1;
 
 DROP TABLE IF EXISTS logica_test.Odd_ifr4;
 CREATE TABLE logica_test.Odd_ifr4 AS SELECT
@@ -284,7 +284,7 @@ SELECT
   Even_MultBodyAggAux_f12.n AS n
 FROM
   t_0_Even_MultBodyAggAux_f12 AS Even_MultBodyAggAux_f12
-GROUP BY 1 ORDER BY n;
+GROUP BY 1;
 
 DROP TABLE IF EXISTS logica_test.Odd_ifr3;
 CREATE TABLE logica_test.Odd_ifr3 AS SELECT

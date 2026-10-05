@@ -144,6 +144,10 @@ pub enum VerifyError {
     #[error("Unsafe aggregation: variable '{var}' not bound outside aggregate in: {rule}")]
     UnsafeAggregation { var: String, rule: String },
 
+    /// A function used as a condition, which holds whatever its value.
+    #[error("{}", function_as_condition_message(function, rule))]
+    FunctionAsCondition { function: String, rule: String },
+
     /// Negative recursion cycle detected.
     #[error("Negative recursion cycle: {}", predicates.join(" -> "))]
     NegativeCycle { predicates: Vec<String> },
@@ -331,4 +335,13 @@ mod tests {
         });
         assert!(!result.is_valid());
     }
+}
+
+/// The message of [`VerifyError::FunctionAsCondition`].
+pub fn function_as_condition_message(function: &str, rule: &str) -> String {
+    format!(
+        "'{f}' is a function: as a condition, {f}(...) holds whatever its value; \
+         compare its value ({f}(...) == true) in: {rule}",
+        f = function
+    )
 }

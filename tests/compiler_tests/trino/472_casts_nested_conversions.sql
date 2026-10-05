@@ -1,0 +1,2 @@
+SELECT
+  CAST(element_at(transform(filter(ARRAY[CAST(element_at(transform(filter(ARRAY[CAST(element_at(transform(filter(ARRAY[CAST(element_at(transform(filter(ARRAY[CAST(2.5E0 AS BIGINT)], v -> v IS NOT NULL), v -> format('%s', v)), 1) AS BIGINT)], v -> v IS NOT NULL), v -> format('%s', v)), 1) AS BIGINT)], v -> v IS NOT NULL), v -> format('%s', v)), 1) AS BIGINT)], v -> v IS NOT NULL), v -> format('%s', v)), 1) AS BIGINT) AS n;

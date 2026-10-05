@@ -11,7 +11,7 @@ CREATE TABLE logica_home.Reach_sn_delta AS WITH t_0_Reach_MultBodyAggAux_f1 AS (
       x_9 AS x,
       ((x_9) + (1)) AS y
     FROM
-      UNNEST((SELECT ARRAY_AGG(x) FROM GENERATE_SERIES(0, 4 - 1) as x)) as x_9
+      UNNEST(COALESCE((SELECT ARRAY_AGG(x) FROM GENERATE_SERIES(0, 4 - 1) as x), '{}')) as x_9
   
 ) AS UNUSED_TABLE_NAME  )
 SELECT
@@ -30,14 +30,14 @@ CREATE TABLE logica_home.Reach_sn_full AS WITH t_1_Reach_MultBodyAggAux_f2 AS (S
       x_17 AS x,
       ((x_17) + (1)) AS y
     FROM
-      UNNEST((SELECT ARRAY_AGG(x) FROM GENERATE_SERIES(0, 4 - 1) as x)) as x_17
+      UNNEST(COALESCE((SELECT ARRAY_AGG(x) FROM GENERATE_SERIES(0, 4 - 1) as x), '{}')) as x_17
    UNION ALL
   
     SELECT
       t_2_Reach_sn_delta.x AS x,
       ((x_25) + (1)) AS y
     FROM
-      logica_home.Reach_sn_delta AS t_2_Reach_sn_delta, UNNEST((SELECT ARRAY_AGG(x) FROM GENERATE_SERIES(0, 4 - 1) as x)) as x_25
+      logica_home.Reach_sn_delta AS t_2_Reach_sn_delta, UNNEST(COALESCE((SELECT ARRAY_AGG(x) FROM GENERATE_SERIES(0, 4 - 1) as x), '{}')) as x_25
     WHERE
       (t_2_Reach_sn_delta.y = x_25)
   
@@ -76,14 +76,14 @@ CREATE TABLE logica_home.Reach_sn_new AS WITH t_1_Reach_MultBodyAggAux_f2 AS (SE
       x_17 AS x,
       ((x_17) + (1)) AS y
     FROM
-      UNNEST((SELECT ARRAY_AGG(x) FROM GENERATE_SERIES(0, 4 - 1) as x)) as x_17
+      UNNEST(COALESCE((SELECT ARRAY_AGG(x) FROM GENERATE_SERIES(0, 4 - 1) as x), '{}')) as x_17
    UNION ALL
   
     SELECT
       t_2_Reach_sn_delta.x AS x,
       ((x_25) + (1)) AS y
     FROM
-      logica_home.Reach_sn_delta AS t_2_Reach_sn_delta, UNNEST((SELECT ARRAY_AGG(x) FROM GENERATE_SERIES(0, 4 - 1) as x)) as x_25
+      logica_home.Reach_sn_delta AS t_2_Reach_sn_delta, UNNEST(COALESCE((SELECT ARRAY_AGG(x) FROM GENERATE_SERIES(0, 4 - 1) as x), '{}')) as x_25
     WHERE
       (t_2_Reach_sn_delta.y = x_25)
   
@@ -125,14 +125,14 @@ CREATE TABLE logica_home.Reach_sn_new AS WITH t_1_Reach_MultBodyAggAux_f2 AS (SE
       x_17 AS x,
       ((x_17) + (1)) AS y
     FROM
-      UNNEST((SELECT ARRAY_AGG(x) FROM GENERATE_SERIES(0, 4 - 1) as x)) as x_17
+      UNNEST(COALESCE((SELECT ARRAY_AGG(x) FROM GENERATE_SERIES(0, 4 - 1) as x), '{}')) as x_17
    UNION ALL
   
     SELECT
       t_2_Reach_sn_delta.x AS x,
       ((x_25) + (1)) AS y
     FROM
-      logica_home.Reach_sn_delta AS t_2_Reach_sn_delta, UNNEST((SELECT ARRAY_AGG(x) FROM GENERATE_SERIES(0, 4 - 1) as x)) as x_25
+      logica_home.Reach_sn_delta AS t_2_Reach_sn_delta, UNNEST(COALESCE((SELECT ARRAY_AGG(x) FROM GENERATE_SERIES(0, 4 - 1) as x), '{}')) as x_25
     WHERE
       (t_2_Reach_sn_delta.y = x_25)
   
@@ -174,14 +174,14 @@ CREATE TABLE logica_home.Reach_sn_new AS WITH t_1_Reach_MultBodyAggAux_f2 AS (SE
       x_17 AS x,
       ((x_17) + (1)) AS y
     FROM
-      UNNEST((SELECT ARRAY_AGG(x) FROM GENERATE_SERIES(0, 4 - 1) as x)) as x_17
+      UNNEST(COALESCE((SELECT ARRAY_AGG(x) FROM GENERATE_SERIES(0, 4 - 1) as x), '{}')) as x_17
    UNION ALL
   
     SELECT
       t_2_Reach_sn_delta.x AS x,
       ((x_25) + (1)) AS y
     FROM
-      logica_home.Reach_sn_delta AS t_2_Reach_sn_delta, UNNEST((SELECT ARRAY_AGG(x) FROM GENERATE_SERIES(0, 4 - 1) as x)) as x_25
+      logica_home.Reach_sn_delta AS t_2_Reach_sn_delta, UNNEST(COALESCE((SELECT ARRAY_AGG(x) FROM GENERATE_SERIES(0, 4 - 1) as x), '{}')) as x_25
     WHERE
       (t_2_Reach_sn_delta.y = x_25)
   
@@ -223,14 +223,14 @@ CREATE TABLE logica_home.Reach_sn_new AS WITH t_1_Reach_MultBodyAggAux_f2 AS (SE
       x_17 AS x,
       ((x_17) + (1)) AS y
     FROM
-      UNNEST((SELECT ARRAY_AGG(x) FROM GENERATE_SERIES(0, 4 - 1) as x)) as x_17
+      UNNEST(COALESCE((SELECT ARRAY_AGG(x) FROM GENERATE_SERIES(0, 4 - 1) as x), '{}')) as x_17
    UNION ALL
   
     SELECT
       t_2_Reach_sn_delta.x AS x,
       ((x_25) + (1)) AS y
     FROM
-      logica_home.Reach_sn_delta AS t_2_Reach_sn_delta, UNNEST((SELECT ARRAY_AGG(x) FROM GENERATE_SERIES(0, 4 - 1) as x)) as x_25
+      logica_home.Reach_sn_delta AS t_2_Reach_sn_delta, UNNEST(COALESCE((SELECT ARRAY_AGG(x) FROM GENERATE_SERIES(0, 4 - 1) as x), '{}')) as x_25
     WHERE
       (t_2_Reach_sn_delta.y = x_25)
   
@@ -272,14 +272,14 @@ CREATE TABLE logica_home.Reach_sn_new AS WITH t_1_Reach_MultBodyAggAux_f2 AS (SE
       x_17 AS x,
       ((x_17) + (1)) AS y
     FROM
-      UNNEST((SELECT ARRAY_AGG(x) FROM GENERATE_SERIES(0, 4 - 1) as x)) as x_17
+      UNNEST(COALESCE((SELECT ARRAY_AGG(x) FROM GENERATE_SERIES(0, 4 - 1) as x), '{}')) as x_17
    UNION ALL
   
     SELECT
       t_2_Reach_sn_delta.x AS x,
       ((x_25) + (1)) AS y
     FROM
-      logica_home.Reach_sn_delta AS t_2_Reach_sn_delta, UNNEST((SELECT ARRAY_AGG(x) FROM GENERATE_SERIES(0, 4 - 1) as x)) as x_25
+      logica_home.Reach_sn_delta AS t_2_Reach_sn_delta, UNNEST(COALESCE((SELECT ARRAY_AGG(x) FROM GENERATE_SERIES(0, 4 - 1) as x), '{}')) as x_25
     WHERE
       (t_2_Reach_sn_delta.y = x_25)
   
@@ -321,14 +321,14 @@ CREATE TABLE logica_home.Reach_sn_new AS WITH t_1_Reach_MultBodyAggAux_f2 AS (SE
       x_17 AS x,
       ((x_17) + (1)) AS y
     FROM
-      UNNEST((SELECT ARRAY_AGG(x) FROM GENERATE_SERIES(0, 4 - 1) as x)) as x_17
+      UNNEST(COALESCE((SELECT ARRAY_AGG(x) FROM GENERATE_SERIES(0, 4 - 1) as x), '{}')) as x_17
    UNION ALL
   
     SELECT
       t_2_Reach_sn_delta.x AS x,
       ((x_25) + (1)) AS y
     FROM
-      logica_home.Reach_sn_delta AS t_2_Reach_sn_delta, UNNEST((SELECT ARRAY_AGG(x) FROM GENERATE_SERIES(0, 4 - 1) as x)) as x_25
+      logica_home.Reach_sn_delta AS t_2_Reach_sn_delta, UNNEST(COALESCE((SELECT ARRAY_AGG(x) FROM GENERATE_SERIES(0, 4 - 1) as x), '{}')) as x_25
     WHERE
       (t_2_Reach_sn_delta.y = x_25)
   
@@ -370,14 +370,14 @@ CREATE TABLE logica_home.Reach_sn_new AS WITH t_1_Reach_MultBodyAggAux_f2 AS (SE
       x_17 AS x,
       ((x_17) + (1)) AS y
     FROM
-      UNNEST((SELECT ARRAY_AGG(x) FROM GENERATE_SERIES(0, 4 - 1) as x)) as x_17
+      UNNEST(COALESCE((SELECT ARRAY_AGG(x) FROM GENERATE_SERIES(0, 4 - 1) as x), '{}')) as x_17
    UNION ALL
   
     SELECT
       t_2_Reach_sn_delta.x AS x,
       ((x_25) + (1)) AS y
     FROM
-      logica_home.Reach_sn_delta AS t_2_Reach_sn_delta, UNNEST((SELECT ARRAY_AGG(x) FROM GENERATE_SERIES(0, 4 - 1) as x)) as x_25
+      logica_home.Reach_sn_delta AS t_2_Reach_sn_delta, UNNEST(COALESCE((SELECT ARRAY_AGG(x) FROM GENERATE_SERIES(0, 4 - 1) as x), '{}')) as x_25
     WHERE
       (t_2_Reach_sn_delta.y = x_25)
   
@@ -419,14 +419,14 @@ CREATE TABLE logica_home.Reach_sn_new AS WITH t_1_Reach_MultBodyAggAux_f2 AS (SE
       x_17 AS x,
       ((x_17) + (1)) AS y
     FROM
-      UNNEST((SELECT ARRAY_AGG(x) FROM GENERATE_SERIES(0, 4 - 1) as x)) as x_17
+      UNNEST(COALESCE((SELECT ARRAY_AGG(x) FROM GENERATE_SERIES(0, 4 - 1) as x), '{}')) as x_17
    UNION ALL
   
     SELECT
       t_2_Reach_sn_delta.x AS x,
       ((x_25) + (1)) AS y
     FROM
-      logica_home.Reach_sn_delta AS t_2_Reach_sn_delta, UNNEST((SELECT ARRAY_AGG(x) FROM GENERATE_SERIES(0, 4 - 1) as x)) as x_25
+      logica_home.Reach_sn_delta AS t_2_Reach_sn_delta, UNNEST(COALESCE((SELECT ARRAY_AGG(x) FROM GENERATE_SERIES(0, 4 - 1) as x), '{}')) as x_25
     WHERE
       (t_2_Reach_sn_delta.y = x_25)
   
@@ -468,14 +468,14 @@ CREATE TABLE logica_home.Reach_sn_new AS WITH t_1_Reach_MultBodyAggAux_f2 AS (SE
       x_17 AS x,
       ((x_17) + (1)) AS y
     FROM
-      UNNEST((SELECT ARRAY_AGG(x) FROM GENERATE_SERIES(0, 4 - 1) as x)) as x_17
+      UNNEST(COALESCE((SELECT ARRAY_AGG(x) FROM GENERATE_SERIES(0, 4 - 1) as x), '{}')) as x_17
    UNION ALL
   
     SELECT
       t_2_Reach_sn_delta.x AS x,
       ((x_25) + (1)) AS y
     FROM
-      logica_home.Reach_sn_delta AS t_2_Reach_sn_delta, UNNEST((SELECT ARRAY_AGG(x) FROM GENERATE_SERIES(0, 4 - 1) as x)) as x_25
+      logica_home.Reach_sn_delta AS t_2_Reach_sn_delta, UNNEST(COALESCE((SELECT ARRAY_AGG(x) FROM GENERATE_SERIES(0, 4 - 1) as x), '{}')) as x_25
     WHERE
       (t_2_Reach_sn_delta.y = x_25)
   
@@ -517,14 +517,14 @@ CREATE TABLE logica_home.Reach_sn_new AS WITH t_1_Reach_MultBodyAggAux_f2 AS (SE
       x_17 AS x,
       ((x_17) + (1)) AS y
     FROM
-      UNNEST((SELECT ARRAY_AGG(x) FROM GENERATE_SERIES(0, 4 - 1) as x)) as x_17
+      UNNEST(COALESCE((SELECT ARRAY_AGG(x) FROM GENERATE_SERIES(0, 4 - 1) as x), '{}')) as x_17
    UNION ALL
   
     SELECT
       t_2_Reach_sn_delta.x AS x,
       ((x_25) + (1)) AS y
     FROM
-      logica_home.Reach_sn_delta AS t_2_Reach_sn_delta, UNNEST((SELECT ARRAY_AGG(x) FROM GENERATE_SERIES(0, 4 - 1) as x)) as x_25
+      logica_home.Reach_sn_delta AS t_2_Reach_sn_delta, UNNEST(COALESCE((SELECT ARRAY_AGG(x) FROM GENERATE_SERIES(0, 4 - 1) as x), '{}')) as x_25
     WHERE
       (t_2_Reach_sn_delta.y = x_25)
   
@@ -566,14 +566,14 @@ CREATE TABLE logica_home.Reach_sn_new AS WITH t_1_Reach_MultBodyAggAux_f2 AS (SE
       x_17 AS x,
       ((x_17) + (1)) AS y
     FROM
-      UNNEST((SELECT ARRAY_AGG(x) FROM GENERATE_SERIES(0, 4 - 1) as x)) as x_17
+      UNNEST(COALESCE((SELECT ARRAY_AGG(x) FROM GENERATE_SERIES(0, 4 - 1) as x), '{}')) as x_17
    UNION ALL
   
     SELECT
       t_2_Reach_sn_delta.x AS x,
       ((x_25) + (1)) AS y
     FROM
-      logica_home.Reach_sn_delta AS t_2_Reach_sn_delta, UNNEST((SELECT ARRAY_AGG(x) FROM GENERATE_SERIES(0, 4 - 1) as x)) as x_25
+      logica_home.Reach_sn_delta AS t_2_Reach_sn_delta, UNNEST(COALESCE((SELECT ARRAY_AGG(x) FROM GENERATE_SERIES(0, 4 - 1) as x), '{}')) as x_25
     WHERE
       (t_2_Reach_sn_delta.y = x_25)
   
@@ -615,14 +615,14 @@ CREATE TABLE logica_home.Reach_sn_new AS WITH t_1_Reach_MultBodyAggAux_f2 AS (SE
       x_17 AS x,
       ((x_17) + (1)) AS y
     FROM
-      UNNEST((SELECT ARRAY_AGG(x) FROM GENERATE_SERIES(0, 4 - 1) as x)) as x_17
+      UNNEST(COALESCE((SELECT ARRAY_AGG(x) FROM GENERATE_SERIES(0, 4 - 1) as x), '{}')) as x_17
    UNION ALL
   
     SELECT
       t_2_Reach_sn_delta.x AS x,
       ((x_25) + (1)) AS y
     FROM
-      logica_home.Reach_sn_delta AS t_2_Reach_sn_delta, UNNEST((SELECT ARRAY_AGG(x) FROM GENERATE_SERIES(0, 4 - 1) as x)) as x_25
+      logica_home.Reach_sn_delta AS t_2_Reach_sn_delta, UNNEST(COALESCE((SELECT ARRAY_AGG(x) FROM GENERATE_SERIES(0, 4 - 1) as x), '{}')) as x_25
     WHERE
       (t_2_Reach_sn_delta.y = x_25)
   
@@ -664,14 +664,14 @@ CREATE TABLE logica_home.Reach_sn_new AS WITH t_1_Reach_MultBodyAggAux_f2 AS (SE
       x_17 AS x,
       ((x_17) + (1)) AS y
     FROM
-      UNNEST((SELECT ARRAY_AGG(x) FROM GENERATE_SERIES(0, 4 - 1) as x)) as x_17
+      UNNEST(COALESCE((SELECT ARRAY_AGG(x) FROM GENERATE_SERIES(0, 4 - 1) as x), '{}')) as x_17
    UNION ALL
   
     SELECT
       t_2_Reach_sn_delta.x AS x,
       ((x_25) + (1)) AS y
     FROM
-      logica_home.Reach_sn_delta AS t_2_Reach_sn_delta, UNNEST((SELECT ARRAY_AGG(x) FROM GENERATE_SERIES(0, 4 - 1) as x)) as x_25
+      logica_home.Reach_sn_delta AS t_2_Reach_sn_delta, UNNEST(COALESCE((SELECT ARRAY_AGG(x) FROM GENERATE_SERIES(0, 4 - 1) as x), '{}')) as x_25
     WHERE
       (t_2_Reach_sn_delta.y = x_25)
   
@@ -713,14 +713,14 @@ CREATE TABLE logica_home.Reach_sn_new AS WITH t_1_Reach_MultBodyAggAux_f2 AS (SE
       x_17 AS x,
       ((x_17) + (1)) AS y
     FROM
-      UNNEST((SELECT ARRAY_AGG(x) FROM GENERATE_SERIES(0, 4 - 1) as x)) as x_17
+      UNNEST(COALESCE((SELECT ARRAY_AGG(x) FROM GENERATE_SERIES(0, 4 - 1) as x), '{}')) as x_17
    UNION ALL
   
     SELECT
       t_2_Reach_sn_delta.x AS x,
       ((x_25) + (1)) AS y
     FROM
-      logica_home.Reach_sn_delta AS t_2_Reach_sn_delta, UNNEST((SELECT ARRAY_AGG(x) FROM GENERATE_SERIES(0, 4 - 1) as x)) as x_25
+      logica_home.Reach_sn_delta AS t_2_Reach_sn_delta, UNNEST(COALESCE((SELECT ARRAY_AGG(x) FROM GENERATE_SERIES(0, 4 - 1) as x), '{}')) as x_25
     WHERE
       (t_2_Reach_sn_delta.y = x_25)
   
@@ -762,14 +762,14 @@ CREATE TABLE logica_home.Reach_sn_new AS WITH t_1_Reach_MultBodyAggAux_f2 AS (SE
       x_17 AS x,
       ((x_17) + (1)) AS y
     FROM
-      UNNEST((SELECT ARRAY_AGG(x) FROM GENERATE_SERIES(0, 4 - 1) as x)) as x_17
+      UNNEST(COALESCE((SELECT ARRAY_AGG(x) FROM GENERATE_SERIES(0, 4 - 1) as x), '{}')) as x_17
    UNION ALL
   
     SELECT
       t_2_Reach_sn_delta.x AS x,
       ((x_25) + (1)) AS y
     FROM
-      logica_home.Reach_sn_delta AS t_2_Reach_sn_delta, UNNEST((SELECT ARRAY_AGG(x) FROM GENERATE_SERIES(0, 4 - 1) as x)) as x_25
+      logica_home.Reach_sn_delta AS t_2_Reach_sn_delta, UNNEST(COALESCE((SELECT ARRAY_AGG(x) FROM GENERATE_SERIES(0, 4 - 1) as x), '{}')) as x_25
     WHERE
       (t_2_Reach_sn_delta.y = x_25)
   
@@ -811,14 +811,14 @@ CREATE TABLE logica_home.Reach_sn_new AS WITH t_1_Reach_MultBodyAggAux_f2 AS (SE
       x_17 AS x,
       ((x_17) + (1)) AS y
     FROM
-      UNNEST((SELECT ARRAY_AGG(x) FROM GENERATE_SERIES(0, 4 - 1) as x)) as x_17
+      UNNEST(COALESCE((SELECT ARRAY_AGG(x) FROM GENERATE_SERIES(0, 4 - 1) as x), '{}')) as x_17
    UNION ALL
   
     SELECT
       t_2_Reach_sn_delta.x AS x,
       ((x_25) + (1)) AS y
     FROM
-      logica_home.Reach_sn_delta AS t_2_Reach_sn_delta, UNNEST((SELECT ARRAY_AGG(x) FROM GENERATE_SERIES(0, 4 - 1) as x)) as x_25
+      logica_home.Reach_sn_delta AS t_2_Reach_sn_delta, UNNEST(COALESCE((SELECT ARRAY_AGG(x) FROM GENERATE_SERIES(0, 4 - 1) as x), '{}')) as x_25
     WHERE
       (t_2_Reach_sn_delta.y = x_25)
   
@@ -860,14 +860,14 @@ CREATE TABLE logica_home.Reach_sn_new AS WITH t_1_Reach_MultBodyAggAux_f2 AS (SE
       x_17 AS x,
       ((x_17) + (1)) AS y
     FROM
-      UNNEST((SELECT ARRAY_AGG(x) FROM GENERATE_SERIES(0, 4 - 1) as x)) as x_17
+      UNNEST(COALESCE((SELECT ARRAY_AGG(x) FROM GENERATE_SERIES(0, 4 - 1) as x), '{}')) as x_17
    UNION ALL
   
     SELECT
       t_2_Reach_sn_delta.x AS x,
       ((x_25) + (1)) AS y
     FROM
-      logica_home.Reach_sn_delta AS t_2_Reach_sn_delta, UNNEST((SELECT ARRAY_AGG(x) FROM GENERATE_SERIES(0, 4 - 1) as x)) as x_25
+      logica_home.Reach_sn_delta AS t_2_Reach_sn_delta, UNNEST(COALESCE((SELECT ARRAY_AGG(x) FROM GENERATE_SERIES(0, 4 - 1) as x), '{}')) as x_25
     WHERE
       (t_2_Reach_sn_delta.y = x_25)
   
@@ -909,14 +909,14 @@ CREATE TABLE logica_home.Reach_sn_new AS WITH t_1_Reach_MultBodyAggAux_f2 AS (SE
       x_17 AS x,
       ((x_17) + (1)) AS y
     FROM
-      UNNEST((SELECT ARRAY_AGG(x) FROM GENERATE_SERIES(0, 4 - 1) as x)) as x_17
+      UNNEST(COALESCE((SELECT ARRAY_AGG(x) FROM GENERATE_SERIES(0, 4 - 1) as x), '{}')) as x_17
    UNION ALL
   
     SELECT
       t_2_Reach_sn_delta.x AS x,
       ((x_25) + (1)) AS y
     FROM
-      logica_home.Reach_sn_delta AS t_2_Reach_sn_delta, UNNEST((SELECT ARRAY_AGG(x) FROM GENERATE_SERIES(0, 4 - 1) as x)) as x_25
+      logica_home.Reach_sn_delta AS t_2_Reach_sn_delta, UNNEST(COALESCE((SELECT ARRAY_AGG(x) FROM GENERATE_SERIES(0, 4 - 1) as x), '{}')) as x_25
     WHERE
       (t_2_Reach_sn_delta.y = x_25)
   
@@ -958,14 +958,14 @@ CREATE TABLE logica_home.Reach_sn_new AS WITH t_1_Reach_MultBodyAggAux_f2 AS (SE
       x_17 AS x,
       ((x_17) + (1)) AS y
     FROM
-      UNNEST((SELECT ARRAY_AGG(x) FROM GENERATE_SERIES(0, 4 - 1) as x)) as x_17
+      UNNEST(COALESCE((SELECT ARRAY_AGG(x) FROM GENERATE_SERIES(0, 4 - 1) as x), '{}')) as x_17
    UNION ALL
   
     SELECT
       t_2_Reach_sn_delta.x AS x,
       ((x_25) + (1)) AS y
     FROM
-      logica_home.Reach_sn_delta AS t_2_Reach_sn_delta, UNNEST((SELECT ARRAY_AGG(x) FROM GENERATE_SERIES(0, 4 - 1) as x)) as x_25
+      logica_home.Reach_sn_delta AS t_2_Reach_sn_delta, UNNEST(COALESCE((SELECT ARRAY_AGG(x) FROM GENERATE_SERIES(0, 4 - 1) as x), '{}')) as x_25
     WHERE
       (t_2_Reach_sn_delta.y = x_25)
   
@@ -1007,14 +1007,14 @@ CREATE TABLE logica_home.Reach_sn_new AS WITH t_1_Reach_MultBodyAggAux_f2 AS (SE
       x_17 AS x,
       ((x_17) + (1)) AS y
     FROM
-      UNNEST((SELECT ARRAY_AGG(x) FROM GENERATE_SERIES(0, 4 - 1) as x)) as x_17
+      UNNEST(COALESCE((SELECT ARRAY_AGG(x) FROM GENERATE_SERIES(0, 4 - 1) as x), '{}')) as x_17
    UNION ALL
   
     SELECT
       t_2_Reach_sn_delta.x AS x,
       ((x_25) + (1)) AS y
     FROM
-      logica_home.Reach_sn_delta AS t_2_Reach_sn_delta, UNNEST((SELECT ARRAY_AGG(x) FROM GENERATE_SERIES(0, 4 - 1) as x)) as x_25
+      logica_home.Reach_sn_delta AS t_2_Reach_sn_delta, UNNEST(COALESCE((SELECT ARRAY_AGG(x) FROM GENERATE_SERIES(0, 4 - 1) as x), '{}')) as x_25
     WHERE
       (t_2_Reach_sn_delta.y = x_25)
   
@@ -1056,14 +1056,14 @@ CREATE TABLE logica_home.Reach_sn_new AS WITH t_1_Reach_MultBodyAggAux_f2 AS (SE
       x_17 AS x,
       ((x_17) + (1)) AS y
     FROM
-      UNNEST((SELECT ARRAY_AGG(x) FROM GENERATE_SERIES(0, 4 - 1) as x)) as x_17
+      UNNEST(COALESCE((SELECT ARRAY_AGG(x) FROM GENERATE_SERIES(0, 4 - 1) as x), '{}')) as x_17
    UNION ALL
   
     SELECT
       t_2_Reach_sn_delta.x AS x,
       ((x_25) + (1)) AS y
     FROM
-      logica_home.Reach_sn_delta AS t_2_Reach_sn_delta, UNNEST((SELECT ARRAY_AGG(x) FROM GENERATE_SERIES(0, 4 - 1) as x)) as x_25
+      logica_home.Reach_sn_delta AS t_2_Reach_sn_delta, UNNEST(COALESCE((SELECT ARRAY_AGG(x) FROM GENERATE_SERIES(0, 4 - 1) as x), '{}')) as x_25
     WHERE
       (t_2_Reach_sn_delta.y = x_25)
   
@@ -1105,14 +1105,14 @@ CREATE TABLE logica_home.Reach_sn_new AS WITH t_1_Reach_MultBodyAggAux_f2 AS (SE
       x_17 AS x,
       ((x_17) + (1)) AS y
     FROM
-      UNNEST((SELECT ARRAY_AGG(x) FROM GENERATE_SERIES(0, 4 - 1) as x)) as x_17
+      UNNEST(COALESCE((SELECT ARRAY_AGG(x) FROM GENERATE_SERIES(0, 4 - 1) as x), '{}')) as x_17
    UNION ALL
   
     SELECT
       t_2_Reach_sn_delta.x AS x,
       ((x_25) + (1)) AS y
     FROM
-      logica_home.Reach_sn_delta AS t_2_Reach_sn_delta, UNNEST((SELECT ARRAY_AGG(x) FROM GENERATE_SERIES(0, 4 - 1) as x)) as x_25
+      logica_home.Reach_sn_delta AS t_2_Reach_sn_delta, UNNEST(COALESCE((SELECT ARRAY_AGG(x) FROM GENERATE_SERIES(0, 4 - 1) as x), '{}')) as x_25
     WHERE
       (t_2_Reach_sn_delta.y = x_25)
   
@@ -1154,14 +1154,14 @@ CREATE TABLE logica_home.Reach_sn_new AS WITH t_1_Reach_MultBodyAggAux_f2 AS (SE
       x_17 AS x,
       ((x_17) + (1)) AS y
     FROM
-      UNNEST((SELECT ARRAY_AGG(x) FROM GENERATE_SERIES(0, 4 - 1) as x)) as x_17
+      UNNEST(COALESCE((SELECT ARRAY_AGG(x) FROM GENERATE_SERIES(0, 4 - 1) as x), '{}')) as x_17
    UNION ALL
   
     SELECT
       t_2_Reach_sn_delta.x AS x,
       ((x_25) + (1)) AS y
     FROM
-      logica_home.Reach_sn_delta AS t_2_Reach_sn_delta, UNNEST((SELECT ARRAY_AGG(x) FROM GENERATE_SERIES(0, 4 - 1) as x)) as x_25
+      logica_home.Reach_sn_delta AS t_2_Reach_sn_delta, UNNEST(COALESCE((SELECT ARRAY_AGG(x) FROM GENERATE_SERIES(0, 4 - 1) as x), '{}')) as x_25
     WHERE
       (t_2_Reach_sn_delta.y = x_25)
   
@@ -1203,14 +1203,14 @@ CREATE TABLE logica_home.Reach_sn_new AS WITH t_1_Reach_MultBodyAggAux_f2 AS (SE
       x_17 AS x,
       ((x_17) + (1)) AS y
     FROM
-      UNNEST((SELECT ARRAY_AGG(x) FROM GENERATE_SERIES(0, 4 - 1) as x)) as x_17
+      UNNEST(COALESCE((SELECT ARRAY_AGG(x) FROM GENERATE_SERIES(0, 4 - 1) as x), '{}')) as x_17
    UNION ALL
   
     SELECT
       t_2_Reach_sn_delta.x AS x,
       ((x_25) + (1)) AS y
     FROM
-      logica_home.Reach_sn_delta AS t_2_Reach_sn_delta, UNNEST((SELECT ARRAY_AGG(x) FROM GENERATE_SERIES(0, 4 - 1) as x)) as x_25
+      logica_home.Reach_sn_delta AS t_2_Reach_sn_delta, UNNEST(COALESCE((SELECT ARRAY_AGG(x) FROM GENERATE_SERIES(0, 4 - 1) as x), '{}')) as x_25
     WHERE
       (t_2_Reach_sn_delta.y = x_25)
   
@@ -1252,14 +1252,14 @@ CREATE TABLE logica_home.Reach_sn_new AS WITH t_1_Reach_MultBodyAggAux_f2 AS (SE
       x_17 AS x,
       ((x_17) + (1)) AS y
     FROM
-      UNNEST((SELECT ARRAY_AGG(x) FROM GENERATE_SERIES(0, 4 - 1) as x)) as x_17
+      UNNEST(COALESCE((SELECT ARRAY_AGG(x) FROM GENERATE_SERIES(0, 4 - 1) as x), '{}')) as x_17
    UNION ALL
   
     SELECT
       t_2_Reach_sn_delta.x AS x,
       ((x_25) + (1)) AS y
     FROM
-      logica_home.Reach_sn_delta AS t_2_Reach_sn_delta, UNNEST((SELECT ARRAY_AGG(x) FROM GENERATE_SERIES(0, 4 - 1) as x)) as x_25
+      logica_home.Reach_sn_delta AS t_2_Reach_sn_delta, UNNEST(COALESCE((SELECT ARRAY_AGG(x) FROM GENERATE_SERIES(0, 4 - 1) as x), '{}')) as x_25
     WHERE
       (t_2_Reach_sn_delta.y = x_25)
   

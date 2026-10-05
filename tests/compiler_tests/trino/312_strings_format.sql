@@ -1,2 +1,2 @@
 SELECT
-  FORMAT('%s-%s', 'a', CAST(3 AS VARCHAR)) AS s;
+  'a' || '-' || element_at(transform(filter(ARRAY[3], v -> v IS NOT NULL), v -> format('%s', v)), 1) AS s;

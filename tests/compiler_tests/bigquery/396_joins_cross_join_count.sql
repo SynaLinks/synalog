@@ -1,0 +1,4 @@
+SELECT
+  SUM(1) AS n
+FROM
+  UNNEST(ARRAY[1, 2]) as x_3, UNNEST(ARRAY[1, 2, 3]) as x_5;

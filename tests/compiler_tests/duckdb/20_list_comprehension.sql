@@ -4,30 +4,18 @@ create schema if not exists logica_home;
 drop type if exists logicarecord893574736 cascade; create type logicarecord893574736 as struct(nirvana numeric);
 create sequence if not exists eternal_logical_sequence;
 
-
--- Logica type: logicarecord481217614
-drop type if exists logicarecord481217614 cascade; create type logicarecord481217614 as struct(r logicarecord893574736);
-
--- Logica type: logicarecord383307722
-drop type if exists logicarecord383307722 cascade; create type logicarecord383307722 as struct(a timestamp);
-
--- Logica type: logicarecord884343024
-drop type if exists logicarecord884343024 cascade; create type logicarecord884343024 as struct(arg numeric, value numeric);
-
--- Logica type: logicarecord519939597
-drop type if exists logicarecord519939597 cascade; create type logicarecord519939597 as struct(args text[], predicate text);
-WITH t_0_Squares AS (SELECT
-  ARRAY_AGG(((x_9.unnested_pod) * (x_9.unnested_pod)) order by x_9.unnested_pod) AS logica_value
+WITH t_1_Squares AS (SELECT
+  ARRAY_AGG(((x_7.unnested_pod) * (x_7.unnested_pod)) order by x_7.unnested_pod) AS logica_value
 FROM
-  (select unnest(Range(5)) as unnested_pod) as x_9),
-t_2_EvenSquares AS (SELECT
-  ARRAY_AGG(((x_21.unnested_pod) * (x_21.unnested_pod)) order by x_21.unnested_pod) AS logica_value
+  (select unnest(Range(5)) as unnested_pod) as x_7),
+t_3_EvenSquares AS (SELECT
+  ARRAY_AGG(((x_14.unnested_pod) * (x_14.unnested_pod)) order by x_14.unnested_pod) AS logica_value
 FROM
-  (select unnest(Range(10)) as unnested_pod) as x_21
+  (select unnest(Range(10)) as unnested_pod) as x_14
 WHERE
-  (((x_21.unnested_pod) % (2)) = 0))
+  (((x_14.unnested_pod) % (2)) = 0))
 SELECT
-  Squares.logica_value AS squares,
+  t_0_Squares.logica_value AS squares,
   EvenSquares.logica_value AS even_squares
 FROM
-  t_0_Squares AS Squares, t_2_EvenSquares AS EvenSquares;
+  t_1_Squares AS t_0_Squares, t_3_EvenSquares AS EvenSquares;

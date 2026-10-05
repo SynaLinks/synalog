@@ -11,7 +11,7 @@ SELECT
   Reach_MultBodyAggAux_f1.hops AS hops
 FROM
   t_0_Reach_MultBodyAggAux_f1 AS Reach_MultBodyAggAux_f1
-GROUP BY 1, 2 ORDER BY node;
+GROUP BY 1, 2;
 
 -- Interacting with table logica_test.Reach_sn_delta
 
@@ -58,7 +58,7 @@ t_0_Reach_sn_step AS (SELECT
   Reach_MultBodyAggAux_f2.hops AS hops
 FROM
   t_1_Reach_MultBodyAggAux_f2 AS Reach_MultBodyAggAux_f2
-GROUP BY 1, 2 ORDER BY node)
+GROUP BY 1, 2)
 SELECT * FROM (
   
     SELECT
@@ -123,7 +123,7 @@ t_0_Reach_sn_step AS (SELECT
   Reach_MultBodyAggAux_f2.hops AS hops
 FROM
   t_1_Reach_MultBodyAggAux_f2 AS Reach_MultBodyAggAux_f2
-GROUP BY 1, 2 ORDER BY node)
+GROUP BY 1, 2)
 SELECT
   Reach_sn_step.node AS node,
   Reach_sn_step.hops AS hops
@@ -191,7 +191,7 @@ t_0_Reach_sn_step AS (SELECT
   Reach_MultBodyAggAux_f2.hops AS hops
 FROM
   t_1_Reach_MultBodyAggAux_f2 AS Reach_MultBodyAggAux_f2
-GROUP BY 1, 2 ORDER BY node)
+GROUP BY 1, 2)
 SELECT
   Reach_sn_step.node AS node,
   Reach_sn_step.hops AS hops
@@ -259,7 +259,7 @@ t_0_Reach_sn_step AS (SELECT
   Reach_MultBodyAggAux_f2.hops AS hops
 FROM
   t_1_Reach_MultBodyAggAux_f2 AS Reach_MultBodyAggAux_f2
-GROUP BY 1, 2 ORDER BY node)
+GROUP BY 1, 2)
 SELECT
   Reach_sn_step.node AS node,
   Reach_sn_step.hops AS hops
@@ -327,7 +327,7 @@ t_0_Reach_sn_step AS (SELECT
   Reach_MultBodyAggAux_f2.hops AS hops
 FROM
   t_1_Reach_MultBodyAggAux_f2 AS Reach_MultBodyAggAux_f2
-GROUP BY 1, 2 ORDER BY node)
+GROUP BY 1, 2)
 SELECT
   Reach_sn_step.node AS node,
   Reach_sn_step.hops AS hops
@@ -395,7 +395,7 @@ t_0_Reach_sn_step AS (SELECT
   Reach_MultBodyAggAux_f2.hops AS hops
 FROM
   t_1_Reach_MultBodyAggAux_f2 AS Reach_MultBodyAggAux_f2
-GROUP BY 1, 2 ORDER BY node)
+GROUP BY 1, 2)
 SELECT
   Reach_sn_step.node AS node,
   Reach_sn_step.hops AS hops
@@ -463,7 +463,7 @@ t_0_Reach_sn_step AS (SELECT
   Reach_MultBodyAggAux_f2.hops AS hops
 FROM
   t_1_Reach_MultBodyAggAux_f2 AS Reach_MultBodyAggAux_f2
-GROUP BY 1, 2 ORDER BY node)
+GROUP BY 1, 2)
 SELECT
   Reach_sn_step.node AS node,
   Reach_sn_step.hops AS hops
@@ -531,7 +531,7 @@ t_0_Reach_sn_step AS (SELECT
   Reach_MultBodyAggAux_f2.hops AS hops
 FROM
   t_1_Reach_MultBodyAggAux_f2 AS Reach_MultBodyAggAux_f2
-GROUP BY 1, 2 ORDER BY node)
+GROUP BY 1, 2)
 SELECT
   Reach_sn_step.node AS node,
   Reach_sn_step.hops AS hops
@@ -599,7 +599,7 @@ t_0_Reach_sn_step AS (SELECT
   Reach_MultBodyAggAux_f2.hops AS hops
 FROM
   t_1_Reach_MultBodyAggAux_f2 AS Reach_MultBodyAggAux_f2
-GROUP BY 1, 2 ORDER BY node)
+GROUP BY 1, 2)
 SELECT
   Reach_sn_step.node AS node,
   Reach_sn_step.hops AS hops
@@ -667,7 +667,7 @@ t_0_Reach_sn_step AS (SELECT
   Reach_MultBodyAggAux_f2.hops AS hops
 FROM
   t_1_Reach_MultBodyAggAux_f2 AS Reach_MultBodyAggAux_f2
-GROUP BY 1, 2 ORDER BY node)
+GROUP BY 1, 2)
 SELECT
   Reach_sn_step.node AS node,
   Reach_sn_step.hops AS hops
@@ -735,7 +735,7 @@ t_0_Reach_sn_step AS (SELECT
   Reach_MultBodyAggAux_f2.hops AS hops
 FROM
   t_1_Reach_MultBodyAggAux_f2 AS Reach_MultBodyAggAux_f2
-GROUP BY 1, 2 ORDER BY node)
+GROUP BY 1, 2)
 SELECT
   Reach_sn_step.node AS node,
   Reach_sn_step.hops AS hops
@@ -803,7 +803,7 @@ t_0_Reach_sn_step AS (SELECT
   Reach_MultBodyAggAux_f2.hops AS hops
 FROM
   t_1_Reach_MultBodyAggAux_f2 AS Reach_MultBodyAggAux_f2
-GROUP BY 1, 2 ORDER BY node)
+GROUP BY 1, 2)
 SELECT
   Reach_sn_step.node AS node,
   Reach_sn_step.hops AS hops
@@ -871,7 +871,7 @@ t_0_Reach_sn_step AS (SELECT
   Reach_MultBodyAggAux_f2.hops AS hops
 FROM
   t_1_Reach_MultBodyAggAux_f2 AS Reach_MultBodyAggAux_f2
-GROUP BY 1, 2 ORDER BY node)
+GROUP BY 1, 2)
 SELECT
   Reach_sn_step.node AS node,
   Reach_sn_step.hops AS hops
@@ -939,7 +939,7 @@ t_0_Reach_sn_step AS (SELECT
   Reach_MultBodyAggAux_f2.hops AS hops
 FROM
   t_1_Reach_MultBodyAggAux_f2 AS Reach_MultBodyAggAux_f2
-GROUP BY 1, 2 ORDER BY node)
+GROUP BY 1, 2)
 SELECT
   Reach_sn_step.node AS node,
   Reach_sn_step.hops AS hops
@@ -1007,7 +1007,7 @@ t_0_Reach_sn_step AS (SELECT
   Reach_MultBodyAggAux_f2.hops AS hops
 FROM
   t_1_Reach_MultBodyAggAux_f2 AS Reach_MultBodyAggAux_f2
-GROUP BY 1, 2 ORDER BY node)
+GROUP BY 1, 2)
 SELECT
   Reach_sn_step.node AS node,
   Reach_sn_step.hops AS hops
@@ -1075,7 +1075,7 @@ t_0_Reach_sn_step AS (SELECT
   Reach_MultBodyAggAux_f2.hops AS hops
 FROM
   t_1_Reach_MultBodyAggAux_f2 AS Reach_MultBodyAggAux_f2
-GROUP BY 1, 2 ORDER BY node)
+GROUP BY 1, 2)
 SELECT
   Reach_sn_step.node AS node,
   Reach_sn_step.hops AS hops
@@ -1143,7 +1143,7 @@ t_0_Reach_sn_step AS (SELECT
   Reach_MultBodyAggAux_f2.hops AS hops
 FROM
   t_1_Reach_MultBodyAggAux_f2 AS Reach_MultBodyAggAux_f2
-GROUP BY 1, 2 ORDER BY node)
+GROUP BY 1, 2)
 SELECT
   Reach_sn_step.node AS node,
   Reach_sn_step.hops AS hops
@@ -1211,7 +1211,7 @@ t_0_Reach_sn_step AS (SELECT
   Reach_MultBodyAggAux_f2.hops AS hops
 FROM
   t_1_Reach_MultBodyAggAux_f2 AS Reach_MultBodyAggAux_f2
-GROUP BY 1, 2 ORDER BY node)
+GROUP BY 1, 2)
 SELECT
   Reach_sn_step.node AS node,
   Reach_sn_step.hops AS hops
@@ -1279,7 +1279,7 @@ t_0_Reach_sn_step AS (SELECT
   Reach_MultBodyAggAux_f2.hops AS hops
 FROM
   t_1_Reach_MultBodyAggAux_f2 AS Reach_MultBodyAggAux_f2
-GROUP BY 1, 2 ORDER BY node)
+GROUP BY 1, 2)
 SELECT
   Reach_sn_step.node AS node,
   Reach_sn_step.hops AS hops
@@ -1347,7 +1347,7 @@ t_0_Reach_sn_step AS (SELECT
   Reach_MultBodyAggAux_f2.hops AS hops
 FROM
   t_1_Reach_MultBodyAggAux_f2 AS Reach_MultBodyAggAux_f2
-GROUP BY 1, 2 ORDER BY node)
+GROUP BY 1, 2)
 SELECT
   Reach_sn_step.node AS node,
   Reach_sn_step.hops AS hops
@@ -1415,7 +1415,7 @@ t_0_Reach_sn_step AS (SELECT
   Reach_MultBodyAggAux_f2.hops AS hops
 FROM
   t_1_Reach_MultBodyAggAux_f2 AS Reach_MultBodyAggAux_f2
-GROUP BY 1, 2 ORDER BY node)
+GROUP BY 1, 2)
 SELECT
   Reach_sn_step.node AS node,
   Reach_sn_step.hops AS hops
@@ -1483,7 +1483,7 @@ t_0_Reach_sn_step AS (SELECT
   Reach_MultBodyAggAux_f2.hops AS hops
 FROM
   t_1_Reach_MultBodyAggAux_f2 AS Reach_MultBodyAggAux_f2
-GROUP BY 1, 2 ORDER BY node)
+GROUP BY 1, 2)
 SELECT
   Reach_sn_step.node AS node,
   Reach_sn_step.hops AS hops
@@ -1551,7 +1551,7 @@ t_0_Reach_sn_step AS (SELECT
   Reach_MultBodyAggAux_f2.hops AS hops
 FROM
   t_1_Reach_MultBodyAggAux_f2 AS Reach_MultBodyAggAux_f2
-GROUP BY 1, 2 ORDER BY node)
+GROUP BY 1, 2)
 SELECT
   Reach_sn_step.node AS node,
   Reach_sn_step.hops AS hops
@@ -1619,7 +1619,7 @@ t_0_Reach_sn_step AS (SELECT
   Reach_MultBodyAggAux_f2.hops AS hops
 FROM
   t_1_Reach_MultBodyAggAux_f2 AS Reach_MultBodyAggAux_f2
-GROUP BY 1, 2 ORDER BY node)
+GROUP BY 1, 2)
 SELECT
   Reach_sn_step.node AS node,
   Reach_sn_step.hops AS hops
@@ -1687,7 +1687,7 @@ t_0_Reach_sn_step AS (SELECT
   Reach_MultBodyAggAux_f2.hops AS hops
 FROM
   t_1_Reach_MultBodyAggAux_f2 AS Reach_MultBodyAggAux_f2
-GROUP BY 1, 2 ORDER BY node)
+GROUP BY 1, 2)
 SELECT
   Reach_sn_step.node AS node,
   Reach_sn_step.hops AS hops
@@ -1755,7 +1755,7 @@ t_0_Reach_sn_step AS (SELECT
   Reach_MultBodyAggAux_f2.hops AS hops
 FROM
   t_1_Reach_MultBodyAggAux_f2 AS Reach_MultBodyAggAux_f2
-GROUP BY 1, 2 ORDER BY node)
+GROUP BY 1, 2)
 SELECT
   Reach_sn_step.node AS node,
   Reach_sn_step.hops AS hops
@@ -1823,7 +1823,7 @@ t_0_Reach_sn_step AS (SELECT
   Reach_MultBodyAggAux_f2.hops AS hops
 FROM
   t_1_Reach_MultBodyAggAux_f2 AS Reach_MultBodyAggAux_f2
-GROUP BY 1, 2 ORDER BY node)
+GROUP BY 1, 2)
 SELECT
   Reach_sn_step.node AS node,
   Reach_sn_step.hops AS hops
@@ -1891,7 +1891,7 @@ t_0_Reach_sn_step AS (SELECT
   Reach_MultBodyAggAux_f2.hops AS hops
 FROM
   t_1_Reach_MultBodyAggAux_f2 AS Reach_MultBodyAggAux_f2
-GROUP BY 1, 2 ORDER BY node)
+GROUP BY 1, 2)
 SELECT
   Reach_sn_step.node AS node,
   Reach_sn_step.hops AS hops
@@ -1959,7 +1959,7 @@ t_0_Reach_sn_step AS (SELECT
   Reach_MultBodyAggAux_f2.hops AS hops
 FROM
   t_1_Reach_MultBodyAggAux_f2 AS Reach_MultBodyAggAux_f2
-GROUP BY 1, 2 ORDER BY node)
+GROUP BY 1, 2)
 SELECT
   Reach_sn_step.node AS node,
   Reach_sn_step.hops AS hops
@@ -2027,7 +2027,7 @@ t_0_Reach_sn_step AS (SELECT
   Reach_MultBodyAggAux_f2.hops AS hops
 FROM
   t_1_Reach_MultBodyAggAux_f2 AS Reach_MultBodyAggAux_f2
-GROUP BY 1, 2 ORDER BY node)
+GROUP BY 1, 2)
 SELECT
   Reach_sn_step.node AS node,
   Reach_sn_step.hops AS hops
@@ -2095,7 +2095,7 @@ t_0_Reach_sn_step AS (SELECT
   Reach_MultBodyAggAux_f2.hops AS hops
 FROM
   t_1_Reach_MultBodyAggAux_f2 AS Reach_MultBodyAggAux_f2
-GROUP BY 1, 2 ORDER BY node)
+GROUP BY 1, 2)
 SELECT
   Reach_sn_step.node AS node,
   Reach_sn_step.hops AS hops
@@ -2163,7 +2163,7 @@ t_0_Reach_sn_step AS (SELECT
   Reach_MultBodyAggAux_f2.hops AS hops
 FROM
   t_1_Reach_MultBodyAggAux_f2 AS Reach_MultBodyAggAux_f2
-GROUP BY 1, 2 ORDER BY node)
+GROUP BY 1, 2)
 SELECT
   Reach_sn_step.node AS node,
   Reach_sn_step.hops AS hops
@@ -2231,7 +2231,7 @@ t_0_Reach_sn_step AS (SELECT
   Reach_MultBodyAggAux_f2.hops AS hops
 FROM
   t_1_Reach_MultBodyAggAux_f2 AS Reach_MultBodyAggAux_f2
-GROUP BY 1, 2 ORDER BY node)
+GROUP BY 1, 2)
 SELECT
   Reach_sn_step.node AS node,
   Reach_sn_step.hops AS hops
@@ -2299,7 +2299,7 @@ t_0_Reach_sn_step AS (SELECT
   Reach_MultBodyAggAux_f2.hops AS hops
 FROM
   t_1_Reach_MultBodyAggAux_f2 AS Reach_MultBodyAggAux_f2
-GROUP BY 1, 2 ORDER BY node)
+GROUP BY 1, 2)
 SELECT
   Reach_sn_step.node AS node,
   Reach_sn_step.hops AS hops
@@ -2367,7 +2367,7 @@ t_0_Reach_sn_step AS (SELECT
   Reach_MultBodyAggAux_f2.hops AS hops
 FROM
   t_1_Reach_MultBodyAggAux_f2 AS Reach_MultBodyAggAux_f2
-GROUP BY 1, 2 ORDER BY node)
+GROUP BY 1, 2)
 SELECT
   Reach_sn_step.node AS node,
   Reach_sn_step.hops AS hops
@@ -2435,7 +2435,7 @@ t_0_Reach_sn_step AS (SELECT
   Reach_MultBodyAggAux_f2.hops AS hops
 FROM
   t_1_Reach_MultBodyAggAux_f2 AS Reach_MultBodyAggAux_f2
-GROUP BY 1, 2 ORDER BY node)
+GROUP BY 1, 2)
 SELECT
   Reach_sn_step.node AS node,
   Reach_sn_step.hops AS hops
@@ -2503,7 +2503,7 @@ t_0_Reach_sn_step AS (SELECT
   Reach_MultBodyAggAux_f2.hops AS hops
 FROM
   t_1_Reach_MultBodyAggAux_f2 AS Reach_MultBodyAggAux_f2
-GROUP BY 1, 2 ORDER BY node)
+GROUP BY 1, 2)
 SELECT
   Reach_sn_step.node AS node,
   Reach_sn_step.hops AS hops
@@ -2571,7 +2571,7 @@ t_0_Reach_sn_step AS (SELECT
   Reach_MultBodyAggAux_f2.hops AS hops
 FROM
   t_1_Reach_MultBodyAggAux_f2 AS Reach_MultBodyAggAux_f2
-GROUP BY 1, 2 ORDER BY node)
+GROUP BY 1, 2)
 SELECT
   Reach_sn_step.node AS node,
   Reach_sn_step.hops AS hops
@@ -2639,7 +2639,7 @@ t_0_Reach_sn_step AS (SELECT
   Reach_MultBodyAggAux_f2.hops AS hops
 FROM
   t_1_Reach_MultBodyAggAux_f2 AS Reach_MultBodyAggAux_f2
-GROUP BY 1, 2 ORDER BY node)
+GROUP BY 1, 2)
 SELECT
   Reach_sn_step.node AS node,
   Reach_sn_step.hops AS hops
@@ -2707,7 +2707,7 @@ t_0_Reach_sn_step AS (SELECT
   Reach_MultBodyAggAux_f2.hops AS hops
 FROM
   t_1_Reach_MultBodyAggAux_f2 AS Reach_MultBodyAggAux_f2
-GROUP BY 1, 2 ORDER BY node)
+GROUP BY 1, 2)
 SELECT
   Reach_sn_step.node AS node,
   Reach_sn_step.hops AS hops
@@ -2775,7 +2775,7 @@ t_0_Reach_sn_step AS (SELECT
   Reach_MultBodyAggAux_f2.hops AS hops
 FROM
   t_1_Reach_MultBodyAggAux_f2 AS Reach_MultBodyAggAux_f2
-GROUP BY 1, 2 ORDER BY node)
+GROUP BY 1, 2)
 SELECT
   Reach_sn_step.node AS node,
   Reach_sn_step.hops AS hops
@@ -2843,7 +2843,7 @@ t_0_Reach_sn_step AS (SELECT
   Reach_MultBodyAggAux_f2.hops AS hops
 FROM
   t_1_Reach_MultBodyAggAux_f2 AS Reach_MultBodyAggAux_f2
-GROUP BY 1, 2 ORDER BY node)
+GROUP BY 1, 2)
 SELECT
   Reach_sn_step.node AS node,
   Reach_sn_step.hops AS hops
@@ -2911,7 +2911,7 @@ t_0_Reach_sn_step AS (SELECT
   Reach_MultBodyAggAux_f2.hops AS hops
 FROM
   t_1_Reach_MultBodyAggAux_f2 AS Reach_MultBodyAggAux_f2
-GROUP BY 1, 2 ORDER BY node)
+GROUP BY 1, 2)
 SELECT
   Reach_sn_step.node AS node,
   Reach_sn_step.hops AS hops
@@ -2979,7 +2979,7 @@ t_0_Reach_sn_step AS (SELECT
   Reach_MultBodyAggAux_f2.hops AS hops
 FROM
   t_1_Reach_MultBodyAggAux_f2 AS Reach_MultBodyAggAux_f2
-GROUP BY 1, 2 ORDER BY node)
+GROUP BY 1, 2)
 SELECT
   Reach_sn_step.node AS node,
   Reach_sn_step.hops AS hops
@@ -3047,7 +3047,7 @@ t_0_Reach_sn_step AS (SELECT
   Reach_MultBodyAggAux_f2.hops AS hops
 FROM
   t_1_Reach_MultBodyAggAux_f2 AS Reach_MultBodyAggAux_f2
-GROUP BY 1, 2 ORDER BY node)
+GROUP BY 1, 2)
 SELECT
   Reach_sn_step.node AS node,
   Reach_sn_step.hops AS hops
@@ -3115,7 +3115,7 @@ t_0_Reach_sn_step AS (SELECT
   Reach_MultBodyAggAux_f2.hops AS hops
 FROM
   t_1_Reach_MultBodyAggAux_f2 AS Reach_MultBodyAggAux_f2
-GROUP BY 1, 2 ORDER BY node)
+GROUP BY 1, 2)
 SELECT
   Reach_sn_step.node AS node,
   Reach_sn_step.hops AS hops
@@ -3183,7 +3183,7 @@ t_0_Reach_sn_step AS (SELECT
   Reach_MultBodyAggAux_f2.hops AS hops
 FROM
   t_1_Reach_MultBodyAggAux_f2 AS Reach_MultBodyAggAux_f2
-GROUP BY 1, 2 ORDER BY node)
+GROUP BY 1, 2)
 SELECT
   Reach_sn_step.node AS node,
   Reach_sn_step.hops AS hops
@@ -3251,7 +3251,7 @@ t_0_Reach_sn_step AS (SELECT
   Reach_MultBodyAggAux_f2.hops AS hops
 FROM
   t_1_Reach_MultBodyAggAux_f2 AS Reach_MultBodyAggAux_f2
-GROUP BY 1, 2 ORDER BY node)
+GROUP BY 1, 2)
 SELECT
   Reach_sn_step.node AS node,
   Reach_sn_step.hops AS hops
@@ -3319,7 +3319,7 @@ t_0_Reach_sn_step AS (SELECT
   Reach_MultBodyAggAux_f2.hops AS hops
 FROM
   t_1_Reach_MultBodyAggAux_f2 AS Reach_MultBodyAggAux_f2
-GROUP BY 1, 2 ORDER BY node)
+GROUP BY 1, 2)
 SELECT
   Reach_sn_step.node AS node,
   Reach_sn_step.hops AS hops
@@ -3387,7 +3387,7 @@ t_0_Reach_sn_step AS (SELECT
   Reach_MultBodyAggAux_f2.hops AS hops
 FROM
   t_1_Reach_MultBodyAggAux_f2 AS Reach_MultBodyAggAux_f2
-GROUP BY 1, 2 ORDER BY node)
+GROUP BY 1, 2)
 SELECT
   Reach_sn_step.node AS node,
   Reach_sn_step.hops AS hops
@@ -3455,7 +3455,7 @@ t_0_Reach_sn_step AS (SELECT
   Reach_MultBodyAggAux_f2.hops AS hops
 FROM
   t_1_Reach_MultBodyAggAux_f2 AS Reach_MultBodyAggAux_f2
-GROUP BY 1, 2 ORDER BY node)
+GROUP BY 1, 2)
 SELECT
   Reach_sn_step.node AS node,
   Reach_sn_step.hops AS hops
@@ -3484,4 +3484,4 @@ SELECT
   Reach_sn_full.node AS node,
   Reach_sn_full.hops AS hops
 FROM
-  logica_test.Reach_sn_full AS Reach_sn_full;
+  logica_test.Reach_sn_full AS Reach_sn_full ORDER BY node;

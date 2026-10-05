@@ -703,6 +703,43 @@ impl<'a> ExprTranslator<'a> {
                         let co = call.as_object();
                         let pred_name = co["predicate_name"].as_str();
 
+                        // Concatenating an empty list written out changes
+                        // nothing, and Trino and Presto cannot type `ARRAY[]`.
+                        if pred_name == "ArrayConcat" {
+                            let fvs = co["record"].as_object()["field_value"].as_array();
+                            let is_empty_list = |fv: &Json| {
+                                fv.as_object()["value"].as_object().get("expression")
+                                    .and_then(|a| a.as_object().get("literal"))
+                                    .and_then(|l| l.as_object().get("the_list"))
+                                    .and_then(|l| l.as_object().get("element"))
+                                    .is_some_and(|e| e.as_array().is_empty())
+                            };
+                            if fvs.len() == 2 && (is_empty_list(&fvs[0]) || is_empty_list(&fvs[1])) {
+                                let kept = if is_empty_list(&fvs[0]) { &fvs[1] } else { &fvs[0] };
+                                if let Some(e) = kept.as_object()["value"].as_object().get("expression") {
+                                    tasks.push(Task::Eval(e));
+                                    continue;
+                                }
+                            }
+                        }
+
+                        // The size of a list written out is known: `Size([])`
+                        // is 0 (PostgreSQL cannot type a lone empty array).
+                        if pred_name == "Size" {
+                            let fvs = co["record"].as_object()["field_value"].as_array();
+                            if fvs.len() == 1 {
+                                let arg = fvs[0].as_object()["value"].as_object().get("expression");
+                                let list = arg
+                                    .and_then(|a| a.as_object().get("literal"))
+                                    .and_then(|l| l.as_object().get("the_list"))
+                                    .and_then(|l| l.as_object().get("element"));
+                                if let Some(elements) = list {
+                                    results.push(elements.as_array().len().to_string());
+                                    continue;
+                                }
+                            }
+                        }
+
                         // Analytic/window functions
                         if Self::is_analytic_function(pred_name) {
                             let fvs = co["record"].as_object()["field_value"].as_array();
@@ -1430,32 +1467,27 @@ impl<'a> ExprTranslator<'a> {
                             }
                             // Strip the surrounding quotes and undo SQL '' escaping.
                             let inner = fmt_sql[1..fmt_sql.len() - 1].replace("''", "'");
-                            let segments: Vec<&str> = inner.split("%s").collect();
-                            // A stray '%' in any segment means an unsupported
-                            // specifier (%d, %f, %%, …) we cannot render as concat.
-                            if segments.iter().any(|s| s.contains('%')) {
-                                return Err(CompileError::new(
-                                    "Format on this engine supports only %s placeholders",
-                                    "",
-                                ));
-                            }
-                            if segments.len() - 1 != values.len() {
+                            let pieces = format_pieces(&inner).map_err(|e| CompileError::new(e, ""))?;
+                            let wanted = pieces.iter().filter(|p| matches!(p, FormatPiece::Spec { .. })).count();
+                            if wanted != values.len() {
                                 return Err(CompileError::new(
                                     format!(
                                         "Format expects {} argument(s) for its placeholders, got {}",
-                                        segments.len() - 1,
+                                        wanted,
                                         values.len()
                                     ),
                                     "",
                                 ));
                             }
                             let mut parts: Vec<String> = Vec::new();
-                            for (i, seg) in segments.iter().enumerate() {
-                                if !seg.is_empty() {
-                                    parts.push(self.dialect.str_literal(seg));
-                                }
-                                if i < values.len() {
-                                    parts.push(values[i].clone());
+                            let mut next = values.iter();
+                            for piece in &pieces {
+                                match piece {
+                                    FormatPiece::Text(text) => parts.push(self.dialect.str_literal(text)),
+                                    FormatPiece::Spec { .. } => {
+                                        let value = next.next().expect("counted");
+                                        parts.push(piece.render(value, |t| self.dialect.str_literal(t)));
+                                    }
                                 }
                             }
                             results.push(if parts.is_empty() {
@@ -1703,3 +1735,127 @@ fn sub_if_struct(implication: &Json, subscript: &str) -> Option<Json> {
 #[cfg(test)]
 #[path = "expr_translate_test.rs"]
 mod expr_translate_test;
+
+/// A part of a printf-style format string: text, or a placeholder.
+#[derive(Debug, PartialEq)]
+enum FormatPiece {
+    Text(String),
+    /// `%[-0][width][.precision](s|d|f)`.
+    Spec { left: bool, zero: bool, width: usize, precision: Option<usize>, conversion: char },
+}
+
+/// The pieces of a format string, for an engine without printf, which
+/// renders each placeholder in SQL: `%s`, `%d`, `%f`, with a width, `0` or
+/// `-` padding and a precision, and `%%`.
+fn format_pieces(format: &str) -> Result<Vec<FormatPiece>, String> {
+    let mut pieces = Vec::new();
+    let mut text = String::new();
+    let mut chars = format.chars().peekable();
+    while let Some(c) = chars.next() {
+        if c != '%' {
+            text.push(c);
+            continue;
+        }
+        if chars.peek() == Some(&'%') {
+            chars.next();
+            text.push('%');
+            continue;
+        }
+        let (mut left, mut zero) = (false, false);
+        while let Some(&f) = chars.peek() {
+            match f {
+                '-' => left = true,
+                '0' => zero = true,
+                _ => break,
+            }
+            chars.next();
+        }
+        let mut width = 0;
+        while let Some(d) = chars.peek().and_then(|c| c.to_digit(10)) {
+            width = width * 10 + d as usize;
+            chars.next();
+        }
+        let mut precision = None;
+        if chars.peek() == Some(&'.') {
+            chars.next();
+            let mut p = 0;
+            while let Some(d) = chars.peek().and_then(|c| c.to_digit(10)) {
+                p = p * 10 + d as usize;
+                chars.next();
+            }
+            precision = Some(p);
+        }
+        let conversion = match chars.next() {
+            Some(c @ ('s' | 'd' | 'f')) => c,
+            other => {
+                return Err(format!(
+                    "Format on this engine supports %s, %d and %f placeholders (with a width, 0 or - padding and a precision), not %{}",
+                    other.map(String::from).unwrap_or_default()
+                ))
+            }
+        };
+        if !text.is_empty() {
+            pieces.push(FormatPiece::Text(std::mem::take(&mut text)));
+        }
+        pieces.push(FormatPiece::Spec { left, zero: zero && !left, width, precision, conversion });
+    }
+    if !text.is_empty() {
+        pieces.push(FormatPiece::Text(text));
+    }
+    Ok(pieces)
+}
+
+impl FormatPiece {
+    /// The SQL text of a placeholder applied to `value`.
+    fn render(&self, value: &str, literal: impl Fn(&str) -> String) -> String {
+        let FormatPiece::Spec { left, zero, width, precision, conversion } = self else {
+            return String::new();
+        };
+        let text = match conversion {
+            'd' => format!("CAST(CAST({} AS BIGINT) AS VARCHAR)", value),
+            'f' => {
+                let p = precision.unwrap_or(6);
+                // The cast rounds to the precision, and keeps its zeros.
+                format!("CAST(CAST({v} AS DECIMAL(38, {p})) AS VARCHAR)", v = value, p = p)
+            }
+            _ => value.to_string(),
+        };
+        if *width == 0 {
+            return text;
+        }
+        // Padded to the width, never cut: LPAD and RPAD truncate.
+        let pad = |padded: String| format!("(CASE WHEN LENGTH({t}) >= {w} THEN {t} ELSE {padded} END)", t = text, w = width, padded = padded);
+        if *left {
+            pad(format!("RPAD({}, {}, {})", text, width, literal(" ")))
+        } else if *zero && *conversion != 's' {
+            // Zeros go after the sign: -0042.
+            pad(format!(
+                "(CASE WHEN {v} < 0 THEN {minus} || LPAD(SUBSTR({t}, 2), {w1}, {zero}) ELSE LPAD({t}, {w}, {zero}) END)",
+                v = value, t = text, w = width, w1 = width - 1, minus = literal("-"), zero = literal("0")
+            ))
+        } else {
+            pad(format!("LPAD({}, {}, {})", text, width, literal(" ")))
+        }
+    }
+}
+
+#[cfg(test)]
+mod format_tests {
+    use super::*;
+
+    #[test]
+    fn format_pieces_read_every_placeholder() {
+        let pieces = format_pieces("%s-%05d|%-3s|%.2f%%").unwrap();
+        assert_eq!(pieces.len(), 8, "{:?}", pieces);
+        assert_eq!(pieces[0], FormatPiece::Spec { left: false, zero: false, width: 0, precision: None, conversion: 's' });
+        assert_eq!(pieces[2], FormatPiece::Spec { left: false, zero: true, width: 5, precision: None, conversion: 'd' });
+        assert_eq!(pieces[4], FormatPiece::Spec { left: true, zero: false, width: 3, precision: None, conversion: 's' });
+        assert_eq!(pieces[6], FormatPiece::Spec { left: false, zero: false, width: 0, precision: Some(2), conversion: 'f' });
+        assert_eq!(pieces[7], FormatPiece::Text("%".to_string()));
+    }
+
+    #[test]
+    fn format_pieces_refuse_other_conversions() {
+        assert!(format_pieces("%x").is_err());
+    }
+}

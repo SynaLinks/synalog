@@ -1,4 +1,4 @@
-WITH t_2_Phones AS (SELECT * FROM (
+WITH t_3_Phones AS (SELECT * FROM (
   
     SELECT
       "Alice" AS person,
@@ -10,7 +10,7 @@ WITH t_2_Phones AS (SELECT * FROM (
       "555-5678" AS phone
   
 ) AS UNUSED_TABLE_NAME  ),
-t_3_Emails AS (SELECT * FROM (
+t_5_Emails AS (SELECT * FROM (
   
     SELECT
       "Bob" AS person,
@@ -25,19 +25,19 @@ t_3_Emails AS (SELECT * FROM (
 t_1_ContactInfo_MultBodyAggAux AS (SELECT * FROM (
   
     SELECT
-      Phones.person AS person,
-      ARRAY(Phones.phone) AS phones,
+      t_2_Phones.person AS person,
+      ARRAY(t_2_Phones.phone) AS phones,
       ARRAY() AS emails
     FROM
-      t_2_Phones AS Phones
+      t_3_Phones AS t_2_Phones
    UNION ALL
   
     SELECT
-      Emails.person AS person,
+      t_4_Emails.person AS person,
       ARRAY() AS phones,
-      ARRAY(Emails.email) AS emails
+      ARRAY(t_4_Emails.email) AS emails
     FROM
-      t_3_Emails AS Emails
+      t_5_Emails AS t_4_Emails
   
 ) AS UNUSED_TABLE_NAME  ),
 t_0_ContactInfo AS (SELECT
@@ -46,10 +46,10 @@ t_0_ContactInfo AS (SELECT
   FLATTEN(COLLECT_LIST(ContactInfo_MultBodyAggAux.emails)) AS emails
 FROM
   t_1_ContactInfo_MultBodyAggAux AS ContactInfo_MultBodyAggAux
-GROUP BY 1 ORDER BY person)
+GROUP BY 1 ORDER BY person NULLS LAST)
 SELECT
   ContactInfo.person AS person,
   ContactInfo.phones AS phones,
   ContactInfo.emails AS emails
 FROM
-  t_0_ContactInfo AS ContactInfo ORDER BY person;
+  t_0_ContactInfo AS ContactInfo ORDER BY person NULLS LAST;

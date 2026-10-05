@@ -3,7 +3,7 @@ WITH t_1_Number AS (SELECT * FROM (
     SELECT
       x_8 AS col0
     FROM
-      UNNEST(SEQUENCE(0, 5 - 1)) as pushkin(x_8)
+      UNNEST(FILTER(SEQUENCE(0, 5), x -> x < 5)) as pushkin(x_8)
    UNION ALL
   
     SELECT

@@ -4,7 +4,7 @@ create schema if not exists logica_home;
 drop type if exists logicarecord893574736 cascade; create type logicarecord893574736 as struct(nirvana numeric);
 create sequence if not exists eternal_logical_sequence;
 
-WITH t_1_S AS (SELECT * FROM (
+WITH t_2_S AS (SELECT * FROM (
   
     SELECT
       1 AS "order",
@@ -17,6 +17,6 @@ WITH t_1_S AS (SELECT * FROM (
   
 ) AS UNUSED_TABLE_NAME  )
 SELECT
-  argmax(S."order", S.s) AS "order"
+  argmax(t_0_S."order", t_0_S.s) AS "order"
 FROM
-  t_1_S AS S;
+  t_2_S AS t_0_S;

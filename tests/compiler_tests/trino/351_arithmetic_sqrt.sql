@@ -1,0 +1,3 @@
+SELECT
+  SQRT(16) AS a,
+  SQRT(2.25E0) AS b;

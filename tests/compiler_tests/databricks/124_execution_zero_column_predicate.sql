@@ -1,6 +1,6 @@
 SELECT
   x_3 AS x
 FROM
-  explode(ARRAY(1, 2)) AS pushkin(x_3), explode(ARRAY(1, 2)) AS pushkin(x_6)
+  LATERAL (SELECT explode(ARRAY(1, 2)) AS x_3) AS pushkin, LATERAL (SELECT explode(ARRAY(1, 2)) AS x_6) AS pushkin
 WHERE
-  (2 = x_6) ORDER BY x;
+  (2 = x_6) ORDER BY x NULLS LAST;

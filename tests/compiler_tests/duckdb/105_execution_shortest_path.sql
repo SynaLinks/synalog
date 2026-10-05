@@ -16,7 +16,7 @@ t_28_Dist_r0 AS (SELECT
   MIN(Dist_MultBodyAggAux_recursive_head_f1.d) AS d
 FROM
   t_29_Dist_MultBodyAggAux_recursive_head_f1 AS Dist_MultBodyAggAux_recursive_head_f1
-GROUP BY Dist_MultBodyAggAux_recursive_head_f1.node ORDER BY node),
+GROUP BY Dist_MultBodyAggAux_recursive_head_f1.node),
 t_31_Edge AS (SELECT * FROM (
   
     SELECT
@@ -60,7 +60,7 @@ t_25_Dist_r1 AS (SELECT
   MIN(Dist_MultBodyAggAux_recursive_head_f2.d) AS d
 FROM
   t_26_Dist_MultBodyAggAux_recursive_head_f2 AS Dist_MultBodyAggAux_recursive_head_f2
-GROUP BY Dist_MultBodyAggAux_recursive_head_f2.node ORDER BY node),
+GROUP BY Dist_MultBodyAggAux_recursive_head_f2.node),
 t_23_Dist_MultBodyAggAux_recursive_head_f3 AS (SELECT * FROM (
   
     SELECT
@@ -82,7 +82,7 @@ t_22_Dist_r2 AS (SELECT
   MIN(Dist_MultBodyAggAux_recursive_head_f3.d) AS d
 FROM
   t_23_Dist_MultBodyAggAux_recursive_head_f3 AS Dist_MultBodyAggAux_recursive_head_f3
-GROUP BY Dist_MultBodyAggAux_recursive_head_f3.node ORDER BY node),
+GROUP BY Dist_MultBodyAggAux_recursive_head_f3.node),
 t_20_Dist_MultBodyAggAux_recursive_head_f4 AS (SELECT * FROM (
   
     SELECT
@@ -104,7 +104,7 @@ t_19_Dist_r3 AS (SELECT
   MIN(Dist_MultBodyAggAux_recursive_head_f4.d) AS d
 FROM
   t_20_Dist_MultBodyAggAux_recursive_head_f4 AS Dist_MultBodyAggAux_recursive_head_f4
-GROUP BY Dist_MultBodyAggAux_recursive_head_f4.node ORDER BY node),
+GROUP BY Dist_MultBodyAggAux_recursive_head_f4.node),
 t_17_Dist_MultBodyAggAux_recursive_head_f5 AS (SELECT * FROM (
   
     SELECT
@@ -126,7 +126,7 @@ t_16_Dist_r4 AS (SELECT
   MIN(Dist_MultBodyAggAux_recursive_head_f5.d) AS d
 FROM
   t_17_Dist_MultBodyAggAux_recursive_head_f5 AS Dist_MultBodyAggAux_recursive_head_f5
-GROUP BY Dist_MultBodyAggAux_recursive_head_f5.node ORDER BY node),
+GROUP BY Dist_MultBodyAggAux_recursive_head_f5.node),
 t_14_Dist_MultBodyAggAux_recursive_head_f6 AS (SELECT * FROM (
   
     SELECT
@@ -148,7 +148,7 @@ t_13_Dist_r5 AS (SELECT
   MIN(Dist_MultBodyAggAux_recursive_head_f6.d) AS d
 FROM
   t_14_Dist_MultBodyAggAux_recursive_head_f6 AS Dist_MultBodyAggAux_recursive_head_f6
-GROUP BY Dist_MultBodyAggAux_recursive_head_f6.node ORDER BY node),
+GROUP BY Dist_MultBodyAggAux_recursive_head_f6.node),
 t_11_Dist_MultBodyAggAux_recursive_head_f7 AS (SELECT * FROM (
   
     SELECT
@@ -170,7 +170,7 @@ t_10_Dist_r6 AS (SELECT
   MIN(Dist_MultBodyAggAux_recursive_head_f7.d) AS d
 FROM
   t_11_Dist_MultBodyAggAux_recursive_head_f7 AS Dist_MultBodyAggAux_recursive_head_f7
-GROUP BY Dist_MultBodyAggAux_recursive_head_f7.node ORDER BY node),
+GROUP BY Dist_MultBodyAggAux_recursive_head_f7.node),
 t_8_Dist_MultBodyAggAux_recursive_head_f8 AS (SELECT * FROM (
   
     SELECT
@@ -192,7 +192,7 @@ t_7_Dist_r7 AS (SELECT
   MIN(Dist_MultBodyAggAux_recursive_head_f8.d) AS d
 FROM
   t_8_Dist_MultBodyAggAux_recursive_head_f8 AS Dist_MultBodyAggAux_recursive_head_f8
-GROUP BY Dist_MultBodyAggAux_recursive_head_f8.node ORDER BY node),
+GROUP BY Dist_MultBodyAggAux_recursive_head_f8.node),
 t_5_Dist_MultBodyAggAux_recursive_head_f9 AS (SELECT * FROM (
   
     SELECT
@@ -214,7 +214,7 @@ t_4_Dist_r8 AS (SELECT
   MIN(Dist_MultBodyAggAux_recursive_head_f9.d) AS d
 FROM
   t_5_Dist_MultBodyAggAux_recursive_head_f9 AS Dist_MultBodyAggAux_recursive_head_f9
-GROUP BY Dist_MultBodyAggAux_recursive_head_f9.node ORDER BY node),
+GROUP BY Dist_MultBodyAggAux_recursive_head_f9.node),
 t_2_Dist_MultBodyAggAux_recursive_head_f10 AS (SELECT * FROM (
   
     SELECT
@@ -236,7 +236,7 @@ t_1_Dist_r9 AS (SELECT
   MIN(Dist_MultBodyAggAux_recursive_head_f10.d) AS d
 FROM
   t_2_Dist_MultBodyAggAux_recursive_head_f10 AS Dist_MultBodyAggAux_recursive_head_f10
-GROUP BY Dist_MultBodyAggAux_recursive_head_f10.node ORDER BY node),
+GROUP BY Dist_MultBodyAggAux_recursive_head_f10.node),
 t_0_Dist_MultBodyAggAux_recursive_head_f11 AS (SELECT * FROM (
   
     SELECT

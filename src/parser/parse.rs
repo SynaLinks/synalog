@@ -555,14 +555,30 @@ fn parse_infix(
         }
         let parts = split_raw(s, op)?;
         if parts.len() > 1 {
+            // Split at the last occurrence, except that a `-` right after
+            // another operator negates its operand (`2 * -3`, `7 % -3`): it
+            // is not where the expression splits.
+            let mut at = parts.len() - 1;
+            if op == "-" {
+                let follows_operator = |k: usize| {
+                    let left = SpanString::from_arc(Arc::clone(&s.heritage), s.start, parts[k - 1].stop);
+                    strip(&left).view().ends_with(|c: char| "+-*/%^!=<>&|~".contains(c))
+                };
+                while at > 1 && follows_operator(at) {
+                    at -= 1;
+                }
+                if at == 1 && follows_operator(1) {
+                    continue;
+                }
+            }
             let left = SpanString::from_arc(
                 Arc::clone(&s.heritage),
                 s.start,
-                parts[parts.len() - 2].stop,
+                parts[at - 1].stop,
             );
             let right = SpanString::from_arc(
                 Arc::clone(&s.heritage),
-                parts.last().unwrap().start,
+                parts[at].start,
                 s.stop,
             );
 

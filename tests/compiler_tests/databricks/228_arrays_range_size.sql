@@ -1,2 +1,2 @@
 SELECT
-  SIZE(SEQUENCE(0, 5 - 1)) AS n;
+  SIZE(FILTER(SEQUENCE(0, 5), x -> x < 5)) AS n;

@@ -2,4 +2,4 @@ SELECT
   x_11 AS x,
   ((x_11) * (x_11)) AS sq
 FROM
-  explode(SEQUENCE(0, 5 - 1)) AS pushkin(x_11) ORDER BY x;
+  LATERAL (SELECT explode(FILTER(SEQUENCE(0, 5), x -> x < 5)) AS x_11) AS pushkin ORDER BY x NULLS LAST;

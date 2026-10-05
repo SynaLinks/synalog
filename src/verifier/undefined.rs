@@ -118,7 +118,10 @@ fn defined_predicates(rules: &[&Json]) -> HashSet<String> {
     let mut defined = HashSet::new();
     for rule in rules {
         let name = rule.as_object()["head"].as_object()["predicate_name"].as_str();
-        if !name.starts_with('@') {
+        if name == "@Make" {
+            // `D := F(...)` defines D.
+            defined.extend(super::assertions::made_predicate(rule));
+        } else if !name.starts_with('@') {
             defined.insert(name.to_string());
         }
     }
@@ -298,15 +301,21 @@ mod tests {
     fn check(code: &str) -> Vec<UndefinedError> {
         let parsed = parse(code);
         let rules: Vec<&Json> = parsed.as_object()["rule"].as_array().iter().collect();
-        let normal: Vec<&Json> = rules
-            .into_iter()
-            .filter(|r| {
-                !r.as_object()["head"].as_object()["predicate_name"]
-                    .as_str()
-                    .starts_with('@')
-            })
-            .collect();
-        check_undefined(&normal)
+        check_undefined(&rules)
+    }
+
+    #[test]
+    fn test_functor_result_is_defined() {
+        let errors = check(
+            r#"
+            Src(x: 0);
+            Doubled(y: 2 * x) :- Src(x:);
+            Base(x: 1);
+            D := Doubled(Src: Base);
+            T(y:) :- D(y:);
+        "#,
+        );
+        assert!(errors.is_empty(), "{:?}", errors);
     }
 
     #[test]

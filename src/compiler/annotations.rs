@@ -665,14 +665,25 @@ impl Annotations {
                     };
                     std::iter::once(name).chain(words.map(str::to_string)).collect::<Vec<_>>().join(" ")
                 };
+                // Nulls sort last, whatever the engine's default.
+                let nulls_last = |item: String| -> String {
+                    let lower = item.to_ascii_lowercase();
+                    let descending = lower.split_whitespace().any(|w| w == "desc");
+                    let first_by_default = dialect.as_ref().is_some_and(|d| d.nulls_first_by_default(descending));
+                    if first_by_default && !lower.split_whitespace().any(|w| w == "nulls") {
+                        format!("{} NULLS LAST", item)
+                    } else {
+                        item
+                    }
+                };
                 for i in 0..len {
                     if order_by[i].eq_ignore_ascii_case("DESC") {
                         continue; // DESC is handled when processing the previous item
                     }
                     if i + 1 < len && order_by[i + 1].eq_ignore_ascii_case("DESC") {
-                        parts.push(format!("{} DESC", column(&order_by[i])));
+                        parts.push(nulls_last(format!("{} DESC", column(&order_by[i]))));
                     } else {
-                        parts.push(column(&order_by[i]));
+                        parts.push(nulls_last(column(&order_by[i])));
                     }
                 }
                 format!(" ORDER BY {}", parts.join(", "))

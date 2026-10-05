@@ -22,22 +22,22 @@ SELECT * FROM (
       'odd' AS test_name,
       x_5 AS x
     FROM
-      UNNEST(SEQUENCE(0, 10 - 1)) as pushkin(x_5)
+      UNNEST(FILTER(SEQUENCE(0, 10), x -> x < 10)) as pushkin(x_5)
     WHERE
       ((SELECT
         MIN(1) AS logica_value
       FROM
-        UNNEST(SEQUENCE(0, 10 - 1)) as pushkin(x_11)
+        UNNEST(FILTER(SEQUENCE(0, 10), x -> x < 10)) as pushkin(x_10)
       WHERE
         ((MOD(x_5, 2)) = 0) AND
-        (x_5 = x_11)) IS NULL)
+        (x_5 = x_10)) IS NULL)
    UNION ALL
   
     SELECT
       'not_prime' AS test_name,
       x_5 AS x
     FROM
-      UNNEST(SEQUENCE(0, 10 - 1)) as pushkin(x_5)
+      UNNEST(FILTER(SEQUENCE(0, 10), x -> x < 10)) as pushkin(x_5)
     WHERE
       (x_5 > 1) AND
       ((SELECT
@@ -52,7 +52,7 @@ SELECT * FROM (
       'even_not_prime' AS test_name,
       x_7 AS x
     FROM
-      UNNEST(SEQUENCE(0, 10 - 1)) as pushkin(x_7)
+      UNNEST(FILTER(SEQUENCE(0, 10), x -> x < 10)) as pushkin(x_7)
     WHERE
       ((SELECT
         MIN(1) AS logica_value

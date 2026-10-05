@@ -4,6 +4,6 @@ SELECT
   ((x_15) - (3)) AS sub,
   ((x_15) * (2)) AS mul
 FROM
-  explode(SEQUENCE(0, 10 - 1)) AS pushkin(x_15)
+  LATERAL (SELECT explode(FILTER(SEQUENCE(0, 10), x -> x < 10)) AS x_15) AS pushkin
 WHERE
-  (x_15 > 0) ORDER BY x;
+  (x_15 > 0) ORDER BY x NULLS LAST;

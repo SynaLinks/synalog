@@ -1,4 +1,4 @@
-WITH t_1_V AS (SELECT * FROM (
+WITH t_2_V AS (SELECT * FROM (
   
     SELECT
       "a" AS s
@@ -8,12 +8,12 @@ WITH t_1_V AS (SELECT * FROM (
       "b" AS s
   
 ) AS UNUSED_TABLE_NAME  ),
-t_0_J AS (SELECT
+t_1_J AS (SELECT
   (CASE WHEN COUNT(V.s) > 0 THEN ARRAY_JOIN(COLLECT_LIST(CAST(V.s AS STRING)), ',') END) AS j
 FROM
-  t_1_V AS V)
+  t_2_V AS V)
 SELECT
-  SIZE(SPLIT(J.j, ",")) AS parts,
-  LENGTH(J.j) AS length
+  SIZE(SPLIT(t_0_J.j, ",")) AS parts,
+  LENGTH(t_0_J.j) AS length
 FROM
-  t_0_J AS J;
+  t_1_J AS t_0_J;

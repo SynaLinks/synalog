@@ -9,7 +9,7 @@ SELECT
   Even_MultBodyAggAux_f4.x AS x
 FROM
   t_0_Even_MultBodyAggAux_f4 AS Even_MultBodyAggAux_f4
-GROUP BY 1 ORDER BY x;
+GROUP BY 1;
 
 -- Interacting with table logica_test.Even_fr1
 
@@ -39,7 +39,7 @@ SELECT
   Even_MultBodyAggAux_f8.x AS x
 FROM
   t_0_Even_MultBodyAggAux_f8 AS Even_MultBodyAggAux_f8
-GROUP BY 1 ORDER BY x;
+GROUP BY 1;
 
 -- Interacting with table logica_test.Even_fr3
 

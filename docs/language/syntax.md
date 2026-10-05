@@ -29,7 +29,7 @@ OrderWithTax(order_id:, total:) :-
 
 | Category | Operators |
 |----------|-----------|
-| Arithmetic | `+` `-` `*` `/` `^` (power) `%` (modulo) |
+| Arithmetic | `+` `-` `*` `/` `^` (power) `%` (modulo); `/` divides exactly (`7 / 2` is `3.5`) and `-` negates also right after another operator (`2 * -3`) |
 | String concatenation | `++` |
 | Comparison | `==` `!=` `<` `>` `<=` `>=` |
 | Boolean | `&&` `\|\|` `!` |

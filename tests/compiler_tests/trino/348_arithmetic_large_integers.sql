@@ -1,0 +1,3 @@
+SELECT
+  ((((((CAST(1024 AS BIGINT)) * (1024))) * (1024))) * (1024)) AS v,
+  ((CAST(2147483647 AS BIGINT)) + (1)) AS w;

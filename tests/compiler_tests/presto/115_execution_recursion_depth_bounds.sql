@@ -9,7 +9,7 @@ SELECT
   Reach_MultBodyAggAux_f1.y AS y
 FROM
   t_0_Reach_MultBodyAggAux_f1 AS Reach_MultBodyAggAux_f1
-GROUP BY 1 ORDER BY y;
+GROUP BY 1;
 
 -- Interacting with table logica_test.Reach_sn_delta
 
@@ -59,7 +59,7 @@ t_0_Reach_sn_step AS (SELECT
   Reach_MultBodyAggAux_f2.y AS y
 FROM
   t_1_Reach_MultBodyAggAux_f2 AS Reach_MultBodyAggAux_f2
-GROUP BY 1 ORDER BY y)
+GROUP BY 1)
 SELECT * FROM (
   
     SELECT
@@ -125,7 +125,7 @@ t_0_Reach_sn_step AS (SELECT
   Reach_MultBodyAggAux_f2.y AS y
 FROM
   t_1_Reach_MultBodyAggAux_f2 AS Reach_MultBodyAggAux_f2
-GROUP BY 1 ORDER BY y)
+GROUP BY 1)
 SELECT
   Reach_sn_step.y AS y
 FROM
@@ -193,7 +193,7 @@ t_0_Reach_sn_step AS (SELECT
   Reach_MultBodyAggAux_f2.y AS y
 FROM
   t_1_Reach_MultBodyAggAux_f2 AS Reach_MultBodyAggAux_f2
-GROUP BY 1 ORDER BY y)
+GROUP BY 1)
 SELECT
   Reach_sn_step.y AS y
 FROM
@@ -261,7 +261,7 @@ t_0_Reach_sn_step AS (SELECT
   Reach_MultBodyAggAux_f2.y AS y
 FROM
   t_1_Reach_MultBodyAggAux_f2 AS Reach_MultBodyAggAux_f2
-GROUP BY 1 ORDER BY y)
+GROUP BY 1)
 SELECT
   Reach_sn_step.y AS y
 FROM
@@ -329,7 +329,7 @@ t_0_Reach_sn_step AS (SELECT
   Reach_MultBodyAggAux_f2.y AS y
 FROM
   t_1_Reach_MultBodyAggAux_f2 AS Reach_MultBodyAggAux_f2
-GROUP BY 1 ORDER BY y)
+GROUP BY 1)
 SELECT
   Reach_sn_step.y AS y
 FROM
@@ -397,7 +397,7 @@ t_0_Reach_sn_step AS (SELECT
   Reach_MultBodyAggAux_f2.y AS y
 FROM
   t_1_Reach_MultBodyAggAux_f2 AS Reach_MultBodyAggAux_f2
-GROUP BY 1 ORDER BY y)
+GROUP BY 1)
 SELECT
   Reach_sn_step.y AS y
 FROM
@@ -465,7 +465,7 @@ t_0_Reach_sn_step AS (SELECT
   Reach_MultBodyAggAux_f2.y AS y
 FROM
   t_1_Reach_MultBodyAggAux_f2 AS Reach_MultBodyAggAux_f2
-GROUP BY 1 ORDER BY y)
+GROUP BY 1)
 SELECT
   Reach_sn_step.y AS y
 FROM
@@ -533,7 +533,7 @@ t_0_Reach_sn_step AS (SELECT
   Reach_MultBodyAggAux_f2.y AS y
 FROM
   t_1_Reach_MultBodyAggAux_f2 AS Reach_MultBodyAggAux_f2
-GROUP BY 1 ORDER BY y)
+GROUP BY 1)
 SELECT
   Reach_sn_step.y AS y
 FROM
@@ -601,7 +601,7 @@ t_0_Reach_sn_step AS (SELECT
   Reach_MultBodyAggAux_f2.y AS y
 FROM
   t_1_Reach_MultBodyAggAux_f2 AS Reach_MultBodyAggAux_f2
-GROUP BY 1 ORDER BY y)
+GROUP BY 1)
 SELECT
   Reach_sn_step.y AS y
 FROM
@@ -669,7 +669,7 @@ t_0_Reach_sn_step AS (SELECT
   Reach_MultBodyAggAux_f2.y AS y
 FROM
   t_1_Reach_MultBodyAggAux_f2 AS Reach_MultBodyAggAux_f2
-GROUP BY 1 ORDER BY y)
+GROUP BY 1)
 SELECT
   Reach_sn_step.y AS y
 FROM
@@ -737,7 +737,7 @@ t_0_Reach_sn_step AS (SELECT
   Reach_MultBodyAggAux_f2.y AS y
 FROM
   t_1_Reach_MultBodyAggAux_f2 AS Reach_MultBodyAggAux_f2
-GROUP BY 1 ORDER BY y)
+GROUP BY 1)
 SELECT
   Reach_sn_step.y AS y
 FROM
@@ -805,7 +805,7 @@ t_0_Reach_sn_step AS (SELECT
   Reach_MultBodyAggAux_f2.y AS y
 FROM
   t_1_Reach_MultBodyAggAux_f2 AS Reach_MultBodyAggAux_f2
-GROUP BY 1 ORDER BY y)
+GROUP BY 1)
 SELECT
   Reach_sn_step.y AS y
 FROM
@@ -873,7 +873,7 @@ t_0_Reach_sn_step AS (SELECT
   Reach_MultBodyAggAux_f2.y AS y
 FROM
   t_1_Reach_MultBodyAggAux_f2 AS Reach_MultBodyAggAux_f2
-GROUP BY 1 ORDER BY y)
+GROUP BY 1)
 SELECT
   Reach_sn_step.y AS y
 FROM
@@ -941,7 +941,7 @@ t_0_Reach_sn_step AS (SELECT
   Reach_MultBodyAggAux_f2.y AS y
 FROM
   t_1_Reach_MultBodyAggAux_f2 AS Reach_MultBodyAggAux_f2
-GROUP BY 1 ORDER BY y)
+GROUP BY 1)
 SELECT
   Reach_sn_step.y AS y
 FROM
@@ -1009,7 +1009,7 @@ t_0_Reach_sn_step AS (SELECT
   Reach_MultBodyAggAux_f2.y AS y
 FROM
   t_1_Reach_MultBodyAggAux_f2 AS Reach_MultBodyAggAux_f2
-GROUP BY 1 ORDER BY y)
+GROUP BY 1)
 SELECT
   Reach_sn_step.y AS y
 FROM
@@ -1077,7 +1077,7 @@ t_0_Reach_sn_step AS (SELECT
   Reach_MultBodyAggAux_f2.y AS y
 FROM
   t_1_Reach_MultBodyAggAux_f2 AS Reach_MultBodyAggAux_f2
-GROUP BY 1 ORDER BY y)
+GROUP BY 1)
 SELECT
   Reach_sn_step.y AS y
 FROM
@@ -1145,7 +1145,7 @@ t_0_Reach_sn_step AS (SELECT
   Reach_MultBodyAggAux_f2.y AS y
 FROM
   t_1_Reach_MultBodyAggAux_f2 AS Reach_MultBodyAggAux_f2
-GROUP BY 1 ORDER BY y)
+GROUP BY 1)
 SELECT
   Reach_sn_step.y AS y
 FROM
@@ -1213,7 +1213,7 @@ t_0_Reach_sn_step AS (SELECT
   Reach_MultBodyAggAux_f2.y AS y
 FROM
   t_1_Reach_MultBodyAggAux_f2 AS Reach_MultBodyAggAux_f2
-GROUP BY 1 ORDER BY y)
+GROUP BY 1)
 SELECT
   Reach_sn_step.y AS y
 FROM
@@ -1281,7 +1281,7 @@ t_0_Reach_sn_step AS (SELECT
   Reach_MultBodyAggAux_f2.y AS y
 FROM
   t_1_Reach_MultBodyAggAux_f2 AS Reach_MultBodyAggAux_f2
-GROUP BY 1 ORDER BY y)
+GROUP BY 1)
 SELECT
   Reach_sn_step.y AS y
 FROM
@@ -1349,7 +1349,7 @@ t_0_Reach_sn_step AS (SELECT
   Reach_MultBodyAggAux_f2.y AS y
 FROM
   t_1_Reach_MultBodyAggAux_f2 AS Reach_MultBodyAggAux_f2
-GROUP BY 1 ORDER BY y)
+GROUP BY 1)
 SELECT
   Reach_sn_step.y AS y
 FROM
@@ -1417,7 +1417,7 @@ t_0_Reach_sn_step AS (SELECT
   Reach_MultBodyAggAux_f2.y AS y
 FROM
   t_1_Reach_MultBodyAggAux_f2 AS Reach_MultBodyAggAux_f2
-GROUP BY 1 ORDER BY y)
+GROUP BY 1)
 SELECT
   Reach_sn_step.y AS y
 FROM
@@ -1442,4 +1442,4 @@ FROM
 SELECT
   Reach_sn_full.y AS y
 FROM
-  logica_test.Reach_sn_full AS Reach_sn_full;
+  logica_test.Reach_sn_full AS Reach_sn_full ORDER BY y;

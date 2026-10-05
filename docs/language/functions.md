@@ -28,9 +28,11 @@
 
 ## Type casting
 
+Integer literals are 32-bit on DuckDB, PostgreSQL, Trino, Presto and Databricks, where arithmetic past 2^31 on them fails (or, on Spark without ANSI mode, wraps around): make such arithmetic 64-bit with `ToInt64`, as in `ToInt64(1024) * 1024 * 1024 * 1024`.
+
 | Function | Description |
 |----------|-------------|
-| `ToInt64(x)` | Cast to integer |
+| `ToInt64(x)` | Cast to a 64-bit integer (a fraction is rounded) |
 | `ToFloat64(x)` | Cast to float |
 | `ToString(x)` | Cast to string |
 
@@ -65,6 +67,13 @@ FullName(first, last) = first ++ " " ++ last;
 ```logica
 Greeting(message:) :- Users(first_name:, last_name:),
   message == "Hello, " ++ FullName(first_name, last_name) ++ "!";
+```
+
+A function is a value: compare it to filter. Written as a condition, `IsEven(x)` would hold for every `x` (a function has a row for each argument, true or false), so the verifier refuses it:
+
+```logica
+IsEven(x) = (x % 2 == 0);
+Even(x:) :- Numbers(x:), IsEven(x) == true;
 ```
 
 ## Complete example

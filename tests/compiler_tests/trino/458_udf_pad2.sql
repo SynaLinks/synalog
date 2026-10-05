@@ -1,0 +1,3 @@
+SELECT
+  CASE WHEN (5 < 10) THEN (CONCAT('0', element_at(transform(filter(ARRAY[5], v -> v IS NOT NULL), v -> format('%s', v)), 1))) ELSE element_at(transform(filter(ARRAY[5], v -> v IS NOT NULL), v -> format('%s', v)), 1) END AS a,
+  CASE WHEN (12 < 10) THEN (CONCAT('0', element_at(transform(filter(ARRAY[12], v -> v IS NOT NULL), v -> format('%s', v)), 1))) ELSE element_at(transform(filter(ARRAY[12], v -> v IS NOT NULL), v -> format('%s', v)), 1) END AS b;

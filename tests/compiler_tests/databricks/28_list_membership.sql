@@ -34,6 +34,6 @@ SELECT
   Items.col0 AS name,
   Items.col2 AS price
 FROM
-  t_0_Items AS Items, explode(ARRAY("fruit", "vegetable")) AS pushkin(x_9)
+  t_0_Items AS Items, LATERAL (SELECT explode(ARRAY("fruit", "vegetable")) AS x_9) AS pushkin
 WHERE
-  (Items.col1 = x_9) ORDER BY name;
+  (Items.col1 = x_9) ORDER BY name NULLS LAST;

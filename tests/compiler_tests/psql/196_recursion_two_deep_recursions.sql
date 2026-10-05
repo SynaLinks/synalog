@@ -29,7 +29,7 @@ CREATE TABLE logica_home.A_sn_full AS WITH t_1_A_MultBodyAggAux_f2 AS (SELECT * 
     SELECT
       ((x_11) + (1)) AS y
     FROM
-      logica_home.A_sn_delta AS t_2_A_sn_delta, UNNEST((SELECT ARRAY_AGG(x) FROM GENERATE_SERIES(0, 100 - 1) as x)) as x_11
+      logica_home.A_sn_delta AS t_2_A_sn_delta, UNNEST(COALESCE((SELECT ARRAY_AGG(x) FROM GENERATE_SERIES(0, 100 - 1) as x), '{}')) as x_11
     WHERE
       (t_2_A_sn_delta.y = x_11)
   
@@ -83,7 +83,7 @@ CREATE TABLE logica_home.B_sn_full AS WITH t_1_B_MultBodyAggAux_f4 AS (SELECT * 
     SELECT
       ((x_11) + (1)) AS y
     FROM
-      logica_home.B_sn_delta AS t_2_B_sn_delta, UNNEST((SELECT ARRAY_AGG(x) FROM GENERATE_SERIES(0, 100 - 1) as x)) as x_11
+      logica_home.B_sn_delta AS t_2_B_sn_delta, UNNEST(COALESCE((SELECT ARRAY_AGG(x) FROM GENERATE_SERIES(0, 100 - 1) as x), '{}')) as x_11
     WHERE
       (t_2_B_sn_delta.y = x_11)
   
@@ -122,7 +122,7 @@ CREATE TABLE logica_home.A_sn_new AS WITH t_1_A_MultBodyAggAux_f2 AS (SELECT * F
     SELECT
       ((x_11) + (1)) AS y
     FROM
-      logica_home.A_sn_delta AS t_2_A_sn_delta, UNNEST((SELECT ARRAY_AGG(x) FROM GENERATE_SERIES(0, 100 - 1) as x)) as x_11
+      logica_home.A_sn_delta AS t_2_A_sn_delta, UNNEST(COALESCE((SELECT ARRAY_AGG(x) FROM GENERATE_SERIES(0, 100 - 1) as x), '{}')) as x_11
     WHERE
       (t_2_A_sn_delta.y = x_11)
   
@@ -163,7 +163,7 @@ CREATE TABLE logica_home.A_sn_new AS WITH t_1_A_MultBodyAggAux_f2 AS (SELECT * F
     SELECT
       ((x_11) + (1)) AS y
     FROM
-      logica_home.A_sn_delta AS t_2_A_sn_delta, UNNEST((SELECT ARRAY_AGG(x) FROM GENERATE_SERIES(0, 100 - 1) as x)) as x_11
+      logica_home.A_sn_delta AS t_2_A_sn_delta, UNNEST(COALESCE((SELECT ARRAY_AGG(x) FROM GENERATE_SERIES(0, 100 - 1) as x), '{}')) as x_11
     WHERE
       (t_2_A_sn_delta.y = x_11)
   
@@ -204,7 +204,7 @@ CREATE TABLE logica_home.A_sn_new AS WITH t_1_A_MultBodyAggAux_f2 AS (SELECT * F
     SELECT
       ((x_11) + (1)) AS y
     FROM
-      logica_home.A_sn_delta AS t_2_A_sn_delta, UNNEST((SELECT ARRAY_AGG(x) FROM GENERATE_SERIES(0, 100 - 1) as x)) as x_11
+      logica_home.A_sn_delta AS t_2_A_sn_delta, UNNEST(COALESCE((SELECT ARRAY_AGG(x) FROM GENERATE_SERIES(0, 100 - 1) as x), '{}')) as x_11
     WHERE
       (t_2_A_sn_delta.y = x_11)
   
@@ -245,7 +245,7 @@ CREATE TABLE logica_home.A_sn_new AS WITH t_1_A_MultBodyAggAux_f2 AS (SELECT * F
     SELECT
       ((x_11) + (1)) AS y
     FROM
-      logica_home.A_sn_delta AS t_2_A_sn_delta, UNNEST((SELECT ARRAY_AGG(x) FROM GENERATE_SERIES(0, 100 - 1) as x)) as x_11
+      logica_home.A_sn_delta AS t_2_A_sn_delta, UNNEST(COALESCE((SELECT ARRAY_AGG(x) FROM GENERATE_SERIES(0, 100 - 1) as x), '{}')) as x_11
     WHERE
       (t_2_A_sn_delta.y = x_11)
   
@@ -286,7 +286,7 @@ CREATE TABLE logica_home.A_sn_new AS WITH t_1_A_MultBodyAggAux_f2 AS (SELECT * F
     SELECT
       ((x_11) + (1)) AS y
     FROM
-      logica_home.A_sn_delta AS t_2_A_sn_delta, UNNEST((SELECT ARRAY_AGG(x) FROM GENERATE_SERIES(0, 100 - 1) as x)) as x_11
+      logica_home.A_sn_delta AS t_2_A_sn_delta, UNNEST(COALESCE((SELECT ARRAY_AGG(x) FROM GENERATE_SERIES(0, 100 - 1) as x), '{}')) as x_11
     WHERE
       (t_2_A_sn_delta.y = x_11)
   
@@ -327,7 +327,7 @@ CREATE TABLE logica_home.A_sn_new AS WITH t_1_A_MultBodyAggAux_f2 AS (SELECT * F
     SELECT
       ((x_11) + (1)) AS y
     FROM
-      logica_home.A_sn_delta AS t_2_A_sn_delta, UNNEST((SELECT ARRAY_AGG(x) FROM GENERATE_SERIES(0, 100 - 1) as x)) as x_11
+      logica_home.A_sn_delta AS t_2_A_sn_delta, UNNEST(COALESCE((SELECT ARRAY_AGG(x) FROM GENERATE_SERIES(0, 100 - 1) as x), '{}')) as x_11
     WHERE
       (t_2_A_sn_delta.y = x_11)
   
@@ -368,7 +368,7 @@ CREATE TABLE logica_home.A_sn_new AS WITH t_1_A_MultBodyAggAux_f2 AS (SELECT * F
     SELECT
       ((x_11) + (1)) AS y
     FROM
-      logica_home.A_sn_delta AS t_2_A_sn_delta, UNNEST((SELECT ARRAY_AGG(x) FROM GENERATE_SERIES(0, 100 - 1) as x)) as x_11
+      logica_home.A_sn_delta AS t_2_A_sn_delta, UNNEST(COALESCE((SELECT ARRAY_AGG(x) FROM GENERATE_SERIES(0, 100 - 1) as x), '{}')) as x_11
     WHERE
       (t_2_A_sn_delta.y = x_11)
   
@@ -409,7 +409,7 @@ CREATE TABLE logica_home.A_sn_new AS WITH t_1_A_MultBodyAggAux_f2 AS (SELECT * F
     SELECT
       ((x_11) + (1)) AS y
     FROM
-      logica_home.A_sn_delta AS t_2_A_sn_delta, UNNEST((SELECT ARRAY_AGG(x) FROM GENERATE_SERIES(0, 100 - 1) as x)) as x_11
+      logica_home.A_sn_delta AS t_2_A_sn_delta, UNNEST(COALESCE((SELECT ARRAY_AGG(x) FROM GENERATE_SERIES(0, 100 - 1) as x), '{}')) as x_11
     WHERE
       (t_2_A_sn_delta.y = x_11)
   
@@ -450,7 +450,7 @@ CREATE TABLE logica_home.A_sn_new AS WITH t_1_A_MultBodyAggAux_f2 AS (SELECT * F
     SELECT
       ((x_11) + (1)) AS y
     FROM
-      logica_home.A_sn_delta AS t_2_A_sn_delta, UNNEST((SELECT ARRAY_AGG(x) FROM GENERATE_SERIES(0, 100 - 1) as x)) as x_11
+      logica_home.A_sn_delta AS t_2_A_sn_delta, UNNEST(COALESCE((SELECT ARRAY_AGG(x) FROM GENERATE_SERIES(0, 100 - 1) as x), '{}')) as x_11
     WHERE
       (t_2_A_sn_delta.y = x_11)
   
@@ -491,7 +491,7 @@ CREATE TABLE logica_home.A_sn_new AS WITH t_1_A_MultBodyAggAux_f2 AS (SELECT * F
     SELECT
       ((x_11) + (1)) AS y
     FROM
-      logica_home.A_sn_delta AS t_2_A_sn_delta, UNNEST((SELECT ARRAY_AGG(x) FROM GENERATE_SERIES(0, 100 - 1) as x)) as x_11
+      logica_home.A_sn_delta AS t_2_A_sn_delta, UNNEST(COALESCE((SELECT ARRAY_AGG(x) FROM GENERATE_SERIES(0, 100 - 1) as x), '{}')) as x_11
     WHERE
       (t_2_A_sn_delta.y = x_11)
   
@@ -532,7 +532,7 @@ CREATE TABLE logica_home.A_sn_new AS WITH t_1_A_MultBodyAggAux_f2 AS (SELECT * F
     SELECT
       ((x_11) + (1)) AS y
     FROM
-      logica_home.A_sn_delta AS t_2_A_sn_delta, UNNEST((SELECT ARRAY_AGG(x) FROM GENERATE_SERIES(0, 100 - 1) as x)) as x_11
+      logica_home.A_sn_delta AS t_2_A_sn_delta, UNNEST(COALESCE((SELECT ARRAY_AGG(x) FROM GENERATE_SERIES(0, 100 - 1) as x), '{}')) as x_11
     WHERE
       (t_2_A_sn_delta.y = x_11)
   
@@ -573,7 +573,7 @@ CREATE TABLE logica_home.A_sn_new AS WITH t_1_A_MultBodyAggAux_f2 AS (SELECT * F
     SELECT
       ((x_11) + (1)) AS y
     FROM
-      logica_home.A_sn_delta AS t_2_A_sn_delta, UNNEST((SELECT ARRAY_AGG(x) FROM GENERATE_SERIES(0, 100 - 1) as x)) as x_11
+      logica_home.A_sn_delta AS t_2_A_sn_delta, UNNEST(COALESCE((SELECT ARRAY_AGG(x) FROM GENERATE_SERIES(0, 100 - 1) as x), '{}')) as x_11
     WHERE
       (t_2_A_sn_delta.y = x_11)
   
@@ -614,7 +614,7 @@ CREATE TABLE logica_home.A_sn_new AS WITH t_1_A_MultBodyAggAux_f2 AS (SELECT * F
     SELECT
       ((x_11) + (1)) AS y
     FROM
-      logica_home.A_sn_delta AS t_2_A_sn_delta, UNNEST((SELECT ARRAY_AGG(x) FROM GENERATE_SERIES(0, 100 - 1) as x)) as x_11
+      logica_home.A_sn_delta AS t_2_A_sn_delta, UNNEST(COALESCE((SELECT ARRAY_AGG(x) FROM GENERATE_SERIES(0, 100 - 1) as x), '{}')) as x_11
     WHERE
       (t_2_A_sn_delta.y = x_11)
   
@@ -655,7 +655,7 @@ CREATE TABLE logica_home.A_sn_new AS WITH t_1_A_MultBodyAggAux_f2 AS (SELECT * F
     SELECT
       ((x_11) + (1)) AS y
     FROM
-      logica_home.A_sn_delta AS t_2_A_sn_delta, UNNEST((SELECT ARRAY_AGG(x) FROM GENERATE_SERIES(0, 100 - 1) as x)) as x_11
+      logica_home.A_sn_delta AS t_2_A_sn_delta, UNNEST(COALESCE((SELECT ARRAY_AGG(x) FROM GENERATE_SERIES(0, 100 - 1) as x), '{}')) as x_11
     WHERE
       (t_2_A_sn_delta.y = x_11)
   
@@ -696,7 +696,7 @@ CREATE TABLE logica_home.A_sn_new AS WITH t_1_A_MultBodyAggAux_f2 AS (SELECT * F
     SELECT
       ((x_11) + (1)) AS y
     FROM
-      logica_home.A_sn_delta AS t_2_A_sn_delta, UNNEST((SELECT ARRAY_AGG(x) FROM GENERATE_SERIES(0, 100 - 1) as x)) as x_11
+      logica_home.A_sn_delta AS t_2_A_sn_delta, UNNEST(COALESCE((SELECT ARRAY_AGG(x) FROM GENERATE_SERIES(0, 100 - 1) as x), '{}')) as x_11
     WHERE
       (t_2_A_sn_delta.y = x_11)
   
@@ -737,7 +737,7 @@ CREATE TABLE logica_home.A_sn_new AS WITH t_1_A_MultBodyAggAux_f2 AS (SELECT * F
     SELECT
       ((x_11) + (1)) AS y
     FROM
-      logica_home.A_sn_delta AS t_2_A_sn_delta, UNNEST((SELECT ARRAY_AGG(x) FROM GENERATE_SERIES(0, 100 - 1) as x)) as x_11
+      logica_home.A_sn_delta AS t_2_A_sn_delta, UNNEST(COALESCE((SELECT ARRAY_AGG(x) FROM GENERATE_SERIES(0, 100 - 1) as x), '{}')) as x_11
     WHERE
       (t_2_A_sn_delta.y = x_11)
   
@@ -778,7 +778,7 @@ CREATE TABLE logica_home.A_sn_new AS WITH t_1_A_MultBodyAggAux_f2 AS (SELECT * F
     SELECT
       ((x_11) + (1)) AS y
     FROM
-      logica_home.A_sn_delta AS t_2_A_sn_delta, UNNEST((SELECT ARRAY_AGG(x) FROM GENERATE_SERIES(0, 100 - 1) as x)) as x_11
+      logica_home.A_sn_delta AS t_2_A_sn_delta, UNNEST(COALESCE((SELECT ARRAY_AGG(x) FROM GENERATE_SERIES(0, 100 - 1) as x), '{}')) as x_11
     WHERE
       (t_2_A_sn_delta.y = x_11)
   
@@ -819,7 +819,7 @@ CREATE TABLE logica_home.A_sn_new AS WITH t_1_A_MultBodyAggAux_f2 AS (SELECT * F
     SELECT
       ((x_11) + (1)) AS y
     FROM
-      logica_home.A_sn_delta AS t_2_A_sn_delta, UNNEST((SELECT ARRAY_AGG(x) FROM GENERATE_SERIES(0, 100 - 1) as x)) as x_11
+      logica_home.A_sn_delta AS t_2_A_sn_delta, UNNEST(COALESCE((SELECT ARRAY_AGG(x) FROM GENERATE_SERIES(0, 100 - 1) as x), '{}')) as x_11
     WHERE
       (t_2_A_sn_delta.y = x_11)
   
@@ -860,7 +860,7 @@ CREATE TABLE logica_home.A_sn_new AS WITH t_1_A_MultBodyAggAux_f2 AS (SELECT * F
     SELECT
       ((x_11) + (1)) AS y
     FROM
-      logica_home.A_sn_delta AS t_2_A_sn_delta, UNNEST((SELECT ARRAY_AGG(x) FROM GENERATE_SERIES(0, 100 - 1) as x)) as x_11
+      logica_home.A_sn_delta AS t_2_A_sn_delta, UNNEST(COALESCE((SELECT ARRAY_AGG(x) FROM GENERATE_SERIES(0, 100 - 1) as x), '{}')) as x_11
     WHERE
       (t_2_A_sn_delta.y = x_11)
   
@@ -901,7 +901,7 @@ CREATE TABLE logica_home.A_sn_new AS WITH t_1_A_MultBodyAggAux_f2 AS (SELECT * F
     SELECT
       ((x_11) + (1)) AS y
     FROM
-      logica_home.A_sn_delta AS t_2_A_sn_delta, UNNEST((SELECT ARRAY_AGG(x) FROM GENERATE_SERIES(0, 100 - 1) as x)) as x_11
+      logica_home.A_sn_delta AS t_2_A_sn_delta, UNNEST(COALESCE((SELECT ARRAY_AGG(x) FROM GENERATE_SERIES(0, 100 - 1) as x), '{}')) as x_11
     WHERE
       (t_2_A_sn_delta.y = x_11)
   
@@ -942,7 +942,7 @@ CREATE TABLE logica_home.A_sn_new AS WITH t_1_A_MultBodyAggAux_f2 AS (SELECT * F
     SELECT
       ((x_11) + (1)) AS y
     FROM
-      logica_home.A_sn_delta AS t_2_A_sn_delta, UNNEST((SELECT ARRAY_AGG(x) FROM GENERATE_SERIES(0, 100 - 1) as x)) as x_11
+      logica_home.A_sn_delta AS t_2_A_sn_delta, UNNEST(COALESCE((SELECT ARRAY_AGG(x) FROM GENERATE_SERIES(0, 100 - 1) as x), '{}')) as x_11
     WHERE
       (t_2_A_sn_delta.y = x_11)
   
@@ -983,7 +983,7 @@ CREATE TABLE logica_home.B_sn_new AS WITH t_1_B_MultBodyAggAux_f4 AS (SELECT * F
     SELECT
       ((x_11) + (1)) AS y
     FROM
-      logica_home.B_sn_delta AS t_2_B_sn_delta, UNNEST((SELECT ARRAY_AGG(x) FROM GENERATE_SERIES(0, 100 - 1) as x)) as x_11
+      logica_home.B_sn_delta AS t_2_B_sn_delta, UNNEST(COALESCE((SELECT ARRAY_AGG(x) FROM GENERATE_SERIES(0, 100 - 1) as x), '{}')) as x_11
     WHERE
       (t_2_B_sn_delta.y = x_11)
   
@@ -1024,7 +1024,7 @@ CREATE TABLE logica_home.B_sn_new AS WITH t_1_B_MultBodyAggAux_f4 AS (SELECT * F
     SELECT
       ((x_11) + (1)) AS y
     FROM
-      logica_home.B_sn_delta AS t_2_B_sn_delta, UNNEST((SELECT ARRAY_AGG(x) FROM GENERATE_SERIES(0, 100 - 1) as x)) as x_11
+      logica_home.B_sn_delta AS t_2_B_sn_delta, UNNEST(COALESCE((SELECT ARRAY_AGG(x) FROM GENERATE_SERIES(0, 100 - 1) as x), '{}')) as x_11
     WHERE
       (t_2_B_sn_delta.y = x_11)
   
@@ -1065,7 +1065,7 @@ CREATE TABLE logica_home.B_sn_new AS WITH t_1_B_MultBodyAggAux_f4 AS (SELECT * F
     SELECT
       ((x_11) + (1)) AS y
     FROM
-      logica_home.B_sn_delta AS t_2_B_sn_delta, UNNEST((SELECT ARRAY_AGG(x) FROM GENERATE_SERIES(0, 100 - 1) as x)) as x_11
+      logica_home.B_sn_delta AS t_2_B_sn_delta, UNNEST(COALESCE((SELECT ARRAY_AGG(x) FROM GENERATE_SERIES(0, 100 - 1) as x), '{}')) as x_11
     WHERE
       (t_2_B_sn_delta.y = x_11)
   
@@ -1106,7 +1106,7 @@ CREATE TABLE logica_home.B_sn_new AS WITH t_1_B_MultBodyAggAux_f4 AS (SELECT * F
     SELECT
       ((x_11) + (1)) AS y
     FROM
-      logica_home.B_sn_delta AS t_2_B_sn_delta, UNNEST((SELECT ARRAY_AGG(x) FROM GENERATE_SERIES(0, 100 - 1) as x)) as x_11
+      logica_home.B_sn_delta AS t_2_B_sn_delta, UNNEST(COALESCE((SELECT ARRAY_AGG(x) FROM GENERATE_SERIES(0, 100 - 1) as x), '{}')) as x_11
     WHERE
       (t_2_B_sn_delta.y = x_11)
   
@@ -1147,7 +1147,7 @@ CREATE TABLE logica_home.B_sn_new AS WITH t_1_B_MultBodyAggAux_f4 AS (SELECT * F
     SELECT
       ((x_11) + (1)) AS y
     FROM
-      logica_home.B_sn_delta AS t_2_B_sn_delta, UNNEST((SELECT ARRAY_AGG(x) FROM GENERATE_SERIES(0, 100 - 1) as x)) as x_11
+      logica_home.B_sn_delta AS t_2_B_sn_delta, UNNEST(COALESCE((SELECT ARRAY_AGG(x) FROM GENERATE_SERIES(0, 100 - 1) as x), '{}')) as x_11
     WHERE
       (t_2_B_sn_delta.y = x_11)
   
@@ -1188,7 +1188,7 @@ CREATE TABLE logica_home.B_sn_new AS WITH t_1_B_MultBodyAggAux_f4 AS (SELECT * F
     SELECT
       ((x_11) + (1)) AS y
     FROM
-      logica_home.B_sn_delta AS t_2_B_sn_delta, UNNEST((SELECT ARRAY_AGG(x) FROM GENERATE_SERIES(0, 100 - 1) as x)) as x_11
+      logica_home.B_sn_delta AS t_2_B_sn_delta, UNNEST(COALESCE((SELECT ARRAY_AGG(x) FROM GENERATE_SERIES(0, 100 - 1) as x), '{}')) as x_11
     WHERE
       (t_2_B_sn_delta.y = x_11)
   
@@ -1229,7 +1229,7 @@ CREATE TABLE logica_home.B_sn_new AS WITH t_1_B_MultBodyAggAux_f4 AS (SELECT * F
     SELECT
       ((x_11) + (1)) AS y
     FROM
-      logica_home.B_sn_delta AS t_2_B_sn_delta, UNNEST((SELECT ARRAY_AGG(x) FROM GENERATE_SERIES(0, 100 - 1) as x)) as x_11
+      logica_home.B_sn_delta AS t_2_B_sn_delta, UNNEST(COALESCE((SELECT ARRAY_AGG(x) FROM GENERATE_SERIES(0, 100 - 1) as x), '{}')) as x_11
     WHERE
       (t_2_B_sn_delta.y = x_11)
   
@@ -1270,7 +1270,7 @@ CREATE TABLE logica_home.B_sn_new AS WITH t_1_B_MultBodyAggAux_f4 AS (SELECT * F
     SELECT
       ((x_11) + (1)) AS y
     FROM
-      logica_home.B_sn_delta AS t_2_B_sn_delta, UNNEST((SELECT ARRAY_AGG(x) FROM GENERATE_SERIES(0, 100 - 1) as x)) as x_11
+      logica_home.B_sn_delta AS t_2_B_sn_delta, UNNEST(COALESCE((SELECT ARRAY_AGG(x) FROM GENERATE_SERIES(0, 100 - 1) as x), '{}')) as x_11
     WHERE
       (t_2_B_sn_delta.y = x_11)
   
@@ -1311,7 +1311,7 @@ CREATE TABLE logica_home.B_sn_new AS WITH t_1_B_MultBodyAggAux_f4 AS (SELECT * F
     SELECT
       ((x_11) + (1)) AS y
     FROM
-      logica_home.B_sn_delta AS t_2_B_sn_delta, UNNEST((SELECT ARRAY_AGG(x) FROM GENERATE_SERIES(0, 100 - 1) as x)) as x_11
+      logica_home.B_sn_delta AS t_2_B_sn_delta, UNNEST(COALESCE((SELECT ARRAY_AGG(x) FROM GENERATE_SERIES(0, 100 - 1) as x), '{}')) as x_11
     WHERE
       (t_2_B_sn_delta.y = x_11)
   
@@ -1352,7 +1352,7 @@ CREATE TABLE logica_home.B_sn_new AS WITH t_1_B_MultBodyAggAux_f4 AS (SELECT * F
     SELECT
       ((x_11) + (1)) AS y
     FROM
-      logica_home.B_sn_delta AS t_2_B_sn_delta, UNNEST((SELECT ARRAY_AGG(x) FROM GENERATE_SERIES(0, 100 - 1) as x)) as x_11
+      logica_home.B_sn_delta AS t_2_B_sn_delta, UNNEST(COALESCE((SELECT ARRAY_AGG(x) FROM GENERATE_SERIES(0, 100 - 1) as x), '{}')) as x_11
     WHERE
       (t_2_B_sn_delta.y = x_11)
   
@@ -1393,7 +1393,7 @@ CREATE TABLE logica_home.B_sn_new AS WITH t_1_B_MultBodyAggAux_f4 AS (SELECT * F
     SELECT
       ((x_11) + (1)) AS y
     FROM
-      logica_home.B_sn_delta AS t_2_B_sn_delta, UNNEST((SELECT ARRAY_AGG(x) FROM GENERATE_SERIES(0, 100 - 1) as x)) as x_11
+      logica_home.B_sn_delta AS t_2_B_sn_delta, UNNEST(COALESCE((SELECT ARRAY_AGG(x) FROM GENERATE_SERIES(0, 100 - 1) as x), '{}')) as x_11
     WHERE
       (t_2_B_sn_delta.y = x_11)
   
@@ -1434,7 +1434,7 @@ CREATE TABLE logica_home.B_sn_new AS WITH t_1_B_MultBodyAggAux_f4 AS (SELECT * F
     SELECT
       ((x_11) + (1)) AS y
     FROM
-      logica_home.B_sn_delta AS t_2_B_sn_delta, UNNEST((SELECT ARRAY_AGG(x) FROM GENERATE_SERIES(0, 100 - 1) as x)) as x_11
+      logica_home.B_sn_delta AS t_2_B_sn_delta, UNNEST(COALESCE((SELECT ARRAY_AGG(x) FROM GENERATE_SERIES(0, 100 - 1) as x), '{}')) as x_11
     WHERE
       (t_2_B_sn_delta.y = x_11)
   
@@ -1475,7 +1475,7 @@ CREATE TABLE logica_home.B_sn_new AS WITH t_1_B_MultBodyAggAux_f4 AS (SELECT * F
     SELECT
       ((x_11) + (1)) AS y
     FROM
-      logica_home.B_sn_delta AS t_2_B_sn_delta, UNNEST((SELECT ARRAY_AGG(x) FROM GENERATE_SERIES(0, 100 - 1) as x)) as x_11
+      logica_home.B_sn_delta AS t_2_B_sn_delta, UNNEST(COALESCE((SELECT ARRAY_AGG(x) FROM GENERATE_SERIES(0, 100 - 1) as x), '{}')) as x_11
     WHERE
       (t_2_B_sn_delta.y = x_11)
   
@@ -1516,7 +1516,7 @@ CREATE TABLE logica_home.B_sn_new AS WITH t_1_B_MultBodyAggAux_f4 AS (SELECT * F
     SELECT
       ((x_11) + (1)) AS y
     FROM
-      logica_home.B_sn_delta AS t_2_B_sn_delta, UNNEST((SELECT ARRAY_AGG(x) FROM GENERATE_SERIES(0, 100 - 1) as x)) as x_11
+      logica_home.B_sn_delta AS t_2_B_sn_delta, UNNEST(COALESCE((SELECT ARRAY_AGG(x) FROM GENERATE_SERIES(0, 100 - 1) as x), '{}')) as x_11
     WHERE
       (t_2_B_sn_delta.y = x_11)
   
@@ -1557,7 +1557,7 @@ CREATE TABLE logica_home.B_sn_new AS WITH t_1_B_MultBodyAggAux_f4 AS (SELECT * F
     SELECT
       ((x_11) + (1)) AS y
     FROM
-      logica_home.B_sn_delta AS t_2_B_sn_delta, UNNEST((SELECT ARRAY_AGG(x) FROM GENERATE_SERIES(0, 100 - 1) as x)) as x_11
+      logica_home.B_sn_delta AS t_2_B_sn_delta, UNNEST(COALESCE((SELECT ARRAY_AGG(x) FROM GENERATE_SERIES(0, 100 - 1) as x), '{}')) as x_11
     WHERE
       (t_2_B_sn_delta.y = x_11)
   
@@ -1598,7 +1598,7 @@ CREATE TABLE logica_home.B_sn_new AS WITH t_1_B_MultBodyAggAux_f4 AS (SELECT * F
     SELECT
       ((x_11) + (1)) AS y
     FROM
-      logica_home.B_sn_delta AS t_2_B_sn_delta, UNNEST((SELECT ARRAY_AGG(x) FROM GENERATE_SERIES(0, 100 - 1) as x)) as x_11
+      logica_home.B_sn_delta AS t_2_B_sn_delta, UNNEST(COALESCE((SELECT ARRAY_AGG(x) FROM GENERATE_SERIES(0, 100 - 1) as x), '{}')) as x_11
     WHERE
       (t_2_B_sn_delta.y = x_11)
   
@@ -1639,7 +1639,7 @@ CREATE TABLE logica_home.B_sn_new AS WITH t_1_B_MultBodyAggAux_f4 AS (SELECT * F
     SELECT
       ((x_11) + (1)) AS y
     FROM
-      logica_home.B_sn_delta AS t_2_B_sn_delta, UNNEST((SELECT ARRAY_AGG(x) FROM GENERATE_SERIES(0, 100 - 1) as x)) as x_11
+      logica_home.B_sn_delta AS t_2_B_sn_delta, UNNEST(COALESCE((SELECT ARRAY_AGG(x) FROM GENERATE_SERIES(0, 100 - 1) as x), '{}')) as x_11
     WHERE
       (t_2_B_sn_delta.y = x_11)
   
@@ -1680,7 +1680,7 @@ CREATE TABLE logica_home.B_sn_new AS WITH t_1_B_MultBodyAggAux_f4 AS (SELECT * F
     SELECT
       ((x_11) + (1)) AS y
     FROM
-      logica_home.B_sn_delta AS t_2_B_sn_delta, UNNEST((SELECT ARRAY_AGG(x) FROM GENERATE_SERIES(0, 100 - 1) as x)) as x_11
+      logica_home.B_sn_delta AS t_2_B_sn_delta, UNNEST(COALESCE((SELECT ARRAY_AGG(x) FROM GENERATE_SERIES(0, 100 - 1) as x), '{}')) as x_11
     WHERE
       (t_2_B_sn_delta.y = x_11)
   
@@ -1721,7 +1721,7 @@ CREATE TABLE logica_home.B_sn_new AS WITH t_1_B_MultBodyAggAux_f4 AS (SELECT * F
     SELECT
       ((x_11) + (1)) AS y
     FROM
-      logica_home.B_sn_delta AS t_2_B_sn_delta, UNNEST((SELECT ARRAY_AGG(x) FROM GENERATE_SERIES(0, 100 - 1) as x)) as x_11
+      logica_home.B_sn_delta AS t_2_B_sn_delta, UNNEST(COALESCE((SELECT ARRAY_AGG(x) FROM GENERATE_SERIES(0, 100 - 1) as x), '{}')) as x_11
     WHERE
       (t_2_B_sn_delta.y = x_11)
   
@@ -1762,7 +1762,7 @@ CREATE TABLE logica_home.B_sn_new AS WITH t_1_B_MultBodyAggAux_f4 AS (SELECT * F
     SELECT
       ((x_11) + (1)) AS y
     FROM
-      logica_home.B_sn_delta AS t_2_B_sn_delta, UNNEST((SELECT ARRAY_AGG(x) FROM GENERATE_SERIES(0, 100 - 1) as x)) as x_11
+      logica_home.B_sn_delta AS t_2_B_sn_delta, UNNEST(COALESCE((SELECT ARRAY_AGG(x) FROM GENERATE_SERIES(0, 100 - 1) as x), '{}')) as x_11
     WHERE
       (t_2_B_sn_delta.y = x_11)
   
@@ -1803,7 +1803,7 @@ CREATE TABLE logica_home.B_sn_new AS WITH t_1_B_MultBodyAggAux_f4 AS (SELECT * F
     SELECT
       ((x_11) + (1)) AS y
     FROM
-      logica_home.B_sn_delta AS t_2_B_sn_delta, UNNEST((SELECT ARRAY_AGG(x) FROM GENERATE_SERIES(0, 100 - 1) as x)) as x_11
+      logica_home.B_sn_delta AS t_2_B_sn_delta, UNNEST(COALESCE((SELECT ARRAY_AGG(x) FROM GENERATE_SERIES(0, 100 - 1) as x), '{}')) as x_11
     WHERE
       (t_2_B_sn_delta.y = x_11)
   
@@ -1844,7 +1844,7 @@ CREATE TABLE logica_home.B_sn_new AS WITH t_1_B_MultBodyAggAux_f4 AS (SELECT * F
     SELECT
       ((x_11) + (1)) AS y
     FROM
-      logica_home.B_sn_delta AS t_2_B_sn_delta, UNNEST((SELECT ARRAY_AGG(x) FROM GENERATE_SERIES(0, 100 - 1) as x)) as x_11
+      logica_home.B_sn_delta AS t_2_B_sn_delta, UNNEST(COALESCE((SELECT ARRAY_AGG(x) FROM GENERATE_SERIES(0, 100 - 1) as x), '{}')) as x_11
     WHERE
       (t_2_B_sn_delta.y = x_11)
   

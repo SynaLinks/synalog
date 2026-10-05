@@ -36,6 +36,11 @@ pub enum SafetyError {
         rule: String,
         var: String,
     },
+    /// A function used as a condition: it holds whatever the function's value.
+    FunctionAsCondition {
+        rule: String,
+        function: String,
+    },
 }
 
 impl std::fmt::Display for SafetyError {
@@ -52,6 +57,9 @@ impl std::fmt::Display for SafetyError {
             }
             SafetyError::UnsafeAggregation { rule, var } => {
                 write!(f, "Unsafe aggregation: variable '{}' not bound outside aggregate in: {}", var, rule)
+            }
+            SafetyError::FunctionAsCondition { rule, function } => {
+                write!(f, "{}", crate::errors::function_as_condition_message(function, rule))
             }
         }
     }
@@ -73,6 +81,9 @@ impl From<SafetyError> for VerifyError {
             }
             SafetyError::UnsafeAggregation { rule, var } => {
                 VerifyError::UnsafeAggregation { var, rule }
+            }
+            SafetyError::FunctionAsCondition { rule, function } => {
+                VerifyError::FunctionAsCondition { function, rule }
             }
         }
     }
@@ -200,7 +211,65 @@ pub fn check_rule_safety(rule: &Json) -> Vec<SafetyError> {
 
 /// Run all safety checks on a program's rules.
 pub fn check_safety(rules: &[&Json]) -> Vec<SafetyError> {
-    rules.iter().flat_map(|r| check_rule_safety(r)).collect()
+    let mut errors: Vec<SafetyError> = rules.iter().flat_map(|r| check_rule_safety(r)).collect();
+    errors.extend(check_functions_as_conditions(rules));
+    errors
+}
+
+/// A function (`F(x) = ...`) written as a condition, `F(x)` in a body: a
+/// function has a row for every argument, whatever its value, so the
+/// condition holds for every `x`, also where `F(x)` is false. Its value is
+/// compared instead (`F(x) == true`).
+fn check_functions_as_conditions(rules: &[&Json]) -> Vec<SafetyError> {
+    let has_value = |record: &Json| {
+        record.as_object().get("field_value").is_some_and(|fvs| {
+            fvs.as_array().iter().any(|fv| {
+                let field = &fv.as_object()["field"];
+                field.is_string() && field.as_str() == "logica_value"
+            })
+        })
+    };
+    // Functions: predicates every rule of which defines a value.
+    let mut defines: std::collections::HashMap<String, bool> = std::collections::HashMap::new();
+    for rule in rules {
+        let head = rule.as_object()["head"].as_object();
+        let name = head["predicate_name"].as_str().to_string();
+        let value = head.get("record").is_some_and(|r| has_value(r));
+        defines.entry(name).and_modify(|all| *all &= value).or_insert(value);
+    }
+    fn conditions<'a>(json: &'a Json, out: &mut Vec<&'a Json>) {
+        match json {
+            Json::Object(o) => {
+                if let Some(p) = o.get("predicate") {
+                    out.push(p);
+                }
+                for (key, value) in o.iter() {
+                    if key != "predicate" {
+                        conditions(value, out);
+                    }
+                }
+            }
+            Json::Array(items) => items.iter().for_each(|i| conditions(i, out)),
+            _ => {}
+        }
+    }
+    let mut errors = Vec::new();
+    for rule in rules {
+        let Some(body) = rule.as_object().get("body") else { continue };
+        let mut found = Vec::new();
+        conditions(body, &mut found);
+        for p in found {
+            let name = p.as_object()["predicate_name"].as_str();
+            let is_function = defines.get(name).copied().unwrap_or(false);
+            if is_function && !p.as_object().get("record").is_some_and(|r| has_value(r)) {
+                errors.push(SafetyError::FunctionAsCondition {
+                    rule: rule_text(rule),
+                    function: name.to_string(),
+                });
+            }
+        }
+    }
+    errors
 }
 
 #[cfg(test)]
@@ -210,6 +279,25 @@ mod tests {
 
     fn parse(code: &str) -> Json {
         parse_file(code, None, &[]).unwrap()
+    }
+
+    fn program_safety(code: &str) -> Vec<String> {
+        let parsed = parse(code);
+        let rules: Vec<&Json> = parsed.as_object()["rule"].as_array().iter().collect();
+        check_safety(&rules).iter().map(|e| e.to_string()).collect()
+    }
+
+    #[test]
+    fn test_function_as_a_condition_is_refused() {
+        let errors = program_safety("IsEven(x) = (x % 2 == 0);\nV(x: 1);\nE(x:) :- V(x:), IsEven(x);\n");
+        assert_eq!(errors.len(), 1, "{:?}", errors);
+        assert!(errors[0].contains("'IsEven' is a function"), "{}", errors[0]);
+    }
+
+    #[test]
+    fn test_function_value_compared_is_safe() {
+        let errors = program_safety("IsEven(x) = (x % 2 == 0);\nV(x: 1);\nE(x:) :- V(x:), IsEven(x) == true;\n");
+        assert!(errors.is_empty(), "{:?}", errors);
     }
 
     #[test]

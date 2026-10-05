@@ -1,0 +1,6 @@
+SELECT
+  FORMAT_STRING("%05d", -42) AS a,
+  FORMAT_STRING("%.2f", 3.14159E0) AS b,
+  FORMAT_STRING("%3s|%-3s|", "a", "b") AS c,
+  FORMAT_STRING("100%%") AS d,
+  FORMAT_STRING("%d", 1234567) AS e;
