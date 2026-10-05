@@ -1,4 +1,5 @@
-WITH t_3_Employees AS (SELECT * FROM (
+DROP TABLE IF EXISTS logica_test.Person;
+CREATE TABLE logica_test.Person AS WITH t_0_Employees AS (SELECT * FROM (
   
     SELECT
       1 AS person_id,
@@ -44,15 +45,18 @@ WITH t_3_Employees AS (SELECT * FROM (
       'active' AS status,
       'https://x/eve' AS url
   
-) AS UNUSED_TABLE_NAME  ),
-t_2_Person AS (SELECT
+) AS UNUSED_TABLE_NAME  )
+SELECT
   Employees.person_id AS person_id,
   Employees.name AS name,
   Employees.url AS url
 FROM
-  t_3_Employees AS Employees
-GROUP BY 1, 2, 3 ORDER BY person_id),
-t_5_Mentoring AS (SELECT * FROM (
+  t_0_Employees AS Employees
+GROUP BY 1, 2, 3 ORDER BY person_id;
+
+-- Interacting with table logica_test.Person
+
+WITH t_2_Mentoring AS (SELECT * FROM (
   
     SELECT
       2 AS mentor_id,
@@ -68,7 +72,7 @@ t_0_Mentors AS (SELECT
   Person.person_id AS mentor_id,
   t_1_Person.person_id AS mentee_id
 FROM
-  t_2_Person AS Person, t_2_Person AS t_1_Person, t_5_Mentoring AS Mentoring
+  logica_test.Person AS Person, logica_test.Person AS t_1_Person, t_2_Mentoring AS Mentoring
 WHERE
   (Mentoring.mentor_id = Person.person_id) AND
   (Mentoring.mentee_id = t_1_Person.person_id)

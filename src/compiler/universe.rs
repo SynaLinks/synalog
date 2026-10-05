@@ -614,6 +614,17 @@ impl LogicaProgram {
         if let Some(e) = engine_override {
             annotations.engine = e.to_string();
         }
+        // Presto and Trino inline a CTE everywhere it is read: a predicate
+        // read by several rules, each read by several more, is copied until
+        // the query passes their limit of stages (100 on Presto, 150 on
+        // Trino), as edges joined through shared nodes do. A derived predicate
+        // read more than once is materialized, as @Ground does.
+        if matches!(annotations.engine.as_str(), "presto" | "trino") {
+            for name in reused_derived_predicates(&rules) {
+                let entry = annotations.annotations.entry(name.clone()).or_default();
+                entry.entry("ground".to_string()).or_insert(Json::Str(name));
+            }
+        }
 
         // Build flag values
         let mut flag_values = annotations.flag_values.clone();
@@ -2575,4 +2586,64 @@ fn constant_select(sql: &str) -> Option<Vec<(String, String)>> {
             (plain && !expr.is_empty() && !column.is_empty()).then(|| (expr.to_string(), column.to_string()))
         })
         .collect()
+}
+
+/// The predicates read more than once in rule bodies (including negations)
+/// whose rules read other predicates, without the ones the compiler writes
+/// for recursions, which are tables already.
+fn reused_derived_predicates(rules: &[(String, Json)]) -> Vec<String> {
+    fn reads(json: &Json, out: &mut Vec<String>) {
+        match json {
+            Json::Object(o) => {
+                if let Some(p) = o.get("predicate").filter(|p| p.is_object()) {
+                    if let Some(name) = p.as_object().get("predicate_name") {
+                        if name.is_string() {
+                            out.push(name.as_str().to_string());
+                        }
+                    }
+                }
+                for (_, value) in o.iter() {
+                    reads(value, out);
+                }
+            }
+            Json::Array(items) => items.iter().for_each(|i| reads(i, out)),
+            _ => {}
+        }
+    }
+    let generated = |name: &str| {
+        name.contains("_MultBodyAggAux")
+            || name.contains("_recursive")
+            || name.contains("_sn_")
+            || ["_ROne", "_RZero"].iter().any(|s| name.ends_with(s))
+            || name
+                .rsplit_once('_')
+                .is_some_and(|(_, tail)| {
+                    let t = tail.trim_start_matches("ifr").trim_start_matches("fr").trim_start_matches('r');
+                    !t.is_empty() && t.len() < tail.len() && t.chars().all(|c| c.is_ascii_digit())
+                })
+    };
+    let mut counts: HashMap<String, usize> = HashMap::new();
+    let mut derived: HashSet<String> = HashSet::new();
+    for (name, rule) in rules {
+        if name.starts_with('@') {
+            continue;
+        }
+        if let Some(body) = rule.as_object().get("body") {
+            let mut found = Vec::new();
+            reads(body, &mut found);
+            if !found.is_empty() {
+                derived.insert(name.clone());
+            }
+            for f in found {
+                *counts.entry(f).or_default() += 1;
+            }
+        }
+    }
+    let mut out: Vec<String> = counts
+        .into_iter()
+        .filter(|(name, n)| *n > 1 && derived.contains(name) && !generated(name))
+        .map(|(name, _)| name)
+        .collect();
+    out.sort();
+    out
 }

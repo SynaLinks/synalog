@@ -1,4 +1,5 @@
-WITH t_2_Sales AS (SELECT * FROM (
+DROP TABLE IF EXISTS logica_test.BestQuarter;
+CREATE TABLE logica_test.BestQuarter AS WITH t_1_Sales AS (SELECT * FROM (
   
     SELECT
       'North' AS col0,
@@ -53,15 +54,18 @@ WITH t_2_Sales AS (SELECT * FROM (
       'Q3' AS col1,
       95 AS col2
   
-) AS UNUSED_TABLE_NAME  ),
-t_0_BestQuarter AS (SELECT
+) AS UNUSED_TABLE_NAME  )
+SELECT
   Sales.col0 AS col0,
   (ARRAY_AGG(Sales.col1 order by Sales.col2 desc))[1] AS best_quarter
 FROM
-  t_2_Sales AS Sales
-GROUP BY 1)
+  t_1_Sales AS Sales
+GROUP BY 1;
+
+-- Interacting with table logica_test.BestQuarter
+
 SELECT
   BestQuarter.col0 AS region,
   BestQuarter.best_quarter AS best_quarter
 FROM
-  t_0_BestQuarter AS BestQuarter ORDER BY region;
+  logica_test.BestQuarter AS BestQuarter ORDER BY region;

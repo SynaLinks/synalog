@@ -1,4 +1,5 @@
-WITH t_1_Transactions AS (SELECT * FROM (
+DROP TABLE IF EXISTS logica_test.CustomerStats;
+CREATE TABLE logica_test.CustomerStats AS WITH t_0_Transactions AS (SELECT * FROM (
   
     SELECT
       'Alice' AS col0,
@@ -47,8 +48,8 @@ WITH t_1_Transactions AS (SELECT * FROM (
       'purchase' AS col1,
       100 AS col2
   
-) AS UNUSED_TABLE_NAME  ),
-t_0_CustomerStats AS (SELECT
+) AS UNUSED_TABLE_NAME  )
+SELECT
   Transactions.col0 AS col0,
   SUM(Transactions.col2) AS total,
   SUM(1) AS count,
@@ -56,12 +57,15 @@ t_0_CustomerStats AS (SELECT
   MIN(Transactions.col2) AS min_txn,
   AVG(Transactions.col2) AS avg_txn
 FROM
-  t_1_Transactions AS Transactions
-GROUP BY 1)
+  t_0_Transactions AS Transactions
+GROUP BY 1;
+
+-- Interacting with table logica_test.CustomerStats
+
 SELECT
   CustomerStats.col0 AS customer,
   CustomerStats.total AS total,
   CustomerStats.count AS count,
   CustomerStats.max_txn AS max_txn
 FROM
-  t_0_CustomerStats AS CustomerStats ORDER BY customer;
+  logica_test.CustomerStats AS CustomerStats ORDER BY customer;

@@ -1,4 +1,5 @@
-WITH t_4_Employees AS (SELECT * FROM (
+DROP TABLE IF EXISTS logica_test.Person;
+CREATE TABLE logica_test.Person AS WITH t_0_Employees AS (SELECT * FROM (
   
     SELECT
       1 AS person_id,
@@ -44,15 +45,18 @@ WITH t_4_Employees AS (SELECT * FROM (
       'active' AS status,
       'https://x/eve' AS url
   
-) AS UNUSED_TABLE_NAME  ),
-t_3_Person AS (SELECT
+) AS UNUSED_TABLE_NAME  )
+SELECT
   Employees.person_id AS person_id,
   Employees.name AS name,
   Employees.url AS url
 FROM
-  t_4_Employees AS Employees
-GROUP BY 1, 2, 3 ORDER BY person_id),
-t_6_Management AS (SELECT * FROM (
+  t_0_Employees AS Employees
+GROUP BY 1, 2, 3 ORDER BY person_id;
+
+-- Interacting with table logica_test.Person
+
+WITH t_3_Management AS (SELECT * FROM (
   
     SELECT
       1 AS manager_id,
@@ -78,12 +82,12 @@ t_1_Manages AS (SELECT
   Person.person_id AS manager_id,
   t_2_Person.person_id AS employee_id
 FROM
-  t_3_Person AS Person, t_3_Person AS t_2_Person, t_6_Management AS Management
+  logica_test.Person AS Person, logica_test.Person AS t_2_Person, t_3_Management AS Management
 WHERE
   (Management.manager_id = Person.person_id) AND
   (Management.employee_id = t_2_Person.person_id)
 GROUP BY 1, 2),
-t_10_Mentoring AS (SELECT * FROM (
+t_7_Mentoring AS (SELECT * FROM (
   
     SELECT
       2 AS mentor_id,
@@ -95,14 +99,14 @@ t_10_Mentoring AS (SELECT * FROM (
       4 AS mentee_id
   
 ) AS UNUSED_TABLE_NAME  ),
-t_7_Mentors AS (SELECT
-  t_8_Person.person_id AS mentor_id,
-  t_9_Person.person_id AS mentee_id
+t_4_Mentors AS (SELECT
+  t_5_Person.person_id AS mentor_id,
+  t_6_Person.person_id AS mentee_id
 FROM
-  t_3_Person AS t_8_Person, t_3_Person AS t_9_Person, t_10_Mentoring AS Mentoring
+  logica_test.Person AS t_5_Person, logica_test.Person AS t_6_Person, t_7_Mentoring AS Mentoring
 WHERE
-  (Mentoring.mentor_id = t_8_Person.person_id) AND
-  (Mentoring.mentee_id = t_9_Person.person_id)
+  (Mentoring.mentor_id = t_5_Person.person_id) AND
+  (Mentoring.mentee_id = t_6_Person.person_id)
 GROUP BY 1, 2),
 t_0_Related_MultBodyAggAux AS (SELECT * FROM (
   
@@ -119,7 +123,7 @@ t_0_Related_MultBodyAggAux AS (SELECT * FROM (
       Mentors.mentee_id AS target_id,
       'mentors' AS type
     FROM
-      t_7_Mentors AS Mentors
+      t_4_Mentors AS Mentors
   
 ) AS UNUSED_TABLE_NAME  )
 SELECT

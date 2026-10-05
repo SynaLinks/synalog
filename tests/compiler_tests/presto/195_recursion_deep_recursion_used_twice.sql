@@ -913,14 +913,22 @@ CREATE TABLE logica_test.Reach_sn_delta AS SELECT
 FROM
   logica_test.Reach_sn_new AS Reach_sn_new;
 
-WITH t_0_Far AS (SELECT
-  MAX(Reach_sn_full.y) AS m
+DROP TABLE IF EXISTS logica_test.Reach;
+CREATE TABLE logica_test.Reach AS SELECT
+  Reach_sn_full.y AS y
 FROM
-  logica_test.Reach_sn_full AS Reach_sn_full),
+  logica_test.Reach_sn_full AS Reach_sn_full;
+
+-- Interacting with table logica_test.Reach
+
+WITH t_0_Far AS (SELECT
+  MAX(Reach.y) AS m
+FROM
+  logica_test.Reach AS Reach),
 t_1_Count AS (SELECT
   SUM(1) AS n
 FROM
-  logica_test.Reach_sn_full AS t_3_Reach_sn_full)
+  logica_test.Reach AS t_2_Reach)
 SELECT
   Far.m AS m,
   Count.n AS n

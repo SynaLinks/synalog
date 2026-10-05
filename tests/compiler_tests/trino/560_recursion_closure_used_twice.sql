@@ -392,10 +392,19 @@ CREATE TABLE logica_test.P_sn_delta AS SELECT
 FROM
   logica_test.P_sn_new AS P_sn_new;
 
-SELECT
+DROP TABLE IF EXISTS logica_test.P;
+CREATE TABLE logica_test.P AS SELECT
   P_sn_full.a AS a,
-  t_1_P_sn_full.b AS c
+  P_sn_full.b AS b
 FROM
-  logica_test.P_sn_full AS P_sn_full, logica_test.P_sn_full AS t_1_P_sn_full
+  logica_test.P_sn_full AS P_sn_full;
+
+-- Interacting with table logica_test.P
+
+SELECT
+  P.a AS a,
+  t_0_P.b AS c
+FROM
+  logica_test.P AS P, logica_test.P AS t_0_P
 WHERE
-  (t_1_P_sn_full.a = P_sn_full.b);
+  (t_0_P.a = P.b);

@@ -36,7 +36,7 @@ Modeling entities and relationships as concepts moves that knowledge into one pl
 - **Discipline is required to keep the payoff.** The moment a rule goes back to the raw table instead of the node, referential integrity and filter propagation are lost for that rule and everything above it.
 - **Identity is the hard part.** When the same customer exists in three systems with three keys, the graph forces you to decide how they reconcile. That decision was always required; the graph just refuses to let it stay implicit.
 - **Deep traversal is still database work.** Each recursive hop is another join. Bounded closures over a mid-sized graph are fine; interactive pathfinding over billions of edges is not what this is for.
-- **Hubs get recomputed.** A node concept used by twenty rules is inlined into each of them unless you materialize it with [`@Ground`](language/directives.md#ground).
+- **Hubs get recomputed.** A node concept used by twenty rules is inlined into each of them unless you materialize it with [`@Ground`](language/directives.md#ground). On Presto and Trino, which copy a reused subquery into every place it is read until a query passes their limit of stages, Synalog materializes a derived concept read more than once by itself; the tables are dropped once the rows are read.
 
 ### Compared to a dedicated graph database
 

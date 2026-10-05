@@ -21,6 +21,7 @@ This matters most for AI agents: it prevents producing programs that parse corre
 | **Functors** | A functor naming a predicate that does not exist, or an argument the applied predicate does not depend on: `F := Count(Nope: Odd)` when `Count` never reads `Nope` |
 | **Directives** | `@OrderBy`, `@Limit`, `@Recursive` or `@Ground` about a predicate the program does not define; an `@OrderBy` item that is not a column of the predicate; an `@Limit` that is not a whole number of rows; an `@Recursive` depth below 1 |
 | **Assertions** | An `@Assert` statement that does not parse or contradicts the program, an assertion stated twice |
+| **Contradictions** (warning) | A rule whose comparisons can never all hold (`a < b, a >= b`; `x > 10, x < 5`; `k == 1, k == 2`), so it gives no row |
 
 ### Unsafe `SqlExpr`
 
@@ -49,6 +50,16 @@ Spent(customer_id:, spent:) :- customer_id in Range(3), spent == 1;
 TopCustomers(customer_id:) :- Spent(customer_id:);
 ''')
 # errors: ['Missing @OrderBy for 'TopCustomers', the predicate this file is about: ... add @OrderBy(TopCustomers, "column"); before its rules']
+```
+
+### Contradictions
+
+A rule whose conditions contradict each other gives no row, which is almost always a reversed comparison or a wrong constant. The verifier reads the comparisons a rule always applies (`<`, `<=`, `>`, `>=`, `==`, `!=` between variables and constants) and warns when they can never all hold: a cycle through a strict comparison, two different constants made equal, or two values both forced equal and required to differ. A rule with a disjunction is reported only when every branch contradicts itself. Comparisons involving arithmetic or a function are left out, so a warning is always right, though some contradictions go unreported.
+
+```python
+errors, warnings = synalog.check('''V(x:) :- x in [1, 7, 12];
+C(x:) :- V(x:), x > 10, x < 5;''')
+# warnings: ['Contradictory conditions: x > 10, x < 5 can never all hold, so the rule gives no row: C(x:) :- V(x:), x > 10, x < 5']
 ```
 
 ### Front matter

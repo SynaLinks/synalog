@@ -424,6 +424,18 @@ case: inside a subquery, `K.k` read `K` as the column `k` of the subquery's own
 table ("Expression K is not of type ROW"). An alias that equals a column name
 of the program, ignoring case, is numbered instead (`t_0_K`).
 
+## Reused predicates on Presto and Trino
+
+Presto and Trino inline a `WITH` everywhere it is read. A knowledge graph's
+edges join through its nodes, so a two-hop neighborhood read `Link` three
+times, each `Link` read `Related` twice, each `Related` read `Person` twice:
+some 24 copies of `Person`, each an aggregation stage, past Presto's 100
+stages (QUERY_HAS_TOO_MANY_STAGES). On those engines, a derived predicate
+(whose rules read other predicates) read more than once is materialized, as
+`@Ground` does, into Synalog's schema; the run drops the tables once its rows
+are read. The goldens of the fixtures with such predicates on Presto and Trino
+are synalog's.
+
 ## Recursion on Presto, Databricks and Trino
 
 Presto plans an unrolled recursion in time exponential in its steps: depth 10

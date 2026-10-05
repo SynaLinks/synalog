@@ -1,4 +1,5 @@
-WITH t_3_Employees AS (SELECT * FROM (
+DROP TABLE IF EXISTS logica_test.Person;
+CREATE TABLE logica_test.Person AS WITH t_0_Employees AS (SELECT * FROM (
   
     SELECT
       1 AS person_id,
@@ -44,15 +45,19 @@ WITH t_3_Employees AS (SELECT * FROM (
       'active' AS status,
       'https://x/eve' AS url
   
-) AS UNUSED_TABLE_NAME  ),
-t_2_Person AS (SELECT
+) AS UNUSED_TABLE_NAME  )
+SELECT
   Employees.person_id AS person_id,
   Employees.name AS name,
   Employees.url AS url
 FROM
-  t_3_Employees AS Employees
-GROUP BY 1, 2, 3 ORDER BY person_id),
-t_5_Teams AS (SELECT * FROM (
+  t_0_Employees AS Employees
+GROUP BY 1, 2, 3 ORDER BY person_id;
+
+-- Interacting with table logica_test.Person
+
+DROP TABLE IF EXISTS logica_test.Team;
+CREATE TABLE logica_test.Team AS WITH t_0_Teams AS (SELECT * FROM (
   
     SELECT
       10 AS team_id,
@@ -68,14 +73,63 @@ t_5_Teams AS (SELECT * FROM (
       30 AS team_id,
       'data' AS team
   
-) AS UNUSED_TABLE_NAME  ),
-t_4_Team AS (SELECT
+) AS UNUSED_TABLE_NAME  )
+SELECT
   Teams.team_id AS team_id,
   Teams.team AS team
 FROM
-  t_5_Teams AS Teams
-GROUP BY 1, 2 ORDER BY team_id),
-t_6_Events AS (SELECT * FROM (
+  t_0_Teams AS Teams
+GROUP BY 1, 2 ORDER BY team_id;
+
+-- Interacting with table logica_test.Team
+
+DROP TABLE IF EXISTS logica_test.NextChange;
+CREATE TABLE logica_test.NextChange AS WITH t_2_Events AS (SELECT * FROM (
+  
+    SELECT
+      1 AS person_id,
+      10 AS team_id,
+      '2022-01-01' AS changed_at
+   UNION ALL
+  
+    SELECT
+      1 AS person_id,
+      30 AS team_id,
+      '2023-06-01' AS changed_at
+   UNION ALL
+  
+    SELECT
+      2 AS person_id,
+      10 AS team_id,
+      '2021-03-01' AS changed_at
+   UNION ALL
+  
+    SELECT
+      4 AS person_id,
+      20 AS team_id,
+      '2020-01-01' AS changed_at
+   UNION ALL
+  
+    SELECT
+      4 AS person_id,
+      10 AS team_id,
+      '2024-02-01' AS changed_at
+  
+) AS UNUSED_TABLE_NAME  )
+SELECT
+  Events.person_id AS person_id,
+  Events.changed_at AS changed_at,
+  MIN(t_0_Events.changed_at) AS next
+FROM
+  t_2_Events AS Events, t_2_Events AS t_0_Events
+WHERE
+  (t_0_Events.changed_at > Events.changed_at) AND
+  (t_0_Events.person_id = Events.person_id)
+GROUP BY 1, 2;
+
+-- Interacting with table logica_test.NextChange
+
+WITH t_2_Events AS (SELECT * FROM (
   
     SELECT
       1 AS person_id,
@@ -107,16 +161,6 @@ t_6_Events AS (SELECT * FROM (
       '2024-02-01' AS changed_at
   
 ) AS UNUSED_TABLE_NAME  ),
-t_7_NextChange AS (SELECT
-  t_8_Events.person_id AS person_id,
-  t_8_Events.changed_at AS changed_at,
-  MIN(t_9_Events.changed_at) AS next
-FROM
-  t_6_Events AS t_8_Events, t_6_Events AS t_9_Events
-WHERE
-  (t_9_Events.changed_at > t_8_Events.changed_at) AND
-  (t_9_Events.person_id = t_8_Events.person_id)
-GROUP BY 1, 2),
 t_0_Member_MultBodyAggAux AS (SELECT * FROM (
   
     SELECT
@@ -125,7 +169,7 @@ t_0_Member_MultBodyAggAux AS (SELECT * FROM (
       Events.changed_at AS valid_from,
       NextChange.next AS valid_to
     FROM
-      t_2_Person AS Person, t_4_Team AS t_1_Team, t_6_Events AS Events, t_7_NextChange AS NextChange
+      logica_test.Person AS Person, logica_test.Team AS t_1_Team, t_2_Events AS Events, logica_test.NextChange AS NextChange
     WHERE
       (Events.person_id = Person.person_id) AND
       (Events.team_id = t_1_Team.team_id) AND
@@ -134,22 +178,22 @@ t_0_Member_MultBodyAggAux AS (SELECT * FROM (
    UNION ALL
   
     SELECT
-      t_10_Person.person_id AS person_id,
-      t_11_Team.team_id AS team_id,
-      t_12_Events.changed_at AS valid_from,
+      t_3_Person.person_id AS person_id,
+      t_4_Team.team_id AS team_id,
+      t_5_Events.changed_at AS valid_from,
       '9999-12-31' AS valid_to
     FROM
-      t_2_Person AS t_10_Person, t_4_Team AS t_11_Team, t_6_Events AS t_12_Events
+      logica_test.Person AS t_3_Person, logica_test.Team AS t_4_Team, t_2_Events AS t_5_Events
     WHERE
       ((SELECT
         MIN(1) AS logica_value
       FROM
-        t_7_NextChange AS t_15_NextChange
+        logica_test.NextChange AS t_6_NextChange
       WHERE
-        (t_15_NextChange.person_id = t_10_Person.person_id) AND
-        (t_15_NextChange.changed_at = t_12_Events.changed_at)) IS NULL) AND
-      (t_12_Events.person_id = t_10_Person.person_id) AND
-      (t_12_Events.team_id = t_11_Team.team_id)
+        (t_6_NextChange.person_id = t_3_Person.person_id) AND
+        (t_6_NextChange.changed_at = t_5_Events.changed_at)) IS NULL) AND
+      (t_5_Events.person_id = t_3_Person.person_id) AND
+      (t_5_Events.team_id = t_4_Team.team_id)
   
 ) AS UNUSED_TABLE_NAME  )
 SELECT

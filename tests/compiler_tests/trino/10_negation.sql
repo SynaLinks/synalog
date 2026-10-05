@@ -1,3 +1,13 @@
+DROP TABLE IF EXISTS logica_test.Even;
+CREATE TABLE logica_test.Even AS SELECT
+  x_3 AS col0
+FROM
+  UNNEST(FILTER(SEQUENCE(0, 10), x -> x < 10)) as pushkin(x_3)
+WHERE
+  ((MOD(x_3, 2)) = 0);
+
+-- Interacting with table logica_test.Even
+
 WITH t_0_Prime AS (SELECT * FROM (
   
     SELECT
@@ -27,10 +37,9 @@ SELECT * FROM (
       ((SELECT
         MIN(1) AS logica_value
       FROM
-        UNNEST(FILTER(SEQUENCE(0, 10), x -> x < 10)) as pushkin(x_10)
+        logica_test.Even AS Even
       WHERE
-        ((MOD(x_5, 2)) = 0) AND
-        (x_5 = x_10)) IS NULL)
+        (Even.col0 = x_5)) IS NULL)
    UNION ALL
   
     SELECT
@@ -50,16 +59,15 @@ SELECT * FROM (
   
     SELECT
       'even_not_prime' AS test_name,
-      x_7 AS x
+      Even.col0 AS x
     FROM
-      UNNEST(FILTER(SEQUENCE(0, 10), x -> x < 10)) as pushkin(x_7)
+      logica_test.Even AS Even
     WHERE
       ((SELECT
         MIN(1) AS logica_value
       FROM
         t_0_Prime AS Prime
       WHERE
-        (Prime.col0 = x_7)) IS NULL) AND
-      ((MOD(x_7, 2)) = 0)
+        (Prime.col0 = Even.col0)) IS NULL)
   
 ) AS UNUSED_TABLE_NAME  ORDER BY test_name, x ;

@@ -1,5 +1,5 @@
-DROP TABLE IF EXISTS logica_test.PathTo_sn_delta;
-CREATE TABLE logica_test.PathTo_sn_delta AS WITH t_7_Employees AS (SELECT * FROM (
+DROP TABLE IF EXISTS logica_test.Person;
+CREATE TABLE logica_test.Person AS WITH t_0_Employees AS (SELECT * FROM (
   
     SELECT
       1 AS person_id,
@@ -45,15 +45,19 @@ CREATE TABLE logica_test.PathTo_sn_delta AS WITH t_7_Employees AS (SELECT * FROM
       'active' AS status,
       'https://x/eve' AS url
   
-) AS UNUSED_TABLE_NAME  ),
-t_6_Person AS (SELECT
+) AS UNUSED_TABLE_NAME  )
+SELECT
   Employees.person_id AS person_id,
   Employees.name AS name,
   Employees.url AS url
 FROM
-  t_7_Employees AS Employees
-GROUP BY 1, 2, 3 ORDER BY person_id),
-t_9_Management AS (SELECT * FROM (
+  t_0_Employees AS Employees
+GROUP BY 1, 2, 3 ORDER BY person_id;
+
+-- Interacting with table logica_test.Person
+
+DROP TABLE IF EXISTS logica_test.Manages;
+CREATE TABLE logica_test.Manages AS WITH t_1_Management AS (SELECT * FROM (
   
     SELECT
       1 AS manager_id,
@@ -74,27 +78,40 @@ t_9_Management AS (SELECT * FROM (
       2 AS manager_id,
       6 AS employee_id
   
-) AS UNUSED_TABLE_NAME  ),
-t_3_Manages AS (SELECT
-  t_4_Person.person_id AS manager_id,
-  t_5_Person.person_id AS employee_id
+) AS UNUSED_TABLE_NAME  )
+SELECT
+  Person.person_id AS manager_id,
+  t_0_Person.person_id AS employee_id
 FROM
-  t_6_Person AS t_4_Person, t_6_Person AS t_5_Person, t_9_Management AS Management
+  logica_test.Person AS Person, logica_test.Person AS t_0_Person, t_1_Management AS Management
 WHERE
-  (Management.manager_id = t_4_Person.person_id) AND
-  (Management.employee_id = t_5_Person.person_id)
-GROUP BY 1, 2),
-t_0_PathTo_MultBodyAggAux_f1 AS (SELECT * FROM (
+  (Management.manager_id = Person.person_id) AND
+  (Management.employee_id = t_0_Person.person_id)
+GROUP BY 1, 2;
+
+-- Interacting with table logica_test.Manages
+
+DROP TABLE IF EXISTS logica_test.N;
+CREATE TABLE logica_test.N AS SELECT
+  Person.person_id AS person_id,
+  Person.name AS name
+FROM
+  logica_test.Person AS Person;
+
+-- Interacting with table logica_test.N
+
+DROP TABLE IF EXISTS logica_test.PathTo_sn_delta;
+CREATE TABLE logica_test.PathTo_sn_delta AS WITH t_0_PathTo_MultBodyAggAux_f1 AS (SELECT * FROM (
   
     SELECT
       Manages.manager_id AS source,
       Manages.employee_id AS target,
-      (CONCAT((CONCAT(Person.name, ' > ')), t_2_Person.name)) AS path
+      (CONCAT((CONCAT(N.name, ' > ')), t_1_N.name)) AS path
     FROM
-      t_3_Manages AS Manages, t_6_Person AS Person, t_6_Person AS t_2_Person
+      logica_test.Manages AS Manages, logica_test.N AS N, logica_test.N AS t_1_N
     WHERE
-      (Manages.manager_id = Person.person_id) AND
-      (Manages.employee_id = t_2_Person.person_id)
+      (N.person_id = Manages.manager_id) AND
+      (t_1_N.person_id = Manages.employee_id)
   
 ) AS UNUSED_TABLE_NAME  )
 SELECT
@@ -108,113 +125,28 @@ GROUP BY 1, 2, 3;
 -- Interacting with table logica_test.PathTo_sn_delta
 
 DROP TABLE IF EXISTS logica_test.PathTo_sn_full;
-CREATE TABLE logica_test.PathTo_sn_full AS WITH t_7_Employees AS (SELECT * FROM (
-  
-    SELECT
-      1 AS person_id,
-      'ann' AS name,
-      'eng' AS dept,
-      10 AS team_id,
-      'active' AS status,
-      'https://x/ann' AS url
-   UNION ALL
-  
-    SELECT
-      2 AS person_id,
-      'bob' AS name,
-      'eng' AS dept,
-      10 AS team_id,
-      'active' AS status,
-      'https://x/bob' AS url
-   UNION ALL
-  
-    SELECT
-      3 AS person_id,
-      'cid' AS name,
-      'ops' AS dept,
-      20 AS team_id,
-      'inactive' AS status,
-      'https://x/cid' AS url
-   UNION ALL
-  
-    SELECT
-      4 AS person_id,
-      'dan' AS name,
-      'ops' AS dept,
-      20 AS team_id,
-      'active' AS status,
-      'https://x/dan' AS url
-   UNION ALL
-  
-    SELECT
-      5 AS person_id,
-      'eve' AS name,
-      'eng' AS dept,
-      30 AS team_id,
-      'active' AS status,
-      'https://x/eve' AS url
-  
-) AS UNUSED_TABLE_NAME  ),
-t_6_Person AS (SELECT
-  Employees.person_id AS person_id,
-  Employees.name AS name,
-  Employees.url AS url
-FROM
-  t_7_Employees AS Employees
-GROUP BY 1, 2, 3 ORDER BY person_id),
-t_9_Management AS (SELECT * FROM (
-  
-    SELECT
-      1 AS manager_id,
-      2 AS employee_id
-   UNION ALL
-  
-    SELECT
-      1 AS manager_id,
-      5 AS employee_id
-   UNION ALL
-  
-    SELECT
-      4 AS manager_id,
-      3 AS employee_id
-   UNION ALL
-  
-    SELECT
-      2 AS manager_id,
-      6 AS employee_id
-  
-) AS UNUSED_TABLE_NAME  ),
-t_3_Manages AS (SELECT
-  t_4_Person.person_id AS manager_id,
-  t_5_Person.person_id AS employee_id
-FROM
-  t_6_Person AS t_4_Person, t_6_Person AS t_5_Person, t_9_Management AS Management
-WHERE
-  (Management.manager_id = t_4_Person.person_id) AND
-  (Management.employee_id = t_5_Person.person_id)
-GROUP BY 1, 2),
-t_1_PathTo_MultBodyAggAux_f2 AS (SELECT * FROM (
+CREATE TABLE logica_test.PathTo_sn_full AS WITH t_1_PathTo_MultBodyAggAux_f2 AS (SELECT * FROM (
   
     SELECT
       Manages.manager_id AS source,
       Manages.employee_id AS target,
-      (CONCAT((CONCAT(Person.name, ' > ')), t_3_Person.name)) AS path
+      (CONCAT((CONCAT(N.name, ' > ')), t_2_N.name)) AS path
     FROM
-      t_3_Manages AS Manages, t_6_Person AS Person, t_6_Person AS t_3_Person
+      logica_test.Manages AS Manages, logica_test.N AS N, logica_test.N AS t_2_N
     WHERE
-      (Manages.manager_id = Person.person_id) AND
-      (Manages.employee_id = t_3_Person.person_id)
+      (N.person_id = Manages.manager_id) AND
+      (t_2_N.person_id = Manages.employee_id)
    UNION ALL
   
     SELECT
-      t_6_PathTo_sn_delta.source AS source,
-      t_7_Manages.employee_id AS target,
-      (CONCAT((CONCAT(t_6_PathTo_sn_delta.path, ' > ')), t_9_Person.name)) AS path
+      t_3_PathTo_sn_delta.source AS source,
+      t_4_Manages.employee_id AS target,
+      (CONCAT((CONCAT(t_3_PathTo_sn_delta.path, ' > ')), t_5_N.name)) AS path
     FROM
-      logica_test.PathTo_sn_delta AS t_6_PathTo_sn_delta, t_3_Manages AS t_7_Manages, t_6_Person AS t_9_Person
+      logica_test.PathTo_sn_delta AS t_3_PathTo_sn_delta, logica_test.Manages AS t_4_Manages, logica_test.N AS t_5_N
     WHERE
-      (t_7_Manages.manager_id = t_6_PathTo_sn_delta.target) AND
-      (t_7_Manages.employee_id = t_9_Person.person_id)
+      (t_4_Manages.manager_id = t_3_PathTo_sn_delta.target) AND
+      (t_5_N.person_id = t_4_Manages.employee_id)
   
 ) AS UNUSED_TABLE_NAME  ),
 t_0_PathTo_sn_step AS (SELECT
@@ -248,113 +180,28 @@ SELECT * FROM (
 -- Interacting with table logica_test.PathTo_sn_full
 
 DROP TABLE IF EXISTS logica_test.PathTo_sn_new;
-CREATE TABLE logica_test.PathTo_sn_new AS WITH t_7_Employees AS (SELECT * FROM (
-  
-    SELECT
-      1 AS person_id,
-      'ann' AS name,
-      'eng' AS dept,
-      10 AS team_id,
-      'active' AS status,
-      'https://x/ann' AS url
-   UNION ALL
-  
-    SELECT
-      2 AS person_id,
-      'bob' AS name,
-      'eng' AS dept,
-      10 AS team_id,
-      'active' AS status,
-      'https://x/bob' AS url
-   UNION ALL
-  
-    SELECT
-      3 AS person_id,
-      'cid' AS name,
-      'ops' AS dept,
-      20 AS team_id,
-      'inactive' AS status,
-      'https://x/cid' AS url
-   UNION ALL
-  
-    SELECT
-      4 AS person_id,
-      'dan' AS name,
-      'ops' AS dept,
-      20 AS team_id,
-      'active' AS status,
-      'https://x/dan' AS url
-   UNION ALL
-  
-    SELECT
-      5 AS person_id,
-      'eve' AS name,
-      'eng' AS dept,
-      30 AS team_id,
-      'active' AS status,
-      'https://x/eve' AS url
-  
-) AS UNUSED_TABLE_NAME  ),
-t_6_Person AS (SELECT
-  Employees.person_id AS person_id,
-  Employees.name AS name,
-  Employees.url AS url
-FROM
-  t_7_Employees AS Employees
-GROUP BY 1, 2, 3 ORDER BY person_id),
-t_9_Management AS (SELECT * FROM (
-  
-    SELECT
-      1 AS manager_id,
-      2 AS employee_id
-   UNION ALL
-  
-    SELECT
-      1 AS manager_id,
-      5 AS employee_id
-   UNION ALL
-  
-    SELECT
-      4 AS manager_id,
-      3 AS employee_id
-   UNION ALL
-  
-    SELECT
-      2 AS manager_id,
-      6 AS employee_id
-  
-) AS UNUSED_TABLE_NAME  ),
-t_3_Manages AS (SELECT
-  t_4_Person.person_id AS manager_id,
-  t_5_Person.person_id AS employee_id
-FROM
-  t_6_Person AS t_4_Person, t_6_Person AS t_5_Person, t_9_Management AS Management
-WHERE
-  (Management.manager_id = t_4_Person.person_id) AND
-  (Management.employee_id = t_5_Person.person_id)
-GROUP BY 1, 2),
-t_1_PathTo_MultBodyAggAux_f2 AS (SELECT * FROM (
+CREATE TABLE logica_test.PathTo_sn_new AS WITH t_1_PathTo_MultBodyAggAux_f2 AS (SELECT * FROM (
   
     SELECT
       Manages.manager_id AS source,
       Manages.employee_id AS target,
-      (CONCAT((CONCAT(Person.name, ' > ')), t_3_Person.name)) AS path
+      (CONCAT((CONCAT(N.name, ' > ')), t_2_N.name)) AS path
     FROM
-      t_3_Manages AS Manages, t_6_Person AS Person, t_6_Person AS t_3_Person
+      logica_test.Manages AS Manages, logica_test.N AS N, logica_test.N AS t_2_N
     WHERE
-      (Manages.manager_id = Person.person_id) AND
-      (Manages.employee_id = t_3_Person.person_id)
+      (N.person_id = Manages.manager_id) AND
+      (t_2_N.person_id = Manages.employee_id)
    UNION ALL
   
     SELECT
-      t_6_PathTo_sn_delta.source AS source,
-      t_7_Manages.employee_id AS target,
-      (CONCAT((CONCAT(t_6_PathTo_sn_delta.path, ' > ')), t_9_Person.name)) AS path
+      t_3_PathTo_sn_delta.source AS source,
+      t_4_Manages.employee_id AS target,
+      (CONCAT((CONCAT(t_3_PathTo_sn_delta.path, ' > ')), t_5_N.name)) AS path
     FROM
-      logica_test.PathTo_sn_delta AS t_6_PathTo_sn_delta, t_3_Manages AS t_7_Manages, t_6_Person AS t_9_Person
+      logica_test.PathTo_sn_delta AS t_3_PathTo_sn_delta, logica_test.Manages AS t_4_Manages, logica_test.N AS t_5_N
     WHERE
-      (t_7_Manages.manager_id = t_6_PathTo_sn_delta.target) AND
-      (t_7_Manages.employee_id = t_9_Person.person_id)
+      (t_4_Manages.manager_id = t_3_PathTo_sn_delta.target) AND
+      (t_5_N.person_id = t_4_Manages.employee_id)
   
 ) AS UNUSED_TABLE_NAME  ),
 t_0_PathTo_sn_step AS (SELECT
@@ -392,113 +239,28 @@ FROM
   logica_test.PathTo_sn_new AS PathTo_sn_new;
 
 DROP TABLE IF EXISTS logica_test.PathTo_sn_new;
-CREATE TABLE logica_test.PathTo_sn_new AS WITH t_7_Employees AS (SELECT * FROM (
-  
-    SELECT
-      1 AS person_id,
-      'ann' AS name,
-      'eng' AS dept,
-      10 AS team_id,
-      'active' AS status,
-      'https://x/ann' AS url
-   UNION ALL
-  
-    SELECT
-      2 AS person_id,
-      'bob' AS name,
-      'eng' AS dept,
-      10 AS team_id,
-      'active' AS status,
-      'https://x/bob' AS url
-   UNION ALL
-  
-    SELECT
-      3 AS person_id,
-      'cid' AS name,
-      'ops' AS dept,
-      20 AS team_id,
-      'inactive' AS status,
-      'https://x/cid' AS url
-   UNION ALL
-  
-    SELECT
-      4 AS person_id,
-      'dan' AS name,
-      'ops' AS dept,
-      20 AS team_id,
-      'active' AS status,
-      'https://x/dan' AS url
-   UNION ALL
-  
-    SELECT
-      5 AS person_id,
-      'eve' AS name,
-      'eng' AS dept,
-      30 AS team_id,
-      'active' AS status,
-      'https://x/eve' AS url
-  
-) AS UNUSED_TABLE_NAME  ),
-t_6_Person AS (SELECT
-  Employees.person_id AS person_id,
-  Employees.name AS name,
-  Employees.url AS url
-FROM
-  t_7_Employees AS Employees
-GROUP BY 1, 2, 3 ORDER BY person_id),
-t_9_Management AS (SELECT * FROM (
-  
-    SELECT
-      1 AS manager_id,
-      2 AS employee_id
-   UNION ALL
-  
-    SELECT
-      1 AS manager_id,
-      5 AS employee_id
-   UNION ALL
-  
-    SELECT
-      4 AS manager_id,
-      3 AS employee_id
-   UNION ALL
-  
-    SELECT
-      2 AS manager_id,
-      6 AS employee_id
-  
-) AS UNUSED_TABLE_NAME  ),
-t_3_Manages AS (SELECT
-  t_4_Person.person_id AS manager_id,
-  t_5_Person.person_id AS employee_id
-FROM
-  t_6_Person AS t_4_Person, t_6_Person AS t_5_Person, t_9_Management AS Management
-WHERE
-  (Management.manager_id = t_4_Person.person_id) AND
-  (Management.employee_id = t_5_Person.person_id)
-GROUP BY 1, 2),
-t_1_PathTo_MultBodyAggAux_f2 AS (SELECT * FROM (
+CREATE TABLE logica_test.PathTo_sn_new AS WITH t_1_PathTo_MultBodyAggAux_f2 AS (SELECT * FROM (
   
     SELECT
       Manages.manager_id AS source,
       Manages.employee_id AS target,
-      (CONCAT((CONCAT(Person.name, ' > ')), t_3_Person.name)) AS path
+      (CONCAT((CONCAT(N.name, ' > ')), t_2_N.name)) AS path
     FROM
-      t_3_Manages AS Manages, t_6_Person AS Person, t_6_Person AS t_3_Person
+      logica_test.Manages AS Manages, logica_test.N AS N, logica_test.N AS t_2_N
     WHERE
-      (Manages.manager_id = Person.person_id) AND
-      (Manages.employee_id = t_3_Person.person_id)
+      (N.person_id = Manages.manager_id) AND
+      (t_2_N.person_id = Manages.employee_id)
    UNION ALL
   
     SELECT
-      t_6_PathTo_sn_delta.source AS source,
-      t_7_Manages.employee_id AS target,
-      (CONCAT((CONCAT(t_6_PathTo_sn_delta.path, ' > ')), t_9_Person.name)) AS path
+      t_3_PathTo_sn_delta.source AS source,
+      t_4_Manages.employee_id AS target,
+      (CONCAT((CONCAT(t_3_PathTo_sn_delta.path, ' > ')), t_5_N.name)) AS path
     FROM
-      logica_test.PathTo_sn_delta AS t_6_PathTo_sn_delta, t_3_Manages AS t_7_Manages, t_6_Person AS t_9_Person
+      logica_test.PathTo_sn_delta AS t_3_PathTo_sn_delta, logica_test.Manages AS t_4_Manages, logica_test.N AS t_5_N
     WHERE
-      (t_7_Manages.manager_id = t_6_PathTo_sn_delta.target) AND
-      (t_7_Manages.employee_id = t_9_Person.person_id)
+      (t_4_Manages.manager_id = t_3_PathTo_sn_delta.target) AND
+      (t_5_N.person_id = t_4_Manages.employee_id)
   
 ) AS UNUSED_TABLE_NAME  ),
 t_0_PathTo_sn_step AS (SELECT
@@ -536,113 +298,28 @@ FROM
   logica_test.PathTo_sn_new AS PathTo_sn_new;
 
 DROP TABLE IF EXISTS logica_test.PathTo_sn_new;
-CREATE TABLE logica_test.PathTo_sn_new AS WITH t_7_Employees AS (SELECT * FROM (
-  
-    SELECT
-      1 AS person_id,
-      'ann' AS name,
-      'eng' AS dept,
-      10 AS team_id,
-      'active' AS status,
-      'https://x/ann' AS url
-   UNION ALL
-  
-    SELECT
-      2 AS person_id,
-      'bob' AS name,
-      'eng' AS dept,
-      10 AS team_id,
-      'active' AS status,
-      'https://x/bob' AS url
-   UNION ALL
-  
-    SELECT
-      3 AS person_id,
-      'cid' AS name,
-      'ops' AS dept,
-      20 AS team_id,
-      'inactive' AS status,
-      'https://x/cid' AS url
-   UNION ALL
-  
-    SELECT
-      4 AS person_id,
-      'dan' AS name,
-      'ops' AS dept,
-      20 AS team_id,
-      'active' AS status,
-      'https://x/dan' AS url
-   UNION ALL
-  
-    SELECT
-      5 AS person_id,
-      'eve' AS name,
-      'eng' AS dept,
-      30 AS team_id,
-      'active' AS status,
-      'https://x/eve' AS url
-  
-) AS UNUSED_TABLE_NAME  ),
-t_6_Person AS (SELECT
-  Employees.person_id AS person_id,
-  Employees.name AS name,
-  Employees.url AS url
-FROM
-  t_7_Employees AS Employees
-GROUP BY 1, 2, 3 ORDER BY person_id),
-t_9_Management AS (SELECT * FROM (
-  
-    SELECT
-      1 AS manager_id,
-      2 AS employee_id
-   UNION ALL
-  
-    SELECT
-      1 AS manager_id,
-      5 AS employee_id
-   UNION ALL
-  
-    SELECT
-      4 AS manager_id,
-      3 AS employee_id
-   UNION ALL
-  
-    SELECT
-      2 AS manager_id,
-      6 AS employee_id
-  
-) AS UNUSED_TABLE_NAME  ),
-t_3_Manages AS (SELECT
-  t_4_Person.person_id AS manager_id,
-  t_5_Person.person_id AS employee_id
-FROM
-  t_6_Person AS t_4_Person, t_6_Person AS t_5_Person, t_9_Management AS Management
-WHERE
-  (Management.manager_id = t_4_Person.person_id) AND
-  (Management.employee_id = t_5_Person.person_id)
-GROUP BY 1, 2),
-t_1_PathTo_MultBodyAggAux_f2 AS (SELECT * FROM (
+CREATE TABLE logica_test.PathTo_sn_new AS WITH t_1_PathTo_MultBodyAggAux_f2 AS (SELECT * FROM (
   
     SELECT
       Manages.manager_id AS source,
       Manages.employee_id AS target,
-      (CONCAT((CONCAT(Person.name, ' > ')), t_3_Person.name)) AS path
+      (CONCAT((CONCAT(N.name, ' > ')), t_2_N.name)) AS path
     FROM
-      t_3_Manages AS Manages, t_6_Person AS Person, t_6_Person AS t_3_Person
+      logica_test.Manages AS Manages, logica_test.N AS N, logica_test.N AS t_2_N
     WHERE
-      (Manages.manager_id = Person.person_id) AND
-      (Manages.employee_id = t_3_Person.person_id)
+      (N.person_id = Manages.manager_id) AND
+      (t_2_N.person_id = Manages.employee_id)
    UNION ALL
   
     SELECT
-      t_6_PathTo_sn_delta.source AS source,
-      t_7_Manages.employee_id AS target,
-      (CONCAT((CONCAT(t_6_PathTo_sn_delta.path, ' > ')), t_9_Person.name)) AS path
+      t_3_PathTo_sn_delta.source AS source,
+      t_4_Manages.employee_id AS target,
+      (CONCAT((CONCAT(t_3_PathTo_sn_delta.path, ' > ')), t_5_N.name)) AS path
     FROM
-      logica_test.PathTo_sn_delta AS t_6_PathTo_sn_delta, t_3_Manages AS t_7_Manages, t_6_Person AS t_9_Person
+      logica_test.PathTo_sn_delta AS t_3_PathTo_sn_delta, logica_test.Manages AS t_4_Manages, logica_test.N AS t_5_N
     WHERE
-      (t_7_Manages.manager_id = t_6_PathTo_sn_delta.target) AND
-      (t_7_Manages.employee_id = t_9_Person.person_id)
+      (t_4_Manages.manager_id = t_3_PathTo_sn_delta.target) AND
+      (t_5_N.person_id = t_4_Manages.employee_id)
   
 ) AS UNUSED_TABLE_NAME  ),
 t_0_PathTo_sn_step AS (SELECT
@@ -680,113 +357,28 @@ FROM
   logica_test.PathTo_sn_new AS PathTo_sn_new;
 
 DROP TABLE IF EXISTS logica_test.PathTo_sn_new;
-CREATE TABLE logica_test.PathTo_sn_new AS WITH t_7_Employees AS (SELECT * FROM (
-  
-    SELECT
-      1 AS person_id,
-      'ann' AS name,
-      'eng' AS dept,
-      10 AS team_id,
-      'active' AS status,
-      'https://x/ann' AS url
-   UNION ALL
-  
-    SELECT
-      2 AS person_id,
-      'bob' AS name,
-      'eng' AS dept,
-      10 AS team_id,
-      'active' AS status,
-      'https://x/bob' AS url
-   UNION ALL
-  
-    SELECT
-      3 AS person_id,
-      'cid' AS name,
-      'ops' AS dept,
-      20 AS team_id,
-      'inactive' AS status,
-      'https://x/cid' AS url
-   UNION ALL
-  
-    SELECT
-      4 AS person_id,
-      'dan' AS name,
-      'ops' AS dept,
-      20 AS team_id,
-      'active' AS status,
-      'https://x/dan' AS url
-   UNION ALL
-  
-    SELECT
-      5 AS person_id,
-      'eve' AS name,
-      'eng' AS dept,
-      30 AS team_id,
-      'active' AS status,
-      'https://x/eve' AS url
-  
-) AS UNUSED_TABLE_NAME  ),
-t_6_Person AS (SELECT
-  Employees.person_id AS person_id,
-  Employees.name AS name,
-  Employees.url AS url
-FROM
-  t_7_Employees AS Employees
-GROUP BY 1, 2, 3 ORDER BY person_id),
-t_9_Management AS (SELECT * FROM (
-  
-    SELECT
-      1 AS manager_id,
-      2 AS employee_id
-   UNION ALL
-  
-    SELECT
-      1 AS manager_id,
-      5 AS employee_id
-   UNION ALL
-  
-    SELECT
-      4 AS manager_id,
-      3 AS employee_id
-   UNION ALL
-  
-    SELECT
-      2 AS manager_id,
-      6 AS employee_id
-  
-) AS UNUSED_TABLE_NAME  ),
-t_3_Manages AS (SELECT
-  t_4_Person.person_id AS manager_id,
-  t_5_Person.person_id AS employee_id
-FROM
-  t_6_Person AS t_4_Person, t_6_Person AS t_5_Person, t_9_Management AS Management
-WHERE
-  (Management.manager_id = t_4_Person.person_id) AND
-  (Management.employee_id = t_5_Person.person_id)
-GROUP BY 1, 2),
-t_1_PathTo_MultBodyAggAux_f2 AS (SELECT * FROM (
+CREATE TABLE logica_test.PathTo_sn_new AS WITH t_1_PathTo_MultBodyAggAux_f2 AS (SELECT * FROM (
   
     SELECT
       Manages.manager_id AS source,
       Manages.employee_id AS target,
-      (CONCAT((CONCAT(Person.name, ' > ')), t_3_Person.name)) AS path
+      (CONCAT((CONCAT(N.name, ' > ')), t_2_N.name)) AS path
     FROM
-      t_3_Manages AS Manages, t_6_Person AS Person, t_6_Person AS t_3_Person
+      logica_test.Manages AS Manages, logica_test.N AS N, logica_test.N AS t_2_N
     WHERE
-      (Manages.manager_id = Person.person_id) AND
-      (Manages.employee_id = t_3_Person.person_id)
+      (N.person_id = Manages.manager_id) AND
+      (t_2_N.person_id = Manages.employee_id)
    UNION ALL
   
     SELECT
-      t_6_PathTo_sn_delta.source AS source,
-      t_7_Manages.employee_id AS target,
-      (CONCAT((CONCAT(t_6_PathTo_sn_delta.path, ' > ')), t_9_Person.name)) AS path
+      t_3_PathTo_sn_delta.source AS source,
+      t_4_Manages.employee_id AS target,
+      (CONCAT((CONCAT(t_3_PathTo_sn_delta.path, ' > ')), t_5_N.name)) AS path
     FROM
-      logica_test.PathTo_sn_delta AS t_6_PathTo_sn_delta, t_3_Manages AS t_7_Manages, t_6_Person AS t_9_Person
+      logica_test.PathTo_sn_delta AS t_3_PathTo_sn_delta, logica_test.Manages AS t_4_Manages, logica_test.N AS t_5_N
     WHERE
-      (t_7_Manages.manager_id = t_6_PathTo_sn_delta.target) AND
-      (t_7_Manages.employee_id = t_9_Person.person_id)
+      (t_4_Manages.manager_id = t_3_PathTo_sn_delta.target) AND
+      (t_5_N.person_id = t_4_Manages.employee_id)
   
 ) AS UNUSED_TABLE_NAME  ),
 t_0_PathTo_sn_step AS (SELECT
@@ -823,66 +415,12 @@ CREATE TABLE logica_test.PathTo_sn_delta AS SELECT
 FROM
   logica_test.PathTo_sn_new AS PathTo_sn_new;
 
-WITH t_7_Employees AS (SELECT * FROM (
-  
-    SELECT
-      1 AS person_id,
-      'ann' AS name,
-      'eng' AS dept,
-      10 AS team_id,
-      'active' AS status,
-      'https://x/ann' AS url
-   UNION ALL
-  
-    SELECT
-      2 AS person_id,
-      'bob' AS name,
-      'eng' AS dept,
-      10 AS team_id,
-      'active' AS status,
-      'https://x/bob' AS url
-   UNION ALL
-  
-    SELECT
-      3 AS person_id,
-      'cid' AS name,
-      'ops' AS dept,
-      20 AS team_id,
-      'inactive' AS status,
-      'https://x/cid' AS url
-   UNION ALL
-  
-    SELECT
-      4 AS person_id,
-      'dan' AS name,
-      'ops' AS dept,
-      20 AS team_id,
-      'active' AS status,
-      'https://x/dan' AS url
-   UNION ALL
-  
-    SELECT
-      5 AS person_id,
-      'eve' AS name,
-      'eng' AS dept,
-      30 AS team_id,
-      'active' AS status,
-      'https://x/eve' AS url
-  
-) AS UNUSED_TABLE_NAME  ),
-t_6_Person AS (SELECT
-  Employees.person_id AS person_id,
-  Employees.name AS name,
-  Employees.url AS url
-FROM
-  t_7_Employees AS Employees
-GROUP BY 1, 2, 3 ORDER BY person_id)
 SELECT
-  Person.name AS target,
+  N.name AS target,
   PathTo_sn_full.path AS path
 FROM
-  logica_test.PathTo_sn_full AS PathTo_sn_full, t_6_Person AS Person
+  logica_test.PathTo_sn_full AS PathTo_sn_full, logica_test.N AS N
 WHERE
-  (Person.person_id = PathTo_sn_full.target) AND
-  (2 = PathTo_sn_full.source)
+  (2 = PathTo_sn_full.source) AND
+  (N.person_id = PathTo_sn_full.target)
 GROUP BY 1, 2 ORDER BY target, path;

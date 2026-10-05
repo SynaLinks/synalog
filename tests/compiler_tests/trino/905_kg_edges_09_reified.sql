@@ -1,4 +1,5 @@
-WITH t_3_Assignments AS (SELECT * FROM (
+DROP TABLE IF EXISTS logica_test.Assignment;
+CREATE TABLE logica_test.Assignment AS WITH t_0_Assignments AS (SELECT * FROM (
   
     SELECT
       1 AS assignment_id,
@@ -13,14 +14,18 @@ WITH t_3_Assignments AS (SELECT * FROM (
       30 AS team_id,
       'dev' AS role
   
-) AS UNUSED_TABLE_NAME  ),
-t_1_Assignment AS (SELECT
-  t_2_Assignments.assignment_id AS assignment_id,
-  t_2_Assignments.role AS role
+) AS UNUSED_TABLE_NAME  )
+SELECT
+  Assignments.assignment_id AS assignment_id,
+  Assignments.role AS role
 FROM
-  t_3_Assignments AS t_2_Assignments
-GROUP BY 1, 2),
-t_5_Employees AS (SELECT * FROM (
+  t_0_Assignments AS Assignments
+GROUP BY 1, 2;
+
+-- Interacting with table logica_test.Assignment
+
+DROP TABLE IF EXISTS logica_test.Person;
+CREATE TABLE logica_test.Person AS WITH t_0_Employees AS (SELECT * FROM (
   
     SELECT
       1 AS person_id,
@@ -66,24 +71,19 @@ t_5_Employees AS (SELECT * FROM (
       'active' AS status,
       'https://x/eve' AS url
   
-) AS UNUSED_TABLE_NAME  ),
-t_4_Person AS (SELECT
+) AS UNUSED_TABLE_NAME  )
+SELECT
   Employees.person_id AS person_id,
   Employees.name AS name,
   Employees.url AS url
 FROM
-  t_5_Employees AS Employees
-GROUP BY 1, 2, 3 ORDER BY person_id),
-t_0_AssignmentPerson AS (SELECT
-  Assignment.assignment_id AS assignment_id,
-  Person.person_id AS person_id
-FROM
-  t_1_Assignment AS Assignment, t_4_Person AS Person, t_3_Assignments AS Assignments
-WHERE
-  (Assignments.assignment_id = Assignment.assignment_id) AND
-  (Assignments.person_id = Person.person_id)
-GROUP BY 1, 2),
-t_12_Teams AS (SELECT * FROM (
+  t_0_Employees AS Employees
+GROUP BY 1, 2, 3 ORDER BY person_id;
+
+-- Interacting with table logica_test.Person
+
+DROP TABLE IF EXISTS logica_test.Team;
+CREATE TABLE logica_test.Team AS WITH t_0_Teams AS (SELECT * FROM (
   
     SELECT
       10 AS team_id,
@@ -99,27 +99,55 @@ t_12_Teams AS (SELECT * FROM (
       30 AS team_id,
       'data' AS team
   
-) AS UNUSED_TABLE_NAME  ),
-t_11_Team AS (SELECT
+) AS UNUSED_TABLE_NAME  )
+SELECT
   Teams.team_id AS team_id,
   Teams.team AS team
 FROM
-  t_12_Teams AS Teams
-GROUP BY 1, 2 ORDER BY team_id),
-t_6_AssignmentTeam AS (SELECT
-  t_7_Assignment.assignment_id AS assignment_id,
-  t_8_Team.team_id AS team_id
+  t_0_Teams AS Teams
+GROUP BY 1, 2 ORDER BY team_id;
+
+-- Interacting with table logica_test.Team
+
+WITH t_0_Assignments AS (SELECT * FROM (
+  
+    SELECT
+      1 AS assignment_id,
+      1 AS person_id,
+      10 AS team_id,
+      'lead' AS role
+   UNION ALL
+  
+    SELECT
+      2 AS assignment_id,
+      2 AS person_id,
+      30 AS team_id,
+      'dev' AS role
+  
+) AS UNUSED_TABLE_NAME  ),
+t_0_AssignmentPerson AS (SELECT
+  Assignment.assignment_id AS assignment_id,
+  Person.person_id AS person_id
 FROM
-  t_1_Assignment AS t_7_Assignment, t_11_Team AS t_8_Team, t_3_Assignments AS t_9_Assignments
+  logica_test.Assignment AS Assignment, logica_test.Person AS Person, t_0_Assignments AS Assignments
 WHERE
-  (t_9_Assignments.assignment_id = t_7_Assignment.assignment_id) AND
-  (t_9_Assignments.team_id = t_8_Team.team_id)
+  (Assignments.assignment_id = Assignment.assignment_id) AND
+  (Assignments.person_id = Person.person_id)
+GROUP BY 1, 2),
+t_1_AssignmentTeam AS (SELECT
+  t_2_Assignment.assignment_id AS assignment_id,
+  t_3_Team.team_id AS team_id
+FROM
+  logica_test.Assignment AS t_2_Assignment, logica_test.Team AS t_3_Team, t_0_Assignments AS t_4_Assignments
+WHERE
+  (t_4_Assignments.assignment_id = t_2_Assignment.assignment_id) AND
+  (t_4_Assignments.team_id = t_3_Team.team_id)
 GROUP BY 1, 2)
 SELECT
   AssignmentPerson.assignment_id AS assignment_id,
   AssignmentPerson.person_id AS person_id,
   AssignmentTeam.team_id AS team_id
 FROM
-  t_0_AssignmentPerson AS AssignmentPerson, t_6_AssignmentTeam AS AssignmentTeam
+  t_0_AssignmentPerson AS AssignmentPerson, t_1_AssignmentTeam AS AssignmentTeam
 WHERE
   (AssignmentTeam.assignment_id = AssignmentPerson.assignment_id) ORDER BY assignment_id;

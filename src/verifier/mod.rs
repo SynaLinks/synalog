@@ -29,6 +29,7 @@ mod front_matter;
 mod functors;
 mod directives;
 mod assertions;
+mod contradiction;
 
 pub use vars::VarCollector;
 pub use safety::{SafetyError, check_safety};
@@ -248,6 +249,9 @@ pub fn validate(parsed: &Json) -> CheckResult {
     for err in directives::check_directives(&all_rules) {
         result.errors.push(CheckError::Directive(err));
     }
+
+    // Check 15: Rules whose conditions contradict each other give no row.
+    result.warnings.extend(contradiction::check_contradictions(&normal_rules));
 
     // Check 15: Assertions (@Assert statements)
     let (assertions, spec_errors) = assertions::check_assertions(&all_rules);

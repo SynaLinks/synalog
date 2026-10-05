@@ -1,4 +1,5 @@
-WITH t_2_Teams AS (SELECT * FROM (
+DROP TABLE IF EXISTS logica_test.Team;
+CREATE TABLE logica_test.Team AS WITH t_0_Teams AS (SELECT * FROM (
   
     SELECT
       10 AS team_id,
@@ -14,14 +15,17 @@ WITH t_2_Teams AS (SELECT * FROM (
       30 AS team_id,
       'data' AS team
   
-) AS UNUSED_TABLE_NAME  ),
-t_1_Team AS (SELECT
+) AS UNUSED_TABLE_NAME  )
+SELECT
   Teams.team_id AS team_id,
   Teams.team AS team
 FROM
-  t_2_Teams AS Teams
-GROUP BY 1, 2 ORDER BY team_id),
-t_8_Clients AS (SELECT * FROM (
+  t_0_Teams AS Teams
+GROUP BY 1, 2 ORDER BY team_id;
+
+-- Interacting with table logica_test.Team
+
+WITH t_5_Clients AS (SELECT * FROM (
   
     SELECT
       100 AS client_id,
@@ -33,13 +37,13 @@ t_8_Clients AS (SELECT * FROM (
       'globex' AS client
   
 ) AS UNUSED_TABLE_NAME  ),
-t_7_Client AS (SELECT
+t_4_Client AS (SELECT
   Clients.client_id AS client_id,
   Clients.client AS client
 FROM
-  t_8_Clients AS Clients
+  t_5_Clients AS Clients
 GROUP BY 1, 2 ORDER BY client_id),
-t_9_Engagements AS (SELECT * FROM (
+t_6_Engagements AS (SELECT * FROM (
   
     SELECT
       10 AS team_id,
@@ -56,23 +60,23 @@ t_9_Engagements AS (SELECT * FROM (
       200 AS client_id
   
 ) AS UNUSED_TABLE_NAME  ),
-t_3_EngagedWith AS (SELECT
-  t_4_Team.team_id AS team_id,
-  t_5_Client.client_id AS client_id
+t_1_EngagedWith AS (SELECT
+  t_2_Team.team_id AS team_id,
+  t_3_Client.client_id AS client_id
 FROM
-  t_1_Team AS t_4_Team, t_7_Client AS t_5_Client, t_9_Engagements AS Engagements
+  logica_test.Team AS t_2_Team, t_4_Client AS t_3_Client, t_6_Engagements AS Engagements
 WHERE
-  (Engagements.team_id = t_4_Team.team_id) AND
-  (Engagements.client_id = t_5_Client.client_id)
+  (Engagements.team_id = t_2_Team.team_id) AND
+  (Engagements.client_id = t_3_Client.client_id)
 GROUP BY 1, 2)
 SELECT
   t_0_Team.team_id AS team_id
 FROM
-  t_1_Team AS t_0_Team
+  logica_test.Team AS t_0_Team
 WHERE
   ((SELECT
     MIN(1) AS logica_value
   FROM
-    t_3_EngagedWith AS EngagedWith
+    t_1_EngagedWith AS EngagedWith
   WHERE
     (EngagedWith.team_id = t_0_Team.team_id)) IS NULL) ORDER BY team_id;

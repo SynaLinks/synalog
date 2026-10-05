@@ -1,26 +1,5 @@
-WITH t_0_Management AS (SELECT * FROM (
-  
-    SELECT
-      1 AS manager_id,
-      2 AS employee_id
-   UNION ALL
-  
-    SELECT
-      1 AS manager_id,
-      5 AS employee_id
-   UNION ALL
-  
-    SELECT
-      4 AS manager_id,
-      3 AS employee_id
-   UNION ALL
-  
-    SELECT
-      2 AS manager_id,
-      6 AS employee_id
-  
-) AS UNUSED_TABLE_NAME  ),
-t_2_Employees AS (SELECT * FROM (
+DROP TABLE IF EXISTS logica_test.Person;
+CREATE TABLE logica_test.Person AS WITH t_0_Employees AS (SELECT * FROM (
   
     SELECT
       1 AS person_id,
@@ -66,14 +45,39 @@ t_2_Employees AS (SELECT * FROM (
       'active' AS status,
       'https://x/eve' AS url
   
-) AS UNUSED_TABLE_NAME  ),
-t_1_Person AS (SELECT
+) AS UNUSED_TABLE_NAME  )
+SELECT
   Employees.person_id AS person_id,
   Employees.name AS name,
   Employees.url AS url
 FROM
-  t_2_Employees AS Employees
-GROUP BY 1, 2, 3 ORDER BY person_id)
+  t_0_Employees AS Employees
+GROUP BY 1, 2, 3 ORDER BY person_id;
+
+-- Interacting with table logica_test.Person
+
+WITH t_0_Management AS (SELECT * FROM (
+  
+    SELECT
+      1 AS manager_id,
+      2 AS employee_id
+   UNION ALL
+  
+    SELECT
+      1 AS manager_id,
+      5 AS employee_id
+   UNION ALL
+  
+    SELECT
+      4 AS manager_id,
+      3 AS employee_id
+   UNION ALL
+  
+    SELECT
+      2 AS manager_id,
+      6 AS employee_id
+  
+) AS UNUSED_TABLE_NAME  )
 SELECT
   Management.employee_id AS employee_id
 FROM
@@ -82,7 +86,7 @@ WHERE
   ((SELECT
     MIN(1) AS logica_value
   FROM
-    t_1_Person AS Person
+    logica_test.Person AS Person
   WHERE
     (Person.person_id = Management.employee_id)) IS NULL)
 GROUP BY 1;
