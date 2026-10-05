@@ -1,0 +1,513 @@
+DROP TABLE IF EXISTS logica_test.Graph_Reach_sn_delta_f3;
+CREATE TABLE logica_test.Graph_Reach_sn_delta_f3 AS WITH t_1_Loop AS (SELECT * FROM VALUES
+  ("x", "y"),
+  ("y", "x"),
+  ("y", "z")
+AS UNUSED_TABLE_NAME(a, b)),
+t_0_Graph_Reach_MultBodyAggAux_f1_f3 AS (SELECT * FROM (
+  
+    SELECT
+      Loop.a AS a,
+      Loop.b AS b
+    FROM
+      t_1_Loop AS Loop
+  
+) AS UNUSED_TABLE_NAME  )
+SELECT
+  Graph_Reach_MultBodyAggAux_f1_f3.a AS a,
+  Graph_Reach_MultBodyAggAux_f1_f3.b AS b
+FROM
+  t_0_Graph_Reach_MultBodyAggAux_f1_f3 AS Graph_Reach_MultBodyAggAux_f1_f3
+GROUP BY 1, 2;
+
+-- Interacting with table logica_test.Graph_Reach_sn_delta_f3
+
+DROP TABLE IF EXISTS logica_test.Graph_Reach_sn_full_f3;
+CREATE TABLE logica_test.Graph_Reach_sn_full_f3 AS WITH t_1_Loop AS (SELECT * FROM VALUES
+  ("x", "y"),
+  ("y", "x"),
+  ("y", "z")
+AS UNUSED_TABLE_NAME(a, b)),
+t_1_Graph_Reach_MultBodyAggAux_f2_f3 AS (SELECT * FROM (
+  
+    SELECT
+      Loop.a AS a,
+      Loop.b AS b
+    FROM
+      t_1_Loop AS Loop
+   UNION ALL
+  
+    SELECT
+      t_2_Graph_Reach_sn_delta_f3.a AS a,
+      t_3_Loop.b AS b
+    FROM
+      logica_test.Graph_Reach_sn_delta_f3 AS t_2_Graph_Reach_sn_delta_f3, t_1_Loop AS t_3_Loop
+    WHERE
+      (t_3_Loop.a = t_2_Graph_Reach_sn_delta_f3.b)
+  
+) AS UNUSED_TABLE_NAME  ),
+t_0_Graph_Reach_sn_step_f3 AS (SELECT
+  Graph_Reach_MultBodyAggAux_f2_f3.a AS a,
+  Graph_Reach_MultBodyAggAux_f2_f3.b AS b
+FROM
+  t_1_Graph_Reach_MultBodyAggAux_f2_f3 AS Graph_Reach_MultBodyAggAux_f2_f3
+GROUP BY 1, 2)
+SELECT * FROM (
+  
+    SELECT
+      Graph_Reach_sn_delta_f3.a AS a,
+      Graph_Reach_sn_delta_f3.b AS b
+    FROM
+      logica_test.Graph_Reach_sn_delta_f3 AS Graph_Reach_sn_delta_f3
+   UNION ALL
+  
+    SELECT
+      Graph_Reach_sn_step_f3.a AS a,
+      Graph_Reach_sn_step_f3.b AS b
+    FROM
+      t_0_Graph_Reach_sn_step_f3 AS Graph_Reach_sn_step_f3
+    WHERE
+      (1 = 0)
+  
+) AS UNUSED_TABLE_NAME  ;
+
+-- Interacting with table logica_test.Graph_Reach_sn_full_f3
+
+DROP TABLE IF EXISTS logica_test.Graph_Reach_sn_new_f3;
+CREATE TABLE logica_test.Graph_Reach_sn_new_f3 AS WITH t_1_Loop AS (SELECT * FROM VALUES
+  ("x", "y"),
+  ("y", "x"),
+  ("y", "z")
+AS UNUSED_TABLE_NAME(a, b)),
+t_1_Graph_Reach_MultBodyAggAux_f2_f3 AS (SELECT * FROM (
+  
+    SELECT
+      Loop.a AS a,
+      Loop.b AS b
+    FROM
+      t_1_Loop AS Loop
+   UNION ALL
+  
+    SELECT
+      t_2_Graph_Reach_sn_delta_f3.a AS a,
+      t_3_Loop.b AS b
+    FROM
+      logica_test.Graph_Reach_sn_delta_f3 AS t_2_Graph_Reach_sn_delta_f3, t_1_Loop AS t_3_Loop
+    WHERE
+      (t_3_Loop.a = t_2_Graph_Reach_sn_delta_f3.b)
+  
+) AS UNUSED_TABLE_NAME  ),
+t_0_Graph_Reach_sn_step_f3 AS (SELECT
+  Graph_Reach_MultBodyAggAux_f2_f3.a AS a,
+  Graph_Reach_MultBodyAggAux_f2_f3.b AS b
+FROM
+  t_1_Graph_Reach_MultBodyAggAux_f2_f3 AS Graph_Reach_MultBodyAggAux_f2_f3
+GROUP BY 1, 2)
+SELECT
+  Graph_Reach_sn_step_f3.a AS a,
+  Graph_Reach_sn_step_f3.b AS b
+FROM
+  t_0_Graph_Reach_sn_step_f3 AS Graph_Reach_sn_step_f3
+WHERE
+  ((SELECT
+    MIN(1) AS logica_value
+  FROM
+    logica_test.Graph_Reach_sn_full_f3 AS Graph_Reach_sn_full_f3
+  WHERE
+    (Graph_Reach_sn_full_f3.a = Graph_Reach_sn_step_f3.a) AND
+    (Graph_Reach_sn_full_f3.b = Graph_Reach_sn_step_f3.b)) IS NULL)
+GROUP BY 1, 2;
+
+INSERT INTO logica_test.Graph_Reach_sn_full_f3 SELECT * FROM logica_test.Graph_Reach_sn_new_f3;
+
+DROP TABLE IF EXISTS logica_test.Graph_Reach_sn_delta_f3;
+CREATE TABLE logica_test.Graph_Reach_sn_delta_f3 AS SELECT
+  Graph_Reach_sn_new_f3.a AS a,
+  Graph_Reach_sn_new_f3.b AS b
+FROM
+  logica_test.Graph_Reach_sn_new_f3 AS Graph_Reach_sn_new_f3;
+
+DROP TABLE IF EXISTS logica_test.Graph_Reach_sn_new_f3;
+CREATE TABLE logica_test.Graph_Reach_sn_new_f3 AS WITH t_1_Loop AS (SELECT * FROM VALUES
+  ("x", "y"),
+  ("y", "x"),
+  ("y", "z")
+AS UNUSED_TABLE_NAME(a, b)),
+t_1_Graph_Reach_MultBodyAggAux_f2_f3 AS (SELECT * FROM (
+  
+    SELECT
+      Loop.a AS a,
+      Loop.b AS b
+    FROM
+      t_1_Loop AS Loop
+   UNION ALL
+  
+    SELECT
+      t_2_Graph_Reach_sn_delta_f3.a AS a,
+      t_3_Loop.b AS b
+    FROM
+      logica_test.Graph_Reach_sn_delta_f3 AS t_2_Graph_Reach_sn_delta_f3, t_1_Loop AS t_3_Loop
+    WHERE
+      (t_3_Loop.a = t_2_Graph_Reach_sn_delta_f3.b)
+  
+) AS UNUSED_TABLE_NAME  ),
+t_0_Graph_Reach_sn_step_f3 AS (SELECT
+  Graph_Reach_MultBodyAggAux_f2_f3.a AS a,
+  Graph_Reach_MultBodyAggAux_f2_f3.b AS b
+FROM
+  t_1_Graph_Reach_MultBodyAggAux_f2_f3 AS Graph_Reach_MultBodyAggAux_f2_f3
+GROUP BY 1, 2)
+SELECT
+  Graph_Reach_sn_step_f3.a AS a,
+  Graph_Reach_sn_step_f3.b AS b
+FROM
+  t_0_Graph_Reach_sn_step_f3 AS Graph_Reach_sn_step_f3
+WHERE
+  ((SELECT
+    MIN(1) AS logica_value
+  FROM
+    logica_test.Graph_Reach_sn_full_f3 AS Graph_Reach_sn_full_f3
+  WHERE
+    (Graph_Reach_sn_full_f3.a = Graph_Reach_sn_step_f3.a) AND
+    (Graph_Reach_sn_full_f3.b = Graph_Reach_sn_step_f3.b)) IS NULL)
+GROUP BY 1, 2;
+
+INSERT INTO logica_test.Graph_Reach_sn_full_f3 SELECT * FROM logica_test.Graph_Reach_sn_new_f3;
+
+DROP TABLE IF EXISTS logica_test.Graph_Reach_sn_delta_f3;
+CREATE TABLE logica_test.Graph_Reach_sn_delta_f3 AS SELECT
+  Graph_Reach_sn_new_f3.a AS a,
+  Graph_Reach_sn_new_f3.b AS b
+FROM
+  logica_test.Graph_Reach_sn_new_f3 AS Graph_Reach_sn_new_f3;
+
+DROP TABLE IF EXISTS logica_test.Graph_Reach_sn_new_f3;
+CREATE TABLE logica_test.Graph_Reach_sn_new_f3 AS WITH t_1_Loop AS (SELECT * FROM VALUES
+  ("x", "y"),
+  ("y", "x"),
+  ("y", "z")
+AS UNUSED_TABLE_NAME(a, b)),
+t_1_Graph_Reach_MultBodyAggAux_f2_f3 AS (SELECT * FROM (
+  
+    SELECT
+      Loop.a AS a,
+      Loop.b AS b
+    FROM
+      t_1_Loop AS Loop
+   UNION ALL
+  
+    SELECT
+      t_2_Graph_Reach_sn_delta_f3.a AS a,
+      t_3_Loop.b AS b
+    FROM
+      logica_test.Graph_Reach_sn_delta_f3 AS t_2_Graph_Reach_sn_delta_f3, t_1_Loop AS t_3_Loop
+    WHERE
+      (t_3_Loop.a = t_2_Graph_Reach_sn_delta_f3.b)
+  
+) AS UNUSED_TABLE_NAME  ),
+t_0_Graph_Reach_sn_step_f3 AS (SELECT
+  Graph_Reach_MultBodyAggAux_f2_f3.a AS a,
+  Graph_Reach_MultBodyAggAux_f2_f3.b AS b
+FROM
+  t_1_Graph_Reach_MultBodyAggAux_f2_f3 AS Graph_Reach_MultBodyAggAux_f2_f3
+GROUP BY 1, 2)
+SELECT
+  Graph_Reach_sn_step_f3.a AS a,
+  Graph_Reach_sn_step_f3.b AS b
+FROM
+  t_0_Graph_Reach_sn_step_f3 AS Graph_Reach_sn_step_f3
+WHERE
+  ((SELECT
+    MIN(1) AS logica_value
+  FROM
+    logica_test.Graph_Reach_sn_full_f3 AS Graph_Reach_sn_full_f3
+  WHERE
+    (Graph_Reach_sn_full_f3.a = Graph_Reach_sn_step_f3.a) AND
+    (Graph_Reach_sn_full_f3.b = Graph_Reach_sn_step_f3.b)) IS NULL)
+GROUP BY 1, 2;
+
+INSERT INTO logica_test.Graph_Reach_sn_full_f3 SELECT * FROM logica_test.Graph_Reach_sn_new_f3;
+
+DROP TABLE IF EXISTS logica_test.Graph_Reach_sn_delta_f3;
+CREATE TABLE logica_test.Graph_Reach_sn_delta_f3 AS SELECT
+  Graph_Reach_sn_new_f3.a AS a,
+  Graph_Reach_sn_new_f3.b AS b
+FROM
+  logica_test.Graph_Reach_sn_new_f3 AS Graph_Reach_sn_new_f3;
+
+DROP TABLE IF EXISTS logica_test.Graph_Reach_sn_new_f3;
+CREATE TABLE logica_test.Graph_Reach_sn_new_f3 AS WITH t_1_Loop AS (SELECT * FROM VALUES
+  ("x", "y"),
+  ("y", "x"),
+  ("y", "z")
+AS UNUSED_TABLE_NAME(a, b)),
+t_1_Graph_Reach_MultBodyAggAux_f2_f3 AS (SELECT * FROM (
+  
+    SELECT
+      Loop.a AS a,
+      Loop.b AS b
+    FROM
+      t_1_Loop AS Loop
+   UNION ALL
+  
+    SELECT
+      t_2_Graph_Reach_sn_delta_f3.a AS a,
+      t_3_Loop.b AS b
+    FROM
+      logica_test.Graph_Reach_sn_delta_f3 AS t_2_Graph_Reach_sn_delta_f3, t_1_Loop AS t_3_Loop
+    WHERE
+      (t_3_Loop.a = t_2_Graph_Reach_sn_delta_f3.b)
+  
+) AS UNUSED_TABLE_NAME  ),
+t_0_Graph_Reach_sn_step_f3 AS (SELECT
+  Graph_Reach_MultBodyAggAux_f2_f3.a AS a,
+  Graph_Reach_MultBodyAggAux_f2_f3.b AS b
+FROM
+  t_1_Graph_Reach_MultBodyAggAux_f2_f3 AS Graph_Reach_MultBodyAggAux_f2_f3
+GROUP BY 1, 2)
+SELECT
+  Graph_Reach_sn_step_f3.a AS a,
+  Graph_Reach_sn_step_f3.b AS b
+FROM
+  t_0_Graph_Reach_sn_step_f3 AS Graph_Reach_sn_step_f3
+WHERE
+  ((SELECT
+    MIN(1) AS logica_value
+  FROM
+    logica_test.Graph_Reach_sn_full_f3 AS Graph_Reach_sn_full_f3
+  WHERE
+    (Graph_Reach_sn_full_f3.a = Graph_Reach_sn_step_f3.a) AND
+    (Graph_Reach_sn_full_f3.b = Graph_Reach_sn_step_f3.b)) IS NULL)
+GROUP BY 1, 2;
+
+INSERT INTO logica_test.Graph_Reach_sn_full_f3 SELECT * FROM logica_test.Graph_Reach_sn_new_f3;
+
+DROP TABLE IF EXISTS logica_test.Graph_Reach_sn_delta_f3;
+CREATE TABLE logica_test.Graph_Reach_sn_delta_f3 AS SELECT
+  Graph_Reach_sn_new_f3.a AS a,
+  Graph_Reach_sn_new_f3.b AS b
+FROM
+  logica_test.Graph_Reach_sn_new_f3 AS Graph_Reach_sn_new_f3;
+
+DROP TABLE IF EXISTS logica_test.Graph_Reach_sn_new_f3;
+CREATE TABLE logica_test.Graph_Reach_sn_new_f3 AS WITH t_1_Loop AS (SELECT * FROM VALUES
+  ("x", "y"),
+  ("y", "x"),
+  ("y", "z")
+AS UNUSED_TABLE_NAME(a, b)),
+t_1_Graph_Reach_MultBodyAggAux_f2_f3 AS (SELECT * FROM (
+  
+    SELECT
+      Loop.a AS a,
+      Loop.b AS b
+    FROM
+      t_1_Loop AS Loop
+   UNION ALL
+  
+    SELECT
+      t_2_Graph_Reach_sn_delta_f3.a AS a,
+      t_3_Loop.b AS b
+    FROM
+      logica_test.Graph_Reach_sn_delta_f3 AS t_2_Graph_Reach_sn_delta_f3, t_1_Loop AS t_3_Loop
+    WHERE
+      (t_3_Loop.a = t_2_Graph_Reach_sn_delta_f3.b)
+  
+) AS UNUSED_TABLE_NAME  ),
+t_0_Graph_Reach_sn_step_f3 AS (SELECT
+  Graph_Reach_MultBodyAggAux_f2_f3.a AS a,
+  Graph_Reach_MultBodyAggAux_f2_f3.b AS b
+FROM
+  t_1_Graph_Reach_MultBodyAggAux_f2_f3 AS Graph_Reach_MultBodyAggAux_f2_f3
+GROUP BY 1, 2)
+SELECT
+  Graph_Reach_sn_step_f3.a AS a,
+  Graph_Reach_sn_step_f3.b AS b
+FROM
+  t_0_Graph_Reach_sn_step_f3 AS Graph_Reach_sn_step_f3
+WHERE
+  ((SELECT
+    MIN(1) AS logica_value
+  FROM
+    logica_test.Graph_Reach_sn_full_f3 AS Graph_Reach_sn_full_f3
+  WHERE
+    (Graph_Reach_sn_full_f3.a = Graph_Reach_sn_step_f3.a) AND
+    (Graph_Reach_sn_full_f3.b = Graph_Reach_sn_step_f3.b)) IS NULL)
+GROUP BY 1, 2;
+
+INSERT INTO logica_test.Graph_Reach_sn_full_f3 SELECT * FROM logica_test.Graph_Reach_sn_new_f3;
+
+DROP TABLE IF EXISTS logica_test.Graph_Reach_sn_delta_f3;
+CREATE TABLE logica_test.Graph_Reach_sn_delta_f3 AS SELECT
+  Graph_Reach_sn_new_f3.a AS a,
+  Graph_Reach_sn_new_f3.b AS b
+FROM
+  logica_test.Graph_Reach_sn_new_f3 AS Graph_Reach_sn_new_f3;
+
+DROP TABLE IF EXISTS logica_test.Graph_Reach_sn_new_f3;
+CREATE TABLE logica_test.Graph_Reach_sn_new_f3 AS WITH t_1_Loop AS (SELECT * FROM VALUES
+  ("x", "y"),
+  ("y", "x"),
+  ("y", "z")
+AS UNUSED_TABLE_NAME(a, b)),
+t_1_Graph_Reach_MultBodyAggAux_f2_f3 AS (SELECT * FROM (
+  
+    SELECT
+      Loop.a AS a,
+      Loop.b AS b
+    FROM
+      t_1_Loop AS Loop
+   UNION ALL
+  
+    SELECT
+      t_2_Graph_Reach_sn_delta_f3.a AS a,
+      t_3_Loop.b AS b
+    FROM
+      logica_test.Graph_Reach_sn_delta_f3 AS t_2_Graph_Reach_sn_delta_f3, t_1_Loop AS t_3_Loop
+    WHERE
+      (t_3_Loop.a = t_2_Graph_Reach_sn_delta_f3.b)
+  
+) AS UNUSED_TABLE_NAME  ),
+t_0_Graph_Reach_sn_step_f3 AS (SELECT
+  Graph_Reach_MultBodyAggAux_f2_f3.a AS a,
+  Graph_Reach_MultBodyAggAux_f2_f3.b AS b
+FROM
+  t_1_Graph_Reach_MultBodyAggAux_f2_f3 AS Graph_Reach_MultBodyAggAux_f2_f3
+GROUP BY 1, 2)
+SELECT
+  Graph_Reach_sn_step_f3.a AS a,
+  Graph_Reach_sn_step_f3.b AS b
+FROM
+  t_0_Graph_Reach_sn_step_f3 AS Graph_Reach_sn_step_f3
+WHERE
+  ((SELECT
+    MIN(1) AS logica_value
+  FROM
+    logica_test.Graph_Reach_sn_full_f3 AS Graph_Reach_sn_full_f3
+  WHERE
+    (Graph_Reach_sn_full_f3.a = Graph_Reach_sn_step_f3.a) AND
+    (Graph_Reach_sn_full_f3.b = Graph_Reach_sn_step_f3.b)) IS NULL)
+GROUP BY 1, 2;
+
+INSERT INTO logica_test.Graph_Reach_sn_full_f3 SELECT * FROM logica_test.Graph_Reach_sn_new_f3;
+
+DROP TABLE IF EXISTS logica_test.Graph_Reach_sn_delta_f3;
+CREATE TABLE logica_test.Graph_Reach_sn_delta_f3 AS SELECT
+  Graph_Reach_sn_new_f3.a AS a,
+  Graph_Reach_sn_new_f3.b AS b
+FROM
+  logica_test.Graph_Reach_sn_new_f3 AS Graph_Reach_sn_new_f3;
+
+DROP TABLE IF EXISTS logica_test.Graph_Reach_sn_new_f3;
+CREATE TABLE logica_test.Graph_Reach_sn_new_f3 AS WITH t_1_Loop AS (SELECT * FROM VALUES
+  ("x", "y"),
+  ("y", "x"),
+  ("y", "z")
+AS UNUSED_TABLE_NAME(a, b)),
+t_1_Graph_Reach_MultBodyAggAux_f2_f3 AS (SELECT * FROM (
+  
+    SELECT
+      Loop.a AS a,
+      Loop.b AS b
+    FROM
+      t_1_Loop AS Loop
+   UNION ALL
+  
+    SELECT
+      t_2_Graph_Reach_sn_delta_f3.a AS a,
+      t_3_Loop.b AS b
+    FROM
+      logica_test.Graph_Reach_sn_delta_f3 AS t_2_Graph_Reach_sn_delta_f3, t_1_Loop AS t_3_Loop
+    WHERE
+      (t_3_Loop.a = t_2_Graph_Reach_sn_delta_f3.b)
+  
+) AS UNUSED_TABLE_NAME  ),
+t_0_Graph_Reach_sn_step_f3 AS (SELECT
+  Graph_Reach_MultBodyAggAux_f2_f3.a AS a,
+  Graph_Reach_MultBodyAggAux_f2_f3.b AS b
+FROM
+  t_1_Graph_Reach_MultBodyAggAux_f2_f3 AS Graph_Reach_MultBodyAggAux_f2_f3
+GROUP BY 1, 2)
+SELECT
+  Graph_Reach_sn_step_f3.a AS a,
+  Graph_Reach_sn_step_f3.b AS b
+FROM
+  t_0_Graph_Reach_sn_step_f3 AS Graph_Reach_sn_step_f3
+WHERE
+  ((SELECT
+    MIN(1) AS logica_value
+  FROM
+    logica_test.Graph_Reach_sn_full_f3 AS Graph_Reach_sn_full_f3
+  WHERE
+    (Graph_Reach_sn_full_f3.a = Graph_Reach_sn_step_f3.a) AND
+    (Graph_Reach_sn_full_f3.b = Graph_Reach_sn_step_f3.b)) IS NULL)
+GROUP BY 1, 2;
+
+INSERT INTO logica_test.Graph_Reach_sn_full_f3 SELECT * FROM logica_test.Graph_Reach_sn_new_f3;
+
+DROP TABLE IF EXISTS logica_test.Graph_Reach_sn_delta_f3;
+CREATE TABLE logica_test.Graph_Reach_sn_delta_f3 AS SELECT
+  Graph_Reach_sn_new_f3.a AS a,
+  Graph_Reach_sn_new_f3.b AS b
+FROM
+  logica_test.Graph_Reach_sn_new_f3 AS Graph_Reach_sn_new_f3;
+
+DROP TABLE IF EXISTS logica_test.Graph_Reach_sn_new_f3;
+CREATE TABLE logica_test.Graph_Reach_sn_new_f3 AS WITH t_1_Loop AS (SELECT * FROM VALUES
+  ("x", "y"),
+  ("y", "x"),
+  ("y", "z")
+AS UNUSED_TABLE_NAME(a, b)),
+t_1_Graph_Reach_MultBodyAggAux_f2_f3 AS (SELECT * FROM (
+  
+    SELECT
+      Loop.a AS a,
+      Loop.b AS b
+    FROM
+      t_1_Loop AS Loop
+   UNION ALL
+  
+    SELECT
+      t_2_Graph_Reach_sn_delta_f3.a AS a,
+      t_3_Loop.b AS b
+    FROM
+      logica_test.Graph_Reach_sn_delta_f3 AS t_2_Graph_Reach_sn_delta_f3, t_1_Loop AS t_3_Loop
+    WHERE
+      (t_3_Loop.a = t_2_Graph_Reach_sn_delta_f3.b)
+  
+) AS UNUSED_TABLE_NAME  ),
+t_0_Graph_Reach_sn_step_f3 AS (SELECT
+  Graph_Reach_MultBodyAggAux_f2_f3.a AS a,
+  Graph_Reach_MultBodyAggAux_f2_f3.b AS b
+FROM
+  t_1_Graph_Reach_MultBodyAggAux_f2_f3 AS Graph_Reach_MultBodyAggAux_f2_f3
+GROUP BY 1, 2)
+SELECT
+  Graph_Reach_sn_step_f3.a AS a,
+  Graph_Reach_sn_step_f3.b AS b
+FROM
+  t_0_Graph_Reach_sn_step_f3 AS Graph_Reach_sn_step_f3
+WHERE
+  ((SELECT
+    MIN(1) AS logica_value
+  FROM
+    logica_test.Graph_Reach_sn_full_f3 AS Graph_Reach_sn_full_f3
+  WHERE
+    (Graph_Reach_sn_full_f3.a = Graph_Reach_sn_step_f3.a) AND
+    (Graph_Reach_sn_full_f3.b = Graph_Reach_sn_step_f3.b)) IS NULL)
+GROUP BY 1, 2;
+
+INSERT INTO logica_test.Graph_Reach_sn_full_f3 SELECT * FROM logica_test.Graph_Reach_sn_new_f3;
+
+DROP TABLE IF EXISTS logica_test.Graph_Reach_sn_delta_f3;
+CREATE TABLE logica_test.Graph_Reach_sn_delta_f3 AS SELECT
+  Graph_Reach_sn_new_f3.a AS a,
+  Graph_Reach_sn_new_f3.b AS b
+FROM
+  logica_test.Graph_Reach_sn_new_f3 AS Graph_Reach_sn_new_f3;
+
+SELECT
+  Graph_Reach_sn_full_f3.b AS b
+FROM
+  logica_test.Graph_Reach_sn_full_f3 AS Graph_Reach_sn_full_f3
+WHERE
+  ("y" = Graph_Reach_sn_full_f3.a) ORDER BY b NULLS LAST;

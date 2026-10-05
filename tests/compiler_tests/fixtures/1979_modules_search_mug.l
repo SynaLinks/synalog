@@ -1,0 +1,5 @@
+# Test: Search 'mug' over an import. (from tests/programs/modules/search_mug.l)
+
+import lib.shop.Product;
+@OrderBy(Q, "sku");
+Q(sku:, name:) :- Product(sku:, name:);
