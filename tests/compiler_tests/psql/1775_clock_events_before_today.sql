@@ -79,6 +79,6 @@ WITH t_0_Event AS (SELECT * FROM (
 SELECT
   SUM(1) AS n
 FROM
-  t_0_Event AS Event, (SELECT to_char(current_date, 'YYYY-MM-DD') AS date) AS Today
+  t_0_Event AS Event, (SELECT to_char(current_timestamp AT TIME ZONE 'UTC', 'YYYY-MM-DD') AS date) AS Today
 WHERE
   (SUBSTR(Event."at", 1, 10) < Today.date);

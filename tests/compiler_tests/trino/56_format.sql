@@ -12,7 +12,7 @@ WITH t_1_Items AS (SELECT * FROM (
 ) AS UNUSED_TABLE_NAME  ),
 t_0_Labels AS (SELECT
   Items.name AS name,
-  Items.name || ' x' || element_at(transform(filter(ARRAY[Items.qty], v -> v IS NOT NULL), v -> format('%s', v)), 1) AS label
+  Items.name || ' x' || element_at(transform(filter(ARRAY[Items.qty], v -> v IS NOT NULL), v -> IF(typeof(v) LIKE 'timestamp%', CAST(v AS VARCHAR), format('%s', v))), 1) AS label
 FROM
   t_1_Items AS Items ORDER BY name)
 SELECT

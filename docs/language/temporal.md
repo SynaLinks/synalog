@@ -46,10 +46,10 @@ MonthlyOrders(month:, count? += 1) distinct :-
 
 ## `Today` and `Now`
 
-Two built-in concepts read the engine's clock:
+Two built-in concepts read the engine's clock, in UTC on every engine, whatever the session's time zone:
 
-- `Today(date:)`: today's date as a `"YYYY-MM-DD"` string.
-- `Now(timestamp:)`: the current instant as the dialect's native timestamp.
+- `Today(date:)`: today's date in UTC, as a `"YYYY-MM-DD"` string.
+- `Now(timestamp:)`: the current instant as the dialect's native timestamp, in UTC. Its text (`ToString`) is `"YYYY-MM-DD HH:MM:SS"` followed by the engine's fraction of a second.
 
 `Now` is deliberately the **most precise** value the engine offers; every coarser part (date, time of day, hour, minute) is *derived* from it through the [pipeline](#the-pipeline) (`ToString` → `Substr`), so there is no separate `time:` or `date:` field to keep in sync.
 

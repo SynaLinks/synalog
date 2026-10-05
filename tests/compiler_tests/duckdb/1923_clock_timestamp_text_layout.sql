@@ -5,8 +5,8 @@ drop type if exists logicarecord893574736 cascade; create type logicarecord89357
 create sequence if not exists eternal_logical_sequence;
 
 SELECT
-  SUM(1) AS n
+  SUBSTR(CAST(Now.timestamp AS TEXT), 11, 1) AS sep,
+  SUBSTR(CAST(Now.timestamp AS TEXT), 8, 1) AS d,
+  SUBSTR(CAST(Now.timestamp AS TEXT), 14, 1) AS c
 FROM
-  (SELECT strftime(current_timestamp AT TIME ZONE 'UTC', '%Y-%m-%d') AS date) AS Today
-WHERE
-  (CAST(SUBSTR(Today.date, 1, 4) AS BIGINT) > 2025);
+  (SELECT current_timestamp AT TIME ZONE 'UTC' AS timestamp) AS Now;

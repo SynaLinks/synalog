@@ -13,6 +13,6 @@ AS UNUSED_TABLE_NAME(id, `at`, kind, `user`))
 SELECT
   SUM(1) AS n
 FROM
-  t_0_Event AS Event, (SELECT CAST(current_date() AS STRING) AS date) AS Today
+  t_0_Event AS Event, (SELECT CAST(to_date(to_utc_timestamp(current_timestamp(), current_timezone())) AS STRING) AS date) AS Today
 WHERE
   (SUBSTR(Event.`at`, 1, 10) < Today.date);

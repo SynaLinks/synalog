@@ -7,6 +7,6 @@ DO $$ BEGIN if not exists (select 'I(am) :- I(think)' from pg_type where typname
 SELECT
   SUM(1) AS n
 FROM
-  (SELECT to_char(current_date, 'YYYY-MM-DD') AS date) AS Today
+  (SELECT to_char(current_timestamp AT TIME ZONE 'UTC', 'YYYY-MM-DD') AS date) AS Today
 WHERE
   (CAST(SUBSTR(Today.date, 1, 4) AS BIGINT) > 2025);

@@ -6062,6 +6062,14 @@ SYNALOG_GOLDENS = {
     ("databricks", "1890_graphs_degree_at_least_1"),
     ("databricks", "1891_graphs_degree_at_least_2"),
     ("databricks", "1892_graphs_degree_at_least_3"),
+    # Today and Now in UTC; Trino's text of a timestamp (see DEVIATIONS.md).
+    ("trino", "1923_clock_timestamp_text_layout"),
+    ("presto", "1923_clock_timestamp_text_layout"),
+    ("databricks", "1923_clock_timestamp_text_layout"),
+    ("bigquery", "1923_clock_timestamp_text_layout"),
+    ("psql", "1923_clock_timestamp_text_layout"),
+    ("sqlite", "1923_clock_timestamp_text_layout"),
+    ("duckdb", "1923_clock_timestamp_text_layout"),
     # ToInt64 rounds a float on SQLite and Databricks (see DEVIATIONS.md).
     ("sqlite", "61_date_arithmetic"),
     ("sqlite", "122_execution_to_string_and_back"),

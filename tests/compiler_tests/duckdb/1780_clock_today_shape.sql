@@ -9,4 +9,4 @@ SELECT
   SUBSTR(Today.date, 5, 1) AS a,
   SUBSTR(Today.date, 8, 1) AS b
 FROM
-  (SELECT strftime(current_date, '%Y-%m-%d') AS date) AS Today;
+  (SELECT strftime(current_timestamp AT TIME ZONE 'UTC', '%Y-%m-%d') AS date) AS Today;

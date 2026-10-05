@@ -77,8 +77,14 @@ including BigQuery and read-only catalogs:
 
 | Concept            | inlined relation (DuckDB example)                         |
 |--------------------|-----------------------------------------------------------|
-| `Today(date:)`     | `(SELECT strftime(current_date, '%Y-%m-%d') AS date)`     |
-| `Now(timestamp:)`  | `(SELECT current_timestamp AS timestamp)`                 |
+| `Today(date:)`     | `(SELECT strftime(current_timestamp AT TIME ZONE 'UTC', '%Y-%m-%d') AS date)` |
+| `Now(timestamp:)`  | `(SELECT current_timestamp AT TIME ZONE 'UTC' AS timestamp)` |
+
+Both read the clock in UTC on every engine: the session's time zone (local on
+DuckDB and a Trino client, set per session on Databricks) would make the hour
+and, near midnight, the date differ from engine to engine. On Trino, the text
+of a timestamp is cast rather than formatted (`2026-10-05 15:19:59.910`, as
+elsewhere, not ISO's `2026-10-05T15:19:59.910`).
 
 `Now` is the most precise value; coarser parts (date, time, hour) are derived
 via the `Substr`/`ToInt64` pipeline rather than exposed as extra fields. Both

@@ -44,6 +44,6 @@ WITH t_0_Customer AS (SELECT * FROM (
 ) AS UNUSED_TABLE_NAME  )
 SELECT
   Customer.id AS id,
-  (CONCAT((CONCAT((CONCAT('#', element_at(transform(filter(ARRAY[Customer.id], v -> v IS NOT NULL), v -> format('%s', v)), 1))), ': ')), Customer.last)) AS label
+  (CONCAT((CONCAT((CONCAT('#', element_at(transform(filter(ARRAY[Customer.id], v -> v IS NOT NULL), v -> IF(typeof(v) LIKE 'timestamp%', CAST(v AS VARCHAR), format('%s', v))), 1))), ': ')), Customer.last)) AS label
 FROM
   t_0_Customer AS Customer ORDER BY id, label;

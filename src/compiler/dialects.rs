@@ -578,10 +578,10 @@ impl Dialect for PostgreSqlDialect {
     fn format_uses_concat(&self) -> bool { true }
     fn name(&self) -> &'static str { "psql" }
     fn today_relation_sql(&self) -> String {
-        "(SELECT to_char(current_date, 'YYYY-MM-DD') AS date)".to_string()
+        "(SELECT to_char(current_timestamp AT TIME ZONE 'UTC', 'YYYY-MM-DD') AS date)".to_string()
     }
     fn now_relation_sql(&self) -> String {
-        "(SELECT current_timestamp AS timestamp)".to_string()
+        "(SELECT current_timestamp AT TIME ZONE 'UTC' AS timestamp)".to_string()
     }
 
     fn built_in_functions(&self) -> HashMap<&'static str, &'static str> {
@@ -734,10 +734,10 @@ impl Dialect for TrinoDialect {
 
     fn name(&self) -> &'static str { "trino" }
     fn today_relation_sql(&self) -> String {
-        "(SELECT CAST(current_date AS VARCHAR) AS date)".to_string()
+        "(SELECT CAST(CAST(current_timestamp AT TIME ZONE 'UTC' AS DATE) AS VARCHAR) AS date)".to_string()
     }
     fn now_relation_sql(&self) -> String {
-        "(SELECT current_timestamp AS timestamp)".to_string()
+        "(SELECT CAST(current_timestamp AT TIME ZONE 'UTC' AS TIMESTAMP) AS timestamp)".to_string()
     }
     fn string_cast(&self, expr: &str) -> String { format!("CAST({} AS VARCHAR)", expr) }
 
@@ -747,7 +747,10 @@ impl Dialect for TrinoDialect {
         m.insert("Range", "FILTER(SEQUENCE(0, {0}), x -> x < {0})");
         // CAST writes a DOUBLE in scientific notation (1.5E0); format does
         // not, but writes a null as 'null': only non-null values are formatted.
-        m.insert("ToString", "element_at(transform(filter(ARRAY[{0}], v -> v IS NOT NULL), v -> format('%s', v)), 1)");
+        // `format` writes a double as the other engines do (1.5, not 1.5E0),
+        // but a timestamp in ISO with a `T`: a timestamp is cast instead, so
+        // its text is `2026-10-05 15:19:59.910` as elsewhere.
+        m.insert("ToString", "element_at(transform(filter(ARRAY[{0}], v -> v IS NOT NULL), v -> IF(typeof(v) LIKE 'timestamp%', CAST(v AS VARCHAR), format('%s', v))), 1)");
         m.insert("StringAgg", "(CASE WHEN COUNT({0}) > 0 THEN ARRAY_JOIN(ARRAY_AGG(CAST({0} AS VARCHAR)), ',') END)");
         m.insert("Join", "ARRAY_JOIN({0}, {1})");
         m.insert("ToInt64", "CAST(%s AS BIGINT)");
@@ -852,10 +855,10 @@ impl Dialect for PrestoDialect {
     fn name(&self) -> &'static str { "presto" }
     fn format_uses_concat(&self) -> bool { true }
     fn today_relation_sql(&self) -> String {
-        "(SELECT CAST(current_date AS VARCHAR) AS date)".to_string()
+        "(SELECT CAST(CAST(current_timestamp AT TIME ZONE 'UTC' AS DATE) AS VARCHAR) AS date)".to_string()
     }
     fn now_relation_sql(&self) -> String {
-        "(SELECT current_timestamp AS timestamp)".to_string()
+        "(SELECT CAST(current_timestamp AT TIME ZONE 'UTC' AS TIMESTAMP) AS timestamp)".to_string()
     }
     fn string_cast(&self, expr: &str) -> String { format!("CAST({} AS VARCHAR)", expr) }
 
@@ -964,10 +967,10 @@ impl Dialect for DatabricksDialect {
     fn name(&self) -> &'static str { "databricks" }
     fn string_cast(&self, expr: &str) -> String { format!("CAST({} AS STRING)", expr) }
     fn today_relation_sql(&self) -> String {
-        "(SELECT CAST(current_date() AS STRING) AS date)".to_string()
+        "(SELECT CAST(to_date(to_utc_timestamp(current_timestamp(), current_timezone())) AS STRING) AS date)".to_string()
     }
     fn now_relation_sql(&self) -> String {
-        "(SELECT current_timestamp() AS timestamp)".to_string()
+        "(SELECT to_utc_timestamp(current_timestamp(), current_timezone()) AS timestamp)".to_string()
     }
 
     fn built_in_functions(&self) -> HashMap<&'static str, &'static str> {
@@ -1092,10 +1095,10 @@ impl Dialect for DuckDbDialect {
     }
 
     fn today_relation_sql(&self) -> String {
-        "(SELECT strftime(current_date, '%Y-%m-%d') AS date)".to_string()
+        "(SELECT strftime(current_timestamp AT TIME ZONE 'UTC', '%Y-%m-%d') AS date)".to_string()
     }
     fn now_relation_sql(&self) -> String {
-        "(SELECT current_timestamp AS timestamp)".to_string()
+        "(SELECT current_timestamp AT TIME ZONE 'UTC' AS timestamp)".to_string()
     }
 
     fn built_in_functions(&self) -> HashMap<&'static str, &'static str> {

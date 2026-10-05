@@ -60,7 +60,7 @@ t_2_Contractors AS (SELECT * FROM (
 t_0_Party_MultBodyAggAux AS (SELECT * FROM (
   
     SELECT
-      (CONCAT('employee:', element_at(transform(filter(ARRAY[Employees.person_id], v -> v IS NOT NULL), v -> format('%s', v)), 1))) AS party_id,
+      (CONCAT('employee:', element_at(transform(filter(ARRAY[Employees.person_id], v -> v IS NOT NULL), v -> IF(typeof(v) LIKE 'timestamp%', CAST(v AS VARCHAR), format('%s', v))), 1))) AS party_id,
       Employees.name AS name,
       'employee' AS kind
     FROM
@@ -68,7 +68,7 @@ t_0_Party_MultBodyAggAux AS (SELECT * FROM (
    UNION ALL
   
     SELECT
-      (CONCAT('contractor:', element_at(transform(filter(ARRAY[Contractors.contractor_id], v -> v IS NOT NULL), v -> format('%s', v)), 1))) AS party_id,
+      (CONCAT('contractor:', element_at(transform(filter(ARRAY[Contractors.contractor_id], v -> v IS NOT NULL), v -> IF(typeof(v) LIKE 'timestamp%', CAST(v AS VARCHAR), format('%s', v))), 1))) AS party_id,
       Contractors.name AS name,
       'contractor' AS kind
     FROM

@@ -1,6 +1,6 @@
 SELECT
   SUM(1) AS n
 FROM
-  (SELECT CAST(current_date AS VARCHAR) AS date) AS Today
+  (SELECT CAST(CAST(current_timestamp AT TIME ZONE 'UTC' AS DATE) AS VARCHAR) AS date) AS Today
 WHERE
   (CAST(SUBSTR(Today.date, 1, 4) AS BIGINT) > 2025);

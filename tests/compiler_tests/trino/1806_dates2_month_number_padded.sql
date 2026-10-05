@@ -71,7 +71,7 @@ WITH t_0_Event AS (SELECT * FROM (
   
 ) AS UNUSED_TABLE_NAME  )
 SELECT
-  CASE WHEN (CAST(SUBSTR(Event."at", 6, 2) AS BIGINT) < 10) THEN (CONCAT('0', element_at(transform(filter(ARRAY[CAST(SUBSTR(Event."at", 6, 2) AS BIGINT)], v -> v IS NOT NULL), v -> format('%s', v)), 1))) ELSE element_at(transform(filter(ARRAY[CAST(SUBSTR(Event."at", 6, 2) AS BIGINT)], v -> v IS NOT NULL), v -> format('%s', v)), 1) END AS m
+  CASE WHEN (CAST(SUBSTR(Event."at", 6, 2) AS BIGINT) < 10) THEN (CONCAT('0', element_at(transform(filter(ARRAY[CAST(SUBSTR(Event."at", 6, 2) AS BIGINT)], v -> v IS NOT NULL), v -> IF(typeof(v) LIKE 'timestamp%', CAST(v AS VARCHAR), format('%s', v))), 1))) ELSE element_at(transform(filter(ARRAY[CAST(SUBSTR(Event."at", 6, 2) AS BIGINT)], v -> v IS NOT NULL), v -> IF(typeof(v) LIKE 'timestamp%', CAST(v AS VARCHAR), format('%s', v))), 1) END AS m
 FROM
   t_0_Event AS Event
 GROUP BY 1 ORDER BY m;

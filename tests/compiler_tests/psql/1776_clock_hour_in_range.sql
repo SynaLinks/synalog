@@ -7,7 +7,7 @@ DO $$ BEGIN if not exists (select 'I(am) :- I(think)' from pg_type where typname
 SELECT
   SUM(1) AS n
 FROM
-  (SELECT current_timestamp AS timestamp) AS Now
+  (SELECT current_timestamp AT TIME ZONE 'UTC' AS timestamp) AS Now
 WHERE
   (CAST(SUBSTR(CAST(Now.timestamp AS TEXT), 12, 2) AS BIGINT) >= 0) AND
   (CAST(SUBSTR(CAST(Now.timestamp AS TEXT), 12, 2) AS BIGINT) <= 23);

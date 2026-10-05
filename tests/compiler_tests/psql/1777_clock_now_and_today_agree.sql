@@ -7,6 +7,6 @@ DO $$ BEGIN if not exists (select 'I(am) :- I(think)' from pg_type where typname
 SELECT
   SUM(1) AS n
 FROM
-  (SELECT current_timestamp AS timestamp) AS Now, (SELECT to_char(current_date, 'YYYY-MM-DD') AS date) AS Today
+  (SELECT current_timestamp AT TIME ZONE 'UTC' AS timestamp) AS Now, (SELECT to_char(current_timestamp AT TIME ZONE 'UTC', 'YYYY-MM-DD') AS date) AS Today
 WHERE
   (SUBSTR(CAST(Now.timestamp AS TEXT), 1, 10) = Today.date);
