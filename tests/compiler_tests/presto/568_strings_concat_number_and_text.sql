@@ -1,0 +1,2 @@
+SELECT
+  (CONCAT('x=', CAST(3.5E0 AS VARCHAR))) AS v;

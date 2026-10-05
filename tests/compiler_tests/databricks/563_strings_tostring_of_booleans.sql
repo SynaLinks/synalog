@@ -1,0 +1,3 @@
+SELECT
+  CAST(true AS STRING) AS a,
+  CAST(false AS STRING) AS b;

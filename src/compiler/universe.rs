@@ -800,7 +800,7 @@ impl LogicaProgram {
                 .and_then(|f| jget(f, "value"))
                 .and_then(|v| jget(v, "expression"));
             let ty = self.aggregation_result_type(agg_name, operand, body);
-            return Some(type_to_psql(&ty));
+            return type_to_psql(&ty);
         }
         None
     }
@@ -812,7 +812,7 @@ impl LogicaProgram {
         operand: Option<&Json>,
         body: Option<&Json>,
     ) -> Type {
-        let operand_ty = || operand.map(|o| self.operand_type(o, body)).unwrap_or(Type::Number);
+        let operand_ty = || operand.map(|o| self.operand_type(o, body)).unwrap_or(Type::Any);
         match agg_name {
             // sum / average / count(+= 1): always numeric.
             "Agg+" | "Avg" => Type::Number,
@@ -867,7 +867,7 @@ impl LogicaProgram {
                 }
             }
         }
-        Type::Number
+        Type::Any
     }
 
     /// Extract `${param}` dollar parameters from rule JSON trees.
@@ -2350,6 +2350,19 @@ impl<'a> SubqueryTranslator for UniverseSubqueryTranslator<'a> {
     fn combine_psql_type(&self, combine: &Json) -> Option<String> {
         self.program.combine_psql_type(combine)
     }
+
+    fn column_psql_type(&self, predicate: &str, column: &str) -> Option<String> {
+        if self.program.annotations.engine() != "psql" {
+            return None;
+        }
+        let base = predicate.split("_MultBodyAggAux").next().unwrap_or(predicate);
+        self.program
+            .predicate_types
+            .get(predicate)
+            .or_else(|| self.program.predicate_types.get(base))
+            .and_then(|fields| fields.get(column))
+            .and_then(type_to_psql)
+    }
 }
 
 // ---------------------------------------------------------------------------
@@ -2365,14 +2378,15 @@ fn jget<'a>(node: &'a Json, key: &str) -> Option<&'a Json> {
 }
 
 /// Map an inferred `Type` to its PostgreSQL type name (logica's `PsqlType`).
-fn type_to_psql(t: &Type) -> String {
+/// None when the type is not known: no cast is better than a wrong one
+/// (`CAST('ant' AS numeric)` fails).
+fn type_to_psql(t: &Type) -> Option<String> {
     match t {
-        Type::Number => "numeric".to_string(),
-        Type::String => "text".to_string(),
-        Type::Bool => "bool".to_string(),
-        Type::List(element) => format!("{}[]", type_to_psql(element)),
-        // Any / Atomic / Record: fall back to numeric (best effort).
-        _ => "numeric".to_string(),
+        Type::Number => Some("numeric".to_string()),
+        Type::String => Some("text".to_string()),
+        Type::Bool => Some("bool".to_string()),
+        Type::List(element) => type_to_psql(element).map(|e| format!("{}[]", e)),
+        _ => None,
     }
 }
 

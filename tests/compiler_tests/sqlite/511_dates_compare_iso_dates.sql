@@ -1,0 +1,6 @@
+SELECT
+  x_3.value AS d
+FROM
+  JSON_EACH(JSON_ARRAY('2023-12-31', '2024-02-01', '2024-03-15')) as x_3
+WHERE
+  (x_3.value >= '2024-01-01') ORDER BY d;

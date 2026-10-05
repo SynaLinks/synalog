@@ -8,12 +8,12 @@ WITH t_0_V AS (SELECT * FROM (
   
     SELECT
       'g' AS g,
-      null AS s
+      CAST(null AS text) AS s
    UNION ALL
   
     SELECT
       'h' AS g,
-      null AS s
+      CAST(null AS text) AS s
    UNION ALL
   
     SELECT

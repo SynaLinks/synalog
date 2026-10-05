@@ -1,0 +1,22 @@
+WITH t_1_M AS (SELECT * FROM (
+  
+    SELECT
+      1 AS k
+   UNION ALL
+  
+    SELECT
+      1 AS k
+   UNION ALL
+  
+    SELECT
+      2 AS k
+  
+) AS UNUSED_TABLE_NAME  )
+SELECT
+  M.k AS k,
+  SUM(1) AS n
+FROM
+  t_1_M AS M, LATERAL (SELECT explode(ARRAY(1, 2)) AS x_4) AS pushkin
+WHERE
+  (x_4 = M.k)
+GROUP BY 1 ORDER BY k NULLS LAST;

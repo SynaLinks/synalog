@@ -8,7 +8,7 @@ WITH t_1_V AS (SELECT * FROM (
   
     SELECT
       1 AS k,
-      null AS x
+      CAST(null AS numeric) AS x
    UNION ALL
   
     SELECT

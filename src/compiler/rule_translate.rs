@@ -637,7 +637,14 @@ impl RuleStructure {
         // SELECT clause
         let mut fields = Vec::with_capacity(self.select.len());
         for (field_name, expression) in &self.select {
-            let sql_expr = ql.convert_to_sql(expression)?;
+            let mut sql_expr = ql.convert_to_sql(expression)?;
+            // A null of a column whose type is known has that type: PostgreSQL
+            // types `null UNION null` as text, and then fails against a number.
+            if sql_expr == "null" {
+                if let Some(t) = subquery_translator.column_psql_type(&self.this_predicate_name, field_name) {
+                    sql_expr = format!("CAST(null AS {})", t);
+                }
+            }
             let sql_field = sql_column(field_name, dialect);
             if field_name == "*" || sql_expr.ends_with(".*") {
                 fields.push(sql_expr);

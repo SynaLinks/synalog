@@ -1,0 +1,2 @@
+SELECT
+  ROUND(3.14159E0, 2) AS v;

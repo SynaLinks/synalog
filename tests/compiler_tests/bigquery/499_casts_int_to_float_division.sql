@@ -1,0 +1,2 @@
+SELECT
+  ((CAST(1 AS FLOAT64)) / (2)) AS v;

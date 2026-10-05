@@ -291,7 +291,26 @@ impl TypeInference {
                 let key = v.to_string();
                 if key.starts_with(&prefix) {
                     if let Some(field) = v.field() {
-                        types.insert(field.to_string(), v.get_type().clone());
+                        // The vertices of a column are visited in hash order,
+                        // and some are less specific than others (a rule giving
+                        // the column a null): keep the most specific type, the
+                        // same whatever the order.
+                        let new = v.get_type();
+                        let keep = match types.get(field) {
+                            None => true,
+                            Some(old) => {
+                                let rank = |t: &Type| match t {
+                                    Type::Any => 0,
+                                    Type::Atomic => 1,
+                                    _ => 2,
+                                };
+                                rank(new) > rank(old)
+                                    || (rank(new) == rank(old) && format!("{:?}", new) < format!("{:?}", old))
+                            }
+                        };
+                        if keep {
+                            types.insert(field.to_string(), new.clone());
+                        }
                     }
                 }
             }

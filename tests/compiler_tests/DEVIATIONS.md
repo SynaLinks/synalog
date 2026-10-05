@@ -232,6 +232,19 @@ Databricks return an estimate. synalog compiles it to `COUNT(DISTINCT x)` on
 every engine, so a count is the same wherever it runs
 (`112_execution_list_aggregate`, `131_execution_count_distinct_value`).
 
+## Types on PostgreSQL
+
+- A null in a column whose type inference knows is cast to it
+  (`CAST(null AS numeric)`): PostgreSQL types `null UNION ALL null` as text,
+  and the next rule's number then fails ("UNION types text and integer
+  cannot be matched").
+- A `combine` whose operand type is not known is not cast. Upstream casts it
+  to `numeric`, and `combine Min= s` over strings failed
+  (`CAST('ant' AS numeric)`).
+- The type of a column no longer depends on hash order: its vertices are
+  merged, the most specific type kept (a rule giving it a null made it
+  unknown, at random).
+
 ## `ArgMin=` / `ArgMax=` on PostgreSQL
 
 Upstream wraps the value in a one-field composite type, declared from the
@@ -361,6 +374,10 @@ go (`"x nulls first"`).
 - Unnesting on Databricks is a `LATERAL (SELECT explode(x) AS v)` subquery:
   Spark does not resolve a column of an earlier table inside a table function
   of the `FROM` list (`explode(L.l)`), so membership in a list column failed.
+- `ToString` of a boolean is `"true"` or `"false"` on SQLite too, which stores
+  booleans as 1 and 0: an argument that is a boolean by its form (a literal,
+  a comparison, a connective, a membership, a null test) is written
+  `CASE x WHEN 1 THEN 'true' WHEN 0 THEN 'false' END`.
 - `Join` is `ARRAY_JOIN` on Trino, Presto and Databricks, which have no
   `ARRAY_TO_STRING`.
 - `ToString` of a `DOUBLE` on Trino is scientific with `CAST` (`1.5E0`);

@@ -37,6 +37,7 @@ from __future__ import annotations
 import csv
 import json
 import os
+import re
 import sqlite3
 import urllib.parse
 
@@ -591,23 +592,43 @@ def run_plan(steps: list[dict], s: Session) -> Result:
     engine's error.
     """
     result: Result = ([], [])
-    for step in steps:
-        if step["kind"] in ("setup", "sql"):
-            if _has_code(step["sql"]):
-                result = s.run(step["sql"])
-        else:
-            check = True
-            for _ in range(step["repetitions"]):
-                if check:
-                    try:
-                        changed = s.run(step["changed"])[1]
-                    except Exception:  # noqa: BLE001 - see the docstring
-                        if step["repetitions"] > UNROLLED_REPETITIONS:
-                            raise
-                        check = False
-                    else:
-                        if changed and int(changed[0][0] or 0) == 0:
-                            break
-                for statement in step["body"]:
-                    s.run(statement)
+    try:
+        for step in steps:
+            if step["kind"] in ("setup", "sql"):
+                if _has_code(step["sql"]):
+                    result = s.run(step["sql"])
+            else:
+                check = True
+                for _ in range(step["repetitions"]):
+                    if check:
+                        try:
+                            changed = s.run(step["changed"])[1]
+                        except Exception:  # noqa: BLE001 - see the docstring
+                            if step["repetitions"] > UNROLLED_REPETITIONS:
+                                raise
+                            check = False
+                        else:
+                            if changed and int(changed[0][0] or 0) == 0:
+                                break
+                    for statement in step["body"]:
+                        s.run(statement)
+    finally:
+        _drop_working_tables(steps, s)
     return result
+
+
+# The tables a plan computes into synalog's own schemas: the steps of a
+# recursion, grounded predicates. A @Ground into a table the program names
+# elsewhere is the user's, and is kept.
+_WORKING_TABLE = re.compile(r"CREATE TABLE ((?:logica_home|logica_test)\.\w+)", re.IGNORECASE)
+
+
+def _drop_working_tables(steps: list[dict], s: Session) -> None:
+    """Drop the tables the run created in synalog's schemas, so a run leaves
+    nothing behind (on Presto's memory connector they filled the heap)."""
+    texts = [step.get("sql", "") for step in steps] + [b for step in steps for b in step.get("body", [])]
+    for table in dict.fromkeys(t for text in texts for t in _WORKING_TABLE.findall(text)):
+        try:
+            s.run(f"DROP TABLE IF EXISTS {table}")
+        except Exception:  # noqa: BLE001 - best effort: the rows are already read
+            pass

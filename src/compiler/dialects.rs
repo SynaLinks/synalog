@@ -101,6 +101,12 @@ pub trait Dialect {
         false
     }
 
+    /// The text of a boolean, where the engine has no boolean type and
+    /// `ToString` would write 1 and 0 (SQLite): a template of `{0}`.
+    fn boolean_to_string(&self) -> Option<&'static str> {
+        None
+    }
+
     /// Whether `OFFSET` can skip rows. PrestoDB disables it by default
     /// (`offset_clause_enabled`): a page past its first row is then taken
     /// by numbering the rows.
@@ -401,6 +407,9 @@ Array(a) = SqlExpr(
 pub struct SqLiteDialect;
 
 impl Dialect for SqLiteDialect {
+    fn boolean_to_string(&self) -> Option<&'static str> {
+        Some("(CASE {0} WHEN 1 THEN 'true' WHEN 0 THEN 'false' END)")
+    }
     fn nulls_first_by_default(&self, descending: bool) -> bool { !descending }
     fn name(&self) -> &'static str { "sqlite" }
     fn today_relation_sql(&self) -> String {

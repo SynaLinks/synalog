@@ -63,6 +63,7 @@ Up to 20 steps, a recursion is unrolled into a single query. Past 20 steps, or w
 
 - **Until it converges.** When Synalog runs a predicate (`synalog ... run`, [`synalog.execute`](../python-api.md#execute)), it stops a recursion as soon as a step changes nothing. A recursion costs the steps its data needs: `@Recursive(AncestorOf, 100)` over a hierarchy 6 levels deep takes 6 steps, and `@Recursive(P, -1)` recurses until nothing changes, on every engine.
 - **One step, the new rows.** A recursion of one `distinct` predicate, without aggregation, whose rules reference it at most once (the transitive closures above) is evaluated semi-naively: each step derives rows only from the rows the previous step added, so a step costs what changed, not the whole relation. Other recursions (an aggregate such as `Min=` in the recursion, mutual recursion, a rule joining the recursion with itself) recompute the relation at every step.
+- **No tables left behind.** The tables a run computes in Synalog's own schemas (`logica_home`, `logica_test`) are dropped once its rows are read.
 - **A script.** [`synalog.compile`](../python-api.md#compile) returns one SQL script, which cannot stop by itself: it writes every step out, up to the declared depth, and refuses a recursion too deep to write out. Run deep recursions with Synalog.
 
 ## Safety

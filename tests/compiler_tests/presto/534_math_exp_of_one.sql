@@ -1,0 +1,2 @@
+SELECT
+  EXP(1) AS v;

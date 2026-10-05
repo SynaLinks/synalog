@@ -7,7 +7,7 @@ DO $$ BEGIN if not exists (select 'I(am) :- I(think)' from pg_type where typname
 WITH t_0_WithNull AS (SELECT * FROM (
   
     SELECT
-      null AS x
+      CAST(null AS numeric) AS x
    UNION ALL
   
     SELECT

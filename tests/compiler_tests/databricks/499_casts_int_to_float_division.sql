@@ -1,0 +1,2 @@
+SELECT
+  ((CAST(1 AS DOUBLE)) / (2)) AS v;

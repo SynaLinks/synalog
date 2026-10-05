@@ -1,0 +1,2 @@
+SELECT
+  LENGTH(UPPER('héllo')) AS n;

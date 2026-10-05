@@ -1,0 +1,20 @@
+WITH t_4_V AS (SELECT * FROM (
+  
+    SELECT
+      2 AS k,
+      'b' AS v
+   UNION ALL
+  
+    SELECT
+      1 AS k,
+      'a' AS v
+  
+) AS UNUSED_TABLE_NAME  ),
+t_1_L AS (SELECT
+  ArgMin(t_2_V.v, t_2_V.k, null) AS l
+FROM
+  t_4_V AS t_2_V)
+SELECT
+  JSON_EXTRACT(t_0_L.l, '$[' || 0 || ']') AS first
+FROM
+  t_1_L AS t_0_L;
