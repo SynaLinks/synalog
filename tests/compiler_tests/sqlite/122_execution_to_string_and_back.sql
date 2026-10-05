@@ -1,3 +1,3 @@
 SELECT
   CAST(12 AS TEXT) AS s,
-  (((SELECT CASE WHEN typeof(v) = 'real' THEN CAST(ROUND(v) AS INTEGER) ELSE CAST(v AS INTEGER) END FROM (SELECT '12' AS v))) + (1)) AS n;
+  ((CAST('12' AS INTEGER)) + (1)) AS n;

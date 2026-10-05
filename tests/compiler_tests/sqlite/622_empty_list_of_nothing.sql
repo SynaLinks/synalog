@@ -1,0 +1,10 @@
+WITH t_0_C AS (SELECT
+  JSON_GROUP_ARRAY(x_3.value) AS l
+FROM
+  JSON_EACH(JSON_ARRAY(1)) as x_3
+WHERE
+  (x_3.value > 5))
+SELECT
+  COALESCE(JSON_ARRAY_LENGTH(C.l), 0) AS n
+FROM
+  t_0_C AS C;

@@ -1,18 +1,9 @@
-WITH t_0_R AS (SELECT * FROM (
-  
-    SELECT
-      1 AS x
-   UNION ALL
-  
-    SELECT
-      1 AS x
-   UNION ALL
-  
-    SELECT
-      2 AS x
-  
-) AS UNUSED_TABLE_NAME  )
+WITH t_0_R AS (SELECT * FROM VALUES
+  (1),
+  (1),
+  (2)
+AS UNUSED_TABLE_NAME(x))
 SELECT
   R.x AS x
 FROM
-  t_0_R AS R ORDER BY x;
+  t_0_R AS R ORDER BY x NULLS LAST;

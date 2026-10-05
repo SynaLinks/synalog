@@ -19,7 +19,7 @@ t_1_J AS (SELECT
 FROM
   t_2_V AS V)
 SELECT
-  COALESCE(ARRAY_LENGTH(STRING_TO_ARRAY(t_0_J.j, ','), 1), 0) AS parts,
+  CARDINALITY((CASE WHEN t_0_J.j = '' THEN ARRAY[''] ELSE STRING_TO_ARRAY(t_0_J.j, ',') END)) AS parts,
   LENGTH(t_0_J.j) AS length
 FROM
   t_1_J AS t_0_J;

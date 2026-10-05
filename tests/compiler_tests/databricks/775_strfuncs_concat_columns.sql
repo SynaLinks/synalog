@@ -1,0 +1,8 @@
+WITH t_0_V AS (SELECT * FROM VALUES
+  ("a", 1),
+  ("b", 2)
+AS UNUSED_TABLE_NAME(s, n))
+SELECT
+  (CONCAT((CONCAT(V.s, "-")), CAST(V.n AS STRING))) AS t
+FROM
+  t_0_V AS V ORDER BY t NULLS LAST;

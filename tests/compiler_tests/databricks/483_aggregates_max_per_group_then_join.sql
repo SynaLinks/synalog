@@ -1,23 +1,8 @@
-WITH t_1_V AS (SELECT * FROM (
-  
-    SELECT
-      "a" AS g,
-      "p" AS n,
-      1 AS x
-   UNION ALL
-  
-    SELECT
-      "a" AS g,
-      "q" AS n,
-      5 AS x
-   UNION ALL
-  
-    SELECT
-      "b" AS g,
-      "r" AS n,
-      2 AS x
-  
-) AS UNUSED_TABLE_NAME  ),
+WITH t_1_V AS (SELECT * FROM VALUES
+  ("a", "p", 1),
+  ("a", "q", 5),
+  ("b", "r", 2)
+AS UNUSED_TABLE_NAME(g, n, x)),
 t_2_M AS (SELECT
   t_3_V.g AS g,
   MAX(t_3_V.x) AS m

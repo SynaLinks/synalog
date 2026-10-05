@@ -1,46 +1,14 @@
-WITH t_0_Users AS (SELECT * FROM (
-  
-    SELECT
-      1 AS col0,
-      "Alice" AS col1,
-      "admin" AS col2
-   UNION ALL
-  
-    SELECT
-      2 AS col0,
-      "Bob" AS col1,
-      "user" AS col2
-   UNION ALL
-  
-    SELECT
-      3 AS col0,
-      "Charlie" AS col1,
-      "user" AS col2
-   UNION ALL
-  
-    SELECT
-      4 AS col0,
-      "Diana" AS col1,
-      "guest" AS col2
-  
-) AS UNUSED_TABLE_NAME  ),
-t_1_Orders AS (SELECT * FROM (
-  
-    SELECT
-      1 AS col0,
-      100 AS col1
-   UNION ALL
-  
-    SELECT
-      1 AS col0,
-      200 AS col1
-   UNION ALL
-  
-    SELECT
-      2 AS col0,
-      50 AS col1
-  
-) AS UNUSED_TABLE_NAME  )
+WITH t_0_Users AS (SELECT * FROM VALUES
+  (1, "Alice", "admin"),
+  (2, "Bob", "user"),
+  (3, "Charlie", "user"),
+  (4, "Diana", "guest")
+AS UNUSED_TABLE_NAME(col0, col1, col2)),
+t_1_Orders AS (SELECT * FROM VALUES
+  (1, 100),
+  (1, 200),
+  (2, 50)
+AS UNUSED_TABLE_NAME(col0, col1))
 SELECT
   Users.col0 AS id,
   Users.col1 AS name
@@ -52,4 +20,4 @@ WHERE
   FROM
     t_1_Orders AS Orders
   WHERE
-    (Orders.col0 = Users.col0)) IS NULL) ORDER BY id;
+    (Orders.col0 = Users.col0)) IS NULL) ORDER BY id NULLS LAST;

@@ -16,26 +16,11 @@ GROUP BY 1, 2;
 -- Interacting with table logica_test.Reach_sn_delta
 
 DROP TABLE IF EXISTS logica_test.Reach_sn_full;
-CREATE TABLE logica_test.Reach_sn_full AS WITH t_3_Edge AS (SELECT * FROM (
-  
-    SELECT
-      "a" AS `from`,
-      "b" AS `to`,
-      true AS ok
-   UNION ALL
-  
-    SELECT
-      "b" AS `from`,
-      "c" AS `to`,
-      true AS ok
-   UNION ALL
-  
-    SELECT
-      "c" AS `from`,
-      "d" AS `to`,
-      false AS ok
-  
-) AS UNUSED_TABLE_NAME  ),
+CREATE TABLE logica_test.Reach_sn_full AS WITH t_3_Edge AS (SELECT * FROM VALUES
+  ("a", "b", true),
+  ("b", "c", true),
+  ("c", "d", false)
+AS UNUSED_TABLE_NAME(`from`, `to`, ok)),
 t_1_Reach_MultBodyAggAux_f2 AS (SELECT * FROM (
   
     SELECT
@@ -81,26 +66,11 @@ SELECT * FROM (
 -- Interacting with table logica_test.Reach_sn_full
 
 DROP TABLE IF EXISTS logica_test.Reach_sn_new;
-CREATE TABLE logica_test.Reach_sn_new AS WITH t_3_Edge AS (SELECT * FROM (
-  
-    SELECT
-      "a" AS `from`,
-      "b" AS `to`,
-      true AS ok
-   UNION ALL
-  
-    SELECT
-      "b" AS `from`,
-      "c" AS `to`,
-      true AS ok
-   UNION ALL
-  
-    SELECT
-      "c" AS `from`,
-      "d" AS `to`,
-      false AS ok
-  
-) AS UNUSED_TABLE_NAME  ),
+CREATE TABLE logica_test.Reach_sn_new AS WITH t_3_Edge AS (SELECT * FROM VALUES
+  ("a", "b", true),
+  ("b", "c", true),
+  ("c", "d", false)
+AS UNUSED_TABLE_NAME(`from`, `to`, ok)),
 t_1_Reach_MultBodyAggAux_f2 AS (SELECT * FROM (
   
     SELECT
@@ -149,26 +119,11 @@ FROM
   logica_test.Reach_sn_new AS Reach_sn_new;
 
 DROP TABLE IF EXISTS logica_test.Reach_sn_new;
-CREATE TABLE logica_test.Reach_sn_new AS WITH t_3_Edge AS (SELECT * FROM (
-  
-    SELECT
-      "a" AS `from`,
-      "b" AS `to`,
-      true AS ok
-   UNION ALL
-  
-    SELECT
-      "b" AS `from`,
-      "c" AS `to`,
-      true AS ok
-   UNION ALL
-  
-    SELECT
-      "c" AS `from`,
-      "d" AS `to`,
-      false AS ok
-  
-) AS UNUSED_TABLE_NAME  ),
+CREATE TABLE logica_test.Reach_sn_new AS WITH t_3_Edge AS (SELECT * FROM VALUES
+  ("a", "b", true),
+  ("b", "c", true),
+  ("c", "d", false)
+AS UNUSED_TABLE_NAME(`from`, `to`, ok)),
 t_1_Reach_MultBodyAggAux_f2 AS (SELECT * FROM (
   
     SELECT
@@ -217,26 +172,11 @@ FROM
   logica_test.Reach_sn_new AS Reach_sn_new;
 
 DROP TABLE IF EXISTS logica_test.Reach_sn_new;
-CREATE TABLE logica_test.Reach_sn_new AS WITH t_3_Edge AS (SELECT * FROM (
-  
-    SELECT
-      "a" AS `from`,
-      "b" AS `to`,
-      true AS ok
-   UNION ALL
-  
-    SELECT
-      "b" AS `from`,
-      "c" AS `to`,
-      true AS ok
-   UNION ALL
-  
-    SELECT
-      "c" AS `from`,
-      "d" AS `to`,
-      false AS ok
-  
-) AS UNUSED_TABLE_NAME  ),
+CREATE TABLE logica_test.Reach_sn_new AS WITH t_3_Edge AS (SELECT * FROM VALUES
+  ("a", "b", true),
+  ("b", "c", true),
+  ("c", "d", false)
+AS UNUSED_TABLE_NAME(`from`, `to`, ok)),
 t_1_Reach_MultBodyAggAux_f2 AS (SELECT * FROM (
   
     SELECT
@@ -285,26 +225,11 @@ FROM
   logica_test.Reach_sn_new AS Reach_sn_new;
 
 DROP TABLE IF EXISTS logica_test.Reach_sn_new;
-CREATE TABLE logica_test.Reach_sn_new AS WITH t_3_Edge AS (SELECT * FROM (
-  
-    SELECT
-      "a" AS `from`,
-      "b" AS `to`,
-      true AS ok
-   UNION ALL
-  
-    SELECT
-      "b" AS `from`,
-      "c" AS `to`,
-      true AS ok
-   UNION ALL
-  
-    SELECT
-      "c" AS `from`,
-      "d" AS `to`,
-      false AS ok
-  
-) AS UNUSED_TABLE_NAME  ),
+CREATE TABLE logica_test.Reach_sn_new AS WITH t_3_Edge AS (SELECT * FROM VALUES
+  ("a", "b", true),
+  ("b", "c", true),
+  ("c", "d", false)
+AS UNUSED_TABLE_NAME(`from`, `to`, ok)),
 t_1_Reach_MultBodyAggAux_f2 AS (SELECT * FROM (
   
     SELECT
@@ -353,26 +278,11 @@ FROM
   logica_test.Reach_sn_new AS Reach_sn_new;
 
 DROP TABLE IF EXISTS logica_test.Reach_sn_new;
-CREATE TABLE logica_test.Reach_sn_new AS WITH t_3_Edge AS (SELECT * FROM (
-  
-    SELECT
-      "a" AS `from`,
-      "b" AS `to`,
-      true AS ok
-   UNION ALL
-  
-    SELECT
-      "b" AS `from`,
-      "c" AS `to`,
-      true AS ok
-   UNION ALL
-  
-    SELECT
-      "c" AS `from`,
-      "d" AS `to`,
-      false AS ok
-  
-) AS UNUSED_TABLE_NAME  ),
+CREATE TABLE logica_test.Reach_sn_new AS WITH t_3_Edge AS (SELECT * FROM VALUES
+  ("a", "b", true),
+  ("b", "c", true),
+  ("c", "d", false)
+AS UNUSED_TABLE_NAME(`from`, `to`, ok)),
 t_1_Reach_MultBodyAggAux_f2 AS (SELECT * FROM (
   
     SELECT
@@ -421,26 +331,11 @@ FROM
   logica_test.Reach_sn_new AS Reach_sn_new;
 
 DROP TABLE IF EXISTS logica_test.Reach_sn_new;
-CREATE TABLE logica_test.Reach_sn_new AS WITH t_3_Edge AS (SELECT * FROM (
-  
-    SELECT
-      "a" AS `from`,
-      "b" AS `to`,
-      true AS ok
-   UNION ALL
-  
-    SELECT
-      "b" AS `from`,
-      "c" AS `to`,
-      true AS ok
-   UNION ALL
-  
-    SELECT
-      "c" AS `from`,
-      "d" AS `to`,
-      false AS ok
-  
-) AS UNUSED_TABLE_NAME  ),
+CREATE TABLE logica_test.Reach_sn_new AS WITH t_3_Edge AS (SELECT * FROM VALUES
+  ("a", "b", true),
+  ("b", "c", true),
+  ("c", "d", false)
+AS UNUSED_TABLE_NAME(`from`, `to`, ok)),
 t_1_Reach_MultBodyAggAux_f2 AS (SELECT * FROM (
   
     SELECT
@@ -489,26 +384,11 @@ FROM
   logica_test.Reach_sn_new AS Reach_sn_new;
 
 DROP TABLE IF EXISTS logica_test.Reach_sn_new;
-CREATE TABLE logica_test.Reach_sn_new AS WITH t_3_Edge AS (SELECT * FROM (
-  
-    SELECT
-      "a" AS `from`,
-      "b" AS `to`,
-      true AS ok
-   UNION ALL
-  
-    SELECT
-      "b" AS `from`,
-      "c" AS `to`,
-      true AS ok
-   UNION ALL
-  
-    SELECT
-      "c" AS `from`,
-      "d" AS `to`,
-      false AS ok
-  
-) AS UNUSED_TABLE_NAME  ),
+CREATE TABLE logica_test.Reach_sn_new AS WITH t_3_Edge AS (SELECT * FROM VALUES
+  ("a", "b", true),
+  ("b", "c", true),
+  ("c", "d", false)
+AS UNUSED_TABLE_NAME(`from`, `to`, ok)),
 t_1_Reach_MultBodyAggAux_f2 AS (SELECT * FROM (
   
     SELECT
@@ -557,26 +437,11 @@ FROM
   logica_test.Reach_sn_new AS Reach_sn_new;
 
 DROP TABLE IF EXISTS logica_test.Reach_sn_new;
-CREATE TABLE logica_test.Reach_sn_new AS WITH t_3_Edge AS (SELECT * FROM (
-  
-    SELECT
-      "a" AS `from`,
-      "b" AS `to`,
-      true AS ok
-   UNION ALL
-  
-    SELECT
-      "b" AS `from`,
-      "c" AS `to`,
-      true AS ok
-   UNION ALL
-  
-    SELECT
-      "c" AS `from`,
-      "d" AS `to`,
-      false AS ok
-  
-) AS UNUSED_TABLE_NAME  ),
+CREATE TABLE logica_test.Reach_sn_new AS WITH t_3_Edge AS (SELECT * FROM VALUES
+  ("a", "b", true),
+  ("b", "c", true),
+  ("c", "d", false)
+AS UNUSED_TABLE_NAME(`from`, `to`, ok)),
 t_1_Reach_MultBodyAggAux_f2 AS (SELECT * FROM (
   
     SELECT
@@ -625,26 +490,11 @@ FROM
   logica_test.Reach_sn_new AS Reach_sn_new;
 
 DROP TABLE IF EXISTS logica_test.Reach_sn_new;
-CREATE TABLE logica_test.Reach_sn_new AS WITH t_3_Edge AS (SELECT * FROM (
-  
-    SELECT
-      "a" AS `from`,
-      "b" AS `to`,
-      true AS ok
-   UNION ALL
-  
-    SELECT
-      "b" AS `from`,
-      "c" AS `to`,
-      true AS ok
-   UNION ALL
-  
-    SELECT
-      "c" AS `from`,
-      "d" AS `to`,
-      false AS ok
-  
-) AS UNUSED_TABLE_NAME  ),
+CREATE TABLE logica_test.Reach_sn_new AS WITH t_3_Edge AS (SELECT * FROM VALUES
+  ("a", "b", true),
+  ("b", "c", true),
+  ("c", "d", false)
+AS UNUSED_TABLE_NAME(`from`, `to`, ok)),
 t_1_Reach_MultBodyAggAux_f2 AS (SELECT * FROM (
   
     SELECT
@@ -693,26 +543,11 @@ FROM
   logica_test.Reach_sn_new AS Reach_sn_new;
 
 DROP TABLE IF EXISTS logica_test.Reach_sn_new;
-CREATE TABLE logica_test.Reach_sn_new AS WITH t_3_Edge AS (SELECT * FROM (
-  
-    SELECT
-      "a" AS `from`,
-      "b" AS `to`,
-      true AS ok
-   UNION ALL
-  
-    SELECT
-      "b" AS `from`,
-      "c" AS `to`,
-      true AS ok
-   UNION ALL
-  
-    SELECT
-      "c" AS `from`,
-      "d" AS `to`,
-      false AS ok
-  
-) AS UNUSED_TABLE_NAME  ),
+CREATE TABLE logica_test.Reach_sn_new AS WITH t_3_Edge AS (SELECT * FROM VALUES
+  ("a", "b", true),
+  ("b", "c", true),
+  ("c", "d", false)
+AS UNUSED_TABLE_NAME(`from`, `to`, ok)),
 t_1_Reach_MultBodyAggAux_f2 AS (SELECT * FROM (
   
     SELECT
@@ -761,26 +596,11 @@ FROM
   logica_test.Reach_sn_new AS Reach_sn_new;
 
 DROP TABLE IF EXISTS logica_test.Reach_sn_new;
-CREATE TABLE logica_test.Reach_sn_new AS WITH t_3_Edge AS (SELECT * FROM (
-  
-    SELECT
-      "a" AS `from`,
-      "b" AS `to`,
-      true AS ok
-   UNION ALL
-  
-    SELECT
-      "b" AS `from`,
-      "c" AS `to`,
-      true AS ok
-   UNION ALL
-  
-    SELECT
-      "c" AS `from`,
-      "d" AS `to`,
-      false AS ok
-  
-) AS UNUSED_TABLE_NAME  ),
+CREATE TABLE logica_test.Reach_sn_new AS WITH t_3_Edge AS (SELECT * FROM VALUES
+  ("a", "b", true),
+  ("b", "c", true),
+  ("c", "d", false)
+AS UNUSED_TABLE_NAME(`from`, `to`, ok)),
 t_1_Reach_MultBodyAggAux_f2 AS (SELECT * FROM (
   
     SELECT
@@ -829,26 +649,11 @@ FROM
   logica_test.Reach_sn_new AS Reach_sn_new;
 
 DROP TABLE IF EXISTS logica_test.Reach_sn_new;
-CREATE TABLE logica_test.Reach_sn_new AS WITH t_3_Edge AS (SELECT * FROM (
-  
-    SELECT
-      "a" AS `from`,
-      "b" AS `to`,
-      true AS ok
-   UNION ALL
-  
-    SELECT
-      "b" AS `from`,
-      "c" AS `to`,
-      true AS ok
-   UNION ALL
-  
-    SELECT
-      "c" AS `from`,
-      "d" AS `to`,
-      false AS ok
-  
-) AS UNUSED_TABLE_NAME  ),
+CREATE TABLE logica_test.Reach_sn_new AS WITH t_3_Edge AS (SELECT * FROM VALUES
+  ("a", "b", true),
+  ("b", "c", true),
+  ("c", "d", false)
+AS UNUSED_TABLE_NAME(`from`, `to`, ok)),
 t_1_Reach_MultBodyAggAux_f2 AS (SELECT * FROM (
   
     SELECT
@@ -897,26 +702,11 @@ FROM
   logica_test.Reach_sn_new AS Reach_sn_new;
 
 DROP TABLE IF EXISTS logica_test.Reach_sn_new;
-CREATE TABLE logica_test.Reach_sn_new AS WITH t_3_Edge AS (SELECT * FROM (
-  
-    SELECT
-      "a" AS `from`,
-      "b" AS `to`,
-      true AS ok
-   UNION ALL
-  
-    SELECT
-      "b" AS `from`,
-      "c" AS `to`,
-      true AS ok
-   UNION ALL
-  
-    SELECT
-      "c" AS `from`,
-      "d" AS `to`,
-      false AS ok
-  
-) AS UNUSED_TABLE_NAME  ),
+CREATE TABLE logica_test.Reach_sn_new AS WITH t_3_Edge AS (SELECT * FROM VALUES
+  ("a", "b", true),
+  ("b", "c", true),
+  ("c", "d", false)
+AS UNUSED_TABLE_NAME(`from`, `to`, ok)),
 t_1_Reach_MultBodyAggAux_f2 AS (SELECT * FROM (
   
     SELECT
@@ -965,26 +755,11 @@ FROM
   logica_test.Reach_sn_new AS Reach_sn_new;
 
 DROP TABLE IF EXISTS logica_test.Reach_sn_new;
-CREATE TABLE logica_test.Reach_sn_new AS WITH t_3_Edge AS (SELECT * FROM (
-  
-    SELECT
-      "a" AS `from`,
-      "b" AS `to`,
-      true AS ok
-   UNION ALL
-  
-    SELECT
-      "b" AS `from`,
-      "c" AS `to`,
-      true AS ok
-   UNION ALL
-  
-    SELECT
-      "c" AS `from`,
-      "d" AS `to`,
-      false AS ok
-  
-) AS UNUSED_TABLE_NAME  ),
+CREATE TABLE logica_test.Reach_sn_new AS WITH t_3_Edge AS (SELECT * FROM VALUES
+  ("a", "b", true),
+  ("b", "c", true),
+  ("c", "d", false)
+AS UNUSED_TABLE_NAME(`from`, `to`, ok)),
 t_1_Reach_MultBodyAggAux_f2 AS (SELECT * FROM (
   
     SELECT
@@ -1033,26 +808,11 @@ FROM
   logica_test.Reach_sn_new AS Reach_sn_new;
 
 DROP TABLE IF EXISTS logica_test.Reach_sn_new;
-CREATE TABLE logica_test.Reach_sn_new AS WITH t_3_Edge AS (SELECT * FROM (
-  
-    SELECT
-      "a" AS `from`,
-      "b" AS `to`,
-      true AS ok
-   UNION ALL
-  
-    SELECT
-      "b" AS `from`,
-      "c" AS `to`,
-      true AS ok
-   UNION ALL
-  
-    SELECT
-      "c" AS `from`,
-      "d" AS `to`,
-      false AS ok
-  
-) AS UNUSED_TABLE_NAME  ),
+CREATE TABLE logica_test.Reach_sn_new AS WITH t_3_Edge AS (SELECT * FROM VALUES
+  ("a", "b", true),
+  ("b", "c", true),
+  ("c", "d", false)
+AS UNUSED_TABLE_NAME(`from`, `to`, ok)),
 t_1_Reach_MultBodyAggAux_f2 AS (SELECT * FROM (
   
     SELECT
@@ -1101,26 +861,11 @@ FROM
   logica_test.Reach_sn_new AS Reach_sn_new;
 
 DROP TABLE IF EXISTS logica_test.Reach_sn_new;
-CREATE TABLE logica_test.Reach_sn_new AS WITH t_3_Edge AS (SELECT * FROM (
-  
-    SELECT
-      "a" AS `from`,
-      "b" AS `to`,
-      true AS ok
-   UNION ALL
-  
-    SELECT
-      "b" AS `from`,
-      "c" AS `to`,
-      true AS ok
-   UNION ALL
-  
-    SELECT
-      "c" AS `from`,
-      "d" AS `to`,
-      false AS ok
-  
-) AS UNUSED_TABLE_NAME  ),
+CREATE TABLE logica_test.Reach_sn_new AS WITH t_3_Edge AS (SELECT * FROM VALUES
+  ("a", "b", true),
+  ("b", "c", true),
+  ("c", "d", false)
+AS UNUSED_TABLE_NAME(`from`, `to`, ok)),
 t_1_Reach_MultBodyAggAux_f2 AS (SELECT * FROM (
   
     SELECT
@@ -1169,26 +914,11 @@ FROM
   logica_test.Reach_sn_new AS Reach_sn_new;
 
 DROP TABLE IF EXISTS logica_test.Reach_sn_new;
-CREATE TABLE logica_test.Reach_sn_new AS WITH t_3_Edge AS (SELECT * FROM (
-  
-    SELECT
-      "a" AS `from`,
-      "b" AS `to`,
-      true AS ok
-   UNION ALL
-  
-    SELECT
-      "b" AS `from`,
-      "c" AS `to`,
-      true AS ok
-   UNION ALL
-  
-    SELECT
-      "c" AS `from`,
-      "d" AS `to`,
-      false AS ok
-  
-) AS UNUSED_TABLE_NAME  ),
+CREATE TABLE logica_test.Reach_sn_new AS WITH t_3_Edge AS (SELECT * FROM VALUES
+  ("a", "b", true),
+  ("b", "c", true),
+  ("c", "d", false)
+AS UNUSED_TABLE_NAME(`from`, `to`, ok)),
 t_1_Reach_MultBodyAggAux_f2 AS (SELECT * FROM (
   
     SELECT
@@ -1237,26 +967,11 @@ FROM
   logica_test.Reach_sn_new AS Reach_sn_new;
 
 DROP TABLE IF EXISTS logica_test.Reach_sn_new;
-CREATE TABLE logica_test.Reach_sn_new AS WITH t_3_Edge AS (SELECT * FROM (
-  
-    SELECT
-      "a" AS `from`,
-      "b" AS `to`,
-      true AS ok
-   UNION ALL
-  
-    SELECT
-      "b" AS `from`,
-      "c" AS `to`,
-      true AS ok
-   UNION ALL
-  
-    SELECT
-      "c" AS `from`,
-      "d" AS `to`,
-      false AS ok
-  
-) AS UNUSED_TABLE_NAME  ),
+CREATE TABLE logica_test.Reach_sn_new AS WITH t_3_Edge AS (SELECT * FROM VALUES
+  ("a", "b", true),
+  ("b", "c", true),
+  ("c", "d", false)
+AS UNUSED_TABLE_NAME(`from`, `to`, ok)),
 t_1_Reach_MultBodyAggAux_f2 AS (SELECT * FROM (
   
     SELECT
@@ -1305,26 +1020,11 @@ FROM
   logica_test.Reach_sn_new AS Reach_sn_new;
 
 DROP TABLE IF EXISTS logica_test.Reach_sn_new;
-CREATE TABLE logica_test.Reach_sn_new AS WITH t_3_Edge AS (SELECT * FROM (
-  
-    SELECT
-      "a" AS `from`,
-      "b" AS `to`,
-      true AS ok
-   UNION ALL
-  
-    SELECT
-      "b" AS `from`,
-      "c" AS `to`,
-      true AS ok
-   UNION ALL
-  
-    SELECT
-      "c" AS `from`,
-      "d" AS `to`,
-      false AS ok
-  
-) AS UNUSED_TABLE_NAME  ),
+CREATE TABLE logica_test.Reach_sn_new AS WITH t_3_Edge AS (SELECT * FROM VALUES
+  ("a", "b", true),
+  ("b", "c", true),
+  ("c", "d", false)
+AS UNUSED_TABLE_NAME(`from`, `to`, ok)),
 t_1_Reach_MultBodyAggAux_f2 AS (SELECT * FROM (
   
     SELECT
@@ -1373,26 +1073,11 @@ FROM
   logica_test.Reach_sn_new AS Reach_sn_new;
 
 DROP TABLE IF EXISTS logica_test.Reach_sn_new;
-CREATE TABLE logica_test.Reach_sn_new AS WITH t_3_Edge AS (SELECT * FROM (
-  
-    SELECT
-      "a" AS `from`,
-      "b" AS `to`,
-      true AS ok
-   UNION ALL
-  
-    SELECT
-      "b" AS `from`,
-      "c" AS `to`,
-      true AS ok
-   UNION ALL
-  
-    SELECT
-      "c" AS `from`,
-      "d" AS `to`,
-      false AS ok
-  
-) AS UNUSED_TABLE_NAME  ),
+CREATE TABLE logica_test.Reach_sn_new AS WITH t_3_Edge AS (SELECT * FROM VALUES
+  ("a", "b", true),
+  ("b", "c", true),
+  ("c", "d", false)
+AS UNUSED_TABLE_NAME(`from`, `to`, ok)),
 t_1_Reach_MultBodyAggAux_f2 AS (SELECT * FROM (
   
     SELECT
@@ -1441,26 +1126,11 @@ FROM
   logica_test.Reach_sn_new AS Reach_sn_new;
 
 DROP TABLE IF EXISTS logica_test.Reach_sn_new;
-CREATE TABLE logica_test.Reach_sn_new AS WITH t_3_Edge AS (SELECT * FROM (
-  
-    SELECT
-      "a" AS `from`,
-      "b" AS `to`,
-      true AS ok
-   UNION ALL
-  
-    SELECT
-      "b" AS `from`,
-      "c" AS `to`,
-      true AS ok
-   UNION ALL
-  
-    SELECT
-      "c" AS `from`,
-      "d" AS `to`,
-      false AS ok
-  
-) AS UNUSED_TABLE_NAME  ),
+CREATE TABLE logica_test.Reach_sn_new AS WITH t_3_Edge AS (SELECT * FROM VALUES
+  ("a", "b", true),
+  ("b", "c", true),
+  ("c", "d", false)
+AS UNUSED_TABLE_NAME(`from`, `to`, ok)),
 t_1_Reach_MultBodyAggAux_f2 AS (SELECT * FROM (
   
     SELECT
@@ -1509,26 +1179,11 @@ FROM
   logica_test.Reach_sn_new AS Reach_sn_new;
 
 DROP TABLE IF EXISTS logica_test.Reach_sn_new;
-CREATE TABLE logica_test.Reach_sn_new AS WITH t_3_Edge AS (SELECT * FROM (
-  
-    SELECT
-      "a" AS `from`,
-      "b" AS `to`,
-      true AS ok
-   UNION ALL
-  
-    SELECT
-      "b" AS `from`,
-      "c" AS `to`,
-      true AS ok
-   UNION ALL
-  
-    SELECT
-      "c" AS `from`,
-      "d" AS `to`,
-      false AS ok
-  
-) AS UNUSED_TABLE_NAME  ),
+CREATE TABLE logica_test.Reach_sn_new AS WITH t_3_Edge AS (SELECT * FROM VALUES
+  ("a", "b", true),
+  ("b", "c", true),
+  ("c", "d", false)
+AS UNUSED_TABLE_NAME(`from`, `to`, ok)),
 t_1_Reach_MultBodyAggAux_f2 AS (SELECT * FROM (
   
     SELECT
@@ -1577,26 +1232,11 @@ FROM
   logica_test.Reach_sn_new AS Reach_sn_new;
 
 DROP TABLE IF EXISTS logica_test.Reach_sn_new;
-CREATE TABLE logica_test.Reach_sn_new AS WITH t_3_Edge AS (SELECT * FROM (
-  
-    SELECT
-      "a" AS `from`,
-      "b" AS `to`,
-      true AS ok
-   UNION ALL
-  
-    SELECT
-      "b" AS `from`,
-      "c" AS `to`,
-      true AS ok
-   UNION ALL
-  
-    SELECT
-      "c" AS `from`,
-      "d" AS `to`,
-      false AS ok
-  
-) AS UNUSED_TABLE_NAME  ),
+CREATE TABLE logica_test.Reach_sn_new AS WITH t_3_Edge AS (SELECT * FROM VALUES
+  ("a", "b", true),
+  ("b", "c", true),
+  ("c", "d", false)
+AS UNUSED_TABLE_NAME(`from`, `to`, ok)),
 t_1_Reach_MultBodyAggAux_f2 AS (SELECT * FROM (
   
     SELECT
@@ -1645,26 +1285,11 @@ FROM
   logica_test.Reach_sn_new AS Reach_sn_new;
 
 DROP TABLE IF EXISTS logica_test.Reach_sn_new;
-CREATE TABLE logica_test.Reach_sn_new AS WITH t_3_Edge AS (SELECT * FROM (
-  
-    SELECT
-      "a" AS `from`,
-      "b" AS `to`,
-      true AS ok
-   UNION ALL
-  
-    SELECT
-      "b" AS `from`,
-      "c" AS `to`,
-      true AS ok
-   UNION ALL
-  
-    SELECT
-      "c" AS `from`,
-      "d" AS `to`,
-      false AS ok
-  
-) AS UNUSED_TABLE_NAME  ),
+CREATE TABLE logica_test.Reach_sn_new AS WITH t_3_Edge AS (SELECT * FROM VALUES
+  ("a", "b", true),
+  ("b", "c", true),
+  ("c", "d", false)
+AS UNUSED_TABLE_NAME(`from`, `to`, ok)),
 t_1_Reach_MultBodyAggAux_f2 AS (SELECT * FROM (
   
     SELECT
@@ -1713,26 +1338,11 @@ FROM
   logica_test.Reach_sn_new AS Reach_sn_new;
 
 DROP TABLE IF EXISTS logica_test.Reach_sn_new;
-CREATE TABLE logica_test.Reach_sn_new AS WITH t_3_Edge AS (SELECT * FROM (
-  
-    SELECT
-      "a" AS `from`,
-      "b" AS `to`,
-      true AS ok
-   UNION ALL
-  
-    SELECT
-      "b" AS `from`,
-      "c" AS `to`,
-      true AS ok
-   UNION ALL
-  
-    SELECT
-      "c" AS `from`,
-      "d" AS `to`,
-      false AS ok
-  
-) AS UNUSED_TABLE_NAME  ),
+CREATE TABLE logica_test.Reach_sn_new AS WITH t_3_Edge AS (SELECT * FROM VALUES
+  ("a", "b", true),
+  ("b", "c", true),
+  ("c", "d", false)
+AS UNUSED_TABLE_NAME(`from`, `to`, ok)),
 t_1_Reach_MultBodyAggAux_f2 AS (SELECT * FROM (
   
     SELECT
@@ -1781,26 +1391,11 @@ FROM
   logica_test.Reach_sn_new AS Reach_sn_new;
 
 DROP TABLE IF EXISTS logica_test.Reach_sn_new;
-CREATE TABLE logica_test.Reach_sn_new AS WITH t_3_Edge AS (SELECT * FROM (
-  
-    SELECT
-      "a" AS `from`,
-      "b" AS `to`,
-      true AS ok
-   UNION ALL
-  
-    SELECT
-      "b" AS `from`,
-      "c" AS `to`,
-      true AS ok
-   UNION ALL
-  
-    SELECT
-      "c" AS `from`,
-      "d" AS `to`,
-      false AS ok
-  
-) AS UNUSED_TABLE_NAME  ),
+CREATE TABLE logica_test.Reach_sn_new AS WITH t_3_Edge AS (SELECT * FROM VALUES
+  ("a", "b", true),
+  ("b", "c", true),
+  ("c", "d", false)
+AS UNUSED_TABLE_NAME(`from`, `to`, ok)),
 t_1_Reach_MultBodyAggAux_f2 AS (SELECT * FROM (
   
     SELECT
@@ -1849,26 +1444,11 @@ FROM
   logica_test.Reach_sn_new AS Reach_sn_new;
 
 DROP TABLE IF EXISTS logica_test.Reach_sn_new;
-CREATE TABLE logica_test.Reach_sn_new AS WITH t_3_Edge AS (SELECT * FROM (
-  
-    SELECT
-      "a" AS `from`,
-      "b" AS `to`,
-      true AS ok
-   UNION ALL
-  
-    SELECT
-      "b" AS `from`,
-      "c" AS `to`,
-      true AS ok
-   UNION ALL
-  
-    SELECT
-      "c" AS `from`,
-      "d" AS `to`,
-      false AS ok
-  
-) AS UNUSED_TABLE_NAME  ),
+CREATE TABLE logica_test.Reach_sn_new AS WITH t_3_Edge AS (SELECT * FROM VALUES
+  ("a", "b", true),
+  ("b", "c", true),
+  ("c", "d", false)
+AS UNUSED_TABLE_NAME(`from`, `to`, ok)),
 t_1_Reach_MultBodyAggAux_f2 AS (SELECT * FROM (
   
     SELECT
@@ -1917,26 +1497,11 @@ FROM
   logica_test.Reach_sn_new AS Reach_sn_new;
 
 DROP TABLE IF EXISTS logica_test.Reach_sn_new;
-CREATE TABLE logica_test.Reach_sn_new AS WITH t_3_Edge AS (SELECT * FROM (
-  
-    SELECT
-      "a" AS `from`,
-      "b" AS `to`,
-      true AS ok
-   UNION ALL
-  
-    SELECT
-      "b" AS `from`,
-      "c" AS `to`,
-      true AS ok
-   UNION ALL
-  
-    SELECT
-      "c" AS `from`,
-      "d" AS `to`,
-      false AS ok
-  
-) AS UNUSED_TABLE_NAME  ),
+CREATE TABLE logica_test.Reach_sn_new AS WITH t_3_Edge AS (SELECT * FROM VALUES
+  ("a", "b", true),
+  ("b", "c", true),
+  ("c", "d", false)
+AS UNUSED_TABLE_NAME(`from`, `to`, ok)),
 t_1_Reach_MultBodyAggAux_f2 AS (SELECT * FROM (
   
     SELECT
@@ -1985,26 +1550,11 @@ FROM
   logica_test.Reach_sn_new AS Reach_sn_new;
 
 DROP TABLE IF EXISTS logica_test.Reach_sn_new;
-CREATE TABLE logica_test.Reach_sn_new AS WITH t_3_Edge AS (SELECT * FROM (
-  
-    SELECT
-      "a" AS `from`,
-      "b" AS `to`,
-      true AS ok
-   UNION ALL
-  
-    SELECT
-      "b" AS `from`,
-      "c" AS `to`,
-      true AS ok
-   UNION ALL
-  
-    SELECT
-      "c" AS `from`,
-      "d" AS `to`,
-      false AS ok
-  
-) AS UNUSED_TABLE_NAME  ),
+CREATE TABLE logica_test.Reach_sn_new AS WITH t_3_Edge AS (SELECT * FROM VALUES
+  ("a", "b", true),
+  ("b", "c", true),
+  ("c", "d", false)
+AS UNUSED_TABLE_NAME(`from`, `to`, ok)),
 t_1_Reach_MultBodyAggAux_f2 AS (SELECT * FROM (
   
     SELECT
@@ -2053,26 +1603,11 @@ FROM
   logica_test.Reach_sn_new AS Reach_sn_new;
 
 DROP TABLE IF EXISTS logica_test.Reach_sn_new;
-CREATE TABLE logica_test.Reach_sn_new AS WITH t_3_Edge AS (SELECT * FROM (
-  
-    SELECT
-      "a" AS `from`,
-      "b" AS `to`,
-      true AS ok
-   UNION ALL
-  
-    SELECT
-      "b" AS `from`,
-      "c" AS `to`,
-      true AS ok
-   UNION ALL
-  
-    SELECT
-      "c" AS `from`,
-      "d" AS `to`,
-      false AS ok
-  
-) AS UNUSED_TABLE_NAME  ),
+CREATE TABLE logica_test.Reach_sn_new AS WITH t_3_Edge AS (SELECT * FROM VALUES
+  ("a", "b", true),
+  ("b", "c", true),
+  ("c", "d", false)
+AS UNUSED_TABLE_NAME(`from`, `to`, ok)),
 t_1_Reach_MultBodyAggAux_f2 AS (SELECT * FROM (
   
     SELECT
@@ -2121,26 +1656,11 @@ FROM
   logica_test.Reach_sn_new AS Reach_sn_new;
 
 DROP TABLE IF EXISTS logica_test.Reach_sn_new;
-CREATE TABLE logica_test.Reach_sn_new AS WITH t_3_Edge AS (SELECT * FROM (
-  
-    SELECT
-      "a" AS `from`,
-      "b" AS `to`,
-      true AS ok
-   UNION ALL
-  
-    SELECT
-      "b" AS `from`,
-      "c" AS `to`,
-      true AS ok
-   UNION ALL
-  
-    SELECT
-      "c" AS `from`,
-      "d" AS `to`,
-      false AS ok
-  
-) AS UNUSED_TABLE_NAME  ),
+CREATE TABLE logica_test.Reach_sn_new AS WITH t_3_Edge AS (SELECT * FROM VALUES
+  ("a", "b", true),
+  ("b", "c", true),
+  ("c", "d", false)
+AS UNUSED_TABLE_NAME(`from`, `to`, ok)),
 t_1_Reach_MultBodyAggAux_f2 AS (SELECT * FROM (
   
     SELECT
@@ -2189,26 +1709,11 @@ FROM
   logica_test.Reach_sn_new AS Reach_sn_new;
 
 DROP TABLE IF EXISTS logica_test.Reach_sn_new;
-CREATE TABLE logica_test.Reach_sn_new AS WITH t_3_Edge AS (SELECT * FROM (
-  
-    SELECT
-      "a" AS `from`,
-      "b" AS `to`,
-      true AS ok
-   UNION ALL
-  
-    SELECT
-      "b" AS `from`,
-      "c" AS `to`,
-      true AS ok
-   UNION ALL
-  
-    SELECT
-      "c" AS `from`,
-      "d" AS `to`,
-      false AS ok
-  
-) AS UNUSED_TABLE_NAME  ),
+CREATE TABLE logica_test.Reach_sn_new AS WITH t_3_Edge AS (SELECT * FROM VALUES
+  ("a", "b", true),
+  ("b", "c", true),
+  ("c", "d", false)
+AS UNUSED_TABLE_NAME(`from`, `to`, ok)),
 t_1_Reach_MultBodyAggAux_f2 AS (SELECT * FROM (
   
     SELECT
@@ -2257,26 +1762,11 @@ FROM
   logica_test.Reach_sn_new AS Reach_sn_new;
 
 DROP TABLE IF EXISTS logica_test.Reach_sn_new;
-CREATE TABLE logica_test.Reach_sn_new AS WITH t_3_Edge AS (SELECT * FROM (
-  
-    SELECT
-      "a" AS `from`,
-      "b" AS `to`,
-      true AS ok
-   UNION ALL
-  
-    SELECT
-      "b" AS `from`,
-      "c" AS `to`,
-      true AS ok
-   UNION ALL
-  
-    SELECT
-      "c" AS `from`,
-      "d" AS `to`,
-      false AS ok
-  
-) AS UNUSED_TABLE_NAME  ),
+CREATE TABLE logica_test.Reach_sn_new AS WITH t_3_Edge AS (SELECT * FROM VALUES
+  ("a", "b", true),
+  ("b", "c", true),
+  ("c", "d", false)
+AS UNUSED_TABLE_NAME(`from`, `to`, ok)),
 t_1_Reach_MultBodyAggAux_f2 AS (SELECT * FROM (
   
     SELECT
@@ -2325,26 +1815,11 @@ FROM
   logica_test.Reach_sn_new AS Reach_sn_new;
 
 DROP TABLE IF EXISTS logica_test.Reach_sn_new;
-CREATE TABLE logica_test.Reach_sn_new AS WITH t_3_Edge AS (SELECT * FROM (
-  
-    SELECT
-      "a" AS `from`,
-      "b" AS `to`,
-      true AS ok
-   UNION ALL
-  
-    SELECT
-      "b" AS `from`,
-      "c" AS `to`,
-      true AS ok
-   UNION ALL
-  
-    SELECT
-      "c" AS `from`,
-      "d" AS `to`,
-      false AS ok
-  
-) AS UNUSED_TABLE_NAME  ),
+CREATE TABLE logica_test.Reach_sn_new AS WITH t_3_Edge AS (SELECT * FROM VALUES
+  ("a", "b", true),
+  ("b", "c", true),
+  ("c", "d", false)
+AS UNUSED_TABLE_NAME(`from`, `to`, ok)),
 t_1_Reach_MultBodyAggAux_f2 AS (SELECT * FROM (
   
     SELECT
@@ -2393,26 +1868,11 @@ FROM
   logica_test.Reach_sn_new AS Reach_sn_new;
 
 DROP TABLE IF EXISTS logica_test.Reach_sn_new;
-CREATE TABLE logica_test.Reach_sn_new AS WITH t_3_Edge AS (SELECT * FROM (
-  
-    SELECT
-      "a" AS `from`,
-      "b" AS `to`,
-      true AS ok
-   UNION ALL
-  
-    SELECT
-      "b" AS `from`,
-      "c" AS `to`,
-      true AS ok
-   UNION ALL
-  
-    SELECT
-      "c" AS `from`,
-      "d" AS `to`,
-      false AS ok
-  
-) AS UNUSED_TABLE_NAME  ),
+CREATE TABLE logica_test.Reach_sn_new AS WITH t_3_Edge AS (SELECT * FROM VALUES
+  ("a", "b", true),
+  ("b", "c", true),
+  ("c", "d", false)
+AS UNUSED_TABLE_NAME(`from`, `to`, ok)),
 t_1_Reach_MultBodyAggAux_f2 AS (SELECT * FROM (
   
     SELECT
@@ -2461,26 +1921,11 @@ FROM
   logica_test.Reach_sn_new AS Reach_sn_new;
 
 DROP TABLE IF EXISTS logica_test.Reach_sn_new;
-CREATE TABLE logica_test.Reach_sn_new AS WITH t_3_Edge AS (SELECT * FROM (
-  
-    SELECT
-      "a" AS `from`,
-      "b" AS `to`,
-      true AS ok
-   UNION ALL
-  
-    SELECT
-      "b" AS `from`,
-      "c" AS `to`,
-      true AS ok
-   UNION ALL
-  
-    SELECT
-      "c" AS `from`,
-      "d" AS `to`,
-      false AS ok
-  
-) AS UNUSED_TABLE_NAME  ),
+CREATE TABLE logica_test.Reach_sn_new AS WITH t_3_Edge AS (SELECT * FROM VALUES
+  ("a", "b", true),
+  ("b", "c", true),
+  ("c", "d", false)
+AS UNUSED_TABLE_NAME(`from`, `to`, ok)),
 t_1_Reach_MultBodyAggAux_f2 AS (SELECT * FROM (
   
     SELECT
@@ -2529,26 +1974,11 @@ FROM
   logica_test.Reach_sn_new AS Reach_sn_new;
 
 DROP TABLE IF EXISTS logica_test.Reach_sn_new;
-CREATE TABLE logica_test.Reach_sn_new AS WITH t_3_Edge AS (SELECT * FROM (
-  
-    SELECT
-      "a" AS `from`,
-      "b" AS `to`,
-      true AS ok
-   UNION ALL
-  
-    SELECT
-      "b" AS `from`,
-      "c" AS `to`,
-      true AS ok
-   UNION ALL
-  
-    SELECT
-      "c" AS `from`,
-      "d" AS `to`,
-      false AS ok
-  
-) AS UNUSED_TABLE_NAME  ),
+CREATE TABLE logica_test.Reach_sn_new AS WITH t_3_Edge AS (SELECT * FROM VALUES
+  ("a", "b", true),
+  ("b", "c", true),
+  ("c", "d", false)
+AS UNUSED_TABLE_NAME(`from`, `to`, ok)),
 t_1_Reach_MultBodyAggAux_f2 AS (SELECT * FROM (
   
     SELECT
@@ -2597,26 +2027,11 @@ FROM
   logica_test.Reach_sn_new AS Reach_sn_new;
 
 DROP TABLE IF EXISTS logica_test.Reach_sn_new;
-CREATE TABLE logica_test.Reach_sn_new AS WITH t_3_Edge AS (SELECT * FROM (
-  
-    SELECT
-      "a" AS `from`,
-      "b" AS `to`,
-      true AS ok
-   UNION ALL
-  
-    SELECT
-      "b" AS `from`,
-      "c" AS `to`,
-      true AS ok
-   UNION ALL
-  
-    SELECT
-      "c" AS `from`,
-      "d" AS `to`,
-      false AS ok
-  
-) AS UNUSED_TABLE_NAME  ),
+CREATE TABLE logica_test.Reach_sn_new AS WITH t_3_Edge AS (SELECT * FROM VALUES
+  ("a", "b", true),
+  ("b", "c", true),
+  ("c", "d", false)
+AS UNUSED_TABLE_NAME(`from`, `to`, ok)),
 t_1_Reach_MultBodyAggAux_f2 AS (SELECT * FROM (
   
     SELECT
@@ -2665,26 +2080,11 @@ FROM
   logica_test.Reach_sn_new AS Reach_sn_new;
 
 DROP TABLE IF EXISTS logica_test.Reach_sn_new;
-CREATE TABLE logica_test.Reach_sn_new AS WITH t_3_Edge AS (SELECT * FROM (
-  
-    SELECT
-      "a" AS `from`,
-      "b" AS `to`,
-      true AS ok
-   UNION ALL
-  
-    SELECT
-      "b" AS `from`,
-      "c" AS `to`,
-      true AS ok
-   UNION ALL
-  
-    SELECT
-      "c" AS `from`,
-      "d" AS `to`,
-      false AS ok
-  
-) AS UNUSED_TABLE_NAME  ),
+CREATE TABLE logica_test.Reach_sn_new AS WITH t_3_Edge AS (SELECT * FROM VALUES
+  ("a", "b", true),
+  ("b", "c", true),
+  ("c", "d", false)
+AS UNUSED_TABLE_NAME(`from`, `to`, ok)),
 t_1_Reach_MultBodyAggAux_f2 AS (SELECT * FROM (
   
     SELECT
@@ -2733,26 +2133,11 @@ FROM
   logica_test.Reach_sn_new AS Reach_sn_new;
 
 DROP TABLE IF EXISTS logica_test.Reach_sn_new;
-CREATE TABLE logica_test.Reach_sn_new AS WITH t_3_Edge AS (SELECT * FROM (
-  
-    SELECT
-      "a" AS `from`,
-      "b" AS `to`,
-      true AS ok
-   UNION ALL
-  
-    SELECT
-      "b" AS `from`,
-      "c" AS `to`,
-      true AS ok
-   UNION ALL
-  
-    SELECT
-      "c" AS `from`,
-      "d" AS `to`,
-      false AS ok
-  
-) AS UNUSED_TABLE_NAME  ),
+CREATE TABLE logica_test.Reach_sn_new AS WITH t_3_Edge AS (SELECT * FROM VALUES
+  ("a", "b", true),
+  ("b", "c", true),
+  ("c", "d", false)
+AS UNUSED_TABLE_NAME(`from`, `to`, ok)),
 t_1_Reach_MultBodyAggAux_f2 AS (SELECT * FROM (
   
     SELECT
@@ -2801,26 +2186,11 @@ FROM
   logica_test.Reach_sn_new AS Reach_sn_new;
 
 DROP TABLE IF EXISTS logica_test.Reach_sn_new;
-CREATE TABLE logica_test.Reach_sn_new AS WITH t_3_Edge AS (SELECT * FROM (
-  
-    SELECT
-      "a" AS `from`,
-      "b" AS `to`,
-      true AS ok
-   UNION ALL
-  
-    SELECT
-      "b" AS `from`,
-      "c" AS `to`,
-      true AS ok
-   UNION ALL
-  
-    SELECT
-      "c" AS `from`,
-      "d" AS `to`,
-      false AS ok
-  
-) AS UNUSED_TABLE_NAME  ),
+CREATE TABLE logica_test.Reach_sn_new AS WITH t_3_Edge AS (SELECT * FROM VALUES
+  ("a", "b", true),
+  ("b", "c", true),
+  ("c", "d", false)
+AS UNUSED_TABLE_NAME(`from`, `to`, ok)),
 t_1_Reach_MultBodyAggAux_f2 AS (SELECT * FROM (
   
     SELECT
@@ -2869,26 +2239,11 @@ FROM
   logica_test.Reach_sn_new AS Reach_sn_new;
 
 DROP TABLE IF EXISTS logica_test.Reach_sn_new;
-CREATE TABLE logica_test.Reach_sn_new AS WITH t_3_Edge AS (SELECT * FROM (
-  
-    SELECT
-      "a" AS `from`,
-      "b" AS `to`,
-      true AS ok
-   UNION ALL
-  
-    SELECT
-      "b" AS `from`,
-      "c" AS `to`,
-      true AS ok
-   UNION ALL
-  
-    SELECT
-      "c" AS `from`,
-      "d" AS `to`,
-      false AS ok
-  
-) AS UNUSED_TABLE_NAME  ),
+CREATE TABLE logica_test.Reach_sn_new AS WITH t_3_Edge AS (SELECT * FROM VALUES
+  ("a", "b", true),
+  ("b", "c", true),
+  ("c", "d", false)
+AS UNUSED_TABLE_NAME(`from`, `to`, ok)),
 t_1_Reach_MultBodyAggAux_f2 AS (SELECT * FROM (
   
     SELECT
@@ -2937,26 +2292,11 @@ FROM
   logica_test.Reach_sn_new AS Reach_sn_new;
 
 DROP TABLE IF EXISTS logica_test.Reach_sn_new;
-CREATE TABLE logica_test.Reach_sn_new AS WITH t_3_Edge AS (SELECT * FROM (
-  
-    SELECT
-      "a" AS `from`,
-      "b" AS `to`,
-      true AS ok
-   UNION ALL
-  
-    SELECT
-      "b" AS `from`,
-      "c" AS `to`,
-      true AS ok
-   UNION ALL
-  
-    SELECT
-      "c" AS `from`,
-      "d" AS `to`,
-      false AS ok
-  
-) AS UNUSED_TABLE_NAME  ),
+CREATE TABLE logica_test.Reach_sn_new AS WITH t_3_Edge AS (SELECT * FROM VALUES
+  ("a", "b", true),
+  ("b", "c", true),
+  ("c", "d", false)
+AS UNUSED_TABLE_NAME(`from`, `to`, ok)),
 t_1_Reach_MultBodyAggAux_f2 AS (SELECT * FROM (
   
     SELECT
@@ -3005,26 +2345,11 @@ FROM
   logica_test.Reach_sn_new AS Reach_sn_new;
 
 DROP TABLE IF EXISTS logica_test.Reach_sn_new;
-CREATE TABLE logica_test.Reach_sn_new AS WITH t_3_Edge AS (SELECT * FROM (
-  
-    SELECT
-      "a" AS `from`,
-      "b" AS `to`,
-      true AS ok
-   UNION ALL
-  
-    SELECT
-      "b" AS `from`,
-      "c" AS `to`,
-      true AS ok
-   UNION ALL
-  
-    SELECT
-      "c" AS `from`,
-      "d" AS `to`,
-      false AS ok
-  
-) AS UNUSED_TABLE_NAME  ),
+CREATE TABLE logica_test.Reach_sn_new AS WITH t_3_Edge AS (SELECT * FROM VALUES
+  ("a", "b", true),
+  ("b", "c", true),
+  ("c", "d", false)
+AS UNUSED_TABLE_NAME(`from`, `to`, ok)),
 t_1_Reach_MultBodyAggAux_f2 AS (SELECT * FROM (
   
     SELECT
@@ -3073,26 +2398,11 @@ FROM
   logica_test.Reach_sn_new AS Reach_sn_new;
 
 DROP TABLE IF EXISTS logica_test.Reach_sn_new;
-CREATE TABLE logica_test.Reach_sn_new AS WITH t_3_Edge AS (SELECT * FROM (
-  
-    SELECT
-      "a" AS `from`,
-      "b" AS `to`,
-      true AS ok
-   UNION ALL
-  
-    SELECT
-      "b" AS `from`,
-      "c" AS `to`,
-      true AS ok
-   UNION ALL
-  
-    SELECT
-      "c" AS `from`,
-      "d" AS `to`,
-      false AS ok
-  
-) AS UNUSED_TABLE_NAME  ),
+CREATE TABLE logica_test.Reach_sn_new AS WITH t_3_Edge AS (SELECT * FROM VALUES
+  ("a", "b", true),
+  ("b", "c", true),
+  ("c", "d", false)
+AS UNUSED_TABLE_NAME(`from`, `to`, ok)),
 t_1_Reach_MultBodyAggAux_f2 AS (SELECT * FROM (
   
     SELECT
@@ -3141,26 +2451,11 @@ FROM
   logica_test.Reach_sn_new AS Reach_sn_new;
 
 DROP TABLE IF EXISTS logica_test.Reach_sn_new;
-CREATE TABLE logica_test.Reach_sn_new AS WITH t_3_Edge AS (SELECT * FROM (
-  
-    SELECT
-      "a" AS `from`,
-      "b" AS `to`,
-      true AS ok
-   UNION ALL
-  
-    SELECT
-      "b" AS `from`,
-      "c" AS `to`,
-      true AS ok
-   UNION ALL
-  
-    SELECT
-      "c" AS `from`,
-      "d" AS `to`,
-      false AS ok
-  
-) AS UNUSED_TABLE_NAME  ),
+CREATE TABLE logica_test.Reach_sn_new AS WITH t_3_Edge AS (SELECT * FROM VALUES
+  ("a", "b", true),
+  ("b", "c", true),
+  ("c", "d", false)
+AS UNUSED_TABLE_NAME(`from`, `to`, ok)),
 t_1_Reach_MultBodyAggAux_f2 AS (SELECT * FROM (
   
     SELECT
@@ -3209,26 +2504,11 @@ FROM
   logica_test.Reach_sn_new AS Reach_sn_new;
 
 DROP TABLE IF EXISTS logica_test.Reach_sn_new;
-CREATE TABLE logica_test.Reach_sn_new AS WITH t_3_Edge AS (SELECT * FROM (
-  
-    SELECT
-      "a" AS `from`,
-      "b" AS `to`,
-      true AS ok
-   UNION ALL
-  
-    SELECT
-      "b" AS `from`,
-      "c" AS `to`,
-      true AS ok
-   UNION ALL
-  
-    SELECT
-      "c" AS `from`,
-      "d" AS `to`,
-      false AS ok
-  
-) AS UNUSED_TABLE_NAME  ),
+CREATE TABLE logica_test.Reach_sn_new AS WITH t_3_Edge AS (SELECT * FROM VALUES
+  ("a", "b", true),
+  ("b", "c", true),
+  ("c", "d", false)
+AS UNUSED_TABLE_NAME(`from`, `to`, ok)),
 t_1_Reach_MultBodyAggAux_f2 AS (SELECT * FROM (
   
     SELECT
@@ -3277,26 +2557,11 @@ FROM
   logica_test.Reach_sn_new AS Reach_sn_new;
 
 DROP TABLE IF EXISTS logica_test.Reach_sn_new;
-CREATE TABLE logica_test.Reach_sn_new AS WITH t_3_Edge AS (SELECT * FROM (
-  
-    SELECT
-      "a" AS `from`,
-      "b" AS `to`,
-      true AS ok
-   UNION ALL
-  
-    SELECT
-      "b" AS `from`,
-      "c" AS `to`,
-      true AS ok
-   UNION ALL
-  
-    SELECT
-      "c" AS `from`,
-      "d" AS `to`,
-      false AS ok
-  
-) AS UNUSED_TABLE_NAME  ),
+CREATE TABLE logica_test.Reach_sn_new AS WITH t_3_Edge AS (SELECT * FROM VALUES
+  ("a", "b", true),
+  ("b", "c", true),
+  ("c", "d", false)
+AS UNUSED_TABLE_NAME(`from`, `to`, ok)),
 t_1_Reach_MultBodyAggAux_f2 AS (SELECT * FROM (
   
     SELECT
@@ -3345,26 +2610,11 @@ FROM
   logica_test.Reach_sn_new AS Reach_sn_new;
 
 DROP TABLE IF EXISTS logica_test.Reach_sn_new;
-CREATE TABLE logica_test.Reach_sn_new AS WITH t_3_Edge AS (SELECT * FROM (
-  
-    SELECT
-      "a" AS `from`,
-      "b" AS `to`,
-      true AS ok
-   UNION ALL
-  
-    SELECT
-      "b" AS `from`,
-      "c" AS `to`,
-      true AS ok
-   UNION ALL
-  
-    SELECT
-      "c" AS `from`,
-      "d" AS `to`,
-      false AS ok
-  
-) AS UNUSED_TABLE_NAME  ),
+CREATE TABLE logica_test.Reach_sn_new AS WITH t_3_Edge AS (SELECT * FROM VALUES
+  ("a", "b", true),
+  ("b", "c", true),
+  ("c", "d", false)
+AS UNUSED_TABLE_NAME(`from`, `to`, ok)),
 t_1_Reach_MultBodyAggAux_f2 AS (SELECT * FROM (
   
     SELECT
@@ -3413,26 +2663,11 @@ FROM
   logica_test.Reach_sn_new AS Reach_sn_new;
 
 DROP TABLE IF EXISTS logica_test.Reach_sn_new;
-CREATE TABLE logica_test.Reach_sn_new AS WITH t_3_Edge AS (SELECT * FROM (
-  
-    SELECT
-      "a" AS `from`,
-      "b" AS `to`,
-      true AS ok
-   UNION ALL
-  
-    SELECT
-      "b" AS `from`,
-      "c" AS `to`,
-      true AS ok
-   UNION ALL
-  
-    SELECT
-      "c" AS `from`,
-      "d" AS `to`,
-      false AS ok
-  
-) AS UNUSED_TABLE_NAME  ),
+CREATE TABLE logica_test.Reach_sn_new AS WITH t_3_Edge AS (SELECT * FROM VALUES
+  ("a", "b", true),
+  ("b", "c", true),
+  ("c", "d", false)
+AS UNUSED_TABLE_NAME(`from`, `to`, ok)),
 t_1_Reach_MultBodyAggAux_f2 AS (SELECT * FROM (
   
     SELECT
@@ -3484,4 +2719,4 @@ SELECT
   Reach_sn_full.node AS node,
   Reach_sn_full.hops AS hops
 FROM
-  logica_test.Reach_sn_full AS Reach_sn_full ORDER BY node;
+  logica_test.Reach_sn_full AS Reach_sn_full ORDER BY node NULLS LAST;

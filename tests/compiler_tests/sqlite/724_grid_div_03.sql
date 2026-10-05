@@ -1,0 +1,2 @@
+SELECT
+  (CAST(1 AS REAL) / (8)) AS r;

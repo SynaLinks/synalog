@@ -101,6 +101,14 @@ pub trait Dialect {
         false
     }
 
+    /// `ToInt64` of an argument that is text by its form, where the general
+    /// `ToInt64` (which rounds a fraction) nests too deep: SQLite before 3.46
+    /// has a fixed parser stack, which nested conversions overflowed. A
+    /// template of `{0}`.
+    fn int64_of_text(&self) -> Option<&'static str> {
+        None
+    }
+
     /// The text of a boolean, where the engine has no boolean type and
     /// `ToString` would write 1 and 0 (SQLite): a template of `{0}`.
     fn boolean_to_string(&self) -> Option<&'static str> {
@@ -407,6 +415,9 @@ Array(a) = SqlExpr(
 pub struct SqLiteDialect;
 
 impl Dialect for SqLiteDialect {
+    fn int64_of_text(&self) -> Option<&'static str> {
+        Some("CAST({0} AS INTEGER)")
+    }
     fn boolean_to_string(&self) -> Option<&'static str> {
         Some("(CASE {0} WHEN 1 THEN 'true' WHEN 0 THEN 'false' END)")
     }
@@ -569,11 +580,14 @@ impl Dialect for PostgreSqlDialect {
         m.insert("ToInt64", "CAST(%s AS BIGINT)");
         m.insert("ToFloat64", "CAST(%s AS double precision)");
         m.insert("Element", "({0})[{1} + 1]");
-        m.insert("Size", "COALESCE(ARRAY_LENGTH({0}, 1), 0)");
+        // 0 for an empty array, null for a null one (ARRAY_LENGTH is null
+        // for both).
+        m.insert("Size", "CARDINALITY({0})");
         m.insert("Count", "COUNT(DISTINCT {0})");
         m.insert("MagicalEntangle", "(CASE WHEN {1} = 0 THEN {0} ELSE NULL END)");
         m.insert("ArrayConcat", "{0} || {1}");
-        m.insert("Split", "STRING_TO_ARRAY({0}, {1})");
+        // STRING_TO_ARRAY('', ',') is empty; elsewhere one empty part.
+        m.insert("Split", "(CASE WHEN {0} = '' THEN ARRAY[''] ELSE STRING_TO_ARRAY({0}, {1}) END)");
         m.insert("AnyValue", "(ARRAY_AGG(%s))[1]");
         m.insert("Log", "LN(%s)");
         m
@@ -965,7 +979,8 @@ impl Dialect for DatabricksDialect {
         // SEQUENCE(0, -1) counts down, [0, -1]: Range(0) is empty.
         m.insert("Range", "FILTER(SEQUENCE(0, {0}), x -> x < {0})");
         m.insert("RangeOf", "SEQUENCE(0, SIZE(%s) - 1)");
-        m.insert("Size", "SIZE(%s)");
+        // SIZE(null) is -1 on Spark; ARRAY_SIZE(null) is null.
+        m.insert("Size", "ARRAY_SIZE(%s)");
         // ELEMENT_AT is 1-based; the default `{0}[OFFSET({1})]` is BigQuery-only.
         m.insert("Element", "ELEMENT_AT({0}, {1} + 1)");
         m.insert("Format", "FORMAT_STRING(%s)");

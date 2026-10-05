@@ -1,0 +1,4 @@
+SELECT
+  SUM(((CAST(x_2 AS INT64)) * (1000000000))) AS t
+FROM
+  UNNEST(ARRAY[1, 2, 3]) as x_2;

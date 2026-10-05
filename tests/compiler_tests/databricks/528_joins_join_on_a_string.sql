@@ -1,15 +1,7 @@
-WITH t_1_City AS (SELECT * FROM (
-  
-    SELECT
-      "fr" AS code,
-      "paris" AS city
-   UNION ALL
-  
-    SELECT
-      "de" AS code,
-      "berlin" AS city
-  
-) AS UNUSED_TABLE_NAME  )
+WITH t_1_City AS (SELECT * FROM VALUES
+  ("fr", "paris"),
+  ("de", "berlin")
+AS UNUSED_TABLE_NAME(code, city))
 SELECT
   t_0_City.code AS code,
   t_0_City.city AS city

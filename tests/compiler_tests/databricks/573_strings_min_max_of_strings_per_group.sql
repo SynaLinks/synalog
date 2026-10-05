@@ -1,20 +1,8 @@
-WITH t_0_V AS (SELECT * FROM (
-  
-    SELECT
-      1 AS g,
-      "cat" AS s
-   UNION ALL
-  
-    SELECT
-      1 AS g,
-      "ant" AS s
-   UNION ALL
-  
-    SELECT
-      1 AS g,
-      "bee" AS s
-  
-) AS UNUSED_TABLE_NAME  )
+WITH t_0_V AS (SELECT * FROM VALUES
+  (1, "cat"),
+  (1, "ant"),
+  (1, "bee")
+AS UNUSED_TABLE_NAME(g, s))
 SELECT
   V.g AS g,
   MIN(V.s) AS lo,

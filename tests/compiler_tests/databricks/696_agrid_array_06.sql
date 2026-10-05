@@ -1,0 +1,2 @@
+SELECT
+  ARRAY_SIZE(SPLIT("", ",")) AS v;

@@ -1,20 +1,8 @@
-WITH t_2_R AS (SELECT * FROM (
-  
-    SELECT
-      "a" AS k,
-      10 AS v
-   UNION ALL
-  
-    SELECT
-      "a" AS k,
-      20 AS v
-   UNION ALL
-  
-    SELECT
-      "b" AS k,
-      5 AS v
-  
-) AS UNUSED_TABLE_NAME  ),
+WITH t_2_R AS (SELECT * FROM VALUES
+  ("a", 10),
+  ("a", 20),
+  ("b", 5)
+AS UNUSED_TABLE_NAME(k, v)),
 t_1_T AS (SELECT
   R.k AS k,
   SUM(R.v) AS t

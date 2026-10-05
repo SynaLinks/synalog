@@ -1,0 +1,4 @@
+SELECT
+  SUM(((CAST(ROUND(x_2) AS BIGINT)) * (1000000000))) AS t
+FROM
+  LATERAL (SELECT explode(ARRAY(1, 2, 3)) AS x_2) AS pushkin;

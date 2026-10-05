@@ -1,13 +1,7 @@
-WITH t_2_V AS (SELECT * FROM (
-  
-    SELECT
-      1 AS x
-   UNION ALL
-  
-    SELECT
-      1 AS x
-  
-) AS UNUSED_TABLE_NAME  ),
+WITH t_2_V AS (SELECT * FROM VALUES
+  (1),
+  (1)
+AS UNUSED_TABLE_NAME(x)),
 t_1_A AS (SELECT
   V.x AS x
 FROM

@@ -1,23 +1,11 @@
-WITH t_0_V AS (SELECT * FROM (
-  
-    SELECT
-      "a" AS g,
-      "2024-01-01" AS d
-   UNION ALL
-  
-    SELECT
-      "a" AS g,
-      "2024-05-01" AS d
-   UNION ALL
-  
-    SELECT
-      "b" AS g,
-      "2023-01-01" AS d
-  
-) AS UNUSED_TABLE_NAME  )
+WITH t_0_V AS (SELECT * FROM VALUES
+  ("a", "2024-01-01"),
+  ("a", "2024-05-01"),
+  ("b", "2023-01-01")
+AS UNUSED_TABLE_NAME(g, d))
 SELECT
   V.g AS g,
   MAX(V.d) AS d
 FROM
   t_0_V AS V
-GROUP BY 1 ORDER BY g;
+GROUP BY 1 ORDER BY g NULLS LAST;

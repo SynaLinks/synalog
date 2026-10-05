@@ -1,15 +1,7 @@
-WITH t_1_V AS (SELECT * FROM (
-  
-    SELECT
-      "g" AS g,
-      7 AS x
-   UNION ALL
-  
-    SELECT
-      "g" AS g,
-      7 AS x
-  
-) AS UNUSED_TABLE_NAME  )
+WITH t_1_V AS (SELECT * FROM VALUES
+  ("g", 7),
+  ("g", 7)
+AS UNUSED_TABLE_NAME(g, x))
 SELECT
   t_0_V.g AS g,
   MIN(t_0_V.x) AS v

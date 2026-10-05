@@ -1,0 +1,6 @@
+SELECT
+  CASE WHEN (x_6 > 5) THEN "big" ELSE "small" END AS s,
+  SUM(1) AS n
+FROM
+  LATERAL (SELECT explode(ARRAY(1, 7, 9)) AS x_6) AS pushkin
+GROUP BY 1 ORDER BY s NULLS LAST;

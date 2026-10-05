@@ -182,6 +182,10 @@ in `generate_expected_sql.py:SYNALOG_GOLDENS`.
 - **A keyword inside an underscored name** (`Count_distinct_items`,
   `Foo_distinct_ends`): upstream splits the rule at `distinct`; synalog reads
   `distinct` as a keyword only as a whole word.
+- **Functions named like library functions.** A function the program defines
+  (`Size(x) = ...`) is the one a value calls: upstream compiled `Size(x)` to
+  the built-in, ignoring the definition. A relation of that name leaves the
+  built-in as is (below).
 - **Predicates named like library functions** (`Count`, `Range`, `Abs`,
   `Size`). Predicates and functions are separate namespaces in synalog: a
   predicate `Abs` is a relation, `Abs(x)` in a value is still `ABS`
@@ -371,6 +375,16 @@ go (`"x nulls first"`).
 
 ## Engine functions
 
+- Facts on Databricks, a predicate whose rules are all constant rows, are
+  the rows of one `VALUES` rather than a `UNION ALL` of constant `SELECT`s:
+  Spark (3.5 and 4.0) fails to plan a correlated subquery over such a union
+  ("NoSuchElementException: key not found"), as in a `combine` per row.
+- `Split("", ",")` is one empty part on every engine: PostgreSQL's
+  `STRING_TO_ARRAY` gives an empty array for the empty string.
+- `Size` of a null list is null: `CARDINALITY` on PostgreSQL (upstream's
+  `COALESCE(ARRAY_LENGTH(x, 1), 0)` made it 0) and `ARRAY_SIZE` on Databricks
+  (Spark's `SIZE(null)` is -1). On SQLite, Synalog's sessions register a
+  `Split` that maps a null to null (Logica's fails on it).
 - Unnesting on Databricks is a `LATERAL (SELECT explode(x) AS v)` subquery:
   Spark does not resolve a column of an earlier table inside a table function
   of the `FROM` list (`explode(L.l)`), so membership in a list column failed.
@@ -391,7 +405,11 @@ go (`"x nulls first"`).
   a lone empty array.
 - `ToInt64` on SQLite names its argument once, in a one-row subquery: written
   three times, nested conversions grow exponentially, and SQLite's parser
-  overflowed (`61_date_arithmetic`).
+  overflowed (`61_date_arithmetic`). An argument that is text by its form
+  (`Substr`, `ToString`, `++`, a string literal, ...) has no fraction to
+  round and is a plain `CAST(x AS INTEGER)`: SQLite before 3.46 has a fixed
+  parser stack, which the subquery's nesting still overflowed in deep date
+  arithmetic (SQLite 3.37, Ubuntu 22.04).
 
 ## Inlining and correlation
 

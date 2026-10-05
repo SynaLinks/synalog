@@ -1,16 +1,8 @@
 DROP TABLE IF EXISTS logica_test.P_sn_delta;
-CREATE TABLE logica_test.P_sn_delta AS WITH t_1_E AS (SELECT * FROM (
-  
-    SELECT
-      1 AS a,
-      2 AS b
-   UNION ALL
-  
-    SELECT
-      2 AS a,
-      3 AS b
-  
-) AS UNUSED_TABLE_NAME  ),
+CREATE TABLE logica_test.P_sn_delta AS WITH t_1_E AS (SELECT * FROM VALUES
+  (1, 2),
+  (2, 3)
+AS UNUSED_TABLE_NAME(a, b)),
 t_0_P_MultBodyAggAux_f1 AS (SELECT * FROM (
   
     SELECT
@@ -30,18 +22,10 @@ GROUP BY 1, 2;
 -- Interacting with table logica_test.P_sn_delta
 
 DROP TABLE IF EXISTS logica_test.P_sn_full;
-CREATE TABLE logica_test.P_sn_full AS WITH t_1_E AS (SELECT * FROM (
-  
-    SELECT
-      1 AS a,
-      2 AS b
-   UNION ALL
-  
-    SELECT
-      2 AS a,
-      3 AS b
-  
-) AS UNUSED_TABLE_NAME  ),
+CREATE TABLE logica_test.P_sn_full AS WITH t_1_E AS (SELECT * FROM VALUES
+  (1, 2),
+  (2, 3)
+AS UNUSED_TABLE_NAME(a, b)),
 t_1_P_MultBodyAggAux_f2 AS (SELECT * FROM (
   
     SELECT
@@ -88,18 +72,10 @@ SELECT * FROM (
 -- Interacting with table logica_test.P_sn_full
 
 DROP TABLE IF EXISTS logica_test.P_sn_new;
-CREATE TABLE logica_test.P_sn_new AS WITH t_1_E AS (SELECT * FROM (
-  
-    SELECT
-      1 AS a,
-      2 AS b
-   UNION ALL
-  
-    SELECT
-      2 AS a,
-      3 AS b
-  
-) AS UNUSED_TABLE_NAME  ),
+CREATE TABLE logica_test.P_sn_new AS WITH t_1_E AS (SELECT * FROM VALUES
+  (1, 2),
+  (2, 3)
+AS UNUSED_TABLE_NAME(a, b)),
 t_1_P_MultBodyAggAux_f2 AS (SELECT * FROM (
   
     SELECT
@@ -149,18 +125,10 @@ FROM
   logica_test.P_sn_new AS P_sn_new;
 
 DROP TABLE IF EXISTS logica_test.P_sn_new;
-CREATE TABLE logica_test.P_sn_new AS WITH t_1_E AS (SELECT * FROM (
-  
-    SELECT
-      1 AS a,
-      2 AS b
-   UNION ALL
-  
-    SELECT
-      2 AS a,
-      3 AS b
-  
-) AS UNUSED_TABLE_NAME  ),
+CREATE TABLE logica_test.P_sn_new AS WITH t_1_E AS (SELECT * FROM VALUES
+  (1, 2),
+  (2, 3)
+AS UNUSED_TABLE_NAME(a, b)),
 t_1_P_MultBodyAggAux_f2 AS (SELECT * FROM (
   
     SELECT
@@ -210,18 +178,10 @@ FROM
   logica_test.P_sn_new AS P_sn_new;
 
 DROP TABLE IF EXISTS logica_test.P_sn_new;
-CREATE TABLE logica_test.P_sn_new AS WITH t_1_E AS (SELECT * FROM (
-  
-    SELECT
-      1 AS a,
-      2 AS b
-   UNION ALL
-  
-    SELECT
-      2 AS a,
-      3 AS b
-  
-) AS UNUSED_TABLE_NAME  ),
+CREATE TABLE logica_test.P_sn_new AS WITH t_1_E AS (SELECT * FROM VALUES
+  (1, 2),
+  (2, 3)
+AS UNUSED_TABLE_NAME(a, b)),
 t_1_P_MultBodyAggAux_f2 AS (SELECT * FROM (
   
     SELECT
@@ -271,18 +231,10 @@ FROM
   logica_test.P_sn_new AS P_sn_new;
 
 DROP TABLE IF EXISTS logica_test.P_sn_new;
-CREATE TABLE logica_test.P_sn_new AS WITH t_1_E AS (SELECT * FROM (
-  
-    SELECT
-      1 AS a,
-      2 AS b
-   UNION ALL
-  
-    SELECT
-      2 AS a,
-      3 AS b
-  
-) AS UNUSED_TABLE_NAME  ),
+CREATE TABLE logica_test.P_sn_new AS WITH t_1_E AS (SELECT * FROM VALUES
+  (1, 2),
+  (2, 3)
+AS UNUSED_TABLE_NAME(a, b)),
 t_1_P_MultBodyAggAux_f2 AS (SELECT * FROM (
   
     SELECT
@@ -332,18 +284,10 @@ FROM
   logica_test.P_sn_new AS P_sn_new;
 
 DROP TABLE IF EXISTS logica_test.P_sn_new;
-CREATE TABLE logica_test.P_sn_new AS WITH t_1_E AS (SELECT * FROM (
-  
-    SELECT
-      1 AS a,
-      2 AS b
-   UNION ALL
-  
-    SELECT
-      2 AS a,
-      3 AS b
-  
-) AS UNUSED_TABLE_NAME  ),
+CREATE TABLE logica_test.P_sn_new AS WITH t_1_E AS (SELECT * FROM VALUES
+  (1, 2),
+  (2, 3)
+AS UNUSED_TABLE_NAME(a, b)),
 t_1_P_MultBodyAggAux_f2 AS (SELECT * FROM (
   
     SELECT

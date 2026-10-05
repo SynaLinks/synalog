@@ -504,6 +504,8 @@ pub struct LogicaProgram {
     pub execution: RefCell<Option<Logica>>,
     /// The column names of the program, lowercase, which table aliases avoid.
     pub column_names: HashSet<String>,
+    /// The functions the program defines, which shadow built-ins of their name.
+    pub defined_functions: HashSet<String>,
     /// Shared names allocator for the current compilation pass.
     /// Set at start of `formatted_predicate_sql`, shared across all sub-compilations.
     pub allocator: RefCell<NamesAllocator>,
@@ -662,8 +664,24 @@ impl LogicaProgram {
                 field.is_string().then(|| field.as_str().to_ascii_lowercase())
             })
             .collect();
+        // Functions: predicates every rule of which defines a value.
+        let mut value_rules: HashMap<String, bool> = HashMap::new();
+        for (name, rule) in &rules {
+            let has_value = rule.as_object()["head"].as_object().get("record").is_some_and(|r| {
+                r.as_object().get("field_value").is_some_and(|fvs| {
+                    fvs.as_array().iter().any(|fv| {
+                        let f = &fv.as_object()["field"];
+                        f.is_string() && f.as_str() == "logica_value"
+                    })
+                })
+            });
+            value_rules.entry(name.clone()).and_modify(|all| *all &= has_value).or_insert(has_value);
+        }
+        let defined_functions: HashSet<String> =
+            value_rules.into_iter().filter(|(_, f)| *f).map(|(n, _)| n).collect();
         let mut allocator = NamesAllocator::new();
         allocator.reserved_aliases = column_names.clone();
+        allocator.defined_functions = defined_functions.clone();
 
         Ok(LogicaProgram {
             raw_rules: raw_rule_list,
@@ -682,6 +700,7 @@ impl LogicaProgram {
             execution: RefCell::new(None),
             allocator: RefCell::new(allocator),
             column_names,
+            defined_functions,
             user_flags,
             functors_args_of,
             typing_preamble,
@@ -946,6 +965,7 @@ impl LogicaProgram {
             .collect();
         let mut allocator = NamesAllocator::with_custom_udfs(udfs);
         allocator.reserved_aliases = self.column_names.clone();
+        allocator.defined_functions = self.defined_functions.clone();
         allocator
     }
 
@@ -1033,6 +1053,7 @@ impl LogicaProgram {
 
         // Multiple rules: UNION ALL
         let mut rules_sql = Vec::new();
+        let mut branches = Vec::new();
         for rule in &rules {
             if rule.as_object().contains_key("distinct_denoted") {
                 return Err(CompileError::new(
@@ -1055,6 +1076,30 @@ impl LogicaProgram {
             let single_sql = self.single_rule_sql(rule, None, false, false)?;
             if !single_sql.starts_with("/* nil */") {
                 rules_sql.push(format!("\n{}\n", indent2(&single_sql)));
+                branches.push(single_sql);
+            }
+        }
+
+        // Spark mis-plans a correlated subquery over a union of constant
+        // SELECTs ("key not found" during optimization, Spark 3.5 and 4.0):
+        // on Databricks, facts are the rows of one VALUES.
+        if self.annotations.engine() == "databricks" && branches.len() > 1 {
+            if let Some(rows) = branches.iter().map(|b| constant_select(b)).collect::<Option<Vec<_>>>() {
+                let columns: Vec<&String> = rows[0].iter().map(|(_, c)| c).collect();
+                if rows.iter().all(|r| r.iter().map(|(_, c)| c).eq(columns.iter().copied())) {
+                    let values: Vec<String> = rows
+                        .iter()
+                        .map(|r| format!("({})", r.iter().map(|(e, _)| e.as_str()).collect::<Vec<_>>().join(", ")))
+                        .collect();
+                    let cols: Vec<&str> = columns.iter().map(|c| c.as_str()).collect();
+                    return Ok(format!(
+                        "SELECT * FROM VALUES\n  {}\nAS UNUSED_TABLE_NAME({}){}{}",
+                        values.join(",\n  "),
+                        cols.join(", "),
+                        self.annotations.order_by_clause(name),
+                        self.annotations.limit_clause(name),
+                    ));
+                }
             }
         }
 
@@ -2480,4 +2525,54 @@ fn has_subquery(json: &Json) -> bool {
         Json::Array(items) => items.iter().any(has_subquery),
         _ => false,
     }
+}
+
+/// The (expression, column) items of a `SELECT` of constants, without FROM,
+/// or None.
+fn constant_select(sql: &str) -> Option<Vec<(String, String)>> {
+    let body = sql.trim().strip_prefix("SELECT")?;
+    let upper = body.to_ascii_uppercase();
+    if upper.contains(" FROM ") || upper.contains("\nFROM") || upper.contains("SELECT") {
+        return None;
+    }
+    // Top-level commas: outside parentheses and quotes.
+    let mut items = Vec::new();
+    let (mut depth, mut quote, mut start) = (0i32, None::<char>, 0usize);
+    let chars: Vec<(usize, char)> = body.char_indices().collect();
+    let mut i = 0;
+    while i < chars.len() {
+        let (pos, c) = chars[i];
+        match quote {
+            Some(q) => {
+                if c == '\\' {
+                    i += 1;
+                } else if c == q {
+                    quote = None;
+                }
+            }
+            None => match c {
+                '\'' | '"' | '`' => quote = Some(c),
+                '(' | '[' => depth += 1,
+                ')' | ']' => depth -= 1,
+                ',' if depth == 0 => {
+                    items.push(&body[start..pos]);
+                    start = pos + 1;
+                }
+                _ => {}
+            },
+        }
+        i += 1;
+    }
+    items.push(&body[start..]);
+    items
+        .into_iter()
+        .map(|item| {
+            let item = item.trim();
+            let at = item.rfind(" AS ")?;
+            let (expr, column) = (item[..at].trim(), item[at + 4..].trim());
+            // A record (`STRUCT(1 AS a)`) is not a row value Spark takes.
+            let plain = !expr.to_ascii_uppercase().contains(" AS ");
+            (plain && !expr.is_empty() && !column.is_empty()).then(|| (expr.to_string(), column.to_string()))
+        })
+        .collect()
 }

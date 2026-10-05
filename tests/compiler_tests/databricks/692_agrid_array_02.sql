@@ -1,0 +1,2 @@
+SELECT
+  ELEMENT_AT(FILTER(SEQUENCE(0, 4), x -> x < 4), 3 + 1) AS v;

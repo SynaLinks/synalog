@@ -1,20 +1,8 @@
-WITH t_0_B AS (SELECT * FROM (
-  
-    SELECT
-      1 AS k,
-      "a" AS v
-   UNION ALL
-  
-    SELECT
-      2 AS k,
-      "b" AS v
-   UNION ALL
-  
-    SELECT
-      3 AS k,
-      "c" AS v
-  
-) AS UNUSED_TABLE_NAME  )
+WITH t_0_B AS (SELECT * FROM VALUES
+  (1, "a"),
+  (2, "b"),
+  (3, "c")
+AS UNUSED_TABLE_NAME(k, v))
 SELECT
   B.k AS k,
   B.v AS v

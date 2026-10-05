@@ -1,4 +1,4 @@
-WITH t_2_V AS (SELECT * FROM (
+WITH t_3_V AS (SELECT * FROM (
   
     SELECT
       "x" AS g,
@@ -22,5 +22,5 @@ SELECT
   t_0_V.g AS g,
   ARRAY_AGG(t_0_V.v order by [t_0_V.k][offset(0)]) AS l
 FROM
-  t_2_V AS t_0_V
+  t_3_V AS t_0_V
 GROUP BY g ORDER BY g NULLS LAST;

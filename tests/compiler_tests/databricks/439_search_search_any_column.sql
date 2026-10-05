@@ -1,26 +1,11 @@
-WITH t_0_V AS (SELECT * FROM (
-  
-    SELECT
-      1 AS n,
-      "xa" AS s,
-      "q" AS t
-   UNION ALL
-  
-    SELECT
-      2 AS n,
-      "b" AS s,
-      "xy" AS t
-   UNION ALL
-  
-    SELECT
-      3 AS n,
-      "c" AS s,
-      "d" AS t
-  
-) AS UNUSED_TABLE_NAME  )
+WITH t_0_V AS (SELECT * FROM VALUES
+  (1, "xa", "q"),
+  (2, "b", "xy"),
+  (3, "c", "d")
+AS UNUSED_TABLE_NAME(n, s, t))
 SELECT
   V.n AS n,
   V.s AS s,
   V.t AS t
 FROM
-  t_0_V AS V ORDER BY n;
+  t_0_V AS V ORDER BY n NULLS LAST;

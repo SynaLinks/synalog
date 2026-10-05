@@ -1,0 +1,2 @@
+SELECT
+  (CAST(-9 AS REAL) / (4)) AS r;

@@ -1,0 +1,4 @@
+SELECT
+  MIN(x_2.value) AS d
+FROM
+  JSON_EACH(JSON_ARRAY('2024-01-01', '2022-07-04', '2023-03-03')) as x_2;

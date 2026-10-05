@@ -1,0 +1,2 @@
+SELECT
+  CAST(-7 AS STRING) AS s;

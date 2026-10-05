@@ -495,7 +495,7 @@ fn test_databricks_built_in_functions() {
     assert!(f.contains_key("IsNull"), "databricks should have IsNull");
     // Spark/Databricks-specific overrides of the BigQuery defaults.
     assert_eq!(f.get("Range"), Some(&"FILTER(SEQUENCE(0, {0}), x -> x < {0})"));
-    assert_eq!(f.get("Size"), Some(&"SIZE(%s)"));
+    assert_eq!(f.get("Size"), Some(&"ARRAY_SIZE(%s)"));
     assert_eq!(f.get("Element"), Some(&"ELEMENT_AT({0}, {1} + 1)"));
     assert_eq!(f.get("Format"), Some(&"FORMAT_STRING(%s)"));
     assert_eq!(f.get("ArrayConcat"), Some(&"CONCAT({0}, {1})"));

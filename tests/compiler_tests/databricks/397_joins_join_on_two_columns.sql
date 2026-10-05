@@ -1,17 +1,7 @@
-WITH t_0_A AS (SELECT * FROM (
-  
-    SELECT
-      1 AS k1,
-      1 AS k2,
-      "x" AS v
-   UNION ALL
-  
-    SELECT
-      1 AS k1,
-      2 AS k2,
-      "y" AS v
-  
-) AS UNUSED_TABLE_NAME  )
+WITH t_0_A AS (SELECT * FROM VALUES
+  (1, 1, "x"),
+  (1, 2, "y")
+AS UNUSED_TABLE_NAME(k1, k2, v))
 SELECT
   A.v AS v
 FROM

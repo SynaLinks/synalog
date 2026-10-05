@@ -15,4 +15,4 @@ SELECT
   Person.info.name AS name,
   Person.info.contact.email AS email
 FROM
-  t_0_Person AS Person ORDER BY id;
+  t_0_Person AS Person ORDER BY id NULLS LAST;

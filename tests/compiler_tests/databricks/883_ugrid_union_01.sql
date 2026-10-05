@@ -1,0 +1,6 @@
+SELECT * FROM VALUES
+  (1),
+  (2),
+  (2),
+  (3)
+AS UNUSED_TABLE_NAME(x) ORDER BY x NULLS LAST;

@@ -1,15 +1,7 @@
-WITH t_0_Person AS (SELECT * FROM (
-  
-    SELECT
-      "ann" AS name,
-      "paris" AS city
-   UNION ALL
-  
-    SELECT
-      "bob" AS name,
-      "rome" AS city
-  
-) AS UNUSED_TABLE_NAME  )
+WITH t_0_Person AS (SELECT * FROM VALUES
+  ("ann", "paris"),
+  ("bob", "rome")
+AS UNUSED_TABLE_NAME(name, city))
 SELECT
   Person.name AS name
 FROM

@@ -3,6 +3,6 @@ WITH t_1_L AS (SELECT
 FROM
   LATERAL (SELECT explode(ARRAY("x", "y", "x")) AS x_3) AS pushkin)
 SELECT
-  SIZE(t_0_L.l) AS n
+  ARRAY_SIZE(t_0_L.l) AS n
 FROM
   t_1_L AS t_0_L;

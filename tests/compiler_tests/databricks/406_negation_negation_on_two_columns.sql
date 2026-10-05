@@ -1,15 +1,7 @@
-WITH t_0_P AS (SELECT * FROM (
-  
-    SELECT
-      1 AS a,
-      1 AS b
-   UNION ALL
-  
-    SELECT
-      1 AS a,
-      2 AS b
-  
-) AS UNUSED_TABLE_NAME  )
+WITH t_0_P AS (SELECT * FROM VALUES
+  (1, 1),
+  (1, 2)
+AS UNUSED_TABLE_NAME(a, b))
 SELECT
   P.a AS a,
   P.b AS b

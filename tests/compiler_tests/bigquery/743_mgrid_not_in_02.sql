@@ -1,0 +1,6 @@
+SELECT
+  x_3 AS x
+FROM
+  UNNEST(ARRAY[1, 2, 3]) as x_3
+WHERE
+  NOT (x_3 IN UNNEST(ARRAY[4])) ORDER BY x;

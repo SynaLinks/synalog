@@ -1,27 +1,11 @@
-WITH t_3_Phones AS (SELECT * FROM (
-  
-    SELECT
-      "Alice" AS person,
-      "555-1234" AS phone
-   UNION ALL
-  
-    SELECT
-      "Bob" AS person,
-      "555-5678" AS phone
-  
-) AS UNUSED_TABLE_NAME  ),
-t_5_Emails AS (SELECT * FROM (
-  
-    SELECT
-      "Bob" AS person,
-      "bob@example.com" AS email
-   UNION ALL
-  
-    SELECT
-      "Charlie" AS person,
-      "charlie@example.com" AS email
-  
-) AS UNUSED_TABLE_NAME  ),
+WITH t_3_Phones AS (SELECT * FROM VALUES
+  ("Alice", "555-1234"),
+  ("Bob", "555-5678")
+AS UNUSED_TABLE_NAME(person, phone)),
+t_5_Emails AS (SELECT * FROM VALUES
+  ("Bob", "bob@example.com"),
+  ("Charlie", "charlie@example.com")
+AS UNUSED_TABLE_NAME(person, email)),
 t_1_ContactInfo_MultBodyAggAux AS (SELECT * FROM (
   
     SELECT

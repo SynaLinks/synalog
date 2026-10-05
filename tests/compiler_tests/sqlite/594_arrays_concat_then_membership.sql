@@ -1,0 +1,6 @@
+SELECT
+  x_3.value AS x
+FROM
+  JSON_EACH(ARRAY_CONCAT(JSON_ARRAY(1, 2), JSON_ARRAY(3))) as x_3
+WHERE
+  (x_3.value > 2);

@@ -1,27 +1,11 @@
-WITH t_0_T AS (SELECT * FROM (
-  
-    SELECT
-      "d" AS k,
-      4 AS v
-   UNION ALL
-  
-    SELECT
-      "a" AS k,
-      1 AS v
-   UNION ALL
-  
-    SELECT
-      "c" AS k,
-      3 AS v
-   UNION ALL
-  
-    SELECT
-      "b" AS k,
-      2 AS v
-  
-) AS UNUSED_TABLE_NAME  )
+WITH t_0_T AS (SELECT * FROM VALUES
+  ("d", 4),
+  ("a", 1),
+  ("c", 3),
+  ("b", 2)
+AS UNUSED_TABLE_NAME(k, v))
 SELECT
   T.k AS k,
   T.v AS v
 FROM
-  t_0_T AS T ORDER BY k;
+  t_0_T AS T ORDER BY k NULLS LAST;

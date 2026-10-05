@@ -1,0 +1,8 @@
+WITH t_0_T0 AS (SELECT
+  MAX(x_4.value) AS t
+FROM
+  JSON_EACH(JSON_ARRAY(4, 5)) as x_4)
+SELECT
+  T0.t AS t
+FROM
+  t_0_T0 AS T0;

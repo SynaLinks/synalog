@@ -1,18 +1,10 @@
-WITH t_0_V AS (SELECT * FROM (
-  
-    SELECT
-      10 AS a,
-      3 AS b
-   UNION ALL
-  
-    SELECT
-      12 AS a,
-      5 AS b
-  
-) AS UNUSED_TABLE_NAME  )
+WITH t_0_V AS (SELECT * FROM VALUES
+  (10, 3),
+  (12, 5)
+AS UNUSED_TABLE_NAME(a, b))
 SELECT
   V.a AS a,
   V.b AS b,
   (MOD(V.a, V.b)) AS r
 FROM
-  t_0_V AS V ORDER BY a;
+  t_0_V AS V ORDER BY a NULLS LAST;

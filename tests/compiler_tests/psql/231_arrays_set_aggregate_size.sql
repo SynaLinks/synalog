@@ -9,6 +9,6 @@ WITH t_1_L AS (SELECT
 FROM
   UNNEST(ARRAY[1, 1, 2]) as x_3)
 SELECT
-  COALESCE(ARRAY_LENGTH(t_0_L.l, 1), 0) AS n
+  CARDINALITY(t_0_L.l) AS n
 FROM
   t_1_L AS t_0_L;

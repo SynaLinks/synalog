@@ -1,2 +1,2 @@
 SELECT
-  (((SELECT CASE WHEN typeof(v) = 'real' THEN CAST(ROUND(v) AS INTEGER) ELSE CAST(v AS INTEGER) END FROM (SELECT '42' AS v))) + (1)) AS n;
+  ((CAST('42' AS INTEGER)) + (1)) AS n;

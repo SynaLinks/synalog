@@ -4,7 +4,7 @@ create schema if not exists logica_home;
 drop type if exists logicarecord893574736 cascade; create type logicarecord893574736 as struct(nirvana numeric);
 create sequence if not exists eternal_logical_sequence;
 
-WITH t_2_V AS (SELECT * FROM (
+WITH t_3_V AS (SELECT * FROM (
   
     SELECT
       3 AS k,
@@ -24,4 +24,4 @@ WITH t_2_V AS (SELECT * FROM (
 SELECT
   ARRAY_AGG(t_0_V.v order by t_0_V.k) AS l
 FROM
-  t_2_V AS t_0_V;
+  t_3_V AS t_0_V;

@@ -1,36 +1,12 @@
 DROP TABLE IF EXISTS logica_test.Reachable_ifr0;
-CREATE TABLE logica_test.Reachable_ifr0 AS WITH t_0_Edge AS (SELECT * FROM (
-  
-    SELECT
-      1 AS col0,
-      2 AS col1
-   UNION ALL
-  
-    SELECT
-      2 AS col0,
-      3 AS col1
-   UNION ALL
-  
-    SELECT
-      3 AS col0,
-      4 AS col1
-   UNION ALL
-  
-    SELECT
-      4 AS col0,
-      5 AS col1
-   UNION ALL
-  
-    SELECT
-      5 AS col0,
-      6 AS col1
-   UNION ALL
-  
-    SELECT
-      6 AS col0,
-      7 AS col1
-  
-) AS UNUSED_TABLE_NAME  )
+CREATE TABLE logica_test.Reachable_ifr0 AS WITH t_0_Edge AS (SELECT * FROM VALUES
+  (1, 2),
+  (2, 3),
+  (3, 4),
+  (4, 5),
+  (5, 6),
+  (6, 7)
+AS UNUSED_TABLE_NAME(col0, col1))
 SELECT * FROM (
   
     SELECT
@@ -44,38 +20,14 @@ SELECT * FROM (
 -- Interacting with table logica_test.Reachable_ifr0
 
 DROP TABLE IF EXISTS logica_test.Reachable_ifr1;
-CREATE TABLE logica_test.Reachable_ifr1 AS WITH t_0_Edge AS (SELECT * FROM (
-  
-    SELECT
-      1 AS col0,
-      2 AS col1
-   UNION ALL
-  
-    SELECT
-      2 AS col0,
-      3 AS col1
-   UNION ALL
-  
-    SELECT
-      3 AS col0,
-      4 AS col1
-   UNION ALL
-  
-    SELECT
-      4 AS col0,
-      5 AS col1
-   UNION ALL
-  
-    SELECT
-      5 AS col0,
-      6 AS col1
-   UNION ALL
-  
-    SELECT
-      6 AS col0,
-      7 AS col1
-  
-) AS UNUSED_TABLE_NAME  )
+CREATE TABLE logica_test.Reachable_ifr1 AS WITH t_0_Edge AS (SELECT * FROM VALUES
+  (1, 2),
+  (2, 3),
+  (3, 4),
+  (4, 5),
+  (5, 6),
+  (6, 7)
+AS UNUSED_TABLE_NAME(col0, col1))
 SELECT * FROM (
   
     SELECT
@@ -98,38 +50,14 @@ SELECT * FROM (
 -- Interacting with table logica_test.Reachable_ifr1
 
 DROP TABLE IF EXISTS logica_test.Reachable_ifr2;
-CREATE TABLE logica_test.Reachable_ifr2 AS WITH t_0_Edge AS (SELECT * FROM (
-  
-    SELECT
-      1 AS col0,
-      2 AS col1
-   UNION ALL
-  
-    SELECT
-      2 AS col0,
-      3 AS col1
-   UNION ALL
-  
-    SELECT
-      3 AS col0,
-      4 AS col1
-   UNION ALL
-  
-    SELECT
-      4 AS col0,
-      5 AS col1
-   UNION ALL
-  
-    SELECT
-      5 AS col0,
-      6 AS col1
-   UNION ALL
-  
-    SELECT
-      6 AS col0,
-      7 AS col1
-  
-) AS UNUSED_TABLE_NAME  )
+CREATE TABLE logica_test.Reachable_ifr2 AS WITH t_0_Edge AS (SELECT * FROM VALUES
+  (1, 2),
+  (2, 3),
+  (3, 4),
+  (4, 5),
+  (5, 6),
+  (6, 7)
+AS UNUSED_TABLE_NAME(col0, col1))
 SELECT * FROM (
   
     SELECT
@@ -152,38 +80,14 @@ SELECT * FROM (
 -- Interacting with table logica_test.Reachable_ifr2
 
 DROP TABLE IF EXISTS logica_test.Reachable_ifr1;
-CREATE TABLE logica_test.Reachable_ifr1 AS WITH t_0_Edge AS (SELECT * FROM (
-  
-    SELECT
-      1 AS col0,
-      2 AS col1
-   UNION ALL
-  
-    SELECT
-      2 AS col0,
-      3 AS col1
-   UNION ALL
-  
-    SELECT
-      3 AS col0,
-      4 AS col1
-   UNION ALL
-  
-    SELECT
-      4 AS col0,
-      5 AS col1
-   UNION ALL
-  
-    SELECT
-      5 AS col0,
-      6 AS col1
-   UNION ALL
-  
-    SELECT
-      6 AS col0,
-      7 AS col1
-  
-) AS UNUSED_TABLE_NAME  )
+CREATE TABLE logica_test.Reachable_ifr1 AS WITH t_0_Edge AS (SELECT * FROM VALUES
+  (1, 2),
+  (2, 3),
+  (3, 4),
+  (4, 5),
+  (5, 6),
+  (6, 7)
+AS UNUSED_TABLE_NAME(col0, col1))
 SELECT * FROM (
   
     SELECT
@@ -206,38 +110,14 @@ SELECT * FROM (
 -- Interacting with table logica_test.Reachable_ifr1
 
 DROP TABLE IF EXISTS logica_test.Reachable_ifr2;
-CREATE TABLE logica_test.Reachable_ifr2 AS WITH t_0_Edge AS (SELECT * FROM (
-  
-    SELECT
-      1 AS col0,
-      2 AS col1
-   UNION ALL
-  
-    SELECT
-      2 AS col0,
-      3 AS col1
-   UNION ALL
-  
-    SELECT
-      3 AS col0,
-      4 AS col1
-   UNION ALL
-  
-    SELECT
-      4 AS col0,
-      5 AS col1
-   UNION ALL
-  
-    SELECT
-      5 AS col0,
-      6 AS col1
-   UNION ALL
-  
-    SELECT
-      6 AS col0,
-      7 AS col1
-  
-) AS UNUSED_TABLE_NAME  )
+CREATE TABLE logica_test.Reachable_ifr2 AS WITH t_0_Edge AS (SELECT * FROM VALUES
+  (1, 2),
+  (2, 3),
+  (3, 4),
+  (4, 5),
+  (5, 6),
+  (6, 7)
+AS UNUSED_TABLE_NAME(col0, col1))
 SELECT * FROM (
   
     SELECT
@@ -258,38 +138,14 @@ SELECT * FROM (
 ) AS UNUSED_TABLE_NAME  ;
 
 DROP TABLE IF EXISTS logica_test.Reachable_ifr1;
-CREATE TABLE logica_test.Reachable_ifr1 AS WITH t_0_Edge AS (SELECT * FROM (
-  
-    SELECT
-      1 AS col0,
-      2 AS col1
-   UNION ALL
-  
-    SELECT
-      2 AS col0,
-      3 AS col1
-   UNION ALL
-  
-    SELECT
-      3 AS col0,
-      4 AS col1
-   UNION ALL
-  
-    SELECT
-      4 AS col0,
-      5 AS col1
-   UNION ALL
-  
-    SELECT
-      5 AS col0,
-      6 AS col1
-   UNION ALL
-  
-    SELECT
-      6 AS col0,
-      7 AS col1
-  
-) AS UNUSED_TABLE_NAME  )
+CREATE TABLE logica_test.Reachable_ifr1 AS WITH t_0_Edge AS (SELECT * FROM VALUES
+  (1, 2),
+  (2, 3),
+  (3, 4),
+  (4, 5),
+  (5, 6),
+  (6, 7)
+AS UNUSED_TABLE_NAME(col0, col1))
 SELECT * FROM (
   
     SELECT
@@ -310,38 +166,14 @@ SELECT * FROM (
 ) AS UNUSED_TABLE_NAME  ;
 
 DROP TABLE IF EXISTS logica_test.Reachable_ifr2;
-CREATE TABLE logica_test.Reachable_ifr2 AS WITH t_0_Edge AS (SELECT * FROM (
-  
-    SELECT
-      1 AS col0,
-      2 AS col1
-   UNION ALL
-  
-    SELECT
-      2 AS col0,
-      3 AS col1
-   UNION ALL
-  
-    SELECT
-      3 AS col0,
-      4 AS col1
-   UNION ALL
-  
-    SELECT
-      4 AS col0,
-      5 AS col1
-   UNION ALL
-  
-    SELECT
-      5 AS col0,
-      6 AS col1
-   UNION ALL
-  
-    SELECT
-      6 AS col0,
-      7 AS col1
-  
-) AS UNUSED_TABLE_NAME  )
+CREATE TABLE logica_test.Reachable_ifr2 AS WITH t_0_Edge AS (SELECT * FROM VALUES
+  (1, 2),
+  (2, 3),
+  (3, 4),
+  (4, 5),
+  (5, 6),
+  (6, 7)
+AS UNUSED_TABLE_NAME(col0, col1))
 SELECT * FROM (
   
     SELECT
@@ -362,38 +194,14 @@ SELECT * FROM (
 ) AS UNUSED_TABLE_NAME  ;
 
 DROP TABLE IF EXISTS logica_test.Reachable_ifr1;
-CREATE TABLE logica_test.Reachable_ifr1 AS WITH t_0_Edge AS (SELECT * FROM (
-  
-    SELECT
-      1 AS col0,
-      2 AS col1
-   UNION ALL
-  
-    SELECT
-      2 AS col0,
-      3 AS col1
-   UNION ALL
-  
-    SELECT
-      3 AS col0,
-      4 AS col1
-   UNION ALL
-  
-    SELECT
-      4 AS col0,
-      5 AS col1
-   UNION ALL
-  
-    SELECT
-      5 AS col0,
-      6 AS col1
-   UNION ALL
-  
-    SELECT
-      6 AS col0,
-      7 AS col1
-  
-) AS UNUSED_TABLE_NAME  )
+CREATE TABLE logica_test.Reachable_ifr1 AS WITH t_0_Edge AS (SELECT * FROM VALUES
+  (1, 2),
+  (2, 3),
+  (3, 4),
+  (4, 5),
+  (5, 6),
+  (6, 7)
+AS UNUSED_TABLE_NAME(col0, col1))
 SELECT * FROM (
   
     SELECT
@@ -414,38 +222,14 @@ SELECT * FROM (
 ) AS UNUSED_TABLE_NAME  ;
 
 DROP TABLE IF EXISTS logica_test.Reachable_ifr2;
-CREATE TABLE logica_test.Reachable_ifr2 AS WITH t_0_Edge AS (SELECT * FROM (
-  
-    SELECT
-      1 AS col0,
-      2 AS col1
-   UNION ALL
-  
-    SELECT
-      2 AS col0,
-      3 AS col1
-   UNION ALL
-  
-    SELECT
-      3 AS col0,
-      4 AS col1
-   UNION ALL
-  
-    SELECT
-      4 AS col0,
-      5 AS col1
-   UNION ALL
-  
-    SELECT
-      5 AS col0,
-      6 AS col1
-   UNION ALL
-  
-    SELECT
-      6 AS col0,
-      7 AS col1
-  
-) AS UNUSED_TABLE_NAME  )
+CREATE TABLE logica_test.Reachable_ifr2 AS WITH t_0_Edge AS (SELECT * FROM VALUES
+  (1, 2),
+  (2, 3),
+  (3, 4),
+  (4, 5),
+  (5, 6),
+  (6, 7)
+AS UNUSED_TABLE_NAME(col0, col1))
 SELECT * FROM (
   
     SELECT
@@ -466,38 +250,14 @@ SELECT * FROM (
 ) AS UNUSED_TABLE_NAME  ;
 
 DROP TABLE IF EXISTS logica_test.Reachable_ifr1;
-CREATE TABLE logica_test.Reachable_ifr1 AS WITH t_0_Edge AS (SELECT * FROM (
-  
-    SELECT
-      1 AS col0,
-      2 AS col1
-   UNION ALL
-  
-    SELECT
-      2 AS col0,
-      3 AS col1
-   UNION ALL
-  
-    SELECT
-      3 AS col0,
-      4 AS col1
-   UNION ALL
-  
-    SELECT
-      4 AS col0,
-      5 AS col1
-   UNION ALL
-  
-    SELECT
-      5 AS col0,
-      6 AS col1
-   UNION ALL
-  
-    SELECT
-      6 AS col0,
-      7 AS col1
-  
-) AS UNUSED_TABLE_NAME  )
+CREATE TABLE logica_test.Reachable_ifr1 AS WITH t_0_Edge AS (SELECT * FROM VALUES
+  (1, 2),
+  (2, 3),
+  (3, 4),
+  (4, 5),
+  (5, 6),
+  (6, 7)
+AS UNUSED_TABLE_NAME(col0, col1))
 SELECT * FROM (
   
     SELECT
@@ -518,38 +278,14 @@ SELECT * FROM (
 ) AS UNUSED_TABLE_NAME  ;
 
 DROP TABLE IF EXISTS logica_test.Reachable;
-CREATE TABLE logica_test.Reachable AS WITH t_0_Edge AS (SELECT * FROM (
-  
-    SELECT
-      1 AS col0,
-      2 AS col1
-   UNION ALL
-  
-    SELECT
-      2 AS col0,
-      3 AS col1
-   UNION ALL
-  
-    SELECT
-      3 AS col0,
-      4 AS col1
-   UNION ALL
-  
-    SELECT
-      4 AS col0,
-      5 AS col1
-   UNION ALL
-  
-    SELECT
-      5 AS col0,
-      6 AS col1
-   UNION ALL
-  
-    SELECT
-      6 AS col0,
-      7 AS col1
-  
-) AS UNUSED_TABLE_NAME  )
+CREATE TABLE logica_test.Reachable AS WITH t_0_Edge AS (SELECT * FROM VALUES
+  (1, 2),
+  (2, 3),
+  (3, 4),
+  (4, 5),
+  (5, 6),
+  (6, 7)
+AS UNUSED_TABLE_NAME(col0, col1))
 SELECT * FROM (
   
     SELECT

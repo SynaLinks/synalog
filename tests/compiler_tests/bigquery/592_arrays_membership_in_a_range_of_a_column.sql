@@ -1,0 +1,5 @@
+SELECT
+  2 AS n,
+  x_3 AS i
+FROM
+  UNNEST(GENERATE_ARRAY(0, 2 - 1)) as x_3 ORDER BY i;

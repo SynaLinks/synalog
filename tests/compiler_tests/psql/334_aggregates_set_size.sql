@@ -23,6 +23,6 @@ t_1_L AS (SELECT
 FROM
   t_2_V AS V)
 SELECT
-  COALESCE(ARRAY_LENGTH(t_0_L.l, 1), 0) AS n
+  CARDINALITY(t_0_L.l) AS n
 FROM
   t_1_L AS t_0_L;

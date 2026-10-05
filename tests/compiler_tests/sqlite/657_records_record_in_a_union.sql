@@ -1,0 +1,14 @@
+WITH t_0_V AS (SELECT * FROM (
+  
+    SELECT
+      JSON_OBJECT('a', 1) AS r
+   UNION ALL
+  
+    SELECT
+      JSON_OBJECT('a', 2) AS r
+  
+) AS UNUSED_TABLE_NAME  )
+SELECT
+  JSON_EXTRACT(V.r, "$.a") AS a
+FROM
+  t_0_V AS V ORDER BY a;

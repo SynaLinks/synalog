@@ -1,5 +1,5 @@
 SELECT
   x_3 AS t,
-  SIZE(SPLIT(x_3, ",")) AS n
+  ARRAY_SIZE(SPLIT(x_3, ",")) AS n
 FROM
   LATERAL (SELECT explode(ARRAY("a,b", "c")) AS x_3) AS pushkin ORDER BY t NULLS LAST;

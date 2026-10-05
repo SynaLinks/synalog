@@ -1,4 +1,4 @@
-WITH t_4_V AS (SELECT * FROM (
+WITH t_5_V AS (SELECT * FROM (
   
     SELECT
       3 AS k,
@@ -18,7 +18,7 @@ WITH t_4_V AS (SELECT * FROM (
 t_1_L AS (SELECT
   ARRAY_AGG(t_2_V.v order by t_2_V.k) AS l
 FROM
-  t_4_V AS t_2_V)
+  t_5_V AS t_2_V)
 SELECT
   ARRAY_JOIN(t_0_L.l, '-') AS s
 FROM

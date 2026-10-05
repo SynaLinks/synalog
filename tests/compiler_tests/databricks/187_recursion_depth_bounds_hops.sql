@@ -14,28 +14,12 @@ GROUP BY 1;
 -- Interacting with table logica_test.Reach_sn_delta
 
 DROP TABLE IF EXISTS logica_test.Reach_sn_full;
-CREATE TABLE logica_test.Reach_sn_full AS WITH t_3_Edge AS (SELECT * FROM (
-  
-    SELECT
-      1 AS a,
-      2 AS b
-   UNION ALL
-  
-    SELECT
-      2 AS a,
-      3 AS b
-   UNION ALL
-  
-    SELECT
-      3 AS a,
-      4 AS b
-   UNION ALL
-  
-    SELECT
-      4 AS a,
-      5 AS b
-  
-) AS UNUSED_TABLE_NAME  ),
+CREATE TABLE logica_test.Reach_sn_full AS WITH t_3_Edge AS (SELECT * FROM VALUES
+  (1, 2),
+  (2, 3),
+  (3, 4),
+  (4, 5)
+AS UNUSED_TABLE_NAME(a, b)),
 t_1_Reach_MultBodyAggAux_f2 AS (SELECT * FROM (
   
     SELECT
@@ -75,28 +59,12 @@ SELECT * FROM (
 -- Interacting with table logica_test.Reach_sn_full
 
 DROP TABLE IF EXISTS logica_test.Reach_sn_new;
-CREATE TABLE logica_test.Reach_sn_new AS WITH t_3_Edge AS (SELECT * FROM (
-  
-    SELECT
-      1 AS a,
-      2 AS b
-   UNION ALL
-  
-    SELECT
-      2 AS a,
-      3 AS b
-   UNION ALL
-  
-    SELECT
-      3 AS a,
-      4 AS b
-   UNION ALL
-  
-    SELECT
-      4 AS a,
-      5 AS b
-  
-) AS UNUSED_TABLE_NAME  ),
+CREATE TABLE logica_test.Reach_sn_new AS WITH t_3_Edge AS (SELECT * FROM VALUES
+  (1, 2),
+  (2, 3),
+  (3, 4),
+  (4, 5)
+AS UNUSED_TABLE_NAME(a, b)),
 t_1_Reach_MultBodyAggAux_f2 AS (SELECT * FROM (
   
     SELECT
@@ -138,28 +106,12 @@ FROM
   logica_test.Reach_sn_new AS Reach_sn_new;
 
 DROP TABLE IF EXISTS logica_test.Reach_sn_new;
-CREATE TABLE logica_test.Reach_sn_new AS WITH t_3_Edge AS (SELECT * FROM (
-  
-    SELECT
-      1 AS a,
-      2 AS b
-   UNION ALL
-  
-    SELECT
-      2 AS a,
-      3 AS b
-   UNION ALL
-  
-    SELECT
-      3 AS a,
-      4 AS b
-   UNION ALL
-  
-    SELECT
-      4 AS a,
-      5 AS b
-  
-) AS UNUSED_TABLE_NAME  ),
+CREATE TABLE logica_test.Reach_sn_new AS WITH t_3_Edge AS (SELECT * FROM VALUES
+  (1, 2),
+  (2, 3),
+  (3, 4),
+  (4, 5)
+AS UNUSED_TABLE_NAME(a, b)),
 t_1_Reach_MultBodyAggAux_f2 AS (SELECT * FROM (
   
     SELECT

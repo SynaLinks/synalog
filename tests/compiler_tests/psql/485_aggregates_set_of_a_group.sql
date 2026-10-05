@@ -34,6 +34,6 @@ FROM
 GROUP BY V.g)
 SELECT
   t_0_S.g AS g,
-  COALESCE(ARRAY_LENGTH(t_0_S.s, 1), 0) AS n
+  CARDINALITY(t_0_S.s) AS n
 FROM
   t_1_S AS t_0_S ORDER BY g;

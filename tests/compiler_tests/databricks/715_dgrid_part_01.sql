@@ -1,0 +1,5 @@
+SELECT
+  x_3 AS d,
+  SUBSTR(x_3, 1, 4) AS p
+FROM
+  LATERAL (SELECT explode(ARRAY("2024-03-09", "2023-11-30", "2024-01-15")) AS x_3) AS pushkin ORDER BY d NULLS LAST;

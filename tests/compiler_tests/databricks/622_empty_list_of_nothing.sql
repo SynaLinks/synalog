@@ -1,0 +1,10 @@
+WITH t_0_C AS (SELECT
+  ARRAY_AGG(x_3) AS l
+FROM
+  LATERAL (SELECT explode(ARRAY(1)) AS x_3) AS pushkin
+WHERE
+  (x_3 > 5))
+SELECT
+  COALESCE(ARRAY_SIZE(C.l), 0) AS n
+FROM
+  t_0_C AS C;

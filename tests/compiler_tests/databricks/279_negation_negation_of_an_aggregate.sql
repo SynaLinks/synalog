@@ -1,15 +1,7 @@
-WITH t_2_R AS (SELECT * FROM (
-  
-    SELECT
-      "a" AS k,
-      10 AS v
-   UNION ALL
-  
-    SELECT
-      "b" AS k,
-      1 AS v
-  
-) AS UNUSED_TABLE_NAME  ),
+WITH t_2_R AS (SELECT * FROM VALUES
+  ("a", 10),
+  ("b", 1)
+AS UNUSED_TABLE_NAME(k, v)),
 t_1_K AS (SELECT
   R.k AS k
 FROM

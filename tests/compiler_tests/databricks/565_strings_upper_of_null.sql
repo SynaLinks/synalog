@@ -1,15 +1,7 @@
-WITH t_0_V AS (SELECT * FROM (
-  
-    SELECT
-      1 AS k,
-      null AS s
-   UNION ALL
-  
-    SELECT
-      2 AS k,
-      "ab" AS s
-  
-) AS UNUSED_TABLE_NAME  )
+WITH t_0_V AS (SELECT * FROM VALUES
+  (1, null),
+  (2, "ab")
+AS UNUSED_TABLE_NAME(k, s))
 SELECT
   V.k AS k,
   UPPER(V.s) AS a,

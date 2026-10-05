@@ -1,22 +1,10 @@
-WITH t_0_V AS (SELECT * FROM (
-  
-    SELECT
-      7 AS n,
-      "x" AS t
-   UNION ALL
-  
-    SELECT
-      8 AS n,
-      "a7" AS t
-   UNION ALL
-  
-    SELECT
-      9 AS n,
-      "b" AS t
-  
-) AS UNUSED_TABLE_NAME  )
+WITH t_0_V AS (SELECT * FROM VALUES
+  (7, "x"),
+  (8, "a7"),
+  (9, "b")
+AS UNUSED_TABLE_NAME(n, t))
 SELECT
   V.n AS n,
   V.t AS t
 FROM
-  t_0_V AS V ORDER BY n;
+  t_0_V AS V ORDER BY n NULLS LAST;

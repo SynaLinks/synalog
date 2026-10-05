@@ -1,21 +1,9 @@
-WITH t_0_Prime AS (SELECT * FROM (
-  
-    SELECT
-      2 AS col0
-   UNION ALL
-  
-    SELECT
-      3 AS col0
-   UNION ALL
-  
-    SELECT
-      5 AS col0
-   UNION ALL
-  
-    SELECT
-      7 AS col0
-  
-) AS UNUSED_TABLE_NAME  )
+WITH t_0_Prime AS (SELECT * FROM VALUES
+  (2),
+  (3),
+  (5),
+  (7)
+AS UNUSED_TABLE_NAME(col0))
 SELECT * FROM (
   
     SELECT

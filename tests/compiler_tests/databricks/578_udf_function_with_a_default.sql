@@ -1,15 +1,7 @@
-WITH t_1_V AS (SELECT * FROM (
-  
-    SELECT
-      1 AS k,
-      1 AS x
-   UNION ALL
-  
-    SELECT
-      2 AS k,
-      null AS x
-  
-) AS UNUSED_TABLE_NAME  )
+WITH t_1_V AS (SELECT * FROM VALUES
+  (1, 1),
+  (2, null)
+AS UNUSED_TABLE_NAME(k, x))
 SELECT
   t_0_V.k AS k,
   COALESCE(t_0_V.x, 0) AS v

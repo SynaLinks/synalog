@@ -1,0 +1,14 @@
+WITH t_0_V AS (SELECT * FROM (
+  
+    SELECT
+      STRUCT(1 AS a) AS r
+   UNION ALL
+  
+    SELECT
+      STRUCT(2 AS a) AS r
+  
+) AS UNUSED_TABLE_NAME  )
+SELECT
+  V.r.a AS a
+FROM
+  t_0_V AS V ORDER BY a;

@@ -1,20 +1,8 @@
-WITH t_0_V AS (SELECT * FROM (
-  
-    SELECT
-      null AS g,
-      1 AS x
-   UNION ALL
-  
-    SELECT
-      null AS g,
-      2 AS x
-   UNION ALL
-  
-    SELECT
-      1 AS g,
-      3 AS x
-  
-) AS UNUSED_TABLE_NAME  )
+WITH t_0_V AS (SELECT * FROM VALUES
+  (null, 1),
+  (null, 2),
+  (1, 3)
+AS UNUSED_TABLE_NAME(g, x))
 SELECT
   V.g AS g,
   SUM(1) AS n

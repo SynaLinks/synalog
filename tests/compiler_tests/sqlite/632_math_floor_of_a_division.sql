@@ -1,0 +1,2 @@
+SELECT
+  FLOOR((CAST(7 AS REAL) / (2))) AS v;

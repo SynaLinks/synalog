@@ -1,0 +1,4 @@
+SELECT
+  SUM(x_2) AS t
+FROM
+  UNNEST(ARRAY[0.25E0, 0.25E0, 0.5E0]) as pushkin(x_2);

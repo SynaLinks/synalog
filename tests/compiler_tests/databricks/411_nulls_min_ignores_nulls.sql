@@ -1,17 +1,8 @@
-WITH t_0_V AS (SELECT * FROM (
-  
-    SELECT
-      null AS x
-   UNION ALL
-  
-    SELECT
-      4 AS x
-   UNION ALL
-  
-    SELECT
-      9 AS x
-  
-) AS UNUSED_TABLE_NAME  )
+WITH t_0_V AS (SELECT * FROM VALUES
+  (null),
+  (4),
+  (9)
+AS UNUSED_TABLE_NAME(x))
 SELECT
   MIN(V.x) AS m
 FROM

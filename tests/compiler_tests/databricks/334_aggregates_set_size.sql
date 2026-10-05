@@ -1,22 +1,13 @@
-WITH t_2_V AS (SELECT * FROM (
-  
-    SELECT
-      1 AS x
-   UNION ALL
-  
-    SELECT
-      1 AS x
-   UNION ALL
-  
-    SELECT
-      2 AS x
-  
-) AS UNUSED_TABLE_NAME  ),
+WITH t_2_V AS (SELECT * FROM VALUES
+  (1),
+  (1),
+  (2)
+AS UNUSED_TABLE_NAME(x)),
 t_1_L AS (SELECT
   ARRAY_AGG(DISTINCT V.x) AS l
 FROM
   t_2_V AS V)
 SELECT
-  SIZE(t_0_L.l) AS n
+  ARRAY_SIZE(t_0_L.l) AS n
 FROM
   t_1_L AS t_0_L;

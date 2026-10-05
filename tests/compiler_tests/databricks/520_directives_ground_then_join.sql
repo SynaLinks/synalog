@@ -6,18 +6,10 @@ FROM
 
 -- Interacting with table logica_test.G
 
-WITH t_0_N AS (SELECT * FROM (
-  
-    SELECT
-      1 AS k,
-      "a" AS s
-   UNION ALL
-  
-    SELECT
-      2 AS k,
-      "b" AS s
-  
-) AS UNUSED_TABLE_NAME  )
+WITH t_0_N AS (SELECT * FROM VALUES
+  (1, "a"),
+  (2, "b")
+AS UNUSED_TABLE_NAME(k, s))
 SELECT
   G.k AS k,
   N.s AS s

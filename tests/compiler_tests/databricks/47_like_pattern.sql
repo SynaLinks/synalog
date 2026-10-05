@@ -1,28 +1,16 @@
-WITH t_1_Names AS (SELECT * FROM (
-  
-    SELECT
-      "alice" AS name
-   UNION ALL
-  
-    SELECT
-      "alan" AS name
-   UNION ALL
-  
-    SELECT
-      "bob" AS name
-   UNION ALL
-  
-    SELECT
-      "albert" AS name
-  
-) AS UNUSED_TABLE_NAME  ),
+WITH t_1_Names AS (SELECT * FROM VALUES
+  ("alice"),
+  ("alan"),
+  ("bob"),
+  ("albert")
+AS UNUSED_TABLE_NAME(name)),
 t_0_StartsWithAl AS (SELECT
   Names.name AS name
 FROM
   t_1_Names AS Names
 WHERE
-  (CAST(Names.name AS STRING) LIKE "al%") ORDER BY name)
+  (CAST(Names.name AS STRING) LIKE "al%") ORDER BY name NULLS LAST)
 SELECT
   StartsWithAl.name AS name
 FROM
-  t_0_StartsWithAl AS StartsWithAl ORDER BY name;
+  t_0_StartsWithAl AS StartsWithAl ORDER BY name NULLS LAST;

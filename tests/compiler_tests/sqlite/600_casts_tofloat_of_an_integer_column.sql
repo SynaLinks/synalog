@@ -1,0 +1,5 @@
+SELECT
+  x_3.value AS x,
+  (CAST(CAST(x_3.value AS FLOAT64) AS REAL) / (2)) AS h
+FROM
+  JSON_EACH(JSON_ARRAY(1, 3)) as x_3 ORDER BY x NULLS LAST;

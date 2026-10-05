@@ -1,0 +1,9 @@
+# Test: Nodes reached from 1 in a chain graph. (from tests/programs/rshapes/reach_chain.l)
+
+E(a: 1, b: 2);
+E(a: 2, b: 3);
+E(a: 3, b: 4);
+@Recursive(R, 8);
+@OrderBy(R, "x");
+R(x: 1) distinct;
+R(x: b) distinct :- R(x: a), E(a:, b:);

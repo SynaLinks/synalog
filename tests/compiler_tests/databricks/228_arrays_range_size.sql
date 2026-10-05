@@ -1,2 +1,2 @@
 SELECT
-  SIZE(FILTER(SEQUENCE(0, 5), x -> x < 5)) AS n;
+  ARRAY_SIZE(FILTER(SEQUENCE(0, 5), x -> x < 5)) AS n;

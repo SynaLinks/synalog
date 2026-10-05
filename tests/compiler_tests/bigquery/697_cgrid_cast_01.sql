@@ -1,0 +1,2 @@
+SELECT
+  CAST("12" AS INT64) AS v;

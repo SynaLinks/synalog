@@ -1,13 +1,7 @@
-WITH t_0_M AS (SELECT * FROM (
-  
-    SELECT
-      1 AS `order`
-   UNION ALL
-  
-    SELECT
-      2 AS `order`
-  
-) AS UNUSED_TABLE_NAME  )
+WITH t_0_M AS (SELECT * FROM VALUES
+  (1),
+  (2)
+AS UNUSED_TABLE_NAME(`order`))
 SELECT
   M.`order` AS `order`,
   "a" AS v

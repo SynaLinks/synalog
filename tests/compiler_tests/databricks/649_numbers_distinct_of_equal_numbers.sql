@@ -1,0 +1,13 @@
+WITH t_1_V AS (SELECT * FROM VALUES
+  (2.0E0),
+  (2.0E0)
+AS UNUSED_TABLE_NAME(x)),
+t_0_D AS (SELECT
+  V.x AS x
+FROM
+  t_1_V AS V
+GROUP BY 1)
+SELECT
+  SUM(1) AS n
+FROM
+  t_0_D AS D;

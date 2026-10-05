@@ -16,18 +16,10 @@ GROUP BY 1;
 -- Interacting with table logica_test.S_fr0
 
 DROP TABLE IF EXISTS logica_test.S_fr1;
-CREATE TABLE logica_test.S_fr1 AS WITH t_1_E AS (SELECT * FROM (
-  
-    SELECT
-      1 AS a,
-      2 AS b
-   UNION ALL
-  
-    SELECT
-      2 AS a,
-      3 AS b
-  
-) AS UNUSED_TABLE_NAME  ),
+CREATE TABLE logica_test.S_fr1 AS WITH t_1_E AS (SELECT * FROM VALUES
+  (1, 2),
+  (2, 3)
+AS UNUSED_TABLE_NAME(a, b)),
 t_0_S_MultBodyAggAux_f2 AS (SELECT * FROM (
   
     SELECT
@@ -54,18 +46,10 @@ GROUP BY 1;
 -- Interacting with table logica_test.S_fr1
 
 DROP TABLE IF EXISTS logica_test.S_fr2;
-CREATE TABLE logica_test.S_fr2 AS WITH t_1_E AS (SELECT * FROM (
-  
-    SELECT
-      1 AS a,
-      2 AS b
-   UNION ALL
-  
-    SELECT
-      2 AS a,
-      3 AS b
-  
-) AS UNUSED_TABLE_NAME  ),
+CREATE TABLE logica_test.S_fr2 AS WITH t_1_E AS (SELECT * FROM VALUES
+  (1, 2),
+  (2, 3)
+AS UNUSED_TABLE_NAME(a, b)),
 t_0_S_MultBodyAggAux_f3 AS (SELECT * FROM (
   
     SELECT
@@ -92,18 +76,10 @@ GROUP BY 1;
 -- Interacting with table logica_test.S_fr2
 
 DROP TABLE IF EXISTS logica_test.S_fr3;
-CREATE TABLE logica_test.S_fr3 AS WITH t_1_E AS (SELECT * FROM (
-  
-    SELECT
-      1 AS a,
-      2 AS b
-   UNION ALL
-  
-    SELECT
-      2 AS a,
-      3 AS b
-  
-) AS UNUSED_TABLE_NAME  ),
+CREATE TABLE logica_test.S_fr3 AS WITH t_1_E AS (SELECT * FROM VALUES
+  (1, 2),
+  (2, 3)
+AS UNUSED_TABLE_NAME(a, b)),
 t_0_S_MultBodyAggAux_f4 AS (SELECT * FROM (
   
     SELECT
@@ -130,18 +106,10 @@ GROUP BY 1;
 -- Interacting with table logica_test.S_fr3
 
 DROP TABLE IF EXISTS logica_test.S_fr4;
-CREATE TABLE logica_test.S_fr4 AS WITH t_1_E AS (SELECT * FROM (
-  
-    SELECT
-      1 AS a,
-      2 AS b
-   UNION ALL
-  
-    SELECT
-      2 AS a,
-      3 AS b
-  
-) AS UNUSED_TABLE_NAME  ),
+CREATE TABLE logica_test.S_fr4 AS WITH t_1_E AS (SELECT * FROM VALUES
+  (1, 2),
+  (2, 3)
+AS UNUSED_TABLE_NAME(a, b)),
 t_0_S_MultBodyAggAux_f5 AS (SELECT * FROM (
   
     SELECT
@@ -167,18 +135,10 @@ GROUP BY 1;
 
 -- Interacting with table logica_test.S_fr4
 
-WITH t_1_E AS (SELECT * FROM (
-  
-    SELECT
-      1 AS a,
-      2 AS b
-   UNION ALL
-  
-    SELECT
-      2 AS a,
-      3 AS b
-  
-) AS UNUSED_TABLE_NAME  ),
+WITH t_1_E AS (SELECT * FROM VALUES
+  (1, 2),
+  (2, 3)
+AS UNUSED_TABLE_NAME(a, b)),
 t_0_S_MultBodyAggAux_f6 AS (SELECT * FROM (
   
     SELECT

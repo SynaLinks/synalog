@@ -16,28 +16,12 @@ GROUP BY 1;
 -- Interacting with table logica_test.Dist_ifr0
 
 DROP TABLE IF EXISTS logica_test.Dist_ifr1;
-CREATE TABLE logica_test.Dist_ifr1 AS WITH t_1_E AS (SELECT * FROM (
-  
-    SELECT
-      "a" AS a,
-      "b" AS b
-   UNION ALL
-  
-    SELECT
-      "b" AS a,
-      "c" AS b
-   UNION ALL
-  
-    SELECT
-      "a" AS a,
-      "d" AS b
-   UNION ALL
-  
-    SELECT
-      "d" AS a,
-      "c" AS b
-  
-) AS UNUSED_TABLE_NAME  ),
+CREATE TABLE logica_test.Dist_ifr1 AS WITH t_1_E AS (SELECT * FROM VALUES
+  ("a", "b"),
+  ("b", "c"),
+  ("a", "d"),
+  ("d", "c")
+AS UNUSED_TABLE_NAME(a, b)),
 t_0_Dist_MultBodyAggAux_f2 AS (SELECT * FROM (
   
     SELECT
@@ -64,28 +48,12 @@ GROUP BY 1;
 -- Interacting with table logica_test.Dist_ifr1
 
 DROP TABLE IF EXISTS logica_test.Dist_ifr2;
-CREATE TABLE logica_test.Dist_ifr2 AS WITH t_1_E AS (SELECT * FROM (
-  
-    SELECT
-      "a" AS a,
-      "b" AS b
-   UNION ALL
-  
-    SELECT
-      "b" AS a,
-      "c" AS b
-   UNION ALL
-  
-    SELECT
-      "a" AS a,
-      "d" AS b
-   UNION ALL
-  
-    SELECT
-      "d" AS a,
-      "c" AS b
-  
-) AS UNUSED_TABLE_NAME  ),
+CREATE TABLE logica_test.Dist_ifr2 AS WITH t_1_E AS (SELECT * FROM VALUES
+  ("a", "b"),
+  ("b", "c"),
+  ("a", "d"),
+  ("d", "c")
+AS UNUSED_TABLE_NAME(a, b)),
 t_0_Dist_MultBodyAggAux_f3 AS (SELECT * FROM (
   
     SELECT
@@ -112,28 +80,12 @@ GROUP BY 1;
 -- Interacting with table logica_test.Dist_ifr2
 
 DROP TABLE IF EXISTS logica_test.Dist_ifr1;
-CREATE TABLE logica_test.Dist_ifr1 AS WITH t_1_E AS (SELECT * FROM (
-  
-    SELECT
-      "a" AS a,
-      "b" AS b
-   UNION ALL
-  
-    SELECT
-      "b" AS a,
-      "c" AS b
-   UNION ALL
-  
-    SELECT
-      "a" AS a,
-      "d" AS b
-   UNION ALL
-  
-    SELECT
-      "d" AS a,
-      "c" AS b
-  
-) AS UNUSED_TABLE_NAME  ),
+CREATE TABLE logica_test.Dist_ifr1 AS WITH t_1_E AS (SELECT * FROM VALUES
+  ("a", "b"),
+  ("b", "c"),
+  ("a", "d"),
+  ("d", "c")
+AS UNUSED_TABLE_NAME(a, b)),
 t_0_Dist_MultBodyAggAux_f4 AS (SELECT * FROM (
   
     SELECT
@@ -160,28 +112,12 @@ GROUP BY 1;
 -- Interacting with table logica_test.Dist_ifr1
 
 DROP TABLE IF EXISTS logica_test.Dist_ifr2;
-CREATE TABLE logica_test.Dist_ifr2 AS WITH t_1_E AS (SELECT * FROM (
-  
-    SELECT
-      "a" AS a,
-      "b" AS b
-   UNION ALL
-  
-    SELECT
-      "b" AS a,
-      "c" AS b
-   UNION ALL
-  
-    SELECT
-      "a" AS a,
-      "d" AS b
-   UNION ALL
-  
-    SELECT
-      "d" AS a,
-      "c" AS b
-  
-) AS UNUSED_TABLE_NAME  ),
+CREATE TABLE logica_test.Dist_ifr2 AS WITH t_1_E AS (SELECT * FROM VALUES
+  ("a", "b"),
+  ("b", "c"),
+  ("a", "d"),
+  ("d", "c")
+AS UNUSED_TABLE_NAME(a, b)),
 t_0_Dist_MultBodyAggAux_f3 AS (SELECT * FROM (
   
     SELECT
@@ -206,28 +142,12 @@ FROM
 GROUP BY 1;
 
 DROP TABLE IF EXISTS logica_test.Dist_ifr1;
-CREATE TABLE logica_test.Dist_ifr1 AS WITH t_1_E AS (SELECT * FROM (
-  
-    SELECT
-      "a" AS a,
-      "b" AS b
-   UNION ALL
-  
-    SELECT
-      "b" AS a,
-      "c" AS b
-   UNION ALL
-  
-    SELECT
-      "a" AS a,
-      "d" AS b
-   UNION ALL
-  
-    SELECT
-      "d" AS a,
-      "c" AS b
-  
-) AS UNUSED_TABLE_NAME  ),
+CREATE TABLE logica_test.Dist_ifr1 AS WITH t_1_E AS (SELECT * FROM VALUES
+  ("a", "b"),
+  ("b", "c"),
+  ("a", "d"),
+  ("d", "c")
+AS UNUSED_TABLE_NAME(a, b)),
 t_0_Dist_MultBodyAggAux_f4 AS (SELECT * FROM (
   
     SELECT
@@ -251,28 +171,12 @@ FROM
   t_0_Dist_MultBodyAggAux_f4 AS Dist_MultBodyAggAux_f4
 GROUP BY 1;
 
-WITH t_1_E AS (SELECT * FROM (
-  
-    SELECT
-      "a" AS a,
-      "b" AS b
-   UNION ALL
-  
-    SELECT
-      "b" AS a,
-      "c" AS b
-   UNION ALL
-  
-    SELECT
-      "a" AS a,
-      "d" AS b
-   UNION ALL
-  
-    SELECT
-      "d" AS a,
-      "c" AS b
-  
-) AS UNUSED_TABLE_NAME  ),
+WITH t_1_E AS (SELECT * FROM VALUES
+  ("a", "b"),
+  ("b", "c"),
+  ("a", "d"),
+  ("d", "c")
+AS UNUSED_TABLE_NAME(a, b)),
 t_0_Dist_MultBodyAggAux_f5 AS (SELECT * FROM (
   
     SELECT

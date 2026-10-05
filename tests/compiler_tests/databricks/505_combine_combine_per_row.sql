@@ -1,20 +1,8 @@
-WITH t_1_V AS (SELECT * FROM (
-  
-    SELECT
-      "a" AS g,
-      1 AS x
-   UNION ALL
-  
-    SELECT
-      "a" AS g,
-      2 AS x
-   UNION ALL
-  
-    SELECT
-      "b" AS g,
-      4 AS x
-  
-) AS UNUSED_TABLE_NAME  ),
+WITH t_1_V AS (SELECT * FROM VALUES
+  ("a", 1),
+  ("a", 2),
+  ("b", 4)
+AS UNUSED_TABLE_NAME(g, x)),
 t_2_G AS (SELECT
   t_3_V.g AS g
 FROM

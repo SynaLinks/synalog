@@ -45,6 +45,9 @@ pub struct NamesAllocator {
     /// Engines with case-insensitive names (Trino, Presto) read an alias
     /// `K` as the column `k` of the subquery's own table.
     pub reserved_aliases: HashSet<String>,
+    /// The functions the program defines (`F(x) = ...`): a call of one in a
+    /// value is the program's, even where a built-in has the name.
+    pub defined_functions: HashSet<String>,
     /// Custom UDF format strings: function_name -> format string (e.g., "my_func({col0}, {col1})")
     pub custom_udfs: HashMap<String, String>,
 }
@@ -772,7 +775,10 @@ fn built_in_function_names() -> HashSet<String> {
 /// Converts calls to user-defined predicates in value position into body table references.
 /// E.g., `F() = T1()` → `F(logica_value: x) :- T1(logica_value: x)`
 pub fn inline_predicate_values(rule: &mut Json, allocator: &mut NamesAllocator) {
-    let known = built_in_function_names();
+    let mut known = built_in_function_names();
+    for f in &allocator.defined_functions {
+        known.remove(f);
+    }
     let mut extra_conjuncts = Vec::new();
     inline_predicate_values_recursive(rule, &mut extra_conjuncts, allocator, &known);
 

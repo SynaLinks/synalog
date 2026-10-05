@@ -1,35 +1,14 @@
-WITH t_2_DateCase AS (SELECT * FROM (
-  
-    SELECT
-      "2024-05-10" AS d
-   UNION ALL
-  
-    SELECT
-      "2024-03-01" AS d
-   UNION ALL
-  
-    SELECT
-      "2021-03-01" AS d
-   UNION ALL
-  
-    SELECT
-      "2024-01-01" AS d
-  
-) AS UNUSED_TABLE_NAME  ),
-t_9_TsCase AS (SELECT * FROM (
-  
-    SELECT
-      "2026-06-13 13:29:24" AS t
-   UNION ALL
-  
-    SELECT
-      "2026-06-13 13:05:00" AS t
-   UNION ALL
-  
-    SELECT
-      "2026-06-13 00:05:00" AS t
-  
-) AS UNUSED_TABLE_NAME  ),
+WITH t_2_DateCase AS (SELECT * FROM VALUES
+  ("2024-05-10"),
+  ("2024-03-01"),
+  ("2021-03-01"),
+  ("2024-01-01")
+AS UNUSED_TABLE_NAME(d)),
+t_9_TsCase AS (SELECT * FROM VALUES
+  ("2026-06-13 13:29:24"),
+  ("2026-06-13 13:05:00"),
+  ("2026-06-13 00:05:00")
+AS UNUSED_TABLE_NAME(t)),
 t_0_DateArithmetic_MultBodyAggAux AS (SELECT * FROM (
   
     SELECT
@@ -54,4 +33,4 @@ SELECT
   DateArithmetic_MultBodyAggAux.result AS result
 FROM
   t_0_DateArithmetic_MultBodyAggAux AS DateArithmetic_MultBodyAggAux
-GROUP BY 1, 2, 3 ORDER BY kind, input;
+GROUP BY 1, 2, 3 ORDER BY kind NULLS LAST, input NULLS LAST;

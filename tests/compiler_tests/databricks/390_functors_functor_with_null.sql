@@ -1,13 +1,7 @@
-WITH t_0_WithNull AS (SELECT * FROM (
-  
-    SELECT
-      null AS x
-   UNION ALL
-  
-    SELECT
-      1 AS x
-  
-) AS UNUSED_TABLE_NAME  )
+WITH t_0_WithNull AS (SELECT * FROM VALUES
+  (null),
+  (1)
+AS UNUSED_TABLE_NAME(x))
 SELECT
   SUM(1) AS n
 FROM

@@ -1,17 +1,8 @@
-WITH t_1_M AS (SELECT * FROM (
-  
-    SELECT
-      1 AS k
-   UNION ALL
-  
-    SELECT
-      1 AS k
-   UNION ALL
-  
-    SELECT
-      2 AS k
-  
-) AS UNUSED_TABLE_NAME  )
+WITH t_1_M AS (SELECT * FROM VALUES
+  (1),
+  (1),
+  (2)
+AS UNUSED_TABLE_NAME(k))
 SELECT
   M.k AS k,
   SUM(1) AS n

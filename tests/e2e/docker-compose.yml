@@ -46,6 +46,17 @@ services:
 
   presto:
     image: prestodb/presto:0.293
+    # The suite sends thousands of queries (a recursion is a few hundred short
+    # statements on Presto). The coordinator keeps each finished query's
+    # details for 15 minutes by default, which filled its 1 GB heap until it
+    # exited (OutOfMemoryError): keep them a minute, with a 2 GB heap.
+    entrypoint:
+      - sh
+      - -c
+      - |
+        echo 'query.min-expire-age=1m' >> $$PRESTO_HOME/etc/config.properties
+        sed -i 's/-Xmx1G/-Xmx2G/' $$PRESTO_HOME/etc/jvm.config
+        exec /opt/entrypoint.sh
     ports:
       - "${SYNALOG_E2E_PRESTO_PORT:-8081}:8080"
     healthcheck:

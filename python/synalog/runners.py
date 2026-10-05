@@ -231,11 +231,17 @@ class Session:
 
 def sqlite_semantics(conn: sqlite3.Connection) -> None:
     """Make SQLite's string functions behave as on the other engines: UPPER and
-    LOWER convert every letter, not only ASCII ones (`Upper("café")`), and
-    LIKE tells upper from lower case."""
+    LOWER convert every letter, not only ASCII ones (`Upper("café")`), LIKE
+    tells upper from lower case, and Split of a null is null."""
     conn.create_function("UPPER", 1, lambda s: s.upper() if isinstance(s, str) else s, deterministic=True)
     conn.create_function("LOWER", 1, lambda s: s.lower() if isinstance(s, str) else s, deterministic=True)
     conn.execute("PRAGMA case_sensitive_like = ON")
+    # Logica's Split fails on a null; a null splits to null.
+    conn.create_function(
+        "Split", 2,
+        lambda text, sep: None if text is None or sep is None else json.dumps(text.split(sep)),
+        deterministic=True,
+    )
 
 
 class SqliteSession(Session):

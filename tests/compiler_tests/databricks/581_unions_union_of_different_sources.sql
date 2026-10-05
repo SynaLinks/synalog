@@ -1,13 +1,7 @@
-WITH t_0_B AS (SELECT * FROM (
-  
-    SELECT
-      "b" AS t
-   UNION ALL
-  
-    SELECT
-      "c" AS t
-  
-) AS UNUSED_TABLE_NAME  )
+WITH t_0_B AS (SELECT * FROM VALUES
+  ("b"),
+  ("c")
+AS UNUSED_TABLE_NAME(t))
 SELECT * FROM (
   
     SELECT
@@ -19,4 +13,4 @@ SELECT * FROM (
     FROM
       t_0_B AS B
   
-) AS UNUSED_TABLE_NAME  ORDER BY s ;
+) AS UNUSED_TABLE_NAME  ORDER BY s NULLS LAST ;

@@ -709,6 +709,20 @@ impl<'a> ExprTranslator<'a> {
                         let co = call.as_object();
                         let pred_name = co["predicate_name"].as_str();
 
+                        // Text to an integer: no fraction to round.
+                        if pred_name == "ToInt64" {
+                            if let Some(template) = self.dialect.int64_of_text() {
+                                let fvs = co["record"].as_object()["field_value"].as_array();
+                                let arg = fvs.first()
+                                    .and_then(|fv| fv.as_object()["value"].as_object().get("expression"));
+                                if let Some(arg) = arg.filter(|a| is_text_expression(a)) {
+                                    tasks.push(Task::Combine(CK::Template(template.to_string()), 1));
+                                    tasks.push(Task::Eval(arg));
+                                    continue;
+                                }
+                            }
+                        }
+
                         // A boolean as text is "true" or "false", also where
                         // the engine stores it as 1 or 0 (SQLite).
                         if pred_name == "ToString" {
@@ -1897,5 +1911,21 @@ fn is_boolean_expression(expr: &Json) -> bool {
             name.as_str(),
             "==" | "!=" | "<" | ">" | "<=" | ">=" | "&&" | "||" | "!" | "in" | "is" | "is not" | "IsNull" | "Like"
         )
+    })
+}
+
+/// Whether an expression is text by its form: a string literal, or a call
+/// of a function returning text.
+fn is_text_expression(expr: &Json) -> bool {
+    if !expr.is_object() {
+        return false;
+    }
+    let o = expr.as_object();
+    if let Some(literal) = o.get("literal") {
+        return literal.is_object() && literal.as_object().contains_key("the_string");
+    }
+    let Some(call) = o.get("call").filter(|c| c.is_object()) else { return false };
+    call.as_object().get("predicate_name").is_some_and(|name| {
+        matches!(name.as_str(), "Substr" | "ToString" | "++" | "Upper" | "Lower" | "Format" | "Join")
     })
 }

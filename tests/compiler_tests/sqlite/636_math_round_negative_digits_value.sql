@@ -1,0 +1,2 @@
+SELECT
+  ROUND(-2.34, 1) AS v;

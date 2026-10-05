@@ -1,13 +1,7 @@
-WITH t_0_V AS (SELECT * FROM (
-  
-    SELECT
-      1 AS x
-   UNION ALL
-  
-    SELECT
-      2.5E0 AS x
-  
-) AS UNUSED_TABLE_NAME  )
+WITH t_0_V AS (SELECT * FROM VALUES
+  (1),
+  (2.5E0)
+AS UNUSED_TABLE_NAME(x))
 SELECT
   SUM(V.x) AS t
 FROM

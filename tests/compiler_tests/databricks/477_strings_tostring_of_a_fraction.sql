@@ -1,17 +1,7 @@
-WITH t_0_V AS (SELECT * FROM (
-  
-    SELECT
-      1.5E0 AS x,
-      42 AS y,
-      null AS z
-   UNION ALL
-  
-    SELECT
-      2.5E0 AS x,
-      7 AS y,
-      1 AS z
-  
-) AS UNUSED_TABLE_NAME  )
+WITH t_0_V AS (SELECT * FROM VALUES
+  (1.5E0, 42, null),
+  (2.5E0, 7, 1)
+AS UNUSED_TABLE_NAME(x, y, z))
 SELECT
   CAST(V.x AS STRING) AS a,
   CAST(V.y AS STRING) AS b,

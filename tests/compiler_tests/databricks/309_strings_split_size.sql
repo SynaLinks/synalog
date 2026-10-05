@@ -1,2 +1,2 @@
 SELECT
-  SIZE(SPLIT("a,b,c", ",")) AS n;
+  ARRAY_SIZE(SPLIT("a,b,c", ",")) AS n;

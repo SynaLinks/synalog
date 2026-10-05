@@ -1,14 +1,8 @@
 DROP TABLE IF EXISTS logica_test.R_sn_delta;
-CREATE TABLE logica_test.R_sn_delta AS WITH t_0_R_MultBodyAggAux_f1 AS (SELECT * FROM (
-  
-    SELECT
-      1 AS x
-   UNION ALL
-  
-    SELECT
-      10 AS x
-  
-) AS UNUSED_TABLE_NAME  )
+CREATE TABLE logica_test.R_sn_delta AS WITH t_0_R_MultBodyAggAux_f1 AS (SELECT * FROM VALUES
+  (1),
+  (10)
+AS UNUSED_TABLE_NAME(x))
 SELECT
   R_MultBodyAggAux_f1.x AS x
 FROM

@@ -1,0 +1,2 @@
+SELECT
+  (CAST(-9 AS DOUBLE) / (4)) AS r;

@@ -1,19 +1,10 @@
-WITH t_0_Words AS (SELECT * FROM (
-  
-    SELECT
-      "apple" AS word
-   UNION ALL
-  
-    SELECT
-      "banana" AS word
-   UNION ALL
-  
-    SELECT
-      "cherry" AS word
-  
-) AS UNUSED_TABLE_NAME  )
+WITH t_0_Words AS (SELECT * FROM VALUES
+  ("apple"),
+  ("banana"),
+  ("cherry")
+AS UNUSED_TABLE_NAME(word))
 SELECT
   (SELECT
   MAX(Words.word) AS logica_value
 FROM
-  t_0_Words AS Words) AS longest ORDER BY longest;
+  t_0_Words AS Words) AS longest ORDER BY longest NULLS LAST;

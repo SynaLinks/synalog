@@ -1,15 +1,7 @@
-WITH t_0_Friend AS (SELECT * FROM (
-  
-    SELECT
-      "a" AS a,
-      "b" AS b
-   UNION ALL
-  
-    SELECT
-      "b" AS a,
-      "a" AS b
-  
-) AS UNUSED_TABLE_NAME  )
+WITH t_0_Friend AS (SELECT * FROM VALUES
+  ("a", "b"),
+  ("b", "a")
+AS UNUSED_TABLE_NAME(a, b))
 SELECT
   x_3 AS name
 FROM

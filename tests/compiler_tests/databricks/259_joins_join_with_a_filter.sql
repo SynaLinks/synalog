@@ -1,15 +1,7 @@
-WITH t_0_B AS (SELECT * FROM (
-  
-    SELECT
-      1 AS id,
-      "a" AS v
-   UNION ALL
-  
-    SELECT
-      2 AS id,
-      "b" AS v
-  
-) AS UNUSED_TABLE_NAME  )
+WITH t_0_B AS (SELECT * FROM VALUES
+  (1, "a"),
+  (2, "b")
+AS UNUSED_TABLE_NAME(id, v))
 SELECT
   B.id AS id,
   B.v AS v
