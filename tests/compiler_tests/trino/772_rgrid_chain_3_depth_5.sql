@@ -1,106 +1,263 @@
-WITH t_14_R_MultBodyAggAux_recursive_head_f1 AS (SELECT * FROM (
+DROP TABLE IF EXISTS logica_test.R_sn_delta;
+CREATE TABLE logica_test.R_sn_delta AS WITH t_0_R_MultBodyAggAux_f1 AS (SELECT * FROM (
   
     SELECT
       0 AS x
-  
-) AS UNUSED_TABLE_NAME  ),
-t_13_R_r0 AS (SELECT
-  R_MultBodyAggAux_recursive_head_f1.x AS x
-FROM
-  t_14_R_MultBodyAggAux_recursive_head_f1 AS R_MultBodyAggAux_recursive_head_f1
-GROUP BY 1),
-t_11_R_MultBodyAggAux_recursive_head_f2 AS (SELECT * FROM (
-  
-    SELECT
-      0 AS x
-   UNION ALL
-  
-    SELECT
-      ((x_39) + (1)) AS x
-    FROM
-      t_13_R_r0 AS R_r0, UNNEST(FILTER(SEQUENCE(0, 3), x -> x < 3)) as pushkin(x_39)
-    WHERE
-      (R_r0.x = x_39)
-  
-) AS UNUSED_TABLE_NAME  ),
-t_10_R_r1 AS (SELECT
-  R_MultBodyAggAux_recursive_head_f2.x AS x
-FROM
-  t_11_R_MultBodyAggAux_recursive_head_f2 AS R_MultBodyAggAux_recursive_head_f2
-GROUP BY 1),
-t_8_R_MultBodyAggAux_recursive_head_f3 AS (SELECT * FROM (
-  
-    SELECT
-      0 AS x
-   UNION ALL
-  
-    SELECT
-      ((x_31) + (1)) AS x
-    FROM
-      t_10_R_r1 AS R_r1, UNNEST(FILTER(SEQUENCE(0, 3), x -> x < 3)) as pushkin(x_31)
-    WHERE
-      (R_r1.x = x_31)
-  
-) AS UNUSED_TABLE_NAME  ),
-t_7_R_r2 AS (SELECT
-  R_MultBodyAggAux_recursive_head_f3.x AS x
-FROM
-  t_8_R_MultBodyAggAux_recursive_head_f3 AS R_MultBodyAggAux_recursive_head_f3
-GROUP BY 1),
-t_5_R_MultBodyAggAux_recursive_head_f4 AS (SELECT * FROM (
-  
-    SELECT
-      0 AS x
-   UNION ALL
-  
-    SELECT
-      ((x_23) + (1)) AS x
-    FROM
-      t_7_R_r2 AS R_r2, UNNEST(FILTER(SEQUENCE(0, 3), x -> x < 3)) as pushkin(x_23)
-    WHERE
-      (R_r2.x = x_23)
-  
-) AS UNUSED_TABLE_NAME  ),
-t_4_R_r3 AS (SELECT
-  R_MultBodyAggAux_recursive_head_f4.x AS x
-FROM
-  t_5_R_MultBodyAggAux_recursive_head_f4 AS R_MultBodyAggAux_recursive_head_f4
-GROUP BY 1),
-t_2_R_MultBodyAggAux_recursive_head_f5 AS (SELECT * FROM (
-  
-    SELECT
-      0 AS x
-   UNION ALL
-  
-    SELECT
-      ((x_15) + (1)) AS x
-    FROM
-      t_4_R_r3 AS R_r3, UNNEST(FILTER(SEQUENCE(0, 3), x -> x < 3)) as pushkin(x_15)
-    WHERE
-      (R_r3.x = x_15)
-  
-) AS UNUSED_TABLE_NAME  ),
-t_1_R_r4 AS (SELECT
-  R_MultBodyAggAux_recursive_head_f5.x AS x
-FROM
-  t_2_R_MultBodyAggAux_recursive_head_f5 AS R_MultBodyAggAux_recursive_head_f5
-GROUP BY 1),
-t_0_R_MultBodyAggAux_recursive_head_f6 AS (SELECT * FROM (
-  
-    SELECT
-      0 AS x
-   UNION ALL
-  
-    SELECT
-      ((x_7) + (1)) AS x
-    FROM
-      t_1_R_r4 AS R_r4, UNNEST(FILTER(SEQUENCE(0, 3), x -> x < 3)) as pushkin(x_7)
-    WHERE
-      (R_r4.x = x_7)
   
 ) AS UNUSED_TABLE_NAME  )
 SELECT
-  R_MultBodyAggAux_recursive_head_f6.x AS x
+  R_MultBodyAggAux_f1.x AS x
 FROM
-  t_0_R_MultBodyAggAux_recursive_head_f6 AS R_MultBodyAggAux_recursive_head_f6
-GROUP BY 1 ORDER BY x;
+  t_0_R_MultBodyAggAux_f1 AS R_MultBodyAggAux_f1
+GROUP BY 1;
+
+-- Interacting with table logica_test.R_sn_delta
+
+DROP TABLE IF EXISTS logica_test.R_sn_full;
+CREATE TABLE logica_test.R_sn_full AS WITH t_1_R_MultBodyAggAux_f2 AS (SELECT * FROM (
+  
+    SELECT
+      0 AS x
+   UNION ALL
+  
+    SELECT
+      ((x_11) + (1)) AS x
+    FROM
+      logica_test.R_sn_delta AS t_2_R_sn_delta, UNNEST(FILTER(SEQUENCE(0, 3), x -> x < 3)) as pushkin(x_11)
+    WHERE
+      (t_2_R_sn_delta.x = x_11)
+  
+) AS UNUSED_TABLE_NAME  ),
+t_0_R_sn_step AS (SELECT
+  R_MultBodyAggAux_f2.x AS x
+FROM
+  t_1_R_MultBodyAggAux_f2 AS R_MultBodyAggAux_f2
+GROUP BY 1)
+SELECT * FROM (
+  
+    SELECT
+      R_sn_delta.x AS x
+    FROM
+      logica_test.R_sn_delta AS R_sn_delta
+   UNION ALL
+  
+    SELECT
+      R_sn_step.x AS x
+    FROM
+      t_0_R_sn_step AS R_sn_step
+    WHERE
+      (1 = 0)
+  
+) AS UNUSED_TABLE_NAME  ;
+
+-- Interacting with table logica_test.R_sn_full
+
+DROP TABLE IF EXISTS logica_test.R_sn_new;
+CREATE TABLE logica_test.R_sn_new AS WITH t_1_R_MultBodyAggAux_f2 AS (SELECT * FROM (
+  
+    SELECT
+      0 AS x
+   UNION ALL
+  
+    SELECT
+      ((x_11) + (1)) AS x
+    FROM
+      logica_test.R_sn_delta AS t_2_R_sn_delta, UNNEST(FILTER(SEQUENCE(0, 3), x -> x < 3)) as pushkin(x_11)
+    WHERE
+      (t_2_R_sn_delta.x = x_11)
+  
+) AS UNUSED_TABLE_NAME  ),
+t_0_R_sn_step AS (SELECT
+  R_MultBodyAggAux_f2.x AS x
+FROM
+  t_1_R_MultBodyAggAux_f2 AS R_MultBodyAggAux_f2
+GROUP BY 1)
+SELECT
+  R_sn_step.x AS x
+FROM
+  t_0_R_sn_step AS R_sn_step
+WHERE
+  ((SELECT
+    MIN(1) AS logica_value
+  FROM
+    logica_test.R_sn_full AS R_sn_full
+  WHERE
+    (R_sn_full.x = R_sn_step.x)) IS NULL)
+GROUP BY 1;
+
+INSERT INTO logica_test.R_sn_full SELECT * FROM logica_test.R_sn_new;
+
+DROP TABLE IF EXISTS logica_test.R_sn_delta;
+CREATE TABLE logica_test.R_sn_delta AS SELECT
+  R_sn_new.x AS x
+FROM
+  logica_test.R_sn_new AS R_sn_new;
+
+DROP TABLE IF EXISTS logica_test.R_sn_new;
+CREATE TABLE logica_test.R_sn_new AS WITH t_1_R_MultBodyAggAux_f2 AS (SELECT * FROM (
+  
+    SELECT
+      0 AS x
+   UNION ALL
+  
+    SELECT
+      ((x_11) + (1)) AS x
+    FROM
+      logica_test.R_sn_delta AS t_2_R_sn_delta, UNNEST(FILTER(SEQUENCE(0, 3), x -> x < 3)) as pushkin(x_11)
+    WHERE
+      (t_2_R_sn_delta.x = x_11)
+  
+) AS UNUSED_TABLE_NAME  ),
+t_0_R_sn_step AS (SELECT
+  R_MultBodyAggAux_f2.x AS x
+FROM
+  t_1_R_MultBodyAggAux_f2 AS R_MultBodyAggAux_f2
+GROUP BY 1)
+SELECT
+  R_sn_step.x AS x
+FROM
+  t_0_R_sn_step AS R_sn_step
+WHERE
+  ((SELECT
+    MIN(1) AS logica_value
+  FROM
+    logica_test.R_sn_full AS R_sn_full
+  WHERE
+    (R_sn_full.x = R_sn_step.x)) IS NULL)
+GROUP BY 1;
+
+INSERT INTO logica_test.R_sn_full SELECT * FROM logica_test.R_sn_new;
+
+DROP TABLE IF EXISTS logica_test.R_sn_delta;
+CREATE TABLE logica_test.R_sn_delta AS SELECT
+  R_sn_new.x AS x
+FROM
+  logica_test.R_sn_new AS R_sn_new;
+
+DROP TABLE IF EXISTS logica_test.R_sn_new;
+CREATE TABLE logica_test.R_sn_new AS WITH t_1_R_MultBodyAggAux_f2 AS (SELECT * FROM (
+  
+    SELECT
+      0 AS x
+   UNION ALL
+  
+    SELECT
+      ((x_11) + (1)) AS x
+    FROM
+      logica_test.R_sn_delta AS t_2_R_sn_delta, UNNEST(FILTER(SEQUENCE(0, 3), x -> x < 3)) as pushkin(x_11)
+    WHERE
+      (t_2_R_sn_delta.x = x_11)
+  
+) AS UNUSED_TABLE_NAME  ),
+t_0_R_sn_step AS (SELECT
+  R_MultBodyAggAux_f2.x AS x
+FROM
+  t_1_R_MultBodyAggAux_f2 AS R_MultBodyAggAux_f2
+GROUP BY 1)
+SELECT
+  R_sn_step.x AS x
+FROM
+  t_0_R_sn_step AS R_sn_step
+WHERE
+  ((SELECT
+    MIN(1) AS logica_value
+  FROM
+    logica_test.R_sn_full AS R_sn_full
+  WHERE
+    (R_sn_full.x = R_sn_step.x)) IS NULL)
+GROUP BY 1;
+
+INSERT INTO logica_test.R_sn_full SELECT * FROM logica_test.R_sn_new;
+
+DROP TABLE IF EXISTS logica_test.R_sn_delta;
+CREATE TABLE logica_test.R_sn_delta AS SELECT
+  R_sn_new.x AS x
+FROM
+  logica_test.R_sn_new AS R_sn_new;
+
+DROP TABLE IF EXISTS logica_test.R_sn_new;
+CREATE TABLE logica_test.R_sn_new AS WITH t_1_R_MultBodyAggAux_f2 AS (SELECT * FROM (
+  
+    SELECT
+      0 AS x
+   UNION ALL
+  
+    SELECT
+      ((x_11) + (1)) AS x
+    FROM
+      logica_test.R_sn_delta AS t_2_R_sn_delta, UNNEST(FILTER(SEQUENCE(0, 3), x -> x < 3)) as pushkin(x_11)
+    WHERE
+      (t_2_R_sn_delta.x = x_11)
+  
+) AS UNUSED_TABLE_NAME  ),
+t_0_R_sn_step AS (SELECT
+  R_MultBodyAggAux_f2.x AS x
+FROM
+  t_1_R_MultBodyAggAux_f2 AS R_MultBodyAggAux_f2
+GROUP BY 1)
+SELECT
+  R_sn_step.x AS x
+FROM
+  t_0_R_sn_step AS R_sn_step
+WHERE
+  ((SELECT
+    MIN(1) AS logica_value
+  FROM
+    logica_test.R_sn_full AS R_sn_full
+  WHERE
+    (R_sn_full.x = R_sn_step.x)) IS NULL)
+GROUP BY 1;
+
+INSERT INTO logica_test.R_sn_full SELECT * FROM logica_test.R_sn_new;
+
+DROP TABLE IF EXISTS logica_test.R_sn_delta;
+CREATE TABLE logica_test.R_sn_delta AS SELECT
+  R_sn_new.x AS x
+FROM
+  logica_test.R_sn_new AS R_sn_new;
+
+DROP TABLE IF EXISTS logica_test.R_sn_new;
+CREATE TABLE logica_test.R_sn_new AS WITH t_1_R_MultBodyAggAux_f2 AS (SELECT * FROM (
+  
+    SELECT
+      0 AS x
+   UNION ALL
+  
+    SELECT
+      ((x_11) + (1)) AS x
+    FROM
+      logica_test.R_sn_delta AS t_2_R_sn_delta, UNNEST(FILTER(SEQUENCE(0, 3), x -> x < 3)) as pushkin(x_11)
+    WHERE
+      (t_2_R_sn_delta.x = x_11)
+  
+) AS UNUSED_TABLE_NAME  ),
+t_0_R_sn_step AS (SELECT
+  R_MultBodyAggAux_f2.x AS x
+FROM
+  t_1_R_MultBodyAggAux_f2 AS R_MultBodyAggAux_f2
+GROUP BY 1)
+SELECT
+  R_sn_step.x AS x
+FROM
+  t_0_R_sn_step AS R_sn_step
+WHERE
+  ((SELECT
+    MIN(1) AS logica_value
+  FROM
+    logica_test.R_sn_full AS R_sn_full
+  WHERE
+    (R_sn_full.x = R_sn_step.x)) IS NULL)
+GROUP BY 1;
+
+INSERT INTO logica_test.R_sn_full SELECT * FROM logica_test.R_sn_new;
+
+DROP TABLE IF EXISTS logica_test.R_sn_delta;
+CREATE TABLE logica_test.R_sn_delta AS SELECT
+  R_sn_new.x AS x
+FROM
+  logica_test.R_sn_new AS R_sn_new;
+
+SELECT
+  R_sn_full.x AS x
+FROM
+  logica_test.R_sn_full AS R_sn_full ORDER BY x;

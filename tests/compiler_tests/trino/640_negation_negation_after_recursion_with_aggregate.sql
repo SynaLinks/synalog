@@ -1,34 +1,20 @@
-WITH t_15_R_MultBodyAggAux_recursive_head_f1 AS (SELECT * FROM (
+DROP TABLE IF EXISTS logica_test.R_sn_delta;
+CREATE TABLE logica_test.R_sn_delta AS WITH t_0_R_MultBodyAggAux_f1 AS (SELECT * FROM (
   
     SELECT
       1 AS x
   
-) AS UNUSED_TABLE_NAME  ),
-t_14_R_r0 AS (SELECT
-  R_MultBodyAggAux_recursive_head_f1.x AS x
+) AS UNUSED_TABLE_NAME  )
+SELECT
+  R_MultBodyAggAux_f1.x AS x
 FROM
-  t_15_R_MultBodyAggAux_recursive_head_f1 AS R_MultBodyAggAux_recursive_head_f1
-GROUP BY 1),
-t_12_R_MultBodyAggAux_recursive_head_f2 AS (SELECT * FROM (
-  
-    SELECT
-      1 AS x
-   UNION ALL
-  
-    SELECT
-      2 AS x
-    FROM
-      t_14_R_r0 AS R_r0
-    WHERE
-      (R_r0.x = 1)
-  
-) AS UNUSED_TABLE_NAME  ),
-t_11_R_r1 AS (SELECT
-  R_MultBodyAggAux_recursive_head_f2.x AS x
-FROM
-  t_12_R_MultBodyAggAux_recursive_head_f2 AS R_MultBodyAggAux_recursive_head_f2
-GROUP BY 1),
-t_9_R_MultBodyAggAux_recursive_head_f3 AS (SELECT * FROM (
+  t_0_R_MultBodyAggAux_f1 AS R_MultBodyAggAux_f1
+GROUP BY 1;
+
+-- Interacting with table logica_test.R_sn_delta
+
+DROP TABLE IF EXISTS logica_test.R_sn_full;
+CREATE TABLE logica_test.R_sn_full AS WITH t_1_R_MultBodyAggAux_f2 AS (SELECT * FROM (
   
     SELECT
       1 AS x
@@ -37,73 +23,240 @@ t_9_R_MultBodyAggAux_recursive_head_f3 AS (SELECT * FROM (
     SELECT
       2 AS x
     FROM
-      t_11_R_r1 AS R_r1
+      logica_test.R_sn_delta AS t_2_R_sn_delta
     WHERE
-      (R_r1.x = 1)
+      (t_2_R_sn_delta.x = 1)
   
 ) AS UNUSED_TABLE_NAME  ),
-t_8_R_r2 AS (SELECT
-  R_MultBodyAggAux_recursive_head_f3.x AS x
+t_0_R_sn_step AS (SELECT
+  R_MultBodyAggAux_f2.x AS x
 FROM
-  t_9_R_MultBodyAggAux_recursive_head_f3 AS R_MultBodyAggAux_recursive_head_f3
-GROUP BY 1),
-t_6_R_MultBodyAggAux_recursive_head_f4 AS (SELECT * FROM (
-  
-    SELECT
-      1 AS x
-   UNION ALL
-  
-    SELECT
-      2 AS x
-    FROM
-      t_8_R_r2 AS R_r2
-    WHERE
-      (R_r2.x = 1)
-  
-) AS UNUSED_TABLE_NAME  ),
-t_5_R_r3 AS (SELECT
-  R_MultBodyAggAux_recursive_head_f4.x AS x
-FROM
-  t_6_R_MultBodyAggAux_recursive_head_f4 AS R_MultBodyAggAux_recursive_head_f4
-GROUP BY 1),
-t_3_R_MultBodyAggAux_recursive_head_f5 AS (SELECT * FROM (
-  
-    SELECT
-      1 AS x
-   UNION ALL
-  
-    SELECT
-      2 AS x
-    FROM
-      t_5_R_r3 AS R_r3
-    WHERE
-      (R_r3.x = 1)
-  
-) AS UNUSED_TABLE_NAME  ),
-t_2_R_r4 AS (SELECT
-  R_MultBodyAggAux_recursive_head_f5.x AS x
-FROM
-  t_3_R_MultBodyAggAux_recursive_head_f5 AS R_MultBodyAggAux_recursive_head_f5
-GROUP BY 1),
-t_1_R_MultBodyAggAux_recursive_head_f6 AS (SELECT * FROM (
-  
-    SELECT
-      1 AS x
-   UNION ALL
-  
-    SELECT
-      2 AS x
-    FROM
-      t_2_R_r4 AS R_r4
-    WHERE
-      (R_r4.x = 1)
-  
-) AS UNUSED_TABLE_NAME  ),
-t_0_R AS (SELECT
-  R_MultBodyAggAux_recursive_head_f6.x AS x
-FROM
-  t_1_R_MultBodyAggAux_recursive_head_f6 AS R_MultBodyAggAux_recursive_head_f6
+  t_1_R_MultBodyAggAux_f2 AS R_MultBodyAggAux_f2
 GROUP BY 1)
+SELECT * FROM (
+  
+    SELECT
+      R_sn_delta.x AS x
+    FROM
+      logica_test.R_sn_delta AS R_sn_delta
+   UNION ALL
+  
+    SELECT
+      R_sn_step.x AS x
+    FROM
+      t_0_R_sn_step AS R_sn_step
+    WHERE
+      (1 = 0)
+  
+) AS UNUSED_TABLE_NAME  ;
+
+-- Interacting with table logica_test.R_sn_full
+
+DROP TABLE IF EXISTS logica_test.R_sn_new;
+CREATE TABLE logica_test.R_sn_new AS WITH t_1_R_MultBodyAggAux_f2 AS (SELECT * FROM (
+  
+    SELECT
+      1 AS x
+   UNION ALL
+  
+    SELECT
+      2 AS x
+    FROM
+      logica_test.R_sn_delta AS t_2_R_sn_delta
+    WHERE
+      (t_2_R_sn_delta.x = 1)
+  
+) AS UNUSED_TABLE_NAME  ),
+t_0_R_sn_step AS (SELECT
+  R_MultBodyAggAux_f2.x AS x
+FROM
+  t_1_R_MultBodyAggAux_f2 AS R_MultBodyAggAux_f2
+GROUP BY 1)
+SELECT
+  R_sn_step.x AS x
+FROM
+  t_0_R_sn_step AS R_sn_step
+WHERE
+  ((SELECT
+    MIN(1) AS logica_value
+  FROM
+    logica_test.R_sn_full AS R_sn_full
+  WHERE
+    (R_sn_full.x = R_sn_step.x)) IS NULL)
+GROUP BY 1;
+
+INSERT INTO logica_test.R_sn_full SELECT * FROM logica_test.R_sn_new;
+
+DROP TABLE IF EXISTS logica_test.R_sn_delta;
+CREATE TABLE logica_test.R_sn_delta AS SELECT
+  R_sn_new.x AS x
+FROM
+  logica_test.R_sn_new AS R_sn_new;
+
+DROP TABLE IF EXISTS logica_test.R_sn_new;
+CREATE TABLE logica_test.R_sn_new AS WITH t_1_R_MultBodyAggAux_f2 AS (SELECT * FROM (
+  
+    SELECT
+      1 AS x
+   UNION ALL
+  
+    SELECT
+      2 AS x
+    FROM
+      logica_test.R_sn_delta AS t_2_R_sn_delta
+    WHERE
+      (t_2_R_sn_delta.x = 1)
+  
+) AS UNUSED_TABLE_NAME  ),
+t_0_R_sn_step AS (SELECT
+  R_MultBodyAggAux_f2.x AS x
+FROM
+  t_1_R_MultBodyAggAux_f2 AS R_MultBodyAggAux_f2
+GROUP BY 1)
+SELECT
+  R_sn_step.x AS x
+FROM
+  t_0_R_sn_step AS R_sn_step
+WHERE
+  ((SELECT
+    MIN(1) AS logica_value
+  FROM
+    logica_test.R_sn_full AS R_sn_full
+  WHERE
+    (R_sn_full.x = R_sn_step.x)) IS NULL)
+GROUP BY 1;
+
+INSERT INTO logica_test.R_sn_full SELECT * FROM logica_test.R_sn_new;
+
+DROP TABLE IF EXISTS logica_test.R_sn_delta;
+CREATE TABLE logica_test.R_sn_delta AS SELECT
+  R_sn_new.x AS x
+FROM
+  logica_test.R_sn_new AS R_sn_new;
+
+DROP TABLE IF EXISTS logica_test.R_sn_new;
+CREATE TABLE logica_test.R_sn_new AS WITH t_1_R_MultBodyAggAux_f2 AS (SELECT * FROM (
+  
+    SELECT
+      1 AS x
+   UNION ALL
+  
+    SELECT
+      2 AS x
+    FROM
+      logica_test.R_sn_delta AS t_2_R_sn_delta
+    WHERE
+      (t_2_R_sn_delta.x = 1)
+  
+) AS UNUSED_TABLE_NAME  ),
+t_0_R_sn_step AS (SELECT
+  R_MultBodyAggAux_f2.x AS x
+FROM
+  t_1_R_MultBodyAggAux_f2 AS R_MultBodyAggAux_f2
+GROUP BY 1)
+SELECT
+  R_sn_step.x AS x
+FROM
+  t_0_R_sn_step AS R_sn_step
+WHERE
+  ((SELECT
+    MIN(1) AS logica_value
+  FROM
+    logica_test.R_sn_full AS R_sn_full
+  WHERE
+    (R_sn_full.x = R_sn_step.x)) IS NULL)
+GROUP BY 1;
+
+INSERT INTO logica_test.R_sn_full SELECT * FROM logica_test.R_sn_new;
+
+DROP TABLE IF EXISTS logica_test.R_sn_delta;
+CREATE TABLE logica_test.R_sn_delta AS SELECT
+  R_sn_new.x AS x
+FROM
+  logica_test.R_sn_new AS R_sn_new;
+
+DROP TABLE IF EXISTS logica_test.R_sn_new;
+CREATE TABLE logica_test.R_sn_new AS WITH t_1_R_MultBodyAggAux_f2 AS (SELECT * FROM (
+  
+    SELECT
+      1 AS x
+   UNION ALL
+  
+    SELECT
+      2 AS x
+    FROM
+      logica_test.R_sn_delta AS t_2_R_sn_delta
+    WHERE
+      (t_2_R_sn_delta.x = 1)
+  
+) AS UNUSED_TABLE_NAME  ),
+t_0_R_sn_step AS (SELECT
+  R_MultBodyAggAux_f2.x AS x
+FROM
+  t_1_R_MultBodyAggAux_f2 AS R_MultBodyAggAux_f2
+GROUP BY 1)
+SELECT
+  R_sn_step.x AS x
+FROM
+  t_0_R_sn_step AS R_sn_step
+WHERE
+  ((SELECT
+    MIN(1) AS logica_value
+  FROM
+    logica_test.R_sn_full AS R_sn_full
+  WHERE
+    (R_sn_full.x = R_sn_step.x)) IS NULL)
+GROUP BY 1;
+
+INSERT INTO logica_test.R_sn_full SELECT * FROM logica_test.R_sn_new;
+
+DROP TABLE IF EXISTS logica_test.R_sn_delta;
+CREATE TABLE logica_test.R_sn_delta AS SELECT
+  R_sn_new.x AS x
+FROM
+  logica_test.R_sn_new AS R_sn_new;
+
+DROP TABLE IF EXISTS logica_test.R_sn_new;
+CREATE TABLE logica_test.R_sn_new AS WITH t_1_R_MultBodyAggAux_f2 AS (SELECT * FROM (
+  
+    SELECT
+      1 AS x
+   UNION ALL
+  
+    SELECT
+      2 AS x
+    FROM
+      logica_test.R_sn_delta AS t_2_R_sn_delta
+    WHERE
+      (t_2_R_sn_delta.x = 1)
+  
+) AS UNUSED_TABLE_NAME  ),
+t_0_R_sn_step AS (SELECT
+  R_MultBodyAggAux_f2.x AS x
+FROM
+  t_1_R_MultBodyAggAux_f2 AS R_MultBodyAggAux_f2
+GROUP BY 1)
+SELECT
+  R_sn_step.x AS x
+FROM
+  t_0_R_sn_step AS R_sn_step
+WHERE
+  ((SELECT
+    MIN(1) AS logica_value
+  FROM
+    logica_test.R_sn_full AS R_sn_full
+  WHERE
+    (R_sn_full.x = R_sn_step.x)) IS NULL)
+GROUP BY 1;
+
+INSERT INTO logica_test.R_sn_full SELECT * FROM logica_test.R_sn_new;
+
+DROP TABLE IF EXISTS logica_test.R_sn_delta;
+CREATE TABLE logica_test.R_sn_delta AS SELECT
+  R_sn_new.x AS x
+FROM
+  logica_test.R_sn_new AS R_sn_new;
+
 SELECT
   SUM(1) AS n
 FROM
@@ -112,6 +265,6 @@ WHERE
   ((SELECT
     MIN(1) AS logica_value
   FROM
-    t_0_R AS R
+    logica_test.R_sn_full AS R_sn_full
   WHERE
-    (R.x = x_2)) IS NULL);
+    (x_2 = R_sn_full.x)) IS NULL);

@@ -21,8 +21,17 @@ impl SpanString {
     }
 
     pub fn from_arc(heritage: Arc<String>, start: usize, stop: usize) -> Self {
-        let stop = stop.min(heritage.len());
-        let start = start.min(stop);
+        // The parser steps over the text byte by byte (`idx..idx + 1`): a span
+        // edge inside a character of several bytes (`é`, `∀`) is moved to the
+        // character's boundary, so a span always holds whole characters.
+        let mut stop = stop.min(heritage.len());
+        while !heritage.is_char_boundary(stop) {
+            stop += 1;
+        }
+        let mut start = start.min(stop);
+        while !heritage.is_char_boundary(start) {
+            start -= 1;
+        }
         SpanString {
             heritage,
             start,
@@ -87,3 +96,28 @@ impl SpanString {
 #[cfg(test)]
 #[path = "span_test.rs"]
 mod span_test;
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn a_span_inside_a_character_holds_the_whole_character() {
+        let s = SpanString::new("é∀x".to_string());
+        assert_eq!(s.slice(0, 1).view(), "é");
+        assert_eq!(s.slice(1, 3).view(), "é∀");
+        assert_eq!(s.slice(3, 4).view(), "∀");
+    }
+}
+
+#[cfg(test)]
+mod parse_tests {
+    #[test]
+    fn text_with_non_ascii_characters_is_an_error_not_a_panic() {
+        // A double-quoted string with a quote in it, after a character of
+        // several bytes; and a program starting with one.
+        for source in ["S(a: \"∀ \\\"x\\\"\");", "éA(x: 1);", "S(a: \"∀\");"] {
+            let _ = crate::parser::parse_file(source, None, &[]);
+        }
+    }
+}

@@ -1,4 +1,5 @@
-WITH t_20_E AS (SELECT * FROM (
+DROP TABLE IF EXISTS logica_test.P_sn_delta;
+CREATE TABLE logica_test.P_sn_delta AS WITH t_2_E AS (SELECT * FROM (
   
     SELECT
       'a' AS a,
@@ -10,146 +11,392 @@ WITH t_20_E AS (SELECT * FROM (
       'c' AS b
   
 ) AS UNUSED_TABLE_NAME  ),
-t_17_P_MultBodyAggAux_recursive_head_f1 AS (SELECT * FROM (
+t_0_P_MultBodyAggAux_f1 AS (SELECT * FROM (
   
     SELECT
-      t_19_E.a AS s,
-      t_19_E.b AS t
+      t_1_E.a AS s,
+      t_1_E.b AS t
     FROM
-      t_20_E AS t_19_E
+      t_2_E AS t_1_E
   
-) AS UNUSED_TABLE_NAME  ),
-t_16_P_r0 AS (SELECT
-  P_MultBodyAggAux_recursive_head_f1.s AS s,
-  P_MultBodyAggAux_recursive_head_f1.t AS t
+) AS UNUSED_TABLE_NAME  )
+SELECT
+  P_MultBodyAggAux_f1.s AS s,
+  P_MultBodyAggAux_f1.t AS t
 FROM
-  t_17_P_MultBodyAggAux_recursive_head_f1 AS P_MultBodyAggAux_recursive_head_f1
-GROUP BY 1, 2),
-t_14_P_MultBodyAggAux_recursive_head_f2 AS (SELECT * FROM (
+  t_0_P_MultBodyAggAux_f1 AS P_MultBodyAggAux_f1
+GROUP BY 1, 2;
+
+-- Interacting with table logica_test.P_sn_delta
+
+DROP TABLE IF EXISTS logica_test.P_sn_full;
+CREATE TABLE logica_test.P_sn_full AS WITH t_2_E AS (SELECT * FROM (
   
     SELECT
-      P_r0.s AS s,
-      t_15_E.b AS t
-    FROM
-      t_16_P_r0 AS P_r0, t_20_E AS t_15_E
-    WHERE
-      (t_15_E.a = P_r0.t)
+      'a' AS a,
+      'b' AS b
    UNION ALL
   
     SELECT
-      t_21_E.a AS s,
-      t_21_E.b AS t
-    FROM
-      t_20_E AS t_21_E
+      'b' AS a,
+      'c' AS b
   
 ) AS UNUSED_TABLE_NAME  ),
-t_13_P_r1 AS (SELECT
-  P_MultBodyAggAux_recursive_head_f2.s AS s,
-  P_MultBodyAggAux_recursive_head_f2.t AS t
-FROM
-  t_14_P_MultBodyAggAux_recursive_head_f2 AS P_MultBodyAggAux_recursive_head_f2
-GROUP BY 1, 2),
-t_11_P_MultBodyAggAux_recursive_head_f3 AS (SELECT * FROM (
+t_1_P_MultBodyAggAux_f2 AS (SELECT * FROM (
   
     SELECT
-      P_r1.s AS s,
-      t_12_E.b AS t
-    FROM
-      t_13_P_r1 AS P_r1, t_20_E AS t_12_E
-    WHERE
-      (t_12_E.a = P_r1.t)
-   UNION ALL
-  
-    SELECT
-      t_22_E.a AS s,
-      t_22_E.b AS t
-    FROM
-      t_20_E AS t_22_E
-  
-) AS UNUSED_TABLE_NAME  ),
-t_10_P_r2 AS (SELECT
-  P_MultBodyAggAux_recursive_head_f3.s AS s,
-  P_MultBodyAggAux_recursive_head_f3.t AS t
-FROM
-  t_11_P_MultBodyAggAux_recursive_head_f3 AS P_MultBodyAggAux_recursive_head_f3
-GROUP BY 1, 2),
-t_8_P_MultBodyAggAux_recursive_head_f4 AS (SELECT * FROM (
-  
-    SELECT
-      P_r2.s AS s,
-      t_9_E.b AS t
-    FROM
-      t_10_P_r2 AS P_r2, t_20_E AS t_9_E
-    WHERE
-      (t_9_E.a = P_r2.t)
-   UNION ALL
-  
-    SELECT
-      t_23_E.a AS s,
-      t_23_E.b AS t
-    FROM
-      t_20_E AS t_23_E
-  
-) AS UNUSED_TABLE_NAME  ),
-t_7_P_r3 AS (SELECT
-  P_MultBodyAggAux_recursive_head_f4.s AS s,
-  P_MultBodyAggAux_recursive_head_f4.t AS t
-FROM
-  t_8_P_MultBodyAggAux_recursive_head_f4 AS P_MultBodyAggAux_recursive_head_f4
-GROUP BY 1, 2),
-t_5_P_MultBodyAggAux_recursive_head_f5 AS (SELECT * FROM (
-  
-    SELECT
-      P_r3.s AS s,
-      t_6_E.b AS t
-    FROM
-      t_7_P_r3 AS P_r3, t_20_E AS t_6_E
-    WHERE
-      (t_6_E.a = P_r3.t)
-   UNION ALL
-  
-    SELECT
-      t_24_E.a AS s,
-      t_24_E.b AS t
-    FROM
-      t_20_E AS t_24_E
-  
-) AS UNUSED_TABLE_NAME  ),
-t_4_P_r4 AS (SELECT
-  P_MultBodyAggAux_recursive_head_f5.s AS s,
-  P_MultBodyAggAux_recursive_head_f5.t AS t
-FROM
-  t_5_P_MultBodyAggAux_recursive_head_f5 AS P_MultBodyAggAux_recursive_head_f5
-GROUP BY 1, 2),
-t_3_P_MultBodyAggAux_recursive_head_f6 AS (SELECT * FROM (
-  
-    SELECT
-      P_r4.s AS s,
+      t_2_P_sn_delta.s AS s,
       E.b AS t
     FROM
-      t_4_P_r4 AS P_r4, t_20_E AS E
+      logica_test.P_sn_delta AS t_2_P_sn_delta, t_2_E AS E
     WHERE
-      (E.a = P_r4.t)
+      (E.a = t_2_P_sn_delta.t)
    UNION ALL
   
     SELECT
-      t_25_E.a AS s,
-      t_25_E.b AS t
+      t_3_E.a AS s,
+      t_3_E.b AS t
     FROM
-      t_20_E AS t_25_E
+      t_2_E AS t_3_E
   
 ) AS UNUSED_TABLE_NAME  ),
-t_2_P AS (SELECT
-  P_MultBodyAggAux_recursive_head_f6.s AS s,
-  P_MultBodyAggAux_recursive_head_f6.t AS t
+t_0_P_sn_step AS (SELECT
+  P_MultBodyAggAux_f2.s AS s,
+  P_MultBodyAggAux_f2.t AS t
 FROM
-  t_3_P_MultBodyAggAux_recursive_head_f6 AS P_MultBodyAggAux_recursive_head_f6
-GROUP BY 1, 2),
-t_1_L AS (SELECT
-  P.s AS s,
-  ARRAY_AGG(DISTINCT P.t) AS l
+  t_1_P_MultBodyAggAux_f2 AS P_MultBodyAggAux_f2
+GROUP BY 1, 2)
+SELECT * FROM (
+  
+    SELECT
+      P_sn_delta.s AS s,
+      P_sn_delta.t AS t
+    FROM
+      logica_test.P_sn_delta AS P_sn_delta
+   UNION ALL
+  
+    SELECT
+      P_sn_step.s AS s,
+      P_sn_step.t AS t
+    FROM
+      t_0_P_sn_step AS P_sn_step
+    WHERE
+      (1 = 0)
+  
+) AS UNUSED_TABLE_NAME  ;
+
+-- Interacting with table logica_test.P_sn_full
+
+DROP TABLE IF EXISTS logica_test.P_sn_new;
+CREATE TABLE logica_test.P_sn_new AS WITH t_2_E AS (SELECT * FROM (
+  
+    SELECT
+      'a' AS a,
+      'b' AS b
+   UNION ALL
+  
+    SELECT
+      'b' AS a,
+      'c' AS b
+  
+) AS UNUSED_TABLE_NAME  ),
+t_1_P_MultBodyAggAux_f2 AS (SELECT * FROM (
+  
+    SELECT
+      t_2_P_sn_delta.s AS s,
+      E.b AS t
+    FROM
+      logica_test.P_sn_delta AS t_2_P_sn_delta, t_2_E AS E
+    WHERE
+      (E.a = t_2_P_sn_delta.t)
+   UNION ALL
+  
+    SELECT
+      t_3_E.a AS s,
+      t_3_E.b AS t
+    FROM
+      t_2_E AS t_3_E
+  
+) AS UNUSED_TABLE_NAME  ),
+t_0_P_sn_step AS (SELECT
+  P_MultBodyAggAux_f2.s AS s,
+  P_MultBodyAggAux_f2.t AS t
 FROM
-  t_2_P AS P
+  t_1_P_MultBodyAggAux_f2 AS P_MultBodyAggAux_f2
+GROUP BY 1, 2)
+SELECT
+  P_sn_step.s AS s,
+  P_sn_step.t AS t
+FROM
+  t_0_P_sn_step AS P_sn_step
+WHERE
+  ((SELECT
+    MIN(1) AS logica_value
+  FROM
+    logica_test.P_sn_full AS P_sn_full
+  WHERE
+    (P_sn_full.s = P_sn_step.s) AND
+    (P_sn_full.t = P_sn_step.t)) IS NULL)
+GROUP BY 1, 2;
+
+INSERT INTO logica_test.P_sn_full SELECT * FROM logica_test.P_sn_new;
+
+DROP TABLE IF EXISTS logica_test.P_sn_delta;
+CREATE TABLE logica_test.P_sn_delta AS SELECT
+  P_sn_new.s AS s,
+  P_sn_new.t AS t
+FROM
+  logica_test.P_sn_new AS P_sn_new;
+
+DROP TABLE IF EXISTS logica_test.P_sn_new;
+CREATE TABLE logica_test.P_sn_new AS WITH t_2_E AS (SELECT * FROM (
+  
+    SELECT
+      'a' AS a,
+      'b' AS b
+   UNION ALL
+  
+    SELECT
+      'b' AS a,
+      'c' AS b
+  
+) AS UNUSED_TABLE_NAME  ),
+t_1_P_MultBodyAggAux_f2 AS (SELECT * FROM (
+  
+    SELECT
+      t_2_P_sn_delta.s AS s,
+      E.b AS t
+    FROM
+      logica_test.P_sn_delta AS t_2_P_sn_delta, t_2_E AS E
+    WHERE
+      (E.a = t_2_P_sn_delta.t)
+   UNION ALL
+  
+    SELECT
+      t_3_E.a AS s,
+      t_3_E.b AS t
+    FROM
+      t_2_E AS t_3_E
+  
+) AS UNUSED_TABLE_NAME  ),
+t_0_P_sn_step AS (SELECT
+  P_MultBodyAggAux_f2.s AS s,
+  P_MultBodyAggAux_f2.t AS t
+FROM
+  t_1_P_MultBodyAggAux_f2 AS P_MultBodyAggAux_f2
+GROUP BY 1, 2)
+SELECT
+  P_sn_step.s AS s,
+  P_sn_step.t AS t
+FROM
+  t_0_P_sn_step AS P_sn_step
+WHERE
+  ((SELECT
+    MIN(1) AS logica_value
+  FROM
+    logica_test.P_sn_full AS P_sn_full
+  WHERE
+    (P_sn_full.s = P_sn_step.s) AND
+    (P_sn_full.t = P_sn_step.t)) IS NULL)
+GROUP BY 1, 2;
+
+INSERT INTO logica_test.P_sn_full SELECT * FROM logica_test.P_sn_new;
+
+DROP TABLE IF EXISTS logica_test.P_sn_delta;
+CREATE TABLE logica_test.P_sn_delta AS SELECT
+  P_sn_new.s AS s,
+  P_sn_new.t AS t
+FROM
+  logica_test.P_sn_new AS P_sn_new;
+
+DROP TABLE IF EXISTS logica_test.P_sn_new;
+CREATE TABLE logica_test.P_sn_new AS WITH t_2_E AS (SELECT * FROM (
+  
+    SELECT
+      'a' AS a,
+      'b' AS b
+   UNION ALL
+  
+    SELECT
+      'b' AS a,
+      'c' AS b
+  
+) AS UNUSED_TABLE_NAME  ),
+t_1_P_MultBodyAggAux_f2 AS (SELECT * FROM (
+  
+    SELECT
+      t_2_P_sn_delta.s AS s,
+      E.b AS t
+    FROM
+      logica_test.P_sn_delta AS t_2_P_sn_delta, t_2_E AS E
+    WHERE
+      (E.a = t_2_P_sn_delta.t)
+   UNION ALL
+  
+    SELECT
+      t_3_E.a AS s,
+      t_3_E.b AS t
+    FROM
+      t_2_E AS t_3_E
+  
+) AS UNUSED_TABLE_NAME  ),
+t_0_P_sn_step AS (SELECT
+  P_MultBodyAggAux_f2.s AS s,
+  P_MultBodyAggAux_f2.t AS t
+FROM
+  t_1_P_MultBodyAggAux_f2 AS P_MultBodyAggAux_f2
+GROUP BY 1, 2)
+SELECT
+  P_sn_step.s AS s,
+  P_sn_step.t AS t
+FROM
+  t_0_P_sn_step AS P_sn_step
+WHERE
+  ((SELECT
+    MIN(1) AS logica_value
+  FROM
+    logica_test.P_sn_full AS P_sn_full
+  WHERE
+    (P_sn_full.s = P_sn_step.s) AND
+    (P_sn_full.t = P_sn_step.t)) IS NULL)
+GROUP BY 1, 2;
+
+INSERT INTO logica_test.P_sn_full SELECT * FROM logica_test.P_sn_new;
+
+DROP TABLE IF EXISTS logica_test.P_sn_delta;
+CREATE TABLE logica_test.P_sn_delta AS SELECT
+  P_sn_new.s AS s,
+  P_sn_new.t AS t
+FROM
+  logica_test.P_sn_new AS P_sn_new;
+
+DROP TABLE IF EXISTS logica_test.P_sn_new;
+CREATE TABLE logica_test.P_sn_new AS WITH t_2_E AS (SELECT * FROM (
+  
+    SELECT
+      'a' AS a,
+      'b' AS b
+   UNION ALL
+  
+    SELECT
+      'b' AS a,
+      'c' AS b
+  
+) AS UNUSED_TABLE_NAME  ),
+t_1_P_MultBodyAggAux_f2 AS (SELECT * FROM (
+  
+    SELECT
+      t_2_P_sn_delta.s AS s,
+      E.b AS t
+    FROM
+      logica_test.P_sn_delta AS t_2_P_sn_delta, t_2_E AS E
+    WHERE
+      (E.a = t_2_P_sn_delta.t)
+   UNION ALL
+  
+    SELECT
+      t_3_E.a AS s,
+      t_3_E.b AS t
+    FROM
+      t_2_E AS t_3_E
+  
+) AS UNUSED_TABLE_NAME  ),
+t_0_P_sn_step AS (SELECT
+  P_MultBodyAggAux_f2.s AS s,
+  P_MultBodyAggAux_f2.t AS t
+FROM
+  t_1_P_MultBodyAggAux_f2 AS P_MultBodyAggAux_f2
+GROUP BY 1, 2)
+SELECT
+  P_sn_step.s AS s,
+  P_sn_step.t AS t
+FROM
+  t_0_P_sn_step AS P_sn_step
+WHERE
+  ((SELECT
+    MIN(1) AS logica_value
+  FROM
+    logica_test.P_sn_full AS P_sn_full
+  WHERE
+    (P_sn_full.s = P_sn_step.s) AND
+    (P_sn_full.t = P_sn_step.t)) IS NULL)
+GROUP BY 1, 2;
+
+INSERT INTO logica_test.P_sn_full SELECT * FROM logica_test.P_sn_new;
+
+DROP TABLE IF EXISTS logica_test.P_sn_delta;
+CREATE TABLE logica_test.P_sn_delta AS SELECT
+  P_sn_new.s AS s,
+  P_sn_new.t AS t
+FROM
+  logica_test.P_sn_new AS P_sn_new;
+
+DROP TABLE IF EXISTS logica_test.P_sn_new;
+CREATE TABLE logica_test.P_sn_new AS WITH t_2_E AS (SELECT * FROM (
+  
+    SELECT
+      'a' AS a,
+      'b' AS b
+   UNION ALL
+  
+    SELECT
+      'b' AS a,
+      'c' AS b
+  
+) AS UNUSED_TABLE_NAME  ),
+t_1_P_MultBodyAggAux_f2 AS (SELECT * FROM (
+  
+    SELECT
+      t_2_P_sn_delta.s AS s,
+      E.b AS t
+    FROM
+      logica_test.P_sn_delta AS t_2_P_sn_delta, t_2_E AS E
+    WHERE
+      (E.a = t_2_P_sn_delta.t)
+   UNION ALL
+  
+    SELECT
+      t_3_E.a AS s,
+      t_3_E.b AS t
+    FROM
+      t_2_E AS t_3_E
+  
+) AS UNUSED_TABLE_NAME  ),
+t_0_P_sn_step AS (SELECT
+  P_MultBodyAggAux_f2.s AS s,
+  P_MultBodyAggAux_f2.t AS t
+FROM
+  t_1_P_MultBodyAggAux_f2 AS P_MultBodyAggAux_f2
+GROUP BY 1, 2)
+SELECT
+  P_sn_step.s AS s,
+  P_sn_step.t AS t
+FROM
+  t_0_P_sn_step AS P_sn_step
+WHERE
+  ((SELECT
+    MIN(1) AS logica_value
+  FROM
+    logica_test.P_sn_full AS P_sn_full
+  WHERE
+    (P_sn_full.s = P_sn_step.s) AND
+    (P_sn_full.t = P_sn_step.t)) IS NULL)
+GROUP BY 1, 2;
+
+INSERT INTO logica_test.P_sn_full SELECT * FROM logica_test.P_sn_new;
+
+DROP TABLE IF EXISTS logica_test.P_sn_delta;
+CREATE TABLE logica_test.P_sn_delta AS SELECT
+  P_sn_new.s AS s,
+  P_sn_new.t AS t
+FROM
+  logica_test.P_sn_new AS P_sn_new;
+
+WITH t_1_L AS (SELECT
+  P_sn_full.s AS s,
+  ARRAY_AGG(DISTINCT P_sn_full.t) AS l
+FROM
+  logica_test.P_sn_full AS P_sn_full
 GROUP BY 1)
 SELECT
   t_0_L.s AS s,

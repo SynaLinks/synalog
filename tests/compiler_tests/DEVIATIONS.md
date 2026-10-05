@@ -424,7 +424,7 @@ case: inside a subquery, `K.k` read `K` as the column `k` of the subquery's own
 table ("Expression K is not of type ROW"). An alias that equals a column name
 of the program, ignoring case, is numbered instead (`t_0_K`).
 
-## Recursion on Presto and Databricks
+## Recursion on Presto, Databricks and Trino
 
 Presto plans an unrolled recursion in time exponential in its steps: depth 10
 took minutes for a mutual recursion, depth 20 exceeded its 3-minute planning
@@ -435,7 +435,10 @@ each level (with `single_node_execution_enabled` it plans in milliseconds; a
 several bodies). Spark (Databricks) has the same trouble: its optimizer took 6 seconds for an
 assertion over a recursion of depth 10 and minutes for depth 12. synalog
 computes every recursion into tables on Presto and Databricks, as past 20
-steps elsewhere, so each step is one short query. A depth shorter than
+steps elsewhere, so each step is one short query. Trino plans unrolled steps
+well, but inlines every CTE where it is read: an assertion reading a recursion
+three times copied it three times, past Trino's 150 stages
+(QUERY_HAS_TOO_MANY_STAGES), so Trino computes recursions into tables too. A depth shorter than
 the iteration's first steps is written out step by step, each in its own
 table. The goldens of the recursive fixtures on Presto are synalog's.
 

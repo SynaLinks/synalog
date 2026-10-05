@@ -202,7 +202,8 @@ pub fn parse_string(s: &SpanString) -> Option<Json> {
     }
 
     // Triple-quoted string
-    if v.len() >= 6 && &v[..3] == "\"\"\"" && &v[v.len() - 3..] == "\"\"\"" {
+    // starts_with, not a byte slice: `"∀...` has no char boundary at 3.
+    if v.len() >= 6 && v.starts_with("\"\"\"") && v.ends_with("\"\"\"") {
         let inner = &v[3..v.len() - 3];
         if !inner.contains("\"\"\"") {
             return Some(json_obj!("the_string" => inner.to_string()));
