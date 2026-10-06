@@ -17,6 +17,6 @@ WITH t_0_V AS (SELECT * FROM (
   
 ) AS UNUSED_TABLE_NAME  )
 SELECT
-  AVG((CAST(V.a AS double precision) / (V.b))) AS r
+  AVG((CAST(V.a AS double precision) / NULLIF(V.b, 0))) AS r
 FROM
   t_0_V AS V;

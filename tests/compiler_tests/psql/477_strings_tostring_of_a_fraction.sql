@@ -7,13 +7,13 @@ DO $$ BEGIN if not exists (select 'I(am) :- I(think)' from pg_type where typname
 WITH t_0_V AS (SELECT * FROM (
   
     SELECT
-      1.5 AS x,
+      CAST(1.5 AS double precision) AS x,
       42 AS y,
       CAST(null AS numeric) AS z
    UNION ALL
   
     SELECT
-      2.5 AS x,
+      CAST(2.5 AS double precision) AS x,
       7 AS y,
       1 AS z
   

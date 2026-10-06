@@ -4,7 +4,7 @@ WITH t_1_V AS (SELECT * FROM (
       'a' AS g,
       x_4 AS x
     FROM
-      UNNEST(ARRAY[4, 1, 7, 1]) as pushkin(x_4)
+      UNNEST(TRANSFORM(ARRAY[4, 1, 7, 1], synalog_e -> ROW(synalog_e))) as pushkin(x_4)
    UNION ALL
   
     SELECT

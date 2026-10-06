@@ -5,6 +5,6 @@ AS UNUSED_TABLE_NAME(a, b))
 SELECT
   V.a AS a,
   V.b AS b,
-  (MOD(V.a, V.b)) AS r
+  (MOD(V.a, NULLIF(V.b, 0))) AS r
 FROM
   t_0_V AS V ORDER BY a NULLS LAST;

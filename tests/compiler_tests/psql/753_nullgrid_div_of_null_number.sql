@@ -18,6 +18,6 @@ WITH t_0_V AS (SELECT * FROM (
 ) AS UNUSED_TABLE_NAME  )
 SELECT
   V.k AS k,
-  ((CAST(V.x AS double precision) / (2)) IS NULL) AS n
+  ((CAST(V.x AS double precision) / NULLIF(2, 0)) IS NULL) AS n
 FROM
   t_0_V AS V ORDER BY k;

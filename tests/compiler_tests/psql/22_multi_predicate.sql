@@ -13,7 +13,7 @@ WITH t_0_AllSquares AS (SELECT * FROM (
     FROM
       UNNEST(COALESCE((SELECT ARRAY_AGG(x) FROM GENERATE_SERIES(0, 10 - 1) as x), '{}')) as x_15
     WHERE
-      ((MOD(x_15, 2)) = 0)
+      ((MOD(CAST(x_15 AS numeric), NULLIF(CAST(2 AS numeric), 0))) = 0)
    UNION ALL
   
     SELECT
@@ -23,7 +23,7 @@ WITH t_0_AllSquares AS (SELECT * FROM (
     FROM
       UNNEST(COALESCE((SELECT ARRAY_AGG(x) FROM GENERATE_SERIES(0, 10 - 1) as x), '{}')) as x_25
     WHERE
-      ((MOD(x_25, 2)) = 1)
+      ((MOD(CAST(x_25 AS numeric), NULLIF(CAST(2 AS numeric), 0))) = 1)
   
 ) AS UNUSED_TABLE_NAME  )
 SELECT

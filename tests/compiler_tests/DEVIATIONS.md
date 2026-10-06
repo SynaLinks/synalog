@@ -281,13 +281,14 @@ a row without a score is never the maximum. The PostgreSQL variant of
 
 ## Numbers with a decimal point
 
-`1.5` is a float in Synalog, but a `DECIMAL` on Trino, Presto and
-Databricks (Spark SQL), where decimal division rounds to the operands' scale:
-`1.0 / 3.0` is `0.3` on Trino and Presto, `0.333333` on Spark, and an
-assertion comparing it within 1e-9 fails. synalog writes such a literal in
-exponent form there (`1.5E0`), which those engines read as a `DOUBLE`. Other
-engines keep `1.5`: BigQuery reads it as a float, DuckDB divides decimals as
-floats, and PostgreSQL's `numeric` keeps full precision. The goldens of
+`1.5` is a float in Synalog, but a `DECIMAL` on Trino, Presto, Databricks
+(Spark SQL) and DuckDB, and a `numeric` on PostgreSQL. Decimal division rounds
+to the operands' scale (`1.0 / 3.0` is `0.3` on Trino and Presto, `0.333333`
+on Spark), DuckDB's decimal products overflow (`DECIMAL(18)`), and decimal
+sums are exact where doubles are not (`0.1 + 0.2 == 0.3` held on DuckDB and
+PostgreSQL only). synalog writes such a literal as a double: in exponent form
+(`1.5E0`) on Trino, Presto, Databricks and DuckDB, `CAST(1.5 AS double
+precision)` on PostgreSQL. SQLite and BigQuery read `1.5` as a float. The goldens of
 `28_list_membership`, `121_execution_float_sum` and
 `157_execution_float_comparison` on those three engines are synalog's.
 
@@ -584,8 +585,19 @@ A program's text reaches SQL as literals and checked names only
 - PostgreSQL: a string with a backslash is `E'...'`, read the same whatever
   `standard_conforming_strings` says.
 - `search()` writes its pattern as such a literal; upstream doubled quotes only.
-- `@Dataset` takes a schema name; `@AttachDatabase` and `copy_to_file` paths are
-  escaped literals; a table named in `@Ground` lives in Synalog's dataset.
+- `@Dataset` takes a schema name; a table named in `@Ground` lives in Synalog's
+  dataset.
+- A table the program reads is a name: upstream wrote `` `(SELECT ...)` `` into
+  the SQL as such, and any backquoted name verbatim. A backquoted path is
+  quoted part by part (whole on BigQuery).
+- `${flag}` is not substituted into the SQL text (upstream did, inside string
+  literals too); `FlagValue("flag")` gives a flag as a string literal.
+- A program reaches no file, process or service: the library's `ReadFile`,
+  `ReadJson`, `WriteFile`, `PrintToConsole`, `Intelligence` and Clingo
+  functions are gone, and `@AttachDatabase` and `@Ground(..., copy_to_file:)`
+  are refused.
+- Databricks quotes an identifier's backtick by doubling it (upstream wrote
+  `` \` ``, which Spark does not read); BigQuery escapes a backslash in one.
 
 The goldens of the fixtures with such strings are synalog's.
 
@@ -601,3 +613,114 @@ numbers round in DECIMAL, or from the exponent form where an engine rounds
 only to a constant number of digits (DuckDB, Spark, SQLite)
 (`tests/programs/numtext`). The goldens of the fixtures with `ToString` of a
 number are synalog's.
+
+## Portable functions
+
+`StartsWith`, `EndsWith`, `Strpos`, `Lpad`, `Rpad`, `Repeat`, `Ifnull`,
+`RegexpContains`, `RegexpReplace`, `RegexpExtract`, `Trunc` and `Div` are
+written so they run, and agree, on every engine: upstream passed most of them
+through as a function of the same name, which only some engines have. `If` is
+`CASE WHEN` (SQLite and PostgreSQL have no `IF()`). `RegexpContains` of a null
+is null on SQLite too, where `REGEXP` gives false. A null typed by its column
+is cast to the column's type (`CAST(null AS text)`), so PostgreSQL knows it.
+The goldens of the `funcs` fixtures are synalog's.
+
+## Lists without a type of their own
+
+An empty list (`[]`) and a null have no element type, which PostgreSQL needs
+(`CARDINALITY('{}')`, `UNNEST('{}')`, `ARRAY_TO_STRING('{}', ',')` do not
+resolve) and Trino, Presto and Databricks need where they meet a typed list
+(a `UNION` of `ROW(xs array(double))` and `ROW(xs array(varchar))`,
+`ELEMENT_AT(null, 1)`). synalog types them from where they are written: the
+column's type (the other rules of its predicate), the field of the record they
+are in, the other list of an `ArrayConcat`, text for `Join`, the value an
+unnested element equals: `CAST('{}' AS numeric[])`, `CAST(null AS ARRAY<STRING>)`.
+
+A column's type is the intersection of the types its rules give it, the same in
+any order: before, a record whose list field was `[]` in one fact and
+`["x"]` in another could be typed either way from one run to the next.
+
+## `Join` on SQLite
+
+`Join` is SQL on SQLite (`GROUP_CONCAT` over `JSON_EACH`): upstream's Python
+function wrote a null element as `None` and a number as Python prints it. A
+null is skipped, as on the other engines, and an empty list joins to `''`.
+
+## A dollar on Databricks
+
+Spark substitutes `${var}` in a statement's text before parsing it, inside
+string literals too: `"costs ${amount}"` came back as `"costs "`, and
+`"${env:HOME}"` as the driver's home directory. A dollar in a Databricks
+string literal is `\u0024`; a field or predicate name holds no `$`.
+
+## Rounding to digits
+
+`Round(x, 2)` of `1.005` was 1.01 on DuckDB, PostgreSQL and Databricks (a
+decimal literal) but 1.0 on SQLite, Trino and Presto (the double nearest
+1.005 is below it), and `2.675` gave 2.67 on SQLite only. synalog rounds the
+number as its text shows it, at 15 significant digits, half away from zero,
+as a spreadsheet does, with the same SQL on every engine (the half unit of
+the 15th significant digit added before the floor); the result is a double.
+
+## Division by zero, remainders
+
+A division by zero was an infinity on DuckDB and Trino, a NaN for `0 / 0`,
+the text `Infinity` from Presto, an error on PostgreSQL, and null on SQLite
+and Spark; `Div` and `%` by zero failed on several. It has no value (null) on
+every engine: the divisor is `NULLIF(y, 0)`. SQLite's `%` truncated both sides
+to integers (`7.5 % 2` was 1): it is the remainder of the quotient truncated
+toward zero there. PostgreSQL has no `MOD` of doubles: it takes numerics.
+
+## A null meets no null
+
+Two facts with a null key, `A(k: null)` and `B(k: null)`, joined on `k`: the
+facts are inlined and both sides become the literal `null`, and the
+unification `null == null`, two identical expressions, was dropped as
+trivially true, so the join had a row. A null equals nothing in SQL: an
+equality holding a null stays (`WHERE null = null`, no row). A variable
+unified with itself (`x == x`) still holds.
+
+## Types across predicates
+
+Type inference gave each edge of its graph its own copy of a vertex's type,
+and never linked a predicate's columns to their uses elsewhere (the link was
+a placeholder): a column of `Q(x:) :- V(x:)` stayed of no type though `V`'s
+was a number, a record field's type was updated on a copy and lost, and the
+type of a column given by several facts depended on hash order. A vertex now
+has one type, shared by every edge it is in: a relation's column wherever it
+is read, a variable within its rule (`x` of one rule is not `x` of another),
+a field of either. A literal, and a function's or built-in's argument, is a
+vertex per use. Annotations (`@Make`) are left out.
+
+## A search reads the text ToString gives
+
+`search` matched a pattern against each column cast to text by the engine:
+`10.0` read `10.0` on some engines and `10` on others, a boolean `1` on
+SQLite. A number is read as `ToString` writes it, the same on every engine,
+a boolean as `true` or `false`.
+
+## A recursion's accumulated table
+
+A step of a recursion can give a column a wider type than its first rows (an
+integer that becomes a bigint, then a sum of it): PrestoDB refuses to insert
+a bigint into an integer column, and PostgreSQL and DuckDB fail once a value
+no longer fits it. A column widens at most twice (integer, bigint, double),
+so the types stop changing within twice as many steps as there are columns:
+the accumulated table is created from the base rows and that many steps
+applied to empty tables, of the widest types from the start, and every
+step's new rows are inserted, in linear time, on every engine.
+
+## A value computed once
+
+A variable is replaced by its value wherever it is used, so a rule defining
+each variable from the one before (`b == a + a, c == b + b, ...`) wrote its
+first value 2^n times: a ten-line date function compiled to 2 MB of SQL. A
+large value (more than 60 nodes) of a variable used more than once is
+computed once, as the one element of a list unnested beside the rule's
+tables, and the variable is that element.
+
+## `Div` of large numbers
+
+`Div(a, b)` told the sign of the quotient by `a * b < 0`, a product that
+overflows 32-bit integers (`Div(719468, 146097)` failed on DuckDB) though the
+quotient is small. It compares the signs instead: `(a < 0) <> (b < 0)`.

@@ -7,7 +7,6 @@
 //!
 //! Ported from Python: type_inference/type_inference_service.py
 
-use super::built_in::{check_inequalities, is_inequality_predicate};
 use super::edge::Edge;
 use super::expression::Expression;
 use super::graph::TypesGraph;
@@ -81,186 +80,124 @@ impl TypeInference {
     }
 
     /// Run type inference to fixed point.
+    ///
+    /// A vertex has one type, shared by every edge it is in: a predicate's
+    /// column (in its own rules and wherever it is read, so a type crosses
+    /// from predicate to predicate), a variable of a rule, a field of either.
+    /// A literal is a vertex of its own edge: two `null`s or two `[]` are not
+    /// one value.
     pub fn infer(&mut self) -> Result<(), TypeInferenceError> {
+        // The relations the program defines: a column of one is one vertex
+        // wherever it is read. A function's or a built-in's argument is a
+        // vertex per call, as a call may give it any type (`Coalesce`).
+        let relations: std::collections::HashSet<String> = self.graphs.iter()
+            // An annotation (`@Make`, `@OrderBy`) is no relation.
+            .filter(|(name, graph)| !name.starts_with('@')
+                && !graph.contains_expression(&format!("PredicateAddressing({}.logica_value)", name)))
+            .map(|(name, _)| name.clone())
+            .collect();
+        let shared_key = |e: &Expression| -> Option<String> {
+            fn key(e: &Expression, relations: &std::collections::HashSet<String>) -> Option<String> {
+                match e {
+                    Expression::PredicateAddressing { predicate_name, predicate_id, .. } => Some(if relations.contains(predicate_name) {
+                        e.to_string()
+                    } else {
+                        format!("{}#{}", e, predicate_id)
+                    }),
+                    Expression::Variable { .. } => Some(e.to_string()),
+                    Expression::SubscriptAddressing { base, .. } => key(base, relations).map(|b| format!("{}.{}", b, e)),
+                    _ => None,
+                }
+            }
+            key(e, &relations)
+        };
+        let mut store: HashMap<String, Type> = HashMap::new();
+        for (_, edge) in &self.all_edges {
+            let (a, b) = edge.vertices();
+            for v in [a, b] {
+                if let Some(k) = shared_key(v) {
+                    let t = v.get_type().clone();
+                    let merged = match store.get(&k) {
+                        Some(old) => intersect(old.clone(), t, (0, 0))?,
+                        None => t,
+                    };
+                    store.insert(k, merged);
+                }
+            }
+        }
+        let current = |store: &HashMap<String, Type>, e: &Expression| -> Type {
+            shared_key(e).and_then(|k| store.get(&k).cloned()).unwrap_or_else(|| e.get_type().clone())
+        };
+        // Give vertex `side` (0 or 1) of edge `i` the type `t`: whether it changed.
+        let assign = |edges: &mut [(String, Edge)], store: &mut HashMap<String, Type>, i: usize, side: usize, t: &Type| -> bool {
+            let (a, b) = edges[i].1.vertices_mut();
+            let v = if side == 0 { a } else { b };
+            let before = current(store, v);
+            if let Some(k) = shared_key(v) {
+                store.insert(k, t.clone());
+            }
+            v.set_type(t.clone());
+            before != *t
+        };
+
         let mut changed = true;
         let mut iterations = 0;
         const MAX_ITERATIONS: usize = 1000;
-
         while changed && iterations < MAX_ITERATIONS {
             changed = false;
             iterations += 1;
-
             for i in 0..self.all_edges.len() {
-                let (graph_name, edge) = &self.all_edges[i];
-                let graph_name = graph_name.clone();
-
-                match edge {
+                let edge = self.all_edges[i].1.clone();
+                match &edge {
                     Edge::Equality { left, right, bounds } => {
-                        let left_type = left.get_type().clone();
-                        let right_type = right.get_type().clone();
-                        let result = intersect(left_type.clone(), right_type.clone(), *bounds)?;
-
-                        if result != left_type {
-                            let (_, edge) = &mut self.all_edges[i];
-                            if let Edge::Equality { left, .. } = edge {
-                                left.set_type(result.clone());
-                            }
-                            changed = true;
-                        }
-                        if result != right_type {
-                            let (_, edge) = &mut self.all_edges[i];
-                            if let Edge::Equality { right, .. } = edge {
-                                right.set_type(result);
-                            }
-                            changed = true;
-                        }
+                        let r = intersect(current(&store, left), current(&store, right), *bounds)?;
+                        changed |= assign(&mut self.all_edges, &mut store, i, 0, &r);
+                        changed |= assign(&mut self.all_edges, &mut store, i, 1, &r);
                     }
-
                     Edge::EqualityOfElement { list, element, bounds } => {
-                        // Ensure list has ListType
-                        let list_type = list.get_type().clone();
+                        let list_type = current(&store, list);
                         if list_type.is_any() {
-                            let (_, edge) = &mut self.all_edges[i];
-                            if let Edge::EqualityOfElement { list, .. } = edge {
-                                list.set_type(Type::list(Type::Any));
-                            }
-                            changed = true;
+                            changed |= assign(&mut self.all_edges, &mut store, i, 0, &Type::list(Type::Any));
                             continue;
                         }
-
-                        let element_type = element.get_type().clone();
-                        let list_type = self.all_edges[i].1.vertices().0.get_type();
-                        let result = intersect_list_element(list_type, element_type.clone(), *bounds)?;
-
-                        if result != element_type {
-                            let (_, edge) = &mut self.all_edges[i];
-                            if let Edge::EqualityOfElement { element, .. } = edge {
-                                element.set_type(result.clone());
-                            }
-                            changed = true;
-                        }
-
-                        let new_list_type = Type::list(result);
-                        let current_list_type = self.all_edges[i].1.vertices().0.get_type();
-                        if &new_list_type != current_list_type {
-                            let (_, edge) = &mut self.all_edges[i];
-                            if let Edge::EqualityOfElement { list, .. } = edge {
-                                list.set_type(new_list_type);
-                            }
-                            changed = true;
-                        }
+                        let r = intersect_list_element(&list_type, current(&store, element), *bounds)?;
+                        changed |= assign(&mut self.all_edges, &mut store, i, 1, &r);
+                        changed |= assign(&mut self.all_edges, &mut store, i, 0, &Type::list(r));
                     }
-
                     Edge::FieldBelonging { parent, field, bounds } => {
-                        // Ensure parent has RecordType
-                        let parent_type = parent.get_type().clone();
+                        let parent_type = current(&store, parent);
                         if parent_type.is_any() {
-                            let (_, edge) = &mut self.all_edges[i];
-                            if let Edge::FieldBelonging { parent, .. } = edge {
-                                parent.set_type(Type::opened_record());
-                            }
-                            changed = true;
+                            changed |= assign(&mut self.all_edges, &mut store, i, 0, &Type::opened_record());
                             continue;
                         }
-
-                        if let Type::Record { ref fields, .. } = parent_type {
-                            let field_name = match field.field() {
-                                Some(f) => f.to_string(),
-                                None => continue,
+                        let Some(name) = field.field().map(|f| f.to_string()) else { continue };
+                        if let Type::Record { fields, is_opened } = &parent_type {
+                            let field_type = current(&store, field);
+                            let r = match fields.get(&name) {
+                                Some(existing) => intersect(field_type, existing.clone(), *bounds)?,
+                                None => field_type,
                             };
-                            let field_type = field.get_type().clone();
-
-                            if let Some(existing_type) = fields.get(&field_name) {
-                                let result = intersect(field_type.clone(), existing_type.clone(), *bounds)?;
-                                if &result != existing_type {
-                                    let (_, edge) = &mut self.all_edges[i];
-                                    if let Edge::FieldBelonging { parent, .. } = edge {
-                                        if let Some(fields) = parent.get_type().clone().record_fields_mut() {
-                                            fields.insert(field_name, result);
-                                        }
-                                    }
-                                    changed = true;
-                                }
-                            } else {
-                                // Add new field to record
-                                let (_, edge) = &mut self.all_edges[i];
-                                if let Edge::FieldBelonging { parent, .. } = edge {
-                                    let mut new_type = parent.get_type().clone();
-                                    if let Some(fields) = new_type.record_fields_mut() {
-                                        fields.insert(field_name, field_type);
-                                    }
-                                    parent.set_type(new_type);
-                                }
-                                changed = true;
-                            }
+                            let mut new_fields = fields.clone();
+                            new_fields.insert(name, r.clone());
+                            let new_parent = Type::Record { fields: new_fields, is_opened: *is_opened };
+                            changed |= assign(&mut self.all_edges, &mut store, i, 0, &new_parent);
+                            changed |= assign(&mut self.all_edges, &mut store, i, 1, &r);
                         }
                     }
-
-                    Edge::PredicateArgument { logica_value, argument: _, bounds: _ } => {
-                        // Handle special built-in predicates like inequalities
-                        if let Some(pred_name) = logica_value.predicate_name() {
-                            if is_inequality_predicate(pred_name) {
-                                // Get argument types from the graph
-                                if let Some(_graph) = self.graphs.get(&graph_name) {
-                                    let arg_types = self.get_arguments(logica_value, &graph_name);
-                                    if let (Some(left_type), Some(right_type)) =
-                                        (arg_types.get("left"), arg_types.get("right"))
-                                    {
-                                        if let Some((correct_left, correct_right)) =
-                                            check_inequalities(left_type, right_type)
-                                        {
-                                            // Update argument types
-                                            // Note: This is simplified - full implementation would update the actual expressions
-                                            let _ = (correct_left, correct_right);
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
+                    Edge::PredicateArgument { .. } => {}
                 }
             }
         }
-
+        // Every copy of a shared vertex has its type.
+        for (_, edge) in self.all_edges.iter_mut() {
+            let (a, b) = edge.vertices_mut();
+            for v in [a, b] {
+                if let Some(t) = shared_key(v).and_then(|k| store.get(&k)) {
+                    v.set_type(t.clone());
+                }
+            }
+        }
         Ok(())
-    }
-
-    /// Get argument types for a predicate call.
-    fn get_arguments(
-        &self,
-        logica_value: &Expression,
-        graph_name: &str,
-    ) -> HashMap<String, Type> {
-        let mut arg_types = HashMap::new();
-
-        if let Some(graph) = self.graphs.get(graph_name) {
-            let lv_key = logica_value.to_string();
-            if let Some(connections) = graph.connections_for(&lv_key) {
-                for (arg_key, edges) in connections {
-                    // Check if any edge is a PredicateArgument
-                    let has_pred_arg = edges.iter().any(|e| matches!(e, Edge::PredicateArgument { .. }));
-                    if has_pred_arg {
-                        // Extract field name from arg_key
-                        if let Some(inner) = arg_key
-                            .strip_prefix("PredicateAddressing(")
-                            .and_then(|s| s.strip_suffix(")"))
-                        {
-                            if let Some((_, field)) = inner.split_once('.') {
-                                // Get type from the edge
-                                for edge in edges {
-                                    if let Edge::PredicateArgument { argument, .. } = edge {
-                                        arg_types.insert(field.to_string(), argument.get_type().clone());
-                                        break;
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        }
-
-        arg_types
     }
 
     /// Get the inferred type for a predicate field.
@@ -282,7 +219,7 @@ impl TypeInference {
 
     /// Get all inferred types for a predicate.
     pub fn get_predicate_types(&self, predicate_name: &str) -> HashMap<String, Type> {
-        let mut types = HashMap::new();
+        let mut types: HashMap<String, Type> = HashMap::new();
         let prefix = format!("PredicateAddressing({}", predicate_name);
 
         for (_, edge) in &self.all_edges {
@@ -291,26 +228,33 @@ impl TypeInference {
                 let key = v.to_string();
                 if key.starts_with(&prefix) {
                     if let Some(field) = v.field() {
-                        // The vertices of a column are visited in hash order,
-                        // and some are less specific than others (a rule giving
-                        // the column a null): keep the most specific type, the
-                        // same whatever the order.
+                        // A column has a vertex per rule, some less specific
+                        // than others (a null, an empty list `[]`): its type is
+                        // their intersection, the same in any order. Where two
+                        // rules disagree, the most specific type, by rank and
+                        // then by a text that does not depend on hash order.
                         let new = v.get_type();
-                        let keep = match types.get(field) {
-                            None => true,
-                            Some(old) => {
-                                let rank = |t: &Type| match t {
-                                    Type::Any => 0,
-                                    Type::Atomic => 1,
-                                    _ => 2,
-                                };
-                                rank(new) > rank(old)
-                                    || (rank(new) == rank(old) && format!("{:?}", new) < format!("{:?}", old))
-                            }
+                        let merged = match types.get(field) {
+                            None => new.clone(),
+                            Some(old) => match intersect(old.clone(), new.clone(), (0, 0)) {
+                                Ok(t) => t,
+                                Err(_) => {
+                                    let rank = |t: &Type| match t {
+                                        Type::Any => 0,
+                                        Type::Atomic => 1,
+                                        _ => 2,
+                                    };
+                                    if rank(new) > rank(old)
+                                        || (rank(new) == rank(old) && new.to_string() < old.to_string())
+                                    {
+                                        new.clone()
+                                    } else {
+                                        old.clone()
+                                    }
+                                }
+                            },
                         };
-                        if keep {
-                            types.insert(field.to_string(), new.clone());
-                        }
+                        types.insert(field.to_string(), merged);
                     }
                 }
             }

@@ -103,7 +103,7 @@ FROM
 SELECT
   x_3 AS d
 FROM
-  t_0_B AS B, UNNEST(FILTER(SEQUENCE(0, ((B.hi) + (1))), x -> x < ((B.hi) + (1)))) as pushkin(x_3)
+  t_0_B AS B, UNNEST(TRANSFORM(FILTER(SEQUENCE(0, ((B.hi) + (1))), x -> x < ((B.hi) + (1))), synalog_e -> ROW(synalog_e))) as pushkin(x_3)
 WHERE
   (x_3 > B.lo) AND
   ((SELECT

@@ -87,6 +87,6 @@ WITH t_0_Sale AS (SELECT * FROM (
   
 ) AS UNUSED_TABLE_NAME  )
 SELECT
-  SUM(CASE WHEN (((Sale.qty) * (Sale.price)) >= 100) THEN ((((Sale.qty) * (Sale.price))) * (0.9)) ELSE ((Sale.qty) * (Sale.price)) END) AS s
+  SUM(CASE WHEN (((Sale.qty) * (Sale.price)) >= 100) THEN ((((Sale.qty) * (Sale.price))) * (0.9E0)) ELSE ((Sale.qty) * (Sale.price)) END) AS s
 FROM
   t_0_Sale AS Sale;

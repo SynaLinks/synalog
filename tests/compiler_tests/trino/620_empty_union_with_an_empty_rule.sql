@@ -7,7 +7,7 @@ SELECT * FROM (
     SELECT
       x_1 AS x
     FROM
-      UNNEST(ARRAY[2]) as pushkin(x_1)
+      UNNEST(TRANSFORM(ARRAY[2], synalog_e -> ROW(synalog_e))) as pushkin(x_1)
     WHERE
       (x_1 > 5)
   

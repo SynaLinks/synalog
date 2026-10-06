@@ -20,7 +20,7 @@ t_4_R_MultBodyAggAux_recursive_head_f2 AS (SELECT * FROM (
     FROM
       t_5_R_r0 AS R_r0
     WHERE
-      (((MOD(R_r0.x, 10)) = 0) OR (R_r0.x = 1))
+      (((MOD(R_r0.x, NULLIF(10, 0))) = 0) OR (R_r0.x = 1))
    UNION ALL
   
     SELECT
@@ -43,7 +43,7 @@ t_2_R_MultBodyAggAux_recursive_head_f3 AS (SELECT * FROM (
     FROM
       t_3_R_r1 AS R_r1
     WHERE
-      (((MOD(R_r1.x, 10)) = 0) OR (R_r1.x = 1))
+      (((MOD(R_r1.x, NULLIF(10, 0))) = 0) OR (R_r1.x = 1))
    UNION ALL
   
     SELECT
@@ -66,7 +66,7 @@ t_0_R_MultBodyAggAux_recursive_head_f4 AS (SELECT * FROM (
     FROM
       t_1_R_r2 AS R_r2
     WHERE
-      (((MOD(R_r2.x, 10)) = 0) OR (R_r2.x = 1))
+      (((MOD(R_r2.x, NULLIF(10, 0))) = 0) OR (R_r2.x = 1))
    UNION ALL
   
     SELECT
@@ -81,4 +81,4 @@ SELECT
   R_MultBodyAggAux_recursive_head_f4.x AS x
 FROM
   t_0_R_MultBodyAggAux_recursive_head_f4 AS R_MultBodyAggAux_recursive_head_f4
-GROUP BY x ORDER BY x;
+GROUP BY x ORDER BY x NULLS LAST;

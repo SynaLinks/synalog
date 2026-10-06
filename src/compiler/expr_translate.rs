@@ -441,6 +441,20 @@ pub(crate) fn base_built_in_functions() -> HashMap<&'static str, &'static str> {
     m.insert("Upper", "UPPER(%s)");
     m.insert("Lower", "LOWER(%s)");
     m.insert("Trim", "TRIM(%s)");
+    // Functions written so they run, and agree, on every engine; a dialect
+    // overrides those its SQL lacks.
+    m.insert("StartsWith", "(SUBSTR({0}, 1, LENGTH({1})) = {1})");
+    m.insert("EndsWith", "(LENGTH({1}) <= LENGTH({0}) AND SUBSTR({0}, LENGTH({0}) - LENGTH({1}) + 1, LENGTH({1})) = {1})");
+    m.insert("Strpos", "STRPOS({0}, {1})");
+    m.insert("Lpad", "LPAD({0}, {1}, {2})");
+    m.insert("Rpad", "RPAD({0}, {1}, {2})");
+    m.insert("Repeat", "REPEAT({0}, {1})");
+    m.insert("Ifnull", "COALESCE({0}, {1})");
+    m.insert("RegexpContains", "REGEXP_LIKE({0}, {1})");
+    m.insert("RegexpReplace", "REGEXP_REPLACE({0}, {1}, {2})");
+    m.insert("RegexpExtract", "REGEXP_EXTRACT({0}, {1})");
+    m.insert("Trunc", "(CASE WHEN {0} < 0 THEN CEIL({0}) ELSE FLOOR({0}) END)");
+    m.insert("Div", "CAST((CASE WHEN (({0}) < 0) <> (({1}) < 0) THEN CEIL(CAST({0} AS DOUBLE) / NULLIF({1}, 0)) ELSE FLOOR(CAST({0} AS DOUBLE) / NULLIF({1}, 0)) END) AS BIGINT)");
     m
 }
 
@@ -456,9 +470,11 @@ fn base_infix_operators() -> HashMap<&'static str, &'static str> {
     m.insert("+", "(%s) + (%s)");
     m.insert("-", "(%s) - (%s)");
     m.insert("*", "(%s) * (%s)");
-    m.insert("/", "(%s) / (%s)");
+    // A division by zero has no value, on every engine (not an error, an
+    // infinity or a NaN).
+    m.insert("/", "(%s) / NULLIF(%s, 0)");
     m.insert("^", "POW(%s, %s)");
-    m.insert("%", "MOD(%s, %s)");
+    m.insert("%", "MOD(%s, NULLIF(%s, 0))");
     m.insert("++", "CONCAT(%s, %s)");
     m.insert("||", "%s OR %s");
     m.insert("&&", "%s AND %s");
@@ -524,6 +540,10 @@ pub struct ExprTranslator<'a> {
     /// The types of the rule's variables that are known: a column of a
     /// table, an element of a list. A record built from them has their types.
     pub variable_types: HashMap<String, Type>,
+    /// The type a list or record literal is expected to have where it is
+    /// written, by the address of its node: an empty list has no type of its
+    /// own (`[]`), nor a record holding one.
+    type_hints: std::cell::RefCell<HashMap<usize, Type>>,
 }
 
 impl<'a> ExprTranslator<'a> {
@@ -569,6 +589,7 @@ impl<'a> ExprTranslator<'a> {
             built_in_functions: functions,
             built_in_infix_operators: infix,
             variable_types: HashMap::new(),
+            type_hints: std::cell::RefCell::new(HashMap::new()),
             flag_values,
             subquery_translator: None,
             value_field,
@@ -578,6 +599,12 @@ impl<'a> ExprTranslator<'a> {
     /// Convert a Logica expression AST node to an SQL string.
     /// Uses an iterative task/result stack instead of recursion.
     pub fn convert_to_sql(&self, expression: &Json) -> CompileResult<String> {
+        self.convert_to_sql_expecting(expression, &Type::Any)
+    }
+
+    /// `convert_to_sql` of a value whose type the context knows (a column's).
+    pub fn convert_to_sql_expecting(&self, expression: &Json, expected: &Type) -> CompileResult<String> {
+        self.hint_types(expression, expected);
         // Combiner kinds that operate on pre-evaluated sub-expression results.
         enum CK {
             /// Apply a SQL template with positional args ({0}, {1} or %s).
@@ -633,7 +660,16 @@ impl<'a> ExprTranslator<'a> {
 
                     // ── Variable ──
                     if let Some(var) = obj.get("variable") {
-                        results.push(self.convert_variable(var)?);
+                        let mut sql = self.convert_variable(var)?;
+                        // A null where a list is expected is a null list.
+                        if sql == "null" {
+                            if let Some(Type::List(element)) = self.type_hints.borrow().get(&node_key(expr)) {
+                                if let Some(typed) = self.dialect.typed_array(&sql, element) {
+                                    sql = typed;
+                                }
+                            }
+                        }
+                        results.push(sql);
                         continue;
                     }
 
@@ -670,11 +706,16 @@ impl<'a> ExprTranslator<'a> {
                             continue;
                         }
                         if lo.contains_key("the_null") || lo.contains_key("null") {
-                            results.push("null".to_string());
+                            // A null where a list is expected is a null list.
+                            let typed = match self.type_hints.borrow().get(&node_key(expr)) {
+                                Some(Type::List(element)) => self.dialect.typed_array("null", element),
+                                _ => None,
+                            };
+                            results.push(typed.unwrap_or_else(|| "null".to_string()));
                             continue;
                         }
                         if let Some(list) = lo.get("the_list") {
-                            if let Some(elements) = list.as_object().get("element") {
+                            if let Some(elements) = list.as_object().get("element").filter(|e| !e.as_array().is_empty()) {
                                 let elems = elements.as_array();
                                 let n = elems.len();
                                 tasks.push(Task::Combine(CK::ArrayLiteral(self.dialect.array_phrase().to_string()), n));
@@ -682,7 +723,11 @@ impl<'a> ExprTranslator<'a> {
                                     tasks.push(Task::Eval(e));
                                 }
                             } else {
-                                results.push(self.dialect.empty_array_literal());
+                                let hinted = match self.type_hints.borrow().get(&node_key(expr)) {
+                                    Some(Type::List(element)) => self.dialect.typed_array(&self.dialect.empty_array_literal(), element),
+                                    _ => None,
+                                };
+                                results.push(hinted.unwrap_or_else(|| self.dialect.empty_array_literal()));
                             }
                             continue;
                         }
@@ -702,6 +747,7 @@ impl<'a> ExprTranslator<'a> {
                                 fields.push((fo["field"].as_str().to_string(), self.value_type(e)));
                                 exprs.push(e);
                             }
+                            self.hinted_fields(expr, &mut fields);
                             let n = exprs.len();
                             tasks.push(Task::Combine(CK::Record(fields), n));
                             for e in exprs.into_iter().rev() {
@@ -738,7 +784,8 @@ impl<'a> ExprTranslator<'a> {
 
                         if pred_name == "Round" {
                             let fvs = co["record"].as_object()["field_value"].as_array();
-                            if let (2, Some(template)) = (fvs.len(), self.dialect.round_to_digits()) {
+                            if fvs.len() == 2 {
+                                let template = crate::compiler::dialects::round_to_digits_template(self.dialect);
                                 let args: Vec<&Json> = fvs.iter()
                                     .filter_map(|fv| fv.as_object()["value"].as_object().get("expression"))
                                     .collect();
@@ -999,8 +1046,9 @@ impl<'a> ExprTranslator<'a> {
                             tasks.push(Task::Combine(CK::FlagValue, num_args));
                         // Use IF(...) to match Python's output (required for golden tests)
                         } else if pred_name == "If" && num_args == 3 {
+                            // CASE: PostgreSQL has no IF.
                             tasks.push(Task::Combine(CK::Template(
-                                "IF({0}, {1}, {2})".to_string()), 3));
+                                "(CASE WHEN {0} THEN {1} ELSE {2} END)".to_string()), 3));
                         // Handle Array/ArgMin/ArgMax with arrow argument for SQLite
                         // Arrow expressions are converted to records {arg: ..., value: ...}
                         } else if (pred_name == "Array" || pred_name == "ArgMin" || pred_name == "ArgMax")
@@ -1267,6 +1315,7 @@ impl<'a> ExprTranslator<'a> {
                             fields.push((fo["field"].as_str().to_string(), self.value_type(e)));
                             exprs.push(e);
                         }
+                        self.hinted_fields(expr, &mut fields);
                         let n = exprs.len();
                         tasks.push(Task::Combine(CK::Record(fields), n));
                         for e in exprs.into_iter().rev() {
@@ -2042,6 +2091,111 @@ impl<'a> ExprTranslator<'a> {
         }
     }
 
+    /// Note the type each list and record literal inside `expr` is expected
+    /// to have: `expected` for `expr` itself, the field types of the record a
+    /// value is in, the other list of an `ArrayConcat`, text for `Join`.
+    fn hint_types(&self, expr: &Json, expected: &Type) {
+        if !expr.is_object() {
+            return;
+        }
+        let o = expr.as_object();
+        let literal = o.get("literal").filter(|l| l.is_object()).map(|l| l.as_object());
+        let record = o.get("record").or_else(|| literal.and_then(|l| l.get("the_record")));
+        let is_null = literal.is_some_and(|l| l.contains_key("the_null") || l.contains_key("null"));
+        let is_list_variable = (o.contains_key("variable") || is_null) && matches!(expected, Type::List(_));
+        if literal.is_some_and(|l| l.contains_key("the_list")) || record.is_some() || is_list_variable {
+            if *expected != Type::Any {
+                self.type_hints.borrow_mut().entry(node_key(expr)).or_insert_with(|| expected.clone());
+            }
+        }
+        if let Some(rec) = record {
+            let fields = match expected {
+                Type::Record { fields, .. } => Some(fields),
+                _ => None,
+            };
+            for fv in rec.as_object()["field_value"].as_array() {
+                let fo = fv.as_object();
+                let val = &fo["value"];
+                let e = val.as_object().get("expression").unwrap_or(val);
+                let t = fo.get("field").filter(|f| f.is_string())
+                    .and_then(|f| fields.and_then(|fs| fs.get(f.as_str())))
+                    .cloned().unwrap_or(Type::Any);
+                self.hint_types(e, &t);
+            }
+            return;
+        }
+        if let Some(list) = literal.and_then(|l| l.get("the_list")) {
+            let element = match expected {
+                Type::List(e) => (**e).clone(),
+                _ => Type::Any,
+            };
+            if let Some(elements) = list.as_object().get("element") {
+                for e in elements.as_array() {
+                    self.hint_types(e, &element);
+                }
+            }
+            return;
+        }
+        if let Some(call) = o.get("call").filter(|c| c.is_object()) {
+            let c = call.as_object();
+            let name = c.get("predicate_name").filter(|n| n.is_string()).map(|n| n.as_str()).unwrap_or("");
+            let args: Vec<&Json> = c.get("record")
+                .and_then(|r| r.as_object().get("field_value"))
+                .map(|fvs| fvs.as_array().iter().map(|fv| {
+                    let val = &fv.as_object()["value"];
+                    val.as_object().get("expression").unwrap_or(val)
+                }).collect())
+                .unwrap_or_default();
+            let text_list = Type::List(Box::new(Type::String));
+            for (i, a) in args.iter().enumerate() {
+                let t = match name {
+                    // A list given with another takes the other's type.
+                    "ArrayConcat" => {
+                        let other = args.get(1 - i.min(1)).map(|x| self.value_type(x));
+                        match other {
+                            Some(Type::List(e)) if *e != Type::Any => Type::List(e),
+                            _ if matches!(expected, Type::List(_)) => expected.clone(),
+                            _ => text_list.clone(),
+                        }
+                    }
+                    "Join" if i == 0 => text_list.clone(),
+                    // Any list will do: its size or an element of none.
+                    "Size" | "Element" if i == 0 => text_list.clone(),
+                    _ => Type::Any,
+                };
+                self.hint_types(a, &t);
+            }
+            return;
+        }
+        if let Some(imp) = o.get("implication").filter(|i| i.is_object()) {
+            let io = imp.as_object();
+            if let Some(branches) = io.get("if_then") {
+                for b in branches.as_array() {
+                    if let Some(c) = b.as_object().get("consequence") {
+                        self.hint_types(c, expected);
+                    }
+                }
+            }
+            if let Some(other) = io.get("otherwise") {
+                self.hint_types(other, expected);
+            }
+        }
+    }
+
+    /// The field types of a record literal, completed by the type its place
+    /// expects where its own say nothing (an empty list).
+    fn hinted_fields(&self, expr: &Json, fields: &mut [(String, Type)]) {
+        if let Some(Type::Record { fields: expected, .. }) = self.type_hints.borrow().get(&node_key(expr)) {
+            for (name, t) in fields.iter_mut() {
+                if has_any(t) {
+                    if let Some(e) = expected.get(name) {
+                        *t = e.clone();
+                    }
+                }
+            }
+        }
+    }
+
     fn record_type(&self, record: &Json) -> Type {
         let mut fields = HashMap::new();
         for fv in record.as_object()["field_value"].as_array() {
@@ -2052,6 +2206,20 @@ impl<'a> ExprTranslator<'a> {
             fields.insert(field.as_str().to_string(), self.value_type(e));
         }
         Type::Record { fields, is_opened: false }
+    }
+}
+
+/// The key of an expression node among type hints: its address.
+fn node_key(expr: &Json) -> usize {
+    expr as *const Json as usize
+}
+
+/// Whether a type is unknown, or a list of unknowns.
+fn has_any(t: &Type) -> bool {
+    match t {
+        Type::Any => true,
+        Type::List(e) => has_any(e),
+        _ => false,
     }
 }
 
@@ -2079,6 +2247,7 @@ fn is_boolean_expression(expr: &Json) -> bool {
         matches!(
             name.as_str(),
             "==" | "!=" | "<" | ">" | "<=" | ">=" | "&&" | "||" | "!" | "in" | "is" | "is not" | "IsNull" | "Like"
+                | "ILike" | "StartsWith" | "EndsWith" | "RegexpContains"
         )
     })
 }
@@ -2095,6 +2264,8 @@ fn is_text_expression(expr: &Json) -> bool {
     }
     let Some(call) = o.get("call").filter(|c| c.is_object()) else { return false };
     call.as_object().get("predicate_name").is_some_and(|name| {
-        matches!(name.as_str(), "Substr" | "ToString" | "++" | "Upper" | "Lower" | "Format" | "Join")
+        matches!(name.as_str(), "Substr" | "ToString" | "++" | "Upper" | "Lower" | "Format" | "Join"
+            | "Replace" | "Trim" | "Lpad" | "Rpad" | "Repeat"
+            | "RegexpExtract" | "RegexpReplace" | "FlagValue")
     })
 }

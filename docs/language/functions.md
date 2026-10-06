@@ -12,6 +12,15 @@
 | `Join(list, sep)` | Join array into a string |
 | `Like(s, pattern)` | SQL pattern match: `%` any text, `_` one character, a backslash escapes them (`"50\%"`) |
 | `Format(fmt, ...)` | printf-style formatting |
+| `StartsWith(s, p)` / `EndsWith(s, p)` | Whether `s` starts / ends with `p` |
+| `Strpos(s, p)` | Position of `p` in `s` (**1-based**), 0 when absent |
+| `Lpad(s, n, p)` / `Rpad(s, n, p)` | `s` padded with `p` on the left / right to `n` characters (cut to `n` when longer) |
+| `Repeat(s, n)` | `s` repeated `n` times |
+| `Replace(s, a, b)` | Every `a` in `s` replaced by `b` |
+| `Trim(s)` | `s` without leading and trailing spaces |
+| `RegexpContains(s, r)` | Whether the regular expression `r` matches in `s` |
+| `RegexpExtract(s, r)` | The first match of `r` in `s`, null when none |
+| `RegexpReplace(s, r, b)` | Every match of `r` in `s` replaced by `b` |
 
 ## Array functions
 
@@ -24,7 +33,9 @@
 
 ## Math functions
 
-`Abs`, `Floor`, `Ceil`, `Round`, `Sqrt`, `Exp`, `Log`, `Sin`, `Cos`.
+`Abs`, `Floor`, `Ceil`, `Round`, `Sqrt`, `Exp`, `Log` (natural), `Sin`, `Cos`.
+
+`Round(x)` rounds a half away from zero (`Round(2.5)` is 3, `Round(-2.5)` is -3). `Round(x, digits)` rounds the number as its text shows it, at 15 significant digits, half away from zero, as a spreadsheet does: `Round(1.005, 2)` is 1.01 and `Round(2.675, 2)` is 2.68 on every engine, though the doubles nearest 1.005 and 2.675 are just below them; a negative number of digits rounds to tens, hundreds, ... (`Round(1234, -2)` is 1200).
 
 ## Type casting
 
@@ -42,6 +53,10 @@ Integer literals are 32-bit on DuckDB, PostgreSQL, Trino, Presto and Databricks,
 |----------|-------------|
 | `IsNull(x)` | Null test as an expression |
 | `Coalesce(x, y, ...)` | First non-null argument |
+| `Ifnull(x, y)` | `x`, or `y` when `x` is null |
+| `If(c, a, b)` | `a` when `c` holds, else `b` |
+| `Trunc(x)` | `x` without its fraction (toward zero) |
+| `Div(a, b)` | The whole quotient of `a` by `b` (toward zero) |
 | `Constraint(expr)` | Filter rows by a boolean expression |
 
 !!! warning "`SqlExpr` is reserved for the built-in library"
@@ -55,6 +70,8 @@ Integer literals are 32-bit on DuckDB, PostgreSQL, Trino, Presto and Databricks,
 !!! note "Indexing conventions"
     `Substr` is **1-based** (SQL convention); `Element` is **0-based** (array convention).
 
+The functions listed on this page run, and give the same result, on every engine. A call of a function that the program does not define and that is not a built-in is refused by the verifier (`Undefined function 'Substrr' ... did you mean 'Substr'?`): it would otherwise read a table of that name.
+
 ## User-defined functions
 
 Define pure functions with `=`:
@@ -63,6 +80,8 @@ Define pure functions with `=`:
 Square(x) = x * x;
 FullName(first, last) = first ++ " " ++ last;
 ```
+
+A function may not take the name of a built-in function (`Upper`, `Size`, `Pow`, ...): it would change what the name means in the whole program, and the verifier refuses it. A relation may (`Rank(x:)`): it is never called as a function.
 
 ```logica
 Greeting(message:) :- Users(first_name:, last_name:),

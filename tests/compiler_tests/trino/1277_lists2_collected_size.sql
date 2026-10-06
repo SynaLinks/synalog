@@ -23,7 +23,7 @@ WITH t_3_L AS (SELECT * FROM (
 t_1_All AS (SELECT
   ARRAY_AGG(x_2) AS xs
 FROM
-  t_3_L AS t_2_L, UNNEST(t_2_L.l) as pushkin(x_2))
+  t_3_L AS t_2_L, UNNEST(TRANSFORM(t_2_L.l, synalog_e -> ROW(synalog_e))) as pushkin(x_2))
 SELECT
   CARDINALITY(t_0_All.xs) AS n
 FROM

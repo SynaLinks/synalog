@@ -4,15 +4,6 @@ create schema if not exists logica_home;
 drop type if exists logicarecord893574736 cascade; create type logicarecord893574736 as struct(nirvana numeric);
 create sequence if not exists eternal_logical_sequence;
 
-
--- Logica type: logicarecord481217614
-drop type if exists logicarecord481217614 cascade; create type logicarecord481217614 as struct(r logicarecord893574736);
-
--- Logica type: logicarecord383307722
-drop type if exists logicarecord383307722 cascade; create type logicarecord383307722 as struct(a timestamp);
-
--- Logica type: logicarecord519939597
-drop type if exists logicarecord519939597 cascade; create type logicarecord519939597 as struct(args text[], predicate text);
 WITH t_2_ApproverOf AS (SELECT * FROM (
   
     SELECT
@@ -46,7 +37,7 @@ t_1_Effective_MultBodyAggAux AS (SELECT * FROM (
       ((SELECT
         MIN((CASE WHEN x_13.unnested_pod = 0 THEN 1 ELSE NULL END)) AS logica_value
       FROM
-        (select unnest([0]::numeric[]) as unnested_pod) as x_13
+        (select unnest([0]) as unnested_pod) as x_13
       WHERE
         (ApproverOf.approver = 'dan')) IS NULL)
    UNION ALL
@@ -57,7 +48,6 @@ t_1_Effective_MultBodyAggAux AS (SELECT * FROM (
     FROM
       t_2_ApproverOf AS t_3_ApproverOf
     WHERE
-      (t_3_ApproverOf.approver = 'dan') AND
       (t_3_ApproverOf.approver = 'dan')
   
 ) AS UNUSED_TABLE_NAME  ),

@@ -1,2 +1,2 @@
 SELECT
-  JOIN_STRINGS(SPLIT('abc', ','), ',') AS s;
+  (CASE WHEN SPLIT('abc', ',') IS NULL OR ',' IS NULL THEN NULL ELSE COALESCE((SELECT GROUP_CONCAT(value, ',') FROM (SELECT value FROM JSON_EACH(SPLIT('abc', ',')) WHERE value IS NOT NULL ORDER BY key)), '') END) AS s;

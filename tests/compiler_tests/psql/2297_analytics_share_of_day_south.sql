@@ -98,7 +98,7 @@ WHERE
   (t_3_S.r = 'south'))
 SELECT
   S.d AS d,
-  ROUND(CAST(((100) * ((CAST(S.v AS double precision) / (t_0_T.t)))) AS numeric), 6) AS pct
+  (SELECT (CASE WHEN synalog_v IS NULL OR 6 IS NULL THEN NULL WHEN CAST(synalog_v AS double precision) = 0 THEN CAST(synalog_v AS double precision) WHEN FLOOR(LOG(ABS(CAST(synalog_v AS double precision)))) - 14 + 6 >= 0 THEN (CASE WHEN CAST(synalog_v AS double precision) < 0 THEN -1 ELSE 1 END) * FLOOR(ABS(CAST(synalog_v AS double precision)) / POWER(10, FLOOR(LOG(ABS(CAST(synalog_v AS double precision)))) - 14) + 0.5) * POWER(10, FLOOR(LOG(ABS(CAST(synalog_v AS double precision)))) - 14) + 0 ELSE (CASE WHEN CAST(synalog_v AS double precision) < 0 THEN -1 ELSE 1 END) * FLOOR(ABS(CAST(synalog_v AS double precision)) * POWER(10, 6) + 0.5 + 0.5 * POWER(10, FLOOR(LOG(ABS(CAST(synalog_v AS double precision)))) - 14 + 6)) / POWER(10, 6) + 0 END) FROM (SELECT ((100) * ((CAST(S.v AS double precision) / NULLIF(t_0_T.t, 0)))) AS synalog_v) AS synalog_n) AS pct
 FROM
   t_1_S AS S, t_2_T AS t_0_T
 WHERE

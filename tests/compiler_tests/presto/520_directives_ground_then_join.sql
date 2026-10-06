@@ -1,8 +1,8 @@
 DROP TABLE IF EXISTS logica_test.G;
 CREATE TABLE logica_test.G AS SELECT
-  x_6 AS k
+  x_1 AS k
 FROM
-  UNNEST(ARRAY[1]) as pushkin(x_6);
+  UNNEST(TRANSFORM(ARRAY[1], synalog_e -> ROW(synalog_e))) as pushkin(x_1);
 
 -- Interacting with table logica_test.G
 

@@ -11,4 +11,4 @@ FROM
 WHERE
   (x_12 > 5) AND
   (x_12 = x_10) AND
-  ((MOD(x_10, 2)) = 0) ORDER BY col0;
+  ((MOD(CAST(x_10 AS numeric), NULLIF(CAST(2 AS numeric), 0))) = 0) ORDER BY col0;

@@ -3,7 +3,7 @@ WITH t_0_Sorted AS (SELECT
 FROM
   LATERAL (SELECT explode(FILTER(SEQUENCE(0, 20), x -> x < 20)) AS x_5) AS pushkin
 WHERE
-  ((MOD(x_5, 2)) = 0) ORDER BY col0 NULLS LAST),
+  ((MOD(x_5, NULLIF(2, 0))) = 0) ORDER BY col0 NULLS LAST),
 t_0_Top5 AS (SELECT
   x_5 AS col0
 FROM
@@ -13,7 +13,7 @@ t_0_TopEven AS (SELECT
 FROM
   LATERAL (SELECT explode(FILTER(SEQUENCE(0, 20), x -> x < 20)) AS x_5) AS pushkin
 WHERE
-  ((MOD(x_5, 2)) = 0) ORDER BY col0 NULLS LAST LIMIT 3)
+  ((MOD(x_5, NULLIF(2, 0))) = 0) ORDER BY col0 NULLS LAST LIMIT 3)
 SELECT * FROM (
   
     SELECT

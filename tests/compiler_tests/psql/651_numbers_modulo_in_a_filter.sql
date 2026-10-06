@@ -10,4 +10,4 @@ FROM
   UNNEST(COALESCE((SELECT ARRAY_AGG(x) FROM GENERATE_SERIES(0, 10 - 1) as x), '{}')) as x_1
 WHERE
   (x_1 > 0) AND
-  ((MOD(x_1, 3)) = 0) ORDER BY x;
+  ((MOD(CAST(x_1 AS numeric), NULLIF(CAST(3 AS numeric), 0))) = 0) ORDER BY x;

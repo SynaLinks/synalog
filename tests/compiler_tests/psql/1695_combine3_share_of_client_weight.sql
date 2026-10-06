@@ -89,11 +89,11 @@ WITH t_1_Ship AS (SELECT * FROM (
 ) AS UNUSED_TABLE_NAME  )
 SELECT
   Ship.id AS id,
-  ROUND(CAST(((100) * ((CAST(Ship.kg AS double precision) / (CAST((SELECT
+  (SELECT (CASE WHEN synalog_v IS NULL OR 4 IS NULL THEN NULL WHEN CAST(synalog_v AS double precision) = 0 THEN CAST(synalog_v AS double precision) WHEN FLOOR(LOG(ABS(CAST(synalog_v AS double precision)))) - 14 + 4 >= 0 THEN (CASE WHEN CAST(synalog_v AS double precision) < 0 THEN -1 ELSE 1 END) * FLOOR(ABS(CAST(synalog_v AS double precision)) / POWER(10, FLOOR(LOG(ABS(CAST(synalog_v AS double precision)))) - 14) + 0.5) * POWER(10, FLOOR(LOG(ABS(CAST(synalog_v AS double precision)))) - 14) + 0 ELSE (CASE WHEN CAST(synalog_v AS double precision) < 0 THEN -1 ELSE 1 END) * FLOOR(ABS(CAST(synalog_v AS double precision)) * POWER(10, 4) + 0.5 + 0.5 * POWER(10, FLOOR(LOG(ABS(CAST(synalog_v AS double precision)))) - 14 + 4)) / POWER(10, 4) + 0 END) FROM (SELECT ((100) * ((CAST(Ship.kg AS double precision) / NULLIF(CAST((SELECT
   SUM((CASE WHEN x_8 = 0 THEN t_0_Ship.kg ELSE NULL END)) AS logica_value
 FROM
   t_1_Ship AS t_0_Ship, UNNEST(ARRAY[0]) as x_8
 WHERE
-  (t_0_Ship.client = Ship.client)) AS numeric))))) AS numeric), 4) AS pct
+  (t_0_Ship.client = Ship.client)) AS numeric), 0)))) AS synalog_v) AS synalog_n) AS pct
 FROM
   t_1_Ship AS Ship ORDER BY id, pct;

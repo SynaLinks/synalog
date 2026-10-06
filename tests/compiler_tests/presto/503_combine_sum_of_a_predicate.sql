@@ -1,5 +1,5 @@
 SELECT
   (SELECT
-  SUM(x_5) AS logica_value
+  SUM(x_4) AS logica_value
 FROM
-  UNNEST(ARRAY[1, 2, 3]) as pushkin(x_5)) AS t;
+  UNNEST(TRANSFORM(ARRAY[1, 2, 3], synalog_e -> ROW(synalog_e))) as pushkin(x_4)) AS t;

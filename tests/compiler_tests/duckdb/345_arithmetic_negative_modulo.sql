@@ -5,5 +5,5 @@ drop type if exists logicarecord893574736 cascade; create type logicarecord89357
 create sequence if not exists eternal_logical_sequence;
 
 SELECT
-  - ((7) % (3)) AS a,
-  ((7) % (-3)) AS b;
+  - ((7) % NULLIF(3, 0)) AS a,
+  ((7) % NULLIF(-3, 0)) AS b;

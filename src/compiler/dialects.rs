@@ -38,10 +38,39 @@ pub fn backslash_escaped_literal(s: &str) -> String {
 /// sorts fields), so the `ROW(…)::name` literal and the `CREATE TYPE name …`
 /// preamble agree without any shared state. Prefixed `logicarecord` so the
 /// golden-test normalizer strips the generated DDL like the existing placeholder.
+///
+/// The name hashes the type's columns as declared (`psql_record_columns`), not
+/// only its shape: a declaration is created once per database (`if not
+/// exists`), so a type declared differently must have another name.
 pub fn record_type_name(ty: &Type) -> String {
     let mut hasher = DefaultHasher::new();
-    format!("{}", ty).hash(&mut hasher);
+    psql_record_columns(ty).hash(&mut hasher);
     format!("logicarecord{}", hasher.finish())
+}
+
+/// The columns of a record's PostgreSQL composite type, in canonical (sorted)
+/// order, the order of the values of its `ROW(…)`: `"f" type, …`. A field of
+/// a record has that record's composite type, a list of records an array of
+/// it.
+pub fn psql_record_columns(ty: &Type) -> String {
+    fn column_type(t: &Type) -> String {
+        match t {
+            Type::Record { .. } => record_type_name(t),
+            Type::List(inner) => format!("{}[]", column_type(inner)),
+            Type::Number => "numeric".to_string(),
+            Type::Bool => "boolean".to_string(),
+            _ => "text".to_string(),
+        }
+    }
+    let Type::Record { fields, .. } = ty else { return String::new() };
+    let mut items: Vec<(&String, &Type)> = fields.iter().collect();
+    items.sort_by(|a, b| a.0.cmp(b.0));
+    items.iter()
+        // Quoted, so a reserved word (`left`) is a field; a lowercase name
+        // folds as an unquoted field access does.
+        .map(|(k, t)| format!("\"{}\" {}", k, column_type(t)))
+        .collect::<Vec<_>>()
+        .join(", ")
 }
 
 // ---------------------------------------------------------------------------
@@ -71,6 +100,14 @@ const SQL_KEYWORDS: &[&str] = &[
     "RIGHT", "ROW", "ROWS", "SELECT", "SESSION_USER", "SET", "SOME", "TABLE", "THEN", "TO",
     "TRAILING", "TRUE", "UNION", "UNIQUE", "UNNEST", "UPDATE", "USER", "USING", "VALUES", "WHEN",
     "WHERE", "WINDOW", "WITH",
+    // Trino's and Presto's own.
+    "CUBE", "CURRENT_CATALOG", "CURRENT_PATH", "CURRENT_ROLE", "CURRENT_SCHEMA", "DEALLOCATE",
+    "DESCRIBE", "ESCAPE", "EXECUTE", "EXTRACT", "JSON_ARRAY", "JSON_EXISTS", "JSON_OBJECT",
+    "JSON_QUERY", "JSON_TABLE", "JSON_VALUE", "LISTAGG", "LOCALTIME", "LOCALTIMESTAMP", "NORMALIZE",
+    "PREPARE", "RECURSIVE", "ROLLUP", "SKIP", "TRIM", "UESCAPE",
+    // PostgreSQL's own.
+    "ANALYSE", "ANALYZE", "ASYMMETRIC", "DEFERRABLE", "INITIALLY", "PLACING", "RETURNING",
+    "SYMMETRIC", "VARIADIC",
 ];
 
 pub fn is_sql_keyword(name: &str) -> bool {
@@ -134,11 +171,20 @@ pub trait Dialect {
         None
     }
 
-    /// `Round(x, digits)`, where the one-argument `Round` template does not
-    /// fit (PostgreSQL rounds a double only to a whole number). A template of
-    /// `{0}` and `{1}`.
-    fn round_to_digits(&self) -> Option<&'static str> {
-        None
+    /// An expression `{body}` of a value `{0}` named `synalog_v` once, so
+    /// the value, an expression maybe, is written and computed once.
+    fn bind_value(&self) -> &'static str {
+        "(SELECT {body} FROM (SELECT {0} AS synalog_v) AS synalog_n)"
+    }
+
+    /// The SQL type of a double.
+    fn double_type(&self) -> &'static str {
+        "DOUBLE"
+    }
+
+    /// The base-10 logarithm.
+    fn log10_function(&self) -> &'static str {
+        "LOG10"
     }
 
     /// The text of a boolean, where the engine has no boolean type and
@@ -192,6 +238,12 @@ pub trait Dialect {
     /// UNNEST phrase template with `{0}` for array, `{1}` for alias.
     fn unnest_phrase(&self) -> &'static str;
 
+    /// `unnest_phrase` for an array of records, whose element must stay one
+    /// value (PostgreSQL spreads a composite into a column per field).
+    fn unnest_records_phrase(&self) -> &'static str {
+        self.unnest_phrase()
+    }
+
     /// Array literal construction template.
     fn array_phrase(&self) -> &'static str;
 
@@ -234,6 +286,12 @@ pub trait Dialect {
         false
     }
 
+    /// `array` (an empty array or a null) typed as an array of `element`,
+    /// when the dialect writes one.
+    fn typed_array(&self, _array: &str, _element: &Type) -> Option<String> {
+        None
+    }
+
     /// SQL for an empty array literal.
     fn empty_array_literal(&self) -> String {
         let ap = self.array_phrase();
@@ -269,6 +327,9 @@ pub trait Dialect {
     /// (sorted) order so the type matches the value emitted by `record_literal`.
     fn row_field_type(&self, ty: &Type) -> String {
         match ty {
+            Type::List(inner) if matches!(**inner, Type::Record { .. } | Type::List(_)) => {
+                format!("array({})", self.row_field_type(inner))
+            }
             Type::Record { fields, .. } => {
                 let mut items: Vec<(&String, &Type)> = fields.iter().collect();
                 items.sort_by(|a, b| a.0.cmp(b.0));
@@ -363,6 +424,8 @@ pub fn get(engine: &str) -> Result<Box<dyn Dialect>, CompileError> {
 pub struct BigQueryDialect;
 
 impl Dialect for BigQueryDialect {
+    fn bind_value(&self) -> &'static str { "(SELECT {body} FROM UNNEST([{0}]) AS synalog_v)" }
+    fn double_type(&self) -> &'static str { "FLOAT64" }
     fn number_to_string(&self) -> Option<&'static str> {
         Some("(SELECT (CASE WHEN synalog_v IS NULL THEN NULL WHEN ABS(synalog_v) < 0.0000000000000005 THEN '0' WHEN synalog_v = FLOOR(synalog_v) AND ABS(synalog_v) < 1e18 THEN CAST(CAST(synalog_v AS INT64) AS STRING) WHEN ABS(synalog_v) >= 1e38 THEN CAST(synalog_v AS STRING) WHEN ABS(synalog_v) >= 1e15 THEN CAST(ROUND(CAST(synalog_v AS BIGNUMERIC), 14 - CAST(FLOOR(LOG10(COALESCE(NULLIF(ABS(synalog_v), 0), 1))) AS INT64)) AS STRING) ELSE CAST(ROUND(CAST(synalog_v AS BIGNUMERIC), 14 - CAST(FLOOR(LOG10(COALESCE(NULLIF(ABS(synalog_v), 0), 1))) AS INT64)) AS STRING) END) FROM UNNEST([{0}]) AS synalog_v)")
     }
@@ -372,8 +435,9 @@ impl Dialect for BigQueryDialect {
     }
 
     fn quote_identifier(&self, name: &str) -> String {
-        // Double quotes make a string here: identifiers take backticks.
-        format!("`{}`", name.replace('`', "\\`"))
+        // Double quotes make a string here: identifiers take backticks,
+        // with a string's backslash escapes.
+        format!("`{}`", name.replace('\\', "\\\\").replace('`', "\\`"))
     }
 
     fn name(&self) -> &'static str { "bigquery" }
@@ -381,6 +445,8 @@ impl Dialect for BigQueryDialect {
 
     fn built_in_functions(&self) -> HashMap<&'static str, &'static str> {
         let mut m = HashMap::new();
+        m.insert("RegexpContains", "REGEXP_CONTAINS({0}, {1})");
+        m.insert("Div", "CAST((CASE WHEN (({0}) < 0) <> (({1}) < 0) THEN CEIL(CAST({0} AS FLOAT64) / NULLIF({1}, 0)) ELSE FLOOR(CAST({0} AS FLOAT64) / NULLIF({1}, 0)) END) AS INT64)");
         // LIKE has no ESCAPE clause here: a backslash escapes already.
         m.insert("Like", "({0} LIKE {1})");
         m
@@ -453,6 +519,8 @@ Array(a) = SqlExpr(
 pub struct SqLiteDialect;
 
 impl Dialect for SqLiteDialect {
+    fn bind_value(&self) -> &'static str { "(SELECT {body} FROM (SELECT {0} AS synalog_v))" }
+    fn double_type(&self) -> &'static str { "REAL" }
     fn number_to_string(&self) -> Option<&'static str> {
         Some("(SELECT (CASE WHEN synalog_v IS NULL THEN NULL WHEN abs(synalog_v) < 0.0000000000000005 THEN '0' WHEN synalog_v = CAST(synalog_v AS INTEGER) AND abs(synalog_v) < 1e18 THEN CAST(CAST(synalog_v AS INTEGER) AS TEXT) WHEN abs(synalog_v) >= 1e38 THEN CAST(synalog_v AS TEXT) WHEN abs(synalog_v) >= 1e15 THEN (CASE WHEN synalog_v < 0 THEN '-' ELSE '' END) || substr(printf('%.14e', abs(synalog_v)), 1, 1) || substr(printf('%.14e', abs(synalog_v)), 3, 14) || substr('0000000000000000000000000', 1, CAST(substr(printf('%.14e', abs(synalog_v)), instr(printf('%.14e', abs(synalog_v)), 'e') + 1) AS INTEGER) - 14) ELSE rtrim(rtrim(printf('%.*f', max(1, min(15, 14 - CAST(floor(log10(coalesce(nullif(abs(synalog_v), 0), 1))) AS INTEGER))), synalog_v), '0'), '.') END) FROM (SELECT {0} AS synalog_v))")
     }
@@ -473,6 +541,13 @@ impl Dialect for SqLiteDialect {
 
     fn built_in_functions(&self) -> HashMap<&'static str, &'static str> {
         let mut m = HashMap::new();
+        m.insert("Strpos", "INSTR({0}, {1})");
+        m.insert("Lpad", "(CASE WHEN LENGTH({0}) >= {1} THEN SUBSTR({0}, 1, {1}) ELSE SUBSTR(REPLACE(HEX(ZEROBLOB({1})), '00', {2}), 1, {1} - LENGTH({0})) || {0} END)");
+        m.insert("Rpad", "(CASE WHEN LENGTH({0}) >= {1} THEN SUBSTR({0}, 1, {1}) ELSE {0} || SUBSTR(REPLACE(HEX(ZEROBLOB({1})), '00', {2}), 1, {1} - LENGTH({0})) END)");
+        m.insert("Repeat", "(CASE WHEN {0} IS NULL OR {1} IS NULL THEN NULL ELSE REPLACE(HEX(ZEROBLOB({1})), '00', {0}) END)");
+        // REGEXP of a null is false here; a null is null on every engine.
+        m.insert("RegexpContains", "(CASE WHEN {0} IS NULL OR {1} IS NULL THEN NULL ELSE {0} REGEXP {1} END)");
+        m.insert("Div", "CAST((CASE WHEN (({0}) < 0) <> (({1}) < 0) THEN CEIL(CAST({0} AS REAL) / NULLIF({1}, 0)) ELSE FLOOR(CAST({0} AS REAL) / NULLIF({1}, 0)) END) AS INTEGER)");
         // SQLite's CAST truncates a fraction; the other engines round it (half
         // away from zero). Only a float is rounded: an integer goes through
         // as it is, without passing through a double.
@@ -488,7 +563,9 @@ impl Dialect for SqLiteDialect {
         m.insert("ValueOfUnnested", "{0}.value");
         m.insert("List", "JSON_GROUP_ARRAY({0})");
         m.insert("Size", "JSON_ARRAY_LENGTH({0})");
-        m.insert("Join", "JOIN_STRINGS({0}, {1})");
+        // In SQL, as on the other engines: the elements in order, nulls
+        // skipped, empty text for an empty list.
+        m.insert("Join", "(CASE WHEN {0} IS NULL OR {1} IS NULL THEN NULL ELSE COALESCE((SELECT GROUP_CONCAT(value, {1}) FROM (SELECT value FROM JSON_EACH({0}) WHERE value IS NOT NULL ORDER BY key)), '') END)");
         m.insert("Count", "COUNT(DISTINCT {0})");
         m.insert("StringAgg", "GROUP_CONCAT(%s)");
         m.insert("Sort", "SortList({0})");
@@ -508,9 +585,12 @@ impl Dialect for SqLiteDialect {
         let mut m = HashMap::new();
         // `/` divides exactly, as BigQuery, DuckDB and Spark do: this engine
         // divides integers to an integer (7 / 2 = 3).
-        m.insert("/", "CAST(%s AS REAL) / (%s)");
+        m.insert("/", "CAST(%s AS REAL) / NULLIF(%s, 0)");
         m.insert("++", "(%s) || (%s)");
-        m.insert("%", "(%s) % (%s)");
+        // `%` truncates both sides to integers here (7.5 % 2 is 1): the
+        // remainder of the quotient truncated toward zero, which keeps an
+        // integer an integer.
+        m.insert("%", "(({0}) - ({1}) * CAST(({0}) / NULLIF({1}, 0) AS INTEGER))");
         m.insert("in", "IN_LIST(%s, %s)");
         m
     }
@@ -537,8 +617,6 @@ Arrow(left, right) = arrow :-
   left == arrow.arg,
   right == arrow.value;
 
-PrintToConsole(message) :- 1 == SqlExpr("PrintToConsole({message})", {message:});
-
 ArgMin(arr) = Element(
     SqlExpr("ArgMin({a}, {v}, 1)", {a:, v:}), 0) :- Arrow(a, v) == arr;
 
@@ -555,20 +633,7 @@ ArgMaxK(arr, k) =
 Array(arr) =
     SqlExpr("ArgMin({v}, {a}, null)", {a:, v:}) :- Arrow(a, v) == arr;
 
-ReadFile(filename) = SqlExpr("ReadFile({filename})", {filename:});
-
-ReadJson(filename) = ReadFile(filename);
-
-WriteFile(filename, content:) = SqlExpr("WriteFile({filename}, {content})",
-                                        {filename:, content:});
-
 Fingerprint(s) = SqlExpr("Fingerprint({s})", {s:});
-
-Intelligence(command) = SqlExpr("Intelligence({command})", {command:});
-
-RunClingo(script) = SqlExpr("RunClingo({script})", {script:});
-
-RunClingoFile(filename) = SqlExpr("RunClingoFile({filename})", {filename:});
 
 AssembleRecord(field_values) = SqlExpr("AssembleRecord({field_values})", {field_values:});
 
@@ -602,6 +667,11 @@ Char(code) = SqlExpr("CHAR({code})", {code:});
 pub struct PostgreSqlDialect;
 
 impl Dialect for PostgreSqlDialect {
+    fn float_literal(&self, text: &str) -> String {
+        // `1.5` is a numeric here, exact (`0.1 + 0.2 == 0.3`), where a number
+        // with a point is a double on the other engines.
+        format!("CAST({} AS double precision)", text)
+    }
     fn number_to_string(&self) -> Option<&'static str> {
         Some("(SELECT (CASE WHEN synalog_v IS NULL THEN NULL WHEN ABS(CAST(synalog_v AS numeric)) < 0.0000000000000005 THEN '0' WHEN CAST(synalog_v AS numeric) = FLOOR(CAST(synalog_v AS numeric)) AND ABS(CAST(synalog_v AS numeric)) < 1e18 THEN CAST(CAST(CAST(synalog_v AS numeric) AS BIGINT) AS TEXT) WHEN ABS(CAST(synalog_v AS numeric)) >= 1e38 THEN CAST(CAST(synalog_v AS numeric) AS TEXT) WHEN ABS(CAST(synalog_v AS numeric)) >= 1e15 THEN CAST(ROUND(CAST(CAST(synalog_v AS numeric) AS DECIMAL(38,0)), 14 - CAST(FLOOR(LOG(COALESCE(NULLIF(ABS(CAST(synalog_v AS numeric)), 0), 1))) AS INTEGER)) AS TEXT) ELSE TRIM(TRAILING '.' FROM TRIM(TRAILING '0' FROM CAST(CAST(ROUND(CAST(synalog_v AS numeric), 14 - CAST(FLOOR(LOG(COALESCE(NULLIF(ABS(CAST(synalog_v AS numeric)), 0), 1))) AS INTEGER)) AS DECIMAL(38,15)) AS TEXT))) END) FROM (SELECT {0} AS synalog_v) AS synalog_n)")
     }
@@ -619,8 +689,12 @@ impl Dialect for PostgreSqlDialect {
     fn int64_of_text(&self) -> Option<&'static str> {
         Some("CAST({0} AS BIGINT)")
     }
-    fn round_to_digits(&self) -> Option<&'static str> {
-        Some("ROUND(CAST({0} AS numeric), {1})")
+    fn double_type(&self) -> &'static str {
+        "double precision"
+    }
+
+    fn log10_function(&self) -> &'static str {
+        "LOG"
     }
     fn nulls_first_by_default(&self, descending: bool) -> bool { descending }
     fn format_uses_concat(&self) -> bool { true }
@@ -634,6 +708,10 @@ impl Dialect for PostgreSqlDialect {
 
     fn built_in_functions(&self) -> HashMap<&'static str, &'static str> {
         let mut m = HashMap::new();
+        m.insert("RegexpContains", "({0} ~ {1})");
+        m.insert("RegexpReplace", "regexp_replace({0}, {1}, {2}, 'g')");
+        m.insert("RegexpExtract", "SUBSTRING({0} FROM {1})");
+        m.insert("Div", "CAST((CASE WHEN (({0}) < 0) <> (({1}) < 0) THEN CEIL(CAST({0} AS double precision) / NULLIF({1}, 0)) ELSE FLOOR(CAST({0} AS double precision) / NULLIF({1}, 0)) END) AS BIGINT)");
         // ARRAY_AGG of no rows is null: Range(0) is the empty array.
         m.insert("Range", "COALESCE((SELECT ARRAY_AGG(x) FROM GENERATE_SERIES(0, {0} - 1) as x), '{}')");
         m.insert("RangeOf", "(SELECT ARRAY_AGG(x) FROM GENERATE_SERIES(0, ARRAY_LENGTH({0}, 1) - 1) as x)");
@@ -662,7 +740,9 @@ impl Dialect for PostgreSqlDialect {
         let mut m = HashMap::new();
         // `/` divides exactly, as BigQuery, DuckDB and Spark do: this engine
         // divides integers to an integer (7 / 2 = 3).
-        m.insert("/", "CAST(%s AS double precision) / (%s)");
+        m.insert("/", "CAST(%s AS double precision) / NULLIF(%s, 0)");
+        // MOD takes integers and numerics, not doubles.
+        m.insert("%", "MOD(CAST(%s AS numeric), NULLIF(CAST(%s AS numeric), 0))");
         m.insert("++", "%s || %s");
         m.insert("in", "%s = ANY(%s)");
         m
@@ -701,8 +781,6 @@ RecordAsJson(r) = SqlExpr(
 
 Fingerprint(s) = SqlExpr("('x' || substr(md5({s}), 1, 16))::bit(64)::bigint", {s:});
 
-ReadFile(filename) = SqlExpr("pg_read_file({filename})", {filename:});
-
 Chr(x) = SqlExpr("Chr({x})", {x:});
 
 Num(a) = a;
@@ -711,6 +789,7 @@ Str(a) = a;
     }
 
     fn unnest_phrase(&self) -> &'static str { "UNNEST({0}) as {1}" }
+    fn unnest_records_phrase(&self) -> &'static str { "LATERAL (SELECT UNNEST({0}) AS {1}) AS pushkin_{1}" }
     fn array_phrase(&self) -> &'static str { "ARRAY[%s]" }
     fn group_by_spec_by(&self) -> GroupBySpec { GroupBySpec::Expr }
     fn is_postgresqlish(&self) -> bool { true }
@@ -723,6 +802,16 @@ Str(a) = a;
     /// which covers every place an empty array literal can usefully appear.
     fn empty_array_literal(&self) -> String {
         "'{}'".to_string()
+    }
+
+    fn typed_array(&self, array: &str, element: &Type) -> Option<String> {
+        let t = match element {
+            Type::Number => "numeric",
+            Type::String => "text",
+            Type::Bool => "bool",
+            _ => return None,
+        };
+        Some(format!("CAST({} AS {}[])", array, t))
     }
 
     fn record_literal(&self, fields: &[(&str, &str, &Type)]) -> String {
@@ -764,6 +853,7 @@ Str(a) = a;
 pub struct TrinoDialect;
 
 impl Dialect for TrinoDialect {
+    fn bind_value(&self) -> &'static str { "element_at(transform(ARRAY[{0}], synalog_v -> {body}), 1)" }
     fn number_to_string(&self) -> Option<&'static str> {
         Some("element_at(transform(ARRAY[{0}], synalog_v -> (CASE WHEN synalog_v IS NULL THEN NULL WHEN ABS(synalog_v) < 0.0000000000000005 THEN '0' WHEN synalog_v = FLOOR(synalog_v) AND ABS(synalog_v) < 1e18 THEN CAST(CAST(synalog_v AS BIGINT) AS VARCHAR) WHEN ABS(synalog_v) >= 1e38 THEN CAST(synalog_v AS VARCHAR) WHEN ABS(synalog_v) >= 1e15 THEN CAST(ROUND(CAST(synalog_v AS DECIMAL(38,0)), 14 - CAST(FLOOR(LOG10(COALESCE(NULLIF(ABS(synalog_v), 0), 1))) AS INTEGER)) AS VARCHAR) ELSE TRIM(TRAILING '.' FROM TRIM(TRAILING '0' FROM CAST(CAST(ROUND(synalog_v, 14 - CAST(FLOOR(LOG10(COALESCE(NULLIF(ABS(synalog_v), 0), 1))) AS INTEGER)) AS DECIMAL(38,15)) AS VARCHAR))) END)), 1)")
     }
@@ -795,6 +885,11 @@ impl Dialect for TrinoDialect {
 
     fn built_in_functions(&self) -> HashMap<&'static str, &'static str> {
         let mut m = HashMap::new();
+        // ARRAY_JOIN skips nulls: the repetition of a null is null.
+        m.insert("Repeat", "(CASE WHEN {0} IS NULL OR {1} IS NULL THEN NULL ELSE ARRAY_JOIN(REPEAT({0}, {1}), '') END)");
+        // SUBSTR and REVERSE of an untyped null are ambiguous here.
+        m.insert("StartsWith", "starts_with(CAST({0} AS VARCHAR), CAST({1} AS VARCHAR))");
+        m.insert("EndsWith", "starts_with(REVERSE(CAST({0} AS VARCHAR)), REVERSE(CAST({1} AS VARCHAR)))");
         // SEQUENCE(0, -1) counts down, [0, -1]: Range(0) is empty.
         m.insert("Range", "FILTER(SEQUENCE(0, {0}), x -> x < {0})");
         // CAST writes a DOUBLE in scientific notation (1.5E0); format does
@@ -823,7 +918,7 @@ impl Dialect for TrinoDialect {
         let mut m = HashMap::new();
         // `/` divides exactly, as BigQuery, DuckDB and Spark do: this engine
         // divides integers to an integer (7 / 2 = 3).
-        m.insert("/", "CAST(%s AS DOUBLE) / (%s)");
+        m.insert("/", "CAST(%s AS DOUBLE) / NULLIF(%s, 0)");
         m.insert("++", "CONCAT(%s, %s)");
         // Deviation: upstream emits `x IN UNNEST(arr)` (BigQuery syntax).
         m.insert("in", "CONTAINS({1}, {0})");
@@ -860,7 +955,10 @@ Array(a) = SqlExpr(
 "#
     }
 
-    fn unnest_phrase(&self) -> &'static str { "UNNEST({0}) as pushkin({1})" }
+    // UNNEST spreads an array of rows into a column per field: each element
+    // goes in a row of one field, so it stays one column, a record or not
+    // (the type of a list's elements is not always known).
+    fn unnest_phrase(&self) -> &'static str { "UNNEST(TRANSFORM({0}, synalog_e -> ROW(synalog_e))) as pushkin({1})" }
     fn array_phrase(&self) -> &'static str { "ARRAY[%s]" }
     fn group_by_spec_by(&self) -> GroupBySpec { GroupBySpec::Index }
     fn decorate_combine_rule(&self) -> bool { false }
@@ -887,6 +985,7 @@ Array(a) = SqlExpr(
 pub struct PrestoDialect;
 
 impl Dialect for PrestoDialect {
+    fn bind_value(&self) -> &'static str { "element_at(transform(ARRAY[{0}], synalog_v -> {body}), 1)" }
     fn number_to_string(&self) -> Option<&'static str> {
         Some("element_at(transform(ARRAY[{0}], synalog_v -> (CASE WHEN synalog_v IS NULL THEN NULL WHEN ABS(synalog_v) < 0.0000000000000005 THEN '0' WHEN synalog_v = FLOOR(synalog_v) AND ABS(synalog_v) < 1e18 THEN CAST(CAST(synalog_v AS BIGINT) AS VARCHAR) WHEN ABS(synalog_v) >= 1e38 THEN CAST(synalog_v AS VARCHAR) WHEN ABS(synalog_v) >= 1e15 THEN CAST(ROUND(CAST(synalog_v AS DECIMAL(38,0)), 14 - CAST(FLOOR(LOG10(COALESCE(NULLIF(ABS(synalog_v), 0), 1))) AS INTEGER)) AS VARCHAR) ELSE rtrim(rtrim(CAST(CAST(ROUND(synalog_v, 14 - CAST(FLOOR(LOG10(COALESCE(NULLIF(ABS(synalog_v), 0), 1))) AS INTEGER)) AS DECIMAL(38,15)) AS VARCHAR), '0'), '.') END)), 1)")
     }
@@ -919,6 +1018,11 @@ impl Dialect for PrestoDialect {
 
     fn built_in_functions(&self) -> HashMap<&'static str, &'static str> {
         let mut m = HashMap::new();
+        // ARRAY_JOIN skips nulls: the repetition of a null is null.
+        m.insert("Repeat", "(CASE WHEN {0} IS NULL OR {1} IS NULL THEN NULL ELSE ARRAY_JOIN(REPEAT({0}, {1}), '') END)");
+        // SUBSTR and REVERSE of an untyped null are ambiguous here.
+        m.insert("StartsWith", "starts_with(CAST({0} AS VARCHAR), CAST({1} AS VARCHAR))");
+        m.insert("EndsWith", "starts_with(REVERSE(CAST({0} AS VARCHAR)), REVERSE(CAST({1} AS VARCHAR)))");
         // SEQUENCE(0, -1) counts down, [0, -1]: Range(0) is empty.
         m.insert("Range", "FILTER(SEQUENCE(0, {0}), x -> x < {0})");
         m.insert("ToString", "CAST(%s AS VARCHAR)");
@@ -942,7 +1046,7 @@ impl Dialect for PrestoDialect {
         let mut m = HashMap::new();
         // `/` divides exactly, as BigQuery, DuckDB and Spark do: this engine
         // divides integers to an integer (7 / 2 = 3).
-        m.insert("/", "CAST(%s AS DOUBLE) / (%s)");
+        m.insert("/", "CAST(%s AS DOUBLE) / NULLIF(%s, 0)");
         m.insert("++", "CONCAT(%s, %s)");
         // Deviation: upstream emits `x IN UNNEST(arr)` (BigQuery syntax).
         m.insert("in", "CONTAINS({1}, {0})");
@@ -979,7 +1083,10 @@ Array(a) = SqlExpr(
 "#
     }
 
-    fn unnest_phrase(&self) -> &'static str { "UNNEST({0}) as pushkin({1})" }
+    // UNNEST spreads an array of rows into a column per field: each element
+    // goes in a row of one field, so it stays one column, a record or not
+    // (the type of a list's elements is not always known).
+    fn unnest_phrase(&self) -> &'static str { "UNNEST(TRANSFORM({0}, synalog_e -> ROW(synalog_e))) as pushkin({1})" }
     fn array_phrase(&self) -> &'static str { "ARRAY[%s]" }
     fn group_by_spec_by(&self) -> GroupBySpec { GroupBySpec::Index }
     fn decorate_combine_rule(&self) -> bool { false }
@@ -1007,6 +1114,7 @@ Array(a) = SqlExpr(
 pub struct DatabricksDialect;
 
 impl Dialect for DatabricksDialect {
+    fn bind_value(&self) -> &'static str { "transform(array({0}), synalog_v -> {body})[0]" }
     // Spark rounds to a constant number of digits only: a double is
     // formatted to the digits it needs, a large number built from its
     // exponent form.
@@ -1020,9 +1128,24 @@ impl Dialect for DatabricksDialect {
         if text.contains(['e', 'E']) { text.to_string() } else { format!("{}E0", text) }
     }
 
+    fn typed_array(&self, array: &str, element: &Type) -> Option<String> {
+        // A null is no array to ELEMENT_AT or SIZE.
+        if array != "null" {
+            return None;
+        }
+        let t = match element {
+            Type::Number => "DOUBLE",
+            Type::String => "STRING",
+            Type::Bool => "BOOLEAN",
+            _ => return None,
+        };
+        Some(format!("CAST(null AS ARRAY<{}>)", t))
+    }
+
     fn quote_identifier(&self, name: &str) -> String {
-        // Double quotes make a string here: identifiers take backticks.
-        format!("`{}`", name.replace('`', "\\`"))
+        // Double quotes make a string here: identifiers take backticks,
+        // a backtick inside doubled.
+        format!("`{}`", name.replace('`', "``"))
     }
 
     fn name(&self) -> &'static str { "databricks" }
@@ -1036,6 +1159,9 @@ impl Dialect for DatabricksDialect {
 
     fn built_in_functions(&self) -> HashMap<&'static str, &'static str> {
         let mut m = HashMap::new();
+        m.insert("Strpos", "INSTR({0}, {1})");
+        m.insert("RegexpContains", "({0} RLIKE {1})");
+        m.insert("RegexpExtract", "(CASE WHEN {0} RLIKE {1} THEN REGEXP_EXTRACT({0}, {1}, 0) END)");
         m.insert("ToString", "CAST(%s AS STRING)");
         m.insert("StringAgg", "(CASE WHEN COUNT({0}) > 0 THEN ARRAY_JOIN(COLLECT_LIST(CAST({0} AS STRING)), ',') END)");
         m.insert("Join", "ARRAY_JOIN({0}, {1})");
@@ -1139,7 +1265,9 @@ Array(a) = SqlExpr(
     }
 
     fn str_literal(&self, s: &str) -> String {
-        backslash_escaped_literal(s)
+        // Spark substitutes `${var}` in a statement's text before it parses
+        // it, inside literals too (`"${env:HOME}"`): a dollar is `\u0024`.
+        backslash_escaped_literal(s).replace('$', "\\u0024")
     }
 }
 
@@ -1150,6 +1278,13 @@ Array(a) = SqlExpr(
 pub struct DuckDbDialect;
 
 impl Dialect for DuckDbDialect {
+    fn float_literal(&self, text: &str) -> String {
+        // `1.5` is a DECIMAL here, whose products overflow (DECIMAL(18)) and
+        // whose sums are exact (`0.1 + 0.2 == 0.3`); the exponent form is a
+        // DOUBLE, as a number with a point is on the other engines.
+        if text.contains(['e', 'E']) { text.to_string() } else { format!("{}E0", text) }
+    }
+    fn bind_value(&self) -> &'static str { "list_transform([{0}], synalog_v -> {body})[1]" }
     // DuckDB rounds a DECIMAL to a constant number of digits only: a double
     // is formatted to the digits it needs, a large number built from its
     // exponent form.
@@ -1170,6 +1305,9 @@ impl Dialect for DuckDbDialect {
 
     fn built_in_functions(&self) -> HashMap<&'static str, &'static str> {
         let mut m = HashMap::new();
+        m.insert("RegexpContains", "regexp_matches({0}, {1})");
+        m.insert("RegexpReplace", "regexp_replace({0}, {1}, {2}, 'g')");
+        m.insert("RegexpExtract", "(CASE WHEN regexp_matches({0}, {1}) THEN regexp_extract({0}, {1}) END)");
         m.insert("Element", "array_extract({0},  CAST({1}+1 AS BIGINT))");
         // A cast rounds a double half to even (2.5 to 2); ROUND rounds half
         // away from zero, as the other engines (2.5 to 3).
@@ -1200,7 +1338,7 @@ impl Dialect for DuckDbDialect {
     fn infix_operators(&self) -> HashMap<&'static str, &'static str> {
         let mut m = HashMap::new();
         m.insert("++", "(%s) || (%s)");
-        m.insert("%", "(%s) % (%s)");
+        m.insert("%", "(%s) % NULLIF(%s, 0)");
         m.insert("in", "list_contains({right}, {left})");
         m
     }
@@ -1217,8 +1355,6 @@ impl Dialect for DuckDbDialect {
 Arrow(left, right) = arrow :-
   left == arrow.arg,
   right == arrow.value;
-
-PrintToConsole(message) :- 1 == SqlExpr("PrintToConsole({message})", {message:});
 
 ArgMin(arr) = SqlExpr(
     "argmin({a}, {v})", {a: arr.arg, v: arr.value});
@@ -1242,8 +1378,6 @@ RecordAsJson(r) = SqlExpr(
   "ROW_TO_JSON({r})", {r:});
 
 Fingerprint(s) = NaturalHash(s);
-
-ReadFile(filename) = SqlExpr("(select struct_pack(size := any_value(size), content := any_value(content), filename := any_value(filename)) from read_text({filename}))", {filename:});
 
 Chr(x) = SqlExpr("Chr(cast({x} as integer))", {x:});
 Ord(x) = SqlExpr("Ord({x})", {x:});
@@ -1278,53 +1412,6 @@ MergeList(e) = SqlExpr("flatten(array_agg({e}))", {e:});
 ProverChoice(slot, options:) = options[i] :-
   i = NaturalHash("ProverChoice-" ++
                   ToString(UniqueNumber())) % Size(options);
-
-#######################
-# Clingo support.
-#
-
-Clingo(p, m) = SqlExpr("Clingo({p}, {m})", {p:, m:}) :-
-  m ~ [{predicate: Str, args: [Str]}];
-CompileClingo(p, m) = SqlExpr("CompileClingo({p}, {m})", {p:, m:}) :-
-  m ~ [{predicate: Str, args: [Str]}];
-
-RunClingo(p) = SqlExpr("RunClingo({p})", {p:});
-RunClingoFile(p) = SqlExpr("RunClingoFile({p})", {p:});
-RunClingoTemplate(p, a) = SqlExpr("RunClingoTemplate({p}, {a})", {p:, a:});
-RunClingoFileTemplate(p, a) = SqlExpr("RunClingoFileTemplate({p}, {a})", {p:, a:});
-
-RenderClingoArgs(args) = (
-  if Size(args) == 0 then
-    "()"
-  else
-    "(" ++ Join(args, ", ") ++ ")"
-);
-
-RenderClingoFact(predicate, args) =  predicate ++ RenderClingoArgs(args);
-
-QuoteIt(x) = Chr(34) ++ x ++ Chr(34);
-ClingoFact(predicate, args) = {predicate:,
-                               args: List{QuoteIt(a) :- a in args}};
-
-ExtractClingoCall(a, b, c, d, e, f, g, h,
-                  predicate:, model_id:) = models :-
-  model in models,
-  model_id = model.model_id,
-  entry in model.model,
-  entry.predicate = predicate,
-  args = entry.args,
-  a = args[0], b = args[1], c = args[2],
-  d = args[3], e = args[4], f = args[5],
-  g = args[6], h = args[7];
-
-JoinOrEmpty(x, s) = Coalesce(Join(x, s), "");
-
-RenderClingoModel(model, sep) = JoinOrEmpty(
-    List{RenderClingoFact(fact.predicate, fact.args) :-
-         fact in model}, sep);
-
-# Indexed sum, that Clingo needs.
-ISum(x) = SqlExpr("SUM({x})", {x:}) :- Error("ISum is to be used only in Clingo.") = true;
 "#
     }
 
@@ -1349,3 +1436,23 @@ ISum(x) = SqlExpr("SUM({x})", {x:}) :- Error("ISum is to be used only in Clingo.
 #[cfg(test)]
 #[path = "dialects_test.rs"]
 mod dialects_test;
+
+/// `Round(x, digits)` as a template of `{0}` and `{1}`, the same on every
+/// engine: the number as its text shows it, at 15 significant digits, rounded
+/// half away from zero, as a spreadsheet rounds (`Round(1.005, 2)` is 1.01,
+/// though the double nearest 1.005 is below it). The half unit of the 15th
+/// significant digit is added before the floor; where that digit is left of
+/// the place rounded to, the number at 15 digits is the result. `+ 0` makes
+/// a negative zero zero.
+pub fn round_to_digits_template(dialect: &dyn Dialect) -> String {
+    let v = format!("CAST(synalog_v AS {})", dialect.double_type());
+    let e = format!("FLOOR({}(ABS({})))", dialect.log10_function(), v);
+    let sign = format!("(CASE WHEN {} < 0 THEN -1 ELSE 1 END)", v);
+    let body = format!(
+        "(CASE WHEN synalog_v IS NULL OR {{1}} IS NULL THEN NULL WHEN {v} = 0 THEN {v} \
+         WHEN {e} - 14 + {{1}} >= 0 THEN {sign} * FLOOR(ABS({v}) / POWER(10, {e} - 14) + 0.5) * POWER(10, {e} - 14) + 0 \
+         ELSE {sign} * FLOOR(ABS({v}) * POWER(10, {{1}}) + 0.5 + 0.5 * POWER(10, {e} - 14 + {{1}})) / POWER(10, {{1}}) + 0 END)",
+        v = v, e = e, sign = sign
+    );
+    dialect.bind_value().replace("{body}", &body)
+}

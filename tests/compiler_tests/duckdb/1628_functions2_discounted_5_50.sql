@@ -5,4 +5,4 @@ drop type if exists logicarecord893574736 cascade; create type logicarecord89357
 create sequence if not exists eternal_logical_sequence;
 
 SELECT
-  CASE WHEN (((5) * (50)) >= 100) THEN ((((5) * (50))) * (0.9)) ELSE ((5) * (50)) END AS t;
+  CASE WHEN (((5) * (50)) >= 100) THEN ((((5) * (50))) * (0.9E0)) ELSE ((5) * (50)) END AS t;

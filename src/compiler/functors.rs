@@ -1317,13 +1317,30 @@ fn get_semi_naive_recursion_functor(depth: i64, p: &str, fields: &[Json]) -> Str
         })
         .collect::<Vec<_>>()
         .join(", ");
+    // A step's columns may be wider than its input's (an integer base, a
+    // bigint `ToInt64(x) * 2`, then a sum of it), and a column widens at most
+    // twice (integer, bigint, double), so the types stop changing within
+    // twice as many steps as there are columns. Steps from the base rows'
+    // types, applied to empty tables (free to compute), give the accumulated
+    // table the widest types from the start: every step's new rows are then
+    // inserted, in linear time, on every engine.
+    let widening = 2 * fields.len() + 1;
+    let mut typed = vec![
+        format!("{p}_sn_t0({args}) :- {p}_sn_delta({args}), 1 == 0;"),
+        format!("@Ground({p}_sn_t0);"),
+    ];
+    for k in 1..=widening {
+        // A step holds the base rows too: kept empty, only its types count.
+        typed.push(format!("{p}_sn_r{k} := {p}_ROne({p}_RZero: {p}_sn_t{});", k - 1));
+        typed.push(format!("{p}_sn_t{k}({args}) :- {p}_sn_r{k}({args}), 1 == 0;"));
+        typed.push(format!("@Ground({p}_sn_t{k});"));
+    }
+    let empties = (1..=widening).map(|k| format!(" | {p}_sn_t{k}({args})")).collect::<String>();
     [
         format!("{p}_sn_delta := {p}_ROne({p}_RZero: nil);"),
         format!("@Ground({p}_sn_delta);"),
-        // Created from the base rows, with the column types of a step's rows
-        // (an empty step: `1 == 0`), so the INSERT of every step's new rows
-        // fits strictly typed engines (an integer base, `y + 1` a bigint).
-        format!("{p}_sn_full({args}) :- {p}_sn_delta({args}) | ({p}_sn_step({args}), 1 == 0);"),
+        typed.join("\n"),
+        format!("{p}_sn_full({args}) :- {p}_sn_delta({args}){empties};"),
         format!("@Ground({p}_sn_full);"),
         format!("{p}_sn_step := {p}_ROne({p}_RZero: {p}_sn_delta);"),
         format!("{p}_sn_new({args}) distinct :- {p}_sn_step({args}), ~{p}_sn_full({args});"),

@@ -29,7 +29,7 @@ SELECT * FROM (
       FROM
         JSON_EACH((select json_group_array(n) from (with recursive t as(select 0 as n union all select n + 1 as n from t where n + 1 < 10) select n from t) where n < 10)) as x_12, JSON_EACH(JSON_ARRAY(0)) as x_8
       WHERE
-        (((x_5.value) % (2)) = 0) AND
+        ((((x_5.value) - (2) * CAST((x_5.value) / NULLIF(2, 0) AS INTEGER))) = 0) AND
         (x_5.value = x_12.value)) IS NULL)
    UNION ALL
   
@@ -60,6 +60,6 @@ SELECT * FROM (
         t_0_Prime AS Prime, JSON_EACH(JSON_ARRAY(0)) as x_10
       WHERE
         (Prime.col0 = x_7.value)) IS NULL) AND
-      (((x_7.value) % (2)) = 0)
+      ((((x_7.value) - (2) * CAST((x_7.value) / NULLIF(2, 0) AS INTEGER))) = 0)
   
-) AS UNUSED_TABLE_NAME  ORDER BY test_name, x ;
+) AS UNUSED_TABLE_NAME  ORDER BY test_name NULLS LAST, x NULLS LAST ;

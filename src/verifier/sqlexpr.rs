@@ -16,26 +16,26 @@ use std::collections::HashSet;
 use crate::errors::VerifyError;
 use crate::parser::Json;
 
-/// Unsafe `SqlExpr` usage error (one per offending rule head).
+/// SQL text written in a rule: a `SqlExpr` (one error per offending rule
+/// head), or a table name that is not one.
 #[derive(Debug, Clone)]
 pub struct SqlExprError {
     pub predicate: String,
+    /// The table name, when the SQL text is one.
+    pub table: Option<String>,
 }
 
 impl std::fmt::Display for SqlExprError {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        write!(
-            f,
-            "Unsafe SqlExpr in rule '{}': raw SQL bypasses verification and portability",
-            self.predicate
-        )
+        write!(f, "{}", VerifyError::from(self.clone()))
     }
 }
 
 impl From<SqlExprError> for VerifyError {
     fn from(e: SqlExprError) -> Self {
-        VerifyError::UnsafeSqlExpr {
-            predicate: e.predicate,
+        match e.table {
+            Some(table) => VerifyError::InvalidTableName { predicate: e.predicate, table },
+            None => VerifyError::UnsafeSqlExpr { predicate: e.predicate },
         }
     }
 }
@@ -71,6 +71,7 @@ pub fn check_sqlexpr(rules: &[&Json]) -> Vec<SqlExprError> {
         if seen.insert(name.to_string()) {
             errors.push(SqlExprError {
                 predicate: name.to_string(),
+                table: None,
             });
         }
     }

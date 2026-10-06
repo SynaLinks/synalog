@@ -41,6 +41,6 @@ WHERE
 SELECT
   Aggregated.total AS total,
   Aggregated.count AS count,
-  (CAST(Aggregated.total AS double precision) / (Aggregated.count)) AS avg
+  (CAST(Aggregated.total AS double precision) / NULLIF(Aggregated.count, 0)) AS avg
 FROM
   t_0_Aggregated AS Aggregated ORDER BY total;

@@ -1,0 +1,57 @@
+WITH t_0_V AS (SELECT * FROM (
+  
+    SELECT
+      1 AS id,
+      '2024-01-01' AS d
+   UNION ALL
+  
+    SELECT
+      2 AS id,
+      '2024-02-28' AS d
+   UNION ALL
+  
+    SELECT
+      3 AS id,
+      '2024-02-29' AS d
+   UNION ALL
+  
+    SELECT
+      4 AS id,
+      '2023-03-01' AS d
+   UNION ALL
+  
+    SELECT
+      5 AS id,
+      '2000-12-31' AS d
+   UNION ALL
+  
+    SELECT
+      6 AS id,
+      '1999-07-15' AS d
+   UNION ALL
+  
+    SELECT
+      7 AS id,
+      '2026-10-06' AS d
+   UNION ALL
+  
+    SELECT
+      8 AS id,
+      '1970-01-01' AS d
+   UNION ALL
+  
+    SELECT
+      9 AS id,
+      '2100-02-28' AS d
+   UNION ALL
+  
+    SELECT
+      10 AS id,
+      '2004-08-09' AS d
+  
+) AS UNUSED_TABLE_NAME  )
+SELECT
+  V.id AS id,
+  (MOD(((((((((((((((365) * (((CAST(SUBSTR(V.d, 1, 4) AS BIGINT)) - (1970))))) + (((CAST((CASE WHEN ((((CAST(SUBSTR(V.d, 1, 4) AS BIGINT)) - (1969))) < 0) <> ((4) < 0) THEN CEIL(CAST(((CAST(SUBSTR(V.d, 1, 4) AS BIGINT)) - (1969)) AS DOUBLE) / NULLIF(4, 0)) ELSE FLOOR(CAST(((CAST(SUBSTR(V.d, 1, 4) AS BIGINT)) - (1969)) AS DOUBLE) / NULLIF(4, 0)) END) AS BIGINT)) - (CAST((CASE WHEN ((((CAST(SUBSTR(V.d, 1, 4) AS BIGINT)) - (1901))) < 0) <> ((100) < 0) THEN CEIL(CAST(((CAST(SUBSTR(V.d, 1, 4) AS BIGINT)) - (1901)) AS DOUBLE) / NULLIF(100, 0)) ELSE FLOOR(CAST(((CAST(SUBSTR(V.d, 1, 4) AS BIGINT)) - (1901)) AS DOUBLE) / NULLIF(100, 0)) END) AS BIGINT)))))) + (CAST((CASE WHEN ((((CAST(SUBSTR(V.d, 1, 4) AS BIGINT)) - (1601))) < 0) <> ((400) < 0) THEN CEIL(CAST(((CAST(SUBSTR(V.d, 1, 4) AS BIGINT)) - (1601)) AS DOUBLE) / NULLIF(400, 0)) ELSE FLOOR(CAST(((CAST(SUBSTR(V.d, 1, 4) AS BIGINT)) - (1601)) AS DOUBLE) / NULLIF(400, 0)) END) AS BIGINT)))) + (CASE WHEN ((CAST(SUBSTR(V.d, 6, 2) AS BIGINT) > 2) AND ((((MOD(CAST(SUBSTR(V.d, 1, 4) AS BIGINT), NULLIF(4, 0))) = 0) AND ((MOD(CAST(SUBSTR(V.d, 1, 4) AS BIGINT), NULLIF(100, 0))) != 0)) OR ((MOD(CAST(SUBSTR(V.d, 1, 4) AS BIGINT), NULLIF(400, 0))) = 0))) THEN 1 ELSE 0 END))) + (ELEMENT_AT(ARRAY[0, 31, 59, 90, 120, 151, 181, 212, 243, 273, 304, 334], ((CAST(SUBSTR(V.d, 6, 2) AS BIGINT)) - (1)) + 1)))) + (((CAST(SUBSTR(V.d, 9, 2) AS BIGINT)) - (1))))) + (3)), NULLIF(7, 0))) AS w
+FROM
+  t_0_V AS V ORDER BY id;

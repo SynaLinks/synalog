@@ -1,0 +1,6 @@
+SELECT
+  SUM(1) AS c
+FROM
+  UNNEST(GENERATE_ARRAY(0, 6 - 1)) as x_0, UNNEST(GENERATE_ARRAY(0, 6 - 1)) as x_1
+WHERE
+  (x_0 < x_1);

@@ -14,6 +14,6 @@ SELECT
   x_6 AS x,
   Name.n AS n
 FROM
-  t_0_Name AS Name, UNNEST(ARRAY[1, 2]) as pushkin(x_6)
+  t_0_Name AS Name, UNNEST(TRANSFORM(ARRAY[1, 2], synalog_e -> ROW(synalog_e))) as pushkin(x_6)
 WHERE
-  (Name.p = CASE WHEN ((MOD(x_6, 2)) = 0) THEN 0 ELSE 1 END) ORDER BY x;
+  (Name.p = CASE WHEN ((MOD(x_6, NULLIF(2, 0))) = 0) THEN 0 ELSE 1 END) ORDER BY x;

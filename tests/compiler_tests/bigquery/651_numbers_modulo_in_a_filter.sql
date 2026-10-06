@@ -3,5 +3,5 @@ SELECT
 FROM
   UNNEST(GENERATE_ARRAY(0, 10 - 1)) as x_1
 WHERE
-  ((MOD(x_1, 3)) = 0) AND
-  (x_1 > 0) ORDER BY x;
+  (x_1 > 0) AND
+  ((MOD(x_1, NULLIF(3, 0))) = 0) ORDER BY x NULLS LAST;

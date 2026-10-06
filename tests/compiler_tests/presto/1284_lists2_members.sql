@@ -24,4 +24,4 @@ SELECT
   t_0_L.id AS id,
   x_4 AS x
 FROM
-  t_1_L AS t_0_L, UNNEST(t_0_L.l) as pushkin(x_4) ORDER BY id, x;
+  t_1_L AS t_0_L, UNNEST(TRANSFORM(t_0_L.l, synalog_e -> ROW(synalog_e))) as pushkin(x_4) ORDER BY id, x;

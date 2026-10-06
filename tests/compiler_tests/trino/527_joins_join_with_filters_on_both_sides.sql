@@ -19,7 +19,7 @@ SELECT
   B.k AS k,
   B.v AS v
 FROM
-  t_0_B AS B, UNNEST(ARRAY[1, 2, 3]) as pushkin(x_6)
+  t_0_B AS B, UNNEST(TRANSFORM(ARRAY[1, 2, 3], synalog_e -> ROW(synalog_e))) as pushkin(x_6)
 WHERE
   (B.k > 1) AND
   (B.v != 'c') AND

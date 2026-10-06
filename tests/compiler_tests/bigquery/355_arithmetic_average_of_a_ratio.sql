@@ -11,6 +11,6 @@ WITH t_0_V AS (SELECT * FROM (
   
 ) AS UNUSED_TABLE_NAME  )
 SELECT
-  AVG(((V.a) / (V.b))) AS r
+  AVG(((V.a) / NULLIF(V.b, 0))) AS r
 FROM
   t_0_V AS V;

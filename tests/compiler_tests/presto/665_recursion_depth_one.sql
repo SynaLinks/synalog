@@ -13,27 +13,105 @@ GROUP BY 1;
 
 -- Interacting with table logica_test.R_sn_delta
 
-DROP TABLE IF EXISTS logica_test.R_sn_full;
-CREATE TABLE logica_test.R_sn_full AS WITH t_1_R_MultBodyAggAux_f2 AS (SELECT * FROM (
+DROP TABLE IF EXISTS logica_test.R_sn_t0;
+CREATE TABLE logica_test.R_sn_t0 AS SELECT
+  R_sn_delta.y AS y
+FROM
+  logica_test.R_sn_delta AS R_sn_delta
+WHERE
+  (1 = 0);
+
+-- Interacting with table logica_test.R_sn_t0
+
+DROP TABLE IF EXISTS logica_test.R_sn_t1;
+CREATE TABLE logica_test.R_sn_t1 AS WITH t_1_R_MultBodyAggAux_f2 AS (SELECT * FROM (
   
     SELECT
       0 AS y
    UNION ALL
   
     SELECT
-      ((x_11) + (1)) AS y
+      ((x_9) + (1)) AS y
     FROM
-      logica_test.R_sn_delta AS t_2_R_sn_delta, UNNEST(FILTER(SEQUENCE(0, 10), x -> x < 10)) as pushkin(x_11)
+      logica_test.R_sn_t0 AS R_sn_t0, UNNEST(TRANSFORM(FILTER(SEQUENCE(0, 10), x -> x < 10), synalog_e -> ROW(synalog_e))) as pushkin(x_9)
     WHERE
-      (t_2_R_sn_delta.y = x_11)
+      (R_sn_t0.y = x_9)
   
 ) AS UNUSED_TABLE_NAME  ),
-t_0_R_sn_step AS (SELECT
+t_0_R_sn_r1 AS (SELECT
   R_MultBodyAggAux_f2.y AS y
 FROM
   t_1_R_MultBodyAggAux_f2 AS R_MultBodyAggAux_f2
 GROUP BY 1)
-SELECT * FROM (
+SELECT
+  R_sn_r1.y AS y
+FROM
+  t_0_R_sn_r1 AS R_sn_r1
+WHERE
+  (1 = 0);
+
+-- Interacting with table logica_test.R_sn_t1
+
+DROP TABLE IF EXISTS logica_test.R_sn_t2;
+CREATE TABLE logica_test.R_sn_t2 AS WITH t_1_R_MultBodyAggAux_f3 AS (SELECT * FROM (
+  
+    SELECT
+      0 AS y
+   UNION ALL
+  
+    SELECT
+      ((x_9) + (1)) AS y
+    FROM
+      logica_test.R_sn_t1 AS R_sn_t1, UNNEST(TRANSFORM(FILTER(SEQUENCE(0, 10), x -> x < 10), synalog_e -> ROW(synalog_e))) as pushkin(x_9)
+    WHERE
+      (R_sn_t1.y = x_9)
+  
+) AS UNUSED_TABLE_NAME  ),
+t_0_R_sn_r2 AS (SELECT
+  R_MultBodyAggAux_f3.y AS y
+FROM
+  t_1_R_MultBodyAggAux_f3 AS R_MultBodyAggAux_f3
+GROUP BY 1)
+SELECT
+  R_sn_r2.y AS y
+FROM
+  t_0_R_sn_r2 AS R_sn_r2
+WHERE
+  (1 = 0);
+
+-- Interacting with table logica_test.R_sn_t2
+
+DROP TABLE IF EXISTS logica_test.R_sn_t3;
+CREATE TABLE logica_test.R_sn_t3 AS WITH t_1_R_MultBodyAggAux_f4 AS (SELECT * FROM (
+  
+    SELECT
+      0 AS y
+   UNION ALL
+  
+    SELECT
+      ((x_9) + (1)) AS y
+    FROM
+      logica_test.R_sn_t2 AS R_sn_t2, UNNEST(TRANSFORM(FILTER(SEQUENCE(0, 10), x -> x < 10), synalog_e -> ROW(synalog_e))) as pushkin(x_9)
+    WHERE
+      (R_sn_t2.y = x_9)
+  
+) AS UNUSED_TABLE_NAME  ),
+t_0_R_sn_r3 AS (SELECT
+  R_MultBodyAggAux_f4.y AS y
+FROM
+  t_1_R_MultBodyAggAux_f4 AS R_MultBodyAggAux_f4
+GROUP BY 1)
+SELECT
+  R_sn_r3.y AS y
+FROM
+  t_0_R_sn_r3 AS R_sn_r3
+WHERE
+  (1 = 0);
+
+-- Interacting with table logica_test.R_sn_t3
+
+DROP TABLE IF EXISTS logica_test.R_sn_full;
+CREATE TABLE logica_test.R_sn_full AS SELECT * FROM (
   
     SELECT
       R_sn_delta.y AS y
@@ -42,35 +120,45 @@ SELECT * FROM (
    UNION ALL
   
     SELECT
-      R_sn_step.y AS y
+      R_sn_t1.y AS y
     FROM
-      t_0_R_sn_step AS R_sn_step
-    WHERE
-      (1 = 0)
+      logica_test.R_sn_t1 AS R_sn_t1
+   UNION ALL
+  
+    SELECT
+      R_sn_t2.y AS y
+    FROM
+      logica_test.R_sn_t2 AS R_sn_t2
+   UNION ALL
+  
+    SELECT
+      R_sn_t3.y AS y
+    FROM
+      logica_test.R_sn_t3 AS R_sn_t3
   
 ) AS UNUSED_TABLE_NAME  ;
 
 -- Interacting with table logica_test.R_sn_full
 
 DROP TABLE IF EXISTS logica_test.R_sn_new;
-CREATE TABLE logica_test.R_sn_new AS WITH t_1_R_MultBodyAggAux_f2 AS (SELECT * FROM (
+CREATE TABLE logica_test.R_sn_new AS WITH t_1_R_MultBodyAggAux_f5 AS (SELECT * FROM (
   
     SELECT
       0 AS y
    UNION ALL
   
     SELECT
-      ((x_11) + (1)) AS y
+      ((x_9) + (1)) AS y
     FROM
-      logica_test.R_sn_delta AS t_2_R_sn_delta, UNNEST(FILTER(SEQUENCE(0, 10), x -> x < 10)) as pushkin(x_11)
+      logica_test.R_sn_delta AS R_sn_delta, UNNEST(TRANSFORM(FILTER(SEQUENCE(0, 10), x -> x < 10), synalog_e -> ROW(synalog_e))) as pushkin(x_9)
     WHERE
-      (t_2_R_sn_delta.y = x_11)
+      (R_sn_delta.y = x_9)
   
 ) AS UNUSED_TABLE_NAME  ),
 t_0_R_sn_step AS (SELECT
-  R_MultBodyAggAux_f2.y AS y
+  R_MultBodyAggAux_f5.y AS y
 FROM
-  t_1_R_MultBodyAggAux_f2 AS R_MultBodyAggAux_f2
+  t_1_R_MultBodyAggAux_f5 AS R_MultBodyAggAux_f5
 GROUP BY 1)
 SELECT
   R_sn_step.y AS y

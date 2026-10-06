@@ -34,4 +34,4 @@ SELECT
 FROM
   t_0_Sales AS Sales, t_1_AvgSale AS AvgSale, t_3_CountSales AS CountSales
 WHERE
-  (Sales.amount > ((AvgSale.logica_value) / (CountSales.logica_value))) ORDER BY product;
+  (Sales.amount > ((AvgSale.logica_value) / NULLIF(CountSales.logica_value, 0))) ORDER BY product NULLS LAST;

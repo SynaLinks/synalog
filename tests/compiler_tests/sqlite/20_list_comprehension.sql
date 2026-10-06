@@ -7,7 +7,7 @@ t_4_EvenSquares AS (SELECT
 FROM
   JSON_EACH((select json_group_array(n) from (with recursive t as(select 0 as n union all select n + 1 as n from t where n + 1 < 10) select n from t) where n < 10)) as x_26
 WHERE
-  (((x_26.value) % (2)) = 0))
+  ((((x_26.value) - (2) * CAST((x_26.value) / NULLIF(2, 0) AS INTEGER))) = 0))
 SELECT
   t_0_Squares.logica_value AS squares,
   EvenSquares.logica_value AS even_squares

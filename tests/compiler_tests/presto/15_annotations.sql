@@ -1,19 +1,19 @@
 WITH t_0_Sorted AS (SELECT
   x_5 AS col0
 FROM
-  UNNEST(FILTER(SEQUENCE(0, 20), x -> x < 20)) as pushkin(x_5)
+  UNNEST(TRANSFORM(FILTER(SEQUENCE(0, 20), x -> x < 20), synalog_e -> ROW(synalog_e))) as pushkin(x_5)
 WHERE
-  ((MOD(x_5, 2)) = 0) ORDER BY col0),
+  ((MOD(x_5, NULLIF(2, 0))) = 0) ORDER BY col0),
 t_0_Top5 AS (SELECT
   x_5 AS col0
 FROM
-  UNNEST(FILTER(SEQUENCE(0, 20), x -> x < 20)) as pushkin(x_5) ORDER BY col0 LIMIT 5),
+  UNNEST(TRANSFORM(FILTER(SEQUENCE(0, 20), x -> x < 20), synalog_e -> ROW(synalog_e))) as pushkin(x_5) ORDER BY col0 LIMIT 5),
 t_0_TopEven AS (SELECT
   x_5 AS col0
 FROM
-  UNNEST(FILTER(SEQUENCE(0, 20), x -> x < 20)) as pushkin(x_5)
+  UNNEST(TRANSFORM(FILTER(SEQUENCE(0, 20), x -> x < 20), synalog_e -> ROW(synalog_e))) as pushkin(x_5)
 WHERE
-  ((MOD(x_5, 2)) = 0) ORDER BY col0 LIMIT 3)
+  ((MOD(x_5, NULLIF(2, 0))) = 0) ORDER BY col0 LIMIT 3)
 SELECT * FROM (
   
     SELECT

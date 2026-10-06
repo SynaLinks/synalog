@@ -1,2 +1,2 @@
 SELECT
-  "$$; DROP TABLE t; $$" AS s;
+  "\u0024\u0024; DROP TABLE t; \u0024\u0024" AS s;

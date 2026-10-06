@@ -46,10 +46,16 @@ pub struct UndefinedError {
     pub suggestion: Option<String>,
     /// Source text of the rule the reference appears in.
     pub rule: String,
+    /// The name is called as a function (`F(x)` in a value), not referenced
+    /// as a predicate.
+    pub function: bool,
 }
 
 impl std::fmt::Display for UndefinedError {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        if self.function {
+            return write!(f, "{}", VerifyError::from(self.clone()));
+        }
         match &self.suggestion {
             Some(s) => write!(
                 f,
@@ -69,6 +75,13 @@ impl std::error::Error for UndefinedError {}
 
 impl From<UndefinedError> for VerifyError {
     fn from(e: UndefinedError) -> Self {
+        if e.function {
+            return VerifyError::UndefinedFunction {
+                function: e.predicate,
+                suggestion: e.suggestion,
+                rule: e.rule,
+            };
+        }
         VerifyError::UndefinedPredicate {
             predicate: e.predicate,
             suggestion: e.suggestion,
@@ -188,9 +201,17 @@ pub fn check_undefined(rules: &[&Json]) -> Vec<UndefinedError> {
 
     for rule in rules {
         let rule_txt = rule_text(rule);
+        // The body's references, and those of a combine in the head.
+        let mut refs = BTreeSet::new();
         if let Some(body) = rule.as_object().get("body") {
-            let mut refs = BTreeSet::new();
             collect_body_refs(body, &mut refs);
+        }
+        if !rule.as_object()["head"].as_object()["predicate_name"].as_str().starts_with('@') {
+            if let Some(record) = rule.as_object()["head"].as_object().get("record") {
+                collect_expr_refs(record, &mut refs);
+            }
+        }
+        {
             for name in refs {
                 if !looks_like_predicate(&name)
                     || defined.contains(&name)
@@ -207,12 +228,93 @@ pub fn check_undefined(rules: &[&Json]) -> Vec<UndefinedError> {
                     predicate: name,
                     suggestion,
                     rule: rule_txt.clone(),
+                    function: false,
                 });
             }
+        }
+        // A function called in a value (`Left(s, 2)`) that nothing defines
+        // compiles to a read of a table of that name: never what was meant.
+        if rule.as_object()["head"].as_object()["predicate_name"].as_str().starts_with('@') {
+            continue;
+        }
+        let mut calls = BTreeSet::new();
+        collect_calls(rule, &mut calls);
+        for name in calls {
+            if !looks_like_predicate(&name)
+                || defined.contains(&name)
+                || builtins.contains(&name)
+                || reserved.contains(&name)
+                || !seen.insert(name.clone())
+            {
+                continue;
+            }
+            let mut functions: HashSet<String> = defined.clone();
+            functions.extend(documented_functions().iter().map(|s| s.to_string()));
+            let suggestion = closest_match(&name, &functions).cloned();
+            errors.push(UndefinedError { predicate: name, suggestion, rule: rule_txt.clone(), function: true });
         }
     }
 
     errors
+}
+
+/// Every table the program reads but does not define whose name is not a
+/// table name (`` `(SELECT 1)` ``, `` `t; DROP TABLE t` ``): the compiler
+/// refuses it, as it never writes such text into SQL.
+pub fn check_table_names(rules: &[&Json]) -> Vec<super::SqlExprError> {
+    let defined = defined_predicates(rules);
+    let builtins = builtin_function_names();
+    let reserved = reserved_predicate_names();
+    let mut errors = Vec::new();
+    let mut seen = HashSet::new();
+    for rule in rules {
+        let mut refs = BTreeSet::new();
+        if let Some(body) = rule.as_object().get("body") {
+            collect_body_refs(body, &mut refs);
+        }
+        if let Some(record) = rule.as_object()["head"].as_object().get("record") {
+            collect_expr_refs(record, &mut refs);
+        }
+        for name in refs {
+            if defined.contains(&name)
+                || builtins.contains(&name)
+                || reserved.contains(&name)
+                || crate::compiler::universe::is_table_name(&name)
+                || !seen.insert(name.clone())
+            {
+                continue;
+            }
+            let predicate = rule.as_object()["head"].as_object()["predicate_name"].as_str().to_string();
+            errors.push(super::SqlExprError { predicate, table: Some(name) });
+        }
+    }
+    errors
+}
+
+/// The functions the language reference documents, suggested for a misspelled
+/// call.
+fn documented_functions() -> &'static [&'static str] {
+    &["Substr", "Length", "Upper", "Lower", "Split", "Join", "Like", "Format", "Size", "Element",
+      "ArrayConcat", "Range", "ToInt64", "ToFloat64", "ToString", "IsNull", "Coalesce", "Round",
+      "Abs", "Greatest", "Least", "Floor", "Ceil", "Sqrt", "Pow", "Exp", "Log", "Replace", "Trim"]
+}
+
+/// The names called as functions anywhere in `json` (`{"call": {...}}`).
+fn collect_calls(json: &Json, out: &mut BTreeSet<String>) {
+    match json {
+        Json::Object(o) => {
+            if let Some(call) = o.get("call") {
+                if let Some(name) = call.as_object().get("predicate_name").filter(|n| n.is_string()) {
+                    out.insert(name.as_str().to_string());
+                }
+            }
+            for v in o.values() {
+                collect_calls(v, out);
+            }
+        }
+        Json::Array(items) => items.iter().for_each(|i| collect_calls(i, out)),
+        _ => {}
+    }
 }
 
 /// Source text of a rule for error context.

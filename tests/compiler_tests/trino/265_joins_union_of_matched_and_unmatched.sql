@@ -4,7 +4,7 @@ SELECT * FROM (
       x_6 AS id,
       'a' AS v
     FROM
-      UNNEST(ARRAY[1, 2]) as pushkin(x_6)
+      UNNEST(TRANSFORM(ARRAY[1, 2], synalog_e -> ROW(synalog_e))) as pushkin(x_6)
     WHERE
       (1 = x_6)
    UNION ALL
@@ -13,7 +13,7 @@ SELECT * FROM (
       x_3 AS id,
       'none' AS v
     FROM
-      UNNEST(ARRAY[1, 2]) as pushkin(x_3)
+      UNNEST(TRANSFORM(ARRAY[1, 2], synalog_e -> ROW(synalog_e))) as pushkin(x_3)
     WHERE
       ((SELECT
         MIN(1) AS logica_value

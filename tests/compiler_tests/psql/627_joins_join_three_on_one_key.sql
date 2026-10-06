@@ -24,5 +24,4 @@ SELECT
 FROM
   t_3_C AS t_2_C
 WHERE
-  (1 = t_2_C.k) AND
   (1 = t_2_C.k);

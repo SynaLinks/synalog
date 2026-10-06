@@ -1,2 +1,2 @@
 SELECT
-  ((9) / (4)) AS r;
+  ((9) / NULLIF(4, 0)) AS r;

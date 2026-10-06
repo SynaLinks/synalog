@@ -1,0 +1,2 @@
+SELECT
+  REGEXP_CONTAINS(null, "a") AS v;

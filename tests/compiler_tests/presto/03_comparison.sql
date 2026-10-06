@@ -4,7 +4,7 @@ SELECT * FROM (
       'equal' AS test_name,
       5 AS x
     FROM
-      UNNEST(FILTER(SEQUENCE(0, 10), x -> x < 10)) as pushkin(x_5)
+      UNNEST(TRANSFORM(FILTER(SEQUENCE(0, 10), x -> x < 10), synalog_e -> ROW(synalog_e))) as pushkin(x_5)
     WHERE
       (5 = x_5)
    UNION ALL
@@ -13,7 +13,7 @@ SELECT * FROM (
       'not_equal' AS test_name,
       x_5 AS x
     FROM
-      UNNEST(FILTER(SEQUENCE(0, 10), x -> x < 10)) as pushkin(x_5)
+      UNNEST(TRANSFORM(FILTER(SEQUENCE(0, 10), x -> x < 10), synalog_e -> ROW(synalog_e))) as pushkin(x_5)
     WHERE
       (x_5 != 5)
    UNION ALL
@@ -22,7 +22,7 @@ SELECT * FROM (
       'less_than' AS test_name,
       x_5 AS x
     FROM
-      UNNEST(FILTER(SEQUENCE(0, 10), x -> x < 10)) as pushkin(x_5)
+      UNNEST(TRANSFORM(FILTER(SEQUENCE(0, 10), x -> x < 10), synalog_e -> ROW(synalog_e))) as pushkin(x_5)
     WHERE
       (x_5 < 5)
    UNION ALL
@@ -31,7 +31,7 @@ SELECT * FROM (
       'in_range' AS test_name,
       x_5 AS x
     FROM
-      UNNEST(FILTER(SEQUENCE(0, 10), x -> x < 10)) as pushkin(x_5)
+      UNNEST(TRANSFORM(FILTER(SEQUENCE(0, 10), x -> x < 10), synalog_e -> ROW(synalog_e))) as pushkin(x_5)
     WHERE
       (x_5 >= 3) AND
       (x_5 <= 7)

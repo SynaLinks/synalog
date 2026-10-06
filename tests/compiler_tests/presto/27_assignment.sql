@@ -3,7 +3,7 @@ CREATE TABLE logica_test.Step1 AS SELECT
   x_4 AS col0,
   ((x_4) + (1)) AS col1
 FROM
-  UNNEST(FILTER(SEQUENCE(0, 5), x -> x < 5)) as pushkin(x_4);
+  UNNEST(TRANSFORM(FILTER(SEQUENCE(0, 5), x -> x < 5), synalog_e -> ROW(synalog_e))) as pushkin(x_4);
 
 -- Interacting with table logica_test.Step1
 

@@ -7,12 +7,12 @@ WITH t_0_V AS (SELECT * FROM (
   
     SELECT
       2 AS k,
-      (CAST(1 AS REAL) / (3)) AS x
+      (CAST(1 AS REAL) / NULLIF(3, 0)) AS x
    UNION ALL
   
     SELECT
       3 AS k,
-      (CAST(4 AS REAL) / (2)) AS x
+      (CAST(4 AS REAL) / NULLIF(2, 0)) AS x
    UNION ALL
   
     SELECT

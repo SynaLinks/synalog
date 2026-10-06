@@ -83,11 +83,11 @@ WITH t_1_Ship AS (SELECT * FROM (
 ) AS UNUSED_TABLE_NAME  )
 SELECT
   Ship.id AS id,
-  ROUND(((100) * ((CAST(Ship.kg AS REAL) / ((SELECT
+  (SELECT (CASE WHEN synalog_v IS NULL OR 4 IS NULL THEN NULL WHEN CAST(synalog_v AS REAL) = 0 THEN CAST(synalog_v AS REAL) WHEN FLOOR(LOG10(ABS(CAST(synalog_v AS REAL)))) - 14 + 4 >= 0 THEN (CASE WHEN CAST(synalog_v AS REAL) < 0 THEN -1 ELSE 1 END) * FLOOR(ABS(CAST(synalog_v AS REAL)) / POWER(10, FLOOR(LOG10(ABS(CAST(synalog_v AS REAL)))) - 14) + 0.5) * POWER(10, FLOOR(LOG10(ABS(CAST(synalog_v AS REAL)))) - 14) + 0 ELSE (CASE WHEN CAST(synalog_v AS REAL) < 0 THEN -1 ELSE 1 END) * FLOOR(ABS(CAST(synalog_v AS REAL)) * POWER(10, 4) + 0.5 + 0.5 * POWER(10, FLOOR(LOG10(ABS(CAST(synalog_v AS REAL)))) - 14 + 4)) / POWER(10, 4) + 0 END) FROM (SELECT ((100) * ((CAST(Ship.kg AS REAL) / NULLIF((SELECT
   SUM(MagicalEntangle(t_0_Ship.kg, x_8.value)) AS logica_value
 FROM
   t_1_Ship AS t_0_Ship, JSON_EACH(JSON_ARRAY(0)) as x_8
 WHERE
-  (t_0_Ship.client = Ship.client)))))), 4) AS pct
+  (t_0_Ship.client = Ship.client)), 0)))) AS synalog_v)) AS pct
 FROM
   t_1_Ship AS Ship ORDER BY id NULLS LAST, pct NULLS LAST;

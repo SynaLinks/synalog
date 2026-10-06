@@ -1,0 +1,9 @@
+WITH t_0_V AS (SELECT * FROM VALUES
+  (1),
+  (4)
+AS UNUSED_TABLE_NAME(x))
+SELECT
+  V.x AS x,
+  CASE WHEN ((MOD(V.x, NULLIF(2, 0))) = 0) THEN ((V.x) / NULLIF(2, 0)) ELSE null END AS h
+FROM
+  t_0_V AS V ORDER BY x NULLS LAST;

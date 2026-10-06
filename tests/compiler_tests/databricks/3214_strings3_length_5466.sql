@@ -1,0 +1,2 @@
+SELECT
+  LENGTH("é") AS n;

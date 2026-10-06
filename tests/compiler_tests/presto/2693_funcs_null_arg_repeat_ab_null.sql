@@ -1,0 +1,2 @@
+SELECT
+  (CASE WHEN 'ab' IS NULL OR null IS NULL THEN NULL ELSE ARRAY_JOIN(REPEAT('ab', null), '') END) AS v;

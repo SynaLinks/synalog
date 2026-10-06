@@ -5,4 +5,4 @@ create schema if not exists logica_home;
 DO $$ BEGIN if not exists (select 'I(am) :- I(think)' from pg_type where typname = 'logicarecord893574736') then create type logicarecord893574736 as (nirvana numeric); end if; END $$;
 
 SELECT
-  CAST(CAST(12.34 AS DECIMAL(38, 1)) AS VARCHAR) || '%' AS v;
+  CAST(CAST(CAST(12.34 AS double precision) AS DECIMAL(38, 1)) AS VARCHAR) || '%' AS v;

@@ -1,0 +1,11 @@
+WITH t_0_B AS (SELECT * FROM VALUES
+  ("1"),
+  ("01")
+AS UNUSED_TABLE_NAME(k))
+SELECT
+  "x" AS t
+FROM
+  t_0_B AS B
+WHERE
+  (B.k = "1")
+GROUP BY 1;

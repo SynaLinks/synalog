@@ -7,13 +7,13 @@ create sequence if not exists eternal_logical_sequence;
 WITH t_0_V AS (SELECT * FROM (
   
     SELECT
-      1.5 AS x,
+      1.5E0 AS x,
       42 AS y,
       null AS z
    UNION ALL
   
     SELECT
-      2.5 AS x,
+      2.5E0 AS x,
       7 AS y,
       1 AS z
   

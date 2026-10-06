@@ -1,0 +1,3 @@
+SELECT
+  ARRAY_LENGTH(ARRAY[2, 3]) AS n,
+  ARRAY[2, 3][OFFSET(0)] AS first;

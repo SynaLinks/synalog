@@ -386,7 +386,9 @@ impl RuleStructure {
 
         loop {
             let mut done = true;
-            self.vars_unification.retain(|(l, r)| l != r);
+            // A value unified with itself says nothing, unless it holds a null,
+            // which equals nothing (see `unifications_to_constraints`).
+            self.vars_unification.retain(|(l, r)| l != r || holds_null_literal(l));
 
             // Iterate all unifications (Python iterates the live list; we iterate
             // by index to handle in-place modifications via replace_variable_everywhere).
@@ -417,9 +419,33 @@ impl RuleStructure {
                             && (is_subset(&r_vars, &self.extracted_variables())
                                 || !var_name.starts_with("x_"))
                         {
-                            let replacement = r_expr.clone();
+                            // A large value written wherever the variable is
+                            // would grow the query with each such variable
+                            // defined from another (`b == a + a, c == b + b`):
+                            // it is computed once, as the one element of a
+                            // list unnested, and the variable is that element.
+                            let defining = count_variable(&left, &var_name) + count_variable(&right, &var_name);
+                            let replacement = if expression_size(r_expr) > LARGE_EXPRESSION
+                                && self.variable_uses(&var_name) - defining > 1
+                            {
+                                let alias = self.allocator.alloc_var();
+                                self.inv_vars_map.insert(alias.clone(), ("".to_string(), alias.clone()));
+                                self.unnestings.push((alias.clone(), crate::json_obj!(
+                                    "literal" => crate::json_obj!(
+                                        "the_list" => crate::json_obj!("element" => Json::Array(vec![r_expr.clone()]))
+                                    )
+                                )));
+                                value_of_unnested(&alias)
+                            } else {
+                                r_expr.clone()
+                            };
                             self.replace_variable_everywhere(&var_name, &replacement);
+                            // This unification is the assignment, now `e == e`:
+                            // it goes, a null in it or not (another one that
+                            // became `null == null` is a comparison, and stays).
+                            self.vars_unification[i] = (Json::Null, Json::Null);
                             done = false;
+                            break;
                         }
                     }
                 }
@@ -495,6 +521,19 @@ impl RuleStructure {
 
     /// Replace all occurrences of a variable with the given expression.
     /// Updates synonym_log to track variable substitutions for error reporting.
+    /// How many times a variable is written in the rule: its unifications,
+    /// conditions, columns and unnested lists.
+    fn variable_uses(&self, var_name: &str) -> usize {
+        // A unification with a variable (`x == y`) renames, copying nothing.
+        let is_variable = |e: &Json| extract_var_name(e).is_some();
+        self.vars_unification.iter()
+            .filter(|(l, r)| !(is_variable(l) && is_variable(r)))
+            .map(|(l, r)| count_variable(l, var_name) + count_variable(r, var_name)).sum::<usize>()
+            + self.constraints.iter().map(|c| count_variable(c, var_name)).sum::<usize>()
+            + self.select.values().map(|e| count_variable(e, var_name)).sum::<usize>()
+            + self.unnestings.iter().map(|(_, l)| count_variable(l, var_name)).sum::<usize>()
+    }
+
     fn replace_variable_everywhere(&mut self, var_name: &str, replacement: &Json) {
         // Update synonym_log if replacement is a variable
         if let Some(repl_var) = replacement.as_object().get("variable") {
@@ -541,10 +580,16 @@ impl RuleStructure {
     pub fn unifications_to_constraints(&mut self) {
         let unifs = std::mem::take(&mut self.vars_unification);
         for (left, right) in unifs {
-            if left == right {
+            // A value equals itself, so the constraint goes; but a null equals
+            // nothing, itself included (`A(k: null)`, `B(k: null)` joined on
+            // `k` have no row): a constraint with a null stays.
+            if left == right && !holds_null_literal(&left) {
                 continue;
             }
-            self.constraints.push(make_equality(&left, &right));
+            let equality = make_equality(&left, &right);
+            if !self.constraints.contains(&equality) {
+                self.constraints.push(equality);
+            }
         }
     }
 
@@ -639,14 +684,17 @@ impl RuleStructure {
         }
         for (element, list) in &self.unnestings {
             if let Type::List(inner) = ql.value_type(list) {
-                ql.variable_types.insert(element.clone(), *inner);
+                if *inner != Type::Any {
+                    ql.variable_types.insert(element.clone(), *inner);
+                }
             }
         }
 
         // SELECT clause
         let mut fields = Vec::with_capacity(self.select.len());
         for (field_name, expression) in &self.select {
-            let mut sql_expr = ql.convert_to_sql(expression)?;
+            let column_type = subquery_translator.column_type(&self.this_predicate_name, field_name).unwrap_or(Type::Any);
+            let mut sql_expr = ql.convert_to_sql_expecting(expression, &column_type)?;
             // A null of a column whose type is known has that type: PostgreSQL
             // types `null UNION null` as text, and then fails against a number.
             if sql_expr == "null" {
@@ -685,8 +733,18 @@ impl RuleStructure {
 
             // UNNEST
             for (element_alias, list_expr) in &self.unnestings {
-                let list_sql = ql.convert_to_sql(list_expr)?;
-                let phrase = dialect.unnest_phrase()
+                // A list of the element's type: `x in []` unnests a typed one.
+                // An element of unknown type takes the type of what it equals.
+                let element = ql.variable_types.get(element_alias).cloned()
+                    .filter(|t| *t != Type::Any)
+                    .or_else(|| self.constraints.iter()
+                        .filter_map(|c| equated_with(c, element_alias))
+                        .map(|other| ql.value_type(other))
+                        .find(|t| *t != Type::Any))
+                    .unwrap_or(Type::String);
+                let holds_records = matches!(element, Type::Record { .. });
+                let list_sql = ql.convert_to_sql_expecting(list_expr, &Type::List(Box::new(element)))?;
+                let phrase = if holds_records { dialect.unnest_records_phrase() } else { dialect.unnest_phrase() }
                     .replace("{0}", &list_sql)
                     .replace("{1}", element_alias);
                 from_parts.push(phrase);
@@ -1553,29 +1611,17 @@ fn extract_inclusion(incl: &Json, s: &mut RuleStructure) -> CompileResult<()> {
     s.unnestings.push((var_name.clone(), list.clone()));
 
     // Unify element with ValueOfUnnested(var)
-    let value_of_unnested = crate::json_obj!(
-        "call" => crate::json_obj!(
-            "predicate_name" => "ValueOfUnnested",
-            "record" => crate::json_obj!(
-                "field_value" => Json::Array(vec![
-                    crate::json_obj!(
-                        "field" => Json::Int(0),
-                        "value" => crate::json_obj!(
-                            "expression" => make_var_expr(&var_name)
-                        )
-                    ),
-                ])
-            )
-        )
-    );
-    s.vars_unification.push((element.clone(), value_of_unnested));
+    s.vars_unification.push((element.clone(), value_of_unnested(&var_name)));
 
     Ok(())
 }
 
-fn is_constraint_predicate(name: &str) -> bool {
+/// Whether a body predicate of this name is a condition, binding nothing.
+pub(crate) fn is_constraint_predicate(name: &str) -> bool {
     matches!(name, "==" | "!=" | "<" | ">" | "<=" | ">=" | "&&" | "||"
-        | "~" | "in" | "is" | "is not" | "Like" | "!" | "IsNull" | "Constraint")
+        | "~" | "in" | "is" | "is not" | "Like" | "!" | "IsNull" | "Constraint"
+        // Boolean functions, a condition where a body writes them.
+        | "ILike" | "StartsWith" | "EndsWith" | "RegexpContains")
 }
 
 /// Check if expression directly contains a "variable" key.
@@ -1839,6 +1885,105 @@ pub fn decorate_combine_rule(rule: &Json, var_name: &str) -> Json {
     }
 
     rule
+}
+
+/// The element of the unnesting `alias`.
+fn value_of_unnested(alias: &str) -> Json {
+    crate::json_obj!(
+        "call" => crate::json_obj!(
+            "predicate_name" => "ValueOfUnnested",
+            "record" => crate::json_obj!(
+                "field_value" => Json::Array(vec![
+                    crate::json_obj!(
+                        "field" => Json::Int(0),
+                        "value" => crate::json_obj!(
+                            "expression" => make_var_expr(alias)
+                        )
+                    ),
+                ])
+            )
+        )
+    )
+}
+
+/// The size of an expression beyond which a variable it defines, used more
+/// than once, is computed once rather than written at each use.
+const LARGE_EXPRESSION: usize = 60;
+
+/// The number of nodes of an expression.
+fn expression_size(expr: &Json) -> usize {
+    match expr {
+        Json::Object(o) => 1 + o.values().map(expression_size).sum::<usize>(),
+        Json::Array(items) => items.iter().map(expression_size).sum(),
+        _ => 0,
+    }
+}
+
+/// How many times a variable is written in `node`.
+fn count_variable(node: &Json, name: &str) -> usize {
+    match node {
+        Json::Object(o) => {
+            let here = o.get("variable").filter(|v| v.is_object())
+                .and_then(|v| v.as_object().get("var_name"))
+                .is_some_and(|n| n.as_var_name() == name) as usize;
+            here + o.values().map(|v| count_variable(v, name)).sum::<usize>()
+        }
+        Json::Array(items) => items.iter().map(|v| count_variable(v, name)).sum(),
+        _ => 0,
+    }
+}
+
+/// Whether an expression holds a null literal anywhere.
+fn holds_null_literal(expr: &Json) -> bool {
+    match expr {
+        Json::Object(o) => {
+            o.get("literal").is_some_and(|l| l.is_object() && (l.as_object().contains_key("the_null") || l.as_object().contains_key("null")))
+                || o.values().any(holds_null_literal)
+        }
+        Json::Array(items) => items.iter().any(holds_null_literal),
+        _ => false,
+    }
+}
+
+/// The other side of an equality constraint between the element `var` of
+/// an unnesting (the variable, or `ValueOfUnnested(var)`) and a value.
+fn equated_with<'j>(constraint: &'j Json, var: &str) -> Option<&'j Json> {
+    let call = constraint.as_object().get("call").filter(|c| c.is_object())?.as_object();
+    if call.get("predicate_name").filter(|n| n.is_string())?.as_str() != "==" {
+        return None;
+    }
+    let sides: Vec<&Json> = call.get("record")?.as_object().get("field_value")?.as_array().iter()
+        .map(|fv| {
+            let val = &fv.as_object()["value"];
+            val.as_object().get("expression").unwrap_or(val)
+        })
+        .collect();
+    fn is_variable(e: &Json, var: &str) -> bool {
+        e.is_object() && e.as_object().get("variable")
+            .is_some_and(|v| v.as_object().get("var_name").is_some_and(|n| n.as_var_name() == var))
+    }
+    let is_element = |e: &Json| {
+        if is_variable(e, var) {
+            return true;
+        }
+        let Some(c) = e.as_object().get("call").filter(|c| c.is_object()).map(|c| c.as_object()) else {
+            return false;
+        };
+        c.get("predicate_name").is_some_and(|n| n.is_string() && n.as_str() == "ValueOfUnnested")
+            && c.get("record")
+                .and_then(|r| r.as_object().get("field_value"))
+                .and_then(|fvs| fvs.as_array().first())
+                .map(|fv| {
+                    let val = &fv.as_object()["value"];
+                    val.as_object().get("expression").unwrap_or(val)
+                })
+                .is_some_and(|arg| is_variable(arg, var))
+    };
+    match sides.as_slice() {
+        [l, r] if is_element(l) => Some(*r),
+        [l, r] if is_element(r) => Some(*l),
+        _ => None,
+    }
 }
 
 fn make_equality(left: &Json, right: &Json) -> Json {

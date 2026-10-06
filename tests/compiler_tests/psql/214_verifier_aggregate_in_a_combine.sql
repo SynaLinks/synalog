@@ -10,6 +10,6 @@ FROM
   UNNEST(ARRAY[1, 3]) as x_8)
 SELECT
   x_5 AS x,
-  (CAST(CAST(x_5 AS double precision) AS double precision) / (CAST(Total.t AS double precision))) AS s
+  (CAST(CAST(x_5 AS double precision) AS double precision) / NULLIF(CAST(Total.t AS double precision), 0)) AS s
 FROM
   t_0_Total AS Total, UNNEST(ARRAY[1, 3]) as x_5 ORDER BY x;

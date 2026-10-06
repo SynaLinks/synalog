@@ -1,2 +1,2 @@
 SELECT
-  (CAST(100 AS REAL) / (8)) AS v;
+  (CAST(100 AS REAL) / NULLIF(8, 0)) AS v;

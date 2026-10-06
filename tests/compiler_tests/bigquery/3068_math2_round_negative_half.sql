@@ -1,0 +1,2 @@
+SELECT
+  ROUND(-0.5) AS v;

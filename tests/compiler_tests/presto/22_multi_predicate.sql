@@ -2,9 +2,9 @@ DROP TABLE IF EXISTS logica_test.Even;
 CREATE TABLE logica_test.Even AS SELECT
   x_3 AS col0
 FROM
-  UNNEST(FILTER(SEQUENCE(0, 10), x -> x < 10)) as pushkin(x_3)
+  UNNEST(TRANSFORM(FILTER(SEQUENCE(0, 10), x -> x < 10), synalog_e -> ROW(synalog_e))) as pushkin(x_3)
 WHERE
-  ((MOD(x_3, 2)) = 0);
+  ((MOD(x_3, NULLIF(2, 0))) = 0);
 
 -- Interacting with table logica_test.Even
 
@@ -12,9 +12,9 @@ DROP TABLE IF EXISTS logica_test.Odd;
 CREATE TABLE logica_test.Odd AS SELECT
   x_3 AS col0
 FROM
-  UNNEST(FILTER(SEQUENCE(0, 10), x -> x < 10)) as pushkin(x_3)
+  UNNEST(TRANSFORM(FILTER(SEQUENCE(0, 10), x -> x < 10), synalog_e -> ROW(synalog_e))) as pushkin(x_3)
 WHERE
-  ((MOD(x_3, 2)) = 1);
+  ((MOD(x_3, NULLIF(2, 0))) = 1);
 
 -- Interacting with table logica_test.Odd
 

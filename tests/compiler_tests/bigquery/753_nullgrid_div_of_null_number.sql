@@ -12,6 +12,6 @@ WITH t_0_V AS (SELECT * FROM (
 ) AS UNUSED_TABLE_NAME  )
 SELECT
   V.k AS k,
-  (((V.x) / (2)) IS NULL) AS n
+  (((V.x) / NULLIF(2, 0)) IS NULL) AS n
 FROM
-  t_0_V AS V ORDER BY k;
+  t_0_V AS V ORDER BY k NULLS LAST;

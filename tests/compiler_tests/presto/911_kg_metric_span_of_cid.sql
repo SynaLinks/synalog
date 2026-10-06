@@ -110,32 +110,194 @@ GROUP BY 1, 2;
 
 -- Interacting with table logica_test.Below_sn_delta
 
-DROP TABLE IF EXISTS logica_test.Below_sn_full;
-CREATE TABLE logica_test.Below_sn_full AS WITH t_1_Below_MultBodyAggAux_f2 AS (SELECT * FROM (
+DROP TABLE IF EXISTS logica_test.Below_sn_t0;
+CREATE TABLE logica_test.Below_sn_t0 AS SELECT
+  Below_sn_delta.manager_id AS manager_id,
+  Below_sn_delta.employee_id AS employee_id
+FROM
+  logica_test.Below_sn_delta AS Below_sn_delta
+WHERE
+  (1 = 0);
+
+-- Interacting with table logica_test.Below_sn_t0
+
+DROP TABLE IF EXISTS logica_test.Below_sn_t1;
+CREATE TABLE logica_test.Below_sn_t1 AS WITH t_1_Below_MultBodyAggAux_f2 AS (SELECT * FROM (
   
     SELECT
-      t_2_Below_sn_delta.manager_id AS manager_id,
+      Below_sn_t0.manager_id AS manager_id,
       Manages.employee_id AS employee_id
     FROM
-      logica_test.Below_sn_delta AS t_2_Below_sn_delta, logica_test.Manages AS Manages
+      logica_test.Below_sn_t0 AS Below_sn_t0, logica_test.Manages AS Manages
     WHERE
-      (Manages.manager_id = t_2_Below_sn_delta.employee_id)
+      (Manages.manager_id = Below_sn_t0.employee_id)
    UNION ALL
   
     SELECT
-      t_3_Manages.manager_id AS manager_id,
-      t_3_Manages.employee_id AS employee_id
+      t_2_Manages.manager_id AS manager_id,
+      t_2_Manages.employee_id AS employee_id
     FROM
-      logica_test.Manages AS t_3_Manages
+      logica_test.Manages AS t_2_Manages
   
 ) AS UNUSED_TABLE_NAME  ),
-t_0_Below_sn_step AS (SELECT
+t_0_Below_sn_r1 AS (SELECT
   Below_MultBodyAggAux_f2.manager_id AS manager_id,
   Below_MultBodyAggAux_f2.employee_id AS employee_id
 FROM
   t_1_Below_MultBodyAggAux_f2 AS Below_MultBodyAggAux_f2
 GROUP BY 1, 2)
-SELECT * FROM (
+SELECT
+  Below_sn_r1.manager_id AS manager_id,
+  Below_sn_r1.employee_id AS employee_id
+FROM
+  t_0_Below_sn_r1 AS Below_sn_r1
+WHERE
+  (1 = 0);
+
+-- Interacting with table logica_test.Below_sn_t1
+
+DROP TABLE IF EXISTS logica_test.Below_sn_t2;
+CREATE TABLE logica_test.Below_sn_t2 AS WITH t_1_Below_MultBodyAggAux_f3 AS (SELECT * FROM (
+  
+    SELECT
+      Below_sn_t1.manager_id AS manager_id,
+      Manages.employee_id AS employee_id
+    FROM
+      logica_test.Below_sn_t1 AS Below_sn_t1, logica_test.Manages AS Manages
+    WHERE
+      (Manages.manager_id = Below_sn_t1.employee_id)
+   UNION ALL
+  
+    SELECT
+      t_2_Manages.manager_id AS manager_id,
+      t_2_Manages.employee_id AS employee_id
+    FROM
+      logica_test.Manages AS t_2_Manages
+  
+) AS UNUSED_TABLE_NAME  ),
+t_0_Below_sn_r2 AS (SELECT
+  Below_MultBodyAggAux_f3.manager_id AS manager_id,
+  Below_MultBodyAggAux_f3.employee_id AS employee_id
+FROM
+  t_1_Below_MultBodyAggAux_f3 AS Below_MultBodyAggAux_f3
+GROUP BY 1, 2)
+SELECT
+  Below_sn_r2.manager_id AS manager_id,
+  Below_sn_r2.employee_id AS employee_id
+FROM
+  t_0_Below_sn_r2 AS Below_sn_r2
+WHERE
+  (1 = 0);
+
+-- Interacting with table logica_test.Below_sn_t2
+
+DROP TABLE IF EXISTS logica_test.Below_sn_t3;
+CREATE TABLE logica_test.Below_sn_t3 AS WITH t_1_Below_MultBodyAggAux_f4 AS (SELECT * FROM (
+  
+    SELECT
+      Below_sn_t2.manager_id AS manager_id,
+      Manages.employee_id AS employee_id
+    FROM
+      logica_test.Below_sn_t2 AS Below_sn_t2, logica_test.Manages AS Manages
+    WHERE
+      (Manages.manager_id = Below_sn_t2.employee_id)
+   UNION ALL
+  
+    SELECT
+      t_2_Manages.manager_id AS manager_id,
+      t_2_Manages.employee_id AS employee_id
+    FROM
+      logica_test.Manages AS t_2_Manages
+  
+) AS UNUSED_TABLE_NAME  ),
+t_0_Below_sn_r3 AS (SELECT
+  Below_MultBodyAggAux_f4.manager_id AS manager_id,
+  Below_MultBodyAggAux_f4.employee_id AS employee_id
+FROM
+  t_1_Below_MultBodyAggAux_f4 AS Below_MultBodyAggAux_f4
+GROUP BY 1, 2)
+SELECT
+  Below_sn_r3.manager_id AS manager_id,
+  Below_sn_r3.employee_id AS employee_id
+FROM
+  t_0_Below_sn_r3 AS Below_sn_r3
+WHERE
+  (1 = 0);
+
+-- Interacting with table logica_test.Below_sn_t3
+
+DROP TABLE IF EXISTS logica_test.Below_sn_t4;
+CREATE TABLE logica_test.Below_sn_t4 AS WITH t_1_Below_MultBodyAggAux_f5 AS (SELECT * FROM (
+  
+    SELECT
+      Below_sn_t3.manager_id AS manager_id,
+      Manages.employee_id AS employee_id
+    FROM
+      logica_test.Below_sn_t3 AS Below_sn_t3, logica_test.Manages AS Manages
+    WHERE
+      (Manages.manager_id = Below_sn_t3.employee_id)
+   UNION ALL
+  
+    SELECT
+      t_2_Manages.manager_id AS manager_id,
+      t_2_Manages.employee_id AS employee_id
+    FROM
+      logica_test.Manages AS t_2_Manages
+  
+) AS UNUSED_TABLE_NAME  ),
+t_0_Below_sn_r4 AS (SELECT
+  Below_MultBodyAggAux_f5.manager_id AS manager_id,
+  Below_MultBodyAggAux_f5.employee_id AS employee_id
+FROM
+  t_1_Below_MultBodyAggAux_f5 AS Below_MultBodyAggAux_f5
+GROUP BY 1, 2)
+SELECT
+  Below_sn_r4.manager_id AS manager_id,
+  Below_sn_r4.employee_id AS employee_id
+FROM
+  t_0_Below_sn_r4 AS Below_sn_r4
+WHERE
+  (1 = 0);
+
+-- Interacting with table logica_test.Below_sn_t4
+
+DROP TABLE IF EXISTS logica_test.Below_sn_t5;
+CREATE TABLE logica_test.Below_sn_t5 AS WITH t_1_Below_MultBodyAggAux_f6 AS (SELECT * FROM (
+  
+    SELECT
+      Below_sn_t4.manager_id AS manager_id,
+      Manages.employee_id AS employee_id
+    FROM
+      logica_test.Below_sn_t4 AS Below_sn_t4, logica_test.Manages AS Manages
+    WHERE
+      (Manages.manager_id = Below_sn_t4.employee_id)
+   UNION ALL
+  
+    SELECT
+      t_2_Manages.manager_id AS manager_id,
+      t_2_Manages.employee_id AS employee_id
+    FROM
+      logica_test.Manages AS t_2_Manages
+  
+) AS UNUSED_TABLE_NAME  ),
+t_0_Below_sn_r5 AS (SELECT
+  Below_MultBodyAggAux_f6.manager_id AS manager_id,
+  Below_MultBodyAggAux_f6.employee_id AS employee_id
+FROM
+  t_1_Below_MultBodyAggAux_f6 AS Below_MultBodyAggAux_f6
+GROUP BY 1, 2)
+SELECT
+  Below_sn_r5.manager_id AS manager_id,
+  Below_sn_r5.employee_id AS employee_id
+FROM
+  t_0_Below_sn_r5 AS Below_sn_r5
+WHERE
+  (1 = 0);
+
+-- Interacting with table logica_test.Below_sn_t5
+
+DROP TABLE IF EXISTS logica_test.Below_sn_full;
+CREATE TABLE logica_test.Below_sn_full AS SELECT * FROM (
   
     SELECT
       Below_sn_delta.manager_id AS manager_id,
@@ -145,41 +307,67 @@ SELECT * FROM (
    UNION ALL
   
     SELECT
-      Below_sn_step.manager_id AS manager_id,
-      Below_sn_step.employee_id AS employee_id
+      Below_sn_t1.manager_id AS manager_id,
+      Below_sn_t1.employee_id AS employee_id
     FROM
-      t_0_Below_sn_step AS Below_sn_step
-    WHERE
-      (1 = 0)
+      logica_test.Below_sn_t1 AS Below_sn_t1
+   UNION ALL
+  
+    SELECT
+      Below_sn_t2.manager_id AS manager_id,
+      Below_sn_t2.employee_id AS employee_id
+    FROM
+      logica_test.Below_sn_t2 AS Below_sn_t2
+   UNION ALL
+  
+    SELECT
+      Below_sn_t3.manager_id AS manager_id,
+      Below_sn_t3.employee_id AS employee_id
+    FROM
+      logica_test.Below_sn_t3 AS Below_sn_t3
+   UNION ALL
+  
+    SELECT
+      Below_sn_t4.manager_id AS manager_id,
+      Below_sn_t4.employee_id AS employee_id
+    FROM
+      logica_test.Below_sn_t4 AS Below_sn_t4
+   UNION ALL
+  
+    SELECT
+      Below_sn_t5.manager_id AS manager_id,
+      Below_sn_t5.employee_id AS employee_id
+    FROM
+      logica_test.Below_sn_t5 AS Below_sn_t5
   
 ) AS UNUSED_TABLE_NAME  ;
 
 -- Interacting with table logica_test.Below_sn_full
 
 DROP TABLE IF EXISTS logica_test.Below_sn_new;
-CREATE TABLE logica_test.Below_sn_new AS WITH t_1_Below_MultBodyAggAux_f2 AS (SELECT * FROM (
+CREATE TABLE logica_test.Below_sn_new AS WITH t_1_Below_MultBodyAggAux_f7 AS (SELECT * FROM (
   
     SELECT
-      t_2_Below_sn_delta.manager_id AS manager_id,
+      Below_sn_delta.manager_id AS manager_id,
       Manages.employee_id AS employee_id
     FROM
-      logica_test.Below_sn_delta AS t_2_Below_sn_delta, logica_test.Manages AS Manages
+      logica_test.Below_sn_delta AS Below_sn_delta, logica_test.Manages AS Manages
     WHERE
-      (Manages.manager_id = t_2_Below_sn_delta.employee_id)
+      (Manages.manager_id = Below_sn_delta.employee_id)
    UNION ALL
   
     SELECT
-      t_3_Manages.manager_id AS manager_id,
-      t_3_Manages.employee_id AS employee_id
+      t_2_Manages.manager_id AS manager_id,
+      t_2_Manages.employee_id AS employee_id
     FROM
-      logica_test.Manages AS t_3_Manages
+      logica_test.Manages AS t_2_Manages
   
 ) AS UNUSED_TABLE_NAME  ),
 t_0_Below_sn_step AS (SELECT
-  Below_MultBodyAggAux_f2.manager_id AS manager_id,
-  Below_MultBodyAggAux_f2.employee_id AS employee_id
+  Below_MultBodyAggAux_f7.manager_id AS manager_id,
+  Below_MultBodyAggAux_f7.employee_id AS employee_id
 FROM
-  t_1_Below_MultBodyAggAux_f2 AS Below_MultBodyAggAux_f2
+  t_1_Below_MultBodyAggAux_f7 AS Below_MultBodyAggAux_f7
 GROUP BY 1, 2)
 SELECT
   Below_sn_step.manager_id AS manager_id,
@@ -206,29 +394,29 @@ FROM
   logica_test.Below_sn_new AS Below_sn_new;
 
 DROP TABLE IF EXISTS logica_test.Below_sn_new;
-CREATE TABLE logica_test.Below_sn_new AS WITH t_1_Below_MultBodyAggAux_f2 AS (SELECT * FROM (
+CREATE TABLE logica_test.Below_sn_new AS WITH t_1_Below_MultBodyAggAux_f7 AS (SELECT * FROM (
   
     SELECT
-      t_2_Below_sn_delta.manager_id AS manager_id,
+      Below_sn_delta.manager_id AS manager_id,
       Manages.employee_id AS employee_id
     FROM
-      logica_test.Below_sn_delta AS t_2_Below_sn_delta, logica_test.Manages AS Manages
+      logica_test.Below_sn_delta AS Below_sn_delta, logica_test.Manages AS Manages
     WHERE
-      (Manages.manager_id = t_2_Below_sn_delta.employee_id)
+      (Manages.manager_id = Below_sn_delta.employee_id)
    UNION ALL
   
     SELECT
-      t_3_Manages.manager_id AS manager_id,
-      t_3_Manages.employee_id AS employee_id
+      t_2_Manages.manager_id AS manager_id,
+      t_2_Manages.employee_id AS employee_id
     FROM
-      logica_test.Manages AS t_3_Manages
+      logica_test.Manages AS t_2_Manages
   
 ) AS UNUSED_TABLE_NAME  ),
 t_0_Below_sn_step AS (SELECT
-  Below_MultBodyAggAux_f2.manager_id AS manager_id,
-  Below_MultBodyAggAux_f2.employee_id AS employee_id
+  Below_MultBodyAggAux_f7.manager_id AS manager_id,
+  Below_MultBodyAggAux_f7.employee_id AS employee_id
 FROM
-  t_1_Below_MultBodyAggAux_f2 AS Below_MultBodyAggAux_f2
+  t_1_Below_MultBodyAggAux_f7 AS Below_MultBodyAggAux_f7
 GROUP BY 1, 2)
 SELECT
   Below_sn_step.manager_id AS manager_id,
@@ -255,29 +443,29 @@ FROM
   logica_test.Below_sn_new AS Below_sn_new;
 
 DROP TABLE IF EXISTS logica_test.Below_sn_new;
-CREATE TABLE logica_test.Below_sn_new AS WITH t_1_Below_MultBodyAggAux_f2 AS (SELECT * FROM (
+CREATE TABLE logica_test.Below_sn_new AS WITH t_1_Below_MultBodyAggAux_f7 AS (SELECT * FROM (
   
     SELECT
-      t_2_Below_sn_delta.manager_id AS manager_id,
+      Below_sn_delta.manager_id AS manager_id,
       Manages.employee_id AS employee_id
     FROM
-      logica_test.Below_sn_delta AS t_2_Below_sn_delta, logica_test.Manages AS Manages
+      logica_test.Below_sn_delta AS Below_sn_delta, logica_test.Manages AS Manages
     WHERE
-      (Manages.manager_id = t_2_Below_sn_delta.employee_id)
+      (Manages.manager_id = Below_sn_delta.employee_id)
    UNION ALL
   
     SELECT
-      t_3_Manages.manager_id AS manager_id,
-      t_3_Manages.employee_id AS employee_id
+      t_2_Manages.manager_id AS manager_id,
+      t_2_Manages.employee_id AS employee_id
     FROM
-      logica_test.Manages AS t_3_Manages
+      logica_test.Manages AS t_2_Manages
   
 ) AS UNUSED_TABLE_NAME  ),
 t_0_Below_sn_step AS (SELECT
-  Below_MultBodyAggAux_f2.manager_id AS manager_id,
-  Below_MultBodyAggAux_f2.employee_id AS employee_id
+  Below_MultBodyAggAux_f7.manager_id AS manager_id,
+  Below_MultBodyAggAux_f7.employee_id AS employee_id
 FROM
-  t_1_Below_MultBodyAggAux_f2 AS Below_MultBodyAggAux_f2
+  t_1_Below_MultBodyAggAux_f7 AS Below_MultBodyAggAux_f7
 GROUP BY 1, 2)
 SELECT
   Below_sn_step.manager_id AS manager_id,
@@ -304,29 +492,29 @@ FROM
   logica_test.Below_sn_new AS Below_sn_new;
 
 DROP TABLE IF EXISTS logica_test.Below_sn_new;
-CREATE TABLE logica_test.Below_sn_new AS WITH t_1_Below_MultBodyAggAux_f2 AS (SELECT * FROM (
+CREATE TABLE logica_test.Below_sn_new AS WITH t_1_Below_MultBodyAggAux_f7 AS (SELECT * FROM (
   
     SELECT
-      t_2_Below_sn_delta.manager_id AS manager_id,
+      Below_sn_delta.manager_id AS manager_id,
       Manages.employee_id AS employee_id
     FROM
-      logica_test.Below_sn_delta AS t_2_Below_sn_delta, logica_test.Manages AS Manages
+      logica_test.Below_sn_delta AS Below_sn_delta, logica_test.Manages AS Manages
     WHERE
-      (Manages.manager_id = t_2_Below_sn_delta.employee_id)
+      (Manages.manager_id = Below_sn_delta.employee_id)
    UNION ALL
   
     SELECT
-      t_3_Manages.manager_id AS manager_id,
-      t_3_Manages.employee_id AS employee_id
+      t_2_Manages.manager_id AS manager_id,
+      t_2_Manages.employee_id AS employee_id
     FROM
-      logica_test.Manages AS t_3_Manages
+      logica_test.Manages AS t_2_Manages
   
 ) AS UNUSED_TABLE_NAME  ),
 t_0_Below_sn_step AS (SELECT
-  Below_MultBodyAggAux_f2.manager_id AS manager_id,
-  Below_MultBodyAggAux_f2.employee_id AS employee_id
+  Below_MultBodyAggAux_f7.manager_id AS manager_id,
+  Below_MultBodyAggAux_f7.employee_id AS employee_id
 FROM
-  t_1_Below_MultBodyAggAux_f2 AS Below_MultBodyAggAux_f2
+  t_1_Below_MultBodyAggAux_f7 AS Below_MultBodyAggAux_f7
 GROUP BY 1, 2)
 SELECT
   Below_sn_step.manager_id AS manager_id,
@@ -353,29 +541,29 @@ FROM
   logica_test.Below_sn_new AS Below_sn_new;
 
 DROP TABLE IF EXISTS logica_test.Below_sn_new;
-CREATE TABLE logica_test.Below_sn_new AS WITH t_1_Below_MultBodyAggAux_f2 AS (SELECT * FROM (
+CREATE TABLE logica_test.Below_sn_new AS WITH t_1_Below_MultBodyAggAux_f7 AS (SELECT * FROM (
   
     SELECT
-      t_2_Below_sn_delta.manager_id AS manager_id,
+      Below_sn_delta.manager_id AS manager_id,
       Manages.employee_id AS employee_id
     FROM
-      logica_test.Below_sn_delta AS t_2_Below_sn_delta, logica_test.Manages AS Manages
+      logica_test.Below_sn_delta AS Below_sn_delta, logica_test.Manages AS Manages
     WHERE
-      (Manages.manager_id = t_2_Below_sn_delta.employee_id)
+      (Manages.manager_id = Below_sn_delta.employee_id)
    UNION ALL
   
     SELECT
-      t_3_Manages.manager_id AS manager_id,
-      t_3_Manages.employee_id AS employee_id
+      t_2_Manages.manager_id AS manager_id,
+      t_2_Manages.employee_id AS employee_id
     FROM
-      logica_test.Manages AS t_3_Manages
+      logica_test.Manages AS t_2_Manages
   
 ) AS UNUSED_TABLE_NAME  ),
 t_0_Below_sn_step AS (SELECT
-  Below_MultBodyAggAux_f2.manager_id AS manager_id,
-  Below_MultBodyAggAux_f2.employee_id AS employee_id
+  Below_MultBodyAggAux_f7.manager_id AS manager_id,
+  Below_MultBodyAggAux_f7.employee_id AS employee_id
 FROM
-  t_1_Below_MultBodyAggAux_f2 AS Below_MultBodyAggAux_f2
+  t_1_Below_MultBodyAggAux_f7 AS Below_MultBodyAggAux_f7
 GROUP BY 1, 2)
 SELECT
   Below_sn_step.manager_id AS manager_id,
@@ -402,29 +590,29 @@ FROM
   logica_test.Below_sn_new AS Below_sn_new;
 
 DROP TABLE IF EXISTS logica_test.Below_sn_new;
-CREATE TABLE logica_test.Below_sn_new AS WITH t_1_Below_MultBodyAggAux_f2 AS (SELECT * FROM (
+CREATE TABLE logica_test.Below_sn_new AS WITH t_1_Below_MultBodyAggAux_f7 AS (SELECT * FROM (
   
     SELECT
-      t_2_Below_sn_delta.manager_id AS manager_id,
+      Below_sn_delta.manager_id AS manager_id,
       Manages.employee_id AS employee_id
     FROM
-      logica_test.Below_sn_delta AS t_2_Below_sn_delta, logica_test.Manages AS Manages
+      logica_test.Below_sn_delta AS Below_sn_delta, logica_test.Manages AS Manages
     WHERE
-      (Manages.manager_id = t_2_Below_sn_delta.employee_id)
+      (Manages.manager_id = Below_sn_delta.employee_id)
    UNION ALL
   
     SELECT
-      t_3_Manages.manager_id AS manager_id,
-      t_3_Manages.employee_id AS employee_id
+      t_2_Manages.manager_id AS manager_id,
+      t_2_Manages.employee_id AS employee_id
     FROM
-      logica_test.Manages AS t_3_Manages
+      logica_test.Manages AS t_2_Manages
   
 ) AS UNUSED_TABLE_NAME  ),
 t_0_Below_sn_step AS (SELECT
-  Below_MultBodyAggAux_f2.manager_id AS manager_id,
-  Below_MultBodyAggAux_f2.employee_id AS employee_id
+  Below_MultBodyAggAux_f7.manager_id AS manager_id,
+  Below_MultBodyAggAux_f7.employee_id AS employee_id
 FROM
-  t_1_Below_MultBodyAggAux_f2 AS Below_MultBodyAggAux_f2
+  t_1_Below_MultBodyAggAux_f7 AS Below_MultBodyAggAux_f7
 GROUP BY 1, 2)
 SELECT
   Below_sn_step.manager_id AS manager_id,

@@ -1,0 +1,8 @@
+WITH t_0_E AS (SELECT * FROM VALUES
+  (1, 2),
+  (2, 3)
+AS UNUSED_TABLE_NAME(a, b))
+SELECT
+  ((E.a) + (E.b)) AS v
+FROM
+  t_0_E AS E ORDER BY v NULLS LAST;

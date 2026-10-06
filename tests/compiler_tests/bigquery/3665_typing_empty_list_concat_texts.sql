@@ -1,0 +1,2 @@
+SELECT
+  ARRAY_LENGTH(ARRAY["a", "b"]) AS n;

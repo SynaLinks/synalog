@@ -43,7 +43,7 @@ WITH t_1_W AS (SELECT * FROM (
 SELECT
   x_2 AS part
 FROM
-  t_1_W AS t_0_W, UNNEST(SPLIT(t_0_W.w, '''')) as pushkin(x_2)
+  t_1_W AS t_0_W, UNNEST(TRANSFORM(SPLIT(t_0_W.w, ''''), synalog_e -> ROW(synalog_e))) as pushkin(x_2)
 WHERE
   (t_0_W.w LIKE '%''%' ESCAPE '\')
 GROUP BY 1 ORDER BY part;

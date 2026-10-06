@@ -1,0 +1,2 @@
+SELECT
+  starts_with(REVERSE(CAST(null AS VARCHAR)), REVERSE(CAST('a' AS VARCHAR))) AS v;

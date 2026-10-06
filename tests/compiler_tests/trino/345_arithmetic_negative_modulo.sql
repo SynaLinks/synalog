@@ -1,3 +1,3 @@
 SELECT
-  - (MOD(7, 3)) AS a,
-  (MOD(7, -3)) AS b;
+  - (MOD(7, NULLIF(3, 0))) AS a,
+  (MOD(7, NULLIF(-3, 0))) AS b;

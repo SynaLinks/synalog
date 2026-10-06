@@ -1,7 +1,7 @@
 WITH t_0_V AS (SELECT * FROM VALUES
   (1, 0.1E0),
-  (2, ((1) / (3))),
-  (3, ((4) / (2))),
+  (2, ((1) / NULLIF(3, 0))),
+  (3, ((4) / NULLIF(2, 0))),
   (4, 1e6)
 AS UNUSED_TABLE_NAME(k, x))
 SELECT

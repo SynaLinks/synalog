@@ -1,4 +1,4 @@
 SELECT
   AVG(x_2) AS a
 FROM
-  UNNEST(ARRAY[1, 2]) as pushkin(x_2);
+  UNNEST(TRANSFORM(ARRAY[1, 2], synalog_e -> ROW(synalog_e))) as pushkin(x_2);

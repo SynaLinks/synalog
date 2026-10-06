@@ -36,6 +36,7 @@ from __future__ import annotations
 
 import csv
 import json
+import math
 import os
 import re
 import sqlite3
@@ -229,6 +230,12 @@ class Session:
         self.close()
 
 
+def _refused(name: str):
+    def refuse(*_args):
+        raise sqlite3.ProgrammingError(f"{name} is not available")
+    return refuse
+
+
 def sqlite_semantics(conn: sqlite3.Connection) -> None:
     """Make SQLite's string functions behave as on the other engines: UPPER and
     LOWER convert every letter, not only ASCII ones (`Upper("café")`), LIKE
@@ -242,6 +249,35 @@ def sqlite_semantics(conn: sqlite3.Connection) -> None:
         lambda text, sep: None if text is None or sep is None else json.dumps(text.split(sep)),
         deterministic=True,
     )
+    # SQLite has no regular expressions of its own: RegexpReplace replaces
+    # every match and RegexpExtract gives the first, null without one, as
+    # on the other engines.
+    conn.create_function(
+        "REGEXP_REPLACE", 3,
+        lambda text, pattern, by: None if None in (text, pattern, by) else re.sub(pattern, by, text),
+        deterministic=True,
+    )
+    conn.create_function(
+        "REGEXP_EXTRACT", 2,
+        lambda text, pattern: None if None in (text, pattern) else (lambda m: m.group(0) if m else None)(re.search(pattern, text)),
+        deterministic=True,
+    )
+    # Logica's math functions fail on a null; the math of a null is null.
+    for name, arity, function in [
+        ("SQRT", 1, lambda x: float(x) ** 0.5), ("POW", 2, lambda x, p: float(x) ** p),
+        ("Exp", 1, math.exp), ("Log", 1, math.log), ("Sin", 1, math.sin), ("Cos", 1, math.cos),
+        ("Asin", 1, math.asin), ("Acos", 1, math.acos), ("Floor", 1, math.floor),
+    ]:
+        conn.create_function(
+            name, arity,
+            lambda *args, f=function: None if None in args else f(*args),
+            deterministic=True,
+        )
+    # A program reaches no file, process or service: Logica's functions that
+    # do are not on the connection.
+    for name, arity in [("ReadFile", 1), ("WriteFile", 2), ("PrintToConsole", 1),
+                        ("Intelligence", 1), ("RunClingo", 1), ("RunClingoFile", 1)]:
+        conn.create_function(name, arity, _refused(name))
 
 
 class SqliteSession(Session):

@@ -266,7 +266,7 @@ fn test_if_then_else() {
         )
     );
     let result = ql.convert_to_sql(&expr).unwrap();
-    assert_eq!(result, "IF(t_0.col0, 1, 0)");
+    assert_eq!(result, "(CASE WHEN t_0.col0 THEN 1 ELSE 0 END)");
 }
 
 // ── CamelCase passthrough ──
@@ -1967,8 +1967,8 @@ fn test_if_case_when() {
         )
     );
     let result = ql.convert_to_sql(&expr).unwrap();
-    // Python Logica uses IF() function format
-    assert!(result.starts_with("IF("), "Expected IF(...), Got: {}", result);
+    // CASE WHEN: every engine has it, not every one IF().
+    assert!(result.starts_with("(CASE WHEN "), "Got: {}", result);
 }
 
 // ── Uppercase unknown function (CamelCase passthrough) ──

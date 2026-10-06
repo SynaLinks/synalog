@@ -1,0 +1,2 @@
+SELECT
+  (POW(16, 0.5)) AS v;

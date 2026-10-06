@@ -1,5 +1,5 @@
 SELECT
   x_3 AS x,
-  (CAST(CAST(x_3 AS DOUBLE) AS DOUBLE) / (2)) AS h
+  (CAST(CAST(x_3 AS DOUBLE) AS DOUBLE) / NULLIF(2, 0)) AS h
 FROM
-  UNNEST(ARRAY[1, 3]) as pushkin(x_3) ORDER BY x;
+  UNNEST(TRANSFORM(ARRAY[1, 3], synalog_e -> ROW(synalog_e))) as pushkin(x_3) ORDER BY x;

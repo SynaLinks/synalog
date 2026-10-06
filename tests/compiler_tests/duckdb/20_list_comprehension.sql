@@ -13,7 +13,7 @@ t_4_EvenSquares AS (SELECT
 FROM
   (select unnest(Range(10)) as unnested_pod) as x_19
 WHERE
-  (((x_19.unnested_pod) % (2)) = 0))
+  (((x_19.unnested_pod) % NULLIF(2, 0)) = 0))
 SELECT
   t_0_Squares.logica_value AS squares,
   EvenSquares.logica_value AS even_squares

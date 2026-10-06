@@ -1,4 +1,4 @@
 SELECT
   SUM(CASE WHEN (x_2 > 2) THEN 1 ELSE 0 END) AS n
 FROM
-  UNNEST(ARRAY[1, 2, 3, 4]) as pushkin(x_2);
+  UNNEST(TRANSFORM(ARRAY[1, 2, 3, 4], synalog_e -> ROW(synalog_e))) as pushkin(x_2);

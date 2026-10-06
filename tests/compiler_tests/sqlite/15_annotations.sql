@@ -3,17 +3,17 @@ WITH t_0_Sorted AS (SELECT
 FROM
   JSON_EACH((select json_group_array(n) from (with recursive t as(select 0 as n union all select n + 1 as n from t where n + 1 < 20) select n from t) where n < 20)) as x_5
 WHERE
-  (((x_5.value) % (2)) = 0) ORDER BY col0),
+  ((((x_5.value) - (2) * CAST((x_5.value) / NULLIF(2, 0) AS INTEGER))) = 0) ORDER BY col0 NULLS LAST),
 t_0_Top5 AS (SELECT
   x_5.value AS col0
 FROM
-  JSON_EACH((select json_group_array(n) from (with recursive t as(select 0 as n union all select n + 1 as n from t where n + 1 < 20) select n from t) where n < 20)) as x_5 ORDER BY col0 LIMIT 5),
+  JSON_EACH((select json_group_array(n) from (with recursive t as(select 0 as n union all select n + 1 as n from t where n + 1 < 20) select n from t) where n < 20)) as x_5 ORDER BY col0 NULLS LAST LIMIT 5),
 t_0_TopEven AS (SELECT
   x_5.value AS col0
 FROM
   JSON_EACH((select json_group_array(n) from (with recursive t as(select 0 as n union all select n + 1 as n from t where n + 1 < 20) select n from t) where n < 20)) as x_5
 WHERE
-  (((x_5.value) % (2)) = 0) ORDER BY col0 LIMIT 3)
+  ((((x_5.value) - (2) * CAST((x_5.value) / NULLIF(2, 0) AS INTEGER))) = 0) ORDER BY col0 NULLS LAST LIMIT 3)
 SELECT * FROM (
   
     SELECT
@@ -36,4 +36,4 @@ SELECT * FROM (
     FROM
       t_0_TopEven AS TopEven
   
-) AS UNUSED_TABLE_NAME  ORDER BY col0, col1 ;
+) AS UNUSED_TABLE_NAME  ORDER BY col0 NULLS LAST, col1 NULLS LAST ;

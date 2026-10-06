@@ -98,6 +98,6 @@ FROM
   t_0_R AS t_3_R)
 SELECT
   R.region AS region,
-  ROUND(CAST(((100) * ((CAST(R.revenue AS double precision) / (T.total)))) AS numeric), 6) AS pct
+  (SELECT (CASE WHEN synalog_v IS NULL OR 6 IS NULL THEN NULL WHEN CAST(synalog_v AS double precision) = 0 THEN CAST(synalog_v AS double precision) WHEN FLOOR(LOG(ABS(CAST(synalog_v AS double precision)))) - 14 + 6 >= 0 THEN (CASE WHEN CAST(synalog_v AS double precision) < 0 THEN -1 ELSE 1 END) * FLOOR(ABS(CAST(synalog_v AS double precision)) / POWER(10, FLOOR(LOG(ABS(CAST(synalog_v AS double precision)))) - 14) + 0.5) * POWER(10, FLOOR(LOG(ABS(CAST(synalog_v AS double precision)))) - 14) + 0 ELSE (CASE WHEN CAST(synalog_v AS double precision) < 0 THEN -1 ELSE 1 END) * FLOOR(ABS(CAST(synalog_v AS double precision)) * POWER(10, 6) + 0.5 + 0.5 * POWER(10, FLOOR(LOG(ABS(CAST(synalog_v AS double precision)))) - 14 + 6)) / POWER(10, 6) + 0 END) FROM (SELECT ((100) * ((CAST(R.revenue AS double precision) / NULLIF(T.total, 0)))) AS synalog_v) AS synalog_n) AS pct
 FROM
   t_0_R AS R, t_2_T AS T ORDER BY region, pct;

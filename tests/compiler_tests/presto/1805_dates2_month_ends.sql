@@ -73,6 +73,6 @@ WITH t_0_Event AS (SELECT * FROM (
 SELECT
   Event.id AS id
 FROM
-  t_0_Event AS Event, UNNEST(ARRAY['28', '30', '31']) as pushkin(x_3)
+  t_0_Event AS Event, UNNEST(TRANSFORM(ARRAY['28', '30', '31'], synalog_e -> ROW(synalog_e))) as pushkin(x_3)
 WHERE
   (SUBSTR(Event."at", 9, 2) = x_3) ORDER BY id;

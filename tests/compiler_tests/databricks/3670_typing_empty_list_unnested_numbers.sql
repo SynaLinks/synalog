@@ -1,0 +1,8 @@
+WITH t_0_V AS (SELECT * FROM VALUES
+  (ARRAY()),
+  (ARRAY(1, 2))
+AS UNUSED_TABLE_NAME(l))
+SELECT
+  SUM(1) AS n
+FROM
+  t_0_V AS V, LATERAL (SELECT explode(V.l) AS x_1) AS pushkin;

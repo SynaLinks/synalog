@@ -1,11 +1,11 @@
 WITH t_0_Lo AS (SELECT
   MIN(x_4) AS m
 FROM
-  UNNEST(ARRAY[1, 2, 3]) as pushkin(x_4)),
+  UNNEST(TRANSFORM(ARRAY[1, 2, 3], synalog_e -> ROW(synalog_e))) as pushkin(x_4)),
 t_0_Hi AS (SELECT
   MAX(x_4) AS m
 FROM
-  UNNEST(ARRAY[1, 2, 3]) as pushkin(x_4))
+  UNNEST(TRANSFORM(ARRAY[1, 2, 3], synalog_e -> ROW(synalog_e))) as pushkin(x_4))
 SELECT * FROM (
   
     SELECT

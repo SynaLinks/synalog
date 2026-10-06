@@ -14,6 +14,6 @@ SELECT
   A.k AS k,
   A.c AS c
 FROM
-  t_0_A AS A, UNNEST(ARRAY[1, 2]) as pushkin(x_6)
+  t_0_A AS A, UNNEST(TRANSFORM(ARRAY[1, 2], synalog_e -> ROW(synalog_e))) as pushkin(x_6)
 WHERE
   (A.k = x_6) ORDER BY k;

@@ -26,4 +26,4 @@ SELECT
 FROM
   t_0_V AS V, JSON_EACH(JSON_ARRAY(0)) as x_4
 WHERE
-  (((V.s) % (2)) = 1)) AS t;
+  ((((V.s) - (2) * CAST((V.s) / NULLIF(2, 0) AS INTEGER))) = 1)) AS t;

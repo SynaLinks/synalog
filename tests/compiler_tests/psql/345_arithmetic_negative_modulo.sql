@@ -5,5 +5,5 @@ create schema if not exists logica_home;
 DO $$ BEGIN if not exists (select 'I(am) :- I(think)' from pg_type where typname = 'logicarecord893574736') then create type logicarecord893574736 as (nirvana numeric); end if; END $$;
 
 SELECT
-  - (MOD(7, 3)) AS a,
-  (MOD(7, -3)) AS b;
+  - (MOD(CAST(7 AS numeric), NULLIF(CAST(3 AS numeric), 0))) AS a,
+  (MOD(CAST(7 AS numeric), NULLIF(CAST(-3 AS numeric), 0))) AS b;

@@ -1,0 +1,10 @@
+WITH t_1_E AS (SELECT * FROM VALUES
+  (1, 2),
+  (2, 3)
+AS UNUSED_TABLE_NAME(a, b))
+SELECT
+  E.a AS v
+FROM
+  t_1_E AS E
+WHERE
+  (E.a > 1);

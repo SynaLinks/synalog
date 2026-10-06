@@ -4,7 +4,7 @@ SELECT * FROM (
       'and' AS test_name,
       x_5 AS x
     FROM
-      UNNEST(FILTER(SEQUENCE(0, 10), x -> x < 10)) as pushkin(x_5)
+      UNNEST(TRANSFORM(FILTER(SEQUENCE(0, 10), x -> x < 10), synalog_e -> ROW(synalog_e))) as pushkin(x_5)
     WHERE
       ((x_5 > 2) AND (x_5 < 7))
    UNION ALL
@@ -13,7 +13,7 @@ SELECT * FROM (
       'complex' AS test_name,
       x_5 AS x
     FROM
-      UNNEST(FILTER(SEQUENCE(0, 10), x -> x < 10)) as pushkin(x_5)
+      UNNEST(TRANSFORM(FILTER(SEQUENCE(0, 10), x -> x < 10), synalog_e -> ROW(synalog_e))) as pushkin(x_5)
     WHERE
       (((x_5 > 2) AND (x_5 < 4)) OR ((x_5 > 6) AND (x_5 < 9)))
   

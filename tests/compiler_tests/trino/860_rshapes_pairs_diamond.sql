@@ -39,8 +39,19 @@ GROUP BY 1, 2;
 
 -- Interacting with table logica_test.P_sn_delta
 
-DROP TABLE IF EXISTS logica_test.P_sn_full;
-CREATE TABLE logica_test.P_sn_full AS WITH t_1_E AS (SELECT * FROM (
+DROP TABLE IF EXISTS logica_test.P_sn_t0;
+CREATE TABLE logica_test.P_sn_t0 AS SELECT
+  P_sn_delta.a AS a,
+  P_sn_delta.b AS b
+FROM
+  logica_test.P_sn_delta AS P_sn_delta
+WHERE
+  (1 = 0);
+
+-- Interacting with table logica_test.P_sn_t0
+
+DROP TABLE IF EXISTS logica_test.P_sn_t1;
+CREATE TABLE logica_test.P_sn_t1 AS WITH t_1_E AS (SELECT * FROM (
   
     SELECT
       1 AS a,
@@ -72,21 +83,260 @@ t_1_P_MultBodyAggAux_f2 AS (SELECT * FROM (
    UNION ALL
   
     SELECT
-      t_2_P_sn_delta.a AS a,
-      t_3_E.b AS b
+      P_sn_t0.a AS a,
+      t_2_E.b AS b
     FROM
-      logica_test.P_sn_delta AS t_2_P_sn_delta, t_1_E AS t_3_E
+      logica_test.P_sn_t0 AS P_sn_t0, t_1_E AS t_2_E
     WHERE
-      (t_3_E.a = t_2_P_sn_delta.b)
+      (t_2_E.a = P_sn_t0.b)
   
 ) AS UNUSED_TABLE_NAME  ),
-t_0_P_sn_step AS (SELECT
+t_0_P_sn_r1 AS (SELECT
   P_MultBodyAggAux_f2.a AS a,
   P_MultBodyAggAux_f2.b AS b
 FROM
   t_1_P_MultBodyAggAux_f2 AS P_MultBodyAggAux_f2
 GROUP BY 1, 2)
-SELECT * FROM (
+SELECT
+  P_sn_r1.a AS a,
+  P_sn_r1.b AS b
+FROM
+  t_0_P_sn_r1 AS P_sn_r1
+WHERE
+  (1 = 0);
+
+-- Interacting with table logica_test.P_sn_t1
+
+DROP TABLE IF EXISTS logica_test.P_sn_t2;
+CREATE TABLE logica_test.P_sn_t2 AS WITH t_1_E AS (SELECT * FROM (
+  
+    SELECT
+      1 AS a,
+      2 AS b
+   UNION ALL
+  
+    SELECT
+      1 AS a,
+      3 AS b
+   UNION ALL
+  
+    SELECT
+      2 AS a,
+      4 AS b
+   UNION ALL
+  
+    SELECT
+      3 AS a,
+      4 AS b
+  
+) AS UNUSED_TABLE_NAME  ),
+t_1_P_MultBodyAggAux_f3 AS (SELECT * FROM (
+  
+    SELECT
+      E.a AS a,
+      E.b AS b
+    FROM
+      t_1_E AS E
+   UNION ALL
+  
+    SELECT
+      P_sn_t1.a AS a,
+      t_2_E.b AS b
+    FROM
+      logica_test.P_sn_t1 AS P_sn_t1, t_1_E AS t_2_E
+    WHERE
+      (t_2_E.a = P_sn_t1.b)
+  
+) AS UNUSED_TABLE_NAME  ),
+t_0_P_sn_r2 AS (SELECT
+  P_MultBodyAggAux_f3.a AS a,
+  P_MultBodyAggAux_f3.b AS b
+FROM
+  t_1_P_MultBodyAggAux_f3 AS P_MultBodyAggAux_f3
+GROUP BY 1, 2)
+SELECT
+  P_sn_r2.a AS a,
+  P_sn_r2.b AS b
+FROM
+  t_0_P_sn_r2 AS P_sn_r2
+WHERE
+  (1 = 0);
+
+-- Interacting with table logica_test.P_sn_t2
+
+DROP TABLE IF EXISTS logica_test.P_sn_t3;
+CREATE TABLE logica_test.P_sn_t3 AS WITH t_1_E AS (SELECT * FROM (
+  
+    SELECT
+      1 AS a,
+      2 AS b
+   UNION ALL
+  
+    SELECT
+      1 AS a,
+      3 AS b
+   UNION ALL
+  
+    SELECT
+      2 AS a,
+      4 AS b
+   UNION ALL
+  
+    SELECT
+      3 AS a,
+      4 AS b
+  
+) AS UNUSED_TABLE_NAME  ),
+t_1_P_MultBodyAggAux_f4 AS (SELECT * FROM (
+  
+    SELECT
+      E.a AS a,
+      E.b AS b
+    FROM
+      t_1_E AS E
+   UNION ALL
+  
+    SELECT
+      P_sn_t2.a AS a,
+      t_2_E.b AS b
+    FROM
+      logica_test.P_sn_t2 AS P_sn_t2, t_1_E AS t_2_E
+    WHERE
+      (t_2_E.a = P_sn_t2.b)
+  
+) AS UNUSED_TABLE_NAME  ),
+t_0_P_sn_r3 AS (SELECT
+  P_MultBodyAggAux_f4.a AS a,
+  P_MultBodyAggAux_f4.b AS b
+FROM
+  t_1_P_MultBodyAggAux_f4 AS P_MultBodyAggAux_f4
+GROUP BY 1, 2)
+SELECT
+  P_sn_r3.a AS a,
+  P_sn_r3.b AS b
+FROM
+  t_0_P_sn_r3 AS P_sn_r3
+WHERE
+  (1 = 0);
+
+-- Interacting with table logica_test.P_sn_t3
+
+DROP TABLE IF EXISTS logica_test.P_sn_t4;
+CREATE TABLE logica_test.P_sn_t4 AS WITH t_1_E AS (SELECT * FROM (
+  
+    SELECT
+      1 AS a,
+      2 AS b
+   UNION ALL
+  
+    SELECT
+      1 AS a,
+      3 AS b
+   UNION ALL
+  
+    SELECT
+      2 AS a,
+      4 AS b
+   UNION ALL
+  
+    SELECT
+      3 AS a,
+      4 AS b
+  
+) AS UNUSED_TABLE_NAME  ),
+t_1_P_MultBodyAggAux_f5 AS (SELECT * FROM (
+  
+    SELECT
+      E.a AS a,
+      E.b AS b
+    FROM
+      t_1_E AS E
+   UNION ALL
+  
+    SELECT
+      P_sn_t3.a AS a,
+      t_2_E.b AS b
+    FROM
+      logica_test.P_sn_t3 AS P_sn_t3, t_1_E AS t_2_E
+    WHERE
+      (t_2_E.a = P_sn_t3.b)
+  
+) AS UNUSED_TABLE_NAME  ),
+t_0_P_sn_r4 AS (SELECT
+  P_MultBodyAggAux_f5.a AS a,
+  P_MultBodyAggAux_f5.b AS b
+FROM
+  t_1_P_MultBodyAggAux_f5 AS P_MultBodyAggAux_f5
+GROUP BY 1, 2)
+SELECT
+  P_sn_r4.a AS a,
+  P_sn_r4.b AS b
+FROM
+  t_0_P_sn_r4 AS P_sn_r4
+WHERE
+  (1 = 0);
+
+-- Interacting with table logica_test.P_sn_t4
+
+DROP TABLE IF EXISTS logica_test.P_sn_t5;
+CREATE TABLE logica_test.P_sn_t5 AS WITH t_1_E AS (SELECT * FROM (
+  
+    SELECT
+      1 AS a,
+      2 AS b
+   UNION ALL
+  
+    SELECT
+      1 AS a,
+      3 AS b
+   UNION ALL
+  
+    SELECT
+      2 AS a,
+      4 AS b
+   UNION ALL
+  
+    SELECT
+      3 AS a,
+      4 AS b
+  
+) AS UNUSED_TABLE_NAME  ),
+t_1_P_MultBodyAggAux_f6 AS (SELECT * FROM (
+  
+    SELECT
+      E.a AS a,
+      E.b AS b
+    FROM
+      t_1_E AS E
+   UNION ALL
+  
+    SELECT
+      P_sn_t4.a AS a,
+      t_2_E.b AS b
+    FROM
+      logica_test.P_sn_t4 AS P_sn_t4, t_1_E AS t_2_E
+    WHERE
+      (t_2_E.a = P_sn_t4.b)
+  
+) AS UNUSED_TABLE_NAME  ),
+t_0_P_sn_r5 AS (SELECT
+  P_MultBodyAggAux_f6.a AS a,
+  P_MultBodyAggAux_f6.b AS b
+FROM
+  t_1_P_MultBodyAggAux_f6 AS P_MultBodyAggAux_f6
+GROUP BY 1, 2)
+SELECT
+  P_sn_r5.a AS a,
+  P_sn_r5.b AS b
+FROM
+  t_0_P_sn_r5 AS P_sn_r5
+WHERE
+  (1 = 0);
+
+-- Interacting with table logica_test.P_sn_t5
+
+DROP TABLE IF EXISTS logica_test.P_sn_full;
+CREATE TABLE logica_test.P_sn_full AS SELECT * FROM (
   
     SELECT
       P_sn_delta.a AS a,
@@ -96,12 +346,38 @@ SELECT * FROM (
    UNION ALL
   
     SELECT
-      P_sn_step.a AS a,
-      P_sn_step.b AS b
+      P_sn_t1.a AS a,
+      P_sn_t1.b AS b
     FROM
-      t_0_P_sn_step AS P_sn_step
-    WHERE
-      (1 = 0)
+      logica_test.P_sn_t1 AS P_sn_t1
+   UNION ALL
+  
+    SELECT
+      P_sn_t2.a AS a,
+      P_sn_t2.b AS b
+    FROM
+      logica_test.P_sn_t2 AS P_sn_t2
+   UNION ALL
+  
+    SELECT
+      P_sn_t3.a AS a,
+      P_sn_t3.b AS b
+    FROM
+      logica_test.P_sn_t3 AS P_sn_t3
+   UNION ALL
+  
+    SELECT
+      P_sn_t4.a AS a,
+      P_sn_t4.b AS b
+    FROM
+      logica_test.P_sn_t4 AS P_sn_t4
+   UNION ALL
+  
+    SELECT
+      P_sn_t5.a AS a,
+      P_sn_t5.b AS b
+    FROM
+      logica_test.P_sn_t5 AS P_sn_t5
   
 ) AS UNUSED_TABLE_NAME  ;
 
@@ -130,7 +406,7 @@ CREATE TABLE logica_test.P_sn_new AS WITH t_1_E AS (SELECT * FROM (
       4 AS b
   
 ) AS UNUSED_TABLE_NAME  ),
-t_1_P_MultBodyAggAux_f2 AS (SELECT * FROM (
+t_1_P_MultBodyAggAux_f7 AS (SELECT * FROM (
   
     SELECT
       E.a AS a,
@@ -140,19 +416,19 @@ t_1_P_MultBodyAggAux_f2 AS (SELECT * FROM (
    UNION ALL
   
     SELECT
-      t_2_P_sn_delta.a AS a,
-      t_3_E.b AS b
+      P_sn_delta.a AS a,
+      t_2_E.b AS b
     FROM
-      logica_test.P_sn_delta AS t_2_P_sn_delta, t_1_E AS t_3_E
+      logica_test.P_sn_delta AS P_sn_delta, t_1_E AS t_2_E
     WHERE
-      (t_3_E.a = t_2_P_sn_delta.b)
+      (t_2_E.a = P_sn_delta.b)
   
 ) AS UNUSED_TABLE_NAME  ),
 t_0_P_sn_step AS (SELECT
-  P_MultBodyAggAux_f2.a AS a,
-  P_MultBodyAggAux_f2.b AS b
+  P_MultBodyAggAux_f7.a AS a,
+  P_MultBodyAggAux_f7.b AS b
 FROM
-  t_1_P_MultBodyAggAux_f2 AS P_MultBodyAggAux_f2
+  t_1_P_MultBodyAggAux_f7 AS P_MultBodyAggAux_f7
 GROUP BY 1, 2)
 SELECT
   P_sn_step.a AS a,
@@ -201,7 +477,7 @@ CREATE TABLE logica_test.P_sn_new AS WITH t_1_E AS (SELECT * FROM (
       4 AS b
   
 ) AS UNUSED_TABLE_NAME  ),
-t_1_P_MultBodyAggAux_f2 AS (SELECT * FROM (
+t_1_P_MultBodyAggAux_f7 AS (SELECT * FROM (
   
     SELECT
       E.a AS a,
@@ -211,19 +487,19 @@ t_1_P_MultBodyAggAux_f2 AS (SELECT * FROM (
    UNION ALL
   
     SELECT
-      t_2_P_sn_delta.a AS a,
-      t_3_E.b AS b
+      P_sn_delta.a AS a,
+      t_2_E.b AS b
     FROM
-      logica_test.P_sn_delta AS t_2_P_sn_delta, t_1_E AS t_3_E
+      logica_test.P_sn_delta AS P_sn_delta, t_1_E AS t_2_E
     WHERE
-      (t_3_E.a = t_2_P_sn_delta.b)
+      (t_2_E.a = P_sn_delta.b)
   
 ) AS UNUSED_TABLE_NAME  ),
 t_0_P_sn_step AS (SELECT
-  P_MultBodyAggAux_f2.a AS a,
-  P_MultBodyAggAux_f2.b AS b
+  P_MultBodyAggAux_f7.a AS a,
+  P_MultBodyAggAux_f7.b AS b
 FROM
-  t_1_P_MultBodyAggAux_f2 AS P_MultBodyAggAux_f2
+  t_1_P_MultBodyAggAux_f7 AS P_MultBodyAggAux_f7
 GROUP BY 1, 2)
 SELECT
   P_sn_step.a AS a,
@@ -272,7 +548,7 @@ CREATE TABLE logica_test.P_sn_new AS WITH t_1_E AS (SELECT * FROM (
       4 AS b
   
 ) AS UNUSED_TABLE_NAME  ),
-t_1_P_MultBodyAggAux_f2 AS (SELECT * FROM (
+t_1_P_MultBodyAggAux_f7 AS (SELECT * FROM (
   
     SELECT
       E.a AS a,
@@ -282,19 +558,19 @@ t_1_P_MultBodyAggAux_f2 AS (SELECT * FROM (
    UNION ALL
   
     SELECT
-      t_2_P_sn_delta.a AS a,
-      t_3_E.b AS b
+      P_sn_delta.a AS a,
+      t_2_E.b AS b
     FROM
-      logica_test.P_sn_delta AS t_2_P_sn_delta, t_1_E AS t_3_E
+      logica_test.P_sn_delta AS P_sn_delta, t_1_E AS t_2_E
     WHERE
-      (t_3_E.a = t_2_P_sn_delta.b)
+      (t_2_E.a = P_sn_delta.b)
   
 ) AS UNUSED_TABLE_NAME  ),
 t_0_P_sn_step AS (SELECT
-  P_MultBodyAggAux_f2.a AS a,
-  P_MultBodyAggAux_f2.b AS b
+  P_MultBodyAggAux_f7.a AS a,
+  P_MultBodyAggAux_f7.b AS b
 FROM
-  t_1_P_MultBodyAggAux_f2 AS P_MultBodyAggAux_f2
+  t_1_P_MultBodyAggAux_f7 AS P_MultBodyAggAux_f7
 GROUP BY 1, 2)
 SELECT
   P_sn_step.a AS a,
@@ -343,7 +619,7 @@ CREATE TABLE logica_test.P_sn_new AS WITH t_1_E AS (SELECT * FROM (
       4 AS b
   
 ) AS UNUSED_TABLE_NAME  ),
-t_1_P_MultBodyAggAux_f2 AS (SELECT * FROM (
+t_1_P_MultBodyAggAux_f7 AS (SELECT * FROM (
   
     SELECT
       E.a AS a,
@@ -353,19 +629,19 @@ t_1_P_MultBodyAggAux_f2 AS (SELECT * FROM (
    UNION ALL
   
     SELECT
-      t_2_P_sn_delta.a AS a,
-      t_3_E.b AS b
+      P_sn_delta.a AS a,
+      t_2_E.b AS b
     FROM
-      logica_test.P_sn_delta AS t_2_P_sn_delta, t_1_E AS t_3_E
+      logica_test.P_sn_delta AS P_sn_delta, t_1_E AS t_2_E
     WHERE
-      (t_3_E.a = t_2_P_sn_delta.b)
+      (t_2_E.a = P_sn_delta.b)
   
 ) AS UNUSED_TABLE_NAME  ),
 t_0_P_sn_step AS (SELECT
-  P_MultBodyAggAux_f2.a AS a,
-  P_MultBodyAggAux_f2.b AS b
+  P_MultBodyAggAux_f7.a AS a,
+  P_MultBodyAggAux_f7.b AS b
 FROM
-  t_1_P_MultBodyAggAux_f2 AS P_MultBodyAggAux_f2
+  t_1_P_MultBodyAggAux_f7 AS P_MultBodyAggAux_f7
 GROUP BY 1, 2)
 SELECT
   P_sn_step.a AS a,
@@ -414,7 +690,7 @@ CREATE TABLE logica_test.P_sn_new AS WITH t_1_E AS (SELECT * FROM (
       4 AS b
   
 ) AS UNUSED_TABLE_NAME  ),
-t_1_P_MultBodyAggAux_f2 AS (SELECT * FROM (
+t_1_P_MultBodyAggAux_f7 AS (SELECT * FROM (
   
     SELECT
       E.a AS a,
@@ -424,19 +700,19 @@ t_1_P_MultBodyAggAux_f2 AS (SELECT * FROM (
    UNION ALL
   
     SELECT
-      t_2_P_sn_delta.a AS a,
-      t_3_E.b AS b
+      P_sn_delta.a AS a,
+      t_2_E.b AS b
     FROM
-      logica_test.P_sn_delta AS t_2_P_sn_delta, t_1_E AS t_3_E
+      logica_test.P_sn_delta AS P_sn_delta, t_1_E AS t_2_E
     WHERE
-      (t_3_E.a = t_2_P_sn_delta.b)
+      (t_2_E.a = P_sn_delta.b)
   
 ) AS UNUSED_TABLE_NAME  ),
 t_0_P_sn_step AS (SELECT
-  P_MultBodyAggAux_f2.a AS a,
-  P_MultBodyAggAux_f2.b AS b
+  P_MultBodyAggAux_f7.a AS a,
+  P_MultBodyAggAux_f7.b AS b
 FROM
-  t_1_P_MultBodyAggAux_f2 AS P_MultBodyAggAux_f2
+  t_1_P_MultBodyAggAux_f7 AS P_MultBodyAggAux_f7
 GROUP BY 1, 2)
 SELECT
   P_sn_step.a AS a,
@@ -485,7 +761,7 @@ CREATE TABLE logica_test.P_sn_new AS WITH t_1_E AS (SELECT * FROM (
       4 AS b
   
 ) AS UNUSED_TABLE_NAME  ),
-t_1_P_MultBodyAggAux_f2 AS (SELECT * FROM (
+t_1_P_MultBodyAggAux_f7 AS (SELECT * FROM (
   
     SELECT
       E.a AS a,
@@ -495,19 +771,19 @@ t_1_P_MultBodyAggAux_f2 AS (SELECT * FROM (
    UNION ALL
   
     SELECT
-      t_2_P_sn_delta.a AS a,
-      t_3_E.b AS b
+      P_sn_delta.a AS a,
+      t_2_E.b AS b
     FROM
-      logica_test.P_sn_delta AS t_2_P_sn_delta, t_1_E AS t_3_E
+      logica_test.P_sn_delta AS P_sn_delta, t_1_E AS t_2_E
     WHERE
-      (t_3_E.a = t_2_P_sn_delta.b)
+      (t_2_E.a = P_sn_delta.b)
   
 ) AS UNUSED_TABLE_NAME  ),
 t_0_P_sn_step AS (SELECT
-  P_MultBodyAggAux_f2.a AS a,
-  P_MultBodyAggAux_f2.b AS b
+  P_MultBodyAggAux_f7.a AS a,
+  P_MultBodyAggAux_f7.b AS b
 FROM
-  t_1_P_MultBodyAggAux_f2 AS P_MultBodyAggAux_f2
+  t_1_P_MultBodyAggAux_f7 AS P_MultBodyAggAux_f7
 GROUP BY 1, 2)
 SELECT
   P_sn_step.a AS a,
@@ -556,7 +832,7 @@ CREATE TABLE logica_test.P_sn_new AS WITH t_1_E AS (SELECT * FROM (
       4 AS b
   
 ) AS UNUSED_TABLE_NAME  ),
-t_1_P_MultBodyAggAux_f2 AS (SELECT * FROM (
+t_1_P_MultBodyAggAux_f7 AS (SELECT * FROM (
   
     SELECT
       E.a AS a,
@@ -566,19 +842,19 @@ t_1_P_MultBodyAggAux_f2 AS (SELECT * FROM (
    UNION ALL
   
     SELECT
-      t_2_P_sn_delta.a AS a,
-      t_3_E.b AS b
+      P_sn_delta.a AS a,
+      t_2_E.b AS b
     FROM
-      logica_test.P_sn_delta AS t_2_P_sn_delta, t_1_E AS t_3_E
+      logica_test.P_sn_delta AS P_sn_delta, t_1_E AS t_2_E
     WHERE
-      (t_3_E.a = t_2_P_sn_delta.b)
+      (t_2_E.a = P_sn_delta.b)
   
 ) AS UNUSED_TABLE_NAME  ),
 t_0_P_sn_step AS (SELECT
-  P_MultBodyAggAux_f2.a AS a,
-  P_MultBodyAggAux_f2.b AS b
+  P_MultBodyAggAux_f7.a AS a,
+  P_MultBodyAggAux_f7.b AS b
 FROM
-  t_1_P_MultBodyAggAux_f2 AS P_MultBodyAggAux_f2
+  t_1_P_MultBodyAggAux_f7 AS P_MultBodyAggAux_f7
 GROUP BY 1, 2)
 SELECT
   P_sn_step.a AS a,
@@ -627,7 +903,7 @@ CREATE TABLE logica_test.P_sn_new AS WITH t_1_E AS (SELECT * FROM (
       4 AS b
   
 ) AS UNUSED_TABLE_NAME  ),
-t_1_P_MultBodyAggAux_f2 AS (SELECT * FROM (
+t_1_P_MultBodyAggAux_f7 AS (SELECT * FROM (
   
     SELECT
       E.a AS a,
@@ -637,19 +913,19 @@ t_1_P_MultBodyAggAux_f2 AS (SELECT * FROM (
    UNION ALL
   
     SELECT
-      t_2_P_sn_delta.a AS a,
-      t_3_E.b AS b
+      P_sn_delta.a AS a,
+      t_2_E.b AS b
     FROM
-      logica_test.P_sn_delta AS t_2_P_sn_delta, t_1_E AS t_3_E
+      logica_test.P_sn_delta AS P_sn_delta, t_1_E AS t_2_E
     WHERE
-      (t_3_E.a = t_2_P_sn_delta.b)
+      (t_2_E.a = P_sn_delta.b)
   
 ) AS UNUSED_TABLE_NAME  ),
 t_0_P_sn_step AS (SELECT
-  P_MultBodyAggAux_f2.a AS a,
-  P_MultBodyAggAux_f2.b AS b
+  P_MultBodyAggAux_f7.a AS a,
+  P_MultBodyAggAux_f7.b AS b
 FROM
-  t_1_P_MultBodyAggAux_f2 AS P_MultBodyAggAux_f2
+  t_1_P_MultBodyAggAux_f7 AS P_MultBodyAggAux_f7
 GROUP BY 1, 2)
 SELECT
   P_sn_step.a AS a,

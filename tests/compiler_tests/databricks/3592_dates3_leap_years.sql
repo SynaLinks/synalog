@@ -1,0 +1,17 @@
+WITH t_1_V AS (SELECT * FROM VALUES
+  (1, "2024-01-01"),
+  (2, "2024-02-28"),
+  (3, "2024-02-29"),
+  (4, "2023-03-01"),
+  (5, "2000-12-31"),
+  (6, "1999-07-15"),
+  (7, "2026-10-06"),
+  (8, "1970-01-01"),
+  (9, "2100-02-28"),
+  (10, "2004-08-09")
+AS UNUSED_TABLE_NAME(id, d))
+SELECT
+  V.id AS id,
+  ((((MOD(CAST(ROUND(SUBSTR(V.d, 1, 4)) AS BIGINT), NULLIF(4, 0))) = 0) AND ((MOD(CAST(ROUND(SUBSTR(V.d, 1, 4)) AS BIGINT), NULLIF(100, 0))) != 0)) OR ((MOD(CAST(ROUND(SUBSTR(V.d, 1, 4)) AS BIGINT), NULLIF(400, 0))) = 0)) AS leap
+FROM
+  t_1_V AS V ORDER BY id NULLS LAST;

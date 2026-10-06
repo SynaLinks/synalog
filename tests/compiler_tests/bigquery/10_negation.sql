@@ -27,10 +27,10 @@ SELECT * FROM (
       ((SELECT
         MIN(1) AS logica_value
       FROM
-        UNNEST(GENERATE_ARRAY(0, 10 - 1)) as x_11
+        UNNEST(GENERATE_ARRAY(0, 10 - 1)) as x_10
       WHERE
-        ((MOD(x_5, 2)) = 0) AND
-        (x_5 = x_11)) IS NULL)
+        ((MOD(x_5, NULLIF(2, 0))) = 0) AND
+        (x_5 = x_10)) IS NULL)
    UNION ALL
   
     SELECT
@@ -60,6 +60,6 @@ SELECT * FROM (
         t_0_Prime AS Prime
       WHERE
         (Prime.col0 = x_7)) IS NULL) AND
-      ((MOD(x_7, 2)) = 0)
+      ((MOD(x_7, NULLIF(2, 0))) = 0)
   
-) AS UNUSED_TABLE_NAME  ORDER BY test_name, x ;
+) AS UNUSED_TABLE_NAME  ORDER BY test_name NULLS LAST, x NULLS LAST ;

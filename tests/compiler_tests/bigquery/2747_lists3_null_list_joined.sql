@@ -1,0 +1,2 @@
+SELECT
+  ARRAY_TO_STRING(null, ",") AS s;

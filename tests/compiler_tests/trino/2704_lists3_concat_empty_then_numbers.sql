@@ -1,0 +1,3 @@
+SELECT
+  CARDINALITY(ARRAY[2, 3]) AS n,
+  ELEMENT_AT(ARRAY[2, 3], 1 + 1) AS last;

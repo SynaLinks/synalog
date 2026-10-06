@@ -92,6 +92,6 @@ FROM
   t_0_R AS t_3_R)
 SELECT
   R.region AS region,
-  ROUND(((100) * ((CAST(R.revenue AS REAL) / (T.total)))), 6) AS pct
+  (SELECT (CASE WHEN synalog_v IS NULL OR 6 IS NULL THEN NULL WHEN CAST(synalog_v AS REAL) = 0 THEN CAST(synalog_v AS REAL) WHEN FLOOR(LOG10(ABS(CAST(synalog_v AS REAL)))) - 14 + 6 >= 0 THEN (CASE WHEN CAST(synalog_v AS REAL) < 0 THEN -1 ELSE 1 END) * FLOOR(ABS(CAST(synalog_v AS REAL)) / POWER(10, FLOOR(LOG10(ABS(CAST(synalog_v AS REAL)))) - 14) + 0.5) * POWER(10, FLOOR(LOG10(ABS(CAST(synalog_v AS REAL)))) - 14) + 0 ELSE (CASE WHEN CAST(synalog_v AS REAL) < 0 THEN -1 ELSE 1 END) * FLOOR(ABS(CAST(synalog_v AS REAL)) * POWER(10, 6) + 0.5 + 0.5 * POWER(10, FLOOR(LOG10(ABS(CAST(synalog_v AS REAL)))) - 14 + 6)) / POWER(10, 6) + 0 END) FROM (SELECT ((100) * ((CAST(R.revenue AS REAL) / NULLIF(T.total, 0)))) AS synalog_v)) AS pct
 FROM
   t_0_R AS R, t_2_T AS T ORDER BY region NULLS LAST, pct NULLS LAST;

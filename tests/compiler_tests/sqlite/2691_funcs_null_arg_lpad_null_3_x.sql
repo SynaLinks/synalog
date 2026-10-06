@@ -1,0 +1,2 @@
+SELECT
+  (CASE WHEN LENGTH(null) >= 3 THEN SUBSTR(null, 1, 3) ELSE SUBSTR(REPLACE(HEX(ZEROBLOB(3)), '00', 'x'), 1, 3 - LENGTH(null)) || null END) AS v;

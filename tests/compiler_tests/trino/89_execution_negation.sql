@@ -13,7 +13,7 @@ WITH t_0_Friend AS (SELECT * FROM (
 SELECT
   x_3 AS name
 FROM
-  UNNEST(ARRAY['a', 'b', 'c']) as pushkin(x_3)
+  UNNEST(TRANSFORM(ARRAY['a', 'b', 'c'], synalog_e -> ROW(synalog_e))) as pushkin(x_3)
 WHERE
   ((SELECT
     MIN(1) AS logica_value

@@ -1,0 +1,2 @@
+SELECT
+  LN(1) AS v;

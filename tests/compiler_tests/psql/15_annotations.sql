@@ -9,7 +9,7 @@ WITH t_0_Sorted AS (SELECT
 FROM
   UNNEST(COALESCE((SELECT ARRAY_AGG(x) FROM GENERATE_SERIES(0, 20 - 1) as x), '{}')) as x_5
 WHERE
-  ((MOD(x_5, 2)) = 0) ORDER BY col0),
+  ((MOD(CAST(x_5 AS numeric), NULLIF(CAST(2 AS numeric), 0))) = 0) ORDER BY col0),
 t_0_Top5 AS (SELECT
   x_5 AS col0
 FROM
@@ -19,7 +19,7 @@ t_0_TopEven AS (SELECT
 FROM
   UNNEST(COALESCE((SELECT ARRAY_AGG(x) FROM GENERATE_SERIES(0, 20 - 1) as x), '{}')) as x_5
 WHERE
-  ((MOD(x_5, 2)) = 0) ORDER BY col0 LIMIT 3)
+  ((MOD(CAST(x_5 AS numeric), NULLIF(CAST(2 AS numeric), 0))) = 0) ORDER BY col0 LIMIT 3)
 SELECT * FROM (
   
     SELECT

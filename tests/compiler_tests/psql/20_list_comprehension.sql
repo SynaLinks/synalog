@@ -13,7 +13,7 @@ t_4_EvenSquares AS (SELECT
 FROM
   UNNEST(COALESCE((SELECT ARRAY_AGG(x) FROM GENERATE_SERIES(0, 10 - 1) as x), '{}')) as x_19
 WHERE
-  ((MOD(x_19, 2)) = 0))
+  ((MOD(CAST(x_19 AS numeric), NULLIF(CAST(2 AS numeric), 0))) = 0))
 SELECT
   t_0_Squares.logica_value AS squares,
   EvenSquares.logica_value AS even_squares

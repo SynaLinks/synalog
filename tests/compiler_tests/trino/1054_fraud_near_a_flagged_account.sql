@@ -72,8 +72,19 @@ GROUP BY 1, 2;
 
 -- Interacting with table logica_test.Linked_sn_delta
 
-DROP TABLE IF EXISTS logica_test.Linked_sn_full;
-CREATE TABLE logica_test.Linked_sn_full AS WITH t_1_Linked_MultBodyAggAux_f2 AS (SELECT * FROM (
+DROP TABLE IF EXISTS logica_test.Linked_sn_t0;
+CREATE TABLE logica_test.Linked_sn_t0 AS SELECT
+  Linked_sn_delta.a AS a,
+  Linked_sn_delta.b AS b
+FROM
+  logica_test.Linked_sn_delta AS Linked_sn_delta
+WHERE
+  (1 = 0);
+
+-- Interacting with table logica_test.Linked_sn_t0
+
+DROP TABLE IF EXISTS logica_test.Linked_sn_t1;
+CREATE TABLE logica_test.Linked_sn_t1 AS WITH t_1_Linked_MultBodyAggAux_f2 AS (SELECT * FROM (
   
     SELECT
       Shares.a AS a,
@@ -83,21 +94,172 @@ CREATE TABLE logica_test.Linked_sn_full AS WITH t_1_Linked_MultBodyAggAux_f2 AS 
    UNION ALL
   
     SELECT
-      t_2_Linked_sn_delta.a AS a,
-      t_3_Shares.b AS b
+      Linked_sn_t0.a AS a,
+      t_2_Shares.b AS b
     FROM
-      logica_test.Linked_sn_delta AS t_2_Linked_sn_delta, logica_test.Shares AS t_3_Shares
+      logica_test.Linked_sn_t0 AS Linked_sn_t0, logica_test.Shares AS t_2_Shares
     WHERE
-      (t_3_Shares.a = t_2_Linked_sn_delta.b)
+      (t_2_Shares.a = Linked_sn_t0.b)
   
 ) AS UNUSED_TABLE_NAME  ),
-t_0_Linked_sn_step AS (SELECT
+t_0_Linked_sn_r1 AS (SELECT
   Linked_MultBodyAggAux_f2.a AS a,
   Linked_MultBodyAggAux_f2.b AS b
 FROM
   t_1_Linked_MultBodyAggAux_f2 AS Linked_MultBodyAggAux_f2
 GROUP BY 1, 2)
-SELECT * FROM (
+SELECT
+  Linked_sn_r1.a AS a,
+  Linked_sn_r1.b AS b
+FROM
+  t_0_Linked_sn_r1 AS Linked_sn_r1
+WHERE
+  (1 = 0);
+
+-- Interacting with table logica_test.Linked_sn_t1
+
+DROP TABLE IF EXISTS logica_test.Linked_sn_t2;
+CREATE TABLE logica_test.Linked_sn_t2 AS WITH t_1_Linked_MultBodyAggAux_f3 AS (SELECT * FROM (
+  
+    SELECT
+      Shares.a AS a,
+      Shares.b AS b
+    FROM
+      logica_test.Shares AS Shares
+   UNION ALL
+  
+    SELECT
+      Linked_sn_t1.a AS a,
+      t_2_Shares.b AS b
+    FROM
+      logica_test.Linked_sn_t1 AS Linked_sn_t1, logica_test.Shares AS t_2_Shares
+    WHERE
+      (t_2_Shares.a = Linked_sn_t1.b)
+  
+) AS UNUSED_TABLE_NAME  ),
+t_0_Linked_sn_r2 AS (SELECT
+  Linked_MultBodyAggAux_f3.a AS a,
+  Linked_MultBodyAggAux_f3.b AS b
+FROM
+  t_1_Linked_MultBodyAggAux_f3 AS Linked_MultBodyAggAux_f3
+GROUP BY 1, 2)
+SELECT
+  Linked_sn_r2.a AS a,
+  Linked_sn_r2.b AS b
+FROM
+  t_0_Linked_sn_r2 AS Linked_sn_r2
+WHERE
+  (1 = 0);
+
+-- Interacting with table logica_test.Linked_sn_t2
+
+DROP TABLE IF EXISTS logica_test.Linked_sn_t3;
+CREATE TABLE logica_test.Linked_sn_t3 AS WITH t_1_Linked_MultBodyAggAux_f4 AS (SELECT * FROM (
+  
+    SELECT
+      Shares.a AS a,
+      Shares.b AS b
+    FROM
+      logica_test.Shares AS Shares
+   UNION ALL
+  
+    SELECT
+      Linked_sn_t2.a AS a,
+      t_2_Shares.b AS b
+    FROM
+      logica_test.Linked_sn_t2 AS Linked_sn_t2, logica_test.Shares AS t_2_Shares
+    WHERE
+      (t_2_Shares.a = Linked_sn_t2.b)
+  
+) AS UNUSED_TABLE_NAME  ),
+t_0_Linked_sn_r3 AS (SELECT
+  Linked_MultBodyAggAux_f4.a AS a,
+  Linked_MultBodyAggAux_f4.b AS b
+FROM
+  t_1_Linked_MultBodyAggAux_f4 AS Linked_MultBodyAggAux_f4
+GROUP BY 1, 2)
+SELECT
+  Linked_sn_r3.a AS a,
+  Linked_sn_r3.b AS b
+FROM
+  t_0_Linked_sn_r3 AS Linked_sn_r3
+WHERE
+  (1 = 0);
+
+-- Interacting with table logica_test.Linked_sn_t3
+
+DROP TABLE IF EXISTS logica_test.Linked_sn_t4;
+CREATE TABLE logica_test.Linked_sn_t4 AS WITH t_1_Linked_MultBodyAggAux_f5 AS (SELECT * FROM (
+  
+    SELECT
+      Shares.a AS a,
+      Shares.b AS b
+    FROM
+      logica_test.Shares AS Shares
+   UNION ALL
+  
+    SELECT
+      Linked_sn_t3.a AS a,
+      t_2_Shares.b AS b
+    FROM
+      logica_test.Linked_sn_t3 AS Linked_sn_t3, logica_test.Shares AS t_2_Shares
+    WHERE
+      (t_2_Shares.a = Linked_sn_t3.b)
+  
+) AS UNUSED_TABLE_NAME  ),
+t_0_Linked_sn_r4 AS (SELECT
+  Linked_MultBodyAggAux_f5.a AS a,
+  Linked_MultBodyAggAux_f5.b AS b
+FROM
+  t_1_Linked_MultBodyAggAux_f5 AS Linked_MultBodyAggAux_f5
+GROUP BY 1, 2)
+SELECT
+  Linked_sn_r4.a AS a,
+  Linked_sn_r4.b AS b
+FROM
+  t_0_Linked_sn_r4 AS Linked_sn_r4
+WHERE
+  (1 = 0);
+
+-- Interacting with table logica_test.Linked_sn_t4
+
+DROP TABLE IF EXISTS logica_test.Linked_sn_t5;
+CREATE TABLE logica_test.Linked_sn_t5 AS WITH t_1_Linked_MultBodyAggAux_f6 AS (SELECT * FROM (
+  
+    SELECT
+      Shares.a AS a,
+      Shares.b AS b
+    FROM
+      logica_test.Shares AS Shares
+   UNION ALL
+  
+    SELECT
+      Linked_sn_t4.a AS a,
+      t_2_Shares.b AS b
+    FROM
+      logica_test.Linked_sn_t4 AS Linked_sn_t4, logica_test.Shares AS t_2_Shares
+    WHERE
+      (t_2_Shares.a = Linked_sn_t4.b)
+  
+) AS UNUSED_TABLE_NAME  ),
+t_0_Linked_sn_r5 AS (SELECT
+  Linked_MultBodyAggAux_f6.a AS a,
+  Linked_MultBodyAggAux_f6.b AS b
+FROM
+  t_1_Linked_MultBodyAggAux_f6 AS Linked_MultBodyAggAux_f6
+GROUP BY 1, 2)
+SELECT
+  Linked_sn_r5.a AS a,
+  Linked_sn_r5.b AS b
+FROM
+  t_0_Linked_sn_r5 AS Linked_sn_r5
+WHERE
+  (1 = 0);
+
+-- Interacting with table logica_test.Linked_sn_t5
+
+DROP TABLE IF EXISTS logica_test.Linked_sn_full;
+CREATE TABLE logica_test.Linked_sn_full AS SELECT * FROM (
   
     SELECT
       Linked_sn_delta.a AS a,
@@ -107,19 +269,45 @@ SELECT * FROM (
    UNION ALL
   
     SELECT
-      Linked_sn_step.a AS a,
-      Linked_sn_step.b AS b
+      Linked_sn_t1.a AS a,
+      Linked_sn_t1.b AS b
     FROM
-      t_0_Linked_sn_step AS Linked_sn_step
-    WHERE
-      (1 = 0)
+      logica_test.Linked_sn_t1 AS Linked_sn_t1
+   UNION ALL
+  
+    SELECT
+      Linked_sn_t2.a AS a,
+      Linked_sn_t2.b AS b
+    FROM
+      logica_test.Linked_sn_t2 AS Linked_sn_t2
+   UNION ALL
+  
+    SELECT
+      Linked_sn_t3.a AS a,
+      Linked_sn_t3.b AS b
+    FROM
+      logica_test.Linked_sn_t3 AS Linked_sn_t3
+   UNION ALL
+  
+    SELECT
+      Linked_sn_t4.a AS a,
+      Linked_sn_t4.b AS b
+    FROM
+      logica_test.Linked_sn_t4 AS Linked_sn_t4
+   UNION ALL
+  
+    SELECT
+      Linked_sn_t5.a AS a,
+      Linked_sn_t5.b AS b
+    FROM
+      logica_test.Linked_sn_t5 AS Linked_sn_t5
   
 ) AS UNUSED_TABLE_NAME  ;
 
 -- Interacting with table logica_test.Linked_sn_full
 
 DROP TABLE IF EXISTS logica_test.Linked_sn_new;
-CREATE TABLE logica_test.Linked_sn_new AS WITH t_1_Linked_MultBodyAggAux_f2 AS (SELECT * FROM (
+CREATE TABLE logica_test.Linked_sn_new AS WITH t_1_Linked_MultBodyAggAux_f7 AS (SELECT * FROM (
   
     SELECT
       Shares.a AS a,
@@ -129,19 +317,19 @@ CREATE TABLE logica_test.Linked_sn_new AS WITH t_1_Linked_MultBodyAggAux_f2 AS (
    UNION ALL
   
     SELECT
-      t_2_Linked_sn_delta.a AS a,
-      t_3_Shares.b AS b
+      Linked_sn_delta.a AS a,
+      t_2_Shares.b AS b
     FROM
-      logica_test.Linked_sn_delta AS t_2_Linked_sn_delta, logica_test.Shares AS t_3_Shares
+      logica_test.Linked_sn_delta AS Linked_sn_delta, logica_test.Shares AS t_2_Shares
     WHERE
-      (t_3_Shares.a = t_2_Linked_sn_delta.b)
+      (t_2_Shares.a = Linked_sn_delta.b)
   
 ) AS UNUSED_TABLE_NAME  ),
 t_0_Linked_sn_step AS (SELECT
-  Linked_MultBodyAggAux_f2.a AS a,
-  Linked_MultBodyAggAux_f2.b AS b
+  Linked_MultBodyAggAux_f7.a AS a,
+  Linked_MultBodyAggAux_f7.b AS b
 FROM
-  t_1_Linked_MultBodyAggAux_f2 AS Linked_MultBodyAggAux_f2
+  t_1_Linked_MultBodyAggAux_f7 AS Linked_MultBodyAggAux_f7
 GROUP BY 1, 2)
 SELECT
   Linked_sn_step.a AS a,
@@ -168,7 +356,7 @@ FROM
   logica_test.Linked_sn_new AS Linked_sn_new;
 
 DROP TABLE IF EXISTS logica_test.Linked_sn_new;
-CREATE TABLE logica_test.Linked_sn_new AS WITH t_1_Linked_MultBodyAggAux_f2 AS (SELECT * FROM (
+CREATE TABLE logica_test.Linked_sn_new AS WITH t_1_Linked_MultBodyAggAux_f7 AS (SELECT * FROM (
   
     SELECT
       Shares.a AS a,
@@ -178,19 +366,19 @@ CREATE TABLE logica_test.Linked_sn_new AS WITH t_1_Linked_MultBodyAggAux_f2 AS (
    UNION ALL
   
     SELECT
-      t_2_Linked_sn_delta.a AS a,
-      t_3_Shares.b AS b
+      Linked_sn_delta.a AS a,
+      t_2_Shares.b AS b
     FROM
-      logica_test.Linked_sn_delta AS t_2_Linked_sn_delta, logica_test.Shares AS t_3_Shares
+      logica_test.Linked_sn_delta AS Linked_sn_delta, logica_test.Shares AS t_2_Shares
     WHERE
-      (t_3_Shares.a = t_2_Linked_sn_delta.b)
+      (t_2_Shares.a = Linked_sn_delta.b)
   
 ) AS UNUSED_TABLE_NAME  ),
 t_0_Linked_sn_step AS (SELECT
-  Linked_MultBodyAggAux_f2.a AS a,
-  Linked_MultBodyAggAux_f2.b AS b
+  Linked_MultBodyAggAux_f7.a AS a,
+  Linked_MultBodyAggAux_f7.b AS b
 FROM
-  t_1_Linked_MultBodyAggAux_f2 AS Linked_MultBodyAggAux_f2
+  t_1_Linked_MultBodyAggAux_f7 AS Linked_MultBodyAggAux_f7
 GROUP BY 1, 2)
 SELECT
   Linked_sn_step.a AS a,
@@ -217,7 +405,7 @@ FROM
   logica_test.Linked_sn_new AS Linked_sn_new;
 
 DROP TABLE IF EXISTS logica_test.Linked_sn_new;
-CREATE TABLE logica_test.Linked_sn_new AS WITH t_1_Linked_MultBodyAggAux_f2 AS (SELECT * FROM (
+CREATE TABLE logica_test.Linked_sn_new AS WITH t_1_Linked_MultBodyAggAux_f7 AS (SELECT * FROM (
   
     SELECT
       Shares.a AS a,
@@ -227,19 +415,19 @@ CREATE TABLE logica_test.Linked_sn_new AS WITH t_1_Linked_MultBodyAggAux_f2 AS (
    UNION ALL
   
     SELECT
-      t_2_Linked_sn_delta.a AS a,
-      t_3_Shares.b AS b
+      Linked_sn_delta.a AS a,
+      t_2_Shares.b AS b
     FROM
-      logica_test.Linked_sn_delta AS t_2_Linked_sn_delta, logica_test.Shares AS t_3_Shares
+      logica_test.Linked_sn_delta AS Linked_sn_delta, logica_test.Shares AS t_2_Shares
     WHERE
-      (t_3_Shares.a = t_2_Linked_sn_delta.b)
+      (t_2_Shares.a = Linked_sn_delta.b)
   
 ) AS UNUSED_TABLE_NAME  ),
 t_0_Linked_sn_step AS (SELECT
-  Linked_MultBodyAggAux_f2.a AS a,
-  Linked_MultBodyAggAux_f2.b AS b
+  Linked_MultBodyAggAux_f7.a AS a,
+  Linked_MultBodyAggAux_f7.b AS b
 FROM
-  t_1_Linked_MultBodyAggAux_f2 AS Linked_MultBodyAggAux_f2
+  t_1_Linked_MultBodyAggAux_f7 AS Linked_MultBodyAggAux_f7
 GROUP BY 1, 2)
 SELECT
   Linked_sn_step.a AS a,
@@ -266,7 +454,7 @@ FROM
   logica_test.Linked_sn_new AS Linked_sn_new;
 
 DROP TABLE IF EXISTS logica_test.Linked_sn_new;
-CREATE TABLE logica_test.Linked_sn_new AS WITH t_1_Linked_MultBodyAggAux_f2 AS (SELECT * FROM (
+CREATE TABLE logica_test.Linked_sn_new AS WITH t_1_Linked_MultBodyAggAux_f7 AS (SELECT * FROM (
   
     SELECT
       Shares.a AS a,
@@ -276,19 +464,19 @@ CREATE TABLE logica_test.Linked_sn_new AS WITH t_1_Linked_MultBodyAggAux_f2 AS (
    UNION ALL
   
     SELECT
-      t_2_Linked_sn_delta.a AS a,
-      t_3_Shares.b AS b
+      Linked_sn_delta.a AS a,
+      t_2_Shares.b AS b
     FROM
-      logica_test.Linked_sn_delta AS t_2_Linked_sn_delta, logica_test.Shares AS t_3_Shares
+      logica_test.Linked_sn_delta AS Linked_sn_delta, logica_test.Shares AS t_2_Shares
     WHERE
-      (t_3_Shares.a = t_2_Linked_sn_delta.b)
+      (t_2_Shares.a = Linked_sn_delta.b)
   
 ) AS UNUSED_TABLE_NAME  ),
 t_0_Linked_sn_step AS (SELECT
-  Linked_MultBodyAggAux_f2.a AS a,
-  Linked_MultBodyAggAux_f2.b AS b
+  Linked_MultBodyAggAux_f7.a AS a,
+  Linked_MultBodyAggAux_f7.b AS b
 FROM
-  t_1_Linked_MultBodyAggAux_f2 AS Linked_MultBodyAggAux_f2
+  t_1_Linked_MultBodyAggAux_f7 AS Linked_MultBodyAggAux_f7
 GROUP BY 1, 2)
 SELECT
   Linked_sn_step.a AS a,
@@ -315,7 +503,7 @@ FROM
   logica_test.Linked_sn_new AS Linked_sn_new;
 
 DROP TABLE IF EXISTS logica_test.Linked_sn_new;
-CREATE TABLE logica_test.Linked_sn_new AS WITH t_1_Linked_MultBodyAggAux_f2 AS (SELECT * FROM (
+CREATE TABLE logica_test.Linked_sn_new AS WITH t_1_Linked_MultBodyAggAux_f7 AS (SELECT * FROM (
   
     SELECT
       Shares.a AS a,
@@ -325,19 +513,19 @@ CREATE TABLE logica_test.Linked_sn_new AS WITH t_1_Linked_MultBodyAggAux_f2 AS (
    UNION ALL
   
     SELECT
-      t_2_Linked_sn_delta.a AS a,
-      t_3_Shares.b AS b
+      Linked_sn_delta.a AS a,
+      t_2_Shares.b AS b
     FROM
-      logica_test.Linked_sn_delta AS t_2_Linked_sn_delta, logica_test.Shares AS t_3_Shares
+      logica_test.Linked_sn_delta AS Linked_sn_delta, logica_test.Shares AS t_2_Shares
     WHERE
-      (t_3_Shares.a = t_2_Linked_sn_delta.b)
+      (t_2_Shares.a = Linked_sn_delta.b)
   
 ) AS UNUSED_TABLE_NAME  ),
 t_0_Linked_sn_step AS (SELECT
-  Linked_MultBodyAggAux_f2.a AS a,
-  Linked_MultBodyAggAux_f2.b AS b
+  Linked_MultBodyAggAux_f7.a AS a,
+  Linked_MultBodyAggAux_f7.b AS b
 FROM
-  t_1_Linked_MultBodyAggAux_f2 AS Linked_MultBodyAggAux_f2
+  t_1_Linked_MultBodyAggAux_f7 AS Linked_MultBodyAggAux_f7
 GROUP BY 1, 2)
 SELECT
   Linked_sn_step.a AS a,
@@ -364,7 +552,7 @@ FROM
   logica_test.Linked_sn_new AS Linked_sn_new;
 
 DROP TABLE IF EXISTS logica_test.Linked_sn_new;
-CREATE TABLE logica_test.Linked_sn_new AS WITH t_1_Linked_MultBodyAggAux_f2 AS (SELECT * FROM (
+CREATE TABLE logica_test.Linked_sn_new AS WITH t_1_Linked_MultBodyAggAux_f7 AS (SELECT * FROM (
   
     SELECT
       Shares.a AS a,
@@ -374,19 +562,19 @@ CREATE TABLE logica_test.Linked_sn_new AS WITH t_1_Linked_MultBodyAggAux_f2 AS (
    UNION ALL
   
     SELECT
-      t_2_Linked_sn_delta.a AS a,
-      t_3_Shares.b AS b
+      Linked_sn_delta.a AS a,
+      t_2_Shares.b AS b
     FROM
-      logica_test.Linked_sn_delta AS t_2_Linked_sn_delta, logica_test.Shares AS t_3_Shares
+      logica_test.Linked_sn_delta AS Linked_sn_delta, logica_test.Shares AS t_2_Shares
     WHERE
-      (t_3_Shares.a = t_2_Linked_sn_delta.b)
+      (t_2_Shares.a = Linked_sn_delta.b)
   
 ) AS UNUSED_TABLE_NAME  ),
 t_0_Linked_sn_step AS (SELECT
-  Linked_MultBodyAggAux_f2.a AS a,
-  Linked_MultBodyAggAux_f2.b AS b
+  Linked_MultBodyAggAux_f7.a AS a,
+  Linked_MultBodyAggAux_f7.b AS b
 FROM
-  t_1_Linked_MultBodyAggAux_f2 AS Linked_MultBodyAggAux_f2
+  t_1_Linked_MultBodyAggAux_f7 AS Linked_MultBodyAggAux_f7
 GROUP BY 1, 2)
 SELECT
   Linked_sn_step.a AS a,
@@ -413,7 +601,7 @@ FROM
   logica_test.Linked_sn_new AS Linked_sn_new;
 
 DROP TABLE IF EXISTS logica_test.Linked_sn_new;
-CREATE TABLE logica_test.Linked_sn_new AS WITH t_1_Linked_MultBodyAggAux_f2 AS (SELECT * FROM (
+CREATE TABLE logica_test.Linked_sn_new AS WITH t_1_Linked_MultBodyAggAux_f7 AS (SELECT * FROM (
   
     SELECT
       Shares.a AS a,
@@ -423,19 +611,19 @@ CREATE TABLE logica_test.Linked_sn_new AS WITH t_1_Linked_MultBodyAggAux_f2 AS (
    UNION ALL
   
     SELECT
-      t_2_Linked_sn_delta.a AS a,
-      t_3_Shares.b AS b
+      Linked_sn_delta.a AS a,
+      t_2_Shares.b AS b
     FROM
-      logica_test.Linked_sn_delta AS t_2_Linked_sn_delta, logica_test.Shares AS t_3_Shares
+      logica_test.Linked_sn_delta AS Linked_sn_delta, logica_test.Shares AS t_2_Shares
     WHERE
-      (t_3_Shares.a = t_2_Linked_sn_delta.b)
+      (t_2_Shares.a = Linked_sn_delta.b)
   
 ) AS UNUSED_TABLE_NAME  ),
 t_0_Linked_sn_step AS (SELECT
-  Linked_MultBodyAggAux_f2.a AS a,
-  Linked_MultBodyAggAux_f2.b AS b
+  Linked_MultBodyAggAux_f7.a AS a,
+  Linked_MultBodyAggAux_f7.b AS b
 FROM
-  t_1_Linked_MultBodyAggAux_f2 AS Linked_MultBodyAggAux_f2
+  t_1_Linked_MultBodyAggAux_f7 AS Linked_MultBodyAggAux_f7
 GROUP BY 1, 2)
 SELECT
   Linked_sn_step.a AS a,
@@ -462,7 +650,7 @@ FROM
   logica_test.Linked_sn_new AS Linked_sn_new;
 
 DROP TABLE IF EXISTS logica_test.Linked_sn_new;
-CREATE TABLE logica_test.Linked_sn_new AS WITH t_1_Linked_MultBodyAggAux_f2 AS (SELECT * FROM (
+CREATE TABLE logica_test.Linked_sn_new AS WITH t_1_Linked_MultBodyAggAux_f7 AS (SELECT * FROM (
   
     SELECT
       Shares.a AS a,
@@ -472,19 +660,19 @@ CREATE TABLE logica_test.Linked_sn_new AS WITH t_1_Linked_MultBodyAggAux_f2 AS (
    UNION ALL
   
     SELECT
-      t_2_Linked_sn_delta.a AS a,
-      t_3_Shares.b AS b
+      Linked_sn_delta.a AS a,
+      t_2_Shares.b AS b
     FROM
-      logica_test.Linked_sn_delta AS t_2_Linked_sn_delta, logica_test.Shares AS t_3_Shares
+      logica_test.Linked_sn_delta AS Linked_sn_delta, logica_test.Shares AS t_2_Shares
     WHERE
-      (t_3_Shares.a = t_2_Linked_sn_delta.b)
+      (t_2_Shares.a = Linked_sn_delta.b)
   
 ) AS UNUSED_TABLE_NAME  ),
 t_0_Linked_sn_step AS (SELECT
-  Linked_MultBodyAggAux_f2.a AS a,
-  Linked_MultBodyAggAux_f2.b AS b
+  Linked_MultBodyAggAux_f7.a AS a,
+  Linked_MultBodyAggAux_f7.b AS b
 FROM
-  t_1_Linked_MultBodyAggAux_f2 AS Linked_MultBodyAggAux_f2
+  t_1_Linked_MultBodyAggAux_f7 AS Linked_MultBodyAggAux_f7
 GROUP BY 1, 2)
 SELECT
   Linked_sn_step.a AS a,

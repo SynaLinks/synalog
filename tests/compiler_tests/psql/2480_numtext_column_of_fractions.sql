@@ -8,17 +8,17 @@ WITH t_0_V AS (SELECT * FROM (
   
     SELECT
       1 AS k,
-      0.1 AS x
+      CAST(0.1 AS double precision) AS x
    UNION ALL
   
     SELECT
       2 AS k,
-      (CAST(1 AS double precision) / (3)) AS x
+      (CAST(1 AS double precision) / NULLIF(3, 0)) AS x
    UNION ALL
   
     SELECT
       3 AS k,
-      (CAST(4 AS double precision) / (2)) AS x
+      (CAST(4 AS double precision) / NULLIF(2, 0)) AS x
    UNION ALL
   
     SELECT

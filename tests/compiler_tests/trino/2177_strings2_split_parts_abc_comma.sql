@@ -1,5 +1,5 @@
 SELECT
   x_1 AS part
 FROM
-  UNNEST(SPLIT('abc', ',')) as pushkin(x_1)
+  UNNEST(TRANSFORM(SPLIT('abc', ','), synalog_e -> ROW(synalog_e))) as pushkin(x_1)
 GROUP BY 1;

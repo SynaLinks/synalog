@@ -7,12 +7,12 @@ WITH t_0_V AS (SELECT * FROM (
   
     SELECT
       2 AS k,
-      ((1) / (3)) AS x
+      ((1) / NULLIF(3, 0)) AS x
    UNION ALL
   
     SELECT
       3 AS k,
-      ((4) / (2)) AS x
+      ((4) / NULLIF(2, 0)) AS x
    UNION ALL
   
     SELECT

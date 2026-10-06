@@ -7,15 +7,15 @@ create sequence if not exists eternal_logical_sequence;
 WITH t_2_V AS (SELECT * FROM (
   
     SELECT
-      0.1 AS x
+      0.1E0 AS x
    UNION ALL
   
     SELECT
-      0.2 AS x
+      0.2E0 AS x
    UNION ALL
   
     SELECT
-      0.3 AS x
+      0.3E0 AS x
   
 ) AS UNUSED_TABLE_NAME  ),
 t_1_T AS (SELECT

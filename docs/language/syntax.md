@@ -29,10 +29,10 @@ OrderWithTax(order_id:, total:) :-
 
 | Category | Operators |
 |----------|-----------|
-| Arithmetic | `+` `-` `*` `/` `^` (power) `%` (modulo); `/` divides exactly (`7 / 2` is `3.5`) and `-` negates also right after another operator (`2 * -3`) |
+| Arithmetic | `+` `-` `*` `/` `^` (power) `%` (remainder, with the sign of the dividend: `-7 % 3` is `-1`, `7.5 % 2` is `1.5`); `/` divides exactly (`7 / 2` is `3.5`); a division or remainder by zero has no value (null); a number with a decimal point is a double (`0.1 + 0.2 == 0.3` does not hold); `-` negates also right after another operator (`2 * -3`) |
 | String concatenation | `++` |
 | Comparison | `==` `!=` `<` `>` `<=` `>=` |
-| Boolean | `&&` `\|\|` `!` |
+| Boolean | `&&` `\|\|` `!`; a boolean variable or field alone is a condition (`Active(id:) :- Person(id:, active:), active;`), as `!active` is |
 | Membership | `x in [1, 2, 3]` |
 | Null tests | `x is null`, `x is not null` |
 
@@ -90,6 +90,8 @@ MissingEmail(user_id:) :- Users(user_id:, email:), email is null;
 HasEmail(user_id:, email:) :- Users(user_id:, email:), email is not null;
 UserDisplay(user_id:, name:) :- Users(user_id:, full_name:), name == Coalesce(full_name, "Anonymous");
 ```
+
+A null equals nothing, another null included: a join on a column finds no row where the key is null (`A(k:), B(k:)` with both `k` null), and neither does a negation (`~B(k:)` holds). Replace a null key before joining when it should match (`B(k: Coalesce(k, 0))`).
 
 ## Conditionals
 

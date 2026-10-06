@@ -22,6 +22,11 @@ pub struct TypesGraphBuilder {
     if_statements_counter: usize,
     /// Cache of expressions for deduplication.
     expressions_cache: HashMap<String, Expression>,
+    /// The rule being traversed: its variables are its own (`x` of one rule
+    /// is not `x` of another).
+    rule_index: usize,
+    /// Count of expressions that could not be read, each its own vertex.
+    unknowns: usize,
 }
 
 impl TypesGraphBuilder {
@@ -35,11 +40,28 @@ impl TypesGraphBuilder {
         self.predicate_usages.clear();
         self.if_statements_counter = 0;
         self.expressions_cache.clear();
+        self.rule_index = 0;
+        self.unknowns = 0;
+    }
+
+    /// A variable of the rule being traversed.
+    fn rule_variable(&mut self, name: &str) -> Expression {
+        self.get_or_cache(Expression::variable(&format!("{}@{}", name, self.rule_index)))
+    }
+
+    /// An expression that could not be read: a vertex of its own.
+    fn unknown(&mut self) -> Expression {
+        self.unknowns += 1;
+        Expression::variable(&format!("_unknown{}", self.unknowns))
     }
 
     /// Get from cache or add expression.
     fn get_or_cache(&mut self, expr: Expression) -> Expression {
-        let key = expr.to_string();
+        // A call is one vertex per use: its usage number is part of its key.
+        let key = match &expr {
+            Expression::PredicateAddressing { predicate_id, .. } => format!("{}#{}", expr, predicate_id),
+            _ => expr.to_string(),
+        };
         if let Some(cached) = self.expressions_cache.get(&key) {
             cached.clone()
         } else {
@@ -69,6 +91,10 @@ impl TypesGraphBuilder {
                 Some(pn) => pn.as_str().to_string(),
                 None => continue,
             };
+            // An annotation (`@Make`, `@OrderBy`) holds no value of the program.
+            if predicate_name.starts_with('@') {
+                continue;
+            }
 
             let rule_graph = self.traverse_tree(&predicate_name, rule);
             graphs
@@ -82,6 +108,7 @@ impl TypesGraphBuilder {
 
     /// Traverse a single rule and build its type graph.
     fn traverse_tree(&mut self, predicate_name: &str, rule: &Json) -> TypesGraph {
+        self.rule_index += 1;
         let mut graph = TypesGraph::new();
 
         if !rule.is_object() {
@@ -228,12 +255,13 @@ impl TypesGraphBuilder {
                 _ => return,
             };
 
+            // The use's number is taken before its arguments are read: a call
+            // inside them is another use (`ToInt64(ToString(ToInt64(x)))`).
             let predicate_id = *self.predicate_usages.get(&predicate_name).unwrap_or(&0);
+            *self.predicate_usages.entry(predicate_name.clone()).or_insert(0) += 1;
             let logica_value = Expression::predicate_addressing(&predicate_name, "logica_value", predicate_id);
 
-            self.fill_fields(graph, &predicate_name, predicate, &logica_value);
-
-            *self.predicate_usages.entry(predicate_name).or_insert(0) += 1;
+            self.fill_fields(graph, &predicate_name, predicate_id, predicate, &logica_value);
         }
     }
 
@@ -242,6 +270,7 @@ impl TypesGraphBuilder {
         &mut self,
         graph: &mut TypesGraph,
         predicate_name: &str,
+        predicate_id: usize,
         fields: &Json,
         result: &Expression,
     ) -> Bounds {
@@ -259,8 +288,6 @@ impl TypesGraphBuilder {
             Some(fv) if fv.is_array() => fv.as_array(),
             _ => return (0, 0),
         };
-
-        let predicate_id = *self.predicate_usages.get(predicate_name).unwrap_or(&0);
 
         for field in field_values {
             if !field.is_object() {
@@ -310,7 +337,7 @@ impl TypesGraphBuilder {
     /// Convert a parsed expression to a typed expression.
     fn convert_expression(&mut self, graph: &mut TypesGraph, expr: &Json) -> (Expression, Bounds) {
         if !expr.is_object() {
-            return (Expression::variable("_unknown"), (0, 0));
+            return (self.unknown(), (0, 0));
         }
         let expr_obj = expr.as_object();
 
@@ -331,7 +358,7 @@ impl TypesGraphBuilder {
                 }
             }).unwrap_or_default();
             let bounds = get_bounds_from_value(variable.as_object().get("var_name"));
-            let result = self.get_or_cache(Expression::variable(&var_name));
+            let result = self.rule_variable(&var_name);
             return (result, bounds);
         }
 
@@ -358,7 +385,7 @@ impl TypesGraphBuilder {
         }
 
         // Default fallback
-        (Expression::variable("_unknown"), (0, 0))
+        (self.unknown(), (0, 0))
     }
 
     /// Convert a literal expression.
@@ -415,18 +442,19 @@ impl TypesGraphBuilder {
         let call_obj = call.as_object();
         let predicate_name = match call_obj.get("predicate_name") {
             Some(pn) => pn.as_str().to_string(),
-            None => return (Expression::variable("_unknown"), (0, 0)),
+            None => return (self.unknown(), (0, 0)),
         };
 
+        // The use's number is taken before its arguments are read.
         let predicate_id = *self.predicate_usages.get(&predicate_name).unwrap_or(&0);
+        *self.predicate_usages.entry(predicate_name.clone()).or_insert(0) += 1;
         let result = self.get_or_cache(Expression::predicate_addressing(
             &predicate_name,
             "logica_value",
             predicate_id,
         ));
 
-        let bounds = self.fill_fields(graph, &predicate_name, call, &result);
-        *self.predicate_usages.entry(predicate_name.clone()).or_insert(0) += 1;
+        let bounds = self.fill_fields(graph, &predicate_name, predicate_id, call, &result);
 
         // Adjust bounds based on predicate name
         let adjusted_bounds = adjust_bounds_for_predicate(bounds, call_obj.get("predicate_name"));
@@ -440,7 +468,7 @@ impl TypesGraphBuilder {
 
         let record_expr = match sub_obj.get("record") {
             Some(r) => r,
-            None => return (Expression::variable("_unknown"), (0, 0)),
+            None => return (self.unknown(), (0, 0)),
         };
 
         let (record, (left_start, _)) = self.convert_expression(graph, record_expr);
@@ -510,7 +538,7 @@ impl TypesGraphBuilder {
         let impl_obj = implication.as_object();
         let inner_var_name = format!("_IfNode{}", self.if_statements_counter);
         self.if_statements_counter += 1;
-        let inner_variable = self.get_or_cache(Expression::variable(&inner_var_name));
+        let inner_variable = self.rule_variable(&inner_var_name);
 
         // Process otherwise clause
         let (otherwise_expr, (mut common_left, mut common_right)) =

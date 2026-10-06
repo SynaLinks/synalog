@@ -1,2 +1,2 @@
 SELECT
-  FLOOR(((7) / (2))) AS v;
+  FLOOR(((7) / NULLIF(2, 0))) AS v;

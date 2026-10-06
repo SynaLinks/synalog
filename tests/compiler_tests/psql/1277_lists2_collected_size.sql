@@ -13,7 +13,7 @@ WITH t_3_L AS (SELECT * FROM (
   
     SELECT
       2 AS id,
-      '{}' AS l
+      CAST('{}' AS numeric[]) AS l
    UNION ALL
   
     SELECT

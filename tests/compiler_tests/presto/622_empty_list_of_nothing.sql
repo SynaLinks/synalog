@@ -1,7 +1,7 @@
 WITH t_0_C AS (SELECT
   ARRAY_AGG(x_3) AS l
 FROM
-  UNNEST(ARRAY[1]) as pushkin(x_3)
+  UNNEST(TRANSFORM(ARRAY[1], synalog_e -> ROW(synalog_e))) as pushkin(x_3)
 WHERE
   (x_3 > 5))
 SELECT

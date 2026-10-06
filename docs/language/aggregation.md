@@ -49,7 +49,14 @@ TopSeller(name? ArgMax= name -> revenue) distinct :- Sales(name:, revenue:);
 
 ## More aggregating functions
 
-In addition to the operators above: `Array= x -> y` (ordered array), `ArgMinK(x -> y, k)` and `ArgMaxK(x -> y, k)` (top-k), `StringAgg= x` (the values as text, joined with `,`, in no particular order; null when they are all null), `1= x` (any single value).
+In addition to the operators above: `Array= x -> y` (ordered array), `StringAgg= x` (the values as text, joined with `,`, in no particular order; null when they are all null), `1= x` (any single value), and `ArgMaxK` and `ArgMinK` (the `k` items of highest or lowest score). These two take how many items to keep: name one with its count, then aggregate with the name:
+
+```logica
+Top3(x) = ArgMaxK(x, 3);
+Podium(race:, top? Top3= runner -> points) distinct :- Result(race:, runner:, points:);
+```
+
+An aggregate aggregates only as an operator (`n? Max= x`) or in a `combine`: called as a value (`Q(t: Max(x))`) or in a condition (`x == Max(x)`), it is refused.
 
 ## Deduplication without aggregation
 

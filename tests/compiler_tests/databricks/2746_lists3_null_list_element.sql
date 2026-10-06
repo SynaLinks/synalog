@@ -1,0 +1,2 @@
+SELECT
+  ELEMENT_AT(CAST(null AS ARRAY<STRING>), 0 + 1) AS e;

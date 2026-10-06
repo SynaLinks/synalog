@@ -1,5 +1,5 @@
 SELECT
   (SELECT
-  MAX(x_5) AS logica_value
+  MAX(x_4) AS logica_value
 FROM
-  UNNEST(ARRAY[4, 9, 2]) as pushkin(x_5)) AS m;
+  UNNEST(TRANSFORM(ARRAY[4, 9, 2], synalog_e -> ROW(synalog_e))) as pushkin(x_4)) AS m;

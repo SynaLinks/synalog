@@ -373,6 +373,14 @@ pub fn parse_record_internals(
                 Err((field, value)) => {
                     // Has colon: named field
                     positional_ok = false;
+                    // A name is written into SQL as an identifier, where `${`
+                    // is a variable Spark substitutes before it parses.
+                    if field.view().contains('$') {
+                        return Err(ParsingException::new(
+                            "A field name may not hold '$'.",
+                            field,
+                        ));
+                    }
                     let mut value = value;
                     observed_field = field.to_string();
                     if value.is_empty() {
@@ -512,7 +520,7 @@ fn parse_generic_call(
                 let pred = pred_span.view();
 
                 let all_good = pred.bytes().all(|c| {
-                    c.is_ascii_alphanumeric() || b"@_.${}+-`".contains(&c)
+                    c.is_ascii_alphanumeric() || b"@_.+-`".contains(&c)
                 });
 
                 if (found_idx > 0 && all_good)
@@ -1117,6 +1125,19 @@ pub fn parse_proposition(s: &SpanString) -> ParseResult<Json> {
     }
     if let Some(neg) = parse_negation(s)? {
         return Ok(neg);
+    }
+    // A boolean variable or field holds where it is true: `active`, as
+    // `!active` holds where it is false.
+    if let Ok(e) = parse_expression(s) {
+        if e.as_object().contains_key("variable") || e.as_object().contains_key("subscript") {
+            return Ok(json_obj!("predicate" => json_obj!(
+                "predicate_name" => Json::Str("Constraint".to_string()),
+                "record" => json_obj!("field_value" => Json::Array(vec![json_obj!(
+                    "field" => Json::Int(0),
+                    "value" => json_obj!("expression" => e)
+                )]))
+            )));
+        }
     }
     Err(ParsingException::new(
         "Could not parse proposition.",

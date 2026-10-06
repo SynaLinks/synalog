@@ -20,7 +20,6 @@
 //     Fields custom_udfs/custom_udf_definitions exist but are never populated.
 //   - TVF support: TvfSignature(), @CompileAsTvf handling.
 //   - Annotation validation: CheckAnnotatedObjects() — verify annotations target existing predicates.
-//   - NeedsClingo() — check DuckDB @Engine clingo flag.
 // Implemented: PerformIterationClosure, SelectAsRecord, iterations initialization, type_inference module.
 
 use std::collections::{HashMap, HashSet};
@@ -50,7 +49,6 @@ pub struct PredicateInfo {
 pub struct GroundInfo {
     pub table_name: String,
     pub overwrite: bool,
-    pub copy_to_file: Option<String>,
 }
 
 /// Pagination options for query compilation.
@@ -114,14 +112,35 @@ pub fn recursion_error_message() -> String {
         .to_string()
 }
 
-/// Enable direct usage of SQL strings as table names.
-/// If table is `` `(...)` ``, strip the backtick-paren wrapper.
-pub fn unquote_parenthesised(table: &str) -> String {
-    if table.len() > 4 && table.starts_with("`(") && table.ends_with(")`") {
-        table[2..table.len() - 2].to_string()
-    } else {
-        table.to_string()
+/// The SQL naming a table the program reads but does not define: a dotted
+/// path of names (`sales.Orders`), or one in backticks whose parts may hold
+/// '-' (`` `my-project.sales.orders` ``), each part then quoted for the
+/// engine. Anything else is refused: a table name never carries SQL.
+pub fn table_reference(table: &str, dialect: &dyn dialects::Dialect) -> CompileResult<String> {
+    if !is_table_name(table) {
+        return Err(CompileError::new(
+            format!("'{}' is not a table name: write names of letters, digits and '_', joined by '.'", table),
+            table.to_string(),
+        ));
     }
+    match table.strip_prefix('`').and_then(|t| t.strip_suffix('`')) {
+        Some(inner) if dialect.name() == "bigquery" => Ok(format!("`{}`", inner)),
+        Some(inner) => Ok(inner.split('.').map(|p| dialect.quote_identifier(p)).collect::<Vec<_>>().join(".")),
+        None => Ok(table.to_string()),
+    }
+}
+
+/// Whether `table` names a table, as `table_reference` takes it.
+pub fn is_table_name(table: &str) -> bool {
+    if let Some(inner) = table.strip_prefix('`').and_then(|t| t.strip_suffix('`')) {
+        return inner.split('.').all(|p| {
+            !p.is_empty() && p.chars().all(|c| c.is_ascii_alphanumeric() || c == '_' || c == '-')
+        });
+    }
+    table.split('.').all(|part| {
+        part.chars().next().is_some_and(|c| c.is_ascii_alphabetic() || c == '_')
+            && part.chars().all(|c| c.is_ascii_alphanumeric() || c == '_')
+    })
 }
 
 // ---------------------------------------------------------------------------
@@ -419,6 +438,19 @@ fn register_record_type(ty: &Type, out: &mut IndexMap<String, Type>) {
         out.entry(dialects::record_type_name(ty))
             .or_insert_with(|| ty.clone());
     }
+    // A list of records holds records of a type too.
+    if let Type::List(inner) = ty {
+        register_record_type(inner, out);
+    }
+}
+
+/// The record type a field's type holds, as a record or a list's element.
+fn held_record(t: &Type) -> Option<&Type> {
+    match t {
+        Type::Record { .. } => Some(t),
+        Type::List(inner) => held_record(inner),
+        _ => None,
+    }
 }
 
 /// Emit the `CREATE TYPE` for `name`, recursing into nested record types first
@@ -438,29 +470,14 @@ fn emit_record_type(
         return;
     };
     for t in fields.values() {
-        if matches!(t, Type::Record { .. }) {
-            emit_record_type(&dialects::record_type_name(t), types, dialect, emitted, out);
+        if let Some(r) = held_record(t) {
+            emit_record_type(&dialects::record_type_name(r), types, dialect, emitted, out);
         }
     }
-    // Canonical (sorted) field order, matching the value order in record_literal.
-    let mut items: Vec<(&String, &Type)> = fields.iter().collect();
-    items.sort_by(|a, b| a.0.cmp(b.0));
-    let cols: Vec<String> = items
-        .iter()
-        .map(|(k, t)| {
-            let col_type = match t {
-                Type::Record { .. } => dialects::record_type_name(t),
-                other => dialect.scalar_sql_type(other),
-            };
-            // Quote the field identifier so reserved words (e.g. `left`) are
-            // legal; lowercase names fold identically to unquoted field access.
-            format!("\"{}\" {}", k, col_type)
-        })
-        .collect();
     out.push_str(&format!(
         "DO $$ BEGIN if not exists (select 1 from pg_type where typname = '{name}') \
          then create type {name} as ({}); end if; END $$;\n",
-        cols.join(", ")
+        dialects::psql_record_columns(&types[name])
     ));
 }
 
@@ -473,7 +490,7 @@ fn emit_record_type(
 /// This is the full-featured version matching Python's `LogicaProgram`,
 /// including execution state, UDFs, grounding, exports, and flag substitution.
 pub struct LogicaProgram {
-    /// Raw rules before functor expansion (for Clingo).
+    /// Raw rules before functor expansion.
     pub raw_rules: Vec<Json>,
     /// Pre-parsed rules (after recursion unfolding, before Make).
     pub preparsed_rules: Vec<Json>,
@@ -484,8 +501,6 @@ pub struct LogicaProgram {
     /// Predicates defined by the dialect's library program (subset of
     /// `defined_predicates`), as opposed to the user's own rules.
     pub library_predicates: HashSet<String>,
-    /// Dollar parameters found in the program.
-    pub dollar_params: Vec<String>,
     /// Table aliases for undefined predicates.
     pub table_aliases: HashMap<String, String>,
     /// Parsed annotations.
@@ -605,9 +620,6 @@ impl LogicaProgram {
             rules.push((name, rule.clone()));
         }
 
-        // Extract dollar params
-        let dollar_params = Self::extract_dollar_params_from_rules(&all_rules);
-
         // Extract annotations (recompute after functors added rules)
         let mut annotations = Annotations::extract(&rules)?;
         // An explicit engine override wins over any `@Engine` annotation so that
@@ -631,16 +643,6 @@ impl LogicaProgram {
         // Build flag values
         let mut flag_values = annotations.flag_values.clone();
         flag_values.extend(user_flags.clone());
-
-        // Check dollar params are defined
-        for param in &dollar_params {
-            if !flag_values.contains_key(param) {
-                return Err(CompileError::new(
-                    format!("Parameter ${{{0}}} is undefined.", param),
-                    format!("Undefined parameter: {}", param),
-                ));
-            }
-        }
 
         // Build defined predicates set
         let defined_predicates: HashSet<String> = rules
@@ -702,7 +704,6 @@ impl LogicaProgram {
             rules,
             defined_predicates,
             library_predicates,
-            dollar_params,
             table_aliases,
             annotations,
             flag_values,
@@ -901,52 +902,6 @@ impl LogicaProgram {
             }
         }
         Type::Any
-    }
-
-    /// Extract `${param}` dollar parameters from rule JSON trees.
-    fn extract_dollar_params_from_rules(rules: &[Json]) -> Vec<String> {
-        let mut params = HashSet::new();
-        for rule in rules {
-            Self::collect_dollar_params(rule, &mut params);
-        }
-        params.into_iter().collect()
-    }
-
-    fn collect_dollar_params(node: &Json, params: &mut HashSet<String>) {
-        let mut stack: Vec<&Json> = vec![node];
-        while let Some(current) = stack.pop() {
-            match current {
-                Json::Str(s) => {
-                    Self::extract_dollar_params_from_string(s, params);
-                }
-                Json::Object(o) => {
-                    for (_, v) in o.iter() {
-                        stack.push(v);
-                    }
-                }
-                Json::Array(a) => {
-                    for v in a {
-                        stack.push(v);
-                    }
-                }
-                _ => {}
-            }
-        }
-    }
-
-    fn extract_dollar_params_from_string(s: &str, params: &mut HashSet<String>) {
-        use regex::Regex;
-        use std::sync::LazyLock;
-        static RE: LazyLock<Regex> =
-            LazyLock::new(|| Regex::new(r"\$\{(.*?)\}").unwrap());
-
-        for cap in RE.captures_iter(s) {
-            let p = &cap[1];
-            // Exclude built-in date params
-            if !p.starts_with("YYYY") && p != "MM" && p != "DD" {
-                params.insert(p.to_string());
-            }
-        }
     }
 
     /// Get the engine name.
@@ -1601,9 +1556,6 @@ impl LogicaProgram {
             sql
         };
 
-        // Apply flag substitution
-        let sql = self.use_flags_as_parameters(&sql);
-
         // Apply a caller-requested regex search filter to the final query
         // only (again, the preamble is assembled around it below). This wraps
         // the query before pagination so the LIMIT/OFFSET apply to the
@@ -1636,7 +1588,7 @@ impl LogicaProgram {
 
         // Preamble
         if !exec_ref.preamble.is_empty() {
-            result.push_str(&self.use_flags_as_parameters(&exec_ref.preamble));
+            result.push_str(&exec_ref.preamble);
         }
 
         // Type definitions. PostgreSQL exposes named record fields only through
@@ -1660,25 +1612,15 @@ impl LogicaProgram {
         }
 
         if !result.is_empty() {
-            steps.push(PlanStep::Setup(self.use_flags_as_parameters(&result)));
+            steps.push(PlanStep::Setup(result));
         }
 
         // Defines and exports
         if !exec_ref.defines_and_exports.is_empty() {
-            for step in self.plan_statements(exec_ref)? {
-                steps.push(match step {
-                    PlanStep::Setup(sql) => PlanStep::Setup(self.use_flags_as_parameters(&sql)),
-                    PlanStep::Sql(sql) => PlanStep::Sql(self.use_flags_as_parameters(&sql)),
-                    PlanStep::Loop { body, repetitions, changed } => PlanStep::Loop {
-                        body: body.iter().map(|sql| self.use_flags_as_parameters(sql)).collect(),
-                        repetitions,
-                        changed,
-                    },
-                });
-            }
+            steps.extend(self.plan_statements(exec_ref)?);
         }
 
-        steps.push(PlanStep::Sql(self.use_flags_as_parameters(&format_sql(&sql))));
+        steps.push(PlanStep::Sql(format_sql(&sql)));
         Ok(steps)
     }
 
@@ -1810,10 +1752,11 @@ impl LogicaProgram {
         };
         let (new, next) = (&iteration.predicates[0], &iteration.predicates[1]);
         let full = iteration.accumulate.as_ref().expect("a semi-naive iteration");
+        let accumulate = format!("INSERT INTO {} SELECT * FROM {};", table(full)?, table(new)?);
         Ok(PlanStep::Loop {
             body: vec![
                 exports[new].clone(),
-                format!("INSERT INTO {} SELECT * FROM {};", table(full)?, table(new)?),
+                accumulate,
                 exports[next].clone(),
             ],
             repetitions: iteration.repetitions,
@@ -1966,11 +1909,28 @@ impl LogicaProgram {
         }
 
         let dialect = dialects::get(self.annotations.engine())?;
+        let types = self.predicate_types.get(name);
         let where_clause = columns
             .iter()
             .map(|col| {
-                let cast_col = dialect.string_cast(&dialects::sql_column(col, dialect.as_ref()));
-                dialect.regex_match_condition(&cast_col, pattern)
+                // A column is searched in the text ToString gives it: a number
+                // as on every engine (`10`, not `10.0`), a boolean as `true` or
+                // `false` (not `1` on SQLite).
+                let column = dialects::sql_column(col, dialect.as_ref());
+                let text = match types.and_then(|t| t.get(col)) {
+                    Some(Type::Number) => match dialect.number_to_string() {
+                        Some(template) => template.replace("{0}", &column),
+                        None => dialect.string_cast(&column),
+                    },
+                    Some(Type::Bool) => format!(
+                        "(CASE WHEN {c} THEN {t} WHEN NOT {c} THEN {f} END)",
+                        c = column,
+                        t = dialect.str_literal("true"),
+                        f = dialect.str_literal("false")
+                    ),
+                    _ => dialect.string_cast(&column),
+                };
+                dialect.regex_match_condition(&text, pattern)
             })
             .collect::<Vec<_>>()
             .join(" OR ");
@@ -2053,26 +2013,6 @@ impl LogicaProgram {
         }
 
         Some(format!("WITH {}", with_bodies.join(",\n")))
-    }
-
-    /// Run flag substitution to fixed point (Python's `UseFlagsAsParameters`).
-    pub fn use_flags_as_parameters(&self, sql: &str) -> String {
-        let mut result = sql.to_string();
-        let mut prev = String::new();
-        let mut num_subs = 0;
-        while result != prev {
-            num_subs += 1;
-            prev = result.clone();
-            if num_subs > 100 {
-                // Recursive flags — warn and break to avoid infinite loop
-                eprintln!("[WARNING] Recursive flag references detected, stopping substitution");
-                break;
-            }
-            for (flag, value) in &self.flag_values {
-                result = result.replace(&format!("${{{}}}", flag), value);
-            }
-        }
-        result
     }
 
     /// Translate a table that should be defined in a WITH clause.
@@ -2237,7 +2177,6 @@ impl LogicaProgram {
             } else {
                 dependency_sql
             };
-            let dependency_sql = self.use_flags_as_parameters(&dependency_sql);
 
             {
                 let mut exec = self.execution.borrow_mut();
@@ -2269,7 +2208,6 @@ impl LogicaProgram {
                 );
 
                 let stmt = format!("{}{}", maybe_drop, create_statement);
-                let stmt = self.use_flags_as_parameters(&stmt);
 
                 exec_ref
                     .table_to_export_map
@@ -2277,17 +2215,6 @@ impl LogicaProgram {
                 exec_ref.export_statements.push(stmt.clone());
                 export_statement = Some(stmt);
             }
-        }
-
-        // Step 5: Build copy_to_file statement if specified (DuckDB file export)
-        if let Some(ref copy_file) = ground.copy_to_file {
-            let copy_stmt = format!(
-                "COPY {} TO '{}' (FORMAT 'json', ARRAY true);",
-                ground.table_name, copy_file.replace('\'', "''")
-            );
-            let mut exec = self.execution.borrow_mut();
-            let exec_ref = exec.as_mut().unwrap();
-            exec_ref.defines_and_exports.push(copy_stmt);
         }
 
         // Step 6: Record in defines_and_exports (short-lived borrow)
@@ -2373,7 +2300,7 @@ impl LogicaProgram {
             }
         }
 
-        Ok(unquote_parenthesised(table))
+        table_reference(table, dialects::get(self.annotations.engine())?.as_ref())
     }
 }
 

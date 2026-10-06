@@ -1,0 +1,3 @@
+SELECT
+  JSON_ARRAY_LENGTH(JSON_ARRAY(2, 3)) AS n,
+  JSON_EXTRACT(JSON_ARRAY(2, 3), '$[' || 1 || ']') AS last;

@@ -88,6 +88,6 @@ WITH t_0_Sale AS (SELECT * FROM (
 ) AS UNUSED_TABLE_NAME  )
 SELECT
   Sale.id AS id,
-  CASE WHEN (((Sale.qty) * (Sale.price)) >= 100) THEN ((((Sale.qty) * (Sale.price))) * (0.9)) ELSE ((Sale.qty) * (Sale.price)) END AS t
+  CASE WHEN (((Sale.qty) * (Sale.price)) >= 100) THEN ((((Sale.qty) * (Sale.price))) * (0.9E0)) ELSE ((Sale.qty) * (Sale.price)) END AS t
 FROM
   t_0_Sale AS Sale ORDER BY id, t;

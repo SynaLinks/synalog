@@ -1,2 +1,2 @@
 SELECT
-  ((1) + ((CAST(6 AS DOUBLE) / (3)))) AS v;
+  ((1) + ((CAST(6 AS DOUBLE) / NULLIF(3, 0)))) AS v;

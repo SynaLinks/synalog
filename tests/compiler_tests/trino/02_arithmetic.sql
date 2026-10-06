@@ -4,6 +4,6 @@ SELECT
   ((x_15) - (3)) AS sub,
   ((x_15) * (2)) AS mul
 FROM
-  UNNEST(FILTER(SEQUENCE(0, 10), x -> x < 10)) as pushkin(x_15)
+  UNNEST(TRANSFORM(FILTER(SEQUENCE(0, 10), x -> x < 10), synalog_e -> ROW(synalog_e))) as pushkin(x_15)
 WHERE
   (x_15 > 0) ORDER BY x;

@@ -7,7 +7,7 @@ t_4_EvenSquares AS (SELECT
 FROM
   UNNEST(GENERATE_ARRAY(0, 10 - 1)) as x_19
 WHERE
-  ((MOD(x_19, 2)) = 0))
+  ((MOD(x_19, NULLIF(2, 0))) = 0))
 SELECT
   t_0_Squares.logica_value AS squares,
   EvenSquares.logica_value AS even_squares

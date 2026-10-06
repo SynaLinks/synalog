@@ -29,6 +29,6 @@ GROUP BY 1)
 SELECT
   t_0_S.g AS g
 FROM
-  t_1_S AS t_0_S, UNNEST(t_0_S.s) as pushkin(x_3)
+  t_1_S AS t_0_S, UNNEST(TRANSFORM(t_0_S.s, synalog_e -> ROW(synalog_e))) as pushkin(x_3)
 WHERE
   (2 = x_3) ORDER BY g;

@@ -1,2 +1,2 @@
 SELECT
-  ((CAST(1 AS DOUBLE)) / (2)) AS v;
+  ((CAST(1 AS DOUBLE)) / NULLIF(2, 0)) AS v;

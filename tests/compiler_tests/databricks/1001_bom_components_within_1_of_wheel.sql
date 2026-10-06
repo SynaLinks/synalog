@@ -28,8 +28,18 @@ GROUP BY 1;
 
 -- Interacting with table logica_test.Down_sn_delta
 
-DROP TABLE IF EXISTS logica_test.Down_sn_full;
-CREATE TABLE logica_test.Down_sn_full AS WITH t_2_Uses AS (SELECT * FROM VALUES
+DROP TABLE IF EXISTS logica_test.Down_sn_t0;
+CREATE TABLE logica_test.Down_sn_t0 AS SELECT
+  Down_sn_delta.component AS component
+FROM
+  logica_test.Down_sn_delta AS Down_sn_delta
+WHERE
+  (1 = 0);
+
+-- Interacting with table logica_test.Down_sn_t0
+
+DROP TABLE IF EXISTS logica_test.Down_sn_t1;
+CREATE TABLE logica_test.Down_sn_t1 AS WITH t_2_Uses AS (SELECT * FROM VALUES
   ("bike", "frame", 1),
   ("bike", "wheel", 2),
   ("wheel", "rim", 1),
@@ -45,25 +55,123 @@ t_1_Down_MultBodyAggAux_f2 AS (SELECT * FROM (
     SELECT
       Uses.component AS component
     FROM
-      logica_test.Down_sn_delta AS t_2_Down_sn_delta, t_2_Uses AS Uses
+      logica_test.Down_sn_t0 AS Down_sn_t0, t_2_Uses AS Uses
     WHERE
-      (Uses.part = t_2_Down_sn_delta.component)
+      (Uses.part = Down_sn_t0.component)
    UNION ALL
   
     SELECT
-      t_3_Uses.component AS component
+      t_2_Uses.component AS component
     FROM
-      t_2_Uses AS t_3_Uses
+      t_2_Uses
     WHERE
-      (t_3_Uses.part = "wheel")
+      (t_2_Uses.part = "wheel")
   
 ) AS UNUSED_TABLE_NAME  ),
-t_0_Down_sn_step AS (SELECT
+t_0_Down_sn_r1 AS (SELECT
   Down_MultBodyAggAux_f2.component AS component
 FROM
   t_1_Down_MultBodyAggAux_f2 AS Down_MultBodyAggAux_f2
 GROUP BY 1)
-SELECT * FROM (
+SELECT
+  Down_sn_r1.component AS component
+FROM
+  t_0_Down_sn_r1 AS Down_sn_r1
+WHERE
+  (1 = 0);
+
+-- Interacting with table logica_test.Down_sn_t1
+
+DROP TABLE IF EXISTS logica_test.Down_sn_t2;
+CREATE TABLE logica_test.Down_sn_t2 AS WITH t_2_Uses AS (SELECT * FROM VALUES
+  ("bike", "frame", 1),
+  ("bike", "wheel", 2),
+  ("wheel", "rim", 1),
+  ("wheel", "spoke", 32),
+  ("wheel", "hub", 1),
+  ("hub", "bearing", 2),
+  ("frame", "tube", 3),
+  ("scooter", "wheel", 2),
+  ("scooter", "deck", 1)
+AS UNUSED_TABLE_NAME(part, component, qty)),
+t_1_Down_MultBodyAggAux_f3 AS (SELECT * FROM (
+  
+    SELECT
+      Uses.component AS component
+    FROM
+      logica_test.Down_sn_t1 AS Down_sn_t1, t_2_Uses AS Uses
+    WHERE
+      (Uses.part = Down_sn_t1.component)
+   UNION ALL
+  
+    SELECT
+      t_2_Uses.component AS component
+    FROM
+      t_2_Uses
+    WHERE
+      (t_2_Uses.part = "wheel")
+  
+) AS UNUSED_TABLE_NAME  ),
+t_0_Down_sn_r2 AS (SELECT
+  Down_MultBodyAggAux_f3.component AS component
+FROM
+  t_1_Down_MultBodyAggAux_f3 AS Down_MultBodyAggAux_f3
+GROUP BY 1)
+SELECT
+  Down_sn_r2.component AS component
+FROM
+  t_0_Down_sn_r2 AS Down_sn_r2
+WHERE
+  (1 = 0);
+
+-- Interacting with table logica_test.Down_sn_t2
+
+DROP TABLE IF EXISTS logica_test.Down_sn_t3;
+CREATE TABLE logica_test.Down_sn_t3 AS WITH t_2_Uses AS (SELECT * FROM VALUES
+  ("bike", "frame", 1),
+  ("bike", "wheel", 2),
+  ("wheel", "rim", 1),
+  ("wheel", "spoke", 32),
+  ("wheel", "hub", 1),
+  ("hub", "bearing", 2),
+  ("frame", "tube", 3),
+  ("scooter", "wheel", 2),
+  ("scooter", "deck", 1)
+AS UNUSED_TABLE_NAME(part, component, qty)),
+t_1_Down_MultBodyAggAux_f4 AS (SELECT * FROM (
+  
+    SELECT
+      Uses.component AS component
+    FROM
+      logica_test.Down_sn_t2 AS Down_sn_t2, t_2_Uses AS Uses
+    WHERE
+      (Uses.part = Down_sn_t2.component)
+   UNION ALL
+  
+    SELECT
+      t_2_Uses.component AS component
+    FROM
+      t_2_Uses
+    WHERE
+      (t_2_Uses.part = "wheel")
+  
+) AS UNUSED_TABLE_NAME  ),
+t_0_Down_sn_r3 AS (SELECT
+  Down_MultBodyAggAux_f4.component AS component
+FROM
+  t_1_Down_MultBodyAggAux_f4 AS Down_MultBodyAggAux_f4
+GROUP BY 1)
+SELECT
+  Down_sn_r3.component AS component
+FROM
+  t_0_Down_sn_r3 AS Down_sn_r3
+WHERE
+  (1 = 0);
+
+-- Interacting with table logica_test.Down_sn_t3
+
+DROP TABLE IF EXISTS logica_test.Down_sn_full;
+CREATE TABLE logica_test.Down_sn_full AS SELECT * FROM (
   
     SELECT
       Down_sn_delta.component AS component
@@ -72,11 +180,21 @@ SELECT * FROM (
    UNION ALL
   
     SELECT
-      Down_sn_step.component AS component
+      Down_sn_t1.component AS component
     FROM
-      t_0_Down_sn_step AS Down_sn_step
-    WHERE
-      (1 = 0)
+      logica_test.Down_sn_t1 AS Down_sn_t1
+   UNION ALL
+  
+    SELECT
+      Down_sn_t2.component AS component
+    FROM
+      logica_test.Down_sn_t2 AS Down_sn_t2
+   UNION ALL
+  
+    SELECT
+      Down_sn_t3.component AS component
+    FROM
+      logica_test.Down_sn_t3 AS Down_sn_t3
   
 ) AS UNUSED_TABLE_NAME  ;
 
@@ -94,28 +212,28 @@ CREATE TABLE logica_test.Down_sn_new AS WITH t_2_Uses AS (SELECT * FROM VALUES
   ("scooter", "wheel", 2),
   ("scooter", "deck", 1)
 AS UNUSED_TABLE_NAME(part, component, qty)),
-t_1_Down_MultBodyAggAux_f2 AS (SELECT * FROM (
+t_1_Down_MultBodyAggAux_f5 AS (SELECT * FROM (
   
     SELECT
       Uses.component AS component
     FROM
-      logica_test.Down_sn_delta AS t_2_Down_sn_delta, t_2_Uses AS Uses
+      logica_test.Down_sn_delta AS Down_sn_delta, t_2_Uses AS Uses
     WHERE
-      (Uses.part = t_2_Down_sn_delta.component)
+      (Uses.part = Down_sn_delta.component)
    UNION ALL
   
     SELECT
-      t_3_Uses.component AS component
+      t_2_Uses.component AS component
     FROM
-      t_2_Uses AS t_3_Uses
+      t_2_Uses
     WHERE
-      (t_3_Uses.part = "wheel")
+      (t_2_Uses.part = "wheel")
   
 ) AS UNUSED_TABLE_NAME  ),
 t_0_Down_sn_step AS (SELECT
-  Down_MultBodyAggAux_f2.component AS component
+  Down_MultBodyAggAux_f5.component AS component
 FROM
-  t_1_Down_MultBodyAggAux_f2 AS Down_MultBodyAggAux_f2
+  t_1_Down_MultBodyAggAux_f5 AS Down_MultBodyAggAux_f5
 GROUP BY 1)
 SELECT
   Down_sn_step.component AS component

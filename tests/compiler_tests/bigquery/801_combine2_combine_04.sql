@@ -26,4 +26,4 @@ SELECT
 FROM
   t_0_V AS V
 WHERE
-  ((MOD(V.s, 2)) = 1)) AS t;
+  ((MOD(V.s, NULLIF(2, 0))) = 1)) AS t;

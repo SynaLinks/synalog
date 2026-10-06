@@ -1,0 +1,2 @@
+SELECT
+  SIN(0) AS v;

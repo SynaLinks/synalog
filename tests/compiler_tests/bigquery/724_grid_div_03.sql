@@ -1,2 +1,2 @@
 SELECT
-  ((1) / (8)) AS r;
+  ((1) / NULLIF(8, 0)) AS r;

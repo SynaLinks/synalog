@@ -47,7 +47,6 @@ t_4_Effective_MultBodyAggAux AS (SELECT * FROM (
     FROM
       t_2_ApproverOf AS t_6_ApproverOf
     WHERE
-      (t_6_ApproverOf.approver = "dan") AND
       (t_6_ApproverOf.approver = "dan")
   
 ) AS UNUSED_TABLE_NAME  ),

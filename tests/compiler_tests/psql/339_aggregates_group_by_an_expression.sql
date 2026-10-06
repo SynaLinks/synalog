@@ -4,17 +4,9 @@ create schema if not exists logica_home;
 -- Empty logica type: logicarecord893574736;
 DO $$ BEGIN if not exists (select 'I(am) :- I(think)' from pg_type where typname = 'logicarecord893574736') then create type logicarecord893574736 as (nirvana numeric); end if; END $$;
 
-
-DO $$
-BEGIN
--- Logica type: logicarecord481217614
-if not exists (select 'I(am) :- I(think)' from pg_type where typname = 'logicarecord481217614') then create type logicarecord481217614 as (r logicarecord893574736); end if;
--- Logica type: logicarecord86796764
-if not exists (select 'I(am) :- I(think)' from pg_type where typname = 'logicarecord86796764') then create type logicarecord86796764 as (s text); end if;
-END $$;
 SELECT
-  (MOD(x_2, 2)) AS k,
+  (MOD(CAST(x_2 AS numeric), NULLIF(CAST(2 AS numeric), 0))) AS k,
   SUM(1) AS n
 FROM
-  UNNEST(ARRAY[1, 2, 3, 4, 5]::numeric[]) as x_2
-GROUP BY (MOD(x_2, 2)) ORDER BY k;
+  UNNEST(ARRAY[1, 2, 3, 4, 5]) as x_2
+GROUP BY (MOD(CAST(x_2 AS numeric), NULLIF(CAST(2 AS numeric), 0))) ORDER BY k;

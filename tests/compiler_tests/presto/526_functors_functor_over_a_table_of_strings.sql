@@ -1,4 +1,4 @@
 SELECT
   UPPER(x_4) AS u
 FROM
-  UNNEST(ARRAY['a', 'b']) as pushkin(x_4) ORDER BY u;
+  UNNEST(TRANSFORM(ARRAY['a', 'b'], synalog_e -> ROW(synalog_e))) as pushkin(x_4) ORDER BY u;

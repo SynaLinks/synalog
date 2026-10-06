@@ -1,2 +1,2 @@
 SELECT
-  (CONCAT((CONCAT("[", "$$; DROP TABLE t; $$")), "]")) AS s;
+  (CONCAT((CONCAT("[", "\u0024\u0024; DROP TABLE t; \u0024\u0024")), "]")) AS s;

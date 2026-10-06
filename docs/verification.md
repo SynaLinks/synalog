@@ -8,19 +8,21 @@ This matters most for AI agents: it prevents producing programs that parse corre
 
 | Check | What it detects |
 |-------|-----------------|
-| **Safety** | Head variables not bound in the body, and variables only compared (`x > 2`) but never given a value |
-| **Safe negation** | Negated variables without a positive occurrence |
+| **Safety** | Head variables not bound in the body, and variables only tested (`x > 2`, `!flag`, `Like(s, "a%")`) but never given a value |
+| **Safe negation** | Negated variables without a positive occurrence; a variable a negation binds and uses again (`~(A(id:, h:), h > 10)`) is the negation's own |
 | **Safe aggregation** | Aggregated variables not bound outside the aggregate |
 | **Stratification** | Negative recursion cycles |
 | **Arity** | Predicates used with inconsistent argument counts, columns a predicate does not have (also inside a negation), a column named twice in a head |
 | **Recursion** | Missing base cases, trivial loops, unbounded recursion without `@Recursive` |
-| **Reserved names** | Rules that redefine a built-in library predicate (`Num`, `Str`, `ArgMin`, `Today`, `Now`, ...) |
-| **Unsafe `SqlExpr`** | User rules that reach for the raw-SQL escape hatch |
+| **Reserved names** | Rules that redefine a built-in library predicate (`Num`, `Str`, `ArgMin`, `Today`, `Now`, ...), or a function named like a built-in one (`Upper(s) = ...`) |
+| **Unsafe `SqlExpr`** | User rules that reach for the raw-SQL escape hatch, or read a table whose name is not one (`` `(SELECT 1)` ``) |
 | **Ordering** | A file whose front matter names a predicate, without an `@OrderBy` for it |
 | **Front matter** | A file with front matter but no `name`, or no `description` (or an empty one) |
 | **Functors** | A functor naming a predicate that does not exist, or an argument the applied predicate does not depend on: `F := Count(Nope: Odd)` when `Count` never reads `Nope` |
-| **Directives** | `@OrderBy`, `@Limit`, `@Recursive` or `@Ground` about a predicate the program does not define; an `@OrderBy` item that is not a column of the predicate; an `@Limit` that is not a whole number of rows; an `@Recursive` depth below 1 |
+| **Directives** | `@OrderBy`, `@Limit`, `@Recursive` or `@Ground` about a predicate the program does not define; an `@OrderBy` item that is not a column of the predicate; an `@Limit` that is not a whole number of rows; an `@Recursive` depth below 1; `@AttachDatabase`, or `@Ground` with `copy_to_file`: a program opens and writes no file; `FlagValue("name")` of a flag no `@DefineFlag` defines |
 | **Assertions** | An `@Assert` statement that does not parse or contradicts the program, an assertion stated twice |
+| **Undefined function** | A call of a function neither defined in the program nor built in (`Substrr(s, 1, 2)`), with the closest name when one is near |
+| **Aggregates** | An aggregate called where nothing aggregates: as a value (`Q(t: Sum(x))`) or in a condition (`x == Max(x)`); `ArgMaxK` or `ArgMinK` without the number of items to keep |
 | **Disjunction inside** | A disjunction inside a negation `~(A \| B)` or a `combine`, which does not compile: its alternatives go in a predicate of their own |
 | **Contradictions** (warning) | A rule whose comparisons can never all hold (`a < b, a >= b`; `x > 10, x < 5`; `k == 1, k == 2`), so it gives no row |
 
@@ -60,7 +62,9 @@ A program's text reaches SQL only as values or as checked names, so no string ca
 - every string (a fact, a pattern for `Like` or `search`, a `Format`) is a literal in the engine's own escapes; on Databricks and BigQuery, whose literals take backslash escapes, a quote of the value is written `\u0022`, so a literal holds no quote but its own two, and whatever splits a script into statements finds its end;
 - on PostgreSQL, a string with a backslash is an `E'...'` literal, read the same whatever `standard_conforming_strings` says;
 - names (predicates, columns, fields) are identifiers, quoted when they are keywords; `@OrderBy` takes columns, `@Limit` a number, `@Dataset` a schema name of letters, digits, `_` and `-`: anything else is refused;
-- `SqlExpr`, raw SQL, is refused in a program;
+- `SqlExpr`, raw SQL, is refused in a program, and so is a table name that is not one: a table the program reads is a dotted path of names, or one in backticks whose parts may hold `-` (`` `my-project.sales.orders` ``), each part quoted for the engine;
+- `${...}` in a string is text, also on Databricks, whose Spark substitutes `${var}` in a statement's text before parsing it (`${env:HOME}`): there a dollar in a string is written `\u0024`, and a name holds none; a flag is read with `FlagValue("name")`, which gives its value as a string;
+- a program reaches no file, process or service: there is no `ReadFile`, `WriteFile` or `Intelligence`, no `@AttachDatabase`, no `copy_to_file`;
 - a grounded table lives in Synalog's dataset, also when `@Ground` names it: a program cannot drop or replace a table elsewhere.
 
 `tests/programs/injection` holds the attempts this is checked against, on every engine.

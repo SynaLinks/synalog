@@ -213,6 +213,10 @@ pub fn validate(parsed: &Json) -> CheckResult {
     for err in sqlexpr::check_sqlexpr(&normal_rules) {
         result.errors.push(CheckError::SqlExpr(err));
     }
+    // ... and SQL text as a table name.
+    for err in undefined::check_table_names(&all_rules) {
+        result.errors.push(CheckError::SqlExpr(err));
+    }
 
     // Check 8: Positional arguments (Synalog requires named arguments)
     for err in positional::check_positional(&normal_rules) {

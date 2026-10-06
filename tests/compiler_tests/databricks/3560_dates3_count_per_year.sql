@@ -1,0 +1,18 @@
+WITH t_0_V AS (SELECT * FROM VALUES
+  (1, "2024-01-01"),
+  (2, "2024-02-28"),
+  (3, "2024-02-29"),
+  (4, "2023-03-01"),
+  (5, "2000-12-31"),
+  (6, "1999-07-15"),
+  (7, "2026-10-06"),
+  (8, "1970-01-01"),
+  (9, "2100-02-28"),
+  (10, "2004-08-09")
+AS UNUSED_TABLE_NAME(id, d))
+SELECT
+  CAST(ROUND(SUBSTR(V.d, 1, 4)) AS BIGINT) AS y,
+  SUM(1) AS n
+FROM
+  t_0_V AS V
+GROUP BY 1 ORDER BY y NULLS LAST;

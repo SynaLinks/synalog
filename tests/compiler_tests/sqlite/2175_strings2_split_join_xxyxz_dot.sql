@@ -1,2 +1,2 @@
 SELECT
-  JOIN_STRINGS(SPLIT('x.y.z', '.'), '.') AS s;
+  (CASE WHEN SPLIT('x.y.z', '.') IS NULL OR '.' IS NULL THEN NULL ELSE COALESCE((SELECT GROUP_CONCAT(value, '.') FROM (SELECT value FROM JSON_EACH(SPLIT('x.y.z', '.')) WHERE value IS NOT NULL ORDER BY key)), '') END) AS s;

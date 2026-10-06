@@ -1,4 +1,4 @@
 SELECT
-  (CAST(7 AS REAL) / (2)) AS a,
-  - (CAST(7 AS REAL) / (2)) AS b,
-  (CAST(6 AS REAL) / (3)) AS c;
+  (CAST(7 AS REAL) / NULLIF(2, 0)) AS a,
+  - (CAST(7 AS REAL) / NULLIF(2, 0)) AS b,
+  (CAST(6 AS REAL) / NULLIF(3, 0)) AS c;

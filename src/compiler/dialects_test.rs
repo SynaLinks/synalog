@@ -312,8 +312,8 @@ fn test_unnest_phrases() {
     assert_eq!(get("bigquery").unwrap().unnest_phrase(), "UNNEST({0}) as {1}");
     assert_eq!(get("sqlite").unwrap().unnest_phrase(), "JSON_EACH({0}) as {1}");
     assert_eq!(get("psql").unwrap().unnest_phrase(), "UNNEST({0}) as {1}");
-    assert_eq!(get("trino").unwrap().unnest_phrase(), "UNNEST({0}) as pushkin({1})");
-    assert_eq!(get("presto").unwrap().unnest_phrase(), "UNNEST({0}) as pushkin({1})");
+    assert_eq!(get("trino").unwrap().unnest_phrase(), "UNNEST(TRANSFORM({0}, synalog_e -> ROW(synalog_e))) as pushkin({1})");
+    assert_eq!(get("presto").unwrap().unnest_phrase(), "UNNEST(TRANSFORM({0}, synalog_e -> ROW(synalog_e))) as pushkin({1})");
     assert!(get("duckdb").unwrap().unnest_phrase().contains("unnest"));
     assert!(get("databricks").unwrap().unnest_phrase().contains("explode"));
 }
@@ -412,10 +412,12 @@ fn test_duckdb_built_in_functions() {
 #[test]
 fn test_bigquery_built_in_functions() {
     // BigQuery uses the base functions but Like, whose LIKE has no ESCAPE
-    // clause (a backslash escapes already).
+    // clause (a backslash escapes already), Div and RegexpContains.
     let d = get("bigquery").unwrap();
     let f = d.built_in_functions();
-    assert_eq!(f.keys().collect::<Vec<_>>(), vec![&"Like"]);
+    let mut keys = f.keys().collect::<Vec<_>>();
+    keys.sort();
+    assert_eq!(keys, vec![&"Div", &"Like", &"RegexpContains"]);
     assert!(!f["Like"].contains("ESCAPE"));
 }
 

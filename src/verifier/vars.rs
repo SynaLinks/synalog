@@ -8,7 +8,8 @@ use std::collections::HashSet;
 use crate::parser::Json;
 
 /// Comparison operators that don't bind variables.
-const COMPARISON_OPS: &[&str] = &[">", "<", ">=", "<=", "==", "!=", "<>"];
+use crate::compiler::rule_translate::is_constraint_predicate;
+
 
 /// Aggregation functions.
 const AGGREGATION_FNS: &[&str] = &["Sum", "Count", "Min", "Max", "Avg", "List", "Array", "ArrayConcat"];
@@ -222,7 +223,10 @@ impl VarCollector {
     pub fn head_vars(rule: &Json) -> HashSet<String> {
         let mut vars = HashSet::new();
         if let Some(head) = rule.as_object().get("head") {
-            Self::collect_record_vars(head.as_object().get("record"), &mut vars);
+            // A combine's variables are its own, given values by its body
+            // (`m: (combine Max= v :- E(g:, v:))`).
+            let record = head.as_object().get("record").map(without_combines);
+            Self::collect_record_vars(record.as_ref(), &mut vars);
         }
         vars
     }
@@ -300,9 +304,9 @@ impl VarCollector {
         // Positive predicate - binds variables
         if let Some(pred) = obj.get("predicate") {
             let pred_name = pred.as_object()["predicate_name"].as_str();
-            // Skip IsNull (negation wrapper) and comparison operators
-            // Comparisons constrain but don't bind variables
-            if pred_name != "IsNull" && !COMPARISON_OPS.contains(&pred_name) {
+            // Conditions (comparisons, `!`, `&&`, `Like`, the IsNull of a
+            // negation, ...) constrain but don't bind variables.
+            if !is_constraint_predicate(pred_name) {
                 Self::collect_record_vars(pred.as_object().get("record"), vars);
             }
             return;
@@ -361,7 +365,7 @@ impl VarCollector {
                 let obj = conjunct.as_object();
                 if let Some(pred) = obj.get("predicate") {
                     let name = pred.as_object()["predicate_name"].as_str();
-                    if COMPARISON_OPS.contains(&name) {
+                    if is_constraint_predicate(name) && name != "IsNull" {
                         // A combine's variables are its own, given values by
                         // its body (`kg > (combine Avg= w :- Ship(kg: w))`).
                         let record = pred.as_object().get("record").map(without_combines);
@@ -418,8 +422,21 @@ impl VarCollector {
                         if let Some(expr) = fv.as_object().get("value")
                             .and_then(|v| v.as_object().get("expression"))
                         {
-                            if expr.as_object().contains_key("combine") {
-                                Self::collect_expr_vars(expr, vars);
+                            if let Some(combine) = expr.as_object().get("combine") {
+                                // A variable the negation binds itself and uses
+                                // again (`~(A(id:, h:), h > 10)`) is its own: not
+                                // negated. One used once is a wildcard, refused.
+                                let mut inner = HashSet::new();
+                                Self::collect_expr_vars(expr, &mut inner);
+                                let mut bound = HashSet::new();
+                                let mut uses = std::collections::HashMap::new();
+                                if let Some(body) = combine.as_object().get("body") {
+                                    Self::collect_positive_vars(body, &mut bound);
+                                    Self::count_var_uses(body, &mut uses);
+                                }
+                                vars.extend(inner.into_iter().filter(|v| {
+                                    !(bound.contains(v) && uses.get(v).is_some_and(|n| *n >= 2))
+                                }));
                             }
                         }
                     }
@@ -435,6 +452,24 @@ impl VarCollector {
                     Self::collect_negated_vars(branch, vars);
                 }
             }
+        }
+    }
+
+    /// How many times each variable is written in `node`.
+    fn count_var_uses(node: &Json, uses: &mut std::collections::HashMap<String, usize>) {
+        match node {
+            Json::Object(o) => {
+                if let Some(var) = o.get("variable").filter(|v| v.is_object()) {
+                    if let Some(name) = var.as_object().get("var_name") {
+                        *uses.entry(name.as_var_name()).or_insert(0) += 1;
+                    }
+                }
+                for (_, v) in o.iter() {
+                    Self::count_var_uses(v, uses);
+                }
+            }
+            Json::Array(a) => a.iter().for_each(|v| Self::count_var_uses(v, uses)),
+            _ => {}
         }
     }
 

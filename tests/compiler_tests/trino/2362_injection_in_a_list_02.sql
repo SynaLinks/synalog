@@ -1,6 +1,6 @@
 SELECT
   x_1 AS s
 FROM
-  UNNEST(ARRAY['x'' OR ''1''=''1', 'other']) as pushkin(x_1)
+  UNNEST(TRANSFORM(ARRAY['x'' OR ''1''=''1', 'other'], synalog_e -> ROW(synalog_e))) as pushkin(x_1)
 WHERE
   (x_1 != 'other');

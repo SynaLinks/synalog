@@ -7,7 +7,7 @@ t_4_EvenSquares AS (SELECT
 FROM
   LATERAL (SELECT explode(FILTER(SEQUENCE(0, 10), x -> x < 10)) AS x_19) AS pushkin
 WHERE
-  ((MOD(x_19, 2)) = 0))
+  ((MOD(x_19, NULLIF(2, 0))) = 0))
 SELECT
   t_0_Squares.logica_value AS squares,
   EvenSquares.logica_value AS even_squares

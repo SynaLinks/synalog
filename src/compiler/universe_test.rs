@@ -78,25 +78,23 @@ fn test_field_values_as_list_ordering() {
     assert_eq!(result[2].as_str(), "third");
 }
 
-// ── unquote_parenthesised ──
+// ── table_reference ──
 
 #[test]
-fn test_unquote_parenthesised() {
-    assert_eq!(
-        unquote_parenthesised("`(SELECT 1)`"),
-        "SELECT 1"
-    );
-    assert_eq!(unquote_parenthesised("my_table"), "my_table");
+fn test_table_reference() {
+    let duckdb = crate::compiler::dialects::get("duckdb").unwrap();
+    let bigquery = crate::compiler::dialects::get("bigquery").unwrap();
+    assert_eq!(table_reference("sales.Orders", duckdb.as_ref()).unwrap(), "sales.Orders");
+    assert_eq!(table_reference("`my-project.sales`", duckdb.as_ref()).unwrap(), "\"my-project\".\"sales\"");
+    assert_eq!(table_reference("`my-project.sales`", bigquery.as_ref()).unwrap(), "`my-project.sales`");
 }
 
 #[test]
-fn test_unquote_parenthesised_no_match() {
-    assert_eq!(unquote_parenthesised("`abc`"), "`abc`");
-}
-
-#[test]
-fn test_unquote_parenthesised_too_short() {
-    assert_eq!(unquote_parenthesised("`()`"), "`()`");
+fn test_table_reference_refuses_sql() {
+    let duckdb = crate::compiler::dialects::get("duckdb").unwrap();
+    for name in ["`(SELECT 1)`", "`t; DROP TABLE t; --`", "`read_text('/etc/hosts')`", "a--b", "a+b", "${x}", "`a..b`"] {
+        assert!(table_reference(name, duckdb.as_ref()).is_err(), "{}", name);
+    }
 }
 
 // ── recursion_error_message ──
@@ -289,31 +287,6 @@ fn test_program_get_predicate_rules_empty() {
     let program = LogicaProgram::new(&parsed, HashMap::new(), HashMap::new()).unwrap();
     let rules = program.get_predicate_rules("NonExistent");
     assert!(rules.is_empty());
-}
-
-#[test]
-fn test_program_use_flags_as_parameters() {
-    let source = r#"
-        @Engine("sqlite");
-        @DefineFlag("my_table", "users");
-        T("hello");
-    "#;
-    let parsed = crate::parser::parse_file(source, None, &[]).unwrap();
-    let program = LogicaProgram::new(&parsed, HashMap::new(), HashMap::new()).unwrap();
-    let result = program.use_flags_as_parameters("SELECT * FROM ${my_table}");
-    assert_eq!(result, "SELECT * FROM users");
-}
-
-#[test]
-fn test_program_use_flags_no_substitution() {
-    let source = r#"
-        @Engine("sqlite");
-        T("hello");
-    "#;
-    let parsed = crate::parser::parse_file(source, None, &[]).unwrap();
-    let program = LogicaProgram::new(&parsed, HashMap::new(), HashMap::new()).unwrap();
-    let result = program.use_flags_as_parameters("SELECT 1");
-    assert_eq!(result, "SELECT 1");
 }
 
 // ── predicate_sql ──
@@ -583,18 +556,6 @@ fn test_engine_default_duckdb() {
     assert_eq!(program.engine(), "duckdb");
 }
 
-// ── dollar params ──
-
-#[test]
-fn test_dollar_params_extracted() {
-    let program = make_universe_program(r#"
-        @Engine("sqlite");
-        T("hello");
-    "#);
-    // No dollar params in this program
-    assert!(program.dollar_params.is_empty());
-}
-
 // ══════════════════════════════════════════════════════════════
 // Additional tests for 100% coverage
 // ══════════════════════════════════════════════════════════════
@@ -679,41 +640,22 @@ fn test_logica_with_for_compiling_udf() {
     assert!(!logica.with_for("T"));
 }
 
-// ── Dollar params ──
+// ── Dollar text ──
 
 #[test]
-fn test_dollar_params_undefined_error() {
+fn test_dollar_text_is_data() {
+    // `${...}` in a string is text: a flag's value never enters the SQL as
+    // such (FlagValue() writes it as a literal).
     let source = r#"
         @Engine("sqlite");
-        T(x) :- x == "${my_param}";
+        @DefineFlag("x", "a'; DROP TABLE t; --");
+        T(x) :- x == "costs ${x}";
     "#;
     let parsed = crate::parser::parse_file(source, None, &[]).unwrap();
-    let result = LogicaProgram::new(&parsed, HashMap::new(), HashMap::new());
-    assert!(result.is_err(), "Should error on undefined dollar param");
-}
-
-#[test]
-fn test_dollar_params_defined_ok() {
-    let source = r#"
-        @Engine("sqlite");
-        @DefineFlag("my_param", "default");
-        T(x) :- x == "${my_param}";
-    "#;
-    let parsed = crate::parser::parse_file(source, None, &[]).unwrap();
-    let result = LogicaProgram::new(&parsed, HashMap::new(), HashMap::new());
-    assert!(result.is_ok(), "Should succeed with defined param: {:?}", result.err());
-}
-
-#[test]
-fn test_dollar_params_builtin_excluded() {
-    let source = r#"
-        @Engine("sqlite");
-        T(x) :- x == "${YYYY-MM-DD}";
-    "#;
-    let parsed = crate::parser::parse_file(source, None, &[]).unwrap();
-    // YYYY-prefixed params are excluded from dollar param checks
-    let result = LogicaProgram::new(&parsed, HashMap::new(), HashMap::new());
-    assert!(result.is_ok(), "Built-in date params should be excluded: {:?}", result.err());
+    let program = LogicaProgram::new(&parsed, HashMap::new(), HashMap::new()).unwrap();
+    let sql = compile_predicate(&program, "T").unwrap();
+    assert!(sql.contains("'costs ${x}'"), "SQL: {}", sql);
+    assert!(!sql.contains("DROP"), "SQL: {}", sql);
 }
 
 // ── predicate_sql with order by and limit ──
@@ -1237,8 +1179,7 @@ fn test_predicate_sql_if_expression() {
         T(y) :- Source(x), y == If(x > 1, "big", "small");
     "#);
     let sql = compile_predicate(&program, "T").unwrap();
-    // Python Logica uses IF() function format
-    assert!(sql.contains("IF("), "SQL should contain IF(): {}", sql);
+    assert!(sql.contains("CASE WHEN"), "SQL should contain CASE WHEN: {}", sql);
 }
 
 // ── predicate_sql with Cast ──
@@ -1332,21 +1273,6 @@ fn test_predicate_sql_subscript() {
     "#);
     let sql = compile_predicate(&program, "T").unwrap();
     assert!(sql.contains("SELECT"), "SQL: {}", sql);
-}
-
-// ── use_flags_as_parameters with substitution ──
-
-#[test]
-fn test_use_flags_as_parameters_substitution() {
-    let source = r#"
-        @Engine("sqlite");
-        @DefineFlag("schema", "public");
-        T("hello");
-    "#;
-    let parsed = crate::parser::parse_file(source, None, &[]).unwrap();
-    let program = LogicaProgram::new(&parsed, HashMap::new(), HashMap::new()).unwrap();
-    let result = program.use_flags_as_parameters("SELECT * FROM ${schema}.table");
-    assert_eq!(result, "SELECT * FROM public.table");
 }
 
 // ── predicate_sql with multiple body + constraint ──
@@ -1564,4 +1490,28 @@ fn test_compile_writes_the_loop_out_and_refuses_one_too_long() {
     let program = LogicaProgram::new(&parsed, HashMap::new(), HashMap::new()).unwrap();
     let error = program.formatted_predicate_sql("Reach").unwrap_err();
     assert!(error.message.contains("more steps than a SQL script can hold"), "{}", error.message);
+}
+
+#[test]
+fn test_column_type_intersects_its_rules() {
+    // `[]` in one fact and `["x"]` in another: a list of text, every time.
+    for _ in 0..8 {
+        let src = "@Engine(\"psql\");\nR(id: 1, r: {tags: [\"x\"]});\nR(id: 2, r: {tags: []});\nQ(id:, n: Size(r.tags)) :- R(id:, r:);";
+        let parsed = crate::parser::parse_file(src, None, &[]).unwrap();
+        let program = LogicaProgram::new(&parsed, HashMap::new(), HashMap::new()).unwrap();
+        let r = &program.predicate_types["R"]["r"];
+        assert_eq!(r.to_string(), Type::Record {
+            fields: [("tags".to_string(), Type::list(Type::String))].into_iter().collect(),
+            is_opened: false,
+        }.to_string());
+    }
+}
+
+#[test]
+fn test_empty_list_typed_on_postgresql() {
+    let program = make_universe_program("@Engine(\"psql\");\nF(k: 1, l: [1]);\nF(k: 2, l: []);\nQ(s: Join([], \",\"));");
+    let f = compile_predicate(&program, "F").unwrap();
+    assert!(f.contains("CAST('{}' AS numeric[])"), "{}", f);
+    let q = compile_predicate(&program, "Q").unwrap();
+    assert!(q.contains("ARRAY_TO_STRING(CAST('{}' AS text[]), ',')"), "{}", q);
 }

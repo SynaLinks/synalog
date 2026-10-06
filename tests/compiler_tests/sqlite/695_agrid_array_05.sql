@@ -1,2 +1,2 @@
 SELECT
-  JOIN_STRINGS(SPLIT('a-b', '-'), '+') AS v;
+  (CASE WHEN SPLIT('a-b', '-') IS NULL OR '+' IS NULL THEN NULL ELSE COALESCE((SELECT GROUP_CONCAT(value, '+') FROM (SELECT value FROM JSON_EACH(SPLIT('a-b', '-')) WHERE value IS NOT NULL ORDER BY key)), '') END) AS v;

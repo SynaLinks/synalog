@@ -1,0 +1,62 @@
+WITH t_3_V AS (SELECT * FROM (
+  
+    SELECT
+      1 AS id,
+      7 AS x
+   UNION ALL
+  
+    SELECT
+      2 AS id,
+      -7 AS x
+   UNION ALL
+  
+    SELECT
+      3 AS id,
+      2.5E0 AS x
+   UNION ALL
+  
+    SELECT
+      4 AS id,
+      -2.5E0 AS x
+   UNION ALL
+  
+    SELECT
+      5 AS id,
+      0 AS x
+   UNION ALL
+  
+    SELECT
+      6 AS id,
+      3 AS x
+   UNION ALL
+  
+    SELECT
+      7 AS id,
+      0.125E0 AS x
+   UNION ALL
+  
+    SELECT
+      8 AS id,
+      1000000 AS x
+   UNION ALL
+  
+    SELECT
+      9 AS id,
+      -0.75E0 AS x
+   UNION ALL
+  
+    SELECT
+      10 AS id,
+      12.345E0 AS x
+  
+) AS UNUSED_TABLE_NAME  ),
+t_1_S AS (SELECT
+  SUM(LN(t_2_V.x)) AS s
+FROM
+  t_3_V AS t_2_V
+WHERE
+  (t_2_V.x > 0))
+SELECT
+  EXP(t_0_S.s) AS v
+FROM
+  t_1_S AS t_0_S;

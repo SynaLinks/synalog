@@ -1,0 +1,2 @@
+SELECT
+  JSON_ARRAY_LENGTH(null) AS n;

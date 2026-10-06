@@ -1,0 +1,2 @@
+SELECT
+  REGEXP_EXTRACT(null, "a") AS v;

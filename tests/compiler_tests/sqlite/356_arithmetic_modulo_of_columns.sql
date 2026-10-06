@@ -13,6 +13,6 @@ WITH t_0_V AS (SELECT * FROM (
 SELECT
   V.a AS a,
   V.b AS b,
-  ((V.a) % (V.b)) AS r
+  (((V.a) - (V.b) * CAST((V.a) / NULLIF(V.b, 0) AS INTEGER))) AS r
 FROM
-  t_0_V AS V ORDER BY a;
+  t_0_V AS V ORDER BY a NULLS LAST;

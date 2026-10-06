@@ -7,4 +7,4 @@ DO $$ BEGIN if not exists (select 'I(am) :- I(think)' from pg_type where typname
 SELECT
   1 AS a,
   4 AS b,
-  (CAST(1 AS double precision) / (4)) AS q;
+  (CAST(1 AS double precision) / NULLIF(4, 0)) AS q;

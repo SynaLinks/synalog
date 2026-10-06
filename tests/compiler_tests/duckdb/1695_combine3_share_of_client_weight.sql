@@ -4,15 +4,6 @@ create schema if not exists logica_home;
 drop type if exists logicarecord893574736 cascade; create type logicarecord893574736 as struct(nirvana numeric);
 create sequence if not exists eternal_logical_sequence;
 
-
--- Logica type: logicarecord481217614
-drop type if exists logicarecord481217614 cascade; create type logicarecord481217614 as struct(r logicarecord893574736);
-
--- Logica type: logicarecord383307722
-drop type if exists logicarecord383307722 cascade; create type logicarecord383307722 as struct(a timestamp);
-
--- Logica type: logicarecord519939597
-drop type if exists logicarecord519939597 cascade; create type logicarecord519939597 as struct(args text[], predicate text);
 WITH t_1_Ship AS (SELECT * FROM (
   
     SELECT
@@ -98,11 +89,11 @@ WITH t_1_Ship AS (SELECT * FROM (
 ) AS UNUSED_TABLE_NAME  )
 SELECT
   Ship.id AS id,
-  ROUND(((100) * (((Ship.kg) / ((SELECT
+  list_transform([((100) * (((Ship.kg) / NULLIF((SELECT
   SUM((CASE WHEN x_8.unnested_pod = 0 THEN t_0_Ship.kg ELSE NULL END)) AS logica_value
 FROM
-  t_1_Ship AS t_0_Ship, (select unnest([0]::numeric[]) as unnested_pod) as x_8
+  t_1_Ship AS t_0_Ship, (select unnest([0]) as unnested_pod) as x_8
 WHERE
-  (t_0_Ship.client = Ship.client)))))), 4) AS pct
+  (t_0_Ship.client = Ship.client)), 0))))], synalog_v -> (CASE WHEN synalog_v IS NULL OR 4 IS NULL THEN NULL WHEN CAST(synalog_v AS DOUBLE) = 0 THEN CAST(synalog_v AS DOUBLE) WHEN FLOOR(LOG10(ABS(CAST(synalog_v AS DOUBLE)))) - 14 + 4 >= 0 THEN (CASE WHEN CAST(synalog_v AS DOUBLE) < 0 THEN -1 ELSE 1 END) * FLOOR(ABS(CAST(synalog_v AS DOUBLE)) / POWER(10, FLOOR(LOG10(ABS(CAST(synalog_v AS DOUBLE)))) - 14) + 0.5) * POWER(10, FLOOR(LOG10(ABS(CAST(synalog_v AS DOUBLE)))) - 14) + 0 ELSE (CASE WHEN CAST(synalog_v AS DOUBLE) < 0 THEN -1 ELSE 1 END) * FLOOR(ABS(CAST(synalog_v AS DOUBLE)) * POWER(10, 4) + 0.5 + 0.5 * POWER(10, FLOOR(LOG10(ABS(CAST(synalog_v AS DOUBLE)))) - 14 + 4)) / POWER(10, 4) + 0 END))[1] AS pct
 FROM
   t_1_Ship AS Ship ORDER BY id, pct;

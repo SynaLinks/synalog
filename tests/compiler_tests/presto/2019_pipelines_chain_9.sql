@@ -1,7 +1,7 @@
 SELECT
   x_21 AS x
 FROM
-  UNNEST(ARRAY[1, 2, 3, 4, 5, 6, 7, 8]) as pushkin(x_21)
+  UNNEST(TRANSFORM(ARRAY[1, 2, 3, 4, 5, 6, 7, 8], synalog_e -> ROW(synalog_e))) as pushkin(x_21)
 WHERE
   (x_21 != 9) AND
   (x_21 != 8) AND

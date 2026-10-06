@@ -3,61 +3,61 @@ WITH t_1_W_MultBodyAggAux AS (SELECT * FROM (
     SELECT
       x_4 AS x
     FROM
-      UNNEST(ARRAY[0, 1]) as pushkin(x_4)
+      UNNEST(TRANSFORM(ARRAY[0, 1], synalog_e -> ROW(synalog_e))) as pushkin(x_4)
    UNION ALL
   
     SELECT
       x_6 AS x
     FROM
-      UNNEST(ARRAY[2, 3]) as pushkin(x_6)
+      UNNEST(TRANSFORM(ARRAY[2, 3], synalog_e -> ROW(synalog_e))) as pushkin(x_6)
    UNION ALL
   
     SELECT
       x_8 AS x
     FROM
-      UNNEST(ARRAY[4, 5]) as pushkin(x_8)
+      UNNEST(TRANSFORM(ARRAY[4, 5], synalog_e -> ROW(synalog_e))) as pushkin(x_8)
    UNION ALL
   
     SELECT
       x_10 AS x
     FROM
-      UNNEST(ARRAY[6, 7]) as pushkin(x_10)
+      UNNEST(TRANSFORM(ARRAY[6, 7], synalog_e -> ROW(synalog_e))) as pushkin(x_10)
    UNION ALL
   
     SELECT
       x_12 AS x
     FROM
-      UNNEST(ARRAY[8, 9]) as pushkin(x_12)
+      UNNEST(TRANSFORM(ARRAY[8, 9], synalog_e -> ROW(synalog_e))) as pushkin(x_12)
    UNION ALL
   
     SELECT
       x_14 AS x
     FROM
-      UNNEST(ARRAY[10, 11]) as pushkin(x_14)
+      UNNEST(TRANSFORM(ARRAY[10, 11], synalog_e -> ROW(synalog_e))) as pushkin(x_14)
    UNION ALL
   
     SELECT
       x_16 AS x
     FROM
-      UNNEST(ARRAY[12, 13]) as pushkin(x_16)
+      UNNEST(TRANSFORM(ARRAY[12, 13], synalog_e -> ROW(synalog_e))) as pushkin(x_16)
    UNION ALL
   
     SELECT
       x_18 AS x
     FROM
-      UNNEST(ARRAY[14, 15]) as pushkin(x_18)
+      UNNEST(TRANSFORM(ARRAY[14, 15], synalog_e -> ROW(synalog_e))) as pushkin(x_18)
    UNION ALL
   
     SELECT
       x_20 AS x
     FROM
-      UNNEST(ARRAY[16, 17]) as pushkin(x_20)
+      UNNEST(TRANSFORM(ARRAY[16, 17], synalog_e -> ROW(synalog_e))) as pushkin(x_20)
    UNION ALL
   
     SELECT
       x_22 AS x
     FROM
-      UNNEST(ARRAY[18, 19]) as pushkin(x_22)
+      UNNEST(TRANSFORM(ARRAY[18, 19], synalog_e -> ROW(synalog_e))) as pushkin(x_22)
   
 ) AS UNUSED_TABLE_NAME  ),
 t_0_W AS (SELECT

@@ -1,0 +1,2 @@
+SELECT
+  COALESCE(null, COALESCE(null, 3)) AS v;

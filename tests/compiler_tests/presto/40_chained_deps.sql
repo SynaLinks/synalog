@@ -48,6 +48,6 @@ FROM
 SELECT
   Aggregated.total AS total,
   Aggregated.count AS count,
-  (CAST(Aggregated.total AS DOUBLE) / (Aggregated.count)) AS avg
+  (CAST(Aggregated.total AS DOUBLE) / NULLIF(Aggregated.count, 0)) AS avg
 FROM
   logica_test.Aggregated AS Aggregated ORDER BY total;
