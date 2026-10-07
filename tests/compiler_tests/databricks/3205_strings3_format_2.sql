@@ -1,0 +1,2 @@
+SELECT
+  FORMAT_STRING("%s%%", "50") AS s;

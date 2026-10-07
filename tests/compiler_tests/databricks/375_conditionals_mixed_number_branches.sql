@@ -1,0 +1,5 @@
+SELECT
+  x_3 AS x,
+  CASE WHEN (x_3 > 0) THEN 1.5E0 ELSE 2 END AS y
+FROM
+  LATERAL (SELECT explode(ARRAY(-1, 1)) AS x_3) AS pushkin ORDER BY x NULLS LAST;

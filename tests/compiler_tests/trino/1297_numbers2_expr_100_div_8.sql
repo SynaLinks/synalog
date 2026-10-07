@@ -1,0 +1,2 @@
+SELECT
+  (CAST(100 AS DOUBLE) / NULLIF(8, 0)) AS v;

@@ -1,0 +1,14 @@
+WITH t_0_A AS (SELECT * FROM VALUES
+  (1),
+  (1)
+AS UNUSED_TABLE_NAME(k)),
+t_1_B AS (SELECT * FROM VALUES
+  (1),
+  (1)
+AS UNUSED_TABLE_NAME(k))
+SELECT
+  SUM(1) AS n
+FROM
+  t_0_A AS A, t_1_B AS B
+WHERE
+  (B.k = A.k);

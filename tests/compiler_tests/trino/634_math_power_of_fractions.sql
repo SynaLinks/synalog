@@ -1,0 +1,2 @@
+SELECT
+  (POW(0.5E0, 2)) AS v;

@@ -1,0 +1,18 @@
+WITH t_0_V AS (SELECT * FROM (
+  
+    SELECT
+      3 AS n
+   UNION ALL
+  
+    SELECT
+      12 AS n
+   UNION ALL
+  
+    SELECT
+      100 AS n
+  
+) AS UNUSED_TABLE_NAME  )
+SELECT
+  SYNALOG_NUMBER_TEXT(V.n) AS s
+FROM
+  t_0_V AS V ORDER BY s NULLS LAST;

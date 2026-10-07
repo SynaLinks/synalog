@@ -1,0 +1,2 @@
+SELECT
+  (CASE WHEN LENGTH('é') >= 3 THEN SUBSTR('é', 1, 3) ELSE SUBSTR(REPLACE(HEX(ZEROBLOB(3)), '00', '.'), 1, 3 - LENGTH('é')) || 'é' END) AS s;

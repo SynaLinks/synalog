@@ -1,0 +1,4 @@
+SELECT
+  x_1 AS s
+FROM
+  UNNEST(ARRAY["9", "10"]) as x_1 ORDER BY s;

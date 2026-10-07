@@ -1,0 +1,2 @@
+SELECT
+  LOG(1) AS v;

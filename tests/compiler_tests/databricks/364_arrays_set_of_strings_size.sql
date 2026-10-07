@@ -1,0 +1,8 @@
+WITH t_1_L AS (SELECT
+  (CASE WHEN COUNT(*) = 0 THEN NULL ELSE ARRAY_DISTINCT(TRANSFORM(COLLECT_LIST(STRUCT(x_3 AS v)), s -> s.v)) END) AS l
+FROM
+  LATERAL (SELECT explode(ARRAY("x", "y", "x")) AS x_3) AS pushkin)
+SELECT
+  ARRAY_SIZE(t_0_L.l) AS n
+FROM
+  t_1_L AS t_0_L;

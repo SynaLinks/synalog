@@ -607,3 +607,49 @@ fn test_rename_in_statement_renames_whole_identifiers_only() {
     assert_eq!(n, 1);
 }
 
+
+#[test]
+fn test_a_function_value_may_compare() {
+    // The value follows the head's first `=`: the `=` of `>=`, `<=`, `==` and
+    // `!=` in the value belong to the value.
+    for source in [
+        "F(x) = if x >= 4 then 1 else 2;",
+        "F(x) = if x <= 4 then 1 else 2;",
+        "F(x) = if x == 4 then 1 else 2;",
+        "F(x) = if x != 4 then 1 else 2;",
+        "F(x) = x >= 4;",
+        "C(n? += if x >= 4 then 1 else 0) distinct :- x in [3, 5];",
+        "M(m? Max= if x != 4 then x else 0) distinct :- x in [3, 4];",
+    ] {
+        let parsed = parse_file(source, None, &[]);
+        assert!(parsed.is_ok(), "{source}: {:?}", parsed.err().map(|e| e.message));
+    }
+    let parsed = parse_file("F(x) = x >= 4;", None, &[]).unwrap();
+    let head = &parsed.as_object()["rule"].as_array()[0].as_object()["head"];
+    let value = &head.as_object()["record"].as_object()["field_value"].as_array()[1];
+    let call = &value.as_object()["value"].as_object()["expression"].as_object()["call"];
+    assert_eq!(call.as_object()["predicate_name"].as_str(), ">=");
+    // A comparison in a body is not a combine.
+    let parsed = parse_file("V(x: 1);\nQ(x:) :- V(x:), x + 1 == 2, x + 1 >= 2;", None, &[]).unwrap();
+    let body = &parsed.as_object()["rule"].as_array()[1].as_object()["body"];
+    let conjuncts = body.as_object()["conjunction"].as_object()["conjunct"].as_array();
+    assert!(conjuncts[1].as_object().contains_key("unification"), "{:?}", conjuncts[1]);
+    assert!(conjuncts[2].as_object().contains_key("predicate"), "{:?}", conjuncts[2]);
+    // Text after the head that is not a value is still an error.
+    assert!(parse_file("F(x) junk;", None, &[]).is_err());
+}
+
+#[test]
+fn test_a_combine_is_a_positional_argument() {
+    // The colon of `:-` and of `x:` inside the combine is not a field's.
+    for source in [
+        "V(x: 1);\nQ(t: Coalesce((combine += x :- V(x:)), 0));",
+        "V(x: 1);\nQ(t: Coalesce(0, (combine += x :- V(x:))));",
+    ] {
+        let parsed = parse_file(source, None, &[]);
+        assert!(parsed.is_ok(), "{source}: {:?}", parsed.err().map(|e| e.message));
+    }
+    // A named field still is one.
+    let parsed = parse_file("Q(a: 1, `b c`: 2);", None, &[]);
+    assert!(parsed.is_ok(), "{:?}", parsed.err().map(|e| e.message));
+}

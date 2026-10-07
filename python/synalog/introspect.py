@@ -35,11 +35,16 @@ from .runners import RunnerUnavailable, _resolve_dsn, run_sql
 # the predicate that excludes that engine's system schemas. Trino/Presto and
 # Databricks expose one `information_schema` per catalog; PostgreSQL adds the
 # `pg_catalog` system schema alongside it.
+# Synalog's own schemas, where it stores the tables a run computes (the steps
+# of a recursion, grounded predicates): never the user's tables.
+_SYNALOG_SCHEMAS = ("logica_home", "logica_test")
+_NOT_SYNALOG = f"table_schema NOT IN ({', '.join(repr(s) for s in _SYNALOG_SCHEMAS)})"
+
 _INFO_SCHEMA_WHERE = {
-    "psql": "table_schema NOT IN ('information_schema', 'pg_catalog')",
-    "trino": "table_schema <> 'information_schema'",
-    "presto": "table_schema <> 'information_schema'",
-    "databricks": "table_schema <> 'information_schema'",
+    "psql": f"table_schema NOT IN ('information_schema', 'pg_catalog') AND {_NOT_SYNALOG}",
+    "trino": f"table_schema <> 'information_schema' AND {_NOT_SYNALOG}",
+    "presto": f"table_schema <> 'information_schema' AND {_NOT_SYNALOG}",
+    "databricks": f"table_schema <> 'information_schema' AND {_NOT_SYNALOG}",
 }
 
 # Engines this command can introspect (everything `synalog connect` supports).
@@ -65,6 +70,7 @@ def _bigquery_sql(dsn: str | None) -> str:
     return (
         "SELECT table_schema, table_name, column_name\n"
         f"FROM `region-{location.lower()}`.INFORMATION_SCHEMA.COLUMNS\n"
+        f"WHERE {_NOT_SYNALOG}\n"
         "ORDER BY table_schema, table_name, ordinal_position"
     )
 
@@ -80,7 +86,7 @@ def _introspect_sql(engine: str, dsn: str | None) -> str:
 # ---------------------------------------------------------------------------
 
 # Schemas that `SHOW SCHEMAS` lists but hold no user tables to introspect.
-_SHOW_SYSTEM_SCHEMAS = {"information_schema"}
+_SHOW_SYSTEM_SCHEMAS = {"information_schema", *_SYNALOG_SCHEMAS}
 
 
 def _describe_columns(fetch, schema: str, table: str) -> list[str]:

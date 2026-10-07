@@ -28,8 +28,6 @@ pub struct Annotations {
     pub flag_values: HashMap<String, String>,
     /// Default engine name.
     pub engine: String,
-    /// User-defined @AttachDatabase entries: db_name → path.
-    pub user_attached_databases: HashMap<String, String>,
     /// @Dataset override (None = use engine default).
     pub dataset_override: Option<String>,
     /// @CompileAsUdf predicate names.
@@ -38,7 +36,7 @@ pub struct Annotations {
     pub compile_as_tvf: HashMap<String, Vec<String>>,
     /// @BareAggregation entries: predicate_name → semigroup name.
     pub bare_aggregation: HashMap<String, String>,
-    /// Engine sub-keys (motherduck, threads, type_checking, clingo).
+    /// Engine sub-keys (motherduck, threads, type_checking).
     pub engine_options: HashMap<String, Json>,
 }
 
@@ -46,7 +44,6 @@ pub struct Annotations {
 pub struct Ground {
     pub table_name: String,
     pub overwrite: bool,
-    pub copy_to_file: Option<String>,
 }
 
 /// Extract a string value from a Logica expression literal.
@@ -162,7 +159,7 @@ impl Annotations {
                             engine = s;
                         }
                     }
-                    // Collect engine sub-keys (motherduck, threads, type_checking, clingo)
+                    // Collect engine sub-keys (motherduck, threads, type_checking)
                     for (k, v) in &fvs {
                         if k != "0" {
                             engine_options.insert(k.clone(), v.clone());
@@ -206,7 +203,6 @@ impl Annotations {
         // ── Pass 2: Extract all other annotations ──
 
         let mut per_predicate: HashMap<String, HashMap<String, Json>> = HashMap::new();
-        let mut user_attached_databases: HashMap<String, String> = HashMap::new();
         let mut dataset_override: Option<String> = None;
         let mut compile_as_udf: HashSet<String> = HashSet::new();
         let mut compile_as_tvf: HashMap<String, Vec<String>> = HashMap::new();
@@ -275,12 +271,15 @@ impl Annotations {
                         let entry = per_predicate.entry(target.clone()).or_default();
                         entry.insert("ground".into(), Json::Str(table));
 
-                        // Store overwrite and copy_to_file if present
                         if let Some((_, ow)) = fvs.iter().find(|(k, _)| k == "overwrite") {
                             entry.insert("ground_overwrite".into(), ow.clone());
                         }
-                        if let Some((_, cf)) = fvs.iter().find(|(k, _)| k == "copy_to_file") {
-                            entry.insert("ground_copy_to_file".into(), cf.clone());
+                        // A program writes no file.
+                        if fvs.iter().any(|(k, _)| k == "copy_to_file") {
+                            return Err(CompileError::new(
+                                "@Ground: copy_to_file is not supported: a program writes no file".to_string(),
+                                "@Ground",
+                            ));
                         }
                     }
                 }
@@ -305,22 +304,27 @@ impl Annotations {
                 "Dataset" => {
                     // @Dataset("name") — singleton, first positional arg is the dataset name
                     if let Some((_, val)) = fvs.iter().find(|(k, _)| k == "0") {
-                        if let Some(s) = extract_string_literal(val) {
-                            dataset_override = Some(s);
-                        } else if let Some(name) = Self::extract_predicate_name(val) {
+                        let name = extract_string_literal(val).or_else(|| Self::extract_predicate_name(val));
+                        if let Some(name) = name {
+                            // It is written into the SQL as a schema: a name,
+                            // never text that could end the statement.
+                            if !is_schema_name(&name) {
+                                return Err(CompileError::new(
+                                    format!("@Dataset: '{}' is not a schema name: write names of letters, digits, '_' and '-', joined by '.'", name),
+                                    "@Dataset",
+                                ));
+                            }
                             dataset_override = Some(name);
                         }
                     }
                 }
                 "AttachDatabase" => {
-                    // @AttachDatabase(db_name, "path")
-                    if let Some(db_name) = Self::predicate_name_from_field(&fvs, "0") {
-                        if let Some((_, path_val)) = fvs.iter().find(|(k, _)| k == "1") {
-                            if let Some(path) = extract_string_literal(path_val) {
-                                user_attached_databases.insert(db_name, path);
-                            }
-                        }
-                    }
+                    // A program reads the database it runs on: it opens no
+                    // file of its own.
+                    return Err(CompileError::new(
+                        "@AttachDatabase is not supported: a program reads the tables of the database it runs on, not files".to_string(),
+                        "@AttachDatabase",
+                    ));
                 }
                 "CompileAsUdf" => {
                     if let Some(target) = Self::predicate_name_from_field(&fvs, "0") {
@@ -374,7 +378,6 @@ impl Annotations {
             annotations: per_predicate,
             flag_values,
             engine,
-            user_attached_databases,
             dataset_override,
             compile_as_udf,
             compile_as_tvf,
@@ -439,13 +442,6 @@ impl Annotations {
             .unwrap_or(false)
     }
 
-    /// Whether Clingo integration is requested.
-    pub fn needs_clingo(&self) -> bool {
-        self.engine_options.get("clingo")
-            .map(|v| !v.is_null())
-            .unwrap_or(false)
-    }
-
     /// Whether type checking is enabled for the current engine.
     /// Matches Python's ShouldTypecheck().
     pub fn should_typecheck(&self) -> bool {
@@ -482,50 +478,31 @@ impl Annotations {
         let test = test_schema();
         match self.engine.as_str() {
             "psql" | "duckdb" => home.to_string(),
-            "sqlite" if self.user_attached_databases.contains_key(home) => home.to_string(),
             _ => test.to_string(),
         }
     }
 
-    /// Get attached databases (user-defined + auto-attach for SQLite).
-    /// Matches Python's `Annotations.AttachedDatabases()`.
+    /// The databases to attach: SQLite keeps grounded tables in an
+    /// in-memory database named as the test schema.
     pub fn attached_databases(&self) -> Vec<(String, String)> {
-        let mut result: Vec<(String, String)> = self.user_attached_databases
-            .iter()
-            .map(|(k, v)| (k.clone(), v.clone()))
-            .collect();
-        // Auto-attach test schema for SQLite when @Ground is used and not user-attached
+        let mut result: Vec<(String, String)> = Vec::new();
         let test = test_schema();
-        if self.engine == "sqlite"
-            && !self.user_attached_databases.contains_key(test)
-            && !self.grounded_predicates().is_empty()
-        {
+        if self.engine == "sqlite" && !self.grounded_predicates().is_empty() {
             result.push((test.to_string(), ":memory:".to_string()));
         }
         result
     }
 
-    /// Generate ATTACH DATABASE statements.
-    /// Matches Python's `Annotations.AttachDatabaseStatements()`.
+    /// The ATTACH DATABASE statements.
     pub fn attach_database_statements(&self) -> String {
         let dbs = self.attached_databases();
         if dbs.is_empty() {
             return String::new();
         }
-        let mut lines = Vec::new();
-        for (k, v) in &dbs {
-            // DuckDB: detach first, detect .sqlite files
-            if self.engine == "duckdb" {
-                lines.push(format!("DETACH DATABASE IF EXISTS {};", k));
-            }
-            let type_sqlite = if self.engine == "duckdb" && v.ends_with(".sqlite") {
-                " (TYPE SQLITE)"
-            } else {
-                ""
-            };
-            lines.push(format!("ATTACH DATABASE '{}' AS {}{};", v, k, type_sqlite));
-        }
-        lines.join("\n")
+        dbs.iter()
+            .map(|(k, v)| format!("ATTACH DATABASE '{}' AS {};", v, k))
+            .collect::<Vec<_>>()
+            .join("\n")
     }
 
     /// Generate the full preamble for the current engine.
@@ -553,11 +530,7 @@ impl Annotations {
                 ));
             }
             "duckdb" => {
-                let home_attachment = if self.user_attached_databases.contains_key(home) {
-                    format!("-- {} attached by user.\n", home)
-                } else {
-                    format!("create schema if not exists {};\n", home)
-                };
+                let home_attachment = format!("create schema if not exists {};\n", home);
                 preamble.push_str("-- Initializing DuckDB environment.\n");
                 preamble.push_str(&home_attachment);
                 preamble.push_str(
@@ -587,6 +560,17 @@ impl Annotations {
     }
 
     /// Get ground table name for a predicate, if any.
+    /// The table of a grounded predicate given no table: the predicate's
+    /// name in the dataset, `_table` added to a name that is an SQL keyword
+    /// (`logica_home.Order` does not parse).
+    fn default_table(&self, pred_name: &str) -> String {
+        if crate::compiler::dialects::is_sql_keyword(pred_name) {
+            format!("{}.{}_table", self.dataset(), pred_name)
+        } else {
+            format!("{}.{}", self.dataset(), pred_name)
+        }
+    }
+
     pub fn ground(&self, pred_name: &str) -> Option<Ground> {
         let a = self.annotations.get(pred_name)?;
         let v = a.get("ground")?;
@@ -596,7 +580,7 @@ impl Annotations {
         // prepend the default dataset. Matches Python:
         //   table_name = annotation.get('1', self.Dataset() + '.' + predicate_name)
         let table_name = if raw == pred_name {
-            format!("{}.{}", self.dataset(), raw)
+            self.default_table(&raw)
         } else {
             // Could be another predicate reference — check if it's grounded
             if let Some(other_ground) = self.annotations
@@ -605,12 +589,14 @@ impl Annotations {
             {
                 let other_raw = other_ground.as_str().to_string();
                 if other_raw == raw {
-                    format!("{}.{}", self.dataset(), other_raw)
+                    self.default_table(&other_raw)
                 } else {
                     other_raw
                 }
             } else {
-                raw
+                // A table named in @Ground lives in Synalog's dataset too:
+                // grounding never drops or replaces a table elsewhere.
+                self.default_table(&raw)
             }
         };
 
@@ -622,11 +608,7 @@ impl Annotations {
             })
             .unwrap_or(true);
 
-        // Read copy_to_file
-        let copy_to_file = a.get("ground_copy_to_file")
-            .and_then(|cf| extract_string_literal(cf));
-
-        Some(Ground { table_name, overwrite, copy_to_file })
+        Some(Ground { table_name, overwrite })
     }
 
     /// Get ORDER BY columns for a predicate, if any.
@@ -665,14 +647,25 @@ impl Annotations {
                     };
                     std::iter::once(name).chain(words.map(str::to_string)).collect::<Vec<_>>().join(" ")
                 };
+                // Nulls sort last, whatever the engine's default.
+                let nulls_last = |item: String| -> String {
+                    let lower = item.to_ascii_lowercase();
+                    let descending = lower.split_whitespace().any(|w| w == "desc");
+                    let first_by_default = dialect.as_ref().is_some_and(|d| d.nulls_first_by_default(descending));
+                    if first_by_default && !lower.split_whitespace().any(|w| w == "nulls") {
+                        format!("{} NULLS LAST", item)
+                    } else {
+                        item
+                    }
+                };
                 for i in 0..len {
                     if order_by[i].eq_ignore_ascii_case("DESC") {
                         continue; // DESC is handled when processing the previous item
                     }
                     if i + 1 < len && order_by[i + 1].eq_ignore_ascii_case("DESC") {
-                        parts.push(format!("{} DESC", column(&order_by[i])));
+                        parts.push(nulls_last(format!("{} DESC", column(&order_by[i]))));
                     } else {
-                        parts.push(column(&order_by[i]));
+                        parts.push(nulls_last(column(&order_by[i])));
                     }
                 }
                 format!(" ORDER BY {}", parts.join(", "))
@@ -839,3 +832,14 @@ impl Annotations {
 #[cfg(test)]
 #[path = "annotations_test.rs"]
 mod annotations_test;
+
+/// Whether `name` can be written into SQL as a schema (or a BigQuery
+/// `project.dataset`): names of letters, digits, `_` and `-`, joined by `.`.
+pub fn is_schema_name(name: &str) -> bool {
+    !name.is_empty()
+        && name.split('.').all(|part| {
+            !part.is_empty()
+                && part.chars().next().is_some_and(|c| c.is_ascii_alphanumeric() || c == '_')
+                && part.chars().all(|c| c.is_ascii_alphanumeric() || c == '_' || c == '-')
+        })
+}

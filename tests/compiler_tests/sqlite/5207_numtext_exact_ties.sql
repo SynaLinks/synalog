@@ -1,0 +1,27 @@
+WITH t_0_V AS (SELECT * FROM (
+  
+    SELECT
+      0 AS k,
+      12345678901234.25 AS x
+   UNION ALL
+  
+    SELECT
+      1 AS k,
+      1234567890123.125 AS x
+   UNION ALL
+  
+    SELECT
+      2 AS k,
+      -12345678901234.25 AS x
+   UNION ALL
+  
+    SELECT
+      3 AS k,
+      100000000000000.5 AS x
+  
+) AS UNUSED_TABLE_NAME  )
+SELECT
+  V.k AS k,
+  SYNALOG_NUMBER_TEXT(V.x) AS t
+FROM
+  t_0_V AS V ORDER BY k NULLS LAST;

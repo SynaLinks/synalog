@@ -1,0 +1,9 @@
+WITH t_1_V AS (SELECT * FROM VALUES
+  (1, null),
+  (2, "ab")
+AS UNUSED_TABLE_NAME(k, s))
+SELECT
+  t_0_V.k AS k,
+  CASE WHEN (t_0_V.k = 1) THEN CASE WHEN ((CAST(t_0_V.s AS STRING) LIKE "a%" ESCAPE '\\') IS NULL) THEN null ELSE "bad" END ELSE "ok" END AS v
+FROM
+  t_1_V AS t_0_V ORDER BY k NULLS LAST;

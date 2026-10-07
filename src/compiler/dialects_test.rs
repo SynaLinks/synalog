@@ -312,8 +312,8 @@ fn test_unnest_phrases() {
     assert_eq!(get("bigquery").unwrap().unnest_phrase(), "UNNEST({0}) as {1}");
     assert_eq!(get("sqlite").unwrap().unnest_phrase(), "JSON_EACH({0}) as {1}");
     assert_eq!(get("psql").unwrap().unnest_phrase(), "UNNEST({0}) as {1}");
-    assert_eq!(get("trino").unwrap().unnest_phrase(), "UNNEST({0}) as pushkin({1})");
-    assert_eq!(get("presto").unwrap().unnest_phrase(), "UNNEST({0}) as pushkin({1})");
+    assert_eq!(get("trino").unwrap().unnest_phrase(), "UNNEST(TRANSFORM({0}, synalog_e -> ROW(synalog_e))) as pushkin({1})");
+    assert_eq!(get("presto").unwrap().unnest_phrase(), "UNNEST(TRANSFORM({0}, synalog_e -> ROW(synalog_e))) as pushkin({1})");
     assert!(get("duckdb").unwrap().unnest_phrase().contains("unnest"));
     assert!(get("databricks").unwrap().unnest_phrase().contains("explode"));
 }
@@ -384,6 +384,14 @@ fn test_sqlite_built_in_functions() {
 }
 
 #[test]
+fn databricks_split_reads_its_separator_literally() {
+    // Spark's SPLIT takes a regular expression; the separator is escaped.
+    let d = get("databricks").unwrap();
+    let f = d.built_in_functions();
+    assert!(f["Split"].contains("REGEXP_REPLACE({1}"), "{}", f["Split"]);
+}
+
+#[test]
 fn test_psql_built_in_functions() {
     let d = get("psql").unwrap();
     let f = d.built_in_functions();
@@ -402,10 +410,25 @@ fn test_duckdb_built_in_functions() {
 }
 
 #[test]
-fn test_bigquery_empty_built_in_functions() {
+fn test_bigquery_built_in_functions() {
+    // BigQuery uses the base functions but Like, whose LIKE has no ESCAPE
+    // clause (a backslash escapes already), Div and RegexpContains.
     let d = get("bigquery").unwrap();
     let f = d.built_in_functions();
-    assert!(f.is_empty(), "BigQuery uses all base functions");
+    let mut keys = f.keys().collect::<Vec<_>>();
+    keys.sort();
+    assert_eq!(keys, vec![&"Div", &"Like", &"RegexpContains"]);
+    assert!(!f["Like"].contains("ESCAPE"));
+}
+
+#[test]
+fn like_escapes_with_a_backslash() {
+    for engine in ["sqlite", "duckdb", "psql", "trino", "presto", "databricks"] {
+        let d = get(engine).unwrap();
+        let like = d.built_in_functions().get("Like").map(|s| s.to_string())
+            .unwrap_or_else(|| crate::compiler::expr_translate::base_built_in_functions()["Like"].to_string());
+        assert!(like.contains("ESCAPE"), "{engine}: {like}");
+    }
 }
 
 // ── infix_operators ──
@@ -494,9 +517,9 @@ fn test_databricks_built_in_functions() {
     assert!(f.contains_key("ILike"), "databricks should have ILike");
     assert!(f.contains_key("IsNull"), "databricks should have IsNull");
     // Spark/Databricks-specific overrides of the BigQuery defaults.
-    assert_eq!(f.get("Range"), Some(&"SEQUENCE(0, %s - 1)"));
-    assert_eq!(f.get("Size"), Some(&"SIZE(%s)"));
-    assert_eq!(f.get("Element"), Some(&"ELEMENT_AT({0}, {1} + 1)"));
+    assert_eq!(f.get("Range"), Some(&"FILTER(SEQUENCE(0, CAST({0} AS BIGINT)), x -> x < {0})"));
+    assert_eq!(f.get("Size"), Some(&"ARRAY_SIZE(%s)"));
+    assert_eq!(f.get("Element"), Some(&"(CASE WHEN {1} < 0 THEN NULL ELSE ELEMENT_AT({0}, CAST({1} AS INT) + 1) END)"));
     assert_eq!(f.get("Format"), Some(&"FORMAT_STRING(%s)"));
     assert_eq!(f.get("ArrayConcat"), Some(&"CONCAT({0}, {1})"));
     // `Length` (string length) is intentionally NOT overridden — it inherits
@@ -593,10 +616,11 @@ fn test_duckdb_regex_match_condition() {
 
 #[test]
 fn test_bigquery_regex_match_condition() {
+    // The pattern is the dialect's string literal: double-quoted here.
     let d = get("bigquery").unwrap();
     assert_eq!(
         d.regex_match_condition("CAST(name AS TEXT)", "foo.*bar"),
-        "REGEXP_LIKE(CAST(name AS TEXT), 'foo.*bar')"
+        "REGEXP_LIKE(CAST(name AS TEXT), \"foo.*bar\")"
     );
 }
 
@@ -620,10 +644,11 @@ fn test_presto_regex_match_condition() {
 
 #[test]
 fn test_databricks_regex_match_condition() {
+    // The pattern is the dialect's string literal: double-quoted here.
     let d = get("databricks").unwrap();
     assert_eq!(
         d.regex_match_condition("CAST(name AS TEXT)", "foo.*bar"),
-        "REGEXP_LIKE(CAST(name AS TEXT), 'foo.*bar')"
+        "REGEXP_LIKE(CAST(name AS TEXT), \"foo.*bar\")"
     );
 }
 
@@ -635,12 +660,106 @@ fn test_regex_match_condition_escapes_single_quotes() {
     ];
     for engine in &engines {
         let d = get(engine).unwrap();
+        // The pattern is written as the dialect's string literal.
         let result = d.regex_match_condition("col", "it's");
         assert!(
-            result.contains("it''s"),
-            "{} should escape single quotes, got: {}",
+            result.contains(&d.str_literal("it's")),
+            "{} should write the pattern as a literal, got: {}",
             engine,
             result
         );
     }
+}
+
+#[test]
+fn nulls_sort_last_on_every_engine() {
+    // Engines sorting nulls first in a direction get `NULLS LAST` there.
+    for (engine, ascending_first, descending_first) in [
+        ("sqlite", true, false),
+        ("databricks", true, false),
+        ("bigquery", true, false),
+        ("psql", false, true),
+        ("duckdb", false, false),
+        ("trino", false, false),
+        ("presto", false, false),
+    ] {
+        let d = crate::compiler::dialects::get(engine).unwrap();
+        assert_eq!(d.nulls_first_by_default(false), ascending_first, "{engine} ascending");
+        assert_eq!(d.nulls_first_by_default(true), descending_first, "{engine} descending");
+    }
+}
+
+#[test]
+fn a_string_literal_ends_where_any_statement_splitter_thinks() {
+    // Whatever splits a script at semicolons outside quotes, knowing the
+    // engine's backslash escapes or not, must find each literal's end at its
+    // last character: otherwise text of the value would run as SQL.
+    let payloads = [
+        "'; DROP TABLE t; --", "\"; DROP TABLE t; --", "\\'; DROP TABLE t; --", "\\\"; DROP",
+        "\\", "a\\", "''", "\"\"", "\\u0022; DROP", "$$; DROP $$", "`; DROP; `", "E'\\''",
+    ];
+    for engine in ["sqlite", "duckdb", "psql", "bigquery", "trino", "presto", "databricks"] {
+        let d = get(engine).unwrap();
+        for p in payloads {
+            let lit = d.str_literal(p);
+            let body = lit.strip_prefix('E').unwrap_or(&lit);
+            let chars: Vec<char> = body.chars().collect();
+            let quote = chars[0];
+            // A naive scan: a doubled quote is one quote, a backslash is a character.
+            let mut i = 1;
+            let end = loop {
+                if chars[i] == quote {
+                    if i + 1 < chars.len() && chars[i + 1] == quote {
+                        i += 2;
+                        continue;
+                    }
+                    break i;
+                }
+                i += 1;
+            };
+            assert_eq!(end, chars.len() - 1, "{engine}: {p:?} written {lit}");
+        }
+    }
+}
+
+#[test]
+fn test_sqlite_float_literals_read_exactly() {
+    use crate::compiler::dialects::sqlite_float_literal;
+    // Digits within 53 bits and a power of ten within 22: as written.
+    assert_eq!(sqlite_float_literal("0.1"), "0.1");
+    assert_eq!(sqlite_float_literal("342547.0843250365"), "342547.0843250365");
+    assert_eq!(sqlite_float_literal("-2.5"), "-2.5");
+    // More digits: the double's exact form.
+    assert_eq!(sqlite_float_literal("4503599627370495.5"), "(CAST(9007199254740991 AS REAL) / 2)");
+    assert_eq!(sqlite_float_literal("-4503599627370495.5"), "(-(CAST(9007199254740991 AS REAL) / 2))");
+    assert_eq!(sqlite_float_literal("0.30000000000000004"), "(CAST(1351079888211149 AS REAL) / 4503599627370496)");
+    // A power of ten beyond 22.
+    let tiny = sqlite_float_literal("1.25e-30");
+    assert!(tiny.contains("CAST(") && tiny.contains(" / 4611686018427387904)"), "{}", tiny);
+    for text in ["4503599627370495.5", "0.30000000000000004", "1.25e-30", "1.5e40", "123456789012345.67"] {
+        let expr = sqlite_float_literal(text);
+        // The expression's value, computed as SQLite does: exact scalings.
+        let value = eval_exact(&expr);
+        assert_eq!(value, text.parse::<f64>().unwrap(), "{} -> {}", text, expr);
+    }
+}
+
+#[cfg(test)]
+fn eval_exact(expr: &str) -> f64 {
+    let expr = expr.trim();
+    if let Some(inner) = expr.strip_prefix("(-").and_then(|e| e.strip_suffix(')')) {
+        return -eval_exact(inner);
+    }
+    if let Some(inner) = expr.strip_prefix("CAST(").and_then(|e| e.strip_suffix(" AS REAL)")) {
+        return inner.parse::<u64>().unwrap() as f64;
+    }
+    if let Some(inner) = expr.strip_prefix('(').and_then(|e| e.strip_suffix(')')) {
+        let at = inner.rfind([' ']).unwrap();
+        let (left, factor) = (&inner[..at], inner[at + 1..].parse::<u64>().unwrap() as f64);
+        let left = left.trim_end();
+        let (left, op) = (&left[..left.len() - 2], &left[left.len() - 1..]);
+        let l = eval_exact(left);
+        return if op == "*" { l * factor } else { l / factor };
+    }
+    expr.parse().unwrap()
 }

@@ -1,0 +1,8 @@
+WITH t_0_U AS (SELECT * FROM VALUES
+  (2),
+  (2.5E0)
+AS UNUSED_TABLE_NAME(v))
+SELECT
+  SUM(U.v) AS s
+FROM
+  t_0_U AS U;

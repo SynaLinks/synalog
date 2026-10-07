@@ -1,0 +1,2 @@
+SELECT
+  ARRAY_TO_STRING(ARRAY[], ",") AS v;

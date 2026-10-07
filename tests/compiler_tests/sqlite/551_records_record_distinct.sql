@@ -1,0 +1,19 @@
+WITH t_1_V AS (SELECT * FROM (
+  
+    SELECT
+      JSON_OBJECT('a', 1) AS r
+   UNION ALL
+  
+    SELECT
+      JSON_OBJECT('a', 1) AS r
+  
+) AS UNUSED_TABLE_NAME  ),
+t_0_D AS (SELECT
+  V.r AS r
+FROM
+  t_1_V AS V
+GROUP BY V.r)
+SELECT
+  SUM(1) AS n
+FROM
+  t_0_D AS D;

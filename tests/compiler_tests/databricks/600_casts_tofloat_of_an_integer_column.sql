@@ -1,0 +1,5 @@
+SELECT
+  x_3 AS x,
+  ((CAST(x_3 AS DOUBLE)) / NULLIF(2, 0)) AS h
+FROM
+  LATERAL (SELECT explode(ARRAY(1, 3)) AS x_3) AS pushkin ORDER BY x NULLS LAST;

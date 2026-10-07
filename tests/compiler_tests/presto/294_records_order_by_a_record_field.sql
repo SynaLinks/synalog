@@ -1,4 +1,4 @@
-WITH t_0_R AS (SELECT * FROM (
+WITH t_1_R AS (SELECT * FROM (
   
     SELECT
       CAST(ROW(2) AS ROW(k double)) AS r
@@ -9,6 +9,6 @@ WITH t_0_R AS (SELECT * FROM (
   
 ) AS UNUSED_TABLE_NAME  )
 SELECT
-  R.r.k AS k
+  t_0_R.r.k AS k
 FROM
-  t_0_R AS R ORDER BY k;
+  t_1_R AS t_0_R ORDER BY k;

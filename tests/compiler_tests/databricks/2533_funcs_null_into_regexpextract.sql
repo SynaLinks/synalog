@@ -1,0 +1,2 @@
+SELECT
+  (CASE WHEN null RLIKE "a" THEN REGEXP_EXTRACT(null, "a", 0) END) AS v;

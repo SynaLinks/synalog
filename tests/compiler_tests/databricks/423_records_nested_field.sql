@@ -1,0 +1,2 @@
+SELECT
+  STRUCT(5 AS b).b AS v;

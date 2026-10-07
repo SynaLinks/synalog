@@ -130,7 +130,7 @@ fn test_functors_new() {
     let rules = parsed.as_object()["rule"].as_array().to_vec();
     let f = Functors::new(&rules);
     // Functors should be constructible without panicking
-    assert!(!f.rules.is_empty());
+    assert!(f.original_rules > 0);
 }
 
 // ── Functors::get_args_of_map ──
@@ -433,7 +433,7 @@ fn test_functors_new_with_many_rules() {
     let parsed = parse_file(source, None, &[]).unwrap();
     let rules = parsed.as_object()["rule"].as_array().to_vec();
     let f = Functors::new(&rules);
-    assert!(f.rules.len() >= 4);
+    assert!(f.original_rules >= 4);
 }
 
 // ── collect_annotations ──

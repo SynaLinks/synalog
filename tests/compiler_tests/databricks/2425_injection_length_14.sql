@@ -1,0 +1,2 @@
+SELECT
+  LENGTH("\\\u0022") AS n;

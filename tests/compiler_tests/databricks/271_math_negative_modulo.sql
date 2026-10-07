@@ -1,2 +1,2 @@
 SELECT
-  - (MOD(7, 3)) AS r;
+  - (MOD(7, NULLIF(3, 0))) AS r;

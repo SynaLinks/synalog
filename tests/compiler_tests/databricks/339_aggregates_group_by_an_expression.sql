@@ -1,0 +1,6 @@
+SELECT
+  (MOD(x_2, NULLIF(2, 0))) AS k,
+  SUM(1) AS n
+FROM
+  LATERAL (SELECT explode(ARRAY(1, 2, 3, 4, 5)) AS x_2) AS pushkin
+GROUP BY 1 ORDER BY k NULLS LAST;

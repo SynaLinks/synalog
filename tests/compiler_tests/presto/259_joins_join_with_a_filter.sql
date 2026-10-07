@@ -14,7 +14,7 @@ SELECT
   B.id AS id,
   B.v AS v
 FROM
-  t_0_B AS B, UNNEST(ARRAY[1, 2]) as pushkin(x_6)
+  t_0_B AS B, UNNEST(TRANSFORM(ARRAY[1, 2], synalog_e -> ROW(synalog_e))) as pushkin(x_6)
 WHERE
   (B.id > 1) AND
   (x_6 = B.id);

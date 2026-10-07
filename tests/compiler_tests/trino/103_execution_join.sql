@@ -1,4 +1,4 @@
-WITH t_0_Person AS (SELECT * FROM (
+WITH t_1_Person AS (SELECT * FROM (
   
     SELECT
       'ann' AS name,
@@ -10,7 +10,7 @@ WITH t_0_Person AS (SELECT * FROM (
       2 AS city_id
   
 ) AS UNUSED_TABLE_NAME  ),
-t_1_City AS (SELECT * FROM (
+t_2_City AS (SELECT * FROM (
   
     SELECT
       1 AS city_id,
@@ -29,8 +29,8 @@ t_1_City AS (SELECT * FROM (
 ) AS UNUSED_TABLE_NAME  )
 SELECT
   Person.name AS name,
-  City.city AS city
+  t_0_City.city AS city
 FROM
-  t_0_Person AS Person, t_1_City AS City
+  t_1_Person AS Person, t_2_City AS t_0_City
 WHERE
-  (City.city_id = Person.city_id) ORDER BY name;
+  (t_0_City.city_id = Person.city_id) ORDER BY name;

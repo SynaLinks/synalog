@@ -11,7 +11,7 @@ WITH t_2_Rows AS (SELECT * FROM (
 t_0_Parsed AS (SELECT
   t_1_Rows.line AS line,
   CARDINALITY(SPLIT(t_1_Rows.line, ',')) AS n,
-  ELEMENT_AT(SPLIT(t_1_Rows.line, ','), 0 + 1) AS first
+  (CASE WHEN 0 < 0 THEN NULL ELSE ELEMENT_AT(SPLIT(t_1_Rows.line, ','), 0 + 1) END) AS first
 FROM
   t_2_Rows AS t_1_Rows ORDER BY line)
 SELECT

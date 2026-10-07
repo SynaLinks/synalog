@@ -1,25 +1,11 @@
-WITH t_0_A AS (SELECT * FROM (
-  
-    SELECT
-      1 AS k,
-      1 AS v
-   UNION ALL
-  
-    SELECT
-      null AS k,
-      2 AS v
-  
-) AS UNUSED_TABLE_NAME  ),
-t_1_B AS (SELECT * FROM (
-  
-    SELECT
-      1 AS k
-   UNION ALL
-  
-    SELECT
-      null AS k
-  
-) AS UNUSED_TABLE_NAME  )
+WITH t_0_A AS (SELECT * FROM VALUES
+  (1, 1),
+  (null, 2)
+AS UNUSED_TABLE_NAME(k, v)),
+t_1_B AS (SELECT * FROM VALUES
+  (1),
+  (null)
+AS UNUSED_TABLE_NAME(k))
 SELECT
   A.v AS v
 FROM

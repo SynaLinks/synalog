@@ -1,0 +1,10 @@
+WITH t_1_L AS (SELECT * FROM VALUES
+  ("a", ARRAY(1, 2, 3)),
+  ("b", ARRAY(10))
+AS UNUSED_TABLE_NAME(k, l))
+SELECT
+  t_0_L.k AS k,
+  SUM(x_3) AS t
+FROM
+  t_1_L AS t_0_L, LATERAL (SELECT explode(t_0_L.l) AS x_3) AS pushkin
+GROUP BY 1 ORDER BY k NULLS LAST, t NULLS LAST;

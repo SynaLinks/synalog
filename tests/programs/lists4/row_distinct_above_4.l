@@ -1,0 +1,9 @@
+# Count= of each row's list elements above 4; null (0 for a distinct count) when none, a null list too.
+# Expect: rows Q = [(1, 0), (2, 0), (3, 1), (4, 2), (5, 0)]
+L(k: 1, l: [1, 2, 3]);
+L(k: 2, l: []);
+L(k: 3, l: [7]);
+L(k: 4, l: [5, 5, 9, 1]);
+L(k: 5, l: null);
+@OrderBy(Q, "k");
+Q(k:, v: (combine Count= y :- y in l, y > 4)) :- L(k:, l:);

@@ -1,0 +1,12 @@
+WITH t_0_N AS (SELECT * FROM VALUES
+  (-7),
+  (-2),
+  (0),
+  (3),
+  (12),
+  (1099511627776)
+AS UNUSED_TABLE_NAME(x))
+SELECT
+  SUM(N.x) AS s
+FROM
+  t_0_N AS N;

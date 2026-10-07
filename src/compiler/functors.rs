@@ -141,9 +141,13 @@ fn defined_predicates_rules(rules: &[Json]) -> HashMap<String, Vec<Json>> {
 /// Note: Python optionally uses numpy for fast matrix-based transitive closure
 /// (NumpyBuildArgsOf). The iterative BuildArgs path used here covers all cases.
 pub struct Functors {
-    rules: Vec<Json>,
+    /// How many rules the program has: `extended_rules` starts with them.
+    original_rules: usize,
     pub extended_rules: Vec<Json>,
     rules_of: HashMap<String, Vec<Json>>,
+    /// How many of `extended_rules` `rules_of` holds: rules are appended,
+    /// so an update reads only the new ones.
+    indexed_rules: usize,
     predicates: HashSet<String>,
     direct_args_of: HashMap<String, HashSet<String>>,
     args_of: HashMap<String, HashSet<String>>,
@@ -158,9 +162,10 @@ impl Functors {
         let predicates: HashSet<String> = rules_of.keys().cloned().collect();
 
         let mut f = Functors {
-            rules: rules.to_vec(),
+            original_rules: rules.len(),
             extended_rules: rules.to_vec(),
-            rules_of: rules_of.clone(),
+            rules_of,
+            indexed_rules: rules.len(),
             predicates: predicates.clone(),
             direct_args_of: HashMap::new(),
             args_of: HashMap::new(),
@@ -289,8 +294,15 @@ impl Functors {
     }
 
     fn update_structure(&mut self, new_predicate: &str) {
-        self.rules_of = defined_predicates_rules(&self.extended_rules);
-        self.predicates = self.rules_of.keys().cloned().collect();
+        // The rules appended since the last update join the index.
+        for rule in &self.extended_rules[self.indexed_rules..] {
+            if let Some(head) = rule.as_object().get("head") {
+                let name = head.as_object()["predicate_name"].as_str().to_string();
+                self.predicates.insert(name.clone());
+                self.rules_of.entry(name).or_default().push(rule.clone());
+            }
+        }
+        self.indexed_rules = self.extended_rules.len();
 
         if self.rules_of.contains_key(new_predicate) {
             let args = self.build_direct_args_of_predicate(new_predicate);
@@ -319,6 +331,28 @@ impl Functors {
         for p in &preds {
             self.build_args(p);
         }
+    }
+
+    /// The predicates an `@Iteration` of `target` names: its `predicates`
+    /// and the one it `accumulate`s into.
+    fn iteration_companions(&self, target: &str) -> Vec<String> {
+        let mut out = Vec::new();
+        for rule in self.rules_of.get("@Iteration").into_iter().flatten() {
+            let Some(rec) = rule.as_object()["head"].as_object().get("record") else { continue };
+            let names = extract_predicate_names(rec);
+            let fvs = rec.as_object()["field_value"].as_array();
+            let first = fvs.first()
+                .and_then(|fv| fv.as_object()["value"].as_object().get("expression"))
+                .and_then(|e| e.as_object().get("literal"))
+                .and_then(|l| l.as_object().get("the_predicate"))
+                .map(|p| p.as_object()["predicate_name"].as_str().to_string());
+            if first.as_deref() == Some(target) {
+                out.extend(names.into_iter().filter(|n| n != target));
+            }
+        }
+        out.sort();
+        out.dedup();
+        out
     }
 
     fn args_of(&self, functor: &str) -> HashSet<String> {
@@ -520,6 +554,31 @@ impl Functors {
         self.creation_count += 1;
 
         let mut rules = self.all_rules_of(applicant)?;
+        // An iteration's predicates (`@Iteration(P_sn_delta, predicates:
+        // [P_sn_new, P_sn_back], accumulate: P_sn_full)`) are read by no rule
+        // of what the iteration computes, only by its loop: they are copied
+        // with it, or the copy would loop over the original's.
+        let mut heads: HashSet<String> = rules.iter()
+            .map(|r| r.as_object()["head"].as_object()["predicate_name"].as_str().to_string())
+            .collect();
+        loop {
+            let companions: Vec<String> = heads.iter()
+                .flat_map(|h| self.iteration_companions(h))
+                .filter(|c| !heads.contains(c))
+                .collect();
+            if companions.is_empty() {
+                break;
+            }
+            for c in companions {
+                for r in self.all_rules_of(&c)? {
+                    heads.insert(r.as_object()["head"].as_object()["predicate_name"].as_str().to_string());
+                    rules.push(r);
+                }
+                heads.insert(c);
+            }
+        }
+        let mut seen = HashSet::new();
+        rules.retain(|r| seen.insert(r.to_string_fmt(false)));
 
         let args: HashSet<String> = args_map.keys().cloned().collect();
 
@@ -768,6 +827,10 @@ impl Functors {
             }
         }
 
+        // The rules were rewritten in place: index them all again.
+        self.rules_of.clear();
+        self.predicates.clear();
+        self.indexed_rules = 0;
         self.update_structure(
             proven_to_be_nothing.iter().next().map(|s| s.as_str()).unwrap_or(""));
         Ok(())
@@ -915,7 +978,12 @@ impl Functors {
                         walk_replace_predicate(r, c, &format!("{}_recursive_head", c));
                     }
                 }
-            } else if head_pred.starts_with('@') && head_pred != "@Make" {
+            } else if head_pred.starts_with('@')
+                && head_pred != "@Make"
+                // The ordering and limit are the result's, not each step's.
+                && head_pred != "@OrderBy"
+                && head_pred != "@Limit"
+            {
                 walk_replace_predicate(r, predicate, &new_predicate_head_name);
                 for c in cover {
                     if c != predicate {
@@ -1015,7 +1083,13 @@ impl Functors {
                 for c in &simplified_cover {
                     walk_replace_predicate(r, c, &format!("{}_RZero", c));
                 }
-            } else if head_pred.starts_with('@') && head_pred != "@Make" {
+            } else if head_pred.starts_with('@')
+                && head_pred != "@Make"
+                // The ordering and limit are the result's: on each step a
+                // limit would cut what the next step starts from.
+                && head_pred != "@OrderBy"
+                && head_pred != "@Limit"
+            {
                 for c in cover {
                     walk_replace_predicate(r, c, &format!("{}_ROne", c));
                 }
@@ -1054,7 +1128,7 @@ impl Functors {
         let (should_recurse, my_cover) = self.recursive_analysis(
             depth_map, default_iterative, default_depth);
 
-        let mut new_rules = self.rules.clone();
+        let mut new_rules = self.extended_rules[..self.original_rules].to_vec();
 
         let mut sorted_recurse: Vec<_> = should_recurse.iter().collect();
         sorted_recurse.sort_by(|a, b| a.0.cmp(b.0));
@@ -1259,23 +1333,43 @@ fn get_semi_naive_recursion_functor(depth: i64, p: &str, fields: &[Json]) -> Str
         })
         .collect::<Vec<_>>()
         .join(", ");
+    // A step's columns may be wider than its input's (an integer base, a
+    // bigint `ToInt64(x) * 2`, then a sum of it), and a column widens at most
+    // twice (integer, bigint, double), so the types stop changing within
+    // twice as many steps as there are columns. Steps from the base rows'
+    // types, applied to empty tables (free to compute), give the accumulated
+    // table the widest types from the start: every step's new rows are then
+    // inserted, in linear time, on every engine.
+    let widening = 2 * fields.len() + 1;
+    let mut typed = vec![
+        format!("{p}_sn_t0({args}) :- {p}_sn_delta({args}), 1 == 0;"),
+        format!("@Ground({p}_sn_t0);"),
+    ];
+    for k in 1..=widening {
+        // A step holds the base rows too: kept empty, only its types count.
+        typed.push(format!("{p}_sn_r{k} := {p}_ROne({p}_RZero: {p}_sn_t{});", k - 1));
+        typed.push(format!("{p}_sn_t{k}({args}) :- {p}_sn_r{k}({args}), 1 == 0;"));
+        typed.push(format!("@Ground({p}_sn_t{k});"));
+    }
+    let empties = (1..=widening).map(|k| format!(" | {p}_sn_t{k}({args})")).collect::<String>();
     [
         format!("{p}_sn_delta := {p}_ROne({p}_RZero: nil);"),
         format!("@Ground({p}_sn_delta);"),
-        // Created from the base rows, with the column types of a step's rows
-        // (an empty step: `1 == 0`), so the INSERT of every step's new rows
-        // fits strictly typed engines (an integer base, `y + 1` a bigint).
-        format!("{p}_sn_full({args}) :- {p}_sn_delta({args}) | ({p}_sn_step({args}), 1 == 0);"),
+        typed.join("\n"),
+        format!("{p}_sn_full({args}) :- {p}_sn_delta({args}){empties};"),
         format!("@Ground({p}_sn_full);"),
         format!("{p}_sn_step := {p}_ROne({p}_RZero: {p}_sn_delta);"),
         format!("{p}_sn_new({args}) distinct :- {p}_sn_step({args}), ~{p}_sn_full({args});"),
         format!("@Ground({p}_sn_new);"),
-        format!("{p}_sn_next({args}) :- {p}_sn_new({args});"),
-        format!("@Ground({p}_sn_next, {p}_sn_delta);"),
+        // The next step, from the new rows into the delta's table: the loop
+        // alternates the two tables rather than copying one into the other.
+        format!("{p}_sn_back_step := {p}_ROne({p}_RZero: {p}_sn_new);"),
+        format!("{p}_sn_back({args}) distinct :- {p}_sn_back_step({args}), ~{p}_sn_full({args});"),
+        format!("@Ground({p}_sn_back, {p}_sn_delta);"),
         // A rule, not a copy (`:=`): it reads the table the loop adds to.
         format!("{p}({args}) :- {p}_sn_full({args});"),
         format!(
-            "@Iteration({p}_sn_delta, predicates: [{p}_sn_new, {p}_sn_next], repetitions: {depth}, accumulate: {p}_sn_full);"
+            "@Iteration({p}_sn_delta, predicates: [{p}_sn_new, {p}_sn_back], repetitions: {depth}, accumulate: {p}_sn_full);"
         ),
     ]
     .join("\n")
@@ -1459,12 +1553,17 @@ pub fn unfold_recursion(rules: &[Json], engine: &str) -> CompileResult<Vec<Json>
     }
 
     // Upstream defaults DuckDB to the iterative path; synalog unrolls DuckDB
-    // inline like the other engines (see DEVIATIONS.md). Presto iterates every
-    // recursion: it inlines each CTE where it is read, and an unrolled step
-    // reads the previous one twice, so the query it plans doubles with each
-    // step (depth 20 took minutes to plan). The iterative path stores each
-    // step in a table, which the run loops over (`synalog.plan`).
-    let default_iterative = engine == "presto";
+    // inline like the other engines (see DEVIATIONS.md). Presto and Spark
+    // (Databricks) iterate every recursion: their planners take time
+    // exponential in the steps of an unrolled recursion (Presto: depth 20
+    // exceeded its 3-minute planning timeout; Spark: depth 12 took minutes).
+    // The iterative path stores each step in a table, which the run loops
+    // over (`synalog.plan`).
+    // Trino inlines every CTE where it is read: an assertion reading a
+    // recursion three times copied its unrolled steps three times, past
+    // Trino's limit of 150 stages (QUERY_HAS_TOO_MANY_STAGES). As a table,
+    // a recursion is read like any other.
+    let default_iterative = engine == "presto" || engine == "databricks" || engine == "trino";
     // Upstream's default is 32 steps on DuckDB; 8 everywhere here, so a
     // program means the same on every engine.
     let default_depth: i64 = 8;

@@ -1,7 +1,7 @@
 WITH t_0_Numbers_Numbers AS (SELECT
   x_3 AS x
 FROM
-  explode(ARRAY(1, 2)) AS pushkin(x_3) ORDER BY x)
+  LATERAL (SELECT explode(ARRAY(1, 2)) AS x_3) AS pushkin ORDER BY x NULLS LAST)
 SELECT
   Numbers_Numbers.x AS x
 FROM

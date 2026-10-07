@@ -1,2 +1,2 @@
 SELECT
-  JSON_EXTRACT(SPLIT('a,b,c', ','), '$[' || 1 || ']') AS p;
+  (CASE WHEN 1 < 0 THEN NULL ELSE JSON_EXTRACT(SPLIT('a,b,c', ','), '$[' || 1 || ']') END) AS p;

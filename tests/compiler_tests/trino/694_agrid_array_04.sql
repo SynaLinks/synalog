@@ -1,0 +1,2 @@
+SELECT
+  (CASE WHEN 2 < 0 THEN NULL ELSE ELEMENT_AT(SPLIT('x;y;z', ';'), 2 + 1) END) AS v;

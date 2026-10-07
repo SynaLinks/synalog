@@ -1,26 +1,11 @@
-WITH t_0_Employee AS (SELECT * FROM (
-  
-    SELECT
-      "Alice" AS name,
-      "Engineering" AS department,
-      75000 AS salary
-   UNION ALL
-  
-    SELECT
-      "Bob" AS name,
-      "Marketing" AS department,
-      65000 AS salary
-   UNION ALL
-  
-    SELECT
-      "Charlie" AS name,
-      "Engineering" AS department,
-      80000 AS salary
-  
-) AS UNUSED_TABLE_NAME  )
+WITH t_0_Employee AS (SELECT * FROM VALUES
+  ("Alice", "Engineering", 75000),
+  ("Bob", "Marketing", 65000),
+  ("Charlie", "Engineering", 80000)
+AS UNUSED_TABLE_NAME(name, department, salary))
 SELECT
   Employee.name AS name
 FROM
   t_0_Employee AS Employee
 WHERE
-  (Employee.department = "Engineering") ORDER BY name;
+  (Employee.department = "Engineering") ORDER BY name NULLS LAST;

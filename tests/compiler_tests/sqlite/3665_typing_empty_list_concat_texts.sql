@@ -1,0 +1,2 @@
+SELECT
+  JSON_ARRAY_LENGTH(JSON_ARRAY('a', 'b')) AS n;

@@ -13,7 +13,7 @@ SumOfSquares(a, b) = Square(a) + Square(b);
 FullName(first, last) = first ++ " " ++ last;
 
 # Conditional function
-Sign(x) = if x > 0 then 1 else if x < 0 then -1 else 0;
+SignOf(x) = if x > 0 then 1 else if x < 0 then -1 else 0;
 
 # Using functions in rules
 Numbers(x) :- x in Range(5);

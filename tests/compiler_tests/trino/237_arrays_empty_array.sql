@@ -1,2 +1,2 @@
 SELECT
-  CARDINALITY(ARRAY[]) AS n;
+  0 AS n;

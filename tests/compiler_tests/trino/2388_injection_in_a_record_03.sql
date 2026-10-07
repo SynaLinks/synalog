@@ -1,0 +1,2 @@
+SELECT
+  ''') UNION SELECT 1 --' AS s;

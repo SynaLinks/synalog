@@ -36,6 +36,19 @@ services:
 
   trino:
     image: trinodb/trino:476
+    # The memory connector waits for a dynamic filter with no timeout, and a
+    # join whose conditions contradict each other (an assertion's
+    # counterexamples of `a < b`: `a < b AND a >= b`) never produces one, so
+    # the query hung. Production connectors bound the wait; this one does not.
+    # The JVM takes 80% of the machine for its heap by default, which beside
+    # the other engines gets the container killed: 3 GB, as Presto.
+    command:
+      - sh
+      - -c
+      - |
+        echo 'memory.enable-lazy-dynamic-filtering=false' >> /etc/trino/catalog/memory.properties
+        sed -i 's/-XX:InitialRAMPercentage=80/-Xms1G/; s/-XX:MaxRAMPercentage=80/-Xmx3G/' /etc/trino/jvm.config
+        exec /usr/lib/trino/bin/run-trino
     ports:
       - "${SYNALOG_E2E_TRINO_PORT:-8080}:8080"
     healthcheck:
@@ -46,6 +59,17 @@ services:
 
   presto:
     image: prestodb/presto:0.293
+    # The suite sends thousands of queries (a recursion is a few hundred short
+    # statements on Presto). The coordinator keeps each finished query's
+    # details for 15 minutes by default, which filled its 1 GB heap until it
+    # exited (OutOfMemoryError): keep them a minute, with a 2 GB heap.
+    entrypoint:
+      - sh
+      - -c
+      - |
+        echo 'query.min-expire-age=1m' >> $$PRESTO_HOME/etc/config.properties
+        sed -i 's/-Xmx1G/-Xmx2G/' $$PRESTO_HOME/etc/jvm.config
+        exec /opt/entrypoint.sh
     ports:
       - "${SYNALOG_E2E_PRESTO_PORT:-8081}:8080"
     healthcheck:

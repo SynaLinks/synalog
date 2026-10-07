@@ -1,4 +1,4 @@
-WITH t_2_Employee AS (SELECT * FROM (
+WITH t_3_Employee AS (SELECT * FROM (
   
     SELECT
       1 AS id,
@@ -25,14 +25,14 @@ WITH t_2_Employee AS (SELECT * FROM (
   
 ) AS UNUSED_TABLE_NAME  ),
 t_0_ManagerPairs AS (SELECT
-  Employee.name AS employee,
-  t_1_Employee.name AS manager
+  t_1_Employee.name AS employee,
+  t_2_Employee.name AS manager
 FROM
-  t_2_Employee AS Employee, t_2_Employee AS t_1_Employee
+  t_3_Employee AS t_1_Employee, t_3_Employee AS t_2_Employee
 WHERE
-  (t_1_Employee.id = Employee.manager_id) ORDER BY employee)
+  (t_2_Employee.id = t_1_Employee.manager_id) ORDER BY employee NULLS LAST)
 SELECT
   ManagerPairs.employee AS employee,
   ManagerPairs.manager AS manager
 FROM
-  t_0_ManagerPairs AS ManagerPairs ORDER BY employee;
+  t_0_ManagerPairs AS ManagerPairs ORDER BY employee NULLS LAST;

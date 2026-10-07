@@ -1,0 +1,2 @@
+SELECT
+  CAST(ROUND("7") AS BIGINT) AS v;

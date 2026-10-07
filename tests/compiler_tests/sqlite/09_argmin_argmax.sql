@@ -16,11 +16,11 @@ WITH t_2_Score AS (SELECT * FROM (
   
 ) AS UNUSED_TABLE_NAME  ),
 t_0_BestPlayer AS (SELECT
-  JSON_EXTRACT(ArgMax(Score.player, Score.points, 1), '$[' || 0 || ']') AS logica_value
+  (CASE WHEN 0 < 0 THEN NULL ELSE JSON_EXTRACT(ArgMax(Score.player, Score.points, 1), '$[' || 0 || ']') END) AS logica_value
 FROM
   t_2_Score AS Score),
 t_3_WorstPlayer AS (SELECT
-  JSON_EXTRACT(ArgMin(t_4_Score.player, t_4_Score.points, 1), '$[' || 0 || ']') AS logica_value
+  (CASE WHEN 0 < 0 THEN NULL ELSE JSON_EXTRACT(ArgMin(t_4_Score.player, t_4_Score.points, 1), '$[' || 0 || ']') END) AS logica_value
 FROM
   t_2_Score AS t_4_Score)
 SELECT

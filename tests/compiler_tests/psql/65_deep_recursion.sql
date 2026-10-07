@@ -5,41 +5,119 @@ create schema if not exists logica_home;
 DO $$ BEGIN if not exists (select 'I(am) :- I(think)' from pg_type where typname = 'logicarecord893574736') then create type logicarecord893574736 as (nirvana numeric); end if; END $$;
 
 DROP TABLE IF EXISTS logica_home.Test_sn_delta CASCADE;
-CREATE TABLE logica_home.Test_sn_delta AS WITH t_0_Test_MultBodyAggAux_f1 AS (SELECT * FROM (
+CREATE TABLE logica_home.Test_sn_delta AS WITH t_0_Test_MultBodyAggAux_f2 AS (SELECT * FROM (
   
     SELECT
       0 AS y
   
 ) AS UNUSED_TABLE_NAME  )
 SELECT
-  Test_MultBodyAggAux_f1.y AS y
+  Test_MultBodyAggAux_f2.y AS y
 FROM
-  t_0_Test_MultBodyAggAux_f1 AS Test_MultBodyAggAux_f1
-GROUP BY Test_MultBodyAggAux_f1.y;
+  t_0_Test_MultBodyAggAux_f2 AS Test_MultBodyAggAux_f2
+GROUP BY Test_MultBodyAggAux_f2.y;
 
 -- Interacting with table logica_home.Test_sn_delta
 
-DROP TABLE IF EXISTS logica_home.Test_sn_full CASCADE;
-CREATE TABLE logica_home.Test_sn_full AS WITH t_1_Test_MultBodyAggAux_f2 AS (SELECT * FROM (
+DROP TABLE IF EXISTS logica_home.Test_sn_t0 CASCADE;
+CREATE TABLE logica_home.Test_sn_t0 AS SELECT
+  Test_sn_delta.y AS y
+FROM
+  logica_home.Test_sn_delta AS Test_sn_delta
+WHERE
+  (1 = 0);
+
+-- Interacting with table logica_home.Test_sn_t0
+
+DROP TABLE IF EXISTS logica_home.Test_sn_t1 CASCADE;
+CREATE TABLE logica_home.Test_sn_t1 AS WITH t_1_Test_MultBodyAggAux_f3 AS (SELECT * FROM (
   
     SELECT
       0 AS y
    UNION ALL
   
     SELECT
-      ((x_11) + (1)) AS y
+      ((x_9) + (1)) AS y
     FROM
-      logica_home.Test_sn_delta AS t_2_Test_sn_delta, UNNEST((SELECT ARRAY_AGG(x) FROM GENERATE_SERIES(0, 100 - 1) as x)) as x_11
+      logica_home.Test_sn_t0 AS Test_sn_t0, UNNEST(COALESCE((SELECT ARRAY_AGG(x) FROM GENERATE_SERIES(0, 100 - 1) as x), '{}')) as x_9
     WHERE
-      (t_2_Test_sn_delta.y = x_11)
+      (Test_sn_t0.y = x_9)
   
 ) AS UNUSED_TABLE_NAME  ),
-t_0_Test_sn_step AS (SELECT
-  Test_MultBodyAggAux_f2.y AS y
+t_0_Test_sn_r1 AS (SELECT
+  Test_MultBodyAggAux_f3.y AS y
 FROM
-  t_1_Test_MultBodyAggAux_f2 AS Test_MultBodyAggAux_f2
-GROUP BY Test_MultBodyAggAux_f2.y)
-SELECT * FROM (
+  t_1_Test_MultBodyAggAux_f3 AS Test_MultBodyAggAux_f3
+GROUP BY Test_MultBodyAggAux_f3.y)
+SELECT
+  Test_sn_r1.y AS y
+FROM
+  t_0_Test_sn_r1 AS Test_sn_r1
+WHERE
+  (1 = 0);
+
+-- Interacting with table logica_home.Test_sn_t1
+
+DROP TABLE IF EXISTS logica_home.Test_sn_t2 CASCADE;
+CREATE TABLE logica_home.Test_sn_t2 AS WITH t_1_Test_MultBodyAggAux_f4 AS (SELECT * FROM (
+  
+    SELECT
+      0 AS y
+   UNION ALL
+  
+    SELECT
+      ((x_9) + (1)) AS y
+    FROM
+      logica_home.Test_sn_t1 AS Test_sn_t1, UNNEST(COALESCE((SELECT ARRAY_AGG(x) FROM GENERATE_SERIES(0, 100 - 1) as x), '{}')) as x_9
+    WHERE
+      (Test_sn_t1.y = x_9)
+  
+) AS UNUSED_TABLE_NAME  ),
+t_0_Test_sn_r2 AS (SELECT
+  Test_MultBodyAggAux_f4.y AS y
+FROM
+  t_1_Test_MultBodyAggAux_f4 AS Test_MultBodyAggAux_f4
+GROUP BY Test_MultBodyAggAux_f4.y)
+SELECT
+  Test_sn_r2.y AS y
+FROM
+  t_0_Test_sn_r2 AS Test_sn_r2
+WHERE
+  (1 = 0);
+
+-- Interacting with table logica_home.Test_sn_t2
+
+DROP TABLE IF EXISTS logica_home.Test_sn_t3 CASCADE;
+CREATE TABLE logica_home.Test_sn_t3 AS WITH t_1_Test_MultBodyAggAux_f5 AS (SELECT * FROM (
+  
+    SELECT
+      0 AS y
+   UNION ALL
+  
+    SELECT
+      ((x_9) + (1)) AS y
+    FROM
+      logica_home.Test_sn_t2 AS Test_sn_t2, UNNEST(COALESCE((SELECT ARRAY_AGG(x) FROM GENERATE_SERIES(0, 100 - 1) as x), '{}')) as x_9
+    WHERE
+      (Test_sn_t2.y = x_9)
+  
+) AS UNUSED_TABLE_NAME  ),
+t_0_Test_sn_r3 AS (SELECT
+  Test_MultBodyAggAux_f5.y AS y
+FROM
+  t_1_Test_MultBodyAggAux_f5 AS Test_MultBodyAggAux_f5
+GROUP BY Test_MultBodyAggAux_f5.y)
+SELECT
+  Test_sn_r3.y AS y
+FROM
+  t_0_Test_sn_r3 AS Test_sn_r3
+WHERE
+  (1 = 0);
+
+-- Interacting with table logica_home.Test_sn_t3
+
+DROP TABLE IF EXISTS logica_home.Test_sn_full CASCADE;
+CREATE TABLE logica_home.Test_sn_full AS SELECT * FROM (
   
     SELECT
       Test_sn_delta.y AS y
@@ -48,36 +126,46 @@ SELECT * FROM (
    UNION ALL
   
     SELECT
-      Test_sn_step.y AS y
+      Test_sn_t1.y AS y
     FROM
-      t_0_Test_sn_step AS Test_sn_step
-    WHERE
-      (1 = 0)
+      logica_home.Test_sn_t1 AS Test_sn_t1
+   UNION ALL
+  
+    SELECT
+      Test_sn_t2.y AS y
+    FROM
+      logica_home.Test_sn_t2 AS Test_sn_t2
+   UNION ALL
+  
+    SELECT
+      Test_sn_t3.y AS y
+    FROM
+      logica_home.Test_sn_t3 AS Test_sn_t3
   
 ) AS UNUSED_TABLE_NAME  ;
 
 -- Interacting with table logica_home.Test_sn_full
 
 DROP TABLE IF EXISTS logica_home.Test_sn_new CASCADE;
-CREATE TABLE logica_home.Test_sn_new AS WITH t_1_Test_MultBodyAggAux_f2 AS (SELECT * FROM (
+CREATE TABLE logica_home.Test_sn_new AS WITH t_1_Test_MultBodyAggAux_f6 AS (SELECT * FROM (
   
     SELECT
       0 AS y
    UNION ALL
   
     SELECT
-      ((x_11) + (1)) AS y
+      ((x_9) + (1)) AS y
     FROM
-      logica_home.Test_sn_delta AS t_2_Test_sn_delta, UNNEST((SELECT ARRAY_AGG(x) FROM GENERATE_SERIES(0, 100 - 1) as x)) as x_11
+      logica_home.Test_sn_delta AS Test_sn_delta, UNNEST(COALESCE((SELECT ARRAY_AGG(x) FROM GENERATE_SERIES(0, 100 - 1) as x), '{}')) as x_9
     WHERE
-      (t_2_Test_sn_delta.y = x_11)
+      (Test_sn_delta.y = x_9)
   
 ) AS UNUSED_TABLE_NAME  ),
 t_0_Test_sn_step AS (SELECT
-  Test_MultBodyAggAux_f2.y AS y
+  Test_MultBodyAggAux_f6.y AS y
 FROM
-  t_1_Test_MultBodyAggAux_f2 AS Test_MultBodyAggAux_f2
-GROUP BY Test_MultBodyAggAux_f2.y)
+  t_1_Test_MultBodyAggAux_f6 AS Test_MultBodyAggAux_f6
+GROUP BY Test_MultBodyAggAux_f6.y)
 SELECT
   Test_sn_step.y AS y
 FROM
@@ -94,31 +182,60 @@ GROUP BY Test_sn_step.y;
 INSERT INTO logica_home.Test_sn_full SELECT * FROM logica_home.Test_sn_new;
 
 DROP TABLE IF EXISTS logica_home.Test_sn_delta CASCADE;
-CREATE TABLE logica_home.Test_sn_delta AS SELECT
-  Test_sn_new.y AS y
+CREATE TABLE logica_home.Test_sn_delta AS WITH t_1_Test_MultBodyAggAux_f1 AS (SELECT * FROM (
+  
+    SELECT
+      0 AS y
+   UNION ALL
+  
+    SELECT
+      ((x_9) + (1)) AS y
+    FROM
+      logica_home.Test_sn_new AS Test_sn_new, UNNEST(COALESCE((SELECT ARRAY_AGG(x) FROM GENERATE_SERIES(0, 100 - 1) as x), '{}')) as x_9
+    WHERE
+      (Test_sn_new.y = x_9)
+  
+) AS UNUSED_TABLE_NAME  ),
+t_0_Test_sn_back_step AS (SELECT
+  Test_MultBodyAggAux_f1.y AS y
 FROM
-  logica_home.Test_sn_new AS Test_sn_new;
+  t_1_Test_MultBodyAggAux_f1 AS Test_MultBodyAggAux_f1
+GROUP BY Test_MultBodyAggAux_f1.y)
+SELECT
+  Test_sn_back_step.y AS y
+FROM
+  t_0_Test_sn_back_step AS Test_sn_back_step
+WHERE
+  (CAST((SELECT
+    MIN((CASE WHEN x_12 = 0 THEN 1 ELSE NULL END)) AS logica_value
+  FROM
+    logica_home.Test_sn_full AS Test_sn_full, UNNEST(ARRAY[0]) as x_12
+  WHERE
+    (Test_sn_full.y = Test_sn_back_step.y)) AS numeric) IS NULL)
+GROUP BY Test_sn_back_step.y;
+
+INSERT INTO logica_home.Test_sn_full SELECT * FROM logica_home.Test_sn_delta;
 
 DROP TABLE IF EXISTS logica_home.Test_sn_new CASCADE;
-CREATE TABLE logica_home.Test_sn_new AS WITH t_1_Test_MultBodyAggAux_f2 AS (SELECT * FROM (
+CREATE TABLE logica_home.Test_sn_new AS WITH t_1_Test_MultBodyAggAux_f6 AS (SELECT * FROM (
   
     SELECT
       0 AS y
    UNION ALL
   
     SELECT
-      ((x_11) + (1)) AS y
+      ((x_9) + (1)) AS y
     FROM
-      logica_home.Test_sn_delta AS t_2_Test_sn_delta, UNNEST((SELECT ARRAY_AGG(x) FROM GENERATE_SERIES(0, 100 - 1) as x)) as x_11
+      logica_home.Test_sn_delta AS Test_sn_delta, UNNEST(COALESCE((SELECT ARRAY_AGG(x) FROM GENERATE_SERIES(0, 100 - 1) as x), '{}')) as x_9
     WHERE
-      (t_2_Test_sn_delta.y = x_11)
+      (Test_sn_delta.y = x_9)
   
 ) AS UNUSED_TABLE_NAME  ),
 t_0_Test_sn_step AS (SELECT
-  Test_MultBodyAggAux_f2.y AS y
+  Test_MultBodyAggAux_f6.y AS y
 FROM
-  t_1_Test_MultBodyAggAux_f2 AS Test_MultBodyAggAux_f2
-GROUP BY Test_MultBodyAggAux_f2.y)
+  t_1_Test_MultBodyAggAux_f6 AS Test_MultBodyAggAux_f6
+GROUP BY Test_MultBodyAggAux_f6.y)
 SELECT
   Test_sn_step.y AS y
 FROM
@@ -135,31 +252,60 @@ GROUP BY Test_sn_step.y;
 INSERT INTO logica_home.Test_sn_full SELECT * FROM logica_home.Test_sn_new;
 
 DROP TABLE IF EXISTS logica_home.Test_sn_delta CASCADE;
-CREATE TABLE logica_home.Test_sn_delta AS SELECT
-  Test_sn_new.y AS y
+CREATE TABLE logica_home.Test_sn_delta AS WITH t_1_Test_MultBodyAggAux_f1 AS (SELECT * FROM (
+  
+    SELECT
+      0 AS y
+   UNION ALL
+  
+    SELECT
+      ((x_9) + (1)) AS y
+    FROM
+      logica_home.Test_sn_new AS Test_sn_new, UNNEST(COALESCE((SELECT ARRAY_AGG(x) FROM GENERATE_SERIES(0, 100 - 1) as x), '{}')) as x_9
+    WHERE
+      (Test_sn_new.y = x_9)
+  
+) AS UNUSED_TABLE_NAME  ),
+t_0_Test_sn_back_step AS (SELECT
+  Test_MultBodyAggAux_f1.y AS y
 FROM
-  logica_home.Test_sn_new AS Test_sn_new;
+  t_1_Test_MultBodyAggAux_f1 AS Test_MultBodyAggAux_f1
+GROUP BY Test_MultBodyAggAux_f1.y)
+SELECT
+  Test_sn_back_step.y AS y
+FROM
+  t_0_Test_sn_back_step AS Test_sn_back_step
+WHERE
+  (CAST((SELECT
+    MIN((CASE WHEN x_12 = 0 THEN 1 ELSE NULL END)) AS logica_value
+  FROM
+    logica_home.Test_sn_full AS Test_sn_full, UNNEST(ARRAY[0]) as x_12
+  WHERE
+    (Test_sn_full.y = Test_sn_back_step.y)) AS numeric) IS NULL)
+GROUP BY Test_sn_back_step.y;
+
+INSERT INTO logica_home.Test_sn_full SELECT * FROM logica_home.Test_sn_delta;
 
 DROP TABLE IF EXISTS logica_home.Test_sn_new CASCADE;
-CREATE TABLE logica_home.Test_sn_new AS WITH t_1_Test_MultBodyAggAux_f2 AS (SELECT * FROM (
+CREATE TABLE logica_home.Test_sn_new AS WITH t_1_Test_MultBodyAggAux_f6 AS (SELECT * FROM (
   
     SELECT
       0 AS y
    UNION ALL
   
     SELECT
-      ((x_11) + (1)) AS y
+      ((x_9) + (1)) AS y
     FROM
-      logica_home.Test_sn_delta AS t_2_Test_sn_delta, UNNEST((SELECT ARRAY_AGG(x) FROM GENERATE_SERIES(0, 100 - 1) as x)) as x_11
+      logica_home.Test_sn_delta AS Test_sn_delta, UNNEST(COALESCE((SELECT ARRAY_AGG(x) FROM GENERATE_SERIES(0, 100 - 1) as x), '{}')) as x_9
     WHERE
-      (t_2_Test_sn_delta.y = x_11)
+      (Test_sn_delta.y = x_9)
   
 ) AS UNUSED_TABLE_NAME  ),
 t_0_Test_sn_step AS (SELECT
-  Test_MultBodyAggAux_f2.y AS y
+  Test_MultBodyAggAux_f6.y AS y
 FROM
-  t_1_Test_MultBodyAggAux_f2 AS Test_MultBodyAggAux_f2
-GROUP BY Test_MultBodyAggAux_f2.y)
+  t_1_Test_MultBodyAggAux_f6 AS Test_MultBodyAggAux_f6
+GROUP BY Test_MultBodyAggAux_f6.y)
 SELECT
   Test_sn_step.y AS y
 FROM
@@ -176,31 +322,60 @@ GROUP BY Test_sn_step.y;
 INSERT INTO logica_home.Test_sn_full SELECT * FROM logica_home.Test_sn_new;
 
 DROP TABLE IF EXISTS logica_home.Test_sn_delta CASCADE;
-CREATE TABLE logica_home.Test_sn_delta AS SELECT
-  Test_sn_new.y AS y
+CREATE TABLE logica_home.Test_sn_delta AS WITH t_1_Test_MultBodyAggAux_f1 AS (SELECT * FROM (
+  
+    SELECT
+      0 AS y
+   UNION ALL
+  
+    SELECT
+      ((x_9) + (1)) AS y
+    FROM
+      logica_home.Test_sn_new AS Test_sn_new, UNNEST(COALESCE((SELECT ARRAY_AGG(x) FROM GENERATE_SERIES(0, 100 - 1) as x), '{}')) as x_9
+    WHERE
+      (Test_sn_new.y = x_9)
+  
+) AS UNUSED_TABLE_NAME  ),
+t_0_Test_sn_back_step AS (SELECT
+  Test_MultBodyAggAux_f1.y AS y
 FROM
-  logica_home.Test_sn_new AS Test_sn_new;
+  t_1_Test_MultBodyAggAux_f1 AS Test_MultBodyAggAux_f1
+GROUP BY Test_MultBodyAggAux_f1.y)
+SELECT
+  Test_sn_back_step.y AS y
+FROM
+  t_0_Test_sn_back_step AS Test_sn_back_step
+WHERE
+  (CAST((SELECT
+    MIN((CASE WHEN x_12 = 0 THEN 1 ELSE NULL END)) AS logica_value
+  FROM
+    logica_home.Test_sn_full AS Test_sn_full, UNNEST(ARRAY[0]) as x_12
+  WHERE
+    (Test_sn_full.y = Test_sn_back_step.y)) AS numeric) IS NULL)
+GROUP BY Test_sn_back_step.y;
+
+INSERT INTO logica_home.Test_sn_full SELECT * FROM logica_home.Test_sn_delta;
 
 DROP TABLE IF EXISTS logica_home.Test_sn_new CASCADE;
-CREATE TABLE logica_home.Test_sn_new AS WITH t_1_Test_MultBodyAggAux_f2 AS (SELECT * FROM (
+CREATE TABLE logica_home.Test_sn_new AS WITH t_1_Test_MultBodyAggAux_f6 AS (SELECT * FROM (
   
     SELECT
       0 AS y
    UNION ALL
   
     SELECT
-      ((x_11) + (1)) AS y
+      ((x_9) + (1)) AS y
     FROM
-      logica_home.Test_sn_delta AS t_2_Test_sn_delta, UNNEST((SELECT ARRAY_AGG(x) FROM GENERATE_SERIES(0, 100 - 1) as x)) as x_11
+      logica_home.Test_sn_delta AS Test_sn_delta, UNNEST(COALESCE((SELECT ARRAY_AGG(x) FROM GENERATE_SERIES(0, 100 - 1) as x), '{}')) as x_9
     WHERE
-      (t_2_Test_sn_delta.y = x_11)
+      (Test_sn_delta.y = x_9)
   
 ) AS UNUSED_TABLE_NAME  ),
 t_0_Test_sn_step AS (SELECT
-  Test_MultBodyAggAux_f2.y AS y
+  Test_MultBodyAggAux_f6.y AS y
 FROM
-  t_1_Test_MultBodyAggAux_f2 AS Test_MultBodyAggAux_f2
-GROUP BY Test_MultBodyAggAux_f2.y)
+  t_1_Test_MultBodyAggAux_f6 AS Test_MultBodyAggAux_f6
+GROUP BY Test_MultBodyAggAux_f6.y)
 SELECT
   Test_sn_step.y AS y
 FROM
@@ -217,31 +392,60 @@ GROUP BY Test_sn_step.y;
 INSERT INTO logica_home.Test_sn_full SELECT * FROM logica_home.Test_sn_new;
 
 DROP TABLE IF EXISTS logica_home.Test_sn_delta CASCADE;
-CREATE TABLE logica_home.Test_sn_delta AS SELECT
-  Test_sn_new.y AS y
+CREATE TABLE logica_home.Test_sn_delta AS WITH t_1_Test_MultBodyAggAux_f1 AS (SELECT * FROM (
+  
+    SELECT
+      0 AS y
+   UNION ALL
+  
+    SELECT
+      ((x_9) + (1)) AS y
+    FROM
+      logica_home.Test_sn_new AS Test_sn_new, UNNEST(COALESCE((SELECT ARRAY_AGG(x) FROM GENERATE_SERIES(0, 100 - 1) as x), '{}')) as x_9
+    WHERE
+      (Test_sn_new.y = x_9)
+  
+) AS UNUSED_TABLE_NAME  ),
+t_0_Test_sn_back_step AS (SELECT
+  Test_MultBodyAggAux_f1.y AS y
 FROM
-  logica_home.Test_sn_new AS Test_sn_new;
+  t_1_Test_MultBodyAggAux_f1 AS Test_MultBodyAggAux_f1
+GROUP BY Test_MultBodyAggAux_f1.y)
+SELECT
+  Test_sn_back_step.y AS y
+FROM
+  t_0_Test_sn_back_step AS Test_sn_back_step
+WHERE
+  (CAST((SELECT
+    MIN((CASE WHEN x_12 = 0 THEN 1 ELSE NULL END)) AS logica_value
+  FROM
+    logica_home.Test_sn_full AS Test_sn_full, UNNEST(ARRAY[0]) as x_12
+  WHERE
+    (Test_sn_full.y = Test_sn_back_step.y)) AS numeric) IS NULL)
+GROUP BY Test_sn_back_step.y;
+
+INSERT INTO logica_home.Test_sn_full SELECT * FROM logica_home.Test_sn_delta;
 
 DROP TABLE IF EXISTS logica_home.Test_sn_new CASCADE;
-CREATE TABLE logica_home.Test_sn_new AS WITH t_1_Test_MultBodyAggAux_f2 AS (SELECT * FROM (
+CREATE TABLE logica_home.Test_sn_new AS WITH t_1_Test_MultBodyAggAux_f6 AS (SELECT * FROM (
   
     SELECT
       0 AS y
    UNION ALL
   
     SELECT
-      ((x_11) + (1)) AS y
+      ((x_9) + (1)) AS y
     FROM
-      logica_home.Test_sn_delta AS t_2_Test_sn_delta, UNNEST((SELECT ARRAY_AGG(x) FROM GENERATE_SERIES(0, 100 - 1) as x)) as x_11
+      logica_home.Test_sn_delta AS Test_sn_delta, UNNEST(COALESCE((SELECT ARRAY_AGG(x) FROM GENERATE_SERIES(0, 100 - 1) as x), '{}')) as x_9
     WHERE
-      (t_2_Test_sn_delta.y = x_11)
+      (Test_sn_delta.y = x_9)
   
 ) AS UNUSED_TABLE_NAME  ),
 t_0_Test_sn_step AS (SELECT
-  Test_MultBodyAggAux_f2.y AS y
+  Test_MultBodyAggAux_f6.y AS y
 FROM
-  t_1_Test_MultBodyAggAux_f2 AS Test_MultBodyAggAux_f2
-GROUP BY Test_MultBodyAggAux_f2.y)
+  t_1_Test_MultBodyAggAux_f6 AS Test_MultBodyAggAux_f6
+GROUP BY Test_MultBodyAggAux_f6.y)
 SELECT
   Test_sn_step.y AS y
 FROM
@@ -258,31 +462,60 @@ GROUP BY Test_sn_step.y;
 INSERT INTO logica_home.Test_sn_full SELECT * FROM logica_home.Test_sn_new;
 
 DROP TABLE IF EXISTS logica_home.Test_sn_delta CASCADE;
-CREATE TABLE logica_home.Test_sn_delta AS SELECT
-  Test_sn_new.y AS y
+CREATE TABLE logica_home.Test_sn_delta AS WITH t_1_Test_MultBodyAggAux_f1 AS (SELECT * FROM (
+  
+    SELECT
+      0 AS y
+   UNION ALL
+  
+    SELECT
+      ((x_9) + (1)) AS y
+    FROM
+      logica_home.Test_sn_new AS Test_sn_new, UNNEST(COALESCE((SELECT ARRAY_AGG(x) FROM GENERATE_SERIES(0, 100 - 1) as x), '{}')) as x_9
+    WHERE
+      (Test_sn_new.y = x_9)
+  
+) AS UNUSED_TABLE_NAME  ),
+t_0_Test_sn_back_step AS (SELECT
+  Test_MultBodyAggAux_f1.y AS y
 FROM
-  logica_home.Test_sn_new AS Test_sn_new;
+  t_1_Test_MultBodyAggAux_f1 AS Test_MultBodyAggAux_f1
+GROUP BY Test_MultBodyAggAux_f1.y)
+SELECT
+  Test_sn_back_step.y AS y
+FROM
+  t_0_Test_sn_back_step AS Test_sn_back_step
+WHERE
+  (CAST((SELECT
+    MIN((CASE WHEN x_12 = 0 THEN 1 ELSE NULL END)) AS logica_value
+  FROM
+    logica_home.Test_sn_full AS Test_sn_full, UNNEST(ARRAY[0]) as x_12
+  WHERE
+    (Test_sn_full.y = Test_sn_back_step.y)) AS numeric) IS NULL)
+GROUP BY Test_sn_back_step.y;
+
+INSERT INTO logica_home.Test_sn_full SELECT * FROM logica_home.Test_sn_delta;
 
 DROP TABLE IF EXISTS logica_home.Test_sn_new CASCADE;
-CREATE TABLE logica_home.Test_sn_new AS WITH t_1_Test_MultBodyAggAux_f2 AS (SELECT * FROM (
+CREATE TABLE logica_home.Test_sn_new AS WITH t_1_Test_MultBodyAggAux_f6 AS (SELECT * FROM (
   
     SELECT
       0 AS y
    UNION ALL
   
     SELECT
-      ((x_11) + (1)) AS y
+      ((x_9) + (1)) AS y
     FROM
-      logica_home.Test_sn_delta AS t_2_Test_sn_delta, UNNEST((SELECT ARRAY_AGG(x) FROM GENERATE_SERIES(0, 100 - 1) as x)) as x_11
+      logica_home.Test_sn_delta AS Test_sn_delta, UNNEST(COALESCE((SELECT ARRAY_AGG(x) FROM GENERATE_SERIES(0, 100 - 1) as x), '{}')) as x_9
     WHERE
-      (t_2_Test_sn_delta.y = x_11)
+      (Test_sn_delta.y = x_9)
   
 ) AS UNUSED_TABLE_NAME  ),
 t_0_Test_sn_step AS (SELECT
-  Test_MultBodyAggAux_f2.y AS y
+  Test_MultBodyAggAux_f6.y AS y
 FROM
-  t_1_Test_MultBodyAggAux_f2 AS Test_MultBodyAggAux_f2
-GROUP BY Test_MultBodyAggAux_f2.y)
+  t_1_Test_MultBodyAggAux_f6 AS Test_MultBodyAggAux_f6
+GROUP BY Test_MultBodyAggAux_f6.y)
 SELECT
   Test_sn_step.y AS y
 FROM
@@ -299,31 +532,60 @@ GROUP BY Test_sn_step.y;
 INSERT INTO logica_home.Test_sn_full SELECT * FROM logica_home.Test_sn_new;
 
 DROP TABLE IF EXISTS logica_home.Test_sn_delta CASCADE;
-CREATE TABLE logica_home.Test_sn_delta AS SELECT
-  Test_sn_new.y AS y
+CREATE TABLE logica_home.Test_sn_delta AS WITH t_1_Test_MultBodyAggAux_f1 AS (SELECT * FROM (
+  
+    SELECT
+      0 AS y
+   UNION ALL
+  
+    SELECT
+      ((x_9) + (1)) AS y
+    FROM
+      logica_home.Test_sn_new AS Test_sn_new, UNNEST(COALESCE((SELECT ARRAY_AGG(x) FROM GENERATE_SERIES(0, 100 - 1) as x), '{}')) as x_9
+    WHERE
+      (Test_sn_new.y = x_9)
+  
+) AS UNUSED_TABLE_NAME  ),
+t_0_Test_sn_back_step AS (SELECT
+  Test_MultBodyAggAux_f1.y AS y
 FROM
-  logica_home.Test_sn_new AS Test_sn_new;
+  t_1_Test_MultBodyAggAux_f1 AS Test_MultBodyAggAux_f1
+GROUP BY Test_MultBodyAggAux_f1.y)
+SELECT
+  Test_sn_back_step.y AS y
+FROM
+  t_0_Test_sn_back_step AS Test_sn_back_step
+WHERE
+  (CAST((SELECT
+    MIN((CASE WHEN x_12 = 0 THEN 1 ELSE NULL END)) AS logica_value
+  FROM
+    logica_home.Test_sn_full AS Test_sn_full, UNNEST(ARRAY[0]) as x_12
+  WHERE
+    (Test_sn_full.y = Test_sn_back_step.y)) AS numeric) IS NULL)
+GROUP BY Test_sn_back_step.y;
+
+INSERT INTO logica_home.Test_sn_full SELECT * FROM logica_home.Test_sn_delta;
 
 DROP TABLE IF EXISTS logica_home.Test_sn_new CASCADE;
-CREATE TABLE logica_home.Test_sn_new AS WITH t_1_Test_MultBodyAggAux_f2 AS (SELECT * FROM (
+CREATE TABLE logica_home.Test_sn_new AS WITH t_1_Test_MultBodyAggAux_f6 AS (SELECT * FROM (
   
     SELECT
       0 AS y
    UNION ALL
   
     SELECT
-      ((x_11) + (1)) AS y
+      ((x_9) + (1)) AS y
     FROM
-      logica_home.Test_sn_delta AS t_2_Test_sn_delta, UNNEST((SELECT ARRAY_AGG(x) FROM GENERATE_SERIES(0, 100 - 1) as x)) as x_11
+      logica_home.Test_sn_delta AS Test_sn_delta, UNNEST(COALESCE((SELECT ARRAY_AGG(x) FROM GENERATE_SERIES(0, 100 - 1) as x), '{}')) as x_9
     WHERE
-      (t_2_Test_sn_delta.y = x_11)
+      (Test_sn_delta.y = x_9)
   
 ) AS UNUSED_TABLE_NAME  ),
 t_0_Test_sn_step AS (SELECT
-  Test_MultBodyAggAux_f2.y AS y
+  Test_MultBodyAggAux_f6.y AS y
 FROM
-  t_1_Test_MultBodyAggAux_f2 AS Test_MultBodyAggAux_f2
-GROUP BY Test_MultBodyAggAux_f2.y)
+  t_1_Test_MultBodyAggAux_f6 AS Test_MultBodyAggAux_f6
+GROUP BY Test_MultBodyAggAux_f6.y)
 SELECT
   Test_sn_step.y AS y
 FROM
@@ -340,31 +602,60 @@ GROUP BY Test_sn_step.y;
 INSERT INTO logica_home.Test_sn_full SELECT * FROM logica_home.Test_sn_new;
 
 DROP TABLE IF EXISTS logica_home.Test_sn_delta CASCADE;
-CREATE TABLE logica_home.Test_sn_delta AS SELECT
-  Test_sn_new.y AS y
+CREATE TABLE logica_home.Test_sn_delta AS WITH t_1_Test_MultBodyAggAux_f1 AS (SELECT * FROM (
+  
+    SELECT
+      0 AS y
+   UNION ALL
+  
+    SELECT
+      ((x_9) + (1)) AS y
+    FROM
+      logica_home.Test_sn_new AS Test_sn_new, UNNEST(COALESCE((SELECT ARRAY_AGG(x) FROM GENERATE_SERIES(0, 100 - 1) as x), '{}')) as x_9
+    WHERE
+      (Test_sn_new.y = x_9)
+  
+) AS UNUSED_TABLE_NAME  ),
+t_0_Test_sn_back_step AS (SELECT
+  Test_MultBodyAggAux_f1.y AS y
 FROM
-  logica_home.Test_sn_new AS Test_sn_new;
+  t_1_Test_MultBodyAggAux_f1 AS Test_MultBodyAggAux_f1
+GROUP BY Test_MultBodyAggAux_f1.y)
+SELECT
+  Test_sn_back_step.y AS y
+FROM
+  t_0_Test_sn_back_step AS Test_sn_back_step
+WHERE
+  (CAST((SELECT
+    MIN((CASE WHEN x_12 = 0 THEN 1 ELSE NULL END)) AS logica_value
+  FROM
+    logica_home.Test_sn_full AS Test_sn_full, UNNEST(ARRAY[0]) as x_12
+  WHERE
+    (Test_sn_full.y = Test_sn_back_step.y)) AS numeric) IS NULL)
+GROUP BY Test_sn_back_step.y;
+
+INSERT INTO logica_home.Test_sn_full SELECT * FROM logica_home.Test_sn_delta;
 
 DROP TABLE IF EXISTS logica_home.Test_sn_new CASCADE;
-CREATE TABLE logica_home.Test_sn_new AS WITH t_1_Test_MultBodyAggAux_f2 AS (SELECT * FROM (
+CREATE TABLE logica_home.Test_sn_new AS WITH t_1_Test_MultBodyAggAux_f6 AS (SELECT * FROM (
   
     SELECT
       0 AS y
    UNION ALL
   
     SELECT
-      ((x_11) + (1)) AS y
+      ((x_9) + (1)) AS y
     FROM
-      logica_home.Test_sn_delta AS t_2_Test_sn_delta, UNNEST((SELECT ARRAY_AGG(x) FROM GENERATE_SERIES(0, 100 - 1) as x)) as x_11
+      logica_home.Test_sn_delta AS Test_sn_delta, UNNEST(COALESCE((SELECT ARRAY_AGG(x) FROM GENERATE_SERIES(0, 100 - 1) as x), '{}')) as x_9
     WHERE
-      (t_2_Test_sn_delta.y = x_11)
+      (Test_sn_delta.y = x_9)
   
 ) AS UNUSED_TABLE_NAME  ),
 t_0_Test_sn_step AS (SELECT
-  Test_MultBodyAggAux_f2.y AS y
+  Test_MultBodyAggAux_f6.y AS y
 FROM
-  t_1_Test_MultBodyAggAux_f2 AS Test_MultBodyAggAux_f2
-GROUP BY Test_MultBodyAggAux_f2.y)
+  t_1_Test_MultBodyAggAux_f6 AS Test_MultBodyAggAux_f6
+GROUP BY Test_MultBodyAggAux_f6.y)
 SELECT
   Test_sn_step.y AS y
 FROM
@@ -381,31 +672,60 @@ GROUP BY Test_sn_step.y;
 INSERT INTO logica_home.Test_sn_full SELECT * FROM logica_home.Test_sn_new;
 
 DROP TABLE IF EXISTS logica_home.Test_sn_delta CASCADE;
-CREATE TABLE logica_home.Test_sn_delta AS SELECT
-  Test_sn_new.y AS y
+CREATE TABLE logica_home.Test_sn_delta AS WITH t_1_Test_MultBodyAggAux_f1 AS (SELECT * FROM (
+  
+    SELECT
+      0 AS y
+   UNION ALL
+  
+    SELECT
+      ((x_9) + (1)) AS y
+    FROM
+      logica_home.Test_sn_new AS Test_sn_new, UNNEST(COALESCE((SELECT ARRAY_AGG(x) FROM GENERATE_SERIES(0, 100 - 1) as x), '{}')) as x_9
+    WHERE
+      (Test_sn_new.y = x_9)
+  
+) AS UNUSED_TABLE_NAME  ),
+t_0_Test_sn_back_step AS (SELECT
+  Test_MultBodyAggAux_f1.y AS y
 FROM
-  logica_home.Test_sn_new AS Test_sn_new;
+  t_1_Test_MultBodyAggAux_f1 AS Test_MultBodyAggAux_f1
+GROUP BY Test_MultBodyAggAux_f1.y)
+SELECT
+  Test_sn_back_step.y AS y
+FROM
+  t_0_Test_sn_back_step AS Test_sn_back_step
+WHERE
+  (CAST((SELECT
+    MIN((CASE WHEN x_12 = 0 THEN 1 ELSE NULL END)) AS logica_value
+  FROM
+    logica_home.Test_sn_full AS Test_sn_full, UNNEST(ARRAY[0]) as x_12
+  WHERE
+    (Test_sn_full.y = Test_sn_back_step.y)) AS numeric) IS NULL)
+GROUP BY Test_sn_back_step.y;
+
+INSERT INTO logica_home.Test_sn_full SELECT * FROM logica_home.Test_sn_delta;
 
 DROP TABLE IF EXISTS logica_home.Test_sn_new CASCADE;
-CREATE TABLE logica_home.Test_sn_new AS WITH t_1_Test_MultBodyAggAux_f2 AS (SELECT * FROM (
+CREATE TABLE logica_home.Test_sn_new AS WITH t_1_Test_MultBodyAggAux_f6 AS (SELECT * FROM (
   
     SELECT
       0 AS y
    UNION ALL
   
     SELECT
-      ((x_11) + (1)) AS y
+      ((x_9) + (1)) AS y
     FROM
-      logica_home.Test_sn_delta AS t_2_Test_sn_delta, UNNEST((SELECT ARRAY_AGG(x) FROM GENERATE_SERIES(0, 100 - 1) as x)) as x_11
+      logica_home.Test_sn_delta AS Test_sn_delta, UNNEST(COALESCE((SELECT ARRAY_AGG(x) FROM GENERATE_SERIES(0, 100 - 1) as x), '{}')) as x_9
     WHERE
-      (t_2_Test_sn_delta.y = x_11)
+      (Test_sn_delta.y = x_9)
   
 ) AS UNUSED_TABLE_NAME  ),
 t_0_Test_sn_step AS (SELECT
-  Test_MultBodyAggAux_f2.y AS y
+  Test_MultBodyAggAux_f6.y AS y
 FROM
-  t_1_Test_MultBodyAggAux_f2 AS Test_MultBodyAggAux_f2
-GROUP BY Test_MultBodyAggAux_f2.y)
+  t_1_Test_MultBodyAggAux_f6 AS Test_MultBodyAggAux_f6
+GROUP BY Test_MultBodyAggAux_f6.y)
 SELECT
   Test_sn_step.y AS y
 FROM
@@ -422,31 +742,60 @@ GROUP BY Test_sn_step.y;
 INSERT INTO logica_home.Test_sn_full SELECT * FROM logica_home.Test_sn_new;
 
 DROP TABLE IF EXISTS logica_home.Test_sn_delta CASCADE;
-CREATE TABLE logica_home.Test_sn_delta AS SELECT
-  Test_sn_new.y AS y
+CREATE TABLE logica_home.Test_sn_delta AS WITH t_1_Test_MultBodyAggAux_f1 AS (SELECT * FROM (
+  
+    SELECT
+      0 AS y
+   UNION ALL
+  
+    SELECT
+      ((x_9) + (1)) AS y
+    FROM
+      logica_home.Test_sn_new AS Test_sn_new, UNNEST(COALESCE((SELECT ARRAY_AGG(x) FROM GENERATE_SERIES(0, 100 - 1) as x), '{}')) as x_9
+    WHERE
+      (Test_sn_new.y = x_9)
+  
+) AS UNUSED_TABLE_NAME  ),
+t_0_Test_sn_back_step AS (SELECT
+  Test_MultBodyAggAux_f1.y AS y
 FROM
-  logica_home.Test_sn_new AS Test_sn_new;
+  t_1_Test_MultBodyAggAux_f1 AS Test_MultBodyAggAux_f1
+GROUP BY Test_MultBodyAggAux_f1.y)
+SELECT
+  Test_sn_back_step.y AS y
+FROM
+  t_0_Test_sn_back_step AS Test_sn_back_step
+WHERE
+  (CAST((SELECT
+    MIN((CASE WHEN x_12 = 0 THEN 1 ELSE NULL END)) AS logica_value
+  FROM
+    logica_home.Test_sn_full AS Test_sn_full, UNNEST(ARRAY[0]) as x_12
+  WHERE
+    (Test_sn_full.y = Test_sn_back_step.y)) AS numeric) IS NULL)
+GROUP BY Test_sn_back_step.y;
+
+INSERT INTO logica_home.Test_sn_full SELECT * FROM logica_home.Test_sn_delta;
 
 DROP TABLE IF EXISTS logica_home.Test_sn_new CASCADE;
-CREATE TABLE logica_home.Test_sn_new AS WITH t_1_Test_MultBodyAggAux_f2 AS (SELECT * FROM (
+CREATE TABLE logica_home.Test_sn_new AS WITH t_1_Test_MultBodyAggAux_f6 AS (SELECT * FROM (
   
     SELECT
       0 AS y
    UNION ALL
   
     SELECT
-      ((x_11) + (1)) AS y
+      ((x_9) + (1)) AS y
     FROM
-      logica_home.Test_sn_delta AS t_2_Test_sn_delta, UNNEST((SELECT ARRAY_AGG(x) FROM GENERATE_SERIES(0, 100 - 1) as x)) as x_11
+      logica_home.Test_sn_delta AS Test_sn_delta, UNNEST(COALESCE((SELECT ARRAY_AGG(x) FROM GENERATE_SERIES(0, 100 - 1) as x), '{}')) as x_9
     WHERE
-      (t_2_Test_sn_delta.y = x_11)
+      (Test_sn_delta.y = x_9)
   
 ) AS UNUSED_TABLE_NAME  ),
 t_0_Test_sn_step AS (SELECT
-  Test_MultBodyAggAux_f2.y AS y
+  Test_MultBodyAggAux_f6.y AS y
 FROM
-  t_1_Test_MultBodyAggAux_f2 AS Test_MultBodyAggAux_f2
-GROUP BY Test_MultBodyAggAux_f2.y)
+  t_1_Test_MultBodyAggAux_f6 AS Test_MultBodyAggAux_f6
+GROUP BY Test_MultBodyAggAux_f6.y)
 SELECT
   Test_sn_step.y AS y
 FROM
@@ -463,31 +812,60 @@ GROUP BY Test_sn_step.y;
 INSERT INTO logica_home.Test_sn_full SELECT * FROM logica_home.Test_sn_new;
 
 DROP TABLE IF EXISTS logica_home.Test_sn_delta CASCADE;
-CREATE TABLE logica_home.Test_sn_delta AS SELECT
-  Test_sn_new.y AS y
+CREATE TABLE logica_home.Test_sn_delta AS WITH t_1_Test_MultBodyAggAux_f1 AS (SELECT * FROM (
+  
+    SELECT
+      0 AS y
+   UNION ALL
+  
+    SELECT
+      ((x_9) + (1)) AS y
+    FROM
+      logica_home.Test_sn_new AS Test_sn_new, UNNEST(COALESCE((SELECT ARRAY_AGG(x) FROM GENERATE_SERIES(0, 100 - 1) as x), '{}')) as x_9
+    WHERE
+      (Test_sn_new.y = x_9)
+  
+) AS UNUSED_TABLE_NAME  ),
+t_0_Test_sn_back_step AS (SELECT
+  Test_MultBodyAggAux_f1.y AS y
 FROM
-  logica_home.Test_sn_new AS Test_sn_new;
+  t_1_Test_MultBodyAggAux_f1 AS Test_MultBodyAggAux_f1
+GROUP BY Test_MultBodyAggAux_f1.y)
+SELECT
+  Test_sn_back_step.y AS y
+FROM
+  t_0_Test_sn_back_step AS Test_sn_back_step
+WHERE
+  (CAST((SELECT
+    MIN((CASE WHEN x_12 = 0 THEN 1 ELSE NULL END)) AS logica_value
+  FROM
+    logica_home.Test_sn_full AS Test_sn_full, UNNEST(ARRAY[0]) as x_12
+  WHERE
+    (Test_sn_full.y = Test_sn_back_step.y)) AS numeric) IS NULL)
+GROUP BY Test_sn_back_step.y;
+
+INSERT INTO logica_home.Test_sn_full SELECT * FROM logica_home.Test_sn_delta;
 
 DROP TABLE IF EXISTS logica_home.Test_sn_new CASCADE;
-CREATE TABLE logica_home.Test_sn_new AS WITH t_1_Test_MultBodyAggAux_f2 AS (SELECT * FROM (
+CREATE TABLE logica_home.Test_sn_new AS WITH t_1_Test_MultBodyAggAux_f6 AS (SELECT * FROM (
   
     SELECT
       0 AS y
    UNION ALL
   
     SELECT
-      ((x_11) + (1)) AS y
+      ((x_9) + (1)) AS y
     FROM
-      logica_home.Test_sn_delta AS t_2_Test_sn_delta, UNNEST((SELECT ARRAY_AGG(x) FROM GENERATE_SERIES(0, 100 - 1) as x)) as x_11
+      logica_home.Test_sn_delta AS Test_sn_delta, UNNEST(COALESCE((SELECT ARRAY_AGG(x) FROM GENERATE_SERIES(0, 100 - 1) as x), '{}')) as x_9
     WHERE
-      (t_2_Test_sn_delta.y = x_11)
+      (Test_sn_delta.y = x_9)
   
 ) AS UNUSED_TABLE_NAME  ),
 t_0_Test_sn_step AS (SELECT
-  Test_MultBodyAggAux_f2.y AS y
+  Test_MultBodyAggAux_f6.y AS y
 FROM
-  t_1_Test_MultBodyAggAux_f2 AS Test_MultBodyAggAux_f2
-GROUP BY Test_MultBodyAggAux_f2.y)
+  t_1_Test_MultBodyAggAux_f6 AS Test_MultBodyAggAux_f6
+GROUP BY Test_MultBodyAggAux_f6.y)
 SELECT
   Test_sn_step.y AS y
 FROM
@@ -504,31 +882,60 @@ GROUP BY Test_sn_step.y;
 INSERT INTO logica_home.Test_sn_full SELECT * FROM logica_home.Test_sn_new;
 
 DROP TABLE IF EXISTS logica_home.Test_sn_delta CASCADE;
-CREATE TABLE logica_home.Test_sn_delta AS SELECT
-  Test_sn_new.y AS y
+CREATE TABLE logica_home.Test_sn_delta AS WITH t_1_Test_MultBodyAggAux_f1 AS (SELECT * FROM (
+  
+    SELECT
+      0 AS y
+   UNION ALL
+  
+    SELECT
+      ((x_9) + (1)) AS y
+    FROM
+      logica_home.Test_sn_new AS Test_sn_new, UNNEST(COALESCE((SELECT ARRAY_AGG(x) FROM GENERATE_SERIES(0, 100 - 1) as x), '{}')) as x_9
+    WHERE
+      (Test_sn_new.y = x_9)
+  
+) AS UNUSED_TABLE_NAME  ),
+t_0_Test_sn_back_step AS (SELECT
+  Test_MultBodyAggAux_f1.y AS y
 FROM
-  logica_home.Test_sn_new AS Test_sn_new;
+  t_1_Test_MultBodyAggAux_f1 AS Test_MultBodyAggAux_f1
+GROUP BY Test_MultBodyAggAux_f1.y)
+SELECT
+  Test_sn_back_step.y AS y
+FROM
+  t_0_Test_sn_back_step AS Test_sn_back_step
+WHERE
+  (CAST((SELECT
+    MIN((CASE WHEN x_12 = 0 THEN 1 ELSE NULL END)) AS logica_value
+  FROM
+    logica_home.Test_sn_full AS Test_sn_full, UNNEST(ARRAY[0]) as x_12
+  WHERE
+    (Test_sn_full.y = Test_sn_back_step.y)) AS numeric) IS NULL)
+GROUP BY Test_sn_back_step.y;
+
+INSERT INTO logica_home.Test_sn_full SELECT * FROM logica_home.Test_sn_delta;
 
 DROP TABLE IF EXISTS logica_home.Test_sn_new CASCADE;
-CREATE TABLE logica_home.Test_sn_new AS WITH t_1_Test_MultBodyAggAux_f2 AS (SELECT * FROM (
+CREATE TABLE logica_home.Test_sn_new AS WITH t_1_Test_MultBodyAggAux_f6 AS (SELECT * FROM (
   
     SELECT
       0 AS y
    UNION ALL
   
     SELECT
-      ((x_11) + (1)) AS y
+      ((x_9) + (1)) AS y
     FROM
-      logica_home.Test_sn_delta AS t_2_Test_sn_delta, UNNEST((SELECT ARRAY_AGG(x) FROM GENERATE_SERIES(0, 100 - 1) as x)) as x_11
+      logica_home.Test_sn_delta AS Test_sn_delta, UNNEST(COALESCE((SELECT ARRAY_AGG(x) FROM GENERATE_SERIES(0, 100 - 1) as x), '{}')) as x_9
     WHERE
-      (t_2_Test_sn_delta.y = x_11)
+      (Test_sn_delta.y = x_9)
   
 ) AS UNUSED_TABLE_NAME  ),
 t_0_Test_sn_step AS (SELECT
-  Test_MultBodyAggAux_f2.y AS y
+  Test_MultBodyAggAux_f6.y AS y
 FROM
-  t_1_Test_MultBodyAggAux_f2 AS Test_MultBodyAggAux_f2
-GROUP BY Test_MultBodyAggAux_f2.y)
+  t_1_Test_MultBodyAggAux_f6 AS Test_MultBodyAggAux_f6
+GROUP BY Test_MultBodyAggAux_f6.y)
 SELECT
   Test_sn_step.y AS y
 FROM
@@ -545,31 +952,60 @@ GROUP BY Test_sn_step.y;
 INSERT INTO logica_home.Test_sn_full SELECT * FROM logica_home.Test_sn_new;
 
 DROP TABLE IF EXISTS logica_home.Test_sn_delta CASCADE;
-CREATE TABLE logica_home.Test_sn_delta AS SELECT
-  Test_sn_new.y AS y
+CREATE TABLE logica_home.Test_sn_delta AS WITH t_1_Test_MultBodyAggAux_f1 AS (SELECT * FROM (
+  
+    SELECT
+      0 AS y
+   UNION ALL
+  
+    SELECT
+      ((x_9) + (1)) AS y
+    FROM
+      logica_home.Test_sn_new AS Test_sn_new, UNNEST(COALESCE((SELECT ARRAY_AGG(x) FROM GENERATE_SERIES(0, 100 - 1) as x), '{}')) as x_9
+    WHERE
+      (Test_sn_new.y = x_9)
+  
+) AS UNUSED_TABLE_NAME  ),
+t_0_Test_sn_back_step AS (SELECT
+  Test_MultBodyAggAux_f1.y AS y
 FROM
-  logica_home.Test_sn_new AS Test_sn_new;
+  t_1_Test_MultBodyAggAux_f1 AS Test_MultBodyAggAux_f1
+GROUP BY Test_MultBodyAggAux_f1.y)
+SELECT
+  Test_sn_back_step.y AS y
+FROM
+  t_0_Test_sn_back_step AS Test_sn_back_step
+WHERE
+  (CAST((SELECT
+    MIN((CASE WHEN x_12 = 0 THEN 1 ELSE NULL END)) AS logica_value
+  FROM
+    logica_home.Test_sn_full AS Test_sn_full, UNNEST(ARRAY[0]) as x_12
+  WHERE
+    (Test_sn_full.y = Test_sn_back_step.y)) AS numeric) IS NULL)
+GROUP BY Test_sn_back_step.y;
+
+INSERT INTO logica_home.Test_sn_full SELECT * FROM logica_home.Test_sn_delta;
 
 DROP TABLE IF EXISTS logica_home.Test_sn_new CASCADE;
-CREATE TABLE logica_home.Test_sn_new AS WITH t_1_Test_MultBodyAggAux_f2 AS (SELECT * FROM (
+CREATE TABLE logica_home.Test_sn_new AS WITH t_1_Test_MultBodyAggAux_f6 AS (SELECT * FROM (
   
     SELECT
       0 AS y
    UNION ALL
   
     SELECT
-      ((x_11) + (1)) AS y
+      ((x_9) + (1)) AS y
     FROM
-      logica_home.Test_sn_delta AS t_2_Test_sn_delta, UNNEST((SELECT ARRAY_AGG(x) FROM GENERATE_SERIES(0, 100 - 1) as x)) as x_11
+      logica_home.Test_sn_delta AS Test_sn_delta, UNNEST(COALESCE((SELECT ARRAY_AGG(x) FROM GENERATE_SERIES(0, 100 - 1) as x), '{}')) as x_9
     WHERE
-      (t_2_Test_sn_delta.y = x_11)
+      (Test_sn_delta.y = x_9)
   
 ) AS UNUSED_TABLE_NAME  ),
 t_0_Test_sn_step AS (SELECT
-  Test_MultBodyAggAux_f2.y AS y
+  Test_MultBodyAggAux_f6.y AS y
 FROM
-  t_1_Test_MultBodyAggAux_f2 AS Test_MultBodyAggAux_f2
-GROUP BY Test_MultBodyAggAux_f2.y)
+  t_1_Test_MultBodyAggAux_f6 AS Test_MultBodyAggAux_f6
+GROUP BY Test_MultBodyAggAux_f6.y)
 SELECT
   Test_sn_step.y AS y
 FROM
@@ -586,31 +1022,60 @@ GROUP BY Test_sn_step.y;
 INSERT INTO logica_home.Test_sn_full SELECT * FROM logica_home.Test_sn_new;
 
 DROP TABLE IF EXISTS logica_home.Test_sn_delta CASCADE;
-CREATE TABLE logica_home.Test_sn_delta AS SELECT
-  Test_sn_new.y AS y
+CREATE TABLE logica_home.Test_sn_delta AS WITH t_1_Test_MultBodyAggAux_f1 AS (SELECT * FROM (
+  
+    SELECT
+      0 AS y
+   UNION ALL
+  
+    SELECT
+      ((x_9) + (1)) AS y
+    FROM
+      logica_home.Test_sn_new AS Test_sn_new, UNNEST(COALESCE((SELECT ARRAY_AGG(x) FROM GENERATE_SERIES(0, 100 - 1) as x), '{}')) as x_9
+    WHERE
+      (Test_sn_new.y = x_9)
+  
+) AS UNUSED_TABLE_NAME  ),
+t_0_Test_sn_back_step AS (SELECT
+  Test_MultBodyAggAux_f1.y AS y
 FROM
-  logica_home.Test_sn_new AS Test_sn_new;
+  t_1_Test_MultBodyAggAux_f1 AS Test_MultBodyAggAux_f1
+GROUP BY Test_MultBodyAggAux_f1.y)
+SELECT
+  Test_sn_back_step.y AS y
+FROM
+  t_0_Test_sn_back_step AS Test_sn_back_step
+WHERE
+  (CAST((SELECT
+    MIN((CASE WHEN x_12 = 0 THEN 1 ELSE NULL END)) AS logica_value
+  FROM
+    logica_home.Test_sn_full AS Test_sn_full, UNNEST(ARRAY[0]) as x_12
+  WHERE
+    (Test_sn_full.y = Test_sn_back_step.y)) AS numeric) IS NULL)
+GROUP BY Test_sn_back_step.y;
+
+INSERT INTO logica_home.Test_sn_full SELECT * FROM logica_home.Test_sn_delta;
 
 DROP TABLE IF EXISTS logica_home.Test_sn_new CASCADE;
-CREATE TABLE logica_home.Test_sn_new AS WITH t_1_Test_MultBodyAggAux_f2 AS (SELECT * FROM (
+CREATE TABLE logica_home.Test_sn_new AS WITH t_1_Test_MultBodyAggAux_f6 AS (SELECT * FROM (
   
     SELECT
       0 AS y
    UNION ALL
   
     SELECT
-      ((x_11) + (1)) AS y
+      ((x_9) + (1)) AS y
     FROM
-      logica_home.Test_sn_delta AS t_2_Test_sn_delta, UNNEST((SELECT ARRAY_AGG(x) FROM GENERATE_SERIES(0, 100 - 1) as x)) as x_11
+      logica_home.Test_sn_delta AS Test_sn_delta, UNNEST(COALESCE((SELECT ARRAY_AGG(x) FROM GENERATE_SERIES(0, 100 - 1) as x), '{}')) as x_9
     WHERE
-      (t_2_Test_sn_delta.y = x_11)
+      (Test_sn_delta.y = x_9)
   
 ) AS UNUSED_TABLE_NAME  ),
 t_0_Test_sn_step AS (SELECT
-  Test_MultBodyAggAux_f2.y AS y
+  Test_MultBodyAggAux_f6.y AS y
 FROM
-  t_1_Test_MultBodyAggAux_f2 AS Test_MultBodyAggAux_f2
-GROUP BY Test_MultBodyAggAux_f2.y)
+  t_1_Test_MultBodyAggAux_f6 AS Test_MultBodyAggAux_f6
+GROUP BY Test_MultBodyAggAux_f6.y)
 SELECT
   Test_sn_step.y AS y
 FROM
@@ -627,31 +1092,60 @@ GROUP BY Test_sn_step.y;
 INSERT INTO logica_home.Test_sn_full SELECT * FROM logica_home.Test_sn_new;
 
 DROP TABLE IF EXISTS logica_home.Test_sn_delta CASCADE;
-CREATE TABLE logica_home.Test_sn_delta AS SELECT
-  Test_sn_new.y AS y
+CREATE TABLE logica_home.Test_sn_delta AS WITH t_1_Test_MultBodyAggAux_f1 AS (SELECT * FROM (
+  
+    SELECT
+      0 AS y
+   UNION ALL
+  
+    SELECT
+      ((x_9) + (1)) AS y
+    FROM
+      logica_home.Test_sn_new AS Test_sn_new, UNNEST(COALESCE((SELECT ARRAY_AGG(x) FROM GENERATE_SERIES(0, 100 - 1) as x), '{}')) as x_9
+    WHERE
+      (Test_sn_new.y = x_9)
+  
+) AS UNUSED_TABLE_NAME  ),
+t_0_Test_sn_back_step AS (SELECT
+  Test_MultBodyAggAux_f1.y AS y
 FROM
-  logica_home.Test_sn_new AS Test_sn_new;
+  t_1_Test_MultBodyAggAux_f1 AS Test_MultBodyAggAux_f1
+GROUP BY Test_MultBodyAggAux_f1.y)
+SELECT
+  Test_sn_back_step.y AS y
+FROM
+  t_0_Test_sn_back_step AS Test_sn_back_step
+WHERE
+  (CAST((SELECT
+    MIN((CASE WHEN x_12 = 0 THEN 1 ELSE NULL END)) AS logica_value
+  FROM
+    logica_home.Test_sn_full AS Test_sn_full, UNNEST(ARRAY[0]) as x_12
+  WHERE
+    (Test_sn_full.y = Test_sn_back_step.y)) AS numeric) IS NULL)
+GROUP BY Test_sn_back_step.y;
+
+INSERT INTO logica_home.Test_sn_full SELECT * FROM logica_home.Test_sn_delta;
 
 DROP TABLE IF EXISTS logica_home.Test_sn_new CASCADE;
-CREATE TABLE logica_home.Test_sn_new AS WITH t_1_Test_MultBodyAggAux_f2 AS (SELECT * FROM (
+CREATE TABLE logica_home.Test_sn_new AS WITH t_1_Test_MultBodyAggAux_f6 AS (SELECT * FROM (
   
     SELECT
       0 AS y
    UNION ALL
   
     SELECT
-      ((x_11) + (1)) AS y
+      ((x_9) + (1)) AS y
     FROM
-      logica_home.Test_sn_delta AS t_2_Test_sn_delta, UNNEST((SELECT ARRAY_AGG(x) FROM GENERATE_SERIES(0, 100 - 1) as x)) as x_11
+      logica_home.Test_sn_delta AS Test_sn_delta, UNNEST(COALESCE((SELECT ARRAY_AGG(x) FROM GENERATE_SERIES(0, 100 - 1) as x), '{}')) as x_9
     WHERE
-      (t_2_Test_sn_delta.y = x_11)
+      (Test_sn_delta.y = x_9)
   
 ) AS UNUSED_TABLE_NAME  ),
 t_0_Test_sn_step AS (SELECT
-  Test_MultBodyAggAux_f2.y AS y
+  Test_MultBodyAggAux_f6.y AS y
 FROM
-  t_1_Test_MultBodyAggAux_f2 AS Test_MultBodyAggAux_f2
-GROUP BY Test_MultBodyAggAux_f2.y)
+  t_1_Test_MultBodyAggAux_f6 AS Test_MultBodyAggAux_f6
+GROUP BY Test_MultBodyAggAux_f6.y)
 SELECT
   Test_sn_step.y AS y
 FROM
@@ -668,625 +1162,39 @@ GROUP BY Test_sn_step.y;
 INSERT INTO logica_home.Test_sn_full SELECT * FROM logica_home.Test_sn_new;
 
 DROP TABLE IF EXISTS logica_home.Test_sn_delta CASCADE;
-CREATE TABLE logica_home.Test_sn_delta AS SELECT
-  Test_sn_new.y AS y
-FROM
-  logica_home.Test_sn_new AS Test_sn_new;
-
-DROP TABLE IF EXISTS logica_home.Test_sn_new CASCADE;
-CREATE TABLE logica_home.Test_sn_new AS WITH t_1_Test_MultBodyAggAux_f2 AS (SELECT * FROM (
+CREATE TABLE logica_home.Test_sn_delta AS WITH t_1_Test_MultBodyAggAux_f1 AS (SELECT * FROM (
   
     SELECT
       0 AS y
    UNION ALL
   
     SELECT
-      ((x_11) + (1)) AS y
+      ((x_9) + (1)) AS y
     FROM
-      logica_home.Test_sn_delta AS t_2_Test_sn_delta, UNNEST((SELECT ARRAY_AGG(x) FROM GENERATE_SERIES(0, 100 - 1) as x)) as x_11
+      logica_home.Test_sn_new AS Test_sn_new, UNNEST(COALESCE((SELECT ARRAY_AGG(x) FROM GENERATE_SERIES(0, 100 - 1) as x), '{}')) as x_9
     WHERE
-      (t_2_Test_sn_delta.y = x_11)
+      (Test_sn_new.y = x_9)
   
 ) AS UNUSED_TABLE_NAME  ),
-t_0_Test_sn_step AS (SELECT
-  Test_MultBodyAggAux_f2.y AS y
+t_0_Test_sn_back_step AS (SELECT
+  Test_MultBodyAggAux_f1.y AS y
 FROM
-  t_1_Test_MultBodyAggAux_f2 AS Test_MultBodyAggAux_f2
-GROUP BY Test_MultBodyAggAux_f2.y)
+  t_1_Test_MultBodyAggAux_f1 AS Test_MultBodyAggAux_f1
+GROUP BY Test_MultBodyAggAux_f1.y)
 SELECT
-  Test_sn_step.y AS y
+  Test_sn_back_step.y AS y
 FROM
-  t_0_Test_sn_step AS Test_sn_step
+  t_0_Test_sn_back_step AS Test_sn_back_step
 WHERE
   (CAST((SELECT
     MIN((CASE WHEN x_12 = 0 THEN 1 ELSE NULL END)) AS logica_value
   FROM
     logica_home.Test_sn_full AS Test_sn_full, UNNEST(ARRAY[0]) as x_12
   WHERE
-    (Test_sn_full.y = Test_sn_step.y)) AS numeric) IS NULL)
-GROUP BY Test_sn_step.y;
+    (Test_sn_full.y = Test_sn_back_step.y)) AS numeric) IS NULL)
+GROUP BY Test_sn_back_step.y;
 
-INSERT INTO logica_home.Test_sn_full SELECT * FROM logica_home.Test_sn_new;
-
-DROP TABLE IF EXISTS logica_home.Test_sn_delta CASCADE;
-CREATE TABLE logica_home.Test_sn_delta AS SELECT
-  Test_sn_new.y AS y
-FROM
-  logica_home.Test_sn_new AS Test_sn_new;
-
-DROP TABLE IF EXISTS logica_home.Test_sn_new CASCADE;
-CREATE TABLE logica_home.Test_sn_new AS WITH t_1_Test_MultBodyAggAux_f2 AS (SELECT * FROM (
-  
-    SELECT
-      0 AS y
-   UNION ALL
-  
-    SELECT
-      ((x_11) + (1)) AS y
-    FROM
-      logica_home.Test_sn_delta AS t_2_Test_sn_delta, UNNEST((SELECT ARRAY_AGG(x) FROM GENERATE_SERIES(0, 100 - 1) as x)) as x_11
-    WHERE
-      (t_2_Test_sn_delta.y = x_11)
-  
-) AS UNUSED_TABLE_NAME  ),
-t_0_Test_sn_step AS (SELECT
-  Test_MultBodyAggAux_f2.y AS y
-FROM
-  t_1_Test_MultBodyAggAux_f2 AS Test_MultBodyAggAux_f2
-GROUP BY Test_MultBodyAggAux_f2.y)
-SELECT
-  Test_sn_step.y AS y
-FROM
-  t_0_Test_sn_step AS Test_sn_step
-WHERE
-  (CAST((SELECT
-    MIN((CASE WHEN x_12 = 0 THEN 1 ELSE NULL END)) AS logica_value
-  FROM
-    logica_home.Test_sn_full AS Test_sn_full, UNNEST(ARRAY[0]) as x_12
-  WHERE
-    (Test_sn_full.y = Test_sn_step.y)) AS numeric) IS NULL)
-GROUP BY Test_sn_step.y;
-
-INSERT INTO logica_home.Test_sn_full SELECT * FROM logica_home.Test_sn_new;
-
-DROP TABLE IF EXISTS logica_home.Test_sn_delta CASCADE;
-CREATE TABLE logica_home.Test_sn_delta AS SELECT
-  Test_sn_new.y AS y
-FROM
-  logica_home.Test_sn_new AS Test_sn_new;
-
-DROP TABLE IF EXISTS logica_home.Test_sn_new CASCADE;
-CREATE TABLE logica_home.Test_sn_new AS WITH t_1_Test_MultBodyAggAux_f2 AS (SELECT * FROM (
-  
-    SELECT
-      0 AS y
-   UNION ALL
-  
-    SELECT
-      ((x_11) + (1)) AS y
-    FROM
-      logica_home.Test_sn_delta AS t_2_Test_sn_delta, UNNEST((SELECT ARRAY_AGG(x) FROM GENERATE_SERIES(0, 100 - 1) as x)) as x_11
-    WHERE
-      (t_2_Test_sn_delta.y = x_11)
-  
-) AS UNUSED_TABLE_NAME  ),
-t_0_Test_sn_step AS (SELECT
-  Test_MultBodyAggAux_f2.y AS y
-FROM
-  t_1_Test_MultBodyAggAux_f2 AS Test_MultBodyAggAux_f2
-GROUP BY Test_MultBodyAggAux_f2.y)
-SELECT
-  Test_sn_step.y AS y
-FROM
-  t_0_Test_sn_step AS Test_sn_step
-WHERE
-  (CAST((SELECT
-    MIN((CASE WHEN x_12 = 0 THEN 1 ELSE NULL END)) AS logica_value
-  FROM
-    logica_home.Test_sn_full AS Test_sn_full, UNNEST(ARRAY[0]) as x_12
-  WHERE
-    (Test_sn_full.y = Test_sn_step.y)) AS numeric) IS NULL)
-GROUP BY Test_sn_step.y;
-
-INSERT INTO logica_home.Test_sn_full SELECT * FROM logica_home.Test_sn_new;
-
-DROP TABLE IF EXISTS logica_home.Test_sn_delta CASCADE;
-CREATE TABLE logica_home.Test_sn_delta AS SELECT
-  Test_sn_new.y AS y
-FROM
-  logica_home.Test_sn_new AS Test_sn_new;
-
-DROP TABLE IF EXISTS logica_home.Test_sn_new CASCADE;
-CREATE TABLE logica_home.Test_sn_new AS WITH t_1_Test_MultBodyAggAux_f2 AS (SELECT * FROM (
-  
-    SELECT
-      0 AS y
-   UNION ALL
-  
-    SELECT
-      ((x_11) + (1)) AS y
-    FROM
-      logica_home.Test_sn_delta AS t_2_Test_sn_delta, UNNEST((SELECT ARRAY_AGG(x) FROM GENERATE_SERIES(0, 100 - 1) as x)) as x_11
-    WHERE
-      (t_2_Test_sn_delta.y = x_11)
-  
-) AS UNUSED_TABLE_NAME  ),
-t_0_Test_sn_step AS (SELECT
-  Test_MultBodyAggAux_f2.y AS y
-FROM
-  t_1_Test_MultBodyAggAux_f2 AS Test_MultBodyAggAux_f2
-GROUP BY Test_MultBodyAggAux_f2.y)
-SELECT
-  Test_sn_step.y AS y
-FROM
-  t_0_Test_sn_step AS Test_sn_step
-WHERE
-  (CAST((SELECT
-    MIN((CASE WHEN x_12 = 0 THEN 1 ELSE NULL END)) AS logica_value
-  FROM
-    logica_home.Test_sn_full AS Test_sn_full, UNNEST(ARRAY[0]) as x_12
-  WHERE
-    (Test_sn_full.y = Test_sn_step.y)) AS numeric) IS NULL)
-GROUP BY Test_sn_step.y;
-
-INSERT INTO logica_home.Test_sn_full SELECT * FROM logica_home.Test_sn_new;
-
-DROP TABLE IF EXISTS logica_home.Test_sn_delta CASCADE;
-CREATE TABLE logica_home.Test_sn_delta AS SELECT
-  Test_sn_new.y AS y
-FROM
-  logica_home.Test_sn_new AS Test_sn_new;
-
-DROP TABLE IF EXISTS logica_home.Test_sn_new CASCADE;
-CREATE TABLE logica_home.Test_sn_new AS WITH t_1_Test_MultBodyAggAux_f2 AS (SELECT * FROM (
-  
-    SELECT
-      0 AS y
-   UNION ALL
-  
-    SELECT
-      ((x_11) + (1)) AS y
-    FROM
-      logica_home.Test_sn_delta AS t_2_Test_sn_delta, UNNEST((SELECT ARRAY_AGG(x) FROM GENERATE_SERIES(0, 100 - 1) as x)) as x_11
-    WHERE
-      (t_2_Test_sn_delta.y = x_11)
-  
-) AS UNUSED_TABLE_NAME  ),
-t_0_Test_sn_step AS (SELECT
-  Test_MultBodyAggAux_f2.y AS y
-FROM
-  t_1_Test_MultBodyAggAux_f2 AS Test_MultBodyAggAux_f2
-GROUP BY Test_MultBodyAggAux_f2.y)
-SELECT
-  Test_sn_step.y AS y
-FROM
-  t_0_Test_sn_step AS Test_sn_step
-WHERE
-  (CAST((SELECT
-    MIN((CASE WHEN x_12 = 0 THEN 1 ELSE NULL END)) AS logica_value
-  FROM
-    logica_home.Test_sn_full AS Test_sn_full, UNNEST(ARRAY[0]) as x_12
-  WHERE
-    (Test_sn_full.y = Test_sn_step.y)) AS numeric) IS NULL)
-GROUP BY Test_sn_step.y;
-
-INSERT INTO logica_home.Test_sn_full SELECT * FROM logica_home.Test_sn_new;
-
-DROP TABLE IF EXISTS logica_home.Test_sn_delta CASCADE;
-CREATE TABLE logica_home.Test_sn_delta AS SELECT
-  Test_sn_new.y AS y
-FROM
-  logica_home.Test_sn_new AS Test_sn_new;
-
-DROP TABLE IF EXISTS logica_home.Test_sn_new CASCADE;
-CREATE TABLE logica_home.Test_sn_new AS WITH t_1_Test_MultBodyAggAux_f2 AS (SELECT * FROM (
-  
-    SELECT
-      0 AS y
-   UNION ALL
-  
-    SELECT
-      ((x_11) + (1)) AS y
-    FROM
-      logica_home.Test_sn_delta AS t_2_Test_sn_delta, UNNEST((SELECT ARRAY_AGG(x) FROM GENERATE_SERIES(0, 100 - 1) as x)) as x_11
-    WHERE
-      (t_2_Test_sn_delta.y = x_11)
-  
-) AS UNUSED_TABLE_NAME  ),
-t_0_Test_sn_step AS (SELECT
-  Test_MultBodyAggAux_f2.y AS y
-FROM
-  t_1_Test_MultBodyAggAux_f2 AS Test_MultBodyAggAux_f2
-GROUP BY Test_MultBodyAggAux_f2.y)
-SELECT
-  Test_sn_step.y AS y
-FROM
-  t_0_Test_sn_step AS Test_sn_step
-WHERE
-  (CAST((SELECT
-    MIN((CASE WHEN x_12 = 0 THEN 1 ELSE NULL END)) AS logica_value
-  FROM
-    logica_home.Test_sn_full AS Test_sn_full, UNNEST(ARRAY[0]) as x_12
-  WHERE
-    (Test_sn_full.y = Test_sn_step.y)) AS numeric) IS NULL)
-GROUP BY Test_sn_step.y;
-
-INSERT INTO logica_home.Test_sn_full SELECT * FROM logica_home.Test_sn_new;
-
-DROP TABLE IF EXISTS logica_home.Test_sn_delta CASCADE;
-CREATE TABLE logica_home.Test_sn_delta AS SELECT
-  Test_sn_new.y AS y
-FROM
-  logica_home.Test_sn_new AS Test_sn_new;
-
-DROP TABLE IF EXISTS logica_home.Test_sn_new CASCADE;
-CREATE TABLE logica_home.Test_sn_new AS WITH t_1_Test_MultBodyAggAux_f2 AS (SELECT * FROM (
-  
-    SELECT
-      0 AS y
-   UNION ALL
-  
-    SELECT
-      ((x_11) + (1)) AS y
-    FROM
-      logica_home.Test_sn_delta AS t_2_Test_sn_delta, UNNEST((SELECT ARRAY_AGG(x) FROM GENERATE_SERIES(0, 100 - 1) as x)) as x_11
-    WHERE
-      (t_2_Test_sn_delta.y = x_11)
-  
-) AS UNUSED_TABLE_NAME  ),
-t_0_Test_sn_step AS (SELECT
-  Test_MultBodyAggAux_f2.y AS y
-FROM
-  t_1_Test_MultBodyAggAux_f2 AS Test_MultBodyAggAux_f2
-GROUP BY Test_MultBodyAggAux_f2.y)
-SELECT
-  Test_sn_step.y AS y
-FROM
-  t_0_Test_sn_step AS Test_sn_step
-WHERE
-  (CAST((SELECT
-    MIN((CASE WHEN x_12 = 0 THEN 1 ELSE NULL END)) AS logica_value
-  FROM
-    logica_home.Test_sn_full AS Test_sn_full, UNNEST(ARRAY[0]) as x_12
-  WHERE
-    (Test_sn_full.y = Test_sn_step.y)) AS numeric) IS NULL)
-GROUP BY Test_sn_step.y;
-
-INSERT INTO logica_home.Test_sn_full SELECT * FROM logica_home.Test_sn_new;
-
-DROP TABLE IF EXISTS logica_home.Test_sn_delta CASCADE;
-CREATE TABLE logica_home.Test_sn_delta AS SELECT
-  Test_sn_new.y AS y
-FROM
-  logica_home.Test_sn_new AS Test_sn_new;
-
-DROP TABLE IF EXISTS logica_home.Test_sn_new CASCADE;
-CREATE TABLE logica_home.Test_sn_new AS WITH t_1_Test_MultBodyAggAux_f2 AS (SELECT * FROM (
-  
-    SELECT
-      0 AS y
-   UNION ALL
-  
-    SELECT
-      ((x_11) + (1)) AS y
-    FROM
-      logica_home.Test_sn_delta AS t_2_Test_sn_delta, UNNEST((SELECT ARRAY_AGG(x) FROM GENERATE_SERIES(0, 100 - 1) as x)) as x_11
-    WHERE
-      (t_2_Test_sn_delta.y = x_11)
-  
-) AS UNUSED_TABLE_NAME  ),
-t_0_Test_sn_step AS (SELECT
-  Test_MultBodyAggAux_f2.y AS y
-FROM
-  t_1_Test_MultBodyAggAux_f2 AS Test_MultBodyAggAux_f2
-GROUP BY Test_MultBodyAggAux_f2.y)
-SELECT
-  Test_sn_step.y AS y
-FROM
-  t_0_Test_sn_step AS Test_sn_step
-WHERE
-  (CAST((SELECT
-    MIN((CASE WHEN x_12 = 0 THEN 1 ELSE NULL END)) AS logica_value
-  FROM
-    logica_home.Test_sn_full AS Test_sn_full, UNNEST(ARRAY[0]) as x_12
-  WHERE
-    (Test_sn_full.y = Test_sn_step.y)) AS numeric) IS NULL)
-GROUP BY Test_sn_step.y;
-
-INSERT INTO logica_home.Test_sn_full SELECT * FROM logica_home.Test_sn_new;
-
-DROP TABLE IF EXISTS logica_home.Test_sn_delta CASCADE;
-CREATE TABLE logica_home.Test_sn_delta AS SELECT
-  Test_sn_new.y AS y
-FROM
-  logica_home.Test_sn_new AS Test_sn_new;
-
-DROP TABLE IF EXISTS logica_home.Test_sn_new CASCADE;
-CREATE TABLE logica_home.Test_sn_new AS WITH t_1_Test_MultBodyAggAux_f2 AS (SELECT * FROM (
-  
-    SELECT
-      0 AS y
-   UNION ALL
-  
-    SELECT
-      ((x_11) + (1)) AS y
-    FROM
-      logica_home.Test_sn_delta AS t_2_Test_sn_delta, UNNEST((SELECT ARRAY_AGG(x) FROM GENERATE_SERIES(0, 100 - 1) as x)) as x_11
-    WHERE
-      (t_2_Test_sn_delta.y = x_11)
-  
-) AS UNUSED_TABLE_NAME  ),
-t_0_Test_sn_step AS (SELECT
-  Test_MultBodyAggAux_f2.y AS y
-FROM
-  t_1_Test_MultBodyAggAux_f2 AS Test_MultBodyAggAux_f2
-GROUP BY Test_MultBodyAggAux_f2.y)
-SELECT
-  Test_sn_step.y AS y
-FROM
-  t_0_Test_sn_step AS Test_sn_step
-WHERE
-  (CAST((SELECT
-    MIN((CASE WHEN x_12 = 0 THEN 1 ELSE NULL END)) AS logica_value
-  FROM
-    logica_home.Test_sn_full AS Test_sn_full, UNNEST(ARRAY[0]) as x_12
-  WHERE
-    (Test_sn_full.y = Test_sn_step.y)) AS numeric) IS NULL)
-GROUP BY Test_sn_step.y;
-
-INSERT INTO logica_home.Test_sn_full SELECT * FROM logica_home.Test_sn_new;
-
-DROP TABLE IF EXISTS logica_home.Test_sn_delta CASCADE;
-CREATE TABLE logica_home.Test_sn_delta AS SELECT
-  Test_sn_new.y AS y
-FROM
-  logica_home.Test_sn_new AS Test_sn_new;
-
-DROP TABLE IF EXISTS logica_home.Test_sn_new CASCADE;
-CREATE TABLE logica_home.Test_sn_new AS WITH t_1_Test_MultBodyAggAux_f2 AS (SELECT * FROM (
-  
-    SELECT
-      0 AS y
-   UNION ALL
-  
-    SELECT
-      ((x_11) + (1)) AS y
-    FROM
-      logica_home.Test_sn_delta AS t_2_Test_sn_delta, UNNEST((SELECT ARRAY_AGG(x) FROM GENERATE_SERIES(0, 100 - 1) as x)) as x_11
-    WHERE
-      (t_2_Test_sn_delta.y = x_11)
-  
-) AS UNUSED_TABLE_NAME  ),
-t_0_Test_sn_step AS (SELECT
-  Test_MultBodyAggAux_f2.y AS y
-FROM
-  t_1_Test_MultBodyAggAux_f2 AS Test_MultBodyAggAux_f2
-GROUP BY Test_MultBodyAggAux_f2.y)
-SELECT
-  Test_sn_step.y AS y
-FROM
-  t_0_Test_sn_step AS Test_sn_step
-WHERE
-  (CAST((SELECT
-    MIN((CASE WHEN x_12 = 0 THEN 1 ELSE NULL END)) AS logica_value
-  FROM
-    logica_home.Test_sn_full AS Test_sn_full, UNNEST(ARRAY[0]) as x_12
-  WHERE
-    (Test_sn_full.y = Test_sn_step.y)) AS numeric) IS NULL)
-GROUP BY Test_sn_step.y;
-
-INSERT INTO logica_home.Test_sn_full SELECT * FROM logica_home.Test_sn_new;
-
-DROP TABLE IF EXISTS logica_home.Test_sn_delta CASCADE;
-CREATE TABLE logica_home.Test_sn_delta AS SELECT
-  Test_sn_new.y AS y
-FROM
-  logica_home.Test_sn_new AS Test_sn_new;
-
-DROP TABLE IF EXISTS logica_home.Test_sn_new CASCADE;
-CREATE TABLE logica_home.Test_sn_new AS WITH t_1_Test_MultBodyAggAux_f2 AS (SELECT * FROM (
-  
-    SELECT
-      0 AS y
-   UNION ALL
-  
-    SELECT
-      ((x_11) + (1)) AS y
-    FROM
-      logica_home.Test_sn_delta AS t_2_Test_sn_delta, UNNEST((SELECT ARRAY_AGG(x) FROM GENERATE_SERIES(0, 100 - 1) as x)) as x_11
-    WHERE
-      (t_2_Test_sn_delta.y = x_11)
-  
-) AS UNUSED_TABLE_NAME  ),
-t_0_Test_sn_step AS (SELECT
-  Test_MultBodyAggAux_f2.y AS y
-FROM
-  t_1_Test_MultBodyAggAux_f2 AS Test_MultBodyAggAux_f2
-GROUP BY Test_MultBodyAggAux_f2.y)
-SELECT
-  Test_sn_step.y AS y
-FROM
-  t_0_Test_sn_step AS Test_sn_step
-WHERE
-  (CAST((SELECT
-    MIN((CASE WHEN x_12 = 0 THEN 1 ELSE NULL END)) AS logica_value
-  FROM
-    logica_home.Test_sn_full AS Test_sn_full, UNNEST(ARRAY[0]) as x_12
-  WHERE
-    (Test_sn_full.y = Test_sn_step.y)) AS numeric) IS NULL)
-GROUP BY Test_sn_step.y;
-
-INSERT INTO logica_home.Test_sn_full SELECT * FROM logica_home.Test_sn_new;
-
-DROP TABLE IF EXISTS logica_home.Test_sn_delta CASCADE;
-CREATE TABLE logica_home.Test_sn_delta AS SELECT
-  Test_sn_new.y AS y
-FROM
-  logica_home.Test_sn_new AS Test_sn_new;
-
-DROP TABLE IF EXISTS logica_home.Test_sn_new CASCADE;
-CREATE TABLE logica_home.Test_sn_new AS WITH t_1_Test_MultBodyAggAux_f2 AS (SELECT * FROM (
-  
-    SELECT
-      0 AS y
-   UNION ALL
-  
-    SELECT
-      ((x_11) + (1)) AS y
-    FROM
-      logica_home.Test_sn_delta AS t_2_Test_sn_delta, UNNEST((SELECT ARRAY_AGG(x) FROM GENERATE_SERIES(0, 100 - 1) as x)) as x_11
-    WHERE
-      (t_2_Test_sn_delta.y = x_11)
-  
-) AS UNUSED_TABLE_NAME  ),
-t_0_Test_sn_step AS (SELECT
-  Test_MultBodyAggAux_f2.y AS y
-FROM
-  t_1_Test_MultBodyAggAux_f2 AS Test_MultBodyAggAux_f2
-GROUP BY Test_MultBodyAggAux_f2.y)
-SELECT
-  Test_sn_step.y AS y
-FROM
-  t_0_Test_sn_step AS Test_sn_step
-WHERE
-  (CAST((SELECT
-    MIN((CASE WHEN x_12 = 0 THEN 1 ELSE NULL END)) AS logica_value
-  FROM
-    logica_home.Test_sn_full AS Test_sn_full, UNNEST(ARRAY[0]) as x_12
-  WHERE
-    (Test_sn_full.y = Test_sn_step.y)) AS numeric) IS NULL)
-GROUP BY Test_sn_step.y;
-
-INSERT INTO logica_home.Test_sn_full SELECT * FROM logica_home.Test_sn_new;
-
-DROP TABLE IF EXISTS logica_home.Test_sn_delta CASCADE;
-CREATE TABLE logica_home.Test_sn_delta AS SELECT
-  Test_sn_new.y AS y
-FROM
-  logica_home.Test_sn_new AS Test_sn_new;
-
-DROP TABLE IF EXISTS logica_home.Test_sn_new CASCADE;
-CREATE TABLE logica_home.Test_sn_new AS WITH t_1_Test_MultBodyAggAux_f2 AS (SELECT * FROM (
-  
-    SELECT
-      0 AS y
-   UNION ALL
-  
-    SELECT
-      ((x_11) + (1)) AS y
-    FROM
-      logica_home.Test_sn_delta AS t_2_Test_sn_delta, UNNEST((SELECT ARRAY_AGG(x) FROM GENERATE_SERIES(0, 100 - 1) as x)) as x_11
-    WHERE
-      (t_2_Test_sn_delta.y = x_11)
-  
-) AS UNUSED_TABLE_NAME  ),
-t_0_Test_sn_step AS (SELECT
-  Test_MultBodyAggAux_f2.y AS y
-FROM
-  t_1_Test_MultBodyAggAux_f2 AS Test_MultBodyAggAux_f2
-GROUP BY Test_MultBodyAggAux_f2.y)
-SELECT
-  Test_sn_step.y AS y
-FROM
-  t_0_Test_sn_step AS Test_sn_step
-WHERE
-  (CAST((SELECT
-    MIN((CASE WHEN x_12 = 0 THEN 1 ELSE NULL END)) AS logica_value
-  FROM
-    logica_home.Test_sn_full AS Test_sn_full, UNNEST(ARRAY[0]) as x_12
-  WHERE
-    (Test_sn_full.y = Test_sn_step.y)) AS numeric) IS NULL)
-GROUP BY Test_sn_step.y;
-
-INSERT INTO logica_home.Test_sn_full SELECT * FROM logica_home.Test_sn_new;
-
-DROP TABLE IF EXISTS logica_home.Test_sn_delta CASCADE;
-CREATE TABLE logica_home.Test_sn_delta AS SELECT
-  Test_sn_new.y AS y
-FROM
-  logica_home.Test_sn_new AS Test_sn_new;
-
-DROP TABLE IF EXISTS logica_home.Test_sn_new CASCADE;
-CREATE TABLE logica_home.Test_sn_new AS WITH t_1_Test_MultBodyAggAux_f2 AS (SELECT * FROM (
-  
-    SELECT
-      0 AS y
-   UNION ALL
-  
-    SELECT
-      ((x_11) + (1)) AS y
-    FROM
-      logica_home.Test_sn_delta AS t_2_Test_sn_delta, UNNEST((SELECT ARRAY_AGG(x) FROM GENERATE_SERIES(0, 100 - 1) as x)) as x_11
-    WHERE
-      (t_2_Test_sn_delta.y = x_11)
-  
-) AS UNUSED_TABLE_NAME  ),
-t_0_Test_sn_step AS (SELECT
-  Test_MultBodyAggAux_f2.y AS y
-FROM
-  t_1_Test_MultBodyAggAux_f2 AS Test_MultBodyAggAux_f2
-GROUP BY Test_MultBodyAggAux_f2.y)
-SELECT
-  Test_sn_step.y AS y
-FROM
-  t_0_Test_sn_step AS Test_sn_step
-WHERE
-  (CAST((SELECT
-    MIN((CASE WHEN x_12 = 0 THEN 1 ELSE NULL END)) AS logica_value
-  FROM
-    logica_home.Test_sn_full AS Test_sn_full, UNNEST(ARRAY[0]) as x_12
-  WHERE
-    (Test_sn_full.y = Test_sn_step.y)) AS numeric) IS NULL)
-GROUP BY Test_sn_step.y;
-
-INSERT INTO logica_home.Test_sn_full SELECT * FROM logica_home.Test_sn_new;
-
-DROP TABLE IF EXISTS logica_home.Test_sn_delta CASCADE;
-CREATE TABLE logica_home.Test_sn_delta AS SELECT
-  Test_sn_new.y AS y
-FROM
-  logica_home.Test_sn_new AS Test_sn_new;
-
-DROP TABLE IF EXISTS logica_home.Test_sn_new CASCADE;
-CREATE TABLE logica_home.Test_sn_new AS WITH t_1_Test_MultBodyAggAux_f2 AS (SELECT * FROM (
-  
-    SELECT
-      0 AS y
-   UNION ALL
-  
-    SELECT
-      ((x_11) + (1)) AS y
-    FROM
-      logica_home.Test_sn_delta AS t_2_Test_sn_delta, UNNEST((SELECT ARRAY_AGG(x) FROM GENERATE_SERIES(0, 100 - 1) as x)) as x_11
-    WHERE
-      (t_2_Test_sn_delta.y = x_11)
-  
-) AS UNUSED_TABLE_NAME  ),
-t_0_Test_sn_step AS (SELECT
-  Test_MultBodyAggAux_f2.y AS y
-FROM
-  t_1_Test_MultBodyAggAux_f2 AS Test_MultBodyAggAux_f2
-GROUP BY Test_MultBodyAggAux_f2.y)
-SELECT
-  Test_sn_step.y AS y
-FROM
-  t_0_Test_sn_step AS Test_sn_step
-WHERE
-  (CAST((SELECT
-    MIN((CASE WHEN x_12 = 0 THEN 1 ELSE NULL END)) AS logica_value
-  FROM
-    logica_home.Test_sn_full AS Test_sn_full, UNNEST(ARRAY[0]) as x_12
-  WHERE
-    (Test_sn_full.y = Test_sn_step.y)) AS numeric) IS NULL)
-GROUP BY Test_sn_step.y;
-
-INSERT INTO logica_home.Test_sn_full SELECT * FROM logica_home.Test_sn_new;
-
-DROP TABLE IF EXISTS logica_home.Test_sn_delta CASCADE;
-CREATE TABLE logica_home.Test_sn_delta AS SELECT
-  Test_sn_new.y AS y
-FROM
-  logica_home.Test_sn_new AS Test_sn_new;
+INSERT INTO logica_home.Test_sn_full SELECT * FROM logica_home.Test_sn_delta;
 
 SELECT
   Test_sn_full.y AS y

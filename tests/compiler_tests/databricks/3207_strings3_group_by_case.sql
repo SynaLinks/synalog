@@ -1,0 +1,11 @@
+WITH t_0_V AS (SELECT * FROM VALUES
+  (1, "a"),
+  (2, "A"),
+  (3, "a")
+AS UNUSED_TABLE_NAME(k, w))
+SELECT
+  V.w AS w,
+  SUM(1) AS n
+FROM
+  t_0_V AS V
+GROUP BY 1 ORDER BY w NULLS LAST;

@@ -1,0 +1,11 @@
+WITH t_0_F AS (SELECT * FROM VALUES
+  (1, ARRAY(3, 4)),
+  (2, ARRAY()),
+  (3, ARRAY(5))
+AS UNUSED_TABLE_NAME(k, l))
+SELECT
+  F.k AS k,
+  SUM(x_3) AS t
+FROM
+  t_0_F AS F, LATERAL (SELECT explode(F.l) AS x_3) AS pushkin
+GROUP BY 1 ORDER BY k NULLS LAST;

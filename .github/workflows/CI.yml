@@ -44,25 +44,62 @@ jobs:
         run: pip install .
       - name: CLI tests
         run: pytest tests/cli -q
-      - name: Start SQL engines (PostgreSQL, Trino, Presto, Spark)
-        run: docker compose -f tests/e2e/docker-compose.yml up -d --wait
-      - name: End-to-end tests against live engines
-        # One worker per engine (see tests/e2e/conftest.py): the engines run in
-        # parallel. A test stuck past --timeout fails, failures print as they
-        # happen, and the step cannot outlive timeout-minutes.
-        timeout-minutes: 45
+
+  e2e:
+    # End-to-end tests, one job per engine, in parallel: each job starts only
+    # its engine's server, and runs only its engine's tests
+    # (SYNALOG_E2E_ENGINES). An engine's tests run one after the other: they
+    # write the same tables.
+    runs-on: ubuntu-22.04
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - engine: sqlite
+            service: ""
+          - engine: duckdb
+            service: ""
+          - engine: psql
+            service: postgres
+          - engine: trino
+            service: trino
+          - engine: presto
+            service: presto
+          - engine: databricks
+            service: spark
+    name: e2e (${{ matrix.engine }})
+    steps:
+      - uses: actions/checkout@v6
+      - uses: dtolnay/rust-toolchain@stable
+      - uses: Swatinem/rust-cache@v2
+      - uses: actions/setup-python@v6
+        with:
+          python-version: '3.12'
+      - name: Install Python test dependencies
+        run: |
+          pip install pytest pytest-timeout duckdb "psycopg[binary]" trino presto-python-client pyhive thrift logica
+      - name: Build and install synalog wheel
+        run: pip install .
+      - name: Start the engine's server
+        if: matrix.service != ''
+        run: docker compose -f tests/e2e/docker-compose.yml up -d --wait ${{ matrix.service }}
+      - name: End-to-end tests against ${{ matrix.engine }}
+        # A test stuck past --timeout fails, failures print as they happen,
+        # and the step cannot outlive timeout-minutes.
+        timeout-minutes: 180
         env:
-          SYNALOG_E2E_REQUIRE: psql,trino,presto,databricks
+          SYNALOG_E2E_ENGINES: ${{ matrix.engine }}
+          SYNALOG_E2E_REQUIRE: ${{ matrix.engine }}
           SYNALOG_E2E_PRINT_FAILURES: "1"
-        run: pytest tests/e2e -q -rfE -n 6 --dist loadgroup --durations=15 --timeout=600 --timeout-method=signal
-      - name: Engines after the e2e tests
-        if: always()
+        run: pytest tests/e2e -q -rfE --durations=15 --timeout=600 --timeout-method=signal
+      - name: Engine after the e2e tests
+        if: always() && matrix.service != ''
         run: |
           free -m
           docker compose -f tests/e2e/docker-compose.yml ps
           docker stats --no-stream
-      - name: Stop SQL engines
-        if: always()
+      - name: Stop the engine's server
+        if: always() && matrix.service != ''
         run: docker compose -f tests/e2e/docker-compose.yml down
 
   linux:

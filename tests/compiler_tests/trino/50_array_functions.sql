@@ -15,7 +15,7 @@ WITH t_1_Lists AS (SELECT * FROM (
 t_0_Concatenated AS (SELECT
   Lists.id AS id,
   CARDINALITY(Lists.a || Lists.b) AS total_size,
-  ELEMENT_AT(Lists.a || Lists.b, 0 + 1) AS head
+  (CASE WHEN 0 < 0 THEN NULL ELSE ELEMENT_AT(Lists.a || Lists.b, 0 + 1) END) AS head
 FROM
   t_1_Lists AS Lists ORDER BY id)
 SELECT

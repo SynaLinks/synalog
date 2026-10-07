@@ -1,15 +1,7 @@
-WITH t_0_Edge AS (SELECT * FROM (
-  
-    SELECT
-      1 AS x,
-      2 AS y
-   UNION ALL
-  
-    SELECT
-      2 AS x,
-      2 AS y
-  
-) AS UNUSED_TABLE_NAME  )
+WITH t_0_Edge AS (SELECT * FROM VALUES
+  (1, 2),
+  (2, 2)
+AS UNUSED_TABLE_NAME(x, y))
 SELECT
   Edge.x AS x
 FROM

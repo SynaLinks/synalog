@@ -1,0 +1,9 @@
+WITH t_1_V AS (SELECT * FROM VALUES
+  (1, 1),
+  (2, null)
+AS UNUSED_TABLE_NAME(k, x))
+SELECT
+  t_0_V.k AS k,
+  COALESCE(t_0_V.x, 0) AS v
+FROM
+  t_1_V AS t_0_V ORDER BY k NULLS LAST;

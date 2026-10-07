@@ -1,0 +1,10 @@
+WITH t_1_V AS (SELECT * FROM VALUES
+  (1, ARRAY("a")),
+  (2, ARRAY("b", "c")),
+  (3, CAST(null AS ARRAY<STRING>))
+AS UNUSED_TABLE_NAME(k, v))
+SELECT
+  t_0_V.k AS k,
+  ARRAY_SIZE(t_0_V.v) AS r
+FROM
+  t_1_V AS t_0_V ORDER BY k NULLS LAST;

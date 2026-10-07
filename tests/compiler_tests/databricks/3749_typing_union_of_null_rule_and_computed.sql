@@ -1,0 +1,9 @@
+WITH t_0_U AS (SELECT * FROM VALUES
+  (1, null),
+  (2, ((1) / NULLIF(2, 0)))
+AS UNUSED_TABLE_NAME(k, v))
+SELECT
+  U.k AS k,
+  U.v AS v
+FROM
+  t_0_U AS U ORDER BY k NULLS LAST;

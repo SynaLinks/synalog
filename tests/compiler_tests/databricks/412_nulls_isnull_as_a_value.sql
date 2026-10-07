@@ -1,0 +1,9 @@
+WITH t_0_V AS (SELECT * FROM VALUES
+  (1, 5),
+  (2, null)
+AS UNUSED_TABLE_NAME(k, x))
+SELECT
+  V.k AS k,
+  (V.x IS NULL) AS n
+FROM
+  t_0_V AS V ORDER BY k NULLS LAST;

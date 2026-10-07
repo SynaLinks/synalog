@@ -1,0 +1,2 @@
+SELECT
+  ARRAY_LENGTH(null) AS n;

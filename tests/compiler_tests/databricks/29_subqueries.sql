@@ -1,25 +1,9 @@
-WITH t_0_Sales AS (SELECT * FROM (
-  
-    SELECT
-      "A" AS product,
-      100 AS amount
-   UNION ALL
-  
-    SELECT
-      "A" AS product,
-      150 AS amount
-   UNION ALL
-  
-    SELECT
-      "B" AS product,
-      200 AS amount
-   UNION ALL
-  
-    SELECT
-      "C" AS product,
-      50 AS amount
-  
-) AS UNUSED_TABLE_NAME  ),
+WITH t_0_Sales AS (SELECT * FROM VALUES
+  ("A", 100),
+  ("A", 150),
+  ("B", 200),
+  ("C", 50)
+AS UNUSED_TABLE_NAME(product, amount)),
 t_1_AvgSale AS (SELECT
   SUM(t_2_Sales.amount) AS logica_value
 FROM
@@ -34,4 +18,4 @@ SELECT
 FROM
   t_0_Sales AS Sales, t_1_AvgSale AS AvgSale, t_3_CountSales AS CountSales
 WHERE
-  (Sales.amount > ((AvgSale.logica_value) / (CountSales.logica_value))) ORDER BY product;
+  (Sales.amount > ((AvgSale.logica_value) / NULLIF(CountSales.logica_value, 0))) ORDER BY product NULLS LAST;

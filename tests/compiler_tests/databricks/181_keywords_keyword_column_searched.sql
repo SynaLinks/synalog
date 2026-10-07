@@ -1,4 +1,4 @@
 SELECT
   x_1 AS `group`
 FROM
-  explode(ARRAY("a", "b")) AS pushkin(x_1) ORDER BY `group`;
+  LATERAL (SELECT explode(ARRAY("a", "b")) AS x_1) AS pushkin ORDER BY `group` NULLS LAST;

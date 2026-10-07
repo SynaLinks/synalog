@@ -1,0 +1,2 @@
+SELECT
+  LOWER('ÉCOLE') AS s;

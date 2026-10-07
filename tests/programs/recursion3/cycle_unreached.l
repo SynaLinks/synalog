@@ -1,0 +1,14 @@
+# Nodes not reached from 1 in the cycle graph.
+# Expect: rows Q = []
+E(a: 1, b: 2, w: 2);
+E(a: 2, b: 3, w: 2);
+E(a: 3, b: 4, w: 2);
+E(a: 4, b: 1, w: 2);
+E(a: 4, b: 5, w: 7);
+@Recursive(R, -1);
+R(x: 1) distinct;
+R(x: b) distinct :- R(x: a), E(a:, b:);
+N(x: a) distinct :- E(a:);
+N(x: b) distinct :- E(b:);
+@OrderBy(Q, "x");
+Q(x:) :- N(x:), ~R(x:);

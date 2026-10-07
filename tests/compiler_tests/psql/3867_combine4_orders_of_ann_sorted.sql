@@ -1,0 +1,58 @@
+-- Initializing PostgreSQL environment.
+set client_min_messages to warning;
+create schema if not exists logica_home;
+-- Empty logica type: logicarecord893574736;
+DO $$ BEGIN if not exists (select 'I(am) :- I(think)' from pg_type where typname = 'logicarecord893574736') then create type logicarecord893574736 as (nirvana numeric); end if; END $$;
+
+DO $$ BEGIN if not exists (select 1 from pg_type where typname = 'logicarecord5496496313841066852') then create type logicarecord5496496313841066852 as ("arg" numeric, "value" text); end if; END $$;
+WITH t_2_O AS (SELECT * FROM (
+  
+    SELECT
+      1 AS id,
+      'ann' AS c,
+      30 AS amt
+   UNION ALL
+  
+    SELECT
+      2 AS id,
+      'ann' AS c,
+      12 AS amt
+   UNION ALL
+  
+    SELECT
+      3 AS id,
+      'bob' AS c,
+      50 AS amt
+   UNION ALL
+  
+    SELECT
+      4 AS id,
+      'cid' AS c,
+      7 AS amt
+   UNION ALL
+  
+    SELECT
+      5 AS id,
+      'cid' AS c,
+      7 AS amt
+   UNION ALL
+  
+    SELECT
+      6 AS id,
+      'cid' AS c,
+      40 AS amt
+   UNION ALL
+  
+    SELECT
+      7 AS id,
+      'bob' AS c,
+      5 AS amt
+  
+) AS UNUSED_TABLE_NAME  )
+SELECT
+  ARRAY_TO_STRING((SELECT
+  ARRAY_AGG(((CASE WHEN x_8 = 0 THEN ROW(O.id, (SELECT (CASE WHEN synalog_v IS NULL THEN NULL WHEN ABS(synalog_v) < 0.0000000000000005 THEN '0' WHEN synalog_v = FLOOR(synalog_v) AND ABS(synalog_v) < 1e18 THEN CAST(CAST(synalog_v AS BIGINT) AS TEXT) WHEN ABS(synalog_v) >= 1e38 THEN CAST(synalog_v AS TEXT) WHEN ABS(synalog_v) < 1 THEN TRIM(TRAILING '.' FROM TRIM(TRAILING '0' FROM CAST(ROUND(CAST(CAST(synalog_v AS TEXT) AS numeric), 15) AS TEXT))) WHEN ABS(synalog_v) < 1e18 THEN TRIM(TRAILING '.' FROM TRIM(TRAILING '0' FROM CAST(CAST(ROUND(CAST(CAST(synalog_v AS TEXT) AS numeric), 15 - LENGTH(CAST(FLOOR(ABS(CAST(CAST(synalog_v AS TEXT) AS numeric))) AS TEXT))) AS DECIMAL(38,20)) AS TEXT))) ELSE CAST(CAST(ROUND(CAST(CAST(synalog_v AS TEXT) AS numeric), 15 - LENGTH(CAST(FLOOR(ABS(CAST(CAST(synalog_v AS TEXT) AS numeric))) AS TEXT))) AS DECIMAL(38,0)) AS TEXT) END) FROM (SELECT O.amt AS synalog_v) AS synalog_n))::logicarecord5496496313841066852 ELSE NULL END)).value order by ((CASE WHEN x_8 = 0 THEN ROW(O.id, (SELECT (CASE WHEN synalog_v IS NULL THEN NULL WHEN ABS(synalog_v) < 0.0000000000000005 THEN '0' WHEN synalog_v = FLOOR(synalog_v) AND ABS(synalog_v) < 1e18 THEN CAST(CAST(synalog_v AS BIGINT) AS TEXT) WHEN ABS(synalog_v) >= 1e38 THEN CAST(synalog_v AS TEXT) WHEN ABS(synalog_v) < 1 THEN TRIM(TRAILING '.' FROM TRIM(TRAILING '0' FROM CAST(ROUND(CAST(CAST(synalog_v AS TEXT) AS numeric), 15) AS TEXT))) WHEN ABS(synalog_v) < 1e18 THEN TRIM(TRAILING '.' FROM TRIM(TRAILING '0' FROM CAST(CAST(ROUND(CAST(CAST(synalog_v AS TEXT) AS numeric), 15 - LENGTH(CAST(FLOOR(ABS(CAST(CAST(synalog_v AS TEXT) AS numeric))) AS TEXT))) AS DECIMAL(38,20)) AS TEXT))) ELSE CAST(CAST(ROUND(CAST(CAST(synalog_v AS TEXT) AS numeric), 15 - LENGTH(CAST(FLOOR(ABS(CAST(CAST(synalog_v AS TEXT) AS numeric))) AS TEXT))) AS DECIMAL(38,0)) AS TEXT) END) FROM (SELECT O.amt AS synalog_v) AS synalog_n))::logicarecord5496496313841066852 ELSE NULL END)).arg) AS logica_value
+FROM
+  t_2_O AS O, UNNEST(ARRAY[0]) as x_8
+WHERE
+  (O.c = 'ann')), ';') AS s;

@@ -1,0 +1,4 @@
+SELECT
+  STRUCT(x_1 AS n).n AS n
+FROM
+  LATERAL (SELECT explode(ARRAY(10, 9)) AS x_1) AS pushkin ORDER BY n NULLS LAST;

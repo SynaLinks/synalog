@@ -359,6 +359,22 @@ fn reserved_predicates() -> Vec<String> {
 /// position, and an unknown call name is compiled as a SQL passthrough rather
 /// than treated as a relation. An embedder checking references must skip them,
 /// or `Substr(s, 1, 7)` reads as a reference to a missing table.
+/// A database value as a report shows it: a double-quoted literal, its line
+/// breaks, control, invisible and reordering characters escaped, at most 200
+/// characters of it. Reports of assertions show counterexample values so:
+/// text in the data reads as one value, never as part of the report.
+#[pyfunction]
+fn quote_value(text: &str) -> String {
+    crate::assertion::report::quote_value(text)
+}
+
+/// An assertion's statement as a report shows it: on one line, the
+/// characters `quote_value` escapes escaped.
+#[pyfunction]
+fn statement_text(text: &str) -> String {
+    crate::assertion::report::statement_text(text)
+}
+
 #[pyfunction]
 fn builtin_functions() -> Vec<String> {
     let mut names: Vec<String> = builtin_function_names().iter().cloned().collect();
@@ -388,6 +404,8 @@ fn _synalog(m: &Bound<'_, PyModule>) -> PyResult<()> {
     m.add_function(wrap_pyfunction!(assertions, m)?)?;
     m.add_function(wrap_pyfunction!(counterexamples, m)?)?;
     m.add_function(wrap_pyfunction!(plan, m)?)?;
+    m.add_function(wrap_pyfunction!(quote_value, m)?)?;
+    m.add_function(wrap_pyfunction!(statement_text, m)?)?;
     m.add_function(wrap_pyfunction!(reserved_predicates, m)?)?;
     m.add_function(wrap_pyfunction!(builtin_functions, m)?)?;
     m.add_function(wrap_pyfunction!(front_matter, m)?)?;

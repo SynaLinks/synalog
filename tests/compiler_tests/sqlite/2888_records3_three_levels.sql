@@ -1,0 +1,2 @@
+SELECT
+  JSON_EXTRACT(JSON_EXTRACT(JSON_OBJECT('b', JSON_OBJECT('c', 7)), "$.b"), "$.c") AS v;

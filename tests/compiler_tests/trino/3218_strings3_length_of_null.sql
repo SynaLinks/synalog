@@ -1,0 +1,2 @@
+SELECT
+  LENGTH(null) AS n;

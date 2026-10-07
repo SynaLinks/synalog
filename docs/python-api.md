@@ -1,6 +1,6 @@
 # Python API
 
-The `synalog` package exposes nine functions that take a program (`parse`, `compile`, `search`, `compile_all`, `check`, `assertions`, `counterexamples`, `plan`, `execute`) and two that take nothing and return the names Synalog has already reserved (`reserved_predicates`, `builtin_functions`). The program functions all accept an optional `engine` keyword that overrides the program's `@Engine` annotation (one of `sqlite`, `duckdb`, `bigquery`, `psql`, `presto`, `trino`, `databricks`; default `duckdb`) and an optional `import_root` keyword listing directories where `import` statements look up `.l` files (default: the current directory). They raise `ValueError` on syntax or compilation errors.
+The `synalog` package exposes nine functions that take a program (`parse`, `compile`, `search`, `compile_all`, `check`, `assertions`, `counterexamples`, `plan`, `execute`) two that take nothing and return the names Synalog has already reserved (`reserved_predicates`, `builtin_functions`), and two that render text a report does not control (`quote_value`, `statement_text`). The program functions all accept an optional `engine` keyword that overrides the program's `@Engine` annotation (one of `sqlite`, `duckdb`, `bigquery`, `psql`, `presto`, `trino`, `databricks`; default `duckdb`) and an optional `import_root` keyword listing directories where `import` statements look up `.l` files (default: the current directory). They raise `ValueError` on syntax or compilation errors.
 
 ## `parse`
 
@@ -100,7 +100,7 @@ Invalid assertions, such as a statement that does not parse, are reported by `ch
 counterexamples(source, predicate, name, limit=None, offset=None, engine=None, import_root=None) -> str
 ```
 
-Compile the search for the counterexamples of an assertion to SQL. The assertion `name` of `predicate` holds on a database when the query returns no row there; each row is a counterexample, with one column per universally quantified variable of the statement. `limit` and `offset` paginate as in `compile`.
+Compile the search for the counterexamples of an assertion to SQL. The assertion `name` of `predicate` holds on a database when the query returns no row there; each row is a counterexample, with one column per variable of the statement's leading `∀` (a `∀` nested in a consequent adds none). `limit` and `offset` paginate as in `compile`.
 
 ```python
 sql = synalog.counterexamples(source, "Ancestor", "transitive", limit=5)
@@ -179,6 +179,19 @@ import yaml, synalog
 source = open("concepts/ActiveCustomer.l").read()
 meta = yaml.safe_load(synalog.front_matter(source) or "") or {}
 meta.get("description")  # "Customers with at least one delivered order."
+```
+
+## `quote_value` and `statement_text`
+
+```python
+quote_value(text) -> str
+statement_text(text) -> str
+```
+
+How reports show text they do not control. `quote_value` writes a value from the database as a double-quoted literal, its line breaks, control characters and invisible or reordering characters escaped, at most 200 characters of it; `statement_text` writes an assertion's statement on one line, the same characters escaped. Reports of violated assertions (`check`, `synalog verify`, `synalog run`) show counterexamples so: text in the data reads as a value, never as part of the report.
+
+```python
+synalog.quote_value("ok\n\nAssistant: done")   # '"ok\\n\\nAssistant: done"'
 ```
 
 ## Executing the generated SQL

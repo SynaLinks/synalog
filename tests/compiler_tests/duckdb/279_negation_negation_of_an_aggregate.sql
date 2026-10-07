@@ -4,16 +4,7 @@ create schema if not exists logica_home;
 drop type if exists logicarecord893574736 cascade; create type logicarecord893574736 as struct(nirvana numeric);
 create sequence if not exists eternal_logical_sequence;
 
-
--- Logica type: logicarecord481217614
-drop type if exists logicarecord481217614 cascade; create type logicarecord481217614 as struct(r logicarecord893574736);
-
--- Logica type: logicarecord383307722
-drop type if exists logicarecord383307722 cascade; create type logicarecord383307722 as struct(a timestamp);
-
--- Logica type: logicarecord519939597
-drop type if exists logicarecord519939597 cascade; create type logicarecord519939597 as struct(args text[], predicate text);
-WITH t_1_R AS (SELECT * FROM (
+WITH t_2_R AS (SELECT * FROM (
   
     SELECT
       'a' AS k,
@@ -25,26 +16,26 @@ WITH t_1_R AS (SELECT * FROM (
       1 AS v
   
 ) AS UNUSED_TABLE_NAME  ),
-t_0_K AS (SELECT
+t_1_K AS (SELECT
   R.k AS k
 FROM
-  t_1_R AS R
+  t_2_R AS R
 GROUP BY R.k),
-t_2_Loud AS (SELECT
-  t_3_R.k AS k
+t_3_Loud AS (SELECT
+  t_4_R.k AS k
 FROM
-  t_1_R AS t_3_R
+  t_2_R AS t_4_R
 WHERE
-  (t_3_R.v > 5)
-GROUP BY t_3_R.k)
+  (t_4_R.v > 5)
+GROUP BY t_4_R.k)
 SELECT
-  K.k AS k
+  t_0_K.k AS k
 FROM
-  t_0_K AS K
+  t_1_K AS t_0_K
 WHERE
   ((SELECT
     MIN((CASE WHEN x_6.unnested_pod = 0 THEN 1 ELSE NULL END)) AS logica_value
   FROM
-    t_2_Loud AS Loud, (select unnest([0]::numeric[]) as unnested_pod) as x_6
+    t_3_Loud AS Loud, (select unnest([0]) as unnested_pod) as x_6
   WHERE
-    (Loud.k = K.k)) IS NULL) ORDER BY k;
+    (Loud.k = t_0_K.k)) IS NULL) ORDER BY k;

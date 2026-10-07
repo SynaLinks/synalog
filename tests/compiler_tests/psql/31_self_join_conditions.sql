@@ -4,15 +4,7 @@ create schema if not exists logica_home;
 -- Empty logica type: logicarecord893574736;
 DO $$ BEGIN if not exists (select 'I(am) :- I(think)' from pg_type where typname = 'logicarecord893574736') then create type logicarecord893574736 as (nirvana numeric); end if; END $$;
 
-
-DO $$
-BEGIN
--- Logica type: logicarecord481217614
-if not exists (select 'I(am) :- I(think)' from pg_type where typname = 'logicarecord481217614') then create type logicarecord481217614 as (r logicarecord893574736); end if;
--- Logica type: logicarecord86796764
-if not exists (select 'I(am) :- I(think)' from pg_type where typname = 'logicarecord86796764') then create type logicarecord86796764 as (s text); end if;
-END $$;
-WITH t_2_Employee AS (SELECT * FROM (
+WITH t_3_Employee AS (SELECT * FROM (
   
     SELECT
       1 AS id,
@@ -39,12 +31,12 @@ WITH t_2_Employee AS (SELECT * FROM (
   
 ) AS UNUSED_TABLE_NAME  ),
 t_0_ManagerPairs AS (SELECT
-  Employee.name AS employee,
-  t_1_Employee.name AS manager
+  t_1_Employee.name AS employee,
+  t_2_Employee.name AS manager
 FROM
-  t_2_Employee AS Employee, t_2_Employee AS t_1_Employee
+  t_3_Employee AS t_1_Employee, t_3_Employee AS t_2_Employee
 WHERE
-  (t_1_Employee.id = Employee.manager_id) ORDER BY employee)
+  (t_2_Employee.id = t_1_Employee.manager_id) ORDER BY employee)
 SELECT
   ManagerPairs.employee AS employee,
   ManagerPairs.manager AS manager

@@ -35,8 +35,11 @@ installs without it; a missing driver raises ``RunnerUnavailable`` with the
 from __future__ import annotations
 
 import csv
+import decimal
 import json
+import math
 import os
+import re
 import sqlite3
 import urllib.parse
 
@@ -228,13 +231,85 @@ class Session:
         self.close()
 
 
+def _refused(name: str):
+    def refuse(*_args):
+        raise sqlite3.ProgrammingError(f"{name} is not available")
+    return refuse
+
+
+def number_text(value):
+    """The text of a number, the same on every engine (`ToString`): a whole
+    number below 10^18 with all its digits; any other below 10^38 as its
+    shortest text (the one that reads back as the same double) shows it,
+    rounded half away from zero to 15 significant digits but at most 15
+    decimals, in plain decimal, without trailing zeros; from 10^38 as SQLite
+    writes it. The compiled SQL of the other engines follows the same rule."""
+    if value is None:
+        return None
+    if isinstance(value, int):
+        return str(value)
+    a = abs(value)
+    if math.isnan(value) or math.isinf(value) or a >= 1e38:
+        text = "%.15g" % value
+        mantissa, _, exponent = text.partition("e")
+        if exponent and "." not in mantissa:
+            text = mantissa + ".0e" + exponent
+        return text
+    if a < 5e-16:
+        return "0"
+    if value == int(value) and a < 1e18:
+        return str(int(value))
+    exact = decimal.Decimal(repr(value))
+    places = 15 if a < 1 else 15 - len(str(int(abs(exact))))
+    rounded = exact.quantize(decimal.Decimal(1).scaleb(-places), rounding=decimal.ROUND_HALF_UP)
+    text = format(rounded, "f")
+    return text.rstrip("0").rstrip(".") if "." in text else text
+
+
 def sqlite_semantics(conn: sqlite3.Connection) -> None:
     """Make SQLite's string functions behave as on the other engines: UPPER and
-    LOWER convert every letter, not only ASCII ones (`Upper("café")`), and
-    LIKE tells upper from lower case."""
+    LOWER convert every letter, not only ASCII ones (`Upper("café")`), LIKE
+    tells upper from lower case, and Split of a null is null."""
     conn.create_function("UPPER", 1, lambda s: s.upper() if isinstance(s, str) else s, deterministic=True)
     conn.create_function("LOWER", 1, lambda s: s.lower() if isinstance(s, str) else s, deterministic=True)
     conn.execute("PRAGMA case_sensitive_like = ON")
+    # The text of a number: SQLite has no exact decimals to round it with.
+    conn.create_function("SYNALOG_NUMBER_TEXT", 1, number_text, deterministic=True)
+    # Logica's Split fails on a null; a null splits to null.
+    conn.create_function(
+        "Split", 2,
+        lambda text, sep: None if text is None or sep is None else json.dumps(text.split(sep)),
+        deterministic=True,
+    )
+    # SQLite has no regular expressions of its own: RegexpReplace replaces
+    # every match and RegexpExtract gives the first, null without one, as
+    # on the other engines.
+    conn.create_function(
+        "REGEXP_REPLACE", 3,
+        lambda text, pattern, by: None if None in (text, pattern, by) else re.sub(pattern, by, text),
+        deterministic=True,
+    )
+    conn.create_function(
+        "REGEXP_EXTRACT", 2,
+        lambda text, pattern: None if None in (text, pattern) else (lambda m: m.group(0) if m else None)(re.search(pattern, text)),
+        deterministic=True,
+    )
+    # Logica's math functions fail on a null; the math of a null is null.
+    for name, arity, function in [
+        ("SQRT", 1, lambda x: float(x) ** 0.5), ("POW", 2, lambda x, p: float(x) ** p),
+        ("Exp", 1, math.exp), ("Log", 1, math.log), ("Sin", 1, math.sin), ("Cos", 1, math.cos),
+        ("Asin", 1, math.asin), ("Acos", 1, math.acos), ("Floor", 1, math.floor),
+    ]:
+        conn.create_function(
+            name, arity,
+            lambda *args, f=function: None if None in args else f(*args),
+            deterministic=True,
+        )
+    # A program reaches no file, process or service: Logica's functions that
+    # do are not on the connection.
+    for name, arity in [("ReadFile", 1), ("WriteFile", 2), ("PrintToConsole", 1),
+                        ("Intelligence", 1), ("RunClingo", 1), ("RunClingoFile", 1)]:
+        conn.create_function(name, arity, _refused(name))
 
 
 class SqliteSession(Session):
@@ -319,6 +394,17 @@ class DuckDbSession(Session):
         self.conn.close()
 
 
+
+# `ARRAY_CONCAT_AGG` for `++=`, created once per database. Two sessions
+# replacing it at once collide ("tuple concurrently updated"), so it is created
+# only when missing, and one created meanwhile by another session is as good.
+PSQL_ARRAY_CONCAT_AGG = """DO $$ BEGIN
+  IF NOT EXISTS (SELECT 1 FROM pg_proc WHERE proname = 'array_concat_agg') THEN
+    CREATE AGGREGATE ARRAY_CONCAT_AGG(anycompatiblearray) (SFUNC = array_cat, STYPE = anycompatiblearray);
+  END IF;
+EXCEPTION WHEN duplicate_function OR unique_violation THEN NULL;
+END $$"""
+
 class PsqlSession(Session):
     engine = "psql"
 
@@ -336,10 +422,7 @@ class PsqlSession(Session):
             ) from None
         self.conn = psycopg.connect(dsn, autocommit=True)
         self.cur = self.conn.cursor()
-        self.cur.execute(
-            "CREATE OR REPLACE AGGREGATE ARRAY_CONCAT_AGG(anycompatiblearray)"
-            " (SFUNC = array_cat, STYPE = anycompatiblearray)"
-        )
+        self.cur.execute(PSQL_ARRAY_CONCAT_AGG)
 
     def run(self, script: str) -> Result:
         # PostgreSQL runs a whole script in one call; keep the last result set.
@@ -591,23 +674,43 @@ def run_plan(steps: list[dict], s: Session) -> Result:
     engine's error.
     """
     result: Result = ([], [])
-    for step in steps:
-        if step["kind"] in ("setup", "sql"):
-            if _has_code(step["sql"]):
-                result = s.run(step["sql"])
-        else:
-            check = True
-            for _ in range(step["repetitions"]):
-                if check:
-                    try:
-                        changed = s.run(step["changed"])[1]
-                    except Exception:  # noqa: BLE001 - see the docstring
-                        if step["repetitions"] > UNROLLED_REPETITIONS:
-                            raise
-                        check = False
-                    else:
-                        if changed and int(changed[0][0] or 0) == 0:
-                            break
-                for statement in step["body"]:
-                    s.run(statement)
+    try:
+        for step in steps:
+            if step["kind"] in ("setup", "sql"):
+                if _has_code(step["sql"]):
+                    result = s.run(step["sql"])
+            else:
+                check = True
+                for _ in range(step["repetitions"]):
+                    if check:
+                        try:
+                            changed = s.run(step["changed"])[1]
+                        except Exception:  # noqa: BLE001 - see the docstring
+                            if step["repetitions"] > UNROLLED_REPETITIONS:
+                                raise
+                            check = False
+                        else:
+                            if changed and int(changed[0][0] or 0) == 0:
+                                break
+                    for statement in step["body"]:
+                        s.run(statement)
+    finally:
+        _drop_working_tables(steps, s)
     return result
+
+
+# The tables a plan computes into synalog's own schemas: the steps of a
+# recursion, grounded predicates. A @Ground into a table the program names
+# elsewhere is the user's, and is kept.
+_WORKING_TABLE = re.compile(r"CREATE TABLE ((?:logica_home|logica_test)\.\w+)", re.IGNORECASE)
+
+
+def _drop_working_tables(steps: list[dict], s: Session) -> None:
+    """Drop the tables the run created in synalog's schemas, so a run leaves
+    nothing behind (on Presto's memory connector they filled the heap)."""
+    texts = [step.get("sql", "") for step in steps] + [b for step in steps for b in step.get("body", [])]
+    for table in dict.fromkeys(t for text in texts for t in _WORKING_TABLE.findall(text)):
+        try:
+            s.run(f"DROP TABLE IF EXISTS {table}")
+        except Exception:  # noqa: BLE001 - best effort: the rows are already read
+            pass

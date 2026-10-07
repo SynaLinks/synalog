@@ -6,6 +6,7 @@ DuckDB and SQLite with the facts it defines itself, executed by synalog
     # Expect: valid                        the verifier finds no error
     # Expect: error <text>                 an error (parse or verifier) contains <text>
     # Expect: warning <text>               a warning contains <text>
+    # Expect: quiet                        the verifier gives no warning
     # Expect: rows <Pred> = <rows>         running <Pred> returns exactly <rows> (a Python literal)
     # Expect: holds <Pred>.<name>          the assertion has no counterexample, and <Pred> has rows
     # Expect: violated <Pred>.<name> <n>   the assertion has exactly <n> counterexamples
@@ -128,6 +129,8 @@ def test_program(path: Path):
             assert any(rest in e for e in errors), f"no error containing {rest!r} in {errors}"
         elif kind == "warning":
             assert any(rest in w for w in warnings), f"no warning containing {rest!r} in {warnings}"
+        elif kind == "quiet":
+            assert warnings == [], f"expected no warning, got {warnings}"
         elif kind == "rows":
             predicate, literal = (part.strip() for part in rest.split("=", 1))
             assert errors == [], f"the program does not verify: {errors}"

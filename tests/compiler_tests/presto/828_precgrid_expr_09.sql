@@ -1,0 +1,2 @@
+SELECT
+  (CAST(((10) - (4)) AS DOUBLE) / NULLIF(3, 0)) AS v;

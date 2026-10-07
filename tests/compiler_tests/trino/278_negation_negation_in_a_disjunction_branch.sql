@@ -13,7 +13,7 @@ t_0_Out_MultBodyAggAux AS (SELECT * FROM (
     SELECT
       x_5 AS x
     FROM
-      UNNEST(ARRAY[1, 2, 3]) as pushkin(x_5)
+      UNNEST(TRANSFORM(ARRAY[1, 2, 3], synalog_e -> ROW(synalog_e))) as pushkin(x_5)
     WHERE
       ((SELECT
         MIN(1) AS logica_value
@@ -26,9 +26,9 @@ t_0_Out_MultBodyAggAux AS (SELECT * FROM (
     SELECT
       3 AS x
     FROM
-      UNNEST(ARRAY[1, 2, 3]) as pushkin(x_11)
+      UNNEST(TRANSFORM(ARRAY[1, 2, 3], synalog_e -> ROW(synalog_e))) as pushkin(x_10)
     WHERE
-      (x_11 = 3)
+      (x_10 = 3)
   
 ) AS UNUSED_TABLE_NAME  )
 SELECT

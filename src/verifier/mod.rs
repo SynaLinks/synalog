@@ -29,6 +29,7 @@ mod front_matter;
 mod functors;
 mod directives;
 mod assertions;
+mod contradiction;
 
 pub use vars::VarCollector;
 pub use safety::{SafetyError, check_safety};
@@ -179,10 +180,8 @@ pub fn validate(parsed: &Json) -> CheckResult {
         .collect();
 
     // Check 1: Variable safety for each rule
-    for rule in &normal_rules {
-        for err in safety::check_rule_safety(rule) {
-            result.errors.push(CheckError::Safety(err));
-        }
+    for err in safety::check_safety(&normal_rules) {
+        result.errors.push(CheckError::Safety(err));
     }
 
     // Check 2: Stratification (no negative cycles)
@@ -214,6 +213,10 @@ pub fn validate(parsed: &Json) -> CheckResult {
     for err in sqlexpr::check_sqlexpr(&normal_rules) {
         result.errors.push(CheckError::SqlExpr(err));
     }
+    // ... and SQL text as a table name.
+    for err in undefined::check_table_names(&all_rules) {
+        result.errors.push(CheckError::SqlExpr(err));
+    }
 
     // Check 8: Positional arguments (Synalog requires named arguments)
     for err in positional::check_positional(&normal_rules) {
@@ -221,7 +224,8 @@ pub fn validate(parsed: &Json) -> CheckResult {
     }
 
     // Check 9: Undefined predicate references (typo detection with suggestions)
-    for err in undefined::check_undefined(&normal_rules) {
+    // All rules: a functor application (`D := F(...)`, an @Make) defines D.
+    for err in undefined::check_undefined(&all_rules) {
         result.errors.push(CheckError::Undefined(err));
     }
 
@@ -249,6 +253,9 @@ pub fn validate(parsed: &Json) -> CheckResult {
     for err in directives::check_directives(&all_rules) {
         result.errors.push(CheckError::Directive(err));
     }
+
+    // Check 15: Rules whose conditions contradict each other give no row.
+    result.warnings.extend(contradiction::check_contradictions(&normal_rules));
 
     // Check 15: Assertions (@Assert statements)
     let (assertions, spec_errors) = assertions::check_assertions(&all_rules);

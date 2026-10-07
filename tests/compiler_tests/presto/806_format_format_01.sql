@@ -1,0 +1,2 @@
+SELECT
+  'n' || '=' || CAST(CAST(3 AS BIGINT) AS VARCHAR) AS v;

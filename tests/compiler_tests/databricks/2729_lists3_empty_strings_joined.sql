@@ -1,0 +1,10 @@
+WITH t_1_S AS (SELECT * FROM VALUES
+  (1, ARRAY("a", "b")),
+  (2, ARRAY()),
+  (3, CAST(null AS ARRAY<STRING>))
+AS UNUSED_TABLE_NAME(k, l))
+SELECT
+  t_0_S.k AS k,
+  ARRAY_JOIN(t_0_S.l, "+") AS s
+FROM
+  t_1_S AS t_0_S ORDER BY k NULLS LAST;

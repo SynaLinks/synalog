@@ -1,0 +1,10 @@
+WITH t_0_V AS (SELECT * FROM VALUES
+  (null),
+  (1)
+AS UNUSED_TABLE_NAME(x))
+SELECT
+  SUM(1) AS n
+FROM
+  t_0_V AS V
+WHERE
+  (V.x IS null);

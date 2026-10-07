@@ -1,0 +1,2 @@
+SELECT
+  (((('[') || ('''; COMMIT; DROP TABLE t; --'))) || (']')) AS s;

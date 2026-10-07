@@ -338,7 +338,7 @@ impl crate::compiler::expr_translate::SubqueryTranslator for MockTranslator {
     fn translate_table(&self, predicate: &str, _vocab: Option<&HashMap<String, String>>) -> crate::compiler::CompileResult<String> {
         Ok(predicate.to_string())
     }
-    fn translate_rule(&self, _rule: &crate::parser::Json, _vocab: &HashMap<String, String>, _is_combine: bool) -> crate::compiler::CompileResult<String> {
+    fn translate_rule(&self, _rule: &crate::parser::Json, _vocab: &HashMap<String, String>, _types: &HashMap<String, crate::compiler::type_inference::Type>, _is_combine: bool) -> crate::compiler::CompileResult<String> {
         Ok("(SELECT 1)".to_string())
     }
 }

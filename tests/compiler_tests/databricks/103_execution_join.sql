@@ -1,36 +1,16 @@
-WITH t_0_Person AS (SELECT * FROM (
-  
-    SELECT
-      "ann" AS name,
-      1 AS city_id
-   UNION ALL
-  
-    SELECT
-      "bob" AS name,
-      2 AS city_id
-  
-) AS UNUSED_TABLE_NAME  ),
-t_1_City AS (SELECT * FROM (
-  
-    SELECT
-      1 AS city_id,
-      "paris" AS city
-   UNION ALL
-  
-    SELECT
-      2 AS city_id,
-      "rome" AS city
-   UNION ALL
-  
-    SELECT
-      3 AS city_id,
-      "oslo" AS city
-  
-) AS UNUSED_TABLE_NAME  )
+WITH t_1_Person AS (SELECT * FROM VALUES
+  ("ann", 1),
+  ("bob", 2)
+AS UNUSED_TABLE_NAME(name, city_id)),
+t_2_City AS (SELECT * FROM VALUES
+  (1, "paris"),
+  (2, "rome"),
+  (3, "oslo")
+AS UNUSED_TABLE_NAME(city_id, city))
 SELECT
   Person.name AS name,
-  City.city AS city
+  t_0_City.city AS city
 FROM
-  t_0_Person AS Person, t_1_City AS City
+  t_1_Person AS Person, t_2_City AS t_0_City
 WHERE
-  (City.city_id = Person.city_id) ORDER BY name;
+  (t_0_City.city_id = Person.city_id) ORDER BY name NULLS LAST;

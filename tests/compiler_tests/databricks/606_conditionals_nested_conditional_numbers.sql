@@ -1,0 +1,5 @@
+SELECT
+  x_3 AS x,
+  CASE WHEN (x_3 < 0) THEN 0 WHEN (x_3 > 10) THEN 10 ELSE x_3 END AS c
+FROM
+  LATERAL (SELECT explode(ARRAY(-5, 5, 15)) AS x_3) AS pushkin ORDER BY x NULLS LAST;

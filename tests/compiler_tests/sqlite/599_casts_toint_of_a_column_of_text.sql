@@ -1,0 +1,4 @@
+SELECT
+  SUM(CAST(x_2.value AS INTEGER)) AS t
+FROM
+  JSON_EACH(JSON_ARRAY('5', '10')) as x_2;

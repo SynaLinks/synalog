@@ -11,12 +11,12 @@ WITH t_2_Rows AS (SELECT * FROM (
 t_0_Parsed AS (SELECT
   t_1_Rows.line AS line,
   JSON_ARRAY_LENGTH(SPLIT(t_1_Rows.line, ',')) AS n,
-  JSON_EXTRACT(SPLIT(t_1_Rows.line, ','), '$[' || 0 || ']') AS first
+  (CASE WHEN 0 < 0 THEN NULL ELSE JSON_EXTRACT(SPLIT(t_1_Rows.line, ','), '$[' || 0 || ']') END) AS first
 FROM
-  t_2_Rows AS t_1_Rows ORDER BY line)
+  t_2_Rows AS t_1_Rows ORDER BY line NULLS LAST)
 SELECT
   Parsed.line AS line,
   Parsed.n AS n,
   Parsed.first AS first
 FROM
-  t_0_Parsed AS Parsed ORDER BY line;
+  t_0_Parsed AS Parsed ORDER BY line NULLS LAST;

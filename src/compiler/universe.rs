@@ -20,7 +20,6 @@
 //     Fields custom_udfs/custom_udf_definitions exist but are never populated.
 //   - TVF support: TvfSignature(), @CompileAsTvf handling.
 //   - Annotation validation: CheckAnnotatedObjects() — verify annotations target existing predicates.
-//   - NeedsClingo() — check DuckDB @Engine clingo flag.
 // Implemented: PerformIterationClosure, SelectAsRecord, iterations initialization, type_inference module.
 
 use std::collections::{HashMap, HashSet};
@@ -50,7 +49,6 @@ pub struct PredicateInfo {
 pub struct GroundInfo {
     pub table_name: String,
     pub overwrite: bool,
-    pub copy_to_file: Option<String>,
 }
 
 /// Pagination options for query compilation.
@@ -114,14 +112,35 @@ pub fn recursion_error_message() -> String {
         .to_string()
 }
 
-/// Enable direct usage of SQL strings as table names.
-/// If table is `` `(...)` ``, strip the backtick-paren wrapper.
-pub fn unquote_parenthesised(table: &str) -> String {
-    if table.len() > 4 && table.starts_with("`(") && table.ends_with(")`") {
-        table[2..table.len() - 2].to_string()
-    } else {
-        table.to_string()
+/// The SQL naming a table the program reads but does not define: a dotted
+/// path of names (`sales.Orders`), or one in backticks whose parts may hold
+/// '-' (`` `my-project.sales.orders` ``), each part then quoted for the
+/// engine. Anything else is refused: a table name never carries SQL.
+pub fn table_reference(table: &str, dialect: &dyn dialects::Dialect) -> CompileResult<String> {
+    if !is_table_name(table) {
+        return Err(CompileError::new(
+            format!("'{}' is not a table name: write names of letters, digits and '_', joined by '.'", table),
+            table.to_string(),
+        ));
     }
+    match table.strip_prefix('`').and_then(|t| t.strip_suffix('`')) {
+        Some(inner) if dialect.name() == "bigquery" => Ok(format!("`{}`", inner)),
+        Some(inner) => Ok(inner.split('.').map(|p| dialect.quote_identifier(p)).collect::<Vec<_>>().join(".")),
+        None => Ok(table.to_string()),
+    }
+}
+
+/// Whether `table` names a table, as `table_reference` takes it.
+pub fn is_table_name(table: &str) -> bool {
+    if let Some(inner) = table.strip_prefix('`').and_then(|t| t.strip_suffix('`')) {
+        return inner.split('.').all(|p| {
+            !p.is_empty() && p.chars().all(|c| c.is_ascii_alphanumeric() || c == '_' || c == '-')
+        });
+    }
+    table.split('.').all(|part| {
+        part.chars().next().is_some_and(|c| c.is_ascii_alphabetic() || c == '_')
+            && part.chars().all(|c| c.is_ascii_alphanumeric() || c == '_')
+    })
 }
 
 // ---------------------------------------------------------------------------
@@ -419,6 +438,19 @@ fn register_record_type(ty: &Type, out: &mut IndexMap<String, Type>) {
         out.entry(dialects::record_type_name(ty))
             .or_insert_with(|| ty.clone());
     }
+    // A list of records holds records of a type too.
+    if let Type::List(inner) = ty {
+        register_record_type(inner, out);
+    }
+}
+
+/// The record type a field's type holds, as a record or a list's element.
+fn held_record(t: &Type) -> Option<&Type> {
+    match t {
+        Type::Record { .. } => Some(t),
+        Type::List(inner) => held_record(inner),
+        _ => None,
+    }
 }
 
 /// Emit the `CREATE TYPE` for `name`, recursing into nested record types first
@@ -438,29 +470,14 @@ fn emit_record_type(
         return;
     };
     for t in fields.values() {
-        if matches!(t, Type::Record { .. }) {
-            emit_record_type(&dialects::record_type_name(t), types, dialect, emitted, out);
+        if let Some(r) = held_record(t) {
+            emit_record_type(&dialects::record_type_name(r), types, dialect, emitted, out);
         }
     }
-    // Canonical (sorted) field order, matching the value order in record_literal.
-    let mut items: Vec<(&String, &Type)> = fields.iter().collect();
-    items.sort_by(|a, b| a.0.cmp(b.0));
-    let cols: Vec<String> = items
-        .iter()
-        .map(|(k, t)| {
-            let col_type = match t {
-                Type::Record { .. } => dialects::record_type_name(t),
-                other => dialect.scalar_sql_type(other),
-            };
-            // Quote the field identifier so reserved words (e.g. `left`) are
-            // legal; lowercase names fold identically to unquoted field access.
-            format!("\"{}\" {}", k, col_type)
-        })
-        .collect();
     out.push_str(&format!(
         "DO $$ BEGIN if not exists (select 1 from pg_type where typname = '{name}') \
          then create type {name} as ({}); end if; END $$;\n",
-        cols.join(", ")
+        dialects::psql_record_columns(&types[name])
     ));
 }
 
@@ -473,7 +490,7 @@ fn emit_record_type(
 /// This is the full-featured version matching Python's `LogicaProgram`,
 /// including execution state, UDFs, grounding, exports, and flag substitution.
 pub struct LogicaProgram {
-    /// Raw rules before functor expansion (for Clingo).
+    /// Raw rules before functor expansion.
     pub raw_rules: Vec<Json>,
     /// Pre-parsed rules (after recursion unfolding, before Make).
     pub preparsed_rules: Vec<Json>,
@@ -484,8 +501,6 @@ pub struct LogicaProgram {
     /// Predicates defined by the dialect's library program (subset of
     /// `defined_predicates`), as opposed to the user's own rules.
     pub library_predicates: HashSet<String>,
-    /// Dollar parameters found in the program.
-    pub dollar_params: Vec<String>,
     /// Table aliases for undefined predicates.
     pub table_aliases: HashMap<String, String>,
     /// Parsed annotations.
@@ -502,6 +517,10 @@ pub struct LogicaProgram {
     pub custom_udf_definitions: IndexMap<String, String>,
     /// Execution state (set during `formatted_predicate_sql`).
     pub execution: RefCell<Option<Logica>>,
+    /// The column names of the program, lowercase, which table aliases avoid.
+    pub column_names: HashSet<String>,
+    /// The functions the program defines, which shadow built-ins of their name.
+    pub defined_functions: HashSet<String>,
     /// Shared names allocator for the current compilation pass.
     /// Set at start of `formatted_predicate_sql`, shared across all sub-compilations.
     pub allocator: RefCell<NamesAllocator>,
@@ -517,6 +536,8 @@ pub struct LogicaProgram {
     pub predicate_types: HashMap<String, HashMap<String, Type>>,
     /// Required type definitions from type inference.
     pub required_type_definitions: HashMap<String, String>,
+    /// The record types compiled queries build (PostgreSQL declares them).
+    pub built_record_types: RefCell<IndexMap<String, Type>>,
 }
 
 impl LogicaProgram {
@@ -578,29 +599,21 @@ impl LogicaProgram {
         let lib_program = dialect.library_program();
         let mut all_rules = extended_rules;
         let mut library_predicates = HashSet::new();
-        if !lib_program.is_empty() {
-            if let Ok(lib_parsed) = crate::parser::parse_file(lib_program, None, &[]) {
-                for r in lib_parsed.as_object()["rule"].as_array() {
-                    library_predicates.insert(
-                        r.as_object()["head"].as_object()["predicate_name"]
-                            .as_str()
-                            .to_string(),
-                    );
-                    all_rules.push(r.clone());
-                }
-            }
+        for r in library_rules(dialect.name(), lib_program).iter() {
+            library_predicates.insert(
+                r.as_object()["head"].as_object()["predicate_name"]
+                    .as_str()
+                    .to_string(),
+            );
+            all_rules.push(r.clone());
         }
 
         // Build (predicate_name, rule) pairs
         let mut rules = Vec::with_capacity(all_rules.len());
-        for rule in &all_rules {
-            let head = &rule.as_object()["head"];
-            let name = head.as_object()["predicate_name"].as_str().to_string();
-            rules.push((name, rule.clone()));
+        for rule in all_rules {
+            let name = rule.as_object()["head"].as_object()["predicate_name"].as_str().to_string();
+            rules.push((name, rule));
         }
-
-        // Extract dollar params
-        let dollar_params = Self::extract_dollar_params_from_rules(&all_rules);
 
         // Extract annotations (recompute after functors added rules)
         let mut annotations = Annotations::extract(&rules)?;
@@ -610,20 +623,21 @@ impl LogicaProgram {
         if let Some(e) = engine_override {
             annotations.engine = e.to_string();
         }
+        // Presto and Trino inline a CTE everywhere it is read: a predicate
+        // read by several rules, each read by several more, is copied until
+        // the query passes their limit of stages (100 on Presto, 150 on
+        // Trino), as edges joined through shared nodes do. A derived predicate
+        // read more than once is materialized, as @Ground does.
+        if matches!(annotations.engine.as_str(), "presto" | "trino") {
+            for name in reused_derived_predicates(&rules) {
+                let entry = annotations.annotations.entry(name.clone()).or_default();
+                entry.entry("ground".to_string()).or_insert(Json::Str(name));
+            }
+        }
 
         // Build flag values
         let mut flag_values = annotations.flag_values.clone();
         flag_values.extend(user_flags.clone());
-
-        // Check dollar params are defined
-        for param in &dollar_params {
-            if !flag_values.contains_key(param) {
-                return Err(CompileError::new(
-                    format!("Parameter ${{{0}}} is undefined.", param),
-                    format!("Undefined parameter: {}", param),
-                ));
-            }
-        }
 
         // Build defined predicates set
         let defined_predicates: HashSet<String> = rules
@@ -649,13 +663,41 @@ impl LogicaProgram {
             .map(|(pred, sg)| (pred.clone(), sg.clone()))
             .collect();
 
+        let column_names: HashSet<String> = rules
+            .iter()
+            .filter_map(|(_, rule)| rule.as_object()["head"].as_object().get("record"))
+            .filter_map(|record| record.as_object().get("field_value"))
+            .flat_map(|field_values| field_values.as_array().iter())
+            .filter_map(|fv| {
+                let field = &fv.as_object()["field"];
+                field.is_string().then(|| field.as_str().to_ascii_lowercase())
+            })
+            .collect();
+        // Functions: predicates every rule of which defines a value.
+        let mut value_rules: HashMap<String, bool> = HashMap::new();
+        for (name, rule) in &rules {
+            let has_value = rule.as_object()["head"].as_object().get("record").is_some_and(|r| {
+                r.as_object().get("field_value").is_some_and(|fvs| {
+                    fvs.as_array().iter().any(|fv| {
+                        let f = &fv.as_object()["field"];
+                        f.is_string() && f.as_str() == "logica_value"
+                    })
+                })
+            });
+            value_rules.entry(name.clone()).and_modify(|all| *all &= has_value).or_insert(has_value);
+        }
+        let defined_functions: HashSet<String> =
+            value_rules.into_iter().filter(|(_, f)| *f).map(|(n, _)| n).collect();
+        let mut allocator = NamesAllocator::new();
+        allocator.reserved_aliases = column_names.clone();
+        allocator.defined_functions = defined_functions.clone();
+
         Ok(LogicaProgram {
             raw_rules: raw_rule_list,
             preparsed_rules: unfolded_rules.clone(),
             rules,
             defined_predicates,
             library_predicates,
-            dollar_params,
             table_aliases,
             annotations,
             flag_values,
@@ -664,13 +706,16 @@ impl LogicaProgram {
             custom_aggregation_semigroup,
             custom_udf_definitions: IndexMap::new(),
             execution: RefCell::new(None),
-            allocator: RefCell::new(NamesAllocator::new()),
+            allocator: RefCell::new(allocator),
+            column_names,
+            defined_functions,
             user_flags,
             functors_args_of,
             typing_preamble,
             predicate_signatures,
             predicate_types,
             required_type_definitions: HashMap::new(),
+            built_record_types: RefCell::new(IndexMap::new()),
         })
     }
 
@@ -713,15 +758,9 @@ impl LogicaProgram {
         HashMap<String, Json>,
         HashMap<String, HashMap<String, Type>>,
     )> {
-        // Build a parsed program structure for the type graph builder
-        let rule_array: Vec<Json> = rules.iter().map(|(_, r)| r.clone()).collect();
-        let parsed_program = crate::json_obj! {
-            "rule" => Json::Array(rule_array)
-        };
-
         // Build type graphs for all predicates
         let mut builder = TypesGraphBuilder::new();
-        let graphs = builder.run(&parsed_program);
+        let graphs = builder.run_rules(rules.iter().map(|(_, r)| r));
 
         // Run type inference
         let mut inference = TypeInference::new(graphs);
@@ -735,11 +774,12 @@ impl LogicaProgram {
         // Collect the inferred column types per predicate. These feed downstream
         // type-dependent SQL (e.g. PostgreSQL CASTs on combine subqueries).
         let mut predicate_types: HashMap<String, HashMap<String, Type>> = HashMap::new();
+        let all_types = inference.all_predicate_types();
         for (name, _) in rules {
             if name.starts_with('@') {
                 continue;
             }
-            let fields = inference.get_predicate_types(name);
+            let fields = all_types.get(name).cloned().unwrap_or_default();
             if !fields.is_empty() {
                 predicate_types.entry(name.clone()).or_default().extend(fields);
             }
@@ -783,7 +823,7 @@ impl LogicaProgram {
                 .and_then(|f| jget(f, "value"))
                 .and_then(|v| jget(v, "expression"));
             let ty = self.aggregation_result_type(agg_name, operand, body);
-            return Some(type_to_psql(&ty));
+            return type_to_psql(&ty);
         }
         None
     }
@@ -795,7 +835,7 @@ impl LogicaProgram {
         operand: Option<&Json>,
         body: Option<&Json>,
     ) -> Type {
-        let operand_ty = || operand.map(|o| self.operand_type(o, body)).unwrap_or(Type::Number);
+        let operand_ty = || operand.map(|o| self.operand_type(o, body)).unwrap_or(Type::Any);
         match agg_name {
             // sum / average / count(+= 1): always numeric.
             "Agg+" | "Avg" => Type::Number,
@@ -850,53 +890,7 @@ impl LogicaProgram {
                 }
             }
         }
-        Type::Number
-    }
-
-    /// Extract `${param}` dollar parameters from rule JSON trees.
-    fn extract_dollar_params_from_rules(rules: &[Json]) -> Vec<String> {
-        let mut params = HashSet::new();
-        for rule in rules {
-            Self::collect_dollar_params(rule, &mut params);
-        }
-        params.into_iter().collect()
-    }
-
-    fn collect_dollar_params(node: &Json, params: &mut HashSet<String>) {
-        let mut stack: Vec<&Json> = vec![node];
-        while let Some(current) = stack.pop() {
-            match current {
-                Json::Str(s) => {
-                    Self::extract_dollar_params_from_string(s, params);
-                }
-                Json::Object(o) => {
-                    for (_, v) in o.iter() {
-                        stack.push(v);
-                    }
-                }
-                Json::Array(a) => {
-                    for v in a {
-                        stack.push(v);
-                    }
-                }
-                _ => {}
-            }
-        }
-    }
-
-    fn extract_dollar_params_from_string(s: &str, params: &mut HashSet<String>) {
-        use regex::Regex;
-        use std::sync::LazyLock;
-        static RE: LazyLock<Regex> =
-            LazyLock::new(|| Regex::new(r"\$\{(.*?)\}").unwrap());
-
-        for cap in RE.captures_iter(s) {
-            let p = &cap[1];
-            // Exclude built-in date params
-            if !p.starts_with("YYYY") && p != "MM" && p != "DD" {
-                params.insert(p.to_string());
-            }
-        }
+        Type::Any
     }
 
     /// Get the engine name.
@@ -927,7 +921,10 @@ impl LogicaProgram {
         let udfs: HashMap<String, String> = self.custom_udfs.iter()
             .map(|(k, v)| (k.clone(), v.clone()))
             .collect();
-        NamesAllocator::with_custom_udfs(udfs)
+        let mut allocator = NamesAllocator::with_custom_udfs(udfs);
+        allocator.reserved_aliases = self.column_names.clone();
+        allocator.defined_functions = self.defined_functions.clone();
+        allocator
     }
 
     /// Yield rules for a given predicate.
@@ -1001,7 +998,7 @@ impl LogicaProgram {
             if allocator_is_none {
                 *self.allocator.borrow_mut() = self.new_names_allocator();
             }
-            let sql = self.single_rule_sql(&rules[0], None, false, true)?;
+            let sql = self.single_rule_sql(&rules[0], None, None, false, true)?;
             assert!(
                 !sql.starts_with("/* nil */"),
                 "Single rule is nil for predicate '{}'",
@@ -1014,6 +1011,7 @@ impl LogicaProgram {
 
         // Multiple rules: UNION ALL
         let mut rules_sql = Vec::new();
+        let mut branches = Vec::new();
         for rule in &rules {
             if rule.as_object().contains_key("distinct_denoted") {
                 return Err(CompileError::new(
@@ -1033,9 +1031,33 @@ impl LogicaProgram {
             if allocator_is_none {
                 *self.allocator.borrow_mut() = self.new_names_allocator();
             }
-            let single_sql = self.single_rule_sql(rule, None, false, false)?;
+            let single_sql = self.single_rule_sql(rule, None, None, false, false)?;
             if !single_sql.starts_with("/* nil */") {
                 rules_sql.push(format!("\n{}\n", indent2(&single_sql)));
+                branches.push(single_sql);
+            }
+        }
+
+        // Spark mis-plans a correlated subquery over a union of constant
+        // SELECTs ("key not found" during optimization, Spark 3.5 and 4.0):
+        // on Databricks, facts are the rows of one VALUES.
+        if self.annotations.engine() == "databricks" && branches.len() > 1 {
+            if let Some(rows) = branches.iter().map(|b| constant_select(b)).collect::<Option<Vec<_>>>() {
+                let columns: Vec<&String> = rows[0].iter().map(|(_, c)| c).collect();
+                if rows.iter().all(|r| r.iter().map(|(_, c)| c).eq(columns.iter().copied())) {
+                    let values: Vec<String> = rows
+                        .iter()
+                        .map(|r| format!("({})", r.iter().map(|(e, _)| e.as_str()).collect::<Vec<_>>().join(", ")))
+                        .collect();
+                    let cols: Vec<&str> = columns.iter().map(|c| c.as_str()).collect();
+                    return Ok(format!(
+                        "SELECT * FROM VALUES\n  {}\nAS UNUSED_TABLE_NAME({}){}{}",
+                        values.join(",\n  "),
+                        cols.join(", "),
+                        self.annotations.order_by_clause(name),
+                        self.annotations.limit_clause(name),
+                    ));
+                }
             }
         }
 
@@ -1081,6 +1103,7 @@ impl LogicaProgram {
         &self,
         rule: &Json,
         external_vocabulary: Option<&HashMap<String, String>>,
+        external_types: Option<&HashMap<String, Type>>,
         is_combine: bool,
         must_not_be_nil: bool,
     ) -> CompileResult<String> {
@@ -1102,6 +1125,7 @@ impl LogicaProgram {
             Some(taken),
             external_vocabulary.cloned(),
         )?;
+        s.external_types = external_types.cloned().unwrap_or_default();
 
         self.run_injections(&mut s)?;
         rule_translate::finalize_rule_structure(&mut s);
@@ -1192,8 +1216,16 @@ impl LogicaProgram {
             for (table_name_rsql, table_predicate_rsql) in &old_tables {
                 let rules = self.get_predicate_rules(table_predicate_rsql);
 
+                // In a subquery (a negation's, which reads the query around
+                // it), a rule with a subquery in its body is not inlined: its
+                // subquery would read a table two levels up, which Trino,
+                // Presto and Spark cannot correlate. As a table, each level
+                // reads its parent.
+                let nests_a_subquery = s.external_vocabulary.as_ref().is_some_and(|v| !v.is_empty())
+                    && rules[0].as_object().get("body").is_some_and(has_subquery);
                 let is_injectable = rules.len() == 1
                     && !rules[0].as_object().contains_key("distinct_denoted")
+                    && !nests_a_subquery
                     && self.annotations.ok_injection(table_predicate_rsql);
 
                 if is_injectable {
@@ -1378,6 +1410,9 @@ impl LogicaProgram {
         for (_, rule) in &self.rules {
             collect_record_types(rule, &mut types);
         }
+        for (name, ty) in self.built_record_types.borrow().iter() {
+            types.entry(name.clone()).or_insert_with(|| ty.clone());
+        }
         // Emit only the types actually cast in the compiled body (`::name`), plus
         // their nested dependencies (pulled in by `emit_record_type`'s recursion).
         // This skips library-helper and other-rule records that the query never
@@ -1512,9 +1547,6 @@ impl LogicaProgram {
             sql
         };
 
-        // Apply flag substitution
-        let sql = self.use_flags_as_parameters(&sql);
-
         // Apply a caller-requested regex search filter to the final query
         // only (again, the preamble is assembled around it below). This wraps
         // the query before pagination so the LIMIT/OFFSET apply to the
@@ -1547,7 +1579,7 @@ impl LogicaProgram {
 
         // Preamble
         if !exec_ref.preamble.is_empty() {
-            result.push_str(&self.use_flags_as_parameters(&exec_ref.preamble));
+            result.push_str(&exec_ref.preamble);
         }
 
         // Type definitions. PostgreSQL exposes named record fields only through
@@ -1571,25 +1603,15 @@ impl LogicaProgram {
         }
 
         if !result.is_empty() {
-            steps.push(PlanStep::Setup(self.use_flags_as_parameters(&result)));
+            steps.push(PlanStep::Setup(result));
         }
 
         // Defines and exports
         if !exec_ref.defines_and_exports.is_empty() {
-            for step in self.plan_statements(exec_ref)? {
-                steps.push(match step {
-                    PlanStep::Setup(sql) => PlanStep::Setup(self.use_flags_as_parameters(&sql)),
-                    PlanStep::Sql(sql) => PlanStep::Sql(self.use_flags_as_parameters(&sql)),
-                    PlanStep::Loop { body, repetitions, changed } => PlanStep::Loop {
-                        body: body.iter().map(|sql| self.use_flags_as_parameters(sql)).collect(),
-                        repetitions,
-                        changed,
-                    },
-                });
-            }
+            steps.extend(self.plan_statements(exec_ref)?);
         }
 
-        steps.push(PlanStep::Sql(self.use_flags_as_parameters(&format_sql(&sql))));
+        steps.push(PlanStep::Sql(format_sql(&sql)));
         Ok(steps)
     }
 
@@ -1680,7 +1702,7 @@ impl LogicaProgram {
             if loop_only.contains(table) {
                 let i = iteration_of[table];
                 let iteration = &iterations[i].1;
-                order.push(self.semi_naive_loop(iteration, exports)?);
+                order.extend(self.semi_naive_loop(iteration, exports)?);
                 for p in &iteration.predicates {
                     if let Some(t) = table_set.get(p) {
                         done.insert(*t);
@@ -1709,27 +1731,41 @@ impl LogicaProgram {
         Ok(order)
     }
 
-    /// The loop of a semi-naive iteration: the new rows from the delta, added
-    /// to the accumulated table, then made the next delta; until the delta is
-    /// empty, `repetitions` times at most.
-    fn semi_naive_loop(&self, iteration: &IterationDef, exports: &HashMap<String, String>) -> CompileResult<PlanStep> {
+    /// The loop of a semi-naive iteration. Each step computes the rows the
+    /// recursion derives from the last step's new rows, less those it has,
+    /// and adds them to the accumulated table. The steps alternate two tables
+    /// (the delta's and the new rows'), each step reading one and writing the
+    /// other, so that no step copies one into the other: a repetition is two
+    /// steps, and the loop stops when the delta's table is empty. An odd
+    /// number of steps ends with one more step after the loop (adding nothing
+    /// when the loop converged).
+    fn semi_naive_loop(&self, iteration: &IterationDef, exports: &HashMap<String, String>) -> CompileResult<Vec<PlanStep>> {
         let table = |p: &String| {
             self.annotations
                 .ground(p)
                 .map(|g| g.table_name)
                 .ok_or_else(|| CompileError::new(format!("The iteration's table {} is not grounded.", p), p))
         };
-        let (new, next) = (&iteration.predicates[0], &iteration.predicates[1]);
+        let (new, back) = (&iteration.predicates[0], &iteration.predicates[1]);
         let full = iteration.accumulate.as_ref().expect("a semi-naive iteration");
-        Ok(PlanStep::Loop {
+        let accumulate = |from: &String| -> CompileResult<String> {
+            Ok(format!("INSERT INTO {} SELECT * FROM {};", table(full)?, table(from)?))
+        };
+        let mut steps = vec![PlanStep::Loop {
             body: vec![
                 exports[new].clone(),
-                format!("INSERT INTO {} SELECT * FROM {};", table(full)?, table(new)?),
-                exports[next].clone(),
+                accumulate(new)?,
+                exports[back].clone(),
+                accumulate(back)?,
             ],
-            repetitions: iteration.repetitions,
-            changed: format!("SELECT COUNT(*) AS changed FROM {}", table(next)?),
-        })
+            repetitions: iteration.repetitions / 2,
+            changed: format!("SELECT COUNT(*) AS changed FROM {}", table(back)?),
+        }];
+        if iteration.repetitions % 2 == 1 {
+            steps.push(PlanStep::Sql(exports[new].clone()));
+            steps.push(PlanStep::Sql(accumulate(new)?));
+        }
+        Ok(steps)
     }
 
     /// The query telling whether one more repetition of an iteration would
@@ -1791,25 +1827,42 @@ impl LogicaProgram {
             (None, _) => None,
         };
 
-        let mut pagination_clause = String::new();
-        if let Some(limit) = effective_limit {
-            pagination_clause.push_str(&format!("\nLIMIT {}", limit));
+        let offset = pagination.offset.filter(|o| *o > 0);
+        if effective_limit.is_none() && offset.is_none() {
+            return query;
         }
-        if let Some(offset) = pagination.offset {
-            if offset > 0 {
-                pagination_clause.push_str(&format!("\nOFFSET {}", offset));
+        let dialect = dialects::get(self.annotations.engine()).ok();
+        if let (Some(d), Some(skip)) = (dialect.as_ref(), offset) {
+            if !d.supports_offset() {
+                // The rows numbered in order; the page is the numbers after
+                // the offset, up to the limit.
+                let columns: Vec<String> = self
+                    .predicate_columns(name)
+                    .iter()
+                    .map(|c| dialects::sql_column(c, d.as_ref()))
+                    .collect();
+                let order = self.annotations.order_by_clause(name);
+                let upto = effective_limit.map(|l| format!(" AND synalog_row <= {}", skip + l)).unwrap_or_default();
+                return format!(
+                    "SELECT {cols} FROM (\nSELECT *, ROW_NUMBER() OVER ({order}) AS synalog_row FROM (\n{query}\n) AS _numbered\n) AS _paginated\nWHERE synalog_row > {skip}{upto}\nORDER BY synalog_row",
+                    cols = columns.join(", "),
+                    order = order.trim(),
+                    query = query.trim_end_matches(';'),
+                );
             }
         }
-
-        if pagination_clause.is_empty() {
-            query
-        } else {
-            format!(
-                "SELECT * FROM (\n{}\n) AS _paginated{}",
-                query.trim_end_matches(';'),
-                pagination_clause
-            )
-        }
+        let pagination_clause = match dialect {
+            Some(d) => d.pagination_clause(effective_limit, offset),
+            None => String::new(),
+        };
+        // A subquery's ORDER BY need not survive it (Trino and Presto drop
+        // it): the page is taken from the rows ordered again.
+        format!(
+            "SELECT * FROM (\n{}\n) AS _paginated{}{}",
+            query.trim_end_matches(';'),
+            self.annotations.order_by_clause(name),
+            pagination_clause
+        )
     }
 
     /// Get the column names for a predicate from its rule head(s).
@@ -1860,19 +1913,38 @@ impl LogicaProgram {
         }
 
         let dialect = dialects::get(self.annotations.engine())?;
+        let types = self.predicate_types.get(name);
         let where_clause = columns
             .iter()
             .map(|col| {
-                let cast_col = dialect.string_cast(&dialects::sql_column(col, dialect.as_ref()));
-                dialect.regex_match_condition(&cast_col, pattern)
+                // A column is searched in the text ToString gives it: a number
+                // as on every engine (`10`, not `10.0`), a boolean as `true` or
+                // `false` (not `1` on SQLite).
+                let column = dialects::sql_column(col, dialect.as_ref());
+                let text = match types.and_then(|t| t.get(col)) {
+                    Some(Type::Number) => match dialect.number_to_string() {
+                        Some(template) => template.replace("{0}", &column),
+                        None => dialect.string_cast(&column),
+                    },
+                    Some(Type::Bool) => format!(
+                        "(CASE WHEN {c} THEN {t} WHEN NOT {c} THEN {f} END)",
+                        c = column,
+                        t = dialect.str_literal("true"),
+                        f = dialect.str_literal("false")
+                    ),
+                    _ => dialect.string_cast(&column),
+                };
+                dialect.regex_match_condition(&text, pattern)
             })
             .collect::<Vec<_>>()
             .join(" OR ");
 
+        // Ordered again: the subquery's ORDER BY need not survive it.
         Ok(format!(
-            "SELECT * FROM (\n{}\n) AS _searched\nWHERE {}",
+            "SELECT * FROM (\n{}\n) AS _searched\nWHERE {}{}",
             query.trim_end_matches(';'),
             where_clause,
+            self.annotations.order_by_clause(name),
         ))
     }
 
@@ -1945,26 +2017,6 @@ impl LogicaProgram {
         }
 
         Some(format!("WITH {}", with_bodies.join(",\n")))
-    }
-
-    /// Run flag substitution to fixed point (Python's `UseFlagsAsParameters`).
-    pub fn use_flags_as_parameters(&self, sql: &str) -> String {
-        let mut result = sql.to_string();
-        let mut prev = String::new();
-        let mut num_subs = 0;
-        while result != prev {
-            num_subs += 1;
-            prev = result.clone();
-            if num_subs > 100 {
-                // Recursive flags — warn and break to avoid infinite loop
-                eprintln!("[WARNING] Recursive flag references detected, stopping substitution");
-                break;
-            }
-            for (flag, value) in &self.flag_values {
-                result = result.replace(&format!("${{{}}}", flag), value);
-            }
-        }
-        result
     }
 
     /// Translate a table that should be defined in a WITH clause.
@@ -2129,7 +2181,6 @@ impl LogicaProgram {
             } else {
                 dependency_sql
             };
-            let dependency_sql = self.use_flags_as_parameters(&dependency_sql);
 
             {
                 let mut exec = self.execution.borrow_mut();
@@ -2161,7 +2212,6 @@ impl LogicaProgram {
                 );
 
                 let stmt = format!("{}{}", maybe_drop, create_statement);
-                let stmt = self.use_flags_as_parameters(&stmt);
 
                 exec_ref
                     .table_to_export_map
@@ -2169,17 +2219,6 @@ impl LogicaProgram {
                 exec_ref.export_statements.push(stmt.clone());
                 export_statement = Some(stmt);
             }
-        }
-
-        // Step 5: Build copy_to_file statement if specified (DuckDB file export)
-        if let Some(ref copy_file) = ground.copy_to_file {
-            let copy_stmt = format!(
-                "COPY {} TO '{}' (FORMAT 'json', ARRAY true);",
-                ground.table_name, copy_file
-            );
-            let mut exec = self.execution.borrow_mut();
-            let exec_ref = exec.as_mut().unwrap();
-            exec_ref.defines_and_exports.push(copy_stmt);
         }
 
         // Step 6: Record in defines_and_exports (short-lived borrow)
@@ -2265,7 +2304,7 @@ impl LogicaProgram {
             }
         }
 
-        Ok(unquote_parenthesised(table))
+        table_reference(table, dialects::get(self.annotations.engine())?.as_ref())
     }
 }
 
@@ -2295,14 +2334,36 @@ impl<'a> SubqueryTranslator for UniverseSubqueryTranslator<'a> {
         &self,
         rule: &Json,
         external_vocabulary: &HashMap<String, String>,
+        external_types: &HashMap<String, Type>,
         is_combine: bool,
     ) -> CompileResult<String> {
         self.program
-            .single_rule_sql(rule, Some(external_vocabulary), is_combine, false)
+            .single_rule_sql(rule, Some(external_vocabulary), Some(external_types), is_combine, false)
     }
 
     fn combine_psql_type(&self, combine: &Json) -> Option<String> {
         self.program.combine_psql_type(combine)
+    }
+
+    fn column_psql_type(&self, predicate: &str, column: &str) -> Option<String> {
+        if self.program.annotations.engine() != "psql" {
+            return None;
+        }
+        self.column_type(predicate, column).as_ref().and_then(type_to_psql)
+    }
+
+    fn column_type(&self, predicate: &str, column: &str) -> Option<Type> {
+        let base = predicate.split("_MultBodyAggAux").next().unwrap_or(predicate);
+        self.program
+            .predicate_types
+            .get(predicate)
+            .or_else(|| self.program.predicate_types.get(base))
+            .and_then(|fields| fields.get(column))
+            .cloned()
+    }
+
+    fn register_record_type(&self, ty: &Type) {
+        register_record_type(ty, &mut self.program.built_record_types.borrow_mut());
     }
 }
 
@@ -2319,14 +2380,15 @@ fn jget<'a>(node: &'a Json, key: &str) -> Option<&'a Json> {
 }
 
 /// Map an inferred `Type` to its PostgreSQL type name (logica's `PsqlType`).
-fn type_to_psql(t: &Type) -> String {
+/// None when the type is not known: no cast is better than a wrong one
+/// (`CAST('ant' AS numeric)` fails).
+fn type_to_psql(t: &Type) -> Option<String> {
     match t {
-        Type::Number => "numeric".to_string(),
-        Type::String => "text".to_string(),
-        Type::Bool => "bool".to_string(),
-        Type::List(element) => format!("{}[]", type_to_psql(element)),
-        // Any / Atomic / Record: fall back to numeric (best effort).
-        _ => "numeric".to_string(),
+        Type::Number => Some("numeric".to_string()),
+        Type::String => Some("text".to_string()),
+        Type::Bool => Some("bool".to_string()),
+        Type::List(element) => type_to_psql(element).map(|e| format!("{}[]", e)),
+        _ => None,
     }
 }
 
@@ -2412,3 +2474,144 @@ fn select_as_record(select: &IndexMap<String, Json>) -> Json {
 #[cfg(test)]
 #[path = "universe_test.rs"]
 mod universe_test;
+
+/// The rules of a dialect's library program, parsed once per dialect: the
+/// program is a constant, and every program compiled for the dialect reads it.
+fn library_rules(dialect: &'static str, program: &'static str) -> std::rc::Rc<Vec<Json>> {
+    thread_local! {
+        static LIBRARY: std::cell::RefCell<HashMap<&'static str, std::rc::Rc<Vec<Json>>>> =
+            std::cell::RefCell::new(HashMap::new());
+    }
+    LIBRARY.with(|cache| {
+        cache.borrow_mut().entry(dialect).or_insert_with(|| {
+            let rules = if program.is_empty() {
+                Vec::new()
+            } else {
+                crate::parser::parse_file(program, None, &[])
+                    .map(|parsed| parsed.as_object()["rule"].as_array().iter().cloned().collect())
+                    .unwrap_or_default()
+            };
+            std::rc::Rc::new(rules)
+        }).clone()
+    })
+}
+
+/// Whether a rule body holds a subquery: a negation or another `combine`.
+fn has_subquery(json: &Json) -> bool {
+    match json {
+        Json::Object(o) => o.iter().any(|(key, value)| key == "combine" || has_subquery(value)),
+        Json::Array(items) => items.iter().any(has_subquery),
+        _ => false,
+    }
+}
+
+/// The (expression, column) items of a `SELECT` of constants, without FROM,
+/// or None.
+fn constant_select(sql: &str) -> Option<Vec<(String, String)>> {
+    let body = sql.trim().strip_prefix("SELECT")?;
+    let upper = body.to_ascii_uppercase();
+    if upper.contains(" FROM ") || upper.contains("\nFROM") || upper.contains("SELECT") {
+        return None;
+    }
+    // Top-level commas: outside parentheses and quotes.
+    let mut items = Vec::new();
+    let (mut depth, mut quote, mut start) = (0i32, None::<char>, 0usize);
+    let chars: Vec<(usize, char)> = body.char_indices().collect();
+    let mut i = 0;
+    while i < chars.len() {
+        let (pos, c) = chars[i];
+        match quote {
+            Some(q) => {
+                if c == '\\' {
+                    i += 1;
+                } else if c == q {
+                    quote = None;
+                }
+            }
+            None => match c {
+                '\'' | '"' | '`' => quote = Some(c),
+                '(' | '[' => depth += 1,
+                ')' | ']' => depth -= 1,
+                ',' if depth == 0 => {
+                    items.push(&body[start..pos]);
+                    start = pos + 1;
+                }
+                _ => {}
+            },
+        }
+        i += 1;
+    }
+    items.push(&body[start..]);
+    items
+        .into_iter()
+        .map(|item| {
+            let item = item.trim();
+            let at = item.rfind(" AS ")?;
+            let (expr, column) = (item[..at].trim(), item[at + 4..].trim());
+            // A record (`STRUCT(1 AS a)`) is not a row value Spark takes; a
+            // typed null (`CAST(null AS ARRAY<DOUBLE>)`) is.
+            let plain = !expr.to_ascii_uppercase().contains("STRUCT(");
+            (plain && !expr.is_empty() && !column.is_empty()).then(|| (expr.to_string(), column.to_string()))
+        })
+        .collect()
+}
+
+/// The predicates read more than once in rule bodies (including negations)
+/// whose rules read other predicates, without the ones the compiler writes
+/// for recursions, which are tables already.
+fn reused_derived_predicates(rules: &[(String, Json)]) -> Vec<String> {
+    fn reads(json: &Json, out: &mut Vec<String>) {
+        match json {
+            Json::Object(o) => {
+                if let Some(p) = o.get("predicate").filter(|p| p.is_object()) {
+                    if let Some(name) = p.as_object().get("predicate_name") {
+                        if name.is_string() {
+                            out.push(name.as_str().to_string());
+                        }
+                    }
+                }
+                for (_, value) in o.iter() {
+                    reads(value, out);
+                }
+            }
+            Json::Array(items) => items.iter().for_each(|i| reads(i, out)),
+            _ => {}
+        }
+    }
+    let generated = |name: &str| {
+        name.contains("_MultBodyAggAux")
+            || name.contains("_recursive")
+            || name.contains("_sn_")
+            || ["_ROne", "_RZero"].iter().any(|s| name.ends_with(s))
+            || name
+                .rsplit_once('_')
+                .is_some_and(|(_, tail)| {
+                    let t = tail.trim_start_matches("ifr").trim_start_matches("fr").trim_start_matches('r');
+                    !t.is_empty() && t.len() < tail.len() && t.chars().all(|c| c.is_ascii_digit())
+                })
+    };
+    let mut counts: HashMap<String, usize> = HashMap::new();
+    let mut derived: HashSet<String> = HashSet::new();
+    for (name, rule) in rules {
+        if name.starts_with('@') {
+            continue;
+        }
+        if let Some(body) = rule.as_object().get("body") {
+            let mut found = Vec::new();
+            reads(body, &mut found);
+            if !found.is_empty() {
+                derived.insert(name.clone());
+            }
+            for f in found {
+                *counts.entry(f).or_default() += 1;
+            }
+        }
+    }
+    let mut out: Vec<String> = counts
+        .into_iter()
+        .filter(|(name, n)| *n > 1 && derived.contains(name) && !generated(name))
+        .map(|(name, _)| name)
+        .collect();
+    out.sort();
+    out
+}

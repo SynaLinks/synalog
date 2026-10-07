@@ -1,4 +1,4 @@
 SELECT
   SUM(1) AS n
 FROM
-  UNNEST(ARRAY[1, 2, 3]) as pushkin(x_1);
+  UNNEST(TRANSFORM(ARRAY[1, 2, 3], synalog_e -> ROW(synalog_e))) as pushkin(x_1);

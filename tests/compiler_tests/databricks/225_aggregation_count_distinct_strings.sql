@@ -1,4 +1,4 @@
 SELECT
   COUNT(DISTINCT x_2) AS n
 FROM
-  explode(ARRAY("x", "y", "x")) AS pushkin(x_2);
+  LATERAL (SELECT explode(ARRAY("x", "y", "x")) AS x_2) AS pushkin;

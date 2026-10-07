@@ -8,7 +8,7 @@ t_4_Reach_r0 AS (SELECT
   Reach_MultBodyAggAux_recursive_head_f1.x AS x
 FROM
   t_5_Reach_MultBodyAggAux_recursive_head_f1 AS Reach_MultBodyAggAux_recursive_head_f1
-GROUP BY Reach_MultBodyAggAux_recursive_head_f1.x ORDER BY x),
+GROUP BY Reach_MultBodyAggAux_recursive_head_f1.x),
 t_7_Edge AS (SELECT * FROM (
   
     SELECT
@@ -49,7 +49,7 @@ t_1_Reach_r1 AS (SELECT
   Reach_MultBodyAggAux_recursive_head_f2.x AS x
 FROM
   t_2_Reach_MultBodyAggAux_recursive_head_f2 AS Reach_MultBodyAggAux_recursive_head_f2
-GROUP BY Reach_MultBodyAggAux_recursive_head_f2.x ORDER BY x),
+GROUP BY Reach_MultBodyAggAux_recursive_head_f2.x),
 t_0_Reach_MultBodyAggAux_recursive_head_f3 AS (SELECT * FROM (
   
     SELECT

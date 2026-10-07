@@ -3,7 +3,7 @@ SELECT * FROM (
     SELECT
       1 AS x
     FROM
-      UNNEST(ARRAY[1, 3, 5]) as pushkin(x_3)
+      UNNEST(TRANSFORM(ARRAY[1, 3, 5], synalog_e -> ROW(synalog_e))) as pushkin(x_3)
     WHERE
       (x_3 = 1)
    UNION ALL
@@ -11,7 +11,7 @@ SELECT * FROM (
     SELECT
       5 AS x
     FROM
-      UNNEST(ARRAY[1, 3, 5]) as pushkin(x_3)
+      UNNEST(TRANSFORM(ARRAY[1, 3, 5], synalog_e -> ROW(synalog_e))) as pushkin(x_3)
     WHERE
       (x_3 = 5)
   

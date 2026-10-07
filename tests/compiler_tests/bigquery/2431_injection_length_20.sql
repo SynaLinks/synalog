@@ -1,0 +1,2 @@
+SELECT
+  LENGTH("{x}; DROP") AS n;

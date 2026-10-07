@@ -1,0 +1,8 @@
+WITH t_0_T0 AS (SELECT
+  SUM(1) AS t
+FROM
+  JSON_EACH(JSON_ARRAY(7)) as x_4)
+SELECT
+  T0.t AS t
+FROM
+  t_0_T0 AS T0;

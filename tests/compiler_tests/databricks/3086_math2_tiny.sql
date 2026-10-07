@@ -1,0 +1,2 @@
+SELECT
+  ((1) / NULLIF(1000000, 0)) AS v;

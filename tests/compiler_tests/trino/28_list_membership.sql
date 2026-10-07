@@ -34,6 +34,6 @@ SELECT
   Items.col0 AS name,
   Items.col2 AS price
 FROM
-  t_0_Items AS Items, UNNEST(ARRAY['fruit', 'vegetable']) as pushkin(x_9)
+  t_0_Items AS Items, UNNEST(TRANSFORM(ARRAY['fruit', 'vegetable'], synalog_e -> ROW(synalog_e))) as pushkin(x_9)
 WHERE
   (Items.col1 = x_9) ORDER BY name;

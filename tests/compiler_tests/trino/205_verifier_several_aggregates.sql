@@ -5,5 +5,5 @@ SELECT
   MAX(x_6) AS top,
   MIN(x_6) AS low
 FROM
-  UNNEST(ARRAY['a', 'b']) as pushkin(x_5), UNNEST(ARRAY[1, 2]) as pushkin(x_6)
+  UNNEST(TRANSFORM(ARRAY['a', 'b'], synalog_e -> ROW(synalog_e))) as pushkin(x_5), UNNEST(TRANSFORM(ARRAY[1, 2], synalog_e -> ROW(synalog_e))) as pushkin(x_6)
 GROUP BY 1 ORDER BY c;

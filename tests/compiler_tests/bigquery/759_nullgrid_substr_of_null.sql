@@ -1,0 +1,17 @@
+WITH t_1_V AS (SELECT * FROM (
+  
+    SELECT
+      1 AS k,
+      null AS s
+   UNION ALL
+  
+    SELECT
+      2 AS k,
+      "ab" AS s
+  
+) AS UNUSED_TABLE_NAME  )
+SELECT
+  t_0_V.k AS k,
+  CASE WHEN (t_0_V.k = 1) THEN CASE WHEN (SUBSTR(t_0_V.s, 1, 1) IS NULL) THEN null ELSE "bad" END ELSE "ok" END AS v
+FROM
+  t_1_V AS t_0_V ORDER BY k NULLS LAST;

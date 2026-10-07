@@ -1,0 +1,9 @@
+WITH t_1_V AS (SELECT * FROM VALUES
+  (1),
+  (2)
+AS UNUSED_TABLE_NAME(k))
+SELECT
+  t_0_V.k AS k,
+  CASE WHEN (t_0_V.k = 1) THEN null ELSE "two" END AS v
+FROM
+  t_1_V AS t_0_V ORDER BY k NULLS LAST;

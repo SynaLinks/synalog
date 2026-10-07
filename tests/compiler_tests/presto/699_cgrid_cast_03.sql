@@ -1,0 +1,2 @@
+SELECT
+  CAST('0.5' AS DOUBLE) AS v;

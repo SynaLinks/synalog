@@ -1,0 +1,13 @@
+# Test: The average absolute value. (from tests/programs/math2/avg_of_abs.l)
+
+V(id: 1, x: 7);
+V(id: 2, x: -7);
+V(id: 3, x: 2.5);
+V(id: 4, x: -2.5);
+V(id: 5, x: 0);
+V(id: 6, x: 3);
+V(id: 7, x: 0.125);
+V(id: 8, x: 1000000);
+V(id: 9, x: -0.75);
+V(id: 10, x: 12.345);
+Q(a? Avg= Abs(x)) distinct :- V(x:);

@@ -1,0 +1,10 @@
+WITH t_0_V AS (SELECT * FROM VALUES
+  (10, 3),
+  (12, 5)
+AS UNUSED_TABLE_NAME(a, b))
+SELECT
+  V.a AS a,
+  V.b AS b,
+  (MOD(V.a, NULLIF(V.b, 0))) AS r
+FROM
+  t_0_V AS V ORDER BY a NULLS LAST;

@@ -1,0 +1,2 @@
+SELECT
+  LOWER('MiXeD') AS s;

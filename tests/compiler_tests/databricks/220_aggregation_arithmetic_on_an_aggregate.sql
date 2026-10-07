@@ -1,8 +1,8 @@
-WITH t_0_T AS (SELECT
+WITH t_1_T AS (SELECT
   SUM(x_4) AS t
 FROM
-  explode(ARRAY(1, 2, 3)) AS pushkin(x_4))
+  LATERAL (SELECT explode(ARRAY(1, 2, 3)) AS x_4) AS pushkin)
 SELECT
-  ((T.t) * (2)) AS d
+  ((t_0_T.t) * (2)) AS d
 FROM
-  t_0_T AS T;
+  t_1_T AS t_0_T;

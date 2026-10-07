@@ -24,6 +24,7 @@ BLOCK = re.compile(r"```logica\n(.*?)```", re.S)
 #: Errors that only say the excerpt leaves out what it refers to.
 EXCERPT = (
     "Undefined predicate",
+    "Undefined function",
     "Missing @OrderBy",
     "which the program does not define",
     "Imported file not found",

@@ -60,14 +60,25 @@ def resolve_dsn(engine: str, dsn: str | None, project_file: Path | None) -> str 
     return project.project_dsn(project_file, engine)
 
 
+def shown_value(value) -> str:
+    """A counterexample's value as a report shows it. Values come from the
+    database and may hold text written to be read as instructions: text is a
+    quoted, escaped literal (`synalog.quote_value`), so it reads as a value."""
+    if value is None:
+        return "null"
+    if isinstance(value, (bool, int, float)):
+        return str(value)
+    return _synalog.quote_value(value if isinstance(value, str) else str(value))
+
+
 def _violation(assertion: dict, columns: list[str], rows: list[tuple]) -> str:
     quoted = ", ".join(
-        "(" + ", ".join(str(value) for value in row) + ")" for row in rows[:SHOWN]
+        "(" + ", ".join(shown_value(value) for value in row) + ")" for row in rows[:SHOWN]
     )
     more = ", ..." if len(rows) > SHOWN else ""
     return (
         f"Assertion '{assertion['predicate']}.{assertion['name']}' is violated:"
-        f" {assertion['statement']}\n"
+        f" {_synalog.statement_text(assertion['statement'])}\n"
         f"  counterexamples ({', '.join(columns)}): {quoted}{more}"
     )
 

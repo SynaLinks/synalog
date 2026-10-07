@@ -1,5 +1,5 @@
 SELECT
-  SIGN(x_4) AS s,
-  x_4 AS x
+  CASE WHEN (x_7 < 0) THEN -1 ELSE 1 END AS s,
+  x_7 AS x
 FROM
-  explode(ARRAY(5, -5)) AS pushkin(x_4) ORDER BY x;
+  LATERAL (SELECT explode(ARRAY(5, -5)) AS x_7) AS pushkin ORDER BY x NULLS LAST;

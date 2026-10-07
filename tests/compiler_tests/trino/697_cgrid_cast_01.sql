@@ -1,0 +1,2 @@
+SELECT
+  CAST('12' AS BIGINT) AS v;

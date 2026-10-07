@@ -1,3 +1,14 @@
+WITH t_0_Missing AS (SELECT
+  x_8 AS x
+FROM
+  UNNEST(ARRAY[1, 2]) as x_8
+WHERE
+  ((SELECT
+    MIN(1) AS logica_value
+  FROM
+    (SELECT 'singleton' as s) as unused_singleton
+  WHERE
+    (x_8 = 1)) IS NULL))
 SELECT
   x_3 AS x
 FROM
@@ -6,12 +17,6 @@ WHERE
   ((SELECT
     MIN(1) AS logica_value
   FROM
-    UNNEST(ARRAY[1, 2]) as x_9
+    t_0_Missing AS Missing
   WHERE
-    ((SELECT
-      MIN(1) AS logica_value
-    FROM
-      (SELECT 'singleton' as s) as unused_singleton
-    WHERE
-      (x_3 = 1)) IS NULL) AND
-    (x_3 = x_9)) IS NULL) ORDER BY x;
+    (Missing.x = x_3)) IS NULL) ORDER BY x NULLS LAST;

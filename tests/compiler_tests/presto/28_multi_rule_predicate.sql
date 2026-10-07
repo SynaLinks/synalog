@@ -3,13 +3,13 @@ WITH t_1_Number AS (SELECT * FROM (
     SELECT
       x_8 AS col0
     FROM
-      UNNEST(SEQUENCE(0, 5 - 1)) as pushkin(x_8)
+      UNNEST(TRANSFORM(FILTER(SEQUENCE(0, 5), x -> x < 5), synalog_e -> ROW(synalog_e))) as pushkin(x_8)
    UNION ALL
   
     SELECT
       x_10 AS col0
     FROM
-      UNNEST(ARRAY[10, 11, 12, 13, 14]) as pushkin(x_10)
+      UNNEST(TRANSFORM(ARRAY[10, 11, 12, 13, 14], synalog_e -> ROW(synalog_e))) as pushkin(x_10)
   
 ) AS UNUSED_TABLE_NAME  ),
 t_0_Category AS (SELECT * FROM (

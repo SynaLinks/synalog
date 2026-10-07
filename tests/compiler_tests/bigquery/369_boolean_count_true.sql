@@ -1,0 +1,4 @@
+SELECT
+  SUM(CASE WHEN (x_4 > 2) THEN 1 ELSE 0 END) AS n
+FROM
+  UNNEST(ARRAY[1, 3, 4]) as x_4;

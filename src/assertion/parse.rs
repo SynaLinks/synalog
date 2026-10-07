@@ -372,10 +372,15 @@ impl Parser {
     }
 
     fn application(&mut self) -> Result<Expr, SyntaxError> {
+        // Only a bare name takes arguments: `(P x y)` is already applied.
+        let bare = matches!(self.peek(), Some(Token::Ident(_)));
         let head = self.atom()?;
         let Expr::App(name, _) = &head else {
             return Ok(head);
         };
+        if !bare {
+            return Ok(head);
+        }
         let name = name.clone();
         let mut args = Vec::new();
         while matches!(
@@ -444,6 +449,13 @@ mod tests {
 
     fn bin(op: BinOp, l: Expr, r: Expr) -> Expr {
         Expr::Binary(op, Box::new(l), Box::new(r))
+    }
+
+    #[test]
+    fn a_parenthesized_application_keeps_its_arguments() {
+        assert_eq!(parse("(P x y)").unwrap(), app("P", &["x", "y"]));
+        assert_eq!(parse("((P x y))").unwrap(), app("P", &["x", "y"]));
+        assert_eq!(parse("P (x) (y)").unwrap(), app("P", &["x", "y"]));
     }
 
     #[test]

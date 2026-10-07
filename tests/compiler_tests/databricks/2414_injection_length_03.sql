@@ -1,0 +1,2 @@
+SELECT
+  LENGTH("') UNION SELECT 1 --") AS n;

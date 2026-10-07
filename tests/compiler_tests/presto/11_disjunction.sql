@@ -4,7 +4,7 @@ WITH t_0_Classification AS (SELECT * FROM (
       x_8 AS col0,
       'small' AS col1
     FROM
-      UNNEST(SEQUENCE(0, 10 - 1)) as pushkin(x_8)
+      UNNEST(TRANSFORM(FILTER(SEQUENCE(0, 10), x -> x < 10), synalog_e -> ROW(synalog_e))) as pushkin(x_8)
     WHERE
       (x_8 < 3)
    UNION ALL
@@ -13,7 +13,7 @@ WITH t_0_Classification AS (SELECT * FROM (
       x_13 AS col0,
       'medium' AS col1
     FROM
-      UNNEST(SEQUENCE(0, 10 - 1)) as pushkin(x_13)
+      UNNEST(TRANSFORM(FILTER(SEQUENCE(0, 10), x -> x < 10), synalog_e -> ROW(synalog_e))) as pushkin(x_13)
     WHERE
       (x_13 >= 3) AND
       (x_13 < 7)
@@ -23,7 +23,7 @@ WITH t_0_Classification AS (SELECT * FROM (
       x_18 AS col0,
       'large' AS col1
     FROM
-      UNNEST(SEQUENCE(0, 10 - 1)) as pushkin(x_18)
+      UNNEST(TRANSFORM(FILTER(SEQUENCE(0, 10), x -> x < 10), synalog_e -> ROW(synalog_e))) as pushkin(x_18)
     WHERE
       (x_18 >= 7)
   

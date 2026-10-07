@@ -1,0 +1,21 @@
+WITH t_0_N AS (SELECT * FROM (
+  
+    SELECT
+      1 AS k,
+      CAST(ROW('x', 1) AS ROW(a varchar, b double)) AS r
+   UNION ALL
+  
+    SELECT
+      2 AS k,
+      CAST(ROW(null, 2) AS ROW(a varchar, b double)) AS r
+   UNION ALL
+  
+    SELECT
+      3 AS k,
+      CAST(ROW('z', null) AS ROW(a varchar, b double)) AS r
+  
+) AS UNUSED_TABLE_NAME  )
+SELECT
+  SUM(N.r.b) AS t
+FROM
+  t_0_N AS N;

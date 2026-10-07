@@ -1,8 +1,8 @@
-WITH t_0_L AS (SELECT
-  ARRAY_AGG(x_3) AS l
+WITH t_1_L AS (SELECT
+  (CASE WHEN COUNT(*) = 0 THEN NULL ELSE TRANSFORM(COLLECT_LIST(STRUCT(x_3 AS v)), s -> s.v) END) AS l
 FROM
-  explode(ARRAY(1, 1, 2)) AS pushkin(x_3))
+  LATERAL (SELECT explode(ARRAY(1, 1, 2)) AS x_3) AS pushkin)
 SELECT
-  SIZE(L.l) AS n
+  ARRAY_SIZE(t_0_L.l) AS n
 FROM
-  t_0_L AS L;
+  t_1_L AS t_0_L;

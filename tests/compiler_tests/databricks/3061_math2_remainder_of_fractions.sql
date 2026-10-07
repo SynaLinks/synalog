@@ -1,0 +1,4 @@
+SELECT
+  (MOD(7.5E0, NULLIF(2, 0))) AS a,
+  - (MOD(7.5E0, NULLIF(2, 0))) AS b,
+  (MOD(5.5E0, NULLIF(2.5E0, 0))) AS c;

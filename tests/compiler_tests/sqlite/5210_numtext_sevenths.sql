@@ -1,0 +1,31 @@
+WITH t_0_W AS (SELECT * FROM (
+  
+    SELECT
+      1 AS n
+   UNION ALL
+  
+    SELECT
+      22 AS n
+   UNION ALL
+  
+    SELECT
+      100 AS n
+   UNION ALL
+  
+    SELECT
+      355 AS n
+   UNION ALL
+  
+    SELECT
+      1000000 AS n
+   UNION ALL
+  
+    SELECT
+      123456789 AS n
+  
+) AS UNUSED_TABLE_NAME  )
+SELECT
+  W.n AS n,
+  SYNALOG_NUMBER_TEXT((CAST(W.n AS REAL) / NULLIF(7, 0))) AS t
+FROM
+  t_0_W AS W ORDER BY n NULLS LAST;

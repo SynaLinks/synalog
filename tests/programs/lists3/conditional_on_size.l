@@ -1,0 +1,14 @@
+# A value chosen by a list's size.
+# Expect: rows Q = [(1, 'pen'), (2, 'single'), (3, 'pen'), (4, 'single'), (5, 'pen')]
+I(order: 1, customer: "ann", item: "pen", price: 2.5, qty: 3, pos: 1);
+I(order: 1, customer: "ann", item: "ink", price: 7.0, qty: 1, pos: 2);
+I(order: 2, customer: "ann", item: "pad", price: 4.0, qty: 2, pos: 1);
+I(order: 3, customer: "bob", item: "pen", price: 2.5, qty: 10, pos: 1);
+I(order: 3, customer: "bob", item: "cap", price: 1.25, qty: 4, pos: 2);
+I(order: 3, customer: "bob", item: "ink", price: 7.0, qty: 2, pos: 3);
+I(order: 4, customer: "cid", item: "pad", price: 4.0, qty: 1, pos: 1);
+I(order: 5, customer: "cid", item: "pen", price: 2.5, qty: 1, pos: 1);
+I(order: 5, customer: "cid", item: "pen", price: 2.5, qty: 2, pos: 2);
+L(order:, l? Array= pos -> item) distinct :- I(order:, pos:, item:);
+@OrderBy(Q, "order", "v");
+Q(order:, v: (if Size(l) > 1 then Element(l, 0) else "single")) :- L(order:, l:);

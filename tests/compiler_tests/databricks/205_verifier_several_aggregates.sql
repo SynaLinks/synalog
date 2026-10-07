@@ -5,5 +5,5 @@ SELECT
   MAX(x_6) AS top,
   MIN(x_6) AS low
 FROM
-  explode(ARRAY("a", "b")) AS pushkin(x_5), explode(ARRAY(1, 2)) AS pushkin(x_6)
-GROUP BY 1 ORDER BY c;
+  LATERAL (SELECT explode(ARRAY("a", "b")) AS x_5) AS pushkin, LATERAL (SELECT explode(ARRAY(1, 2)) AS x_6) AS pushkin
+GROUP BY 1 ORDER BY c NULLS LAST;

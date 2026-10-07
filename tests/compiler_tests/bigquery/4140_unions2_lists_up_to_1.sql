@@ -1,0 +1,114 @@
+WITH t_5_A AS (SELECT * FROM (
+  
+    SELECT
+      1 AS x
+   UNION ALL
+  
+    SELECT
+      2 AS x
+   UNION ALL
+  
+    SELECT
+      3 AS x
+   UNION ALL
+  
+    SELECT
+      4 AS x
+   UNION ALL
+  
+    SELECT
+      5 AS x
+   UNION ALL
+  
+    SELECT
+      6 AS x
+  
+) AS UNUSED_TABLE_NAME  ),
+t_6_B AS (SELECT * FROM (
+  
+    SELECT
+      4 AS x
+   UNION ALL
+  
+    SELECT
+      5 AS x
+   UNION ALL
+  
+    SELECT
+      6 AS x
+   UNION ALL
+  
+    SELECT
+      7 AS x
+   UNION ALL
+  
+    SELECT
+      8 AS x
+  
+) AS UNUSED_TABLE_NAME  ),
+t_4_L_MultBodyAggAux AS (SELECT * FROM (
+  
+    SELECT
+      "a" AS src,
+      A.x AS l
+    FROM
+      t_5_A AS A
+    WHERE
+      (A.x <= 1)
+   UNION ALL
+  
+    SELECT
+      "b" AS src,
+      B.x AS l
+    FROM
+      t_6_B AS B
+    WHERE
+      (B.x <= 1)
+  
+) AS UNUSED_TABLE_NAME  ),
+t_3_L AS (SELECT
+  L_MultBodyAggAux.src AS src,
+  ARRAY_AGG(L_MultBodyAggAux.l) AS l
+FROM
+  t_4_L_MultBodyAggAux AS L_MultBodyAggAux
+GROUP BY src),
+t_7_M AS (SELECT * FROM (
+  
+    SELECT
+      "a" AS src,
+      ARRAY[] AS l
+   UNION ALL
+  
+    SELECT
+      "b" AS src,
+      ARRAY[] AS l
+  
+) AS UNUSED_TABLE_NAME  ),
+t_1_All AS (SELECT * FROM (
+  
+    SELECT
+      t_2_L.src AS src,
+      t_2_L.l AS l
+    FROM
+      t_3_L AS t_2_L
+   UNION ALL
+  
+    SELECT
+      M.src AS src,
+      M.l AS l
+    FROM
+      t_7_M AS M
+    WHERE
+      ((SELECT
+        MIN(1) AS logica_value
+      FROM
+        t_3_L AS t_8_L
+      WHERE
+        (t_8_L.src = M.src)) IS NULL)
+  
+) AS UNUSED_TABLE_NAME  )
+SELECT
+  t_0_All.src AS src,
+  ARRAY_LENGTH(t_0_All.l) AS n
+FROM
+  t_1_All AS t_0_All ORDER BY src NULLS LAST;

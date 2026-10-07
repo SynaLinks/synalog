@@ -1,0 +1,6 @@
+# Test: Equal records are one row under distinct. (from tests/programs/records/10_record_distinct.l)
+
+V(r: {a: 1});
+V(r: {a: 1});
+D(r:) distinct :- V(r:);
+R(n? += 1) distinct :- D(r:);

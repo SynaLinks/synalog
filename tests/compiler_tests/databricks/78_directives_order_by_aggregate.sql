@@ -1,20 +1,8 @@
-WITH t_0_Sale AS (SELECT * FROM (
-  
-    SELECT
-      "a" AS k,
-      1 AS v
-   UNION ALL
-  
-    SELECT
-      "a" AS k,
-      2 AS v
-   UNION ALL
-  
-    SELECT
-      "b" AS k,
-      10 AS v
-  
-) AS UNUSED_TABLE_NAME  )
+WITH t_0_Sale AS (SELECT * FROM VALUES
+  ("a", 1),
+  ("a", 2),
+  ("b", 10)
+AS UNUSED_TABLE_NAME(k, v))
 SELECT
   Sale.k AS k,
   SUM(Sale.v) AS v

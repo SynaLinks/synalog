@@ -1,2 +1,2 @@
 SELECT
-  ARRAY["x", "y"][OFFSET(0)] AS e;
+  (CASE WHEN 0 < 0 THEN NULL ELSE ARRAY["x", "y"][SAFE_OFFSET(0)] END) AS e;

@@ -1,30 +1,10 @@
-WITH t_1_Sales AS (SELECT * FROM (
-  
-    SELECT
-      "A" AS product,
-      100 AS amount
-   UNION ALL
-  
-    SELECT
-      "A" AS product,
-      150 AS amount
-   UNION ALL
-  
-    SELECT
-      "B" AS product,
-      200 AS amount
-   UNION ALL
-  
-    SELECT
-      "B" AS product,
-      50 AS amount
-   UNION ALL
-  
-    SELECT
-      "C" AS product,
-      300 AS amount
-  
-) AS UNUSED_TABLE_NAME  ),
+WITH t_1_Sales AS (SELECT * FROM VALUES
+  ("A", 100),
+  ("A", 150),
+  ("B", 200),
+  ("B", 50),
+  ("C", 300)
+AS UNUSED_TABLE_NAME(product, amount)),
 t_0_TotalByProduct AS (SELECT
   Sales.product AS product,
   SUM(Sales.amount) AS total
@@ -60,4 +40,4 @@ FROM
 WHERE
   (CountByProduct.product = TotalByProduct.product) AND
   (MinByProduct.product = TotalByProduct.product) AND
-  (MaxByProduct.product = TotalByProduct.product) ORDER BY product;
+  (MaxByProduct.product = TotalByProduct.product) ORDER BY product NULLS LAST;

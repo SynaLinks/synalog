@@ -1,0 +1,4 @@
+SELECT
+  SUM(CAST(x_2 AS INT64)) AS t
+FROM
+  UNNEST(ARRAY["5", "10"]) as x_2;

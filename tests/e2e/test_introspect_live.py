@@ -38,6 +38,7 @@ def _presto_dsn() -> str:
     return f"presto://e2e@{host}:{port}/tpch"
 
 
+@pytest.mark.engine("psql")
 def test_introspect_psql_reads_seeded_schemas(runner_for):
     runner_for("psql")  # skip/fail per availability, like the golden e2e tests
     text = introspect("psql", _psql_dsn())
@@ -72,6 +73,7 @@ def test_introspect_trino_presto_reads_tpch(engine, dsn, runner_for):
     assert synalog.check(text, engine=engine)[0] == []
 
 
+@pytest.mark.engine("databricks")
 def test_introspect_databricks_via_spark_show_fallback(runner_for):
     # Open-source Spark has no information_schema, so this exercises introspect's
     # SHOW SCHEMAS / SHOW TABLES / DESCRIBE TABLE fallback against a live server.

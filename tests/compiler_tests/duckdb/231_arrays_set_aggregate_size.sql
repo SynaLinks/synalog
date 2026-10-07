@@ -4,11 +4,11 @@ create schema if not exists logica_home;
 drop type if exists logicarecord893574736 cascade; create type logicarecord893574736 as struct(nirvana numeric);
 create sequence if not exists eternal_logical_sequence;
 
-WITH t_0_L AS (SELECT
+WITH t_1_L AS (SELECT
   ARRAY_AGG(DISTINCT x_3.unnested_pod ORDER BY x_3.unnested_pod) AS l
 FROM
   (select unnest([1, 1, 2]) as unnested_pod) as x_3)
 SELECT
-  LEN(L.l) AS n
+  LEN(t_0_L.l) AS n
 FROM
-  t_0_L AS L;
+  t_1_L AS t_0_L;

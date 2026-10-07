@@ -3,7 +3,7 @@ WITH t_0_U_MultBodyAggAux AS (SELECT * FROM (
     SELECT
       x_5 AS x
     FROM
-      UNNEST(ARRAY[1, 2, 3, 4]) as pushkin(x_5)
+      UNNEST(TRANSFORM(ARRAY[1, 2, 3, 4], synalog_e -> ROW(synalog_e))) as pushkin(x_5)
     WHERE
       (x_5 < 2)
    UNION ALL
@@ -11,7 +11,7 @@ WITH t_0_U_MultBodyAggAux AS (SELECT * FROM (
     SELECT
       x_9 AS x
     FROM
-      UNNEST(ARRAY[1, 2, 3, 4]) as pushkin(x_9)
+      UNNEST(TRANSFORM(ARRAY[1, 2, 3, 4], synalog_e -> ROW(synalog_e))) as pushkin(x_9)
     WHERE
       (x_9 > 3)
   

@@ -1,0 +1,2 @@
+SELECT
+  ARRAY_JOIN(ARRAY[], ',') AS v;

@@ -133,7 +133,7 @@ pub enum VerifyError {
     UnboundHeadVar { var: String, rule: String },
 
     /// Variable compared in the body but never given a value.
-    #[error("Unbound variable '{var}': it is compared but never given a value in: {rule}")]
+    #[error("Unbound variable '{var}': it is tested (compared, negated, matched) but never given a value in: {rule}")]
     UnboundComparedVar { var: String, rule: String },
 
     /// Variable only appears in negated context.
@@ -143,6 +143,18 @@ pub enum VerifyError {
     /// Variable in aggregation not bound outside.
     #[error("Unsafe aggregation: variable '{var}' not bound outside aggregate in: {rule}")]
     UnsafeAggregation { var: String, rule: String },
+
+    /// An aggregate (`Sum`, `Max`, `ArgMaxK`, ...) called outside an aggregation.
+    #[error("{}", aggregate_outside_message(function, rule))]
+    AggregateOutside { function: String, rule: String },
+
+    /// A disjunction inside a negation or a combine, which does not compile.
+    #[error("A disjunction inside a negation or a combine is not supported: write the alternatives as rules of a predicate of their own and use it there, in: {rule}")]
+    DisjunctionInside { rule: String },
+
+    /// A function used as a condition, which holds whatever its value.
+    #[error("{}", function_as_condition_message(function, rule))]
+    FunctionAsCondition { function: String, rule: String },
 
     /// Negative recursion cycle detected.
     #[error("Negative recursion cycle: {}", predicates.join(" -> "))]
@@ -177,12 +189,16 @@ pub enum VerifyError {
     DuplicateColumn { predicate: String, column: String },
 
     /// Predicate name collides with a built-in library predicate.
-    #[error("Reserved predicate name '{predicate}': it is a built-in library predicate and cannot be redefined")]
-    ReservedPredicateName { predicate: String },
+    #[error("Reserved predicate name '{predicate}': it is a built-in {} and cannot be redefined", if *function { "function" } else { "library predicate" })]
+    ReservedPredicateName { predicate: String, function: bool },
 
     /// Raw-SQL `SqlExpr` escape hatch used in a user rule.
     #[error("Unsafe SqlExpr in rule '{predicate}': raw SQL bypasses verification and portability")]
     UnsafeSqlExpr { predicate: String },
+
+    /// A table the program reads, named with text that is not a table name.
+    #[error("Invalid table name in rule '{predicate}': '{table}' is not a table name: write names of letters, digits and '_', joined by '.'")]
+    InvalidTableName { predicate: String, table: String },
 
     /// A file's front matter does not name the predicate it is about.
     #[error("The front matter has no name: give the predicate this file is about, the one that runs (name: ...)")]
@@ -215,6 +231,17 @@ pub enum VerifyError {
     })]
     UndefinedPredicate {
         predicate: String,
+        suggestion: Option<String>,
+        rule: String,
+    },
+
+    /// Call of a function that is not defined and is not a built-in.
+    #[error("Undefined function '{function}': not defined and not a built-in{}", match suggestion {
+        Some(s) => format!(" — did you mean '{}'?", s),
+        None => String::new(),
+    })]
+    UndefinedFunction {
+        function: String,
         suggestion: Option<String>,
         rule: String,
     },
@@ -331,4 +358,30 @@ mod tests {
         });
         assert!(!result.is_valid());
     }
+}
+
+/// The message of [`VerifyError::FunctionAsCondition`].
+/// The message of an aggregate called outside an aggregation.
+pub fn aggregate_outside_message(function: &str, rule: &str) -> String {
+    if function == "ArgMaxK" || function == "ArgMinK" {
+        return format!(
+            "{f} is an aggregate that takes how many values to keep: name it with the count, \
+             `Top2(x) = {f}(x, 2);`, and aggregate with it in a head with distinct, \
+             `best? Top2= item -> score`, in: {rule}",
+            f = function, rule = rule
+        );
+    }
+    format!(
+        "'{f}' is an aggregate: aggregate in a head with distinct (`n? {f}= x`) or in a combine \
+         (`(combine {f}= x :- ...)`), in: {rule}",
+        f = function, rule = rule
+    )
+}
+
+pub fn function_as_condition_message(function: &str, rule: &str) -> String {
+    format!(
+        "'{f}' is a function: as a condition, {f}(...) holds whatever its value; \
+         compare its value ({f}(...) == true) in: {rule}",
+        f = function
+    )
 }

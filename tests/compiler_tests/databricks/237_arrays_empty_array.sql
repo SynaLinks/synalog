@@ -1,2 +1,2 @@
 SELECT
-  SIZE(ARRAY()) AS n;
+  0 AS n;

@@ -1,23 +1,39 @@
+DROP TABLE IF EXISTS logica_test.Even;
+CREATE TABLE logica_test.Even AS SELECT
+  x_3 AS col0
+FROM
+  UNNEST(TRANSFORM(FILTER(SEQUENCE(0, 10), x -> x < 10), synalog_e -> ROW(synalog_e))) as pushkin(x_3)
+WHERE
+  ((MOD(x_3, NULLIF(2, 0))) = 0);
+
+-- Interacting with table logica_test.Even
+
+DROP TABLE IF EXISTS logica_test.Odd;
+CREATE TABLE logica_test.Odd AS SELECT
+  x_3 AS col0
+FROM
+  UNNEST(TRANSFORM(FILTER(SEQUENCE(0, 10), x -> x < 10), synalog_e -> ROW(synalog_e))) as pushkin(x_3)
+WHERE
+  ((MOD(x_3, NULLIF(2, 0))) = 1);
+
+-- Interacting with table logica_test.Odd
+
 WITH t_0_AllSquares AS (SELECT * FROM (
   
     SELECT
-      x_15 AS x,
-      ((x_15) * (x_15)) AS sq,
+      Even.col0 AS x,
+      ((Even.col0) * (Even.col0)) AS sq,
       'even' AS type
     FROM
-      UNNEST(SEQUENCE(0, 10 - 1)) as pushkin(x_15)
-    WHERE
-      ((MOD(x_15, 2)) = 0)
+      logica_test.Even AS Even
    UNION ALL
   
     SELECT
-      x_25 AS x,
-      ((x_25) * (x_25)) AS sq,
+      Odd.col0 AS x,
+      ((Odd.col0) * (Odd.col0)) AS sq,
       'odd' AS type
     FROM
-      UNNEST(SEQUENCE(0, 10 - 1)) as pushkin(x_25)
-    WHERE
-      ((MOD(x_25, 2)) = 1)
+      logica_test.Odd AS Odd
   
 ) AS UNUSED_TABLE_NAME  )
 SELECT

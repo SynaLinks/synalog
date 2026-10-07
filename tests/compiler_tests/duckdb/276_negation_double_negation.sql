@@ -4,29 +4,25 @@ create schema if not exists logica_home;
 drop type if exists logicarecord893574736 cascade; create type logicarecord893574736 as struct(nirvana numeric);
 create sequence if not exists eternal_logical_sequence;
 
-
--- Logica type: logicarecord481217614
-drop type if exists logicarecord481217614 cascade; create type logicarecord481217614 as struct(r logicarecord893574736);
-
--- Logica type: logicarecord383307722
-drop type if exists logicarecord383307722 cascade; create type logicarecord383307722 as struct(a timestamp);
-
--- Logica type: logicarecord519939597
-drop type if exists logicarecord519939597 cascade; create type logicarecord519939597 as struct(args text[], predicate text);
+WITH t_0_Missing AS (SELECT
+  x_10.unnested_pod AS x
+FROM
+  (select unnest([1, 2]) as unnested_pod) as x_10
+WHERE
+  ((SELECT
+    MIN((CASE WHEN x_13.unnested_pod = 0 THEN 1 ELSE NULL END)) AS logica_value
+  FROM
+    (select unnest([0]) as unnested_pod) as x_13
+  WHERE
+    (x_10.unnested_pod = 1)) IS NULL))
 SELECT
   x_3.unnested_pod AS x
 FROM
-  (select unnest([1, 2]::numeric[]) as unnested_pod) as x_3
+  (select unnest([1, 2]) as unnested_pod) as x_3
 WHERE
   ((SELECT
     MIN((CASE WHEN x_6.unnested_pod = 0 THEN 1 ELSE NULL END)) AS logica_value
   FROM
-    (select unnest([1, 2]::numeric[]) as unnested_pod) as x_10, (select unnest([0]::numeric[]) as unnested_pod) as x_6
+    t_0_Missing AS Missing, (select unnest([0]) as unnested_pod) as x_6
   WHERE
-    ((SELECT
-      MIN((CASE WHEN x_13.unnested_pod = 0 THEN 1 ELSE NULL END)) AS logica_value
-    FROM
-      (select unnest([0]::numeric[]) as unnested_pod) as x_13
-    WHERE
-      (x_3.unnested_pod = 1)) IS NULL) AND
-    (x_3.unnested_pod = x_10.unnested_pod)) IS NULL) ORDER BY x;
+    (Missing.x = x_3.unnested_pod)) IS NULL) ORDER BY x;

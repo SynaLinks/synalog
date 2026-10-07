@@ -266,7 +266,7 @@ fn test_if_then_else() {
         )
     );
     let result = ql.convert_to_sql(&expr).unwrap();
-    assert_eq!(result, "IF(t_0.col0, 1, 0)");
+    assert_eq!(result, "(CASE WHEN t_0.col0 THEN 1 ELSE 0 END)");
 }
 
 // ── CamelCase passthrough ──
@@ -1005,7 +1005,7 @@ impl SubqueryTranslator for MockSubqueryTranslator {
     fn translate_table(&self, predicate: &str, _vocab: Option<&HashMap<String, String>>) -> crate::compiler::CompileResult<String> {
         Ok(predicate.to_string())
     }
-    fn translate_rule(&self, _rule: &Json, _vocab: &HashMap<String, String>, _is_combine: bool) -> crate::compiler::CompileResult<String> {
+    fn translate_rule(&self, _rule: &Json, _vocab: &HashMap<String, String>, _types: &HashMap<String, crate::compiler::type_inference::Type>, _is_combine: bool) -> crate::compiler::CompileResult<String> {
         Ok("SELECT 1 AS logica_value".to_string())
     }
 }
@@ -1608,7 +1608,7 @@ impl SubqueryTranslator for FailingTranslator {
     fn translate_table(&self, _predicate: &str, _vocab: Option<&HashMap<String, String>>) -> crate::compiler::CompileResult<String> {
         Err(crate::compiler::CompileError::new("not found", ""))
     }
-    fn translate_rule(&self, _rule: &Json, _vocab: &HashMap<String, String>, _is_combine: bool) -> crate::compiler::CompileResult<String> {
+    fn translate_rule(&self, _rule: &Json, _vocab: &HashMap<String, String>, _types: &HashMap<String, crate::compiler::type_inference::Type>, _is_combine: bool) -> crate::compiler::CompileResult<String> {
         Ok("SELECT 1".to_string())
     }
 }
@@ -1967,8 +1967,8 @@ fn test_if_case_when() {
         )
     );
     let result = ql.convert_to_sql(&expr).unwrap();
-    // Python Logica uses IF() function format
-    assert!(result.starts_with("IF("), "Expected IF(...), Got: {}", result);
+    // CASE WHEN: every engine has it, not every one IF().
+    assert!(result.starts_with("(CASE WHEN "), "Got: {}", result);
 }
 
 // ── Uppercase unknown function (CamelCase passthrough) ──

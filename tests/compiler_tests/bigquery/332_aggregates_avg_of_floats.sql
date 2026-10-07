@@ -1,0 +1,4 @@
+SELECT
+  AVG(x_2) AS a
+FROM
+  UNNEST(ARRAY[0.25, 0.75]) as x_2;

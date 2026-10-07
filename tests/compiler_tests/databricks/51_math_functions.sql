@@ -1,17 +1,8 @@
-WITH t_1_Numbers AS (SELECT * FROM (
-  
-    SELECT
-      1 AS x
-   UNION ALL
-  
-    SELECT
-      2 AS x
-   UNION ALL
-  
-    SELECT
-      3 AS x
-  
-) AS UNUSED_TABLE_NAME  ),
+WITH t_1_Numbers AS (SELECT * FROM VALUES
+  (1),
+  (2),
+  (3)
+AS UNUSED_TABLE_NAME(x)),
 t_0_Computed AS (SELECT
   Numbers.x AS x,
   EXP(CAST(Numbers.x AS DOUBLE)) AS e,
@@ -20,7 +11,7 @@ t_0_Computed AS (SELECT
   COS(CAST(Numbers.x AS DOUBLE)) AS c,
   POW(Numbers.x, 2) AS p
 FROM
-  t_1_Numbers AS Numbers ORDER BY x)
+  t_1_Numbers AS Numbers ORDER BY x NULLS LAST)
 SELECT
   Computed.x AS x,
   Computed.e AS e,
@@ -29,4 +20,4 @@ SELECT
   Computed.c AS c,
   Computed.p AS p
 FROM
-  t_0_Computed AS Computed ORDER BY x;
+  t_0_Computed AS Computed ORDER BY x NULLS LAST;

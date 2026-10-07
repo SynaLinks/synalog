@@ -1,4 +1,4 @@
 SELECT
   x_3 AS s
 FROM
-  explode(ARRAY("b", "a", "c")) AS pushkin(x_3) ORDER BY s DESC;
+  LATERAL (SELECT explode(ARRAY("b", "a", "c")) AS x_3) AS pushkin ORDER BY s DESC;

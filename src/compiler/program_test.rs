@@ -167,7 +167,8 @@ fn test_ground_with_alias() {
         T(x) :- Ext(x);
     "#);
     let sql = program.predicate_sql("Ext").unwrap();
-    assert_eq!(sql, "actual_table");
+    // A named table lives in Synalog's dataset too.
+    assert_eq!(sql, "logica_test.actual_table");
 }
 
 // ── table aliases ──

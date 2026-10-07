@@ -1,0 +1,2 @@
+SELECT
+  (CAST(7 AS DOUBLE) / NULLIF(2, 0)) AS v;

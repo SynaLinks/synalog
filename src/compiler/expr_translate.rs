@@ -4,18 +4,16 @@
 // Modifications: Copyright 2025-2026 Yoan Sallami (Synalinks Team), licensed under the Apache License, Version 2.0.
 
 use std::collections::{HashMap, HashSet};
+use std::sync::{Arc, Mutex, OnceLock};
 use crate::parser::Json;
 use crate::compiler::CompileResult;
 use crate::compiler::CompileError;
 use crate::compiler::dialects::Dialect;
 use crate::compiler::type_inference::Type;
 
-/// Best-effort SQL type of a record-literal field, read from its value
-/// expression AST node. Typed dialects (trino/presto/psql) need a field type to
-/// build named record literals; literal-valued fields — the only ones that
-/// reach a compiled query — resolve precisely, and anything else (variables,
-/// calls) falls back to `String`, a type every engine accepts for a column that
-/// is constructed but, lacking inference here, not otherwise constrained.
+/// The type of a record-literal field read from its value alone: a literal,
+/// or a nested record. Used where no rule is at hand (the PostgreSQL types a
+/// program declares); `ExprTranslator::value_type` knows a rule's variables.
 fn record_field_type(expr: &Json) -> Type {
     let obj = expr.as_object();
     if let Some(rec) = obj.get("record") {
@@ -87,10 +85,16 @@ fn to_camel_case(s: &str) -> String {
         .collect()
 }
 
+/// Bulk StandardSQL functions from processed_functions.csv, built once.
+fn bulk_built_in_functions() -> &'static HashMap<String, String> {
+    static BULK: OnceLock<HashMap<String, String>> = OnceLock::new();
+    BULK.get_or_init(build_bulk_built_in_functions)
+}
+
 /// Bulk StandardSQL functions from processed_functions.csv.
 /// Format: function,sql_function,aggregates,has_repeated_args,min_args,max_args
 /// Rows starting with `$` are operators (skipped here).
-fn bulk_built_in_functions() -> HashMap<String, String> {
+fn build_bulk_built_in_functions() -> HashMap<String, String> {
     let csv_data = "\
 abs,ABS
 acos,ACOS
@@ -378,10 +382,42 @@ var_samp,VAR_SAMP";
     m
 }
 
+/// A dialect's function and infix operator templates: bulk functions, then
+/// the base built-ins (overriding bulk), then the dialect's (overriding all),
+/// without the ones a dialect disables with an empty template. Built once per
+/// dialect: every rule's translator reads them.
+#[allow(clippy::type_complexity)]
+fn dialect_tables(dialect: &dyn Dialect) -> (Arc<HashMap<String, String>>, Arc<HashMap<String, String>>) {
+    static TABLES: OnceLock<Mutex<HashMap<&'static str, (Arc<HashMap<String, String>>, Arc<HashMap<String, String>>)>>> = OnceLock::new();
+    let cache = TABLES.get_or_init(|| Mutex::new(HashMap::new()));
+    let mut cache = cache.lock().unwrap_or_else(|e| e.into_inner());
+    cache.entry(dialect.name()).or_insert_with(|| {
+        let mut functions = bulk_built_in_functions().clone();
+        for (k, v) in base_built_in_functions() {
+            functions.insert(k.to_string(), v.to_string());
+        }
+        for (k, v) in dialect.built_in_functions() {
+            functions.insert(k.to_string(), v.to_string());
+        }
+        let mut infix: HashMap<String, String> = base_infix_operators()
+            .into_iter()
+            .map(|(k, v)| (k.to_string(), v.to_string()))
+            .collect();
+        for (k, v) in dialect.infix_operators() {
+            infix.insert(k.to_string(), v.to_string());
+        }
+        // CleanOperatorsAndFunctions: remove entries with empty/None values
+        // (dialect overrides can set a value to "" to disable a function)
+        functions.retain(|_, v| !v.is_empty());
+        infix.retain(|_, v| !v.is_empty());
+        (Arc::new(functions), Arc::new(infix))
+    }).clone()
+}
+
 /// Built-in functions: Logica name → SQL template.
 /// These override bulk functions for Logica-specific semantics.
 // Note: SomeValue uses ANY_VALUE in Rust vs ARRAY_AGG(... IGNORE NULLS LIMIT 1)[OFFSET(0)] in Python.
-fn base_built_in_functions() -> HashMap<&'static str, &'static str> {
+pub(crate) fn base_built_in_functions() -> HashMap<&'static str, &'static str> {
     let mut m = HashMap::new();
     m.insert("ToFloat64", "CAST(%s AS FLOAT64)");
     m.insert("ToInt64", "CAST(%s AS INT64)");
@@ -410,10 +446,12 @@ fn base_built_in_functions() -> HashMap<&'static str, &'static str> {
     m.insert("Concat", "ARRAY_CONCAT({0}, {1})");
     m.insert("DateAddDay", "DATE_ADD({0}, INTERVAL {1} DAY)");
     m.insert("DateDiffDay", "DATE_DIFF({0}, {1}, DAY)");
-    m.insert("Element", "{0}[OFFSET({1})]");
+    m.insert("Element", "(CASE WHEN {1} < 0 THEN NULL ELSE {0}[SAFE_OFFSET({1})] END)");
     m.insert("IsNull", "(%s IS NULL)");
     m.insert("Join", "ARRAY_TO_STRING(%s)");
-    m.insert("Like", "({0} LIKE {1})");
+    // A backslash escapes `%`, `_` and itself in a pattern on every engine;
+    // without ESCAPE, only PostgreSQL and Spark would read it so.
+    m.insert("Like", "({0} LIKE {1} ESCAPE '\\')");
     m.insert("Range", "GENERATE_ARRAY(0, %s - 1)");
     m.insert("RangeOf", "GENERATE_ARRAY(0, ARRAY_LENGTH(%s) - 1)");
     m.insert("Size", "ARRAY_LENGTH(%s)");
@@ -442,6 +480,20 @@ fn base_built_in_functions() -> HashMap<&'static str, &'static str> {
     m.insert("Upper", "UPPER(%s)");
     m.insert("Lower", "LOWER(%s)");
     m.insert("Trim", "TRIM(%s)");
+    // Functions written so they run, and agree, on every engine; a dialect
+    // overrides those its SQL lacks.
+    m.insert("StartsWith", "(SUBSTR({0}, 1, LENGTH({1})) = {1})");
+    m.insert("EndsWith", "(LENGTH({1}) <= LENGTH({0}) AND SUBSTR({0}, LENGTH({0}) - LENGTH({1}) + 1, LENGTH({1})) = {1})");
+    m.insert("Strpos", "STRPOS({0}, {1})");
+    m.insert("Lpad", "LPAD({0}, {1}, {2})");
+    m.insert("Rpad", "RPAD({0}, {1}, {2})");
+    m.insert("Repeat", "REPEAT({0}, {1})");
+    m.insert("Ifnull", "COALESCE({0}, {1})");
+    m.insert("RegexpContains", "REGEXP_LIKE({0}, {1})");
+    m.insert("RegexpReplace", "REGEXP_REPLACE({0}, {1}, {2})");
+    m.insert("RegexpExtract", "REGEXP_EXTRACT({0}, {1})");
+    m.insert("Trunc", "(CASE WHEN {0} < 0 THEN CEIL({0}) ELSE FLOOR({0}) END)");
+    m.insert("Div", "CAST((CASE WHEN (({0}) < 0) <> (({1}) < 0) THEN CEIL(CAST({0} AS DOUBLE) / NULLIF({1}, 0)) ELSE FLOOR(CAST({0} AS DOUBLE) / NULLIF({1}, 0)) END) AS BIGINT)");
     m
 }
 
@@ -457,9 +509,11 @@ fn base_infix_operators() -> HashMap<&'static str, &'static str> {
     m.insert("+", "(%s) + (%s)");
     m.insert("-", "(%s) - (%s)");
     m.insert("*", "(%s) * (%s)");
-    m.insert("/", "(%s) / (%s)");
+    // A division by zero has no value, on every engine (not an error, an
+    // infinity or a NaN).
+    m.insert("/", "(%s) / NULLIF(%s, 0)");
     m.insert("^", "POW(%s, %s)");
-    m.insert("%", "MOD(%s, %s)");
+    m.insert("%", "MOD(%s, NULLIF(%s, 0))");
     m.insert("++", "CONCAT(%s, %s)");
     m.insert("||", "%s OR %s");
     m.insert("&&", "%s AND %s");
@@ -483,6 +537,7 @@ pub trait SubqueryTranslator {
         &self,
         rule: &Json,
         external_vocabulary: &HashMap<String, String>,
+        external_types: &HashMap<String, Type>,
         is_combine: bool,
     ) -> CompileResult<String>;
 
@@ -491,6 +546,21 @@ pub trait SubqueryTranslator {
     fn combine_psql_type(&self, _combine: &Json) -> Option<String> {
         None
     }
+
+    /// PostgreSQL type of a predicate's column, when type inference knows it.
+    /// Default: none.
+    fn column_psql_type(&self, _predicate: &str, _column: &str) -> Option<String> {
+        None
+    }
+
+    /// The inferred type of a predicate's column. Default: unknown.
+    fn column_type(&self, _predicate: &str, _column: &str) -> Option<Type> {
+        None
+    }
+
+    /// Note a record type a query builds, for dialects that declare record
+    /// types (PostgreSQL). Default: nothing to do.
+    fn register_record_type(&self, _ty: &Type) {}
 }
 
 /// Expression-to-SQL translator.
@@ -501,12 +571,19 @@ pub trait SubqueryTranslator {
 pub struct ExprTranslator<'a> {
     pub vocabulary: HashMap<String, String>,
     pub dialect: &'a dyn Dialect,
-    built_in_functions: HashMap<String, String>,
-    built_in_infix_operators: HashMap<String, String>,
+    built_in_functions: Arc<HashMap<String, String>>,
+    built_in_infix_operators: Arc<HashMap<String, String>>,
     pub flag_values: &'a HashMap<String, String>,
     pub subquery_translator: Option<&'a dyn SubqueryTranslator>,
     /// The value field name based on compilation mode ("logica_value" or "synalog_value")
     pub value_field: &'static str,
+    /// The types of the rule's variables that are known: a column of a
+    /// table, an element of a list. A record built from them has their types.
+    pub variable_types: HashMap<String, Type>,
+    /// The type a list or record literal is expected to have where it is
+    /// written, by the address of its node: an empty list has no type of its
+    /// own (`[]`), nor a record holding one.
+    type_hints: std::cell::RefCell<HashMap<usize, Type>>,
 }
 
 impl<'a> ExprTranslator<'a> {
@@ -524,33 +601,14 @@ impl<'a> ExprTranslator<'a> {
         flag_values: &'a HashMap<String, String>,
         value_field: &'static str,
     ) -> Self {
-        // Layer: bulk functions → base built-in (overrides bulk) → dialect (overrides all).
-        let mut functions = bulk_built_in_functions();
-        for (k, v) in base_built_in_functions() {
-            functions.insert(k.to_string(), v.to_string());
-        }
-        for (k, v) in dialect.built_in_functions() {
-            functions.insert(k.to_string(), v.to_string());
-        }
-
-        let mut infix: HashMap<String, String> = base_infix_operators()
-            .into_iter()
-            .map(|(k, v)| (k.to_string(), v.to_string()))
-            .collect();
-        for (k, v) in dialect.infix_operators() {
-            infix.insert(k.to_string(), v.to_string());
-        }
-
-        // CleanOperatorsAndFunctions: remove entries with empty/None values
-        // (dialect overrides can set a value to "" to disable a function)
-        functions.retain(|_, v| !v.is_empty());
-        infix.retain(|_, v| !v.is_empty());
-
+        let (functions, infix) = dialect_tables(dialect);
         ExprTranslator {
             vocabulary,
             dialect,
             built_in_functions: functions,
             built_in_infix_operators: infix,
+            variable_types: HashMap::new(),
+            type_hints: std::cell::RefCell::new(HashMap::new()),
             flag_values,
             subquery_translator: None,
             value_field,
@@ -560,6 +618,12 @@ impl<'a> ExprTranslator<'a> {
     /// Convert a Logica expression AST node to an SQL string.
     /// Uses an iterative task/result stack instead of recursion.
     pub fn convert_to_sql(&self, expression: &Json) -> CompileResult<String> {
+        self.convert_to_sql_expecting(expression, &Type::Any)
+    }
+
+    /// `convert_to_sql` of a value whose type the context knows (a column's).
+    pub fn convert_to_sql_expecting(&self, expression: &Json, expected: &Type) -> CompileResult<String> {
+        self.hint_types(expression, expected);
         // Combiner kinds that operate on pre-evaluated sub-expression results.
         enum CK {
             /// Apply a SQL template with positional args ({0}, {1} or %s).
@@ -615,7 +679,16 @@ impl<'a> ExprTranslator<'a> {
 
                     // ── Variable ──
                     if let Some(var) = obj.get("variable") {
-                        results.push(self.convert_variable(var)?);
+                        let mut sql = self.convert_variable(var)?;
+                        // A null where a list is expected is a null list.
+                        if sql == "null" {
+                            if let Some(Type::List(element)) = self.type_hints.borrow().get(&node_key(expr)) {
+                                if let Some(typed) = self.dialect.typed_array(&sql, element) {
+                                    sql = typed;
+                                }
+                            }
+                        }
+                        results.push(sql);
                         continue;
                     }
 
@@ -652,11 +725,16 @@ impl<'a> ExprTranslator<'a> {
                             continue;
                         }
                         if lo.contains_key("the_null") || lo.contains_key("null") {
-                            results.push("null".to_string());
+                            // A null where a list is expected is a null list.
+                            let typed = match self.type_hints.borrow().get(&node_key(expr)) {
+                                Some(Type::List(element)) => self.dialect.typed_array("null", element),
+                                _ => None,
+                            };
+                            results.push(typed.unwrap_or_else(|| "null".to_string()));
                             continue;
                         }
                         if let Some(list) = lo.get("the_list") {
-                            if let Some(elements) = list.as_object().get("element") {
+                            if let Some(elements) = list.as_object().get("element").filter(|e| !e.as_array().is_empty()) {
                                 let elems = elements.as_array();
                                 let n = elems.len();
                                 tasks.push(Task::Combine(CK::ArrayLiteral(self.dialect.array_phrase().to_string()), n));
@@ -664,7 +742,11 @@ impl<'a> ExprTranslator<'a> {
                                     tasks.push(Task::Eval(e));
                                 }
                             } else {
-                                results.push(self.dialect.empty_array_literal());
+                                let hinted = match self.type_hints.borrow().get(&node_key(expr)) {
+                                    Some(Type::List(element)) => self.dialect.typed_array(&self.dialect.empty_array_literal(), element),
+                                    _ => None,
+                                };
+                                results.push(hinted.unwrap_or_else(|| self.dialect.empty_array_literal()));
                             }
                             continue;
                         }
@@ -681,9 +763,10 @@ impl<'a> ExprTranslator<'a> {
                                 let fo = fv.as_object();
                                 let val = &fo["value"];
                                 let e = val.as_object().get("expression").unwrap_or(val);
-                                fields.push((fo["field"].as_str().to_string(), record_field_type(e)));
+                                fields.push((fo["field"].as_str().to_string(), self.value_type(e)));
                                 exprs.push(e);
                             }
+                            self.hinted_fields(expr, &mut fields);
                             let n = exprs.len();
                             tasks.push(Task::Combine(CK::Record(fields), n));
                             for e in exprs.into_iter().rev() {
@@ -702,6 +785,137 @@ impl<'a> ExprTranslator<'a> {
                     if let Some(call) = obj.get("call") {
                         let co = call.as_object();
                         let pred_name = co["predicate_name"].as_str();
+
+                        // Text (by its form or its column's type) or a whole number to
+                        // an integer: no fraction to round.
+                        if pred_name == "ToInt64" {
+                            if let Some(template) = self.dialect.int64_of_text() {
+                                let fvs = co["record"].as_object()["field_value"].as_array();
+                                let arg = fvs.first()
+                                    .and_then(|fv| fv.as_object()["value"].as_object().get("expression"));
+                                if let Some(arg) = arg.filter(|a| is_text_expression(a) || is_whole_number_literal(a) || self.value_type(a) == Type::String) {
+                                    tasks.push(Task::Combine(CK::Template(template.to_string()), 1));
+                                    tasks.push(Task::Eval(arg));
+                                    continue;
+                                }
+                            }
+                        }
+
+                        // The least and greatest of booleans: false before true.
+                        if pred_name == "Min" || pred_name == "Max" {
+                            let fvs = co["record"].as_object()["field_value"].as_array();
+                            if let (1, Some((min, max))) = (fvs.len(), self.dialect.boolean_min_max()) {
+                                let arg = fvs[0].as_object()["value"].as_object().get("expression");
+                                if let Some(arg) = arg.filter(|a| self.value_type(a) == Type::Bool) {
+                                    let template = if pred_name == "Min" { min } else { max };
+                                    tasks.push(Task::Combine(CK::Template(template.to_string()), 1));
+                                    tasks.push(Task::Eval(arg));
+                                    continue;
+                                }
+                            }
+                        }
+
+                        // Greatest and Least are null when an argument is,
+                        // also where the engine's skip nulls.
+                        if (pred_name == "Greatest" || pred_name == "Least") && self.dialect.greatest_skips_nulls() {
+                            let fvs = co["record"].as_object()["field_value"].as_array();
+                            let args: Vec<&Json> = fvs.iter()
+                                .filter_map(|fv| fv.as_object()["value"].as_object().get("expression"))
+                                .collect();
+                            if args.len() > 1 {
+                                let n = args.len();
+                                let any_null = (0..n).map(|i| format!("{{{}}} IS NULL", i)).collect::<Vec<_>>().join(" OR ");
+                                let all = (0..n).map(|i| format!("{{{}}}", i)).collect::<Vec<_>>().join(", ");
+                                let function = if pred_name == "Greatest" { "GREATEST" } else { "LEAST" };
+                                let template = format!("(CASE WHEN {} THEN NULL ELSE {}({}) END)", any_null, function, all);
+                                tasks.push(Task::Combine(CK::Template(template), n));
+                                for arg in args.into_iter().rev() {
+                                    tasks.push(Task::Eval(arg));
+                                }
+                                continue;
+                            }
+                        }
+
+                        if pred_name == "Round" {
+                            let fvs = co["record"].as_object()["field_value"].as_array();
+                            if fvs.len() == 2 {
+                                let template = crate::compiler::dialects::round_to_digits_template(self.dialect);
+                                let args: Vec<&Json> = fvs.iter()
+                                    .filter_map(|fv| fv.as_object()["value"].as_object().get("expression"))
+                                    .collect();
+                                tasks.push(Task::Combine(CK::Template(template.to_string()), 2));
+                                for arg in args.into_iter().rev() {
+                                    tasks.push(Task::Eval(arg));
+                                }
+                                continue;
+                            }
+                        }
+
+                        // A number as text: the same text on every engine.
+                        if pred_name == "ToString" {
+                            if let Some(template) = self.dialect.number_to_string() {
+                                let fvs = co["record"].as_object()["field_value"].as_array();
+                                let arg = fvs.first()
+                                    .and_then(|fv| fv.as_object()["value"].as_object().get("expression"));
+                                if let Some(arg) = arg.filter(|a| self.value_type(a) == Type::Number) {
+                                    tasks.push(Task::Combine(CK::Template(template.to_string()), 1));
+                                    tasks.push(Task::Eval(arg));
+                                    continue;
+                                }
+                            }
+                        }
+
+                        // A boolean as text is "true" or "false", also where
+                        // the engine stores it as 1 or 0 (SQLite).
+                        if pred_name == "ToString" {
+                            if let Some(template) = self.dialect.boolean_to_string() {
+                                let fvs = co["record"].as_object()["field_value"].as_array();
+                                let arg = fvs.first()
+                                    .and_then(|fv| fv.as_object()["value"].as_object().get("expression"));
+                                if let Some(arg) = arg.filter(|a| is_boolean_expression(a)) {
+                                    tasks.push(Task::Combine(CK::Template(template.to_string()), 1));
+                                    tasks.push(Task::Eval(arg));
+                                    continue;
+                                }
+                            }
+                        }
+
+                        // Concatenating an empty list written out changes
+                        // nothing, and Trino and Presto cannot type `ARRAY[]`.
+                        if pred_name == "ArrayConcat" {
+                            let fvs = co["record"].as_object()["field_value"].as_array();
+                            let is_empty_list = |fv: &Json| {
+                                fv.as_object()["value"].as_object().get("expression")
+                                    .and_then(|a| a.as_object().get("literal"))
+                                    .and_then(|l| l.as_object().get("the_list"))
+                                    .and_then(|l| l.as_object().get("element"))
+                                    .is_some_and(|e| e.as_array().is_empty())
+                            };
+                            if fvs.len() == 2 && (is_empty_list(&fvs[0]) || is_empty_list(&fvs[1])) {
+                                let kept = if is_empty_list(&fvs[0]) { &fvs[1] } else { &fvs[0] };
+                                if let Some(e) = kept.as_object()["value"].as_object().get("expression") {
+                                    tasks.push(Task::Eval(e));
+                                    continue;
+                                }
+                            }
+                        }
+
+                        // The size of a list written out is known: `Size([])`
+                        // is 0 (PostgreSQL cannot type a lone empty array).
+                        if pred_name == "Size" {
+                            let fvs = co["record"].as_object()["field_value"].as_array();
+                            if fvs.len() == 1 {
+                                let arg = fvs[0].as_object()["value"].as_object().get("expression");
+                                let list = arg
+                                    .and_then(|a| a.as_object().get("literal"))
+                                    .and_then(|l| l.as_object().get("the_list"))
+                                    .and_then(|l| l.as_object().get("element"));
+                                if let Some(elements) = list {
+                                    results.push(elements.as_array().len().to_string());
+                                    continue;
+                                }
+                            }
+                        }
 
                         // Analytic/window functions
                         if Self::is_analytic_function(pred_name) {
@@ -886,8 +1100,9 @@ impl<'a> ExprTranslator<'a> {
                             tasks.push(Task::Combine(CK::FlagValue, num_args));
                         // Use IF(...) to match Python's output (required for golden tests)
                         } else if pred_name == "If" && num_args == 3 {
+                            // CASE: PostgreSQL has no IF.
                             tasks.push(Task::Combine(CK::Template(
-                                "IF({0}, {1}, {2})".to_string()), 3));
+                                "(CASE WHEN {0} THEN {1} ELSE {2} END)".to_string()), 3));
                         // Handle Array/ArgMin/ArgMax with arrow argument for SQLite
                         // Arrow expressions are converted to records {arg: ..., value: ...}
                         } else if (pred_name == "Array" || pred_name == "ArgMin" || pred_name == "ArgMax")
@@ -1151,9 +1366,10 @@ impl<'a> ExprTranslator<'a> {
                             let fo = fv.as_object();
                             let val = &fo["value"];
                             let e = val.as_object().get("expression").unwrap_or(val);
-                            fields.push((fo["field"].as_str().to_string(), record_field_type(e)));
+                            fields.push((fo["field"].as_str().to_string(), self.value_type(e)));
                             exprs.push(e);
                         }
+                        self.hinted_fields(expr, &mut fields);
                         let n = exprs.len();
                         tasks.push(Task::Combine(CK::Record(fields), n));
                         for e in exprs.into_iter().rev() {
@@ -1321,6 +1537,12 @@ impl<'a> ExprTranslator<'a> {
                                 .zip(args.iter())
                                 .map(|((f, t), v)| (f.as_str(), v.as_str(), t))
                                 .collect();
+                            if let Some(st) = self.subquery_translator {
+                                st.register_record_type(&Type::Record {
+                                    fields: fields.iter().cloned().collect(),
+                                    is_opened: false,
+                                });
+                            }
                             results.push(self.dialect.record_literal(&pairs));
                         }
                         // Subscript optimizations (record literal extraction, SubIfStruct) are in Eval phase above.
@@ -1430,32 +1652,27 @@ impl<'a> ExprTranslator<'a> {
                             }
                             // Strip the surrounding quotes and undo SQL '' escaping.
                             let inner = fmt_sql[1..fmt_sql.len() - 1].replace("''", "'");
-                            let segments: Vec<&str> = inner.split("%s").collect();
-                            // A stray '%' in any segment means an unsupported
-                            // specifier (%d, %f, %%, …) we cannot render as concat.
-                            if segments.iter().any(|s| s.contains('%')) {
-                                return Err(CompileError::new(
-                                    "Format on this engine supports only %s placeholders",
-                                    "",
-                                ));
-                            }
-                            if segments.len() - 1 != values.len() {
+                            let pieces = format_pieces(&inner).map_err(|e| CompileError::new(e, ""))?;
+                            let wanted = pieces.iter().filter(|p| matches!(p, FormatPiece::Spec { .. })).count();
+                            if wanted != values.len() {
                                 return Err(CompileError::new(
                                     format!(
                                         "Format expects {} argument(s) for its placeholders, got {}",
-                                        segments.len() - 1,
+                                        wanted,
                                         values.len()
                                     ),
                                     "",
                                 ));
                             }
                             let mut parts: Vec<String> = Vec::new();
-                            for (i, seg) in segments.iter().enumerate() {
-                                if !seg.is_empty() {
-                                    parts.push(self.dialect.str_literal(seg));
-                                }
-                                if i < values.len() {
-                                    parts.push(values[i].clone());
+                            let mut next = values.iter();
+                            for piece in &pieces {
+                                match piece {
+                                    FormatPiece::Text(text) => parts.push(self.dialect.str_literal(text)),
+                                    FormatPiece::Spec { .. } => {
+                                        let value = next.next().expect("counted");
+                                        parts.push(piece.render(value, |t| self.dialect.str_literal(t)));
+                                    }
                                 }
                             }
                             results.push(if parts.is_empty() {
@@ -1506,13 +1723,212 @@ impl<'a> ExprTranslator<'a> {
         let translator = self.subquery_translator.ok_or_else(|| {
             CompileError::new("Combine expressions require a subquery translator", "")
         })?;
-        let sql = translator.translate_rule(combine, &self.vocabulary, true)?;
+        if let Some(sql) = self.combine_of_lists(combine)? {
+            return Ok(sql);
+        }
+        let sql = translator.translate_rule(combine, &self.vocabulary, &self.variable_types, true)?;
         if self.dialect.name() == "psql" {
             if let Some(ty) = translator.combine_psql_type(combine) {
                 return Ok(format!("CAST(({}) AS {})", sql, ty));
             }
         }
         Ok(format!("({})", sql))
+    }
+
+    /// This translator with variables of a lambda added to its vocabulary.
+    fn scoped(&self, names: &[(String, String)]) -> ExprTranslator<'a> {
+        let mut vocabulary = self.vocabulary.clone();
+        for (variable, sql) in names {
+            vocabulary.insert(variable.clone(), sql.clone());
+        }
+        ExprTranslator {
+            vocabulary,
+            dialect: self.dialect,
+            built_in_functions: self.built_in_functions.clone(),
+            built_in_infix_operators: self.built_in_infix_operators.clone(),
+            variable_types: self.variable_types.clone(),
+            type_hints: std::cell::RefCell::new(self.type_hints.borrow().clone()),
+            flag_values: self.flag_values,
+            subquery_translator: self.subquery_translator,
+            value_field: self.value_field,
+        }
+    }
+
+    /// A combine over the elements of lists of the enclosing rule's row
+    /// (`combine Max= y :- y in l, y > 1`), on Trino, Presto and Spark: a
+    /// subquery unnesting a column of the outer query and filtering it is not
+    /// supported on Trino and Presto ("Given correlated subquery is not
+    /// supported"), nor on Spark an aggregate of both the outer row and the
+    /// elements (`ArgMax= i -> Element(l, i)`). Its values are an array built
+    /// with lambdas: `FILTER` for the conditions, `TRANSFORM` (and `FLATTEN`
+    /// for several lists) for the values. Trino and Spark aggregate the array
+    /// in a subquery that unnests it unfiltered, which they support; Presto
+    /// supports none, and applies array functions (as Trino and Spark do for
+    /// ArgMax, ArgMin and Array). None
+    /// when the combine reads a table or aggregates otherwise.
+    fn combine_of_lists(&self, combine: &Json) -> CompileResult<Option<String>> {
+        let engine = self.dialect.name();
+        if engine != "trino" && engine != "presto" && engine != "databricks" {
+            return Ok(None);
+        }
+        let co = combine.as_object();
+        let Some(body) = co.get("body") else { return Ok(None) };
+        let Some(conjuncts) = body.as_object().get("conjunction")
+            .and_then(|c| c.as_object().get("conjunct")) else { return Ok(None) };
+        let basis = Self::basis_functions(self.dialect);
+        let mut lists: Vec<(String, Json)> = Vec::new();
+        let mut conditions: Vec<Json> = Vec::new();
+        for conjunct in conjuncts.as_array().iter() {
+            let c = conjunct.as_object();
+            if let Some(inclusion) = c.get("inclusion") {
+                let io = inclusion.as_object();
+                let variable = io.get("element")
+                    .and_then(|e| e.as_object().get("variable"))
+                    .map(|v| v.as_object()["var_name"].as_str().to_string());
+                match variable {
+                    Some(v) if !self.vocabulary.contains_key(&v) && lists.iter().all(|(w, _)| *w != v) => {
+                        lists.push((v, io["list"].clone()));
+                    }
+                    _ => return Ok(None),
+                }
+            } else if let Some(predicate) = c.get("predicate") {
+                let name = predicate.as_object()["predicate_name"].as_str().to_string();
+                if !basis.contains(&name) {
+                    return Ok(None);
+                }
+                conditions.push(crate::json_obj! { "call" => predicate.clone() });
+            } else {
+                return Ok(None);
+            }
+        }
+        if lists.is_empty() {
+            return Ok(None);
+        }
+        let head = co["head"].as_object();
+        let fields = head["record"].as_object()["field_value"].as_array();
+        if fields.len() != 1 {
+            return Ok(None);
+        }
+        let Some(call) = fields[0].as_object()["value"].as_object().get("aggregation")
+            .and_then(|a| a.as_object().get("expression"))
+            .and_then(|e| e.as_object().get("call")) else { return Ok(None) };
+        let aggregate = call.as_object()["predicate_name"].as_str().to_string();
+        let arguments = call.as_object()["record"].as_object()["field_value"].as_array();
+        if arguments.len() != 1 {
+            return Ok(None);
+        }
+        let argument = arguments[0].as_object()["value"].as_object()["expression"].clone();
+        // The argument's parts: `key -> value` for ArgMax, ArgMin and Array.
+        let paired = matches!(aggregate.as_str(), "ArgMax" | "ArgMin" | "Array");
+        let parts: Vec<Json> = if paired {
+            let Some(arrow) = argument.as_object().get("call")
+                .filter(|c| c.as_object()["predicate_name"].as_str() == "->") else { return Ok(None) };
+            arrow.as_object()["record"].as_object()["field_value"].as_array().iter()
+                .map(|fv| fv.as_object()["value"].as_object()["expression"].clone())
+                .collect()
+        } else if matches!(aggregate.as_str(), "Agg+" | "Avg" | "Max" | "Min" | "Count" | "List" | "Set") {
+            vec![argument.clone()]
+        } else {
+            return Ok(None);
+        };
+
+        let names: Vec<(String, String)> = lists.iter().enumerate()
+            .map(|(i, (v, _))| (v.clone(), format!("synalog_u{}", i)))
+            .collect();
+        let scoped = self.scoped(&names);
+        let mut list_sql = Vec::new();
+        for (_, list) in &lists {
+            list_sql.push(scoped.convert_to_sql(list)?);
+        }
+        let mut condition_sql = Vec::new();
+        for condition in &conditions {
+            condition_sql.push(scoped.convert_to_sql(condition)?);
+        }
+        let n = lists.len();
+        let spark = engine == "databricks";
+        let array = |items: &str| if spark { format!("ARRAY({})", items) } else { format!("ARRAY[{}]", items) };
+        let empty = array("");
+        let values = |value: &str| -> String {
+            let last = &names[n - 1].1;
+            let source = format!("COALESCE({}, {})", list_sql[n - 1], empty);
+            let filtered = if condition_sql.is_empty() {
+                source
+            } else {
+                format!("FILTER({}, {} -> {})", source, last, condition_sql.join(" AND "))
+            };
+            let mut sql = format!("TRANSFORM({}, {} -> {})", filtered, last, value);
+            for i in (0..n - 1).rev() {
+                sql = format!("FLATTEN(TRANSFORM(COALESCE({}, {}), {} -> {}))", list_sql[i], empty, names[i].1, sql);
+            }
+            sql
+        };
+        let mut arrays = Vec::new();
+        for part in &parts {
+            arrays.push(values(&scoped.convert_to_sql(part)?));
+        }
+
+        if engine != "presto" && !paired {
+            // The aggregate of the unnested array, as in any combine.
+            let columns: Vec<String> = (0..arrays.len()).map(|i| format!("synalog_c{}", i)).collect();
+            let variables: Vec<(String, String)> = columns.iter()
+                .map(|c| (format!("{} # array", c), format!("synalog_p.{}", c)))
+                .collect();
+            let variable = |i: usize| crate::json_obj! {
+                "variable" => crate::json_obj! { "var_name" => variables[i].0.clone() }
+            };
+            let argument = variable(0);
+            let aggregation = crate::json_obj! { "call" => crate::json_obj! {
+                "predicate_name" => aggregate.clone(),
+                "record" => crate::json_obj! { "field_value" => Json::Array(vec![
+                    crate::json_obj! { "field" => 0i64, "value" => crate::json_obj! { "expression" => argument } },
+                ].into()) },
+            } };
+            let sql = self.scoped(&variables).convert_to_sql(&aggregation)?;
+            if spark {
+                return Ok(Some(format!(
+                    "(SELECT {} FROM LATERAL (SELECT explode({}) AS {}) AS synalog_p)",
+                    sql, arrays[0], columns[0])));
+            }
+            return Ok(Some(format!(
+                "(SELECT {} FROM UNNEST({}) AS synalog_p({}))",
+                sql, arrays.join(", "), columns.join(", "))));
+        }
+
+        // Presto, and a key with its value elsewhere: array functions, each
+        // array bound once to a lambda's parameter.
+        let bind = |items: &str, name: &str, body: String| -> String {
+            format!("ELEMENT_AT(TRANSFORM({}, {} -> {}), 1)", array(items), name, body)
+        };
+        let known = |array: &str| format!("FILTER({}, synalog_v -> synalog_v IS NOT NULL)", array);
+        let sql = match aggregate.as_str() {
+            "Agg+" => bind(&known(&arrays[0]), "synalog_a", "IF(CARDINALITY(synalog_a) = 0, NULL, ARRAY_SUM(synalog_a))".to_string()),
+            "Avg" => bind(&known(&arrays[0]), "synalog_a", "IF(CARDINALITY(synalog_a) = 0, NULL, ARRAY_AVERAGE(synalog_a))".to_string()),
+            "Max" => format!("ARRAY_MAX({})", known(&arrays[0])),
+            "Min" => format!("ARRAY_MIN({})", known(&arrays[0])),
+            "Count" => format!("CARDINALITY(ARRAY_DISTINCT({}))", known(&arrays[0])),
+            "List" => bind(&arrays[0], "synalog_a", "IF(CARDINALITY(synalog_a) = 0, NULL, synalog_a)".to_string()),
+            "Set" => bind(&arrays[0], "synalog_a", "IF(CARDINALITY(synalog_a) = 0, NULL, ARRAY_DISTINCT(synalog_a))".to_string()),
+            _ => {
+                // The positions of the values sorted by the key: descending
+                // for ArgMax, nulls last.
+                let (before, after) = if aggregate == "ArgMax" { (">", "<") } else { ("<", ">") };
+                let (key, value) = if aggregate == "Array" { ("synalog_a", "synalog_b") } else { ("synalog_b", "synalog_a") };
+                let order = format!(
+                    "ARRAY_SORT(SEQUENCE(1, CARDINALITY({k})), (synalog_i, synalog_j) -> \
+                     IF({i} IS NULL AND {j} IS NULL, 0, IF({i} IS NULL, 1, IF({j} IS NULL, -1, \
+                     IF({i} {b} {j}, -1, IF({i} {a} {j}, 1, 0))))))",
+                    k = key, b = before, a = after,
+                    i = format!("ELEMENT_AT({}, synalog_i)", key), j = format!("ELEMENT_AT({}, synalog_j)", key));
+                let picked = if aggregate == "Array" {
+                    format!("TRANSFORM({}, synalog_i -> ELEMENT_AT({}, synalog_i))", order, value)
+                } else {
+                    format!("ELEMENT_AT({}, ELEMENT_AT({}, 1))", value, order)
+                };
+                bind(&arrays[0], "synalog_a", bind(&arrays[1], "synalog_b",
+                    format!("IF(CARDINALITY(synalog_a) = 0, NULL, {})", picked)))
+            }
+        };
+        Ok(Some(sql))
     }
 
     /// Convert expression to SQL for GROUP BY context.
@@ -1557,9 +1973,16 @@ impl<'a> ExprTranslator<'a> {
     }
 
     /// Return the set of all "basis" function names that the ExprTranslator can
-    /// handle natively (without needing subquery translation).
-    /// Matches Python's `QL.BasisFunctions()`.
-    pub fn basis_functions(dialect: &dyn Dialect) -> HashSet<String> {
+    /// handle natively (without needing subquery translation), built once per
+    /// dialect. Matches Python's `QL.BasisFunctions()`.
+    pub fn basis_functions(dialect: &dyn Dialect) -> Arc<HashSet<String>> {
+        static BASIS: OnceLock<Mutex<HashMap<&'static str, Arc<HashSet<String>>>>> = OnceLock::new();
+        let cache = BASIS.get_or_init(|| Mutex::new(HashMap::new()));
+        let mut cache = cache.lock().unwrap_or_else(|e| e.into_inner());
+        cache.entry(dialect.name()).or_insert_with(|| Arc::new(Self::build_basis_functions(dialect))).clone()
+    }
+
+    fn build_basis_functions(dialect: &dyn Dialect) -> HashSet<String> {
         let mut names = HashSet::new();
         // Bulk functions
         for k in bulk_built_in_functions().keys() {
@@ -1703,3 +2126,414 @@ fn sub_if_struct(implication: &Json, subscript: &str) -> Option<Json> {
 #[cfg(test)]
 #[path = "expr_translate_test.rs"]
 mod expr_translate_test;
+
+/// A part of a printf-style format string: text, or a placeholder.
+#[derive(Debug, PartialEq)]
+enum FormatPiece {
+    Text(String),
+    /// `%[-0][width][.precision](s|d|f)`.
+    Spec { left: bool, zero: bool, width: usize, precision: Option<usize>, conversion: char },
+}
+
+/// The pieces of a format string, for an engine without printf, which
+/// renders each placeholder in SQL: `%s`, `%d`, `%f`, with a width, `0` or
+/// `-` padding and a precision, and `%%`.
+fn format_pieces(format: &str) -> Result<Vec<FormatPiece>, String> {
+    let mut pieces = Vec::new();
+    let mut text = String::new();
+    let mut chars = format.chars().peekable();
+    while let Some(c) = chars.next() {
+        if c != '%' {
+            text.push(c);
+            continue;
+        }
+        if chars.peek() == Some(&'%') {
+            chars.next();
+            text.push('%');
+            continue;
+        }
+        let (mut left, mut zero) = (false, false);
+        while let Some(&f) = chars.peek() {
+            match f {
+                '-' => left = true,
+                '0' => zero = true,
+                _ => break,
+            }
+            chars.next();
+        }
+        let mut width = 0;
+        while let Some(d) = chars.peek().and_then(|c| c.to_digit(10)) {
+            width = width * 10 + d as usize;
+            chars.next();
+        }
+        let mut precision = None;
+        if chars.peek() == Some(&'.') {
+            chars.next();
+            let mut p = 0;
+            while let Some(d) = chars.peek().and_then(|c| c.to_digit(10)) {
+                p = p * 10 + d as usize;
+                chars.next();
+            }
+            precision = Some(p);
+        }
+        let conversion = match chars.next() {
+            Some(c @ ('s' | 'd' | 'f')) => c,
+            other => {
+                return Err(format!(
+                    "Format on this engine supports %s, %d and %f placeholders (with a width, 0 or - padding and a precision), not %{}",
+                    other.map(String::from).unwrap_or_default()
+                ))
+            }
+        };
+        if !text.is_empty() {
+            pieces.push(FormatPiece::Text(std::mem::take(&mut text)));
+        }
+        pieces.push(FormatPiece::Spec { left, zero: zero && !left, width, precision, conversion });
+    }
+    if !text.is_empty() {
+        pieces.push(FormatPiece::Text(text));
+    }
+    Ok(pieces)
+}
+
+impl FormatPiece {
+    /// The SQL text of a placeholder applied to `value`.
+    fn render(&self, value: &str, literal: impl Fn(&str) -> String) -> String {
+        let FormatPiece::Spec { left, zero, width, precision, conversion } = self else {
+            return String::new();
+        };
+        let text = match conversion {
+            'd' => format!("CAST(CAST({} AS BIGINT) AS VARCHAR)", value),
+            'f' => {
+                let p = precision.unwrap_or(6);
+                // The cast rounds to the precision, and keeps its zeros.
+                format!("CAST(CAST({v} AS DECIMAL(38, {p})) AS VARCHAR)", v = value, p = p)
+            }
+            _ => value.to_string(),
+        };
+        if *width == 0 {
+            return text;
+        }
+        // Padded to the width, never cut: LPAD and RPAD truncate.
+        let pad = |padded: String| format!("(CASE WHEN LENGTH({t}) >= {w} THEN {t} ELSE {padded} END)", t = text, w = width, padded = padded);
+        if *left {
+            pad(format!("RPAD({}, {}, {})", text, width, literal(" ")))
+        } else if *zero && *conversion != 's' {
+            // Zeros go after the sign: -0042.
+            pad(format!(
+                "(CASE WHEN {v} < 0 THEN {minus} || LPAD(SUBSTR({t}, 2), {w1}, {zero}) ELSE LPAD({t}, {w}, {zero}) END)",
+                v = value, t = text, w = width, w1 = width - 1, minus = literal("-"), zero = literal("0")
+            ))
+        } else {
+            pad(format!("LPAD({}, {}, {})", text, width, literal(" ")))
+        }
+    }
+}
+
+#[cfg(test)]
+mod format_tests {
+    use super::*;
+
+    #[test]
+    fn format_pieces_read_every_placeholder() {
+        let pieces = format_pieces("%s-%05d|%-3s|%.2f%%").unwrap();
+        assert_eq!(pieces.len(), 8, "{:?}", pieces);
+        assert_eq!(pieces[0], FormatPiece::Spec { left: false, zero: false, width: 0, precision: None, conversion: 's' });
+        assert_eq!(pieces[2], FormatPiece::Spec { left: false, zero: true, width: 5, precision: None, conversion: 'd' });
+        assert_eq!(pieces[4], FormatPiece::Spec { left: true, zero: false, width: 3, precision: None, conversion: 's' });
+        assert_eq!(pieces[6], FormatPiece::Spec { left: false, zero: false, width: 0, precision: Some(2), conversion: 'f' });
+        assert_eq!(pieces[7], FormatPiece::Text("%".to_string()));
+    }
+
+    #[test]
+    fn format_pieces_refuse_other_conversions() {
+        assert!(format_pieces("%x").is_err());
+    }
+}
+
+impl<'a> ExprTranslator<'a> {
+    /// The type of a value, from its form and the types of the rule's
+    /// variables: a typed dialect declares a record's field types
+    /// (`CAST(ROW(x) AS ROW(a double))`), and a number declared text comes
+    /// back as text. `Any` when unknown.
+    pub fn value_type(&self, expr: &Json) -> Type {
+        if !expr.is_object() {
+            return Type::Any;
+        }
+        let o = expr.as_object();
+        if let Some(rec) = o.get("record") {
+            return self.record_type(rec);
+        }
+        if let Some(lit) = o.get("literal") {
+            let lo = lit.as_object();
+            if let Some(rec) = lo.get("the_record") {
+                return self.record_type(rec);
+            }
+            if let Some(list) = lo.get("the_list") {
+                let element = list.as_object().get("element").map(|e| {
+                    e.as_array().iter().map(|x| self.value_type(x)).find(|t| *t != Type::Any)
+                });
+                return Type::List(Box::new(element.flatten().unwrap_or(Type::Any)));
+            }
+            if lo.contains_key("the_number") {
+                return Type::Number;
+            }
+            if lo.contains_key("the_bool") {
+                return Type::Bool;
+            }
+            if lo.contains_key("the_string") {
+                return Type::String;
+            }
+            return Type::Any;
+        }
+        if let Some(v) = o.get("variable") {
+            let n = &v.as_object()["var_name"];
+            let name = if n.is_string() { n.as_str().to_string() } else { n.to_string() };
+            return self.variable_types.get(&name).cloned().unwrap_or(Type::Any);
+        }
+        if let Some(sub) = o.get("subscript") {
+            let so = sub.as_object();
+            let field = so.get("subscript")
+                .and_then(|s| s.as_object().get("literal"))
+                .and_then(|l| l.as_object().get("the_symbol"))
+                .map(|s| s.as_object()["symbol"].as_str().to_string());
+            if let (Some(field), Some(record)) = (field, so.get("record")) {
+                if let Type::Record { fields, .. } = self.value_type(record) {
+                    return fields.get(&field).cloned().unwrap_or(Type::Any);
+                }
+            }
+            return Type::Any;
+        }
+        if let Some(imp) = o.get("implication") {
+            let io = imp.as_object();
+            let branches = io.get("if_then").map(|b| b.as_array().clone()).unwrap_or_default();
+            let consequences = branches
+                .iter()
+                .filter_map(|b| b.as_object().get("consequence").cloned())
+                .chain(io.get("otherwise").cloned());
+            return consequences.map(|c| self.value_type(&c)).find(|t| *t != Type::Any).unwrap_or(Type::Any);
+        }
+        if is_boolean_expression(expr) {
+            return Type::Bool;
+        }
+        if is_text_expression(expr) {
+            return Type::String;
+        }
+        let Some(call) = o.get("call").filter(|c| c.is_object()) else { return Type::Any };
+        let name = call.as_object()["predicate_name"].as_str().to_string();
+        match name.as_str() {
+            "+" | "-" | "*" | "/" | "%" | "^" | "Length" | "Size" | "ToInt64" | "ToFloat64" | "Abs"
+            | "Round" | "Floor" | "Ceil" | "Sqrt" | "Exp" | "Log" | "Pow" | "Sin" | "Cos" => Type::Number,
+            "Split" => Type::List(Box::new(Type::String)),
+            "Range" => Type::List(Box::new(Type::Number)),
+            "Coalesce" | "Least" | "Greatest" | "ArrayConcat" | "ValueOfUnnested" => call.as_object()
+                .get("record")
+                .and_then(|r| r.as_object().get("field_value"))
+                .map(|fvs| {
+                    fvs.as_array().iter()
+                        .filter_map(|fv| fv.as_object()["value"].as_object().get("expression").cloned())
+                        .map(|e| self.value_type(&e))
+                        .find(|t| *t != Type::Any)
+                        .unwrap_or(Type::Any)
+                })
+                .unwrap_or(Type::Any),
+            // A value tied to a combine's rows: the value's type.
+            "MagicalEntangle" => call.as_object()
+                .get("record")
+                .and_then(|r| r.as_object().get("field_value"))
+                .and_then(|fvs| fvs.as_array().first().cloned())
+                .and_then(|fv| fv.as_object()["value"].as_object().get("expression").cloned())
+                .map(|e| self.value_type(&e))
+                .unwrap_or(Type::Any),
+            "Element" => match call.as_object()
+                .get("record")
+                .and_then(|r| r.as_object().get("field_value"))
+                .and_then(|fvs| fvs.as_array().first().cloned())
+                .and_then(|fv| fv.as_object()["value"].as_object().get("expression").cloned())
+                .map(|e| self.value_type(&e))
+            {
+                Some(Type::List(inner)) => *inner,
+                _ => Type::Any,
+            },
+            _ => Type::Any,
+        }
+    }
+
+    /// Note the type each list and record literal inside `expr` is expected
+    /// to have: `expected` for `expr` itself, the field types of the record a
+    /// value is in, the other list of an `ArrayConcat`, text for `Join`.
+    fn hint_types(&self, expr: &Json, expected: &Type) {
+        if !expr.is_object() {
+            return;
+        }
+        let o = expr.as_object();
+        let literal = o.get("literal").filter(|l| l.is_object()).map(|l| l.as_object());
+        let record = o.get("record").or_else(|| literal.and_then(|l| l.get("the_record")));
+        let is_null = literal.is_some_and(|l| l.contains_key("the_null") || l.contains_key("null"));
+        let is_list_variable = (o.contains_key("variable") || is_null) && matches!(expected, Type::List(_));
+        if literal.is_some_and(|l| l.contains_key("the_list")) || record.is_some() || is_list_variable {
+            if *expected != Type::Any {
+                self.type_hints.borrow_mut().entry(node_key(expr)).or_insert_with(|| expected.clone());
+            }
+        }
+        if let Some(rec) = record {
+            let fields = match expected {
+                Type::Record { fields, .. } => Some(fields),
+                _ => None,
+            };
+            for fv in rec.as_object()["field_value"].as_array() {
+                let fo = fv.as_object();
+                let val = &fo["value"];
+                let e = val.as_object().get("expression").unwrap_or(val);
+                let t = fo.get("field").filter(|f| f.is_string())
+                    .and_then(|f| fields.and_then(|fs| fs.get(f.as_str())))
+                    .cloned().unwrap_or(Type::Any);
+                self.hint_types(e, &t);
+            }
+            return;
+        }
+        if let Some(list) = literal.and_then(|l| l.get("the_list")) {
+            let element = match expected {
+                Type::List(e) => (**e).clone(),
+                _ => Type::Any,
+            };
+            if let Some(elements) = list.as_object().get("element") {
+                for e in elements.as_array() {
+                    self.hint_types(e, &element);
+                }
+            }
+            return;
+        }
+        if let Some(call) = o.get("call").filter(|c| c.is_object()) {
+            let c = call.as_object();
+            let name = c.get("predicate_name").filter(|n| n.is_string()).map(|n| n.as_str()).unwrap_or("");
+            let args: Vec<&Json> = c.get("record")
+                .and_then(|r| r.as_object().get("field_value"))
+                .map(|fvs| fvs.as_array().iter().map(|fv| {
+                    let val = &fv.as_object()["value"];
+                    val.as_object().get("expression").unwrap_or(val)
+                }).collect())
+                .unwrap_or_default();
+            let text_list = Type::List(Box::new(Type::String));
+            for (i, a) in args.iter().enumerate() {
+                let t = match name {
+                    // A list given with another takes the other's type.
+                    "ArrayConcat" => {
+                        let other = args.get(1 - i.min(1)).map(|x| self.value_type(x));
+                        match other {
+                            Some(Type::List(e)) if *e != Type::Any => Type::List(e),
+                            _ if matches!(expected, Type::List(_)) => expected.clone(),
+                            _ => text_list.clone(),
+                        }
+                    }
+                    "Join" if i == 0 => text_list.clone(),
+                    // Any list will do: its size or an element of none.
+                    "Size" | "Element" if i == 0 => text_list.clone(),
+                    _ => Type::Any,
+                };
+                self.hint_types(a, &t);
+            }
+            return;
+        }
+        if let Some(imp) = o.get("implication").filter(|i| i.is_object()) {
+            let io = imp.as_object();
+            if let Some(branches) = io.get("if_then") {
+                for b in branches.as_array() {
+                    if let Some(c) = b.as_object().get("consequence") {
+                        self.hint_types(c, expected);
+                    }
+                }
+            }
+            if let Some(other) = io.get("otherwise") {
+                self.hint_types(other, expected);
+            }
+        }
+    }
+
+    /// The field types of a record literal, completed by the type its place
+    /// expects where its own say nothing (an empty list).
+    fn hinted_fields(&self, expr: &Json, fields: &mut [(String, Type)]) {
+        if let Some(Type::Record { fields: expected, .. }) = self.type_hints.borrow().get(&node_key(expr)) {
+            for (name, t) in fields.iter_mut() {
+                if has_any(t) {
+                    if let Some(e) = expected.get(name) {
+                        *t = e.clone();
+                    }
+                }
+            }
+        }
+    }
+
+    fn record_type(&self, record: &Json) -> Type {
+        let mut fields = HashMap::new();
+        for fv in record.as_object()["field_value"].as_array() {
+            let fo = fv.as_object();
+            let Some(field) = fo.get("field").filter(|f| f.is_string()) else { continue };
+            let val = &fo["value"];
+            let e = val.as_object().get("expression").unwrap_or(val);
+            fields.insert(field.as_str().to_string(), self.value_type(e));
+        }
+        Type::Record { fields, is_opened: false }
+    }
+}
+
+/// The key of an expression node among type hints: its address.
+fn node_key(expr: &Json) -> usize {
+    expr as *const Json as usize
+}
+
+/// Whether a type is unknown, or a list of unknowns.
+fn has_any(t: &Type) -> bool {
+    match t {
+        Type::Any => true,
+        Type::List(e) => has_any(e),
+        _ => false,
+    }
+}
+
+/// Whether an expression is a number literal without a fraction (`65536`).
+fn is_whole_number_literal(expr: &Json) -> bool {
+    expr.is_object()
+        && expr.as_object().get("literal")
+            .and_then(|l| l.as_object().get("the_number"))
+            .map(|n| if n.is_object() { n.as_object()["number"].as_str().to_string() } else { n.to_string() })
+            .is_some_and(|n| n.trim_start_matches('-').bytes().all(|b| b.is_ascii_digit()))
+}
+
+/// Whether an expression is a boolean by its form: a boolean literal, a
+/// comparison, a connective, a membership or a null test.
+fn is_boolean_expression(expr: &Json) -> bool {
+    if !expr.is_object() {
+        return false;
+    }
+    let o = expr.as_object();
+    if let Some(literal) = o.get("literal") {
+        return literal.is_object() && literal.as_object().contains_key("the_bool");
+    }
+    let Some(call) = o.get("call").filter(|c| c.is_object()) else { return false };
+    call.as_object().get("predicate_name").is_some_and(|name| {
+        matches!(
+            name.as_str(),
+            "==" | "!=" | "<" | ">" | "<=" | ">=" | "&&" | "||" | "!" | "in" | "is" | "is not" | "IsNull" | "Like"
+                | "ILike" | "StartsWith" | "EndsWith" | "RegexpContains"
+        )
+    })
+}
+
+/// Whether an expression is text by its form: a string literal, or a call
+/// of a function returning text.
+fn is_text_expression(expr: &Json) -> bool {
+    if !expr.is_object() {
+        return false;
+    }
+    let o = expr.as_object();
+    if let Some(literal) = o.get("literal") {
+        return literal.is_object() && literal.as_object().contains_key("the_string");
+    }
+    let Some(call) = o.get("call").filter(|c| c.is_object()) else { return false };
+    call.as_object().get("predicate_name").is_some_and(|name| {
+        matches!(name.as_str(), "Substr" | "ToString" | "++" | "Upper" | "Lower" | "Format" | "Join"
+            | "Replace" | "Trim" | "Lpad" | "Rpad" | "Repeat"
+            | "RegexpExtract" | "RegexpReplace" | "FlagValue")
+    })
+}

@@ -1,0 +1,9 @@
+WITH t_0_V AS (SELECT * FROM VALUES
+  ("é"),
+  ("z"),
+  ("e")
+AS UNUSED_TABLE_NAME(w))
+SELECT
+  V.w AS w
+FROM
+  t_0_V AS V ORDER BY w NULLS LAST;

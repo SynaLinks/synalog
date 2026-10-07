@@ -11,4 +11,4 @@ WITH t_0_Person AS (SELECT * FROM (
 SELECT
   Person.info.name AS name
 FROM
-  t_0_Person AS Person ORDER BY name;
+  t_0_Person AS Person ORDER BY name NULLS LAST;

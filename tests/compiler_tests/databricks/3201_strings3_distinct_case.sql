@@ -1,0 +1,14 @@
+WITH t_1_V AS (SELECT * FROM VALUES
+  ("a"),
+  ("A"),
+  ("a")
+AS UNUSED_TABLE_NAME(w)),
+t_0_D AS (SELECT
+  V.w AS w
+FROM
+  t_1_V AS V
+GROUP BY 1)
+SELECT
+  SUM(1) AS n
+FROM
+  t_0_D AS D;

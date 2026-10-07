@@ -1,0 +1,6 @@
+SELECT
+  x_3 AS x
+FROM
+  UNNEST(ARRAY_CONCAT(ARRAY[1, 2], ARRAY[3])) as x_3
+WHERE
+  (x_3 > 2);

@@ -1,0 +1,2 @@
+SELECT
+  REPLACE(CAST("a\u0024b" AS STRING), "\u0024", "S") AS s;

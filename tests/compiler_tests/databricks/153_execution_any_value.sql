@@ -1,15 +1,7 @@
-WITH t_0_R AS (SELECT * FROM (
-  
-    SELECT
-      "a" AS k,
-      7 AS v
-   UNION ALL
-  
-    SELECT
-      "a" AS k,
-      7 AS v
-  
-) AS UNUSED_TABLE_NAME  )
+WITH t_0_R AS (SELECT * FROM VALUES
+  ("a", 7),
+  ("a", 7)
+AS UNUSED_TABLE_NAME(k, v))
 SELECT
   R.k AS k,
   MIN(R.v) AS v

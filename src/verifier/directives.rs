@@ -55,6 +55,43 @@ fn arguments(rule: &Json) -> Vec<&Json> {
         .unwrap_or_default()
 }
 
+/// Whether an annotation rule gives the field `name`.
+fn has_field(rule: &Json, name: &str) -> bool {
+    rule.as_object()["head"].as_object()
+        .get("record")
+        .and_then(|r| r.as_object().get("field_value"))
+        .is_some_and(|fvs| fvs.as_array().iter().any(|fv| {
+            let field = &fv.as_object()["field"];
+            field.is_string() && field.as_str() == name
+        }))
+}
+
+/// The names of the flags `FlagValue("name")` reads in `node`.
+fn flags_read(node: &Json, out: &mut std::collections::BTreeSet<String>) {
+    match node {
+        Json::Object(o) => {
+            if let Some(call) = o.get("call").filter(|c| c.is_object()) {
+                let c = call.as_object();
+                if c.get("predicate_name").is_some_and(|n| n.is_string() && n.as_str() == "FlagValue") {
+                    let arg = c.get("record")
+                        .and_then(|r| r.as_object().get("field_value"))
+                        .and_then(|fvs| fvs.as_array().first())
+                        .map(|fv| {
+                            let v = &fv.as_object()["value"];
+                            v.as_object().get("expression").unwrap_or(v)
+                        });
+                    if let Some(name) = arg.and_then(string_literal) {
+                        out.insert(name);
+                    }
+                }
+            }
+            o.values().for_each(|v| flags_read(v, out));
+        }
+        Json::Array(items) => items.iter().for_each(|i| flags_read(i, out)),
+        _ => {}
+    }
+}
+
 /// True if `depth` is a number of steps (1 or more) or -1 (until nothing
 /// changes), as `@Recursive` takes.
 fn is_recursion_depth(depth: &Json) -> bool {
@@ -89,8 +126,55 @@ pub fn check_directives(rules: &[&Json]) -> Vec<DirectiveError> {
     }
     let schema = assertion::schema(rules);
     let mut errors = Vec::new();
+    // A flag is read with FlagValue("name"); nothing but @DefineFlag gives
+    // one, so a name it does not define has no value.
+    let flags: HashSet<String> = rules.iter()
+        .filter(|r| r.as_object()["head"].as_object()["predicate_name"].as_str() == "@DefineFlag")
+        .filter_map(|r| arguments(r).first().and_then(|a| string_literal(a)))
+        .collect();
+    let mut read = std::collections::BTreeSet::new();
+    for rule in rules {
+        flags_read(rule, &mut read);
+    }
+    for name in read.into_iter().filter(|n| !flags.contains(n)) {
+        errors.push(DirectiveError {
+            message: format!("Undefined flag '{}': define it with @DefineFlag(\"{}\", value)", name, name),
+        });
+    }
     for rule in rules {
         let directive = rule.as_object()["head"].as_object()["predicate_name"].as_str();
+        // @Dataset is written into the SQL as a schema: a name, never text.
+        if directive == "@Dataset" {
+            let args = arguments(rule);
+            let name = args.first().map(|a| {
+                let o = a.as_object();
+                o.get("literal")
+                    .and_then(|l| l.as_object().get("the_string"))
+                    .map(|t| if t.is_object() { t.as_object()["the_string"].as_str().to_string() } else { t.as_str().to_string() })
+                    .unwrap_or_else(|| source_text(a))
+            });
+            if let Some(name) = name.filter(|n| !crate::compiler::annotations::is_schema_name(n)) {
+                errors.push(DirectiveError {
+                    message: format!(
+                        "@Dataset: '{}' is not a schema name: write names of letters, digits, '_' and '-', joined by '.'",
+                        name
+                    ),
+                });
+            }
+            continue;
+        }
+        // A program reads the database it runs on, and writes no file.
+        if directive == "@AttachDatabase" {
+            errors.push(DirectiveError {
+                message: "@AttachDatabase is not supported: a program reads the tables of the database it runs on, not files".to_string(),
+            });
+            continue;
+        }
+        if directive == "@Ground" && has_field(rule, "copy_to_file") {
+            errors.push(DirectiveError {
+                message: "@Ground: copy_to_file is not supported: a program writes no file".to_string(),
+            });
+        }
         if !DIRECTIVES.contains(&directive) {
             continue;
         }
@@ -206,6 +290,28 @@ mod tests {
         let errors = directive_errors("@OrderBy(V, \"x; DROP TABLE t\");\nV(x:) :- x in [1];\n");
         assert_eq!(errors.len(), 1);
         assert!(errors[0].contains("is not a column to order by"), "{}", errors[0]);
+    }
+
+    #[test]
+    fn files_are_refused() {
+        let errors = directive_errors("@AttachDatabase(other, \"/tmp/x.db\");\nV(x: 1);\n");
+        assert_eq!(errors.len(), 1);
+        assert!(errors[0].contains("@AttachDatabase is not supported"), "{}", errors[0]);
+        let errors = directive_errors("@Ground(V, copy_to_file: \"/tmp/x.json\");\nV(x: 1);\n");
+        assert_eq!(errors, vec!["@Ground: copy_to_file is not supported: a program writes no file".to_string()]);
+    }
+
+    #[test]
+    fn sql_as_a_table_name_is_refused() {
+        let parsed = parse_file("Q(x:) :- `(SELECT 1 AS x)`(x:);\nR(x:) :- `my-project.sales`(x:), sales.Orders(x:);\n", None, &[]).unwrap();
+        let errors: Vec<String> = validate(&parsed)
+            .errors
+            .iter()
+            .filter(|e| matches!(e, CheckError::SqlExpr(_)))
+            .map(|e| e.to_string())
+            .collect();
+        assert_eq!(errors.len(), 1, "{:?}", errors);
+        assert!(errors[0].contains("'`(SELECT 1 AS x)`' is not a table name"), "{}", errors[0]);
     }
 
     #[test]

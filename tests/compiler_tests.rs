@@ -66,8 +66,11 @@ fn normalize_sql_for_comparison(sql: &str) -> String {
         lines.push(line);
     }
 
-    // Join lines
-    let joined = lines.join("\n");
+    // Join lines. synalog sorts nulls last on every engine, adding
+    // `NULLS LAST` to each ordering where the engine sorts them first
+    // (DEVIATIONS.md, "Nulls sort last"); upstream leaves the engine's
+    // default. Compared without it; `dialects_test.rs` checks the clause.
+    let joined = lines.join("\n").replace(" NULLS LAST", "");
 
     // Remove type casts like ::text[], ::numeric[], ::bigint[] etc.
     // These are added by Python's type inference but Rust doesn't add them yet

@@ -1,0 +1,2 @@
+SELECT
+  UPPER('50%') AS s;

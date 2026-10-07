@@ -1,0 +1,8 @@
+WITH t_0_V AS (SELECT * FROM VALUES
+  (1),
+  (2)
+AS UNUSED_TABLE_NAME(`cube`))
+SELECT
+  V.`cube` AS `cube`
+FROM
+  t_0_V AS V ORDER BY `cube` NULLS LAST;

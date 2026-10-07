@@ -1,0 +1,2 @@
+SELECT
+  LOG(EXP(1)) AS v;

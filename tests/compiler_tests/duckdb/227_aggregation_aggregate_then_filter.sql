@@ -4,16 +4,7 @@ create schema if not exists logica_home;
 drop type if exists logicarecord893574736 cascade; create type logicarecord893574736 as struct(nirvana numeric);
 create sequence if not exists eternal_logical_sequence;
 
-
--- Logica type: logicarecord481217614
-drop type if exists logicarecord481217614 cascade; create type logicarecord481217614 as struct(r logicarecord893574736);
-
--- Logica type: logicarecord383307722
-drop type if exists logicarecord383307722 cascade; create type logicarecord383307722 as struct(a timestamp);
-
--- Logica type: logicarecord519939597
-drop type if exists logicarecord519939597 cascade; create type logicarecord519939597 as struct(args text[], predicate text);
-WITH t_1_R AS (SELECT * FROM (
+WITH t_2_R AS (SELECT * FROM (
   
     SELECT
       'a' AS k,
@@ -30,15 +21,15 @@ WITH t_1_R AS (SELECT * FROM (
       5 AS v
   
 ) AS UNUSED_TABLE_NAME  ),
-t_0_T AS (SELECT
+t_1_T AS (SELECT
   R.k AS k,
   SUM(R.v) AS t
 FROM
-  t_1_R AS R
+  t_2_R AS R
 GROUP BY R.k)
 SELECT
-  T.k AS k
+  t_0_T.k AS k
 FROM
-  t_0_T AS T
+  t_1_T AS t_0_T
 WHERE
-  (T.t > 10) ORDER BY k;
+  (t_0_T.t > 10) ORDER BY k;

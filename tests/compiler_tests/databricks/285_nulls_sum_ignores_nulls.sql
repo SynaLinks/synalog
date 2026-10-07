@@ -1,17 +1,8 @@
-WITH t_0_V AS (SELECT * FROM (
-  
-    SELECT
-      1 AS x
-   UNION ALL
-  
-    SELECT
-      null AS x
-   UNION ALL
-  
-    SELECT
-      2 AS x
-  
-) AS UNUSED_TABLE_NAME  )
+WITH t_0_V AS (SELECT * FROM VALUES
+  (1),
+  (null),
+  (2)
+AS UNUSED_TABLE_NAME(x))
 SELECT
   SUM(V.x) AS t
 FROM

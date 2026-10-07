@@ -1,0 +1,2 @@
+SELECT
+  ARRAY_LENGTH(SPLIT(",a,", ",")) AS n;

@@ -1,5 +1,5 @@
 SELECT
-  SIGN(x_4) AS s,
-  x_4 AS x
+  CASE WHEN (x_7 < 0) THEN -1 ELSE 1 END AS s,
+  x_7 AS x
 FROM
-  UNNEST(ARRAY[5, -5]) as pushkin(x_4) ORDER BY x;
+  UNNEST(TRANSFORM(ARRAY[5, -5], synalog_e -> ROW(synalog_e))) as pushkin(x_7) ORDER BY x;

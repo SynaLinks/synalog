@@ -1,0 +1,5 @@
+SELECT
+  x_3 AS x,
+  CASE WHEN (x_3 > 0) THEN 1.5 ELSE 2 END AS y
+FROM
+  UNNEST(ARRAY[-1, 1]) as x_3 ORDER BY x;

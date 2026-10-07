@@ -16,8 +16,8 @@ WITH t_2_Rows AS (SELECT * FROM (
 ) AS UNUSED_TABLE_NAME  ),
 t_0_Parsed AS (SELECT
   t_1_Rows.line AS line,
-  COALESCE(ARRAY_LENGTH(STRING_TO_ARRAY(t_1_Rows.line, ','), 1), 0) AS n,
-  (STRING_TO_ARRAY(t_1_Rows.line, ','))[0 + 1] AS first
+  CARDINALITY((CASE WHEN t_1_Rows.line = '' THEN ARRAY[''] ELSE STRING_TO_ARRAY(t_1_Rows.line, ',') END)) AS n,
+  ((CASE WHEN t_1_Rows.line = '' THEN ARRAY[''] ELSE STRING_TO_ARRAY(t_1_Rows.line, ',') END))[0 + 1] AS first
 FROM
   t_2_Rows AS t_1_Rows ORDER BY line)
 SELECT

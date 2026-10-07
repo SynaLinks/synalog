@@ -149,10 +149,9 @@ class PostgresRunner(Runner):
 
         conn = psycopg.connect(self.dsn, autocommit=True)
         cur = conn.cursor()
-        cur.execute(
-            "CREATE OR REPLACE AGGREGATE ARRAY_CONCAT_AGG(anycompatiblearray)"
-            " (SFUNC = array_cat, STYPE = anycompatiblearray)"
-        )
+        from synalog.runners import PSQL_ARRAY_CONCAT_AGG
+
+        cur.execute(PSQL_ARRAY_CONCAT_AGG)
 
         class Session(_Session):
             def run(self, script):
@@ -294,7 +293,15 @@ class SparkRunner(Runner):
     def session(self):
         from pyhive import hive
 
-        conn = hive.Connection(host=self.host, port=self.port, auth="NOSASL", username="e2e")
+        from thrift.transport import TSocket, TTransport
+
+        # A statement Spark never answers (a plan it cannot finish) blocks in
+        # a socket read, which pytest-timeout's signal does not interrupt:
+        # the socket gives up first, and the test fails instead of the run
+        # hanging. NOSASL is a plain buffered transport.
+        sock = TSocket.TSocket(self.host, self.port)
+        sock.setTimeout(540_000)
+        conn = hive.Connection(thrift_transport=TTransport.TBufferedTransport(sock), username="e2e")
         cur = conn.cursor()
         ready = []
 

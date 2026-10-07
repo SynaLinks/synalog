@@ -1,0 +1,4 @@
+SELECT
+  JSON_EXTRACT(JSON_OBJECT('n', x_1.value), "$.n") AS n
+FROM
+  JSON_EACH(JSON_ARRAY(10, 9)) as x_1 ORDER BY n;

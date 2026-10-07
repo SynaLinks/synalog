@@ -11,7 +11,7 @@ SELECT
   MIN(Dist_MultBodyAggAux_f1.d) AS d
 FROM
   t_0_Dist_MultBodyAggAux_f1 AS Dist_MultBodyAggAux_f1
-GROUP BY 1 ORDER BY node;
+GROUP BY 1;
 
 -- Interacting with table logica_test.Dist_ifr0
 
@@ -59,7 +59,7 @@ SELECT
   MIN(Dist_MultBodyAggAux_f2.d) AS d
 FROM
   t_0_Dist_MultBodyAggAux_f2 AS Dist_MultBodyAggAux_f2
-GROUP BY 1 ORDER BY node;
+GROUP BY 1;
 
 -- Interacting with table logica_test.Dist_ifr1
 
@@ -107,7 +107,7 @@ SELECT
   MIN(Dist_MultBodyAggAux_f3.d) AS d
 FROM
   t_0_Dist_MultBodyAggAux_f3 AS Dist_MultBodyAggAux_f3
-GROUP BY 1 ORDER BY node;
+GROUP BY 1;
 
 -- Interacting with table logica_test.Dist_ifr2
 
@@ -155,7 +155,7 @@ SELECT
   MIN(Dist_MultBodyAggAux_f4.d) AS d
 FROM
   t_0_Dist_MultBodyAggAux_f4 AS Dist_MultBodyAggAux_f4
-GROUP BY 1 ORDER BY node;
+GROUP BY 1;
 
 -- Interacting with table logica_test.Dist_ifr1
 
@@ -203,7 +203,7 @@ SELECT
   MIN(Dist_MultBodyAggAux_f3.d) AS d
 FROM
   t_0_Dist_MultBodyAggAux_f3 AS Dist_MultBodyAggAux_f3
-GROUP BY 1 ORDER BY node;
+GROUP BY 1;
 
 DROP TABLE IF EXISTS logica_test.Dist_ifr1;
 CREATE TABLE logica_test.Dist_ifr1 AS WITH t_1_Edge AS (SELECT * FROM (
@@ -249,7 +249,7 @@ SELECT
   MIN(Dist_MultBodyAggAux_f4.d) AS d
 FROM
   t_0_Dist_MultBodyAggAux_f4 AS Dist_MultBodyAggAux_f4
-GROUP BY 1 ORDER BY node;
+GROUP BY 1;
 
 DROP TABLE IF EXISTS logica_test.Dist_ifr2;
 CREATE TABLE logica_test.Dist_ifr2 AS WITH t_1_Edge AS (SELECT * FROM (
@@ -295,7 +295,7 @@ SELECT
   MIN(Dist_MultBodyAggAux_f3.d) AS d
 FROM
   t_0_Dist_MultBodyAggAux_f3 AS Dist_MultBodyAggAux_f3
-GROUP BY 1 ORDER BY node;
+GROUP BY 1;
 
 DROP TABLE IF EXISTS logica_test.Dist_ifr1;
 CREATE TABLE logica_test.Dist_ifr1 AS WITH t_1_Edge AS (SELECT * FROM (
@@ -341,7 +341,7 @@ SELECT
   MIN(Dist_MultBodyAggAux_f4.d) AS d
 FROM
   t_0_Dist_MultBodyAggAux_f4 AS Dist_MultBodyAggAux_f4
-GROUP BY 1 ORDER BY node;
+GROUP BY 1;
 
 DROP TABLE IF EXISTS logica_test.Dist_ifr2;
 CREATE TABLE logica_test.Dist_ifr2 AS WITH t_1_Edge AS (SELECT * FROM (
@@ -387,7 +387,7 @@ SELECT
   MIN(Dist_MultBodyAggAux_f3.d) AS d
 FROM
   t_0_Dist_MultBodyAggAux_f3 AS Dist_MultBodyAggAux_f3
-GROUP BY 1 ORDER BY node;
+GROUP BY 1;
 
 DROP TABLE IF EXISTS logica_test.Dist_ifr1;
 CREATE TABLE logica_test.Dist_ifr1 AS WITH t_1_Edge AS (SELECT * FROM (
@@ -433,7 +433,7 @@ SELECT
   MIN(Dist_MultBodyAggAux_f4.d) AS d
 FROM
   t_0_Dist_MultBodyAggAux_f4 AS Dist_MultBodyAggAux_f4
-GROUP BY 1 ORDER BY node;
+GROUP BY 1;
 
 WITH t_1_Edge AS (SELECT * FROM (
   

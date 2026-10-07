@@ -1,43 +1,19 @@
-WITH t_1_Events1 AS (SELECT * FROM (
-  
-    SELECT
-      "A" AS category,
-      10 AS count
-   UNION ALL
-  
-    SELECT
-      "A" AS category,
-      20 AS count
-   UNION ALL
-  
-    SELECT
-      "B" AS category,
-      15 AS count
-  
-) AS UNUSED_TABLE_NAME  ),
+WITH t_1_Events1 AS (SELECT * FROM VALUES
+  ("A", 10),
+  ("A", 20),
+  ("B", 15)
+AS UNUSED_TABLE_NAME(category, count)),
 t_0_Total1 AS (SELECT
   Events1.category AS category,
   SUM(Events1.count) AS total
 FROM
   t_1_Events1 AS Events1
 GROUP BY 1),
-t_1_Events2 AS (SELECT * FROM (
-  
-    SELECT
-      "B" AS category,
-      5 AS count
-   UNION ALL
-  
-    SELECT
-      "C" AS category,
-      25 AS count
-   UNION ALL
-  
-    SELECT
-      "C" AS category,
-      30 AS count
-  
-) AS UNUSED_TABLE_NAME  ),
+t_1_Events2 AS (SELECT * FROM VALUES
+  ("B", 5),
+  ("C", 25),
+  ("C", 30)
+AS UNUSED_TABLE_NAME(category, count)),
 t_0_Total2 AS (SELECT
   Events2.category AS category,
   SUM(Events2.count) AS total
@@ -61,4 +37,4 @@ SELECT * FROM (
     FROM
       t_0_Total2 AS Total2
   
-) AS UNUSED_TABLE_NAME  ORDER BY source, category ;
+) AS UNUSED_TABLE_NAME  ORDER BY source NULLS LAST, category NULLS LAST ;

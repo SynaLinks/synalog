@@ -1,0 +1,4 @@
+SELECT
+  SUM(CASE WHEN (x_2.value > 2) THEN 1 ELSE 0 END) AS n
+FROM
+  JSON_EACH(JSON_ARRAY(1, 2, 3, 4)) as x_2;

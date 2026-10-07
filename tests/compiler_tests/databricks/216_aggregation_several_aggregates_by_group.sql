@@ -1,20 +1,8 @@
-WITH t_0_R AS (SELECT * FROM (
-  
-    SELECT
-      "a" AS k,
-      1 AS v
-   UNION ALL
-  
-    SELECT
-      "a" AS k,
-      2 AS v
-   UNION ALL
-  
-    SELECT
-      "b" AS k,
-      5 AS v
-  
-) AS UNUSED_TABLE_NAME  )
+WITH t_0_R AS (SELECT * FROM VALUES
+  ("a", 1),
+  ("a", 2),
+  ("b", 5)
+AS UNUSED_TABLE_NAME(k, v))
 SELECT
   R.k AS k,
   SUM(1) AS n,
@@ -23,4 +11,4 @@ SELECT
   MAX(R.v) AS hi
 FROM
   t_0_R AS R
-GROUP BY 1 ORDER BY k;
+GROUP BY 1 ORDER BY k NULLS LAST;

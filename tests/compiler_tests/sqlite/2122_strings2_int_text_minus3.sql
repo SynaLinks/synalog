@@ -1,0 +1,2 @@
+SELECT
+  SYNALOG_NUMBER_TEXT(((0) - (3))) AS s;

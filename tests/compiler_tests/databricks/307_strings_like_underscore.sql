@@ -1,6 +1,6 @@
 SELECT
   x_3 AS w
 FROM
-  explode(ARRAY("abc", "abbc", "ac")) AS pushkin(x_3)
+  LATERAL (SELECT explode(ARRAY("abc", "abbc", "ac")) AS x_3) AS pushkin
 WHERE
-  (CAST(x_3 AS STRING) LIKE "a_c") ORDER BY w;
+  (CAST(x_3 AS STRING) LIKE "a_c" ESCAPE '\\') ORDER BY w NULLS LAST;

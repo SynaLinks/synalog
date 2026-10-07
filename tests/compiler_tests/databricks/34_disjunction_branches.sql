@@ -1,29 +1,9 @@
-WITH t_1_Products AS (SELECT * FROM (
-  
-    SELECT
-      "laptop" AS col0,
-      1000 AS col1,
-      "electronics" AS col2
-   UNION ALL
-  
-    SELECT
-      "phone" AS col0,
-      500 AS col1,
-      "electronics" AS col2
-   UNION ALL
-  
-    SELECT
-      "book" AS col0,
-      20 AS col1,
-      "media" AS col2
-   UNION ALL
-  
-    SELECT
-      "headphones" AS col0,
-      150 AS col1,
-      "electronics" AS col2
-  
-) AS UNUSED_TABLE_NAME  ),
+WITH t_1_Products AS (SELECT * FROM VALUES
+  ("laptop", 1000, "electronics"),
+  ("phone", 500, "electronics"),
+  ("book", 20, "media"),
+  ("headphones", 150, "electronics")
+AS UNUSED_TABLE_NAME(col0, col1, col2)),
 t_0_SpecialProducts AS (SELECT * FROM (
   
     SELECT
@@ -49,4 +29,4 @@ SELECT
   SpecialProducts.col1 AS reason
 FROM
   t_0_SpecialProducts AS SpecialProducts
-GROUP BY 1, 2 ORDER BY name;
+GROUP BY 1, 2 ORDER BY name NULLS LAST;

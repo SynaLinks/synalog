@@ -50,8 +50,10 @@ def test_a_recursion_stops_when_it_converges(counted):
     assert columns == ["y"]
     assert rows == [(y,) for y in range(11)]
     (session,) = counted
-    # A few setup statements, then 3 statements and a check per step.
-    assert session.scripts < 4 * 15
+    # Setup statements (the accumulated table's typed empty steps among
+    # them, as many whatever the depth), then 3 statements and a check per
+    # step: linear in the steps the data needs, not the declared depth.
+    assert session.scripts < 4 * 15 + 12
 
 
 def test_until_convergence_runs_where_compile_cannot():
@@ -71,7 +73,8 @@ def test_a_plan_has_a_loop_per_recursion():
     kinds = [step["kind"] for step in steps]
     assert kinds.count("loop") == 1 and kinds[-1] == "sql"
     (loop,) = [step for step in steps if step["kind"] == "loop"]
-    assert loop["repetitions"] == 40
+    # Two steps of the recursion per repetition (see semi_naive_loop).
+    assert loop["repetitions"] == 20
     assert loop["changed"].startswith("SELECT COUNT(*)")
 
 

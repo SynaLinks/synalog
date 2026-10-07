@@ -1,0 +1,2 @@
+SELECT
+  ((CAST(2147483647 AS BIGINT)) + (1)) AS v;

@@ -11,7 +11,7 @@ CREATE TABLE logica_home.Path_ifr0 AS WITH t_0_Path_MultBodyAggAux_f1 AS (SELECT
       x_15 AS a,
       ((x_15) + (1)) AS b
     FROM
-      UNNEST((SELECT ARRAY_AGG(x) FROM GENERATE_SERIES(0, 9 - 1) as x)) as x_15
+      UNNEST(COALESCE((SELECT ARRAY_AGG(x) FROM GENERATE_SERIES(0, 9 - 1) as x), '{}')) as x_15
   
 ) AS UNUSED_TABLE_NAME  )
 SELECT
@@ -39,7 +39,7 @@ CREATE TABLE logica_home.Path_ifr1 AS WITH t_0_Path_MultBodyAggAux_f2 AS (SELECT
       x_15 AS a,
       ((x_15) + (1)) AS b
     FROM
-      UNNEST((SELECT ARRAY_AGG(x) FROM GENERATE_SERIES(0, 9 - 1) as x)) as x_15
+      UNNEST(COALESCE((SELECT ARRAY_AGG(x) FROM GENERATE_SERIES(0, 9 - 1) as x), '{}')) as x_15
   
 ) AS UNUSED_TABLE_NAME  )
 SELECT
@@ -67,7 +67,7 @@ CREATE TABLE logica_home.Path_ifr2 AS WITH t_0_Path_MultBodyAggAux_f3 AS (SELECT
       x_15 AS a,
       ((x_15) + (1)) AS b
     FROM
-      UNNEST((SELECT ARRAY_AGG(x) FROM GENERATE_SERIES(0, 9 - 1) as x)) as x_15
+      UNNEST(COALESCE((SELECT ARRAY_AGG(x) FROM GENERATE_SERIES(0, 9 - 1) as x), '{}')) as x_15
   
 ) AS UNUSED_TABLE_NAME  )
 SELECT
@@ -95,7 +95,7 @@ CREATE TABLE logica_home.Path_ifr3 AS WITH t_0_Path_MultBodyAggAux_f4 AS (SELECT
       x_15 AS a,
       ((x_15) + (1)) AS b
     FROM
-      UNNEST((SELECT ARRAY_AGG(x) FROM GENERATE_SERIES(0, 9 - 1) as x)) as x_15
+      UNNEST(COALESCE((SELECT ARRAY_AGG(x) FROM GENERATE_SERIES(0, 9 - 1) as x), '{}')) as x_15
   
 ) AS UNUSED_TABLE_NAME  )
 SELECT
@@ -123,7 +123,7 @@ CREATE TABLE logica_home.Path_ifr2 AS WITH t_0_Path_MultBodyAggAux_f5 AS (SELECT
       x_15 AS a,
       ((x_15) + (1)) AS b
     FROM
-      UNNEST((SELECT ARRAY_AGG(x) FROM GENERATE_SERIES(0, 9 - 1) as x)) as x_15
+      UNNEST(COALESCE((SELECT ARRAY_AGG(x) FROM GENERATE_SERIES(0, 9 - 1) as x), '{}')) as x_15
   
 ) AS UNUSED_TABLE_NAME  )
 SELECT
@@ -151,7 +151,7 @@ CREATE TABLE logica_home.Path_ifr3 AS WITH t_0_Path_MultBodyAggAux_f4 AS (SELECT
       x_15 AS a,
       ((x_15) + (1)) AS b
     FROM
-      UNNEST((SELECT ARRAY_AGG(x) FROM GENERATE_SERIES(0, 9 - 1) as x)) as x_15
+      UNNEST(COALESCE((SELECT ARRAY_AGG(x) FROM GENERATE_SERIES(0, 9 - 1) as x), '{}')) as x_15
   
 ) AS UNUSED_TABLE_NAME  )
 SELECT
@@ -177,7 +177,7 @@ CREATE TABLE logica_home.Path_ifr2 AS WITH t_0_Path_MultBodyAggAux_f5 AS (SELECT
       x_15 AS a,
       ((x_15) + (1)) AS b
     FROM
-      UNNEST((SELECT ARRAY_AGG(x) FROM GENERATE_SERIES(0, 9 - 1) as x)) as x_15
+      UNNEST(COALESCE((SELECT ARRAY_AGG(x) FROM GENERATE_SERIES(0, 9 - 1) as x), '{}')) as x_15
   
 ) AS UNUSED_TABLE_NAME  )
 SELECT
@@ -203,7 +203,7 @@ CREATE TABLE logica_home.Path_ifr3 AS WITH t_0_Path_MultBodyAggAux_f4 AS (SELECT
       x_15 AS a,
       ((x_15) + (1)) AS b
     FROM
-      UNNEST((SELECT ARRAY_AGG(x) FROM GENERATE_SERIES(0, 9 - 1) as x)) as x_15
+      UNNEST(COALESCE((SELECT ARRAY_AGG(x) FROM GENERATE_SERIES(0, 9 - 1) as x), '{}')) as x_15
   
 ) AS UNUSED_TABLE_NAME  )
 SELECT
@@ -229,7 +229,7 @@ CREATE TABLE logica_home.Path_ifr2 AS WITH t_0_Path_MultBodyAggAux_f5 AS (SELECT
       x_15 AS a,
       ((x_15) + (1)) AS b
     FROM
-      UNNEST((SELECT ARRAY_AGG(x) FROM GENERATE_SERIES(0, 9 - 1) as x)) as x_15
+      UNNEST(COALESCE((SELECT ARRAY_AGG(x) FROM GENERATE_SERIES(0, 9 - 1) as x), '{}')) as x_15
   
 ) AS UNUSED_TABLE_NAME  )
 SELECT
@@ -255,7 +255,7 @@ CREATE TABLE logica_home.Path_ifr3 AS WITH t_0_Path_MultBodyAggAux_f4 AS (SELECT
       x_15 AS a,
       ((x_15) + (1)) AS b
     FROM
-      UNNEST((SELECT ARRAY_AGG(x) FROM GENERATE_SERIES(0, 9 - 1) as x)) as x_15
+      UNNEST(COALESCE((SELECT ARRAY_AGG(x) FROM GENERATE_SERIES(0, 9 - 1) as x), '{}')) as x_15
   
 ) AS UNUSED_TABLE_NAME  )
 SELECT
@@ -281,7 +281,7 @@ CREATE TABLE logica_home.Path_ifr2 AS WITH t_0_Path_MultBodyAggAux_f5 AS (SELECT
       x_15 AS a,
       ((x_15) + (1)) AS b
     FROM
-      UNNEST((SELECT ARRAY_AGG(x) FROM GENERATE_SERIES(0, 9 - 1) as x)) as x_15
+      UNNEST(COALESCE((SELECT ARRAY_AGG(x) FROM GENERATE_SERIES(0, 9 - 1) as x), '{}')) as x_15
   
 ) AS UNUSED_TABLE_NAME  )
 SELECT
@@ -307,7 +307,7 @@ CREATE TABLE logica_home.Path_ifr3 AS WITH t_0_Path_MultBodyAggAux_f4 AS (SELECT
       x_15 AS a,
       ((x_15) + (1)) AS b
     FROM
-      UNNEST((SELECT ARRAY_AGG(x) FROM GENERATE_SERIES(0, 9 - 1) as x)) as x_15
+      UNNEST(COALESCE((SELECT ARRAY_AGG(x) FROM GENERATE_SERIES(0, 9 - 1) as x), '{}')) as x_15
   
 ) AS UNUSED_TABLE_NAME  )
 SELECT
@@ -333,7 +333,7 @@ CREATE TABLE logica_home.Path_ifr2 AS WITH t_0_Path_MultBodyAggAux_f5 AS (SELECT
       x_15 AS a,
       ((x_15) + (1)) AS b
     FROM
-      UNNEST((SELECT ARRAY_AGG(x) FROM GENERATE_SERIES(0, 9 - 1) as x)) as x_15
+      UNNEST(COALESCE((SELECT ARRAY_AGG(x) FROM GENERATE_SERIES(0, 9 - 1) as x), '{}')) as x_15
   
 ) AS UNUSED_TABLE_NAME  )
 SELECT
@@ -359,7 +359,7 @@ CREATE TABLE logica_home.Path_ifr3 AS WITH t_0_Path_MultBodyAggAux_f4 AS (SELECT
       x_15 AS a,
       ((x_15) + (1)) AS b
     FROM
-      UNNEST((SELECT ARRAY_AGG(x) FROM GENERATE_SERIES(0, 9 - 1) as x)) as x_15
+      UNNEST(COALESCE((SELECT ARRAY_AGG(x) FROM GENERATE_SERIES(0, 9 - 1) as x), '{}')) as x_15
   
 ) AS UNUSED_TABLE_NAME  )
 SELECT
@@ -385,7 +385,7 @@ CREATE TABLE logica_home.Path_ifr2 AS WITH t_0_Path_MultBodyAggAux_f5 AS (SELECT
       x_15 AS a,
       ((x_15) + (1)) AS b
     FROM
-      UNNEST((SELECT ARRAY_AGG(x) FROM GENERATE_SERIES(0, 9 - 1) as x)) as x_15
+      UNNEST(COALESCE((SELECT ARRAY_AGG(x) FROM GENERATE_SERIES(0, 9 - 1) as x), '{}')) as x_15
   
 ) AS UNUSED_TABLE_NAME  )
 SELECT
@@ -411,7 +411,7 @@ CREATE TABLE logica_home.Path_ifr3 AS WITH t_0_Path_MultBodyAggAux_f4 AS (SELECT
       x_15 AS a,
       ((x_15) + (1)) AS b
     FROM
-      UNNEST((SELECT ARRAY_AGG(x) FROM GENERATE_SERIES(0, 9 - 1) as x)) as x_15
+      UNNEST(COALESCE((SELECT ARRAY_AGG(x) FROM GENERATE_SERIES(0, 9 - 1) as x), '{}')) as x_15
   
 ) AS UNUSED_TABLE_NAME  )
 SELECT
@@ -437,7 +437,7 @@ CREATE TABLE logica_home.Path_ifr2 AS WITH t_0_Path_MultBodyAggAux_f5 AS (SELECT
       x_15 AS a,
       ((x_15) + (1)) AS b
     FROM
-      UNNEST((SELECT ARRAY_AGG(x) FROM GENERATE_SERIES(0, 9 - 1) as x)) as x_15
+      UNNEST(COALESCE((SELECT ARRAY_AGG(x) FROM GENERATE_SERIES(0, 9 - 1) as x), '{}')) as x_15
   
 ) AS UNUSED_TABLE_NAME  )
 SELECT
@@ -463,7 +463,7 @@ CREATE TABLE logica_home.Path_ifr3 AS WITH t_0_Path_MultBodyAggAux_f4 AS (SELECT
       x_15 AS a,
       ((x_15) + (1)) AS b
     FROM
-      UNNEST((SELECT ARRAY_AGG(x) FROM GENERATE_SERIES(0, 9 - 1) as x)) as x_15
+      UNNEST(COALESCE((SELECT ARRAY_AGG(x) FROM GENERATE_SERIES(0, 9 - 1) as x), '{}')) as x_15
   
 ) AS UNUSED_TABLE_NAME  )
 SELECT
@@ -489,7 +489,7 @@ CREATE TABLE logica_home.Path_ifr2 AS WITH t_0_Path_MultBodyAggAux_f5 AS (SELECT
       x_15 AS a,
       ((x_15) + (1)) AS b
     FROM
-      UNNEST((SELECT ARRAY_AGG(x) FROM GENERATE_SERIES(0, 9 - 1) as x)) as x_15
+      UNNEST(COALESCE((SELECT ARRAY_AGG(x) FROM GENERATE_SERIES(0, 9 - 1) as x), '{}')) as x_15
   
 ) AS UNUSED_TABLE_NAME  )
 SELECT
@@ -515,7 +515,7 @@ CREATE TABLE logica_home.Path_ifr3 AS WITH t_0_Path_MultBodyAggAux_f4 AS (SELECT
       x_15 AS a,
       ((x_15) + (1)) AS b
     FROM
-      UNNEST((SELECT ARRAY_AGG(x) FROM GENERATE_SERIES(0, 9 - 1) as x)) as x_15
+      UNNEST(COALESCE((SELECT ARRAY_AGG(x) FROM GENERATE_SERIES(0, 9 - 1) as x), '{}')) as x_15
   
 ) AS UNUSED_TABLE_NAME  )
 SELECT
@@ -541,7 +541,7 @@ CREATE TABLE logica_home.Path_ifr2 AS WITH t_0_Path_MultBodyAggAux_f5 AS (SELECT
       x_15 AS a,
       ((x_15) + (1)) AS b
     FROM
-      UNNEST((SELECT ARRAY_AGG(x) FROM GENERATE_SERIES(0, 9 - 1) as x)) as x_15
+      UNNEST(COALESCE((SELECT ARRAY_AGG(x) FROM GENERATE_SERIES(0, 9 - 1) as x), '{}')) as x_15
   
 ) AS UNUSED_TABLE_NAME  )
 SELECT
@@ -567,7 +567,7 @@ CREATE TABLE logica_home.Path_ifr3 AS WITH t_0_Path_MultBodyAggAux_f4 AS (SELECT
       x_15 AS a,
       ((x_15) + (1)) AS b
     FROM
-      UNNEST((SELECT ARRAY_AGG(x) FROM GENERATE_SERIES(0, 9 - 1) as x)) as x_15
+      UNNEST(COALESCE((SELECT ARRAY_AGG(x) FROM GENERATE_SERIES(0, 9 - 1) as x), '{}')) as x_15
   
 ) AS UNUSED_TABLE_NAME  )
 SELECT
@@ -593,7 +593,7 @@ CREATE TABLE logica_home.Path_ifr2 AS WITH t_0_Path_MultBodyAggAux_f5 AS (SELECT
       x_15 AS a,
       ((x_15) + (1)) AS b
     FROM
-      UNNEST((SELECT ARRAY_AGG(x) FROM GENERATE_SERIES(0, 9 - 1) as x)) as x_15
+      UNNEST(COALESCE((SELECT ARRAY_AGG(x) FROM GENERATE_SERIES(0, 9 - 1) as x), '{}')) as x_15
   
 ) AS UNUSED_TABLE_NAME  )
 SELECT
@@ -619,7 +619,7 @@ CREATE TABLE logica_home.Path_ifr3 AS WITH t_0_Path_MultBodyAggAux_f4 AS (SELECT
       x_15 AS a,
       ((x_15) + (1)) AS b
     FROM
-      UNNEST((SELECT ARRAY_AGG(x) FROM GENERATE_SERIES(0, 9 - 1) as x)) as x_15
+      UNNEST(COALESCE((SELECT ARRAY_AGG(x) FROM GENERATE_SERIES(0, 9 - 1) as x), '{}')) as x_15
   
 ) AS UNUSED_TABLE_NAME  )
 SELECT
@@ -645,7 +645,7 @@ CREATE TABLE logica_home.Path_ifr2 AS WITH t_0_Path_MultBodyAggAux_f5 AS (SELECT
       x_15 AS a,
       ((x_15) + (1)) AS b
     FROM
-      UNNEST((SELECT ARRAY_AGG(x) FROM GENERATE_SERIES(0, 9 - 1) as x)) as x_15
+      UNNEST(COALESCE((SELECT ARRAY_AGG(x) FROM GENERATE_SERIES(0, 9 - 1) as x), '{}')) as x_15
   
 ) AS UNUSED_TABLE_NAME  )
 SELECT
@@ -671,7 +671,7 @@ CREATE TABLE logica_home.Path AS WITH t_0_Path_MultBodyAggAux_f6 AS (SELECT * FR
       x_15 AS a,
       ((x_15) + (1)) AS b
     FROM
-      UNNEST((SELECT ARRAY_AGG(x) FROM GENERATE_SERIES(0, 9 - 1) as x)) as x_15
+      UNNEST(COALESCE((SELECT ARRAY_AGG(x) FROM GENERATE_SERIES(0, 9 - 1) as x), '{}')) as x_15
   
 ) AS UNUSED_TABLE_NAME  )
 SELECT

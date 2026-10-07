@@ -1,0 +1,2 @@
+SELECT
+  ((CAST(-2147483648 AS INTEGER)) - (1)) AS v;

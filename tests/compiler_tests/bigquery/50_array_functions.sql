@@ -15,12 +15,12 @@ WITH t_1_Lists AS (SELECT * FROM (
 t_0_Concatenated AS (SELECT
   Lists.id AS id,
   ARRAY_LENGTH(ARRAY_CONCAT(Lists.a, Lists.b)) AS total_size,
-  ARRAY_CONCAT(Lists.a, Lists.b)[OFFSET(0)] AS head
+  (CASE WHEN 0 < 0 THEN NULL ELSE ARRAY_CONCAT(Lists.a, Lists.b)[SAFE_OFFSET(0)] END) AS head
 FROM
-  t_1_Lists AS Lists ORDER BY id)
+  t_1_Lists AS Lists ORDER BY id NULLS LAST)
 SELECT
   Concatenated.id AS id,
   Concatenated.total_size AS total_size,
   Concatenated.head AS head
 FROM
-  t_0_Concatenated AS Concatenated ORDER BY id;
+  t_0_Concatenated AS Concatenated ORDER BY id NULLS LAST;

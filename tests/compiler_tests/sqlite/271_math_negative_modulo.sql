@@ -1,2 +1,2 @@
 SELECT
-  - ((7) % (3)) AS r;
+  - (((7) - (3) * CAST((7) / NULLIF(3, 0) AS INTEGER))) AS r;
