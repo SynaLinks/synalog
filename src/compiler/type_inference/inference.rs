@@ -128,7 +128,10 @@ impl TypeInference {
         let current = |store: &HashMap<String, Type>, e: &Expression| -> Type {
             shared_key(e).and_then(|k| store.get(&k).cloned()).unwrap_or_else(|| e.get_type().clone())
         };
-        // Give vertex `side` (0 or 1) of edge `i` the type `t`: whether it changed.
+        // Give vertex `side` (0 or 1) of edge `i` the type `t`: whether its
+        // type changed. A literal keeps its own (a null's is any type), so
+        // giving it another changes nothing: counted as a change, it kept the
+        // loop from converging.
         let assign = |edges: &mut [(String, Edge)], store: &mut HashMap<String, Type>, i: usize, side: usize, t: &Type| -> bool {
             let (a, b) = edges[i].1.vertices_mut();
             let v = if side == 0 { a } else { b };
@@ -137,7 +140,7 @@ impl TypeInference {
                 store.insert(k, t.clone());
             }
             v.set_type(t.clone());
-            before != *t
+            before != current(store, v)
         };
 
         let mut changed = true;
