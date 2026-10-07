@@ -40,7 +40,7 @@ shell/test.sh quick        # unit + parser golden (no SQL compilation)
 
 Python steps run through `uv run`, so the project virtualenv supplies pytest and the engine drivers. The `e2e` step builds the extension into the venv and starts the server engines (PostgreSQL, Trino, Presto, and a Spark Thrift Server standing in for Databricks) itself via Docker Compose.
 
-`SYNALOG_E2E_ENGINES` runs the end-to-end tests of some engines only, a comma list (`SYNALOG_E2E_ENGINES=psql,trino uv run pytest tests/e2e`); CI runs each engine in a job of its own this way, in parallel, starting only that engine's server.
+`SYNALOG_E2E_ENGINES` runs the end-to-end tests of some engines only, a comma list (`SYNALOG_E2E_ENGINES=psql,trino uv run pytest tests/e2e`); CI runs each engine in a job of its own this way, in parallel, starting only that engine's server. `SYNALOG_E2E_SHARD=2/3` runs the second third of the selected tests, split by fixture: CI splits Trino, Presto and Spark, whose every query pays a fixed cost, into three jobs each.
 
 ## Golden test generation
 
