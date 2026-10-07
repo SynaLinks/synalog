@@ -54,7 +54,7 @@ impl TypeInference {
         let relations: std::collections::HashSet<String> = self.graphs.iter()
             // An annotation (`@Make`, `@OrderBy`) is no relation.
             .filter(|(name, graph)| !name.starts_with('@')
-                && !graph.contains_expression(&format!("PredicateAddressing({}.logica_value)", name)))
+                && !graph.has_column(name, "logica_value"))
             .map(|(name, _)| name.clone())
             .collect();
         let shared_key = |e: &Expression| -> Option<String> {

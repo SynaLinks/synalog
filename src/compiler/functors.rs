@@ -141,7 +141,8 @@ fn defined_predicates_rules(rules: &[Json]) -> HashMap<String, Vec<Json>> {
 /// Note: Python optionally uses numpy for fast matrix-based transitive closure
 /// (NumpyBuildArgsOf). The iterative BuildArgs path used here covers all cases.
 pub struct Functors {
-    rules: Vec<Json>,
+    /// How many rules the program has: `extended_rules` starts with them.
+    original_rules: usize,
     pub extended_rules: Vec<Json>,
     rules_of: HashMap<String, Vec<Json>>,
     /// How many of `extended_rules` `rules_of` holds: rules are appended,
@@ -161,9 +162,9 @@ impl Functors {
         let predicates: HashSet<String> = rules_of.keys().cloned().collect();
 
         let mut f = Functors {
-            rules: rules.to_vec(),
+            original_rules: rules.len(),
             extended_rules: rules.to_vec(),
-            rules_of: rules_of.clone(),
+            rules_of,
             indexed_rules: rules.len(),
             predicates: predicates.clone(),
             direct_args_of: HashMap::new(),
@@ -1127,7 +1128,7 @@ impl Functors {
         let (should_recurse, my_cover) = self.recursive_analysis(
             depth_map, default_iterative, default_depth);
 
-        let mut new_rules = self.rules.clone();
+        let mut new_rules = self.extended_rules[..self.original_rules].to_vec();
 
         let mut sorted_recurse: Vec<_> = should_recurse.iter().collect();
         sorted_recurse.sort_by(|a, b| a.0.cmp(b.0));

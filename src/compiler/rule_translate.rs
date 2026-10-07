@@ -397,71 +397,77 @@ impl RuleStructure {
             // by index to handle in-place modifications via replace_variable_everywhere).
             let mut i = 0;
             while i < self.vars_unification.len() {
-                let left = self.vars_unification[i].0.clone();
-                let right = self.vars_unification[i].1.clone();
-
-                // Phase 1: Direct variable assignments (both directions)
-                for (k_expr, r_expr) in [(&left, &right), (&right, &left)] {
-                    if k_expr == r_expr {
-                        continue;
-                    }
-                    if let Some(var_name) = extract_var_name(k_expr).filter(|v| variables.contains(v)) {
-                        let r_vars = {
-                            let mut s = HashSet::new();
-                            all_mentioned_variables(r_expr, &mut s);
-                            s
-                        };
-                        let r_vars_incl_combines = {
-                            let mut s = HashSet::new();
-                            all_mentioned_variables_impl(r_expr, &mut s, true);
-                            s
-                        };
-                        if variables.contains(&var_name)
-                            && !r_vars_incl_combines.contains(&var_name)
-                            && (is_subset(&r_vars, &self.extracted_variables())
-                                || !var_name.starts_with("x_"))
-                        {
-                            // A large value written wherever the variable is
-                            // would grow the query with each such variable
-                            // defined from another (`b == a + a, c == b + b`):
-                            // it is computed once, as the one element of a
-                            // list unnested, and the variable is that element.
-                            let replacement = if expression_size(r_expr) > LARGE_EXPRESSION && {
-                                let defining = count_variable(&left, &var_name) + count_variable(&right, &var_name);
-                                self.variable_uses(&var_name) - defining > 1
-                            } {
-                                let alias = self.allocator.alloc_var();
-                                self.inv_vars_map.insert(alias.clone(), ("".to_string(), alias.clone()));
-                                self.unnestings.push((alias.clone(), crate::json_obj!(
-                                    "literal" => crate::json_obj!(
-                                        "the_list" => crate::json_obj!("element" => Json::Array(vec![r_expr.clone()]))
-                                    )
-                                )));
-                                value_of_unnested(&alias)
-                            } else {
-                                r_expr.clone()
-                            };
-                            self.replace_variable_everywhere(&var_name, &replacement);
-                            // This unification is the assignment, now `e == e`:
-                            // it goes, a null in it or not (another one that
-                            // became `null == null` is a comparison, and stays).
-                            self.vars_unification[i] = (Json::Null, Json::Null);
-                            done = false;
-                            break;
+                // Phase 1: Direct variable assignments (both directions). The
+                // unification is read in place: only the value assigned is
+                // copied.
+                for side in 0..2 {
+                    let assignment = {
+                        let (left, right) = &self.vars_unification[i];
+                        let (k_expr, r_expr) = if side == 0 { (left, right) } else { (right, left) };
+                        match extract_var_name(k_expr).filter(|v| k_expr != r_expr && variables.contains(v)) {
+                            None => None,
+                            Some(var_name) => {
+                                let r_vars = {
+                                    let mut s = HashSet::new();
+                                    all_mentioned_variables(r_expr, &mut s);
+                                    s
+                                };
+                                let r_vars_incl_combines = {
+                                    let mut s = HashSet::new();
+                                    all_mentioned_variables_impl(r_expr, &mut s, true);
+                                    s
+                                };
+                                if !r_vars_incl_combines.contains(&var_name)
+                                    && (is_subset(&r_vars, &self.extracted_variables())
+                                        || !var_name.starts_with("x_"))
+                                {
+                                    // A large value written wherever the variable is
+                                    // would grow the query with each such variable
+                                    // defined from another (`b == a + a, c == b + b`):
+                                    // it is computed once, as the one element of a
+                                    // list unnested, and the variable is that element.
+                                    let once = expression_size(r_expr) > LARGE_EXPRESSION && {
+                                        let defining = count_variable(left, &var_name) + count_variable(right, &var_name);
+                                        self.variable_uses(&var_name) - defining > 1
+                                    };
+                                    Some((var_name, r_expr.clone(), once))
+                                } else {
+                                    None
+                                }
+                            }
                         }
+                    };
+                    if let Some((var_name, value, once)) = assignment {
+                        let replacement = if once {
+                            let alias = self.allocator.alloc_var();
+                            self.inv_vars_map.insert(alias.clone(), ("".to_string(), alias.clone()));
+                            self.unnestings.push((alias.clone(), crate::json_obj!(
+                                "literal" => crate::json_obj!(
+                                    "the_list" => crate::json_obj!("element" => Json::Array(vec![value]))
+                                )
+                            )));
+                            value_of_unnested(&alias)
+                        } else {
+                            value
+                        };
+                        self.replace_variable_everywhere(&var_name, &replacement);
+                        // This unification is the assignment, now `e == e`:
+                        // it goes, a null in it or not (another one that
+                        // became `null == null` is a comparison, and stays).
+                        self.vars_unification[i] = (Json::Null, Json::Null);
+                        done = false;
+                        break;
                     }
                 }
 
-                // Phase 2: Record field unwrapping (both directions)
+                // Phase 2: Record field unwrapping (both directions), each
+                // direction read from the unification as Phase 1 left it.
                 if unfold_records {
-                    // Re-read after potential Phase 1 modifications
-                    let left2 = self.vars_unification.get(i)
-                        .map(|(l, _)| l.clone());
-                    let right2 = self.vars_unification.get(i)
-                        .map(|(_, r)| r.clone());
-                    if let (Some(left2), Some(right2)) = (left2, right2) {
-                        for (k_expr, r_expr) in [(&left2, &right2), (&right2, &left2)] {
-                            if k_expr == r_expr {
+                    let mut assignments = Vec::new();
+                    {
+                        let (left, right) = &self.vars_unification[i];
+                        for (k_expr, r_expr) in [(left, right), (right, left)] {
+                            if k_expr == r_expr || !is_record(k_expr) {
                                 continue;
                             }
                             let r_vars = {
@@ -469,20 +475,23 @@ impl RuleStructure {
                                 all_mentioned_variables(r_expr, &mut s);
                                 s
                             };
+                            if !is_subset(&r_vars, &self.extracted_variables()) {
+                                continue;
+                            }
                             let r_vars_incl_combines = {
                                 let mut s = HashSet::new();
                                 all_mentioned_variables_impl(r_expr, &mut s, true);
                                 s
                             };
-                            if is_record(k_expr) && is_subset(&r_vars, &self.extracted_variables()) {
-                                let replacements = collect_record_assignments(
-                                    k_expr, r_expr, &variables, &r_vars_incl_combines,
-                                );
-                                for (var_name, replacement) in &replacements {
-                                    self.replace_variable_everywhere(var_name, replacement);
-                                    done = false;
-                                }
-                            }
+                            assignments.push(collect_record_assignments(
+                                k_expr, r_expr, &variables, &r_vars_incl_combines,
+                            ));
+                        }
+                    }
+                    for replacements in assignments {
+                        for (var_name, replacement) in &replacements {
+                            self.replace_variable_everywhere(var_name, replacement);
+                            done = false;
                         }
                     }
                 }

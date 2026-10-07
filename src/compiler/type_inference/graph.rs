@@ -8,7 +8,8 @@
 //! Ported from Python: type_inference/types/types_graph.py
 
 use super::edge::Edge;
-use std::collections::HashSet;
+use super::expression::Expression;
+use std::collections::{HashMap, HashSet};
 
 /// Graph storing type inference edges between expressions.
 #[derive(Debug, Clone, Default)]
@@ -17,25 +18,46 @@ pub struct TypesGraph {
     edges: Vec<Edge>,
     /// The keys of the edges, to connect each once.
     keys: HashSet<EdgeKey>,
-    /// The expressions the edges connect, by their text.
-    expressions: HashSet<String>,
+    /// The columns the edges hold: the fields of each predicate of their
+    /// `PredicateAddressing` vertices.
+    columns: HashMap<String, HashSet<String>>,
 }
 
-/// Key for deduplicating edges.
+/// Key for deduplicating edges: two edges are one when they are of the same
+/// kind, have the same bounds, and connect the same two expressions, an
+/// expression being its text (its type and, for a column, its use apart).
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
 struct EdgeKey {
-    v1: String,
-    v2: String,
+    vertices: (u128, u128),
     bounds: (i64, i64),
     discriminant: std::mem::Discriminant<Edge>,
 }
 
+/// A 128-bit digest of an expression's text, written without allocating it.
+fn text_digest(expression: &Expression) -> u128 {
+    use std::fmt::Write;
+    use std::hash::Hasher;
+    struct Digest(std::collections::hash_map::DefaultHasher, std::collections::hash_map::DefaultHasher);
+    impl Write for Digest {
+        fn write_str(&mut self, text: &str) -> std::fmt::Result {
+            self.0.write(text.as_bytes());
+            self.1.write(text.as_bytes());
+            Ok(())
+        }
+    }
+    let mut second = std::collections::hash_map::DefaultHasher::new();
+    second.write_u8(0x5a);
+    let mut digest = Digest(std::collections::hash_map::DefaultHasher::new(), second);
+    let _ = write!(digest, "{}", expression);
+    ((digest.0.finish() as u128) << 64) | digest.1.finish() as u128
+}
+
 impl EdgeKey {
-    fn new(edge: &Edge, first: String, second: String) -> Self {
-        let (v1, v2) = if first <= second { (first, second) } else { (second, first) };
+    fn new(edge: &Edge) -> Self {
+        let (first, second) = edge.vertices();
+        let (a, b) = (text_digest(first), text_digest(second));
         Self {
-            v1,
-            v2,
+            vertices: if a <= b { (a, b) } else { (b, a) },
             bounds: edge.bounds(),
             discriminant: std::mem::discriminant(edge),
         }
@@ -50,14 +72,17 @@ impl TypesGraph {
 
     /// Connect two expressions with an edge.
     pub fn connect(&mut self, edge: Edge) {
-        let (first, second) = edge.vertices();
-        let (first, second) = (first.to_string(), second.to_string());
-        let key = EdgeKey::new(&edge, first.clone(), second.clone());
-        if !self.keys.insert(key) {
+        if !self.keys.insert(EdgeKey::new(&edge)) {
             return; // Already have this edge
         }
-        self.expressions.insert(first);
-        self.expressions.insert(second);
+        let (first, second) = edge.vertices();
+        for v in [first, second] {
+            if let Expression::PredicateAddressing { predicate_name, field, .. } = v {
+                if !self.has_column(predicate_name, field) {
+                    self.columns.entry(predicate_name.clone()).or_default().insert(field.clone());
+                }
+            }
+        }
         self.edges.push(edge);
     }
 
@@ -71,14 +96,9 @@ impl TypesGraph {
         &self.edges
     }
 
-    /// Check if an expression exists in the graph.
-    pub fn contains_expression(&self, expr: &str) -> bool {
-        self.expressions.contains(expr)
-    }
-
-    /// Get all expression keys in the graph.
-    pub fn expressions(&self) -> impl Iterator<Item = &String> {
-        self.expressions.iter()
+    /// Whether an edge of the graph holds column `field` of `predicate`.
+    pub fn has_column(&self, predicate: &str, field: &str) -> bool {
+        self.columns.get(predicate).is_some_and(|fields| fields.contains(field))
     }
 
     /// Merge another graph into this one.
