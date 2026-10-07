@@ -12,7 +12,7 @@ WITH t_1_Items AS (SELECT * FROM (
 ) AS UNUSED_TABLE_NAME  ),
 t_0_Labels AS (SELECT
   Items.name AS name,
-  Printf('%s x%s', Items.name, (SELECT (CASE WHEN synalog_v IS NULL THEN NULL WHEN abs(synalog_v) < 0.0000000000000005 THEN '0' WHEN synalog_v = CAST(synalog_v AS INTEGER) AND abs(synalog_v) < 1e18 THEN CAST(CAST(synalog_v AS INTEGER) AS TEXT) WHEN abs(synalog_v) >= 1e38 THEN CAST(synalog_v AS TEXT) WHEN abs(synalog_v) >= 1e15 THEN (CASE WHEN synalog_v < 0 THEN '-' ELSE '' END) || substr(printf('%.14e', abs(synalog_v)), 1, 1) || substr(printf('%.14e', abs(synalog_v)), 3, 14) || substr('0000000000000000000000000', 1, substr(printf('%.14e', abs(synalog_v)), 19) - 14) ELSE rtrim(rtrim(printf('%.*f', min(15, max(1, 14 - floor(log10(abs(synalog_v))))), synalog_v), '0'), '.') END) FROM (SELECT Items.qty AS synalog_v))) AS label
+  Printf('%s x%s', Items.name, SYNALOG_NUMBER_TEXT(Items.qty)) AS label
 FROM
   t_1_Items AS Items ORDER BY name NULLS LAST)
 SELECT

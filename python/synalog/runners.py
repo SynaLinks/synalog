@@ -35,6 +35,7 @@ installs without it; a missing driver raises ``RunnerUnavailable`` with the
 from __future__ import annotations
 
 import csv
+import decimal
 import json
 import math
 import os
@@ -236,6 +237,35 @@ def _refused(name: str):
     return refuse
 
 
+def number_text(value):
+    """The text of a number, the same on every engine (`ToString`): a whole
+    number below 10^18 with all its digits; any other below 10^38 as its
+    shortest text (the one that reads back as the same double) shows it,
+    rounded half away from zero to 15 significant digits but at most 15
+    decimals, in plain decimal, without trailing zeros; from 10^38 as SQLite
+    writes it. The compiled SQL of the other engines follows the same rule."""
+    if value is None:
+        return None
+    if isinstance(value, int):
+        return str(value)
+    a = abs(value)
+    if math.isnan(value) or math.isinf(value) or a >= 1e38:
+        text = "%.15g" % value
+        mantissa, _, exponent = text.partition("e")
+        if exponent and "." not in mantissa:
+            text = mantissa + ".0e" + exponent
+        return text
+    if a < 5e-16:
+        return "0"
+    if value == int(value) and a < 1e18:
+        return str(int(value))
+    exact = decimal.Decimal(repr(value))
+    places = 15 if a < 1 else 15 - len(str(int(abs(exact))))
+    rounded = exact.quantize(decimal.Decimal(1).scaleb(-places), rounding=decimal.ROUND_HALF_UP)
+    text = format(rounded, "f")
+    return text.rstrip("0").rstrip(".") if "." in text else text
+
+
 def sqlite_semantics(conn: sqlite3.Connection) -> None:
     """Make SQLite's string functions behave as on the other engines: UPPER and
     LOWER convert every letter, not only ASCII ones (`Upper("café")`), LIKE
@@ -243,6 +273,8 @@ def sqlite_semantics(conn: sqlite3.Connection) -> None:
     conn.create_function("UPPER", 1, lambda s: s.upper() if isinstance(s, str) else s, deterministic=True)
     conn.create_function("LOWER", 1, lambda s: s.lower() if isinstance(s, str) else s, deterministic=True)
     conn.execute("PRAGMA case_sensitive_like = ON")
+    # The text of a number: SQLite has no exact decimals to round it with.
+    conn.create_function("SYNALOG_NUMBER_TEXT", 1, number_text, deterministic=True)
     # Logica's Split fails on a null; a null splits to null.
     conn.create_function(
         "Split", 2,

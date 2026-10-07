@@ -268,7 +268,8 @@ fn search_multiple_columns_uses_or_all_engines() {
         // A number is searched as `ToString` writes it, the same text on
         // every engine (see DEVIATIONS.md), not as the engine casts it.
         assert!(
-            !sql.contains(&format!("CAST(value AS {})", string_type(engine))) && sql.contains("synalog_v"),
+            !sql.contains(&format!("CAST(value AS {})", string_type(engine)))
+                && (sql.contains("synalog_v") || sql.contains("SYNALOG_NUMBER_TEXT(value)")),
             "{}: should read value as its number text, got:\n{}",
             engine,
             sql

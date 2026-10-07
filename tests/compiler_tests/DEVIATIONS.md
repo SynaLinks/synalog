@@ -605,19 +605,26 @@ The goldens of the fixtures with such strings are synalog's.
 
 Engines write a number as text each their own way: `0.30000000000000004` or
 `0.3`, `1e+20`, `1.0E20` or `100000000000000000000`, `5.0` or `5`. synalog's
-`ToString` of a number gives one text everywhere: a whole number without a
-decimal point, every digit below 10^18; any other number with at most 15
-significant digits (what a double holds reliably), in plain decimal, trailing
-zeros trimmed, at most 15 decimals; the engine's own form from 10^38. Large
-numbers round in DECIMAL, or from the exponent form where an engine rounds
-only to a constant number of digits (DuckDB, Spark, SQLite)
-(`tests/programs/numtext`). The goldens of the fixtures with `ToString` of a
-number are synalog's.
+`ToString` of a number gives one text everywhere: a whole number below 10^18
+with all its digits; any other below 10^38 as its shortest text (the one that
+reads back as the same double, as `Round(x, digits)` reads it) rounded half
+away from zero to 15 significant digits but at most 15 decimals, in plain
+decimal, without trailing zeros; from 10^38 the engine's own form.
 
-SQLite's text of a number nests as few calls as it can: SQLite before 3.46
-(Ubuntu 22.04 has 3.37) parses about 30 nested calls at most ("parser stack
-overflow"), and the text often sits in other calls (`Array= id ->
-ToString(amt)`).
+The rounding is exact: the shortest text is read as a DECIMAL (PostgreSQL's
+`numeric`), its integer digits counted, and it is rounded to the places they
+leave. Rounding the double instead, through `printf`, `format` or `ROUND` of a
+double, gave different last digits: the double nearest `342547.0843250365` is
+below it, so DuckDB and PostgreSQL wrote `342547.084325036` and the others
+`342547.084325037`; a tie (`12345678901234.25`) went to even on two engines;
+from 10^14 to 10^15 three engines kept 16 digits; `floor(log10(x))`, rounded
+up just below a power of ten, made Trino write `999999999999999.4` as
+`1000000000000000`; PostgreSQL's `numeric` of a double kept 15 digits of
+`9999999999999998`. DuckDB and Spark take only a constant number of places in
+`ROUND`: one per count of integer digits. SQLite has no exact decimals: its
+sessions register `SYNALOG_NUMBER_TEXT` (`synalog.runners.number_text`),
+which follows the rule (`tests/programs/numtext`). The goldens of the fixtures
+with `ToString` of a number are synalog's.
 
 ## Portable functions
 
