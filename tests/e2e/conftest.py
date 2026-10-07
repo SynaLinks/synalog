@@ -9,6 +9,9 @@ Engine availability:
     their tests are skipped when the server is unreachable, unless
     SYNALOG_E2E_REQUIRE=psql,trino,presto is set (then unreachable = failure,
     used in CI so missing services can't silently skip).
+
+Engine selection: SYNALOG_E2E_ENGINES=psql (a comma list) runs only the tests
+of those engines, so that CI runs each engine in a job of its own.
 """
 
 from __future__ import annotations
@@ -151,15 +154,42 @@ def runner_for():
     return get
 
 
+def selected_engines():
+    """The engines SYNALOG_E2E_ENGINES names (none: every engine)."""
+    return {e.strip() for e in os.environ.get("SYNALOG_E2E_ENGINES", "").split(",") if e.strip()}
+
+
+def pytest_configure(config):
+    config.addinivalue_line("markers", "engine(name): the engine a test that takes no engine parameter runs on")
+    unknown = selected_engines() - set(ENGINES)
+    if unknown:
+        raise pytest.UsageError(f"SYNALOG_E2E_ENGINES: unknown engines {sorted(unknown)} (engines: {ENGINES})")
+
+
+def item_engine(item):
+    """The engine a test runs on: its `engine` parameter, or its `engine` marker."""
+    engine = getattr(getattr(item, "callspec", None), "params", {}).get("engine")
+    if engine is None and item.get_closest_marker("engine"):
+        engine = item.get_closest_marker("engine").args[0]
+    return engine
+
+
 @pytest.hookimpl(tryfirst=True)
-def pytest_collection_modifyitems(items):
+def pytest_collection_modifyitems(config, items):
     """With pytest-xdist (`-n 6 --dist loadgroup`), each engine's tests run in
     one worker: the engines run in parallel, the tests of an engine one after
     the other (they write the same tables), and a fixture's rows, computed
     once per worker, serve both layers. First: xdist reads the marker in its
-    own hook of this name, to group the tests."""
+    own hook of this name, to group the tests. With SYNALOG_E2E_ENGINES, the
+    tests of other engines are deselected."""
+    selected = selected_engines()
+    if selected:
+        deselected = [item for item in items if item_engine(item) not in selected]
+        if deselected:
+            config.hook.pytest_deselected(items=deselected)
+            items[:] = [item for item in items if item_engine(item) in selected]
     for item in items:
-        engine = getattr(getattr(item, "callspec", None), "params", {}).get("engine")
+        engine = item_engine(item)
         if engine:
             item.add_marker(pytest.mark.xdist_group(engine))
 
