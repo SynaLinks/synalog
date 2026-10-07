@@ -12,6 +12,8 @@ Engine availability:
 
 Engine selection: SYNALOG_E2E_ENGINES=psql (a comma list) runs only the tests
 of those engines, so that CI runs each engine in a job of its own.
+SYNALOG_E2E_SHARD=2/3 runs the second third of them: CI splits the slow
+engines (Trino, Presto, Spark) into jobs that run in parallel.
 """
 
 from __future__ import annotations
@@ -20,6 +22,7 @@ import functools
 import json
 import os
 import sys
+import zlib
 from pathlib import Path
 
 import pytest
@@ -159,8 +162,32 @@ def selected_engines():
     return {e.strip() for e in os.environ.get("SYNALOG_E2E_ENGINES", "").split(",") if e.strip()}
 
 
+def selected_shard():
+    """(shard, shards) of SYNALOG_E2E_SHARD (`2/3`), 1-based; (1, 1) without it."""
+    text = os.environ.get("SYNALOG_E2E_SHARD", "").strip()
+    if not text:
+        return 1, 1
+    try:
+        shard, shards = (int(part) for part in text.split("/"))
+    except ValueError:
+        raise pytest.UsageError(f"SYNALOG_E2E_SHARD: expected a shard like 2/3, got {text!r}")
+    if not 1 <= shard <= shards:
+        raise pytest.UsageError(f"SYNALOG_E2E_SHARD: shard {shard} of {shards} does not exist")
+    return shard, shards
+
+
+def shard_of(item, shards: int) -> int:
+    """The shard (1-based) of a test: by its fixture or program, so that the
+    tests of one fixture, which share its rows, run in the same shard; the
+    same on every machine (a hash of the name, not Python's salted one)."""
+    params = getattr(getattr(item, "callspec", None), "params", {})
+    key = params.get("name") or params.get("path") or item.nodeid
+    return zlib.crc32(str(key).encode()) % shards + 1
+
+
 def pytest_configure(config):
     config.addinivalue_line("markers", "engine(name): the engine a test that takes no engine parameter runs on")
+    selected_shard()
     unknown = selected_engines() - set(ENGINES)
     if unknown:
         raise pytest.UsageError(f"SYNALOG_E2E_ENGINES: unknown engines {sorted(unknown)} (engines: {ENGINES})")
@@ -183,6 +210,12 @@ def pytest_collection_modifyitems(config, items):
     own hook of this name, to group the tests. With SYNALOG_E2E_ENGINES, the
     tests of other engines are deselected."""
     selected = selected_engines()
+    shard, shards = selected_shard()
+    if shards > 1:
+        others = [item for item in items if shard_of(item, shards) != shard]
+        if others:
+            config.hook.pytest_deselected(items=others)
+            items[:] = [item for item in items if shard_of(item, shards) == shard]
     if selected:
         deselected = [item for item in items if item_engine(item) not in selected]
         if deselected:
