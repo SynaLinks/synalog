@@ -721,3 +721,45 @@ fn a_string_literal_ends_where_any_statement_splitter_thinks() {
         }
     }
 }
+
+#[test]
+fn test_sqlite_float_literals_read_exactly() {
+    use crate::compiler::dialects::sqlite_float_literal;
+    // Digits within 53 bits and a power of ten within 22: as written.
+    assert_eq!(sqlite_float_literal("0.1"), "0.1");
+    assert_eq!(sqlite_float_literal("342547.0843250365"), "342547.0843250365");
+    assert_eq!(sqlite_float_literal("-2.5"), "-2.5");
+    // More digits: the double's exact form.
+    assert_eq!(sqlite_float_literal("4503599627370495.5"), "(CAST(9007199254740991 AS REAL) / 2)");
+    assert_eq!(sqlite_float_literal("-4503599627370495.5"), "(-(CAST(9007199254740991 AS REAL) / 2))");
+    assert_eq!(sqlite_float_literal("0.30000000000000004"), "(CAST(1351079888211149 AS REAL) / 4503599627370496)");
+    // A power of ten beyond 22.
+    let tiny = sqlite_float_literal("1.25e-30");
+    assert!(tiny.contains("CAST(") && tiny.contains(" / 4611686018427387904)"), "{}", tiny);
+    for text in ["4503599627370495.5", "0.30000000000000004", "1.25e-30", "1.5e40", "123456789012345.67"] {
+        let expr = sqlite_float_literal(text);
+        // The expression's value, computed as SQLite does: exact scalings.
+        let value = eval_exact(&expr);
+        assert_eq!(value, text.parse::<f64>().unwrap(), "{} -> {}", text, expr);
+    }
+}
+
+#[cfg(test)]
+fn eval_exact(expr: &str) -> f64 {
+    let expr = expr.trim();
+    if let Some(inner) = expr.strip_prefix("(-").and_then(|e| e.strip_suffix(')')) {
+        return -eval_exact(inner);
+    }
+    if let Some(inner) = expr.strip_prefix("CAST(").and_then(|e| e.strip_suffix(" AS REAL)")) {
+        return inner.parse::<u64>().unwrap() as f64;
+    }
+    if let Some(inner) = expr.strip_prefix('(').and_then(|e| e.strip_suffix(')')) {
+        let at = inner.rfind([' ']).unwrap();
+        let (left, factor) = (&inner[..at], inner[at + 1..].parse::<u64>().unwrap() as f64);
+        let left = left.trim_end();
+        let (left, op) = (&left[..left.len() - 2], &left[left.len() - 1..]);
+        let l = eval_exact(left);
+        return if op == "*" { l * factor } else { l / factor };
+    }
+    expr.parse().unwrap()
+}

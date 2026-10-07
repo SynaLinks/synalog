@@ -626,6 +626,16 @@ sessions register `SYNALOG_NUMBER_TEXT` (`synalog.runners.number_text`),
 which follows the rule (`tests/programs/numtext`). The goldens of the fixtures
 with `ToString` of a number are synalog's.
 
+## Float literals on SQLite
+
+SQLite before 3.43 without an extended `long double` (macOS on ARM) reads a
+float literal by rounding its digits to a double, then scaling by a power of
+ten: exact while the digits fit in 53 bits and the power is at most 22,
+rounded twice otherwise (`4503599627370495.5` read `4503599627370495`). Such
+a literal is written as its double's exact form, an integer of at most 53
+bits scaled by powers of two (`(CAST(3000000000000001 AS REAL) / 2)`), which
+every SQLite reads exactly. Other literals are written as they are.
+
 ## Portable functions
 
 `StartsWith`, `EndsWith`, `Strpos`, `Lpad`, `Rpad`, `Repeat`, `Reverse`, `Ifnull`,

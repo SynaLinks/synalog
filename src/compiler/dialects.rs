@@ -531,6 +531,52 @@ Array(a) = SqlExpr(
 
 pub struct SqLiteDialect;
 
+/// A float literal SQLite reads as exactly the double it is. SQLite before
+/// 3.43, without an extended `long double` (macOS on ARM), reads a literal by
+/// rounding its digits to a double and scaling by a power of ten: exact while
+/// the digits fit in 53 bits and the power is at most 22, rounded twice
+/// otherwise (`4503599627370495.5` read `4503599627370495`). Such a literal is
+/// written as its double's exact form: an integer of at most 53 bits scaled by
+/// powers of two, which are exact.
+pub(crate) fn sqlite_float_literal(text: &str) -> String {
+    let (negative, body) = match text.strip_prefix('-') {
+        Some(rest) => (true, rest),
+        None => (false, text),
+    };
+    let (mantissa, exponent) = match body.find(['e', 'E']) {
+        Some(i) => (&body[..i], body[i + 1..].parse::<i64>().unwrap_or(0)),
+        None => (body, 0),
+    };
+    let digits: String = mantissa.chars().filter(|c| c.is_ascii_digit()).collect();
+    let digits = digits.trim_start_matches('0');
+    let fraction = mantissa.split('.').nth(1).map_or(0, |f| f.len() as i64);
+    let power = exponent - fraction;
+    let fits = digits.len() <= 15 || digits.parse::<u64>().is_ok_and(|d| d < (1u64 << 53));
+    let value: f64 = match text.parse() {
+        Ok(v) => v,
+        Err(_) => return text.to_string(),
+    };
+    if (fits && power.abs() <= 22) || value == 0.0 || !value.is_finite() {
+        return text.to_string();
+    }
+    let bits = value.abs().to_bits();
+    let biased = ((bits >> 52) & 0x7ff) as i64;
+    let fraction_bits = bits & ((1u64 << 52) - 1);
+    let (mut m, mut q) = if biased == 0 { (fraction_bits, -1074) } else { (fraction_bits | (1u64 << 52), biased - 1075) };
+    while m % 2 == 0 {
+        m /= 2;
+        q += 1;
+    }
+    let mut out = format!("CAST({} AS REAL)", m);
+    while q != 0 {
+        let step = q.abs().min(62);
+        let op = if q > 0 { "*" } else { "/" };
+        out = format!("({} {} {})", out, op, 1u64 << step);
+        q -= step * q.signum();
+    }
+    if negative { format!("(-{})", out) } else { out }
+}
+
 impl Dialect for SqLiteDialect {
     fn bind_value(&self) -> &'static str { "(SELECT {body} FROM (SELECT {0} AS synalog_v))" }
     fn double_type(&self) -> &'static str { "REAL" }
@@ -544,6 +590,9 @@ impl Dialect for SqLiteDialect {
     }
     fn boolean_to_string(&self) -> Option<&'static str> {
         Some("(CASE {0} WHEN 1 THEN 'true' WHEN 0 THEN 'false' END)")
+    }
+    fn float_literal(&self, text: &str) -> String {
+        sqlite_float_literal(text)
     }
     fn nulls_first_by_default(&self, descending: bool) -> bool { !descending }
     fn name(&self) -> &'static str { "sqlite" }
