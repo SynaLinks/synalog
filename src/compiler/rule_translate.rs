@@ -7,8 +7,9 @@ use std::collections::{HashMap, HashSet};
 use indexmap::IndexMap;
 use crate::parser::{Json, JsonObject};
 use crate::compiler::{CompileResult, CompileError};
-use crate::compiler::dialects::{Dialect, GroupBySpec};
-use crate::compiler::expr_translate::{ExprTranslator, SubqueryTranslator, logica_field_to_sql_field};
+use crate::compiler::dialects::{is_sql_keyword, sql_column, Dialect, GroupBySpec};
+use crate::compiler::expr_translate::{ExprTranslator, SubqueryTranslator};
+use crate::compiler::type_inference::Type;
 
 use crate::compiler::universe::indent2;
 
@@ -41,6 +42,13 @@ pub struct NamesAllocator {
     table_count: usize,
     var_count: usize,
     allocated_tables: HashSet<String>,
+    /// Names a table alias must not take, lowercase: the program's columns.
+    /// Engines with case-insensitive names (Trino, Presto) read an alias
+    /// `K` as the column `k` of the subquery's own table.
+    pub reserved_aliases: HashSet<String>,
+    /// The functions the program defines (`F(x) = ...`): a call of one in a
+    /// value is the program's, even where a built-in has the name.
+    pub defined_functions: HashSet<String>,
     /// Custom UDF format strings: function_name -> format string (e.g., "my_func({col0}, {col1})")
     pub custom_udfs: HashMap<String, String>,
 }
@@ -69,7 +77,9 @@ impl NamesAllocator {
     }
 
     /// Allocate a table alias, using the hint if it's unique and valid.
-    /// Matches Python's AllocateTable logic.
+    /// Matches Python's AllocateTable logic, except that a hint which is an
+    /// SQL keyword (a predicate named `Order`, `Group`, `Select`, ...) is not
+    /// used as is: `FROM t AS Order` does not parse on any engine.
     pub fn alloc_table(&mut self, hint: Option<&str>) -> String {
         let suffix = hint
             .filter(|h| h.len() < 100)
@@ -84,6 +94,8 @@ impl NamesAllocator {
         let name = if !suffix.is_empty()
             && !self.allocated_tables.contains(&suffix)
             && !suffix.chars().next().unwrap_or('0').is_ascii_digit()
+            && !is_sql_keyword(&suffix)
+            && !self.reserved_aliases.contains(&suffix.to_ascii_lowercase())
         {
             suffix
         } else {
@@ -113,9 +125,9 @@ pub struct RuleStructure {
     /// table_alias → predicate_name
     pub tables: IndexMap<String, String>,
     /// (table_alias, field) → generated variable name
-    pub vars_map: HashMap<(String, String), String>,
+    pub vars_map: IndexMap<(String, String), String>,
     /// generated variable name → (table_alias, field)
-    pub inv_vars_map: HashMap<String, (String, String)>,
+    pub inv_vars_map: IndexMap<String, (String, String)>,
     /// Variable unifications: [{left: expr, right: expr}]
     pub vars_unification: Vec<(Json, Json)>,
     /// Constraint expressions (become WHERE clauses)
@@ -136,6 +148,8 @@ pub struct RuleStructure {
     pub synonym_log: HashMap<String, Vec<LogicalVariable>>,
     /// External vocabulary for combine sub-rules (variables from outer scope)
     pub external_vocabulary: Option<HashMap<String, String>>,
+    /// The types of the outer scope's variables, for a combine sub-rule.
+    pub external_types: HashMap<String, Type>,
     /// Tracks spread variables with EXCEPT fields: var_name -> (table_alias, excluded_fields)
     pub except_info: HashMap<String, (String, Vec<String>)>,
 }
@@ -145,8 +159,8 @@ impl RuleStructure {
         RuleStructure {
             this_predicate_name: String::new(),
             tables: IndexMap::new(),
-            vars_map: HashMap::new(),
-            inv_vars_map: HashMap::new(),
+            vars_map: IndexMap::new(),
+            inv_vars_map: IndexMap::new(),
             vars_unification: Vec::new(),
             constraints: Vec::new(),
             select: IndexMap::new(),
@@ -158,6 +172,7 @@ impl RuleStructure {
             aggregated_fields: Vec::new(),
             synonym_log: HashMap::<String, Vec<LogicalVariable>>::new(),
             external_vocabulary: None,
+            external_types: HashMap::new(),
             except_info: HashMap::new(),
         }
     }
@@ -204,7 +219,7 @@ impl RuleStructure {
             vocab.extend(ext.clone());
         }
         for (var_name, (table, field)) in &self.inv_vars_map {
-            let sql_field = logica_field_to_sql_field(field);
+            let sql_field = sql_column(field, dialect);
             if table.is_empty() {
                 vocab.insert(var_name.clone(), sql_field);
             } else if field == "*" {
@@ -374,54 +389,85 @@ impl RuleStructure {
 
         loop {
             let mut done = true;
-            self.vars_unification.retain(|(l, r)| l != r);
+            // A value unified with itself says nothing, unless it holds a null,
+            // which equals nothing (see `unifications_to_constraints`).
+            self.vars_unification.retain(|(l, r)| l != r || holds_null_literal(l));
 
             // Iterate all unifications (Python iterates the live list; we iterate
             // by index to handle in-place modifications via replace_variable_everywhere).
             let mut i = 0;
             while i < self.vars_unification.len() {
-                let left = self.vars_unification[i].0.clone();
-                let right = self.vars_unification[i].1.clone();
-
-                // Phase 1: Direct variable assignments (both directions)
-                for (k_expr, r_expr) in [(&left, &right), (&right, &left)] {
-                    if k_expr == r_expr {
-                        continue;
-                    }
-                    let r_vars = {
-                        let mut s = HashSet::new();
-                        all_mentioned_variables(r_expr, &mut s);
-                        s
-                    };
-                    let r_vars_incl_combines = {
-                        let mut s = HashSet::new();
-                        all_mentioned_variables_impl(r_expr, &mut s, true);
-                        s
-                    };
-
-                    if let Some(var_name) = extract_var_name(k_expr) {
-                        if variables.contains(&var_name)
-                            && !r_vars_incl_combines.contains(&var_name)
-                            && (is_subset(&r_vars, &self.extracted_variables())
-                                || !var_name.starts_with("x_"))
-                        {
-                            let replacement = r_expr.clone();
-                            self.replace_variable_everywhere(&var_name, &replacement);
-                            done = false;
+                // Phase 1: Direct variable assignments (both directions). The
+                // unification is read in place: only the value assigned is
+                // copied.
+                for side in 0..2 {
+                    let assignment = {
+                        let (left, right) = &self.vars_unification[i];
+                        let (k_expr, r_expr) = if side == 0 { (left, right) } else { (right, left) };
+                        match extract_var_name(k_expr).filter(|v| k_expr != r_expr && variables.contains(v)) {
+                            None => None,
+                            Some(var_name) => {
+                                let r_vars = {
+                                    let mut s = HashSet::new();
+                                    all_mentioned_variables(r_expr, &mut s);
+                                    s
+                                };
+                                let r_vars_incl_combines = {
+                                    let mut s = HashSet::new();
+                                    all_mentioned_variables_impl(r_expr, &mut s, true);
+                                    s
+                                };
+                                if !r_vars_incl_combines.contains(&var_name)
+                                    && (is_subset(&r_vars, &self.extracted_variables())
+                                        || !var_name.starts_with("x_"))
+                                {
+                                    // A large value written wherever the variable is
+                                    // would grow the query with each such variable
+                                    // defined from another (`b == a + a, c == b + b`):
+                                    // it is computed once, as the one element of a
+                                    // list unnested, and the variable is that element.
+                                    let once = expression_size(r_expr) > LARGE_EXPRESSION && {
+                                        let defining = count_variable(left, &var_name) + count_variable(right, &var_name);
+                                        self.variable_uses(&var_name) - defining > 1
+                                    };
+                                    Some((var_name, r_expr.clone(), once))
+                                } else {
+                                    None
+                                }
+                            }
                         }
+                    };
+                    if let Some((var_name, value, once)) = assignment {
+                        let replacement = if once {
+                            let alias = self.allocator.alloc_var();
+                            self.inv_vars_map.insert(alias.clone(), ("".to_string(), alias.clone()));
+                            self.unnestings.push((alias.clone(), crate::json_obj!(
+                                "literal" => crate::json_obj!(
+                                    "the_list" => crate::json_obj!("element" => Json::Array(vec![value]))
+                                )
+                            )));
+                            value_of_unnested(&alias)
+                        } else {
+                            value
+                        };
+                        self.replace_variable_everywhere(&var_name, &replacement);
+                        // This unification is the assignment, now `e == e`:
+                        // it goes, a null in it or not (another one that
+                        // became `null == null` is a comparison, and stays).
+                        self.vars_unification[i] = (Json::Null, Json::Null);
+                        done = false;
+                        break;
                     }
                 }
 
-                // Phase 2: Record field unwrapping (both directions)
+                // Phase 2: Record field unwrapping (both directions), each
+                // direction read from the unification as Phase 1 left it.
                 if unfold_records {
-                    // Re-read after potential Phase 1 modifications
-                    let left2 = self.vars_unification.get(i)
-                        .map(|(l, _)| l.clone());
-                    let right2 = self.vars_unification.get(i)
-                        .map(|(_, r)| r.clone());
-                    if let (Some(left2), Some(right2)) = (left2, right2) {
-                        for (k_expr, r_expr) in [(&left2, &right2), (&right2, &left2)] {
-                            if k_expr == r_expr {
+                    let mut assignments = Vec::new();
+                    {
+                        let (left, right) = &self.vars_unification[i];
+                        for (k_expr, r_expr) in [(left, right), (right, left)] {
+                            if k_expr == r_expr || !is_record(k_expr) {
                                 continue;
                             }
                             let r_vars = {
@@ -429,32 +475,28 @@ impl RuleStructure {
                                 all_mentioned_variables(r_expr, &mut s);
                                 s
                             };
+                            if !is_subset(&r_vars, &self.extracted_variables()) {
+                                continue;
+                            }
                             let r_vars_incl_combines = {
                                 let mut s = HashSet::new();
                                 all_mentioned_variables_impl(r_expr, &mut s, true);
                                 s
                             };
-                            if is_record(k_expr) && is_subset(&r_vars, &self.extracted_variables()) {
-                                let replacements = collect_record_assignments(
-                                    k_expr, r_expr, &variables, &r_vars_incl_combines,
-                                );
-                                for (var_name, replacement) in &replacements {
-                                    self.replace_variable_everywhere(var_name, replacement);
-                                    done = false;
-                                }
-                            }
+                            assignments.push(collect_record_assignments(
+                                k_expr, r_expr, &variables, &r_vars_incl_combines,
+                            ));
+                        }
+                    }
+                    for replacements in assignments {
+                        for (var_name, replacement) in &replacements {
+                            self.replace_variable_everywhere(var_name, replacement);
+                            done = false;
                         }
                     }
                 }
 
                 i += 1;
-            }
-
-            // Remove self-referential unifications
-            if unfold_records {
-                self.vars_unification.retain(|(l, r)| {
-                    !is_self_referential_unification(l, r)
-                });
             }
 
             if done {
@@ -490,6 +532,19 @@ impl RuleStructure {
 
     /// Replace all occurrences of a variable with the given expression.
     /// Updates synonym_log to track variable substitutions for error reporting.
+    /// How many times a variable is written in the rule: its unifications,
+    /// conditions, columns and unnested lists.
+    fn variable_uses(&self, var_name: &str) -> usize {
+        // A unification with a variable (`x == y`) renames, copying nothing.
+        let is_variable = |e: &Json| extract_var_name(e).is_some();
+        self.vars_unification.iter()
+            .filter(|(l, r)| !(is_variable(l) && is_variable(r)))
+            .map(|(l, r)| count_variable(l, var_name) + count_variable(r, var_name)).sum::<usize>()
+            + self.constraints.iter().map(|c| count_variable(c, var_name)).sum::<usize>()
+            + self.select.values().map(|e| count_variable(e, var_name)).sum::<usize>()
+            + self.unnestings.iter().map(|(_, l)| count_variable(l, var_name)).sum::<usize>()
+    }
+
     fn replace_variable_everywhere(&mut self, var_name: &str, replacement: &Json) {
         // Update synonym_log if replacement is a variable
         if let Some(repl_var) = replacement.as_object().get("variable") {
@@ -536,10 +591,16 @@ impl RuleStructure {
     pub fn unifications_to_constraints(&mut self) {
         let unifs = std::mem::take(&mut self.vars_unification);
         for (left, right) in unifs {
-            if left == right {
+            // A value equals itself, so the constraint goes; but a null equals
+            // nothing, itself included (`A(k: null)`, `B(k: null)` joined on
+            // `k` have no row): a constraint with a null stays.
+            if left == right && !holds_null_literal(&left) {
                 continue;
             }
-            self.constraints.push(make_equality(&left, &right));
+            let equality = make_equality(&left, &right);
+            if !self.constraints.contains(&equality) {
+                self.constraints.push(equality);
+            }
         }
     }
 
@@ -625,12 +686,35 @@ impl RuleStructure {
         let vocabulary = self.vars_vocabulary(dialect);
         let mut ql = ExprTranslator::new(vocabulary, dialect, flag_values);
         ql.subquery_translator = Some(subquery_translator);
+        // The types of the variables: the outer scope's in a combine, a
+        // column has its predicate's, an element its list's.
+        ql.variable_types = self.external_types.clone();
+        for (var, (alias, field)) in &self.inv_vars_map {
+            if let Some(t) = self.tables.get(alias).and_then(|p| subquery_translator.column_type(p, field)) {
+                ql.variable_types.insert(var.clone(), t);
+            }
+        }
+        for (element, list) in &self.unnestings {
+            if let Type::List(inner) = ql.value_type(list) {
+                if *inner != Type::Any {
+                    ql.variable_types.insert(element.clone(), *inner);
+                }
+            }
+        }
 
         // SELECT clause
         let mut fields = Vec::with_capacity(self.select.len());
         for (field_name, expression) in &self.select {
-            let sql_expr = ql.convert_to_sql(expression)?;
-            let sql_field = logica_field_to_sql_field(field_name);
+            let column_type = subquery_translator.column_type(&self.this_predicate_name, field_name).unwrap_or(Type::Any);
+            let mut sql_expr = ql.convert_to_sql_expecting(expression, &column_type)?;
+            // A null of a column whose type is known has that type: PostgreSQL
+            // types `null UNION null` as text, and then fails against a number.
+            if sql_expr == "null" {
+                if let Some(t) = subquery_translator.column_psql_type(&self.this_predicate_name, field_name) {
+                    sql_expr = format!("CAST(null AS {})", t);
+                }
+            }
+            let sql_field = sql_column(field_name, dialect);
             if field_name == "*" || sql_expr.ends_with(".*") {
                 fields.push(sql_expr);
             } else {
@@ -661,8 +745,18 @@ impl RuleStructure {
 
             // UNNEST
             for (element_alias, list_expr) in &self.unnestings {
-                let list_sql = ql.convert_to_sql(list_expr)?;
-                let phrase = dialect.unnest_phrase()
+                // A list of the element's type: `x in []` unnests a typed one.
+                // An element of unknown type takes the type of what it equals.
+                let element = ql.variable_types.get(element_alias).cloned()
+                    .filter(|t| *t != Type::Any)
+                    .or_else(|| self.constraints.iter()
+                        .filter_map(|c| equated_with(c, element_alias))
+                        .map(|other| ql.value_type(other))
+                        .find(|t| *t != Type::Any))
+                    .unwrap_or(Type::String);
+                let holds_records = matches!(element, Type::Record { .. });
+                let list_sql = ql.convert_to_sql_expecting(list_expr, &Type::List(Box::new(element)))?;
+                let phrase = if holds_records { dialect.unnest_records_phrase() } else { dialect.unnest_phrase() }
                     .replace("{0}", &list_sql)
                     .replace("{1}", element_alias);
                 from_parts.push(phrase);
@@ -707,7 +801,7 @@ impl RuleStructure {
             let group_items: Vec<String> = match group_spec {
                 GroupBySpec::Name => {
                     self.distinct_vars.iter()
-                        .map(|v| logica_field_to_sql_field(v))
+                        .map(|v| sql_column(v, dialect))
                         .collect()
                 }
                 GroupBySpec::Index => {
@@ -736,18 +830,23 @@ impl RuleStructure {
     }
 }
 
-/// Set of known built-in function names (not user-defined predicates).
-fn built_in_function_names() -> HashSet<String> {
+/// Set of known built-in function names (not user-defined predicates), built once.
+fn built_in_function_names() -> &'static HashSet<String> {
+    static NAMES: std::sync::OnceLock<HashSet<String>> = std::sync::OnceLock::new();
+    NAMES.get_or_init(build_built_in_function_names)
+}
+
+fn build_built_in_function_names() -> HashSet<String> {
     use crate::compiler::expr_translate::{ExprTranslator};
     use crate::compiler::dialects;
     // Use the basis_functions from the default dialect (bigquery) as a starting point.
     // All dialect-independent built-in functions are the same across dialects.
     let dialect = dialects::get("bigquery").unwrap_or_else(|_| dialects::get("sqlite").unwrap());
-    let mut s = ExprTranslator::basis_functions(dialect.as_ref());
+    let mut s = (*ExprTranslator::basis_functions(dialect.as_ref())).clone();
     // Also add basis functions from other dialects to be safe
     for engine in &["sqlite", "psql", "duckdb"] {
         if let Ok(d) = dialects::get(engine) {
-            s.extend(ExprTranslator::basis_functions(d.as_ref()));
+            s.extend(ExprTranslator::basis_functions(d.as_ref()).iter().cloned());
         }
     }
     s
@@ -757,9 +856,11 @@ fn built_in_function_names() -> HashSet<String> {
 /// Converts calls to user-defined predicates in value position into body table references.
 /// E.g., `F() = T1()` → `F(logica_value: x) :- T1(logica_value: x)`
 pub fn inline_predicate_values(rule: &mut Json, allocator: &mut NamesAllocator) {
+    // A function the program defines is not a built-in, even of a built-in's
+    // name: checked where a call is met (see inline_predicate_values_recursive).
     let known = built_in_function_names();
     let mut extra_conjuncts = Vec::new();
-    inline_predicate_values_recursive(rule, &mut extra_conjuncts, allocator, &known);
+    inline_predicate_values_recursive(rule, &mut extra_conjuncts, allocator, known);
 
     if !extra_conjuncts.is_empty() {
         let ro = rule.as_object_mut();
@@ -808,7 +909,7 @@ fn inline_predicate_values_recursive(
                 call.as_object()["predicate_name"].as_str().to_string()
             });
             if let Some(pred_name) = pred_name_opt {
-                if !known_functions.contains(pred_name.as_str()) {
+                if !known_functions.contains(pred_name.as_str()) || allocator.defined_functions.contains(&pred_name) {
                     // Convert to body table reference
                     let aux_var = allocator.alloc_var();
 
@@ -935,11 +1036,8 @@ fn replace_variable(old_var: &str, new_expr: &Json, node: &mut Json) {
                     *current = new_expr.clone();
                     continue;
                 }
-                let keys: Vec<String> = o.keys().cloned().collect();
-                for key in keys {
-                    if let Some(v) = o.get_mut(&key) {
-                        stack.push(v as *mut Json);
-                    }
+                for v in o.values_mut() {
+                    stack.push(v as *mut Json);
                 }
             }
             Json::Array(a) => {
@@ -1073,21 +1171,6 @@ fn try_expand_record_pair(left: &Json, right: &Json) -> Option<Vec<(Json, Json)>
     }
 
     Some(result)
-}
-
-/// Check if a unification is self-referential: one side is a simple variable
-/// that also appears inside the other side (e.g., `x == {f: x.f}`).
-fn is_self_referential_unification(left: &Json, right: &Json) -> bool {
-    for (a, b) in [(left, right), (right, left)] {
-        if let Some(var_name) = extract_var_name(a) {
-            let mut vars = HashSet::new();
-            all_mentioned_variables(b, &mut vars);
-            if vars.contains(&var_name) {
-                return true;
-            }
-        }
-    }
-    false
 }
 
 /// Extract a rule's structure from its parsed JSON AST.
@@ -1541,29 +1624,17 @@ fn extract_inclusion(incl: &Json, s: &mut RuleStructure) -> CompileResult<()> {
     s.unnestings.push((var_name.clone(), list.clone()));
 
     // Unify element with ValueOfUnnested(var)
-    let value_of_unnested = crate::json_obj!(
-        "call" => crate::json_obj!(
-            "predicate_name" => "ValueOfUnnested",
-            "record" => crate::json_obj!(
-                "field_value" => Json::Array(vec![
-                    crate::json_obj!(
-                        "field" => Json::Int(0),
-                        "value" => crate::json_obj!(
-                            "expression" => make_var_expr(&var_name)
-                        )
-                    ),
-                ])
-            )
-        )
-    );
-    s.vars_unification.push((element.clone(), value_of_unnested));
+    s.vars_unification.push((element.clone(), value_of_unnested(&var_name)));
 
     Ok(())
 }
 
-fn is_constraint_predicate(name: &str) -> bool {
+/// Whether a body predicate of this name is a condition, binding nothing.
+pub(crate) fn is_constraint_predicate(name: &str) -> bool {
     matches!(name, "==" | "!=" | "<" | ">" | "<=" | ">=" | "&&" | "||"
-        | "~" | "in" | "is" | "is not" | "Like" | "!" | "IsNull" | "Constraint")
+        | "~" | "in" | "is" | "is not" | "Like" | "!" | "IsNull" | "Constraint"
+        // Boolean functions, a condition where a body writes them.
+        | "ILike" | "StartsWith" | "EndsWith" | "RegexpContains")
 }
 
 /// Check if expression directly contains a "variable" key.
@@ -1827,6 +1898,105 @@ pub fn decorate_combine_rule(rule: &Json, var_name: &str) -> Json {
     }
 
     rule
+}
+
+/// The element of the unnesting `alias`.
+fn value_of_unnested(alias: &str) -> Json {
+    crate::json_obj!(
+        "call" => crate::json_obj!(
+            "predicate_name" => "ValueOfUnnested",
+            "record" => crate::json_obj!(
+                "field_value" => Json::Array(vec![
+                    crate::json_obj!(
+                        "field" => Json::Int(0),
+                        "value" => crate::json_obj!(
+                            "expression" => make_var_expr(alias)
+                        )
+                    ),
+                ])
+            )
+        )
+    )
+}
+
+/// The size of an expression beyond which a variable it defines, used more
+/// than once, is computed once rather than written at each use.
+const LARGE_EXPRESSION: usize = 60;
+
+/// The number of nodes of an expression.
+fn expression_size(expr: &Json) -> usize {
+    match expr {
+        Json::Object(o) => 1 + o.values().map(expression_size).sum::<usize>(),
+        Json::Array(items) => items.iter().map(expression_size).sum(),
+        _ => 0,
+    }
+}
+
+/// How many times a variable is written in `node`.
+fn count_variable(node: &Json, name: &str) -> usize {
+    match node {
+        Json::Object(o) => {
+            let here = o.get("variable").filter(|v| v.is_object())
+                .and_then(|v| v.as_object().get("var_name"))
+                .is_some_and(|n| n.as_var_name() == name) as usize;
+            here + o.values().map(|v| count_variable(v, name)).sum::<usize>()
+        }
+        Json::Array(items) => items.iter().map(|v| count_variable(v, name)).sum(),
+        _ => 0,
+    }
+}
+
+/// Whether an expression holds a null literal anywhere.
+fn holds_null_literal(expr: &Json) -> bool {
+    match expr {
+        Json::Object(o) => {
+            o.get("literal").is_some_and(|l| l.is_object() && (l.as_object().contains_key("the_null") || l.as_object().contains_key("null")))
+                || o.values().any(holds_null_literal)
+        }
+        Json::Array(items) => items.iter().any(holds_null_literal),
+        _ => false,
+    }
+}
+
+/// The other side of an equality constraint between the element `var` of
+/// an unnesting (the variable, or `ValueOfUnnested(var)`) and a value.
+fn equated_with<'j>(constraint: &'j Json, var: &str) -> Option<&'j Json> {
+    let call = constraint.as_object().get("call").filter(|c| c.is_object())?.as_object();
+    if call.get("predicate_name").filter(|n| n.is_string())?.as_str() != "==" {
+        return None;
+    }
+    let sides: Vec<&Json> = call.get("record")?.as_object().get("field_value")?.as_array().iter()
+        .map(|fv| {
+            let val = &fv.as_object()["value"];
+            val.as_object().get("expression").unwrap_or(val)
+        })
+        .collect();
+    fn is_variable(e: &Json, var: &str) -> bool {
+        e.is_object() && e.as_object().get("variable")
+            .is_some_and(|v| v.as_object().get("var_name").is_some_and(|n| n.as_var_name() == var))
+    }
+    let is_element = |e: &Json| {
+        if is_variable(e, var) {
+            return true;
+        }
+        let Some(c) = e.as_object().get("call").filter(|c| c.is_object()).map(|c| c.as_object()) else {
+            return false;
+        };
+        c.get("predicate_name").is_some_and(|n| n.is_string() && n.as_str() == "ValueOfUnnested")
+            && c.get("record")
+                .and_then(|r| r.as_object().get("field_value"))
+                .and_then(|fvs| fvs.as_array().first())
+                .map(|fv| {
+                    let val = &fv.as_object()["value"];
+                    val.as_object().get("expression").unwrap_or(val)
+                })
+                .is_some_and(|arg| is_variable(arg, var))
+    };
+    match sides.as_slice() {
+        [l, r] if is_element(l) => Some(*r),
+        [l, r] if is_element(r) => Some(*l),
+        _ => None,
+    }
 }
 
 fn make_equality(left: &Json, right: &Json) -> Json {

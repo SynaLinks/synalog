@@ -1,0 +1,2 @@
+SELECT
+  CAST(3.7 AS INT64) AS v;

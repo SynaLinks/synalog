@@ -1,0 +1,2 @@
+SELECT
+  FLOOR(7) AS v;

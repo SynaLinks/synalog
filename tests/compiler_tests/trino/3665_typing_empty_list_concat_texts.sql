@@ -1,0 +1,2 @@
+SELECT
+  CARDINALITY(ARRAY['a', 'b']) AS n;

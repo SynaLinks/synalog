@@ -1,0 +1,10 @@
+WITH t_0_F AS (SELECT * FROM VALUES
+  (1, ARRAY(3, 4)),
+  (2, ARRAY()),
+  (3, ARRAY(5))
+AS UNUSED_TABLE_NAME(k, l))
+SELECT
+  F.k AS k,
+  ARRAY_SIZE(F.l) AS n
+FROM
+  t_0_F AS F ORDER BY k NULLS LAST;

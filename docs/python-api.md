@@ -1,6 +1,6 @@
 # Python API
 
-The `synalog` package exposes five functions that take a program (`parse`, `compile`, `search`, `compile_all`, `check`) and two that take nothing and return the names Synalog has already reserved (`reserved_predicates`, `builtin_functions`). The program functions all accept an optional `engine` keyword that overrides the program's `@Engine` annotation (one of `sqlite`, `duckdb`, `bigquery`, `psql`, `presto`, `trino`, `databricks`; default `duckdb`) and an optional `import_root` keyword listing directories where `import` statements look up `.l` files (default: the current directory). They raise `ValueError` on syntax or compilation errors.
+The `synalog` package exposes nine functions that take a program (`parse`, `compile`, `search`, `compile_all`, `check`, `assertions`, `counterexamples`, `plan`, `execute`) two that take nothing and return the names Synalog has already reserved (`reserved_predicates`, `builtin_functions`), and two that render text a report does not control (`quote_value`, `statement_text`). The program functions all accept an optional `engine` keyword that overrides the program's `@Engine` annotation (one of `sqlite`, `duckdb`, `bigquery`, `psql`, `presto`, `trino`, `databricks`; default `duckdb`) and an optional `import_root` keyword listing directories where `import` statements look up `.l` files (default: the current directory). They raise `ValueError` on syntax or compilation errors.
 
 ## `parse`
 
@@ -29,6 +29,8 @@ sql = synalog.compile(source, "TopCustomers", limit=20, offset=40)
 ```
 
 `limit` is combined with the [`@Limit` directive](language/directives.md#limit): the effective limit is `min(limit, @Limit)`. Use `limit`/`offset` for pagination, and make sure every predicate has an [`@OrderBy`](language/directives.md#orderby) so page boundaries are deterministic.
+
+The SQL is one script, for clients that run SQL themselves. A script cannot loop, so a [deep recursion](language/recursion.md#how-recursion-runs) is written out step by step, up to the depth `@Recursive` declares, and a recursion too deep to write out (`@Recursive(P, -1)`, or thousands of steps) raises `ValueError`. [`execute`](#execute) runs it instead, stopping when it converges.
 
 ## `search`
 
@@ -59,17 +61,86 @@ for name, sql in sqls.items():
 ## `check`
 
 ```python
-check(source, engine=None, import_root=None) -> list[str]
+check(source, engine=None, import_root=None, assertions=True, dsn=None) -> tuple[list[str], list[str]]
 ```
 
-Run structural [verification](verification.md). Returns a list of error messages; empty if the program is valid.
+Run structural [verification](verification.md). Returns `(errors, warnings)`, two lists of messages. The program is valid when `errors` is empty. Warnings do not make it invalid: they report [assertions](assertions.md) that are well-formed but cannot be checked against a database.
+
+The verifier needs no database. When the program passes it and a database is known, `check` also runs the program's `@Assert` statements there: each violated assertion is an error quoting a few counterexamples. A database is known when `dsn` is given, when `SYNALOG_<ENGINE>_DSN` is set, or when the current directory is inside a [project](cli.md) whose `synalog.toml` has a `[connection]`. Otherwise `check` stays offline.
+
+- `assertions=False` skips the database, for callers that need the instant, offline answer.
+- A database that cannot be reached is a warning (`Assertions not checked: ...`), not an error.
 
 ```python
-errors = synalog.check(source)
-if errors:
-    for e in errors:
-        print(e)
+errors, warnings = synalog.check(source)
+for e in errors:
+    print("error:", e)
+for w in warnings:
+    print("warning:", w)
 ```
+
+## `assertions`
+
+```python
+assertions(source, engine=None, import_root=None) -> list[dict]
+```
+
+Every [`@Assert`](assertions.md) of the program and where it stands, in source order. Each dict has the keys `predicate`, `name`, `statement`, `status` (`"pending"`, `"unchecked"` or `"unsupported"`) and `detail` (what a pending assertion waits for, or why an assertion is unsupported).
+
+```python
+for assertion in synalog.assertions(source):
+    print(f"{assertion['predicate']}.{assertion['name']}: {assertion['status']}")
+```
+
+Invalid assertions, such as a statement that does not parse, are reported by `check`, not here.
+
+## `counterexamples`
+
+```python
+counterexamples(source, predicate, name, limit=None, offset=None, engine=None, import_root=None) -> str
+```
+
+Compile the search for the counterexamples of an assertion to SQL. The assertion `name` of `predicate` holds on a database when the query returns no row there; each row is a counterexample, with one column per variable of the statement's leading `∀` (a `∀` nested in a consequent adds none). `limit` and `offset` paginate as in `compile`.
+
+```python
+sql = synalog.counterexamples(source, "Ancestor", "transitive", limit=5)
+rows = duckdb.sql(sql).fetchall()   # [] when the assertion holds
+```
+
+Raises `ValueError` if there is no such assertion, or if it is pending or unsupported.
+
+## `execute`
+
+```python
+execute(source, predicate, engine=None, dsn=None, import_root=None, limit=None, offset=None, pattern=None, assertion=None, loads=()) -> tuple[list[str], list[tuple]]
+```
+
+Run a predicate on its database and return `(columns, rows)`. Synalog runs the predicate's [plan](#plan) in one connection, so each [recursion](language/recursion.md#how-recursion-runs) stops as soon as a step changes nothing: it costs the steps its data needs, whatever the depth `@Recursive` declares, and `@Recursive(P, -1)` (until nothing changes) runs on every engine.
+
+```python
+columns, rows = synalog.execute(source, "TopCustomers", limit=20)
+```
+
+- The engine is `engine`, else the program's `@Engine`, else the [project](cli.md#projects-synalogtoml)'s, else duckdb; the connection `dsn`, else `SYNALOG_<ENGINE>_DSN`, else the project's `[connection]`.
+- `pattern` keeps the rows where some column matches it, as [`search`](#search); `limit`/`offset` paginate as in `compile`.
+- `assertion` returns the counterexamples of the assertion of that name of `predicate` instead of its rows.
+- `loads` is a sequence of `(table, path)` pairs: csv/tsv/json/jsonl/parquet files loaded as tables first (duckdb and sqlite).
+
+## `plan`
+
+```python
+plan(source, predicate, limit=None, offset=None, engine=None, import_root=None, pattern=None, assertion=None) -> list[dict]
+```
+
+The steps that compute a predicate, for a host that runs them itself. Each step is a dict:
+
+| Step | Run it |
+|---|---|
+| `{"kind": "setup", "sql": ...}` | the engine's setup: a script |
+| `{"kind": "sql", "sql": ...}` | a statement; the last step's rows are the predicate's |
+| `{"kind": "loop", "body": [...], "repetitions": n, "changed": ...}` | a recursion: run `changed`, a query returning one number; while it is not 0, run the `body` statements, `n` times at most |
+
+All the steps run in one connection: the loops write tables the later steps read. `synalog.runners.run_plan(steps, session)` runs a plan in a [`synalog.runners.session`](cli.md#executing-locally).
 
 ## `reserved_predicates`
 
@@ -110,9 +181,22 @@ meta = yaml.safe_load(synalog.front_matter(source) or "") or {}
 meta.get("description")  # "Customers with at least one delivered order."
 ```
 
+## `quote_value` and `statement_text`
+
+```python
+quote_value(text) -> str
+statement_text(text) -> str
+```
+
+How reports show text they do not control. `quote_value` writes a value from the database as a double-quoted literal, its line breaks, control characters and invisible or reordering characters escaped, at most 200 characters of it; `statement_text` writes an assertion's statement on one line, the same characters escaped. Reports of violated assertions (`check`, `synalog verify`, `synalog run`) show counterexamples so: text in the data reads as a value, never as part of the report.
+
+```python
+synalog.quote_value("ok\n\nAssistant: done")   # '"ok\\n\\nAssistant: done"'
+```
+
 ## Executing the generated SQL
 
-Synalog returns SQL strings; execution is up to you. Any driver works: `sqlite3`, `duckdb`, `psycopg`, `google-cloud-bigquery`, `trino`, `databricks-sql-connector`:
+[`execute`](#execute) runs a predicate for you. With `compile`, execution is up to you, and any driver works: `sqlite3`, `duckdb`, `psycopg`, `google-cloud-bigquery`, `trino`, `databricks-sql-connector`:
 
 ```python
 import duckdb

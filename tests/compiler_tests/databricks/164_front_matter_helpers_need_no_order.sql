@@ -1,0 +1,4 @@
+SELECT
+  x_3 AS x
+FROM
+  LATERAL (SELECT explode(ARRAY(1, 2, 3)) AS x_3) AS pushkin ORDER BY x NULLS LAST;

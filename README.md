@@ -62,7 +62,7 @@ Employee(name: "Charlie", department: "Engineering", salary: 80000);
 EngineeringTeam(name:, salary:) :- Employee(name:, department: "Engineering", salary:);
 """
 
-errors = synalog.check(source)
+errors, warnings = synalog.check(source)
 assert errors == []
 
 sql = synalog.compile(source, "EngineeringTeam")
@@ -76,7 +76,7 @@ rows = duckdb.sql(sql).fetchall()
 pip install synalog
 ```
 
-Or with [uv](https://docs.astral.sh/uv/): `uv add synalog` (or `uv pip install synalog`). The CLI also runs without installing via `uvx synalog`, or `uvx --from 'synalog[run]' synalog` to include the duckdb and psycopg drivers.
+Or with [uv](https://docs.astral.sh/uv/): `uv add synalog` (or `uv pip install synalog`). The CLI also runs without installing via `uvx synalog`.
 
 Requires Python 3.10+. Wheels are published for Linux (x86_64, aarch64, armv7, s390x, ppc64le; glibc and musl), Windows (x64, x86, aarch64) and macOS (x86_64, aarch64).
 
@@ -120,7 +120,7 @@ $ synalog program.l run EngineeringTeam
 - `--limit` / `--offset` paginate the result.
 - `--csv` (with `run`) prints results as CSV instead of the rendered table.
 - `--search REGEX` (with `print`/`run`) keeps only rows where some column matches the regular expression `REGEX`, e.g. `synalog program.l run Customers --search "(?i)acme"`. In the interactive session the same is `.search Customers (?i)acme`.
-- `run` executes locally on `duckdb` (needs `pip install duckdb`), `sqlite` (stdlib), or `psql` (needs `pip install psycopg` and `--dsn` or `SYNALOG_PSQL_DSN`). For other engines, use `print` and run the SQL with your own client. `pip install 'synalog[run]'` pulls in the duckdb and psycopg drivers.
+- `run` executes on `duckdb` (the default), `sqlite` (stdlib) or `psql` (with `--dsn` or `SYNALOG_PSQL_DSN`) out of the box: synalog depends on duckdb and on psycopg with its bundled libpq, on macOS and Linux alike. For other engines, install their driver (`pip install 'synalog[trino]'`, ...) or use `print` and run the SQL with your own client.
 - `import path.to.file.Pred;` statements resolve `path/to/file.l` against the program file's directory, then the current directory; pass `--import-root DIR` (repeatable) to search elsewhere.
 - `--load TABLE=PATH` (repeatable) loads a csv/tsv/json/jsonl/parquet file as a table before running, e.g. `synalog senior.l run Senior --load employees=employees.csv`.
 
@@ -138,7 +138,7 @@ user = "analyst"
 schema = "public"
 ```
 
-Secrets never go in the file (synalog refuses it): each comes from the environment as `SYNALOG_<ENGINE>_<FIELD>` — `SYNALOG_PSQL_PASSWORD`, `SYNALOG_DATABRICKS_ACCESS_TOKEN`, or `GOOGLE_APPLICATION_CREDENTIALS` for BigQuery — usually from the project's `.env`, kept out of git. Inside the project (from the program's folder or the current directory, and their parents), `run`, `print` and `introspect` use that engine and connection; `--engine`, an `@Engine` annotation, `--dsn` and `SYNALOG_<ENGINE>_DSN` still take precedence. The fields of every engine are in `synalog.project.ENGINES`.
+Secrets never go in the file (synalog refuses it): each comes from the environment as `SYNALOG_<ENGINE>_<FIELD>` — `SYNALOG_PSQL_PASSWORD`, `SYNALOG_DATABRICKS_ACCESS_TOKEN`, or `GOOGLE_APPLICATION_CREDENTIALS` for BigQuery — usually from the project's `.env`, kept out of git. Inside the project (from the program's folder or the current directory, and their parents), `run`, `print` and `verify` use that engine and connection, imports resolve from the project's folder, and `synalog introspect` writes the project's `tables/`, one file per table of the database; `--engine`, an `@Engine` annotation, `--dsn` and `SYNALOG_<ENGINE>_DSN` still take precedence. The fields of every engine are in `synalog.project.ENGINES`.
 
 Running `synalog` with no arguments starts an interactive session, in the spirit of `python` (the options above, e.g. `--engine` or `--load`, apply to it too):
 
@@ -175,7 +175,7 @@ Employee(name: "Charlie", department: "Engineering", salary: 80000);
 EngineeringTeam(name:, salary:) :- Employee(name:, department: "Engineering", salary:);
 """
 
-errors = synalog.check(source)
+errors, warnings = synalog.check(source)
 assert errors == []
 
 sql = synalog.compile(source, "EngineeringTeam")
@@ -220,12 +220,20 @@ for name, sql in sqls.items():
     print(name, sql)
 ```
 
-### `check(source, engine=None, import_root=None) -> list[str]`
+### `execute(source, predicate, engine=None, dsn=None, import_root=None, limit=None, offset=None, pattern=None, assertion=None, loads=()) -> tuple[list[str], list[tuple]]`
 
-Run structural validation. Returns a list of error messages; empty if the program is valid.
+Run a predicate on its database (the program's or project's engine and connection) and return `(columns, rows)`. Each recursion stops as soon as a step changes nothing, so it costs the steps its data needs, and `@Recursive(P, -1)` (until nothing changes) runs on every engine. `plan()` returns the same steps for a host that runs them itself.
 
 ```python
-errors = synalog.check(source)
+columns, rows = synalog.execute(source, "TopCustomers", limit=20)
+```
+
+### `check(source, engine=None, import_root=None, assertions=True, dsn=None) -> tuple[list[str], list[str]]`
+
+Run structural validation. Returns the error messages and the warning messages, as two lists. The program is valid when there is no error; warnings do not make it invalid. Inside a project whose `synalog.toml` has a `[connection]` (or given a `dsn`), it also runs the program's `@Assert` statements against the database and reports each violated one as an error; `assertions=False` keeps it offline.
+
+```python
+errors, warnings = synalog.check(source)
 if errors:
     for e in errors:
         print(e)
@@ -235,26 +243,60 @@ All of these functions accept an optional `engine` keyword that overrides the pr
 
 ## Language overview
 
-By convention, a Synalog program is organized into three sections: **tables**, **concepts** and **rules**. Tables map external data sources (a database table is referenced by its lowercase database name and mapped once to a PascalCase predicate). Concepts extract entities and relationships from tables. Rules derive new data from concepts. The section headers are plain comments: the structure is a convention, not syntax.
+A Synalog program is a **project**: a folder with a `synalog.toml`, holding one predicate per file in three folders, the layout of [semantic layers](https://github.com/SynaLinks/semantic-layers):
+
+```
+shop/
+├── tables/Orders.l               # the data: one file per database table
+├── concepts/Customer.l           # entities and relationships extracted from tables
+├── rules/CustomerRevenue.l       # insights derived from concepts
+├── rules/TopCustomers.l
+└── synalog.toml                  # the project's name, description and database
+```
+
+Each file is named after its predicate and opens with front matter (`name`, the predicate; `description`, what its rows are), then imports what it builds on by folder, file and predicate, then orders its predicate with `@OrderBy`. A database table is referenced by its lowercase database name in `tables/`, and everything else builds on the PascalCase predicate that maps it:
+
+`tables/Orders.l`
 
 ```logica
-# Tables: read-only mappings of database tables
-Orders(customer_id:, product_id:, amount:, status:) :-
-  orders(customer_id:, product_id:, amount:, status:);
+---
+name: Orders
+description: One row per order, with its customer, amount and status.
+---
+@OrderBy(Orders, "order_id");
+Orders(order_id:, customer_id:, amount:, status:) :-
+  orders(order_id:, customer_id:, amount:, status:);
+```
 
-# Concepts: extract entities and relationships
+`concepts/Customer.l`
+
+```logica
+---
+name: Customer
+description: Every customer who placed at least one order.
+---
+import tables.Orders.Orders;
 
 @OrderBy(Customer, "customer_id");
 Customer(customer_id:) distinct :- Orders(customer_id:);
-
-@OrderBy(Purchased, "customer_id");
-Purchased(customer_id:, product_id:) distinct :- Orders(customer_id:, product_id:);
-
-# Rules: derive insights from concepts
-
-@OrderBy(CustomerSpend, "total", "DESC");
-CustomerSpend(customer_id:, total? += amount) distinct :- Orders(customer_id:, amount:);
 ```
+
+`rules/CustomerRevenue.l`
+
+```logica
+---
+name: CustomerRevenue
+description: Total amount ordered by each customer, all statuses included.
+---
+import concepts.Customer.Customer;
+import tables.Orders.Orders;
+
+@OrderBy(CustomerRevenue, "customer_id");
+CustomerRevenue(customer_id:, total? += amount) distinct :-
+  Customer(customer_id:), Orders(customer_id:, amount:);
+```
+
+Imports resolve from the project's folder, so every file runs on its own: `synalog rules/CustomerRevenue.l run CustomerRevenue`. The snippets below show the language itself, one rule at a time.
 
 ### Named arguments
 
@@ -382,7 +424,7 @@ AllManagers(employee_id:, manager_id:) :- Employees(employee_id:, manager_id:);
 
 # Recursive case: manager's managers
 AllManagers(employee_id:, manager_id:) :-
-  AllManagers(employee_id:, intermediate:),
+  AllManagers(employee_id:, manager_id: intermediate),
   Employees(employee_id: intermediate, manager_id:);
 ```
 
@@ -390,17 +432,21 @@ Useful for: referral chains, org charts, product taxonomies, bill of materials.
 
 ### Shortest paths
 
-Find shortest paths in weighted graphs using `Min=` aggregation:
+Find shortest paths in weighted graphs by enumerating route costs recursively, then keeping the minimum per destination with a `Min=` aggregation:
 
 ```logica
-ShippingCost("warehouse_main") = 0;
-
-ShippingCost(destination) Min= cost :-
+# Enumerate route costs from the origin, hop by hop.
+@Recursive(RouteCost, 10);
+RouteCost(destination:, cost:) :-
   ShippingRoutes(origin: "warehouse_main", destination:, cost:);
+RouteCost(destination:, cost: total) :-
+  RouteCost(destination: hub, cost: hub_cost),
+  ShippingRoutes(origin: hub, destination:, cost:),
+  total == hub_cost + cost;
 
-ShippingCost(destination) Min= ShippingCost(hub) + cost :-
-  ShippingCost(hub),
-  ShippingRoutes(origin: hub, destination:, cost:);
+# Keep the cheapest cost per destination.
+@OrderBy(ShippingCost, "destination");
+ShippingCost(destination:, total? Min= cost) distinct :- RouteCost(destination:, cost:);
 ```
 
 ### Temporal data
@@ -518,7 +564,7 @@ Unlike Logica, which lets the database raise errors at execution time, Synalog e
 | **Unsafe `SqlExpr`** | User rules that reach for the raw-SQL escape hatch |
 
 ```python
-errors = synalog.check(bad_source)
+errors, warnings = synalog.check(bad_source)
 for e in errors:
     print(e)
 # Unbound variable 'y' in head of rule: Test(x:, y:) :- Numbers(x:)

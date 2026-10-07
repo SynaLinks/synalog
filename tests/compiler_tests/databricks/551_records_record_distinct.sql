@@ -1,0 +1,19 @@
+WITH t_1_V AS (SELECT * FROM (
+  
+    SELECT
+      STRUCT(1 AS a) AS r
+   UNION ALL
+  
+    SELECT
+      STRUCT(1 AS a) AS r
+  
+) AS UNUSED_TABLE_NAME  ),
+t_0_D AS (SELECT
+  V.r AS r
+FROM
+  t_1_V AS V
+GROUP BY 1)
+SELECT
+  SUM(1) AS n
+FROM
+  t_0_D AS D;

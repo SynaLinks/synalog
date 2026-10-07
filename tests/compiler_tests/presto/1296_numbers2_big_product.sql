@@ -1,0 +1,2 @@
+SELECT
+  ((((CAST(65536 AS BIGINT)) * (65536))) * (3)) AS v;

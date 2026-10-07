@@ -1,0 +1,9 @@
+WITH t_2_V AS (SELECT * FROM VALUES
+  (1),
+  (2)
+AS UNUSED_TABLE_NAME(k))
+SELECT
+  t_1_V.k AS k,
+  ((t_1_V.k) * (3)) AS v
+FROM
+  t_2_V AS t_1_V ORDER BY k NULLS LAST;

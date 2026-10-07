@@ -1,0 +1,2 @@
+SELECT
+  ARRAY_LENGTH(SPLIT("1|2|3", "|")) AS n;

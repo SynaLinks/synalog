@@ -22,16 +22,17 @@
   var ASSET_V = "20260613a";
 
   var DEFAULT_PROGRAM = [
-    "# Tables",
-    "Orders(order_id:, customer_id:, amount:, created_at:) :-",
-    "  orders(order_id:, customer_id:, amount:, created_at:);",
+    "---",
+    "name: CustomerRevenue",
+    "description: Total amount ordered by each customer, highest first.",
+    "---",
+    "# In a project, Orders is tables/Orders.l, imported with",
+    "# import tables.Orders.Orders; here inline facts stand in for it.",
+    "Orders(order_id: 1, customer_id: 100, amount: 250);",
+    "Orders(order_id: 2, customer_id: 100, amount: 1200);",
+    "Orders(order_id: 3, customer_id: 200, amount: 80);",
     "",
-    "# Concepts",
-    "@OrderBy(Customer, \"customer_id\");",
-    "Customer(customer_id:) distinct :- Orders(customer_id:);",
-    "",
-    "# Rules",
-    "@OrderBy(CustomerRevenue, \"total\", \"desc\");",
+    "@OrderBy(CustomerRevenue, \"total\", \"DESC\");",
     "CustomerRevenue(customer_id:, total? += amount) distinct :-",
     "  Orders(customer_id:, amount:);",
     "",
@@ -276,7 +277,7 @@
       if (verifyBox.checked) {
         var errors;
         try {
-          errors = wasm.check(source(), engine());
+          errors = wasm.check(source(), engine()).errors;
         } catch (e) {
           setSql(String(e.message || e), true);
           return;

@@ -1,7 +1,6 @@
 # run: ProductLabel, Rounded, Casts
 @Engine("duckdb");
 
-# Tables
 Products(name: "espresso machine", price: 249.99);
 Products(name: "grinder", price: 79.5);
 
@@ -9,9 +8,7 @@ Products(name: "grinder", price: 79.5);
 Initial(s) = Upper(Substr(s, 1, 1));
 FullLabel(name, price) = Upper(name) ++ " ($" ++ ToString(price) ++ ")";
 
-# Rules
-
-## String functions and concatenation.
+# String functions and concatenation.
 @OrderBy(ProductLabel, "name");
 ProductLabel(name:, label:, initial:, name_length:) :-
   Products(name:, price:),
@@ -19,7 +16,7 @@ ProductLabel(name:, label:, initial:, name_length:) :-
   initial == Initial(name),
   name_length == Length(name);
 
-## Math functions.
+# Math functions.
 @OrderBy(Rounded, "name");
 Rounded(name:, rounded:, floor:, sqrt:) :-
   Products(name:, price:),
@@ -27,7 +24,7 @@ Rounded(name:, rounded:, floor:, sqrt:) :-
   floor == Floor(price),
   sqrt == Round(Sqrt(price));
 
-## Type casting.
+# Type casting.
 @OrderBy(Casts, "name");
 Casts(name:, cents:, as_text:) :-
   Products(name:, price:),

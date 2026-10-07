@@ -1,0 +1,8 @@
+WITH t_1_A AS (SELECT
+  AVG(x_3.value) AS a
+FROM
+  JSON_EACH(JSON_ARRAY(1, 2, 4)) as x_3)
+SELECT
+  (SELECT (CASE WHEN synalog_v IS NULL OR 2 IS NULL THEN NULL WHEN CAST(synalog_v AS REAL) = 0 THEN CAST(synalog_v AS REAL) WHEN FLOOR(LOG10(ABS(CAST(synalog_v AS REAL)))) - 14 + 2 >= 0 THEN (CASE WHEN CAST(synalog_v AS REAL) < 0 THEN -1 ELSE 1 END) * FLOOR(ABS(CAST(synalog_v AS REAL)) / POWER(10, FLOOR(LOG10(ABS(CAST(synalog_v AS REAL)))) - 14) + 0.5) * POWER(10, FLOOR(LOG10(ABS(CAST(synalog_v AS REAL)))) - 14) + 0 ELSE (CASE WHEN CAST(synalog_v AS REAL) < 0 THEN -1 ELSE 1 END) * FLOOR(ABS(CAST(synalog_v AS REAL)) * POWER(10, 2) + 0.5 + 0.5 * POWER(10, FLOOR(LOG10(ABS(CAST(synalog_v AS REAL)))) - 14 + 2)) / POWER(10, 2) + 0 END) FROM (SELECT t_0_A.a AS synalog_v)) AS r
+FROM
+  t_1_A AS t_0_A;

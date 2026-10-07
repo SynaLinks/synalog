@@ -1,0 +1,4 @@
+SELECT
+  MAX(x_2.value) AS m
+FROM
+  JSON_EACH(JSON_ARRAY('2023-12-31', '2024-03-01', '2024-01-15')) as x_2;

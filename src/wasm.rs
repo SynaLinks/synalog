@@ -83,12 +83,46 @@ pub fn compile(source: &str, predicate: &str, engine: &str) -> Result<String, Js
         .map_err(err)
 }
 
-/// Run the verifier over `source`. Returns the list of verification error
-/// messages (empty = the program is valid). Raises on syntax errors.
+/// What the verifier reports for a program: it is valid when `errors` is
+/// empty. Warnings do not make it invalid (an `@Assert` that cannot be checked
+/// against a database).
+#[wasm_bindgen(getter_with_clone)]
+pub struct CheckOutcome {
+    pub errors: Vec<String>,
+    pub warnings: Vec<String>,
+}
+
+/// Run the verifier over `source`. Raises on syntax errors.
 #[wasm_bindgen]
-pub fn check(source: &str, engine: &str) -> Result<Vec<String>, JsValue> {
+pub fn check(source: &str, engine: &str) -> Result<CheckOutcome, JsValue> {
     engine_arg(engine)?;
     let parsed = parse(source)?;
     let result = validate(&parsed);
-    Ok(result.errors.iter().map(|e| e.to_string()).collect())
+    Ok(CheckOutcome {
+        errors: result.errors.iter().map(|e| e.to_string()).collect(),
+        warnings: result.warnings,
+    })
+}
+
+/// Every `@Assert` of `source` and where it stands, as a JSON array of
+/// `{predicate, name, statement, status, detail}` objects in source order.
+/// Raises on syntax errors.
+#[wasm_bindgen]
+pub fn assertions(source: &str, engine: &str) -> Result<String, JsValue> {
+    engine_arg(engine)?;
+    let parsed = parse(source)?;
+    let assertions: Vec<serde_json::Value> = validate(&parsed)
+        .assertions
+        .into_iter()
+        .map(|assertion| {
+            serde_json::json!({
+                "predicate": assertion.predicate,
+                "name": assertion.name,
+                "statement": assertion.statement,
+                "status": assertion.status.as_str(),
+                "detail": assertion.detail,
+            })
+        })
+        .collect();
+    Ok(serde_json::Value::Array(assertions).to_string())
 }

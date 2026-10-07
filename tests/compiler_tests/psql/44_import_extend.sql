@@ -4,15 +4,7 @@ create schema if not exists logica_home;
 -- Empty logica type: logicarecord893574736;
 DO $$ BEGIN if not exists (select 'I(am) :- I(think)' from pg_type where typname = 'logicarecord893574736') then create type logicarecord893574736 as (nirvana numeric); end if; END $$;
 
-
-DO $$
-BEGIN
--- Logica type: logicarecord481217614
-if not exists (select 'I(am) :- I(think)' from pg_type where typname = 'logicarecord481217614') then create type logicarecord481217614 as (r logicarecord893574736); end if;
--- Logica type: logicarecord86796764
-if not exists (select 'I(am) :- I(think)' from pg_type where typname = 'logicarecord86796764') then create type logicarecord86796764 as (s text); end if;
-END $$;
-WITH t_1_Values AS (SELECT * FROM (
+WITH t_2_Values AS (SELECT * FROM (
   
     SELECT
       2 AS a,
@@ -25,8 +17,8 @@ WITH t_1_Values AS (SELECT * FROM (
   
 ) AS UNUSED_TABLE_NAME  )
 SELECT
-  Values.a AS a,
-  Values.b AS b,
-  ((((Values.a) * (Values.a))) + (((Values.b) * (Values.b)))) AS result
+  t_0_Values.a AS a,
+  t_0_Values.b AS b,
+  ((((t_0_Values.a) * (t_0_Values.a))) + (((t_0_Values.b) * (t_0_Values.b)))) AS result
 FROM
-  t_1_Values AS Values ORDER BY a;
+  t_2_Values AS t_0_Values ORDER BY a;

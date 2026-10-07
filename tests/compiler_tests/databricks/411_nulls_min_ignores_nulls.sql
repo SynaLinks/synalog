@@ -1,0 +1,9 @@
+WITH t_0_V AS (SELECT * FROM VALUES
+  (null),
+  (4),
+  (9)
+AS UNUSED_TABLE_NAME(x))
+SELECT
+  MIN(V.x) AS m
+FROM
+  t_0_V AS V;

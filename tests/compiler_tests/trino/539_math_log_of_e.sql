@@ -1,0 +1,2 @@
+SELECT
+  LN(EXP(1)) AS v;

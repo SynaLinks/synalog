@@ -1,0 +1,4 @@
+SELECT
+  SUM(x_2) AS t
+FROM
+  UNNEST(ARRAY[0.1, 0.2, 0.3]) as x_2;

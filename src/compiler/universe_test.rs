@@ -78,25 +78,23 @@ fn test_field_values_as_list_ordering() {
     assert_eq!(result[2].as_str(), "third");
 }
 
-// ── unquote_parenthesised ──
+// ── table_reference ──
 
 #[test]
-fn test_unquote_parenthesised() {
-    assert_eq!(
-        unquote_parenthesised("`(SELECT 1)`"),
-        "SELECT 1"
-    );
-    assert_eq!(unquote_parenthesised("my_table"), "my_table");
+fn test_table_reference() {
+    let duckdb = crate::compiler::dialects::get("duckdb").unwrap();
+    let bigquery = crate::compiler::dialects::get("bigquery").unwrap();
+    assert_eq!(table_reference("sales.Orders", duckdb.as_ref()).unwrap(), "sales.Orders");
+    assert_eq!(table_reference("`my-project.sales`", duckdb.as_ref()).unwrap(), "\"my-project\".\"sales\"");
+    assert_eq!(table_reference("`my-project.sales`", bigquery.as_ref()).unwrap(), "`my-project.sales`");
 }
 
 #[test]
-fn test_unquote_parenthesised_no_match() {
-    assert_eq!(unquote_parenthesised("`abc`"), "`abc`");
-}
-
-#[test]
-fn test_unquote_parenthesised_too_short() {
-    assert_eq!(unquote_parenthesised("`()`"), "`()`");
+fn test_table_reference_refuses_sql() {
+    let duckdb = crate::compiler::dialects::get("duckdb").unwrap();
+    for name in ["`(SELECT 1)`", "`t; DROP TABLE t; --`", "`read_text('/etc/hosts')`", "a--b", "a+b", "${x}", "`a..b`"] {
+        assert!(table_reference(name, duckdb.as_ref()).is_err(), "{}", name);
+    }
 }
 
 // ── recursion_error_message ──
@@ -291,31 +289,6 @@ fn test_program_get_predicate_rules_empty() {
     assert!(rules.is_empty());
 }
 
-#[test]
-fn test_program_use_flags_as_parameters() {
-    let source = r#"
-        @Engine("sqlite");
-        @DefineFlag("my_table", "users");
-        T("hello");
-    "#;
-    let parsed = crate::parser::parse_file(source, None, &[]).unwrap();
-    let program = LogicaProgram::new(&parsed, HashMap::new(), HashMap::new()).unwrap();
-    let result = program.use_flags_as_parameters("SELECT * FROM ${my_table}");
-    assert_eq!(result, "SELECT * FROM users");
-}
-
-#[test]
-fn test_program_use_flags_no_substitution() {
-    let source = r#"
-        @Engine("sqlite");
-        T("hello");
-    "#;
-    let parsed = crate::parser::parse_file(source, None, &[]).unwrap();
-    let program = LogicaProgram::new(&parsed, HashMap::new(), HashMap::new()).unwrap();
-    let result = program.use_flags_as_parameters("SELECT 1");
-    assert_eq!(result, "SELECT 1");
-}
-
 // ── predicate_sql ──
 
 fn make_universe_program(source: &str) -> LogicaProgram {
@@ -329,6 +302,24 @@ fn compile_predicate(program: &LogicaProgram, name: &str) -> crate::compiler::Co
     *program.execution.borrow_mut() = Some(exec);
     *program.allocator.borrow_mut() = program.new_names_allocator();
     program.predicate_sql(name)
+}
+
+/// `@Assert` is read by the verifier only: the SQL is the same with or without
+/// it.
+#[test]
+fn test_spec_does_not_change_sql() {
+    let rules = r#"
+        @Engine("sqlite");
+        Ancestor(x:, y:) :- parent(x:, y:);
+    "#;
+    let annotated = format!(
+        "{}{}",
+        r#"@Assert(Ancestor, irreflexive: "∀ x, ¬ Ancestor x x");"#,
+        rules
+    );
+    let plain = compile_predicate(&make_universe_program(rules), "Ancestor").unwrap();
+    let with_spec = compile_predicate(&make_universe_program(&annotated), "Ancestor").unwrap();
+    assert_eq!(plain, with_spec);
 }
 
 #[test]
@@ -565,18 +556,6 @@ fn test_engine_default_duckdb() {
     assert_eq!(program.engine(), "duckdb");
 }
 
-// ── dollar params ──
-
-#[test]
-fn test_dollar_params_extracted() {
-    let program = make_universe_program(r#"
-        @Engine("sqlite");
-        T("hello");
-    "#);
-    // No dollar params in this program
-    assert!(program.dollar_params.is_empty());
-}
-
 // ══════════════════════════════════════════════════════════════
 // Additional tests for 100% coverage
 // ══════════════════════════════════════════════════════════════
@@ -661,41 +640,22 @@ fn test_logica_with_for_compiling_udf() {
     assert!(!logica.with_for("T"));
 }
 
-// ── Dollar params ──
+// ── Dollar text ──
 
 #[test]
-fn test_dollar_params_undefined_error() {
+fn test_dollar_text_is_data() {
+    // `${...}` in a string is text: a flag's value never enters the SQL as
+    // such (FlagValue() writes it as a literal).
     let source = r#"
         @Engine("sqlite");
-        T(x) :- x == "${my_param}";
+        @DefineFlag("x", "a'; DROP TABLE t; --");
+        T(x) :- x == "costs ${x}";
     "#;
     let parsed = crate::parser::parse_file(source, None, &[]).unwrap();
-    let result = LogicaProgram::new(&parsed, HashMap::new(), HashMap::new());
-    assert!(result.is_err(), "Should error on undefined dollar param");
-}
-
-#[test]
-fn test_dollar_params_defined_ok() {
-    let source = r#"
-        @Engine("sqlite");
-        @DefineFlag("my_param", "default");
-        T(x) :- x == "${my_param}";
-    "#;
-    let parsed = crate::parser::parse_file(source, None, &[]).unwrap();
-    let result = LogicaProgram::new(&parsed, HashMap::new(), HashMap::new());
-    assert!(result.is_ok(), "Should succeed with defined param: {:?}", result.err());
-}
-
-#[test]
-fn test_dollar_params_builtin_excluded() {
-    let source = r#"
-        @Engine("sqlite");
-        T(x) :- x == "${YYYY-MM-DD}";
-    "#;
-    let parsed = crate::parser::parse_file(source, None, &[]).unwrap();
-    // YYYY-prefixed params are excluded from dollar param checks
-    let result = LogicaProgram::new(&parsed, HashMap::new(), HashMap::new());
-    assert!(result.is_ok(), "Built-in date params should be excluded: {:?}", result.err());
+    let program = LogicaProgram::new(&parsed, HashMap::new(), HashMap::new()).unwrap();
+    let sql = compile_predicate(&program, "T").unwrap();
+    assert!(sql.contains("'costs ${x}'"), "SQL: {}", sql);
+    assert!(!sql.contains("DROP"), "SQL: {}", sql);
 }
 
 // ── predicate_sql with order by and limit ──
@@ -1219,8 +1179,7 @@ fn test_predicate_sql_if_expression() {
         T(y) :- Source(x), y == If(x > 1, "big", "small");
     "#);
     let sql = compile_predicate(&program, "T").unwrap();
-    // Python Logica uses IF() function format
-    assert!(sql.contains("IF("), "SQL should contain IF(): {}", sql);
+    assert!(sql.contains("CASE WHEN"), "SQL should contain CASE WHEN: {}", sql);
 }
 
 // ── predicate_sql with Cast ──
@@ -1316,21 +1275,6 @@ fn test_predicate_sql_subscript() {
     assert!(sql.contains("SELECT"), "SQL: {}", sql);
 }
 
-// ── use_flags_as_parameters with substitution ──
-
-#[test]
-fn test_use_flags_as_parameters_substitution() {
-    let source = r#"
-        @Engine("sqlite");
-        @DefineFlag("schema", "public");
-        T("hello");
-    "#;
-    let parsed = crate::parser::parse_file(source, None, &[]).unwrap();
-    let program = LogicaProgram::new(&parsed, HashMap::new(), HashMap::new()).unwrap();
-    let result = program.use_flags_as_parameters("SELECT * FROM ${schema}.table");
-    assert_eq!(result, "SELECT * FROM public.table");
-}
-
 // ── predicate_sql with multiple body + constraint ──
 
 #[test]
@@ -1392,7 +1336,7 @@ fn test_combine_expression_full_pipeline() {
     // Call single_rule_sql with is_combine=true
     let rules = program.get_predicate_rules("T");
     assert!(!rules.is_empty());
-    let sql = program.single_rule_sql(&rules[0], None, true, false);
+    let sql = program.single_rule_sql(&rules[0], None, None, true, false);
     assert!(sql.is_ok(), "Combine SQL: {:?}", sql.err());
 }
 
@@ -1460,4 +1404,137 @@ fn test_formatted_predicate_sql_single_fact_no_with() {
     let sql = program.formatted_predicate_sql("T").unwrap();
     assert!(!sql.contains("WITH"), "Single fact should not have WITH: {}", sql);
     assert!(sql.contains("hello"), "SQL: {}", sql);
+}
+
+#[test]
+fn test_injected_fact_compiles_the_same_every_time() {
+    // A negated single fact is injected as one equality per column; their
+    // order followed a HashMap, so the SQL changed from one compilation to
+    // the next.
+    let source = "Want(a: 1, b: 2);\nWant(a: 1, b: 3);\nHave(a: 1, b: 3);\n\
+                  Missing(a:, b:) :- Want(a:, b:), ~Have(a:, b:);\n";
+    let compile = || {
+        let parsed = crate::parser::parse_file(source, None, &[]).unwrap();
+        let program = LogicaProgram::new(&parsed, HashMap::new(), HashMap::new()).unwrap();
+        program.formatted_predicate_sql("Missing").unwrap()
+    };
+    let first = compile();
+    for _ in 0..30 {
+        assert_eq!(compile(), first);
+    }
+}
+
+fn plan_of(source: &str, predicate: &str) -> Vec<PlanStep> {
+    let parsed = crate::parser::parse_file(source, None, &[]).unwrap();
+    let program = LogicaProgram::new(&parsed, HashMap::new(), HashMap::new()).unwrap();
+    program.formatted_predicate_plan(predicate, None, None).unwrap()
+}
+
+fn loops(plan: &[PlanStep]) -> Vec<(&Vec<String>, i64, &String)> {
+    plan.iter()
+        .filter_map(|step| match step {
+            PlanStep::Loop { body, repetitions, changed } => Some((body, *repetitions, changed)),
+            _ => None,
+        })
+        .collect()
+}
+
+const CHAIN: &str = "Next(x:, y: x + 1) :- x in Range(10);\n";
+
+#[test]
+fn test_a_linear_distinct_recursion_is_semi_naive() {
+    let source = format!(
+        "{CHAIN}@Recursive(Reach, 40);\nReach(y: 0) distinct;\nReach(y:) distinct :- Reach(y: x), Next(x:, y:);\n"
+    );
+    let plan = plan_of(&source, "Reach");
+    let found = loops(&plan);
+    assert_eq!(found.len(), 1);
+    let (body, repetitions, changed) = found[0];
+    // Two steps per repetition, alternating the delta's table and the new
+    // rows' (no copy of one into the other): each step's rows, added to every
+    // row so far; until the delta is empty.
+    assert_eq!(repetitions, 20);
+    assert_eq!(body.len(), 4);
+    assert!(body[0].contains("CREATE TABLE logica_home.Reach_sn_new"), "{}", body[0]);
+    assert!(body[1].starts_with("INSERT INTO logica_home.Reach_sn_full SELECT * FROM logica_home.Reach_sn_new"), "{}", body[1]);
+    assert!(body[2].contains("CREATE TABLE logica_home.Reach_sn_delta"), "{}", body[2]);
+    assert!(body[3].starts_with("INSERT INTO logica_home.Reach_sn_full SELECT * FROM logica_home.Reach_sn_delta"), "{}", body[3]);
+    assert_eq!(changed, "SELECT COUNT(*) AS changed FROM logica_home.Reach_sn_delta");
+}
+
+#[test]
+fn test_an_odd_number_of_steps_ends_with_one_step() {
+    let source = format!(
+        "{CHAIN}@Recursive(Reach, 41);\nReach(y: 0) distinct;\nReach(y:) distinct :- Reach(y: x), Next(x:, y:);\n"
+    );
+    let plan = plan_of(&source, "Reach");
+    let at = plan.iter().position(|s| matches!(s, PlanStep::Loop { .. })).unwrap();
+    assert_eq!(loops(&plan)[0].1, 20);
+    // The 41st step, after the loop: the new rows from the delta, added.
+    match (&plan[at + 1], &plan[at + 2]) {
+        (PlanStep::Sql(step), PlanStep::Sql(add)) => {
+            assert!(step.contains("CREATE TABLE logica_home.Reach_sn_new"), "{}", step);
+            assert!(add.starts_with("INSERT INTO logica_home.Reach_sn_full SELECT * FROM logica_home.Reach_sn_new"), "{}", add);
+        }
+        other => panic!("{:?}", other),
+    }
+}
+
+#[test]
+fn test_recursions_semi_naive_cannot_split_recompute_every_step() {
+    let cases = [
+        // An aggregate: a new row can change a value already found.
+        "Edge(a: 0, b: 1);\n@Recursive(Dist, 30);\nDist(node: 0, d? Min= 0) distinct;\n\
+         Dist(node: b, d? Min= d + 1) distinct :- Dist(node: a, d:), Edge(a:, b:);\n",
+        // Two references: a step joins the new rows with all the others.
+        "Edge(a: 0, b: 1);\n@Recursive(Path, 30);\nPath(a:, b:) distinct :- Edge(a:, b:);\n\
+         Path(a:, b: c) distinct :- Path(a:, b:), Path(a: b, b: c);\n",
+    ];
+    for (source, predicate) in cases.iter().zip(["Dist", "Path"]) {
+        let plan = plan_of(source, predicate);
+        let found = loops(&plan);
+        assert_eq!(found.len(), 1, "{predicate}");
+        assert!(found[0].2.contains("EXCEPT"), "{predicate}: {}", found[0].2);
+        assert!(!found[0].0.iter().any(|s| s.starts_with("INSERT")), "{predicate}");
+    }
+}
+
+#[test]
+fn test_compile_writes_the_loop_out_and_refuses_one_too_long() {
+    let source = format!(
+        "{CHAIN}@Recursive(Reach, 30);\nReach(y: 0) distinct;\nReach(y:) distinct :- Reach(y: x), Next(x:, y:);\n"
+    );
+    let parsed = crate::parser::parse_file(&source, None, &[]).unwrap();
+    let program = LogicaProgram::new(&parsed, HashMap::new(), HashMap::new()).unwrap();
+    let sql = program.formatted_predicate_sql("Reach").unwrap();
+    assert_eq!(sql.matches("INSERT INTO logica_home.Reach_sn_full").count(), 30);
+    let deep = source.replace("@Recursive(Reach, 30)", "@Recursive(Reach, -1)");
+    let parsed = crate::parser::parse_file(&deep, None, &[]).unwrap();
+    let program = LogicaProgram::new(&parsed, HashMap::new(), HashMap::new()).unwrap();
+    let error = program.formatted_predicate_sql("Reach").unwrap_err();
+    assert!(error.message.contains("more steps than a SQL script can hold"), "{}", error.message);
+}
+
+#[test]
+fn test_column_type_intersects_its_rules() {
+    // `[]` in one fact and `["x"]` in another: a list of text, every time.
+    for _ in 0..8 {
+        let src = "@Engine(\"psql\");\nR(id: 1, r: {tags: [\"x\"]});\nR(id: 2, r: {tags: []});\nQ(id:, n: Size(r.tags)) :- R(id:, r:);";
+        let parsed = crate::parser::parse_file(src, None, &[]).unwrap();
+        let program = LogicaProgram::new(&parsed, HashMap::new(), HashMap::new()).unwrap();
+        let r = &program.predicate_types["R"]["r"];
+        assert_eq!(r.to_string(), Type::Record {
+            fields: [("tags".to_string(), Type::list(Type::String))].into_iter().collect(),
+            is_opened: false,
+        }.to_string());
+    }
+}
+
+#[test]
+fn test_empty_list_typed_on_postgresql() {
+    let program = make_universe_program("@Engine(\"psql\");\nF(k: 1, l: [1]);\nF(k: 2, l: []);\nQ(s: Join([], \",\"));");
+    let f = compile_predicate(&program, "F").unwrap();
+    assert!(f.contains("CAST('{}' AS numeric[])"), "{}", f);
+    let q = compile_predicate(&program, "Q").unwrap();
+    assert!(q.contains("ARRAY_TO_STRING(CAST('{}' AS text[]), ',')"), "{}", q);
 }

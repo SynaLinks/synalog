@@ -1,0 +1,2 @@
+SELECT
+  '-- comment' AS s;

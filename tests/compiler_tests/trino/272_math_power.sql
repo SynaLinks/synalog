@@ -1,0 +1,2 @@
+SELECT
+  (POW(2, 10)) AS p;

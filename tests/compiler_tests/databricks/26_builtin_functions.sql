@@ -2,6 +2,6 @@ SELECT
   x_10 AS col0,
   ABS(((x_10) - (5))) AS col1
 FROM
-  explode(SEQUENCE(0, 10 - 1)) AS pushkin(x_10)
+  LATERAL (SELECT explode(FILTER(SEQUENCE(0, CAST(10 AS BIGINT)), x -> x < 10)) AS x_10) AS pushkin
 WHERE
-  (x_10 > 0) ORDER BY col0;
+  (x_10 > 0) ORDER BY col0 NULLS LAST;

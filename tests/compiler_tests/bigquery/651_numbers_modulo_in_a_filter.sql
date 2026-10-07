@@ -1,0 +1,7 @@
+SELECT
+  x_1 AS x
+FROM
+  UNNEST(GENERATE_ARRAY(0, 10 - 1)) as x_1
+WHERE
+  (x_1 > 0) AND
+  ((MOD(x_1, NULLIF(3, 0))) = 0) ORDER BY x NULLS LAST;

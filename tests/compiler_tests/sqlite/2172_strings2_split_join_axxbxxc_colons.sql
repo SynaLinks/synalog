@@ -1,0 +1,2 @@
+SELECT
+  (CASE WHEN SPLIT('a::b::c', '::') IS NULL OR '::' IS NULL THEN NULL ELSE COALESCE((SELECT GROUP_CONCAT(value, '::') FROM (SELECT value FROM JSON_EACH(SPLIT('a::b::c', '::')) WHERE value IS NOT NULL ORDER BY key)), '') END) AS s;

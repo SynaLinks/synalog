@@ -1,0 +1,57 @@
+WITH t_1_V AS (SELECT * FROM (
+  
+    SELECT
+      1 AS id,
+      7 AS x
+   UNION ALL
+  
+    SELECT
+      2 AS id,
+      -7 AS x
+   UNION ALL
+  
+    SELECT
+      3 AS id,
+      2.5E0 AS x
+   UNION ALL
+  
+    SELECT
+      4 AS id,
+      -2.5E0 AS x
+   UNION ALL
+  
+    SELECT
+      5 AS id,
+      0 AS x
+   UNION ALL
+  
+    SELECT
+      6 AS id,
+      3 AS x
+   UNION ALL
+  
+    SELECT
+      7 AS id,
+      0.125E0 AS x
+   UNION ALL
+  
+    SELECT
+      8 AS id,
+      1000000 AS x
+   UNION ALL
+  
+    SELECT
+      9 AS id,
+      -0.75E0 AS x
+   UNION ALL
+  
+    SELECT
+      10 AS id,
+      12.345E0 AS x
+  
+) AS UNUSED_TABLE_NAME  )
+SELECT
+  t_0_V.id AS id,
+  ROUND((CAST(t_0_V.x AS DOUBLE) / NULLIF(2, 0))) AS v
+FROM
+  t_1_V AS t_0_V ORDER BY id;

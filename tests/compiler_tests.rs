@@ -23,7 +23,7 @@ use std::time::Duration;
 use synalog::compiler::universe::LogicaProgram;
 use synalog::parser::parse_file;
 
-use common::{last_predicate, strip_engine};
+use common::{last_predicate, strip_engine, with_engine};
 
 /// Strip type preamble definitions from SQL and normalize for comparison.
 ///
@@ -66,8 +66,11 @@ fn normalize_sql_for_comparison(sql: &str) -> String {
         lines.push(line);
     }
 
-    // Join lines
-    let joined = lines.join("\n");
+    // Join lines. synalog sorts nulls last on every engine, adding
+    // `NULLS LAST` to each ordering where the engine sorts them first
+    // (DEVIATIONS.md, "Nulls sort last"); upstream leaves the engine's
+    // default. Compared without it; `dialects_test.rs` checks the clause.
+    let joined = lines.join("\n").replace(" NULLS LAST", "");
 
     // Remove type casts like ::text[], ::numeric[], ::bigint[] etc.
     // These are added by Python's type inference but Rust doesn't add them yet
@@ -235,7 +238,7 @@ fn run_compiler_feature_tests(engine: &str) {
 
         // Strip existing engine annotation and add the correct one
         let clean = strip_engine(&source);
-        let full_source = format!("@Engine(\"{}\");\n{}", engine, clean);
+        let full_source = with_engine(&clean, engine);
 
         let full_source_clone = full_source.clone();
         let stem_str = stem.to_string();
@@ -248,7 +251,7 @@ fn run_compiler_feature_tests(engine: &str) {
                 let result = std::panic::catch_unwind(std::panic::AssertUnwindSafe(|| {
                     let parsed =
                         parse_file(&full_source_clone, None, &roots).expect("parse failed");
-                    let pred = last_predicate(&parsed)
+                    let pred = last_predicate(&parsed, &full_source_clone)
                         .unwrap_or_else(|| panic!("No predicate found in {}", stem_str));
                     let program = LogicaProgram::new(&parsed, HashMap::new(), HashMap::new())
                         .expect("program creation failed");
@@ -389,7 +392,7 @@ fn run_compiler_fail_tests(engine: &str) {
 
         // Strip existing engine annotation and add the correct one
         let clean = strip_engine(&source);
-        let full_source = format!("@Engine(\"{}\");\n{}", engine, clean);
+        let full_source = with_engine(&clean, engine);
 
         let full_source_clone = full_source.clone();
         let roots = import_roots();
@@ -401,7 +404,7 @@ fn run_compiler_fail_tests(engine: &str) {
                 let result = std::panic::catch_unwind(std::panic::AssertUnwindSafe(|| {
                     let parsed =
                         parse_file(&full_source_clone, None, &roots).expect("parse failed");
-                    let pred = last_predicate(&parsed).unwrap_or("Test".to_string());
+                    let pred = last_predicate(&parsed, &full_source_clone).unwrap_or("Test".to_string());
                     let program = LogicaProgram::new(&parsed, HashMap::new(), HashMap::new())
                         .expect("program creation failed");
                     let _sql = program

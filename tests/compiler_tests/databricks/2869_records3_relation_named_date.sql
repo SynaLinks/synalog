@@ -1,0 +1,8 @@
+WITH t_0_Date AS (SELECT * FROM VALUES
+  (1),
+  (2)
+AS UNUSED_TABLE_NAME(x))
+SELECT
+  Date.x AS x
+FROM
+  t_0_Date AS Date ORDER BY x NULLS LAST;

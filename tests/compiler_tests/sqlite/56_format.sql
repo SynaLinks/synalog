@@ -12,11 +12,11 @@ WITH t_1_Items AS (SELECT * FROM (
 ) AS UNUSED_TABLE_NAME  ),
 t_0_Labels AS (SELECT
   Items.name AS name,
-  Printf('%s x%s', Items.name, CAST(Items.qty AS TEXT)) AS label
+  Printf('%s x%s', Items.name, SYNALOG_NUMBER_TEXT(Items.qty)) AS label
 FROM
-  t_1_Items AS Items ORDER BY name)
+  t_1_Items AS Items ORDER BY name NULLS LAST)
 SELECT
   Labels.name AS name,
   Labels.label AS label
 FROM
-  t_0_Labels AS Labels ORDER BY name;
+  t_0_Labels AS Labels ORDER BY name NULLS LAST;

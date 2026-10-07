@@ -1,0 +1,2 @@
+SELECT
+  (('n=') || (SYNALOG_NUMBER_TEXT(42))) AS s;

@@ -1,53 +1,14 @@
-WITH t_0_Orders AS (SELECT * FROM (
-  
-    SELECT
-      1 AS order_id,
-      101 AS customer_id,
-      50 AS amount,
-      "shipped" AS status
-   UNION ALL
-  
-    SELECT
-      2 AS order_id,
-      102 AS customer_id,
-      75 AS amount,
-      "pending" AS status
-   UNION ALL
-  
-    SELECT
-      3 AS order_id,
-      101 AS customer_id,
-      100 AS amount,
-      "shipped" AS status
-   UNION ALL
-  
-    SELECT
-      4 AS order_id,
-      103 AS customer_id,
-      25 AS amount,
-      "cancelled" AS status
-  
-) AS UNUSED_TABLE_NAME  ),
-t_1_Customers AS (SELECT * FROM (
-  
-    SELECT
-      101 AS customer_id,
-      "Alice" AS name,
-      "gold" AS tier
-   UNION ALL
-  
-    SELECT
-      102 AS customer_id,
-      "Bob" AS name,
-      "silver" AS tier
-   UNION ALL
-  
-    SELECT
-      103 AS customer_id,
-      "Charlie" AS name,
-      "bronze" AS tier
-  
-) AS UNUSED_TABLE_NAME  )
+WITH t_0_Orders AS (SELECT * FROM VALUES
+  (1, 101, 50, "shipped"),
+  (2, 102, 75, "pending"),
+  (3, 101, 100, "shipped"),
+  (4, 103, 25, "cancelled")
+AS UNUSED_TABLE_NAME(order_id, customer_id, amount, status)),
+t_1_Customers AS (SELECT * FROM VALUES
+  (101, "Alice", "gold"),
+  (102, "Bob", "silver"),
+  (103, "Charlie", "bronze")
+AS UNUSED_TABLE_NAME(customer_id, name, tier))
 SELECT
   Orders.order_id AS oid,
   Customers.name AS cname,
@@ -55,4 +16,4 @@ SELECT
 FROM
   t_0_Orders AS Orders, t_1_Customers AS Customers
 WHERE
-  (Customers.customer_id = Orders.customer_id) ORDER BY oid;
+  (Customers.customer_id = Orders.customer_id) ORDER BY oid NULLS LAST;

@@ -202,7 +202,8 @@ pub fn parse_string(s: &SpanString) -> Option<Json> {
     }
 
     // Triple-quoted string
-    if v.len() >= 6 && &v[..3] == "\"\"\"" && &v[v.len() - 3..] == "\"\"\"" {
+    // starts_with, not a byte slice: `"∀...` has no char boundary at 3.
+    if v.len() >= 6 && v.starts_with("\"\"\"") && v.ends_with("\"\"\"") {
         let inner = &v[3..v.len() - 3];
         if !inner.contains("\"\"\"") {
             return Some(json_obj!("the_string" => inner.to_string()));
@@ -309,7 +310,9 @@ pub fn parse_record_internals(
     is_record_literal: bool,
     is_aggregation_allowed: bool,
 ) -> ParseResult<Json> {
-    let s = strip(input);
+    // Spaces only: parentheses around the whole are an argument's own, as in
+    // `Size((combine List= x :- P(x:)))`, whose `:-` is the combine's.
+    let s = strip_spaces(input);
     if split(&s, ":-")?.len() > 1 {
         return Err(ParsingException::new(
             "Unexpected :- in record internals.",
@@ -361,12 +364,25 @@ pub fn parse_record_internals(
             }
 
             let observed_field;
-            let colon_result = split_in_one_or_two(field_value, ":")?;
+            // A field is named by an identifier before its colon; a colon
+            // elsewhere belongs to the value (`(combine += x :- P(x:))`).
+            let colon_result = match split_in_one_or_two(field_value, ":")? {
+                Err((field, _)) if !is_field_name(field.view()) => Ok(field_value.clone()),
+                other => other,
+            };
 
             match colon_result {
                 Err((field, value)) => {
                     // Has colon: named field
                     positional_ok = false;
+                    // A name is written into SQL as an identifier, where `${`
+                    // is a variable Spark substitutes before it parses.
+                    if field.view().contains('$') {
+                        return Err(ParsingException::new(
+                            "A field name may not hold '$'.",
+                            field,
+                        ));
+                    }
                     let mut value = value;
                     observed_field = field.to_string();
                     if value.is_empty() {
@@ -413,8 +429,12 @@ pub fn parse_record_internals(
                                     field_value.clone(),
                                 ));
                             }
-                            let (op, expr) = split_in_two(&value, "=")?;
-                            let op = strip(&op);
+                            let Some((op, expr)) = split_at_first(&value, "=")? else {
+                                return Err(ParsingException::new(
+                                    "An aggregated field needs an operator: `n? += x`.",
+                                    value.clone(),
+                                ));
+                            };
                             let mut agg = JsonObject::new();
                             agg.insert("operator".into(), Json::Str(op.to_string()));
                             agg.insert("argument".into(), parse_expression(&expr)?);
@@ -456,6 +476,15 @@ pub fn parse_record_internals(
     Ok(json_obj!("field_value" => Json::Array(result)))
 }
 
+/// Whether `name` can name a record field: an identifier, a number (a
+/// positional field), or a backquoted name.
+fn is_field_name(name: &str) -> bool {
+    let name = name.trim();
+    !name.is_empty()
+        && (name.starts_with('`') && name.ends_with('`')
+            || name.bytes().all(|b| b.is_ascii_alphanumeric() || b == b'_'))
+}
+
 fn parse_generic_call(
     input: &SpanString,
     opening: u8,
@@ -493,7 +522,7 @@ fn parse_generic_call(
                 let pred = pred_span.view();
 
                 let all_good = pred.bytes().all(|c| {
-                    c.is_ascii_alphanumeric() || b"@_.${}+-`".contains(&c)
+                    c.is_ascii_alphanumeric() || b"@_.+-`".contains(&c)
                 });
 
                 if (found_idx > 0 && all_good)
@@ -555,14 +584,30 @@ fn parse_infix(
         }
         let parts = split_raw(s, op)?;
         if parts.len() > 1 {
+            // Split at the last occurrence, except that a `-` right after
+            // another operator negates its operand (`2 * -3`, `7 % -3`): it
+            // is not where the expression splits.
+            let mut at = parts.len() - 1;
+            if op == "-" {
+                let follows_operator = |k: usize| {
+                    let left = SpanString::from_arc(Arc::clone(&s.heritage), s.start, parts[k - 1].stop);
+                    strip(&left).view().ends_with(|c: char| "+-*/%^!=<>&|~".contains(c))
+                };
+                while at > 1 && follows_operator(at) {
+                    at -= 1;
+                }
+                if at == 1 && follows_operator(1) {
+                    continue;
+                }
+            }
             let left = SpanString::from_arc(
                 Arc::clone(&s.heritage),
                 s.start,
-                parts[parts.len() - 2].stop,
+                parts[at - 1].stop,
             );
             let right = SpanString::from_arc(
                 Arc::clone(&s.heritage),
-                parts.last().unwrap().start,
+                parts[at].start,
                 s.stop,
             );
 
@@ -644,8 +689,12 @@ fn parse_combine(input: &SpanString) -> ParseResult<Option<Json>> {
         Ok(v) => (v, None),
         Err((v, b)) => (v, Some(b)),
     };
-    let (op, expr) = split_in_two(&value, "=")?;
-    let op = strip(&op);
+    let Some((op, expr)) = split_at_first(&value, "=")? else {
+        return Err(ParsingException::new(
+            "A combine needs an operator: `combine += x`.",
+            value.clone(),
+        ));
+    };
     let parsed_expression = parse_expression(&expr)?;
 
     let parsed_body = if let Some(b) = &body {
@@ -692,12 +741,14 @@ fn parse_implication(s: &SpanString) -> ParseResult<Option<Json>> {
 }
 
 fn parse_concise_combine(s: &SpanString) -> ParseResult<Option<Json>> {
-    let parts = split(s, "=")?;
-    if parts.len() != 2 {
+    let Some((lhs_and_op, combine)) = split_at_first(s, "=")? else {
+        return Ok(None);
+    };
+    // `x + 1 == y` compares.
+    if combine.starts_with("=") {
         return Ok(None);
     }
-    let lhs_and_op = &parts[0];
-    let combine = &parts[1];
+    let (lhs_and_op, combine) = (&lhs_and_op, &combine);
     let left_parts = split_on_whitespace(lhs_and_op)?;
     if left_parts.len() <= 1 {
         return Ok(None);
@@ -1077,6 +1128,19 @@ pub fn parse_proposition(s: &SpanString) -> ParseResult<Json> {
     if let Some(neg) = parse_negation(s)? {
         return Ok(neg);
     }
+    // A boolean variable or field holds where it is true: `active`, as
+    // `!active` holds where it is false.
+    if let Ok(e) = parse_expression(s) {
+        if e.as_object().contains_key("variable") || e.as_object().contains_key("subscript") {
+            return Ok(json_obj!("predicate" => json_obj!(
+                "predicate_name" => Json::Str("Constraint".to_string()),
+                "record" => json_obj!("field_value" => Json::Array(vec![json_obj!(
+                    "field" => Json::Int(0),
+                    "value" => json_obj!("expression" => e)
+                )]))
+            )));
+        }
+    }
     Err(ParsingException::new(
         "Could not parse proposition.",
         s.clone(),
@@ -1198,26 +1262,21 @@ fn parse_head_call(s: &SpanString, distinct_from_outside: bool) -> ParseResult<(
         Ok(())
     };
 
-    let op_expr = split(&post_call_str, "=")?;
-    if op_expr.len() == 1 {
-        if !op_expr[0].is_empty() {
+    // The value follows the first `=` (`= x`, `+= x`, `Max= x`); the value
+    // itself may compare (`if x >= 4 then ...`, `x == 4`).
+    let Some((op_str, expr_str)) = split_at_first(&post_call_str, "=")? else {
+        let rest = strip(&post_call_str);
+        if !rest.is_empty() {
             return Err(ParsingException::new(
                 "Unexpected text in the head of a rule.",
-                op_expr[0].clone(),
+                rest,
             ));
         }
         check_agg(&call)?;
         return Ok((call, false));
-    }
-    if op_expr.len() > 2 {
-        return Err(ParsingException::new(
-            "Too many '=' in predicate value.",
-            post_call_str,
-        ));
-    }
-
-    let op_str = &op_expr[0];
-    let expr_str = &op_expr[1];
+    };
+    let op_str = &op_str;
+    let expr_str = &expr_str;
 
     if op_str.is_empty() {
         let fvs = call.as_object_mut().get_mut("record").unwrap().as_object_mut()
@@ -1498,8 +1557,56 @@ fn made_predicates(rules: &JsonArray) -> BTreeSet<String> {
     out
 }
 
+/// True if `rule` is an `@Assert` annotation, whose statements are strings.
+fn is_assert_rule(rule: &Json) -> bool {
+    rule.as_object()
+        .get("head")
+        .and_then(|h| h.as_object().get("predicate_name"))
+        .is_some_and(|n| n.is_string() && n.as_str() == "@Assert")
+}
+
+/// `old_name` replaced by `new_name` wherever it is a whole identifier of an
+/// `@Assert` statement (identifiers as Lean reads them: letters, digits, `_`,
+/// `'` and subscripts).
+fn rename_in_statement(statement: &str, old_name: &str, new_name: &str) -> (String, i32) {
+    let is_ident = |c: char| c.is_alphanumeric() || c == '_' || c == '\'' || ('\u{2080}'..='\u{209c}').contains(&c);
+    let mut out = String::with_capacity(statement.len());
+    let mut count = 0;
+    let mut chars = statement.char_indices().peekable();
+    let mut in_string = false;
+    while let Some((start, c)) = chars.next() {
+        if c == '"' {
+            in_string = !in_string;
+            out.push(c);
+            continue;
+        }
+        if in_string || !is_ident(c) {
+            out.push(c);
+            continue;
+        }
+        let mut end = start + c.len_utf8();
+        while let Some(&(i, next)) = chars.peek() {
+            if !is_ident(next) {
+                break;
+            }
+            end = i + next.len_utf8();
+            chars.next();
+        }
+        let word = &statement[start..end];
+        if word == old_name {
+            out.push_str(new_name);
+            count += 1;
+        } else {
+            out.push_str(word);
+        }
+    }
+    (out, count)
+}
+
 fn rename_predicate(e: &mut Json, old_name: &str, new_name: &str) -> i32 {
     let mut count = 0;
+    // An @Assert names predicates inside its statements too.
+    let in_assert = is_assert_rule(e);
     let mut stack: Vec<*mut Json> = vec![e as *mut Json];
 
     while let Some(ptr) = stack.pop() {
@@ -1518,6 +1625,25 @@ fn rename_predicate(e: &mut Json, old_name: &str, new_name: &str) -> i32 {
                     if v.is_string() && v.as_str() == old_name {
                         *v = Json::Str(new_name.to_string());
                         count += 1;
+                    }
+                }
+                if in_assert {
+                    let mut source = None;
+                    if let Some(v) = o.get_mut("the_string") {
+                        if v.is_string() {
+                            let (renamed, n) = rename_in_statement(v.as_str(), old_name, new_name);
+                            if n > 0 {
+                                source = Some(v.as_str().to_string());
+                                *v = Json::Str(renamed);
+                                count += n;
+                            }
+                        }
+                    }
+                    // Reports quote the statement as it was written, not as imports renamed it.
+                    if let Some(source) = source {
+                        if !o.contains_key("statement_source") {
+                            o.insert("statement_source".into(), Json::Str(source));
+                        }
                     }
                 }
                 for (_, v) in o.iter_mut() {
@@ -1819,6 +1945,43 @@ fn parse_file_internal(
         }
     }
 
+    // The names imported predicates were written with, for errors and reports.
+    // One the main file imports goes by the name it imports it under; any
+    // other by its own name in its file, unless that name is already taken —
+    // it then keeps its prefix.
+    let mut predicate_names = JsonObject::new();
+    if this_file_name == "main" {
+        let mut taken = defined_predicates(&rules);
+        for ipj in &imported_predicates {
+            let ip = ipj.as_object();
+            let name = ip["predicate_name"].as_str();
+            let import_prefix = parsed_imports[ip["file"].as_str()].as_object()["predicates_prefix"].as_str();
+            let written = if ip["synonym"].is_null() { name } else { ip["synonym"].as_str() };
+            predicate_names.insert(format!("{}{}", import_prefix, name), Json::Str(written.to_string()));
+            taken.insert(written.to_string());
+        }
+        let mut others: BTreeMap<String, Vec<String>> = BTreeMap::new();
+        for (_, v) in parsed_imports.iter() {
+            let import = v.as_object();
+            let import_prefix = import["predicates_prefix"].as_str();
+            let irules = import["rule"].as_array();
+            let mut own = defined_predicates(irules);
+            own.extend(made_predicates(irules));
+            for p in own {
+                let Some(name) = p.strip_prefix(import_prefix) else { continue };
+                if import_prefix.is_empty() || name.is_empty() || predicate_names.contains_key(&p) {
+                    continue;
+                }
+                others.entry(name.to_string()).or_default().push(p.clone());
+            }
+        }
+        for (name, internals) in others {
+            if internals.len() == 1 && !taken.contains(&name) {
+                predicate_names.insert(internals[0].clone(), Json::Str(name));
+            }
+        }
+    }
+
     // Main assembles all rules
     if this_file_name == "main" {
         let mut defined = defined_predicates(&rules);
@@ -1843,6 +2006,9 @@ fn parse_file_internal(
     out.insert("imported_predicates".into(), Json::Array(imported_predicates));
     out.insert("predicates_prefix".into(), Json::Str(prefix));
     out.insert("file_name".into(), Json::Str(this_file_name.to_string()));
+    if !predicate_names.is_empty() {
+        out.insert(super::PREDICATE_NAMES.into(), Json::Object(predicate_names));
+    }
     // The main file's front matter, for the verifier: the predicate it is
     // about must be ordered, and it must say what it is (description).
     if this_file_name == "main" {

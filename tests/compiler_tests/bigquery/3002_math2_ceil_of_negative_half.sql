@@ -1,0 +1,2 @@
+SELECT
+  CEIL(-0.5) AS v;

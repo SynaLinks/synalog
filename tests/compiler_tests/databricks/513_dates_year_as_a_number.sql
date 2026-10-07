@@ -1,0 +1,2 @@
+SELECT
+  ((CAST(ROUND(SUBSTR("2024-06-01", 1, 4)) AS BIGINT)) + (1)) AS y;

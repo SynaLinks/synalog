@@ -1,0 +1,5 @@
+SELECT
+  x_3 AS x,
+  SQRT(x_3) AS r
+FROM
+  LATERAL (SELECT explode(ARRAY(4, 9)) AS x_3) AS pushkin ORDER BY x NULLS LAST;

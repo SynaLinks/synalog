@@ -1,0 +1,22 @@
+WITH t_1_Sale AS (SELECT * FROM VALUES
+  (1, "north", "tea", 4, 30),
+  (2, "north", "coffee", 2, 50),
+  (3, "south", "tea", 6, 30),
+  (4, "south", "cake", 1, 80),
+  (5, "east", "coffee", 5, 50),
+  (6, "east", "tea", 2, 30),
+  (7, "north", "cake", 3, 80),
+  (8, "west", "coffee", 4, 50),
+  (9, "south", "coffee", 3, 50),
+  (10, "east", "cake", 3, 80)
+AS UNUSED_TABLE_NAME(id, region, item, qty, price)),
+t_2_A AS (SELECT
+  AVG(((t_3_Sale.qty) * (t_3_Sale.price))) AS a
+FROM
+  t_1_Sale AS t_3_Sale)
+SELECT
+  Sale.id AS id
+FROM
+  t_1_Sale AS Sale, t_2_A AS t_0_A
+WHERE
+  (((Sale.qty) * (Sale.price)) > t_0_A.a) ORDER BY id NULLS LAST;

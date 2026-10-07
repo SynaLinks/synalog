@@ -1,0 +1,2 @@
+SELECT
+  LOWER("ÑANDÚ") AS s;

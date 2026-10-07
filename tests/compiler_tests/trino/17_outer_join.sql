@@ -1,4 +1,4 @@
-WITH t_1_Phones AS (SELECT * FROM (
+WITH t_3_Phones AS (SELECT * FROM (
   
     SELECT
       'Alice' AS person,
@@ -10,7 +10,7 @@ WITH t_1_Phones AS (SELECT * FROM (
       '555-5678' AS phone
   
 ) AS UNUSED_TABLE_NAME  ),
-t_2_Emails AS (SELECT * FROM (
+t_5_Emails AS (SELECT * FROM (
   
     SELECT
       'Bob' AS person,
@@ -22,28 +22,34 @@ t_2_Emails AS (SELECT * FROM (
       'charlie@example.com' AS email
   
 ) AS UNUSED_TABLE_NAME  ),
-t_0_PersonSummary_MultBodyAggAux AS (SELECT * FROM (
+t_1_ContactInfo_MultBodyAggAux AS (SELECT * FROM (
   
     SELECT
-      Phones.person AS person,
-      1 AS has_phone,
-      0 AS has_email
+      t_2_Phones.person AS person,
+      ARRAY[t_2_Phones.phone] AS phones,
+      ARRAY[] AS emails
     FROM
-      t_1_Phones AS Phones
+      t_3_Phones AS t_2_Phones
    UNION ALL
   
     SELECT
-      Emails.person AS person,
-      0 AS has_phone,
-      1 AS has_email
+      t_4_Emails.person AS person,
+      ARRAY[] AS phones,
+      ARRAY[t_4_Emails.email] AS emails
     FROM
-      t_2_Emails AS Emails
+      t_5_Emails AS t_4_Emails
   
-) AS UNUSED_TABLE_NAME  )
-SELECT
-  PersonSummary_MultBodyAggAux.person AS person,
-  MAX(PersonSummary_MultBodyAggAux.has_phone) AS has_phone,
-  MAX(PersonSummary_MultBodyAggAux.has_email) AS has_email
+) AS UNUSED_TABLE_NAME  ),
+t_0_ContactInfo AS (SELECT
+  ContactInfo_MultBodyAggAux.person AS person,
+  FLATTEN(ARRAY_AGG(ContactInfo_MultBodyAggAux.phones)) AS phones,
+  FLATTEN(ARRAY_AGG(ContactInfo_MultBodyAggAux.emails)) AS emails
 FROM
-  t_0_PersonSummary_MultBodyAggAux AS PersonSummary_MultBodyAggAux
-GROUP BY 1 ORDER BY person;
+  t_1_ContactInfo_MultBodyAggAux AS ContactInfo_MultBodyAggAux
+GROUP BY 1 ORDER BY person)
+SELECT
+  ContactInfo.person AS person,
+  ContactInfo.phones AS phones,
+  ContactInfo.emails AS emails
+FROM
+  t_0_ContactInfo AS ContactInfo ORDER BY person;

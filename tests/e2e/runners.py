@@ -1,8 +1,10 @@
 """SQL runners for end-to-end tests: execute compiled SQL against real engines.
 
-Each runner takes a SQL script (possibly multi-statement, as produced by
-``synalog.compile``) and returns the rows of the last statement that produced
-a result set, as a list of tuples.
+Each runner opens a session (one connection) per call: ``run(sql)`` runs a
+script (as ``synalog.compile`` returns), ``run_plan(steps)`` a plan (as
+``synalog.plan`` returns: each recursion's loop stops when it converges, with
+synalog's own loop, ``synalog.runners.run_plan``). Both return the rows of the
+last statement that produced a result set, as a list of tuples.
 
 Runners reproduce the runtime environment upstream Python Logica provides on
 its own connections:
@@ -21,36 +23,48 @@ import os
 import sqlite3
 
 
-def _split_statements(sql: str) -> list[str]:
-    """Split a script on top-level semicolons (quote-aware).
-
-    @Ground fixtures compile to multi-statement scripts (DROP TABLE; CREATE
-    TABLE AS ...; SELECT ...) but the Trino/Presto REST clients only accept
-    one statement per execute.
-    """
-    statements, current, in_string = [], [], False
-    for ch in sql:
-        if ch == "'":
-            in_string = not in_string
-        if ch == ";" and not in_string:
-            statement = "".join(current).strip()
-            if statement:
-                statements.append(statement)
-            current = []
-        else:
-            current.append(ch)
-    tail = "".join(current).strip()
-    if tail:
-        statements.append(tail)
-    return statements
+from synalog.runners import run_plan as _run_plan
+from synalog.runners import split_statements as _split_statements
 
 
-class SqliteRunner:
+class Runner:
+    engine = ""
+
+    def run(self, sql: str) -> list[tuple]:
+        return self.run_plan([{"kind": "sql", "sql": sql}])
+
+    def run_plan(self, steps: list[dict]) -> list[tuple]:
+        session = self.session()
+        try:
+            return _run_plan(steps, session)[1]
+        finally:
+            session.close()
+
+    def session(self):
+        raise NotImplementedError
+
+
+class _Session:
+    """``run(script) -> (columns, rows)`` over one connection."""
+
+    def run(self, script: str) -> tuple[list[str], list[tuple]]:
+        columns: list[str] = []
+        rows: list[tuple] = []
+        for statement in self.split(script):
+            result = self.execute(statement)
+            if result is not None:
+                columns, rows = result
+        return columns, rows
+
+    split = staticmethod(_split_statements)
+
+
+class SqliteRunner(Runner):
     """In-process SQLite with Logica's runtime UDFs registered."""
 
     engine = "sqlite"
 
-    def run(self, sql: str) -> list[tuple]:
+    def session(self):
         import re
 
         from logica.common import sqlite3_logica
@@ -64,15 +78,22 @@ class SqliteRunner:
             2,
             lambda pattern, value: value is not None and re.search(pattern, value) is not None,
         )
-        try:
-            rows: list[tuple] = []
-            for statement in self._split(sql):
+        # As synalog's own SQLite sessions: Unicode UPPER/LOWER, case-sensitive LIKE.
+        from synalog.runners import sqlite_semantics
+
+        sqlite_semantics(conn)
+
+        class Session(_Session):
+            split = staticmethod(SqliteRunner._split)
+
+            def execute(self, statement):
                 cur = conn.execute(statement)
-                if cur.description is not None:
-                    rows = cur.fetchall()
-            return rows
-        finally:
-            conn.close()
+                return ([d[0] for d in cur.description], cur.fetchall()) if cur.description else None
+
+            def close(self):
+                conn.close()
+
+        return Session()
 
     @staticmethod
     def _split(sql: str) -> list[str]:
@@ -89,27 +110,33 @@ class SqliteRunner:
         return statements
 
 
-class DuckDbRunner:
+class DuckDbRunner(Runner):
     """In-process DuckDB (pip package)."""
 
     engine = "duckdb"
 
-    def run(self, sql: str) -> list[tuple]:
+    def session(self):
         import duckdb
 
         conn = duckdb.connect(":memory:")
-        try:
-            conn.execute(
-                "CREATE MACRO ARRAY_CONCAT_AGG(x) AS flatten(list(x))"
-            )
-            # duckdb executes multi-statement scripts and returns the last result.
-            return conn.execute(sql).fetchall()
-        finally:
-            conn.close()
+        conn.execute("CREATE MACRO ARRAY_CONCAT_AGG(x) AS flatten(list(x))")
+
+        class Session(_Session):
+            def run(self, script):
+                # duckdb executes multi-statement scripts and returns the last result.
+                cur = conn.execute(script)
+                if cur is None or cur.description is None:
+                    return [], []
+                return [d[0] for d in cur.description], cur.fetchall()
+
+            def close(self):
+                conn.close()
+
+        return Session()
 
 
-class PostgresRunner:
-    """PostgreSQL over psycopg3. Each run gets a throwaway schema-less session;
+class PostgresRunner(Runner):
+    """PostgreSQL over psycopg3. Each session is a throwaway connection;
     logica preambles use ``create ... if not exists`` so reruns are idempotent."""
 
     engine = "psql"
@@ -117,27 +144,35 @@ class PostgresRunner:
     def __init__(self, dsn: str):
         self.dsn = dsn
 
-    def run(self, sql: str) -> list[tuple]:
+    def session(self):
         import psycopg
 
-        with psycopg.connect(self.dsn, autocommit=True) as conn:
-            with conn.cursor() as cur:
-                cur.execute(
-                    "CREATE OR REPLACE AGGREGATE ARRAY_CONCAT_AGG(anycompatiblearray)"
-                    " (SFUNC = array_cat, STYPE = anycompatiblearray)"
-                )
-                cur.execute(sql)
-                rows: list[tuple] = []
+        conn = psycopg.connect(self.dsn, autocommit=True)
+        cur = conn.cursor()
+        from synalog.runners import PSQL_ARRAY_CONCAT_AGG
+
+        cur.execute(PSQL_ARRAY_CONCAT_AGG)
+
+        class Session(_Session):
+            def run(self, script):
+                cur.execute(script)
+                columns, rows = [], []
                 while True:
                     if cur.description is not None:
+                        columns = [d[0] for d in cur.description]
                         rows = cur.fetchall()
                     if not cur.nextset():
                         break
-                return rows
+                return columns, rows
+
+            def close(self):
+                conn.close()
+
+        return Session()
 
 
-class TrinoRunner:
-    """Trino over its REST client."""
+class TrinoRunner(Runner):
+    """Trino over its REST client, which takes one statement per execute."""
 
     engine = "trino"
 
@@ -145,33 +180,41 @@ class TrinoRunner:
         self.host = host
         self.port = port
 
-    def run(self, sql: str) -> list[tuple]:
+    def connect(self):
         import trino
 
-        conn = trino.dbapi.connect(
+        return trino.dbapi.connect(
             host=self.host, port=self.port, user="e2e", catalog="memory", schema="default"
         )
-        try:
-            cur = conn.cursor()
-            for statement in self._setup_statements(sql):
-                cur.execute(statement)
-                cur.fetchall()
-            rows: list[tuple] = []
-            for statement in _split_statements(sql):
+
+    # @Ground writes into this schema.
+    setup = "CREATE SCHEMA IF NOT EXISTS memory.logica_test"
+
+    def decode(self, rows, description) -> list[tuple]:
+        return [tuple(r) for r in rows]
+
+    def session(self):
+        conn = self.connect()
+        cur = conn.cursor()
+        runner = self
+        ready = []
+
+        class Session(_Session):
+            def execute(self, statement):
+                if "logica_test." in statement and not ready:
+                    cur.execute(runner.setup)
+                    cur.fetchall()
+                    ready.append(True)
                 cur.execute(statement)
                 fetched = cur.fetchall()
-                if cur.description is not None:
-                    rows = [tuple(r) for r in fetched]
-            return rows
-        finally:
-            conn.close()
+                if cur.description is None:
+                    return None
+                return [d[0] for d in cur.description], runner.decode(fetched, cur.description)
 
-    @staticmethod
-    def _setup_statements(sql: str) -> list[str]:
-        statements = []
-        if "logica_test." in sql:  # @Ground writes into this schema
-            statements.append("CREATE SCHEMA IF NOT EXISTS memory.logica_test")
-        return statements
+            def close(self):
+                conn.close()
+
+        return Session()
 
 
 class PrestoRunner(TrinoRunner):
@@ -184,29 +227,22 @@ class PrestoRunner(TrinoRunner):
 
     engine = "presto"
 
-    def run(self, sql: str) -> list[tuple]:
+    def connect(self):
         import prestodb
 
-        conn = prestodb.dbapi.connect(
-            host=self.host, port=self.port, user="e2e", catalog="memory", schema="default"
+        # One driver per task: the container's per-node memory (about 100MB)
+        # otherwise goes to each join's buffers, 16 drivers each, before any
+        # row is read — enough to refuse a plan of a few dozen joins.
+        return prestodb.dbapi.connect(
+            host=self.host,
+            port=self.port,
+            user="e2e",
+            catalog="memory",
+            schema="default",
+            session_properties={"task_concurrency": "1"},
         )
-        try:
-            cur = conn.cursor()
-            for statement in self._setup_statements(sql):
-                cur.execute(statement)
-                cur.fetchall()
-            rows: list[tuple] = []
-            for statement in _split_statements(sql):
-                cur.execute(statement)
-                fetched = cur.fetchall()
-                if cur.description is not None:
-                    rows = self._decode(fetched, cur.description)
-            return rows
-        finally:
-            conn.close()
 
-    @staticmethod
-    def _decode(rows, description) -> list[tuple]:
+    def decode(self, rows, description) -> list[tuple]:
         import json
         from decimal import Decimal
 
@@ -233,17 +269,16 @@ class PrestoRunner(TrinoRunner):
         return decoded
 
 
-class SparkRunner:
+class SparkRunner(Runner):
     """Apache Spark over its Thrift Server (HiveServer2) — an open-source
     stand-in for Databricks.
 
     The ``databricks`` dialect targets Spark SQL, so a vanilla Spark server runs
     the compiled SQL. It is NOT byte-identical to Databricks (no Photon / Unity
     Catalog / Delta), and a handful of Databricks SQL extensions are absent on
-    OSS Spark — notably ``ARRAY_AGG(... ORDER BY ...)`` (used by ArgMin/ArgMax/
-    Array) — so those fixtures xfail. Production code talks to real Databricks
-    via ``databricks-sql-connector`` (the ``databricks`` extra); this test
-    stand-in uses ``pyhive`` over a NOSASL connection.
+    OSS Spark. Production code talks to real Databricks via
+    ``databricks-sql-connector`` (the ``databricks`` extra); this test stand-in
+    uses ``pyhive`` over a NOSASL connection.
 
     Complex columns (ARRAY/STRUCT/MAP) arrive as JSON text over Thrift; decode
     them so results compare equal to engines with native client-side values.
@@ -255,25 +290,38 @@ class SparkRunner:
         self.host = host
         self.port = port
 
-    def run(self, sql: str) -> list[tuple]:
+    def session(self):
         from pyhive import hive
 
-        conn = hive.Connection(host=self.host, port=self.port, auth="NOSASL", username="e2e")
-        try:
-            cur = conn.cursor()
-            for statement in self._setup_statements(sql):
-                cur.execute(statement)
-            rows: list[tuple] = []
-            for statement in _split_statements(sql):
+        from thrift.transport import TSocket, TTransport
+
+        # A statement Spark never answers (a plan it cannot finish) blocks in
+        # a socket read, which pytest-timeout's signal does not interrupt:
+        # the socket gives up first, and the test fails instead of the run
+        # hanging. NOSASL is a plain buffered transport.
+        sock = TSocket.TSocket(self.host, self.port)
+        sock.setTimeout(540_000)
+        conn = hive.Connection(thrift_transport=TTransport.TBufferedTransport(sock), username="e2e")
+        cur = conn.cursor()
+        ready = []
+
+        class Session(_Session):
+            def execute(self, statement):
+                if "logica_test." in statement and not ready:  # @Ground writes into this database
+                    cur.execute("CREATE DATABASE IF NOT EXISTS logica_test")
+                    ready.append(True)
                 cur.execute(statement)
                 # @Ground emits DDL (DROP/CREATE TABLE AS); those report a
                 # schema but no fetchable result set, and pyhive crashes on
                 # fetchall(). Only fetch from result-producing statements.
-                if self._produces_rows(statement) and cur.description is not None:
-                    rows = self._decode(cur.fetchall(), cur.description)
-            return rows
-        finally:
-            conn.close()
+                if SparkRunner._produces_rows(statement) and cur.description is not None:
+                    return [d[0] for d in cur.description], SparkRunner._decode(cur.fetchall(), cur.description)
+                return None
+
+            def close(self):
+                conn.close()
+
+        return Session()
 
     @staticmethod
     def _produces_rows(statement: str) -> bool:
@@ -282,13 +330,6 @@ class SparkRunner:
             line for line in statement.splitlines() if not line.lstrip().startswith("--")
         ).lstrip()
         return body[:6].upper().startswith(("SELECT", "WITH", "VALUES", "SHOW", "DESC"))
-
-    @staticmethod
-    def _setup_statements(sql: str) -> list[str]:
-        statements = []
-        if "logica_test." in sql:  # @Ground writes into this database
-            statements.append("CREATE DATABASE IF NOT EXISTS logica_test")
-        return statements
 
     @staticmethod
     def _decode(rows, description) -> list[tuple]:

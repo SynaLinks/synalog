@@ -1,0 +1,2 @@
+SELECT
+  CAST('-5' AS INTEGER) AS n;

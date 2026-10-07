@@ -1,0 +1,2 @@
+SELECT
+  5 AS x ORDER BY x;

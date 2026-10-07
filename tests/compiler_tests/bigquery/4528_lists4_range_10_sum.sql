@@ -1,0 +1,4 @@
+SELECT
+  SUM(x_0) AS s
+FROM
+  UNNEST(GENERATE_ARRAY(0, 10 - 1)) as x_0;

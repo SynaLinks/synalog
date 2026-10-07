@@ -1,0 +1,8 @@
+WITH t_0_C AS (SELECT
+  (CASE WHEN COUNT(*) = 0 THEN NULL ELSE ARRAY_DISTINCT(TRANSFORM(COLLECT_LIST(STRUCT(x_3 AS v)), s -> s.v)) END) AS s
+FROM
+  LATERAL (SELECT explode(SPLIT("a b a", REGEXP_REPLACE(" ", '([^a-zA-Z0-9])', '\\\\$1'))) AS x_3) AS pushkin)
+SELECT
+  ARRAY_SIZE(C.s) AS n
+FROM
+  t_0_C AS C;

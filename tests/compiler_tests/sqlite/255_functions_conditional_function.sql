@@ -1,0 +1,5 @@
+SELECT
+  CASE WHEN (x_7.value < 0) THEN -1 ELSE 1 END AS s,
+  x_7.value AS x
+FROM
+  JSON_EACH(JSON_ARRAY(5, -5)) as x_7 ORDER BY x NULLS LAST;

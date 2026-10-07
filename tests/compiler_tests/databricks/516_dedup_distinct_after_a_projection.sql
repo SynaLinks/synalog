@@ -1,0 +1,10 @@
+WITH t_0_V AS (SELECT * FROM VALUES
+  ("a", 1),
+  ("a", 2),
+  ("b", 3)
+AS UNUSED_TABLE_NAME(g, x))
+SELECT
+  V.g AS g
+FROM
+  t_0_V AS V
+GROUP BY 1 ORDER BY g NULLS LAST;

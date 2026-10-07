@@ -1,0 +1,9 @@
+# Verifier Test: A functor argument the rule does not depend on.
+# Expected Error: FunctorError.invalidFunctor
+#
+# (from tests/programs/verifier/17_functor_names_nothing.l)
+
+All(c:) :- c in [1, 2, 3];
+Odd(c:) :- c in [1, 3];
+Count(n? += 1) distinct :- All(c:);
+OddCount := Count(Nope: Odd);

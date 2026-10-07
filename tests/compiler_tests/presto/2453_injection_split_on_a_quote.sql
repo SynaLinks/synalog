@@ -1,0 +1,2 @@
+SELECT
+  CARDINALITY(SPLIT('a''b''c', '''')) AS n;

@@ -26,6 +26,16 @@ Synalog applies pagination at compile time via the `limit` and `offset` argument
 
 Synalog embeds a [formal verifier](verification.md) that catches structural errors before any SQL is generated: variable safety, safe negation and aggregation, stratification, arity consistency, and recursion safety. Logica defers these to the database at execution time.
 
+## Assertions (new in Synalog)
+
+New in Synalog 2.0, and not in Logica: `@Assert` states what a predicate must satisfy, in first-order logic written as [Lean](https://lean-lang.org/) propositions, and Synalog checks it against the data by searching for counterexamples. `synalog program.l verify` reports the assertions that are violated, and `run` refuses a program that violates one.
+
+```logica
+@Assert(Ancestor, transitive: "∀ x y z, Ancestor x y → Ancestor y z → Ancestor x z");
+```
+
+Rules stay named; only the statements apply predicates by position, as Lean does: `Ancestor x y` reads `Ancestor(x: x, y: y)`. See [Assertions](assertions.md).
+
 ## Performance
 
 The compiler is written in Rust and exposed via PyO3, dramatically reducing compilation time compared to the Python implementation, which matters when an agent compiles programs inside a reasoning loop.

@@ -1,53 +1,13 @@
-WITH t_1_Transactions AS (SELECT * FROM (
-  
-    SELECT
-      "Alice" AS col0,
-      "purchase" AS col1,
-      100 AS col2
-   UNION ALL
-  
-    SELECT
-      "Alice" AS col0,
-      "purchase" AS col1,
-      50 AS col2
-   UNION ALL
-  
-    SELECT
-      "Alice" AS col0,
-      "refund" AS col1,
-      30 AS col2
-   UNION ALL
-  
-    SELECT
-      "Bob" AS col0,
-      "purchase" AS col1,
-      200 AS col2
-   UNION ALL
-  
-    SELECT
-      "Bob" AS col0,
-      "purchase" AS col1,
-      75 AS col2
-   UNION ALL
-  
-    SELECT
-      "Charlie" AS col0,
-      "purchase" AS col1,
-      150 AS col2
-   UNION ALL
-  
-    SELECT
-      "Charlie" AS col0,
-      "refund" AS col1,
-      50 AS col2
-   UNION ALL
-  
-    SELECT
-      "Charlie" AS col0,
-      "purchase" AS col1,
-      100 AS col2
-  
-) AS UNUSED_TABLE_NAME  ),
+WITH t_1_Transactions AS (SELECT * FROM VALUES
+  ("Alice", "purchase", 100),
+  ("Alice", "purchase", 50),
+  ("Alice", "refund", 30),
+  ("Bob", "purchase", 200),
+  ("Bob", "purchase", 75),
+  ("Charlie", "purchase", 150),
+  ("Charlie", "refund", 50),
+  ("Charlie", "purchase", 100)
+AS UNUSED_TABLE_NAME(col0, col1, col2)),
 t_0_CustomerStats AS (SELECT
   Transactions.col0 AS col0,
   SUM(Transactions.col2) AS total,
@@ -64,4 +24,4 @@ SELECT
   CustomerStats.count AS count,
   CustomerStats.max_txn AS max_txn
 FROM
-  t_0_CustomerStats AS CustomerStats ORDER BY customer;
+  t_0_CustomerStats AS CustomerStats ORDER BY customer NULLS LAST;

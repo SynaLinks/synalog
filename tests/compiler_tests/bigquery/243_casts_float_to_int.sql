@@ -1,0 +1,2 @@
+SELECT
+  CAST(2.9 AS INT64) AS n;

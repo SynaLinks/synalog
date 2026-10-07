@@ -1,0 +1,9 @@
+WITH t_0_V AS (SELECT * FROM VALUES
+  (1),
+  (null),
+  (3)
+AS UNUSED_TABLE_NAME(x))
+SELECT
+  SUM(CASE WHEN (V.x IS null) THEN 0 ELSE 1 END) AS n
+FROM
+  t_0_V AS V;

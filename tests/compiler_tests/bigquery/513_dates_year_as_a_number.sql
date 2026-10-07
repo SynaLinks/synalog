@@ -1,0 +1,2 @@
+SELECT
+  ((CAST(SUBSTR("2024-06-01", 1, 4) AS INT64)) + (1)) AS y;

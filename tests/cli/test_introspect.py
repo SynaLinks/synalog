@@ -38,7 +38,7 @@ def test_each_table_is_described_and_ordered():
     ) in text
     # A capitalized column orders by its field name.
     assert '## User id.\n@OrderBy(CrmUserId, "UserId");' in text
-    assert check(text, engine="psql") == []
+    assert check(text, engine="psql")[0] == []
 
 
 @pytest.mark.parametrize(
@@ -59,7 +59,7 @@ def test_table_description_comes_from_the_name(table, description):
 def test_predicates_are_valid_logica():
     rows = [("public", "users", "id"), ("public", "users", "name")]
     prog = predicates("psql", rows) + "\nDemo(id:) :- PublicUsers(id:);\n"
-    assert check(prog, engine="psql") == []
+    assert check(prog, engine="psql")[0] == []
 
 
 def test_predicates_qualify_by_schema():
@@ -76,7 +76,7 @@ def test_predicates_capitalized_column_uses_explicit_mapping():
     rows = [("public", "t", "UserId")]
     text = predicates("psql", rows)
     assert "PublicT(UserId: userid) :- public.t(UserId: userid);" in text
-    assert check(text, engine="psql") == []
+    assert check(text, engine="psql")[0] == []
 
 
 def test_predicates_skip_unquotable_columns_with_comment():
@@ -153,7 +153,7 @@ def test_databricks_falls_back_to_show_without_information_schema():
     assert "ShopCustomers(id:, full_name:) :- shop.customers(id:, full_name:);" in text
     assert "ShopOrders(id:, amount:) :- shop.orders(id:, amount:);" in text
     assert "information_schema" not in text  # system schema excluded
-    assert check(text, engine="databricks") == []
+    assert check(text, engine="databricks")[0] == []
 
 
 def test_introspect_rejects_unknown_engine():
@@ -173,3 +173,40 @@ def test_introspectable_matches_connectable_engines():
     from synalog.cli import DSN_ENGINES
 
     assert set(INTROSPECTABLE) == set(DSN_ENGINES)
+
+
+def test_write_tables_writes_one_checked_file_per_table(tmp_path):
+    import synalog
+
+    found, _ = introspect.tables([("public", "orders", "order_id"), ("public", "orders", "amount")])
+    result = introspect.write_tables(tmp_path / "tables", found)
+    assert result == {"written": ["PublicOrders"], "gone": []}
+    source = (tmp_path / "tables" / "PublicOrders.l").read_text()
+    assert source.startswith("---\nname: PublicOrders\ndescription: Orders.\n---\n")
+    assert synalog.check(source, assertions=False) == ([], [])
+
+
+def test_write_tables_keeps_the_front_matter_written_by_hand(tmp_path):
+    folder = tmp_path / "tables"
+    folder.mkdir()
+    (folder / "PublicOrders.l").write_text(
+        "---\nname: PublicOrders\ndescription: Every order, net of refunds.\nkeywords: [sale]\n---\n"
+        '@OrderBy(PublicOrders, "order_id");\nPublicOrders(order_id:) :- public.orders(order_id:);\n'
+    )
+    (folder / "PublicLegacy.l").write_text("---\nname: PublicLegacy\ndescription: Old.\n---\n")
+    found, _ = introspect.tables([("public", "orders", "order_id"), ("public", "orders", "amount")])
+    result = introspect.write_tables(folder, found)
+    source = (folder / "PublicOrders.l").read_text()
+    assert "description: Every order, net of refunds.\nkeywords: [sale]\n" in source
+    assert "PublicOrders(order_id:, amount:) :- public.orders(order_id:, amount:);" in source
+    assert result["gone"] == ["PublicLegacy"]
+    assert (folder / "PublicLegacy.l").exists()
+
+
+def test_a_description_that_plain_yaml_would_misread_is_quoted(tmp_path):
+    import synalog
+
+    table = introspect.Table("A", "Orders: all of them.", '@OrderBy(A, "x");', "A(x:) :- t(x:);")
+    introspect.write_tables(tmp_path, [table])
+    source = (tmp_path / "A.l").read_text()
+    assert synalog.check(source, assertions=False) == ([], [])

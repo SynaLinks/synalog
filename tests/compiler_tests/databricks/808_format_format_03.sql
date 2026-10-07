@@ -1,0 +1,2 @@
+SELECT
+  FORMAT_STRING("%.1f%%", 12.34E0) AS v;

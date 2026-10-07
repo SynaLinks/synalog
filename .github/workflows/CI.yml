@@ -37,21 +37,72 @@ jobs:
           python-version: '3.12'
       - name: Install Python test dependencies
         run: |
-          pip install pytest duckdb "psycopg[binary]" trino presto-python-client pyhive thrift logica
+          pip install pytest pytest-xdist pytest-timeout duckdb "psycopg[binary]" trino presto-python-client pyhive thrift logica
       - name: Rust tests (unit, parser, compiler golden, search, verifier)
         run: cargo test
       - name: Build and install synalog wheel
         run: pip install .
       - name: CLI tests
         run: pytest tests/cli -q
-      - name: Start SQL engines (PostgreSQL, Trino, Presto, Spark)
-        run: docker compose -f tests/e2e/docker-compose.yml up -d --wait
-      - name: End-to-end tests against live engines
-        run: pytest tests/e2e -q
+
+  e2e:
+    # End-to-end tests, one job per engine, in parallel: each job starts only
+    # its engine's server, and runs only its engine's tests
+    # (SYNALOG_E2E_ENGINES). An engine's tests run one after the other: they
+    # write the same tables. Trino, Presto and Spark pay a query's fixed cost
+    # on every statement, so their tests are split in three jobs each
+    # (SYNALOG_E2E_SHARD), each with its own server.
+    runs-on: ubuntu-22.04
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - { engine: sqlite, service: "", shard: "1/1" }
+          - { engine: duckdb, service: "", shard: "1/1" }
+          - { engine: psql, service: postgres, shard: "1/1" }
+          - { engine: trino, service: trino, shard: "1/3" }
+          - { engine: trino, service: trino, shard: "2/3" }
+          - { engine: trino, service: trino, shard: "3/3" }
+          - { engine: presto, service: presto, shard: "1/3" }
+          - { engine: presto, service: presto, shard: "2/3" }
+          - { engine: presto, service: presto, shard: "3/3" }
+          - { engine: databricks, service: spark, shard: "1/3" }
+          - { engine: databricks, service: spark, shard: "2/3" }
+          - { engine: databricks, service: spark, shard: "3/3" }
+    name: e2e (${{ matrix.engine }} ${{ matrix.shard }})
+    steps:
+      - uses: actions/checkout@v6
+      - uses: dtolnay/rust-toolchain@stable
+      - uses: Swatinem/rust-cache@v2
+      - uses: actions/setup-python@v6
+        with:
+          python-version: '3.12'
+      - name: Install Python test dependencies
+        run: |
+          pip install pytest pytest-timeout duckdb "psycopg[binary]" trino presto-python-client pyhive thrift logica
+      - name: Build and install synalog wheel
+        run: pip install .
+      - name: Start the engine's server
+        if: matrix.service != ''
+        run: docker compose -f tests/e2e/docker-compose.yml up -d --wait ${{ matrix.service }}
+      - name: End-to-end tests against ${{ matrix.engine }}
+        # A test stuck past --timeout fails, failures print as they happen,
+        # and the step cannot outlive timeout-minutes.
+        timeout-minutes: 180
         env:
-          SYNALOG_E2E_REQUIRE: psql,trino,presto,databricks
-      - name: Stop SQL engines
-        if: always()
+          SYNALOG_E2E_ENGINES: ${{ matrix.engine }}
+          SYNALOG_E2E_SHARD: ${{ matrix.shard }}
+          SYNALOG_E2E_REQUIRE: ${{ matrix.engine }}
+          SYNALOG_E2E_PRINT_FAILURES: "1"
+        run: pytest tests/e2e -q -rfE --durations=15 --timeout=600 --timeout-method=signal
+      - name: Engine after the e2e tests
+        if: always() && matrix.service != ''
+        run: |
+          free -m
+          docker compose -f tests/e2e/docker-compose.yml ps
+          docker stats --no-stream
+      - name: Stop the engine's server
+        if: always() && matrix.service != ''
         run: docker compose -f tests/e2e/docker-compose.yml down
 
   linux:
@@ -258,18 +309,17 @@ jobs:
           path: wheels
       - name: Install wheel + test deps
         # --find-links serves the locally-built synalog wheel; its runtime deps
-        # (click, rich, rdflib, duckdb) resolve from PyPI. Don't use --no-index:
+        # (click, rich, duckdb, psycopg) resolve from PyPI. Don't use --no-index:
         # it would block dependency resolution and fail the install. `logica`
-        # registers the sqlite runtime UDFs the CLI tests exercise; psycopg lets
-        # the one psql runner-ordering test reach its DSN check (the other remote
-        # engines' tests run driver-free).
-        run: pip install --find-links wheels synalog pytest logica "psycopg[binary]"
+        # registers the sqlite runtime UDFs the CLI tests exercise.
+        run: pip install --find-links wheels synalog pytest logica
       - name: Smoke test
         run: |
           python -c "
           import synalog
           src = 'Greeting(msg: \"hello\");'
-          assert synalog.check(src) == []
+          assert synalog.check(src, assertions=False) == ([], [])
+          import psycopg  # a dependency, with its libpq on every platform
           sql = synalog.compile(src, 'Greeting', engine='sqlite')
           assert 'hello' in sql, sql
           print('ok:', sql.replace(chr(10), ' '))

@@ -1,0 +1,2 @@
+SELECT
+  (CASE WHEN 5 < 0 THEN NULL ELSE JSON_EXTRACT((select json_group_array(n) from (with recursive t as(select 0 as n union all select n + 1 as n from t where n + 1 < 5) select n from t) where n < 5), '$[' || 5 || ']') END) AS e;

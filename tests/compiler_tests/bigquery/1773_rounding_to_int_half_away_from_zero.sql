@@ -1,0 +1,5 @@
+SELECT
+  CAST(((5) / NULLIF(2, 0)) AS INT64) AS a,
+  CAST(- ((5) / NULLIF(2, 0)) AS INT64) AS b,
+  CAST(3.7 AS INT64) AS c,
+  CAST(((9) / NULLIF(4, 0)) AS INT64) AS d;

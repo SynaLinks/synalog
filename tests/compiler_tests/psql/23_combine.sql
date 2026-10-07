@@ -26,7 +26,7 @@ t_0_AllTags AS (SELECT
 FROM
   t_1_Items AS Items),
 t_2_FilteredTags AS (SELECT
-  ARRAY_CONCAT_AGG(CASE WHEN (COALESCE(ARRAY_LENGTH(t_3_Items.tags, 1), 0) > 1) THEN t_3_Items.tags ELSE '{}' END) AS logica_value
+  ARRAY_CONCAT_AGG(CASE WHEN (CARDINALITY(t_3_Items.tags) > 1) THEN t_3_Items.tags ELSE '{}' END) AS logica_value
 FROM
   t_1_Items AS t_3_Items)
 SELECT

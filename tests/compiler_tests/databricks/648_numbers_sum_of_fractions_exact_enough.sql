@@ -1,0 +1,4 @@
+SELECT
+  SUM(x_2) AS t
+FROM
+  LATERAL (SELECT explode(ARRAY(0.25E0, 0.25E0, 0.5E0)) AS x_2) AS pushkin;

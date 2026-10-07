@@ -1,0 +1,4 @@
+SELECT
+  COUNT(DISTINCT x_2.value) AS n
+FROM
+  JSON_EACH(JSON_ARRAY(1, 1, 2)) as x_2;

@@ -1,0 +1,5 @@
+SELECT
+  CASE WHEN (x_7 < 0) THEN -1 ELSE 1 END AS s,
+  x_7 AS x
+FROM
+  LATERAL (SELECT explode(ARRAY(5, -5)) AS x_7) AS pushkin ORDER BY x NULLS LAST;

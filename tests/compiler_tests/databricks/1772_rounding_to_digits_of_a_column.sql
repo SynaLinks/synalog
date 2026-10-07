@@ -1,0 +1,13 @@
+WITH t_1_V AS (SELECT * FROM VALUES
+  ("a", 1),
+  ("b", 2)
+AS UNUSED_TABLE_NAME(k, x)),
+t_2_T AS (SELECT
+  SUM(t_3_V.x) AS t
+FROM
+  t_1_V AS t_3_V)
+SELECT
+  V.k AS k,
+  transform(array(((100) * (((V.x) / NULLIF(t_0_T.t, 0))))), synalog_v -> (CASE WHEN synalog_v IS NULL OR 2 IS NULL THEN NULL WHEN CAST(synalog_v AS DOUBLE) = 0 THEN CAST(synalog_v AS DOUBLE) WHEN FLOOR(LOG10(ABS(CAST(synalog_v AS DOUBLE)))) - 14 + 2 >= 0 THEN (CASE WHEN CAST(synalog_v AS DOUBLE) < 0 THEN -1 ELSE 1 END) * FLOOR(ABS(CAST(synalog_v AS DOUBLE)) / POWER(10, FLOOR(LOG10(ABS(CAST(synalog_v AS DOUBLE)))) - 14) + 0.5) * POWER(10, FLOOR(LOG10(ABS(CAST(synalog_v AS DOUBLE)))) - 14) + 0 ELSE (CASE WHEN CAST(synalog_v AS DOUBLE) < 0 THEN -1 ELSE 1 END) * FLOOR(ABS(CAST(synalog_v AS DOUBLE)) * POWER(10, 2) + 0.5 + 0.5 * POWER(10, FLOOR(LOG10(ABS(CAST(synalog_v AS DOUBLE)))) - 14 + 2)) / POWER(10, 2) + 0 END))[0] AS pct
+FROM
+  t_1_V AS V, t_2_T AS t_0_T ORDER BY k NULLS LAST;

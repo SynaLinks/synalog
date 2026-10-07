@@ -4,7 +4,7 @@ SELECT * FROM (
       "and" AS test_name,
       x_5 AS x
     FROM
-      explode(SEQUENCE(0, 10 - 1)) AS pushkin(x_5)
+      LATERAL (SELECT explode(FILTER(SEQUENCE(0, CAST(10 AS BIGINT)), x -> x < 10)) AS x_5) AS pushkin
     WHERE
       ((x_5 > 2) AND (x_5 < 7))
    UNION ALL
@@ -13,8 +13,8 @@ SELECT * FROM (
       "complex" AS test_name,
       x_5 AS x
     FROM
-      explode(SEQUENCE(0, 10 - 1)) AS pushkin(x_5)
+      LATERAL (SELECT explode(FILTER(SEQUENCE(0, CAST(10 AS BIGINT)), x -> x < 10)) AS x_5) AS pushkin
     WHERE
       (((x_5 > 2) AND (x_5 < 4)) OR ((x_5 > 6) AND (x_5 < 9)))
   
-) AS UNUSED_TABLE_NAME  ORDER BY test_name, x ;
+) AS UNUSED_TABLE_NAME  ORDER BY test_name NULLS LAST, x NULLS LAST ;

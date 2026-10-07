@@ -1,0 +1,2 @@
+SELECT
+  (CAST(1 AS REAL) / NULLIF(8, 0)) AS r;

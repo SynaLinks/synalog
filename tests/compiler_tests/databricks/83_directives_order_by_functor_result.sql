@@ -1,0 +1,4 @@
+SELECT
+  x_3 AS c
+FROM
+  LATERAL (SELECT explode(ARRAY(1, 3)) AS x_3) AS pushkin ORDER BY c DESC;

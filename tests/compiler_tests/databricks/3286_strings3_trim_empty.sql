@@ -1,0 +1,2 @@
+SELECT
+  TRIM("    ") AS s;

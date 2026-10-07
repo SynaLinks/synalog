@@ -5,11 +5,11 @@ Installing the package also installs a `synalog` command (also available as `pyt
 If you use [uv](https://docs.astral.sh/uv/), `uvx` runs the CLI in an ephemeral environment without installing anything:
 
 ```bash
-uvx synalog                                            # interactive session
-uvx --from 'synalog[run]' synalog program.l run Total  # adds the psycopg (psql) driver
+uvx synalog                          # interactive session
+uvx synalog program.l run Total      # on duckdb, the default engine
 ```
 
-Plain `uvx synalog` covers `print` and execution on duckdb (the default engine, bundled with synalog) and sqlite (Python's built-in driver); executing on PostgreSQL needs the psycopg driver from the `synalog[run]` extra, hence `--from`.
+`uvx synalog` covers `print` and execution on duckdb (the default engine), sqlite (Python's built-in driver) and PostgreSQL: synalog depends on duckdb and on psycopg with its bundled libpq, so nothing else is needed on macOS or Linux.
 
 ## One-shot commands
 
@@ -19,9 +19,25 @@ The argument order follows `logica`: the program file first, then the command.
 synalog program.l print Predicate ...      # print compiled SQL
 synalog program.l run Predicate ...        # execute and print a table
 synalog program.l run Predicate --csv      # execute and print CSV
+synalog program.l verify [Predicate ...]   # check the @Assert statements
 ```
 
-Both `print` and `run` validate the whole program first and exit 1 with the verifier's errors if it is invalid, so there is no separate `check` step to forget. `print` and `run` accept several predicate names and process them in order. In a terminal, `print` highlights the SQL and `run` renders the table with rich formatting; piped output falls back to plain text. Add `--csv` to `run` for machine-readable CSV instead of the rendered table.
+`print`, `run` and `verify` validate the whole program first and exit 1 with the verifier's errors if it is invalid, so there is no separate `check` step to forget. Verifier warnings, such as an [assertion](assertions.md) that cannot be checked, are printed to stderr and do not stop the command. `run` also checks the program's assertions against the database and exits 1, printing a few counterexamples, if one is violated; `print` stays offline. `print` and `run` accept several predicate names and process them in order. In a terminal, `print` highlights the SQL and `run` renders the table with rich formatting; piped output falls back to plain text. Add `--csv` to `run` for machine-readable CSV instead of the rendered table.
+
+`verify` runs every [assertion](assertions.md) of the program, or only those of the given predicates, against the database. It prints the counterexamples of each assertion that does not hold (5 by default, `--limit` to change) and exits 1 if any assertion is violated. Assertions that are pending or cannot be checked are listed and skipped.
+
+```console
+$ synalog family.l verify
+✓ Ancestor.transitive holds
+✗ Near.transitive is violated: ∀ x y z, Near x y → Near y z → Near x z
+  2 counterexamples:
++---+---+---+
+| x | y | z |
++---+---+---+
+| a | b | d |
+| a | c | d |
++---+---+---+
+```
 
 ```console
 $ synalog program.l run EngineeringTeam
@@ -63,7 +79,7 @@ With `-c` there is no `FILE` argument: the positionals are the command and its p
 
 - **duckdb**: the default engine, bundled with synalog; nothing extra to install.
 - **sqlite**: Python's stdlib driver; Logica's runtime UDFs (ArgMin/ArgMax, ARRAY_CONCAT, ...) are registered when the `logica` package is installed.
-- **psql**: needs `pip install psycopg` and a connection string.
+- **psql**: bundled with synalog (psycopg with its own libpq); needs a connection string.
 
 The [`Today` and `Now`](language/temporal.md) built-in concepts need no runner support, since the compiler inlines them per dialect, so they work on every engine.
 
@@ -80,41 +96,30 @@ $ synalog totals.l run Total --load sales=sales.csv
 2 rows
 ```
 
-duckdb ships with synalog; `pip install 'synalog[run]'` adds the psycopg driver for PostgreSQL. For the other engines (`bigquery`, `trino`, `presto`, `databricks`), use `print` and run the SQL with your own client.
+duckdb and the PostgreSQL driver ship with synalog. For the other engines (`bigquery`, `trino`, `presto`, `databricks`), install their driver (`pip install 'synalog[trino]'`, ...) or use `print` and run the SQL with your own client.
 
 ### Imports
 
-`import path.to.file.Pred;` statements resolve `path/to/file.l` against the program file's directory, then the current directory. Pass `--import-root DIR` (repeatable) to search elsewhere; explicit roots replace the defaults.
+In a project, `import <folder>.<Name>.<Name>;` statements resolve from the project's folder (the one holding `synalog.toml`), whichever file runs and wherever from: `import tables.Orders.Orders;` reads the project's `tables/Orders.l`. The program file's directory and the current directory come next. Pass `--import-root DIR` (repeatable) to search elsewhere; explicit roots replace the defaults.
 
-For example, with a reusable metric in `lib/metrics.l`:
-
-```logica
-@OrderBy(RegionTotal, "region");
-RegionTotal(region:, total? += amount) distinct :- sales(region:, amount:);
-```
-
-a program next to the `lib/` directory imports it by its dotted path and builds on it:
+In the [`shop` project](language/index.md), `rules/TopCustomers.l` builds on `rules/CustomerRevenue.l`:
 
 ```logica
-# report.l
-import lib.metrics.RegionTotal;
-
-@OrderBy(TopRegion, "total DESC");
-@Limit(TopRegion, 1);
-TopRegion(region:, total:) :- RegionTotal(region:, total:);
+--8<-- "docs/examples/shop/rules/TopCustomers.l"
 ```
 
 ```console
-$ synalog report.l run TopRegion --load sales=sales.csv
-+--------+-------+
-| region | total |
-+--------+-------+
-| south  | 20    |
-+--------+-------+
-1 row
+$ synalog rules/TopCustomers.l run TopCustomers --load orders=data/orders.csv
++-------------+-------+
+| customer_id | total |
++-------------+-------+
+| 100         | 1450  |
+| 300         | 430   |
++-------------+-------+
+2 rows
 ```
 
-`import lib.metrics.RegionTotal as Totals;` imports the same predicate under another name. Directives attached to an imported predicate (its `@OrderBy` here) travel with it.
+`import rules.CustomerRevenue.CustomerRevenue as Revenue;` imports the same predicate under another name. Directives attached to an imported predicate (its `@OrderBy` here) travel with it.
 
 ### Errors
 
@@ -149,6 +154,46 @@ Compile error: No rules are defining 'Missing', but compilation was requested.
 ```
 
 A failing program never produces partial output: `run` either prints the table or the error.
+
+## Projects: `synalog.toml`
+
+A Synalog program is a [project](language/index.md): a folder with a `synalog.toml`, its predicates in `tables/`, `concepts/` and `rules/`, one per file. The file names and describes the project, and its `[connection]` says which database it runs on, as plain fields — commit it:
+
+```toml
+[project]
+name = "sales"
+description = "Orders and customers: revenue, active customers, countries."
+
+[connection]
+engine = "psql"
+host = "db.example.com"
+port = 5432
+database = "sales"
+user = "analyst"
+schema = "public"
+```
+
+Secrets never go in the file (synalog refuses it): each comes from the environment as `SYNALOG_<ENGINE>_<FIELD>` — `SYNALOG_PSQL_PASSWORD`, `SYNALOG_DATABRICKS_ACCESS_TOKEN`, or `GOOGLE_APPLICATION_CREDENTIALS` for BigQuery — usually from the project's `.env`, kept out of git. Anywhere in the project, `run`, `print`, `verify` and `introspect` use that engine and connection, and [imports](#imports) resolve from the project's folder; `--engine`, an `@Engine` annotation, `--dsn` and `SYNALOG_<ENGINE>_DSN` still take precedence. The fields of every engine are in `synalog.project.ENGINES`.
+
+### Introspect
+
+`synalog introspect` reads the database's schema and writes the project's `tables/`: one file per table, `tables/<Schema><Table>.l`, mapping the table to a predicate ordered by its first column, with a description made from the table's name (`public.order_items` → "Order items.") until someone writes a better one.
+
+```console
+$ synalog introspect
+Wrote 2 table file(s) to /path/to/sales/tables
+```
+
+```logica
+---
+name: PublicOrders
+description: Orders.
+---
+@OrderBy(PublicOrders, "order_id");
+PublicOrders(order_id:, customer_id:, amount:, status:) :- public.orders(order_id:, customer_id:, amount:, status:);
+```
+
+Run it again when the schema changes: the declarations are regenerated, and a file's front matter (its description, keywords, ...) is kept as written. A table the database no longer has keeps its file, since concepts may import it, and is listed. Outside a project, `synalog introspect <engine> [dsn]` prints the declarations instead. PostgreSQL, Trino, Presto, Databricks and BigQuery can be introspected.
 
 ## Add the skill to your coding agent
 

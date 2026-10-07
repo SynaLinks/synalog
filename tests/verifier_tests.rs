@@ -7,7 +7,7 @@
 use std::path::PathBuf;
 
 use synalog::parser::parse_file;
-use synalog::verifier::{validate, CheckError, SafetyError, RecursionError};
+use synalog::verifier::{validate, ArityError, AssertionError, CheckError, RecursionError, SafetyError};
 
 /// Path to the verifier fixtures directory.
 fn fixtures_dir() -> PathBuf {
@@ -20,6 +20,7 @@ enum ExpectedError {
     UnboundHeadVar,
     UnsafeNegation,
     UnsafeAggregation,
+    FunctionAsCondition,
     StratificationError,
     ArityMismatch,
     NoBaseCase,
@@ -32,6 +33,14 @@ enum ExpectedError {
     MissingOrderBy,
     MissingDescription,
     MissingName,
+    InvalidFunctor,
+    InvalidDirective,
+    UnboundComparedVar,
+    DuplicateColumn,
+    UnknownColumn,
+    MalformedAssertion,
+    InvalidAssertion,
+    DuplicateAssertion,
 }
 
 /// Parse expected error from file content.
@@ -43,6 +52,7 @@ fn parse_expected_error(content: &str) -> Option<ExpectedError> {
                 s if s.contains("unboundHeadVar") => Some(ExpectedError::UnboundHeadVar),
                 s if s.contains("unsafeNegation") => Some(ExpectedError::UnsafeNegation),
                 s if s.contains("unsafeAggregation") => Some(ExpectedError::UnsafeAggregation),
+                s if s.contains("functionAsCondition") => Some(ExpectedError::FunctionAsCondition),
                 s if s.contains("StratificationError") => Some(ExpectedError::StratificationError),
                 s if s.contains("arityMismatch") => Some(ExpectedError::ArityMismatch),
                 s if s.contains("noBaseCase") => Some(ExpectedError::NoBaseCase),
@@ -55,6 +65,14 @@ fn parse_expected_error(content: &str) -> Option<ExpectedError> {
                 s if s.contains("missingOrderBy") => Some(ExpectedError::MissingOrderBy),
                 s if s.contains("missingDescription") => Some(ExpectedError::MissingDescription),
                 s if s.contains("missingName") => Some(ExpectedError::MissingName),
+                s if s.contains("invalidFunctor") => Some(ExpectedError::InvalidFunctor),
+                s if s.contains("invalidDirective") => Some(ExpectedError::InvalidDirective),
+                s if s.contains("unboundComparedVar") => Some(ExpectedError::UnboundComparedVar),
+                s if s.contains("duplicateColumn") => Some(ExpectedError::DuplicateColumn),
+                s if s.contains("unknownColumn") => Some(ExpectedError::UnknownColumn),
+                s if s.contains("malformedAssertion") => Some(ExpectedError::MalformedAssertion),
+                s if s.contains("invalidAssertion") => Some(ExpectedError::InvalidAssertion),
+                s if s.contains("duplicateAssertion") => Some(ExpectedError::DuplicateAssertion),
                 _ => None,
             };
         }
@@ -68,6 +86,7 @@ fn error_matches(error: &CheckError, expected: &ExpectedError) -> bool {
         (CheckError::Safety(SafetyError::UnboundHeadVar { .. }), ExpectedError::UnboundHeadVar) => true,
         (CheckError::Safety(SafetyError::UnsafeNegation { .. }), ExpectedError::UnsafeNegation) => true,
         (CheckError::Safety(SafetyError::UnsafeAggregation { .. }), ExpectedError::UnsafeAggregation) => true,
+        (CheckError::Safety(SafetyError::FunctionAsCondition { .. }), ExpectedError::FunctionAsCondition) => true,
         (CheckError::Stratification(_), ExpectedError::StratificationError) => true,
         (CheckError::Arity(_), ExpectedError::ArityMismatch) => true,
         (CheckError::Recursion(RecursionError::NoBaseCase { .. }), ExpectedError::NoBaseCase) => true,
@@ -80,6 +99,14 @@ fn error_matches(error: &CheckError, expected: &ExpectedError) -> bool {
         (CheckError::OrderBy(_), ExpectedError::MissingOrderBy) => true,
         (CheckError::Description(_), ExpectedError::MissingDescription) => true,
         (CheckError::Name(_), ExpectedError::MissingName) => true,
+        (CheckError::Functor(_), ExpectedError::InvalidFunctor) => true,
+        (CheckError::Directive(_), ExpectedError::InvalidDirective) => true,
+        (CheckError::Safety(SafetyError::UnboundComparedVar { .. }), ExpectedError::UnboundComparedVar) => true,
+        (CheckError::Arity(ArityError::DuplicateColumn { .. }), ExpectedError::DuplicateColumn) => true,
+        (CheckError::Arity(ArityError::UnknownColumn { .. }), ExpectedError::UnknownColumn) => true,
+        (CheckError::Assert(AssertionError::Malformed { .. }), ExpectedError::MalformedAssertion) => true,
+        (CheckError::Assert(AssertionError::Statement { .. }), ExpectedError::InvalidAssertion) => true,
+        (CheckError::Assert(AssertionError::DuplicateAssertion { .. }), ExpectedError::DuplicateAssertion) => true,
         _ => false,
     }
 }

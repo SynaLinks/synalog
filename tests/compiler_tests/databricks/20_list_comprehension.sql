@@ -1,15 +1,15 @@
-WITH t_0_Squares AS (SELECT
-  TRANSFORM(ARRAY_SORT(COLLECT_LIST(STRUCT(x_7 AS arg, ((x_7) * (x_7)) AS value))), s -> s.value) AS logica_value
+WITH t_1_Squares AS (SELECT
+  (CASE WHEN COUNT(*) = 0 THEN NULL ELSE TRANSFORM(ARRAY_SORT(COLLECT_LIST(STRUCT(x_8 AS arg, ((x_8) * (x_8)) AS value))), s -> s.value) END) AS logica_value
 FROM
-  explode(SEQUENCE(0, 5 - 1)) AS pushkin(x_7)),
-t_2_EvenSquares AS (SELECT
-  TRANSFORM(ARRAY_SORT(COLLECT_LIST(STRUCT(x_14 AS arg, ((x_14) * (x_14)) AS value))), s -> s.value) AS logica_value
+  LATERAL (SELECT explode(FILTER(SEQUENCE(0, CAST(5 AS BIGINT)), x -> x < 5)) AS x_8) AS pushkin),
+t_4_EvenSquares AS (SELECT
+  (CASE WHEN COUNT(*) = 0 THEN NULL ELSE TRANSFORM(ARRAY_SORT(COLLECT_LIST(STRUCT(x_19 AS arg, ((x_19) * (x_19)) AS value))), s -> s.value) END) AS logica_value
 FROM
-  explode(SEQUENCE(0, 10 - 1)) AS pushkin(x_14)
+  LATERAL (SELECT explode(FILTER(SEQUENCE(0, CAST(10 AS BIGINT)), x -> x < 10)) AS x_19) AS pushkin
 WHERE
-  ((MOD(x_14, 2)) = 0))
+  ((MOD(x_19, NULLIF(2, 0))) = 0))
 SELECT
-  Squares.logica_value AS squares,
+  t_0_Squares.logica_value AS squares,
   EvenSquares.logica_value AS even_squares
 FROM
-  t_0_Squares AS Squares, t_2_EvenSquares AS EvenSquares;
+  t_1_Squares AS t_0_Squares, t_4_EvenSquares AS EvenSquares;

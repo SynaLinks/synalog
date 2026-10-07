@@ -38,6 +38,7 @@ def _presto_dsn() -> str:
     return f"presto://e2e@{host}:{port}/tpch"
 
 
+@pytest.mark.engine("psql")
 def test_introspect_psql_reads_seeded_schemas(runner_for):
     runner_for("psql")  # skip/fail per availability, like the golden e2e tests
     text = introspect("psql", _psql_dsn())
@@ -55,7 +56,7 @@ def test_introspect_psql_reads_seeded_schemas(runner_for):
 
     # The generated block is valid Logica that downstream rules can build on.
     program = text + "\nPaidOrders(id:) :- ShopOrders(id:, status: s), s == \"paid\";\n"
-    assert synalog.check(program, engine="psql") == []
+    assert synalog.check(program, engine="psql")[0] == []
 
 
 @pytest.mark.parametrize(
@@ -69,9 +70,10 @@ def test_introspect_trino_presto_reads_tpch(engine, dsn, runner_for):
     # tpch ships the same 8 tables in each scale-factor schema (sf1, tiny, ...).
     assert "customer(custkey:, name:, address:, nationkey:" in text
     assert "Customer(custkey:, name:, address:, nationkey:" in text  # PascalCase head
-    assert synalog.check(text, engine=engine) == []
+    assert synalog.check(text, engine=engine)[0] == []
 
 
+@pytest.mark.engine("databricks")
 def test_introspect_databricks_via_spark_show_fallback(runner_for):
     # Open-source Spark has no information_schema, so this exercises introspect's
     # SHOW SCHEMAS / SHOW TABLES / DESCRIBE TABLE fallback against a live server.
@@ -96,6 +98,6 @@ def test_introspect_databricks_via_spark_show_fallback(runner_for):
             f" :- {schema}.orders(id:, amount:);" in text
         )
         # Everything introspected compiles as databricks-dialect Logica.
-        assert synalog.check(text, engine="databricks") == []
+        assert synalog.check(text, engine="databricks")[0] == []
     finally:
         runner.run(f"DROP SCHEMA IF EXISTS {schema} CASCADE")

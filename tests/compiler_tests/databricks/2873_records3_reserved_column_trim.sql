@@ -1,0 +1,8 @@
+WITH t_0_V AS (SELECT * FROM VALUES
+  (1),
+  (2)
+AS UNUSED_TABLE_NAME(`trim`))
+SELECT
+  V.`trim` AS `trim`
+FROM
+  t_0_V AS V ORDER BY `trim` NULLS LAST;

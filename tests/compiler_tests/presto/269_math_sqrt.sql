@@ -1,0 +1,2 @@
+SELECT
+  SQRT(16) AS r;

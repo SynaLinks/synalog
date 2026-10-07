@@ -1,0 +1,3 @@
+SELECT
+  CAST("12" AS INT64) AS a,
+  CAST(SUBSTR("x7", 2, 1) AS INT64) AS b;

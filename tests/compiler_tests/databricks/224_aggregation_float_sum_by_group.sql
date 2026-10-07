@@ -1,0 +1,11 @@
+WITH t_0_R AS (SELECT * FROM VALUES
+  ("a", 0.25E0),
+  ("a", 0.5E0),
+  ("b", 0.5E0)
+AS UNUSED_TABLE_NAME(k, v))
+SELECT
+  R.k AS k,
+  SUM(R.v) AS t
+FROM
+  t_0_R AS R
+GROUP BY 1 ORDER BY k NULLS LAST;

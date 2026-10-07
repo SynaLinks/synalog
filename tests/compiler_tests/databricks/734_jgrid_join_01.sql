@@ -1,0 +1,16 @@
+WITH t_0_A AS (SELECT * FROM VALUES
+  (1),
+  (2),
+  (3)
+AS UNUSED_TABLE_NAME(x)),
+t_1_B AS (SELECT * FROM VALUES
+  (2),
+  (3),
+  (4)
+AS UNUSED_TABLE_NAME(x))
+SELECT
+  A.x AS x
+FROM
+  t_0_A AS A, t_1_B AS B
+WHERE
+  (B.x = A.x) ORDER BY x NULLS LAST;

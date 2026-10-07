@@ -130,7 +130,7 @@ fn test_functors_new() {
     let rules = parsed.as_object()["rule"].as_array().to_vec();
     let f = Functors::new(&rules);
     // Functors should be constructible without panicking
-    assert!(!f.rules.is_empty());
+    assert!(f.original_rules > 0);
 }
 
 // ── Functors::get_args_of_map ──
@@ -433,7 +433,7 @@ fn test_functors_new_with_many_rules() {
     let parsed = parse_file(source, None, &[]).unwrap();
     let rules = parsed.as_object()["rule"].as_array().to_vec();
     let f = Functors::new(&rules);
-    assert!(f.rules.len() >= 4);
+    assert!(f.original_rules >= 4);
 }
 
 // ── collect_annotations ──
@@ -499,10 +499,23 @@ fn test_get_flat_recursion_functor_single() {
     cover.insert("P".to_string());
     let mut direct = std::collections::HashMap::new();
     direct.insert("P".to_string(), vec!["P".to_string()]);
-    let result = get_flat_recursion_functor(2, &cover, &direct);
+    let result = get_flat_recursion_functor(2, &cover, &direct, false);
     assert!(result.contains("P_fr0"), "Got:\n{}", result);
     assert!(result.contains("P_fr2"), "Got:\n{}", result);
     assert!(result.contains("P := P_fr2()"), "Got:\n{}", result);
+}
+
+#[test]
+fn test_get_flat_recursion_functor_grounds_each_step() {
+    let mut cover = std::collections::BTreeSet::new();
+    cover.insert("P".to_string());
+    let mut direct = std::collections::HashMap::new();
+    direct.insert("P".to_string(), vec!["P".to_string()]);
+    let result = get_flat_recursion_functor(2, &cover, &direct, true);
+    for step in ["@Ground(P_fr0);", "@Ground(P_fr1);", "@Ground(P_fr2);"] {
+        assert!(result.contains(step), "Got:\n{}", result);
+    }
+    assert!(!get_flat_recursion_functor(2, &cover, &direct, false).contains("@Ground"));
 }
 
 #[test]
@@ -513,7 +526,7 @@ fn test_get_flat_recursion_functor_two_preds() {
     let mut direct = std::collections::HashMap::new();
     direct.insert("A".to_string(), vec!["B".to_string()]);
     direct.insert("B".to_string(), vec!["A".to_string()]);
-    let result = get_flat_recursion_functor(1, &cover, &direct);
+    let result = get_flat_recursion_functor(1, &cover, &direct, false);
     assert!(result.contains("A_fr0"), "Got:\n{}", result);
     assert!(result.contains("B_fr0"), "Got:\n{}", result);
     assert!(result.contains("A := A_fr1()"), "Got:\n{}", result);

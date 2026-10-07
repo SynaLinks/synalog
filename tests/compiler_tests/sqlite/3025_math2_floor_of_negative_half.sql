@@ -1,0 +1,2 @@
+SELECT
+  FLOOR(-0.5) AS v;

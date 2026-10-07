@@ -1,0 +1,2 @@
+SELECT
+  CAST(ROUND("-5") AS BIGINT) AS n;

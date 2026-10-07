@@ -1,0 +1,5 @@
+SELECT
+  ROUND(2.5) AS a,
+  ROUND(-2.5) AS b,
+  ROUND(1.5) AS c,
+  ROUND(0.5) AS d;

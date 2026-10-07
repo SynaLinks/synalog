@@ -14,7 +14,7 @@ from decimal import Decimal
 
 import pytest
 
-from conftest import ENGINES, compile_fixture, fixture_names, same_program_as_duckdb
+from conftest import ENGINES, fixture_names, plan_fixture, same_program_as_duckdb
 
 # ---------------------------------------------------------------------------
 # Layer 1: every fixture executes on its engine
@@ -49,12 +49,19 @@ def _params(engines, xfail_tables):
     return params
 
 
+@functools.cache
+def _engine_rows(engine: str, name: str) -> list[tuple]:
+    """The rows of a fixture on an engine, run once per test process: both
+    layers read them (a fixture's script can be long on the JVM engines)."""
+    from runners import make_runner
+
+    return make_runner(engine).run_plan(plan_fixture(engine, name))
+
+
 @pytest.mark.parametrize(("engine", "name"), _params(ENGINES, [XFAIL_EXECUTE]))
 def test_fixture_executes(runner_for, engine, name):
-    runner = runner_for(engine)
-    sql = compile_fixture(engine, name)
-    rows = runner.run(sql)
-    assert isinstance(rows, list)
+    runner_for(engine)  # skips when the engine is unavailable
+    assert isinstance(_engine_rows(engine, name), list)
 
 
 # ---------------------------------------------------------------------------
@@ -117,9 +124,7 @@ def _normalize_rows(rows: list[tuple], name: str | None = None) -> list[tuple]:
 def _reference_rows(name: str) -> list[tuple]:
     from runners import make_runner
 
-    return _normalize_rows(
-        make_runner("duckdb").run(compile_fixture("duckdb", name)), name
-    )
+    return _normalize_rows(make_runner("duckdb").run_plan(plan_fixture("duckdb", name)), name)
 
 
 def _cross_engine_params():
@@ -150,8 +155,8 @@ def _cross_engine_params():
 
 @pytest.mark.parametrize(("engine", "name"), _cross_engine_params())
 def test_matches_duckdb(runner_for, engine, name):
-    runner = runner_for(engine)
-    rows = _normalize_rows(runner.run(compile_fixture(engine, name)), name)
+    runner_for(engine)  # skips when the engine is unavailable
+    rows = _normalize_rows(_engine_rows(engine, name), name)
     assert rows == _reference_rows(name)
 
 

@@ -15,11 +15,11 @@ uv pip install synalog  # or install into the current virtualenv
 
 Requires Python 3.10+. Wheels are published for Linux (x86_64, aarch64, armv7, s390x, ppc64le; glibc and musl), Windows (x64, x86, aarch64) and macOS (x86_64, aarch64).
 
-duckdb (the default engine) and sqlite work out of the box. To execute on PostgreSQL, add the `run` extra (`pip install 'synalog[run]'` or `uv add 'synalog[run]'`), which pulls in the psycopg driver.
+duckdb (the default engine), sqlite and PostgreSQL work out of the box: synalog depends on duckdb and on psycopg with its bundled libpq, so nothing else is needed on macOS or Linux.
 
 ## Your first program
 
-A Synalog program declares **tables** (external data), defines **concepts** (entities and relationships extracted from tables), and writes **rules** (derived data). You then compile a predicate to SQL and run it with any database driver.
+A Synalog project maps **tables** (the data), defines **concepts** (entities and relationships extracted from tables) and writes **rules** (what you want to know), one predicate per file (see [Program structure](language/index.md)). You compile a predicate to SQL and run it with any database driver. To start, a single program can hold its own data as facts:
 
 ```python
 import synalog
@@ -36,7 +36,7 @@ EngineeringTeam(name:, salary:) :- Employee(name:, department: "Engineering", sa
 """
 
 # 1. Validate the program: returns a list of error messages
-errors = synalog.check(source)
+errors, warnings = synalog.check(source)
 assert errors == []
 
 # 2. Compile a predicate to SQL
@@ -94,7 +94,7 @@ Everything above also works without writing Python. Installing the package insta
 synalog program.l run EngineeringTeam
 ```
 
-Running `synalog` with no arguments starts an interactive session where you build a program rule by rule and query it as you go. With uv, `uvx` runs the CLI without installing anything: `uvx synalog program.l run EngineeringTeam` (duckdb is bundled; add `--from 'synalog[run]'` for PostgreSQL). See [CLI interface](cli.md).
+Running `synalog` with no arguments starts an interactive session where you build a program rule by rule and query it as you go. With uv, `uvx` runs the CLI without installing anything: `uvx synalog program.l run EngineeringTeam` (duckdb and the PostgreSQL driver are bundled). See [CLI interface](cli.md).
 
 ### Add the skill to your coding agent
 
@@ -105,47 +105,73 @@ $ npx skills add SynaLinks/synalog        # this project
 $ npx skills add SynaLinks/synalog -g     # user-wide, across all projects
 ```
 
-Then put your data files in `data/`, keep reusable predicates in `lib/` modules, and write one top-level program per analysis. See [Add the skill to your coding agent](cli.md#add-the-skill-to-your-coding-agent) for the per-agent options.
+Then lay out the project as [tables, concepts and rules](language/index.md), one predicate per file. See [Add the skill to your coding agent](cli.md#add-the-skill-to-your-coding-agent) for the per-agent options.
 
 ## Querying a CSV file
 
-Real data usually lives in files or database tables, not inline facts. DuckDB loads a CSV straight into a table, and a Synalog program references that table by its database name (lowercase). By convention the `# Tables` section maps the raw table to a PascalCase table predicate, and everything else builds on the predicate.
-
-Take a small smoke-test dataset:
+Real data lives in files or database tables, not inline facts. Here it is a small smoke-test dataset, in the `smoke` project:
 
 ```csv
---8<-- "docs/examples/smoke_tests.csv"
+--8<-- "docs/examples/smoke/data/smoke_tests.csv"
 ```
 
-Load it into DuckDB and run a compiled predicate against the connection:
+```
+smoke/
+├── data/smoke_tests.csv
+├── tables/SmokeTests.l
+├── concepts/Device.l
+├── concepts/TestStatus.l
+├── rules/FailuresByDevice.l
+├── rules/RunsPerDay.l
+└── synalog.toml
+```
+
+The table file maps the database table `smoke_tests`, referenced by its lowercase database name, to the `SmokeTests` predicate; everything else builds on it:
+
+```logica
+--8<-- "docs/examples/smoke/tables/SmokeTests.l"
+```
+
+A concept extracts the devices, and a rule counts the failures of each, importing both:
+
+```logica
+--8<-- "docs/examples/smoke/concepts/Device.l"
+```
+
+```logica
+--8<-- "docs/examples/smoke/rules/FailuresByDevice.l"
+```
+
+From the project's folder, the CLI loads the CSV as the `smoke_tests` table and runs the rule:
+
+```console
+$ synalog rules/FailuresByDevice.l run FailuresByDevice --load smoke_tests=data/smoke_tests.csv
+```
+
+From Python, load it into DuckDB and give the project's folder as the import root:
 
 ```python
 import duckdb
 import synalog
 
 conn = duckdb.connect()
-conn.execute(
-    "CREATE TABLE smoke_tests AS SELECT * FROM read_csv('smoke_tests.csv')"
-)
+conn.execute("CREATE TABLE smoke_tests AS SELECT * FROM read_csv('smoke/data/smoke_tests.csv')")
 
-source = open("loading_csv.l").read()
-assert synalog.check(source) == []
+source = open("smoke/rules/FailuresByDevice.l").read()
+errors, warnings = synalog.check(source, import_root=["smoke"])
+assert errors == []
 
-sql = synalog.compile(source, "FailuresByDevice")
+sql = synalog.compile(source, "FailuresByDevice", import_root=["smoke"])
 print(conn.execute(sql).fetchall())
 # [('gateway', 2), ('sensor-a', 1)]
 ```
 
-The program maps the `smoke_tests` table once, extracts the device and status concepts, and derives failure counts and daily run totals. Note the [temporal pipeline](language/temporal.md) (`ToString` → `Substr`) on the `run_at` timestamp:
+`rules/RunsPerDay.l` counts the runs per day through the [temporal pipeline](language/temporal.md) (`ToString` → `Substr`) on the `run_at` timestamp.
 
-```logica
---8<-- "docs/examples/loading_csv.l"
-```
-
-??? example "Generated SQL and execution results"
+??? example "Every file of the `smoke` project, run on its data"
 
     ```text
-    --8<-- "docs/examples/loading_csv.log"
+    --8<-- "docs/examples/smoke.log"
     ```
 
 ## Pagination

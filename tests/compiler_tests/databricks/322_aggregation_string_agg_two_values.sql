@@ -1,0 +1,13 @@
+WITH t_2_V AS (SELECT * FROM VALUES
+  ("a"),
+  ("b")
+AS UNUSED_TABLE_NAME(s)),
+t_1_J AS (SELECT
+  (CASE WHEN COUNT(V.s) > 0 THEN ARRAY_JOIN(COLLECT_LIST(CAST(V.s AS STRING)), ',') END) AS j
+FROM
+  t_2_V AS V)
+SELECT
+  ARRAY_SIZE(SPLIT(t_0_J.j, REGEXP_REPLACE(",", '([^a-zA-Z0-9])', '\\\\$1'))) AS parts,
+  LENGTH(t_0_J.j) AS length
+FROM
+  t_1_J AS t_0_J;

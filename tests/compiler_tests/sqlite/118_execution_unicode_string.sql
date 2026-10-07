@@ -1,0 +1,2 @@
+SELECT
+  'café ∀' AS s;

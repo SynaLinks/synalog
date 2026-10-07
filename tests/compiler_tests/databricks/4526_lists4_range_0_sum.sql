@@ -1,0 +1,4 @@
+SELECT
+  SUM(x_0) AS s
+FROM
+  LATERAL (SELECT explode(FILTER(SEQUENCE(0, CAST(0 AS BIGINT)), x -> x < 0)) AS x_0) AS pushkin;

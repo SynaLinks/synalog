@@ -1,0 +1,2 @@
+SELECT
+  LENGTH("'; COMMIT; DROP TABLE t; --") AS n;

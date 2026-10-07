@@ -1,0 +1,9 @@
+WITH t_0_V AS (SELECT * FROM VALUES
+  ("9"),
+  ("10")
+AS UNUSED_TABLE_NAME(w))
+SELECT
+  MIN(V.w) AS lo,
+  MAX(V.w) AS hi
+FROM
+  t_0_V AS V;

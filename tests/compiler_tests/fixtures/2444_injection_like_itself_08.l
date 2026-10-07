@@ -1,0 +1,5 @@
+# Test: A string matched as a Like pattern of itself, wildcards escaped. (from tests/programs/injection/like_itself_08.l)
+
+V(id: 1, s: "/* comment */ x");
+V(id: 2, s: "plain");
+Q(id:) :- V(id:, s:), Like(s, "/* comment */ x");

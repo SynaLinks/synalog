@@ -1,0 +1,2 @@
+SELECT
+  LENGTH(''' || (SELECT 1) || ''') AS n;

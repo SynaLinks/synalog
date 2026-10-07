@@ -104,7 +104,7 @@ def test_print_outputs_sql(program_file):
 
 
 def test_parse_and_check_are_not_commands(program_file):
-    # parse/check are no longer exposed; only print/run remain.
+    # parse/check are no longer exposed; only print/run/verify remain.
     for removed in ("parse", "check"):
         result = synalog(str(program_file), removed)
         assert result.returncode == 2
@@ -127,6 +127,91 @@ def test_print_validates_before_compiling(tmp_path):
     result = synalog(str(path), "print", "Bad")
     assert result.returncode == 1
     assert "SqlExpr" in result.stderr
+
+
+ASSERT_PROGRAM = """\
+@Assert(Near, transitive: "forall x y z, Near x y -> Near y z -> Near x z",
+            irreflexive: "forall x, not Near x x");
+Parent(x: "a", y: "b");
+Parent(x: "b", y: "c");
+Parent(x: "c", y: "d");
+Near(x:, y:) :- Parent(x:, y:);
+Near(x:, y: z) :- Parent(x:, y:), Parent(x: y, y: z);
+"""
+
+
+@pytest.mark.parametrize("engine", ["duckdb", "sqlite"])
+def test_verify_prints_counterexamples_and_fails(tmp_path, engine):
+    path = tmp_path / "assertion.l"
+    path.write_text(ASSERT_PROGRAM)
+    result = synalog(str(path), "verify", "--engine", engine)
+    assert result.returncode == 1
+    assert "Near.transitive is violated" in result.stdout
+    assert "2 counterexamples" in result.stdout
+    assert "Near.irreflexive holds" in result.stdout
+
+
+def test_verify_passes_when_every_spec_holds(tmp_path):
+    path = tmp_path / "assertion.l"
+    path.write_text(ASSERT_PROGRAM.replace("Near y z -> Near x z", "Near y z -> Near x z \\/ x != z"))
+    result = synalog(str(path), "verify")
+    assert result.returncode == 0, result.stdout + result.stderr
+    assert "Near.transitive holds" in result.stdout
+
+
+def test_verify_limits_the_counterexamples_shown(tmp_path):
+    path = tmp_path / "assertion.l"
+    path.write_text(ASSERT_PROGRAM)
+    result = synalog(str(path), "verify", "Near", "--limit", "1")
+    assert result.returncode == 1
+    assert "at least 1 counterexample:" in result.stdout
+
+
+def test_verify_reports_uncheckable_and_pending_specs(tmp_path):
+    path = tmp_path / "assertion.l"
+    path.write_text(
+        ASSERT_PROGRAM
+        + '@Assert(Near, positive: "forall x, x > 0");\n'
+        + '@Assert(Far, symmetric: "forall x y, Far x y -> Far y x");\n'
+    )
+    result = synalog(str(path), "verify", "Far")
+    assert result.returncode == 0
+    assert "Far.symmetric pending: waiting for Far" in result.stdout
+    # The uncheckable assertion is a verifier warning on every command.
+    assert "Assertion 'Near.positive' cannot be checked" in result.stderr
+
+
+def test_run_refuses_a_violated_assertion(tmp_path):
+    path = tmp_path / "spec.l"
+    path.write_text(ASSERT_PROGRAM)
+    result = synalog(str(path), "run", "Parent", "--csv")
+    assert result.returncode == 1
+    assert "Assertion 'Near.transitive' is violated" in result.stderr
+    assert "counterexamples (x, y, z):" in result.stderr
+    assert result.stdout == ""
+
+
+def test_print_does_not_run_assertions(tmp_path):
+    path = tmp_path / "spec.l"
+    path.write_text(ASSERT_PROGRAM)
+    result = synalog(str(path), "print", "Near")
+    assert result.returncode == 0, result.stderr
+    assert "SELECT" in result.stdout
+
+
+def test_verify_unknown_predicate(tmp_path):
+    path = tmp_path / "assertion.l"
+    path.write_text(ASSERT_PROGRAM)
+    result = synalog(str(path), "verify", "Parent")
+    assert result.returncode == 1
+    assert "No assertion for Parent" in result.stderr
+
+
+def test_run_with_limit_on_sqlite(program_file):
+    # A paginated query used to end in ";;", which sqlite refuses to execute.
+    result = synalog(str(program_file), "run", "Doubled", "--engine", "sqlite", "--limit", "2", "--csv")
+    assert result.returncode == 0, result.stderr
+    assert result.stdout.splitlines() == ["doubled", "2", "4"]
 
 
 def test_stdin_program():
@@ -814,3 +899,46 @@ def test_project_write_bigquery_key_and_clear(tmp_path):
     project.clear(tmp_path)
     assert "connection" not in tomllib.loads((tmp_path / "synalog.toml").read_text())
     assert not key.exists() and not (tmp_path / ".env").exists()
+
+
+def test_run_reports_a_driver_error_without_traceback(tmp_path):
+    # A server that refuses the connection is reported as one error line.
+    program = tmp_path / "p.l"
+    program.write_text("V(x:) :- x in [1, 2];\n")
+    result = synalog(str(program), "run", "V", "--engine", "psql", "--dsn", "postgresql://nobody@127.0.0.1:1/x")
+    assert result.returncode == 1
+    assert "OperationalError" in result.stderr + result.stdout
+    assert "Traceback" not in result.stderr
+
+
+def test_run_reports_a_missing_table_without_traceback(tmp_path):
+    program = tmp_path / "p.l"
+    program.write_text("V(x:) :- missing_table(x:);\n")
+    result = synalog(str(program), "run", "V")
+    assert result.returncode == 1
+    assert "missing_table" in result.stderr + result.stdout
+    assert "Traceback" not in result.stderr
+
+
+def test_imports_resolve_from_the_project_folder(tmp_path):
+    # In a project, `import tables.Orders.Orders;` reads the project's
+    # tables/Orders.l from any of its files, wherever the CLI runs from.
+    (tmp_path / "synalog.toml").write_text('[project]\nname = "shop"\ndescription = "Orders."\n')
+    (tmp_path / "tables").mkdir()
+    (tmp_path / "rules").mkdir()
+    (tmp_path / "tables" / "Orders.l").write_text(
+        "---\nname: Orders\ndescription: One row per order.\n---\n"
+        '@OrderBy(Orders, "order_id");\nOrders(order_id:, amount:) :- orders(order_id:, amount:);\n'
+    )
+    (tmp_path / "rules" / "BigOrder.l").write_text(
+        "---\nname: BigOrder\ndescription: Orders over 100.\n---\nimport tables.Orders.Orders;\n\n"
+        '@OrderBy(BigOrder, "order_id");\nBigOrder(order_id:) :- Orders(order_id:, amount:), amount > 100;\n'
+    )
+    (tmp_path / "orders.csv").write_text("order_id,amount\n1,50\n2,500\n")
+    for cwd in (tmp_path, tmp_path / "rules"):
+        result = synalog(
+            str(tmp_path / "rules" / "BigOrder.l"), "run", "BigOrder", "--csv",
+            "--load", f"orders={tmp_path / 'orders.csv'}", cwd=cwd,
+        )
+        assert result.returncode == 0, result.stderr
+        assert result.stdout.splitlines() == ["order_id", "2"]

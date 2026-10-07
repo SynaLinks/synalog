@@ -1,0 +1,2 @@
+SELECT
+  STRUCT(STRUCT(7 AS c) AS b).b.c AS v;

@@ -1,0 +1,2 @@
+SELECT
+  (('x=') || (SYNALOG_NUMBER_TEXT(3.5))) AS v;

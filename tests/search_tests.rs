@@ -265,9 +265,12 @@ fn search_multiple_columns_uses_or_all_engines() {
             engine,
             sql
         );
+        // A number is searched as `ToString` writes it, the same text on
+        // every engine (see DEVIATIONS.md), not as the engine casts it.
         assert!(
-            sql.contains(&format!("CAST(value AS {})", string_type(engine))),
-            "{}: should cast value, got:\n{}",
+            !sql.contains(&format!("CAST(value AS {})", string_type(engine)))
+                && (sql.contains("synalog_v") || sql.contains("SYNALOG_NUMBER_TEXT(value)")),
+            "{}: should read value as its number text, got:\n{}",
             engine,
             sql
         );
@@ -307,12 +310,9 @@ fn search_with_offset_all_engines() {
             None,
             Some(5),
         );
-        assert!(
-            sql.contains("OFFSET 5"),
-            "{}: should have OFFSET, got:\n{}",
-            engine,
-            sql
-        );
+        // PrestoDB disables OFFSET: the rows are numbered instead.
+        let skips = if *engine == "presto" { sql.contains("synalog_row > 5") } else { sql.contains("OFFSET 5") };
+        assert!(skips, "{}: should skip 5 rows, got:\n{}", engine, sql);
     }
 }
 
@@ -326,18 +326,13 @@ fn search_with_limit_and_offset_all_engines() {
             Some(10),
             Some(5),
         );
-        assert!(
-            sql.contains("LIMIT 10"),
-            "{}: should have LIMIT, got:\n{}",
-            engine,
-            sql
-        );
-        assert!(
-            sql.contains("OFFSET 5"),
-            "{}: should have OFFSET, got:\n{}",
-            engine,
-            sql
-        );
+        // PrestoDB disables OFFSET: the rows are numbered instead.
+        let (takes, skips) = if *engine == "presto" {
+            (sql.contains("synalog_row <= 15"), sql.contains("synalog_row > 5"))
+        } else {
+            (sql.contains("LIMIT 10"), sql.contains("OFFSET 5"))
+        };
+        assert!(takes && skips, "{}: should take rows 6 to 15, got:\n{}", engine, sql);
     }
 }
 
@@ -373,9 +368,11 @@ fn search_without_pagination_all_engines() {
 #[test]
 fn search_escapes_single_quotes_all_engines() {
     for engine in ALL_ENGINES {
+        // A quote of the pattern is escaped: doubled in a single-quoted
+        // literal, or inside a double-quoted one (Databricks, BigQuery).
         let sql = search_sql(&program_for(engine), "Test", "it's");
         assert!(
-            sql.contains("it''s"),
+            sql.contains("it''s") || sql.contains("\"it's\""),
             "{}: single quotes in pattern should be escaped, got:\n{}",
             engine,
             sql
@@ -396,5 +393,21 @@ fn search_nonexistent_predicate_returns_error_all_engines() {
             "{}: should error on nonexistent predicate",
             engine
         );
+    }
+}
+
+#[test]
+fn a_search_pattern_never_ends_its_literal() {
+    // On Databricks and BigQuery a backslash escapes in a literal: a pattern
+    // ending a literal with `\'` or `\"` would run what follows as SQL.
+    for engine in ALL_ENGINES {
+        for pattern in ["\\'); DROP TABLE t; --", "\\\"); DROP TABLE t; --", "'); DROP TABLE t; --"] {
+            let sql = search_sql(&program_for(engine), "Test", pattern);
+            let statements = sql.matches("DROP TABLE t").count();
+            assert_eq!(statements, 1, "{engine}: {sql}");
+            if matches!(*engine, "databricks" | "bigquery") {
+                assert!(!sql.contains("\\\"); DROP"), "{engine}: a quote is written \\u0022 there:\n{sql}");
+            }
+        }
     }
 }

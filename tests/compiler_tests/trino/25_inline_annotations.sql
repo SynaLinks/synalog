@@ -1,17 +1,17 @@
 WITH t_0_P1 AS (SELECT
-  (MOD(((x_2) * (17)), 39)) AS col0
+  (MOD(((x_2) * (17)), NULLIF(39, 0))) AS col0
 FROM
-  UNNEST(SEQUENCE(0, 10 - 1)) as pushkin(x_2) ORDER BY col0),
+  UNNEST(TRANSFORM(FILTER(SEQUENCE(0, 10), x -> x < 10), synalog_e -> ROW(synalog_e))) as pushkin(x_2) ORDER BY col0),
 t_0_P2 AS (SELECT
   x_5 AS col0
 FROM
-  UNNEST(SEQUENCE(0, 20 - 1)) as pushkin(x_5) LIMIT 5),
+  UNNEST(TRANSFORM(FILTER(SEQUENCE(0, 20), x -> x < 20), synalog_e -> ROW(synalog_e))) as pushkin(x_5) LIMIT 5),
 t_0_P3 AS (SELECT
   x_5 AS col0
 FROM
-  UNNEST(SEQUENCE(0, 20 - 1)) as pushkin(x_5)
+  UNNEST(TRANSFORM(FILTER(SEQUENCE(0, 20), x -> x < 20), synalog_e -> ROW(synalog_e))) as pushkin(x_5)
 WHERE
-  ((MOD(x_5, 2)) = 0) ORDER BY col0 LIMIT 3)
+  ((MOD(x_5, NULLIF(2, 0))) = 0) ORDER BY col0 LIMIT 3)
 SELECT * FROM (
   
     SELECT

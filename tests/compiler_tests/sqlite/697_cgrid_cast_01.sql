@@ -1,0 +1,2 @@
+SELECT
+  CAST('12' AS INTEGER) AS v;

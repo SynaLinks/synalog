@@ -1,0 +1,2 @@
+SELECT
+  FORMAT_STRING("%03d", 7) AS v;

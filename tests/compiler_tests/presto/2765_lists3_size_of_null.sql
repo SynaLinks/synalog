@@ -1,0 +1,2 @@
+SELECT
+  CARDINALITY(null) AS n;

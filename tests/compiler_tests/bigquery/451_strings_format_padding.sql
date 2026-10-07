@@ -1,0 +1,2 @@
+SELECT
+  FORMAT("%05d", 42) AS v;

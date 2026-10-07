@@ -1,0 +1,2 @@
+SELECT
+  COS(0) AS v;

@@ -1,0 +1,2 @@
+SELECT
+  CARDINALITY(SPLIT('', ',')) AS v;

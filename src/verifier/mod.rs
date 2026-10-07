@@ -11,6 +11,9 @@
 //! - Recursion safety (base cases, no trivial loops)
 //! - Ordering (the predicate a file's front matter names has `@OrderBy`)
 //! - Front matter (a name and a description)
+//! - Functors (each argument a predicate the functor depends on)
+//! - Directives (@OrderBy, @Limit, ... about a defined predicate and its columns)
+//! - Assertions (`@Assert` statements)
 
 mod vars;
 mod safety;
@@ -23,6 +26,10 @@ mod positional;
 mod undefined;
 mod orderby;
 mod front_matter;
+mod functors;
+mod directives;
+mod assertions;
+mod contradiction;
 
 pub use vars::VarCollector;
 pub use safety::{SafetyError, check_safety};
@@ -35,6 +42,9 @@ pub use positional::{PositionalError, check_positional};
 pub use undefined::{UndefinedError, builtin_function_names, check_undefined};
 pub use orderby::{OrderByError, check_order_by};
 pub use front_matter::{DescriptionError, NameError, check_description, check_name};
+pub use functors::{FunctorError, check_functors};
+pub use directives::{DirectiveError, check_directives};
+pub use assertions::{AssertionError, AssertionReport, AssertionStatus, check_assertions, assertion_check};
 
 use crate::parser::Json;
 use crate::errors::{VerifyError, VerifyResult};
@@ -53,6 +63,9 @@ pub enum CheckError {
     OrderBy(OrderByError),
     Name(NameError),
     Description(DescriptionError),
+    Functor(FunctorError),
+    Directive(DirectiveError),
+    Assert(AssertionError),
 }
 
 impl std::fmt::Display for CheckError {
@@ -69,6 +82,9 @@ impl std::fmt::Display for CheckError {
             CheckError::OrderBy(e) => write!(f, "{}", e),
             CheckError::Name(e) => write!(f, "{}", e),
             CheckError::Description(e) => write!(f, "{}", e),
+            CheckError::Functor(e) => write!(f, "{}", e),
+            CheckError::Directive(e) => write!(f, "{}", e),
+            CheckError::Assert(e) => write!(f, "{}", e),
         }
     }
 }
@@ -89,6 +105,9 @@ impl From<CheckError> for VerifyError {
             CheckError::OrderBy(oe) => oe.into(),
             CheckError::Name(ne) => ne.into(),
             CheckError::Description(de) => de.into(),
+            CheckError::Functor(fe) => fe.into(),
+            CheckError::Directive(de) => de.into(),
+            CheckError::Assert(se) => se.into(),
         }
     }
 }
@@ -104,6 +123,8 @@ impl From<CheckError> for crate::errors::SynalogError {
 pub struct CheckResult {
     pub errors: Vec<CheckError>,
     pub warnings: Vec<String>,
+    /// Every `@Assert` of the program and where it stands.
+    pub assertions: Vec<AssertionReport>,
 }
 
 impl CheckResult {
@@ -114,6 +135,7 @@ impl CheckResult {
     pub fn merge(&mut self, other: CheckResult) {
         self.errors.extend(other.errors);
         self.warnings.extend(other.warnings);
+        self.assertions.extend(other.assertions);
     }
 
     /// Convert to the unified VerifyResult type.
@@ -158,10 +180,8 @@ pub fn validate(parsed: &Json) -> CheckResult {
         .collect();
 
     // Check 1: Variable safety for each rule
-    for rule in &normal_rules {
-        for err in safety::check_rule_safety(rule) {
-            result.errors.push(CheckError::Safety(err));
-        }
+    for err in safety::check_safety(&normal_rules) {
+        result.errors.push(CheckError::Safety(err));
     }
 
     // Check 2: Stratification (no negative cycles)
@@ -193,6 +213,10 @@ pub fn validate(parsed: &Json) -> CheckResult {
     for err in sqlexpr::check_sqlexpr(&normal_rules) {
         result.errors.push(CheckError::SqlExpr(err));
     }
+    // ... and SQL text as a table name.
+    for err in undefined::check_table_names(&all_rules) {
+        result.errors.push(CheckError::SqlExpr(err));
+    }
 
     // Check 8: Positional arguments (Synalog requires named arguments)
     for err in positional::check_positional(&normal_rules) {
@@ -200,7 +224,8 @@ pub fn validate(parsed: &Json) -> CheckResult {
     }
 
     // Check 9: Undefined predicate references (typo detection with suggestions)
-    for err in undefined::check_undefined(&normal_rules) {
+    // All rules: a functor application (`D := F(...)`, an @Make) defines D.
+    for err in undefined::check_undefined(&all_rules) {
         result.errors.push(CheckError::Undefined(err));
     }
 
@@ -218,6 +243,36 @@ pub fn validate(parsed: &Json) -> CheckResult {
     if let Some(err) = front_matter::check_description(parsed) {
         result.errors.push(CheckError::Description(err));
     }
+
+    // Check 13: Functors (each argument a predicate the functor depends on)
+    for err in functors::check_functors(&all_rules) {
+        result.errors.push(CheckError::Functor(err));
+    }
+
+    // Check 14: Directives (@OrderBy, @Limit, ... about what the program defines)
+    for err in directives::check_directives(&all_rules) {
+        result.errors.push(CheckError::Directive(err));
+    }
+
+    // Check 15: Rules whose conditions contradict each other give no row.
+    result.warnings.extend(contradiction::check_contradictions(&normal_rules));
+
+    // Check 15: Assertions (@Assert statements)
+    let (assertions, spec_errors) = assertions::check_assertions(&all_rules);
+    for err in spec_errors {
+        result.errors.push(CheckError::Assert(err));
+    }
+    for assertion in &assertions {
+        if assertion.status == AssertionStatus::Unsupported {
+            if let Some(reason) = &assertion.detail {
+                result.warnings.push(format!(
+                    "Assertion '{}.{}' cannot be checked: {}",
+                    assertion.predicate, assertion.name, reason
+                ));
+            }
+        }
+    }
+    result.assertions = assertions;
 
     result
 }

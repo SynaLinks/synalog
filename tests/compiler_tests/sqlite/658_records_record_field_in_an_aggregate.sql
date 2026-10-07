@@ -1,0 +1,14 @@
+WITH t_0_V AS (SELECT * FROM (
+  
+    SELECT
+      JSON_OBJECT('a', 2) AS r
+   UNION ALL
+  
+    SELECT
+      JSON_OBJECT('a', 3) AS r
+  
+) AS UNUSED_TABLE_NAME  )
+SELECT
+  SUM(JSON_EXTRACT(V.r, "$.a")) AS t
+FROM
+  t_0_V AS V;

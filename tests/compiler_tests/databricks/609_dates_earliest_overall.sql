@@ -1,0 +1,4 @@
+SELECT
+  MIN(x_2) AS d
+FROM
+  LATERAL (SELECT explode(ARRAY("2024-01-01", "2022-07-04", "2023-03-03")) AS x_2) AS pushkin;

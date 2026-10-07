@@ -1,0 +1,2 @@
+SELECT
+  ABS(-0.0) AS v;

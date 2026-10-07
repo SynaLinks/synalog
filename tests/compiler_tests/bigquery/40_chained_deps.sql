@@ -35,6 +35,6 @@ WHERE
 SELECT
   Aggregated.total AS total,
   Aggregated.count AS count,
-  ((Aggregated.total) / (Aggregated.count)) AS avg
+  ((Aggregated.total) / NULLIF(Aggregated.count, 0)) AS avg
 FROM
-  t_0_Aggregated AS Aggregated ORDER BY total;
+  t_0_Aggregated AS Aggregated ORDER BY total NULLS LAST;

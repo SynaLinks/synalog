@@ -1,0 +1,11 @@
+WITH t_0_V AS (SELECT * FROM VALUES
+  ("g", null),
+  ("h", null),
+  ("h", "x")
+AS UNUSED_TABLE_NAME(g, s))
+SELECT
+  V.g AS g,
+  (CASE WHEN COUNT(V.s) > 0 THEN ARRAY_JOIN(COLLECT_LIST(CAST(V.s AS STRING)), ',') END) AS s
+FROM
+  t_0_V AS V
+GROUP BY 1 ORDER BY g NULLS LAST;

@@ -5,6 +5,7 @@
 
 use std::cell::RefCell;
 use std::collections::{HashMap, HashSet};
+use indexmap::IndexMap;
 use crate::parser::Json;
 use crate::compiler::{CompileResult, CompileError};
 use crate::compiler::annotations::Annotations;
@@ -189,7 +190,7 @@ impl LogicaProgram {
     /// Compile a single rule to SQL using the program's shared allocator.
     /// Matches Python's SingleRuleSql: extract → RunInjections → Eliminate → Constraints → AsSql
     fn single_rule_sql(&self, rule: &Json) -> CompileResult<String> {
-        self.single_rule_sql_ext(rule, None, false)
+        self.single_rule_sql_ext(rule, None, None, false)
     }
 
     /// Extended single rule SQL compilation with external vocabulary and combine support.
@@ -197,6 +198,7 @@ impl LogicaProgram {
         &self,
         rule: &Json,
         external_vocabulary: Option<&HashMap<String, String>>,
+        external_types: Option<&HashMap<String, crate::compiler::type_inference::Type>>,
         is_combine: bool,
     ) -> CompileResult<String> {
         // Take the allocator out, give to extract_rule_structure
@@ -229,6 +231,7 @@ impl LogicaProgram {
             Some(alloc),
             external_vocabulary.cloned(),
         )?;
+        structure.external_types = external_types.cloned().unwrap_or_default();
 
         // Run injections: inline single-rule predicates (like Python's RunInjections)
         self.run_injections(&mut structure)?;
@@ -314,8 +317,8 @@ impl LogicaProgram {
 
                     // Handle variable mappings: replace table references
                     // Preserve inv_vars_map entries not in vars_map (e.g. unnesting vars)
-                    let mut new_vars_map = HashMap::new();
-                    let mut new_inv_vars_map: HashMap<String, (String, String)> = s.inv_vars_map
+                    let mut new_vars_map = IndexMap::new();
+                    let mut new_inv_vars_map: IndexMap<String, (String, String)> = s.inv_vars_map
                         .iter()
                         .filter(|(_, (tbl, _))| tbl.is_empty()) // Keep unnesting entries
                         .map(|(k, v)| (k.clone(), v.clone()))
@@ -602,9 +605,10 @@ impl<'a> SubqueryTranslator for ProgramSubqueryTranslator<'a> {
         &self,
         rule: &Json,
         external_vocabulary: &HashMap<String, String>,
+        external_types: &HashMap<String, crate::compiler::type_inference::Type>,
         is_combine: bool,
     ) -> CompileResult<String> {
-        self.program.single_rule_sql_ext(rule, Some(external_vocabulary), is_combine)
+        self.program.single_rule_sql_ext(rule, Some(external_vocabulary), Some(external_types), is_combine)
     }
 }
 

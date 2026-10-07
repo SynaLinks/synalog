@@ -1,0 +1,7 @@
+SELECT
+  SUM(1) AS n
+FROM
+  (SELECT CURRENT_TIMESTAMP() AS timestamp) AS Now
+WHERE
+  (CAST(SUBSTR(CAST(Now.timestamp AS STRING), 12, 2) AS INT64) >= 0) AND
+  (CAST(SUBSTR(CAST(Now.timestamp AS STRING), 12, 2) AS INT64) <= 23);

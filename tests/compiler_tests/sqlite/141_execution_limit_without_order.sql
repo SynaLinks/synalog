@@ -1,0 +1,8 @@
+WITH t_0_Two AS (SELECT
+  x_4.value AS x
+FROM
+  JSON_EACH(JSON_ARRAY(1, 2, 3)) as x_4 LIMIT 2)
+SELECT
+  SUM(1) AS n
+FROM
+  t_0_Two AS Two;

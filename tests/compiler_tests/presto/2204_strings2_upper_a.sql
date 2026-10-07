@@ -1,0 +1,2 @@
+SELECT
+  UPPER('a') AS s;

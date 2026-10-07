@@ -1,0 +1,16 @@
+WITH t_1_X AS (SELECT * FROM VALUES
+  (1, 7),
+  (2, -7),
+  (3, 2.5E0),
+  (4, -2.5E0),
+  (5, 0),
+  (6, null),
+  (7, 0.1E0),
+  (8, -0.75E0)
+AS UNUSED_TABLE_NAME(k, x))
+SELECT
+  CASE WHEN (t_0_X.x > 0) THEN 1 WHEN (t_0_X.x < 0) THEN -1 ELSE 0 END AS s,
+  SUM(t_0_X.x) AS t
+FROM
+  t_1_X AS t_0_X
+GROUP BY 1 ORDER BY s NULLS LAST;

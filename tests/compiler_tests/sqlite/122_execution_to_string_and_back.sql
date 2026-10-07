@@ -1,0 +1,3 @@
+SELECT
+  SYNALOG_NUMBER_TEXT(12) AS s,
+  ((CAST('12' AS INTEGER)) + (1)) AS n;

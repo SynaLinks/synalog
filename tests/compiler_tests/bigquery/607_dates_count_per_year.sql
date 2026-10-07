@@ -1,0 +1,6 @@
+SELECT
+  SUBSTR(x_2, 1, 4) AS y,
+  SUM(1) AS n
+FROM
+  UNNEST(ARRAY["2024-01-01", "2023-05-05", "2024-12-31"]) as x_2
+GROUP BY y ORDER BY y;

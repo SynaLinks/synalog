@@ -1,0 +1,10 @@
+WITH t_0_E AS (SELECT * FROM VALUES
+  (1, 2),
+  (2, 3)
+AS UNUSED_TABLE_NAME(a, b))
+SELECT
+  ((MOD(E.a, NULLIF(2, 0))) = 1) AS odd,
+  SUM(1) AS n
+FROM
+  t_0_E AS E
+GROUP BY 1 ORDER BY odd NULLS LAST;

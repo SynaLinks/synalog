@@ -1,0 +1,4 @@
+SELECT
+  MAX(x_2) AS m
+FROM
+  LATERAL (SELECT explode(ARRAY("2023-12-31", "2024-03-01", "2024-01-15")) AS x_2) AS pushkin;

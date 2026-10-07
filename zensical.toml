@@ -31,6 +31,7 @@ nav = [
   { "Python API" = "python-api.md" },
   { "CLI interface" = "cli.md" },
   { "Verification" = "verification.md" },
+  { "Assertions" = "assertions.md" },
   { "Supported engines" = "engines.md" },
   { "Benchmark" = "benchmark.md" },
   { "Differences with Datalog" = "differences-datalog.md" },

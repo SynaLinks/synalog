@@ -1,0 +1,4 @@
+SELECT
+  AVG(x_2.value) AS a
+FROM
+  JSON_EACH(JSON_ARRAY(1, 2)) as x_2;

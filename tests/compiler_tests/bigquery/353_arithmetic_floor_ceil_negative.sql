@@ -1,0 +1,3 @@
+SELECT
+  FLOOR(-2.5) AS f,
+  CEIL(-2.5) AS c;

@@ -1,0 +1,2 @@
+SELECT
+  (CASE WHEN null < 0 THEN CEIL(null) ELSE FLOOR(null) END) AS v;

@@ -1,0 +1,4 @@
+SELECT
+  (CAST(7 AS DOUBLE) / NULLIF(2, 0)) AS a,
+  - (CAST(7 AS DOUBLE) / NULLIF(2, 0)) AS b,
+  (CAST(6 AS DOUBLE) / NULLIF(3, 0)) AS c;

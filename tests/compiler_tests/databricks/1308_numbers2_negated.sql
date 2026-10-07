@@ -1,0 +1,13 @@
+WITH t_1_N AS (SELECT * FROM VALUES
+  (-7),
+  (-2),
+  (0),
+  (3),
+  (12),
+  (1099511627776)
+AS UNUSED_TABLE_NAME(x))
+SELECT
+  t_0_N.x AS x,
+  - t_0_N.x AS n
+FROM
+  t_1_N AS t_0_N ORDER BY x NULLS LAST, n NULLS LAST;

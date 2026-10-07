@@ -1,0 +1,9 @@
+WITH t_0_R AS (SELECT * FROM VALUES
+  (1),
+  (1),
+  (2)
+AS UNUSED_TABLE_NAME(x))
+SELECT
+  R.x AS x
+FROM
+  t_0_R AS R ORDER BY x NULLS LAST;

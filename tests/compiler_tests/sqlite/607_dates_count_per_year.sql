@@ -1,0 +1,6 @@
+SELECT
+  SUBSTR(x_2.value, 1, 4) AS y,
+  SUM(1) AS n
+FROM
+  JSON_EACH(JSON_ARRAY('2024-01-01', '2023-05-05', '2024-12-31')) as x_2
+GROUP BY SUBSTR(x_2.value, 1, 4) ORDER BY y;

@@ -1,0 +1,4 @@
+SELECT
+  x_1 AS x
+FROM
+  UNNEST(ARRAY[15, 21, 25]) as x_1 ORDER BY x;

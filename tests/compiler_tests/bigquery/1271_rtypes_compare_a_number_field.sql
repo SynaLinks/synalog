@@ -1,0 +1,6 @@
+SELECT
+  x_1 AS n
+FROM
+  UNNEST(ARRAY[100, 9, 10]) as x_1
+WHERE
+  (x_1 > 9) ORDER BY n;

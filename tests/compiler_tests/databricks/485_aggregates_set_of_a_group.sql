@@ -1,0 +1,17 @@
+WITH t_2_V AS (SELECT * FROM VALUES
+  ("a", 1),
+  ("a", 1),
+  ("a", 2),
+  ("b", 7)
+AS UNUSED_TABLE_NAME(g, x)),
+t_1_S AS (SELECT
+  V.g AS g,
+  (CASE WHEN COUNT(*) = 0 THEN NULL ELSE ARRAY_DISTINCT(TRANSFORM(COLLECT_LIST(STRUCT(V.x AS v)), s -> s.v)) END) AS s
+FROM
+  t_2_V AS V
+GROUP BY 1)
+SELECT
+  t_0_S.g AS g,
+  ARRAY_SIZE(t_0_S.s) AS n
+FROM
+  t_1_S AS t_0_S ORDER BY g NULLS LAST;

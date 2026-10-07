@@ -1,0 +1,2 @@
+SELECT
+  ARRAY_JOIN(CAST(null AS ARRAY<STRING>), ",") AS s;

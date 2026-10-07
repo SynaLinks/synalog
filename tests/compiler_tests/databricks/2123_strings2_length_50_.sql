@@ -1,0 +1,2 @@
+SELECT
+  LENGTH("50%") AS n;

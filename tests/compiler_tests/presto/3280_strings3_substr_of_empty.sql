@@ -1,0 +1,2 @@
+SELECT
+  SUBSTR('', 1, 3) AS s;

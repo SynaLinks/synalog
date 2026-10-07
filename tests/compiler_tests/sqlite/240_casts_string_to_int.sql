@@ -1,0 +1,2 @@
+SELECT
+  ((CAST('42' AS INTEGER)) + (1)) AS n;

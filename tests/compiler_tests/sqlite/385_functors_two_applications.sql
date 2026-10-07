@@ -1,0 +1,4 @@
+SELECT
+  SUM(x_2.value) AS t
+FROM
+  JSON_EACH(JSON_ARRAY(10, 20)) as x_2;

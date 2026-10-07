@@ -1,0 +1,8 @@
+WITH t_0_Count AS (SELECT * FROM VALUES
+  (1),
+  (2)
+AS UNUSED_TABLE_NAME(x))
+SELECT
+  Count.x AS x
+FROM
+  t_0_Count AS Count ORDER BY x NULLS LAST;

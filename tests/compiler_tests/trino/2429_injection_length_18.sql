@@ -1,0 +1,2 @@
+SELECT
+  LENGTH('\x27; DROP TABLE t') AS n;

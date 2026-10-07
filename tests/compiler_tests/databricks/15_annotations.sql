@@ -1,19 +1,19 @@
 WITH t_0_Sorted AS (SELECT
   x_5 AS col0
 FROM
-  explode(SEQUENCE(0, 20 - 1)) AS pushkin(x_5)
+  LATERAL (SELECT explode(FILTER(SEQUENCE(0, CAST(20 AS BIGINT)), x -> x < 20)) AS x_5) AS pushkin
 WHERE
-  ((MOD(x_5, 2)) = 0) ORDER BY col0),
+  ((MOD(x_5, NULLIF(2, 0))) = 0) ORDER BY col0 NULLS LAST),
 t_0_Top5 AS (SELECT
   x_5 AS col0
 FROM
-  explode(SEQUENCE(0, 20 - 1)) AS pushkin(x_5) ORDER BY col0 LIMIT 5),
+  LATERAL (SELECT explode(FILTER(SEQUENCE(0, CAST(20 AS BIGINT)), x -> x < 20)) AS x_5) AS pushkin ORDER BY col0 NULLS LAST LIMIT 5),
 t_0_TopEven AS (SELECT
   x_5 AS col0
 FROM
-  explode(SEQUENCE(0, 20 - 1)) AS pushkin(x_5)
+  LATERAL (SELECT explode(FILTER(SEQUENCE(0, CAST(20 AS BIGINT)), x -> x < 20)) AS x_5) AS pushkin
 WHERE
-  ((MOD(x_5, 2)) = 0) ORDER BY col0 LIMIT 3)
+  ((MOD(x_5, NULLIF(2, 0))) = 0) ORDER BY col0 NULLS LAST LIMIT 3)
 SELECT * FROM (
   
     SELECT
@@ -36,4 +36,4 @@ SELECT * FROM (
     FROM
       t_0_TopEven AS TopEven
   
-) AS UNUSED_TABLE_NAME  ORDER BY col0, col1 ;
+) AS UNUSED_TABLE_NAME  ORDER BY col0 NULLS LAST, col1 NULLS LAST ;

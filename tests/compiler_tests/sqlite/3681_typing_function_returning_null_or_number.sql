@@ -1,0 +1,15 @@
+WITH t_0_V AS (SELECT * FROM (
+  
+    SELECT
+      1 AS x
+   UNION ALL
+  
+    SELECT
+      4 AS x
+  
+) AS UNUSED_TABLE_NAME  )
+SELECT
+  V.x AS x,
+  CASE WHEN ((((V.x) - (2) * CAST((V.x) / NULLIF(2, 0) AS INTEGER))) = 0) THEN (CAST(V.x AS REAL) / NULLIF(2, 0)) ELSE null END AS h
+FROM
+  t_0_V AS V ORDER BY x NULLS LAST;

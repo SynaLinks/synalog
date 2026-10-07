@@ -7,7 +7,7 @@ WITH t_0_AllSquares AS (SELECT * FROM (
     FROM
       JSON_EACH((select json_group_array(n) from (with recursive t as(select 0 as n union all select n + 1 as n from t where n + 1 < 10) select n from t) where n < 10)) as x_15
     WHERE
-      (((x_15.value) % (2)) = 0)
+      ((((x_15.value) - (2) * CAST((x_15.value) / NULLIF(2, 0) AS INTEGER))) = 0)
    UNION ALL
   
     SELECT
@@ -17,7 +17,7 @@ WITH t_0_AllSquares AS (SELECT * FROM (
     FROM
       JSON_EACH((select json_group_array(n) from (with recursive t as(select 0 as n union all select n + 1 as n from t where n + 1 < 10) select n from t) where n < 10)) as x_25
     WHERE
-      (((x_25.value) % (2)) = 1)
+      ((((x_25.value) - (2) * CAST((x_25.value) / NULLIF(2, 0) AS INTEGER))) = 1)
   
 ) AS UNUSED_TABLE_NAME  )
 SELECT
@@ -25,4 +25,4 @@ SELECT
   AllSquares.sq AS sq,
   AllSquares.type AS type
 FROM
-  t_0_AllSquares AS AllSquares ORDER BY x;
+  t_0_AllSquares AS AllSquares ORDER BY x NULLS LAST;

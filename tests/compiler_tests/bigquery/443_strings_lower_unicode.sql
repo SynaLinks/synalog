@@ -1,0 +1,2 @@
+SELECT
+  LOWER("ÀB") AS v;

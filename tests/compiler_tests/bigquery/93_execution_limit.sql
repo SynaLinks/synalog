@@ -1,0 +1,4 @@
+SELECT
+  x_3 AS x
+FROM
+  UNNEST(ARRAY[4, 1, 9, 7]) as x_3 ORDER BY x DESC LIMIT 2;

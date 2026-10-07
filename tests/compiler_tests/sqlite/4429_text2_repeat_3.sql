@@ -1,0 +1,47 @@
+WITH t_0_W AS (SELECT * FROM (
+  
+    SELECT
+      1 AS k,
+      'Hello' AS s
+   UNION ALL
+  
+    SELECT
+      2 AS k,
+      ' a ' AS s
+   UNION ALL
+  
+    SELECT
+      3 AS k,
+      '' AS s
+   UNION ALL
+  
+    SELECT
+      4 AS k,
+      'aaa' AS s
+   UNION ALL
+  
+    SELECT
+      5 AS k,
+      null AS s
+   UNION ALL
+  
+    SELECT
+      6 AS k,
+      'hello world' AS s
+   UNION ALL
+  
+    SELECT
+      7 AS k,
+      'naïve' AS s
+   UNION ALL
+  
+    SELECT
+      8 AS k,
+      'lol' AS s
+  
+) AS UNUSED_TABLE_NAME  )
+SELECT
+  W.k AS k,
+  (CASE WHEN W.s IS NULL OR 3 IS NULL THEN NULL ELSE REPLACE(HEX(ZEROBLOB(3)), '00', W.s) END) AS v
+FROM
+  t_0_W AS W ORDER BY k NULLS LAST;

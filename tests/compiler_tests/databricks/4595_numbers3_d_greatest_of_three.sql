@@ -1,0 +1,15 @@
+WITH t_1_X AS (SELECT * FROM VALUES
+  (1, 7),
+  (2, -7),
+  (3, 2.5E0),
+  (4, -2.5E0),
+  (5, 0),
+  (6, null),
+  (7, 0.1E0),
+  (8, -0.75E0)
+AS UNUSED_TABLE_NAME(k, x))
+SELECT
+  t_0_X.k AS k,
+  (CASE WHEN t_0_X.x IS NULL OR 1 IS NULL OR -1 IS NULL THEN NULL ELSE GREATEST(t_0_X.x, 1, -1) END) AS v
+FROM
+  t_1_X AS t_0_X ORDER BY k NULLS LAST;

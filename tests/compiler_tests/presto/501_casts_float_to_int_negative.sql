@@ -1,0 +1,2 @@
+SELECT
+  CAST(-2.5E0 AS BIGINT) AS v;

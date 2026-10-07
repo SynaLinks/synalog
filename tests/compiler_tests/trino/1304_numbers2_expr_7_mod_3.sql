@@ -1,0 +1,2 @@
+SELECT
+  (MOD(7, NULLIF(3, 0))) AS v;

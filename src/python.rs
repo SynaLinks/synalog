@@ -11,12 +11,17 @@ use pyo3::exceptions::PyValueError;
 use pyo3::prelude::*;
 
 use crate::compiler::dialects;
-use crate::compiler::universe::{LogicaProgram, Pagination};
-use crate::parser::{front_matter as read_front_matter, parse_file, Json};
-use crate::verifier::{builtin_function_names, reserved_predicate_names, validate};
+use crate::compiler::universe::{LogicaProgram, Pagination, PlanStep};
+use crate::parser::{front_matter as read_front_matter, parse_file, Json, PredicateNames};
+use crate::verifier::{builtin_function_names, reserved_predicate_names, assertion_check, validate};
 
 fn map_err<E: std::fmt::Display>(e: E) -> PyErr {
     PyValueError::new_err(e.to_string())
+}
+
+/// An error that names predicates as they were written, not as imports renamed them.
+fn written_err<E: std::fmt::Display>(names: &PredicateNames) -> impl Fn(E) -> PyErr + '_ {
+    move |e| PyValueError::new_err(names.written(&e.to_string()))
 }
 
 fn parse_source(
@@ -96,11 +101,12 @@ fn compile(
 ) -> PyResult<String> {
     check_engine(engine)?;
     let parsed = parse_source(source, None, import_root)?;
+    let names = PredicateNames::of(&parsed);
     let program = build_program(&parsed, engine)?;
     let pagination = Pagination { limit, offset };
     program
-        .formatted_predicate_sql_with_pagination(predicate, &pagination)
-        .map_err(map_err)
+        .formatted_predicate_sql_with_pagination(&names.internal(predicate), &pagination)
+        .map_err(written_err(&names))
 }
 
 /// Compile a predicate to SQL that keeps only rows where some column matches
@@ -127,11 +133,12 @@ fn search(
 ) -> PyResult<String> {
     check_engine(engine)?;
     let parsed = parse_source(source, None, import_root)?;
+    let names = PredicateNames::of(&parsed);
     let program = build_program(&parsed, engine)?;
     let pagination = Pagination { limit, offset };
     program
-        .formatted_predicate_sql_with_search(predicate, pattern, &pagination)
-        .map_err(map_err)
+        .formatted_predicate_sql_with_search(&names.internal(predicate), pattern, &pagination)
+        .map_err(written_err(&names))
 }
 
 /// Compile every defined predicate to SQL; returns {predicate_name: sql}.
@@ -159,7 +166,12 @@ fn compile_all(
     Ok(out)
 }
 
-/// Validate a Synalog program; returns a list of error messages (empty = valid).
+/// Validate a Synalog program; returns `(errors, warnings)`, two lists of
+/// messages.
+///
+/// The program is valid when `errors` is empty. Warnings do not make it
+/// invalid: they report assertions that are well-formed but cannot be checked
+/// against a database.
 ///
 /// `engine` overrides the program's `@Engine` annotation (default: duckdb).
 /// Raises ValueError on syntax errors.
@@ -169,11 +181,158 @@ fn check(
     source: &str,
     engine: Option<&str>,
     import_root: Option<Vec<String>>,
-) -> PyResult<Vec<String>> {
+) -> PyResult<(Vec<String>, Vec<String>)> {
     check_engine(engine)?;
     let parsed = parse_source(source, None, import_root)?;
+    let names = PredicateNames::of(&parsed);
     let result = validate(&parsed);
-    Ok(result.errors.iter().map(|e| e.to_string()).collect())
+    let errors = result.errors.iter().map(|e| names.written(&e.to_string())).collect();
+    let warnings = result.warnings.iter().map(|w| names.written(w)).collect();
+    Ok((errors, warnings))
+}
+
+/// Every `@Assert` of a program and where it stands.
+///
+/// Returns one dict per assertion, in source order, with the keys `predicate`,
+/// `name`, `statement`, `status` and `detail`:
+///
+/// - `"pending"`: a predicate the assertion is about is not defined yet (`detail`
+///   names what it waits for);
+/// - `"unchecked"`: the statement can be checked against a database, see
+///   `counterexamples`;
+/// - `"unsupported"`: the statement is well-formed but cannot be checked
+///   against a database (`detail` says why).
+///
+/// Invalid assertions (a statement that does not parse, a duplicate, ...) are
+/// reported by `check`, not here. Raises ValueError on syntax errors.
+#[pyfunction]
+#[pyo3(signature = (source, engine=None, import_root=None))]
+fn assertions(
+    source: &str,
+    engine: Option<&str>,
+    import_root: Option<Vec<String>>,
+) -> PyResult<Vec<HashMap<&'static str, Option<String>>>> {
+    check_engine(engine)?;
+    let parsed = parse_source(source, None, import_root)?;
+    let names = PredicateNames::of(&parsed);
+    Ok(validate(&parsed)
+        .assertions
+        .into_iter()
+        .map(|assertion| {
+            HashMap::from([
+                ("predicate", Some(names.written(&assertion.predicate))),
+                ("name", Some(assertion.name)),
+                ("statement", Some(assertion.statement)),
+                ("status", Some(assertion.status.to_string())),
+                ("detail", assertion.detail.map(|detail| names.written(&detail))),
+            ])
+        })
+        .collect())
+}
+
+/// Compile the search for the counterexamples of an assertion to SQL.
+///
+/// The assertion `name` of `predicate` holds on a database when this query returns
+/// no row there; each row it returns is a counterexample, one column per
+/// universally quantified variable of the statement. `limit`/`offset` paginate
+/// as in `compile`.
+///
+/// Raises ValueError if there is no such assertion, if it is pending or cannot be
+/// checked, and on syntax or compilation errors.
+#[pyfunction]
+#[pyo3(signature = (source, predicate, name, limit=None, offset=None, engine=None, import_root=None))]
+fn counterexamples(
+    source: &str,
+    predicate: &str,
+    name: &str,
+    limit: Option<u64>,
+    offset: Option<u64>,
+    engine: Option<&str>,
+    import_root: Option<Vec<String>>,
+) -> PyResult<String> {
+    check_engine(engine)?;
+    let parsed = parse_source(source, None, import_root.clone())?;
+    let names = PredicateNames::of(&parsed);
+    let rules: Vec<&Json> = parsed.as_object()["rule"].as_array().iter().collect();
+    let translation = assertion_check(&rules, &names.internal(predicate), name).map_err(written_err(&names))?;
+    // The counterexamples are a predicate of the program like any other.
+    let extended = format!("{}\n{}\n", source, translation.rules);
+    let parsed = parse_source(&extended, None, import_root)?;
+    let program = build_program(&parsed, engine)?;
+    let pagination = Pagination { limit, offset };
+    program
+        .formatted_predicate_sql_with_pagination(&translation.predicate, &pagination)
+        .map_err(map_err)
+}
+
+/// The steps that compute a predicate, for a runner that executes them.
+///
+/// Each step is a dict: `{"kind": "setup", "sql": ...}` (the engine's setup, a
+/// script), `{"kind": "sql", "sql": ...}` (one statement; the last step's rows
+/// are the predicate's), or `{"kind": "loop", "body": [...], "repetitions": n,
+/// "changed": ...}`: a deep recursion's iteration, whose `body` statements run
+/// again, at most `repetitions` times, until the `changed` query returns 0.
+/// `synalog.execute` runs plans; `compile` writes the loops out instead.
+///
+/// With `assertion`, the plan computes the counterexamples of the assertion of
+/// that name of `predicate`; with `pattern`, the predicate's rows matching it,
+/// as `search`. `limit`/`offset` paginate as in `compile`.
+#[pyfunction]
+#[pyo3(signature = (source, predicate, limit=None, offset=None, engine=None, import_root=None, pattern=None, assertion=None))]
+#[allow(clippy::too_many_arguments)]
+fn plan(
+    py: Python<'_>,
+    source: &str,
+    predicate: &str,
+    limit: Option<u64>,
+    offset: Option<u64>,
+    engine: Option<&str>,
+    import_root: Option<Vec<String>>,
+    pattern: Option<&str>,
+    assertion: Option<&str>,
+) -> PyResult<Vec<Py<PyAny>>> {
+    check_engine(engine)?;
+    let (source, predicate) = match assertion {
+        Some(name) => {
+            let parsed = parse_source(source, None, import_root.clone())?;
+            let names = PredicateNames::of(&parsed);
+            let rules: Vec<&Json> = parsed.as_object()["rule"].as_array().iter().collect();
+            let translation =
+                assertion_check(&rules, &names.internal(predicate), name).map_err(written_err(&names))?;
+            (format!("{}\n{}\n", source, translation.rules), translation.predicate)
+        }
+        None => (source.to_string(), predicate.to_string()),
+    };
+    let parsed = parse_source(&source, None, import_root)?;
+    let names = PredicateNames::of(&parsed);
+    let program = build_program(&parsed, engine)?;
+    let pagination = Pagination { limit, offset };
+    let steps = program
+        .formatted_predicate_plan(&names.internal(&predicate), Some(&pagination), pattern)
+        .map_err(written_err(&names))?;
+    steps
+        .into_iter()
+        .map(|step| {
+            let dict = pyo3::types::PyDict::new(py);
+            match step {
+                PlanStep::Setup(sql) => {
+                    dict.set_item("kind", "setup")?;
+                    dict.set_item("sql", sql)?;
+                }
+                PlanStep::Sql(sql) => {
+                    dict.set_item("kind", "sql")?;
+                    dict.set_item("sql", sql)?;
+                }
+                PlanStep::Loop { body, repetitions, changed } => {
+                    dict.set_item("kind", "loop")?;
+                    dict.set_item("body", body)?;
+                    dict.set_item("repetitions", repetitions)?;
+                    dict.set_item("changed", changed)?;
+                }
+            }
+            Ok(dict.into_any().unbind())
+        })
+        .collect()
 }
 
 /// Predicate names Synalog defines itself, sorted.
@@ -200,6 +359,22 @@ fn reserved_predicates() -> Vec<String> {
 /// position, and an unknown call name is compiled as a SQL passthrough rather
 /// than treated as a relation. An embedder checking references must skip them,
 /// or `Substr(s, 1, 7)` reads as a reference to a missing table.
+/// A database value as a report shows it: a double-quoted literal, its line
+/// breaks, control, invisible and reordering characters escaped, at most 200
+/// characters of it. Reports of assertions show counterexample values so:
+/// text in the data reads as one value, never as part of the report.
+#[pyfunction]
+fn quote_value(text: &str) -> String {
+    crate::assertion::report::quote_value(text)
+}
+
+/// An assertion's statement as a report shows it: on one line, the
+/// characters `quote_value` escapes escaped.
+#[pyfunction]
+fn statement_text(text: &str) -> String {
+    crate::assertion::report::statement_text(text)
+}
+
 #[pyfunction]
 fn builtin_functions() -> Vec<String> {
     let mut names: Vec<String> = builtin_function_names().iter().cloned().collect();
@@ -226,6 +401,11 @@ fn _synalog(m: &Bound<'_, PyModule>) -> PyResult<()> {
     m.add_function(wrap_pyfunction!(search, m)?)?;
     m.add_function(wrap_pyfunction!(compile_all, m)?)?;
     m.add_function(wrap_pyfunction!(check, m)?)?;
+    m.add_function(wrap_pyfunction!(assertions, m)?)?;
+    m.add_function(wrap_pyfunction!(counterexamples, m)?)?;
+    m.add_function(wrap_pyfunction!(plan, m)?)?;
+    m.add_function(wrap_pyfunction!(quote_value, m)?)?;
+    m.add_function(wrap_pyfunction!(statement_text, m)?)?;
     m.add_function(wrap_pyfunction!(reserved_predicates, m)?)?;
     m.add_function(wrap_pyfunction!(builtin_functions, m)?)?;
     m.add_function(wrap_pyfunction!(front_matter, m)?)?;

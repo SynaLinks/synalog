@@ -1,0 +1,2 @@
+SELECT
+  CEIL(2.1E0) AS v;

@@ -1,0 +1,4 @@
+SELECT
+  x_1.value AS x
+FROM
+  JSON_EACH(JSON_ARRAY(5, 3, 1, 4, 2)) as x_1 ORDER BY x LIMIT 3;

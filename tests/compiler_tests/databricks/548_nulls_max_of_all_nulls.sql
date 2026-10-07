@@ -1,0 +1,8 @@
+WITH t_0_V AS (SELECT * FROM VALUES
+  (null),
+  (null)
+AS UNUSED_TABLE_NAME(x))
+SELECT
+  MAX(V.x) AS m
+FROM
+  t_0_V AS V;

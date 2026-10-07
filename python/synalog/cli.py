@@ -26,7 +26,6 @@ options above also apply to the session.
 from __future__ import annotations
 
 import csv
-import json
 import os
 import re
 import sys
@@ -41,12 +40,25 @@ from rich.table import Table
 from rich.text import Text
 
 from . import __version__, project
-from ._synalog import SUPPORTED_ENGINES, check, compile, parse, search
-from .runners import RunnerUnavailable, run_sql
+from ._synalog import (
+    SUPPORTED_ENGINES,
+    check,
+    compile,
+    parse,
+    plan,
+    search,
+    assertions,
+    statement_text,
+)
+from .checking import program_engine, project_engine as _project_engine, resolve_dsn as _resolve_dsn, shown_value, violated_assertions
+from .runners import RunnerUnavailable, run_plan, run_sql, session
 
 DEFAULT_ENGINE = "duckdb"
 
-COMMANDS = ("print", "run")
+COMMANDS = ("print", "run", "verify")
+
+#: Counterexamples shown per violated assertion by `verify`, unless --limit is given.
+VERIFY_LIMIT = 5
 
 out = Console()
 err = Console(stderr=True)
@@ -54,6 +66,10 @@ err = Console(stderr=True)
 
 def print_error(message: object) -> None:
     err.print(str(message), style="red", markup=False, highlight=False, soft_wrap=True)
+
+
+def print_warning(message: object) -> None:
+    err.print(str(message), style="yellow", markup=False, highlight=False, soft_wrap=True)
 
 
 def fail(message: object) -> None:
@@ -91,55 +107,26 @@ def _dotenv_dirs(args: tuple[str, ...], inline: str | None) -> list[str]:
     return dirs
 
 
-def _project_engine(project_file: Path | None) -> str | None:
-    """The engine the project connects to, if it has a connection."""
-    if project_file is None:
-        return None
-    conn = project.connection(project_file)
-    return conn["engine"] if conn else None
-
-
-def _resolve_dsn(engine: str, dsn: str | None, project_file: Path | None) -> str | None:
-    """--dsn, else SYNALOG_<ENGINE>_DSN (the runner reads it), else the
-    project's connection for this engine; the runner falls back to the saved
-    connection when this is None."""
-    if dsn or os.environ.get(f"SYNALOG_{engine.upper()}_DSN") or project_file is None:
-        return dsn
-    if engine not in project.ENGINES:
-        return None
-    return project.project_dsn(project_file, engine)
-
-
 def import_roots(file: str | None, flag_roots: tuple[str, ...]) -> list[str]:
     """Directories where `import` statements look up .l files.
 
-    Explicit --import-root flags win; otherwise the program file's directory
-    and the current directory are searched, in that order.
+    Explicit --import-root flags win. Otherwise the project's folder comes
+    first — the one holding the `synalog.toml` of the program's folder or of
+    the current directory — so `import tables.Orders.Orders;` reads the
+    project's `tables/Orders.l` from any of its files; then the program file's
+    directory and the current directory.
     """
     if flag_roots:
         return list(flag_roots)
+    program_dir = os.path.dirname(os.path.abspath(file)) if file and file != "-" else None
     roots = []
-    if file and file != "-":
-        roots.append(os.path.dirname(os.path.abspath(file)))
-    roots.append(os.getcwd())
+    project_file = project.find(*([program_dir] if program_dir else []), os.getcwd())
+    if project_file is not None:
+        roots.append(str(project_file.parent))
+    for directory in (program_dir, os.getcwd()):
+        if directory and directory not in roots:
+            roots.append(directory)
     return roots
-
-
-def program_engine(source: str, roots: list[str]) -> str | None:
-    """Return the engine declared via @Engine, or None."""
-    ast = json.loads(parse(source, import_root=roots))
-    for rule in ast.get("rule", []):
-        head = rule.get("head", {})
-        if head.get("predicate_name") != "@Engine":
-            continue
-        for field_value in head.get("record", {}).get("field_value", []):
-            literal = (
-                field_value.get("value", {}).get("expression", {}).get("literal", {})
-            )
-            name = literal.get("the_string", {}).get("the_string")
-            if name:
-                return name
-    return None
 
 
 def render_table(columns: list[str], rows: list[tuple]) -> Table:
@@ -271,7 +258,7 @@ def cmd_connect(args: tuple[str, ...]) -> int:
 
 
 def cmd_introspect(args: tuple[str, ...], dsn: str | None, project_file: Path | None) -> int:
-    """Print `# Tables` predicates learned from a database schema.
+    """Write the project's table files from its database's schema.
 
     \b
     synalog introspect                   introspect the project's connection (synalog.toml)
@@ -280,9 +267,10 @@ def cmd_introspect(args: tuple[str, ...], dsn: str | None, project_file: Path | 
 
     The DSN is resolved like everywhere else: the argument here (or --dsn) wins,
     then SYNALOG_<ENGINE>_DSN, then synalog.toml, then the saved connection.
-    Output goes to stdout, so redirect it into a file:  synalog introspect > tables.l
+    In a project, each table becomes a file of its tables/ folder (a file that
+    exists keeps its front matter); elsewhere, the declarations are printed.
     """
-    from .introspect import INTROSPECTABLE, introspect
+    from .introspect import INTROSPECTABLE, catalog, predicates, tables, write_tables
 
     if len(args) > 2:
         raise click.UsageError("usage: synalog introspect [engine] [dsn]")
@@ -299,12 +287,25 @@ def cmd_introspect(args: tuple[str, ...], dsn: str | None, project_file: Path | 
         )
     explicit = args[1] if len(args) > 1 else dsn
     try:
-        text = introspect(engine, _resolve_dsn(engine, explicit, project_file))
+        rows = catalog(engine, _resolve_dsn(engine, explicit, project_file))
+        if project_file is None:
+            click.echo(predicates(engine, rows), nl=False)
+            return 0
+        found, skipped = tables(rows)
+        folder = project_file.parent / "tables"
+        result = write_tables(folder, found)
     except (ValueError, RunnerUnavailable, OSError) as e:
         fail(e)
     except Exception as e:  # surface a driver/server error without a traceback
         fail(f"{type(e).__name__}: {e}")
-    click.echo(text, nl=False)
+    click.echo(f"Wrote {len(result['written'])} table file(s) to {folder}")
+    for note in skipped:
+        click.echo(note)
+    if result["gone"]:
+        click.echo(
+            "Not in the database any more (kept, other files may import them): "
+            + ", ".join(result["gone"])
+        )
     return 0
 
 
@@ -376,11 +377,17 @@ def main(args, inline, engine, limit, offset, as_csv, search_pattern, dsn,
       synalog program.l print Predicate ...   print compiled SQL
       synalog program.l run Predicate ...     execute and print a table
       synalog program.l run Predicate --csv   execute and print CSV
+      synalog program.l verify [Predicate ...] check the @Assert statements
       synalog connect ENGINE DSN              save a remote engine connection
-      synalog introspect ENGINE               print Tables predicates for a schema
+      synalog introspect [ENGINE]             write a project's tables/ from its database
 
-    print and run validate the whole program first, aborting with the verifier's
-    errors if it is invalid.
+    print, run and verify validate the whole program first, aborting with the
+    verifier's errors if it is invalid. run also checks the @Assert statements
+    against the database and refuses a program that violates one.
+
+    verify runs every @Assert of the program (or of the given predicates) against
+    the database and prints the counterexamples of those that do not hold
+    (--limit of them, 5 by default); it exits 1 if any assertion is violated.
 
     Add --search REGEX to print/run to keep only rows where some
     column matches REGEX (engine-native regex, not a SQL LIKE pattern), e.g.
@@ -438,7 +445,7 @@ def main(args, inline, engine, limit, offset, as_csv, search_pattern, dsn,
         )
     if inline is not None and predicates and os.path.exists(predicates[0]):
         raise click.UsageError("FILE and -c are mutually exclusive.")
-    if not predicates:
+    if not predicates and command != "verify":
         raise click.UsageError("Missing argument 'PREDICATES...'.")
     if as_csv and command != "run":
         raise click.UsageError("--csv applies to run only")
@@ -468,14 +475,77 @@ def main(args, inline, engine, limit, offset, as_csv, search_pattern, dsn,
 
     def validate_or_fail(eng: str | None) -> None:
         """Run the verifier over the whole program; abort on any error."""
-        errors = check(source, engine=eng, import_root=roots)
+        errors, warnings = check(source, engine=eng, import_root=roots)
+        for warning in warnings:
+            print_warning(warning)
         if errors:
             for error in errors:
                 print_error(error)
             sys.exit(1)
 
+    def run_pred(predicate: str, eng: str, open_session, assertion: str | None = None, rows_limit=None):
+        """Run a predicate's plan (or an assertion's counterexamples) in the
+        session: each recursion stops as soon as it converges."""
+        steps = plan(
+            source,
+            predicate,
+            limit=limit if rows_limit is None else rows_limit,
+            offset=offset if assertion is None else None,
+            engine=eng,
+            import_root=roots,
+            pattern=search_pattern if assertion is None else None,
+            assertion=assertion,
+        )
+        return run_plan(steps, open_session)
+
+    def verify(eng: str, open_session) -> bool:
+        """Run the assertions against the database; False if any is violated."""
+        selected = [
+            assertion
+            for assertion in assertions(source, engine=eng, import_root=roots)
+            if not predicates or assertion["predicate"] in predicates
+        ]
+        unknown = set(predicates) - {assertion["predicate"] for assertion in selected}
+        if unknown:
+            raise ValueError(f"No assertion for {', '.join(sorted(unknown))}")
+        shown = VERIFY_LIMIT if limit is None else limit
+        ok = True
+        for assertion in selected:
+            label = f"{assertion['predicate']}.{assertion['name']}"
+            if assertion["status"] != "unchecked":
+                detail = f": {assertion['detail']}" if assertion["detail"] else ""
+                out.print(f"- {label} {assertion['status']}{detail}", style="yellow", markup=False, highlight=False)
+                continue
+            # One row past the limit tells whether there are more.
+            columns, rows = run_pred(
+                assertion["predicate"], eng, open_session, assertion=assertion["name"], rows_limit=shown + 1
+            )
+            if not rows:
+                out.print(f"✓ {label} holds", style="green", markup=False, highlight=False)
+                continue
+            ok = False
+            more = "at least " if len(rows) > shown else ""
+            count = min(len(rows), shown)
+            out.print(
+                f"✗ {label} is violated: {statement_text(assertion['statement'])}\n"
+                f"  {more}{count} counterexample{'' if count == 1 else 's'}:",
+                style="red",
+                markup=False,
+                highlight=False,
+            )
+            # Values from the database read as values, never as report text.
+            out.print(render_table(columns, [tuple(shown_value(v) for v in row) for row in rows[:shown]]))
+        return ok
+
     try:
-        if command == "print":
+        if command == "verify":
+            resolved = engine or program_engine(source, roots) or default_engine or DEFAULT_ENGINE
+            validate_or_fail(resolved)
+            with session(resolved, _resolve_dsn(resolved, dsn, project_file), loads) as s:
+                ok = verify(resolved, s)
+            if not ok:
+                sys.exit(1)
+        elif command == "print":
             dialect = engine or default_engine
             validate_or_fail(dialect)
             for predicate in predicates:
@@ -485,17 +555,25 @@ def main(args, inline, engine, limit, offset, as_csv, search_pattern, dsn,
             resolved = engine or program_engine(source, roots) or default_engine or DEFAULT_ENGINE
             validate_or_fail(resolved)
             run_dsn = _resolve_dsn(resolved, dsn, project_file)
-            for predicate in predicates:
-                sql = compile_pred(predicate, resolved)
-                columns, rows = run_sql(resolved, sql, dsn=run_dsn, loads=loads)
-                if as_csv:
-                    writer = csv.writer(sys.stdout)
-                    writer.writerow(columns)
-                    writer.writerows(rows)
-                else:
-                    out.print(render_table(columns, rows))
+            with session(resolved, run_dsn, loads) as s:
+                # run has a database: a violated assertion refuses the program.
+                violated = violated_assertions(source, resolved, roots, open_session=s)
+                if violated:
+                    for error in violated:
+                        print_error(error)
+                    sys.exit(1)
+                for predicate in predicates:
+                    columns, rows = run_pred(predicate, resolved, s)
+                    if as_csv:
+                        writer = csv.writer(sys.stdout)
+                        writer.writerow(columns)
+                        writer.writerows(rows)
+                    else:
+                        out.print(render_table(columns, rows))
     except (ValueError, RunnerUnavailable, OSError) as e:
         fail(e)
+    except Exception as e:  # a driver or server error: report it, no traceback
+        fail(f"{type(e).__name__}: {e}")
 
 
 # ---------------------------------------------------------------------------
@@ -591,7 +669,7 @@ class Repl:
     def add_statement(self, statement: str) -> None:
         candidate = self.source + "\n" + statement if self.statements else statement
         try:
-            errors = check(candidate, engine=self.engine, import_root=self.roots)
+            errors, _ = check(candidate, engine=self.engine, import_root=self.roots)
         except ValueError as e:
             # An import is only "used" once a later rule references it; in an
             # interactive session that rule comes after, so defer this check.
@@ -608,19 +686,11 @@ class Repl:
 
     def query(self, predicate: str, pattern: str | None = None) -> None:
         try:
-            if pattern is None:
-                sql = compile(
-                    self.source, predicate, engine=self.engine, import_root=self.roots
-                )
-            else:
-                sql = search(
-                    self.source,
-                    predicate,
-                    pattern,
-                    engine=self.engine,
-                    import_root=self.roots,
-                )
-            columns, rows = run_sql(self.engine, sql, dsn=self.dsn, loads=self.loads)
+            steps = plan(
+                self.source, predicate, engine=self.engine, import_root=self.roots, pattern=pattern
+            )
+            with session(self.engine, self.dsn, self.loads) as s:
+                columns, rows = run_plan(steps, s)
         except (ValueError, RunnerUnavailable, OSError) as e:
             print_error(e)
             return

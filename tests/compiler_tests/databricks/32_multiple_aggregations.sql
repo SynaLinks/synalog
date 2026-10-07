@@ -1,35 +1,10 @@
-WITH t_1_Sales AS (SELECT * FROM (
-  
-    SELECT
-      "North" AS region,
-      "A" AS product,
-      100 AS amount
-   UNION ALL
-  
-    SELECT
-      "North" AS region,
-      "B" AS product,
-      150 AS amount
-   UNION ALL
-  
-    SELECT
-      "South" AS region,
-      "A" AS product,
-      200 AS amount
-   UNION ALL
-  
-    SELECT
-      "South" AS region,
-      "B" AS product,
-      75 AS amount
-   UNION ALL
-  
-    SELECT
-      "East" AS region,
-      "A" AS product,
-      300 AS amount
-  
-) AS UNUSED_TABLE_NAME  ),
+WITH t_1_Sales AS (SELECT * FROM VALUES
+  ("North", "A", 100),
+  ("North", "B", 150),
+  ("South", "A", 200),
+  ("South", "B", 75),
+  ("East", "A", 300)
+AS UNUSED_TABLE_NAME(region, product, amount)),
 t_0_RegionStats AS (SELECT
   Sales.region AS region,
   SUM(Sales.amount) AS total,
@@ -38,7 +13,7 @@ t_0_RegionStats AS (SELECT
   MIN(Sales.amount) AS min_sale
 FROM
   t_1_Sales AS Sales
-GROUP BY 1 ORDER BY region)
+GROUP BY 1 ORDER BY region NULLS LAST)
 SELECT
   RegionStats.region AS region,
   RegionStats.total AS total,
@@ -46,4 +21,4 @@ SELECT
   RegionStats.max_sale AS max_sale,
   RegionStats.min_sale AS min_sale
 FROM
-  t_0_RegionStats AS RegionStats ORDER BY region;
+  t_0_RegionStats AS RegionStats ORDER BY region NULLS LAST;

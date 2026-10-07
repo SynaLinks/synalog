@@ -8,35 +8,56 @@
 //! Ported from Python: type_inference/types/types_graph.py
 
 use super::edge::Edge;
+use super::expression::Expression;
 use std::collections::{HashMap, HashSet};
 
 /// Graph storing type inference edges between expressions.
 #[derive(Debug, Clone, Default)]
 pub struct TypesGraph {
-    /// Map from expression to connected expressions and their edges.
-    /// expression_connections[expr1][expr2] = list of edges between expr1 and expr2
-    expression_connections: HashMap<String, HashMap<String, Vec<Edge>>>,
-    /// All edges in the graph.
-    edges: HashSet<EdgeKey>,
+    /// The edges, each once, in the order they were connected.
+    edges: Vec<Edge>,
+    /// The keys of the edges, to connect each once.
+    keys: HashSet<EdgeKey>,
+    /// The columns the edges hold: the fields of each predicate of their
+    /// `PredicateAddressing` vertices.
+    columns: HashMap<String, HashSet<String>>,
 }
 
-/// Key for deduplicating edges.
+/// Key for deduplicating edges: two edges are one when they are of the same
+/// kind, have the same bounds, and connect the same two expressions, an
+/// expression being its text (its type and, for a column, its use apart).
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
 struct EdgeKey {
-    v1: String,
-    v2: String,
+    vertices: (u128, u128),
     bounds: (i64, i64),
     discriminant: std::mem::Discriminant<Edge>,
 }
 
+/// A 128-bit digest of an expression's text, written without allocating it.
+fn text_digest(expression: &Expression) -> u128 {
+    use std::fmt::Write;
+    use std::hash::Hasher;
+    struct Digest(std::collections::hash_map::DefaultHasher, std::collections::hash_map::DefaultHasher);
+    impl Write for Digest {
+        fn write_str(&mut self, text: &str) -> std::fmt::Result {
+            self.0.write(text.as_bytes());
+            self.1.write(text.as_bytes());
+            Ok(())
+        }
+    }
+    let mut second = std::collections::hash_map::DefaultHasher::new();
+    second.write_u8(0x5a);
+    let mut digest = Digest(std::collections::hash_map::DefaultHasher::new(), second);
+    let _ = write!(digest, "{}", expression);
+    ((digest.0.finish() as u128) << 64) | digest.1.finish() as u128
+}
+
 impl EdgeKey {
-    fn from_edge(edge: &Edge) -> Self {
-        let (v1, v2) = edge.vertices();
-        let mut strs = vec![v1.to_string(), v2.to_string()];
-        strs.sort();
+    fn new(edge: &Edge) -> Self {
+        let (first, second) = edge.vertices();
+        let (a, b) = (text_digest(first), text_digest(second));
         Self {
-            v1: strs[0].clone(),
-            v2: strs[1].clone(),
+            vertices: if a <= b { (a, b) } else { (b, a) },
             bounds: edge.bounds(),
             discriminant: std::mem::discriminant(edge),
         }
@@ -51,70 +72,38 @@ impl TypesGraph {
 
     /// Connect two expressions with an edge.
     pub fn connect(&mut self, edge: Edge) {
-        let key = EdgeKey::from_edge(&edge);
-        if self.edges.contains(&key) {
+        if !self.keys.insert(EdgeKey::new(&edge)) {
             return; // Already have this edge
         }
-        self.edges.insert(key);
-
         let (first, second) = edge.vertices();
-        let first_key = first.to_string();
-        let second_key = second.to_string();
-
-        // Add edge in both directions
-        self.expression_connections
-            .entry(first_key.clone())
-            .or_default()
-            .entry(second_key.clone())
-            .or_default()
-            .push(edge.clone());
-
-        self.expression_connections
-            .entry(second_key)
-            .or_default()
-            .entry(first_key)
-            .or_default()
-            .push(edge);
+        for v in [first, second] {
+            if let Expression::PredicateAddressing { predicate_name, field, .. } = v {
+                if !self.has_column(predicate_name, field) {
+                    self.columns.entry(predicate_name.clone()).or_default().insert(field.clone());
+                }
+            }
+        }
+        self.edges.push(edge);
     }
 
     /// Get all edges in the graph.
     pub fn to_edges_vec(&self) -> Vec<Edge> {
-        let mut seen = HashSet::new();
-        let mut result = Vec::new();
-
-        for connections in self.expression_connections.values() {
-            for edges in connections.values() {
-                for edge in edges {
-                    let key = EdgeKey::from_edge(edge);
-                    if !seen.contains(&key) {
-                        seen.insert(key);
-                        result.push(edge.clone());
-                    }
-                }
-            }
-        }
-
-        result
+        self.edges.clone()
     }
 
-    /// Get connections for a specific expression.
-    pub fn connections_for(&self, expr: &str) -> Option<&HashMap<String, Vec<Edge>>> {
-        self.expression_connections.get(expr)
+    /// The edges in the graph, in the order they were connected.
+    pub fn edges(&self) -> &[Edge] {
+        &self.edges
     }
 
-    /// Check if an expression exists in the graph.
-    pub fn contains_expression(&self, expr: &str) -> bool {
-        self.expression_connections.contains_key(expr)
-    }
-
-    /// Get all expression keys in the graph.
-    pub fn expressions(&self) -> impl Iterator<Item = &String> {
-        self.expression_connections.keys()
+    /// Whether an edge of the graph holds column `field` of `predicate`.
+    pub fn has_column(&self, predicate: &str, field: &str) -> bool {
+        self.columns.get(predicate).is_some_and(|fields| fields.contains(field))
     }
 
     /// Merge another graph into this one.
     pub fn merge(&mut self, other: TypesGraph) {
-        for edge in other.to_edges_vec() {
+        for edge in other.edges {
             self.connect(edge);
         }
     }

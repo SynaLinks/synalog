@@ -1,17 +1,17 @@
 WITH t_0_P1 AS (SELECT
-  (MOD(((x_2) * (17)), 39)) AS col0
+  (MOD(((x_2) * (17)), NULLIF(39, 0))) AS col0
 FROM
-  explode(SEQUENCE(0, 10 - 1)) AS pushkin(x_2) ORDER BY col0),
+  LATERAL (SELECT explode(FILTER(SEQUENCE(0, CAST(10 AS BIGINT)), x -> x < 10)) AS x_2) AS pushkin ORDER BY col0 NULLS LAST),
 t_0_P2 AS (SELECT
   x_5 AS col0
 FROM
-  explode(SEQUENCE(0, 20 - 1)) AS pushkin(x_5) LIMIT 5),
+  LATERAL (SELECT explode(FILTER(SEQUENCE(0, CAST(20 AS BIGINT)), x -> x < 20)) AS x_5) AS pushkin LIMIT 5),
 t_0_P3 AS (SELECT
   x_5 AS col0
 FROM
-  explode(SEQUENCE(0, 20 - 1)) AS pushkin(x_5)
+  LATERAL (SELECT explode(FILTER(SEQUENCE(0, CAST(20 AS BIGINT)), x -> x < 20)) AS x_5) AS pushkin
 WHERE
-  ((MOD(x_5, 2)) = 0) ORDER BY col0 LIMIT 3)
+  ((MOD(x_5, NULLIF(2, 0))) = 0) ORDER BY col0 NULLS LAST LIMIT 3)
 SELECT * FROM (
   
     SELECT
@@ -34,4 +34,4 @@ SELECT * FROM (
     FROM
       t_0_P3 AS P3
   
-) AS UNUSED_TABLE_NAME  ORDER BY col0, col1 ;
+) AS UNUSED_TABLE_NAME  ORDER BY col0 NULLS LAST, col1 NULLS LAST ;

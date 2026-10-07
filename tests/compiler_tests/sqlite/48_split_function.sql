@@ -1,4 +1,4 @@
-WITH t_1_Rows AS (SELECT * FROM (
+WITH t_2_Rows AS (SELECT * FROM (
   
     SELECT
       'a,b,c' AS line
@@ -9,14 +9,14 @@ WITH t_1_Rows AS (SELECT * FROM (
   
 ) AS UNUSED_TABLE_NAME  ),
 t_0_Parsed AS (SELECT
-  Rows.line AS line,
-  JSON_ARRAY_LENGTH(SPLIT(Rows.line, ',')) AS n,
-  JSON_EXTRACT(SPLIT(Rows.line, ','), '$[' || 0 || ']') AS first
+  t_1_Rows.line AS line,
+  JSON_ARRAY_LENGTH(SPLIT(t_1_Rows.line, ',')) AS n,
+  (CASE WHEN 0 < 0 THEN NULL ELSE JSON_EXTRACT(SPLIT(t_1_Rows.line, ','), '$[' || 0 || ']') END) AS first
 FROM
-  t_1_Rows AS Rows ORDER BY line)
+  t_2_Rows AS t_1_Rows ORDER BY line NULLS LAST)
 SELECT
   Parsed.line AS line,
   Parsed.n AS n,
   Parsed.first AS first
 FROM
-  t_0_Parsed AS Parsed ORDER BY line;
+  t_0_Parsed AS Parsed ORDER BY line NULLS LAST;

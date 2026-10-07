@@ -1,0 +1,8 @@
+WITH t_0_C AS (SELECT
+  ARRAY_AGG(DISTINCT x_3) AS s
+FROM
+  UNNEST(SPLIT("a b a", " ")) as x_3)
+SELECT
+  ARRAY_LENGTH(C.s) AS n
+FROM
+  t_0_C AS C;

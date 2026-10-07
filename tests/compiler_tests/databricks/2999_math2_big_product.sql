@@ -1,0 +1,2 @@
+SELECT
+  ((((((CAST(ROUND(1024) AS BIGINT)) * (1024))) * (1024))) * (1024)) AS v;

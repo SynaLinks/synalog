@@ -1,0 +1,50 @@
+-- Loaded data/orders.csv into DuckDB table orders (5 rows)
+
+$ synalog tables/Orders.l run Orders
+| order_id | customer_id | amount | status    |
+|----------|-------------|--------|-----------|
+| 1        | 100         | 250    | shipped   |
+| 2        | 100         | 1200   | pending   |
+| 3        | 200         | 80     | shipped   |
+| 4        | 300         | 430    | cancelled |
+| 5        | 200         | 95     | shipped   |
+(5 rows)
+
+$ synalog concepts/Customer.l run Customer
+| customer_id |
+|-------------|
+| 100         |
+| 200         |
+| 300         |
+(3 rows)
+
+$ synalog concepts/OrderStatus.l run OrderStatus
+| status    |
+|-----------|
+| cancelled |
+| pending   |
+| shipped   |
+(3 rows)
+
+$ synalog rules/CustomerRevenue.l run CustomerRevenue
+| customer_id | total |
+|-------------|-------|
+| 100         | 1450  |
+| 200         | 175   |
+| 300         | 430   |
+(3 rows)
+
+$ synalog rules/OrdersByStatus.l run OrdersByStatus
+| status    | count |
+|-----------|-------|
+| cancelled | 1     |
+| pending   | 1     |
+| shipped   | 3     |
+(3 rows)
+
+$ synalog rules/TopCustomers.l run TopCustomers
+| customer_id | total |
+|-------------|-------|
+| 100         | 1450  |
+| 300         | 430   |
+(2 rows)

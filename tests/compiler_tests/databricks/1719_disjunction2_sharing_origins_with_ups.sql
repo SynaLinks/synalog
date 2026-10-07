@@ -1,0 +1,20 @@
+WITH t_1_Ship AS (SELECT * FROM VALUES
+  (1, "acme", "paris", "lyon", 12, "dhl"),
+  (2, "acme", "lyon", "nice", 5, "ups"),
+  (3, "bolt", "paris", "nice", 30, "dhl"),
+  (4, "bolt", "nice", "rome", 8, "fedex"),
+  (5, "cora", "rome", "milan", 14, "ups"),
+  (6, "cora", "milan", "paris", 3, "dhl"),
+  (7, "acme", "paris", "rome", 22, "fedex"),
+  (8, "dune", "lyon", "paris", 9, "ups"),
+  (9, "dune", "nice", "lyon", 11, "dhl")
+AS UNUSED_TABLE_NAME(id, client, src, dst, kg, carrier))
+SELECT
+  t_0_Ship.carrier AS carrier
+FROM
+  t_1_Ship AS Ship, t_1_Ship AS t_0_Ship
+WHERE
+  (t_0_Ship.carrier != "ups") AND
+  (Ship.carrier = "ups") AND
+  (t_0_Ship.src = Ship.src)
+GROUP BY 1;

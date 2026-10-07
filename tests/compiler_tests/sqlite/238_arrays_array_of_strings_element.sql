@@ -1,0 +1,2 @@
+SELECT
+  (CASE WHEN 0 < 0 THEN NULL ELSE JSON_EXTRACT(JSON_ARRAY('x', 'y'), '$[' || 0 || ']') END) AS e;

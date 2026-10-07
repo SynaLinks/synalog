@@ -1,0 +1,9 @@
+WITH t_0_B AS (SELECT * FROM VALUES
+  (1, null),
+  (2, 5)
+AS UNUSED_TABLE_NAME(k, v))
+SELECT
+  B.k AS k,
+  B.v AS v
+FROM
+  t_0_B AS B ORDER BY k NULLS LAST;

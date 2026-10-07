@@ -1,0 +1,2 @@
+SELECT
+  ((100) / NULLIF(8, 0)) AS v;

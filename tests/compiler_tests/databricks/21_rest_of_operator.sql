@@ -1,33 +1,15 @@
-WITH t_1_Data AS (SELECT * FROM (
-  
-    SELECT
-      1 AS a,
-      2 AS b,
-      3 AS c,
-      "x" AS d
-   UNION ALL
-  
-    SELECT
-      4 AS a,
-      5 AS b,
-      6 AS c,
-      "y" AS d
-   UNION ALL
-  
-    SELECT
-      7 AS a,
-      8 AS b,
-      9 AS c,
-      "z" AS d
-  
-) AS UNUSED_TABLE_NAME  ),
+WITH t_1_Data AS (SELECT * FROM VALUES
+  (1, 2, 3, "x"),
+  (4, 5, 6, "y"),
+  (7, 8, 9, "z")
+AS UNUSED_TABLE_NAME(a, b, c, d)),
 t_0_Subset AS (SELECT
   Data.c AS c,
   Data.d AS d
 FROM
-  t_1_Data AS Data ORDER BY d)
+  t_1_Data AS Data ORDER BY d NULLS LAST)
 SELECT
   Subset.c AS c,
   Subset.d AS d
 FROM
-  t_0_Subset AS Subset ORDER BY d;
+  t_0_Subset AS Subset ORDER BY d NULLS LAST;

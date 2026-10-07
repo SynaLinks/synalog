@@ -1,0 +1,9 @@
+-- Initializing PostgreSQL environment.
+set client_min_messages to warning;
+create schema if not exists logica_home;
+-- Empty logica type: logicarecord893574736;
+DO $$ BEGIN if not exists (select 'I(am) :- I(think)' from pg_type where typname = 'logicarecord893574736') then create type logicarecord893574736 as (nirvana numeric); end if; END $$;
+
+SELECT
+  SQRT(16) AS a,
+  SQRT(CAST(2.25 AS double precision)) AS b;
