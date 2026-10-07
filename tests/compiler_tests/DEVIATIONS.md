@@ -614,6 +614,11 @@ only to a constant number of digits (DuckDB, Spark, SQLite)
 (`tests/programs/numtext`). The goldens of the fixtures with `ToString` of a
 number are synalog's.
 
+SQLite's text of a number nests as few calls as it can: SQLite before 3.46
+(Ubuntu 22.04 has 3.37) parses about 30 nested calls at most ("parser stack
+overflow"), and the text often sits in other calls (`Array= id ->
+ToString(amt)`).
+
 ## Portable functions
 
 `StartsWith`, `EndsWith`, `Strpos`, `Lpad`, `Rpad`, `Repeat`, `Reverse`, `Ifnull`,
