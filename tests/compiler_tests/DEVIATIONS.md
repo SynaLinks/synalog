@@ -616,7 +616,7 @@ number are synalog's.
 
 ## Portable functions
 
-`StartsWith`, `EndsWith`, `Strpos`, `Lpad`, `Rpad`, `Repeat`, `Ifnull`,
+`StartsWith`, `EndsWith`, `Strpos`, `Lpad`, `Rpad`, `Repeat`, `Reverse`, `Ifnull`,
 `RegexpContains`, `RegexpReplace`, `RegexpExtract`, `Trunc` and `Div` are
 written so they run, and agree, on every engine: upstream passed most of them
 through as a function of the same name, which only some engines have. `If` is
@@ -724,3 +724,76 @@ tables, and the variable is that element.
 `Div(a, b)` told the sign of the quotient by `a * b < 0`, a product that
 overflows 32-bit integers (`Div(719468, 146097)` failed on DuckDB) though the
 quotient is small. It compares the signs instead: `(a < 0) <> (b < 0)`.
+
+## `Element` on Databricks
+
+Spark's `ELEMENT_AT` takes an `INT` index and refuses a `BIGINT` one, which
+any computed or grounded index is. The index is cast: `ELEMENT_AT(arr,
+CAST(i AS INT) + 1)`.
+
+## A list of no rows
+
+`List=`, `Set=`, `Array=` and `ArgMaxK`/`ArgMinK` over no rows are null on
+every engine, as upstream's `ARRAY_AGG` gives on BigQuery, DuckDB,
+PostgreSQL and Trino. SQLite's `JSON_GROUP_ARRAY` and Spark's `COLLECT_LIST`
+gave an empty list instead: they are null when `COUNT(*) = 0`.
+
+## The least and greatest of booleans
+
+PostgreSQL has no `MIN` or `MAX` of booleans: `Min=` and `Max=` of a boolean
+are `BOOL_AND` and `BOOL_OR` there, false before true as on the other
+engines.
+
+## The element type of a collected list
+
+The type of `List=`'s and `Set=`'s result was not linked to its elements', so
+an empty list in the same column (`[]` from another rule) was typed as a list
+of text and PostgreSQL refused to union the two. A collected list is a list
+of what it collects.
+
+## `Greatest` and `Least` of a null
+
+PostgreSQL's, DuckDB's and Spark's `GREATEST` and `LEAST` skip a null
+argument; BigQuery's, SQLite's, Trino's and Presto's are null. They are null
+on every engine, like any arithmetic of a null: there, `CASE WHEN a IS NULL
+OR b IS NULL THEN NULL ELSE GREATEST(a, b) END`. `Coalesce` skips a null
+explicitly.
+
+## `Element` below zero
+
+`Element(l, i)` is null when `i` is below zero or past the end, on every
+engine: Trino, Presto, Spark and DuckDB count a negative position from the
+end (or refuse 0), SQLite refuses a negative JSON path and BigQuery's
+`OFFSET` fails past the end (`SAFE_OFFSET` is null). PostgreSQL's subscript
+already gives null.
+
+## A null in a collected list
+
+`List=` and `Set=` collect a null like any value, as `ARRAY_AGG` does on
+DuckDB, PostgreSQL, Trino and Presto and `JSON_GROUP_ARRAY` on SQLite.
+Spark's `COLLECT_LIST` skips nulls: the values are collected in structs,
+which are never null, and taken out of them.
+
+## A combine over a row's lists
+
+A combine whose rows are the elements of lists of the enclosing rule's row
+(`combine Max= y :- y in l, y > 1`) is a subquery unnesting a column of the
+outer query. Trino refuses one filtered by a condition, Presto any ("Given
+correlated subquery is not supported"), and Spark an aggregate of both the
+outer row and the elements (`ArgMax= i -> Element(l, i)`). There, its values
+are an array built with lambdas (`FILTER` for the conditions, `TRANSFORM`,
+and `FLATTEN` for several lists); Trino and Spark aggregate the array in a
+subquery that unnests it, unfiltered; Presto, and `ArgMax`, `ArgMin` and
+`Array` everywhere, apply array functions (`ARRAY_MAX`, `ARRAY_SUM`,
+`ARRAY_SORT` of the positions by the key).
+
+The types of the enclosing rule's variables reach the combine: an element of
+a list of the outer row has the list's element type (PostgreSQL typed a
+record of it as text).
+
+## Facts with a typed null on Databricks
+
+Facts on Databricks are the rows of one `VALUES` (see "Engine functions");
+a typed null (`CAST(null AS ARRAY<DOUBLE>)`) no longer keeps them a union of
+`SELECT`s, which Spark fails to correlate. `Range` of a number Spark types as
+a double casts it to an integer for `SEQUENCE`.

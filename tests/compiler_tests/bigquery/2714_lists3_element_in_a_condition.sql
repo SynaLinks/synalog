@@ -92,4 +92,4 @@ SELECT
 FROM
   t_1_L AS t_0_L
 WHERE
-  (t_0_L.l[OFFSET(0)] = "pen") ORDER BY `order` NULLS LAST;
+  ((CASE WHEN 0 < 0 THEN NULL ELSE t_0_L.l[SAFE_OFFSET(0)] END) = "pen") ORDER BY `order` NULLS LAST;

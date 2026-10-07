@@ -1,4 +1,4 @@
 SELECT
   x_1 AS x
 FROM
-  LATERAL (SELECT explode(FILTER(SEQUENCE(0, 3), x -> x < 3)) AS x_1) AS pushkin ORDER BY x NULLS LAST;
+  LATERAL (SELECT explode(FILTER(SEQUENCE(0, CAST(3 AS BIGINT)), x -> x < 3)) AS x_1) AS pushkin ORDER BY x NULLS LAST;

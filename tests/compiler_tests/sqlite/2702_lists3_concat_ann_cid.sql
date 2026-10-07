@@ -83,7 +83,7 @@ WITH t_2_I AS (SELECT * FROM (
 ) AS UNUSED_TABLE_NAME  ),
 t_1_A AS (SELECT
   I.customer AS customer,
-  JSON_GROUP_ARRAY(I.item) AS l
+  (CASE WHEN COUNT(*) = 0 THEN NULL ELSE JSON_GROUP_ARRAY(I.item) END) AS l
 FROM
   t_2_I AS I
 GROUP BY I.customer)

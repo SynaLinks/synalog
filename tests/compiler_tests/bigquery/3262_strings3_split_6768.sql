@@ -1,4 +1,4 @@
 SELECT
   ARRAY_LENGTH(SPLIT("one--two", "--")) AS n,
-  SPLIT("one--two", "--")[OFFSET(0)] AS first,
-  SPLIT("one--two", "--")[OFFSET(((ARRAY_LENGTH(SPLIT("one--two", "--"))) - (1)))] AS last;
+  (CASE WHEN 0 < 0 THEN NULL ELSE SPLIT("one--two", "--")[SAFE_OFFSET(0)] END) AS first,
+  (CASE WHEN ((ARRAY_LENGTH(SPLIT("one--two", "--"))) - (1)) < 0 THEN NULL ELSE SPLIT("one--two", "--")[SAFE_OFFSET(((ARRAY_LENGTH(SPLIT("one--two", "--"))) - (1)))] END) AS last;

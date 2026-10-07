@@ -20,7 +20,7 @@ t_5_L AS (SELECT
 FROM
   t_8_V AS V),
 t_0_J AS (SELECT
-  ARRAY_AGG(t_4_L.l[OFFSET(x_12)].n order by [x_12][offset(0)]) AS s
+  ARRAY_AGG((CASE WHEN x_12 < 0 THEN NULL ELSE t_4_L.l[SAFE_OFFSET(x_12)] END).n order by [x_12][offset(0)]) AS s
 FROM
   t_5_L AS t_4_L, UNNEST(GENERATE_ARRAY(0, ARRAY_LENGTH(t_4_L.l) - 1)) as x_12)
 SELECT

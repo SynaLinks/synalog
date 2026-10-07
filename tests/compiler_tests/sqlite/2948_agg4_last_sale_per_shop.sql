@@ -83,7 +83,7 @@ WITH t_1_S AS (SELECT * FROM (
 ) AS UNUSED_TABLE_NAME  )
 SELECT
   S.shop AS shop,
-  JSON_EXTRACT(ArgMax(S.id, S.day, 1), '$[' || 0 || ']') AS id
+  (CASE WHEN 0 < 0 THEN NULL ELSE JSON_EXTRACT(ArgMax(S.id, S.day, 1), '$[' || 0 || ']') END) AS id
 FROM
   t_1_S AS S
-GROUP BY S.shop ORDER BY shop, id;
+GROUP BY S.shop ORDER BY shop NULLS LAST, id NULLS LAST;

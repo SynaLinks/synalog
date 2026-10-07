@@ -15,6 +15,6 @@ t_1_L AS (SELECT
 FROM
   t_5_V AS t_2_V)
 SELECT
-  ELEMENT_AT(t_0_L.l, 0 + 1) AS first
+  (CASE WHEN 0 < 0 THEN NULL ELSE ELEMENT_AT(t_0_L.l, 0 + 1) END) AS first
 FROM
   t_1_L AS t_0_L;

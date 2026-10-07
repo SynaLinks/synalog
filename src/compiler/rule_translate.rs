@@ -148,6 +148,8 @@ pub struct RuleStructure {
     pub synonym_log: HashMap<String, Vec<LogicalVariable>>,
     /// External vocabulary for combine sub-rules (variables from outer scope)
     pub external_vocabulary: Option<HashMap<String, String>>,
+    /// The types of the outer scope's variables, for a combine sub-rule.
+    pub external_types: HashMap<String, Type>,
     /// Tracks spread variables with EXCEPT fields: var_name -> (table_alias, excluded_fields)
     pub except_info: HashMap<String, (String, Vec<String>)>,
 }
@@ -170,6 +172,7 @@ impl RuleStructure {
             aggregated_fields: Vec::new(),
             synonym_log: HashMap::<String, Vec<LogicalVariable>>::new(),
             external_vocabulary: None,
+            external_types: HashMap::new(),
             except_info: HashMap::new(),
         }
     }
@@ -675,8 +678,9 @@ impl RuleStructure {
         let vocabulary = self.vars_vocabulary(dialect);
         let mut ql = ExprTranslator::new(vocabulary, dialect, flag_values);
         ql.subquery_translator = Some(subquery_translator);
-        // The types of the variables: a column has its predicate's, an
-        // element its list's.
+        // The types of the variables: the outer scope's in a combine, a
+        // column has its predicate's, an element its list's.
+        ql.variable_types = self.external_types.clone();
         for (var, (alias, field)) in &self.inv_vars_map {
             if let Some(t) = self.tables.get(alias).and_then(|p| subquery_translator.column_type(p, field)) {
                 ql.variable_types.insert(var.clone(), t);

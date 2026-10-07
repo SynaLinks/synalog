@@ -1,2 +1,2 @@
 SELECT
-  SPLIT("a,b,c", ",")[OFFSET(1)] AS p;
+  (CASE WHEN 1 < 0 THEN NULL ELSE SPLIT("a,b,c", ",")[SAFE_OFFSET(1)] END) AS p;

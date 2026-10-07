@@ -20,7 +20,7 @@ WITH t_1_V AS (SELECT * FROM (
 ) AS UNUSED_TABLE_NAME  )
 SELECT
   V.g AS g,
-  JSON_EXTRACT(ArgMax(V.n, V.s, 1), '$[' || 0 || ']') AS w
+  (CASE WHEN 0 < 0 THEN NULL ELSE JSON_EXTRACT(ArgMax(V.n, V.s, 1), '$[' || 0 || ']') END) AS w
 FROM
   t_1_V AS V
-GROUP BY V.g ORDER BY g;
+GROUP BY V.g ORDER BY g NULLS LAST;

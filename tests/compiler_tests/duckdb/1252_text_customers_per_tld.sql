@@ -49,8 +49,8 @@ WITH t_1_Customer AS (SELECT * FROM (
   
 ) AS UNUSED_TABLE_NAME  )
 SELECT
-  array_extract(SPLIT(Customer.email, '.'),  CAST(((LEN(SPLIT(Customer.email, '.'))) - (1))+1 AS BIGINT)) AS tld,
+  (CASE WHEN ((LEN(SPLIT(Customer.email, '.'))) - (1)) < 0 THEN NULL ELSE array_extract(SPLIT(Customer.email, '.'), CAST(((LEN(SPLIT(Customer.email, '.'))) - (1)) + 1 AS BIGINT)) END) AS tld,
   SUM(1) AS n
 FROM
   t_1_Customer AS Customer
-GROUP BY array_extract(SPLIT(Customer.email, '.'),  CAST(((LEN(SPLIT(Customer.email, '.'))) - (1))+1 AS BIGINT)) ORDER BY tld, n;
+GROUP BY (CASE WHEN ((LEN(SPLIT(Customer.email, '.'))) - (1)) < 0 THEN NULL ELSE array_extract(SPLIT(Customer.email, '.'), CAST(((LEN(SPLIT(Customer.email, '.'))) - (1)) + 1 AS BIGINT)) END) ORDER BY tld, n;

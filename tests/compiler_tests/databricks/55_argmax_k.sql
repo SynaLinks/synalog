@@ -7,8 +7,8 @@ WITH t_3_Score AS (SELECT * FROM VALUES
 AS UNUSED_TABLE_NAME(team, player, points)),
 t_0_TeamLeaders AS (SELECT
   Score.team AS team,
-  TRANSFORM(SLICE(SORT_ARRAY(COLLECT_LIST(STRUCT(Score.points AS value, Score.player AS arg)), false), 1, 2), s -> s.arg) AS top2,
-  TRANSFORM(SLICE(SORT_ARRAY(COLLECT_LIST(STRUCT(Score.points AS value, Score.player AS arg))), 1, 1), s -> s.arg) AS bottom1
+  (CASE WHEN COUNT(*) = 0 THEN NULL ELSE TRANSFORM(SLICE(SORT_ARRAY(COLLECT_LIST(STRUCT(Score.points AS value, Score.player AS arg)), false), 1, 2), s -> s.arg) END) AS top2,
+  (CASE WHEN COUNT(*) = 0 THEN NULL ELSE TRANSFORM(SLICE(SORT_ARRAY(COLLECT_LIST(STRUCT(Score.points AS value, Score.player AS arg))), 1, 1), s -> s.arg) END) AS bottom1
 FROM
   t_3_Score AS Score
 GROUP BY 1 ORDER BY team NULLS LAST)

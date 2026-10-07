@@ -10,7 +10,7 @@ WITH t_2_S AS (SELECT * FROM VALUES
   (9, "lima", "2026-02-14", "cake", 2, 5.0E0)
 AS UNUSED_TABLE_NAME(id, shop, day, product, qty, price)),
 t_0_T AS (SELECT
-  TRANSFORM(SLICE(SORT_ARRAY(COLLECT_LIST(STRUCT(S.price AS value, S.id AS arg)), false), 1, 2), s -> s.arg) AS l
+  (CASE WHEN COUNT(*) = 0 THEN NULL ELSE TRANSFORM(SLICE(SORT_ARRAY(COLLECT_LIST(STRUCT(S.price AS value, S.id AS arg)), false), 1, 2), s -> s.arg) END) AS l
 FROM
   t_2_S AS S
 WHERE

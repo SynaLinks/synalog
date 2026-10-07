@@ -12,6 +12,6 @@ WITH t_0_E AS (SELECT * FROM (
 ) AS UNUSED_TABLE_NAME  )
 SELECT
   E.name AS name,
-  ELEMENT_AT(SPLIT(E.email, '.'), ((CARDINALITY(SPLIT(E.email, '.'))) - (1)) + 1) AS tld
+  (CASE WHEN ((CARDINALITY(SPLIT(E.email, '.'))) - (1)) < 0 THEN NULL ELSE ELEMENT_AT(SPLIT(E.email, '.'), ((CARDINALITY(SPLIT(E.email, '.'))) - (1)) + 1) END) AS tld
 FROM
   t_0_E AS E ORDER BY name;

@@ -44,6 +44,6 @@ WITH t_0_Customer AS (SELECT * FROM (
 ) AS UNUSED_TABLE_NAME  )
 SELECT
   Customer.id AS id,
-  ELEMENT_AT(SPLIT(Customer.email, '@'), 0 + 1) AS local
+  (CASE WHEN 0 < 0 THEN NULL ELSE ELEMENT_AT(SPLIT(Customer.email, '@'), 0 + 1) END) AS local
 FROM
   t_0_Customer AS Customer ORDER BY id, local;

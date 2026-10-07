@@ -33,7 +33,7 @@ OrderWithTax(order_id:, total:) :-
 | String concatenation | `++` |
 | Comparison | `==` `!=` `<` `>` `<=` `>=` |
 | Boolean | `&&` `\|\|` `!`; a boolean variable or field alone is a condition (`Active(id:) :- Person(id:, active:), active;`), as `!active` is |
-| Membership | `x in [1, 2, 3]` |
+| Membership | `x in [1, 2, 3]`, `x in l` (see [Lists](#lists)) |
 | Null tests | `x is null`, `x is not null` |
 
 ### Strings
@@ -59,6 +59,13 @@ Result(x:, y:) :- TableA(x:), TableB(x:, y:);
 
 ```logica
 Combined(x:) distinct :- SourceA(x:) | SourceB(x:);
+```
+
+A disjunction gives one row per alternative that holds: a row matching both alternatives comes out twice, which matters to an aggregate (`n? += 1`) and to a rule without `distinct`. Alternatives can be conjunctions in parentheses, and a variable can be bound by either alternative:
+
+```logica
+Related(x:) distinct :- Pair(a: 1, b: x) | Pair(a: x, b: 1);
+Picked(id:) distinct :- Item(id:, tag:, price:), ((tag == "x", price > 20) | (tag is null, price < 20));
 ```
 
 **Negation (NOT)**: tilde `~`:
@@ -105,12 +112,30 @@ OrderSize(order_id:, size:) :-
            else "small");
 ```
 
+## Lists
+
+A list is written `[1, 2, 3]`, and a column can hold one. `x in l`, with `x` not bound elsewhere, gives a row for each element of `l`: an element repeated in `l` gives as many rows, and an empty or null list gives none. With `x` bound, it holds once for each element equal to `x`, so add `distinct` when a value may repeat:
+
+```logica
+OrderItem(order_id:, item:) :- Orders(order_id:, items:), item in items;
+HasGift(order_id:) distinct :- Orders(order_id:, items:), "gift" in items;
+```
+
+See [Array functions](functions.md#array-functions) for `Size`, `Element` and the others, and [`combine`](aggregation.md#combine-an-aggregate-as-a-value) to aggregate a row's list.
+
 ## Records
 
 Build nested record values with `{field:, field:}`:
 
 ```logica
 UserInfo(user_id:, info:) :- Users(user_id:, name:, email:), info == {name:, email:};
+```
+
+Read a field with a dot, also of a nested record: `info.name`, `person.home.city`. A field is a value like any other: in a condition, a group key, a join key, an aggregate. Two records are equal when their fields are (`person.home == {city: "Paris"}`), and a list of records can be collected (`List= {name:, age:}`) and unnested back (`p in people, name == p.name`):
+
+```logica
+SameCity(a:, b:) :- Person(id: a, info: x), Person(id: b, info: y), a < b,
+  x.home.city == y.home.city;
 ```
 
 ## Complete example

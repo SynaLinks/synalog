@@ -20,6 +20,6 @@ t_1_L AS (SELECT
 FROM
   t_5_V AS t_2_V)
 SELECT
-  t_0_L.l[OFFSET(((ARRAY_LENGTH(t_0_L.l)) - (1)))] AS last
+  (CASE WHEN ((ARRAY_LENGTH(t_0_L.l)) - (1)) < 0 THEN NULL ELSE t_0_L.l[SAFE_OFFSET(((ARRAY_LENGTH(t_0_L.l)) - (1)))] END) AS last
 FROM
   t_1_L AS t_0_L;

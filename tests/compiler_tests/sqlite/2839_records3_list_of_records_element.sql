@@ -12,6 +12,6 @@ WITH t_0_T AS (SELECT * FROM (
 ) AS UNUSED_TABLE_NAME  )
 SELECT
   T.k AS k,
-  JSON_EXTRACT(JSON_EXTRACT(T.l, '$[' || 0 || ']'), "$.n") AS n
+  JSON_EXTRACT((CASE WHEN 0 < 0 THEN NULL ELSE JSON_EXTRACT(T.l, '$[' || 0 || ']') END), "$.n") AS n
 FROM
-  t_0_T AS T ORDER BY k;
+  t_0_T AS T ORDER BY k NULLS LAST;

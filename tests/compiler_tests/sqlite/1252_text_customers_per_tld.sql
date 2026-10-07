@@ -43,8 +43,8 @@ WITH t_1_Customer AS (SELECT * FROM (
   
 ) AS UNUSED_TABLE_NAME  )
 SELECT
-  JSON_EXTRACT(SPLIT(Customer.email, '.'), '$[' || ((JSON_ARRAY_LENGTH(SPLIT(Customer.email, '.'))) - (1)) || ']') AS tld,
+  (CASE WHEN ((JSON_ARRAY_LENGTH(SPLIT(Customer.email, '.'))) - (1)) < 0 THEN NULL ELSE JSON_EXTRACT(SPLIT(Customer.email, '.'), '$[' || ((JSON_ARRAY_LENGTH(SPLIT(Customer.email, '.'))) - (1)) || ']') END) AS tld,
   SUM(1) AS n
 FROM
   t_1_Customer AS Customer
-GROUP BY JSON_EXTRACT(SPLIT(Customer.email, '.'), '$[' || ((JSON_ARRAY_LENGTH(SPLIT(Customer.email, '.'))) - (1)) || ']') ORDER BY tld NULLS LAST, n NULLS LAST;
+GROUP BY (CASE WHEN ((JSON_ARRAY_LENGTH(SPLIT(Customer.email, '.'))) - (1)) < 0 THEN NULL ELSE JSON_EXTRACT(SPLIT(Customer.email, '.'), '$[' || ((JSON_ARRAY_LENGTH(SPLIT(Customer.email, '.'))) - (1)) || ']') END) ORDER BY tld NULLS LAST, n NULLS LAST;

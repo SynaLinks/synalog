@@ -1,20 +1,8 @@
-WITH t_0_S AS (SELECT * FROM (
-  
-    SELECT
-      1 AS k,
-      ARRAY("a", "b") AS l
-   UNION ALL
-  
-    SELECT
-      2 AS k,
-      ARRAY() AS l
-   UNION ALL
-  
-    SELECT
-      3 AS k,
-      CAST(null AS ARRAY<STRING>) AS l
-  
-) AS UNUSED_TABLE_NAME  )
+WITH t_0_S AS (SELECT * FROM VALUES
+  (1, ARRAY("a", "b")),
+  (2, ARRAY()),
+  (3, CAST(null AS ARRAY<STRING>))
+AS UNUSED_TABLE_NAME(k, l))
 SELECT
   S.k AS k
 FROM

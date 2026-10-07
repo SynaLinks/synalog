@@ -29,7 +29,7 @@ FROM
 SELECT
   x_3 AS d
 FROM
-  t_0_B AS B, LATERAL (SELECT explode(FILTER(SEQUENCE(0, ((B.hi) + (1))), x -> x < ((B.hi) + (1)))) AS x_3) AS pushkin
+  t_0_B AS B, LATERAL (SELECT explode(FILTER(SEQUENCE(0, CAST(((B.hi) + (1)) AS BIGINT)), x -> x < ((B.hi) + (1)))) AS x_3) AS pushkin
 WHERE
   (x_3 > B.lo) AND
   ((SELECT

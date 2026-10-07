@@ -1,0 +1,47 @@
+WITH t_0_W AS (SELECT * FROM (
+  
+    SELECT
+      1 AS k,
+      'Hello' AS s
+   UNION ALL
+  
+    SELECT
+      2 AS k,
+      ' a ' AS s
+   UNION ALL
+  
+    SELECT
+      3 AS k,
+      '' AS s
+   UNION ALL
+  
+    SELECT
+      4 AS k,
+      'aaa' AS s
+   UNION ALL
+  
+    SELECT
+      5 AS k,
+      null AS s
+   UNION ALL
+  
+    SELECT
+      6 AS k,
+      'hello world' AS s
+   UNION ALL
+  
+    SELECT
+      7 AS k,
+      'naïve' AS s
+   UNION ALL
+  
+    SELECT
+      8 AS k,
+      'lol' AS s
+  
+) AS UNUSED_TABLE_NAME  )
+SELECT
+  W.k AS k,
+  (CASE WHEN LENGTH(W.s) >= 7 THEN SUBSTR(W.s, 1, 7) ELSE SUBSTR(REPLACE(HEX(ZEROBLOB(7)), '00', 'ab'), 1, 7 - LENGTH(W.s)) || W.s END) AS v
+FROM
+  t_0_W AS W ORDER BY k NULLS LAST;

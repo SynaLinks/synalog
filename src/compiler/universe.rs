@@ -1009,7 +1009,7 @@ impl LogicaProgram {
             if allocator_is_none {
                 *self.allocator.borrow_mut() = self.new_names_allocator();
             }
-            let sql = self.single_rule_sql(&rules[0], None, false, true)?;
+            let sql = self.single_rule_sql(&rules[0], None, None, false, true)?;
             assert!(
                 !sql.starts_with("/* nil */"),
                 "Single rule is nil for predicate '{}'",
@@ -1042,7 +1042,7 @@ impl LogicaProgram {
             if allocator_is_none {
                 *self.allocator.borrow_mut() = self.new_names_allocator();
             }
-            let single_sql = self.single_rule_sql(rule, None, false, false)?;
+            let single_sql = self.single_rule_sql(rule, None, None, false, false)?;
             if !single_sql.starts_with("/* nil */") {
                 rules_sql.push(format!("\n{}\n", indent2(&single_sql)));
                 branches.push(single_sql);
@@ -1114,6 +1114,7 @@ impl LogicaProgram {
         &self,
         rule: &Json,
         external_vocabulary: Option<&HashMap<String, String>>,
+        external_types: Option<&HashMap<String, Type>>,
         is_combine: bool,
         must_not_be_nil: bool,
     ) -> CompileResult<String> {
@@ -1135,6 +1136,7 @@ impl LogicaProgram {
             Some(taken),
             external_vocabulary.cloned(),
         )?;
+        s.external_types = external_types.cloned().unwrap_or_default();
 
         self.run_injections(&mut s)?;
         rule_translate::finalize_rule_structure(&mut s);
@@ -2330,10 +2332,11 @@ impl<'a> SubqueryTranslator for UniverseSubqueryTranslator<'a> {
         &self,
         rule: &Json,
         external_vocabulary: &HashMap<String, String>,
+        external_types: &HashMap<String, Type>,
         is_combine: bool,
     ) -> CompileResult<String> {
         self.program
-            .single_rule_sql(rule, Some(external_vocabulary), is_combine, false)
+            .single_rule_sql(rule, Some(external_vocabulary), Some(external_types), is_combine, false)
     }
 
     fn combine_psql_type(&self, combine: &Json) -> Option<String> {
@@ -2522,8 +2525,9 @@ fn constant_select(sql: &str) -> Option<Vec<(String, String)>> {
             let item = item.trim();
             let at = item.rfind(" AS ")?;
             let (expr, column) = (item[..at].trim(), item[at + 4..].trim());
-            // A record (`STRUCT(1 AS a)`) is not a row value Spark takes.
-            let plain = !expr.to_ascii_uppercase().contains(" AS ");
+            // A record (`STRUCT(1 AS a)`) is not a row value Spark takes; a
+            // typed null (`CAST(null AS ARRAY<DOUBLE>)`) is.
+            let plain = !expr.to_ascii_uppercase().contains("STRUCT(");
             (plain && !expr.is_empty() && !column.is_empty()).then(|| (expr.to_string(), column.to_string()))
         })
         .collect()

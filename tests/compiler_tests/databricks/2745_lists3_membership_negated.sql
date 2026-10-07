@@ -11,7 +11,7 @@ WITH t_4_I AS (SELECT * FROM VALUES
 AS UNUSED_TABLE_NAME(`order`, customer, item, price, qty, pos)),
 t_1_L AS (SELECT
   I.`order` AS `order`,
-  TRANSFORM(ARRAY_SORT(COLLECT_LIST(STRUCT(I.pos AS arg, I.item AS value))), s -> s.value) AS l
+  (CASE WHEN COUNT(*) = 0 THEN NULL ELSE TRANSFORM(ARRAY_SORT(COLLECT_LIST(STRUCT(I.pos AS arg, I.item AS value))), s -> s.value) END) AS l
 FROM
   t_4_I AS I
 GROUP BY 1)

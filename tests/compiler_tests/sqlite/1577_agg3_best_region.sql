@@ -87,6 +87,6 @@ FROM
   t_2_Sale AS Sale
 GROUP BY Sale.region)
 SELECT
-  JSON_EXTRACT(ArgMax(R.region, R.revenue, 1), '$[' || 0 || ']') AS region
+  (CASE WHEN 0 < 0 THEN NULL ELSE JSON_EXTRACT(ArgMax(R.region, R.revenue, 1), '$[' || 0 || ']') END) AS region
 FROM
   t_1_R AS R;

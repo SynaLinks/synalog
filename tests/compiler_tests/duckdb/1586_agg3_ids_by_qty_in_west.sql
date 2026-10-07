@@ -93,7 +93,7 @@ FROM
 WHERE
   (Sale.region = 'west'))
 SELECT
-  array_extract(A.l,  CAST(0+1 AS BIGINT)) AS first,
+  (CASE WHEN 0 < 0 THEN NULL ELSE array_extract(A.l, CAST(0 + 1 AS BIGINT)) END) AS first,
   LEN(A.l) AS n
 FROM
   t_0_A AS A;

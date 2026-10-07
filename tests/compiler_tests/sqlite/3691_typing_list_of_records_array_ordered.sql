@@ -15,6 +15,6 @@ t_1_L AS (SELECT
 FROM
   t_4_V AS V)
 SELECT
-  JSON_EXTRACT(JSON_EXTRACT(t_0_L.l, '$[' || 0 || ']'), "$.n") AS n
+  JSON_EXTRACT((CASE WHEN 0 < 0 THEN NULL ELSE JSON_EXTRACT(t_0_L.l, '$[' || 0 || ']') END), "$.n") AS n
 FROM
   t_1_L AS t_0_L;

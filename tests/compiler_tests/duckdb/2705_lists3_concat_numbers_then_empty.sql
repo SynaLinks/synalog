@@ -6,4 +6,4 @@ create sequence if not exists eternal_logical_sequence;
 
 SELECT
   LEN([2, 3]) AS n,
-  array_extract([2, 3],  CAST(0+1 AS BIGINT)) AS first;
+  (CASE WHEN 0 < 0 THEN NULL ELSE array_extract([2, 3], CAST(0 + 1 AS BIGINT)) END) AS first;

@@ -92,4 +92,4 @@ SELECT
 FROM
   t_1_L AS t_0_L
 WHERE
-  (JSON_EXTRACT(t_0_L.l, '$[' || 0 || ']') = 'pen') ORDER BY "order" NULLS LAST;
+  ((CASE WHEN 0 < 0 THEN NULL ELSE JSON_EXTRACT(t_0_L.l, '$[' || 0 || ']') END) = 'pen') ORDER BY "order" NULLS LAST;

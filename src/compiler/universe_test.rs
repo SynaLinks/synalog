@@ -1336,7 +1336,7 @@ fn test_combine_expression_full_pipeline() {
     // Call single_rule_sql with is_combine=true
     let rules = program.get_predicate_rules("T");
     assert!(!rules.is_empty());
-    let sql = program.single_rule_sql(&rules[0], None, true, false);
+    let sql = program.single_rule_sql(&rules[0], None, None, true, false);
     assert!(sql.is_ok(), "Combine SQL: {:?}", sql.err());
 }
 

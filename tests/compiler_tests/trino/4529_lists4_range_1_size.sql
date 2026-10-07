@@ -1,0 +1,2 @@
+SELECT
+  CARDINALITY(FILTER(SEQUENCE(0, 1), x -> x < 1)) AS n;

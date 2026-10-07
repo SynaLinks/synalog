@@ -15,6 +15,6 @@ t_1_L AS (SELECT
 FROM
   t_4_V AS V)
 SELECT
-  ELEMENT_AT(t_0_L.l, 0 + 1).n AS n
+  (CASE WHEN 0 < 0 THEN NULL ELSE ELEMENT_AT(t_0_L.l, 0 + 1) END).n AS n
 FROM
   t_1_L AS t_0_L;

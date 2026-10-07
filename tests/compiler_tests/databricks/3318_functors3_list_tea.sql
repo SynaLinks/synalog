@@ -9,7 +9,7 @@ WITH t_2_Sale AS (SELECT * FROM VALUES
   (8, "south", "cake", 20)
 AS UNUSED_TABLE_NAME(id, region, product, amount)),
 t_1_R AS (SELECT
-  ARRAY_AGG(Sale.amount) AS l
+  (CASE WHEN COUNT(*) = 0 THEN NULL ELSE TRANSFORM(COLLECT_LIST(STRUCT(Sale.amount AS v)), s -> s.v) END) AS l
 FROM
   t_2_Sale AS Sale
 WHERE

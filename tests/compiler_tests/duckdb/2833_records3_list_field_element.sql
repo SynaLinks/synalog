@@ -4,37 +4,25 @@ create schema if not exists logica_home;
 drop type if exists logicarecord893574736 cascade; create type logicarecord893574736 as struct(nirvana numeric);
 create sequence if not exists eternal_logical_sequence;
 
-
--- Logica type: logicarecord481217614
-drop type if exists logicarecord481217614 cascade; create type logicarecord481217614 as struct(r logicarecord893574736);
-
--- Logica type: logicarecord383307722
-drop type if exists logicarecord383307722 cascade; create type logicarecord383307722 as struct(a timestamp);
-
--- Logica type: logicarecord51730912
-drop type if exists logicarecord51730912 cascade; create type logicarecord51730912 as struct(name text, xs numeric[]);
-
--- Logica type: logicarecord519939597
-drop type if exists logicarecord519939597 cascade; create type logicarecord519939597 as struct(args text[], predicate text);
 WITH t_0_S AS (SELECT * FROM (
   
     SELECT
       1 AS k,
-      {name: 'a', xs: [1, 2, 3]::numeric[]} AS r
+      {name: 'a', xs: [1, 2, 3]} AS r
    UNION ALL
   
     SELECT
       2 AS k,
-      {name: 'b', xs: [4]::numeric[]} AS r
+      {name: 'b', xs: [4]} AS r
    UNION ALL
   
     SELECT
       3 AS k,
-      {name: 'c', xs: []::numeric[]} AS r
+      {name: 'c', xs: []} AS r
   
 ) AS UNUSED_TABLE_NAME  )
 SELECT
   S.k AS k,
-  array_extract(S.r.xs,  CAST(1+1 AS BIGINT)) AS e
+  (CASE WHEN 1 < 0 THEN NULL ELSE array_extract(S.r.xs, CAST(1 + 1 AS BIGINT)) END) AS e
 FROM
   t_0_S AS S ORDER BY k;

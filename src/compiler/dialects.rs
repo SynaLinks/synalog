@@ -177,6 +177,19 @@ pub trait Dialect {
         "(SELECT {body} FROM (SELECT {0} AS synalog_v) AS synalog_n)"
     }
 
+    /// The least and greatest of booleans, where MIN and MAX take none
+    /// (PostgreSQL): templates of `%s`.
+    fn boolean_min_max(&self) -> Option<(&'static str, &'static str)> {
+        None
+    }
+
+    /// Whether the engine's GREATEST and LEAST skip a null argument
+    /// (PostgreSQL, DuckDB, Spark) instead of being null, as on BigQuery,
+    /// SQLite, Trino and Presto.
+    fn greatest_skips_nulls(&self) -> bool {
+        false
+    }
+
     /// The SQL type of a double.
     fn double_type(&self) -> &'static str {
         "DOUBLE"
@@ -545,6 +558,8 @@ impl Dialect for SqLiteDialect {
         m.insert("Lpad", "(CASE WHEN LENGTH({0}) >= {1} THEN SUBSTR({0}, 1, {1}) ELSE SUBSTR(REPLACE(HEX(ZEROBLOB({1})), '00', {2}), 1, {1} - LENGTH({0})) || {0} END)");
         m.insert("Rpad", "(CASE WHEN LENGTH({0}) >= {1} THEN SUBSTR({0}, 1, {1}) ELSE {0} || SUBSTR(REPLACE(HEX(ZEROBLOB({1})), '00', {2}), 1, {1} - LENGTH({0})) END)");
         m.insert("Repeat", "(CASE WHEN {0} IS NULL OR {1} IS NULL THEN NULL ELSE REPLACE(HEX(ZEROBLOB({1})), '00', {0}) END)");
+        // SQLite has no REVERSE: the characters taken from the last.
+        m.insert("Reverse", "(WITH RECURSIVE synalog_r(i, t) AS (SELECT LENGTH({0}), '' UNION ALL SELECT i - 1, t || SUBSTR({0}, i, 1) FROM synalog_r WHERE i > 0) SELECT t FROM synalog_r WHERE i = 0)");
         // REGEXP of a null is false here; a null is null on every engine.
         m.insert("RegexpContains", "(CASE WHEN {0} IS NULL OR {1} IS NULL THEN NULL ELSE {0} REGEXP {1} END)");
         m.insert("Div", "CAST((CASE WHEN (({0}) < 0) <> (({1}) < 0) THEN CEIL(CAST({0} AS REAL) / NULLIF({1}, 0)) ELSE FLOOR(CAST({0} AS REAL) / NULLIF({1}, 0)) END) AS INTEGER)");
@@ -558,10 +573,11 @@ impl Dialect for SqLiteDialect {
             "(SELECT CASE WHEN typeof(v) = 'real' THEN CAST(ROUND(v) AS INTEGER) ELSE CAST(v AS INTEGER) END FROM (SELECT {0} AS v))",
         );
         m.insert("Set", "DistinctListAgg({0})");
-        m.insert("Element", "JSON_EXTRACT({0}, '$[' || {1} || ']')");
+        m.insert("Element", "(CASE WHEN {1} < 0 THEN NULL ELSE JSON_EXTRACT({0}, '$[' || {1} || ']') END)");
         m.insert("Range", "(select json_group_array(n) from (with recursive t as(select 0 as n union all select n + 1 as n from t where n + 1 < {0}) select n from t) where n < {0})");
         m.insert("ValueOfUnnested", "{0}.value");
-        m.insert("List", "JSON_GROUP_ARRAY({0})");
+        // A list of no rows is null, as ARRAY_AGG's is on the other engines.
+        m.insert("List", "(CASE WHEN COUNT(*) = 0 THEN NULL ELSE JSON_GROUP_ARRAY({0}) END)");
         m.insert("Size", "JSON_ARRAY_LENGTH({0})");
         // In SQL, as on the other engines: the elements in order, nulls
         // skipped, empty text for an empty list.
@@ -667,6 +683,10 @@ Char(code) = SqlExpr("CHAR({code})", {code:});
 pub struct PostgreSqlDialect;
 
 impl Dialect for PostgreSqlDialect {
+    fn greatest_skips_nulls(&self) -> bool {
+        true
+    }
+
     fn float_literal(&self, text: &str) -> String {
         // `1.5` is a numeric here, exact (`0.1 + 0.2 == 0.3`), where a number
         // with a point is a double on the other engines.
@@ -691,6 +711,10 @@ impl Dialect for PostgreSqlDialect {
     }
     fn double_type(&self) -> &'static str {
         "double precision"
+    }
+
+    fn boolean_min_max(&self) -> Option<(&'static str, &'static str)> {
+        Some(("BOOL_AND(%s)", "BOOL_OR(%s)"))
     }
 
     fn log10_function(&self) -> &'static str {
@@ -910,7 +934,7 @@ impl Dialect for TrinoDialect {
         m.insert("Size", "CARDINALITY({0})");
         m.insert("Log", "LN({0})");
         m.insert("Agg++", "FLATTEN(ARRAY_AGG({0}))");
-        m.insert("Element", "ELEMENT_AT({0}, {1} + 1)");
+        m.insert("Element", "(CASE WHEN {1} < 0 THEN NULL ELSE ELEMENT_AT({0}, {1} + 1) END)");
         m
     }
 
@@ -1038,7 +1062,7 @@ impl Dialect for PrestoDialect {
         m.insert("Size", "CARDINALITY({0})");
         m.insert("Log", "LN({0})");
         m.insert("Agg++", "FLATTEN(ARRAY_AGG({0}))");
-        m.insert("Element", "ELEMENT_AT({0}, {1} + 1)");
+        m.insert("Element", "(CASE WHEN {1} < 0 THEN NULL ELSE ELEMENT_AT({0}, {1} + 1) END)");
         m
     }
 
@@ -1114,6 +1138,10 @@ Array(a) = SqlExpr(
 pub struct DatabricksDialect;
 
 impl Dialect for DatabricksDialect {
+    fn greatest_skips_nulls(&self) -> bool {
+        true
+    }
+
     fn bind_value(&self) -> &'static str { "transform(array({0}), synalog_v -> {body})[0]" }
     // Spark rounds to a constant number of digits only: a double is
     // formatted to the digits it needs, a large number built from its
@@ -1189,12 +1217,20 @@ impl Dialect for DatabricksDialect {
         // not exist on Spark SQL; `Length` (string length) inherits the default
         // LENGTH — the previous ARRAY_SIZE override broke it for strings.
         // SEQUENCE(0, -1) counts down, [0, -1]: Range(0) is empty.
-        m.insert("Range", "FILTER(SEQUENCE(0, {0}), x -> x < {0})");
+        // SEQUENCE takes integers: a number of a list Spark types as doubles is one.
+        m.insert("Range", "FILTER(SEQUENCE(0, CAST({0} AS BIGINT)), x -> x < {0})");
         m.insert("RangeOf", "SEQUENCE(0, SIZE(%s) - 1)");
         // SIZE(null) is -1 on Spark; ARRAY_SIZE(null) is null.
         m.insert("Size", "ARRAY_SIZE(%s)");
         // ELEMENT_AT is 1-based; the default `{0}[OFFSET({1})]` is BigQuery-only.
-        m.insert("Element", "ELEMENT_AT({0}, {1} + 1)");
+        // A list of no rows is null, as on the other engines (COLLECT_LIST
+        // gives an empty one).
+        // Spark's ARRAY_AGG skips nulls: the values are collected in structs,
+        // which are never null, so that a null is collected as elsewhere.
+        m.insert("List", "(CASE WHEN COUNT(*) = 0 THEN NULL ELSE TRANSFORM(COLLECT_LIST(STRUCT(%s AS v)), s -> s.v) END)");
+        m.insert("Set", "(CASE WHEN COUNT(*) = 0 THEN NULL ELSE ARRAY_DISTINCT(TRANSFORM(COLLECT_LIST(STRUCT(%s AS v)), s -> s.v)) END)");
+        // ELEMENT_AT takes an INT index here, not a BIGINT (`ToInt64(...)`).
+        m.insert("Element", "(CASE WHEN {1} < 0 THEN NULL ELSE ELEMENT_AT({0}, CAST({1} AS INT) + 1) END)");
         m.insert("Format", "FORMAT_STRING(%s)");
         m.insert("DateDiff", "DATEDIFF({0}, {1}, {2})");
         m.insert("IsNull", "({0} IS NULL)");
@@ -1233,10 +1269,10 @@ ArgMax(a) = SqlExpr(
    "SORT_ARRAY(COLLECT_LIST(STRUCT({value} AS value, {arg} AS arg)), false)[0].arg",
   {arg: a.arg, value: a.value});
 ArgMaxK(a, l) = SqlExpr(
-  "TRANSFORM(SLICE(SORT_ARRAY(COLLECT_LIST(STRUCT({value} AS value, {arg} AS arg)), false), 1, {lim}), s -> s.arg)",
+  "(CASE WHEN COUNT(*) = 0 THEN NULL ELSE TRANSFORM(SLICE(SORT_ARRAY(COLLECT_LIST(STRUCT({value} AS value, {arg} AS arg)), false), 1, {lim}), s -> s.arg) END)",
   {arg: a.arg, value: a.value, lim: l});
 ArgMinK(a, l) = SqlExpr(
-  "TRANSFORM(SLICE(SORT_ARRAY(COLLECT_LIST(STRUCT({value} AS value, {arg} AS arg))), 1, {lim}), s -> s.arg)",
+  "(CASE WHEN COUNT(*) = 0 THEN NULL ELSE TRANSFORM(SLICE(SORT_ARRAY(COLLECT_LIST(STRUCT({value} AS value, {arg} AS arg))), 1, {lim}), s -> s.arg) END)",
   {arg: a.arg, value: a.value, lim: l});
 RMatch(s, p) = SqlExpr(
   "REGEXP_LIKE({s}, {p})",
@@ -1246,7 +1282,7 @@ RExtract(s, p, g) = SqlExpr(
   {s: s, p: p, g: g});
 
 Array(a) = SqlExpr(
-  "TRANSFORM(ARRAY_SORT(COLLECT_LIST(STRUCT({arg} AS arg, {value} AS value))), s -> s.value)",
+  "(CASE WHEN COUNT(*) = 0 THEN NULL ELSE TRANSFORM(ARRAY_SORT(COLLECT_LIST(STRUCT({arg} AS arg, {value} AS value))), s -> s.value) END)",
   {arg: a.arg, value: a.value});
 "#
     }
@@ -1278,6 +1314,10 @@ Array(a) = SqlExpr(
 pub struct DuckDbDialect;
 
 impl Dialect for DuckDbDialect {
+    fn greatest_skips_nulls(&self) -> bool {
+        true
+    }
+
     fn float_literal(&self, text: &str) -> String {
         // `1.5` is a DECIMAL here, whose products overflow (DECIMAL(18)) and
         // whose sums are exact (`0.1 + 0.2 == 0.3`); the exponent form is a
@@ -1308,7 +1348,7 @@ impl Dialect for DuckDbDialect {
         m.insert("RegexpContains", "regexp_matches({0}, {1})");
         m.insert("RegexpReplace", "regexp_replace({0}, {1}, {2}, 'g')");
         m.insert("RegexpExtract", "(CASE WHEN regexp_matches({0}, {1}) THEN regexp_extract({0}, {1}) END)");
-        m.insert("Element", "array_extract({0},  CAST({1}+1 AS BIGINT))");
+        m.insert("Element", "(CASE WHEN {1} < 0 THEN NULL ELSE array_extract({0}, CAST({1} + 1 AS BIGINT)) END)");
         // A cast rounds a double half to even (2.5 to 2); ROUND rounds half
         // away from zero, as the other engines (2.5 to 3).
         m.insert("ToInt64", "CAST(ROUND(%s) AS BIGINT)");

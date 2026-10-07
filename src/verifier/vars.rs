@@ -489,7 +489,8 @@ impl VarCollector {
                     .and_then(|v| v.as_object().get("aggregation"))
                     .and_then(|a| a.as_object().get("expression"))
                 {
-                    Self::collect_expr_vars(agg, &mut vars);
+                    // A combine inside is its own, given values by its body.
+                    Self::collect_expr_vars(&without_combines(agg), &mut vars);
                 }
             }
         }

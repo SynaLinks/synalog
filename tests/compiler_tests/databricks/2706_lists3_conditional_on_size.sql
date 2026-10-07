@@ -11,12 +11,12 @@ WITH t_4_I AS (SELECT * FROM VALUES
 AS UNUSED_TABLE_NAME(`order`, customer, item, price, qty, pos)),
 t_1_L AS (SELECT
   I.`order` AS `order`,
-  TRANSFORM(ARRAY_SORT(COLLECT_LIST(STRUCT(I.pos AS arg, I.item AS value))), s -> s.value) AS l
+  (CASE WHEN COUNT(*) = 0 THEN NULL ELSE TRANSFORM(ARRAY_SORT(COLLECT_LIST(STRUCT(I.pos AS arg, I.item AS value))), s -> s.value) END) AS l
 FROM
   t_4_I AS I
 GROUP BY 1)
 SELECT
   t_0_L.`order` AS `order`,
-  CASE WHEN (ARRAY_SIZE(t_0_L.l) > 1) THEN ELEMENT_AT(t_0_L.l, 0 + 1) ELSE "single" END AS v
+  CASE WHEN (ARRAY_SIZE(t_0_L.l) > 1) THEN (CASE WHEN 0 < 0 THEN NULL ELSE ELEMENT_AT(t_0_L.l, CAST(0 AS INT) + 1) END) ELSE "single" END AS v
 FROM
   t_1_L AS t_0_L ORDER BY `order` NULLS LAST, v NULLS LAST;

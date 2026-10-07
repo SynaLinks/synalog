@@ -74,7 +74,7 @@ t_5_L AS (SELECT
 FROM
   t_8_B AS B),
 t_0_J AS (SELECT
-  ARRAY_AGG(array_extract(t_4_L.l,  CAST(x_12.unnested_pod+1 AS BIGINT)).t order by x_12.unnested_pod) AS s
+  ARRAY_AGG((CASE WHEN x_12.unnested_pod < 0 THEN NULL ELSE array_extract(t_4_L.l, CAST(x_12.unnested_pod + 1 AS BIGINT)) END).t order by x_12.unnested_pod) AS s
 FROM
   t_5_L AS t_4_L, (select unnest(Range(LEN(t_4_L.l))) as unnested_pod) as x_12)
 SELECT

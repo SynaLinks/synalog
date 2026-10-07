@@ -1,2 +1,2 @@
 SELECT
-  ELEMENT_AT(SPLIT(",a,", REGEXP_REPLACE(",", '([^a-zA-Z0-9])', '\\\\$1')), 1 + 1) AS e;
+  (CASE WHEN 1 < 0 THEN NULL ELSE ELEMENT_AT(SPLIT(",a,", REGEXP_REPLACE(",", '([^a-zA-Z0-9])', '\\\\$1')), CAST(1 AS INT) + 1) END) AS e;

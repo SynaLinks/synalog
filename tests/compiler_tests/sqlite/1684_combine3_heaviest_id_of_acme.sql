@@ -83,8 +83,8 @@ WITH t_1_Ship AS (SELECT * FROM (
 ) AS UNUSED_TABLE_NAME  )
 SELECT
   (SELECT
-  JSON_EXTRACT(ArgMax(JSON_EXTRACT(MagicalEntangle(JSON_OBJECT('arg', Ship.id, 'value', Ship.kg), x_10.value), "$.arg"), JSON_EXTRACT(MagicalEntangle(JSON_OBJECT('arg', Ship.id, 'value', Ship.kg), x_10.value), "$.value"), 1), '$[' || 0 || ']') AS logica_value
+  (CASE WHEN 0 < 0 THEN NULL ELSE JSON_EXTRACT(ArgMax(JSON_EXTRACT(MagicalEntangle(JSON_OBJECT('arg', Ship.id, 'value', Ship.kg), x_9.value), "$.arg"), JSON_EXTRACT(MagicalEntangle(JSON_OBJECT('arg', Ship.id, 'value', Ship.kg), x_9.value), "$.value"), 1), '$[' || 0 || ']') END) AS logica_value
 FROM
-  t_1_Ship AS Ship, JSON_EACH(JSON_ARRAY(0)) as x_10
+  t_1_Ship AS Ship, JSON_EACH(JSON_ARRAY(0)) as x_9
 WHERE
   (Ship.client = 'acme')) AS id;

@@ -1,2 +1,2 @@
 SELECT
-  SPLIT("x;y;z", ";")[OFFSET(2)] AS v;
+  (CASE WHEN 2 < 0 THEN NULL ELSE SPLIT("x;y;z", ";")[SAFE_OFFSET(2)] END) AS v;

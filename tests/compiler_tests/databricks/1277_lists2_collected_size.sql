@@ -5,7 +5,7 @@ WITH t_3_L AS (SELECT * FROM VALUES
   (4, ARRAY(7, 7, 8, 9))
 AS UNUSED_TABLE_NAME(id, l)),
 t_1_All AS (SELECT
-  ARRAY_AGG(x_2) AS xs
+  (CASE WHEN COUNT(*) = 0 THEN NULL ELSE TRANSFORM(COLLECT_LIST(STRUCT(x_2 AS v)), s -> s.v) END) AS xs
 FROM
   t_3_L AS t_2_L, LATERAL (SELECT explode(t_2_L.l) AS x_2) AS pushkin)
 SELECT

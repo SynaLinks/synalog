@@ -11,7 +11,7 @@ WITH t_1_I AS (SELECT * FROM VALUES
 AS UNUSED_TABLE_NAME(`order`, customer, item, price, qty, pos)),
 t_0_Q0 AS (SELECT
   I.customer AS customer,
-  ARRAY_AGG(I.qty) AS l
+  (CASE WHEN COUNT(*) = 0 THEN NULL ELSE TRANSFORM(COLLECT_LIST(STRUCT(I.qty AS v)), s -> s.v) END) AS l
 FROM
   t_1_I AS I
 GROUP BY 1)

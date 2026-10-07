@@ -89,6 +89,6 @@ FROM
 GROUP BY 1)
 SELECT
   t_0_L."order" AS "order",
-  ELEMENT_AT(t_0_L.l, 0 + 1) AS e
+  (CASE WHEN 0 < 0 THEN NULL ELSE ELEMENT_AT(t_0_L.l, 0 + 1) END) AS e
 FROM
   t_1_L AS t_0_L ORDER BY "order", e;

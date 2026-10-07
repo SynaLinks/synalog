@@ -87,7 +87,7 @@ FROM
 WHERE
   (Sale.region = 'west'))
 SELECT
-  ELEMENT_AT(A.l, 0 + 1) AS first,
+  (CASE WHEN 0 < 0 THEN NULL ELSE ELEMENT_AT(A.l, 0 + 1) END) AS first,
   CARDINALITY(A.l) AS n
 FROM
   t_0_A AS A;

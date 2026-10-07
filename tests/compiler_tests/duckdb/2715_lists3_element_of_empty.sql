@@ -5,4 +5,4 @@ drop type if exists logicarecord893574736 cascade; create type logicarecord89357
 create sequence if not exists eternal_logical_sequence;
 
 SELECT
-  array_extract([],  CAST(0+1 AS BIGINT)) AS e;
+  (CASE WHEN 0 < 0 THEN NULL ELSE array_extract([], CAST(0 + 1 AS BIGINT)) END) AS e;

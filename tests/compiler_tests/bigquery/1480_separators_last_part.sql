@@ -12,6 +12,6 @@ WITH t_0_E AS (SELECT * FROM (
 ) AS UNUSED_TABLE_NAME  )
 SELECT
   E.name AS name,
-  SPLIT(E.email, ".")[OFFSET(((ARRAY_LENGTH(SPLIT(E.email, "."))) - (1)))] AS tld
+  (CASE WHEN ((ARRAY_LENGTH(SPLIT(E.email, "."))) - (1)) < 0 THEN NULL ELSE SPLIT(E.email, ".")[SAFE_OFFSET(((ARRAY_LENGTH(SPLIT(E.email, "."))) - (1)))] END) AS tld
 FROM
-  t_0_E AS E ORDER BY name;
+  t_0_E AS E ORDER BY name NULLS LAST;

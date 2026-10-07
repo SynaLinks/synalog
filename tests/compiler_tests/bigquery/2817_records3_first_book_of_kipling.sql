@@ -70,7 +70,7 @@ FROM
 WHERE
   (B.author = "kipling"))
 SELECT
-  t_0_L.l[OFFSET(0)].title AS title,
-  t_0_L.l[OFFSET(0)].year AS year
+  (CASE WHEN 0 < 0 THEN NULL ELSE t_0_L.l[SAFE_OFFSET(0)] END).title AS title,
+  (CASE WHEN 0 < 0 THEN NULL ELSE t_0_L.l[SAFE_OFFSET(0)] END).year AS year
 FROM
   t_1_L AS t_0_L;

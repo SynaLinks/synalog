@@ -310,7 +310,9 @@ pub fn parse_record_internals(
     is_record_literal: bool,
     is_aggregation_allowed: bool,
 ) -> ParseResult<Json> {
-    let s = strip(input);
+    // Spaces only: parentheses around the whole are an argument's own, as in
+    // `Size((combine List= x :- P(x:)))`, whose `:-` is the combine's.
+    let s = strip_spaces(input);
     if split(&s, ":-")?.len() > 1 {
         return Err(ParsingException::new(
             "Unexpected :- in record internals.",

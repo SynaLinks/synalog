@@ -44,6 +44,6 @@ WITH t_0_Customer AS (SELECT * FROM (
 ) AS UNUSED_TABLE_NAME  )
 SELECT
   Customer.id AS id,
-  JSON_EXTRACT(SPLIT(Customer.email, '@'), '$[' || 1 || ']') AS domain
+  (CASE WHEN 1 < 0 THEN NULL ELSE JSON_EXTRACT(SPLIT(Customer.email, '@'), '$[' || 1 || ']') END) AS domain
 FROM
-  t_0_Customer AS Customer ORDER BY id, domain;
+  t_0_Customer AS Customer ORDER BY id NULLS LAST, domain NULLS LAST;

@@ -76,7 +76,7 @@ FROM
 WHERE
   (B.author = 'austen'))
 SELECT
-  array_extract(t_0_L.l,  CAST(0+1 AS BIGINT)).title AS title,
-  array_extract(t_0_L.l,  CAST(0+1 AS BIGINT)).year AS year
+  (CASE WHEN 0 < 0 THEN NULL ELSE array_extract(t_0_L.l, CAST(0 + 1 AS BIGINT)) END).title AS title,
+  (CASE WHEN 0 < 0 THEN NULL ELSE array_extract(t_0_L.l, CAST(0 + 1 AS BIGINT)) END).year AS year
 FROM
   t_1_L AS t_0_L;

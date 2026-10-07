@@ -86,6 +86,6 @@ t_0_T AS (SELECT
 FROM
   t_3_S AS S)
 SELECT
-  ELEMENT_AT(T.l, x_2 + 1) AS id
+  (CASE WHEN x_2 < 0 THEN NULL ELSE ELEMENT_AT(T.l, x_2 + 1) END) AS id
 FROM
   t_0_T AS T, UNNEST(TRANSFORM(FILTER(SEQUENCE(0, 2), x -> x < 2), synalog_e -> ROW(synalog_e))) as pushkin(x_2) ORDER BY id;

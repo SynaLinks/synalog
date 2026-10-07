@@ -10,10 +10,10 @@ WITH t_3_S AS (SELECT * FROM VALUES
   (9, "lima", "2026-02-14", "cake", 2, 5.0E0)
 AS UNUSED_TABLE_NAME(id, shop, day, product, qty, price)),
 t_0_T AS (SELECT
-  TRANSFORM(ARRAY_SORT(COLLECT_LIST(STRUCT(S.price AS arg, S.id AS value))), s -> s.value) AS l
+  (CASE WHEN COUNT(*) = 0 THEN NULL ELSE TRANSFORM(ARRAY_SORT(COLLECT_LIST(STRUCT(S.price AS arg, S.id AS value))), s -> s.value) END) AS l
 FROM
   t_3_S AS S)
 SELECT
-  ELEMENT_AT(T.l, x_2 + 1) AS id
+  (CASE WHEN x_2 < 0 THEN NULL ELSE ELEMENT_AT(T.l, CAST(x_2 AS INT) + 1) END) AS id
 FROM
-  t_0_T AS T, LATERAL (SELECT explode(FILTER(SEQUENCE(0, 2), x -> x < 2)) AS x_2) AS pushkin ORDER BY id NULLS LAST;
+  t_0_T AS T, LATERAL (SELECT explode(FILTER(SEQUENCE(0, CAST(2 AS BIGINT)), x -> x < 2)) AS x_2) AS pushkin ORDER BY id NULLS LAST;

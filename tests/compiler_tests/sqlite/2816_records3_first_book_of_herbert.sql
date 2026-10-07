@@ -70,7 +70,7 @@ FROM
 WHERE
   (B.author = 'herbert'))
 SELECT
-  JSON_EXTRACT(JSON_EXTRACT(t_0_L.l, '$[' || 0 || ']'), "$.title") AS title,
-  JSON_EXTRACT(JSON_EXTRACT(t_0_L.l, '$[' || 0 || ']'), "$.year") AS year
+  JSON_EXTRACT((CASE WHEN 0 < 0 THEN NULL ELSE JSON_EXTRACT(t_0_L.l, '$[' || 0 || ']') END), "$.title") AS title,
+  JSON_EXTRACT((CASE WHEN 0 < 0 THEN NULL ELSE JSON_EXTRACT(t_0_L.l, '$[' || 0 || ']') END), "$.year") AS year
 FROM
   t_1_L AS t_0_L;

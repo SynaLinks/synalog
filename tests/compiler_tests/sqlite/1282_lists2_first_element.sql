@@ -22,7 +22,7 @@ WITH t_1_L AS (SELECT * FROM (
 ) AS UNUSED_TABLE_NAME  )
 SELECT
   t_0_L.id AS id,
-  JSON_EXTRACT(t_0_L.l, '$[' || 0 || ']') AS x
+  (CASE WHEN 0 < 0 THEN NULL ELSE JSON_EXTRACT(t_0_L.l, '$[' || 0 || ']') END) AS x
 FROM
   t_1_L AS t_0_L
 WHERE

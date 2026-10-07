@@ -70,7 +70,7 @@ FROM
 WHERE
   (B.author = 'austen'))
 SELECT
-  ELEMENT_AT(t_0_L.l, 0 + 1).title AS title,
-  ELEMENT_AT(t_0_L.l, 0 + 1).year AS year
+  (CASE WHEN 0 < 0 THEN NULL ELSE ELEMENT_AT(t_0_L.l, 0 + 1) END).title AS title,
+  (CASE WHEN 0 < 0 THEN NULL ELSE ELEMENT_AT(t_0_L.l, 0 + 1) END).year AS year
 FROM
   t_1_L AS t_0_L;

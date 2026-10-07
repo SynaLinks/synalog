@@ -1,3 +1,3 @@
 SELECT
   JSON_ARRAY_LENGTH(JSON_ARRAY(2, 3)) AS n,
-  JSON_EXTRACT(JSON_ARRAY(2, 3), '$[' || 0 || ']') AS first;
+  (CASE WHEN 0 < 0 THEN NULL ELSE JSON_EXTRACT(JSON_ARRAY(2, 3), '$[' || 0 || ']') END) AS first;

@@ -11,7 +11,7 @@ WITH t_4_I AS (SELECT * FROM VALUES
 AS UNUSED_TABLE_NAME(`order`, customer, item, price, qty, pos)),
 t_1_L AS (SELECT
   I.`order` AS `order`,
-  TRANSFORM(ARRAY_SORT(COLLECT_LIST(STRUCT(I.pos AS arg, I.item AS value))), s -> s.value) AS l
+  (CASE WHEN COUNT(*) = 0 THEN NULL ELSE TRANSFORM(ARRAY_SORT(COLLECT_LIST(STRUCT(I.pos AS arg, I.item AS value))), s -> s.value) END) AS l
 FROM
   t_4_I AS I
 GROUP BY 1)
@@ -20,4 +20,4 @@ SELECT
 FROM
   t_1_L AS t_0_L
 WHERE
-  (ELEMENT_AT(t_0_L.l, 0 + 1) = "pen") ORDER BY `order` NULLS LAST;
+  ((CASE WHEN 0 < 0 THEN NULL ELSE ELEMENT_AT(t_0_L.l, CAST(0 AS INT) + 1) END) = "pen") ORDER BY `order` NULLS LAST;

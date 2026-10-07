@@ -92,6 +92,6 @@ t_0_T AS (SELECT
 FROM
   t_3_S AS S)
 SELECT
-  array_extract(T.l,  CAST(x_2.unnested_pod+1 AS BIGINT)) AS id
+  (CASE WHEN x_2.unnested_pod < 0 THEN NULL ELSE array_extract(T.l, CAST(x_2.unnested_pod + 1 AS BIGINT)) END) AS id
 FROM
   t_0_T AS T, (select unnest(Range(3)) as unnested_pod) as x_2 ORDER BY id;

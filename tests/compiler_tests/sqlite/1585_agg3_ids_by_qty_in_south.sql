@@ -87,7 +87,7 @@ FROM
 WHERE
   (Sale.region = 'south'))
 SELECT
-  JSON_EXTRACT(A.l, '$[' || 0 || ']') AS first,
+  (CASE WHEN 0 < 0 THEN NULL ELSE JSON_EXTRACT(A.l, '$[' || 0 || ']') END) AS first,
   JSON_ARRAY_LENGTH(A.l) AS n
 FROM
   t_0_A AS A;

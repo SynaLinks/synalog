@@ -21,6 +21,6 @@ t_1_L AS (SELECT
 FROM
   t_4_V AS V)
 SELECT
-  array_extract(t_0_L.l,  CAST(0+1 AS BIGINT)).n AS n
+  (CASE WHEN 0 < 0 THEN NULL ELSE array_extract(t_0_L.l, CAST(0 + 1 AS BIGINT)) END).n AS n
 FROM
   t_1_L AS t_0_L;

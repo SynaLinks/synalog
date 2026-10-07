@@ -1,5 +1,5 @@
 SELECT
   ARRAY_SIZE((SELECT
-  ARRAY_AGG(x_3) AS logica_value
+  (CASE WHEN COUNT(*) = 0 THEN NULL ELSE TRANSFORM(COLLECT_LIST(STRUCT(x_3 AS v)), s -> s.v) END) AS logica_value
 FROM
   LATERAL (SELECT explode(ARRAY(1, 2, 3)) AS x_3) AS pushkin)) AS n;

@@ -17,7 +17,7 @@ WITH t_2_Rows AS (SELECT * FROM (
 t_0_Parsed AS (SELECT
   t_1_Rows.line AS line,
   LEN(SPLIT(t_1_Rows.line, ',')) AS n,
-  array_extract(SPLIT(t_1_Rows.line, ','),  CAST(0+1 AS BIGINT)) AS first
+  (CASE WHEN 0 < 0 THEN NULL ELSE array_extract(SPLIT(t_1_Rows.line, ','), CAST(0 + 1 AS BIGINT)) END) AS first
 FROM
   t_2_Rows AS t_1_Rows ORDER BY line)
 SELECT

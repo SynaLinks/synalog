@@ -455,6 +455,11 @@ impl TypesGraphBuilder {
         ));
 
         let bounds = self.fill_fields(graph, &predicate_name, predicate_id, call, &result);
+        // A list collected (`List= x`, `Set= x`) is a list of its argument.
+        if predicate_name == "List" || predicate_name == "Set" {
+            let element = self.get_or_cache(Expression::predicate_addressing(&predicate_name, "col0", predicate_id));
+            graph.connect(Edge::equality_of_element(result.clone(), element, bounds));
+        }
 
         // Adjust bounds based on predicate name
         let adjusted_bounds = adjust_bounds_for_predicate(bounds, call_obj.get("predicate_name"));

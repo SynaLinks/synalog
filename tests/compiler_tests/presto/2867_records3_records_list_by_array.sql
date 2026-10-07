@@ -20,7 +20,7 @@ t_5_L AS (SELECT
 FROM
   t_8_V AS V),
 t_0_J AS (SELECT
-  ARRAY_AGG(ELEMENT_AT(t_4_L.l, x_12 + 1).n order by x_12) AS s
+  ARRAY_AGG((CASE WHEN x_12 < 0 THEN NULL ELSE ELEMENT_AT(t_4_L.l, x_12 + 1) END).n order by x_12) AS s
 FROM
   t_5_L AS t_4_L, UNNEST(TRANSFORM(FILTER(SEQUENCE(0, CARDINALITY(t_4_L.l)), x -> x < CARDINALITY(t_4_L.l)), synalog_e -> ROW(synalog_e))) as pushkin(x_12))
 SELECT

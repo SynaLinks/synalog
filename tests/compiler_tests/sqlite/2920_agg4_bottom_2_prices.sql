@@ -86,6 +86,6 @@ t_0_T AS (SELECT
 FROM
   t_3_S AS S)
 SELECT
-  JSON_EXTRACT(T.l, '$[' || x_2.value || ']') AS id
+  (CASE WHEN x_2.value < 0 THEN NULL ELSE JSON_EXTRACT(T.l, '$[' || x_2.value || ']') END) AS id
 FROM
   t_0_T AS T, JSON_EACH((select json_group_array(n) from (with recursive t as(select 0 as n union all select n + 1 as n from t where n + 1 < 2) select n from t) where n < 2)) as x_2 ORDER BY id NULLS LAST;

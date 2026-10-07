@@ -16,6 +16,6 @@ WITH t_1_Score AS (SELECT * FROM (
   
 ) AS UNUSED_TABLE_NAME  )
 SELECT
-  JSON_EXTRACT(ArgMax(Score.name, Score.s, 1), '$[' || 0 || ']') AS name
+  (CASE WHEN 0 < 0 THEN NULL ELSE JSON_EXTRACT(ArgMax(Score.name, Score.s, 1), '$[' || 0 || ']') END) AS name
 FROM
   t_1_Score AS Score;

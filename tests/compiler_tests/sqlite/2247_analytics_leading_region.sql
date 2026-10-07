@@ -91,6 +91,6 @@ FROM
   t_3_S AS S
 GROUP BY S.r)
 SELECT
-  JSON_EXTRACT(ArgMax(t_0_T.r, t_0_T.t, 1), '$[' || 0 || ']') AS r
+  (CASE WHEN 0 < 0 THEN NULL ELSE JSON_EXTRACT(ArgMax(t_0_T.r, t_0_T.t, 1), '$[' || 0 || ']') END) AS r
 FROM
   t_2_T AS t_0_T;

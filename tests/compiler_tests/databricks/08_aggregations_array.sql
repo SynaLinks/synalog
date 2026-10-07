@@ -7,7 +7,7 @@ WITH t_3_Team AS (SELECT * FROM VALUES
 AS UNUSED_TABLE_NAME(name, skill)),
 t_0_SkillsByPerson AS (SELECT
   Team.name AS name,
-  TRANSFORM(ARRAY_SORT(COLLECT_LIST(STRUCT(Team.skill AS arg, Team.skill AS value))), s -> s.value) AS skills
+  (CASE WHEN COUNT(*) = 0 THEN NULL ELSE TRANSFORM(ARRAY_SORT(COLLECT_LIST(STRUCT(Team.skill AS arg, Team.skill AS value))), s -> s.value) END) AS skills
 FROM
   t_3_Team AS Team
 GROUP BY 1)

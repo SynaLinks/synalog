@@ -64,7 +64,7 @@ WITH t_2_B AS (SELECT * FROM (
   
 ) AS UNUSED_TABLE_NAME  ),
 t_0_L AS (SELECT
-  JSON_EXTRACT(ArgMax(JSON_OBJECT('title', B.title, 'pages', B.pages), B.pages, 1), '$[' || 0 || ']') AS best
+  (CASE WHEN 0 < 0 THEN NULL ELSE JSON_EXTRACT(ArgMax(JSON_OBJECT('title', B.title, 'pages', B.pages), B.pages, 1), '$[' || 0 || ']') END) AS best
 FROM
   t_2_B AS B
 WHERE

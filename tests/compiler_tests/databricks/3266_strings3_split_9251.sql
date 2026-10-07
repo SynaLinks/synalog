@@ -1,4 +1,4 @@
 SELECT
   ARRAY_SIZE(SPLIT("a*b", REGEXP_REPLACE("*", '([^a-zA-Z0-9])', '\\\\$1'))) AS n,
-  ELEMENT_AT(SPLIT("a*b", REGEXP_REPLACE("*", '([^a-zA-Z0-9])', '\\\\$1')), 0 + 1) AS first,
-  ELEMENT_AT(SPLIT("a*b", REGEXP_REPLACE("*", '([^a-zA-Z0-9])', '\\\\$1')), ((ARRAY_SIZE(SPLIT("a*b", REGEXP_REPLACE("*", '([^a-zA-Z0-9])', '\\\\$1')))) - (1)) + 1) AS last;
+  (CASE WHEN 0 < 0 THEN NULL ELSE ELEMENT_AT(SPLIT("a*b", REGEXP_REPLACE("*", '([^a-zA-Z0-9])', '\\\\$1')), CAST(0 AS INT) + 1) END) AS first,
+  (CASE WHEN ((ARRAY_SIZE(SPLIT("a*b", REGEXP_REPLACE("*", '([^a-zA-Z0-9])', '\\\\$1')))) - (1)) < 0 THEN NULL ELSE ELEMENT_AT(SPLIT("a*b", REGEXP_REPLACE("*", '([^a-zA-Z0-9])', '\\\\$1')), CAST(((ARRAY_SIZE(SPLIT("a*b", REGEXP_REPLACE("*", '([^a-zA-Z0-9])', '\\\\$1')))) - (1)) AS INT) + 1) END) AS last;

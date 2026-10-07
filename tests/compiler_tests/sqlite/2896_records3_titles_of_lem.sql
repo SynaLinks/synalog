@@ -64,7 +64,7 @@ WITH t_2_B AS (SELECT * FROM (
   
 ) AS UNUSED_TABLE_NAME  ),
 t_1_L AS (SELECT
-  JSON_GROUP_ARRAY(JSON_OBJECT('title', B.title, 'year', B.year)) AS l
+  (CASE WHEN COUNT(*) = 0 THEN NULL ELSE JSON_GROUP_ARRAY(JSON_OBJECT('title', B.title, 'year', B.year)) END) AS l
 FROM
   t_2_B AS B
 WHERE

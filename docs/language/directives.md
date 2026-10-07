@@ -24,7 +24,7 @@ TopCustomers(customer_id:, total? += amount) distinct :- Orders(customer_id:, am
 @OrderBy(TopCustomers, "total", "DESC");
 ```
 
-Each item is a column of the predicate, optionally followed by `ASC` or `DESC` and by `NULLS FIRST` or `NULLS LAST` (in any case): `"total DESC"`, `"name"`, `"score desc nulls last"`. Anything else, such as an expression (`"x * 2"`), is refused by both the verifier and the compiler, since the item is written into the SQL's `ORDER BY`. To order by a computed value, compute it in a column of the rule.
+Each item is a column of the predicate, optionally followed by `ASC` or `DESC` and by `NULLS FIRST` or `NULLS LAST` (in any case): `"total DESC"`, `"name"`, `"score desc nulls last"`. Nulls come last in both directions unless `NULLS FIRST` says otherwise, text is ordered by code point (`"B"` before `"a"`, `"Z"` before `"a"`) and booleans false before true, on every engine. Rows equal on every item come in any order: end the list with a column that tells them apart (`"total DESC", "customer_id"`) for pages to be stable. Anything else, such as an expression (`"x * 2"`), is refused by both the verifier and the compiler, since the item is written into the SQL's `ORDER BY`. To order by a computed value, compute it in a column of the rule.
 
 !!! warning "`@OrderBy` is mandatory in practice"
     Put `@OrderBy` on **every concept and rule**. Without a stable sort order, pagination (`limit`/`offset` in [`compile()`](../python-api.md#compile)) returns rows in a non-deterministic order between calls.
@@ -35,7 +35,7 @@ Each item is a column of the predicate, optionally followed by `ASC` or `DESC` a
 @Limit(TopCustomers, 10);
 ```
 
-The limit is a whole number of rows, 0 or more. It is part of what the predicate holds: a rule that uses `TopCustomers` sees only its 10 rows, and so do its [assertions](../assertions.md).
+The limit is a whole number of rows, 0 or more (0 gives no row). It is part of what the predicate holds: a rule that uses `TopCustomers` sees only its 10 rows, and so do its [assertions](../assertions.md).
 
 `@Limit` combines with the `limit` argument of `compile()`: the effective limit is `min(limit, @Limit)`.
 

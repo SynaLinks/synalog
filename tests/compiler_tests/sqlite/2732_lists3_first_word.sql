@@ -22,6 +22,6 @@ WITH t_1_W AS (SELECT * FROM (
 ) AS UNUSED_TABLE_NAME  )
 SELECT
   t_0_W.id AS id,
-  JSON_EXTRACT(SPLIT(t_0_W.s, ' '), '$[' || 0 || ']') AS w
+  (CASE WHEN 0 < 0 THEN NULL ELSE JSON_EXTRACT(SPLIT(t_0_W.s, ' '), '$[' || 0 || ']') END) AS w
 FROM
   t_1_W AS t_0_W ORDER BY id NULLS LAST, w NULLS LAST;

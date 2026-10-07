@@ -1,2 +1,2 @@
 SELECT
-  ELEMENT_AT(SPLIT('x', ','), 0 + 1) AS e;
+  (CASE WHEN 0 < 0 THEN NULL ELSE ELEMENT_AT(SPLIT('x', ','), 0 + 1) END) AS e;

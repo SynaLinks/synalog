@@ -28,6 +28,6 @@ WITH t_1_W AS (SELECT * FROM (
 ) AS UNUSED_TABLE_NAME  )
 SELECT
   t_0_W.id AS id,
-  array_extract(SPLIT(t_0_W.s, ' '),  CAST(0+1 AS BIGINT)) AS w
+  (CASE WHEN 0 < 0 THEN NULL ELSE array_extract(SPLIT(t_0_W.s, ' '), CAST(0 + 1 AS BIGINT)) END) AS w
 FROM
   t_1_W AS t_0_W ORDER BY id, w;

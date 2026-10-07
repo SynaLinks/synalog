@@ -517,9 +517,9 @@ fn test_databricks_built_in_functions() {
     assert!(f.contains_key("ILike"), "databricks should have ILike");
     assert!(f.contains_key("IsNull"), "databricks should have IsNull");
     // Spark/Databricks-specific overrides of the BigQuery defaults.
-    assert_eq!(f.get("Range"), Some(&"FILTER(SEQUENCE(0, {0}), x -> x < {0})"));
+    assert_eq!(f.get("Range"), Some(&"FILTER(SEQUENCE(0, CAST({0} AS BIGINT)), x -> x < {0})"));
     assert_eq!(f.get("Size"), Some(&"ARRAY_SIZE(%s)"));
-    assert_eq!(f.get("Element"), Some(&"ELEMENT_AT({0}, {1} + 1)"));
+    assert_eq!(f.get("Element"), Some(&"(CASE WHEN {1} < 0 THEN NULL ELSE ELEMENT_AT({0}, CAST({1} AS INT) + 1) END)"));
     assert_eq!(f.get("Format"), Some(&"FORMAT_STRING(%s)"));
     assert_eq!(f.get("ArrayConcat"), Some(&"CONCAT({0}, {1})"));
     // `Length` (string length) is intentionally NOT overridden — it inherits

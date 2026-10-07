@@ -5,7 +5,7 @@ WITH t_0_AllSquares AS (SELECT * FROM (
       ((x_15) * (x_15)) AS sq,
       "even" AS type
     FROM
-      LATERAL (SELECT explode(FILTER(SEQUENCE(0, 10), x -> x < 10)) AS x_15) AS pushkin
+      LATERAL (SELECT explode(FILTER(SEQUENCE(0, CAST(10 AS BIGINT)), x -> x < 10)) AS x_15) AS pushkin
     WHERE
       ((MOD(x_15, NULLIF(2, 0))) = 0)
    UNION ALL
@@ -15,7 +15,7 @@ WITH t_0_AllSquares AS (SELECT * FROM (
       ((x_25) * (x_25)) AS sq,
       "odd" AS type
     FROM
-      LATERAL (SELECT explode(FILTER(SEQUENCE(0, 10), x -> x < 10)) AS x_25) AS pushkin
+      LATERAL (SELECT explode(FILTER(SEQUENCE(0, CAST(10 AS BIGINT)), x -> x < 10)) AS x_25) AS pushkin
     WHERE
       ((MOD(x_25, NULLIF(2, 0))) = 1)
   

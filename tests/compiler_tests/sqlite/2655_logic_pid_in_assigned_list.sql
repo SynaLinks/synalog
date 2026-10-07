@@ -50,7 +50,7 @@ WITH t_1_A AS (SELECT * FROM (
 ) AS UNUSED_TABLE_NAME  ),
 t_0_Projects AS (SELECT
   A.id AS id,
-  JSON_GROUP_ARRAY(A.pid) AS l
+  (CASE WHEN COUNT(*) = 0 THEN NULL ELSE JSON_GROUP_ARRAY(A.pid) END) AS l
 FROM
   t_1_A AS A
 GROUP BY A.id),
@@ -93,4 +93,4 @@ FROM
   t_0_Projects AS Projects, t_2_Proj AS Proj, JSON_EACH(Projects.l) as x_4
 WHERE
   (Proj.pid = x_4.value)
-GROUP BY Projects.id ORDER BY id, n;
+GROUP BY Projects.id ORDER BY id NULLS LAST, n NULLS LAST;

@@ -87,7 +87,7 @@ FROM
 WHERE
   (Sale.region = "south"))
 SELECT
-  A.l[OFFSET(0)] AS first,
+  (CASE WHEN 0 < 0 THEN NULL ELSE A.l[SAFE_OFFSET(0)] END) AS first,
   ARRAY_LENGTH(A.l) AS n
 FROM
   t_0_A AS A;

@@ -10,7 +10,7 @@ WITH t_1_A AS (SELECT * FROM VALUES
 AS UNUSED_TABLE_NAME(id, pid, hours)),
 t_0_Projects AS (SELECT
   A.id AS id,
-  ARRAY_AGG(A.pid) AS l
+  (CASE WHEN COUNT(*) = 0 THEN NULL ELSE TRANSFORM(COLLECT_LIST(STRUCT(A.pid AS v)), s -> s.v) END) AS l
 FROM
   t_1_A AS A
 GROUP BY 1),

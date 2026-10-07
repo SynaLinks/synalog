@@ -1,4 +1,4 @@
 SELECT
   ARRAY_LENGTH(SPLIT("x||y||", "||")) AS n,
-  SPLIT("x||y||", "||")[OFFSET(0)] AS first,
-  SPLIT("x||y||", "||")[OFFSET(((ARRAY_LENGTH(SPLIT("x||y||", "||"))) - (1)))] AS last;
+  (CASE WHEN 0 < 0 THEN NULL ELSE SPLIT("x||y||", "||")[SAFE_OFFSET(0)] END) AS first,
+  (CASE WHEN ((ARRAY_LENGTH(SPLIT("x||y||", "||"))) - (1)) < 0 THEN NULL ELSE SPLIT("x||y||", "||")[SAFE_OFFSET(((ARRAY_LENGTH(SPLIT("x||y||", "||"))) - (1)))] END) AS last;

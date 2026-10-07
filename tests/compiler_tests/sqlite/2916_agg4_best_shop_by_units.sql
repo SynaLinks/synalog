@@ -88,6 +88,6 @@ FROM
   t_3_S AS S
 GROUP BY S.shop)
 SELECT
-  JSON_EXTRACT(ArgMax(t_0_U.shop, t_0_U.u, 1), '$[' || 0 || ']') AS best
+  (CASE WHEN 0 < 0 THEN NULL ELSE JSON_EXTRACT(ArgMax(t_0_U.shop, t_0_U.u, 1), '$[' || 0 || ']') END) AS best
 FROM
   t_2_U AS t_0_U;

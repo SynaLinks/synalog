@@ -1,17 +1,17 @@
 WITH t_0_Sorted AS (SELECT
   x_5 AS col0
 FROM
-  LATERAL (SELECT explode(FILTER(SEQUENCE(0, 20), x -> x < 20)) AS x_5) AS pushkin
+  LATERAL (SELECT explode(FILTER(SEQUENCE(0, CAST(20 AS BIGINT)), x -> x < 20)) AS x_5) AS pushkin
 WHERE
   ((MOD(x_5, NULLIF(2, 0))) = 0) ORDER BY col0 NULLS LAST),
 t_0_Top5 AS (SELECT
   x_5 AS col0
 FROM
-  LATERAL (SELECT explode(FILTER(SEQUENCE(0, 20), x -> x < 20)) AS x_5) AS pushkin ORDER BY col0 NULLS LAST LIMIT 5),
+  LATERAL (SELECT explode(FILTER(SEQUENCE(0, CAST(20 AS BIGINT)), x -> x < 20)) AS x_5) AS pushkin ORDER BY col0 NULLS LAST LIMIT 5),
 t_0_TopEven AS (SELECT
   x_5 AS col0
 FROM
-  LATERAL (SELECT explode(FILTER(SEQUENCE(0, 20), x -> x < 20)) AS x_5) AS pushkin
+  LATERAL (SELECT explode(FILTER(SEQUENCE(0, CAST(20 AS BIGINT)), x -> x < 20)) AS x_5) AS pushkin
 WHERE
   ((MOD(x_5, NULLIF(2, 0))) = 0) ORDER BY col0 NULLS LAST LIMIT 3)
 SELECT * FROM (

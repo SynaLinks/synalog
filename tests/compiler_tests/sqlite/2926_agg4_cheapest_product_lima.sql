@@ -82,7 +82,7 @@ WITH t_1_S AS (SELECT * FROM (
   
 ) AS UNUSED_TABLE_NAME  )
 SELECT
-  JSON_EXTRACT(ArgMin(S.product, S.price, 1), '$[' || 0 || ']') AS p
+  (CASE WHEN 0 < 0 THEN NULL ELSE JSON_EXTRACT(ArgMin(S.product, S.price, 1), '$[' || 0 || ']') END) AS p
 FROM
   t_1_S AS S
 WHERE

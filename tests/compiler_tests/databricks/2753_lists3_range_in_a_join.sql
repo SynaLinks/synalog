@@ -13,5 +13,5 @@ SELECT
   I.item AS item,
   SUM(1) AS n
 FROM
-  t_0_I AS I, LATERAL (SELECT explode(FILTER(SEQUENCE(0, I.qty), x -> x < I.qty)) AS x_3) AS pushkin
+  t_0_I AS I, LATERAL (SELECT explode(FILTER(SEQUENCE(0, CAST(I.qty AS BIGINT)), x -> x < I.qty)) AS x_3) AS pushkin
 GROUP BY 1 ORDER BY item NULLS LAST, n NULLS LAST;

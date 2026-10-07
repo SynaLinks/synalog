@@ -20,7 +20,7 @@ t_5_L AS (SELECT
 FROM
   t_9_V AS V),
 t_0_J AS (SELECT
-  ArgMin(JSON_EXTRACT(JSON_EXTRACT(t_4_L.l, '$[' || x_12.value || ']'), "$.n"), x_12.value, null) AS s
+  ArgMin(JSON_EXTRACT((CASE WHEN x_12.value < 0 THEN NULL ELSE JSON_EXTRACT(t_4_L.l, '$[' || x_12.value || ']') END), "$.n"), x_12.value, null) AS s
 FROM
   t_5_L AS t_4_L, JSON_EACH((select json_group_array(n) from (with recursive t as(select 0 as n union all select n + 1 as n from t where n + 1 < JSON_ARRAY_LENGTH(t_4_L.l)) select n from t) where n < JSON_ARRAY_LENGTH(t_4_L.l))) as x_12)
 SELECT

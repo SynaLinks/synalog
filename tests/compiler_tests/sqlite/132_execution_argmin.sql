@@ -11,6 +11,6 @@ WITH t_1_Price AS (SELECT * FROM (
   
 ) AS UNUSED_TABLE_NAME  )
 SELECT
-  JSON_EXTRACT(ArgMin(Price.item, Price.p, 1), '$[' || 0 || ']') AS item
+  (CASE WHEN 0 < 0 THEN NULL ELSE JSON_EXTRACT(ArgMin(Price.item, Price.p, 1), '$[' || 0 || ']') END) AS item
 FROM
   t_1_Price AS Price;

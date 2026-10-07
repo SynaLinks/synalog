@@ -407,7 +407,7 @@ pub(crate) fn base_built_in_functions() -> HashMap<&'static str, &'static str> {
     m.insert("Concat", "ARRAY_CONCAT({0}, {1})");
     m.insert("DateAddDay", "DATE_ADD({0}, INTERVAL {1} DAY)");
     m.insert("DateDiffDay", "DATE_DIFF({0}, {1}, DAY)");
-    m.insert("Element", "{0}[OFFSET({1})]");
+    m.insert("Element", "(CASE WHEN {1} < 0 THEN NULL ELSE {0}[SAFE_OFFSET({1})] END)");
     m.insert("IsNull", "(%s IS NULL)");
     m.insert("Join", "ARRAY_TO_STRING(%s)");
     // A backslash escapes `%`, `_` and itself in a pattern on every engine;
@@ -498,6 +498,7 @@ pub trait SubqueryTranslator {
         &self,
         rule: &Json,
         external_vocabulary: &HashMap<String, String>,
+        external_types: &HashMap<String, Type>,
         is_combine: bool,
     ) -> CompileResult<String>;
 
@@ -779,6 +780,41 @@ impl<'a> ExprTranslator<'a> {
                                     tasks.push(Task::Eval(arg));
                                     continue;
                                 }
+                            }
+                        }
+
+                        // The least and greatest of booleans: false before true.
+                        if pred_name == "Min" || pred_name == "Max" {
+                            let fvs = co["record"].as_object()["field_value"].as_array();
+                            if let (1, Some((min, max))) = (fvs.len(), self.dialect.boolean_min_max()) {
+                                let arg = fvs[0].as_object()["value"].as_object().get("expression");
+                                if let Some(arg) = arg.filter(|a| self.value_type(a) == Type::Bool) {
+                                    let template = if pred_name == "Min" { min } else { max };
+                                    tasks.push(Task::Combine(CK::Template(template.to_string()), 1));
+                                    tasks.push(Task::Eval(arg));
+                                    continue;
+                                }
+                            }
+                        }
+
+                        // Greatest and Least are null when an argument is,
+                        // also where the engine's skip nulls.
+                        if (pred_name == "Greatest" || pred_name == "Least") && self.dialect.greatest_skips_nulls() {
+                            let fvs = co["record"].as_object()["field_value"].as_array();
+                            let args: Vec<&Json> = fvs.iter()
+                                .filter_map(|fv| fv.as_object()["value"].as_object().get("expression"))
+                                .collect();
+                            if args.len() > 1 {
+                                let n = args.len();
+                                let any_null = (0..n).map(|i| format!("{{{}}} IS NULL", i)).collect::<Vec<_>>().join(" OR ");
+                                let all = (0..n).map(|i| format!("{{{}}}", i)).collect::<Vec<_>>().join(", ");
+                                let function = if pred_name == "Greatest" { "GREATEST" } else { "LEAST" };
+                                let template = format!("(CASE WHEN {} THEN NULL ELSE {}({}) END)", any_null, function, all);
+                                tasks.push(Task::Combine(CK::Template(template), n));
+                                for arg in args.into_iter().rev() {
+                                    tasks.push(Task::Eval(arg));
+                                }
+                                continue;
                             }
                         }
 
@@ -1669,13 +1705,212 @@ impl<'a> ExprTranslator<'a> {
         let translator = self.subquery_translator.ok_or_else(|| {
             CompileError::new("Combine expressions require a subquery translator", "")
         })?;
-        let sql = translator.translate_rule(combine, &self.vocabulary, true)?;
+        if let Some(sql) = self.combine_of_lists(combine)? {
+            return Ok(sql);
+        }
+        let sql = translator.translate_rule(combine, &self.vocabulary, &self.variable_types, true)?;
         if self.dialect.name() == "psql" {
             if let Some(ty) = translator.combine_psql_type(combine) {
                 return Ok(format!("CAST(({}) AS {})", sql, ty));
             }
         }
         Ok(format!("({})", sql))
+    }
+
+    /// This translator with variables of a lambda added to its vocabulary.
+    fn scoped(&self, names: &[(String, String)]) -> ExprTranslator<'a> {
+        let mut vocabulary = self.vocabulary.clone();
+        for (variable, sql) in names {
+            vocabulary.insert(variable.clone(), sql.clone());
+        }
+        ExprTranslator {
+            vocabulary,
+            dialect: self.dialect,
+            built_in_functions: self.built_in_functions.clone(),
+            built_in_infix_operators: self.built_in_infix_operators.clone(),
+            variable_types: self.variable_types.clone(),
+            type_hints: std::cell::RefCell::new(self.type_hints.borrow().clone()),
+            flag_values: self.flag_values,
+            subquery_translator: self.subquery_translator,
+            value_field: self.value_field,
+        }
+    }
+
+    /// A combine over the elements of lists of the enclosing rule's row
+    /// (`combine Max= y :- y in l, y > 1`), on Trino, Presto and Spark: a
+    /// subquery unnesting a column of the outer query and filtering it is not
+    /// supported on Trino and Presto ("Given correlated subquery is not
+    /// supported"), nor on Spark an aggregate of both the outer row and the
+    /// elements (`ArgMax= i -> Element(l, i)`). Its values are an array built
+    /// with lambdas: `FILTER` for the conditions, `TRANSFORM` (and `FLATTEN`
+    /// for several lists) for the values. Trino and Spark aggregate the array
+    /// in a subquery that unnests it unfiltered, which they support; Presto
+    /// supports none, and applies array functions (as Trino and Spark do for
+    /// ArgMax, ArgMin and Array). None
+    /// when the combine reads a table or aggregates otherwise.
+    fn combine_of_lists(&self, combine: &Json) -> CompileResult<Option<String>> {
+        let engine = self.dialect.name();
+        if engine != "trino" && engine != "presto" && engine != "databricks" {
+            return Ok(None);
+        }
+        let co = combine.as_object();
+        let Some(body) = co.get("body") else { return Ok(None) };
+        let Some(conjuncts) = body.as_object().get("conjunction")
+            .and_then(|c| c.as_object().get("conjunct")) else { return Ok(None) };
+        let basis = Self::basis_functions(self.dialect);
+        let mut lists: Vec<(String, Json)> = Vec::new();
+        let mut conditions: Vec<Json> = Vec::new();
+        for conjunct in conjuncts.as_array().iter() {
+            let c = conjunct.as_object();
+            if let Some(inclusion) = c.get("inclusion") {
+                let io = inclusion.as_object();
+                let variable = io.get("element")
+                    .and_then(|e| e.as_object().get("variable"))
+                    .map(|v| v.as_object()["var_name"].as_str().to_string());
+                match variable {
+                    Some(v) if !self.vocabulary.contains_key(&v) && lists.iter().all(|(w, _)| *w != v) => {
+                        lists.push((v, io["list"].clone()));
+                    }
+                    _ => return Ok(None),
+                }
+            } else if let Some(predicate) = c.get("predicate") {
+                let name = predicate.as_object()["predicate_name"].as_str().to_string();
+                if !basis.contains(&name) {
+                    return Ok(None);
+                }
+                conditions.push(crate::json_obj! { "call" => predicate.clone() });
+            } else {
+                return Ok(None);
+            }
+        }
+        if lists.is_empty() {
+            return Ok(None);
+        }
+        let head = co["head"].as_object();
+        let fields = head["record"].as_object()["field_value"].as_array();
+        if fields.len() != 1 {
+            return Ok(None);
+        }
+        let Some(call) = fields[0].as_object()["value"].as_object().get("aggregation")
+            .and_then(|a| a.as_object().get("expression"))
+            .and_then(|e| e.as_object().get("call")) else { return Ok(None) };
+        let aggregate = call.as_object()["predicate_name"].as_str().to_string();
+        let arguments = call.as_object()["record"].as_object()["field_value"].as_array();
+        if arguments.len() != 1 {
+            return Ok(None);
+        }
+        let argument = arguments[0].as_object()["value"].as_object()["expression"].clone();
+        // The argument's parts: `key -> value` for ArgMax, ArgMin and Array.
+        let paired = matches!(aggregate.as_str(), "ArgMax" | "ArgMin" | "Array");
+        let parts: Vec<Json> = if paired {
+            let Some(arrow) = argument.as_object().get("call")
+                .filter(|c| c.as_object()["predicate_name"].as_str() == "->") else { return Ok(None) };
+            arrow.as_object()["record"].as_object()["field_value"].as_array().iter()
+                .map(|fv| fv.as_object()["value"].as_object()["expression"].clone())
+                .collect()
+        } else if matches!(aggregate.as_str(), "Agg+" | "Avg" | "Max" | "Min" | "Count" | "List" | "Set") {
+            vec![argument.clone()]
+        } else {
+            return Ok(None);
+        };
+
+        let names: Vec<(String, String)> = lists.iter().enumerate()
+            .map(|(i, (v, _))| (v.clone(), format!("synalog_u{}", i)))
+            .collect();
+        let scoped = self.scoped(&names);
+        let mut list_sql = Vec::new();
+        for (_, list) in &lists {
+            list_sql.push(scoped.convert_to_sql(list)?);
+        }
+        let mut condition_sql = Vec::new();
+        for condition in &conditions {
+            condition_sql.push(scoped.convert_to_sql(condition)?);
+        }
+        let n = lists.len();
+        let spark = engine == "databricks";
+        let array = |items: &str| if spark { format!("ARRAY({})", items) } else { format!("ARRAY[{}]", items) };
+        let empty = array("");
+        let values = |value: &str| -> String {
+            let last = &names[n - 1].1;
+            let source = format!("COALESCE({}, {})", list_sql[n - 1], empty);
+            let filtered = if condition_sql.is_empty() {
+                source
+            } else {
+                format!("FILTER({}, {} -> {})", source, last, condition_sql.join(" AND "))
+            };
+            let mut sql = format!("TRANSFORM({}, {} -> {})", filtered, last, value);
+            for i in (0..n - 1).rev() {
+                sql = format!("FLATTEN(TRANSFORM(COALESCE({}, {}), {} -> {}))", list_sql[i], empty, names[i].1, sql);
+            }
+            sql
+        };
+        let mut arrays = Vec::new();
+        for part in &parts {
+            arrays.push(values(&scoped.convert_to_sql(part)?));
+        }
+
+        if engine != "presto" && !paired {
+            // The aggregate of the unnested array, as in any combine.
+            let columns: Vec<String> = (0..arrays.len()).map(|i| format!("synalog_c{}", i)).collect();
+            let variables: Vec<(String, String)> = columns.iter()
+                .map(|c| (format!("{} # array", c), format!("synalog_p.{}", c)))
+                .collect();
+            let variable = |i: usize| crate::json_obj! {
+                "variable" => crate::json_obj! { "var_name" => variables[i].0.clone() }
+            };
+            let argument = variable(0);
+            let aggregation = crate::json_obj! { "call" => crate::json_obj! {
+                "predicate_name" => aggregate.clone(),
+                "record" => crate::json_obj! { "field_value" => Json::Array(vec![
+                    crate::json_obj! { "field" => 0i64, "value" => crate::json_obj! { "expression" => argument } },
+                ].into()) },
+            } };
+            let sql = self.scoped(&variables).convert_to_sql(&aggregation)?;
+            if spark {
+                return Ok(Some(format!(
+                    "(SELECT {} FROM LATERAL (SELECT explode({}) AS {}) AS synalog_p)",
+                    sql, arrays[0], columns[0])));
+            }
+            return Ok(Some(format!(
+                "(SELECT {} FROM UNNEST({}) AS synalog_p({}))",
+                sql, arrays.join(", "), columns.join(", "))));
+        }
+
+        // Presto, and a key with its value elsewhere: array functions, each
+        // array bound once to a lambda's parameter.
+        let bind = |items: &str, name: &str, body: String| -> String {
+            format!("ELEMENT_AT(TRANSFORM({}, {} -> {}), 1)", array(items), name, body)
+        };
+        let known = |array: &str| format!("FILTER({}, synalog_v -> synalog_v IS NOT NULL)", array);
+        let sql = match aggregate.as_str() {
+            "Agg+" => bind(&known(&arrays[0]), "synalog_a", "IF(CARDINALITY(synalog_a) = 0, NULL, ARRAY_SUM(synalog_a))".to_string()),
+            "Avg" => bind(&known(&arrays[0]), "synalog_a", "IF(CARDINALITY(synalog_a) = 0, NULL, ARRAY_AVERAGE(synalog_a))".to_string()),
+            "Max" => format!("ARRAY_MAX({})", known(&arrays[0])),
+            "Min" => format!("ARRAY_MIN({})", known(&arrays[0])),
+            "Count" => format!("CARDINALITY(ARRAY_DISTINCT({}))", known(&arrays[0])),
+            "List" => bind(&arrays[0], "synalog_a", "IF(CARDINALITY(synalog_a) = 0, NULL, synalog_a)".to_string()),
+            "Set" => bind(&arrays[0], "synalog_a", "IF(CARDINALITY(synalog_a) = 0, NULL, ARRAY_DISTINCT(synalog_a))".to_string()),
+            _ => {
+                // The positions of the values sorted by the key: descending
+                // for ArgMax, nulls last.
+                let (before, after) = if aggregate == "ArgMax" { (">", "<") } else { ("<", ">") };
+                let (key, value) = if aggregate == "Array" { ("synalog_a", "synalog_b") } else { ("synalog_b", "synalog_a") };
+                let order = format!(
+                    "ARRAY_SORT(SEQUENCE(1, CARDINALITY({k})), (synalog_i, synalog_j) -> \
+                     IF({i} IS NULL AND {j} IS NULL, 0, IF({i} IS NULL, 1, IF({j} IS NULL, -1, \
+                     IF({i} {b} {j}, -1, IF({i} {a} {j}, 1, 0))))))",
+                    k = key, b = before, a = after,
+                    i = format!("ELEMENT_AT({}, synalog_i)", key), j = format!("ELEMENT_AT({}, synalog_j)", key));
+                let picked = if aggregate == "Array" {
+                    format!("TRANSFORM({}, synalog_i -> ELEMENT_AT({}, synalog_i))", order, value)
+                } else {
+                    format!("ELEMENT_AT({}, ELEMENT_AT({}, 1))", value, order)
+                };
+                bind(&arrays[0], "synalog_a", bind(&arrays[1], "synalog_b",
+                    format!("IF(CARDINALITY(synalog_a) = 0, NULL, {})", picked)))
+            }
+        };
+        Ok(Some(sql))
     }
 
     /// Convert expression to SQL for GROUP BY context.
@@ -2076,6 +2311,14 @@ impl<'a> ExprTranslator<'a> {
                         .find(|t| *t != Type::Any)
                         .unwrap_or(Type::Any)
                 })
+                .unwrap_or(Type::Any),
+            // A value tied to a combine's rows: the value's type.
+            "MagicalEntangle" => call.as_object()
+                .get("record")
+                .and_then(|r| r.as_object().get("field_value"))
+                .and_then(|fvs| fvs.as_array().first().cloned())
+                .and_then(|fv| fv.as_object()["value"].as_object().get("expression").cloned())
+                .map(|e| self.value_type(&e))
                 .unwrap_or(Type::Any),
             "Element" => match call.as_object()
                 .get("record")

@@ -1,2 +1,2 @@
 SELECT
-  ELEMENT_AT(SPLIT('a,b', ','), 5 + 1) AS s;
+  (CASE WHEN 5 < 0 THEN NULL ELSE ELEMENT_AT(SPLIT('a,b', ','), 5 + 1) END) AS s;

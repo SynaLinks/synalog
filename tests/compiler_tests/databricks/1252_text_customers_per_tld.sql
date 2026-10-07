@@ -7,7 +7,7 @@ WITH t_1_Customer AS (SELECT * FROM VALUES
   (6, "Ken", "Thompson", "ken@bell-labs.com")
 AS UNUSED_TABLE_NAME(id, first, last, email))
 SELECT
-  ELEMENT_AT(SPLIT(Customer.email, REGEXP_REPLACE(".", '([^a-zA-Z0-9])', '\\\\$1')), ((ARRAY_SIZE(SPLIT(Customer.email, REGEXP_REPLACE(".", '([^a-zA-Z0-9])', '\\\\$1')))) - (1)) + 1) AS tld,
+  (CASE WHEN ((ARRAY_SIZE(SPLIT(Customer.email, REGEXP_REPLACE(".", '([^a-zA-Z0-9])', '\\\\$1')))) - (1)) < 0 THEN NULL ELSE ELEMENT_AT(SPLIT(Customer.email, REGEXP_REPLACE(".", '([^a-zA-Z0-9])', '\\\\$1')), CAST(((ARRAY_SIZE(SPLIT(Customer.email, REGEXP_REPLACE(".", '([^a-zA-Z0-9])', '\\\\$1')))) - (1)) AS INT) + 1) END) AS tld,
   SUM(1) AS n
 FROM
   t_1_Customer AS Customer

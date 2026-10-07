@@ -13,13 +13,13 @@ t_3_T AS (SELECT
   t_5_I.pos AS pos,
   SUM(x_13) AS t
 FROM
-  t_2_I AS t_5_I, LATERAL (SELECT explode(FILTER(SEQUENCE(0, t_5_I.qty), x -> x < t_5_I.qty)) AS x_13) AS pushkin
+  t_2_I AS t_5_I, LATERAL (SELECT explode(FILTER(SEQUENCE(0, CAST(t_5_I.qty AS BIGINT)), x -> x < t_5_I.qty)) AS x_13) AS pushkin
 WHERE
   (t_5_I.`order` = 5)
 GROUP BY 1)
 SELECT
   t_1_T.pos AS pos,
-  ARRAY_SIZE(FILTER(SEQUENCE(0, I.qty), x -> x < I.qty)) AS n,
+  ARRAY_SIZE(FILTER(SEQUENCE(0, CAST(I.qty AS BIGINT)), x -> x < I.qty)) AS n,
   t_1_T.t AS t
 FROM
   t_2_I AS I, t_3_T AS t_1_T

@@ -89,6 +89,6 @@ FROM
 GROUP BY `order`)
 SELECT
   t_0_L.`order` AS `order`,
-  t_0_L.l[OFFSET(((ARRAY_LENGTH(t_0_L.l)) - (1)))] AS e
+  (CASE WHEN ((ARRAY_LENGTH(t_0_L.l)) - (1)) < 0 THEN NULL ELSE t_0_L.l[SAFE_OFFSET(((ARRAY_LENGTH(t_0_L.l)) - (1)))] END) AS e
 FROM
   t_1_L AS t_0_L ORDER BY `order` NULLS LAST, e NULLS LAST;

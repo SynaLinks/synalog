@@ -43,7 +43,7 @@ WITH t_1_Customer AS (SELECT * FROM (
   
 ) AS UNUSED_TABLE_NAME  )
 SELECT
-  ELEMENT_AT(SPLIT(Customer.email, '.'), ((CARDINALITY(SPLIT(Customer.email, '.'))) - (1)) + 1) AS tld,
+  (CASE WHEN ((CARDINALITY(SPLIT(Customer.email, '.'))) - (1)) < 0 THEN NULL ELSE ELEMENT_AT(SPLIT(Customer.email, '.'), ((CARDINALITY(SPLIT(Customer.email, '.'))) - (1)) + 1) END) AS tld,
   SUM(1) AS n
 FROM
   t_1_Customer AS Customer

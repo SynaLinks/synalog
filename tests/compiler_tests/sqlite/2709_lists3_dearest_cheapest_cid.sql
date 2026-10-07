@@ -82,8 +82,8 @@ WITH t_3_I AS (SELECT * FROM (
   
 ) AS UNUSED_TABLE_NAME  )
 SELECT
-  JSON_EXTRACT(ArgMax(I.item, I.price, 1), '$[' || 0 || ']') AS dear,
-  JSON_EXTRACT(ArgMin(I.item, I.price, 1), '$[' || 0 || ']') AS cheap
+  (CASE WHEN 0 < 0 THEN NULL ELSE JSON_EXTRACT(ArgMax(I.item, I.price, 1), '$[' || 0 || ']') END) AS dear,
+  (CASE WHEN 0 < 0 THEN NULL ELSE JSON_EXTRACT(ArgMin(I.item, I.price, 1), '$[' || 0 || ']') END) AS cheap
 FROM
   t_3_I AS I
 WHERE

@@ -43,7 +43,7 @@ t_1_L AS (SELECT * FROM (
   
     SELECT
       t_4_G.g AS g,
-      '{}' AS l
+      CAST('{}' AS numeric[]) AS l
     FROM
       t_5_G AS t_4_G
     WHERE

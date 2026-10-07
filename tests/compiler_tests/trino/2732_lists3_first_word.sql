@@ -22,6 +22,6 @@ WITH t_1_W AS (SELECT * FROM (
 ) AS UNUSED_TABLE_NAME  )
 SELECT
   t_0_W.id AS id,
-  ELEMENT_AT(SPLIT(t_0_W.s, ' '), 0 + 1) AS w
+  (CASE WHEN 0 < 0 THEN NULL ELSE ELEMENT_AT(SPLIT(t_0_W.s, ' '), 0 + 1) END) AS w
 FROM
   t_1_W AS t_0_W ORDER BY id, w;

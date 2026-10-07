@@ -89,6 +89,6 @@ FROM
 GROUP BY I."order")
 SELECT
   t_0_L."order" AS "order",
-  JSON_EXTRACT(t_0_L.l, '$[' || 3 || ']') AS e
+  (CASE WHEN 3 < 0 THEN NULL ELSE JSON_EXTRACT(t_0_L.l, '$[' || 3 || ']') END) AS e
 FROM
   t_1_L AS t_0_L ORDER BY "order" NULLS LAST, e NULLS LAST;

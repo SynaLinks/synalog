@@ -16,6 +16,6 @@ WITH t_1_V AS (SELECT * FROM (
   
 ) AS UNUSED_TABLE_NAME  )
 SELECT
-  JSON_EXTRACT(ArgMin(V.id, V.w, 1), '$[' || 0 || ']') AS id
+  (CASE WHEN 0 < 0 THEN NULL ELSE JSON_EXTRACT(ArgMin(V.id, V.w, 1), '$[' || 0 || ']') END) AS id
 FROM
   t_1_V AS V;

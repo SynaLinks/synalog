@@ -89,6 +89,6 @@ FROM
 GROUP BY I."order")
 SELECT
   t_0_L."order" AS "order",
-  CASE WHEN (JSON_ARRAY_LENGTH(t_0_L.l) > 1) THEN JSON_EXTRACT(t_0_L.l, '$[' || 0 || ']') ELSE 'single' END AS v
+  CASE WHEN (JSON_ARRAY_LENGTH(t_0_L.l) > 1) THEN (CASE WHEN 0 < 0 THEN NULL ELSE JSON_EXTRACT(t_0_L.l, '$[' || 0 || ']') END) ELSE 'single' END AS v
 FROM
   t_1_L AS t_0_L ORDER BY "order" NULLS LAST, v NULLS LAST;

@@ -44,6 +44,6 @@ WITH t_0_Customer AS (SELECT * FROM (
 ) AS UNUSED_TABLE_NAME  )
 SELECT
   Customer.id AS id,
-  ELEMENT_AT(SPLIT(Customer.email, '@'), 1 + 1) AS domain
+  (CASE WHEN 1 < 0 THEN NULL ELSE ELEMENT_AT(SPLIT(Customer.email, '@'), 1 + 1) END) AS domain
 FROM
   t_0_Customer AS Customer ORDER BY id, domain;

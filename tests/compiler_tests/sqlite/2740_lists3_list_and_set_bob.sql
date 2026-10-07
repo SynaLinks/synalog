@@ -82,7 +82,7 @@ WITH t_1_I AS (SELECT * FROM (
   
 ) AS UNUSED_TABLE_NAME  ),
 t_0_A AS (SELECT
-  JSON_GROUP_ARRAY(I.item) AS "all",
+  (CASE WHEN COUNT(*) = 0 THEN NULL ELSE JSON_GROUP_ARRAY(I.item) END) AS "all",
   DistinctListAgg(I.item) AS distinct_items
 FROM
   t_1_I AS I

@@ -1,2 +1,2 @@
 SELECT
-  ELEMENT_AT(SPLIT("x;y;z", REGEXP_REPLACE(";", '([^a-zA-Z0-9])', '\\\\$1')), 2 + 1) AS v;
+  (CASE WHEN 2 < 0 THEN NULL ELSE ELEMENT_AT(SPLIT("x;y;z", REGEXP_REPLACE(";", '([^a-zA-Z0-9])', '\\\\$1')), CAST(2 AS INT) + 1) END) AS v;

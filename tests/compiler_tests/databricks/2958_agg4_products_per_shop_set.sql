@@ -11,7 +11,7 @@ WITH t_1_S AS (SELECT * FROM VALUES
 AS UNUSED_TABLE_NAME(id, shop, day, product, qty, price)),
 t_0_A AS (SELECT
   S.shop AS shop,
-  ARRAY_AGG(DISTINCT S.product) AS ps
+  (CASE WHEN COUNT(*) = 0 THEN NULL ELSE ARRAY_DISTINCT(TRANSFORM(COLLECT_LIST(STRUCT(S.product AS v)), s -> s.v)) END) AS ps
 FROM
   t_1_S AS S
 GROUP BY 1)

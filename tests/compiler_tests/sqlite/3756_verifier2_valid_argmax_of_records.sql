@@ -16,7 +16,7 @@ WITH t_4_N AS (SELECT * FROM (
   
 ) AS UNUSED_TABLE_NAME  ),
 t_1_A AS (SELECT
-  JSON_EXTRACT(ArgMax(JSON_OBJECT('n', t_2_N.n, 's', t_2_N.s), t_2_N.n, 1), '$[' || 0 || ']') AS best
+  (CASE WHEN 0 < 0 THEN NULL ELSE JSON_EXTRACT(ArgMax(JSON_OBJECT('n', t_2_N.n, 's', t_2_N.s), t_2_N.n, 1), '$[' || 0 || ']') END) AS best
 FROM
   t_4_N AS t_2_N)
 SELECT

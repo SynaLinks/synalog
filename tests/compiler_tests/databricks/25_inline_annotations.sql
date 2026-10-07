@@ -1,15 +1,15 @@
 WITH t_0_P1 AS (SELECT
   (MOD(((x_2) * (17)), NULLIF(39, 0))) AS col0
 FROM
-  LATERAL (SELECT explode(FILTER(SEQUENCE(0, 10), x -> x < 10)) AS x_2) AS pushkin ORDER BY col0 NULLS LAST),
+  LATERAL (SELECT explode(FILTER(SEQUENCE(0, CAST(10 AS BIGINT)), x -> x < 10)) AS x_2) AS pushkin ORDER BY col0 NULLS LAST),
 t_0_P2 AS (SELECT
   x_5 AS col0
 FROM
-  LATERAL (SELECT explode(FILTER(SEQUENCE(0, 20), x -> x < 20)) AS x_5) AS pushkin LIMIT 5),
+  LATERAL (SELECT explode(FILTER(SEQUENCE(0, CAST(20 AS BIGINT)), x -> x < 20)) AS x_5) AS pushkin LIMIT 5),
 t_0_P3 AS (SELECT
   x_5 AS col0
 FROM
-  LATERAL (SELECT explode(FILTER(SEQUENCE(0, 20), x -> x < 20)) AS x_5) AS pushkin
+  LATERAL (SELECT explode(FILTER(SEQUENCE(0, CAST(20 AS BIGINT)), x -> x < 20)) AS x_5) AS pushkin
 WHERE
   ((MOD(x_5, NULLIF(2, 0))) = 0) ORDER BY col0 NULLS LAST LIMIT 3)
 SELECT * FROM (

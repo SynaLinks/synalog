@@ -1,15 +1,7 @@
-WITH t_0_V AS (SELECT * FROM (
-  
-    SELECT
-      1 AS id,
-      "');ATTACH DATABASE 'x' AS y;--" AS s
-   UNION ALL
-  
-    SELECT
-      2 AS id,
-      "plain" AS s
-  
-) AS UNUSED_TABLE_NAME  )
+WITH t_0_V AS (SELECT * FROM VALUES
+  (1, "');ATTACH DATABASE 'x' AS y;--"),
+  (2, "plain")
+AS UNUSED_TABLE_NAME(id, s))
 SELECT
   V.id AS id
 FROM

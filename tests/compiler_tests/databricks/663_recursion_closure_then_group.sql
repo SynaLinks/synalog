@@ -542,7 +542,7 @@ FROM
 
 WITH t_1_L AS (SELECT
   P_sn_full.s AS s,
-  ARRAY_AGG(DISTINCT P_sn_full.t) AS l
+  (CASE WHEN COUNT(*) = 0 THEN NULL ELSE ARRAY_DISTINCT(TRANSFORM(COLLECT_LIST(STRUCT(P_sn_full.t AS v)), s -> s.v)) END) AS l
 FROM
   logica_test.P_sn_full AS P_sn_full
 GROUP BY 1)

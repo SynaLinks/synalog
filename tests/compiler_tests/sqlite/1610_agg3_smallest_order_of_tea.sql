@@ -81,7 +81,7 @@ WITH t_1_Sale AS (SELECT * FROM (
   
 ) AS UNUSED_TABLE_NAME  )
 SELECT
-  JSON_EXTRACT(ArgMin(Sale.region, Sale.qty, 1), '$[' || 0 || ']') AS region
+  (CASE WHEN 0 < 0 THEN NULL ELSE JSON_EXTRACT(ArgMin(Sale.region, Sale.qty, 1), '$[' || 0 || ']') END) AS region
 FROM
   t_1_Sale AS Sale
 WHERE

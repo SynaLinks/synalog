@@ -65,7 +65,7 @@ WITH t_3_B AS (SELECT * FROM (
 ) AS UNUSED_TABLE_NAME  ),
 t_1_M AS (SELECT
   B.author AS author,
-  JSON_EXTRACT(ArgMin(JSON_OBJECT('title', B.title, 'v', B.year), B.year, 1), '$[' || 0 || ']') AS m
+  (CASE WHEN 0 < 0 THEN NULL ELSE JSON_EXTRACT(ArgMin(JSON_OBJECT('title', B.title, 'v', B.year), B.year, 1), '$[' || 0 || ']') END) AS m
 FROM
   t_3_B AS B
 GROUP BY B.author)

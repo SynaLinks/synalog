@@ -1,2 +1,2 @@
 SELECT
-  SPLIT("x", ",")[OFFSET(0)] AS e;
+  (CASE WHEN 0 < 0 THEN NULL ELSE SPLIT("x", ",")[SAFE_OFFSET(0)] END) AS e;

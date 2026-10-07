@@ -56,7 +56,7 @@ WITH t_2_Sales AS (SELECT * FROM (
 ) AS UNUSED_TABLE_NAME  ),
 t_0_BestQuarter AS (SELECT
   Sales.col0 AS col0,
-  JSON_EXTRACT(ArgMax(Sales.col1, Sales.col2, 1), '$[' || 0 || ']') AS best_quarter
+  (CASE WHEN 0 < 0 THEN NULL ELSE JSON_EXTRACT(ArgMax(Sales.col1, Sales.col2, 1), '$[' || 0 || ']') END) AS best_quarter
 FROM
   t_2_Sales AS Sales
 GROUP BY Sales.col0)
@@ -64,4 +64,4 @@ SELECT
   BestQuarter.col0 AS region,
   BestQuarter.best_quarter AS best_quarter
 FROM
-  t_0_BestQuarter AS BestQuarter ORDER BY region;
+  t_0_BestQuarter AS BestQuarter ORDER BY region NULLS LAST;

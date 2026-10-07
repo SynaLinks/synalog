@@ -15,6 +15,6 @@ t_1_L AS (SELECT
 FROM
   t_5_V AS t_2_V)
 SELECT
-  t_0_L.l[OFFSET(0)] AS first
+  (CASE WHEN 0 < 0 THEN NULL ELSE t_0_L.l[SAFE_OFFSET(0)] END) AS first
 FROM
   t_1_L AS t_0_L;

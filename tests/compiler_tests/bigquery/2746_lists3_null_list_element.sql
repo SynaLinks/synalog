@@ -1,2 +1,2 @@
 SELECT
-  null[OFFSET(0)] AS e;
+  (CASE WHEN 0 < 0 THEN NULL ELSE null[SAFE_OFFSET(0)] END) AS e;

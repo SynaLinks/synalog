@@ -43,7 +43,7 @@ WITH t_1_Customer AS (SELECT * FROM (
   
 ) AS UNUSED_TABLE_NAME  )
 SELECT
-  SPLIT(Customer.email, ".")[OFFSET(((ARRAY_LENGTH(SPLIT(Customer.email, "."))) - (1)))] AS tld,
+  (CASE WHEN ((ARRAY_LENGTH(SPLIT(Customer.email, "."))) - (1)) < 0 THEN NULL ELSE SPLIT(Customer.email, ".")[SAFE_OFFSET(((ARRAY_LENGTH(SPLIT(Customer.email, "."))) - (1)))] END) AS tld,
   SUM(1) AS n
 FROM
   t_1_Customer AS Customer

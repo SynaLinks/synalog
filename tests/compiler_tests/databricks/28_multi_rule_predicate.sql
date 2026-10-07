@@ -3,7 +3,7 @@ WITH t_1_Number AS (SELECT * FROM (
     SELECT
       x_8 AS col0
     FROM
-      LATERAL (SELECT explode(FILTER(SEQUENCE(0, 5), x -> x < 5)) AS x_8) AS pushkin
+      LATERAL (SELECT explode(FILTER(SEQUENCE(0, CAST(5 AS BIGINT)), x -> x < 5)) AS x_8) AS pushkin
    UNION ALL
   
     SELECT

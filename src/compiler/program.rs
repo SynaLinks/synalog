@@ -190,7 +190,7 @@ impl LogicaProgram {
     /// Compile a single rule to SQL using the program's shared allocator.
     /// Matches Python's SingleRuleSql: extract → RunInjections → Eliminate → Constraints → AsSql
     fn single_rule_sql(&self, rule: &Json) -> CompileResult<String> {
-        self.single_rule_sql_ext(rule, None, false)
+        self.single_rule_sql_ext(rule, None, None, false)
     }
 
     /// Extended single rule SQL compilation with external vocabulary and combine support.
@@ -198,6 +198,7 @@ impl LogicaProgram {
         &self,
         rule: &Json,
         external_vocabulary: Option<&HashMap<String, String>>,
+        external_types: Option<&HashMap<String, crate::compiler::type_inference::Type>>,
         is_combine: bool,
     ) -> CompileResult<String> {
         // Take the allocator out, give to extract_rule_structure
@@ -230,6 +231,7 @@ impl LogicaProgram {
             Some(alloc),
             external_vocabulary.cloned(),
         )?;
+        structure.external_types = external_types.cloned().unwrap_or_default();
 
         // Run injections: inline single-rule predicates (like Python's RunInjections)
         self.run_injections(&mut structure)?;
@@ -603,9 +605,10 @@ impl<'a> SubqueryTranslator for ProgramSubqueryTranslator<'a> {
         &self,
         rule: &Json,
         external_vocabulary: &HashMap<String, String>,
+        external_types: &HashMap<String, crate::compiler::type_inference::Type>,
         is_combine: bool,
     ) -> CompileResult<String> {
-        self.program.single_rule_sql_ext(rule, Some(external_vocabulary), is_combine)
+        self.program.single_rule_sql_ext(rule, Some(external_vocabulary), Some(external_types), is_combine)
     }
 }
 

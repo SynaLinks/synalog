@@ -92,4 +92,4 @@ SELECT
 FROM
   t_1_L AS t_0_L
 WHERE
-  (ELEMENT_AT(t_0_L.l, 0 + 1) = 'pen') ORDER BY "order";
+  ((CASE WHEN 0 < 0 THEN NULL ELSE ELEMENT_AT(t_0_L.l, 0 + 1) END) = 'pen') ORDER BY "order";

@@ -95,6 +95,6 @@ FROM
 GROUP BY I."order")
 SELECT
   t_0_L."order" AS "order",
-  CASE WHEN (LEN(t_0_L.l) > 1) THEN array_extract(t_0_L.l,  CAST(0+1 AS BIGINT)) ELSE 'single' END AS v
+  CASE WHEN (LEN(t_0_L.l) > 1) THEN (CASE WHEN 0 < 0 THEN NULL ELSE array_extract(t_0_L.l, CAST(0 + 1 AS BIGINT)) END) ELSE 'single' END AS v
 FROM
   t_1_L AS t_0_L ORDER BY "order", v;

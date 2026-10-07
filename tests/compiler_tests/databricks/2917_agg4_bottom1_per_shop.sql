@@ -11,7 +11,7 @@ WITH t_2_S AS (SELECT * FROM VALUES
 AS UNUSED_TABLE_NAME(id, shop, day, product, qty, price)),
 t_0_T AS (SELECT
   S.shop AS shop,
-  TRANSFORM(SLICE(SORT_ARRAY(COLLECT_LIST(STRUCT(S.price AS value, S.id AS arg))), 1, 1), s -> s.arg) AS l
+  (CASE WHEN COUNT(*) = 0 THEN NULL ELSE TRANSFORM(SLICE(SORT_ARRAY(COLLECT_LIST(STRUCT(S.price AS value, S.id AS arg))), 1, 1), s -> s.arg) END) AS l
 FROM
   t_2_S AS S
 GROUP BY 1)

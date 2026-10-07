@@ -85,8 +85,8 @@ WITH t_3_S AS (SELECT * FROM (
   
 ) AS UNUSED_TABLE_NAME  )
 SELECT
-  JSON_EXTRACT(ArgMin(S.v, S.d, 1), '$[' || 0 || ']') AS first,
-  JSON_EXTRACT(ArgMax(S.v, S.d, 1), '$[' || 0 || ']') AS last
+  (CASE WHEN 0 < 0 THEN NULL ELSE JSON_EXTRACT(ArgMin(S.v, S.d, 1), '$[' || 0 || ']') END) AS first,
+  (CASE WHEN 0 < 0 THEN NULL ELSE JSON_EXTRACT(ArgMax(S.v, S.d, 1), '$[' || 0 || ']') END) AS last
 FROM
   t_3_S AS S
 WHERE

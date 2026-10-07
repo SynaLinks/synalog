@@ -17,6 +17,6 @@ WITH t_0_S AS (SELECT * FROM (
 ) AS UNUSED_TABLE_NAME  )
 SELECT
   S.k AS k,
-  JSON_EXTRACT(JSON_EXTRACT(S.r, "$.xs"), '$[' || 1 || ']') AS e
+  (CASE WHEN 1 < 0 THEN NULL ELSE JSON_EXTRACT(JSON_EXTRACT(S.r, "$.xs"), '$[' || 1 || ']') END) AS e
 FROM
-  t_0_S AS S ORDER BY k;
+  t_0_S AS S ORDER BY k NULLS LAST;

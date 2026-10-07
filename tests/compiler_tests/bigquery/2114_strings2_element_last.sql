@@ -1,2 +1,2 @@
 SELECT
-  SPLIT("a,b,c", ",")[OFFSET(((ARRAY_LENGTH(SPLIT("a,b,c", ","))) - (1)))] AS s;
+  (CASE WHEN ((ARRAY_LENGTH(SPLIT("a,b,c", ","))) - (1)) < 0 THEN NULL ELSE SPLIT("a,b,c", ",")[SAFE_OFFSET(((ARRAY_LENGTH(SPLIT("a,b,c", ","))) - (1)))] END) AS s;

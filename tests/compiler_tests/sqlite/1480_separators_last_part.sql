@@ -12,6 +12,6 @@ WITH t_0_E AS (SELECT * FROM (
 ) AS UNUSED_TABLE_NAME  )
 SELECT
   E.name AS name,
-  JSON_EXTRACT(SPLIT(E.email, '.'), '$[' || ((JSON_ARRAY_LENGTH(SPLIT(E.email, '.'))) - (1)) || ']') AS tld
+  (CASE WHEN ((JSON_ARRAY_LENGTH(SPLIT(E.email, '.'))) - (1)) < 0 THEN NULL ELSE JSON_EXTRACT(SPLIT(E.email, '.'), '$[' || ((JSON_ARRAY_LENGTH(SPLIT(E.email, '.'))) - (1)) || ']') END) AS tld
 FROM
-  t_0_E AS E ORDER BY name;
+  t_0_E AS E ORDER BY name NULLS LAST;

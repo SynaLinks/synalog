@@ -10,12 +10,12 @@ SELECT * FROM (
       "odd" AS test_name,
       x_5 AS x
     FROM
-      LATERAL (SELECT explode(FILTER(SEQUENCE(0, 10), x -> x < 10)) AS x_5) AS pushkin
+      LATERAL (SELECT explode(FILTER(SEQUENCE(0, CAST(10 AS BIGINT)), x -> x < 10)) AS x_5) AS pushkin
     WHERE
       ((SELECT
         MIN(1) AS logica_value
       FROM
-        LATERAL (SELECT explode(FILTER(SEQUENCE(0, 10), x -> x < 10)) AS x_10) AS pushkin
+        LATERAL (SELECT explode(FILTER(SEQUENCE(0, CAST(10 AS BIGINT)), x -> x < 10)) AS x_10) AS pushkin
       WHERE
         ((MOD(x_5, NULLIF(2, 0))) = 0) AND
         (x_5 = x_10)) IS NULL)
@@ -25,7 +25,7 @@ SELECT * FROM (
       "not_prime" AS test_name,
       x_5 AS x
     FROM
-      LATERAL (SELECT explode(FILTER(SEQUENCE(0, 10), x -> x < 10)) AS x_5) AS pushkin
+      LATERAL (SELECT explode(FILTER(SEQUENCE(0, CAST(10 AS BIGINT)), x -> x < 10)) AS x_5) AS pushkin
     WHERE
       (x_5 > 1) AND
       ((SELECT
@@ -40,7 +40,7 @@ SELECT * FROM (
       "even_not_prime" AS test_name,
       x_7 AS x
     FROM
-      LATERAL (SELECT explode(FILTER(SEQUENCE(0, 10), x -> x < 10)) AS x_7) AS pushkin
+      LATERAL (SELECT explode(FILTER(SEQUENCE(0, CAST(10 AS BIGINT)), x -> x < 10)) AS x_7) AS pushkin
     WHERE
       ((SELECT
         MIN(1) AS logica_value

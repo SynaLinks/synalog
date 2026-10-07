@@ -2,4 +2,4 @@ SELECT
   2 AS n,
   x_3 AS i
 FROM
-  LATERAL (SELECT explode(FILTER(SEQUENCE(0, 2), x -> x < 2)) AS x_3) AS pushkin ORDER BY i NULLS LAST;
+  LATERAL (SELECT explode(FILTER(SEQUENCE(0, CAST(2 AS BIGINT)), x -> x < 2)) AS x_3) AS pushkin ORDER BY i NULLS LAST;

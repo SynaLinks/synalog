@@ -5,7 +5,7 @@ CREATE TABLE logica_test.Reach_sn_delta AS WITH t_0_Reach_MultBodyAggAux_f1 AS (
       x_9 AS x,
       ((x_9) + (1)) AS y
     FROM
-      LATERAL (SELECT explode(FILTER(SEQUENCE(0, 4), x -> x < 4)) AS x_9) AS pushkin
+      LATERAL (SELECT explode(FILTER(SEQUENCE(0, CAST(4 AS BIGINT)), x -> x < 4)) AS x_9) AS pushkin
   
 ) AS UNUSED_TABLE_NAME  )
 SELECT
@@ -35,14 +35,14 @@ CREATE TABLE logica_test.Reach_sn_t1 AS WITH t_1_Reach_MultBodyAggAux_f2 AS (SEL
       x_13 AS x,
       ((x_13) + (1)) AS y
     FROM
-      LATERAL (SELECT explode(FILTER(SEQUENCE(0, 4), x -> x < 4)) AS x_13) AS pushkin
+      LATERAL (SELECT explode(FILTER(SEQUENCE(0, CAST(4 AS BIGINT)), x -> x < 4)) AS x_13) AS pushkin
    UNION ALL
   
     SELECT
       Reach_sn_t0.x AS x,
       ((x_21) + (1)) AS y
     FROM
-      logica_test.Reach_sn_t0 AS Reach_sn_t0, LATERAL (SELECT explode(FILTER(SEQUENCE(0, 4), x -> x < 4)) AS x_21) AS pushkin
+      logica_test.Reach_sn_t0 AS Reach_sn_t0, LATERAL (SELECT explode(FILTER(SEQUENCE(0, CAST(4 AS BIGINT)), x -> x < 4)) AS x_21) AS pushkin
     WHERE
       (Reach_sn_t0.y = x_21)
   
@@ -70,14 +70,14 @@ CREATE TABLE logica_test.Reach_sn_t2 AS WITH t_1_Reach_MultBodyAggAux_f3 AS (SEL
       x_13 AS x,
       ((x_13) + (1)) AS y
     FROM
-      LATERAL (SELECT explode(FILTER(SEQUENCE(0, 4), x -> x < 4)) AS x_13) AS pushkin
+      LATERAL (SELECT explode(FILTER(SEQUENCE(0, CAST(4 AS BIGINT)), x -> x < 4)) AS x_13) AS pushkin
    UNION ALL
   
     SELECT
       Reach_sn_t1.x AS x,
       ((x_21) + (1)) AS y
     FROM
-      logica_test.Reach_sn_t1 AS Reach_sn_t1, LATERAL (SELECT explode(FILTER(SEQUENCE(0, 4), x -> x < 4)) AS x_21) AS pushkin
+      logica_test.Reach_sn_t1 AS Reach_sn_t1, LATERAL (SELECT explode(FILTER(SEQUENCE(0, CAST(4 AS BIGINT)), x -> x < 4)) AS x_21) AS pushkin
     WHERE
       (Reach_sn_t1.y = x_21)
   
@@ -105,14 +105,14 @@ CREATE TABLE logica_test.Reach_sn_t3 AS WITH t_1_Reach_MultBodyAggAux_f4 AS (SEL
       x_13 AS x,
       ((x_13) + (1)) AS y
     FROM
-      LATERAL (SELECT explode(FILTER(SEQUENCE(0, 4), x -> x < 4)) AS x_13) AS pushkin
+      LATERAL (SELECT explode(FILTER(SEQUENCE(0, CAST(4 AS BIGINT)), x -> x < 4)) AS x_13) AS pushkin
    UNION ALL
   
     SELECT
       Reach_sn_t2.x AS x,
       ((x_21) + (1)) AS y
     FROM
-      logica_test.Reach_sn_t2 AS Reach_sn_t2, LATERAL (SELECT explode(FILTER(SEQUENCE(0, 4), x -> x < 4)) AS x_21) AS pushkin
+      logica_test.Reach_sn_t2 AS Reach_sn_t2, LATERAL (SELECT explode(FILTER(SEQUENCE(0, CAST(4 AS BIGINT)), x -> x < 4)) AS x_21) AS pushkin
     WHERE
       (Reach_sn_t2.y = x_21)
   
@@ -140,14 +140,14 @@ CREATE TABLE logica_test.Reach_sn_t4 AS WITH t_1_Reach_MultBodyAggAux_f5 AS (SEL
       x_13 AS x,
       ((x_13) + (1)) AS y
     FROM
-      LATERAL (SELECT explode(FILTER(SEQUENCE(0, 4), x -> x < 4)) AS x_13) AS pushkin
+      LATERAL (SELECT explode(FILTER(SEQUENCE(0, CAST(4 AS BIGINT)), x -> x < 4)) AS x_13) AS pushkin
    UNION ALL
   
     SELECT
       Reach_sn_t3.x AS x,
       ((x_21) + (1)) AS y
     FROM
-      logica_test.Reach_sn_t3 AS Reach_sn_t3, LATERAL (SELECT explode(FILTER(SEQUENCE(0, 4), x -> x < 4)) AS x_21) AS pushkin
+      logica_test.Reach_sn_t3 AS Reach_sn_t3, LATERAL (SELECT explode(FILTER(SEQUENCE(0, CAST(4 AS BIGINT)), x -> x < 4)) AS x_21) AS pushkin
     WHERE
       (Reach_sn_t3.y = x_21)
   
@@ -175,14 +175,14 @@ CREATE TABLE logica_test.Reach_sn_t5 AS WITH t_1_Reach_MultBodyAggAux_f6 AS (SEL
       x_13 AS x,
       ((x_13) + (1)) AS y
     FROM
-      LATERAL (SELECT explode(FILTER(SEQUENCE(0, 4), x -> x < 4)) AS x_13) AS pushkin
+      LATERAL (SELECT explode(FILTER(SEQUENCE(0, CAST(4 AS BIGINT)), x -> x < 4)) AS x_13) AS pushkin
    UNION ALL
   
     SELECT
       Reach_sn_t4.x AS x,
       ((x_21) + (1)) AS y
     FROM
-      logica_test.Reach_sn_t4 AS Reach_sn_t4, LATERAL (SELECT explode(FILTER(SEQUENCE(0, 4), x -> x < 4)) AS x_21) AS pushkin
+      logica_test.Reach_sn_t4 AS Reach_sn_t4, LATERAL (SELECT explode(FILTER(SEQUENCE(0, CAST(4 AS BIGINT)), x -> x < 4)) AS x_21) AS pushkin
     WHERE
       (Reach_sn_t4.y = x_21)
   
@@ -258,14 +258,14 @@ CREATE TABLE logica_test.Reach_sn_new AS WITH t_1_Reach_MultBodyAggAux_f7 AS (SE
       x_13 AS x,
       ((x_13) + (1)) AS y
     FROM
-      LATERAL (SELECT explode(FILTER(SEQUENCE(0, 4), x -> x < 4)) AS x_13) AS pushkin
+      LATERAL (SELECT explode(FILTER(SEQUENCE(0, CAST(4 AS BIGINT)), x -> x < 4)) AS x_13) AS pushkin
    UNION ALL
   
     SELECT
       Reach_sn_delta.x AS x,
       ((x_21) + (1)) AS y
     FROM
-      logica_test.Reach_sn_delta AS Reach_sn_delta, LATERAL (SELECT explode(FILTER(SEQUENCE(0, 4), x -> x < 4)) AS x_21) AS pushkin
+      logica_test.Reach_sn_delta AS Reach_sn_delta, LATERAL (SELECT explode(FILTER(SEQUENCE(0, CAST(4 AS BIGINT)), x -> x < 4)) AS x_21) AS pushkin
     WHERE
       (Reach_sn_delta.y = x_21)
   
@@ -307,14 +307,14 @@ CREATE TABLE logica_test.Reach_sn_new AS WITH t_1_Reach_MultBodyAggAux_f7 AS (SE
       x_13 AS x,
       ((x_13) + (1)) AS y
     FROM
-      LATERAL (SELECT explode(FILTER(SEQUENCE(0, 4), x -> x < 4)) AS x_13) AS pushkin
+      LATERAL (SELECT explode(FILTER(SEQUENCE(0, CAST(4 AS BIGINT)), x -> x < 4)) AS x_13) AS pushkin
    UNION ALL
   
     SELECT
       Reach_sn_delta.x AS x,
       ((x_21) + (1)) AS y
     FROM
-      logica_test.Reach_sn_delta AS Reach_sn_delta, LATERAL (SELECT explode(FILTER(SEQUENCE(0, 4), x -> x < 4)) AS x_21) AS pushkin
+      logica_test.Reach_sn_delta AS Reach_sn_delta, LATERAL (SELECT explode(FILTER(SEQUENCE(0, CAST(4 AS BIGINT)), x -> x < 4)) AS x_21) AS pushkin
     WHERE
       (Reach_sn_delta.y = x_21)
   
@@ -356,14 +356,14 @@ CREATE TABLE logica_test.Reach_sn_new AS WITH t_1_Reach_MultBodyAggAux_f7 AS (SE
       x_13 AS x,
       ((x_13) + (1)) AS y
     FROM
-      LATERAL (SELECT explode(FILTER(SEQUENCE(0, 4), x -> x < 4)) AS x_13) AS pushkin
+      LATERAL (SELECT explode(FILTER(SEQUENCE(0, CAST(4 AS BIGINT)), x -> x < 4)) AS x_13) AS pushkin
    UNION ALL
   
     SELECT
       Reach_sn_delta.x AS x,
       ((x_21) + (1)) AS y
     FROM
-      logica_test.Reach_sn_delta AS Reach_sn_delta, LATERAL (SELECT explode(FILTER(SEQUENCE(0, 4), x -> x < 4)) AS x_21) AS pushkin
+      logica_test.Reach_sn_delta AS Reach_sn_delta, LATERAL (SELECT explode(FILTER(SEQUENCE(0, CAST(4 AS BIGINT)), x -> x < 4)) AS x_21) AS pushkin
     WHERE
       (Reach_sn_delta.y = x_21)
   
@@ -405,14 +405,14 @@ CREATE TABLE logica_test.Reach_sn_new AS WITH t_1_Reach_MultBodyAggAux_f7 AS (SE
       x_13 AS x,
       ((x_13) + (1)) AS y
     FROM
-      LATERAL (SELECT explode(FILTER(SEQUENCE(0, 4), x -> x < 4)) AS x_13) AS pushkin
+      LATERAL (SELECT explode(FILTER(SEQUENCE(0, CAST(4 AS BIGINT)), x -> x < 4)) AS x_13) AS pushkin
    UNION ALL
   
     SELECT
       Reach_sn_delta.x AS x,
       ((x_21) + (1)) AS y
     FROM
-      logica_test.Reach_sn_delta AS Reach_sn_delta, LATERAL (SELECT explode(FILTER(SEQUENCE(0, 4), x -> x < 4)) AS x_21) AS pushkin
+      logica_test.Reach_sn_delta AS Reach_sn_delta, LATERAL (SELECT explode(FILTER(SEQUENCE(0, CAST(4 AS BIGINT)), x -> x < 4)) AS x_21) AS pushkin
     WHERE
       (Reach_sn_delta.y = x_21)
   
@@ -454,14 +454,14 @@ CREATE TABLE logica_test.Reach_sn_new AS WITH t_1_Reach_MultBodyAggAux_f7 AS (SE
       x_13 AS x,
       ((x_13) + (1)) AS y
     FROM
-      LATERAL (SELECT explode(FILTER(SEQUENCE(0, 4), x -> x < 4)) AS x_13) AS pushkin
+      LATERAL (SELECT explode(FILTER(SEQUENCE(0, CAST(4 AS BIGINT)), x -> x < 4)) AS x_13) AS pushkin
    UNION ALL
   
     SELECT
       Reach_sn_delta.x AS x,
       ((x_21) + (1)) AS y
     FROM
-      logica_test.Reach_sn_delta AS Reach_sn_delta, LATERAL (SELECT explode(FILTER(SEQUENCE(0, 4), x -> x < 4)) AS x_21) AS pushkin
+      logica_test.Reach_sn_delta AS Reach_sn_delta, LATERAL (SELECT explode(FILTER(SEQUENCE(0, CAST(4 AS BIGINT)), x -> x < 4)) AS x_21) AS pushkin
     WHERE
       (Reach_sn_delta.y = x_21)
   
@@ -503,14 +503,14 @@ CREATE TABLE logica_test.Reach_sn_new AS WITH t_1_Reach_MultBodyAggAux_f7 AS (SE
       x_13 AS x,
       ((x_13) + (1)) AS y
     FROM
-      LATERAL (SELECT explode(FILTER(SEQUENCE(0, 4), x -> x < 4)) AS x_13) AS pushkin
+      LATERAL (SELECT explode(FILTER(SEQUENCE(0, CAST(4 AS BIGINT)), x -> x < 4)) AS x_13) AS pushkin
    UNION ALL
   
     SELECT
       Reach_sn_delta.x AS x,
       ((x_21) + (1)) AS y
     FROM
-      logica_test.Reach_sn_delta AS Reach_sn_delta, LATERAL (SELECT explode(FILTER(SEQUENCE(0, 4), x -> x < 4)) AS x_21) AS pushkin
+      logica_test.Reach_sn_delta AS Reach_sn_delta, LATERAL (SELECT explode(FILTER(SEQUENCE(0, CAST(4 AS BIGINT)), x -> x < 4)) AS x_21) AS pushkin
     WHERE
       (Reach_sn_delta.y = x_21)
   
@@ -552,14 +552,14 @@ CREATE TABLE logica_test.Reach_sn_new AS WITH t_1_Reach_MultBodyAggAux_f7 AS (SE
       x_13 AS x,
       ((x_13) + (1)) AS y
     FROM
-      LATERAL (SELECT explode(FILTER(SEQUENCE(0, 4), x -> x < 4)) AS x_13) AS pushkin
+      LATERAL (SELECT explode(FILTER(SEQUENCE(0, CAST(4 AS BIGINT)), x -> x < 4)) AS x_13) AS pushkin
    UNION ALL
   
     SELECT
       Reach_sn_delta.x AS x,
       ((x_21) + (1)) AS y
     FROM
-      logica_test.Reach_sn_delta AS Reach_sn_delta, LATERAL (SELECT explode(FILTER(SEQUENCE(0, 4), x -> x < 4)) AS x_21) AS pushkin
+      logica_test.Reach_sn_delta AS Reach_sn_delta, LATERAL (SELECT explode(FILTER(SEQUENCE(0, CAST(4 AS BIGINT)), x -> x < 4)) AS x_21) AS pushkin
     WHERE
       (Reach_sn_delta.y = x_21)
   
@@ -601,14 +601,14 @@ CREATE TABLE logica_test.Reach_sn_new AS WITH t_1_Reach_MultBodyAggAux_f7 AS (SE
       x_13 AS x,
       ((x_13) + (1)) AS y
     FROM
-      LATERAL (SELECT explode(FILTER(SEQUENCE(0, 4), x -> x < 4)) AS x_13) AS pushkin
+      LATERAL (SELECT explode(FILTER(SEQUENCE(0, CAST(4 AS BIGINT)), x -> x < 4)) AS x_13) AS pushkin
    UNION ALL
   
     SELECT
       Reach_sn_delta.x AS x,
       ((x_21) + (1)) AS y
     FROM
-      logica_test.Reach_sn_delta AS Reach_sn_delta, LATERAL (SELECT explode(FILTER(SEQUENCE(0, 4), x -> x < 4)) AS x_21) AS pushkin
+      logica_test.Reach_sn_delta AS Reach_sn_delta, LATERAL (SELECT explode(FILTER(SEQUENCE(0, CAST(4 AS BIGINT)), x -> x < 4)) AS x_21) AS pushkin
     WHERE
       (Reach_sn_delta.y = x_21)
   
@@ -650,14 +650,14 @@ CREATE TABLE logica_test.Reach_sn_new AS WITH t_1_Reach_MultBodyAggAux_f7 AS (SE
       x_13 AS x,
       ((x_13) + (1)) AS y
     FROM
-      LATERAL (SELECT explode(FILTER(SEQUENCE(0, 4), x -> x < 4)) AS x_13) AS pushkin
+      LATERAL (SELECT explode(FILTER(SEQUENCE(0, CAST(4 AS BIGINT)), x -> x < 4)) AS x_13) AS pushkin
    UNION ALL
   
     SELECT
       Reach_sn_delta.x AS x,
       ((x_21) + (1)) AS y
     FROM
-      logica_test.Reach_sn_delta AS Reach_sn_delta, LATERAL (SELECT explode(FILTER(SEQUENCE(0, 4), x -> x < 4)) AS x_21) AS pushkin
+      logica_test.Reach_sn_delta AS Reach_sn_delta, LATERAL (SELECT explode(FILTER(SEQUENCE(0, CAST(4 AS BIGINT)), x -> x < 4)) AS x_21) AS pushkin
     WHERE
       (Reach_sn_delta.y = x_21)
   
@@ -699,14 +699,14 @@ CREATE TABLE logica_test.Reach_sn_new AS WITH t_1_Reach_MultBodyAggAux_f7 AS (SE
       x_13 AS x,
       ((x_13) + (1)) AS y
     FROM
-      LATERAL (SELECT explode(FILTER(SEQUENCE(0, 4), x -> x < 4)) AS x_13) AS pushkin
+      LATERAL (SELECT explode(FILTER(SEQUENCE(0, CAST(4 AS BIGINT)), x -> x < 4)) AS x_13) AS pushkin
    UNION ALL
   
     SELECT
       Reach_sn_delta.x AS x,
       ((x_21) + (1)) AS y
     FROM
-      logica_test.Reach_sn_delta AS Reach_sn_delta, LATERAL (SELECT explode(FILTER(SEQUENCE(0, 4), x -> x < 4)) AS x_21) AS pushkin
+      logica_test.Reach_sn_delta AS Reach_sn_delta, LATERAL (SELECT explode(FILTER(SEQUENCE(0, CAST(4 AS BIGINT)), x -> x < 4)) AS x_21) AS pushkin
     WHERE
       (Reach_sn_delta.y = x_21)
   
@@ -748,14 +748,14 @@ CREATE TABLE logica_test.Reach_sn_new AS WITH t_1_Reach_MultBodyAggAux_f7 AS (SE
       x_13 AS x,
       ((x_13) + (1)) AS y
     FROM
-      LATERAL (SELECT explode(FILTER(SEQUENCE(0, 4), x -> x < 4)) AS x_13) AS pushkin
+      LATERAL (SELECT explode(FILTER(SEQUENCE(0, CAST(4 AS BIGINT)), x -> x < 4)) AS x_13) AS pushkin
    UNION ALL
   
     SELECT
       Reach_sn_delta.x AS x,
       ((x_21) + (1)) AS y
     FROM
-      logica_test.Reach_sn_delta AS Reach_sn_delta, LATERAL (SELECT explode(FILTER(SEQUENCE(0, 4), x -> x < 4)) AS x_21) AS pushkin
+      logica_test.Reach_sn_delta AS Reach_sn_delta, LATERAL (SELECT explode(FILTER(SEQUENCE(0, CAST(4 AS BIGINT)), x -> x < 4)) AS x_21) AS pushkin
     WHERE
       (Reach_sn_delta.y = x_21)
   
@@ -797,14 +797,14 @@ CREATE TABLE logica_test.Reach_sn_new AS WITH t_1_Reach_MultBodyAggAux_f7 AS (SE
       x_13 AS x,
       ((x_13) + (1)) AS y
     FROM
-      LATERAL (SELECT explode(FILTER(SEQUENCE(0, 4), x -> x < 4)) AS x_13) AS pushkin
+      LATERAL (SELECT explode(FILTER(SEQUENCE(0, CAST(4 AS BIGINT)), x -> x < 4)) AS x_13) AS pushkin
    UNION ALL
   
     SELECT
       Reach_sn_delta.x AS x,
       ((x_21) + (1)) AS y
     FROM
-      logica_test.Reach_sn_delta AS Reach_sn_delta, LATERAL (SELECT explode(FILTER(SEQUENCE(0, 4), x -> x < 4)) AS x_21) AS pushkin
+      logica_test.Reach_sn_delta AS Reach_sn_delta, LATERAL (SELECT explode(FILTER(SEQUENCE(0, CAST(4 AS BIGINT)), x -> x < 4)) AS x_21) AS pushkin
     WHERE
       (Reach_sn_delta.y = x_21)
   
@@ -846,14 +846,14 @@ CREATE TABLE logica_test.Reach_sn_new AS WITH t_1_Reach_MultBodyAggAux_f7 AS (SE
       x_13 AS x,
       ((x_13) + (1)) AS y
     FROM
-      LATERAL (SELECT explode(FILTER(SEQUENCE(0, 4), x -> x < 4)) AS x_13) AS pushkin
+      LATERAL (SELECT explode(FILTER(SEQUENCE(0, CAST(4 AS BIGINT)), x -> x < 4)) AS x_13) AS pushkin
    UNION ALL
   
     SELECT
       Reach_sn_delta.x AS x,
       ((x_21) + (1)) AS y
     FROM
-      logica_test.Reach_sn_delta AS Reach_sn_delta, LATERAL (SELECT explode(FILTER(SEQUENCE(0, 4), x -> x < 4)) AS x_21) AS pushkin
+      logica_test.Reach_sn_delta AS Reach_sn_delta, LATERAL (SELECT explode(FILTER(SEQUENCE(0, CAST(4 AS BIGINT)), x -> x < 4)) AS x_21) AS pushkin
     WHERE
       (Reach_sn_delta.y = x_21)
   
@@ -895,14 +895,14 @@ CREATE TABLE logica_test.Reach_sn_new AS WITH t_1_Reach_MultBodyAggAux_f7 AS (SE
       x_13 AS x,
       ((x_13) + (1)) AS y
     FROM
-      LATERAL (SELECT explode(FILTER(SEQUENCE(0, 4), x -> x < 4)) AS x_13) AS pushkin
+      LATERAL (SELECT explode(FILTER(SEQUENCE(0, CAST(4 AS BIGINT)), x -> x < 4)) AS x_13) AS pushkin
    UNION ALL
   
     SELECT
       Reach_sn_delta.x AS x,
       ((x_21) + (1)) AS y
     FROM
-      logica_test.Reach_sn_delta AS Reach_sn_delta, LATERAL (SELECT explode(FILTER(SEQUENCE(0, 4), x -> x < 4)) AS x_21) AS pushkin
+      logica_test.Reach_sn_delta AS Reach_sn_delta, LATERAL (SELECT explode(FILTER(SEQUENCE(0, CAST(4 AS BIGINT)), x -> x < 4)) AS x_21) AS pushkin
     WHERE
       (Reach_sn_delta.y = x_21)
   
@@ -944,14 +944,14 @@ CREATE TABLE logica_test.Reach_sn_new AS WITH t_1_Reach_MultBodyAggAux_f7 AS (SE
       x_13 AS x,
       ((x_13) + (1)) AS y
     FROM
-      LATERAL (SELECT explode(FILTER(SEQUENCE(0, 4), x -> x < 4)) AS x_13) AS pushkin
+      LATERAL (SELECT explode(FILTER(SEQUENCE(0, CAST(4 AS BIGINT)), x -> x < 4)) AS x_13) AS pushkin
    UNION ALL
   
     SELECT
       Reach_sn_delta.x AS x,
       ((x_21) + (1)) AS y
     FROM
-      logica_test.Reach_sn_delta AS Reach_sn_delta, LATERAL (SELECT explode(FILTER(SEQUENCE(0, 4), x -> x < 4)) AS x_21) AS pushkin
+      logica_test.Reach_sn_delta AS Reach_sn_delta, LATERAL (SELECT explode(FILTER(SEQUENCE(0, CAST(4 AS BIGINT)), x -> x < 4)) AS x_21) AS pushkin
     WHERE
       (Reach_sn_delta.y = x_21)
   
@@ -993,14 +993,14 @@ CREATE TABLE logica_test.Reach_sn_new AS WITH t_1_Reach_MultBodyAggAux_f7 AS (SE
       x_13 AS x,
       ((x_13) + (1)) AS y
     FROM
-      LATERAL (SELECT explode(FILTER(SEQUENCE(0, 4), x -> x < 4)) AS x_13) AS pushkin
+      LATERAL (SELECT explode(FILTER(SEQUENCE(0, CAST(4 AS BIGINT)), x -> x < 4)) AS x_13) AS pushkin
    UNION ALL
   
     SELECT
       Reach_sn_delta.x AS x,
       ((x_21) + (1)) AS y
     FROM
-      logica_test.Reach_sn_delta AS Reach_sn_delta, LATERAL (SELECT explode(FILTER(SEQUENCE(0, 4), x -> x < 4)) AS x_21) AS pushkin
+      logica_test.Reach_sn_delta AS Reach_sn_delta, LATERAL (SELECT explode(FILTER(SEQUENCE(0, CAST(4 AS BIGINT)), x -> x < 4)) AS x_21) AS pushkin
     WHERE
       (Reach_sn_delta.y = x_21)
   
@@ -1042,14 +1042,14 @@ CREATE TABLE logica_test.Reach_sn_new AS WITH t_1_Reach_MultBodyAggAux_f7 AS (SE
       x_13 AS x,
       ((x_13) + (1)) AS y
     FROM
-      LATERAL (SELECT explode(FILTER(SEQUENCE(0, 4), x -> x < 4)) AS x_13) AS pushkin
+      LATERAL (SELECT explode(FILTER(SEQUENCE(0, CAST(4 AS BIGINT)), x -> x < 4)) AS x_13) AS pushkin
    UNION ALL
   
     SELECT
       Reach_sn_delta.x AS x,
       ((x_21) + (1)) AS y
     FROM
-      logica_test.Reach_sn_delta AS Reach_sn_delta, LATERAL (SELECT explode(FILTER(SEQUENCE(0, 4), x -> x < 4)) AS x_21) AS pushkin
+      logica_test.Reach_sn_delta AS Reach_sn_delta, LATERAL (SELECT explode(FILTER(SEQUENCE(0, CAST(4 AS BIGINT)), x -> x < 4)) AS x_21) AS pushkin
     WHERE
       (Reach_sn_delta.y = x_21)
   
@@ -1091,14 +1091,14 @@ CREATE TABLE logica_test.Reach_sn_new AS WITH t_1_Reach_MultBodyAggAux_f7 AS (SE
       x_13 AS x,
       ((x_13) + (1)) AS y
     FROM
-      LATERAL (SELECT explode(FILTER(SEQUENCE(0, 4), x -> x < 4)) AS x_13) AS pushkin
+      LATERAL (SELECT explode(FILTER(SEQUENCE(0, CAST(4 AS BIGINT)), x -> x < 4)) AS x_13) AS pushkin
    UNION ALL
   
     SELECT
       Reach_sn_delta.x AS x,
       ((x_21) + (1)) AS y
     FROM
-      logica_test.Reach_sn_delta AS Reach_sn_delta, LATERAL (SELECT explode(FILTER(SEQUENCE(0, 4), x -> x < 4)) AS x_21) AS pushkin
+      logica_test.Reach_sn_delta AS Reach_sn_delta, LATERAL (SELECT explode(FILTER(SEQUENCE(0, CAST(4 AS BIGINT)), x -> x < 4)) AS x_21) AS pushkin
     WHERE
       (Reach_sn_delta.y = x_21)
   
@@ -1140,14 +1140,14 @@ CREATE TABLE logica_test.Reach_sn_new AS WITH t_1_Reach_MultBodyAggAux_f7 AS (SE
       x_13 AS x,
       ((x_13) + (1)) AS y
     FROM
-      LATERAL (SELECT explode(FILTER(SEQUENCE(0, 4), x -> x < 4)) AS x_13) AS pushkin
+      LATERAL (SELECT explode(FILTER(SEQUENCE(0, CAST(4 AS BIGINT)), x -> x < 4)) AS x_13) AS pushkin
    UNION ALL
   
     SELECT
       Reach_sn_delta.x AS x,
       ((x_21) + (1)) AS y
     FROM
-      logica_test.Reach_sn_delta AS Reach_sn_delta, LATERAL (SELECT explode(FILTER(SEQUENCE(0, 4), x -> x < 4)) AS x_21) AS pushkin
+      logica_test.Reach_sn_delta AS Reach_sn_delta, LATERAL (SELECT explode(FILTER(SEQUENCE(0, CAST(4 AS BIGINT)), x -> x < 4)) AS x_21) AS pushkin
     WHERE
       (Reach_sn_delta.y = x_21)
   
@@ -1189,14 +1189,14 @@ CREATE TABLE logica_test.Reach_sn_new AS WITH t_1_Reach_MultBodyAggAux_f7 AS (SE
       x_13 AS x,
       ((x_13) + (1)) AS y
     FROM
-      LATERAL (SELECT explode(FILTER(SEQUENCE(0, 4), x -> x < 4)) AS x_13) AS pushkin
+      LATERAL (SELECT explode(FILTER(SEQUENCE(0, CAST(4 AS BIGINT)), x -> x < 4)) AS x_13) AS pushkin
    UNION ALL
   
     SELECT
       Reach_sn_delta.x AS x,
       ((x_21) + (1)) AS y
     FROM
-      logica_test.Reach_sn_delta AS Reach_sn_delta, LATERAL (SELECT explode(FILTER(SEQUENCE(0, 4), x -> x < 4)) AS x_21) AS pushkin
+      logica_test.Reach_sn_delta AS Reach_sn_delta, LATERAL (SELECT explode(FILTER(SEQUENCE(0, CAST(4 AS BIGINT)), x -> x < 4)) AS x_21) AS pushkin
     WHERE
       (Reach_sn_delta.y = x_21)
   
@@ -1238,14 +1238,14 @@ CREATE TABLE logica_test.Reach_sn_new AS WITH t_1_Reach_MultBodyAggAux_f7 AS (SE
       x_13 AS x,
       ((x_13) + (1)) AS y
     FROM
-      LATERAL (SELECT explode(FILTER(SEQUENCE(0, 4), x -> x < 4)) AS x_13) AS pushkin
+      LATERAL (SELECT explode(FILTER(SEQUENCE(0, CAST(4 AS BIGINT)), x -> x < 4)) AS x_13) AS pushkin
    UNION ALL
   
     SELECT
       Reach_sn_delta.x AS x,
       ((x_21) + (1)) AS y
     FROM
-      logica_test.Reach_sn_delta AS Reach_sn_delta, LATERAL (SELECT explode(FILTER(SEQUENCE(0, 4), x -> x < 4)) AS x_21) AS pushkin
+      logica_test.Reach_sn_delta AS Reach_sn_delta, LATERAL (SELECT explode(FILTER(SEQUENCE(0, CAST(4 AS BIGINT)), x -> x < 4)) AS x_21) AS pushkin
     WHERE
       (Reach_sn_delta.y = x_21)
   
@@ -1287,14 +1287,14 @@ CREATE TABLE logica_test.Reach_sn_new AS WITH t_1_Reach_MultBodyAggAux_f7 AS (SE
       x_13 AS x,
       ((x_13) + (1)) AS y
     FROM
-      LATERAL (SELECT explode(FILTER(SEQUENCE(0, 4), x -> x < 4)) AS x_13) AS pushkin
+      LATERAL (SELECT explode(FILTER(SEQUENCE(0, CAST(4 AS BIGINT)), x -> x < 4)) AS x_13) AS pushkin
    UNION ALL
   
     SELECT
       Reach_sn_delta.x AS x,
       ((x_21) + (1)) AS y
     FROM
-      logica_test.Reach_sn_delta AS Reach_sn_delta, LATERAL (SELECT explode(FILTER(SEQUENCE(0, 4), x -> x < 4)) AS x_21) AS pushkin
+      logica_test.Reach_sn_delta AS Reach_sn_delta, LATERAL (SELECT explode(FILTER(SEQUENCE(0, CAST(4 AS BIGINT)), x -> x < 4)) AS x_21) AS pushkin
     WHERE
       (Reach_sn_delta.y = x_21)
   
@@ -1336,14 +1336,14 @@ CREATE TABLE logica_test.Reach_sn_new AS WITH t_1_Reach_MultBodyAggAux_f7 AS (SE
       x_13 AS x,
       ((x_13) + (1)) AS y
     FROM
-      LATERAL (SELECT explode(FILTER(SEQUENCE(0, 4), x -> x < 4)) AS x_13) AS pushkin
+      LATERAL (SELECT explode(FILTER(SEQUENCE(0, CAST(4 AS BIGINT)), x -> x < 4)) AS x_13) AS pushkin
    UNION ALL
   
     SELECT
       Reach_sn_delta.x AS x,
       ((x_21) + (1)) AS y
     FROM
-      logica_test.Reach_sn_delta AS Reach_sn_delta, LATERAL (SELECT explode(FILTER(SEQUENCE(0, 4), x -> x < 4)) AS x_21) AS pushkin
+      logica_test.Reach_sn_delta AS Reach_sn_delta, LATERAL (SELECT explode(FILTER(SEQUENCE(0, CAST(4 AS BIGINT)), x -> x < 4)) AS x_21) AS pushkin
     WHERE
       (Reach_sn_delta.y = x_21)
   
@@ -1385,14 +1385,14 @@ CREATE TABLE logica_test.Reach_sn_new AS WITH t_1_Reach_MultBodyAggAux_f7 AS (SE
       x_13 AS x,
       ((x_13) + (1)) AS y
     FROM
-      LATERAL (SELECT explode(FILTER(SEQUENCE(0, 4), x -> x < 4)) AS x_13) AS pushkin
+      LATERAL (SELECT explode(FILTER(SEQUENCE(0, CAST(4 AS BIGINT)), x -> x < 4)) AS x_13) AS pushkin
    UNION ALL
   
     SELECT
       Reach_sn_delta.x AS x,
       ((x_21) + (1)) AS y
     FROM
-      logica_test.Reach_sn_delta AS Reach_sn_delta, LATERAL (SELECT explode(FILTER(SEQUENCE(0, 4), x -> x < 4)) AS x_21) AS pushkin
+      logica_test.Reach_sn_delta AS Reach_sn_delta, LATERAL (SELECT explode(FILTER(SEQUENCE(0, CAST(4 AS BIGINT)), x -> x < 4)) AS x_21) AS pushkin
     WHERE
       (Reach_sn_delta.y = x_21)
   
@@ -1434,14 +1434,14 @@ CREATE TABLE logica_test.Reach_sn_new AS WITH t_1_Reach_MultBodyAggAux_f7 AS (SE
       x_13 AS x,
       ((x_13) + (1)) AS y
     FROM
-      LATERAL (SELECT explode(FILTER(SEQUENCE(0, 4), x -> x < 4)) AS x_13) AS pushkin
+      LATERAL (SELECT explode(FILTER(SEQUENCE(0, CAST(4 AS BIGINT)), x -> x < 4)) AS x_13) AS pushkin
    UNION ALL
   
     SELECT
       Reach_sn_delta.x AS x,
       ((x_21) + (1)) AS y
     FROM
-      logica_test.Reach_sn_delta AS Reach_sn_delta, LATERAL (SELECT explode(FILTER(SEQUENCE(0, 4), x -> x < 4)) AS x_21) AS pushkin
+      logica_test.Reach_sn_delta AS Reach_sn_delta, LATERAL (SELECT explode(FILTER(SEQUENCE(0, CAST(4 AS BIGINT)), x -> x < 4)) AS x_21) AS pushkin
     WHERE
       (Reach_sn_delta.y = x_21)
   

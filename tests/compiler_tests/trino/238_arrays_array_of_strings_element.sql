@@ -1,2 +1,2 @@
 SELECT
-  ELEMENT_AT(ARRAY['x', 'y'], 0 + 1) AS e;
+  (CASE WHEN 0 < 0 THEN NULL ELSE ELEMENT_AT(ARRAY['x', 'y'], 0 + 1) END) AS e;

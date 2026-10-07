@@ -98,4 +98,4 @@ SELECT
 FROM
   t_1_L AS t_0_L
 WHERE
-  (array_extract(t_0_L.l,  CAST(0+1 AS BIGINT)) = 'pen') ORDER BY "order";
+  ((CASE WHEN 0 < 0 THEN NULL ELSE array_extract(t_0_L.l, CAST(0 + 1 AS BIGINT)) END) = 'pen') ORDER BY "order";

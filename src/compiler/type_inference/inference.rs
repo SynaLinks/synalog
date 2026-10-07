@@ -220,7 +220,8 @@ impl TypeInference {
     /// Get all inferred types for a predicate.
     pub fn get_predicate_types(&self, predicate_name: &str) -> HashMap<String, Type> {
         let mut types: HashMap<String, Type> = HashMap::new();
-        let prefix = format!("PredicateAddressing({}", predicate_name);
+        // The dot ends the name: `L` is not `List`.
+        let prefix = format!("PredicateAddressing({}.", predicate_name);
 
         for (_, edge) in &self.all_edges {
             let (v1, v2) = edge.vertices();

@@ -8,6 +8,6 @@ WITH t_0_Customer AS (SELECT * FROM VALUES
 AS UNUSED_TABLE_NAME(id, first, last, email))
 SELECT
   Customer.id AS id,
-  ELEMENT_AT(SPLIT(Customer.email, REGEXP_REPLACE("@", '([^a-zA-Z0-9])', '\\\\$1')), 1 + 1) AS domain
+  (CASE WHEN 1 < 0 THEN NULL ELSE ELEMENT_AT(SPLIT(Customer.email, REGEXP_REPLACE("@", '([^a-zA-Z0-9])', '\\\\$1')), CAST(1 AS INT) + 1) END) AS domain
 FROM
   t_0_Customer AS Customer ORDER BY id NULLS LAST, domain NULLS LAST;

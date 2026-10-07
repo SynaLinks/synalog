@@ -15,6 +15,6 @@ t_1_L AS (SELECT
 FROM
   t_4_V AS V)
 SELECT
-  t_0_L.l[OFFSET(0)].n AS n
+  (CASE WHEN 0 < 0 THEN NULL ELSE t_0_L.l[SAFE_OFFSET(0)] END).n AS n
 FROM
   t_1_L AS t_0_L;

@@ -89,6 +89,6 @@ FROM
 GROUP BY 1)
 SELECT
   t_0_L."order" AS "order",
-  CASE WHEN (CARDINALITY(t_0_L.l) > 1) THEN ELEMENT_AT(t_0_L.l, 0 + 1) ELSE 'single' END AS v
+  CASE WHEN (CARDINALITY(t_0_L.l) > 1) THEN (CASE WHEN 0 < 0 THEN NULL ELSE ELEMENT_AT(t_0_L.l, 0 + 1) END) ELSE 'single' END AS v
 FROM
   t_1_L AS t_0_L ORDER BY "order", v;

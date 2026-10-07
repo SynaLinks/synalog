@@ -33,7 +33,7 @@ CREATE TABLE logica_test.Test_sn_t1 AS WITH t_1_Test_MultBodyAggAux_f2 AS (SELEC
     SELECT
       ((x_9) + (1)) AS y
     FROM
-      logica_test.Test_sn_t0 AS Test_sn_t0, LATERAL (SELECT explode(FILTER(SEQUENCE(0, 100), x -> x < 100)) AS x_9) AS pushkin
+      logica_test.Test_sn_t0 AS Test_sn_t0, LATERAL (SELECT explode(FILTER(SEQUENCE(0, CAST(100 AS BIGINT)), x -> x < 100)) AS x_9) AS pushkin
     WHERE
       (Test_sn_t0.y = x_9)
   
@@ -62,7 +62,7 @@ CREATE TABLE logica_test.Test_sn_t2 AS WITH t_1_Test_MultBodyAggAux_f3 AS (SELEC
     SELECT
       ((x_9) + (1)) AS y
     FROM
-      logica_test.Test_sn_t1 AS Test_sn_t1, LATERAL (SELECT explode(FILTER(SEQUENCE(0, 100), x -> x < 100)) AS x_9) AS pushkin
+      logica_test.Test_sn_t1 AS Test_sn_t1, LATERAL (SELECT explode(FILTER(SEQUENCE(0, CAST(100 AS BIGINT)), x -> x < 100)) AS x_9) AS pushkin
     WHERE
       (Test_sn_t1.y = x_9)
   
@@ -91,7 +91,7 @@ CREATE TABLE logica_test.Test_sn_t3 AS WITH t_1_Test_MultBodyAggAux_f4 AS (SELEC
     SELECT
       ((x_9) + (1)) AS y
     FROM
-      logica_test.Test_sn_t2 AS Test_sn_t2, LATERAL (SELECT explode(FILTER(SEQUENCE(0, 100), x -> x < 100)) AS x_9) AS pushkin
+      logica_test.Test_sn_t2 AS Test_sn_t2, LATERAL (SELECT explode(FILTER(SEQUENCE(0, CAST(100 AS BIGINT)), x -> x < 100)) AS x_9) AS pushkin
     WHERE
       (Test_sn_t2.y = x_9)
   
@@ -150,7 +150,7 @@ CREATE TABLE logica_test.Test_sn_new AS WITH t_1_Test_MultBodyAggAux_f5 AS (SELE
     SELECT
       ((x_9) + (1)) AS y
     FROM
-      logica_test.Test_sn_delta AS Test_sn_delta, LATERAL (SELECT explode(FILTER(SEQUENCE(0, 100), x -> x < 100)) AS x_9) AS pushkin
+      logica_test.Test_sn_delta AS Test_sn_delta, LATERAL (SELECT explode(FILTER(SEQUENCE(0, CAST(100 AS BIGINT)), x -> x < 100)) AS x_9) AS pushkin
     WHERE
       (Test_sn_delta.y = x_9)
   
@@ -191,7 +191,7 @@ CREATE TABLE logica_test.Test_sn_new AS WITH t_1_Test_MultBodyAggAux_f5 AS (SELE
     SELECT
       ((x_9) + (1)) AS y
     FROM
-      logica_test.Test_sn_delta AS Test_sn_delta, LATERAL (SELECT explode(FILTER(SEQUENCE(0, 100), x -> x < 100)) AS x_9) AS pushkin
+      logica_test.Test_sn_delta AS Test_sn_delta, LATERAL (SELECT explode(FILTER(SEQUENCE(0, CAST(100 AS BIGINT)), x -> x < 100)) AS x_9) AS pushkin
     WHERE
       (Test_sn_delta.y = x_9)
   
@@ -232,7 +232,7 @@ CREATE TABLE logica_test.Test_sn_new AS WITH t_1_Test_MultBodyAggAux_f5 AS (SELE
     SELECT
       ((x_9) + (1)) AS y
     FROM
-      logica_test.Test_sn_delta AS Test_sn_delta, LATERAL (SELECT explode(FILTER(SEQUENCE(0, 100), x -> x < 100)) AS x_9) AS pushkin
+      logica_test.Test_sn_delta AS Test_sn_delta, LATERAL (SELECT explode(FILTER(SEQUENCE(0, CAST(100 AS BIGINT)), x -> x < 100)) AS x_9) AS pushkin
     WHERE
       (Test_sn_delta.y = x_9)
   
@@ -273,7 +273,7 @@ CREATE TABLE logica_test.Test_sn_new AS WITH t_1_Test_MultBodyAggAux_f5 AS (SELE
     SELECT
       ((x_9) + (1)) AS y
     FROM
-      logica_test.Test_sn_delta AS Test_sn_delta, LATERAL (SELECT explode(FILTER(SEQUENCE(0, 100), x -> x < 100)) AS x_9) AS pushkin
+      logica_test.Test_sn_delta AS Test_sn_delta, LATERAL (SELECT explode(FILTER(SEQUENCE(0, CAST(100 AS BIGINT)), x -> x < 100)) AS x_9) AS pushkin
     WHERE
       (Test_sn_delta.y = x_9)
   
@@ -314,7 +314,7 @@ CREATE TABLE logica_test.Test_sn_new AS WITH t_1_Test_MultBodyAggAux_f5 AS (SELE
     SELECT
       ((x_9) + (1)) AS y
     FROM
-      logica_test.Test_sn_delta AS Test_sn_delta, LATERAL (SELECT explode(FILTER(SEQUENCE(0, 100), x -> x < 100)) AS x_9) AS pushkin
+      logica_test.Test_sn_delta AS Test_sn_delta, LATERAL (SELECT explode(FILTER(SEQUENCE(0, CAST(100 AS BIGINT)), x -> x < 100)) AS x_9) AS pushkin
     WHERE
       (Test_sn_delta.y = x_9)
   
@@ -355,7 +355,7 @@ CREATE TABLE logica_test.Test_sn_new AS WITH t_1_Test_MultBodyAggAux_f5 AS (SELE
     SELECT
       ((x_9) + (1)) AS y
     FROM
-      logica_test.Test_sn_delta AS Test_sn_delta, LATERAL (SELECT explode(FILTER(SEQUENCE(0, 100), x -> x < 100)) AS x_9) AS pushkin
+      logica_test.Test_sn_delta AS Test_sn_delta, LATERAL (SELECT explode(FILTER(SEQUENCE(0, CAST(100 AS BIGINT)), x -> x < 100)) AS x_9) AS pushkin
     WHERE
       (Test_sn_delta.y = x_9)
   
@@ -396,7 +396,7 @@ CREATE TABLE logica_test.Test_sn_new AS WITH t_1_Test_MultBodyAggAux_f5 AS (SELE
     SELECT
       ((x_9) + (1)) AS y
     FROM
-      logica_test.Test_sn_delta AS Test_sn_delta, LATERAL (SELECT explode(FILTER(SEQUENCE(0, 100), x -> x < 100)) AS x_9) AS pushkin
+      logica_test.Test_sn_delta AS Test_sn_delta, LATERAL (SELECT explode(FILTER(SEQUENCE(0, CAST(100 AS BIGINT)), x -> x < 100)) AS x_9) AS pushkin
     WHERE
       (Test_sn_delta.y = x_9)
   
@@ -437,7 +437,7 @@ CREATE TABLE logica_test.Test_sn_new AS WITH t_1_Test_MultBodyAggAux_f5 AS (SELE
     SELECT
       ((x_9) + (1)) AS y
     FROM
-      logica_test.Test_sn_delta AS Test_sn_delta, LATERAL (SELECT explode(FILTER(SEQUENCE(0, 100), x -> x < 100)) AS x_9) AS pushkin
+      logica_test.Test_sn_delta AS Test_sn_delta, LATERAL (SELECT explode(FILTER(SEQUENCE(0, CAST(100 AS BIGINT)), x -> x < 100)) AS x_9) AS pushkin
     WHERE
       (Test_sn_delta.y = x_9)
   
@@ -478,7 +478,7 @@ CREATE TABLE logica_test.Test_sn_new AS WITH t_1_Test_MultBodyAggAux_f5 AS (SELE
     SELECT
       ((x_9) + (1)) AS y
     FROM
-      logica_test.Test_sn_delta AS Test_sn_delta, LATERAL (SELECT explode(FILTER(SEQUENCE(0, 100), x -> x < 100)) AS x_9) AS pushkin
+      logica_test.Test_sn_delta AS Test_sn_delta, LATERAL (SELECT explode(FILTER(SEQUENCE(0, CAST(100 AS BIGINT)), x -> x < 100)) AS x_9) AS pushkin
     WHERE
       (Test_sn_delta.y = x_9)
   
@@ -519,7 +519,7 @@ CREATE TABLE logica_test.Test_sn_new AS WITH t_1_Test_MultBodyAggAux_f5 AS (SELE
     SELECT
       ((x_9) + (1)) AS y
     FROM
-      logica_test.Test_sn_delta AS Test_sn_delta, LATERAL (SELECT explode(FILTER(SEQUENCE(0, 100), x -> x < 100)) AS x_9) AS pushkin
+      logica_test.Test_sn_delta AS Test_sn_delta, LATERAL (SELECT explode(FILTER(SEQUENCE(0, CAST(100 AS BIGINT)), x -> x < 100)) AS x_9) AS pushkin
     WHERE
       (Test_sn_delta.y = x_9)
   
@@ -560,7 +560,7 @@ CREATE TABLE logica_test.Test_sn_new AS WITH t_1_Test_MultBodyAggAux_f5 AS (SELE
     SELECT
       ((x_9) + (1)) AS y
     FROM
-      logica_test.Test_sn_delta AS Test_sn_delta, LATERAL (SELECT explode(FILTER(SEQUENCE(0, 100), x -> x < 100)) AS x_9) AS pushkin
+      logica_test.Test_sn_delta AS Test_sn_delta, LATERAL (SELECT explode(FILTER(SEQUENCE(0, CAST(100 AS BIGINT)), x -> x < 100)) AS x_9) AS pushkin
     WHERE
       (Test_sn_delta.y = x_9)
   
@@ -601,7 +601,7 @@ CREATE TABLE logica_test.Test_sn_new AS WITH t_1_Test_MultBodyAggAux_f5 AS (SELE
     SELECT
       ((x_9) + (1)) AS y
     FROM
-      logica_test.Test_sn_delta AS Test_sn_delta, LATERAL (SELECT explode(FILTER(SEQUENCE(0, 100), x -> x < 100)) AS x_9) AS pushkin
+      logica_test.Test_sn_delta AS Test_sn_delta, LATERAL (SELECT explode(FILTER(SEQUENCE(0, CAST(100 AS BIGINT)), x -> x < 100)) AS x_9) AS pushkin
     WHERE
       (Test_sn_delta.y = x_9)
   
@@ -642,7 +642,7 @@ CREATE TABLE logica_test.Test_sn_new AS WITH t_1_Test_MultBodyAggAux_f5 AS (SELE
     SELECT
       ((x_9) + (1)) AS y
     FROM
-      logica_test.Test_sn_delta AS Test_sn_delta, LATERAL (SELECT explode(FILTER(SEQUENCE(0, 100), x -> x < 100)) AS x_9) AS pushkin
+      logica_test.Test_sn_delta AS Test_sn_delta, LATERAL (SELECT explode(FILTER(SEQUENCE(0, CAST(100 AS BIGINT)), x -> x < 100)) AS x_9) AS pushkin
     WHERE
       (Test_sn_delta.y = x_9)
   
@@ -683,7 +683,7 @@ CREATE TABLE logica_test.Test_sn_new AS WITH t_1_Test_MultBodyAggAux_f5 AS (SELE
     SELECT
       ((x_9) + (1)) AS y
     FROM
-      logica_test.Test_sn_delta AS Test_sn_delta, LATERAL (SELECT explode(FILTER(SEQUENCE(0, 100), x -> x < 100)) AS x_9) AS pushkin
+      logica_test.Test_sn_delta AS Test_sn_delta, LATERAL (SELECT explode(FILTER(SEQUENCE(0, CAST(100 AS BIGINT)), x -> x < 100)) AS x_9) AS pushkin
     WHERE
       (Test_sn_delta.y = x_9)
   
@@ -724,7 +724,7 @@ CREATE TABLE logica_test.Test_sn_new AS WITH t_1_Test_MultBodyAggAux_f5 AS (SELE
     SELECT
       ((x_9) + (1)) AS y
     FROM
-      logica_test.Test_sn_delta AS Test_sn_delta, LATERAL (SELECT explode(FILTER(SEQUENCE(0, 100), x -> x < 100)) AS x_9) AS pushkin
+      logica_test.Test_sn_delta AS Test_sn_delta, LATERAL (SELECT explode(FILTER(SEQUENCE(0, CAST(100 AS BIGINT)), x -> x < 100)) AS x_9) AS pushkin
     WHERE
       (Test_sn_delta.y = x_9)
   
@@ -765,7 +765,7 @@ CREATE TABLE logica_test.Test_sn_new AS WITH t_1_Test_MultBodyAggAux_f5 AS (SELE
     SELECT
       ((x_9) + (1)) AS y
     FROM
-      logica_test.Test_sn_delta AS Test_sn_delta, LATERAL (SELECT explode(FILTER(SEQUENCE(0, 100), x -> x < 100)) AS x_9) AS pushkin
+      logica_test.Test_sn_delta AS Test_sn_delta, LATERAL (SELECT explode(FILTER(SEQUENCE(0, CAST(100 AS BIGINT)), x -> x < 100)) AS x_9) AS pushkin
     WHERE
       (Test_sn_delta.y = x_9)
   
@@ -806,7 +806,7 @@ CREATE TABLE logica_test.Test_sn_new AS WITH t_1_Test_MultBodyAggAux_f5 AS (SELE
     SELECT
       ((x_9) + (1)) AS y
     FROM
-      logica_test.Test_sn_delta AS Test_sn_delta, LATERAL (SELECT explode(FILTER(SEQUENCE(0, 100), x -> x < 100)) AS x_9) AS pushkin
+      logica_test.Test_sn_delta AS Test_sn_delta, LATERAL (SELECT explode(FILTER(SEQUENCE(0, CAST(100 AS BIGINT)), x -> x < 100)) AS x_9) AS pushkin
     WHERE
       (Test_sn_delta.y = x_9)
   
@@ -847,7 +847,7 @@ CREATE TABLE logica_test.Test_sn_new AS WITH t_1_Test_MultBodyAggAux_f5 AS (SELE
     SELECT
       ((x_9) + (1)) AS y
     FROM
-      logica_test.Test_sn_delta AS Test_sn_delta, LATERAL (SELECT explode(FILTER(SEQUENCE(0, 100), x -> x < 100)) AS x_9) AS pushkin
+      logica_test.Test_sn_delta AS Test_sn_delta, LATERAL (SELECT explode(FILTER(SEQUENCE(0, CAST(100 AS BIGINT)), x -> x < 100)) AS x_9) AS pushkin
     WHERE
       (Test_sn_delta.y = x_9)
   
@@ -888,7 +888,7 @@ CREATE TABLE logica_test.Test_sn_new AS WITH t_1_Test_MultBodyAggAux_f5 AS (SELE
     SELECT
       ((x_9) + (1)) AS y
     FROM
-      logica_test.Test_sn_delta AS Test_sn_delta, LATERAL (SELECT explode(FILTER(SEQUENCE(0, 100), x -> x < 100)) AS x_9) AS pushkin
+      logica_test.Test_sn_delta AS Test_sn_delta, LATERAL (SELECT explode(FILTER(SEQUENCE(0, CAST(100 AS BIGINT)), x -> x < 100)) AS x_9) AS pushkin
     WHERE
       (Test_sn_delta.y = x_9)
   
@@ -929,7 +929,7 @@ CREATE TABLE logica_test.Test_sn_new AS WITH t_1_Test_MultBodyAggAux_f5 AS (SELE
     SELECT
       ((x_9) + (1)) AS y
     FROM
-      logica_test.Test_sn_delta AS Test_sn_delta, LATERAL (SELECT explode(FILTER(SEQUENCE(0, 100), x -> x < 100)) AS x_9) AS pushkin
+      logica_test.Test_sn_delta AS Test_sn_delta, LATERAL (SELECT explode(FILTER(SEQUENCE(0, CAST(100 AS BIGINT)), x -> x < 100)) AS x_9) AS pushkin
     WHERE
       (Test_sn_delta.y = x_9)
   
@@ -970,7 +970,7 @@ CREATE TABLE logica_test.Test_sn_new AS WITH t_1_Test_MultBodyAggAux_f5 AS (SELE
     SELECT
       ((x_9) + (1)) AS y
     FROM
-      logica_test.Test_sn_delta AS Test_sn_delta, LATERAL (SELECT explode(FILTER(SEQUENCE(0, 100), x -> x < 100)) AS x_9) AS pushkin
+      logica_test.Test_sn_delta AS Test_sn_delta, LATERAL (SELECT explode(FILTER(SEQUENCE(0, CAST(100 AS BIGINT)), x -> x < 100)) AS x_9) AS pushkin
     WHERE
       (Test_sn_delta.y = x_9)
   
@@ -1011,7 +1011,7 @@ CREATE TABLE logica_test.Test_sn_new AS WITH t_1_Test_MultBodyAggAux_f5 AS (SELE
     SELECT
       ((x_9) + (1)) AS y
     FROM
-      logica_test.Test_sn_delta AS Test_sn_delta, LATERAL (SELECT explode(FILTER(SEQUENCE(0, 100), x -> x < 100)) AS x_9) AS pushkin
+      logica_test.Test_sn_delta AS Test_sn_delta, LATERAL (SELECT explode(FILTER(SEQUENCE(0, CAST(100 AS BIGINT)), x -> x < 100)) AS x_9) AS pushkin
     WHERE
       (Test_sn_delta.y = x_9)
   
@@ -1052,7 +1052,7 @@ CREATE TABLE logica_test.Test_sn_new AS WITH t_1_Test_MultBodyAggAux_f5 AS (SELE
     SELECT
       ((x_9) + (1)) AS y
     FROM
-      logica_test.Test_sn_delta AS Test_sn_delta, LATERAL (SELECT explode(FILTER(SEQUENCE(0, 100), x -> x < 100)) AS x_9) AS pushkin
+      logica_test.Test_sn_delta AS Test_sn_delta, LATERAL (SELECT explode(FILTER(SEQUENCE(0, CAST(100 AS BIGINT)), x -> x < 100)) AS x_9) AS pushkin
     WHERE
       (Test_sn_delta.y = x_9)
   
@@ -1093,7 +1093,7 @@ CREATE TABLE logica_test.Test_sn_new AS WITH t_1_Test_MultBodyAggAux_f5 AS (SELE
     SELECT
       ((x_9) + (1)) AS y
     FROM
-      logica_test.Test_sn_delta AS Test_sn_delta, LATERAL (SELECT explode(FILTER(SEQUENCE(0, 100), x -> x < 100)) AS x_9) AS pushkin
+      logica_test.Test_sn_delta AS Test_sn_delta, LATERAL (SELECT explode(FILTER(SEQUENCE(0, CAST(100 AS BIGINT)), x -> x < 100)) AS x_9) AS pushkin
     WHERE
       (Test_sn_delta.y = x_9)
   
@@ -1134,7 +1134,7 @@ CREATE TABLE logica_test.Test_sn_new AS WITH t_1_Test_MultBodyAggAux_f5 AS (SELE
     SELECT
       ((x_9) + (1)) AS y
     FROM
-      logica_test.Test_sn_delta AS Test_sn_delta, LATERAL (SELECT explode(FILTER(SEQUENCE(0, 100), x -> x < 100)) AS x_9) AS pushkin
+      logica_test.Test_sn_delta AS Test_sn_delta, LATERAL (SELECT explode(FILTER(SEQUENCE(0, CAST(100 AS BIGINT)), x -> x < 100)) AS x_9) AS pushkin
     WHERE
       (Test_sn_delta.y = x_9)
   
@@ -1175,7 +1175,7 @@ CREATE TABLE logica_test.Test_sn_new AS WITH t_1_Test_MultBodyAggAux_f5 AS (SELE
     SELECT
       ((x_9) + (1)) AS y
     FROM
-      logica_test.Test_sn_delta AS Test_sn_delta, LATERAL (SELECT explode(FILTER(SEQUENCE(0, 100), x -> x < 100)) AS x_9) AS pushkin
+      logica_test.Test_sn_delta AS Test_sn_delta, LATERAL (SELECT explode(FILTER(SEQUENCE(0, CAST(100 AS BIGINT)), x -> x < 100)) AS x_9) AS pushkin
     WHERE
       (Test_sn_delta.y = x_9)
   
@@ -1216,7 +1216,7 @@ CREATE TABLE logica_test.Test_sn_new AS WITH t_1_Test_MultBodyAggAux_f5 AS (SELE
     SELECT
       ((x_9) + (1)) AS y
     FROM
-      logica_test.Test_sn_delta AS Test_sn_delta, LATERAL (SELECT explode(FILTER(SEQUENCE(0, 100), x -> x < 100)) AS x_9) AS pushkin
+      logica_test.Test_sn_delta AS Test_sn_delta, LATERAL (SELECT explode(FILTER(SEQUENCE(0, CAST(100 AS BIGINT)), x -> x < 100)) AS x_9) AS pushkin
     WHERE
       (Test_sn_delta.y = x_9)
   
@@ -1257,7 +1257,7 @@ CREATE TABLE logica_test.Test_sn_new AS WITH t_1_Test_MultBodyAggAux_f5 AS (SELE
     SELECT
       ((x_9) + (1)) AS y
     FROM
-      logica_test.Test_sn_delta AS Test_sn_delta, LATERAL (SELECT explode(FILTER(SEQUENCE(0, 100), x -> x < 100)) AS x_9) AS pushkin
+      logica_test.Test_sn_delta AS Test_sn_delta, LATERAL (SELECT explode(FILTER(SEQUENCE(0, CAST(100 AS BIGINT)), x -> x < 100)) AS x_9) AS pushkin
     WHERE
       (Test_sn_delta.y = x_9)
   
@@ -1298,7 +1298,7 @@ CREATE TABLE logica_test.Test_sn_new AS WITH t_1_Test_MultBodyAggAux_f5 AS (SELE
     SELECT
       ((x_9) + (1)) AS y
     FROM
-      logica_test.Test_sn_delta AS Test_sn_delta, LATERAL (SELECT explode(FILTER(SEQUENCE(0, 100), x -> x < 100)) AS x_9) AS pushkin
+      logica_test.Test_sn_delta AS Test_sn_delta, LATERAL (SELECT explode(FILTER(SEQUENCE(0, CAST(100 AS BIGINT)), x -> x < 100)) AS x_9) AS pushkin
     WHERE
       (Test_sn_delta.y = x_9)
   
@@ -1339,7 +1339,7 @@ CREATE TABLE logica_test.Test_sn_new AS WITH t_1_Test_MultBodyAggAux_f5 AS (SELE
     SELECT
       ((x_9) + (1)) AS y
     FROM
-      logica_test.Test_sn_delta AS Test_sn_delta, LATERAL (SELECT explode(FILTER(SEQUENCE(0, 100), x -> x < 100)) AS x_9) AS pushkin
+      logica_test.Test_sn_delta AS Test_sn_delta, LATERAL (SELECT explode(FILTER(SEQUENCE(0, CAST(100 AS BIGINT)), x -> x < 100)) AS x_9) AS pushkin
     WHERE
       (Test_sn_delta.y = x_9)
   

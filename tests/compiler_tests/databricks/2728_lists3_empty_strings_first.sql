@@ -1,22 +1,10 @@
-WITH t_0_S AS (SELECT * FROM (
-  
-    SELECT
-      1 AS k,
-      ARRAY("a", "b") AS l
-   UNION ALL
-  
-    SELECT
-      2 AS k,
-      ARRAY() AS l
-   UNION ALL
-  
-    SELECT
-      3 AS k,
-      CAST(null AS ARRAY<STRING>) AS l
-  
-) AS UNUSED_TABLE_NAME  )
+WITH t_0_S AS (SELECT * FROM VALUES
+  (1, ARRAY("a", "b")),
+  (2, ARRAY()),
+  (3, CAST(null AS ARRAY<STRING>))
+AS UNUSED_TABLE_NAME(k, l))
 SELECT
   S.k AS k,
-  ELEMENT_AT(S.l, 0 + 1) AS e
+  (CASE WHEN 0 < 0 THEN NULL ELSE ELEMENT_AT(S.l, CAST(0 AS INT) + 1) END) AS e
 FROM
   t_0_S AS S ORDER BY k NULLS LAST;
