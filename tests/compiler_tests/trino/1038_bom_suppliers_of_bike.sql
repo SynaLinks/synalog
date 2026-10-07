@@ -55,7 +55,7 @@ CREATE TABLE logica_test.Contains_sn_delta AS WITH t_2_Uses AS (SELECT * FROM (
       1 AS qty
   
 ) AS UNUSED_TABLE_NAME  ),
-t_0_Contains_MultBodyAggAux_f1 AS (SELECT * FROM (
+t_0_Contains_MultBodyAggAux_f2 AS (SELECT * FROM (
   
     SELECT
       t_1_Uses.part AS part,
@@ -65,10 +65,10 @@ t_0_Contains_MultBodyAggAux_f1 AS (SELECT * FROM (
   
 ) AS UNUSED_TABLE_NAME  )
 SELECT
-  Contains_MultBodyAggAux_f1.part AS part,
-  Contains_MultBodyAggAux_f1.component AS component
+  Contains_MultBodyAggAux_f2.part AS part,
+  Contains_MultBodyAggAux_f2.component AS component
 FROM
-  t_0_Contains_MultBodyAggAux_f1 AS Contains_MultBodyAggAux_f1
+  t_0_Contains_MultBodyAggAux_f2 AS Contains_MultBodyAggAux_f2
 GROUP BY 1, 2;
 
 -- Interacting with table logica_test.Contains_sn_delta
@@ -141,7 +141,7 @@ CREATE TABLE logica_test.Contains_sn_t1 AS WITH t_2_Uses AS (SELECT * FROM (
       1 AS qty
   
 ) AS UNUSED_TABLE_NAME  ),
-t_1_Contains_MultBodyAggAux_f2 AS (SELECT * FROM (
+t_1_Contains_MultBodyAggAux_f3 AS (SELECT * FROM (
   
     SELECT
       Contains_sn_t0.part AS part,
@@ -160,10 +160,10 @@ t_1_Contains_MultBodyAggAux_f2 AS (SELECT * FROM (
   
 ) AS UNUSED_TABLE_NAME  ),
 t_0_Contains_sn_r1 AS (SELECT
-  Contains_MultBodyAggAux_f2.part AS part,
-  Contains_MultBodyAggAux_f2.component AS component
+  Contains_MultBodyAggAux_f3.part AS part,
+  Contains_MultBodyAggAux_f3.component AS component
 FROM
-  t_1_Contains_MultBodyAggAux_f2 AS Contains_MultBodyAggAux_f2
+  t_1_Contains_MultBodyAggAux_f3 AS Contains_MultBodyAggAux_f3
 GROUP BY 1, 2)
 SELECT
   Contains_sn_r1.part AS part,
@@ -232,7 +232,7 @@ CREATE TABLE logica_test.Contains_sn_t2 AS WITH t_2_Uses AS (SELECT * FROM (
       1 AS qty
   
 ) AS UNUSED_TABLE_NAME  ),
-t_1_Contains_MultBodyAggAux_f3 AS (SELECT * FROM (
+t_1_Contains_MultBodyAggAux_f4 AS (SELECT * FROM (
   
     SELECT
       Contains_sn_t1.part AS part,
@@ -251,10 +251,10 @@ t_1_Contains_MultBodyAggAux_f3 AS (SELECT * FROM (
   
 ) AS UNUSED_TABLE_NAME  ),
 t_0_Contains_sn_r2 AS (SELECT
-  Contains_MultBodyAggAux_f3.part AS part,
-  Contains_MultBodyAggAux_f3.component AS component
+  Contains_MultBodyAggAux_f4.part AS part,
+  Contains_MultBodyAggAux_f4.component AS component
 FROM
-  t_1_Contains_MultBodyAggAux_f3 AS Contains_MultBodyAggAux_f3
+  t_1_Contains_MultBodyAggAux_f4 AS Contains_MultBodyAggAux_f4
 GROUP BY 1, 2)
 SELECT
   Contains_sn_r2.part AS part,
@@ -323,7 +323,7 @@ CREATE TABLE logica_test.Contains_sn_t3 AS WITH t_2_Uses AS (SELECT * FROM (
       1 AS qty
   
 ) AS UNUSED_TABLE_NAME  ),
-t_1_Contains_MultBodyAggAux_f4 AS (SELECT * FROM (
+t_1_Contains_MultBodyAggAux_f5 AS (SELECT * FROM (
   
     SELECT
       Contains_sn_t2.part AS part,
@@ -342,10 +342,10 @@ t_1_Contains_MultBodyAggAux_f4 AS (SELECT * FROM (
   
 ) AS UNUSED_TABLE_NAME  ),
 t_0_Contains_sn_r3 AS (SELECT
-  Contains_MultBodyAggAux_f4.part AS part,
-  Contains_MultBodyAggAux_f4.component AS component
+  Contains_MultBodyAggAux_f5.part AS part,
+  Contains_MultBodyAggAux_f5.component AS component
 FROM
-  t_1_Contains_MultBodyAggAux_f4 AS Contains_MultBodyAggAux_f4
+  t_1_Contains_MultBodyAggAux_f5 AS Contains_MultBodyAggAux_f5
 GROUP BY 1, 2)
 SELECT
   Contains_sn_r3.part AS part,
@@ -414,7 +414,7 @@ CREATE TABLE logica_test.Contains_sn_t4 AS WITH t_2_Uses AS (SELECT * FROM (
       1 AS qty
   
 ) AS UNUSED_TABLE_NAME  ),
-t_1_Contains_MultBodyAggAux_f5 AS (SELECT * FROM (
+t_1_Contains_MultBodyAggAux_f6 AS (SELECT * FROM (
   
     SELECT
       Contains_sn_t3.part AS part,
@@ -433,10 +433,10 @@ t_1_Contains_MultBodyAggAux_f5 AS (SELECT * FROM (
   
 ) AS UNUSED_TABLE_NAME  ),
 t_0_Contains_sn_r4 AS (SELECT
-  Contains_MultBodyAggAux_f5.part AS part,
-  Contains_MultBodyAggAux_f5.component AS component
+  Contains_MultBodyAggAux_f6.part AS part,
+  Contains_MultBodyAggAux_f6.component AS component
 FROM
-  t_1_Contains_MultBodyAggAux_f5 AS Contains_MultBodyAggAux_f5
+  t_1_Contains_MultBodyAggAux_f6 AS Contains_MultBodyAggAux_f6
 GROUP BY 1, 2)
 SELECT
   Contains_sn_r4.part AS part,
@@ -505,7 +505,7 @@ CREATE TABLE logica_test.Contains_sn_t5 AS WITH t_2_Uses AS (SELECT * FROM (
       1 AS qty
   
 ) AS UNUSED_TABLE_NAME  ),
-t_1_Contains_MultBodyAggAux_f6 AS (SELECT * FROM (
+t_1_Contains_MultBodyAggAux_f7 AS (SELECT * FROM (
   
     SELECT
       Contains_sn_t4.part AS part,
@@ -524,10 +524,10 @@ t_1_Contains_MultBodyAggAux_f6 AS (SELECT * FROM (
   
 ) AS UNUSED_TABLE_NAME  ),
 t_0_Contains_sn_r5 AS (SELECT
-  Contains_MultBodyAggAux_f6.part AS part,
-  Contains_MultBodyAggAux_f6.component AS component
+  Contains_MultBodyAggAux_f7.part AS part,
+  Contains_MultBodyAggAux_f7.component AS component
 FROM
-  t_1_Contains_MultBodyAggAux_f6 AS Contains_MultBodyAggAux_f6
+  t_1_Contains_MultBodyAggAux_f7 AS Contains_MultBodyAggAux_f7
 GROUP BY 1, 2)
 SELECT
   Contains_sn_r5.part AS part,
@@ -644,7 +644,7 @@ CREATE TABLE logica_test.Contains_sn_new AS WITH t_2_Uses AS (SELECT * FROM (
       1 AS qty
   
 ) AS UNUSED_TABLE_NAME  ),
-t_1_Contains_MultBodyAggAux_f7 AS (SELECT * FROM (
+t_1_Contains_MultBodyAggAux_f8 AS (SELECT * FROM (
   
     SELECT
       Contains_sn_delta.part AS part,
@@ -663,10 +663,10 @@ t_1_Contains_MultBodyAggAux_f7 AS (SELECT * FROM (
   
 ) AS UNUSED_TABLE_NAME  ),
 t_0_Contains_sn_step AS (SELECT
-  Contains_MultBodyAggAux_f7.part AS part,
-  Contains_MultBodyAggAux_f7.component AS component
+  Contains_MultBodyAggAux_f8.part AS part,
+  Contains_MultBodyAggAux_f8.component AS component
 FROM
-  t_1_Contains_MultBodyAggAux_f7 AS Contains_MultBodyAggAux_f7
+  t_1_Contains_MultBodyAggAux_f8 AS Contains_MultBodyAggAux_f8
 GROUP BY 1, 2)
 SELECT
   Contains_sn_step.part AS part,
@@ -686,11 +686,102 @@ GROUP BY 1, 2;
 INSERT INTO logica_test.Contains_sn_full SELECT * FROM logica_test.Contains_sn_new;
 
 DROP TABLE IF EXISTS logica_test.Contains_sn_delta;
-CREATE TABLE logica_test.Contains_sn_delta AS SELECT
-  Contains_sn_new.part AS part,
-  Contains_sn_new.component AS component
+CREATE TABLE logica_test.Contains_sn_delta AS WITH t_2_Uses AS (SELECT * FROM (
+  
+    SELECT
+      'bike' AS part,
+      'frame' AS component,
+      1 AS qty
+   UNION ALL
+  
+    SELECT
+      'bike' AS part,
+      'wheel' AS component,
+      2 AS qty
+   UNION ALL
+  
+    SELECT
+      'wheel' AS part,
+      'rim' AS component,
+      1 AS qty
+   UNION ALL
+  
+    SELECT
+      'wheel' AS part,
+      'spoke' AS component,
+      32 AS qty
+   UNION ALL
+  
+    SELECT
+      'wheel' AS part,
+      'hub' AS component,
+      1 AS qty
+   UNION ALL
+  
+    SELECT
+      'hub' AS part,
+      'bearing' AS component,
+      2 AS qty
+   UNION ALL
+  
+    SELECT
+      'frame' AS part,
+      'tube' AS component,
+      3 AS qty
+   UNION ALL
+  
+    SELECT
+      'scooter' AS part,
+      'wheel' AS component,
+      2 AS qty
+   UNION ALL
+  
+    SELECT
+      'scooter' AS part,
+      'deck' AS component,
+      1 AS qty
+  
+) AS UNUSED_TABLE_NAME  ),
+t_1_Contains_MultBodyAggAux_f1 AS (SELECT * FROM (
+  
+    SELECT
+      Contains_sn_new.part AS part,
+      Uses.component AS component
+    FROM
+      logica_test.Contains_sn_new AS Contains_sn_new, t_2_Uses AS Uses
+    WHERE
+      (Uses.part = Contains_sn_new.component)
+   UNION ALL
+  
+    SELECT
+      t_2_Uses.part AS part,
+      t_2_Uses.component AS component
+    FROM
+      t_2_Uses
+  
+) AS UNUSED_TABLE_NAME  ),
+t_0_Contains_sn_back_step AS (SELECT
+  Contains_MultBodyAggAux_f1.part AS part,
+  Contains_MultBodyAggAux_f1.component AS component
 FROM
-  logica_test.Contains_sn_new AS Contains_sn_new;
+  t_1_Contains_MultBodyAggAux_f1 AS Contains_MultBodyAggAux_f1
+GROUP BY 1, 2)
+SELECT
+  Contains_sn_back_step.part AS part,
+  Contains_sn_back_step.component AS component
+FROM
+  t_0_Contains_sn_back_step AS Contains_sn_back_step
+WHERE
+  ((SELECT
+    MIN(1) AS logica_value
+  FROM
+    logica_test.Contains_sn_full AS Contains_sn_full
+  WHERE
+    (Contains_sn_full.part = Contains_sn_back_step.part) AND
+    (Contains_sn_full.component = Contains_sn_back_step.component)) IS NULL)
+GROUP BY 1, 2;
+
+INSERT INTO logica_test.Contains_sn_full SELECT * FROM logica_test.Contains_sn_delta;
 
 DROP TABLE IF EXISTS logica_test.Contains_sn_new;
 CREATE TABLE logica_test.Contains_sn_new AS WITH t_2_Uses AS (SELECT * FROM (
@@ -749,7 +840,7 @@ CREATE TABLE logica_test.Contains_sn_new AS WITH t_2_Uses AS (SELECT * FROM (
       1 AS qty
   
 ) AS UNUSED_TABLE_NAME  ),
-t_1_Contains_MultBodyAggAux_f7 AS (SELECT * FROM (
+t_1_Contains_MultBodyAggAux_f8 AS (SELECT * FROM (
   
     SELECT
       Contains_sn_delta.part AS part,
@@ -768,10 +859,10 @@ t_1_Contains_MultBodyAggAux_f7 AS (SELECT * FROM (
   
 ) AS UNUSED_TABLE_NAME  ),
 t_0_Contains_sn_step AS (SELECT
-  Contains_MultBodyAggAux_f7.part AS part,
-  Contains_MultBodyAggAux_f7.component AS component
+  Contains_MultBodyAggAux_f8.part AS part,
+  Contains_MultBodyAggAux_f8.component AS component
 FROM
-  t_1_Contains_MultBodyAggAux_f7 AS Contains_MultBodyAggAux_f7
+  t_1_Contains_MultBodyAggAux_f8 AS Contains_MultBodyAggAux_f8
 GROUP BY 1, 2)
 SELECT
   Contains_sn_step.part AS part,
@@ -791,11 +882,102 @@ GROUP BY 1, 2;
 INSERT INTO logica_test.Contains_sn_full SELECT * FROM logica_test.Contains_sn_new;
 
 DROP TABLE IF EXISTS logica_test.Contains_sn_delta;
-CREATE TABLE logica_test.Contains_sn_delta AS SELECT
-  Contains_sn_new.part AS part,
-  Contains_sn_new.component AS component
+CREATE TABLE logica_test.Contains_sn_delta AS WITH t_2_Uses AS (SELECT * FROM (
+  
+    SELECT
+      'bike' AS part,
+      'frame' AS component,
+      1 AS qty
+   UNION ALL
+  
+    SELECT
+      'bike' AS part,
+      'wheel' AS component,
+      2 AS qty
+   UNION ALL
+  
+    SELECT
+      'wheel' AS part,
+      'rim' AS component,
+      1 AS qty
+   UNION ALL
+  
+    SELECT
+      'wheel' AS part,
+      'spoke' AS component,
+      32 AS qty
+   UNION ALL
+  
+    SELECT
+      'wheel' AS part,
+      'hub' AS component,
+      1 AS qty
+   UNION ALL
+  
+    SELECT
+      'hub' AS part,
+      'bearing' AS component,
+      2 AS qty
+   UNION ALL
+  
+    SELECT
+      'frame' AS part,
+      'tube' AS component,
+      3 AS qty
+   UNION ALL
+  
+    SELECT
+      'scooter' AS part,
+      'wheel' AS component,
+      2 AS qty
+   UNION ALL
+  
+    SELECT
+      'scooter' AS part,
+      'deck' AS component,
+      1 AS qty
+  
+) AS UNUSED_TABLE_NAME  ),
+t_1_Contains_MultBodyAggAux_f1 AS (SELECT * FROM (
+  
+    SELECT
+      Contains_sn_new.part AS part,
+      Uses.component AS component
+    FROM
+      logica_test.Contains_sn_new AS Contains_sn_new, t_2_Uses AS Uses
+    WHERE
+      (Uses.part = Contains_sn_new.component)
+   UNION ALL
+  
+    SELECT
+      t_2_Uses.part AS part,
+      t_2_Uses.component AS component
+    FROM
+      t_2_Uses
+  
+) AS UNUSED_TABLE_NAME  ),
+t_0_Contains_sn_back_step AS (SELECT
+  Contains_MultBodyAggAux_f1.part AS part,
+  Contains_MultBodyAggAux_f1.component AS component
 FROM
-  logica_test.Contains_sn_new AS Contains_sn_new;
+  t_1_Contains_MultBodyAggAux_f1 AS Contains_MultBodyAggAux_f1
+GROUP BY 1, 2)
+SELECT
+  Contains_sn_back_step.part AS part,
+  Contains_sn_back_step.component AS component
+FROM
+  t_0_Contains_sn_back_step AS Contains_sn_back_step
+WHERE
+  ((SELECT
+    MIN(1) AS logica_value
+  FROM
+    logica_test.Contains_sn_full AS Contains_sn_full
+  WHERE
+    (Contains_sn_full.part = Contains_sn_back_step.part) AND
+    (Contains_sn_full.component = Contains_sn_back_step.component)) IS NULL)
+GROUP BY 1, 2;
+
+INSERT INTO logica_test.Contains_sn_full SELECT * FROM logica_test.Contains_sn_delta;
 
 DROP TABLE IF EXISTS logica_test.Contains_sn_new;
 CREATE TABLE logica_test.Contains_sn_new AS WITH t_2_Uses AS (SELECT * FROM (
@@ -854,7 +1036,7 @@ CREATE TABLE logica_test.Contains_sn_new AS WITH t_2_Uses AS (SELECT * FROM (
       1 AS qty
   
 ) AS UNUSED_TABLE_NAME  ),
-t_1_Contains_MultBodyAggAux_f7 AS (SELECT * FROM (
+t_1_Contains_MultBodyAggAux_f8 AS (SELECT * FROM (
   
     SELECT
       Contains_sn_delta.part AS part,
@@ -873,10 +1055,10 @@ t_1_Contains_MultBodyAggAux_f7 AS (SELECT * FROM (
   
 ) AS UNUSED_TABLE_NAME  ),
 t_0_Contains_sn_step AS (SELECT
-  Contains_MultBodyAggAux_f7.part AS part,
-  Contains_MultBodyAggAux_f7.component AS component
+  Contains_MultBodyAggAux_f8.part AS part,
+  Contains_MultBodyAggAux_f8.component AS component
 FROM
-  t_1_Contains_MultBodyAggAux_f7 AS Contains_MultBodyAggAux_f7
+  t_1_Contains_MultBodyAggAux_f8 AS Contains_MultBodyAggAux_f8
 GROUP BY 1, 2)
 SELECT
   Contains_sn_step.part AS part,
@@ -896,14 +1078,7 @@ GROUP BY 1, 2;
 INSERT INTO logica_test.Contains_sn_full SELECT * FROM logica_test.Contains_sn_new;
 
 DROP TABLE IF EXISTS logica_test.Contains_sn_delta;
-CREATE TABLE logica_test.Contains_sn_delta AS SELECT
-  Contains_sn_new.part AS part,
-  Contains_sn_new.component AS component
-FROM
-  logica_test.Contains_sn_new AS Contains_sn_new;
-
-DROP TABLE IF EXISTS logica_test.Contains_sn_new;
-CREATE TABLE logica_test.Contains_sn_new AS WITH t_2_Uses AS (SELECT * FROM (
+CREATE TABLE logica_test.Contains_sn_delta AS WITH t_2_Uses AS (SELECT * FROM (
   
     SELECT
       'bike' AS part,
@@ -959,15 +1134,15 @@ CREATE TABLE logica_test.Contains_sn_new AS WITH t_2_Uses AS (SELECT * FROM (
       1 AS qty
   
 ) AS UNUSED_TABLE_NAME  ),
-t_1_Contains_MultBodyAggAux_f7 AS (SELECT * FROM (
+t_1_Contains_MultBodyAggAux_f1 AS (SELECT * FROM (
   
     SELECT
-      Contains_sn_delta.part AS part,
+      Contains_sn_new.part AS part,
       Uses.component AS component
     FROM
-      logica_test.Contains_sn_delta AS Contains_sn_delta, t_2_Uses AS Uses
+      logica_test.Contains_sn_new AS Contains_sn_new, t_2_Uses AS Uses
     WHERE
-      (Uses.part = Contains_sn_delta.component)
+      (Uses.part = Contains_sn_new.component)
    UNION ALL
   
     SELECT
@@ -977,245 +1152,28 @@ t_1_Contains_MultBodyAggAux_f7 AS (SELECT * FROM (
       t_2_Uses
   
 ) AS UNUSED_TABLE_NAME  ),
-t_0_Contains_sn_step AS (SELECT
-  Contains_MultBodyAggAux_f7.part AS part,
-  Contains_MultBodyAggAux_f7.component AS component
+t_0_Contains_sn_back_step AS (SELECT
+  Contains_MultBodyAggAux_f1.part AS part,
+  Contains_MultBodyAggAux_f1.component AS component
 FROM
-  t_1_Contains_MultBodyAggAux_f7 AS Contains_MultBodyAggAux_f7
+  t_1_Contains_MultBodyAggAux_f1 AS Contains_MultBodyAggAux_f1
 GROUP BY 1, 2)
 SELECT
-  Contains_sn_step.part AS part,
-  Contains_sn_step.component AS component
+  Contains_sn_back_step.part AS part,
+  Contains_sn_back_step.component AS component
 FROM
-  t_0_Contains_sn_step AS Contains_sn_step
+  t_0_Contains_sn_back_step AS Contains_sn_back_step
 WHERE
   ((SELECT
     MIN(1) AS logica_value
   FROM
     logica_test.Contains_sn_full AS Contains_sn_full
   WHERE
-    (Contains_sn_full.part = Contains_sn_step.part) AND
-    (Contains_sn_full.component = Contains_sn_step.component)) IS NULL)
+    (Contains_sn_full.part = Contains_sn_back_step.part) AND
+    (Contains_sn_full.component = Contains_sn_back_step.component)) IS NULL)
 GROUP BY 1, 2;
 
-INSERT INTO logica_test.Contains_sn_full SELECT * FROM logica_test.Contains_sn_new;
-
-DROP TABLE IF EXISTS logica_test.Contains_sn_delta;
-CREATE TABLE logica_test.Contains_sn_delta AS SELECT
-  Contains_sn_new.part AS part,
-  Contains_sn_new.component AS component
-FROM
-  logica_test.Contains_sn_new AS Contains_sn_new;
-
-DROP TABLE IF EXISTS logica_test.Contains_sn_new;
-CREATE TABLE logica_test.Contains_sn_new AS WITH t_2_Uses AS (SELECT * FROM (
-  
-    SELECT
-      'bike' AS part,
-      'frame' AS component,
-      1 AS qty
-   UNION ALL
-  
-    SELECT
-      'bike' AS part,
-      'wheel' AS component,
-      2 AS qty
-   UNION ALL
-  
-    SELECT
-      'wheel' AS part,
-      'rim' AS component,
-      1 AS qty
-   UNION ALL
-  
-    SELECT
-      'wheel' AS part,
-      'spoke' AS component,
-      32 AS qty
-   UNION ALL
-  
-    SELECT
-      'wheel' AS part,
-      'hub' AS component,
-      1 AS qty
-   UNION ALL
-  
-    SELECT
-      'hub' AS part,
-      'bearing' AS component,
-      2 AS qty
-   UNION ALL
-  
-    SELECT
-      'frame' AS part,
-      'tube' AS component,
-      3 AS qty
-   UNION ALL
-  
-    SELECT
-      'scooter' AS part,
-      'wheel' AS component,
-      2 AS qty
-   UNION ALL
-  
-    SELECT
-      'scooter' AS part,
-      'deck' AS component,
-      1 AS qty
-  
-) AS UNUSED_TABLE_NAME  ),
-t_1_Contains_MultBodyAggAux_f7 AS (SELECT * FROM (
-  
-    SELECT
-      Contains_sn_delta.part AS part,
-      Uses.component AS component
-    FROM
-      logica_test.Contains_sn_delta AS Contains_sn_delta, t_2_Uses AS Uses
-    WHERE
-      (Uses.part = Contains_sn_delta.component)
-   UNION ALL
-  
-    SELECT
-      t_2_Uses.part AS part,
-      t_2_Uses.component AS component
-    FROM
-      t_2_Uses
-  
-) AS UNUSED_TABLE_NAME  ),
-t_0_Contains_sn_step AS (SELECT
-  Contains_MultBodyAggAux_f7.part AS part,
-  Contains_MultBodyAggAux_f7.component AS component
-FROM
-  t_1_Contains_MultBodyAggAux_f7 AS Contains_MultBodyAggAux_f7
-GROUP BY 1, 2)
-SELECT
-  Contains_sn_step.part AS part,
-  Contains_sn_step.component AS component
-FROM
-  t_0_Contains_sn_step AS Contains_sn_step
-WHERE
-  ((SELECT
-    MIN(1) AS logica_value
-  FROM
-    logica_test.Contains_sn_full AS Contains_sn_full
-  WHERE
-    (Contains_sn_full.part = Contains_sn_step.part) AND
-    (Contains_sn_full.component = Contains_sn_step.component)) IS NULL)
-GROUP BY 1, 2;
-
-INSERT INTO logica_test.Contains_sn_full SELECT * FROM logica_test.Contains_sn_new;
-
-DROP TABLE IF EXISTS logica_test.Contains_sn_delta;
-CREATE TABLE logica_test.Contains_sn_delta AS SELECT
-  Contains_sn_new.part AS part,
-  Contains_sn_new.component AS component
-FROM
-  logica_test.Contains_sn_new AS Contains_sn_new;
-
-DROP TABLE IF EXISTS logica_test.Contains_sn_new;
-CREATE TABLE logica_test.Contains_sn_new AS WITH t_2_Uses AS (SELECT * FROM (
-  
-    SELECT
-      'bike' AS part,
-      'frame' AS component,
-      1 AS qty
-   UNION ALL
-  
-    SELECT
-      'bike' AS part,
-      'wheel' AS component,
-      2 AS qty
-   UNION ALL
-  
-    SELECT
-      'wheel' AS part,
-      'rim' AS component,
-      1 AS qty
-   UNION ALL
-  
-    SELECT
-      'wheel' AS part,
-      'spoke' AS component,
-      32 AS qty
-   UNION ALL
-  
-    SELECT
-      'wheel' AS part,
-      'hub' AS component,
-      1 AS qty
-   UNION ALL
-  
-    SELECT
-      'hub' AS part,
-      'bearing' AS component,
-      2 AS qty
-   UNION ALL
-  
-    SELECT
-      'frame' AS part,
-      'tube' AS component,
-      3 AS qty
-   UNION ALL
-  
-    SELECT
-      'scooter' AS part,
-      'wheel' AS component,
-      2 AS qty
-   UNION ALL
-  
-    SELECT
-      'scooter' AS part,
-      'deck' AS component,
-      1 AS qty
-  
-) AS UNUSED_TABLE_NAME  ),
-t_1_Contains_MultBodyAggAux_f7 AS (SELECT * FROM (
-  
-    SELECT
-      Contains_sn_delta.part AS part,
-      Uses.component AS component
-    FROM
-      logica_test.Contains_sn_delta AS Contains_sn_delta, t_2_Uses AS Uses
-    WHERE
-      (Uses.part = Contains_sn_delta.component)
-   UNION ALL
-  
-    SELECT
-      t_2_Uses.part AS part,
-      t_2_Uses.component AS component
-    FROM
-      t_2_Uses
-  
-) AS UNUSED_TABLE_NAME  ),
-t_0_Contains_sn_step AS (SELECT
-  Contains_MultBodyAggAux_f7.part AS part,
-  Contains_MultBodyAggAux_f7.component AS component
-FROM
-  t_1_Contains_MultBodyAggAux_f7 AS Contains_MultBodyAggAux_f7
-GROUP BY 1, 2)
-SELECT
-  Contains_sn_step.part AS part,
-  Contains_sn_step.component AS component
-FROM
-  t_0_Contains_sn_step AS Contains_sn_step
-WHERE
-  ((SELECT
-    MIN(1) AS logica_value
-  FROM
-    logica_test.Contains_sn_full AS Contains_sn_full
-  WHERE
-    (Contains_sn_full.part = Contains_sn_step.part) AND
-    (Contains_sn_full.component = Contains_sn_step.component)) IS NULL)
-GROUP BY 1, 2;
-
-INSERT INTO logica_test.Contains_sn_full SELECT * FROM logica_test.Contains_sn_new;
-
-DROP TABLE IF EXISTS logica_test.Contains_sn_delta;
-CREATE TABLE logica_test.Contains_sn_delta AS SELECT
-  Contains_sn_new.part AS part,
-  Contains_sn_new.component AS component
-FROM
-  logica_test.Contains_sn_new AS Contains_sn_new;
+INSERT INTO logica_test.Contains_sn_full SELECT * FROM logica_test.Contains_sn_delta;
 
 WITH t_1_Supplies AS (SELECT * FROM (
   

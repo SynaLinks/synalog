@@ -1,17 +1,17 @@
 ATTACH DATABASE ':memory:' AS logica_test;
 
 DROP TABLE IF EXISTS logica_test.Test_sn_delta;
-CREATE TABLE logica_test.Test_sn_delta AS WITH t_0_Test_MultBodyAggAux_f1 AS (SELECT * FROM (
+CREATE TABLE logica_test.Test_sn_delta AS WITH t_0_Test_MultBodyAggAux_f2 AS (SELECT * FROM (
   
     SELECT
       0 AS y
   
 ) AS UNUSED_TABLE_NAME  )
 SELECT
-  Test_MultBodyAggAux_f1.y AS y
+  Test_MultBodyAggAux_f2.y AS y
 FROM
-  t_0_Test_MultBodyAggAux_f1 AS Test_MultBodyAggAux_f1
-GROUP BY Test_MultBodyAggAux_f1.y;
+  t_0_Test_MultBodyAggAux_f2 AS Test_MultBodyAggAux_f2
+GROUP BY Test_MultBodyAggAux_f2.y;
 
 -- Interacting with table logica_test.Test_sn_delta
 
@@ -26,7 +26,7 @@ WHERE
 -- Interacting with table logica_test.Test_sn_t0
 
 DROP TABLE IF EXISTS logica_test.Test_sn_t1;
-CREATE TABLE logica_test.Test_sn_t1 AS WITH t_1_Test_MultBodyAggAux_f2 AS (SELECT * FROM (
+CREATE TABLE logica_test.Test_sn_t1 AS WITH t_1_Test_MultBodyAggAux_f3 AS (SELECT * FROM (
   
     SELECT
       0 AS y
@@ -41,10 +41,10 @@ CREATE TABLE logica_test.Test_sn_t1 AS WITH t_1_Test_MultBodyAggAux_f2 AS (SELEC
   
 ) AS UNUSED_TABLE_NAME  ),
 t_0_Test_sn_r1 AS (SELECT
-  Test_MultBodyAggAux_f2.y AS y
+  Test_MultBodyAggAux_f3.y AS y
 FROM
-  t_1_Test_MultBodyAggAux_f2 AS Test_MultBodyAggAux_f2
-GROUP BY Test_MultBodyAggAux_f2.y)
+  t_1_Test_MultBodyAggAux_f3 AS Test_MultBodyAggAux_f3
+GROUP BY Test_MultBodyAggAux_f3.y)
 SELECT
   Test_sn_r1.y AS y
 FROM
@@ -55,7 +55,7 @@ WHERE
 -- Interacting with table logica_test.Test_sn_t1
 
 DROP TABLE IF EXISTS logica_test.Test_sn_t2;
-CREATE TABLE logica_test.Test_sn_t2 AS WITH t_1_Test_MultBodyAggAux_f3 AS (SELECT * FROM (
+CREATE TABLE logica_test.Test_sn_t2 AS WITH t_1_Test_MultBodyAggAux_f4 AS (SELECT * FROM (
   
     SELECT
       0 AS y
@@ -70,10 +70,10 @@ CREATE TABLE logica_test.Test_sn_t2 AS WITH t_1_Test_MultBodyAggAux_f3 AS (SELEC
   
 ) AS UNUSED_TABLE_NAME  ),
 t_0_Test_sn_r2 AS (SELECT
-  Test_MultBodyAggAux_f3.y AS y
+  Test_MultBodyAggAux_f4.y AS y
 FROM
-  t_1_Test_MultBodyAggAux_f3 AS Test_MultBodyAggAux_f3
-GROUP BY Test_MultBodyAggAux_f3.y)
+  t_1_Test_MultBodyAggAux_f4 AS Test_MultBodyAggAux_f4
+GROUP BY Test_MultBodyAggAux_f4.y)
 SELECT
   Test_sn_r2.y AS y
 FROM
@@ -84,7 +84,7 @@ WHERE
 -- Interacting with table logica_test.Test_sn_t2
 
 DROP TABLE IF EXISTS logica_test.Test_sn_t3;
-CREATE TABLE logica_test.Test_sn_t3 AS WITH t_1_Test_MultBodyAggAux_f4 AS (SELECT * FROM (
+CREATE TABLE logica_test.Test_sn_t3 AS WITH t_1_Test_MultBodyAggAux_f5 AS (SELECT * FROM (
   
     SELECT
       0 AS y
@@ -99,10 +99,10 @@ CREATE TABLE logica_test.Test_sn_t3 AS WITH t_1_Test_MultBodyAggAux_f4 AS (SELEC
   
 ) AS UNUSED_TABLE_NAME  ),
 t_0_Test_sn_r3 AS (SELECT
-  Test_MultBodyAggAux_f4.y AS y
+  Test_MultBodyAggAux_f5.y AS y
 FROM
-  t_1_Test_MultBodyAggAux_f4 AS Test_MultBodyAggAux_f4
-GROUP BY Test_MultBodyAggAux_f4.y)
+  t_1_Test_MultBodyAggAux_f5 AS Test_MultBodyAggAux_f5
+GROUP BY Test_MultBodyAggAux_f5.y)
 SELECT
   Test_sn_r3.y AS y
 FROM
@@ -143,7 +143,7 @@ CREATE TABLE logica_test.Test_sn_full AS SELECT * FROM (
 -- Interacting with table logica_test.Test_sn_full
 
 DROP TABLE IF EXISTS logica_test.Test_sn_new;
-CREATE TABLE logica_test.Test_sn_new AS WITH t_1_Test_MultBodyAggAux_f5 AS (SELECT * FROM (
+CREATE TABLE logica_test.Test_sn_new AS WITH t_1_Test_MultBodyAggAux_f6 AS (SELECT * FROM (
   
     SELECT
       0 AS y
@@ -158,10 +158,10 @@ CREATE TABLE logica_test.Test_sn_new AS WITH t_1_Test_MultBodyAggAux_f5 AS (SELE
   
 ) AS UNUSED_TABLE_NAME  ),
 t_0_Test_sn_step AS (SELECT
-  Test_MultBodyAggAux_f5.y AS y
+  Test_MultBodyAggAux_f6.y AS y
 FROM
-  t_1_Test_MultBodyAggAux_f5 AS Test_MultBodyAggAux_f5
-GROUP BY Test_MultBodyAggAux_f5.y)
+  t_1_Test_MultBodyAggAux_f6 AS Test_MultBodyAggAux_f6
+GROUP BY Test_MultBodyAggAux_f6.y)
 SELECT
   Test_sn_step.y AS y
 FROM
@@ -178,13 +178,42 @@ GROUP BY Test_sn_step.y;
 INSERT INTO logica_test.Test_sn_full SELECT * FROM logica_test.Test_sn_new;
 
 DROP TABLE IF EXISTS logica_test.Test_sn_delta;
-CREATE TABLE logica_test.Test_sn_delta AS SELECT
-  Test_sn_new.y AS y
+CREATE TABLE logica_test.Test_sn_delta AS WITH t_1_Test_MultBodyAggAux_f1 AS (SELECT * FROM (
+  
+    SELECT
+      0 AS y
+   UNION ALL
+  
+    SELECT
+      ((x_9.value) + (1)) AS y
+    FROM
+      logica_test.Test_sn_new AS Test_sn_new, JSON_EACH((select json_group_array(n) from (with recursive t as(select 0 as n union all select n + 1 as n from t where n + 1 < 100) select n from t) where n < 100)) as x_9
+    WHERE
+      (Test_sn_new.y = x_9.value)
+  
+) AS UNUSED_TABLE_NAME  ),
+t_0_Test_sn_back_step AS (SELECT
+  Test_MultBodyAggAux_f1.y AS y
 FROM
-  logica_test.Test_sn_new AS Test_sn_new;
+  t_1_Test_MultBodyAggAux_f1 AS Test_MultBodyAggAux_f1
+GROUP BY Test_MultBodyAggAux_f1.y)
+SELECT
+  Test_sn_back_step.y AS y
+FROM
+  t_0_Test_sn_back_step AS Test_sn_back_step
+WHERE
+  ((SELECT
+    MIN(MagicalEntangle(1, x_12.value)) AS logica_value
+  FROM
+    logica_test.Test_sn_full AS Test_sn_full, JSON_EACH(JSON_ARRAY(0)) as x_12
+  WHERE
+    (Test_sn_full.y = Test_sn_back_step.y)) IS NULL)
+GROUP BY Test_sn_back_step.y;
+
+INSERT INTO logica_test.Test_sn_full SELECT * FROM logica_test.Test_sn_delta;
 
 DROP TABLE IF EXISTS logica_test.Test_sn_new;
-CREATE TABLE logica_test.Test_sn_new AS WITH t_1_Test_MultBodyAggAux_f5 AS (SELECT * FROM (
+CREATE TABLE logica_test.Test_sn_new AS WITH t_1_Test_MultBodyAggAux_f6 AS (SELECT * FROM (
   
     SELECT
       0 AS y
@@ -199,10 +228,10 @@ CREATE TABLE logica_test.Test_sn_new AS WITH t_1_Test_MultBodyAggAux_f5 AS (SELE
   
 ) AS UNUSED_TABLE_NAME  ),
 t_0_Test_sn_step AS (SELECT
-  Test_MultBodyAggAux_f5.y AS y
+  Test_MultBodyAggAux_f6.y AS y
 FROM
-  t_1_Test_MultBodyAggAux_f5 AS Test_MultBodyAggAux_f5
-GROUP BY Test_MultBodyAggAux_f5.y)
+  t_1_Test_MultBodyAggAux_f6 AS Test_MultBodyAggAux_f6
+GROUP BY Test_MultBodyAggAux_f6.y)
 SELECT
   Test_sn_step.y AS y
 FROM
@@ -219,13 +248,42 @@ GROUP BY Test_sn_step.y;
 INSERT INTO logica_test.Test_sn_full SELECT * FROM logica_test.Test_sn_new;
 
 DROP TABLE IF EXISTS logica_test.Test_sn_delta;
-CREATE TABLE logica_test.Test_sn_delta AS SELECT
-  Test_sn_new.y AS y
+CREATE TABLE logica_test.Test_sn_delta AS WITH t_1_Test_MultBodyAggAux_f1 AS (SELECT * FROM (
+  
+    SELECT
+      0 AS y
+   UNION ALL
+  
+    SELECT
+      ((x_9.value) + (1)) AS y
+    FROM
+      logica_test.Test_sn_new AS Test_sn_new, JSON_EACH((select json_group_array(n) from (with recursive t as(select 0 as n union all select n + 1 as n from t where n + 1 < 100) select n from t) where n < 100)) as x_9
+    WHERE
+      (Test_sn_new.y = x_9.value)
+  
+) AS UNUSED_TABLE_NAME  ),
+t_0_Test_sn_back_step AS (SELECT
+  Test_MultBodyAggAux_f1.y AS y
 FROM
-  logica_test.Test_sn_new AS Test_sn_new;
+  t_1_Test_MultBodyAggAux_f1 AS Test_MultBodyAggAux_f1
+GROUP BY Test_MultBodyAggAux_f1.y)
+SELECT
+  Test_sn_back_step.y AS y
+FROM
+  t_0_Test_sn_back_step AS Test_sn_back_step
+WHERE
+  ((SELECT
+    MIN(MagicalEntangle(1, x_12.value)) AS logica_value
+  FROM
+    logica_test.Test_sn_full AS Test_sn_full, JSON_EACH(JSON_ARRAY(0)) as x_12
+  WHERE
+    (Test_sn_full.y = Test_sn_back_step.y)) IS NULL)
+GROUP BY Test_sn_back_step.y;
+
+INSERT INTO logica_test.Test_sn_full SELECT * FROM logica_test.Test_sn_delta;
 
 DROP TABLE IF EXISTS logica_test.Test_sn_new;
-CREATE TABLE logica_test.Test_sn_new AS WITH t_1_Test_MultBodyAggAux_f5 AS (SELECT * FROM (
+CREATE TABLE logica_test.Test_sn_new AS WITH t_1_Test_MultBodyAggAux_f6 AS (SELECT * FROM (
   
     SELECT
       0 AS y
@@ -240,10 +298,10 @@ CREATE TABLE logica_test.Test_sn_new AS WITH t_1_Test_MultBodyAggAux_f5 AS (SELE
   
 ) AS UNUSED_TABLE_NAME  ),
 t_0_Test_sn_step AS (SELECT
-  Test_MultBodyAggAux_f5.y AS y
+  Test_MultBodyAggAux_f6.y AS y
 FROM
-  t_1_Test_MultBodyAggAux_f5 AS Test_MultBodyAggAux_f5
-GROUP BY Test_MultBodyAggAux_f5.y)
+  t_1_Test_MultBodyAggAux_f6 AS Test_MultBodyAggAux_f6
+GROUP BY Test_MultBodyAggAux_f6.y)
 SELECT
   Test_sn_step.y AS y
 FROM
@@ -260,13 +318,42 @@ GROUP BY Test_sn_step.y;
 INSERT INTO logica_test.Test_sn_full SELECT * FROM logica_test.Test_sn_new;
 
 DROP TABLE IF EXISTS logica_test.Test_sn_delta;
-CREATE TABLE logica_test.Test_sn_delta AS SELECT
-  Test_sn_new.y AS y
+CREATE TABLE logica_test.Test_sn_delta AS WITH t_1_Test_MultBodyAggAux_f1 AS (SELECT * FROM (
+  
+    SELECT
+      0 AS y
+   UNION ALL
+  
+    SELECT
+      ((x_9.value) + (1)) AS y
+    FROM
+      logica_test.Test_sn_new AS Test_sn_new, JSON_EACH((select json_group_array(n) from (with recursive t as(select 0 as n union all select n + 1 as n from t where n + 1 < 100) select n from t) where n < 100)) as x_9
+    WHERE
+      (Test_sn_new.y = x_9.value)
+  
+) AS UNUSED_TABLE_NAME  ),
+t_0_Test_sn_back_step AS (SELECT
+  Test_MultBodyAggAux_f1.y AS y
 FROM
-  logica_test.Test_sn_new AS Test_sn_new;
+  t_1_Test_MultBodyAggAux_f1 AS Test_MultBodyAggAux_f1
+GROUP BY Test_MultBodyAggAux_f1.y)
+SELECT
+  Test_sn_back_step.y AS y
+FROM
+  t_0_Test_sn_back_step AS Test_sn_back_step
+WHERE
+  ((SELECT
+    MIN(MagicalEntangle(1, x_12.value)) AS logica_value
+  FROM
+    logica_test.Test_sn_full AS Test_sn_full, JSON_EACH(JSON_ARRAY(0)) as x_12
+  WHERE
+    (Test_sn_full.y = Test_sn_back_step.y)) IS NULL)
+GROUP BY Test_sn_back_step.y;
+
+INSERT INTO logica_test.Test_sn_full SELECT * FROM logica_test.Test_sn_delta;
 
 DROP TABLE IF EXISTS logica_test.Test_sn_new;
-CREATE TABLE logica_test.Test_sn_new AS WITH t_1_Test_MultBodyAggAux_f5 AS (SELECT * FROM (
+CREATE TABLE logica_test.Test_sn_new AS WITH t_1_Test_MultBodyAggAux_f6 AS (SELECT * FROM (
   
     SELECT
       0 AS y
@@ -281,10 +368,10 @@ CREATE TABLE logica_test.Test_sn_new AS WITH t_1_Test_MultBodyAggAux_f5 AS (SELE
   
 ) AS UNUSED_TABLE_NAME  ),
 t_0_Test_sn_step AS (SELECT
-  Test_MultBodyAggAux_f5.y AS y
+  Test_MultBodyAggAux_f6.y AS y
 FROM
-  t_1_Test_MultBodyAggAux_f5 AS Test_MultBodyAggAux_f5
-GROUP BY Test_MultBodyAggAux_f5.y)
+  t_1_Test_MultBodyAggAux_f6 AS Test_MultBodyAggAux_f6
+GROUP BY Test_MultBodyAggAux_f6.y)
 SELECT
   Test_sn_step.y AS y
 FROM
@@ -301,13 +388,42 @@ GROUP BY Test_sn_step.y;
 INSERT INTO logica_test.Test_sn_full SELECT * FROM logica_test.Test_sn_new;
 
 DROP TABLE IF EXISTS logica_test.Test_sn_delta;
-CREATE TABLE logica_test.Test_sn_delta AS SELECT
-  Test_sn_new.y AS y
+CREATE TABLE logica_test.Test_sn_delta AS WITH t_1_Test_MultBodyAggAux_f1 AS (SELECT * FROM (
+  
+    SELECT
+      0 AS y
+   UNION ALL
+  
+    SELECT
+      ((x_9.value) + (1)) AS y
+    FROM
+      logica_test.Test_sn_new AS Test_sn_new, JSON_EACH((select json_group_array(n) from (with recursive t as(select 0 as n union all select n + 1 as n from t where n + 1 < 100) select n from t) where n < 100)) as x_9
+    WHERE
+      (Test_sn_new.y = x_9.value)
+  
+) AS UNUSED_TABLE_NAME  ),
+t_0_Test_sn_back_step AS (SELECT
+  Test_MultBodyAggAux_f1.y AS y
 FROM
-  logica_test.Test_sn_new AS Test_sn_new;
+  t_1_Test_MultBodyAggAux_f1 AS Test_MultBodyAggAux_f1
+GROUP BY Test_MultBodyAggAux_f1.y)
+SELECT
+  Test_sn_back_step.y AS y
+FROM
+  t_0_Test_sn_back_step AS Test_sn_back_step
+WHERE
+  ((SELECT
+    MIN(MagicalEntangle(1, x_12.value)) AS logica_value
+  FROM
+    logica_test.Test_sn_full AS Test_sn_full, JSON_EACH(JSON_ARRAY(0)) as x_12
+  WHERE
+    (Test_sn_full.y = Test_sn_back_step.y)) IS NULL)
+GROUP BY Test_sn_back_step.y;
+
+INSERT INTO logica_test.Test_sn_full SELECT * FROM logica_test.Test_sn_delta;
 
 DROP TABLE IF EXISTS logica_test.Test_sn_new;
-CREATE TABLE logica_test.Test_sn_new AS WITH t_1_Test_MultBodyAggAux_f5 AS (SELECT * FROM (
+CREATE TABLE logica_test.Test_sn_new AS WITH t_1_Test_MultBodyAggAux_f6 AS (SELECT * FROM (
   
     SELECT
       0 AS y
@@ -322,10 +438,10 @@ CREATE TABLE logica_test.Test_sn_new AS WITH t_1_Test_MultBodyAggAux_f5 AS (SELE
   
 ) AS UNUSED_TABLE_NAME  ),
 t_0_Test_sn_step AS (SELECT
-  Test_MultBodyAggAux_f5.y AS y
+  Test_MultBodyAggAux_f6.y AS y
 FROM
-  t_1_Test_MultBodyAggAux_f5 AS Test_MultBodyAggAux_f5
-GROUP BY Test_MultBodyAggAux_f5.y)
+  t_1_Test_MultBodyAggAux_f6 AS Test_MultBodyAggAux_f6
+GROUP BY Test_MultBodyAggAux_f6.y)
 SELECT
   Test_sn_step.y AS y
 FROM
@@ -342,13 +458,42 @@ GROUP BY Test_sn_step.y;
 INSERT INTO logica_test.Test_sn_full SELECT * FROM logica_test.Test_sn_new;
 
 DROP TABLE IF EXISTS logica_test.Test_sn_delta;
-CREATE TABLE logica_test.Test_sn_delta AS SELECT
-  Test_sn_new.y AS y
+CREATE TABLE logica_test.Test_sn_delta AS WITH t_1_Test_MultBodyAggAux_f1 AS (SELECT * FROM (
+  
+    SELECT
+      0 AS y
+   UNION ALL
+  
+    SELECT
+      ((x_9.value) + (1)) AS y
+    FROM
+      logica_test.Test_sn_new AS Test_sn_new, JSON_EACH((select json_group_array(n) from (with recursive t as(select 0 as n union all select n + 1 as n from t where n + 1 < 100) select n from t) where n < 100)) as x_9
+    WHERE
+      (Test_sn_new.y = x_9.value)
+  
+) AS UNUSED_TABLE_NAME  ),
+t_0_Test_sn_back_step AS (SELECT
+  Test_MultBodyAggAux_f1.y AS y
 FROM
-  logica_test.Test_sn_new AS Test_sn_new;
+  t_1_Test_MultBodyAggAux_f1 AS Test_MultBodyAggAux_f1
+GROUP BY Test_MultBodyAggAux_f1.y)
+SELECT
+  Test_sn_back_step.y AS y
+FROM
+  t_0_Test_sn_back_step AS Test_sn_back_step
+WHERE
+  ((SELECT
+    MIN(MagicalEntangle(1, x_12.value)) AS logica_value
+  FROM
+    logica_test.Test_sn_full AS Test_sn_full, JSON_EACH(JSON_ARRAY(0)) as x_12
+  WHERE
+    (Test_sn_full.y = Test_sn_back_step.y)) IS NULL)
+GROUP BY Test_sn_back_step.y;
+
+INSERT INTO logica_test.Test_sn_full SELECT * FROM logica_test.Test_sn_delta;
 
 DROP TABLE IF EXISTS logica_test.Test_sn_new;
-CREATE TABLE logica_test.Test_sn_new AS WITH t_1_Test_MultBodyAggAux_f5 AS (SELECT * FROM (
+CREATE TABLE logica_test.Test_sn_new AS WITH t_1_Test_MultBodyAggAux_f6 AS (SELECT * FROM (
   
     SELECT
       0 AS y
@@ -363,10 +508,10 @@ CREATE TABLE logica_test.Test_sn_new AS WITH t_1_Test_MultBodyAggAux_f5 AS (SELE
   
 ) AS UNUSED_TABLE_NAME  ),
 t_0_Test_sn_step AS (SELECT
-  Test_MultBodyAggAux_f5.y AS y
+  Test_MultBodyAggAux_f6.y AS y
 FROM
-  t_1_Test_MultBodyAggAux_f5 AS Test_MultBodyAggAux_f5
-GROUP BY Test_MultBodyAggAux_f5.y)
+  t_1_Test_MultBodyAggAux_f6 AS Test_MultBodyAggAux_f6
+GROUP BY Test_MultBodyAggAux_f6.y)
 SELECT
   Test_sn_step.y AS y
 FROM
@@ -383,13 +528,42 @@ GROUP BY Test_sn_step.y;
 INSERT INTO logica_test.Test_sn_full SELECT * FROM logica_test.Test_sn_new;
 
 DROP TABLE IF EXISTS logica_test.Test_sn_delta;
-CREATE TABLE logica_test.Test_sn_delta AS SELECT
-  Test_sn_new.y AS y
+CREATE TABLE logica_test.Test_sn_delta AS WITH t_1_Test_MultBodyAggAux_f1 AS (SELECT * FROM (
+  
+    SELECT
+      0 AS y
+   UNION ALL
+  
+    SELECT
+      ((x_9.value) + (1)) AS y
+    FROM
+      logica_test.Test_sn_new AS Test_sn_new, JSON_EACH((select json_group_array(n) from (with recursive t as(select 0 as n union all select n + 1 as n from t where n + 1 < 100) select n from t) where n < 100)) as x_9
+    WHERE
+      (Test_sn_new.y = x_9.value)
+  
+) AS UNUSED_TABLE_NAME  ),
+t_0_Test_sn_back_step AS (SELECT
+  Test_MultBodyAggAux_f1.y AS y
 FROM
-  logica_test.Test_sn_new AS Test_sn_new;
+  t_1_Test_MultBodyAggAux_f1 AS Test_MultBodyAggAux_f1
+GROUP BY Test_MultBodyAggAux_f1.y)
+SELECT
+  Test_sn_back_step.y AS y
+FROM
+  t_0_Test_sn_back_step AS Test_sn_back_step
+WHERE
+  ((SELECT
+    MIN(MagicalEntangle(1, x_12.value)) AS logica_value
+  FROM
+    logica_test.Test_sn_full AS Test_sn_full, JSON_EACH(JSON_ARRAY(0)) as x_12
+  WHERE
+    (Test_sn_full.y = Test_sn_back_step.y)) IS NULL)
+GROUP BY Test_sn_back_step.y;
+
+INSERT INTO logica_test.Test_sn_full SELECT * FROM logica_test.Test_sn_delta;
 
 DROP TABLE IF EXISTS logica_test.Test_sn_new;
-CREATE TABLE logica_test.Test_sn_new AS WITH t_1_Test_MultBodyAggAux_f5 AS (SELECT * FROM (
+CREATE TABLE logica_test.Test_sn_new AS WITH t_1_Test_MultBodyAggAux_f6 AS (SELECT * FROM (
   
     SELECT
       0 AS y
@@ -404,10 +578,10 @@ CREATE TABLE logica_test.Test_sn_new AS WITH t_1_Test_MultBodyAggAux_f5 AS (SELE
   
 ) AS UNUSED_TABLE_NAME  ),
 t_0_Test_sn_step AS (SELECT
-  Test_MultBodyAggAux_f5.y AS y
+  Test_MultBodyAggAux_f6.y AS y
 FROM
-  t_1_Test_MultBodyAggAux_f5 AS Test_MultBodyAggAux_f5
-GROUP BY Test_MultBodyAggAux_f5.y)
+  t_1_Test_MultBodyAggAux_f6 AS Test_MultBodyAggAux_f6
+GROUP BY Test_MultBodyAggAux_f6.y)
 SELECT
   Test_sn_step.y AS y
 FROM
@@ -424,13 +598,42 @@ GROUP BY Test_sn_step.y;
 INSERT INTO logica_test.Test_sn_full SELECT * FROM logica_test.Test_sn_new;
 
 DROP TABLE IF EXISTS logica_test.Test_sn_delta;
-CREATE TABLE logica_test.Test_sn_delta AS SELECT
-  Test_sn_new.y AS y
+CREATE TABLE logica_test.Test_sn_delta AS WITH t_1_Test_MultBodyAggAux_f1 AS (SELECT * FROM (
+  
+    SELECT
+      0 AS y
+   UNION ALL
+  
+    SELECT
+      ((x_9.value) + (1)) AS y
+    FROM
+      logica_test.Test_sn_new AS Test_sn_new, JSON_EACH((select json_group_array(n) from (with recursive t as(select 0 as n union all select n + 1 as n from t where n + 1 < 100) select n from t) where n < 100)) as x_9
+    WHERE
+      (Test_sn_new.y = x_9.value)
+  
+) AS UNUSED_TABLE_NAME  ),
+t_0_Test_sn_back_step AS (SELECT
+  Test_MultBodyAggAux_f1.y AS y
 FROM
-  logica_test.Test_sn_new AS Test_sn_new;
+  t_1_Test_MultBodyAggAux_f1 AS Test_MultBodyAggAux_f1
+GROUP BY Test_MultBodyAggAux_f1.y)
+SELECT
+  Test_sn_back_step.y AS y
+FROM
+  t_0_Test_sn_back_step AS Test_sn_back_step
+WHERE
+  ((SELECT
+    MIN(MagicalEntangle(1, x_12.value)) AS logica_value
+  FROM
+    logica_test.Test_sn_full AS Test_sn_full, JSON_EACH(JSON_ARRAY(0)) as x_12
+  WHERE
+    (Test_sn_full.y = Test_sn_back_step.y)) IS NULL)
+GROUP BY Test_sn_back_step.y;
+
+INSERT INTO logica_test.Test_sn_full SELECT * FROM logica_test.Test_sn_delta;
 
 DROP TABLE IF EXISTS logica_test.Test_sn_new;
-CREATE TABLE logica_test.Test_sn_new AS WITH t_1_Test_MultBodyAggAux_f5 AS (SELECT * FROM (
+CREATE TABLE logica_test.Test_sn_new AS WITH t_1_Test_MultBodyAggAux_f6 AS (SELECT * FROM (
   
     SELECT
       0 AS y
@@ -445,10 +648,10 @@ CREATE TABLE logica_test.Test_sn_new AS WITH t_1_Test_MultBodyAggAux_f5 AS (SELE
   
 ) AS UNUSED_TABLE_NAME  ),
 t_0_Test_sn_step AS (SELECT
-  Test_MultBodyAggAux_f5.y AS y
+  Test_MultBodyAggAux_f6.y AS y
 FROM
-  t_1_Test_MultBodyAggAux_f5 AS Test_MultBodyAggAux_f5
-GROUP BY Test_MultBodyAggAux_f5.y)
+  t_1_Test_MultBodyAggAux_f6 AS Test_MultBodyAggAux_f6
+GROUP BY Test_MultBodyAggAux_f6.y)
 SELECT
   Test_sn_step.y AS y
 FROM
@@ -465,13 +668,42 @@ GROUP BY Test_sn_step.y;
 INSERT INTO logica_test.Test_sn_full SELECT * FROM logica_test.Test_sn_new;
 
 DROP TABLE IF EXISTS logica_test.Test_sn_delta;
-CREATE TABLE logica_test.Test_sn_delta AS SELECT
-  Test_sn_new.y AS y
+CREATE TABLE logica_test.Test_sn_delta AS WITH t_1_Test_MultBodyAggAux_f1 AS (SELECT * FROM (
+  
+    SELECT
+      0 AS y
+   UNION ALL
+  
+    SELECT
+      ((x_9.value) + (1)) AS y
+    FROM
+      logica_test.Test_sn_new AS Test_sn_new, JSON_EACH((select json_group_array(n) from (with recursive t as(select 0 as n union all select n + 1 as n from t where n + 1 < 100) select n from t) where n < 100)) as x_9
+    WHERE
+      (Test_sn_new.y = x_9.value)
+  
+) AS UNUSED_TABLE_NAME  ),
+t_0_Test_sn_back_step AS (SELECT
+  Test_MultBodyAggAux_f1.y AS y
 FROM
-  logica_test.Test_sn_new AS Test_sn_new;
+  t_1_Test_MultBodyAggAux_f1 AS Test_MultBodyAggAux_f1
+GROUP BY Test_MultBodyAggAux_f1.y)
+SELECT
+  Test_sn_back_step.y AS y
+FROM
+  t_0_Test_sn_back_step AS Test_sn_back_step
+WHERE
+  ((SELECT
+    MIN(MagicalEntangle(1, x_12.value)) AS logica_value
+  FROM
+    logica_test.Test_sn_full AS Test_sn_full, JSON_EACH(JSON_ARRAY(0)) as x_12
+  WHERE
+    (Test_sn_full.y = Test_sn_back_step.y)) IS NULL)
+GROUP BY Test_sn_back_step.y;
+
+INSERT INTO logica_test.Test_sn_full SELECT * FROM logica_test.Test_sn_delta;
 
 DROP TABLE IF EXISTS logica_test.Test_sn_new;
-CREATE TABLE logica_test.Test_sn_new AS WITH t_1_Test_MultBodyAggAux_f5 AS (SELECT * FROM (
+CREATE TABLE logica_test.Test_sn_new AS WITH t_1_Test_MultBodyAggAux_f6 AS (SELECT * FROM (
   
     SELECT
       0 AS y
@@ -486,10 +718,10 @@ CREATE TABLE logica_test.Test_sn_new AS WITH t_1_Test_MultBodyAggAux_f5 AS (SELE
   
 ) AS UNUSED_TABLE_NAME  ),
 t_0_Test_sn_step AS (SELECT
-  Test_MultBodyAggAux_f5.y AS y
+  Test_MultBodyAggAux_f6.y AS y
 FROM
-  t_1_Test_MultBodyAggAux_f5 AS Test_MultBodyAggAux_f5
-GROUP BY Test_MultBodyAggAux_f5.y)
+  t_1_Test_MultBodyAggAux_f6 AS Test_MultBodyAggAux_f6
+GROUP BY Test_MultBodyAggAux_f6.y)
 SELECT
   Test_sn_step.y AS y
 FROM
@@ -506,13 +738,42 @@ GROUP BY Test_sn_step.y;
 INSERT INTO logica_test.Test_sn_full SELECT * FROM logica_test.Test_sn_new;
 
 DROP TABLE IF EXISTS logica_test.Test_sn_delta;
-CREATE TABLE logica_test.Test_sn_delta AS SELECT
-  Test_sn_new.y AS y
+CREATE TABLE logica_test.Test_sn_delta AS WITH t_1_Test_MultBodyAggAux_f1 AS (SELECT * FROM (
+  
+    SELECT
+      0 AS y
+   UNION ALL
+  
+    SELECT
+      ((x_9.value) + (1)) AS y
+    FROM
+      logica_test.Test_sn_new AS Test_sn_new, JSON_EACH((select json_group_array(n) from (with recursive t as(select 0 as n union all select n + 1 as n from t where n + 1 < 100) select n from t) where n < 100)) as x_9
+    WHERE
+      (Test_sn_new.y = x_9.value)
+  
+) AS UNUSED_TABLE_NAME  ),
+t_0_Test_sn_back_step AS (SELECT
+  Test_MultBodyAggAux_f1.y AS y
 FROM
-  logica_test.Test_sn_new AS Test_sn_new;
+  t_1_Test_MultBodyAggAux_f1 AS Test_MultBodyAggAux_f1
+GROUP BY Test_MultBodyAggAux_f1.y)
+SELECT
+  Test_sn_back_step.y AS y
+FROM
+  t_0_Test_sn_back_step AS Test_sn_back_step
+WHERE
+  ((SELECT
+    MIN(MagicalEntangle(1, x_12.value)) AS logica_value
+  FROM
+    logica_test.Test_sn_full AS Test_sn_full, JSON_EACH(JSON_ARRAY(0)) as x_12
+  WHERE
+    (Test_sn_full.y = Test_sn_back_step.y)) IS NULL)
+GROUP BY Test_sn_back_step.y;
+
+INSERT INTO logica_test.Test_sn_full SELECT * FROM logica_test.Test_sn_delta;
 
 DROP TABLE IF EXISTS logica_test.Test_sn_new;
-CREATE TABLE logica_test.Test_sn_new AS WITH t_1_Test_MultBodyAggAux_f5 AS (SELECT * FROM (
+CREATE TABLE logica_test.Test_sn_new AS WITH t_1_Test_MultBodyAggAux_f6 AS (SELECT * FROM (
   
     SELECT
       0 AS y
@@ -527,10 +788,10 @@ CREATE TABLE logica_test.Test_sn_new AS WITH t_1_Test_MultBodyAggAux_f5 AS (SELE
   
 ) AS UNUSED_TABLE_NAME  ),
 t_0_Test_sn_step AS (SELECT
-  Test_MultBodyAggAux_f5.y AS y
+  Test_MultBodyAggAux_f6.y AS y
 FROM
-  t_1_Test_MultBodyAggAux_f5 AS Test_MultBodyAggAux_f5
-GROUP BY Test_MultBodyAggAux_f5.y)
+  t_1_Test_MultBodyAggAux_f6 AS Test_MultBodyAggAux_f6
+GROUP BY Test_MultBodyAggAux_f6.y)
 SELECT
   Test_sn_step.y AS y
 FROM
@@ -547,13 +808,42 @@ GROUP BY Test_sn_step.y;
 INSERT INTO logica_test.Test_sn_full SELECT * FROM logica_test.Test_sn_new;
 
 DROP TABLE IF EXISTS logica_test.Test_sn_delta;
-CREATE TABLE logica_test.Test_sn_delta AS SELECT
-  Test_sn_new.y AS y
+CREATE TABLE logica_test.Test_sn_delta AS WITH t_1_Test_MultBodyAggAux_f1 AS (SELECT * FROM (
+  
+    SELECT
+      0 AS y
+   UNION ALL
+  
+    SELECT
+      ((x_9.value) + (1)) AS y
+    FROM
+      logica_test.Test_sn_new AS Test_sn_new, JSON_EACH((select json_group_array(n) from (with recursive t as(select 0 as n union all select n + 1 as n from t where n + 1 < 100) select n from t) where n < 100)) as x_9
+    WHERE
+      (Test_sn_new.y = x_9.value)
+  
+) AS UNUSED_TABLE_NAME  ),
+t_0_Test_sn_back_step AS (SELECT
+  Test_MultBodyAggAux_f1.y AS y
 FROM
-  logica_test.Test_sn_new AS Test_sn_new;
+  t_1_Test_MultBodyAggAux_f1 AS Test_MultBodyAggAux_f1
+GROUP BY Test_MultBodyAggAux_f1.y)
+SELECT
+  Test_sn_back_step.y AS y
+FROM
+  t_0_Test_sn_back_step AS Test_sn_back_step
+WHERE
+  ((SELECT
+    MIN(MagicalEntangle(1, x_12.value)) AS logica_value
+  FROM
+    logica_test.Test_sn_full AS Test_sn_full, JSON_EACH(JSON_ARRAY(0)) as x_12
+  WHERE
+    (Test_sn_full.y = Test_sn_back_step.y)) IS NULL)
+GROUP BY Test_sn_back_step.y;
+
+INSERT INTO logica_test.Test_sn_full SELECT * FROM logica_test.Test_sn_delta;
 
 DROP TABLE IF EXISTS logica_test.Test_sn_new;
-CREATE TABLE logica_test.Test_sn_new AS WITH t_1_Test_MultBodyAggAux_f5 AS (SELECT * FROM (
+CREATE TABLE logica_test.Test_sn_new AS WITH t_1_Test_MultBodyAggAux_f6 AS (SELECT * FROM (
   
     SELECT
       0 AS y
@@ -568,10 +858,10 @@ CREATE TABLE logica_test.Test_sn_new AS WITH t_1_Test_MultBodyAggAux_f5 AS (SELE
   
 ) AS UNUSED_TABLE_NAME  ),
 t_0_Test_sn_step AS (SELECT
-  Test_MultBodyAggAux_f5.y AS y
+  Test_MultBodyAggAux_f6.y AS y
 FROM
-  t_1_Test_MultBodyAggAux_f5 AS Test_MultBodyAggAux_f5
-GROUP BY Test_MultBodyAggAux_f5.y)
+  t_1_Test_MultBodyAggAux_f6 AS Test_MultBodyAggAux_f6
+GROUP BY Test_MultBodyAggAux_f6.y)
 SELECT
   Test_sn_step.y AS y
 FROM
@@ -588,13 +878,42 @@ GROUP BY Test_sn_step.y;
 INSERT INTO logica_test.Test_sn_full SELECT * FROM logica_test.Test_sn_new;
 
 DROP TABLE IF EXISTS logica_test.Test_sn_delta;
-CREATE TABLE logica_test.Test_sn_delta AS SELECT
-  Test_sn_new.y AS y
+CREATE TABLE logica_test.Test_sn_delta AS WITH t_1_Test_MultBodyAggAux_f1 AS (SELECT * FROM (
+  
+    SELECT
+      0 AS y
+   UNION ALL
+  
+    SELECT
+      ((x_9.value) + (1)) AS y
+    FROM
+      logica_test.Test_sn_new AS Test_sn_new, JSON_EACH((select json_group_array(n) from (with recursive t as(select 0 as n union all select n + 1 as n from t where n + 1 < 100) select n from t) where n < 100)) as x_9
+    WHERE
+      (Test_sn_new.y = x_9.value)
+  
+) AS UNUSED_TABLE_NAME  ),
+t_0_Test_sn_back_step AS (SELECT
+  Test_MultBodyAggAux_f1.y AS y
 FROM
-  logica_test.Test_sn_new AS Test_sn_new;
+  t_1_Test_MultBodyAggAux_f1 AS Test_MultBodyAggAux_f1
+GROUP BY Test_MultBodyAggAux_f1.y)
+SELECT
+  Test_sn_back_step.y AS y
+FROM
+  t_0_Test_sn_back_step AS Test_sn_back_step
+WHERE
+  ((SELECT
+    MIN(MagicalEntangle(1, x_12.value)) AS logica_value
+  FROM
+    logica_test.Test_sn_full AS Test_sn_full, JSON_EACH(JSON_ARRAY(0)) as x_12
+  WHERE
+    (Test_sn_full.y = Test_sn_back_step.y)) IS NULL)
+GROUP BY Test_sn_back_step.y;
+
+INSERT INTO logica_test.Test_sn_full SELECT * FROM logica_test.Test_sn_delta;
 
 DROP TABLE IF EXISTS logica_test.Test_sn_new;
-CREATE TABLE logica_test.Test_sn_new AS WITH t_1_Test_MultBodyAggAux_f5 AS (SELECT * FROM (
+CREATE TABLE logica_test.Test_sn_new AS WITH t_1_Test_MultBodyAggAux_f6 AS (SELECT * FROM (
   
     SELECT
       0 AS y
@@ -609,10 +928,10 @@ CREATE TABLE logica_test.Test_sn_new AS WITH t_1_Test_MultBodyAggAux_f5 AS (SELE
   
 ) AS UNUSED_TABLE_NAME  ),
 t_0_Test_sn_step AS (SELECT
-  Test_MultBodyAggAux_f5.y AS y
+  Test_MultBodyAggAux_f6.y AS y
 FROM
-  t_1_Test_MultBodyAggAux_f5 AS Test_MultBodyAggAux_f5
-GROUP BY Test_MultBodyAggAux_f5.y)
+  t_1_Test_MultBodyAggAux_f6 AS Test_MultBodyAggAux_f6
+GROUP BY Test_MultBodyAggAux_f6.y)
 SELECT
   Test_sn_step.y AS y
 FROM
@@ -629,13 +948,42 @@ GROUP BY Test_sn_step.y;
 INSERT INTO logica_test.Test_sn_full SELECT * FROM logica_test.Test_sn_new;
 
 DROP TABLE IF EXISTS logica_test.Test_sn_delta;
-CREATE TABLE logica_test.Test_sn_delta AS SELECT
-  Test_sn_new.y AS y
+CREATE TABLE logica_test.Test_sn_delta AS WITH t_1_Test_MultBodyAggAux_f1 AS (SELECT * FROM (
+  
+    SELECT
+      0 AS y
+   UNION ALL
+  
+    SELECT
+      ((x_9.value) + (1)) AS y
+    FROM
+      logica_test.Test_sn_new AS Test_sn_new, JSON_EACH((select json_group_array(n) from (with recursive t as(select 0 as n union all select n + 1 as n from t where n + 1 < 100) select n from t) where n < 100)) as x_9
+    WHERE
+      (Test_sn_new.y = x_9.value)
+  
+) AS UNUSED_TABLE_NAME  ),
+t_0_Test_sn_back_step AS (SELECT
+  Test_MultBodyAggAux_f1.y AS y
 FROM
-  logica_test.Test_sn_new AS Test_sn_new;
+  t_1_Test_MultBodyAggAux_f1 AS Test_MultBodyAggAux_f1
+GROUP BY Test_MultBodyAggAux_f1.y)
+SELECT
+  Test_sn_back_step.y AS y
+FROM
+  t_0_Test_sn_back_step AS Test_sn_back_step
+WHERE
+  ((SELECT
+    MIN(MagicalEntangle(1, x_12.value)) AS logica_value
+  FROM
+    logica_test.Test_sn_full AS Test_sn_full, JSON_EACH(JSON_ARRAY(0)) as x_12
+  WHERE
+    (Test_sn_full.y = Test_sn_back_step.y)) IS NULL)
+GROUP BY Test_sn_back_step.y;
+
+INSERT INTO logica_test.Test_sn_full SELECT * FROM logica_test.Test_sn_delta;
 
 DROP TABLE IF EXISTS logica_test.Test_sn_new;
-CREATE TABLE logica_test.Test_sn_new AS WITH t_1_Test_MultBodyAggAux_f5 AS (SELECT * FROM (
+CREATE TABLE logica_test.Test_sn_new AS WITH t_1_Test_MultBodyAggAux_f6 AS (SELECT * FROM (
   
     SELECT
       0 AS y
@@ -650,10 +998,10 @@ CREATE TABLE logica_test.Test_sn_new AS WITH t_1_Test_MultBodyAggAux_f5 AS (SELE
   
 ) AS UNUSED_TABLE_NAME  ),
 t_0_Test_sn_step AS (SELECT
-  Test_MultBodyAggAux_f5.y AS y
+  Test_MultBodyAggAux_f6.y AS y
 FROM
-  t_1_Test_MultBodyAggAux_f5 AS Test_MultBodyAggAux_f5
-GROUP BY Test_MultBodyAggAux_f5.y)
+  t_1_Test_MultBodyAggAux_f6 AS Test_MultBodyAggAux_f6
+GROUP BY Test_MultBodyAggAux_f6.y)
 SELECT
   Test_sn_step.y AS y
 FROM
@@ -670,13 +1018,42 @@ GROUP BY Test_sn_step.y;
 INSERT INTO logica_test.Test_sn_full SELECT * FROM logica_test.Test_sn_new;
 
 DROP TABLE IF EXISTS logica_test.Test_sn_delta;
-CREATE TABLE logica_test.Test_sn_delta AS SELECT
-  Test_sn_new.y AS y
+CREATE TABLE logica_test.Test_sn_delta AS WITH t_1_Test_MultBodyAggAux_f1 AS (SELECT * FROM (
+  
+    SELECT
+      0 AS y
+   UNION ALL
+  
+    SELECT
+      ((x_9.value) + (1)) AS y
+    FROM
+      logica_test.Test_sn_new AS Test_sn_new, JSON_EACH((select json_group_array(n) from (with recursive t as(select 0 as n union all select n + 1 as n from t where n + 1 < 100) select n from t) where n < 100)) as x_9
+    WHERE
+      (Test_sn_new.y = x_9.value)
+  
+) AS UNUSED_TABLE_NAME  ),
+t_0_Test_sn_back_step AS (SELECT
+  Test_MultBodyAggAux_f1.y AS y
 FROM
-  logica_test.Test_sn_new AS Test_sn_new;
+  t_1_Test_MultBodyAggAux_f1 AS Test_MultBodyAggAux_f1
+GROUP BY Test_MultBodyAggAux_f1.y)
+SELECT
+  Test_sn_back_step.y AS y
+FROM
+  t_0_Test_sn_back_step AS Test_sn_back_step
+WHERE
+  ((SELECT
+    MIN(MagicalEntangle(1, x_12.value)) AS logica_value
+  FROM
+    logica_test.Test_sn_full AS Test_sn_full, JSON_EACH(JSON_ARRAY(0)) as x_12
+  WHERE
+    (Test_sn_full.y = Test_sn_back_step.y)) IS NULL)
+GROUP BY Test_sn_back_step.y;
+
+INSERT INTO logica_test.Test_sn_full SELECT * FROM logica_test.Test_sn_delta;
 
 DROP TABLE IF EXISTS logica_test.Test_sn_new;
-CREATE TABLE logica_test.Test_sn_new AS WITH t_1_Test_MultBodyAggAux_f5 AS (SELECT * FROM (
+CREATE TABLE logica_test.Test_sn_new AS WITH t_1_Test_MultBodyAggAux_f6 AS (SELECT * FROM (
   
     SELECT
       0 AS y
@@ -691,10 +1068,10 @@ CREATE TABLE logica_test.Test_sn_new AS WITH t_1_Test_MultBodyAggAux_f5 AS (SELE
   
 ) AS UNUSED_TABLE_NAME  ),
 t_0_Test_sn_step AS (SELECT
-  Test_MultBodyAggAux_f5.y AS y
+  Test_MultBodyAggAux_f6.y AS y
 FROM
-  t_1_Test_MultBodyAggAux_f5 AS Test_MultBodyAggAux_f5
-GROUP BY Test_MultBodyAggAux_f5.y)
+  t_1_Test_MultBodyAggAux_f6 AS Test_MultBodyAggAux_f6
+GROUP BY Test_MultBodyAggAux_f6.y)
 SELECT
   Test_sn_step.y AS y
 FROM
@@ -711,13 +1088,42 @@ GROUP BY Test_sn_step.y;
 INSERT INTO logica_test.Test_sn_full SELECT * FROM logica_test.Test_sn_new;
 
 DROP TABLE IF EXISTS logica_test.Test_sn_delta;
-CREATE TABLE logica_test.Test_sn_delta AS SELECT
-  Test_sn_new.y AS y
+CREATE TABLE logica_test.Test_sn_delta AS WITH t_1_Test_MultBodyAggAux_f1 AS (SELECT * FROM (
+  
+    SELECT
+      0 AS y
+   UNION ALL
+  
+    SELECT
+      ((x_9.value) + (1)) AS y
+    FROM
+      logica_test.Test_sn_new AS Test_sn_new, JSON_EACH((select json_group_array(n) from (with recursive t as(select 0 as n union all select n + 1 as n from t where n + 1 < 100) select n from t) where n < 100)) as x_9
+    WHERE
+      (Test_sn_new.y = x_9.value)
+  
+) AS UNUSED_TABLE_NAME  ),
+t_0_Test_sn_back_step AS (SELECT
+  Test_MultBodyAggAux_f1.y AS y
 FROM
-  logica_test.Test_sn_new AS Test_sn_new;
+  t_1_Test_MultBodyAggAux_f1 AS Test_MultBodyAggAux_f1
+GROUP BY Test_MultBodyAggAux_f1.y)
+SELECT
+  Test_sn_back_step.y AS y
+FROM
+  t_0_Test_sn_back_step AS Test_sn_back_step
+WHERE
+  ((SELECT
+    MIN(MagicalEntangle(1, x_12.value)) AS logica_value
+  FROM
+    logica_test.Test_sn_full AS Test_sn_full, JSON_EACH(JSON_ARRAY(0)) as x_12
+  WHERE
+    (Test_sn_full.y = Test_sn_back_step.y)) IS NULL)
+GROUP BY Test_sn_back_step.y;
+
+INSERT INTO logica_test.Test_sn_full SELECT * FROM logica_test.Test_sn_delta;
 
 DROP TABLE IF EXISTS logica_test.Test_sn_new;
-CREATE TABLE logica_test.Test_sn_new AS WITH t_1_Test_MultBodyAggAux_f5 AS (SELECT * FROM (
+CREATE TABLE logica_test.Test_sn_new AS WITH t_1_Test_MultBodyAggAux_f6 AS (SELECT * FROM (
   
     SELECT
       0 AS y
@@ -732,10 +1138,10 @@ CREATE TABLE logica_test.Test_sn_new AS WITH t_1_Test_MultBodyAggAux_f5 AS (SELE
   
 ) AS UNUSED_TABLE_NAME  ),
 t_0_Test_sn_step AS (SELECT
-  Test_MultBodyAggAux_f5.y AS y
+  Test_MultBodyAggAux_f6.y AS y
 FROM
-  t_1_Test_MultBodyAggAux_f5 AS Test_MultBodyAggAux_f5
-GROUP BY Test_MultBodyAggAux_f5.y)
+  t_1_Test_MultBodyAggAux_f6 AS Test_MultBodyAggAux_f6
+GROUP BY Test_MultBodyAggAux_f6.y)
 SELECT
   Test_sn_step.y AS y
 FROM
@@ -752,13 +1158,7 @@ GROUP BY Test_sn_step.y;
 INSERT INTO logica_test.Test_sn_full SELECT * FROM logica_test.Test_sn_new;
 
 DROP TABLE IF EXISTS logica_test.Test_sn_delta;
-CREATE TABLE logica_test.Test_sn_delta AS SELECT
-  Test_sn_new.y AS y
-FROM
-  logica_test.Test_sn_new AS Test_sn_new;
-
-DROP TABLE IF EXISTS logica_test.Test_sn_new;
-CREATE TABLE logica_test.Test_sn_new AS WITH t_1_Test_MultBodyAggAux_f5 AS (SELECT * FROM (
+CREATE TABLE logica_test.Test_sn_delta AS WITH t_1_Test_MultBodyAggAux_f1 AS (SELECT * FROM (
   
     SELECT
       0 AS y
@@ -767,610 +1167,30 @@ CREATE TABLE logica_test.Test_sn_new AS WITH t_1_Test_MultBodyAggAux_f5 AS (SELE
     SELECT
       ((x_9.value) + (1)) AS y
     FROM
-      logica_test.Test_sn_delta AS Test_sn_delta, JSON_EACH((select json_group_array(n) from (with recursive t as(select 0 as n union all select n + 1 as n from t where n + 1 < 100) select n from t) where n < 100)) as x_9
+      logica_test.Test_sn_new AS Test_sn_new, JSON_EACH((select json_group_array(n) from (with recursive t as(select 0 as n union all select n + 1 as n from t where n + 1 < 100) select n from t) where n < 100)) as x_9
     WHERE
-      (Test_sn_delta.y = x_9.value)
+      (Test_sn_new.y = x_9.value)
   
 ) AS UNUSED_TABLE_NAME  ),
-t_0_Test_sn_step AS (SELECT
-  Test_MultBodyAggAux_f5.y AS y
+t_0_Test_sn_back_step AS (SELECT
+  Test_MultBodyAggAux_f1.y AS y
 FROM
-  t_1_Test_MultBodyAggAux_f5 AS Test_MultBodyAggAux_f5
-GROUP BY Test_MultBodyAggAux_f5.y)
+  t_1_Test_MultBodyAggAux_f1 AS Test_MultBodyAggAux_f1
+GROUP BY Test_MultBodyAggAux_f1.y)
 SELECT
-  Test_sn_step.y AS y
+  Test_sn_back_step.y AS y
 FROM
-  t_0_Test_sn_step AS Test_sn_step
+  t_0_Test_sn_back_step AS Test_sn_back_step
 WHERE
   ((SELECT
     MIN(MagicalEntangle(1, x_12.value)) AS logica_value
   FROM
     logica_test.Test_sn_full AS Test_sn_full, JSON_EACH(JSON_ARRAY(0)) as x_12
   WHERE
-    (Test_sn_full.y = Test_sn_step.y)) IS NULL)
-GROUP BY Test_sn_step.y;
+    (Test_sn_full.y = Test_sn_back_step.y)) IS NULL)
+GROUP BY Test_sn_back_step.y;
 
-INSERT INTO logica_test.Test_sn_full SELECT * FROM logica_test.Test_sn_new;
-
-DROP TABLE IF EXISTS logica_test.Test_sn_delta;
-CREATE TABLE logica_test.Test_sn_delta AS SELECT
-  Test_sn_new.y AS y
-FROM
-  logica_test.Test_sn_new AS Test_sn_new;
-
-DROP TABLE IF EXISTS logica_test.Test_sn_new;
-CREATE TABLE logica_test.Test_sn_new AS WITH t_1_Test_MultBodyAggAux_f5 AS (SELECT * FROM (
-  
-    SELECT
-      0 AS y
-   UNION ALL
-  
-    SELECT
-      ((x_9.value) + (1)) AS y
-    FROM
-      logica_test.Test_sn_delta AS Test_sn_delta, JSON_EACH((select json_group_array(n) from (with recursive t as(select 0 as n union all select n + 1 as n from t where n + 1 < 100) select n from t) where n < 100)) as x_9
-    WHERE
-      (Test_sn_delta.y = x_9.value)
-  
-) AS UNUSED_TABLE_NAME  ),
-t_0_Test_sn_step AS (SELECT
-  Test_MultBodyAggAux_f5.y AS y
-FROM
-  t_1_Test_MultBodyAggAux_f5 AS Test_MultBodyAggAux_f5
-GROUP BY Test_MultBodyAggAux_f5.y)
-SELECT
-  Test_sn_step.y AS y
-FROM
-  t_0_Test_sn_step AS Test_sn_step
-WHERE
-  ((SELECT
-    MIN(MagicalEntangle(1, x_12.value)) AS logica_value
-  FROM
-    logica_test.Test_sn_full AS Test_sn_full, JSON_EACH(JSON_ARRAY(0)) as x_12
-  WHERE
-    (Test_sn_full.y = Test_sn_step.y)) IS NULL)
-GROUP BY Test_sn_step.y;
-
-INSERT INTO logica_test.Test_sn_full SELECT * FROM logica_test.Test_sn_new;
-
-DROP TABLE IF EXISTS logica_test.Test_sn_delta;
-CREATE TABLE logica_test.Test_sn_delta AS SELECT
-  Test_sn_new.y AS y
-FROM
-  logica_test.Test_sn_new AS Test_sn_new;
-
-DROP TABLE IF EXISTS logica_test.Test_sn_new;
-CREATE TABLE logica_test.Test_sn_new AS WITH t_1_Test_MultBodyAggAux_f5 AS (SELECT * FROM (
-  
-    SELECT
-      0 AS y
-   UNION ALL
-  
-    SELECT
-      ((x_9.value) + (1)) AS y
-    FROM
-      logica_test.Test_sn_delta AS Test_sn_delta, JSON_EACH((select json_group_array(n) from (with recursive t as(select 0 as n union all select n + 1 as n from t where n + 1 < 100) select n from t) where n < 100)) as x_9
-    WHERE
-      (Test_sn_delta.y = x_9.value)
-  
-) AS UNUSED_TABLE_NAME  ),
-t_0_Test_sn_step AS (SELECT
-  Test_MultBodyAggAux_f5.y AS y
-FROM
-  t_1_Test_MultBodyAggAux_f5 AS Test_MultBodyAggAux_f5
-GROUP BY Test_MultBodyAggAux_f5.y)
-SELECT
-  Test_sn_step.y AS y
-FROM
-  t_0_Test_sn_step AS Test_sn_step
-WHERE
-  ((SELECT
-    MIN(MagicalEntangle(1, x_12.value)) AS logica_value
-  FROM
-    logica_test.Test_sn_full AS Test_sn_full, JSON_EACH(JSON_ARRAY(0)) as x_12
-  WHERE
-    (Test_sn_full.y = Test_sn_step.y)) IS NULL)
-GROUP BY Test_sn_step.y;
-
-INSERT INTO logica_test.Test_sn_full SELECT * FROM logica_test.Test_sn_new;
-
-DROP TABLE IF EXISTS logica_test.Test_sn_delta;
-CREATE TABLE logica_test.Test_sn_delta AS SELECT
-  Test_sn_new.y AS y
-FROM
-  logica_test.Test_sn_new AS Test_sn_new;
-
-DROP TABLE IF EXISTS logica_test.Test_sn_new;
-CREATE TABLE logica_test.Test_sn_new AS WITH t_1_Test_MultBodyAggAux_f5 AS (SELECT * FROM (
-  
-    SELECT
-      0 AS y
-   UNION ALL
-  
-    SELECT
-      ((x_9.value) + (1)) AS y
-    FROM
-      logica_test.Test_sn_delta AS Test_sn_delta, JSON_EACH((select json_group_array(n) from (with recursive t as(select 0 as n union all select n + 1 as n from t where n + 1 < 100) select n from t) where n < 100)) as x_9
-    WHERE
-      (Test_sn_delta.y = x_9.value)
-  
-) AS UNUSED_TABLE_NAME  ),
-t_0_Test_sn_step AS (SELECT
-  Test_MultBodyAggAux_f5.y AS y
-FROM
-  t_1_Test_MultBodyAggAux_f5 AS Test_MultBodyAggAux_f5
-GROUP BY Test_MultBodyAggAux_f5.y)
-SELECT
-  Test_sn_step.y AS y
-FROM
-  t_0_Test_sn_step AS Test_sn_step
-WHERE
-  ((SELECT
-    MIN(MagicalEntangle(1, x_12.value)) AS logica_value
-  FROM
-    logica_test.Test_sn_full AS Test_sn_full, JSON_EACH(JSON_ARRAY(0)) as x_12
-  WHERE
-    (Test_sn_full.y = Test_sn_step.y)) IS NULL)
-GROUP BY Test_sn_step.y;
-
-INSERT INTO logica_test.Test_sn_full SELECT * FROM logica_test.Test_sn_new;
-
-DROP TABLE IF EXISTS logica_test.Test_sn_delta;
-CREATE TABLE logica_test.Test_sn_delta AS SELECT
-  Test_sn_new.y AS y
-FROM
-  logica_test.Test_sn_new AS Test_sn_new;
-
-DROP TABLE IF EXISTS logica_test.Test_sn_new;
-CREATE TABLE logica_test.Test_sn_new AS WITH t_1_Test_MultBodyAggAux_f5 AS (SELECT * FROM (
-  
-    SELECT
-      0 AS y
-   UNION ALL
-  
-    SELECT
-      ((x_9.value) + (1)) AS y
-    FROM
-      logica_test.Test_sn_delta AS Test_sn_delta, JSON_EACH((select json_group_array(n) from (with recursive t as(select 0 as n union all select n + 1 as n from t where n + 1 < 100) select n from t) where n < 100)) as x_9
-    WHERE
-      (Test_sn_delta.y = x_9.value)
-  
-) AS UNUSED_TABLE_NAME  ),
-t_0_Test_sn_step AS (SELECT
-  Test_MultBodyAggAux_f5.y AS y
-FROM
-  t_1_Test_MultBodyAggAux_f5 AS Test_MultBodyAggAux_f5
-GROUP BY Test_MultBodyAggAux_f5.y)
-SELECT
-  Test_sn_step.y AS y
-FROM
-  t_0_Test_sn_step AS Test_sn_step
-WHERE
-  ((SELECT
-    MIN(MagicalEntangle(1, x_12.value)) AS logica_value
-  FROM
-    logica_test.Test_sn_full AS Test_sn_full, JSON_EACH(JSON_ARRAY(0)) as x_12
-  WHERE
-    (Test_sn_full.y = Test_sn_step.y)) IS NULL)
-GROUP BY Test_sn_step.y;
-
-INSERT INTO logica_test.Test_sn_full SELECT * FROM logica_test.Test_sn_new;
-
-DROP TABLE IF EXISTS logica_test.Test_sn_delta;
-CREATE TABLE logica_test.Test_sn_delta AS SELECT
-  Test_sn_new.y AS y
-FROM
-  logica_test.Test_sn_new AS Test_sn_new;
-
-DROP TABLE IF EXISTS logica_test.Test_sn_new;
-CREATE TABLE logica_test.Test_sn_new AS WITH t_1_Test_MultBodyAggAux_f5 AS (SELECT * FROM (
-  
-    SELECT
-      0 AS y
-   UNION ALL
-  
-    SELECT
-      ((x_9.value) + (1)) AS y
-    FROM
-      logica_test.Test_sn_delta AS Test_sn_delta, JSON_EACH((select json_group_array(n) from (with recursive t as(select 0 as n union all select n + 1 as n from t where n + 1 < 100) select n from t) where n < 100)) as x_9
-    WHERE
-      (Test_sn_delta.y = x_9.value)
-  
-) AS UNUSED_TABLE_NAME  ),
-t_0_Test_sn_step AS (SELECT
-  Test_MultBodyAggAux_f5.y AS y
-FROM
-  t_1_Test_MultBodyAggAux_f5 AS Test_MultBodyAggAux_f5
-GROUP BY Test_MultBodyAggAux_f5.y)
-SELECT
-  Test_sn_step.y AS y
-FROM
-  t_0_Test_sn_step AS Test_sn_step
-WHERE
-  ((SELECT
-    MIN(MagicalEntangle(1, x_12.value)) AS logica_value
-  FROM
-    logica_test.Test_sn_full AS Test_sn_full, JSON_EACH(JSON_ARRAY(0)) as x_12
-  WHERE
-    (Test_sn_full.y = Test_sn_step.y)) IS NULL)
-GROUP BY Test_sn_step.y;
-
-INSERT INTO logica_test.Test_sn_full SELECT * FROM logica_test.Test_sn_new;
-
-DROP TABLE IF EXISTS logica_test.Test_sn_delta;
-CREATE TABLE logica_test.Test_sn_delta AS SELECT
-  Test_sn_new.y AS y
-FROM
-  logica_test.Test_sn_new AS Test_sn_new;
-
-DROP TABLE IF EXISTS logica_test.Test_sn_new;
-CREATE TABLE logica_test.Test_sn_new AS WITH t_1_Test_MultBodyAggAux_f5 AS (SELECT * FROM (
-  
-    SELECT
-      0 AS y
-   UNION ALL
-  
-    SELECT
-      ((x_9.value) + (1)) AS y
-    FROM
-      logica_test.Test_sn_delta AS Test_sn_delta, JSON_EACH((select json_group_array(n) from (with recursive t as(select 0 as n union all select n + 1 as n from t where n + 1 < 100) select n from t) where n < 100)) as x_9
-    WHERE
-      (Test_sn_delta.y = x_9.value)
-  
-) AS UNUSED_TABLE_NAME  ),
-t_0_Test_sn_step AS (SELECT
-  Test_MultBodyAggAux_f5.y AS y
-FROM
-  t_1_Test_MultBodyAggAux_f5 AS Test_MultBodyAggAux_f5
-GROUP BY Test_MultBodyAggAux_f5.y)
-SELECT
-  Test_sn_step.y AS y
-FROM
-  t_0_Test_sn_step AS Test_sn_step
-WHERE
-  ((SELECT
-    MIN(MagicalEntangle(1, x_12.value)) AS logica_value
-  FROM
-    logica_test.Test_sn_full AS Test_sn_full, JSON_EACH(JSON_ARRAY(0)) as x_12
-  WHERE
-    (Test_sn_full.y = Test_sn_step.y)) IS NULL)
-GROUP BY Test_sn_step.y;
-
-INSERT INTO logica_test.Test_sn_full SELECT * FROM logica_test.Test_sn_new;
-
-DROP TABLE IF EXISTS logica_test.Test_sn_delta;
-CREATE TABLE logica_test.Test_sn_delta AS SELECT
-  Test_sn_new.y AS y
-FROM
-  logica_test.Test_sn_new AS Test_sn_new;
-
-DROP TABLE IF EXISTS logica_test.Test_sn_new;
-CREATE TABLE logica_test.Test_sn_new AS WITH t_1_Test_MultBodyAggAux_f5 AS (SELECT * FROM (
-  
-    SELECT
-      0 AS y
-   UNION ALL
-  
-    SELECT
-      ((x_9.value) + (1)) AS y
-    FROM
-      logica_test.Test_sn_delta AS Test_sn_delta, JSON_EACH((select json_group_array(n) from (with recursive t as(select 0 as n union all select n + 1 as n from t where n + 1 < 100) select n from t) where n < 100)) as x_9
-    WHERE
-      (Test_sn_delta.y = x_9.value)
-  
-) AS UNUSED_TABLE_NAME  ),
-t_0_Test_sn_step AS (SELECT
-  Test_MultBodyAggAux_f5.y AS y
-FROM
-  t_1_Test_MultBodyAggAux_f5 AS Test_MultBodyAggAux_f5
-GROUP BY Test_MultBodyAggAux_f5.y)
-SELECT
-  Test_sn_step.y AS y
-FROM
-  t_0_Test_sn_step AS Test_sn_step
-WHERE
-  ((SELECT
-    MIN(MagicalEntangle(1, x_12.value)) AS logica_value
-  FROM
-    logica_test.Test_sn_full AS Test_sn_full, JSON_EACH(JSON_ARRAY(0)) as x_12
-  WHERE
-    (Test_sn_full.y = Test_sn_step.y)) IS NULL)
-GROUP BY Test_sn_step.y;
-
-INSERT INTO logica_test.Test_sn_full SELECT * FROM logica_test.Test_sn_new;
-
-DROP TABLE IF EXISTS logica_test.Test_sn_delta;
-CREATE TABLE logica_test.Test_sn_delta AS SELECT
-  Test_sn_new.y AS y
-FROM
-  logica_test.Test_sn_new AS Test_sn_new;
-
-DROP TABLE IF EXISTS logica_test.Test_sn_new;
-CREATE TABLE logica_test.Test_sn_new AS WITH t_1_Test_MultBodyAggAux_f5 AS (SELECT * FROM (
-  
-    SELECT
-      0 AS y
-   UNION ALL
-  
-    SELECT
-      ((x_9.value) + (1)) AS y
-    FROM
-      logica_test.Test_sn_delta AS Test_sn_delta, JSON_EACH((select json_group_array(n) from (with recursive t as(select 0 as n union all select n + 1 as n from t where n + 1 < 100) select n from t) where n < 100)) as x_9
-    WHERE
-      (Test_sn_delta.y = x_9.value)
-  
-) AS UNUSED_TABLE_NAME  ),
-t_0_Test_sn_step AS (SELECT
-  Test_MultBodyAggAux_f5.y AS y
-FROM
-  t_1_Test_MultBodyAggAux_f5 AS Test_MultBodyAggAux_f5
-GROUP BY Test_MultBodyAggAux_f5.y)
-SELECT
-  Test_sn_step.y AS y
-FROM
-  t_0_Test_sn_step AS Test_sn_step
-WHERE
-  ((SELECT
-    MIN(MagicalEntangle(1, x_12.value)) AS logica_value
-  FROM
-    logica_test.Test_sn_full AS Test_sn_full, JSON_EACH(JSON_ARRAY(0)) as x_12
-  WHERE
-    (Test_sn_full.y = Test_sn_step.y)) IS NULL)
-GROUP BY Test_sn_step.y;
-
-INSERT INTO logica_test.Test_sn_full SELECT * FROM logica_test.Test_sn_new;
-
-DROP TABLE IF EXISTS logica_test.Test_sn_delta;
-CREATE TABLE logica_test.Test_sn_delta AS SELECT
-  Test_sn_new.y AS y
-FROM
-  logica_test.Test_sn_new AS Test_sn_new;
-
-DROP TABLE IF EXISTS logica_test.Test_sn_new;
-CREATE TABLE logica_test.Test_sn_new AS WITH t_1_Test_MultBodyAggAux_f5 AS (SELECT * FROM (
-  
-    SELECT
-      0 AS y
-   UNION ALL
-  
-    SELECT
-      ((x_9.value) + (1)) AS y
-    FROM
-      logica_test.Test_sn_delta AS Test_sn_delta, JSON_EACH((select json_group_array(n) from (with recursive t as(select 0 as n union all select n + 1 as n from t where n + 1 < 100) select n from t) where n < 100)) as x_9
-    WHERE
-      (Test_sn_delta.y = x_9.value)
-  
-) AS UNUSED_TABLE_NAME  ),
-t_0_Test_sn_step AS (SELECT
-  Test_MultBodyAggAux_f5.y AS y
-FROM
-  t_1_Test_MultBodyAggAux_f5 AS Test_MultBodyAggAux_f5
-GROUP BY Test_MultBodyAggAux_f5.y)
-SELECT
-  Test_sn_step.y AS y
-FROM
-  t_0_Test_sn_step AS Test_sn_step
-WHERE
-  ((SELECT
-    MIN(MagicalEntangle(1, x_12.value)) AS logica_value
-  FROM
-    logica_test.Test_sn_full AS Test_sn_full, JSON_EACH(JSON_ARRAY(0)) as x_12
-  WHERE
-    (Test_sn_full.y = Test_sn_step.y)) IS NULL)
-GROUP BY Test_sn_step.y;
-
-INSERT INTO logica_test.Test_sn_full SELECT * FROM logica_test.Test_sn_new;
-
-DROP TABLE IF EXISTS logica_test.Test_sn_delta;
-CREATE TABLE logica_test.Test_sn_delta AS SELECT
-  Test_sn_new.y AS y
-FROM
-  logica_test.Test_sn_new AS Test_sn_new;
-
-DROP TABLE IF EXISTS logica_test.Test_sn_new;
-CREATE TABLE logica_test.Test_sn_new AS WITH t_1_Test_MultBodyAggAux_f5 AS (SELECT * FROM (
-  
-    SELECT
-      0 AS y
-   UNION ALL
-  
-    SELECT
-      ((x_9.value) + (1)) AS y
-    FROM
-      logica_test.Test_sn_delta AS Test_sn_delta, JSON_EACH((select json_group_array(n) from (with recursive t as(select 0 as n union all select n + 1 as n from t where n + 1 < 100) select n from t) where n < 100)) as x_9
-    WHERE
-      (Test_sn_delta.y = x_9.value)
-  
-) AS UNUSED_TABLE_NAME  ),
-t_0_Test_sn_step AS (SELECT
-  Test_MultBodyAggAux_f5.y AS y
-FROM
-  t_1_Test_MultBodyAggAux_f5 AS Test_MultBodyAggAux_f5
-GROUP BY Test_MultBodyAggAux_f5.y)
-SELECT
-  Test_sn_step.y AS y
-FROM
-  t_0_Test_sn_step AS Test_sn_step
-WHERE
-  ((SELECT
-    MIN(MagicalEntangle(1, x_12.value)) AS logica_value
-  FROM
-    logica_test.Test_sn_full AS Test_sn_full, JSON_EACH(JSON_ARRAY(0)) as x_12
-  WHERE
-    (Test_sn_full.y = Test_sn_step.y)) IS NULL)
-GROUP BY Test_sn_step.y;
-
-INSERT INTO logica_test.Test_sn_full SELECT * FROM logica_test.Test_sn_new;
-
-DROP TABLE IF EXISTS logica_test.Test_sn_delta;
-CREATE TABLE logica_test.Test_sn_delta AS SELECT
-  Test_sn_new.y AS y
-FROM
-  logica_test.Test_sn_new AS Test_sn_new;
-
-DROP TABLE IF EXISTS logica_test.Test_sn_new;
-CREATE TABLE logica_test.Test_sn_new AS WITH t_1_Test_MultBodyAggAux_f5 AS (SELECT * FROM (
-  
-    SELECT
-      0 AS y
-   UNION ALL
-  
-    SELECT
-      ((x_9.value) + (1)) AS y
-    FROM
-      logica_test.Test_sn_delta AS Test_sn_delta, JSON_EACH((select json_group_array(n) from (with recursive t as(select 0 as n union all select n + 1 as n from t where n + 1 < 100) select n from t) where n < 100)) as x_9
-    WHERE
-      (Test_sn_delta.y = x_9.value)
-  
-) AS UNUSED_TABLE_NAME  ),
-t_0_Test_sn_step AS (SELECT
-  Test_MultBodyAggAux_f5.y AS y
-FROM
-  t_1_Test_MultBodyAggAux_f5 AS Test_MultBodyAggAux_f5
-GROUP BY Test_MultBodyAggAux_f5.y)
-SELECT
-  Test_sn_step.y AS y
-FROM
-  t_0_Test_sn_step AS Test_sn_step
-WHERE
-  ((SELECT
-    MIN(MagicalEntangle(1, x_12.value)) AS logica_value
-  FROM
-    logica_test.Test_sn_full AS Test_sn_full, JSON_EACH(JSON_ARRAY(0)) as x_12
-  WHERE
-    (Test_sn_full.y = Test_sn_step.y)) IS NULL)
-GROUP BY Test_sn_step.y;
-
-INSERT INTO logica_test.Test_sn_full SELECT * FROM logica_test.Test_sn_new;
-
-DROP TABLE IF EXISTS logica_test.Test_sn_delta;
-CREATE TABLE logica_test.Test_sn_delta AS SELECT
-  Test_sn_new.y AS y
-FROM
-  logica_test.Test_sn_new AS Test_sn_new;
-
-DROP TABLE IF EXISTS logica_test.Test_sn_new;
-CREATE TABLE logica_test.Test_sn_new AS WITH t_1_Test_MultBodyAggAux_f5 AS (SELECT * FROM (
-  
-    SELECT
-      0 AS y
-   UNION ALL
-  
-    SELECT
-      ((x_9.value) + (1)) AS y
-    FROM
-      logica_test.Test_sn_delta AS Test_sn_delta, JSON_EACH((select json_group_array(n) from (with recursive t as(select 0 as n union all select n + 1 as n from t where n + 1 < 100) select n from t) where n < 100)) as x_9
-    WHERE
-      (Test_sn_delta.y = x_9.value)
-  
-) AS UNUSED_TABLE_NAME  ),
-t_0_Test_sn_step AS (SELECT
-  Test_MultBodyAggAux_f5.y AS y
-FROM
-  t_1_Test_MultBodyAggAux_f5 AS Test_MultBodyAggAux_f5
-GROUP BY Test_MultBodyAggAux_f5.y)
-SELECT
-  Test_sn_step.y AS y
-FROM
-  t_0_Test_sn_step AS Test_sn_step
-WHERE
-  ((SELECT
-    MIN(MagicalEntangle(1, x_12.value)) AS logica_value
-  FROM
-    logica_test.Test_sn_full AS Test_sn_full, JSON_EACH(JSON_ARRAY(0)) as x_12
-  WHERE
-    (Test_sn_full.y = Test_sn_step.y)) IS NULL)
-GROUP BY Test_sn_step.y;
-
-INSERT INTO logica_test.Test_sn_full SELECT * FROM logica_test.Test_sn_new;
-
-DROP TABLE IF EXISTS logica_test.Test_sn_delta;
-CREATE TABLE logica_test.Test_sn_delta AS SELECT
-  Test_sn_new.y AS y
-FROM
-  logica_test.Test_sn_new AS Test_sn_new;
-
-DROP TABLE IF EXISTS logica_test.Test_sn_new;
-CREATE TABLE logica_test.Test_sn_new AS WITH t_1_Test_MultBodyAggAux_f5 AS (SELECT * FROM (
-  
-    SELECT
-      0 AS y
-   UNION ALL
-  
-    SELECT
-      ((x_9.value) + (1)) AS y
-    FROM
-      logica_test.Test_sn_delta AS Test_sn_delta, JSON_EACH((select json_group_array(n) from (with recursive t as(select 0 as n union all select n + 1 as n from t where n + 1 < 100) select n from t) where n < 100)) as x_9
-    WHERE
-      (Test_sn_delta.y = x_9.value)
-  
-) AS UNUSED_TABLE_NAME  ),
-t_0_Test_sn_step AS (SELECT
-  Test_MultBodyAggAux_f5.y AS y
-FROM
-  t_1_Test_MultBodyAggAux_f5 AS Test_MultBodyAggAux_f5
-GROUP BY Test_MultBodyAggAux_f5.y)
-SELECT
-  Test_sn_step.y AS y
-FROM
-  t_0_Test_sn_step AS Test_sn_step
-WHERE
-  ((SELECT
-    MIN(MagicalEntangle(1, x_12.value)) AS logica_value
-  FROM
-    logica_test.Test_sn_full AS Test_sn_full, JSON_EACH(JSON_ARRAY(0)) as x_12
-  WHERE
-    (Test_sn_full.y = Test_sn_step.y)) IS NULL)
-GROUP BY Test_sn_step.y;
-
-INSERT INTO logica_test.Test_sn_full SELECT * FROM logica_test.Test_sn_new;
-
-DROP TABLE IF EXISTS logica_test.Test_sn_delta;
-CREATE TABLE logica_test.Test_sn_delta AS SELECT
-  Test_sn_new.y AS y
-FROM
-  logica_test.Test_sn_new AS Test_sn_new;
-
-DROP TABLE IF EXISTS logica_test.Test_sn_new;
-CREATE TABLE logica_test.Test_sn_new AS WITH t_1_Test_MultBodyAggAux_f5 AS (SELECT * FROM (
-  
-    SELECT
-      0 AS y
-   UNION ALL
-  
-    SELECT
-      ((x_9.value) + (1)) AS y
-    FROM
-      logica_test.Test_sn_delta AS Test_sn_delta, JSON_EACH((select json_group_array(n) from (with recursive t as(select 0 as n union all select n + 1 as n from t where n + 1 < 100) select n from t) where n < 100)) as x_9
-    WHERE
-      (Test_sn_delta.y = x_9.value)
-  
-) AS UNUSED_TABLE_NAME  ),
-t_0_Test_sn_step AS (SELECT
-  Test_MultBodyAggAux_f5.y AS y
-FROM
-  t_1_Test_MultBodyAggAux_f5 AS Test_MultBodyAggAux_f5
-GROUP BY Test_MultBodyAggAux_f5.y)
-SELECT
-  Test_sn_step.y AS y
-FROM
-  t_0_Test_sn_step AS Test_sn_step
-WHERE
-  ((SELECT
-    MIN(MagicalEntangle(1, x_12.value)) AS logica_value
-  FROM
-    logica_test.Test_sn_full AS Test_sn_full, JSON_EACH(JSON_ARRAY(0)) as x_12
-  WHERE
-    (Test_sn_full.y = Test_sn_step.y)) IS NULL)
-GROUP BY Test_sn_step.y;
-
-INSERT INTO logica_test.Test_sn_full SELECT * FROM logica_test.Test_sn_new;
-
-DROP TABLE IF EXISTS logica_test.Test_sn_delta;
-CREATE TABLE logica_test.Test_sn_delta AS SELECT
-  Test_sn_new.y AS y
-FROM
-  logica_test.Test_sn_new AS Test_sn_new;
+INSERT INTO logica_test.Test_sn_full SELECT * FROM logica_test.Test_sn_delta;
 
 SELECT
   Test_sn_full.y AS y

@@ -21,7 +21,7 @@ CREATE TABLE logica_test.Above_sn_delta AS WITH t_1_ApproverOf AS (SELECT * FROM
       'ali' AS requester
   
 ) AS UNUSED_TABLE_NAME  ),
-t_0_Above_MultBodyAggAux_f1 AS (SELECT * FROM (
+t_0_Above_MultBodyAggAux_f2 AS (SELECT * FROM (
   
     SELECT
       ApproverOf.approver AS approver,
@@ -31,10 +31,10 @@ t_0_Above_MultBodyAggAux_f1 AS (SELECT * FROM (
   
 ) AS UNUSED_TABLE_NAME  )
 SELECT
-  Above_MultBodyAggAux_f1.approver AS approver,
-  Above_MultBodyAggAux_f1.requester AS requester
+  Above_MultBodyAggAux_f2.approver AS approver,
+  Above_MultBodyAggAux_f2.requester AS requester
 FROM
-  t_0_Above_MultBodyAggAux_f1 AS Above_MultBodyAggAux_f1
+  t_0_Above_MultBodyAggAux_f2 AS Above_MultBodyAggAux_f2
 GROUP BY 1, 2;
 
 -- Interacting with table logica_test.Above_sn_delta
@@ -73,7 +73,7 @@ CREATE TABLE logica_test.Above_sn_t1 AS WITH t_1_ApproverOf AS (SELECT * FROM (
       'ali' AS requester
   
 ) AS UNUSED_TABLE_NAME  ),
-t_1_Above_MultBodyAggAux_f2 AS (SELECT * FROM (
+t_1_Above_MultBodyAggAux_f3 AS (SELECT * FROM (
   
     SELECT
       ApproverOf.approver AS approver,
@@ -92,10 +92,10 @@ t_1_Above_MultBodyAggAux_f2 AS (SELECT * FROM (
   
 ) AS UNUSED_TABLE_NAME  ),
 t_0_Above_sn_r1 AS (SELECT
-  Above_MultBodyAggAux_f2.approver AS approver,
-  Above_MultBodyAggAux_f2.requester AS requester
+  Above_MultBodyAggAux_f3.approver AS approver,
+  Above_MultBodyAggAux_f3.requester AS requester
 FROM
-  t_1_Above_MultBodyAggAux_f2 AS Above_MultBodyAggAux_f2
+  t_1_Above_MultBodyAggAux_f3 AS Above_MultBodyAggAux_f3
 GROUP BY 1, 2)
 SELECT
   Above_sn_r1.approver AS approver,
@@ -130,7 +130,7 @@ CREATE TABLE logica_test.Above_sn_t2 AS WITH t_1_ApproverOf AS (SELECT * FROM (
       'ali' AS requester
   
 ) AS UNUSED_TABLE_NAME  ),
-t_1_Above_MultBodyAggAux_f3 AS (SELECT * FROM (
+t_1_Above_MultBodyAggAux_f4 AS (SELECT * FROM (
   
     SELECT
       ApproverOf.approver AS approver,
@@ -149,10 +149,10 @@ t_1_Above_MultBodyAggAux_f3 AS (SELECT * FROM (
   
 ) AS UNUSED_TABLE_NAME  ),
 t_0_Above_sn_r2 AS (SELECT
-  Above_MultBodyAggAux_f3.approver AS approver,
-  Above_MultBodyAggAux_f3.requester AS requester
+  Above_MultBodyAggAux_f4.approver AS approver,
+  Above_MultBodyAggAux_f4.requester AS requester
 FROM
-  t_1_Above_MultBodyAggAux_f3 AS Above_MultBodyAggAux_f3
+  t_1_Above_MultBodyAggAux_f4 AS Above_MultBodyAggAux_f4
 GROUP BY 1, 2)
 SELECT
   Above_sn_r2.approver AS approver,
@@ -187,7 +187,7 @@ CREATE TABLE logica_test.Above_sn_t3 AS WITH t_1_ApproverOf AS (SELECT * FROM (
       'ali' AS requester
   
 ) AS UNUSED_TABLE_NAME  ),
-t_1_Above_MultBodyAggAux_f4 AS (SELECT * FROM (
+t_1_Above_MultBodyAggAux_f5 AS (SELECT * FROM (
   
     SELECT
       ApproverOf.approver AS approver,
@@ -206,10 +206,10 @@ t_1_Above_MultBodyAggAux_f4 AS (SELECT * FROM (
   
 ) AS UNUSED_TABLE_NAME  ),
 t_0_Above_sn_r3 AS (SELECT
-  Above_MultBodyAggAux_f4.approver AS approver,
-  Above_MultBodyAggAux_f4.requester AS requester
+  Above_MultBodyAggAux_f5.approver AS approver,
+  Above_MultBodyAggAux_f5.requester AS requester
 FROM
-  t_1_Above_MultBodyAggAux_f4 AS Above_MultBodyAggAux_f4
+  t_1_Above_MultBodyAggAux_f5 AS Above_MultBodyAggAux_f5
 GROUP BY 1, 2)
 SELECT
   Above_sn_r3.approver AS approver,
@@ -244,7 +244,7 @@ CREATE TABLE logica_test.Above_sn_t4 AS WITH t_1_ApproverOf AS (SELECT * FROM (
       'ali' AS requester
   
 ) AS UNUSED_TABLE_NAME  ),
-t_1_Above_MultBodyAggAux_f5 AS (SELECT * FROM (
+t_1_Above_MultBodyAggAux_f6 AS (SELECT * FROM (
   
     SELECT
       ApproverOf.approver AS approver,
@@ -263,10 +263,10 @@ t_1_Above_MultBodyAggAux_f5 AS (SELECT * FROM (
   
 ) AS UNUSED_TABLE_NAME  ),
 t_0_Above_sn_r4 AS (SELECT
-  Above_MultBodyAggAux_f5.approver AS approver,
-  Above_MultBodyAggAux_f5.requester AS requester
+  Above_MultBodyAggAux_f6.approver AS approver,
+  Above_MultBodyAggAux_f6.requester AS requester
 FROM
-  t_1_Above_MultBodyAggAux_f5 AS Above_MultBodyAggAux_f5
+  t_1_Above_MultBodyAggAux_f6 AS Above_MultBodyAggAux_f6
 GROUP BY 1, 2)
 SELECT
   Above_sn_r4.approver AS approver,
@@ -301,7 +301,7 @@ CREATE TABLE logica_test.Above_sn_t5 AS WITH t_1_ApproverOf AS (SELECT * FROM (
       'ali' AS requester
   
 ) AS UNUSED_TABLE_NAME  ),
-t_1_Above_MultBodyAggAux_f6 AS (SELECT * FROM (
+t_1_Above_MultBodyAggAux_f7 AS (SELECT * FROM (
   
     SELECT
       ApproverOf.approver AS approver,
@@ -320,10 +320,10 @@ t_1_Above_MultBodyAggAux_f6 AS (SELECT * FROM (
   
 ) AS UNUSED_TABLE_NAME  ),
 t_0_Above_sn_r5 AS (SELECT
-  Above_MultBodyAggAux_f6.approver AS approver,
-  Above_MultBodyAggAux_f6.requester AS requester
+  Above_MultBodyAggAux_f7.approver AS approver,
+  Above_MultBodyAggAux_f7.requester AS requester
 FROM
-  t_1_Above_MultBodyAggAux_f6 AS Above_MultBodyAggAux_f6
+  t_1_Above_MultBodyAggAux_f7 AS Above_MultBodyAggAux_f7
 GROUP BY 1, 2)
 SELECT
   Above_sn_r5.approver AS approver,
@@ -406,7 +406,7 @@ CREATE TABLE logica_test.Above_sn_new AS WITH t_1_ApproverOf AS (SELECT * FROM (
       'ali' AS requester
   
 ) AS UNUSED_TABLE_NAME  ),
-t_1_Above_MultBodyAggAux_f7 AS (SELECT * FROM (
+t_1_Above_MultBodyAggAux_f8 AS (SELECT * FROM (
   
     SELECT
       ApproverOf.approver AS approver,
@@ -425,10 +425,10 @@ t_1_Above_MultBodyAggAux_f7 AS (SELECT * FROM (
   
 ) AS UNUSED_TABLE_NAME  ),
 t_0_Above_sn_step AS (SELECT
-  Above_MultBodyAggAux_f7.approver AS approver,
-  Above_MultBodyAggAux_f7.requester AS requester
+  Above_MultBodyAggAux_f8.approver AS approver,
+  Above_MultBodyAggAux_f8.requester AS requester
 FROM
-  t_1_Above_MultBodyAggAux_f7 AS Above_MultBodyAggAux_f7
+  t_1_Above_MultBodyAggAux_f8 AS Above_MultBodyAggAux_f8
 GROUP BY 1, 2)
 SELECT
   Above_sn_step.approver AS approver,
@@ -448,11 +448,68 @@ GROUP BY 1, 2;
 INSERT INTO logica_test.Above_sn_full SELECT * FROM logica_test.Above_sn_new;
 
 DROP TABLE IF EXISTS logica_test.Above_sn_delta;
-CREATE TABLE logica_test.Above_sn_delta AS SELECT
-  Above_sn_new.approver AS approver,
-  Above_sn_new.requester AS requester
+CREATE TABLE logica_test.Above_sn_delta AS WITH t_1_ApproverOf AS (SELECT * FROM (
+  
+    SELECT
+      'eva' AS approver,
+      'dan' AS requester
+   UNION ALL
+  
+    SELECT
+      'dan' AS approver,
+      'cal' AS requester
+   UNION ALL
+  
+    SELECT
+      'dan' AS approver,
+      'bea' AS requester
+   UNION ALL
+  
+    SELECT
+      'cal' AS approver,
+      'ali' AS requester
+  
+) AS UNUSED_TABLE_NAME  ),
+t_1_Above_MultBodyAggAux_f1 AS (SELECT * FROM (
+  
+    SELECT
+      ApproverOf.approver AS approver,
+      ApproverOf.requester AS requester
+    FROM
+      t_1_ApproverOf AS ApproverOf
+   UNION ALL
+  
+    SELECT
+      t_2_ApproverOf.approver AS approver,
+      Above_sn_new.requester AS requester
+    FROM
+      logica_test.Above_sn_new AS Above_sn_new, t_1_ApproverOf AS t_2_ApproverOf
+    WHERE
+      (t_2_ApproverOf.requester = Above_sn_new.approver)
+  
+) AS UNUSED_TABLE_NAME  ),
+t_0_Above_sn_back_step AS (SELECT
+  Above_MultBodyAggAux_f1.approver AS approver,
+  Above_MultBodyAggAux_f1.requester AS requester
 FROM
-  logica_test.Above_sn_new AS Above_sn_new;
+  t_1_Above_MultBodyAggAux_f1 AS Above_MultBodyAggAux_f1
+GROUP BY 1, 2)
+SELECT
+  Above_sn_back_step.approver AS approver,
+  Above_sn_back_step.requester AS requester
+FROM
+  t_0_Above_sn_back_step AS Above_sn_back_step
+WHERE
+  ((SELECT
+    MIN(1) AS logica_value
+  FROM
+    logica_test.Above_sn_full AS Above_sn_full
+  WHERE
+    (Above_sn_full.approver = Above_sn_back_step.approver) AND
+    (Above_sn_full.requester = Above_sn_back_step.requester)) IS NULL)
+GROUP BY 1, 2;
+
+INSERT INTO logica_test.Above_sn_full SELECT * FROM logica_test.Above_sn_delta;
 
 DROP TABLE IF EXISTS logica_test.Above_sn_new;
 CREATE TABLE logica_test.Above_sn_new AS WITH t_1_ApproverOf AS (SELECT * FROM (
@@ -477,7 +534,7 @@ CREATE TABLE logica_test.Above_sn_new AS WITH t_1_ApproverOf AS (SELECT * FROM (
       'ali' AS requester
   
 ) AS UNUSED_TABLE_NAME  ),
-t_1_Above_MultBodyAggAux_f7 AS (SELECT * FROM (
+t_1_Above_MultBodyAggAux_f8 AS (SELECT * FROM (
   
     SELECT
       ApproverOf.approver AS approver,
@@ -496,10 +553,10 @@ t_1_Above_MultBodyAggAux_f7 AS (SELECT * FROM (
   
 ) AS UNUSED_TABLE_NAME  ),
 t_0_Above_sn_step AS (SELECT
-  Above_MultBodyAggAux_f7.approver AS approver,
-  Above_MultBodyAggAux_f7.requester AS requester
+  Above_MultBodyAggAux_f8.approver AS approver,
+  Above_MultBodyAggAux_f8.requester AS requester
 FROM
-  t_1_Above_MultBodyAggAux_f7 AS Above_MultBodyAggAux_f7
+  t_1_Above_MultBodyAggAux_f8 AS Above_MultBodyAggAux_f8
 GROUP BY 1, 2)
 SELECT
   Above_sn_step.approver AS approver,
@@ -519,11 +576,68 @@ GROUP BY 1, 2;
 INSERT INTO logica_test.Above_sn_full SELECT * FROM logica_test.Above_sn_new;
 
 DROP TABLE IF EXISTS logica_test.Above_sn_delta;
-CREATE TABLE logica_test.Above_sn_delta AS SELECT
-  Above_sn_new.approver AS approver,
-  Above_sn_new.requester AS requester
+CREATE TABLE logica_test.Above_sn_delta AS WITH t_1_ApproverOf AS (SELECT * FROM (
+  
+    SELECT
+      'eva' AS approver,
+      'dan' AS requester
+   UNION ALL
+  
+    SELECT
+      'dan' AS approver,
+      'cal' AS requester
+   UNION ALL
+  
+    SELECT
+      'dan' AS approver,
+      'bea' AS requester
+   UNION ALL
+  
+    SELECT
+      'cal' AS approver,
+      'ali' AS requester
+  
+) AS UNUSED_TABLE_NAME  ),
+t_1_Above_MultBodyAggAux_f1 AS (SELECT * FROM (
+  
+    SELECT
+      ApproverOf.approver AS approver,
+      ApproverOf.requester AS requester
+    FROM
+      t_1_ApproverOf AS ApproverOf
+   UNION ALL
+  
+    SELECT
+      t_2_ApproverOf.approver AS approver,
+      Above_sn_new.requester AS requester
+    FROM
+      logica_test.Above_sn_new AS Above_sn_new, t_1_ApproverOf AS t_2_ApproverOf
+    WHERE
+      (t_2_ApproverOf.requester = Above_sn_new.approver)
+  
+) AS UNUSED_TABLE_NAME  ),
+t_0_Above_sn_back_step AS (SELECT
+  Above_MultBodyAggAux_f1.approver AS approver,
+  Above_MultBodyAggAux_f1.requester AS requester
 FROM
-  logica_test.Above_sn_new AS Above_sn_new;
+  t_1_Above_MultBodyAggAux_f1 AS Above_MultBodyAggAux_f1
+GROUP BY 1, 2)
+SELECT
+  Above_sn_back_step.approver AS approver,
+  Above_sn_back_step.requester AS requester
+FROM
+  t_0_Above_sn_back_step AS Above_sn_back_step
+WHERE
+  ((SELECT
+    MIN(1) AS logica_value
+  FROM
+    logica_test.Above_sn_full AS Above_sn_full
+  WHERE
+    (Above_sn_full.approver = Above_sn_back_step.approver) AND
+    (Above_sn_full.requester = Above_sn_back_step.requester)) IS NULL)
+GROUP BY 1, 2;
+
+INSERT INTO logica_test.Above_sn_full SELECT * FROM logica_test.Above_sn_delta;
 
 DROP TABLE IF EXISTS logica_test.Above_sn_new;
 CREATE TABLE logica_test.Above_sn_new AS WITH t_1_ApproverOf AS (SELECT * FROM (
@@ -548,7 +662,7 @@ CREATE TABLE logica_test.Above_sn_new AS WITH t_1_ApproverOf AS (SELECT * FROM (
       'ali' AS requester
   
 ) AS UNUSED_TABLE_NAME  ),
-t_1_Above_MultBodyAggAux_f7 AS (SELECT * FROM (
+t_1_Above_MultBodyAggAux_f8 AS (SELECT * FROM (
   
     SELECT
       ApproverOf.approver AS approver,
@@ -567,10 +681,10 @@ t_1_Above_MultBodyAggAux_f7 AS (SELECT * FROM (
   
 ) AS UNUSED_TABLE_NAME  ),
 t_0_Above_sn_step AS (SELECT
-  Above_MultBodyAggAux_f7.approver AS approver,
-  Above_MultBodyAggAux_f7.requester AS requester
+  Above_MultBodyAggAux_f8.approver AS approver,
+  Above_MultBodyAggAux_f8.requester AS requester
 FROM
-  t_1_Above_MultBodyAggAux_f7 AS Above_MultBodyAggAux_f7
+  t_1_Above_MultBodyAggAux_f8 AS Above_MultBodyAggAux_f8
 GROUP BY 1, 2)
 SELECT
   Above_sn_step.approver AS approver,
@@ -590,14 +704,7 @@ GROUP BY 1, 2;
 INSERT INTO logica_test.Above_sn_full SELECT * FROM logica_test.Above_sn_new;
 
 DROP TABLE IF EXISTS logica_test.Above_sn_delta;
-CREATE TABLE logica_test.Above_sn_delta AS SELECT
-  Above_sn_new.approver AS approver,
-  Above_sn_new.requester AS requester
-FROM
-  logica_test.Above_sn_new AS Above_sn_new;
-
-DROP TABLE IF EXISTS logica_test.Above_sn_new;
-CREATE TABLE logica_test.Above_sn_new AS WITH t_1_ApproverOf AS (SELECT * FROM (
+CREATE TABLE logica_test.Above_sn_delta AS WITH t_1_ApproverOf AS (SELECT * FROM (
   
     SELECT
       'eva' AS approver,
@@ -619,7 +726,7 @@ CREATE TABLE logica_test.Above_sn_new AS WITH t_1_ApproverOf AS (SELECT * FROM (
       'ali' AS requester
   
 ) AS UNUSED_TABLE_NAME  ),
-t_1_Above_MultBodyAggAux_f7 AS (SELECT * FROM (
+t_1_Above_MultBodyAggAux_f1 AS (SELECT * FROM (
   
     SELECT
       ApproverOf.approver AS approver,
@@ -630,184 +737,35 @@ t_1_Above_MultBodyAggAux_f7 AS (SELECT * FROM (
   
     SELECT
       t_2_ApproverOf.approver AS approver,
-      Above_sn_delta.requester AS requester
+      Above_sn_new.requester AS requester
     FROM
-      logica_test.Above_sn_delta AS Above_sn_delta, t_1_ApproverOf AS t_2_ApproverOf
+      logica_test.Above_sn_new AS Above_sn_new, t_1_ApproverOf AS t_2_ApproverOf
     WHERE
-      (t_2_ApproverOf.requester = Above_sn_delta.approver)
+      (t_2_ApproverOf.requester = Above_sn_new.approver)
   
 ) AS UNUSED_TABLE_NAME  ),
-t_0_Above_sn_step AS (SELECT
-  Above_MultBodyAggAux_f7.approver AS approver,
-  Above_MultBodyAggAux_f7.requester AS requester
+t_0_Above_sn_back_step AS (SELECT
+  Above_MultBodyAggAux_f1.approver AS approver,
+  Above_MultBodyAggAux_f1.requester AS requester
 FROM
-  t_1_Above_MultBodyAggAux_f7 AS Above_MultBodyAggAux_f7
+  t_1_Above_MultBodyAggAux_f1 AS Above_MultBodyAggAux_f1
 GROUP BY 1, 2)
 SELECT
-  Above_sn_step.approver AS approver,
-  Above_sn_step.requester AS requester
+  Above_sn_back_step.approver AS approver,
+  Above_sn_back_step.requester AS requester
 FROM
-  t_0_Above_sn_step AS Above_sn_step
+  t_0_Above_sn_back_step AS Above_sn_back_step
 WHERE
   ((SELECT
     MIN(1) AS logica_value
   FROM
     logica_test.Above_sn_full AS Above_sn_full
   WHERE
-    (Above_sn_full.approver = Above_sn_step.approver) AND
-    (Above_sn_full.requester = Above_sn_step.requester)) IS NULL)
+    (Above_sn_full.approver = Above_sn_back_step.approver) AND
+    (Above_sn_full.requester = Above_sn_back_step.requester)) IS NULL)
 GROUP BY 1, 2;
 
-INSERT INTO logica_test.Above_sn_full SELECT * FROM logica_test.Above_sn_new;
-
-DROP TABLE IF EXISTS logica_test.Above_sn_delta;
-CREATE TABLE logica_test.Above_sn_delta AS SELECT
-  Above_sn_new.approver AS approver,
-  Above_sn_new.requester AS requester
-FROM
-  logica_test.Above_sn_new AS Above_sn_new;
-
-DROP TABLE IF EXISTS logica_test.Above_sn_new;
-CREATE TABLE logica_test.Above_sn_new AS WITH t_1_ApproverOf AS (SELECT * FROM (
-  
-    SELECT
-      'eva' AS approver,
-      'dan' AS requester
-   UNION ALL
-  
-    SELECT
-      'dan' AS approver,
-      'cal' AS requester
-   UNION ALL
-  
-    SELECT
-      'dan' AS approver,
-      'bea' AS requester
-   UNION ALL
-  
-    SELECT
-      'cal' AS approver,
-      'ali' AS requester
-  
-) AS UNUSED_TABLE_NAME  ),
-t_1_Above_MultBodyAggAux_f7 AS (SELECT * FROM (
-  
-    SELECT
-      ApproverOf.approver AS approver,
-      ApproverOf.requester AS requester
-    FROM
-      t_1_ApproverOf AS ApproverOf
-   UNION ALL
-  
-    SELECT
-      t_2_ApproverOf.approver AS approver,
-      Above_sn_delta.requester AS requester
-    FROM
-      logica_test.Above_sn_delta AS Above_sn_delta, t_1_ApproverOf AS t_2_ApproverOf
-    WHERE
-      (t_2_ApproverOf.requester = Above_sn_delta.approver)
-  
-) AS UNUSED_TABLE_NAME  ),
-t_0_Above_sn_step AS (SELECT
-  Above_MultBodyAggAux_f7.approver AS approver,
-  Above_MultBodyAggAux_f7.requester AS requester
-FROM
-  t_1_Above_MultBodyAggAux_f7 AS Above_MultBodyAggAux_f7
-GROUP BY 1, 2)
-SELECT
-  Above_sn_step.approver AS approver,
-  Above_sn_step.requester AS requester
-FROM
-  t_0_Above_sn_step AS Above_sn_step
-WHERE
-  ((SELECT
-    MIN(1) AS logica_value
-  FROM
-    logica_test.Above_sn_full AS Above_sn_full
-  WHERE
-    (Above_sn_full.approver = Above_sn_step.approver) AND
-    (Above_sn_full.requester = Above_sn_step.requester)) IS NULL)
-GROUP BY 1, 2;
-
-INSERT INTO logica_test.Above_sn_full SELECT * FROM logica_test.Above_sn_new;
-
-DROP TABLE IF EXISTS logica_test.Above_sn_delta;
-CREATE TABLE logica_test.Above_sn_delta AS SELECT
-  Above_sn_new.approver AS approver,
-  Above_sn_new.requester AS requester
-FROM
-  logica_test.Above_sn_new AS Above_sn_new;
-
-DROP TABLE IF EXISTS logica_test.Above_sn_new;
-CREATE TABLE logica_test.Above_sn_new AS WITH t_1_ApproverOf AS (SELECT * FROM (
-  
-    SELECT
-      'eva' AS approver,
-      'dan' AS requester
-   UNION ALL
-  
-    SELECT
-      'dan' AS approver,
-      'cal' AS requester
-   UNION ALL
-  
-    SELECT
-      'dan' AS approver,
-      'bea' AS requester
-   UNION ALL
-  
-    SELECT
-      'cal' AS approver,
-      'ali' AS requester
-  
-) AS UNUSED_TABLE_NAME  ),
-t_1_Above_MultBodyAggAux_f7 AS (SELECT * FROM (
-  
-    SELECT
-      ApproverOf.approver AS approver,
-      ApproverOf.requester AS requester
-    FROM
-      t_1_ApproverOf AS ApproverOf
-   UNION ALL
-  
-    SELECT
-      t_2_ApproverOf.approver AS approver,
-      Above_sn_delta.requester AS requester
-    FROM
-      logica_test.Above_sn_delta AS Above_sn_delta, t_1_ApproverOf AS t_2_ApproverOf
-    WHERE
-      (t_2_ApproverOf.requester = Above_sn_delta.approver)
-  
-) AS UNUSED_TABLE_NAME  ),
-t_0_Above_sn_step AS (SELECT
-  Above_MultBodyAggAux_f7.approver AS approver,
-  Above_MultBodyAggAux_f7.requester AS requester
-FROM
-  t_1_Above_MultBodyAggAux_f7 AS Above_MultBodyAggAux_f7
-GROUP BY 1, 2)
-SELECT
-  Above_sn_step.approver AS approver,
-  Above_sn_step.requester AS requester
-FROM
-  t_0_Above_sn_step AS Above_sn_step
-WHERE
-  ((SELECT
-    MIN(1) AS logica_value
-  FROM
-    logica_test.Above_sn_full AS Above_sn_full
-  WHERE
-    (Above_sn_full.approver = Above_sn_step.approver) AND
-    (Above_sn_full.requester = Above_sn_step.requester)) IS NULL)
-GROUP BY 1, 2;
-
-INSERT INTO logica_test.Above_sn_full SELECT * FROM logica_test.Above_sn_new;
-
-DROP TABLE IF EXISTS logica_test.Above_sn_delta;
-CREATE TABLE logica_test.Above_sn_delta AS SELECT
-  Above_sn_new.approver AS approver,
-  Above_sn_new.requester AS requester
-FROM
-  logica_test.Above_sn_new AS Above_sn_new;
+INSERT INTO logica_test.Above_sn_full SELECT * FROM logica_test.Above_sn_delta;
 
 SELECT
   Above_sn_full.approver AS approver

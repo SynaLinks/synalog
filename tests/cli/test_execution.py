@@ -73,7 +73,8 @@ def test_a_plan_has_a_loop_per_recursion():
     kinds = [step["kind"] for step in steps]
     assert kinds.count("loop") == 1 and kinds[-1] == "sql"
     (loop,) = [step for step in steps if step["kind"] == "loop"]
-    assert loop["repetitions"] == 40
+    # Two steps of the recursion per repetition (see semi_naive_loop).
+    assert loop["repetitions"] == 20
     assert loop["changed"].startswith("SELECT COUNT(*)")
 
 

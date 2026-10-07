@@ -1450,11 +1450,34 @@ fn test_a_linear_distinct_recursion_is_semi_naive() {
     let found = loops(&plan);
     assert_eq!(found.len(), 1);
     let (body, repetitions, changed) = found[0];
-    // One step per repetition: the new rows, added to every row so far, made
-    // the next delta; until the delta is empty.
-    assert_eq!(repetitions, 40);
+    // Two steps per repetition, alternating the delta's table and the new
+    // rows' (no copy of one into the other): each step's rows, added to every
+    // row so far; until the delta is empty.
+    assert_eq!(repetitions, 20);
+    assert_eq!(body.len(), 4);
+    assert!(body[0].contains("CREATE TABLE logica_home.Reach_sn_new"), "{}", body[0]);
     assert!(body[1].starts_with("INSERT INTO logica_home.Reach_sn_full SELECT * FROM logica_home.Reach_sn_new"), "{}", body[1]);
+    assert!(body[2].contains("CREATE TABLE logica_home.Reach_sn_delta"), "{}", body[2]);
+    assert!(body[3].starts_with("INSERT INTO logica_home.Reach_sn_full SELECT * FROM logica_home.Reach_sn_delta"), "{}", body[3]);
     assert_eq!(changed, "SELECT COUNT(*) AS changed FROM logica_home.Reach_sn_delta");
+}
+
+#[test]
+fn test_an_odd_number_of_steps_ends_with_one_step() {
+    let source = format!(
+        "{CHAIN}@Recursive(Reach, 41);\nReach(y: 0) distinct;\nReach(y:) distinct :- Reach(y: x), Next(x:, y:);\n"
+    );
+    let plan = plan_of(&source, "Reach");
+    let at = plan.iter().position(|s| matches!(s, PlanStep::Loop { .. })).unwrap();
+    assert_eq!(loops(&plan)[0].1, 20);
+    // The 41st step, after the loop: the new rows from the delta, added.
+    match (&plan[at + 1], &plan[at + 2]) {
+        (PlanStep::Sql(step), PlanStep::Sql(add)) => {
+            assert!(step.contains("CREATE TABLE logica_home.Reach_sn_new"), "{}", step);
+            assert!(add.starts_with("INSERT INTO logica_home.Reach_sn_full SELECT * FROM logica_home.Reach_sn_new"), "{}", add);
+        }
+        other => panic!("{:?}", other),
+    }
 }
 
 #[test]

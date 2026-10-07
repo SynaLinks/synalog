@@ -5,7 +5,7 @@ CREATE TABLE logica_test.Anc_sn_delta AS WITH t_2_ParentOf AS (SELECT * FROM VAL
   (3, 1),
   (3, 4)
 AS UNUSED_TABLE_NAME(parent_id, child_id)),
-t_0_Anc_MultBodyAggAux_f1 AS (SELECT * FROM (
+t_0_Anc_MultBodyAggAux_f2 AS (SELECT * FROM (
   
     SELECT
       t_1_ParentOf.parent_id AS a,
@@ -15,10 +15,10 @@ t_0_Anc_MultBodyAggAux_f1 AS (SELECT * FROM (
   
 ) AS UNUSED_TABLE_NAME  )
 SELECT
-  Anc_MultBodyAggAux_f1.a AS a,
-  Anc_MultBodyAggAux_f1.d AS d
+  Anc_MultBodyAggAux_f2.a AS a,
+  Anc_MultBodyAggAux_f2.d AS d
 FROM
-  t_0_Anc_MultBodyAggAux_f1 AS Anc_MultBodyAggAux_f1
+  t_0_Anc_MultBodyAggAux_f2 AS Anc_MultBodyAggAux_f2
 GROUP BY 1, 2;
 
 -- Interacting with table logica_test.Anc_sn_delta
@@ -41,7 +41,7 @@ CREATE TABLE logica_test.Anc_sn_t1 AS WITH t_2_ParentOf AS (SELECT * FROM VALUES
   (3, 1),
   (3, 4)
 AS UNUSED_TABLE_NAME(parent_id, child_id)),
-t_1_Anc_MultBodyAggAux_f2 AS (SELECT * FROM (
+t_1_Anc_MultBodyAggAux_f3 AS (SELECT * FROM (
   
     SELECT
       Anc_sn_t0.a AS a,
@@ -60,10 +60,10 @@ t_1_Anc_MultBodyAggAux_f2 AS (SELECT * FROM (
   
 ) AS UNUSED_TABLE_NAME  ),
 t_0_Anc_sn_r1 AS (SELECT
-  Anc_MultBodyAggAux_f2.a AS a,
-  Anc_MultBodyAggAux_f2.d AS d
+  Anc_MultBodyAggAux_f3.a AS a,
+  Anc_MultBodyAggAux_f3.d AS d
 FROM
-  t_1_Anc_MultBodyAggAux_f2 AS Anc_MultBodyAggAux_f2
+  t_1_Anc_MultBodyAggAux_f3 AS Anc_MultBodyAggAux_f3
 GROUP BY 1, 2)
 SELECT
   Anc_sn_r1.a AS a,
@@ -82,7 +82,7 @@ CREATE TABLE logica_test.Anc_sn_t2 AS WITH t_2_ParentOf AS (SELECT * FROM VALUES
   (3, 1),
   (3, 4)
 AS UNUSED_TABLE_NAME(parent_id, child_id)),
-t_1_Anc_MultBodyAggAux_f3 AS (SELECT * FROM (
+t_1_Anc_MultBodyAggAux_f4 AS (SELECT * FROM (
   
     SELECT
       Anc_sn_t1.a AS a,
@@ -101,10 +101,10 @@ t_1_Anc_MultBodyAggAux_f3 AS (SELECT * FROM (
   
 ) AS UNUSED_TABLE_NAME  ),
 t_0_Anc_sn_r2 AS (SELECT
-  Anc_MultBodyAggAux_f3.a AS a,
-  Anc_MultBodyAggAux_f3.d AS d
+  Anc_MultBodyAggAux_f4.a AS a,
+  Anc_MultBodyAggAux_f4.d AS d
 FROM
-  t_1_Anc_MultBodyAggAux_f3 AS Anc_MultBodyAggAux_f3
+  t_1_Anc_MultBodyAggAux_f4 AS Anc_MultBodyAggAux_f4
 GROUP BY 1, 2)
 SELECT
   Anc_sn_r2.a AS a,
@@ -123,7 +123,7 @@ CREATE TABLE logica_test.Anc_sn_t3 AS WITH t_2_ParentOf AS (SELECT * FROM VALUES
   (3, 1),
   (3, 4)
 AS UNUSED_TABLE_NAME(parent_id, child_id)),
-t_1_Anc_MultBodyAggAux_f4 AS (SELECT * FROM (
+t_1_Anc_MultBodyAggAux_f5 AS (SELECT * FROM (
   
     SELECT
       Anc_sn_t2.a AS a,
@@ -142,10 +142,10 @@ t_1_Anc_MultBodyAggAux_f4 AS (SELECT * FROM (
   
 ) AS UNUSED_TABLE_NAME  ),
 t_0_Anc_sn_r3 AS (SELECT
-  Anc_MultBodyAggAux_f4.a AS a,
-  Anc_MultBodyAggAux_f4.d AS d
+  Anc_MultBodyAggAux_f5.a AS a,
+  Anc_MultBodyAggAux_f5.d AS d
 FROM
-  t_1_Anc_MultBodyAggAux_f4 AS Anc_MultBodyAggAux_f4
+  t_1_Anc_MultBodyAggAux_f5 AS Anc_MultBodyAggAux_f5
 GROUP BY 1, 2)
 SELECT
   Anc_sn_r3.a AS a,
@@ -164,7 +164,7 @@ CREATE TABLE logica_test.Anc_sn_t4 AS WITH t_2_ParentOf AS (SELECT * FROM VALUES
   (3, 1),
   (3, 4)
 AS UNUSED_TABLE_NAME(parent_id, child_id)),
-t_1_Anc_MultBodyAggAux_f5 AS (SELECT * FROM (
+t_1_Anc_MultBodyAggAux_f6 AS (SELECT * FROM (
   
     SELECT
       Anc_sn_t3.a AS a,
@@ -183,10 +183,10 @@ t_1_Anc_MultBodyAggAux_f5 AS (SELECT * FROM (
   
 ) AS UNUSED_TABLE_NAME  ),
 t_0_Anc_sn_r4 AS (SELECT
-  Anc_MultBodyAggAux_f5.a AS a,
-  Anc_MultBodyAggAux_f5.d AS d
+  Anc_MultBodyAggAux_f6.a AS a,
+  Anc_MultBodyAggAux_f6.d AS d
 FROM
-  t_1_Anc_MultBodyAggAux_f5 AS Anc_MultBodyAggAux_f5
+  t_1_Anc_MultBodyAggAux_f6 AS Anc_MultBodyAggAux_f6
 GROUP BY 1, 2)
 SELECT
   Anc_sn_r4.a AS a,
@@ -205,7 +205,7 @@ CREATE TABLE logica_test.Anc_sn_t5 AS WITH t_2_ParentOf AS (SELECT * FROM VALUES
   (3, 1),
   (3, 4)
 AS UNUSED_TABLE_NAME(parent_id, child_id)),
-t_1_Anc_MultBodyAggAux_f6 AS (SELECT * FROM (
+t_1_Anc_MultBodyAggAux_f7 AS (SELECT * FROM (
   
     SELECT
       Anc_sn_t4.a AS a,
@@ -224,10 +224,10 @@ t_1_Anc_MultBodyAggAux_f6 AS (SELECT * FROM (
   
 ) AS UNUSED_TABLE_NAME  ),
 t_0_Anc_sn_r5 AS (SELECT
-  Anc_MultBodyAggAux_f6.a AS a,
-  Anc_MultBodyAggAux_f6.d AS d
+  Anc_MultBodyAggAux_f7.a AS a,
+  Anc_MultBodyAggAux_f7.d AS d
 FROM
-  t_1_Anc_MultBodyAggAux_f6 AS Anc_MultBodyAggAux_f6
+  t_1_Anc_MultBodyAggAux_f7 AS Anc_MultBodyAggAux_f7
 GROUP BY 1, 2)
 SELECT
   Anc_sn_r5.a AS a,
@@ -294,7 +294,7 @@ CREATE TABLE logica_test.Anc_sn_new AS WITH t_2_ParentOf AS (SELECT * FROM VALUE
   (3, 1),
   (3, 4)
 AS UNUSED_TABLE_NAME(parent_id, child_id)),
-t_1_Anc_MultBodyAggAux_f7 AS (SELECT * FROM (
+t_1_Anc_MultBodyAggAux_f8 AS (SELECT * FROM (
   
     SELECT
       Anc_sn_delta.a AS a,
@@ -313,10 +313,10 @@ t_1_Anc_MultBodyAggAux_f7 AS (SELECT * FROM (
   
 ) AS UNUSED_TABLE_NAME  ),
 t_0_Anc_sn_step AS (SELECT
-  Anc_MultBodyAggAux_f7.a AS a,
-  Anc_MultBodyAggAux_f7.d AS d
+  Anc_MultBodyAggAux_f8.a AS a,
+  Anc_MultBodyAggAux_f8.d AS d
 FROM
-  t_1_Anc_MultBodyAggAux_f7 AS Anc_MultBodyAggAux_f7
+  t_1_Anc_MultBodyAggAux_f8 AS Anc_MultBodyAggAux_f8
 GROUP BY 1, 2)
 SELECT
   Anc_sn_step.a AS a,
@@ -336,11 +336,52 @@ GROUP BY 1, 2;
 INSERT INTO logica_test.Anc_sn_full SELECT * FROM logica_test.Anc_sn_new;
 
 DROP TABLE IF EXISTS logica_test.Anc_sn_delta;
-CREATE TABLE logica_test.Anc_sn_delta AS SELECT
-  Anc_sn_new.a AS a,
-  Anc_sn_new.d AS d
+CREATE TABLE logica_test.Anc_sn_delta AS WITH t_2_ParentOf AS (SELECT * FROM VALUES
+  (1, 2),
+  (2, 3),
+  (3, 1),
+  (3, 4)
+AS UNUSED_TABLE_NAME(parent_id, child_id)),
+t_1_Anc_MultBodyAggAux_f1 AS (SELECT * FROM (
+  
+    SELECT
+      Anc_sn_new.a AS a,
+      ParentOf.child_id AS d
+    FROM
+      logica_test.Anc_sn_new AS Anc_sn_new, t_2_ParentOf AS ParentOf
+    WHERE
+      (ParentOf.parent_id = Anc_sn_new.d)
+   UNION ALL
+  
+    SELECT
+      t_2_ParentOf.parent_id AS a,
+      t_2_ParentOf.child_id AS d
+    FROM
+      t_2_ParentOf
+  
+) AS UNUSED_TABLE_NAME  ),
+t_0_Anc_sn_back_step AS (SELECT
+  Anc_MultBodyAggAux_f1.a AS a,
+  Anc_MultBodyAggAux_f1.d AS d
 FROM
-  logica_test.Anc_sn_new AS Anc_sn_new;
+  t_1_Anc_MultBodyAggAux_f1 AS Anc_MultBodyAggAux_f1
+GROUP BY 1, 2)
+SELECT
+  Anc_sn_back_step.a AS a,
+  Anc_sn_back_step.d AS d
+FROM
+  t_0_Anc_sn_back_step AS Anc_sn_back_step
+WHERE
+  ((SELECT
+    MIN(1) AS logica_value
+  FROM
+    logica_test.Anc_sn_full AS Anc_sn_full
+  WHERE
+    (Anc_sn_full.a = Anc_sn_back_step.a) AND
+    (Anc_sn_full.d = Anc_sn_back_step.d)) IS NULL)
+GROUP BY 1, 2;
+
+INSERT INTO logica_test.Anc_sn_full SELECT * FROM logica_test.Anc_sn_delta;
 
 DROP TABLE IF EXISTS logica_test.Anc_sn_new;
 CREATE TABLE logica_test.Anc_sn_new AS WITH t_2_ParentOf AS (SELECT * FROM VALUES
@@ -349,7 +390,7 @@ CREATE TABLE logica_test.Anc_sn_new AS WITH t_2_ParentOf AS (SELECT * FROM VALUE
   (3, 1),
   (3, 4)
 AS UNUSED_TABLE_NAME(parent_id, child_id)),
-t_1_Anc_MultBodyAggAux_f7 AS (SELECT * FROM (
+t_1_Anc_MultBodyAggAux_f8 AS (SELECT * FROM (
   
     SELECT
       Anc_sn_delta.a AS a,
@@ -368,10 +409,10 @@ t_1_Anc_MultBodyAggAux_f7 AS (SELECT * FROM (
   
 ) AS UNUSED_TABLE_NAME  ),
 t_0_Anc_sn_step AS (SELECT
-  Anc_MultBodyAggAux_f7.a AS a,
-  Anc_MultBodyAggAux_f7.d AS d
+  Anc_MultBodyAggAux_f8.a AS a,
+  Anc_MultBodyAggAux_f8.d AS d
 FROM
-  t_1_Anc_MultBodyAggAux_f7 AS Anc_MultBodyAggAux_f7
+  t_1_Anc_MultBodyAggAux_f8 AS Anc_MultBodyAggAux_f8
 GROUP BY 1, 2)
 SELECT
   Anc_sn_step.a AS a,
@@ -391,11 +432,52 @@ GROUP BY 1, 2;
 INSERT INTO logica_test.Anc_sn_full SELECT * FROM logica_test.Anc_sn_new;
 
 DROP TABLE IF EXISTS logica_test.Anc_sn_delta;
-CREATE TABLE logica_test.Anc_sn_delta AS SELECT
-  Anc_sn_new.a AS a,
-  Anc_sn_new.d AS d
+CREATE TABLE logica_test.Anc_sn_delta AS WITH t_2_ParentOf AS (SELECT * FROM VALUES
+  (1, 2),
+  (2, 3),
+  (3, 1),
+  (3, 4)
+AS UNUSED_TABLE_NAME(parent_id, child_id)),
+t_1_Anc_MultBodyAggAux_f1 AS (SELECT * FROM (
+  
+    SELECT
+      Anc_sn_new.a AS a,
+      ParentOf.child_id AS d
+    FROM
+      logica_test.Anc_sn_new AS Anc_sn_new, t_2_ParentOf AS ParentOf
+    WHERE
+      (ParentOf.parent_id = Anc_sn_new.d)
+   UNION ALL
+  
+    SELECT
+      t_2_ParentOf.parent_id AS a,
+      t_2_ParentOf.child_id AS d
+    FROM
+      t_2_ParentOf
+  
+) AS UNUSED_TABLE_NAME  ),
+t_0_Anc_sn_back_step AS (SELECT
+  Anc_MultBodyAggAux_f1.a AS a,
+  Anc_MultBodyAggAux_f1.d AS d
 FROM
-  logica_test.Anc_sn_new AS Anc_sn_new;
+  t_1_Anc_MultBodyAggAux_f1 AS Anc_MultBodyAggAux_f1
+GROUP BY 1, 2)
+SELECT
+  Anc_sn_back_step.a AS a,
+  Anc_sn_back_step.d AS d
+FROM
+  t_0_Anc_sn_back_step AS Anc_sn_back_step
+WHERE
+  ((SELECT
+    MIN(1) AS logica_value
+  FROM
+    logica_test.Anc_sn_full AS Anc_sn_full
+  WHERE
+    (Anc_sn_full.a = Anc_sn_back_step.a) AND
+    (Anc_sn_full.d = Anc_sn_back_step.d)) IS NULL)
+GROUP BY 1, 2;
+
+INSERT INTO logica_test.Anc_sn_full SELECT * FROM logica_test.Anc_sn_delta;
 
 DROP TABLE IF EXISTS logica_test.Anc_sn_new;
 CREATE TABLE logica_test.Anc_sn_new AS WITH t_2_ParentOf AS (SELECT * FROM VALUES
@@ -404,7 +486,7 @@ CREATE TABLE logica_test.Anc_sn_new AS WITH t_2_ParentOf AS (SELECT * FROM VALUE
   (3, 1),
   (3, 4)
 AS UNUSED_TABLE_NAME(parent_id, child_id)),
-t_1_Anc_MultBodyAggAux_f7 AS (SELECT * FROM (
+t_1_Anc_MultBodyAggAux_f8 AS (SELECT * FROM (
   
     SELECT
       Anc_sn_delta.a AS a,
@@ -423,10 +505,10 @@ t_1_Anc_MultBodyAggAux_f7 AS (SELECT * FROM (
   
 ) AS UNUSED_TABLE_NAME  ),
 t_0_Anc_sn_step AS (SELECT
-  Anc_MultBodyAggAux_f7.a AS a,
-  Anc_MultBodyAggAux_f7.d AS d
+  Anc_MultBodyAggAux_f8.a AS a,
+  Anc_MultBodyAggAux_f8.d AS d
 FROM
-  t_1_Anc_MultBodyAggAux_f7 AS Anc_MultBodyAggAux_f7
+  t_1_Anc_MultBodyAggAux_f8 AS Anc_MultBodyAggAux_f8
 GROUP BY 1, 2)
 SELECT
   Anc_sn_step.a AS a,
@@ -446,11 +528,52 @@ GROUP BY 1, 2;
 INSERT INTO logica_test.Anc_sn_full SELECT * FROM logica_test.Anc_sn_new;
 
 DROP TABLE IF EXISTS logica_test.Anc_sn_delta;
-CREATE TABLE logica_test.Anc_sn_delta AS SELECT
-  Anc_sn_new.a AS a,
-  Anc_sn_new.d AS d
+CREATE TABLE logica_test.Anc_sn_delta AS WITH t_2_ParentOf AS (SELECT * FROM VALUES
+  (1, 2),
+  (2, 3),
+  (3, 1),
+  (3, 4)
+AS UNUSED_TABLE_NAME(parent_id, child_id)),
+t_1_Anc_MultBodyAggAux_f1 AS (SELECT * FROM (
+  
+    SELECT
+      Anc_sn_new.a AS a,
+      ParentOf.child_id AS d
+    FROM
+      logica_test.Anc_sn_new AS Anc_sn_new, t_2_ParentOf AS ParentOf
+    WHERE
+      (ParentOf.parent_id = Anc_sn_new.d)
+   UNION ALL
+  
+    SELECT
+      t_2_ParentOf.parent_id AS a,
+      t_2_ParentOf.child_id AS d
+    FROM
+      t_2_ParentOf
+  
+) AS UNUSED_TABLE_NAME  ),
+t_0_Anc_sn_back_step AS (SELECT
+  Anc_MultBodyAggAux_f1.a AS a,
+  Anc_MultBodyAggAux_f1.d AS d
 FROM
-  logica_test.Anc_sn_new AS Anc_sn_new;
+  t_1_Anc_MultBodyAggAux_f1 AS Anc_MultBodyAggAux_f1
+GROUP BY 1, 2)
+SELECT
+  Anc_sn_back_step.a AS a,
+  Anc_sn_back_step.d AS d
+FROM
+  t_0_Anc_sn_back_step AS Anc_sn_back_step
+WHERE
+  ((SELECT
+    MIN(1) AS logica_value
+  FROM
+    logica_test.Anc_sn_full AS Anc_sn_full
+  WHERE
+    (Anc_sn_full.a = Anc_sn_back_step.a) AND
+    (Anc_sn_full.d = Anc_sn_back_step.d)) IS NULL)
+GROUP BY 1, 2;
+
+INSERT INTO logica_test.Anc_sn_full SELECT * FROM logica_test.Anc_sn_delta;
 
 DROP TABLE IF EXISTS logica_test.Anc_sn_new;
 CREATE TABLE logica_test.Anc_sn_new AS WITH t_2_ParentOf AS (SELECT * FROM VALUES
@@ -459,7 +582,7 @@ CREATE TABLE logica_test.Anc_sn_new AS WITH t_2_ParentOf AS (SELECT * FROM VALUE
   (3, 1),
   (3, 4)
 AS UNUSED_TABLE_NAME(parent_id, child_id)),
-t_1_Anc_MultBodyAggAux_f7 AS (SELECT * FROM (
+t_1_Anc_MultBodyAggAux_f8 AS (SELECT * FROM (
   
     SELECT
       Anc_sn_delta.a AS a,
@@ -478,10 +601,10 @@ t_1_Anc_MultBodyAggAux_f7 AS (SELECT * FROM (
   
 ) AS UNUSED_TABLE_NAME  ),
 t_0_Anc_sn_step AS (SELECT
-  Anc_MultBodyAggAux_f7.a AS a,
-  Anc_MultBodyAggAux_f7.d AS d
+  Anc_MultBodyAggAux_f8.a AS a,
+  Anc_MultBodyAggAux_f8.d AS d
 FROM
-  t_1_Anc_MultBodyAggAux_f7 AS Anc_MultBodyAggAux_f7
+  t_1_Anc_MultBodyAggAux_f8 AS Anc_MultBodyAggAux_f8
 GROUP BY 1, 2)
 SELECT
   Anc_sn_step.a AS a,
@@ -501,28 +624,21 @@ GROUP BY 1, 2;
 INSERT INTO logica_test.Anc_sn_full SELECT * FROM logica_test.Anc_sn_new;
 
 DROP TABLE IF EXISTS logica_test.Anc_sn_delta;
-CREATE TABLE logica_test.Anc_sn_delta AS SELECT
-  Anc_sn_new.a AS a,
-  Anc_sn_new.d AS d
-FROM
-  logica_test.Anc_sn_new AS Anc_sn_new;
-
-DROP TABLE IF EXISTS logica_test.Anc_sn_new;
-CREATE TABLE logica_test.Anc_sn_new AS WITH t_2_ParentOf AS (SELECT * FROM VALUES
+CREATE TABLE logica_test.Anc_sn_delta AS WITH t_2_ParentOf AS (SELECT * FROM VALUES
   (1, 2),
   (2, 3),
   (3, 1),
   (3, 4)
 AS UNUSED_TABLE_NAME(parent_id, child_id)),
-t_1_Anc_MultBodyAggAux_f7 AS (SELECT * FROM (
+t_1_Anc_MultBodyAggAux_f1 AS (SELECT * FROM (
   
     SELECT
-      Anc_sn_delta.a AS a,
+      Anc_sn_new.a AS a,
       ParentOf.child_id AS d
     FROM
-      logica_test.Anc_sn_delta AS Anc_sn_delta, t_2_ParentOf AS ParentOf
+      logica_test.Anc_sn_new AS Anc_sn_new, t_2_ParentOf AS ParentOf
     WHERE
-      (ParentOf.parent_id = Anc_sn_delta.d)
+      (ParentOf.parent_id = Anc_sn_new.d)
    UNION ALL
   
     SELECT
@@ -532,200 +648,28 @@ t_1_Anc_MultBodyAggAux_f7 AS (SELECT * FROM (
       t_2_ParentOf
   
 ) AS UNUSED_TABLE_NAME  ),
-t_0_Anc_sn_step AS (SELECT
-  Anc_MultBodyAggAux_f7.a AS a,
-  Anc_MultBodyAggAux_f7.d AS d
+t_0_Anc_sn_back_step AS (SELECT
+  Anc_MultBodyAggAux_f1.a AS a,
+  Anc_MultBodyAggAux_f1.d AS d
 FROM
-  t_1_Anc_MultBodyAggAux_f7 AS Anc_MultBodyAggAux_f7
+  t_1_Anc_MultBodyAggAux_f1 AS Anc_MultBodyAggAux_f1
 GROUP BY 1, 2)
 SELECT
-  Anc_sn_step.a AS a,
-  Anc_sn_step.d AS d
+  Anc_sn_back_step.a AS a,
+  Anc_sn_back_step.d AS d
 FROM
-  t_0_Anc_sn_step AS Anc_sn_step
+  t_0_Anc_sn_back_step AS Anc_sn_back_step
 WHERE
   ((SELECT
     MIN(1) AS logica_value
   FROM
     logica_test.Anc_sn_full AS Anc_sn_full
   WHERE
-    (Anc_sn_full.a = Anc_sn_step.a) AND
-    (Anc_sn_full.d = Anc_sn_step.d)) IS NULL)
+    (Anc_sn_full.a = Anc_sn_back_step.a) AND
+    (Anc_sn_full.d = Anc_sn_back_step.d)) IS NULL)
 GROUP BY 1, 2;
 
-INSERT INTO logica_test.Anc_sn_full SELECT * FROM logica_test.Anc_sn_new;
-
-DROP TABLE IF EXISTS logica_test.Anc_sn_delta;
-CREATE TABLE logica_test.Anc_sn_delta AS SELECT
-  Anc_sn_new.a AS a,
-  Anc_sn_new.d AS d
-FROM
-  logica_test.Anc_sn_new AS Anc_sn_new;
-
-DROP TABLE IF EXISTS logica_test.Anc_sn_new;
-CREATE TABLE logica_test.Anc_sn_new AS WITH t_2_ParentOf AS (SELECT * FROM VALUES
-  (1, 2),
-  (2, 3),
-  (3, 1),
-  (3, 4)
-AS UNUSED_TABLE_NAME(parent_id, child_id)),
-t_1_Anc_MultBodyAggAux_f7 AS (SELECT * FROM (
-  
-    SELECT
-      Anc_sn_delta.a AS a,
-      ParentOf.child_id AS d
-    FROM
-      logica_test.Anc_sn_delta AS Anc_sn_delta, t_2_ParentOf AS ParentOf
-    WHERE
-      (ParentOf.parent_id = Anc_sn_delta.d)
-   UNION ALL
-  
-    SELECT
-      t_2_ParentOf.parent_id AS a,
-      t_2_ParentOf.child_id AS d
-    FROM
-      t_2_ParentOf
-  
-) AS UNUSED_TABLE_NAME  ),
-t_0_Anc_sn_step AS (SELECT
-  Anc_MultBodyAggAux_f7.a AS a,
-  Anc_MultBodyAggAux_f7.d AS d
-FROM
-  t_1_Anc_MultBodyAggAux_f7 AS Anc_MultBodyAggAux_f7
-GROUP BY 1, 2)
-SELECT
-  Anc_sn_step.a AS a,
-  Anc_sn_step.d AS d
-FROM
-  t_0_Anc_sn_step AS Anc_sn_step
-WHERE
-  ((SELECT
-    MIN(1) AS logica_value
-  FROM
-    logica_test.Anc_sn_full AS Anc_sn_full
-  WHERE
-    (Anc_sn_full.a = Anc_sn_step.a) AND
-    (Anc_sn_full.d = Anc_sn_step.d)) IS NULL)
-GROUP BY 1, 2;
-
-INSERT INTO logica_test.Anc_sn_full SELECT * FROM logica_test.Anc_sn_new;
-
-DROP TABLE IF EXISTS logica_test.Anc_sn_delta;
-CREATE TABLE logica_test.Anc_sn_delta AS SELECT
-  Anc_sn_new.a AS a,
-  Anc_sn_new.d AS d
-FROM
-  logica_test.Anc_sn_new AS Anc_sn_new;
-
-DROP TABLE IF EXISTS logica_test.Anc_sn_new;
-CREATE TABLE logica_test.Anc_sn_new AS WITH t_2_ParentOf AS (SELECT * FROM VALUES
-  (1, 2),
-  (2, 3),
-  (3, 1),
-  (3, 4)
-AS UNUSED_TABLE_NAME(parent_id, child_id)),
-t_1_Anc_MultBodyAggAux_f7 AS (SELECT * FROM (
-  
-    SELECT
-      Anc_sn_delta.a AS a,
-      ParentOf.child_id AS d
-    FROM
-      logica_test.Anc_sn_delta AS Anc_sn_delta, t_2_ParentOf AS ParentOf
-    WHERE
-      (ParentOf.parent_id = Anc_sn_delta.d)
-   UNION ALL
-  
-    SELECT
-      t_2_ParentOf.parent_id AS a,
-      t_2_ParentOf.child_id AS d
-    FROM
-      t_2_ParentOf
-  
-) AS UNUSED_TABLE_NAME  ),
-t_0_Anc_sn_step AS (SELECT
-  Anc_MultBodyAggAux_f7.a AS a,
-  Anc_MultBodyAggAux_f7.d AS d
-FROM
-  t_1_Anc_MultBodyAggAux_f7 AS Anc_MultBodyAggAux_f7
-GROUP BY 1, 2)
-SELECT
-  Anc_sn_step.a AS a,
-  Anc_sn_step.d AS d
-FROM
-  t_0_Anc_sn_step AS Anc_sn_step
-WHERE
-  ((SELECT
-    MIN(1) AS logica_value
-  FROM
-    logica_test.Anc_sn_full AS Anc_sn_full
-  WHERE
-    (Anc_sn_full.a = Anc_sn_step.a) AND
-    (Anc_sn_full.d = Anc_sn_step.d)) IS NULL)
-GROUP BY 1, 2;
-
-INSERT INTO logica_test.Anc_sn_full SELECT * FROM logica_test.Anc_sn_new;
-
-DROP TABLE IF EXISTS logica_test.Anc_sn_delta;
-CREATE TABLE logica_test.Anc_sn_delta AS SELECT
-  Anc_sn_new.a AS a,
-  Anc_sn_new.d AS d
-FROM
-  logica_test.Anc_sn_new AS Anc_sn_new;
-
-DROP TABLE IF EXISTS logica_test.Anc_sn_new;
-CREATE TABLE logica_test.Anc_sn_new AS WITH t_2_ParentOf AS (SELECT * FROM VALUES
-  (1, 2),
-  (2, 3),
-  (3, 1),
-  (3, 4)
-AS UNUSED_TABLE_NAME(parent_id, child_id)),
-t_1_Anc_MultBodyAggAux_f7 AS (SELECT * FROM (
-  
-    SELECT
-      Anc_sn_delta.a AS a,
-      ParentOf.child_id AS d
-    FROM
-      logica_test.Anc_sn_delta AS Anc_sn_delta, t_2_ParentOf AS ParentOf
-    WHERE
-      (ParentOf.parent_id = Anc_sn_delta.d)
-   UNION ALL
-  
-    SELECT
-      t_2_ParentOf.parent_id AS a,
-      t_2_ParentOf.child_id AS d
-    FROM
-      t_2_ParentOf
-  
-) AS UNUSED_TABLE_NAME  ),
-t_0_Anc_sn_step AS (SELECT
-  Anc_MultBodyAggAux_f7.a AS a,
-  Anc_MultBodyAggAux_f7.d AS d
-FROM
-  t_1_Anc_MultBodyAggAux_f7 AS Anc_MultBodyAggAux_f7
-GROUP BY 1, 2)
-SELECT
-  Anc_sn_step.a AS a,
-  Anc_sn_step.d AS d
-FROM
-  t_0_Anc_sn_step AS Anc_sn_step
-WHERE
-  ((SELECT
-    MIN(1) AS logica_value
-  FROM
-    logica_test.Anc_sn_full AS Anc_sn_full
-  WHERE
-    (Anc_sn_full.a = Anc_sn_step.a) AND
-    (Anc_sn_full.d = Anc_sn_step.d)) IS NULL)
-GROUP BY 1, 2;
-
-INSERT INTO logica_test.Anc_sn_full SELECT * FROM logica_test.Anc_sn_new;
-
-DROP TABLE IF EXISTS logica_test.Anc_sn_delta;
-CREATE TABLE logica_test.Anc_sn_delta AS SELECT
-  Anc_sn_new.a AS a,
-  Anc_sn_new.d AS d
-FROM
-  logica_test.Anc_sn_new AS Anc_sn_new;
+INSERT INTO logica_test.Anc_sn_full SELECT * FROM logica_test.Anc_sn_delta;
 
 SELECT
   Anc_sn_full.a AS n

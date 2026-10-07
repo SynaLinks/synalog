@@ -28,7 +28,7 @@ WHERE
   (Management.manager_id = t_4_Person.person_id) AND
   (Management.employee_id = t_5_Person.person_id)
 GROUP BY 1, 2),
-t_0_PathTo_MultBodyAggAux_f1 AS (SELECT * FROM (
+t_0_PathTo_MultBodyAggAux_f2 AS (SELECT * FROM (
   
     SELECT
       Manages.manager_id AS source,
@@ -42,11 +42,11 @@ t_0_PathTo_MultBodyAggAux_f1 AS (SELECT * FROM (
   
 ) AS UNUSED_TABLE_NAME  )
 SELECT
-  PathTo_MultBodyAggAux_f1.source AS source,
-  PathTo_MultBodyAggAux_f1.target AS target,
-  PathTo_MultBodyAggAux_f1.path AS path
+  PathTo_MultBodyAggAux_f2.source AS source,
+  PathTo_MultBodyAggAux_f2.target AS target,
+  PathTo_MultBodyAggAux_f2.path AS path
 FROM
-  t_0_PathTo_MultBodyAggAux_f1 AS PathTo_MultBodyAggAux_f1
+  t_0_PathTo_MultBodyAggAux_f2 AS PathTo_MultBodyAggAux_f2
 GROUP BY 1, 2, 3;
 
 -- Interacting with table logica_test.PathTo_sn_delta
@@ -93,7 +93,7 @@ WHERE
   (Management.manager_id = t_4_Person.person_id) AND
   (Management.employee_id = t_5_Person.person_id)
 GROUP BY 1, 2),
-t_1_PathTo_MultBodyAggAux_f2 AS (SELECT * FROM (
+t_1_PathTo_MultBodyAggAux_f3 AS (SELECT * FROM (
   
     SELECT
       Manages.manager_id AS source,
@@ -118,11 +118,11 @@ t_1_PathTo_MultBodyAggAux_f2 AS (SELECT * FROM (
   
 ) AS UNUSED_TABLE_NAME  ),
 t_0_PathTo_sn_r1 AS (SELECT
-  PathTo_MultBodyAggAux_f2.source AS source,
-  PathTo_MultBodyAggAux_f2.target AS target,
-  PathTo_MultBodyAggAux_f2.path AS path
+  PathTo_MultBodyAggAux_f3.source AS source,
+  PathTo_MultBodyAggAux_f3.target AS target,
+  PathTo_MultBodyAggAux_f3.path AS path
 FROM
-  t_1_PathTo_MultBodyAggAux_f2 AS PathTo_MultBodyAggAux_f2
+  t_1_PathTo_MultBodyAggAux_f3 AS PathTo_MultBodyAggAux_f3
 GROUP BY 1, 2, 3)
 SELECT
   PathTo_sn_r1.source AS source,
@@ -165,7 +165,7 @@ WHERE
   (Management.manager_id = t_4_Person.person_id) AND
   (Management.employee_id = t_5_Person.person_id)
 GROUP BY 1, 2),
-t_1_PathTo_MultBodyAggAux_f3 AS (SELECT * FROM (
+t_1_PathTo_MultBodyAggAux_f4 AS (SELECT * FROM (
   
     SELECT
       Manages.manager_id AS source,
@@ -190,11 +190,11 @@ t_1_PathTo_MultBodyAggAux_f3 AS (SELECT * FROM (
   
 ) AS UNUSED_TABLE_NAME  ),
 t_0_PathTo_sn_r2 AS (SELECT
-  PathTo_MultBodyAggAux_f3.source AS source,
-  PathTo_MultBodyAggAux_f3.target AS target,
-  PathTo_MultBodyAggAux_f3.path AS path
+  PathTo_MultBodyAggAux_f4.source AS source,
+  PathTo_MultBodyAggAux_f4.target AS target,
+  PathTo_MultBodyAggAux_f4.path AS path
 FROM
-  t_1_PathTo_MultBodyAggAux_f3 AS PathTo_MultBodyAggAux_f3
+  t_1_PathTo_MultBodyAggAux_f4 AS PathTo_MultBodyAggAux_f4
 GROUP BY 1, 2, 3)
 SELECT
   PathTo_sn_r2.source AS source,
@@ -237,7 +237,7 @@ WHERE
   (Management.manager_id = t_4_Person.person_id) AND
   (Management.employee_id = t_5_Person.person_id)
 GROUP BY 1, 2),
-t_1_PathTo_MultBodyAggAux_f4 AS (SELECT * FROM (
+t_1_PathTo_MultBodyAggAux_f5 AS (SELECT * FROM (
   
     SELECT
       Manages.manager_id AS source,
@@ -262,11 +262,11 @@ t_1_PathTo_MultBodyAggAux_f4 AS (SELECT * FROM (
   
 ) AS UNUSED_TABLE_NAME  ),
 t_0_PathTo_sn_r3 AS (SELECT
-  PathTo_MultBodyAggAux_f4.source AS source,
-  PathTo_MultBodyAggAux_f4.target AS target,
-  PathTo_MultBodyAggAux_f4.path AS path
+  PathTo_MultBodyAggAux_f5.source AS source,
+  PathTo_MultBodyAggAux_f5.target AS target,
+  PathTo_MultBodyAggAux_f5.path AS path
 FROM
-  t_1_PathTo_MultBodyAggAux_f4 AS PathTo_MultBodyAggAux_f4
+  t_1_PathTo_MultBodyAggAux_f5 AS PathTo_MultBodyAggAux_f5
 GROUP BY 1, 2, 3)
 SELECT
   PathTo_sn_r3.source AS source,
@@ -309,7 +309,7 @@ WHERE
   (Management.manager_id = t_4_Person.person_id) AND
   (Management.employee_id = t_5_Person.person_id)
 GROUP BY 1, 2),
-t_1_PathTo_MultBodyAggAux_f5 AS (SELECT * FROM (
+t_1_PathTo_MultBodyAggAux_f6 AS (SELECT * FROM (
   
     SELECT
       Manages.manager_id AS source,
@@ -334,11 +334,11 @@ t_1_PathTo_MultBodyAggAux_f5 AS (SELECT * FROM (
   
 ) AS UNUSED_TABLE_NAME  ),
 t_0_PathTo_sn_r4 AS (SELECT
-  PathTo_MultBodyAggAux_f5.source AS source,
-  PathTo_MultBodyAggAux_f5.target AS target,
-  PathTo_MultBodyAggAux_f5.path AS path
+  PathTo_MultBodyAggAux_f6.source AS source,
+  PathTo_MultBodyAggAux_f6.target AS target,
+  PathTo_MultBodyAggAux_f6.path AS path
 FROM
-  t_1_PathTo_MultBodyAggAux_f5 AS PathTo_MultBodyAggAux_f5
+  t_1_PathTo_MultBodyAggAux_f6 AS PathTo_MultBodyAggAux_f6
 GROUP BY 1, 2, 3)
 SELECT
   PathTo_sn_r4.source AS source,
@@ -381,7 +381,7 @@ WHERE
   (Management.manager_id = t_4_Person.person_id) AND
   (Management.employee_id = t_5_Person.person_id)
 GROUP BY 1, 2),
-t_1_PathTo_MultBodyAggAux_f6 AS (SELECT * FROM (
+t_1_PathTo_MultBodyAggAux_f7 AS (SELECT * FROM (
   
     SELECT
       Manages.manager_id AS source,
@@ -406,11 +406,11 @@ t_1_PathTo_MultBodyAggAux_f6 AS (SELECT * FROM (
   
 ) AS UNUSED_TABLE_NAME  ),
 t_0_PathTo_sn_r5 AS (SELECT
-  PathTo_MultBodyAggAux_f6.source AS source,
-  PathTo_MultBodyAggAux_f6.target AS target,
-  PathTo_MultBodyAggAux_f6.path AS path
+  PathTo_MultBodyAggAux_f7.source AS source,
+  PathTo_MultBodyAggAux_f7.target AS target,
+  PathTo_MultBodyAggAux_f7.path AS path
 FROM
-  t_1_PathTo_MultBodyAggAux_f6 AS PathTo_MultBodyAggAux_f6
+  t_1_PathTo_MultBodyAggAux_f7 AS PathTo_MultBodyAggAux_f7
 GROUP BY 1, 2, 3)
 SELECT
   PathTo_sn_r5.source AS source,
@@ -453,7 +453,7 @@ WHERE
   (Management.manager_id = t_4_Person.person_id) AND
   (Management.employee_id = t_5_Person.person_id)
 GROUP BY 1, 2),
-t_1_PathTo_MultBodyAggAux_f7 AS (SELECT * FROM (
+t_1_PathTo_MultBodyAggAux_f8 AS (SELECT * FROM (
   
     SELECT
       Manages.manager_id AS source,
@@ -478,11 +478,11 @@ t_1_PathTo_MultBodyAggAux_f7 AS (SELECT * FROM (
   
 ) AS UNUSED_TABLE_NAME  ),
 t_0_PathTo_sn_r6 AS (SELECT
-  PathTo_MultBodyAggAux_f7.source AS source,
-  PathTo_MultBodyAggAux_f7.target AS target,
-  PathTo_MultBodyAggAux_f7.path AS path
+  PathTo_MultBodyAggAux_f8.source AS source,
+  PathTo_MultBodyAggAux_f8.target AS target,
+  PathTo_MultBodyAggAux_f8.path AS path
 FROM
-  t_1_PathTo_MultBodyAggAux_f7 AS PathTo_MultBodyAggAux_f7
+  t_1_PathTo_MultBodyAggAux_f8 AS PathTo_MultBodyAggAux_f8
 GROUP BY 1, 2, 3)
 SELECT
   PathTo_sn_r6.source AS source,
@@ -525,7 +525,7 @@ WHERE
   (Management.manager_id = t_4_Person.person_id) AND
   (Management.employee_id = t_5_Person.person_id)
 GROUP BY 1, 2),
-t_1_PathTo_MultBodyAggAux_f8 AS (SELECT * FROM (
+t_1_PathTo_MultBodyAggAux_f9 AS (SELECT * FROM (
   
     SELECT
       Manages.manager_id AS source,
@@ -550,11 +550,11 @@ t_1_PathTo_MultBodyAggAux_f8 AS (SELECT * FROM (
   
 ) AS UNUSED_TABLE_NAME  ),
 t_0_PathTo_sn_r7 AS (SELECT
-  PathTo_MultBodyAggAux_f8.source AS source,
-  PathTo_MultBodyAggAux_f8.target AS target,
-  PathTo_MultBodyAggAux_f8.path AS path
+  PathTo_MultBodyAggAux_f9.source AS source,
+  PathTo_MultBodyAggAux_f9.target AS target,
+  PathTo_MultBodyAggAux_f9.path AS path
 FROM
-  t_1_PathTo_MultBodyAggAux_f8 AS PathTo_MultBodyAggAux_f8
+  t_1_PathTo_MultBodyAggAux_f9 AS PathTo_MultBodyAggAux_f9
 GROUP BY 1, 2, 3)
 SELECT
   PathTo_sn_r7.source AS source,
@@ -667,7 +667,7 @@ WHERE
   (Management.manager_id = t_4_Person.person_id) AND
   (Management.employee_id = t_5_Person.person_id)
 GROUP BY 1, 2),
-t_1_PathTo_MultBodyAggAux_f9 AS (SELECT * FROM (
+t_1_PathTo_MultBodyAggAux_f10 AS (SELECT * FROM (
   
     SELECT
       Manages.manager_id AS source,
@@ -692,11 +692,11 @@ t_1_PathTo_MultBodyAggAux_f9 AS (SELECT * FROM (
   
 ) AS UNUSED_TABLE_NAME  ),
 t_0_PathTo_sn_step AS (SELECT
-  PathTo_MultBodyAggAux_f9.source AS source,
-  PathTo_MultBodyAggAux_f9.target AS target,
-  PathTo_MultBodyAggAux_f9.path AS path
+  PathTo_MultBodyAggAux_f10.source AS source,
+  PathTo_MultBodyAggAux_f10.target AS target,
+  PathTo_MultBodyAggAux_f10.path AS path
 FROM
-  t_1_PathTo_MultBodyAggAux_f9 AS PathTo_MultBodyAggAux_f9
+  t_1_PathTo_MultBodyAggAux_f10 AS PathTo_MultBodyAggAux_f10
 GROUP BY 1, 2, 3)
 SELECT
   PathTo_sn_step.source AS source,
@@ -718,12 +718,84 @@ GROUP BY 1, 2, 3;
 INSERT INTO logica_test.PathTo_sn_full SELECT * FROM logica_test.PathTo_sn_new;
 
 DROP TABLE IF EXISTS logica_test.PathTo_sn_delta;
-CREATE TABLE logica_test.PathTo_sn_delta AS SELECT
-  PathTo_sn_new.source AS source,
-  PathTo_sn_new.target AS target,
-  PathTo_sn_new.path AS path
+CREATE TABLE logica_test.PathTo_sn_delta AS WITH t_7_Employees AS (SELECT * FROM VALUES
+  (1, "ann", "eng", 10, "active", "https://x/ann"),
+  (2, "bob", "eng", 10, "active", "https://x/bob"),
+  (3, "cid", "ops", 20, "inactive", "https://x/cid"),
+  (4, "dan", "ops", 20, "active", "https://x/dan"),
+  (5, "eve", "eng", 30, "active", "https://x/eve")
+AS UNUSED_TABLE_NAME(person_id, name, dept, team_id, status, url)),
+t_6_Person AS (SELECT
+  Employees.person_id AS person_id,
+  Employees.name AS name,
+  Employees.url AS url
 FROM
-  logica_test.PathTo_sn_new AS PathTo_sn_new;
+  t_7_Employees AS Employees
+GROUP BY 1, 2, 3 ORDER BY person_id NULLS LAST),
+t_9_Management AS (SELECT * FROM VALUES
+  (1, 2),
+  (1, 5),
+  (4, 3),
+  (2, 6)
+AS UNUSED_TABLE_NAME(manager_id, employee_id)),
+t_3_Manages AS (SELECT
+  t_4_Person.person_id AS manager_id,
+  t_5_Person.person_id AS employee_id
+FROM
+  t_6_Person AS t_4_Person, t_6_Person AS t_5_Person, t_9_Management AS Management
+WHERE
+  (Management.manager_id = t_4_Person.person_id) AND
+  (Management.employee_id = t_5_Person.person_id)
+GROUP BY 1, 2),
+t_1_PathTo_MultBodyAggAux_f1 AS (SELECT * FROM (
+  
+    SELECT
+      Manages.manager_id AS source,
+      Manages.employee_id AS target,
+      (CONCAT((CONCAT(Person.name, " > ")), t_3_Person.name)) AS path
+    FROM
+      t_3_Manages AS Manages, t_6_Person AS Person, t_6_Person AS t_3_Person
+    WHERE
+      (Manages.manager_id = Person.person_id) AND
+      (Manages.employee_id = t_3_Person.person_id)
+   UNION ALL
+  
+    SELECT
+      PathTo_sn_new.source AS source,
+      t_6_Manages.employee_id AS target,
+      (CONCAT((CONCAT(PathTo_sn_new.path, " > ")), t_8_Person.name)) AS path
+    FROM
+      logica_test.PathTo_sn_new AS PathTo_sn_new, t_3_Manages AS t_6_Manages, t_6_Person AS t_8_Person
+    WHERE
+      (t_6_Manages.manager_id = PathTo_sn_new.target) AND
+      (t_6_Manages.employee_id = t_8_Person.person_id)
+  
+) AS UNUSED_TABLE_NAME  ),
+t_0_PathTo_sn_back_step AS (SELECT
+  PathTo_MultBodyAggAux_f1.source AS source,
+  PathTo_MultBodyAggAux_f1.target AS target,
+  PathTo_MultBodyAggAux_f1.path AS path
+FROM
+  t_1_PathTo_MultBodyAggAux_f1 AS PathTo_MultBodyAggAux_f1
+GROUP BY 1, 2, 3)
+SELECT
+  PathTo_sn_back_step.source AS source,
+  PathTo_sn_back_step.target AS target,
+  PathTo_sn_back_step.path AS path
+FROM
+  t_0_PathTo_sn_back_step AS PathTo_sn_back_step
+WHERE
+  ((SELECT
+    MIN(1) AS logica_value
+  FROM
+    logica_test.PathTo_sn_full AS PathTo_sn_full
+  WHERE
+    (PathTo_sn_full.source = PathTo_sn_back_step.source) AND
+    (PathTo_sn_full.target = PathTo_sn_back_step.target) AND
+    (PathTo_sn_full.path = PathTo_sn_back_step.path)) IS NULL)
+GROUP BY 1, 2, 3;
+
+INSERT INTO logica_test.PathTo_sn_full SELECT * FROM logica_test.PathTo_sn_delta;
 
 DROP TABLE IF EXISTS logica_test.PathTo_sn_new;
 CREATE TABLE logica_test.PathTo_sn_new AS WITH t_7_Employees AS (SELECT * FROM VALUES
@@ -755,7 +827,7 @@ WHERE
   (Management.manager_id = t_4_Person.person_id) AND
   (Management.employee_id = t_5_Person.person_id)
 GROUP BY 1, 2),
-t_1_PathTo_MultBodyAggAux_f9 AS (SELECT * FROM (
+t_1_PathTo_MultBodyAggAux_f10 AS (SELECT * FROM (
   
     SELECT
       Manages.manager_id AS source,
@@ -780,11 +852,11 @@ t_1_PathTo_MultBodyAggAux_f9 AS (SELECT * FROM (
   
 ) AS UNUSED_TABLE_NAME  ),
 t_0_PathTo_sn_step AS (SELECT
-  PathTo_MultBodyAggAux_f9.source AS source,
-  PathTo_MultBodyAggAux_f9.target AS target,
-  PathTo_MultBodyAggAux_f9.path AS path
+  PathTo_MultBodyAggAux_f10.source AS source,
+  PathTo_MultBodyAggAux_f10.target AS target,
+  PathTo_MultBodyAggAux_f10.path AS path
 FROM
-  t_1_PathTo_MultBodyAggAux_f9 AS PathTo_MultBodyAggAux_f9
+  t_1_PathTo_MultBodyAggAux_f10 AS PathTo_MultBodyAggAux_f10
 GROUP BY 1, 2, 3)
 SELECT
   PathTo_sn_step.source AS source,
@@ -806,15 +878,7 @@ GROUP BY 1, 2, 3;
 INSERT INTO logica_test.PathTo_sn_full SELECT * FROM logica_test.PathTo_sn_new;
 
 DROP TABLE IF EXISTS logica_test.PathTo_sn_delta;
-CREATE TABLE logica_test.PathTo_sn_delta AS SELECT
-  PathTo_sn_new.source AS source,
-  PathTo_sn_new.target AS target,
-  PathTo_sn_new.path AS path
-FROM
-  logica_test.PathTo_sn_new AS PathTo_sn_new;
-
-DROP TABLE IF EXISTS logica_test.PathTo_sn_new;
-CREATE TABLE logica_test.PathTo_sn_new AS WITH t_7_Employees AS (SELECT * FROM VALUES
+CREATE TABLE logica_test.PathTo_sn_delta AS WITH t_7_Employees AS (SELECT * FROM VALUES
   (1, "ann", "eng", 10, "active", "https://x/ann"),
   (2, "bob", "eng", 10, "active", "https://x/bob"),
   (3, "cid", "ops", 20, "inactive", "https://x/cid"),
@@ -843,7 +907,7 @@ WHERE
   (Management.manager_id = t_4_Person.person_id) AND
   (Management.employee_id = t_5_Person.person_id)
 GROUP BY 1, 2),
-t_1_PathTo_MultBodyAggAux_f9 AS (SELECT * FROM (
+t_1_PathTo_MultBodyAggAux_f1 AS (SELECT * FROM (
   
     SELECT
       Manages.manager_id AS source,
@@ -857,137 +921,41 @@ t_1_PathTo_MultBodyAggAux_f9 AS (SELECT * FROM (
    UNION ALL
   
     SELECT
-      PathTo_sn_delta.source AS source,
+      PathTo_sn_new.source AS source,
       t_6_Manages.employee_id AS target,
-      (CONCAT((CONCAT(PathTo_sn_delta.path, " > ")), t_8_Person.name)) AS path
+      (CONCAT((CONCAT(PathTo_sn_new.path, " > ")), t_8_Person.name)) AS path
     FROM
-      logica_test.PathTo_sn_delta AS PathTo_sn_delta, t_3_Manages AS t_6_Manages, t_6_Person AS t_8_Person
+      logica_test.PathTo_sn_new AS PathTo_sn_new, t_3_Manages AS t_6_Manages, t_6_Person AS t_8_Person
     WHERE
-      (t_6_Manages.manager_id = PathTo_sn_delta.target) AND
+      (t_6_Manages.manager_id = PathTo_sn_new.target) AND
       (t_6_Manages.employee_id = t_8_Person.person_id)
   
 ) AS UNUSED_TABLE_NAME  ),
-t_0_PathTo_sn_step AS (SELECT
-  PathTo_MultBodyAggAux_f9.source AS source,
-  PathTo_MultBodyAggAux_f9.target AS target,
-  PathTo_MultBodyAggAux_f9.path AS path
+t_0_PathTo_sn_back_step AS (SELECT
+  PathTo_MultBodyAggAux_f1.source AS source,
+  PathTo_MultBodyAggAux_f1.target AS target,
+  PathTo_MultBodyAggAux_f1.path AS path
 FROM
-  t_1_PathTo_MultBodyAggAux_f9 AS PathTo_MultBodyAggAux_f9
+  t_1_PathTo_MultBodyAggAux_f1 AS PathTo_MultBodyAggAux_f1
 GROUP BY 1, 2, 3)
 SELECT
-  PathTo_sn_step.source AS source,
-  PathTo_sn_step.target AS target,
-  PathTo_sn_step.path AS path
+  PathTo_sn_back_step.source AS source,
+  PathTo_sn_back_step.target AS target,
+  PathTo_sn_back_step.path AS path
 FROM
-  t_0_PathTo_sn_step AS PathTo_sn_step
+  t_0_PathTo_sn_back_step AS PathTo_sn_back_step
 WHERE
   ((SELECT
     MIN(1) AS logica_value
   FROM
     logica_test.PathTo_sn_full AS PathTo_sn_full
   WHERE
-    (PathTo_sn_full.source = PathTo_sn_step.source) AND
-    (PathTo_sn_full.target = PathTo_sn_step.target) AND
-    (PathTo_sn_full.path = PathTo_sn_step.path)) IS NULL)
+    (PathTo_sn_full.source = PathTo_sn_back_step.source) AND
+    (PathTo_sn_full.target = PathTo_sn_back_step.target) AND
+    (PathTo_sn_full.path = PathTo_sn_back_step.path)) IS NULL)
 GROUP BY 1, 2, 3;
 
-INSERT INTO logica_test.PathTo_sn_full SELECT * FROM logica_test.PathTo_sn_new;
-
-DROP TABLE IF EXISTS logica_test.PathTo_sn_delta;
-CREATE TABLE logica_test.PathTo_sn_delta AS SELECT
-  PathTo_sn_new.source AS source,
-  PathTo_sn_new.target AS target,
-  PathTo_sn_new.path AS path
-FROM
-  logica_test.PathTo_sn_new AS PathTo_sn_new;
-
-DROP TABLE IF EXISTS logica_test.PathTo_sn_new;
-CREATE TABLE logica_test.PathTo_sn_new AS WITH t_7_Employees AS (SELECT * FROM VALUES
-  (1, "ann", "eng", 10, "active", "https://x/ann"),
-  (2, "bob", "eng", 10, "active", "https://x/bob"),
-  (3, "cid", "ops", 20, "inactive", "https://x/cid"),
-  (4, "dan", "ops", 20, "active", "https://x/dan"),
-  (5, "eve", "eng", 30, "active", "https://x/eve")
-AS UNUSED_TABLE_NAME(person_id, name, dept, team_id, status, url)),
-t_6_Person AS (SELECT
-  Employees.person_id AS person_id,
-  Employees.name AS name,
-  Employees.url AS url
-FROM
-  t_7_Employees AS Employees
-GROUP BY 1, 2, 3 ORDER BY person_id NULLS LAST),
-t_9_Management AS (SELECT * FROM VALUES
-  (1, 2),
-  (1, 5),
-  (4, 3),
-  (2, 6)
-AS UNUSED_TABLE_NAME(manager_id, employee_id)),
-t_3_Manages AS (SELECT
-  t_4_Person.person_id AS manager_id,
-  t_5_Person.person_id AS employee_id
-FROM
-  t_6_Person AS t_4_Person, t_6_Person AS t_5_Person, t_9_Management AS Management
-WHERE
-  (Management.manager_id = t_4_Person.person_id) AND
-  (Management.employee_id = t_5_Person.person_id)
-GROUP BY 1, 2),
-t_1_PathTo_MultBodyAggAux_f9 AS (SELECT * FROM (
-  
-    SELECT
-      Manages.manager_id AS source,
-      Manages.employee_id AS target,
-      (CONCAT((CONCAT(Person.name, " > ")), t_3_Person.name)) AS path
-    FROM
-      t_3_Manages AS Manages, t_6_Person AS Person, t_6_Person AS t_3_Person
-    WHERE
-      (Manages.manager_id = Person.person_id) AND
-      (Manages.employee_id = t_3_Person.person_id)
-   UNION ALL
-  
-    SELECT
-      PathTo_sn_delta.source AS source,
-      t_6_Manages.employee_id AS target,
-      (CONCAT((CONCAT(PathTo_sn_delta.path, " > ")), t_8_Person.name)) AS path
-    FROM
-      logica_test.PathTo_sn_delta AS PathTo_sn_delta, t_3_Manages AS t_6_Manages, t_6_Person AS t_8_Person
-    WHERE
-      (t_6_Manages.manager_id = PathTo_sn_delta.target) AND
-      (t_6_Manages.employee_id = t_8_Person.person_id)
-  
-) AS UNUSED_TABLE_NAME  ),
-t_0_PathTo_sn_step AS (SELECT
-  PathTo_MultBodyAggAux_f9.source AS source,
-  PathTo_MultBodyAggAux_f9.target AS target,
-  PathTo_MultBodyAggAux_f9.path AS path
-FROM
-  t_1_PathTo_MultBodyAggAux_f9 AS PathTo_MultBodyAggAux_f9
-GROUP BY 1, 2, 3)
-SELECT
-  PathTo_sn_step.source AS source,
-  PathTo_sn_step.target AS target,
-  PathTo_sn_step.path AS path
-FROM
-  t_0_PathTo_sn_step AS PathTo_sn_step
-WHERE
-  ((SELECT
-    MIN(1) AS logica_value
-  FROM
-    logica_test.PathTo_sn_full AS PathTo_sn_full
-  WHERE
-    (PathTo_sn_full.source = PathTo_sn_step.source) AND
-    (PathTo_sn_full.target = PathTo_sn_step.target) AND
-    (PathTo_sn_full.path = PathTo_sn_step.path)) IS NULL)
-GROUP BY 1, 2, 3;
-
-INSERT INTO logica_test.PathTo_sn_full SELECT * FROM logica_test.PathTo_sn_new;
-
-DROP TABLE IF EXISTS logica_test.PathTo_sn_delta;
-CREATE TABLE logica_test.PathTo_sn_delta AS SELECT
-  PathTo_sn_new.source AS source,
-  PathTo_sn_new.target AS target,
-  PathTo_sn_new.path AS path
-FROM
-  logica_test.PathTo_sn_new AS PathTo_sn_new;
+INSERT INTO logica_test.PathTo_sn_full SELECT * FROM logica_test.PathTo_sn_delta;
 
 WITH t_7_Employees AS (SELECT * FROM VALUES
   (1, "ann", "eng", 10, "active", "https://x/ann"),

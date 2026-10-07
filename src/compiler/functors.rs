@@ -555,7 +555,7 @@ impl Functors {
 
         let mut rules = self.all_rules_of(applicant)?;
         // An iteration's predicates (`@Iteration(P_sn_delta, predicates:
-        // [P_sn_new, P_sn_next], accumulate: P_sn_full)`) are read by no rule
+        // [P_sn_new, P_sn_back], accumulate: P_sn_full)`) are read by no rule
         // of what the iteration computes, only by its loop: they are copied
         // with it, or the copy would loop over the original's.
         let mut heads: HashSet<String> = rules.iter()
@@ -1361,12 +1361,15 @@ fn get_semi_naive_recursion_functor(depth: i64, p: &str, fields: &[Json]) -> Str
         format!("{p}_sn_step := {p}_ROne({p}_RZero: {p}_sn_delta);"),
         format!("{p}_sn_new({args}) distinct :- {p}_sn_step({args}), ~{p}_sn_full({args});"),
         format!("@Ground({p}_sn_new);"),
-        format!("{p}_sn_next({args}) :- {p}_sn_new({args});"),
-        format!("@Ground({p}_sn_next, {p}_sn_delta);"),
+        // The next step, from the new rows into the delta's table: the loop
+        // alternates the two tables rather than copying one into the other.
+        format!("{p}_sn_back_step := {p}_ROne({p}_RZero: {p}_sn_new);"),
+        format!("{p}_sn_back({args}) distinct :- {p}_sn_back_step({args}), ~{p}_sn_full({args});"),
+        format!("@Ground({p}_sn_back, {p}_sn_delta);"),
         // A rule, not a copy (`:=`): it reads the table the loop adds to.
         format!("{p}({args}) :- {p}_sn_full({args});"),
         format!(
-            "@Iteration({p}_sn_delta, predicates: [{p}_sn_new, {p}_sn_next], repetitions: {depth}, accumulate: {p}_sn_full);"
+            "@Iteration({p}_sn_delta, predicates: [{p}_sn_new, {p}_sn_back], repetitions: {depth}, accumulate: {p}_sn_full);"
         ),
     ]
     .join("\n")

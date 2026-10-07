@@ -21,7 +21,7 @@ CREATE TABLE logica_test.After_sn_delta AS WITH t_2_Sequel AS (SELECT * FROM (
       2 AS next
   
 ) AS UNUSED_TABLE_NAME  ),
-t_0_After_MultBodyAggAux_f1 AS (SELECT * FROM (
+t_0_After_MultBodyAggAux_f2 AS (SELECT * FROM (
   
     SELECT
       t_1_Sequel.book AS book,
@@ -31,10 +31,10 @@ t_0_After_MultBodyAggAux_f1 AS (SELECT * FROM (
   
 ) AS UNUSED_TABLE_NAME  )
 SELECT
-  After_MultBodyAggAux_f1.book AS book,
-  After_MultBodyAggAux_f1.next AS next
+  After_MultBodyAggAux_f2.book AS book,
+  After_MultBodyAggAux_f2.next AS next
 FROM
-  t_0_After_MultBodyAggAux_f1 AS After_MultBodyAggAux_f1
+  t_0_After_MultBodyAggAux_f2 AS After_MultBodyAggAux_f2
 GROUP BY 1, 2;
 
 -- Interacting with table logica_test.After_sn_delta
@@ -73,7 +73,7 @@ CREATE TABLE logica_test.After_sn_t1 AS WITH t_2_Sequel AS (SELECT * FROM (
       2 AS next
   
 ) AS UNUSED_TABLE_NAME  ),
-t_1_After_MultBodyAggAux_f2 AS (SELECT * FROM (
+t_1_After_MultBodyAggAux_f3 AS (SELECT * FROM (
   
     SELECT
       After_sn_t0.book AS book,
@@ -92,10 +92,10 @@ t_1_After_MultBodyAggAux_f2 AS (SELECT * FROM (
   
 ) AS UNUSED_TABLE_NAME  ),
 t_0_After_sn_r1 AS (SELECT
-  After_MultBodyAggAux_f2.book AS book,
-  After_MultBodyAggAux_f2.next AS next
+  After_MultBodyAggAux_f3.book AS book,
+  After_MultBodyAggAux_f3.next AS next
 FROM
-  t_1_After_MultBodyAggAux_f2 AS After_MultBodyAggAux_f2
+  t_1_After_MultBodyAggAux_f3 AS After_MultBodyAggAux_f3
 GROUP BY 1, 2)
 SELECT
   After_sn_r1.book AS book,
@@ -130,7 +130,7 @@ CREATE TABLE logica_test.After_sn_t2 AS WITH t_2_Sequel AS (SELECT * FROM (
       2 AS next
   
 ) AS UNUSED_TABLE_NAME  ),
-t_1_After_MultBodyAggAux_f3 AS (SELECT * FROM (
+t_1_After_MultBodyAggAux_f4 AS (SELECT * FROM (
   
     SELECT
       After_sn_t1.book AS book,
@@ -149,10 +149,10 @@ t_1_After_MultBodyAggAux_f3 AS (SELECT * FROM (
   
 ) AS UNUSED_TABLE_NAME  ),
 t_0_After_sn_r2 AS (SELECT
-  After_MultBodyAggAux_f3.book AS book,
-  After_MultBodyAggAux_f3.next AS next
+  After_MultBodyAggAux_f4.book AS book,
+  After_MultBodyAggAux_f4.next AS next
 FROM
-  t_1_After_MultBodyAggAux_f3 AS After_MultBodyAggAux_f3
+  t_1_After_MultBodyAggAux_f4 AS After_MultBodyAggAux_f4
 GROUP BY 1, 2)
 SELECT
   After_sn_r2.book AS book,
@@ -187,7 +187,7 @@ CREATE TABLE logica_test.After_sn_t3 AS WITH t_2_Sequel AS (SELECT * FROM (
       2 AS next
   
 ) AS UNUSED_TABLE_NAME  ),
-t_1_After_MultBodyAggAux_f4 AS (SELECT * FROM (
+t_1_After_MultBodyAggAux_f5 AS (SELECT * FROM (
   
     SELECT
       After_sn_t2.book AS book,
@@ -206,10 +206,10 @@ t_1_After_MultBodyAggAux_f4 AS (SELECT * FROM (
   
 ) AS UNUSED_TABLE_NAME  ),
 t_0_After_sn_r3 AS (SELECT
-  After_MultBodyAggAux_f4.book AS book,
-  After_MultBodyAggAux_f4.next AS next
+  After_MultBodyAggAux_f5.book AS book,
+  After_MultBodyAggAux_f5.next AS next
 FROM
-  t_1_After_MultBodyAggAux_f4 AS After_MultBodyAggAux_f4
+  t_1_After_MultBodyAggAux_f5 AS After_MultBodyAggAux_f5
 GROUP BY 1, 2)
 SELECT
   After_sn_r3.book AS book,
@@ -244,7 +244,7 @@ CREATE TABLE logica_test.After_sn_t4 AS WITH t_2_Sequel AS (SELECT * FROM (
       2 AS next
   
 ) AS UNUSED_TABLE_NAME  ),
-t_1_After_MultBodyAggAux_f5 AS (SELECT * FROM (
+t_1_After_MultBodyAggAux_f6 AS (SELECT * FROM (
   
     SELECT
       After_sn_t3.book AS book,
@@ -263,10 +263,10 @@ t_1_After_MultBodyAggAux_f5 AS (SELECT * FROM (
   
 ) AS UNUSED_TABLE_NAME  ),
 t_0_After_sn_r4 AS (SELECT
-  After_MultBodyAggAux_f5.book AS book,
-  After_MultBodyAggAux_f5.next AS next
+  After_MultBodyAggAux_f6.book AS book,
+  After_MultBodyAggAux_f6.next AS next
 FROM
-  t_1_After_MultBodyAggAux_f5 AS After_MultBodyAggAux_f5
+  t_1_After_MultBodyAggAux_f6 AS After_MultBodyAggAux_f6
 GROUP BY 1, 2)
 SELECT
   After_sn_r4.book AS book,
@@ -301,7 +301,7 @@ CREATE TABLE logica_test.After_sn_t5 AS WITH t_2_Sequel AS (SELECT * FROM (
       2 AS next
   
 ) AS UNUSED_TABLE_NAME  ),
-t_1_After_MultBodyAggAux_f6 AS (SELECT * FROM (
+t_1_After_MultBodyAggAux_f7 AS (SELECT * FROM (
   
     SELECT
       After_sn_t4.book AS book,
@@ -320,10 +320,10 @@ t_1_After_MultBodyAggAux_f6 AS (SELECT * FROM (
   
 ) AS UNUSED_TABLE_NAME  ),
 t_0_After_sn_r5 AS (SELECT
-  After_MultBodyAggAux_f6.book AS book,
-  After_MultBodyAggAux_f6.next AS next
+  After_MultBodyAggAux_f7.book AS book,
+  After_MultBodyAggAux_f7.next AS next
 FROM
-  t_1_After_MultBodyAggAux_f6 AS After_MultBodyAggAux_f6
+  t_1_After_MultBodyAggAux_f7 AS After_MultBodyAggAux_f7
 GROUP BY 1, 2)
 SELECT
   After_sn_r5.book AS book,
@@ -406,7 +406,7 @@ CREATE TABLE logica_test.After_sn_new AS WITH t_2_Sequel AS (SELECT * FROM (
       2 AS next
   
 ) AS UNUSED_TABLE_NAME  ),
-t_1_After_MultBodyAggAux_f7 AS (SELECT * FROM (
+t_1_After_MultBodyAggAux_f8 AS (SELECT * FROM (
   
     SELECT
       After_sn_delta.book AS book,
@@ -425,10 +425,10 @@ t_1_After_MultBodyAggAux_f7 AS (SELECT * FROM (
   
 ) AS UNUSED_TABLE_NAME  ),
 t_0_After_sn_step AS (SELECT
-  After_MultBodyAggAux_f7.book AS book,
-  After_MultBodyAggAux_f7.next AS next
+  After_MultBodyAggAux_f8.book AS book,
+  After_MultBodyAggAux_f8.next AS next
 FROM
-  t_1_After_MultBodyAggAux_f7 AS After_MultBodyAggAux_f7
+  t_1_After_MultBodyAggAux_f8 AS After_MultBodyAggAux_f8
 GROUP BY 1, 2)
 SELECT
   After_sn_step.book AS book,
@@ -448,11 +448,68 @@ GROUP BY 1, 2;
 INSERT INTO logica_test.After_sn_full SELECT * FROM logica_test.After_sn_new;
 
 DROP TABLE IF EXISTS logica_test.After_sn_delta;
-CREATE TABLE logica_test.After_sn_delta AS SELECT
-  After_sn_new.book AS book,
-  After_sn_new.next AS next
+CREATE TABLE logica_test.After_sn_delta AS WITH t_2_Sequel AS (SELECT * FROM (
+  
+    SELECT
+      2 AS book,
+      3 AS next
+   UNION ALL
+  
+    SELECT
+      4 AS book,
+      5 AS next
+   UNION ALL
+  
+    SELECT
+      8 AS book,
+      9 AS next
+   UNION ALL
+  
+    SELECT
+      1 AS book,
+      2 AS next
+  
+) AS UNUSED_TABLE_NAME  ),
+t_1_After_MultBodyAggAux_f1 AS (SELECT * FROM (
+  
+    SELECT
+      After_sn_new.book AS book,
+      Sequel.next AS next
+    FROM
+      logica_test.After_sn_new AS After_sn_new, t_2_Sequel AS Sequel
+    WHERE
+      (Sequel.book = After_sn_new.next)
+   UNION ALL
+  
+    SELECT
+      t_2_Sequel.book AS book,
+      t_2_Sequel.next AS next
+    FROM
+      t_2_Sequel
+  
+) AS UNUSED_TABLE_NAME  ),
+t_0_After_sn_back_step AS (SELECT
+  After_MultBodyAggAux_f1.book AS book,
+  After_MultBodyAggAux_f1.next AS next
 FROM
-  logica_test.After_sn_new AS After_sn_new;
+  t_1_After_MultBodyAggAux_f1 AS After_MultBodyAggAux_f1
+GROUP BY 1, 2)
+SELECT
+  After_sn_back_step.book AS book,
+  After_sn_back_step.next AS next
+FROM
+  t_0_After_sn_back_step AS After_sn_back_step
+WHERE
+  ((SELECT
+    MIN(1) AS logica_value
+  FROM
+    logica_test.After_sn_full AS After_sn_full
+  WHERE
+    (After_sn_full.book = After_sn_back_step.book) AND
+    (After_sn_full.next = After_sn_back_step.next)) IS NULL)
+GROUP BY 1, 2;
+
+INSERT INTO logica_test.After_sn_full SELECT * FROM logica_test.After_sn_delta;
 
 DROP TABLE IF EXISTS logica_test.After_sn_new;
 CREATE TABLE logica_test.After_sn_new AS WITH t_2_Sequel AS (SELECT * FROM (
@@ -477,7 +534,7 @@ CREATE TABLE logica_test.After_sn_new AS WITH t_2_Sequel AS (SELECT * FROM (
       2 AS next
   
 ) AS UNUSED_TABLE_NAME  ),
-t_1_After_MultBodyAggAux_f7 AS (SELECT * FROM (
+t_1_After_MultBodyAggAux_f8 AS (SELECT * FROM (
   
     SELECT
       After_sn_delta.book AS book,
@@ -496,10 +553,10 @@ t_1_After_MultBodyAggAux_f7 AS (SELECT * FROM (
   
 ) AS UNUSED_TABLE_NAME  ),
 t_0_After_sn_step AS (SELECT
-  After_MultBodyAggAux_f7.book AS book,
-  After_MultBodyAggAux_f7.next AS next
+  After_MultBodyAggAux_f8.book AS book,
+  After_MultBodyAggAux_f8.next AS next
 FROM
-  t_1_After_MultBodyAggAux_f7 AS After_MultBodyAggAux_f7
+  t_1_After_MultBodyAggAux_f8 AS After_MultBodyAggAux_f8
 GROUP BY 1, 2)
 SELECT
   After_sn_step.book AS book,
@@ -519,11 +576,68 @@ GROUP BY 1, 2;
 INSERT INTO logica_test.After_sn_full SELECT * FROM logica_test.After_sn_new;
 
 DROP TABLE IF EXISTS logica_test.After_sn_delta;
-CREATE TABLE logica_test.After_sn_delta AS SELECT
-  After_sn_new.book AS book,
-  After_sn_new.next AS next
+CREATE TABLE logica_test.After_sn_delta AS WITH t_2_Sequel AS (SELECT * FROM (
+  
+    SELECT
+      2 AS book,
+      3 AS next
+   UNION ALL
+  
+    SELECT
+      4 AS book,
+      5 AS next
+   UNION ALL
+  
+    SELECT
+      8 AS book,
+      9 AS next
+   UNION ALL
+  
+    SELECT
+      1 AS book,
+      2 AS next
+  
+) AS UNUSED_TABLE_NAME  ),
+t_1_After_MultBodyAggAux_f1 AS (SELECT * FROM (
+  
+    SELECT
+      After_sn_new.book AS book,
+      Sequel.next AS next
+    FROM
+      logica_test.After_sn_new AS After_sn_new, t_2_Sequel AS Sequel
+    WHERE
+      (Sequel.book = After_sn_new.next)
+   UNION ALL
+  
+    SELECT
+      t_2_Sequel.book AS book,
+      t_2_Sequel.next AS next
+    FROM
+      t_2_Sequel
+  
+) AS UNUSED_TABLE_NAME  ),
+t_0_After_sn_back_step AS (SELECT
+  After_MultBodyAggAux_f1.book AS book,
+  After_MultBodyAggAux_f1.next AS next
 FROM
-  logica_test.After_sn_new AS After_sn_new;
+  t_1_After_MultBodyAggAux_f1 AS After_MultBodyAggAux_f1
+GROUP BY 1, 2)
+SELECT
+  After_sn_back_step.book AS book,
+  After_sn_back_step.next AS next
+FROM
+  t_0_After_sn_back_step AS After_sn_back_step
+WHERE
+  ((SELECT
+    MIN(1) AS logica_value
+  FROM
+    logica_test.After_sn_full AS After_sn_full
+  WHERE
+    (After_sn_full.book = After_sn_back_step.book) AND
+    (After_sn_full.next = After_sn_back_step.next)) IS NULL)
+GROUP BY 1, 2;
+
+INSERT INTO logica_test.After_sn_full SELECT * FROM logica_test.After_sn_delta;
 
 DROP TABLE IF EXISTS logica_test.After_sn_new;
 CREATE TABLE logica_test.After_sn_new AS WITH t_2_Sequel AS (SELECT * FROM (
@@ -548,7 +662,7 @@ CREATE TABLE logica_test.After_sn_new AS WITH t_2_Sequel AS (SELECT * FROM (
       2 AS next
   
 ) AS UNUSED_TABLE_NAME  ),
-t_1_After_MultBodyAggAux_f7 AS (SELECT * FROM (
+t_1_After_MultBodyAggAux_f8 AS (SELECT * FROM (
   
     SELECT
       After_sn_delta.book AS book,
@@ -567,10 +681,10 @@ t_1_After_MultBodyAggAux_f7 AS (SELECT * FROM (
   
 ) AS UNUSED_TABLE_NAME  ),
 t_0_After_sn_step AS (SELECT
-  After_MultBodyAggAux_f7.book AS book,
-  After_MultBodyAggAux_f7.next AS next
+  After_MultBodyAggAux_f8.book AS book,
+  After_MultBodyAggAux_f8.next AS next
 FROM
-  t_1_After_MultBodyAggAux_f7 AS After_MultBodyAggAux_f7
+  t_1_After_MultBodyAggAux_f8 AS After_MultBodyAggAux_f8
 GROUP BY 1, 2)
 SELECT
   After_sn_step.book AS book,
@@ -590,14 +704,7 @@ GROUP BY 1, 2;
 INSERT INTO logica_test.After_sn_full SELECT * FROM logica_test.After_sn_new;
 
 DROP TABLE IF EXISTS logica_test.After_sn_delta;
-CREATE TABLE logica_test.After_sn_delta AS SELECT
-  After_sn_new.book AS book,
-  After_sn_new.next AS next
-FROM
-  logica_test.After_sn_new AS After_sn_new;
-
-DROP TABLE IF EXISTS logica_test.After_sn_new;
-CREATE TABLE logica_test.After_sn_new AS WITH t_2_Sequel AS (SELECT * FROM (
+CREATE TABLE logica_test.After_sn_delta AS WITH t_2_Sequel AS (SELECT * FROM (
   
     SELECT
       2 AS book,
@@ -619,15 +726,15 @@ CREATE TABLE logica_test.After_sn_new AS WITH t_2_Sequel AS (SELECT * FROM (
       2 AS next
   
 ) AS UNUSED_TABLE_NAME  ),
-t_1_After_MultBodyAggAux_f7 AS (SELECT * FROM (
+t_1_After_MultBodyAggAux_f1 AS (SELECT * FROM (
   
     SELECT
-      After_sn_delta.book AS book,
+      After_sn_new.book AS book,
       Sequel.next AS next
     FROM
-      logica_test.After_sn_delta AS After_sn_delta, t_2_Sequel AS Sequel
+      logica_test.After_sn_new AS After_sn_new, t_2_Sequel AS Sequel
     WHERE
-      (Sequel.book = After_sn_delta.next)
+      (Sequel.book = After_sn_new.next)
    UNION ALL
   
     SELECT
@@ -637,177 +744,28 @@ t_1_After_MultBodyAggAux_f7 AS (SELECT * FROM (
       t_2_Sequel
   
 ) AS UNUSED_TABLE_NAME  ),
-t_0_After_sn_step AS (SELECT
-  After_MultBodyAggAux_f7.book AS book,
-  After_MultBodyAggAux_f7.next AS next
+t_0_After_sn_back_step AS (SELECT
+  After_MultBodyAggAux_f1.book AS book,
+  After_MultBodyAggAux_f1.next AS next
 FROM
-  t_1_After_MultBodyAggAux_f7 AS After_MultBodyAggAux_f7
+  t_1_After_MultBodyAggAux_f1 AS After_MultBodyAggAux_f1
 GROUP BY 1, 2)
 SELECT
-  After_sn_step.book AS book,
-  After_sn_step.next AS next
+  After_sn_back_step.book AS book,
+  After_sn_back_step.next AS next
 FROM
-  t_0_After_sn_step AS After_sn_step
+  t_0_After_sn_back_step AS After_sn_back_step
 WHERE
   ((SELECT
     MIN(1) AS logica_value
   FROM
     logica_test.After_sn_full AS After_sn_full
   WHERE
-    (After_sn_full.book = After_sn_step.book) AND
-    (After_sn_full.next = After_sn_step.next)) IS NULL)
+    (After_sn_full.book = After_sn_back_step.book) AND
+    (After_sn_full.next = After_sn_back_step.next)) IS NULL)
 GROUP BY 1, 2;
 
-INSERT INTO logica_test.After_sn_full SELECT * FROM logica_test.After_sn_new;
-
-DROP TABLE IF EXISTS logica_test.After_sn_delta;
-CREATE TABLE logica_test.After_sn_delta AS SELECT
-  After_sn_new.book AS book,
-  After_sn_new.next AS next
-FROM
-  logica_test.After_sn_new AS After_sn_new;
-
-DROP TABLE IF EXISTS logica_test.After_sn_new;
-CREATE TABLE logica_test.After_sn_new AS WITH t_2_Sequel AS (SELECT * FROM (
-  
-    SELECT
-      2 AS book,
-      3 AS next
-   UNION ALL
-  
-    SELECT
-      4 AS book,
-      5 AS next
-   UNION ALL
-  
-    SELECT
-      8 AS book,
-      9 AS next
-   UNION ALL
-  
-    SELECT
-      1 AS book,
-      2 AS next
-  
-) AS UNUSED_TABLE_NAME  ),
-t_1_After_MultBodyAggAux_f7 AS (SELECT * FROM (
-  
-    SELECT
-      After_sn_delta.book AS book,
-      Sequel.next AS next
-    FROM
-      logica_test.After_sn_delta AS After_sn_delta, t_2_Sequel AS Sequel
-    WHERE
-      (Sequel.book = After_sn_delta.next)
-   UNION ALL
-  
-    SELECT
-      t_2_Sequel.book AS book,
-      t_2_Sequel.next AS next
-    FROM
-      t_2_Sequel
-  
-) AS UNUSED_TABLE_NAME  ),
-t_0_After_sn_step AS (SELECT
-  After_MultBodyAggAux_f7.book AS book,
-  After_MultBodyAggAux_f7.next AS next
-FROM
-  t_1_After_MultBodyAggAux_f7 AS After_MultBodyAggAux_f7
-GROUP BY 1, 2)
-SELECT
-  After_sn_step.book AS book,
-  After_sn_step.next AS next
-FROM
-  t_0_After_sn_step AS After_sn_step
-WHERE
-  ((SELECT
-    MIN(1) AS logica_value
-  FROM
-    logica_test.After_sn_full AS After_sn_full
-  WHERE
-    (After_sn_full.book = After_sn_step.book) AND
-    (After_sn_full.next = After_sn_step.next)) IS NULL)
-GROUP BY 1, 2;
-
-INSERT INTO logica_test.After_sn_full SELECT * FROM logica_test.After_sn_new;
-
-DROP TABLE IF EXISTS logica_test.After_sn_delta;
-CREATE TABLE logica_test.After_sn_delta AS SELECT
-  After_sn_new.book AS book,
-  After_sn_new.next AS next
-FROM
-  logica_test.After_sn_new AS After_sn_new;
-
-DROP TABLE IF EXISTS logica_test.After_sn_new;
-CREATE TABLE logica_test.After_sn_new AS WITH t_2_Sequel AS (SELECT * FROM (
-  
-    SELECT
-      2 AS book,
-      3 AS next
-   UNION ALL
-  
-    SELECT
-      4 AS book,
-      5 AS next
-   UNION ALL
-  
-    SELECT
-      8 AS book,
-      9 AS next
-   UNION ALL
-  
-    SELECT
-      1 AS book,
-      2 AS next
-  
-) AS UNUSED_TABLE_NAME  ),
-t_1_After_MultBodyAggAux_f7 AS (SELECT * FROM (
-  
-    SELECT
-      After_sn_delta.book AS book,
-      Sequel.next AS next
-    FROM
-      logica_test.After_sn_delta AS After_sn_delta, t_2_Sequel AS Sequel
-    WHERE
-      (Sequel.book = After_sn_delta.next)
-   UNION ALL
-  
-    SELECT
-      t_2_Sequel.book AS book,
-      t_2_Sequel.next AS next
-    FROM
-      t_2_Sequel
-  
-) AS UNUSED_TABLE_NAME  ),
-t_0_After_sn_step AS (SELECT
-  After_MultBodyAggAux_f7.book AS book,
-  After_MultBodyAggAux_f7.next AS next
-FROM
-  t_1_After_MultBodyAggAux_f7 AS After_MultBodyAggAux_f7
-GROUP BY 1, 2)
-SELECT
-  After_sn_step.book AS book,
-  After_sn_step.next AS next
-FROM
-  t_0_After_sn_step AS After_sn_step
-WHERE
-  ((SELECT
-    MIN(1) AS logica_value
-  FROM
-    logica_test.After_sn_full AS After_sn_full
-  WHERE
-    (After_sn_full.book = After_sn_step.book) AND
-    (After_sn_full.next = After_sn_step.next)) IS NULL)
-GROUP BY 1, 2;
-
-INSERT INTO logica_test.After_sn_full SELECT * FROM logica_test.After_sn_new;
-
-DROP TABLE IF EXISTS logica_test.After_sn_delta;
-CREATE TABLE logica_test.After_sn_delta AS SELECT
-  After_sn_new.book AS book,
-  After_sn_new.next AS next
-FROM
-  logica_test.After_sn_new AS After_sn_new;
+INSERT INTO logica_test.After_sn_full SELECT * FROM logica_test.After_sn_delta;
 
 WITH t_2_Sequel AS (SELECT * FROM (
   

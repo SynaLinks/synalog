@@ -1,14 +1,14 @@
 DROP TABLE IF EXISTS logica_test.R_sn_delta;
-CREATE TABLE logica_test.R_sn_delta AS WITH t_0_R_MultBodyAggAux_f1 AS (SELECT * FROM (
+CREATE TABLE logica_test.R_sn_delta AS WITH t_0_R_MultBodyAggAux_f2 AS (SELECT * FROM (
   
     SELECT
       1 AS x
   
 ) AS UNUSED_TABLE_NAME  )
 SELECT
-  R_MultBodyAggAux_f1.x AS x
+  R_MultBodyAggAux_f2.x AS x
 FROM
-  t_0_R_MultBodyAggAux_f1 AS R_MultBodyAggAux_f1
+  t_0_R_MultBodyAggAux_f2 AS R_MultBodyAggAux_f2
 GROUP BY 1;
 
 -- Interacting with table logica_test.R_sn_delta
@@ -31,7 +31,7 @@ CREATE TABLE logica_test.R_sn_t1 AS WITH t_2_E AS (SELECT * FROM VALUES
   (4, 1, 2),
   (4, 5, 7)
 AS UNUSED_TABLE_NAME(a, b, w)),
-t_1_R_MultBodyAggAux_f2 AS (SELECT * FROM (
+t_1_R_MultBodyAggAux_f3 AS (SELECT * FROM (
   
     SELECT
       1 AS x
@@ -46,9 +46,9 @@ t_1_R_MultBodyAggAux_f2 AS (SELECT * FROM (
   
 ) AS UNUSED_TABLE_NAME  ),
 t_0_R_sn_r1 AS (SELECT
-  R_MultBodyAggAux_f2.x AS x
+  R_MultBodyAggAux_f3.x AS x
 FROM
-  t_1_R_MultBodyAggAux_f2 AS R_MultBodyAggAux_f2
+  t_1_R_MultBodyAggAux_f3 AS R_MultBodyAggAux_f3
 GROUP BY 1)
 SELECT
   R_sn_r1.x AS x
@@ -67,7 +67,7 @@ CREATE TABLE logica_test.R_sn_t2 AS WITH t_2_E AS (SELECT * FROM VALUES
   (4, 1, 2),
   (4, 5, 7)
 AS UNUSED_TABLE_NAME(a, b, w)),
-t_1_R_MultBodyAggAux_f3 AS (SELECT * FROM (
+t_1_R_MultBodyAggAux_f4 AS (SELECT * FROM (
   
     SELECT
       1 AS x
@@ -82,9 +82,9 @@ t_1_R_MultBodyAggAux_f3 AS (SELECT * FROM (
   
 ) AS UNUSED_TABLE_NAME  ),
 t_0_R_sn_r2 AS (SELECT
-  R_MultBodyAggAux_f3.x AS x
+  R_MultBodyAggAux_f4.x AS x
 FROM
-  t_1_R_MultBodyAggAux_f3 AS R_MultBodyAggAux_f3
+  t_1_R_MultBodyAggAux_f4 AS R_MultBodyAggAux_f4
 GROUP BY 1)
 SELECT
   R_sn_r2.x AS x
@@ -103,7 +103,7 @@ CREATE TABLE logica_test.R_sn_t3 AS WITH t_2_E AS (SELECT * FROM VALUES
   (4, 1, 2),
   (4, 5, 7)
 AS UNUSED_TABLE_NAME(a, b, w)),
-t_1_R_MultBodyAggAux_f4 AS (SELECT * FROM (
+t_1_R_MultBodyAggAux_f5 AS (SELECT * FROM (
   
     SELECT
       1 AS x
@@ -118,9 +118,9 @@ t_1_R_MultBodyAggAux_f4 AS (SELECT * FROM (
   
 ) AS UNUSED_TABLE_NAME  ),
 t_0_R_sn_r3 AS (SELECT
-  R_MultBodyAggAux_f4.x AS x
+  R_MultBodyAggAux_f5.x AS x
 FROM
-  t_1_R_MultBodyAggAux_f4 AS R_MultBodyAggAux_f4
+  t_1_R_MultBodyAggAux_f5 AS R_MultBodyAggAux_f5
 GROUP BY 1)
 SELECT
   R_sn_r3.x AS x
@@ -169,7 +169,7 @@ CREATE TABLE logica_test.R_sn_new AS WITH t_2_E AS (SELECT * FROM VALUES
   (4, 1, 2),
   (4, 5, 7)
 AS UNUSED_TABLE_NAME(a, b, w)),
-t_1_R_MultBodyAggAux_f5 AS (SELECT * FROM (
+t_1_R_MultBodyAggAux_f6 AS (SELECT * FROM (
   
     SELECT
       1 AS x
@@ -184,9 +184,9 @@ t_1_R_MultBodyAggAux_f5 AS (SELECT * FROM (
   
 ) AS UNUSED_TABLE_NAME  ),
 t_0_R_sn_step AS (SELECT
-  R_MultBodyAggAux_f5.x AS x
+  R_MultBodyAggAux_f6.x AS x
 FROM
-  t_1_R_MultBodyAggAux_f5 AS R_MultBodyAggAux_f5
+  t_1_R_MultBodyAggAux_f6 AS R_MultBodyAggAux_f6
 GROUP BY 1)
 SELECT
   R_sn_step.x AS x
@@ -204,20 +204,14 @@ GROUP BY 1;
 INSERT INTO logica_test.R_sn_full SELECT * FROM logica_test.R_sn_new;
 
 DROP TABLE IF EXISTS logica_test.R_sn_delta;
-CREATE TABLE logica_test.R_sn_delta AS SELECT
-  R_sn_new.x AS x
-FROM
-  logica_test.R_sn_new AS R_sn_new;
-
-DROP TABLE IF EXISTS logica_test.R_sn_new;
-CREATE TABLE logica_test.R_sn_new AS WITH t_2_E AS (SELECT * FROM VALUES
+CREATE TABLE logica_test.R_sn_delta AS WITH t_2_E AS (SELECT * FROM VALUES
   (1, 2, 2),
   (2, 3, 2),
   (3, 4, 2),
   (4, 1, 2),
   (4, 5, 7)
 AS UNUSED_TABLE_NAME(a, b, w)),
-t_1_R_MultBodyAggAux_f5 AS (SELECT * FROM (
+t_1_R_MultBodyAggAux_f1 AS (SELECT * FROM (
   
     SELECT
       1 AS x
@@ -226,36 +220,30 @@ t_1_R_MultBodyAggAux_f5 AS (SELECT * FROM (
     SELECT
       E.b AS x
     FROM
-      logica_test.R_sn_delta AS R_sn_delta, t_2_E AS E
+      logica_test.R_sn_new AS R_sn_new, t_2_E AS E
     WHERE
-      (E.a = R_sn_delta.x)
+      (E.a = R_sn_new.x)
   
 ) AS UNUSED_TABLE_NAME  ),
-t_0_R_sn_step AS (SELECT
-  R_MultBodyAggAux_f5.x AS x
+t_0_R_sn_back_step AS (SELECT
+  R_MultBodyAggAux_f1.x AS x
 FROM
-  t_1_R_MultBodyAggAux_f5 AS R_MultBodyAggAux_f5
+  t_1_R_MultBodyAggAux_f1 AS R_MultBodyAggAux_f1
 GROUP BY 1)
 SELECT
-  R_sn_step.x AS x
+  R_sn_back_step.x AS x
 FROM
-  t_0_R_sn_step AS R_sn_step
+  t_0_R_sn_back_step AS R_sn_back_step
 WHERE
   ((SELECT
     MIN(1) AS logica_value
   FROM
     logica_test.R_sn_full AS R_sn_full
   WHERE
-    (R_sn_full.x = R_sn_step.x)) IS NULL)
+    (R_sn_full.x = R_sn_back_step.x)) IS NULL)
 GROUP BY 1;
 
-INSERT INTO logica_test.R_sn_full SELECT * FROM logica_test.R_sn_new;
-
-DROP TABLE IF EXISTS logica_test.R_sn_delta;
-CREATE TABLE logica_test.R_sn_delta AS SELECT
-  R_sn_new.x AS x
-FROM
-  logica_test.R_sn_new AS R_sn_new;
+INSERT INTO logica_test.R_sn_full SELECT * FROM logica_test.R_sn_delta;
 
 SELECT
   R_sn_full.x AS x

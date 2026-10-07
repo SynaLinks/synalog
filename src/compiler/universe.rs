@@ -1702,7 +1702,7 @@ impl LogicaProgram {
             if loop_only.contains(table) {
                 let i = iteration_of[table];
                 let iteration = &iterations[i].1;
-                order.push(self.semi_naive_loop(iteration, exports)?);
+                order.extend(self.semi_naive_loop(iteration, exports)?);
                 for p in &iteration.predicates {
                     if let Some(t) = table_set.get(p) {
                         done.insert(*t);
@@ -1731,28 +1731,41 @@ impl LogicaProgram {
         Ok(order)
     }
 
-    /// The loop of a semi-naive iteration: the new rows from the delta, added
-    /// to the accumulated table, then made the next delta; until the delta is
-    /// empty, `repetitions` times at most.
-    fn semi_naive_loop(&self, iteration: &IterationDef, exports: &HashMap<String, String>) -> CompileResult<PlanStep> {
+    /// The loop of a semi-naive iteration. Each step computes the rows the
+    /// recursion derives from the last step's new rows, less those it has,
+    /// and adds them to the accumulated table. The steps alternate two tables
+    /// (the delta's and the new rows'), each step reading one and writing the
+    /// other, so that no step copies one into the other: a repetition is two
+    /// steps, and the loop stops when the delta's table is empty. An odd
+    /// number of steps ends with one more step after the loop (adding nothing
+    /// when the loop converged).
+    fn semi_naive_loop(&self, iteration: &IterationDef, exports: &HashMap<String, String>) -> CompileResult<Vec<PlanStep>> {
         let table = |p: &String| {
             self.annotations
                 .ground(p)
                 .map(|g| g.table_name)
                 .ok_or_else(|| CompileError::new(format!("The iteration's table {} is not grounded.", p), p))
         };
-        let (new, next) = (&iteration.predicates[0], &iteration.predicates[1]);
+        let (new, back) = (&iteration.predicates[0], &iteration.predicates[1]);
         let full = iteration.accumulate.as_ref().expect("a semi-naive iteration");
-        let accumulate = format!("INSERT INTO {} SELECT * FROM {};", table(full)?, table(new)?);
-        Ok(PlanStep::Loop {
+        let accumulate = |from: &String| -> CompileResult<String> {
+            Ok(format!("INSERT INTO {} SELECT * FROM {};", table(full)?, table(from)?))
+        };
+        let mut steps = vec![PlanStep::Loop {
             body: vec![
                 exports[new].clone(),
-                accumulate,
-                exports[next].clone(),
+                accumulate(new)?,
+                exports[back].clone(),
+                accumulate(back)?,
             ],
-            repetitions: iteration.repetitions,
-            changed: format!("SELECT COUNT(*) AS changed FROM {}", table(next)?),
-        })
+            repetitions: iteration.repetitions / 2,
+            changed: format!("SELECT COUNT(*) AS changed FROM {}", table(back)?),
+        }];
+        if iteration.repetitions % 2 == 1 {
+            steps.push(PlanStep::Sql(exports[new].clone()));
+            steps.push(PlanStep::Sql(accumulate(new)?));
+        }
+        Ok(steps)
     }
 
     /// The query telling whether one more repetition of an iteration would

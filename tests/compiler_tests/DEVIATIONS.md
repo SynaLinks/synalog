@@ -732,6 +732,12 @@ the accumulated table is created from the base rows and that many steps
 applied to empty tables, of the widest types from the start, and every
 step's new rows are inserted, in linear time, on every engine.
 
+A step reads the last step's new rows and writes its own into the other of
+two tables, which the steps alternate: no step copies its new rows into the
+table the next one reads, and whether a step changed anything is counted once
+every two steps. On Trino, Presto and Spark, where each statement of a loop
+costs a query's fixed overhead, a step is three statements instead of six.
+
 ## A value computed once
 
 A variable is replaced by its value wherever it is used, so a rule defining
