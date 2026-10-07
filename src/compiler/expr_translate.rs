@@ -4,6 +4,7 @@
 // Modifications: Copyright 2025-2026 Yoan Sallami (Synalinks Team), licensed under the Apache License, Version 2.0.
 
 use std::collections::{HashMap, HashSet};
+use std::sync::{Arc, Mutex, OnceLock};
 use crate::parser::Json;
 use crate::compiler::CompileResult;
 use crate::compiler::CompileError;
@@ -84,10 +85,16 @@ fn to_camel_case(s: &str) -> String {
         .collect()
 }
 
+/// Bulk StandardSQL functions from processed_functions.csv, built once.
+fn bulk_built_in_functions() -> &'static HashMap<String, String> {
+    static BULK: OnceLock<HashMap<String, String>> = OnceLock::new();
+    BULK.get_or_init(build_bulk_built_in_functions)
+}
+
 /// Bulk StandardSQL functions from processed_functions.csv.
 /// Format: function,sql_function,aggregates,has_repeated_args,min_args,max_args
 /// Rows starting with `$` are operators (skipped here).
-fn bulk_built_in_functions() -> HashMap<String, String> {
+fn build_bulk_built_in_functions() -> HashMap<String, String> {
     let csv_data = "\
 abs,ABS
 acos,ACOS
@@ -375,6 +382,38 @@ var_samp,VAR_SAMP";
     m
 }
 
+/// A dialect's function and infix operator templates: bulk functions, then
+/// the base built-ins (overriding bulk), then the dialect's (overriding all),
+/// without the ones a dialect disables with an empty template. Built once per
+/// dialect: every rule's translator reads them.
+#[allow(clippy::type_complexity)]
+fn dialect_tables(dialect: &dyn Dialect) -> (Arc<HashMap<String, String>>, Arc<HashMap<String, String>>) {
+    static TABLES: OnceLock<Mutex<HashMap<&'static str, (Arc<HashMap<String, String>>, Arc<HashMap<String, String>>)>>> = OnceLock::new();
+    let cache = TABLES.get_or_init(|| Mutex::new(HashMap::new()));
+    let mut cache = cache.lock().unwrap_or_else(|e| e.into_inner());
+    cache.entry(dialect.name()).or_insert_with(|| {
+        let mut functions = bulk_built_in_functions().clone();
+        for (k, v) in base_built_in_functions() {
+            functions.insert(k.to_string(), v.to_string());
+        }
+        for (k, v) in dialect.built_in_functions() {
+            functions.insert(k.to_string(), v.to_string());
+        }
+        let mut infix: HashMap<String, String> = base_infix_operators()
+            .into_iter()
+            .map(|(k, v)| (k.to_string(), v.to_string()))
+            .collect();
+        for (k, v) in dialect.infix_operators() {
+            infix.insert(k.to_string(), v.to_string());
+        }
+        // CleanOperatorsAndFunctions: remove entries with empty/None values
+        // (dialect overrides can set a value to "" to disable a function)
+        functions.retain(|_, v| !v.is_empty());
+        infix.retain(|_, v| !v.is_empty());
+        (Arc::new(functions), Arc::new(infix))
+    }).clone()
+}
+
 /// Built-in functions: Logica name → SQL template.
 /// These override bulk functions for Logica-specific semantics.
 // Note: SomeValue uses ANY_VALUE in Rust vs ARRAY_AGG(... IGNORE NULLS LIMIT 1)[OFFSET(0)] in Python.
@@ -532,8 +571,8 @@ pub trait SubqueryTranslator {
 pub struct ExprTranslator<'a> {
     pub vocabulary: HashMap<String, String>,
     pub dialect: &'a dyn Dialect,
-    built_in_functions: HashMap<String, String>,
-    built_in_infix_operators: HashMap<String, String>,
+    built_in_functions: Arc<HashMap<String, String>>,
+    built_in_infix_operators: Arc<HashMap<String, String>>,
     pub flag_values: &'a HashMap<String, String>,
     pub subquery_translator: Option<&'a dyn SubqueryTranslator>,
     /// The value field name based on compilation mode ("logica_value" or "synalog_value")
@@ -562,28 +601,7 @@ impl<'a> ExprTranslator<'a> {
         flag_values: &'a HashMap<String, String>,
         value_field: &'static str,
     ) -> Self {
-        // Layer: bulk functions → base built-in (overrides bulk) → dialect (overrides all).
-        let mut functions = bulk_built_in_functions();
-        for (k, v) in base_built_in_functions() {
-            functions.insert(k.to_string(), v.to_string());
-        }
-        for (k, v) in dialect.built_in_functions() {
-            functions.insert(k.to_string(), v.to_string());
-        }
-
-        let mut infix: HashMap<String, String> = base_infix_operators()
-            .into_iter()
-            .map(|(k, v)| (k.to_string(), v.to_string()))
-            .collect();
-        for (k, v) in dialect.infix_operators() {
-            infix.insert(k.to_string(), v.to_string());
-        }
-
-        // CleanOperatorsAndFunctions: remove entries with empty/None values
-        // (dialect overrides can set a value to "" to disable a function)
-        functions.retain(|_, v| !v.is_empty());
-        infix.retain(|_, v| !v.is_empty());
-
+        let (functions, infix) = dialect_tables(dialect);
         ExprTranslator {
             vocabulary,
             dialect,
@@ -1955,9 +1973,16 @@ impl<'a> ExprTranslator<'a> {
     }
 
     /// Return the set of all "basis" function names that the ExprTranslator can
-    /// handle natively (without needing subquery translation).
-    /// Matches Python's `QL.BasisFunctions()`.
-    pub fn basis_functions(dialect: &dyn Dialect) -> HashSet<String> {
+    /// handle natively (without needing subquery translation), built once per
+    /// dialect. Matches Python's `QL.BasisFunctions()`.
+    pub fn basis_functions(dialect: &dyn Dialect) -> Arc<HashSet<String>> {
+        static BASIS: OnceLock<Mutex<HashMap<&'static str, Arc<HashSet<String>>>>> = OnceLock::new();
+        let cache = BASIS.get_or_init(|| Mutex::new(HashMap::new()));
+        let mut cache = cache.lock().unwrap_or_else(|e| e.into_inner());
+        cache.entry(dialect.name()).or_insert_with(|| Arc::new(Self::build_basis_functions(dialect))).clone()
+    }
+
+    fn build_basis_functions(dialect: &dyn Dialect) -> HashSet<String> {
         let mut names = HashSet::new();
         // Bulk functions
         for k in bulk_built_in_functions().keys() {

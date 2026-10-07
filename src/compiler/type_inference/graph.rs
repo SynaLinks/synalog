@@ -8,16 +8,17 @@
 //! Ported from Python: type_inference/types/types_graph.py
 
 use super::edge::Edge;
-use std::collections::{HashMap, HashSet};
+use std::collections::HashSet;
 
 /// Graph storing type inference edges between expressions.
 #[derive(Debug, Clone, Default)]
 pub struct TypesGraph {
-    /// Map from expression to connected expressions and their edges.
-    /// expression_connections[expr1][expr2] = list of edges between expr1 and expr2
-    expression_connections: HashMap<String, HashMap<String, Vec<Edge>>>,
-    /// All edges in the graph.
-    edges: HashSet<EdgeKey>,
+    /// The edges, each once, in the order they were connected.
+    edges: Vec<Edge>,
+    /// The keys of the edges, to connect each once.
+    keys: HashSet<EdgeKey>,
+    /// The expressions the edges connect, by their text.
+    expressions: HashSet<String>,
 }
 
 /// Key for deduplicating edges.
@@ -30,13 +31,11 @@ struct EdgeKey {
 }
 
 impl EdgeKey {
-    fn from_edge(edge: &Edge) -> Self {
-        let (v1, v2) = edge.vertices();
-        let mut strs = vec![v1.to_string(), v2.to_string()];
-        strs.sort();
+    fn new(edge: &Edge, first: String, second: String) -> Self {
+        let (v1, v2) = if first <= second { (first, second) } else { (second, first) };
         Self {
-            v1: strs[0].clone(),
-            v2: strs[1].clone(),
+            v1,
+            v2,
             bounds: edge.bounds(),
             discriminant: std::mem::discriminant(edge),
         }
@@ -51,70 +50,40 @@ impl TypesGraph {
 
     /// Connect two expressions with an edge.
     pub fn connect(&mut self, edge: Edge) {
-        let key = EdgeKey::from_edge(&edge);
-        if self.edges.contains(&key) {
+        let (first, second) = edge.vertices();
+        let (first, second) = (first.to_string(), second.to_string());
+        let key = EdgeKey::new(&edge, first.clone(), second.clone());
+        if !self.keys.insert(key) {
             return; // Already have this edge
         }
-        self.edges.insert(key);
-
-        let (first, second) = edge.vertices();
-        let first_key = first.to_string();
-        let second_key = second.to_string();
-
-        // Add edge in both directions
-        self.expression_connections
-            .entry(first_key.clone())
-            .or_default()
-            .entry(second_key.clone())
-            .or_default()
-            .push(edge.clone());
-
-        self.expression_connections
-            .entry(second_key)
-            .or_default()
-            .entry(first_key)
-            .or_default()
-            .push(edge);
+        self.expressions.insert(first);
+        self.expressions.insert(second);
+        self.edges.push(edge);
     }
 
     /// Get all edges in the graph.
     pub fn to_edges_vec(&self) -> Vec<Edge> {
-        let mut seen = HashSet::new();
-        let mut result = Vec::new();
-
-        for connections in self.expression_connections.values() {
-            for edges in connections.values() {
-                for edge in edges {
-                    let key = EdgeKey::from_edge(edge);
-                    if !seen.contains(&key) {
-                        seen.insert(key);
-                        result.push(edge.clone());
-                    }
-                }
-            }
-        }
-
-        result
+        self.edges.clone()
     }
 
-    /// Get connections for a specific expression.
-    pub fn connections_for(&self, expr: &str) -> Option<&HashMap<String, Vec<Edge>>> {
-        self.expression_connections.get(expr)
+    /// The edges in the graph, in the order they were connected.
+    pub fn edges(&self) -> &[Edge] {
+        &self.edges
     }
 
     /// Check if an expression exists in the graph.
     pub fn contains_expression(&self, expr: &str) -> bool {
-        self.expression_connections.contains_key(expr)
+        self.expressions.contains(expr)
     }
 
     /// Get all expression keys in the graph.
     pub fn expressions(&self) -> impl Iterator<Item = &String> {
-        self.expression_connections.keys()
+        self.expressions.iter()
     }
 
     /// Merge another graph into this one.
     pub fn merge(&mut self, other: TypesGraph) {
-        for edge in other.to_edges_vec() {
+        for edge in other.edges {
             self.connect(edge);
         }
     }

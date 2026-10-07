@@ -111,7 +111,7 @@ pub fn builtin_function_names() -> &'static HashSet<String> {
         let mut names = HashSet::new();
         for engine in dialects::SUPPORTED_ENGINES {
             if let Ok(dialect) = dialects::get(engine) {
-                names.extend(ExprTranslator::basis_functions(dialect.as_ref()));
+                names.extend(ExprTranslator::basis_functions(dialect.as_ref()).iter().cloned());
             }
         }
         names

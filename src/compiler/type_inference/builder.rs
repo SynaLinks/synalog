@@ -73,13 +73,19 @@ impl TypesGraphBuilder {
     /// Build type graphs from a parsed program.
     /// Returns a map from predicate name to its type graph.
     pub fn run(&mut self, parsed_program: &Json) -> HashMap<String, TypesGraph> {
+        match parsed_program.as_object().get("rule") {
+            Some(rules) => self.run_rules(rules.as_array().iter()),
+            None => {
+                self.reset();
+                HashMap::new()
+            }
+        }
+    }
+
+    /// The type graphs of the predicates the rules define.
+    pub fn run_rules<'r>(&mut self, rules: impl IntoIterator<Item = &'r Json>) -> HashMap<String, TypesGraph> {
         self.reset();
         let mut graphs: HashMap<String, TypesGraph> = HashMap::new();
-
-        let rules = match parsed_program.as_object().get("rule") {
-            Some(r) => r.as_array(),
-            None => return graphs,
-        };
 
         for rule in rules {
             let head = match rule.as_object().get("head") {

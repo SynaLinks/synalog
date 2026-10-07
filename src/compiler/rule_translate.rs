@@ -405,18 +405,17 @@ impl RuleStructure {
                     if k_expr == r_expr {
                         continue;
                     }
-                    let r_vars = {
-                        let mut s = HashSet::new();
-                        all_mentioned_variables(r_expr, &mut s);
-                        s
-                    };
-                    let r_vars_incl_combines = {
-                        let mut s = HashSet::new();
-                        all_mentioned_variables_impl(r_expr, &mut s, true);
-                        s
-                    };
-
-                    if let Some(var_name) = extract_var_name(k_expr) {
+                    if let Some(var_name) = extract_var_name(k_expr).filter(|v| variables.contains(v)) {
+                        let r_vars = {
+                            let mut s = HashSet::new();
+                            all_mentioned_variables(r_expr, &mut s);
+                            s
+                        };
+                        let r_vars_incl_combines = {
+                            let mut s = HashSet::new();
+                            all_mentioned_variables_impl(r_expr, &mut s, true);
+                            s
+                        };
                         if variables.contains(&var_name)
                             && !r_vars_incl_combines.contains(&var_name)
                             && (is_subset(&r_vars, &self.extracted_variables())
@@ -427,10 +426,10 @@ impl RuleStructure {
                             // defined from another (`b == a + a, c == b + b`):
                             // it is computed once, as the one element of a
                             // list unnested, and the variable is that element.
-                            let defining = count_variable(&left, &var_name) + count_variable(&right, &var_name);
-                            let replacement = if expression_size(r_expr) > LARGE_EXPRESSION
-                                && self.variable_uses(&var_name) - defining > 1
-                            {
+                            let replacement = if expression_size(r_expr) > LARGE_EXPRESSION && {
+                                let defining = count_variable(&left, &var_name) + count_variable(&right, &var_name);
+                                self.variable_uses(&var_name) - defining > 1
+                            } {
                                 let alias = self.allocator.alloc_var();
                                 self.inv_vars_map.insert(alias.clone(), ("".to_string(), alias.clone()));
                                 self.unnestings.push((alias.clone(), crate::json_obj!(
@@ -822,18 +821,23 @@ impl RuleStructure {
     }
 }
 
-/// Set of known built-in function names (not user-defined predicates).
-fn built_in_function_names() -> HashSet<String> {
+/// Set of known built-in function names (not user-defined predicates), built once.
+fn built_in_function_names() -> &'static HashSet<String> {
+    static NAMES: std::sync::OnceLock<HashSet<String>> = std::sync::OnceLock::new();
+    NAMES.get_or_init(build_built_in_function_names)
+}
+
+fn build_built_in_function_names() -> HashSet<String> {
     use crate::compiler::expr_translate::{ExprTranslator};
     use crate::compiler::dialects;
     // Use the basis_functions from the default dialect (bigquery) as a starting point.
     // All dialect-independent built-in functions are the same across dialects.
     let dialect = dialects::get("bigquery").unwrap_or_else(|_| dialects::get("sqlite").unwrap());
-    let mut s = ExprTranslator::basis_functions(dialect.as_ref());
+    let mut s = (*ExprTranslator::basis_functions(dialect.as_ref())).clone();
     // Also add basis functions from other dialects to be safe
     for engine in &["sqlite", "psql", "duckdb"] {
         if let Ok(d) = dialects::get(engine) {
-            s.extend(ExprTranslator::basis_functions(d.as_ref()));
+            s.extend(ExprTranslator::basis_functions(d.as_ref()).iter().cloned());
         }
     }
     s
@@ -843,12 +847,11 @@ fn built_in_function_names() -> HashSet<String> {
 /// Converts calls to user-defined predicates in value position into body table references.
 /// E.g., `F() = T1()` → `F(logica_value: x) :- T1(logica_value: x)`
 pub fn inline_predicate_values(rule: &mut Json, allocator: &mut NamesAllocator) {
-    let mut known = built_in_function_names();
-    for f in &allocator.defined_functions {
-        known.remove(f);
-    }
+    // A function the program defines is not a built-in, even of a built-in's
+    // name: checked where a call is met (see inline_predicate_values_recursive).
+    let known = built_in_function_names();
     let mut extra_conjuncts = Vec::new();
-    inline_predicate_values_recursive(rule, &mut extra_conjuncts, allocator, &known);
+    inline_predicate_values_recursive(rule, &mut extra_conjuncts, allocator, known);
 
     if !extra_conjuncts.is_empty() {
         let ro = rule.as_object_mut();
@@ -897,7 +900,7 @@ fn inline_predicate_values_recursive(
                 call.as_object()["predicate_name"].as_str().to_string()
             });
             if let Some(pred_name) = pred_name_opt {
-                if !known_functions.contains(pred_name.as_str()) {
+                if !known_functions.contains(pred_name.as_str()) || allocator.defined_functions.contains(&pred_name) {
                     // Convert to body table reference
                     let aux_var = allocator.alloc_var();
 
@@ -1024,11 +1027,8 @@ fn replace_variable(old_var: &str, new_expr: &Json, node: &mut Json) {
                     *current = new_expr.clone();
                     continue;
                 }
-                let keys: Vec<String> = o.keys().cloned().collect();
-                for key in keys {
-                    if let Some(v) = o.get_mut(&key) {
-                        stack.push(v as *mut Json);
-                    }
+                for v in o.values_mut() {
+                    stack.push(v as *mut Json);
                 }
             }
             Json::Array(a) => {

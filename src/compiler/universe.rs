@@ -599,25 +599,20 @@ impl LogicaProgram {
         let lib_program = dialect.library_program();
         let mut all_rules = extended_rules;
         let mut library_predicates = HashSet::new();
-        if !lib_program.is_empty() {
-            if let Ok(lib_parsed) = crate::parser::parse_file(lib_program, None, &[]) {
-                for r in lib_parsed.as_object()["rule"].as_array() {
-                    library_predicates.insert(
-                        r.as_object()["head"].as_object()["predicate_name"]
-                            .as_str()
-                            .to_string(),
-                    );
-                    all_rules.push(r.clone());
-                }
-            }
+        for r in library_rules(dialect.name(), lib_program).iter() {
+            library_predicates.insert(
+                r.as_object()["head"].as_object()["predicate_name"]
+                    .as_str()
+                    .to_string(),
+            );
+            all_rules.push(r.clone());
         }
 
         // Build (predicate_name, rule) pairs
         let mut rules = Vec::with_capacity(all_rules.len());
-        for rule in &all_rules {
-            let head = &rule.as_object()["head"];
-            let name = head.as_object()["predicate_name"].as_str().to_string();
-            rules.push((name, rule.clone()));
+        for rule in all_rules {
+            let name = rule.as_object()["head"].as_object()["predicate_name"].as_str().to_string();
+            rules.push((name, rule));
         }
 
         // Extract annotations (recompute after functors added rules)
@@ -670,10 +665,9 @@ impl LogicaProgram {
 
         let column_names: HashSet<String> = rules
             .iter()
-            .filter_map(|(_, rule)| rule.as_object()["head"].as_object().get("record").cloned())
-            .flat_map(|record| {
-                record.as_object().get("field_value").map(|f| f.as_array().clone()).unwrap_or_default()
-            })
+            .filter_map(|(_, rule)| rule.as_object()["head"].as_object().get("record"))
+            .filter_map(|record| record.as_object().get("field_value"))
+            .flat_map(|field_values| field_values.as_array().iter())
             .filter_map(|fv| {
                 let field = &fv.as_object()["field"];
                 field.is_string().then(|| field.as_str().to_ascii_lowercase())
@@ -764,15 +758,9 @@ impl LogicaProgram {
         HashMap<String, Json>,
         HashMap<String, HashMap<String, Type>>,
     )> {
-        // Build a parsed program structure for the type graph builder
-        let rule_array: Vec<Json> = rules.iter().map(|(_, r)| r.clone()).collect();
-        let parsed_program = crate::json_obj! {
-            "rule" => Json::Array(rule_array)
-        };
-
         // Build type graphs for all predicates
         let mut builder = TypesGraphBuilder::new();
-        let graphs = builder.run(&parsed_program);
+        let graphs = builder.run_rules(rules.iter().map(|(_, r)| r));
 
         // Run type inference
         let mut inference = TypeInference::new(graphs);
@@ -786,11 +774,12 @@ impl LogicaProgram {
         // Collect the inferred column types per predicate. These feed downstream
         // type-dependent SQL (e.g. PostgreSQL CASTs on combine subqueries).
         let mut predicate_types: HashMap<String, HashMap<String, Type>> = HashMap::new();
+        let all_types = inference.all_predicate_types();
         for (name, _) in rules {
             if name.starts_with('@') {
                 continue;
             }
-            let fields = inference.get_predicate_types(name);
+            let fields = all_types.get(name).cloned().unwrap_or_default();
             if !fields.is_empty() {
                 predicate_types.entry(name.clone()).or_default().extend(fields);
             }
@@ -2472,6 +2461,27 @@ fn select_as_record(select: &IndexMap<String, Json>) -> Json {
 #[cfg(test)]
 #[path = "universe_test.rs"]
 mod universe_test;
+
+/// The rules of a dialect's library program, parsed once per dialect: the
+/// program is a constant, and every program compiled for the dialect reads it.
+fn library_rules(dialect: &'static str, program: &'static str) -> std::rc::Rc<Vec<Json>> {
+    thread_local! {
+        static LIBRARY: std::cell::RefCell<HashMap<&'static str, std::rc::Rc<Vec<Json>>>> =
+            std::cell::RefCell::new(HashMap::new());
+    }
+    LIBRARY.with(|cache| {
+        cache.borrow_mut().entry(dialect).or_insert_with(|| {
+            let rules = if program.is_empty() {
+                Vec::new()
+            } else {
+                crate::parser::parse_file(program, None, &[])
+                    .map(|parsed| parsed.as_object()["rule"].as_array().iter().cloned().collect())
+                    .unwrap_or_default()
+            };
+            std::rc::Rc::new(rules)
+        }).clone()
+    })
+}
 
 /// Whether a rule body holds a subquery: a negation or another `combine`.
 fn has_subquery(json: &Json) -> bool {

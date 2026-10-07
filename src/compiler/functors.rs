@@ -144,6 +144,9 @@ pub struct Functors {
     rules: Vec<Json>,
     pub extended_rules: Vec<Json>,
     rules_of: HashMap<String, Vec<Json>>,
+    /// How many of `extended_rules` `rules_of` holds: rules are appended,
+    /// so an update reads only the new ones.
+    indexed_rules: usize,
     predicates: HashSet<String>,
     direct_args_of: HashMap<String, HashSet<String>>,
     args_of: HashMap<String, HashSet<String>>,
@@ -161,6 +164,7 @@ impl Functors {
             rules: rules.to_vec(),
             extended_rules: rules.to_vec(),
             rules_of: rules_of.clone(),
+            indexed_rules: rules.len(),
             predicates: predicates.clone(),
             direct_args_of: HashMap::new(),
             args_of: HashMap::new(),
@@ -289,8 +293,15 @@ impl Functors {
     }
 
     fn update_structure(&mut self, new_predicate: &str) {
-        self.rules_of = defined_predicates_rules(&self.extended_rules);
-        self.predicates = self.rules_of.keys().cloned().collect();
+        // The rules appended since the last update join the index.
+        for rule in &self.extended_rules[self.indexed_rules..] {
+            if let Some(head) = rule.as_object().get("head") {
+                let name = head.as_object()["predicate_name"].as_str().to_string();
+                self.predicates.insert(name.clone());
+                self.rules_of.entry(name).or_default().push(rule.clone());
+            }
+        }
+        self.indexed_rules = self.extended_rules.len();
 
         if self.rules_of.contains_key(new_predicate) {
             let args = self.build_direct_args_of_predicate(new_predicate);
@@ -815,6 +826,10 @@ impl Functors {
             }
         }
 
+        // The rules were rewritten in place: index them all again.
+        self.rules_of.clear();
+        self.predicates.clear();
+        self.indexed_rules = 0;
         self.update_structure(
             proven_to_be_nothing.iter().next().map(|s| s.as_str()).unwrap_or(""));
         Ok(())
