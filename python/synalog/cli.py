@@ -110,7 +110,7 @@ def import_roots(file: str | None, flag_roots: tuple[str, ...]) -> list[str]:
     """Directories where `import` statements look up .l files.
 
     Explicit --import-root flags win. Otherwise the project's folder comes
-    first — the one holding the `synalog.toml` of the program's folder or of
+    first — the one holding the `layer.toml` of the program's folder or of
     the current directory — so `import tables.Orders.Orders;` reads the
     project's `tables/Orders.l` from any of its files; then the program file's
     directory and the current directory.
@@ -187,23 +187,23 @@ def _connection_fields(pairs: tuple[str, ...]) -> dict:
 
 
 def _engine_fields() -> str:
-    lines = ["Engines and their fields (* secret: written to .env, never to synalog.toml):"]
+    lines = ["Engines and their fields (* secret: written to .env, never to layer.toml):"]
     for name, spec in project.ENGINES.items():
         lines.append(f"  {name:<11} " + ", ".join(f.key + ("*" if f.secret else "") for f in spec.fields))
     return "\n".join(lines)
 
 
 def cmd_connect(args: tuple[str, ...], project_file: Path | None) -> int:
-    """Give the project its database, in its synalog.toml.
+    """Give the project its database, in its layer.toml.
 
     \b
     synalog connect                            show the project's connection (secrets hidden)
-    synalog connect <engine> key=value ...     connect the project: synalog.toml, secrets in .env
+    synalog connect <engine> key=value ...     connect the project: layer.toml, secrets in .env
     synalog connect clear                      remove the connection (back to in-memory engines)
 
-    The project is the folder of the nearest synalog.toml, else the current
+    The project is the folder of the nearest layer.toml, else the current
     directory. Secret fields (a password, a token) go to its .env, kept out
-    of git; the others to synalog.toml, meant to be committed.
+    of git; the others to layer.toml, meant to be committed.
     """
     folder = project_file.parent if project_file is not None else Path.cwd()
     if not args:
@@ -248,7 +248,7 @@ def cmd_introspect(args: tuple[str, ...], project_file: Path | None) -> int:
     """Write the project's table files from its database's schema.
 
     \b
-    synalog introspect                   introspect the project's connection (synalog.toml)
+    synalog introspect                   introspect the project's connection (layer.toml)
 
     Each table becomes a file of the project's tables/ folder (a file that
     exists keeps its front matter).
@@ -256,7 +256,7 @@ def cmd_introspect(args: tuple[str, ...], project_file: Path | None) -> int:
     from .introspect import INTROSPECTABLE, catalog, tables, write_tables
 
     if args:
-        raise click.UsageError("usage: synalog introspect (in a project: its synalog.toml names the database)")
+        raise click.UsageError("usage: synalog introspect (in a project: its layer.toml names the database)")
     try:
         engine = _project_engine(project_file)
     except ValueError as e:
@@ -370,7 +370,7 @@ def main(args, inline, engine, limit, offset, as_csv, search_pattern,
     text inline instead of FILE. With no arguments, starts an interactive
     session (the options apply to it too).
 
-    A project is a folder with a 'synalog.toml' (found from the program file's
+    A project is a folder with a 'layer.toml' (found from the program file's
     directory, then the current directory, and their parents): its
     [connection] gives the engine and the connection details, its secrets come
     from the environment (SYNALOG_<ENGINE>_<FIELD>). A '.env' file in the

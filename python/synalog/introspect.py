@@ -3,7 +3,7 @@
 """Introspect a database schema into the table files of a project.
 
 `synalog introspect` connects to the project's connection (its
-``synalog.toml``), reads the table/column catalog across all user (non-system)
+``layer.toml``), reads the table/column catalog across all user (non-system)
 schemas, and writes one file per table into the project's `tables/` folder,
 the rest of the project building on them.
 

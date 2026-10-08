@@ -120,13 +120,13 @@ $ synalog program.l run EngineeringTeam
 - `--limit` / `--offset` paginate the result.
 - `--csv` (with `run`) prints results as CSV instead of the rendered table.
 - `--search REGEX` (with `print`/`run`) keeps only rows where some column matches the regular expression `REGEX`, e.g. `synalog program.l run Customers --search "(?i)acme"`. In the interactive session the same is `.search Customers (?i)acme`.
-- `run` executes on `duckdb` (the default), `sqlite` (stdlib) or `psql` (in a [project](#projects-synalogtoml) connected to it) out of the box: synalog depends on duckdb and on psycopg with its bundled libpq, on macOS and Linux alike. For other engines, install their driver (`pip install 'synalog[trino]'`, ...) or use `print` and run the SQL with your own client.
+- `run` executes on `duckdb` (the default), `sqlite` (stdlib) or `psql` (in a [project](#projects-layertoml) connected to it) out of the box: synalog depends on duckdb and on psycopg with its bundled libpq, on macOS and Linux alike. For other engines, install their driver (`pip install 'synalog[trino]'`, ...) or use `print` and run the SQL with your own client.
 - `import path.to.file.Pred;` statements resolve `path/to/file.l` against the program file's directory, then the current directory; pass `--import-root DIR` (repeatable) to search elsewhere.
 - `--load TABLE=PATH` (repeatable) loads a csv/tsv/json/jsonl/parquet file as a table before running, e.g. `synalog senior.l run Senior --load employees=employees.csv`.
 
-### Projects: `synalog.toml`
+### Projects: `layer.toml`
 
-A folder with a `synalog.toml` is a project. Its `[connection]` says which database its programs run on, as plain fields — commit it:
+A folder with a `layer.toml` is a project. Its `[connection]` says which database its programs run on, as plain fields — commit it:
 
 ```toml
 [connection]
@@ -138,7 +138,7 @@ user = "analyst"
 schema = "public"
 ```
 
-Secrets never go in the file (synalog refuses it): each comes from the environment as `SYNALOG_<ENGINE>_<FIELD>` — `SYNALOG_PSQL_PASSWORD`, `SYNALOG_DATABRICKS_ACCESS_TOKEN`, or `GOOGLE_APPLICATION_CREDENTIALS` for BigQuery — usually from the project's `.env`, kept out of git. Inside the project (from the program's folder or the current directory, and their parents), `run`, `print` and `verify` use that engine and connection, imports resolve from the project's folder, and `synalog introspect` writes the project's `tables/`, one file per table of the database. The project's file is the only place a connection comes from; `--engine` and an `@Engine` annotation choose the dialect, and a remote engine runs only through the project's connection to it. `synalog connect <engine> key=value ...` writes it — the non-secret fields to `synalog.toml`, the secret ones to `.env` — `synalog connect` shows it (secrets hidden), `synalog connect clear` removes it. The fields of every engine are in `synalog.project.ENGINES`.
+Secrets never go in the file (synalog refuses it): each comes from the environment as `SYNALOG_<ENGINE>_<FIELD>` — `SYNALOG_PSQL_PASSWORD`, `SYNALOG_DATABRICKS_ACCESS_TOKEN`, or `GOOGLE_APPLICATION_CREDENTIALS` for BigQuery — usually from the project's `.env`, kept out of git. Inside the project (from the program's folder or the current directory, and their parents), `run`, `print` and `verify` use that engine and connection, imports resolve from the project's folder, and `synalog introspect` writes the project's `tables/`, one file per table of the database. The project's file is the only place a connection comes from; `--engine` and an `@Engine` annotation choose the dialect, and a remote engine runs only through the project's connection to it. `synalog connect <engine> key=value ...` writes it — the non-secret fields to `layer.toml`, the secret ones to `.env` — `synalog connect` shows it (secrets hidden), `synalog connect clear` removes it. The fields of every engine are in `synalog.project.ENGINES`.
 
 Running `synalog` with no arguments starts an interactive session, in the spirit of `python` (the options above, e.g. `--engine` or `--load`, apply to it too):
 
@@ -230,7 +230,7 @@ columns, rows = synalog.execute(source, "TopCustomers", limit=20)
 
 ### `check(source, engine=None, import_root=None, assertions=True, project=None) -> tuple[list[str], list[str]]`
 
-Run structural validation. Returns the error messages and the warning messages, as two lists. The program is valid when there is no error; warnings do not make it invalid. Inside a project whose `synalog.toml` has a `[connection]` — the current directory's, or the folder `project` names — it also runs the program's `@Assert` statements against the database and reports each violated one as an error; `assertions=False` keeps it offline.
+Run structural validation. Returns the error messages and the warning messages, as two lists. The program is valid when there is no error; warnings do not make it invalid. Inside a project whose `layer.toml` has a `[connection]` — the current directory's, or the folder `project` names — it also runs the program's `@Assert` statements against the database and reports each violated one as an error; `assertions=False` keeps it offline.
 
 ```python
 errors, warnings = synalog.check(source)
@@ -243,7 +243,7 @@ All of these functions accept an optional `engine` keyword that overrides the pr
 
 ## Language overview
 
-A Synalog program is a **project**: a folder with a `synalog.toml`, holding one predicate per file in three folders, the layout of [semantic layers](https://github.com/SynaLinks/semantic-layers):
+A Synalog program is a **project**: a folder with a `layer.toml`, holding one predicate per file in three folders, the layout of [semantic layers](https://github.com/SynaLinks/semantic-layers):
 
 ```
 shop/
@@ -251,7 +251,7 @@ shop/
 ├── concepts/Customer.l           # entities and relationships extracted from tables
 ├── rules/CustomerRevenue.l       # insights derived from concepts
 ├── rules/TopCustomers.l
-└── synalog.toml                  # the project's name, description and database
+└── layer.toml                  # the project's name, description and database
 ```
 
 Each file is named after its predicate and opens with front matter (`name`, the predicate; `description`, what its rows are), then imports what it builds on by folder, file and predicate, then orders its predicate with `@OrderBy`. A database table is referenced by its lowercase database name in `tables/`, and everything else builds on the PascalCase predicate that maps it:

@@ -40,7 +40,7 @@ t_38_AllManagers_r0 AS (SELECT * FROM (
     WHERE
       (t_40_Employees.manager_id IS NOT null)
   
-) AS UNUSED_TABLE_NAME  ORDER BY employee_id, manager_id ),
+) AS UNUSED_TABLE_NAME  ),
 t_36_AllManagers_r1 AS (SELECT * FROM (
   
     SELECT
@@ -61,7 +61,7 @@ t_36_AllManagers_r1 AS (SELECT * FROM (
     WHERE
       (t_42_Employees.manager_id IS NOT null)
   
-) AS UNUSED_TABLE_NAME  ORDER BY employee_id, manager_id ),
+) AS UNUSED_TABLE_NAME  ),
 t_34_AllManagers_r2 AS (SELECT * FROM (
   
     SELECT
@@ -82,7 +82,7 @@ t_34_AllManagers_r2 AS (SELECT * FROM (
     WHERE
       (t_43_Employees.manager_id IS NOT null)
   
-) AS UNUSED_TABLE_NAME  ORDER BY employee_id, manager_id ),
+) AS UNUSED_TABLE_NAME  ),
 t_32_AllManagers_r3 AS (SELECT * FROM (
   
     SELECT
@@ -103,7 +103,7 @@ t_32_AllManagers_r3 AS (SELECT * FROM (
     WHERE
       (t_44_Employees.manager_id IS NOT null)
   
-) AS UNUSED_TABLE_NAME  ORDER BY employee_id, manager_id ),
+) AS UNUSED_TABLE_NAME  ),
 t_30_AllManagers_r4 AS (SELECT * FROM (
   
     SELECT
@@ -124,7 +124,7 @@ t_30_AllManagers_r4 AS (SELECT * FROM (
     WHERE
       (t_45_Employees.manager_id IS NOT null)
   
-) AS UNUSED_TABLE_NAME  ORDER BY employee_id, manager_id ),
+) AS UNUSED_TABLE_NAME  ),
 t_28_AllManagers_r5 AS (SELECT * FROM (
   
     SELECT
@@ -145,7 +145,7 @@ t_28_AllManagers_r5 AS (SELECT * FROM (
     WHERE
       (t_46_Employees.manager_id IS NOT null)
   
-) AS UNUSED_TABLE_NAME  ORDER BY employee_id, manager_id ),
+) AS UNUSED_TABLE_NAME  ),
 t_26_AllManagers_r6 AS (SELECT * FROM (
   
     SELECT
@@ -166,7 +166,7 @@ t_26_AllManagers_r6 AS (SELECT * FROM (
     WHERE
       (t_47_Employees.manager_id IS NOT null)
   
-) AS UNUSED_TABLE_NAME  ORDER BY employee_id, manager_id ),
+) AS UNUSED_TABLE_NAME  ),
 t_24_AllManagers_r7 AS (SELECT * FROM (
   
     SELECT
@@ -187,7 +187,7 @@ t_24_AllManagers_r7 AS (SELECT * FROM (
     WHERE
       (t_48_Employees.manager_id IS NOT null)
   
-) AS UNUSED_TABLE_NAME  ORDER BY employee_id, manager_id ),
+) AS UNUSED_TABLE_NAME  ),
 t_22_AllManagers_r8 AS (SELECT * FROM (
   
     SELECT
@@ -208,7 +208,7 @@ t_22_AllManagers_r8 AS (SELECT * FROM (
     WHERE
       (t_49_Employees.manager_id IS NOT null)
   
-) AS UNUSED_TABLE_NAME  ORDER BY employee_id, manager_id ),
+) AS UNUSED_TABLE_NAME  ),
 t_20_AllManagers_r9 AS (SELECT * FROM (
   
     SELECT
@@ -229,7 +229,7 @@ t_20_AllManagers_r9 AS (SELECT * FROM (
     WHERE
       (t_50_Employees.manager_id IS NOT null)
   
-) AS UNUSED_TABLE_NAME  ORDER BY employee_id, manager_id ),
+) AS UNUSED_TABLE_NAME  ),
 t_18_AllManagers_r10 AS (SELECT * FROM (
   
     SELECT
@@ -250,7 +250,7 @@ t_18_AllManagers_r10 AS (SELECT * FROM (
     WHERE
       (t_51_Employees.manager_id IS NOT null)
   
-) AS UNUSED_TABLE_NAME  ORDER BY employee_id, manager_id ),
+) AS UNUSED_TABLE_NAME  ),
 t_16_AllManagers_r11 AS (SELECT * FROM (
   
     SELECT
@@ -271,7 +271,7 @@ t_16_AllManagers_r11 AS (SELECT * FROM (
     WHERE
       (t_52_Employees.manager_id IS NOT null)
   
-) AS UNUSED_TABLE_NAME  ORDER BY employee_id, manager_id ),
+) AS UNUSED_TABLE_NAME  ),
 t_14_AllManagers_r12 AS (SELECT * FROM (
   
     SELECT
@@ -292,7 +292,7 @@ t_14_AllManagers_r12 AS (SELECT * FROM (
     WHERE
       (t_53_Employees.manager_id IS NOT null)
   
-) AS UNUSED_TABLE_NAME  ORDER BY employee_id, manager_id ),
+) AS UNUSED_TABLE_NAME  ),
 t_12_AllManagers_r13 AS (SELECT * FROM (
   
     SELECT
@@ -313,7 +313,7 @@ t_12_AllManagers_r13 AS (SELECT * FROM (
     WHERE
       (t_54_Employees.manager_id IS NOT null)
   
-) AS UNUSED_TABLE_NAME  ORDER BY employee_id, manager_id ),
+) AS UNUSED_TABLE_NAME  ),
 t_10_AllManagers_r14 AS (SELECT * FROM (
   
     SELECT
@@ -334,7 +334,7 @@ t_10_AllManagers_r14 AS (SELECT * FROM (
     WHERE
       (t_55_Employees.manager_id IS NOT null)
   
-) AS UNUSED_TABLE_NAME  ORDER BY employee_id, manager_id ),
+) AS UNUSED_TABLE_NAME  ),
 t_8_AllManagers_r15 AS (SELECT * FROM (
   
     SELECT
@@ -355,7 +355,7 @@ t_8_AllManagers_r15 AS (SELECT * FROM (
     WHERE
       (t_56_Employees.manager_id IS NOT null)
   
-) AS UNUSED_TABLE_NAME  ORDER BY employee_id, manager_id ),
+) AS UNUSED_TABLE_NAME  ),
 t_6_AllManagers_r16 AS (SELECT * FROM (
   
     SELECT
@@ -376,7 +376,7 @@ t_6_AllManagers_r16 AS (SELECT * FROM (
     WHERE
       (t_57_Employees.manager_id IS NOT null)
   
-) AS UNUSED_TABLE_NAME  ORDER BY employee_id, manager_id ),
+) AS UNUSED_TABLE_NAME  ),
 t_4_AllManagers_r17 AS (SELECT * FROM (
   
     SELECT
@@ -397,7 +397,7 @@ t_4_AllManagers_r17 AS (SELECT * FROM (
     WHERE
       (t_58_Employees.manager_id IS NOT null)
   
-) AS UNUSED_TABLE_NAME  ORDER BY employee_id, manager_id ),
+) AS UNUSED_TABLE_NAME  ),
 t_2_AllManagers_r18 AS (SELECT * FROM (
   
     SELECT
@@ -418,7 +418,7 @@ t_2_AllManagers_r18 AS (SELECT * FROM (
     WHERE
       (t_59_Employees.manager_id IS NOT null)
   
-) AS UNUSED_TABLE_NAME  ORDER BY employee_id, manager_id ),
+) AS UNUSED_TABLE_NAME  ),
 t_0_AllManagers_r19 AS (SELECT * FROM (
   
     SELECT
@@ -439,7 +439,7 @@ t_0_AllManagers_r19 AS (SELECT * FROM (
     WHERE
       (t_60_Employees.manager_id IS NOT null)
   
-) AS UNUSED_TABLE_NAME  ORDER BY employee_id, manager_id )
+) AS UNUSED_TABLE_NAME  )
 SELECT * FROM (
   
     SELECT

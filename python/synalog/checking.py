@@ -4,7 +4,7 @@
 
 The verifier (``_synalog.check``) is structural: it needs no database and
 cannot tell whether an ``@Assert`` holds. Inside a project — a folder with a
-``synalog.toml`` that has a ``[connection]`` — the database is known, so
+``layer.toml`` that has a ``[connection]`` — the database is known, so
 ``check`` also looks for the counterexamples of every assertion there and
 refuses the program when it finds some.
 """
@@ -45,7 +45,7 @@ def program_engine(source: str, roots: list[str] | None) -> str | None:
 
 def project_engine(project_file: Path | None) -> str | None:
     """The engine the project connects to, if it has a connection (read
-    from ``synalog.toml`` alone: no secret is needed to know it)."""
+    from ``layer.toml`` alone: no secret is needed to know it)."""
     if project_file is None:
         return None
     conn = projects.connection(project_file)
@@ -60,7 +60,7 @@ def resolve_connection(
 ) -> tuple[str, dict | None]:
     """The engine a program runs on — `engine`, else its `@Engine`, else the
     project's, else duckdb — and the project's connection when it is to that
-    engine. The project is the ``synalog.toml`` found from `project`, a
+    engine. The project is the ``layer.toml`` found from `project`, a
     folder (default: the current directory). Secrets are read only for that
     connection: a program run in memory needs none."""
     project_file = projects.find(project if project is not None else os.getcwd())
@@ -145,7 +145,7 @@ def check(
 
     The verifier runs first and needs no database. When the program passes it
     and its project has a database — the ``[connection]`` of the
-    ``synalog.toml`` found from ``project``, a folder (default: the current
+    ``layer.toml`` found from ``project``, a folder (default: the current
     directory) — its ``@Assert`` statements are run there, and each violated
     one is an error quoting a few counterexamples. A database that cannot be
     reached is a warning, not an error. ``assertions=False`` skips the

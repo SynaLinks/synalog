@@ -123,7 +123,7 @@ smoke/
 ├── concepts/TestStatus.l
 ├── rules/FailuresByDevice.l
 ├── rules/RunsPerDay.l
-└── synalog.toml
+└── layer.toml
 ```
 
 The table file maps the database table `smoke_tests`, referenced by its lowercase database name, to the `SmokeTests` predicate; everything else builds on it:

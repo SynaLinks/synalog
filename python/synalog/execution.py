@@ -36,7 +36,7 @@ def execute(
     `pattern` keeps the rows where some column matches it (as `search`);
     `assertion` returns the counterexamples of the assertion of that name of
     `predicate` instead of its rows. The database is the ``[connection]`` of
-    the ``synalog.toml`` found from `project`, a folder (default: the current
+    the ``layer.toml`` found from `project`, a folder (default: the current
     directory), when it is to the engine the program runs on. `loads` is a
     sequence of ``(table, path)`` pairs, files loaded as tables first (duckdb
     and sqlite). Raises ValueError on an invalid program, and the driver's

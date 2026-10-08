@@ -24,7 +24,7 @@ from synalog.introspect import introspect
 
 def _connect(folder, engine: str, fields: dict) -> dict:
     """The engine's connection, the only way synalog has one: a project's
-    synalog.toml (its secrets in .env), resolved back."""
+    layer.toml (its secrets in .env), resolved back."""
     project.write(folder, engine, fields)
     return project.resolve(folder)
 

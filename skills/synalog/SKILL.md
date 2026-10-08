@@ -5,7 +5,7 @@ description: Write, validate and run Synalog programs (.l files), a Datalog-fami
 
 # Synalog
 
-Synalog is a logic programming language from the Datalog family. A program is a **project**: a folder with a `synalog.toml`, holding one predicate per `.l` file in `tables/`, `concepts/` and `rules/` (the layout of semantic layers). Each predicate compiles to SQL and runs on duckdb (default), sqlite, psql, bigquery, trino, presto or databricks. Predicates import the predicates they build on, so knowledge accumulates instead of being re-derived in every query.
+Synalog is a logic programming language from the Datalog family. A program is a **project**: a folder with a `layer.toml`, holding one predicate per `.l` file in `tables/`, `concepts/` and `rules/` (the layout of semantic layers). Each predicate compiles to SQL and runs on duckdb (default), sqlite, psql, bigquery, trino, presto or databricks. Predicates import the predicates they build on, so knowledge accumulates instead of being re-derived in every query.
 
 ## Workflow
 
@@ -23,7 +23,7 @@ CLI notes (argument order follows logica: FILE first, then the command):
 
 - `--load TABLE=PATH` (repeatable) loads a data file as a database table; the program refers to it by the lowercase table name. duckdb reads csv/tsv/json/jsonl/parquet; sqlite csv/tsv/json/jsonl (no parquet).
 - `--limit N` / `--offset N` paginate results; use them instead of reading huge outputs.
-- `--engine <name>` overrides the program's `@Engine` annotation; without either, the project's `synalog.toml` decides (see *Projects and connections*), else duckdb.
+- `--engine <name>` overrides the program's `@Engine` annotation; without either, the project's `layer.toml` decides (see *Projects and connections*), else duckdb.
 - `synalog rules/TopRegion.l print TopRegion` shows the compiled SQL without executing.
 - `synalog rules/TopRegion.l verify` runs every `@Assert` of the file against the database and prints the counterexamples of those that fail.
 - Quick experiments without a file: `synalog -c 'Digit(d) :- d in [1, 2, 3];' run Digit`
@@ -41,7 +41,7 @@ Runnable projects ship with this skill under [`examples/`](examples/). Every fil
 
 ## Projects and connections
 
-A folder with a `synalog.toml` is a project. synalog finds it from the program's folder or the current directory, and their parents; its `[connection]` gives the engine and the database as plain fields, and `run`, `print` and `introspect` use them — no `--engine`, no connection string:
+A folder with a `layer.toml` is a project. synalog finds it from the program's folder or the current directory, and their parents; its `[connection]` gives the engine and the database as plain fields, and `run`, `print` and `introspect` use them — no `--engine`, no connection string:
 
 ```toml
 [project]
@@ -125,13 +125,13 @@ Fix the quoted statement and re-run: later syntax errors only surface once earli
 
 **Compile errors** (`print`/`run`) mean SQL generation failed, e.g. `Compile error: No rules are defining 'Missing', but compilation was requested.` Usually a typo in the predicate name passed to the command, or an imported predicate run by its short name (run it from its own module instead).
 
-**Connection errors** come from the project's `synalog.toml` and environment:
+**Connection errors** come from the project's `layer.toml` and environment:
 
 | Message | Fix |
 |---|---|
-| `synalog.toml: password is a secret — remove it from the file and set SYNALOG_PSQL_PASSWORD …` | move the secret to `.env`; never commit it |
+| `layer.toml: password is a secret — remove it from the file and set SYNALOG_PSQL_PASSWORD …` | move the secret to `.env`; never commit it |
 | `The databricks connection needs SYNALOG_DATABRICKS_ACCESS_TOKEN` | the secret is missing from `.env`: ask the user for it |
-| `synalog.toml: psql has no field 'hots' (fields: …)` | use one of the fields listed |
+| `layer.toml: psql has no field 'hots' (fields: …)` | use one of the fields listed |
 | `The psql engine needs psycopg with its libpq (...)` | the driver ships with synalog; reinstall it with its libpq: `pip install 'psycopg[binary]'` |
 | `The psql engine needs the project's connection: …` | connect the project: `synalog connect psql key=value ...` (ask the user for the credentials) |
 
@@ -142,7 +142,7 @@ A query that runs but returns nothing is not an error: check the filter values a
 ```
 AGENTS.md / CLAUDE.md       agent instructions for this project
 .agents/skills/synalog/     this skill
-synalog.toml                the project's name, description and database (committed)
+layer.toml                the project's name, description and database (committed)
 .env                        its secrets (git-ignored)
 tables/                     the data: one file per database table
 concepts/                   entities, relationships and clean views, built on tables
@@ -172,7 +172,7 @@ TotalByRegion(region:, total? += amount) distinct :- Region(region:), Sales(regi
 
 ## Imports
 
-`import <folder>.<Name>.<Name>;` imports the predicate of the project's file `<folder>/<Name>.l`: imports resolve from the project's folder (the one holding `synalog.toml`), whichever file runs and wherever from (`--import-root DIR`, repeatable, overrides it).
+`import <folder>.<Name>.<Name>;` imports the predicate of the project's file `<folder>/<Name>.l`: imports resolve from the project's folder (the one holding `layer.toml`), whichever file runs and wherever from (`--import-root DIR`, repeatable, overrides it).
 
 ```logica
 import rules.TotalByRegion.TotalByRegion;

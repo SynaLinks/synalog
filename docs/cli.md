@@ -78,7 +78,7 @@ With `-c` there is no `FILE` argument: the positionals are the command and its p
 
 - **duckdb**: the default engine, bundled with synalog; nothing extra to install.
 - **sqlite**: Python's stdlib driver; Logica's runtime UDFs (ArgMin/ArgMax, ARRAY_CONCAT, ...) are registered when the `logica` package is installed.
-- **psql**: bundled with synalog (psycopg with its own libpq); runs in a [project](#projects-synalogtoml) connected to PostgreSQL.
+- **psql**: bundled with synalog (psycopg with its own libpq); runs in a [project](#projects-layertoml) connected to PostgreSQL.
 
 The [`Today` and `Now`](language/temporal.md) built-in concepts need no runner support, since the compiler inlines them per dialect, so they work on every engine.
 
@@ -99,7 +99,7 @@ duckdb and the PostgreSQL driver ship with synalog. For the other engines (`bigq
 
 ### Imports
 
-In a project, `import <folder>.<Name>.<Name>;` statements resolve from the project's folder (the one holding `synalog.toml`), whichever file runs and wherever from: `import tables.Orders.Orders;` reads the project's `tables/Orders.l`. The program file's directory and the current directory come next. Pass `--import-root DIR` (repeatable) to search elsewhere; explicit roots replace the defaults.
+In a project, `import <folder>.<Name>.<Name>;` statements resolve from the project's folder (the one holding `layer.toml`), whichever file runs and wherever from: `import tables.Orders.Orders;` reads the project's `tables/Orders.l`. The program file's directory and the current directory come next. Pass `--import-root DIR` (repeatable) to search elsewhere; explicit roots replace the defaults.
 
 In the [`shop` project](language/index.md), `rules/TopCustomers.l` builds on `rules/CustomerRevenue.l`:
 
@@ -154,9 +154,9 @@ Compile error: No rules are defining 'Missing', but compilation was requested.
 
 A failing program never produces partial output: `run` either prints the table or the error.
 
-## Projects: `synalog.toml`
+## Projects: `layer.toml`
 
-A Synalog program is a [project](language/index.md): a folder with a `synalog.toml`, its predicates in `tables/`, `concepts/` and `rules/`, one per file. The file names and describes the project, and its `[connection]` says which database it runs on, as plain fields — commit it:
+A Synalog program is a [project](language/index.md): a folder with a `layer.toml`, its predicates in `tables/`, `concepts/` and `rules/`, one per file. The file names and describes the project, and its `[connection]` says which database it runs on, as plain fields — commit it:
 
 ```toml
 [project]
@@ -178,16 +178,16 @@ Secrets never go in the file (synalog refuses it): each comes from the environme
 
 ```console
 $ synalog connect psql host=db.example.com database=sales user=analyst password=...
-Connected /path/to/sales/synalog.toml to psql (secrets in .env)
+Connected /path/to/sales/layer.toml to psql (secrets in .env)
 $ synalog connect
-/path/to/sales/synalog.toml
+/path/to/sales/layer.toml
   engine = psql
   host = db.example.com
   ...
   password: SYNALOG_PSQL_PASSWORD set
 ```
 
-`synalog connect <engine> key=value ...` writes it — the non-secret fields to `synalog.toml`, the secret ones to `.env` — `synalog connect` shows it (secrets hidden), `synalog connect clear` removes it. It runs in the project's folder — the nearest `synalog.toml`'s, else the current directory — keeps the file's other tables, adds `.env` to `.gitignore`, and writes nothing when a required field is missing.
+`synalog connect <engine> key=value ...` writes it — the non-secret fields to `layer.toml`, the secret ones to `.env` — `synalog connect` shows it (secrets hidden), `synalog connect clear` removes it. It runs in the project's folder — the nearest `layer.toml`'s, else the current directory — keeps the file's other tables, adds `.env` to `.gitignore`, and writes nothing when a required field is missing.
 
 ### Introspect
 

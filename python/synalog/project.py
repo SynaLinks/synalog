@@ -1,8 +1,8 @@
 # License Apache 2.0: (c) 2025-2026 Yoan Sallami (Synalinks Team)
 
-"""The project file, ``synalog.toml``: which database a project runs on.
+"""The project file, ``layer.toml``: which database a project runs on.
 
-A project is a folder of ``.l`` files with a ``synalog.toml`` at its root.
+A project is a folder of ``.l`` files with a ``layer.toml`` at its root.
 Its ``[connection]`` table names the engine and its connection details as
 plain fields — no connection string to percent-encode — and is meant to be
 committed, so everyone working on the project targets the same database::
@@ -39,11 +39,11 @@ if sys.version_info >= (3, 11):
 else:  # pragma: no cover
     import tomli as tomllib
 
-PROJECT_FILE = "synalog.toml"
+PROJECT_FILE = "layer.toml"
 
 
 class ProjectError(ValueError):
-    """A ``synalog.toml`` that cannot be used, with what to fix."""
+    """A ``layer.toml`` that cannot be used, with what to fix."""
 
 
 @dataclass(frozen=True)
@@ -131,7 +131,7 @@ def secret_env(engine: str, key: str) -> str:
 
 
 def find(*starts: str | os.PathLike) -> Path | None:
-    """The nearest ``synalog.toml``: in each start directory or one of its
+    """The nearest ``layer.toml``: in each start directory or one of its
     parents, the first start that has one winning."""
     for start in starts:
         for directory in (Path(start).resolve(), *Path(start).resolve().parents):
@@ -257,7 +257,7 @@ def secrets(engine: str, details: dict) -> dict[str, str]:
 
 # -- writing a project's connection ---------------------------------------------
 
-#: Written next to synalog.toml by `write`, never committed.
+#: Written next to layer.toml by `write`, never committed.
 SECRET_FILES = (".env", "bigquery-credentials.json")
 _KEY_FILE = "bigquery-credentials.json"
 
@@ -298,7 +298,7 @@ def ensure_gitignore(folder: str | os.PathLike) -> None:
 
 def write(folder: str | os.PathLike, engine: str, details: dict) -> Path:
     """Give the project in ``folder`` a connection: its ``[connection]`` in
-    ``synalog.toml`` (the file's other tables are kept), its secrets in
+    ``layer.toml`` (the file's other tables are kept), its secrets in
     ``.env`` (other lines kept, owner-only), BigQuery's key — given as the
     key's JSON — in a key file next to it, and both listed in ``.gitignore``.
     Raises ``ProjectError`` for an unknown engine or field, or a missing

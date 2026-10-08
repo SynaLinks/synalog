@@ -11,7 +11,7 @@ jsonl/parquet files — is replayed on every connection before the script runs.
 Local, in-memory engines (``sqlite``, ``duckdb``) build the connection from
 ``loads``; remote engines (``psql``, ``trino``, ``presto``, ``databricks``,
 ``bigquery``) connect over the network with the fields of the project's
-``[connection]`` (``synalog.project.resolve``: ``synalog.toml``, its secrets
+``[connection]`` (``synalog.project.resolve``: ``layer.toml``, its secrets
 from the environment). Remote engines cannot ingest local ``loads`` files —
 load those with your own tools.
 
@@ -465,7 +465,7 @@ def _require_connection(engine: str, connection: Mapping | None) -> Mapping:
         raise RunnerUnavailable(
             f"The {engine} engine needs the project's connection: run"
             f" 'synalog connect {engine} key=value ...' in the project's folder"
-            " (it writes synalog.toml, the secrets in .env)"
+            " (it writes layer.toml, the secrets in .env)"
         )
     return connection
 

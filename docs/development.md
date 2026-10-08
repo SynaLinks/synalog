@@ -131,7 +131,7 @@ It deploys to GitHub Pages automatically on push via `.github/workflows/docs.yml
 
 ### Documentation examples
 
-The example projects (`docs/examples/shop/`, `docs/examples/smoke/`) are laid out as every Synalog project is: `tables/`, `concepts/`, `rules/`, a `synalog.toml`, and their data in `data/<table>.csv`. `run.py` loads the data into an in-memory DuckDB, checks every file, runs the predicate its front matter names, and writes the results to `<project>.log`.
+The example projects (`docs/examples/shop/`, `docs/examples/smoke/`) are laid out as every Synalog project is: `tables/`, `concepts/`, `rules/`, a `layer.toml`, and their data in `data/<table>.csv`. `run.py` loads the data into an in-memory DuckDB, checks every file, runs the predicate its front matter names, and writes the results to `<project>.log`.
 
 The feature examples (aggregation, functors, recursion, ...) are single `.l` programs with their data as inline facts. For those, the `run.py` harness validates each program with `synalog.check()`, compiles every predicate listed in its `# run:` header, executes the SQL on an in-memory DuckDB, and writes the combined output to the matching `.log` file. A `# load: <file>.csv as <table>` header loads a CSV from `docs/examples/` into a DuckDB table before the predicates run. The `Today`/`Now` built-in concepts need no special handling, since the compiler inlines them per dialect:
 

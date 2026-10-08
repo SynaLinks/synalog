@@ -2,7 +2,7 @@
 
 """The ``.env`` file: a project's secrets, loaded into the environment.
 
-A connection is described only by the project's ``synalog.toml`` (see
+A connection is described only by the project's ``layer.toml`` (see
 ``synalog.project``); its secrets — a password, a token — come from the
 environment, usually from the git-ignored ``.env`` next to it.
 """

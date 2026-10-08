@@ -66,7 +66,7 @@ check(source, engine=None, import_root=None, assertions=True, project=None) -> t
 
 Run structural [verification](verification.md). Returns `(errors, warnings)`, two lists of messages. The program is valid when `errors` is empty. Warnings do not make it invalid: they report [assertions](assertions.md) that are well-formed but cannot be checked against a database.
 
-The verifier needs no database. When the program passes it and a database is known, `check` also runs the program's `@Assert` statements there: each violated assertion is an error quoting a few counterexamples. A database is known when the program is inside a [project](cli.md#projects-synalogtoml) whose `synalog.toml` has a `[connection]`: the one found from `project`, a folder, or else from the current directory. Otherwise `check` stays offline.
+The verifier needs no database. When the program passes it and a database is known, `check` also runs the program's `@Assert` statements there: each violated assertion is an error quoting a few counterexamples. A database is known when the program is inside a [project](cli.md#projects-layertoml) whose `layer.toml` has a `[connection]`: the one found from `project`, a folder, or else from the current directory. Otherwise `check` stays offline.
 
 - `assertions=False` skips the database, for callers that need the instant, offline answer.
 - A database that cannot be reached is a warning (`Assertions not checked: ...`), not an error.
@@ -121,7 +121,7 @@ Run a predicate on its database and return `(columns, rows)`. Synalog runs the p
 columns, rows = synalog.execute(source, "TopCustomers", limit=20)
 ```
 
-- The engine is `engine`, else the program's `@Engine`, else the [project](cli.md#projects-synalogtoml)'s, else duckdb; the connection is the project's `[connection]` — found from `project`, a folder, or else from the current directory — when it is to that engine.
+- The engine is `engine`, else the program's `@Engine`, else the [project](cli.md#projects-layertoml)'s, else duckdb; the connection is the project's `[connection]` — found from `project`, a folder, or else from the current directory — when it is to that engine.
 - `pattern` keeps the rows where some column matches it, as [`search`](#search); `limit`/`offset` paginate as in `compile`.
 - `assertion` returns the counterexamples of the assertion of that name of `predicate` instead of its rows.
 - `loads` is a sequence of `(table, path)` pairs: csv/tsv/json/jsonl/parquet files loaded as tables first (duckdb and sqlite).

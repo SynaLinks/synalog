@@ -312,7 +312,7 @@ def test_unknown_engine_has_no_runner(tmp_path):
 
 
 def test_connect_writes_the_project_file(tmp_path):
-    # The connection lives in synalog.toml, its secret in .env: never elsewhere.
+    # The connection lives in layer.toml, its secret in .env: never elsewhere.
     assert "No connection" in synalog("connect", cwd=tmp_path).stdout
 
     saved = synalog(
@@ -320,7 +320,7 @@ def test_connect_writes_the_project_file(tmp_path):
         "auth=password", "password=secret", cwd=tmp_path,
     )
     assert saved.returncode == 0, saved.stderr
-    toml = tomllib.loads((tmp_path / "synalog.toml").read_text())["connection"]
+    toml = tomllib.loads((tmp_path / "layer.toml").read_text())["connection"]
     assert toml["engine"] == "trino" and toml["host"] == "host" and "password" not in toml
     assert 'SYNALOG_TRINO_PASSWORD="secret"' in (tmp_path / ".env").read_text()
 
@@ -338,7 +338,7 @@ def test_connect_with_missing_fields_writes_nothing(tmp_path):
     result = synalog("connect", "psql", "host=h", cwd=tmp_path)
     assert result.returncode == 1
     assert "needs database, user" in result.stderr
-    assert not (tmp_path / "synalog.toml").exists()
+    assert not (tmp_path / "layer.toml").exists()
 
 
 def test_connect_takes_fields_not_a_connection_string(tmp_path):
@@ -676,13 +676,13 @@ def test_repl_clear_drops_loaded_tables(employees_csv):
 
 
 # ---------------------------------------------------------------------------
-# synalog.toml: the project's connection
+# layer.toml: the project's connection
 # ---------------------------------------------------------------------------
 
 
 def _project(tmp_path, toml: str, env: str = ""):
-    """A project folder: synalog.toml, an optional .env, a rule in rules/."""
-    (tmp_path / "synalog.toml").write_text(toml)
+    """A project folder: layer.toml, an optional .env, a rule in rules/."""
+    (tmp_path / "layer.toml").write_text(toml)
     if env:
         (tmp_path / ".env").write_text(env)
     (tmp_path / "rules").mkdir()
@@ -704,7 +704,7 @@ def test_project_file_round_trip():
 def test_project_file_refuses_secrets_and_unknown_fields(tmp_path):
     from synalog import project
 
-    path = tmp_path / "synalog.toml"
+    path = tmp_path / "layer.toml"
     path.write_text('[connection]\nengine = "psql"\nhost = "h"\ndatabase = "d"\nuser = "u"\npassword = "x"\n')
     with pytest.raises(project.ProjectError, match="SYNALOG_PSQL_PASSWORD"):
         project.connection(path)
@@ -721,7 +721,7 @@ def test_project_file_refuses_secrets_and_unknown_fields(tmp_path):
 def test_project_resolve_reads_secrets_from_the_environment(tmp_path, monkeypatch):
     from synalog import project
 
-    (tmp_path / "synalog.toml").write_text(project.dumps("psql", {"host": "h", "database": "d", "user": "u"}))
+    (tmp_path / "layer.toml").write_text(project.dumps("psql", {"host": "h", "database": "d", "user": "u"}))
     (tmp_path / "rules").mkdir()
     monkeypatch.setenv("SYNALOG_PSQL_PASSWORD", 'p"w@:/')
     conn = project.resolve(tmp_path / "rules")  # found from a subfolder
@@ -729,7 +729,7 @@ def test_project_resolve_reads_secrets_from_the_environment(tmp_path, monkeypatc
         "engine": "psql", "host": "h", "port": 5432, "database": "d", "user": "u",
         "password": 'p"w@:/', "sslmode": "prefer", "schema": "public",
     }
-    (tmp_path / "synalog.toml").write_text("# no connection: a local project\n")
+    (tmp_path / "layer.toml").write_text("# no connection: a local project\n")
     assert project.resolve(tmp_path) is None
 
 
@@ -800,10 +800,10 @@ def test_introspect_defaults_to_the_project(tmp_path):
 def test_project_write_keeps_other_tables_and_lines(tmp_path):
     from synalog import config, project
 
-    (tmp_path / "synalog.toml").write_text('[project]\nname = "sales"\n\n[connection]\nengine = "trino"\nhost = "old"\n')
+    (tmp_path / "layer.toml").write_text('[project]\nname = "sales"\n\n[connection]\nengine = "trino"\nhost = "old"\n')
     (tmp_path / ".env").write_text('OTHER=1\nSYNALOG_PSQL_PASSWORD="old"\n')
     project.write(tmp_path, "psql", {"host": "h", "database": "d", "user": "u", "password": 'p"w'})
-    data = tomllib.loads((tmp_path / "synalog.toml").read_text())
+    data = tomllib.loads((tmp_path / "layer.toml").read_text())
     assert data["project"] == {"name": "sales"}
     assert data["connection"]["engine"] == "psql" and "password" not in data["connection"]
     assert (tmp_path / ".env").read_text() == 'OTHER=1\nSYNALOG_PSQL_PASSWORD="p"w"\n'
@@ -824,7 +824,7 @@ def test_project_write_bigquery_key_and_clear(tmp_path):
     assert json.loads(key.read_text()) == {"type": "service_account"}
     assert f'GOOGLE_APPLICATION_CREDENTIALS="{key.resolve()}"' in (tmp_path / ".env").read_text()
     project.clear(tmp_path)
-    assert "connection" not in tomllib.loads((tmp_path / "synalog.toml").read_text())
+    assert "connection" not in tomllib.loads((tmp_path / "layer.toml").read_text())
     assert not key.exists() and not (tmp_path / ".env").exists()
 
 
@@ -832,7 +832,7 @@ def test_run_reports_a_driver_error_without_traceback(tmp_path):
     # A server that refuses the connection is reported as one error line.
     program = tmp_path / "p.l"
     program.write_text("V(x:) :- x in [1, 2];\n")
-    (tmp_path / "synalog.toml").write_text('[connection]\nengine = "psql"\nhost = "127.0.0.1"\nport = 1\ndatabase = "x"\nuser = "nobody"\n')
+    (tmp_path / "layer.toml").write_text('[connection]\nengine = "psql"\nhost = "127.0.0.1"\nport = 1\ndatabase = "x"\nuser = "nobody"\n')
     result = synalog(str(program), "run", "V", cwd=tmp_path)
     assert result.returncode == 1
     assert "OperationalError" in result.stderr + result.stdout
@@ -851,7 +851,7 @@ def test_run_reports_a_missing_table_without_traceback(tmp_path):
 def test_imports_resolve_from_the_project_folder(tmp_path):
     # In a project, `import tables.Orders.Orders;` reads the project's
     # tables/Orders.l from any of its files, wherever the CLI runs from.
-    (tmp_path / "synalog.toml").write_text('[project]\nname = "shop"\ndescription = "Orders."\n')
+    (tmp_path / "layer.toml").write_text('[project]\nname = "shop"\ndescription = "Orders."\n')
     (tmp_path / "tables").mkdir()
     (tmp_path / "rules").mkdir()
     (tmp_path / "tables" / "Orders.l").write_text(

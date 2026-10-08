@@ -198,7 +198,7 @@ def project_db(tmp_path, monkeypatch):
     """A project connected to psql, with duckdb standing in for the server:
     the queries `check` sends are recorded, and executed in memory in duckdb's
     dialect."""
-    (tmp_path / "synalog.toml").write_text(PSQL_PROJECT)
+    (tmp_path / "layer.toml").write_text(PSQL_PROJECT)
     monkeypatch.chdir(tmp_path)
     sent = []
     plan_for = synalog.plan
@@ -270,7 +270,7 @@ def test_check_outside_a_project_is_offline(tmp_path, monkeypatch):
 
 
 def test_unreachable_database_is_a_warning(tmp_path, monkeypatch):
-    (tmp_path / "synalog.toml").write_text(PSQL_PROJECT)
+    (tmp_path / "layer.toml").write_text(PSQL_PROJECT)
     monkeypatch.chdir(tmp_path)
 
     def session(engine, connection=None, loads=()):
@@ -286,7 +286,7 @@ def test_unreachable_database_is_a_warning(tmp_path, monkeypatch):
 def test_a_project_elsewhere_is_a_database(tmp_path, monkeypatch):
     # The project need not be the current directory: `project` names its folder.
     (tmp_path / "proj").mkdir()
-    (tmp_path / "proj" / "synalog.toml").write_text(PSQL_PROJECT)
+    (tmp_path / "proj" / "layer.toml").write_text(PSQL_PROJECT)
     monkeypatch.chdir(tmp_path)
     sent = []
 

@@ -30,16 +30,16 @@ WITH t_0_Orders AS (SELECT * FROM (
 ) AS UNUSED_TABLE_NAME  )
 SELECT
   Orders.order_id AS order_id,
-  ((Orders.amount) * (1.10)) AS total
+  ((Orders.amount) * (1.10E0)) AS total
 FROM
   t_0_Orders AS Orders ORDER BY order_id;
 
 -- Executed on DuckDB:
-| order_id | total   |
-|----------|---------|
-| 10       | 1650.00 |
-| 11       | 264.00  |
-| 12       | 44.00   |
+| order_id | total              |
+|----------|--------------------|
+| 10       | 1650.0000000000002 |
+| 11       | 264.0              |
+| 12       | 44.0               |
 (3 rows)
 
 $ synalog.compile('syntax.l', 'ContactableCustomer')
@@ -104,8 +104,8 @@ GROUP BY ContactableCustomer_MultBodyAggAux.customer_id, ContactableCustomer_Mul
 |-------------|---------|
 | 1           | email   |
 | 2           | phone   |
-| 3           | phone   |
 | 3           | email   |
+| 3           | phone   |
 (4 rows)
 
 $ synalog.compile('syntax.l', 'Inactive')
