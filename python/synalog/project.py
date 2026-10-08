@@ -199,19 +199,23 @@ def details(conn: dict, env: Mapping[str, str] | None = None) -> dict:
 def resolve(*starts: str | os.PathLike) -> dict | None:
     """The connection of the project found from ``starts`` (see ``find``):
     its ``engine`` and every field a runner needs, defaults filled in and
-    secrets read from the environment — the project's ``.env`` loaded first,
-    real variables winning. ``None`` outside a project, or in one without a
-    ``[connection]`` (it runs on a local engine)."""
-    from .config import load_dotenv
+    secrets read from the project's ``.env`` and the environment, real
+    variables winning. The environment is not changed: two projects in one
+    process each get their own secrets. ``None`` outside a project, or in
+    one without a ``[connection]`` (it runs on a local engine)."""
+    from .config import parse_dotenv
 
     path = find(*starts)
     if path is None:
         return None
-    load_dotenv(path.parent)
     conn = connection(path)
     if conn is None:
         return None
-    return {"engine": conn["engine"], **details(conn)}
+    try:
+        dotenv = dict(parse_dotenv((path.parent / ".env").read_text(encoding="utf-8")))
+    except OSError:
+        dotenv = {}
+    return {"engine": conn["engine"], **details(conn, {**dotenv, **os.environ})}
 
 
 # -- writing -------------------------------------------------------------------

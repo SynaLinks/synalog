@@ -7,6 +7,7 @@ Needs the wheel installed (maturin develop) and the duckdb package.
 from __future__ import annotations
 
 import json
+import os
 import subprocess
 import sys
 
@@ -730,6 +731,19 @@ def test_project_resolve_reads_secrets_from_the_environment(tmp_path, monkeypatc
     }
     (tmp_path / "synalog.toml").write_text("# no connection: a local project\n")
     assert project.resolve(tmp_path) is None
+
+
+def test_two_projects_keep_their_own_secrets(tmp_path, monkeypatch):
+    # One process, two projects: each reads its own .env, and neither leaks
+    # into the environment for the other.
+    from synalog import project
+
+    monkeypatch.delenv("SYNALOG_PSQL_PASSWORD", raising=False)
+    for name in ("a", "b"):
+        project.write(tmp_path / name, "psql", {"host": "h", "database": "d", "user": "u", "password": f"pw-{name}"})
+    assert project.resolve(tmp_path / "a")["password"] == "pw-a"
+    assert project.resolve(tmp_path / "b")["password"] == "pw-b"
+    assert "SYNALOG_PSQL_PASSWORD" not in os.environ
 
 
 def test_project_engine_and_connection_used_by_run(tmp_path):
