@@ -13,7 +13,7 @@ shop/
 │   ├── CustomerRevenue.l
 │   ├── OrdersByStatus.l
 │   └── TopCustomers.l
-└── layer.toml      # the project's name, description and database
+└── layer.toml        # the project's name, description and database
 ```
 
 A predicate's kind is the folder it is in:

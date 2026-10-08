@@ -142,7 +142,7 @@ A query that runs but returns nothing is not an error: check the filter values a
 ```
 AGENTS.md / CLAUDE.md       agent instructions for this project
 .agents/skills/synalog/     this skill
-layer.toml                the project's name, description and database (committed)
+layer.toml                  the project's name, description and database (committed)
 .env                        its secrets (git-ignored)
 tables/                     the data: one file per database table
 concepts/                   entities, relationships and clean views, built on tables

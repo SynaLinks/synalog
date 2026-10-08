@@ -251,7 +251,7 @@ shop/
 ├── concepts/Customer.l           # entities and relationships extracted from tables
 ├── rules/CustomerRevenue.l       # insights derived from concepts
 ├── rules/TopCustomers.l
-└── layer.toml                  # the project's name, description and database
+└── layer.toml                    # the project's name, description and database
 ```
 
 Each file is named after its predicate and opens with front matter (`name`, the predicate; `description`, what its rows are), then imports what it builds on by folder, file and predicate, then orders its predicate with `@OrderBy`. A database table is referenced by its lowercase database name in `tables/`, and everything else builds on the PascalCase predicate that maps it:
