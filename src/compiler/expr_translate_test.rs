@@ -350,6 +350,18 @@ fn test_sql_column_special_chars() {
 }
 
 #[test]
+fn test_sql_column_uppercase_is_quoted() {
+    let psql = crate::compiler::dialects::get("psql").unwrap();
+    assert_eq!(crate::compiler::dialects::sql_column("createdAt", psql.as_ref()), "\"createdAt\"");
+}
+
+#[test]
+fn test_sql_column_backticks_name_the_column() {
+    let psql = crate::compiler::dialects::get("psql").unwrap();
+    assert_eq!(crate::compiler::dialects::sql_column("`Order Note`", psql.as_ref()), "\"Order Note\"");
+}
+
+#[test]
 fn test_sql_column_keyword_is_quoted() {
     let duckdb = crate::compiler::dialects::get("duckdb").unwrap();
     assert_eq!(crate::compiler::dialects::sql_column("order", duckdb.as_ref()), "\"order\"");

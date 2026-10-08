@@ -303,7 +303,8 @@ mod tests {
 
     #[test]
     fn sql_as_a_table_name_is_refused() {
-        let parsed = parse_file("Q(x:) :- `(SELECT 1 AS x)`(x:);\nR(x:) :- `my-project.sales`(x:), sales.Orders(x:);\n", None, &[]).unwrap();
+        // Quoted, parentheses are part of a name (`Ventes (2024)`); what could leave the quotes or read a file is not.
+        let parsed = parse_file("Q(x:) :- `read_text('/etc/hosts')`(x:);\nR(x:) :- `my-project.sales`(x:), sales.Orders(x:), `Ventes (2024)`(x:);\n", None, &[]).unwrap();
         let errors: Vec<String> = validate(&parsed)
             .errors
             .iter()
@@ -311,7 +312,7 @@ mod tests {
             .map(|e| e.to_string())
             .collect();
         assert_eq!(errors.len(), 1, "{:?}", errors);
-        assert!(errors[0].contains("'`(SELECT 1 AS x)`' is not a table name"), "{}", errors[0]);
+        assert!(errors[0].contains("'`read_text('/etc/hosts')`' is not a table name"), "{}", errors[0]);
     }
 
     #[test]

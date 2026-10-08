@@ -17,6 +17,7 @@ DuckDB and SQLite with the facts it defines itself, executed by synalog
     # Expect: page <Pred> <limit> <offset> = <rows>    compile(limit=, offset=) returns <rows>
     # Expect: search <Pred> <pattern> = <rows>         search(pattern) returns <rows>
     # Expect: compile-error <Pred> <text>  compile() refuses <Pred> with an error containing <text>
+    # Expect: run-error <Pred> <text>      running <Pred> fails on every engine with an error containing <text>
 
 Run with: python -m pytest tests/cli/test_programs.py
 """
@@ -174,6 +175,12 @@ def test_program(path: Path):
             with pytest.raises(ValueError) as refused:
                 synalog.compile(source, predicate, engine="duckdb", import_root=[root])
             assert text in str(refused.value), f"{refused.value}"
+        elif kind == "run-error":
+            predicate, text = rest.split(" ", 1)
+            for engine in ENGINES:
+                with pytest.raises(Exception) as failed:  # noqa: B017, PT011 — each engine has its own error
+                    synalog.execute(source, predicate, engine=engine, import_root=[root])
+                assert text in str(failed.value), f"{engine}: {failed.value}"
         elif kind == "same-sql":
             bare = "\n".join(line for line in source.splitlines() if not line.lstrip().startswith("@Assert"))
             with_assertions = synalog.compile(source, rest, engine="duckdb", import_root=[root])

@@ -114,8 +114,11 @@ pub fn recursion_error_message() -> String {
 
 /// The SQL naming a table the program reads but does not define: a dotted
 /// path of names (`sales.Orders`), or one in backticks whose parts may hold
-/// '-' (`` `my-project.sales.orders` ``), each part then quoted for the
-/// engine. Anything else is refused: a table name never carries SQL.
+/// any letter, spaces and a few signs (`` `my-project.sales.Ventes (2024)` ``),
+/// each part then quoted for the engine, so a sign in it is part of the name
+/// and nothing else. What could end the quoting ('"', '`', '\\'), make a
+/// path or a URL ('/', '\\', '*', '?') or name a variable ('$') is refused: a
+/// table name never carries SQL, a file or a variable.
 pub fn table_reference(table: &str, dialect: &dyn dialects::Dialect) -> CompileResult<String> {
     if !is_table_name(table) {
         return Err(CompileError::new(
@@ -134,7 +137,9 @@ pub fn table_reference(table: &str, dialect: &dyn dialects::Dialect) -> CompileR
 pub fn is_table_name(table: &str) -> bool {
     if let Some(inner) = table.strip_prefix('`').and_then(|t| t.strip_suffix('`')) {
         return inner.split('.').all(|p| {
-            !p.is_empty() && p.chars().all(|c| c.is_ascii_alphanumeric() || c == '_' || c == '-')
+            !p.is_empty()
+                && p.trim() == p
+                && p.chars().all(|c| c.is_alphanumeric() || "_- '&#@+%:()".contains(c))
         });
     }
     table.split('.').all(|part| {
