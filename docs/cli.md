@@ -55,13 +55,12 @@ $ synalog program.l run EngineeringTeam
 | Option | Meaning |
 | --- | --- |
 | `-c PROGRAM` | Pass the program text inline instead of `FILE`, like `python -c`. |
-| `--engine <name>` | Target SQL dialect. Resolution order: this flag, then the program's `@Engine` annotation, then `duckdb`. |
+| `--engine <name>` | Target SQL dialect. Resolution order: this flag, then the program's `@Engine` annotation, then the project's engine, then `duckdb`. |
 | `--limit N` / `--offset N` | Paginate the result. |
 | `--csv` | With `run`: print results as CSV instead of a rendered table. |
 | `--search REGEX` | With `print`/`run`: keep only rows where some column matches the regular expression `REGEX` (engine-native regex, not a SQL `LIKE` pattern). Applies to the filtered rows before pagination. |
 | `--import-root DIR` | Directory where `import` statements look up `.l` files (repeatable). |
 | `--load TABLE=PATH` | Load a csv/tsv/json/jsonl/parquet file as a table before running (repeatable). |
-| `--dsn <conninfo>` | PostgreSQL connection string for `--engine psql` (or set `SYNALOG_PSQL_DSN`). |
 
 Passing `-` as the file reads the program from stdin, and `-c` takes the program text directly, and both compose with the other options:
 
@@ -79,7 +78,7 @@ With `-c` there is no `FILE` argument: the positionals are the command and its p
 
 - **duckdb**: the default engine, bundled with synalog; nothing extra to install.
 - **sqlite**: Python's stdlib driver; Logica's runtime UDFs (ArgMin/ArgMax, ARRAY_CONCAT, ...) are registered when the `logica` package is installed.
-- **psql**: bundled with synalog (psycopg with its own libpq); needs a connection string.
+- **psql**: bundled with synalog (psycopg with its own libpq); runs in a [project](#projects-synalogtoml) connected to PostgreSQL.
 
 The [`Today` and `Now`](language/temporal.md) built-in concepts need no runner support, since the compiler inlines them per dialect, so they work on every engine.
 
@@ -173,7 +172,22 @@ user = "analyst"
 schema = "public"
 ```
 
-Secrets never go in the file (synalog refuses it): each comes from the environment as `SYNALOG_<ENGINE>_<FIELD>` — `SYNALOG_PSQL_PASSWORD`, `SYNALOG_DATABRICKS_ACCESS_TOKEN`, or `GOOGLE_APPLICATION_CREDENTIALS` for BigQuery — usually from the project's `.env`, kept out of git. Anywhere in the project, `run`, `print`, `verify` and `introspect` use that engine and connection, and [imports](#imports) resolve from the project's folder; `--engine`, an `@Engine` annotation, `--dsn` and `SYNALOG_<ENGINE>_DSN` still take precedence. The fields of every engine are in `synalog.project.ENGINES`.
+Secrets never go in the file (synalog refuses it): each comes from the environment as `SYNALOG_<ENGINE>_<FIELD>` — `SYNALOG_PSQL_PASSWORD`, `SYNALOG_DATABRICKS_ACCESS_TOKEN`, or `GOOGLE_APPLICATION_CREDENTIALS` for BigQuery — usually from the project's `.env`, kept out of git. Anywhere in the project, `run`, `print`, `verify` and `introspect` use that engine and connection, and [imports](#imports) resolve from the project's folder. The project's file is the only place a connection comes from: `--engine` and an `@Engine` annotation choose the dialect, and a remote engine runs only through the project's connection to it. The fields of every engine are in `synalog.project.ENGINES`.
+
+### Connect
+
+```console
+$ synalog connect psql host=db.example.com database=sales user=analyst password=...
+Connected /path/to/sales/synalog.toml to psql (secrets in .env)
+$ synalog connect
+/path/to/sales/synalog.toml
+  engine = psql
+  host = db.example.com
+  ...
+  password: SYNALOG_PSQL_PASSWORD set
+```
+
+`synalog connect <engine> key=value ...` writes it — the non-secret fields to `synalog.toml`, the secret ones to `.env` — `synalog connect` shows it (secrets hidden), `synalog connect clear` removes it. It runs in the project's folder — the nearest `synalog.toml`'s, else the current directory — keeps the file's other tables, adds `.env` to `.gitignore`, and writes nothing when a required field is missing.
 
 ### Introspect
 
@@ -193,7 +207,7 @@ description: Orders.
 PublicOrders(order_id:, customer_id:, amount:, status:) :- public.orders(order_id:, customer_id:, amount:, status:);
 ```
 
-Run it again when the schema changes: the declarations are regenerated, and a file's front matter (its description, keywords, ...) is kept as written. A table the database no longer has keeps its file, since concepts may import it, and is listed. Outside a project, `synalog introspect <engine> [dsn]` prints the declarations instead. PostgreSQL, Trino, Presto, Databricks and BigQuery can be introspected.
+Run it again when the schema changes: the declarations are regenerated, and a file's front matter (its description, keywords, ...) is kept as written. A table the database no longer has keeps its file, since concepts may import it, and is listed. It needs a project connected to its database. PostgreSQL, Trino, Presto, Databricks and BigQuery can be introspected.
 
 ## Add the skill to your coding agent
 
@@ -243,7 +257,7 @@ Bad(x) :- x ==<EMPTY>
 Greeting("hi");
 ```
 
-The `--engine`, `--dsn`, `--import-root` and `--load` options also apply to the session:
+The `--engine`, `--import-root` and `--load` options also apply to the session, and the project's connection too:
 
 ```bash
 synalog --engine sqlite --load employees=employees.csv

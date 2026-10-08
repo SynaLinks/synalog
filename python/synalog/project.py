@@ -33,7 +33,6 @@ import sys
 from collections.abc import Mapping
 from dataclasses import asdict, dataclass, field
 from pathlib import Path
-from urllib.parse import quote, urlencode
 
 if sys.version_info >= (3, 11):
     import tomllib
@@ -194,49 +193,25 @@ def details(conn: dict, env: Mapping[str, str] | None = None) -> dict:
     return out
 
 
-# -- connection strings --------------------------------------------------------
+# -- resolving ----------------------------------------------------------------
 
 
-def dsn(engine: str, details: dict) -> str:
-    """The connection string synalog's runner for ``engine`` parses."""
-    c = {k: v for k, v in details.items() if v not in (None, "")}
+def resolve(*starts: str | os.PathLike) -> dict | None:
+    """The connection of the project found from ``starts`` (see ``find``):
+    its ``engine`` and every field a runner needs, defaults filled in and
+    secrets read from the environment — the project's ``.env`` loaded first,
+    real variables winning. ``None`` outside a project, or in one without a
+    ``[connection]`` (it runs on a local engine)."""
+    from .config import load_dotenv
 
-    def userinfo(user, password) -> str:
-        if not user:
-            return ""
-        return quote(str(user), safe="") + (f":{quote(str(password), safe='')}" if password else "") + "@"
-
-    def hostport() -> str:
-        return f"{c['host']}:{c['port']}" if c.get("port") else c["host"]
-
-    if engine == "psql":
-        query = {k: c[k] for k in ("sslmode",) if k in c}
-        if c.get("schema"):
-            query["options"] = f"-csearch_path={c['schema']}"
-        suffix = f"?{urlencode(query)}" if query else ""
-        return f"postgresql://{userinfo(c.get('user'), c.get('password'))}{hostport()}/{c.get('database', '')}{suffix}"
-    if engine in ("trino", "presto"):
-        path = "/".join(quote(str(c[k]), safe="") for k in ("catalog", "schema") if c.get(k))
-        password = c.get("password") if c.get("auth") == "password" else None
-        query = {"http_scheme": c["scheme"]} if c.get("scheme") else {}
-        suffix = f"?{urlencode(query)}" if query else ""
-        return f"{engine}://{userinfo(c.get('user'), password)}{hostport()}/{path}{suffix}"
-    if engine == "databricks":
-        query = {"http_path": c["http_path"], "access_token": c["access_token"]}
-        return f"databricks://{c['server_hostname']}?{urlencode(query)}"
-    if engine == "bigquery":
-        query = {"location": c["location"]} if c.get("location") else {}
-        return f"bigquery://{c['project']}" + (f"?{urlencode(query)}" if query else "")
-    raise ProjectError(f"{engine!r} takes no connection")
-
-
-def project_dsn(path: str | os.PathLike, engine: str, env: Mapping[str, str] | None = None) -> str | None:
-    """The connection string of the project file at ``path`` for ``engine``,
-    or ``None`` when the project connects to another engine, or none."""
-    conn = connection(path)
-    if conn is None or conn["engine"] != engine:
+    path = find(*starts)
+    if path is None:
         return None
-    return dsn(engine, details(conn, env))
+    load_dotenv(path.parent)
+    conn = connection(path)
+    if conn is None:
+        return None
+    return {"engine": conn["engine"], **details(conn)}
 
 
 # -- writing -------------------------------------------------------------------
@@ -332,6 +307,10 @@ def write(folder: str | os.PathLike, engine: str, details: dict) -> Path:
     if unknown:
         raise ProjectError(f"{engine} has no field {', '.join(unknown)} (fields: {', '.join(sorted(keys))})")
     details = {k: v for k, v in details.items() if v not in (None, "")}
+    # Checked before anything is written: a failed connect leaves the project as it was.
+    missing = [f.key for f in ENGINES[engine].fields if f.required and not f.secret and f.default is None and f.key not in details]
+    if missing:
+        raise ProjectError(f"the {engine} connection needs {', '.join(missing)}")
     folder.mkdir(parents=True, exist_ok=True)
     secrets_ = {}
     if isinstance(details.get("credentials"), dict):  # BigQuery's key, as JSON

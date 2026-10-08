@@ -143,7 +143,7 @@ An assertion is checked by looking for its counterexamples: Synalog compiles tha
 | `synalog program.l verify [Predicate ...]` | Runs every assertion, or those of the given predicates, and prints the counterexamples of each violated one (5 by default, `--limit` to change). Exits 1 if one is violated. |
 | `synalog program.l run Predicate` | Checks the program's assertions before it prints anything, and exits 1 with a few counterexamples if one is violated. |
 | `synalog program.l print Predicate` | Never touches the database: assertions are not run. |
-| [`check()`](python-api.md#check) | Runs the assertions when a database is known: inside a project whose `synalog.toml` has a `[connection]`, or given a `dsn`. Each violated assertion is an error. `assertions=False` keeps it offline. |
+| [`check()`](python-api.md#check) | Runs the assertions when a database is known: inside a project whose `synalog.toml` has a `[connection]` (the current directory's, or the folder `project` names). Each violated assertion is an error. `assertions=False` keeps it offline. |
 
 ```text
 $ synalog family.l run Grandparent --load parents=parents.csv

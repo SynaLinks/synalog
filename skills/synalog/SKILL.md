@@ -59,7 +59,7 @@ schema = "public"
 
 - **Secrets never go in the file** — synalog refuses it and names the variable to use. They come from the environment as `SYNALOG_<ENGINE>_<FIELD>` (`SYNALOG_PSQL_PASSWORD`, `SYNALOG_DATABRICKS_ACCESS_TOKEN`; `GOOGLE_APPLICATION_CREDENTIALS` for BigQuery's key file), usually from the project's `.env`, which synalog loads and git must ignore. Never read or print `.env`.
 - Fields per engine: `psql` host, port, database, user, password, sslmode, schema; `trino`/`presto` host, port, scheme, catalog, schema, user, auth, password; `databricks` server_hostname, http_path, access_token, catalog, schema; `bigquery` project, dataset, credentials, location.
-- Precedence: `--engine` and `@Engine` over the project's engine; `--dsn`, then `SYNALOG_<ENGINE>_DSN`, then `synalog.toml`, then a connection saved with `synalog connect <engine> <dsn>`.
+- The project's file is the only place a connection comes from. `synalog connect <engine> key=value ...` writes it (secret fields to `.env`), `synalog connect` shows it, secrets hidden. `--engine` and `@Engine` choose the dialect over the project's engine; a remote engine runs only through the project's connection to it.
 - `[project]` (`name`, `description`) is for the tools around synalog; synalog ignores it.
 - `synalog introspect` (inside a project) writes the project's `tables/`: one `tables/<Name>.l` per table of its database, ordered by its first column, described from the table's name (`order_items` → "Order items.") until you write a better description. Run it again after a schema change: declarations are regenerated, front matter written by hand is kept.
 
@@ -133,7 +133,7 @@ Fix the quoted statement and re-run: later syntax errors only surface once earli
 | `The databricks connection needs SYNALOG_DATABRICKS_ACCESS_TOKEN` | the secret is missing from `.env`: ask the user for it |
 | `synalog.toml: psql has no field 'hots' (fields: …)` | use one of the fields listed |
 | `The psql engine needs psycopg with its libpq (...)` | the driver ships with synalog; reinstall it with its libpq: `pip install 'psycopg[binary]'` |
-| `The psql engine needs a connection string: …` | give the project a `[connection]`, or pass `--dsn` |
+| `The psql engine needs the project's connection: …` | connect the project: `synalog connect psql key=value ...` (ask the user for the credentials) |
 
 A query that runs but returns nothing is not an error: check the filter values against the data before concluding there is none.
 
