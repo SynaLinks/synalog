@@ -126,12 +126,33 @@ pub fn table_reference(table: &str, dialect: &dyn dialects::Dialect) -> CompileR
             table.to_string(),
         ));
     }
-    match table.strip_prefix('`').and_then(|t| t.strip_suffix('`')) {
+    let inner = table.strip_prefix('`').and_then(|t| t.strip_suffix('`'));
+    // Spark reads `format.path` as a file when no table has that name
+    // (`text.secret`, `` csv.`/data/x` ``): there a format is no schema.
+    if dialect.name() == "databricks" {
+        let parts: Vec<&str> = inner.unwrap_or(table).split('.').collect();
+        if parts.len() == 2 && SPARK_FILE_FORMATS.contains(&parts[0].to_ascii_lowercase().as_str()) {
+            return Err(CompileError::new(
+                format!(
+                    "'{}' is not a table name: on this engine '{}' reads a file; name the table with its catalog",
+                    table, parts[0]
+                ),
+                table.to_string(),
+            ));
+        }
+    }
+    match inner {
         Some(inner) if dialect.name() == "bigquery" => Ok(format!("`{}`", inner)),
         Some(inner) => Ok(inner.split('.').map(|p| dialect.quote_identifier(p)).collect::<Vec<_>>().join(".")),
         None => Ok(table.to_string()),
     }
 }
+
+/// The data sources Spark SQL queries a file with (`SELECT * FROM text.`path``).
+const SPARK_FILE_FORMATS: [&str; 14] = [
+    "text", "csv", "json", "parquet", "orc", "avro", "xml", "binaryfile", "delta", "jdbc", "image", "libsvm",
+    "kafka", "hudi",
+];
 
 /// Whether `table` names a table, as `table_reference` takes it.
 pub fn is_table_name(table: &str) -> bool {

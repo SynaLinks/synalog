@@ -127,6 +127,22 @@ fn test_table_reference_refuses_sql() {
     }
 }
 
+#[test]
+fn test_table_reference_reads_no_file_on_spark() {
+    let databricks = crate::compiler::dialects::get("databricks").unwrap();
+    let duckdb = crate::compiler::dialects::get("duckdb").unwrap();
+    for name in ["text.secret", "`text.secret`", "csv.orders", "`CSV.orders`", "parquet.events", "json.x", "delta.t"] {
+        let refused = table_reference(name, databricks.as_ref());
+        assert!(refused.is_err(), "{}", name);
+        assert!(refused.unwrap_err().to_string().contains("reads a file"), "{}", name);
+    }
+    // With its catalog, or under another schema, it is a table.
+    assert_eq!(table_reference("main.text.secret", databricks.as_ref()).unwrap(), "main.text.secret");
+    assert_eq!(table_reference("sales.text", databricks.as_ref()).unwrap(), "sales.text");
+    // Elsewhere `text` is a schema like another.
+    assert_eq!(table_reference("text.secret", duckdb.as_ref()).unwrap(), "text.secret");
+}
+
 // ── recursion_error_message ──
 
 #[test]
