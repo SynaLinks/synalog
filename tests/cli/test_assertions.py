@@ -198,7 +198,7 @@ def project_db(tmp_path, monkeypatch):
     """A project connected to psql, with duckdb standing in for the server:
     the queries `check` sends are recorded, and executed in memory in duckdb's
     dialect."""
-    (tmp_path / "synalog.toml").write_text(PSQL_PROJECT)
+    (tmp_path / "layer.toml").write_text(PSQL_PROJECT)
     monkeypatch.chdir(tmp_path)
     sent = []
     plan_for = synalog.plan
@@ -209,8 +209,8 @@ def project_db(tmp_path, monkeypatch):
 
     monkeypatch.setattr("synalog.checking._synalog.plan", plan)
 
-    def session(engine, dsn=None, loads=()):
-        sent.append((engine, dsn))
+    def session(engine, connection=None, loads=()):
+        sent.append((engine, connection))
         return DuckDbSession()
 
     monkeypatch.setattr("synalog.checking.session", session)
@@ -229,8 +229,9 @@ def test_check_refuses_a_violated_assertion_in_a_project(project_db):
     # Text values are quoted: data reads as data.
     assert '("a", "b", "d")' in counterexamples and '("a", "c", "d")' in counterexamples
     # It ran on the project's engine, through the project's connection.
-    ((engine, dsn),) = project_db
-    assert engine == "psql" and dsn.startswith("postgresql://u@db.example.com:5432/d?")
+    ((engine, connection),) = project_db
+    assert engine == "psql"
+    assert (connection["host"], connection["port"], connection["database"]) == ("db.example.com", 5432, "d")
 
 
 def test_check_accepts_assertions_that_hold_in_a_project(project_db):
@@ -269,10 +270,10 @@ def test_check_outside_a_project_is_offline(tmp_path, monkeypatch):
 
 
 def test_unreachable_database_is_a_warning(tmp_path, monkeypatch):
-    (tmp_path / "synalog.toml").write_text(PSQL_PROJECT)
+    (tmp_path / "layer.toml").write_text(PSQL_PROJECT)
     monkeypatch.chdir(tmp_path)
 
-    def session(engine, dsn=None, loads=()):
+    def session(engine, connection=None, loads=()):
         raise OSError("could not connect to server")
 
     monkeypatch.setattr("synalog.checking.session", session)
@@ -282,7 +283,10 @@ def test_unreachable_database_is_a_warning(tmp_path, monkeypatch):
     )
 
 
-def test_explicit_dsn_is_a_database(tmp_path, monkeypatch):
+def test_a_project_elsewhere_is_a_database(tmp_path, monkeypatch):
+    # The project need not be the current directory: `project` names its folder.
+    (tmp_path / "proj").mkdir()
+    (tmp_path / "proj" / "layer.toml").write_text(PSQL_PROJECT)
     monkeypatch.chdir(tmp_path)
     sent = []
 
@@ -292,14 +296,14 @@ def test_explicit_dsn_is_a_database(tmp_path, monkeypatch):
         lambda source, predicate, engine=None, **kwargs: plan_for(source, predicate, engine="duckdb", **kwargs),
     )
 
-    def session(engine, dsn=None, loads=()):
-        sent.append((engine, dsn))
+    def session(engine, connection=None, loads=()):
+        sent.append((engine, connection))
         return DuckDbSession()
 
     monkeypatch.setattr("synalog.checking.session", session)
     source = ASSERTION + PARENT + CLOSURE
-    assert synalog.check(source, engine="psql", dsn="postgresql://h/d") == ([], [])
-    assert sent == [("psql", "postgresql://h/d")]
+    assert synalog.check(source, project=tmp_path / "proj") == ([], [])
+    assert [(engine, connection["host"]) for engine, connection in sent] == [("psql", "db.example.com")]
 
 
 def test_a_counterexample_from_the_data_reads_as_a_value(tmp_path):

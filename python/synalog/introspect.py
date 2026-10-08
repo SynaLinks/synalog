@@ -2,10 +2,10 @@
 
 """Introspect a database schema into the table files of a project.
 
-`synalog introspect` connects to the project's (or a given) connection, reads
-the table/column catalog across all user (non-system) schemas, and writes one
-file per table into the project's `tables/` folder, the rest of the project
-building on them; outside a project, it prints the declarations.
+`synalog introspect` connects to the project's connection (its
+``layer.toml``), reads the table/column catalog across all user (non-system)
+schemas, and writes one file per table into the project's `tables/` folder,
+the rest of the project building on them.
 
 Each database table becomes one predicate mapping the physical, schema-qualified
 table to a PascalCase predicate,
@@ -25,11 +25,11 @@ without an information schema (legacy ``hive_metastore``, plain Spark).
 from __future__ import annotations
 
 import re
-import urllib.parse
+from collections.abc import Mapping
 from pathlib import Path
 from typing import NamedTuple
 
-from .runners import RunnerUnavailable, _resolve_dsn, run_sql
+from .runners import RunnerUnavailable, run_sql
 
 # Engines whose catalog `information_schema.columns` covers directly, mapped to
 # the predicate that excludes that engine's system schemas. Trino/Presto and
@@ -60,13 +60,10 @@ def _info_schema_sql(where: str) -> str:
     )
 
 
-def _bigquery_sql(dsn: str | None) -> str:
-    # BigQuery's COLUMNS view is region-qualified; the region comes from the
-    # DSN's ?location= (default: the multi-region US), the default project.
-    location = "us"
-    if dsn and "://" in dsn:
-        query = urllib.parse.parse_qs(urllib.parse.urlparse(dsn).query)
-        location = (query.get("location") or ["us"])[0]
+def _bigquery_sql(connection: Mapping | None) -> str:
+    # BigQuery's COLUMNS view is region-qualified; the region is the
+    # connection's location (default: the multi-region US).
+    location = (connection or {}).get("location") or "us"
     return (
         "SELECT table_schema, table_name, column_name\n"
         f"FROM `region-{location.lower()}`.INFORMATION_SCHEMA.COLUMNS\n"
@@ -75,9 +72,9 @@ def _bigquery_sql(dsn: str | None) -> str:
     )
 
 
-def _introspect_sql(engine: str, dsn: str | None) -> str:
+def _introspect_sql(engine: str, connection: Mapping | None) -> str:
     if engine == "bigquery":
-        return _bigquery_sql(dsn)
+        return _bigquery_sql(connection)
     return _info_schema_sql(_INFO_SCHEMA_WHERE[engine])
 
 
@@ -134,10 +131,10 @@ def _databricks_rows(fetch) -> list[tuple]:
         return _databricks_show_rows(fetch)
 
 
-def _catalog_rows(engine: str, fetch, dsn: str | None) -> list[tuple]:
+def _catalog_rows(engine: str, fetch, connection: Mapping | None) -> list[tuple]:
     if engine == "databricks":
         return _databricks_rows(fetch)
-    return list(fetch(_introspect_sql(engine, dsn)))
+    return list(fetch(_introspect_sql(engine, connection)))
 
 
 # ---------------------------------------------------------------------------
@@ -298,17 +295,18 @@ def write_tables(folder: str | Path, found: list[Table]) -> dict[str, list[str]]
     return {"written": [table.name for table in found], "gone": gone}
 
 
-def introspect(engine: str, dsn: str | None = None, fetch=None) -> str:
+def introspect(engine: str, connection: Mapping | None = None, fetch=None) -> str:
     """Connect, read the catalog, and return the declarations of its tables."""
-    return predicates(engine, catalog(engine, dsn, fetch))
+    return predicates(engine, catalog(engine, connection, fetch))
 
 
-def catalog(engine: str, dsn: str | None = None, fetch=None) -> list[tuple]:
+def catalog(engine: str, connection: Mapping | None = None, fetch=None) -> list[tuple]:
     """Connect and read the catalog rows ``(schema, table, column)``.
 
-    ``fetch`` is an optional ``sql -> rows`` executor; when omitted, queries run
-    through :func:`synalog.runners.run_sql` against the resolved connection. Tests
-    inject one to drive introspection against a runner of their choice.
+    ``connection`` is the project's (``synalog.project.resolve``). ``fetch``
+    is an optional ``sql -> rows`` executor; when omitted, queries run through
+    :func:`synalog.runners.run_sql` on the connection. Tests inject one to
+    drive introspection against a runner of their choice.
     """
     if engine not in INTROSPECTABLE:
         raise RunnerUnavailable(
@@ -316,16 +314,8 @@ def catalog(engine: str, dsn: str | None = None, fetch=None) -> list[tuple]:
             + ", ".join(INTROSPECTABLE)
         )
     if fetch is None:
-        resolved = _resolve_dsn(engine, dsn)
-        if not resolved and engine != "bigquery":  # bigquery falls back to ADC
-            raise RunnerUnavailable(
-                f"The {engine} engine needs a connection string: pass it after the"
-                f" engine, set SYNALOG_{engine.upper()}_DSN, or run"
-                f" 'synalog connect {engine} <dsn>'"
-            )
 
         def fetch(sql: str):
-            return run_sql(engine, sql, dsn=resolved)[1]
+            return run_sql(engine, sql, connection)[1]
 
-        dsn = resolved
-    return _catalog_rows(engine, fetch, dsn)
+    return _catalog_rows(engine, fetch, connection)

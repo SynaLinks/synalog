@@ -109,10 +109,10 @@ def test_info_schema_sql_shape(engine):
     assert "ORDER BY table_schema, table_name, ordinal_position" in sql
 
 
-def test_bigquery_sql_uses_region_from_dsn_location():
+def test_bigquery_sql_uses_the_connection_location():
     default = _introspect_sql("bigquery", None)
     assert "`region-us`.INFORMATION_SCHEMA.COLUMNS" in default
-    eu = _introspect_sql("bigquery", "bigquery://my-proj?location=EU")
+    eu = _introspect_sql("bigquery", {"engine": "bigquery", "project": "my-proj", "location": "EU"})
     assert "`region-eu`.INFORMATION_SCHEMA.COLUMNS" in eu
 
 
@@ -161,18 +161,16 @@ def test_introspect_rejects_unknown_engine():
         introspect.introspect("sqlite")
 
 
-def test_introspect_requires_dsn(monkeypatch, tmp_path):
-    monkeypatch.setenv("SYNALOG_CONFIG_DIR", str(tmp_path))
-    monkeypatch.delenv("SYNALOG_PSQL_DSN", raising=False)
-    with pytest.raises(introspect.RunnerUnavailable, match="needs a connection string"):
+def test_introspect_requires_the_project_connection():
+    with pytest.raises(introspect.RunnerUnavailable, match="needs the project's connection"):
         introspect.introspect("psql")
 
 
 def test_introspectable_matches_connectable_engines():
     # introspect should cover exactly the engines `synalog connect` accepts.
-    from synalog.cli import DSN_ENGINES
+    from synalog.project import ENGINES
 
-    assert set(INTROSPECTABLE) == set(DSN_ENGINES)
+    assert set(INTROSPECTABLE) == set(ENGINES)
 
 
 def test_write_tables_writes_one_checked_file_per_table(tmp_path):

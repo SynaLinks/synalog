@@ -1,6 +1,6 @@
 # Program structure
 
-A Synalog program is a **project**: a folder with a `synalog.toml`, holding one predicate per file in three folders. This is the layout of [semantic layers](https://github.com/SynaLinks/semantic-layers), and the one this documentation follows.
+A Synalog program is a **project**: a folder with a `layer.toml`, holding one predicate per file in three folders. This is the layout of [semantic layers](https://github.com/SynaLinks/semantic-layers), and the one this documentation follows.
 
 ```
 shop/
@@ -13,7 +13,7 @@ shop/
 │   ├── CustomerRevenue.l
 │   ├── OrdersByStatus.l
 │   └── TopCustomers.l
-└── synalog.toml      # the project's name, description and database
+└── layer.toml        # the project's name, description and database
 ```
 
 A predicate's kind is the folder it is in:
@@ -79,7 +79,7 @@ Imports resolve from the project's folder, so every file runs on its own, from a
 synalog rules/TopCustomers.l run TopCustomers
 ```
 
-The project's `synalog.toml` says which database it runs on (see [Projects](../cli.md#projects-synalogtoml)). From Python, give the project's folder as the import root:
+The project's `layer.toml` says which database it runs on (see [Projects](../cli.md#projects-layertoml)). From Python, give the project's folder as the import root:
 
 ```python
 import synalog
@@ -134,7 +134,7 @@ Add `as` to rename: `import rules.CustomerRevenue.CustomerRevenue as Revenue;`. 
 
 The imports are the project's dependency graph: what each predicate builds on, and so what a change affects. A project is self-contained: everything its files import is inside it, its tables included.
 
-Imports resolve from the project's folder (the one holding `synalog.toml`) in the [CLI](../cli.md#imports), whichever file runs and wherever from; in the [Python API](../python-api.md), pass that folder as `import_root`.
+Imports resolve from the project's folder (the one holding `layer.toml`) in the [CLI](../cli.md#imports), whichever file runs and wherever from; in the [Python API](../python-api.md), pass that folder as `import_root`.
 
 ## Extract categorical values first
 

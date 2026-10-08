@@ -10,10 +10,10 @@ jsonl/parquet files — is replayed on every connection before the script runs.
 
 Local, in-memory engines (``sqlite``, ``duckdb``) build the connection from
 ``loads``; remote engines (``psql``, ``trino``, ``presto``, ``databricks``,
-``bigquery``) connect over the network using a connection string resolved, in
-order, from the ``--dsn`` flag, the ``SYNALOG_<ENGINE>_DSN`` environment
-variable, then the saved-connection file (see ``synalog.config``). Remote
-engines cannot ingest local ``loads`` files — load those with your own tools.
+``bigquery``) connect over the network with the fields of the project's
+``[connection]`` (``synalog.project.resolve``: ``layer.toml``, its secrets
+from the environment). Remote engines cannot ingest local ``loads`` files —
+load those with your own tools.
 
 Runners reproduce the runtime environment upstream Python Logica provides on
 its own connections:
@@ -41,7 +41,7 @@ import math
 import os
 import re
 import sqlite3
-import urllib.parse
+from collections.abc import Mapping
 
 Result = tuple[list[str], list[tuple]]
 
@@ -408,10 +408,10 @@ END $$"""
 class PsqlSession(Session):
     engine = "psql"
 
-    def __init__(self, dsn: str | None, loads=()):
+    def __init__(self, connection: Mapping | None, loads=()):
         _reject_loads(loads, "psql")
-        # The connection string first: without one, the driver is beside the point.
-        dsn = _require_dsn("psql", dsn)
+        # The connection first: without one, the driver is beside the point.
+        c = _require_connection("psql", connection)
         try:
             import psycopg
         except ImportError as e:
@@ -420,7 +420,16 @@ class PsqlSession(Session):
             raise RunnerUnavailable(
                 f"The psql engine needs psycopg with its libpq ({e}): pip install 'psycopg[binary]'"
             ) from None
-        self.conn = psycopg.connect(dsn, autocommit=True)
+        self.conn = psycopg.connect(
+            host=c["host"],
+            port=c.get("port", 5432),
+            dbname=c["database"],
+            user=c["user"],
+            password=c.get("password"),
+            sslmode=c.get("sslmode", "prefer"),
+            options=f"-csearch_path={c['schema']}" if c.get("schema") else None,
+            autocommit=True,
+        )
         self.cur = self.conn.cursor()
         self.cur.execute(PSQL_ARRAY_CONCAT_AGG)
 
@@ -450,28 +459,15 @@ class PsqlSession(Session):
 # ---------------------------------------------------------------------------
 
 
-def _resolve_dsn(engine: str, dsn: str | None) -> str | None:
-    """Connection string for `engine`: --dsn, then env, then saved config."""
-    if dsn:
-        return dsn
-    if env := os.environ.get(f"SYNALOG_{engine.upper()}_DSN"):
-        return env
-    try:
-        from .config import saved_connection
-    except ImportError:
-        return None
-    return saved_connection(engine)
-
-
-def _require_dsn(engine: str, dsn: str | None) -> str:
-    resolved = _resolve_dsn(engine, dsn)
-    if not resolved:
+def _require_connection(engine: str, connection: Mapping | None) -> Mapping:
+    """The project's connection to ``engine``, or what to do without one."""
+    if not connection or connection.get("engine", engine) != engine:
         raise RunnerUnavailable(
-            f"The {engine} engine needs a connection string: give the project a"
-            f" [connection] in synalog.toml, pass --dsn, set SYNALOG_{engine.upper()}_DSN, or run"
-            f" 'synalog connect {engine} <dsn>'"
+            f"The {engine} engine needs the project's connection: run"
+            f" 'synalog connect {engine} key=value ...' in the project's folder"
+            " (it writes layer.toml, the secrets in .env)"
         )
-    return resolved
+    return connection
 
 
 def _reject_loads(loads, engine: str) -> None:
@@ -500,9 +496,9 @@ class DbapiSession(Session):
         self.conn.close()
 
 
-def _trino_session(dsn: str | None, loads) -> Session:
+def _trino_session(connection: Mapping | None, loads) -> Session:
     _reject_loads(loads, "trino")
-    dsn = _require_dsn("trino", dsn)
+    c = _require_connection("trino", connection)
     try:
         import trino
     except ImportError:
@@ -510,30 +506,27 @@ def _trino_session(dsn: str | None, loads) -> Session:
             "The trino engine needs the 'trino' package: pip install trino"
         ) from None
 
-    url = urllib.parse.urlparse(dsn)
-    query = dict(urllib.parse.parse_qsl(url.query))
-    path = [p for p in url.path.split("/") if p]
-    port = url.port or 8080
     auth = None
-    http_scheme = query.get("http_scheme") or ("https" if port == 443 else "http")
-    if url.password:
-        auth = trino.auth.BasicAuthentication(url.username or "", url.password)
-        http_scheme = "https"
+    if c.get("auth") == "password":
+        auth = trino.auth.BasicAuthentication(c["user"], c.get("password", ""))
+    elif c.get("auth") == "jwt":
+        auth = trino.auth.JWTAuthentication(c.get("password", ""))
     conn = trino.dbapi.connect(
-        host=url.hostname,
-        port=port,
-        user=url.username or query.get("user") or "synalog",
-        catalog=(path[0] if path else query.get("catalog")),
-        schema=(path[1] if len(path) > 1 else query.get("schema")),
-        http_scheme=http_scheme,
+        host=c["host"],
+        port=int(c.get("port", 8080)),
+        user=c["user"],
+        catalog=c.get("catalog"),
+        schema=c.get("schema"),
+        # Credentials only travel over https.
+        http_scheme="https" if auth else c.get("scheme", "http"),
         auth=auth,
     )
     return DbapiSession("trino", conn)
 
 
-def _presto_session(dsn: str | None, loads) -> Session:
+def _presto_session(connection: Mapping | None, loads) -> Session:
     _reject_loads(loads, "presto")
-    dsn = _require_dsn("presto", dsn)
+    c = _require_connection("presto", connection)
     try:
         import prestodb
     except ImportError:
@@ -542,22 +535,24 @@ def _presto_session(dsn: str | None, loads) -> Session:
             " pip install presto-python-client"
         ) from None
 
-    url = urllib.parse.urlparse(dsn)
-    query = dict(urllib.parse.parse_qsl(url.query))
-    path = [p for p in url.path.split("/") if p]
+    auth = None
+    if c.get("auth") == "password":
+        auth = prestodb.auth.BasicAuthentication(c["user"], c.get("password", ""))
     conn = prestodb.dbapi.connect(
-        host=url.hostname,
-        port=url.port or 8080,
-        user=url.username or query.get("user") or "synalog",
-        catalog=(path[0] if path else query.get("catalog")),
-        schema=(path[1] if len(path) > 1 else query.get("schema")),
+        host=c["host"],
+        port=int(c.get("port", 8080)),
+        user=c["user"],
+        catalog=c.get("catalog"),
+        schema=c.get("schema"),
+        http_scheme="https" if auth else c.get("scheme", "http"),
+        auth=auth,
     )
     return DbapiSession("presto", conn)
 
 
-def _databricks_session(dsn: str | None, loads) -> Session:
+def _databricks_session(connection: Mapping | None, loads) -> Session:
     _reject_loads(loads, "databricks")
-    dsn = _require_dsn("databricks", dsn)
+    c = _require_connection("databricks", connection)
     try:
         from databricks import sql as databricks_sql
     except ImportError:
@@ -566,19 +561,12 @@ def _databricks_session(dsn: str | None, loads) -> Session:
             " pip install databricks-sql-connector"
         ) from None
 
-    url = urllib.parse.urlparse(dsn)
-    query = dict(urllib.parse.parse_qsl(url.query))
-    http_path = query.get("http_path")
-    access_token = query.get("access_token") or url.password or url.username
-    if not (url.hostname and http_path and access_token):
-        raise RunnerUnavailable(
-            "The databricks DSN needs a host, http_path and access token, e.g."
-            " databricks://<token>@<host>?http_path=/sql/1.0/warehouses/<id>"
-        )
     conn = databricks_sql.connect(
-        server_hostname=url.hostname,
-        http_path=http_path,
-        access_token=access_token,
+        server_hostname=c["server_hostname"],
+        http_path=c["http_path"],
+        access_token=c["access_token"],
+        catalog=c.get("catalog"),
+        schema=c.get("schema"),
     )
     return DbapiSession("databricks", conn)
 
@@ -590,8 +578,9 @@ class BigQuerySession(Session):
 
     engine = "bigquery"
 
-    def __init__(self, dsn: str | None, loads=()):
+    def __init__(self, connection: Mapping | None, loads=()):
         _reject_loads(loads, "bigquery")
+        c = _require_connection("bigquery", connection)
         try:
             from google.cloud import bigquery
         except ImportError:
@@ -599,18 +588,18 @@ class BigQuerySession(Session):
                 "The bigquery engine needs the 'google-cloud-bigquery' package:"
                 " pip install google-cloud-bigquery"
             ) from None
-        # BigQuery authenticates via Application Default Credentials; the DSN,
-        # when given, only names the billing project (and optional location).
-        project = location = None
-        if resolved := _resolve_dsn("bigquery", dsn):
-            if "://" in resolved:
-                url = urllib.parse.urlparse(resolved)
-                project = url.hostname or url.netloc or None
-                location = dict(urllib.parse.parse_qsl(url.query)).get("location")
-            else:
-                project = resolved
+        # The key file is GOOGLE_APPLICATION_CREDENTIALS, which the client
+        # reads itself; the connection names the project, dataset and location.
+        project, location = c["project"], c.get("location")
+        default_dataset = f"{project}.{c['dataset']}" if c.get("dataset") else None
         try:
-            self.client = bigquery.Client(project=project, location=location)
+            self.client = bigquery.Client(
+                project=project,
+                location=location,
+                default_query_job_config=(
+                    bigquery.QueryJobConfig(default_dataset=default_dataset) if default_dataset else None
+                ),
+            )
         except Exception as e:
             raise RunnerUnavailable(f"bigquery error ({type(e).__name__}: {e})") from None
 
@@ -624,37 +613,39 @@ class BigQuerySession(Session):
         return [field.name for field in result.schema], [tuple(row.values()) for row in result]
 
 
-def session(engine: str, dsn: str | None = None, loads=()) -> Session:
-    """Open a session on `engine`. `loads` is a sequence of (table, path)
-    pairs; each file is loaded into the session as a table (local engines)."""
+def session(engine: str, connection: Mapping | None = None, loads=()) -> Session:
+    """Open a session on `engine`. `connection` is the project's
+    (``synalog.project.resolve``), which a remote engine needs; `loads` is a
+    sequence of (table, path) pairs, each file loaded as a table (local
+    engines)."""
     if engine == "sqlite":
         return SqliteSession(loads)
     if engine == "duckdb":
         return DuckDbSession(loads)
     if engine == "psql":
-        return PsqlSession(dsn, loads)
+        return PsqlSession(connection, loads)
     if engine == "trino":
-        return _trino_session(dsn, loads)
+        return _trino_session(connection, loads)
     if engine == "presto":
-        return _presto_session(dsn, loads)
+        return _presto_session(connection, loads)
     if engine == "databricks":
-        return _databricks_session(dsn, loads)
+        return _databricks_session(connection, loads)
     if engine == "bigquery":
-        return BigQuerySession(dsn, loads)
+        return BigQuerySession(connection, loads)
     raise RunnerUnavailable(
         f"Engine '{engine}' has no local runner. Use the 'print' command to get"
         " the SQL and run it with your own client."
     )
 
 
-def run_sql(engine: str, sql: str, dsn: str | None = None, loads=()) -> Result:
+def run_sql(engine: str, sql: str, connection: Mapping | None = None, loads=()) -> Result:
     """Execute `sql` against `engine`, returning (column_names, rows) of its
     last statement that produced rows.
 
     `loads` is a sequence of (table, path) pairs; each file is loaded into
     the connection as a table before the script runs.
     """
-    with session(engine, dsn, loads) as s:
+    with session(engine, connection, loads) as s:
         return s.run(sql)
 
 

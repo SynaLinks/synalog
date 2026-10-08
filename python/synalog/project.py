@@ -1,8 +1,8 @@
 # License Apache 2.0: (c) 2025-2026 Yoan Sallami (Synalinks Team)
 
-"""The project file, ``synalog.toml``: which database a project runs on.
+"""The project file, ``layer.toml``: which database a project runs on.
 
-A project is a folder of ``.l`` files with a ``synalog.toml`` at its root.
+A project is a folder of ``.l`` files with a ``layer.toml`` at its root.
 Its ``[connection]`` table names the engine and its connection details as
 plain fields — no connection string to percent-encode — and is meant to be
 committed, so everyone working on the project targets the same database::
@@ -33,18 +33,17 @@ import sys
 from collections.abc import Mapping
 from dataclasses import asdict, dataclass, field
 from pathlib import Path
-from urllib.parse import quote, urlencode
 
 if sys.version_info >= (3, 11):
     import tomllib
 else:  # pragma: no cover
     import tomli as tomllib
 
-PROJECT_FILE = "synalog.toml"
+PROJECT_FILE = "layer.toml"
 
 
 class ProjectError(ValueError):
-    """A ``synalog.toml`` that cannot be used, with what to fix."""
+    """A ``layer.toml`` that cannot be used, with what to fix."""
 
 
 @dataclass(frozen=True)
@@ -132,7 +131,7 @@ def secret_env(engine: str, key: str) -> str:
 
 
 def find(*starts: str | os.PathLike) -> Path | None:
-    """The nearest ``synalog.toml``: in each start directory or one of its
+    """The nearest ``layer.toml``: in each start directory or one of its
     parents, the first start that has one winning."""
     for start in starts:
         for directory in (Path(start).resolve(), *Path(start).resolve().parents):
@@ -194,49 +193,29 @@ def details(conn: dict, env: Mapping[str, str] | None = None) -> dict:
     return out
 
 
-# -- connection strings --------------------------------------------------------
+# -- resolving ----------------------------------------------------------------
 
 
-def dsn(engine: str, details: dict) -> str:
-    """The connection string synalog's runner for ``engine`` parses."""
-    c = {k: v for k, v in details.items() if v not in (None, "")}
+def resolve(*starts: str | os.PathLike) -> dict | None:
+    """The connection of the project found from ``starts`` (see ``find``):
+    its ``engine`` and every field a runner needs, defaults filled in and
+    secrets read from the project's ``.env`` and the environment, real
+    variables winning. The environment is not changed: two projects in one
+    process each get their own secrets. ``None`` outside a project, or in
+    one without a ``[connection]`` (it runs on a local engine)."""
+    from .config import parse_dotenv
 
-    def userinfo(user, password) -> str:
-        if not user:
-            return ""
-        return quote(str(user), safe="") + (f":{quote(str(password), safe='')}" if password else "") + "@"
-
-    def hostport() -> str:
-        return f"{c['host']}:{c['port']}" if c.get("port") else c["host"]
-
-    if engine == "psql":
-        query = {k: c[k] for k in ("sslmode",) if k in c}
-        if c.get("schema"):
-            query["options"] = f"-csearch_path={c['schema']}"
-        suffix = f"?{urlencode(query)}" if query else ""
-        return f"postgresql://{userinfo(c.get('user'), c.get('password'))}{hostport()}/{c.get('database', '')}{suffix}"
-    if engine in ("trino", "presto"):
-        path = "/".join(quote(str(c[k]), safe="") for k in ("catalog", "schema") if c.get(k))
-        password = c.get("password") if c.get("auth") == "password" else None
-        query = {"http_scheme": c["scheme"]} if c.get("scheme") else {}
-        suffix = f"?{urlencode(query)}" if query else ""
-        return f"{engine}://{userinfo(c.get('user'), password)}{hostport()}/{path}{suffix}"
-    if engine == "databricks":
-        query = {"http_path": c["http_path"], "access_token": c["access_token"]}
-        return f"databricks://{c['server_hostname']}?{urlencode(query)}"
-    if engine == "bigquery":
-        query = {"location": c["location"]} if c.get("location") else {}
-        return f"bigquery://{c['project']}" + (f"?{urlencode(query)}" if query else "")
-    raise ProjectError(f"{engine!r} takes no connection")
-
-
-def project_dsn(path: str | os.PathLike, engine: str, env: Mapping[str, str] | None = None) -> str | None:
-    """The connection string of the project file at ``path`` for ``engine``,
-    or ``None`` when the project connects to another engine, or none."""
-    conn = connection(path)
-    if conn is None or conn["engine"] != engine:
+    path = find(*starts)
+    if path is None:
         return None
-    return dsn(engine, details(conn, env))
+    conn = connection(path)
+    if conn is None:
+        return None
+    try:
+        dotenv = dict(parse_dotenv((path.parent / ".env").read_text(encoding="utf-8")))
+    except OSError:
+        dotenv = {}
+    return {"engine": conn["engine"], **details(conn, {**dotenv, **os.environ})}
 
 
 # -- writing -------------------------------------------------------------------
@@ -278,7 +257,7 @@ def secrets(engine: str, details: dict) -> dict[str, str]:
 
 # -- writing a project's connection ---------------------------------------------
 
-#: Written next to synalog.toml by `write`, never committed.
+#: Written next to layer.toml by `write`, never committed.
 SECRET_FILES = (".env", "bigquery-credentials.json")
 _KEY_FILE = "bigquery-credentials.json"
 
@@ -319,7 +298,7 @@ def ensure_gitignore(folder: str | os.PathLike) -> None:
 
 def write(folder: str | os.PathLike, engine: str, details: dict) -> Path:
     """Give the project in ``folder`` a connection: its ``[connection]`` in
-    ``synalog.toml`` (the file's other tables are kept), its secrets in
+    ``layer.toml`` (the file's other tables are kept), its secrets in
     ``.env`` (other lines kept, owner-only), BigQuery's key — given as the
     key's JSON — in a key file next to it, and both listed in ``.gitignore``.
     Raises ``ProjectError`` for an unknown engine or field, or a missing
@@ -332,6 +311,10 @@ def write(folder: str | os.PathLike, engine: str, details: dict) -> Path:
     if unknown:
         raise ProjectError(f"{engine} has no field {', '.join(unknown)} (fields: {', '.join(sorted(keys))})")
     details = {k: v for k, v in details.items() if v not in (None, "")}
+    # Checked before anything is written: a failed connect leaves the project as it was.
+    missing = [f.key for f in ENGINES[engine].fields if f.required and not f.secret and f.default is None and f.key not in details]
+    if missing:
+        raise ProjectError(f"the {engine} connection needs {', '.join(missing)}")
     folder.mkdir(parents=True, exist_ok=True)
     secrets_ = {}
     if isinstance(details.get("credentials"), dict):  # BigQuery's key, as JSON

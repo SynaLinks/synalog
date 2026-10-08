@@ -29,7 +29,6 @@ import csv
 import os
 import re
 import sys
-import urllib.parse
 from pathlib import Path
 
 import click
@@ -50,7 +49,7 @@ from ._synalog import (
     assertions,
     statement_text,
 )
-from .checking import program_engine, project_engine as _project_engine, resolve_dsn as _resolve_dsn, shown_value, violated_assertions
+from .checking import program_engine, project_engine as _project_engine, shown_value, violated_assertions
 from .runners import RunnerUnavailable, run_plan, run_sql, session
 
 DEFAULT_ENGINE = "duckdb"
@@ -111,7 +110,7 @@ def import_roots(file: str | None, flag_roots: tuple[str, ...]) -> list[str]:
     """Directories where `import` statements look up .l files.
 
     Explicit --import-root flags win. Otherwise the project's folder comes
-    first — the one holding the `synalog.toml` of the program's folder or of
+    first — the one holding the `layer.toml` of the program's folder or of
     the current directory — so `import tables.Orders.Orders;` reads the
     project's `tables/Orders.l` from any of its files; then the program file's
     directory and the current directory.
@@ -165,91 +164,79 @@ def _load_callback(ctx, param, value):
 
 
 # ---------------------------------------------------------------------------
-# Saved connections (connect)
+# The project's connection (connect)
 # ---------------------------------------------------------------------------
 
-# Engines that connect over the network with a connection string. Local
-# engines (sqlite, duckdb) build their connection from --load and take no DSN.
-DSN_ENGINES = ("psql", "trino", "presto", "databricks", "bigquery")
 
-_SECRET_QUERY_KEYS = {"access_token", "password", "token", "secret"}
-
-
-def mask_dsn(dsn: str) -> str:
-    """Hide credentials in a connection string for display."""
-    try:
-        parts = urllib.parse.urlsplit(dsn)
-    except ValueError:
-        return dsn
-    if not parts.scheme:
-        return dsn  # bare value (e.g. a bigquery project id)
-    netloc = parts.netloc
-    if "@" in netloc:
-        userinfo, _, host = netloc.rpartition("@")
-        if ":" in userinfo:
-            user = userinfo.split(":", 1)[0]
-            userinfo = f"{user}:***"
-        elif userinfo:
-            userinfo = "***"  # token-only userinfo (e.g. databricks)
-        netloc = f"{userinfo}@{host}"
-    query = parts.query
-    if query:
-        masked = [
-            (k, "***" if k.lower() in _SECRET_QUERY_KEYS else v)
-            for k, v in urllib.parse.parse_qsl(query, keep_blank_values=True)
-        ]
-        query = urllib.parse.urlencode(masked, safe="/")
-    return urllib.parse.urlunsplit(
-        (parts.scheme, netloc, parts.path, query, parts.fragment)
-    )
+def project_connection(engine: str, project_file: Path | None) -> dict | None:
+    """The project's connection when it is to `engine` (its secrets read
+    then, and only then); None otherwise: a local engine needs none."""
+    if project_file is None or _project_engine(project_file) != engine:
+        return None
+    return project.resolve(project_file.parent)
 
 
-def cmd_connect(args: tuple[str, ...]) -> int:
-    """Manage saved connection strings for remote engines.
+def _connection_fields(pairs: tuple[str, ...]) -> dict:
+    fields = {}
+    for pair in pairs:
+        key, sep, value = pair.partition("=")
+        if not sep or not key:
+            raise click.UsageError(f"'{pair}' is not key=value (e.g. host=db.example.com)")
+        fields[key.strip()] = value
+    return fields
+
+
+def _engine_fields() -> str:
+    lines = ["Engines and their fields (* secret: written to .env, never to layer.toml):"]
+    for name, spec in project.ENGINES.items():
+        lines.append(f"  {name:<11} " + ", ".join(f.key + ("*" if f.secret else "") for f in spec.fields))
+    return "\n".join(lines)
+
+
+def cmd_connect(args: tuple[str, ...], project_file: Path | None) -> int:
+    """Give the project its database, in its layer.toml.
 
     \b
-    synalog connect                     list saved connections (credentials hidden)
-    synalog connect <engine> <dsn>      save a connection string for an engine
-    synalog connect <engine>            show the saved connection for an engine
-    synalog connect remove <engine>     forget a saved connection
+    synalog connect                            show the project's connection (secrets hidden)
+    synalog connect <engine> key=value ...     connect the project: layer.toml, secrets in .env
+    synalog connect clear                      remove the connection (back to in-memory engines)
+
+    The project is the folder of the nearest layer.toml, else the current
+    directory. Secret fields (a password, a token) go to its .env, kept out
+    of git; the others to layer.toml, meant to be committed.
     """
-    from . import config
-
+    folder = project_file.parent if project_file is not None else Path.cwd()
     if not args:
-        connections = config.load_connections()
-        if not connections:
-            click.echo("No saved connections.")
+        conn = project.connection(project_file) if project_file is not None else None
+        if conn is None:
+            click.echo("No connection: synalog runs in memory (duckdb). " + _CONNECT_USAGE)
             return 0
-        for engine, dsn in sorted(connections.items()):
-            click.echo(f"{engine}\t{mask_dsn(dsn)}")
+        click.echo(f"{project_file}")
+        for key, value in conn.items():
+            click.echo(f"  {key} = {value}")
+        for f in project.ENGINES[conn["engine"]].fields:
+            if f.secret:
+                state = "set" if os.environ.get(project.secret_env(conn["engine"], f.key)) else "not set"
+                click.echo(f"  {f.key}: {project.secret_env(conn['engine'], f.key)} {state}")
         return 0
-
-    if args[0] == "remove":
-        if len(args) != 2:
-            raise click.UsageError("usage: synalog connect remove <engine>")
-        if config.remove_connection(args[1]):
-            click.echo(f"Removed saved connection for {args[1]}.")
-            return 0
-        fail(f"No saved connection for {args[1]}.")
-
-    engine = args[0]
-    if engine not in DSN_ENGINES:
-        fail(
-            f"'{engine}' does not use a connection string;"
-            f" engines that do: {', '.join(DSN_ENGINES)}"
-        )
-    if len(args) == 1:
-        dsn = config.saved_connection(engine)
-        if dsn is None:
-            click.echo(f"No saved connection for {engine}.")
-        else:
-            click.echo(mask_dsn(dsn))
+    if args[0] == "clear":
+        if len(args) != 1:
+            raise click.UsageError("usage: synalog connect clear")
+        project.clear(folder)
+        click.echo(f"Removed the connection of {folder / project.PROJECT_FILE}")
         return 0
-    if len(args) > 2:
-        raise click.UsageError("usage: synalog connect <engine> <dsn>")
-    config.save_connection(engine, args[1])
-    click.echo(f"Saved {engine} connection to {config.config_dir()}/connections.json")
+    engine, fields = args[0], _connection_fields(args[1:])
+    if engine not in project.ENGINES:
+        fail(f"'{engine}' takes no connection; engines that do: {', '.join(project.ENGINES)}\n" + _engine_fields())
+    try:
+        path = project.write(folder, engine, fields)
+    except project.ProjectError as e:
+        fail(f"{e}\n" + _engine_fields())
+    click.echo(f"Connected {path} to {engine}" + (" (secrets in .env)" if project.secrets(engine, fields) else ""))
     return 0
+
+
+_CONNECT_USAGE = "Connect the project with: synalog connect <engine> key=value ..."
 
 
 # ---------------------------------------------------------------------------
@@ -257,40 +244,32 @@ def cmd_connect(args: tuple[str, ...]) -> int:
 # ---------------------------------------------------------------------------
 
 
-def cmd_introspect(args: tuple[str, ...], dsn: str | None, project_file: Path | None) -> int:
+def cmd_introspect(args: tuple[str, ...], project_file: Path | None) -> int:
     """Write the project's table files from its database's schema.
 
     \b
-    synalog introspect                   introspect the project's connection (synalog.toml)
-    synalog introspect <engine>          introspect the connection for an engine
-    synalog introspect <engine> <dsn>    introspect an explicit connection string
+    synalog introspect                   introspect the project's connection (layer.toml)
 
-    The DSN is resolved like everywhere else: the argument here (or --dsn) wins,
-    then SYNALOG_<ENGINE>_DSN, then synalog.toml, then the saved connection.
-    In a project, each table becomes a file of its tables/ folder (a file that
-    exists keeps its front matter); elsewhere, the declarations are printed.
+    Each table becomes a file of the project's tables/ folder (a file that
+    exists keeps its front matter).
     """
-    from .introspect import INTROSPECTABLE, catalog, predicates, tables, write_tables
+    from .introspect import INTROSPECTABLE, catalog, tables, write_tables
 
-    if len(args) > 2:
-        raise click.UsageError("usage: synalog introspect [engine] [dsn]")
+    if args:
+        raise click.UsageError("usage: synalog introspect (in a project: its layer.toml names the database)")
     try:
-        engine = args[0] if args else _project_engine(project_file)
+        engine = _project_engine(project_file)
     except ValueError as e:
         fail(e)
     if engine is None:
-        raise click.UsageError("usage: synalog introspect <engine> [dsn] (or run it in a project with a synalog.toml)")
+        fail("introspect reads the project's database, and there is none. " + _CONNECT_USAGE)
     if engine not in INTROSPECTABLE:
         fail(
             f"'{engine}' cannot be introspected;"
             f" engines with a catalog: {', '.join(INTROSPECTABLE)}"
         )
-    explicit = args[1] if len(args) > 1 else dsn
     try:
-        rows = catalog(engine, _resolve_dsn(engine, explicit, project_file))
-        if project_file is None:
-            click.echo(predicates(engine, rows), nl=False)
-            return 0
+        rows = catalog(engine, project_connection(engine, project_file))
         found, skipped = tables(rows)
         folder = project_file.parent / "tables"
         result = write_tables(folder, found)
@@ -346,12 +325,6 @@ def cmd_introspect(args: tuple[str, ...], dsn: str | None, project_file: Path | 
     " the regular expression REGEX (engine-native regex, not SQL LIKE).",
 )
 @click.option(
-    "--dsn",
-    help="Connection string for the remote engine (psql/trino/presto/databricks/"
-    "bigquery); falls back to SYNALOG_<ENGINE>_DSN, then the project's"
-    " synalog.toml, then the saved connection.",
-)
-@click.option(
     "--import-root",
     "import_root",
     multiple=True,
@@ -368,7 +341,7 @@ def cmd_introspect(args: tuple[str, ...], dsn: str | None, project_file: Path | 
     help="Load a csv/tsv/json/jsonl/parquet file as TABLE before running"
     " (repeatable).",
 )
-def main(args, inline, engine, limit, offset, as_csv, search_pattern, dsn,
+def main(args, inline, engine, limit, offset, as_csv, search_pattern,
          import_root, loads):
     """Synalog: logic programming compiling to SQL.
 
@@ -378,7 +351,7 @@ def main(args, inline, engine, limit, offset, as_csv, search_pattern, dsn,
       synalog program.l run Predicate ...     execute and print a table
       synalog program.l run Predicate --csv   execute and print CSV
       synalog program.l verify [Predicate ...] check the @Assert statements
-      synalog connect ENGINE DSN              save a remote engine connection
+      synalog connect ENGINE KEY=VALUE ...    connect the project to its database
       synalog introspect [ENGINE]             write a project's tables/ from its database
 
     print, run and verify validate the whole program first, aborting with the
@@ -397,7 +370,7 @@ def main(args, inline, engine, limit, offset, as_csv, search_pattern, dsn,
     text inline instead of FILE. With no arguments, starts an interactive
     session (the options apply to it too).
 
-    A project is a folder with a 'synalog.toml' (found from the program file's
+    A project is a folder with a 'layer.toml' (found from the program file's
     directory, then the current directory, and their parents): its
     [connection] gives the engine and the connection details, its secrets come
     from the environment (SYNALOG_<ENGINE>_<FIELD>). A '.env' file in the
@@ -412,9 +385,9 @@ def main(args, inline, engine, limit, offset, as_csv, search_pattern, dsn,
         dirs.insert(1 if len(dirs) > 1 else 0, str(project_file.parent))
     config.load_dotenv(*dirs)
     if args and args[0] == "connect" and inline is None:
-        sys.exit(cmd_connect(args[1:]))
+        sys.exit(cmd_connect(args[1:], project_file))
     if args and args[0] == "introspect" and inline is None:
-        sys.exit(cmd_introspect(args[1:], dsn, project_file))
+        sys.exit(cmd_introspect(args[1:], project_file))
     try:
         default_engine = _project_engine(project_file)
     except ValueError as e:
@@ -422,11 +395,7 @@ def main(args, inline, engine, limit, offset, as_csv, search_pattern, dsn,
     if inline is None:
         if not args:
             repl_engine = engine or default_engine or DEFAULT_ENGINE
-            try:
-                repl_dsn = _resolve_dsn(repl_engine, dsn, project_file)
-            except ValueError as e:
-                fail(e)
-            sys.exit(Repl(repl_engine, repl_dsn, import_roots(None, import_root), loads).run())
+            sys.exit(Repl(repl_engine, project_file, import_roots(None, import_root), loads).run())
         file = args[0]
         if len(args) < 2:
             raise click.UsageError(f"missing command (one of: {', '.join(COMMANDS)})")
@@ -541,7 +510,7 @@ def main(args, inline, engine, limit, offset, as_csv, search_pattern, dsn,
         if command == "verify":
             resolved = engine or program_engine(source, roots) or default_engine or DEFAULT_ENGINE
             validate_or_fail(resolved)
-            with session(resolved, _resolve_dsn(resolved, dsn, project_file), loads) as s:
+            with session(resolved, project_connection(resolved, project_file), loads) as s:
                 ok = verify(resolved, s)
             if not ok:
                 sys.exit(1)
@@ -554,8 +523,7 @@ def main(args, inline, engine, limit, offset, as_csv, search_pattern, dsn,
         else:  # run
             resolved = engine or program_engine(source, roots) or default_engine or DEFAULT_ENGINE
             validate_or_fail(resolved)
-            run_dsn = _resolve_dsn(resolved, dsn, project_file)
-            with session(resolved, run_dsn, loads) as s:
+            with session(resolved, project_connection(resolved, project_file), loads) as s:
                 # run has a database: a violated assertion refuses the program.
                 violated = violated_assertions(source, resolved, roots, open_session=s)
                 if violated:
@@ -602,13 +570,13 @@ class Repl:
     def __init__(
         self,
         engine: str | None,
-        dsn: str | None,
+        project_file: Path | None,
         roots: list[str],
         loads: list[tuple[str, str]],
     ):
         self.statements: list[str] = []
         self.engine = engine or DEFAULT_ENGINE
-        self.dsn = dsn
+        self.project_file = project_file
         self.roots = roots
         self.loads = list(loads)
 
@@ -689,7 +657,8 @@ class Repl:
             steps = plan(
                 self.source, predicate, engine=self.engine, import_root=self.roots, pattern=pattern
             )
-            with session(self.engine, self.dsn, self.loads) as s:
+            connection = project_connection(self.engine, self.project_file)
+            with session(self.engine, connection, self.loads) as s:
                 columns, rows = run_plan(steps, s)
         except (ValueError, RunnerUnavailable, OSError) as e:
             print_error(e)

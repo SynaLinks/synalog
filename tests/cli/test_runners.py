@@ -38,7 +38,7 @@ def test_remote_engine_missing_driver(engine, monkeypatch):
 
     monkeypatch.setattr(builtins, "__import__", block)
     with pytest.raises(RunnerUnavailable) as excinfo:
-        run_sql(engine, "SELECT 1", dsn="x://y")
+        run_sql(engine, "SELECT 1", {"engine": engine})
     assert engine in str(excinfo.value)
     assert "pip install" in str(excinfo.value)
 
@@ -49,26 +49,16 @@ def test_remote_engine_rejects_loads(engine):
         run_sql(engine, "SELECT 1", loads=[("t", "/tmp/x.csv")])
 
 
-@pytest.mark.parametrize("engine", ["trino", "presto", "databricks", "psql"])
-def test_require_dsn_missing(engine, monkeypatch):
-    # No --dsn, no env var, no saved config -> a helpful "needs a connection
-    # string" error rather than a driver/network failure.
-    monkeypatch.delenv(f"SYNALOG_{engine.upper()}_DSN", raising=False)
-    monkeypatch.setattr(runners, "_resolve_dsn", lambda eng, dsn: None)
-    with pytest.raises(RunnerUnavailable, match="needs a connection string"):
+@pytest.mark.parametrize("engine", ["trino", "presto", "databricks", "psql", "bigquery"])
+def test_remote_engine_needs_the_project_connection(engine):
+    # No connection -> what to run, rather than a driver/network failure.
+    with pytest.raises(RunnerUnavailable, match=f"needs the project's connection: run 'synalog connect {engine}"):
         run_sql(engine, "SELECT 1")
 
 
-def test_resolve_dsn_precedence(monkeypatch):
-    # flag > env > saved config
-    monkeypatch.setenv("SYNALOG_TRINO_DSN", "from-env")
-    assert runners._resolve_dsn("trino", "from-flag") == "from-flag"
-    assert runners._resolve_dsn("trino", None) == "from-env"
-    monkeypatch.delenv("SYNALOG_TRINO_DSN")
-    # falls through to the saved connection file (imported lazily inside
-    # _resolve_dsn, so patch it where it lives)
-    monkeypatch.setattr("synalog.config.saved_connection", lambda eng: "from-config")
-    assert runners._resolve_dsn("trino", None) == "from-config"
+def test_a_connection_to_another_engine_is_not_used():
+    with pytest.raises(RunnerUnavailable, match="needs the project's connection"):
+        run_sql("trino", "SELECT 1", {"engine": "psql", "host": "h"})
 
 
 def test_a_run_leaves_no_working_tables():

@@ -14,38 +14,16 @@ from __future__ import annotations
 
 import os
 
-from . import _synalog, config, project
-from .checking import DEFAULT_ENGINE, program_engine, project_engine, resolve_dsn
+from . import _synalog
+from .checking import resolve_connection
 from .runners import Result, run_plan, session
-
-
-def resolve_connection(
-    source: str,
-    engine: str | None,
-    dsn: str | None,
-    import_root: list[str] | None,
-) -> tuple[str, str | None]:
-    """The engine and connection string a program runs on: `engine`, else its
-    `@Engine`, else the project's (the `synalog.toml` found from the current
-    directory), else duckdb; `dsn`, else `SYNALOG_<ENGINE>_DSN`, else the
-    project's connection."""
-    project_file = project.find(os.getcwd())
-    if project_file is not None:
-        config.load_dotenv(project_file.parent)
-    resolved = (
-        engine
-        or program_engine(source, import_root)
-        or project_engine(project_file)
-        or DEFAULT_ENGINE
-    )
-    return resolved, resolve_dsn(resolved, dsn, project_file)
 
 
 def execute(
     source: str,
     predicate: str,
     engine: str | None = None,
-    dsn: str | None = None,
+    project: str | os.PathLike | None = None,
     import_root: list[str] | None = None,
     limit: int | None = None,
     offset: int | None = None,
@@ -57,11 +35,14 @@ def execute(
 
     `pattern` keeps the rows where some column matches it (as `search`);
     `assertion` returns the counterexamples of the assertion of that name of
-    `predicate` instead of its rows. `loads` is a sequence of ``(table, path)``
-    pairs, files loaded as tables first (duckdb and sqlite). Raises
-    ValueError on an invalid program, and the driver's errors.
+    `predicate` instead of its rows. The database is the ``[connection]`` of
+    the ``layer.toml`` found from `project`, a folder (default: the current
+    directory), when it is to the engine the program runs on. `loads` is a
+    sequence of ``(table, path)`` pairs, files loaded as tables first (duckdb
+    and sqlite). Raises ValueError on an invalid program, and the driver's
+    errors.
     """
-    resolved, resolved_dsn = resolve_connection(source, engine, dsn, import_root)
+    resolved, connection = resolve_connection(source, engine, project, import_root)
     steps = _synalog.plan(
         source,
         predicate,
@@ -72,5 +53,5 @@ def execute(
         pattern=pattern,
         assertion=assertion,
     )
-    with session(resolved, resolved_dsn, loads) as s:
+    with session(resolved, connection, loads) as s:
         return run_plan(steps, s)

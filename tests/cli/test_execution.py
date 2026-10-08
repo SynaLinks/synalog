@@ -36,7 +36,7 @@ class CountingSession(DuckDbSession):
 def counted(monkeypatch):
     sessions = []
 
-    def session(engine, dsn=None, loads=()):
+    def session(engine, connection=None, loads=()):
         sessions.append(CountingSession(loads))
         return sessions[-1]
 

@@ -7,6 +7,7 @@ Needs the wheel installed (maturin develop) and the duckdb package.
 from __future__ import annotations
 
 import json
+import os
 import subprocess
 import sys
 
@@ -291,11 +292,11 @@ def test_import_root_flag(tmp_path):
 
 
 def test_engine_annotation_picks_runner(tmp_path):
-    # trino has a runner now; without the driver or a DSN it should fail with a
+    # trino has a runner now; without the driver or a connection it should fail with a
     # trino-specific message, not the generic "no local runner".
     path = tmp_path / "trino.l"
     path.write_text('@Engine("trino");\nGreeting(text: "hi");\n')
-    result = synalog(str(path), "run", "Greeting")
+    result = synalog(str(path), "run", "Greeting", cwd=tmp_path)
     assert result.returncode == 1
     assert "trino" in result.stderr
     assert "no local runner" not in result.stderr
@@ -310,141 +311,67 @@ def test_unknown_engine_has_no_runner(tmp_path):
     assert result.returncode == 0, result.stderr
 
 
-def test_connect_save_list_show_remove(tmp_path, monkeypatch):
-    monkeypatch.setenv("SYNALOG_CONFIG_DIR", str(tmp_path))  # subprocess inherits env
+def test_connect_writes_the_project_file(tmp_path):
+    # The connection lives in layer.toml, its secret in .env: never elsewhere.
+    assert "No connection" in synalog("connect", cwd=tmp_path).stdout
 
-    assert synalog("connect").stdout.strip() == "No saved connections."
+    saved = synalog(
+        "connect", "trino", "host=host", "port=443", "catalog=hive", "user=alice",
+        "auth=password", "password=secret", cwd=tmp_path,
+    )
+    assert saved.returncode == 0, saved.stderr
+    toml = tomllib.loads((tmp_path / "layer.toml").read_text())["connection"]
+    assert toml["engine"] == "trino" and toml["host"] == "host" and "password" not in toml
+    assert 'SYNALOG_TRINO_PASSWORD="secret"' in (tmp_path / ".env").read_text()
 
-    saved = synalog("connect", "trino", "trino://alice:secret@host:443/hive/analytics")
-    assert saved.returncode == 0
+    # shown with the secret's variable, never its value
+    shown = synalog("connect", cwd=tmp_path).stdout
+    assert "host = host" in shown and "SYNALOG_TRINO_PASSWORD set" in shown and "secret" not in shown
 
-    # list and show hide credentials; the password never appears
-    listed = synalog("connect").stdout
-    assert "trino" in listed and "secret" not in listed and "***" in listed
-    shown = synalog("connect", "trino").stdout
-    assert "alice:***@host" in shown and "secret" not in shown
-
-    # the real secret is what gets persisted (and used to connect)
-    stored = json.loads((tmp_path / "connections.json").read_text())
-    assert stored["trino"].endswith("secret@host:443/hive/analytics")
-
-    removed = synalog("connect", "remove", "trino")
-    assert removed.returncode == 0 and "Removed" in removed.stdout
-    assert synalog("connect").stdout.strip() == "No saved connections."
-
-
-def test_connect_masks_token_only_userinfo(tmp_path, monkeypatch):
-    # Databricks DSNs carry a token-only userinfo (token:dapi...); the token is
-    # masked on display but the username half ("token") is kept for readability.
-    monkeypatch.setenv("SYNALOG_CONFIG_DIR", str(tmp_path))
-    dsn = "databricks://token:dapi-secret@host.cloud.databricks.com/sql/1.0"
-    assert synalog("connect", "databricks", dsn).returncode == 0
-    shown = synalog("connect", "databricks").stdout
-    assert "token:***@host" in shown and "dapi-secret" not in shown
+    cleared = synalog("connect", "clear", cwd=tmp_path)
+    assert cleared.returncode == 0
+    assert "No connection" in synalog("connect", cwd=tmp_path).stdout
+    assert not (tmp_path / ".env").exists()
 
 
-def test_connect_show_missing_engine(tmp_path, monkeypatch):
-    monkeypatch.setenv("SYNALOG_CONFIG_DIR", str(tmp_path))
-    result = synalog("connect", "trino")
-    assert result.returncode == 0
-    assert "No saved connection for trino" in result.stdout
+def test_connect_with_missing_fields_writes_nothing(tmp_path):
+    result = synalog("connect", "psql", "host=h", cwd=tmp_path)
+    assert result.returncode == 1
+    assert "needs database, user" in result.stderr
+    assert not (tmp_path / "layer.toml").exists()
 
 
-def test_connect_remove_usage_error(tmp_path, monkeypatch):
-    monkeypatch.setenv("SYNALOG_CONFIG_DIR", str(tmp_path))
-    result = synalog("connect", "remove")
+def test_connect_takes_fields_not_a_connection_string(tmp_path):
+    result = synalog("connect", "psql", "postgresql://u@h/d", cwd=tmp_path)
     assert result.returncode == 2  # click usage error
-    assert "connect remove <engine>" in result.stderr
+    assert "is not key=value" in result.stderr
 
 
-def test_connect_remove_missing_connection(tmp_path, monkeypatch):
-    monkeypatch.setenv("SYNALOG_CONFIG_DIR", str(tmp_path))
-    result = synalog("connect", "remove", "trino")
+def test_connect_rejects_local_engine(tmp_path):
+    result = synalog("connect", "duckdb", cwd=tmp_path)
     assert result.returncode == 1
-    assert "No saved connection for trino" in result.stderr
+    assert "takes no connection" in result.stderr
 
 
-def test_connect_rejects_local_engine(tmp_path, monkeypatch):
-    monkeypatch.setenv("SYNALOG_CONFIG_DIR", str(tmp_path))
-    result = synalog("connect", "duckdb", "whatever")
-    assert result.returncode == 1
-    assert "does not use a connection string" in result.stderr
-
-
-def test_connect_resolves_for_run(tmp_path, monkeypatch):
-    # A saved connection is consumed by `run`: with a bogus DSN saved, running a
-    # trino program reaches the driver/connection layer (not "needs a connection
-    # string" and not "no local runner").
-    monkeypatch.setenv("SYNALOG_CONFIG_DIR", str(tmp_path))
-    synalog("connect", "trino", "trino://nobody@127.0.0.1:1/memory/default")
+def test_remote_engine_without_a_project_says_how_to_connect(tmp_path):
     path = tmp_path / "p.l"
     path.write_text('@Engine("trino");\nGreeting(text: "hi");\n')
-    result = synalog(str(path), "run", "Greeting")
+    result = synalog(str(path), "run", "Greeting", cwd=tmp_path)
     assert result.returncode == 1
-    assert "needs a connection string" not in result.stderr
-    assert "no local runner" not in result.stderr
+    assert "synalog connect trino" in result.stderr
 
 
-# ---------------------------------------------------------------------------
-# .env auto-loading
-# ---------------------------------------------------------------------------
-
-
-def test_dotenv_in_cwd_provides_dsn(tmp_path, monkeypatch):
-    # A .env in the working directory supplies SYNALOG_<ENGINE>_DSN: running a
-    # trino program reaches the driver/connection layer (DSN resolved), not the
-    # "needs a connection string" error.
-    monkeypatch.setenv("SYNALOG_CONFIG_DIR", str(tmp_path))
-    monkeypatch.delenv("SYNALOG_TRINO_DSN", raising=False)
-    (tmp_path / ".env").write_text(
-        "SYNALOG_TRINO_DSN=trino://nobody@127.0.0.1:1/memory/default\n"
-    )
+def test_connection_is_used_by_run(tmp_path):
+    # The project's connection is consumed by `run`: to a server that is not
+    # there, it fails at the driver, not for want of a connection.
+    assert synalog(
+        "connect", "trino", "host=127.0.0.1", "port=1", "catalog=memory", "user=nobody", cwd=tmp_path
+    ).returncode == 0
     (tmp_path / "p.l").write_text('@Engine("trino");\nGreeting(text: "hi");\n')
     result = synalog("p.l", "run", "Greeting", cwd=tmp_path)
     assert result.returncode == 1
-    assert "needs a connection string" not in result.stderr
+    assert "needs the project's connection" not in result.stderr
     assert "no local runner" not in result.stderr
-
-
-def test_dotenv_loaded_from_program_directory(tmp_path, monkeypatch):
-    # Run from elsewhere, pointing at a program whose directory holds the .env;
-    # that directory is the project root and its .env is loaded.
-    monkeypatch.setenv("SYNALOG_CONFIG_DIR", str(tmp_path))
-    monkeypatch.delenv("SYNALOG_TRINO_DSN", raising=False)
-    project = tmp_path / "project"
-    project.mkdir()
-    (project / ".env").write_text(
-        "SYNALOG_TRINO_DSN=trino://nobody@127.0.0.1:1/memory/default\n"
-    )
-    (project / "p.l").write_text('@Engine("trino");\nGreeting(text: "hi");\n')
-    result = synalog(str(project / "p.l"), "run", "Greeting", cwd="/")
-    assert result.returncode == 1
-    assert "needs a connection string" not in result.stderr
-
-
-def test_real_env_overrides_dotenv(tmp_path, monkeypatch):
-    # A variable already set in the environment beats the .env file.
-    monkeypatch.setenv("SYNALOG_CONFIG_DIR", str(tmp_path))
-    monkeypatch.setenv("SYNALOG_PSQL_DSN", "postgresql://nobody@127.0.0.1:1/none")
-    (tmp_path / ".env").write_text("SYNALOG_PSQL_DSN=postgresql://bogus@bogus:0/x\n")
-    # introspect echoes the connection error; the real-env host must be the one
-    # it tries (127.0.0.1), not the .env host (bogus).
-    result = synalog("introspect", "psql", cwd=tmp_path)
-    assert result.returncode == 1
-    assert "needs a connection string" not in result.stderr
-    assert "bogus" not in result.stderr
-
-
-def test_dotenv_sets_config_dir(tmp_path, monkeypatch):
-    # SYNALOG_CONFIG_DIR can come from .env, redirecting where connections save.
-    monkeypatch.delenv("SYNALOG_CONFIG_DIR", raising=False)
-    store = tmp_path / "store"
-    (tmp_path / ".env").write_text(f"SYNALOG_CONFIG_DIR={store}\n")
-    saved = synalog(
-        "connect", "trino", "trino://a:b@host:443/c/d", cwd=tmp_path
-    )
-    assert saved.returncode == 0, saved.stderr
-    assert (store / "connections.json").is_file()
 
 
 def test_missing_predicate_argument(program_file):
@@ -465,42 +392,27 @@ def test_unknown_command(program_file):
     assert "unknown command 'explode'" in result.stderr
 
 
-def test_introspect_rejects_non_catalog_engine(tmp_path, monkeypatch):
-    monkeypatch.setenv("SYNALOG_CONFIG_DIR", str(tmp_path))
-    result = synalog("introspect", "duckdb")
+def test_introspect_needs_a_project_connection(tmp_path):
+    result = synalog("introspect", cwd=tmp_path)
     assert result.returncode == 1
-    assert "cannot be introspected" in result.stderr
+    assert "there is none" in result.stderr and "synalog connect" in result.stderr
 
 
-def test_introspect_requires_connection(tmp_path, monkeypatch):
-    monkeypatch.setenv("SYNALOG_CONFIG_DIR", str(tmp_path))
-    result = synalog("introspect", "psql")
-    assert result.returncode == 1
-    assert "needs a connection string" in result.stderr
-
-
-def test_introspect_usage_error_without_engine():
-    result = synalog("introspect")
+def test_introspect_takes_no_argument(tmp_path):
+    result = synalog("introspect", "psql", cwd=tmp_path)
     assert result.returncode == 2  # click usage error
-    assert "introspect <engine>" in result.stderr
+    assert "usage: synalog introspect" in result.stderr
 
 
-def test_introspect_usage_error_too_many_args():
-    result = synalog("introspect", "psql", "dsn-a", "dsn-b")
-    assert result.returncode == 2  # click usage error
-    assert "introspect [engine] [dsn]" in result.stderr
-
-
-def test_introspect_uses_positional_dsn(tmp_path, monkeypatch):
-    # An explicit DSN argument is consumed: with a bogus one, introspection
-    # reaches the driver/connection layer (not "needs a connection string").
-    monkeypatch.setenv("SYNALOG_CONFIG_DIR", str(tmp_path))
-    result = synalog(
-        "introspect", "psql", "postgresql://nobody@127.0.0.1:1/none"
-    )
+def test_introspect_uses_the_project_connection(tmp_path):
+    # To a server that is not there: it fails at the driver.
+    assert synalog(
+        "connect", "psql", "host=127.0.0.1", "port=1", "database=none", "user=nobody", cwd=tmp_path
+    ).returncode == 0
+    result = synalog("introspect", cwd=tmp_path)
     assert result.returncode == 1
-    assert "needs a connection string" not in result.stderr
-    assert "cannot be introspected" not in result.stderr
+    assert "there is none" not in result.stderr
+    assert "Traceback" not in result.stderr
 
 
 def test_missing_file():
@@ -764,13 +676,13 @@ def test_repl_clear_drops_loaded_tables(employees_csv):
 
 
 # ---------------------------------------------------------------------------
-# synalog.toml: the project's connection
+# layer.toml: the project's connection
 # ---------------------------------------------------------------------------
 
 
 def _project(tmp_path, toml: str, env: str = ""):
-    """A project folder: synalog.toml, an optional .env, a rule in rules/."""
-    (tmp_path / "synalog.toml").write_text(toml)
+    """A project folder: layer.toml, an optional .env, a rule in rules/."""
+    (tmp_path / "layer.toml").write_text(toml)
     if env:
         (tmp_path / ".env").write_text(env)
     (tmp_path / "rules").mkdir()
@@ -792,7 +704,7 @@ def test_project_file_round_trip():
 def test_project_file_refuses_secrets_and_unknown_fields(tmp_path):
     from synalog import project
 
-    path = tmp_path / "synalog.toml"
+    path = tmp_path / "layer.toml"
     path.write_text('[connection]\nengine = "psql"\nhost = "h"\ndatabase = "d"\nuser = "u"\npassword = "x"\n')
     with pytest.raises(project.ProjectError, match="SYNALOG_PSQL_PASSWORD"):
         project.connection(path)
@@ -806,17 +718,32 @@ def test_project_file_refuses_secrets_and_unknown_fields(tmp_path):
     assert project.connection(path) is None
 
 
-def test_project_dsn_reads_secrets_from_the_environment(tmp_path, monkeypatch):
-    from urllib.parse import unquote, urlparse
-
+def test_project_resolve_reads_secrets_from_the_environment(tmp_path, monkeypatch):
     from synalog import project
 
-    path = tmp_path / "synalog.toml"
-    path.write_text(project.dumps("psql", {"host": "h", "database": "d", "user": "u"}))
+    (tmp_path / "layer.toml").write_text(project.dumps("psql", {"host": "h", "database": "d", "user": "u"}))
+    (tmp_path / "rules").mkdir()
     monkeypatch.setenv("SYNALOG_PSQL_PASSWORD", 'p"w@:/')
-    url = urlparse(project.project_dsn(path, "psql"))
-    assert (url.hostname, url.port, url.path, unquote(url.password)) == ("h", 5432, "/d", 'p"w@:/')
-    assert project.project_dsn(path, "trino") is None  # another engine
+    conn = project.resolve(tmp_path / "rules")  # found from a subfolder
+    assert conn == {
+        "engine": "psql", "host": "h", "port": 5432, "database": "d", "user": "u",
+        "password": 'p"w@:/', "sslmode": "prefer", "schema": "public",
+    }
+    (tmp_path / "layer.toml").write_text("# no connection: a local project\n")
+    assert project.resolve(tmp_path) is None
+
+
+def test_two_projects_keep_their_own_secrets(tmp_path, monkeypatch):
+    # One process, two projects: each reads its own .env, and neither leaks
+    # into the environment for the other.
+    from synalog import project
+
+    monkeypatch.delenv("SYNALOG_PSQL_PASSWORD", raising=False)
+    for name in ("a", "b"):
+        project.write(tmp_path / name, "psql", {"host": "h", "database": "d", "user": "u", "password": f"pw-{name}"})
+    assert project.resolve(tmp_path / "a")["password"] == "pw-a"
+    assert project.resolve(tmp_path / "b")["password"] == "pw-b"
+    assert "SYNALOG_PSQL_PASSWORD" not in os.environ
 
 
 def test_project_engine_and_connection_used_by_run(tmp_path):
@@ -825,7 +752,7 @@ def test_project_engine_and_connection_used_by_run(tmp_path):
     program = _project(tmp_path, '[connection]\nengine = "trino"\nhost = "127.0.0.1"\nport = 1\ncatalog = "memory"\nuser = "nobody"\n')
     result = synalog(str(program), "run", "Greeting", cwd=tmp_path)
     assert result.returncode == 1
-    assert "needs a connection string" not in result.stderr
+    assert "needs the project's connection" not in result.stderr
     assert "no local runner" not in result.stderr
 
 
@@ -873,10 +800,10 @@ def test_introspect_defaults_to_the_project(tmp_path):
 def test_project_write_keeps_other_tables_and_lines(tmp_path):
     from synalog import config, project
 
-    (tmp_path / "synalog.toml").write_text('[project]\nname = "sales"\n\n[connection]\nengine = "trino"\nhost = "old"\n')
+    (tmp_path / "layer.toml").write_text('[project]\nname = "sales"\n\n[connection]\nengine = "trino"\nhost = "old"\n')
     (tmp_path / ".env").write_text('OTHER=1\nSYNALOG_PSQL_PASSWORD="old"\n')
     project.write(tmp_path, "psql", {"host": "h", "database": "d", "user": "u", "password": 'p"w'})
-    data = tomllib.loads((tmp_path / "synalog.toml").read_text())
+    data = tomllib.loads((tmp_path / "layer.toml").read_text())
     assert data["project"] == {"name": "sales"}
     assert data["connection"]["engine"] == "psql" and "password" not in data["connection"]
     assert (tmp_path / ".env").read_text() == 'OTHER=1\nSYNALOG_PSQL_PASSWORD="p"w"\n'
@@ -897,7 +824,7 @@ def test_project_write_bigquery_key_and_clear(tmp_path):
     assert json.loads(key.read_text()) == {"type": "service_account"}
     assert f'GOOGLE_APPLICATION_CREDENTIALS="{key.resolve()}"' in (tmp_path / ".env").read_text()
     project.clear(tmp_path)
-    assert "connection" not in tomllib.loads((tmp_path / "synalog.toml").read_text())
+    assert "connection" not in tomllib.loads((tmp_path / "layer.toml").read_text())
     assert not key.exists() and not (tmp_path / ".env").exists()
 
 
@@ -905,7 +832,8 @@ def test_run_reports_a_driver_error_without_traceback(tmp_path):
     # A server that refuses the connection is reported as one error line.
     program = tmp_path / "p.l"
     program.write_text("V(x:) :- x in [1, 2];\n")
-    result = synalog(str(program), "run", "V", "--engine", "psql", "--dsn", "postgresql://nobody@127.0.0.1:1/x")
+    (tmp_path / "layer.toml").write_text('[connection]\nengine = "psql"\nhost = "127.0.0.1"\nport = 1\ndatabase = "x"\nuser = "nobody"\n')
+    result = synalog(str(program), "run", "V", cwd=tmp_path)
     assert result.returncode == 1
     assert "OperationalError" in result.stderr + result.stdout
     assert "Traceback" not in result.stderr
@@ -923,7 +851,7 @@ def test_run_reports_a_missing_table_without_traceback(tmp_path):
 def test_imports_resolve_from_the_project_folder(tmp_path):
     # In a project, `import tables.Orders.Orders;` reads the project's
     # tables/Orders.l from any of its files, wherever the CLI runs from.
-    (tmp_path / "synalog.toml").write_text('[project]\nname = "shop"\ndescription = "Orders."\n')
+    (tmp_path / "layer.toml").write_text('[project]\nname = "shop"\ndescription = "Orders."\n')
     (tmp_path / "tables").mkdir()
     (tmp_path / "rules").mkdir()
     (tmp_path / "tables" / "Orders.l").write_text(

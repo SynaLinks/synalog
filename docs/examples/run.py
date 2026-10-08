@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Run every documentation example and capture its output.
 
-Each folder holding a ``synalog.toml`` is a project, laid out as every
+Each folder holding a ``layer.toml`` is a project, laid out as every
 Synalog project is: ``tables/``, ``concepts/`` and ``rules/``, one predicate per
 file named in its front matter, and its data in ``data/<table>.csv``. Every file
 is checked, then its predicate runs on an in-memory DuckDB holding the data;
@@ -144,7 +144,7 @@ def main() -> int:
         p for p in HERE.glob("*.l") if not names or p.stem in names
     )
     projects = sorted(
-        p.parent for p in HERE.glob("*/synalog.toml") if not names or p.parent.name in names
+        p.parent for p in HERE.glob("*/layer.toml") if not names or p.parent.name in names
     )
     if not files and not projects:
         print("no examples found", file=sys.stderr)

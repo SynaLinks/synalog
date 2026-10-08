@@ -4,7 +4,7 @@
 
 The verifier (``_synalog.check``) is structural: it needs no database and
 cannot tell whether an ``@Assert`` holds. Inside a project — a folder with a
-``synalog.toml`` that has a ``[connection]`` — the database is known, so
+``layer.toml`` that has a ``[connection]`` — the database is known, so
 ``check`` also looks for the counterexamples of every assertion there and
 refuses the program when it finds some.
 """
@@ -13,9 +13,11 @@ from __future__ import annotations
 
 import json
 import os
+from collections.abc import Mapping
 from pathlib import Path
 
-from . import _synalog, config, project
+from . import _synalog
+from . import project as projects
 from .runners import Session, run_plan, session
 
 DEFAULT_ENGINE = "duckdb"
@@ -42,22 +44,31 @@ def program_engine(source: str, roots: list[str] | None) -> str | None:
 
 
 def project_engine(project_file: Path | None) -> str | None:
-    """The engine the project connects to, if it has a connection."""
+    """The engine the project connects to, if it has a connection (read
+    from ``layer.toml`` alone: no secret is needed to know it)."""
     if project_file is None:
         return None
-    conn = project.connection(project_file)
+    conn = projects.connection(project_file)
     return conn["engine"] if conn else None
 
 
-def resolve_dsn(engine: str, dsn: str | None, project_file: Path | None) -> str | None:
-    """--dsn, else SYNALOG_<ENGINE>_DSN (the runner reads it), else the
-    project's connection for this engine; the runner falls back to the saved
-    connection when this is None."""
-    if dsn or os.environ.get(f"SYNALOG_{engine.upper()}_DSN") or project_file is None:
-        return dsn
-    if engine not in project.ENGINES:
-        return None
-    return project.project_dsn(project_file, engine)
+def resolve_connection(
+    source: str,
+    engine: str | None,
+    project: str | os.PathLike | None,
+    import_root: list[str] | None,
+) -> tuple[str, dict | None]:
+    """The engine a program runs on — `engine`, else its `@Engine`, else the
+    project's, else duckdb — and the project's connection when it is to that
+    engine. The project is the ``layer.toml`` found from `project`, a
+    folder (default: the current directory). Secrets are read only for that
+    connection: a program run in memory needs none."""
+    project_file = projects.find(project if project is not None else os.getcwd())
+    connected_to = project_engine(project_file)
+    resolved = engine or program_engine(source, import_root) or connected_to or DEFAULT_ENGINE
+    if project_file is None or connected_to != resolved:
+        return resolved, None
+    return resolved, projects.resolve(project_file.parent)
 
 
 def shown_value(value) -> str:
@@ -87,14 +98,14 @@ def violated_assertions(
     source: str,
     engine: str,
     import_root: list[str] | None = None,
-    dsn: str | None = None,
+    connection: Mapping | None = None,
     loads=(),
     open_session: Session | None = None,
 ) -> list[str]:
     """Run every assertion of the program on ``engine``; one message, quoting
     a few counterexamples, per assertion that does not hold. Pending and
     unsupported assertions are skipped. ``open_session`` runs them in a
-    session already open (``dsn`` and ``loads`` are then its own)."""
+    session already open (``connection`` and ``loads`` are then its own)."""
     checked = [
         assertion
         for assertion in _synalog.assertions(source, engine=engine, import_root=import_root)
@@ -103,7 +114,7 @@ def violated_assertions(
     if not checked:
         return []
     if open_session is None:
-        with session(engine, dsn, loads) as s:
+        with session(engine, connection, loads) as s:
             return violated_assertions(source, engine, import_root, open_session=s)
     errors = []
     for assertion in checked:
@@ -127,17 +138,18 @@ def check(
     engine: str | None = None,
     import_root: list[str] | None = None,
     assertions: bool = True,
-    dsn: str | None = None,
+    project: str | os.PathLike | None = None,
 ) -> tuple[list[str], list[str]]:
     """Validate a Synalog program; returns ``(errors, warnings)``, two lists
     of messages. The program is valid when ``errors`` is empty.
 
     The verifier runs first and needs no database. When the program passes it
-    and a database is known — ``dsn``, ``SYNALOG_<ENGINE>_DSN``, or the
-    ``[connection]`` of the ``synalog.toml`` found from the current directory —
-    its ``@Assert`` statements are run there, and each violated one is an
-    error quoting a few counterexamples. A database that cannot be reached is
-    a warning, not an error. ``assertions=False`` skips the database.
+    and its project has a database — the ``[connection]`` of the
+    ``layer.toml`` found from ``project``, a folder (default: the current
+    directory) — its ``@Assert`` statements are run there, and each violated
+    one is an error quoting a few counterexamples. A database that cannot be
+    reached is a warning, not an error. ``assertions=False`` skips the
+    database.
 
     ``engine`` overrides the program's ``@Engine`` annotation, which overrides
     the project's engine (default: duckdb). Raises ValueError on syntax errors.
@@ -148,21 +160,10 @@ def check(
     if not _synalog.assertions(source, engine=engine, import_root=import_root):
         return errors, warnings
     try:
-        project_file = project.find(os.getcwd())
-        if project_file is not None:
-            config.load_dotenv(project_file.parent)
-        resolved = (
-            engine
-            or program_engine(source, import_root)
-            or project_engine(project_file)
-            or DEFAULT_ENGINE
-        )
-        resolved_dsn = resolve_dsn(resolved, dsn, project_file) or os.environ.get(
-            f"SYNALOG_{resolved.upper()}_DSN"
-        )
-        if resolved_dsn is None:
+        resolved, connection = resolve_connection(source, engine, project, import_root)
+        if connection is None:
             return errors, warnings  # no database: the verifier's answer stands
-        errors.extend(violated_assertions(source, resolved, import_root, resolved_dsn))
+        errors.extend(violated_assertions(source, resolved, import_root, connection))
     # Each driver has its own exceptions, and none of them is about the
     # program: whatever keeps the database from answering is reported as such.
     except Exception as e:  # noqa: BLE001

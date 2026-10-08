@@ -18,30 +18,34 @@ import os
 import pytest
 
 import synalog
+from synalog import project
 from synalog.introspect import introspect
 
 
-def _psql_dsn() -> str:
+def _connect(folder, engine: str, fields: dict) -> dict:
+    """The engine's connection, the only way synalog has one: a project's
+    layer.toml (its secrets in .env), resolved back."""
+    project.write(folder, engine, fields)
+    return project.resolve(folder)
+
+
+def _psql(folder) -> dict:
     port = os.environ.get("SYNALOG_E2E_PSQL_PORT", "5433")
-    return f"postgresql://logica:logica@localhost:{port}/logica"
+    fields = {"host": "localhost", "port": port, "database": "logica", "user": "logica", "password": "logica"}
+    return _connect(folder, "psql", fields)
 
 
-def _trino_dsn() -> str:
-    host = os.environ.get("SYNALOG_E2E_TRINO_HOST", "localhost")
-    port = os.environ.get("SYNALOG_E2E_TRINO_PORT", "8080")
-    return f"trino://e2e@{host}:{port}/tpch"
-
-
-def _presto_dsn() -> str:
-    host = os.environ.get("SYNALOG_E2E_PRESTO_HOST", "localhost")
-    port = os.environ.get("SYNALOG_E2E_PRESTO_PORT", "8081")
-    return f"presto://e2e@{host}:{port}/tpch"
+def _trino_like(engine: str, folder) -> dict:
+    default_port = "8080" if engine == "trino" else "8081"
+    host = os.environ.get(f"SYNALOG_E2E_{engine.upper()}_HOST", "localhost")
+    port = os.environ.get(f"SYNALOG_E2E_{engine.upper()}_PORT", default_port)
+    return _connect(folder, engine, {"host": host, "port": port, "catalog": "tpch", "user": "e2e"})
 
 
 @pytest.mark.engine("psql")
-def test_introspect_psql_reads_seeded_schemas(runner_for):
+def test_introspect_psql_reads_seeded_schemas(runner_for, tmp_path):
     runner_for("psql")  # skip/fail per availability, like the golden e2e tests
-    text = introspect("psql", _psql_dsn())
+    text = introspect("psql", _psql(tmp_path))
 
     # Schema-qualified predicate names, columns preserved in order.
     assert (
@@ -59,13 +63,10 @@ def test_introspect_psql_reads_seeded_schemas(runner_for):
     assert synalog.check(program, engine="psql")[0] == []
 
 
-@pytest.mark.parametrize(
-    "engine,dsn",
-    [("trino", _trino_dsn()), ("presto", _presto_dsn())],
-)
-def test_introspect_trino_presto_reads_tpch(engine, dsn, runner_for):
+@pytest.mark.parametrize("engine", ["trino", "presto"])
+def test_introspect_trino_presto_reads_tpch(engine, runner_for, tmp_path):
     runner_for(engine)
-    text = introspect(engine, dsn)
+    text = introspect(engine, _trino_like(engine, tmp_path))
 
     # tpch ships the same 8 tables in each scale-factor schema (sf1, tiny, ...).
     assert "customer(custkey:, name:, address:, nationkey:" in text
