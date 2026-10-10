@@ -11,6 +11,8 @@
 [![PyPI](https://img.shields.io/pypi/v/synalog?logo=pypi&logoColor=white&cacheSeconds=86400)](https://pypi.org/project/synalog/)
 [![Downloads](https://static.pepy.tech/badge/synalog)](https://pepy.tech/project/synalog)
 [![Discord](https://img.shields.io/discord/1118241178723291219?logo=discord&logoColor=white&label=Discord&cacheSeconds=3600)](https://discord.gg/82nt97uXcM)
+[![PyPI](https://img.shields.io/pypi/v/synalog.svg)](https://pypi.org/project/synalog/)
+[![crates.io](https://img.shields.io/crates/v/synalog.svg)](https://crates.io/crates/synalog)
 [![CI](https://github.com/synalinks/synalog/actions/workflows/CI.yml/badge.svg)](https://github.com/synalinks/synalog/actions/workflows/CI.yml)
 [![Documentation](https://github.com/synalinks/synalog/actions/workflows/docs.yml/badge.svg)](https://github.com/synalinks/synalog/actions/workflows/docs.yml)
 [![License: Apache-2.0](https://img.shields.io/badge/License-Apache_2.0-green.svg)](https://opensource.org/license/apache-2-0)
@@ -79,6 +81,8 @@ pip install synalog
 Or with [uv](https://docs.astral.sh/uv/): `uv add synalog` (or `uv pip install synalog`). The CLI also runs without installing via `uvx synalog`.
 
 Requires Python 3.10+. Wheels are published for Linux (x86_64, aarch64, armv7, s390x, ppc64le; glibc and musl), Windows (x64, x86, aarch64) and macOS (x86_64, aarch64).
+
+The Rust core is also on crates.io for embedding the parser, verifier and compiler directly in a Rust program (no Python involved): `cargo add synalog`. See the [API docs on docs.rs](https://docs.rs/synalog).
 
 ## Add the skill to your coding agent
 

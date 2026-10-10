@@ -40,6 +40,15 @@ jobs:
           pip install pytest pytest-xdist pytest-timeout duckdb "psycopg[binary]" trino presto-python-client pyhive thrift logica
       - name: Rust tests (unit, parser, compiler golden, search, verifier)
         run: cargo test
+      - name: Crate packaging check (what release.yml publishes to crates.io)
+        # Builds the crate from the packaged sources exactly as `cargo publish`
+        # would, so a missing `include` entry or a broken doc example fails
+        # here instead of on the release tag.
+        run: cargo package --locked
+      - name: Rustdoc (docs.rs build) is warning-free
+        run: cargo doc --no-deps --locked
+        env:
+          RUSTDOCFLAGS: -D warnings
       - name: Build and install synalog wheel
         run: pip install .
       - name: CLI tests
@@ -327,4 +336,4 @@ jobs:
       - name: CLI tests
         run: pytest tests/cli -q
 
-# Publishing to PyPI happens in release.yml, triggered by `v*` tags.
+# Publishing to PyPI and crates.io happens in release.yml, triggered by `v*` tags.
