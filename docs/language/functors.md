@@ -2,7 +2,7 @@
 
 Functors let you **parameterize predicates**: take an existing rule and substitute one of the predicates it depends on, producing a new predicate.
 
-```logica
+```synalog
 NewPredicate := FunctorPredicate(Arg1: Value1, Arg2: Value2);
 ```
 
@@ -10,7 +10,7 @@ NewPredicate := FunctorPredicate(Arg1: Value1, Arg2: Value2);
 
 Define a generic pattern once, then instantiate it for different inputs:
 
-```logica
+```synalog
 # Define a reusable pattern
 @OrderBy(SegmentRevenue, "segment_id");
 SegmentRevenue(segment_id:, total? += amount) distinct :-
@@ -28,7 +28,7 @@ SMBRevenue        := SegmentRevenue(Segment: SMBCustomers);
 
 A common use is parameterized filtering: write a generic rule with a `Filter` dependency whose default matches all rows, then override the filter per query:
 
-```logica
+```synalog
 @OrderBy(CustomerRevenue, "customer_name");
 CustomerRevenue(customer_name:, revenue? += amount) distinct :-
   Filter(customer_name:), Orders(customer_name:, amount:);
@@ -47,7 +47,7 @@ This keeps the aggregation logic in one place while allowing any number of filte
 
 Both patterns together: the filter pattern (`JohnsRevenue`) and segment parameterization (`EnterpriseRevenue`, `SMBRevenue`):
 
-```logica
+```synalog
 --8<-- "docs/examples/functors.l"
 ```
 

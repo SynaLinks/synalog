@@ -103,7 +103,7 @@ In a project, `import <folder>.<Name>.<Name>;` statements resolve from the proje
 
 In the [`shop` project](language/index.md), `rules/TopCustomers.l` builds on `rules/CustomerRevenue.l`:
 
-```logica
+```synalog
 --8<-- "docs/examples/shop/rules/TopCustomers.l"
 ```
 
@@ -198,7 +198,7 @@ $ synalog introspect
 Wrote 2 table file(s) to /path/to/sales/tables
 ```
 
-```logica
+```synalog
 ---
 name: PublicOrders
 description: Orders.

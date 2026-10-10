@@ -9,7 +9,7 @@ Assertions are written in first-order logic, not in Synalog. A rule and its asse
 
 ## A first assertion
 
-```logica
+```synalog
 Parent(x:, y:) :- parents(parent: x, child: y);
 
 @Assert(Ancestor,
@@ -48,7 +48,7 @@ Carol is Alice's grandchild, Erin is Carol's, but Erin is Alice's great-grandchi
 
 `@Assert` takes the predicate the properties are about, then one named argument per property: the name identifies the property in reports, the string is the statement.
 
-```logica
+```synalog
 @Assert(Revenue,
       one_row_per_customer: "∀ c r s, Revenue c r → Revenue c s → r = s",
       positive:             "∀ c, Revenue c > 0");
@@ -74,7 +74,7 @@ Statements are written as [Lean](https://lean-lang.org/) propositions, with the 
 | `+`, `-`, `*`, `/` | | arithmetic |
 | `∑ x, t` | `sum x, t` | sum of `t` over `x` |
 
-```logica
+```synalog
 @Assert(Revenue, consistent: """forall c r s,
                                 Revenue c r -> Revenue c s -> r = s""");
 ```
@@ -92,7 +92,7 @@ A name bound by a quantifier is a variable; an unbound lowercase name is univers
 
 The properties worth stating are the ones a rule can silently get wrong. All of these run as written against the tables `orders(order_id, customer_id, amount, status)` and `customers(customer_id, country)`:
 
-```logica
+```synalog
 Order(order_id:, customer_id:, amount:, status:) :- orders(order_id:, customer_id:, amount:, status:);
 Customer(customer_id:, country:) :- customers(customer_id:, country:);
 

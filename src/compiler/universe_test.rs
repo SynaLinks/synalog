@@ -87,14 +87,60 @@ fn test_table_reference() {
     assert_eq!(table_reference("sales.Orders", duckdb.as_ref()).unwrap(), "sales.Orders");
     assert_eq!(table_reference("`my-project.sales`", duckdb.as_ref()).unwrap(), "\"my-project\".\"sales\"");
     assert_eq!(table_reference("`my-project.sales`", bigquery.as_ref()).unwrap(), "`my-project.sales`");
+    assert_eq!(
+        table_reference("`public.Ventes d'été 2024`", duckdb.as_ref()).unwrap(),
+        "\"public\".\"Ventes d'été 2024\""
+    );
+}
+
+#[test]
+fn test_table_reference_quotes_what_looks_like_sql() {
+    // Parentheses and colons are part of a name: quoted, they call and read nothing.
+    for (engine, expected) in [
+        ("duckdb", "\"(SELECT 7 AS x)\""),
+        ("sqlite", "\"(SELECT 7 AS x)\""),
+        ("psql", "\"(SELECT 7 AS x)\""),
+        ("trino", "\"(SELECT 7 AS x)\""),
+        ("presto", "\"(SELECT 7 AS x)\""),
+        ("databricks", "`(SELECT 7 AS x)`"),
+        ("bigquery", "`(SELECT 7 AS x)`"),
+    ] {
+        let dialect = crate::compiler::dialects::get(engine).unwrap();
+        assert_eq!(table_reference("`(SELECT 7 AS x)`", dialect.as_ref()).unwrap(), expected, "{}", engine);
+    }
+    let duckdb = crate::compiler::dialects::get("duckdb").unwrap();
+    assert_eq!(
+        table_reference("`main.Ventes (2024): final`", duckdb.as_ref()).unwrap(),
+        "\"main\".\"Ventes (2024): final\""
+    );
 }
 
 #[test]
 fn test_table_reference_refuses_sql() {
     let duckdb = crate::compiler::dialects::get("duckdb").unwrap();
-    for name in ["`(SELECT 1)`", "`t; DROP TABLE t; --`", "`read_text('/etc/hosts')`", "a--b", "a+b", "${x}", "`a..b`"] {
+    for name in [
+        "`t; DROP TABLE t; --`", "`read_text('/etc/hosts')`", "a--b", "a+b", "${x}", "`a..b`", "(SELECT 1)",
+        "`a\"b`", "`a\\b`", "`a${x}`", "`/etc/hosts`", "`data/*`", "`s3://bucket/key`", "` a`", "`a `", "`a\nb`",
+        "`https://host/file`", "`file:/etc/hosts`", "`C:\\data`", "`read_csv('x')?`", "`a,b`", "`a=b`", "`a<b`",
+    ] {
         assert!(table_reference(name, duckdb.as_ref()).is_err(), "{}", name);
     }
+}
+
+#[test]
+fn test_table_reference_reads_no_file_on_spark() {
+    let databricks = crate::compiler::dialects::get("databricks").unwrap();
+    let duckdb = crate::compiler::dialects::get("duckdb").unwrap();
+    for name in ["text.secret", "`text.secret`", "csv.orders", "`CSV.orders`", "parquet.events", "json.x", "delta.t"] {
+        let refused = table_reference(name, databricks.as_ref());
+        assert!(refused.is_err(), "{}", name);
+        assert!(refused.unwrap_err().to_string().contains("reads a file"), "{}", name);
+    }
+    // With its catalog, or under another schema, it is a table.
+    assert_eq!(table_reference("main.text.secret", databricks.as_ref()).unwrap(), "main.text.secret");
+    assert_eq!(table_reference("sales.text", databricks.as_ref()).unwrap(), "sales.text");
+    // Elsewhere `text` is a schema like another.
+    assert_eq!(table_reference("text.secret", duckdb.as_ref()).unwrap(), "text.secret");
 }
 
 // ── recursion_error_message ──

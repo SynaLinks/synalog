@@ -6,7 +6,7 @@ Synalog is a fork of [Logica](https://logica.dev/) with a fast Rust core. It kee
 
 Synalog doesn't support positional attributes like Logica or Datalog: it only uses **named attributes**, which reduce agent mistakes. This feature is optional in Logica; Synalog makes it mandatory.
 
-```logica
+```synalog
 # Synalog: always named
 Employee(name:, salary:)
 
@@ -30,7 +30,7 @@ Synalog embeds a [formal verifier](verification.md) that catches structural erro
 
 New in Synalog 2.0, and not in Logica: `@Assert` states what a predicate must satisfy, in first-order logic written as [Lean](https://lean-lang.org/) propositions, and Synalog checks it against the data by searching for counterexamples. `synalog program.l verify` reports the assertions that are violated, and `run` refuses a program that violates one.
 
-```logica
+```synalog
 @Assert(Ancestor, transitive: "∀ x y z, Ancestor x y → Ancestor y z → Ancestor x z");
 ```
 
