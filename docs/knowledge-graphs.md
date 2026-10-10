@@ -64,7 +64,7 @@ If the data is one wide table with no meaningful relationships, or the questions
 - **Edges join through nodes**, not raw tables. This guarantees referential integrity: a filter on a node automatically applies to every edge that references it.
 - **Name plainly.** `Person`, `Team`, `WorksIn`, `ReportsTo`. No `Node`, `Edge` or `Rel` suffixes.
 
-```logica
+```synalog
 @OrderBy(Person, "person_id");
 Person(person_id:, name:, role:) distinct :- Employees(person_id:, name:, role:);
 
@@ -83,7 +83,7 @@ WorksIn(person_id:, department_id:) distinct :-
 
 A node concept is a `distinct` projection of the identifying and descriptive columns of a table:
 
-```logica
+```synalog
 @OrderBy(Product, "product_id");
 Product(product_id:, name:, category:, permalink:) distinct :-
   Products(product_id:, name:, category:, permalink:);
@@ -93,7 +93,7 @@ Product(product_id:, name:, category:, permalink:) distinct :-
 
 Columns such as `status`, `tier`, `category` or `country` are entities in disguise. Extract the distinct values as a node *before* writing rules over them, so the vocabulary is discoverable and every rule agrees on it:
 
-```logica
+```synalog
 @OrderBy(Category, "category");
 Category(category:) distinct :- Products(category:);
 
@@ -106,7 +106,7 @@ BelongsTo(product_id:, category:) distinct :-
 
 When an entity has distinct categorical states, model one concept per state, each joined through the base node. The subtype is then a drop-in replacement for the base node in any rule:
 
-```logica
+```synalog
 @OrderBy(ActiveCustomer, "customer_id");
 ActiveCustomer(customer_id:, name:) distinct :-
   Customer(customer_id:, name:, status: "active");
@@ -122,7 +122,7 @@ Combined with [functors](language/functors.md), a subtype becomes a parameter: t
 
 Entities often arrive from more than one table. Union the sources into a single node concept and make the identifier globally unique, so edges from either side land on the same vertex:
 
-```logica
+```synalog
 @OrderBy(Party, "party_id");
 Party(party_id:, name:, kind:) distinct :-
   Employees(employee_id:, name:),
@@ -139,7 +139,7 @@ Prefixing the source keeps two systems that both number their rows from 1 from c
 
 When more than two entities participate, include all of them as columns:
 
-```logica
+```synalog
 WorksOn(person_id:, project_id:, role:) distinct :-
   Person(person_id:), Project(project_id:),
   ProjectAssignments(person_id:, project_id:, role:);
@@ -149,7 +149,7 @@ WorksOn(person_id:, project_id:, role:) distinct :-
 
 Attach a numeric attribute to the relationship, often an aggregate:
 
-```logica
+```synalog
 Purchased(customer_id:, product_id:, total_amount? += amount) distinct :-
   Customer(customer_id:), Product(product_id:),
   Orders(customer_id:, product_id:, amount:);
@@ -159,7 +159,7 @@ Purchased(customer_id:, product_id:, total_amount? += amount) distinct :-
 
 Two options, and the choice matters. One concept per relationship type (`Manages`, `Mentors`) keeps rules precise and lets the verifier catch mistakes. A single concept with a `type` column is useful when a rule has to walk *any* connection, for example to compute a neighborhood or a degree:
 
-```logica
+```synalog
 @OrderBy(Related, "source_id", "target_id");
 Related(source_id:, target_id:, type:) distinct :-
   Manages(manager_id: source_id, employee_id: target_id), type == "manages" |
@@ -172,7 +172,7 @@ Define the typed relations first and derive `Related` from them, never the other
 
 Define the raw direction once, for example with `a < b`, then close it with a union:
 
-```logica
+```synalog
 CoAuthored(author_a:, author_b:, paper_id:) distinct :-
   CoAuthoredRaw(author_a:, author_b:, paper_id:) |
   CoAuthoredRaw(author_a: author_b, author_b: author_a, paper_id:);
@@ -182,7 +182,7 @@ CoAuthored(author_a:, author_b:, paper_id:) distinct :-
 
 Derive the opposite direction from an existing edge:
 
-```logica
+```synalog
 ReportsTo(employee_id:, manager_id:) distinct :- Manages(manager_id:, employee_id:);
 ```
 
@@ -190,7 +190,7 @@ ReportsTo(employee_id:, manager_id:) distinct :- Manages(manager_id:, employee_i
 
 When a relationship has attributes of its own, or when other things point *at* the relationship, promote it to a node and connect it with two edges. An assignment with a role, an allocation and its own history is an entity, not a label on a line:
 
-```logica
+```synalog
 ## The relationship as a node.
 @OrderBy(Assignment, "assignment_id");
 Assignment(assignment_id:, role:, allocation:) distinct :-
@@ -213,7 +213,7 @@ The plain `person -> project` edge is then one composition away, and stays avail
 
 Chain different edge types: `A -> B` via one relation and `B -> C` via another gives `A -> C`:
 
-```logica
+```synalog
 WorksWithClient(employee_id:, client_id:) distinct :-
   MemberOf(employee_id:, team_id:),
   EngagedWith(team_id:, client_id:);
@@ -223,7 +223,7 @@ WorksWithClient(employee_id:, client_id:) distinct :-
 
 Recursion over a single edge type (parent to child, manager to employee) computes chains. See [Recursion](language/recursion.md). To track the route rather than just the endpoints, accumulate it in the recursive rule:
 
-```logica
+```synalog
 @Recursive(PathTo, 10);
 @OrderBy(PathTo, "source", "target");
 PathTo(source:, target:, path:) distinct :-
@@ -241,14 +241,14 @@ PathTo(source:, target:, path:) distinct :-
 
 A recursive closure detects hierarchy cycles ([example](language/recursion.md#cycle-detection)). For cardinality constraints, count children per parent and filter for violations:
 
-```logica
+```synalog
 ChildCount(parent_id:, n? += 1) distinct :- ParentOf(parent_id:, child_id:);
 TooManyChildren(parent_id:, n:) :- ChildCount(parent_id:, n:), n > 2;
 ```
 
 Dangling references are the mirror image, and negation finds them:
 
-```logica
+```synalog
 OrphanEdge(child_id:) :- ParentOf(child_id:), ~Person(person_id: child_id);
 ```
 
@@ -258,7 +258,7 @@ Once nodes and edges exist, questions become short rules over them.
 
 **Neighborhood.** Everything one hop away from a node, in either direction:
 
-```logica
+```synalog
 @OrderBy(Neighbor, "node_id", "neighbor_id");
 Neighbor(node_id:, neighbor_id:, type:) distinct :-
   Related(source_id: node_id, target_id: neighbor_id, type:) |
@@ -267,7 +267,7 @@ Neighbor(node_id:, neighbor_id:, type:) distinct :-
 
 **Degree.** How connected a node is, straight from an aggregation:
 
-```logica
+```synalog
 @OrderBy(Degree, "n", "DESC");
 Degree(node_id:, n? += 1) distinct :- Neighbor(node_id:);
 ```
@@ -283,7 +283,7 @@ Degree(node_id:, n? += 1) distinct :- Neighbor(node_id:);
 
 A small employee, team and client graph: nodes with primary keys and preserved URLs, edges joined through nodes, an inverse edge, and an edge composition:
 
-```logica
+```synalog
 --8<-- "docs/examples/knowledge_graphs.l"
 ```
 
@@ -324,7 +324,7 @@ Two conventions make the arithmetic disappear:
 
 Dates come out of the [temporal pipeline](language/temporal.md), never out of raw timestamp arithmetic:
 
-```logica
+```synalog
 @OrderBy(MemberOf, "person_id", "valid_from");
 MemberOf(person_id:, team_id:, valid_from:, valid_to:) distinct :-
   Person(person_id:), Team(team_id:),
@@ -337,7 +337,7 @@ MemberOf(person_id:, team_id:, valid_from:, valid_to:) distinct :-
 
 Source systems often record only *changes*: one row per assignment, with no end date. The end of a period is the start of the next one for the same entity. Compute it with a self-join and a `Min=` aggregation, then handle the still-open period with negation:
 
-```logica
+```synalog
 ## The next change for this person, when there is one.
 @OrderBy(NextChange, "person_id", "changed_at");
 NextChange(person_id:, changed_at:, next? Min= later) distinct :-
@@ -361,7 +361,7 @@ MemberOf(person_id:, team_id:, valid_from:, valid_to:) distinct :-
 
 `Today` supplies the clock, and the half-open test reads exactly like the interval:
 
-```logica
+```synalog
 @OrderBy(ActiveMember, "person_id");
 ActiveMember(person_id:, name:, team_id:) distinct :-
   MemberOf(person_id:, team_id:, valid_from:, valid_to:),
@@ -374,7 +374,7 @@ ActiveMember(person_id:, name:, team_id:) distinct :-
 
 Two periods `[s1, e1)` and `[s2, e2)` overlap when `s1 < e2 && s2 < e1`. A derived edge should carry the **intersection** of the periods it was built from, and exist only when that intersection is non-empty:
 
-```logica
+```synalog
 @OrderBy(Colleague, "person_a", "person_b");
 Colleague(person_a:, person_b:, team_id:, valid_from:, valid_to:) distinct :-
   MemberOf(person_id: person_a, team_id:, valid_from: a_from, valid_to: a_to),
@@ -391,7 +391,7 @@ Two people on the same team five years apart are not colleagues, and the rule sa
 
 The same intersection carried through a recursive rule gives paths whose hops are *simultaneously* valid. A path that would need a hop to travel back in time is never derived:
 
-```logica
+```synalog
 @Recursive(ReachedBy, 10);
 @OrderBy(ReachedBy, "source", "target");
 ReachedBy(source:, target:, valid_from:, valid_to:) distinct :-
@@ -408,7 +408,7 @@ ReachedBy(source:, target:, valid_from:, valid_to:) distinct :-
 
 Interval closing from an event log, "active today", the overlap join and the time-respecting closure, in one runnable program:
 
-```logica
+```synalog
 --8<-- "docs/examples/temporal_graph.l"
 ```
 

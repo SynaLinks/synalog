@@ -97,7 +97,7 @@ TopCustomers(customer_id:) :- customer_id in Range(3);
 
 `@Assert` states what a predicate must satisfy, in first-order logic, and Synalog checks it against the data by searching for counterexamples:
 
-```logica
+```synalog
 @Assert(Ancestor, transitive: "∀ x y z, Ancestor x y → Ancestor y z → Ancestor x z");
 ```
 
@@ -129,7 +129,7 @@ for e in errors:
 
 An intentionally invalid program (an unbound head variable, an unbounded self-recursion and a reserved predicate name), and everything the verifier reports for it:
 
-```logica
+```synalog
 --8<-- "docs/examples/verification.l"
 ```
 

@@ -258,7 +258,7 @@ Each file is named after its predicate and opens with front matter (`name`, the 
 
 `tables/Orders.l`
 
-```logica
+```synalog
 ---
 name: Orders
 description: One row per order, with its customer, amount and status.
@@ -270,7 +270,7 @@ Orders(order_id:, customer_id:, amount:, status:) :-
 
 `concepts/Customer.l`
 
-```logica
+```synalog
 ---
 name: Customer
 description: Every customer who placed at least one order.
@@ -283,7 +283,7 @@ Customer(customer_id:) distinct :- Orders(customer_id:);
 
 `rules/CustomerRevenue.l`
 
-```logica
+```synalog
 ---
 name: CustomerRevenue
 description: Total amount ordered by each customer, all statuses included.
@@ -302,7 +302,7 @@ Imports resolve from the project's folder, so every file runs on its own: `synal
 
 Synalog uses **named arguments only** (no positional arguments). The left side of `:` is the column name, the right side is the variable:
 
-```logica
+```synalog
 # column "amount" bound to variable "total"
 Orders(amount: total)
 
@@ -314,7 +314,7 @@ Orders(amount:)
 
 Variables are defined with `==`. Arithmetic, string and comparison operators are supported:
 
-```logica
+```synalog
 OrderWithTax(order_id:, total:) :-
   Orders(order_id:, amount:),
   total == amount * 1.10;
@@ -326,7 +326,7 @@ OrderWithTax(order_id:, total:) :-
 
 Aggregation uses the `distinct` keyword and special operators in the rule head:
 
-```logica
+```synalog
 # Sum
 Revenue(total? += amount) distinct :- Orders(amount:);
 
@@ -350,7 +350,7 @@ TopSeller(name? ArgMax= name -> revenue) distinct :- Sales(name:, revenue:);
 
 ### Logical operators
 
-```logica
+```synalog
 # Conjunction (AND), comma
 Result(x:, y:) :- TableA(x:), TableB(x:, y:);
 
@@ -363,14 +363,14 @@ Inactive(user_id:) :- Users(user_id:), ~Logins(user_id:);
 
 Multiple rule definitions for the same predicate combine results (union):
 
-```logica
+```synalog
 HighValue(user_id:) :- Orders(user_id:, amount:), amount > 10000;
 HighValue(user_id:) :- Referrals(user_id:, tier: "vip");
 ```
 
 ### Conditionals
 
-```logica
+```synalog
 OrderSize(order_id:, size:) :-
   Orders(order_id:, amount:),
   size == (if amount > 1000 then "large"
@@ -382,7 +382,7 @@ OrderSize(order_id:, size:) :-
 
 Directives control predicate behavior and **must be placed before** the rule definition:
 
-```logica
+```synalog
 @OrderBy(TopCustomers, "total", "DESC");
 @Limit(TopCustomers, 10);
 TopCustomers(customer_id:, total? += amount) distinct :- Orders(customer_id:, amount:);
@@ -400,7 +400,7 @@ TopCustomers(customer_id:, total? += amount) distinct :- Orders(customer_id:, am
 
 Functors let you reuse predicate logic by parameterizing input predicates:
 
-```logica
+```synalog
 # Define a reusable pattern
 @OrderBy(SegmentRevenue, "segment_id");
 SegmentRevenue(segment_id:, total? += amount) distinct :-
@@ -416,7 +416,7 @@ SMBRevenue := SegmentRevenue(Segment: SMBCustomers);
 
 Recursive predicates compute transitive closures, for example finding all managers above an employee:
 
-```logica
+```synalog
 @Recursive(AllManagers, 20);
 
 # Base case: direct manager
@@ -434,7 +434,7 @@ Useful for: referral chains, org charts, product taxonomies, bill of materials.
 
 Find shortest paths in weighted graphs by enumerating route costs recursively, then keeping the minimum per destination with a `Min=` aggregation:
 
-```logica
+```synalog
 # Enumerate route costs from the origin, hop by hop.
 @Recursive(RouteCost, 10);
 RouteCost(destination:, cost:) :-
@@ -453,7 +453,7 @@ ShippingCost(destination:, total? Min= cost) distinct :- RouteCost(destination:,
 
 When working with timestamps or dates, always convert to string first:
 
-```logica
+```synalog
 @OrderBy(MonthlyOrders, "month");
 MonthlyOrders(month:, count? += 1) distinct :-
   Orders(created_at:),
@@ -467,7 +467,7 @@ RecentOrders(order_id:) :-
 
 `Today(date:)` (today's date as `"YYYY-MM-DD"`) and `Now(timestamp:)` (the current instant as the engine's native timestamp) are built-in concepts. They are inlined per dialect by the compiler, with no runtime table needed, so they work on every engine. `Now` is the most precise value; derive coarser parts (date, time, hour) from it through the `ToString` → `Substr` pipeline. Join against `Today` whenever a rule needs "today":
 
-```logica
+```synalog
 @OrderBy(ThisMonthOrders, "order_id");
 ThisMonthOrders(order_id:, created_at:) :-
   Orders(order_id:, created_at:),
@@ -481,7 +481,7 @@ They are reserved names: you cannot redefine, extend, or update them.
 
 Entities and relationships become node and edge concepts, and rules traverse them. Edges join **through** the node concepts rather than the raw table, so a filter on a node applies to every edge built on it:
 
-```logica
+```synalog
 @OrderBy(Person, "person_id");
 Person(person_id:, name:, profile_url:) distinct :- Employees(person_id:, name:, profile_url:);
 
@@ -494,7 +494,7 @@ WorksIn(person_id:, department_id:) distinct :-
 
 Relationships with a lifetime carry it as a half-open interval `[valid_from, valid_to)`, using `"9999-12-31"` as the open end so ISO strings compare correctly, and `Today` supplies the clock for point-in-time questions:
 
-```logica
+```synalog
 @OrderBy(CurrentEmployment, "person_id");
 CurrentEmployment(person_id:, company_id:, role:) distinct :-
   EmployedAt(person_id:, company_id:, role:, valid_from:, valid_to:),

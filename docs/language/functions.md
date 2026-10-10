@@ -82,21 +82,21 @@ The functions listed on this page run, and give the same result, on every engine
 
 Define pure functions with `=`:
 
-```logica
+```synalog
 Square(x) = x * x;
 FullName(first, last) = first ++ " " ++ last;
 ```
 
 A function may not take the name of a built-in function (`Upper`, `Size`, `Pow`, ...): it would change what the name means in the whole program, and the verifier refuses it. A relation may (`Rank(x:)`): it is never called as a function.
 
-```logica
+```synalog
 Greeting(message:) :- Users(first_name:, last_name:),
   message == "Hello, " ++ FullName(first_name, last_name) ++ "!";
 ```
 
 A function can have a body: its value is the one the body binds, as a rule's head value is. A body that reads a table makes a lookup, which joins: a row with no match gets no value, so the rule using it gives no row for it (write a [`combine`](aggregation.md#combine-an-aggregate-as-a-value) to get a null instead):
 
-```logica
+```synalog
 Inc(x) = n :- n == x + 1;
 RateOf(currency) = rate :- ExchangeRate(currency:, rate:);
 Converted(order_id:, eur: amount * RateOf(currency)) :- Orders(order_id:, amount:, currency:);
@@ -106,7 +106,7 @@ A function can return a record, read with a dot: `Point(x) = {x:, y: x * x};` th
 
 A function is a value: compare it to filter. Written as a condition, `IsEven(x)` would hold for every `x` (a function has a row for each argument, true or false), so the verifier refuses it:
 
-```logica
+```synalog
 IsEven(x) = (x % 2 == 0);
 Even(x:) :- Numbers(x:), IsEven(x) == true;
 ```
@@ -115,7 +115,7 @@ Even(x:) :- Numbers(x:), IsEven(x) == true;
 
 String, math and casting functions, plus two user-defined functions:
 
-```logica
+```synalog
 --8<-- "docs/examples/functions.l"
 ```
 

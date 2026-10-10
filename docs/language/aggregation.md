@@ -2,7 +2,7 @@
 
 Aggregation happens in the rule **head**, together with the `distinct` keyword. The `?` marks the aggregated output column.
 
-```logica
+```synalog
 @OrderBy(Stats, "category");
 Stats(category:, total? += amount, count? += 1) distinct :- Sales(category:, amount:);
 ```
@@ -23,7 +23,7 @@ Non-aggregated head columns (`category` above) become the grouping key, like `GR
 | `col? ArgMax= item -> score` | The `item` with the highest `score` |
 | `col? ArgMin= item -> score` | The `item` with the lowest `score` |
 
-```logica
+```synalog
 # Sum
 Revenue(total? += amount) distinct :- Orders(amount:);
 
@@ -52,7 +52,7 @@ TopSeller(name? ArgMax= name -> revenue) distinct :- Sales(name:, revenue:);
 
 In addition to the operators above: `Array= key -> value` (the values in an array, ordered by their key), `StringAgg= x` (the values as text, joined with `,`, in no particular order; null when they are all null), `1= x` (any single value), and `ArgMaxK` and `ArgMinK` (the `k` items of highest or lowest score). These two take how many items to keep: name one with its count, then aggregate with the name:
 
-```logica
+```synalog
 Top3(x) = ArgMaxK(x, 3);
 Podium(race:, top? Top3= runner -> points) distinct :- Result(race:, runner:, points:);
 ```
@@ -65,7 +65,7 @@ An aggregate aggregates only as an operator (`n? Max= x`) or in a `combine`: cal
 
 With a grouping key, a group exists only when it has rows, so an aggregation over no rows gives no row. Without one, it gives a single row: `+=`, `Min=`, `Max=`, `Avg=`, `List=`, `Set=` and `Array=` are null there and `Count=` is 0. To count 0 instead of null, use `Coalesce`:
 
-```logica
+```synalog
 Big(n? += 1) distinct :- Orders(amount:), amount > 1000;     # one row: null when no order is over 1000
 BigCount(n: Coalesce(c, 0)) :- Big(n: c);
 ```
@@ -74,7 +74,7 @@ BigCount(n: Coalesce(c, 0)) :- Big(n: c);
 
 `(combine Op= expr :- body)` is the aggregate of `body`'s rows, used as a value anywhere a value is: in a head, a condition, a function. The body sees the variables of the enclosing rule, so the aggregate is computed for each of its rows, like a correlated subquery:
 
-```logica
+```synalog
 # Each customer's total, null for a customer without orders.
 CustomerTotal(customer_id:, total: (combine += amount :- Orders(customer_id:, amount:))) :-
   Customer(customer_id:);
@@ -95,7 +95,7 @@ Every aggregating operator works in a `combine`. Over no rows it follows the rul
 
 `distinct` on its own deduplicates rows, and this is how concepts extract unique entities:
 
-```logica
+```synalog
 @OrderBy(Customer, "customer_id");
 Customer(customer_id:) distinct :- Orders(customer_id:);
 ```
@@ -104,7 +104,7 @@ Customer(customer_id:) distinct :- Orders(customer_id:);
 
 Sum, count, min/max/avg, `Set=` collection and `ArgMax=` over a small sales table:
 
-```logica
+```synalog
 --8<-- "docs/examples/aggregation.l"
 ```
 
