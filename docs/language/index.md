@@ -34,11 +34,11 @@ Each file is named after the predicate it defines, `<folder>/<Name>.l`, and hold
 
 `rules/TopCustomers.l` builds on `rules/CustomerRevenue.l`, which builds on a concept and a table:
 
-```logica
+```synalog
 --8<-- "docs/examples/shop/rules/CustomerRevenue.l"
 ```
 
-```logica
+```synalog
 --8<-- "docs/examples/shop/rules/TopCustomers.l"
 ```
 
@@ -48,7 +48,7 @@ A file may also define the intermediate rules its predicate is built from (a rec
 
 A table file maps one database table, referenced by its database name (lowercase, as it exists in the database), to a PascalCase predicate listing the columns the project may reference; everything else builds on the predicate:
 
-```logica
+```synalog
 --8<-- "docs/examples/shop/tables/Orders.l"
 ```
 
@@ -61,7 +61,7 @@ Concepts extract the entities and relationships hidden in tables:
 - Entity concepts are named after the entity: `Customer`, `Product`.
 - Relationship concepts are named after the relationship: `Purchased`, `WorksIn`.
 
-```logica
+```synalog
 --8<-- "docs/examples/shop/concepts/Customer.l"
 ```
 
@@ -98,7 +98,7 @@ sql = synalog.compile(source, "TopCustomers", import_root=["shop"])
 
 To try the language without a database, a single file can hold its own data as inline facts, as the examples of this documentation do:
 
-```logica
+```synalog
 Orders(order_id: 1, customer_id: 100, amount: 250, status: "shipped");
 Orders(order_id: 2, customer_id: 100, amount: 1200, status: "pending");
 ```
@@ -111,7 +111,7 @@ Orders(order_id: 2, customer_id: 100, amount: 1200, status: "pending");
 
 Every file opens with YAML front matter, as in Markdown: a first line `---`, the YAML, and a closing `---` line. It says what the file is, and carries metadata for the tools around your project (keywords, ownership, ...). Synalog checks that it is well-formed YAML — a syntax error is reported on its line — and reads two keys, both required: `name` is the predicate the file is about — it must be one the file defines and orders with `@OrderBy` — and `description` says what its rows are, in the words someone would search for (see [verification](../verification.md#front-matter)). Other keys are left to the host (`keywords`, `locked`, ...), and the file parses as if the block were not there, so error line numbers stay those of the file. It must be the very first thing in the file; an opening `---` that is never closed is an error.
 
-```logica
+```synalog
 --8<-- "docs/examples/shop/concepts/Customer.l"
 ```
 
@@ -125,7 +125,7 @@ The power of logic programming is composition: define a predicate once, in its o
 
 `import` brings one predicate of another file into scope: `import <folder>.<Name>.<Name>;` reads the project's `<folder>/<Name>.l` and names its predicate. One import statement names exactly one predicate; every import must be used.
 
-```logica
+```synalog
 import concepts.Customer.Customer;
 import tables.Orders.Orders;
 ```
@@ -140,11 +140,11 @@ Imports resolve from the project's folder (the one holding `layer.toml`) in the 
 
 For columns like `status`, `type`, `tier`, `category` or `country`, extract the distinct values as a concept *before* writing rules over them. This gives consistency, reuse and discoverability:
 
-```logica
+```synalog
 --8<-- "docs/examples/shop/concepts/OrderStatus.l"
 ```
 
-```logica
+```synalog
 --8<-- "docs/examples/shop/rules/OrdersByStatus.l"
 ```
 

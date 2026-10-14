@@ -114,11 +114,15 @@ pub fn is_sql_keyword(name: &str) -> bool {
     SQL_KEYWORDS.iter().any(|k| k.eq_ignore_ascii_case(name))
 }
 
-/// A column name as SQL reads it: as is when it is a plain identifier, quoted
-/// by the dialect when it is a keyword (`order`) or holds other characters.
+/// A column name as SQL reads it: as is when it is a plain lowercase
+/// identifier, quoted by the dialect when it is a keyword (`order`), holds
+/// other characters or an uppercase letter (`createdAt`), which an engine
+/// that folds unquoted names would otherwise not find. A field written in
+/// backticks (`` `Order Note` ``) names the column between them.
 pub fn sql_column(field: &str, dialect: &dyn Dialect) -> String {
-    let plain = field.chars().next().is_some_and(|c| c.is_ascii_alphabetic() || c == '_')
-        && field.chars().all(|c| c.is_ascii_alphanumeric() || c == '_');
+    let field = field.strip_prefix('`').and_then(|f| f.strip_suffix('`')).unwrap_or(field);
+    let plain = field.chars().next().is_some_and(|c| c.is_ascii_lowercase() || c == '_')
+        && field.chars().all(|c| c.is_ascii_lowercase() || c.is_ascii_digit() || c == '_');
     if plain && !is_sql_keyword(field) {
         field.to_string()
     } else {

@@ -19,7 +19,7 @@ import synalog
 
 ROOT = Path(__file__).resolve().parents[2]
 SOURCES = [ROOT / "README.md", *sorted((ROOT / "docs").rglob("*.md")), *sorted((ROOT / "skills").rglob("*.md"))]
-BLOCK = re.compile(r"```logica\n(.*?)```", re.S)
+BLOCK = re.compile(r"```synalog\n(.*?)```", re.S)
 
 #: Errors that only say the excerpt leaves out what it refers to.
 EXCERPT = (

@@ -128,17 +128,17 @@ smoke/
 
 The table file maps the database table `smoke_tests`, referenced by its lowercase database name, to the `SmokeTests` predicate; everything else builds on it:
 
-```logica
+```synalog
 --8<-- "docs/examples/smoke/tables/SmokeTests.l"
 ```
 
 A concept extracts the devices, and a rule counts the failures of each, importing both:
 
-```logica
+```synalog
 --8<-- "docs/examples/smoke/concepts/Device.l"
 ```
 
-```logica
+```synalog
 --8<-- "docs/examples/smoke/rules/FailuresByDevice.l"
 ```
 
@@ -201,7 +201,7 @@ Valid engines: `sqlite`, `duckdb` (default), `bigquery`, `psql`, `presto`, `trin
 
 The same program as a standalone `.l` file, with the SQL it compiles to and the rows it returns on DuckDB:
 
-```logica
+```synalog
 --8<-- "docs/examples/getting_started.l"
 ```
 

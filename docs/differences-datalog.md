@@ -19,7 +19,7 @@ Synalog belongs to the [Datalog](https://en.wikipedia.org/wiki/Datalog) family: 
 
 Datalog identifies arguments by position: `edge(X, Y)` means whatever the first and second columns happen to be. Synalog uses [named arguments](language/syntax.md#named-arguments) exclusively:
 
-```logica
+```synalog
 # Datalog: positional, not supported
 # edge(X, Y) :- node(X), node(Y), link(X, Y).
 
@@ -39,7 +39,7 @@ The trade is deliberate: you give up an incremental in-memory engine and gain th
 
 A Datalog relation is a *set*: duplicates cannot exist. Synalog inherits SQL's *multiset* semantics: a rule body that matches a row twice produces it twice, and the union operator `|` is a `UNION ALL`. Deduplication is opt-in with the `distinct` keyword:
 
-```logica
+```synalog
 # Set semantics, as in Datalog: duplicates removed
 Customer(customer_id:) distinct :- Orders(customer_id:);
 ```
@@ -50,7 +50,7 @@ This is why the documentation marks concepts and aggregating rules `distinct` th
 
 Pure Datalog restricts terms to constants and variables, with no function symbols, which is exactly what guarantees its termination. Synalog drops that restriction: rule bodies can compute with [arithmetic, string and comparison operators](language/syntax.md#operators), [conditionals](language/syntax.md#conditionals), [records](language/syntax.md#records), arrays, [built-in functions](language/functions.md) and [user-defined functions](language/functions.md#user-defined-functions):
 
-```logica
+```synalog
 OrderSize(order_id:, size:) :-
   Orders(order_id:, amount:),
   size == (if amount > 1000 then "large" else "small");
@@ -60,7 +60,7 @@ OrderSize(order_id:, size:) :-
 
 Core Datalog has no aggregation; systems that add it bolt it on with varying syntax and semantics. In Synalog [aggregation](language/aggregation.md) is part of the rule head: `+=`, `Min=`, `Max=`, `Avg=`, `List=`, `Set=`, `ArgMax=` and more:
 
-```logica
+```synalog
 @OrderBy(CustomerSpend, "total", "DESC");
 CustomerSpend(customer_id:, total? += amount) distinct :- Orders(customer_id:, amount:);
 ```
@@ -71,7 +71,7 @@ The non-aggregated head columns act as the grouping key, like SQL's `GROUP BY`.
 
 Datalog recursion always terminates because the Herbrand universe is finite: no function symbols means no new values can ever be created. Synalog's expressions break that guarantee (a recursive rule can compute `cost + hop` forever), so [recursion](language/recursion.md) requires an explicit iteration bound via the [`@Recursive` directive](language/directives.md#recursive):
 
-```logica
+```synalog
 @Recursive(AllManagers, 20);
 AllManagers(employee_id:, manager_id:) :- Employees(employee_id:, manager_id:);
 AllManagers(employee_id:, manager_id:) :-
@@ -85,7 +85,7 @@ The limit bounds the number of hops, so even cyclic graphs terminate. For a clos
 
 Datalog answers are unordered sets, with no notion of "the first ten results". Synalog adds [`@OrderBy` and `@Limit`](language/directives.md) so results are deterministic and pageable, which is what lets an agent with a limited context window walk a large result set page by page:
 
-```logica
+```synalog
 @OrderBy(TopCustomers, "total DESC");
 @Limit(TopCustomers, 10);
 TopCustomers(customer_id:, total:) :- CustomerSpend(customer_id:, total:);
@@ -97,7 +97,7 @@ This is also why `@OrderBy` is mandatory on every concept and rule: without it, 
 
 Datalog predicates are first-order: a rule cannot take another predicate as a parameter. Synalog's [functors](language/functors.md) allow exactly that, instantiating a generic rule with different predicates:
 
-```logica
+```synalog
 EnterpriseRevenue := SegmentRevenue(Segment: EnterpriseCustomer);
 SMBRevenue        := SegmentRevenue(Segment: SMBCustomer);
 ```
@@ -112,7 +112,7 @@ The classic Datalog safety conditions, range restriction (every head variable bo
 
 Datalog has no way to state, next to a predicate, what it should satisfy; some engines accept integrity constraints, written as Datalog rules that must derive nothing. New in Synalog 2.0, and found in neither Datalog nor Logica, `@Assert` states a property in first-order logic, with quantifiers, implication and sums, in a notation distinct from the rules:
 
-```logica
+```synalog
 @Assert(Ancestor,
       transitive:  "∀ x y z, Ancestor x y → Ancestor y z → Ancestor x z",
       irreflexive: "∀ x, ¬ Ancestor x x");

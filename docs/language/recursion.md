@@ -8,7 +8,7 @@ Typical uses: org charts, referral chains, product taxonomies, bill of materials
 
 Define a **base case** and a **recursive case**, and put the [`@Recursive` directive](directives.md#recursive) before the rules with an iteration limit:
 
-```logica
+```synalog
 @Recursive(AllManagers, 20);
 
 # Base case: direct manager
@@ -24,7 +24,7 @@ AllManagers(employee_id:, manager_id:) :-
 
 Find shortest paths in weighted graphs by enumerating route costs recursively, then keeping the minimum per destination with a `Min=` aggregation:
 
-```logica
+```synalog
 # Enumerate route costs from the origin, hop by hop.
 @Recursive(RouteCost, 10);
 RouteCost(destination:, cost:) :-
@@ -45,7 +45,7 @@ The `@Recursive` iteration limit bounds the path length, so cyclic route graphs 
 
 The recursive closure of a parent/child edge detects cycles in a hierarchy: a node that is its own ancestor:
 
-```logica
+```synalog
 @Recursive(AncestorOf, 100);
 AncestorOf(ancestor_id:, descendant_id:) :- ParentOf(parent_id: ancestor_id, child_id: descendant_id);
 AncestorOf(ancestor_id:, descendant_id:) :-
@@ -74,7 +74,7 @@ The [verifier](../verification.md) checks recursive programs at compile time: mi
 
 A management chain (transitive closure) and a shortest-path computation. The shortest path is written as a recursive `RouteCost` enumeration followed by a `Min=` aggregation per destination:
 
-```logica
+```synalog
 --8<-- "docs/examples/recursion.l"
 ```
 

@@ -304,3 +304,52 @@
 [data-md-color-scheme="slate"] .md-logo img {
   content: url("../assets/synalog-dark.svg");
 }
+
+/* --------------------------------------------------------------------------
+   Code: Synalemma's colours, for every language.
+   Synalog blocks are coloured by javascripts/synalog-highlight.js (.syn-*);
+   the others by Pygments, through the theme's variables.
+   -------------------------------------------------------------------------- */
+
+:root,
+[data-md-color-scheme="default"] {
+    --md-code-fg-color: #383a42;
+    --md-code-hl-comment-color: #a0a1a7;
+    --md-code-hl-string-color: #50a14f;
+    --md-code-hl-keyword-color: #a626a4;
+    --md-code-hl-special-color: #a626a4;
+    --md-code-hl-function-color: #4078f2;
+    --md-code-hl-operator-color: #0184bc;
+    --md-code-hl-number-color: #986801;
+    --md-code-hl-constant-color: #986801;
+    --md-code-hl-name-color: #383a42;
+    --md-code-hl-variable-color: #383a42;
+    --md-code-hl-punctuation-color: #383a42;
+    --md-code-hl-generic-color: #383a42;
+}
+
+[data-md-color-scheme="slate"] {
+    --md-code-fg-color: #abb2bf;
+    --md-code-hl-comment-color: #7f848e;
+    --md-code-hl-string-color: #98c379;
+    --md-code-hl-keyword-color: #c678dd;
+    --md-code-hl-special-color: #c678dd;
+    --md-code-hl-function-color: #61afef;
+    --md-code-hl-operator-color: #56b6c2;
+    --md-code-hl-number-color: #d19a66;
+    --md-code-hl-constant-color: #d19a66;
+    --md-code-hl-name-color: #abb2bf;
+    --md-code-hl-variable-color: #abb2bf;
+    --md-code-hl-punctuation-color: #abb2bf;
+    --md-code-hl-generic-color: #abb2bf;
+}
+
+.syn-comment { color: var(--md-code-hl-comment-color); font-style: italic; }
+.syn-string { color: var(--md-code-hl-string-color); }
+.syn-directive { color: var(--md-code-hl-special-color); }
+.syn-predicate { color: var(--md-code-hl-function-color); }
+.syn-keyword { color: var(--md-code-hl-keyword-color); }
+.syn-operator { color: var(--md-code-hl-operator-color); }
+.syn-number { color: var(--md-code-hl-number-color); }
+.syn-variable { color: var(--md-code-hl-variable-color); }
+.syn-punctuation { color: var(--md-code-hl-punctuation-color); }

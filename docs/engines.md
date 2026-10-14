@@ -12,7 +12,7 @@ Synalog compiles to seven SQL dialects. Select the target with the `@Engine` ann
 | Presto | `presto` | |
 | Databricks | `databricks` | Double-quoted string literals |
 
-```logica
+```synalog
 @Engine("psql");
 ```
 

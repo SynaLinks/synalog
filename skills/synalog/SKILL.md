@@ -152,7 +152,7 @@ data/                       local data files, loaded with --load (when there is 
 
 A predicate's kind is its folder. Each file is named after the predicate it defines, `<folder>/<Name>.l`, and holds, in this order: front matter (`name`, the predicate; `description`, what its rows are), one `import` per predicate it builds on, then its rules after their directives, with an `@OrderBy` on the predicate.
 
-```logica
+```synalog
 ---
 name: TotalByRegion
 description: Total sales amount per region, highest first.
@@ -174,7 +174,7 @@ TotalByRegion(region:, total? += amount) distinct :- Region(region:), Sales(regi
 
 `import <folder>.<Name>.<Name>;` imports the predicate of the project's file `<folder>/<Name>.l`: imports resolve from the project's folder (the one holding `layer.toml`), whichever file runs and wherever from (`--import-root DIR`, repeatable, overrides it).
 
-```logica
+```synalog
 import rules.TotalByRegion.TotalByRegion;
 
 @OrderBy(TopRegion, "total DESC");
@@ -215,7 +215,7 @@ TopRegion(region:, total:) :- TotalByRegion(region:, total:);
 
 `?` names the output column; non-aggregated columns are the grouping key.
 
-```logica
+```synalog
 @OrderBy(Stats, "category");
 Stats(category:, total? += amount, count? += 1) distinct :- Sales(category:, amount:);
 ```
@@ -224,7 +224,7 @@ Operators: `+=` (sum/count), `Min=`, `Max=`, `Avg=`, `List=` (all), `Set=` (dist
 
 Top k: define an aggregating alias, then use it as the operator:
 
-```logica
+```synalog
 TopThree(x) = ArgMaxK(x, 3);
 @OrderBy(TopProducts, "category");
 TopProducts(category:, products? TopThree= product -> sold) distinct :- Sales(category:, product:, sold:);
@@ -242,7 +242,7 @@ TopProducts(category:, products? TopThree= product -> sold) distinct :- Sales(ca
 
 Never apply arithmetic or comparison directly to TIMESTAMP/DATE/DATETIME columns. Always: `ToString` → `Substr` (1-based) → `ToInt64` if arithmetic is needed.
 
-```logica
+```synalog
 month == Substr(ToString(created_at), 1, 7);              # "2024-01" for grouping
 date  == Substr(ToString(created_at), 1, 10);             # "2024-01-15"
 hour  == ToInt64(Substr(ToString(created_at), 12, 2));
@@ -255,7 +255,7 @@ ToString(created_at) >= "2024-01-01", ToString(created_at) < "2024-02-01";  # IS
 
 Base case + recursive case, with `@Recursive(Pred, iterations)` before the rules. Use for org charts, taxonomies, BOM, referral chains. The iteration limit bounds path length, so cyclic graphs terminate; `run` stops earlier, as soon as a step adds nothing, so a generous limit costs nothing, and `@Recursive(Pred, -1)` recurses until nothing changes. Keep recursive rules linear (the recursive predicate once per rule, `distinct`, no aggregate in it): each step then only derives from the rows the last step added. `print` shows a script that writes every step out; it refuses `-1`. Full runnable version: [`examples/org/concepts/AllManagers.l`](examples/org/concepts/AllManagers.l).
 
-```logica
+```synalog
 @Recursive(AllManagers, 20);
 AllManagers(employee_id:, manager_id:) :- Employees(employee_id:, manager_id:);
 AllManagers(employee_id:, manager_id:) :-
@@ -269,7 +269,7 @@ Shortest paths: enumerate route costs recursively, then keep `Min=` per destinat
 
 `@Assert` states what a predicate must satisfy, in first-order logic rather than Synalog, so a mistake in a rule is unlikely to be repeated in its assertion. Write the contract first, then the rules:
 
-```logica
+```synalog
 @Assert(Ancestor,
       transitive:  "∀ x y z, Ancestor x y → Ancestor y z → Ancestor x z",
       irreflexive: "∀ x, ¬ Ancestor x x");
@@ -287,7 +287,7 @@ Ancestor(x:, y: z) :- Ancestor(x:, y:), Parent(x: y, y: z);
 
 ## Functors (parameterize predicates)
 
-```logica
+```synalog
 @OrderBy(SegmentRevenue, "segment_id");
 SegmentRevenue(segment_id:, total? += amount) distinct :-
   Segment(segment_id:, user_id:), Orders(user_id:, amount:);
@@ -307,7 +307,7 @@ When data has entities and relationships, model entity concepts (first column = 
 - Symmetric edges: define one direction raw, close with `|` swapping the endpoints. Inverse edges derive from the existing edge. N-ary relations include all participants as columns.
 - Reify a relationship into a node (plus two edges) when it has attributes of its own or when other things point at it.
 
-```logica
+```synalog
 @OrderBy(WorksIn, "person_id");
 WorksIn(person_id:, department_id:) distinct :-
   Person(person_id:),
@@ -322,7 +322,7 @@ Carry the lifetime on the edge as a **half-open** interval `[valid_from, valid_t
 - Valid now: `Today(date:), valid_from <= date, date < valid_to`.
 - Overlap of `[s1, e1)` and `[s2, e2)`: `s1 < e2 && s2 < e1`. A derived edge carries the intersection and exists only if it is non-empty:
 
-```logica
+```synalog
 valid_from == (if a_from > b_from then a_from else b_from),
 valid_to   == (if a_to < b_to then a_to else b_to),
 valid_from < valid_to;
@@ -330,7 +330,7 @@ valid_from < valid_to;
 
 - Event log with no end date: close each period with the next change, and the open one with negation.
 
-```logica
+```synalog
 @OrderBy(NextChange, "person_id", "changed_at");
 NextChange(person_id:, changed_at:, next? Min= later) distinct :-
   Assignments(person_id:, changed_at:),
@@ -349,7 +349,7 @@ MemberOf(person_id:, team_id:, valid_from:, valid_to:) distinct :-
 - Time-respecting traversal: carry the interval intersection through the recursive rule, so a path only exists when its hops are valid simultaneously.
 - Point-in-time queries: put the vantage date in a swappable predicate and move it with a functor.
 
-```logica
+```synalog
 AsOf(valid_date:) :- Today(date:), valid_date == date;
 
 @OrderBy(EmploymentSnapshot, "person_id");

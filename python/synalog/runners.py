@@ -375,6 +375,18 @@ class DuckDbSession(Session):
                 f"CREATE OR REPLACE TABLE {_quote(table)} AS SELECT * FROM {reader}(?)",
                 [path],
             )
+        # The files to load are loaded: from here a program reads only tables.
+        # DuckDB otherwise opens the file a table name designates (`secret.csv`,
+        # `"secret"."parquet"`), installs the extension that reads it, or takes
+        # the Python variable of that name.
+        for setting in (
+            "python_enable_replacements = false",
+            "autoinstall_known_extensions = false",
+            "autoload_known_extensions = false",
+            "enable_external_access = false",
+            "lock_configuration = true",
+        ):
+            self.conn.execute(f"SET {setting}")
 
     def run(self, script: str) -> Result:
         # duckdb executes multi-statement scripts and returns the last result

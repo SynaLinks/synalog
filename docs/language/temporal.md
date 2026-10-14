@@ -8,7 +8,7 @@ Synalog has one rule for `TIMESTAMP`, `DATE`, `DATETIME` and `TIME` columns: **n
 2. `Substr(s, i, l)`: extract the part you need (**1-based** indexing).
 3. `ToInt64(x)`: only if you need arithmetic on the part.
 
-```logica
+```synalog
 # Year-month for grouping
 month == Substr(ToString(created_at), 1, 7);    # "2024-01"
 
@@ -28,7 +28,7 @@ day   == ToInt64(Substr(date_str, 9, 2));
 
 ISO-format strings compare correctly as strings, so range filters are simple:
 
-```logica
+```synalog
 RecentOrders(order_id:) :-
   Orders(order_id:, created_at:),
   ToString(created_at) >= "2024-01-01",
@@ -37,7 +37,7 @@ RecentOrders(order_id:) :-
 
 ## Grouping by month
 
-```logica
+```synalog
 @OrderBy(MonthlyOrders, "month");
 MonthlyOrders(month:, count? += 1) distinct :-
   Orders(created_at:),
@@ -55,7 +55,7 @@ Two built-in concepts read the engine's clock, in UTC on every engine, whatever 
 
 Use them for any "today"- or "now"-relative logic. Do not create, update or delete them: the compiler inlines a one-row relation per dialect (using each engine's native current-date/timestamp SQL), so they need no runtime table and work on every engine, including BigQuery and read-only remote catalogs.
 
-```logica
+```synalog
 ThisMonthOrders(order_id:, created_at:) :-
   Orders(order_id:, created_at:),
   Today(date:),
@@ -66,7 +66,7 @@ ThisMonthOrders(order_id:, created_at:) :-
 
 The time of day, hour, and date all come out of the same `Substr` pipeline you use for any temporal column:
 
-```logica
+```synalog
 NowParts(date:, time:, hour:) :-
   Now(timestamp:),
   date == Substr(ToString(timestamp), 1, 10),    # "2026-06-13"
@@ -82,7 +82,7 @@ Within one statement the engine reads `Today` and `Now` from the same clock, so 
 
 Two small helpers, month length (with the leap-year rule) and two-digit zero-padding:
 
-```logica
+```synalog
 DaysInMonth(y, m) = n :-
   leap == (if (y % 4 == 0) && ((y % 100 != 0) || (y % 400 == 0)) then 1 else 0),
   n == (if m == 2 then 28 + leap
@@ -94,7 +94,7 @@ Pad2(x) = (if x < 10 then "0" ++ ToString(x) else ToString(x));
 
 `Yesterday` subtracts one day, borrowing into the previous month/year at a boundary:
 
-```logica
+```synalog
 Yesterday(date) = ToString(py) ++ "-" ++ Pad2(pm) ++ "-" ++ Pad2(pd) :-
   y == ToInt64(Substr(date, 1, 4)),
   m == ToInt64(Substr(date, 6, 2)),
@@ -106,7 +106,7 @@ Yesterday(date) = ToString(py) ++ "-" ++ Pad2(pm) ++ "-" ++ Pad2(pd) :-
 
 `TenMinutesAgo` subtracts ten minutes, borrowing into the hour and (at midnight) reusing `Yesterday` for the date. Ten minutes crosses at most one hour, and one hour-borrow crosses at most one day, so no division is needed:
 
-```logica
+```synalog
 TenMinutesAgo(ts) = ndate ++ " " ++ Pad2(nhh) ++ ":" ++ Pad2(nmm) ++ ":" ++ ss :-
   date == Substr(ts, 1, 10),
   hh == ToInt64(Substr(ts, 12, 2)),
@@ -120,7 +120,7 @@ TenMinutesAgo(ts) = ndate ++ " " ++ Pad2(nhh) ++ ":" ++ Pad2(nmm) ++ ":" ++ ss :
 
 Apply them to `Today`/`Now` and filter with plain string comparison:
 
-```logica
+```synalog
 RecentlyCreated(order_id:) :-
   Orders(order_id:, created_at:),
   Now(timestamp:),
@@ -132,7 +132,7 @@ RecentlyCreated(order_id:) :-
 
 For relationships with validity periods, extract `start_date`/`end_date` through the pipeline when defining the edge, then filter with `Today`:
 
-```logica
+```synalog
 @OrderBy(MemberOf, "employee_id");
 MemberOf(employee_id:, team_id:, start_date:, end_date:) distinct :-
   Employee(employee_id:), Team(team_id:),
@@ -157,7 +157,7 @@ Temporal edges, interval closing from an event log and time-respecting traversal
 
 Month grouping, a date-range filter, integer hour extraction over timestamped orders, and a `Today`-based "not yet expired" filter over subscriptions:
 
-```logica
+```synalog
 --8<-- "docs/examples/temporal.l"
 ```
 

@@ -2,7 +2,7 @@
 
 Directives control predicate behavior. They **must be placed before** the rule definition they apply to.
 
-```logica
+```synalog
 @OrderBy(TopCustomers, "total", "DESC");
 @Limit(TopCustomers, 10);
 TopCustomers(customer_id:, total? += amount) distinct :- Orders(customer_id:, amount:);
@@ -19,7 +19,7 @@ TopCustomers(customer_id:, total? += amount) distinct :- Orders(customer_id:, am
 
 ## `@OrderBy`
 
-```logica
+```synalog
 @OrderBy(Stats, "category");
 @OrderBy(TopCustomers, "total", "DESC");
 ```
@@ -31,7 +31,7 @@ Each item is a column of the predicate, optionally followed by `ASC` or `DESC` a
 
 ## `@Limit`
 
-```logica
+```synalog
 @Limit(TopCustomers, 10);
 ```
 
@@ -43,7 +43,7 @@ The limit is a whole number of rows, 0 or more (0 gives no row). It is part of w
 
 Enables recursion on a predicate, with a maximum number of iterations:
 
-```logica
+```synalog
 @Recursive(AllManagers, 20);
 ```
 
@@ -53,7 +53,7 @@ It takes the predicate and the number of iterations, nothing else. The number of
 
 Forces a predicate to be materialized before its dependents are evaluated, useful when a predicate is reused by many rules and recomputing it inline would be wasteful:
 
-```logica
+```synalog
 @Ground(CustomerRevenue);
 ```
 
@@ -63,7 +63,7 @@ The table is named after the predicate, in Synalog's schema (`CustomerRevenue`);
 
 Selects the target SQL dialect for the whole program:
 
-```logica
+```synalog
 @Engine("duckdb");
 ```
 
@@ -73,7 +73,7 @@ The `engine` keyword of the [Python API](../python-api.md) functions overrides t
 
 States a property of a predicate in first-order logic. Each property has a name, given as a named argument:
 
-```logica
+```synalog
 @Assert(Ancestor, transitive: "∀ x y z, Ancestor x y → Ancestor y z → Ancestor x z");
 
 @Recursive(Ancestor, 20);
@@ -87,7 +87,7 @@ Unlike the other directives, it does not change the generated SQL, and it can be
 
 `@OrderBy` and `@Limit` combined: the top 3 customers by total spend:
 
-```logica
+```synalog
 --8<-- "docs/examples/directives.l"
 ```
 
