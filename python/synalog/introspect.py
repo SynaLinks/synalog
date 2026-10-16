@@ -143,11 +143,19 @@ def _catalog_rows(engine: str, fetch, connection: Mapping | None) -> list[tuple]
 
 _PLAIN = re.compile(r"[a-z_][a-z0-9_]*")  # usable verbatim as a Logica field/var
 _IDENT = re.compile(r"[A-Za-z_][A-Za-z0-9_]*")  # usable as an explicit field name
+_WORD_BOUNDARY = re.compile(r"(?<=[a-z0-9])(?=[A-Z])|(?<=[A-Z])(?=[A-Z][a-z])")
 
 
 def _pascal(name: str) -> str:
     parts = re.split(r"[^0-9A-Za-z]+", name)
     return "".join(p[:1].upper() + p[1:] for p in parts if p)
+
+
+def file_name(predicate: str) -> str:
+    """The file a predicate is defined in, without ``.l``: its name in
+    snake_case (``PublicOrderItems`` → ``public_order_items``, ``SKUCount`` →
+    ``sku_count``)."""
+    return _WORD_BOUNDARY.sub("_", predicate).lower()
 
 
 def table_description(table: str) -> str:
@@ -272,26 +280,33 @@ def _front_matter_block(text: str) -> str | None:
 
 
 def write_tables(folder: str | Path, found: list[Table]) -> dict[str, list[str]]:
-    """Write one file per table, ``<folder>/<Name>.l``: front matter, then the
-    table's ``@OrderBy`` and declaration.
+    """Write one file per table, ``<folder>/<name>.l`` (the predicate in
+    snake_case): front matter, then the table's ``@OrderBy`` and declaration.
 
     A table file that exists keeps its front matter as written — a description,
     keywords, ``locked`` written by hand — and only its declaration is
     regenerated. Returns the tables ``written``, and the table files the
-    database no longer has (``gone``): kept, since the project's concepts may
-    import them.
+    database no longer has (``gone``, by file name): kept, since the project's
+    concepts may import them. A file named before the snake_case convention
+    (``PublicOrders.l``) gives its front matter to its new one and goes.
     """
     folder = Path(folder)
     folder.mkdir(parents=True, exist_ok=True)
+    on_disk = {p.name for p in folder.glob("*.l")}  # as named: a disk may ignore case
+    written = set()
     for table in found:
-        path = folder / f"{table.name}.l"
-        previous = _front_matter_block(path.read_text()) if path.exists() else None
+        path = folder / f"{file_name(table.name)}.l"
+        legacy = folder / f"{table.name}.l"
+        source = legacy if legacy.name in on_disk else path if path.name in on_disk else None
+        previous = _front_matter_block(source.read_text()) if source else None
         front = previous or (
             f"---\nname: {table.name}\ndescription: {_yaml_string(table.description)}\n---\n"
         )
+        if source == legacy and legacy.name != path.name:
+            legacy.unlink()
         path.write_text(f"{front}{table.order_by}\n{table.declaration}\n")
-    names = {table.name for table in found}
-    gone = sorted(p.stem for p in folder.glob("*.l") if p.stem not in names)
+        written.add(path.name)
+    gone = sorted(p.name for p in folder.glob("*.l") if p.name not in written)
     return {"written": [table.name for table in found], "gone": gone}
 
 

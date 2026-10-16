@@ -99,16 +99,16 @@ duckdb and the PostgreSQL driver ship with synalog. For the other engines (`bigq
 
 ### Imports
 
-In a project, `import <folder>.<Name>.<Name>;` statements resolve from the project's folder (the one holding `layer.toml`), whichever file runs and wherever from: `import tables.Orders.Orders;` reads the project's `tables/Orders.l`. The program file's directory and the current directory come next. Pass `--import-root DIR` (repeatable) to search elsewhere; explicit roots replace the defaults.
+In a project, `import <folder>.<name>.<Name>;` statements resolve from the project's folder (the one holding `layer.toml`), whichever file runs and wherever from: `import tables.orders.Orders;` reads the project's `tables/orders.l`. The program file's directory and the current directory come next. Pass `--import-root DIR` (repeatable) to search elsewhere; explicit roots replace the defaults.
 
-In the [`shop` project](language/index.md), `rules/TopCustomers.l` builds on `rules/CustomerRevenue.l`:
+In the [`shop` project](language/index.md), `rules/top_customers.l` builds on `rules/customer_revenue.l`:
 
 ```synalog
---8<-- "docs/examples/shop/rules/TopCustomers.l"
+--8<-- "docs/examples/shop/rules/top_customers.l"
 ```
 
 ```console
-$ synalog rules/TopCustomers.l run TopCustomers --load orders=data/orders.csv
+$ synalog rules/top_customers.l run TopCustomers --load orders=data/orders.csv
 +-------------+-------+
 | customer_id | total |
 +-------------+-------+
@@ -118,7 +118,7 @@ $ synalog rules/TopCustomers.l run TopCustomers --load orders=data/orders.csv
 2 rows
 ```
 
-`import rules.CustomerRevenue.CustomerRevenue as Revenue;` imports the same predicate under another name. Directives attached to an imported predicate (its `@OrderBy` here) travel with it.
+`import rules.customer_revenue.CustomerRevenue as Revenue;` imports the same predicate under another name. Directives attached to an imported predicate (its `@OrderBy` here) travel with it.
 
 ### Errors
 

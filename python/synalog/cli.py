@@ -111,8 +111,8 @@ def import_roots(file: str | None, flag_roots: tuple[str, ...]) -> list[str]:
 
     Explicit --import-root flags win. Otherwise the project's folder comes
     first — the one holding the `layer.toml` of the program's folder or of
-    the current directory — so `import tables.Orders.Orders;` reads the
-    project's `tables/Orders.l` from any of its files; then the program file's
+    the current directory — so `import tables.orders.Orders;` reads the
+    project's `tables/orders.l` from any of its files; then the program file's
     directory and the current directory.
     """
     if flag_roots:

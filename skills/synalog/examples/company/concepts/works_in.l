@@ -2,9 +2,9 @@
 name: WorksIn
 description: Which department each person works in (an edge of the graph).
 ---
-import concepts.Department.Department;
-import concepts.Person.Person;
-import tables.Employees.Employees;
+import concepts.department.Department;
+import concepts.person.Person;
+import tables.employees.Employees;
 
 # An edge joins through the node concepts, not the raw table, so a filter on a
 # node applies to its edges too.

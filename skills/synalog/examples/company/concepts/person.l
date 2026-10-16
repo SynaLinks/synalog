@@ -2,7 +2,7 @@
 name: Person
 description: Every person of the company (a node of the graph).
 ---
-import tables.Employees.Employees;
+import tables.employees.Employees;
 
 # A node: its first column is its key, and it is ordered by it.
 @OrderBy(Person, "person_id");

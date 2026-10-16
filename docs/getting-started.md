@@ -118,34 +118,34 @@ Real data lives in files or database tables, not inline facts. Here it is a smal
 ```
 smoke/
 ├── data/smoke_tests.csv
-├── tables/SmokeTests.l
-├── concepts/Device.l
-├── concepts/TestStatus.l
-├── rules/FailuresByDevice.l
-├── rules/RunsPerDay.l
+├── tables/smoke_tests.l
+├── concepts/device.l
+├── concepts/test_status.l
+├── rules/failures_by_device.l
+├── rules/runs_per_day.l
 └── layer.toml
 ```
 
 The table file maps the database table `smoke_tests`, referenced by its lowercase database name, to the `SmokeTests` predicate; everything else builds on it:
 
 ```synalog
---8<-- "docs/examples/smoke/tables/SmokeTests.l"
+--8<-- "docs/examples/smoke/tables/smoke_tests.l"
 ```
 
 A concept extracts the devices, and a rule counts the failures of each, importing both:
 
 ```synalog
---8<-- "docs/examples/smoke/concepts/Device.l"
+--8<-- "docs/examples/smoke/concepts/device.l"
 ```
 
 ```synalog
---8<-- "docs/examples/smoke/rules/FailuresByDevice.l"
+--8<-- "docs/examples/smoke/rules/failures_by_device.l"
 ```
 
 From the project's folder, the CLI loads the CSV as the `smoke_tests` table and runs the rule:
 
 ```console
-$ synalog rules/FailuresByDevice.l run FailuresByDevice --load smoke_tests=data/smoke_tests.csv
+$ synalog rules/failures_by_device.l run FailuresByDevice --load smoke_tests=data/smoke_tests.csv
 ```
 
 From Python, load it into DuckDB and give the project's folder as the import root:
@@ -157,7 +157,7 @@ import synalog
 conn = duckdb.connect()
 conn.execute("CREATE TABLE smoke_tests AS SELECT * FROM read_csv('smoke/data/smoke_tests.csv')")
 
-source = open("smoke/rules/FailuresByDevice.l").read()
+source = open("smoke/rules/failures_by_device.l").read()
 errors, warnings = synalog.check(source, import_root=["smoke"])
 assert errors == []
 
@@ -166,7 +166,7 @@ print(conn.execute(sql).fetchall())
 # [('gateway', 2), ('sensor-a', 1)]
 ```
 
-`rules/RunsPerDay.l` counts the runs per day through the [temporal pipeline](language/temporal.md) (`ToString` → `Substr`) on the `run_at` timestamp.
+`rules/runs_per_day.l` counts the runs per day through the [temporal pipeline](language/temporal.md) (`ToString` → `Substr`) on the `run_at` timestamp.
 
 ??? example "Every file of the `smoke` project, run on its data"
 

@@ -176,7 +176,7 @@ The YAML [front matter](language/index.md#front-matter) opening a program file, 
 ```python
 import yaml, synalog
 
-source = open("concepts/ActiveCustomer.l").read()
+source = open("concepts/active_customer.l").read()
 meta = yaml.safe_load(synalog.front_matter(source) or "") or {}
 meta.get("description")  # "Customers with at least one delivered order."
 ```
