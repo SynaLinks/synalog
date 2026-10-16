@@ -1,6 +1,6 @@
 -- Loaded data/smoke_tests.csv into DuckDB table smoke_tests (12 rows)
 
-$ synalog tables/SmokeTests.l run SmokeTests
+$ synalog tables/smoke_tests.l run SmokeTests
 | test_id | device   | status | duration_ms | run_at              |
 |---------|----------|--------|-------------|---------------------|
 | 1       | sensor-a | passed | 532         | 2026-06-10 08:00:12 |
@@ -17,7 +17,7 @@ $ synalog tables/SmokeTests.l run SmokeTests
 | 12      | gateway  | passed | 1822        | 2026-06-11 20:00:22 |
 (12 rows)
 
-$ synalog concepts/Device.l run Device
+$ synalog concepts/device.l run Device
 | device   |
 |----------|
 | gateway  |
@@ -25,7 +25,7 @@ $ synalog concepts/Device.l run Device
 | sensor-b |
 (3 rows)
 
-$ synalog concepts/TestStatus.l run TestStatus
+$ synalog concepts/test_status.l run TestStatus
 | status |
 |--------|
 | failed |
@@ -33,14 +33,14 @@ $ synalog concepts/TestStatus.l run TestStatus
 | passed |
 (3 rows)
 
-$ synalog rules/FailuresByDevice.l run FailuresByDevice
+$ synalog rules/failures_by_device.l run FailuresByDevice
 | device   | failures |
 |----------|----------|
 | gateway  | 2        |
 | sensor-a | 1        |
 (2 rows)
 
-$ synalog rules/RunsPerDay.l run RunsPerDay
+$ synalog rules/runs_per_day.l run RunsPerDay
 | day        | runs |
 |------------|------|
 | 2026-06-10 | 6    |

@@ -3,7 +3,7 @@ name: AllManagers
 description: Every manager of each employee, directly or up the chain.
 keywords: [reporting line, hierarchy, chain of command]
 ---
-import tables.Employees.Employees;
+import tables.employees.Employees;
 
 # Direct managers (base case) plus every manager up the chain (recursive case);
 # @Recursive bounds the path length, so a cycle in the data terminates.

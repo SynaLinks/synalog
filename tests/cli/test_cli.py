@@ -686,7 +686,7 @@ def _project(tmp_path, toml: str, env: str = ""):
     if env:
         (tmp_path / ".env").write_text(env)
     (tmp_path / "rules").mkdir()
-    program = tmp_path / "rules" / "Greeting.l"
+    program = tmp_path / "rules" / "greeting.l"
     program.write_text('Greeting(text: "hi");\n')
     return program
 
@@ -849,23 +849,23 @@ def test_run_reports_a_missing_table_without_traceback(tmp_path):
 
 
 def test_imports_resolve_from_the_project_folder(tmp_path):
-    # In a project, `import tables.Orders.Orders;` reads the project's
-    # tables/Orders.l from any of its files, wherever the CLI runs from.
+    # In a project, `import tables.orders.Orders;` reads the project's
+    # tables/orders.l from any of its files, wherever the CLI runs from.
     (tmp_path / "layer.toml").write_text('[project]\nname = "shop"\ndescription = "Orders."\n')
     (tmp_path / "tables").mkdir()
     (tmp_path / "rules").mkdir()
-    (tmp_path / "tables" / "Orders.l").write_text(
+    (tmp_path / "tables" / "orders.l").write_text(
         "---\nname: Orders\ndescription: One row per order.\n---\n"
         '@OrderBy(Orders, "order_id");\nOrders(order_id:, amount:) :- orders(order_id:, amount:);\n'
     )
-    (tmp_path / "rules" / "BigOrder.l").write_text(
-        "---\nname: BigOrder\ndescription: Orders over 100.\n---\nimport tables.Orders.Orders;\n\n"
+    (tmp_path / "rules" / "big_order.l").write_text(
+        "---\nname: BigOrder\ndescription: Orders over 100.\n---\nimport tables.orders.Orders;\n\n"
         '@OrderBy(BigOrder, "order_id");\nBigOrder(order_id:) :- Orders(order_id:, amount:), amount > 100;\n'
     )
     (tmp_path / "orders.csv").write_text("order_id,amount\n1,50\n2,500\n")
     for cwd in (tmp_path, tmp_path / "rules"):
         result = synalog(
-            str(tmp_path / "rules" / "BigOrder.l"), "run", "BigOrder", "--csv",
+            str(tmp_path / "rules" / "big_order.l"), "run", "BigOrder", "--csv",
             "--load", f"orders={tmp_path / 'orders.csv'}", cwd=cwd,
         )
         assert result.returncode == 0, result.stderr

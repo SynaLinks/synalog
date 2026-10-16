@@ -3,7 +3,7 @@ name: TopCustomers
 description: The two customers with the highest revenue.
 keywords: [best customers, ranking]
 ---
-import rules.CustomerRevenue.CustomerRevenue;
+import rules.customer_revenue.CustomerRevenue;
 
 @OrderBy(TopCustomers, "total", "DESC");
 @Limit(TopCustomers, 2);

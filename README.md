@@ -247,16 +247,16 @@ A Synalog program is a **project**: a folder with a `layer.toml`, holding one pr
 
 ```
 shop/
-├── tables/Orders.l               # the data: one file per database table
-├── concepts/Customer.l           # entities and relationships extracted from tables
-├── rules/CustomerRevenue.l       # insights derived from concepts
-├── rules/TopCustomers.l
+├── tables/orders.l               # the data: one file per database table
+├── concepts/customer.l           # entities and relationships extracted from tables
+├── rules/customer_revenue.l       # insights derived from concepts
+├── rules/top_customers.l
 └── layer.toml                    # the project's name, description and database
 ```
 
 Each file is named after its predicate and opens with front matter (`name`, the predicate; `description`, what its rows are), then imports what it builds on by folder, file and predicate, then orders its predicate with `@OrderBy`. A database table is referenced by its lowercase database name in `tables/`, and everything else builds on the PascalCase predicate that maps it:
 
-`tables/Orders.l`
+`tables/orders.l`
 
 ```synalog
 ---
@@ -268,35 +268,35 @@ Orders(order_id:, customer_id:, amount:, status:) :-
   orders(order_id:, customer_id:, amount:, status:);
 ```
 
-`concepts/Customer.l`
+`concepts/customer.l`
 
 ```synalog
 ---
 name: Customer
 description: Every customer who placed at least one order.
 ---
-import tables.Orders.Orders;
+import tables.orders.Orders;
 
 @OrderBy(Customer, "customer_id");
 Customer(customer_id:) distinct :- Orders(customer_id:);
 ```
 
-`rules/CustomerRevenue.l`
+`rules/customer_revenue.l`
 
 ```synalog
 ---
 name: CustomerRevenue
 description: Total amount ordered by each customer, all statuses included.
 ---
-import concepts.Customer.Customer;
-import tables.Orders.Orders;
+import concepts.customer.Customer;
+import tables.orders.Orders;
 
 @OrderBy(CustomerRevenue, "customer_id");
 CustomerRevenue(customer_id:, total? += amount) distinct :-
   Customer(customer_id:), Orders(customer_id:, amount:);
 ```
 
-Imports resolve from the project's folder, so every file runs on its own: `synalog rules/CustomerRevenue.l run CustomerRevenue`. The snippets below show the language itself, one rule at a time.
+Imports resolve from the project's folder, so every file runs on its own: `synalog rules/customer_revenue.l run CustomerRevenue`. The snippets below show the language itself, one rule at a time.
 
 ### Named arguments
 
