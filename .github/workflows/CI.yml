@@ -287,6 +287,9 @@ jobs:
     name: Wheel tests (py${{ matrix.python-version }}, ${{ matrix.platform.artifact }})
     runs-on: ${{ matrix.platform.runner }}
     needs: [linux, macos]
+    # The suite takes a few minutes; a hang in a native driver otherwise runs
+    # to GitHub's 6h limit.
+    timeout-minutes: 30
     strategy:
       fail-fast: false
       matrix:
@@ -308,11 +311,12 @@ jobs:
           name: ${{ matrix.platform.artifact }}
           path: wheels
       - name: Install wheel + test deps
-        # --find-links serves the locally-built synalog wheel; its runtime deps
-        # (click, rich, duckdb, psycopg) resolve from PyPI. Don't use --no-index:
-        # it would block dependency resolution and fail the install. `logica`
-        # registers the sqlite runtime UDFs the CLI tests exercise.
-        run: pip install --find-links wheels synalog pytest logica
+        # The locally-built wheel is named by its path: with --find-links, pip
+        # took the PyPI release of the same version instead, and the suite
+        # tested that. Its runtime deps (click, rich, duckdb, psycopg) resolve
+        # from PyPI. `logica` registers the sqlite runtime UDFs the CLI tests
+        # exercise.
+        run: pip install wheels/synalog-*-abi3-*.whl pytest logica
       - name: Smoke test
         run: |
           python -c "
@@ -323,6 +327,11 @@ jobs:
           sql = synalog.compile(src, 'Greeting', engine='sqlite')
           assert 'hello' in sql, sql
           print('ok:', sql.replace(chr(10), ' '))
+          # The wheel built from this commit, not a release from PyPI: pip
+          # records the file a package was installed from.
+          from importlib.metadata import distribution
+          origin = distribution('synalog').read_text('direct_url.json')
+          assert origin and '/wheels/' in origin, origin
           "
       - name: CLI tests
         run: pytest tests/cli -q
