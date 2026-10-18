@@ -76,6 +76,9 @@ pub struct AssertionReport {
     pub status: AssertionStatus,
     /// Why the assertion is pending (the predicates it waits for) or unsupported.
     pub detail: Option<String>,
+    /// The predicates the statement names, in order of appearance: what the
+    /// assertion depends on besides its anchor. Empty when it does not parse.
+    pub predicates: Vec<String>,
 }
 
 /// `@Assert` annotation error.
@@ -198,12 +201,14 @@ pub fn check_assertions(rules: &[&Json]) -> (Vec<AssertionReport>, Vec<Assertion
                 (AssertionStatus::Unsupported, None)
             }
         };
+        let predicates = assertion::parse(&assertion.text).map(|s| assertion::predicates(&s)).unwrap_or_default();
         reports.push(AssertionReport {
             predicate: assertion.predicate,
             name: assertion.name,
             statement: assertion.source,
             status,
             detail,
+            predicates,
         });
     }
 

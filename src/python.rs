@@ -5,7 +5,7 @@
 //! Exposed as the `_synalog` extension module, wrapped by the `synalog`
 //! Python package in `python/synalog/__init__.py`.
 
-use std::collections::HashMap;
+use std::collections::{BTreeMap, HashMap};
 
 use pyo3::exceptions::PyValueError;
 use pyo3::prelude::*;
@@ -13,7 +13,7 @@ use pyo3::prelude::*;
 use crate::compiler::dialects;
 use crate::compiler::universe::{LogicaProgram, Pagination, PlanStep};
 use crate::parser::{front_matter as read_front_matter, parse_file, Json, PredicateNames};
-use crate::verifier::{builtin_function_names, reserved_predicate_names, assertion_check, validate};
+use crate::verifier::{builtin_function_names, dependencies as program_dependencies, reserved_predicate_names, assertion_check, validate};
 
 fn map_err<E: std::fmt::Display>(e: E) -> PyErr {
     PyValueError::new_err(e.to_string())
@@ -194,7 +194,8 @@ fn check(
 /// Every `@Assert` of a program and where it stands.
 ///
 /// Returns one dict per assertion, in source order, with the keys `predicate`,
-/// `name`, `statement`, `status` and `detail`:
+/// `name`, `statement`, `status`, `detail` and `predicates` (the predicates the
+/// statement names, as written; empty when it does not parse):
 ///
 /// - `"pending"`: a predicate the assertion is about is not defined yet (`detail`
 ///   names what it waits for);
@@ -208,24 +209,51 @@ fn check(
 #[pyfunction]
 #[pyo3(signature = (source, engine=None, import_root=None))]
 fn assertions(
+    py: Python<'_>,
     source: &str,
     engine: Option<&str>,
     import_root: Option<Vec<String>>,
-) -> PyResult<Vec<HashMap<&'static str, Option<String>>>> {
+) -> PyResult<Vec<Py<PyAny>>> {
     check_engine(engine)?;
     let parsed = parse_source(source, None, import_root)?;
     let names = PredicateNames::of(&parsed);
-    Ok(validate(&parsed)
+    validate(&parsed)
         .assertions
         .into_iter()
         .map(|assertion| {
-            HashMap::from([
-                ("predicate", Some(names.written(&assertion.predicate))),
-                ("name", Some(assertion.name)),
-                ("statement", Some(assertion.statement)),
-                ("status", Some(assertion.status.to_string())),
-                ("detail", assertion.detail.map(|detail| names.written(&detail))),
-            ])
+            let dict = pyo3::types::PyDict::new(py);
+            dict.set_item("predicate", names.written(&assertion.predicate))?;
+            dict.set_item("name", assertion.name)?;
+            dict.set_item("statement", assertion.statement)?;
+            dict.set_item("status", assertion.status.to_string())?;
+            dict.set_item("detail", assertion.detail.map(|detail| names.written(&detail)))?;
+            let predicates: Vec<String> = assertion.predicates.iter().map(|p| names.written(p)).collect();
+            dict.set_item("predicates", predicates)?;
+            Ok(dict.into_any().unbind())
+        })
+        .collect()
+}
+
+/// What each predicate of a program depends on.
+///
+/// Returns `{predicate: [dependencies]}` for every predicate the program
+/// defines, names as written, sorted: the predicates and tables its bodies
+/// read, the predicates its `@Assert` statements name, and for a functor's
+/// result the functor and its arguments. Built-ins and the predicate itself
+/// are left out. A host keeping its own dependency graph takes its edges
+/// from here. Raises ValueError on syntax errors.
+#[pyfunction]
+#[pyo3(signature = (source, import_root=None))]
+fn dependencies(source: &str, import_root: Option<Vec<String>>) -> PyResult<BTreeMap<String, Vec<String>>> {
+    let parsed = parse_source(source, None, import_root)?;
+    let names = PredicateNames::of(&parsed);
+    let rules: Vec<&Json> = parsed.as_object().get("rule").map(|r| r.as_array().iter().collect()).unwrap_or_default();
+    Ok(program_dependencies(&rules)
+        .into_iter()
+        .map(|(name, refs)| {
+            let mut refs: Vec<String> = refs.iter().map(|r| names.written(r)).collect();
+            refs.sort();
+            (names.written(&name), refs)
         })
         .collect())
 }
@@ -402,6 +430,7 @@ fn _synalog(m: &Bound<'_, PyModule>) -> PyResult<()> {
     m.add_function(wrap_pyfunction!(compile_all, m)?)?;
     m.add_function(wrap_pyfunction!(check, m)?)?;
     m.add_function(wrap_pyfunction!(assertions, m)?)?;
+    m.add_function(wrap_pyfunction!(dependencies, m)?)?;
     m.add_function(wrap_pyfunction!(counterexamples, m)?)?;
     m.add_function(wrap_pyfunction!(plan, m)?)?;
     m.add_function(wrap_pyfunction!(quote_value, m)?)?;

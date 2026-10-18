@@ -12,7 +12,7 @@ pub mod report;
 pub mod translate;
 
 pub use parse::{parse, Expr, SyntaxError};
-pub use translate::{translate, Schema, TranslateError, Translation};
+pub use translate::{predicates, translate, Schema, TranslateError, Translation};
 
 use crate::parser::Json;
 

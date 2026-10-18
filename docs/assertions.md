@@ -57,6 +57,7 @@ Carol is Alice's grandchild, Erin is Carol's, but Erin is Alice's great-grandchi
 - A predicate may have several `@Assert` annotations; a name may appear only once per predicate.
 - A statement that spans several lines goes in a triple-quoted string (`"""..."""`).
 - An assertion can be written before its predicate exists: it waits, as `pending`, until the predicate is defined. Write the contract first.
+- Once its predicate exists, an assertion naming a predicate that nothing defines or imports is a warning: a misspelled name, or a missing import, would leave it pending, never checked.
 - Assertions do not change the generated SQL.
 
 ## The statement language

@@ -85,7 +85,7 @@ for w in warnings:
 assertions(source, engine=None, import_root=None) -> list[dict]
 ```
 
-Every [`@Assert`](assertions.md) of the program and where it stands, in source order. Each dict has the keys `predicate`, `name`, `statement`, `status` (`"pending"`, `"unchecked"` or `"unsupported"`) and `detail` (what a pending assertion waits for, or why an assertion is unsupported).
+Every [`@Assert`](assertions.md) of the program and where it stands, in source order. Each dict has the keys `predicate`, `name`, `statement`, `status` (`"pending"`, `"unchecked"` or `"unsupported"`) `detail` (what a pending assertion waits for, or why an assertion is unsupported) and `predicates` (the predicates the statement names, as written, in order of appearance: what the assertion depends on; empty when the statement does not parse). A host keeping its own dependency graph takes it whole from [`dependencies`](#dependencies).
 
 ```python
 for assertion in synalog.assertions(source):
@@ -93,6 +93,22 @@ for assertion in synalog.assertions(source):
 ```
 
 Invalid assertions, such as a statement that does not parse, are reported by `check`, not here.
+
+## `dependencies`
+
+```python
+dependencies(source, import_root=None) -> dict[str, list[str]]
+```
+
+What each predicate the program defines depends on, names as written, sorted: the predicates and tables its bodies read (in a negation or a `combine` too), the predicates its `@Assert` statements name, and, for a functor's result (`P := F(A: B)`), the functor and its arguments. Built-in predicates and functions are left out, and so is the predicate itself; the rules synalog splits a multi-body aggregate into are their predicate's. A host that keeps its own dependency graph takes its edges from here, so they are exactly what synalog reads.
+
+```python
+synalog.dependencies('''
+@Assert(Vip, spends: "∀ c, Vip c → ∃ t, Spend c t");
+Vip(id:) :- Customer(id:), id > 100;
+''')["Vip"]
+# ['Customer', 'Spend']
+```
 
 ## `counterexamples`
 
