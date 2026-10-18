@@ -194,7 +194,8 @@ fn check(
 /// Every `@Assert` of a program and where it stands.
 ///
 /// Returns one dict per assertion, in source order, with the keys `predicate`,
-/// `name`, `statement`, `status` and `detail`:
+/// `name`, `statement`, `status`, `detail` and `predicates` (the predicates the
+/// statement names, as written; empty when it does not parse):
 ///
 /// - `"pending"`: a predicate the assertion is about is not defined yet (`detail`
 ///   names what it waits for);
@@ -208,26 +209,29 @@ fn check(
 #[pyfunction]
 #[pyo3(signature = (source, engine=None, import_root=None))]
 fn assertions(
+    py: Python<'_>,
     source: &str,
     engine: Option<&str>,
     import_root: Option<Vec<String>>,
-) -> PyResult<Vec<HashMap<&'static str, Option<String>>>> {
+) -> PyResult<Vec<Py<PyAny>>> {
     check_engine(engine)?;
     let parsed = parse_source(source, None, import_root)?;
     let names = PredicateNames::of(&parsed);
-    Ok(validate(&parsed)
+    validate(&parsed)
         .assertions
         .into_iter()
         .map(|assertion| {
-            HashMap::from([
-                ("predicate", Some(names.written(&assertion.predicate))),
-                ("name", Some(assertion.name)),
-                ("statement", Some(assertion.statement)),
-                ("status", Some(assertion.status.to_string())),
-                ("detail", assertion.detail.map(|detail| names.written(&detail))),
-            ])
+            let dict = pyo3::types::PyDict::new(py);
+            dict.set_item("predicate", names.written(&assertion.predicate))?;
+            dict.set_item("name", assertion.name)?;
+            dict.set_item("statement", assertion.statement)?;
+            dict.set_item("status", assertion.status.to_string())?;
+            dict.set_item("detail", assertion.detail.map(|detail| names.written(&detail)))?;
+            let predicates: Vec<String> = assertion.predicates.iter().map(|p| names.written(p)).collect();
+            dict.set_item("predicates", predicates)?;
+            Ok(dict.into_any().unbind())
         })
-        .collect())
+        .collect()
 }
 
 /// Compile the search for the counterexamples of an assertion to SQL.

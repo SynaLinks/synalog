@@ -105,7 +105,7 @@ pub fn check(source: &str, engine: &str) -> Result<CheckOutcome, JsValue> {
 }
 
 /// Every `@Assert` of `source` and where it stands, as a JSON array of
-/// `{predicate, name, statement, status, detail}` objects in source order.
+/// `{predicate, name, statement, status, detail, predicates}` objects in source order.
 /// Raises on syntax errors.
 #[wasm_bindgen]
 pub fn assertions(source: &str, engine: &str) -> Result<String, JsValue> {
@@ -121,6 +121,7 @@ pub fn assertions(source: &str, engine: &str) -> Result<String, JsValue> {
                 "statement": assertion.statement,
                 "status": assertion.status.as_str(),
                 "detail": assertion.detail,
+                "predicates": assertion.predicates,
             })
         })
         .collect();

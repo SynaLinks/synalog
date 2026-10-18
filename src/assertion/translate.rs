@@ -95,8 +95,7 @@ enum Lit {
 /// Translate `statement` into the rules of its counterexamples. `prefix` names
 /// the counterexample predicate and prefixes its helpers.
 pub fn translate(statement: &Expr, schema: &Schema, prefix: &str) -> Result<Translation> {
-    let mut missing = Vec::new();
-    collect_missing(statement, schema, &mut missing);
+    let missing: Vec<String> = predicates(statement).into_iter().filter(|p| !schema.contains_key(p)).collect();
     if !missing.is_empty() {
         return Err(TranslateError::Missing(missing));
     }
@@ -184,37 +183,35 @@ fn display(var: &str) -> &str {
     var.rsplit("__").next().unwrap_or(var)
 }
 
-/// Collect the predicates `expr` names that `schema` does not define. Names
-/// bound by a quantifier are variables whatever their case.
-fn collect_missing(expr: &Expr, schema: &Schema, missing: &mut Vec<String>) {
-    fn walk(expr: &Expr, schema: &Schema, bound: &mut Vec<String>, missing: &mut Vec<String>) {
+/// The predicates `statement` names, in order of appearance. Names bound by
+/// a quantifier are variables whatever their case.
+pub fn predicates(statement: &Expr) -> Vec<String> {
+    fn walk(expr: &Expr, bound: &mut Vec<String>, found: &mut Vec<String>) {
         match expr {
             Expr::Forall(vars, body) | Expr::Exists(vars, body) | Expr::Sum(vars, body) => {
                 bound.extend(vars.iter().cloned());
-                walk(body, schema, bound, missing);
+                walk(body, bound, found);
                 bound.truncate(bound.len() - vars.len());
             }
-            Expr::Not(inner) | Expr::Neg(inner) => walk(inner, schema, bound, missing),
+            Expr::Not(inner) | Expr::Neg(inner) => walk(inner, bound, found),
             Expr::Binary(_, left, right) => {
-                walk(left, schema, bound, missing);
-                walk(right, schema, bound, missing);
+                walk(left, bound, found);
+                walk(right, bound, found);
             }
             Expr::App(name, args) => {
-                if is_predicate_name(name)
-                    && !bound.contains(name)
-                    && !schema.contains_key(name)
-                    && !missing.contains(name)
-                {
-                    missing.push(name.clone());
+                if is_predicate_name(name) && !bound.contains(name) && !found.contains(name) {
+                    found.push(name.clone());
                 }
                 for arg in args {
-                    walk(arg, schema, bound, missing);
+                    walk(arg, bound, found);
                 }
             }
             Expr::Var(_) | Expr::Num(_) | Expr::Str(_) => {}
         }
     }
-    walk(expr, schema, &mut Vec::new(), missing);
+    let mut found = Vec::new();
+    walk(statement, &mut Vec::new(), &mut found);
+    found
 }
 
 /// Turns bare names into variables and gives every bound variable a name of
@@ -926,6 +923,13 @@ mod tests {
             rules("∀ y, Parent \"a\" y → y ≠ \"a\""),
             "Assert(y: y) distinct :- Parent(x: \"a\", y: y), y == \"a\";"
         );
+    }
+
+    #[test]
+    fn test_predicates() {
+        // A bound name is a variable whatever its case; each predicate comes once.
+        let statement = parse("∀ X, Ancestor X X → ∃ y, Parent X y ∧ ¬Ancestor y X").unwrap();
+        assert_eq!(predicates(&statement), vec!["Ancestor".to_string(), "Parent".to_string()]);
     }
 
     #[test]

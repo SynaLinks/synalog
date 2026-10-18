@@ -73,7 +73,15 @@ def test_report_holds_the_statement():
         "statement": "∀ x y z, Near x y → Near y z → Near x z",
         "status": "unchecked",
         "detail": None,
+        "predicates": ["Near"],
     }
+
+
+def test_report_names_the_predicates_of_the_statement():
+    # What the assertion depends on: the statement's predicates, not its bound variables.
+    source = '@Assert(Root, known: "∀ X, Root X → ∃ y, Parent X y ∧ ¬Near y X");\n'
+    (assertion,) = synalog.assertions(source)
+    assert assertion["predicates"] == ["Root", "Parent", "Near"]
 
 
 def test_spec_before_its_predicate_is_not_an_error():
@@ -116,6 +124,7 @@ def test_imported_predicates_go_by_their_written_name(tmp_path):
     roots = [str(tmp_path)]
     (assertion,) = synalog.assertions(source, import_root=roots)
     assert (assertion["predicate"], assertion["statement"]) == ("Someone", "∀ x, Person x → Parent x x")
+    assert assertion["predicates"] == ["Someone", "Parent"]
     # The written name is the one the commands take.
     assert "Family_Parent" in synalog.compile(source, "Someone", import_root=roots)
     sql = synalog.counterexamples(source, "Someone", "named", import_root=roots)

@@ -85,7 +85,7 @@ for w in warnings:
 assertions(source, engine=None, import_root=None) -> list[dict]
 ```
 
-Every [`@Assert`](assertions.md) of the program and where it stands, in source order. Each dict has the keys `predicate`, `name`, `statement`, `status` (`"pending"`, `"unchecked"` or `"unsupported"`) and `detail` (what a pending assertion waits for, or why an assertion is unsupported).
+Every [`@Assert`](assertions.md) of the program and where it stands, in source order. Each dict has the keys `predicate`, `name`, `statement`, `status` (`"pending"`, `"unchecked"` or `"unsupported"`) `detail` (what a pending assertion waits for, or why an assertion is unsupported) and `predicates` (the predicates the statement names, as written, in order of appearance: what the assertion depends on, which a host keeping its own dependency graph adds to the edges of the rule bodies; empty when the statement does not parse).
 
 ```python
 for assertion in synalog.assertions(source):
