@@ -35,7 +35,7 @@ impl From<FunctorError> for VerifyError {
 
 /// The predicates a `@Make` rule names: its result, the predicate it applies,
 /// and the predicates of its arguments.
-fn functor_names(rule: &Json) -> Option<(String, String, Vec<String>)> {
+pub(super) fn functor_names(rule: &Json) -> Option<(String, String, Vec<String>)> {
     let head = rule.as_object()["head"].as_object();
     let fvs = head.get("record")?.as_object().get("field_value")?.as_array();
     let value = |i: usize| -> Option<&Json> {
