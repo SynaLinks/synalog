@@ -30,6 +30,7 @@ mod functors;
 mod directives;
 mod assertions;
 mod contradiction;
+mod dependencies;
 
 pub use vars::VarCollector;
 pub use safety::{SafetyError, check_safety};
@@ -44,6 +45,7 @@ pub use orderby::{OrderByError, check_order_by};
 pub use front_matter::{DescriptionError, NameError, check_description, check_name};
 pub use functors::{FunctorError, check_functors};
 pub use directives::{DirectiveError, check_directives};
+pub use dependencies::dependencies;
 pub use assertions::{AssertionError, AssertionReport, AssertionStatus, check_assertions, assertion_check};
 
 use crate::parser::Json;
@@ -269,7 +271,29 @@ pub fn validate(parsed: &Json) -> CheckResult {
     for err in spec_errors {
         result.errors.push(CheckError::Assert(err));
     }
+    // An assertion written before its predicate waits for it; one about a
+    // predicate that exists waiting for another is a misspelled name, or
+    // a missing import.
+    let defined = undefined::defined_predicates(&all_rules);
     for assertion in &assertions {
+        if assertion.status == AssertionStatus::Pending && defined.contains(&assertion.predicate) {
+            let missing: Vec<&str> = assertion
+                .predicates
+                .iter()
+                .filter(|p| !defined.contains(*p) && !reserved_predicate_names().contains(*p))
+                .map(String::as_str)
+                .collect();
+            if !missing.is_empty() {
+                result.warnings.push(format!(
+                    "Assertion '{}.{}' names {}, which nothing defines or imports: it waits for {} \
+                     and is never checked",
+                    assertion.predicate,
+                    assertion.name,
+                    missing.join(", "),
+                    if missing.len() == 1 { "it" } else { "them" },
+                ));
+            }
+        }
         if assertion.status == AssertionStatus::Unsupported {
             if let Some(reason) = &assertion.detail {
                 result.warnings.push(format!(

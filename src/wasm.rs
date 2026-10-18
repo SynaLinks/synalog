@@ -15,7 +15,7 @@ use wasm_bindgen::prelude::*;
 use crate::compiler::dialects;
 use crate::compiler::universe::{LogicaProgram, Pagination};
 use crate::parser::{parse_file, Json};
-use crate::verifier::validate;
+use crate::verifier::{dependencies as program_dependencies, validate};
 
 fn err(e: impl std::fmt::Display) -> JsValue {
     JsValue::from_str(&e.to_string())
@@ -102,6 +102,16 @@ pub fn check(source: &str, engine: &str) -> Result<CheckOutcome, JsValue> {
         errors: result.errors.iter().map(|e| e.to_string()).collect(),
         warnings: result.warnings,
     })
+}
+
+/// What each predicate of `source` depends on, as a JSON object
+/// `{predicate: [dependencies]}` (see the Python `dependencies`).
+/// Raises on syntax errors.
+#[wasm_bindgen]
+pub fn dependencies(source: &str) -> Result<String, JsValue> {
+    let parsed = parse(source)?;
+    let rules: Vec<&Json> = parsed.as_object().get("rule").map(|r| r.as_array().iter().collect()).unwrap_or_default();
+    Ok(serde_json::to_string(&program_dependencies(&rules)).map_err(|e| JsValue::from_str(&e.to_string()))?)
 }
 
 /// Every `@Assert` of `source` and where it stands, as a JSON array of

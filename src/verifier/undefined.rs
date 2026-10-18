@@ -127,7 +127,7 @@ fn looks_like_predicate(name: &str) -> bool {
 
 /// Collect the names of all predicates defined in this program (every rule head,
 /// including those merged in from imports).
-fn defined_predicates(rules: &[&Json]) -> HashSet<String> {
+pub(super) fn defined_predicates(rules: &[&Json]) -> HashSet<String> {
     let mut defined = HashSet::new();
     for rule in rules {
         let name = rule.as_object()["head"].as_object()["predicate_name"].as_str();
@@ -405,7 +405,7 @@ fn rule_text(rule: &Json) -> String {
 /// `arity`/`recursion`: descends into conjunctions, disjunction branches, and
 /// the bodies of aggregating `combine` subqueries. Function `call` names are
 /// intentionally not collected.
-fn collect_body_refs(body: &Json, out: &mut BTreeSet<String>) {
+pub(super) fn collect_body_refs(body: &Json, out: &mut BTreeSet<String>) {
     let obj = body.as_object();
     if let Some(conj) = obj.get("conjunction") {
         if let Some(conjuncts) = conj.as_object().get("conjunct") {
@@ -449,7 +449,7 @@ fn collect_conjunct_refs(conjunct: &Json, out: &mut BTreeSet<String>) {
 /// Descend into expressions only far enough to reach predicate references that
 /// live inside aggregating `combine` subqueries. Plain `call` function names are
 /// not collected (they are SQL passthroughs, not relational references).
-fn collect_expr_refs(expr: &Json, out: &mut BTreeSet<String>) {
+pub(super) fn collect_expr_refs(expr: &Json, out: &mut BTreeSet<String>) {
     match expr {
         Json::Object(obj) => {
             if let Some(combine) = obj.get("combine") {
