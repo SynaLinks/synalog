@@ -43,10 +43,28 @@ ENGINES = ["sqlite", "duckdb", "psql", "trino", "presto", "databricks"]
 # resolve through `import_root`, see plan_fixture).
 SKIP_COMPILE: set[str] = set()
 
-# Fixtures that read database tables the engines here do not hold: what they
-# test is the SQL they compile to, which the golden suite checks on every
-# engine. A fixture otherwise defines the facts it reads.
-READS_DATABASE_TABLES = {"5212_negation_of_a_database_table"}
+# The database tables a fixture reads, created and filled before it runs (a
+# fixture otherwise defines the facts it reads): table -> (columns, rows).
+FIXTURE_TABLES: dict[str, dict[str, tuple[str, list[tuple]]]] = {
+    # A table has no rules, which is what the fixture is about: facts would.
+    "5212_negation_of_a_database_table": {
+        "providers": ("npi INTEGER, scheme VARCHAR(20)", [(1, "upcoding"), (2, "referral_ring"), (3, "upcoding")]),
+        "ground_truth": ("npi INTEGER, scheme VARCHAR(20)", [(1, "upcoding")]),
+    },
+}
+
+
+def _table_steps(name: str) -> list[dict]:
+    """The steps that create a fixture's tables, run first in its session."""
+    steps = []
+    for table, (columns, rows) in FIXTURE_TABLES.get(name, {}).items():
+        values = ", ".join("(" + ", ".join(repr(v) for v in row) + ")" for row in rows)
+        steps += [
+            {"kind": "sql", "sql": f"DROP TABLE IF EXISTS {table}"},
+            {"kind": "sql", "sql": f"CREATE TABLE {table} ({columns})"},
+            {"kind": "sql", "sql": f"INSERT INTO {table} VALUES {values}"},
+        ]
+    return steps
 
 
 def fixture_path(engine: str, name: str) -> Path:
@@ -61,13 +79,12 @@ def fixture_path(engine: str, name: str) -> Path:
 def fixture_names(engine: str) -> list[str]:
     """Runnable fixture stems for an engine.
 
-    Skips *_fail and import tests, fixtures that read database tables, and
-    any fixture without a golden .sql for the engine (those are not validated
-    by the golden suite either).
+    Skips *_fail and import tests, and any fixture without a golden .sql
+    for the engine (those are not validated by the golden suite either).
     """
     names = []
     for path in sorted((FIXTURES_DIR / engine).glob("*.sql")):
-        if path.stem.endswith("_fail") or path.stem in SKIP_COMPILE | READS_DATABASE_TABLES:
+        if path.stem.endswith("_fail") or path.stem in SKIP_COMPILE:
             continue
         if not fixture_path(engine, path.stem).exists():
             continue
@@ -120,14 +137,17 @@ def made_predicate(head):
 
 
 def plan_fixture(engine: str, name: str) -> list[dict]:
-    """The plan of a fixture's last predicate for `engine` (``synalog.plan``):
-    executed, each recursion stops as soon as it converges."""
+    """The plan of a fixture's last predicate for `engine` (``synalog.plan``),
+    after the steps that create the tables it reads: executed, each recursion
+    stops as soon as it converges."""
     import synalog
 
     path = fixture_path(engine, name)
     source = path.read_text()
     import_root = [str(FIXTURES_DIR)]
-    return synalog.plan(source, last_predicate(source, import_root), engine=engine, import_root=import_root)
+    return _table_steps(name) + synalog.plan(
+        source, last_predicate(source, import_root), engine=engine, import_root=import_root
+    )
 
 
 @functools.cache
