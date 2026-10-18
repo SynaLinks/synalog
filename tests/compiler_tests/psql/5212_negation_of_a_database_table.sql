@@ -23,10 +23,4 @@ WHERE
     ground_truth, UNNEST(ARRAY[0]::numeric[]) as x_10
   WHERE
     (providers.npi = ground_truth.npi) AND
-    (providers.scheme = ground_truth.scheme)) AS numeric) IS NULL) AND
-  (CAST((SELECT
-    MIN((CASE WHEN x_17 = 0 THEN 1 ELSE NULL END)) AS logica_value
-  FROM
-    excluded, UNNEST(ARRAY[0]::numeric[]) as x_17
-  WHERE
-    (excluded.npi = providers.npi)) AS numeric) IS NULL);
+    (providers.scheme = ground_truth.scheme)) AS numeric) IS NULL);

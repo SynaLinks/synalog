@@ -27,7 +27,7 @@
 //! functions/operators synthesized by desugaring (`IsNull` from negation,
 //! `Constraint`, `MagicalEntangle`, ...) are never flagged.
 
-use std::collections::{BTreeSet, HashSet};
+use std::collections::{BTreeSet, HashMap, HashSet};
 use std::sync::OnceLock;
 
 use crate::compiler::dialects;
@@ -291,6 +291,82 @@ pub fn check_table_names(rules: &[&Json]) -> Vec<super::SqlExprError> {
     errors
 }
 
+/// A database table read outside its declaration.
+#[derive(Debug, Clone)]
+pub struct TableReadError {
+    /// The table as written (`orders`, `` `public.Order Items` ``).
+    pub table: String,
+    /// The predicate that declares it, when the program has one.
+    pub declared_as: Option<String>,
+    /// Source text of the rule that reads it.
+    pub rule: String,
+}
+
+impl std::fmt::Display for TableReadError {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f, "{}", VerifyError::from(self.clone()))
+    }
+}
+
+impl From<TableReadError> for VerifyError {
+    fn from(e: TableReadError) -> Self {
+        VerifyError::TableOutsideDeclaration { table: e.table, declared_as: e.declared_as, rule: e.rule }
+    }
+}
+
+/// The database table a rule declares: the one its body is, alone
+/// (`GroundTruth(npi:, scheme:) :- ground_truth(npi:, scheme:)`).
+fn declared_table(rule: &Json, is_table: &dyn Fn(&str) -> bool) -> Option<String> {
+    let conjuncts = rule.as_object().get("body")?.as_object().get("conjunction")?.as_object().get("conjunct")?.as_array();
+    let [only] = conjuncts.as_slice() else { return None };
+    let name = only.as_object().get("predicate")?.as_object()["predicate_name"].as_str();
+    is_table(name).then(|| name.to_string())
+}
+
+/// Every database table read outside its declaration. A table is declared
+/// once, by a rule whose body is that table alone, and the rest of the program
+/// reads the predicate it declares: read anywhere else (`~excluded(npi:)`, a
+/// join on `orders(...)`), it bypasses the predicate the program knows it by.
+/// A table is a name the program does not define that is not a predicate's
+/// (lowercase, or quoted: `` `public.Order Items` ``); a capitalized unknown
+/// name is `check_undefined`'s.
+pub fn check_table_reads(rules: &[&Json]) -> Vec<TableReadError> {
+    let defined = defined_predicates(rules);
+    let builtins = builtin_function_names();
+    let reserved = reserved_predicate_names();
+    let is_table = |name: &str| {
+        !looks_like_predicate(name) && !defined.contains(name) && !builtins.contains(name) && !reserved.contains(name)
+    };
+    let mut declared_as = HashMap::new();
+    for rule in rules {
+        if let Some(table) = declared_table(rule, &is_table) {
+            let head = rule.as_object()["head"].as_object()["predicate_name"].as_str().to_string();
+            declared_as.entry(table).or_insert(head);
+        }
+    }
+    let mut errors = Vec::new();
+    let mut seen = HashSet::new();
+    for rule in rules {
+        if declared_table(rule, &is_table).is_some() {
+            continue;
+        }
+        let mut refs = BTreeSet::new();
+        if let Some(body) = rule.as_object().get("body") {
+            collect_body_refs(body, &mut refs);
+        }
+        if let Some(record) = rule.as_object()["head"].as_object().get("record") {
+            collect_expr_refs(record, &mut refs);
+        }
+        for table in refs.into_iter().filter(|name| is_table(name)) {
+            if seen.insert(table.clone()) {
+                let declared_as = declared_as.get(&table).cloned();
+                errors.push(TableReadError { table, declared_as, rule: rule_text(rule) });
+            }
+        }
+    }
+    errors
+}
+
 /// The functions the language reference documents, suggested for a misspelled
 /// call.
 fn documented_functions() -> &'static [&'static str] {
@@ -436,6 +512,46 @@ mod tests {
         // The raw db table `customers` in the Tables section is not a predicate.
         let errors = check(r#"Customer(id:, name:) :- customers(id:, name:);"#);
         assert!(errors.is_empty(), "{:?}", errors);
+    }
+
+    fn table_reads(code: &str) -> Vec<String> {
+        let parsed = parse(code);
+        let rules: Vec<&Json> = parsed.as_object()["rule"].as_array().iter().collect();
+        check_table_reads(&rules).iter().map(|e| e.to_string()).collect()
+    }
+
+    #[test]
+    fn test_tables_read_through_their_declaration_pass() {
+        let errors = table_reads(
+            r#"
+            GroundTruth(npi:, scheme:) :- ground_truth(npi:, scheme:);
+            OrderItems(id:) :- `public.Order Items`(Id: id);
+            Listed(npi:) :- providers(npi:);
+            Listed(npi:) :- archived_providers(npi:);
+            Unlisted(npi:) :- Listed(npi:), ~GroundTruth(npi:), OrderItems(id: npi);
+        "#,
+        );
+        assert!(errors.is_empty(), "{:?}", errors);
+    }
+
+    #[test]
+    fn test_table_read_outside_its_declaration() {
+        let errors = table_reads(
+            r#"
+            GroundTruth(npi:, scheme:) :- ground_truth(npi:, scheme:);
+            Unlisted(npi:) :- providers(npi:), ~ground_truth(npi:), npi > 0;
+        "#,
+        );
+        assert_eq!(errors.len(), 2, "{:?}", errors);
+        assert!(errors[0].starts_with("'ground_truth' is a database table: read it through 'GroundTruth'"), "{}", errors[0]);
+        assert!(errors[1].starts_with("'providers' is a database table: read it through a predicate that declares it"), "{}", errors[1]);
+    }
+
+    #[test]
+    fn test_a_filtered_table_is_not_a_declaration() {
+        let errors = table_reads(r#"Active(id:) :- `public.Customers`(id:, active:), active == true;"#);
+        assert_eq!(errors.len(), 1, "{:?}", errors);
+        assert!(errors[0].contains("`public.Customers`"), "{}", errors[0]);
     }
 
     #[test]

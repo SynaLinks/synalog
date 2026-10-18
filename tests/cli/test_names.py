@@ -45,7 +45,8 @@ def test_reserved_names_are_not_user_predicates():
     undefined, while a genuine typo still must."""
     program = "\n".join(
         [
-            "Sale(id:, day:) :- sales(id:, created_at:),",
+            "Sales(id:, created_at:) :- sales(id:, created_at:);",
+            "Sale(id:, day:) :- Sales(id:, created_at:),",
             "  day == Substr(ToString(created_at), 1, 10);",
             "Typo(id:) :- Saless(id:);",
         ]

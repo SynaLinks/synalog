@@ -24,10 +24,4 @@ WHERE
     ground_truth, (select unnest([0]::numeric[]) as unnested_pod) as x_10
   WHERE
     (providers.npi = ground_truth.npi) AND
-    (providers.scheme = ground_truth.scheme)) IS NULL) AND
-  ((SELECT
-    MIN((CASE WHEN x_17.unnested_pod = 0 THEN 1 ELSE NULL END)) AS logica_value
-  FROM
-    excluded, (select unnest([0]::numeric[]) as unnested_pod) as x_17
-  WHERE
-    (excluded.npi = providers.npi)) IS NULL);
+    (providers.scheme = ground_truth.scheme)) IS NULL);

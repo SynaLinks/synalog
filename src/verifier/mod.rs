@@ -39,7 +39,7 @@ pub use recursion::{RecursionError, check_recursion, check_unbounded_recursion};
 pub use reserved::{ReservedError, check_reserved, reserved_predicate_names};
 pub use sqlexpr::{SqlExprError, check_sqlexpr};
 pub use positional::{PositionalError, check_positional};
-pub use undefined::{UndefinedError, builtin_function_names, check_undefined};
+pub use undefined::{TableReadError, UndefinedError, builtin_function_names, check_table_reads, check_undefined};
 pub use orderby::{OrderByError, check_order_by};
 pub use front_matter::{DescriptionError, NameError, check_description, check_name};
 pub use functors::{FunctorError, check_functors};
@@ -60,6 +60,7 @@ pub enum CheckError {
     SqlExpr(SqlExprError),
     Positional(PositionalError),
     Undefined(UndefinedError),
+    TableRead(TableReadError),
     OrderBy(OrderByError),
     Name(NameError),
     Description(DescriptionError),
@@ -79,6 +80,7 @@ impl std::fmt::Display for CheckError {
             CheckError::SqlExpr(e) => write!(f, "{}", e),
             CheckError::Positional(e) => write!(f, "{}", e),
             CheckError::Undefined(e) => write!(f, "{}", e),
+            CheckError::TableRead(e) => write!(f, "{}", e),
             CheckError::OrderBy(e) => write!(f, "{}", e),
             CheckError::Name(e) => write!(f, "{}", e),
             CheckError::Description(e) => write!(f, "{}", e),
@@ -102,6 +104,7 @@ impl From<CheckError> for VerifyError {
             CheckError::SqlExpr(se) => se.into(),
             CheckError::Positional(pe) => pe.into(),
             CheckError::Undefined(ue) => ue.into(),
+            CheckError::TableRead(te) => te.into(),
             CheckError::OrderBy(oe) => oe.into(),
             CheckError::Name(ne) => ne.into(),
             CheckError::Description(de) => de.into(),
@@ -227,6 +230,10 @@ pub fn validate(parsed: &Json) -> CheckResult {
     // All rules: a functor application (`D := F(...)`, an @Make) defines D.
     for err in undefined::check_undefined(&all_rules) {
         result.errors.push(CheckError::Undefined(err));
+    }
+    // ... and database tables read outside their declaration.
+    for err in undefined::check_table_reads(&normal_rules) {
+        result.errors.push(CheckError::TableRead(err));
     }
 
     // Check 10: The predicate the front matter names is ordered (@OrderBy)

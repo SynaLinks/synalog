@@ -109,6 +109,7 @@ Fix the quoted statement and re-run: later syntax errors only surface once earli
 | `Unsafe negation: variable 'x' only appears negated in: …` | a negated atom introduces a variable | bind `x` in a positive atom first: `Customer(customer_id: x), ~Orders(customer_id: x)` |
 | `Unsafe aggregation: variable 'v' not bound outside aggregate in: …` | an aggregate over a variable the body never binds | bind it in the body: `Orders(amount: v)` |
 | `Undefined predicate 'Nope': not defined and not a built-in` | a misspelt name, or a missing import | import it or fix the name |
+| `'orders' is a database table: read it through 'Orders', the predicate that declares it, not directly, in: …` | a rule reads a raw table instead of its predicate | read `Orders(...)`; a table appears only in its declaration, `Orders(id:) :- orders(id:);` |
 | `Unknown column 'y' for predicate 'A'` | a column the predicate does not have | use the predicate's own column names |
 | `Recursive predicate 'R' missing @Recursive annotation` | recursion without a depth | add `@Recursive(R, 20);` before its rules |
 | `Trivial infinite loop: 'R' calls itself with same arguments` | the recursive case adds nothing | join the recursive atom with another predicate on a *different* variable |
@@ -165,7 +166,7 @@ import tables.sales.Sales;
 TotalByRegion(region:, total? += amount) distinct :- Region(region:), Sales(region:, amount:);
 ```
 
-- `tables/<name>.l` maps one database table, referenced by its database name (lowercase), to a PascalCase predicate; everything else builds on that predicate, never on the raw table.
+- `tables/<name>.l` maps one database table, referenced by its database name (lowercase), to a PascalCase predicate; everything else builds on that predicate, never on the raw table (the verifier refuses a raw table anywhere but in its declaration).
 - A file may also define the intermediate rules its predicate is built from (a recursive relation, a staging join); they are private to it. A step worth reusing goes in its own file.
 - Before adding a file, read the project: build on the predicates it has instead of recomputing them.
 - **Naming:** name concepts plainly after the entity or relationship (`Customer`, `WorksIn`), with no suffixes; rules carry no suffix either (`TopRegion`).
