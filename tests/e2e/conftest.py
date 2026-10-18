@@ -43,6 +43,11 @@ ENGINES = ["sqlite", "duckdb", "psql", "trino", "presto", "databricks"]
 # resolve through `import_root`, see plan_fixture).
 SKIP_COMPILE: set[str] = set()
 
+# Fixtures that read database tables the engines here do not hold: what they
+# test is the SQL they compile to, which the golden suite checks on every
+# engine. A fixture otherwise defines the facts it reads.
+READS_DATABASE_TABLES = {"5212_negation_of_a_database_table"}
+
 
 def fixture_path(engine: str, name: str) -> Path:
     """Source for a fixture: the engine-specific override (or engine-only
@@ -56,12 +61,13 @@ def fixture_path(engine: str, name: str) -> Path:
 def fixture_names(engine: str) -> list[str]:
     """Runnable fixture stems for an engine.
 
-    Skips *_fail and import tests, and any fixture without a golden .sql
-    for the engine (those are not validated by the golden suite either).
+    Skips *_fail and import tests, fixtures that read database tables, and
+    any fixture without a golden .sql for the engine (those are not validated
+    by the golden suite either).
     """
     names = []
     for path in sorted((FIXTURES_DIR / engine).glob("*.sql")):
-        if path.stem.endswith("_fail") or path.stem in SKIP_COMPILE:
+        if path.stem.endswith("_fail") or path.stem in SKIP_COMPILE | READS_DATABASE_TABLES:
             continue
         if not fixture_path(engine, path.stem).exists():
             continue
