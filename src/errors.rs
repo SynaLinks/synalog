@@ -200,6 +200,13 @@ pub enum VerifyError {
     #[error("Invalid table name in rule '{predicate}': '{table}' is not a table name: write names of letters, digits and '_', joined by '.'")]
     InvalidTableName { predicate: String, table: String },
 
+    /// A database table read outside the rule that declares it.
+    #[error("'{table}' is a database table: read it through {}, not directly, in: {rule}", match declared_as {
+        Some(p) => format!("'{}', the predicate that declares it", p),
+        None => format!("a predicate that declares it (`Name(column:) :- {}(column:);`)", table),
+    })]
+    TableOutsideDeclaration { table: String, declared_as: Option<String>, rule: String },
+
     /// A file's front matter does not name the predicate it is about.
     #[error("The front matter has no name: give the predicate this file is about, the one that runs (name: ...)")]
     MissingName,

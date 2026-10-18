@@ -1246,9 +1246,9 @@ impl LogicaProgram {
                 // it), a rule with a subquery in its body is not inlined: its
                 // subquery would read a table two levels up, which Trino,
                 // Presto and Spark cannot correlate. As a table, each level
-                // reads its parent.
+                // reads its parent. A database table has no rules to look at.
                 let nests_a_subquery = s.external_vocabulary.as_ref().is_some_and(|v| !v.is_empty())
-                    && rules[0].as_object().get("body").is_some_and(has_subquery);
+                    && rules.first().is_some_and(|rule| rule.as_object().get("body").is_some_and(has_subquery));
                 let is_injectable = rules.len() == 1
                     && !rules[0].as_object().contains_key("distinct_denoted")
                     && !nests_a_subquery

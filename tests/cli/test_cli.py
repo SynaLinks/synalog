@@ -445,8 +445,9 @@ def employees_csv(tmp_path):
 
 
 SENIOR = (
+    "Employees(name:, salary:) :- employees(name:, salary:);\n"
     '@OrderBy(Senior, "name");\n'
-    "Senior(name:) distinct :- employees(name:, salary:), salary > 70000;\n"
+    "Senior(name:) distinct :- Employees(name:, salary:), salary > 70000;\n"
 )
 
 
@@ -489,7 +490,8 @@ def test_load_unsupported_format(tmp_path):
 def test_repl_load_command(employees_csv):
     session = (
         f".load employees {employees_csv}\n"
-        "High(name:) :- employees(name:, salary:), salary > 70000;\n"
+        "Employees(name:, salary:) :- employees(name:, salary:);\n"
+        "High(name:) :- Employees(name:, salary:), salary > 70000;\n"
         "High\n"
         ".exit\n"
     )
@@ -666,7 +668,8 @@ def test_repl_clear_drops_loaded_tables(employees_csv):
     session = (
         f".load employees {employees_csv}\n"
         ".clear\n"
-        "High(name:) :- employees(name:, salary:), salary > 70000;\n"
+        "Employees(name:, salary:) :- employees(name:, salary:);\n"
+        "High(name:) :- Employees(name:, salary:), salary > 70000;\n"
         "High\n"
         ".exit\n"
     )

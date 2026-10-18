@@ -21,6 +21,7 @@ This matters most for AI agents: it prevents producing programs that parse corre
 | **Functors** | A functor naming a predicate that does not exist, or an argument the applied predicate does not depend on: `F := Count(Nope: Odd)` when `Count` never reads `Nope` |
 | **Directives** | `@OrderBy`, `@Limit`, `@Recursive` or `@Ground` about a predicate the program does not define; an `@OrderBy` item that is not a column of the predicate; an `@Limit` that is not a whole number of rows; an `@Recursive` depth below 1; `@AttachDatabase`, or `@Ground` with `copy_to_file`: a program opens and writes no file; `FlagValue("name")` of a flag no `@DefineFlag` defines |
 | **Assertions** | An `@Assert` statement that does not parse or contradicts the program, an assertion stated twice |
+| **Tables** | A database table read anywhere but in its declaration, the rule whose body is that table alone (`Orders(id:) :- orders(id:);`): `~orders(id:)`, or a join or a filter on `orders(...)`, is refused; the rest of the program reads the predicate that declares it |
 | **Undefined function** | A call of a function neither defined in the program nor built in (`Substrr(s, 1, 2)`), with the closest name when one is near |
 | **Aggregates** | An aggregate called where nothing aggregates: as a value (`Q(t: Sum(x))`) or in a condition (`x == Max(x)`); `ArgMaxK` or `ArgMinK` without the number of items to keep |
 | **Disjunction inside** | A disjunction inside a negation `~(A \| B)` or a `combine`, which does not compile: its alternatives go in a predicate of their own |
