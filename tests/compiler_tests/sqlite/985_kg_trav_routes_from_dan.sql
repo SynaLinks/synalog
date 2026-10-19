@@ -1,4 +1,4 @@
-WITH t_10_Employees AS (SELECT * FROM (
+WITH RECURSIVE t_10_Employees AS (SELECT * FROM (
   
     SELECT
       1 AS person_id,
@@ -51,7 +51,7 @@ t_9_Person AS (SELECT
   Employees.url AS url
 FROM
   t_10_Employees AS Employees
-GROUP BY Employees.person_id, Employees.name, Employees.url ORDER BY person_id),
+GROUP BY Employees.person_id, Employees.name, Employees.url ORDER BY person_id NULLS LAST),
 t_12_Management AS (SELECT * FROM (
   
     SELECT
@@ -83,150 +83,216 @@ WHERE
   (Management.manager_id = t_7_Person.person_id) AND
   (Management.employee_id = t_8_Person.person_id)
 GROUP BY t_7_Person.person_id, t_8_Person.person_id),
-t_50_PathTo_MultBodyAggAux_recursive_head_f1 AS (SELECT * FROM (
-  
-    SELECT
-      t_51_Manages.manager_id AS source,
-      t_51_Manages.employee_id AS target,
-      ((((t_54_Person.name) || (' > '))) || (t_55_Person.name)) AS path
-    FROM
-      t_6_Manages AS t_51_Manages, t_9_Person AS t_54_Person, t_9_Person AS t_55_Person
-    WHERE
-      (t_51_Manages.manager_id = t_54_Person.person_id) AND
-      (t_51_Manages.employee_id = t_55_Person.person_id)
-  
-) AS UNUSED_TABLE_NAME  ),
-t_49_PathTo_r0 AS (SELECT
-  PathTo_MultBodyAggAux_recursive_head_f1.source AS source,
-  PathTo_MultBodyAggAux_recursive_head_f1.target AS target,
-  PathTo_MultBodyAggAux_recursive_head_f1.path AS path
+t_1_PathTo_RecursiveCte AS (SELECT * FROM (
+  SELECT * FROM (
+    
+      SELECT
+        Manages.manager_id AS source,
+        Manages.employee_id AS target,
+        ((((t_4_Person.name) || (' > '))) || (t_5_Person.name)) AS path,
+        0 AS logica_step
+      FROM
+        t_6_Manages AS Manages, t_9_Person AS t_4_Person, t_9_Person AS t_5_Person
+      WHERE
+        (Manages.manager_id = t_4_Person.person_id) AND
+        (Manages.employee_id = t_5_Person.person_id)
+     UNION ALL
+    
+      SELECT
+        t_17_Manages.manager_id AS source,
+        t_13_Manages.employee_id AS target,
+        ((((((((t_20_Person.name) || (' > '))) || (t_21_Person.name))) || (' > '))) || (t_16_Person.name)) AS path,
+        ((0) + (1)) AS logica_step
+      FROM
+        t_6_Manages AS t_17_Manages, t_9_Person AS t_20_Person, t_9_Person AS t_21_Person, t_6_Manages AS t_13_Manages, t_9_Person AS t_16_Person
+      WHERE
+        (0 < 4) AND
+        (1 = 0) AND
+        (t_13_Manages.employee_id = t_16_Person.person_id) AND
+        (t_13_Manages.manager_id = t_17_Manages.employee_id) AND
+        (t_17_Manages.manager_id = t_20_Person.person_id) AND
+        (t_17_Manages.employee_id = t_21_Person.person_id)
+     UNION ALL
+    
+      SELECT
+        t_34_Manages.manager_id AS source,
+        t_26_Manages.employee_id AS target,
+        ((((((((((((t_37_Person.name) || (' > '))) || (t_38_Person.name))) || (' > '))) || (t_33_Person.name))) || (' > '))) || (t_31_Person.name)) AS path,
+        ((((0) + (1))) + (1)) AS logica_step
+      FROM
+        t_6_Manages AS t_34_Manages, t_9_Person AS t_37_Person, t_9_Person AS t_38_Person, t_6_Manages AS t_29_Manages, t_9_Person AS t_33_Person, t_6_Manages AS t_26_Manages, t_9_Person AS t_31_Person
+      WHERE
+        (((0) + (1)) < 4) AND
+        (0 < 4) AND
+        (1 = 0) AND
+        (t_26_Manages.manager_id = t_29_Manages.employee_id) AND
+        (t_26_Manages.employee_id = t_31_Person.person_id) AND
+        (t_29_Manages.employee_id = t_33_Person.person_id) AND
+        (t_29_Manages.manager_id = t_34_Manages.employee_id) AND
+        (t_34_Manages.manager_id = t_37_Person.person_id) AND
+        (t_34_Manages.employee_id = t_38_Person.person_id)
+     UNION ALL
+    
+      SELECT
+        t_52_Manages.manager_id AS source,
+        t_40_Manages.employee_id AS target,
+        ((((((((((((((((t_55_Person.name) || (' > '))) || (t_56_Person.name))) || (' > '))) || (t_51_Person.name))) || (' > '))) || (t_49_Person.name))) || (' > '))) || (t_45_Person.name)) AS path,
+        ((((((0) + (1))) + (1))) + (1)) AS logica_step
+      FROM
+        t_6_Manages AS t_52_Manages, t_9_Person AS t_55_Person, t_9_Person AS t_56_Person, t_6_Manages AS t_47_Manages, t_9_Person AS t_51_Person, t_6_Manages AS t_43_Manages, t_9_Person AS t_49_Person, t_6_Manages AS t_40_Manages, t_9_Person AS t_45_Person
+      WHERE
+        (((((0) + (1))) + (1)) < 4) AND
+        (((0) + (1)) < 4) AND
+        (0 < 4) AND
+        (1 = 0) AND
+        (t_40_Manages.manager_id = t_43_Manages.employee_id) AND
+        (t_40_Manages.employee_id = t_45_Person.person_id) AND
+        (t_43_Manages.manager_id = t_47_Manages.employee_id) AND
+        (t_43_Manages.employee_id = t_49_Person.person_id) AND
+        (t_47_Manages.employee_id = t_51_Person.person_id) AND
+        (t_47_Manages.manager_id = t_52_Manages.employee_id) AND
+        (t_52_Manages.manager_id = t_55_Person.person_id) AND
+        (t_52_Manages.employee_id = t_56_Person.person_id)
+     UNION ALL
+    
+      SELECT
+        t_74_Manages.manager_id AS source,
+        t_58_Manages.employee_id AS target,
+        ((((((((((((((((((((t_77_Person.name) || (' > '))) || (t_78_Person.name))) || (' > '))) || (t_73_Person.name))) || (' > '))) || (t_71_Person.name))) || (' > '))) || (t_67_Person.name))) || (' > '))) || (t_63_Person.name)) AS path,
+        ((((((((0) + (1))) + (1))) + (1))) + (1)) AS logica_step
+      FROM
+        t_6_Manages AS t_74_Manages, t_9_Person AS t_77_Person, t_9_Person AS t_78_Person, t_6_Manages AS t_69_Manages, t_9_Person AS t_73_Person, t_6_Manages AS t_65_Manages, t_9_Person AS t_71_Person, t_6_Manages AS t_61_Manages, t_9_Person AS t_67_Person, t_6_Manages AS t_58_Manages, t_9_Person AS t_63_Person
+      WHERE
+        (((((((0) + (1))) + (1))) + (1)) < 4) AND
+        (((((0) + (1))) + (1)) < 4) AND
+        (((0) + (1)) < 4) AND
+        (0 < 4) AND
+        (1 = 0) AND
+        (t_58_Manages.manager_id = t_61_Manages.employee_id) AND
+        (t_58_Manages.employee_id = t_63_Person.person_id) AND
+        (t_61_Manages.manager_id = t_65_Manages.employee_id) AND
+        (t_61_Manages.employee_id = t_67_Person.person_id) AND
+        (t_65_Manages.manager_id = t_69_Manages.employee_id) AND
+        (t_65_Manages.employee_id = t_71_Person.person_id) AND
+        (t_69_Manages.employee_id = t_73_Person.person_id) AND
+        (t_69_Manages.manager_id = t_74_Manages.employee_id) AND
+        (t_74_Manages.manager_id = t_77_Person.person_id) AND
+        (t_74_Manages.employee_id = t_78_Person.person_id)
+     UNION ALL
+    
+      SELECT
+        t_100_Manages.manager_id AS source,
+        t_80_Manages.employee_id AS target,
+        ((((((((((((((((((((((((t_103_Person.name) || (' > '))) || (t_104_Person.name))) || (' > '))) || (t_99_Person.name))) || (' > '))) || (t_97_Person.name))) || (' > '))) || (t_93_Person.name))) || (' > '))) || (t_89_Person.name))) || (' > '))) || (t_85_Person.name)) AS path,
+        ((((((((((0) + (1))) + (1))) + (1))) + (1))) + (1)) AS logica_step
+      FROM
+        t_6_Manages AS t_100_Manages, t_9_Person AS t_103_Person, t_9_Person AS t_104_Person, t_6_Manages AS t_95_Manages, t_9_Person AS t_99_Person, t_6_Manages AS t_91_Manages, t_9_Person AS t_97_Person, t_6_Manages AS t_87_Manages, t_9_Person AS t_93_Person, t_6_Manages AS t_83_Manages, t_9_Person AS t_89_Person, t_6_Manages AS t_80_Manages, t_9_Person AS t_85_Person
+      WHERE
+        (((((((((0) + (1))) + (1))) + (1))) + (1)) < 4) AND
+        (((((((0) + (1))) + (1))) + (1)) < 4) AND
+        (((((0) + (1))) + (1)) < 4) AND
+        (((0) + (1)) < 4) AND
+        (0 < 4) AND
+        (1 = 0) AND
+        (t_80_Manages.manager_id = t_83_Manages.employee_id) AND
+        (t_80_Manages.employee_id = t_85_Person.person_id) AND
+        (t_83_Manages.manager_id = t_87_Manages.employee_id) AND
+        (t_83_Manages.employee_id = t_89_Person.person_id) AND
+        (t_87_Manages.manager_id = t_91_Manages.employee_id) AND
+        (t_87_Manages.employee_id = t_93_Person.person_id) AND
+        (t_91_Manages.manager_id = t_95_Manages.employee_id) AND
+        (t_91_Manages.employee_id = t_97_Person.person_id) AND
+        (t_95_Manages.employee_id = t_99_Person.person_id) AND
+        (t_95_Manages.manager_id = t_100_Manages.employee_id) AND
+        (t_100_Manages.manager_id = t_103_Person.person_id) AND
+        (t_100_Manages.employee_id = t_104_Person.person_id)
+     UNION ALL
+    
+      SELECT
+        t_130_Manages.manager_id AS source,
+        t_106_Manages.employee_id AS target,
+        ((((((((((((((((((((((((((((t_133_Person.name) || (' > '))) || (t_134_Person.name))) || (' > '))) || (t_129_Person.name))) || (' > '))) || (t_127_Person.name))) || (' > '))) || (t_123_Person.name))) || (' > '))) || (t_119_Person.name))) || (' > '))) || (t_115_Person.name))) || (' > '))) || (t_111_Person.name)) AS path,
+        ((((((((((((0) + (1))) + (1))) + (1))) + (1))) + (1))) + (1)) AS logica_step
+      FROM
+        t_6_Manages AS t_130_Manages, t_9_Person AS t_133_Person, t_9_Person AS t_134_Person, t_6_Manages AS t_125_Manages, t_9_Person AS t_129_Person, t_6_Manages AS t_121_Manages, t_9_Person AS t_127_Person, t_6_Manages AS t_117_Manages, t_9_Person AS t_123_Person, t_6_Manages AS t_113_Manages, t_9_Person AS t_119_Person, t_6_Manages AS t_109_Manages, t_9_Person AS t_115_Person, t_6_Manages AS t_106_Manages, t_9_Person AS t_111_Person
+      WHERE
+        (((((((((((0) + (1))) + (1))) + (1))) + (1))) + (1)) < 4) AND
+        (((((((((0) + (1))) + (1))) + (1))) + (1)) < 4) AND
+        (((((((0) + (1))) + (1))) + (1)) < 4) AND
+        (((((0) + (1))) + (1)) < 4) AND
+        (((0) + (1)) < 4) AND
+        (0 < 4) AND
+        (1 = 0) AND
+        (t_106_Manages.manager_id = t_109_Manages.employee_id) AND
+        (t_106_Manages.employee_id = t_111_Person.person_id) AND
+        (t_109_Manages.manager_id = t_113_Manages.employee_id) AND
+        (t_109_Manages.employee_id = t_115_Person.person_id) AND
+        (t_113_Manages.manager_id = t_117_Manages.employee_id) AND
+        (t_113_Manages.employee_id = t_119_Person.person_id) AND
+        (t_117_Manages.manager_id = t_121_Manages.employee_id) AND
+        (t_117_Manages.employee_id = t_123_Person.person_id) AND
+        (t_121_Manages.manager_id = t_125_Manages.employee_id) AND
+        (t_121_Manages.employee_id = t_127_Person.person_id) AND
+        (t_125_Manages.employee_id = t_129_Person.person_id) AND
+        (t_125_Manages.manager_id = t_130_Manages.employee_id) AND
+        (t_130_Manages.manager_id = t_133_Person.person_id) AND
+        (t_130_Manages.employee_id = t_134_Person.person_id)
+     UNION ALL
+    
+      SELECT
+        t_164_Manages.manager_id AS source,
+        t_136_Manages.employee_id AS target,
+        ((((((((((((((((((((((((((((((((t_167_Person.name) || (' > '))) || (t_168_Person.name))) || (' > '))) || (t_163_Person.name))) || (' > '))) || (t_161_Person.name))) || (' > '))) || (t_157_Person.name))) || (' > '))) || (t_153_Person.name))) || (' > '))) || (t_149_Person.name))) || (' > '))) || (t_145_Person.name))) || (' > '))) || (t_141_Person.name)) AS path,
+        ((x_717.value) + (1)) AS logica_step
+      FROM
+        t_6_Manages AS t_164_Manages, t_9_Person AS t_167_Person, t_9_Person AS t_168_Person, t_6_Manages AS t_159_Manages, t_9_Person AS t_163_Person, t_6_Manages AS t_155_Manages, t_9_Person AS t_161_Person, t_6_Manages AS t_151_Manages, t_9_Person AS t_157_Person, t_6_Manages AS t_147_Manages, t_9_Person AS t_153_Person, t_6_Manages AS t_143_Manages, t_9_Person AS t_149_Person, t_6_Manages AS t_139_Manages, t_9_Person AS t_145_Person, t_6_Manages AS t_136_Manages, t_9_Person AS t_141_Person, JSON_EACH(JSON_ARRAY(((((((((((((0) + (1))) + (1))) + (1))) + (1))) + (1))) + (1)))) as x_717
+      WHERE
+        (x_717.value < 4) AND
+        (((((((((((0) + (1))) + (1))) + (1))) + (1))) + (1)) < 4) AND
+        (((((((((0) + (1))) + (1))) + (1))) + (1)) < 4) AND
+        (((((((0) + (1))) + (1))) + (1)) < 4) AND
+        (((((0) + (1))) + (1)) < 4) AND
+        (((0) + (1)) < 4) AND
+        (0 < 4) AND
+        (1 = 0) AND
+        (t_136_Manages.manager_id = t_139_Manages.employee_id) AND
+        (t_136_Manages.employee_id = t_141_Person.person_id) AND
+        (t_139_Manages.manager_id = t_143_Manages.employee_id) AND
+        (t_139_Manages.employee_id = t_145_Person.person_id) AND
+        (t_143_Manages.manager_id = t_147_Manages.employee_id) AND
+        (t_143_Manages.employee_id = t_149_Person.person_id) AND
+        (t_147_Manages.manager_id = t_151_Manages.employee_id) AND
+        (t_147_Manages.employee_id = t_153_Person.person_id) AND
+        (t_151_Manages.manager_id = t_155_Manages.employee_id) AND
+        (t_151_Manages.employee_id = t_157_Person.person_id) AND
+        (t_155_Manages.manager_id = t_159_Manages.employee_id) AND
+        (t_155_Manages.employee_id = t_161_Person.person_id) AND
+        (t_159_Manages.employee_id = t_163_Person.person_id) AND
+        (t_159_Manages.manager_id = t_164_Manages.employee_id) AND
+        (t_164_Manages.manager_id = t_167_Person.person_id) AND
+        (t_164_Manages.employee_id = t_168_Person.person_id)
+    
+  ) AS UNUSED_TABLE_NAME  
+) AS UNUSED_TABLE_NAME
+UNION
+SELECT
+  t_169_PathTo_RecursiveCte.source AS source,
+  t_170_Manages.employee_id AS target,
+  ((((t_169_PathTo_RecursiveCte.path) || (' > '))) || (t_172_Person.name)) AS path,
+  ((t_169_PathTo_RecursiveCte.logica_step) + (1)) AS logica_step
 FROM
-  t_50_PathTo_MultBodyAggAux_recursive_head_f1 AS PathTo_MultBodyAggAux_recursive_head_f1
-GROUP BY PathTo_MultBodyAggAux_recursive_head_f1.source, PathTo_MultBodyAggAux_recursive_head_f1.target, PathTo_MultBodyAggAux_recursive_head_f1.path),
-t_40_PathTo_MultBodyAggAux_recursive_head_f2 AS (SELECT * FROM (
-  
-    SELECT
-      t_41_Manages.manager_id AS source,
-      t_41_Manages.employee_id AS target,
-      ((((t_44_Person.name) || (' > '))) || (t_45_Person.name)) AS path
-    FROM
-      t_6_Manages AS t_41_Manages, t_9_Person AS t_44_Person, t_9_Person AS t_45_Person
-    WHERE
-      (t_41_Manages.manager_id = t_44_Person.person_id) AND
-      (t_41_Manages.employee_id = t_45_Person.person_id)
-   UNION ALL
-  
-    SELECT
-      PathTo_r0.source AS source,
-      t_46_Manages.employee_id AS target,
-      ((((PathTo_r0.path) || (' > '))) || (t_48_Person.name)) AS path
-    FROM
-      t_49_PathTo_r0 AS PathTo_r0, t_6_Manages AS t_46_Manages, t_9_Person AS t_48_Person
-    WHERE
-      (t_46_Manages.manager_id = PathTo_r0.target) AND
-      (t_46_Manages.employee_id = t_48_Person.person_id)
-  
-) AS UNUSED_TABLE_NAME  ),
-t_39_PathTo_r1 AS (SELECT
-  PathTo_MultBodyAggAux_recursive_head_f2.source AS source,
-  PathTo_MultBodyAggAux_recursive_head_f2.target AS target,
-  PathTo_MultBodyAggAux_recursive_head_f2.path AS path
-FROM
-  t_40_PathTo_MultBodyAggAux_recursive_head_f2 AS PathTo_MultBodyAggAux_recursive_head_f2
-GROUP BY PathTo_MultBodyAggAux_recursive_head_f2.source, PathTo_MultBodyAggAux_recursive_head_f2.target, PathTo_MultBodyAggAux_recursive_head_f2.path),
-t_30_PathTo_MultBodyAggAux_recursive_head_f3 AS (SELECT * FROM (
-  
-    SELECT
-      t_31_Manages.manager_id AS source,
-      t_31_Manages.employee_id AS target,
-      ((((t_34_Person.name) || (' > '))) || (t_35_Person.name)) AS path
-    FROM
-      t_6_Manages AS t_31_Manages, t_9_Person AS t_34_Person, t_9_Person AS t_35_Person
-    WHERE
-      (t_31_Manages.manager_id = t_34_Person.person_id) AND
-      (t_31_Manages.employee_id = t_35_Person.person_id)
-   UNION ALL
-  
-    SELECT
-      PathTo_r1.source AS source,
-      t_36_Manages.employee_id AS target,
-      ((((PathTo_r1.path) || (' > '))) || (t_38_Person.name)) AS path
-    FROM
-      t_39_PathTo_r1 AS PathTo_r1, t_6_Manages AS t_36_Manages, t_9_Person AS t_38_Person
-    WHERE
-      (t_36_Manages.manager_id = PathTo_r1.target) AND
-      (t_36_Manages.employee_id = t_38_Person.person_id)
-  
-) AS UNUSED_TABLE_NAME  ),
-t_29_PathTo_r2 AS (SELECT
-  PathTo_MultBodyAggAux_recursive_head_f3.source AS source,
-  PathTo_MultBodyAggAux_recursive_head_f3.target AS target,
-  PathTo_MultBodyAggAux_recursive_head_f3.path AS path
-FROM
-  t_30_PathTo_MultBodyAggAux_recursive_head_f3 AS PathTo_MultBodyAggAux_recursive_head_f3
-GROUP BY PathTo_MultBodyAggAux_recursive_head_f3.source, PathTo_MultBodyAggAux_recursive_head_f3.target, PathTo_MultBodyAggAux_recursive_head_f3.path),
-t_17_PathTo_MultBodyAggAux_recursive_head_f4 AS (SELECT * FROM (
-  
-    SELECT
-      t_18_Manages.manager_id AS source,
-      t_18_Manages.employee_id AS target,
-      ((((t_21_Person.name) || (' > '))) || (t_22_Person.name)) AS path
-    FROM
-      t_6_Manages AS t_18_Manages, t_9_Person AS t_21_Person, t_9_Person AS t_22_Person
-    WHERE
-      (t_18_Manages.manager_id = t_21_Person.person_id) AND
-      (t_18_Manages.employee_id = t_22_Person.person_id)
-   UNION ALL
-  
-    SELECT
-      PathTo_r2.source AS source,
-      t_26_Manages.employee_id AS target,
-      ((((PathTo_r2.path) || (' > '))) || (t_28_Person.name)) AS path
-    FROM
-      t_29_PathTo_r2 AS PathTo_r2, t_6_Manages AS t_26_Manages, t_9_Person AS t_28_Person
-    WHERE
-      (t_26_Manages.manager_id = PathTo_r2.target) AND
-      (t_26_Manages.employee_id = t_28_Person.person_id)
-  
-) AS UNUSED_TABLE_NAME  ),
-t_16_PathTo_r3 AS (SELECT
-  PathTo_MultBodyAggAux_recursive_head_f4.source AS source,
-  PathTo_MultBodyAggAux_recursive_head_f4.target AS target,
-  PathTo_MultBodyAggAux_recursive_head_f4.path AS path
-FROM
-  t_17_PathTo_MultBodyAggAux_recursive_head_f4 AS PathTo_MultBodyAggAux_recursive_head_f4
-GROUP BY PathTo_MultBodyAggAux_recursive_head_f4.source, PathTo_MultBodyAggAux_recursive_head_f4.target, PathTo_MultBodyAggAux_recursive_head_f4.path),
-t_1_PathTo_MultBodyAggAux_recursive_head_f5 AS (SELECT * FROM (
-  
-    SELECT
-      Manages.manager_id AS source,
-      Manages.employee_id AS target,
-      ((((t_4_Person.name) || (' > '))) || (t_5_Person.name)) AS path
-    FROM
-      t_6_Manages AS Manages, t_9_Person AS t_4_Person, t_9_Person AS t_5_Person
-    WHERE
-      (Manages.manager_id = t_4_Person.person_id) AND
-      (Manages.employee_id = t_5_Person.person_id)
-   UNION ALL
-  
-    SELECT
-      PathTo_r3.source AS source,
-      t_13_Manages.employee_id AS target,
-      ((((PathTo_r3.path) || (' > '))) || (t_15_Person.name)) AS path
-    FROM
-      t_16_PathTo_r3 AS PathTo_r3, t_6_Manages AS t_13_Manages, t_9_Person AS t_15_Person
-    WHERE
-      (t_13_Manages.manager_id = PathTo_r3.target) AND
-      (t_13_Manages.employee_id = t_15_Person.person_id)
-  
-) AS UNUSED_TABLE_NAME  ),
+  t_1_PathTo_RecursiveCte AS t_169_PathTo_RecursiveCte, t_6_Manages AS t_170_Manages, t_9_Person AS t_172_Person
+WHERE
+  (t_169_PathTo_RecursiveCte.logica_step < 4) AND
+  (t_170_Manages.manager_id = t_169_PathTo_RecursiveCte.target) AND
+  (t_170_Manages.employee_id = t_172_Person.person_id)),
 t_0_PathTo AS (SELECT
-  PathTo_MultBodyAggAux_recursive_head_f5.source AS source,
-  PathTo_MultBodyAggAux_recursive_head_f5.target AS target,
-  PathTo_MultBodyAggAux_recursive_head_f5.path AS path
+  PathTo_RecursiveCte.source AS source,
+  PathTo_RecursiveCte.target AS target,
+  PathTo_RecursiveCte.path AS path
 FROM
-  t_1_PathTo_MultBodyAggAux_recursive_head_f5 AS PathTo_MultBodyAggAux_recursive_head_f5
-GROUP BY PathTo_MultBodyAggAux_recursive_head_f5.source, PathTo_MultBodyAggAux_recursive_head_f5.target, PathTo_MultBodyAggAux_recursive_head_f5.path)
+  t_1_PathTo_RecursiveCte AS PathTo_RecursiveCte
+GROUP BY PathTo_RecursiveCte.source, PathTo_RecursiveCte.target, PathTo_RecursiveCte.path)
 SELECT
   Person.name AS target,
   PathTo.path AS path
@@ -235,4 +301,4 @@ FROM
 WHERE
   (PathTo.source = 4) AND
   (PathTo.target = Person.person_id)
-GROUP BY Person.name, PathTo.path ORDER BY target, path;
+GROUP BY Person.name, PathTo.path ORDER BY target NULLS LAST, path NULLS LAST;

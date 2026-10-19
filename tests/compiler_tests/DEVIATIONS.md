@@ -137,7 +137,8 @@ short of `depth` — which silently **truncates the transitive closure** (e.g. a
 compile time and is correct. The `duckdb/35_recursive_annotated.sql` golden is
 generated from synalog (`generate_expected_sql.py:SYNALOG_GOLDENS`) and verified
 end-to-end against live DuckDB, matching the other engines' results
-(`tests/e2e`).
+(`tests/e2e`). A linear recursion is now one recursive query instead (see "A
+recursion as one recursive query").
 
 `Set=` sorts its values on DuckDB, `ARRAY_AGG(DISTINCT x ORDER BY x)`, so a set
 compares equal however its rows were scanned; upstream leaves it unordered
@@ -355,6 +356,45 @@ and the recursion has converged when a step adds nothing. Other recursions
 (mutual recursion, aggregation in the recursion) recompute every step. The
 deep-recursion fixtures (`65_deep_recursion`, `66_deep_mutual_recursion`,
 `148_` to `199_`) are generated from synalog on every engine.
+
+## A recursion as one recursive query
+
+On DuckDB, SQLite and PostgreSQL, a recursion semi-naive evaluation computes
+exactly (one `distinct` predicate without aggregation, each rule reading it at
+most once), written as its first rows and steps that each read it once as a
+conjunct, is one recursive query (`WITH RECURSIVE`, `functors.rs:
+unfold_recursive_predicate_cte`, `universe.rs: translate_recursive_cte`), at
+every depth. Upstream unrolls it: a step per level, each a copy of the steps
+below it, which DuckDB's optimizer took seconds to plan at depth 20 (2.5 s for
+33 rows, 26 s for an assertion over a rule built on it), and past 20 steps it
+computes tables, which a user who may only read cannot create.
+
+`P_RecursiveCte` numbers each row with the step that found it
+(`logica_step`): its first rows are step 0, a step reads the rows numbered
+below the depth and numbers its own one more, `UNION` keeps a row once, and `P`
+is the rows without the number, distinct. The rows are those of the steps
+written out, also when they never repeat (hops round a cycle), and the query
+ends when a step finds no new row. `@Recursive(P, -1)` numbers nothing: the
+query runs until nothing changes. The first rows come with the steps applied
+to no rows, twice per column (as the semi-naive accumulated table): a step can
+widen a column (an integer, then a decimal), and DuckDB casts the query's rows
+to the types of its first rows (`2.25` became `2.3`). A step reads the query
+in its own `FROM`: PostgreSQL and SQLite refuse the reference in a subquery.
+DuckDB takes several steps in parentheses, SQLite one after the other, and
+PostgreSQL one only (a second is "a recursive reference ... more than once"),
+so a recursion with two recursive rules is unrolled there. Trino and BigQuery
+take only `UNION ALL` in a recursive query, whose rows multiply with the
+paths to them, Trino stops at 10 steps unless told otherwise, Spark has
+recursive queries from 4.1 only and Presto none: they compute the recursion as
+before. A functor applied to the recursion copies the query's steps with it
+(`iteration_companions`), read by no rule but by the query.
+
+The rows of every fixture and program this changes were compared with the
+unrolled compilation's on DuckDB, SQLite and PostgreSQL (720 programs, all
+equal). Their goldens on those engines are synalog's
+(`generate_expected_sql.py:SYNALOG_GOLDENS`). The fixtures `compile` refused
+there (`*_until_convergence`, `recursion_depth_too_large`) now compile on
+those engines and stay fail fixtures of the others.
 
 ## Division is exact
 

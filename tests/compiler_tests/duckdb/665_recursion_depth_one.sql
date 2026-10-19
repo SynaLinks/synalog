@@ -4,33 +4,65 @@ create schema if not exists logica_home;
 drop type if exists logicarecord893574736 cascade; create type logicarecord893574736 as struct(nirvana numeric);
 create sequence if not exists eternal_logical_sequence;
 
-WITH t_2_R_MultBodyAggAux_recursive_head_f1 AS (SELECT * FROM (
-  
-    SELECT
-      0 AS y
-  
-) AS UNUSED_TABLE_NAME  ),
-t_1_R_r0 AS (SELECT
-  R_MultBodyAggAux_recursive_head_f1.y AS y
-FROM
-  t_2_R_MultBodyAggAux_recursive_head_f1 AS R_MultBodyAggAux_recursive_head_f1
-GROUP BY R_MultBodyAggAux_recursive_head_f1.y),
-t_0_R_MultBodyAggAux_recursive_head_f2 AS (SELECT * FROM (
-  
-    SELECT
-      0 AS y
-   UNION ALL
-  
-    SELECT
-      ((x_7.unnested_pod) + (1)) AS y
-    FROM
-      t_1_R_r0 AS R_r0, (select unnest(Range(10)) as unnested_pod) as x_7
-    WHERE
-      (R_r0.y = x_7.unnested_pod)
-  
-) AS UNUSED_TABLE_NAME  )
+WITH RECURSIVE t_0_R_RecursiveCte AS (SELECT * FROM (
+  SELECT * FROM (
+    
+      SELECT
+        0 AS y,
+        0 AS logica_step
+     UNION ALL
+    
+      SELECT
+        ((x_20.unnested_pod) + (1)) AS y,
+        ((0) + (1)) AS logica_step
+      FROM
+        (select unnest(Range(10)) as unnested_pod) as x_20
+      WHERE
+        (0 < 1) AND
+        (1 = 0) AND
+        (x_20.unnested_pod = 0)
+     UNION ALL
+    
+      SELECT
+        ((x_36.unnested_pod) + (1)) AS y,
+        ((((0) + (1))) + (1)) AS logica_step
+      FROM
+        (select unnest(Range(10)) as unnested_pod) as x_36, (select unnest(Range(10)) as unnested_pod) as x_42
+      WHERE
+        (((0) + (1)) < 1) AND
+        (0 < 1) AND
+        (1 = 0) AND
+        (x_36.unnested_pod = ((x_42.unnested_pod) + (1))) AND
+        (x_42.unnested_pod = 0)
+     UNION ALL
+    
+      SELECT
+        ((x_58.unnested_pod) + (1)) AS y,
+        ((((((0) + (1))) + (1))) + (1)) AS logica_step
+      FROM
+        (select unnest(Range(10)) as unnested_pod) as x_58, (select unnest(Range(10)) as unnested_pod) as x_65, (select unnest(Range(10)) as unnested_pod) as x_71
+      WHERE
+        (((((0) + (1))) + (1)) < 1) AND
+        (((0) + (1)) < 1) AND
+        (0 < 1) AND
+        (1 = 0) AND
+        (x_58.unnested_pod = ((x_65.unnested_pod) + (1))) AND
+        (x_65.unnested_pod = ((x_71.unnested_pod) + (1))) AND
+        (x_71.unnested_pod = 0)
+    
+  ) AS UNUSED_TABLE_NAME  
+) AS UNUSED_TABLE_NAME
+UNION
 SELECT
-  R_MultBodyAggAux_recursive_head_f2.y AS y
+  ((x_78.unnested_pod) + (1)) AS y,
+  ((t_14_R_RecursiveCte.logica_step) + (1)) AS logica_step
 FROM
-  t_0_R_MultBodyAggAux_recursive_head_f2 AS R_MultBodyAggAux_recursive_head_f2
-GROUP BY R_MultBodyAggAux_recursive_head_f2.y ORDER BY y;
+  t_0_R_RecursiveCte AS t_14_R_RecursiveCte, (select unnest(Range(10)) as unnested_pod) as x_78
+WHERE
+  (t_14_R_RecursiveCte.logica_step < 1) AND
+  (t_14_R_RecursiveCte.y = x_78.unnested_pod))
+SELECT
+  R_RecursiveCte.y AS y
+FROM
+  t_0_R_RecursiveCte AS R_RecursiveCte
+GROUP BY R_RecursiveCte.y ORDER BY y;

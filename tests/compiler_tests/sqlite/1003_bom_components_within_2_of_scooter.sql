@@ -1,4 +1,4 @@
-WITH t_9_Uses AS (SELECT * FROM (
+WITH RECURSIVE t_2_Uses AS (SELECT * FROM (
   
     SELECT
       'bike' AS part,
@@ -54,69 +54,77 @@ WITH t_9_Uses AS (SELECT * FROM (
       1 AS qty
   
 ) AS UNUSED_TABLE_NAME  ),
-t_6_Down_MultBodyAggAux_recursive_head_f1 AS (SELECT * FROM (
-  
-    SELECT
-      t_8_Uses.component AS component
-    FROM
-      t_9_Uses AS t_8_Uses
-    WHERE
-      (t_8_Uses.part = 'scooter')
-  
-) AS UNUSED_TABLE_NAME  ),
-t_5_Down_r0 AS (SELECT
-  Down_MultBodyAggAux_recursive_head_f1.component AS component
+t_1_Down_RecursiveCte AS (SELECT * FROM (
+  SELECT * FROM (
+    
+      SELECT
+        Uses.component AS component,
+        0 AS logica_step
+      FROM
+        t_2_Uses AS Uses
+      WHERE
+        (Uses.part = 'scooter')
+     UNION ALL
+    
+      SELECT
+        t_3_Uses.component AS component,
+        ((0) + (1)) AS logica_step
+      FROM
+        t_2_Uses AS t_5_Uses, t_2_Uses AS t_3_Uses
+      WHERE
+        (0 < 2) AND
+        (1 = 0) AND
+        (t_5_Uses.part = 'scooter') AND
+        (t_3_Uses.part = t_5_Uses.component)
+     UNION ALL
+    
+      SELECT
+        t_7_Uses.component AS component,
+        ((((0) + (1))) + (1)) AS logica_step
+      FROM
+        t_2_Uses AS t_11_Uses, t_2_Uses AS t_9_Uses, t_2_Uses AS t_7_Uses
+      WHERE
+        (((0) + (1)) < 2) AND
+        (0 < 2) AND
+        (1 = 0) AND
+        (t_7_Uses.part = t_9_Uses.component) AND
+        (t_11_Uses.part = 'scooter') AND
+        (t_9_Uses.part = t_11_Uses.component)
+     UNION ALL
+    
+      SELECT
+        t_13_Uses.component AS component,
+        ((((((0) + (1))) + (1))) + (1)) AS logica_step
+      FROM
+        t_2_Uses AS t_19_Uses, t_2_Uses AS t_17_Uses, t_2_Uses AS t_15_Uses, t_2_Uses AS t_13_Uses
+      WHERE
+        (((((0) + (1))) + (1)) < 2) AND
+        (((0) + (1)) < 2) AND
+        (0 < 2) AND
+        (1 = 0) AND
+        (t_13_Uses.part = t_15_Uses.component) AND
+        (t_15_Uses.part = t_17_Uses.component) AND
+        (t_19_Uses.part = 'scooter') AND
+        (t_17_Uses.part = t_19_Uses.component)
+    
+  ) AS UNUSED_TABLE_NAME  
+) AS UNUSED_TABLE_NAME
+UNION
+SELECT
+  t_21_Uses.component AS component,
+  ((t_20_Down_RecursiveCte.logica_step) + (1)) AS logica_step
 FROM
-  t_6_Down_MultBodyAggAux_recursive_head_f1 AS Down_MultBodyAggAux_recursive_head_f1
-GROUP BY Down_MultBodyAggAux_recursive_head_f1.component),
-t_3_Down_MultBodyAggAux_recursive_head_f2 AS (SELECT * FROM (
-  
-    SELECT
-      t_4_Uses.component AS component
-    FROM
-      t_5_Down_r0 AS Down_r0, t_9_Uses AS t_4_Uses
-    WHERE
-      (t_4_Uses.part = Down_r0.component)
-   UNION ALL
-  
-    SELECT
-      t_10_Uses.component AS component
-    FROM
-      t_9_Uses AS t_10_Uses
-    WHERE
-      (t_10_Uses.part = 'scooter')
-  
-) AS UNUSED_TABLE_NAME  ),
-t_2_Down_r1 AS (SELECT
-  Down_MultBodyAggAux_recursive_head_f2.component AS component
-FROM
-  t_3_Down_MultBodyAggAux_recursive_head_f2 AS Down_MultBodyAggAux_recursive_head_f2
-GROUP BY Down_MultBodyAggAux_recursive_head_f2.component),
-t_1_Down_MultBodyAggAux_recursive_head_f3 AS (SELECT * FROM (
-  
-    SELECT
-      Uses.component AS component
-    FROM
-      t_2_Down_r1 AS Down_r1, t_9_Uses AS Uses
-    WHERE
-      (Uses.part = Down_r1.component)
-   UNION ALL
-  
-    SELECT
-      t_11_Uses.component AS component
-    FROM
-      t_9_Uses AS t_11_Uses
-    WHERE
-      (t_11_Uses.part = 'scooter')
-  
-) AS UNUSED_TABLE_NAME  ),
+  t_1_Down_RecursiveCte AS t_20_Down_RecursiveCte, t_2_Uses AS t_21_Uses
+WHERE
+  (t_20_Down_RecursiveCte.logica_step < 2) AND
+  (t_21_Uses.part = t_20_Down_RecursiveCte.component)),
 t_0_Down AS (SELECT
-  Down_MultBodyAggAux_recursive_head_f3.component AS component
+  Down_RecursiveCte.component AS component
 FROM
-  t_1_Down_MultBodyAggAux_recursive_head_f3 AS Down_MultBodyAggAux_recursive_head_f3
-GROUP BY Down_MultBodyAggAux_recursive_head_f3.component)
+  t_1_Down_RecursiveCte AS Down_RecursiveCte
+GROUP BY Down_RecursiveCte.component)
 SELECT
   Down.component AS component
 FROM
   t_0_Down AS Down
-GROUP BY Down.component ORDER BY component;
+GROUP BY Down.component ORDER BY component NULLS LAST;

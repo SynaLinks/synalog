@@ -1,4 +1,4 @@
-WITH t_2_Ship AS (SELECT * FROM (
+WITH RECURSIVE t_2_Ship AS (SELECT * FROM (
   
     SELECT
       1 AS id,
@@ -81,168 +81,117 @@ WITH t_2_Ship AS (SELECT * FROM (
       'dhl' AS carrier
   
 ) AS UNUSED_TABLE_NAME  ),
-t_36_Reach_MultBodyAggAux_recursive_head_f1_f10 AS (SELECT * FROM (
-  
-    SELECT
-      t_38_Ship.src AS a,
-      t_38_Ship.dst AS b
-    FROM
-      t_2_Ship AS t_38_Ship
-  
-) AS UNUSED_TABLE_NAME  ),
-t_35_Reach_r0_f10 AS (SELECT
-  Reach_MultBodyAggAux_recursive_head_f1_f10.a AS a,
-  Reach_MultBodyAggAux_recursive_head_f1_f10.b AS b
+t_1_Reach_RecursiveCte_f1 AS (SELECT * FROM (
+  SELECT * FROM (
+    
+      SELECT
+        Ship.src AS a,
+        Ship.dst AS b,
+        0 AS logica_step
+      FROM
+        t_2_Ship AS Ship
+     UNION ALL
+    
+      SELECT
+        t_7_Ship.src AS a,
+        t_5_Ship.dst AS b,
+        ((0) + (1)) AS logica_step
+      FROM
+        t_2_Ship AS t_7_Ship, t_2_Ship AS t_5_Ship
+      WHERE
+        (0 < 6) AND
+        (1 = 0) AND
+        (t_5_Ship.src = t_7_Ship.dst)
+     UNION ALL
+    
+      SELECT
+        t_16_Ship.src AS a,
+        t_12_Ship.dst AS b,
+        ((((0) + (1))) + (1)) AS logica_step
+      FROM
+        t_2_Ship AS t_16_Ship, t_2_Ship AS t_14_Ship, t_2_Ship AS t_12_Ship
+      WHERE
+        (((0) + (1)) < 6) AND
+        (0 < 6) AND
+        (1 = 0) AND
+        (t_12_Ship.src = t_14_Ship.dst) AND
+        (t_14_Ship.src = t_16_Ship.dst)
+     UNION ALL
+    
+      SELECT
+        t_28_Ship.src AS a,
+        t_21_Ship.dst AS b,
+        ((((((0) + (1))) + (1))) + (1)) AS logica_step
+      FROM
+        t_2_Ship AS t_28_Ship, t_2_Ship AS t_26_Ship, t_2_Ship AS t_24_Ship, t_2_Ship AS t_21_Ship
+      WHERE
+        (((((0) + (1))) + (1)) < 6) AND
+        (((0) + (1)) < 6) AND
+        (0 < 6) AND
+        (1 = 0) AND
+        (t_21_Ship.src = t_24_Ship.dst) AND
+        (t_24_Ship.src = t_26_Ship.dst) AND
+        (t_26_Ship.src = t_28_Ship.dst)
+     UNION ALL
+    
+      SELECT
+        t_43_Ship.src AS a,
+        t_33_Ship.dst AS b,
+        ((((((((0) + (1))) + (1))) + (1))) + (1)) AS logica_step
+      FROM
+        t_2_Ship AS t_43_Ship, t_2_Ship AS t_41_Ship, t_2_Ship AS t_39_Ship, t_2_Ship AS t_36_Ship, t_2_Ship AS t_33_Ship
+      WHERE
+        (((((((0) + (1))) + (1))) + (1)) < 6) AND
+        (((((0) + (1))) + (1)) < 6) AND
+        (((0) + (1)) < 6) AND
+        (0 < 6) AND
+        (1 = 0) AND
+        (t_33_Ship.src = t_36_Ship.dst) AND
+        (t_36_Ship.src = t_39_Ship.dst) AND
+        (t_39_Ship.src = t_41_Ship.dst) AND
+        (t_41_Ship.src = t_43_Ship.dst)
+     UNION ALL
+    
+      SELECT
+        t_61_Ship.src AS a,
+        t_48_Ship.dst AS b,
+        ((((((((((0) + (1))) + (1))) + (1))) + (1))) + (1)) AS logica_step
+      FROM
+        t_2_Ship AS t_61_Ship, t_2_Ship AS t_59_Ship, t_2_Ship AS t_57_Ship, t_2_Ship AS t_54_Ship, t_2_Ship AS t_51_Ship, t_2_Ship AS t_48_Ship
+      WHERE
+        (((((((((0) + (1))) + (1))) + (1))) + (1)) < 6) AND
+        (((((((0) + (1))) + (1))) + (1)) < 6) AND
+        (((((0) + (1))) + (1)) < 6) AND
+        (((0) + (1)) < 6) AND
+        (0 < 6) AND
+        (1 = 0) AND
+        (t_48_Ship.src = t_51_Ship.dst) AND
+        (t_51_Ship.src = t_54_Ship.dst) AND
+        (t_54_Ship.src = t_57_Ship.dst) AND
+        (t_57_Ship.src = t_59_Ship.dst) AND
+        (t_59_Ship.src = t_61_Ship.dst)
+    
+  ) AS UNUSED_TABLE_NAME  
+) AS UNUSED_TABLE_NAME
+UNION
+SELECT
+  t_62_Reach_RecursiveCte_f1.a AS a,
+  t_64_Ship.dst AS b,
+  ((t_62_Reach_RecursiveCte_f1.logica_step) + (1)) AS logica_step
 FROM
-  t_36_Reach_MultBodyAggAux_recursive_head_f1_f10 AS Reach_MultBodyAggAux_recursive_head_f1_f10
-GROUP BY Reach_MultBodyAggAux_recursive_head_f1_f10.a, Reach_MultBodyAggAux_recursive_head_f1_f10.b),
-t_30_Reach_MultBodyAggAux_recursive_head_f2_f10 AS (SELECT * FROM (
-  
-    SELECT
-      t_32_Ship.src AS a,
-      t_32_Ship.dst AS b
-    FROM
-      t_2_Ship AS t_32_Ship
-   UNION ALL
-  
-    SELECT
-      Reach_r0_f10.a AS a,
-      t_34_Ship.dst AS b
-    FROM
-      t_35_Reach_r0_f10 AS Reach_r0_f10, t_2_Ship AS t_34_Ship
-    WHERE
-      (Reach_r0_f10.b = t_34_Ship.src)
-  
-) AS UNUSED_TABLE_NAME  ),
-t_29_Reach_r1_f10 AS (SELECT
-  Reach_MultBodyAggAux_recursive_head_f2_f10.a AS a,
-  Reach_MultBodyAggAux_recursive_head_f2_f10.b AS b
-FROM
-  t_30_Reach_MultBodyAggAux_recursive_head_f2_f10 AS Reach_MultBodyAggAux_recursive_head_f2_f10
-GROUP BY Reach_MultBodyAggAux_recursive_head_f2_f10.a, Reach_MultBodyAggAux_recursive_head_f2_f10.b),
-t_24_Reach_MultBodyAggAux_recursive_head_f3_f10 AS (SELECT * FROM (
-  
-    SELECT
-      t_26_Ship.src AS a,
-      t_26_Ship.dst AS b
-    FROM
-      t_2_Ship AS t_26_Ship
-   UNION ALL
-  
-    SELECT
-      Reach_r1_f10.a AS a,
-      t_28_Ship.dst AS b
-    FROM
-      t_29_Reach_r1_f10 AS Reach_r1_f10, t_2_Ship AS t_28_Ship
-    WHERE
-      (Reach_r1_f10.b = t_28_Ship.src)
-  
-) AS UNUSED_TABLE_NAME  ),
-t_23_Reach_r2_f10 AS (SELECT
-  Reach_MultBodyAggAux_recursive_head_f3_f10.a AS a,
-  Reach_MultBodyAggAux_recursive_head_f3_f10.b AS b
-FROM
-  t_24_Reach_MultBodyAggAux_recursive_head_f3_f10 AS Reach_MultBodyAggAux_recursive_head_f3_f10
-GROUP BY Reach_MultBodyAggAux_recursive_head_f3_f10.a, Reach_MultBodyAggAux_recursive_head_f3_f10.b),
-t_18_Reach_MultBodyAggAux_recursive_head_f4_f10 AS (SELECT * FROM (
-  
-    SELECT
-      t_20_Ship.src AS a,
-      t_20_Ship.dst AS b
-    FROM
-      t_2_Ship AS t_20_Ship
-   UNION ALL
-  
-    SELECT
-      Reach_r2_f10.a AS a,
-      t_22_Ship.dst AS b
-    FROM
-      t_23_Reach_r2_f10 AS Reach_r2_f10, t_2_Ship AS t_22_Ship
-    WHERE
-      (Reach_r2_f10.b = t_22_Ship.src)
-  
-) AS UNUSED_TABLE_NAME  ),
-t_17_Reach_r3_f10 AS (SELECT
-  Reach_MultBodyAggAux_recursive_head_f4_f10.a AS a,
-  Reach_MultBodyAggAux_recursive_head_f4_f10.b AS b
-FROM
-  t_18_Reach_MultBodyAggAux_recursive_head_f4_f10 AS Reach_MultBodyAggAux_recursive_head_f4_f10
-GROUP BY Reach_MultBodyAggAux_recursive_head_f4_f10.a, Reach_MultBodyAggAux_recursive_head_f4_f10.b),
-t_12_Reach_MultBodyAggAux_recursive_head_f5_f10 AS (SELECT * FROM (
-  
-    SELECT
-      t_14_Ship.src AS a,
-      t_14_Ship.dst AS b
-    FROM
-      t_2_Ship AS t_14_Ship
-   UNION ALL
-  
-    SELECT
-      Reach_r3_f10.a AS a,
-      t_16_Ship.dst AS b
-    FROM
-      t_17_Reach_r3_f10 AS Reach_r3_f10, t_2_Ship AS t_16_Ship
-    WHERE
-      (Reach_r3_f10.b = t_16_Ship.src)
-  
-) AS UNUSED_TABLE_NAME  ),
-t_11_Reach_r4_f10 AS (SELECT
-  Reach_MultBodyAggAux_recursive_head_f5_f10.a AS a,
-  Reach_MultBodyAggAux_recursive_head_f5_f10.b AS b
-FROM
-  t_12_Reach_MultBodyAggAux_recursive_head_f5_f10 AS Reach_MultBodyAggAux_recursive_head_f5_f10
-GROUP BY Reach_MultBodyAggAux_recursive_head_f5_f10.a, Reach_MultBodyAggAux_recursive_head_f5_f10.b),
-t_6_Reach_MultBodyAggAux_recursive_head_f6_f10 AS (SELECT * FROM (
-  
-    SELECT
-      t_8_Ship.src AS a,
-      t_8_Ship.dst AS b
-    FROM
-      t_2_Ship AS t_8_Ship
-   UNION ALL
-  
-    SELECT
-      Reach_r4_f10.a AS a,
-      t_10_Ship.dst AS b
-    FROM
-      t_11_Reach_r4_f10 AS Reach_r4_f10, t_2_Ship AS t_10_Ship
-    WHERE
-      (Reach_r4_f10.b = t_10_Ship.src)
-  
-) AS UNUSED_TABLE_NAME  ),
-t_5_Reach_r5_f10 AS (SELECT
-  Reach_MultBodyAggAux_recursive_head_f6_f10.a AS a,
-  Reach_MultBodyAggAux_recursive_head_f6_f10.b AS b
-FROM
-  t_6_Reach_MultBodyAggAux_recursive_head_f6_f10 AS Reach_MultBodyAggAux_recursive_head_f6_f10
-GROUP BY Reach_MultBodyAggAux_recursive_head_f6_f10.a, Reach_MultBodyAggAux_recursive_head_f6_f10.b),
-t_1_Reach_MultBodyAggAux_recursive_head_f7_f10 AS (SELECT * FROM (
-  
-    SELECT
-      Ship.src AS a,
-      Ship.dst AS b
-    FROM
-      t_2_Ship AS Ship
-   UNION ALL
-  
-    SELECT
-      Reach_r5_f10.a AS a,
-      t_4_Ship.dst AS b
-    FROM
-      t_5_Reach_r5_f10 AS Reach_r5_f10, t_2_Ship AS t_4_Ship
-    WHERE
-      (Reach_r5_f10.b = t_4_Ship.src)
-  
-) AS UNUSED_TABLE_NAME  ),
+  t_1_Reach_RecursiveCte_f1 AS t_62_Reach_RecursiveCte_f1, t_2_Ship AS t_64_Ship
+WHERE
+  (t_62_Reach_RecursiveCte_f1.logica_step < 6) AND
+  (t_62_Reach_RecursiveCte_f1.b = t_64_Ship.src)),
 t_0_R AS (SELECT
-  Reach_MultBodyAggAux_recursive_head_f7_f10.a AS a,
-  Reach_MultBodyAggAux_recursive_head_f7_f10.b AS b
+  Reach_RecursiveCte_f1.a AS a,
+  Reach_RecursiveCte_f1.b AS b
 FROM
-  t_1_Reach_MultBodyAggAux_recursive_head_f7_f10 AS Reach_MultBodyAggAux_recursive_head_f7_f10
-GROUP BY Reach_MultBodyAggAux_recursive_head_f7_f10.a, Reach_MultBodyAggAux_recursive_head_f7_f10.b)
+  t_1_Reach_RecursiveCte_f1 AS Reach_RecursiveCte_f1
+GROUP BY Reach_RecursiveCte_f1.a, Reach_RecursiveCte_f1.b)
 SELECT
   R.b AS b
 FROM
   t_0_R AS R
 WHERE
-  (R.a = 'milan') ORDER BY b;
+  (R.a = 'milan') ORDER BY b NULLS LAST;

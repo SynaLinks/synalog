@@ -4,87 +4,79 @@ create schema if not exists logica_home;
 drop type if exists logicarecord893574736 cascade; create type logicarecord893574736 as struct(nirvana numeric);
 create sequence if not exists eternal_logical_sequence;
 
-WITH t_6_R_MultBodyAggAux_recursive_head_f1 AS (SELECT * FROM (
+WITH RECURSIVE t_1_R_RecursiveCte_base AS (SELECT * FROM (
   
     SELECT
-      1 AS x
+      1 AS x,
+      0 AS logica_step
    UNION ALL
   
     SELECT
-      10 AS x
+      10 AS x,
+      0 AS logica_step
   
 ) AS UNUSED_TABLE_NAME  ),
-t_5_R_r0 AS (SELECT
-  R_MultBodyAggAux_recursive_head_f1.x AS x
-FROM
-  t_6_R_MultBodyAggAux_recursive_head_f1 AS R_MultBodyAggAux_recursive_head_f1
-GROUP BY R_MultBodyAggAux_recursive_head_f1.x),
-t_4_R_MultBodyAggAux_recursive_head_f2 AS (SELECT * FROM (
-  
-    SELECT
-      ((R_r0.x) + (1)) AS x
-    FROM
-      t_5_R_r0 AS R_r0
-    WHERE
-      ((((R_r0.x) % NULLIF(10, 0)) = 0) OR (R_r0.x = 1))
-   UNION ALL
-  
-    SELECT
-      1 AS x
-   UNION ALL
-  
-    SELECT
-      10 AS x
-  
-) AS UNUSED_TABLE_NAME  ),
-t_3_R_r1 AS (SELECT
-  R_MultBodyAggAux_recursive_head_f2.x AS x
-FROM
-  t_4_R_MultBodyAggAux_recursive_head_f2 AS R_MultBodyAggAux_recursive_head_f2
-GROUP BY R_MultBodyAggAux_recursive_head_f2.x),
-t_2_R_MultBodyAggAux_recursive_head_f3 AS (SELECT * FROM (
-  
-    SELECT
-      ((R_r1.x) + (1)) AS x
-    FROM
-      t_3_R_r1 AS R_r1
-    WHERE
-      ((((R_r1.x) % NULLIF(10, 0)) = 0) OR (R_r1.x = 1))
-   UNION ALL
-  
-    SELECT
-      1 AS x
-   UNION ALL
-  
-    SELECT
-      10 AS x
-  
-) AS UNUSED_TABLE_NAME  ),
-t_1_R_r2 AS (SELECT
-  R_MultBodyAggAux_recursive_head_f3.x AS x
-FROM
-  t_2_R_MultBodyAggAux_recursive_head_f3 AS R_MultBodyAggAux_recursive_head_f3
-GROUP BY R_MultBodyAggAux_recursive_head_f3.x),
-t_0_R_MultBodyAggAux_recursive_head_f4 AS (SELECT * FROM (
-  
-    SELECT
-      ((R_r2.x) + (1)) AS x
-    FROM
-      t_1_R_r2 AS R_r2
-    WHERE
-      ((((R_r2.x) % NULLIF(10, 0)) = 0) OR (R_r2.x = 1))
-   UNION ALL
-  
-    SELECT
-      1 AS x
-   UNION ALL
-  
-    SELECT
-      10 AS x
-  
-) AS UNUSED_TABLE_NAME  )
+t_0_R_RecursiveCte AS (SELECT * FROM (
+  SELECT * FROM (
+    
+      SELECT
+        R_RecursiveCte_base.x AS x,
+        R_RecursiveCte_base.logica_step AS logica_step
+      FROM
+        t_1_R_RecursiveCte_base AS R_RecursiveCte_base
+     UNION ALL
+    
+      SELECT
+        ((t_2_R_RecursiveCte_base.x) + (1)) AS x,
+        ((t_2_R_RecursiveCte_base.logica_step) + (1)) AS logica_step
+      FROM
+        t_1_R_RecursiveCte_base AS t_2_R_RecursiveCte_base
+      WHERE
+        ((((t_2_R_RecursiveCte_base.x) % NULLIF(10, 0)) = 0) OR (t_2_R_RecursiveCte_base.x = 1)) AND
+        (t_2_R_RecursiveCte_base.logica_step < 3) AND
+        (1 = 0)
+     UNION ALL
+    
+      SELECT
+        ((((t_5_R_RecursiveCte_base.x) + (1))) + (1)) AS x,
+        ((((t_5_R_RecursiveCte_base.logica_step) + (1))) + (1)) AS logica_step
+      FROM
+        t_1_R_RecursiveCte_base AS t_5_R_RecursiveCte_base
+      WHERE
+        ((((((t_5_R_RecursiveCte_base.x) + (1))) % NULLIF(10, 0)) = 0) OR (((t_5_R_RecursiveCte_base.x) + (1)) = 1)) AND
+        (((t_5_R_RecursiveCte_base.logica_step) + (1)) < 3) AND
+        ((((t_5_R_RecursiveCte_base.x) % NULLIF(10, 0)) = 0) OR (t_5_R_RecursiveCte_base.x = 1)) AND
+        (t_5_R_RecursiveCte_base.logica_step < 3) AND
+        (1 = 0)
+     UNION ALL
+    
+      SELECT
+        ((((((t_9_R_RecursiveCte_base.x) + (1))) + (1))) + (1)) AS x,
+        ((((((t_9_R_RecursiveCte_base.logica_step) + (1))) + (1))) + (1)) AS logica_step
+      FROM
+        t_1_R_RecursiveCte_base AS t_9_R_RecursiveCte_base
+      WHERE
+        ((((((((t_9_R_RecursiveCte_base.x) + (1))) + (1))) % NULLIF(10, 0)) = 0) OR (((((t_9_R_RecursiveCte_base.x) + (1))) + (1)) = 1)) AND
+        (((((t_9_R_RecursiveCte_base.logica_step) + (1))) + (1)) < 3) AND
+        ((((((t_9_R_RecursiveCte_base.x) + (1))) % NULLIF(10, 0)) = 0) OR (((t_9_R_RecursiveCte_base.x) + (1)) = 1)) AND
+        (((t_9_R_RecursiveCte_base.logica_step) + (1)) < 3) AND
+        ((((t_9_R_RecursiveCte_base.x) % NULLIF(10, 0)) = 0) OR (t_9_R_RecursiveCte_base.x = 1)) AND
+        (t_9_R_RecursiveCte_base.logica_step < 3) AND
+        (1 = 0)
+    
+  ) AS UNUSED_TABLE_NAME  
+) AS UNUSED_TABLE_NAME
+UNION
 SELECT
-  R_MultBodyAggAux_recursive_head_f4.x AS x
+  ((t_10_R_RecursiveCte.x) + (1)) AS x,
+  ((t_10_R_RecursiveCte.logica_step) + (1)) AS logica_step
 FROM
-  t_0_R_MultBodyAggAux_recursive_head_f4 AS R_MultBodyAggAux_recursive_head_f4
-GROUP BY R_MultBodyAggAux_recursive_head_f4.x ORDER BY x;
+  t_0_R_RecursiveCte AS t_10_R_RecursiveCte
+WHERE
+  ((((t_10_R_RecursiveCte.x) % NULLIF(10, 0)) = 0) OR (t_10_R_RecursiveCte.x = 1)) AND
+  (t_10_R_RecursiveCte.logica_step < 3))
+SELECT
+  R_RecursiveCte.x AS x
+FROM
+  t_0_R_RecursiveCte AS R_RecursiveCte
+GROUP BY R_RecursiveCte.x ORDER BY x;

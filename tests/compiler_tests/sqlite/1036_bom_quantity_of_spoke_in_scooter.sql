@@ -1,4 +1,4 @@
-WITH t_21_Uses AS (SELECT * FROM (
+WITH RECURSIVE t_2_Uses AS (SELECT * FROM (
   
     SELECT
       'bike' AS part,
@@ -54,205 +54,238 @@ WITH t_21_Uses AS (SELECT * FROM (
       1 AS qty
   
 ) AS UNUSED_TABLE_NAME  ),
-t_18_Need_MultBodyAggAux_recursive_head_f1 AS (SELECT * FROM (
-  
-    SELECT
-      t_20_Uses.part AS part,
-      t_20_Uses.component AS component,
-      t_20_Uses.component AS path_id,
-      t_20_Uses.qty AS n
-    FROM
-      t_21_Uses AS t_20_Uses
-  
-) AS UNUSED_TABLE_NAME  ),
-t_17_Need_r0 AS (SELECT
-  Need_MultBodyAggAux_recursive_head_f1.part AS part,
-  Need_MultBodyAggAux_recursive_head_f1.component AS component,
-  Need_MultBodyAggAux_recursive_head_f1.path_id AS path_id,
-  Need_MultBodyAggAux_recursive_head_f1.n AS n
+t_1_Need_RecursiveCte AS (SELECT * FROM (
+  SELECT * FROM (
+    
+      SELECT
+        Uses.part AS part,
+        Uses.component AS component,
+        Uses.component AS path_id,
+        Uses.qty AS n,
+        0 AS logica_step
+      FROM
+        t_2_Uses AS Uses
+     UNION ALL
+    
+      SELECT
+        t_5_Uses.part AS part,
+        t_3_Uses.component AS component,
+        ((((t_5_Uses.component) || ('/'))) || (t_3_Uses.component)) AS path_id,
+        ((t_5_Uses.qty) * (t_3_Uses.qty)) AS n,
+        ((0) + (1)) AS logica_step
+      FROM
+        t_2_Uses AS t_5_Uses, t_2_Uses AS t_3_Uses
+      WHERE
+        (0 < 6) AND
+        (1 = 0) AND
+        (t_3_Uses.part = t_5_Uses.component)
+     UNION ALL
+    
+      SELECT
+        t_11_Uses.part AS part,
+        t_7_Uses.component AS component,
+        ((((((((t_11_Uses.component) || ('/'))) || (t_9_Uses.component))) || ('/'))) || (t_7_Uses.component)) AS path_id,
+        ((((t_11_Uses.qty) * (t_9_Uses.qty))) * (t_7_Uses.qty)) AS n,
+        ((((0) + (1))) + (1)) AS logica_step
+      FROM
+        t_2_Uses AS t_11_Uses, t_2_Uses AS t_9_Uses, t_2_Uses AS t_7_Uses
+      WHERE
+        (((0) + (1)) < 6) AND
+        (0 < 6) AND
+        (1 = 0) AND
+        (t_7_Uses.part = t_9_Uses.component) AND
+        (t_9_Uses.part = t_11_Uses.component)
+     UNION ALL
+    
+      SELECT
+        t_19_Uses.part AS part,
+        t_13_Uses.component AS component,
+        ((((((((((((t_19_Uses.component) || ('/'))) || (t_17_Uses.component))) || ('/'))) || (t_15_Uses.component))) || ('/'))) || (t_13_Uses.component)) AS path_id,
+        ((((((t_19_Uses.qty) * (t_17_Uses.qty))) * (t_15_Uses.qty))) * (t_13_Uses.qty)) AS n,
+        ((((((0) + (1))) + (1))) + (1)) AS logica_step
+      FROM
+        t_2_Uses AS t_19_Uses, t_2_Uses AS t_17_Uses, t_2_Uses AS t_15_Uses, t_2_Uses AS t_13_Uses
+      WHERE
+        (((((0) + (1))) + (1)) < 6) AND
+        (((0) + (1)) < 6) AND
+        (0 < 6) AND
+        (1 = 0) AND
+        (t_13_Uses.part = t_15_Uses.component) AND
+        (t_15_Uses.part = t_17_Uses.component) AND
+        (t_17_Uses.part = t_19_Uses.component)
+     UNION ALL
+    
+      SELECT
+        t_29_Uses.part AS part,
+        t_21_Uses.component AS component,
+        ((((((((((((((((t_29_Uses.component) || ('/'))) || (t_27_Uses.component))) || ('/'))) || (t_25_Uses.component))) || ('/'))) || (t_23_Uses.component))) || ('/'))) || (t_21_Uses.component)) AS path_id,
+        ((((((((t_29_Uses.qty) * (t_27_Uses.qty))) * (t_25_Uses.qty))) * (t_23_Uses.qty))) * (t_21_Uses.qty)) AS n,
+        ((((((((0) + (1))) + (1))) + (1))) + (1)) AS logica_step
+      FROM
+        t_2_Uses AS t_29_Uses, t_2_Uses AS t_27_Uses, t_2_Uses AS t_25_Uses, t_2_Uses AS t_23_Uses, t_2_Uses AS t_21_Uses
+      WHERE
+        (((((((0) + (1))) + (1))) + (1)) < 6) AND
+        (((((0) + (1))) + (1)) < 6) AND
+        (((0) + (1)) < 6) AND
+        (0 < 6) AND
+        (1 = 0) AND
+        (t_21_Uses.part = t_23_Uses.component) AND
+        (t_23_Uses.part = t_25_Uses.component) AND
+        (t_25_Uses.part = t_27_Uses.component) AND
+        (t_27_Uses.part = t_29_Uses.component)
+     UNION ALL
+    
+      SELECT
+        t_41_Uses.part AS part,
+        t_31_Uses.component AS component,
+        ((((((((((((((((((((t_41_Uses.component) || ('/'))) || (t_39_Uses.component))) || ('/'))) || (t_37_Uses.component))) || ('/'))) || (t_35_Uses.component))) || ('/'))) || (t_33_Uses.component))) || ('/'))) || (t_31_Uses.component)) AS path_id,
+        ((((((((((t_41_Uses.qty) * (t_39_Uses.qty))) * (t_37_Uses.qty))) * (t_35_Uses.qty))) * (t_33_Uses.qty))) * (t_31_Uses.qty)) AS n,
+        ((((((((((0) + (1))) + (1))) + (1))) + (1))) + (1)) AS logica_step
+      FROM
+        t_2_Uses AS t_41_Uses, t_2_Uses AS t_39_Uses, t_2_Uses AS t_37_Uses, t_2_Uses AS t_35_Uses, t_2_Uses AS t_33_Uses, t_2_Uses AS t_31_Uses
+      WHERE
+        (((((((((0) + (1))) + (1))) + (1))) + (1)) < 6) AND
+        (((((((0) + (1))) + (1))) + (1)) < 6) AND
+        (((((0) + (1))) + (1)) < 6) AND
+        (((0) + (1)) < 6) AND
+        (0 < 6) AND
+        (1 = 0) AND
+        (t_31_Uses.part = t_33_Uses.component) AND
+        (t_33_Uses.part = t_35_Uses.component) AND
+        (t_35_Uses.part = t_37_Uses.component) AND
+        (t_37_Uses.part = t_39_Uses.component) AND
+        (t_39_Uses.part = t_41_Uses.component)
+     UNION ALL
+    
+      SELECT
+        t_55_Uses.part AS part,
+        t_43_Uses.component AS component,
+        ((((((((((((((((((((((((t_55_Uses.component) || ('/'))) || (t_53_Uses.component))) || ('/'))) || (t_51_Uses.component))) || ('/'))) || (t_49_Uses.component))) || ('/'))) || (t_47_Uses.component))) || ('/'))) || (t_45_Uses.component))) || ('/'))) || (t_43_Uses.component)) AS path_id,
+        ((((((((((((t_55_Uses.qty) * (t_53_Uses.qty))) * (t_51_Uses.qty))) * (t_49_Uses.qty))) * (t_47_Uses.qty))) * (t_45_Uses.qty))) * (t_43_Uses.qty)) AS n,
+        ((((((((((((0) + (1))) + (1))) + (1))) + (1))) + (1))) + (1)) AS logica_step
+      FROM
+        t_2_Uses AS t_55_Uses, t_2_Uses AS t_53_Uses, t_2_Uses AS t_51_Uses, t_2_Uses AS t_49_Uses, t_2_Uses AS t_47_Uses, t_2_Uses AS t_45_Uses, t_2_Uses AS t_43_Uses
+      WHERE
+        (((((((((((0) + (1))) + (1))) + (1))) + (1))) + (1)) < 6) AND
+        (((((((((0) + (1))) + (1))) + (1))) + (1)) < 6) AND
+        (((((((0) + (1))) + (1))) + (1)) < 6) AND
+        (((((0) + (1))) + (1)) < 6) AND
+        (((0) + (1)) < 6) AND
+        (0 < 6) AND
+        (1 = 0) AND
+        (t_43_Uses.part = t_45_Uses.component) AND
+        (t_45_Uses.part = t_47_Uses.component) AND
+        (t_47_Uses.part = t_49_Uses.component) AND
+        (t_49_Uses.part = t_51_Uses.component) AND
+        (t_51_Uses.part = t_53_Uses.component) AND
+        (t_53_Uses.part = t_55_Uses.component)
+     UNION ALL
+    
+      SELECT
+        t_71_Uses.part AS part,
+        t_57_Uses.component AS component,
+        ((((((((((((((((((((((((((((t_71_Uses.component) || ('/'))) || (t_69_Uses.component))) || ('/'))) || (t_67_Uses.component))) || ('/'))) || (t_65_Uses.component))) || ('/'))) || (t_63_Uses.component))) || ('/'))) || (t_61_Uses.component))) || ('/'))) || (t_59_Uses.component))) || ('/'))) || (t_57_Uses.component)) AS path_id,
+        ((((((((((((((t_71_Uses.qty) * (t_69_Uses.qty))) * (t_67_Uses.qty))) * (t_65_Uses.qty))) * (t_63_Uses.qty))) * (t_61_Uses.qty))) * (t_59_Uses.qty))) * (t_57_Uses.qty)) AS n,
+        ((x_553.value) + (1)) AS logica_step
+      FROM
+        t_2_Uses AS t_71_Uses, t_2_Uses AS t_69_Uses, t_2_Uses AS t_67_Uses, t_2_Uses AS t_65_Uses, t_2_Uses AS t_63_Uses, t_2_Uses AS t_61_Uses, t_2_Uses AS t_59_Uses, t_2_Uses AS t_57_Uses, JSON_EACH(JSON_ARRAY(((((((((((((0) + (1))) + (1))) + (1))) + (1))) + (1))) + (1)))) as x_553
+      WHERE
+        (x_553.value < 6) AND
+        (((((((((((0) + (1))) + (1))) + (1))) + (1))) + (1)) < 6) AND
+        (((((((((0) + (1))) + (1))) + (1))) + (1)) < 6) AND
+        (((((((0) + (1))) + (1))) + (1)) < 6) AND
+        (((((0) + (1))) + (1)) < 6) AND
+        (((0) + (1)) < 6) AND
+        (0 < 6) AND
+        (1 = 0) AND
+        (t_57_Uses.part = t_59_Uses.component) AND
+        (t_59_Uses.part = t_61_Uses.component) AND
+        (t_61_Uses.part = t_63_Uses.component) AND
+        (t_63_Uses.part = t_65_Uses.component) AND
+        (t_65_Uses.part = t_67_Uses.component) AND
+        (t_67_Uses.part = t_69_Uses.component) AND
+        (t_69_Uses.part = t_71_Uses.component)
+     UNION ALL
+    
+      SELECT
+        t_89_Uses.part AS part,
+        t_73_Uses.component AS component,
+        ((((((((((((((((((((((((((((((((t_89_Uses.component) || ('/'))) || (t_87_Uses.component))) || ('/'))) || (t_85_Uses.component))) || ('/'))) || (t_83_Uses.component))) || ('/'))) || (t_81_Uses.component))) || ('/'))) || (t_79_Uses.component))) || ('/'))) || (t_77_Uses.component))) || ('/'))) || (t_75_Uses.component))) || ('/'))) || (t_73_Uses.component)) AS path_id,
+        ((((((((((((((((t_89_Uses.qty) * (t_87_Uses.qty))) * (t_85_Uses.qty))) * (t_83_Uses.qty))) * (t_81_Uses.qty))) * (t_79_Uses.qty))) * (t_77_Uses.qty))) * (t_75_Uses.qty))) * (t_73_Uses.qty)) AS n,
+        ((((x_677.value) + (1))) + (1)) AS logica_step
+      FROM
+        t_2_Uses AS t_89_Uses, t_2_Uses AS t_87_Uses, t_2_Uses AS t_85_Uses, t_2_Uses AS t_83_Uses, t_2_Uses AS t_81_Uses, t_2_Uses AS t_79_Uses, t_2_Uses AS t_77_Uses, t_2_Uses AS t_75_Uses, t_2_Uses AS t_73_Uses, JSON_EACH(JSON_ARRAY(((((((((((((0) + (1))) + (1))) + (1))) + (1))) + (1))) + (1)))) as x_677
+      WHERE
+        (((x_677.value) + (1)) < 6) AND
+        (x_677.value < 6) AND
+        (((((((((((0) + (1))) + (1))) + (1))) + (1))) + (1)) < 6) AND
+        (((((((((0) + (1))) + (1))) + (1))) + (1)) < 6) AND
+        (((((((0) + (1))) + (1))) + (1)) < 6) AND
+        (((((0) + (1))) + (1)) < 6) AND
+        (((0) + (1)) < 6) AND
+        (0 < 6) AND
+        (1 = 0) AND
+        (t_73_Uses.part = t_75_Uses.component) AND
+        (t_75_Uses.part = t_77_Uses.component) AND
+        (t_77_Uses.part = t_79_Uses.component) AND
+        (t_79_Uses.part = t_81_Uses.component) AND
+        (t_81_Uses.part = t_83_Uses.component) AND
+        (t_83_Uses.part = t_85_Uses.component) AND
+        (t_85_Uses.part = t_87_Uses.component) AND
+        (t_87_Uses.part = t_89_Uses.component)
+     UNION ALL
+    
+      SELECT
+        t_109_Uses.part AS part,
+        t_91_Uses.component AS component,
+        ((((((((((((((((((((((((((((((((((((t_109_Uses.component) || ('/'))) || (t_107_Uses.component))) || ('/'))) || (t_105_Uses.component))) || ('/'))) || (t_103_Uses.component))) || ('/'))) || (t_101_Uses.component))) || ('/'))) || (t_99_Uses.component))) || ('/'))) || (t_97_Uses.component))) || ('/'))) || (t_95_Uses.component))) || ('/'))) || (t_93_Uses.component))) || ('/'))) || (t_91_Uses.component)) AS path_id,
+        ((((((((((((((((((t_109_Uses.qty) * (t_107_Uses.qty))) * (t_105_Uses.qty))) * (t_103_Uses.qty))) * (t_101_Uses.qty))) * (t_99_Uses.qty))) * (t_97_Uses.qty))) * (t_95_Uses.qty))) * (t_93_Uses.qty))) * (t_91_Uses.qty)) AS n,
+        ((((((x_813.value) + (1))) + (1))) + (1)) AS logica_step
+      FROM
+        t_2_Uses AS t_109_Uses, t_2_Uses AS t_107_Uses, t_2_Uses AS t_105_Uses, t_2_Uses AS t_103_Uses, t_2_Uses AS t_101_Uses, t_2_Uses AS t_99_Uses, t_2_Uses AS t_97_Uses, t_2_Uses AS t_95_Uses, t_2_Uses AS t_93_Uses, t_2_Uses AS t_91_Uses, JSON_EACH(JSON_ARRAY(((((((((((((0) + (1))) + (1))) + (1))) + (1))) + (1))) + (1)))) as x_813
+      WHERE
+        (((((x_813.value) + (1))) + (1)) < 6) AND
+        (((x_813.value) + (1)) < 6) AND
+        (x_813.value < 6) AND
+        (((((((((((0) + (1))) + (1))) + (1))) + (1))) + (1)) < 6) AND
+        (((((((((0) + (1))) + (1))) + (1))) + (1)) < 6) AND
+        (((((((0) + (1))) + (1))) + (1)) < 6) AND
+        (((((0) + (1))) + (1)) < 6) AND
+        (((0) + (1)) < 6) AND
+        (0 < 6) AND
+        (1 = 0) AND
+        (t_91_Uses.part = t_93_Uses.component) AND
+        (t_93_Uses.part = t_95_Uses.component) AND
+        (t_95_Uses.part = t_97_Uses.component) AND
+        (t_97_Uses.part = t_99_Uses.component) AND
+        (t_99_Uses.part = t_101_Uses.component) AND
+        (t_101_Uses.part = t_103_Uses.component) AND
+        (t_103_Uses.part = t_105_Uses.component) AND
+        (t_105_Uses.part = t_107_Uses.component) AND
+        (t_107_Uses.part = t_109_Uses.component)
+    
+  ) AS UNUSED_TABLE_NAME  
+) AS UNUSED_TABLE_NAME
+UNION
+SELECT
+  t_110_Need_RecursiveCte.part AS part,
+  t_111_Uses.component AS component,
+  ((((t_110_Need_RecursiveCte.path_id) || ('/'))) || (t_111_Uses.component)) AS path_id,
+  ((t_110_Need_RecursiveCte.n) * (t_111_Uses.qty)) AS n,
+  ((t_110_Need_RecursiveCte.logica_step) + (1)) AS logica_step
 FROM
-  t_18_Need_MultBodyAggAux_recursive_head_f1 AS Need_MultBodyAggAux_recursive_head_f1
-GROUP BY Need_MultBodyAggAux_recursive_head_f1.part, Need_MultBodyAggAux_recursive_head_f1.component, Need_MultBodyAggAux_recursive_head_f1.path_id, Need_MultBodyAggAux_recursive_head_f1.n),
-t_15_Need_MultBodyAggAux_recursive_head_f2 AS (SELECT * FROM (
-  
-    SELECT
-      Need_r0.part AS part,
-      t_16_Uses.component AS component,
-      ((((Need_r0.path_id) || ('/'))) || (t_16_Uses.component)) AS path_id,
-      ((Need_r0.n) * (t_16_Uses.qty)) AS n
-    FROM
-      t_17_Need_r0 AS Need_r0, t_21_Uses AS t_16_Uses
-    WHERE
-      (t_16_Uses.part = Need_r0.component)
-   UNION ALL
-  
-    SELECT
-      t_22_Uses.part AS part,
-      t_22_Uses.component AS component,
-      t_22_Uses.component AS path_id,
-      t_22_Uses.qty AS n
-    FROM
-      t_21_Uses AS t_22_Uses
-  
-) AS UNUSED_TABLE_NAME  ),
-t_14_Need_r1 AS (SELECT
-  Need_MultBodyAggAux_recursive_head_f2.part AS part,
-  Need_MultBodyAggAux_recursive_head_f2.component AS component,
-  Need_MultBodyAggAux_recursive_head_f2.path_id AS path_id,
-  Need_MultBodyAggAux_recursive_head_f2.n AS n
-FROM
-  t_15_Need_MultBodyAggAux_recursive_head_f2 AS Need_MultBodyAggAux_recursive_head_f2
-GROUP BY Need_MultBodyAggAux_recursive_head_f2.part, Need_MultBodyAggAux_recursive_head_f2.component, Need_MultBodyAggAux_recursive_head_f2.path_id, Need_MultBodyAggAux_recursive_head_f2.n),
-t_12_Need_MultBodyAggAux_recursive_head_f3 AS (SELECT * FROM (
-  
-    SELECT
-      Need_r1.part AS part,
-      t_13_Uses.component AS component,
-      ((((Need_r1.path_id) || ('/'))) || (t_13_Uses.component)) AS path_id,
-      ((Need_r1.n) * (t_13_Uses.qty)) AS n
-    FROM
-      t_14_Need_r1 AS Need_r1, t_21_Uses AS t_13_Uses
-    WHERE
-      (t_13_Uses.part = Need_r1.component)
-   UNION ALL
-  
-    SELECT
-      t_23_Uses.part AS part,
-      t_23_Uses.component AS component,
-      t_23_Uses.component AS path_id,
-      t_23_Uses.qty AS n
-    FROM
-      t_21_Uses AS t_23_Uses
-  
-) AS UNUSED_TABLE_NAME  ),
-t_11_Need_r2 AS (SELECT
-  Need_MultBodyAggAux_recursive_head_f3.part AS part,
-  Need_MultBodyAggAux_recursive_head_f3.component AS component,
-  Need_MultBodyAggAux_recursive_head_f3.path_id AS path_id,
-  Need_MultBodyAggAux_recursive_head_f3.n AS n
-FROM
-  t_12_Need_MultBodyAggAux_recursive_head_f3 AS Need_MultBodyAggAux_recursive_head_f3
-GROUP BY Need_MultBodyAggAux_recursive_head_f3.part, Need_MultBodyAggAux_recursive_head_f3.component, Need_MultBodyAggAux_recursive_head_f3.path_id, Need_MultBodyAggAux_recursive_head_f3.n),
-t_9_Need_MultBodyAggAux_recursive_head_f4 AS (SELECT * FROM (
-  
-    SELECT
-      Need_r2.part AS part,
-      t_10_Uses.component AS component,
-      ((((Need_r2.path_id) || ('/'))) || (t_10_Uses.component)) AS path_id,
-      ((Need_r2.n) * (t_10_Uses.qty)) AS n
-    FROM
-      t_11_Need_r2 AS Need_r2, t_21_Uses AS t_10_Uses
-    WHERE
-      (t_10_Uses.part = Need_r2.component)
-   UNION ALL
-  
-    SELECT
-      t_24_Uses.part AS part,
-      t_24_Uses.component AS component,
-      t_24_Uses.component AS path_id,
-      t_24_Uses.qty AS n
-    FROM
-      t_21_Uses AS t_24_Uses
-  
-) AS UNUSED_TABLE_NAME  ),
-t_8_Need_r3 AS (SELECT
-  Need_MultBodyAggAux_recursive_head_f4.part AS part,
-  Need_MultBodyAggAux_recursive_head_f4.component AS component,
-  Need_MultBodyAggAux_recursive_head_f4.path_id AS path_id,
-  Need_MultBodyAggAux_recursive_head_f4.n AS n
-FROM
-  t_9_Need_MultBodyAggAux_recursive_head_f4 AS Need_MultBodyAggAux_recursive_head_f4
-GROUP BY Need_MultBodyAggAux_recursive_head_f4.part, Need_MultBodyAggAux_recursive_head_f4.component, Need_MultBodyAggAux_recursive_head_f4.path_id, Need_MultBodyAggAux_recursive_head_f4.n),
-t_6_Need_MultBodyAggAux_recursive_head_f5 AS (SELECT * FROM (
-  
-    SELECT
-      Need_r3.part AS part,
-      t_7_Uses.component AS component,
-      ((((Need_r3.path_id) || ('/'))) || (t_7_Uses.component)) AS path_id,
-      ((Need_r3.n) * (t_7_Uses.qty)) AS n
-    FROM
-      t_8_Need_r3 AS Need_r3, t_21_Uses AS t_7_Uses
-    WHERE
-      (t_7_Uses.part = Need_r3.component)
-   UNION ALL
-  
-    SELECT
-      t_25_Uses.part AS part,
-      t_25_Uses.component AS component,
-      t_25_Uses.component AS path_id,
-      t_25_Uses.qty AS n
-    FROM
-      t_21_Uses AS t_25_Uses
-  
-) AS UNUSED_TABLE_NAME  ),
-t_5_Need_r4 AS (SELECT
-  Need_MultBodyAggAux_recursive_head_f5.part AS part,
-  Need_MultBodyAggAux_recursive_head_f5.component AS component,
-  Need_MultBodyAggAux_recursive_head_f5.path_id AS path_id,
-  Need_MultBodyAggAux_recursive_head_f5.n AS n
-FROM
-  t_6_Need_MultBodyAggAux_recursive_head_f5 AS Need_MultBodyAggAux_recursive_head_f5
-GROUP BY Need_MultBodyAggAux_recursive_head_f5.part, Need_MultBodyAggAux_recursive_head_f5.component, Need_MultBodyAggAux_recursive_head_f5.path_id, Need_MultBodyAggAux_recursive_head_f5.n),
-t_3_Need_MultBodyAggAux_recursive_head_f6 AS (SELECT * FROM (
-  
-    SELECT
-      Need_r4.part AS part,
-      t_4_Uses.component AS component,
-      ((((Need_r4.path_id) || ('/'))) || (t_4_Uses.component)) AS path_id,
-      ((Need_r4.n) * (t_4_Uses.qty)) AS n
-    FROM
-      t_5_Need_r4 AS Need_r4, t_21_Uses AS t_4_Uses
-    WHERE
-      (t_4_Uses.part = Need_r4.component)
-   UNION ALL
-  
-    SELECT
-      t_26_Uses.part AS part,
-      t_26_Uses.component AS component,
-      t_26_Uses.component AS path_id,
-      t_26_Uses.qty AS n
-    FROM
-      t_21_Uses AS t_26_Uses
-  
-) AS UNUSED_TABLE_NAME  ),
-t_2_Need_r5 AS (SELECT
-  Need_MultBodyAggAux_recursive_head_f6.part AS part,
-  Need_MultBodyAggAux_recursive_head_f6.component AS component,
-  Need_MultBodyAggAux_recursive_head_f6.path_id AS path_id,
-  Need_MultBodyAggAux_recursive_head_f6.n AS n
-FROM
-  t_3_Need_MultBodyAggAux_recursive_head_f6 AS Need_MultBodyAggAux_recursive_head_f6
-GROUP BY Need_MultBodyAggAux_recursive_head_f6.part, Need_MultBodyAggAux_recursive_head_f6.component, Need_MultBodyAggAux_recursive_head_f6.path_id, Need_MultBodyAggAux_recursive_head_f6.n),
-t_1_Need_MultBodyAggAux_recursive_head_f7 AS (SELECT * FROM (
-  
-    SELECT
-      Need_r5.part AS part,
-      Uses.component AS component,
-      ((((Need_r5.path_id) || ('/'))) || (Uses.component)) AS path_id,
-      ((Need_r5.n) * (Uses.qty)) AS n
-    FROM
-      t_2_Need_r5 AS Need_r5, t_21_Uses AS Uses
-    WHERE
-      (Uses.part = Need_r5.component)
-   UNION ALL
-  
-    SELECT
-      t_27_Uses.part AS part,
-      t_27_Uses.component AS component,
-      t_27_Uses.component AS path_id,
-      t_27_Uses.qty AS n
-    FROM
-      t_21_Uses AS t_27_Uses
-  
-) AS UNUSED_TABLE_NAME  ),
+  t_1_Need_RecursiveCte AS t_110_Need_RecursiveCte, t_2_Uses AS t_111_Uses
+WHERE
+  (t_110_Need_RecursiveCte.logica_step < 6) AND
+  (t_111_Uses.part = t_110_Need_RecursiveCte.component)),
 t_0_Need AS (SELECT
-  Need_MultBodyAggAux_recursive_head_f7.part AS part,
-  Need_MultBodyAggAux_recursive_head_f7.component AS component,
-  Need_MultBodyAggAux_recursive_head_f7.path_id AS path_id,
-  Need_MultBodyAggAux_recursive_head_f7.n AS n
+  Need_RecursiveCte.part AS part,
+  Need_RecursiveCte.component AS component,
+  Need_RecursiveCte.path_id AS path_id,
+  Need_RecursiveCte.n AS n
 FROM
-  t_1_Need_MultBodyAggAux_recursive_head_f7 AS Need_MultBodyAggAux_recursive_head_f7
-GROUP BY Need_MultBodyAggAux_recursive_head_f7.part, Need_MultBodyAggAux_recursive_head_f7.component, Need_MultBodyAggAux_recursive_head_f7.path_id, Need_MultBodyAggAux_recursive_head_f7.n)
+  t_1_Need_RecursiveCte AS Need_RecursiveCte
+GROUP BY Need_RecursiveCte.part, Need_RecursiveCte.component, Need_RecursiveCte.path_id, Need_RecursiveCte.n)
 SELECT
   SUM(Need.n) AS q
 FROM

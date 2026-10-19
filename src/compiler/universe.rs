@@ -192,6 +192,11 @@ pub struct Logica {
     pub table_to_with_dependencies: HashMap<String, Vec<String>>,
     /// Track which parent predicates had WITH tables compiled for them.
     pub with_compilation_done_for_parent: HashMap<String, HashSet<String>>,
+    /// The recursive queries among the WITH tables (allocated names): the
+    /// WITH that holds one is `WITH RECURSIVE`.
+    pub recursive_with_tables: HashSet<String>,
+    /// The recursive queries being compiled: their steps read them by name.
+    pub recursive_ctes_compiling: HashSet<String>,
     /// Dependency edges for the execution graph.
     pub dependency_edges: Vec<(String, String)>,
     /// Data dependency edges (for unknown/external tables).
@@ -314,6 +319,8 @@ impl Logica {
             table_to_with_sql_map: HashMap::new(),
             table_to_with_dependencies: HashMap::new(),
             with_compilation_done_for_parent: HashMap::new(),
+            recursive_with_tables: HashSet::new(),
+            recursive_ctes_compiling: HashSet::new(),
             dependency_edges: Vec::new(),
             data_dependency_edges: Vec::new(),
             table_to_export_map: HashMap::new(),
@@ -1249,10 +1256,13 @@ impl LogicaProgram {
                 // reads its parent. A database table has no rules to look at.
                 let nests_a_subquery = s.external_vocabulary.as_ref().is_some_and(|v| !v.is_empty())
                     && rules.first().is_some_and(|rule| rule.as_object().get("body").is_some_and(has_subquery));
+                // A recursive query's one rule only types it: it is read as
+                // the query (`translate_recursive_cte`).
                 let is_injectable = rules.len() == 1
                     && !rules[0].as_object().contains_key("distinct_denoted")
                     && !nests_a_subquery
-                    && self.annotations.ok_injection(table_predicate_rsql);
+                    && self.annotations.ok_injection(table_predicate_rsql)
+                    && self.recursive_cte_parts(table_predicate_rsql).is_none();
 
                 if is_injectable {
                     // Share allocator with the injected rule (matching Python)
@@ -2030,10 +2040,12 @@ impl LogicaProgram {
         }
 
         let mut with_bodies = Vec::new();
+        let mut recursive = false;
         for dep in dependencies {
             if let Some(table_name) = exec_ref.table_to_defined_table_map.get(dep) {
                 if let Some(sql) = exec_ref.table_to_with_sql_map.get(table_name) {
                     with_bodies.push(format!("{} AS ({})", table_name, sql));
+                    recursive |= exec_ref.recursive_with_tables.contains(table_name);
                 }
             }
         }
@@ -2042,7 +2054,8 @@ impl LogicaProgram {
             return None;
         }
 
-        Some(format!("WITH {}", with_bodies.join(",\n")))
+        let with = if recursive { "WITH RECURSIVE" } else { "WITH" };
+        Some(format!("{} {}", with, with_bodies.join(",\n")))
     }
 
     /// Translate a table that should be defined in a WITH clause.
@@ -2139,6 +2152,99 @@ impl LogicaProgram {
         let exec = self.execution.borrow();
         let exec_ref = exec.as_ref().unwrap();
         Ok(exec_ref.table_to_defined_table_map[table].clone())
+    }
+
+    /// The first rows and the steps of `table` when it is a recursion written
+    /// as one recursive query (`functors::recursive_cte_name`), else `None`.
+    fn recursive_cte_parts(&self, table: &str) -> Option<(String, Vec<String>)> {
+        let (stem, suffix) = crate::compiler::functors::recursive_cte_name(table)?;
+        if !self.defined_predicates.contains(table) {
+            return None;
+        }
+        let init = format!("{}_init{}", stem, suffix);
+        let steps: Vec<String> = (0..)
+            .map(|i| format!("{}_step{}{}", stem, i, suffix))
+            .take_while(|s| self.defined_predicates.contains(s))
+            .collect();
+        (self.defined_predicates.contains(&init) && !steps.is_empty()).then_some((init, steps))
+    }
+
+    /// Translate a recursion compiled as one recursive query: a WITH table
+    /// holding its first rows (`_init`), then the rows each step derives
+    /// from it, `UNION` keeping a row once. A step reads the table by its
+    /// name, in its own `FROM`: PostgreSQL and SQLite refuse the reference
+    /// in a subquery. Like `translate_withed_table` otherwise.
+    fn translate_recursive_cte(&self, table: &str, init: &str, steps: &[String]) -> CompileResult<String> {
+        let (parent_table, defined, compiling) = {
+            let exec = self.execution.borrow();
+            let e = exec.as_ref().unwrap();
+            (
+                e.workflow_predicates_stack.last().cloned().unwrap_or_default(),
+                e.table_to_defined_table_map.get(table).cloned(),
+                e.recursive_ctes_compiling.contains(table),
+            )
+        };
+        // A step reading the query.
+        if compiling {
+            return Ok(defined.unwrap());
+        }
+        let done = {
+            let exec = self.execution.borrow();
+            exec.as_ref().unwrap().with_compilation_done_for_parent
+                .get(&parent_table)
+                .map_or(false, |s| s.contains(table))
+        };
+        if defined.is_none() || !done {
+            let table_name = match defined {
+                Some(name) => name,
+                None => {
+                    let name = self.allocator.borrow_mut().alloc_table(Some(table));
+                    let mut exec = self.execution.borrow_mut();
+                    let e = exec.as_mut().unwrap();
+                    e.table_to_defined_table_map.insert(table.to_string(), name.clone());
+                    e.recursive_with_tables.insert(name.clone());
+                    name
+                }
+            };
+            {
+                let mut exec = self.execution.borrow_mut();
+                let e = exec.as_mut().unwrap();
+                e.with_compilation_done_for_parent
+                    .entry(parent_table.clone())
+                    .or_default()
+                    .insert(table.to_string());
+                e.recursive_ctes_compiling.insert(table.to_string());
+            }
+            let compiled = (|| -> CompileResult<String> {
+                let init = self.predicate_sql(init)?;
+                let steps = steps.iter().map(|s| self.predicate_sql(s)).collect::<CompileResult<Vec<_>>>()?;
+                Ok(self.recursive_cte_sql(&init, &steps))
+            })();
+            self.execution.borrow_mut().as_mut().unwrap().recursive_ctes_compiling.remove(table);
+            let sql = compiled?;
+            self.execution.borrow_mut().as_mut().unwrap().table_to_with_sql_map.insert(table_name, sql);
+        }
+        let mut exec = self.execution.borrow_mut();
+        let e = exec.as_mut().unwrap();
+        let dependencies = e.table_to_with_dependencies.entry(parent_table).or_default();
+        if !dependencies.iter().any(|d| d == table) {
+            dependencies.push(table.to_string());
+        }
+        Ok(e.table_to_defined_table_map[table].clone())
+    }
+
+    /// The body of a recursive query: its first rows, then its steps. DuckDB
+    /// takes several steps in parentheses, SQLite one after the other.
+    fn recursive_cte_sql(&self, init: &str, steps: &[String]) -> String {
+        let first = format!("SELECT * FROM (\n{}\n) AS UNUSED_TABLE_NAME", indent2(init));
+        let steps = if steps.len() == 1 {
+            steps[0].clone()
+        } else if self.annotations.engine() == "duckdb" {
+            format!("(\n{}\n)", steps.join("\nUNION ALL\n"))
+        } else {
+            steps.join("\nUNION\n")
+        };
+        format!("{}\nUNION\n{}", first, steps)
     }
 
     /// Translate a file-attached (grounded) table.
@@ -2295,6 +2401,10 @@ impl LogicaProgram {
             );
             *self.allocator.borrow_mut() = alloc;
             return result;
+        }
+
+        if let Some((init, steps)) = self.recursive_cte_parts(table) {
+            return self.translate_recursive_cte(table, &init, &steps);
         }
 
         // Check defined predicate

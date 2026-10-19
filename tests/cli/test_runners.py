@@ -62,17 +62,17 @@ def test_a_connection_to_another_engine_is_not_used():
 
 
 def test_a_run_leaves_no_working_tables():
-    # The steps of a recursion are tables in synalog's schema; once the rows
-    # are read, the run drops them (on Presto's memory connector they filled
-    # the heap over a long session).
+    # The steps of a recursion one query cannot hold (an aggregate in it) are
+    # tables in synalog's schema; once the rows are read, the run drops them
+    # (on Presto's memory connector they filled the heap over a long session).
     import synalog
 
     source = (
-        "E(a: 1, b: 2);\nE(a: 2, b: 3);\n@Recursive(R, 25);\n"
-        "R(x: 1) distinct;\nR(x: b) distinct :- R(x: a), E(a:, b:);\n"
+        "E(a: 1, b: 2);\nE(a: 2, b: 3);\n@Recursive(D, 25);\n"
+        "D(n: 1, d? Min= 0) distinct;\nD(n: b, d? Min= d + 1) distinct :- D(n: a, d:), E(a:, b:);\n"
     )
     s = runners.session("sqlite")
-    rows = runners.run_plan(synalog.plan(source, "R", engine="sqlite"), s)[1]
-    assert sorted(rows) == [(1,), (2,), (3,)]
+    rows = runners.run_plan(synalog.plan(source, "D", engine="sqlite"), s)[1]
+    assert sorted(rows) == [(1, 0), (2, 1), (3, 2)]
     left = s.run("SELECT name FROM logica_test.sqlite_master WHERE type = 'table'")[1]
     assert left == []

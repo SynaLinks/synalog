@@ -4,15 +4,7 @@ create schema if not exists logica_home;
 -- Empty logica type: logicarecord893574736;
 DO $$ BEGIN if not exists (select 'I(am) :- I(think)' from pg_type where typname = 'logicarecord893574736') then create type logicarecord893574736 as (nirvana numeric); end if; END $$;
 
-
-DO $$
-BEGIN
--- Logica type: logicarecord481217614
-if not exists (select 'I(am) :- I(think)' from pg_type where typname = 'logicarecord481217614') then create type logicarecord481217614 as (r logicarecord893574736); end if;
--- Logica type: logicarecord86796764
-if not exists (select 'I(am) :- I(think)' from pg_type where typname = 'logicarecord86796764') then create type logicarecord86796764 as (s text); end if;
-END $$;
-WITH t_24_Employees AS (SELECT * FROM (
+WITH RECURSIVE t_5_Employees AS (SELECT * FROM (
   
     SELECT
       1 AS person_id,
@@ -59,14 +51,14 @@ WITH t_24_Employees AS (SELECT * FROM (
       'https://x/eve' AS url
   
 ) AS UNUSED_TABLE_NAME  ),
-t_23_Person AS (SELECT
+t_4_Person AS (SELECT
   Employees.person_id AS person_id,
   Employees.name AS name,
   Employees.url AS url
 FROM
-  t_24_Employees AS Employees
+  t_5_Employees AS Employees
 GROUP BY Employees.person_id, Employees.name, Employees.url ORDER BY person_id),
-t_26_Management AS (SELECT * FROM (
+t_7_Management AS (SELECT * FROM (
   
     SELECT
       1 AS manager_id,
@@ -88,174 +80,123 @@ t_26_Management AS (SELECT * FROM (
       6 AS employee_id
   
 ) AS UNUSED_TABLE_NAME  ),
-t_21_Manages AS (SELECT
+t_2_Manages AS (SELECT
   Person.person_id AS manager_id,
-  t_22_Person.person_id AS employee_id
+  t_3_Person.person_id AS employee_id
 FROM
-  t_23_Person AS Person, t_23_Person AS t_22_Person, t_26_Management AS Management
+  t_4_Person AS Person, t_4_Person AS t_3_Person, t_7_Management AS Management
 WHERE
   (Management.manager_id = Person.person_id) AND
-  (Management.employee_id = t_22_Person.person_id)
-GROUP BY Person.person_id, t_22_Person.person_id),
-t_18_Chain_MultBodyAggAux_recursive_head_f1 AS (SELECT * FROM (
-  
-    SELECT
-      t_20_Manages.employee_id AS employee_id,
-      t_20_Manages.manager_id AS manager_id
-    FROM
-      t_21_Manages AS t_20_Manages
-  
-) AS UNUSED_TABLE_NAME  ),
-t_17_Chain_r0 AS (SELECT
-  Chain_MultBodyAggAux_recursive_head_f1.employee_id AS employee_id,
-  Chain_MultBodyAggAux_recursive_head_f1.manager_id AS manager_id
+  (Management.employee_id = t_3_Person.person_id)
+GROUP BY Person.person_id, t_3_Person.person_id),
+t_1_Chain_RecursiveCte AS (SELECT * FROM (
+  SELECT * FROM (
+    
+      SELECT
+        Manages.employee_id AS employee_id,
+        Manages.manager_id AS manager_id,
+        0 AS logica_step
+      FROM
+        t_2_Manages AS Manages
+     UNION ALL
+    
+      SELECT
+        t_10_Manages.employee_id AS employee_id,
+        t_8_Manages.manager_id AS manager_id,
+        ((0) + (1)) AS logica_step
+      FROM
+        t_2_Manages AS t_10_Manages, t_2_Manages AS t_8_Manages
+      WHERE
+        (0 < 6) AND
+        (1 = 0) AND
+        (t_8_Manages.employee_id = t_10_Manages.manager_id)
+     UNION ALL
+    
+      SELECT
+        t_19_Manages.employee_id AS employee_id,
+        t_15_Manages.manager_id AS manager_id,
+        ((((0) + (1))) + (1)) AS logica_step
+      FROM
+        t_2_Manages AS t_19_Manages, t_2_Manages AS t_17_Manages, t_2_Manages AS t_15_Manages
+      WHERE
+        (((0) + (1)) < 6) AND
+        (0 < 6) AND
+        (1 = 0) AND
+        (t_15_Manages.employee_id = t_17_Manages.manager_id) AND
+        (t_17_Manages.employee_id = t_19_Manages.manager_id)
+     UNION ALL
+    
+      SELECT
+        t_27_Manages.employee_id AS employee_id,
+        t_21_Manages.manager_id AS manager_id,
+        ((((((0) + (1))) + (1))) + (1)) AS logica_step
+      FROM
+        t_2_Manages AS t_27_Manages, t_2_Manages AS t_25_Manages, t_2_Manages AS t_23_Manages, t_2_Manages AS t_21_Manages
+      WHERE
+        (((((0) + (1))) + (1)) < 6) AND
+        (((0) + (1)) < 6) AND
+        (0 < 6) AND
+        (1 = 0) AND
+        (t_21_Manages.employee_id = t_23_Manages.manager_id) AND
+        (t_23_Manages.employee_id = t_25_Manages.manager_id) AND
+        (t_25_Manages.employee_id = t_27_Manages.manager_id)
+     UNION ALL
+    
+      SELECT
+        t_37_Manages.employee_id AS employee_id,
+        t_29_Manages.manager_id AS manager_id,
+        ((((((((0) + (1))) + (1))) + (1))) + (1)) AS logica_step
+      FROM
+        t_2_Manages AS t_37_Manages, t_2_Manages AS t_35_Manages, t_2_Manages AS t_33_Manages, t_2_Manages AS t_31_Manages, t_2_Manages AS t_29_Manages
+      WHERE
+        (((((((0) + (1))) + (1))) + (1)) < 6) AND
+        (((((0) + (1))) + (1)) < 6) AND
+        (((0) + (1)) < 6) AND
+        (0 < 6) AND
+        (1 = 0) AND
+        (t_29_Manages.employee_id = t_31_Manages.manager_id) AND
+        (t_31_Manages.employee_id = t_33_Manages.manager_id) AND
+        (t_33_Manages.employee_id = t_35_Manages.manager_id) AND
+        (t_35_Manages.employee_id = t_37_Manages.manager_id)
+     UNION ALL
+    
+      SELECT
+        t_49_Manages.employee_id AS employee_id,
+        t_39_Manages.manager_id AS manager_id,
+        ((((((((((0) + (1))) + (1))) + (1))) + (1))) + (1)) AS logica_step
+      FROM
+        t_2_Manages AS t_49_Manages, t_2_Manages AS t_47_Manages, t_2_Manages AS t_45_Manages, t_2_Manages AS t_43_Manages, t_2_Manages AS t_41_Manages, t_2_Manages AS t_39_Manages
+      WHERE
+        (((((((((0) + (1))) + (1))) + (1))) + (1)) < 6) AND
+        (((((((0) + (1))) + (1))) + (1)) < 6) AND
+        (((((0) + (1))) + (1)) < 6) AND
+        (((0) + (1)) < 6) AND
+        (0 < 6) AND
+        (1 = 0) AND
+        (t_39_Manages.employee_id = t_41_Manages.manager_id) AND
+        (t_41_Manages.employee_id = t_43_Manages.manager_id) AND
+        (t_43_Manages.employee_id = t_45_Manages.manager_id) AND
+        (t_45_Manages.employee_id = t_47_Manages.manager_id) AND
+        (t_47_Manages.employee_id = t_49_Manages.manager_id)
+    
+  ) AS UNUSED_TABLE_NAME  
+) AS UNUSED_TABLE_NAME
+UNION
+SELECT
+  t_50_Chain_RecursiveCte.employee_id AS employee_id,
+  t_51_Manages.manager_id AS manager_id,
+  ((t_50_Chain_RecursiveCte.logica_step) + (1)) AS logica_step
 FROM
-  t_18_Chain_MultBodyAggAux_recursive_head_f1 AS Chain_MultBodyAggAux_recursive_head_f1
-GROUP BY Chain_MultBodyAggAux_recursive_head_f1.employee_id, Chain_MultBodyAggAux_recursive_head_f1.manager_id),
-t_15_Chain_MultBodyAggAux_recursive_head_f2 AS (SELECT * FROM (
-  
-    SELECT
-      Chain_r0.employee_id AS employee_id,
-      t_16_Manages.manager_id AS manager_id
-    FROM
-      t_17_Chain_r0 AS Chain_r0, t_21_Manages AS t_16_Manages
-    WHERE
-      (t_16_Manages.employee_id = Chain_r0.manager_id)
-   UNION ALL
-  
-    SELECT
-      t_30_Manages.employee_id AS employee_id,
-      t_30_Manages.manager_id AS manager_id
-    FROM
-      t_21_Manages AS t_30_Manages
-  
-) AS UNUSED_TABLE_NAME  ),
-t_14_Chain_r1 AS (SELECT
-  Chain_MultBodyAggAux_recursive_head_f2.employee_id AS employee_id,
-  Chain_MultBodyAggAux_recursive_head_f2.manager_id AS manager_id
-FROM
-  t_15_Chain_MultBodyAggAux_recursive_head_f2 AS Chain_MultBodyAggAux_recursive_head_f2
-GROUP BY Chain_MultBodyAggAux_recursive_head_f2.employee_id, Chain_MultBodyAggAux_recursive_head_f2.manager_id),
-t_12_Chain_MultBodyAggAux_recursive_head_f3 AS (SELECT * FROM (
-  
-    SELECT
-      Chain_r1.employee_id AS employee_id,
-      t_13_Manages.manager_id AS manager_id
-    FROM
-      t_14_Chain_r1 AS Chain_r1, t_21_Manages AS t_13_Manages
-    WHERE
-      (t_13_Manages.employee_id = Chain_r1.manager_id)
-   UNION ALL
-  
-    SELECT
-      t_31_Manages.employee_id AS employee_id,
-      t_31_Manages.manager_id AS manager_id
-    FROM
-      t_21_Manages AS t_31_Manages
-  
-) AS UNUSED_TABLE_NAME  ),
-t_11_Chain_r2 AS (SELECT
-  Chain_MultBodyAggAux_recursive_head_f3.employee_id AS employee_id,
-  Chain_MultBodyAggAux_recursive_head_f3.manager_id AS manager_id
-FROM
-  t_12_Chain_MultBodyAggAux_recursive_head_f3 AS Chain_MultBodyAggAux_recursive_head_f3
-GROUP BY Chain_MultBodyAggAux_recursive_head_f3.employee_id, Chain_MultBodyAggAux_recursive_head_f3.manager_id),
-t_9_Chain_MultBodyAggAux_recursive_head_f4 AS (SELECT * FROM (
-  
-    SELECT
-      Chain_r2.employee_id AS employee_id,
-      t_10_Manages.manager_id AS manager_id
-    FROM
-      t_11_Chain_r2 AS Chain_r2, t_21_Manages AS t_10_Manages
-    WHERE
-      (t_10_Manages.employee_id = Chain_r2.manager_id)
-   UNION ALL
-  
-    SELECT
-      t_32_Manages.employee_id AS employee_id,
-      t_32_Manages.manager_id AS manager_id
-    FROM
-      t_21_Manages AS t_32_Manages
-  
-) AS UNUSED_TABLE_NAME  ),
-t_8_Chain_r3 AS (SELECT
-  Chain_MultBodyAggAux_recursive_head_f4.employee_id AS employee_id,
-  Chain_MultBodyAggAux_recursive_head_f4.manager_id AS manager_id
-FROM
-  t_9_Chain_MultBodyAggAux_recursive_head_f4 AS Chain_MultBodyAggAux_recursive_head_f4
-GROUP BY Chain_MultBodyAggAux_recursive_head_f4.employee_id, Chain_MultBodyAggAux_recursive_head_f4.manager_id),
-t_6_Chain_MultBodyAggAux_recursive_head_f5 AS (SELECT * FROM (
-  
-    SELECT
-      Chain_r3.employee_id AS employee_id,
-      t_7_Manages.manager_id AS manager_id
-    FROM
-      t_8_Chain_r3 AS Chain_r3, t_21_Manages AS t_7_Manages
-    WHERE
-      (t_7_Manages.employee_id = Chain_r3.manager_id)
-   UNION ALL
-  
-    SELECT
-      t_33_Manages.employee_id AS employee_id,
-      t_33_Manages.manager_id AS manager_id
-    FROM
-      t_21_Manages AS t_33_Manages
-  
-) AS UNUSED_TABLE_NAME  ),
-t_5_Chain_r4 AS (SELECT
-  Chain_MultBodyAggAux_recursive_head_f5.employee_id AS employee_id,
-  Chain_MultBodyAggAux_recursive_head_f5.manager_id AS manager_id
-FROM
-  t_6_Chain_MultBodyAggAux_recursive_head_f5 AS Chain_MultBodyAggAux_recursive_head_f5
-GROUP BY Chain_MultBodyAggAux_recursive_head_f5.employee_id, Chain_MultBodyAggAux_recursive_head_f5.manager_id),
-t_3_Chain_MultBodyAggAux_recursive_head_f6 AS (SELECT * FROM (
-  
-    SELECT
-      Chain_r4.employee_id AS employee_id,
-      t_4_Manages.manager_id AS manager_id
-    FROM
-      t_5_Chain_r4 AS Chain_r4, t_21_Manages AS t_4_Manages
-    WHERE
-      (t_4_Manages.employee_id = Chain_r4.manager_id)
-   UNION ALL
-  
-    SELECT
-      t_34_Manages.employee_id AS employee_id,
-      t_34_Manages.manager_id AS manager_id
-    FROM
-      t_21_Manages AS t_34_Manages
-  
-) AS UNUSED_TABLE_NAME  ),
-t_2_Chain_r5 AS (SELECT
-  Chain_MultBodyAggAux_recursive_head_f6.employee_id AS employee_id,
-  Chain_MultBodyAggAux_recursive_head_f6.manager_id AS manager_id
-FROM
-  t_3_Chain_MultBodyAggAux_recursive_head_f6 AS Chain_MultBodyAggAux_recursive_head_f6
-GROUP BY Chain_MultBodyAggAux_recursive_head_f6.employee_id, Chain_MultBodyAggAux_recursive_head_f6.manager_id),
-t_1_Chain_MultBodyAggAux_recursive_head_f7 AS (SELECT * FROM (
-  
-    SELECT
-      Chain_r5.employee_id AS employee_id,
-      Manages.manager_id AS manager_id
-    FROM
-      t_2_Chain_r5 AS Chain_r5, t_21_Manages AS Manages
-    WHERE
-      (Manages.employee_id = Chain_r5.manager_id)
-   UNION ALL
-  
-    SELECT
-      t_35_Manages.employee_id AS employee_id,
-      t_35_Manages.manager_id AS manager_id
-    FROM
-      t_21_Manages AS t_35_Manages
-  
-) AS UNUSED_TABLE_NAME  ),
+  t_1_Chain_RecursiveCte AS t_50_Chain_RecursiveCte, t_2_Manages AS t_51_Manages
+WHERE
+  (t_50_Chain_RecursiveCte.logica_step < 6) AND
+  (t_51_Manages.employee_id = t_50_Chain_RecursiveCte.manager_id)),
 t_0_Chain AS (SELECT
-  Chain_MultBodyAggAux_recursive_head_f7.employee_id AS employee_id,
-  Chain_MultBodyAggAux_recursive_head_f7.manager_id AS manager_id
+  Chain_RecursiveCte.employee_id AS employee_id,
+  Chain_RecursiveCte.manager_id AS manager_id
 FROM
-  t_1_Chain_MultBodyAggAux_recursive_head_f7 AS Chain_MultBodyAggAux_recursive_head_f7
-GROUP BY Chain_MultBodyAggAux_recursive_head_f7.employee_id, Chain_MultBodyAggAux_recursive_head_f7.manager_id)
+  t_1_Chain_RecursiveCte AS Chain_RecursiveCte
+GROUP BY Chain_RecursiveCte.employee_id, Chain_RecursiveCte.manager_id)
 SELECT
   Chain.manager_id AS manager_id
 FROM

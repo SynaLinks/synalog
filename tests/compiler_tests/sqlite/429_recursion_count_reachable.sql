@@ -1,4 +1,4 @@
-WITH t_2_E AS (SELECT * FROM (
+WITH RECURSIVE t_2_E AS (SELECT * FROM (
   
     SELECT
       1 AS a,
@@ -15,144 +15,117 @@ WITH t_2_E AS (SELECT * FROM (
       4 AS b
   
 ) AS UNUSED_TABLE_NAME  ),
-t_21_Reach_MultBodyAggAux_recursive_head_f1 AS (SELECT * FROM (
-  
-    SELECT
-      t_22_E.a AS s,
-      t_22_E.b AS t
-    FROM
-      t_2_E AS t_22_E
-  
-) AS UNUSED_TABLE_NAME  ),
-t_20_Reach_r0 AS (SELECT
-  Reach_MultBodyAggAux_recursive_head_f1.s AS s,
-  Reach_MultBodyAggAux_recursive_head_f1.t AS t
+t_1_Reach_RecursiveCte AS (SELECT * FROM (
+  SELECT * FROM (
+    
+      SELECT
+        E.a AS s,
+        E.b AS t,
+        0 AS logica_step
+      FROM
+        t_2_E AS E
+     UNION ALL
+    
+      SELECT
+        t_5_E.a AS s,
+        t_3_E.b AS t,
+        ((0) + (1)) AS logica_step
+      FROM
+        t_2_E AS t_5_E, t_2_E AS t_3_E
+      WHERE
+        (0 < 5) AND
+        (1 = 0) AND
+        (t_3_E.a = t_5_E.b)
+     UNION ALL
+    
+      SELECT
+        t_11_E.a AS s,
+        t_7_E.b AS t,
+        ((((0) + (1))) + (1)) AS logica_step
+      FROM
+        t_2_E AS t_11_E, t_2_E AS t_9_E, t_2_E AS t_7_E
+      WHERE
+        (((0) + (1)) < 5) AND
+        (0 < 5) AND
+        (1 = 0) AND
+        (t_7_E.a = t_9_E.b) AND
+        (t_9_E.a = t_11_E.b)
+     UNION ALL
+    
+      SELECT
+        t_19_E.a AS s,
+        t_13_E.b AS t,
+        ((((((0) + (1))) + (1))) + (1)) AS logica_step
+      FROM
+        t_2_E AS t_19_E, t_2_E AS t_17_E, t_2_E AS t_15_E, t_2_E AS t_13_E
+      WHERE
+        (((((0) + (1))) + (1)) < 5) AND
+        (((0) + (1)) < 5) AND
+        (0 < 5) AND
+        (1 = 0) AND
+        (t_13_E.a = t_15_E.b) AND
+        (t_15_E.a = t_17_E.b) AND
+        (t_17_E.a = t_19_E.b)
+     UNION ALL
+    
+      SELECT
+        t_29_E.a AS s,
+        t_21_E.b AS t,
+        ((((((((0) + (1))) + (1))) + (1))) + (1)) AS logica_step
+      FROM
+        t_2_E AS t_29_E, t_2_E AS t_27_E, t_2_E AS t_25_E, t_2_E AS t_23_E, t_2_E AS t_21_E
+      WHERE
+        (((((((0) + (1))) + (1))) + (1)) < 5) AND
+        (((((0) + (1))) + (1)) < 5) AND
+        (((0) + (1)) < 5) AND
+        (0 < 5) AND
+        (1 = 0) AND
+        (t_21_E.a = t_23_E.b) AND
+        (t_23_E.a = t_25_E.b) AND
+        (t_25_E.a = t_27_E.b) AND
+        (t_27_E.a = t_29_E.b)
+     UNION ALL
+    
+      SELECT
+        t_41_E.a AS s,
+        t_31_E.b AS t,
+        ((((((((((0) + (1))) + (1))) + (1))) + (1))) + (1)) AS logica_step
+      FROM
+        t_2_E AS t_41_E, t_2_E AS t_39_E, t_2_E AS t_37_E, t_2_E AS t_35_E, t_2_E AS t_33_E, t_2_E AS t_31_E
+      WHERE
+        (((((((((0) + (1))) + (1))) + (1))) + (1)) < 5) AND
+        (((((((0) + (1))) + (1))) + (1)) < 5) AND
+        (((((0) + (1))) + (1)) < 5) AND
+        (((0) + (1)) < 5) AND
+        (0 < 5) AND
+        (1 = 0) AND
+        (t_31_E.a = t_33_E.b) AND
+        (t_33_E.a = t_35_E.b) AND
+        (t_35_E.a = t_37_E.b) AND
+        (t_37_E.a = t_39_E.b) AND
+        (t_39_E.a = t_41_E.b)
+    
+  ) AS UNUSED_TABLE_NAME  
+) AS UNUSED_TABLE_NAME
+UNION
+SELECT
+  t_42_Reach_RecursiveCte.s AS s,
+  t_43_E.b AS t,
+  ((t_42_Reach_RecursiveCte.logica_step) + (1)) AS logica_step
 FROM
-  t_21_Reach_MultBodyAggAux_recursive_head_f1 AS Reach_MultBodyAggAux_recursive_head_f1
-GROUP BY Reach_MultBodyAggAux_recursive_head_f1.s, Reach_MultBodyAggAux_recursive_head_f1.t),
-t_17_Reach_MultBodyAggAux_recursive_head_f2 AS (SELECT * FROM (
-  
-    SELECT
-      t_18_E.a AS s,
-      t_18_E.b AS t
-    FROM
-      t_2_E AS t_18_E
-   UNION ALL
-  
-    SELECT
-      Reach_r0.s AS s,
-      t_19_E.b AS t
-    FROM
-      t_20_Reach_r0 AS Reach_r0, t_2_E AS t_19_E
-    WHERE
-      (t_19_E.a = Reach_r0.t)
-  
-) AS UNUSED_TABLE_NAME  ),
-t_16_Reach_r1 AS (SELECT
-  Reach_MultBodyAggAux_recursive_head_f2.s AS s,
-  Reach_MultBodyAggAux_recursive_head_f2.t AS t
-FROM
-  t_17_Reach_MultBodyAggAux_recursive_head_f2 AS Reach_MultBodyAggAux_recursive_head_f2
-GROUP BY Reach_MultBodyAggAux_recursive_head_f2.s, Reach_MultBodyAggAux_recursive_head_f2.t),
-t_13_Reach_MultBodyAggAux_recursive_head_f3 AS (SELECT * FROM (
-  
-    SELECT
-      t_14_E.a AS s,
-      t_14_E.b AS t
-    FROM
-      t_2_E AS t_14_E
-   UNION ALL
-  
-    SELECT
-      Reach_r1.s AS s,
-      t_15_E.b AS t
-    FROM
-      t_16_Reach_r1 AS Reach_r1, t_2_E AS t_15_E
-    WHERE
-      (t_15_E.a = Reach_r1.t)
-  
-) AS UNUSED_TABLE_NAME  ),
-t_12_Reach_r2 AS (SELECT
-  Reach_MultBodyAggAux_recursive_head_f3.s AS s,
-  Reach_MultBodyAggAux_recursive_head_f3.t AS t
-FROM
-  t_13_Reach_MultBodyAggAux_recursive_head_f3 AS Reach_MultBodyAggAux_recursive_head_f3
-GROUP BY Reach_MultBodyAggAux_recursive_head_f3.s, Reach_MultBodyAggAux_recursive_head_f3.t),
-t_9_Reach_MultBodyAggAux_recursive_head_f4 AS (SELECT * FROM (
-  
-    SELECT
-      t_10_E.a AS s,
-      t_10_E.b AS t
-    FROM
-      t_2_E AS t_10_E
-   UNION ALL
-  
-    SELECT
-      Reach_r2.s AS s,
-      t_11_E.b AS t
-    FROM
-      t_12_Reach_r2 AS Reach_r2, t_2_E AS t_11_E
-    WHERE
-      (t_11_E.a = Reach_r2.t)
-  
-) AS UNUSED_TABLE_NAME  ),
-t_8_Reach_r3 AS (SELECT
-  Reach_MultBodyAggAux_recursive_head_f4.s AS s,
-  Reach_MultBodyAggAux_recursive_head_f4.t AS t
-FROM
-  t_9_Reach_MultBodyAggAux_recursive_head_f4 AS Reach_MultBodyAggAux_recursive_head_f4
-GROUP BY Reach_MultBodyAggAux_recursive_head_f4.s, Reach_MultBodyAggAux_recursive_head_f4.t),
-t_5_Reach_MultBodyAggAux_recursive_head_f5 AS (SELECT * FROM (
-  
-    SELECT
-      t_6_E.a AS s,
-      t_6_E.b AS t
-    FROM
-      t_2_E AS t_6_E
-   UNION ALL
-  
-    SELECT
-      Reach_r3.s AS s,
-      t_7_E.b AS t
-    FROM
-      t_8_Reach_r3 AS Reach_r3, t_2_E AS t_7_E
-    WHERE
-      (t_7_E.a = Reach_r3.t)
-  
-) AS UNUSED_TABLE_NAME  ),
-t_4_Reach_r4 AS (SELECT
-  Reach_MultBodyAggAux_recursive_head_f5.s AS s,
-  Reach_MultBodyAggAux_recursive_head_f5.t AS t
-FROM
-  t_5_Reach_MultBodyAggAux_recursive_head_f5 AS Reach_MultBodyAggAux_recursive_head_f5
-GROUP BY Reach_MultBodyAggAux_recursive_head_f5.s, Reach_MultBodyAggAux_recursive_head_f5.t),
-t_1_Reach_MultBodyAggAux_recursive_head_f6 AS (SELECT * FROM (
-  
-    SELECT
-      E.a AS s,
-      E.b AS t
-    FROM
-      t_2_E AS E
-   UNION ALL
-  
-    SELECT
-      Reach_r4.s AS s,
-      t_3_E.b AS t
-    FROM
-      t_4_Reach_r4 AS Reach_r4, t_2_E AS t_3_E
-    WHERE
-      (t_3_E.a = Reach_r4.t)
-  
-) AS UNUSED_TABLE_NAME  ),
+  t_1_Reach_RecursiveCte AS t_42_Reach_RecursiveCte, t_2_E AS t_43_E
+WHERE
+  (t_42_Reach_RecursiveCte.logica_step < 5) AND
+  (t_43_E.a = t_42_Reach_RecursiveCte.t)),
 t_0_Reach AS (SELECT
-  Reach_MultBodyAggAux_recursive_head_f6.s AS s,
-  Reach_MultBodyAggAux_recursive_head_f6.t AS t
+  Reach_RecursiveCte.s AS s,
+  Reach_RecursiveCte.t AS t
 FROM
-  t_1_Reach_MultBodyAggAux_recursive_head_f6 AS Reach_MultBodyAggAux_recursive_head_f6
-GROUP BY Reach_MultBodyAggAux_recursive_head_f6.s, Reach_MultBodyAggAux_recursive_head_f6.t)
+  t_1_Reach_RecursiveCte AS Reach_RecursiveCte
+GROUP BY Reach_RecursiveCte.s, Reach_RecursiveCte.t)
 SELECT
   Reach.s AS s,
   SUM(1) AS n
 FROM
   t_0_Reach AS Reach
-GROUP BY Reach.s ORDER BY s;
+GROUP BY Reach.s ORDER BY s NULLS LAST;

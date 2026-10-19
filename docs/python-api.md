@@ -30,7 +30,7 @@ sql = synalog.compile(source, "TopCustomers", limit=20, offset=40)
 
 `limit` is combined with the [`@Limit` directive](language/directives.md#limit): the effective limit is `min(limit, @Limit)`. Use `limit`/`offset` for pagination, and make sure every predicate has an [`@OrderBy`](language/directives.md#orderby) so page boundaries are deterministic.
 
-The SQL is one script, for clients that run SQL themselves. A script cannot loop, so a [deep recursion](language/recursion.md#how-recursion-runs) is written out step by step, up to the depth `@Recursive` declares, and a recursion too deep to write out (`@Recursive(P, -1)`, or thousands of steps) raises `ValueError`. [`execute`](#execute) runs it instead, stopping when it converges.
+The SQL is one script, for clients that run SQL themselves. On DuckDB, SQLite and PostgreSQL a linear recursion is one recursive query, which stops by itself at any depth ([how recursion runs](language/recursion.md#how-recursion-runs)). A script cannot loop, so another deep recursion is written out step by step, up to the depth `@Recursive` declares, and one too deep to write out (`@Recursive(P, -1)`, or thousands of steps) raises `ValueError`. [`execute`](#execute) runs it instead, stopping when it converges.
 
 ## `search`
 

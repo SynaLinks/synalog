@@ -350,6 +350,14 @@ impl Functors {
                 out.extend(names.into_iter().filter(|n| n != target));
             }
         }
+        // The steps of a recursive query, read by no rule but by the query
+        // (`unfold_recursive_predicate_cte`).
+        if let Some((stem, suffix)) = recursive_cte_name(target) {
+            out.extend(
+                (0..).map(|i| format!("{}_step{}{}", stem, i, suffix))
+                    .take_while(|s| self.rules_of.contains_key(s)),
+            );
+        }
         out.sort();
         out.dedup();
         out
@@ -1118,12 +1126,175 @@ impl Functors {
         Ok(())
     }
 
-    /// Unfold all recursions.
+    /// Unfold a recursion into one recursive query (`WITH RECURSIVE`): the
+    /// recursions semi-naive evaluation computes exactly (one `distinct`
+    /// predicate without aggregation, each rule reading it at most once),
+    /// written with several bodies, some its first rows, the others steps
+    /// reading it once, as a conjunct, `max_steps` at most. Returns whether
+    /// it applied; otherwise `rules` are left as they were.
+    ///
+    /// `P_RecursiveCte` holds the rows, each numbered with the step that
+    /// derived it (`logica_step`): a step reads the rows numbered below the
+    /// depth, so the query stops where the unrolled steps stop, even when the
+    /// rows never repeat (a count of hops round a cycle). `P` is its rows
+    /// without the number, distinct. Its first rows (`_init`) come with the
+    /// steps applied to no rows: a step can widen a column (an integer, then
+    /// a decimal), and the query keeps the types of its first rows. An
+    /// unbounded recursion (`@Recursive(P, -1)`) numbers nothing and stops
+    /// when a step adds no new row. `universe.rs` writes the query.
+    fn unfold_recursive_predicate_cte(
+        &self,
+        p: &str,
+        cover: &HashSet<String>,
+        depth: i64,
+        rules: &mut Vec<Json>,
+        max_steps: usize,
+    ) -> CompileResult<bool> {
+        let aux = format!("{}_MultBodyAggAux", p);
+        if cover.len() != 2 || !cover.contains(p) || !cover.contains(&aux) {
+            return Ok(false);
+        }
+        let visible: BTreeSet<String> = [p.to_string()].into_iter().collect();
+        let Some(fields) = semi_naive_fields(cover, &visible, rules) else {
+            return Ok(false);
+        };
+        if fields.iter().any(|f| f.is_string() && f.as_str() == CTE_STEP_FIELD) {
+            return Ok(false);
+        }
+        let head_of = |r: &Json| r.as_object()["head"].as_object()["predicate_name"].as_str().to_string();
+        let conjuncts = |r: &Json| -> Vec<Json> {
+            r.as_object().get("body")
+                .map(|b| b.as_object()["conjunction"].as_object()["conjunct"].as_array().to_vec())
+                .unwrap_or_default()
+        };
+        // `P` is its bodies' rows, distinct.
+        let heads: Vec<&Json> = rules.iter().filter(|r| head_of(r) == p).collect();
+        if heads.len() != 1 {
+            return Ok(false);
+        }
+        let reads_aux = conjuncts(heads[0]);
+        if reads_aux.len() != 1 || reads_aux[0].as_object().get("predicate").map_or(true, |c| {
+            c.as_object()["predicate_name"].as_str() != aux
+        }) {
+            return Ok(false);
+        }
+        // The bodies: first rows, or a step reading `P` once, as a conjunct.
+        let mut bases = Vec::new();
+        let mut steps = Vec::new();
+        for rule in rules.iter().filter(|r| head_of(r) == aux) {
+            let values = rule.as_object()["head"].as_object()["record"].as_object()["field_value"].as_array();
+            if values.iter().any(|fv| fv.as_object()["value"].as_object().contains_key("aggregation")) {
+                return Ok(false);
+            }
+            let body = conjuncts(rule);
+            let at: Vec<usize> = body.iter().enumerate()
+                .filter(|(_, c)| c.as_object().get("predicate")
+                    .map_or(false, |c| c.as_object()["predicate_name"].as_str() == p))
+                .map(|(i, _)| i)
+                .collect();
+            match (count_references(rule, p), at.as_slice()) {
+                (0, []) => bases.push(rule.clone()),
+                (1, [i]) => steps.push((rule.clone(), *i)),
+                _ => return Ok(false),
+            }
+        }
+        if bases.is_empty() || steps.is_empty() || steps.len() > max_steps {
+            return Ok(false);
+        }
+
+        let cte = format!("{}_RecursiveCte", p);
+        let bounded = depth < 1_000_000_000;
+        // The number of a step, as rules: what the first rows, a step's head
+        // and its read of `P` add, and the bound.
+        let template = parse_rules(&format!(
+            "T({f}: 0);\nT({f}: {v} + 1) :- T({f}: {v}), {v} < {depth};",
+            f = CTE_STEP_FIELD, v = CTE_STEP_VARIABLE,
+        ))?;
+        let field_of = |r: &Json| r.as_object()["head"].as_object()["record"].as_object()["field_value"].as_array()[0].clone();
+        let (first, next) = (field_of(&template[0]), field_of(&template[1]));
+        let template_body = conjuncts(&template[1]);
+        let read = template_body[0].as_object()["predicate"].as_object()["record"].as_object()["field_value"].as_array()[0].clone();
+        let bound = template_body[1].clone();
+
+        fn head_mut(rule: &mut Json) -> &mut crate::parser::JsonObject {
+            rule.as_object_mut().get_mut("head").unwrap().as_object_mut()
+        }
+        fn values_mut(call: &mut crate::parser::JsonObject) -> &mut Vec<Json> {
+            call.get_mut("record").unwrap().as_object_mut().get_mut("field_value").unwrap().as_array_mut()
+        }
+        fn conjuncts_mut(rule: &mut Json) -> &mut Vec<Json> {
+            rule.as_object_mut().get_mut("body").unwrap().as_object_mut()
+                .get_mut("conjunction").unwrap().as_object_mut()
+                .get_mut("conjunct").unwrap().as_array_mut()
+        }
+
+        let mut generated = Vec::new();
+        for mut rule in bases {
+            head_mut(&mut rule).insert("predicate_name".into(), Json::Str(format!("{}_base", cte)));
+            if bounded {
+                values_mut(head_mut(&mut rule)).push(first.clone());
+            }
+            generated.push(rule);
+        }
+        let mut step_rules = Vec::new();
+        for (i, (mut rule, at)) in steps.into_iter().enumerate() {
+            head_mut(&mut rule).insert("predicate_name".into(), Json::Str(format!("{}_step{}", cte, i)));
+            if bounded {
+                values_mut(head_mut(&mut rule)).push(next.clone());
+            }
+            let body = conjuncts_mut(&mut rule);
+            let call = body[at].as_object_mut().get_mut("predicate").unwrap().as_object_mut();
+            call.insert("predicate_name".into(), Json::Str(cte.clone()));
+            if bounded {
+                values_mut(call).push(read.clone());
+                body.push(bound.clone());
+            }
+            step_rules.push(rule);
+        }
+
+        // The types: the steps applied, twice per column, to no rows (see
+        // `get_semi_naive_recursion_functor`).
+        let mut args: Vec<String> = fields.iter().enumerate()
+            .map(|(i, f)| if f.is_string() { format!("{}: v{}", f.as_str(), i) } else { format!("v{}", i) })
+            .collect();
+        if bounded {
+            args.push(format!("{}: v_step", CTE_STEP_FIELD));
+        }
+        let args = args.join(", ");
+        let widening = 2 * fields.len() + 1;
+        let mut typed = vec![format!("{cte}_t0({args}) :- {cte}_base({args}), 1 == 0;")];
+        for k in 1..=widening {
+            for rule in &step_rules {
+                let mut applied = rule.clone();
+                walk_replace_predicate(&mut applied, &cte, &format!("{}_t{}", cte, k - 1));
+                head_mut(&mut applied).insert("predicate_name".into(), Json::Str(format!("{}_t{}", cte, k)));
+                generated.push(applied);
+            }
+        }
+        typed.push(format!("{cte}_init({args}) :- {cte}_base({args});"));
+        typed.extend((1..=widening).map(|k| format!("{cte}_init({args}) :- {cte}_t{k}({args});")));
+        // What the rows are to the rules reading them; the query is
+        // `universe.rs`'s.
+        typed.push(format!("{cte}({args}) :- {cte}_init({args});"));
+        generated.extend(parse_rules(&typed.join("\n"))?);
+        generated.extend(step_rules);
+
+        rules.retain(|r| head_of(r) != aux);
+        for rule in rules.iter_mut().filter(|r| head_of(r) == p) {
+            walk_replace_predicate(rule, &aux, &cte);
+        }
+        rules.extend(generated);
+        Ok(true)
+    }
+
+    /// Unfold all recursions. `cte_steps` is how many recursive rules one
+    /// recursive query (`WITH RECURSIVE`) of the engine holds, 0 for none.
     pub fn unfold_recursions(
         &mut self,
         depth_map: &mut HashMap<String, HashMap<String, SerdeLikeValue>>,
         default_iterative: bool,
         default_depth: i64,
+        cte_steps: usize,
     ) -> CompileResult<Vec<Json>> {
         let (should_recurse, my_cover) = self.recursive_analysis(
             depth_map, default_iterative, default_depth);
@@ -1143,6 +1314,14 @@ impl Functors {
             }
 
             let cover = my_cover.get(p).unwrap();
+
+            let stopped = depth_map.get(p).map_or(false, |m| m.contains_key("stop"));
+            if cte_steps > 0
+                && !stopped
+                && self.unfold_recursive_predicate_cte(p, cover, depth, &mut new_rules, cte_steps)?
+            {
+                continue;
+            }
 
             match style.as_str() {
                 "vertical" => {
@@ -1238,6 +1417,40 @@ fn get_recursion_functor(depth: i64, predicate: &str) -> String {
     }
     lines.push(format!("{0} := {0}_r{1}();", predicate, depth));
     lines.join("\n")
+}
+
+/// A recursive query's name (`P_RecursiveCte`) split into its stem and the
+/// suffix functors applied to the recursion add to the names they copy
+/// (`_f3`, `_f3_f7`), else `None`. Its first rows are `{stem}_init{suffix}`
+/// and its steps `{stem}_step{i}{suffix}`: a functor copies them all, as
+/// they all read the query.
+pub fn recursive_cte_name(name: &str) -> Option<(&str, &str)> {
+    const MARK: &str = "_RecursiveCte";
+    let (stem, suffix) = name.split_at(name.rfind(MARK)? + MARK.len());
+    let copied = |s: &str| s.split("_f").all(|n| !n.is_empty() && n.bytes().all(|b| b.is_ascii_digit()));
+    match suffix.strip_prefix("_f") {
+        None if suffix.is_empty() => Some((stem, suffix)),
+        Some(numbers) if copied(numbers) => Some((stem, suffix)),
+        _ => None,
+    }
+}
+
+/// The column numbering the rows of a recursive query by the step that
+/// derived them, and the variable a step reads it into.
+const CTE_STEP_FIELD: &str = "logica_step";
+const CTE_STEP_VARIABLE: &str = "logica_cte_step";
+
+/// How many calls of `predicate` `json` holds.
+fn count_references(json: &Json, predicate: &str) -> usize {
+    match json {
+        Json::Object(o) => {
+            let own = o.get("predicate_name")
+                .map_or(0, |n| (n.is_string() && n.as_str() == predicate) as usize);
+            own + o.values().map(|v| count_references(v, predicate)).sum::<usize>()
+        }
+        Json::Array(items) => items.iter().map(|i| count_references(i, predicate)).sum(),
+        _ => 0,
+    }
 }
 
 /// The columns of a recursion that semi-naive evaluation computes exactly, or
@@ -1569,7 +1782,23 @@ pub fn unfold_recursion(rules: &[Json], engine: &str) -> CompileResult<Vec<Json>
     let default_depth: i64 = 8;
 
     let mut functors = Functors::new(rules);
-    functors.unfold_recursions(&mut depth_map, default_iterative, default_depth)
+    functors.unfold_recursions(&mut depth_map, default_iterative, default_depth, recursive_cte_steps(engine))
+}
+
+/// How many recursive rules one recursive query (`WITH RECURSIVE`) holds on
+/// `engine`, 0 where synalog does not write one. DuckDB, SQLite and
+/// PostgreSQL take `UNION` between the steps, which drops a row met before:
+/// the query ends with the recursion. PostgreSQL takes one recursive rule
+/// (a second is "a recursive reference ... more than once"). Trino and
+/// BigQuery take only `UNION ALL`, whose rows multiply with the paths to
+/// them, Trino stops at 10 steps unless told otherwise, Spark has the query
+/// from 4.1 only, and Presto not at all.
+fn recursive_cte_steps(engine: &str) -> usize {
+    match engine {
+        "duckdb" | "sqlite" => usize::MAX,
+        "psql" => 1,
+        _ => 0,
+    }
 }
 
 /// Process @Make annotations (functor applications).

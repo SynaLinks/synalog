@@ -4,7 +4,7 @@ create schema if not exists logica_home;
 drop type if exists logicarecord893574736 cascade; create type logicarecord893574736 as struct(nirvana numeric);
 create sequence if not exists eternal_logical_sequence;
 
-WITH t_21_Sequel AS (SELECT * FROM (
+WITH RECURSIVE t_2_Sequel AS (SELECT * FROM (
   
     SELECT
       2 AS book,
@@ -26,165 +26,114 @@ WITH t_21_Sequel AS (SELECT * FROM (
       2 AS next
   
 ) AS UNUSED_TABLE_NAME  ),
-t_18_After_MultBodyAggAux_recursive_head_f1 AS (SELECT * FROM (
-  
-    SELECT
-      t_20_Sequel.book AS book,
-      t_20_Sequel.next AS next
-    FROM
-      t_21_Sequel AS t_20_Sequel
-  
-) AS UNUSED_TABLE_NAME  ),
-t_17_After_r0 AS (SELECT
-  After_MultBodyAggAux_recursive_head_f1.book AS book,
-  After_MultBodyAggAux_recursive_head_f1.next AS next
+t_1_After_RecursiveCte AS (SELECT * FROM (
+  SELECT * FROM (
+    
+      SELECT
+        Sequel.book AS book,
+        Sequel.next AS next,
+        0 AS logica_step
+      FROM
+        t_2_Sequel AS Sequel
+     UNION ALL
+    
+      SELECT
+        t_5_Sequel.book AS book,
+        t_3_Sequel.next AS next,
+        ((0) + (1)) AS logica_step
+      FROM
+        t_2_Sequel AS t_5_Sequel, t_2_Sequel AS t_3_Sequel
+      WHERE
+        (0 < 6) AND
+        (1 = 0) AND
+        (t_3_Sequel.book = t_5_Sequel.next)
+     UNION ALL
+    
+      SELECT
+        t_11_Sequel.book AS book,
+        t_7_Sequel.next AS next,
+        ((((0) + (1))) + (1)) AS logica_step
+      FROM
+        t_2_Sequel AS t_11_Sequel, t_2_Sequel AS t_9_Sequel, t_2_Sequel AS t_7_Sequel
+      WHERE
+        (((0) + (1)) < 6) AND
+        (0 < 6) AND
+        (1 = 0) AND
+        (t_7_Sequel.book = t_9_Sequel.next) AND
+        (t_9_Sequel.book = t_11_Sequel.next)
+     UNION ALL
+    
+      SELECT
+        t_19_Sequel.book AS book,
+        t_13_Sequel.next AS next,
+        ((((((0) + (1))) + (1))) + (1)) AS logica_step
+      FROM
+        t_2_Sequel AS t_19_Sequel, t_2_Sequel AS t_17_Sequel, t_2_Sequel AS t_15_Sequel, t_2_Sequel AS t_13_Sequel
+      WHERE
+        (((((0) + (1))) + (1)) < 6) AND
+        (((0) + (1)) < 6) AND
+        (0 < 6) AND
+        (1 = 0) AND
+        (t_13_Sequel.book = t_15_Sequel.next) AND
+        (t_15_Sequel.book = t_17_Sequel.next) AND
+        (t_17_Sequel.book = t_19_Sequel.next)
+     UNION ALL
+    
+      SELECT
+        t_29_Sequel.book AS book,
+        t_21_Sequel.next AS next,
+        ((((((((0) + (1))) + (1))) + (1))) + (1)) AS logica_step
+      FROM
+        t_2_Sequel AS t_29_Sequel, t_2_Sequel AS t_27_Sequel, t_2_Sequel AS t_25_Sequel, t_2_Sequel AS t_23_Sequel, t_2_Sequel AS t_21_Sequel
+      WHERE
+        (((((((0) + (1))) + (1))) + (1)) < 6) AND
+        (((((0) + (1))) + (1)) < 6) AND
+        (((0) + (1)) < 6) AND
+        (0 < 6) AND
+        (1 = 0) AND
+        (t_21_Sequel.book = t_23_Sequel.next) AND
+        (t_23_Sequel.book = t_25_Sequel.next) AND
+        (t_25_Sequel.book = t_27_Sequel.next) AND
+        (t_27_Sequel.book = t_29_Sequel.next)
+     UNION ALL
+    
+      SELECT
+        t_41_Sequel.book AS book,
+        t_31_Sequel.next AS next,
+        ((((((((((0) + (1))) + (1))) + (1))) + (1))) + (1)) AS logica_step
+      FROM
+        t_2_Sequel AS t_41_Sequel, t_2_Sequel AS t_39_Sequel, t_2_Sequel AS t_37_Sequel, t_2_Sequel AS t_35_Sequel, t_2_Sequel AS t_33_Sequel, t_2_Sequel AS t_31_Sequel
+      WHERE
+        (((((((((0) + (1))) + (1))) + (1))) + (1)) < 6) AND
+        (((((((0) + (1))) + (1))) + (1)) < 6) AND
+        (((((0) + (1))) + (1)) < 6) AND
+        (((0) + (1)) < 6) AND
+        (0 < 6) AND
+        (1 = 0) AND
+        (t_31_Sequel.book = t_33_Sequel.next) AND
+        (t_33_Sequel.book = t_35_Sequel.next) AND
+        (t_35_Sequel.book = t_37_Sequel.next) AND
+        (t_37_Sequel.book = t_39_Sequel.next) AND
+        (t_39_Sequel.book = t_41_Sequel.next)
+    
+  ) AS UNUSED_TABLE_NAME  
+) AS UNUSED_TABLE_NAME
+UNION
+SELECT
+  t_42_After_RecursiveCte.book AS book,
+  t_43_Sequel.next AS next,
+  ((t_42_After_RecursiveCte.logica_step) + (1)) AS logica_step
 FROM
-  t_18_After_MultBodyAggAux_recursive_head_f1 AS After_MultBodyAggAux_recursive_head_f1
-GROUP BY After_MultBodyAggAux_recursive_head_f1.book, After_MultBodyAggAux_recursive_head_f1.next),
-t_15_After_MultBodyAggAux_recursive_head_f2 AS (SELECT * FROM (
-  
-    SELECT
-      After_r0.book AS book,
-      t_16_Sequel.next AS next
-    FROM
-      t_17_After_r0 AS After_r0, t_21_Sequel AS t_16_Sequel
-    WHERE
-      (t_16_Sequel.book = After_r0.next)
-   UNION ALL
-  
-    SELECT
-      t_22_Sequel.book AS book,
-      t_22_Sequel.next AS next
-    FROM
-      t_21_Sequel AS t_22_Sequel
-  
-) AS UNUSED_TABLE_NAME  ),
-t_14_After_r1 AS (SELECT
-  After_MultBodyAggAux_recursive_head_f2.book AS book,
-  After_MultBodyAggAux_recursive_head_f2.next AS next
-FROM
-  t_15_After_MultBodyAggAux_recursive_head_f2 AS After_MultBodyAggAux_recursive_head_f2
-GROUP BY After_MultBodyAggAux_recursive_head_f2.book, After_MultBodyAggAux_recursive_head_f2.next),
-t_12_After_MultBodyAggAux_recursive_head_f3 AS (SELECT * FROM (
-  
-    SELECT
-      After_r1.book AS book,
-      t_13_Sequel.next AS next
-    FROM
-      t_14_After_r1 AS After_r1, t_21_Sequel AS t_13_Sequel
-    WHERE
-      (t_13_Sequel.book = After_r1.next)
-   UNION ALL
-  
-    SELECT
-      t_23_Sequel.book AS book,
-      t_23_Sequel.next AS next
-    FROM
-      t_21_Sequel AS t_23_Sequel
-  
-) AS UNUSED_TABLE_NAME  ),
-t_11_After_r2 AS (SELECT
-  After_MultBodyAggAux_recursive_head_f3.book AS book,
-  After_MultBodyAggAux_recursive_head_f3.next AS next
-FROM
-  t_12_After_MultBodyAggAux_recursive_head_f3 AS After_MultBodyAggAux_recursive_head_f3
-GROUP BY After_MultBodyAggAux_recursive_head_f3.book, After_MultBodyAggAux_recursive_head_f3.next),
-t_9_After_MultBodyAggAux_recursive_head_f4 AS (SELECT * FROM (
-  
-    SELECT
-      After_r2.book AS book,
-      t_10_Sequel.next AS next
-    FROM
-      t_11_After_r2 AS After_r2, t_21_Sequel AS t_10_Sequel
-    WHERE
-      (t_10_Sequel.book = After_r2.next)
-   UNION ALL
-  
-    SELECT
-      t_24_Sequel.book AS book,
-      t_24_Sequel.next AS next
-    FROM
-      t_21_Sequel AS t_24_Sequel
-  
-) AS UNUSED_TABLE_NAME  ),
-t_8_After_r3 AS (SELECT
-  After_MultBodyAggAux_recursive_head_f4.book AS book,
-  After_MultBodyAggAux_recursive_head_f4.next AS next
-FROM
-  t_9_After_MultBodyAggAux_recursive_head_f4 AS After_MultBodyAggAux_recursive_head_f4
-GROUP BY After_MultBodyAggAux_recursive_head_f4.book, After_MultBodyAggAux_recursive_head_f4.next),
-t_6_After_MultBodyAggAux_recursive_head_f5 AS (SELECT * FROM (
-  
-    SELECT
-      After_r3.book AS book,
-      t_7_Sequel.next AS next
-    FROM
-      t_8_After_r3 AS After_r3, t_21_Sequel AS t_7_Sequel
-    WHERE
-      (t_7_Sequel.book = After_r3.next)
-   UNION ALL
-  
-    SELECT
-      t_25_Sequel.book AS book,
-      t_25_Sequel.next AS next
-    FROM
-      t_21_Sequel AS t_25_Sequel
-  
-) AS UNUSED_TABLE_NAME  ),
-t_5_After_r4 AS (SELECT
-  After_MultBodyAggAux_recursive_head_f5.book AS book,
-  After_MultBodyAggAux_recursive_head_f5.next AS next
-FROM
-  t_6_After_MultBodyAggAux_recursive_head_f5 AS After_MultBodyAggAux_recursive_head_f5
-GROUP BY After_MultBodyAggAux_recursive_head_f5.book, After_MultBodyAggAux_recursive_head_f5.next),
-t_3_After_MultBodyAggAux_recursive_head_f6 AS (SELECT * FROM (
-  
-    SELECT
-      After_r4.book AS book,
-      t_4_Sequel.next AS next
-    FROM
-      t_5_After_r4 AS After_r4, t_21_Sequel AS t_4_Sequel
-    WHERE
-      (t_4_Sequel.book = After_r4.next)
-   UNION ALL
-  
-    SELECT
-      t_26_Sequel.book AS book,
-      t_26_Sequel.next AS next
-    FROM
-      t_21_Sequel AS t_26_Sequel
-  
-) AS UNUSED_TABLE_NAME  ),
-t_2_After_r5 AS (SELECT
-  After_MultBodyAggAux_recursive_head_f6.book AS book,
-  After_MultBodyAggAux_recursive_head_f6.next AS next
-FROM
-  t_3_After_MultBodyAggAux_recursive_head_f6 AS After_MultBodyAggAux_recursive_head_f6
-GROUP BY After_MultBodyAggAux_recursive_head_f6.book, After_MultBodyAggAux_recursive_head_f6.next),
-t_1_After_MultBodyAggAux_recursive_head_f7 AS (SELECT * FROM (
-  
-    SELECT
-      After_r5.book AS book,
-      Sequel.next AS next
-    FROM
-      t_2_After_r5 AS After_r5, t_21_Sequel AS Sequel
-    WHERE
-      (Sequel.book = After_r5.next)
-   UNION ALL
-  
-    SELECT
-      t_27_Sequel.book AS book,
-      t_27_Sequel.next AS next
-    FROM
-      t_21_Sequel AS t_27_Sequel
-  
-) AS UNUSED_TABLE_NAME  ),
+  t_1_After_RecursiveCte AS t_42_After_RecursiveCte, t_2_Sequel AS t_43_Sequel
+WHERE
+  (t_42_After_RecursiveCte.logica_step < 6) AND
+  (t_43_Sequel.book = t_42_After_RecursiveCte.next)),
 t_0_After AS (SELECT
-  After_MultBodyAggAux_recursive_head_f7.book AS book,
-  After_MultBodyAggAux_recursive_head_f7.next AS next
+  After_RecursiveCte.book AS book,
+  After_RecursiveCte.next AS next
 FROM
-  t_1_After_MultBodyAggAux_recursive_head_f7 AS After_MultBodyAggAux_recursive_head_f7
-GROUP BY After_MultBodyAggAux_recursive_head_f7.book, After_MultBodyAggAux_recursive_head_f7.next)
+  t_1_After_RecursiveCte AS After_RecursiveCte
+GROUP BY After_RecursiveCte.book, After_RecursiveCte.next)
 SELECT
   After.next AS next
 FROM

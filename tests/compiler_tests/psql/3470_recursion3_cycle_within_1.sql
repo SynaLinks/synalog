@@ -4,18 +4,7 @@ create schema if not exists logica_home;
 -- Empty logica type: logicarecord893574736;
 DO $$ BEGIN if not exists (select 'I(am) :- I(think)' from pg_type where typname = 'logicarecord893574736') then create type logicarecord893574736 as (nirvana numeric); end if; END $$;
 
-WITH t_2_R_MultBodyAggAux_recursive_head_f1 AS (SELECT * FROM (
-  
-    SELECT
-      1 AS x
-  
-) AS UNUSED_TABLE_NAME  ),
-t_1_R_r0 AS (SELECT
-  R_MultBodyAggAux_recursive_head_f1.x AS x
-FROM
-  t_2_R_MultBodyAggAux_recursive_head_f1 AS R_MultBodyAggAux_recursive_head_f1
-GROUP BY R_MultBodyAggAux_recursive_head_f1.x),
-t_4_E AS (SELECT * FROM (
+WITH RECURSIVE t_2_E AS (SELECT * FROM (
   
     SELECT
       1 AS a,
@@ -47,22 +36,65 @@ t_4_E AS (SELECT * FROM (
       7 AS w
   
 ) AS UNUSED_TABLE_NAME  ),
-t_0_R_MultBodyAggAux_recursive_head_f2 AS (SELECT * FROM (
-  
-    SELECT
-      1 AS x
-   UNION ALL
-  
-    SELECT
-      E.b AS x
-    FROM
-      t_1_R_r0 AS R_r0, t_4_E AS E
-    WHERE
-      (E.a = R_r0.x)
-  
-) AS UNUSED_TABLE_NAME  )
+t_0_R_RecursiveCte AS (SELECT * FROM (
+  SELECT * FROM (
+    
+      SELECT
+        1 AS x,
+        0 AS logica_step
+     UNION ALL
+    
+      SELECT
+        E.b AS x,
+        ((0) + (1)) AS logica_step
+      FROM
+        t_2_E AS E
+      WHERE
+        (0 < 1) AND
+        (1 = 0) AND
+        (E.a = 1)
+     UNION ALL
+    
+      SELECT
+        t_4_E.b AS x,
+        ((((0) + (1))) + (1)) AS logica_step
+      FROM
+        t_2_E AS t_6_E, t_2_E AS t_4_E
+      WHERE
+        (((0) + (1)) < 1) AND
+        (0 < 1) AND
+        (1 = 0) AND
+        (t_4_E.a = t_6_E.b) AND
+        (t_6_E.a = 1)
+     UNION ALL
+    
+      SELECT
+        t_9_E.b AS x,
+        ((((((0) + (1))) + (1))) + (1)) AS logica_step
+      FROM
+        t_2_E AS t_13_E, t_2_E AS t_11_E, t_2_E AS t_9_E
+      WHERE
+        (((((0) + (1))) + (1)) < 1) AND
+        (((0) + (1)) < 1) AND
+        (0 < 1) AND
+        (1 = 0) AND
+        (t_9_E.a = t_11_E.b) AND
+        (t_11_E.a = t_13_E.b) AND
+        (t_13_E.a = 1)
+    
+  ) AS UNUSED_TABLE_NAME  
+) AS UNUSED_TABLE_NAME
+UNION
 SELECT
-  R_MultBodyAggAux_recursive_head_f2.x AS x
+  t_16_E.b AS x,
+  ((t_15_R_RecursiveCte.logica_step) + (1)) AS logica_step
 FROM
-  t_0_R_MultBodyAggAux_recursive_head_f2 AS R_MultBodyAggAux_recursive_head_f2
-GROUP BY R_MultBodyAggAux_recursive_head_f2.x ORDER BY x;
+  t_0_R_RecursiveCte AS t_15_R_RecursiveCte, t_2_E AS t_16_E
+WHERE
+  (t_15_R_RecursiveCte.logica_step < 1) AND
+  (t_16_E.a = t_15_R_RecursiveCte.x))
+SELECT
+  R_RecursiveCte.x AS x
+FROM
+  t_0_R_RecursiveCte AS R_RecursiveCte
+GROUP BY R_RecursiveCte.x ORDER BY x;
