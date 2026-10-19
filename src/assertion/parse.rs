@@ -409,6 +409,12 @@ impl Parser {
             Some(Token::LParen) => {
                 self.pos += 1;
                 let inner = self.expr(0)?;
+                if self.peek() == Some(&Token::Comma) {
+                    // `P(x, y)`: the SQL-style call, never valid here.
+                    return self.error(
+                        "arguments are separated by spaces, not commas: write 'P x y', not 'P(x, y)'",
+                    );
+                }
                 if self.peek() != Some(&Token::RParen) {
                     return self.unexpected("')'");
                 }
@@ -573,6 +579,10 @@ mod tests {
 
         let err = parse("∑ h ∈ S, P h = 1").unwrap_err();
         assert!(err.message.contains("bounded binders"), "{}", err.message);
+
+        let err = parse("∀ x y, P(x, y) → Q x").unwrap_err();
+        assert_eq!(err.offset, 10);
+        assert!(err.message.contains("not 'P(x, y)'"), "{}", err.message);
 
         let err = parse("P x Q y )").unwrap_err();
         assert!(err.message.contains("end of the statement"), "{}", err.message);
