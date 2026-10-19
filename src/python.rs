@@ -13,7 +13,7 @@ use pyo3::prelude::*;
 use crate::compiler::dialects;
 use crate::compiler::universe::{LogicaProgram, Pagination, PlanStep};
 use crate::parser::{front_matter as read_front_matter, parse_file, Json, PredicateNames};
-use crate::verifier::{builtin_function_names, dependencies as program_dependencies, reserved_predicate_names, assertion_check, validate};
+use crate::verifier::{builtin_function_names, dependencies as program_dependencies, reserved_predicate_names, assertion_check, validate, AssertionStatus};
 
 fn map_err<E: std::fmt::Display>(e: E) -> PyErr {
     PyValueError::new_err(e.to_string())
@@ -293,6 +293,59 @@ fn counterexamples(
         .map_err(map_err)
 }
 
+/// Compile the search for the counterexamples of several assertions to SQL;
+/// returns {(predicate, name): sql}.
+///
+/// As `counterexamples` for each, but the program is parsed and built once
+/// for them all, not once per assertion. `assertions` lists the
+/// `(predicate, name)` pairs to compile, by default every assertion that can
+/// be checked (`assertions` reports it "unchecked").
+///
+/// Raises ValueError if a listed assertion does not exist, is pending or
+/// cannot be checked, and on syntax or compilation errors.
+#[pyfunction]
+#[pyo3(signature = (source, assertions=None, limit=None, offset=None, engine=None, import_root=None))]
+fn counterexamples_all(
+    source: &str,
+    assertions: Option<Vec<(String, String)>>,
+    limit: Option<u64>,
+    offset: Option<u64>,
+    engine: Option<&str>,
+    import_root: Option<Vec<String>>,
+) -> PyResult<HashMap<(String, String), String>> {
+    check_engine(engine)?;
+    let parsed = parse_source(source, None, import_root.clone())?;
+    let names = PredicateNames::of(&parsed);
+    let assertions = match assertions {
+        Some(assertions) => assertions,
+        None => validate(&parsed)
+            .assertions
+            .into_iter()
+            .filter(|assertion| assertion.status == AssertionStatus::Unchecked)
+            .map(|assertion| (names.written(&assertion.predicate), assertion.name))
+            .collect(),
+    };
+    let rules: Vec<&Json> = parsed.as_object()["rule"].as_array().iter().collect();
+    let mut extended = format!("{}\n", source);
+    let mut checks = Vec::new();
+    for (predicate, name) in assertions {
+        let translation = assertion_check(&rules, &names.internal(&predicate), &name).map_err(written_err(&names))?;
+        extended.push_str(&translation.rules);
+        extended.push('\n');
+        checks.push(((predicate, name), translation.predicate));
+    }
+    let parsed = parse_source(&extended, None, import_root)?;
+    let program = build_program(&parsed, engine)?;
+    let pagination = Pagination { limit, offset };
+    checks
+        .into_iter()
+        .map(|(key, predicate)| {
+            let sql = program.formatted_predicate_sql_with_pagination(&predicate, &pagination).map_err(map_err)?;
+            Ok((key, sql))
+        })
+        .collect()
+}
+
 /// The steps that compute a predicate, for a runner that executes them.
 ///
 /// Each step is a dict: `{"kind": "setup", "sql": ...}` (the engine's setup, a
@@ -432,6 +485,7 @@ fn _synalog(m: &Bound<'_, PyModule>) -> PyResult<()> {
     m.add_function(wrap_pyfunction!(assertions, m)?)?;
     m.add_function(wrap_pyfunction!(dependencies, m)?)?;
     m.add_function(wrap_pyfunction!(counterexamples, m)?)?;
+    m.add_function(wrap_pyfunction!(counterexamples_all, m)?)?;
     m.add_function(wrap_pyfunction!(plan, m)?)?;
     m.add_function(wrap_pyfunction!(quote_value, m)?)?;
     m.add_function(wrap_pyfunction!(statement_text, m)?)?;

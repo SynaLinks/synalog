@@ -190,6 +190,35 @@ def test_counterexamples_of_a_pending_or_unknown_spec():
         synalog.counterexamples(ASSERTION + PARENT + NEAR, "Near", "symmetric")
 
 
+def test_counterexamples_all_finds_what_each_search_finds():
+    # One build for them all: the same rows as one search per assertion.
+    found = synalog.counterexamples_all(BAYES, limit=3)
+    assert sorted(found) == [
+        ("Evidence", "definition"),
+        ("Joint", "definition"),
+        ("Posterior", "bounded"),
+        ("Posterior", "definition"),
+        ("Posterior", "normalised"),
+    ]
+    for (predicate, name), sql in found.items():
+        alone = synalog.counterexamples(BAYES, predicate, name, limit=3)
+        assert sorted(duckdb.sql(sql).fetchall()) == sorted(duckdb.sql(alone).fetchall())
+    wrong = ASSERTION + PARENT + NEAR
+    assert sorted(duckdb.sql(synalog.counterexamples_all(wrong)[("Near", "transitive")]).fetchall()) == violations(
+        wrong, "Near", "transitive"
+    )
+
+
+def test_counterexamples_all_compiles_those_listed():
+    assert list(synalog.counterexamples_all(BAYES, [("Joint", "definition")])) == [("Joint", "definition")]
+    # Left out by default, refused when listed.
+    assert synalog.counterexamples_all(ASSERTION) == {}
+    with pytest.raises(ValueError, match="is pending: waiting for Near"):
+        synalog.counterexamples_all(ASSERTION, [("Near", "transitive")])
+    with pytest.raises(ValueError, match="No assertion 'Near.symmetric'"):
+        synalog.counterexamples_all(ASSERTION + PARENT + NEAR, [("Near", "symmetric")])
+
+
 def test_specs_do_not_change_the_sql():
     plain = synalog.compile(PARENT + NEAR, "Near")
     assert synalog.compile(ASSERTION + PARENT + NEAR, "Near") == plain

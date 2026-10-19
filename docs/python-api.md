@@ -1,6 +1,6 @@
 # Python API
 
-The `synalog` package exposes nine functions that take a program (`parse`, `compile`, `search`, `compile_all`, `check`, `assertions`, `counterexamples`, `plan`, `execute`) two that take nothing and return the names Synalog has already reserved (`reserved_predicates`, `builtin_functions`), and two that render text a report does not control (`quote_value`, `statement_text`). The program functions all accept an optional `engine` keyword that overrides the program's `@Engine` annotation (one of `sqlite`, `duckdb`, `bigquery`, `psql`, `presto`, `trino`, `databricks`; default `duckdb`) and an optional `import_root` keyword listing directories where `import` statements look up `.l` files (default: the current directory). They raise `ValueError` on syntax or compilation errors.
+The `synalog` package exposes ten functions that take a program (`parse`, `compile`, `search`, `compile_all`, `check`, `assertions`, `counterexamples`, `counterexamples_all`, `plan`, `execute`) two that take nothing and return the names Synalog has already reserved (`reserved_predicates`, `builtin_functions`), and two that render text a report does not control (`quote_value`, `statement_text`). The program functions all accept an optional `engine` keyword that overrides the program's `@Engine` annotation (one of `sqlite`, `duckdb`, `bigquery`, `psql`, `presto`, `trino`, `databricks`; default `duckdb`) and an optional `import_root` keyword listing directories where `import` statements look up `.l` files (default: the current directory). They raise `ValueError` on syntax or compilation errors.
 
 ## `parse`
 
@@ -124,6 +124,21 @@ rows = duckdb.sql(sql).fetchall()   # [] when the assertion holds
 ```
 
 Raises `ValueError` if there is no such assertion, or if it is pending or unsupported.
+
+## `counterexamples_all`
+
+```python
+counterexamples_all(source, assertions=None, limit=None, offset=None, engine=None, import_root=None) -> dict[tuple[str, str], str]
+```
+
+`counterexamples` for several assertions at once: `{(predicate, name): sql}`. The program is parsed and compiled once for them all instead of once per assertion, which is most of the time a check takes on a large program. `assertions` lists the `(predicate, name)` pairs to compile; by default, every assertion `assertions` reports `"unchecked"`.
+
+```python
+for (predicate, name), sql in synalog.counterexamples_all(source, limit=5).items():
+    rows = duckdb.sql(sql).fetchall()   # [] when the assertion holds
+```
+
+Raises `ValueError` if a listed assertion does not exist, or if it is pending or unsupported.
 
 ## `execute`
 
