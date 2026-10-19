@@ -4,90 +4,65 @@ create schema if not exists logica_home;
 -- Empty logica type: logicarecord893574736;
 DO $$ BEGIN if not exists (select 'I(am) :- I(think)' from pg_type where typname = 'logicarecord893574736') then create type logicarecord893574736 as (nirvana numeric); end if; END $$;
 
-WITH t_11_R_MultBodyAggAux_recursive_head_f1 AS (SELECT * FROM (
-  
-    SELECT
-      0 AS x
-  
-) AS UNUSED_TABLE_NAME  ),
-t_10_R_r0 AS (SELECT
-  R_MultBodyAggAux_recursive_head_f1.x AS x
-FROM
-  t_11_R_MultBodyAggAux_recursive_head_f1 AS R_MultBodyAggAux_recursive_head_f1
-GROUP BY R_MultBodyAggAux_recursive_head_f1.x),
-t_8_R_MultBodyAggAux_recursive_head_f2 AS (SELECT * FROM (
-  
-    SELECT
-      0 AS x
-   UNION ALL
-  
-    SELECT
-      ((x_31) + (1)) AS x
-    FROM
-      t_10_R_r0 AS R_r0, UNNEST(COALESCE((SELECT ARRAY_AGG(x) FROM GENERATE_SERIES(0, 4 - 1) as x), '{}')) as x_31
-    WHERE
-      (R_r0.x = x_31)
-  
-) AS UNUSED_TABLE_NAME  ),
-t_7_R_r1 AS (SELECT
-  R_MultBodyAggAux_recursive_head_f2.x AS x
-FROM
-  t_8_R_MultBodyAggAux_recursive_head_f2 AS R_MultBodyAggAux_recursive_head_f2
-GROUP BY R_MultBodyAggAux_recursive_head_f2.x),
-t_5_R_MultBodyAggAux_recursive_head_f3 AS (SELECT * FROM (
-  
-    SELECT
-      0 AS x
-   UNION ALL
-  
-    SELECT
-      ((x_23) + (1)) AS x
-    FROM
-      t_7_R_r1 AS R_r1, UNNEST(COALESCE((SELECT ARRAY_AGG(x) FROM GENERATE_SERIES(0, 4 - 1) as x), '{}')) as x_23
-    WHERE
-      (R_r1.x = x_23)
-  
-) AS UNUSED_TABLE_NAME  ),
-t_4_R_r2 AS (SELECT
-  R_MultBodyAggAux_recursive_head_f3.x AS x
-FROM
-  t_5_R_MultBodyAggAux_recursive_head_f3 AS R_MultBodyAggAux_recursive_head_f3
-GROUP BY R_MultBodyAggAux_recursive_head_f3.x),
-t_2_R_MultBodyAggAux_recursive_head_f4 AS (SELECT * FROM (
-  
-    SELECT
-      0 AS x
-   UNION ALL
-  
-    SELECT
-      ((x_15) + (1)) AS x
-    FROM
-      t_4_R_r2 AS R_r2, UNNEST(COALESCE((SELECT ARRAY_AGG(x) FROM GENERATE_SERIES(0, 4 - 1) as x), '{}')) as x_15
-    WHERE
-      (R_r2.x = x_15)
-  
-) AS UNUSED_TABLE_NAME  ),
-t_1_R_r3 AS (SELECT
-  R_MultBodyAggAux_recursive_head_f4.x AS x
-FROM
-  t_2_R_MultBodyAggAux_recursive_head_f4 AS R_MultBodyAggAux_recursive_head_f4
-GROUP BY R_MultBodyAggAux_recursive_head_f4.x),
-t_0_R_MultBodyAggAux_recursive_head_f5 AS (SELECT * FROM (
-  
-    SELECT
-      0 AS x
-   UNION ALL
-  
-    SELECT
-      ((x_7) + (1)) AS x
-    FROM
-      t_1_R_r3 AS R_r3, UNNEST(COALESCE((SELECT ARRAY_AGG(x) FROM GENERATE_SERIES(0, 4 - 1) as x), '{}')) as x_7
-    WHERE
-      (R_r3.x = x_7)
-  
-) AS UNUSED_TABLE_NAME  )
+WITH RECURSIVE t_0_R_RecursiveCte AS (SELECT * FROM (
+  SELECT * FROM (
+    
+      SELECT
+        0 AS x,
+        0 AS logica_step
+     UNION ALL
+    
+      SELECT
+        ((x_20) + (1)) AS x,
+        ((0) + (1)) AS logica_step
+      FROM
+        UNNEST(COALESCE((SELECT ARRAY_AGG(x) FROM GENERATE_SERIES(0, 4 - 1) as x), '{}')) as x_20
+      WHERE
+        (0 < 4) AND
+        (1 = 0) AND
+        (x_20 = 0)
+     UNION ALL
+    
+      SELECT
+        ((x_36) + (1)) AS x,
+        ((((0) + (1))) + (1)) AS logica_step
+      FROM
+        UNNEST(COALESCE((SELECT ARRAY_AGG(x) FROM GENERATE_SERIES(0, 4 - 1) as x), '{}')) as x_36, UNNEST(COALESCE((SELECT ARRAY_AGG(x) FROM GENERATE_SERIES(0, 4 - 1) as x), '{}')) as x_42
+      WHERE
+        (((0) + (1)) < 4) AND
+        (0 < 4) AND
+        (1 = 0) AND
+        (x_36 = ((x_42) + (1))) AND
+        (x_42 = 0)
+     UNION ALL
+    
+      SELECT
+        ((x_58) + (1)) AS x,
+        ((((((0) + (1))) + (1))) + (1)) AS logica_step
+      FROM
+        UNNEST(COALESCE((SELECT ARRAY_AGG(x) FROM GENERATE_SERIES(0, 4 - 1) as x), '{}')) as x_58, UNNEST(COALESCE((SELECT ARRAY_AGG(x) FROM GENERATE_SERIES(0, 4 - 1) as x), '{}')) as x_65, UNNEST(COALESCE((SELECT ARRAY_AGG(x) FROM GENERATE_SERIES(0, 4 - 1) as x), '{}')) as x_71
+      WHERE
+        (((((0) + (1))) + (1)) < 4) AND
+        (((0) + (1)) < 4) AND
+        (0 < 4) AND
+        (1 = 0) AND
+        (x_58 = ((x_65) + (1))) AND
+        (x_65 = ((x_71) + (1))) AND
+        (x_71 = 0)
+    
+  ) AS UNUSED_TABLE_NAME  
+) AS UNUSED_TABLE_NAME
+UNION
 SELECT
-  R_MultBodyAggAux_recursive_head_f5.x AS x
+  ((x_78) + (1)) AS x,
+  ((t_14_R_RecursiveCte.logica_step) + (1)) AS logica_step
 FROM
-  t_0_R_MultBodyAggAux_recursive_head_f5 AS R_MultBodyAggAux_recursive_head_f5
-GROUP BY R_MultBodyAggAux_recursive_head_f5.x ORDER BY x;
+  t_0_R_RecursiveCte AS t_14_R_RecursiveCte, UNNEST(COALESCE((SELECT ARRAY_AGG(x) FROM GENERATE_SERIES(0, 4 - 1) as x), '{}')) as x_78
+WHERE
+  (t_14_R_RecursiveCte.logica_step < 4) AND
+  (t_14_R_RecursiveCte.x = x_78))
+SELECT
+  R_RecursiveCte.x AS x
+FROM
+  t_0_R_RecursiveCte AS R_RecursiveCte
+GROUP BY R_RecursiveCte.x ORDER BY x;

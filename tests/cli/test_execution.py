@@ -50,17 +50,19 @@ def test_a_recursion_stops_when_it_converges(counted):
     assert columns == ["y"]
     assert rows == [(y,) for y in range(11)]
     (session,) = counted
-    # Setup statements (the accumulated table's typed empty steps among
-    # them, as many whatever the depth), then 3 statements and a check per
-    # step: linear in the steps the data needs, not the declared depth.
-    assert session.scripts < 4 * 15 + 12
+    # The engine's setup, then one recursive query, which ends when a step
+    # adds no row: the steps the data needs, not the declared depth.
+    assert session.scripts == 2
 
 
 def test_until_convergence_runs_where_compile_cannot():
     source = CHAIN.replace("DEPTH", "-1")
     assert synalog.execute(source, "Reach", engine="sqlite")[1] == [(y,) for y in range(11)]
+    # One recursive query holds it on DuckDB, SQLite and PostgreSQL; a script
+    # of tables cannot stop by itself.
+    assert "WITH RECURSIVE" in synalog.compile(source, "Reach")
     with pytest.raises(ValueError, match="more steps than a SQL script can hold"):
-        synalog.compile(source, "Reach")
+        synalog.compile(source, "Reach", engine="bigquery")
 
 
 def test_the_depth_still_bounds_the_recursion():
@@ -69,7 +71,9 @@ def test_the_depth_still_bounds_the_recursion():
 
 
 def test_a_plan_has_a_loop_per_recursion():
-    steps = synalog.plan(CHAIN.replace("DEPTH", "40"), "Reach")
+    # Where the engine has no recursive query (BigQuery), a recursion is
+    # computed into tables, a loop of steps.
+    steps = synalog.plan(CHAIN.replace("DEPTH", "40"), "Reach", engine="bigquery")
     kinds = [step["kind"] for step in steps]
     assert kinds.count("loop") == 1 and kinds[-1] == "sql"
     (loop,) = [step for step in steps if step["kind"] == "loop"]
@@ -86,4 +90,4 @@ def test_execute_paginates_and_searches():
 
 def test_execute_returns_counterexamples():
     source = '@Assert(Reach, small: "∀ y, Reach y → y < 9");\n' + CHAIN.replace("DEPTH", "40")
-    assert synalog.execute(source, "Reach", assertion="small")[1] == [(9,), (10,)]
+    assert sorted(synalog.execute(source, "Reach", assertion="small")[1]) == [(9,), (10,)]

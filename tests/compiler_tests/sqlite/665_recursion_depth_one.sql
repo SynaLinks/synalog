@@ -1,30 +1,62 @@
-WITH t_2_R_MultBodyAggAux_recursive_head_f1 AS (SELECT * FROM (
-  
-    SELECT
-      0 AS y
-  
-) AS UNUSED_TABLE_NAME  ),
-t_1_R_r0 AS (SELECT
-  R_MultBodyAggAux_recursive_head_f1.y AS y
-FROM
-  t_2_R_MultBodyAggAux_recursive_head_f1 AS R_MultBodyAggAux_recursive_head_f1
-GROUP BY R_MultBodyAggAux_recursive_head_f1.y),
-t_0_R_MultBodyAggAux_recursive_head_f2 AS (SELECT * FROM (
-  
-    SELECT
-      0 AS y
-   UNION ALL
-  
-    SELECT
-      ((x_7.value) + (1)) AS y
-    FROM
-      t_1_R_r0 AS R_r0, JSON_EACH((select json_group_array(n) from (with recursive t as(select 0 as n union all select n + 1 as n from t where n + 1 < 10) select n from t) where n < 10)) as x_7
-    WHERE
-      (R_r0.y = x_7.value)
-  
-) AS UNUSED_TABLE_NAME  )
+WITH RECURSIVE t_0_R_RecursiveCte AS (SELECT * FROM (
+  SELECT * FROM (
+    
+      SELECT
+        0 AS y,
+        0 AS logica_step
+     UNION ALL
+    
+      SELECT
+        ((x_20.value) + (1)) AS y,
+        ((0) + (1)) AS logica_step
+      FROM
+        JSON_EACH((select json_group_array(n) from (with recursive t as(select 0 as n union all select n + 1 as n from t where n + 1 < 10) select n from t) where n < 10)) as x_20
+      WHERE
+        (0 < 1) AND
+        (1 = 0) AND
+        (x_20.value = 0)
+     UNION ALL
+    
+      SELECT
+        ((x_36.value) + (1)) AS y,
+        ((((0) + (1))) + (1)) AS logica_step
+      FROM
+        JSON_EACH((select json_group_array(n) from (with recursive t as(select 0 as n union all select n + 1 as n from t where n + 1 < 10) select n from t) where n < 10)) as x_36, JSON_EACH((select json_group_array(n) from (with recursive t as(select 0 as n union all select n + 1 as n from t where n + 1 < 10) select n from t) where n < 10)) as x_42
+      WHERE
+        (((0) + (1)) < 1) AND
+        (0 < 1) AND
+        (1 = 0) AND
+        (x_36.value = ((x_42.value) + (1))) AND
+        (x_42.value = 0)
+     UNION ALL
+    
+      SELECT
+        ((x_58.value) + (1)) AS y,
+        ((((((0) + (1))) + (1))) + (1)) AS logica_step
+      FROM
+        JSON_EACH((select json_group_array(n) from (with recursive t as(select 0 as n union all select n + 1 as n from t where n + 1 < 10) select n from t) where n < 10)) as x_58, JSON_EACH((select json_group_array(n) from (with recursive t as(select 0 as n union all select n + 1 as n from t where n + 1 < 10) select n from t) where n < 10)) as x_65, JSON_EACH((select json_group_array(n) from (with recursive t as(select 0 as n union all select n + 1 as n from t where n + 1 < 10) select n from t) where n < 10)) as x_71
+      WHERE
+        (((((0) + (1))) + (1)) < 1) AND
+        (((0) + (1)) < 1) AND
+        (0 < 1) AND
+        (1 = 0) AND
+        (x_58.value = ((x_65.value) + (1))) AND
+        (x_65.value = ((x_71.value) + (1))) AND
+        (x_71.value = 0)
+    
+  ) AS UNUSED_TABLE_NAME  
+) AS UNUSED_TABLE_NAME
+UNION
 SELECT
-  R_MultBodyAggAux_recursive_head_f2.y AS y
+  ((x_78.value) + (1)) AS y,
+  ((t_14_R_RecursiveCte.logica_step) + (1)) AS logica_step
 FROM
-  t_0_R_MultBodyAggAux_recursive_head_f2 AS R_MultBodyAggAux_recursive_head_f2
-GROUP BY R_MultBodyAggAux_recursive_head_f2.y ORDER BY y NULLS LAST;
+  t_0_R_RecursiveCte AS t_14_R_RecursiveCte, JSON_EACH((select json_group_array(n) from (with recursive t as(select 0 as n union all select n + 1 as n from t where n + 1 < 10) select n from t) where n < 10)) as x_78
+WHERE
+  (t_14_R_RecursiveCte.logica_step < 1) AND
+  (t_14_R_RecursiveCte.y = x_78.value))
+SELECT
+  R_RecursiveCte.y AS y
+FROM
+  t_0_R_RecursiveCte AS R_RecursiveCte
+GROUP BY R_RecursiveCte.y ORDER BY y NULLS LAST;

@@ -1,0 +1,68 @@
+-- Initializing PostgreSQL environment.
+set client_min_messages to warning;
+create schema if not exists logica_home;
+-- Empty logica type: logicarecord893574736;
+DO $$ BEGIN if not exists (select 'I(am) :- I(think)' from pg_type where typname = 'logicarecord893574736') then create type logicarecord893574736 as (nirvana numeric); end if; END $$;
+
+WITH RECURSIVE t_0_Reach_RecursiveCte AS (SELECT * FROM (
+  SELECT * FROM (
+    
+      SELECT
+        0 AS y,
+        0 AS logica_step
+     UNION ALL
+    
+      SELECT
+        ((x_20) + (1)) AS y,
+        ((0) + (1)) AS logica_step
+      FROM
+        UNNEST(COALESCE((SELECT ARRAY_AGG(x) FROM GENERATE_SERIES(0, 10 - 1) as x), '{}')) as x_20
+      WHERE
+        (0 < 5000) AND
+        (1 = 0) AND
+        (x_20 = 0)
+     UNION ALL
+    
+      SELECT
+        ((x_36) + (1)) AS y,
+        ((((0) + (1))) + (1)) AS logica_step
+      FROM
+        UNNEST(COALESCE((SELECT ARRAY_AGG(x) FROM GENERATE_SERIES(0, 10 - 1) as x), '{}')) as x_36, UNNEST(COALESCE((SELECT ARRAY_AGG(x) FROM GENERATE_SERIES(0, 10 - 1) as x), '{}')) as x_42
+      WHERE
+        (((0) + (1)) < 5000) AND
+        (0 < 5000) AND
+        (1 = 0) AND
+        (x_36 = ((x_42) + (1))) AND
+        (x_42 = 0)
+     UNION ALL
+    
+      SELECT
+        ((x_58) + (1)) AS y,
+        ((((((0) + (1))) + (1))) + (1)) AS logica_step
+      FROM
+        UNNEST(COALESCE((SELECT ARRAY_AGG(x) FROM GENERATE_SERIES(0, 10 - 1) as x), '{}')) as x_58, UNNEST(COALESCE((SELECT ARRAY_AGG(x) FROM GENERATE_SERIES(0, 10 - 1) as x), '{}')) as x_65, UNNEST(COALESCE((SELECT ARRAY_AGG(x) FROM GENERATE_SERIES(0, 10 - 1) as x), '{}')) as x_71
+      WHERE
+        (((((0) + (1))) + (1)) < 5000) AND
+        (((0) + (1)) < 5000) AND
+        (0 < 5000) AND
+        (1 = 0) AND
+        (x_58 = ((x_65) + (1))) AND
+        (x_65 = ((x_71) + (1))) AND
+        (x_71 = 0)
+    
+  ) AS UNUSED_TABLE_NAME  
+) AS UNUSED_TABLE_NAME
+UNION
+SELECT
+  ((x_78) + (1)) AS y,
+  ((t_14_Reach_RecursiveCte.logica_step) + (1)) AS logica_step
+FROM
+  t_0_Reach_RecursiveCte AS t_14_Reach_RecursiveCte, UNNEST(COALESCE((SELECT ARRAY_AGG(x) FROM GENERATE_SERIES(0, 10 - 1) as x), '{}')) as x_78
+WHERE
+  (t_14_Reach_RecursiveCte.logica_step < 5000) AND
+  (t_14_Reach_RecursiveCte.y = x_78))
+SELECT
+  Reach_RecursiveCte.y AS y
+FROM
+  t_0_Reach_RecursiveCte AS Reach_RecursiveCte
+GROUP BY Reach_RecursiveCte.y ORDER BY y;

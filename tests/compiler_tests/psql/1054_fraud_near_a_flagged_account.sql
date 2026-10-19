@@ -4,15 +4,7 @@ create schema if not exists logica_home;
 -- Empty logica type: logicarecord893574736;
 DO $$ BEGIN if not exists (select 'I(am) :- I(think)' from pg_type where typname = 'logicarecord893574736') then create type logicarecord893574736 as (nirvana numeric); end if; END $$;
 
-
-DO $$
-BEGIN
--- Logica type: logicarecord481217614
-if not exists (select 'I(am) :- I(think)' from pg_type where typname = 'logicarecord481217614') then create type logicarecord481217614 as (r logicarecord893574736); end if;
--- Logica type: logicarecord86796764
-if not exists (select 'I(am) :- I(think)' from pg_type where typname = 'logicarecord86796764') then create type logicarecord86796764 as (s text); end if;
-END $$;
-WITH t_0_Flagged AS (SELECT * FROM (
+WITH RECURSIVE t_0_Flagged AS (SELECT * FROM (
   
     SELECT
       'a1' AS account
@@ -73,223 +65,124 @@ WHERE
   (HasPhone.account != t_4_HasPhone.account) AND
   (t_4_HasPhone.phone = HasPhone.phone)
 GROUP BY HasPhone.account, t_4_HasPhone.account),
-t_38_Linked_MultBodyAggAux_recursive_head_f1 AS (SELECT * FROM (
-  
-    SELECT
-      t_39_Shares.a AS a,
-      t_39_Shares.b AS b
-    FROM
-      t_3_Shares AS t_39_Shares
-  
-) AS UNUSED_TABLE_NAME  ),
-t_37_Linked_r0 AS (SELECT
-  Linked_MultBodyAggAux_recursive_head_f1.a AS a,
-  Linked_MultBodyAggAux_recursive_head_f1.b AS b
+t_2_Linked_RecursiveCte AS (SELECT * FROM (
+  SELECT * FROM (
+    
+      SELECT
+        Shares.a AS a,
+        Shares.b AS b,
+        0 AS logica_step
+      FROM
+        t_3_Shares AS Shares
+     UNION ALL
+    
+      SELECT
+        t_8_Shares.a AS a,
+        t_6_Shares.b AS b,
+        ((0) + (1)) AS logica_step
+      FROM
+        t_3_Shares AS t_8_Shares, t_3_Shares AS t_6_Shares
+      WHERE
+        (0 < 8) AND
+        (1 = 0) AND
+        (t_6_Shares.a = t_8_Shares.b)
+     UNION ALL
+    
+      SELECT
+        t_16_Shares.a AS a,
+        t_12_Shares.b AS b,
+        ((((0) + (1))) + (1)) AS logica_step
+      FROM
+        t_3_Shares AS t_16_Shares, t_3_Shares AS t_14_Shares, t_3_Shares AS t_12_Shares
+      WHERE
+        (((0) + (1)) < 8) AND
+        (0 < 8) AND
+        (1 = 0) AND
+        (t_12_Shares.a = t_14_Shares.b) AND
+        (t_14_Shares.a = t_16_Shares.b)
+     UNION ALL
+    
+      SELECT
+        t_24_Shares.a AS a,
+        t_18_Shares.b AS b,
+        ((((((0) + (1))) + (1))) + (1)) AS logica_step
+      FROM
+        t_3_Shares AS t_24_Shares, t_3_Shares AS t_22_Shares, t_3_Shares AS t_20_Shares, t_3_Shares AS t_18_Shares
+      WHERE
+        (((((0) + (1))) + (1)) < 8) AND
+        (((0) + (1)) < 8) AND
+        (0 < 8) AND
+        (1 = 0) AND
+        (t_18_Shares.a = t_20_Shares.b) AND
+        (t_20_Shares.a = t_22_Shares.b) AND
+        (t_22_Shares.a = t_24_Shares.b)
+     UNION ALL
+    
+      SELECT
+        t_34_Shares.a AS a,
+        t_26_Shares.b AS b,
+        ((((((((0) + (1))) + (1))) + (1))) + (1)) AS logica_step
+      FROM
+        t_3_Shares AS t_34_Shares, t_3_Shares AS t_32_Shares, t_3_Shares AS t_30_Shares, t_3_Shares AS t_28_Shares, t_3_Shares AS t_26_Shares
+      WHERE
+        (((((((0) + (1))) + (1))) + (1)) < 8) AND
+        (((((0) + (1))) + (1)) < 8) AND
+        (((0) + (1)) < 8) AND
+        (0 < 8) AND
+        (1 = 0) AND
+        (t_26_Shares.a = t_28_Shares.b) AND
+        (t_28_Shares.a = t_30_Shares.b) AND
+        (t_30_Shares.a = t_32_Shares.b) AND
+        (t_32_Shares.a = t_34_Shares.b)
+     UNION ALL
+    
+      SELECT
+        t_46_Shares.a AS a,
+        t_36_Shares.b AS b,
+        ((((((((((0) + (1))) + (1))) + (1))) + (1))) + (1)) AS logica_step
+      FROM
+        t_3_Shares AS t_46_Shares, t_3_Shares AS t_44_Shares, t_3_Shares AS t_42_Shares, t_3_Shares AS t_40_Shares, t_3_Shares AS t_38_Shares, t_3_Shares AS t_36_Shares
+      WHERE
+        (((((((((0) + (1))) + (1))) + (1))) + (1)) < 8) AND
+        (((((((0) + (1))) + (1))) + (1)) < 8) AND
+        (((((0) + (1))) + (1)) < 8) AND
+        (((0) + (1)) < 8) AND
+        (0 < 8) AND
+        (1 = 0) AND
+        (t_36_Shares.a = t_38_Shares.b) AND
+        (t_38_Shares.a = t_40_Shares.b) AND
+        (t_40_Shares.a = t_42_Shares.b) AND
+        (t_42_Shares.a = t_44_Shares.b) AND
+        (t_44_Shares.a = t_46_Shares.b)
+    
+  ) AS UNUSED_TABLE_NAME  
+) AS UNUSED_TABLE_NAME
+UNION
+SELECT
+  t_47_Linked_RecursiveCte.a AS a,
+  t_48_Shares.b AS b,
+  ((t_47_Linked_RecursiveCte.logica_step) + (1)) AS logica_step
 FROM
-  t_38_Linked_MultBodyAggAux_recursive_head_f1 AS Linked_MultBodyAggAux_recursive_head_f1
-GROUP BY Linked_MultBodyAggAux_recursive_head_f1.a, Linked_MultBodyAggAux_recursive_head_f1.b),
-t_34_Linked_MultBodyAggAux_recursive_head_f2 AS (SELECT * FROM (
-  
-    SELECT
-      t_35_Shares.a AS a,
-      t_35_Shares.b AS b
-    FROM
-      t_3_Shares AS t_35_Shares
-   UNION ALL
-  
-    SELECT
-      Linked_r0.a AS a,
-      t_36_Shares.b AS b
-    FROM
-      t_37_Linked_r0 AS Linked_r0, t_3_Shares AS t_36_Shares
-    WHERE
-      (t_36_Shares.a = Linked_r0.b)
-  
-) AS UNUSED_TABLE_NAME  ),
-t_33_Linked_r1 AS (SELECT
-  Linked_MultBodyAggAux_recursive_head_f2.a AS a,
-  Linked_MultBodyAggAux_recursive_head_f2.b AS b
-FROM
-  t_34_Linked_MultBodyAggAux_recursive_head_f2 AS Linked_MultBodyAggAux_recursive_head_f2
-GROUP BY Linked_MultBodyAggAux_recursive_head_f2.a, Linked_MultBodyAggAux_recursive_head_f2.b),
-t_30_Linked_MultBodyAggAux_recursive_head_f3 AS (SELECT * FROM (
-  
-    SELECT
-      t_31_Shares.a AS a,
-      t_31_Shares.b AS b
-    FROM
-      t_3_Shares AS t_31_Shares
-   UNION ALL
-  
-    SELECT
-      Linked_r1.a AS a,
-      t_32_Shares.b AS b
-    FROM
-      t_33_Linked_r1 AS Linked_r1, t_3_Shares AS t_32_Shares
-    WHERE
-      (t_32_Shares.a = Linked_r1.b)
-  
-) AS UNUSED_TABLE_NAME  ),
-t_29_Linked_r2 AS (SELECT
-  Linked_MultBodyAggAux_recursive_head_f3.a AS a,
-  Linked_MultBodyAggAux_recursive_head_f3.b AS b
-FROM
-  t_30_Linked_MultBodyAggAux_recursive_head_f3 AS Linked_MultBodyAggAux_recursive_head_f3
-GROUP BY Linked_MultBodyAggAux_recursive_head_f3.a, Linked_MultBodyAggAux_recursive_head_f3.b),
-t_26_Linked_MultBodyAggAux_recursive_head_f4 AS (SELECT * FROM (
-  
-    SELECT
-      t_27_Shares.a AS a,
-      t_27_Shares.b AS b
-    FROM
-      t_3_Shares AS t_27_Shares
-   UNION ALL
-  
-    SELECT
-      Linked_r2.a AS a,
-      t_28_Shares.b AS b
-    FROM
-      t_29_Linked_r2 AS Linked_r2, t_3_Shares AS t_28_Shares
-    WHERE
-      (t_28_Shares.a = Linked_r2.b)
-  
-) AS UNUSED_TABLE_NAME  ),
-t_25_Linked_r3 AS (SELECT
-  Linked_MultBodyAggAux_recursive_head_f4.a AS a,
-  Linked_MultBodyAggAux_recursive_head_f4.b AS b
-FROM
-  t_26_Linked_MultBodyAggAux_recursive_head_f4 AS Linked_MultBodyAggAux_recursive_head_f4
-GROUP BY Linked_MultBodyAggAux_recursive_head_f4.a, Linked_MultBodyAggAux_recursive_head_f4.b),
-t_22_Linked_MultBodyAggAux_recursive_head_f5 AS (SELECT * FROM (
-  
-    SELECT
-      t_23_Shares.a AS a,
-      t_23_Shares.b AS b
-    FROM
-      t_3_Shares AS t_23_Shares
-   UNION ALL
-  
-    SELECT
-      Linked_r3.a AS a,
-      t_24_Shares.b AS b
-    FROM
-      t_25_Linked_r3 AS Linked_r3, t_3_Shares AS t_24_Shares
-    WHERE
-      (t_24_Shares.a = Linked_r3.b)
-  
-) AS UNUSED_TABLE_NAME  ),
-t_21_Linked_r4 AS (SELECT
-  Linked_MultBodyAggAux_recursive_head_f5.a AS a,
-  Linked_MultBodyAggAux_recursive_head_f5.b AS b
-FROM
-  t_22_Linked_MultBodyAggAux_recursive_head_f5 AS Linked_MultBodyAggAux_recursive_head_f5
-GROUP BY Linked_MultBodyAggAux_recursive_head_f5.a, Linked_MultBodyAggAux_recursive_head_f5.b),
-t_18_Linked_MultBodyAggAux_recursive_head_f6 AS (SELECT * FROM (
-  
-    SELECT
-      t_19_Shares.a AS a,
-      t_19_Shares.b AS b
-    FROM
-      t_3_Shares AS t_19_Shares
-   UNION ALL
-  
-    SELECT
-      Linked_r4.a AS a,
-      t_20_Shares.b AS b
-    FROM
-      t_21_Linked_r4 AS Linked_r4, t_3_Shares AS t_20_Shares
-    WHERE
-      (t_20_Shares.a = Linked_r4.b)
-  
-) AS UNUSED_TABLE_NAME  ),
-t_17_Linked_r5 AS (SELECT
-  Linked_MultBodyAggAux_recursive_head_f6.a AS a,
-  Linked_MultBodyAggAux_recursive_head_f6.b AS b
-FROM
-  t_18_Linked_MultBodyAggAux_recursive_head_f6 AS Linked_MultBodyAggAux_recursive_head_f6
-GROUP BY Linked_MultBodyAggAux_recursive_head_f6.a, Linked_MultBodyAggAux_recursive_head_f6.b),
-t_14_Linked_MultBodyAggAux_recursive_head_f7 AS (SELECT * FROM (
-  
-    SELECT
-      t_15_Shares.a AS a,
-      t_15_Shares.b AS b
-    FROM
-      t_3_Shares AS t_15_Shares
-   UNION ALL
-  
-    SELECT
-      Linked_r5.a AS a,
-      t_16_Shares.b AS b
-    FROM
-      t_17_Linked_r5 AS Linked_r5, t_3_Shares AS t_16_Shares
-    WHERE
-      (t_16_Shares.a = Linked_r5.b)
-  
-) AS UNUSED_TABLE_NAME  ),
-t_13_Linked_r6 AS (SELECT
-  Linked_MultBodyAggAux_recursive_head_f7.a AS a,
-  Linked_MultBodyAggAux_recursive_head_f7.b AS b
-FROM
-  t_14_Linked_MultBodyAggAux_recursive_head_f7 AS Linked_MultBodyAggAux_recursive_head_f7
-GROUP BY Linked_MultBodyAggAux_recursive_head_f7.a, Linked_MultBodyAggAux_recursive_head_f7.b),
-t_8_Linked_MultBodyAggAux_recursive_head_f8 AS (SELECT * FROM (
-  
-    SELECT
-      t_9_Shares.a AS a,
-      t_9_Shares.b AS b
-    FROM
-      t_3_Shares AS t_9_Shares
-   UNION ALL
-  
-    SELECT
-      Linked_r6.a AS a,
-      t_12_Shares.b AS b
-    FROM
-      t_13_Linked_r6 AS Linked_r6, t_3_Shares AS t_12_Shares
-    WHERE
-      (t_12_Shares.a = Linked_r6.b)
-  
-) AS UNUSED_TABLE_NAME  ),
-t_7_Linked_r7 AS (SELECT
-  Linked_MultBodyAggAux_recursive_head_f8.a AS a,
-  Linked_MultBodyAggAux_recursive_head_f8.b AS b
-FROM
-  t_8_Linked_MultBodyAggAux_recursive_head_f8 AS Linked_MultBodyAggAux_recursive_head_f8
-GROUP BY Linked_MultBodyAggAux_recursive_head_f8.a, Linked_MultBodyAggAux_recursive_head_f8.b),
-t_2_Linked_MultBodyAggAux_recursive_head_f9 AS (SELECT * FROM (
-  
-    SELECT
-      Shares.a AS a,
-      Shares.b AS b
-    FROM
-      t_3_Shares AS Shares
-   UNION ALL
-  
-    SELECT
-      Linked_r7.a AS a,
-      t_6_Shares.b AS b
-    FROM
-      t_7_Linked_r7 AS Linked_r7, t_3_Shares AS t_6_Shares
-    WHERE
-      (t_6_Shares.a = Linked_r7.b)
-  
-) AS UNUSED_TABLE_NAME  ),
+  t_2_Linked_RecursiveCte AS t_47_Linked_RecursiveCte, t_3_Shares AS t_48_Shares
+WHERE
+  (t_47_Linked_RecursiveCte.logica_step < 8) AND
+  (t_48_Shares.a = t_47_Linked_RecursiveCte.b)),
 t_1_Linked AS (SELECT
-  Linked_MultBodyAggAux_recursive_head_f9.a AS a,
-  Linked_MultBodyAggAux_recursive_head_f9.b AS b
+  Linked_RecursiveCte.a AS a,
+  Linked_RecursiveCte.b AS b
 FROM
-  t_2_Linked_MultBodyAggAux_recursive_head_f9 AS Linked_MultBodyAggAux_recursive_head_f9
-GROUP BY Linked_MultBodyAggAux_recursive_head_f9.a, Linked_MultBodyAggAux_recursive_head_f9.b)
+  t_2_Linked_RecursiveCte AS Linked_RecursiveCte
+GROUP BY Linked_RecursiveCte.a, Linked_RecursiveCte.b)
 SELECT
   Linked.b AS account
 FROM
   t_0_Flagged AS Flagged, t_1_Linked AS Linked
 WHERE
   (CAST((SELECT
-    MIN((CASE WHEN x_144 = 0 THEN 1 ELSE NULL END)) AS logica_value
+    MIN((CASE WHEN x_224 = 0 THEN 1 ELSE NULL END)) AS logica_value
   FROM
-    t_0_Flagged AS t_41_Flagged, UNNEST(ARRAY[0]::numeric[]) as x_144
+    t_0_Flagged AS t_49_Flagged, UNNEST(ARRAY[0]) as x_224
   WHERE
-    (t_41_Flagged.account = Linked.b)) AS numeric) IS NULL) AND
+    (t_49_Flagged.account = Linked.b)) AS numeric) IS NULL) AND
   (Linked.a = Flagged.account)
 GROUP BY Linked.b ORDER BY account;

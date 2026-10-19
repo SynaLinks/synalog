@@ -4,7 +4,7 @@ create schema if not exists logica_home;
 drop type if exists logicarecord893574736 cascade; create type logicarecord893574736 as struct(nirvana numeric);
 create sequence if not exists eternal_logical_sequence;
 
-WITH t_3_E AS (SELECT * FROM (
+WITH RECURSIVE t_3_E AS (SELECT * FROM (
   
     SELECT
       1 AS a,
@@ -16,141 +16,114 @@ WITH t_3_E AS (SELECT * FROM (
       3 AS b
   
 ) AS UNUSED_TABLE_NAME  ),
-t_22_P_MultBodyAggAux_recursive_head_f1 AS (SELECT * FROM (
-  
-    SELECT
-      t_23_E.a AS a,
-      t_23_E.b AS b
-    FROM
-      t_3_E AS t_23_E
-  
-) AS UNUSED_TABLE_NAME  ),
-t_21_P_r0 AS (SELECT
-  P_MultBodyAggAux_recursive_head_f1.a AS a,
-  P_MultBodyAggAux_recursive_head_f1.b AS b
+t_2_P_RecursiveCte AS (SELECT * FROM (
+  SELECT * FROM (
+    
+      SELECT
+        E.a AS a,
+        E.b AS b,
+        0 AS logica_step
+      FROM
+        t_3_E AS E
+     UNION ALL
+    
+      SELECT
+        t_6_E.a AS a,
+        t_4_E.b AS b,
+        ((0) + (1)) AS logica_step
+      FROM
+        t_3_E AS t_6_E, t_3_E AS t_4_E
+      WHERE
+        (0 < 5) AND
+        (1 = 0) AND
+        (t_4_E.a = t_6_E.b)
+     UNION ALL
+    
+      SELECT
+        t_12_E.a AS a,
+        t_8_E.b AS b,
+        ((((0) + (1))) + (1)) AS logica_step
+      FROM
+        t_3_E AS t_12_E, t_3_E AS t_10_E, t_3_E AS t_8_E
+      WHERE
+        (((0) + (1)) < 5) AND
+        (0 < 5) AND
+        (1 = 0) AND
+        (t_8_E.a = t_10_E.b) AND
+        (t_10_E.a = t_12_E.b)
+     UNION ALL
+    
+      SELECT
+        t_20_E.a AS a,
+        t_14_E.b AS b,
+        ((((((0) + (1))) + (1))) + (1)) AS logica_step
+      FROM
+        t_3_E AS t_20_E, t_3_E AS t_18_E, t_3_E AS t_16_E, t_3_E AS t_14_E
+      WHERE
+        (((((0) + (1))) + (1)) < 5) AND
+        (((0) + (1)) < 5) AND
+        (0 < 5) AND
+        (1 = 0) AND
+        (t_14_E.a = t_16_E.b) AND
+        (t_16_E.a = t_18_E.b) AND
+        (t_18_E.a = t_20_E.b)
+     UNION ALL
+    
+      SELECT
+        t_30_E.a AS a,
+        t_22_E.b AS b,
+        ((((((((0) + (1))) + (1))) + (1))) + (1)) AS logica_step
+      FROM
+        t_3_E AS t_30_E, t_3_E AS t_28_E, t_3_E AS t_26_E, t_3_E AS t_24_E, t_3_E AS t_22_E
+      WHERE
+        (((((((0) + (1))) + (1))) + (1)) < 5) AND
+        (((((0) + (1))) + (1)) < 5) AND
+        (((0) + (1)) < 5) AND
+        (0 < 5) AND
+        (1 = 0) AND
+        (t_22_E.a = t_24_E.b) AND
+        (t_24_E.a = t_26_E.b) AND
+        (t_26_E.a = t_28_E.b) AND
+        (t_28_E.a = t_30_E.b)
+     UNION ALL
+    
+      SELECT
+        t_42_E.a AS a,
+        t_32_E.b AS b,
+        ((((((((((0) + (1))) + (1))) + (1))) + (1))) + (1)) AS logica_step
+      FROM
+        t_3_E AS t_42_E, t_3_E AS t_40_E, t_3_E AS t_38_E, t_3_E AS t_36_E, t_3_E AS t_34_E, t_3_E AS t_32_E
+      WHERE
+        (((((((((0) + (1))) + (1))) + (1))) + (1)) < 5) AND
+        (((((((0) + (1))) + (1))) + (1)) < 5) AND
+        (((((0) + (1))) + (1)) < 5) AND
+        (((0) + (1)) < 5) AND
+        (0 < 5) AND
+        (1 = 0) AND
+        (t_32_E.a = t_34_E.b) AND
+        (t_34_E.a = t_36_E.b) AND
+        (t_36_E.a = t_38_E.b) AND
+        (t_38_E.a = t_40_E.b) AND
+        (t_40_E.a = t_42_E.b)
+    
+  ) AS UNUSED_TABLE_NAME  
+) AS UNUSED_TABLE_NAME
+UNION
+SELECT
+  t_43_P_RecursiveCte.a AS a,
+  t_44_E.b AS b,
+  ((t_43_P_RecursiveCte.logica_step) + (1)) AS logica_step
 FROM
-  t_22_P_MultBodyAggAux_recursive_head_f1 AS P_MultBodyAggAux_recursive_head_f1
-GROUP BY P_MultBodyAggAux_recursive_head_f1.a, P_MultBodyAggAux_recursive_head_f1.b),
-t_18_P_MultBodyAggAux_recursive_head_f2 AS (SELECT * FROM (
-  
-    SELECT
-      t_19_E.a AS a,
-      t_19_E.b AS b
-    FROM
-      t_3_E AS t_19_E
-   UNION ALL
-  
-    SELECT
-      P_r0.a AS a,
-      t_20_E.b AS b
-    FROM
-      t_21_P_r0 AS P_r0, t_3_E AS t_20_E
-    WHERE
-      (t_20_E.a = P_r0.b)
-  
-) AS UNUSED_TABLE_NAME  ),
-t_17_P_r1 AS (SELECT
-  P_MultBodyAggAux_recursive_head_f2.a AS a,
-  P_MultBodyAggAux_recursive_head_f2.b AS b
-FROM
-  t_18_P_MultBodyAggAux_recursive_head_f2 AS P_MultBodyAggAux_recursive_head_f2
-GROUP BY P_MultBodyAggAux_recursive_head_f2.a, P_MultBodyAggAux_recursive_head_f2.b),
-t_14_P_MultBodyAggAux_recursive_head_f3 AS (SELECT * FROM (
-  
-    SELECT
-      t_15_E.a AS a,
-      t_15_E.b AS b
-    FROM
-      t_3_E AS t_15_E
-   UNION ALL
-  
-    SELECT
-      P_r1.a AS a,
-      t_16_E.b AS b
-    FROM
-      t_17_P_r1 AS P_r1, t_3_E AS t_16_E
-    WHERE
-      (t_16_E.a = P_r1.b)
-  
-) AS UNUSED_TABLE_NAME  ),
-t_13_P_r2 AS (SELECT
-  P_MultBodyAggAux_recursive_head_f3.a AS a,
-  P_MultBodyAggAux_recursive_head_f3.b AS b
-FROM
-  t_14_P_MultBodyAggAux_recursive_head_f3 AS P_MultBodyAggAux_recursive_head_f3
-GROUP BY P_MultBodyAggAux_recursive_head_f3.a, P_MultBodyAggAux_recursive_head_f3.b),
-t_10_P_MultBodyAggAux_recursive_head_f4 AS (SELECT * FROM (
-  
-    SELECT
-      t_11_E.a AS a,
-      t_11_E.b AS b
-    FROM
-      t_3_E AS t_11_E
-   UNION ALL
-  
-    SELECT
-      P_r2.a AS a,
-      t_12_E.b AS b
-    FROM
-      t_13_P_r2 AS P_r2, t_3_E AS t_12_E
-    WHERE
-      (t_12_E.a = P_r2.b)
-  
-) AS UNUSED_TABLE_NAME  ),
-t_9_P_r3 AS (SELECT
-  P_MultBodyAggAux_recursive_head_f4.a AS a,
-  P_MultBodyAggAux_recursive_head_f4.b AS b
-FROM
-  t_10_P_MultBodyAggAux_recursive_head_f4 AS P_MultBodyAggAux_recursive_head_f4
-GROUP BY P_MultBodyAggAux_recursive_head_f4.a, P_MultBodyAggAux_recursive_head_f4.b),
-t_6_P_MultBodyAggAux_recursive_head_f5 AS (SELECT * FROM (
-  
-    SELECT
-      t_7_E.a AS a,
-      t_7_E.b AS b
-    FROM
-      t_3_E AS t_7_E
-   UNION ALL
-  
-    SELECT
-      P_r3.a AS a,
-      t_8_E.b AS b
-    FROM
-      t_9_P_r3 AS P_r3, t_3_E AS t_8_E
-    WHERE
-      (t_8_E.a = P_r3.b)
-  
-) AS UNUSED_TABLE_NAME  ),
-t_5_P_r4 AS (SELECT
-  P_MultBodyAggAux_recursive_head_f5.a AS a,
-  P_MultBodyAggAux_recursive_head_f5.b AS b
-FROM
-  t_6_P_MultBodyAggAux_recursive_head_f5 AS P_MultBodyAggAux_recursive_head_f5
-GROUP BY P_MultBodyAggAux_recursive_head_f5.a, P_MultBodyAggAux_recursive_head_f5.b),
-t_2_P_MultBodyAggAux_recursive_head_f6 AS (SELECT * FROM (
-  
-    SELECT
-      E.a AS a,
-      E.b AS b
-    FROM
-      t_3_E AS E
-   UNION ALL
-  
-    SELECT
-      P_r4.a AS a,
-      t_4_E.b AS b
-    FROM
-      t_5_P_r4 AS P_r4, t_3_E AS t_4_E
-    WHERE
-      (t_4_E.a = P_r4.b)
-  
-) AS UNUSED_TABLE_NAME  ),
+  t_2_P_RecursiveCte AS t_43_P_RecursiveCte, t_3_E AS t_44_E
+WHERE
+  (t_43_P_RecursiveCte.logica_step < 5) AND
+  (t_44_E.a = t_43_P_RecursiveCte.b)),
 t_1_P AS (SELECT
-  P_MultBodyAggAux_recursive_head_f6.a AS a,
-  P_MultBodyAggAux_recursive_head_f6.b AS b
+  P_RecursiveCte.a AS a,
+  P_RecursiveCte.b AS b
 FROM
-  t_2_P_MultBodyAggAux_recursive_head_f6 AS P_MultBodyAggAux_recursive_head_f6
-GROUP BY P_MultBodyAggAux_recursive_head_f6.a, P_MultBodyAggAux_recursive_head_f6.b)
+  t_2_P_RecursiveCte AS P_RecursiveCte
+GROUP BY P_RecursiveCte.a, P_RecursiveCte.b)
 SELECT
   P.a AS a,
   t_0_P.b AS c

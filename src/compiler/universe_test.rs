@@ -1486,11 +1486,15 @@ fn loops(plan: &[PlanStep]) -> Vec<(&Vec<String>, i64, &String)> {
 }
 
 const CHAIN: &str = "Next(x:, y: x + 1) :- x in Range(10);\n";
+/// An engine without a recursive query (`WITH RECURSIVE`, see
+/// `test_a_linear_distinct_recursion_is_one_recursive_query`): its deep
+/// recursions are computed into tables.
+const LOOPING: &str = "@Engine(\"bigquery\");\n";
 
 #[test]
 fn test_a_linear_distinct_recursion_is_semi_naive() {
     let source = format!(
-        "{CHAIN}@Recursive(Reach, 40);\nReach(y: 0) distinct;\nReach(y:) distinct :- Reach(y: x), Next(x:, y:);\n"
+        "{LOOPING}{CHAIN}@Recursive(Reach, 40);\nReach(y: 0) distinct;\nReach(y:) distinct :- Reach(y: x), Next(x:, y:);\n"
     );
     let plan = plan_of(&source, "Reach");
     let found = loops(&plan);
@@ -1501,17 +1505,17 @@ fn test_a_linear_distinct_recursion_is_semi_naive() {
     // row so far; until the delta is empty.
     assert_eq!(repetitions, 20);
     assert_eq!(body.len(), 4);
-    assert!(body[0].contains("CREATE TABLE logica_home.Reach_sn_new"), "{}", body[0]);
-    assert!(body[1].starts_with("INSERT INTO logica_home.Reach_sn_full SELECT * FROM logica_home.Reach_sn_new"), "{}", body[1]);
-    assert!(body[2].contains("CREATE TABLE logica_home.Reach_sn_delta"), "{}", body[2]);
-    assert!(body[3].starts_with("INSERT INTO logica_home.Reach_sn_full SELECT * FROM logica_home.Reach_sn_delta"), "{}", body[3]);
-    assert_eq!(changed, "SELECT COUNT(*) AS changed FROM logica_home.Reach_sn_delta");
+    assert!(body[0].contains("CREATE TABLE logica_test.Reach_sn_new"), "{}", body[0]);
+    assert!(body[1].starts_with("INSERT INTO logica_test.Reach_sn_full SELECT * FROM logica_test.Reach_sn_new"), "{}", body[1]);
+    assert!(body[2].contains("CREATE TABLE logica_test.Reach_sn_delta"), "{}", body[2]);
+    assert!(body[3].starts_with("INSERT INTO logica_test.Reach_sn_full SELECT * FROM logica_test.Reach_sn_delta"), "{}", body[3]);
+    assert_eq!(changed, "SELECT COUNT(*) AS changed FROM logica_test.Reach_sn_delta");
 }
 
 #[test]
 fn test_an_odd_number_of_steps_ends_with_one_step() {
     let source = format!(
-        "{CHAIN}@Recursive(Reach, 41);\nReach(y: 0) distinct;\nReach(y:) distinct :- Reach(y: x), Next(x:, y:);\n"
+        "{LOOPING}{CHAIN}@Recursive(Reach, 41);\nReach(y: 0) distinct;\nReach(y:) distinct :- Reach(y: x), Next(x:, y:);\n"
     );
     let plan = plan_of(&source, "Reach");
     let at = plan.iter().position(|s| matches!(s, PlanStep::Loop { .. })).unwrap();
@@ -1519,8 +1523,8 @@ fn test_an_odd_number_of_steps_ends_with_one_step() {
     // The 41st step, after the loop: the new rows from the delta, added.
     match (&plan[at + 1], &plan[at + 2]) {
         (PlanStep::Sql(step), PlanStep::Sql(add)) => {
-            assert!(step.contains("CREATE TABLE logica_home.Reach_sn_new"), "{}", step);
-            assert!(add.starts_with("INSERT INTO logica_home.Reach_sn_full SELECT * FROM logica_home.Reach_sn_new"), "{}", add);
+            assert!(step.contains("CREATE TABLE logica_test.Reach_sn_new"), "{}", step);
+            assert!(add.starts_with("INSERT INTO logica_test.Reach_sn_full SELECT * FROM logica_test.Reach_sn_new"), "{}", add);
         }
         other => panic!("{:?}", other),
     }
@@ -1548,17 +1552,93 @@ fn test_recursions_semi_naive_cannot_split_recompute_every_step() {
 #[test]
 fn test_compile_writes_the_loop_out_and_refuses_one_too_long() {
     let source = format!(
-        "{CHAIN}@Recursive(Reach, 30);\nReach(y: 0) distinct;\nReach(y:) distinct :- Reach(y: x), Next(x:, y:);\n"
+        "{LOOPING}{CHAIN}@Recursive(Reach, 30);\nReach(y: 0) distinct;\nReach(y:) distinct :- Reach(y: x), Next(x:, y:);\n"
     );
     let parsed = crate::parser::parse_file(&source, None, &[]).unwrap();
     let program = LogicaProgram::new(&parsed, HashMap::new(), HashMap::new()).unwrap();
     let sql = program.formatted_predicate_sql("Reach").unwrap();
-    assert_eq!(sql.matches("INSERT INTO logica_home.Reach_sn_full").count(), 30);
+    assert_eq!(sql.matches("INSERT INTO logica_test.Reach_sn_full").count(), 30);
     let deep = source.replace("@Recursive(Reach, 30)", "@Recursive(Reach, -1)");
     let parsed = crate::parser::parse_file(&deep, None, &[]).unwrap();
     let program = LogicaProgram::new(&parsed, HashMap::new(), HashMap::new()).unwrap();
     let error = program.formatted_predicate_sql("Reach").unwrap_err();
     assert!(error.message.contains("more steps than a SQL script can hold"), "{}", error.message);
+}
+
+fn compiled(source: &str, predicate: &str) -> String {
+    let parsed = crate::parser::parse_file(source, None, &[]).unwrap();
+    let program = LogicaProgram::new(&parsed, HashMap::new(), HashMap::new()).unwrap();
+    program.formatted_predicate_sql(predicate).unwrap()
+}
+
+#[test]
+fn test_a_linear_distinct_recursion_is_one_recursive_query() {
+    let reach = format!(
+        "{CHAIN}@Recursive(Reach, 40);\nReach(y: 0) distinct;\nReach(y:) distinct :- Reach(y: x), Next(x:, y:);\n"
+    );
+    for engine in ["duckdb", "sqlite", "psql"] {
+        let source = format!("@Engine(\"{engine}\");\n{reach}");
+        // One query, writing no table: its rows numbered by step, up to the depth.
+        let plan = plan_of(&source, "Reach");
+        assert!(loops(&plan).is_empty(), "{engine}");
+        let sql = compiled(&source, "Reach");
+        assert!(sql.contains("WITH RECURSIVE"), "{engine}: {sql}");
+        assert!(sql.contains(".logica_step < 40)"), "{engine}: {sql}");
+        assert!(!sql.contains("CREATE TABLE"), "{engine}: {sql}");
+        // Until it converges: no number, `UNION` ends it.
+        let sql = compiled(&source.replace("@Recursive(Reach, 40)", "@Recursive(Reach, -1)"), "Reach");
+        assert!(sql.contains("WITH RECURSIVE") && !sql.contains("logica_step"), "{engine}: {sql}");
+    }
+    for engine in ["trino", "presto", "bigquery", "databricks"] {
+        let sql = compiled(&format!("@Engine(\"{engine}\");\n{reach}"), "Reach");
+        assert!(!sql.contains("RECURSIVE"), "{engine}: {sql}");
+    }
+}
+
+#[test]
+fn test_two_recursive_rules_are_one_query_where_the_engine_takes_them() {
+    let source = "E(a: 1, b: 2);\n@Recursive(R, 2);\nR(x: 1) distinct;\n\
+                  R(x: b) distinct :- R(x: a), E(a:, b:);\nR(x: a) distinct :- R(x: b), E(a:, b:);\n";
+    let duckdb = compiled(&format!("@Engine(\"duckdb\");\n{source}"), "R");
+    assert!(duckdb.contains("WITH RECURSIVE") && duckdb.contains("UNION\n(\n"), "{duckdb}");
+    let sqlite = compiled(&format!("@Engine(\"sqlite\");\n{source}"), "R");
+    assert!(sqlite.contains("WITH RECURSIVE") && !sqlite.contains("UNION\n(\n"), "{sqlite}");
+    // PostgreSQL takes one recursive rule: the steps are unrolled.
+    let psql = compiled(&format!("@Engine(\"psql\");\n{source}"), "R");
+    assert!(!psql.contains("RECURSIVE"), "{psql}");
+}
+
+#[test]
+fn test_recursions_one_query_cannot_hold_are_unrolled() {
+    let cases = [
+        // An aggregate.
+        ("Dist", "Edge(a: 0, b: 1);\n@Recursive(Dist, 5);\nDist(node: 0, d? Min= 0) distinct;\n\
+          Dist(node: b, d? Min= d + 1) distinct :- Dist(node: a, d:), Edge(a:, b:);\n"),
+        // Two references in one rule.
+        ("Path", "Edge(a: 0, b: 1);\n@Recursive(Path, 5);\nPath(a:, b:) distinct :- Edge(a:, b:);\n\
+          Path(a:, b: c) distinct :- Path(a:, b:), Path(a: b, b: c);\n"),
+        // Mutual recursion.
+        ("Even", "@Recursive(Even, 5);\nEven(x: 0) distinct;\nEven(x: y + 1) distinct :- Odd(x: y), y < 6;\n\
+          @Recursive(Odd, 5);\nOdd(x: y + 1) distinct :- Even(x: y), y < 6;\n"),
+    ];
+    for (predicate, source) in cases {
+        let sql = compiled(&format!("@Engine(\"duckdb\");\n{source}"), predicate);
+        assert!(!sql.contains("RECURSIVE"), "{predicate}: {sql}");
+    }
+}
+
+#[test]
+fn test_a_functor_copies_the_recursive_query_with_its_steps() {
+    let source = "@Engine(\"duckdb\");\nShip(src: \"a\", dst: \"b\");\nEdge(a: \"x\", b: \"x\");\n\
+                  @Recursive(Reach, 6);\nReach(a:, b:) distinct :- Edge(a:, b:);\n\
+                  Reach(a:, b: c) distinct :- Reach(a:, b:), Edge(a: b, b: c);\n\
+                  Route(a: src, b: dst) :- Ship(src:, dst:);\nR := Reach(Edge: Route);\n";
+    let sql = compiled(source, "R");
+    // The copy is the query (not the original), and its step reads it.
+    assert!(sql.contains("WITH RECURSIVE"), "{sql}");
+    assert!(sql.contains("_Reach_RecursiveCte_f1 AS ("), "{sql}");
+    assert!(!sql.contains("_Reach_RecursiveCte AS ("), "{sql}");
+    assert!(sql.matches("_Reach_RecursiveCte_f1 AS ").count() >= 2, "{sql}");
 }
 
 #[test]

@@ -1,0 +1,62 @@
+WITH RECURSIVE t_0_Reach_RecursiveCte AS (SELECT * FROM (
+  SELECT * FROM (
+    
+      SELECT
+        0 AS y,
+        0 AS logica_step
+     UNION ALL
+    
+      SELECT
+        ((x_20.value) + (1)) AS y,
+        ((0) + (1)) AS logica_step
+      FROM
+        JSON_EACH((select json_group_array(n) from (with recursive t as(select 0 as n union all select n + 1 as n from t where n + 1 < 10) select n from t) where n < 10)) as x_20
+      WHERE
+        (0 < 5000) AND
+        (1 = 0) AND
+        (x_20.value = 0)
+     UNION ALL
+    
+      SELECT
+        ((x_36.value) + (1)) AS y,
+        ((((0) + (1))) + (1)) AS logica_step
+      FROM
+        JSON_EACH((select json_group_array(n) from (with recursive t as(select 0 as n union all select n + 1 as n from t where n + 1 < 10) select n from t) where n < 10)) as x_36, JSON_EACH((select json_group_array(n) from (with recursive t as(select 0 as n union all select n + 1 as n from t where n + 1 < 10) select n from t) where n < 10)) as x_42
+      WHERE
+        (((0) + (1)) < 5000) AND
+        (0 < 5000) AND
+        (1 = 0) AND
+        (x_36.value = ((x_42.value) + (1))) AND
+        (x_42.value = 0)
+     UNION ALL
+    
+      SELECT
+        ((x_58.value) + (1)) AS y,
+        ((((((0) + (1))) + (1))) + (1)) AS logica_step
+      FROM
+        JSON_EACH((select json_group_array(n) from (with recursive t as(select 0 as n union all select n + 1 as n from t where n + 1 < 10) select n from t) where n < 10)) as x_58, JSON_EACH((select json_group_array(n) from (with recursive t as(select 0 as n union all select n + 1 as n from t where n + 1 < 10) select n from t) where n < 10)) as x_65, JSON_EACH((select json_group_array(n) from (with recursive t as(select 0 as n union all select n + 1 as n from t where n + 1 < 10) select n from t) where n < 10)) as x_71
+      WHERE
+        (((((0) + (1))) + (1)) < 5000) AND
+        (((0) + (1)) < 5000) AND
+        (0 < 5000) AND
+        (1 = 0) AND
+        (x_58.value = ((x_65.value) + (1))) AND
+        (x_65.value = ((x_71.value) + (1))) AND
+        (x_71.value = 0)
+    
+  ) AS UNUSED_TABLE_NAME  
+) AS UNUSED_TABLE_NAME
+UNION
+SELECT
+  ((x_78.value) + (1)) AS y,
+  ((t_14_Reach_RecursiveCte.logica_step) + (1)) AS logica_step
+FROM
+  t_0_Reach_RecursiveCte AS t_14_Reach_RecursiveCte, JSON_EACH((select json_group_array(n) from (with recursive t as(select 0 as n union all select n + 1 as n from t where n + 1 < 10) select n from t) where n < 10)) as x_78
+WHERE
+  (t_14_Reach_RecursiveCte.logica_step < 5000) AND
+  (t_14_Reach_RecursiveCte.y = x_78.value))
+SELECT
+  Reach_RecursiveCte.y AS y
+FROM
+  t_0_Reach_RecursiveCte AS Reach_RecursiveCte
+GROUP BY Reach_RecursiveCte.y ORDER BY y NULLS LAST;

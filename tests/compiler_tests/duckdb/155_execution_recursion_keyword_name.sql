@@ -4,18 +4,7 @@ create schema if not exists logica_home;
 drop type if exists logicarecord893574736 cascade; create type logicarecord893574736 as struct(nirvana numeric);
 create sequence if not exists eternal_logical_sequence;
 
-WITH t_16_Select_MultBodyAggAux_recursive_head_f1 AS (SELECT * FROM (
-  
-    SELECT
-      1 AS x
-  
-) AS UNUSED_TABLE_NAME  ),
-t_15_Select_r0 AS (SELECT
-  Select_MultBodyAggAux_recursive_head_f1.x AS x
-FROM
-  t_16_Select_MultBodyAggAux_recursive_head_f1 AS Select_MultBodyAggAux_recursive_head_f1
-GROUP BY Select_MultBodyAggAux_recursive_head_f1.x),
-t_18_Edge AS (SELECT * FROM (
+WITH RECURSIVE t_4_Edge AS (SELECT * FROM (
   
     SELECT
       1 AS a,
@@ -27,101 +16,68 @@ t_18_Edge AS (SELECT * FROM (
       3 AS b
   
 ) AS UNUSED_TABLE_NAME  ),
-t_13_Select_MultBodyAggAux_recursive_head_f2 AS (SELECT * FROM (
-  
-    SELECT
-      1 AS x
-   UNION ALL
-  
-    SELECT
-      t_14_Edge.b AS x
-    FROM
-      t_15_Select_r0 AS Select_r0, t_18_Edge AS t_14_Edge
-    WHERE
-      (t_14_Edge.a = Select_r0.x)
-  
-) AS UNUSED_TABLE_NAME  ),
-t_12_Select_r1 AS (SELECT
-  Select_MultBodyAggAux_recursive_head_f2.x AS x
+t_2_Select_RecursiveCte AS (SELECT * FROM (
+  SELECT * FROM (
+    
+      SELECT
+        1 AS x,
+        0 AS logica_step
+     UNION ALL
+    
+      SELECT
+        Edge.b AS x,
+        ((0) + (1)) AS logica_step
+      FROM
+        t_4_Edge AS Edge
+      WHERE
+        (0 < 5) AND
+        (1 = 0) AND
+        (Edge.a = 1)
+     UNION ALL
+    
+      SELECT
+        t_6_Edge.b AS x,
+        ((((0) + (1))) + (1)) AS logica_step
+      FROM
+        t_4_Edge AS t_8_Edge, t_4_Edge AS t_6_Edge
+      WHERE
+        (((0) + (1)) < 5) AND
+        (0 < 5) AND
+        (1 = 0) AND
+        (t_6_Edge.a = t_8_Edge.b) AND
+        (t_8_Edge.a = 1)
+     UNION ALL
+    
+      SELECT
+        t_11_Edge.b AS x,
+        ((((((0) + (1))) + (1))) + (1)) AS logica_step
+      FROM
+        t_4_Edge AS t_15_Edge, t_4_Edge AS t_13_Edge, t_4_Edge AS t_11_Edge
+      WHERE
+        (((((0) + (1))) + (1)) < 5) AND
+        (((0) + (1)) < 5) AND
+        (0 < 5) AND
+        (1 = 0) AND
+        (t_11_Edge.a = t_13_Edge.b) AND
+        (t_13_Edge.a = t_15_Edge.b) AND
+        (t_15_Edge.a = 1)
+    
+  ) AS UNUSED_TABLE_NAME  
+) AS UNUSED_TABLE_NAME
+UNION
+SELECT
+  t_18_Edge.b AS x,
+  ((t_17_Select_RecursiveCte.logica_step) + (1)) AS logica_step
 FROM
-  t_13_Select_MultBodyAggAux_recursive_head_f2 AS Select_MultBodyAggAux_recursive_head_f2
-GROUP BY Select_MultBodyAggAux_recursive_head_f2.x),
-t_10_Select_MultBodyAggAux_recursive_head_f3 AS (SELECT * FROM (
-  
-    SELECT
-      1 AS x
-   UNION ALL
-  
-    SELECT
-      t_11_Edge.b AS x
-    FROM
-      t_12_Select_r1 AS Select_r1, t_18_Edge AS t_11_Edge
-    WHERE
-      (t_11_Edge.a = Select_r1.x)
-  
-) AS UNUSED_TABLE_NAME  ),
-t_9_Select_r2 AS (SELECT
-  Select_MultBodyAggAux_recursive_head_f3.x AS x
-FROM
-  t_10_Select_MultBodyAggAux_recursive_head_f3 AS Select_MultBodyAggAux_recursive_head_f3
-GROUP BY Select_MultBodyAggAux_recursive_head_f3.x),
-t_7_Select_MultBodyAggAux_recursive_head_f4 AS (SELECT * FROM (
-  
-    SELECT
-      1 AS x
-   UNION ALL
-  
-    SELECT
-      t_8_Edge.b AS x
-    FROM
-      t_9_Select_r2 AS Select_r2, t_18_Edge AS t_8_Edge
-    WHERE
-      (t_8_Edge.a = Select_r2.x)
-  
-) AS UNUSED_TABLE_NAME  ),
-t_6_Select_r3 AS (SELECT
-  Select_MultBodyAggAux_recursive_head_f4.x AS x
-FROM
-  t_7_Select_MultBodyAggAux_recursive_head_f4 AS Select_MultBodyAggAux_recursive_head_f4
-GROUP BY Select_MultBodyAggAux_recursive_head_f4.x),
-t_4_Select_MultBodyAggAux_recursive_head_f5 AS (SELECT * FROM (
-  
-    SELECT
-      1 AS x
-   UNION ALL
-  
-    SELECT
-      t_5_Edge.b AS x
-    FROM
-      t_6_Select_r3 AS Select_r3, t_18_Edge AS t_5_Edge
-    WHERE
-      (t_5_Edge.a = Select_r3.x)
-  
-) AS UNUSED_TABLE_NAME  ),
-t_3_Select_r4 AS (SELECT
-  Select_MultBodyAggAux_recursive_head_f5.x AS x
-FROM
-  t_4_Select_MultBodyAggAux_recursive_head_f5 AS Select_MultBodyAggAux_recursive_head_f5
-GROUP BY Select_MultBodyAggAux_recursive_head_f5.x),
-t_2_Select_MultBodyAggAux_recursive_head_f6 AS (SELECT * FROM (
-  
-    SELECT
-      1 AS x
-   UNION ALL
-  
-    SELECT
-      Edge.b AS x
-    FROM
-      t_3_Select_r4 AS Select_r4, t_18_Edge AS Edge
-    WHERE
-      (Edge.a = Select_r4.x)
-  
-) AS UNUSED_TABLE_NAME  ),
+  t_2_Select_RecursiveCte AS t_17_Select_RecursiveCte, t_4_Edge AS t_18_Edge
+WHERE
+  (t_17_Select_RecursiveCte.logica_step < 5) AND
+  (t_18_Edge.a = t_17_Select_RecursiveCte.x)),
 t_1_Select AS (SELECT
-  Select_MultBodyAggAux_recursive_head_f6.x AS x
+  Select_RecursiveCte.x AS x
 FROM
-  t_2_Select_MultBodyAggAux_recursive_head_f6 AS Select_MultBodyAggAux_recursive_head_f6
-GROUP BY Select_MultBodyAggAux_recursive_head_f6.x)
+  t_2_Select_RecursiveCte AS Select_RecursiveCte
+GROUP BY Select_RecursiveCte.x)
 SELECT
   SUM(1) AS n
 FROM

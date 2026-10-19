@@ -4,18 +4,7 @@ create schema if not exists logica_home;
 drop type if exists logicarecord893574736 cascade; create type logicarecord893574736 as struct(nirvana numeric);
 create sequence if not exists eternal_logical_sequence;
 
-WITH t_14_Reach_MultBodyAggAux_recursive_head_f1 AS (SELECT * FROM (
-  
-    SELECT
-      1 AS x
-  
-) AS UNUSED_TABLE_NAME  ),
-t_13_Reach_r0 AS (SELECT
-  Reach_MultBodyAggAux_recursive_head_f1.x AS x
-FROM
-  t_14_Reach_MultBodyAggAux_recursive_head_f1 AS Reach_MultBodyAggAux_recursive_head_f1
-GROUP BY Reach_MultBodyAggAux_recursive_head_f1.x),
-t_16_E AS (SELECT * FROM (
+WITH RECURSIVE t_2_E AS (SELECT * FROM (
   
     SELECT
       1 AS a,
@@ -29,103 +18,72 @@ t_16_E AS (SELECT * FROM (
       false AS ok
   
 ) AS UNUSED_TABLE_NAME  ),
-t_11_Reach_MultBodyAggAux_recursive_head_f2 AS (SELECT * FROM (
-  
-    SELECT
-      1 AS x
-   UNION ALL
-  
-    SELECT
-      t_12_E.b AS x
-    FROM
-      t_13_Reach_r0 AS Reach_r0, t_16_E AS t_12_E
-    WHERE
-      (t_12_E.a = Reach_r0.x) AND
-      (t_12_E.ok = true)
-  
-) AS UNUSED_TABLE_NAME  ),
-t_10_Reach_r1 AS (SELECT
-  Reach_MultBodyAggAux_recursive_head_f2.x AS x
-FROM
-  t_11_Reach_MultBodyAggAux_recursive_head_f2 AS Reach_MultBodyAggAux_recursive_head_f2
-GROUP BY Reach_MultBodyAggAux_recursive_head_f2.x),
-t_8_Reach_MultBodyAggAux_recursive_head_f3 AS (SELECT * FROM (
-  
-    SELECT
-      1 AS x
-   UNION ALL
-  
-    SELECT
-      t_9_E.b AS x
-    FROM
-      t_10_Reach_r1 AS Reach_r1, t_16_E AS t_9_E
-    WHERE
-      (t_9_E.a = Reach_r1.x) AND
-      (t_9_E.ok = true)
-  
-) AS UNUSED_TABLE_NAME  ),
-t_7_Reach_r2 AS (SELECT
-  Reach_MultBodyAggAux_recursive_head_f3.x AS x
-FROM
-  t_8_Reach_MultBodyAggAux_recursive_head_f3 AS Reach_MultBodyAggAux_recursive_head_f3
-GROUP BY Reach_MultBodyAggAux_recursive_head_f3.x),
-t_5_Reach_MultBodyAggAux_recursive_head_f4 AS (SELECT * FROM (
-  
-    SELECT
-      1 AS x
-   UNION ALL
-  
-    SELECT
-      t_6_E.b AS x
-    FROM
-      t_7_Reach_r2 AS Reach_r2, t_16_E AS t_6_E
-    WHERE
-      (t_6_E.a = Reach_r2.x) AND
-      (t_6_E.ok = true)
-  
-) AS UNUSED_TABLE_NAME  ),
-t_4_Reach_r3 AS (SELECT
-  Reach_MultBodyAggAux_recursive_head_f4.x AS x
-FROM
-  t_5_Reach_MultBodyAggAux_recursive_head_f4 AS Reach_MultBodyAggAux_recursive_head_f4
-GROUP BY Reach_MultBodyAggAux_recursive_head_f4.x),
-t_2_Reach_MultBodyAggAux_recursive_head_f5 AS (SELECT * FROM (
-  
-    SELECT
-      1 AS x
-   UNION ALL
-  
-    SELECT
-      t_3_E.b AS x
-    FROM
-      t_4_Reach_r3 AS Reach_r3, t_16_E AS t_3_E
-    WHERE
-      (t_3_E.a = Reach_r3.x) AND
-      (t_3_E.ok = true)
-  
-) AS UNUSED_TABLE_NAME  ),
-t_1_Reach_r4 AS (SELECT
-  Reach_MultBodyAggAux_recursive_head_f5.x AS x
-FROM
-  t_2_Reach_MultBodyAggAux_recursive_head_f5 AS Reach_MultBodyAggAux_recursive_head_f5
-GROUP BY Reach_MultBodyAggAux_recursive_head_f5.x),
-t_0_Reach_MultBodyAggAux_recursive_head_f6 AS (SELECT * FROM (
-  
-    SELECT
-      1 AS x
-   UNION ALL
-  
-    SELECT
-      E.b AS x
-    FROM
-      t_1_Reach_r4 AS Reach_r4, t_16_E AS E
-    WHERE
-      (E.a = Reach_r4.x) AND
-      (E.ok = true)
-  
-) AS UNUSED_TABLE_NAME  )
+t_0_Reach_RecursiveCte AS (SELECT * FROM (
+  SELECT * FROM (
+    
+      SELECT
+        1 AS x,
+        0 AS logica_step
+     UNION ALL
+    
+      SELECT
+        E.b AS x,
+        ((0) + (1)) AS logica_step
+      FROM
+        t_2_E AS E
+      WHERE
+        (0 < 5) AND
+        (1 = 0) AND
+        (E.ok = true) AND
+        (E.a = 1)
+     UNION ALL
+    
+      SELECT
+        t_4_E.b AS x,
+        ((((0) + (1))) + (1)) AS logica_step
+      FROM
+        t_2_E AS t_6_E, t_2_E AS t_4_E
+      WHERE
+        (((0) + (1)) < 5) AND
+        (0 < 5) AND
+        (1 = 0) AND
+        (t_4_E.ok = true) AND
+        (t_6_E.ok = true) AND
+        (t_4_E.a = t_6_E.b) AND
+        (t_6_E.a = 1)
+     UNION ALL
+    
+      SELECT
+        t_9_E.b AS x,
+        ((((((0) + (1))) + (1))) + (1)) AS logica_step
+      FROM
+        t_2_E AS t_13_E, t_2_E AS t_11_E, t_2_E AS t_9_E
+      WHERE
+        (((((0) + (1))) + (1)) < 5) AND
+        (((0) + (1)) < 5) AND
+        (0 < 5) AND
+        (1 = 0) AND
+        (t_9_E.ok = true) AND
+        (t_11_E.ok = true) AND
+        (t_9_E.a = t_11_E.b) AND
+        (t_13_E.ok = true) AND
+        (t_11_E.a = t_13_E.b) AND
+        (t_13_E.a = 1)
+    
+  ) AS UNUSED_TABLE_NAME  
+) AS UNUSED_TABLE_NAME
+UNION
 SELECT
-  Reach_MultBodyAggAux_recursive_head_f6.x AS x
+  t_16_E.b AS x,
+  ((t_15_Reach_RecursiveCte.logica_step) + (1)) AS logica_step
 FROM
-  t_0_Reach_MultBodyAggAux_recursive_head_f6 AS Reach_MultBodyAggAux_recursive_head_f6
-GROUP BY Reach_MultBodyAggAux_recursive_head_f6.x ORDER BY x;
+  t_0_Reach_RecursiveCte AS t_15_Reach_RecursiveCte, t_2_E AS t_16_E
+WHERE
+  (t_15_Reach_RecursiveCte.logica_step < 5) AND
+  (t_16_E.a = t_15_Reach_RecursiveCte.x) AND
+  (t_16_E.ok = true))
+SELECT
+  Reach_RecursiveCte.x AS x
+FROM
+  t_0_Reach_RecursiveCte AS Reach_RecursiveCte
+GROUP BY Reach_RecursiveCte.x ORDER BY x;

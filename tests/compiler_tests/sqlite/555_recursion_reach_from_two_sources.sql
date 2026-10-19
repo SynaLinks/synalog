@@ -1,17 +1,4 @@
-WITH t_14_R_MultBodyAggAux_recursive_head_f1 AS (SELECT * FROM (
-  
-    SELECT
-      x_37.value AS x
-    FROM
-      JSON_EACH(JSON_ARRAY(1, 10)) as x_37
-  
-) AS UNUSED_TABLE_NAME  ),
-t_13_R_r0 AS (SELECT
-  R_MultBodyAggAux_recursive_head_f1.x AS x
-FROM
-  t_14_R_MultBodyAggAux_recursive_head_f1 AS R_MultBodyAggAux_recursive_head_f1
-GROUP BY R_MultBodyAggAux_recursive_head_f1.x),
-t_16_E AS (SELECT * FROM (
+WITH RECURSIVE t_2_E AS (SELECT * FROM (
   
     SELECT
       1 AS a,
@@ -28,108 +15,67 @@ t_16_E AS (SELECT * FROM (
       11 AS b
   
 ) AS UNUSED_TABLE_NAME  ),
-t_11_R_MultBodyAggAux_recursive_head_f2 AS (SELECT * FROM (
-  
-    SELECT
-      t_12_E.b AS x
-    FROM
-      t_13_R_r0 AS R_r0, t_16_E AS t_12_E
-    WHERE
-      (t_12_E.a = R_r0.x)
-   UNION ALL
-  
-    SELECT
-      x_39.value AS x
-    FROM
-      JSON_EACH(JSON_ARRAY(1, 10)) as x_39
-  
-) AS UNUSED_TABLE_NAME  ),
-t_10_R_r1 AS (SELECT
-  R_MultBodyAggAux_recursive_head_f2.x AS x
-FROM
-  t_11_R_MultBodyAggAux_recursive_head_f2 AS R_MultBodyAggAux_recursive_head_f2
-GROUP BY R_MultBodyAggAux_recursive_head_f2.x),
-t_8_R_MultBodyAggAux_recursive_head_f3 AS (SELECT * FROM (
-  
-    SELECT
-      t_9_E.b AS x
-    FROM
-      t_10_R_r1 AS R_r1, t_16_E AS t_9_E
-    WHERE
-      (t_9_E.a = R_r1.x)
-   UNION ALL
-  
-    SELECT
-      x_41.value AS x
-    FROM
-      JSON_EACH(JSON_ARRAY(1, 10)) as x_41
-  
-) AS UNUSED_TABLE_NAME  ),
-t_7_R_r2 AS (SELECT
-  R_MultBodyAggAux_recursive_head_f3.x AS x
-FROM
-  t_8_R_MultBodyAggAux_recursive_head_f3 AS R_MultBodyAggAux_recursive_head_f3
-GROUP BY R_MultBodyAggAux_recursive_head_f3.x),
-t_5_R_MultBodyAggAux_recursive_head_f4 AS (SELECT * FROM (
-  
-    SELECT
-      t_6_E.b AS x
-    FROM
-      t_7_R_r2 AS R_r2, t_16_E AS t_6_E
-    WHERE
-      (t_6_E.a = R_r2.x)
-   UNION ALL
-  
-    SELECT
-      x_43.value AS x
-    FROM
-      JSON_EACH(JSON_ARRAY(1, 10)) as x_43
-  
-) AS UNUSED_TABLE_NAME  ),
-t_4_R_r3 AS (SELECT
-  R_MultBodyAggAux_recursive_head_f4.x AS x
-FROM
-  t_5_R_MultBodyAggAux_recursive_head_f4 AS R_MultBodyAggAux_recursive_head_f4
-GROUP BY R_MultBodyAggAux_recursive_head_f4.x),
-t_2_R_MultBodyAggAux_recursive_head_f5 AS (SELECT * FROM (
-  
-    SELECT
-      t_3_E.b AS x
-    FROM
-      t_4_R_r3 AS R_r3, t_16_E AS t_3_E
-    WHERE
-      (t_3_E.a = R_r3.x)
-   UNION ALL
-  
-    SELECT
-      x_45.value AS x
-    FROM
-      JSON_EACH(JSON_ARRAY(1, 10)) as x_45
-  
-) AS UNUSED_TABLE_NAME  ),
-t_1_R_r4 AS (SELECT
-  R_MultBodyAggAux_recursive_head_f5.x AS x
-FROM
-  t_2_R_MultBodyAggAux_recursive_head_f5 AS R_MultBodyAggAux_recursive_head_f5
-GROUP BY R_MultBodyAggAux_recursive_head_f5.x),
-t_0_R_MultBodyAggAux_recursive_head_f6 AS (SELECT * FROM (
-  
-    SELECT
-      E.b AS x
-    FROM
-      t_1_R_r4 AS R_r4, t_16_E AS E
-    WHERE
-      (E.a = R_r4.x)
-   UNION ALL
-  
-    SELECT
-      x_47.value AS x
-    FROM
-      JSON_EACH(JSON_ARRAY(1, 10)) as x_47
-  
-) AS UNUSED_TABLE_NAME  )
+t_0_R_RecursiveCte AS (SELECT * FROM (
+  SELECT * FROM (
+    
+      SELECT
+        x_7.value AS x,
+        0 AS logica_step
+      FROM
+        JSON_EACH(JSON_ARRAY(1, 10)) as x_7
+     UNION ALL
+    
+      SELECT
+        E.b AS x,
+        ((0) + (1)) AS logica_step
+      FROM
+        t_2_E AS E, JSON_EACH(JSON_ARRAY(1, 10)) as x_22
+      WHERE
+        (0 < 5) AND
+        (1 = 0) AND
+        (E.a = x_22.value)
+     UNION ALL
+    
+      SELECT
+        t_4_E.b AS x,
+        ((((0) + (1))) + (1)) AS logica_step
+      FROM
+        t_2_E AS t_6_E, t_2_E AS t_4_E, JSON_EACH(JSON_ARRAY(1, 10)) as x_42
+      WHERE
+        (((0) + (1)) < 5) AND
+        (0 < 5) AND
+        (1 = 0) AND
+        (t_4_E.a = t_6_E.b) AND
+        (t_6_E.a = x_42.value)
+     UNION ALL
+    
+      SELECT
+        t_9_E.b AS x,
+        ((((((0) + (1))) + (1))) + (1)) AS logica_step
+      FROM
+        t_2_E AS t_13_E, t_2_E AS t_11_E, t_2_E AS t_9_E, JSON_EACH(JSON_ARRAY(1, 10)) as x_67
+      WHERE
+        (((((0) + (1))) + (1)) < 5) AND
+        (((0) + (1)) < 5) AND
+        (0 < 5) AND
+        (1 = 0) AND
+        (t_9_E.a = t_11_E.b) AND
+        (t_11_E.a = t_13_E.b) AND
+        (t_13_E.a = x_67.value)
+    
+  ) AS UNUSED_TABLE_NAME  
+) AS UNUSED_TABLE_NAME
+UNION
 SELECT
-  R_MultBodyAggAux_recursive_head_f6.x AS x
+  t_16_E.b AS x,
+  ((t_15_R_RecursiveCte.logica_step) + (1)) AS logica_step
 FROM
-  t_0_R_MultBodyAggAux_recursive_head_f6 AS R_MultBodyAggAux_recursive_head_f6
-GROUP BY R_MultBodyAggAux_recursive_head_f6.x ORDER BY x NULLS LAST;
+  t_0_R_RecursiveCte AS t_15_R_RecursiveCte, t_2_E AS t_16_E
+WHERE
+  (t_15_R_RecursiveCte.logica_step < 5) AND
+  (t_16_E.a = t_15_R_RecursiveCte.x))
+SELECT
+  R_RecursiveCte.x AS x
+FROM
+  t_0_R_RecursiveCte AS R_RecursiveCte
+GROUP BY R_RecursiveCte.x ORDER BY x NULLS LAST;

@@ -962,3 +962,15 @@ fn test_parse_rules_bad_syntax() {
     // Should fail to parse
     assert!(result.is_err(), "Invalid syntax should fail to parse");
 }
+
+#[test]
+fn test_recursive_cte_name_reads_functor_copies() {
+    assert_eq!(recursive_cte_name("Reach_RecursiveCte"), Some(("Reach_RecursiveCte", "")));
+    assert_eq!(recursive_cte_name("Reach_RecursiveCte_f3"), Some(("Reach_RecursiveCte", "_f3")));
+    assert_eq!(recursive_cte_name("Reach_RecursiveCte_f3_f12"), Some(("Reach_RecursiveCte", "_f3_f12")));
+    // Its parts, and names that only look like it.
+    assert_eq!(recursive_cte_name("Reach_RecursiveCte_step0"), None);
+    assert_eq!(recursive_cte_name("Reach_RecursiveCte_init_f3"), None);
+    assert_eq!(recursive_cte_name("Reach_RecursiveCte_f"), None);
+    assert_eq!(recursive_cte_name("Reach"), None);
+}

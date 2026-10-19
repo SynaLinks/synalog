@@ -1,4 +1,4 @@
-WITH t_0_Product AS (SELECT * FROM (
+WITH RECURSIVE t_0_Product AS (SELECT * FROM (
   
     SELECT
       'bike' AS part
@@ -8,7 +8,7 @@ WITH t_0_Product AS (SELECT * FROM (
       'scooter' AS part
   
 ) AS UNUSED_TABLE_NAME  ),
-t_22_Uses AS (SELECT * FROM (
+t_3_Uses AS (SELECT * FROM (
   
     SELECT
       'bike' AS part,
@@ -64,165 +64,114 @@ t_22_Uses AS (SELECT * FROM (
       1 AS qty
   
 ) AS UNUSED_TABLE_NAME  ),
-t_19_Contains_MultBodyAggAux_recursive_head_f1 AS (SELECT * FROM (
-  
-    SELECT
-      t_21_Uses.part AS part,
-      t_21_Uses.component AS component
-    FROM
-      t_22_Uses AS t_21_Uses
-  
-) AS UNUSED_TABLE_NAME  ),
-t_18_Contains_r0 AS (SELECT
-  Contains_MultBodyAggAux_recursive_head_f1.part AS part,
-  Contains_MultBodyAggAux_recursive_head_f1.component AS component
+t_2_Contains_RecursiveCte AS (SELECT * FROM (
+  SELECT * FROM (
+    
+      SELECT
+        Uses.part AS part,
+        Uses.component AS component,
+        0 AS logica_step
+      FROM
+        t_3_Uses AS Uses
+     UNION ALL
+    
+      SELECT
+        t_6_Uses.part AS part,
+        t_4_Uses.component AS component,
+        ((0) + (1)) AS logica_step
+      FROM
+        t_3_Uses AS t_6_Uses, t_3_Uses AS t_4_Uses
+      WHERE
+        (0 < 6) AND
+        (1 = 0) AND
+        (t_4_Uses.part = t_6_Uses.component)
+     UNION ALL
+    
+      SELECT
+        t_12_Uses.part AS part,
+        t_8_Uses.component AS component,
+        ((((0) + (1))) + (1)) AS logica_step
+      FROM
+        t_3_Uses AS t_12_Uses, t_3_Uses AS t_10_Uses, t_3_Uses AS t_8_Uses
+      WHERE
+        (((0) + (1)) < 6) AND
+        (0 < 6) AND
+        (1 = 0) AND
+        (t_8_Uses.part = t_10_Uses.component) AND
+        (t_10_Uses.part = t_12_Uses.component)
+     UNION ALL
+    
+      SELECT
+        t_20_Uses.part AS part,
+        t_14_Uses.component AS component,
+        ((((((0) + (1))) + (1))) + (1)) AS logica_step
+      FROM
+        t_3_Uses AS t_20_Uses, t_3_Uses AS t_18_Uses, t_3_Uses AS t_16_Uses, t_3_Uses AS t_14_Uses
+      WHERE
+        (((((0) + (1))) + (1)) < 6) AND
+        (((0) + (1)) < 6) AND
+        (0 < 6) AND
+        (1 = 0) AND
+        (t_14_Uses.part = t_16_Uses.component) AND
+        (t_16_Uses.part = t_18_Uses.component) AND
+        (t_18_Uses.part = t_20_Uses.component)
+     UNION ALL
+    
+      SELECT
+        t_30_Uses.part AS part,
+        t_22_Uses.component AS component,
+        ((((((((0) + (1))) + (1))) + (1))) + (1)) AS logica_step
+      FROM
+        t_3_Uses AS t_30_Uses, t_3_Uses AS t_28_Uses, t_3_Uses AS t_26_Uses, t_3_Uses AS t_24_Uses, t_3_Uses AS t_22_Uses
+      WHERE
+        (((((((0) + (1))) + (1))) + (1)) < 6) AND
+        (((((0) + (1))) + (1)) < 6) AND
+        (((0) + (1)) < 6) AND
+        (0 < 6) AND
+        (1 = 0) AND
+        (t_22_Uses.part = t_24_Uses.component) AND
+        (t_24_Uses.part = t_26_Uses.component) AND
+        (t_26_Uses.part = t_28_Uses.component) AND
+        (t_28_Uses.part = t_30_Uses.component)
+     UNION ALL
+    
+      SELECT
+        t_42_Uses.part AS part,
+        t_32_Uses.component AS component,
+        ((((((((((0) + (1))) + (1))) + (1))) + (1))) + (1)) AS logica_step
+      FROM
+        t_3_Uses AS t_42_Uses, t_3_Uses AS t_40_Uses, t_3_Uses AS t_38_Uses, t_3_Uses AS t_36_Uses, t_3_Uses AS t_34_Uses, t_3_Uses AS t_32_Uses
+      WHERE
+        (((((((((0) + (1))) + (1))) + (1))) + (1)) < 6) AND
+        (((((((0) + (1))) + (1))) + (1)) < 6) AND
+        (((((0) + (1))) + (1)) < 6) AND
+        (((0) + (1)) < 6) AND
+        (0 < 6) AND
+        (1 = 0) AND
+        (t_32_Uses.part = t_34_Uses.component) AND
+        (t_34_Uses.part = t_36_Uses.component) AND
+        (t_36_Uses.part = t_38_Uses.component) AND
+        (t_38_Uses.part = t_40_Uses.component) AND
+        (t_40_Uses.part = t_42_Uses.component)
+    
+  ) AS UNUSED_TABLE_NAME  
+) AS UNUSED_TABLE_NAME
+UNION
+SELECT
+  t_43_Contains_RecursiveCte.part AS part,
+  t_44_Uses.component AS component,
+  ((t_43_Contains_RecursiveCte.logica_step) + (1)) AS logica_step
 FROM
-  t_19_Contains_MultBodyAggAux_recursive_head_f1 AS Contains_MultBodyAggAux_recursive_head_f1
-GROUP BY Contains_MultBodyAggAux_recursive_head_f1.part, Contains_MultBodyAggAux_recursive_head_f1.component),
-t_16_Contains_MultBodyAggAux_recursive_head_f2 AS (SELECT * FROM (
-  
-    SELECT
-      Contains_r0.part AS part,
-      t_17_Uses.component AS component
-    FROM
-      t_18_Contains_r0 AS Contains_r0, t_22_Uses AS t_17_Uses
-    WHERE
-      (t_17_Uses.part = Contains_r0.component)
-   UNION ALL
-  
-    SELECT
-      t_23_Uses.part AS part,
-      t_23_Uses.component AS component
-    FROM
-      t_22_Uses AS t_23_Uses
-  
-) AS UNUSED_TABLE_NAME  ),
-t_15_Contains_r1 AS (SELECT
-  Contains_MultBodyAggAux_recursive_head_f2.part AS part,
-  Contains_MultBodyAggAux_recursive_head_f2.component AS component
-FROM
-  t_16_Contains_MultBodyAggAux_recursive_head_f2 AS Contains_MultBodyAggAux_recursive_head_f2
-GROUP BY Contains_MultBodyAggAux_recursive_head_f2.part, Contains_MultBodyAggAux_recursive_head_f2.component),
-t_13_Contains_MultBodyAggAux_recursive_head_f3 AS (SELECT * FROM (
-  
-    SELECT
-      Contains_r1.part AS part,
-      t_14_Uses.component AS component
-    FROM
-      t_15_Contains_r1 AS Contains_r1, t_22_Uses AS t_14_Uses
-    WHERE
-      (t_14_Uses.part = Contains_r1.component)
-   UNION ALL
-  
-    SELECT
-      t_24_Uses.part AS part,
-      t_24_Uses.component AS component
-    FROM
-      t_22_Uses AS t_24_Uses
-  
-) AS UNUSED_TABLE_NAME  ),
-t_12_Contains_r2 AS (SELECT
-  Contains_MultBodyAggAux_recursive_head_f3.part AS part,
-  Contains_MultBodyAggAux_recursive_head_f3.component AS component
-FROM
-  t_13_Contains_MultBodyAggAux_recursive_head_f3 AS Contains_MultBodyAggAux_recursive_head_f3
-GROUP BY Contains_MultBodyAggAux_recursive_head_f3.part, Contains_MultBodyAggAux_recursive_head_f3.component),
-t_10_Contains_MultBodyAggAux_recursive_head_f4 AS (SELECT * FROM (
-  
-    SELECT
-      Contains_r2.part AS part,
-      t_11_Uses.component AS component
-    FROM
-      t_12_Contains_r2 AS Contains_r2, t_22_Uses AS t_11_Uses
-    WHERE
-      (t_11_Uses.part = Contains_r2.component)
-   UNION ALL
-  
-    SELECT
-      t_25_Uses.part AS part,
-      t_25_Uses.component AS component
-    FROM
-      t_22_Uses AS t_25_Uses
-  
-) AS UNUSED_TABLE_NAME  ),
-t_9_Contains_r3 AS (SELECT
-  Contains_MultBodyAggAux_recursive_head_f4.part AS part,
-  Contains_MultBodyAggAux_recursive_head_f4.component AS component
-FROM
-  t_10_Contains_MultBodyAggAux_recursive_head_f4 AS Contains_MultBodyAggAux_recursive_head_f4
-GROUP BY Contains_MultBodyAggAux_recursive_head_f4.part, Contains_MultBodyAggAux_recursive_head_f4.component),
-t_7_Contains_MultBodyAggAux_recursive_head_f5 AS (SELECT * FROM (
-  
-    SELECT
-      Contains_r3.part AS part,
-      t_8_Uses.component AS component
-    FROM
-      t_9_Contains_r3 AS Contains_r3, t_22_Uses AS t_8_Uses
-    WHERE
-      (t_8_Uses.part = Contains_r3.component)
-   UNION ALL
-  
-    SELECT
-      t_26_Uses.part AS part,
-      t_26_Uses.component AS component
-    FROM
-      t_22_Uses AS t_26_Uses
-  
-) AS UNUSED_TABLE_NAME  ),
-t_6_Contains_r4 AS (SELECT
-  Contains_MultBodyAggAux_recursive_head_f5.part AS part,
-  Contains_MultBodyAggAux_recursive_head_f5.component AS component
-FROM
-  t_7_Contains_MultBodyAggAux_recursive_head_f5 AS Contains_MultBodyAggAux_recursive_head_f5
-GROUP BY Contains_MultBodyAggAux_recursive_head_f5.part, Contains_MultBodyAggAux_recursive_head_f5.component),
-t_4_Contains_MultBodyAggAux_recursive_head_f6 AS (SELECT * FROM (
-  
-    SELECT
-      Contains_r4.part AS part,
-      t_5_Uses.component AS component
-    FROM
-      t_6_Contains_r4 AS Contains_r4, t_22_Uses AS t_5_Uses
-    WHERE
-      (t_5_Uses.part = Contains_r4.component)
-   UNION ALL
-  
-    SELECT
-      t_27_Uses.part AS part,
-      t_27_Uses.component AS component
-    FROM
-      t_22_Uses AS t_27_Uses
-  
-) AS UNUSED_TABLE_NAME  ),
-t_3_Contains_r5 AS (SELECT
-  Contains_MultBodyAggAux_recursive_head_f6.part AS part,
-  Contains_MultBodyAggAux_recursive_head_f6.component AS component
-FROM
-  t_4_Contains_MultBodyAggAux_recursive_head_f6 AS Contains_MultBodyAggAux_recursive_head_f6
-GROUP BY Contains_MultBodyAggAux_recursive_head_f6.part, Contains_MultBodyAggAux_recursive_head_f6.component),
-t_2_Contains_MultBodyAggAux_recursive_head_f7 AS (SELECT * FROM (
-  
-    SELECT
-      Contains_r5.part AS part,
-      Uses.component AS component
-    FROM
-      t_3_Contains_r5 AS Contains_r5, t_22_Uses AS Uses
-    WHERE
-      (Uses.part = Contains_r5.component)
-   UNION ALL
-  
-    SELECT
-      t_28_Uses.part AS part,
-      t_28_Uses.component AS component
-    FROM
-      t_22_Uses AS t_28_Uses
-  
-) AS UNUSED_TABLE_NAME  ),
+  t_2_Contains_RecursiveCte AS t_43_Contains_RecursiveCte, t_3_Uses AS t_44_Uses
+WHERE
+  (t_43_Contains_RecursiveCte.logica_step < 6) AND
+  (t_44_Uses.part = t_43_Contains_RecursiveCte.component)),
 t_1_Contains AS (SELECT
-  Contains_MultBodyAggAux_recursive_head_f7.part AS part,
-  Contains_MultBodyAggAux_recursive_head_f7.component AS component
+  Contains_RecursiveCte.part AS part,
+  Contains_RecursiveCte.component AS component
 FROM
-  t_2_Contains_MultBodyAggAux_recursive_head_f7 AS Contains_MultBodyAggAux_recursive_head_f7
-GROUP BY Contains_MultBodyAggAux_recursive_head_f7.part, Contains_MultBodyAggAux_recursive_head_f7.component)
+  t_2_Contains_RecursiveCte AS Contains_RecursiveCte
+GROUP BY Contains_RecursiveCte.part, Contains_RecursiveCte.component)
 SELECT
   Product.part AS part
 FROM
@@ -230,4 +179,4 @@ FROM
 WHERE
   (Contains.part = Product.part) AND
   (Contains.component = 'deck')
-GROUP BY Product.part ORDER BY part;
+GROUP BY Product.part ORDER BY part NULLS LAST;

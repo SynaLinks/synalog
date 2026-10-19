@@ -4,7 +4,7 @@ create schema if not exists logica_home;
 drop type if exists logicarecord893574736 cascade; create type logicarecord893574736 as struct(nirvana numeric);
 create sequence if not exists eternal_logical_sequence;
 
-WITH t_2_Local AS (SELECT * FROM (
+WITH RECURSIVE t_2_Local AS (SELECT * FROM (
   
     SELECT
       'x' AS a,
@@ -26,213 +26,114 @@ WITH t_2_Local AS (SELECT * FROM (
       'q' AS b
   
 ) AS UNUSED_TABLE_NAME  ),
-t_33_Graph_Reach_MultBodyAggAux_recursive_head_f1_f12 AS (SELECT * FROM (
-  
-    SELECT
-      t_34_Local.a AS a,
-      t_34_Local.b AS b
-    FROM
-      t_2_Local AS t_34_Local
-  
-) AS UNUSED_TABLE_NAME  ),
-t_32_Graph_Reach_r0_f12 AS (SELECT
-  Graph_Reach_MultBodyAggAux_recursive_head_f1_f12.a AS a,
-  Graph_Reach_MultBodyAggAux_recursive_head_f1_f12.b AS b
+t_1_Graph_Reach_RecursiveCte_f1 AS (SELECT * FROM (
+  SELECT * FROM (
+    
+      SELECT
+        Local.a AS a,
+        Local.b AS b,
+        0 AS logica_step
+      FROM
+        t_2_Local AS Local
+     UNION ALL
+    
+      SELECT
+        t_5_Local.a AS a,
+        t_3_Local.b AS b,
+        ((0) + (1)) AS logica_step
+      FROM
+        t_2_Local AS t_5_Local, t_2_Local AS t_3_Local
+      WHERE
+        (0 < 8) AND
+        (1 = 0) AND
+        (t_3_Local.a = t_5_Local.b)
+     UNION ALL
+    
+      SELECT
+        t_11_Local.a AS a,
+        t_7_Local.b AS b,
+        ((((0) + (1))) + (1)) AS logica_step
+      FROM
+        t_2_Local AS t_11_Local, t_2_Local AS t_9_Local, t_2_Local AS t_7_Local
+      WHERE
+        (((0) + (1)) < 8) AND
+        (0 < 8) AND
+        (1 = 0) AND
+        (t_7_Local.a = t_9_Local.b) AND
+        (t_9_Local.a = t_11_Local.b)
+     UNION ALL
+    
+      SELECT
+        t_19_Local.a AS a,
+        t_13_Local.b AS b,
+        ((((((0) + (1))) + (1))) + (1)) AS logica_step
+      FROM
+        t_2_Local AS t_19_Local, t_2_Local AS t_17_Local, t_2_Local AS t_15_Local, t_2_Local AS t_13_Local
+      WHERE
+        (((((0) + (1))) + (1)) < 8) AND
+        (((0) + (1)) < 8) AND
+        (0 < 8) AND
+        (1 = 0) AND
+        (t_13_Local.a = t_15_Local.b) AND
+        (t_15_Local.a = t_17_Local.b) AND
+        (t_17_Local.a = t_19_Local.b)
+     UNION ALL
+    
+      SELECT
+        t_29_Local.a AS a,
+        t_21_Local.b AS b,
+        ((((((((0) + (1))) + (1))) + (1))) + (1)) AS logica_step
+      FROM
+        t_2_Local AS t_29_Local, t_2_Local AS t_27_Local, t_2_Local AS t_25_Local, t_2_Local AS t_23_Local, t_2_Local AS t_21_Local
+      WHERE
+        (((((((0) + (1))) + (1))) + (1)) < 8) AND
+        (((((0) + (1))) + (1)) < 8) AND
+        (((0) + (1)) < 8) AND
+        (0 < 8) AND
+        (1 = 0) AND
+        (t_21_Local.a = t_23_Local.b) AND
+        (t_23_Local.a = t_25_Local.b) AND
+        (t_25_Local.a = t_27_Local.b) AND
+        (t_27_Local.a = t_29_Local.b)
+     UNION ALL
+    
+      SELECT
+        t_41_Local.a AS a,
+        t_31_Local.b AS b,
+        ((((((((((0) + (1))) + (1))) + (1))) + (1))) + (1)) AS logica_step
+      FROM
+        t_2_Local AS t_41_Local, t_2_Local AS t_39_Local, t_2_Local AS t_37_Local, t_2_Local AS t_35_Local, t_2_Local AS t_33_Local, t_2_Local AS t_31_Local
+      WHERE
+        (((((((((0) + (1))) + (1))) + (1))) + (1)) < 8) AND
+        (((((((0) + (1))) + (1))) + (1)) < 8) AND
+        (((((0) + (1))) + (1)) < 8) AND
+        (((0) + (1)) < 8) AND
+        (0 < 8) AND
+        (1 = 0) AND
+        (t_31_Local.a = t_33_Local.b) AND
+        (t_33_Local.a = t_35_Local.b) AND
+        (t_35_Local.a = t_37_Local.b) AND
+        (t_37_Local.a = t_39_Local.b) AND
+        (t_39_Local.a = t_41_Local.b)
+    
+  ) AS UNUSED_TABLE_NAME  
+) AS UNUSED_TABLE_NAME
+UNION
+SELECT
+  t_42_Graph_Reach_RecursiveCte_f1.a AS a,
+  t_43_Local.b AS b,
+  ((t_42_Graph_Reach_RecursiveCte_f1.logica_step) + (1)) AS logica_step
 FROM
-  t_33_Graph_Reach_MultBodyAggAux_recursive_head_f1_f12 AS Graph_Reach_MultBodyAggAux_recursive_head_f1_f12
-GROUP BY Graph_Reach_MultBodyAggAux_recursive_head_f1_f12.a, Graph_Reach_MultBodyAggAux_recursive_head_f1_f12.b),
-t_29_Graph_Reach_MultBodyAggAux_recursive_head_f2_f12 AS (SELECT * FROM (
-  
-    SELECT
-      t_30_Local.a AS a,
-      t_30_Local.b AS b
-    FROM
-      t_2_Local AS t_30_Local
-   UNION ALL
-  
-    SELECT
-      Graph_Reach_r0_f12.a AS a,
-      t_31_Local.b AS b
-    FROM
-      t_32_Graph_Reach_r0_f12 AS Graph_Reach_r0_f12, t_2_Local AS t_31_Local
-    WHERE
-      (t_31_Local.a = Graph_Reach_r0_f12.b)
-  
-) AS UNUSED_TABLE_NAME  ),
-t_28_Graph_Reach_r1_f12 AS (SELECT
-  Graph_Reach_MultBodyAggAux_recursive_head_f2_f12.a AS a,
-  Graph_Reach_MultBodyAggAux_recursive_head_f2_f12.b AS b
-FROM
-  t_29_Graph_Reach_MultBodyAggAux_recursive_head_f2_f12 AS Graph_Reach_MultBodyAggAux_recursive_head_f2_f12
-GROUP BY Graph_Reach_MultBodyAggAux_recursive_head_f2_f12.a, Graph_Reach_MultBodyAggAux_recursive_head_f2_f12.b),
-t_25_Graph_Reach_MultBodyAggAux_recursive_head_f3_f12 AS (SELECT * FROM (
-  
-    SELECT
-      t_26_Local.a AS a,
-      t_26_Local.b AS b
-    FROM
-      t_2_Local AS t_26_Local
-   UNION ALL
-  
-    SELECT
-      Graph_Reach_r1_f12.a AS a,
-      t_27_Local.b AS b
-    FROM
-      t_28_Graph_Reach_r1_f12 AS Graph_Reach_r1_f12, t_2_Local AS t_27_Local
-    WHERE
-      (t_27_Local.a = Graph_Reach_r1_f12.b)
-  
-) AS UNUSED_TABLE_NAME  ),
-t_24_Graph_Reach_r2_f12 AS (SELECT
-  Graph_Reach_MultBodyAggAux_recursive_head_f3_f12.a AS a,
-  Graph_Reach_MultBodyAggAux_recursive_head_f3_f12.b AS b
-FROM
-  t_25_Graph_Reach_MultBodyAggAux_recursive_head_f3_f12 AS Graph_Reach_MultBodyAggAux_recursive_head_f3_f12
-GROUP BY Graph_Reach_MultBodyAggAux_recursive_head_f3_f12.a, Graph_Reach_MultBodyAggAux_recursive_head_f3_f12.b),
-t_21_Graph_Reach_MultBodyAggAux_recursive_head_f4_f12 AS (SELECT * FROM (
-  
-    SELECT
-      t_22_Local.a AS a,
-      t_22_Local.b AS b
-    FROM
-      t_2_Local AS t_22_Local
-   UNION ALL
-  
-    SELECT
-      Graph_Reach_r2_f12.a AS a,
-      t_23_Local.b AS b
-    FROM
-      t_24_Graph_Reach_r2_f12 AS Graph_Reach_r2_f12, t_2_Local AS t_23_Local
-    WHERE
-      (t_23_Local.a = Graph_Reach_r2_f12.b)
-  
-) AS UNUSED_TABLE_NAME  ),
-t_20_Graph_Reach_r3_f12 AS (SELECT
-  Graph_Reach_MultBodyAggAux_recursive_head_f4_f12.a AS a,
-  Graph_Reach_MultBodyAggAux_recursive_head_f4_f12.b AS b
-FROM
-  t_21_Graph_Reach_MultBodyAggAux_recursive_head_f4_f12 AS Graph_Reach_MultBodyAggAux_recursive_head_f4_f12
-GROUP BY Graph_Reach_MultBodyAggAux_recursive_head_f4_f12.a, Graph_Reach_MultBodyAggAux_recursive_head_f4_f12.b),
-t_17_Graph_Reach_MultBodyAggAux_recursive_head_f5_f12 AS (SELECT * FROM (
-  
-    SELECT
-      t_18_Local.a AS a,
-      t_18_Local.b AS b
-    FROM
-      t_2_Local AS t_18_Local
-   UNION ALL
-  
-    SELECT
-      Graph_Reach_r3_f12.a AS a,
-      t_19_Local.b AS b
-    FROM
-      t_20_Graph_Reach_r3_f12 AS Graph_Reach_r3_f12, t_2_Local AS t_19_Local
-    WHERE
-      (t_19_Local.a = Graph_Reach_r3_f12.b)
-  
-) AS UNUSED_TABLE_NAME  ),
-t_16_Graph_Reach_r4_f12 AS (SELECT
-  Graph_Reach_MultBodyAggAux_recursive_head_f5_f12.a AS a,
-  Graph_Reach_MultBodyAggAux_recursive_head_f5_f12.b AS b
-FROM
-  t_17_Graph_Reach_MultBodyAggAux_recursive_head_f5_f12 AS Graph_Reach_MultBodyAggAux_recursive_head_f5_f12
-GROUP BY Graph_Reach_MultBodyAggAux_recursive_head_f5_f12.a, Graph_Reach_MultBodyAggAux_recursive_head_f5_f12.b),
-t_13_Graph_Reach_MultBodyAggAux_recursive_head_f6_f12 AS (SELECT * FROM (
-  
-    SELECT
-      t_14_Local.a AS a,
-      t_14_Local.b AS b
-    FROM
-      t_2_Local AS t_14_Local
-   UNION ALL
-  
-    SELECT
-      Graph_Reach_r4_f12.a AS a,
-      t_15_Local.b AS b
-    FROM
-      t_16_Graph_Reach_r4_f12 AS Graph_Reach_r4_f12, t_2_Local AS t_15_Local
-    WHERE
-      (t_15_Local.a = Graph_Reach_r4_f12.b)
-  
-) AS UNUSED_TABLE_NAME  ),
-t_12_Graph_Reach_r5_f12 AS (SELECT
-  Graph_Reach_MultBodyAggAux_recursive_head_f6_f12.a AS a,
-  Graph_Reach_MultBodyAggAux_recursive_head_f6_f12.b AS b
-FROM
-  t_13_Graph_Reach_MultBodyAggAux_recursive_head_f6_f12 AS Graph_Reach_MultBodyAggAux_recursive_head_f6_f12
-GROUP BY Graph_Reach_MultBodyAggAux_recursive_head_f6_f12.a, Graph_Reach_MultBodyAggAux_recursive_head_f6_f12.b),
-t_9_Graph_Reach_MultBodyAggAux_recursive_head_f7_f12 AS (SELECT * FROM (
-  
-    SELECT
-      t_10_Local.a AS a,
-      t_10_Local.b AS b
-    FROM
-      t_2_Local AS t_10_Local
-   UNION ALL
-  
-    SELECT
-      Graph_Reach_r5_f12.a AS a,
-      t_11_Local.b AS b
-    FROM
-      t_12_Graph_Reach_r5_f12 AS Graph_Reach_r5_f12, t_2_Local AS t_11_Local
-    WHERE
-      (t_11_Local.a = Graph_Reach_r5_f12.b)
-  
-) AS UNUSED_TABLE_NAME  ),
-t_8_Graph_Reach_r6_f12 AS (SELECT
-  Graph_Reach_MultBodyAggAux_recursive_head_f7_f12.a AS a,
-  Graph_Reach_MultBodyAggAux_recursive_head_f7_f12.b AS b
-FROM
-  t_9_Graph_Reach_MultBodyAggAux_recursive_head_f7_f12 AS Graph_Reach_MultBodyAggAux_recursive_head_f7_f12
-GROUP BY Graph_Reach_MultBodyAggAux_recursive_head_f7_f12.a, Graph_Reach_MultBodyAggAux_recursive_head_f7_f12.b),
-t_5_Graph_Reach_MultBodyAggAux_recursive_head_f8_f12 AS (SELECT * FROM (
-  
-    SELECT
-      t_6_Local.a AS a,
-      t_6_Local.b AS b
-    FROM
-      t_2_Local AS t_6_Local
-   UNION ALL
-  
-    SELECT
-      Graph_Reach_r6_f12.a AS a,
-      t_7_Local.b AS b
-    FROM
-      t_8_Graph_Reach_r6_f12 AS Graph_Reach_r6_f12, t_2_Local AS t_7_Local
-    WHERE
-      (t_7_Local.a = Graph_Reach_r6_f12.b)
-  
-) AS UNUSED_TABLE_NAME  ),
-t_4_Graph_Reach_r7_f12 AS (SELECT
-  Graph_Reach_MultBodyAggAux_recursive_head_f8_f12.a AS a,
-  Graph_Reach_MultBodyAggAux_recursive_head_f8_f12.b AS b
-FROM
-  t_5_Graph_Reach_MultBodyAggAux_recursive_head_f8_f12 AS Graph_Reach_MultBodyAggAux_recursive_head_f8_f12
-GROUP BY Graph_Reach_MultBodyAggAux_recursive_head_f8_f12.a, Graph_Reach_MultBodyAggAux_recursive_head_f8_f12.b),
-t_1_Graph_Reach_MultBodyAggAux_recursive_head_f9_f12 AS (SELECT * FROM (
-  
-    SELECT
-      Local.a AS a,
-      Local.b AS b
-    FROM
-      t_2_Local AS Local
-   UNION ALL
-  
-    SELECT
-      Graph_Reach_r7_f12.a AS a,
-      t_3_Local.b AS b
-    FROM
-      t_4_Graph_Reach_r7_f12 AS Graph_Reach_r7_f12, t_2_Local AS t_3_Local
-    WHERE
-      (t_3_Local.a = Graph_Reach_r7_f12.b)
-  
-) AS UNUSED_TABLE_NAME  ),
+  t_1_Graph_Reach_RecursiveCte_f1 AS t_42_Graph_Reach_RecursiveCte_f1, t_2_Local AS t_43_Local
+WHERE
+  (t_42_Graph_Reach_RecursiveCte_f1.logica_step < 8) AND
+  (t_43_Local.a = t_42_Graph_Reach_RecursiveCte_f1.b)),
 t_0_R AS (SELECT
-  Graph_Reach_MultBodyAggAux_recursive_head_f9_f12.a AS a,
-  Graph_Reach_MultBodyAggAux_recursive_head_f9_f12.b AS b
+  Graph_Reach_RecursiveCte_f1.a AS a,
+  Graph_Reach_RecursiveCte_f1.b AS b
 FROM
-  t_1_Graph_Reach_MultBodyAggAux_recursive_head_f9_f12 AS Graph_Reach_MultBodyAggAux_recursive_head_f9_f12
-GROUP BY Graph_Reach_MultBodyAggAux_recursive_head_f9_f12.a, Graph_Reach_MultBodyAggAux_recursive_head_f9_f12.b)
+  t_1_Graph_Reach_RecursiveCte_f1 AS Graph_Reach_RecursiveCte_f1
+GROUP BY Graph_Reach_RecursiveCte_f1.a, Graph_Reach_RecursiveCte_f1.b)
 SELECT
   R.a AS a,
   R.b AS b
