@@ -90,4 +90,4 @@ def test_execute_paginates_and_searches():
 
 def test_execute_returns_counterexamples():
     source = '@Assert(Reach, small: "∀ y, Reach y → y < 9");\n' + CHAIN.replace("DEPTH", "40")
-    assert synalog.execute(source, "Reach", assertion="small")[1] == [(9,), (10,)]
+    assert sorted(synalog.execute(source, "Reach", assertion="small")[1]) == [(9,), (10,)]
