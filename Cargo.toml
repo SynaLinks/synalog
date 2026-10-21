@@ -5,14 +5,25 @@ edition = "2024"
 description = "Logic programming for AI agents: Datalog-family language compiling to optimized SQL"
 license = "Apache-2.0"
 repository = "https://github.com/synalinks/synalog"
+homepage = "https://synalinks.github.io/synalog/"
+documentation = "https://docs.rs/synalog"
 readme = "README.md"
+keywords = ["datalog", "logic-programming", "sql", "compiler", "query"]
+categories = ["compilers", "database", "parser-implementations"]
+# What ships to crates.io: the library sources plus the legal/readme files.
+# Everything else in the repository (Python package, docs site, benchmarks,
+# golden test fixtures, CI) is irrelevant to a Rust consumer.
+include = ["/src/**", "/Cargo.toml", "/README.md", "/LICENSE", "/NOTICE"]
 
 [lib]
 name = "synalog"
 crate-type = ["cdylib", "rlib"]
 
 [features]
-default = ["python"]
+# No default features: `cargo add synalog` gives a plain Rust library (parser,
+# verifier, compiler). The bindings below are opt-in; maturin selects `python`
+# via pyproject.toml, so wheel builds are unaffected.
+default = []
 # Python extension module (built by maturin). Pulls in pyo3.
 python = ["dep:pyo3"]
 # Browser playground: compiles the parser + compiler to wasm via wasm-bindgen.
