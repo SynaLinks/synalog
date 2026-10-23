@@ -89,9 +89,12 @@ fn parse(
 /// the program's `@Engine` annotation (default: duckdb). `import_root` lists
 /// directories where `import` statements look up `.l` files (default: the
 /// current directory). Raises ValueError on syntax or compilation errors.
+///
+/// The GIL is released while compiling: threads compile side by side.
 #[pyfunction]
 #[pyo3(signature = (source, predicate, limit=None, offset=None, engine=None, import_root=None))]
 fn compile(
+    py: Python<'_>,
     source: &str,
     predicate: &str,
     limit: Option<u64>,
@@ -99,14 +102,55 @@ fn compile(
     engine: Option<&str>,
     import_root: Option<Vec<String>>,
 ) -> PyResult<String> {
+    py.detach(|| {
+        let mut sql = compile_predicates(source, &[predicate], limit, offset, engine, import_root)?;
+        Ok(sql.remove(predicate).unwrap_or_default())
+    })
+}
+
+/// Compile several predicates of one program to SQL, each exactly as `compile`
+/// gives it: the program is parsed and built once for all of them. Returns
+/// {predicate: sql}. Raises ValueError on syntax or compilation errors, the
+/// first predicate that fails naming it.
+///
+/// The GIL is released while compiling.
+#[pyfunction]
+#[pyo3(signature = (source, predicates, limit=None, offset=None, engine=None, import_root=None))]
+fn compile_many(
+    py: Python<'_>,
+    source: &str,
+    predicates: Vec<String>,
+    limit: Option<u64>,
+    offset: Option<u64>,
+    engine: Option<&str>,
+    import_root: Option<Vec<String>>,
+) -> PyResult<HashMap<String, String>> {
+    let predicates: Vec<&str> = predicates.iter().map(String::as_str).collect();
+    py.detach(|| compile_predicates(source, &predicates, limit, offset, engine, import_root))
+}
+
+/// `compile` for each of `predicates`, the program parsed and built once.
+fn compile_predicates(
+    source: &str,
+    predicates: &[&str],
+    limit: Option<u64>,
+    offset: Option<u64>,
+    engine: Option<&str>,
+    import_root: Option<Vec<String>>,
+) -> PyResult<HashMap<String, String>> {
     check_engine(engine)?;
     let parsed = parse_source(source, None, import_root)?;
     let names = PredicateNames::of(&parsed);
     let program = build_program(&parsed, engine)?;
     let pagination = Pagination { limit, offset };
-    program
-        .formatted_predicate_sql_with_pagination(&names.internal(predicate), &pagination)
-        .map_err(written_err(&names))
+    let mut out = HashMap::new();
+    for predicate in predicates {
+        let sql = program
+            .formatted_predicate_sql_with_pagination(&names.internal(predicate), &pagination)
+            .map_err(written_err(&names))?;
+        out.insert(predicate.to_string(), sql);
+    }
+    Ok(out)
 }
 
 /// Compile a predicate to SQL that keeps only rows where some column matches
@@ -123,6 +167,7 @@ fn compile(
 #[pyfunction]
 #[pyo3(signature = (source, predicate, pattern, limit=None, offset=None, engine=None, import_root=None))]
 fn search(
+    py: Python<'_>,
     source: &str,
     predicate: &str,
     pattern: &str,
@@ -131,14 +176,16 @@ fn search(
     engine: Option<&str>,
     import_root: Option<Vec<String>>,
 ) -> PyResult<String> {
-    check_engine(engine)?;
-    let parsed = parse_source(source, None, import_root)?;
-    let names = PredicateNames::of(&parsed);
-    let program = build_program(&parsed, engine)?;
-    let pagination = Pagination { limit, offset };
-    program
-        .formatted_predicate_sql_with_search(&names.internal(predicate), pattern, &pagination)
-        .map_err(written_err(&names))
+    py.detach(|| {
+        check_engine(engine)?;
+        let parsed = parse_source(source, None, import_root)?;
+        let names = PredicateNames::of(&parsed);
+        let program = build_program(&parsed, engine)?;
+        let pagination = Pagination { limit, offset };
+        program
+            .formatted_predicate_sql_with_search(&names.internal(predicate), pattern, &pagination)
+            .map_err(written_err(&names))
+    })
 }
 
 /// Compile every defined predicate to SQL; returns {predicate_name: sql}.
@@ -481,6 +528,7 @@ fn _synalog(m: &Bound<'_, PyModule>) -> PyResult<()> {
     m.add_function(wrap_pyfunction!(compile, m)?)?;
     m.add_function(wrap_pyfunction!(search, m)?)?;
     m.add_function(wrap_pyfunction!(compile_all, m)?)?;
+    m.add_function(wrap_pyfunction!(compile_many, m)?)?;
     m.add_function(wrap_pyfunction!(check, m)?)?;
     m.add_function(wrap_pyfunction!(assertions, m)?)?;
     m.add_function(wrap_pyfunction!(dependencies, m)?)?;

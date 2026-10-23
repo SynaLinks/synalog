@@ -523,6 +523,21 @@ def test_compile_all_excludes_library_predicates():
     assert sorted(sqls) == ["Out", "T"]
 
 
+def test_compile_many_gives_what_compile_gives():
+    import synalog as api
+
+    source = (
+        "T(x: 1);\nT(x: 2);\n"
+        "Out(y:) :- T(x:), y == x + 1;\n"
+        "Total(n? += y) distinct :- Out(y:);\n"
+    )
+    names = ["Out", "Total", "T"]
+    many = api.compile_many(source, names, limit=5, offset=1, engine="sqlite")
+    assert many == {n: api.compile(source, n, limit=5, offset=1, engine="sqlite") for n in names}
+    with pytest.raises(ValueError, match="Missing"):
+        api.compile_many(source, ["Out", "Missing"])
+
+
 def test_repl_engine_switch_and_sql():
     session = (
         "Digit(x:) :- x in [1, 2];\n"
