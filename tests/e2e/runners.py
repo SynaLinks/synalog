@@ -119,10 +119,6 @@ class DuckDbRunner(Runner):
         import duckdb
 
         conn = duckdb.connect(":memory:")
-        try:
-            conn.execute("SET lambda_syntax='ENABLE_SINGLE_ARROW'")
-        except Exception:
-            pass
         conn.execute("CREATE MACRO ARRAY_CONCAT_AGG(x) AS flatten(list(x))")
 
         class Session(_Session):

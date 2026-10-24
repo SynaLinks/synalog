@@ -368,13 +368,6 @@ class DuckDbSession(Session):
                 "The duckdb engine needs the 'duckdb' package: pip install duckdb"
             ) from None
         self.conn = duckdb.connect(":memory:")
-        # synalog emits the single-arrow lambda (`x -> expr`); DuckDB deprecated
-        # it and newer versions reject it unless this is set (older DuckDB has no
-        # such setting, so the failure is ignored).
-        try:
-            self.conn.execute("SET lambda_syntax='ENABLE_SINGLE_ARROW'")
-        except Exception:
-            pass
         self.conn.execute("CREATE MACRO ARRAY_CONCAT_AGG(x) AS flatten(list(x))")
         for table, path in loads:
             reader = _DUCKDB_READERS[_extension(path)]

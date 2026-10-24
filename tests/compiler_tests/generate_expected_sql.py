@@ -21932,11 +21932,15 @@ _HEADER = (
     "Licensed under the Apache License, Version 2.0.\n\n"
 )
 
-def _rebrand(sql):
+def _rebrand(sql, engine=None):
     for a, b in (("logicarecord", "synalogrecord"), ("logica_home", "synalog_home"),
                  ("logica_test", "synalog_test"), ("logica_value", "synalog_value"),
                  ("logica_step", "synalog_step"), ("-- Logica type:", "-- Synalog type:")):
         sql = sql.replace(a, b)
+    if engine == "duckdb":
+        # DuckDB deprecated the single-arrow lambda; emit `lambda x: body`.
+        import re as _re
+        sql = _re.sub(r"(\b\w+) -> ", r"lambda \1: ", sql)
     return _HEADER + sql
 
 
@@ -22002,7 +22006,7 @@ def process_engine(engine):
 
         pred, sql = result
         with open(os.path.join(engine, f"{stem}.sql"), 'w') as f:
-            f.write(_rebrand(sql))
+            f.write(_rebrand(sql, engine))
 
         stats["ok"] += 1
         log.append(f"  {stem}... " + f"OK ({pred})")
