@@ -266,7 +266,6 @@ safe_divide,SAFE_DIVIDE
 safe_multiply,SAFE_MULTIPLY
 safe_negate,SAFE_NEGATE
 safe_subtract,SAFE_SUBTRACT
-session_user,SESSION_USER
 sha1,SHA1
 sha256,SHA256
 sha512,SHA512
@@ -1596,6 +1595,14 @@ impl<'a> ExprTranslator<'a> {
                                     format!("{} requires 2 arguments", func), ""));
                             }
                             let type_name = args[1].trim_matches('\'').trim_matches('"');
+                            // The type is pasted in unquoted: it must be a plain
+                            // type name, proved unable to escape the CAST (the
+                            // verifier reports this too, but a host may compile
+                            // without verifying).
+                            if !synalog_verified::cast::accepts(&type_name.chars().collect()) {
+                                return Err(CompileError::new(
+                                    format!("{}: '{}' is not a type name — write a type of letters, digits, '_', spaces and balanced '()<>'", func, type_name), ""));
+                            }
                             results.push(if func == "TryCast" {
                                 format!("TRY_CAST({} AS {})", args[0], type_name)
                             } else {

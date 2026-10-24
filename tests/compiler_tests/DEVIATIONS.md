@@ -99,8 +99,10 @@ hatch for user programs. synalog's verifier **rejects** it in user rules: raw
 SQL is unparsed, untyped, unverified, and non-portable, defeating the
 guarantees the verifier exists to provide. It remains available *internally* to
 the dialect library (`ArgMin`/`ArgMax`/regex/...), which is injected during
-compilation and never passes through the verifier. This is a verification-time
-behavior, so it affects `synalog.check`, not the golden `.sql` files.
+compilation and never passes through the verifier. The **compiler** refuses it
+in user rules too (before the library is merged in), so compiling without
+verifying stays safe; the golden fixture `54_sqlexpr_fail.l` checks that
+compilation fails.
 
 ## DuckDB
 
@@ -128,7 +130,7 @@ that override was removed.
 recursion path (`GetFlatIterativeRecursionFunctor`), which materializes
 `*_ifr*` iteration tables and relies on the **runtime re-executing** the
 `@Iteration` block until a stop signal/fixpoint. synalog compiles to a single
-static SQL script with no runtime loop, so the concertina can only expand
+static SQL script with no runtime loop, so the script can only expand
 `@Iteration` a fixed `repetitions = (depth + 1 − ignition) / 2 + 1` times —
 short of `depth` — which silently **truncates the transitive closure** (e.g. a
 6-hop path is dropped: 20 rows instead of 21). synalog therefore uses the inline

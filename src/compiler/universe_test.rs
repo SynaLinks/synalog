@@ -1243,13 +1243,18 @@ fn test_predicate_sql_cast() {
 
 #[test]
 fn test_predicate_sql_sqlexpr() {
-    let program = make_universe_program(r#"
+    // User SqlExpr is a raw-SQL escape hatch: the compiler refuses it, even
+    // when a host skips the verifier.
+    let parsed = crate::parser::parse_file(r#"
         @Engine("sqlite");
         Source(1);
         T(y) :- Source(x), y == SqlExpr("{0} + 10", x);
-    "#);
-    let sql = compile_predicate(&program, "T").unwrap();
-    assert!(sql.contains("+ 10"), "SQL: {}", sql);
+    "#, None, &[]).unwrap();
+    let err = match LogicaProgram::new(&parsed, HashMap::new(), HashMap::new()) {
+        Ok(_) => panic!("expected SqlExpr to be refused"),
+        Err(e) => e.to_string(),
+    };
+    assert!(err.contains("Unsafe SqlExpr"), "{err}");
 }
 
 // ── predicate_sql with FlagValue ──

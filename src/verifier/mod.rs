@@ -22,6 +22,7 @@ mod arity;
 mod recursion;
 mod reserved;
 mod sqlexpr;
+mod cast;
 mod positional;
 mod undefined;
 mod orderby;
@@ -39,6 +40,7 @@ pub use arity::{ArityError, check_arity};
 pub use recursion::{RecursionError, check_recursion, check_unbounded_recursion};
 pub use reserved::{ReservedError, check_reserved, reserved_predicate_names};
 pub use sqlexpr::{SqlExprError, check_sqlexpr};
+pub use cast::{CastError, check_cast};
 pub use positional::{PositionalError, check_positional};
 pub use undefined::{TableReadError, UndefinedError, builtin_function_names, check_table_reads, check_undefined};
 pub use orderby::{OrderByError, check_order_by};
@@ -60,6 +62,7 @@ pub enum CheckError {
     Recursion(RecursionError),
     Reserved(ReservedError),
     SqlExpr(SqlExprError),
+    Cast(CastError),
     Positional(PositionalError),
     Undefined(UndefinedError),
     TableRead(TableReadError),
@@ -80,6 +83,7 @@ impl std::fmt::Display for CheckError {
             CheckError::Recursion(e) => write!(f, "{}", e),
             CheckError::Reserved(e) => write!(f, "{}", e),
             CheckError::SqlExpr(e) => write!(f, "{}", e),
+            CheckError::Cast(e) => write!(f, "{}", e),
             CheckError::Positional(e) => write!(f, "{}", e),
             CheckError::Undefined(e) => write!(f, "{}", e),
             CheckError::TableRead(e) => write!(f, "{}", e),
@@ -104,6 +108,7 @@ impl From<CheckError> for VerifyError {
             CheckError::Recursion(re) => re.into(),
             CheckError::Reserved(re) => re.into(),
             CheckError::SqlExpr(se) => se.into(),
+            CheckError::Cast(ce) => ce.into(),
             CheckError::Positional(pe) => pe.into(),
             CheckError::Undefined(ue) => ue.into(),
             CheckError::TableRead(te) => te.into(),
@@ -221,6 +226,11 @@ pub fn validate(parsed: &Json) -> CheckResult {
     // ... and SQL text as a table name.
     for err in undefined::check_table_names(&all_rules) {
         result.errors.push(CheckError::SqlExpr(err));
+    }
+
+    // ... and an unsafe Cast/TryCast type name.
+    for err in cast::check_cast(&normal_rules) {
+        result.errors.push(CheckError::Cast(err));
     }
 
     // Check 8: Positional arguments (Synalog requires named arguments)

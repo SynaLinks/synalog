@@ -618,6 +618,18 @@ impl LogicaProgram {
         let (extended_rules, functors_args_of) =
             crate::compiler::functors::run_makes_with_deps(&unfolded_rules)?;
 
+        // The raw-SQL escape hatches are refused before the library is
+        // merged in, so `compile` is safe even when a host skips `check`.
+        // (The library itself uses `SqlExpr` deliberately; it is injected
+        // below, after this gate, and so never reaches it.) `Cast`/`TryCast`
+        // type names are refused at their translation site instead.
+        {
+            let user: Vec<&Json> = extended_rules.iter().collect();
+            if let Some(e) = crate::verifier::check_sqlexpr(&user).into_iter().next() {
+                return Err(CompileError::new(e.to_string(), ""));
+            }
+        }
+
         // Step 3: Add library program rules
         let dialect = dialects::get(&engine)?;
         let lib_program = dialect.library_program();
