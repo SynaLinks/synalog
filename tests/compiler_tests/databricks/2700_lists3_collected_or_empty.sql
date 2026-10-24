@@ -28,7 +28,7 @@ t_1_L AS (SELECT * FROM (
       t_5_G AS t_4_G
     WHERE
       ((SELECT
-        MIN(1) AS logica_value
+        MIN(1) AS synalog_value
       FROM
         t_2_C AS t_6_C
       WHERE

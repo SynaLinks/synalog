@@ -1,5 +1,5 @@
-DROP TABLE IF EXISTS logica_test.Spend;
-CREATE TABLE logica_test.Spend AS WITH t_1_Order AS (SELECT * FROM VALUES
+DROP TABLE IF EXISTS synalog_test.Spend;
+CREATE TABLE synalog_test.Spend AS WITH t_1_Order AS (SELECT * FROM VALUES
   (1, "ann", "tea", 3, "paid"),
   (2, "bob", "cake", 1, "paid"),
   (3, "ann", "cake", 2, "refunded"),
@@ -26,15 +26,15 @@ WHERE
   (Price.item = t_0_Order.item)
 GROUP BY 1;
 
--- Interacting with table logica_test.Spend
+-- Interacting with table synalog_test.Spend
 
 WITH t_1_A AS (SELECT
   AVG(t_2_Spend.total) AS a
 FROM
-  logica_test.Spend AS t_2_Spend)
+  synalog_test.Spend AS t_2_Spend)
 SELECT
   Spend.who AS who
 FROM
-  logica_test.Spend AS Spend, t_1_A AS t_0_A
+  synalog_test.Spend AS Spend, t_1_A AS t_0_A
 WHERE
   (Spend.total > t_0_A.a) ORDER BY who NULLS LAST;

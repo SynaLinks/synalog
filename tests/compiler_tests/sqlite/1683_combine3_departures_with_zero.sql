@@ -103,7 +103,7 @@ GROUP BY City_MultBodyAggAux.c)
 SELECT
   City.c AS c,
   COALESCE((SELECT
-  SUM(MagicalEntangle(1, x_4.value)) AS logica_value
+  SUM(MagicalEntangle(1, x_4.value)) AS synalog_value
 FROM
   t_0_Ship AS Ship, JSON_EACH(JSON_ARRAY(0)) as x_4
 WHERE

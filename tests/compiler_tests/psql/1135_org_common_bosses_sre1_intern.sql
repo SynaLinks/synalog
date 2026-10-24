@@ -1,8 +1,8 @@
 -- Initializing PostgreSQL environment.
 set client_min_messages to warning;
-create schema if not exists logica_home;
--- Empty logica type: logicarecord893574736;
-DO $$ BEGIN if not exists (select 'I(am) :- I(think)' from pg_type where typname = 'logicarecord893574736') then create type logicarecord893574736 as (nirvana numeric); end if; END $$;
+create schema if not exists synalog_home;
+-- Empty synalog type: synalogrecord893574736;
+DO $$ BEGIN if not exists (select 'I(am) :- I(think)' from pg_type where typname = 'synalogrecord893574736') then create type synalogrecord893574736 as (nirvana numeric); end if; END $$;
 
 WITH RECURSIVE t_3_Manages AS (SELECT * FROM (
   
@@ -57,7 +57,7 @@ t_2_Under_RecursiveCte AS (SELECT * FROM (
       SELECT
         Manages.boss AS boss,
         Manages.report AS report,
-        0 AS logica_step
+        0 AS synalog_step
       FROM
         t_3_Manages AS Manages
      UNION ALL
@@ -65,7 +65,7 @@ t_2_Under_RecursiveCte AS (SELECT * FROM (
       SELECT
         t_6_Manages.boss AS boss,
         t_4_Manages.report AS report,
-        ((0) + (1)) AS logica_step
+        ((0) + (1)) AS synalog_step
       FROM
         t_3_Manages AS t_6_Manages, t_3_Manages AS t_4_Manages
       WHERE
@@ -77,7 +77,7 @@ t_2_Under_RecursiveCte AS (SELECT * FROM (
       SELECT
         t_12_Manages.boss AS boss,
         t_8_Manages.report AS report,
-        ((((0) + (1))) + (1)) AS logica_step
+        ((((0) + (1))) + (1)) AS synalog_step
       FROM
         t_3_Manages AS t_12_Manages, t_3_Manages AS t_10_Manages, t_3_Manages AS t_8_Manages
       WHERE
@@ -91,7 +91,7 @@ t_2_Under_RecursiveCte AS (SELECT * FROM (
       SELECT
         t_20_Manages.boss AS boss,
         t_14_Manages.report AS report,
-        ((((((0) + (1))) + (1))) + (1)) AS logica_step
+        ((((((0) + (1))) + (1))) + (1)) AS synalog_step
       FROM
         t_3_Manages AS t_20_Manages, t_3_Manages AS t_18_Manages, t_3_Manages AS t_16_Manages, t_3_Manages AS t_14_Manages
       WHERE
@@ -107,7 +107,7 @@ t_2_Under_RecursiveCte AS (SELECT * FROM (
       SELECT
         t_30_Manages.boss AS boss,
         t_22_Manages.report AS report,
-        ((((((((0) + (1))) + (1))) + (1))) + (1)) AS logica_step
+        ((((((((0) + (1))) + (1))) + (1))) + (1)) AS synalog_step
       FROM
         t_3_Manages AS t_30_Manages, t_3_Manages AS t_28_Manages, t_3_Manages AS t_26_Manages, t_3_Manages AS t_24_Manages, t_3_Manages AS t_22_Manages
       WHERE
@@ -125,7 +125,7 @@ t_2_Under_RecursiveCte AS (SELECT * FROM (
       SELECT
         t_42_Manages.boss AS boss,
         t_32_Manages.report AS report,
-        ((((((((((0) + (1))) + (1))) + (1))) + (1))) + (1)) AS logica_step
+        ((((((((((0) + (1))) + (1))) + (1))) + (1))) + (1)) AS synalog_step
       FROM
         t_3_Manages AS t_42_Manages, t_3_Manages AS t_40_Manages, t_3_Manages AS t_38_Manages, t_3_Manages AS t_36_Manages, t_3_Manages AS t_34_Manages, t_3_Manages AS t_32_Manages
       WHERE
@@ -147,11 +147,11 @@ UNION
 SELECT
   t_43_Under_RecursiveCte.boss AS boss,
   t_44_Manages.report AS report,
-  ((t_43_Under_RecursiveCte.logica_step) + (1)) AS logica_step
+  ((t_43_Under_RecursiveCte.synalog_step) + (1)) AS synalog_step
 FROM
   t_2_Under_RecursiveCte AS t_43_Under_RecursiveCte, t_3_Manages AS t_44_Manages
 WHERE
-  (t_43_Under_RecursiveCte.logica_step < 8) AND
+  (t_43_Under_RecursiveCte.synalog_step < 8) AND
   (t_44_Manages.boss = t_43_Under_RecursiveCte.report)),
 t_1_Under AS (SELECT
   Under_RecursiveCte.boss AS boss,

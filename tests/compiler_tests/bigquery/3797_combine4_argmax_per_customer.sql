@@ -63,7 +63,7 @@ t_3_C AS (SELECT * FROM (
 SELECT
   t_0_C.c AS c,
   (SELECT
-  ARRAY_AGG(O.id order by  [O.amt][offset(0)] desc limit 1)[OFFSET(0)] AS logica_value
+  ARRAY_AGG(O.id order by  [O.amt][offset(0)] desc limit 1)[OFFSET(0)] AS synalog_value
 FROM
   t_2_O AS O
 WHERE

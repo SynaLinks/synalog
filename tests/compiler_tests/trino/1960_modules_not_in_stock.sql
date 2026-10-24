@@ -58,7 +58,7 @@ FROM
   t_0_Shop_Product AS Shop_Product
 WHERE
   ((SELECT
-    MIN(1) AS logica_value
+    MIN(1) AS synalog_value
   FROM
     t_1_Shop_Stock AS Shop_Stock
   WHERE

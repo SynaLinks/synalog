@@ -1,5 +1,5 @@
-DROP TABLE IF EXISTS logica_test.Person;
-CREATE TABLE logica_test.Person AS WITH t_0_Employees AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_test.Person;
+CREATE TABLE synalog_test.Person AS WITH t_0_Employees AS (SELECT * FROM (
   
     SELECT
       1 AS person_id,
@@ -54,10 +54,10 @@ FROM
   t_0_Employees AS Employees
 GROUP BY 1, 2, 3 ORDER BY person_id;
 
--- Interacting with table logica_test.Person
+-- Interacting with table synalog_test.Person
 
-DROP TABLE IF EXISTS logica_test.Team;
-CREATE TABLE logica_test.Team AS WITH t_0_Teams AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_test.Team;
+CREATE TABLE synalog_test.Team AS WITH t_0_Teams AS (SELECT * FROM (
   
     SELECT
       10 AS team_id,
@@ -81,10 +81,10 @@ FROM
   t_0_Teams AS Teams
 GROUP BY 1, 2 ORDER BY team_id;
 
--- Interacting with table logica_test.Team
+-- Interacting with table synalog_test.Team
 
-DROP TABLE IF EXISTS logica_test.Serves;
-CREATE TABLE logica_test.Serves AS WITH t_0_Employees AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_test.Serves;
+CREATE TABLE synalog_test.Serves AS WITH t_0_Employees AS (SELECT * FROM (
   
     SELECT
       1 AS person_id,
@@ -135,7 +135,7 @@ t_0_MemberOf AS (SELECT
   Person.person_id AS person_id,
   Team.team_id AS team_id
 FROM
-  logica_test.Person AS Person, logica_test.Team AS Team, t_0_Employees AS Employees
+  synalog_test.Person AS Person, synalog_test.Team AS Team, t_0_Employees AS Employees
 WHERE
   (Employees.person_id = Person.person_id) AND
   (Employees.team_id = Team.team_id)
@@ -179,7 +179,7 @@ t_1_EngagedWith AS (SELECT
   t_2_Team.team_id AS team_id,
   Client.client_id AS client_id
 FROM
-  logica_test.Team AS t_2_Team, t_3_Client AS Client, t_5_Engagements AS Engagements
+  synalog_test.Team AS t_2_Team, t_3_Client AS Client, t_5_Engagements AS Engagements
 WHERE
   (Engagements.team_id = t_2_Team.team_id) AND
   (Engagements.client_id = Client.client_id)
@@ -193,13 +193,13 @@ WHERE
   (EngagedWith.team_id = MemberOf.team_id)
 GROUP BY 1, 2;
 
--- Interacting with table logica_test.Serves
+-- Interacting with table synalog_test.Serves
 
 SELECT
   Serves.person_id AS a,
   t_0_Serves.person_id AS b
 FROM
-  logica_test.Serves AS Serves, logica_test.Serves AS t_0_Serves
+  synalog_test.Serves AS Serves, synalog_test.Serves AS t_0_Serves
 WHERE
   (Serves.person_id < t_0_Serves.person_id) AND
   (t_0_Serves.client_id = Serves.client_id)

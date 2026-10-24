@@ -1,6 +1,6 @@
 // License Apache 2.0: (c) 2025-2026 Yoan Sallami (Synalinks Team)
 
-//! Variable collection utilities for Logica AST.
+//! Variable collection utilities for Synalog AST.
 //!
 //! Mirrors the Lean 4 specification for variable analysis.
 
@@ -14,7 +14,7 @@ use crate::compiler::rule_translate::is_constraint_predicate;
 /// Aggregation functions.
 const AGGREGATION_FNS: &[&str] = &["Sum", "Count", "Min", "Max", "Avg", "List", "Array", "ArrayConcat"];
 
-/// Collects variables from Logica AST nodes.
+/// Collects variables from Synalog AST nodes.
 pub struct VarCollector;
 
 impl VarCollector {
@@ -233,11 +233,11 @@ impl VarCollector {
 
     /// Input-argument variables of a value-function definition (`F(a, b) = v`).
     ///
-    /// A value-function's head record carries a `logica_value` field (the
+    /// A value-function's head record carries a `synalog_value` field (the
     /// returned value); its *other* fields are input parameters, bound by the
     /// caller rather than the body. Returns those parameter variables so the
     /// safety checks treat them as bound. For an ordinary predicate (no
-    /// `logica_value` field) this is empty, leaving predicate checks unchanged.
+    /// `synalog_value` field) this is empty, leaving predicate checks unchanged.
     pub fn function_input_vars(rule: &Json) -> HashSet<String> {
         let mut vars = HashSet::new();
         let Some(head) = rule.as_object().get("head") else {
@@ -252,13 +252,13 @@ impl VarCollector {
         let fields = fv_arr.as_array();
         let is_function = fields
             .iter()
-            .any(|fv| matches!(fv.as_object().get("field"), Some(Json::Str(s)) if s == "logica_value"));
+            .any(|fv| matches!(fv.as_object().get("field"), Some(Json::Str(s)) if s == "synalog_value"));
         if !is_function {
             return vars;
         }
         for fv in fields {
             let is_value =
-                matches!(fv.as_object().get("field"), Some(Json::Str(s)) if s == "logica_value");
+                matches!(fv.as_object().get("field"), Some(Json::Str(s)) if s == "synalog_value");
             if is_value {
                 continue;
             }
@@ -606,7 +606,7 @@ mod tests {
         assert!(vars.contains("0"), "int head column should collect as \"0\": {vars:?}");
     }
 
-    /// A value-function's input args are reported; its `logica_value` is not.
+    /// A value-function's input args are reported; its `synalog_value` is not.
     #[test]
     fn test_function_input_vars() {
         use crate::parser::parse_file;
@@ -617,7 +617,7 @@ mod tests {
         assert!(!inputs.contains("n"), "return value is not an input: {inputs:?}");
     }
 
-    /// An ordinary predicate has no `logica_value`, so no input vars (which
+    /// An ordinary predicate has no `synalog_value`, so no input vars (which
     /// keeps the head-var safety check unchanged for predicates).
     #[test]
     fn test_predicate_has_no_function_input_vars() {

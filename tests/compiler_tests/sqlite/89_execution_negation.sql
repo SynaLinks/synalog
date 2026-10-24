@@ -16,7 +16,7 @@ FROM
   JSON_EACH(JSON_ARRAY('a', 'b', 'c')) as x_3
 WHERE
   ((SELECT
-    MIN(MagicalEntangle(1, x_6.value)) AS logica_value
+    MIN(MagicalEntangle(1, x_6.value)) AS synalog_value
   FROM
     t_0_Friend AS Friend, JSON_EACH(JSON_ARRAY(0)) as x_6
   WHERE

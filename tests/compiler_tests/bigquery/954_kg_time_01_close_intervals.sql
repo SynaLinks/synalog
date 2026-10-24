@@ -142,7 +142,7 @@ t_0_Member_MultBodyAggAux AS (SELECT * FROM (
       t_2_Person AS t_10_Person, t_4_Team AS t_11_Team, t_6_Events AS t_12_Events
     WHERE
       ((SELECT
-        MIN(1) AS logica_value
+        MIN(1) AS synalog_value
       FROM
         t_7_NextChange AS t_15_NextChange
       WHERE

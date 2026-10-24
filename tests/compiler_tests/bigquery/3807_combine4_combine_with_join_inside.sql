@@ -54,7 +54,7 @@ t_1_Vip AS (SELECT * FROM (
 ) AS UNUSED_TABLE_NAME  )
 SELECT
   (SELECT
-  SUM(O.amt) AS logica_value
+  SUM(O.amt) AS synalog_value
 FROM
   t_0_O AS O, t_1_Vip AS Vip
 WHERE

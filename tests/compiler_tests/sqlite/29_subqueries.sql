@@ -21,11 +21,11 @@ WITH t_0_Sales AS (SELECT * FROM (
   
 ) AS UNUSED_TABLE_NAME  ),
 t_1_AvgSale AS (SELECT
-  SUM(t_2_Sales.amount) AS logica_value
+  SUM(t_2_Sales.amount) AS synalog_value
 FROM
   t_0_Sales AS t_2_Sales),
 t_3_CountSales AS (SELECT
-  SUM(1) AS logica_value
+  SUM(1) AS synalog_value
 FROM
   t_0_Sales AS t_4_Sales)
 SELECT
@@ -34,4 +34,4 @@ SELECT
 FROM
   t_0_Sales AS Sales, t_1_AvgSale AS AvgSale, t_3_CountSales AS CountSales
 WHERE
-  (Sales.amount > (CAST(AvgSale.logica_value AS REAL) / NULLIF(CountSales.logica_value, 0))) ORDER BY product NULLS LAST;
+  (Sales.amount > (CAST(AvgSale.synalog_value AS REAL) / NULLIF(CountSales.synalog_value, 0))) ORDER BY product NULLS LAST;

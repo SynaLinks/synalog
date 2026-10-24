@@ -1,8 +1,8 @@
 -- Initializing PostgreSQL environment.
 set client_min_messages to warning;
-create schema if not exists logica_home;
--- Empty logica type: logicarecord893574736;
-DO $$ BEGIN if not exists (select 'I(am) :- I(think)' from pg_type where typname = 'logicarecord893574736') then create type logicarecord893574736 as (nirvana numeric); end if; END $$;
+create schema if not exists synalog_home;
+-- Empty synalog type: synalogrecord893574736;
+DO $$ BEGIN if not exists (select 'I(am) :- I(think)' from pg_type where typname = 'synalogrecord893574736') then create type synalogrecord893574736 as (nirvana numeric); end if; END $$;
 
 WITH t_2_U AS (SELECT * FROM (
   
@@ -91,7 +91,7 @@ FROM
 WHERE
   (t_0_U.u < t_1_U.u) AND
   (CAST((SELECT
-    MIN((CASE WHEN x_10 = 0 THEN 1 ELSE NULL END)) AS logica_value
+    MIN((CASE WHEN x_10 = 0 THEN 1 ELSE NULL END)) AS synalog_value
   FROM
     t_4_F AS F, t_4_F AS t_3_F, UNNEST(ARRAY[0]) as x_10
   WHERE

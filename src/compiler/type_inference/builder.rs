@@ -3,7 +3,7 @@
 // Original work: Copyright 2020 Google LLC, licensed under the Apache License, Version 2.0.
 // Modifications: Copyright 2025-2026 Yoan Sallami (Synalinks Team), licensed under the Apache License, Version 2.0.
 
-//! Types graph builder from parsed Logica programs.
+//! Types graph builder from parsed Synalog programs.
 //!
 //! Ported from Python: type_inference/types_graph_builder.py
 
@@ -13,7 +13,7 @@ use super::graph::TypesGraph;
 use crate::parser::Json;
 use std::collections::HashMap;
 
-/// Builder for constructing type graphs from parsed Logica programs.
+/// Builder for constructing type graphs from parsed Synalog programs.
 #[derive(Debug, Default)]
 pub struct TypesGraphBuilder {
     /// Count of predicate usages for unique predicate IDs.
@@ -265,9 +265,9 @@ impl TypesGraphBuilder {
             // inside them is another use (`ToInt64(ToString(ToInt64(x)))`).
             let predicate_id = *self.predicate_usages.get(&predicate_name).unwrap_or(&0);
             *self.predicate_usages.entry(predicate_name.clone()).or_insert(0) += 1;
-            let logica_value = Expression::predicate_addressing(&predicate_name, "logica_value", predicate_id);
+            let synalog_value = Expression::predicate_addressing(&predicate_name, "synalog_value", predicate_id);
 
-            self.fill_fields(graph, &predicate_name, predicate_id, predicate, &logica_value);
+            self.fill_fields(graph, &predicate_name, predicate_id, predicate, &synalog_value);
         }
     }
 
@@ -456,7 +456,7 @@ impl TypesGraphBuilder {
         *self.predicate_usages.entry(predicate_name.clone()).or_insert(0) += 1;
         let result = self.get_or_cache(Expression::predicate_addressing(
             &predicate_name,
-            "logica_value",
+            "synalog_value",
             predicate_id,
         ));
 

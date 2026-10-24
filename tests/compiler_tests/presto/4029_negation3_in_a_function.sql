@@ -80,7 +80,7 @@ t_2_U AS (SELECT * FROM (
 SELECT
   t_0_U.u AS u,
   COALESCE((SELECT
-  MIN(false) AS logica_value
+  MIN(false) AS synalog_value
 FROM
   t_1_F AS F
 WHERE

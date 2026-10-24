@@ -2,7 +2,7 @@
 
 The pure formatting and SQL-building logic is exercised here without a database
 driver or a live server. The generated predicates are round-tripped through the
-real compiler to prove they are valid, usable Logica.
+real compiler to prove they are valid, usable Synalog.
 
 Run with: python -m pytest tests/cli/test_introspect.py
 """
@@ -56,7 +56,7 @@ def test_table_description_comes_from_the_name(table, description):
     assert introspect.table_description(table) == description
 
 
-def test_predicates_are_valid_logica():
+def test_predicates_are_valid_synalog():
     rows = [("public", "users", "id"), ("public", "users", "name")]
     prog = predicates("psql", rows) + "\nDemo(id:) :- PublicUsers(id:);\n"
     assert check(prog, engine="psql")[0] == []

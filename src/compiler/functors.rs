@@ -17,7 +17,7 @@ use crate::parser::Json;
 use crate::compiler::CompileResult;
 use crate::compiler::CompileError;
 
-/// Parse Logica source text into rules, converting parse errors to CompileError.
+/// Parse Synalog source text into rules, converting parse errors to CompileError.
 fn parse_rules(text: &str) -> CompileResult<Vec<Json>> {
     let parsed = crate::parser::parse_file(text, None, &[]).map_err(|e| {
         CompileError::new(format!("Failed to parse generated program: {}", e.show_message()), "")
@@ -400,7 +400,7 @@ impl Functors {
         if let Some(name) = self.constant_literal_function.get(key) {
             return name.clone();
         }
-        let name = format!("LogicaCompilerConstant{}", self.constant_literal_function.len());
+        let name = format!("SynalogCompilerConstant{}", self.constant_literal_function.len());
         self.constant_literal_function.insert(key.to_string(), name.clone());
         name
     }
@@ -1135,7 +1135,7 @@ impl Functors {
     /// it applied; otherwise `rules` are left as they were.
     ///
     /// `P_RecursiveCte` holds the rows, each numbered with the step that
-    /// derived it (`logica_step`): a step reads the rows numbered below the
+    /// derived it (`synalog_step`): a step reads the rows numbered below the
     /// depth, so the query stops where the unrolled steps stop, even when the
     /// rows never repeat (a count of hops round a cycle). `P` is its rows
     /// without the number, distinct. Its first rows (`_init`) come with the
@@ -1438,8 +1438,8 @@ pub fn recursive_cte_name(name: &str) -> Option<(&str, &str)> {
 
 /// The column numbering the rows of a recursive query by the step that
 /// derived them, and the variable a step reads it into.
-const CTE_STEP_FIELD: &str = "logica_step";
-const CTE_STEP_VARIABLE: &str = "logica_cte_step";
+const CTE_STEP_FIELD: &str = "synalog_step";
+const CTE_STEP_VARIABLE: &str = "synalog_cte_step";
 
 /// How many calls of `predicate` `json` holds.
 fn count_references(json: &Json, predicate: &str) -> usize {
@@ -1512,7 +1512,7 @@ fn semi_naive_fields(cover: &HashSet<String>, visible: &BTreeSet<String>, rules:
                 return None;
             }
             let field = &fv["field"];
-            if field.is_string() && field.as_str() == "logica_value" {
+            if field.is_string() && field.as_str() == "synalog_value" {
                 return None;
             }
             keys.push(field.clone());

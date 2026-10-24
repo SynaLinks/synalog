@@ -31,7 +31,7 @@ GROUP BY 1)
 SELECT
   City.c AS c,
   COALESCE((SELECT
-  SUM(1) AS logica_value
+  SUM(1) AS synalog_value
 FROM
   t_0_Ship AS Ship
 WHERE

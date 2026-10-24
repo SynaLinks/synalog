@@ -1,7 +1,7 @@
-ATTACH DATABASE ':memory:' AS logica_test;
+ATTACH DATABASE ':memory:' AS synalog_test;
 
-DROP TABLE IF EXISTS logica_test.Paid;
-CREATE TABLE logica_test.Paid AS WITH t_1_Order AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_test.Paid;
+CREATE TABLE synalog_test.Paid AS WITH t_1_Order AS (SELECT * FROM (
   
     SELECT
       1 AS id,
@@ -93,10 +93,10 @@ FROM
 WHERE
   (t_0_Order.state = 'paid');
 
--- Interacting with table logica_test.Paid
+-- Interacting with table synalog_test.Paid
 
-DROP TABLE IF EXISTS logica_test.Spend;
-CREATE TABLE logica_test.Spend AS WITH t_0_Price AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_test.Spend;
+CREATE TABLE synalog_test.Spend AS WITH t_0_Price AS (SELECT * FROM (
   
     SELECT
       'tea' AS item,
@@ -117,15 +117,15 @@ SELECT
   Paid.who AS who,
   SUM(((Paid.n) * (Price.p))) AS total
 FROM
-  logica_test.Paid AS Paid, t_0_Price AS Price
+  synalog_test.Paid AS Paid, t_0_Price AS Price
 WHERE
   (Price.item = Paid.item)
 GROUP BY Paid.who;
 
--- Interacting with table logica_test.Spend
+-- Interacting with table synalog_test.Spend
 
 SELECT
   Spend.who AS who,
   Spend.total AS total
 FROM
-  logica_test.Spend AS Spend ORDER BY who NULLS LAST, total NULLS LAST;
+  synalog_test.Spend AS Spend ORDER BY who NULLS LAST, total NULLS LAST;

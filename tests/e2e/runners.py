@@ -119,6 +119,10 @@ class DuckDbRunner(Runner):
         import duckdb
 
         conn = duckdb.connect(":memory:")
+        try:
+            conn.execute("SET lambda_syntax='ENABLE_SINGLE_ARROW'")
+        except Exception:
+            pass
         conn.execute("CREATE MACRO ARRAY_CONCAT_AGG(x) AS flatten(list(x))")
 
         class Session(_Session):
@@ -137,7 +141,7 @@ class DuckDbRunner(Runner):
 
 class PostgresRunner(Runner):
     """PostgreSQL over psycopg3. Each session is a throwaway connection;
-    logica preambles use ``create ... if not exists`` so reruns are idempotent."""
+    synalog preambles use ``create ... if not exists`` so reruns are idempotent."""
 
     engine = "psql"
 
@@ -188,7 +192,7 @@ class TrinoRunner(Runner):
         )
 
     # @Ground writes into this schema.
-    setup = "CREATE SCHEMA IF NOT EXISTS memory.logica_test"
+    setup = "CREATE SCHEMA IF NOT EXISTS memory.synalog_test"
 
     def decode(self, rows, description) -> list[tuple]:
         return [tuple(r) for r in rows]
@@ -201,7 +205,7 @@ class TrinoRunner(Runner):
 
         class Session(_Session):
             def execute(self, statement):
-                if "logica_test." in statement and not ready:
+                if "synalog_test." in statement and not ready:
                     cur.execute(runner.setup)
                     cur.fetchall()
                     ready.append(True)
@@ -307,8 +311,8 @@ class SparkRunner(Runner):
 
         class Session(_Session):
             def execute(self, statement):
-                if "logica_test." in statement and not ready:  # @Ground writes into this database
-                    cur.execute("CREATE DATABASE IF NOT EXISTS logica_test")
+                if "synalog_test." in statement and not ready:  # @Ground writes into this database
+                    cur.execute("CREATE DATABASE IF NOT EXISTS synalog_test")
                     ready.append(True)
                 cur.execute(statement)
                 # @Ground emits DDL (DROP/CREATE TABLE AS); those report a
@@ -361,7 +365,7 @@ def make_runner(engine: str):
     if engine == "psql":
         dsn = os.environ.get(
             "SYNALOG_E2E_PSQL_DSN",
-            "postgresql://logica:logica@localhost:{}/logica".format(
+            "postgresql://synalog:synalog@localhost:{}/synalog".format(
                 os.environ.get("SYNALOG_E2E_PSQL_PORT", "5433")
             ),
         )

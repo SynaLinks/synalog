@@ -93,7 +93,7 @@ FROM
   t_0_Proj AS Proj
 WHERE
   ((SELECT
-    MIN(1) AS logica_value
+    MIN(1) AS synalog_value
   FROM
     t_1_Heavy AS Heavy
   WHERE

@@ -1,5 +1,5 @@
-DROP TABLE IF EXISTS logica_test.Person;
-CREATE TABLE logica_test.Person AS WITH t_0_Employees AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_test.Person;
+CREATE TABLE synalog_test.Person AS WITH t_0_Employees AS (SELECT * FROM (
   
     SELECT
       1 AS person_id,
@@ -54,10 +54,10 @@ FROM
   t_0_Employees AS Employees
 GROUP BY 1, 2, 3 ORDER BY person_id;
 
--- Interacting with table logica_test.Person
+-- Interacting with table synalog_test.Person
 
-DROP TABLE IF EXISTS logica_test.Team;
-CREATE TABLE logica_test.Team AS WITH t_0_Teams AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_test.Team;
+CREATE TABLE synalog_test.Team AS WITH t_0_Teams AS (SELECT * FROM (
   
     SELECT
       10 AS team_id,
@@ -81,10 +81,10 @@ FROM
   t_0_Teams AS Teams
 GROUP BY 1, 2 ORDER BY team_id;
 
--- Interacting with table logica_test.Team
+-- Interacting with table synalog_test.Team
 
-DROP TABLE IF EXISTS logica_test.MemberOf;
-CREATE TABLE logica_test.MemberOf AS WITH t_0_Employees AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_test.MemberOf;
+CREATE TABLE synalog_test.MemberOf AS WITH t_0_Employees AS (SELECT * FROM (
   
     SELECT
       1 AS person_id,
@@ -135,16 +135,16 @@ SELECT
   Person.person_id AS person_id,
   Team.team_id AS team_id
 FROM
-  logica_test.Person AS Person, logica_test.Team AS Team, t_0_Employees AS Employees
+  synalog_test.Person AS Person, synalog_test.Team AS Team, t_0_Employees AS Employees
 WHERE
   (Employees.person_id = Person.person_id) AND
   (Employees.team_id = Team.team_id)
 GROUP BY 1, 2;
 
--- Interacting with table logica_test.MemberOf
+-- Interacting with table synalog_test.MemberOf
 
-DROP TABLE IF EXISTS logica_test.EngagedWith;
-CREATE TABLE logica_test.EngagedWith AS WITH t_1_Clients AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_test.EngagedWith;
+CREATE TABLE synalog_test.EngagedWith AS WITH t_1_Clients AS (SELECT * FROM (
   
     SELECT
       100 AS client_id,
@@ -183,13 +183,13 @@ SELECT
   Team.team_id AS team_id,
   Client.client_id AS client_id
 FROM
-  logica_test.Team AS Team, t_0_Client AS Client, t_2_Engagements AS Engagements
+  synalog_test.Team AS Team, t_0_Client AS Client, t_2_Engagements AS Engagements
 WHERE
   (Engagements.team_id = Team.team_id) AND
   (Engagements.client_id = Client.client_id)
 GROUP BY 1, 2;
 
--- Interacting with table logica_test.EngagedWith
+-- Interacting with table synalog_test.EngagedWith
 
 WITH t_0_Employees AS (SELECT * FROM (
   
@@ -241,7 +241,7 @@ WITH t_0_Employees AS (SELECT * FROM (
 t_1_Active AS (SELECT
   Person.person_id AS person_id
 FROM
-  logica_test.Person AS Person, t_0_Employees AS Employees
+  synalog_test.Person AS Person, t_0_Employees AS Employees
 WHERE
   (Employees.person_id = Person.person_id) AND
   (Employees.status = 'active')
@@ -250,7 +250,7 @@ t_0_ActiveReach AS (SELECT
   Active.person_id AS person_id,
   EngagedWith.client_id AS client_id
 FROM
-  t_1_Active AS Active, logica_test.MemberOf AS MemberOf, logica_test.EngagedWith AS EngagedWith
+  t_1_Active AS Active, synalog_test.MemberOf AS MemberOf, synalog_test.EngagedWith AS EngagedWith
 WHERE
   (MemberOf.person_id = Active.person_id) AND
   (EngagedWith.team_id = MemberOf.team_id)

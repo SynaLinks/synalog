@@ -166,7 +166,7 @@ FROM
   t_1_Member AS t_3_Member, t_5_Book AS t_4_Book
 WHERE
   ((SELECT
-    MIN(MagicalEntangle(1, x_12.value)) AS logica_value
+    MIN(MagicalEntangle(1, x_12.value)) AS synalog_value
   FROM
     t_6_Loan AS Loan, JSON_EACH(JSON_ARRAY(0)) as x_12
   WHERE
@@ -180,7 +180,7 @@ FROM
   t_1_Member AS t_0_Member
 WHERE
   ((SELECT
-    MIN(MagicalEntangle(1, x_4.value)) AS logica_value
+    MIN(MagicalEntangle(1, x_4.value)) AS synalog_value
   FROM
     t_2_Missed AS Missed, JSON_EACH(JSON_ARRAY(0)) as x_4
   WHERE

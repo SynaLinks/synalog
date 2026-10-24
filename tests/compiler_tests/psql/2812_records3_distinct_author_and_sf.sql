@@ -1,18 +1,18 @@
 -- Initializing PostgreSQL environment.
 set client_min_messages to warning;
-create schema if not exists logica_home;
--- Empty logica type: logicarecord893574736;
-DO $$ BEGIN if not exists (select 'I(am) :- I(think)' from pg_type where typname = 'logicarecord893574736') then create type logicarecord893574736 as (nirvana numeric); end if; END $$;
+create schema if not exists synalog_home;
+-- Empty synalog type: synalogrecord893574736;
+DO $$ BEGIN if not exists (select 'I(am) :- I(think)' from pg_type where typname = 'synalogrecord893574736') then create type synalogrecord893574736 as (nirvana numeric); end if; END $$;
 
 
 DO $$
 BEGIN
--- Logica type: logicarecord481217614
-if not exists (select 'I(am) :- I(think)' from pg_type where typname = 'logicarecord481217614') then create type logicarecord481217614 as (r logicarecord893574736); end if;
--- Logica type: logicarecord86796764
-if not exists (select 'I(am) :- I(think)' from pg_type where typname = 'logicarecord86796764') then create type logicarecord86796764 as (s text); end if;
--- Logica type: logicarecord185747523
-if not exists (select 'I(am) :- I(think)' from pg_type where typname = 'logicarecord185747523') then create type logicarecord185747523 as (author text, sf bool); end if;
+-- Synalog type: synalogrecord481217614
+if not exists (select 'I(am) :- I(think)' from pg_type where typname = 'synalogrecord481217614') then create type synalogrecord481217614 as (r synalogrecord893574736); end if;
+-- Synalog type: synalogrecord86796764
+if not exists (select 'I(am) :- I(think)' from pg_type where typname = 'synalogrecord86796764') then create type synalogrecord86796764 as (s text); end if;
+-- Synalog type: synalogrecord185747523
+if not exists (select 'I(am) :- I(think)' from pg_type where typname = 'synalogrecord185747523') then create type synalogrecord185747523 as (author text, sf bool); end if;
 END $$;
 WITH t_1_B AS (SELECT * FROM (
   
@@ -80,10 +80,10 @@ WITH t_1_B AS (SELECT * FROM (
   
 ) AS UNUSED_TABLE_NAME  ),
 t_0_A AS (SELECT
-  ROW(B.author, B.sf)::logicarecord185747523 AS r
+  ROW(B.author, B.sf)::synalogrecord185747523 AS r
 FROM
   t_1_B AS B
-GROUP BY ROW(B.author, B.sf)::logicarecord185747523)
+GROUP BY ROW(B.author, B.sf)::synalogrecord185747523)
 SELECT
   SUM(1) AS n
 FROM

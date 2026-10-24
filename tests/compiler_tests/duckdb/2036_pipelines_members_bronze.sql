@@ -1,11 +1,11 @@
 -- Initializing DuckDB environment.
-create schema if not exists logica_home;
+create schema if not exists synalog_home;
 -- Empty record, has to have a field by DuckDB syntax.
-drop type if exists logicarecord893574736 cascade; create type logicarecord893574736 as struct(nirvana numeric);
+drop type if exists synalogrecord893574736 cascade; create type synalogrecord893574736 as struct(nirvana numeric);
 create sequence if not exists eternal_logical_sequence;
 
-DROP TABLE IF EXISTS logica_home.Tier;
-CREATE TABLE logica_home.Tier AS WITH t_2_Order AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_home.Tier;
+CREATE TABLE synalog_home.Tier AS WITH t_2_Order AS (SELECT * FROM (
   
     SELECT
       1 AS id,
@@ -119,11 +119,11 @@ SELECT
 FROM
   t_0_Spend AS Spend;
 
--- Interacting with table logica_home.Tier
+-- Interacting with table synalog_home.Tier
 
 SELECT
   t_0_Tier.who AS who
 FROM
-  logica_home.Tier AS t_0_Tier
+  synalog_home.Tier AS t_0_Tier
 WHERE
   (t_0_Tier.tier = 'bronze') ORDER BY who;

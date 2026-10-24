@@ -12,7 +12,7 @@ AS UNUSED_TABLE_NAME(g))
 SELECT
   t_0_G.g AS g,
   COALESCE((SELECT
-  SUM(1) AS logica_value
+  SUM(1) AS synalog_value
 FROM
   t_1_E AS E
 WHERE

@@ -92,7 +92,7 @@ FROM
   t_1_Client AS t_0_Client
 WHERE
   ((SELECT
-    MIN(t_3_Ship.kg) AS logica_value
+    MIN(t_3_Ship.kg) AS synalog_value
   FROM
     t_2_Ship AS t_3_Ship
   WHERE

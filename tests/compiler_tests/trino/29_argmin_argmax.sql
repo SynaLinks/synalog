@@ -1,5 +1,5 @@
-DROP TABLE IF EXISTS logica_test.BestQuarter;
-CREATE TABLE logica_test.BestQuarter AS WITH t_1_Sales AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_test.BestQuarter;
+CREATE TABLE synalog_test.BestQuarter AS WITH t_1_Sales AS (SELECT * FROM (
   
     SELECT
       'North' AS col0,
@@ -62,10 +62,10 @@ FROM
   t_1_Sales AS Sales
 GROUP BY 1;
 
--- Interacting with table logica_test.BestQuarter
+-- Interacting with table synalog_test.BestQuarter
 
 SELECT
   BestQuarter.col0 AS region,
   BestQuarter.best_quarter AS best_quarter
 FROM
-  logica_test.BestQuarter AS BestQuarter ORDER BY region;
+  synalog_test.BestQuarter AS BestQuarter ORDER BY region;

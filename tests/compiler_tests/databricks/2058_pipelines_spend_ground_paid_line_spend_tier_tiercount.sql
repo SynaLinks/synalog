@@ -1,5 +1,5 @@
-DROP TABLE IF EXISTS logica_test.Paid;
-CREATE TABLE logica_test.Paid AS WITH t_1_Order AS (SELECT * FROM VALUES
+DROP TABLE IF EXISTS synalog_test.Paid;
+CREATE TABLE synalog_test.Paid AS WITH t_1_Order AS (SELECT * FROM VALUES
   (1, "ann", "tea", 3, "paid"),
   (2, "bob", "cake", 1, "paid"),
   (3, "ann", "cake", 2, "refunded"),
@@ -21,10 +21,10 @@ FROM
 WHERE
   (t_0_Order.state = "paid");
 
--- Interacting with table logica_test.Paid
+-- Interacting with table synalog_test.Paid
 
-DROP TABLE IF EXISTS logica_test.Line;
-CREATE TABLE logica_test.Line AS WITH t_0_Price AS (SELECT * FROM VALUES
+DROP TABLE IF EXISTS synalog_test.Line;
+CREATE TABLE synalog_test.Line AS WITH t_0_Price AS (SELECT * FROM VALUES
   ("tea", 4),
   ("cake", 9),
   ("coffee", 6)
@@ -34,24 +34,24 @@ SELECT
   Paid.who AS who,
   ((Paid.n) * (Price.p)) AS amount
 FROM
-  logica_test.Paid AS Paid, t_0_Price AS Price
+  synalog_test.Paid AS Paid, t_0_Price AS Price
 WHERE
   (Price.item = Paid.item);
 
--- Interacting with table logica_test.Line
+-- Interacting with table synalog_test.Line
 
-DROP TABLE IF EXISTS logica_test.Spend;
-CREATE TABLE logica_test.Spend AS SELECT
+DROP TABLE IF EXISTS synalog_test.Spend;
+CREATE TABLE synalog_test.Spend AS SELECT
   Line.who AS who,
   SUM(Line.amount) AS total
 FROM
-  logica_test.Line AS Line
+  synalog_test.Line AS Line
 GROUP BY 1;
 
--- Interacting with table logica_test.Spend
+-- Interacting with table synalog_test.Spend
 
 SELECT
   Spend.who AS who,
   Spend.total AS total
 FROM
-  logica_test.Spend AS Spend ORDER BY who NULLS LAST, total NULLS LAST;
+  synalog_test.Spend AS Spend ORDER BY who NULLS LAST, total NULLS LAST;

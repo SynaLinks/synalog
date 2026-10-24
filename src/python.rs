@@ -11,7 +11,7 @@ use pyo3::exceptions::PyValueError;
 use pyo3::prelude::*;
 
 use crate::compiler::dialects;
-use crate::compiler::universe::{LogicaProgram, Pagination, PlanStep};
+use crate::compiler::universe::{SynalogProgram, Pagination, PlanStep};
 use crate::parser::{front_matter as read_front_matter, parse_file, Json, PredicateNames};
 use crate::verifier::{builtin_function_names, dependencies as program_dependencies, reserved_predicate_names, assertion_check, validate, AssertionStatus};
 
@@ -53,8 +53,8 @@ fn check_engine(engine: Option<&str>) -> PyResult<()> {
 /// Build a program, optionally overriding the engine declared via `@Engine`.
 /// When `engine` is `None`, the engine is read from the source (defaulting to
 /// `duckdb`), preserving the previous behavior.
-fn build_program(parsed: &Json, engine: Option<&str>) -> PyResult<LogicaProgram> {
-    LogicaProgram::new_with_engine(
+fn build_program(parsed: &Json, engine: Option<&str>) -> PyResult<SynalogProgram> {
+    SynalogProgram::new_with_engine(
         parsed,
         HashMap::new(),
         HashMap::new(),

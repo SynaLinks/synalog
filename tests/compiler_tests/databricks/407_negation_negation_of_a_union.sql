@@ -8,7 +8,7 @@ FROM
   LATERAL (SELECT explode(ARRAY(1, 2, 3)) AS x_3) AS pushkin
 WHERE
   ((SELECT
-    MIN(1) AS logica_value
+    MIN(1) AS synalog_value
   FROM
     t_0_U AS U
   WHERE

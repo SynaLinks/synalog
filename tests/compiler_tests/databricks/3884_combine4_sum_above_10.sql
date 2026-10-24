@@ -16,7 +16,7 @@ AS UNUSED_TABLE_NAME(c))
 SELECT
   t_0_C.c AS c,
   (SELECT
-  SUM(O.amt) AS logica_value
+  SUM(O.amt) AS synalog_value
 FROM
   t_1_O AS O
 WHERE

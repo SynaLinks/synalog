@@ -19,7 +19,7 @@ FROM
   t_1_C AS t_0_C
 WHERE
   ((SELECT
-    MIN(O.amt) AS logica_value
+    MIN(O.amt) AS synalog_value
   FROM
     t_2_O AS O
   WHERE

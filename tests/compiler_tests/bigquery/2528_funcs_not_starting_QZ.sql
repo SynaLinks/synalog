@@ -48,7 +48,7 @@ FROM
   t_0_C AS C
 WHERE
   ((SELECT
-    MIN(1) AS logica_value
+    MIN(1) AS synalog_value
   FROM
     (SELECT 'singleton' as s) as unused_singleton
   WHERE

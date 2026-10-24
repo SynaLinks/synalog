@@ -26,7 +26,7 @@ FROM
   UNNEST(ARRAY[1, 2, 3]) as x_4
 WHERE
   ((SELECT
-    MIN(1) AS logica_value
+    MIN(1) AS synalog_value
   FROM
     t_0_E AS E, t_1_L AS L
   WHERE

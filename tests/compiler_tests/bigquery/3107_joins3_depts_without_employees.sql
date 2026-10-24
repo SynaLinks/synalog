@@ -81,7 +81,7 @@ FROM
   t_0_D AS D
 WHERE
   ((SELECT
-    MIN(1) AS logica_value
+    MIN(1) AS synalog_value
   FROM
     t_1_Staffed AS Staffed
   WHERE

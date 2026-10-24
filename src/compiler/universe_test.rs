@@ -188,33 +188,33 @@ fn test_inject_structure_merges() {
     assert_eq!(target.constraints.len(), 2);
 }
 
-// ── Logica ──
+// ── Execution ──
 
 #[test]
-fn test_logica_new() {
-    let l = Logica::new();
+fn test_execution_new() {
+    let l = Execution::new();
     assert!(l.defines.is_empty());
     assert!(!l.compiling_udf);
     assert!(l.annotations.is_none());
 }
 
 #[test]
-fn test_logica_default() {
-    let l = Logica::default();
+fn test_execution_default() {
+    let l = Execution::default();
     assert!(l.defines.is_empty());
 }
 
 #[test]
-fn test_logica_add_define() {
-    let mut l = Logica::new();
+fn test_execution_add_define() {
+    let mut l = Execution::new();
     l.add_define("DEFINE TABLE t AS (SELECT 1)".to_string());
     assert_eq!(l.defines.len(), 1);
     assert!(l.defines[0].contains("DEFINE TABLE"));
 }
 
 #[test]
-fn test_logica_full_preamble() {
-    let mut l = Logica::new();
+fn test_execution_full_preamble() {
+    let mut l = Execution::new();
     l.flags_comment = "-- flags".to_string();
     l.preamble = "SET x = 1;".to_string();
     l.defines.push("DEFINE TABLE t AS (SELECT 1)".to_string());
@@ -225,28 +225,28 @@ fn test_logica_full_preamble() {
 }
 
 #[test]
-fn test_logica_full_preamble_empty() {
-    let l = Logica::new();
+fn test_execution_full_preamble_empty() {
+    let l = Execution::new();
     let full = l.full_preamble();
     assert!(full.trim().is_empty() || full.contains('\n'));
 }
 
 #[test]
-fn test_logica_with_for_default() {
-    let l = Logica::new();
+fn test_execution_with_for_default() {
+    let l = Execution::new();
     assert!(l.with_for("T"));
 }
 
 #[test]
-fn test_logica_with_for_udf() {
-    let mut l = Logica::new();
+fn test_execution_with_for_udf() {
+    let mut l = Execution::new();
     l.compiling_udf = true;
     assert!(!l.with_for("T"));
 }
 
 #[test]
-fn test_logica_with_for_with_annotations() {
-    let mut l = Logica::new();
+fn test_execution_with_for_with_annotations() {
+    let mut l = Execution::new();
     let mut ann = Annotations::extract(&[]).unwrap();
     let mut pred_anns = HashMap::new();
     pred_anns.insert("with".to_string(), Json::Bool(false));
@@ -256,18 +256,18 @@ fn test_logica_with_for_with_annotations() {
 }
 
 #[test]
-fn test_logica_predicate_specific_preamble_empty() {
-    let l = Logica::new();
+fn test_execution_predicate_specific_preamble_empty() {
+    let l = Execution::new();
     assert_eq!(l.predicate_specific_preamble("T"), "");
 }
 
 #[test]
-fn test_logica_needed_udf_definitions_empty() {
-    let l = Logica::new();
+fn test_execution_needed_udf_definitions_empty() {
+    let l = Execution::new();
     assert!(l.needed_udf_definitions().is_empty());
 }
 
-// ── LogicaProgram (universe version) ──
+// ── SynalogProgram (universe version) ──
 
 #[test]
 fn test_simple_program() {
@@ -276,7 +276,7 @@ fn test_simple_program() {
         T("hello");
     "#;
     let parsed = crate::parser::parse_file(source, None, &[]).unwrap();
-    let program = LogicaProgram::new(&parsed, HashMap::new(), HashMap::new()).unwrap();
+    let program = SynalogProgram::new(&parsed, HashMap::new(), HashMap::new()).unwrap();
     assert_eq!(program.engine(), "sqlite");
 }
 
@@ -288,7 +288,7 @@ fn test_program_defined_predicates() {
         Source("a");
     "#;
     let parsed = crate::parser::parse_file(source, None, &[]).unwrap();
-    let program = LogicaProgram::new(&parsed, HashMap::new(), HashMap::new()).unwrap();
+    let program = SynalogProgram::new(&parsed, HashMap::new(), HashMap::new()).unwrap();
     let preds = program.defined_predicates();
     assert!(preds.contains("T"));
     assert!(preds.contains("Source"));
@@ -302,7 +302,7 @@ fn test_program_new_names_allocator() {
         T("hello");
     "#;
     let parsed = crate::parser::parse_file(source, None, &[]).unwrap();
-    let program = LogicaProgram::new(&parsed, HashMap::new(), HashMap::new()).unwrap();
+    let program = SynalogProgram::new(&parsed, HashMap::new(), HashMap::new()).unwrap();
     let mut alloc = program.new_names_allocator();
     let t = alloc.alloc_table(None);
     assert!(t.starts_with("t_"));
@@ -316,7 +316,7 @@ fn test_program_get_predicate_rules() {
         T("world");
     "#;
     let parsed = crate::parser::parse_file(source, None, &[]).unwrap();
-    let program = LogicaProgram::new(&parsed, HashMap::new(), HashMap::new()).unwrap();
+    let program = SynalogProgram::new(&parsed, HashMap::new(), HashMap::new()).unwrap();
     let rules = program.get_predicate_rules("T");
     assert_eq!(rules.len(), 2);
 }
@@ -328,20 +328,20 @@ fn test_program_get_predicate_rules_empty() {
         T("hello");
     "#;
     let parsed = crate::parser::parse_file(source, None, &[]).unwrap();
-    let program = LogicaProgram::new(&parsed, HashMap::new(), HashMap::new()).unwrap();
+    let program = SynalogProgram::new(&parsed, HashMap::new(), HashMap::new()).unwrap();
     let rules = program.get_predicate_rules("NonExistent");
     assert!(rules.is_empty());
 }
 
 // ── predicate_sql ──
 
-fn make_universe_program(source: &str) -> LogicaProgram {
+fn make_universe_program(source: &str) -> SynalogProgram {
     let parsed = crate::parser::parse_file(source, None, &[]).unwrap();
-    LogicaProgram::new(&parsed, HashMap::new(), HashMap::new()).unwrap()
+    SynalogProgram::new(&parsed, HashMap::new(), HashMap::new()).unwrap()
 }
 
 /// Initialize execution state and call predicate_sql
-fn compile_predicate(program: &LogicaProgram, name: &str) -> crate::compiler::CompileResult<String> {
+fn compile_predicate(program: &SynalogProgram, name: &str) -> crate::compiler::CompileResult<String> {
     let exec = program.initialize_execution(name)?;
     *program.execution.borrow_mut() = Some(exec);
     *program.allocator.borrow_mut() = program.new_names_allocator();
@@ -536,7 +536,7 @@ fn test_table_aliases_stored() {
     let parsed = crate::parser::parse_file(source, None, &[]).unwrap();
     let mut aliases = HashMap::new();
     aliases.insert("Ext".to_string(), "external_table".to_string());
-    let program = LogicaProgram::new(&parsed, aliases, HashMap::new()).unwrap();
+    let program = SynalogProgram::new(&parsed, aliases, HashMap::new()).unwrap();
     // Verify table aliases are stored correctly
     assert_eq!(program.table_aliases.get("Ext"), Some(&"external_table".to_string()));
     // formatted_predicate_sql should produce valid SQL
@@ -554,15 +554,15 @@ fn test_user_flags_default() {
         T("hello");
     "#;
     let parsed = crate::parser::parse_file(source, None, &[]).unwrap();
-    let program = LogicaProgram::new(&parsed, HashMap::new(), HashMap::new()).unwrap();
+    let program = SynalogProgram::new(&parsed, HashMap::new(), HashMap::new()).unwrap();
     assert_eq!(program.flag_values.get("my_flag"), Some(&"default_val".to_string()));
 }
 
-// ── Logica with UDFs ──
+// ── Execution with UDFs ──
 
 #[test]
-fn test_logica_predicate_specific_preamble_with_udfs() {
-    let mut l = Logica::new();
+fn test_execution_predicate_specific_preamble_with_udfs() {
+    let mut l = Execution::new();
     l.custom_udf_definitions.insert("my_func".to_string(), "CREATE FUNCTION my_func() RETURNS INT".to_string());
     l.used_predicates.push("my_func".to_string());
     let preamble = l.predicate_specific_preamble("T");
@@ -571,8 +571,8 @@ fn test_logica_predicate_specific_preamble_with_udfs() {
 }
 
 #[test]
-fn test_logica_needed_udf_definitions_with_entries() {
-    let mut l = Logica::new();
+fn test_execution_needed_udf_definitions_with_entries() {
+    let mut l = Execution::new();
     l.custom_udf_definitions.insert("func1".to_string(), "CREATE FUNCTION func1()".to_string());
     l.custom_udfs.insert("func1".to_string(), "FUNC1(%s)".to_string());
     let defs = l.needed_udf_definitions();
@@ -604,84 +604,84 @@ fn test_engine_default_duckdb() {
 // Additional tests for 100% coverage
 // ══════════════════════════════════════════════════════════════
 
-// ── Logica struct methods ──
+// ── Execution struct methods ──
 
 #[test]
-fn test_logica_predicate_specific_preamble_no_deps() {
-    let logica = Logica::new();
-    assert_eq!(logica.predicate_specific_preamble("T"), "");
+fn test_execution_predicate_specific_preamble_no_deps() {
+    let exec = Execution::new();
+    assert_eq!(exec.predicate_specific_preamble("T"), "");
 }
 
 #[test]
-fn test_logica_predicate_specific_preamble_with_udf() {
-    let mut logica = Logica::new();
+fn test_execution_predicate_specific_preamble_with_udf() {
+    let mut exec = Execution::new();
     let mut deps = std::collections::HashSet::new();
     deps.insert("my_func".to_string());
-    logica.dependencies_of.insert("T".to_string(), deps);
-    logica.custom_udf_definitions.insert("my_func".to_string(), "CREATE FUNCTION my_func() RETURNS INT".to_string());
-    let preamble = logica.predicate_specific_preamble("T");
+    exec.dependencies_of.insert("T".to_string(), deps);
+    exec.custom_udf_definitions.insert("my_func".to_string(), "CREATE FUNCTION my_func() RETURNS INT".to_string());
+    let preamble = exec.predicate_specific_preamble("T");
     assert!(preamble.contains("my_func"), "Got: {}", preamble);
 }
 
 #[test]
-fn test_logica_predicate_specific_preamble_with_semigroup() {
-    let mut logica = Logica::new();
+fn test_execution_predicate_specific_preamble_with_semigroup() {
+    let mut exec = Execution::new();
     let mut deps = std::collections::HashSet::new();
     deps.insert("my_agg".to_string());
-    logica.dependencies_of.insert("T".to_string(), deps);
-    logica.custom_udf_definitions.insert("my_agg".to_string(), "CREATE AGG".to_string());
-    logica.custom_udf_definitions.insert("my_sg".to_string(), "CREATE SG".to_string());
-    logica.custom_aggregation_semigroup.insert("my_agg".to_string(), "my_sg".to_string());
-    let preamble = logica.predicate_specific_preamble("T");
+    exec.dependencies_of.insert("T".to_string(), deps);
+    exec.custom_udf_definitions.insert("my_agg".to_string(), "CREATE AGG".to_string());
+    exec.custom_udf_definitions.insert("my_sg".to_string(), "CREATE SG".to_string());
+    exec.custom_aggregation_semigroup.insert("my_agg".to_string(), "my_sg".to_string());
+    let preamble = exec.predicate_specific_preamble("T");
     assert!(preamble.contains("CREATE SG"), "Got: {}", preamble);
 }
 
 #[test]
-fn test_logica_needed_udf_definitions() {
-    let mut logica = Logica::new();
-    logica.used_predicates = vec!["f1".to_string(), "f2".to_string()];
-    logica.custom_udf_definitions.insert("f1".to_string(), "DEF1".to_string());
-    logica.custom_udf_definitions.insert("f2".to_string(), "DEF2".to_string());
-    let defs = logica.needed_udf_definitions();
+fn test_execution_needed_udf_definitions() {
+    let mut exec = Execution::new();
+    exec.used_predicates = vec!["f1".to_string(), "f2".to_string()];
+    exec.custom_udf_definitions.insert("f1".to_string(), "DEF1".to_string());
+    exec.custom_udf_definitions.insert("f2".to_string(), "DEF2".to_string());
+    let defs = exec.needed_udf_definitions();
     assert!(defs.contains(&"DEF1".to_string()));
     assert!(defs.contains(&"DEF2".to_string()));
 }
 
 #[test]
-fn test_logica_needed_udf_definitions_with_semigroup() {
-    let mut logica = Logica::new();
-    logica.used_predicates = vec!["my_agg".to_string()];
-    logica.custom_udf_definitions.insert("my_agg".to_string(), "AGG_DEF".to_string());
-    logica.custom_udf_definitions.insert("my_sg".to_string(), "SG_DEF".to_string());
-    logica.custom_aggregation_semigroup.insert("my_agg".to_string(), "my_sg".to_string());
-    let defs = logica.needed_udf_definitions();
+fn test_execution_needed_udf_definitions_with_semigroup() {
+    let mut exec = Execution::new();
+    exec.used_predicates = vec!["my_agg".to_string()];
+    exec.custom_udf_definitions.insert("my_agg".to_string(), "AGG_DEF".to_string());
+    exec.custom_udf_definitions.insert("my_sg".to_string(), "SG_DEF".to_string());
+    exec.custom_aggregation_semigroup.insert("my_agg".to_string(), "my_sg".to_string());
+    let defs = exec.needed_udf_definitions();
     assert!(defs.contains(&"SG_DEF".to_string()));
 }
 
 #[test]
-fn test_logica_full_preamble_with_defines() {
-    let mut logica = Logica::new();
-    logica.flags_comment = "-- flags".to_string();
-    logica.preamble = "-- preamble".to_string();
-    logica.add_define("-- define1".to_string());
-    let fp = logica.full_preamble();
+fn test_execution_full_preamble_with_defines() {
+    let mut exec = Execution::new();
+    exec.flags_comment = "-- flags".to_string();
+    exec.preamble = "-- preamble".to_string();
+    exec.add_define("-- define1".to_string());
+    let fp = exec.full_preamble();
     assert!(fp.contains("-- flags"), "Got: {}", fp);
     assert!(fp.contains("-- preamble"), "Got: {}", fp);
     assert!(fp.contains("-- define1"), "Got: {}", fp);
 }
 
 #[test]
-fn test_logica_with_for_default_true() {
-    let logica = Logica::new();
+fn test_execution_with_for_default_true() {
+    let exec = Execution::new();
     // No annotations set, default is true
-    assert!(logica.with_for("T"));
+    assert!(exec.with_for("T"));
 }
 
 #[test]
-fn test_logica_with_for_compiling_udf() {
-    let mut logica = Logica::new();
-    logica.compiling_udf = true;
-    assert!(!logica.with_for("T"));
+fn test_execution_with_for_compiling_udf() {
+    let mut exec = Execution::new();
+    exec.compiling_udf = true;
+    assert!(!exec.with_for("T"));
 }
 
 // ── Dollar text ──
@@ -696,7 +696,7 @@ fn test_dollar_text_is_data() {
         T(x) :- x == "costs ${x}";
     "#;
     let parsed = crate::parser::parse_file(source, None, &[]).unwrap();
-    let program = LogicaProgram::new(&parsed, HashMap::new(), HashMap::new()).unwrap();
+    let program = SynalogProgram::new(&parsed, HashMap::new(), HashMap::new()).unwrap();
     let sql = compile_predicate(&program, "T").unwrap();
     assert!(sql.contains("'costs ${x}'"), "SQL: {}", sql);
     assert!(!sql.contains("DROP"), "SQL: {}", sql);
@@ -808,7 +808,7 @@ fn test_translate_table_alias() {
     let parsed = crate::parser::parse_file(source, None, &[]).unwrap();
     let mut aliases = HashMap::new();
     aliases.insert("Ext".to_string(), "external_table".to_string());
-    let program = LogicaProgram::new(&parsed, aliases, HashMap::new()).unwrap();
+    let program = SynalogProgram::new(&parsed, aliases, HashMap::new()).unwrap();
     let sql = compile_predicate(&program, "T").unwrap();
     assert!(sql.contains("external_table"), "SQL: {}", sql);
 }
@@ -910,7 +910,7 @@ fn test_distinct_consistency_ok() {
         T(x) distinct :- Source(x);
     "#;
     let parsed = crate::parser::parse_file(source, None, &[]).unwrap();
-    let result = LogicaProgram::new(&parsed, HashMap::new(), HashMap::new());
+    let result = SynalogProgram::new(&parsed, HashMap::new(), HashMap::new());
     assert!(result.is_ok(), "Single distinct rule should be fine: {:?}", result.err());
 }
 
@@ -957,7 +957,7 @@ fn test_formatted_sql_flag_substitution() {
         T("hello");
     "#;
     let parsed = crate::parser::parse_file(source, None, &[]).unwrap();
-    let program = LogicaProgram::new(&parsed, HashMap::new(), HashMap::new()).unwrap();
+    let program = SynalogProgram::new(&parsed, HashMap::new(), HashMap::new()).unwrap();
     let sql = program.formatted_predicate_sql("T").unwrap();
     assert!(sql.contains("SELECT"), "SQL: {}", sql);
 }
@@ -968,14 +968,14 @@ fn test_formatted_sql_flag_substitution() {
 fn test_select_as_record() {
     let mut select = IndexMap::new();
     select.insert("col0".to_string(), Json::Str("test_expr".to_string()));
-    select.insert("logica_value".to_string(), Json::Str("skip_me".to_string()));
+    select.insert("synalog_value".to_string(), Json::Str("skip_me".to_string()));
     select.insert("col1".to_string(), Json::Str("other_expr".to_string()));
     let record = select_as_record(&select);
     assert!(record.is_object());
     let rec = record.as_object().get("record").unwrap();
     let fvs = rec.as_object().get("field_value").unwrap().as_array();
-    // logica_value should be skipped
-    assert_eq!(fvs.len(), 2, "Should have 2 fields (logica_value skipped)");
+    // synalog_value should be skipped
+    assert_eq!(fvs.len(), 2, "Should have 2 fields (synalog_value skipped)");
 }
 
 // ── combine rule in single_rule_sql ──
@@ -1004,7 +1004,7 @@ fn test_user_flags_override() {
     let parsed = crate::parser::parse_file(source, None, &[]).unwrap();
     let mut flags = HashMap::new();
     flags.insert("my_flag".to_string(), "override_val".to_string());
-    let program = LogicaProgram::new(&parsed, HashMap::new(), flags).unwrap();
+    let program = SynalogProgram::new(&parsed, HashMap::new(), flags).unwrap();
     assert_eq!(program.flag_values.get("my_flag"), Some(&"override_val".to_string()));
 }
 
@@ -1070,28 +1070,28 @@ fn test_multiple_table_aliases() {
     let mut aliases = HashMap::new();
     aliases.insert("ExtA".to_string(), "table_a".to_string());
     aliases.insert("ExtB".to_string(), "table_b".to_string());
-    let program = LogicaProgram::new(&parsed, aliases, HashMap::new()).unwrap();
+    let program = SynalogProgram::new(&parsed, aliases, HashMap::new()).unwrap();
     let sql = compile_predicate(&program, "T").unwrap();
     assert!(sql.contains("table_a"), "SQL: {}", sql);
     assert!(sql.contains("table_b"), "SQL: {}", sql);
 }
 
-// ── Logica struct: workflow stack ──
+// ── Execution struct: workflow stack ──
 
 #[test]
-fn test_logica_workflow_predicates_stack() {
-    let mut l = Logica::new();
+fn test_execution_workflow_predicates_stack() {
+    let mut l = Execution::new();
     l.workflow_predicates_stack.push("T".to_string());
     l.workflow_predicates_stack.push("Source".to_string());
     assert_eq!(l.workflow_predicates_stack.len(), 2);
     assert_eq!(l.workflow_predicates_stack.last(), Some(&"Source".to_string()));
 }
 
-// ── Logica struct: table maps ──
+// ── Execution struct: table maps ──
 
 #[test]
-fn test_logica_table_maps() {
-    let mut l = Logica::new();
+fn test_execution_table_maps() {
+    let mut l = Execution::new();
     l.table_to_defined_table_map.insert("T".to_string(), "T_cte".to_string());
     l.table_to_with_sql_map.insert("T_cte".to_string(), "SELECT 1".to_string());
     l.table_to_with_dependencies.entry("Result".to_string()).or_default().push("T".to_string());
@@ -1250,7 +1250,7 @@ fn test_predicate_sql_sqlexpr() {
         Source(1);
         T(y) :- Source(x), y == SqlExpr("{0} + 10", x);
     "#, None, &[]).unwrap();
-    let err = match LogicaProgram::new(&parsed, HashMap::new(), HashMap::new()) {
+    let err = match SynalogProgram::new(&parsed, HashMap::new(), HashMap::new()) {
         Ok(_) => panic!("expected SqlExpr to be refused"),
         Err(e) => e.to_string(),
     };
@@ -1267,7 +1267,7 @@ fn test_predicate_sql_flagvalue() {
         T(FlagValue("my_table"));
     "#;
     let parsed = crate::parser::parse_file(source, None, &[]).unwrap();
-    let program = LogicaProgram::new(&parsed, HashMap::new(), HashMap::new()).unwrap();
+    let program = SynalogProgram::new(&parsed, HashMap::new(), HashMap::new()).unwrap();
     let sql = compile_predicate(&program, "T").unwrap();
     assert!(sql.contains("users"), "SQL should contain flag value: {}", sql);
 }
@@ -1341,20 +1341,20 @@ fn test_predicate_sql_complex_body() {
     assert!(sql.contains("WHERE"), "SQL should have WHERE: {}", sql);
 }
 
-// ── Logica struct: dependency edges ──
+// ── Execution struct: dependency edges ──
 
 #[test]
-fn test_logica_dependency_edges() {
-    let mut l = Logica::new();
+fn test_execution_dependency_edges() {
+    let mut l = Execution::new();
     l.dependency_edges.push(("A".to_string(), "B".to_string()));
     assert_eq!(l.dependency_edges.len(), 1);
 }
 
-// ── Logica struct: defines_and_exports ──
+// ── Execution struct: defines_and_exports ──
 
 #[test]
-fn test_logica_defines_and_exports() {
-    let mut l = Logica::new();
+fn test_execution_defines_and_exports() {
+    let mut l = Execution::new();
     l.defines_and_exports.push("-- statement".to_string());
     assert_eq!(l.defines_and_exports.len(), 1);
 }
@@ -1455,7 +1455,7 @@ fn test_injected_fact_compiles_the_same_every_time() {
                   Missing(a:, b:) :- Want(a:, b:), ~Have(a:, b:);\n";
     let compile = || {
         let parsed = crate::parser::parse_file(source, None, &[]).unwrap();
-        let program = LogicaProgram::new(&parsed, HashMap::new(), HashMap::new()).unwrap();
+        let program = SynalogProgram::new(&parsed, HashMap::new(), HashMap::new()).unwrap();
         program.formatted_predicate_sql("Missing").unwrap()
     };
     let first = compile();
@@ -1466,7 +1466,7 @@ fn test_injected_fact_compiles_the_same_every_time() {
 
 fn plan_of(source: &str, predicate: &str) -> Vec<PlanStep> {
     let parsed = crate::parser::parse_file(source, None, &[]).unwrap();
-    let program = LogicaProgram::new(&parsed, HashMap::new(), HashMap::new()).unwrap();
+    let program = SynalogProgram::new(&parsed, HashMap::new(), HashMap::new()).unwrap();
     program.formatted_predicate_plan(predicate, None, None).unwrap()
 }
 
@@ -1499,11 +1499,11 @@ fn test_a_linear_distinct_recursion_is_semi_naive() {
     // row so far; until the delta is empty.
     assert_eq!(repetitions, 20);
     assert_eq!(body.len(), 4);
-    assert!(body[0].contains("CREATE TABLE logica_test.Reach_sn_new"), "{}", body[0]);
-    assert!(body[1].starts_with("INSERT INTO logica_test.Reach_sn_full SELECT * FROM logica_test.Reach_sn_new"), "{}", body[1]);
-    assert!(body[2].contains("CREATE TABLE logica_test.Reach_sn_delta"), "{}", body[2]);
-    assert!(body[3].starts_with("INSERT INTO logica_test.Reach_sn_full SELECT * FROM logica_test.Reach_sn_delta"), "{}", body[3]);
-    assert_eq!(changed, "SELECT COUNT(*) AS changed FROM logica_test.Reach_sn_delta");
+    assert!(body[0].contains("CREATE TABLE synalog_test.Reach_sn_new"), "{}", body[0]);
+    assert!(body[1].starts_with("INSERT INTO synalog_test.Reach_sn_full SELECT * FROM synalog_test.Reach_sn_new"), "{}", body[1]);
+    assert!(body[2].contains("CREATE TABLE synalog_test.Reach_sn_delta"), "{}", body[2]);
+    assert!(body[3].starts_with("INSERT INTO synalog_test.Reach_sn_full SELECT * FROM synalog_test.Reach_sn_delta"), "{}", body[3]);
+    assert_eq!(changed, "SELECT COUNT(*) AS changed FROM synalog_test.Reach_sn_delta");
 }
 
 #[test]
@@ -1517,8 +1517,8 @@ fn test_an_odd_number_of_steps_ends_with_one_step() {
     // The 41st step, after the loop: the new rows from the delta, added.
     match (&plan[at + 1], &plan[at + 2]) {
         (PlanStep::Sql(step), PlanStep::Sql(add)) => {
-            assert!(step.contains("CREATE TABLE logica_test.Reach_sn_new"), "{}", step);
-            assert!(add.starts_with("INSERT INTO logica_test.Reach_sn_full SELECT * FROM logica_test.Reach_sn_new"), "{}", add);
+            assert!(step.contains("CREATE TABLE synalog_test.Reach_sn_new"), "{}", step);
+            assert!(add.starts_with("INSERT INTO synalog_test.Reach_sn_full SELECT * FROM synalog_test.Reach_sn_new"), "{}", add);
         }
         other => panic!("{:?}", other),
     }
@@ -1549,19 +1549,19 @@ fn test_compile_writes_the_loop_out_and_refuses_one_too_long() {
         "{LOOPING}{CHAIN}@Recursive(Reach, 30);\nReach(y: 0) distinct;\nReach(y:) distinct :- Reach(y: x), Next(x:, y:);\n"
     );
     let parsed = crate::parser::parse_file(&source, None, &[]).unwrap();
-    let program = LogicaProgram::new(&parsed, HashMap::new(), HashMap::new()).unwrap();
+    let program = SynalogProgram::new(&parsed, HashMap::new(), HashMap::new()).unwrap();
     let sql = program.formatted_predicate_sql("Reach").unwrap();
-    assert_eq!(sql.matches("INSERT INTO logica_test.Reach_sn_full").count(), 30);
+    assert_eq!(sql.matches("INSERT INTO synalog_test.Reach_sn_full").count(), 30);
     let deep = source.replace("@Recursive(Reach, 30)", "@Recursive(Reach, -1)");
     let parsed = crate::parser::parse_file(&deep, None, &[]).unwrap();
-    let program = LogicaProgram::new(&parsed, HashMap::new(), HashMap::new()).unwrap();
+    let program = SynalogProgram::new(&parsed, HashMap::new(), HashMap::new()).unwrap();
     let error = program.formatted_predicate_sql("Reach").unwrap_err();
     assert!(error.message.contains("more steps than a SQL script can hold"), "{}", error.message);
 }
 
 fn compiled(source: &str, predicate: &str) -> String {
     let parsed = crate::parser::parse_file(source, None, &[]).unwrap();
-    let program = LogicaProgram::new(&parsed, HashMap::new(), HashMap::new()).unwrap();
+    let program = SynalogProgram::new(&parsed, HashMap::new(), HashMap::new()).unwrap();
     program.formatted_predicate_sql(predicate).unwrap()
 }
 
@@ -1577,11 +1577,11 @@ fn test_a_linear_distinct_recursion_is_one_recursive_query() {
         assert!(loops(&plan).is_empty(), "{engine}");
         let sql = compiled(&source, "Reach");
         assert!(sql.contains("WITH RECURSIVE"), "{engine}: {sql}");
-        assert!(sql.contains(".logica_step < 40)"), "{engine}: {sql}");
+        assert!(sql.contains(".synalog_step < 40)"), "{engine}: {sql}");
         assert!(!sql.contains("CREATE TABLE"), "{engine}: {sql}");
         // Until it converges: no number, `UNION` ends it.
         let sql = compiled(&source.replace("@Recursive(Reach, 40)", "@Recursive(Reach, -1)"), "Reach");
-        assert!(sql.contains("WITH RECURSIVE") && !sql.contains("logica_step"), "{engine}: {sql}");
+        assert!(sql.contains("WITH RECURSIVE") && !sql.contains("synalog_step"), "{engine}: {sql}");
     }
     for engine in ["trino", "presto", "bigquery", "databricks"] {
         let sql = compiled(&format!("@Engine(\"{engine}\");\n{reach}"), "Reach");
@@ -1641,7 +1641,7 @@ fn test_column_type_intersects_its_rules() {
     for _ in 0..8 {
         let src = "@Engine(\"psql\");\nR(id: 1, r: {tags: [\"x\"]});\nR(id: 2, r: {tags: []});\nQ(id:, n: Size(r.tags)) :- R(id:, r:);";
         let parsed = crate::parser::parse_file(src, None, &[]).unwrap();
-        let program = LogicaProgram::new(&parsed, HashMap::new(), HashMap::new()).unwrap();
+        let program = SynalogProgram::new(&parsed, HashMap::new(), HashMap::new()).unwrap();
         let r = &program.predicate_types["R"]["r"];
         assert_eq!(r.to_string(), Type::Record {
             fields: [("tags".to_string(), Type::list(Type::String))].into_iter().collect(),
@@ -1662,7 +1662,7 @@ fn test_empty_list_typed_on_postgresql() {
 fn presto_page(limit: Option<u64>, offset: Option<u64>) -> String {
     let src = "@Engine(\"presto\");\n@OrderBy(V, \"x\");\nV(x:) :- x in [1, 2, 3];\n";
     let parsed = crate::parser::parse_file(src, None, &[]).unwrap();
-    let p = LogicaProgram::new_with_engine(&parsed, HashMap::new(), HashMap::new(), Some("presto")).unwrap();
+    let p = SynalogProgram::new_with_engine(&parsed, HashMap::new(), HashMap::new(), Some("presto")).unwrap();
     let sql = p.formatted_predicate_sql_with_pagination("V", &Pagination { limit, offset }).unwrap();
     sql.lines().filter(|l| l.contains("synalog_row >")).collect()
 }
@@ -1683,7 +1683,7 @@ fn test_page_past_the_last_row_number_keeps_every_row() {
 fn test_recursion_as_deep_as_an_integer_goes() {
     let src = "@Engine(\"sqlite\");\nE(a: 1, b: 2);\n@Recursive(P, 9223372036854775807);\nP(a:, b:) :- E(a:, b:);\nP(a:, b:) :- P(a:, b: c), E(a: c, b:);\n";
     let parsed = crate::parser::parse_file(src, None, &[]).unwrap();
-    let p = LogicaProgram::new_with_engine(&parsed, HashMap::new(), HashMap::new(), Some("sqlite")).unwrap();
+    let p = SynalogProgram::new_with_engine(&parsed, HashMap::new(), HashMap::new(), Some("sqlite")).unwrap();
     let err = p.formatted_predicate_sql("P").unwrap_err().to_string();
     assert!(err.contains("more steps than a SQL script can hold"), "{err}");
 }

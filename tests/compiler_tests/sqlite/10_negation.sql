@@ -25,7 +25,7 @@ SELECT * FROM (
       JSON_EACH((select json_group_array(n) from (with recursive t as(select 0 as n union all select n + 1 as n from t where n + 1 < 10) select n from t) where n < 10)) as x_5
     WHERE
       ((SELECT
-        MIN(MagicalEntangle(1, x_8.value)) AS logica_value
+        MIN(MagicalEntangle(1, x_8.value)) AS synalog_value
       FROM
         JSON_EACH((select json_group_array(n) from (with recursive t as(select 0 as n union all select n + 1 as n from t where n + 1 < 10) select n from t) where n < 10)) as x_12, JSON_EACH(JSON_ARRAY(0)) as x_8
       WHERE
@@ -41,7 +41,7 @@ SELECT * FROM (
     WHERE
       (x_5.value > 1) AND
       ((SELECT
-        MIN(MagicalEntangle(1, x_8.value)) AS logica_value
+        MIN(MagicalEntangle(1, x_8.value)) AS synalog_value
       FROM
         t_0_Prime AS Prime, JSON_EACH(JSON_ARRAY(0)) as x_8
       WHERE
@@ -55,7 +55,7 @@ SELECT * FROM (
       JSON_EACH((select json_group_array(n) from (with recursive t as(select 0 as n union all select n + 1 as n from t where n + 1 < 10) select n from t) where n < 10)) as x_7
     WHERE
       ((SELECT
-        MIN(MagicalEntangle(1, x_10.value)) AS logica_value
+        MIN(MagicalEntangle(1, x_10.value)) AS synalog_value
       FROM
         t_0_Prime AS Prime, JSON_EACH(JSON_ARRAY(0)) as x_10
       WHERE

@@ -413,8 +413,8 @@ fn dialect_tables(dialect: &dyn Dialect) -> (Arc<HashMap<String, String>>, Arc<H
     }).clone()
 }
 
-/// Built-in functions: Logica name → SQL template.
-/// These override bulk functions for Logica-specific semantics.
+/// Built-in functions: Synalog name → SQL template.
+/// These override bulk functions for Synalog-specific semantics.
 // Note: SomeValue uses ANY_VALUE in Rust vs ARRAY_AGG(... IGNORE NULLS LIMIT 1)[OFFSET(0)] in Python.
 pub(crate) fn base_built_in_functions() -> HashMap<&'static str, &'static str> {
     let mut m = HashMap::new();
@@ -496,7 +496,7 @@ pub(crate) fn base_built_in_functions() -> HashMap<&'static str, &'static str> {
     m
 }
 
-/// Built-in infix operators: Logica operator → SQL template.
+/// Built-in infix operators: Synalog operator → SQL template.
 fn base_infix_operators() -> HashMap<&'static str, &'static str> {
     let mut m = HashMap::new();
     m.insert("==", "%s = %s");
@@ -574,7 +574,7 @@ pub struct ExprTranslator<'a> {
     built_in_infix_operators: Arc<HashMap<String, String>>,
     pub flag_values: &'a HashMap<String, String>,
     pub subquery_translator: Option<&'a dyn SubqueryTranslator>,
-    /// The value field name based on compilation mode ("logica_value" or "synalog_value")
+    /// The value field name based on compilation mode ("synalog_value" or "synalog_value")
     pub value_field: &'static str,
     /// The types of the rule's variables that are known: a column of a
     /// table, an element of a list. A record built from them has their types.
@@ -591,7 +591,7 @@ impl<'a> ExprTranslator<'a> {
         dialect: &'a dyn Dialect,
         flag_values: &'a HashMap<String, String>,
     ) -> Self {
-        Self::new_with_value_field(vocabulary, dialect, flag_values, "logica_value")
+        Self::new_with_value_field(vocabulary, dialect, flag_values, "synalog_value")
     }
 
     pub fn new_with_value_field(
@@ -614,7 +614,7 @@ impl<'a> ExprTranslator<'a> {
         }
     }
 
-    /// Convert a Logica expression AST node to an SQL string.
+    /// Convert a Synalog expression AST node to an SQL string.
     /// Uses an iterative task/result stack instead of recursion.
     pub fn convert_to_sql(&self, expression: &Json) -> CompileResult<String> {
         self.convert_to_sql_expecting(expression, &Type::Any)

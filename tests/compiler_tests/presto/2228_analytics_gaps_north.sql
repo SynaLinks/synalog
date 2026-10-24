@@ -1,5 +1,5 @@
-DROP TABLE IF EXISTS logica_test.D;
-CREATE TABLE logica_test.D AS WITH t_0_S AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_test.D;
+CREATE TABLE synalog_test.D AS WITH t_0_S AS (SELECT * FROM (
   
     SELECT
       'north' AS r,
@@ -93,13 +93,13 @@ WHERE
   (S.r = 'north')
 GROUP BY 1;
 
--- Interacting with table logica_test.D
+-- Interacting with table synalog_test.D
 
 WITH t_0_B AS (SELECT
   MIN(t_1_D.d) AS lo,
   MAX(t_1_D.d) AS hi
 FROM
-  logica_test.D AS t_1_D)
+  synalog_test.D AS t_1_D)
 SELECT
   x_3 AS d
 FROM
@@ -107,8 +107,8 @@ FROM
 WHERE
   (x_3 > B.lo) AND
   ((SELECT
-    MIN(1) AS logica_value
+    MIN(1) AS synalog_value
   FROM
-    logica_test.D AS t_2_D
+    synalog_test.D AS t_2_D
   WHERE
     (t_2_D.d = x_3)) IS NULL);

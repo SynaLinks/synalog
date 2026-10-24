@@ -66,7 +66,7 @@ FROM
   t_0_S AS S
 WHERE
   ((SELECT
-    MIN(1) AS logica_value
+    MIN(1) AS synalog_value
   FROM
     t_1_Lower AS Lower
   WHERE

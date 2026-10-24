@@ -84,14 +84,14 @@ FROM
 WHERE
   (t_0_U.u != "bob") AND
   ((SELECT
-    MIN(1) AS logica_value
+    MIN(1) AS synalog_value
   FROM
     t_2_F AS F
   WHERE
     (F.a = "bob") AND
     (F.b = t_0_U.u)) IS NULL) AND
   ((SELECT
-    MIN(1) AS logica_value
+    MIN(1) AS synalog_value
   FROM
     t_2_F AS t_3_F
   WHERE

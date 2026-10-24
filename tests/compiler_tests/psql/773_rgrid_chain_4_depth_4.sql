@@ -1,20 +1,20 @@
 -- Initializing PostgreSQL environment.
 set client_min_messages to warning;
-create schema if not exists logica_home;
--- Empty logica type: logicarecord893574736;
-DO $$ BEGIN if not exists (select 'I(am) :- I(think)' from pg_type where typname = 'logicarecord893574736') then create type logicarecord893574736 as (nirvana numeric); end if; END $$;
+create schema if not exists synalog_home;
+-- Empty synalog type: synalogrecord893574736;
+DO $$ BEGIN if not exists (select 'I(am) :- I(think)' from pg_type where typname = 'synalogrecord893574736') then create type synalogrecord893574736 as (nirvana numeric); end if; END $$;
 
 WITH RECURSIVE t_0_R_RecursiveCte AS (SELECT * FROM (
   SELECT * FROM (
     
       SELECT
         0 AS x,
-        0 AS logica_step
+        0 AS synalog_step
      UNION ALL
     
       SELECT
         ((x_20) + (1)) AS x,
-        ((0) + (1)) AS logica_step
+        ((0) + (1)) AS synalog_step
       FROM
         UNNEST(COALESCE((SELECT ARRAY_AGG(x) FROM GENERATE_SERIES(0, 4 - 1) as x), '{}')) as x_20
       WHERE
@@ -25,7 +25,7 @@ WITH RECURSIVE t_0_R_RecursiveCte AS (SELECT * FROM (
     
       SELECT
         ((x_36) + (1)) AS x,
-        ((((0) + (1))) + (1)) AS logica_step
+        ((((0) + (1))) + (1)) AS synalog_step
       FROM
         UNNEST(COALESCE((SELECT ARRAY_AGG(x) FROM GENERATE_SERIES(0, 4 - 1) as x), '{}')) as x_36, UNNEST(COALESCE((SELECT ARRAY_AGG(x) FROM GENERATE_SERIES(0, 4 - 1) as x), '{}')) as x_42
       WHERE
@@ -38,7 +38,7 @@ WITH RECURSIVE t_0_R_RecursiveCte AS (SELECT * FROM (
     
       SELECT
         ((x_58) + (1)) AS x,
-        ((((((0) + (1))) + (1))) + (1)) AS logica_step
+        ((((((0) + (1))) + (1))) + (1)) AS synalog_step
       FROM
         UNNEST(COALESCE((SELECT ARRAY_AGG(x) FROM GENERATE_SERIES(0, 4 - 1) as x), '{}')) as x_58, UNNEST(COALESCE((SELECT ARRAY_AGG(x) FROM GENERATE_SERIES(0, 4 - 1) as x), '{}')) as x_65, UNNEST(COALESCE((SELECT ARRAY_AGG(x) FROM GENERATE_SERIES(0, 4 - 1) as x), '{}')) as x_71
       WHERE
@@ -55,11 +55,11 @@ WITH RECURSIVE t_0_R_RecursiveCte AS (SELECT * FROM (
 UNION
 SELECT
   ((x_78) + (1)) AS x,
-  ((t_14_R_RecursiveCte.logica_step) + (1)) AS logica_step
+  ((t_14_R_RecursiveCte.synalog_step) + (1)) AS synalog_step
 FROM
   t_0_R_RecursiveCte AS t_14_R_RecursiveCte, UNNEST(COALESCE((SELECT ARRAY_AGG(x) FROM GENERATE_SERIES(0, 4 - 1) as x), '{}')) as x_78
 WHERE
-  (t_14_R_RecursiveCte.logica_step < 4) AND
+  (t_14_R_RecursiveCte.synalog_step < 4) AND
   (t_14_R_RecursiveCte.x = x_78))
 SELECT
   R_RecursiveCte.x AS x

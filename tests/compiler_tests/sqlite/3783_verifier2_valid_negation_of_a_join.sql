@@ -33,7 +33,7 @@ FROM
   t_1_N AS t_0_N
 WHERE
   ((SELECT
-    MIN(MagicalEntangle(1, x_7.value)) AS logica_value
+    MIN(MagicalEntangle(1, x_7.value)) AS synalog_value
   FROM
     t_3_E AS E, t_1_N AS t_2_N, JSON_EACH(JSON_ARRAY(0)) as x_7
   WHERE

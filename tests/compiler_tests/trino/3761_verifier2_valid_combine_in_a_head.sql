@@ -30,7 +30,7 @@ t_2_N AS (SELECT * FROM (
 SELECT
   t_0_N.n AS n,
   (SELECT
-  SUM(1) AS logica_value
+  SUM(1) AS synalog_value
 FROM
   t_1_E AS E
 WHERE

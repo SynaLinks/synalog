@@ -1,21 +1,21 @@
 -- Initializing DuckDB environment.
-create schema if not exists logica_home;
+create schema if not exists synalog_home;
 -- Empty record, has to have a field by DuckDB syntax.
-drop type if exists logicarecord893574736 cascade; create type logicarecord893574736 as struct(nirvana numeric);
+drop type if exists synalogrecord893574736 cascade; create type synalogrecord893574736 as struct(nirvana numeric);
 create sequence if not exists eternal_logical_sequence;
 
 
--- Logica type: logicarecord481217614
-drop type if exists logicarecord481217614 cascade; create type logicarecord481217614 as struct(r logicarecord893574736);
+-- Synalog type: synalogrecord481217614
+drop type if exists synalogrecord481217614 cascade; create type synalogrecord481217614 as struct(r synalogrecord893574736);
 
--- Logica type: logicarecord383307722
-drop type if exists logicarecord383307722 cascade; create type logicarecord383307722 as struct(a timestamp);
+-- Synalog type: synalogrecord383307722
+drop type if exists synalogrecord383307722 cascade; create type synalogrecord383307722 as struct(a timestamp);
 
--- Logica type: logicarecord986930601
-drop type if exists logicarecord986930601 cascade; create type logicarecord986930601 as struct(hi numeric, lo numeric);
+-- Synalog type: synalogrecord986930601
+drop type if exists synalogrecord986930601 cascade; create type synalogrecord986930601 as struct(hi numeric, lo numeric);
 
--- Logica type: logicarecord519939597
-drop type if exists logicarecord519939597 cascade; create type logicarecord519939597 as struct(args text[], predicate text);
+-- Synalog type: synalogrecord519939597
+drop type if exists synalogrecord519939597 cascade; create type synalogrecord519939597 as struct(args text[], predicate text);
 WITH t_0_S AS (SELECT
   MIN(x_5.unnested_pod) AS lo,
   MAX(x_5.unnested_pod) AS hi

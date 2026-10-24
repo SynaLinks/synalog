@@ -100,7 +100,7 @@ t_1_All AS (SELECT * FROM (
       t_7_M AS M
     WHERE
       ((SELECT
-        MIN(MagicalEntangle(1, x_20.value)) AS logica_value
+        MIN(MagicalEntangle(1, x_20.value)) AS synalog_value
       FROM
         t_3_L AS t_8_L, JSON_EACH(JSON_ARRAY(0)) as x_20
       WHERE

@@ -52,7 +52,7 @@ FROM
   t_0_Node AS Node
 WHERE
   (COALESCE((SELECT
-    SUM(1) AS logica_value
+    SUM(1) AS synalog_value
   FROM
     t_1_U AS U
   WHERE

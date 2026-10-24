@@ -1,5 +1,5 @@
-DROP TABLE IF EXISTS logica_test.Users;
-CREATE TABLE logica_test.Users AS WITH t_0_V AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_test.Users;
+CREATE TABLE synalog_test.Users AS WITH t_0_V AS (SELECT * FROM (
   
     SELECT
       1 AS x
@@ -14,9 +14,9 @@ SELECT
 FROM
   t_0_V AS V;
 
--- Interacting with table logica_test.Users
+-- Interacting with table synalog_test.Users
 
 SELECT
   Q.x AS x
 FROM
-  logica_test.Users AS Q ORDER BY x;
+  synalog_test.Users AS Q ORDER BY x;

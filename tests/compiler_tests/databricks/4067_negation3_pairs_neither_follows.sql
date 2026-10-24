@@ -25,14 +25,14 @@ FROM
 WHERE
   (t_0_U.u < t_1_U.u) AND
   ((SELECT
-    MIN(1) AS logica_value
+    MIN(1) AS synalog_value
   FROM
     t_3_F AS F
   WHERE
     (F.a = t_0_U.u) AND
     (F.b = t_1_U.u)) IS NULL) AND
   ((SELECT
-    MIN(1) AS logica_value
+    MIN(1) AS synalog_value
   FROM
     t_3_F AS t_4_F
   WHERE

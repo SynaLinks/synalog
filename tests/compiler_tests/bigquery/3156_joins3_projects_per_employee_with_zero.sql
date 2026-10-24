@@ -67,7 +67,7 @@ t_1_E AS (SELECT * FROM (
 SELECT
   E.name AS name,
   COALESCE((SELECT
-  SUM(1) AS logica_value
+  SUM(1) AS synalog_value
 FROM
   t_0_Pr AS Pr
 WHERE

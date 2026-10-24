@@ -1,27 +1,27 @@
 -- Initializing DuckDB environment.
-create schema if not exists logica_home;
+create schema if not exists synalog_home;
 -- Empty record, has to have a field by DuckDB syntax.
-drop type if exists logicarecord893574736 cascade; create type logicarecord893574736 as struct(nirvana numeric);
+drop type if exists synalogrecord893574736 cascade; create type synalogrecord893574736 as struct(nirvana numeric);
 create sequence if not exists eternal_logical_sequence;
 
 
--- Logica type: logicarecord481217614
-drop type if exists logicarecord481217614 cascade; create type logicarecord481217614 as struct(r logicarecord893574736);
+-- Synalog type: synalogrecord481217614
+drop type if exists synalogrecord481217614 cascade; create type synalogrecord481217614 as struct(r synalogrecord893574736);
 
--- Logica type: logicarecord383307722
-drop type if exists logicarecord383307722 cascade; create type logicarecord383307722 as struct(a timestamp);
+-- Synalog type: synalogrecord383307722
+drop type if exists synalogrecord383307722 cascade; create type synalogrecord383307722 as struct(a timestamp);
 
--- Logica type: logicarecord315011332
-drop type if exists logicarecord315011332 cascade; create type logicarecord315011332 as struct(email text, phone text);
+-- Synalog type: synalogrecord315011332
+drop type if exists synalogrecord315011332 cascade; create type synalogrecord315011332 as struct(email text, phone text);
 
--- Logica type: logicarecord519939597
-drop type if exists logicarecord519939597 cascade; create type logicarecord519939597 as struct(args text[], predicate text);
+-- Synalog type: synalogrecord519939597
+drop type if exists synalogrecord519939597 cascade; create type synalogrecord519939597 as struct(args text[], predicate text);
 
--- Logica type: logicarecord257158727
-drop type if exists logicarecord257158727 cascade; create type logicarecord257158727 as struct(person_email text, person_name text);
+-- Synalog type: synalogrecord257158727
+drop type if exists synalogrecord257158727 cascade; create type synalogrecord257158727 as struct(person_email text, person_name text);
 
--- Logica type: logicarecord836374436
-drop type if exists logicarecord836374436 cascade; create type logicarecord836374436 as struct(contact logicarecord315011332, name text);
+-- Synalog type: synalogrecord836374436
+drop type if exists synalogrecord836374436 cascade; create type synalogrecord836374436 as struct(contact synalogrecord315011332, name text);
 WITH t_0_Person AS (SELECT * FROM (
   
     SELECT

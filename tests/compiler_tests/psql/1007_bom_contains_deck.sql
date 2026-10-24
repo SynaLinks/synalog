@@ -1,8 +1,8 @@
 -- Initializing PostgreSQL environment.
 set client_min_messages to warning;
-create schema if not exists logica_home;
--- Empty logica type: logicarecord893574736;
-DO $$ BEGIN if not exists (select 'I(am) :- I(think)' from pg_type where typname = 'logicarecord893574736') then create type logicarecord893574736 as (nirvana numeric); end if; END $$;
+create schema if not exists synalog_home;
+-- Empty synalog type: synalogrecord893574736;
+DO $$ BEGIN if not exists (select 'I(am) :- I(think)' from pg_type where typname = 'synalogrecord893574736') then create type synalogrecord893574736 as (nirvana numeric); end if; END $$;
 
 WITH RECURSIVE t_2_Uses AS (SELECT * FROM (
   
@@ -66,7 +66,7 @@ t_1_Contains_RecursiveCte AS (SELECT * FROM (
       SELECT
         Uses.part AS part,
         Uses.component AS component,
-        0 AS logica_step
+        0 AS synalog_step
       FROM
         t_2_Uses AS Uses
      UNION ALL
@@ -74,7 +74,7 @@ t_1_Contains_RecursiveCte AS (SELECT * FROM (
       SELECT
         t_5_Uses.part AS part,
         t_3_Uses.component AS component,
-        ((0) + (1)) AS logica_step
+        ((0) + (1)) AS synalog_step
       FROM
         t_2_Uses AS t_5_Uses, t_2_Uses AS t_3_Uses
       WHERE
@@ -86,7 +86,7 @@ t_1_Contains_RecursiveCte AS (SELECT * FROM (
       SELECT
         t_11_Uses.part AS part,
         t_7_Uses.component AS component,
-        ((((0) + (1))) + (1)) AS logica_step
+        ((((0) + (1))) + (1)) AS synalog_step
       FROM
         t_2_Uses AS t_11_Uses, t_2_Uses AS t_9_Uses, t_2_Uses AS t_7_Uses
       WHERE
@@ -100,7 +100,7 @@ t_1_Contains_RecursiveCte AS (SELECT * FROM (
       SELECT
         t_19_Uses.part AS part,
         t_13_Uses.component AS component,
-        ((((((0) + (1))) + (1))) + (1)) AS logica_step
+        ((((((0) + (1))) + (1))) + (1)) AS synalog_step
       FROM
         t_2_Uses AS t_19_Uses, t_2_Uses AS t_17_Uses, t_2_Uses AS t_15_Uses, t_2_Uses AS t_13_Uses
       WHERE
@@ -116,7 +116,7 @@ t_1_Contains_RecursiveCte AS (SELECT * FROM (
       SELECT
         t_29_Uses.part AS part,
         t_21_Uses.component AS component,
-        ((((((((0) + (1))) + (1))) + (1))) + (1)) AS logica_step
+        ((((((((0) + (1))) + (1))) + (1))) + (1)) AS synalog_step
       FROM
         t_2_Uses AS t_29_Uses, t_2_Uses AS t_27_Uses, t_2_Uses AS t_25_Uses, t_2_Uses AS t_23_Uses, t_2_Uses AS t_21_Uses
       WHERE
@@ -134,7 +134,7 @@ t_1_Contains_RecursiveCte AS (SELECT * FROM (
       SELECT
         t_41_Uses.part AS part,
         t_31_Uses.component AS component,
-        ((((((((((0) + (1))) + (1))) + (1))) + (1))) + (1)) AS logica_step
+        ((((((((((0) + (1))) + (1))) + (1))) + (1))) + (1)) AS synalog_step
       FROM
         t_2_Uses AS t_41_Uses, t_2_Uses AS t_39_Uses, t_2_Uses AS t_37_Uses, t_2_Uses AS t_35_Uses, t_2_Uses AS t_33_Uses, t_2_Uses AS t_31_Uses
       WHERE
@@ -156,11 +156,11 @@ UNION
 SELECT
   t_42_Contains_RecursiveCte.part AS part,
   t_43_Uses.component AS component,
-  ((t_42_Contains_RecursiveCte.logica_step) + (1)) AS logica_step
+  ((t_42_Contains_RecursiveCte.synalog_step) + (1)) AS synalog_step
 FROM
   t_1_Contains_RecursiveCte AS t_42_Contains_RecursiveCte, t_2_Uses AS t_43_Uses
 WHERE
-  (t_42_Contains_RecursiveCte.logica_step < 6) AND
+  (t_42_Contains_RecursiveCte.synalog_step < 6) AND
   (t_43_Uses.part = t_42_Contains_RecursiveCte.component)),
 t_0_Contains AS (SELECT
   Contains_RecursiveCte.part AS part,

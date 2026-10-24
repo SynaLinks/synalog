@@ -181,7 +181,7 @@ predicates named `Order`, `Group`, `Select` and `Table` on DuckDB.
 
 The same holds for the table of a grounded predicate: `@Ground(Order)` (or a
 reused predicate grounded on Presto and Trino, `In`) writes
-`logica_home.Order_table`, not `logica_home.Order`, which SQLite, Presto and
+`synalog_home.Order_table`, not `synalog_home.Order`, which SQLite, Presto and
 Trino do not parse.
 
 ## Fixtures from `tests/programs`
@@ -372,7 +372,7 @@ below it, which DuckDB's optimizer took seconds to plan at depth 20 (2.5 s for
 computes tables, which a user who may only read cannot create.
 
 `P_RecursiveCte` numbers each row with the step that found it
-(`logica_step`): its first rows are step 0, a step reads the rows numbered
+(`synalog_step`): its first rows are step 0, a step reads the rows numbered
 below the depth and numbers its own one more, `UNION` keeps a row once, and `P`
 is the rows without the number, distinct. The rows are those of the steps
 written out, also when they never repeat (hops round a cycle), and the query

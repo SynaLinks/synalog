@@ -1,5 +1,5 @@
-DROP TABLE IF EXISTS logica_test.Down_sn_delta;
-CREATE TABLE logica_test.Down_sn_delta AS WITH t_2_Uses AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_test.Down_sn_delta;
+CREATE TABLE synalog_test.Down_sn_delta AS WITH t_2_Uses AS (SELECT * FROM (
   
     SELECT
       'bike' AS part,
@@ -71,20 +71,20 @@ FROM
   t_0_Down_MultBodyAggAux_f2 AS Down_MultBodyAggAux_f2
 GROUP BY 1;
 
--- Interacting with table logica_test.Down_sn_delta
+-- Interacting with table synalog_test.Down_sn_delta
 
-DROP TABLE IF EXISTS logica_test.Down_sn_t0;
-CREATE TABLE logica_test.Down_sn_t0 AS SELECT
+DROP TABLE IF EXISTS synalog_test.Down_sn_t0;
+CREATE TABLE synalog_test.Down_sn_t0 AS SELECT
   Down_sn_delta.component AS component
 FROM
-  logica_test.Down_sn_delta AS Down_sn_delta
+  synalog_test.Down_sn_delta AS Down_sn_delta
 WHERE
   (1 = 0);
 
--- Interacting with table logica_test.Down_sn_t0
+-- Interacting with table synalog_test.Down_sn_t0
 
-DROP TABLE IF EXISTS logica_test.Down_sn_t1;
-CREATE TABLE logica_test.Down_sn_t1 AS WITH t_2_Uses AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_test.Down_sn_t1;
+CREATE TABLE synalog_test.Down_sn_t1 AS WITH t_2_Uses AS (SELECT * FROM (
   
     SELECT
       'bike' AS part,
@@ -145,7 +145,7 @@ t_1_Down_MultBodyAggAux_f3 AS (SELECT * FROM (
     SELECT
       Uses.component AS component
     FROM
-      logica_test.Down_sn_t0 AS Down_sn_t0, t_2_Uses AS Uses
+      synalog_test.Down_sn_t0 AS Down_sn_t0, t_2_Uses AS Uses
     WHERE
       (Uses.part = Down_sn_t0.component)
    UNION ALL
@@ -170,10 +170,10 @@ FROM
 WHERE
   (1 = 0);
 
--- Interacting with table logica_test.Down_sn_t1
+-- Interacting with table synalog_test.Down_sn_t1
 
-DROP TABLE IF EXISTS logica_test.Down_sn_t2;
-CREATE TABLE logica_test.Down_sn_t2 AS WITH t_2_Uses AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_test.Down_sn_t2;
+CREATE TABLE synalog_test.Down_sn_t2 AS WITH t_2_Uses AS (SELECT * FROM (
   
     SELECT
       'bike' AS part,
@@ -234,7 +234,7 @@ t_1_Down_MultBodyAggAux_f4 AS (SELECT * FROM (
     SELECT
       Uses.component AS component
     FROM
-      logica_test.Down_sn_t1 AS Down_sn_t1, t_2_Uses AS Uses
+      synalog_test.Down_sn_t1 AS Down_sn_t1, t_2_Uses AS Uses
     WHERE
       (Uses.part = Down_sn_t1.component)
    UNION ALL
@@ -259,10 +259,10 @@ FROM
 WHERE
   (1 = 0);
 
--- Interacting with table logica_test.Down_sn_t2
+-- Interacting with table synalog_test.Down_sn_t2
 
-DROP TABLE IF EXISTS logica_test.Down_sn_t3;
-CREATE TABLE logica_test.Down_sn_t3 AS WITH t_2_Uses AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_test.Down_sn_t3;
+CREATE TABLE synalog_test.Down_sn_t3 AS WITH t_2_Uses AS (SELECT * FROM (
   
     SELECT
       'bike' AS part,
@@ -323,7 +323,7 @@ t_1_Down_MultBodyAggAux_f5 AS (SELECT * FROM (
     SELECT
       Uses.component AS component
     FROM
-      logica_test.Down_sn_t2 AS Down_sn_t2, t_2_Uses AS Uses
+      synalog_test.Down_sn_t2 AS Down_sn_t2, t_2_Uses AS Uses
     WHERE
       (Uses.part = Down_sn_t2.component)
    UNION ALL
@@ -348,40 +348,40 @@ FROM
 WHERE
   (1 = 0);
 
--- Interacting with table logica_test.Down_sn_t3
+-- Interacting with table synalog_test.Down_sn_t3
 
-DROP TABLE IF EXISTS logica_test.Down_sn_full;
-CREATE TABLE logica_test.Down_sn_full AS SELECT * FROM (
+DROP TABLE IF EXISTS synalog_test.Down_sn_full;
+CREATE TABLE synalog_test.Down_sn_full AS SELECT * FROM (
   
     SELECT
       Down_sn_delta.component AS component
     FROM
-      logica_test.Down_sn_delta AS Down_sn_delta
+      synalog_test.Down_sn_delta AS Down_sn_delta
    UNION ALL
   
     SELECT
       Down_sn_t1.component AS component
     FROM
-      logica_test.Down_sn_t1 AS Down_sn_t1
+      synalog_test.Down_sn_t1 AS Down_sn_t1
    UNION ALL
   
     SELECT
       Down_sn_t2.component AS component
     FROM
-      logica_test.Down_sn_t2 AS Down_sn_t2
+      synalog_test.Down_sn_t2 AS Down_sn_t2
    UNION ALL
   
     SELECT
       Down_sn_t3.component AS component
     FROM
-      logica_test.Down_sn_t3 AS Down_sn_t3
+      synalog_test.Down_sn_t3 AS Down_sn_t3
   
 ) AS UNUSED_TABLE_NAME  ;
 
--- Interacting with table logica_test.Down_sn_full
+-- Interacting with table synalog_test.Down_sn_full
 
-DROP TABLE IF EXISTS logica_test.Down_sn_new;
-CREATE TABLE logica_test.Down_sn_new AS WITH t_2_Uses AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_test.Down_sn_new;
+CREATE TABLE synalog_test.Down_sn_new AS WITH t_2_Uses AS (SELECT * FROM (
   
     SELECT
       'bike' AS part,
@@ -442,7 +442,7 @@ t_1_Down_MultBodyAggAux_f6 AS (SELECT * FROM (
     SELECT
       Uses.component AS component
     FROM
-      logica_test.Down_sn_delta AS Down_sn_delta, t_2_Uses AS Uses
+      synalog_test.Down_sn_delta AS Down_sn_delta, t_2_Uses AS Uses
     WHERE
       (Uses.part = Down_sn_delta.component)
    UNION ALL
@@ -466,17 +466,17 @@ FROM
   t_0_Down_sn_step AS Down_sn_step
 WHERE
   ((SELECT
-    MIN(1) AS logica_value
+    MIN(1) AS synalog_value
   FROM
-    logica_test.Down_sn_full AS Down_sn_full
+    synalog_test.Down_sn_full AS Down_sn_full
   WHERE
     (Down_sn_full.component = Down_sn_step.component)) IS NULL)
 GROUP BY 1;
 
-INSERT INTO logica_test.Down_sn_full SELECT * FROM logica_test.Down_sn_new;
+INSERT INTO synalog_test.Down_sn_full SELECT * FROM synalog_test.Down_sn_new;
 
-DROP TABLE IF EXISTS logica_test.Down_sn_delta;
-CREATE TABLE logica_test.Down_sn_delta AS WITH t_2_Uses AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_test.Down_sn_delta;
+CREATE TABLE synalog_test.Down_sn_delta AS WITH t_2_Uses AS (SELECT * FROM (
   
     SELECT
       'bike' AS part,
@@ -537,7 +537,7 @@ t_1_Down_MultBodyAggAux_f1 AS (SELECT * FROM (
     SELECT
       Uses.component AS component
     FROM
-      logica_test.Down_sn_new AS Down_sn_new, t_2_Uses AS Uses
+      synalog_test.Down_sn_new AS Down_sn_new, t_2_Uses AS Uses
     WHERE
       (Uses.part = Down_sn_new.component)
    UNION ALL
@@ -561,17 +561,17 @@ FROM
   t_0_Down_sn_back_step AS Down_sn_back_step
 WHERE
   ((SELECT
-    MIN(1) AS logica_value
+    MIN(1) AS synalog_value
   FROM
-    logica_test.Down_sn_full AS Down_sn_full
+    synalog_test.Down_sn_full AS Down_sn_full
   WHERE
     (Down_sn_full.component = Down_sn_back_step.component)) IS NULL)
 GROUP BY 1;
 
-INSERT INTO logica_test.Down_sn_full SELECT * FROM logica_test.Down_sn_delta;
+INSERT INTO synalog_test.Down_sn_full SELECT * FROM synalog_test.Down_sn_delta;
 
 SELECT
   Down_sn_full.component AS component
 FROM
-  logica_test.Down_sn_full AS Down_sn_full
+  synalog_test.Down_sn_full AS Down_sn_full
 GROUP BY 1 ORDER BY component;

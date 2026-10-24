@@ -62,7 +62,7 @@ FROM
   t_0_Person AS Person
 WHERE
   ((SELECT
-    MIN(1) AS logica_value
+    MIN(1) AS synalog_value
   FROM
     UNNEST(ARRAY["gold", "green"]) as x_6
   WHERE

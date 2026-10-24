@@ -24,7 +24,7 @@ FROM
   t_0_Management AS Management
 WHERE
   ((SELECT
-    MIN(1) AS logica_value
+    MIN(1) AS synalog_value
   FROM
     t_1_Person AS Person
   WHERE

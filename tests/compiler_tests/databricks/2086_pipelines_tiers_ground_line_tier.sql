@@ -1,5 +1,5 @@
-DROP TABLE IF EXISTS logica_test.Line;
-CREATE TABLE logica_test.Line AS WITH t_1_Order AS (SELECT * FROM VALUES
+DROP TABLE IF EXISTS synalog_test.Line;
+CREATE TABLE synalog_test.Line AS WITH t_1_Order AS (SELECT * FROM VALUES
   (1, "ann", "tea", 3, "paid"),
   (2, "bob", "cake", 1, "paid"),
   (3, "ann", "cake", 2, "refunded"),
@@ -26,14 +26,14 @@ WHERE
   (t_0_Order.state = "paid") AND
   (Price.item = t_0_Order.item);
 
--- Interacting with table logica_test.Line
+-- Interacting with table synalog_test.Line
 
-DROP TABLE IF EXISTS logica_test.Tier;
-CREATE TABLE logica_test.Tier AS WITH t_0_Spend AS (SELECT
+DROP TABLE IF EXISTS synalog_test.Tier;
+CREATE TABLE synalog_test.Tier AS WITH t_0_Spend AS (SELECT
   Line.who AS who,
   SUM(Line.amount) AS total
 FROM
-  logica_test.Line AS Line
+  synalog_test.Line AS Line
 GROUP BY 1)
 SELECT
   Spend.who AS who,
@@ -41,13 +41,13 @@ SELECT
 FROM
   t_0_Spend AS Spend;
 
--- Interacting with table logica_test.Tier
+-- Interacting with table synalog_test.Tier
 
 WITH t_0_TierCount AS (SELECT
   t_1_Tier.tier AS tier,
   SUM(1) AS n
 FROM
-  logica_test.Tier AS t_1_Tier
+  synalog_test.Tier AS t_1_Tier
 GROUP BY 1)
 SELECT
   TierCount.tier AS tier,

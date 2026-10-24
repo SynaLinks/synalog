@@ -1,7 +1,7 @@
-ATTACH DATABASE ':memory:' AS logica_test;
+ATTACH DATABASE ':memory:' AS synalog_test;
 
-DROP TABLE IF EXISTS logica_test.Tier;
-CREATE TABLE logica_test.Tier AS WITH t_2_Order AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_test.Tier;
+CREATE TABLE synalog_test.Tier AS WITH t_2_Order AS (SELECT * FROM (
   
     SELECT
       1 AS id,
@@ -115,7 +115,7 @@ SELECT
 FROM
   t_0_Spend AS Spend;
 
--- Interacting with table logica_test.Tier
+-- Interacting with table synalog_test.Tier
 
 WITH t_2_Order AS (SELECT * FROM (
   
@@ -210,9 +210,9 @@ FROM
   t_0_Person AS t_4_Person
 WHERE
   ((SELECT
-    MIN(MagicalEntangle(1, x_12.value)) AS logica_value
+    MIN(MagicalEntangle(1, x_12.value)) AS synalog_value
   FROM
-    logica_test.Tier AS t_6_Tier, JSON_EACH(JSON_ARRAY(0)) as x_12
+    synalog_test.Tier AS t_6_Tier, JSON_EACH(JSON_ARRAY(0)) as x_12
   WHERE
     (t_6_Tier.who = t_4_Person.who)) IS NULL))
 SELECT
@@ -221,7 +221,7 @@ FROM
   t_0_Person AS Person
 WHERE
   ((SELECT
-    MIN(MagicalEntangle(1, x_5.value)) AS logica_value
+    MIN(MagicalEntangle(1, x_5.value)) AS synalog_value
   FROM
     t_3_NoTier AS NoTier, JSON_EACH(JSON_ARRAY(0)) as x_5
   WHERE

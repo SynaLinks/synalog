@@ -99,7 +99,7 @@ FROM
   t_1_Member AS t_0_Member
 WHERE
   ((SELECT
-    MIN(1) AS logica_value
+    MIN(1) AS synalog_value
   FROM
     t_2_Active AS Active
   WHERE

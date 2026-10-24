@@ -11,7 +11,7 @@ WITH t_1_U AS (SELECT * FROM (
 SELECT
   t_0_U.u AS u,
   (SELECT
-  MIN(false) AS logica_value
+  MIN(false) AS synalog_value
 FROM
   (SELECT 'singleton' as s) as unused_singleton
 WHERE

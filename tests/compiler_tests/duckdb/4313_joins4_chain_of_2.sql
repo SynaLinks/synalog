@@ -1,7 +1,7 @@
 -- Initializing DuckDB environment.
-create schema if not exists logica_home;
+create schema if not exists synalog_home;
 -- Empty record, has to have a field by DuckDB syntax.
-drop type if exists logicarecord893574736 cascade; create type logicarecord893574736 as struct(nirvana numeric);
+drop type if exists synalogrecord893574736 cascade; create type synalogrecord893574736 as struct(nirvana numeric);
 create sequence if not exists eternal_logical_sequence;
 
 WITH RECURSIVE t_3_E AS (SELECT * FROM (
@@ -75,7 +75,7 @@ t_1_Up_RecursiveCte AS (SELECT * FROM (
     
       SELECT
         t_2_E.boss AS id,
-        0 AS logica_step
+        0 AS synalog_step
       FROM
         t_3_E AS t_2_E
       WHERE
@@ -84,7 +84,7 @@ t_1_Up_RecursiveCte AS (SELECT * FROM (
     
       SELECT
         t_4_E.boss AS id,
-        ((0) + (1)) AS logica_step
+        ((0) + (1)) AS synalog_step
       FROM
         t_3_E AS t_6_E, t_3_E AS t_4_E
       WHERE
@@ -96,7 +96,7 @@ t_1_Up_RecursiveCte AS (SELECT * FROM (
     
       SELECT
         t_8_E.boss AS id,
-        ((((0) + (1))) + (1)) AS logica_step
+        ((((0) + (1))) + (1)) AS synalog_step
       FROM
         t_3_E AS t_12_E, t_3_E AS t_10_E, t_3_E AS t_8_E
       WHERE
@@ -110,7 +110,7 @@ t_1_Up_RecursiveCte AS (SELECT * FROM (
     
       SELECT
         t_14_E.boss AS id,
-        ((((((0) + (1))) + (1))) + (1)) AS logica_step
+        ((((((0) + (1))) + (1))) + (1)) AS synalog_step
       FROM
         t_3_E AS t_20_E, t_3_E AS t_18_E, t_3_E AS t_16_E, t_3_E AS t_14_E
       WHERE
@@ -128,11 +128,11 @@ t_1_Up_RecursiveCte AS (SELECT * FROM (
 UNION
 SELECT
   t_22_E.boss AS id,
-  ((t_21_Up_RecursiveCte.logica_step) + (1)) AS logica_step
+  ((t_21_Up_RecursiveCte.synalog_step) + (1)) AS synalog_step
 FROM
   t_1_Up_RecursiveCte AS t_21_Up_RecursiveCte, t_3_E AS t_22_E
 WHERE
-  (t_21_Up_RecursiveCte.logica_step < 10) AND
+  (t_21_Up_RecursiveCte.synalog_step < 10) AND
   (t_22_E.id = t_21_Up_RecursiveCte.id)),
 t_0_Up AS (SELECT
   Up_RecursiveCte.id AS id

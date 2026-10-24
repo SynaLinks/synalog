@@ -1,8 +1,8 @@
 -- Initializing PostgreSQL environment.
 set client_min_messages to warning;
-create schema if not exists logica_home;
--- Empty logica type: logicarecord893574736;
-DO $$ BEGIN if not exists (select 'I(am) :- I(think)' from pg_type where typname = 'logicarecord893574736') then create type logicarecord893574736 as (nirvana numeric); end if; END $$;
+create schema if not exists synalog_home;
+-- Empty synalog type: synalogrecord893574736;
+DO $$ BEGIN if not exists (select 'I(am) :- I(think)' from pg_type where typname = 'synalogrecord893574736') then create type synalogrecord893574736 as (nirvana numeric); end if; END $$;
 
 WITH RECURSIVE t_2_Influenced AS (SELECT * FROM (
   
@@ -32,7 +32,7 @@ t_1_Down_RecursiveCte AS (SELECT * FROM (
       SELECT
         Influenced.a AS a,
         Influenced.b AS b,
-        0 AS logica_step
+        0 AS synalog_step
       FROM
         t_2_Influenced AS Influenced
      UNION ALL
@@ -40,7 +40,7 @@ t_1_Down_RecursiveCte AS (SELECT * FROM (
       SELECT
         t_5_Influenced.a AS a,
         t_3_Influenced.b AS b,
-        ((0) + (1)) AS logica_step
+        ((0) + (1)) AS synalog_step
       FROM
         t_2_Influenced AS t_5_Influenced, t_2_Influenced AS t_3_Influenced
       WHERE
@@ -52,7 +52,7 @@ t_1_Down_RecursiveCte AS (SELECT * FROM (
       SELECT
         t_11_Influenced.a AS a,
         t_7_Influenced.b AS b,
-        ((((0) + (1))) + (1)) AS logica_step
+        ((((0) + (1))) + (1)) AS synalog_step
       FROM
         t_2_Influenced AS t_11_Influenced, t_2_Influenced AS t_9_Influenced, t_2_Influenced AS t_7_Influenced
       WHERE
@@ -66,7 +66,7 @@ t_1_Down_RecursiveCte AS (SELECT * FROM (
       SELECT
         t_19_Influenced.a AS a,
         t_13_Influenced.b AS b,
-        ((((((0) + (1))) + (1))) + (1)) AS logica_step
+        ((((((0) + (1))) + (1))) + (1)) AS synalog_step
       FROM
         t_2_Influenced AS t_19_Influenced, t_2_Influenced AS t_17_Influenced, t_2_Influenced AS t_15_Influenced, t_2_Influenced AS t_13_Influenced
       WHERE
@@ -82,7 +82,7 @@ t_1_Down_RecursiveCte AS (SELECT * FROM (
       SELECT
         t_29_Influenced.a AS a,
         t_21_Influenced.b AS b,
-        ((((((((0) + (1))) + (1))) + (1))) + (1)) AS logica_step
+        ((((((((0) + (1))) + (1))) + (1))) + (1)) AS synalog_step
       FROM
         t_2_Influenced AS t_29_Influenced, t_2_Influenced AS t_27_Influenced, t_2_Influenced AS t_25_Influenced, t_2_Influenced AS t_23_Influenced, t_2_Influenced AS t_21_Influenced
       WHERE
@@ -100,7 +100,7 @@ t_1_Down_RecursiveCte AS (SELECT * FROM (
       SELECT
         t_41_Influenced.a AS a,
         t_31_Influenced.b AS b,
-        ((((((((((0) + (1))) + (1))) + (1))) + (1))) + (1)) AS logica_step
+        ((((((((((0) + (1))) + (1))) + (1))) + (1))) + (1)) AS synalog_step
       FROM
         t_2_Influenced AS t_41_Influenced, t_2_Influenced AS t_39_Influenced, t_2_Influenced AS t_37_Influenced, t_2_Influenced AS t_35_Influenced, t_2_Influenced AS t_33_Influenced, t_2_Influenced AS t_31_Influenced
       WHERE
@@ -122,11 +122,11 @@ UNION
 SELECT
   t_42_Down_RecursiveCte.a AS a,
   t_43_Influenced.b AS b,
-  ((t_42_Down_RecursiveCte.logica_step) + (1)) AS logica_step
+  ((t_42_Down_RecursiveCte.synalog_step) + (1)) AS synalog_step
 FROM
   t_1_Down_RecursiveCte AS t_42_Down_RecursiveCte, t_2_Influenced AS t_43_Influenced
 WHERE
-  (t_42_Down_RecursiveCte.logica_step < 6) AND
+  (t_42_Down_RecursiveCte.synalog_step < 6) AND
   (t_43_Influenced.a = t_42_Down_RecursiveCte.b)),
 t_0_Down AS (SELECT
   Down_RecursiveCte.a AS a,

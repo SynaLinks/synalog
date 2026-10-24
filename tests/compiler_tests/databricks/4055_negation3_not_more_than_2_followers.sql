@@ -36,7 +36,7 @@ FROM
   t_1_U AS t_0_U
 WHERE
   ((SELECT
-    MIN(1) AS logica_value
+    MIN(1) AS synalog_value
   FROM
     t_2_Popular AS Popular
   WHERE

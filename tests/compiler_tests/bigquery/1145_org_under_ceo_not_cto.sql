@@ -258,7 +258,7 @@ FROM
   t_0_Under AS Under
 WHERE
   ((SELECT
-    MIN(1) AS logica_value
+    MIN(1) AS synalog_value
   FROM
     t_0_Under AS t_36_Under
   WHERE

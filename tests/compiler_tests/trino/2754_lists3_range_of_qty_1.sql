@@ -1,5 +1,5 @@
-DROP TABLE IF EXISTS logica_test.R;
-CREATE TABLE logica_test.R AS WITH t_0_I AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_test.R;
+CREATE TABLE synalog_test.R AS WITH t_0_I AS (SELECT * FROM (
   
     SELECT
       1 AS "order",
@@ -90,19 +90,19 @@ FROM
 WHERE
   (I."order" = 1);
 
--- Interacting with table logica_test.R
+-- Interacting with table synalog_test.R
 
 WITH t_2_T AS (SELECT
   t_3_R.pos AS pos,
   SUM(x_9) AS t
 FROM
-  logica_test.R AS t_3_R, UNNEST(TRANSFORM(t_3_R.r, synalog_e -> ROW(synalog_e))) as pushkin(x_9)
+  synalog_test.R AS t_3_R, UNNEST(TRANSFORM(t_3_R.r, synalog_e -> ROW(synalog_e))) as pushkin(x_9)
 GROUP BY 1)
 SELECT
   t_0_R.pos AS pos,
   CARDINALITY(t_0_R.r) AS n,
   t_1_T.t AS t
 FROM
-  logica_test.R AS t_0_R, t_2_T AS t_1_T
+  synalog_test.R AS t_0_R, t_2_T AS t_1_T
 WHERE
   (t_1_T.pos = t_0_R.pos) ORDER BY pos, n, t;

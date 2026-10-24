@@ -1,5 +1,5 @@
-DROP TABLE IF EXISTS logica_test.Day;
-CREATE TABLE logica_test.Day AS WITH t_0_S AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_test.Day;
+CREATE TABLE synalog_test.Day AS WITH t_0_S AS (SELECT * FROM (
   
     SELECT
       'north' AS r,
@@ -91,7 +91,7 @@ FROM
   t_0_S AS S
 GROUP BY 1;
 
--- Interacting with table logica_test.Day
+-- Interacting with table synalog_test.Day
 
 WITH t_0_S AS (SELECT * FROM (
   
@@ -187,10 +187,10 @@ GROUP BY 1),
 t_0_Missing AS (SELECT
   t_1_Day.d AS d
 FROM
-  logica_test.Day AS t_1_Day, t_2_Region AS Region
+  synalog_test.Day AS t_1_Day, t_2_Region AS Region
 WHERE
   ((SELECT
-    MIN(1) AS logica_value
+    MIN(1) AS synalog_value
   FROM
     t_0_S AS t_3_S
   WHERE
@@ -200,10 +200,10 @@ GROUP BY 1)
 SELECT
   Day.d AS d
 FROM
-  logica_test.Day AS Day
+  synalog_test.Day AS Day
 WHERE
   ((SELECT
-    MIN(1) AS logica_value
+    MIN(1) AS synalog_value
   FROM
     t_0_Missing AS Missing
   WHERE

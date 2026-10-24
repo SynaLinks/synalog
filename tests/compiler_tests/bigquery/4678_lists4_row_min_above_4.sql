@@ -28,7 +28,7 @@ WITH t_1_L AS (SELECT * FROM (
 SELECT
   t_0_L.k AS k,
   (SELECT
-  MIN(x_4) AS logica_value
+  MIN(x_4) AS synalog_value
 FROM
   UNNEST(t_0_L.l) as x_4
 WHERE

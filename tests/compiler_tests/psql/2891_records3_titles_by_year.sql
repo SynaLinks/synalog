@@ -1,10 +1,10 @@
 -- Initializing PostgreSQL environment.
 set client_min_messages to warning;
-create schema if not exists logica_home;
--- Empty logica type: logicarecord893574736;
-DO $$ BEGIN if not exists (select 'I(am) :- I(think)' from pg_type where typname = 'logicarecord893574736') then create type logicarecord893574736 as (nirvana numeric); end if; END $$;
+create schema if not exists synalog_home;
+-- Empty synalog type: synalogrecord893574736;
+DO $$ BEGIN if not exists (select 'I(am) :- I(think)' from pg_type where typname = 'synalogrecord893574736') then create type synalogrecord893574736 as (nirvana numeric); end if; END $$;
 
-DO $$ BEGIN if not exists (select 1 from pg_type where typname = 'logicarecord9877274980856550123') then create type logicarecord9877274980856550123 as ("t" text); end if; END $$;
+DO $$ BEGIN if not exists (select 1 from pg_type where typname = 'synalogrecord9877274980856550123') then create type synalogrecord9877274980856550123 as ("t" text); end if; END $$;
 WITH t_8_B AS (SELECT * FROM (
   
     SELECT
@@ -71,7 +71,7 @@ WITH t_8_B AS (SELECT * FROM (
   
 ) AS UNUSED_TABLE_NAME  ),
 t_5_L AS (SELECT
-  ARRAY_AGG(ROW(B.title)::logicarecord9877274980856550123 order by B.year) AS l
+  ARRAY_AGG(ROW(B.title)::synalogrecord9877274980856550123 order by B.year) AS l
 FROM
   t_8_B AS B),
 t_0_J AS (SELECT

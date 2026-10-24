@@ -1,5 +1,5 @@
-DROP TABLE IF EXISTS logica_test.Filtered;
-CREATE TABLE logica_test.Filtered AS WITH t_0_RawData AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_test.Filtered;
+CREATE TABLE synalog_test.Filtered AS WITH t_0_RawData AS (SELECT * FROM (
   
     SELECT
       1 AS col0,
@@ -34,20 +34,20 @@ FROM
 WHERE
   (RawData.col1 > 15);
 
--- Interacting with table logica_test.Filtered
+-- Interacting with table synalog_test.Filtered
 
-DROP TABLE IF EXISTS logica_test.Aggregated;
-CREATE TABLE logica_test.Aggregated AS SELECT
+DROP TABLE IF EXISTS synalog_test.Aggregated;
+CREATE TABLE synalog_test.Aggregated AS SELECT
   SUM(((Filtered.col1) * (2))) AS total,
   SUM(1) AS count
 FROM
-  logica_test.Filtered AS Filtered;
+  synalog_test.Filtered AS Filtered;
 
--- Interacting with table logica_test.Aggregated
+-- Interacting with table synalog_test.Aggregated
 
 SELECT
   Aggregated.total AS total,
   Aggregated.count AS count,
   (CAST(Aggregated.total AS DOUBLE) / NULLIF(Aggregated.count, 0)) AS avg
 FROM
-  logica_test.Aggregated AS Aggregated ORDER BY total;
+  synalog_test.Aggregated AS Aggregated ORDER BY total;

@@ -129,7 +129,7 @@ t_0_Mid AS (SELECT * FROM (
       t_4_S AS S, t_5_N AS t_2_N
     WHERE
       (((((2) * (COALESCE((SELECT
-        SUM(MagicalEntangle(1, x_24.value)) AS logica_value
+        SUM(MagicalEntangle(1, x_24.value)) AS synalog_value
       FROM
         t_8_Before AS Before, JSON_EACH(JSON_ARRAY(0)) as x_24
       WHERE
@@ -143,7 +143,7 @@ t_0_Mid AS (SELECT * FROM (
       t_4_S AS t_21_S, t_5_N AS t_19_N
     WHERE
       (((2) * (COALESCE((SELECT
-        SUM(MagicalEntangle(1, x_84.value)) AS logica_value
+        SUM(MagicalEntangle(1, x_84.value)) AS synalog_value
       FROM
         t_8_Before AS t_24_Before, JSON_EACH(JSON_ARRAY(0)) as x_84
       WHERE
@@ -157,7 +157,7 @@ t_0_Mid AS (SELECT * FROM (
       t_4_S AS t_37_S, t_5_N AS t_35_N
     WHERE
       (((((2) * (COALESCE((SELECT
-        SUM(MagicalEntangle(1, x_138.value)) AS logica_value
+        SUM(MagicalEntangle(1, x_138.value)) AS synalog_value
       FROM
         t_8_Before AS t_38_Before, JSON_EACH(JSON_ARRAY(0)) as x_138
       WHERE

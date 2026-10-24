@@ -272,7 +272,7 @@ FROM
   t_0_Flagged AS Flagged, t_1_Linked AS Linked
 WHERE
   ((SELECT
-    MIN(1) AS logica_value
+    MIN(1) AS synalog_value
   FROM
     t_0_Flagged AS t_41_Flagged
   WHERE

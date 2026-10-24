@@ -1,5 +1,5 @@
-DROP TABLE IF EXISTS logica_test.A;
-CREATE TABLE logica_test.A AS WITH t_0_I AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_test.A;
+CREATE TABLE synalog_test.A AS WITH t_0_I AS (SELECT * FROM (
   
     SELECT
       1 AS "order",
@@ -89,13 +89,13 @@ FROM
   t_0_I AS I
 GROUP BY 1;
 
--- Interacting with table logica_test.A
+-- Interacting with table synalog_test.A
 
 SELECT
   CARDINALITY(A.l || t_0_A.l) AS n,
   (CONTAINS(A.l || t_0_A.l, 'cap')) AS has_cap
 FROM
-  logica_test.A AS A, logica_test.A AS t_0_A
+  synalog_test.A AS A, synalog_test.A AS t_0_A
 WHERE
   (A.customer = 'bob') AND
   (t_0_A.customer = 'cid');

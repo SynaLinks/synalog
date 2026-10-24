@@ -1,5 +1,5 @@
-DROP TABLE IF EXISTS logica_test.Route;
-CREATE TABLE logica_test.Route AS WITH t_0_Ship AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_test.Route;
+CREATE TABLE synalog_test.Route AS WITH t_0_Ship AS (SELECT * FROM (
   
     SELECT
       1 AS id,
@@ -88,16 +88,16 @@ SELECT
 FROM
   t_0_Ship AS Ship;
 
--- Interacting with table logica_test.Route
+-- Interacting with table synalog_test.Route
 
-DROP TABLE IF EXISTS logica_test.Reach_sn_delta_f9;
-CREATE TABLE logica_test.Reach_sn_delta_f9 AS WITH t_0_Reach_MultBodyAggAux_f2_f9 AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_test.Reach_sn_delta_f9;
+CREATE TABLE synalog_test.Reach_sn_delta_f9 AS WITH t_0_Reach_MultBodyAggAux_f2_f9 AS (SELECT * FROM (
   
     SELECT
       Route.a AS a,
       Route.b AS b
     FROM
-      logica_test.Route AS Route
+      synalog_test.Route AS Route
   
 ) AS UNUSED_TABLE_NAME  )
 SELECT
@@ -107,34 +107,34 @@ FROM
   t_0_Reach_MultBodyAggAux_f2_f9 AS Reach_MultBodyAggAux_f2_f9
 GROUP BY 1, 2;
 
--- Interacting with table logica_test.Reach_sn_delta_f9
+-- Interacting with table synalog_test.Reach_sn_delta_f9
 
-DROP TABLE IF EXISTS logica_test.Reach_sn_t0_f9;
-CREATE TABLE logica_test.Reach_sn_t0_f9 AS SELECT
+DROP TABLE IF EXISTS synalog_test.Reach_sn_t0_f9;
+CREATE TABLE synalog_test.Reach_sn_t0_f9 AS SELECT
   Reach_sn_delta_f9.a AS a,
   Reach_sn_delta_f9.b AS b
 FROM
-  logica_test.Reach_sn_delta_f9 AS Reach_sn_delta_f9
+  synalog_test.Reach_sn_delta_f9 AS Reach_sn_delta_f9
 WHERE
   (1 = 0);
 
--- Interacting with table logica_test.Reach_sn_t0_f9
+-- Interacting with table synalog_test.Reach_sn_t0_f9
 
-DROP TABLE IF EXISTS logica_test.Reach_sn_t1_f9;
-CREATE TABLE logica_test.Reach_sn_t1_f9 AS WITH t_1_Reach_MultBodyAggAux_f3_f9 AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_test.Reach_sn_t1_f9;
+CREATE TABLE synalog_test.Reach_sn_t1_f9 AS WITH t_1_Reach_MultBodyAggAux_f3_f9 AS (SELECT * FROM (
   
     SELECT
       Route.a AS a,
       Route.b AS b
     FROM
-      logica_test.Route AS Route
+      synalog_test.Route AS Route
    UNION ALL
   
     SELECT
       Reach_sn_t0_f9.a AS a,
       t_2_Route.b AS b
     FROM
-      logica_test.Reach_sn_t0_f9 AS Reach_sn_t0_f9, logica_test.Route AS t_2_Route
+      synalog_test.Reach_sn_t0_f9 AS Reach_sn_t0_f9, synalog_test.Route AS t_2_Route
     WHERE
       (t_2_Route.a = Reach_sn_t0_f9.b)
   
@@ -153,23 +153,23 @@ FROM
 WHERE
   (1 = 0);
 
--- Interacting with table logica_test.Reach_sn_t1_f9
+-- Interacting with table synalog_test.Reach_sn_t1_f9
 
-DROP TABLE IF EXISTS logica_test.Reach_sn_t2_f9;
-CREATE TABLE logica_test.Reach_sn_t2_f9 AS WITH t_1_Reach_MultBodyAggAux_f4_f9 AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_test.Reach_sn_t2_f9;
+CREATE TABLE synalog_test.Reach_sn_t2_f9 AS WITH t_1_Reach_MultBodyAggAux_f4_f9 AS (SELECT * FROM (
   
     SELECT
       Route.a AS a,
       Route.b AS b
     FROM
-      logica_test.Route AS Route
+      synalog_test.Route AS Route
    UNION ALL
   
     SELECT
       Reach_sn_t1_f9.a AS a,
       t_2_Route.b AS b
     FROM
-      logica_test.Reach_sn_t1_f9 AS Reach_sn_t1_f9, logica_test.Route AS t_2_Route
+      synalog_test.Reach_sn_t1_f9 AS Reach_sn_t1_f9, synalog_test.Route AS t_2_Route
     WHERE
       (t_2_Route.a = Reach_sn_t1_f9.b)
   
@@ -188,23 +188,23 @@ FROM
 WHERE
   (1 = 0);
 
--- Interacting with table logica_test.Reach_sn_t2_f9
+-- Interacting with table synalog_test.Reach_sn_t2_f9
 
-DROP TABLE IF EXISTS logica_test.Reach_sn_t3_f9;
-CREATE TABLE logica_test.Reach_sn_t3_f9 AS WITH t_1_Reach_MultBodyAggAux_f5_f9 AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_test.Reach_sn_t3_f9;
+CREATE TABLE synalog_test.Reach_sn_t3_f9 AS WITH t_1_Reach_MultBodyAggAux_f5_f9 AS (SELECT * FROM (
   
     SELECT
       Route.a AS a,
       Route.b AS b
     FROM
-      logica_test.Route AS Route
+      synalog_test.Route AS Route
    UNION ALL
   
     SELECT
       Reach_sn_t2_f9.a AS a,
       t_2_Route.b AS b
     FROM
-      logica_test.Reach_sn_t2_f9 AS Reach_sn_t2_f9, logica_test.Route AS t_2_Route
+      synalog_test.Reach_sn_t2_f9 AS Reach_sn_t2_f9, synalog_test.Route AS t_2_Route
     WHERE
       (t_2_Route.a = Reach_sn_t2_f9.b)
   
@@ -223,23 +223,23 @@ FROM
 WHERE
   (1 = 0);
 
--- Interacting with table logica_test.Reach_sn_t3_f9
+-- Interacting with table synalog_test.Reach_sn_t3_f9
 
-DROP TABLE IF EXISTS logica_test.Reach_sn_t4_f9;
-CREATE TABLE logica_test.Reach_sn_t4_f9 AS WITH t_1_Reach_MultBodyAggAux_f6_f9 AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_test.Reach_sn_t4_f9;
+CREATE TABLE synalog_test.Reach_sn_t4_f9 AS WITH t_1_Reach_MultBodyAggAux_f6_f9 AS (SELECT * FROM (
   
     SELECT
       Route.a AS a,
       Route.b AS b
     FROM
-      logica_test.Route AS Route
+      synalog_test.Route AS Route
    UNION ALL
   
     SELECT
       Reach_sn_t3_f9.a AS a,
       t_2_Route.b AS b
     FROM
-      logica_test.Reach_sn_t3_f9 AS Reach_sn_t3_f9, logica_test.Route AS t_2_Route
+      synalog_test.Reach_sn_t3_f9 AS Reach_sn_t3_f9, synalog_test.Route AS t_2_Route
     WHERE
       (t_2_Route.a = Reach_sn_t3_f9.b)
   
@@ -258,23 +258,23 @@ FROM
 WHERE
   (1 = 0);
 
--- Interacting with table logica_test.Reach_sn_t4_f9
+-- Interacting with table synalog_test.Reach_sn_t4_f9
 
-DROP TABLE IF EXISTS logica_test.Reach_sn_t5_f9;
-CREATE TABLE logica_test.Reach_sn_t5_f9 AS WITH t_1_Reach_MultBodyAggAux_f7_f9 AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_test.Reach_sn_t5_f9;
+CREATE TABLE synalog_test.Reach_sn_t5_f9 AS WITH t_1_Reach_MultBodyAggAux_f7_f9 AS (SELECT * FROM (
   
     SELECT
       Route.a AS a,
       Route.b AS b
     FROM
-      logica_test.Route AS Route
+      synalog_test.Route AS Route
    UNION ALL
   
     SELECT
       Reach_sn_t4_f9.a AS a,
       t_2_Route.b AS b
     FROM
-      logica_test.Reach_sn_t4_f9 AS Reach_sn_t4_f9, logica_test.Route AS t_2_Route
+      synalog_test.Reach_sn_t4_f9 AS Reach_sn_t4_f9, synalog_test.Route AS t_2_Route
     WHERE
       (t_2_Route.a = Reach_sn_t4_f9.b)
   
@@ -293,71 +293,71 @@ FROM
 WHERE
   (1 = 0);
 
--- Interacting with table logica_test.Reach_sn_t5_f9
+-- Interacting with table synalog_test.Reach_sn_t5_f9
 
-DROP TABLE IF EXISTS logica_test.Reach_sn_full_f9;
-CREATE TABLE logica_test.Reach_sn_full_f9 AS SELECT * FROM (
+DROP TABLE IF EXISTS synalog_test.Reach_sn_full_f9;
+CREATE TABLE synalog_test.Reach_sn_full_f9 AS SELECT * FROM (
   
     SELECT
       Reach_sn_delta_f9.a AS a,
       Reach_sn_delta_f9.b AS b
     FROM
-      logica_test.Reach_sn_delta_f9 AS Reach_sn_delta_f9
+      synalog_test.Reach_sn_delta_f9 AS Reach_sn_delta_f9
    UNION ALL
   
     SELECT
       Reach_sn_t1_f9.a AS a,
       Reach_sn_t1_f9.b AS b
     FROM
-      logica_test.Reach_sn_t1_f9 AS Reach_sn_t1_f9
+      synalog_test.Reach_sn_t1_f9 AS Reach_sn_t1_f9
    UNION ALL
   
     SELECT
       Reach_sn_t2_f9.a AS a,
       Reach_sn_t2_f9.b AS b
     FROM
-      logica_test.Reach_sn_t2_f9 AS Reach_sn_t2_f9
+      synalog_test.Reach_sn_t2_f9 AS Reach_sn_t2_f9
    UNION ALL
   
     SELECT
       Reach_sn_t3_f9.a AS a,
       Reach_sn_t3_f9.b AS b
     FROM
-      logica_test.Reach_sn_t3_f9 AS Reach_sn_t3_f9
+      synalog_test.Reach_sn_t3_f9 AS Reach_sn_t3_f9
    UNION ALL
   
     SELECT
       Reach_sn_t4_f9.a AS a,
       Reach_sn_t4_f9.b AS b
     FROM
-      logica_test.Reach_sn_t4_f9 AS Reach_sn_t4_f9
+      synalog_test.Reach_sn_t4_f9 AS Reach_sn_t4_f9
    UNION ALL
   
     SELECT
       Reach_sn_t5_f9.a AS a,
       Reach_sn_t5_f9.b AS b
     FROM
-      logica_test.Reach_sn_t5_f9 AS Reach_sn_t5_f9
+      synalog_test.Reach_sn_t5_f9 AS Reach_sn_t5_f9
   
 ) AS UNUSED_TABLE_NAME  ;
 
--- Interacting with table logica_test.Reach_sn_full_f9
+-- Interacting with table synalog_test.Reach_sn_full_f9
 
-DROP TABLE IF EXISTS logica_test.Reach_sn_new_f9;
-CREATE TABLE logica_test.Reach_sn_new_f9 AS WITH t_1_Reach_MultBodyAggAux_f8_f9 AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_test.Reach_sn_new_f9;
+CREATE TABLE synalog_test.Reach_sn_new_f9 AS WITH t_1_Reach_MultBodyAggAux_f8_f9 AS (SELECT * FROM (
   
     SELECT
       Route.a AS a,
       Route.b AS b
     FROM
-      logica_test.Route AS Route
+      synalog_test.Route AS Route
    UNION ALL
   
     SELECT
       Reach_sn_delta_f9.a AS a,
       t_2_Route.b AS b
     FROM
-      logica_test.Reach_sn_delta_f9 AS Reach_sn_delta_f9, logica_test.Route AS t_2_Route
+      synalog_test.Reach_sn_delta_f9 AS Reach_sn_delta_f9, synalog_test.Route AS t_2_Route
     WHERE
       (t_2_Route.a = Reach_sn_delta_f9.b)
   
@@ -375,31 +375,31 @@ FROM
   t_0_Reach_sn_step_f9 AS Reach_sn_step_f9
 WHERE
   ((SELECT
-    MIN(1) AS logica_value
+    MIN(1) AS synalog_value
   FROM
-    logica_test.Reach_sn_full_f9 AS Reach_sn_full_f9
+    synalog_test.Reach_sn_full_f9 AS Reach_sn_full_f9
   WHERE
     (Reach_sn_full_f9.a = Reach_sn_step_f9.a) AND
     (Reach_sn_full_f9.b = Reach_sn_step_f9.b)) IS NULL)
 GROUP BY 1, 2;
 
-INSERT INTO logica_test.Reach_sn_full_f9 SELECT * FROM logica_test.Reach_sn_new_f9;
+INSERT INTO synalog_test.Reach_sn_full_f9 SELECT * FROM synalog_test.Reach_sn_new_f9;
 
-DROP TABLE IF EXISTS logica_test.Reach_sn_delta_f9;
-CREATE TABLE logica_test.Reach_sn_delta_f9 AS WITH t_1_Reach_MultBodyAggAux_f1_f9 AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_test.Reach_sn_delta_f9;
+CREATE TABLE synalog_test.Reach_sn_delta_f9 AS WITH t_1_Reach_MultBodyAggAux_f1_f9 AS (SELECT * FROM (
   
     SELECT
       Route.a AS a,
       Route.b AS b
     FROM
-      logica_test.Route AS Route
+      synalog_test.Route AS Route
    UNION ALL
   
     SELECT
       Reach_sn_new_f9.a AS a,
       t_2_Route.b AS b
     FROM
-      logica_test.Reach_sn_new_f9 AS Reach_sn_new_f9, logica_test.Route AS t_2_Route
+      synalog_test.Reach_sn_new_f9 AS Reach_sn_new_f9, synalog_test.Route AS t_2_Route
     WHERE
       (t_2_Route.a = Reach_sn_new_f9.b)
   
@@ -417,31 +417,31 @@ FROM
   t_0_Reach_sn_back_step_f9 AS Reach_sn_back_step_f9
 WHERE
   ((SELECT
-    MIN(1) AS logica_value
+    MIN(1) AS synalog_value
   FROM
-    logica_test.Reach_sn_full_f9 AS Reach_sn_full_f9
+    synalog_test.Reach_sn_full_f9 AS Reach_sn_full_f9
   WHERE
     (Reach_sn_full_f9.a = Reach_sn_back_step_f9.a) AND
     (Reach_sn_full_f9.b = Reach_sn_back_step_f9.b)) IS NULL)
 GROUP BY 1, 2;
 
-INSERT INTO logica_test.Reach_sn_full_f9 SELECT * FROM logica_test.Reach_sn_delta_f9;
+INSERT INTO synalog_test.Reach_sn_full_f9 SELECT * FROM synalog_test.Reach_sn_delta_f9;
 
-DROP TABLE IF EXISTS logica_test.Reach_sn_new_f9;
-CREATE TABLE logica_test.Reach_sn_new_f9 AS WITH t_1_Reach_MultBodyAggAux_f8_f9 AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_test.Reach_sn_new_f9;
+CREATE TABLE synalog_test.Reach_sn_new_f9 AS WITH t_1_Reach_MultBodyAggAux_f8_f9 AS (SELECT * FROM (
   
     SELECT
       Route.a AS a,
       Route.b AS b
     FROM
-      logica_test.Route AS Route
+      synalog_test.Route AS Route
    UNION ALL
   
     SELECT
       Reach_sn_delta_f9.a AS a,
       t_2_Route.b AS b
     FROM
-      logica_test.Reach_sn_delta_f9 AS Reach_sn_delta_f9, logica_test.Route AS t_2_Route
+      synalog_test.Reach_sn_delta_f9 AS Reach_sn_delta_f9, synalog_test.Route AS t_2_Route
     WHERE
       (t_2_Route.a = Reach_sn_delta_f9.b)
   
@@ -459,31 +459,31 @@ FROM
   t_0_Reach_sn_step_f9 AS Reach_sn_step_f9
 WHERE
   ((SELECT
-    MIN(1) AS logica_value
+    MIN(1) AS synalog_value
   FROM
-    logica_test.Reach_sn_full_f9 AS Reach_sn_full_f9
+    synalog_test.Reach_sn_full_f9 AS Reach_sn_full_f9
   WHERE
     (Reach_sn_full_f9.a = Reach_sn_step_f9.a) AND
     (Reach_sn_full_f9.b = Reach_sn_step_f9.b)) IS NULL)
 GROUP BY 1, 2;
 
-INSERT INTO logica_test.Reach_sn_full_f9 SELECT * FROM logica_test.Reach_sn_new_f9;
+INSERT INTO synalog_test.Reach_sn_full_f9 SELECT * FROM synalog_test.Reach_sn_new_f9;
 
-DROP TABLE IF EXISTS logica_test.Reach_sn_delta_f9;
-CREATE TABLE logica_test.Reach_sn_delta_f9 AS WITH t_1_Reach_MultBodyAggAux_f1_f9 AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_test.Reach_sn_delta_f9;
+CREATE TABLE synalog_test.Reach_sn_delta_f9 AS WITH t_1_Reach_MultBodyAggAux_f1_f9 AS (SELECT * FROM (
   
     SELECT
       Route.a AS a,
       Route.b AS b
     FROM
-      logica_test.Route AS Route
+      synalog_test.Route AS Route
    UNION ALL
   
     SELECT
       Reach_sn_new_f9.a AS a,
       t_2_Route.b AS b
     FROM
-      logica_test.Reach_sn_new_f9 AS Reach_sn_new_f9, logica_test.Route AS t_2_Route
+      synalog_test.Reach_sn_new_f9 AS Reach_sn_new_f9, synalog_test.Route AS t_2_Route
     WHERE
       (t_2_Route.a = Reach_sn_new_f9.b)
   
@@ -501,31 +501,31 @@ FROM
   t_0_Reach_sn_back_step_f9 AS Reach_sn_back_step_f9
 WHERE
   ((SELECT
-    MIN(1) AS logica_value
+    MIN(1) AS synalog_value
   FROM
-    logica_test.Reach_sn_full_f9 AS Reach_sn_full_f9
+    synalog_test.Reach_sn_full_f9 AS Reach_sn_full_f9
   WHERE
     (Reach_sn_full_f9.a = Reach_sn_back_step_f9.a) AND
     (Reach_sn_full_f9.b = Reach_sn_back_step_f9.b)) IS NULL)
 GROUP BY 1, 2;
 
-INSERT INTO logica_test.Reach_sn_full_f9 SELECT * FROM logica_test.Reach_sn_delta_f9;
+INSERT INTO synalog_test.Reach_sn_full_f9 SELECT * FROM synalog_test.Reach_sn_delta_f9;
 
-DROP TABLE IF EXISTS logica_test.Reach_sn_new_f9;
-CREATE TABLE logica_test.Reach_sn_new_f9 AS WITH t_1_Reach_MultBodyAggAux_f8_f9 AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_test.Reach_sn_new_f9;
+CREATE TABLE synalog_test.Reach_sn_new_f9 AS WITH t_1_Reach_MultBodyAggAux_f8_f9 AS (SELECT * FROM (
   
     SELECT
       Route.a AS a,
       Route.b AS b
     FROM
-      logica_test.Route AS Route
+      synalog_test.Route AS Route
    UNION ALL
   
     SELECT
       Reach_sn_delta_f9.a AS a,
       t_2_Route.b AS b
     FROM
-      logica_test.Reach_sn_delta_f9 AS Reach_sn_delta_f9, logica_test.Route AS t_2_Route
+      synalog_test.Reach_sn_delta_f9 AS Reach_sn_delta_f9, synalog_test.Route AS t_2_Route
     WHERE
       (t_2_Route.a = Reach_sn_delta_f9.b)
   
@@ -543,31 +543,31 @@ FROM
   t_0_Reach_sn_step_f9 AS Reach_sn_step_f9
 WHERE
   ((SELECT
-    MIN(1) AS logica_value
+    MIN(1) AS synalog_value
   FROM
-    logica_test.Reach_sn_full_f9 AS Reach_sn_full_f9
+    synalog_test.Reach_sn_full_f9 AS Reach_sn_full_f9
   WHERE
     (Reach_sn_full_f9.a = Reach_sn_step_f9.a) AND
     (Reach_sn_full_f9.b = Reach_sn_step_f9.b)) IS NULL)
 GROUP BY 1, 2;
 
-INSERT INTO logica_test.Reach_sn_full_f9 SELECT * FROM logica_test.Reach_sn_new_f9;
+INSERT INTO synalog_test.Reach_sn_full_f9 SELECT * FROM synalog_test.Reach_sn_new_f9;
 
-DROP TABLE IF EXISTS logica_test.Reach_sn_delta_f9;
-CREATE TABLE logica_test.Reach_sn_delta_f9 AS WITH t_1_Reach_MultBodyAggAux_f1_f9 AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_test.Reach_sn_delta_f9;
+CREATE TABLE synalog_test.Reach_sn_delta_f9 AS WITH t_1_Reach_MultBodyAggAux_f1_f9 AS (SELECT * FROM (
   
     SELECT
       Route.a AS a,
       Route.b AS b
     FROM
-      logica_test.Route AS Route
+      synalog_test.Route AS Route
    UNION ALL
   
     SELECT
       Reach_sn_new_f9.a AS a,
       t_2_Route.b AS b
     FROM
-      logica_test.Reach_sn_new_f9 AS Reach_sn_new_f9, logica_test.Route AS t_2_Route
+      synalog_test.Reach_sn_new_f9 AS Reach_sn_new_f9, synalog_test.Route AS t_2_Route
     WHERE
       (t_2_Route.a = Reach_sn_new_f9.b)
   
@@ -585,19 +585,19 @@ FROM
   t_0_Reach_sn_back_step_f9 AS Reach_sn_back_step_f9
 WHERE
   ((SELECT
-    MIN(1) AS logica_value
+    MIN(1) AS synalog_value
   FROM
-    logica_test.Reach_sn_full_f9 AS Reach_sn_full_f9
+    synalog_test.Reach_sn_full_f9 AS Reach_sn_full_f9
   WHERE
     (Reach_sn_full_f9.a = Reach_sn_back_step_f9.a) AND
     (Reach_sn_full_f9.b = Reach_sn_back_step_f9.b)) IS NULL)
 GROUP BY 1, 2;
 
-INSERT INTO logica_test.Reach_sn_full_f9 SELECT * FROM logica_test.Reach_sn_delta_f9;
+INSERT INTO synalog_test.Reach_sn_full_f9 SELECT * FROM synalog_test.Reach_sn_delta_f9;
 
 SELECT
   Reach_sn_full_f9.b AS b
 FROM
-  logica_test.Reach_sn_full_f9 AS Reach_sn_full_f9
+  synalog_test.Reach_sn_full_f9 AS Reach_sn_full_f9
 WHERE
   ('milan' = Reach_sn_full_f9.a) ORDER BY b;

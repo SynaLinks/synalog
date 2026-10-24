@@ -1,5 +1,5 @@
-DROP TABLE IF EXISTS logica_test.L;
-CREATE TABLE logica_test.L AS WITH t_1_I AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_test.L;
+CREATE TABLE synalog_test.L AS WITH t_1_I AS (SELECT * FROM (
   
     SELECT
       1 AS "order",
@@ -89,17 +89,17 @@ FROM
   t_1_I AS I
 GROUP BY 1;
 
--- Interacting with table logica_test.L
+-- Interacting with table synalog_test.L
 
 SELECT
   t_0_L."order" AS "order"
 FROM
-  logica_test.L AS t_0_L
+  synalog_test.L AS t_0_L
 WHERE
   ((SELECT
-    MIN(1) AS logica_value
+    MIN(1) AS synalog_value
   FROM
-    logica_test.L AS t_1_L, UNNEST(TRANSFORM(t_1_L.l, synalog_e -> ROW(synalog_e))) as pushkin(x_6)
+    synalog_test.L AS t_1_L, UNNEST(TRANSFORM(t_1_L.l, synalog_e -> ROW(synalog_e))) as pushkin(x_6)
   WHERE
     ('ink' = x_6) AND
     (t_0_L."order" = t_1_L."order")) IS NULL) ORDER BY "order";

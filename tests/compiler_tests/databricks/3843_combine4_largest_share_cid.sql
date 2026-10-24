@@ -9,7 +9,7 @@ WITH t_1_O AS (SELECT * FROM VALUES
 AS UNUSED_TABLE_NAME(id, c, amt))
 SELECT
   MAX(((O.amt) / NULLIF((SELECT
-  SUM(t_0_O.amt) AS logica_value
+  SUM(t_0_O.amt) AS synalog_value
 FROM
   t_1_O AS t_0_O
 WHERE

@@ -11,7 +11,7 @@ WITH t_1_U AS (SELECT * FROM (
 SELECT
   t_0_U.u AS u,
   (SELECT
-  MIN(MagicalEntangle(false, x_4.value)) AS logica_value
+  MIN(MagicalEntangle(false, x_4.value)) AS synalog_value
 FROM
   JSON_EACH(JSON_ARRAY(0)) as x_4
 WHERE

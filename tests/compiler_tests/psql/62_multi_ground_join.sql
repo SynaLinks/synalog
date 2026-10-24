@@ -1,11 +1,11 @@
 -- Initializing PostgreSQL environment.
 set client_min_messages to warning;
-create schema if not exists logica_home;
--- Empty logica type: logicarecord893574736;
-DO $$ BEGIN if not exists (select 'I(am) :- I(think)' from pg_type where typname = 'logicarecord893574736') then create type logicarecord893574736 as (nirvana numeric); end if; END $$;
+create schema if not exists synalog_home;
+-- Empty synalog type: synalogrecord893574736;
+DO $$ BEGIN if not exists (select 'I(am) :- I(think)' from pg_type where typname = 'synalogrecord893574736') then create type synalogrecord893574736 as (nirvana numeric); end if; END $$;
 
-DROP TABLE IF EXISTS logica_home.QuarterTotals CASCADE;
-CREATE TABLE logica_home.QuarterTotals AS WITH t_0_Sales AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_home.QuarterTotals CASCADE;
+CREATE TABLE synalog_home.QuarterTotals AS WITH t_0_Sales AS (SELECT * FROM (
   
     SELECT
       'Q1' AS col0,
@@ -38,10 +38,10 @@ FROM
   t_0_Sales AS Sales
 GROUP BY Sales.col0;
 
--- Interacting with table logica_home.QuarterTotals
+-- Interacting with table synalog_home.QuarterTotals
 
-DROP TABLE IF EXISTS logica_home.RegionTotals CASCADE;
-CREATE TABLE logica_home.RegionTotals AS WITH t_0_Sales AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_home.RegionTotals CASCADE;
+CREATE TABLE synalog_home.RegionTotals AS WITH t_0_Sales AS (SELECT * FROM (
   
     SELECT
       'Q1' AS col0,
@@ -74,7 +74,7 @@ FROM
   t_0_Sales AS Sales
 GROUP BY Sales.col1;
 
--- Interacting with table logica_home.RegionTotals
+-- Interacting with table synalog_home.RegionTotals
 
 WITH t_0_Sales AS (SELECT * FROM (
   
@@ -108,7 +108,7 @@ SELECT
   QuarterTotals.total AS qtotal,
   RegionTotals.total AS rtotal
 FROM
-  t_0_Sales AS Sales, logica_home.QuarterTotals AS QuarterTotals, logica_home.RegionTotals AS RegionTotals
+  t_0_Sales AS Sales, synalog_home.QuarterTotals AS QuarterTotals, synalog_home.RegionTotals AS RegionTotals
 WHERE
   (QuarterTotals.col0 = Sales.col0) AND
   (RegionTotals.col0 = Sales.col1) ORDER BY quarter, region;

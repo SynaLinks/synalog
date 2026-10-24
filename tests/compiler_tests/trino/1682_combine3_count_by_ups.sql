@@ -83,7 +83,7 @@ WITH t_0_Ship AS (SELECT * FROM (
 ) AS UNUSED_TABLE_NAME  )
 SELECT
   (SELECT
-  SUM(1) AS logica_value
+  SUM(1) AS synalog_value
 FROM
   t_0_Ship AS Ship
 WHERE

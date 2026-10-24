@@ -16,10 +16,10 @@ AS UNUSED_TABLE_NAME(c))
 SELECT
   (SELECT
   MAX((SELECT
-  SUM(O.amt) AS logica_value
+  SUM(O.amt) AS synalog_value
 FROM
   t_2_O AS O
 WHERE
-  (O.c = t_1_C.c))) AS logica_value
+  (O.c = t_1_C.c))) AS synalog_value
 FROM
   t_3_C AS t_1_C) AS m;

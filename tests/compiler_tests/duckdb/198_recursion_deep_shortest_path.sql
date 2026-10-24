@@ -1,7 +1,7 @@
 -- Initializing DuckDB environment.
-create schema if not exists logica_home;
+create schema if not exists synalog_home;
 -- Empty record, has to have a field by DuckDB syntax.
-drop type if exists logicarecord893574736 cascade; create type logicarecord893574736 as struct(nirvana numeric);
+drop type if exists synalogrecord893574736 cascade; create type synalogrecord893574736 as struct(nirvana numeric);
 create sequence if not exists eternal_logical_sequence;
 
 WITH RECURSIVE t_3_Edge AS (SELECT * FROM (
@@ -32,13 +32,13 @@ t_1_Hop_RecursiveCte AS (SELECT * FROM (
       SELECT
         0 AS node,
         0 AS d,
-        0 AS logica_step
+        0 AS synalog_step
      UNION ALL
     
       SELECT
         Edge.b AS node,
         ((0) + (1)) AS d,
-        ((0) + (1)) AS logica_step
+        ((0) + (1)) AS synalog_step
       FROM
         t_3_Edge AS Edge
       WHERE
@@ -51,7 +51,7 @@ t_1_Hop_RecursiveCte AS (SELECT * FROM (
       SELECT
         t_5_Edge.b AS node,
         ((((0) + (1))) + (1)) AS d,
-        ((((0) + (1))) + (1)) AS logica_step
+        ((((0) + (1))) + (1)) AS synalog_step
       FROM
         t_3_Edge AS t_7_Edge, t_3_Edge AS t_5_Edge
       WHERE
@@ -67,7 +67,7 @@ t_1_Hop_RecursiveCte AS (SELECT * FROM (
       SELECT
         t_10_Edge.b AS node,
         ((((((0) + (1))) + (1))) + (1)) AS d,
-        ((((((0) + (1))) + (1))) + (1)) AS logica_step
+        ((((((0) + (1))) + (1))) + (1)) AS synalog_step
       FROM
         t_3_Edge AS t_14_Edge, t_3_Edge AS t_12_Edge, t_3_Edge AS t_10_Edge
       WHERE
@@ -86,7 +86,7 @@ t_1_Hop_RecursiveCte AS (SELECT * FROM (
       SELECT
         t_17_Edge.b AS node,
         ((((((((0) + (1))) + (1))) + (1))) + (1)) AS d,
-        ((((((((0) + (1))) + (1))) + (1))) + (1)) AS logica_step
+        ((((((((0) + (1))) + (1))) + (1))) + (1)) AS synalog_step
       FROM
         t_3_Edge AS t_23_Edge, t_3_Edge AS t_21_Edge, t_3_Edge AS t_19_Edge, t_3_Edge AS t_17_Edge
       WHERE
@@ -108,7 +108,7 @@ t_1_Hop_RecursiveCte AS (SELECT * FROM (
       SELECT
         t_26_Edge.b AS node,
         ((((((((((0) + (1))) + (1))) + (1))) + (1))) + (1)) AS d,
-        ((((((((((0) + (1))) + (1))) + (1))) + (1))) + (1)) AS logica_step
+        ((((((((((0) + (1))) + (1))) + (1))) + (1))) + (1)) AS synalog_step
       FROM
         t_3_Edge AS t_34_Edge, t_3_Edge AS t_32_Edge, t_3_Edge AS t_30_Edge, t_3_Edge AS t_28_Edge, t_3_Edge AS t_26_Edge
       WHERE
@@ -135,12 +135,12 @@ UNION
 SELECT
   t_37_Edge.b AS node,
   ((t_36_Hop_RecursiveCte.d) + (1)) AS d,
-  ((t_36_Hop_RecursiveCte.logica_step) + (1)) AS logica_step
+  ((t_36_Hop_RecursiveCte.synalog_step) + (1)) AS synalog_step
 FROM
   t_1_Hop_RecursiveCte AS t_36_Hop_RecursiveCte, t_3_Edge AS t_37_Edge
 WHERE
   (t_36_Hop_RecursiveCte.d < 5) AND
-  (t_36_Hop_RecursiveCte.logica_step < 25) AND
+  (t_36_Hop_RecursiveCte.synalog_step < 25) AND
   (t_37_Edge.a = t_36_Hop_RecursiveCte.node)),
 t_0_Hop AS (SELECT
   Hop_RecursiveCte.node AS node,

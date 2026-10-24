@@ -1,11 +1,11 @@
 -- Initializing PostgreSQL environment.
 set client_min_messages to warning;
-create schema if not exists logica_home;
--- Empty logica type: logicarecord893574736;
-DO $$ BEGIN if not exists (select 'I(am) :- I(think)' from pg_type where typname = 'logicarecord893574736') then create type logicarecord893574736 as (nirvana numeric); end if; END $$;
+create schema if not exists synalog_home;
+-- Empty synalog type: synalogrecord893574736;
+DO $$ BEGIN if not exists (select 'I(am) :- I(think)' from pg_type where typname = 'synalogrecord893574736') then create type synalogrecord893574736 as (nirvana numeric); end if; END $$;
 
-DROP TABLE IF EXISTS logica_home.Line CASCADE;
-CREATE TABLE logica_home.Line AS WITH t_1_Order AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_home.Line CASCADE;
+CREATE TABLE synalog_home.Line AS WITH t_1_Order AS (SELECT * FROM (
   
     SELECT
       1 AS id,
@@ -114,14 +114,14 @@ WHERE
   (t_0_Order.state = 'paid') AND
   (Price.item = t_0_Order.item);
 
--- Interacting with table logica_home.Line
+-- Interacting with table synalog_home.Line
 
-DROP TABLE IF EXISTS logica_home.Tier CASCADE;
-CREATE TABLE logica_home.Tier AS WITH t_0_Spend AS (SELECT
+DROP TABLE IF EXISTS synalog_home.Tier CASCADE;
+CREATE TABLE synalog_home.Tier AS WITH t_0_Spend AS (SELECT
   Line.who AS who,
   SUM(Line.amount) AS total
 FROM
-  logica_home.Line AS Line
+  synalog_home.Line AS Line
 GROUP BY Line.who)
 SELECT
   Spend.who AS who,
@@ -129,13 +129,13 @@ SELECT
 FROM
   t_0_Spend AS Spend;
 
--- Interacting with table logica_home.Tier
+-- Interacting with table synalog_home.Tier
 
 WITH t_0_TierCount AS (SELECT
   t_1_Tier.tier AS tier,
   SUM(1) AS n
 FROM
-  logica_home.Tier AS t_1_Tier
+  synalog_home.Tier AS t_1_Tier
 GROUP BY t_1_Tier.tier)
 SELECT
   TierCount.tier AS tier,

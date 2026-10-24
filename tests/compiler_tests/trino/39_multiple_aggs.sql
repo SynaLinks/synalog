@@ -1,5 +1,5 @@
-DROP TABLE IF EXISTS logica_test.CustomerStats;
-CREATE TABLE logica_test.CustomerStats AS WITH t_0_Transactions AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_test.CustomerStats;
+CREATE TABLE synalog_test.CustomerStats AS WITH t_0_Transactions AS (SELECT * FROM (
   
     SELECT
       'Alice' AS col0,
@@ -60,7 +60,7 @@ FROM
   t_0_Transactions AS Transactions
 GROUP BY 1;
 
--- Interacting with table logica_test.CustomerStats
+-- Interacting with table synalog_test.CustomerStats
 
 SELECT
   CustomerStats.col0 AS customer,
@@ -68,4 +68,4 @@ SELECT
   CustomerStats.count AS count,
   CustomerStats.max_txn AS max_txn
 FROM
-  logica_test.CustomerStats AS CustomerStats ORDER BY customer;
+  synalog_test.CustomerStats AS CustomerStats ORDER BY customer;

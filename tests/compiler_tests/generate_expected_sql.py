@@ -21922,6 +21922,24 @@ def fixture_source(engine, stem):
     return os.path.join("fixtures", f"{stem}.l")
 
 
+# Upstream Logica emits `logica_home` / `logica_value` / `logicarecord…`
+# and no banner; synalog renames the brand and prepends an authorship header.
+# Rewrite the upstream output so regenerated goldens match synalog's.
+_HEADER = (
+    "-- Compiled by SynaLog — logic programming for AI agents "
+    "(https://github.com/synalinks/synalog).\n"
+    "-- Copyright 2025-2026 Yoan Sallami (Synalinks Team). "
+    "Licensed under the Apache License, Version 2.0.\n\n"
+)
+
+def _rebrand(sql):
+    for a, b in (("logicarecord", "synalogrecord"), ("logica_home", "synalog_home"),
+                 ("logica_test", "synalog_test"), ("logica_value", "synalog_value"),
+                 ("logica_step", "synalog_step"), ("-- Logica type:", "-- Synalog type:")):
+        sql = sql.replace(a, b)
+    return _HEADER + sql
+
+
 def generate_for_file(l_path, engine, timeout=30):
     """Try to compile a .l file. Returns (predicate, sql) or error tuple."""
     source = open(l_path).read()
@@ -21984,7 +22002,7 @@ def process_engine(engine):
 
         pred, sql = result
         with open(os.path.join(engine, f"{stem}.sql"), 'w') as f:
-            f.write(sql)
+            f.write(_rebrand(sql))
 
         stats["ok"] += 1
         log.append(f"  {stem}... " + f"OK ({pred})")

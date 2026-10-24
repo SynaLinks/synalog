@@ -94,7 +94,7 @@ GROUP BY 1)
 SELECT
   S.d AS d,
   ((1) + (COALESCE((SELECT
-  SUM(1) AS logica_value
+  SUM(1) AS synalog_value
 FROM
   t_0_Val AS Val
 WHERE

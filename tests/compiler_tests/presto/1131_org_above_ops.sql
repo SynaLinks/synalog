@@ -1,5 +1,5 @@
-DROP TABLE IF EXISTS logica_test.Under_sn_delta;
-CREATE TABLE logica_test.Under_sn_delta AS WITH t_2_Manages AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_test.Under_sn_delta;
+CREATE TABLE synalog_test.Under_sn_delta AS WITH t_2_Manages AS (SELECT * FROM (
   
     SELECT
       'ceo' AS boss,
@@ -62,21 +62,21 @@ FROM
   t_0_Under_MultBodyAggAux_f2 AS Under_MultBodyAggAux_f2
 GROUP BY 1, 2;
 
--- Interacting with table logica_test.Under_sn_delta
+-- Interacting with table synalog_test.Under_sn_delta
 
-DROP TABLE IF EXISTS logica_test.Under_sn_t0;
-CREATE TABLE logica_test.Under_sn_t0 AS SELECT
+DROP TABLE IF EXISTS synalog_test.Under_sn_t0;
+CREATE TABLE synalog_test.Under_sn_t0 AS SELECT
   Under_sn_delta.boss AS boss,
   Under_sn_delta.report AS report
 FROM
-  logica_test.Under_sn_delta AS Under_sn_delta
+  synalog_test.Under_sn_delta AS Under_sn_delta
 WHERE
   (1 = 0);
 
--- Interacting with table logica_test.Under_sn_t0
+-- Interacting with table synalog_test.Under_sn_t0
 
-DROP TABLE IF EXISTS logica_test.Under_sn_t1;
-CREATE TABLE logica_test.Under_sn_t1 AS WITH t_2_Manages AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_test.Under_sn_t1;
+CREATE TABLE synalog_test.Under_sn_t1 AS WITH t_2_Manages AS (SELECT * FROM (
   
     SELECT
       'ceo' AS boss,
@@ -129,7 +129,7 @@ t_1_Under_MultBodyAggAux_f3 AS (SELECT * FROM (
       Under_sn_t0.boss AS boss,
       Manages.report AS report
     FROM
-      logica_test.Under_sn_t0 AS Under_sn_t0, t_2_Manages AS Manages
+      synalog_test.Under_sn_t0 AS Under_sn_t0, t_2_Manages AS Manages
     WHERE
       (Manages.boss = Under_sn_t0.report)
    UNION ALL
@@ -155,10 +155,10 @@ FROM
 WHERE
   (1 = 0);
 
--- Interacting with table logica_test.Under_sn_t1
+-- Interacting with table synalog_test.Under_sn_t1
 
-DROP TABLE IF EXISTS logica_test.Under_sn_t2;
-CREATE TABLE logica_test.Under_sn_t2 AS WITH t_2_Manages AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_test.Under_sn_t2;
+CREATE TABLE synalog_test.Under_sn_t2 AS WITH t_2_Manages AS (SELECT * FROM (
   
     SELECT
       'ceo' AS boss,
@@ -211,7 +211,7 @@ t_1_Under_MultBodyAggAux_f4 AS (SELECT * FROM (
       Under_sn_t1.boss AS boss,
       Manages.report AS report
     FROM
-      logica_test.Under_sn_t1 AS Under_sn_t1, t_2_Manages AS Manages
+      synalog_test.Under_sn_t1 AS Under_sn_t1, t_2_Manages AS Manages
     WHERE
       (Manages.boss = Under_sn_t1.report)
    UNION ALL
@@ -237,10 +237,10 @@ FROM
 WHERE
   (1 = 0);
 
--- Interacting with table logica_test.Under_sn_t2
+-- Interacting with table synalog_test.Under_sn_t2
 
-DROP TABLE IF EXISTS logica_test.Under_sn_t3;
-CREATE TABLE logica_test.Under_sn_t3 AS WITH t_2_Manages AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_test.Under_sn_t3;
+CREATE TABLE synalog_test.Under_sn_t3 AS WITH t_2_Manages AS (SELECT * FROM (
   
     SELECT
       'ceo' AS boss,
@@ -293,7 +293,7 @@ t_1_Under_MultBodyAggAux_f5 AS (SELECT * FROM (
       Under_sn_t2.boss AS boss,
       Manages.report AS report
     FROM
-      logica_test.Under_sn_t2 AS Under_sn_t2, t_2_Manages AS Manages
+      synalog_test.Under_sn_t2 AS Under_sn_t2, t_2_Manages AS Manages
     WHERE
       (Manages.boss = Under_sn_t2.report)
    UNION ALL
@@ -319,10 +319,10 @@ FROM
 WHERE
   (1 = 0);
 
--- Interacting with table logica_test.Under_sn_t3
+-- Interacting with table synalog_test.Under_sn_t3
 
-DROP TABLE IF EXISTS logica_test.Under_sn_t4;
-CREATE TABLE logica_test.Under_sn_t4 AS WITH t_2_Manages AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_test.Under_sn_t4;
+CREATE TABLE synalog_test.Under_sn_t4 AS WITH t_2_Manages AS (SELECT * FROM (
   
     SELECT
       'ceo' AS boss,
@@ -375,7 +375,7 @@ t_1_Under_MultBodyAggAux_f6 AS (SELECT * FROM (
       Under_sn_t3.boss AS boss,
       Manages.report AS report
     FROM
-      logica_test.Under_sn_t3 AS Under_sn_t3, t_2_Manages AS Manages
+      synalog_test.Under_sn_t3 AS Under_sn_t3, t_2_Manages AS Manages
     WHERE
       (Manages.boss = Under_sn_t3.report)
    UNION ALL
@@ -401,10 +401,10 @@ FROM
 WHERE
   (1 = 0);
 
--- Interacting with table logica_test.Under_sn_t4
+-- Interacting with table synalog_test.Under_sn_t4
 
-DROP TABLE IF EXISTS logica_test.Under_sn_t5;
-CREATE TABLE logica_test.Under_sn_t5 AS WITH t_2_Manages AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_test.Under_sn_t5;
+CREATE TABLE synalog_test.Under_sn_t5 AS WITH t_2_Manages AS (SELECT * FROM (
   
     SELECT
       'ceo' AS boss,
@@ -457,7 +457,7 @@ t_1_Under_MultBodyAggAux_f7 AS (SELECT * FROM (
       Under_sn_t4.boss AS boss,
       Manages.report AS report
     FROM
-      logica_test.Under_sn_t4 AS Under_sn_t4, t_2_Manages AS Manages
+      synalog_test.Under_sn_t4 AS Under_sn_t4, t_2_Manages AS Manages
     WHERE
       (Manages.boss = Under_sn_t4.report)
    UNION ALL
@@ -483,58 +483,58 @@ FROM
 WHERE
   (1 = 0);
 
--- Interacting with table logica_test.Under_sn_t5
+-- Interacting with table synalog_test.Under_sn_t5
 
-DROP TABLE IF EXISTS logica_test.Under_sn_full;
-CREATE TABLE logica_test.Under_sn_full AS SELECT * FROM (
+DROP TABLE IF EXISTS synalog_test.Under_sn_full;
+CREATE TABLE synalog_test.Under_sn_full AS SELECT * FROM (
   
     SELECT
       Under_sn_delta.boss AS boss,
       Under_sn_delta.report AS report
     FROM
-      logica_test.Under_sn_delta AS Under_sn_delta
+      synalog_test.Under_sn_delta AS Under_sn_delta
    UNION ALL
   
     SELECT
       Under_sn_t1.boss AS boss,
       Under_sn_t1.report AS report
     FROM
-      logica_test.Under_sn_t1 AS Under_sn_t1
+      synalog_test.Under_sn_t1 AS Under_sn_t1
    UNION ALL
   
     SELECT
       Under_sn_t2.boss AS boss,
       Under_sn_t2.report AS report
     FROM
-      logica_test.Under_sn_t2 AS Under_sn_t2
+      synalog_test.Under_sn_t2 AS Under_sn_t2
    UNION ALL
   
     SELECT
       Under_sn_t3.boss AS boss,
       Under_sn_t3.report AS report
     FROM
-      logica_test.Under_sn_t3 AS Under_sn_t3
+      synalog_test.Under_sn_t3 AS Under_sn_t3
    UNION ALL
   
     SELECT
       Under_sn_t4.boss AS boss,
       Under_sn_t4.report AS report
     FROM
-      logica_test.Under_sn_t4 AS Under_sn_t4
+      synalog_test.Under_sn_t4 AS Under_sn_t4
    UNION ALL
   
     SELECT
       Under_sn_t5.boss AS boss,
       Under_sn_t5.report AS report
     FROM
-      logica_test.Under_sn_t5 AS Under_sn_t5
+      synalog_test.Under_sn_t5 AS Under_sn_t5
   
 ) AS UNUSED_TABLE_NAME  ;
 
--- Interacting with table logica_test.Under_sn_full
+-- Interacting with table synalog_test.Under_sn_full
 
-DROP TABLE IF EXISTS logica_test.Under_sn_new;
-CREATE TABLE logica_test.Under_sn_new AS WITH t_2_Manages AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_test.Under_sn_new;
+CREATE TABLE synalog_test.Under_sn_new AS WITH t_2_Manages AS (SELECT * FROM (
   
     SELECT
       'ceo' AS boss,
@@ -587,7 +587,7 @@ t_1_Under_MultBodyAggAux_f8 AS (SELECT * FROM (
       Under_sn_delta.boss AS boss,
       Manages.report AS report
     FROM
-      logica_test.Under_sn_delta AS Under_sn_delta, t_2_Manages AS Manages
+      synalog_test.Under_sn_delta AS Under_sn_delta, t_2_Manages AS Manages
     WHERE
       (Manages.boss = Under_sn_delta.report)
    UNION ALL
@@ -612,18 +612,18 @@ FROM
   t_0_Under_sn_step AS Under_sn_step
 WHERE
   ((SELECT
-    MIN(1) AS logica_value
+    MIN(1) AS synalog_value
   FROM
-    logica_test.Under_sn_full AS Under_sn_full
+    synalog_test.Under_sn_full AS Under_sn_full
   WHERE
     (Under_sn_full.boss = Under_sn_step.boss) AND
     (Under_sn_full.report = Under_sn_step.report)) IS NULL)
 GROUP BY 1, 2;
 
-INSERT INTO logica_test.Under_sn_full SELECT * FROM logica_test.Under_sn_new;
+INSERT INTO synalog_test.Under_sn_full SELECT * FROM synalog_test.Under_sn_new;
 
-DROP TABLE IF EXISTS logica_test.Under_sn_delta;
-CREATE TABLE logica_test.Under_sn_delta AS WITH t_2_Manages AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_test.Under_sn_delta;
+CREATE TABLE synalog_test.Under_sn_delta AS WITH t_2_Manages AS (SELECT * FROM (
   
     SELECT
       'ceo' AS boss,
@@ -676,7 +676,7 @@ t_1_Under_MultBodyAggAux_f1 AS (SELECT * FROM (
       Under_sn_new.boss AS boss,
       Manages.report AS report
     FROM
-      logica_test.Under_sn_new AS Under_sn_new, t_2_Manages AS Manages
+      synalog_test.Under_sn_new AS Under_sn_new, t_2_Manages AS Manages
     WHERE
       (Manages.boss = Under_sn_new.report)
    UNION ALL
@@ -701,18 +701,18 @@ FROM
   t_0_Under_sn_back_step AS Under_sn_back_step
 WHERE
   ((SELECT
-    MIN(1) AS logica_value
+    MIN(1) AS synalog_value
   FROM
-    logica_test.Under_sn_full AS Under_sn_full
+    synalog_test.Under_sn_full AS Under_sn_full
   WHERE
     (Under_sn_full.boss = Under_sn_back_step.boss) AND
     (Under_sn_full.report = Under_sn_back_step.report)) IS NULL)
 GROUP BY 1, 2;
 
-INSERT INTO logica_test.Under_sn_full SELECT * FROM logica_test.Under_sn_delta;
+INSERT INTO synalog_test.Under_sn_full SELECT * FROM synalog_test.Under_sn_delta;
 
-DROP TABLE IF EXISTS logica_test.Under_sn_new;
-CREATE TABLE logica_test.Under_sn_new AS WITH t_2_Manages AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_test.Under_sn_new;
+CREATE TABLE synalog_test.Under_sn_new AS WITH t_2_Manages AS (SELECT * FROM (
   
     SELECT
       'ceo' AS boss,
@@ -765,7 +765,7 @@ t_1_Under_MultBodyAggAux_f8 AS (SELECT * FROM (
       Under_sn_delta.boss AS boss,
       Manages.report AS report
     FROM
-      logica_test.Under_sn_delta AS Under_sn_delta, t_2_Manages AS Manages
+      synalog_test.Under_sn_delta AS Under_sn_delta, t_2_Manages AS Manages
     WHERE
       (Manages.boss = Under_sn_delta.report)
    UNION ALL
@@ -790,18 +790,18 @@ FROM
   t_0_Under_sn_step AS Under_sn_step
 WHERE
   ((SELECT
-    MIN(1) AS logica_value
+    MIN(1) AS synalog_value
   FROM
-    logica_test.Under_sn_full AS Under_sn_full
+    synalog_test.Under_sn_full AS Under_sn_full
   WHERE
     (Under_sn_full.boss = Under_sn_step.boss) AND
     (Under_sn_full.report = Under_sn_step.report)) IS NULL)
 GROUP BY 1, 2;
 
-INSERT INTO logica_test.Under_sn_full SELECT * FROM logica_test.Under_sn_new;
+INSERT INTO synalog_test.Under_sn_full SELECT * FROM synalog_test.Under_sn_new;
 
-DROP TABLE IF EXISTS logica_test.Under_sn_delta;
-CREATE TABLE logica_test.Under_sn_delta AS WITH t_2_Manages AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_test.Under_sn_delta;
+CREATE TABLE synalog_test.Under_sn_delta AS WITH t_2_Manages AS (SELECT * FROM (
   
     SELECT
       'ceo' AS boss,
@@ -854,7 +854,7 @@ t_1_Under_MultBodyAggAux_f1 AS (SELECT * FROM (
       Under_sn_new.boss AS boss,
       Manages.report AS report
     FROM
-      logica_test.Under_sn_new AS Under_sn_new, t_2_Manages AS Manages
+      synalog_test.Under_sn_new AS Under_sn_new, t_2_Manages AS Manages
     WHERE
       (Manages.boss = Under_sn_new.report)
    UNION ALL
@@ -879,18 +879,18 @@ FROM
   t_0_Under_sn_back_step AS Under_sn_back_step
 WHERE
   ((SELECT
-    MIN(1) AS logica_value
+    MIN(1) AS synalog_value
   FROM
-    logica_test.Under_sn_full AS Under_sn_full
+    synalog_test.Under_sn_full AS Under_sn_full
   WHERE
     (Under_sn_full.boss = Under_sn_back_step.boss) AND
     (Under_sn_full.report = Under_sn_back_step.report)) IS NULL)
 GROUP BY 1, 2;
 
-INSERT INTO logica_test.Under_sn_full SELECT * FROM logica_test.Under_sn_delta;
+INSERT INTO synalog_test.Under_sn_full SELECT * FROM synalog_test.Under_sn_delta;
 
-DROP TABLE IF EXISTS logica_test.Under_sn_new;
-CREATE TABLE logica_test.Under_sn_new AS WITH t_2_Manages AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_test.Under_sn_new;
+CREATE TABLE synalog_test.Under_sn_new AS WITH t_2_Manages AS (SELECT * FROM (
   
     SELECT
       'ceo' AS boss,
@@ -943,7 +943,7 @@ t_1_Under_MultBodyAggAux_f8 AS (SELECT * FROM (
       Under_sn_delta.boss AS boss,
       Manages.report AS report
     FROM
-      logica_test.Under_sn_delta AS Under_sn_delta, t_2_Manages AS Manages
+      synalog_test.Under_sn_delta AS Under_sn_delta, t_2_Manages AS Manages
     WHERE
       (Manages.boss = Under_sn_delta.report)
    UNION ALL
@@ -968,18 +968,18 @@ FROM
   t_0_Under_sn_step AS Under_sn_step
 WHERE
   ((SELECT
-    MIN(1) AS logica_value
+    MIN(1) AS synalog_value
   FROM
-    logica_test.Under_sn_full AS Under_sn_full
+    synalog_test.Under_sn_full AS Under_sn_full
   WHERE
     (Under_sn_full.boss = Under_sn_step.boss) AND
     (Under_sn_full.report = Under_sn_step.report)) IS NULL)
 GROUP BY 1, 2;
 
-INSERT INTO logica_test.Under_sn_full SELECT * FROM logica_test.Under_sn_new;
+INSERT INTO synalog_test.Under_sn_full SELECT * FROM synalog_test.Under_sn_new;
 
-DROP TABLE IF EXISTS logica_test.Under_sn_delta;
-CREATE TABLE logica_test.Under_sn_delta AS WITH t_2_Manages AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_test.Under_sn_delta;
+CREATE TABLE synalog_test.Under_sn_delta AS WITH t_2_Manages AS (SELECT * FROM (
   
     SELECT
       'ceo' AS boss,
@@ -1032,7 +1032,7 @@ t_1_Under_MultBodyAggAux_f1 AS (SELECT * FROM (
       Under_sn_new.boss AS boss,
       Manages.report AS report
     FROM
-      logica_test.Under_sn_new AS Under_sn_new, t_2_Manages AS Manages
+      synalog_test.Under_sn_new AS Under_sn_new, t_2_Manages AS Manages
     WHERE
       (Manages.boss = Under_sn_new.report)
    UNION ALL
@@ -1057,18 +1057,18 @@ FROM
   t_0_Under_sn_back_step AS Under_sn_back_step
 WHERE
   ((SELECT
-    MIN(1) AS logica_value
+    MIN(1) AS synalog_value
   FROM
-    logica_test.Under_sn_full AS Under_sn_full
+    synalog_test.Under_sn_full AS Under_sn_full
   WHERE
     (Under_sn_full.boss = Under_sn_back_step.boss) AND
     (Under_sn_full.report = Under_sn_back_step.report)) IS NULL)
 GROUP BY 1, 2;
 
-INSERT INTO logica_test.Under_sn_full SELECT * FROM logica_test.Under_sn_delta;
+INSERT INTO synalog_test.Under_sn_full SELECT * FROM synalog_test.Under_sn_delta;
 
-DROP TABLE IF EXISTS logica_test.Under_sn_new;
-CREATE TABLE logica_test.Under_sn_new AS WITH t_2_Manages AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_test.Under_sn_new;
+CREATE TABLE synalog_test.Under_sn_new AS WITH t_2_Manages AS (SELECT * FROM (
   
     SELECT
       'ceo' AS boss,
@@ -1121,7 +1121,7 @@ t_1_Under_MultBodyAggAux_f8 AS (SELECT * FROM (
       Under_sn_delta.boss AS boss,
       Manages.report AS report
     FROM
-      logica_test.Under_sn_delta AS Under_sn_delta, t_2_Manages AS Manages
+      synalog_test.Under_sn_delta AS Under_sn_delta, t_2_Manages AS Manages
     WHERE
       (Manages.boss = Under_sn_delta.report)
    UNION ALL
@@ -1146,18 +1146,18 @@ FROM
   t_0_Under_sn_step AS Under_sn_step
 WHERE
   ((SELECT
-    MIN(1) AS logica_value
+    MIN(1) AS synalog_value
   FROM
-    logica_test.Under_sn_full AS Under_sn_full
+    synalog_test.Under_sn_full AS Under_sn_full
   WHERE
     (Under_sn_full.boss = Under_sn_step.boss) AND
     (Under_sn_full.report = Under_sn_step.report)) IS NULL)
 GROUP BY 1, 2;
 
-INSERT INTO logica_test.Under_sn_full SELECT * FROM logica_test.Under_sn_new;
+INSERT INTO synalog_test.Under_sn_full SELECT * FROM synalog_test.Under_sn_new;
 
-DROP TABLE IF EXISTS logica_test.Under_sn_delta;
-CREATE TABLE logica_test.Under_sn_delta AS WITH t_2_Manages AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_test.Under_sn_delta;
+CREATE TABLE synalog_test.Under_sn_delta AS WITH t_2_Manages AS (SELECT * FROM (
   
     SELECT
       'ceo' AS boss,
@@ -1210,7 +1210,7 @@ t_1_Under_MultBodyAggAux_f1 AS (SELECT * FROM (
       Under_sn_new.boss AS boss,
       Manages.report AS report
     FROM
-      logica_test.Under_sn_new AS Under_sn_new, t_2_Manages AS Manages
+      synalog_test.Under_sn_new AS Under_sn_new, t_2_Manages AS Manages
     WHERE
       (Manages.boss = Under_sn_new.report)
    UNION ALL
@@ -1235,19 +1235,19 @@ FROM
   t_0_Under_sn_back_step AS Under_sn_back_step
 WHERE
   ((SELECT
-    MIN(1) AS logica_value
+    MIN(1) AS synalog_value
   FROM
-    logica_test.Under_sn_full AS Under_sn_full
+    synalog_test.Under_sn_full AS Under_sn_full
   WHERE
     (Under_sn_full.boss = Under_sn_back_step.boss) AND
     (Under_sn_full.report = Under_sn_back_step.report)) IS NULL)
 GROUP BY 1, 2;
 
-INSERT INTO logica_test.Under_sn_full SELECT * FROM logica_test.Under_sn_delta;
+INSERT INTO synalog_test.Under_sn_full SELECT * FROM synalog_test.Under_sn_delta;
 
 SELECT
   Under_sn_full.boss AS boss
 FROM
-  logica_test.Under_sn_full AS Under_sn_full
+  synalog_test.Under_sn_full AS Under_sn_full
 WHERE
   ('ops' = Under_sn_full.report) ORDER BY boss;

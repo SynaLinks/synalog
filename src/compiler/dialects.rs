@@ -6,7 +6,7 @@
 //! SQL dialects — port of Python's `compiler/dialects.py`.
 //!
 //! Each dialect defines built-in function templates, infix operator overrides,
-//! subscript access, a Logica standard library program string, and various SQL
+//! subscript access, a Synalog standard library program string, and various SQL
 //! formatting helpers.
 
 // NOTE: Python's DecorateCombineRule(rule, var) free function is implemented in
@@ -43,7 +43,7 @@ fn backslash_escaped_literal(s: &str, dollar: bool) -> String {
 /// can only expose *named* record fields through a declared composite type. The
 /// name is content-addressed from the record's canonical shape (`Type`'s Display
 /// sorts fields), so the `ROW(…)::name` literal and the `CREATE TYPE name …`
-/// preamble agree without any shared state. Prefixed `logicarecord` so the
+/// preamble agree without any shared state. Prefixed `synalogrecord` so the
 /// golden-test normalizer strips the generated DDL like the existing placeholder.
 ///
 /// The name hashes the type's columns as declared (`psql_record_columns`), not
@@ -52,7 +52,7 @@ fn backslash_escaped_literal(s: &str, dollar: bool) -> String {
 pub fn record_type_name(ty: &Type) -> String {
     let mut hasher = DefaultHasher::new();
     psql_record_columns(ty).hash(&mut hasher);
-    format!("logicarecord{}", hasher.finish())
+    format!("synalogrecord{}", hasher.finish())
 }
 
 /// The columns of a record's PostgreSQL composite type, in canonical (sorted)
@@ -140,7 +140,7 @@ pub fn sql_column(field: &str, dialect: &dyn Dialect) -> String {
 pub trait Dialect {
     fn name(&self) -> &'static str;
 
-    /// Additional built-in functions: Logica name → SQL template.
+    /// Additional built-in functions: Synalog name → SQL template.
     /// Templates use `%s` for single-arg or `{0}`, `{1}` for multi-arg.
     fn built_in_functions(&self) -> HashMap<&'static str, &'static str>;
 
@@ -237,7 +237,7 @@ pub trait Dialect {
         clause
     }
 
-    /// Infix operator overrides: Logica operator → SQL template.
+    /// Infix operator overrides: Synalog operator → SQL template.
     fn infix_operators(&self) -> HashMap<&'static str, &'static str>;
 
     /// Field/subscript access on a record or table.
@@ -256,7 +256,7 @@ pub trait Dialect {
         }
     }
 
-    /// Logica source code for the dialect's standard library.
+    /// Synalog source code for the dialect's standard library.
     fn library_program(&self) -> &'static str;
 
     /// UNNEST phrase template with `{0}` for array, `{1}` for alias.

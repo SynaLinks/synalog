@@ -1,7 +1,7 @@
 -- Initializing DuckDB environment.
-create schema if not exists logica_home;
+create schema if not exists synalog_home;
 -- Empty record, has to have a field by DuckDB syntax.
-drop type if exists logicarecord893574736 cascade; create type logicarecord893574736 as struct(nirvana numeric);
+drop type if exists synalogrecord893574736 cascade; create type synalogrecord893574736 as struct(nirvana numeric);
 create sequence if not exists eternal_logical_sequence;
 
 WITH RECURSIVE t_2_E AS (SELECT * FROM (
@@ -23,12 +23,12 @@ t_0_Reach_RecursiveCte AS (SELECT * FROM (
     
       SELECT
         1 AS x,
-        0 AS logica_step
+        0 AS synalog_step
      UNION ALL
     
       SELECT
         E.b AS x,
-        ((0) + (1)) AS logica_step
+        ((0) + (1)) AS synalog_step
       FROM
         t_2_E AS E
       WHERE
@@ -40,7 +40,7 @@ t_0_Reach_RecursiveCte AS (SELECT * FROM (
     
       SELECT
         t_4_E.b AS x,
-        ((((0) + (1))) + (1)) AS logica_step
+        ((((0) + (1))) + (1)) AS synalog_step
       FROM
         t_2_E AS t_6_E, t_2_E AS t_4_E
       WHERE
@@ -55,7 +55,7 @@ t_0_Reach_RecursiveCte AS (SELECT * FROM (
     
       SELECT
         t_9_E.b AS x,
-        ((((((0) + (1))) + (1))) + (1)) AS logica_step
+        ((((((0) + (1))) + (1))) + (1)) AS synalog_step
       FROM
         t_2_E AS t_13_E, t_2_E AS t_11_E, t_2_E AS t_9_E
       WHERE
@@ -75,11 +75,11 @@ t_0_Reach_RecursiveCte AS (SELECT * FROM (
 UNION
 SELECT
   t_16_E.b AS x,
-  ((t_15_Reach_RecursiveCte.logica_step) + (1)) AS logica_step
+  ((t_15_Reach_RecursiveCte.synalog_step) + (1)) AS synalog_step
 FROM
   t_0_Reach_RecursiveCte AS t_15_Reach_RecursiveCte, t_2_E AS t_16_E
 WHERE
-  (t_15_Reach_RecursiveCte.logica_step < 5) AND
+  (t_15_Reach_RecursiveCte.synalog_step < 5) AND
   (t_16_E.a = t_15_Reach_RecursiveCte.x) AND
   (t_16_E.ok = true))
 SELECT

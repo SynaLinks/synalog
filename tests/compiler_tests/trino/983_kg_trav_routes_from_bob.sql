@@ -1,5 +1,5 @@
-DROP TABLE IF EXISTS logica_test.Person;
-CREATE TABLE logica_test.Person AS WITH t_0_Employees AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_test.Person;
+CREATE TABLE synalog_test.Person AS WITH t_0_Employees AS (SELECT * FROM (
   
     SELECT
       1 AS person_id,
@@ -54,10 +54,10 @@ FROM
   t_0_Employees AS Employees
 GROUP BY 1, 2, 3 ORDER BY person_id;
 
--- Interacting with table logica_test.Person
+-- Interacting with table synalog_test.Person
 
-DROP TABLE IF EXISTS logica_test.Manages;
-CREATE TABLE logica_test.Manages AS WITH t_1_Management AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_test.Manages;
+CREATE TABLE synalog_test.Manages AS WITH t_1_Management AS (SELECT * FROM (
   
     SELECT
       1 AS manager_id,
@@ -83,32 +83,32 @@ SELECT
   Person.person_id AS manager_id,
   t_0_Person.person_id AS employee_id
 FROM
-  logica_test.Person AS Person, logica_test.Person AS t_0_Person, t_1_Management AS Management
+  synalog_test.Person AS Person, synalog_test.Person AS t_0_Person, t_1_Management AS Management
 WHERE
   (Management.manager_id = Person.person_id) AND
   (Management.employee_id = t_0_Person.person_id)
 GROUP BY 1, 2;
 
--- Interacting with table logica_test.Manages
+-- Interacting with table synalog_test.Manages
 
-DROP TABLE IF EXISTS logica_test.N;
-CREATE TABLE logica_test.N AS SELECT
+DROP TABLE IF EXISTS synalog_test.N;
+CREATE TABLE synalog_test.N AS SELECT
   Person.person_id AS person_id,
   Person.name AS name
 FROM
-  logica_test.Person AS Person;
+  synalog_test.Person AS Person;
 
--- Interacting with table logica_test.N
+-- Interacting with table synalog_test.N
 
-DROP TABLE IF EXISTS logica_test.PathTo_sn_delta;
-CREATE TABLE logica_test.PathTo_sn_delta AS WITH t_0_PathTo_MultBodyAggAux_f2 AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_test.PathTo_sn_delta;
+CREATE TABLE synalog_test.PathTo_sn_delta AS WITH t_0_PathTo_MultBodyAggAux_f2 AS (SELECT * FROM (
   
     SELECT
       Manages.manager_id AS source,
       Manages.employee_id AS target,
       (CONCAT((CONCAT(N.name, ' > ')), t_1_N.name)) AS path
     FROM
-      logica_test.Manages AS Manages, logica_test.N AS N, logica_test.N AS t_1_N
+      synalog_test.Manages AS Manages, synalog_test.N AS N, synalog_test.N AS t_1_N
     WHERE
       (N.person_id = Manages.manager_id) AND
       (t_1_N.person_id = Manages.employee_id)
@@ -122,29 +122,29 @@ FROM
   t_0_PathTo_MultBodyAggAux_f2 AS PathTo_MultBodyAggAux_f2
 GROUP BY 1, 2, 3;
 
--- Interacting with table logica_test.PathTo_sn_delta
+-- Interacting with table synalog_test.PathTo_sn_delta
 
-DROP TABLE IF EXISTS logica_test.PathTo_sn_t0;
-CREATE TABLE logica_test.PathTo_sn_t0 AS SELECT
+DROP TABLE IF EXISTS synalog_test.PathTo_sn_t0;
+CREATE TABLE synalog_test.PathTo_sn_t0 AS SELECT
   PathTo_sn_delta.source AS source,
   PathTo_sn_delta.target AS target,
   PathTo_sn_delta.path AS path
 FROM
-  logica_test.PathTo_sn_delta AS PathTo_sn_delta
+  synalog_test.PathTo_sn_delta AS PathTo_sn_delta
 WHERE
   (1 = 0);
 
--- Interacting with table logica_test.PathTo_sn_t0
+-- Interacting with table synalog_test.PathTo_sn_t0
 
-DROP TABLE IF EXISTS logica_test.PathTo_sn_t1;
-CREATE TABLE logica_test.PathTo_sn_t1 AS WITH t_1_PathTo_MultBodyAggAux_f3 AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_test.PathTo_sn_t1;
+CREATE TABLE synalog_test.PathTo_sn_t1 AS WITH t_1_PathTo_MultBodyAggAux_f3 AS (SELECT * FROM (
   
     SELECT
       Manages.manager_id AS source,
       Manages.employee_id AS target,
       (CONCAT((CONCAT(N.name, ' > ')), t_2_N.name)) AS path
     FROM
-      logica_test.Manages AS Manages, logica_test.N AS N, logica_test.N AS t_2_N
+      synalog_test.Manages AS Manages, synalog_test.N AS N, synalog_test.N AS t_2_N
     WHERE
       (N.person_id = Manages.manager_id) AND
       (t_2_N.person_id = Manages.employee_id)
@@ -155,7 +155,7 @@ CREATE TABLE logica_test.PathTo_sn_t1 AS WITH t_1_PathTo_MultBodyAggAux_f3 AS (S
       t_3_Manages.employee_id AS target,
       (CONCAT((CONCAT(PathTo_sn_t0.path, ' > ')), t_4_N.name)) AS path
     FROM
-      logica_test.PathTo_sn_t0 AS PathTo_sn_t0, logica_test.Manages AS t_3_Manages, logica_test.N AS t_4_N
+      synalog_test.PathTo_sn_t0 AS PathTo_sn_t0, synalog_test.Manages AS t_3_Manages, synalog_test.N AS t_4_N
     WHERE
       (t_3_Manages.manager_id = PathTo_sn_t0.target) AND
       (t_4_N.person_id = t_3_Manages.employee_id)
@@ -177,17 +177,17 @@ FROM
 WHERE
   (1 = 0);
 
--- Interacting with table logica_test.PathTo_sn_t1
+-- Interacting with table synalog_test.PathTo_sn_t1
 
-DROP TABLE IF EXISTS logica_test.PathTo_sn_t2;
-CREATE TABLE logica_test.PathTo_sn_t2 AS WITH t_1_PathTo_MultBodyAggAux_f4 AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_test.PathTo_sn_t2;
+CREATE TABLE synalog_test.PathTo_sn_t2 AS WITH t_1_PathTo_MultBodyAggAux_f4 AS (SELECT * FROM (
   
     SELECT
       Manages.manager_id AS source,
       Manages.employee_id AS target,
       (CONCAT((CONCAT(N.name, ' > ')), t_2_N.name)) AS path
     FROM
-      logica_test.Manages AS Manages, logica_test.N AS N, logica_test.N AS t_2_N
+      synalog_test.Manages AS Manages, synalog_test.N AS N, synalog_test.N AS t_2_N
     WHERE
       (N.person_id = Manages.manager_id) AND
       (t_2_N.person_id = Manages.employee_id)
@@ -198,7 +198,7 @@ CREATE TABLE logica_test.PathTo_sn_t2 AS WITH t_1_PathTo_MultBodyAggAux_f4 AS (S
       t_3_Manages.employee_id AS target,
       (CONCAT((CONCAT(PathTo_sn_t1.path, ' > ')), t_4_N.name)) AS path
     FROM
-      logica_test.PathTo_sn_t1 AS PathTo_sn_t1, logica_test.Manages AS t_3_Manages, logica_test.N AS t_4_N
+      synalog_test.PathTo_sn_t1 AS PathTo_sn_t1, synalog_test.Manages AS t_3_Manages, synalog_test.N AS t_4_N
     WHERE
       (t_3_Manages.manager_id = PathTo_sn_t1.target) AND
       (t_4_N.person_id = t_3_Manages.employee_id)
@@ -220,17 +220,17 @@ FROM
 WHERE
   (1 = 0);
 
--- Interacting with table logica_test.PathTo_sn_t2
+-- Interacting with table synalog_test.PathTo_sn_t2
 
-DROP TABLE IF EXISTS logica_test.PathTo_sn_t3;
-CREATE TABLE logica_test.PathTo_sn_t3 AS WITH t_1_PathTo_MultBodyAggAux_f5 AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_test.PathTo_sn_t3;
+CREATE TABLE synalog_test.PathTo_sn_t3 AS WITH t_1_PathTo_MultBodyAggAux_f5 AS (SELECT * FROM (
   
     SELECT
       Manages.manager_id AS source,
       Manages.employee_id AS target,
       (CONCAT((CONCAT(N.name, ' > ')), t_2_N.name)) AS path
     FROM
-      logica_test.Manages AS Manages, logica_test.N AS N, logica_test.N AS t_2_N
+      synalog_test.Manages AS Manages, synalog_test.N AS N, synalog_test.N AS t_2_N
     WHERE
       (N.person_id = Manages.manager_id) AND
       (t_2_N.person_id = Manages.employee_id)
@@ -241,7 +241,7 @@ CREATE TABLE logica_test.PathTo_sn_t3 AS WITH t_1_PathTo_MultBodyAggAux_f5 AS (S
       t_3_Manages.employee_id AS target,
       (CONCAT((CONCAT(PathTo_sn_t2.path, ' > ')), t_4_N.name)) AS path
     FROM
-      logica_test.PathTo_sn_t2 AS PathTo_sn_t2, logica_test.Manages AS t_3_Manages, logica_test.N AS t_4_N
+      synalog_test.PathTo_sn_t2 AS PathTo_sn_t2, synalog_test.Manages AS t_3_Manages, synalog_test.N AS t_4_N
     WHERE
       (t_3_Manages.manager_id = PathTo_sn_t2.target) AND
       (t_4_N.person_id = t_3_Manages.employee_id)
@@ -263,17 +263,17 @@ FROM
 WHERE
   (1 = 0);
 
--- Interacting with table logica_test.PathTo_sn_t3
+-- Interacting with table synalog_test.PathTo_sn_t3
 
-DROP TABLE IF EXISTS logica_test.PathTo_sn_t4;
-CREATE TABLE logica_test.PathTo_sn_t4 AS WITH t_1_PathTo_MultBodyAggAux_f6 AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_test.PathTo_sn_t4;
+CREATE TABLE synalog_test.PathTo_sn_t4 AS WITH t_1_PathTo_MultBodyAggAux_f6 AS (SELECT * FROM (
   
     SELECT
       Manages.manager_id AS source,
       Manages.employee_id AS target,
       (CONCAT((CONCAT(N.name, ' > ')), t_2_N.name)) AS path
     FROM
-      logica_test.Manages AS Manages, logica_test.N AS N, logica_test.N AS t_2_N
+      synalog_test.Manages AS Manages, synalog_test.N AS N, synalog_test.N AS t_2_N
     WHERE
       (N.person_id = Manages.manager_id) AND
       (t_2_N.person_id = Manages.employee_id)
@@ -284,7 +284,7 @@ CREATE TABLE logica_test.PathTo_sn_t4 AS WITH t_1_PathTo_MultBodyAggAux_f6 AS (S
       t_3_Manages.employee_id AS target,
       (CONCAT((CONCAT(PathTo_sn_t3.path, ' > ')), t_4_N.name)) AS path
     FROM
-      logica_test.PathTo_sn_t3 AS PathTo_sn_t3, logica_test.Manages AS t_3_Manages, logica_test.N AS t_4_N
+      synalog_test.PathTo_sn_t3 AS PathTo_sn_t3, synalog_test.Manages AS t_3_Manages, synalog_test.N AS t_4_N
     WHERE
       (t_3_Manages.manager_id = PathTo_sn_t3.target) AND
       (t_4_N.person_id = t_3_Manages.employee_id)
@@ -306,17 +306,17 @@ FROM
 WHERE
   (1 = 0);
 
--- Interacting with table logica_test.PathTo_sn_t4
+-- Interacting with table synalog_test.PathTo_sn_t4
 
-DROP TABLE IF EXISTS logica_test.PathTo_sn_t5;
-CREATE TABLE logica_test.PathTo_sn_t5 AS WITH t_1_PathTo_MultBodyAggAux_f7 AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_test.PathTo_sn_t5;
+CREATE TABLE synalog_test.PathTo_sn_t5 AS WITH t_1_PathTo_MultBodyAggAux_f7 AS (SELECT * FROM (
   
     SELECT
       Manages.manager_id AS source,
       Manages.employee_id AS target,
       (CONCAT((CONCAT(N.name, ' > ')), t_2_N.name)) AS path
     FROM
-      logica_test.Manages AS Manages, logica_test.N AS N, logica_test.N AS t_2_N
+      synalog_test.Manages AS Manages, synalog_test.N AS N, synalog_test.N AS t_2_N
     WHERE
       (N.person_id = Manages.manager_id) AND
       (t_2_N.person_id = Manages.employee_id)
@@ -327,7 +327,7 @@ CREATE TABLE logica_test.PathTo_sn_t5 AS WITH t_1_PathTo_MultBodyAggAux_f7 AS (S
       t_3_Manages.employee_id AS target,
       (CONCAT((CONCAT(PathTo_sn_t4.path, ' > ')), t_4_N.name)) AS path
     FROM
-      logica_test.PathTo_sn_t4 AS PathTo_sn_t4, logica_test.Manages AS t_3_Manages, logica_test.N AS t_4_N
+      synalog_test.PathTo_sn_t4 AS PathTo_sn_t4, synalog_test.Manages AS t_3_Manages, synalog_test.N AS t_4_N
     WHERE
       (t_3_Manages.manager_id = PathTo_sn_t4.target) AND
       (t_4_N.person_id = t_3_Manages.employee_id)
@@ -349,17 +349,17 @@ FROM
 WHERE
   (1 = 0);
 
--- Interacting with table logica_test.PathTo_sn_t5
+-- Interacting with table synalog_test.PathTo_sn_t5
 
-DROP TABLE IF EXISTS logica_test.PathTo_sn_t6;
-CREATE TABLE logica_test.PathTo_sn_t6 AS WITH t_1_PathTo_MultBodyAggAux_f8 AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_test.PathTo_sn_t6;
+CREATE TABLE synalog_test.PathTo_sn_t6 AS WITH t_1_PathTo_MultBodyAggAux_f8 AS (SELECT * FROM (
   
     SELECT
       Manages.manager_id AS source,
       Manages.employee_id AS target,
       (CONCAT((CONCAT(N.name, ' > ')), t_2_N.name)) AS path
     FROM
-      logica_test.Manages AS Manages, logica_test.N AS N, logica_test.N AS t_2_N
+      synalog_test.Manages AS Manages, synalog_test.N AS N, synalog_test.N AS t_2_N
     WHERE
       (N.person_id = Manages.manager_id) AND
       (t_2_N.person_id = Manages.employee_id)
@@ -370,7 +370,7 @@ CREATE TABLE logica_test.PathTo_sn_t6 AS WITH t_1_PathTo_MultBodyAggAux_f8 AS (S
       t_3_Manages.employee_id AS target,
       (CONCAT((CONCAT(PathTo_sn_t5.path, ' > ')), t_4_N.name)) AS path
     FROM
-      logica_test.PathTo_sn_t5 AS PathTo_sn_t5, logica_test.Manages AS t_3_Manages, logica_test.N AS t_4_N
+      synalog_test.PathTo_sn_t5 AS PathTo_sn_t5, synalog_test.Manages AS t_3_Manages, synalog_test.N AS t_4_N
     WHERE
       (t_3_Manages.manager_id = PathTo_sn_t5.target) AND
       (t_4_N.person_id = t_3_Manages.employee_id)
@@ -392,17 +392,17 @@ FROM
 WHERE
   (1 = 0);
 
--- Interacting with table logica_test.PathTo_sn_t6
+-- Interacting with table synalog_test.PathTo_sn_t6
 
-DROP TABLE IF EXISTS logica_test.PathTo_sn_t7;
-CREATE TABLE logica_test.PathTo_sn_t7 AS WITH t_1_PathTo_MultBodyAggAux_f9 AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_test.PathTo_sn_t7;
+CREATE TABLE synalog_test.PathTo_sn_t7 AS WITH t_1_PathTo_MultBodyAggAux_f9 AS (SELECT * FROM (
   
     SELECT
       Manages.manager_id AS source,
       Manages.employee_id AS target,
       (CONCAT((CONCAT(N.name, ' > ')), t_2_N.name)) AS path
     FROM
-      logica_test.Manages AS Manages, logica_test.N AS N, logica_test.N AS t_2_N
+      synalog_test.Manages AS Manages, synalog_test.N AS N, synalog_test.N AS t_2_N
     WHERE
       (N.person_id = Manages.manager_id) AND
       (t_2_N.person_id = Manages.employee_id)
@@ -413,7 +413,7 @@ CREATE TABLE logica_test.PathTo_sn_t7 AS WITH t_1_PathTo_MultBodyAggAux_f9 AS (S
       t_3_Manages.employee_id AS target,
       (CONCAT((CONCAT(PathTo_sn_t6.path, ' > ')), t_4_N.name)) AS path
     FROM
-      logica_test.PathTo_sn_t6 AS PathTo_sn_t6, logica_test.Manages AS t_3_Manages, logica_test.N AS t_4_N
+      synalog_test.PathTo_sn_t6 AS PathTo_sn_t6, synalog_test.Manages AS t_3_Manages, synalog_test.N AS t_4_N
     WHERE
       (t_3_Manages.manager_id = PathTo_sn_t6.target) AND
       (t_4_N.person_id = t_3_Manages.employee_id)
@@ -435,17 +435,17 @@ FROM
 WHERE
   (1 = 0);
 
--- Interacting with table logica_test.PathTo_sn_t7
+-- Interacting with table synalog_test.PathTo_sn_t7
 
-DROP TABLE IF EXISTS logica_test.PathTo_sn_full;
-CREATE TABLE logica_test.PathTo_sn_full AS SELECT * FROM (
+DROP TABLE IF EXISTS synalog_test.PathTo_sn_full;
+CREATE TABLE synalog_test.PathTo_sn_full AS SELECT * FROM (
   
     SELECT
       PathTo_sn_delta.source AS source,
       PathTo_sn_delta.target AS target,
       PathTo_sn_delta.path AS path
     FROM
-      logica_test.PathTo_sn_delta AS PathTo_sn_delta
+      synalog_test.PathTo_sn_delta AS PathTo_sn_delta
    UNION ALL
   
     SELECT
@@ -453,7 +453,7 @@ CREATE TABLE logica_test.PathTo_sn_full AS SELECT * FROM (
       PathTo_sn_t1.target AS target,
       PathTo_sn_t1.path AS path
     FROM
-      logica_test.PathTo_sn_t1 AS PathTo_sn_t1
+      synalog_test.PathTo_sn_t1 AS PathTo_sn_t1
    UNION ALL
   
     SELECT
@@ -461,7 +461,7 @@ CREATE TABLE logica_test.PathTo_sn_full AS SELECT * FROM (
       PathTo_sn_t2.target AS target,
       PathTo_sn_t2.path AS path
     FROM
-      logica_test.PathTo_sn_t2 AS PathTo_sn_t2
+      synalog_test.PathTo_sn_t2 AS PathTo_sn_t2
    UNION ALL
   
     SELECT
@@ -469,7 +469,7 @@ CREATE TABLE logica_test.PathTo_sn_full AS SELECT * FROM (
       PathTo_sn_t3.target AS target,
       PathTo_sn_t3.path AS path
     FROM
-      logica_test.PathTo_sn_t3 AS PathTo_sn_t3
+      synalog_test.PathTo_sn_t3 AS PathTo_sn_t3
    UNION ALL
   
     SELECT
@@ -477,7 +477,7 @@ CREATE TABLE logica_test.PathTo_sn_full AS SELECT * FROM (
       PathTo_sn_t4.target AS target,
       PathTo_sn_t4.path AS path
     FROM
-      logica_test.PathTo_sn_t4 AS PathTo_sn_t4
+      synalog_test.PathTo_sn_t4 AS PathTo_sn_t4
    UNION ALL
   
     SELECT
@@ -485,7 +485,7 @@ CREATE TABLE logica_test.PathTo_sn_full AS SELECT * FROM (
       PathTo_sn_t5.target AS target,
       PathTo_sn_t5.path AS path
     FROM
-      logica_test.PathTo_sn_t5 AS PathTo_sn_t5
+      synalog_test.PathTo_sn_t5 AS PathTo_sn_t5
    UNION ALL
   
     SELECT
@@ -493,7 +493,7 @@ CREATE TABLE logica_test.PathTo_sn_full AS SELECT * FROM (
       PathTo_sn_t6.target AS target,
       PathTo_sn_t6.path AS path
     FROM
-      logica_test.PathTo_sn_t6 AS PathTo_sn_t6
+      synalog_test.PathTo_sn_t6 AS PathTo_sn_t6
    UNION ALL
   
     SELECT
@@ -501,21 +501,21 @@ CREATE TABLE logica_test.PathTo_sn_full AS SELECT * FROM (
       PathTo_sn_t7.target AS target,
       PathTo_sn_t7.path AS path
     FROM
-      logica_test.PathTo_sn_t7 AS PathTo_sn_t7
+      synalog_test.PathTo_sn_t7 AS PathTo_sn_t7
   
 ) AS UNUSED_TABLE_NAME  ;
 
--- Interacting with table logica_test.PathTo_sn_full
+-- Interacting with table synalog_test.PathTo_sn_full
 
-DROP TABLE IF EXISTS logica_test.PathTo_sn_new;
-CREATE TABLE logica_test.PathTo_sn_new AS WITH t_1_PathTo_MultBodyAggAux_f10 AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_test.PathTo_sn_new;
+CREATE TABLE synalog_test.PathTo_sn_new AS WITH t_1_PathTo_MultBodyAggAux_f10 AS (SELECT * FROM (
   
     SELECT
       Manages.manager_id AS source,
       Manages.employee_id AS target,
       (CONCAT((CONCAT(N.name, ' > ')), t_2_N.name)) AS path
     FROM
-      logica_test.Manages AS Manages, logica_test.N AS N, logica_test.N AS t_2_N
+      synalog_test.Manages AS Manages, synalog_test.N AS N, synalog_test.N AS t_2_N
     WHERE
       (N.person_id = Manages.manager_id) AND
       (t_2_N.person_id = Manages.employee_id)
@@ -526,7 +526,7 @@ CREATE TABLE logica_test.PathTo_sn_new AS WITH t_1_PathTo_MultBodyAggAux_f10 AS 
       t_3_Manages.employee_id AS target,
       (CONCAT((CONCAT(PathTo_sn_delta.path, ' > ')), t_4_N.name)) AS path
     FROM
-      logica_test.PathTo_sn_delta AS PathTo_sn_delta, logica_test.Manages AS t_3_Manages, logica_test.N AS t_4_N
+      synalog_test.PathTo_sn_delta AS PathTo_sn_delta, synalog_test.Manages AS t_3_Manages, synalog_test.N AS t_4_N
     WHERE
       (t_3_Manages.manager_id = PathTo_sn_delta.target) AND
       (t_4_N.person_id = t_3_Manages.employee_id)
@@ -547,26 +547,26 @@ FROM
   t_0_PathTo_sn_step AS PathTo_sn_step
 WHERE
   ((SELECT
-    MIN(1) AS logica_value
+    MIN(1) AS synalog_value
   FROM
-    logica_test.PathTo_sn_full AS PathTo_sn_full
+    synalog_test.PathTo_sn_full AS PathTo_sn_full
   WHERE
     (PathTo_sn_full.source = PathTo_sn_step.source) AND
     (PathTo_sn_full.target = PathTo_sn_step.target) AND
     (PathTo_sn_full.path = PathTo_sn_step.path)) IS NULL)
 GROUP BY 1, 2, 3;
 
-INSERT INTO logica_test.PathTo_sn_full SELECT * FROM logica_test.PathTo_sn_new;
+INSERT INTO synalog_test.PathTo_sn_full SELECT * FROM synalog_test.PathTo_sn_new;
 
-DROP TABLE IF EXISTS logica_test.PathTo_sn_delta;
-CREATE TABLE logica_test.PathTo_sn_delta AS WITH t_1_PathTo_MultBodyAggAux_f1 AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_test.PathTo_sn_delta;
+CREATE TABLE synalog_test.PathTo_sn_delta AS WITH t_1_PathTo_MultBodyAggAux_f1 AS (SELECT * FROM (
   
     SELECT
       Manages.manager_id AS source,
       Manages.employee_id AS target,
       (CONCAT((CONCAT(N.name, ' > ')), t_2_N.name)) AS path
     FROM
-      logica_test.Manages AS Manages, logica_test.N AS N, logica_test.N AS t_2_N
+      synalog_test.Manages AS Manages, synalog_test.N AS N, synalog_test.N AS t_2_N
     WHERE
       (N.person_id = Manages.manager_id) AND
       (t_2_N.person_id = Manages.employee_id)
@@ -577,7 +577,7 @@ CREATE TABLE logica_test.PathTo_sn_delta AS WITH t_1_PathTo_MultBodyAggAux_f1 AS
       t_3_Manages.employee_id AS target,
       (CONCAT((CONCAT(PathTo_sn_new.path, ' > ')), t_4_N.name)) AS path
     FROM
-      logica_test.PathTo_sn_new AS PathTo_sn_new, logica_test.Manages AS t_3_Manages, logica_test.N AS t_4_N
+      synalog_test.PathTo_sn_new AS PathTo_sn_new, synalog_test.Manages AS t_3_Manages, synalog_test.N AS t_4_N
     WHERE
       (t_3_Manages.manager_id = PathTo_sn_new.target) AND
       (t_4_N.person_id = t_3_Manages.employee_id)
@@ -598,26 +598,26 @@ FROM
   t_0_PathTo_sn_back_step AS PathTo_sn_back_step
 WHERE
   ((SELECT
-    MIN(1) AS logica_value
+    MIN(1) AS synalog_value
   FROM
-    logica_test.PathTo_sn_full AS PathTo_sn_full
+    synalog_test.PathTo_sn_full AS PathTo_sn_full
   WHERE
     (PathTo_sn_full.source = PathTo_sn_back_step.source) AND
     (PathTo_sn_full.target = PathTo_sn_back_step.target) AND
     (PathTo_sn_full.path = PathTo_sn_back_step.path)) IS NULL)
 GROUP BY 1, 2, 3;
 
-INSERT INTO logica_test.PathTo_sn_full SELECT * FROM logica_test.PathTo_sn_delta;
+INSERT INTO synalog_test.PathTo_sn_full SELECT * FROM synalog_test.PathTo_sn_delta;
 
-DROP TABLE IF EXISTS logica_test.PathTo_sn_new;
-CREATE TABLE logica_test.PathTo_sn_new AS WITH t_1_PathTo_MultBodyAggAux_f10 AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_test.PathTo_sn_new;
+CREATE TABLE synalog_test.PathTo_sn_new AS WITH t_1_PathTo_MultBodyAggAux_f10 AS (SELECT * FROM (
   
     SELECT
       Manages.manager_id AS source,
       Manages.employee_id AS target,
       (CONCAT((CONCAT(N.name, ' > ')), t_2_N.name)) AS path
     FROM
-      logica_test.Manages AS Manages, logica_test.N AS N, logica_test.N AS t_2_N
+      synalog_test.Manages AS Manages, synalog_test.N AS N, synalog_test.N AS t_2_N
     WHERE
       (N.person_id = Manages.manager_id) AND
       (t_2_N.person_id = Manages.employee_id)
@@ -628,7 +628,7 @@ CREATE TABLE logica_test.PathTo_sn_new AS WITH t_1_PathTo_MultBodyAggAux_f10 AS 
       t_3_Manages.employee_id AS target,
       (CONCAT((CONCAT(PathTo_sn_delta.path, ' > ')), t_4_N.name)) AS path
     FROM
-      logica_test.PathTo_sn_delta AS PathTo_sn_delta, logica_test.Manages AS t_3_Manages, logica_test.N AS t_4_N
+      synalog_test.PathTo_sn_delta AS PathTo_sn_delta, synalog_test.Manages AS t_3_Manages, synalog_test.N AS t_4_N
     WHERE
       (t_3_Manages.manager_id = PathTo_sn_delta.target) AND
       (t_4_N.person_id = t_3_Manages.employee_id)
@@ -649,26 +649,26 @@ FROM
   t_0_PathTo_sn_step AS PathTo_sn_step
 WHERE
   ((SELECT
-    MIN(1) AS logica_value
+    MIN(1) AS synalog_value
   FROM
-    logica_test.PathTo_sn_full AS PathTo_sn_full
+    synalog_test.PathTo_sn_full AS PathTo_sn_full
   WHERE
     (PathTo_sn_full.source = PathTo_sn_step.source) AND
     (PathTo_sn_full.target = PathTo_sn_step.target) AND
     (PathTo_sn_full.path = PathTo_sn_step.path)) IS NULL)
 GROUP BY 1, 2, 3;
 
-INSERT INTO logica_test.PathTo_sn_full SELECT * FROM logica_test.PathTo_sn_new;
+INSERT INTO synalog_test.PathTo_sn_full SELECT * FROM synalog_test.PathTo_sn_new;
 
-DROP TABLE IF EXISTS logica_test.PathTo_sn_delta;
-CREATE TABLE logica_test.PathTo_sn_delta AS WITH t_1_PathTo_MultBodyAggAux_f1 AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_test.PathTo_sn_delta;
+CREATE TABLE synalog_test.PathTo_sn_delta AS WITH t_1_PathTo_MultBodyAggAux_f1 AS (SELECT * FROM (
   
     SELECT
       Manages.manager_id AS source,
       Manages.employee_id AS target,
       (CONCAT((CONCAT(N.name, ' > ')), t_2_N.name)) AS path
     FROM
-      logica_test.Manages AS Manages, logica_test.N AS N, logica_test.N AS t_2_N
+      synalog_test.Manages AS Manages, synalog_test.N AS N, synalog_test.N AS t_2_N
     WHERE
       (N.person_id = Manages.manager_id) AND
       (t_2_N.person_id = Manages.employee_id)
@@ -679,7 +679,7 @@ CREATE TABLE logica_test.PathTo_sn_delta AS WITH t_1_PathTo_MultBodyAggAux_f1 AS
       t_3_Manages.employee_id AS target,
       (CONCAT((CONCAT(PathTo_sn_new.path, ' > ')), t_4_N.name)) AS path
     FROM
-      logica_test.PathTo_sn_new AS PathTo_sn_new, logica_test.Manages AS t_3_Manages, logica_test.N AS t_4_N
+      synalog_test.PathTo_sn_new AS PathTo_sn_new, synalog_test.Manages AS t_3_Manages, synalog_test.N AS t_4_N
     WHERE
       (t_3_Manages.manager_id = PathTo_sn_new.target) AND
       (t_4_N.person_id = t_3_Manages.employee_id)
@@ -700,22 +700,22 @@ FROM
   t_0_PathTo_sn_back_step AS PathTo_sn_back_step
 WHERE
   ((SELECT
-    MIN(1) AS logica_value
+    MIN(1) AS synalog_value
   FROM
-    logica_test.PathTo_sn_full AS PathTo_sn_full
+    synalog_test.PathTo_sn_full AS PathTo_sn_full
   WHERE
     (PathTo_sn_full.source = PathTo_sn_back_step.source) AND
     (PathTo_sn_full.target = PathTo_sn_back_step.target) AND
     (PathTo_sn_full.path = PathTo_sn_back_step.path)) IS NULL)
 GROUP BY 1, 2, 3;
 
-INSERT INTO logica_test.PathTo_sn_full SELECT * FROM logica_test.PathTo_sn_delta;
+INSERT INTO synalog_test.PathTo_sn_full SELECT * FROM synalog_test.PathTo_sn_delta;
 
 SELECT
   N.name AS target,
   PathTo_sn_full.path AS path
 FROM
-  logica_test.PathTo_sn_full AS PathTo_sn_full, logica_test.N AS N
+  synalog_test.PathTo_sn_full AS PathTo_sn_full, synalog_test.N AS N
 WHERE
   (2 = PathTo_sn_full.source) AND
   (N.person_id = PathTo_sn_full.target)

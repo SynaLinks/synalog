@@ -1,5 +1,5 @@
-DROP TABLE IF EXISTS logica_test.Line;
-CREATE TABLE logica_test.Line AS WITH t_1_Order AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_test.Line;
+CREATE TABLE synalog_test.Line AS WITH t_1_Order AS (SELECT * FROM (
   
     SELECT
       1 AS id,
@@ -108,7 +108,7 @@ WHERE
   (t_0_Order.state = "paid") AND
   (Price.item = t_0_Order.item);
 
--- Interacting with table logica_test.Line
+-- Interacting with table synalog_test.Line
 
 WITH t_1_Order AS (SELECT * FROM (
   
@@ -195,7 +195,7 @@ WITH t_1_Order AS (SELECT * FROM (
 SELECT
   SUM(Line.amount) AS r
 FROM
-  logica_test.Line AS Line, t_1_Order
+  synalog_test.Line AS Line, t_1_Order
 WHERE
   (Line.id = t_1_Order.id) AND
   ("cake" = t_1_Order.item);

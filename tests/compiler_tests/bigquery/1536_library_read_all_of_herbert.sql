@@ -166,7 +166,7 @@ FROM
   t_1_Member AS t_3_Member, t_5_Book AS t_4_Book
 WHERE
   ((SELECT
-    MIN(1) AS logica_value
+    MIN(1) AS synalog_value
   FROM
     t_6_Loan AS Loan
   WHERE
@@ -180,7 +180,7 @@ FROM
   t_1_Member AS t_0_Member
 WHERE
   ((SELECT
-    MIN(1) AS logica_value
+    MIN(1) AS synalog_value
   FROM
     t_2_Missed AS Missed
   WHERE

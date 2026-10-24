@@ -36,7 +36,7 @@ pub enum Edge {
     },
     /// Predicate argument relationship.
     PredicateArgument {
-        logica_value: Expression, // Should be PredicateAddressing
+        synalog_value: Expression, // Should be PredicateAddressing
         argument: Expression,     // Should be PredicateAddressing
         bounds: Bounds,
     },
@@ -72,12 +72,12 @@ impl Edge {
 
     /// Create a predicate argument edge.
     pub fn predicate_argument(
-        logica_value: Expression,
+        synalog_value: Expression,
         argument: Expression,
         bounds: Bounds,
     ) -> Self {
         Edge::PredicateArgument {
-            logica_value,
+            synalog_value,
             argument,
             bounds,
         }
@@ -100,10 +100,10 @@ impl Edge {
             Edge::EqualityOfElement { list, element, .. } => (list, element),
             Edge::FieldBelonging { parent, field, .. } => (parent, field),
             Edge::PredicateArgument {
-                logica_value,
+                synalog_value,
                 argument,
                 ..
-            } => (logica_value, argument),
+            } => (synalog_value, argument),
         }
     }
 
@@ -114,10 +114,10 @@ impl Edge {
             Edge::EqualityOfElement { list, element, .. } => (list, element),
             Edge::FieldBelonging { parent, field, .. } => (parent, field),
             Edge::PredicateArgument {
-                logica_value,
+                synalog_value,
                 argument,
                 ..
-            } => (logica_value, argument),
+            } => (synalog_value, argument),
         }
     }
 }
@@ -166,12 +166,12 @@ impl PartialEq for Edge {
             ) => p1 == p2 && f1 == f2 && b1 == b2,
             (
                 Edge::PredicateArgument {
-                    logica_value: lv1,
+                    synalog_value: lv1,
                     argument: a1,
                     bounds: b1,
                 },
                 Edge::PredicateArgument {
-                    logica_value: lv2,
+                    synalog_value: lv2,
                     argument: a2,
                     bounds: b2,
                 },

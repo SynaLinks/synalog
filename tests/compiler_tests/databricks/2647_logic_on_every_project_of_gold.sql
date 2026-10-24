@@ -31,7 +31,7 @@ FROM
   t_0_Person AS t_2_Person, t_3_Proj AS Proj
 WHERE
   ((SELECT
-    MIN(1) AS logica_value
+    MIN(1) AS synalog_value
   FROM
     t_4_A AS A
   WHERE
@@ -44,7 +44,7 @@ FROM
   t_0_Person AS Person
 WHERE
   ((SELECT
-    MIN(1) AS logica_value
+    MIN(1) AS synalog_value
   FROM
     t_1_Missing AS Missing
   WHERE

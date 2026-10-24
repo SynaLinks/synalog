@@ -1,5 +1,5 @@
-DROP TABLE IF EXISTS logica_test.Spend;
-CREATE TABLE logica_test.Spend AS WITH t_1_Order AS (SELECT * FROM VALUES
+DROP TABLE IF EXISTS synalog_test.Spend;
+CREATE TABLE synalog_test.Spend AS WITH t_1_Order AS (SELECT * FROM VALUES
   (1, "ann", "tea", 3, "paid"),
   (2, "bob", "cake", 1, "paid"),
   (3, "ann", "cake", 2, "refunded"),
@@ -26,10 +26,10 @@ WHERE
   (Price.item = t_0_Order.item)
 GROUP BY 1;
 
--- Interacting with table logica_test.Spend
+-- Interacting with table synalog_test.Spend
 
 SELECT
   Spend.who AS who,
   Spend.total AS total
 FROM
-  logica_test.Spend AS Spend ORDER BY total desc, who NULLS LAST LIMIT 2;
+  synalog_test.Spend AS Spend ORDER BY total desc, who NULLS LAST LIMIT 2;

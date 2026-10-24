@@ -1,7 +1,7 @@
 -- Initializing DuckDB environment.
-create schema if not exists logica_home;
+create schema if not exists synalog_home;
 -- Empty record, has to have a field by DuckDB syntax.
-drop type if exists logicarecord893574736 cascade; create type logicarecord893574736 as struct(nirvana numeric);
+drop type if exists synalogrecord893574736 cascade; create type synalogrecord893574736 as struct(nirvana numeric);
 create sequence if not exists eternal_logical_sequence;
 
 WITH t_0_Sales AS (SELECT * FROM (
@@ -27,11 +27,11 @@ WITH t_0_Sales AS (SELECT * FROM (
   
 ) AS UNUSED_TABLE_NAME  ),
 t_1_AvgSale AS (SELECT
-  SUM(t_2_Sales.amount) AS logica_value
+  SUM(t_2_Sales.amount) AS synalog_value
 FROM
   t_0_Sales AS t_2_Sales),
 t_3_CountSales AS (SELECT
-  SUM(1) AS logica_value
+  SUM(1) AS synalog_value
 FROM
   t_0_Sales AS t_4_Sales)
 SELECT
@@ -40,4 +40,4 @@ SELECT
 FROM
   t_0_Sales AS Sales, t_1_AvgSale AS AvgSale, t_3_CountSales AS CountSales
 WHERE
-  (Sales.amount > ((AvgSale.logica_value) / NULLIF(CountSales.logica_value, 0))) ORDER BY product;
+  (Sales.amount > ((AvgSale.synalog_value) / NULLIF(CountSales.synalog_value, 0))) ORDER BY product;

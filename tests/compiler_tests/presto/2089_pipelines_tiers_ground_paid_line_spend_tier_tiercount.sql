@@ -1,5 +1,5 @@
-DROP TABLE IF EXISTS logica_test.Paid;
-CREATE TABLE logica_test.Paid AS WITH t_1_Order AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_test.Paid;
+CREATE TABLE synalog_test.Paid AS WITH t_1_Order AS (SELECT * FROM (
   
     SELECT
       1 AS id,
@@ -91,10 +91,10 @@ FROM
 WHERE
   (t_0_Order.state = 'paid');
 
--- Interacting with table logica_test.Paid
+-- Interacting with table synalog_test.Paid
 
-DROP TABLE IF EXISTS logica_test.Line;
-CREATE TABLE logica_test.Line AS WITH t_0_Price AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_test.Line;
+CREATE TABLE synalog_test.Line AS WITH t_0_Price AS (SELECT * FROM (
   
     SELECT
       'tea' AS item,
@@ -116,43 +116,43 @@ SELECT
   Paid.who AS who,
   ((Paid.n) * (Price.p)) AS amount
 FROM
-  logica_test.Paid AS Paid, t_0_Price AS Price
+  synalog_test.Paid AS Paid, t_0_Price AS Price
 WHERE
   (Price.item = Paid.item);
 
--- Interacting with table logica_test.Line
+-- Interacting with table synalog_test.Line
 
-DROP TABLE IF EXISTS logica_test.Spend;
-CREATE TABLE logica_test.Spend AS SELECT
+DROP TABLE IF EXISTS synalog_test.Spend;
+CREATE TABLE synalog_test.Spend AS SELECT
   Line.who AS who,
   SUM(Line.amount) AS total
 FROM
-  logica_test.Line AS Line
+  synalog_test.Line AS Line
 GROUP BY 1;
 
--- Interacting with table logica_test.Spend
+-- Interacting with table synalog_test.Spend
 
-DROP TABLE IF EXISTS logica_test.Tier;
-CREATE TABLE logica_test.Tier AS SELECT
+DROP TABLE IF EXISTS synalog_test.Tier;
+CREATE TABLE synalog_test.Tier AS SELECT
   Spend.who AS who,
   CASE WHEN (Spend.total >= 40) THEN 'gold' WHEN (Spend.total >= 15) THEN 'silver' ELSE 'bronze' END AS tier
 FROM
-  logica_test.Spend AS Spend;
+  synalog_test.Spend AS Spend;
 
--- Interacting with table logica_test.Tier
+-- Interacting with table synalog_test.Tier
 
-DROP TABLE IF EXISTS logica_test.TierCount;
-CREATE TABLE logica_test.TierCount AS SELECT
+DROP TABLE IF EXISTS synalog_test.TierCount;
+CREATE TABLE synalog_test.TierCount AS SELECT
   Tier.tier AS tier,
   SUM(1) AS n
 FROM
-  logica_test.Tier AS Tier
+  synalog_test.Tier AS Tier
 GROUP BY 1;
 
--- Interacting with table logica_test.TierCount
+-- Interacting with table synalog_test.TierCount
 
 SELECT
   TierCount.tier AS tier,
   TierCount.n AS n
 FROM
-  logica_test.TierCount AS TierCount ORDER BY tier, n;
+  synalog_test.TierCount AS TierCount ORDER BY tier, n;

@@ -73,7 +73,7 @@
         "record": {
           "field_value": [
             {
-              "field": "logica_value",
+              "field": "synalog_value",
               "value": {
                 "aggregation": {
                   "expression": {
@@ -250,7 +250,7 @@
         "record": {
           "field_value": [
             {
-              "field": "logica_value",
+              "field": "synalog_value",
               "value": {
                 "aggregation": {
                   "expression": {

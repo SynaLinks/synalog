@@ -24,7 +24,9 @@ fn verus_proofs_hold() {
     };
     // Cargo would skip a crate it built already, and Verus with it.
     cargo(&["clean", "-p", "synalog-verified"]);
-    let output = cargo(&["verus", "verify"]);
+    // `focus` verifies this crate only, not the pre-verified vstd dependency
+    // (re-verifying vstd is slow and has crashed some CI runners).
+    let output = cargo(&["verus", "focus"]);
     let log = format!("{}{}", String::from_utf8_lossy(&output.stdout), String::from_utf8_lossy(&output.stderr));
     assert!(
         output.status.success(),

@@ -80,7 +80,7 @@ t_2_U AS (SELECT * FROM (
 SELECT
   t_0_U.u AS u,
   COALESCE((SELECT
-  MIN(MagicalEntangle(false, x_9.value)) AS logica_value
+  MIN(MagicalEntangle(false, x_9.value)) AS synalog_value
 FROM
   t_1_F AS F, JSON_EACH(JSON_ARRAY(0)) as x_9
 WHERE

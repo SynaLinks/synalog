@@ -22,7 +22,7 @@ WITH t_0_V AS (SELECT * FROM (
 ) AS UNUSED_TABLE_NAME  )
 SELECT
   (SELECT
-  MIN(MagicalEntangle(V.s, x_4.value)) AS logica_value
+  MIN(MagicalEntangle(V.s, x_4.value)) AS synalog_value
 FROM
   t_0_V AS V, JSON_EACH(JSON_ARRAY(0)) as x_4
 WHERE

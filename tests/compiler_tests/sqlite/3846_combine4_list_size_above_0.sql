@@ -63,7 +63,7 @@ t_2_C AS (SELECT * FROM (
 SELECT
   t_0_C.c AS c,
   JSON_ARRAY_LENGTH((SELECT
-  (CASE WHEN COUNT(*) = 0 THEN NULL ELSE JSON_GROUP_ARRAY(MagicalEntangle(O.amt, x_6.value)) END) AS logica_value
+  (CASE WHEN COUNT(*) = 0 THEN NULL ELSE JSON_GROUP_ARRAY(MagicalEntangle(O.amt, x_6.value)) END) AS synalog_value
 FROM
   t_1_O AS O, JSON_EACH(JSON_ARRAY(0)) as x_6
 WHERE

@@ -1,5 +1,5 @@
-DROP TABLE IF EXISTS logica_test.P_sn_delta;
-CREATE TABLE logica_test.P_sn_delta AS WITH t_1_E AS (SELECT * FROM VALUES
+DROP TABLE IF EXISTS synalog_test.P_sn_delta;
+CREATE TABLE synalog_test.P_sn_delta AS WITH t_1_E AS (SELECT * FROM VALUES
   (1, 2),
   (2, 3),
   (3, 4)
@@ -20,21 +20,21 @@ FROM
   t_0_P_MultBodyAggAux_f2 AS P_MultBodyAggAux_f2
 GROUP BY 1, 2;
 
--- Interacting with table logica_test.P_sn_delta
+-- Interacting with table synalog_test.P_sn_delta
 
-DROP TABLE IF EXISTS logica_test.P_sn_t0;
-CREATE TABLE logica_test.P_sn_t0 AS SELECT
+DROP TABLE IF EXISTS synalog_test.P_sn_t0;
+CREATE TABLE synalog_test.P_sn_t0 AS SELECT
   P_sn_delta.a AS a,
   P_sn_delta.b AS b
 FROM
-  logica_test.P_sn_delta AS P_sn_delta
+  synalog_test.P_sn_delta AS P_sn_delta
 WHERE
   (1 = 0);
 
--- Interacting with table logica_test.P_sn_t0
+-- Interacting with table synalog_test.P_sn_t0
 
-DROP TABLE IF EXISTS logica_test.P_sn_t1;
-CREATE TABLE logica_test.P_sn_t1 AS WITH t_1_E AS (SELECT * FROM VALUES
+DROP TABLE IF EXISTS synalog_test.P_sn_t1;
+CREATE TABLE synalog_test.P_sn_t1 AS WITH t_1_E AS (SELECT * FROM VALUES
   (1, 2),
   (2, 3),
   (3, 4)
@@ -52,7 +52,7 @@ t_1_P_MultBodyAggAux_f3 AS (SELECT * FROM (
       P_sn_t0.a AS a,
       t_2_E.b AS b
     FROM
-      logica_test.P_sn_t0 AS P_sn_t0, t_1_E AS t_2_E
+      synalog_test.P_sn_t0 AS P_sn_t0, t_1_E AS t_2_E
     WHERE
       (t_2_E.a = P_sn_t0.b)
   
@@ -71,10 +71,10 @@ FROM
 WHERE
   (1 = 0);
 
--- Interacting with table logica_test.P_sn_t1
+-- Interacting with table synalog_test.P_sn_t1
 
-DROP TABLE IF EXISTS logica_test.P_sn_t2;
-CREATE TABLE logica_test.P_sn_t2 AS WITH t_1_E AS (SELECT * FROM VALUES
+DROP TABLE IF EXISTS synalog_test.P_sn_t2;
+CREATE TABLE synalog_test.P_sn_t2 AS WITH t_1_E AS (SELECT * FROM VALUES
   (1, 2),
   (2, 3),
   (3, 4)
@@ -92,7 +92,7 @@ t_1_P_MultBodyAggAux_f4 AS (SELECT * FROM (
       P_sn_t1.a AS a,
       t_2_E.b AS b
     FROM
-      logica_test.P_sn_t1 AS P_sn_t1, t_1_E AS t_2_E
+      synalog_test.P_sn_t1 AS P_sn_t1, t_1_E AS t_2_E
     WHERE
       (t_2_E.a = P_sn_t1.b)
   
@@ -111,10 +111,10 @@ FROM
 WHERE
   (1 = 0);
 
--- Interacting with table logica_test.P_sn_t2
+-- Interacting with table synalog_test.P_sn_t2
 
-DROP TABLE IF EXISTS logica_test.P_sn_t3;
-CREATE TABLE logica_test.P_sn_t3 AS WITH t_1_E AS (SELECT * FROM VALUES
+DROP TABLE IF EXISTS synalog_test.P_sn_t3;
+CREATE TABLE synalog_test.P_sn_t3 AS WITH t_1_E AS (SELECT * FROM VALUES
   (1, 2),
   (2, 3),
   (3, 4)
@@ -132,7 +132,7 @@ t_1_P_MultBodyAggAux_f5 AS (SELECT * FROM (
       P_sn_t2.a AS a,
       t_2_E.b AS b
     FROM
-      logica_test.P_sn_t2 AS P_sn_t2, t_1_E AS t_2_E
+      synalog_test.P_sn_t2 AS P_sn_t2, t_1_E AS t_2_E
     WHERE
       (t_2_E.a = P_sn_t2.b)
   
@@ -151,10 +151,10 @@ FROM
 WHERE
   (1 = 0);
 
--- Interacting with table logica_test.P_sn_t3
+-- Interacting with table synalog_test.P_sn_t3
 
-DROP TABLE IF EXISTS logica_test.P_sn_t4;
-CREATE TABLE logica_test.P_sn_t4 AS WITH t_1_E AS (SELECT * FROM VALUES
+DROP TABLE IF EXISTS synalog_test.P_sn_t4;
+CREATE TABLE synalog_test.P_sn_t4 AS WITH t_1_E AS (SELECT * FROM VALUES
   (1, 2),
   (2, 3),
   (3, 4)
@@ -172,7 +172,7 @@ t_1_P_MultBodyAggAux_f6 AS (SELECT * FROM (
       P_sn_t3.a AS a,
       t_2_E.b AS b
     FROM
-      logica_test.P_sn_t3 AS P_sn_t3, t_1_E AS t_2_E
+      synalog_test.P_sn_t3 AS P_sn_t3, t_1_E AS t_2_E
     WHERE
       (t_2_E.a = P_sn_t3.b)
   
@@ -191,10 +191,10 @@ FROM
 WHERE
   (1 = 0);
 
--- Interacting with table logica_test.P_sn_t4
+-- Interacting with table synalog_test.P_sn_t4
 
-DROP TABLE IF EXISTS logica_test.P_sn_t5;
-CREATE TABLE logica_test.P_sn_t5 AS WITH t_1_E AS (SELECT * FROM VALUES
+DROP TABLE IF EXISTS synalog_test.P_sn_t5;
+CREATE TABLE synalog_test.P_sn_t5 AS WITH t_1_E AS (SELECT * FROM VALUES
   (1, 2),
   (2, 3),
   (3, 4)
@@ -212,7 +212,7 @@ t_1_P_MultBodyAggAux_f7 AS (SELECT * FROM (
       P_sn_t4.a AS a,
       t_2_E.b AS b
     FROM
-      logica_test.P_sn_t4 AS P_sn_t4, t_1_E AS t_2_E
+      synalog_test.P_sn_t4 AS P_sn_t4, t_1_E AS t_2_E
     WHERE
       (t_2_E.a = P_sn_t4.b)
   
@@ -231,58 +231,58 @@ FROM
 WHERE
   (1 = 0);
 
--- Interacting with table logica_test.P_sn_t5
+-- Interacting with table synalog_test.P_sn_t5
 
-DROP TABLE IF EXISTS logica_test.P_sn_full;
-CREATE TABLE logica_test.P_sn_full AS SELECT * FROM (
+DROP TABLE IF EXISTS synalog_test.P_sn_full;
+CREATE TABLE synalog_test.P_sn_full AS SELECT * FROM (
   
     SELECT
       P_sn_delta.a AS a,
       P_sn_delta.b AS b
     FROM
-      logica_test.P_sn_delta AS P_sn_delta
+      synalog_test.P_sn_delta AS P_sn_delta
    UNION ALL
   
     SELECT
       P_sn_t1.a AS a,
       P_sn_t1.b AS b
     FROM
-      logica_test.P_sn_t1 AS P_sn_t1
+      synalog_test.P_sn_t1 AS P_sn_t1
    UNION ALL
   
     SELECT
       P_sn_t2.a AS a,
       P_sn_t2.b AS b
     FROM
-      logica_test.P_sn_t2 AS P_sn_t2
+      synalog_test.P_sn_t2 AS P_sn_t2
    UNION ALL
   
     SELECT
       P_sn_t3.a AS a,
       P_sn_t3.b AS b
     FROM
-      logica_test.P_sn_t3 AS P_sn_t3
+      synalog_test.P_sn_t3 AS P_sn_t3
    UNION ALL
   
     SELECT
       P_sn_t4.a AS a,
       P_sn_t4.b AS b
     FROM
-      logica_test.P_sn_t4 AS P_sn_t4
+      synalog_test.P_sn_t4 AS P_sn_t4
    UNION ALL
   
     SELECT
       P_sn_t5.a AS a,
       P_sn_t5.b AS b
     FROM
-      logica_test.P_sn_t5 AS P_sn_t5
+      synalog_test.P_sn_t5 AS P_sn_t5
   
 ) AS UNUSED_TABLE_NAME  ;
 
--- Interacting with table logica_test.P_sn_full
+-- Interacting with table synalog_test.P_sn_full
 
-DROP TABLE IF EXISTS logica_test.P_sn_new;
-CREATE TABLE logica_test.P_sn_new AS WITH t_1_E AS (SELECT * FROM VALUES
+DROP TABLE IF EXISTS synalog_test.P_sn_new;
+CREATE TABLE synalog_test.P_sn_new AS WITH t_1_E AS (SELECT * FROM VALUES
   (1, 2),
   (2, 3),
   (3, 4)
@@ -300,7 +300,7 @@ t_1_P_MultBodyAggAux_f8 AS (SELECT * FROM (
       P_sn_delta.a AS a,
       t_2_E.b AS b
     FROM
-      logica_test.P_sn_delta AS P_sn_delta, t_1_E AS t_2_E
+      synalog_test.P_sn_delta AS P_sn_delta, t_1_E AS t_2_E
     WHERE
       (t_2_E.a = P_sn_delta.b)
   
@@ -318,18 +318,18 @@ FROM
   t_0_P_sn_step AS P_sn_step
 WHERE
   ((SELECT
-    MIN(1) AS logica_value
+    MIN(1) AS synalog_value
   FROM
-    logica_test.P_sn_full AS P_sn_full
+    synalog_test.P_sn_full AS P_sn_full
   WHERE
     (P_sn_full.a = P_sn_step.a) AND
     (P_sn_full.b = P_sn_step.b)) IS NULL)
 GROUP BY 1, 2;
 
-INSERT INTO logica_test.P_sn_full SELECT * FROM logica_test.P_sn_new;
+INSERT INTO synalog_test.P_sn_full SELECT * FROM synalog_test.P_sn_new;
 
-DROP TABLE IF EXISTS logica_test.P_sn_delta;
-CREATE TABLE logica_test.P_sn_delta AS WITH t_1_E AS (SELECT * FROM VALUES
+DROP TABLE IF EXISTS synalog_test.P_sn_delta;
+CREATE TABLE synalog_test.P_sn_delta AS WITH t_1_E AS (SELECT * FROM VALUES
   (1, 2),
   (2, 3),
   (3, 4)
@@ -347,7 +347,7 @@ t_1_P_MultBodyAggAux_f1 AS (SELECT * FROM (
       P_sn_new.a AS a,
       t_2_E.b AS b
     FROM
-      logica_test.P_sn_new AS P_sn_new, t_1_E AS t_2_E
+      synalog_test.P_sn_new AS P_sn_new, t_1_E AS t_2_E
     WHERE
       (t_2_E.a = P_sn_new.b)
   
@@ -365,18 +365,18 @@ FROM
   t_0_P_sn_back_step AS P_sn_back_step
 WHERE
   ((SELECT
-    MIN(1) AS logica_value
+    MIN(1) AS synalog_value
   FROM
-    logica_test.P_sn_full AS P_sn_full
+    synalog_test.P_sn_full AS P_sn_full
   WHERE
     (P_sn_full.a = P_sn_back_step.a) AND
     (P_sn_full.b = P_sn_back_step.b)) IS NULL)
 GROUP BY 1, 2;
 
-INSERT INTO logica_test.P_sn_full SELECT * FROM logica_test.P_sn_delta;
+INSERT INTO synalog_test.P_sn_full SELECT * FROM synalog_test.P_sn_delta;
 
-DROP TABLE IF EXISTS logica_test.P_sn_new;
-CREATE TABLE logica_test.P_sn_new AS WITH t_1_E AS (SELECT * FROM VALUES
+DROP TABLE IF EXISTS synalog_test.P_sn_new;
+CREATE TABLE synalog_test.P_sn_new AS WITH t_1_E AS (SELECT * FROM VALUES
   (1, 2),
   (2, 3),
   (3, 4)
@@ -394,7 +394,7 @@ t_1_P_MultBodyAggAux_f8 AS (SELECT * FROM (
       P_sn_delta.a AS a,
       t_2_E.b AS b
     FROM
-      logica_test.P_sn_delta AS P_sn_delta, t_1_E AS t_2_E
+      synalog_test.P_sn_delta AS P_sn_delta, t_1_E AS t_2_E
     WHERE
       (t_2_E.a = P_sn_delta.b)
   
@@ -412,18 +412,18 @@ FROM
   t_0_P_sn_step AS P_sn_step
 WHERE
   ((SELECT
-    MIN(1) AS logica_value
+    MIN(1) AS synalog_value
   FROM
-    logica_test.P_sn_full AS P_sn_full
+    synalog_test.P_sn_full AS P_sn_full
   WHERE
     (P_sn_full.a = P_sn_step.a) AND
     (P_sn_full.b = P_sn_step.b)) IS NULL)
 GROUP BY 1, 2;
 
-INSERT INTO logica_test.P_sn_full SELECT * FROM logica_test.P_sn_new;
+INSERT INTO synalog_test.P_sn_full SELECT * FROM synalog_test.P_sn_new;
 
-DROP TABLE IF EXISTS logica_test.P_sn_delta;
-CREATE TABLE logica_test.P_sn_delta AS WITH t_1_E AS (SELECT * FROM VALUES
+DROP TABLE IF EXISTS synalog_test.P_sn_delta;
+CREATE TABLE synalog_test.P_sn_delta AS WITH t_1_E AS (SELECT * FROM VALUES
   (1, 2),
   (2, 3),
   (3, 4)
@@ -441,7 +441,7 @@ t_1_P_MultBodyAggAux_f1 AS (SELECT * FROM (
       P_sn_new.a AS a,
       t_2_E.b AS b
     FROM
-      logica_test.P_sn_new AS P_sn_new, t_1_E AS t_2_E
+      synalog_test.P_sn_new AS P_sn_new, t_1_E AS t_2_E
     WHERE
       (t_2_E.a = P_sn_new.b)
   
@@ -459,18 +459,18 @@ FROM
   t_0_P_sn_back_step AS P_sn_back_step
 WHERE
   ((SELECT
-    MIN(1) AS logica_value
+    MIN(1) AS synalog_value
   FROM
-    logica_test.P_sn_full AS P_sn_full
+    synalog_test.P_sn_full AS P_sn_full
   WHERE
     (P_sn_full.a = P_sn_back_step.a) AND
     (P_sn_full.b = P_sn_back_step.b)) IS NULL)
 GROUP BY 1, 2;
 
-INSERT INTO logica_test.P_sn_full SELECT * FROM logica_test.P_sn_delta;
+INSERT INTO synalog_test.P_sn_full SELECT * FROM synalog_test.P_sn_delta;
 
-DROP TABLE IF EXISTS logica_test.P_sn_new;
-CREATE TABLE logica_test.P_sn_new AS WITH t_1_E AS (SELECT * FROM VALUES
+DROP TABLE IF EXISTS synalog_test.P_sn_new;
+CREATE TABLE synalog_test.P_sn_new AS WITH t_1_E AS (SELECT * FROM VALUES
   (1, 2),
   (2, 3),
   (3, 4)
@@ -488,7 +488,7 @@ t_1_P_MultBodyAggAux_f8 AS (SELECT * FROM (
       P_sn_delta.a AS a,
       t_2_E.b AS b
     FROM
-      logica_test.P_sn_delta AS P_sn_delta, t_1_E AS t_2_E
+      synalog_test.P_sn_delta AS P_sn_delta, t_1_E AS t_2_E
     WHERE
       (t_2_E.a = P_sn_delta.b)
   
@@ -506,18 +506,18 @@ FROM
   t_0_P_sn_step AS P_sn_step
 WHERE
   ((SELECT
-    MIN(1) AS logica_value
+    MIN(1) AS synalog_value
   FROM
-    logica_test.P_sn_full AS P_sn_full
+    synalog_test.P_sn_full AS P_sn_full
   WHERE
     (P_sn_full.a = P_sn_step.a) AND
     (P_sn_full.b = P_sn_step.b)) IS NULL)
 GROUP BY 1, 2;
 
-INSERT INTO logica_test.P_sn_full SELECT * FROM logica_test.P_sn_new;
+INSERT INTO synalog_test.P_sn_full SELECT * FROM synalog_test.P_sn_new;
 
-DROP TABLE IF EXISTS logica_test.P_sn_delta;
-CREATE TABLE logica_test.P_sn_delta AS WITH t_1_E AS (SELECT * FROM VALUES
+DROP TABLE IF EXISTS synalog_test.P_sn_delta;
+CREATE TABLE synalog_test.P_sn_delta AS WITH t_1_E AS (SELECT * FROM VALUES
   (1, 2),
   (2, 3),
   (3, 4)
@@ -535,7 +535,7 @@ t_1_P_MultBodyAggAux_f1 AS (SELECT * FROM (
       P_sn_new.a AS a,
       t_2_E.b AS b
     FROM
-      logica_test.P_sn_new AS P_sn_new, t_1_E AS t_2_E
+      synalog_test.P_sn_new AS P_sn_new, t_1_E AS t_2_E
     WHERE
       (t_2_E.a = P_sn_new.b)
   
@@ -553,18 +553,18 @@ FROM
   t_0_P_sn_back_step AS P_sn_back_step
 WHERE
   ((SELECT
-    MIN(1) AS logica_value
+    MIN(1) AS synalog_value
   FROM
-    logica_test.P_sn_full AS P_sn_full
+    synalog_test.P_sn_full AS P_sn_full
   WHERE
     (P_sn_full.a = P_sn_back_step.a) AND
     (P_sn_full.b = P_sn_back_step.b)) IS NULL)
 GROUP BY 1, 2;
 
-INSERT INTO logica_test.P_sn_full SELECT * FROM logica_test.P_sn_delta;
+INSERT INTO synalog_test.P_sn_full SELECT * FROM synalog_test.P_sn_delta;
 
-DROP TABLE IF EXISTS logica_test.P_sn_new;
-CREATE TABLE logica_test.P_sn_new AS WITH t_1_E AS (SELECT * FROM VALUES
+DROP TABLE IF EXISTS synalog_test.P_sn_new;
+CREATE TABLE synalog_test.P_sn_new AS WITH t_1_E AS (SELECT * FROM VALUES
   (1, 2),
   (2, 3),
   (3, 4)
@@ -582,7 +582,7 @@ t_1_P_MultBodyAggAux_f8 AS (SELECT * FROM (
       P_sn_delta.a AS a,
       t_2_E.b AS b
     FROM
-      logica_test.P_sn_delta AS P_sn_delta, t_1_E AS t_2_E
+      synalog_test.P_sn_delta AS P_sn_delta, t_1_E AS t_2_E
     WHERE
       (t_2_E.a = P_sn_delta.b)
   
@@ -600,18 +600,18 @@ FROM
   t_0_P_sn_step AS P_sn_step
 WHERE
   ((SELECT
-    MIN(1) AS logica_value
+    MIN(1) AS synalog_value
   FROM
-    logica_test.P_sn_full AS P_sn_full
+    synalog_test.P_sn_full AS P_sn_full
   WHERE
     (P_sn_full.a = P_sn_step.a) AND
     (P_sn_full.b = P_sn_step.b)) IS NULL)
 GROUP BY 1, 2;
 
-INSERT INTO logica_test.P_sn_full SELECT * FROM logica_test.P_sn_new;
+INSERT INTO synalog_test.P_sn_full SELECT * FROM synalog_test.P_sn_new;
 
-DROP TABLE IF EXISTS logica_test.P_sn_delta;
-CREATE TABLE logica_test.P_sn_delta AS WITH t_1_E AS (SELECT * FROM VALUES
+DROP TABLE IF EXISTS synalog_test.P_sn_delta;
+CREATE TABLE synalog_test.P_sn_delta AS WITH t_1_E AS (SELECT * FROM VALUES
   (1, 2),
   (2, 3),
   (3, 4)
@@ -629,7 +629,7 @@ t_1_P_MultBodyAggAux_f1 AS (SELECT * FROM (
       P_sn_new.a AS a,
       t_2_E.b AS b
     FROM
-      logica_test.P_sn_new AS P_sn_new, t_1_E AS t_2_E
+      synalog_test.P_sn_new AS P_sn_new, t_1_E AS t_2_E
     WHERE
       (t_2_E.a = P_sn_new.b)
   
@@ -647,18 +647,18 @@ FROM
   t_0_P_sn_back_step AS P_sn_back_step
 WHERE
   ((SELECT
-    MIN(1) AS logica_value
+    MIN(1) AS synalog_value
   FROM
-    logica_test.P_sn_full AS P_sn_full
+    synalog_test.P_sn_full AS P_sn_full
   WHERE
     (P_sn_full.a = P_sn_back_step.a) AND
     (P_sn_full.b = P_sn_back_step.b)) IS NULL)
 GROUP BY 1, 2;
 
-INSERT INTO logica_test.P_sn_full SELECT * FROM logica_test.P_sn_delta;
+INSERT INTO synalog_test.P_sn_full SELECT * FROM synalog_test.P_sn_delta;
 
 SELECT
   P_sn_full.a AS a,
   P_sn_full.b AS b
 FROM
-  logica_test.P_sn_full AS P_sn_full ORDER BY a NULLS LAST, b NULLS LAST;
+  synalog_test.P_sn_full AS P_sn_full ORDER BY a NULLS LAST, b NULLS LAST;

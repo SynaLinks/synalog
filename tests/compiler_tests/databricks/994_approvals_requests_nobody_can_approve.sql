@@ -18,7 +18,7 @@ t_4_Effective_MultBodyAggAux AS (SELECT * FROM (
       t_2_ApproverOf AS t_5_ApproverOf
     WHERE
       ((SELECT
-        MIN(1) AS logica_value
+        MIN(1) AS synalog_value
       FROM
         (SELECT 'singleton' as s) as unused_singleton
       WHERE
@@ -46,7 +46,7 @@ FROM
   t_1_Requester AS t_0_Requester
 WHERE
   ((SELECT
-    MIN(1) AS logica_value
+    MIN(1) AS synalog_value
   FROM
     t_3_Effective AS Effective
   WHERE

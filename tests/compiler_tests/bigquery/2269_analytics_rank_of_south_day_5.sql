@@ -86,7 +86,7 @@ WITH t_1_S AS (SELECT * FROM (
 ) AS UNUSED_TABLE_NAME  )
 SELECT
   ((1) + (COALESCE((SELECT
-  SUM(1) AS logica_value
+  SUM(1) AS synalog_value
 FROM
   t_1_S AS t_0_S
 WHERE

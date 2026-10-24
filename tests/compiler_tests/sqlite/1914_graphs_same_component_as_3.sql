@@ -128,7 +128,7 @@ t_5_Conn_RecursiveCte AS (SELECT * FROM (
       SELECT
         U.a AS a,
         U.b AS b,
-        0 AS logica_step
+        0 AS synalog_step
       FROM
         t_6_U AS U
      UNION ALL
@@ -136,7 +136,7 @@ t_5_Conn_RecursiveCte AS (SELECT * FROM (
       SELECT
         t_12_U.a AS a,
         t_10_U.b AS b,
-        ((0) + (1)) AS logica_step
+        ((0) + (1)) AS synalog_step
       FROM
         t_6_U AS t_12_U, t_6_U AS t_10_U
       WHERE
@@ -148,7 +148,7 @@ t_5_Conn_RecursiveCte AS (SELECT * FROM (
       SELECT
         t_21_U.a AS a,
         t_17_U.b AS b,
-        ((((0) + (1))) + (1)) AS logica_step
+        ((((0) + (1))) + (1)) AS synalog_step
       FROM
         t_6_U AS t_21_U, t_6_U AS t_19_U, t_6_U AS t_17_U
       WHERE
@@ -162,7 +162,7 @@ t_5_Conn_RecursiveCte AS (SELECT * FROM (
       SELECT
         t_29_U.a AS a,
         t_23_U.b AS b,
-        ((((((0) + (1))) + (1))) + (1)) AS logica_step
+        ((((((0) + (1))) + (1))) + (1)) AS synalog_step
       FROM
         t_6_U AS t_29_U, t_6_U AS t_27_U, t_6_U AS t_25_U, t_6_U AS t_23_U
       WHERE
@@ -178,7 +178,7 @@ t_5_Conn_RecursiveCte AS (SELECT * FROM (
       SELECT
         t_39_U.a AS a,
         t_31_U.b AS b,
-        ((((((((0) + (1))) + (1))) + (1))) + (1)) AS logica_step
+        ((((((((0) + (1))) + (1))) + (1))) + (1)) AS synalog_step
       FROM
         t_6_U AS t_39_U, t_6_U AS t_37_U, t_6_U AS t_35_U, t_6_U AS t_33_U, t_6_U AS t_31_U
       WHERE
@@ -196,7 +196,7 @@ t_5_Conn_RecursiveCte AS (SELECT * FROM (
       SELECT
         t_51_U.a AS a,
         t_41_U.b AS b,
-        ((((((((((0) + (1))) + (1))) + (1))) + (1))) + (1)) AS logica_step
+        ((((((((((0) + (1))) + (1))) + (1))) + (1))) + (1)) AS synalog_step
       FROM
         t_6_U AS t_51_U, t_6_U AS t_49_U, t_6_U AS t_47_U, t_6_U AS t_45_U, t_6_U AS t_43_U, t_6_U AS t_41_U
       WHERE
@@ -218,11 +218,11 @@ UNION
 SELECT
   t_52_Conn_RecursiveCte.a AS a,
   t_53_U.b AS b,
-  ((t_52_Conn_RecursiveCte.logica_step) + (1)) AS logica_step
+  ((t_52_Conn_RecursiveCte.synalog_step) + (1)) AS synalog_step
 FROM
   t_5_Conn_RecursiveCte AS t_52_Conn_RecursiveCte, t_6_U AS t_53_U
 WHERE
-  (t_52_Conn_RecursiveCte.logica_step < 12) AND
+  (t_52_Conn_RecursiveCte.synalog_step < 12) AND
   (t_53_U.a = t_52_Conn_RecursiveCte.b)),
 t_4_Conn AS (SELECT
   Conn_RecursiveCte.a AS a,

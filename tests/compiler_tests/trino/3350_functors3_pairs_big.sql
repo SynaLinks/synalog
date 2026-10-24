@@ -1,5 +1,5 @@
-DROP TABLE IF EXISTS logica_test.F;
-CREATE TABLE logica_test.F AS WITH t_0_Sale AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_test.F;
+CREATE TABLE synalog_test.F AS WITH t_0_Sale AS (SELECT * FROM (
   
     SELECT
       1 AS id,
@@ -65,13 +65,13 @@ FROM
 WHERE
   (Sale.amount > 100);
 
--- Interacting with table logica_test.F
+-- Interacting with table synalog_test.F
 
 SELECT
   F.id AS a,
   t_0_F.id AS b
 FROM
-  logica_test.F AS F, logica_test.F AS t_0_F
+  synalog_test.F AS F, synalog_test.F AS t_0_F
 WHERE
   (F.id < t_0_F.id) AND
   (((F.amount) + (t_0_F.amount)) > 200) ORDER BY a, b;

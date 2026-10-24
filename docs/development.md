@@ -81,11 +81,11 @@ src/
   errors.rs               # Unified error types with help messages
   python.rs               # PyO3 bindings (the _synalog extension module)
   parser/
-    parse.rs              # Logica syntax -> JSON AST
+    parse.rs              # Synalog syntax -> JSON AST
     rewrite.rs            # AST rewrites (aggregation, multi-body)
     json.rs               # Custom JSON implementation
   compiler/
-    universe.rs           # LogicaProgram: AST -> SQL compilation
+    universe.rs           # SynalogProgram: AST -> SQL compilation
     annotations.rs        # @OrderBy, @Limit, @Recursive, etc.
     dialects.rs           # Engine-specific SQL generation
     expr_translate.rs     # Expression -> SQL translation

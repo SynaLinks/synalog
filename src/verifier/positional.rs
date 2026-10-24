@@ -18,7 +18,7 @@
 //!     *desugared* AST this check runs on — e.g. negation `~P(x:)` lowers to
 //!     `IsNull(Combine= ...)` and `Constraint(...)` carries a positional field —
 //!     none of which the user wrote positionally.
-//!   * Value / function / aggregation predicates, marked by a `logica_value`
+//!   * Value / function / aggregation predicates, marked by a `synalog_value`
 //!     field in the head (`F(x) = ...`, `Cost(d) Min= ...`). Their leading
 //!     positional arguments are function parameters or aggregation keys resolved
 //!     by the compiler, not schema columns — so both their heads and references
@@ -52,7 +52,7 @@ fn builtin_predicate_names() -> &'static HashSet<String> {
     })
 }
 
-/// True if a head `record` declares a `logica_value` field — the mark of a
+/// True if a head `record` declares a `synalog_value` field — the mark of a
 /// value / function / aggregation predicate (`F(x) = ...`, `Cost(d) Min= ...`).
 /// Such a predicate's leading positional arguments are function parameters or
 /// aggregation keys, not schema-matched columns.
@@ -62,7 +62,7 @@ fn record_defines_value(record: &Json) -> bool {
         .get("field_value")
         .map(|fvs| {
             fvs.as_array().iter().any(|fv| {
-                matches!(fv.as_object().get("field"), Some(f) if f.is_string() && f.as_str() == "logica_value")
+                matches!(fv.as_object().get("field"), Some(f) if f.is_string() && f.as_str() == "synalog_value")
             })
         })
         .unwrap_or(false)
@@ -142,7 +142,7 @@ fn collect_body_positional(node: &Json, value_preds: &HashSet<String>, out: &mut
 /// Flag rule heads and body predicate references that use positional arguments
 /// (one error per predicate name, mirroring the other name-based checks).
 pub fn check_positional(rules: &[&Json]) -> Vec<PositionalError> {
-    // Value/function/aggregation predicates (heads with a `logica_value` field):
+    // Value/function/aggregation predicates (heads with a `synalog_value` field):
     // their positional arguments are parameters/keys, not schema columns, so
     // both their heads and references to them are exempt.
     let value_preds: HashSet<String> = rules
@@ -177,7 +177,7 @@ pub fn check_positional(rules: &[&Json]) -> Vec<PositionalError> {
         }
 
         // Head: a plain relational predicate's column list must be named. Value
-        // / function predicates (`logica_value` in the head) are exempt.
+        // / function predicates (`synalog_value` in the head) are exempt.
         if let Some(record) = head.as_object().get("record") {
             if record_has_positional(record) && !record_defines_value(record) {
                 let name = head.as_object()["predicate_name"].as_str().to_string();

@@ -62,7 +62,7 @@ FROM
   t_0_Sale AS Sale
 WHERE
   ((SELECT
-    MIN(1) AS logica_value
+    MIN(1) AS synalog_value
   FROM
     t_0_Sale AS t_1_Sale
   WHERE

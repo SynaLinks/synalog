@@ -64,7 +64,7 @@ fn test_ground() {
     "#);
     let g = ann.ground("MyTable");
     assert!(g.is_some());
-    assert_eq!(g.unwrap().table_name, "logica_test.MyTable");
+    assert_eq!(g.unwrap().table_name, "synalog_test.MyTable");
 }
 
 #[test]
@@ -97,7 +97,7 @@ fn test_ground_with_alias() {
     let g = ann.ground("Pred");
     assert!(g.is_some());
     // A named table lives in Synalog's dataset too.
-    assert_eq!(g.unwrap().table_name, "logica_test.actual_table");
+    assert_eq!(g.unwrap().table_name, "synalog_test.actual_table");
 }
 
 // ── grounded_predicates ──
@@ -571,7 +571,7 @@ fn test_ground_returns_ground_info() {
     let ground = ann.ground("T");
     assert!(ground.is_some(), "Should have ground info");
     let g = ground.unwrap();
-    assert_eq!(g.table_name, "logica_test.actual_table");
+    assert_eq!(g.table_name, "synalog_test.actual_table");
 }
 
 // ── ground without alias ──
@@ -586,7 +586,7 @@ fn test_ground_no_alias() {
     let ground = ann.ground("T");
     assert!(ground.is_some(), "Should have ground info");
     let g = ground.unwrap();
-    assert_eq!(g.table_name, "logica_test.T");
+    assert_eq!(g.table_name, "synalog_test.T");
 }
 
 // ── limit_value ──

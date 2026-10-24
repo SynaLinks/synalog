@@ -30,7 +30,7 @@ FROM
   t_0_Day AS t_3_Day, t_5_Region AS Region
 WHERE
   ((SELECT
-    MIN(1) AS logica_value
+    MIN(1) AS synalog_value
   FROM
     t_1_S AS t_7_S
   WHERE
@@ -43,7 +43,7 @@ FROM
   t_0_Day AS Day
 WHERE
   ((SELECT
-    MIN(1) AS logica_value
+    MIN(1) AS synalog_value
   FROM
     t_2_Missing AS Missing
   WHERE

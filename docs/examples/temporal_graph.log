@@ -3,9 +3,9 @@ No errors found.
 
 $ synalog.compile('temporal_graph.l', 'MemberOf')
 -- Initializing DuckDB environment.
-create schema if not exists logica_home;
+create schema if not exists synalog_home;
 -- Empty record, has to have a field by DuckDB syntax.
-drop type if exists logicarecord893574736 cascade; create type logicarecord893574736 as struct(nirvana numeric);
+drop type if exists synalogrecord893574736 cascade; create type synalogrecord893574736 as struct(nirvana numeric);
 create sequence if not exists eternal_logical_sequence;
 
 WITH t_2_People AS (SELECT * FROM (
@@ -111,7 +111,7 @@ t_0_MemberOf_MultBodyAggAux AS (SELECT * FROM (
       t_1_Person AS t_9_Person, t_3_Team AS t_10_Team, t_5_Assignments AS t_11_Assignments
     WHERE
       ((SELECT
-        MIN((CASE WHEN x_50.unnested_pod = 0 THEN 1 ELSE NULL END)) AS logica_value
+        MIN((CASE WHEN x_50.unnested_pod = 0 THEN 1 ELSE NULL END)) AS synalog_value
       FROM
         t_6_NextChange AS t_14_NextChange, (select unnest([0]) as unnested_pod) as x_50
       WHERE
@@ -141,9 +141,9 @@ GROUP BY MemberOf_MultBodyAggAux.person_id, MemberOf_MultBodyAggAux.team_id, Mem
 
 $ synalog.compile('temporal_graph.l', 'ActiveMember')
 -- Initializing DuckDB environment.
-create schema if not exists logica_home;
+create schema if not exists synalog_home;
 -- Empty record, has to have a field by DuckDB syntax.
-drop type if exists logicarecord893574736 cascade; create type logicarecord893574736 as struct(nirvana numeric);
+drop type if exists synalogrecord893574736 cascade; create type synalogrecord893574736 as struct(nirvana numeric);
 create sequence if not exists eternal_logical_sequence;
 
 WITH t_4_People AS (SELECT * FROM (
@@ -249,7 +249,7 @@ t_1_MemberOf_MultBodyAggAux AS (SELECT * FROM (
       t_3_Person AS t_11_Person, t_5_Team AS t_12_Team, t_7_Assignments AS t_13_Assignments
     WHERE
       ((SELECT
-        MIN((CASE WHEN x_60.unnested_pod = 0 THEN 1 ELSE NULL END)) AS logica_value
+        MIN((CASE WHEN x_60.unnested_pod = 0 THEN 1 ELSE NULL END)) AS synalog_value
       FROM
         t_8_NextChange AS t_16_NextChange, (select unnest([0]) as unnested_pod) as x_60
       WHERE
@@ -289,9 +289,9 @@ GROUP BY MemberOf.person_id, Person.name, MemberOf.team_id ORDER BY person_id;
 
 $ synalog.compile('temporal_graph.l', 'Colleague')
 -- Initializing DuckDB environment.
-create schema if not exists logica_home;
+create schema if not exists synalog_home;
 -- Empty record, has to have a field by DuckDB syntax.
-drop type if exists logicarecord893574736 cascade; create type logicarecord893574736 as struct(nirvana numeric);
+drop type if exists synalogrecord893574736 cascade; create type synalogrecord893574736 as struct(nirvana numeric);
 create sequence if not exists eternal_logical_sequence;
 
 WITH t_4_People AS (SELECT * FROM (
@@ -397,7 +397,7 @@ t_2_MemberOf_MultBodyAggAux AS (SELECT * FROM (
       t_3_Person AS t_11_Person, t_5_Team AS t_12_Team, t_7_Assignments AS t_13_Assignments
     WHERE
       ((SELECT
-        MIN((CASE WHEN x_63.unnested_pod = 0 THEN 1 ELSE NULL END)) AS logica_value
+        MIN((CASE WHEN x_63.unnested_pod = 0 THEN 1 ELSE NULL END)) AS synalog_value
       FROM
         t_8_NextChange AS t_16_NextChange, (select unnest([0]) as unnested_pod) as x_63
       WHERE
@@ -438,9 +438,9 @@ GROUP BY MemberOf.person_id, t_0_MemberOf.person_id, MemberOf.team_id, CASE WHEN
 
 $ synalog.compile('temporal_graph.l', 'ReachedBy')
 -- Initializing DuckDB environment.
-create schema if not exists logica_home;
+create schema if not exists synalog_home;
 -- Empty record, has to have a field by DuckDB syntax.
-drop type if exists logicarecord893574736 cascade; create type logicarecord893574736 as struct(nirvana numeric);
+drop type if exists synalogrecord893574736 cascade; create type synalogrecord893574736 as struct(nirvana numeric);
 create sequence if not exists eternal_logical_sequence;
 
 WITH t_4_Teams AS (SELECT * FROM (

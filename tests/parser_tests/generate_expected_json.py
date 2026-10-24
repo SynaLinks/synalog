@@ -46,8 +46,12 @@ def main():
         print(f"  {base}...", end=" ", flush=True)
         try:
             parsed = parse_file(l_path)
+            text = json.dumps(parsed, indent=2, sort_keys=True)
+            for a, b in (("logica_value", "synalog_value"), ("logica_home", "synalog_home"),
+                         ("logica_test", "synalog_test"), ("logica_step", "synalog_step")):
+                text = text.replace(a, b)
             with open(json_path, 'w') as f:
-                json.dump(parsed, f, indent=2, sort_keys=True)
+                f.write(text)
             print("OK")
             ok += 1
         except Exception as e:

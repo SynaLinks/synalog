@@ -12,7 +12,7 @@ AS UNUSED_TABLE_NAME(id, client, src, dst, kg, carrier))
 SELECT
   Ship.id AS id,
   transform(array(((100) * (((Ship.kg) / NULLIF((SELECT
-  SUM(t_0_Ship.kg) AS logica_value
+  SUM(t_0_Ship.kg) AS synalog_value
 FROM
   t_1_Ship AS t_0_Ship
 WHERE

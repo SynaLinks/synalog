@@ -6,9 +6,9 @@
 //! Port of Python's `compiler/universe.py`.
 //!
 //! Contains:
-//! - `Logica` — Predicate execution accumulated state (defines, exports, dependency graph).
+//! - `Execution` — Predicate execution accumulated state (defines, exports, dependency graph).
 //! - `UniverseAnnotations` — Full annotation parsing (Preamble, AttachedDatabases, UDFs, etc.).
-//! - `LogicaProgram` — Representing a Logica program; produces SQL for predicates.
+//! - `SynalogProgram` — Representing a Synalog program; produces SQL for predicates.
 //! - `UniverseSubqueryTranslator` — Table/rule translation with grounding, WITH clauses, exports.
 //! - Helper functions: `format_sql`, `indent2`, `inject_structure`, `field_values_as_list`.
 
@@ -177,7 +177,7 @@ pub fn is_table_name(table: &str) -> bool {
 ///
 /// Stores DEFINE TABLE, EXPORT DATA, dependency edges, and universe annotations
 /// that accumulate during a single predicate's compilation.
-pub struct Logica {
+pub struct Execution {
     /// DEFINE TABLE statements.
     pub defines: Vec<String>,
     /// Combined defines and exports in order.
@@ -232,7 +232,7 @@ pub struct Logica {
 }
 
 /// Definition of an @Iteration block.
-/// One step of a plan (see `LogicaProgram::formatted_predicate_plan`).
+/// One step of a plan (see `SynalogProgram::formatted_predicate_plan`).
 #[derive(Debug, Clone, PartialEq)]
 pub enum PlanStep {
     /// The engine's setup (schema, types, functions): a script of its own.
@@ -245,6 +245,11 @@ pub enum PlanStep {
     /// returns 0.
     Loop { body: Vec<String>, repetitions: i64, changed: String },
 }
+
+/// Authorship and license banner prepended to every compiled query.
+const QUERY_HEADER: &str = "\
+-- Compiled by SynaLog — logic programming for AI agents (https://github.com/synalinks/synalog).\n\
+-- Copyright 2025-2026 Yoan Sallami (Synalinks Team). Licensed under the Apache License, Version 2.0.\n";
 
 /// Most repetitions a script writes out: past this, it would be huge.
 const MAX_SCRIPT_REPETITIONS: i64 = 1000;
@@ -277,7 +282,9 @@ pub fn script_of(plan: &[PlanStep]) -> CompileResult<String> {
         }
     }
     let last = statements.pop().unwrap_or_default();
-    let mut script = setup;
+    let mut script = String::from(QUERY_HEADER);
+    script.push('\n');
+    script.push_str(&setup);
     if !statements.is_empty() {
         script.push_str(&statements.join("\n\n"));
         script.push_str("\n\n");
@@ -297,15 +304,15 @@ pub struct IterationDef {
     pub accumulate: Option<String>,
 }
 
-impl Default for Logica {
+impl Default for Execution {
     fn default() -> Self {
         Self::new()
     }
 }
 
-impl Logica {
+impl Execution {
     pub fn new() -> Self {
-        Logica {
+        Execution {
             defines: Vec::new(),
             defines_and_exports: Vec::new(),
             table_to_defined_table_map: HashMap::new(),
@@ -509,11 +516,11 @@ fn emit_record_type(
 // LogicaProgram — full program compilation (Python's `class LogicaProgram`)
 // ---------------------------------------------------------------------------
 
-/// Representing a Logica program. Can produce SQL for predicates.
+/// Representing a Synalog program. Can produce SQL for predicates.
 ///
-/// This is the full-featured version matching Python's `LogicaProgram`,
+/// This is the full-featured version matching Python's `SynalogProgram`,
 /// including execution state, UDFs, grounding, exports, and flag substitution.
-pub struct LogicaProgram {
+pub struct SynalogProgram {
     /// Raw rules before functor expansion.
     pub raw_rules: Vec<Json>,
     /// Pre-parsed rules (after recursion unfolding, before Make).
@@ -540,7 +547,7 @@ pub struct LogicaProgram {
     /// Custom UDF CREATE FUNCTION SQL.
     pub custom_udf_definitions: IndexMap<String, String>,
     /// Execution state (set during `formatted_predicate_sql`).
-    pub execution: RefCell<Option<Logica>>,
+    pub execution: RefCell<Option<Execution>>,
     /// The column names of the program, lowercase, which table aliases avoid.
     pub column_names: HashSet<String>,
     /// The functions the program defines, which shadow built-ins of their name.
@@ -564,10 +571,10 @@ pub struct LogicaProgram {
     pub built_record_types: RefCell<IndexMap<String, Type>>,
 }
 
-impl LogicaProgram {
+impl SynalogProgram {
     /// Create a new program from parsed JSON output and user configuration.
     ///
-    /// Matches Python's `LogicaProgram.__init__`:
+    /// Matches Python's `SynalogProgram.__init__`:
     /// 1. Unfold recursion
     /// 2. Run @Make functors
     /// 3. Add library rules
@@ -716,7 +723,7 @@ impl LogicaProgram {
                 r.as_object().get("field_value").is_some_and(|fvs| {
                     fvs.as_array().iter().any(|fv| {
                         let f = &fv.as_object()["field"];
-                        f.is_string() && f.as_str() == "logica_value"
+                        f.is_string() && f.as_str() == "synalog_value"
                     })
                 })
             });
@@ -728,7 +735,7 @@ impl LogicaProgram {
         allocator.reserved_aliases = column_names.clone();
         allocator.defined_functions = defined_functions.clone();
 
-        Ok(LogicaProgram {
+        Ok(SynalogProgram {
             raw_rules: raw_rule_list,
             preparsed_rules: unfolded_rules.clone(),
             rules,
@@ -822,7 +829,7 @@ impl LogicaProgram {
         }
 
         // TODO: Implement proper type definition generation for DuckDB/PostgreSQL
-        // (typing preamble of `create type logicarecord...` definitions): requires
+        // (typing preamble of `create type synalogrecord...` definitions): requires
         // matching Python's type-name hash function and ordering. Not needed for
         // the compiler golden tests, which strip the preamble.
         let typing_preamble = String::new();
@@ -974,8 +981,8 @@ impl LogicaProgram {
 
     /// Initialize execution state for compiling a main predicate.
     /// Matches Python's `InitializeExecution`.
-    fn initialize_execution(&self, main_predicate: &str) -> CompileResult<Logica> {
-        let mut exec = Logica::new();
+    fn initialize_execution(&self, main_predicate: &str) -> CompileResult<Execution> {
+        let mut exec = Execution::new();
         exec.workflow_predicates_stack
             .push(main_predicate.to_string());
         exec.annotations = Some(self.annotations.clone());
@@ -1435,13 +1442,13 @@ impl LogicaProgram {
     /// PostgreSQL composite-type DDL for every record shape in the program.
     ///
     /// psql exposes named record fields only through declared composite types,
-    /// so each `ROW(…)::logicarecordNNN` literal emitted by `record_literal`
+    /// so each `ROW(…)::synalogrecordNNN` literal emitted by `record_literal`
     /// needs a matching `CREATE TYPE`. We scan every record node in the program
     /// (over-collecting head/argument records is harmless: the DDL is idempotent
     /// and unreferenced types are simply never used), then emit dependency types
     /// before the types that nest them. Names are content-addressed
     /// (`dialects::record_type_name`), so they line up with the casts without any
-    /// shared state. Emitted as single-line `DO $$ … logicarecord … END $$;`
+    /// shared state. Emitted as single-line `DO $$ … synalogrecord … END $$;`
     /// blocks, which the golden-test normalizer strips like the placeholder type.
     fn record_type_definitions(&self, dialect: &dyn Dialect, body_sql: &str) -> String {
         let mut types: IndexMap<String, Type> = IndexMap::new();
@@ -1662,7 +1669,7 @@ impl LogicaProgram {
     /// after the tables it reads, the iteration's loop after its first run, and
     /// anything reading the iteration after its loop. Without iterations, the
     /// order is the compiler's.
-    fn plan_statements(&self, exec: &Logica) -> CompileResult<Vec<PlanStep>> {
+    fn plan_statements(&self, exec: &Execution) -> CompileResult<Vec<PlanStep>> {
         let exports = &exec.table_to_export_map;
         let mut iterations: Vec<(String, IterationDef)> = self
             .annotations
@@ -2417,13 +2424,13 @@ impl LogicaProgram {
 }
 
 // ---------------------------------------------------------------------------
-// SubqueryTranslator impl for LogicaProgram
+// SubqueryTranslator impl for SynalogProgram
 // ---------------------------------------------------------------------------
 
-/// Subquery translator backed by a full `LogicaProgram`.
+/// Subquery translator backed by a full `SynalogProgram`.
 /// Matches Python's `SubqueryTranslator` class from universe.py.
 pub struct UniverseSubqueryTranslator<'a> {
-    pub program: &'a LogicaProgram,
+    pub program: &'a SynalogProgram,
 }
 
 impl<'a> SubqueryTranslator for UniverseSubqueryTranslator<'a> {
@@ -2548,7 +2555,7 @@ fn select_as_record(select: &IndexMap<String, Json>) -> Json {
     let mut field_values = Vec::new();
     for (field, expr) in select {
         // Skip internal value field (both modes)
-        if field == "logica_value" || field == "synalog_value" {
+        if field == "synalog_value" || field == "synalog_value" {
             continue;
         }
         field_values.push(Json::Object({

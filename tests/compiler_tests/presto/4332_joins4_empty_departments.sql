@@ -96,7 +96,7 @@ FROM
   t_1_D AS t_0_D
 WHERE
   ((SELECT
-    MIN(1) AS logica_value
+    MIN(1) AS synalog_value
   FROM
     t_2_E AS E
   WHERE

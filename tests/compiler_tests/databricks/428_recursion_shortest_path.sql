@@ -1,5 +1,5 @@
-DROP TABLE IF EXISTS logica_test.Dist_ifr0;
-CREATE TABLE logica_test.Dist_ifr0 AS WITH t_0_Dist_MultBodyAggAux_f1 AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_test.Dist_ifr0;
+CREATE TABLE synalog_test.Dist_ifr0 AS WITH t_0_Dist_MultBodyAggAux_f1 AS (SELECT * FROM (
   
     SELECT
       "a" AS n,
@@ -13,10 +13,10 @@ FROM
   t_0_Dist_MultBodyAggAux_f1 AS Dist_MultBodyAggAux_f1
 GROUP BY 1;
 
--- Interacting with table logica_test.Dist_ifr0
+-- Interacting with table synalog_test.Dist_ifr0
 
-DROP TABLE IF EXISTS logica_test.Dist_ifr1;
-CREATE TABLE logica_test.Dist_ifr1 AS WITH t_1_E AS (SELECT * FROM VALUES
+DROP TABLE IF EXISTS synalog_test.Dist_ifr1;
+CREATE TABLE synalog_test.Dist_ifr1 AS WITH t_1_E AS (SELECT * FROM VALUES
   ("a", "b"),
   ("b", "c"),
   ("a", "d"),
@@ -33,7 +33,7 @@ t_0_Dist_MultBodyAggAux_f2 AS (SELECT * FROM (
       E.b AS n,
       ((Dist_ifr0.d) + (1)) AS d
     FROM
-      logica_test.Dist_ifr0 AS Dist_ifr0, t_1_E AS E
+      synalog_test.Dist_ifr0 AS Dist_ifr0, t_1_E AS E
     WHERE
       (E.a = Dist_ifr0.n)
   
@@ -45,10 +45,10 @@ FROM
   t_0_Dist_MultBodyAggAux_f2 AS Dist_MultBodyAggAux_f2
 GROUP BY 1;
 
--- Interacting with table logica_test.Dist_ifr1
+-- Interacting with table synalog_test.Dist_ifr1
 
-DROP TABLE IF EXISTS logica_test.Dist_ifr2;
-CREATE TABLE logica_test.Dist_ifr2 AS WITH t_1_E AS (SELECT * FROM VALUES
+DROP TABLE IF EXISTS synalog_test.Dist_ifr2;
+CREATE TABLE synalog_test.Dist_ifr2 AS WITH t_1_E AS (SELECT * FROM VALUES
   ("a", "b"),
   ("b", "c"),
   ("a", "d"),
@@ -65,7 +65,7 @@ t_0_Dist_MultBodyAggAux_f3 AS (SELECT * FROM (
       E.b AS n,
       ((Dist_ifr1.d) + (1)) AS d
     FROM
-      logica_test.Dist_ifr1 AS Dist_ifr1, t_1_E AS E
+      synalog_test.Dist_ifr1 AS Dist_ifr1, t_1_E AS E
     WHERE
       (E.a = Dist_ifr1.n)
   
@@ -77,10 +77,10 @@ FROM
   t_0_Dist_MultBodyAggAux_f3 AS Dist_MultBodyAggAux_f3
 GROUP BY 1;
 
--- Interacting with table logica_test.Dist_ifr2
+-- Interacting with table synalog_test.Dist_ifr2
 
-DROP TABLE IF EXISTS logica_test.Dist_ifr1;
-CREATE TABLE logica_test.Dist_ifr1 AS WITH t_1_E AS (SELECT * FROM VALUES
+DROP TABLE IF EXISTS synalog_test.Dist_ifr1;
+CREATE TABLE synalog_test.Dist_ifr1 AS WITH t_1_E AS (SELECT * FROM VALUES
   ("a", "b"),
   ("b", "c"),
   ("a", "d"),
@@ -97,7 +97,7 @@ t_0_Dist_MultBodyAggAux_f4 AS (SELECT * FROM (
       E.b AS n,
       ((Dist_ifr2.d) + (1)) AS d
     FROM
-      logica_test.Dist_ifr2 AS Dist_ifr2, t_1_E AS E
+      synalog_test.Dist_ifr2 AS Dist_ifr2, t_1_E AS E
     WHERE
       (E.a = Dist_ifr2.n)
   
@@ -109,10 +109,10 @@ FROM
   t_0_Dist_MultBodyAggAux_f4 AS Dist_MultBodyAggAux_f4
 GROUP BY 1;
 
--- Interacting with table logica_test.Dist_ifr1
+-- Interacting with table synalog_test.Dist_ifr1
 
-DROP TABLE IF EXISTS logica_test.Dist_ifr2;
-CREATE TABLE logica_test.Dist_ifr2 AS WITH t_1_E AS (SELECT * FROM VALUES
+DROP TABLE IF EXISTS synalog_test.Dist_ifr2;
+CREATE TABLE synalog_test.Dist_ifr2 AS WITH t_1_E AS (SELECT * FROM VALUES
   ("a", "b"),
   ("b", "c"),
   ("a", "d"),
@@ -129,7 +129,7 @@ t_0_Dist_MultBodyAggAux_f3 AS (SELECT * FROM (
       E.b AS n,
       ((Dist_ifr1.d) + (1)) AS d
     FROM
-      logica_test.Dist_ifr1 AS Dist_ifr1, t_1_E AS E
+      synalog_test.Dist_ifr1 AS Dist_ifr1, t_1_E AS E
     WHERE
       (E.a = Dist_ifr1.n)
   
@@ -141,8 +141,8 @@ FROM
   t_0_Dist_MultBodyAggAux_f3 AS Dist_MultBodyAggAux_f3
 GROUP BY 1;
 
-DROP TABLE IF EXISTS logica_test.Dist_ifr1;
-CREATE TABLE logica_test.Dist_ifr1 AS WITH t_1_E AS (SELECT * FROM VALUES
+DROP TABLE IF EXISTS synalog_test.Dist_ifr1;
+CREATE TABLE synalog_test.Dist_ifr1 AS WITH t_1_E AS (SELECT * FROM VALUES
   ("a", "b"),
   ("b", "c"),
   ("a", "d"),
@@ -159,7 +159,7 @@ t_0_Dist_MultBodyAggAux_f4 AS (SELECT * FROM (
       E.b AS n,
       ((Dist_ifr2.d) + (1)) AS d
     FROM
-      logica_test.Dist_ifr2 AS Dist_ifr2, t_1_E AS E
+      synalog_test.Dist_ifr2 AS Dist_ifr2, t_1_E AS E
     WHERE
       (E.a = Dist_ifr2.n)
   
@@ -188,7 +188,7 @@ t_0_Dist_MultBodyAggAux_f5 AS (SELECT * FROM (
       E.b AS n,
       ((Dist_ifr3.d) + (1)) AS d
     FROM
-      logica_test.Dist_ifr1 AS Dist_ifr3, t_1_E AS E
+      synalog_test.Dist_ifr1 AS Dist_ifr3, t_1_E AS E
     WHERE
       (E.a = Dist_ifr3.n)
   

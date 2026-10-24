@@ -191,7 +191,7 @@ FROM
   t_1_After AS After
 WHERE
   ((SELECT
-    MIN(1) AS logica_value
+    MIN(1) AS synalog_value
   FROM
     t_29_IsSequel AS IsSequel
   WHERE

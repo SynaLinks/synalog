@@ -6,6 +6,6 @@ WITH t_0_V AS (SELECT * FROM VALUES
 AS UNUSED_TABLE_NAME(n, s))
 SELECT
   (SELECT
-  MAX(V.s) AS logica_value
+  MAX(V.s) AS synalog_value
 FROM
   t_0_V AS V) AS t;

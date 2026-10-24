@@ -17,7 +17,7 @@ AS UNUSED_TABLE_NAME(d, dn, city))
 SELECT
   t_0_D.dn AS dn,
   COALESCE((SELECT
-  SUM(1) AS logica_value
+  SUM(1) AS synalog_value
 FROM
   t_1_E AS E
 WHERE

@@ -114,7 +114,7 @@ FROM
 WHERE
   (Person.id < t_0_Person.id) AND
   ((SELECT
-    MIN(MagicalEntangle(1, x_12.value)) AS logica_value
+    MIN(MagicalEntangle(1, x_12.value)) AS synalog_value
   FROM
     t_4_A AS t_2_A, t_4_A AS t_3_A, JSON_EACH(JSON_ARRAY(0)) as x_12
   WHERE

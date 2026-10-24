@@ -28,7 +28,7 @@ WITH t_3_L AS (SELECT * FROM (
 SELECT
   t_0_L.k AS k,
   (SELECT
-  ArgMin(JSON_EXTRACT(MagicalEntangle(JSON_OBJECT('arg', - x_7.value, 'value', x_7.value), x_8.value), "$.value"), JSON_EXTRACT(MagicalEntangle(JSON_OBJECT('arg', - x_7.value, 'value', x_7.value), x_8.value), "$.arg"), null) AS logica_value
+  ArgMin(JSON_EXTRACT(MagicalEntangle(JSON_OBJECT('arg', - x_7.value, 'value', x_7.value), x_8.value), "$.value"), JSON_EXTRACT(MagicalEntangle(JSON_OBJECT('arg', - x_7.value, 'value', x_7.value), x_8.value), "$.arg"), null) AS synalog_value
 FROM
   JSON_EACH(t_0_L.l) as x_7, JSON_EACH(JSON_ARRAY(0)) as x_8) AS v
 FROM

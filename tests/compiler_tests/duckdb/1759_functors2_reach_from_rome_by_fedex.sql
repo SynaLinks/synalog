@@ -1,7 +1,7 @@
 -- Initializing DuckDB environment.
-create schema if not exists logica_home;
+create schema if not exists synalog_home;
 -- Empty record, has to have a field by DuckDB syntax.
-drop type if exists logicarecord893574736 cascade; create type logicarecord893574736 as struct(nirvana numeric);
+drop type if exists synalogrecord893574736 cascade; create type synalogrecord893574736 as struct(nirvana numeric);
 create sequence if not exists eternal_logical_sequence;
 
 WITH RECURSIVE t_2_Ship AS (SELECT * FROM (
@@ -93,7 +93,7 @@ t_1_Reach_RecursiveCte_f1 AS (SELECT * FROM (
       SELECT
         Ship.src AS a,
         Ship.dst AS b,
-        0 AS logica_step
+        0 AS synalog_step
       FROM
         t_2_Ship AS Ship
       WHERE
@@ -103,7 +103,7 @@ t_1_Reach_RecursiveCte_f1 AS (SELECT * FROM (
       SELECT
         t_7_Ship.src AS a,
         t_5_Ship.dst AS b,
-        ((0) + (1)) AS logica_step
+        ((0) + (1)) AS synalog_step
       FROM
         t_2_Ship AS t_7_Ship, t_2_Ship AS t_5_Ship
       WHERE
@@ -117,7 +117,7 @@ t_1_Reach_RecursiveCte_f1 AS (SELECT * FROM (
       SELECT
         t_16_Ship.src AS a,
         t_12_Ship.dst AS b,
-        ((((0) + (1))) + (1)) AS logica_step
+        ((((0) + (1))) + (1)) AS synalog_step
       FROM
         t_2_Ship AS t_16_Ship, t_2_Ship AS t_14_Ship, t_2_Ship AS t_12_Ship
       WHERE
@@ -134,7 +134,7 @@ t_1_Reach_RecursiveCte_f1 AS (SELECT * FROM (
       SELECT
         t_28_Ship.src AS a,
         t_21_Ship.dst AS b,
-        ((((((0) + (1))) + (1))) + (1)) AS logica_step
+        ((((((0) + (1))) + (1))) + (1)) AS synalog_step
       FROM
         t_2_Ship AS t_28_Ship, t_2_Ship AS t_26_Ship, t_2_Ship AS t_24_Ship, t_2_Ship AS t_21_Ship
       WHERE
@@ -154,7 +154,7 @@ t_1_Reach_RecursiveCte_f1 AS (SELECT * FROM (
       SELECT
         t_43_Ship.src AS a,
         t_33_Ship.dst AS b,
-        ((((((((0) + (1))) + (1))) + (1))) + (1)) AS logica_step
+        ((((((((0) + (1))) + (1))) + (1))) + (1)) AS synalog_step
       FROM
         t_2_Ship AS t_43_Ship, t_2_Ship AS t_41_Ship, t_2_Ship AS t_39_Ship, t_2_Ship AS t_36_Ship, t_2_Ship AS t_33_Ship
       WHERE
@@ -177,7 +177,7 @@ t_1_Reach_RecursiveCte_f1 AS (SELECT * FROM (
       SELECT
         t_61_Ship.src AS a,
         t_48_Ship.dst AS b,
-        ((((((((((0) + (1))) + (1))) + (1))) + (1))) + (1)) AS logica_step
+        ((((((((((0) + (1))) + (1))) + (1))) + (1))) + (1)) AS synalog_step
       FROM
         t_2_Ship AS t_61_Ship, t_2_Ship AS t_59_Ship, t_2_Ship AS t_57_Ship, t_2_Ship AS t_54_Ship, t_2_Ship AS t_51_Ship, t_2_Ship AS t_48_Ship
       WHERE
@@ -205,11 +205,11 @@ UNION
 SELECT
   t_62_Reach_RecursiveCte_f1.a AS a,
   t_64_Ship.dst AS b,
-  ((t_62_Reach_RecursiveCte_f1.logica_step) + (1)) AS logica_step
+  ((t_62_Reach_RecursiveCte_f1.synalog_step) + (1)) AS synalog_step
 FROM
   t_1_Reach_RecursiveCte_f1 AS t_62_Reach_RecursiveCte_f1, t_2_Ship AS t_64_Ship
 WHERE
-  (t_62_Reach_RecursiveCte_f1.logica_step < 6) AND
+  (t_62_Reach_RecursiveCte_f1.synalog_step < 6) AND
   (t_64_Ship.carrier = 'fedex') AND
   (t_62_Reach_RecursiveCte_f1.b = t_64_Ship.src)),
 t_0_R AS (SELECT

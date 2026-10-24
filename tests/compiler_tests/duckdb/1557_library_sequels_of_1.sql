@@ -1,7 +1,7 @@
 -- Initializing DuckDB environment.
-create schema if not exists logica_home;
+create schema if not exists synalog_home;
 -- Empty record, has to have a field by DuckDB syntax.
-drop type if exists logicarecord893574736 cascade; create type logicarecord893574736 as struct(nirvana numeric);
+drop type if exists synalogrecord893574736 cascade; create type synalogrecord893574736 as struct(nirvana numeric);
 create sequence if not exists eternal_logical_sequence;
 
 WITH RECURSIVE t_2_Sequel AS (SELECT * FROM (
@@ -32,7 +32,7 @@ t_1_After_RecursiveCte AS (SELECT * FROM (
       SELECT
         Sequel.book AS book,
         Sequel.next AS next,
-        0 AS logica_step
+        0 AS synalog_step
       FROM
         t_2_Sequel AS Sequel
      UNION ALL
@@ -40,7 +40,7 @@ t_1_After_RecursiveCte AS (SELECT * FROM (
       SELECT
         t_5_Sequel.book AS book,
         t_3_Sequel.next AS next,
-        ((0) + (1)) AS logica_step
+        ((0) + (1)) AS synalog_step
       FROM
         t_2_Sequel AS t_5_Sequel, t_2_Sequel AS t_3_Sequel
       WHERE
@@ -52,7 +52,7 @@ t_1_After_RecursiveCte AS (SELECT * FROM (
       SELECT
         t_11_Sequel.book AS book,
         t_7_Sequel.next AS next,
-        ((((0) + (1))) + (1)) AS logica_step
+        ((((0) + (1))) + (1)) AS synalog_step
       FROM
         t_2_Sequel AS t_11_Sequel, t_2_Sequel AS t_9_Sequel, t_2_Sequel AS t_7_Sequel
       WHERE
@@ -66,7 +66,7 @@ t_1_After_RecursiveCte AS (SELECT * FROM (
       SELECT
         t_19_Sequel.book AS book,
         t_13_Sequel.next AS next,
-        ((((((0) + (1))) + (1))) + (1)) AS logica_step
+        ((((((0) + (1))) + (1))) + (1)) AS synalog_step
       FROM
         t_2_Sequel AS t_19_Sequel, t_2_Sequel AS t_17_Sequel, t_2_Sequel AS t_15_Sequel, t_2_Sequel AS t_13_Sequel
       WHERE
@@ -82,7 +82,7 @@ t_1_After_RecursiveCte AS (SELECT * FROM (
       SELECT
         t_29_Sequel.book AS book,
         t_21_Sequel.next AS next,
-        ((((((((0) + (1))) + (1))) + (1))) + (1)) AS logica_step
+        ((((((((0) + (1))) + (1))) + (1))) + (1)) AS synalog_step
       FROM
         t_2_Sequel AS t_29_Sequel, t_2_Sequel AS t_27_Sequel, t_2_Sequel AS t_25_Sequel, t_2_Sequel AS t_23_Sequel, t_2_Sequel AS t_21_Sequel
       WHERE
@@ -100,7 +100,7 @@ t_1_After_RecursiveCte AS (SELECT * FROM (
       SELECT
         t_41_Sequel.book AS book,
         t_31_Sequel.next AS next,
-        ((((((((((0) + (1))) + (1))) + (1))) + (1))) + (1)) AS logica_step
+        ((((((((((0) + (1))) + (1))) + (1))) + (1))) + (1)) AS synalog_step
       FROM
         t_2_Sequel AS t_41_Sequel, t_2_Sequel AS t_39_Sequel, t_2_Sequel AS t_37_Sequel, t_2_Sequel AS t_35_Sequel, t_2_Sequel AS t_33_Sequel, t_2_Sequel AS t_31_Sequel
       WHERE
@@ -122,11 +122,11 @@ UNION
 SELECT
   t_42_After_RecursiveCte.book AS book,
   t_43_Sequel.next AS next,
-  ((t_42_After_RecursiveCte.logica_step) + (1)) AS logica_step
+  ((t_42_After_RecursiveCte.synalog_step) + (1)) AS synalog_step
 FROM
   t_1_After_RecursiveCte AS t_42_After_RecursiveCte, t_2_Sequel AS t_43_Sequel
 WHERE
-  (t_42_After_RecursiveCte.logica_step < 6) AND
+  (t_42_After_RecursiveCte.synalog_step < 6) AND
   (t_43_Sequel.book = t_42_After_RecursiveCte.next)),
 t_0_After AS (SELECT
   After_RecursiveCte.book AS book,

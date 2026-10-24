@@ -12,12 +12,12 @@ use std::fmt;
 
 /// The "home" schema name (where user predicates materialize).
 pub fn home_schema() -> &'static str {
-    "logica_home"
+    "synalog_home"
 }
 
 /// The "test" schema name (in-memory schema for `@Ground` on SQLite).
 pub fn test_schema() -> &'static str {
-    "logica_test"
+    "synalog_test"
 }
 
 /// Compilation error with source context (legacy type).

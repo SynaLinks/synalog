@@ -63,7 +63,7 @@ t_2_C AS (SELECT * FROM (
 SELECT
   t_0_C.c AS c,
   (SELECT
-  COUNT(DISTINCT O.amt) AS logica_value
+  COUNT(DISTINCT O.amt) AS synalog_value
 FROM
   t_1_O AS O
 WHERE

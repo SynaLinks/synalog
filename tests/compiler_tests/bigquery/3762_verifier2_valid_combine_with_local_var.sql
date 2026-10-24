@@ -30,7 +30,7 @@ t_2_N AS (SELECT * FROM (
 SELECT
   t_0_N.n AS n,
   (SELECT
-  MAX(E.b) AS logica_value
+  MAX(E.b) AS synalog_value
 FROM
   t_1_E AS E
 WHERE

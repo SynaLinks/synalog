@@ -1,7 +1,7 @@
 -- Initializing DuckDB environment.
-create schema if not exists logica_home;
+create schema if not exists synalog_home;
 -- Empty record, has to have a field by DuckDB syntax.
-drop type if exists logicarecord893574736 cascade; create type logicarecord893574736 as struct(nirvana numeric);
+drop type if exists synalogrecord893574736 cascade; create type synalogrecord893574736 as struct(nirvana numeric);
 create sequence if not exists eternal_logical_sequence;
 
 WITH RECURSIVE t_1_Own AS (SELECT * FROM (
@@ -32,7 +32,7 @@ t_0_C_RecursiveCte AS (SELECT * FROM (
         Own.owned AS entity,
         1 AS hops,
         Own.percent AS stake,
-        0 AS logica_step
+        0 AS synalog_step
       FROM
         t_1_Own AS Own
      UNION ALL
@@ -42,7 +42,7 @@ t_0_C_RecursiveCte AS (SELECT * FROM (
         t_2_Own.owned AS entity,
         ((1) + (1)) AS hops,
         ((t_4_Own.percent) * (((t_2_Own.percent) / NULLIF(100, 0)))) AS stake,
-        ((0) + (1)) AS logica_step
+        ((0) + (1)) AS synalog_step
       FROM
         t_1_Own AS t_4_Own, t_1_Own AS t_2_Own
       WHERE
@@ -56,7 +56,7 @@ t_0_C_RecursiveCte AS (SELECT * FROM (
         t_6_Own.owned AS entity,
         ((((1) + (1))) + (1)) AS hops,
         ((((t_10_Own.percent) * (((t_8_Own.percent) / NULLIF(100, 0))))) * (((t_6_Own.percent) / NULLIF(100, 0)))) AS stake,
-        ((((0) + (1))) + (1)) AS logica_step
+        ((((0) + (1))) + (1)) AS synalog_step
       FROM
         t_1_Own AS t_10_Own, t_1_Own AS t_8_Own, t_1_Own AS t_6_Own
       WHERE
@@ -72,7 +72,7 @@ t_0_C_RecursiveCte AS (SELECT * FROM (
         t_12_Own.owned AS entity,
         ((((((1) + (1))) + (1))) + (1)) AS hops,
         ((((((t_18_Own.percent) * (((t_16_Own.percent) / NULLIF(100, 0))))) * (((t_14_Own.percent) / NULLIF(100, 0))))) * (((t_12_Own.percent) / NULLIF(100, 0)))) AS stake,
-        ((((((0) + (1))) + (1))) + (1)) AS logica_step
+        ((((((0) + (1))) + (1))) + (1)) AS synalog_step
       FROM
         t_1_Own AS t_18_Own, t_1_Own AS t_16_Own, t_1_Own AS t_14_Own, t_1_Own AS t_12_Own
       WHERE
@@ -90,7 +90,7 @@ t_0_C_RecursiveCte AS (SELECT * FROM (
         t_20_Own.owned AS entity,
         ((((((((1) + (1))) + (1))) + (1))) + (1)) AS hops,
         ((((((((t_28_Own.percent) * (((t_26_Own.percent) / NULLIF(100, 0))))) * (((t_24_Own.percent) / NULLIF(100, 0))))) * (((t_22_Own.percent) / NULLIF(100, 0))))) * (((t_20_Own.percent) / NULLIF(100, 0)))) AS stake,
-        ((((((((0) + (1))) + (1))) + (1))) + (1)) AS logica_step
+        ((((((((0) + (1))) + (1))) + (1))) + (1)) AS synalog_step
       FROM
         t_1_Own AS t_28_Own, t_1_Own AS t_26_Own, t_1_Own AS t_24_Own, t_1_Own AS t_22_Own, t_1_Own AS t_20_Own
       WHERE
@@ -110,7 +110,7 @@ t_0_C_RecursiveCte AS (SELECT * FROM (
         t_30_Own.owned AS entity,
         ((((((((((1) + (1))) + (1))) + (1))) + (1))) + (1)) AS hops,
         ((((((((((t_40_Own.percent) * (((t_38_Own.percent) / NULLIF(100, 0))))) * (((t_36_Own.percent) / NULLIF(100, 0))))) * (((t_34_Own.percent) / NULLIF(100, 0))))) * (((t_32_Own.percent) / NULLIF(100, 0))))) * (((t_30_Own.percent) / NULLIF(100, 0)))) AS stake,
-        ((((((((((0) + (1))) + (1))) + (1))) + (1))) + (1)) AS logica_step
+        ((((((((((0) + (1))) + (1))) + (1))) + (1))) + (1)) AS synalog_step
       FROM
         t_1_Own AS t_40_Own, t_1_Own AS t_38_Own, t_1_Own AS t_36_Own, t_1_Own AS t_34_Own, t_1_Own AS t_32_Own, t_1_Own AS t_30_Own
       WHERE
@@ -132,7 +132,7 @@ t_0_C_RecursiveCte AS (SELECT * FROM (
         t_42_Own.owned AS entity,
         ((((((((((((1) + (1))) + (1))) + (1))) + (1))) + (1))) + (1)) AS hops,
         ((((((((((((t_54_Own.percent) * (((t_52_Own.percent) / NULLIF(100, 0))))) * (((t_50_Own.percent) / NULLIF(100, 0))))) * (((t_48_Own.percent) / NULLIF(100, 0))))) * (((t_46_Own.percent) / NULLIF(100, 0))))) * (((t_44_Own.percent) / NULLIF(100, 0))))) * (((t_42_Own.percent) / NULLIF(100, 0)))) AS stake,
-        ((((((((((((0) + (1))) + (1))) + (1))) + (1))) + (1))) + (1)) AS logica_step
+        ((((((((((((0) + (1))) + (1))) + (1))) + (1))) + (1))) + (1)) AS synalog_step
       FROM
         t_1_Own AS t_54_Own, t_1_Own AS t_52_Own, t_1_Own AS t_50_Own, t_1_Own AS t_48_Own, t_1_Own AS t_46_Own, t_1_Own AS t_44_Own, t_1_Own AS t_42_Own
       WHERE
@@ -156,7 +156,7 @@ t_0_C_RecursiveCte AS (SELECT * FROM (
         t_56_Own.owned AS entity,
         ((((((((((((((1) + (1))) + (1))) + (1))) + (1))) + (1))) + (1))) + (1)) AS hops,
         ((((((((((((((t_70_Own.percent) * (((t_68_Own.percent) / NULLIF(100, 0))))) * (((t_66_Own.percent) / NULLIF(100, 0))))) * (((t_64_Own.percent) / NULLIF(100, 0))))) * (((t_62_Own.percent) / NULLIF(100, 0))))) * (((t_60_Own.percent) / NULLIF(100, 0))))) * (((t_58_Own.percent) / NULLIF(100, 0))))) * (((t_56_Own.percent) / NULLIF(100, 0)))) AS stake,
-        ((x_486.unnested_pod) + (1)) AS logica_step
+        ((x_486.unnested_pod) + (1)) AS synalog_step
       FROM
         t_1_Own AS t_70_Own, t_1_Own AS t_68_Own, t_1_Own AS t_66_Own, t_1_Own AS t_64_Own, t_1_Own AS t_62_Own, t_1_Own AS t_60_Own, t_1_Own AS t_58_Own, t_1_Own AS t_56_Own, (select unnest([((((((((((((0) + (1))) + (1))) + (1))) + (1))) + (1))) + (1))]) as unnested_pod) as x_486
       WHERE
@@ -182,7 +182,7 @@ t_0_C_RecursiveCte AS (SELECT * FROM (
         t_72_Own.owned AS entity,
         ((((((((((((((((1) + (1))) + (1))) + (1))) + (1))) + (1))) + (1))) + (1))) + (1)) AS hops,
         ((((((((((((((((t_88_Own.percent) * (((t_86_Own.percent) / NULLIF(100, 0))))) * (((t_84_Own.percent) / NULLIF(100, 0))))) * (((t_82_Own.percent) / NULLIF(100, 0))))) * (((t_80_Own.percent) / NULLIF(100, 0))))) * (((t_78_Own.percent) / NULLIF(100, 0))))) * (((t_76_Own.percent) / NULLIF(100, 0))))) * (((t_74_Own.percent) / NULLIF(100, 0))))) * (((t_72_Own.percent) / NULLIF(100, 0)))) AS stake,
-        ((((x_593.unnested_pod) + (1))) + (1)) AS logica_step
+        ((((x_593.unnested_pod) + (1))) + (1)) AS synalog_step
       FROM
         t_1_Own AS t_88_Own, t_1_Own AS t_86_Own, t_1_Own AS t_84_Own, t_1_Own AS t_82_Own, t_1_Own AS t_80_Own, t_1_Own AS t_78_Own, t_1_Own AS t_76_Own, t_1_Own AS t_74_Own, t_1_Own AS t_72_Own, (select unnest([((((((((((((0) + (1))) + (1))) + (1))) + (1))) + (1))) + (1))]) as unnested_pod) as x_593
       WHERE
@@ -210,7 +210,7 @@ t_0_C_RecursiveCte AS (SELECT * FROM (
         t_90_Own.owned AS entity,
         ((((((((((((((((((1) + (1))) + (1))) + (1))) + (1))) + (1))) + (1))) + (1))) + (1))) + (1)) AS hops,
         ((((((((((((((((((t_108_Own.percent) * (((t_106_Own.percent) / NULLIF(100, 0))))) * (((t_104_Own.percent) / NULLIF(100, 0))))) * (((t_102_Own.percent) / NULLIF(100, 0))))) * (((t_100_Own.percent) / NULLIF(100, 0))))) * (((t_98_Own.percent) / NULLIF(100, 0))))) * (((t_96_Own.percent) / NULLIF(100, 0))))) * (((t_94_Own.percent) / NULLIF(100, 0))))) * (((t_92_Own.percent) / NULLIF(100, 0))))) * (((t_90_Own.percent) / NULLIF(100, 0)))) AS stake,
-        ((((((x_710.unnested_pod) + (1))) + (1))) + (1)) AS logica_step
+        ((((((x_710.unnested_pod) + (1))) + (1))) + (1)) AS synalog_step
       FROM
         t_1_Own AS t_108_Own, t_1_Own AS t_106_Own, t_1_Own AS t_104_Own, t_1_Own AS t_102_Own, t_1_Own AS t_100_Own, t_1_Own AS t_98_Own, t_1_Own AS t_96_Own, t_1_Own AS t_94_Own, t_1_Own AS t_92_Own, t_1_Own AS t_90_Own, (select unnest([((((((((((((0) + (1))) + (1))) + (1))) + (1))) + (1))) + (1))]) as unnested_pod) as x_710
       WHERE
@@ -242,11 +242,11 @@ SELECT
   t_110_Own.owned AS entity,
   ((t_109_C_RecursiveCte.hops) + (1)) AS hops,
   ((t_109_C_RecursiveCte.stake) * (((t_110_Own.percent) / NULLIF(100, 0)))) AS stake,
-  ((t_109_C_RecursiveCte.logica_step) + (1)) AS logica_step
+  ((t_109_C_RecursiveCte.synalog_step) + (1)) AS synalog_step
 FROM
   t_0_C_RecursiveCte AS t_109_C_RecursiveCte, t_1_Own AS t_110_Own
 WHERE
-  (t_109_C_RecursiveCte.logica_step < 4) AND
+  (t_109_C_RecursiveCte.synalog_step < 4) AND
   (t_110_Own.owner = t_109_C_RecursiveCte.entity))
 SELECT
   C_RecursiveCte.owner AS owner,

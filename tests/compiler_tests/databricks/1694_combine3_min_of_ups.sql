@@ -11,7 +11,7 @@ WITH t_0_Ship AS (SELECT * FROM VALUES
 AS UNUSED_TABLE_NAME(id, client, src, dst, kg, carrier))
 SELECT
   (SELECT
-  MIN(Ship.kg) AS logica_value
+  MIN(Ship.kg) AS synalog_value
 FROM
   t_0_Ship AS Ship
 WHERE

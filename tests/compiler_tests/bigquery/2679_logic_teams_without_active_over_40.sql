@@ -75,7 +75,7 @@ FROM
   t_1_Team AS t_0_Team
 WHERE
   ((SELECT
-    MIN(1) AS logica_value
+    MIN(1) AS synalog_value
   FROM
     t_3_Senior AS Senior
   WHERE

@@ -28,7 +28,7 @@ WITH t_1_L AS (SELECT * FROM (
 SELECT
   t_0_L.k AS k,
   (SELECT
-  SUM(1) AS logica_value
+  SUM(1) AS synalog_value
 FROM
   UNNEST(t_0_L.l) as x_5, UNNEST(ARRAY[3, 6]) as x_6
 WHERE

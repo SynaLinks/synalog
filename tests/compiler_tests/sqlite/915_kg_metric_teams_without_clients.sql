@@ -71,7 +71,7 @@ FROM
   t_1_Team AS t_0_Team
 WHERE
   ((SELECT
-    MIN(MagicalEntangle(1, x_8.value)) AS logica_value
+    MIN(MagicalEntangle(1, x_8.value)) AS synalog_value
   FROM
     t_3_EngagedWith AS EngagedWith, JSON_EACH(JSON_ARRAY(0)) as x_8
   WHERE

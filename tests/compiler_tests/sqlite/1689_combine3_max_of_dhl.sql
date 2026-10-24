@@ -83,7 +83,7 @@ WITH t_0_Ship AS (SELECT * FROM (
 ) AS UNUSED_TABLE_NAME  )
 SELECT
   (SELECT
-  MAX(MagicalEntangle(Ship.kg, x_5.value)) AS logica_value
+  MAX(MagicalEntangle(Ship.kg, x_5.value)) AS synalog_value
 FROM
   t_0_Ship AS Ship, JSON_EACH(JSON_ARRAY(0)) as x_5
 WHERE

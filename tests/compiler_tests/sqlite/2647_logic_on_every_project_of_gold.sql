@@ -145,7 +145,7 @@ FROM
   t_0_Person AS t_2_Person, t_3_Proj AS Proj
 WHERE
   ((SELECT
-    MIN(MagicalEntangle(1, x_15.value)) AS logica_value
+    MIN(MagicalEntangle(1, x_15.value)) AS synalog_value
   FROM
     t_4_A AS A, JSON_EACH(JSON_ARRAY(0)) as x_15
   WHERE
@@ -158,7 +158,7 @@ FROM
   t_0_Person AS Person
 WHERE
   ((SELECT
-    MIN(MagicalEntangle(1, x_5.value)) AS logica_value
+    MIN(MagicalEntangle(1, x_5.value)) AS synalog_value
   FROM
     t_1_Missing AS Missing, JSON_EACH(JSON_ARRAY(0)) as x_5
   WHERE

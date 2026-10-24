@@ -120,7 +120,7 @@ FROM
   t_0_Event AS Event
 WHERE
   ((SELECT
-    MIN(1) AS logica_value
+    MIN(1) AS synalog_value
   FROM
     t_1_Priced AS Priced
   WHERE

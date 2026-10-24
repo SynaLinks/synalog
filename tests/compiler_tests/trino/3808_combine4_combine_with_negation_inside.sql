@@ -44,12 +44,12 @@ WITH t_0_O AS (SELECT * FROM (
 ) AS UNUSED_TABLE_NAME  )
 SELECT
   (SELECT
-  SUM(O.amt) AS logica_value
+  SUM(O.amt) AS synalog_value
 FROM
   t_0_O AS O
 WHERE
   ((SELECT
-    MIN(1) AS logica_value
+    MIN(1) AS synalog_value
   FROM
     (SELECT 'singleton' as s) as unused_singleton
   WHERE

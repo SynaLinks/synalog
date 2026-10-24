@@ -1,8 +1,8 @@
 -- Initializing PostgreSQL environment.
 set client_min_messages to warning;
-create schema if not exists logica_home;
--- Empty logica type: logicarecord893574736;
-DO $$ BEGIN if not exists (select 'I(am) :- I(think)' from pg_type where typname = 'logicarecord893574736') then create type logicarecord893574736 as (nirvana numeric); end if; END $$;
+create schema if not exists synalog_home;
+-- Empty synalog type: synalogrecord893574736;
+DO $$ BEGIN if not exists (select 'I(am) :- I(think)' from pg_type where typname = 'synalogrecord893574736') then create type synalogrecord893574736 as (nirvana numeric); end if; END $$;
 
 WITH t_0_Sales AS (SELECT * FROM (
   
@@ -27,11 +27,11 @@ WITH t_0_Sales AS (SELECT * FROM (
   
 ) AS UNUSED_TABLE_NAME  ),
 t_1_AvgSale AS (SELECT
-  SUM(t_2_Sales.amount) AS logica_value
+  SUM(t_2_Sales.amount) AS synalog_value
 FROM
   t_0_Sales AS t_2_Sales),
 t_3_CountSales AS (SELECT
-  SUM(1) AS logica_value
+  SUM(1) AS synalog_value
 FROM
   t_0_Sales AS t_4_Sales)
 SELECT
@@ -40,4 +40,4 @@ SELECT
 FROM
   t_0_Sales AS Sales, t_1_AvgSale AS AvgSale, t_3_CountSales AS CountSales
 WHERE
-  (Sales.amount > (CAST(AvgSale.logica_value AS double precision) / NULLIF(CountSales.logica_value, 0))) ORDER BY product;
+  (Sales.amount > (CAST(AvgSale.synalog_value AS double precision) / NULLIF(CountSales.synalog_value, 0))) ORDER BY product;

@@ -1,7 +1,7 @@
 -- Initializing DuckDB environment.
-create schema if not exists logica_home;
+create schema if not exists synalog_home;
 -- Empty record, has to have a field by DuckDB syntax.
-drop type if exists logicarecord893574736 cascade; create type logicarecord893574736 as struct(nirvana numeric);
+drop type if exists synalogrecord893574736 cascade; create type synalogrecord893574736 as struct(nirvana numeric);
 create sequence if not exists eternal_logical_sequence;
 
 WITH RECURSIVE t_6_HasPhone AS (SELECT * FROM (
@@ -66,7 +66,7 @@ t_8_Linked_RecursiveCte AS (SELECT * FROM (
       SELECT
         Shares.a AS a,
         Shares.b AS b,
-        0 AS logica_step
+        0 AS synalog_step
       FROM
         t_9_Shares AS Shares
      UNION ALL
@@ -74,7 +74,7 @@ t_8_Linked_RecursiveCte AS (SELECT * FROM (
       SELECT
         t_14_Shares.a AS a,
         t_12_Shares.b AS b,
-        ((0) + (1)) AS logica_step
+        ((0) + (1)) AS synalog_step
       FROM
         t_9_Shares AS t_14_Shares, t_9_Shares AS t_12_Shares
       WHERE
@@ -86,7 +86,7 @@ t_8_Linked_RecursiveCte AS (SELECT * FROM (
       SELECT
         t_22_Shares.a AS a,
         t_18_Shares.b AS b,
-        ((((0) + (1))) + (1)) AS logica_step
+        ((((0) + (1))) + (1)) AS synalog_step
       FROM
         t_9_Shares AS t_22_Shares, t_9_Shares AS t_20_Shares, t_9_Shares AS t_18_Shares
       WHERE
@@ -100,7 +100,7 @@ t_8_Linked_RecursiveCte AS (SELECT * FROM (
       SELECT
         t_30_Shares.a AS a,
         t_24_Shares.b AS b,
-        ((((((0) + (1))) + (1))) + (1)) AS logica_step
+        ((((((0) + (1))) + (1))) + (1)) AS synalog_step
       FROM
         t_9_Shares AS t_30_Shares, t_9_Shares AS t_28_Shares, t_9_Shares AS t_26_Shares, t_9_Shares AS t_24_Shares
       WHERE
@@ -116,7 +116,7 @@ t_8_Linked_RecursiveCte AS (SELECT * FROM (
       SELECT
         t_40_Shares.a AS a,
         t_32_Shares.b AS b,
-        ((((((((0) + (1))) + (1))) + (1))) + (1)) AS logica_step
+        ((((((((0) + (1))) + (1))) + (1))) + (1)) AS synalog_step
       FROM
         t_9_Shares AS t_40_Shares, t_9_Shares AS t_38_Shares, t_9_Shares AS t_36_Shares, t_9_Shares AS t_34_Shares, t_9_Shares AS t_32_Shares
       WHERE
@@ -134,7 +134,7 @@ t_8_Linked_RecursiveCte AS (SELECT * FROM (
       SELECT
         t_52_Shares.a AS a,
         t_42_Shares.b AS b,
-        ((((((((((0) + (1))) + (1))) + (1))) + (1))) + (1)) AS logica_step
+        ((((((((((0) + (1))) + (1))) + (1))) + (1))) + (1)) AS synalog_step
       FROM
         t_9_Shares AS t_52_Shares, t_9_Shares AS t_50_Shares, t_9_Shares AS t_48_Shares, t_9_Shares AS t_46_Shares, t_9_Shares AS t_44_Shares, t_9_Shares AS t_42_Shares
       WHERE
@@ -156,11 +156,11 @@ UNION
 SELECT
   t_53_Linked_RecursiveCte.a AS a,
   t_54_Shares.b AS b,
-  ((t_53_Linked_RecursiveCte.logica_step) + (1)) AS logica_step
+  ((t_53_Linked_RecursiveCte.synalog_step) + (1)) AS synalog_step
 FROM
   t_8_Linked_RecursiveCte AS t_53_Linked_RecursiveCte, t_9_Shares AS t_54_Shares
 WHERE
-  (t_53_Linked_RecursiveCte.logica_step < 8) AND
+  (t_53_Linked_RecursiveCte.synalog_step < 8) AND
   (t_54_Shares.a = t_53_Linked_RecursiveCte.b)),
 t_7_Linked AS (SELECT
   Linked_RecursiveCte.a AS a,

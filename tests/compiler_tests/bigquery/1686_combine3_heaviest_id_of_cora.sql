@@ -83,7 +83,7 @@ WITH t_1_Ship AS (SELECT * FROM (
 ) AS UNUSED_TABLE_NAME  )
 SELECT
   (SELECT
-  ARRAY_AGG(Ship.id order by  [Ship.kg][offset(0)] desc limit 1)[OFFSET(0)] AS logica_value
+  ARRAY_AGG(Ship.id order by  [Ship.kg][offset(0)] desc limit 1)[OFFSET(0)] AS synalog_value
 FROM
   t_1_Ship AS Ship
 WHERE

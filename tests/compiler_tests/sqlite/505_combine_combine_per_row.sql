@@ -23,7 +23,7 @@ GROUP BY t_3_V.g)
 SELECT
   t_0_G.g AS g,
   (SELECT
-  SUM(MagicalEntangle(V.x, x_7.value)) AS logica_value
+  SUM(MagicalEntangle(V.x, x_7.value)) AS synalog_value
 FROM
   t_1_V AS V, JSON_EACH(JSON_ARRAY(0)) as x_7
 WHERE

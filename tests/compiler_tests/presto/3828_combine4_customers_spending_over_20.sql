@@ -66,7 +66,7 @@ FROM
   t_1_C AS t_0_C
 WHERE
   ((SELECT
-    SUM(O.amt) AS logica_value
+    SUM(O.amt) AS synalog_value
   FROM
     t_2_O AS O
   WHERE

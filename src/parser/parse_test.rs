@@ -341,7 +341,7 @@ fn test_parse_rule_with_assignment() {
     let fvs = result.as_object()["head"].as_object()["record"].as_object()["field_value"].as_array();
     assert!(fvs.len() >= 2);
     let last = fvs.last().unwrap().as_object();
-    assert_eq!(last["field"], Json::Str("logica_value".to_string()));
+    assert_eq!(last["field"], Json::Str("synalog_value".to_string()));
 }
 
 #[test]

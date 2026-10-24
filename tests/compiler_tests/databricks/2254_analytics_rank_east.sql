@@ -17,7 +17,7 @@ AS UNUSED_TABLE_NAME(r, d, v))
 SELECT
   S.d AS d,
   ((1) + (COALESCE((SELECT
-  SUM(1) AS logica_value
+  SUM(1) AS synalog_value
 FROM
   t_2_S AS t_0_S, t_2_S AS t_1_S
 WHERE

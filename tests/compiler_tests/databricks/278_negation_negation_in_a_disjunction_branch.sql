@@ -10,7 +10,7 @@ t_0_Out_MultBodyAggAux AS (SELECT * FROM (
       LATERAL (SELECT explode(ARRAY(1, 2, 3)) AS x_5) AS pushkin
     WHERE
       ((SELECT
-        MIN(1) AS logica_value
+        MIN(1) AS synalog_value
       FROM
         t_1_Banned AS Banned
       WHERE

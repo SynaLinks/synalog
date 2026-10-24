@@ -15,7 +15,7 @@ FROM
   t_0_Ship AS Ship
 WHERE
   (Ship.kg > (SELECT
-    AVG(t_1_Ship.kg) AS logica_value
+    AVG(t_1_Ship.kg) AS synalog_value
   FROM
     t_0_Ship AS t_1_Ship
   WHERE

@@ -14,6 +14,6 @@ WITH t_0_Words AS (SELECT * FROM (
 ) AS UNUSED_TABLE_NAME  )
 SELECT
   (SELECT
-  MAX(Words.word) AS logica_value
+  MAX(Words.word) AS synalog_value
 FROM
   t_0_Words AS Words) AS longest ORDER BY longest;

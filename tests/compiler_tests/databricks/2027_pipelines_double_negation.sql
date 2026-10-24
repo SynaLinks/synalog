@@ -35,7 +35,7 @@ FROM
   t_0_Person AS t_4_Person
 WHERE
   ((SELECT
-    MIN(1) AS logica_value
+    MIN(1) AS synalog_value
   FROM
     t_6_Spend AS Spend
   WHERE
@@ -46,7 +46,7 @@ FROM
   t_0_Person AS Person
 WHERE
   ((SELECT
-    MIN(1) AS logica_value
+    MIN(1) AS synalog_value
   FROM
     t_3_Never AS Never
   WHERE

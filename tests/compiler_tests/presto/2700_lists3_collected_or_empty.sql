@@ -1,5 +1,5 @@
-DROP TABLE IF EXISTS logica_test.C;
-CREATE TABLE logica_test.C AS WITH t_0_V AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_test.C;
+CREATE TABLE synalog_test.C AS WITH t_0_V AS (SELECT * FROM (
   
     SELECT
       'a' AS g,
@@ -18,7 +18,7 @@ FROM
   t_0_V AS V
 GROUP BY 1;
 
--- Interacting with table logica_test.C
+-- Interacting with table synalog_test.C
 
 WITH t_3_G AS (SELECT * FROM (
   
@@ -36,7 +36,7 @@ t_1_L AS (SELECT * FROM (
       C.g AS g,
       C.l AS l
     FROM
-      logica_test.C AS C
+      synalog_test.C AS C
    UNION ALL
   
     SELECT
@@ -46,9 +46,9 @@ t_1_L AS (SELECT * FROM (
       t_3_G AS t_2_G
     WHERE
       ((SELECT
-        MIN(1) AS logica_value
+        MIN(1) AS synalog_value
       FROM
-        logica_test.C AS t_4_C
+        synalog_test.C AS t_4_C
       WHERE
         (t_4_C.g = t_2_G.g)) IS NULL)
   

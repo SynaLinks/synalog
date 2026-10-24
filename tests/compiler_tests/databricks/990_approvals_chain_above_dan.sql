@@ -1,5 +1,5 @@
-DROP TABLE IF EXISTS logica_test.Above_sn_delta;
-CREATE TABLE logica_test.Above_sn_delta AS WITH t_1_ApproverOf AS (SELECT * FROM VALUES
+DROP TABLE IF EXISTS synalog_test.Above_sn_delta;
+CREATE TABLE synalog_test.Above_sn_delta AS WITH t_1_ApproverOf AS (SELECT * FROM VALUES
   ("eva", "dan"),
   ("dan", "cal"),
   ("dan", "bea"),
@@ -21,21 +21,21 @@ FROM
   t_0_Above_MultBodyAggAux_f2 AS Above_MultBodyAggAux_f2
 GROUP BY 1, 2;
 
--- Interacting with table logica_test.Above_sn_delta
+-- Interacting with table synalog_test.Above_sn_delta
 
-DROP TABLE IF EXISTS logica_test.Above_sn_t0;
-CREATE TABLE logica_test.Above_sn_t0 AS SELECT
+DROP TABLE IF EXISTS synalog_test.Above_sn_t0;
+CREATE TABLE synalog_test.Above_sn_t0 AS SELECT
   Above_sn_delta.approver AS approver,
   Above_sn_delta.requester AS requester
 FROM
-  logica_test.Above_sn_delta AS Above_sn_delta
+  synalog_test.Above_sn_delta AS Above_sn_delta
 WHERE
   (1 = 0);
 
--- Interacting with table logica_test.Above_sn_t0
+-- Interacting with table synalog_test.Above_sn_t0
 
-DROP TABLE IF EXISTS logica_test.Above_sn_t1;
-CREATE TABLE logica_test.Above_sn_t1 AS WITH t_1_ApproverOf AS (SELECT * FROM VALUES
+DROP TABLE IF EXISTS synalog_test.Above_sn_t1;
+CREATE TABLE synalog_test.Above_sn_t1 AS WITH t_1_ApproverOf AS (SELECT * FROM VALUES
   ("eva", "dan"),
   ("dan", "cal"),
   ("dan", "bea"),
@@ -54,7 +54,7 @@ t_1_Above_MultBodyAggAux_f3 AS (SELECT * FROM (
       t_2_ApproverOf.approver AS approver,
       Above_sn_t0.requester AS requester
     FROM
-      logica_test.Above_sn_t0 AS Above_sn_t0, t_1_ApproverOf AS t_2_ApproverOf
+      synalog_test.Above_sn_t0 AS Above_sn_t0, t_1_ApproverOf AS t_2_ApproverOf
     WHERE
       (t_2_ApproverOf.requester = Above_sn_t0.approver)
   
@@ -73,10 +73,10 @@ FROM
 WHERE
   (1 = 0);
 
--- Interacting with table logica_test.Above_sn_t1
+-- Interacting with table synalog_test.Above_sn_t1
 
-DROP TABLE IF EXISTS logica_test.Above_sn_t2;
-CREATE TABLE logica_test.Above_sn_t2 AS WITH t_1_ApproverOf AS (SELECT * FROM VALUES
+DROP TABLE IF EXISTS synalog_test.Above_sn_t2;
+CREATE TABLE synalog_test.Above_sn_t2 AS WITH t_1_ApproverOf AS (SELECT * FROM VALUES
   ("eva", "dan"),
   ("dan", "cal"),
   ("dan", "bea"),
@@ -95,7 +95,7 @@ t_1_Above_MultBodyAggAux_f4 AS (SELECT * FROM (
       t_2_ApproverOf.approver AS approver,
       Above_sn_t1.requester AS requester
     FROM
-      logica_test.Above_sn_t1 AS Above_sn_t1, t_1_ApproverOf AS t_2_ApproverOf
+      synalog_test.Above_sn_t1 AS Above_sn_t1, t_1_ApproverOf AS t_2_ApproverOf
     WHERE
       (t_2_ApproverOf.requester = Above_sn_t1.approver)
   
@@ -114,10 +114,10 @@ FROM
 WHERE
   (1 = 0);
 
--- Interacting with table logica_test.Above_sn_t2
+-- Interacting with table synalog_test.Above_sn_t2
 
-DROP TABLE IF EXISTS logica_test.Above_sn_t3;
-CREATE TABLE logica_test.Above_sn_t3 AS WITH t_1_ApproverOf AS (SELECT * FROM VALUES
+DROP TABLE IF EXISTS synalog_test.Above_sn_t3;
+CREATE TABLE synalog_test.Above_sn_t3 AS WITH t_1_ApproverOf AS (SELECT * FROM VALUES
   ("eva", "dan"),
   ("dan", "cal"),
   ("dan", "bea"),
@@ -136,7 +136,7 @@ t_1_Above_MultBodyAggAux_f5 AS (SELECT * FROM (
       t_2_ApproverOf.approver AS approver,
       Above_sn_t2.requester AS requester
     FROM
-      logica_test.Above_sn_t2 AS Above_sn_t2, t_1_ApproverOf AS t_2_ApproverOf
+      synalog_test.Above_sn_t2 AS Above_sn_t2, t_1_ApproverOf AS t_2_ApproverOf
     WHERE
       (t_2_ApproverOf.requester = Above_sn_t2.approver)
   
@@ -155,10 +155,10 @@ FROM
 WHERE
   (1 = 0);
 
--- Interacting with table logica_test.Above_sn_t3
+-- Interacting with table synalog_test.Above_sn_t3
 
-DROP TABLE IF EXISTS logica_test.Above_sn_t4;
-CREATE TABLE logica_test.Above_sn_t4 AS WITH t_1_ApproverOf AS (SELECT * FROM VALUES
+DROP TABLE IF EXISTS synalog_test.Above_sn_t4;
+CREATE TABLE synalog_test.Above_sn_t4 AS WITH t_1_ApproverOf AS (SELECT * FROM VALUES
   ("eva", "dan"),
   ("dan", "cal"),
   ("dan", "bea"),
@@ -177,7 +177,7 @@ t_1_Above_MultBodyAggAux_f6 AS (SELECT * FROM (
       t_2_ApproverOf.approver AS approver,
       Above_sn_t3.requester AS requester
     FROM
-      logica_test.Above_sn_t3 AS Above_sn_t3, t_1_ApproverOf AS t_2_ApproverOf
+      synalog_test.Above_sn_t3 AS Above_sn_t3, t_1_ApproverOf AS t_2_ApproverOf
     WHERE
       (t_2_ApproverOf.requester = Above_sn_t3.approver)
   
@@ -196,10 +196,10 @@ FROM
 WHERE
   (1 = 0);
 
--- Interacting with table logica_test.Above_sn_t4
+-- Interacting with table synalog_test.Above_sn_t4
 
-DROP TABLE IF EXISTS logica_test.Above_sn_t5;
-CREATE TABLE logica_test.Above_sn_t5 AS WITH t_1_ApproverOf AS (SELECT * FROM VALUES
+DROP TABLE IF EXISTS synalog_test.Above_sn_t5;
+CREATE TABLE synalog_test.Above_sn_t5 AS WITH t_1_ApproverOf AS (SELECT * FROM VALUES
   ("eva", "dan"),
   ("dan", "cal"),
   ("dan", "bea"),
@@ -218,7 +218,7 @@ t_1_Above_MultBodyAggAux_f7 AS (SELECT * FROM (
       t_2_ApproverOf.approver AS approver,
       Above_sn_t4.requester AS requester
     FROM
-      logica_test.Above_sn_t4 AS Above_sn_t4, t_1_ApproverOf AS t_2_ApproverOf
+      synalog_test.Above_sn_t4 AS Above_sn_t4, t_1_ApproverOf AS t_2_ApproverOf
     WHERE
       (t_2_ApproverOf.requester = Above_sn_t4.approver)
   
@@ -237,58 +237,58 @@ FROM
 WHERE
   (1 = 0);
 
--- Interacting with table logica_test.Above_sn_t5
+-- Interacting with table synalog_test.Above_sn_t5
 
-DROP TABLE IF EXISTS logica_test.Above_sn_full;
-CREATE TABLE logica_test.Above_sn_full AS SELECT * FROM (
+DROP TABLE IF EXISTS synalog_test.Above_sn_full;
+CREATE TABLE synalog_test.Above_sn_full AS SELECT * FROM (
   
     SELECT
       Above_sn_delta.approver AS approver,
       Above_sn_delta.requester AS requester
     FROM
-      logica_test.Above_sn_delta AS Above_sn_delta
+      synalog_test.Above_sn_delta AS Above_sn_delta
    UNION ALL
   
     SELECT
       Above_sn_t1.approver AS approver,
       Above_sn_t1.requester AS requester
     FROM
-      logica_test.Above_sn_t1 AS Above_sn_t1
+      synalog_test.Above_sn_t1 AS Above_sn_t1
    UNION ALL
   
     SELECT
       Above_sn_t2.approver AS approver,
       Above_sn_t2.requester AS requester
     FROM
-      logica_test.Above_sn_t2 AS Above_sn_t2
+      synalog_test.Above_sn_t2 AS Above_sn_t2
    UNION ALL
   
     SELECT
       Above_sn_t3.approver AS approver,
       Above_sn_t3.requester AS requester
     FROM
-      logica_test.Above_sn_t3 AS Above_sn_t3
+      synalog_test.Above_sn_t3 AS Above_sn_t3
    UNION ALL
   
     SELECT
       Above_sn_t4.approver AS approver,
       Above_sn_t4.requester AS requester
     FROM
-      logica_test.Above_sn_t4 AS Above_sn_t4
+      synalog_test.Above_sn_t4 AS Above_sn_t4
    UNION ALL
   
     SELECT
       Above_sn_t5.approver AS approver,
       Above_sn_t5.requester AS requester
     FROM
-      logica_test.Above_sn_t5 AS Above_sn_t5
+      synalog_test.Above_sn_t5 AS Above_sn_t5
   
 ) AS UNUSED_TABLE_NAME  ;
 
--- Interacting with table logica_test.Above_sn_full
+-- Interacting with table synalog_test.Above_sn_full
 
-DROP TABLE IF EXISTS logica_test.Above_sn_new;
-CREATE TABLE logica_test.Above_sn_new AS WITH t_1_ApproverOf AS (SELECT * FROM VALUES
+DROP TABLE IF EXISTS synalog_test.Above_sn_new;
+CREATE TABLE synalog_test.Above_sn_new AS WITH t_1_ApproverOf AS (SELECT * FROM VALUES
   ("eva", "dan"),
   ("dan", "cal"),
   ("dan", "bea"),
@@ -307,7 +307,7 @@ t_1_Above_MultBodyAggAux_f8 AS (SELECT * FROM (
       t_2_ApproverOf.approver AS approver,
       Above_sn_delta.requester AS requester
     FROM
-      logica_test.Above_sn_delta AS Above_sn_delta, t_1_ApproverOf AS t_2_ApproverOf
+      synalog_test.Above_sn_delta AS Above_sn_delta, t_1_ApproverOf AS t_2_ApproverOf
     WHERE
       (t_2_ApproverOf.requester = Above_sn_delta.approver)
   
@@ -325,18 +325,18 @@ FROM
   t_0_Above_sn_step AS Above_sn_step
 WHERE
   ((SELECT
-    MIN(1) AS logica_value
+    MIN(1) AS synalog_value
   FROM
-    logica_test.Above_sn_full AS Above_sn_full
+    synalog_test.Above_sn_full AS Above_sn_full
   WHERE
     (Above_sn_full.approver = Above_sn_step.approver) AND
     (Above_sn_full.requester = Above_sn_step.requester)) IS NULL)
 GROUP BY 1, 2;
 
-INSERT INTO logica_test.Above_sn_full SELECT * FROM logica_test.Above_sn_new;
+INSERT INTO synalog_test.Above_sn_full SELECT * FROM synalog_test.Above_sn_new;
 
-DROP TABLE IF EXISTS logica_test.Above_sn_delta;
-CREATE TABLE logica_test.Above_sn_delta AS WITH t_1_ApproverOf AS (SELECT * FROM VALUES
+DROP TABLE IF EXISTS synalog_test.Above_sn_delta;
+CREATE TABLE synalog_test.Above_sn_delta AS WITH t_1_ApproverOf AS (SELECT * FROM VALUES
   ("eva", "dan"),
   ("dan", "cal"),
   ("dan", "bea"),
@@ -355,7 +355,7 @@ t_1_Above_MultBodyAggAux_f1 AS (SELECT * FROM (
       t_2_ApproverOf.approver AS approver,
       Above_sn_new.requester AS requester
     FROM
-      logica_test.Above_sn_new AS Above_sn_new, t_1_ApproverOf AS t_2_ApproverOf
+      synalog_test.Above_sn_new AS Above_sn_new, t_1_ApproverOf AS t_2_ApproverOf
     WHERE
       (t_2_ApproverOf.requester = Above_sn_new.approver)
   
@@ -373,18 +373,18 @@ FROM
   t_0_Above_sn_back_step AS Above_sn_back_step
 WHERE
   ((SELECT
-    MIN(1) AS logica_value
+    MIN(1) AS synalog_value
   FROM
-    logica_test.Above_sn_full AS Above_sn_full
+    synalog_test.Above_sn_full AS Above_sn_full
   WHERE
     (Above_sn_full.approver = Above_sn_back_step.approver) AND
     (Above_sn_full.requester = Above_sn_back_step.requester)) IS NULL)
 GROUP BY 1, 2;
 
-INSERT INTO logica_test.Above_sn_full SELECT * FROM logica_test.Above_sn_delta;
+INSERT INTO synalog_test.Above_sn_full SELECT * FROM synalog_test.Above_sn_delta;
 
-DROP TABLE IF EXISTS logica_test.Above_sn_new;
-CREATE TABLE logica_test.Above_sn_new AS WITH t_1_ApproverOf AS (SELECT * FROM VALUES
+DROP TABLE IF EXISTS synalog_test.Above_sn_new;
+CREATE TABLE synalog_test.Above_sn_new AS WITH t_1_ApproverOf AS (SELECT * FROM VALUES
   ("eva", "dan"),
   ("dan", "cal"),
   ("dan", "bea"),
@@ -403,7 +403,7 @@ t_1_Above_MultBodyAggAux_f8 AS (SELECT * FROM (
       t_2_ApproverOf.approver AS approver,
       Above_sn_delta.requester AS requester
     FROM
-      logica_test.Above_sn_delta AS Above_sn_delta, t_1_ApproverOf AS t_2_ApproverOf
+      synalog_test.Above_sn_delta AS Above_sn_delta, t_1_ApproverOf AS t_2_ApproverOf
     WHERE
       (t_2_ApproverOf.requester = Above_sn_delta.approver)
   
@@ -421,18 +421,18 @@ FROM
   t_0_Above_sn_step AS Above_sn_step
 WHERE
   ((SELECT
-    MIN(1) AS logica_value
+    MIN(1) AS synalog_value
   FROM
-    logica_test.Above_sn_full AS Above_sn_full
+    synalog_test.Above_sn_full AS Above_sn_full
   WHERE
     (Above_sn_full.approver = Above_sn_step.approver) AND
     (Above_sn_full.requester = Above_sn_step.requester)) IS NULL)
 GROUP BY 1, 2;
 
-INSERT INTO logica_test.Above_sn_full SELECT * FROM logica_test.Above_sn_new;
+INSERT INTO synalog_test.Above_sn_full SELECT * FROM synalog_test.Above_sn_new;
 
-DROP TABLE IF EXISTS logica_test.Above_sn_delta;
-CREATE TABLE logica_test.Above_sn_delta AS WITH t_1_ApproverOf AS (SELECT * FROM VALUES
+DROP TABLE IF EXISTS synalog_test.Above_sn_delta;
+CREATE TABLE synalog_test.Above_sn_delta AS WITH t_1_ApproverOf AS (SELECT * FROM VALUES
   ("eva", "dan"),
   ("dan", "cal"),
   ("dan", "bea"),
@@ -451,7 +451,7 @@ t_1_Above_MultBodyAggAux_f1 AS (SELECT * FROM (
       t_2_ApproverOf.approver AS approver,
       Above_sn_new.requester AS requester
     FROM
-      logica_test.Above_sn_new AS Above_sn_new, t_1_ApproverOf AS t_2_ApproverOf
+      synalog_test.Above_sn_new AS Above_sn_new, t_1_ApproverOf AS t_2_ApproverOf
     WHERE
       (t_2_ApproverOf.requester = Above_sn_new.approver)
   
@@ -469,18 +469,18 @@ FROM
   t_0_Above_sn_back_step AS Above_sn_back_step
 WHERE
   ((SELECT
-    MIN(1) AS logica_value
+    MIN(1) AS synalog_value
   FROM
-    logica_test.Above_sn_full AS Above_sn_full
+    synalog_test.Above_sn_full AS Above_sn_full
   WHERE
     (Above_sn_full.approver = Above_sn_back_step.approver) AND
     (Above_sn_full.requester = Above_sn_back_step.requester)) IS NULL)
 GROUP BY 1, 2;
 
-INSERT INTO logica_test.Above_sn_full SELECT * FROM logica_test.Above_sn_delta;
+INSERT INTO synalog_test.Above_sn_full SELECT * FROM synalog_test.Above_sn_delta;
 
-DROP TABLE IF EXISTS logica_test.Above_sn_new;
-CREATE TABLE logica_test.Above_sn_new AS WITH t_1_ApproverOf AS (SELECT * FROM VALUES
+DROP TABLE IF EXISTS synalog_test.Above_sn_new;
+CREATE TABLE synalog_test.Above_sn_new AS WITH t_1_ApproverOf AS (SELECT * FROM VALUES
   ("eva", "dan"),
   ("dan", "cal"),
   ("dan", "bea"),
@@ -499,7 +499,7 @@ t_1_Above_MultBodyAggAux_f8 AS (SELECT * FROM (
       t_2_ApproverOf.approver AS approver,
       Above_sn_delta.requester AS requester
     FROM
-      logica_test.Above_sn_delta AS Above_sn_delta, t_1_ApproverOf AS t_2_ApproverOf
+      synalog_test.Above_sn_delta AS Above_sn_delta, t_1_ApproverOf AS t_2_ApproverOf
     WHERE
       (t_2_ApproverOf.requester = Above_sn_delta.approver)
   
@@ -517,18 +517,18 @@ FROM
   t_0_Above_sn_step AS Above_sn_step
 WHERE
   ((SELECT
-    MIN(1) AS logica_value
+    MIN(1) AS synalog_value
   FROM
-    logica_test.Above_sn_full AS Above_sn_full
+    synalog_test.Above_sn_full AS Above_sn_full
   WHERE
     (Above_sn_full.approver = Above_sn_step.approver) AND
     (Above_sn_full.requester = Above_sn_step.requester)) IS NULL)
 GROUP BY 1, 2;
 
-INSERT INTO logica_test.Above_sn_full SELECT * FROM logica_test.Above_sn_new;
+INSERT INTO synalog_test.Above_sn_full SELECT * FROM synalog_test.Above_sn_new;
 
-DROP TABLE IF EXISTS logica_test.Above_sn_delta;
-CREATE TABLE logica_test.Above_sn_delta AS WITH t_1_ApproverOf AS (SELECT * FROM VALUES
+DROP TABLE IF EXISTS synalog_test.Above_sn_delta;
+CREATE TABLE synalog_test.Above_sn_delta AS WITH t_1_ApproverOf AS (SELECT * FROM VALUES
   ("eva", "dan"),
   ("dan", "cal"),
   ("dan", "bea"),
@@ -547,7 +547,7 @@ t_1_Above_MultBodyAggAux_f1 AS (SELECT * FROM (
       t_2_ApproverOf.approver AS approver,
       Above_sn_new.requester AS requester
     FROM
-      logica_test.Above_sn_new AS Above_sn_new, t_1_ApproverOf AS t_2_ApproverOf
+      synalog_test.Above_sn_new AS Above_sn_new, t_1_ApproverOf AS t_2_ApproverOf
     WHERE
       (t_2_ApproverOf.requester = Above_sn_new.approver)
   
@@ -565,20 +565,20 @@ FROM
   t_0_Above_sn_back_step AS Above_sn_back_step
 WHERE
   ((SELECT
-    MIN(1) AS logica_value
+    MIN(1) AS synalog_value
   FROM
-    logica_test.Above_sn_full AS Above_sn_full
+    synalog_test.Above_sn_full AS Above_sn_full
   WHERE
     (Above_sn_full.approver = Above_sn_back_step.approver) AND
     (Above_sn_full.requester = Above_sn_back_step.requester)) IS NULL)
 GROUP BY 1, 2;
 
-INSERT INTO logica_test.Above_sn_full SELECT * FROM logica_test.Above_sn_delta;
+INSERT INTO synalog_test.Above_sn_full SELECT * FROM synalog_test.Above_sn_delta;
 
 SELECT
   Above_sn_full.approver AS approver
 FROM
-  logica_test.Above_sn_full AS Above_sn_full
+  synalog_test.Above_sn_full AS Above_sn_full
 WHERE
   ("dan" = Above_sn_full.requester)
 GROUP BY 1 ORDER BY approver NULLS LAST;

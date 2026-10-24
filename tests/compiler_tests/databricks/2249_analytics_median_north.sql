@@ -59,7 +59,7 @@ t_0_Mid AS (SELECT * FROM (
       t_4_S AS S, t_5_N AS t_2_N
     WHERE
       (((((2) * (COALESCE((SELECT
-        SUM(1) AS logica_value
+        SUM(1) AS synalog_value
       FROM
         t_8_Before AS Before
       WHERE
@@ -73,7 +73,7 @@ t_0_Mid AS (SELECT * FROM (
       t_4_S AS t_21_S, t_5_N AS t_19_N
     WHERE
       (((2) * (COALESCE((SELECT
-        SUM(1) AS logica_value
+        SUM(1) AS synalog_value
       FROM
         t_8_Before AS t_24_Before
       WHERE
@@ -87,7 +87,7 @@ t_0_Mid AS (SELECT * FROM (
       t_4_S AS t_37_S, t_5_N AS t_35_N
     WHERE
       (((((2) * (COALESCE((SELECT
-        SUM(1) AS logica_value
+        SUM(1) AS synalog_value
       FROM
         t_8_Before AS t_38_Before
       WHERE

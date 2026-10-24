@@ -1,7 +1,7 @@
-ATTACH DATABASE ':memory:' AS logica_test;
+ATTACH DATABASE ':memory:' AS synalog_test;
 
-DROP TABLE IF EXISTS logica_test.QuarterTotals;
-CREATE TABLE logica_test.QuarterTotals AS WITH t_0_Sales AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_test.QuarterTotals;
+CREATE TABLE synalog_test.QuarterTotals AS WITH t_0_Sales AS (SELECT * FROM (
   
     SELECT
       'Q1' AS col0,
@@ -46,10 +46,10 @@ FROM
   t_0_Sales AS Sales
 GROUP BY Sales.col0;
 
--- Interacting with table logica_test.QuarterTotals
+-- Interacting with table synalog_test.QuarterTotals
 
 SELECT
   QuarterTotals.col0 AS quarter,
   QuarterTotals.total AS total
 FROM
-  logica_test.QuarterTotals AS QuarterTotals ORDER BY quarter;
+  synalog_test.QuarterTotals AS QuarterTotals ORDER BY quarter;

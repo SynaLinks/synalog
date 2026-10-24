@@ -1,7 +1,7 @@
 -- Initializing DuckDB environment.
-create schema if not exists logica_home;
+create schema if not exists synalog_home;
 -- Empty record, has to have a field by DuckDB syntax.
-drop type if exists logicarecord893574736 cascade; create type logicarecord893574736 as struct(nirvana numeric);
+drop type if exists synalogrecord893574736 cascade; create type synalogrecord893574736 as struct(nirvana numeric);
 create sequence if not exists eternal_logical_sequence;
 
 WITH t_4_Employees AS (SELECT * FROM (
@@ -148,7 +148,7 @@ t_1_Member_MultBodyAggAux AS (SELECT * FROM (
       t_3_Person AS t_11_Person, t_5_Team AS t_12_Team, t_7_Events AS t_13_Events
     WHERE
       ((SELECT
-        MIN((CASE WHEN x_64.unnested_pod = 0 THEN 1 ELSE NULL END)) AS logica_value
+        MIN((CASE WHEN x_64.unnested_pod = 0 THEN 1 ELSE NULL END)) AS synalog_value
       FROM
         t_8_NextChange AS t_16_NextChange, (select unnest([0]) as unnested_pod) as x_64
       WHERE

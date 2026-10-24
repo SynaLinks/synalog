@@ -100,7 +100,7 @@ t_1_All AS (SELECT * FROM (
       t_7_M AS M
     WHERE
       ((SELECT
-        MIN(1) AS logica_value
+        MIN(1) AS synalog_value
       FROM
         t_3_L AS t_8_L
       WHERE

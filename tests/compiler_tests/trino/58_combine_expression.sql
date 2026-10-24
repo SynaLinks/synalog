@@ -17,6 +17,6 @@ WITH t_0_Sales AS (SELECT * FROM (
 ) AS UNUSED_TABLE_NAME  )
 SELECT
   (SELECT
-  SUM(Sales.amount) AS logica_value
+  SUM(Sales.amount) AS synalog_value
 FROM
   t_0_Sales AS Sales) AS total ORDER BY total;

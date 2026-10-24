@@ -93,7 +93,7 @@ FROM
   t_1_L AS t_0_L
 WHERE
   ((SELECT
-    MIN(1) AS logica_value
+    MIN(1) AS synalog_value
   FROM
     t_1_L AS t_5_L, UNNEST(t_5_L.l) as x_20
   WHERE

@@ -1,5 +1,5 @@
-DROP TABLE IF EXISTS logica_test.QuarterTotals;
-CREATE TABLE logica_test.QuarterTotals AS WITH t_0_Sales AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_test.QuarterTotals;
+CREATE TABLE synalog_test.QuarterTotals AS WITH t_0_Sales AS (SELECT * FROM (
   
     SELECT
       "Q1" AS col0,
@@ -32,10 +32,10 @@ FROM
   t_0_Sales AS Sales
 GROUP BY col0;
 
--- Interacting with table logica_test.QuarterTotals
+-- Interacting with table synalog_test.QuarterTotals
 
-DROP TABLE IF EXISTS logica_test.RegionTotals;
-CREATE TABLE logica_test.RegionTotals AS WITH t_0_Sales AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_test.RegionTotals;
+CREATE TABLE synalog_test.RegionTotals AS WITH t_0_Sales AS (SELECT * FROM (
   
     SELECT
       "Q1" AS col0,
@@ -68,7 +68,7 @@ FROM
   t_0_Sales AS Sales
 GROUP BY col0;
 
--- Interacting with table logica_test.RegionTotals
+-- Interacting with table synalog_test.RegionTotals
 
 WITH t_0_Sales AS (SELECT * FROM (
   
@@ -102,7 +102,7 @@ SELECT
   QuarterTotals.total AS qtotal,
   RegionTotals.total AS rtotal
 FROM
-  t_0_Sales AS Sales, logica_test.QuarterTotals AS QuarterTotals, logica_test.RegionTotals AS RegionTotals
+  t_0_Sales AS Sales, synalog_test.QuarterTotals AS QuarterTotals, synalog_test.RegionTotals AS RegionTotals
 WHERE
   (QuarterTotals.col0 = Sales.col0) AND
   (RegionTotals.col0 = Sales.col1) ORDER BY quarter, region;

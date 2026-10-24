@@ -51,7 +51,7 @@ t_1_Under_RecursiveCte AS (SELECT * FROM (
       SELECT
         Manages.boss AS boss,
         Manages.report AS report,
-        0 AS logica_step
+        0 AS synalog_step
       FROM
         t_2_Manages AS Manages
      UNION ALL
@@ -59,7 +59,7 @@ t_1_Under_RecursiveCte AS (SELECT * FROM (
       SELECT
         t_5_Manages.boss AS boss,
         t_3_Manages.report AS report,
-        ((0) + (1)) AS logica_step
+        ((0) + (1)) AS synalog_step
       FROM
         t_2_Manages AS t_5_Manages, t_2_Manages AS t_3_Manages
       WHERE
@@ -71,7 +71,7 @@ t_1_Under_RecursiveCte AS (SELECT * FROM (
       SELECT
         t_11_Manages.boss AS boss,
         t_7_Manages.report AS report,
-        ((((0) + (1))) + (1)) AS logica_step
+        ((((0) + (1))) + (1)) AS synalog_step
       FROM
         t_2_Manages AS t_11_Manages, t_2_Manages AS t_9_Manages, t_2_Manages AS t_7_Manages
       WHERE
@@ -85,7 +85,7 @@ t_1_Under_RecursiveCte AS (SELECT * FROM (
       SELECT
         t_19_Manages.boss AS boss,
         t_13_Manages.report AS report,
-        ((((((0) + (1))) + (1))) + (1)) AS logica_step
+        ((((((0) + (1))) + (1))) + (1)) AS synalog_step
       FROM
         t_2_Manages AS t_19_Manages, t_2_Manages AS t_17_Manages, t_2_Manages AS t_15_Manages, t_2_Manages AS t_13_Manages
       WHERE
@@ -101,7 +101,7 @@ t_1_Under_RecursiveCte AS (SELECT * FROM (
       SELECT
         t_29_Manages.boss AS boss,
         t_21_Manages.report AS report,
-        ((((((((0) + (1))) + (1))) + (1))) + (1)) AS logica_step
+        ((((((((0) + (1))) + (1))) + (1))) + (1)) AS synalog_step
       FROM
         t_2_Manages AS t_29_Manages, t_2_Manages AS t_27_Manages, t_2_Manages AS t_25_Manages, t_2_Manages AS t_23_Manages, t_2_Manages AS t_21_Manages
       WHERE
@@ -119,7 +119,7 @@ t_1_Under_RecursiveCte AS (SELECT * FROM (
       SELECT
         t_41_Manages.boss AS boss,
         t_31_Manages.report AS report,
-        ((((((((((0) + (1))) + (1))) + (1))) + (1))) + (1)) AS logica_step
+        ((((((((((0) + (1))) + (1))) + (1))) + (1))) + (1)) AS synalog_step
       FROM
         t_2_Manages AS t_41_Manages, t_2_Manages AS t_39_Manages, t_2_Manages AS t_37_Manages, t_2_Manages AS t_35_Manages, t_2_Manages AS t_33_Manages, t_2_Manages AS t_31_Manages
       WHERE
@@ -141,11 +141,11 @@ UNION
 SELECT
   t_42_Under_RecursiveCte.boss AS boss,
   t_43_Manages.report AS report,
-  ((t_42_Under_RecursiveCte.logica_step) + (1)) AS logica_step
+  ((t_42_Under_RecursiveCte.synalog_step) + (1)) AS synalog_step
 FROM
   t_1_Under_RecursiveCte AS t_42_Under_RecursiveCte, t_2_Manages AS t_43_Manages
 WHERE
-  (t_42_Under_RecursiveCte.logica_step < 8) AND
+  (t_42_Under_RecursiveCte.synalog_step < 8) AND
   (t_43_Manages.boss = t_42_Under_RecursiveCte.report)),
 t_0_Under AS (SELECT
   Under_RecursiveCte.boss AS boss,

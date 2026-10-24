@@ -1,7 +1,7 @@
-ATTACH DATABASE ':memory:' AS logica_test;
+ATTACH DATABASE ':memory:' AS synalog_test;
 
-DROP TABLE IF EXISTS logica_test.Spend;
-CREATE TABLE logica_test.Spend AS WITH t_1_Order AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_test.Spend;
+CREATE TABLE synalog_test.Spend AS WITH t_1_Order AS (SELECT * FROM (
   
     SELECT
       1 AS id,
@@ -110,10 +110,10 @@ WHERE
   (Price.item = t_0_Order.item)
 GROUP BY t_0_Order.who;
 
--- Interacting with table logica_test.Spend
+-- Interacting with table synalog_test.Spend
 
 SELECT
   Spend.who AS who,
   Spend.total AS total
 FROM
-  logica_test.Spend AS Spend ORDER BY who NULLS LAST, total NULLS LAST;
+  synalog_test.Spend AS Spend ORDER BY who NULLS LAST, total NULLS LAST;

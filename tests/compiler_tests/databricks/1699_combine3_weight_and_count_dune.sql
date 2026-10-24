@@ -11,13 +11,13 @@ WITH t_0_Ship AS (SELECT * FROM VALUES
 AS UNUSED_TABLE_NAME(id, client, src, dst, kg, carrier))
 SELECT
   (SELECT
-  SUM(Ship.kg) AS logica_value
+  SUM(Ship.kg) AS synalog_value
 FROM
   t_0_Ship AS Ship
 WHERE
   (Ship.client = "dune")) AS t,
   (SELECT
-  SUM(1) AS logica_value
+  SUM(1) AS synalog_value
 FROM
   t_0_Ship AS t_1_Ship
 WHERE

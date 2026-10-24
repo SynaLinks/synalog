@@ -18,7 +18,7 @@ FROM
   t_0_Follows AS Follows
 WHERE
   ((SELECT
-    MIN(1) AS logica_value
+    MIN(1) AS synalog_value
   FROM
     t_0_Follows AS t_1_Follows
   WHERE

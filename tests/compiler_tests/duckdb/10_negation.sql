@@ -1,7 +1,7 @@
 -- Initializing DuckDB environment.
-create schema if not exists logica_home;
+create schema if not exists synalog_home;
 -- Empty record, has to have a field by DuckDB syntax.
-drop type if exists logicarecord893574736 cascade; create type logicarecord893574736 as struct(nirvana numeric);
+drop type if exists synalogrecord893574736 cascade; create type synalogrecord893574736 as struct(nirvana numeric);
 create sequence if not exists eternal_logical_sequence;
 
 WITH t_0_Prime AS (SELECT * FROM (
@@ -31,7 +31,7 @@ SELECT * FROM (
       (select unnest(Range(10)) as unnested_pod) as x_5
     WHERE
       ((SELECT
-        MIN((CASE WHEN x_8.unnested_pod = 0 THEN 1 ELSE NULL END)) AS logica_value
+        MIN((CASE WHEN x_8.unnested_pod = 0 THEN 1 ELSE NULL END)) AS synalog_value
       FROM
         (select unnest(Range(10)) as unnested_pod) as x_12, (select unnest([0]) as unnested_pod) as x_8
       WHERE
@@ -47,7 +47,7 @@ SELECT * FROM (
     WHERE
       (x_5.unnested_pod > 1) AND
       ((SELECT
-        MIN((CASE WHEN x_8.unnested_pod = 0 THEN 1 ELSE NULL END)) AS logica_value
+        MIN((CASE WHEN x_8.unnested_pod = 0 THEN 1 ELSE NULL END)) AS synalog_value
       FROM
         t_0_Prime AS Prime, (select unnest([0]) as unnested_pod) as x_8
       WHERE
@@ -61,7 +61,7 @@ SELECT * FROM (
       (select unnest(Range(10)) as unnested_pod) as x_7
     WHERE
       ((SELECT
-        MIN((CASE WHEN x_10.unnested_pod = 0 THEN 1 ELSE NULL END)) AS logica_value
+        MIN((CASE WHEN x_10.unnested_pod = 0 THEN 1 ELSE NULL END)) AS synalog_value
       FROM
         t_0_Prime AS Prime, (select unnest([0]) as unnested_pod) as x_10
       WHERE

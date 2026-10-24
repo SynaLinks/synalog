@@ -135,7 +135,7 @@ FROM
   t_0_Spend AS Spend
 WHERE
   ((SELECT
-    MIN(1) AS logica_value
+    MIN(1) AS synalog_value
   FROM
     t_4_Trouble AS Trouble
   WHERE

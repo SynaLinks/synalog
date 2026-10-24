@@ -1,8 +1,8 @@
 -- Initializing PostgreSQL environment.
 set client_min_messages to warning;
-create schema if not exists logica_home;
--- Empty logica type: logicarecord893574736;
-DO $$ BEGIN if not exists (select 'I(am) :- I(think)' from pg_type where typname = 'logicarecord893574736') then create type logicarecord893574736 as (nirvana numeric); end if; END $$;
+create schema if not exists synalog_home;
+-- Empty synalog type: synalogrecord893574736;
+DO $$ BEGIN if not exists (select 'I(am) :- I(think)' from pg_type where typname = 'synalogrecord893574736') then create type synalogrecord893574736 as (nirvana numeric); end if; END $$;
 
 WITH RECURSIVE t_2_Edge AS (SELECT * FROM (
   
@@ -32,7 +32,7 @@ t_1_Reach_RecursiveCte AS (SELECT * FROM (
       SELECT
         Edge.a AS a,
         Edge.b AS b,
-        0 AS logica_step
+        0 AS synalog_step
       FROM
         t_2_Edge AS Edge
      UNION ALL
@@ -40,7 +40,7 @@ t_1_Reach_RecursiveCte AS (SELECT * FROM (
       SELECT
         t_5_Edge.a AS a,
         t_3_Edge.b AS b,
-        ((0) + (1)) AS logica_step
+        ((0) + (1)) AS synalog_step
       FROM
         t_2_Edge AS t_5_Edge, t_2_Edge AS t_3_Edge
       WHERE
@@ -52,7 +52,7 @@ t_1_Reach_RecursiveCte AS (SELECT * FROM (
       SELECT
         t_11_Edge.a AS a,
         t_7_Edge.b AS b,
-        ((((0) + (1))) + (1)) AS logica_step
+        ((((0) + (1))) + (1)) AS synalog_step
       FROM
         t_2_Edge AS t_11_Edge, t_2_Edge AS t_9_Edge, t_2_Edge AS t_7_Edge
       WHERE
@@ -66,7 +66,7 @@ t_1_Reach_RecursiveCte AS (SELECT * FROM (
       SELECT
         t_19_Edge.a AS a,
         t_13_Edge.b AS b,
-        ((((((0) + (1))) + (1))) + (1)) AS logica_step
+        ((((((0) + (1))) + (1))) + (1)) AS synalog_step
       FROM
         t_2_Edge AS t_19_Edge, t_2_Edge AS t_17_Edge, t_2_Edge AS t_15_Edge, t_2_Edge AS t_13_Edge
       WHERE
@@ -82,7 +82,7 @@ t_1_Reach_RecursiveCte AS (SELECT * FROM (
       SELECT
         t_29_Edge.a AS a,
         t_21_Edge.b AS b,
-        ((((((((0) + (1))) + (1))) + (1))) + (1)) AS logica_step
+        ((((((((0) + (1))) + (1))) + (1))) + (1)) AS synalog_step
       FROM
         t_2_Edge AS t_29_Edge, t_2_Edge AS t_27_Edge, t_2_Edge AS t_25_Edge, t_2_Edge AS t_23_Edge, t_2_Edge AS t_21_Edge
       WHERE
@@ -100,7 +100,7 @@ t_1_Reach_RecursiveCte AS (SELECT * FROM (
       SELECT
         t_41_Edge.a AS a,
         t_31_Edge.b AS b,
-        ((((((((((0) + (1))) + (1))) + (1))) + (1))) + (1)) AS logica_step
+        ((((((((((0) + (1))) + (1))) + (1))) + (1))) + (1)) AS synalog_step
       FROM
         t_2_Edge AS t_41_Edge, t_2_Edge AS t_39_Edge, t_2_Edge AS t_37_Edge, t_2_Edge AS t_35_Edge, t_2_Edge AS t_33_Edge, t_2_Edge AS t_31_Edge
       WHERE
@@ -122,11 +122,11 @@ UNION
 SELECT
   t_42_Reach_RecursiveCte.a AS a,
   t_43_Edge.b AS b,
-  ((t_42_Reach_RecursiveCte.logica_step) + (1)) AS logica_step
+  ((t_42_Reach_RecursiveCte.synalog_step) + (1)) AS synalog_step
 FROM
   t_1_Reach_RecursiveCte AS t_42_Reach_RecursiveCte, t_2_Edge AS t_43_Edge
 WHERE
-  (t_42_Reach_RecursiveCte.logica_step < 10) AND
+  (t_42_Reach_RecursiveCte.synalog_step < 10) AND
   (t_43_Edge.a = t_42_Reach_RecursiveCte.b)),
 t_0_Reach AS (SELECT
   Reach_RecursiveCte.a AS a,

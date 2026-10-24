@@ -21,7 +21,7 @@ FROM
   t_1_G AS t_0_G
 WHERE
   ((SELECT
-    MIN(1) AS logica_value
+    MIN(1) AS synalog_value
   FROM
     t_3_Big AS Big
   WHERE

@@ -3,7 +3,7 @@ WITH RECURSIVE t_0_R_RecursiveCte AS (SELECT * FROM (
     
       SELECT
         x_7.value AS x,
-        0 AS logica_step
+        0 AS synalog_step
       FROM
         JSON_EACH(JSON_ARRAY(1)) as x_7
       WHERE
@@ -12,7 +12,7 @@ WITH RECURSIVE t_0_R_RecursiveCte AS (SELECT * FROM (
     
       SELECT
         2 AS x,
-        ((0) + (1)) AS logica_step
+        ((0) + (1)) AS synalog_step
       FROM
         JSON_EACH(JSON_ARRAY(1)) as x_22
       WHERE
@@ -24,7 +24,7 @@ WITH RECURSIVE t_0_R_RecursiveCte AS (SELECT * FROM (
     
       SELECT
         2 AS x,
-        ((((0) + (1))) + (1)) AS logica_step
+        ((((0) + (1))) + (1)) AS synalog_step
       FROM
         JSON_EACH(JSON_ARRAY(1)) as x_42
       WHERE
@@ -38,7 +38,7 @@ WITH RECURSIVE t_0_R_RecursiveCte AS (SELECT * FROM (
     
       SELECT
         2 AS x,
-        ((((((0) + (1))) + (1))) + (1)) AS logica_step
+        ((((((0) + (1))) + (1))) + (1)) AS synalog_step
       FROM
         JSON_EACH(JSON_ARRAY(1)) as x_67
       WHERE
@@ -55,11 +55,11 @@ WITH RECURSIVE t_0_R_RecursiveCte AS (SELECT * FROM (
 UNION
 SELECT
   2 AS x,
-  ((t_14_R_RecursiveCte.logica_step) + (1)) AS logica_step
+  ((t_14_R_RecursiveCte.synalog_step) + (1)) AS synalog_step
 FROM
   t_0_R_RecursiveCte AS t_14_R_RecursiveCte
 WHERE
-  (t_14_R_RecursiveCte.logica_step < 5) AND
+  (t_14_R_RecursiveCte.synalog_step < 5) AND
   (t_14_R_RecursiveCte.x = 1))
 SELECT
   R_RecursiveCte.x AS x

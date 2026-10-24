@@ -69,7 +69,7 @@ t_1_Up_RecursiveCte AS (SELECT * FROM (
     
       SELECT
         t_2_E.boss AS id,
-        0 AS logica_step
+        0 AS synalog_step
       FROM
         t_3_E AS t_2_E
       WHERE
@@ -78,7 +78,7 @@ t_1_Up_RecursiveCte AS (SELECT * FROM (
     
       SELECT
         t_4_E.boss AS id,
-        ((0) + (1)) AS logica_step
+        ((0) + (1)) AS synalog_step
       FROM
         t_3_E AS t_6_E, t_3_E AS t_4_E
       WHERE
@@ -90,7 +90,7 @@ t_1_Up_RecursiveCte AS (SELECT * FROM (
     
       SELECT
         t_8_E.boss AS id,
-        ((((0) + (1))) + (1)) AS logica_step
+        ((((0) + (1))) + (1)) AS synalog_step
       FROM
         t_3_E AS t_12_E, t_3_E AS t_10_E, t_3_E AS t_8_E
       WHERE
@@ -104,7 +104,7 @@ t_1_Up_RecursiveCte AS (SELECT * FROM (
     
       SELECT
         t_14_E.boss AS id,
-        ((((((0) + (1))) + (1))) + (1)) AS logica_step
+        ((((((0) + (1))) + (1))) + (1)) AS synalog_step
       FROM
         t_3_E AS t_20_E, t_3_E AS t_18_E, t_3_E AS t_16_E, t_3_E AS t_14_E
       WHERE
@@ -122,11 +122,11 @@ t_1_Up_RecursiveCte AS (SELECT * FROM (
 UNION
 SELECT
   t_22_E.boss AS id,
-  ((t_21_Up_RecursiveCte.logica_step) + (1)) AS logica_step
+  ((t_21_Up_RecursiveCte.synalog_step) + (1)) AS synalog_step
 FROM
   t_1_Up_RecursiveCte AS t_21_Up_RecursiveCte, t_3_E AS t_22_E
 WHERE
-  (t_21_Up_RecursiveCte.logica_step < 10) AND
+  (t_21_Up_RecursiveCte.synalog_step < 10) AND
   (t_22_E.id = t_21_Up_RecursiveCte.id)),
 t_0_Up AS (SELECT
   Up_RecursiveCte.id AS id

@@ -1,5 +1,5 @@
-DROP TABLE IF EXISTS logica_test.Person;
-CREATE TABLE logica_test.Person AS WITH t_0_Employees AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_test.Person;
+CREATE TABLE synalog_test.Person AS WITH t_0_Employees AS (SELECT * FROM (
   
     SELECT
       1 AS person_id,
@@ -54,10 +54,10 @@ FROM
   t_0_Employees AS Employees
 GROUP BY 1, 2, 3 ORDER BY person_id;
 
--- Interacting with table logica_test.Person
+-- Interacting with table synalog_test.Person
 
-DROP TABLE IF EXISTS logica_test.Manages;
-CREATE TABLE logica_test.Manages AS WITH t_1_Management AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_test.Manages;
+CREATE TABLE synalog_test.Manages AS WITH t_1_Management AS (SELECT * FROM (
   
     SELECT
       1 AS manager_id,
@@ -83,22 +83,22 @@ SELECT
   Person.person_id AS manager_id,
   t_0_Person.person_id AS employee_id
 FROM
-  logica_test.Person AS Person, logica_test.Person AS t_0_Person, t_1_Management AS Management
+  synalog_test.Person AS Person, synalog_test.Person AS t_0_Person, t_1_Management AS Management
 WHERE
   (Management.manager_id = Person.person_id) AND
   (Management.employee_id = t_0_Person.person_id)
 GROUP BY 1, 2;
 
--- Interacting with table logica_test.Manages
+-- Interacting with table synalog_test.Manages
 
-DROP TABLE IF EXISTS logica_test.Chain_sn_delta;
-CREATE TABLE logica_test.Chain_sn_delta AS WITH t_0_Chain_MultBodyAggAux_f2 AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_test.Chain_sn_delta;
+CREATE TABLE synalog_test.Chain_sn_delta AS WITH t_0_Chain_MultBodyAggAux_f2 AS (SELECT * FROM (
   
     SELECT
       t_1_Manages.employee_id AS employee_id,
       t_1_Manages.manager_id AS manager_id
     FROM
-      logica_test.Manages AS t_1_Manages
+      synalog_test.Manages AS t_1_Manages
   
 ) AS UNUSED_TABLE_NAME  )
 SELECT
@@ -108,27 +108,27 @@ FROM
   t_0_Chain_MultBodyAggAux_f2 AS Chain_MultBodyAggAux_f2
 GROUP BY 1, 2;
 
--- Interacting with table logica_test.Chain_sn_delta
+-- Interacting with table synalog_test.Chain_sn_delta
 
-DROP TABLE IF EXISTS logica_test.Chain_sn_t0;
-CREATE TABLE logica_test.Chain_sn_t0 AS SELECT
+DROP TABLE IF EXISTS synalog_test.Chain_sn_t0;
+CREATE TABLE synalog_test.Chain_sn_t0 AS SELECT
   Chain_sn_delta.employee_id AS employee_id,
   Chain_sn_delta.manager_id AS manager_id
 FROM
-  logica_test.Chain_sn_delta AS Chain_sn_delta
+  synalog_test.Chain_sn_delta AS Chain_sn_delta
 WHERE
   (1 = 0);
 
--- Interacting with table logica_test.Chain_sn_t0
+-- Interacting with table synalog_test.Chain_sn_t0
 
-DROP TABLE IF EXISTS logica_test.Chain_sn_t1;
-CREATE TABLE logica_test.Chain_sn_t1 AS WITH t_1_Chain_MultBodyAggAux_f3 AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_test.Chain_sn_t1;
+CREATE TABLE synalog_test.Chain_sn_t1 AS WITH t_1_Chain_MultBodyAggAux_f3 AS (SELECT * FROM (
   
     SELECT
       Chain_sn_t0.employee_id AS employee_id,
       Manages.manager_id AS manager_id
     FROM
-      logica_test.Chain_sn_t0 AS Chain_sn_t0, logica_test.Manages AS Manages
+      synalog_test.Chain_sn_t0 AS Chain_sn_t0, synalog_test.Manages AS Manages
     WHERE
       (Manages.employee_id = Chain_sn_t0.manager_id)
    UNION ALL
@@ -137,7 +137,7 @@ CREATE TABLE logica_test.Chain_sn_t1 AS WITH t_1_Chain_MultBodyAggAux_f3 AS (SEL
       t_2_Manages.employee_id AS employee_id,
       t_2_Manages.manager_id AS manager_id
     FROM
-      logica_test.Manages AS t_2_Manages
+      synalog_test.Manages AS t_2_Manages
   
 ) AS UNUSED_TABLE_NAME  ),
 t_0_Chain_sn_r1 AS (SELECT
@@ -154,16 +154,16 @@ FROM
 WHERE
   (1 = 0);
 
--- Interacting with table logica_test.Chain_sn_t1
+-- Interacting with table synalog_test.Chain_sn_t1
 
-DROP TABLE IF EXISTS logica_test.Chain_sn_t2;
-CREATE TABLE logica_test.Chain_sn_t2 AS WITH t_1_Chain_MultBodyAggAux_f4 AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_test.Chain_sn_t2;
+CREATE TABLE synalog_test.Chain_sn_t2 AS WITH t_1_Chain_MultBodyAggAux_f4 AS (SELECT * FROM (
   
     SELECT
       Chain_sn_t1.employee_id AS employee_id,
       Manages.manager_id AS manager_id
     FROM
-      logica_test.Chain_sn_t1 AS Chain_sn_t1, logica_test.Manages AS Manages
+      synalog_test.Chain_sn_t1 AS Chain_sn_t1, synalog_test.Manages AS Manages
     WHERE
       (Manages.employee_id = Chain_sn_t1.manager_id)
    UNION ALL
@@ -172,7 +172,7 @@ CREATE TABLE logica_test.Chain_sn_t2 AS WITH t_1_Chain_MultBodyAggAux_f4 AS (SEL
       t_2_Manages.employee_id AS employee_id,
       t_2_Manages.manager_id AS manager_id
     FROM
-      logica_test.Manages AS t_2_Manages
+      synalog_test.Manages AS t_2_Manages
   
 ) AS UNUSED_TABLE_NAME  ),
 t_0_Chain_sn_r2 AS (SELECT
@@ -189,16 +189,16 @@ FROM
 WHERE
   (1 = 0);
 
--- Interacting with table logica_test.Chain_sn_t2
+-- Interacting with table synalog_test.Chain_sn_t2
 
-DROP TABLE IF EXISTS logica_test.Chain_sn_t3;
-CREATE TABLE logica_test.Chain_sn_t3 AS WITH t_1_Chain_MultBodyAggAux_f5 AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_test.Chain_sn_t3;
+CREATE TABLE synalog_test.Chain_sn_t3 AS WITH t_1_Chain_MultBodyAggAux_f5 AS (SELECT * FROM (
   
     SELECT
       Chain_sn_t2.employee_id AS employee_id,
       Manages.manager_id AS manager_id
     FROM
-      logica_test.Chain_sn_t2 AS Chain_sn_t2, logica_test.Manages AS Manages
+      synalog_test.Chain_sn_t2 AS Chain_sn_t2, synalog_test.Manages AS Manages
     WHERE
       (Manages.employee_id = Chain_sn_t2.manager_id)
    UNION ALL
@@ -207,7 +207,7 @@ CREATE TABLE logica_test.Chain_sn_t3 AS WITH t_1_Chain_MultBodyAggAux_f5 AS (SEL
       t_2_Manages.employee_id AS employee_id,
       t_2_Manages.manager_id AS manager_id
     FROM
-      logica_test.Manages AS t_2_Manages
+      synalog_test.Manages AS t_2_Manages
   
 ) AS UNUSED_TABLE_NAME  ),
 t_0_Chain_sn_r3 AS (SELECT
@@ -224,16 +224,16 @@ FROM
 WHERE
   (1 = 0);
 
--- Interacting with table logica_test.Chain_sn_t3
+-- Interacting with table synalog_test.Chain_sn_t3
 
-DROP TABLE IF EXISTS logica_test.Chain_sn_t4;
-CREATE TABLE logica_test.Chain_sn_t4 AS WITH t_1_Chain_MultBodyAggAux_f6 AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_test.Chain_sn_t4;
+CREATE TABLE synalog_test.Chain_sn_t4 AS WITH t_1_Chain_MultBodyAggAux_f6 AS (SELECT * FROM (
   
     SELECT
       Chain_sn_t3.employee_id AS employee_id,
       Manages.manager_id AS manager_id
     FROM
-      logica_test.Chain_sn_t3 AS Chain_sn_t3, logica_test.Manages AS Manages
+      synalog_test.Chain_sn_t3 AS Chain_sn_t3, synalog_test.Manages AS Manages
     WHERE
       (Manages.employee_id = Chain_sn_t3.manager_id)
    UNION ALL
@@ -242,7 +242,7 @@ CREATE TABLE logica_test.Chain_sn_t4 AS WITH t_1_Chain_MultBodyAggAux_f6 AS (SEL
       t_2_Manages.employee_id AS employee_id,
       t_2_Manages.manager_id AS manager_id
     FROM
-      logica_test.Manages AS t_2_Manages
+      synalog_test.Manages AS t_2_Manages
   
 ) AS UNUSED_TABLE_NAME  ),
 t_0_Chain_sn_r4 AS (SELECT
@@ -259,16 +259,16 @@ FROM
 WHERE
   (1 = 0);
 
--- Interacting with table logica_test.Chain_sn_t4
+-- Interacting with table synalog_test.Chain_sn_t4
 
-DROP TABLE IF EXISTS logica_test.Chain_sn_t5;
-CREATE TABLE logica_test.Chain_sn_t5 AS WITH t_1_Chain_MultBodyAggAux_f7 AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_test.Chain_sn_t5;
+CREATE TABLE synalog_test.Chain_sn_t5 AS WITH t_1_Chain_MultBodyAggAux_f7 AS (SELECT * FROM (
   
     SELECT
       Chain_sn_t4.employee_id AS employee_id,
       Manages.manager_id AS manager_id
     FROM
-      logica_test.Chain_sn_t4 AS Chain_sn_t4, logica_test.Manages AS Manages
+      synalog_test.Chain_sn_t4 AS Chain_sn_t4, synalog_test.Manages AS Manages
     WHERE
       (Manages.employee_id = Chain_sn_t4.manager_id)
    UNION ALL
@@ -277,7 +277,7 @@ CREATE TABLE logica_test.Chain_sn_t5 AS WITH t_1_Chain_MultBodyAggAux_f7 AS (SEL
       t_2_Manages.employee_id AS employee_id,
       t_2_Manages.manager_id AS manager_id
     FROM
-      logica_test.Manages AS t_2_Manages
+      synalog_test.Manages AS t_2_Manages
   
 ) AS UNUSED_TABLE_NAME  ),
 t_0_Chain_sn_r5 AS (SELECT
@@ -294,64 +294,64 @@ FROM
 WHERE
   (1 = 0);
 
--- Interacting with table logica_test.Chain_sn_t5
+-- Interacting with table synalog_test.Chain_sn_t5
 
-DROP TABLE IF EXISTS logica_test.Chain_sn_full;
-CREATE TABLE logica_test.Chain_sn_full AS SELECT * FROM (
+DROP TABLE IF EXISTS synalog_test.Chain_sn_full;
+CREATE TABLE synalog_test.Chain_sn_full AS SELECT * FROM (
   
     SELECT
       Chain_sn_delta.employee_id AS employee_id,
       Chain_sn_delta.manager_id AS manager_id
     FROM
-      logica_test.Chain_sn_delta AS Chain_sn_delta
+      synalog_test.Chain_sn_delta AS Chain_sn_delta
    UNION ALL
   
     SELECT
       Chain_sn_t1.employee_id AS employee_id,
       Chain_sn_t1.manager_id AS manager_id
     FROM
-      logica_test.Chain_sn_t1 AS Chain_sn_t1
+      synalog_test.Chain_sn_t1 AS Chain_sn_t1
    UNION ALL
   
     SELECT
       Chain_sn_t2.employee_id AS employee_id,
       Chain_sn_t2.manager_id AS manager_id
     FROM
-      logica_test.Chain_sn_t2 AS Chain_sn_t2
+      synalog_test.Chain_sn_t2 AS Chain_sn_t2
    UNION ALL
   
     SELECT
       Chain_sn_t3.employee_id AS employee_id,
       Chain_sn_t3.manager_id AS manager_id
     FROM
-      logica_test.Chain_sn_t3 AS Chain_sn_t3
+      synalog_test.Chain_sn_t3 AS Chain_sn_t3
    UNION ALL
   
     SELECT
       Chain_sn_t4.employee_id AS employee_id,
       Chain_sn_t4.manager_id AS manager_id
     FROM
-      logica_test.Chain_sn_t4 AS Chain_sn_t4
+      synalog_test.Chain_sn_t4 AS Chain_sn_t4
    UNION ALL
   
     SELECT
       Chain_sn_t5.employee_id AS employee_id,
       Chain_sn_t5.manager_id AS manager_id
     FROM
-      logica_test.Chain_sn_t5 AS Chain_sn_t5
+      synalog_test.Chain_sn_t5 AS Chain_sn_t5
   
 ) AS UNUSED_TABLE_NAME  ;
 
--- Interacting with table logica_test.Chain_sn_full
+-- Interacting with table synalog_test.Chain_sn_full
 
-DROP TABLE IF EXISTS logica_test.Chain_sn_new;
-CREATE TABLE logica_test.Chain_sn_new AS WITH t_1_Chain_MultBodyAggAux_f8 AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_test.Chain_sn_new;
+CREATE TABLE synalog_test.Chain_sn_new AS WITH t_1_Chain_MultBodyAggAux_f8 AS (SELECT * FROM (
   
     SELECT
       Chain_sn_delta.employee_id AS employee_id,
       Manages.manager_id AS manager_id
     FROM
-      logica_test.Chain_sn_delta AS Chain_sn_delta, logica_test.Manages AS Manages
+      synalog_test.Chain_sn_delta AS Chain_sn_delta, synalog_test.Manages AS Manages
     WHERE
       (Manages.employee_id = Chain_sn_delta.manager_id)
    UNION ALL
@@ -360,7 +360,7 @@ CREATE TABLE logica_test.Chain_sn_new AS WITH t_1_Chain_MultBodyAggAux_f8 AS (SE
       t_2_Manages.employee_id AS employee_id,
       t_2_Manages.manager_id AS manager_id
     FROM
-      logica_test.Manages AS t_2_Manages
+      synalog_test.Manages AS t_2_Manages
   
 ) AS UNUSED_TABLE_NAME  ),
 t_0_Chain_sn_step AS (SELECT
@@ -376,24 +376,24 @@ FROM
   t_0_Chain_sn_step AS Chain_sn_step
 WHERE
   ((SELECT
-    MIN(1) AS logica_value
+    MIN(1) AS synalog_value
   FROM
-    logica_test.Chain_sn_full AS Chain_sn_full
+    synalog_test.Chain_sn_full AS Chain_sn_full
   WHERE
     (Chain_sn_full.employee_id = Chain_sn_step.employee_id) AND
     (Chain_sn_full.manager_id = Chain_sn_step.manager_id)) IS NULL)
 GROUP BY 1, 2;
 
-INSERT INTO logica_test.Chain_sn_full SELECT * FROM logica_test.Chain_sn_new;
+INSERT INTO synalog_test.Chain_sn_full SELECT * FROM synalog_test.Chain_sn_new;
 
-DROP TABLE IF EXISTS logica_test.Chain_sn_delta;
-CREATE TABLE logica_test.Chain_sn_delta AS WITH t_1_Chain_MultBodyAggAux_f1 AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_test.Chain_sn_delta;
+CREATE TABLE synalog_test.Chain_sn_delta AS WITH t_1_Chain_MultBodyAggAux_f1 AS (SELECT * FROM (
   
     SELECT
       Chain_sn_new.employee_id AS employee_id,
       Manages.manager_id AS manager_id
     FROM
-      logica_test.Chain_sn_new AS Chain_sn_new, logica_test.Manages AS Manages
+      synalog_test.Chain_sn_new AS Chain_sn_new, synalog_test.Manages AS Manages
     WHERE
       (Manages.employee_id = Chain_sn_new.manager_id)
    UNION ALL
@@ -402,7 +402,7 @@ CREATE TABLE logica_test.Chain_sn_delta AS WITH t_1_Chain_MultBodyAggAux_f1 AS (
       t_2_Manages.employee_id AS employee_id,
       t_2_Manages.manager_id AS manager_id
     FROM
-      logica_test.Manages AS t_2_Manages
+      synalog_test.Manages AS t_2_Manages
   
 ) AS UNUSED_TABLE_NAME  ),
 t_0_Chain_sn_back_step AS (SELECT
@@ -418,24 +418,24 @@ FROM
   t_0_Chain_sn_back_step AS Chain_sn_back_step
 WHERE
   ((SELECT
-    MIN(1) AS logica_value
+    MIN(1) AS synalog_value
   FROM
-    logica_test.Chain_sn_full AS Chain_sn_full
+    synalog_test.Chain_sn_full AS Chain_sn_full
   WHERE
     (Chain_sn_full.employee_id = Chain_sn_back_step.employee_id) AND
     (Chain_sn_full.manager_id = Chain_sn_back_step.manager_id)) IS NULL)
 GROUP BY 1, 2;
 
-INSERT INTO logica_test.Chain_sn_full SELECT * FROM logica_test.Chain_sn_delta;
+INSERT INTO synalog_test.Chain_sn_full SELECT * FROM synalog_test.Chain_sn_delta;
 
-DROP TABLE IF EXISTS logica_test.Chain_sn_new;
-CREATE TABLE logica_test.Chain_sn_new AS WITH t_1_Chain_MultBodyAggAux_f8 AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_test.Chain_sn_new;
+CREATE TABLE synalog_test.Chain_sn_new AS WITH t_1_Chain_MultBodyAggAux_f8 AS (SELECT * FROM (
   
     SELECT
       Chain_sn_delta.employee_id AS employee_id,
       Manages.manager_id AS manager_id
     FROM
-      logica_test.Chain_sn_delta AS Chain_sn_delta, logica_test.Manages AS Manages
+      synalog_test.Chain_sn_delta AS Chain_sn_delta, synalog_test.Manages AS Manages
     WHERE
       (Manages.employee_id = Chain_sn_delta.manager_id)
    UNION ALL
@@ -444,7 +444,7 @@ CREATE TABLE logica_test.Chain_sn_new AS WITH t_1_Chain_MultBodyAggAux_f8 AS (SE
       t_2_Manages.employee_id AS employee_id,
       t_2_Manages.manager_id AS manager_id
     FROM
-      logica_test.Manages AS t_2_Manages
+      synalog_test.Manages AS t_2_Manages
   
 ) AS UNUSED_TABLE_NAME  ),
 t_0_Chain_sn_step AS (SELECT
@@ -460,24 +460,24 @@ FROM
   t_0_Chain_sn_step AS Chain_sn_step
 WHERE
   ((SELECT
-    MIN(1) AS logica_value
+    MIN(1) AS synalog_value
   FROM
-    logica_test.Chain_sn_full AS Chain_sn_full
+    synalog_test.Chain_sn_full AS Chain_sn_full
   WHERE
     (Chain_sn_full.employee_id = Chain_sn_step.employee_id) AND
     (Chain_sn_full.manager_id = Chain_sn_step.manager_id)) IS NULL)
 GROUP BY 1, 2;
 
-INSERT INTO logica_test.Chain_sn_full SELECT * FROM logica_test.Chain_sn_new;
+INSERT INTO synalog_test.Chain_sn_full SELECT * FROM synalog_test.Chain_sn_new;
 
-DROP TABLE IF EXISTS logica_test.Chain_sn_delta;
-CREATE TABLE logica_test.Chain_sn_delta AS WITH t_1_Chain_MultBodyAggAux_f1 AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_test.Chain_sn_delta;
+CREATE TABLE synalog_test.Chain_sn_delta AS WITH t_1_Chain_MultBodyAggAux_f1 AS (SELECT * FROM (
   
     SELECT
       Chain_sn_new.employee_id AS employee_id,
       Manages.manager_id AS manager_id
     FROM
-      logica_test.Chain_sn_new AS Chain_sn_new, logica_test.Manages AS Manages
+      synalog_test.Chain_sn_new AS Chain_sn_new, synalog_test.Manages AS Manages
     WHERE
       (Manages.employee_id = Chain_sn_new.manager_id)
    UNION ALL
@@ -486,7 +486,7 @@ CREATE TABLE logica_test.Chain_sn_delta AS WITH t_1_Chain_MultBodyAggAux_f1 AS (
       t_2_Manages.employee_id AS employee_id,
       t_2_Manages.manager_id AS manager_id
     FROM
-      logica_test.Manages AS t_2_Manages
+      synalog_test.Manages AS t_2_Manages
   
 ) AS UNUSED_TABLE_NAME  ),
 t_0_Chain_sn_back_step AS (SELECT
@@ -502,24 +502,24 @@ FROM
   t_0_Chain_sn_back_step AS Chain_sn_back_step
 WHERE
   ((SELECT
-    MIN(1) AS logica_value
+    MIN(1) AS synalog_value
   FROM
-    logica_test.Chain_sn_full AS Chain_sn_full
+    synalog_test.Chain_sn_full AS Chain_sn_full
   WHERE
     (Chain_sn_full.employee_id = Chain_sn_back_step.employee_id) AND
     (Chain_sn_full.manager_id = Chain_sn_back_step.manager_id)) IS NULL)
 GROUP BY 1, 2;
 
-INSERT INTO logica_test.Chain_sn_full SELECT * FROM logica_test.Chain_sn_delta;
+INSERT INTO synalog_test.Chain_sn_full SELECT * FROM synalog_test.Chain_sn_delta;
 
-DROP TABLE IF EXISTS logica_test.Chain_sn_new;
-CREATE TABLE logica_test.Chain_sn_new AS WITH t_1_Chain_MultBodyAggAux_f8 AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_test.Chain_sn_new;
+CREATE TABLE synalog_test.Chain_sn_new AS WITH t_1_Chain_MultBodyAggAux_f8 AS (SELECT * FROM (
   
     SELECT
       Chain_sn_delta.employee_id AS employee_id,
       Manages.manager_id AS manager_id
     FROM
-      logica_test.Chain_sn_delta AS Chain_sn_delta, logica_test.Manages AS Manages
+      synalog_test.Chain_sn_delta AS Chain_sn_delta, synalog_test.Manages AS Manages
     WHERE
       (Manages.employee_id = Chain_sn_delta.manager_id)
    UNION ALL
@@ -528,7 +528,7 @@ CREATE TABLE logica_test.Chain_sn_new AS WITH t_1_Chain_MultBodyAggAux_f8 AS (SE
       t_2_Manages.employee_id AS employee_id,
       t_2_Manages.manager_id AS manager_id
     FROM
-      logica_test.Manages AS t_2_Manages
+      synalog_test.Manages AS t_2_Manages
   
 ) AS UNUSED_TABLE_NAME  ),
 t_0_Chain_sn_step AS (SELECT
@@ -544,24 +544,24 @@ FROM
   t_0_Chain_sn_step AS Chain_sn_step
 WHERE
   ((SELECT
-    MIN(1) AS logica_value
+    MIN(1) AS synalog_value
   FROM
-    logica_test.Chain_sn_full AS Chain_sn_full
+    synalog_test.Chain_sn_full AS Chain_sn_full
   WHERE
     (Chain_sn_full.employee_id = Chain_sn_step.employee_id) AND
     (Chain_sn_full.manager_id = Chain_sn_step.manager_id)) IS NULL)
 GROUP BY 1, 2;
 
-INSERT INTO logica_test.Chain_sn_full SELECT * FROM logica_test.Chain_sn_new;
+INSERT INTO synalog_test.Chain_sn_full SELECT * FROM synalog_test.Chain_sn_new;
 
-DROP TABLE IF EXISTS logica_test.Chain_sn_delta;
-CREATE TABLE logica_test.Chain_sn_delta AS WITH t_1_Chain_MultBodyAggAux_f1 AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_test.Chain_sn_delta;
+CREATE TABLE synalog_test.Chain_sn_delta AS WITH t_1_Chain_MultBodyAggAux_f1 AS (SELECT * FROM (
   
     SELECT
       Chain_sn_new.employee_id AS employee_id,
       Manages.manager_id AS manager_id
     FROM
-      logica_test.Chain_sn_new AS Chain_sn_new, logica_test.Manages AS Manages
+      synalog_test.Chain_sn_new AS Chain_sn_new, synalog_test.Manages AS Manages
     WHERE
       (Manages.employee_id = Chain_sn_new.manager_id)
    UNION ALL
@@ -570,7 +570,7 @@ CREATE TABLE logica_test.Chain_sn_delta AS WITH t_1_Chain_MultBodyAggAux_f1 AS (
       t_2_Manages.employee_id AS employee_id,
       t_2_Manages.manager_id AS manager_id
     FROM
-      logica_test.Manages AS t_2_Manages
+      synalog_test.Manages AS t_2_Manages
   
 ) AS UNUSED_TABLE_NAME  ),
 t_0_Chain_sn_back_step AS (SELECT
@@ -586,20 +586,20 @@ FROM
   t_0_Chain_sn_back_step AS Chain_sn_back_step
 WHERE
   ((SELECT
-    MIN(1) AS logica_value
+    MIN(1) AS synalog_value
   FROM
-    logica_test.Chain_sn_full AS Chain_sn_full
+    synalog_test.Chain_sn_full AS Chain_sn_full
   WHERE
     (Chain_sn_full.employee_id = Chain_sn_back_step.employee_id) AND
     (Chain_sn_full.manager_id = Chain_sn_back_step.manager_id)) IS NULL)
 GROUP BY 1, 2;
 
-INSERT INTO logica_test.Chain_sn_full SELECT * FROM logica_test.Chain_sn_delta;
+INSERT INTO synalog_test.Chain_sn_full SELECT * FROM synalog_test.Chain_sn_delta;
 
 SELECT
   Chain_sn_full.manager_id AS manager_id
 FROM
-  logica_test.Chain_sn_full AS Chain_sn_full
+  synalog_test.Chain_sn_full AS Chain_sn_full
 WHERE
   (4 = Chain_sn_full.employee_id)
 GROUP BY 1 ORDER BY manager_id;

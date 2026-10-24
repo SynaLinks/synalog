@@ -1,5 +1,5 @@
-DROP TABLE IF EXISTS logica_test.Team;
-CREATE TABLE logica_test.Team AS WITH t_0_Teams AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_test.Team;
+CREATE TABLE synalog_test.Team AS WITH t_0_Teams AS (SELECT * FROM (
   
     SELECT
       10 AS team_id,
@@ -23,7 +23,7 @@ FROM
   t_0_Teams AS Teams
 GROUP BY 1, 2 ORDER BY team_id;
 
--- Interacting with table logica_test.Team
+-- Interacting with table synalog_test.Team
 
 WITH t_4_Clients AS (SELECT * FROM (
   
@@ -64,7 +64,7 @@ t_0_EngagedWith AS (SELECT
   t_1_Team.team_id AS team_id,
   t_2_Client.client_id AS client_id
 FROM
-  logica_test.Team AS t_1_Team, t_3_Client AS t_2_Client, t_5_Engagements AS Engagements
+  synalog_test.Team AS t_1_Team, t_3_Client AS t_2_Client, t_5_Engagements AS Engagements
 WHERE
   (Engagements.team_id = t_1_Team.team_id) AND
   (Engagements.client_id = t_2_Client.client_id)

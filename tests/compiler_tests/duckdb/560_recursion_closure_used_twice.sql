@@ -1,7 +1,7 @@
 -- Initializing DuckDB environment.
-create schema if not exists logica_home;
+create schema if not exists synalog_home;
 -- Empty record, has to have a field by DuckDB syntax.
-drop type if exists logicarecord893574736 cascade; create type logicarecord893574736 as struct(nirvana numeric);
+drop type if exists synalogrecord893574736 cascade; create type synalogrecord893574736 as struct(nirvana numeric);
 create sequence if not exists eternal_logical_sequence;
 
 WITH RECURSIVE t_3_E AS (SELECT * FROM (
@@ -22,7 +22,7 @@ t_2_P_RecursiveCte AS (SELECT * FROM (
       SELECT
         E.a AS a,
         E.b AS b,
-        0 AS logica_step
+        0 AS synalog_step
       FROM
         t_3_E AS E
      UNION ALL
@@ -30,7 +30,7 @@ t_2_P_RecursiveCte AS (SELECT * FROM (
       SELECT
         t_6_E.a AS a,
         t_4_E.b AS b,
-        ((0) + (1)) AS logica_step
+        ((0) + (1)) AS synalog_step
       FROM
         t_3_E AS t_6_E, t_3_E AS t_4_E
       WHERE
@@ -42,7 +42,7 @@ t_2_P_RecursiveCte AS (SELECT * FROM (
       SELECT
         t_12_E.a AS a,
         t_8_E.b AS b,
-        ((((0) + (1))) + (1)) AS logica_step
+        ((((0) + (1))) + (1)) AS synalog_step
       FROM
         t_3_E AS t_12_E, t_3_E AS t_10_E, t_3_E AS t_8_E
       WHERE
@@ -56,7 +56,7 @@ t_2_P_RecursiveCte AS (SELECT * FROM (
       SELECT
         t_20_E.a AS a,
         t_14_E.b AS b,
-        ((((((0) + (1))) + (1))) + (1)) AS logica_step
+        ((((((0) + (1))) + (1))) + (1)) AS synalog_step
       FROM
         t_3_E AS t_20_E, t_3_E AS t_18_E, t_3_E AS t_16_E, t_3_E AS t_14_E
       WHERE
@@ -72,7 +72,7 @@ t_2_P_RecursiveCte AS (SELECT * FROM (
       SELECT
         t_30_E.a AS a,
         t_22_E.b AS b,
-        ((((((((0) + (1))) + (1))) + (1))) + (1)) AS logica_step
+        ((((((((0) + (1))) + (1))) + (1))) + (1)) AS synalog_step
       FROM
         t_3_E AS t_30_E, t_3_E AS t_28_E, t_3_E AS t_26_E, t_3_E AS t_24_E, t_3_E AS t_22_E
       WHERE
@@ -90,7 +90,7 @@ t_2_P_RecursiveCte AS (SELECT * FROM (
       SELECT
         t_42_E.a AS a,
         t_32_E.b AS b,
-        ((((((((((0) + (1))) + (1))) + (1))) + (1))) + (1)) AS logica_step
+        ((((((((((0) + (1))) + (1))) + (1))) + (1))) + (1)) AS synalog_step
       FROM
         t_3_E AS t_42_E, t_3_E AS t_40_E, t_3_E AS t_38_E, t_3_E AS t_36_E, t_3_E AS t_34_E, t_3_E AS t_32_E
       WHERE
@@ -112,11 +112,11 @@ UNION
 SELECT
   t_43_P_RecursiveCte.a AS a,
   t_44_E.b AS b,
-  ((t_43_P_RecursiveCte.logica_step) + (1)) AS logica_step
+  ((t_43_P_RecursiveCte.synalog_step) + (1)) AS synalog_step
 FROM
   t_2_P_RecursiveCte AS t_43_P_RecursiveCte, t_3_E AS t_44_E
 WHERE
-  (t_43_P_RecursiveCte.logica_step < 5) AND
+  (t_43_P_RecursiveCte.synalog_step < 5) AND
   (t_44_E.a = t_43_P_RecursiveCte.b)),
 t_1_P AS (SELECT
   P_RecursiveCte.a AS a,

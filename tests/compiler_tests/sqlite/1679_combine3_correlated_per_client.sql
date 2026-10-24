@@ -89,7 +89,7 @@ GROUP BY t_3_Ship.client)
 SELECT
   t_0_Client.client AS client,
   (SELECT
-  SUM(MagicalEntangle(Ship.kg, x_7.value)) AS logica_value
+  SUM(MagicalEntangle(Ship.kg, x_7.value)) AS synalog_value
 FROM
   t_1_Ship AS Ship, JSON_EACH(JSON_ARRAY(0)) as x_7
 WHERE

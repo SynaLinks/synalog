@@ -93,7 +93,7 @@ t_2_D AS (SELECT * FROM (
 SELECT
   t_0_D.dn AS dn,
   COALESCE((SELECT
-  SUM(1) AS logica_value
+  SUM(1) AS synalog_value
 FROM
   t_1_E AS E
 WHERE

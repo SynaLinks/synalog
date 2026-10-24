@@ -1,6 +1,6 @@
 // License Apache 2.0: (c) 2025-2026 Yoan Sallami (Synalinks Team)
 
-//! Stratification check for Logica programs.
+//! Stratification check for Synalog programs.
 //!
 //! A program is stratified if there are no negative recursion cycles: no
 //! negative dependency `P -> Q` with `Q` reaching back to `P`. The graph

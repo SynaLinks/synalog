@@ -1018,7 +1018,7 @@ impl SubqueryTranslator for MockSubqueryTranslator {
         Ok(predicate.to_string())
     }
     fn translate_rule(&self, _rule: &Json, _vocab: &HashMap<String, String>, _types: &HashMap<String, crate::compiler::type_inference::Type>, _is_combine: bool) -> crate::compiler::CompileResult<String> {
-        Ok("SELECT 1 AS logica_value".to_string())
+        Ok("SELECT 1 AS synalog_value".to_string())
     }
 }
 
@@ -1067,7 +1067,7 @@ fn test_user_predicate_no_args() {
         )
     );
     let result = ql.convert_to_sql(&expr).unwrap();
-    assert!(result.contains("SELECT logica_value FROM myPred"), "Got: {}", result);
+    assert!(result.contains("SELECT synalog_value FROM myPred"), "Got: {}", result);
 }
 
 #[test]
@@ -1099,7 +1099,7 @@ fn test_user_predicate_with_args() {
         )
     );
     let result = ql.convert_to_sql(&expr).unwrap();
-    assert!(result.contains("SELECT logica_value FROM myPred WHERE col0 = t_0.col0"), "Got: {}", result);
+    assert!(result.contains("SELECT synalog_value FROM myPred WHERE col0 = t_0.col0"), "Got: {}", result);
 }
 
 // ── Unary minus ──
@@ -1927,14 +1927,14 @@ fn test_cast_function() {
 
 #[test]
 fn test_flagvalue_function_defined() {
-    // Use integration test through LogicaProgram instead
+    // Use integration test through SynalogProgram instead
     let source = r#"
         @Engine("sqlite");
         @DefineFlag("my_flag", "flag_val");
         T(FlagValue("my_flag"));
     "#;
     let parsed = crate::parser::parse_file(source, None, &[]).unwrap();
-    let program = crate::compiler::universe::LogicaProgram::new(
+    let program = crate::compiler::universe::SynalogProgram::new(
         &parsed, HashMap::new(), HashMap::new()).unwrap();
     let sql = program.formatted_predicate_sql("T").unwrap();
     assert!(sql.contains("flag_val"), "SQL should contain flag value: {}", sql);

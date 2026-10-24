@@ -26,7 +26,7 @@ t_0_P_RecursiveCte AS (SELECT * FROM (
       SELECT
         E.a AS a,
         E.b AS b,
-        0 AS logica_step
+        0 AS synalog_step
       FROM
         t_1_E AS E
      UNION ALL
@@ -34,7 +34,7 @@ t_0_P_RecursiveCte AS (SELECT * FROM (
       SELECT
         t_4_E.a AS a,
         t_2_E.b AS b,
-        ((0) + (1)) AS logica_step
+        ((0) + (1)) AS synalog_step
       FROM
         t_1_E AS t_4_E, t_1_E AS t_2_E
       WHERE
@@ -46,7 +46,7 @@ t_0_P_RecursiveCte AS (SELECT * FROM (
       SELECT
         t_10_E.a AS a,
         t_6_E.b AS b,
-        ((((0) + (1))) + (1)) AS logica_step
+        ((((0) + (1))) + (1)) AS synalog_step
       FROM
         t_1_E AS t_10_E, t_1_E AS t_8_E, t_1_E AS t_6_E
       WHERE
@@ -60,7 +60,7 @@ t_0_P_RecursiveCte AS (SELECT * FROM (
       SELECT
         t_18_E.a AS a,
         t_12_E.b AS b,
-        ((((((0) + (1))) + (1))) + (1)) AS logica_step
+        ((((((0) + (1))) + (1))) + (1)) AS synalog_step
       FROM
         t_1_E AS t_18_E, t_1_E AS t_16_E, t_1_E AS t_14_E, t_1_E AS t_12_E
       WHERE
@@ -76,7 +76,7 @@ t_0_P_RecursiveCte AS (SELECT * FROM (
       SELECT
         t_28_E.a AS a,
         t_20_E.b AS b,
-        ((((((((0) + (1))) + (1))) + (1))) + (1)) AS logica_step
+        ((((((((0) + (1))) + (1))) + (1))) + (1)) AS synalog_step
       FROM
         t_1_E AS t_28_E, t_1_E AS t_26_E, t_1_E AS t_24_E, t_1_E AS t_22_E, t_1_E AS t_20_E
       WHERE
@@ -94,7 +94,7 @@ t_0_P_RecursiveCte AS (SELECT * FROM (
       SELECT
         t_40_E.a AS a,
         t_30_E.b AS b,
-        ((((((((((0) + (1))) + (1))) + (1))) + (1))) + (1)) AS logica_step
+        ((((((((((0) + (1))) + (1))) + (1))) + (1))) + (1)) AS synalog_step
       FROM
         t_1_E AS t_40_E, t_1_E AS t_38_E, t_1_E AS t_36_E, t_1_E AS t_34_E, t_1_E AS t_32_E, t_1_E AS t_30_E
       WHERE
@@ -116,11 +116,11 @@ UNION
 SELECT
   t_41_P_RecursiveCte.a AS a,
   t_42_E.b AS b,
-  ((t_41_P_RecursiveCte.logica_step) + (1)) AS logica_step
+  ((t_41_P_RecursiveCte.synalog_step) + (1)) AS synalog_step
 FROM
   t_0_P_RecursiveCte AS t_41_P_RecursiveCte, t_1_E AS t_42_E
 WHERE
-  (t_41_P_RecursiveCte.logica_step < 8) AND
+  (t_41_P_RecursiveCte.synalog_step < 8) AND
   (t_42_E.a = t_41_P_RecursiveCte.b))
 SELECT
   P_RecursiveCte.a AS a,

@@ -1,5 +1,5 @@
-DROP TABLE IF EXISTS logica_test.Reach_sn_delta;
-CREATE TABLE logica_test.Reach_sn_delta AS WITH t_1_Edge AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_test.Reach_sn_delta;
+CREATE TABLE synalog_test.Reach_sn_delta AS WITH t_1_Edge AS (SELECT * FROM (
   
     SELECT
       'a' AS x,
@@ -32,21 +32,21 @@ FROM
   t_0_Reach_MultBodyAggAux_f2 AS Reach_MultBodyAggAux_f2
 GROUP BY 1, 2;
 
--- Interacting with table logica_test.Reach_sn_delta
+-- Interacting with table synalog_test.Reach_sn_delta
 
-DROP TABLE IF EXISTS logica_test.Reach_sn_t0;
-CREATE TABLE logica_test.Reach_sn_t0 AS SELECT
+DROP TABLE IF EXISTS synalog_test.Reach_sn_t0;
+CREATE TABLE synalog_test.Reach_sn_t0 AS SELECT
   Reach_sn_delta.x AS x,
   Reach_sn_delta.y AS y
 FROM
-  logica_test.Reach_sn_delta AS Reach_sn_delta
+  synalog_test.Reach_sn_delta AS Reach_sn_delta
 WHERE
   (1 = 0);
 
--- Interacting with table logica_test.Reach_sn_t0
+-- Interacting with table synalog_test.Reach_sn_t0
 
-DROP TABLE IF EXISTS logica_test.Reach_sn_t1;
-CREATE TABLE logica_test.Reach_sn_t1 AS WITH t_1_Edge AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_test.Reach_sn_t1;
+CREATE TABLE synalog_test.Reach_sn_t1 AS WITH t_1_Edge AS (SELECT * FROM (
   
     SELECT
       'a' AS x,
@@ -76,7 +76,7 @@ t_1_Reach_MultBodyAggAux_f3 AS (SELECT * FROM (
       Reach_sn_t0.x AS x,
       t_2_Edge.y AS y
     FROM
-      logica_test.Reach_sn_t0 AS Reach_sn_t0, t_1_Edge AS t_2_Edge
+      synalog_test.Reach_sn_t0 AS Reach_sn_t0, t_1_Edge AS t_2_Edge
     WHERE
       (t_2_Edge.x = Reach_sn_t0.y)
   
@@ -95,10 +95,10 @@ FROM
 WHERE
   (1 = 0);
 
--- Interacting with table logica_test.Reach_sn_t1
+-- Interacting with table synalog_test.Reach_sn_t1
 
-DROP TABLE IF EXISTS logica_test.Reach_sn_t2;
-CREATE TABLE logica_test.Reach_sn_t2 AS WITH t_1_Edge AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_test.Reach_sn_t2;
+CREATE TABLE synalog_test.Reach_sn_t2 AS WITH t_1_Edge AS (SELECT * FROM (
   
     SELECT
       'a' AS x,
@@ -128,7 +128,7 @@ t_1_Reach_MultBodyAggAux_f4 AS (SELECT * FROM (
       Reach_sn_t1.x AS x,
       t_2_Edge.y AS y
     FROM
-      logica_test.Reach_sn_t1 AS Reach_sn_t1, t_1_Edge AS t_2_Edge
+      synalog_test.Reach_sn_t1 AS Reach_sn_t1, t_1_Edge AS t_2_Edge
     WHERE
       (t_2_Edge.x = Reach_sn_t1.y)
   
@@ -147,10 +147,10 @@ FROM
 WHERE
   (1 = 0);
 
--- Interacting with table logica_test.Reach_sn_t2
+-- Interacting with table synalog_test.Reach_sn_t2
 
-DROP TABLE IF EXISTS logica_test.Reach_sn_t3;
-CREATE TABLE logica_test.Reach_sn_t3 AS WITH t_1_Edge AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_test.Reach_sn_t3;
+CREATE TABLE synalog_test.Reach_sn_t3 AS WITH t_1_Edge AS (SELECT * FROM (
   
     SELECT
       'a' AS x,
@@ -180,7 +180,7 @@ t_1_Reach_MultBodyAggAux_f5 AS (SELECT * FROM (
       Reach_sn_t2.x AS x,
       t_2_Edge.y AS y
     FROM
-      logica_test.Reach_sn_t2 AS Reach_sn_t2, t_1_Edge AS t_2_Edge
+      synalog_test.Reach_sn_t2 AS Reach_sn_t2, t_1_Edge AS t_2_Edge
     WHERE
       (t_2_Edge.x = Reach_sn_t2.y)
   
@@ -199,10 +199,10 @@ FROM
 WHERE
   (1 = 0);
 
--- Interacting with table logica_test.Reach_sn_t3
+-- Interacting with table synalog_test.Reach_sn_t3
 
-DROP TABLE IF EXISTS logica_test.Reach_sn_t4;
-CREATE TABLE logica_test.Reach_sn_t4 AS WITH t_1_Edge AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_test.Reach_sn_t4;
+CREATE TABLE synalog_test.Reach_sn_t4 AS WITH t_1_Edge AS (SELECT * FROM (
   
     SELECT
       'a' AS x,
@@ -232,7 +232,7 @@ t_1_Reach_MultBodyAggAux_f6 AS (SELECT * FROM (
       Reach_sn_t3.x AS x,
       t_2_Edge.y AS y
     FROM
-      logica_test.Reach_sn_t3 AS Reach_sn_t3, t_1_Edge AS t_2_Edge
+      synalog_test.Reach_sn_t3 AS Reach_sn_t3, t_1_Edge AS t_2_Edge
     WHERE
       (t_2_Edge.x = Reach_sn_t3.y)
   
@@ -251,10 +251,10 @@ FROM
 WHERE
   (1 = 0);
 
--- Interacting with table logica_test.Reach_sn_t4
+-- Interacting with table synalog_test.Reach_sn_t4
 
-DROP TABLE IF EXISTS logica_test.Reach_sn_t5;
-CREATE TABLE logica_test.Reach_sn_t5 AS WITH t_1_Edge AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_test.Reach_sn_t5;
+CREATE TABLE synalog_test.Reach_sn_t5 AS WITH t_1_Edge AS (SELECT * FROM (
   
     SELECT
       'a' AS x,
@@ -284,7 +284,7 @@ t_1_Reach_MultBodyAggAux_f7 AS (SELECT * FROM (
       Reach_sn_t4.x AS x,
       t_2_Edge.y AS y
     FROM
-      logica_test.Reach_sn_t4 AS Reach_sn_t4, t_1_Edge AS t_2_Edge
+      synalog_test.Reach_sn_t4 AS Reach_sn_t4, t_1_Edge AS t_2_Edge
     WHERE
       (t_2_Edge.x = Reach_sn_t4.y)
   
@@ -303,58 +303,58 @@ FROM
 WHERE
   (1 = 0);
 
--- Interacting with table logica_test.Reach_sn_t5
+-- Interacting with table synalog_test.Reach_sn_t5
 
-DROP TABLE IF EXISTS logica_test.Reach_sn_full;
-CREATE TABLE logica_test.Reach_sn_full AS SELECT * FROM (
+DROP TABLE IF EXISTS synalog_test.Reach_sn_full;
+CREATE TABLE synalog_test.Reach_sn_full AS SELECT * FROM (
   
     SELECT
       Reach_sn_delta.x AS x,
       Reach_sn_delta.y AS y
     FROM
-      logica_test.Reach_sn_delta AS Reach_sn_delta
+      synalog_test.Reach_sn_delta AS Reach_sn_delta
    UNION ALL
   
     SELECT
       Reach_sn_t1.x AS x,
       Reach_sn_t1.y AS y
     FROM
-      logica_test.Reach_sn_t1 AS Reach_sn_t1
+      synalog_test.Reach_sn_t1 AS Reach_sn_t1
    UNION ALL
   
     SELECT
       Reach_sn_t2.x AS x,
       Reach_sn_t2.y AS y
     FROM
-      logica_test.Reach_sn_t2 AS Reach_sn_t2
+      synalog_test.Reach_sn_t2 AS Reach_sn_t2
    UNION ALL
   
     SELECT
       Reach_sn_t3.x AS x,
       Reach_sn_t3.y AS y
     FROM
-      logica_test.Reach_sn_t3 AS Reach_sn_t3
+      synalog_test.Reach_sn_t3 AS Reach_sn_t3
    UNION ALL
   
     SELECT
       Reach_sn_t4.x AS x,
       Reach_sn_t4.y AS y
     FROM
-      logica_test.Reach_sn_t4 AS Reach_sn_t4
+      synalog_test.Reach_sn_t4 AS Reach_sn_t4
    UNION ALL
   
     SELECT
       Reach_sn_t5.x AS x,
       Reach_sn_t5.y AS y
     FROM
-      logica_test.Reach_sn_t5 AS Reach_sn_t5
+      synalog_test.Reach_sn_t5 AS Reach_sn_t5
   
 ) AS UNUSED_TABLE_NAME  ;
 
--- Interacting with table logica_test.Reach_sn_full
+-- Interacting with table synalog_test.Reach_sn_full
 
-DROP TABLE IF EXISTS logica_test.Reach_sn_new;
-CREATE TABLE logica_test.Reach_sn_new AS WITH t_1_Edge AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_test.Reach_sn_new;
+CREATE TABLE synalog_test.Reach_sn_new AS WITH t_1_Edge AS (SELECT * FROM (
   
     SELECT
       'a' AS x,
@@ -384,7 +384,7 @@ t_1_Reach_MultBodyAggAux_f8 AS (SELECT * FROM (
       Reach_sn_delta.x AS x,
       t_2_Edge.y AS y
     FROM
-      logica_test.Reach_sn_delta AS Reach_sn_delta, t_1_Edge AS t_2_Edge
+      synalog_test.Reach_sn_delta AS Reach_sn_delta, t_1_Edge AS t_2_Edge
     WHERE
       (t_2_Edge.x = Reach_sn_delta.y)
   
@@ -402,18 +402,18 @@ FROM
   t_0_Reach_sn_step AS Reach_sn_step
 WHERE
   ((SELECT
-    MIN(1) AS logica_value
+    MIN(1) AS synalog_value
   FROM
-    logica_test.Reach_sn_full AS Reach_sn_full
+    synalog_test.Reach_sn_full AS Reach_sn_full
   WHERE
     (Reach_sn_full.x = Reach_sn_step.x) AND
     (Reach_sn_full.y = Reach_sn_step.y)) IS NULL)
 GROUP BY 1, 2;
 
-INSERT INTO logica_test.Reach_sn_full SELECT * FROM logica_test.Reach_sn_new;
+INSERT INTO synalog_test.Reach_sn_full SELECT * FROM synalog_test.Reach_sn_new;
 
-DROP TABLE IF EXISTS logica_test.Reach_sn_delta;
-CREATE TABLE logica_test.Reach_sn_delta AS WITH t_1_Edge AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_test.Reach_sn_delta;
+CREATE TABLE synalog_test.Reach_sn_delta AS WITH t_1_Edge AS (SELECT * FROM (
   
     SELECT
       'a' AS x,
@@ -443,7 +443,7 @@ t_1_Reach_MultBodyAggAux_f1 AS (SELECT * FROM (
       Reach_sn_new.x AS x,
       t_2_Edge.y AS y
     FROM
-      logica_test.Reach_sn_new AS Reach_sn_new, t_1_Edge AS t_2_Edge
+      synalog_test.Reach_sn_new AS Reach_sn_new, t_1_Edge AS t_2_Edge
     WHERE
       (t_2_Edge.x = Reach_sn_new.y)
   
@@ -461,18 +461,18 @@ FROM
   t_0_Reach_sn_back_step AS Reach_sn_back_step
 WHERE
   ((SELECT
-    MIN(1) AS logica_value
+    MIN(1) AS synalog_value
   FROM
-    logica_test.Reach_sn_full AS Reach_sn_full
+    synalog_test.Reach_sn_full AS Reach_sn_full
   WHERE
     (Reach_sn_full.x = Reach_sn_back_step.x) AND
     (Reach_sn_full.y = Reach_sn_back_step.y)) IS NULL)
 GROUP BY 1, 2;
 
-INSERT INTO logica_test.Reach_sn_full SELECT * FROM logica_test.Reach_sn_delta;
+INSERT INTO synalog_test.Reach_sn_full SELECT * FROM synalog_test.Reach_sn_delta;
 
-DROP TABLE IF EXISTS logica_test.Reach_sn_new;
-CREATE TABLE logica_test.Reach_sn_new AS WITH t_1_Edge AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_test.Reach_sn_new;
+CREATE TABLE synalog_test.Reach_sn_new AS WITH t_1_Edge AS (SELECT * FROM (
   
     SELECT
       'a' AS x,
@@ -502,7 +502,7 @@ t_1_Reach_MultBodyAggAux_f8 AS (SELECT * FROM (
       Reach_sn_delta.x AS x,
       t_2_Edge.y AS y
     FROM
-      logica_test.Reach_sn_delta AS Reach_sn_delta, t_1_Edge AS t_2_Edge
+      synalog_test.Reach_sn_delta AS Reach_sn_delta, t_1_Edge AS t_2_Edge
     WHERE
       (t_2_Edge.x = Reach_sn_delta.y)
   
@@ -520,18 +520,18 @@ FROM
   t_0_Reach_sn_step AS Reach_sn_step
 WHERE
   ((SELECT
-    MIN(1) AS logica_value
+    MIN(1) AS synalog_value
   FROM
-    logica_test.Reach_sn_full AS Reach_sn_full
+    synalog_test.Reach_sn_full AS Reach_sn_full
   WHERE
     (Reach_sn_full.x = Reach_sn_step.x) AND
     (Reach_sn_full.y = Reach_sn_step.y)) IS NULL)
 GROUP BY 1, 2;
 
-INSERT INTO logica_test.Reach_sn_full SELECT * FROM logica_test.Reach_sn_new;
+INSERT INTO synalog_test.Reach_sn_full SELECT * FROM synalog_test.Reach_sn_new;
 
-DROP TABLE IF EXISTS logica_test.Reach_sn_delta;
-CREATE TABLE logica_test.Reach_sn_delta AS WITH t_1_Edge AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_test.Reach_sn_delta;
+CREATE TABLE synalog_test.Reach_sn_delta AS WITH t_1_Edge AS (SELECT * FROM (
   
     SELECT
       'a' AS x,
@@ -561,7 +561,7 @@ t_1_Reach_MultBodyAggAux_f1 AS (SELECT * FROM (
       Reach_sn_new.x AS x,
       t_2_Edge.y AS y
     FROM
-      logica_test.Reach_sn_new AS Reach_sn_new, t_1_Edge AS t_2_Edge
+      synalog_test.Reach_sn_new AS Reach_sn_new, t_1_Edge AS t_2_Edge
     WHERE
       (t_2_Edge.x = Reach_sn_new.y)
   
@@ -579,18 +579,18 @@ FROM
   t_0_Reach_sn_back_step AS Reach_sn_back_step
 WHERE
   ((SELECT
-    MIN(1) AS logica_value
+    MIN(1) AS synalog_value
   FROM
-    logica_test.Reach_sn_full AS Reach_sn_full
+    synalog_test.Reach_sn_full AS Reach_sn_full
   WHERE
     (Reach_sn_full.x = Reach_sn_back_step.x) AND
     (Reach_sn_full.y = Reach_sn_back_step.y)) IS NULL)
 GROUP BY 1, 2;
 
-INSERT INTO logica_test.Reach_sn_full SELECT * FROM logica_test.Reach_sn_delta;
+INSERT INTO synalog_test.Reach_sn_full SELECT * FROM synalog_test.Reach_sn_delta;
 
-DROP TABLE IF EXISTS logica_test.Reach_sn_new;
-CREATE TABLE logica_test.Reach_sn_new AS WITH t_1_Edge AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_test.Reach_sn_new;
+CREATE TABLE synalog_test.Reach_sn_new AS WITH t_1_Edge AS (SELECT * FROM (
   
     SELECT
       'a' AS x,
@@ -620,7 +620,7 @@ t_1_Reach_MultBodyAggAux_f8 AS (SELECT * FROM (
       Reach_sn_delta.x AS x,
       t_2_Edge.y AS y
     FROM
-      logica_test.Reach_sn_delta AS Reach_sn_delta, t_1_Edge AS t_2_Edge
+      synalog_test.Reach_sn_delta AS Reach_sn_delta, t_1_Edge AS t_2_Edge
     WHERE
       (t_2_Edge.x = Reach_sn_delta.y)
   
@@ -638,18 +638,18 @@ FROM
   t_0_Reach_sn_step AS Reach_sn_step
 WHERE
   ((SELECT
-    MIN(1) AS logica_value
+    MIN(1) AS synalog_value
   FROM
-    logica_test.Reach_sn_full AS Reach_sn_full
+    synalog_test.Reach_sn_full AS Reach_sn_full
   WHERE
     (Reach_sn_full.x = Reach_sn_step.x) AND
     (Reach_sn_full.y = Reach_sn_step.y)) IS NULL)
 GROUP BY 1, 2;
 
-INSERT INTO logica_test.Reach_sn_full SELECT * FROM logica_test.Reach_sn_new;
+INSERT INTO synalog_test.Reach_sn_full SELECT * FROM synalog_test.Reach_sn_new;
 
-DROP TABLE IF EXISTS logica_test.Reach_sn_delta;
-CREATE TABLE logica_test.Reach_sn_delta AS WITH t_1_Edge AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_test.Reach_sn_delta;
+CREATE TABLE synalog_test.Reach_sn_delta AS WITH t_1_Edge AS (SELECT * FROM (
   
     SELECT
       'a' AS x,
@@ -679,7 +679,7 @@ t_1_Reach_MultBodyAggAux_f1 AS (SELECT * FROM (
       Reach_sn_new.x AS x,
       t_2_Edge.y AS y
     FROM
-      logica_test.Reach_sn_new AS Reach_sn_new, t_1_Edge AS t_2_Edge
+      synalog_test.Reach_sn_new AS Reach_sn_new, t_1_Edge AS t_2_Edge
     WHERE
       (t_2_Edge.x = Reach_sn_new.y)
   
@@ -697,18 +697,18 @@ FROM
   t_0_Reach_sn_back_step AS Reach_sn_back_step
 WHERE
   ((SELECT
-    MIN(1) AS logica_value
+    MIN(1) AS synalog_value
   FROM
-    logica_test.Reach_sn_full AS Reach_sn_full
+    synalog_test.Reach_sn_full AS Reach_sn_full
   WHERE
     (Reach_sn_full.x = Reach_sn_back_step.x) AND
     (Reach_sn_full.y = Reach_sn_back_step.y)) IS NULL)
 GROUP BY 1, 2;
 
-INSERT INTO logica_test.Reach_sn_full SELECT * FROM logica_test.Reach_sn_delta;
+INSERT INTO synalog_test.Reach_sn_full SELECT * FROM synalog_test.Reach_sn_delta;
 
-DROP TABLE IF EXISTS logica_test.Reach_sn_new;
-CREATE TABLE logica_test.Reach_sn_new AS WITH t_1_Edge AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_test.Reach_sn_new;
+CREATE TABLE synalog_test.Reach_sn_new AS WITH t_1_Edge AS (SELECT * FROM (
   
     SELECT
       'a' AS x,
@@ -738,7 +738,7 @@ t_1_Reach_MultBodyAggAux_f8 AS (SELECT * FROM (
       Reach_sn_delta.x AS x,
       t_2_Edge.y AS y
     FROM
-      logica_test.Reach_sn_delta AS Reach_sn_delta, t_1_Edge AS t_2_Edge
+      synalog_test.Reach_sn_delta AS Reach_sn_delta, t_1_Edge AS t_2_Edge
     WHERE
       (t_2_Edge.x = Reach_sn_delta.y)
   
@@ -756,18 +756,18 @@ FROM
   t_0_Reach_sn_step AS Reach_sn_step
 WHERE
   ((SELECT
-    MIN(1) AS logica_value
+    MIN(1) AS synalog_value
   FROM
-    logica_test.Reach_sn_full AS Reach_sn_full
+    synalog_test.Reach_sn_full AS Reach_sn_full
   WHERE
     (Reach_sn_full.x = Reach_sn_step.x) AND
     (Reach_sn_full.y = Reach_sn_step.y)) IS NULL)
 GROUP BY 1, 2;
 
-INSERT INTO logica_test.Reach_sn_full SELECT * FROM logica_test.Reach_sn_new;
+INSERT INTO synalog_test.Reach_sn_full SELECT * FROM synalog_test.Reach_sn_new;
 
-DROP TABLE IF EXISTS logica_test.Reach_sn_delta;
-CREATE TABLE logica_test.Reach_sn_delta AS WITH t_1_Edge AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_test.Reach_sn_delta;
+CREATE TABLE synalog_test.Reach_sn_delta AS WITH t_1_Edge AS (SELECT * FROM (
   
     SELECT
       'a' AS x,
@@ -797,7 +797,7 @@ t_1_Reach_MultBodyAggAux_f1 AS (SELECT * FROM (
       Reach_sn_new.x AS x,
       t_2_Edge.y AS y
     FROM
-      logica_test.Reach_sn_new AS Reach_sn_new, t_1_Edge AS t_2_Edge
+      synalog_test.Reach_sn_new AS Reach_sn_new, t_1_Edge AS t_2_Edge
     WHERE
       (t_2_Edge.x = Reach_sn_new.y)
   
@@ -815,18 +815,18 @@ FROM
   t_0_Reach_sn_back_step AS Reach_sn_back_step
 WHERE
   ((SELECT
-    MIN(1) AS logica_value
+    MIN(1) AS synalog_value
   FROM
-    logica_test.Reach_sn_full AS Reach_sn_full
+    synalog_test.Reach_sn_full AS Reach_sn_full
   WHERE
     (Reach_sn_full.x = Reach_sn_back_step.x) AND
     (Reach_sn_full.y = Reach_sn_back_step.y)) IS NULL)
 GROUP BY 1, 2;
 
-INSERT INTO logica_test.Reach_sn_full SELECT * FROM logica_test.Reach_sn_delta;
+INSERT INTO synalog_test.Reach_sn_full SELECT * FROM synalog_test.Reach_sn_delta;
 
-DROP TABLE IF EXISTS logica_test.Reach_sn_new;
-CREATE TABLE logica_test.Reach_sn_new AS WITH t_1_Edge AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_test.Reach_sn_new;
+CREATE TABLE synalog_test.Reach_sn_new AS WITH t_1_Edge AS (SELECT * FROM (
   
     SELECT
       'a' AS x,
@@ -856,7 +856,7 @@ t_1_Reach_MultBodyAggAux_f8 AS (SELECT * FROM (
       Reach_sn_delta.x AS x,
       t_2_Edge.y AS y
     FROM
-      logica_test.Reach_sn_delta AS Reach_sn_delta, t_1_Edge AS t_2_Edge
+      synalog_test.Reach_sn_delta AS Reach_sn_delta, t_1_Edge AS t_2_Edge
     WHERE
       (t_2_Edge.x = Reach_sn_delta.y)
   
@@ -874,18 +874,18 @@ FROM
   t_0_Reach_sn_step AS Reach_sn_step
 WHERE
   ((SELECT
-    MIN(1) AS logica_value
+    MIN(1) AS synalog_value
   FROM
-    logica_test.Reach_sn_full AS Reach_sn_full
+    synalog_test.Reach_sn_full AS Reach_sn_full
   WHERE
     (Reach_sn_full.x = Reach_sn_step.x) AND
     (Reach_sn_full.y = Reach_sn_step.y)) IS NULL)
 GROUP BY 1, 2;
 
-INSERT INTO logica_test.Reach_sn_full SELECT * FROM logica_test.Reach_sn_new;
+INSERT INTO synalog_test.Reach_sn_full SELECT * FROM synalog_test.Reach_sn_new;
 
-DROP TABLE IF EXISTS logica_test.Reach_sn_delta;
-CREATE TABLE logica_test.Reach_sn_delta AS WITH t_1_Edge AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_test.Reach_sn_delta;
+CREATE TABLE synalog_test.Reach_sn_delta AS WITH t_1_Edge AS (SELECT * FROM (
   
     SELECT
       'a' AS x,
@@ -915,7 +915,7 @@ t_1_Reach_MultBodyAggAux_f1 AS (SELECT * FROM (
       Reach_sn_new.x AS x,
       t_2_Edge.y AS y
     FROM
-      logica_test.Reach_sn_new AS Reach_sn_new, t_1_Edge AS t_2_Edge
+      synalog_test.Reach_sn_new AS Reach_sn_new, t_1_Edge AS t_2_Edge
     WHERE
       (t_2_Edge.x = Reach_sn_new.y)
   
@@ -933,17 +933,17 @@ FROM
   t_0_Reach_sn_back_step AS Reach_sn_back_step
 WHERE
   ((SELECT
-    MIN(1) AS logica_value
+    MIN(1) AS synalog_value
   FROM
-    logica_test.Reach_sn_full AS Reach_sn_full
+    synalog_test.Reach_sn_full AS Reach_sn_full
   WHERE
     (Reach_sn_full.x = Reach_sn_back_step.x) AND
     (Reach_sn_full.y = Reach_sn_back_step.y)) IS NULL)
 GROUP BY 1, 2;
 
-INSERT INTO logica_test.Reach_sn_full SELECT * FROM logica_test.Reach_sn_delta;
+INSERT INTO synalog_test.Reach_sn_full SELECT * FROM synalog_test.Reach_sn_delta;
 
 SELECT
   SUM(1) AS n
 FROM
-  logica_test.Reach_sn_full AS Reach_sn_full;
+  synalog_test.Reach_sn_full AS Reach_sn_full;

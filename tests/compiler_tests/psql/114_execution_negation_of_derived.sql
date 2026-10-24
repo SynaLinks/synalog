@@ -1,8 +1,8 @@
 -- Initializing PostgreSQL environment.
 set client_min_messages to warning;
-create schema if not exists logica_home;
--- Empty logica type: logicarecord893574736;
-DO $$ BEGIN if not exists (select 'I(am) :- I(think)' from pg_type where typname = 'logicarecord893574736') then create type logicarecord893574736 as (nirvana numeric); end if; END $$;
+create schema if not exists synalog_home;
+-- Empty synalog type: synalogrecord893574736;
+DO $$ BEGIN if not exists (select 'I(am) :- I(think)' from pg_type where typname = 'synalogrecord893574736') then create type synalogrecord893574736 as (nirvana numeric); end if; END $$;
 
 WITH RECURSIVE t_3_Edge AS (SELECT * FROM (
   
@@ -22,13 +22,13 @@ t_1_Reach_RecursiveCte AS (SELECT * FROM (
       SELECT
         'a' AS x,
         'a' AS y,
-        0 AS logica_step
+        0 AS synalog_step
      UNION ALL
     
       SELECT
         'a' AS x,
         Edge.y AS y,
-        ((0) + (1)) AS logica_step
+        ((0) + (1)) AS synalog_step
       FROM
         t_3_Edge AS Edge
       WHERE
@@ -40,7 +40,7 @@ t_1_Reach_RecursiveCte AS (SELECT * FROM (
       SELECT
         'a' AS x,
         t_5_Edge.y AS y,
-        ((((0) + (1))) + (1)) AS logica_step
+        ((((0) + (1))) + (1)) AS synalog_step
       FROM
         t_3_Edge AS t_7_Edge, t_3_Edge AS t_5_Edge
       WHERE
@@ -54,7 +54,7 @@ t_1_Reach_RecursiveCte AS (SELECT * FROM (
       SELECT
         'a' AS x,
         t_10_Edge.y AS y,
-        ((((((0) + (1))) + (1))) + (1)) AS logica_step
+        ((((((0) + (1))) + (1))) + (1)) AS synalog_step
       FROM
         t_3_Edge AS t_14_Edge, t_3_Edge AS t_12_Edge, t_3_Edge AS t_10_Edge
       WHERE
@@ -70,7 +70,7 @@ t_1_Reach_RecursiveCte AS (SELECT * FROM (
       SELECT
         'a' AS x,
         t_17_Edge.y AS y,
-        ((((((((0) + (1))) + (1))) + (1))) + (1)) AS logica_step
+        ((((((((0) + (1))) + (1))) + (1))) + (1)) AS synalog_step
       FROM
         t_3_Edge AS t_23_Edge, t_3_Edge AS t_21_Edge, t_3_Edge AS t_19_Edge, t_3_Edge AS t_17_Edge
       WHERE
@@ -88,7 +88,7 @@ t_1_Reach_RecursiveCte AS (SELECT * FROM (
       SELECT
         'a' AS x,
         t_26_Edge.y AS y,
-        ((((((((((0) + (1))) + (1))) + (1))) + (1))) + (1)) AS logica_step
+        ((((((((((0) + (1))) + (1))) + (1))) + (1))) + (1)) AS synalog_step
       FROM
         t_3_Edge AS t_34_Edge, t_3_Edge AS t_32_Edge, t_3_Edge AS t_30_Edge, t_3_Edge AS t_28_Edge, t_3_Edge AS t_26_Edge
       WHERE
@@ -110,11 +110,11 @@ UNION
 SELECT
   t_36_Reach_RecursiveCte.x AS x,
   t_37_Edge.y AS y,
-  ((t_36_Reach_RecursiveCte.logica_step) + (1)) AS logica_step
+  ((t_36_Reach_RecursiveCte.synalog_step) + (1)) AS synalog_step
 FROM
   t_1_Reach_RecursiveCte AS t_36_Reach_RecursiveCte, t_3_Edge AS t_37_Edge
 WHERE
-  (t_36_Reach_RecursiveCte.logica_step < 10) AND
+  (t_36_Reach_RecursiveCte.synalog_step < 10) AND
   (t_37_Edge.x = t_36_Reach_RecursiveCte.y)),
 t_0_Reach AS (SELECT
   Reach_RecursiveCte.x AS x,
@@ -128,7 +128,7 @@ FROM
   UNNEST(ARRAY['a', 'b', 'c', 'e']) as x_3
 WHERE
   (CAST((SELECT
-    MIN((CASE WHEN x_7 = 0 THEN 1 ELSE NULL END)) AS logica_value
+    MIN((CASE WHEN x_7 = 0 THEN 1 ELSE NULL END)) AS synalog_value
   FROM
     t_0_Reach AS Reach, UNNEST(ARRAY[0]) as x_7
   WHERE

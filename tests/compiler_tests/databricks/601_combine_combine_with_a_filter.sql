@@ -1,6 +1,6 @@
 SELECT
   (SELECT
-  SUM(x_4) AS logica_value
+  SUM(x_4) AS synalog_value
 FROM
   LATERAL (SELECT explode(ARRAY(1, 2, 3)) AS x_4) AS pushkin
 WHERE

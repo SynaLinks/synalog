@@ -79,7 +79,7 @@ FROM
   t_1_Part AS t_0_Part
 WHERE
   ((SELECT
-    MIN(1) AS logica_value
+    MIN(1) AS synalog_value
   FROM
     t_3_Uses AS t_5_Uses
   WHERE

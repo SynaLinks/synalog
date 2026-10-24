@@ -34,7 +34,7 @@ t_4_Effective_MultBodyAggAux AS (SELECT * FROM (
       t_2_ApproverOf AS t_5_ApproverOf
     WHERE
       ((SELECT
-        MIN(MagicalEntangle(1, x_17.value)) AS logica_value
+        MIN(MagicalEntangle(1, x_17.value)) AS synalog_value
       FROM
         JSON_EACH(JSON_ARRAY(0)) as x_17
       WHERE
@@ -62,7 +62,7 @@ FROM
   t_1_Requester AS t_0_Requester
 WHERE
   ((SELECT
-    MIN(MagicalEntangle(1, x_6.value)) AS logica_value
+    MIN(MagicalEntangle(1, x_6.value)) AS synalog_value
   FROM
     t_3_Effective AS Effective, JSON_EACH(JSON_ARRAY(0)) as x_6
   WHERE

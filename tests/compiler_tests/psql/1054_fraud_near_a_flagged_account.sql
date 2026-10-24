@@ -1,8 +1,8 @@
 -- Initializing PostgreSQL environment.
 set client_min_messages to warning;
-create schema if not exists logica_home;
--- Empty logica type: logicarecord893574736;
-DO $$ BEGIN if not exists (select 'I(am) :- I(think)' from pg_type where typname = 'logicarecord893574736') then create type logicarecord893574736 as (nirvana numeric); end if; END $$;
+create schema if not exists synalog_home;
+-- Empty synalog type: synalogrecord893574736;
+DO $$ BEGIN if not exists (select 'I(am) :- I(think)' from pg_type where typname = 'synalogrecord893574736') then create type synalogrecord893574736 as (nirvana numeric); end if; END $$;
 
 WITH RECURSIVE t_0_Flagged AS (SELECT * FROM (
   
@@ -71,7 +71,7 @@ t_2_Linked_RecursiveCte AS (SELECT * FROM (
       SELECT
         Shares.a AS a,
         Shares.b AS b,
-        0 AS logica_step
+        0 AS synalog_step
       FROM
         t_3_Shares AS Shares
      UNION ALL
@@ -79,7 +79,7 @@ t_2_Linked_RecursiveCte AS (SELECT * FROM (
       SELECT
         t_8_Shares.a AS a,
         t_6_Shares.b AS b,
-        ((0) + (1)) AS logica_step
+        ((0) + (1)) AS synalog_step
       FROM
         t_3_Shares AS t_8_Shares, t_3_Shares AS t_6_Shares
       WHERE
@@ -91,7 +91,7 @@ t_2_Linked_RecursiveCte AS (SELECT * FROM (
       SELECT
         t_16_Shares.a AS a,
         t_12_Shares.b AS b,
-        ((((0) + (1))) + (1)) AS logica_step
+        ((((0) + (1))) + (1)) AS synalog_step
       FROM
         t_3_Shares AS t_16_Shares, t_3_Shares AS t_14_Shares, t_3_Shares AS t_12_Shares
       WHERE
@@ -105,7 +105,7 @@ t_2_Linked_RecursiveCte AS (SELECT * FROM (
       SELECT
         t_24_Shares.a AS a,
         t_18_Shares.b AS b,
-        ((((((0) + (1))) + (1))) + (1)) AS logica_step
+        ((((((0) + (1))) + (1))) + (1)) AS synalog_step
       FROM
         t_3_Shares AS t_24_Shares, t_3_Shares AS t_22_Shares, t_3_Shares AS t_20_Shares, t_3_Shares AS t_18_Shares
       WHERE
@@ -121,7 +121,7 @@ t_2_Linked_RecursiveCte AS (SELECT * FROM (
       SELECT
         t_34_Shares.a AS a,
         t_26_Shares.b AS b,
-        ((((((((0) + (1))) + (1))) + (1))) + (1)) AS logica_step
+        ((((((((0) + (1))) + (1))) + (1))) + (1)) AS synalog_step
       FROM
         t_3_Shares AS t_34_Shares, t_3_Shares AS t_32_Shares, t_3_Shares AS t_30_Shares, t_3_Shares AS t_28_Shares, t_3_Shares AS t_26_Shares
       WHERE
@@ -139,7 +139,7 @@ t_2_Linked_RecursiveCte AS (SELECT * FROM (
       SELECT
         t_46_Shares.a AS a,
         t_36_Shares.b AS b,
-        ((((((((((0) + (1))) + (1))) + (1))) + (1))) + (1)) AS logica_step
+        ((((((((((0) + (1))) + (1))) + (1))) + (1))) + (1)) AS synalog_step
       FROM
         t_3_Shares AS t_46_Shares, t_3_Shares AS t_44_Shares, t_3_Shares AS t_42_Shares, t_3_Shares AS t_40_Shares, t_3_Shares AS t_38_Shares, t_3_Shares AS t_36_Shares
       WHERE
@@ -161,11 +161,11 @@ UNION
 SELECT
   t_47_Linked_RecursiveCte.a AS a,
   t_48_Shares.b AS b,
-  ((t_47_Linked_RecursiveCte.logica_step) + (1)) AS logica_step
+  ((t_47_Linked_RecursiveCte.synalog_step) + (1)) AS synalog_step
 FROM
   t_2_Linked_RecursiveCte AS t_47_Linked_RecursiveCte, t_3_Shares AS t_48_Shares
 WHERE
-  (t_47_Linked_RecursiveCte.logica_step < 8) AND
+  (t_47_Linked_RecursiveCte.synalog_step < 8) AND
   (t_48_Shares.a = t_47_Linked_RecursiveCte.b)),
 t_1_Linked AS (SELECT
   Linked_RecursiveCte.a AS a,
@@ -179,7 +179,7 @@ FROM
   t_0_Flagged AS Flagged, t_1_Linked AS Linked
 WHERE
   (CAST((SELECT
-    MIN((CASE WHEN x_224 = 0 THEN 1 ELSE NULL END)) AS logica_value
+    MIN((CASE WHEN x_224 = 0 THEN 1 ELSE NULL END)) AS synalog_value
   FROM
     t_0_Flagged AS t_49_Flagged, UNNEST(ARRAY[0]) as x_224
   WHERE

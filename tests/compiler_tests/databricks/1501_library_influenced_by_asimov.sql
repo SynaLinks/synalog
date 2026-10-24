@@ -1,5 +1,5 @@
-DROP TABLE IF EXISTS logica_test.Down_sn_delta;
-CREATE TABLE logica_test.Down_sn_delta AS WITH t_1_Influenced AS (SELECT * FROM VALUES
+DROP TABLE IF EXISTS synalog_test.Down_sn_delta;
+CREATE TABLE synalog_test.Down_sn_delta AS WITH t_1_Influenced AS (SELECT * FROM VALUES
   ("austen", "tolkien"),
   ("tolkien", "herbert"),
   ("herbert", "gibson"),
@@ -21,21 +21,21 @@ FROM
   t_0_Down_MultBodyAggAux_f2 AS Down_MultBodyAggAux_f2
 GROUP BY 1, 2;
 
--- Interacting with table logica_test.Down_sn_delta
+-- Interacting with table synalog_test.Down_sn_delta
 
-DROP TABLE IF EXISTS logica_test.Down_sn_t0;
-CREATE TABLE logica_test.Down_sn_t0 AS SELECT
+DROP TABLE IF EXISTS synalog_test.Down_sn_t0;
+CREATE TABLE synalog_test.Down_sn_t0 AS SELECT
   Down_sn_delta.a AS a,
   Down_sn_delta.b AS b
 FROM
-  logica_test.Down_sn_delta AS Down_sn_delta
+  synalog_test.Down_sn_delta AS Down_sn_delta
 WHERE
   (1 = 0);
 
--- Interacting with table logica_test.Down_sn_t0
+-- Interacting with table synalog_test.Down_sn_t0
 
-DROP TABLE IF EXISTS logica_test.Down_sn_t1;
-CREATE TABLE logica_test.Down_sn_t1 AS WITH t_1_Influenced AS (SELECT * FROM VALUES
+DROP TABLE IF EXISTS synalog_test.Down_sn_t1;
+CREATE TABLE synalog_test.Down_sn_t1 AS WITH t_1_Influenced AS (SELECT * FROM VALUES
   ("austen", "tolkien"),
   ("tolkien", "herbert"),
   ("herbert", "gibson"),
@@ -54,7 +54,7 @@ t_1_Down_MultBodyAggAux_f3 AS (SELECT * FROM (
       Down_sn_t0.a AS a,
       t_2_Influenced.b AS b
     FROM
-      logica_test.Down_sn_t0 AS Down_sn_t0, t_1_Influenced AS t_2_Influenced
+      synalog_test.Down_sn_t0 AS Down_sn_t0, t_1_Influenced AS t_2_Influenced
     WHERE
       (t_2_Influenced.a = Down_sn_t0.b)
   
@@ -73,10 +73,10 @@ FROM
 WHERE
   (1 = 0);
 
--- Interacting with table logica_test.Down_sn_t1
+-- Interacting with table synalog_test.Down_sn_t1
 
-DROP TABLE IF EXISTS logica_test.Down_sn_t2;
-CREATE TABLE logica_test.Down_sn_t2 AS WITH t_1_Influenced AS (SELECT * FROM VALUES
+DROP TABLE IF EXISTS synalog_test.Down_sn_t2;
+CREATE TABLE synalog_test.Down_sn_t2 AS WITH t_1_Influenced AS (SELECT * FROM VALUES
   ("austen", "tolkien"),
   ("tolkien", "herbert"),
   ("herbert", "gibson"),
@@ -95,7 +95,7 @@ t_1_Down_MultBodyAggAux_f4 AS (SELECT * FROM (
       Down_sn_t1.a AS a,
       t_2_Influenced.b AS b
     FROM
-      logica_test.Down_sn_t1 AS Down_sn_t1, t_1_Influenced AS t_2_Influenced
+      synalog_test.Down_sn_t1 AS Down_sn_t1, t_1_Influenced AS t_2_Influenced
     WHERE
       (t_2_Influenced.a = Down_sn_t1.b)
   
@@ -114,10 +114,10 @@ FROM
 WHERE
   (1 = 0);
 
--- Interacting with table logica_test.Down_sn_t2
+-- Interacting with table synalog_test.Down_sn_t2
 
-DROP TABLE IF EXISTS logica_test.Down_sn_t3;
-CREATE TABLE logica_test.Down_sn_t3 AS WITH t_1_Influenced AS (SELECT * FROM VALUES
+DROP TABLE IF EXISTS synalog_test.Down_sn_t3;
+CREATE TABLE synalog_test.Down_sn_t3 AS WITH t_1_Influenced AS (SELECT * FROM VALUES
   ("austen", "tolkien"),
   ("tolkien", "herbert"),
   ("herbert", "gibson"),
@@ -136,7 +136,7 @@ t_1_Down_MultBodyAggAux_f5 AS (SELECT * FROM (
       Down_sn_t2.a AS a,
       t_2_Influenced.b AS b
     FROM
-      logica_test.Down_sn_t2 AS Down_sn_t2, t_1_Influenced AS t_2_Influenced
+      synalog_test.Down_sn_t2 AS Down_sn_t2, t_1_Influenced AS t_2_Influenced
     WHERE
       (t_2_Influenced.a = Down_sn_t2.b)
   
@@ -155,10 +155,10 @@ FROM
 WHERE
   (1 = 0);
 
--- Interacting with table logica_test.Down_sn_t3
+-- Interacting with table synalog_test.Down_sn_t3
 
-DROP TABLE IF EXISTS logica_test.Down_sn_t4;
-CREATE TABLE logica_test.Down_sn_t4 AS WITH t_1_Influenced AS (SELECT * FROM VALUES
+DROP TABLE IF EXISTS synalog_test.Down_sn_t4;
+CREATE TABLE synalog_test.Down_sn_t4 AS WITH t_1_Influenced AS (SELECT * FROM VALUES
   ("austen", "tolkien"),
   ("tolkien", "herbert"),
   ("herbert", "gibson"),
@@ -177,7 +177,7 @@ t_1_Down_MultBodyAggAux_f6 AS (SELECT * FROM (
       Down_sn_t3.a AS a,
       t_2_Influenced.b AS b
     FROM
-      logica_test.Down_sn_t3 AS Down_sn_t3, t_1_Influenced AS t_2_Influenced
+      synalog_test.Down_sn_t3 AS Down_sn_t3, t_1_Influenced AS t_2_Influenced
     WHERE
       (t_2_Influenced.a = Down_sn_t3.b)
   
@@ -196,10 +196,10 @@ FROM
 WHERE
   (1 = 0);
 
--- Interacting with table logica_test.Down_sn_t4
+-- Interacting with table synalog_test.Down_sn_t4
 
-DROP TABLE IF EXISTS logica_test.Down_sn_t5;
-CREATE TABLE logica_test.Down_sn_t5 AS WITH t_1_Influenced AS (SELECT * FROM VALUES
+DROP TABLE IF EXISTS synalog_test.Down_sn_t5;
+CREATE TABLE synalog_test.Down_sn_t5 AS WITH t_1_Influenced AS (SELECT * FROM VALUES
   ("austen", "tolkien"),
   ("tolkien", "herbert"),
   ("herbert", "gibson"),
@@ -218,7 +218,7 @@ t_1_Down_MultBodyAggAux_f7 AS (SELECT * FROM (
       Down_sn_t4.a AS a,
       t_2_Influenced.b AS b
     FROM
-      logica_test.Down_sn_t4 AS Down_sn_t4, t_1_Influenced AS t_2_Influenced
+      synalog_test.Down_sn_t4 AS Down_sn_t4, t_1_Influenced AS t_2_Influenced
     WHERE
       (t_2_Influenced.a = Down_sn_t4.b)
   
@@ -237,58 +237,58 @@ FROM
 WHERE
   (1 = 0);
 
--- Interacting with table logica_test.Down_sn_t5
+-- Interacting with table synalog_test.Down_sn_t5
 
-DROP TABLE IF EXISTS logica_test.Down_sn_full;
-CREATE TABLE logica_test.Down_sn_full AS SELECT * FROM (
+DROP TABLE IF EXISTS synalog_test.Down_sn_full;
+CREATE TABLE synalog_test.Down_sn_full AS SELECT * FROM (
   
     SELECT
       Down_sn_delta.a AS a,
       Down_sn_delta.b AS b
     FROM
-      logica_test.Down_sn_delta AS Down_sn_delta
+      synalog_test.Down_sn_delta AS Down_sn_delta
    UNION ALL
   
     SELECT
       Down_sn_t1.a AS a,
       Down_sn_t1.b AS b
     FROM
-      logica_test.Down_sn_t1 AS Down_sn_t1
+      synalog_test.Down_sn_t1 AS Down_sn_t1
    UNION ALL
   
     SELECT
       Down_sn_t2.a AS a,
       Down_sn_t2.b AS b
     FROM
-      logica_test.Down_sn_t2 AS Down_sn_t2
+      synalog_test.Down_sn_t2 AS Down_sn_t2
    UNION ALL
   
     SELECT
       Down_sn_t3.a AS a,
       Down_sn_t3.b AS b
     FROM
-      logica_test.Down_sn_t3 AS Down_sn_t3
+      synalog_test.Down_sn_t3 AS Down_sn_t3
    UNION ALL
   
     SELECT
       Down_sn_t4.a AS a,
       Down_sn_t4.b AS b
     FROM
-      logica_test.Down_sn_t4 AS Down_sn_t4
+      synalog_test.Down_sn_t4 AS Down_sn_t4
    UNION ALL
   
     SELECT
       Down_sn_t5.a AS a,
       Down_sn_t5.b AS b
     FROM
-      logica_test.Down_sn_t5 AS Down_sn_t5
+      synalog_test.Down_sn_t5 AS Down_sn_t5
   
 ) AS UNUSED_TABLE_NAME  ;
 
--- Interacting with table logica_test.Down_sn_full
+-- Interacting with table synalog_test.Down_sn_full
 
-DROP TABLE IF EXISTS logica_test.Down_sn_new;
-CREATE TABLE logica_test.Down_sn_new AS WITH t_1_Influenced AS (SELECT * FROM VALUES
+DROP TABLE IF EXISTS synalog_test.Down_sn_new;
+CREATE TABLE synalog_test.Down_sn_new AS WITH t_1_Influenced AS (SELECT * FROM VALUES
   ("austen", "tolkien"),
   ("tolkien", "herbert"),
   ("herbert", "gibson"),
@@ -307,7 +307,7 @@ t_1_Down_MultBodyAggAux_f8 AS (SELECT * FROM (
       Down_sn_delta.a AS a,
       t_2_Influenced.b AS b
     FROM
-      logica_test.Down_sn_delta AS Down_sn_delta, t_1_Influenced AS t_2_Influenced
+      synalog_test.Down_sn_delta AS Down_sn_delta, t_1_Influenced AS t_2_Influenced
     WHERE
       (t_2_Influenced.a = Down_sn_delta.b)
   
@@ -325,18 +325,18 @@ FROM
   t_0_Down_sn_step AS Down_sn_step
 WHERE
   ((SELECT
-    MIN(1) AS logica_value
+    MIN(1) AS synalog_value
   FROM
-    logica_test.Down_sn_full AS Down_sn_full
+    synalog_test.Down_sn_full AS Down_sn_full
   WHERE
     (Down_sn_full.a = Down_sn_step.a) AND
     (Down_sn_full.b = Down_sn_step.b)) IS NULL)
 GROUP BY 1, 2;
 
-INSERT INTO logica_test.Down_sn_full SELECT * FROM logica_test.Down_sn_new;
+INSERT INTO synalog_test.Down_sn_full SELECT * FROM synalog_test.Down_sn_new;
 
-DROP TABLE IF EXISTS logica_test.Down_sn_delta;
-CREATE TABLE logica_test.Down_sn_delta AS WITH t_1_Influenced AS (SELECT * FROM VALUES
+DROP TABLE IF EXISTS synalog_test.Down_sn_delta;
+CREATE TABLE synalog_test.Down_sn_delta AS WITH t_1_Influenced AS (SELECT * FROM VALUES
   ("austen", "tolkien"),
   ("tolkien", "herbert"),
   ("herbert", "gibson"),
@@ -355,7 +355,7 @@ t_1_Down_MultBodyAggAux_f1 AS (SELECT * FROM (
       Down_sn_new.a AS a,
       t_2_Influenced.b AS b
     FROM
-      logica_test.Down_sn_new AS Down_sn_new, t_1_Influenced AS t_2_Influenced
+      synalog_test.Down_sn_new AS Down_sn_new, t_1_Influenced AS t_2_Influenced
     WHERE
       (t_2_Influenced.a = Down_sn_new.b)
   
@@ -373,18 +373,18 @@ FROM
   t_0_Down_sn_back_step AS Down_sn_back_step
 WHERE
   ((SELECT
-    MIN(1) AS logica_value
+    MIN(1) AS synalog_value
   FROM
-    logica_test.Down_sn_full AS Down_sn_full
+    synalog_test.Down_sn_full AS Down_sn_full
   WHERE
     (Down_sn_full.a = Down_sn_back_step.a) AND
     (Down_sn_full.b = Down_sn_back_step.b)) IS NULL)
 GROUP BY 1, 2;
 
-INSERT INTO logica_test.Down_sn_full SELECT * FROM logica_test.Down_sn_delta;
+INSERT INTO synalog_test.Down_sn_full SELECT * FROM synalog_test.Down_sn_delta;
 
-DROP TABLE IF EXISTS logica_test.Down_sn_new;
-CREATE TABLE logica_test.Down_sn_new AS WITH t_1_Influenced AS (SELECT * FROM VALUES
+DROP TABLE IF EXISTS synalog_test.Down_sn_new;
+CREATE TABLE synalog_test.Down_sn_new AS WITH t_1_Influenced AS (SELECT * FROM VALUES
   ("austen", "tolkien"),
   ("tolkien", "herbert"),
   ("herbert", "gibson"),
@@ -403,7 +403,7 @@ t_1_Down_MultBodyAggAux_f8 AS (SELECT * FROM (
       Down_sn_delta.a AS a,
       t_2_Influenced.b AS b
     FROM
-      logica_test.Down_sn_delta AS Down_sn_delta, t_1_Influenced AS t_2_Influenced
+      synalog_test.Down_sn_delta AS Down_sn_delta, t_1_Influenced AS t_2_Influenced
     WHERE
       (t_2_Influenced.a = Down_sn_delta.b)
   
@@ -421,18 +421,18 @@ FROM
   t_0_Down_sn_step AS Down_sn_step
 WHERE
   ((SELECT
-    MIN(1) AS logica_value
+    MIN(1) AS synalog_value
   FROM
-    logica_test.Down_sn_full AS Down_sn_full
+    synalog_test.Down_sn_full AS Down_sn_full
   WHERE
     (Down_sn_full.a = Down_sn_step.a) AND
     (Down_sn_full.b = Down_sn_step.b)) IS NULL)
 GROUP BY 1, 2;
 
-INSERT INTO logica_test.Down_sn_full SELECT * FROM logica_test.Down_sn_new;
+INSERT INTO synalog_test.Down_sn_full SELECT * FROM synalog_test.Down_sn_new;
 
-DROP TABLE IF EXISTS logica_test.Down_sn_delta;
-CREATE TABLE logica_test.Down_sn_delta AS WITH t_1_Influenced AS (SELECT * FROM VALUES
+DROP TABLE IF EXISTS synalog_test.Down_sn_delta;
+CREATE TABLE synalog_test.Down_sn_delta AS WITH t_1_Influenced AS (SELECT * FROM VALUES
   ("austen", "tolkien"),
   ("tolkien", "herbert"),
   ("herbert", "gibson"),
@@ -451,7 +451,7 @@ t_1_Down_MultBodyAggAux_f1 AS (SELECT * FROM (
       Down_sn_new.a AS a,
       t_2_Influenced.b AS b
     FROM
-      logica_test.Down_sn_new AS Down_sn_new, t_1_Influenced AS t_2_Influenced
+      synalog_test.Down_sn_new AS Down_sn_new, t_1_Influenced AS t_2_Influenced
     WHERE
       (t_2_Influenced.a = Down_sn_new.b)
   
@@ -469,18 +469,18 @@ FROM
   t_0_Down_sn_back_step AS Down_sn_back_step
 WHERE
   ((SELECT
-    MIN(1) AS logica_value
+    MIN(1) AS synalog_value
   FROM
-    logica_test.Down_sn_full AS Down_sn_full
+    synalog_test.Down_sn_full AS Down_sn_full
   WHERE
     (Down_sn_full.a = Down_sn_back_step.a) AND
     (Down_sn_full.b = Down_sn_back_step.b)) IS NULL)
 GROUP BY 1, 2;
 
-INSERT INTO logica_test.Down_sn_full SELECT * FROM logica_test.Down_sn_delta;
+INSERT INTO synalog_test.Down_sn_full SELECT * FROM synalog_test.Down_sn_delta;
 
-DROP TABLE IF EXISTS logica_test.Down_sn_new;
-CREATE TABLE logica_test.Down_sn_new AS WITH t_1_Influenced AS (SELECT * FROM VALUES
+DROP TABLE IF EXISTS synalog_test.Down_sn_new;
+CREATE TABLE synalog_test.Down_sn_new AS WITH t_1_Influenced AS (SELECT * FROM VALUES
   ("austen", "tolkien"),
   ("tolkien", "herbert"),
   ("herbert", "gibson"),
@@ -499,7 +499,7 @@ t_1_Down_MultBodyAggAux_f8 AS (SELECT * FROM (
       Down_sn_delta.a AS a,
       t_2_Influenced.b AS b
     FROM
-      logica_test.Down_sn_delta AS Down_sn_delta, t_1_Influenced AS t_2_Influenced
+      synalog_test.Down_sn_delta AS Down_sn_delta, t_1_Influenced AS t_2_Influenced
     WHERE
       (t_2_Influenced.a = Down_sn_delta.b)
   
@@ -517,18 +517,18 @@ FROM
   t_0_Down_sn_step AS Down_sn_step
 WHERE
   ((SELECT
-    MIN(1) AS logica_value
+    MIN(1) AS synalog_value
   FROM
-    logica_test.Down_sn_full AS Down_sn_full
+    synalog_test.Down_sn_full AS Down_sn_full
   WHERE
     (Down_sn_full.a = Down_sn_step.a) AND
     (Down_sn_full.b = Down_sn_step.b)) IS NULL)
 GROUP BY 1, 2;
 
-INSERT INTO logica_test.Down_sn_full SELECT * FROM logica_test.Down_sn_new;
+INSERT INTO synalog_test.Down_sn_full SELECT * FROM synalog_test.Down_sn_new;
 
-DROP TABLE IF EXISTS logica_test.Down_sn_delta;
-CREATE TABLE logica_test.Down_sn_delta AS WITH t_1_Influenced AS (SELECT * FROM VALUES
+DROP TABLE IF EXISTS synalog_test.Down_sn_delta;
+CREATE TABLE synalog_test.Down_sn_delta AS WITH t_1_Influenced AS (SELECT * FROM VALUES
   ("austen", "tolkien"),
   ("tolkien", "herbert"),
   ("herbert", "gibson"),
@@ -547,7 +547,7 @@ t_1_Down_MultBodyAggAux_f1 AS (SELECT * FROM (
       Down_sn_new.a AS a,
       t_2_Influenced.b AS b
     FROM
-      logica_test.Down_sn_new AS Down_sn_new, t_1_Influenced AS t_2_Influenced
+      synalog_test.Down_sn_new AS Down_sn_new, t_1_Influenced AS t_2_Influenced
     WHERE
       (t_2_Influenced.a = Down_sn_new.b)
   
@@ -565,19 +565,19 @@ FROM
   t_0_Down_sn_back_step AS Down_sn_back_step
 WHERE
   ((SELECT
-    MIN(1) AS logica_value
+    MIN(1) AS synalog_value
   FROM
-    logica_test.Down_sn_full AS Down_sn_full
+    synalog_test.Down_sn_full AS Down_sn_full
   WHERE
     (Down_sn_full.a = Down_sn_back_step.a) AND
     (Down_sn_full.b = Down_sn_back_step.b)) IS NULL)
 GROUP BY 1, 2;
 
-INSERT INTO logica_test.Down_sn_full SELECT * FROM logica_test.Down_sn_delta;
+INSERT INTO synalog_test.Down_sn_full SELECT * FROM synalog_test.Down_sn_delta;
 
 SELECT
   Down_sn_full.b AS b
 FROM
-  logica_test.Down_sn_full AS Down_sn_full
+  synalog_test.Down_sn_full AS Down_sn_full
 WHERE
   ("asimov" = Down_sn_full.a) ORDER BY b NULLS LAST;
