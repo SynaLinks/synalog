@@ -194,8 +194,6 @@ fn test_inject_structure_merges() {
 fn test_logica_new() {
     let l = Logica::new();
     assert!(l.defines.is_empty());
-    assert!(l.export_statements.is_empty());
-    assert!(l.main_predicate.is_none());
     assert!(!l.compiling_udf);
     assert!(l.annotations.is_none());
 }
@@ -1345,15 +1343,6 @@ fn test_logica_dependency_edges() {
     let mut l = Logica::new();
     l.dependency_edges.push(("A".to_string(), "B".to_string()));
     assert_eq!(l.dependency_edges.len(), 1);
-}
-
-// ── Logica struct: export_statements ──
-
-#[test]
-fn test_logica_export_statements() {
-    let mut l = Logica::new();
-    l.export_statements.push("CREATE TABLE T AS SELECT 1".to_string());
-    assert_eq!(l.export_statements.len(), 1);
 }
 
 // ── Logica struct: defines_and_exports ──

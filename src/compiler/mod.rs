@@ -1,12 +1,10 @@
 // License Apache 2.0: (c) 2025-2026 Yoan Sallami (Synalinks Team)
 
 pub mod annotations;
-pub mod concertina;
 pub mod dialects;
 pub mod expr_translate;
 pub mod functors;
 pub mod rule_translate;
-pub mod program;
 pub mod type_inference;
 pub mod universe;
 

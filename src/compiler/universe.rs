@@ -180,8 +180,6 @@ pub fn is_table_name(table: &str) -> bool {
 pub struct Logica {
     /// DEFINE TABLE statements.
     pub defines: Vec<String>,
-    /// EXPORT DATA statements.
-    pub export_statements: Vec<String>,
     /// Combined defines and exports in order.
     pub defines_and_exports: Vec<String>,
     /// Predicate → allocated CTE table name.
@@ -203,8 +201,6 @@ pub struct Logica {
     pub data_dependency_edges: Vec<(String, String)>,
     /// Predicate → full export SQL.
     pub table_to_export_map: HashMap<String, String>,
-    /// SQL of the main predicate being compiled.
-    pub main_predicate_sql: Option<String>,
     /// Query preamble (engine init, type defs, etc.).
     pub preamble: String,
     /// Workflow stack: inverse path from final to current predicate.
@@ -221,8 +217,6 @@ pub struct Logica {
     pub custom_udf_definitions: IndexMap<String, String>,
     /// Custom aggregation semigroups: aggregation → semigroup function.
     pub custom_aggregation_semigroup: HashMap<String, String>,
-    /// Main predicate name.
-    pub main_predicate: Option<String>,
     /// Predicates used by the main predicate (from functors).
     pub used_predicates: Vec<String>,
     /// Predicate → transitive dependencies (from functors).
@@ -313,7 +307,6 @@ impl Logica {
     pub fn new() -> Self {
         Logica {
             defines: Vec::new(),
-            export_statements: Vec::new(),
             defines_and_exports: Vec::new(),
             table_to_defined_table_map: HashMap::new(),
             table_to_with_sql_map: HashMap::new(),
@@ -324,7 +317,6 @@ impl Logica {
             dependency_edges: Vec::new(),
             data_dependency_edges: Vec::new(),
             table_to_export_map: HashMap::new(),
-            main_predicate_sql: None,
             preamble: String::new(),
             workflow_predicates_stack: Vec::new(),
             flags_comment: String::new(),
@@ -335,7 +327,6 @@ impl Logica {
             custom_aggregation_semigroup: HashMap::new(),
             used_predicates: Vec::new(),
             dependencies_of: HashMap::new(),
-            main_predicate: None,
             iterations: HashMap::new(),
             dialect: None,
             pending_with_compilations: Vec::new(),
@@ -992,7 +983,6 @@ impl LogicaProgram {
         exec.dialect = Some(dialects::get(self.annotations.engine())?);
         // Set dialect-specific preamble (matches Python's InitializeExecution)
         exec.preamble = self.annotations.preamble();
-        exec.main_predicate = Some(main_predicate.to_string());
         // Populate iterations from @Iteration annotations
         exec.iterations = self.annotations.iterations()?;
         Ok(exec)
@@ -2319,7 +2309,6 @@ impl LogicaProgram {
                 exec_ref
                     .table_to_export_map
                     .insert(table.to_string(), stmt.clone());
-                exec_ref.export_statements.push(stmt.clone());
                 export_statement = Some(stmt);
             }
         }
