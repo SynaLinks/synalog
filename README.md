@@ -563,6 +563,8 @@ Unlike Logica, which lets the database raise errors at execution time, Synalog e
 | **Reserved names** | Rules that redefine a built-in library predicate (`Num`, `Str`, `ArgMin`, `Today`, `Now`, ...) |
 | **Unsafe `SqlExpr`** | User rules that reach for the raw-SQL escape hatch |
 
+The algorithms behind the stratification and recursion checks, the compiler's unfolding of mutual recursion, the order a compiled program's tables run in, the contradiction warning, pagination, the quoting of text into SQL and the `Cast` type-name check are proved correct with [Verus](https://github.com/verus-lang/verus). See [Verification](https://synalinks.github.io/synalog/verification/).
+
 ```python
 errors, warnings = synalog.check(bad_source)
 for e in errors:
@@ -612,6 +614,7 @@ cargo test --test compiler_tests        # compiler golden tests (all engines)
 cargo test --test parser_tests          # parser golden tests (all engines)
 cargo test --test verifier_tests        # verifier tests (all engines)
 cargo test --test search_tests          # search feature tests (all engines)
+cargo test --test verus_proofs          # the Verus proofs of verified/ (shell/install-verus.sh installs Verus)
 ```
 
 ### Tests

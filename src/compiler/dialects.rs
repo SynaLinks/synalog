@@ -19,15 +19,22 @@ use std::hash::{Hash, Hasher};
 use crate::compiler::CompileError;
 use crate::compiler::type_inference::Type;
 
+/// `s` quoted by one of `synalog_verified::quote`'s quotings, which Verus
+/// proves the engine reads back as `s`, the literal ending at its closing
+/// quote whatever SQL follows.
+pub(crate) fn quoted(s: &str, quote: impl Fn(&Vec<char>) -> Vec<char>) -> String {
+    quote(&s.chars().collect()).into_iter().collect()
+}
+
 /// A double-quoted string literal for engines whose literals take backslash
 /// escapes (Spark, BigQuery). A quote of the value is written `\u0022`, never
 /// `\"`: the literal then holds no quote but its own two, so whatever splits a
 /// script into statements at semicolons outside quotes, knowing these escapes
 /// or not, never ends it early (`"\"; DROP TABLE t; --"` would end at the
-/// escaped quote for one that does not, and run `DROP TABLE t`).
-pub fn backslash_escaped_literal(s: &str) -> String {
-    let escaped = s.replace('\\', "\\\\").replace('"', "\\u0022");
-    format!("\"{}\"", escaped)
+/// escaped quote for one that does not, and run `DROP TABLE t`). With
+/// `dollar`, a dollar is `\u0024` (Spark substitutes `${var}` first).
+fn backslash_escaped_literal(s: &str, dollar: bool) -> String {
+    quoted(s, |s| synalog_verified::quote::backslashed(s, '"', true, dollar))
 }
 
 /// Deterministic composite-type name for a record shape.
@@ -68,7 +75,7 @@ pub fn psql_record_columns(ty: &Type) -> String {
     items.iter()
         // Quoted, so a reserved word (`left`) is a field; a lowercase name
         // folds as an unquoted field access does.
-        .map(|(k, t)| format!("\"{}\" {}", k, column_type(t)))
+        .map(|(k, t)| format!("{} {}", quoted(k, |s| synalog_verified::quote::doubled(s, '"')), column_type(t)))
         .collect::<Vec<_>>()
         .join(", ")
 }
@@ -294,7 +301,7 @@ pub trait Dialect {
 
     /// `name` quoted as an identifier (standard SQL: double quotes).
     fn quote_identifier(&self, name: &str) -> String {
-        format!("\"{}\"", name.replace('"', "\"\""))
+        quoted(name, |s| synalog_verified::quote::doubled(s, '"'))
     }
 
     /// Whether table materialization uses `CREATE OR REPLACE TABLE` instead
@@ -362,8 +369,7 @@ pub trait Dialect {
 
     /// String literal formatting.
     fn str_literal(&self, s: &str) -> String {
-        let escaped = s.replace('\'', "''");
-        format!("'{}'", escaped)
+        quoted(s, |s| synalog_verified::quote::doubled(s, '\''))
     }
 
     /// Whether combine rules should be decorated with MagicalEntangle.
@@ -454,7 +460,7 @@ impl Dialect for BigQueryDialect {
     fn quote_identifier(&self, name: &str) -> String {
         // Double quotes make a string here: identifiers take backticks,
         // with a string's backslash escapes.
-        format!("`{}`", name.replace('\\', "\\\\").replace('`', "\\`"))
+        quoted(name, |s| synalog_verified::quote::backslashed(s, '`', false, false))
     }
 
     fn name(&self) -> &'static str { "bigquery" }
@@ -477,7 +483,7 @@ impl Dialect for BigQueryDialect {
 
     fn str_literal(&self, s: &str) -> String {
         // BigQuery uses double-quoted string literals (matching Python's json.dumps).
-        backslash_escaped_literal(s)
+        backslash_escaped_literal(s, false)
     }
 
     fn subscript(&self, record: &str, subscript: &str, _record_is_table: bool) -> String {
@@ -720,7 +726,7 @@ Char(code) = SqlExpr("CHAR({code})", {code:});
 
     fn record_literal(&self, fields: &[(&str, &str, &Type)]) -> String {
         let pairs: Vec<String> = fields.iter()
-            .map(|(k, v, _)| format!("'{}', {}", k, v)).collect();
+            .map(|(k, v, _)| format!("{}, {}", self.str_literal(k), v)).collect();
         format!("JSON_OBJECT({})", pairs.join(", "))
     }
 
@@ -754,12 +760,7 @@ impl Dialect for PostgreSqlDialect {
         // A server with standard_conforming_strings off reads a backslash in
         // '...' as an escape, which could end the literal: E'...' reads it as
         // one whatever the setting, so a backslash is written doubled there.
-        let escaped = s.replace('\'', "''");
-        if s.contains('\\') {
-            format!("E'{}'", escaped.replace('\\', "\\\\"))
-        } else {
-            format!("'{}'", escaped)
-        }
+        quoted(s, synalog_verified::quote::postgres)
     }
     fn int64_of_text(&self) -> Option<&'static str> {
         Some("CAST({0} AS BIGINT)")
@@ -1228,7 +1229,7 @@ impl Dialect for DatabricksDialect {
     fn quote_identifier(&self, name: &str) -> String {
         // Double quotes make a string here: identifiers take backticks,
         // a backtick inside doubled.
-        format!("`{}`", name.replace('`', "``"))
+        quoted(name, |s| synalog_verified::quote::doubled(s, '`'))
     }
 
     fn name(&self) -> &'static str { "databricks" }
@@ -1358,7 +1359,7 @@ Array(a) = SqlExpr(
     fn str_literal(&self, s: &str) -> String {
         // Spark substitutes `${var}` in a statement's text before it parses
         // it, inside literals too (`"${env:HOME}"`): a dollar is `\u0024`.
-        backslash_escaped_literal(s).replace('$', "\\u0024")
+        backslash_escaped_literal(s, true)
     }
 }
 

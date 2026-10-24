@@ -22,7 +22,11 @@ run = ["rusqlite", "duckdb", "postgres-db", "bigquery-db"]
 postgres-db = ["postgres"]
 bigquery-db = ["reqwest"]
 
+[workspace]
+members = ["verified"]
+
 [dependencies]
+synalog-verified = { path = "verified" }
 indexmap = "2"
 regex = "1.12.3"
 serde = { version = "1", features = ["derive"] }

@@ -1,0 +1,18 @@
+[package]
+name = "synalog-verified"
+version = "2.2.0"
+edition = "2024"
+description = "Synalog's graph algorithms, proved correct with Verus"
+license = "Apache-2.0"
+repository = "https://github.com/synalinks/synalog"
+publish = false
+
+[dependencies]
+vstd = "=0.0.0-2026-10-18-0147"
+
+[package.metadata.verus]
+verify = true
+
+# Verus compiles with `verus_keep_ghost`, which keeps the proofs.
+[lints.rust]
+unexpected_cfgs = { level = "warn", check-cfg = ["cfg(verus_keep_ghost)"] }

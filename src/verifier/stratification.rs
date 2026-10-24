@@ -2,13 +2,11 @@
 
 //! Stratification check for Logica programs.
 //!
-//! A program is stratified if there are no negative recursion cycles.
-//! Uses Tarjan's SCC algorithm to detect cycles, then checks if any
-//! SCC contains a negative dependency edge.
-//!
-//! Mirrors the Lean 4 specification.
+//! A program is stratified if there are no negative recursion cycles: no
+//! negative dependency `P -> Q` with `Q` reaching back to `P`. The graph
+//! algorithms are `synalog_verified`'s, proved correct with Verus.
 
-use std::collections::{HashMap, HashSet};
+use std::collections::{BTreeMap, HashMap};
 use crate::parser::Json;
 use crate::errors::VerifyError;
 
@@ -158,95 +156,14 @@ fn collect_conjunct_deps_negated(conjunct: &Json, head_pred: &str, edges: &mut V
     }
 }
 
-/// Tarjan's SCC algorithm state.
-struct TarjanState {
-    index: usize,
-    stack: Vec<String>,
-    on_stack: HashSet<String>,
-    indices: HashMap<String, usize>,
-    lowlinks: HashMap<String, usize>,
-    sccs: Vec<Vec<String>>,
-}
-
-impl TarjanState {
-    fn new() -> Self {
-        TarjanState {
-            index: 0,
-            stack: Vec::new(),
-            on_stack: HashSet::new(),
-            indices: HashMap::new(),
-            lowlinks: HashMap::new(),
-            sccs: Vec::new(),
-        }
-    }
-}
-
-/// Find strongly connected components using Tarjan's algorithm.
-fn tarjan(graph: &HashMap<String, Vec<(String, bool)>>) -> Vec<Vec<String>> {
-    let mut state = TarjanState::new();
-
-    let nodes: Vec<String> = graph.keys().cloned().collect();
-    for v in &nodes {
-        if !state.indices.contains_key(v) {
-            strong_connect(graph, v, &mut state);
-        }
-    }
-
-    state.sccs
-}
-
-fn strong_connect(
-    graph: &HashMap<String, Vec<(String, bool)>>,
-    v: &str,
-    state: &mut TarjanState,
-) {
-    // Set index and lowlink
-    state.indices.insert(v.to_string(), state.index);
-    state.lowlinks.insert(v.to_string(), state.index);
-    state.index += 1;
-    state.stack.push(v.to_string());
-    state.on_stack.insert(v.to_string());
-
-    // Visit successors
-    if let Some(successors) = graph.get(v) {
-        for (w, _negated) in successors {
-            if !state.indices.contains_key(w) {
-                // w not visited
-                strong_connect(graph, w, state);
-                let v_low = state.lowlinks[v];
-                let w_low = state.lowlinks[w];
-                state.lowlinks.insert(v.to_string(), v_low.min(w_low));
-            } else if state.on_stack.contains(w) {
-                // w is on stack = part of current SCC
-                let v_low = state.lowlinks[v];
-                let w_idx = state.indices[w];
-                state.lowlinks.insert(v.to_string(), v_low.min(w_idx));
-            }
-        }
-    }
-
-    // If v is root, pop SCC
-    if state.lowlinks[v] == state.indices[v] {
-        let mut scc = Vec::new();
-        loop {
-            let w = state.stack.pop().unwrap();
-            state.on_stack.remove(&w);
-            scc.push(w.clone());
-            if w == v {
-                break;
-            }
-        }
-        state.sccs.push(scc);
-    }
-}
-
-/// Check if an SCC contains a negative internal edge.
-fn scc_has_negative_edge(scc: &[String], edges: &[DepEdge]) -> bool {
-    let scc_set: HashSet<&str> = scc.iter().map(|s| s.as_str()).collect();
-
-    edges.iter().any(|e| {
-        e.negated && scc_set.contains(e.from.as_str()) && scc_set.contains(e.to.as_str())
-    })
+/// The graph over the nodes `0..n`, the predicates sorted by name: the
+/// names, the node of each name, and the successors of each node.
+fn index_graph(graph: &HashMap<String, Vec<(String, bool)>>) -> (Vec<&str>, HashMap<&str, usize>, Vec<Vec<usize>>) {
+    let mut names: Vec<&str> = graph.keys().map(|s| s.as_str()).collect();
+    names.sort_unstable();
+    let index: HashMap<&str, usize> = names.iter().enumerate().map(|(i, name)| (*name, i)).collect();
+    let successors = names.iter().map(|name| graph[*name].iter().map(|(to, _)| index[to.as_str()]).collect()).collect();
+    (names, index, successors)
 }
 
 /// Build adjacency list from edges.
@@ -269,37 +186,44 @@ pub fn build_dep_graph(rules: &[&Json]) -> HashMap<String, Vec<(String, bool)>> 
     build_graph(&edges)
 }
 
-/// Find strongly connected components (public interface for other modules).
-pub fn find_sccs(graph: &HashMap<String, Vec<(String, bool)>>) -> Vec<Vec<String>> {
-    tarjan(graph)
-}
-
-/// Check if a program is stratified.
-pub fn check_stratification(rules: &[&Json]) -> Result<(), StratificationError> {
-    // Extract all dependency edges
-    let edges: Vec<DepEdge> = rules.iter().flat_map(|r| extract_deps(r)).collect();
-
-    if edges.is_empty() {
-        return Ok(());
-    }
-
-    // Build graph and find SCCs
-    let graph = build_graph(&edges);
-    let sccs = tarjan(&graph);
-
-    // Check each SCC for negative edges
-    for scc in &sccs {
-        if scc.len() > 1 || graph.get(&scc[0]).map_or(false, |adj| adj.iter().any(|(to, _)| to == &scc[0])) {
-            // This is a non-trivial SCC (has cycle)
-            if scc_has_negative_edge(scc, &edges) {
-                return Err(StratificationError {
-                    cycle: scc.clone(),
-                });
-            }
+/// The recursive strongly connected components: those with two predicates
+/// or more, or with a predicate that calls itself. Each lists its predicates
+/// sorted, and the components come in the order of their first predicate.
+/// The components, and which are recursive, are proved by `synalog_verified`.
+pub fn recursive_sccs(graph: &HashMap<String, Vec<(String, bool)>>) -> Vec<Vec<String>> {
+    let (names, _, successors) = index_graph(graph);
+    let reach = synalog_verified::reachability(&successors);
+    let component = synalog_verified::components(&successors, &reach);
+    let on_cycle = synalog_verified::cycles(&successors, &reach);
+    let mut sccs: BTreeMap<usize, Vec<String>> = BTreeMap::new();
+    for (v, name) in names.iter().enumerate() {
+        if on_cycle[v] {
+            sccs.entry(component[v]).or_default().push(name.to_string());
         }
     }
+    sccs.into_values().collect()
+}
 
-    Ok(())
+/// Check if a program is stratified: no recursion goes through a negation.
+pub fn check_stratification(rules: &[&Json]) -> Result<(), StratificationError> {
+    let edges: Vec<DepEdge> = rules.iter().flat_map(|r| extract_deps(r)).collect();
+    let graph = build_graph(&edges);
+    let (names, index, successors) = index_graph(&graph);
+    let negative: Vec<(usize, usize)> = edges
+        .iter()
+        .filter(|e| e.negated)
+        .map(|e| (index[e.from.as_str()], index[e.to.as_str()]))
+        .collect();
+    let reach = synalog_verified::reachability(&successors);
+    let Some(i) = synalog_verified::first_negative_cycle(&successors, &reach, &negative) else {
+        return Ok(());
+    };
+    // The cycle's predicates: the component of the negative edge.
+    let component = synalog_verified::components(&successors, &reach);
+    let of = component[negative[i].0];
+    Err(StratificationError {
+        cycle: names.iter().enumerate().filter(|(v, _)| component[*v] == of).map(|(_, name)| name.to_string()).collect(),
+    })
 }
 
 #[cfg(test)]
@@ -329,5 +253,31 @@ mod tests {
         "#);
         let rules: Vec<&Json> = parsed.as_object()["rule"].as_array().iter().collect();
         assert!(check_stratification(&rules).is_ok());
+    }
+
+    #[test]
+    fn test_negative_cycle_names_its_predicates() {
+        let parsed = parse(r#"
+            A(x) :- B(x), ~C(x);
+            B(x) :- A(x);
+            C(x) :- A(x);
+            D(x) :- C(x);
+        "#);
+        let rules: Vec<&Json> = parsed.as_object()["rule"].as_array().iter().collect();
+        let err = check_stratification(&rules).unwrap_err();
+        assert_eq!(err.cycle, vec!["A", "B", "C"]);
+    }
+
+    #[test]
+    fn test_recursive_sccs() {
+        let parsed = parse(r#"
+            A(x) :- B(x);
+            B(x) :- A(x);
+            C(x) :- C(x), A(x);
+            D(x) :- A(x);
+        "#);
+        let rules: Vec<&Json> = parsed.as_object()["rule"].as_array().iter().collect();
+        let sccs = recursive_sccs(&build_dep_graph(&rules));
+        assert_eq!(sccs, vec![vec!["A", "B"], vec!["C"]]);
     }
 }

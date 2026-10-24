@@ -265,7 +265,7 @@ pub fn script_of(plan: &[PlanStep]) -> CompileResult<String> {
             PlanStep::Setup(sql) => setup.push_str(sql),
             PlanStep::Sql(sql) => statements.push(sql.clone()),
             PlanStep::Loop { body, repetitions, .. } => {
-                if *repetitions + 1 > MAX_SCRIPT_REPETITIONS {
+                if *repetitions >= MAX_SCRIPT_REPETITIONS {
                     return Err(CompileError::new(
                         format!(
                             "This recursion takes more steps than a SQL script can hold (about {} at most): \
@@ -333,9 +333,9 @@ impl Logica {
             custom_udfs: IndexMap::new(),
             custom_udf_definitions: IndexMap::new(),
             custom_aggregation_semigroup: HashMap::new(),
-            main_predicate: None,
             used_predicates: Vec::new(),
             dependencies_of: HashMap::new(),
+            main_predicate: None,
             iterations: HashMap::new(),
             dialect: None,
             pending_with_compilations: Vec::new(),
@@ -979,7 +979,6 @@ impl LogicaProgram {
         exec.custom_udfs = self.custom_udfs.clone();
         exec.custom_udf_definitions = self.custom_udf_definitions.clone();
         exec.custom_aggregation_semigroup = self.custom_aggregation_semigroup.clone();
-        exec.main_predicate = Some(main_predicate.to_string());
         exec.used_predicates = self
             .functors_args_of
             .get(main_predicate)
@@ -993,6 +992,7 @@ impl LogicaProgram {
         exec.dialect = Some(dialects::get(self.annotations.engine())?);
         // Set dialect-specific preamble (matches Python's InitializeExecution)
         exec.preamble = self.annotations.preamble();
+        exec.main_predicate = Some(main_predicate.to_string());
         // Populate iterations from @Iteration annotations
         exec.iterations = self.annotations.iterations()?;
         Ok(exec)
@@ -1688,79 +1688,54 @@ impl LogicaProgram {
                 },
             }
         }
-        let table_set: HashSet<&String> = tables.iter().collect();
-        let mut requires: HashMap<&String, HashSet<&String>> = HashMap::new();
+        // The tables are the nodes `0..n`, in the compiler's order, planned
+        // by `synalog_verified::plan::schedule`, proved correct with Verus.
+        let index: HashMap<&String, usize> = tables.iter().enumerate().map(|(t, table)| (table, t)).collect();
+        let mut requires: Vec<Vec<usize>> = vec![Vec::new(); tables.len()];
         for (source, target) in exec.dependency_edges.iter().chain(exec.data_dependency_edges.iter()) {
-            if let (Some(s), Some(t)) = (table_set.get(source), table_set.get(target)) {
+            if let (Some(&s), Some(&t)) = (index.get(source), index.get(target)) {
                 if s != t {
-                    requires.entry(*t).or_default().insert(*s);
+                    requires[t].push(s);
                 }
             }
         }
-        let iteration_of: HashMap<&String, usize> = iterations
-            .iter()
-            .enumerate()
-            .flat_map(|(i, (_, it))| it.predicates.iter().chain(it.accumulate.iter()).map(move |p| (p, i)))
-            .filter_map(|(p, i)| table_set.get(p).map(|t| (*t, i)))
-            .collect();
-        // A semi-naive iteration's predicates run only inside its loop.
-        let loop_only: HashSet<&String> = iterations
-            .iter()
-            .filter(|(_, it)| it.accumulate.is_some())
-            .flat_map(|(_, it)| it.predicates.iter())
-            .filter_map(|p| table_set.get(p).copied())
-            .collect();
+        let mut iteration_of: Vec<Option<usize>> = vec![None; tables.len()];
+        for (i, (_, it)) in iterations.iter().enumerate() {
+            for p in it.predicates.iter().chain(it.accumulate.iter()) {
+                if let Some(&t) = index.get(p) {
+                    iteration_of[t] = Some(i);
+                }
+            }
+        }
+        let graph = synalog_verified::plan::PlanGraph {
+            requires,
+            iteration_of,
+            members: iterations.iter().map(|(_, it)| it.predicates.iter().filter_map(|p| index.get(p).copied()).collect()).collect(),
+            semi_naive: iterations.iter().map(|(_, it)| it.accumulate.is_some()).collect(),
+        };
+        let Some(steps) = synalog_verified::plan::schedule(&graph) else {
+            // A cycle the dependencies do not resolve: keep the compiler's order.
+            return Ok(as_steps(&exec.defines_and_exports));
+        };
 
         let mut order: Vec<PlanStep> = as_steps(&leading);
-        let mut done: HashSet<&String> = HashSet::new();
-        // Iterations whose every table ran once, and whose loop is planned.
-        let mut finished: HashSet<usize> = HashSet::new();
-        while done.len() < tables.len() {
-            let ready = tables.iter().find(|t| {
-                !done.contains(t)
-                    && requires.get(t).is_none_or(|reqs| {
-                        reqs.iter().all(|r| {
-                            done.contains(r)
-                                // Outside an iteration, its tables are ready
-                                // once its loop is planned.
-                                && match (iteration_of.get(r), iteration_of.get(t)) {
-                                    (Some(i), Some(j)) if i == j => true,
-                                    (Some(i), _) => finished.contains(i),
-                                    _ => true,
-                                }
-                        })
-                    })
-            });
-            let Some(table) = ready else {
-                // A cycle the dependencies do not resolve: keep the compiler's order.
-                return Ok(as_steps(&exec.defines_and_exports));
-            };
-            if loop_only.contains(table) {
-                let i = iteration_of[table];
-                let iteration = &iterations[i].1;
-                order.extend(self.semi_naive_loop(iteration, exports)?);
-                for p in &iteration.predicates {
-                    if let Some(t) = table_set.get(p) {
-                        done.insert(*t);
-                    }
+        for step in steps {
+            match step {
+                synalog_verified::plan::Step::Table(t) => {
+                    order.push(PlanStep::Sql(exports[&tables[t]].clone()));
+                    order.extend(as_steps(&trailing.get(&tables[t]).cloned().unwrap_or_default()));
                 }
-                finished.insert(i);
-                continue;
-            }
-            done.insert(table);
-            order.push(PlanStep::Sql(exports[table].clone()));
-            order.extend(as_steps(&trailing.get(table).cloned().unwrap_or_default()));
-            if let Some(&i) = iteration_of.get(table) {
-                let iteration = &iterations[i].1;
-                if iteration.accumulate.is_none()
-                    && iteration.predicates.iter().all(|p| table_set.get(p).is_some_and(|t| done.contains(t)))
-                {
-                    order.push(PlanStep::Loop {
-                        body: iteration.predicates.iter().map(|p| exports[p].clone()).collect(),
-                        repetitions: iteration.repetitions - 1,
-                        changed: self.iteration_changed_query(&iteration.predicates)?,
-                    });
-                    finished.insert(i);
+                synalog_verified::plan::Step::Loop(i) => {
+                    let iteration = &iterations[i].1;
+                    if iteration.accumulate.is_some() {
+                        order.extend(self.semi_naive_loop(iteration, exports)?);
+                    } else {
+                        order.push(PlanStep::Loop {
+                            body: iteration.predicates.iter().map(|p| exports[p].clone()).collect(),
+                            repetitions: iteration.repetitions - 1,
+                            changed: self.iteration_changed_query(&iteration.predicates)?,
+                        });
+                    }
                 }
             }
         }
@@ -1856,14 +1831,10 @@ impl LogicaProgram {
     /// `query`, so a caller limit is combined with them via min() and a
     /// bare @Limit needs no wrapping at all.
     fn paginate_query(&self, name: &str, query: String, pagination: &Pagination) -> String {
-        let annotation_limit = self.annotations.limit_of(name);
-        let effective_limit = match (pagination.limit, annotation_limit) {
-            (Some(pl), Some(al)) => Some(pl.min(al as u64)),
-            (Some(pl), None) => Some(pl),
-            (None, _) => None,
-        };
-
-        let offset = pagination.offset.filter(|o| *o > 0);
+        // The limit (no more than @Limit) and offset, and the page's last row:
+        // `synalog_verified::page::page`, proved to keep the rows asked for.
+        let page = synalog_verified::page::page(pagination.limit, self.annotations.limit_of(name), pagination.offset);
+        let (effective_limit, offset) = (page.limit, page.offset);
         if effective_limit.is_none() && offset.is_none() {
             return query;
         }
@@ -1878,7 +1849,7 @@ impl LogicaProgram {
                     .map(|c| dialects::sql_column(c, d.as_ref()))
                     .collect();
                 let order = self.annotations.order_by_clause(name);
-                let upto = effective_limit.map(|l| format!(" AND synalog_row <= {}", skip + l)).unwrap_or_default();
+                let upto = page.last_row.map(|last| format!(" AND synalog_row <= {}", last)).unwrap_or_default();
                 return format!(
                     "SELECT {cols} FROM (\nSELECT *, ROW_NUMBER() OVER ({order}) AS synalog_row FROM (\n{query}\n) AS _numbered\n) AS _paginated\nWHERE synalog_row > {skip}{upto}\nORDER BY synalog_row",
                     cols = columns.join(", "),

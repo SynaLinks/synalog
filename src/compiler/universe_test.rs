@@ -1664,3 +1664,32 @@ fn test_empty_list_typed_on_postgresql() {
     let q = compile_predicate(&program, "Q").unwrap();
     assert!(q.contains("ARRAY_TO_STRING(CAST('{}' AS text[]), ',')"), "{}", q);
 }
+
+fn presto_page(limit: Option<u64>, offset: Option<u64>) -> String {
+    let src = "@Engine(\"presto\");\n@OrderBy(V, \"x\");\nV(x:) :- x in [1, 2, 3];\n";
+    let parsed = crate::parser::parse_file(src, None, &[]).unwrap();
+    let p = LogicaProgram::new_with_engine(&parsed, HashMap::new(), HashMap::new(), Some("presto")).unwrap();
+    let sql = p.formatted_predicate_sql_with_pagination("V", &Pagination { limit, offset }).unwrap();
+    sql.lines().filter(|l| l.contains("synalog_row >")).collect()
+}
+
+#[test]
+fn test_page_without_offset_numbers_its_rows() {
+    assert_eq!(presto_page(Some(2), Some(1)), "WHERE synalog_row > 1 AND synalog_row <= 3");
+}
+
+#[test]
+fn test_page_past_the_last_row_number_keeps_every_row() {
+    // The last row would be past `i64::MAX`, the largest row number.
+    assert_eq!(presto_page(Some(u64::MAX), Some(1)), "WHERE synalog_row > 1");
+    assert_eq!(presto_page(Some(1), Some(u64::MAX)), format!("WHERE synalog_row > {}", i64::MAX));
+}
+
+#[test]
+fn test_recursion_as_deep_as_an_integer_goes() {
+    let src = "@Engine(\"sqlite\");\nE(a: 1, b: 2);\n@Recursive(P, 9223372036854775807);\nP(a:, b:) :- E(a:, b:);\nP(a:, b:) :- P(a:, b: c), E(a: c, b:);\n";
+    let parsed = crate::parser::parse_file(src, None, &[]).unwrap();
+    let p = LogicaProgram::new_with_engine(&parsed, HashMap::new(), HashMap::new(), Some("sqlite")).unwrap();
+    let err = p.formatted_predicate_sql("P").unwrap_err().to_string();
+    assert!(err.contains("more steps than a SQL script can hold"), "{err}");
+}

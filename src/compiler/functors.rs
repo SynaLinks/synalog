@@ -924,26 +924,27 @@ impl Functors {
     }
 
     /// Check if `p` is a cut of the cover leaf — removing p prevents cycles among remaining members.
-    /// Matches Python's IsCutOfCover using DFS with visited tracking.
+    /// Matches Python's IsCutOfCover: following the cover's edges from `p`,
+    /// and never back into `p`, reaches no cycle. The search is
+    /// `synalog_verified`'s, proved correct with Verus.
     fn is_cut_of_cover(&self, p: &str, cover: &HashSet<String>) -> bool {
-        // DFS: starting from p, follow cover edges (excluding p itself from traversal).
-        // If we can reach a node we already visited without going through p, there's a cycle.
-        let mut stack: Vec<(&str, HashSet<String>)> = vec![(p, HashSet::new())];
-        while let Some((t, visited)) = stack.pop() {
-            if visited.contains(t) {
-                return false; // Cycle found without going through p
-            }
-            if let Some(direct) = self.direct_args_of.get(t) {
-                for x in direct {
-                    if cover.contains(x) && x.as_str() != p {
-                        let mut new_visited = visited.clone();
-                        new_visited.insert(t.to_string());
-                        stack.push((x, new_visited));
-                    }
-                }
-            }
-        }
-        true
+        // The node 0 is `p`.
+        let names: Vec<&str> = std::iter::once(p).chain(cover.iter().map(|s| s.as_str()).filter(|s| *s != p)).collect();
+        let index: HashMap<&str, usize> = names.iter().enumerate().map(|(i, name)| (*name, i)).collect();
+        let successors: Vec<Vec<usize>> = names
+            .iter()
+            .map(|t| {
+                self.direct_args_of
+                    .get(*t)
+                    .into_iter()
+                    .flatten()
+                    .filter_map(|x| index.get(x.as_str()).copied().filter(|&i| i != 0))
+                    .collect()
+            })
+            .collect();
+        let reach = synalog_verified::reachability(&successors);
+        let on_cycle = synalog_verified::cycles(&successors, &reach);
+        !synalog_verified::reaches_cycle(&successors, &reach, &on_cycle, 0)
     }
 
     /// Unfold recursive predicates (vertical style).
@@ -1686,7 +1687,8 @@ fn get_flat_iterative_recursion_functor(
         .chain(iterate_over_lower_half)
         .collect();
     let iterate_over_str = iterate_over.join(", ");
-    let repetitions = (depth + 1 - ignition_steps) / 2 + 1;
+    // `depth >= ignition_steps`: no overflow, `depth` up to `i64::MAX`.
+    let repetitions = (depth - ignition_steps + 1) / 2 + 1;
     let min_cover = cover.iter().next().unwrap();
 
     let mut iteration_line = format!(

@@ -500,7 +500,10 @@ impl Annotations {
             return String::new();
         }
         dbs.iter()
-            .map(|(k, v)| format!("ATTACH DATABASE '{}' AS {};", v, k))
+            .map(|(k, v)| {
+                let path = crate::compiler::dialects::quoted(v, |s| synalog_verified::quote::doubled(s, '\''));
+                format!("ATTACH DATABASE {} AS {};", path, k)
+            })
             .collect::<Vec<_>>()
             .join("\n")
     }
