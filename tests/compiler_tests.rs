@@ -40,7 +40,9 @@ fn normalize_sql_for_comparison(sql: &str) -> String {
         let trimmed = line.trim();
 
         // Strip the authorship/license banner.
-        if trimmed.starts_with("-- Compiled by SynaLog") || trimmed.starts_with("-- Copyright 2025-2026 Yoan Sallami") {
+        if trimmed.starts_with("-- Compiled by SynaLog")
+            || trimmed.starts_with("-- Copyright 2025-2026 Yoan Sallami")
+            || trimmed.starts_with("-- SPDX-License-Identifier:") {
             continue;
         }
 

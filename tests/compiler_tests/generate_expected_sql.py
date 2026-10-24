@@ -21928,8 +21928,8 @@ def fixture_source(engine, stem):
 _HEADER = (
     "-- Compiled by SynaLog — logic programming for AI agents "
     "(https://github.com/synalinks/synalog).\n"
-    "-- Copyright 2025-2026 Yoan Sallami (Synalinks Team). "
-    "Licensed under the Apache License, Version 2.0.\n\n"
+    "-- Copyright 2025-2026 Yoan Sallami (Synalinks Team).\n"
+    "-- SPDX-License-Identifier: Apache-2.0\n\n"
 )
 
 def _rebrand(sql, engine=None):
