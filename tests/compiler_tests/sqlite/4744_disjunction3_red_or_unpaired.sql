@@ -111,7 +111,7 @@ t_0_Q_MultBodyAggAux AS (SELECT * FROM (
       t_1_I AS t_2_I
     WHERE
       ((SELECT
-        MIN(MagicalEntangle(1, x_10.value)) AS logica_value
+        MIN(MagicalEntangle(1, x_10.value)) AS synalog_value
       FROM
         t_3_Paired AS Paired, JSON_EACH(JSON_ARRAY(0)) as x_10
       WHERE

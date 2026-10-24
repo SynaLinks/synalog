@@ -49,7 +49,7 @@ t_0_Q_MultBodyAggAux AS (SELECT * FROM (
       t_1_I AS t_2_I
     WHERE
       ((SELECT
-        MIN(1) AS logica_value
+        MIN(1) AS synalog_value
       FROM
         t_3_Paired AS Paired
       WHERE

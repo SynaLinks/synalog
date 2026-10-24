@@ -44,7 +44,7 @@ WITH t_1_O AS (SELECT * FROM (
 ) AS UNUSED_TABLE_NAME  )
 SELECT
   SUM((((SELECT
-  MAX(t_0_O.amt) AS logica_value
+  MAX(t_0_O.amt) AS synalog_value
 FROM
   t_1_O AS t_0_O
 WHERE

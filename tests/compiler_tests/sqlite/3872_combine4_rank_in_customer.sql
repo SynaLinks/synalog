@@ -45,7 +45,7 @@ WITH t_1_O AS (SELECT * FROM (
 SELECT
   O.id AS id,
   ((1) + (COALESCE((SELECT
-  SUM(MagicalEntangle(1, x_8.value)) AS logica_value
+  SUM(MagicalEntangle(1, x_8.value)) AS synalog_value
 FROM
   t_1_O AS t_0_O, JSON_EACH(JSON_ARRAY(0)) as x_8
 WHERE

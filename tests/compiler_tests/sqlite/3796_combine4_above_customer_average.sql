@@ -48,7 +48,7 @@ FROM
   t_0_O AS O
 WHERE
   (O.amt > (SELECT
-    AVG(MagicalEntangle(t_1_O.amt, x_8.value)) AS logica_value
+    AVG(MagicalEntangle(t_1_O.amt, x_8.value)) AS synalog_value
   FROM
     t_0_O AS t_1_O, JSON_EACH(JSON_ARRAY(0)) as x_8
   WHERE

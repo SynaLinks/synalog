@@ -1,11 +1,11 @@
 -- Initializing PostgreSQL environment.
 set client_min_messages to warning;
-create schema if not exists logica_home;
--- Empty logica type: logicarecord893574736;
-DO $$ BEGIN if not exists (select 'I(am) :- I(think)' from pg_type where typname = 'logicarecord893574736') then create type logicarecord893574736 as (nirvana numeric); end if; END $$;
+create schema if not exists synalog_home;
+-- Empty synalog type: synalogrecord893574736;
+DO $$ BEGIN if not exists (select 'I(am) :- I(think)' from pg_type where typname = 'synalogrecord893574736') then create type synalogrecord893574736 as (nirvana numeric); end if; END $$;
 
-DROP TABLE IF EXISTS logica_home.Tier CASCADE;
-CREATE TABLE logica_home.Tier AS WITH t_2_Order AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_home.Tier CASCADE;
+CREATE TABLE synalog_home.Tier AS WITH t_2_Order AS (SELECT * FROM (
   
     SELECT
       1 AS id,
@@ -119,7 +119,7 @@ SELECT
 FROM
   t_0_Spend AS Spend;
 
--- Interacting with table logica_home.Tier
+-- Interacting with table synalog_home.Tier
 
 WITH t_2_Order AS (SELECT * FROM (
   
@@ -214,9 +214,9 @@ FROM
   t_0_Person AS t_4_Person
 WHERE
   (CAST((SELECT
-    MIN((CASE WHEN x_12 = 0 THEN 1 ELSE NULL END)) AS logica_value
+    MIN((CASE WHEN x_12 = 0 THEN 1 ELSE NULL END)) AS synalog_value
   FROM
-    logica_home.Tier AS t_6_Tier, UNNEST(ARRAY[0]) as x_12
+    synalog_home.Tier AS t_6_Tier, UNNEST(ARRAY[0]) as x_12
   WHERE
     (t_6_Tier.who = t_4_Person.who)) AS numeric) IS NULL))
 SELECT
@@ -225,7 +225,7 @@ FROM
   t_0_Person AS Person
 WHERE
   (CAST((SELECT
-    MIN((CASE WHEN x_5 = 0 THEN 1 ELSE NULL END)) AS logica_value
+    MIN((CASE WHEN x_5 = 0 THEN 1 ELSE NULL END)) AS synalog_value
   FROM
     t_3_NoTier AS NoTier, UNNEST(ARRAY[0]) as x_5
   WHERE

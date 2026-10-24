@@ -14,7 +14,7 @@ FROM
   t_0_E AS E
 WHERE
   ((SELECT
-    MIN(1) AS logica_value
+    MIN(1) AS synalog_value
   FROM
     t_0_E AS t_1_E
   WHERE

@@ -10,7 +10,7 @@ AS UNUSED_TABLE_NAME(n, s))
 SELECT
   t_0_N.n AS n,
   (SELECT
-  SUM(1) AS logica_value
+  SUM(1) AS synalog_value
 FROM
   t_1_E AS E
 WHERE

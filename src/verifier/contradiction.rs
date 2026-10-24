@@ -107,7 +107,7 @@ fn contradictory(cmps: &[(Term, &'static str, Term, String)]) -> bool {
             nodes.len() - 1
         })
     };
-    // reach[a][b]: None, Some(false) a <= b, Some(true) a < b.
+    // (a, b, strict): a < b when strict, a <= b otherwise.
     let mut edges: Vec<(usize, usize, bool)> = Vec::new();
     let mut differ: Vec<(usize, usize)> = Vec::new();
     for (a, op, b, _) in cmps {
@@ -124,37 +124,33 @@ fn contradictory(cmps: &[(Term, &'static str, Term, String)]) -> bool {
             _ => differ.push((i, j)),
         }
     }
-    // Constants are ordered among themselves (numbers, and strings, apart).
+    // Numbers are ordered among themselves. Strings are in the engine's
+    // collation, which only agrees with their bytes among lowercase letters,
+    // uppercase letters or digits (PostgreSQL puts "a" before "B"): two other
+    // strings only differ.
+    let class = |s: &str| {
+        [char::is_ascii_lowercase, char::is_ascii_uppercase, char::is_ascii_digit]
+            .iter()
+            .position(|is| !s.is_empty() && s.chars().all(|c| is(&c)))
+    };
     for i in 0..nodes.len() {
         for j in 0..nodes.len() {
-            let less = match (&nodes[i], &nodes[j]) {
-                (Term::Num(a), Term::Num(b)) => a.parse::<f64>().ok() < b.parse::<f64>().ok(),
-                (Term::Str(a), Term::Str(b)) => a < b,
-                _ => false,
-            };
-            if less {
-                edges.push((i, j, true));
-            }
-        }
-    }
-    let n = nodes.len();
-    let mut reach: Vec<Vec<Option<bool>>> = vec![vec![None; n]; n];
-    for (i, j, strict) in edges {
-        let cur = reach[i][j];
-        reach[i][j] = Some(cur.unwrap_or(false) || strict);
-    }
-    for k in 0..n {
-        for i in 0..n {
-            for j in 0..n {
-                if let (Some(a), Some(b)) = (reach[i][k], reach[k][j]) {
-                    let cur = reach[i][j];
-                    reach[i][j] = Some(cur.unwrap_or(false) || a || b);
+            match (&nodes[i], &nodes[j]) {
+                (Term::Num(a), Term::Num(b)) if a.parse::<f64>().ok() < b.parse::<f64>().ok() => edges.push((i, j, true)),
+                (Term::Str(a), Term::Str(b)) if a < b => {
+                    if class(a).is_some() && class(a) == class(b) {
+                        edges.push((i, j, true));
+                    } else {
+                        differ.push((i, j));
+                    }
                 }
+                _ => {}
             }
         }
     }
-    (0..n).any(|i| reach[i][i] == Some(true))
-        || differ.iter().any(|&(i, j)| i == j || (reach[i][j].is_some() && reach[j][i].is_some()))
+    // Closing the order is `synalog_verified`'s, proved sound with Verus: what
+    // it reports can never hold.
+    synalog_verified::contradiction::contradictory(nodes.len(), &edges, &differ)
 }
 
 /// A warning for each rule whose conditions contradict each other. A rule
@@ -214,6 +210,12 @@ mod tests {
         assert_eq!(warnings("V(x: 1);\nC(a:) :- V(x: a), a == 3, a == 4;").len(), 1);
         assert_eq!(warnings("V(x: 1);\nC(a:) :- V(x: a), a > 5, a < 3;").len(), 1);
         assert_eq!(warnings("V(s: \"x\");\nC(s:) :- V(s:), s == \"a\", s == \"b\";").len(), 1);
+    }
+
+    #[test]
+    fn strings_are_ordered_by_the_engine() {
+        // "a" < "B" in PostgreSQL's collation, not in bytes.
+        assert!(warnings("V(s: \"x\");\nC(s:) :- V(s:), s == \"a\", s < \"B\";").is_empty());
     }
 
     #[test]

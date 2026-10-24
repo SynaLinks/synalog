@@ -66,7 +66,7 @@ FROM
   t_1_C AS t_0_C
 WHERE
   ((SELECT
-    SUM(MagicalEntangle(1, x_4.value)) AS logica_value
+    SUM(MagicalEntangle(1, x_4.value)) AS synalog_value
   FROM
     t_2_O AS O, JSON_EACH(JSON_ARRAY(0)) as x_4
   WHERE

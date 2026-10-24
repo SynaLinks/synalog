@@ -26,7 +26,7 @@ t_0_C_RecursiveCte AS (SELECT * FROM (
         Own.owned AS entity,
         1 AS hops,
         Own.percent AS stake,
-        0 AS logica_step
+        0 AS synalog_step
       FROM
         t_1_Own AS Own
      UNION ALL
@@ -36,7 +36,7 @@ t_0_C_RecursiveCte AS (SELECT * FROM (
         t_2_Own.owned AS entity,
         ((1) + (1)) AS hops,
         ((t_4_Own.percent) * ((CAST(t_2_Own.percent AS REAL) / NULLIF(100, 0)))) AS stake,
-        ((0) + (1)) AS logica_step
+        ((0) + (1)) AS synalog_step
       FROM
         t_1_Own AS t_4_Own, t_1_Own AS t_2_Own
       WHERE
@@ -50,7 +50,7 @@ t_0_C_RecursiveCte AS (SELECT * FROM (
         t_6_Own.owned AS entity,
         ((((1) + (1))) + (1)) AS hops,
         ((((t_10_Own.percent) * ((CAST(t_8_Own.percent AS REAL) / NULLIF(100, 0))))) * ((CAST(t_6_Own.percent AS REAL) / NULLIF(100, 0)))) AS stake,
-        ((((0) + (1))) + (1)) AS logica_step
+        ((((0) + (1))) + (1)) AS synalog_step
       FROM
         t_1_Own AS t_10_Own, t_1_Own AS t_8_Own, t_1_Own AS t_6_Own
       WHERE
@@ -66,7 +66,7 @@ t_0_C_RecursiveCte AS (SELECT * FROM (
         t_12_Own.owned AS entity,
         ((((((1) + (1))) + (1))) + (1)) AS hops,
         ((((((t_18_Own.percent) * ((CAST(t_16_Own.percent AS REAL) / NULLIF(100, 0))))) * ((CAST(t_14_Own.percent AS REAL) / NULLIF(100, 0))))) * ((CAST(t_12_Own.percent AS REAL) / NULLIF(100, 0)))) AS stake,
-        ((((((0) + (1))) + (1))) + (1)) AS logica_step
+        ((((((0) + (1))) + (1))) + (1)) AS synalog_step
       FROM
         t_1_Own AS t_18_Own, t_1_Own AS t_16_Own, t_1_Own AS t_14_Own, t_1_Own AS t_12_Own
       WHERE
@@ -84,7 +84,7 @@ t_0_C_RecursiveCte AS (SELECT * FROM (
         t_20_Own.owned AS entity,
         ((((((((1) + (1))) + (1))) + (1))) + (1)) AS hops,
         ((((((((t_28_Own.percent) * ((CAST(t_26_Own.percent AS REAL) / NULLIF(100, 0))))) * ((CAST(t_24_Own.percent AS REAL) / NULLIF(100, 0))))) * ((CAST(t_22_Own.percent AS REAL) / NULLIF(100, 0))))) * ((CAST(t_20_Own.percent AS REAL) / NULLIF(100, 0)))) AS stake,
-        ((((((((0) + (1))) + (1))) + (1))) + (1)) AS logica_step
+        ((((((((0) + (1))) + (1))) + (1))) + (1)) AS synalog_step
       FROM
         t_1_Own AS t_28_Own, t_1_Own AS t_26_Own, t_1_Own AS t_24_Own, t_1_Own AS t_22_Own, t_1_Own AS t_20_Own
       WHERE
@@ -104,7 +104,7 @@ t_0_C_RecursiveCte AS (SELECT * FROM (
         t_30_Own.owned AS entity,
         ((((((((((1) + (1))) + (1))) + (1))) + (1))) + (1)) AS hops,
         ((((((((((t_40_Own.percent) * ((CAST(t_38_Own.percent AS REAL) / NULLIF(100, 0))))) * ((CAST(t_36_Own.percent AS REAL) / NULLIF(100, 0))))) * ((CAST(t_34_Own.percent AS REAL) / NULLIF(100, 0))))) * ((CAST(t_32_Own.percent AS REAL) / NULLIF(100, 0))))) * ((CAST(t_30_Own.percent AS REAL) / NULLIF(100, 0)))) AS stake,
-        ((((((((((0) + (1))) + (1))) + (1))) + (1))) + (1)) AS logica_step
+        ((((((((((0) + (1))) + (1))) + (1))) + (1))) + (1)) AS synalog_step
       FROM
         t_1_Own AS t_40_Own, t_1_Own AS t_38_Own, t_1_Own AS t_36_Own, t_1_Own AS t_34_Own, t_1_Own AS t_32_Own, t_1_Own AS t_30_Own
       WHERE
@@ -126,7 +126,7 @@ t_0_C_RecursiveCte AS (SELECT * FROM (
         t_42_Own.owned AS entity,
         ((((((((((((1) + (1))) + (1))) + (1))) + (1))) + (1))) + (1)) AS hops,
         ((((((((((((t_54_Own.percent) * ((CAST(t_52_Own.percent AS REAL) / NULLIF(100, 0))))) * ((CAST(t_50_Own.percent AS REAL) / NULLIF(100, 0))))) * ((CAST(t_48_Own.percent AS REAL) / NULLIF(100, 0))))) * ((CAST(t_46_Own.percent AS REAL) / NULLIF(100, 0))))) * ((CAST(t_44_Own.percent AS REAL) / NULLIF(100, 0))))) * ((CAST(t_42_Own.percent AS REAL) / NULLIF(100, 0)))) AS stake,
-        ((((((((((((0) + (1))) + (1))) + (1))) + (1))) + (1))) + (1)) AS logica_step
+        ((((((((((((0) + (1))) + (1))) + (1))) + (1))) + (1))) + (1)) AS synalog_step
       FROM
         t_1_Own AS t_54_Own, t_1_Own AS t_52_Own, t_1_Own AS t_50_Own, t_1_Own AS t_48_Own, t_1_Own AS t_46_Own, t_1_Own AS t_44_Own, t_1_Own AS t_42_Own
       WHERE
@@ -150,7 +150,7 @@ t_0_C_RecursiveCte AS (SELECT * FROM (
         t_56_Own.owned AS entity,
         ((((((((((((((1) + (1))) + (1))) + (1))) + (1))) + (1))) + (1))) + (1)) AS hops,
         ((((((((((((((t_70_Own.percent) * ((CAST(t_68_Own.percent AS REAL) / NULLIF(100, 0))))) * ((CAST(t_66_Own.percent AS REAL) / NULLIF(100, 0))))) * ((CAST(t_64_Own.percent AS REAL) / NULLIF(100, 0))))) * ((CAST(t_62_Own.percent AS REAL) / NULLIF(100, 0))))) * ((CAST(t_60_Own.percent AS REAL) / NULLIF(100, 0))))) * ((CAST(t_58_Own.percent AS REAL) / NULLIF(100, 0))))) * ((CAST(t_56_Own.percent AS REAL) / NULLIF(100, 0)))) AS stake,
-        ((x_486.value) + (1)) AS logica_step
+        ((x_486.value) + (1)) AS synalog_step
       FROM
         t_1_Own AS t_70_Own, t_1_Own AS t_68_Own, t_1_Own AS t_66_Own, t_1_Own AS t_64_Own, t_1_Own AS t_62_Own, t_1_Own AS t_60_Own, t_1_Own AS t_58_Own, t_1_Own AS t_56_Own, JSON_EACH(JSON_ARRAY(((((((((((((0) + (1))) + (1))) + (1))) + (1))) + (1))) + (1)))) as x_486
       WHERE
@@ -176,7 +176,7 @@ t_0_C_RecursiveCte AS (SELECT * FROM (
         t_72_Own.owned AS entity,
         ((((((((((((((((1) + (1))) + (1))) + (1))) + (1))) + (1))) + (1))) + (1))) + (1)) AS hops,
         ((((((((((((((((t_88_Own.percent) * ((CAST(t_86_Own.percent AS REAL) / NULLIF(100, 0))))) * ((CAST(t_84_Own.percent AS REAL) / NULLIF(100, 0))))) * ((CAST(t_82_Own.percent AS REAL) / NULLIF(100, 0))))) * ((CAST(t_80_Own.percent AS REAL) / NULLIF(100, 0))))) * ((CAST(t_78_Own.percent AS REAL) / NULLIF(100, 0))))) * ((CAST(t_76_Own.percent AS REAL) / NULLIF(100, 0))))) * ((CAST(t_74_Own.percent AS REAL) / NULLIF(100, 0))))) * ((CAST(t_72_Own.percent AS REAL) / NULLIF(100, 0)))) AS stake,
-        ((((x_593.value) + (1))) + (1)) AS logica_step
+        ((((x_593.value) + (1))) + (1)) AS synalog_step
       FROM
         t_1_Own AS t_88_Own, t_1_Own AS t_86_Own, t_1_Own AS t_84_Own, t_1_Own AS t_82_Own, t_1_Own AS t_80_Own, t_1_Own AS t_78_Own, t_1_Own AS t_76_Own, t_1_Own AS t_74_Own, t_1_Own AS t_72_Own, JSON_EACH(JSON_ARRAY(((((((((((((0) + (1))) + (1))) + (1))) + (1))) + (1))) + (1)))) as x_593
       WHERE
@@ -204,7 +204,7 @@ t_0_C_RecursiveCte AS (SELECT * FROM (
         t_90_Own.owned AS entity,
         ((((((((((((((((((1) + (1))) + (1))) + (1))) + (1))) + (1))) + (1))) + (1))) + (1))) + (1)) AS hops,
         ((((((((((((((((((t_108_Own.percent) * ((CAST(t_106_Own.percent AS REAL) / NULLIF(100, 0))))) * ((CAST(t_104_Own.percent AS REAL) / NULLIF(100, 0))))) * ((CAST(t_102_Own.percent AS REAL) / NULLIF(100, 0))))) * ((CAST(t_100_Own.percent AS REAL) / NULLIF(100, 0))))) * ((CAST(t_98_Own.percent AS REAL) / NULLIF(100, 0))))) * ((CAST(t_96_Own.percent AS REAL) / NULLIF(100, 0))))) * ((CAST(t_94_Own.percent AS REAL) / NULLIF(100, 0))))) * ((CAST(t_92_Own.percent AS REAL) / NULLIF(100, 0))))) * ((CAST(t_90_Own.percent AS REAL) / NULLIF(100, 0)))) AS stake,
-        ((((((x_710.value) + (1))) + (1))) + (1)) AS logica_step
+        ((((((x_710.value) + (1))) + (1))) + (1)) AS synalog_step
       FROM
         t_1_Own AS t_108_Own, t_1_Own AS t_106_Own, t_1_Own AS t_104_Own, t_1_Own AS t_102_Own, t_1_Own AS t_100_Own, t_1_Own AS t_98_Own, t_1_Own AS t_96_Own, t_1_Own AS t_94_Own, t_1_Own AS t_92_Own, t_1_Own AS t_90_Own, JSON_EACH(JSON_ARRAY(((((((((((((0) + (1))) + (1))) + (1))) + (1))) + (1))) + (1)))) as x_710
       WHERE
@@ -236,11 +236,11 @@ SELECT
   t_110_Own.owned AS entity,
   ((t_109_C_RecursiveCte.hops) + (1)) AS hops,
   ((t_109_C_RecursiveCte.stake) * ((CAST(t_110_Own.percent AS REAL) / NULLIF(100, 0)))) AS stake,
-  ((t_109_C_RecursiveCte.logica_step) + (1)) AS logica_step
+  ((t_109_C_RecursiveCte.synalog_step) + (1)) AS synalog_step
 FROM
   t_0_C_RecursiveCte AS t_109_C_RecursiveCte, t_1_Own AS t_110_Own
 WHERE
-  (t_109_C_RecursiveCte.logica_step < 4) AND
+  (t_109_C_RecursiveCte.synalog_step < 4) AND
   (t_110_Own.owner = t_109_C_RecursiveCte.entity))
 SELECT
   C_RecursiveCte.owner AS owner,

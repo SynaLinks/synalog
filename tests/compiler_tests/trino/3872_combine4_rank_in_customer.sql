@@ -45,7 +45,7 @@ WITH t_1_O AS (SELECT * FROM (
 SELECT
   O.id AS id,
   ((1) + (COALESCE((SELECT
-  SUM(1) AS logica_value
+  SUM(1) AS synalog_value
 FROM
   t_1_O AS t_0_O
 WHERE

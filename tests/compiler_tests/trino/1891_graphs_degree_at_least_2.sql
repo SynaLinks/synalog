@@ -1,5 +1,5 @@
-DROP TABLE IF EXISTS logica_test.U;
-CREATE TABLE logica_test.U AS WITH t_1_E AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_test.U;
+CREATE TABLE synalog_test.U AS WITH t_1_E AS (SELECT * FROM (
   
     SELECT
       1 AS a,
@@ -74,7 +74,7 @@ FROM
   t_0_U_MultBodyAggAux AS U_MultBodyAggAux
 GROUP BY 1, 2;
 
--- Interacting with table logica_test.U
+-- Interacting with table synalog_test.U
 
 WITH t_0_Node AS (SELECT * FROM (
   
@@ -132,8 +132,8 @@ FROM
   t_0_Node AS Node
 WHERE
   (COALESCE((SELECT
-    SUM(1) AS logica_value
+    SUM(1) AS synalog_value
   FROM
-    logica_test.U AS U
+    synalog_test.U AS U
   WHERE
     (U.a = Node.n)), 0) >= 2) ORDER BY n;

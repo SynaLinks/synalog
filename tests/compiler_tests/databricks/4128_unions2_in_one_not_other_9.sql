@@ -39,7 +39,7 @@ FROM
 WHERE
   (U.x > 9) AND
   ((SELECT
-    MIN(1) AS logica_value
+    MIN(1) AS synalog_value
   FROM
     t_2_A AS t_5_A, t_3_B AS t_6_B
   WHERE

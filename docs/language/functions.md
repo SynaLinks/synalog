@@ -73,6 +73,10 @@ Integer literals are 32-bit on DuckDB, PostgreSQL, Trino, Presto and Databricks,
     in Synalog instead. For date/time math, use the `Substr` → `ToInt64` →
     `ToString` pipeline.
 
+    `Cast(expr, "TYPE")` and `TryCast(expr, "TYPE")` take a plain type name
+    only (`TEXT`, `DECIMAL(38, 2)`, `ARRAY<INT64>`); a type name that is not one
+    is refused, since it is pasted into the query unquoted.
+
 !!! note "Indexing conventions"
     `Substr` is **1-based** (SQL convention); `Element` is **0-based** (array convention).
 

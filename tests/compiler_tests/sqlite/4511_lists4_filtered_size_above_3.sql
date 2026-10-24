@@ -23,7 +23,7 @@ WITH t_1_L AS (SELECT * FROM (
 SELECT
   t_0_L.k AS k,
   COALESCE((SELECT
-  SUM(MagicalEntangle(1, x_6.value)) AS logica_value
+  SUM(MagicalEntangle(1, x_6.value)) AS synalog_value
 FROM
   JSON_EACH(t_0_L.l) as x_5, JSON_EACH(JSON_ARRAY(0)) as x_6
 WHERE

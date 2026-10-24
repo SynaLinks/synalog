@@ -1,5 +1,5 @@
-DROP TABLE IF EXISTS logica_test.R;
-CREATE TABLE logica_test.R AS WITH t_0_Sale AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_test.R;
+CREATE TABLE synalog_test.R AS WITH t_0_Sale AS (SELECT * FROM (
   
     SELECT
       1 AS id,
@@ -64,14 +64,14 @@ FROM
 WHERE
   (Sale.region = 'south');
 
--- Interacting with table logica_test.R
+-- Interacting with table synalog_test.R
 
 WITH t_1_T AS (SELECT
   SUM(x_4) AS t
 FROM
-  logica_test.R AS t_2_R, UNNEST(TRANSFORM(t_2_R.l, synalog_e -> ROW(synalog_e))) as pushkin(x_4))
+  synalog_test.R AS t_2_R, UNNEST(TRANSFORM(t_2_R.l, synalog_e -> ROW(synalog_e))) as pushkin(x_4))
 SELECT
   CARDINALITY(R.l) AS n,
   t_0_T.t AS t
 FROM
-  logica_test.R AS R, t_1_T AS t_0_T;
+  synalog_test.R AS R, t_1_T AS t_0_T;

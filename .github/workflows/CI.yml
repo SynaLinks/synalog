@@ -16,9 +16,8 @@ on:
 permissions:
   contents: read
 
-# Resilience against flaky crates.io downloads (e.g. the large libduckdb-sys
-# crate, which cargo metadata fetches even though the wheel never builds it).
-# maturin-action forwards these into the build, including the Linux container.
+# Resilience against flaky crates.io downloads. maturin-action forwards these
+# into the build, including the Linux container.
 env:
   CARGO_NET_RETRY: "10"
   CARGO_HTTP_MULTIPLEXING: "false"
@@ -27,7 +26,9 @@ env:
 
 jobs:
   test:
-    runs-on: ubuntu-22.04
+    # ubuntu-24.04: the z3 bundled with Verus needs GLIBC 2.38 / GLIBCXX 3.4.32,
+    # which ubuntu-22.04 does not have (the proofs run in this job).
+    runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v6
       - uses: dtolnay/rust-toolchain@stable
@@ -38,7 +39,11 @@ jobs:
       - name: Install Python test dependencies
         run: |
           pip install pytest pytest-xdist pytest-timeout duckdb "psycopg[binary]" trino presto-python-client pyhive thrift logica
-      - name: Rust tests (unit, parser, compiler golden, search, verifier)
+      - name: Install Verus (checks the proofs of verified/)
+        run: |
+          shell/install-verus.sh
+          echo "$HOME/.verus/verus-x86-linux" >> "$GITHUB_PATH"
+      - name: Rust tests (unit, parser, compiler golden, search, verifier, Verus proofs)
         run: cargo test
       - name: Build and install synalog wheel
         run: pip install .

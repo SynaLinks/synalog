@@ -45,7 +45,7 @@ WITH t_1_O AS (SELECT * FROM (
 SELECT
   O.c AS c,
   MAX((CAST(O.amt AS DOUBLE) / NULLIF((SELECT
-  SUM(t_0_O.amt) AS logica_value
+  SUM(t_0_O.amt) AS synalog_value
 FROM
   t_1_O AS t_0_O
 WHERE

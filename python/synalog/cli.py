@@ -2,7 +2,7 @@
 
 """Command-line interface for synalog, built on click and rich.
 
-One-shot mode (like ``logica``):
+One-shot mode:
 
     synalog program.l print Predicate ...   print compiled SQL
     synalog program.l run Predicate ...     execute and print a table

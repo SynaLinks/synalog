@@ -16,7 +16,7 @@ FROM
   UNNEST(ARRAY["a", "b", "c"]) as x_3
 WHERE
   ((SELECT
-    MIN(1) AS logica_value
+    MIN(1) AS synalog_value
   FROM
     t_0_Friend AS Friend
   WHERE

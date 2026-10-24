@@ -19,7 +19,7 @@ synalog rules/top_region.l run TopRegion --load sales=data/sales.csv
 synalog rules/top_region.l run TopRegion --csv --load sales=data/sales.csv   # machine-readable
 ```
 
-CLI notes (argument order follows logica: FILE first, then the command):
+CLI notes (program file comes first, then the command):
 
 - `--load TABLE=PATH` (repeatable) loads a data file as a database table; the program refers to it by the lowercase table name. duckdb reads csv/tsv/json/jsonl/parquet; sqlite csv/tsv/json/jsonl (no parquet).
 - `--limit N` / `--offset N` paginate results; use them instead of reading huge outputs.

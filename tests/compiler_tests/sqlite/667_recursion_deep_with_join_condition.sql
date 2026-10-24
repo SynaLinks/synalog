@@ -3,12 +3,12 @@ WITH RECURSIVE t_3_R_RecursiveCte AS (SELECT * FROM (
     
       SELECT
         0 AS y,
-        0 AS logica_step
+        0 AS synalog_step
      UNION ALL
     
       SELECT
         ((x_23.value) + (2)) AS y,
-        ((0) + (1)) AS logica_step
+        ((0) + (1)) AS synalog_step
       FROM
         JSON_EACH((select json_group_array(n) from (with recursive t as(select 0 as n union all select n + 1 as n from t where n + 1 < 100) select n from t) where n < 100)) as x_23
       WHERE
@@ -20,7 +20,7 @@ WITH RECURSIVE t_3_R_RecursiveCte AS (SELECT * FROM (
     
       SELECT
         ((x_39.value) + (2)) AS y,
-        ((((0) + (1))) + (1)) AS logica_step
+        ((((0) + (1))) + (1)) AS synalog_step
       FROM
         JSON_EACH((select json_group_array(n) from (with recursive t as(select 0 as n union all select n + 1 as n from t where n + 1 < 100) select n from t) where n < 100)) as x_39, JSON_EACH((select json_group_array(n) from (with recursive t as(select 0 as n union all select n + 1 as n from t where n + 1 < 100) select n from t) where n < 100)) as x_45
       WHERE
@@ -35,7 +35,7 @@ WITH RECURSIVE t_3_R_RecursiveCte AS (SELECT * FROM (
     
       SELECT
         ((x_61.value) + (2)) AS y,
-        ((((((0) + (1))) + (1))) + (1)) AS logica_step
+        ((((((0) + (1))) + (1))) + (1)) AS synalog_step
       FROM
         JSON_EACH((select json_group_array(n) from (with recursive t as(select 0 as n union all select n + 1 as n from t where n + 1 < 100) select n from t) where n < 100)) as x_61, JSON_EACH((select json_group_array(n) from (with recursive t as(select 0 as n union all select n + 1 as n from t where n + 1 < 100) select n from t) where n < 100)) as x_68, JSON_EACH((select json_group_array(n) from (with recursive t as(select 0 as n union all select n + 1 as n from t where n + 1 < 100) select n from t) where n < 100)) as x_74
       WHERE
@@ -55,12 +55,12 @@ WITH RECURSIVE t_3_R_RecursiveCte AS (SELECT * FROM (
 UNION
 SELECT
   ((x_81.value) + (2)) AS y,
-  ((t_17_R_RecursiveCte.logica_step) + (1)) AS logica_step
+  ((t_17_R_RecursiveCte.synalog_step) + (1)) AS synalog_step
 FROM
   t_3_R_RecursiveCte AS t_17_R_RecursiveCte, JSON_EACH((select json_group_array(n) from (with recursive t as(select 0 as n union all select n + 1 as n from t where n + 1 < 100) select n from t) where n < 100)) as x_81
 WHERE
   (((x_81.value) + (2)) < 25) AND
-  (t_17_R_RecursiveCte.logica_step < 30) AND
+  (t_17_R_RecursiveCte.synalog_step < 30) AND
   (t_17_R_RecursiveCte.y = x_81.value)),
 t_2_R AS (SELECT
   R_RecursiveCte.y AS y

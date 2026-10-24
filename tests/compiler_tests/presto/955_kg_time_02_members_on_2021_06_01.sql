@@ -1,5 +1,5 @@
-DROP TABLE IF EXISTS logica_test.Person;
-CREATE TABLE logica_test.Person AS WITH t_0_Employees AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_test.Person;
+CREATE TABLE synalog_test.Person AS WITH t_0_Employees AS (SELECT * FROM (
   
     SELECT
       1 AS person_id,
@@ -54,10 +54,10 @@ FROM
   t_0_Employees AS Employees
 GROUP BY 1, 2, 3 ORDER BY person_id;
 
--- Interacting with table logica_test.Person
+-- Interacting with table synalog_test.Person
 
-DROP TABLE IF EXISTS logica_test.Team;
-CREATE TABLE logica_test.Team AS WITH t_0_Teams AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_test.Team;
+CREATE TABLE synalog_test.Team AS WITH t_0_Teams AS (SELECT * FROM (
   
     SELECT
       10 AS team_id,
@@ -81,10 +81,10 @@ FROM
   t_0_Teams AS Teams
 GROUP BY 1, 2 ORDER BY team_id;
 
--- Interacting with table logica_test.Team
+-- Interacting with table synalog_test.Team
 
-DROP TABLE IF EXISTS logica_test.NextChange;
-CREATE TABLE logica_test.NextChange AS WITH t_3_Events AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_test.NextChange;
+CREATE TABLE synalog_test.NextChange AS WITH t_3_Events AS (SELECT * FROM (
   
     SELECT
       1 AS person_id,
@@ -127,7 +127,7 @@ WHERE
   (t_0_Events.person_id = Events.person_id)
 GROUP BY 1, 2;
 
--- Interacting with table logica_test.NextChange
+-- Interacting with table synalog_test.NextChange
 
 WITH t_3_Events AS (SELECT * FROM (
   
@@ -169,7 +169,7 @@ t_1_Member_MultBodyAggAux AS (SELECT * FROM (
       Events.changed_at AS valid_from,
       NextChange.next AS valid_to
     FROM
-      logica_test.Person AS Person, logica_test.Team AS t_2_Team, t_3_Events AS Events, logica_test.NextChange AS NextChange
+      synalog_test.Person AS Person, synalog_test.Team AS t_2_Team, t_3_Events AS Events, synalog_test.NextChange AS NextChange
     WHERE
       (Events.person_id = Person.person_id) AND
       (Events.team_id = t_2_Team.team_id) AND
@@ -183,12 +183,12 @@ t_1_Member_MultBodyAggAux AS (SELECT * FROM (
       t_6_Events.changed_at AS valid_from,
       '9999-12-31' AS valid_to
     FROM
-      logica_test.Person AS t_4_Person, logica_test.Team AS t_5_Team, t_3_Events AS t_6_Events
+      synalog_test.Person AS t_4_Person, synalog_test.Team AS t_5_Team, t_3_Events AS t_6_Events
     WHERE
       ((SELECT
-        MIN(1) AS logica_value
+        MIN(1) AS synalog_value
       FROM
-        logica_test.NextChange AS t_7_NextChange
+        synalog_test.NextChange AS t_7_NextChange
       WHERE
         (t_7_NextChange.person_id = t_4_Person.person_id) AND
         (t_7_NextChange.changed_at = t_6_Events.changed_at)) IS NULL) AND

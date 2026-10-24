@@ -1,5 +1,5 @@
-DROP TABLE IF EXISTS logica_test.Person;
-CREATE TABLE logica_test.Person AS WITH t_0_Employees AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_test.Person;
+CREATE TABLE synalog_test.Person AS WITH t_0_Employees AS (SELECT * FROM (
   
     SELECT
       1 AS person_id,
@@ -54,10 +54,10 @@ FROM
   t_0_Employees AS Employees
 GROUP BY 1, 2, 3 ORDER BY person_id;
 
--- Interacting with table logica_test.Person
+-- Interacting with table synalog_test.Person
 
-DROP TABLE IF EXISTS logica_test.Team;
-CREATE TABLE logica_test.Team AS WITH t_0_Teams AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_test.Team;
+CREATE TABLE synalog_test.Team AS WITH t_0_Teams AS (SELECT * FROM (
   
     SELECT
       10 AS team_id,
@@ -81,10 +81,10 @@ FROM
   t_0_Teams AS Teams
 GROUP BY 1, 2 ORDER BY team_id;
 
--- Interacting with table logica_test.Team
+-- Interacting with table synalog_test.Team
 
-DROP TABLE IF EXISTS logica_test.MemberOf;
-CREATE TABLE logica_test.MemberOf AS WITH t_0_Employees AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_test.MemberOf;
+CREATE TABLE synalog_test.MemberOf AS WITH t_0_Employees AS (SELECT * FROM (
   
     SELECT
       1 AS person_id,
@@ -135,18 +135,18 @@ SELECT
   Person.person_id AS person_id,
   Team.team_id AS team_id
 FROM
-  logica_test.Person AS Person, logica_test.Team AS Team, t_0_Employees AS Employees
+  synalog_test.Person AS Person, synalog_test.Team AS Team, t_0_Employees AS Employees
 WHERE
   (Employees.person_id = Person.person_id) AND
   (Employees.team_id = Team.team_id)
 GROUP BY 1, 2;
 
--- Interacting with table logica_test.MemberOf
+-- Interacting with table synalog_test.MemberOf
 
 SELECT
   t_0_MemberOf.person_id AS person_id
 FROM
-  logica_test.MemberOf AS MemberOf, logica_test.MemberOf AS t_0_MemberOf
+  synalog_test.MemberOf AS MemberOf, synalog_test.MemberOf AS t_0_MemberOf
 WHERE
   (t_0_MemberOf.person_id != 5) AND
   (MemberOf.person_id = 5) AND

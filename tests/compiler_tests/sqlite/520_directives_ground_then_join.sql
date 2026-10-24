@@ -1,12 +1,12 @@
-ATTACH DATABASE ':memory:' AS logica_test;
+ATTACH DATABASE ':memory:' AS synalog_test;
 
-DROP TABLE IF EXISTS logica_test.G;
-CREATE TABLE logica_test.G AS SELECT
+DROP TABLE IF EXISTS synalog_test.G;
+CREATE TABLE synalog_test.G AS SELECT
   x_6.value AS k
 FROM
   JSON_EACH(JSON_ARRAY(1)) as x_6;
 
--- Interacting with table logica_test.G
+-- Interacting with table synalog_test.G
 
 WITH t_0_N AS (SELECT * FROM (
   
@@ -24,6 +24,6 @@ SELECT
   G.k AS k,
   N.s AS s
 FROM
-  logica_test.G AS G, t_0_N AS N
+  synalog_test.G AS G, t_0_N AS N
 WHERE
   (N.k = G.k);

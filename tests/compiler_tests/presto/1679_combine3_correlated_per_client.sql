@@ -89,7 +89,7 @@ GROUP BY 1)
 SELECT
   t_0_Client.client AS client,
   (SELECT
-  SUM(Ship.kg) AS logica_value
+  SUM(Ship.kg) AS synalog_value
 FROM
   t_1_Ship AS Ship
 WHERE

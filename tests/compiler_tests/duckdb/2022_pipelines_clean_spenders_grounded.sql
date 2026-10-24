@@ -1,11 +1,11 @@
 -- Initializing DuckDB environment.
-create schema if not exists logica_home;
+create schema if not exists synalog_home;
 -- Empty record, has to have a field by DuckDB syntax.
-drop type if exists logicarecord893574736 cascade; create type logicarecord893574736 as struct(nirvana numeric);
+drop type if exists synalogrecord893574736 cascade; create type synalogrecord893574736 as struct(nirvana numeric);
 create sequence if not exists eternal_logical_sequence;
 
-DROP TABLE IF EXISTS logica_home.Trouble;
-CREATE TABLE logica_home.Trouble AS WITH t_2_Order AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_home.Trouble;
+CREATE TABLE synalog_home.Trouble AS WITH t_2_Order AS (SELECT * FROM (
   
     SELECT
       1 AS id,
@@ -111,7 +111,7 @@ FROM
   t_0_Trouble_MultBodyAggAux AS Trouble_MultBodyAggAux
 GROUP BY Trouble_MultBodyAggAux.who;
 
--- Interacting with table logica_home.Trouble
+-- Interacting with table synalog_home.Trouble
 
 WITH t_2_Order AS (SELECT * FROM (
   
@@ -227,8 +227,8 @@ FROM
   t_0_Spend AS Spend
 WHERE
   ((SELECT
-    MIN((CASE WHEN x_24.unnested_pod = 0 THEN 1 ELSE NULL END)) AS logica_value
+    MIN((CASE WHEN x_24.unnested_pod = 0 THEN 1 ELSE NULL END)) AS synalog_value
   FROM
-    logica_home.Trouble AS Trouble, (select unnest([0]) as unnested_pod) as x_24
+    synalog_home.Trouble AS Trouble, (select unnest([0]) as unnested_pod) as x_24
   WHERE
     (Trouble.who = Spend.who)) IS NULL) ORDER BY who;

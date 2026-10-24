@@ -6,7 +6,7 @@ WITH t_0_V AS (SELECT * FROM VALUES
 AS UNUSED_TABLE_NAME(n, s))
 SELECT
   (SELECT
-  SUM(1) AS logica_value
+  SUM(1) AS synalog_value
 FROM
   t_0_V AS V
 WHERE

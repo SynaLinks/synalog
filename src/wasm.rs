@@ -13,7 +13,7 @@ use std::collections::HashMap;
 use wasm_bindgen::prelude::*;
 
 use crate::compiler::dialects;
-use crate::compiler::universe::{LogicaProgram, Pagination};
+use crate::compiler::universe::{SynalogProgram, Pagination};
 use crate::parser::{parse_file, Json};
 use crate::verifier::{dependencies as program_dependencies, validate};
 
@@ -40,8 +40,8 @@ fn parse(source: &str) -> Result<Json, JsValue> {
     parse_file(source, None, &[]).map_err(err)
 }
 
-fn build(parsed: &Json, engine: Option<&str>) -> Result<LogicaProgram, JsValue> {
-    LogicaProgram::new_with_engine(
+fn build(parsed: &Json, engine: Option<&str>) -> Result<SynalogProgram, JsValue> {
+    SynalogProgram::new_with_engine(
         parsed,
         HashMap::new(),
         HashMap::new(),

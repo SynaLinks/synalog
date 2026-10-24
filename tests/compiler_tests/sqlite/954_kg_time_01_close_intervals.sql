@@ -142,7 +142,7 @@ t_0_Member_MultBodyAggAux AS (SELECT * FROM (
       t_2_Person AS t_10_Person, t_4_Team AS t_11_Team, t_6_Events AS t_12_Events
     WHERE
       ((SELECT
-        MIN(MagicalEntangle(1, x_58.value)) AS logica_value
+        MIN(MagicalEntangle(1, x_58.value)) AS synalog_value
       FROM
         t_7_NextChange AS t_15_NextChange, JSON_EACH(JSON_ARRAY(0)) as x_58
       WHERE

@@ -1,7 +1,7 @@
 """Live end-to-end tests for `synalog introspect` against real servers.
 
 These connect to the engines from docker-compose.yml here and check that
-introspection reads a real catalog and emits valid, compilable Logica.
+introspection reads a real catalog and emits valid, compilable Synalog.
 
 Engine availability follows the same rule as the rest of the e2e suite: a
 test is skipped when its server is unreachable, unless the engine is listed in
@@ -31,7 +31,7 @@ def _connect(folder, engine: str, fields: dict) -> dict:
 
 def _psql(folder) -> dict:
     port = os.environ.get("SYNALOG_E2E_PSQL_PORT", "5433")
-    fields = {"host": "localhost", "port": port, "database": "logica", "user": "logica", "password": "logica"}
+    fields = {"host": "localhost", "port": port, "database": "synalog", "user": "synalog", "password": "synalog"}
     return _connect(folder, "psql", fields)
 
 
@@ -58,7 +58,7 @@ def test_introspect_psql_reads_seeded_schemas(runner_for, tmp_path):
     assert "AnalyticsCustomers(id:, segment:)" in text
     assert "ShopCustomers(id:" in text
 
-    # The generated block is valid Logica that downstream rules can build on.
+    # The generated block is valid Synalog that downstream rules can build on.
     program = text + "\nPaidOrders(id:) :- ShopOrders(id:, status: s), s == \"paid\";\n"
     assert synalog.check(program, engine="psql")[0] == []
 
@@ -98,7 +98,7 @@ def test_introspect_databricks_via_spark_show_fallback(runner_for):
             "SynalogIntrospectTestOrders(id:, amount:)"
             f" :- {schema}.orders(id:, amount:);" in text
         )
-        # Everything introspected compiles as databricks-dialect Logica.
+        # Everything introspected compiles as databricks-dialect Synalog.
         assert synalog.check(text, engine="databricks")[0] == []
     finally:
         runner.run(f"DROP SCHEMA IF EXISTS {schema} CASCADE")

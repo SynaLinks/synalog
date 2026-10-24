@@ -1,5 +1,5 @@
-DROP TABLE IF EXISTS logica_test.Person;
-CREATE TABLE logica_test.Person AS WITH t_0_Employees AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_test.Person;
+CREATE TABLE synalog_test.Person AS WITH t_0_Employees AS (SELECT * FROM (
   
     SELECT
       1 AS person_id,
@@ -54,10 +54,10 @@ FROM
   t_0_Employees AS Employees
 GROUP BY 1, 2, 3 ORDER BY person_id;
 
--- Interacting with table logica_test.Person
+-- Interacting with table synalog_test.Person
 
-DROP TABLE IF EXISTS logica_test.Related;
-CREATE TABLE logica_test.Related AS WITH t_3_Management AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_test.Related;
+CREATE TABLE synalog_test.Related AS WITH t_3_Management AS (SELECT * FROM (
   
     SELECT
       1 AS manager_id,
@@ -83,7 +83,7 @@ t_1_Manages AS (SELECT
   Person.person_id AS manager_id,
   t_2_Person.person_id AS employee_id
 FROM
-  logica_test.Person AS Person, logica_test.Person AS t_2_Person, t_3_Management AS Management
+  synalog_test.Person AS Person, synalog_test.Person AS t_2_Person, t_3_Management AS Management
 WHERE
   (Management.manager_id = Person.person_id) AND
   (Management.employee_id = t_2_Person.person_id)
@@ -104,7 +104,7 @@ t_4_Mentors AS (SELECT
   t_5_Person.person_id AS mentor_id,
   t_6_Person.person_id AS mentee_id
 FROM
-  logica_test.Person AS t_5_Person, logica_test.Person AS t_6_Person, t_7_Mentoring AS Mentoring
+  synalog_test.Person AS t_5_Person, synalog_test.Person AS t_6_Person, t_7_Mentoring AS Mentoring
 WHERE
   (Mentoring.mentor_id = t_5_Person.person_id) AND
   (Mentoring.mentee_id = t_6_Person.person_id)
@@ -135,7 +135,7 @@ FROM
   t_0_Related_MultBodyAggAux AS Related_MultBodyAggAux
 GROUP BY 1, 2, 3;
 
--- Interacting with table logica_test.Related
+-- Interacting with table synalog_test.Related
 
 WITH t_0_N_MultBodyAggAux AS (SELECT * FROM (
   
@@ -143,7 +143,7 @@ WITH t_0_N_MultBodyAggAux AS (SELECT * FROM (
       Related.target_id AS neighbor_id,
       Related.type AS type
     FROM
-      logica_test.Related AS Related
+      synalog_test.Related AS Related
     WHERE
       (Related.source_id = 3)
    UNION ALL
@@ -152,7 +152,7 @@ WITH t_0_N_MultBodyAggAux AS (SELECT * FROM (
       t_1_Related.source_id AS neighbor_id,
       t_1_Related.type AS type
     FROM
-      logica_test.Related AS t_1_Related
+      synalog_test.Related AS t_1_Related
     WHERE
       (t_1_Related.target_id = 3)
   

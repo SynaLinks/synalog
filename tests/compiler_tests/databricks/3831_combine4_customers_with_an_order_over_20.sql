@@ -19,7 +19,7 @@ FROM
   t_1_C AS t_0_C
 WHERE
   ((SELECT
-    MAX(O.amt) AS logica_value
+    MAX(O.amt) AS synalog_value
   FROM
     t_2_O AS O
   WHERE

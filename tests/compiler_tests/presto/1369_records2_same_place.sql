@@ -1,5 +1,5 @@
-DROP TABLE IF EXISTS logica_test.Place;
-CREATE TABLE logica_test.Place AS WITH t_0_Emp AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_test.Place;
+CREATE TABLE synalog_test.Place AS WITH t_0_Emp AS (SELECT * FROM (
   
     SELECT
       'ann' AS name,
@@ -63,13 +63,13 @@ SELECT
 FROM
   t_0_Emp AS Emp;
 
--- Interacting with table logica_test.Place
+-- Interacting with table synalog_test.Place
 
 SELECT
   Place.name AS a,
   t_0_Place.name AS b
 FROM
-  logica_test.Place AS Place, logica_test.Place AS t_0_Place
+  synalog_test.Place AS Place, synalog_test.Place AS t_0_Place
 WHERE
   (Place.name < t_0_Place.name) AND
   (t_0_Place.p = Place.p);

@@ -1,10 +1,10 @@
 -- Initializing PostgreSQL environment.
 set client_min_messages to warning;
-create schema if not exists logica_home;
--- Empty logica type: logicarecord893574736;
-DO $$ BEGIN if not exists (select 'I(am) :- I(think)' from pg_type where typname = 'logicarecord893574736') then create type logicarecord893574736 as (nirvana numeric); end if; END $$;
+create schema if not exists synalog_home;
+-- Empty synalog type: synalogrecord893574736;
+DO $$ BEGIN if not exists (select 'I(am) :- I(think)' from pg_type where typname = 'synalogrecord893574736') then create type synalogrecord893574736 as (nirvana numeric); end if; END $$;
 
-DO $$ BEGIN if not exists (select 1 from pg_type where typname = 'logicarecord1790657755071105979') then create type logicarecord1790657755071105979 as ("author" text); end if; END $$;
+DO $$ BEGIN if not exists (select 1 from pg_type where typname = 'synalogrecord1790657755071105979') then create type synalogrecord1790657755071105979 as ("author" text); end if; END $$;
 WITH t_4_B AS (SELECT * FROM (
   
     SELECT
@@ -77,4 +77,4 @@ FROM
   t_4_B AS t_2_B, t_4_B AS t_3_B
 WHERE
   (t_2_B.id < t_3_B.id) AND
-  (ROW(t_3_B.author)::logicarecord1790657755071105979 = ROW(t_2_B.author)::logicarecord1790657755071105979) ORDER BY a, b;
+  (ROW(t_3_B.author)::synalogrecord1790657755071105979 = ROW(t_2_B.author)::synalogrecord1790657755071105979) ORDER BY a, b;

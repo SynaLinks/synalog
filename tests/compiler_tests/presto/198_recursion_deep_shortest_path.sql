@@ -1,5 +1,5 @@
-DROP TABLE IF EXISTS logica_test.Hop_sn_delta;
-CREATE TABLE logica_test.Hop_sn_delta AS WITH t_0_Hop_MultBodyAggAux_f2 AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_test.Hop_sn_delta;
+CREATE TABLE synalog_test.Hop_sn_delta AS WITH t_0_Hop_MultBodyAggAux_f2 AS (SELECT * FROM (
   
     SELECT
       0 AS node,
@@ -13,21 +13,21 @@ FROM
   t_0_Hop_MultBodyAggAux_f2 AS Hop_MultBodyAggAux_f2
 GROUP BY 1, 2;
 
--- Interacting with table logica_test.Hop_sn_delta
+-- Interacting with table synalog_test.Hop_sn_delta
 
-DROP TABLE IF EXISTS logica_test.Hop_sn_t0;
-CREATE TABLE logica_test.Hop_sn_t0 AS SELECT
+DROP TABLE IF EXISTS synalog_test.Hop_sn_t0;
+CREATE TABLE synalog_test.Hop_sn_t0 AS SELECT
   Hop_sn_delta.node AS node,
   Hop_sn_delta.d AS d
 FROM
-  logica_test.Hop_sn_delta AS Hop_sn_delta
+  synalog_test.Hop_sn_delta AS Hop_sn_delta
 WHERE
   (1 = 0);
 
--- Interacting with table logica_test.Hop_sn_t0
+-- Interacting with table synalog_test.Hop_sn_t0
 
-DROP TABLE IF EXISTS logica_test.Hop_sn_t1;
-CREATE TABLE logica_test.Hop_sn_t1 AS WITH t_2_Edge AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_test.Hop_sn_t1;
+CREATE TABLE synalog_test.Hop_sn_t1 AS WITH t_2_Edge AS (SELECT * FROM (
   
     SELECT
       0 AS a,
@@ -60,7 +60,7 @@ t_1_Hop_MultBodyAggAux_f3 AS (SELECT * FROM (
       Edge.b AS node,
       ((Hop_sn_t0.d) + (1)) AS d
     FROM
-      logica_test.Hop_sn_t0 AS Hop_sn_t0, t_2_Edge AS Edge
+      synalog_test.Hop_sn_t0 AS Hop_sn_t0, t_2_Edge AS Edge
     WHERE
       (Hop_sn_t0.d < 5) AND
       (Edge.a = Hop_sn_t0.node)
@@ -80,10 +80,10 @@ FROM
 WHERE
   (1 = 0);
 
--- Interacting with table logica_test.Hop_sn_t1
+-- Interacting with table synalog_test.Hop_sn_t1
 
-DROP TABLE IF EXISTS logica_test.Hop_sn_t2;
-CREATE TABLE logica_test.Hop_sn_t2 AS WITH t_2_Edge AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_test.Hop_sn_t2;
+CREATE TABLE synalog_test.Hop_sn_t2 AS WITH t_2_Edge AS (SELECT * FROM (
   
     SELECT
       0 AS a,
@@ -116,7 +116,7 @@ t_1_Hop_MultBodyAggAux_f4 AS (SELECT * FROM (
       Edge.b AS node,
       ((Hop_sn_t1.d) + (1)) AS d
     FROM
-      logica_test.Hop_sn_t1 AS Hop_sn_t1, t_2_Edge AS Edge
+      synalog_test.Hop_sn_t1 AS Hop_sn_t1, t_2_Edge AS Edge
     WHERE
       (Hop_sn_t1.d < 5) AND
       (Edge.a = Hop_sn_t1.node)
@@ -136,10 +136,10 @@ FROM
 WHERE
   (1 = 0);
 
--- Interacting with table logica_test.Hop_sn_t2
+-- Interacting with table synalog_test.Hop_sn_t2
 
-DROP TABLE IF EXISTS logica_test.Hop_sn_t3;
-CREATE TABLE logica_test.Hop_sn_t3 AS WITH t_2_Edge AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_test.Hop_sn_t3;
+CREATE TABLE synalog_test.Hop_sn_t3 AS WITH t_2_Edge AS (SELECT * FROM (
   
     SELECT
       0 AS a,
@@ -172,7 +172,7 @@ t_1_Hop_MultBodyAggAux_f5 AS (SELECT * FROM (
       Edge.b AS node,
       ((Hop_sn_t2.d) + (1)) AS d
     FROM
-      logica_test.Hop_sn_t2 AS Hop_sn_t2, t_2_Edge AS Edge
+      synalog_test.Hop_sn_t2 AS Hop_sn_t2, t_2_Edge AS Edge
     WHERE
       (Hop_sn_t2.d < 5) AND
       (Edge.a = Hop_sn_t2.node)
@@ -192,10 +192,10 @@ FROM
 WHERE
   (1 = 0);
 
--- Interacting with table logica_test.Hop_sn_t3
+-- Interacting with table synalog_test.Hop_sn_t3
 
-DROP TABLE IF EXISTS logica_test.Hop_sn_t4;
-CREATE TABLE logica_test.Hop_sn_t4 AS WITH t_2_Edge AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_test.Hop_sn_t4;
+CREATE TABLE synalog_test.Hop_sn_t4 AS WITH t_2_Edge AS (SELECT * FROM (
   
     SELECT
       0 AS a,
@@ -228,7 +228,7 @@ t_1_Hop_MultBodyAggAux_f6 AS (SELECT * FROM (
       Edge.b AS node,
       ((Hop_sn_t3.d) + (1)) AS d
     FROM
-      logica_test.Hop_sn_t3 AS Hop_sn_t3, t_2_Edge AS Edge
+      synalog_test.Hop_sn_t3 AS Hop_sn_t3, t_2_Edge AS Edge
     WHERE
       (Hop_sn_t3.d < 5) AND
       (Edge.a = Hop_sn_t3.node)
@@ -248,10 +248,10 @@ FROM
 WHERE
   (1 = 0);
 
--- Interacting with table logica_test.Hop_sn_t4
+-- Interacting with table synalog_test.Hop_sn_t4
 
-DROP TABLE IF EXISTS logica_test.Hop_sn_t5;
-CREATE TABLE logica_test.Hop_sn_t5 AS WITH t_2_Edge AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_test.Hop_sn_t5;
+CREATE TABLE synalog_test.Hop_sn_t5 AS WITH t_2_Edge AS (SELECT * FROM (
   
     SELECT
       0 AS a,
@@ -284,7 +284,7 @@ t_1_Hop_MultBodyAggAux_f7 AS (SELECT * FROM (
       Edge.b AS node,
       ((Hop_sn_t4.d) + (1)) AS d
     FROM
-      logica_test.Hop_sn_t4 AS Hop_sn_t4, t_2_Edge AS Edge
+      synalog_test.Hop_sn_t4 AS Hop_sn_t4, t_2_Edge AS Edge
     WHERE
       (Hop_sn_t4.d < 5) AND
       (Edge.a = Hop_sn_t4.node)
@@ -304,58 +304,58 @@ FROM
 WHERE
   (1 = 0);
 
--- Interacting with table logica_test.Hop_sn_t5
+-- Interacting with table synalog_test.Hop_sn_t5
 
-DROP TABLE IF EXISTS logica_test.Hop_sn_full;
-CREATE TABLE logica_test.Hop_sn_full AS SELECT * FROM (
+DROP TABLE IF EXISTS synalog_test.Hop_sn_full;
+CREATE TABLE synalog_test.Hop_sn_full AS SELECT * FROM (
   
     SELECT
       Hop_sn_delta.node AS node,
       Hop_sn_delta.d AS d
     FROM
-      logica_test.Hop_sn_delta AS Hop_sn_delta
+      synalog_test.Hop_sn_delta AS Hop_sn_delta
    UNION ALL
   
     SELECT
       Hop_sn_t1.node AS node,
       Hop_sn_t1.d AS d
     FROM
-      logica_test.Hop_sn_t1 AS Hop_sn_t1
+      synalog_test.Hop_sn_t1 AS Hop_sn_t1
    UNION ALL
   
     SELECT
       Hop_sn_t2.node AS node,
       Hop_sn_t2.d AS d
     FROM
-      logica_test.Hop_sn_t2 AS Hop_sn_t2
+      synalog_test.Hop_sn_t2 AS Hop_sn_t2
    UNION ALL
   
     SELECT
       Hop_sn_t3.node AS node,
       Hop_sn_t3.d AS d
     FROM
-      logica_test.Hop_sn_t3 AS Hop_sn_t3
+      synalog_test.Hop_sn_t3 AS Hop_sn_t3
    UNION ALL
   
     SELECT
       Hop_sn_t4.node AS node,
       Hop_sn_t4.d AS d
     FROM
-      logica_test.Hop_sn_t4 AS Hop_sn_t4
+      synalog_test.Hop_sn_t4 AS Hop_sn_t4
    UNION ALL
   
     SELECT
       Hop_sn_t5.node AS node,
       Hop_sn_t5.d AS d
     FROM
-      logica_test.Hop_sn_t5 AS Hop_sn_t5
+      synalog_test.Hop_sn_t5 AS Hop_sn_t5
   
 ) AS UNUSED_TABLE_NAME  ;
 
--- Interacting with table logica_test.Hop_sn_full
+-- Interacting with table synalog_test.Hop_sn_full
 
-DROP TABLE IF EXISTS logica_test.Hop_sn_new;
-CREATE TABLE logica_test.Hop_sn_new AS WITH t_2_Edge AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_test.Hop_sn_new;
+CREATE TABLE synalog_test.Hop_sn_new AS WITH t_2_Edge AS (SELECT * FROM (
   
     SELECT
       0 AS a,
@@ -388,7 +388,7 @@ t_1_Hop_MultBodyAggAux_f8 AS (SELECT * FROM (
       Edge.b AS node,
       ((Hop_sn_delta.d) + (1)) AS d
     FROM
-      logica_test.Hop_sn_delta AS Hop_sn_delta, t_2_Edge AS Edge
+      synalog_test.Hop_sn_delta AS Hop_sn_delta, t_2_Edge AS Edge
     WHERE
       (Hop_sn_delta.d < 5) AND
       (Edge.a = Hop_sn_delta.node)
@@ -407,18 +407,18 @@ FROM
   t_0_Hop_sn_step AS Hop_sn_step
 WHERE
   ((SELECT
-    MIN(1) AS logica_value
+    MIN(1) AS synalog_value
   FROM
-    logica_test.Hop_sn_full AS Hop_sn_full
+    synalog_test.Hop_sn_full AS Hop_sn_full
   WHERE
     (Hop_sn_full.node = Hop_sn_step.node) AND
     (Hop_sn_full.d = Hop_sn_step.d)) IS NULL)
 GROUP BY 1, 2;
 
-INSERT INTO logica_test.Hop_sn_full SELECT * FROM logica_test.Hop_sn_new;
+INSERT INTO synalog_test.Hop_sn_full SELECT * FROM synalog_test.Hop_sn_new;
 
-DROP TABLE IF EXISTS logica_test.Hop_sn_delta;
-CREATE TABLE logica_test.Hop_sn_delta AS WITH t_2_Edge AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_test.Hop_sn_delta;
+CREATE TABLE synalog_test.Hop_sn_delta AS WITH t_2_Edge AS (SELECT * FROM (
   
     SELECT
       0 AS a,
@@ -451,7 +451,7 @@ t_1_Hop_MultBodyAggAux_f1 AS (SELECT * FROM (
       Edge.b AS node,
       ((Hop_sn_new.d) + (1)) AS d
     FROM
-      logica_test.Hop_sn_new AS Hop_sn_new, t_2_Edge AS Edge
+      synalog_test.Hop_sn_new AS Hop_sn_new, t_2_Edge AS Edge
     WHERE
       (Hop_sn_new.d < 5) AND
       (Edge.a = Hop_sn_new.node)
@@ -470,18 +470,18 @@ FROM
   t_0_Hop_sn_back_step AS Hop_sn_back_step
 WHERE
   ((SELECT
-    MIN(1) AS logica_value
+    MIN(1) AS synalog_value
   FROM
-    logica_test.Hop_sn_full AS Hop_sn_full
+    synalog_test.Hop_sn_full AS Hop_sn_full
   WHERE
     (Hop_sn_full.node = Hop_sn_back_step.node) AND
     (Hop_sn_full.d = Hop_sn_back_step.d)) IS NULL)
 GROUP BY 1, 2;
 
-INSERT INTO logica_test.Hop_sn_full SELECT * FROM logica_test.Hop_sn_delta;
+INSERT INTO synalog_test.Hop_sn_full SELECT * FROM synalog_test.Hop_sn_delta;
 
-DROP TABLE IF EXISTS logica_test.Hop_sn_new;
-CREATE TABLE logica_test.Hop_sn_new AS WITH t_2_Edge AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_test.Hop_sn_new;
+CREATE TABLE synalog_test.Hop_sn_new AS WITH t_2_Edge AS (SELECT * FROM (
   
     SELECT
       0 AS a,
@@ -514,7 +514,7 @@ t_1_Hop_MultBodyAggAux_f8 AS (SELECT * FROM (
       Edge.b AS node,
       ((Hop_sn_delta.d) + (1)) AS d
     FROM
-      logica_test.Hop_sn_delta AS Hop_sn_delta, t_2_Edge AS Edge
+      synalog_test.Hop_sn_delta AS Hop_sn_delta, t_2_Edge AS Edge
     WHERE
       (Hop_sn_delta.d < 5) AND
       (Edge.a = Hop_sn_delta.node)
@@ -533,18 +533,18 @@ FROM
   t_0_Hop_sn_step AS Hop_sn_step
 WHERE
   ((SELECT
-    MIN(1) AS logica_value
+    MIN(1) AS synalog_value
   FROM
-    logica_test.Hop_sn_full AS Hop_sn_full
+    synalog_test.Hop_sn_full AS Hop_sn_full
   WHERE
     (Hop_sn_full.node = Hop_sn_step.node) AND
     (Hop_sn_full.d = Hop_sn_step.d)) IS NULL)
 GROUP BY 1, 2;
 
-INSERT INTO logica_test.Hop_sn_full SELECT * FROM logica_test.Hop_sn_new;
+INSERT INTO synalog_test.Hop_sn_full SELECT * FROM synalog_test.Hop_sn_new;
 
-DROP TABLE IF EXISTS logica_test.Hop_sn_delta;
-CREATE TABLE logica_test.Hop_sn_delta AS WITH t_2_Edge AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_test.Hop_sn_delta;
+CREATE TABLE synalog_test.Hop_sn_delta AS WITH t_2_Edge AS (SELECT * FROM (
   
     SELECT
       0 AS a,
@@ -577,7 +577,7 @@ t_1_Hop_MultBodyAggAux_f1 AS (SELECT * FROM (
       Edge.b AS node,
       ((Hop_sn_new.d) + (1)) AS d
     FROM
-      logica_test.Hop_sn_new AS Hop_sn_new, t_2_Edge AS Edge
+      synalog_test.Hop_sn_new AS Hop_sn_new, t_2_Edge AS Edge
     WHERE
       (Hop_sn_new.d < 5) AND
       (Edge.a = Hop_sn_new.node)
@@ -596,18 +596,18 @@ FROM
   t_0_Hop_sn_back_step AS Hop_sn_back_step
 WHERE
   ((SELECT
-    MIN(1) AS logica_value
+    MIN(1) AS synalog_value
   FROM
-    logica_test.Hop_sn_full AS Hop_sn_full
+    synalog_test.Hop_sn_full AS Hop_sn_full
   WHERE
     (Hop_sn_full.node = Hop_sn_back_step.node) AND
     (Hop_sn_full.d = Hop_sn_back_step.d)) IS NULL)
 GROUP BY 1, 2;
 
-INSERT INTO logica_test.Hop_sn_full SELECT * FROM logica_test.Hop_sn_delta;
+INSERT INTO synalog_test.Hop_sn_full SELECT * FROM synalog_test.Hop_sn_delta;
 
-DROP TABLE IF EXISTS logica_test.Hop_sn_new;
-CREATE TABLE logica_test.Hop_sn_new AS WITH t_2_Edge AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_test.Hop_sn_new;
+CREATE TABLE synalog_test.Hop_sn_new AS WITH t_2_Edge AS (SELECT * FROM (
   
     SELECT
       0 AS a,
@@ -640,7 +640,7 @@ t_1_Hop_MultBodyAggAux_f8 AS (SELECT * FROM (
       Edge.b AS node,
       ((Hop_sn_delta.d) + (1)) AS d
     FROM
-      logica_test.Hop_sn_delta AS Hop_sn_delta, t_2_Edge AS Edge
+      synalog_test.Hop_sn_delta AS Hop_sn_delta, t_2_Edge AS Edge
     WHERE
       (Hop_sn_delta.d < 5) AND
       (Edge.a = Hop_sn_delta.node)
@@ -659,18 +659,18 @@ FROM
   t_0_Hop_sn_step AS Hop_sn_step
 WHERE
   ((SELECT
-    MIN(1) AS logica_value
+    MIN(1) AS synalog_value
   FROM
-    logica_test.Hop_sn_full AS Hop_sn_full
+    synalog_test.Hop_sn_full AS Hop_sn_full
   WHERE
     (Hop_sn_full.node = Hop_sn_step.node) AND
     (Hop_sn_full.d = Hop_sn_step.d)) IS NULL)
 GROUP BY 1, 2;
 
-INSERT INTO logica_test.Hop_sn_full SELECT * FROM logica_test.Hop_sn_new;
+INSERT INTO synalog_test.Hop_sn_full SELECT * FROM synalog_test.Hop_sn_new;
 
-DROP TABLE IF EXISTS logica_test.Hop_sn_delta;
-CREATE TABLE logica_test.Hop_sn_delta AS WITH t_2_Edge AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_test.Hop_sn_delta;
+CREATE TABLE synalog_test.Hop_sn_delta AS WITH t_2_Edge AS (SELECT * FROM (
   
     SELECT
       0 AS a,
@@ -703,7 +703,7 @@ t_1_Hop_MultBodyAggAux_f1 AS (SELECT * FROM (
       Edge.b AS node,
       ((Hop_sn_new.d) + (1)) AS d
     FROM
-      logica_test.Hop_sn_new AS Hop_sn_new, t_2_Edge AS Edge
+      synalog_test.Hop_sn_new AS Hop_sn_new, t_2_Edge AS Edge
     WHERE
       (Hop_sn_new.d < 5) AND
       (Edge.a = Hop_sn_new.node)
@@ -722,18 +722,18 @@ FROM
   t_0_Hop_sn_back_step AS Hop_sn_back_step
 WHERE
   ((SELECT
-    MIN(1) AS logica_value
+    MIN(1) AS synalog_value
   FROM
-    logica_test.Hop_sn_full AS Hop_sn_full
+    synalog_test.Hop_sn_full AS Hop_sn_full
   WHERE
     (Hop_sn_full.node = Hop_sn_back_step.node) AND
     (Hop_sn_full.d = Hop_sn_back_step.d)) IS NULL)
 GROUP BY 1, 2;
 
-INSERT INTO logica_test.Hop_sn_full SELECT * FROM logica_test.Hop_sn_delta;
+INSERT INTO synalog_test.Hop_sn_full SELECT * FROM synalog_test.Hop_sn_delta;
 
-DROP TABLE IF EXISTS logica_test.Hop_sn_new;
-CREATE TABLE logica_test.Hop_sn_new AS WITH t_2_Edge AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_test.Hop_sn_new;
+CREATE TABLE synalog_test.Hop_sn_new AS WITH t_2_Edge AS (SELECT * FROM (
   
     SELECT
       0 AS a,
@@ -766,7 +766,7 @@ t_1_Hop_MultBodyAggAux_f8 AS (SELECT * FROM (
       Edge.b AS node,
       ((Hop_sn_delta.d) + (1)) AS d
     FROM
-      logica_test.Hop_sn_delta AS Hop_sn_delta, t_2_Edge AS Edge
+      synalog_test.Hop_sn_delta AS Hop_sn_delta, t_2_Edge AS Edge
     WHERE
       (Hop_sn_delta.d < 5) AND
       (Edge.a = Hop_sn_delta.node)
@@ -785,18 +785,18 @@ FROM
   t_0_Hop_sn_step AS Hop_sn_step
 WHERE
   ((SELECT
-    MIN(1) AS logica_value
+    MIN(1) AS synalog_value
   FROM
-    logica_test.Hop_sn_full AS Hop_sn_full
+    synalog_test.Hop_sn_full AS Hop_sn_full
   WHERE
     (Hop_sn_full.node = Hop_sn_step.node) AND
     (Hop_sn_full.d = Hop_sn_step.d)) IS NULL)
 GROUP BY 1, 2;
 
-INSERT INTO logica_test.Hop_sn_full SELECT * FROM logica_test.Hop_sn_new;
+INSERT INTO synalog_test.Hop_sn_full SELECT * FROM synalog_test.Hop_sn_new;
 
-DROP TABLE IF EXISTS logica_test.Hop_sn_delta;
-CREATE TABLE logica_test.Hop_sn_delta AS WITH t_2_Edge AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_test.Hop_sn_delta;
+CREATE TABLE synalog_test.Hop_sn_delta AS WITH t_2_Edge AS (SELECT * FROM (
   
     SELECT
       0 AS a,
@@ -829,7 +829,7 @@ t_1_Hop_MultBodyAggAux_f1 AS (SELECT * FROM (
       Edge.b AS node,
       ((Hop_sn_new.d) + (1)) AS d
     FROM
-      logica_test.Hop_sn_new AS Hop_sn_new, t_2_Edge AS Edge
+      synalog_test.Hop_sn_new AS Hop_sn_new, t_2_Edge AS Edge
     WHERE
       (Hop_sn_new.d < 5) AND
       (Edge.a = Hop_sn_new.node)
@@ -848,18 +848,18 @@ FROM
   t_0_Hop_sn_back_step AS Hop_sn_back_step
 WHERE
   ((SELECT
-    MIN(1) AS logica_value
+    MIN(1) AS synalog_value
   FROM
-    logica_test.Hop_sn_full AS Hop_sn_full
+    synalog_test.Hop_sn_full AS Hop_sn_full
   WHERE
     (Hop_sn_full.node = Hop_sn_back_step.node) AND
     (Hop_sn_full.d = Hop_sn_back_step.d)) IS NULL)
 GROUP BY 1, 2;
 
-INSERT INTO logica_test.Hop_sn_full SELECT * FROM logica_test.Hop_sn_delta;
+INSERT INTO synalog_test.Hop_sn_full SELECT * FROM synalog_test.Hop_sn_delta;
 
-DROP TABLE IF EXISTS logica_test.Hop_sn_new;
-CREATE TABLE logica_test.Hop_sn_new AS WITH t_2_Edge AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_test.Hop_sn_new;
+CREATE TABLE synalog_test.Hop_sn_new AS WITH t_2_Edge AS (SELECT * FROM (
   
     SELECT
       0 AS a,
@@ -892,7 +892,7 @@ t_1_Hop_MultBodyAggAux_f8 AS (SELECT * FROM (
       Edge.b AS node,
       ((Hop_sn_delta.d) + (1)) AS d
     FROM
-      logica_test.Hop_sn_delta AS Hop_sn_delta, t_2_Edge AS Edge
+      synalog_test.Hop_sn_delta AS Hop_sn_delta, t_2_Edge AS Edge
     WHERE
       (Hop_sn_delta.d < 5) AND
       (Edge.a = Hop_sn_delta.node)
@@ -911,18 +911,18 @@ FROM
   t_0_Hop_sn_step AS Hop_sn_step
 WHERE
   ((SELECT
-    MIN(1) AS logica_value
+    MIN(1) AS synalog_value
   FROM
-    logica_test.Hop_sn_full AS Hop_sn_full
+    synalog_test.Hop_sn_full AS Hop_sn_full
   WHERE
     (Hop_sn_full.node = Hop_sn_step.node) AND
     (Hop_sn_full.d = Hop_sn_step.d)) IS NULL)
 GROUP BY 1, 2;
 
-INSERT INTO logica_test.Hop_sn_full SELECT * FROM logica_test.Hop_sn_new;
+INSERT INTO synalog_test.Hop_sn_full SELECT * FROM synalog_test.Hop_sn_new;
 
-DROP TABLE IF EXISTS logica_test.Hop_sn_delta;
-CREATE TABLE logica_test.Hop_sn_delta AS WITH t_2_Edge AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_test.Hop_sn_delta;
+CREATE TABLE synalog_test.Hop_sn_delta AS WITH t_2_Edge AS (SELECT * FROM (
   
     SELECT
       0 AS a,
@@ -955,7 +955,7 @@ t_1_Hop_MultBodyAggAux_f1 AS (SELECT * FROM (
       Edge.b AS node,
       ((Hop_sn_new.d) + (1)) AS d
     FROM
-      logica_test.Hop_sn_new AS Hop_sn_new, t_2_Edge AS Edge
+      synalog_test.Hop_sn_new AS Hop_sn_new, t_2_Edge AS Edge
     WHERE
       (Hop_sn_new.d < 5) AND
       (Edge.a = Hop_sn_new.node)
@@ -974,18 +974,18 @@ FROM
   t_0_Hop_sn_back_step AS Hop_sn_back_step
 WHERE
   ((SELECT
-    MIN(1) AS logica_value
+    MIN(1) AS synalog_value
   FROM
-    logica_test.Hop_sn_full AS Hop_sn_full
+    synalog_test.Hop_sn_full AS Hop_sn_full
   WHERE
     (Hop_sn_full.node = Hop_sn_back_step.node) AND
     (Hop_sn_full.d = Hop_sn_back_step.d)) IS NULL)
 GROUP BY 1, 2;
 
-INSERT INTO logica_test.Hop_sn_full SELECT * FROM logica_test.Hop_sn_delta;
+INSERT INTO synalog_test.Hop_sn_full SELECT * FROM synalog_test.Hop_sn_delta;
 
-DROP TABLE IF EXISTS logica_test.Hop_sn_new;
-CREATE TABLE logica_test.Hop_sn_new AS WITH t_2_Edge AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_test.Hop_sn_new;
+CREATE TABLE synalog_test.Hop_sn_new AS WITH t_2_Edge AS (SELECT * FROM (
   
     SELECT
       0 AS a,
@@ -1018,7 +1018,7 @@ t_1_Hop_MultBodyAggAux_f8 AS (SELECT * FROM (
       Edge.b AS node,
       ((Hop_sn_delta.d) + (1)) AS d
     FROM
-      logica_test.Hop_sn_delta AS Hop_sn_delta, t_2_Edge AS Edge
+      synalog_test.Hop_sn_delta AS Hop_sn_delta, t_2_Edge AS Edge
     WHERE
       (Hop_sn_delta.d < 5) AND
       (Edge.a = Hop_sn_delta.node)
@@ -1037,18 +1037,18 @@ FROM
   t_0_Hop_sn_step AS Hop_sn_step
 WHERE
   ((SELECT
-    MIN(1) AS logica_value
+    MIN(1) AS synalog_value
   FROM
-    logica_test.Hop_sn_full AS Hop_sn_full
+    synalog_test.Hop_sn_full AS Hop_sn_full
   WHERE
     (Hop_sn_full.node = Hop_sn_step.node) AND
     (Hop_sn_full.d = Hop_sn_step.d)) IS NULL)
 GROUP BY 1, 2;
 
-INSERT INTO logica_test.Hop_sn_full SELECT * FROM logica_test.Hop_sn_new;
+INSERT INTO synalog_test.Hop_sn_full SELECT * FROM synalog_test.Hop_sn_new;
 
-DROP TABLE IF EXISTS logica_test.Hop_sn_delta;
-CREATE TABLE logica_test.Hop_sn_delta AS WITH t_2_Edge AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_test.Hop_sn_delta;
+CREATE TABLE synalog_test.Hop_sn_delta AS WITH t_2_Edge AS (SELECT * FROM (
   
     SELECT
       0 AS a,
@@ -1081,7 +1081,7 @@ t_1_Hop_MultBodyAggAux_f1 AS (SELECT * FROM (
       Edge.b AS node,
       ((Hop_sn_new.d) + (1)) AS d
     FROM
-      logica_test.Hop_sn_new AS Hop_sn_new, t_2_Edge AS Edge
+      synalog_test.Hop_sn_new AS Hop_sn_new, t_2_Edge AS Edge
     WHERE
       (Hop_sn_new.d < 5) AND
       (Edge.a = Hop_sn_new.node)
@@ -1100,18 +1100,18 @@ FROM
   t_0_Hop_sn_back_step AS Hop_sn_back_step
 WHERE
   ((SELECT
-    MIN(1) AS logica_value
+    MIN(1) AS synalog_value
   FROM
-    logica_test.Hop_sn_full AS Hop_sn_full
+    synalog_test.Hop_sn_full AS Hop_sn_full
   WHERE
     (Hop_sn_full.node = Hop_sn_back_step.node) AND
     (Hop_sn_full.d = Hop_sn_back_step.d)) IS NULL)
 GROUP BY 1, 2;
 
-INSERT INTO logica_test.Hop_sn_full SELECT * FROM logica_test.Hop_sn_delta;
+INSERT INTO synalog_test.Hop_sn_full SELECT * FROM synalog_test.Hop_sn_delta;
 
-DROP TABLE IF EXISTS logica_test.Hop_sn_new;
-CREATE TABLE logica_test.Hop_sn_new AS WITH t_2_Edge AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_test.Hop_sn_new;
+CREATE TABLE synalog_test.Hop_sn_new AS WITH t_2_Edge AS (SELECT * FROM (
   
     SELECT
       0 AS a,
@@ -1144,7 +1144,7 @@ t_1_Hop_MultBodyAggAux_f8 AS (SELECT * FROM (
       Edge.b AS node,
       ((Hop_sn_delta.d) + (1)) AS d
     FROM
-      logica_test.Hop_sn_delta AS Hop_sn_delta, t_2_Edge AS Edge
+      synalog_test.Hop_sn_delta AS Hop_sn_delta, t_2_Edge AS Edge
     WHERE
       (Hop_sn_delta.d < 5) AND
       (Edge.a = Hop_sn_delta.node)
@@ -1163,18 +1163,18 @@ FROM
   t_0_Hop_sn_step AS Hop_sn_step
 WHERE
   ((SELECT
-    MIN(1) AS logica_value
+    MIN(1) AS synalog_value
   FROM
-    logica_test.Hop_sn_full AS Hop_sn_full
+    synalog_test.Hop_sn_full AS Hop_sn_full
   WHERE
     (Hop_sn_full.node = Hop_sn_step.node) AND
     (Hop_sn_full.d = Hop_sn_step.d)) IS NULL)
 GROUP BY 1, 2;
 
-INSERT INTO logica_test.Hop_sn_full SELECT * FROM logica_test.Hop_sn_new;
+INSERT INTO synalog_test.Hop_sn_full SELECT * FROM synalog_test.Hop_sn_new;
 
-DROP TABLE IF EXISTS logica_test.Hop_sn_delta;
-CREATE TABLE logica_test.Hop_sn_delta AS WITH t_2_Edge AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_test.Hop_sn_delta;
+CREATE TABLE synalog_test.Hop_sn_delta AS WITH t_2_Edge AS (SELECT * FROM (
   
     SELECT
       0 AS a,
@@ -1207,7 +1207,7 @@ t_1_Hop_MultBodyAggAux_f1 AS (SELECT * FROM (
       Edge.b AS node,
       ((Hop_sn_new.d) + (1)) AS d
     FROM
-      logica_test.Hop_sn_new AS Hop_sn_new, t_2_Edge AS Edge
+      synalog_test.Hop_sn_new AS Hop_sn_new, t_2_Edge AS Edge
     WHERE
       (Hop_sn_new.d < 5) AND
       (Edge.a = Hop_sn_new.node)
@@ -1226,18 +1226,18 @@ FROM
   t_0_Hop_sn_back_step AS Hop_sn_back_step
 WHERE
   ((SELECT
-    MIN(1) AS logica_value
+    MIN(1) AS synalog_value
   FROM
-    logica_test.Hop_sn_full AS Hop_sn_full
+    synalog_test.Hop_sn_full AS Hop_sn_full
   WHERE
     (Hop_sn_full.node = Hop_sn_back_step.node) AND
     (Hop_sn_full.d = Hop_sn_back_step.d)) IS NULL)
 GROUP BY 1, 2;
 
-INSERT INTO logica_test.Hop_sn_full SELECT * FROM logica_test.Hop_sn_delta;
+INSERT INTO synalog_test.Hop_sn_full SELECT * FROM synalog_test.Hop_sn_delta;
 
-DROP TABLE IF EXISTS logica_test.Hop_sn_new;
-CREATE TABLE logica_test.Hop_sn_new AS WITH t_2_Edge AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_test.Hop_sn_new;
+CREATE TABLE synalog_test.Hop_sn_new AS WITH t_2_Edge AS (SELECT * FROM (
   
     SELECT
       0 AS a,
@@ -1270,7 +1270,7 @@ t_1_Hop_MultBodyAggAux_f8 AS (SELECT * FROM (
       Edge.b AS node,
       ((Hop_sn_delta.d) + (1)) AS d
     FROM
-      logica_test.Hop_sn_delta AS Hop_sn_delta, t_2_Edge AS Edge
+      synalog_test.Hop_sn_delta AS Hop_sn_delta, t_2_Edge AS Edge
     WHERE
       (Hop_sn_delta.d < 5) AND
       (Edge.a = Hop_sn_delta.node)
@@ -1289,18 +1289,18 @@ FROM
   t_0_Hop_sn_step AS Hop_sn_step
 WHERE
   ((SELECT
-    MIN(1) AS logica_value
+    MIN(1) AS synalog_value
   FROM
-    logica_test.Hop_sn_full AS Hop_sn_full
+    synalog_test.Hop_sn_full AS Hop_sn_full
   WHERE
     (Hop_sn_full.node = Hop_sn_step.node) AND
     (Hop_sn_full.d = Hop_sn_step.d)) IS NULL)
 GROUP BY 1, 2;
 
-INSERT INTO logica_test.Hop_sn_full SELECT * FROM logica_test.Hop_sn_new;
+INSERT INTO synalog_test.Hop_sn_full SELECT * FROM synalog_test.Hop_sn_new;
 
-DROP TABLE IF EXISTS logica_test.Hop_sn_delta;
-CREATE TABLE logica_test.Hop_sn_delta AS WITH t_2_Edge AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_test.Hop_sn_delta;
+CREATE TABLE synalog_test.Hop_sn_delta AS WITH t_2_Edge AS (SELECT * FROM (
   
     SELECT
       0 AS a,
@@ -1333,7 +1333,7 @@ t_1_Hop_MultBodyAggAux_f1 AS (SELECT * FROM (
       Edge.b AS node,
       ((Hop_sn_new.d) + (1)) AS d
     FROM
-      logica_test.Hop_sn_new AS Hop_sn_new, t_2_Edge AS Edge
+      synalog_test.Hop_sn_new AS Hop_sn_new, t_2_Edge AS Edge
     WHERE
       (Hop_sn_new.d < 5) AND
       (Edge.a = Hop_sn_new.node)
@@ -1352,18 +1352,18 @@ FROM
   t_0_Hop_sn_back_step AS Hop_sn_back_step
 WHERE
   ((SELECT
-    MIN(1) AS logica_value
+    MIN(1) AS synalog_value
   FROM
-    logica_test.Hop_sn_full AS Hop_sn_full
+    synalog_test.Hop_sn_full AS Hop_sn_full
   WHERE
     (Hop_sn_full.node = Hop_sn_back_step.node) AND
     (Hop_sn_full.d = Hop_sn_back_step.d)) IS NULL)
 GROUP BY 1, 2;
 
-INSERT INTO logica_test.Hop_sn_full SELECT * FROM logica_test.Hop_sn_delta;
+INSERT INTO synalog_test.Hop_sn_full SELECT * FROM synalog_test.Hop_sn_delta;
 
-DROP TABLE IF EXISTS logica_test.Hop_sn_new;
-CREATE TABLE logica_test.Hop_sn_new AS WITH t_2_Edge AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_test.Hop_sn_new;
+CREATE TABLE synalog_test.Hop_sn_new AS WITH t_2_Edge AS (SELECT * FROM (
   
     SELECT
       0 AS a,
@@ -1396,7 +1396,7 @@ t_1_Hop_MultBodyAggAux_f8 AS (SELECT * FROM (
       Edge.b AS node,
       ((Hop_sn_delta.d) + (1)) AS d
     FROM
-      logica_test.Hop_sn_delta AS Hop_sn_delta, t_2_Edge AS Edge
+      synalog_test.Hop_sn_delta AS Hop_sn_delta, t_2_Edge AS Edge
     WHERE
       (Hop_sn_delta.d < 5) AND
       (Edge.a = Hop_sn_delta.node)
@@ -1415,18 +1415,18 @@ FROM
   t_0_Hop_sn_step AS Hop_sn_step
 WHERE
   ((SELECT
-    MIN(1) AS logica_value
+    MIN(1) AS synalog_value
   FROM
-    logica_test.Hop_sn_full AS Hop_sn_full
+    synalog_test.Hop_sn_full AS Hop_sn_full
   WHERE
     (Hop_sn_full.node = Hop_sn_step.node) AND
     (Hop_sn_full.d = Hop_sn_step.d)) IS NULL)
 GROUP BY 1, 2;
 
-INSERT INTO logica_test.Hop_sn_full SELECT * FROM logica_test.Hop_sn_new;
+INSERT INTO synalog_test.Hop_sn_full SELECT * FROM synalog_test.Hop_sn_new;
 
-DROP TABLE IF EXISTS logica_test.Hop_sn_delta;
-CREATE TABLE logica_test.Hop_sn_delta AS WITH t_2_Edge AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_test.Hop_sn_delta;
+CREATE TABLE synalog_test.Hop_sn_delta AS WITH t_2_Edge AS (SELECT * FROM (
   
     SELECT
       0 AS a,
@@ -1459,7 +1459,7 @@ t_1_Hop_MultBodyAggAux_f1 AS (SELECT * FROM (
       Edge.b AS node,
       ((Hop_sn_new.d) + (1)) AS d
     FROM
-      logica_test.Hop_sn_new AS Hop_sn_new, t_2_Edge AS Edge
+      synalog_test.Hop_sn_new AS Hop_sn_new, t_2_Edge AS Edge
     WHERE
       (Hop_sn_new.d < 5) AND
       (Edge.a = Hop_sn_new.node)
@@ -1478,18 +1478,18 @@ FROM
   t_0_Hop_sn_back_step AS Hop_sn_back_step
 WHERE
   ((SELECT
-    MIN(1) AS logica_value
+    MIN(1) AS synalog_value
   FROM
-    logica_test.Hop_sn_full AS Hop_sn_full
+    synalog_test.Hop_sn_full AS Hop_sn_full
   WHERE
     (Hop_sn_full.node = Hop_sn_back_step.node) AND
     (Hop_sn_full.d = Hop_sn_back_step.d)) IS NULL)
 GROUP BY 1, 2;
 
-INSERT INTO logica_test.Hop_sn_full SELECT * FROM logica_test.Hop_sn_delta;
+INSERT INTO synalog_test.Hop_sn_full SELECT * FROM synalog_test.Hop_sn_delta;
 
-DROP TABLE IF EXISTS logica_test.Hop_sn_new;
-CREATE TABLE logica_test.Hop_sn_new AS WITH t_2_Edge AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_test.Hop_sn_new;
+CREATE TABLE synalog_test.Hop_sn_new AS WITH t_2_Edge AS (SELECT * FROM (
   
     SELECT
       0 AS a,
@@ -1522,7 +1522,7 @@ t_1_Hop_MultBodyAggAux_f8 AS (SELECT * FROM (
       Edge.b AS node,
       ((Hop_sn_delta.d) + (1)) AS d
     FROM
-      logica_test.Hop_sn_delta AS Hop_sn_delta, t_2_Edge AS Edge
+      synalog_test.Hop_sn_delta AS Hop_sn_delta, t_2_Edge AS Edge
     WHERE
       (Hop_sn_delta.d < 5) AND
       (Edge.a = Hop_sn_delta.node)
@@ -1541,18 +1541,18 @@ FROM
   t_0_Hop_sn_step AS Hop_sn_step
 WHERE
   ((SELECT
-    MIN(1) AS logica_value
+    MIN(1) AS synalog_value
   FROM
-    logica_test.Hop_sn_full AS Hop_sn_full
+    synalog_test.Hop_sn_full AS Hop_sn_full
   WHERE
     (Hop_sn_full.node = Hop_sn_step.node) AND
     (Hop_sn_full.d = Hop_sn_step.d)) IS NULL)
 GROUP BY 1, 2;
 
-INSERT INTO logica_test.Hop_sn_full SELECT * FROM logica_test.Hop_sn_new;
+INSERT INTO synalog_test.Hop_sn_full SELECT * FROM synalog_test.Hop_sn_new;
 
-DROP TABLE IF EXISTS logica_test.Hop_sn_delta;
-CREATE TABLE logica_test.Hop_sn_delta AS WITH t_2_Edge AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_test.Hop_sn_delta;
+CREATE TABLE synalog_test.Hop_sn_delta AS WITH t_2_Edge AS (SELECT * FROM (
   
     SELECT
       0 AS a,
@@ -1585,7 +1585,7 @@ t_1_Hop_MultBodyAggAux_f1 AS (SELECT * FROM (
       Edge.b AS node,
       ((Hop_sn_new.d) + (1)) AS d
     FROM
-      logica_test.Hop_sn_new AS Hop_sn_new, t_2_Edge AS Edge
+      synalog_test.Hop_sn_new AS Hop_sn_new, t_2_Edge AS Edge
     WHERE
       (Hop_sn_new.d < 5) AND
       (Edge.a = Hop_sn_new.node)
@@ -1604,18 +1604,18 @@ FROM
   t_0_Hop_sn_back_step AS Hop_sn_back_step
 WHERE
   ((SELECT
-    MIN(1) AS logica_value
+    MIN(1) AS synalog_value
   FROM
-    logica_test.Hop_sn_full AS Hop_sn_full
+    synalog_test.Hop_sn_full AS Hop_sn_full
   WHERE
     (Hop_sn_full.node = Hop_sn_back_step.node) AND
     (Hop_sn_full.d = Hop_sn_back_step.d)) IS NULL)
 GROUP BY 1, 2;
 
-INSERT INTO logica_test.Hop_sn_full SELECT * FROM logica_test.Hop_sn_delta;
+INSERT INTO synalog_test.Hop_sn_full SELECT * FROM synalog_test.Hop_sn_delta;
 
-DROP TABLE IF EXISTS logica_test.Hop_sn_new;
-CREATE TABLE logica_test.Hop_sn_new AS WITH t_2_Edge AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_test.Hop_sn_new;
+CREATE TABLE synalog_test.Hop_sn_new AS WITH t_2_Edge AS (SELECT * FROM (
   
     SELECT
       0 AS a,
@@ -1648,7 +1648,7 @@ t_1_Hop_MultBodyAggAux_f8 AS (SELECT * FROM (
       Edge.b AS node,
       ((Hop_sn_delta.d) + (1)) AS d
     FROM
-      logica_test.Hop_sn_delta AS Hop_sn_delta, t_2_Edge AS Edge
+      synalog_test.Hop_sn_delta AS Hop_sn_delta, t_2_Edge AS Edge
     WHERE
       (Hop_sn_delta.d < 5) AND
       (Edge.a = Hop_sn_delta.node)
@@ -1667,18 +1667,18 @@ FROM
   t_0_Hop_sn_step AS Hop_sn_step
 WHERE
   ((SELECT
-    MIN(1) AS logica_value
+    MIN(1) AS synalog_value
   FROM
-    logica_test.Hop_sn_full AS Hop_sn_full
+    synalog_test.Hop_sn_full AS Hop_sn_full
   WHERE
     (Hop_sn_full.node = Hop_sn_step.node) AND
     (Hop_sn_full.d = Hop_sn_step.d)) IS NULL)
 GROUP BY 1, 2;
 
-INSERT INTO logica_test.Hop_sn_full SELECT * FROM logica_test.Hop_sn_new;
+INSERT INTO synalog_test.Hop_sn_full SELECT * FROM synalog_test.Hop_sn_new;
 
-DROP TABLE IF EXISTS logica_test.Hop_sn_delta;
-CREATE TABLE logica_test.Hop_sn_delta AS WITH t_2_Edge AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_test.Hop_sn_delta;
+CREATE TABLE synalog_test.Hop_sn_delta AS WITH t_2_Edge AS (SELECT * FROM (
   
     SELECT
       0 AS a,
@@ -1711,7 +1711,7 @@ t_1_Hop_MultBodyAggAux_f1 AS (SELECT * FROM (
       Edge.b AS node,
       ((Hop_sn_new.d) + (1)) AS d
     FROM
-      logica_test.Hop_sn_new AS Hop_sn_new, t_2_Edge AS Edge
+      synalog_test.Hop_sn_new AS Hop_sn_new, t_2_Edge AS Edge
     WHERE
       (Hop_sn_new.d < 5) AND
       (Edge.a = Hop_sn_new.node)
@@ -1730,18 +1730,18 @@ FROM
   t_0_Hop_sn_back_step AS Hop_sn_back_step
 WHERE
   ((SELECT
-    MIN(1) AS logica_value
+    MIN(1) AS synalog_value
   FROM
-    logica_test.Hop_sn_full AS Hop_sn_full
+    synalog_test.Hop_sn_full AS Hop_sn_full
   WHERE
     (Hop_sn_full.node = Hop_sn_back_step.node) AND
     (Hop_sn_full.d = Hop_sn_back_step.d)) IS NULL)
 GROUP BY 1, 2;
 
-INSERT INTO logica_test.Hop_sn_full SELECT * FROM logica_test.Hop_sn_delta;
+INSERT INTO synalog_test.Hop_sn_full SELECT * FROM synalog_test.Hop_sn_delta;
 
-DROP TABLE IF EXISTS logica_test.Hop_sn_new;
-CREATE TABLE logica_test.Hop_sn_new AS WITH t_2_Edge AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_test.Hop_sn_new;
+CREATE TABLE synalog_test.Hop_sn_new AS WITH t_2_Edge AS (SELECT * FROM (
   
     SELECT
       0 AS a,
@@ -1774,7 +1774,7 @@ t_1_Hop_MultBodyAggAux_f8 AS (SELECT * FROM (
       Edge.b AS node,
       ((Hop_sn_delta.d) + (1)) AS d
     FROM
-      logica_test.Hop_sn_delta AS Hop_sn_delta, t_2_Edge AS Edge
+      synalog_test.Hop_sn_delta AS Hop_sn_delta, t_2_Edge AS Edge
     WHERE
       (Hop_sn_delta.d < 5) AND
       (Edge.a = Hop_sn_delta.node)
@@ -1793,18 +1793,18 @@ FROM
   t_0_Hop_sn_step AS Hop_sn_step
 WHERE
   ((SELECT
-    MIN(1) AS logica_value
+    MIN(1) AS synalog_value
   FROM
-    logica_test.Hop_sn_full AS Hop_sn_full
+    synalog_test.Hop_sn_full AS Hop_sn_full
   WHERE
     (Hop_sn_full.node = Hop_sn_step.node) AND
     (Hop_sn_full.d = Hop_sn_step.d)) IS NULL)
 GROUP BY 1, 2;
 
-INSERT INTO logica_test.Hop_sn_full SELECT * FROM logica_test.Hop_sn_new;
+INSERT INTO synalog_test.Hop_sn_full SELECT * FROM synalog_test.Hop_sn_new;
 
-DROP TABLE IF EXISTS logica_test.Hop_sn_delta;
-CREATE TABLE logica_test.Hop_sn_delta AS WITH t_2_Edge AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_test.Hop_sn_delta;
+CREATE TABLE synalog_test.Hop_sn_delta AS WITH t_2_Edge AS (SELECT * FROM (
   
     SELECT
       0 AS a,
@@ -1837,7 +1837,7 @@ t_1_Hop_MultBodyAggAux_f1 AS (SELECT * FROM (
       Edge.b AS node,
       ((Hop_sn_new.d) + (1)) AS d
     FROM
-      logica_test.Hop_sn_new AS Hop_sn_new, t_2_Edge AS Edge
+      synalog_test.Hop_sn_new AS Hop_sn_new, t_2_Edge AS Edge
     WHERE
       (Hop_sn_new.d < 5) AND
       (Edge.a = Hop_sn_new.node)
@@ -1856,18 +1856,18 @@ FROM
   t_0_Hop_sn_back_step AS Hop_sn_back_step
 WHERE
   ((SELECT
-    MIN(1) AS logica_value
+    MIN(1) AS synalog_value
   FROM
-    logica_test.Hop_sn_full AS Hop_sn_full
+    synalog_test.Hop_sn_full AS Hop_sn_full
   WHERE
     (Hop_sn_full.node = Hop_sn_back_step.node) AND
     (Hop_sn_full.d = Hop_sn_back_step.d)) IS NULL)
 GROUP BY 1, 2;
 
-INSERT INTO logica_test.Hop_sn_full SELECT * FROM logica_test.Hop_sn_delta;
+INSERT INTO synalog_test.Hop_sn_full SELECT * FROM synalog_test.Hop_sn_delta;
 
-DROP TABLE IF EXISTS logica_test.Hop_sn_new;
-CREATE TABLE logica_test.Hop_sn_new AS WITH t_2_Edge AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_test.Hop_sn_new;
+CREATE TABLE synalog_test.Hop_sn_new AS WITH t_2_Edge AS (SELECT * FROM (
   
     SELECT
       0 AS a,
@@ -1900,7 +1900,7 @@ t_1_Hop_MultBodyAggAux_f8 AS (SELECT * FROM (
       Edge.b AS node,
       ((Hop_sn_delta.d) + (1)) AS d
     FROM
-      logica_test.Hop_sn_delta AS Hop_sn_delta, t_2_Edge AS Edge
+      synalog_test.Hop_sn_delta AS Hop_sn_delta, t_2_Edge AS Edge
     WHERE
       (Hop_sn_delta.d < 5) AND
       (Edge.a = Hop_sn_delta.node)
@@ -1919,19 +1919,19 @@ FROM
   t_0_Hop_sn_step AS Hop_sn_step
 WHERE
   ((SELECT
-    MIN(1) AS logica_value
+    MIN(1) AS synalog_value
   FROM
-    logica_test.Hop_sn_full AS Hop_sn_full
+    synalog_test.Hop_sn_full AS Hop_sn_full
   WHERE
     (Hop_sn_full.node = Hop_sn_step.node) AND
     (Hop_sn_full.d = Hop_sn_step.d)) IS NULL)
 GROUP BY 1, 2;
 
-INSERT INTO logica_test.Hop_sn_full SELECT * FROM logica_test.Hop_sn_new;
+INSERT INTO synalog_test.Hop_sn_full SELECT * FROM synalog_test.Hop_sn_new;
 
 SELECT
   Hop_sn_full.node AS node,
   MIN(Hop_sn_full.d) AS d
 FROM
-  logica_test.Hop_sn_full AS Hop_sn_full
+  synalog_test.Hop_sn_full AS Hop_sn_full
 GROUP BY 1 ORDER BY node;

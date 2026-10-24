@@ -1,7 +1,7 @@
 -- Initializing DuckDB environment.
-create schema if not exists logica_home;
+create schema if not exists synalog_home;
 -- Empty record, has to have a field by DuckDB syntax.
-drop type if exists logicarecord893574736 cascade; create type logicarecord893574736 as struct(nirvana numeric);
+drop type if exists synalogrecord893574736 cascade; create type synalogrecord893574736 as struct(nirvana numeric);
 create sequence if not exists eternal_logical_sequence;
 
 WITH t_3_L AS (SELECT * FROM (
@@ -34,7 +34,7 @@ WITH t_3_L AS (SELECT * FROM (
 SELECT
   t_0_L.k AS k,
   (SELECT
-  ARRAY_AGG((CASE WHEN x_8.unnested_pod = 0 THEN {arg: - x_7.unnested_pod, value: x_7.unnested_pod} ELSE NULL END).value order by (CASE WHEN x_8.unnested_pod = 0 THEN {arg: - x_7.unnested_pod, value: x_7.unnested_pod} ELSE NULL END).arg) AS logica_value
+  ARRAY_AGG((CASE WHEN x_8.unnested_pod = 0 THEN {arg: - x_7.unnested_pod, value: x_7.unnested_pod} ELSE NULL END).value order by (CASE WHEN x_8.unnested_pod = 0 THEN {arg: - x_7.unnested_pod, value: x_7.unnested_pod} ELSE NULL END).arg) AS synalog_value
 FROM
   (select unnest(t_0_L.l) as unnested_pod) as x_7, (select unnest([0]) as unnested_pod) as x_8) AS v
 FROM

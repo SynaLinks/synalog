@@ -1,8 +1,8 @@
 -- Initializing PostgreSQL environment.
 set client_min_messages to warning;
-create schema if not exists logica_home;
--- Empty logica type: logicarecord893574736;
-DO $$ BEGIN if not exists (select 'I(am) :- I(think)' from pg_type where typname = 'logicarecord893574736') then create type logicarecord893574736 as (nirvana numeric); end if; END $$;
+create schema if not exists synalog_home;
+-- Empty synalog type: synalogrecord893574736;
+DO $$ BEGIN if not exists (select 'I(am) :- I(think)' from pg_type where typname = 'synalogrecord893574736') then create type synalogrecord893574736 as (nirvana numeric); end if; END $$;
 
 WITH t_1_Ship AS (SELECT * FROM (
   
@@ -90,7 +90,7 @@ WITH t_1_Ship AS (SELECT * FROM (
 SELECT
   Ship.id AS id,
   (SELECT (CASE WHEN synalog_v IS NULL OR 4 IS NULL THEN NULL WHEN CAST(synalog_v AS double precision) = 0 THEN CAST(synalog_v AS double precision) WHEN FLOOR(LOG(ABS(CAST(synalog_v AS double precision)))) - 14 + 4 >= 0 THEN (CASE WHEN CAST(synalog_v AS double precision) < 0 THEN -1 ELSE 1 END) * FLOOR(ABS(CAST(synalog_v AS double precision)) / POWER(10, FLOOR(LOG(ABS(CAST(synalog_v AS double precision)))) - 14) + 0.5) * POWER(10, FLOOR(LOG(ABS(CAST(synalog_v AS double precision)))) - 14) + 0 ELSE (CASE WHEN CAST(synalog_v AS double precision) < 0 THEN -1 ELSE 1 END) * FLOOR(ABS(CAST(synalog_v AS double precision)) * POWER(10, 4) + 0.5 + 0.5 * POWER(10, FLOOR(LOG(ABS(CAST(synalog_v AS double precision)))) - 14 + 4)) / POWER(10, 4) + 0 END) FROM (SELECT ((100) * ((CAST(Ship.kg AS double precision) / NULLIF(CAST((SELECT
-  SUM((CASE WHEN x_8 = 0 THEN t_0_Ship.kg ELSE NULL END)) AS logica_value
+  SUM((CASE WHEN x_8 = 0 THEN t_0_Ship.kg ELSE NULL END)) AS synalog_value
 FROM
   t_1_Ship AS t_0_Ship, UNNEST(ARRAY[0]) as x_8
 WHERE

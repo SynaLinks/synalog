@@ -30,7 +30,7 @@ t_2_N AS (SELECT * FROM (
 SELECT
   t_0_N.n AS n,
   (SELECT
-  SUM(MagicalEntangle(1, x_4.value)) AS logica_value
+  SUM(MagicalEntangle(1, x_4.value)) AS synalog_value
 FROM
   t_1_E AS E, JSON_EACH(JSON_ARRAY(0)) as x_4
 WHERE

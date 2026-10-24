@@ -1,5 +1,5 @@
-DROP TABLE IF EXISTS logica_test.In_table;
-CREATE TABLE logica_test.In_table AS WITH t_0_Stock AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_test.In_table;
+CREATE TABLE synalog_test.In_table AS WITH t_0_Stock AS (SELECT * FROM (
   
     SELECT
       'north' AS warehouse,
@@ -62,17 +62,17 @@ FROM
   t_0_Stock AS Stock
 GROUP BY 1, 2;
 
--- Interacting with table logica_test.In_table
+-- Interacting with table synalog_test.In_table
 
 SELECT
   t_0_In.item AS item
 FROM
-  logica_test.In_table AS t_0_In
+  synalog_test.In_table AS t_0_In
 WHERE
   ((SELECT
-    MIN(1) AS logica_value
+    MIN(1) AS synalog_value
   FROM
-    logica_test.In_table AS t_1_In
+    synalog_test.In_table AS t_1_In
   WHERE
     (t_1_In.warehouse = 'east') AND
     (t_1_In.item = t_0_In.item)) IS NULL) AND

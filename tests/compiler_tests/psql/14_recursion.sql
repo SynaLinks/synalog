@@ -1,8 +1,8 @@
 -- Initializing PostgreSQL environment.
 set client_min_messages to warning;
-create schema if not exists logica_home;
--- Empty logica type: logicarecord893574736;
-DO $$ BEGIN if not exists (select 'I(am) :- I(think)' from pg_type where typname = 'logicarecord893574736') then create type logicarecord893574736 as (nirvana numeric); end if; END $$;
+create schema if not exists synalog_home;
+-- Empty synalog type: synalogrecord893574736;
+DO $$ BEGIN if not exists (select 'I(am) :- I(think)' from pg_type where typname = 'synalogrecord893574736') then create type synalogrecord893574736 as (nirvana numeric); end if; END $$;
 
 WITH t_2_Edge AS (SELECT * FROM (
   
@@ -225,7 +225,7 @@ t_85_Distance_MultBodyAggAux_recursive_head_f1 AS (SELECT * FROM (
     SELECT
       t_86_Edge.col0 AS col0,
       t_86_Edge.col1 AS col1,
-      1 AS logica_value
+      1 AS synalog_value
     FROM
       t_2_Edge AS t_86_Edge
   
@@ -233,7 +233,7 @@ t_85_Distance_MultBodyAggAux_recursive_head_f1 AS (SELECT * FROM (
 t_84_Distance_r0 AS (SELECT
   Distance_MultBodyAggAux_recursive_head_f1.col0 AS col0,
   Distance_MultBodyAggAux_recursive_head_f1.col1 AS col1,
-  MIN(Distance_MultBodyAggAux_recursive_head_f1.logica_value) AS logica_value
+  MIN(Distance_MultBodyAggAux_recursive_head_f1.synalog_value) AS synalog_value
 FROM
   t_85_Distance_MultBodyAggAux_recursive_head_f1 AS Distance_MultBodyAggAux_recursive_head_f1
 GROUP BY Distance_MultBodyAggAux_recursive_head_f1.col0, Distance_MultBodyAggAux_recursive_head_f1.col1),
@@ -242,7 +242,7 @@ t_80_Distance_MultBodyAggAux_recursive_head_f2 AS (SELECT * FROM (
     SELECT
       t_81_Edge.col0 AS col0,
       t_81_Edge.col1 AS col1,
-      1 AS logica_value
+      1 AS synalog_value
     FROM
       t_2_Edge AS t_81_Edge
    UNION ALL
@@ -250,7 +250,7 @@ t_80_Distance_MultBodyAggAux_recursive_head_f2 AS (SELECT * FROM (
     SELECT
       Distance_r0.col0 AS col0,
       t_82_Edge.col1 AS col1,
-      ((t_83_Distance_r0.logica_value) + (1)) AS logica_value
+      ((t_83_Distance_r0.synalog_value) + (1)) AS synalog_value
     FROM
       t_84_Distance_r0 AS Distance_r0, t_2_Edge AS t_82_Edge, t_84_Distance_r0 AS t_83_Distance_r0
     WHERE
@@ -262,7 +262,7 @@ t_80_Distance_MultBodyAggAux_recursive_head_f2 AS (SELECT * FROM (
 t_79_Distance_r1 AS (SELECT
   Distance_MultBodyAggAux_recursive_head_f2.col0 AS col0,
   Distance_MultBodyAggAux_recursive_head_f2.col1 AS col1,
-  MIN(Distance_MultBodyAggAux_recursive_head_f2.logica_value) AS logica_value
+  MIN(Distance_MultBodyAggAux_recursive_head_f2.synalog_value) AS synalog_value
 FROM
   t_80_Distance_MultBodyAggAux_recursive_head_f2 AS Distance_MultBodyAggAux_recursive_head_f2
 GROUP BY Distance_MultBodyAggAux_recursive_head_f2.col0, Distance_MultBodyAggAux_recursive_head_f2.col1),
@@ -271,7 +271,7 @@ t_75_Distance_MultBodyAggAux_recursive_head_f3 AS (SELECT * FROM (
     SELECT
       t_76_Edge.col0 AS col0,
       t_76_Edge.col1 AS col1,
-      1 AS logica_value
+      1 AS synalog_value
     FROM
       t_2_Edge AS t_76_Edge
    UNION ALL
@@ -279,7 +279,7 @@ t_75_Distance_MultBodyAggAux_recursive_head_f3 AS (SELECT * FROM (
     SELECT
       Distance_r1.col0 AS col0,
       t_77_Edge.col1 AS col1,
-      ((t_78_Distance_r1.logica_value) + (1)) AS logica_value
+      ((t_78_Distance_r1.synalog_value) + (1)) AS synalog_value
     FROM
       t_79_Distance_r1 AS Distance_r1, t_2_Edge AS t_77_Edge, t_79_Distance_r1 AS t_78_Distance_r1
     WHERE
@@ -291,7 +291,7 @@ t_75_Distance_MultBodyAggAux_recursive_head_f3 AS (SELECT * FROM (
 t_74_Distance_r2 AS (SELECT
   Distance_MultBodyAggAux_recursive_head_f3.col0 AS col0,
   Distance_MultBodyAggAux_recursive_head_f3.col1 AS col1,
-  MIN(Distance_MultBodyAggAux_recursive_head_f3.logica_value) AS logica_value
+  MIN(Distance_MultBodyAggAux_recursive_head_f3.synalog_value) AS synalog_value
 FROM
   t_75_Distance_MultBodyAggAux_recursive_head_f3 AS Distance_MultBodyAggAux_recursive_head_f3
 GROUP BY Distance_MultBodyAggAux_recursive_head_f3.col0, Distance_MultBodyAggAux_recursive_head_f3.col1),
@@ -300,7 +300,7 @@ t_70_Distance_MultBodyAggAux_recursive_head_f4 AS (SELECT * FROM (
     SELECT
       t_71_Edge.col0 AS col0,
       t_71_Edge.col1 AS col1,
-      1 AS logica_value
+      1 AS synalog_value
     FROM
       t_2_Edge AS t_71_Edge
    UNION ALL
@@ -308,7 +308,7 @@ t_70_Distance_MultBodyAggAux_recursive_head_f4 AS (SELECT * FROM (
     SELECT
       Distance_r2.col0 AS col0,
       t_72_Edge.col1 AS col1,
-      ((t_73_Distance_r2.logica_value) + (1)) AS logica_value
+      ((t_73_Distance_r2.synalog_value) + (1)) AS synalog_value
     FROM
       t_74_Distance_r2 AS Distance_r2, t_2_Edge AS t_72_Edge, t_74_Distance_r2 AS t_73_Distance_r2
     WHERE
@@ -320,7 +320,7 @@ t_70_Distance_MultBodyAggAux_recursive_head_f4 AS (SELECT * FROM (
 t_69_Distance_r3 AS (SELECT
   Distance_MultBodyAggAux_recursive_head_f4.col0 AS col0,
   Distance_MultBodyAggAux_recursive_head_f4.col1 AS col1,
-  MIN(Distance_MultBodyAggAux_recursive_head_f4.logica_value) AS logica_value
+  MIN(Distance_MultBodyAggAux_recursive_head_f4.synalog_value) AS synalog_value
 FROM
   t_70_Distance_MultBodyAggAux_recursive_head_f4 AS Distance_MultBodyAggAux_recursive_head_f4
 GROUP BY Distance_MultBodyAggAux_recursive_head_f4.col0, Distance_MultBodyAggAux_recursive_head_f4.col1),
@@ -329,7 +329,7 @@ t_65_Distance_MultBodyAggAux_recursive_head_f5 AS (SELECT * FROM (
     SELECT
       t_66_Edge.col0 AS col0,
       t_66_Edge.col1 AS col1,
-      1 AS logica_value
+      1 AS synalog_value
     FROM
       t_2_Edge AS t_66_Edge
    UNION ALL
@@ -337,7 +337,7 @@ t_65_Distance_MultBodyAggAux_recursive_head_f5 AS (SELECT * FROM (
     SELECT
       Distance_r3.col0 AS col0,
       t_67_Edge.col1 AS col1,
-      ((t_68_Distance_r3.logica_value) + (1)) AS logica_value
+      ((t_68_Distance_r3.synalog_value) + (1)) AS synalog_value
     FROM
       t_69_Distance_r3 AS Distance_r3, t_2_Edge AS t_67_Edge, t_69_Distance_r3 AS t_68_Distance_r3
     WHERE
@@ -349,7 +349,7 @@ t_65_Distance_MultBodyAggAux_recursive_head_f5 AS (SELECT * FROM (
 t_64_Distance_r4 AS (SELECT
   Distance_MultBodyAggAux_recursive_head_f5.col0 AS col0,
   Distance_MultBodyAggAux_recursive_head_f5.col1 AS col1,
-  MIN(Distance_MultBodyAggAux_recursive_head_f5.logica_value) AS logica_value
+  MIN(Distance_MultBodyAggAux_recursive_head_f5.synalog_value) AS synalog_value
 FROM
   t_65_Distance_MultBodyAggAux_recursive_head_f5 AS Distance_MultBodyAggAux_recursive_head_f5
 GROUP BY Distance_MultBodyAggAux_recursive_head_f5.col0, Distance_MultBodyAggAux_recursive_head_f5.col1),
@@ -358,7 +358,7 @@ t_60_Distance_MultBodyAggAux_recursive_head_f6 AS (SELECT * FROM (
     SELECT
       t_61_Edge.col0 AS col0,
       t_61_Edge.col1 AS col1,
-      1 AS logica_value
+      1 AS synalog_value
     FROM
       t_2_Edge AS t_61_Edge
    UNION ALL
@@ -366,7 +366,7 @@ t_60_Distance_MultBodyAggAux_recursive_head_f6 AS (SELECT * FROM (
     SELECT
       Distance_r4.col0 AS col0,
       t_62_Edge.col1 AS col1,
-      ((t_63_Distance_r4.logica_value) + (1)) AS logica_value
+      ((t_63_Distance_r4.synalog_value) + (1)) AS synalog_value
     FROM
       t_64_Distance_r4 AS Distance_r4, t_2_Edge AS t_62_Edge, t_64_Distance_r4 AS t_63_Distance_r4
     WHERE
@@ -378,7 +378,7 @@ t_60_Distance_MultBodyAggAux_recursive_head_f6 AS (SELECT * FROM (
 t_59_Distance_r5 AS (SELECT
   Distance_MultBodyAggAux_recursive_head_f6.col0 AS col0,
   Distance_MultBodyAggAux_recursive_head_f6.col1 AS col1,
-  MIN(Distance_MultBodyAggAux_recursive_head_f6.logica_value) AS logica_value
+  MIN(Distance_MultBodyAggAux_recursive_head_f6.synalog_value) AS synalog_value
 FROM
   t_60_Distance_MultBodyAggAux_recursive_head_f6 AS Distance_MultBodyAggAux_recursive_head_f6
 GROUP BY Distance_MultBodyAggAux_recursive_head_f6.col0, Distance_MultBodyAggAux_recursive_head_f6.col1),
@@ -387,7 +387,7 @@ t_55_Distance_MultBodyAggAux_recursive_head_f7 AS (SELECT * FROM (
     SELECT
       t_56_Edge.col0 AS col0,
       t_56_Edge.col1 AS col1,
-      1 AS logica_value
+      1 AS synalog_value
     FROM
       t_2_Edge AS t_56_Edge
    UNION ALL
@@ -395,7 +395,7 @@ t_55_Distance_MultBodyAggAux_recursive_head_f7 AS (SELECT * FROM (
     SELECT
       Distance_r5.col0 AS col0,
       t_57_Edge.col1 AS col1,
-      ((t_58_Distance_r5.logica_value) + (1)) AS logica_value
+      ((t_58_Distance_r5.synalog_value) + (1)) AS synalog_value
     FROM
       t_59_Distance_r5 AS Distance_r5, t_2_Edge AS t_57_Edge, t_59_Distance_r5 AS t_58_Distance_r5
     WHERE
@@ -407,7 +407,7 @@ t_55_Distance_MultBodyAggAux_recursive_head_f7 AS (SELECT * FROM (
 t_54_Distance_r6 AS (SELECT
   Distance_MultBodyAggAux_recursive_head_f7.col0 AS col0,
   Distance_MultBodyAggAux_recursive_head_f7.col1 AS col1,
-  MIN(Distance_MultBodyAggAux_recursive_head_f7.logica_value) AS logica_value
+  MIN(Distance_MultBodyAggAux_recursive_head_f7.synalog_value) AS synalog_value
 FROM
   t_55_Distance_MultBodyAggAux_recursive_head_f7 AS Distance_MultBodyAggAux_recursive_head_f7
 GROUP BY Distance_MultBodyAggAux_recursive_head_f7.col0, Distance_MultBodyAggAux_recursive_head_f7.col1),
@@ -416,7 +416,7 @@ t_50_Distance_MultBodyAggAux_recursive_head_f8 AS (SELECT * FROM (
     SELECT
       t_51_Edge.col0 AS col0,
       t_51_Edge.col1 AS col1,
-      1 AS logica_value
+      1 AS synalog_value
     FROM
       t_2_Edge AS t_51_Edge
    UNION ALL
@@ -424,7 +424,7 @@ t_50_Distance_MultBodyAggAux_recursive_head_f8 AS (SELECT * FROM (
     SELECT
       Distance_r6.col0 AS col0,
       t_52_Edge.col1 AS col1,
-      ((t_53_Distance_r6.logica_value) + (1)) AS logica_value
+      ((t_53_Distance_r6.synalog_value) + (1)) AS synalog_value
     FROM
       t_54_Distance_r6 AS Distance_r6, t_2_Edge AS t_52_Edge, t_54_Distance_r6 AS t_53_Distance_r6
     WHERE
@@ -436,7 +436,7 @@ t_50_Distance_MultBodyAggAux_recursive_head_f8 AS (SELECT * FROM (
 t_49_Distance_r7 AS (SELECT
   Distance_MultBodyAggAux_recursive_head_f8.col0 AS col0,
   Distance_MultBodyAggAux_recursive_head_f8.col1 AS col1,
-  MIN(Distance_MultBodyAggAux_recursive_head_f8.logica_value) AS logica_value
+  MIN(Distance_MultBodyAggAux_recursive_head_f8.synalog_value) AS synalog_value
 FROM
   t_50_Distance_MultBodyAggAux_recursive_head_f8 AS Distance_MultBodyAggAux_recursive_head_f8
 GROUP BY Distance_MultBodyAggAux_recursive_head_f8.col0, Distance_MultBodyAggAux_recursive_head_f8.col1),
@@ -445,7 +445,7 @@ t_45_Distance_MultBodyAggAux_recursive_head_f9 AS (SELECT * FROM (
     SELECT
       t_46_Edge.col0 AS col0,
       t_46_Edge.col1 AS col1,
-      1 AS logica_value
+      1 AS synalog_value
     FROM
       t_2_Edge AS t_46_Edge
    UNION ALL
@@ -453,7 +453,7 @@ t_45_Distance_MultBodyAggAux_recursive_head_f9 AS (SELECT * FROM (
     SELECT
       Distance_r7.col0 AS col0,
       t_47_Edge.col1 AS col1,
-      ((t_48_Distance_r7.logica_value) + (1)) AS logica_value
+      ((t_48_Distance_r7.synalog_value) + (1)) AS synalog_value
     FROM
       t_49_Distance_r7 AS Distance_r7, t_2_Edge AS t_47_Edge, t_49_Distance_r7 AS t_48_Distance_r7
     WHERE
@@ -465,7 +465,7 @@ t_45_Distance_MultBodyAggAux_recursive_head_f9 AS (SELECT * FROM (
 t_44_Distance_r8 AS (SELECT
   Distance_MultBodyAggAux_recursive_head_f9.col0 AS col0,
   Distance_MultBodyAggAux_recursive_head_f9.col1 AS col1,
-  MIN(Distance_MultBodyAggAux_recursive_head_f9.logica_value) AS logica_value
+  MIN(Distance_MultBodyAggAux_recursive_head_f9.synalog_value) AS synalog_value
 FROM
   t_45_Distance_MultBodyAggAux_recursive_head_f9 AS Distance_MultBodyAggAux_recursive_head_f9
 GROUP BY Distance_MultBodyAggAux_recursive_head_f9.col0, Distance_MultBodyAggAux_recursive_head_f9.col1),
@@ -474,7 +474,7 @@ t_40_Distance_MultBodyAggAux_recursive_head_f10 AS (SELECT * FROM (
     SELECT
       t_41_Edge.col0 AS col0,
       t_41_Edge.col1 AS col1,
-      1 AS logica_value
+      1 AS synalog_value
     FROM
       t_2_Edge AS t_41_Edge
    UNION ALL
@@ -482,7 +482,7 @@ t_40_Distance_MultBodyAggAux_recursive_head_f10 AS (SELECT * FROM (
     SELECT
       Distance_r8.col0 AS col0,
       t_42_Edge.col1 AS col1,
-      ((t_43_Distance_r8.logica_value) + (1)) AS logica_value
+      ((t_43_Distance_r8.synalog_value) + (1)) AS synalog_value
     FROM
       t_44_Distance_r8 AS Distance_r8, t_2_Edge AS t_42_Edge, t_44_Distance_r8 AS t_43_Distance_r8
     WHERE
@@ -494,7 +494,7 @@ t_40_Distance_MultBodyAggAux_recursive_head_f10 AS (SELECT * FROM (
 t_39_Distance_r9 AS (SELECT
   Distance_MultBodyAggAux_recursive_head_f10.col0 AS col0,
   Distance_MultBodyAggAux_recursive_head_f10.col1 AS col1,
-  MIN(Distance_MultBodyAggAux_recursive_head_f10.logica_value) AS logica_value
+  MIN(Distance_MultBodyAggAux_recursive_head_f10.synalog_value) AS synalog_value
 FROM
   t_40_Distance_MultBodyAggAux_recursive_head_f10 AS Distance_MultBodyAggAux_recursive_head_f10
 GROUP BY Distance_MultBodyAggAux_recursive_head_f10.col0, Distance_MultBodyAggAux_recursive_head_f10.col1),
@@ -503,7 +503,7 @@ t_35_Distance_MultBodyAggAux_recursive_head_f21 AS (SELECT * FROM (
     SELECT
       t_36_Edge.col0 AS col0,
       t_36_Edge.col1 AS col1,
-      1 AS logica_value
+      1 AS synalog_value
     FROM
       t_2_Edge AS t_36_Edge
    UNION ALL
@@ -511,7 +511,7 @@ t_35_Distance_MultBodyAggAux_recursive_head_f21 AS (SELECT * FROM (
     SELECT
       Distance_r9.col0 AS col0,
       t_37_Edge.col1 AS col1,
-      ((t_38_Distance_r9.logica_value) + (1)) AS logica_value
+      ((t_38_Distance_r9.synalog_value) + (1)) AS synalog_value
     FROM
       t_39_Distance_r9 AS Distance_r9, t_2_Edge AS t_37_Edge, t_39_Distance_r9 AS t_38_Distance_r9
     WHERE
@@ -523,14 +523,14 @@ t_35_Distance_MultBodyAggAux_recursive_head_f21 AS (SELECT * FROM (
 t_34_Distance AS (SELECT
   Distance_MultBodyAggAux_recursive_head_f21.col0 AS col0,
   Distance_MultBodyAggAux_recursive_head_f21.col1 AS col1,
-  MIN(Distance_MultBodyAggAux_recursive_head_f21.logica_value) AS logica_value
+  MIN(Distance_MultBodyAggAux_recursive_head_f21.synalog_value) AS synalog_value
 FROM
   t_35_Distance_MultBodyAggAux_recursive_head_f21 AS Distance_MultBodyAggAux_recursive_head_f21
 GROUP BY Distance_MultBodyAggAux_recursive_head_f21.col0, Distance_MultBodyAggAux_recursive_head_f21.col1)
 SELECT
   Reachable.col0 AS src,
   Reachable.col1 AS dst,
-  t_0_Distance.logica_value AS distance
+  t_0_Distance.synalog_value AS distance
 FROM
   t_1_Reachable AS Reachable, t_34_Distance AS t_0_Distance
 WHERE

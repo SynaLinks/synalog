@@ -1,6 +1,6 @@
 SELECT
   (SELECT
-  SUM(1) AS logica_value
+  SUM(1) AS synalog_value
 FROM
   UNNEST(ARRAY[1, 2, 3]) as x_6, UNNEST(ARRAY[2, 3, 4]) as x_8
 WHERE

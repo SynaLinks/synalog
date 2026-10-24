@@ -1,5 +1,5 @@
-DROP TABLE IF EXISTS logica_test.Chain_sn_delta;
-CREATE TABLE logica_test.Chain_sn_delta AS WITH t_5_Employees AS (SELECT * FROM VALUES
+DROP TABLE IF EXISTS synalog_test.Chain_sn_delta;
+CREATE TABLE synalog_test.Chain_sn_delta AS WITH t_5_Employees AS (SELECT * FROM VALUES
   (1, "ann", "eng", 10, "active", "https://x/ann"),
   (2, "bob", "eng", 10, "active", "https://x/bob"),
   (3, "cid", "ops", 20, "inactive", "https://x/cid"),
@@ -44,21 +44,21 @@ FROM
   t_0_Chain_MultBodyAggAux_f2 AS Chain_MultBodyAggAux_f2
 GROUP BY 1, 2;
 
--- Interacting with table logica_test.Chain_sn_delta
+-- Interacting with table synalog_test.Chain_sn_delta
 
-DROP TABLE IF EXISTS logica_test.Chain_sn_t0;
-CREATE TABLE logica_test.Chain_sn_t0 AS SELECT
+DROP TABLE IF EXISTS synalog_test.Chain_sn_t0;
+CREATE TABLE synalog_test.Chain_sn_t0 AS SELECT
   Chain_sn_delta.employee_id AS employee_id,
   Chain_sn_delta.manager_id AS manager_id
 FROM
-  logica_test.Chain_sn_delta AS Chain_sn_delta
+  synalog_test.Chain_sn_delta AS Chain_sn_delta
 WHERE
   (1 = 0);
 
--- Interacting with table logica_test.Chain_sn_t0
+-- Interacting with table synalog_test.Chain_sn_t0
 
-DROP TABLE IF EXISTS logica_test.Chain_sn_t1;
-CREATE TABLE logica_test.Chain_sn_t1 AS WITH t_5_Employees AS (SELECT * FROM VALUES
+DROP TABLE IF EXISTS synalog_test.Chain_sn_t1;
+CREATE TABLE synalog_test.Chain_sn_t1 AS WITH t_5_Employees AS (SELECT * FROM VALUES
   (1, "ann", "eng", 10, "active", "https://x/ann"),
   (2, "bob", "eng", 10, "active", "https://x/bob"),
   (3, "cid", "ops", 20, "inactive", "https://x/cid"),
@@ -93,7 +93,7 @@ t_1_Chain_MultBodyAggAux_f3 AS (SELECT * FROM (
       Chain_sn_t0.employee_id AS employee_id,
       Manages.manager_id AS manager_id
     FROM
-      logica_test.Chain_sn_t0 AS Chain_sn_t0, t_2_Manages AS Manages
+      synalog_test.Chain_sn_t0 AS Chain_sn_t0, t_2_Manages AS Manages
     WHERE
       (Manages.employee_id = Chain_sn_t0.manager_id)
    UNION ALL
@@ -119,10 +119,10 @@ FROM
 WHERE
   (1 = 0);
 
--- Interacting with table logica_test.Chain_sn_t1
+-- Interacting with table synalog_test.Chain_sn_t1
 
-DROP TABLE IF EXISTS logica_test.Chain_sn_t2;
-CREATE TABLE logica_test.Chain_sn_t2 AS WITH t_5_Employees AS (SELECT * FROM VALUES
+DROP TABLE IF EXISTS synalog_test.Chain_sn_t2;
+CREATE TABLE synalog_test.Chain_sn_t2 AS WITH t_5_Employees AS (SELECT * FROM VALUES
   (1, "ann", "eng", 10, "active", "https://x/ann"),
   (2, "bob", "eng", 10, "active", "https://x/bob"),
   (3, "cid", "ops", 20, "inactive", "https://x/cid"),
@@ -157,7 +157,7 @@ t_1_Chain_MultBodyAggAux_f4 AS (SELECT * FROM (
       Chain_sn_t1.employee_id AS employee_id,
       Manages.manager_id AS manager_id
     FROM
-      logica_test.Chain_sn_t1 AS Chain_sn_t1, t_2_Manages AS Manages
+      synalog_test.Chain_sn_t1 AS Chain_sn_t1, t_2_Manages AS Manages
     WHERE
       (Manages.employee_id = Chain_sn_t1.manager_id)
    UNION ALL
@@ -183,10 +183,10 @@ FROM
 WHERE
   (1 = 0);
 
--- Interacting with table logica_test.Chain_sn_t2
+-- Interacting with table synalog_test.Chain_sn_t2
 
-DROP TABLE IF EXISTS logica_test.Chain_sn_t3;
-CREATE TABLE logica_test.Chain_sn_t3 AS WITH t_5_Employees AS (SELECT * FROM VALUES
+DROP TABLE IF EXISTS synalog_test.Chain_sn_t3;
+CREATE TABLE synalog_test.Chain_sn_t3 AS WITH t_5_Employees AS (SELECT * FROM VALUES
   (1, "ann", "eng", 10, "active", "https://x/ann"),
   (2, "bob", "eng", 10, "active", "https://x/bob"),
   (3, "cid", "ops", 20, "inactive", "https://x/cid"),
@@ -221,7 +221,7 @@ t_1_Chain_MultBodyAggAux_f5 AS (SELECT * FROM (
       Chain_sn_t2.employee_id AS employee_id,
       Manages.manager_id AS manager_id
     FROM
-      logica_test.Chain_sn_t2 AS Chain_sn_t2, t_2_Manages AS Manages
+      synalog_test.Chain_sn_t2 AS Chain_sn_t2, t_2_Manages AS Manages
     WHERE
       (Manages.employee_id = Chain_sn_t2.manager_id)
    UNION ALL
@@ -247,10 +247,10 @@ FROM
 WHERE
   (1 = 0);
 
--- Interacting with table logica_test.Chain_sn_t3
+-- Interacting with table synalog_test.Chain_sn_t3
 
-DROP TABLE IF EXISTS logica_test.Chain_sn_t4;
-CREATE TABLE logica_test.Chain_sn_t4 AS WITH t_5_Employees AS (SELECT * FROM VALUES
+DROP TABLE IF EXISTS synalog_test.Chain_sn_t4;
+CREATE TABLE synalog_test.Chain_sn_t4 AS WITH t_5_Employees AS (SELECT * FROM VALUES
   (1, "ann", "eng", 10, "active", "https://x/ann"),
   (2, "bob", "eng", 10, "active", "https://x/bob"),
   (3, "cid", "ops", 20, "inactive", "https://x/cid"),
@@ -285,7 +285,7 @@ t_1_Chain_MultBodyAggAux_f6 AS (SELECT * FROM (
       Chain_sn_t3.employee_id AS employee_id,
       Manages.manager_id AS manager_id
     FROM
-      logica_test.Chain_sn_t3 AS Chain_sn_t3, t_2_Manages AS Manages
+      synalog_test.Chain_sn_t3 AS Chain_sn_t3, t_2_Manages AS Manages
     WHERE
       (Manages.employee_id = Chain_sn_t3.manager_id)
    UNION ALL
@@ -311,10 +311,10 @@ FROM
 WHERE
   (1 = 0);
 
--- Interacting with table logica_test.Chain_sn_t4
+-- Interacting with table synalog_test.Chain_sn_t4
 
-DROP TABLE IF EXISTS logica_test.Chain_sn_t5;
-CREATE TABLE logica_test.Chain_sn_t5 AS WITH t_5_Employees AS (SELECT * FROM VALUES
+DROP TABLE IF EXISTS synalog_test.Chain_sn_t5;
+CREATE TABLE synalog_test.Chain_sn_t5 AS WITH t_5_Employees AS (SELECT * FROM VALUES
   (1, "ann", "eng", 10, "active", "https://x/ann"),
   (2, "bob", "eng", 10, "active", "https://x/bob"),
   (3, "cid", "ops", 20, "inactive", "https://x/cid"),
@@ -349,7 +349,7 @@ t_1_Chain_MultBodyAggAux_f7 AS (SELECT * FROM (
       Chain_sn_t4.employee_id AS employee_id,
       Manages.manager_id AS manager_id
     FROM
-      logica_test.Chain_sn_t4 AS Chain_sn_t4, t_2_Manages AS Manages
+      synalog_test.Chain_sn_t4 AS Chain_sn_t4, t_2_Manages AS Manages
     WHERE
       (Manages.employee_id = Chain_sn_t4.manager_id)
    UNION ALL
@@ -375,58 +375,58 @@ FROM
 WHERE
   (1 = 0);
 
--- Interacting with table logica_test.Chain_sn_t5
+-- Interacting with table synalog_test.Chain_sn_t5
 
-DROP TABLE IF EXISTS logica_test.Chain_sn_full;
-CREATE TABLE logica_test.Chain_sn_full AS SELECT * FROM (
+DROP TABLE IF EXISTS synalog_test.Chain_sn_full;
+CREATE TABLE synalog_test.Chain_sn_full AS SELECT * FROM (
   
     SELECT
       Chain_sn_delta.employee_id AS employee_id,
       Chain_sn_delta.manager_id AS manager_id
     FROM
-      logica_test.Chain_sn_delta AS Chain_sn_delta
+      synalog_test.Chain_sn_delta AS Chain_sn_delta
    UNION ALL
   
     SELECT
       Chain_sn_t1.employee_id AS employee_id,
       Chain_sn_t1.manager_id AS manager_id
     FROM
-      logica_test.Chain_sn_t1 AS Chain_sn_t1
+      synalog_test.Chain_sn_t1 AS Chain_sn_t1
    UNION ALL
   
     SELECT
       Chain_sn_t2.employee_id AS employee_id,
       Chain_sn_t2.manager_id AS manager_id
     FROM
-      logica_test.Chain_sn_t2 AS Chain_sn_t2
+      synalog_test.Chain_sn_t2 AS Chain_sn_t2
    UNION ALL
   
     SELECT
       Chain_sn_t3.employee_id AS employee_id,
       Chain_sn_t3.manager_id AS manager_id
     FROM
-      logica_test.Chain_sn_t3 AS Chain_sn_t3
+      synalog_test.Chain_sn_t3 AS Chain_sn_t3
    UNION ALL
   
     SELECT
       Chain_sn_t4.employee_id AS employee_id,
       Chain_sn_t4.manager_id AS manager_id
     FROM
-      logica_test.Chain_sn_t4 AS Chain_sn_t4
+      synalog_test.Chain_sn_t4 AS Chain_sn_t4
    UNION ALL
   
     SELECT
       Chain_sn_t5.employee_id AS employee_id,
       Chain_sn_t5.manager_id AS manager_id
     FROM
-      logica_test.Chain_sn_t5 AS Chain_sn_t5
+      synalog_test.Chain_sn_t5 AS Chain_sn_t5
   
 ) AS UNUSED_TABLE_NAME  ;
 
--- Interacting with table logica_test.Chain_sn_full
+-- Interacting with table synalog_test.Chain_sn_full
 
-DROP TABLE IF EXISTS logica_test.Chain_sn_new;
-CREATE TABLE logica_test.Chain_sn_new AS WITH t_5_Employees AS (SELECT * FROM VALUES
+DROP TABLE IF EXISTS synalog_test.Chain_sn_new;
+CREATE TABLE synalog_test.Chain_sn_new AS WITH t_5_Employees AS (SELECT * FROM VALUES
   (1, "ann", "eng", 10, "active", "https://x/ann"),
   (2, "bob", "eng", 10, "active", "https://x/bob"),
   (3, "cid", "ops", 20, "inactive", "https://x/cid"),
@@ -461,7 +461,7 @@ t_1_Chain_MultBodyAggAux_f8 AS (SELECT * FROM (
       Chain_sn_delta.employee_id AS employee_id,
       Manages.manager_id AS manager_id
     FROM
-      logica_test.Chain_sn_delta AS Chain_sn_delta, t_2_Manages AS Manages
+      synalog_test.Chain_sn_delta AS Chain_sn_delta, t_2_Manages AS Manages
     WHERE
       (Manages.employee_id = Chain_sn_delta.manager_id)
    UNION ALL
@@ -486,18 +486,18 @@ FROM
   t_0_Chain_sn_step AS Chain_sn_step
 WHERE
   ((SELECT
-    MIN(1) AS logica_value
+    MIN(1) AS synalog_value
   FROM
-    logica_test.Chain_sn_full AS Chain_sn_full
+    synalog_test.Chain_sn_full AS Chain_sn_full
   WHERE
     (Chain_sn_full.employee_id = Chain_sn_step.employee_id) AND
     (Chain_sn_full.manager_id = Chain_sn_step.manager_id)) IS NULL)
 GROUP BY 1, 2;
 
-INSERT INTO logica_test.Chain_sn_full SELECT * FROM logica_test.Chain_sn_new;
+INSERT INTO synalog_test.Chain_sn_full SELECT * FROM synalog_test.Chain_sn_new;
 
-DROP TABLE IF EXISTS logica_test.Chain_sn_delta;
-CREATE TABLE logica_test.Chain_sn_delta AS WITH t_5_Employees AS (SELECT * FROM VALUES
+DROP TABLE IF EXISTS synalog_test.Chain_sn_delta;
+CREATE TABLE synalog_test.Chain_sn_delta AS WITH t_5_Employees AS (SELECT * FROM VALUES
   (1, "ann", "eng", 10, "active", "https://x/ann"),
   (2, "bob", "eng", 10, "active", "https://x/bob"),
   (3, "cid", "ops", 20, "inactive", "https://x/cid"),
@@ -532,7 +532,7 @@ t_1_Chain_MultBodyAggAux_f1 AS (SELECT * FROM (
       Chain_sn_new.employee_id AS employee_id,
       Manages.manager_id AS manager_id
     FROM
-      logica_test.Chain_sn_new AS Chain_sn_new, t_2_Manages AS Manages
+      synalog_test.Chain_sn_new AS Chain_sn_new, t_2_Manages AS Manages
     WHERE
       (Manages.employee_id = Chain_sn_new.manager_id)
    UNION ALL
@@ -557,18 +557,18 @@ FROM
   t_0_Chain_sn_back_step AS Chain_sn_back_step
 WHERE
   ((SELECT
-    MIN(1) AS logica_value
+    MIN(1) AS synalog_value
   FROM
-    logica_test.Chain_sn_full AS Chain_sn_full
+    synalog_test.Chain_sn_full AS Chain_sn_full
   WHERE
     (Chain_sn_full.employee_id = Chain_sn_back_step.employee_id) AND
     (Chain_sn_full.manager_id = Chain_sn_back_step.manager_id)) IS NULL)
 GROUP BY 1, 2;
 
-INSERT INTO logica_test.Chain_sn_full SELECT * FROM logica_test.Chain_sn_delta;
+INSERT INTO synalog_test.Chain_sn_full SELECT * FROM synalog_test.Chain_sn_delta;
 
-DROP TABLE IF EXISTS logica_test.Chain_sn_new;
-CREATE TABLE logica_test.Chain_sn_new AS WITH t_5_Employees AS (SELECT * FROM VALUES
+DROP TABLE IF EXISTS synalog_test.Chain_sn_new;
+CREATE TABLE synalog_test.Chain_sn_new AS WITH t_5_Employees AS (SELECT * FROM VALUES
   (1, "ann", "eng", 10, "active", "https://x/ann"),
   (2, "bob", "eng", 10, "active", "https://x/bob"),
   (3, "cid", "ops", 20, "inactive", "https://x/cid"),
@@ -603,7 +603,7 @@ t_1_Chain_MultBodyAggAux_f8 AS (SELECT * FROM (
       Chain_sn_delta.employee_id AS employee_id,
       Manages.manager_id AS manager_id
     FROM
-      logica_test.Chain_sn_delta AS Chain_sn_delta, t_2_Manages AS Manages
+      synalog_test.Chain_sn_delta AS Chain_sn_delta, t_2_Manages AS Manages
     WHERE
       (Manages.employee_id = Chain_sn_delta.manager_id)
    UNION ALL
@@ -628,18 +628,18 @@ FROM
   t_0_Chain_sn_step AS Chain_sn_step
 WHERE
   ((SELECT
-    MIN(1) AS logica_value
+    MIN(1) AS synalog_value
   FROM
-    logica_test.Chain_sn_full AS Chain_sn_full
+    synalog_test.Chain_sn_full AS Chain_sn_full
   WHERE
     (Chain_sn_full.employee_id = Chain_sn_step.employee_id) AND
     (Chain_sn_full.manager_id = Chain_sn_step.manager_id)) IS NULL)
 GROUP BY 1, 2;
 
-INSERT INTO logica_test.Chain_sn_full SELECT * FROM logica_test.Chain_sn_new;
+INSERT INTO synalog_test.Chain_sn_full SELECT * FROM synalog_test.Chain_sn_new;
 
-DROP TABLE IF EXISTS logica_test.Chain_sn_delta;
-CREATE TABLE logica_test.Chain_sn_delta AS WITH t_5_Employees AS (SELECT * FROM VALUES
+DROP TABLE IF EXISTS synalog_test.Chain_sn_delta;
+CREATE TABLE synalog_test.Chain_sn_delta AS WITH t_5_Employees AS (SELECT * FROM VALUES
   (1, "ann", "eng", 10, "active", "https://x/ann"),
   (2, "bob", "eng", 10, "active", "https://x/bob"),
   (3, "cid", "ops", 20, "inactive", "https://x/cid"),
@@ -674,7 +674,7 @@ t_1_Chain_MultBodyAggAux_f1 AS (SELECT * FROM (
       Chain_sn_new.employee_id AS employee_id,
       Manages.manager_id AS manager_id
     FROM
-      logica_test.Chain_sn_new AS Chain_sn_new, t_2_Manages AS Manages
+      synalog_test.Chain_sn_new AS Chain_sn_new, t_2_Manages AS Manages
     WHERE
       (Manages.employee_id = Chain_sn_new.manager_id)
    UNION ALL
@@ -699,18 +699,18 @@ FROM
   t_0_Chain_sn_back_step AS Chain_sn_back_step
 WHERE
   ((SELECT
-    MIN(1) AS logica_value
+    MIN(1) AS synalog_value
   FROM
-    logica_test.Chain_sn_full AS Chain_sn_full
+    synalog_test.Chain_sn_full AS Chain_sn_full
   WHERE
     (Chain_sn_full.employee_id = Chain_sn_back_step.employee_id) AND
     (Chain_sn_full.manager_id = Chain_sn_back_step.manager_id)) IS NULL)
 GROUP BY 1, 2;
 
-INSERT INTO logica_test.Chain_sn_full SELECT * FROM logica_test.Chain_sn_delta;
+INSERT INTO synalog_test.Chain_sn_full SELECT * FROM synalog_test.Chain_sn_delta;
 
-DROP TABLE IF EXISTS logica_test.Chain_sn_new;
-CREATE TABLE logica_test.Chain_sn_new AS WITH t_5_Employees AS (SELECT * FROM VALUES
+DROP TABLE IF EXISTS synalog_test.Chain_sn_new;
+CREATE TABLE synalog_test.Chain_sn_new AS WITH t_5_Employees AS (SELECT * FROM VALUES
   (1, "ann", "eng", 10, "active", "https://x/ann"),
   (2, "bob", "eng", 10, "active", "https://x/bob"),
   (3, "cid", "ops", 20, "inactive", "https://x/cid"),
@@ -745,7 +745,7 @@ t_1_Chain_MultBodyAggAux_f8 AS (SELECT * FROM (
       Chain_sn_delta.employee_id AS employee_id,
       Manages.manager_id AS manager_id
     FROM
-      logica_test.Chain_sn_delta AS Chain_sn_delta, t_2_Manages AS Manages
+      synalog_test.Chain_sn_delta AS Chain_sn_delta, t_2_Manages AS Manages
     WHERE
       (Manages.employee_id = Chain_sn_delta.manager_id)
    UNION ALL
@@ -770,18 +770,18 @@ FROM
   t_0_Chain_sn_step AS Chain_sn_step
 WHERE
   ((SELECT
-    MIN(1) AS logica_value
+    MIN(1) AS synalog_value
   FROM
-    logica_test.Chain_sn_full AS Chain_sn_full
+    synalog_test.Chain_sn_full AS Chain_sn_full
   WHERE
     (Chain_sn_full.employee_id = Chain_sn_step.employee_id) AND
     (Chain_sn_full.manager_id = Chain_sn_step.manager_id)) IS NULL)
 GROUP BY 1, 2;
 
-INSERT INTO logica_test.Chain_sn_full SELECT * FROM logica_test.Chain_sn_new;
+INSERT INTO synalog_test.Chain_sn_full SELECT * FROM synalog_test.Chain_sn_new;
 
-DROP TABLE IF EXISTS logica_test.Chain_sn_delta;
-CREATE TABLE logica_test.Chain_sn_delta AS WITH t_5_Employees AS (SELECT * FROM VALUES
+DROP TABLE IF EXISTS synalog_test.Chain_sn_delta;
+CREATE TABLE synalog_test.Chain_sn_delta AS WITH t_5_Employees AS (SELECT * FROM VALUES
   (1, "ann", "eng", 10, "active", "https://x/ann"),
   (2, "bob", "eng", 10, "active", "https://x/bob"),
   (3, "cid", "ops", 20, "inactive", "https://x/cid"),
@@ -816,7 +816,7 @@ t_1_Chain_MultBodyAggAux_f1 AS (SELECT * FROM (
       Chain_sn_new.employee_id AS employee_id,
       Manages.manager_id AS manager_id
     FROM
-      logica_test.Chain_sn_new AS Chain_sn_new, t_2_Manages AS Manages
+      synalog_test.Chain_sn_new AS Chain_sn_new, t_2_Manages AS Manages
     WHERE
       (Manages.employee_id = Chain_sn_new.manager_id)
    UNION ALL
@@ -841,20 +841,20 @@ FROM
   t_0_Chain_sn_back_step AS Chain_sn_back_step
 WHERE
   ((SELECT
-    MIN(1) AS logica_value
+    MIN(1) AS synalog_value
   FROM
-    logica_test.Chain_sn_full AS Chain_sn_full
+    synalog_test.Chain_sn_full AS Chain_sn_full
   WHERE
     (Chain_sn_full.employee_id = Chain_sn_back_step.employee_id) AND
     (Chain_sn_full.manager_id = Chain_sn_back_step.manager_id)) IS NULL)
 GROUP BY 1, 2;
 
-INSERT INTO logica_test.Chain_sn_full SELECT * FROM logica_test.Chain_sn_delta;
+INSERT INTO synalog_test.Chain_sn_full SELECT * FROM synalog_test.Chain_sn_delta;
 
 SELECT
   Chain_sn_full.manager_id AS manager_id
 FROM
-  logica_test.Chain_sn_full AS Chain_sn_full
+  synalog_test.Chain_sn_full AS Chain_sn_full
 WHERE
   (1 = Chain_sn_full.employee_id)
 GROUP BY 1 ORDER BY manager_id NULLS LAST;

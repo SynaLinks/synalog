@@ -14,7 +14,7 @@ use crate::parser::traverse::*;
 
 /// The internal value field name used for the value of a function-style rule.
 fn value_field_name() -> &'static str {
-    "logica_value"
+    "synalog_value"
 }
 
 fn span_ref_json(s: &SpanString) -> Json {
@@ -40,7 +40,7 @@ pub fn parse_variable(s: &SpanString) -> ParseResult<Option<Json>> {
     }
     if s.starts_with("x_") {
         return Err(ParsingException::new(
-            "Variables starting with x_ are reserved to be Logica compiler internal. Please use a different name.",
+            "Variables starting with x_ are reserved to be Synalog compiler internal. Please use a different name.",
             s.clone(),
         ));
     }

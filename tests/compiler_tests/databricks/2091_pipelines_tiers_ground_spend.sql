@@ -1,5 +1,5 @@
-DROP TABLE IF EXISTS logica_test.Spend;
-CREATE TABLE logica_test.Spend AS WITH t_1_Order AS (SELECT * FROM VALUES
+DROP TABLE IF EXISTS synalog_test.Spend;
+CREATE TABLE synalog_test.Spend AS WITH t_1_Order AS (SELECT * FROM VALUES
   (1, "ann", "tea", 3, "paid"),
   (2, "bob", "cake", 1, "paid"),
   (3, "ann", "cake", 2, "refunded"),
@@ -26,13 +26,13 @@ WHERE
   (Price.item = t_0_Order.item)
 GROUP BY 1;
 
--- Interacting with table logica_test.Spend
+-- Interacting with table synalog_test.Spend
 
 WITH t_0_TierCount AS (SELECT
   CASE WHEN (Spend.total >= 40) THEN "gold" WHEN (Spend.total >= 15) THEN "silver" ELSE "bronze" END AS tier,
   SUM(1) AS n
 FROM
-  logica_test.Spend AS Spend
+  synalog_test.Spend AS Spend
 GROUP BY 1)
 SELECT
   TierCount.tier AS tier,

@@ -1,20 +1,20 @@
 -- Initializing PostgreSQL environment.
 set client_min_messages to warning;
-create schema if not exists logica_home;
--- Empty logica type: logicarecord893574736;
-DO $$ BEGIN if not exists (select 'I(am) :- I(think)' from pg_type where typname = 'logicarecord893574736') then create type logicarecord893574736 as (nirvana numeric); end if; END $$;
+create schema if not exists synalog_home;
+-- Empty synalog type: synalogrecord893574736;
+DO $$ BEGIN if not exists (select 'I(am) :- I(think)' from pg_type where typname = 'synalogrecord893574736') then create type synalogrecord893574736 as (nirvana numeric); end if; END $$;
 
 
 DO $$
 BEGIN
--- Logica type: logicarecord481217614
-if not exists (select 'I(am) :- I(think)' from pg_type where typname = 'logicarecord481217614') then create type logicarecord481217614 as (r logicarecord893574736); end if;
--- Logica type: logicarecord86796764
-if not exists (select 'I(am) :- I(think)' from pg_type where typname = 'logicarecord86796764') then create type logicarecord86796764 as (s text); end if;
--- Logica type: logicarecord636063531
-if not exists (select 'I(am) :- I(think)' from pg_type where typname = 'logicarecord636063531') then create type logicarecord636063531 as (long bool, pages numeric); end if;
--- Logica type: logicarecord984911454
-if not exists (select 'I(am) :- I(think)' from pg_type where typname = 'logicarecord984911454') then create type logicarecord984911454 as (author text, sf bool, size logicarecord636063531, title text, year numeric); end if;
+-- Synalog type: synalogrecord481217614
+if not exists (select 'I(am) :- I(think)' from pg_type where typname = 'synalogrecord481217614') then create type synalogrecord481217614 as (r synalogrecord893574736); end if;
+-- Synalog type: synalogrecord86796764
+if not exists (select 'I(am) :- I(think)' from pg_type where typname = 'synalogrecord86796764') then create type synalogrecord86796764 as (s text); end if;
+-- Synalog type: synalogrecord636063531
+if not exists (select 'I(am) :- I(think)' from pg_type where typname = 'synalogrecord636063531') then create type synalogrecord636063531 as (long bool, pages numeric); end if;
+-- Synalog type: synalogrecord984911454
+if not exists (select 'I(am) :- I(think)' from pg_type where typname = 'synalogrecord984911454') then create type synalogrecord984911454 as (author text, sf bool, size synalogrecord636063531, title text, year numeric); end if;
 END $$;
 WITH t_0_B AS (SELECT * FROM (
   
@@ -83,7 +83,7 @@ WITH t_0_B AS (SELECT * FROM (
 ) AS UNUSED_TABLE_NAME  )
 SELECT
   B.author AS author,
-  SUM(CASE WHEN (ROW((B.pages > 300), B.pages)::logicarecord636063531).long THEN 1 ELSE 0 END) AS n
+  SUM(CASE WHEN (ROW((B.pages > 300), B.pages)::synalogrecord636063531).long THEN 1 ELSE 0 END) AS n
 FROM
   t_0_B AS B
 GROUP BY B.author ORDER BY author, n;

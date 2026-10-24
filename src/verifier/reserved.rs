@@ -84,7 +84,7 @@ pub fn check_reserved(rules: &[&Json]) -> Vec<ReservedError> {
             .and_then(|r| r.as_object().get("field_value"))
             .is_some_and(|fvs| fvs.as_array().iter().any(|fv| {
                 let f = &fv.as_object()["field"];
-                f.is_string() && f.as_str() == "logica_value"
+                f.is_string() && f.as_str() == "synalog_value"
             }));
         let function = !reserved.contains(name)
             && defines_a_value

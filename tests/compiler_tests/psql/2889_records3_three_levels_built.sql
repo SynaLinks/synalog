@@ -1,11 +1,11 @@
 -- Initializing PostgreSQL environment.
 set client_min_messages to warning;
-create schema if not exists logica_home;
--- Empty logica type: logicarecord893574736;
-DO $$ BEGIN if not exists (select 'I(am) :- I(think)' from pg_type where typname = 'logicarecord893574736') then create type logicarecord893574736 as (nirvana numeric); end if; END $$;
+create schema if not exists synalog_home;
+-- Empty synalog type: synalogrecord893574736;
+DO $$ BEGIN if not exists (select 'I(am) :- I(think)' from pg_type where typname = 'synalogrecord893574736') then create type synalogrecord893574736 as (nirvana numeric); end if; END $$;
 
-DO $$ BEGIN if not exists (select 1 from pg_type where typname = 'logicarecord8141638361344710968') then create type logicarecord8141638361344710968 as ("c" numeric); end if; END $$;
-DO $$ BEGIN if not exists (select 1 from pg_type where typname = 'logicarecord16322170723623589212') then create type logicarecord16322170723623589212 as ("b" logicarecord8141638361344710968); end if; END $$;
+DO $$ BEGIN if not exists (select 1 from pg_type where typname = 'synalogrecord8141638361344710968') then create type synalogrecord8141638361344710968 as ("c" numeric); end if; END $$;
+DO $$ BEGIN if not exists (select 1 from pg_type where typname = 'synalogrecord9963493211370211326') then create type synalogrecord9963493211370211326 as ("b" synalogrecord8141638361344710968); end if; END $$;
 WITH t_1_B AS (SELECT * FROM (
   
     SELECT
@@ -73,6 +73,6 @@ WITH t_1_B AS (SELECT * FROM (
 ) AS UNUSED_TABLE_NAME  )
 SELECT
   B.id AS id,
-  ((ROW(ROW(B.pages)::logicarecord8141638361344710968)::logicarecord16322170723623589212).b).c AS v
+  ((ROW(ROW(B.pages)::synalogrecord8141638361344710968)::synalogrecord9963493211370211326).b).c AS v
 FROM
   t_1_B AS B ORDER BY id, v;

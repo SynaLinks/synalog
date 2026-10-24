@@ -67,7 +67,7 @@ t_1_E AS (SELECT * FROM (
 SELECT
   E.name AS name,
   COALESCE((SELECT
-  SUM(MagicalEntangle(1, x_5.value)) AS logica_value
+  SUM(MagicalEntangle(1, x_5.value)) AS synalog_value
 FROM
   t_0_Pr AS Pr, JSON_EACH(JSON_ARRAY(0)) as x_5
 WHERE

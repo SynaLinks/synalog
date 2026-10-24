@@ -41,7 +41,7 @@ t_2_G AS (SELECT * FROM (
 SELECT
   t_0_G.g AS g,
   (SELECT
-  MAX(MagicalEntangle(E.v, x_6.value)) AS logica_value
+  MAX(MagicalEntangle(E.v, x_6.value)) AS synalog_value
 FROM
   t_1_E AS E, JSON_EACH(JSON_ARRAY(0)) as x_6
 WHERE

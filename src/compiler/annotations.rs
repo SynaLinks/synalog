@@ -19,7 +19,7 @@ const ANNOTATING_PREDICATES: &[&str] = &[
     "@Assert",
 ];
 
-/// Parsed annotations from a Logica program.
+/// Parsed annotations from a Synalog program.
 #[derive(Clone)]
 pub struct Annotations {
     /// Raw annotation values per predicate: predicate_name → { annotation_key → value }
@@ -46,7 +46,7 @@ pub struct Ground {
     pub overwrite: bool,
 }
 
-/// Extract a string value from a Logica expression literal.
+/// Extract a string value from a Synalog expression literal.
 /// Handles the nested structure: {"literal": {"the_string": {"the_string": "value"}}}
 fn extract_string_literal(expr: &Json) -> Option<String> {
     if !expr.is_object() {
@@ -500,7 +500,10 @@ impl Annotations {
             return String::new();
         }
         dbs.iter()
-            .map(|(k, v)| format!("ATTACH DATABASE '{}' AS {};", v, k))
+            .map(|(k, v)| {
+                let path = crate::compiler::dialects::quoted(v, |s| synalog_verified::quote::doubled(s, '\''));
+                format!("ATTACH DATABASE {} AS {};", path, k)
+            })
             .collect::<Vec<_>>()
             .join("\n")
     }
@@ -521,10 +524,10 @@ impl Annotations {
                     "-- Initializing PostgreSQL environment.\n\
                      set client_min_messages to warning;\n\
                      create schema if not exists {};\n\
-                     -- Empty logica type: logicarecord893574736;\n\
+                     -- Empty synalog type: synalogrecord893574736;\n\
                      DO $$ BEGIN if not exists (select 'I(am) :- I(think)' from pg_type \
-                     where typname = 'logicarecord893574736') then \
-                     create type logicarecord893574736 as (nirvana numeric); \
+                     where typname = 'synalogrecord893574736') then \
+                     create type synalogrecord893574736 as (nirvana numeric); \
                      end if; END $$;\n\n",
                     home
                 ));
@@ -535,8 +538,8 @@ impl Annotations {
                 preamble.push_str(&home_attachment);
                 preamble.push_str(
                     "-- Empty record, has to have a field by DuckDB syntax.\n\
-                     drop type if exists logicarecord893574736 cascade; \
-                     create type logicarecord893574736 as struct(nirvana numeric);\n"
+                     drop type if exists synalogrecord893574736 cascade; \
+                     create type synalogrecord893574736 as struct(nirvana numeric);\n"
                 );
                 if self.is_motherduck() {
                     preamble.push('\n'); // Sequences not supported in MotherDuck
@@ -562,7 +565,7 @@ impl Annotations {
     /// Get ground table name for a predicate, if any.
     /// The table of a grounded predicate given no table: the predicate's
     /// name in the dataset, `_table` added to a name that is an SQL keyword
-    /// (`logica_home.Order` does not parse).
+    /// (`synalog_home.Order` does not parse).
     fn default_table(&self, pred_name: &str) -> String {
         if crate::compiler::dialects::is_sql_keyword(pred_name) {
             format!("{}.{}_table", self.dataset(), pred_name)

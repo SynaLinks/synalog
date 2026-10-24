@@ -1,12 +1,12 @@
-DROP TABLE IF EXISTS logica_test.Even;
-CREATE TABLE logica_test.Even AS SELECT
+DROP TABLE IF EXISTS synalog_test.Even;
+CREATE TABLE synalog_test.Even AS SELECT
   x_3 AS col0
 FROM
   UNNEST(TRANSFORM(FILTER(SEQUENCE(0, 10), x -> x < 10), synalog_e -> ROW(synalog_e))) as pushkin(x_3)
 WHERE
   ((MOD(x_3, NULLIF(2, 0))) = 0);
 
--- Interacting with table logica_test.Even
+-- Interacting with table synalog_test.Even
 
 WITH t_0_Prime AS (SELECT * FROM (
   
@@ -35,9 +35,9 @@ SELECT * FROM (
       UNNEST(TRANSFORM(FILTER(SEQUENCE(0, 10), x -> x < 10), synalog_e -> ROW(synalog_e))) as pushkin(x_5)
     WHERE
       ((SELECT
-        MIN(1) AS logica_value
+        MIN(1) AS synalog_value
       FROM
-        logica_test.Even AS Even
+        synalog_test.Even AS Even
       WHERE
         (Even.col0 = x_5)) IS NULL)
    UNION ALL
@@ -50,7 +50,7 @@ SELECT * FROM (
     WHERE
       (x_5 > 1) AND
       ((SELECT
-        MIN(1) AS logica_value
+        MIN(1) AS synalog_value
       FROM
         t_0_Prime AS Prime
       WHERE
@@ -61,10 +61,10 @@ SELECT * FROM (
       'even_not_prime' AS test_name,
       Even.col0 AS x
     FROM
-      logica_test.Even AS Even
+      synalog_test.Even AS Even
     WHERE
       ((SELECT
-        MIN(1) AS logica_value
+        MIN(1) AS synalog_value
       FROM
         t_0_Prime AS Prime
       WHERE

@@ -21,7 +21,7 @@ FROM
   t_1_L AS t_0_L
 WHERE
   ((SELECT
-    MIN(1) AS logica_value
+    MIN(1) AS synalog_value
   FROM
     t_1_L AS t_5_L, LATERAL (SELECT explode(t_5_L.l) AS x_20) AS pushkin
   WHERE

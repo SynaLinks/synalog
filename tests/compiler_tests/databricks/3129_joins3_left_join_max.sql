@@ -12,7 +12,7 @@ AS UNUSED_TABLE_NAME(g))
 SELECT
   t_0_G.g AS g,
   (SELECT
-  MAX(E.v) AS logica_value
+  MAX(E.v) AS synalog_value
 FROM
   t_1_E AS E
 WHERE

@@ -1,7 +1,7 @@
 -- Initializing DuckDB environment.
-create schema if not exists logica_home;
+create schema if not exists synalog_home;
 -- Empty record, has to have a field by DuckDB syntax.
-drop type if exists logicarecord893574736 cascade; create type logicarecord893574736 as struct(nirvana numeric);
+drop type if exists synalogrecord893574736 cascade; create type synalogrecord893574736 as struct(nirvana numeric);
 create sequence if not exists eternal_logical_sequence;
 
 WITH t_2_L AS (SELECT * FROM (
@@ -34,7 +34,7 @@ WITH t_2_L AS (SELECT * FROM (
 SELECT
   t_0_L.k AS k,
   (SELECT
-  argmax((CASE WHEN x_8.unnested_pod = 0 THEN {arg: x_7.unnested_pod, value: (CASE WHEN x_7.unnested_pod < 0 THEN NULL ELSE array_extract(t_0_L.l, CAST(x_7.unnested_pod + 1 AS BIGINT)) END)} ELSE NULL END).arg, (CASE WHEN x_8.unnested_pod = 0 THEN {arg: x_7.unnested_pod, value: (CASE WHEN x_7.unnested_pod < 0 THEN NULL ELSE array_extract(t_0_L.l, CAST(x_7.unnested_pod + 1 AS BIGINT)) END)} ELSE NULL END).value) AS logica_value
+  argmax((CASE WHEN x_8.unnested_pod = 0 THEN {arg: x_7.unnested_pod, value: (CASE WHEN x_7.unnested_pod < 0 THEN NULL ELSE array_extract(t_0_L.l, CAST(x_7.unnested_pod + 1 AS BIGINT)) END)} ELSE NULL END).arg, (CASE WHEN x_8.unnested_pod = 0 THEN {arg: x_7.unnested_pod, value: (CASE WHEN x_7.unnested_pod < 0 THEN NULL ELSE array_extract(t_0_L.l, CAST(x_7.unnested_pod + 1 AS BIGINT)) END)} ELSE NULL END).value) AS synalog_value
 FROM
   (select unnest(Range(LEN(t_0_L.l))) as unnested_pod) as x_7, (select unnest([0]) as unnested_pod) as x_8) AS v
 FROM

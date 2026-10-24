@@ -89,7 +89,7 @@ FROM
   t_1_All AS t_0_All
 WHERE
   ((SELECT
-    MIN(1) AS logica_value
+    MIN(1) AS synalog_value
   FROM
     t_5_Pick AS Pick
   WHERE

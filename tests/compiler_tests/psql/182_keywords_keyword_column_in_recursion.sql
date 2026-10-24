@@ -1,8 +1,8 @@
 -- Initializing PostgreSQL environment.
 set client_min_messages to warning;
-create schema if not exists logica_home;
--- Empty logica type: logicarecord893574736;
-DO $$ BEGIN if not exists (select 'I(am) :- I(think)' from pg_type where typname = 'logicarecord893574736') then create type logicarecord893574736 as (nirvana numeric); end if; END $$;
+create schema if not exists synalog_home;
+-- Empty synalog type: synalogrecord893574736;
+DO $$ BEGIN if not exists (select 'I(am) :- I(think)' from pg_type where typname = 'synalogrecord893574736') then create type synalogrecord893574736 as (nirvana numeric); end if; END $$;
 
 WITH RECURSIVE t_1_Edge AS (SELECT * FROM (
   
@@ -21,7 +21,7 @@ t_0_Reach_RecursiveCte AS (SELECT * FROM (
     
       SELECT
         Edge."to" AS "to",
-        0 AS logica_step
+        0 AS synalog_step
       FROM
         t_1_Edge AS Edge
       WHERE
@@ -30,7 +30,7 @@ t_0_Reach_RecursiveCte AS (SELECT * FROM (
     
       SELECT
         t_2_Edge."to" AS "to",
-        ((0) + (1)) AS logica_step
+        ((0) + (1)) AS synalog_step
       FROM
         t_1_Edge AS t_4_Edge, t_1_Edge AS t_2_Edge
       WHERE
@@ -42,7 +42,7 @@ t_0_Reach_RecursiveCte AS (SELECT * FROM (
     
       SELECT
         t_6_Edge."to" AS "to",
-        ((((0) + (1))) + (1)) AS logica_step
+        ((((0) + (1))) + (1)) AS synalog_step
       FROM
         t_1_Edge AS t_10_Edge, t_1_Edge AS t_8_Edge, t_1_Edge AS t_6_Edge
       WHERE
@@ -56,7 +56,7 @@ t_0_Reach_RecursiveCte AS (SELECT * FROM (
     
       SELECT
         t_12_Edge."to" AS "to",
-        ((((((0) + (1))) + (1))) + (1)) AS logica_step
+        ((((((0) + (1))) + (1))) + (1)) AS synalog_step
       FROM
         t_1_Edge AS t_18_Edge, t_1_Edge AS t_16_Edge, t_1_Edge AS t_14_Edge, t_1_Edge AS t_12_Edge
       WHERE
@@ -74,11 +74,11 @@ t_0_Reach_RecursiveCte AS (SELECT * FROM (
 UNION
 SELECT
   t_20_Edge."to" AS "to",
-  ((t_19_Reach_RecursiveCte.logica_step) + (1)) AS logica_step
+  ((t_19_Reach_RecursiveCte.synalog_step) + (1)) AS synalog_step
 FROM
   t_0_Reach_RecursiveCte AS t_19_Reach_RecursiveCte, t_1_Edge AS t_20_Edge
 WHERE
-  (t_19_Reach_RecursiveCte.logica_step < 5) AND
+  (t_19_Reach_RecursiveCte.synalog_step < 5) AND
   (t_20_Edge."from" = t_19_Reach_RecursiveCte."to"))
 SELECT
   Reach_RecursiveCte."to" AS "to"

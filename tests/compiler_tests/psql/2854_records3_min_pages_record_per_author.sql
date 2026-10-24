@@ -1,10 +1,10 @@
 -- Initializing PostgreSQL environment.
 set client_min_messages to warning;
-create schema if not exists logica_home;
--- Empty logica type: logicarecord893574736;
-DO $$ BEGIN if not exists (select 'I(am) :- I(think)' from pg_type where typname = 'logicarecord893574736') then create type logicarecord893574736 as (nirvana numeric); end if; END $$;
+create schema if not exists synalog_home;
+-- Empty synalog type: synalogrecord893574736;
+DO $$ BEGIN if not exists (select 'I(am) :- I(think)' from pg_type where typname = 'synalogrecord893574736') then create type synalogrecord893574736 as (nirvana numeric); end if; END $$;
 
-DO $$ BEGIN if not exists (select 1 from pg_type where typname = 'logicarecord14279614345574163515') then create type logicarecord14279614345574163515 as ("title" text, "v" numeric); end if; END $$;
+DO $$ BEGIN if not exists (select 1 from pg_type where typname = 'synalogrecord14279614345574163515') then create type synalogrecord14279614345574163515 as ("title" text, "v" numeric); end if; END $$;
 WITH t_3_B AS (SELECT * FROM (
   
     SELECT
@@ -72,7 +72,7 @@ WITH t_3_B AS (SELECT * FROM (
 ) AS UNUSED_TABLE_NAME  ),
 t_1_M AS (SELECT
   B.author AS author,
-  (ARRAY_AGG(ROW(B.title, B.pages)::logicarecord14279614345574163515 order by B.pages nulls last))[1] AS m
+  (ARRAY_AGG(ROW(B.title, B.pages)::synalogrecord14279614345574163515 order by B.pages nulls last))[1] AS m
 FROM
   t_3_B AS B
 GROUP BY B.author)

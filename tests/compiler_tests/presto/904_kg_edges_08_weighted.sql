@@ -1,5 +1,5 @@
-DROP TABLE IF EXISTS logica_test.Person;
-CREATE TABLE logica_test.Person AS WITH t_0_Employees AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_test.Person;
+CREATE TABLE synalog_test.Person AS WITH t_0_Employees AS (SELECT * FROM (
   
     SELECT
       1 AS person_id,
@@ -54,10 +54,10 @@ FROM
   t_0_Employees AS Employees
 GROUP BY 1, 2, 3 ORDER BY person_id;
 
--- Interacting with table logica_test.Person
+-- Interacting with table synalog_test.Person
 
-DROP TABLE IF EXISTS logica_test.Client;
-CREATE TABLE logica_test.Client AS WITH t_0_Clients AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_test.Client;
+CREATE TABLE synalog_test.Client AS WITH t_0_Clients AS (SELECT * FROM (
   
     SELECT
       100 AS client_id,
@@ -76,7 +76,7 @@ FROM
   t_0_Clients AS Clients
 GROUP BY 1, 2 ORDER BY client_id;
 
--- Interacting with table logica_test.Client
+-- Interacting with table synalog_test.Client
 
 WITH t_1_Orders AS (SELECT * FROM (
   
@@ -109,7 +109,7 @@ SELECT
   t_0_Client.client_id AS client_id,
   SUM(Orders.amount) AS total
 FROM
-  logica_test.Person AS Person, logica_test.Client AS t_0_Client, t_1_Orders AS Orders
+  synalog_test.Person AS Person, synalog_test.Client AS t_0_Client, t_1_Orders AS Orders
 WHERE
   (Orders.person_id = Person.person_id) AND
   (Orders.client_id = t_0_Client.client_id)

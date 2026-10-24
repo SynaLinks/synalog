@@ -16,7 +16,7 @@ AS UNUSED_TABLE_NAME(c))
 SELECT
   t_0_C.c AS c,
   (SELECT
-  AVG(O.amt) AS logica_value
+  AVG(O.amt) AS synalog_value
 FROM
   t_1_O AS O
 WHERE

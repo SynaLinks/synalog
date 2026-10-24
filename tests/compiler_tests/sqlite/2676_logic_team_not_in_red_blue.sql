@@ -62,7 +62,7 @@ FROM
   t_0_Person AS Person
 WHERE
   ((SELECT
-    MIN(MagicalEntangle(1, x_5.value)) AS logica_value
+    MIN(MagicalEntangle(1, x_5.value)) AS synalog_value
   FROM
     JSON_EACH(JSON_ARRAY(0)) as x_5, JSON_EACH(JSON_ARRAY('red', 'blue')) as x_7
   WHERE

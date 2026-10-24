@@ -1,7 +1,7 @@
 -- Initializing DuckDB environment.
-create schema if not exists logica_home;
+create schema if not exists synalog_home;
 -- Empty record, has to have a field by DuckDB syntax.
-drop type if exists logicarecord893574736 cascade; create type logicarecord893574736 as struct(nirvana numeric);
+drop type if exists synalogrecord893574736 cascade; create type synalogrecord893574736 as struct(nirvana numeric);
 create sequence if not exists eternal_logical_sequence;
 
 WITH RECURSIVE t_1_R_RecursiveCte AS (SELECT * FROM (
@@ -9,12 +9,12 @@ WITH RECURSIVE t_1_R_RecursiveCte AS (SELECT * FROM (
     
       SELECT
         1 AS x,
-        0 AS logica_step
+        0 AS synalog_step
      UNION ALL
     
       SELECT
         2 AS x,
-        ((0) + (1)) AS logica_step
+        ((0) + (1)) AS synalog_step
       FROM
         (SELECT 'singleton' as s) as unused_singleton
       WHERE
@@ -24,7 +24,7 @@ WITH RECURSIVE t_1_R_RecursiveCte AS (SELECT * FROM (
     
       SELECT
         2 AS x,
-        ((((0) + (1))) + (1)) AS logica_step
+        ((((0) + (1))) + (1)) AS synalog_step
       FROM
         (SELECT 'singleton' as s) as unused_singleton
       WHERE
@@ -36,7 +36,7 @@ WITH RECURSIVE t_1_R_RecursiveCte AS (SELECT * FROM (
     
       SELECT
         2 AS x,
-        ((((((0) + (1))) + (1))) + (1)) AS logica_step
+        ((((((0) + (1))) + (1))) + (1)) AS synalog_step
       FROM
         (SELECT 'singleton' as s) as unused_singleton
       WHERE
@@ -51,11 +51,11 @@ WITH RECURSIVE t_1_R_RecursiveCte AS (SELECT * FROM (
 UNION
 SELECT
   2 AS x,
-  ((t_15_R_RecursiveCte.logica_step) + (1)) AS logica_step
+  ((t_15_R_RecursiveCte.synalog_step) + (1)) AS synalog_step
 FROM
   t_1_R_RecursiveCte AS t_15_R_RecursiveCte
 WHERE
-  (t_15_R_RecursiveCte.logica_step < 5) AND
+  (t_15_R_RecursiveCte.synalog_step < 5) AND
   (t_15_R_RecursiveCte.x = 1)),
 t_0_R AS (SELECT
   R_RecursiveCte.x AS x
@@ -68,7 +68,7 @@ FROM
   (select unnest([1, 2, 3, 4]) as unnested_pod) as x_2
 WHERE
   ((SELECT
-    MIN((CASE WHEN x_5.unnested_pod = 0 THEN 1 ELSE NULL END)) AS logica_value
+    MIN((CASE WHEN x_5.unnested_pod = 0 THEN 1 ELSE NULL END)) AS synalog_value
   FROM
     t_0_R AS R, (select unnest([0]) as unnested_pod) as x_5
   WHERE

@@ -1,8 +1,8 @@
 -- Initializing PostgreSQL environment.
 set client_min_messages to warning;
-create schema if not exists logica_home;
--- Empty logica type: logicarecord893574736;
-DO $$ BEGIN if not exists (select 'I(am) :- I(think)' from pg_type where typname = 'logicarecord893574736') then create type logicarecord893574736 as (nirvana numeric); end if; END $$;
+create schema if not exists synalog_home;
+-- Empty synalog type: synalogrecord893574736;
+DO $$ BEGIN if not exists (select 'I(am) :- I(think)' from pg_type where typname = 'synalogrecord893574736') then create type synalogrecord893574736 as (nirvana numeric); end if; END $$;
 
 WITH t_4_S AS (SELECT * FROM (
   
@@ -135,7 +135,7 @@ t_0_Mid AS (SELECT * FROM (
       t_4_S AS S, t_5_N AS t_2_N
     WHERE
       (((((2) * (COALESCE(CAST((SELECT
-        SUM((CASE WHEN x_24 = 0 THEN 1 ELSE NULL END)) AS logica_value
+        SUM((CASE WHEN x_24 = 0 THEN 1 ELSE NULL END)) AS synalog_value
       FROM
         t_8_Before AS Before, UNNEST(ARRAY[0]) as x_24
       WHERE
@@ -149,7 +149,7 @@ t_0_Mid AS (SELECT * FROM (
       t_4_S AS t_21_S, t_5_N AS t_19_N
     WHERE
       (((2) * (COALESCE(CAST((SELECT
-        SUM((CASE WHEN x_84 = 0 THEN 1 ELSE NULL END)) AS logica_value
+        SUM((CASE WHEN x_84 = 0 THEN 1 ELSE NULL END)) AS synalog_value
       FROM
         t_8_Before AS t_24_Before, UNNEST(ARRAY[0]) as x_84
       WHERE
@@ -163,7 +163,7 @@ t_0_Mid AS (SELECT * FROM (
       t_4_S AS t_37_S, t_5_N AS t_35_N
     WHERE
       (((((2) * (COALESCE(CAST((SELECT
-        SUM((CASE WHEN x_138 = 0 THEN 1 ELSE NULL END)) AS logica_value
+        SUM((CASE WHEN x_138 = 0 THEN 1 ELSE NULL END)) AS synalog_value
       FROM
         t_8_Before AS t_38_Before, UNNEST(ARRAY[0]) as x_138
       WHERE

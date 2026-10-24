@@ -68,6 +68,7 @@ if [[ "$MODE" == "all" || "$MODE" == "golden" ]]; then
     run_step "compiler_tests" cargo test --test compiler_tests
     run_step "search_tests" cargo test --test search_tests
     run_step "verifier_tests" cargo test --test verifier_tests
+    run_step "verus_proofs" cargo test --test verus_proofs
 fi
 
 # ── CLI tests ────────────────────────────────────────────

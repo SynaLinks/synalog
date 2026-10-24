@@ -1,6 +1,6 @@
 SELECT
   COALESCE((SELECT
-  SUM(1) AS logica_value
+  SUM(1) AS synalog_value
 FROM
   (SELECT 'singleton' as s) as unused_singleton
 WHERE

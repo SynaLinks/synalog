@@ -25,7 +25,7 @@ t_0_Q_MultBodyAggAux AS (SELECT * FROM (
       t_2_U AS t_1_U
     WHERE
       ((SELECT
-        MIN(1) AS logica_value
+        MIN(1) AS synalog_value
       FROM
         t_3_F AS F
       WHERE

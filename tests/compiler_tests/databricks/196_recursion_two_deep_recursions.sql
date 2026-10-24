@@ -1,5 +1,5 @@
-DROP TABLE IF EXISTS logica_test.A_sn_delta;
-CREATE TABLE logica_test.A_sn_delta AS WITH t_0_A_MultBodyAggAux_f2 AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_test.A_sn_delta;
+CREATE TABLE synalog_test.A_sn_delta AS WITH t_0_A_MultBodyAggAux_f2 AS (SELECT * FROM (
   
     SELECT
       0 AS y
@@ -11,20 +11,20 @@ FROM
   t_0_A_MultBodyAggAux_f2 AS A_MultBodyAggAux_f2
 GROUP BY 1;
 
--- Interacting with table logica_test.A_sn_delta
+-- Interacting with table synalog_test.A_sn_delta
 
-DROP TABLE IF EXISTS logica_test.A_sn_t0;
-CREATE TABLE logica_test.A_sn_t0 AS SELECT
+DROP TABLE IF EXISTS synalog_test.A_sn_t0;
+CREATE TABLE synalog_test.A_sn_t0 AS SELECT
   A_sn_delta.y AS y
 FROM
-  logica_test.A_sn_delta AS A_sn_delta
+  synalog_test.A_sn_delta AS A_sn_delta
 WHERE
   (1 = 0);
 
--- Interacting with table logica_test.A_sn_t0
+-- Interacting with table synalog_test.A_sn_t0
 
-DROP TABLE IF EXISTS logica_test.A_sn_t1;
-CREATE TABLE logica_test.A_sn_t1 AS WITH t_1_A_MultBodyAggAux_f3 AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_test.A_sn_t1;
+CREATE TABLE synalog_test.A_sn_t1 AS WITH t_1_A_MultBodyAggAux_f3 AS (SELECT * FROM (
   
     SELECT
       0 AS y
@@ -33,7 +33,7 @@ CREATE TABLE logica_test.A_sn_t1 AS WITH t_1_A_MultBodyAggAux_f3 AS (SELECT * FR
     SELECT
       ((x_9) + (1)) AS y
     FROM
-      logica_test.A_sn_t0 AS A_sn_t0, LATERAL (SELECT explode(FILTER(SEQUENCE(0, CAST(100 AS BIGINT)), x -> x < 100)) AS x_9) AS pushkin
+      synalog_test.A_sn_t0 AS A_sn_t0, LATERAL (SELECT explode(FILTER(SEQUENCE(0, CAST(100 AS BIGINT)), x -> x < 100)) AS x_9) AS pushkin
     WHERE
       (A_sn_t0.y = x_9)
   
@@ -50,10 +50,10 @@ FROM
 WHERE
   (1 = 0);
 
--- Interacting with table logica_test.A_sn_t1
+-- Interacting with table synalog_test.A_sn_t1
 
-DROP TABLE IF EXISTS logica_test.A_sn_t2;
-CREATE TABLE logica_test.A_sn_t2 AS WITH t_1_A_MultBodyAggAux_f4 AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_test.A_sn_t2;
+CREATE TABLE synalog_test.A_sn_t2 AS WITH t_1_A_MultBodyAggAux_f4 AS (SELECT * FROM (
   
     SELECT
       0 AS y
@@ -62,7 +62,7 @@ CREATE TABLE logica_test.A_sn_t2 AS WITH t_1_A_MultBodyAggAux_f4 AS (SELECT * FR
     SELECT
       ((x_9) + (1)) AS y
     FROM
-      logica_test.A_sn_t1 AS A_sn_t1, LATERAL (SELECT explode(FILTER(SEQUENCE(0, CAST(100 AS BIGINT)), x -> x < 100)) AS x_9) AS pushkin
+      synalog_test.A_sn_t1 AS A_sn_t1, LATERAL (SELECT explode(FILTER(SEQUENCE(0, CAST(100 AS BIGINT)), x -> x < 100)) AS x_9) AS pushkin
     WHERE
       (A_sn_t1.y = x_9)
   
@@ -79,10 +79,10 @@ FROM
 WHERE
   (1 = 0);
 
--- Interacting with table logica_test.A_sn_t2
+-- Interacting with table synalog_test.A_sn_t2
 
-DROP TABLE IF EXISTS logica_test.A_sn_t3;
-CREATE TABLE logica_test.A_sn_t3 AS WITH t_1_A_MultBodyAggAux_f5 AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_test.A_sn_t3;
+CREATE TABLE synalog_test.A_sn_t3 AS WITH t_1_A_MultBodyAggAux_f5 AS (SELECT * FROM (
   
     SELECT
       0 AS y
@@ -91,7 +91,7 @@ CREATE TABLE logica_test.A_sn_t3 AS WITH t_1_A_MultBodyAggAux_f5 AS (SELECT * FR
     SELECT
       ((x_9) + (1)) AS y
     FROM
-      logica_test.A_sn_t2 AS A_sn_t2, LATERAL (SELECT explode(FILTER(SEQUENCE(0, CAST(100 AS BIGINT)), x -> x < 100)) AS x_9) AS pushkin
+      synalog_test.A_sn_t2 AS A_sn_t2, LATERAL (SELECT explode(FILTER(SEQUENCE(0, CAST(100 AS BIGINT)), x -> x < 100)) AS x_9) AS pushkin
     WHERE
       (A_sn_t2.y = x_9)
   
@@ -108,40 +108,40 @@ FROM
 WHERE
   (1 = 0);
 
--- Interacting with table logica_test.A_sn_t3
+-- Interacting with table synalog_test.A_sn_t3
 
-DROP TABLE IF EXISTS logica_test.A_sn_full;
-CREATE TABLE logica_test.A_sn_full AS SELECT * FROM (
+DROP TABLE IF EXISTS synalog_test.A_sn_full;
+CREATE TABLE synalog_test.A_sn_full AS SELECT * FROM (
   
     SELECT
       A_sn_delta.y AS y
     FROM
-      logica_test.A_sn_delta AS A_sn_delta
+      synalog_test.A_sn_delta AS A_sn_delta
    UNION ALL
   
     SELECT
       A_sn_t1.y AS y
     FROM
-      logica_test.A_sn_t1 AS A_sn_t1
+      synalog_test.A_sn_t1 AS A_sn_t1
    UNION ALL
   
     SELECT
       A_sn_t2.y AS y
     FROM
-      logica_test.A_sn_t2 AS A_sn_t2
+      synalog_test.A_sn_t2 AS A_sn_t2
    UNION ALL
   
     SELECT
       A_sn_t3.y AS y
     FROM
-      logica_test.A_sn_t3 AS A_sn_t3
+      synalog_test.A_sn_t3 AS A_sn_t3
   
 ) AS UNUSED_TABLE_NAME  ;
 
--- Interacting with table logica_test.A_sn_full
+-- Interacting with table synalog_test.A_sn_full
 
-DROP TABLE IF EXISTS logica_test.B_sn_delta;
-CREATE TABLE logica_test.B_sn_delta AS WITH t_0_B_MultBodyAggAux_f8 AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_test.B_sn_delta;
+CREATE TABLE synalog_test.B_sn_delta AS WITH t_0_B_MultBodyAggAux_f8 AS (SELECT * FROM (
   
     SELECT
       0 AS y
@@ -153,20 +153,20 @@ FROM
   t_0_B_MultBodyAggAux_f8 AS B_MultBodyAggAux_f8
 GROUP BY 1;
 
--- Interacting with table logica_test.B_sn_delta
+-- Interacting with table synalog_test.B_sn_delta
 
-DROP TABLE IF EXISTS logica_test.B_sn_t0;
-CREATE TABLE logica_test.B_sn_t0 AS SELECT
+DROP TABLE IF EXISTS synalog_test.B_sn_t0;
+CREATE TABLE synalog_test.B_sn_t0 AS SELECT
   B_sn_delta.y AS y
 FROM
-  logica_test.B_sn_delta AS B_sn_delta
+  synalog_test.B_sn_delta AS B_sn_delta
 WHERE
   (1 = 0);
 
--- Interacting with table logica_test.B_sn_t0
+-- Interacting with table synalog_test.B_sn_t0
 
-DROP TABLE IF EXISTS logica_test.B_sn_t1;
-CREATE TABLE logica_test.B_sn_t1 AS WITH t_1_B_MultBodyAggAux_f9 AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_test.B_sn_t1;
+CREATE TABLE synalog_test.B_sn_t1 AS WITH t_1_B_MultBodyAggAux_f9 AS (SELECT * FROM (
   
     SELECT
       0 AS y
@@ -175,7 +175,7 @@ CREATE TABLE logica_test.B_sn_t1 AS WITH t_1_B_MultBodyAggAux_f9 AS (SELECT * FR
     SELECT
       ((x_9) + (1)) AS y
     FROM
-      logica_test.B_sn_t0 AS B_sn_t0, LATERAL (SELECT explode(FILTER(SEQUENCE(0, CAST(100 AS BIGINT)), x -> x < 100)) AS x_9) AS pushkin
+      synalog_test.B_sn_t0 AS B_sn_t0, LATERAL (SELECT explode(FILTER(SEQUENCE(0, CAST(100 AS BIGINT)), x -> x < 100)) AS x_9) AS pushkin
     WHERE
       (B_sn_t0.y = x_9)
   
@@ -192,10 +192,10 @@ FROM
 WHERE
   (1 = 0);
 
--- Interacting with table logica_test.B_sn_t1
+-- Interacting with table synalog_test.B_sn_t1
 
-DROP TABLE IF EXISTS logica_test.B_sn_t2;
-CREATE TABLE logica_test.B_sn_t2 AS WITH t_1_B_MultBodyAggAux_f10 AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_test.B_sn_t2;
+CREATE TABLE synalog_test.B_sn_t2 AS WITH t_1_B_MultBodyAggAux_f10 AS (SELECT * FROM (
   
     SELECT
       0 AS y
@@ -204,7 +204,7 @@ CREATE TABLE logica_test.B_sn_t2 AS WITH t_1_B_MultBodyAggAux_f10 AS (SELECT * F
     SELECT
       ((x_9) + (1)) AS y
     FROM
-      logica_test.B_sn_t1 AS B_sn_t1, LATERAL (SELECT explode(FILTER(SEQUENCE(0, CAST(100 AS BIGINT)), x -> x < 100)) AS x_9) AS pushkin
+      synalog_test.B_sn_t1 AS B_sn_t1, LATERAL (SELECT explode(FILTER(SEQUENCE(0, CAST(100 AS BIGINT)), x -> x < 100)) AS x_9) AS pushkin
     WHERE
       (B_sn_t1.y = x_9)
   
@@ -221,10 +221,10 @@ FROM
 WHERE
   (1 = 0);
 
--- Interacting with table logica_test.B_sn_t2
+-- Interacting with table synalog_test.B_sn_t2
 
-DROP TABLE IF EXISTS logica_test.B_sn_t3;
-CREATE TABLE logica_test.B_sn_t3 AS WITH t_1_B_MultBodyAggAux_f11 AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_test.B_sn_t3;
+CREATE TABLE synalog_test.B_sn_t3 AS WITH t_1_B_MultBodyAggAux_f11 AS (SELECT * FROM (
   
     SELECT
       0 AS y
@@ -233,7 +233,7 @@ CREATE TABLE logica_test.B_sn_t3 AS WITH t_1_B_MultBodyAggAux_f11 AS (SELECT * F
     SELECT
       ((x_9) + (1)) AS y
     FROM
-      logica_test.B_sn_t2 AS B_sn_t2, LATERAL (SELECT explode(FILTER(SEQUENCE(0, CAST(100 AS BIGINT)), x -> x < 100)) AS x_9) AS pushkin
+      synalog_test.B_sn_t2 AS B_sn_t2, LATERAL (SELECT explode(FILTER(SEQUENCE(0, CAST(100 AS BIGINT)), x -> x < 100)) AS x_9) AS pushkin
     WHERE
       (B_sn_t2.y = x_9)
   
@@ -250,40 +250,40 @@ FROM
 WHERE
   (1 = 0);
 
--- Interacting with table logica_test.B_sn_t3
+-- Interacting with table synalog_test.B_sn_t3
 
-DROP TABLE IF EXISTS logica_test.B_sn_full;
-CREATE TABLE logica_test.B_sn_full AS SELECT * FROM (
+DROP TABLE IF EXISTS synalog_test.B_sn_full;
+CREATE TABLE synalog_test.B_sn_full AS SELECT * FROM (
   
     SELECT
       B_sn_delta.y AS y
     FROM
-      logica_test.B_sn_delta AS B_sn_delta
+      synalog_test.B_sn_delta AS B_sn_delta
    UNION ALL
   
     SELECT
       B_sn_t1.y AS y
     FROM
-      logica_test.B_sn_t1 AS B_sn_t1
+      synalog_test.B_sn_t1 AS B_sn_t1
    UNION ALL
   
     SELECT
       B_sn_t2.y AS y
     FROM
-      logica_test.B_sn_t2 AS B_sn_t2
+      synalog_test.B_sn_t2 AS B_sn_t2
    UNION ALL
   
     SELECT
       B_sn_t3.y AS y
     FROM
-      logica_test.B_sn_t3 AS B_sn_t3
+      synalog_test.B_sn_t3 AS B_sn_t3
   
 ) AS UNUSED_TABLE_NAME  ;
 
--- Interacting with table logica_test.B_sn_full
+-- Interacting with table synalog_test.B_sn_full
 
-DROP TABLE IF EXISTS logica_test.A_sn_new;
-CREATE TABLE logica_test.A_sn_new AS WITH t_1_A_MultBodyAggAux_f6 AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_test.A_sn_new;
+CREATE TABLE synalog_test.A_sn_new AS WITH t_1_A_MultBodyAggAux_f6 AS (SELECT * FROM (
   
     SELECT
       0 AS y
@@ -292,7 +292,7 @@ CREATE TABLE logica_test.A_sn_new AS WITH t_1_A_MultBodyAggAux_f6 AS (SELECT * F
     SELECT
       ((x_9) + (1)) AS y
     FROM
-      logica_test.A_sn_delta AS A_sn_delta, LATERAL (SELECT explode(FILTER(SEQUENCE(0, CAST(100 AS BIGINT)), x -> x < 100)) AS x_9) AS pushkin
+      synalog_test.A_sn_delta AS A_sn_delta, LATERAL (SELECT explode(FILTER(SEQUENCE(0, CAST(100 AS BIGINT)), x -> x < 100)) AS x_9) AS pushkin
     WHERE
       (A_sn_delta.y = x_9)
   
@@ -308,17 +308,17 @@ FROM
   t_0_A_sn_step AS A_sn_step
 WHERE
   ((SELECT
-    MIN(1) AS logica_value
+    MIN(1) AS synalog_value
   FROM
-    logica_test.A_sn_full AS A_sn_full
+    synalog_test.A_sn_full AS A_sn_full
   WHERE
     (A_sn_full.y = A_sn_step.y)) IS NULL)
 GROUP BY 1;
 
-INSERT INTO logica_test.A_sn_full SELECT * FROM logica_test.A_sn_new;
+INSERT INTO synalog_test.A_sn_full SELECT * FROM synalog_test.A_sn_new;
 
-DROP TABLE IF EXISTS logica_test.A_sn_delta;
-CREATE TABLE logica_test.A_sn_delta AS WITH t_1_A_MultBodyAggAux_f1 AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_test.A_sn_delta;
+CREATE TABLE synalog_test.A_sn_delta AS WITH t_1_A_MultBodyAggAux_f1 AS (SELECT * FROM (
   
     SELECT
       0 AS y
@@ -327,7 +327,7 @@ CREATE TABLE logica_test.A_sn_delta AS WITH t_1_A_MultBodyAggAux_f1 AS (SELECT *
     SELECT
       ((x_9) + (1)) AS y
     FROM
-      logica_test.A_sn_new AS A_sn_new, LATERAL (SELECT explode(FILTER(SEQUENCE(0, CAST(100 AS BIGINT)), x -> x < 100)) AS x_9) AS pushkin
+      synalog_test.A_sn_new AS A_sn_new, LATERAL (SELECT explode(FILTER(SEQUENCE(0, CAST(100 AS BIGINT)), x -> x < 100)) AS x_9) AS pushkin
     WHERE
       (A_sn_new.y = x_9)
   
@@ -343,17 +343,17 @@ FROM
   t_0_A_sn_back_step AS A_sn_back_step
 WHERE
   ((SELECT
-    MIN(1) AS logica_value
+    MIN(1) AS synalog_value
   FROM
-    logica_test.A_sn_full AS A_sn_full
+    synalog_test.A_sn_full AS A_sn_full
   WHERE
     (A_sn_full.y = A_sn_back_step.y)) IS NULL)
 GROUP BY 1;
 
-INSERT INTO logica_test.A_sn_full SELECT * FROM logica_test.A_sn_delta;
+INSERT INTO synalog_test.A_sn_full SELECT * FROM synalog_test.A_sn_delta;
 
-DROP TABLE IF EXISTS logica_test.A_sn_new;
-CREATE TABLE logica_test.A_sn_new AS WITH t_1_A_MultBodyAggAux_f6 AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_test.A_sn_new;
+CREATE TABLE synalog_test.A_sn_new AS WITH t_1_A_MultBodyAggAux_f6 AS (SELECT * FROM (
   
     SELECT
       0 AS y
@@ -362,7 +362,7 @@ CREATE TABLE logica_test.A_sn_new AS WITH t_1_A_MultBodyAggAux_f6 AS (SELECT * F
     SELECT
       ((x_9) + (1)) AS y
     FROM
-      logica_test.A_sn_delta AS A_sn_delta, LATERAL (SELECT explode(FILTER(SEQUENCE(0, CAST(100 AS BIGINT)), x -> x < 100)) AS x_9) AS pushkin
+      synalog_test.A_sn_delta AS A_sn_delta, LATERAL (SELECT explode(FILTER(SEQUENCE(0, CAST(100 AS BIGINT)), x -> x < 100)) AS x_9) AS pushkin
     WHERE
       (A_sn_delta.y = x_9)
   
@@ -378,17 +378,17 @@ FROM
   t_0_A_sn_step AS A_sn_step
 WHERE
   ((SELECT
-    MIN(1) AS logica_value
+    MIN(1) AS synalog_value
   FROM
-    logica_test.A_sn_full AS A_sn_full
+    synalog_test.A_sn_full AS A_sn_full
   WHERE
     (A_sn_full.y = A_sn_step.y)) IS NULL)
 GROUP BY 1;
 
-INSERT INTO logica_test.A_sn_full SELECT * FROM logica_test.A_sn_new;
+INSERT INTO synalog_test.A_sn_full SELECT * FROM synalog_test.A_sn_new;
 
-DROP TABLE IF EXISTS logica_test.A_sn_delta;
-CREATE TABLE logica_test.A_sn_delta AS WITH t_1_A_MultBodyAggAux_f1 AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_test.A_sn_delta;
+CREATE TABLE synalog_test.A_sn_delta AS WITH t_1_A_MultBodyAggAux_f1 AS (SELECT * FROM (
   
     SELECT
       0 AS y
@@ -397,7 +397,7 @@ CREATE TABLE logica_test.A_sn_delta AS WITH t_1_A_MultBodyAggAux_f1 AS (SELECT *
     SELECT
       ((x_9) + (1)) AS y
     FROM
-      logica_test.A_sn_new AS A_sn_new, LATERAL (SELECT explode(FILTER(SEQUENCE(0, CAST(100 AS BIGINT)), x -> x < 100)) AS x_9) AS pushkin
+      synalog_test.A_sn_new AS A_sn_new, LATERAL (SELECT explode(FILTER(SEQUENCE(0, CAST(100 AS BIGINT)), x -> x < 100)) AS x_9) AS pushkin
     WHERE
       (A_sn_new.y = x_9)
   
@@ -413,17 +413,17 @@ FROM
   t_0_A_sn_back_step AS A_sn_back_step
 WHERE
   ((SELECT
-    MIN(1) AS logica_value
+    MIN(1) AS synalog_value
   FROM
-    logica_test.A_sn_full AS A_sn_full
+    synalog_test.A_sn_full AS A_sn_full
   WHERE
     (A_sn_full.y = A_sn_back_step.y)) IS NULL)
 GROUP BY 1;
 
-INSERT INTO logica_test.A_sn_full SELECT * FROM logica_test.A_sn_delta;
+INSERT INTO synalog_test.A_sn_full SELECT * FROM synalog_test.A_sn_delta;
 
-DROP TABLE IF EXISTS logica_test.A_sn_new;
-CREATE TABLE logica_test.A_sn_new AS WITH t_1_A_MultBodyAggAux_f6 AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_test.A_sn_new;
+CREATE TABLE synalog_test.A_sn_new AS WITH t_1_A_MultBodyAggAux_f6 AS (SELECT * FROM (
   
     SELECT
       0 AS y
@@ -432,7 +432,7 @@ CREATE TABLE logica_test.A_sn_new AS WITH t_1_A_MultBodyAggAux_f6 AS (SELECT * F
     SELECT
       ((x_9) + (1)) AS y
     FROM
-      logica_test.A_sn_delta AS A_sn_delta, LATERAL (SELECT explode(FILTER(SEQUENCE(0, CAST(100 AS BIGINT)), x -> x < 100)) AS x_9) AS pushkin
+      synalog_test.A_sn_delta AS A_sn_delta, LATERAL (SELECT explode(FILTER(SEQUENCE(0, CAST(100 AS BIGINT)), x -> x < 100)) AS x_9) AS pushkin
     WHERE
       (A_sn_delta.y = x_9)
   
@@ -448,17 +448,17 @@ FROM
   t_0_A_sn_step AS A_sn_step
 WHERE
   ((SELECT
-    MIN(1) AS logica_value
+    MIN(1) AS synalog_value
   FROM
-    logica_test.A_sn_full AS A_sn_full
+    synalog_test.A_sn_full AS A_sn_full
   WHERE
     (A_sn_full.y = A_sn_step.y)) IS NULL)
 GROUP BY 1;
 
-INSERT INTO logica_test.A_sn_full SELECT * FROM logica_test.A_sn_new;
+INSERT INTO synalog_test.A_sn_full SELECT * FROM synalog_test.A_sn_new;
 
-DROP TABLE IF EXISTS logica_test.A_sn_delta;
-CREATE TABLE logica_test.A_sn_delta AS WITH t_1_A_MultBodyAggAux_f1 AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_test.A_sn_delta;
+CREATE TABLE synalog_test.A_sn_delta AS WITH t_1_A_MultBodyAggAux_f1 AS (SELECT * FROM (
   
     SELECT
       0 AS y
@@ -467,7 +467,7 @@ CREATE TABLE logica_test.A_sn_delta AS WITH t_1_A_MultBodyAggAux_f1 AS (SELECT *
     SELECT
       ((x_9) + (1)) AS y
     FROM
-      logica_test.A_sn_new AS A_sn_new, LATERAL (SELECT explode(FILTER(SEQUENCE(0, CAST(100 AS BIGINT)), x -> x < 100)) AS x_9) AS pushkin
+      synalog_test.A_sn_new AS A_sn_new, LATERAL (SELECT explode(FILTER(SEQUENCE(0, CAST(100 AS BIGINT)), x -> x < 100)) AS x_9) AS pushkin
     WHERE
       (A_sn_new.y = x_9)
   
@@ -483,17 +483,17 @@ FROM
   t_0_A_sn_back_step AS A_sn_back_step
 WHERE
   ((SELECT
-    MIN(1) AS logica_value
+    MIN(1) AS synalog_value
   FROM
-    logica_test.A_sn_full AS A_sn_full
+    synalog_test.A_sn_full AS A_sn_full
   WHERE
     (A_sn_full.y = A_sn_back_step.y)) IS NULL)
 GROUP BY 1;
 
-INSERT INTO logica_test.A_sn_full SELECT * FROM logica_test.A_sn_delta;
+INSERT INTO synalog_test.A_sn_full SELECT * FROM synalog_test.A_sn_delta;
 
-DROP TABLE IF EXISTS logica_test.A_sn_new;
-CREATE TABLE logica_test.A_sn_new AS WITH t_1_A_MultBodyAggAux_f6 AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_test.A_sn_new;
+CREATE TABLE synalog_test.A_sn_new AS WITH t_1_A_MultBodyAggAux_f6 AS (SELECT * FROM (
   
     SELECT
       0 AS y
@@ -502,7 +502,7 @@ CREATE TABLE logica_test.A_sn_new AS WITH t_1_A_MultBodyAggAux_f6 AS (SELECT * F
     SELECT
       ((x_9) + (1)) AS y
     FROM
-      logica_test.A_sn_delta AS A_sn_delta, LATERAL (SELECT explode(FILTER(SEQUENCE(0, CAST(100 AS BIGINT)), x -> x < 100)) AS x_9) AS pushkin
+      synalog_test.A_sn_delta AS A_sn_delta, LATERAL (SELECT explode(FILTER(SEQUENCE(0, CAST(100 AS BIGINT)), x -> x < 100)) AS x_9) AS pushkin
     WHERE
       (A_sn_delta.y = x_9)
   
@@ -518,17 +518,17 @@ FROM
   t_0_A_sn_step AS A_sn_step
 WHERE
   ((SELECT
-    MIN(1) AS logica_value
+    MIN(1) AS synalog_value
   FROM
-    logica_test.A_sn_full AS A_sn_full
+    synalog_test.A_sn_full AS A_sn_full
   WHERE
     (A_sn_full.y = A_sn_step.y)) IS NULL)
 GROUP BY 1;
 
-INSERT INTO logica_test.A_sn_full SELECT * FROM logica_test.A_sn_new;
+INSERT INTO synalog_test.A_sn_full SELECT * FROM synalog_test.A_sn_new;
 
-DROP TABLE IF EXISTS logica_test.A_sn_delta;
-CREATE TABLE logica_test.A_sn_delta AS WITH t_1_A_MultBodyAggAux_f1 AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_test.A_sn_delta;
+CREATE TABLE synalog_test.A_sn_delta AS WITH t_1_A_MultBodyAggAux_f1 AS (SELECT * FROM (
   
     SELECT
       0 AS y
@@ -537,7 +537,7 @@ CREATE TABLE logica_test.A_sn_delta AS WITH t_1_A_MultBodyAggAux_f1 AS (SELECT *
     SELECT
       ((x_9) + (1)) AS y
     FROM
-      logica_test.A_sn_new AS A_sn_new, LATERAL (SELECT explode(FILTER(SEQUENCE(0, CAST(100 AS BIGINT)), x -> x < 100)) AS x_9) AS pushkin
+      synalog_test.A_sn_new AS A_sn_new, LATERAL (SELECT explode(FILTER(SEQUENCE(0, CAST(100 AS BIGINT)), x -> x < 100)) AS x_9) AS pushkin
     WHERE
       (A_sn_new.y = x_9)
   
@@ -553,17 +553,17 @@ FROM
   t_0_A_sn_back_step AS A_sn_back_step
 WHERE
   ((SELECT
-    MIN(1) AS logica_value
+    MIN(1) AS synalog_value
   FROM
-    logica_test.A_sn_full AS A_sn_full
+    synalog_test.A_sn_full AS A_sn_full
   WHERE
     (A_sn_full.y = A_sn_back_step.y)) IS NULL)
 GROUP BY 1;
 
-INSERT INTO logica_test.A_sn_full SELECT * FROM logica_test.A_sn_delta;
+INSERT INTO synalog_test.A_sn_full SELECT * FROM synalog_test.A_sn_delta;
 
-DROP TABLE IF EXISTS logica_test.A_sn_new;
-CREATE TABLE logica_test.A_sn_new AS WITH t_1_A_MultBodyAggAux_f6 AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_test.A_sn_new;
+CREATE TABLE synalog_test.A_sn_new AS WITH t_1_A_MultBodyAggAux_f6 AS (SELECT * FROM (
   
     SELECT
       0 AS y
@@ -572,7 +572,7 @@ CREATE TABLE logica_test.A_sn_new AS WITH t_1_A_MultBodyAggAux_f6 AS (SELECT * F
     SELECT
       ((x_9) + (1)) AS y
     FROM
-      logica_test.A_sn_delta AS A_sn_delta, LATERAL (SELECT explode(FILTER(SEQUENCE(0, CAST(100 AS BIGINT)), x -> x < 100)) AS x_9) AS pushkin
+      synalog_test.A_sn_delta AS A_sn_delta, LATERAL (SELECT explode(FILTER(SEQUENCE(0, CAST(100 AS BIGINT)), x -> x < 100)) AS x_9) AS pushkin
     WHERE
       (A_sn_delta.y = x_9)
   
@@ -588,17 +588,17 @@ FROM
   t_0_A_sn_step AS A_sn_step
 WHERE
   ((SELECT
-    MIN(1) AS logica_value
+    MIN(1) AS synalog_value
   FROM
-    logica_test.A_sn_full AS A_sn_full
+    synalog_test.A_sn_full AS A_sn_full
   WHERE
     (A_sn_full.y = A_sn_step.y)) IS NULL)
 GROUP BY 1;
 
-INSERT INTO logica_test.A_sn_full SELECT * FROM logica_test.A_sn_new;
+INSERT INTO synalog_test.A_sn_full SELECT * FROM synalog_test.A_sn_new;
 
-DROP TABLE IF EXISTS logica_test.A_sn_delta;
-CREATE TABLE logica_test.A_sn_delta AS WITH t_1_A_MultBodyAggAux_f1 AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_test.A_sn_delta;
+CREATE TABLE synalog_test.A_sn_delta AS WITH t_1_A_MultBodyAggAux_f1 AS (SELECT * FROM (
   
     SELECT
       0 AS y
@@ -607,7 +607,7 @@ CREATE TABLE logica_test.A_sn_delta AS WITH t_1_A_MultBodyAggAux_f1 AS (SELECT *
     SELECT
       ((x_9) + (1)) AS y
     FROM
-      logica_test.A_sn_new AS A_sn_new, LATERAL (SELECT explode(FILTER(SEQUENCE(0, CAST(100 AS BIGINT)), x -> x < 100)) AS x_9) AS pushkin
+      synalog_test.A_sn_new AS A_sn_new, LATERAL (SELECT explode(FILTER(SEQUENCE(0, CAST(100 AS BIGINT)), x -> x < 100)) AS x_9) AS pushkin
     WHERE
       (A_sn_new.y = x_9)
   
@@ -623,17 +623,17 @@ FROM
   t_0_A_sn_back_step AS A_sn_back_step
 WHERE
   ((SELECT
-    MIN(1) AS logica_value
+    MIN(1) AS synalog_value
   FROM
-    logica_test.A_sn_full AS A_sn_full
+    synalog_test.A_sn_full AS A_sn_full
   WHERE
     (A_sn_full.y = A_sn_back_step.y)) IS NULL)
 GROUP BY 1;
 
-INSERT INTO logica_test.A_sn_full SELECT * FROM logica_test.A_sn_delta;
+INSERT INTO synalog_test.A_sn_full SELECT * FROM synalog_test.A_sn_delta;
 
-DROP TABLE IF EXISTS logica_test.A_sn_new;
-CREATE TABLE logica_test.A_sn_new AS WITH t_1_A_MultBodyAggAux_f6 AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_test.A_sn_new;
+CREATE TABLE synalog_test.A_sn_new AS WITH t_1_A_MultBodyAggAux_f6 AS (SELECT * FROM (
   
     SELECT
       0 AS y
@@ -642,7 +642,7 @@ CREATE TABLE logica_test.A_sn_new AS WITH t_1_A_MultBodyAggAux_f6 AS (SELECT * F
     SELECT
       ((x_9) + (1)) AS y
     FROM
-      logica_test.A_sn_delta AS A_sn_delta, LATERAL (SELECT explode(FILTER(SEQUENCE(0, CAST(100 AS BIGINT)), x -> x < 100)) AS x_9) AS pushkin
+      synalog_test.A_sn_delta AS A_sn_delta, LATERAL (SELECT explode(FILTER(SEQUENCE(0, CAST(100 AS BIGINT)), x -> x < 100)) AS x_9) AS pushkin
     WHERE
       (A_sn_delta.y = x_9)
   
@@ -658,17 +658,17 @@ FROM
   t_0_A_sn_step AS A_sn_step
 WHERE
   ((SELECT
-    MIN(1) AS logica_value
+    MIN(1) AS synalog_value
   FROM
-    logica_test.A_sn_full AS A_sn_full
+    synalog_test.A_sn_full AS A_sn_full
   WHERE
     (A_sn_full.y = A_sn_step.y)) IS NULL)
 GROUP BY 1;
 
-INSERT INTO logica_test.A_sn_full SELECT * FROM logica_test.A_sn_new;
+INSERT INTO synalog_test.A_sn_full SELECT * FROM synalog_test.A_sn_new;
 
-DROP TABLE IF EXISTS logica_test.A_sn_delta;
-CREATE TABLE logica_test.A_sn_delta AS WITH t_1_A_MultBodyAggAux_f1 AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_test.A_sn_delta;
+CREATE TABLE synalog_test.A_sn_delta AS WITH t_1_A_MultBodyAggAux_f1 AS (SELECT * FROM (
   
     SELECT
       0 AS y
@@ -677,7 +677,7 @@ CREATE TABLE logica_test.A_sn_delta AS WITH t_1_A_MultBodyAggAux_f1 AS (SELECT *
     SELECT
       ((x_9) + (1)) AS y
     FROM
-      logica_test.A_sn_new AS A_sn_new, LATERAL (SELECT explode(FILTER(SEQUENCE(0, CAST(100 AS BIGINT)), x -> x < 100)) AS x_9) AS pushkin
+      synalog_test.A_sn_new AS A_sn_new, LATERAL (SELECT explode(FILTER(SEQUENCE(0, CAST(100 AS BIGINT)), x -> x < 100)) AS x_9) AS pushkin
     WHERE
       (A_sn_new.y = x_9)
   
@@ -693,17 +693,17 @@ FROM
   t_0_A_sn_back_step AS A_sn_back_step
 WHERE
   ((SELECT
-    MIN(1) AS logica_value
+    MIN(1) AS synalog_value
   FROM
-    logica_test.A_sn_full AS A_sn_full
+    synalog_test.A_sn_full AS A_sn_full
   WHERE
     (A_sn_full.y = A_sn_back_step.y)) IS NULL)
 GROUP BY 1;
 
-INSERT INTO logica_test.A_sn_full SELECT * FROM logica_test.A_sn_delta;
+INSERT INTO synalog_test.A_sn_full SELECT * FROM synalog_test.A_sn_delta;
 
-DROP TABLE IF EXISTS logica_test.A_sn_new;
-CREATE TABLE logica_test.A_sn_new AS WITH t_1_A_MultBodyAggAux_f6 AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_test.A_sn_new;
+CREATE TABLE synalog_test.A_sn_new AS WITH t_1_A_MultBodyAggAux_f6 AS (SELECT * FROM (
   
     SELECT
       0 AS y
@@ -712,7 +712,7 @@ CREATE TABLE logica_test.A_sn_new AS WITH t_1_A_MultBodyAggAux_f6 AS (SELECT * F
     SELECT
       ((x_9) + (1)) AS y
     FROM
-      logica_test.A_sn_delta AS A_sn_delta, LATERAL (SELECT explode(FILTER(SEQUENCE(0, CAST(100 AS BIGINT)), x -> x < 100)) AS x_9) AS pushkin
+      synalog_test.A_sn_delta AS A_sn_delta, LATERAL (SELECT explode(FILTER(SEQUENCE(0, CAST(100 AS BIGINT)), x -> x < 100)) AS x_9) AS pushkin
     WHERE
       (A_sn_delta.y = x_9)
   
@@ -728,17 +728,17 @@ FROM
   t_0_A_sn_step AS A_sn_step
 WHERE
   ((SELECT
-    MIN(1) AS logica_value
+    MIN(1) AS synalog_value
   FROM
-    logica_test.A_sn_full AS A_sn_full
+    synalog_test.A_sn_full AS A_sn_full
   WHERE
     (A_sn_full.y = A_sn_step.y)) IS NULL)
 GROUP BY 1;
 
-INSERT INTO logica_test.A_sn_full SELECT * FROM logica_test.A_sn_new;
+INSERT INTO synalog_test.A_sn_full SELECT * FROM synalog_test.A_sn_new;
 
-DROP TABLE IF EXISTS logica_test.A_sn_delta;
-CREATE TABLE logica_test.A_sn_delta AS WITH t_1_A_MultBodyAggAux_f1 AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_test.A_sn_delta;
+CREATE TABLE synalog_test.A_sn_delta AS WITH t_1_A_MultBodyAggAux_f1 AS (SELECT * FROM (
   
     SELECT
       0 AS y
@@ -747,7 +747,7 @@ CREATE TABLE logica_test.A_sn_delta AS WITH t_1_A_MultBodyAggAux_f1 AS (SELECT *
     SELECT
       ((x_9) + (1)) AS y
     FROM
-      logica_test.A_sn_new AS A_sn_new, LATERAL (SELECT explode(FILTER(SEQUENCE(0, CAST(100 AS BIGINT)), x -> x < 100)) AS x_9) AS pushkin
+      synalog_test.A_sn_new AS A_sn_new, LATERAL (SELECT explode(FILTER(SEQUENCE(0, CAST(100 AS BIGINT)), x -> x < 100)) AS x_9) AS pushkin
     WHERE
       (A_sn_new.y = x_9)
   
@@ -763,17 +763,17 @@ FROM
   t_0_A_sn_back_step AS A_sn_back_step
 WHERE
   ((SELECT
-    MIN(1) AS logica_value
+    MIN(1) AS synalog_value
   FROM
-    logica_test.A_sn_full AS A_sn_full
+    synalog_test.A_sn_full AS A_sn_full
   WHERE
     (A_sn_full.y = A_sn_back_step.y)) IS NULL)
 GROUP BY 1;
 
-INSERT INTO logica_test.A_sn_full SELECT * FROM logica_test.A_sn_delta;
+INSERT INTO synalog_test.A_sn_full SELECT * FROM synalog_test.A_sn_delta;
 
-DROP TABLE IF EXISTS logica_test.A_sn_new;
-CREATE TABLE logica_test.A_sn_new AS WITH t_1_A_MultBodyAggAux_f6 AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_test.A_sn_new;
+CREATE TABLE synalog_test.A_sn_new AS WITH t_1_A_MultBodyAggAux_f6 AS (SELECT * FROM (
   
     SELECT
       0 AS y
@@ -782,7 +782,7 @@ CREATE TABLE logica_test.A_sn_new AS WITH t_1_A_MultBodyAggAux_f6 AS (SELECT * F
     SELECT
       ((x_9) + (1)) AS y
     FROM
-      logica_test.A_sn_delta AS A_sn_delta, LATERAL (SELECT explode(FILTER(SEQUENCE(0, CAST(100 AS BIGINT)), x -> x < 100)) AS x_9) AS pushkin
+      synalog_test.A_sn_delta AS A_sn_delta, LATERAL (SELECT explode(FILTER(SEQUENCE(0, CAST(100 AS BIGINT)), x -> x < 100)) AS x_9) AS pushkin
     WHERE
       (A_sn_delta.y = x_9)
   
@@ -798,17 +798,17 @@ FROM
   t_0_A_sn_step AS A_sn_step
 WHERE
   ((SELECT
-    MIN(1) AS logica_value
+    MIN(1) AS synalog_value
   FROM
-    logica_test.A_sn_full AS A_sn_full
+    synalog_test.A_sn_full AS A_sn_full
   WHERE
     (A_sn_full.y = A_sn_step.y)) IS NULL)
 GROUP BY 1;
 
-INSERT INTO logica_test.A_sn_full SELECT * FROM logica_test.A_sn_new;
+INSERT INTO synalog_test.A_sn_full SELECT * FROM synalog_test.A_sn_new;
 
-DROP TABLE IF EXISTS logica_test.A_sn_delta;
-CREATE TABLE logica_test.A_sn_delta AS WITH t_1_A_MultBodyAggAux_f1 AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_test.A_sn_delta;
+CREATE TABLE synalog_test.A_sn_delta AS WITH t_1_A_MultBodyAggAux_f1 AS (SELECT * FROM (
   
     SELECT
       0 AS y
@@ -817,7 +817,7 @@ CREATE TABLE logica_test.A_sn_delta AS WITH t_1_A_MultBodyAggAux_f1 AS (SELECT *
     SELECT
       ((x_9) + (1)) AS y
     FROM
-      logica_test.A_sn_new AS A_sn_new, LATERAL (SELECT explode(FILTER(SEQUENCE(0, CAST(100 AS BIGINT)), x -> x < 100)) AS x_9) AS pushkin
+      synalog_test.A_sn_new AS A_sn_new, LATERAL (SELECT explode(FILTER(SEQUENCE(0, CAST(100 AS BIGINT)), x -> x < 100)) AS x_9) AS pushkin
     WHERE
       (A_sn_new.y = x_9)
   
@@ -833,17 +833,17 @@ FROM
   t_0_A_sn_back_step AS A_sn_back_step
 WHERE
   ((SELECT
-    MIN(1) AS logica_value
+    MIN(1) AS synalog_value
   FROM
-    logica_test.A_sn_full AS A_sn_full
+    synalog_test.A_sn_full AS A_sn_full
   WHERE
     (A_sn_full.y = A_sn_back_step.y)) IS NULL)
 GROUP BY 1;
 
-INSERT INTO logica_test.A_sn_full SELECT * FROM logica_test.A_sn_delta;
+INSERT INTO synalog_test.A_sn_full SELECT * FROM synalog_test.A_sn_delta;
 
-DROP TABLE IF EXISTS logica_test.A_sn_new;
-CREATE TABLE logica_test.A_sn_new AS WITH t_1_A_MultBodyAggAux_f6 AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_test.A_sn_new;
+CREATE TABLE synalog_test.A_sn_new AS WITH t_1_A_MultBodyAggAux_f6 AS (SELECT * FROM (
   
     SELECT
       0 AS y
@@ -852,7 +852,7 @@ CREATE TABLE logica_test.A_sn_new AS WITH t_1_A_MultBodyAggAux_f6 AS (SELECT * F
     SELECT
       ((x_9) + (1)) AS y
     FROM
-      logica_test.A_sn_delta AS A_sn_delta, LATERAL (SELECT explode(FILTER(SEQUENCE(0, CAST(100 AS BIGINT)), x -> x < 100)) AS x_9) AS pushkin
+      synalog_test.A_sn_delta AS A_sn_delta, LATERAL (SELECT explode(FILTER(SEQUENCE(0, CAST(100 AS BIGINT)), x -> x < 100)) AS x_9) AS pushkin
     WHERE
       (A_sn_delta.y = x_9)
   
@@ -868,17 +868,17 @@ FROM
   t_0_A_sn_step AS A_sn_step
 WHERE
   ((SELECT
-    MIN(1) AS logica_value
+    MIN(1) AS synalog_value
   FROM
-    logica_test.A_sn_full AS A_sn_full
+    synalog_test.A_sn_full AS A_sn_full
   WHERE
     (A_sn_full.y = A_sn_step.y)) IS NULL)
 GROUP BY 1;
 
-INSERT INTO logica_test.A_sn_full SELECT * FROM logica_test.A_sn_new;
+INSERT INTO synalog_test.A_sn_full SELECT * FROM synalog_test.A_sn_new;
 
-DROP TABLE IF EXISTS logica_test.A_sn_delta;
-CREATE TABLE logica_test.A_sn_delta AS WITH t_1_A_MultBodyAggAux_f1 AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_test.A_sn_delta;
+CREATE TABLE synalog_test.A_sn_delta AS WITH t_1_A_MultBodyAggAux_f1 AS (SELECT * FROM (
   
     SELECT
       0 AS y
@@ -887,7 +887,7 @@ CREATE TABLE logica_test.A_sn_delta AS WITH t_1_A_MultBodyAggAux_f1 AS (SELECT *
     SELECT
       ((x_9) + (1)) AS y
     FROM
-      logica_test.A_sn_new AS A_sn_new, LATERAL (SELECT explode(FILTER(SEQUENCE(0, CAST(100 AS BIGINT)), x -> x < 100)) AS x_9) AS pushkin
+      synalog_test.A_sn_new AS A_sn_new, LATERAL (SELECT explode(FILTER(SEQUENCE(0, CAST(100 AS BIGINT)), x -> x < 100)) AS x_9) AS pushkin
     WHERE
       (A_sn_new.y = x_9)
   
@@ -903,17 +903,17 @@ FROM
   t_0_A_sn_back_step AS A_sn_back_step
 WHERE
   ((SELECT
-    MIN(1) AS logica_value
+    MIN(1) AS synalog_value
   FROM
-    logica_test.A_sn_full AS A_sn_full
+    synalog_test.A_sn_full AS A_sn_full
   WHERE
     (A_sn_full.y = A_sn_back_step.y)) IS NULL)
 GROUP BY 1;
 
-INSERT INTO logica_test.A_sn_full SELECT * FROM logica_test.A_sn_delta;
+INSERT INTO synalog_test.A_sn_full SELECT * FROM synalog_test.A_sn_delta;
 
-DROP TABLE IF EXISTS logica_test.A_sn_new;
-CREATE TABLE logica_test.A_sn_new AS WITH t_1_A_MultBodyAggAux_f6 AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_test.A_sn_new;
+CREATE TABLE synalog_test.A_sn_new AS WITH t_1_A_MultBodyAggAux_f6 AS (SELECT * FROM (
   
     SELECT
       0 AS y
@@ -922,7 +922,7 @@ CREATE TABLE logica_test.A_sn_new AS WITH t_1_A_MultBodyAggAux_f6 AS (SELECT * F
     SELECT
       ((x_9) + (1)) AS y
     FROM
-      logica_test.A_sn_delta AS A_sn_delta, LATERAL (SELECT explode(FILTER(SEQUENCE(0, CAST(100 AS BIGINT)), x -> x < 100)) AS x_9) AS pushkin
+      synalog_test.A_sn_delta AS A_sn_delta, LATERAL (SELECT explode(FILTER(SEQUENCE(0, CAST(100 AS BIGINT)), x -> x < 100)) AS x_9) AS pushkin
     WHERE
       (A_sn_delta.y = x_9)
   
@@ -938,17 +938,17 @@ FROM
   t_0_A_sn_step AS A_sn_step
 WHERE
   ((SELECT
-    MIN(1) AS logica_value
+    MIN(1) AS synalog_value
   FROM
-    logica_test.A_sn_full AS A_sn_full
+    synalog_test.A_sn_full AS A_sn_full
   WHERE
     (A_sn_full.y = A_sn_step.y)) IS NULL)
 GROUP BY 1;
 
-INSERT INTO logica_test.A_sn_full SELECT * FROM logica_test.A_sn_new;
+INSERT INTO synalog_test.A_sn_full SELECT * FROM synalog_test.A_sn_new;
 
-DROP TABLE IF EXISTS logica_test.A_sn_delta;
-CREATE TABLE logica_test.A_sn_delta AS WITH t_1_A_MultBodyAggAux_f1 AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_test.A_sn_delta;
+CREATE TABLE synalog_test.A_sn_delta AS WITH t_1_A_MultBodyAggAux_f1 AS (SELECT * FROM (
   
     SELECT
       0 AS y
@@ -957,7 +957,7 @@ CREATE TABLE logica_test.A_sn_delta AS WITH t_1_A_MultBodyAggAux_f1 AS (SELECT *
     SELECT
       ((x_9) + (1)) AS y
     FROM
-      logica_test.A_sn_new AS A_sn_new, LATERAL (SELECT explode(FILTER(SEQUENCE(0, CAST(100 AS BIGINT)), x -> x < 100)) AS x_9) AS pushkin
+      synalog_test.A_sn_new AS A_sn_new, LATERAL (SELECT explode(FILTER(SEQUENCE(0, CAST(100 AS BIGINT)), x -> x < 100)) AS x_9) AS pushkin
     WHERE
       (A_sn_new.y = x_9)
   
@@ -973,17 +973,17 @@ FROM
   t_0_A_sn_back_step AS A_sn_back_step
 WHERE
   ((SELECT
-    MIN(1) AS logica_value
+    MIN(1) AS synalog_value
   FROM
-    logica_test.A_sn_full AS A_sn_full
+    synalog_test.A_sn_full AS A_sn_full
   WHERE
     (A_sn_full.y = A_sn_back_step.y)) IS NULL)
 GROUP BY 1;
 
-INSERT INTO logica_test.A_sn_full SELECT * FROM logica_test.A_sn_delta;
+INSERT INTO synalog_test.A_sn_full SELECT * FROM synalog_test.A_sn_delta;
 
-DROP TABLE IF EXISTS logica_test.A_sn_new;
-CREATE TABLE logica_test.A_sn_new AS WITH t_1_A_MultBodyAggAux_f6 AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_test.A_sn_new;
+CREATE TABLE synalog_test.A_sn_new AS WITH t_1_A_MultBodyAggAux_f6 AS (SELECT * FROM (
   
     SELECT
       0 AS y
@@ -992,7 +992,7 @@ CREATE TABLE logica_test.A_sn_new AS WITH t_1_A_MultBodyAggAux_f6 AS (SELECT * F
     SELECT
       ((x_9) + (1)) AS y
     FROM
-      logica_test.A_sn_delta AS A_sn_delta, LATERAL (SELECT explode(FILTER(SEQUENCE(0, CAST(100 AS BIGINT)), x -> x < 100)) AS x_9) AS pushkin
+      synalog_test.A_sn_delta AS A_sn_delta, LATERAL (SELECT explode(FILTER(SEQUENCE(0, CAST(100 AS BIGINT)), x -> x < 100)) AS x_9) AS pushkin
     WHERE
       (A_sn_delta.y = x_9)
   
@@ -1008,17 +1008,17 @@ FROM
   t_0_A_sn_step AS A_sn_step
 WHERE
   ((SELECT
-    MIN(1) AS logica_value
+    MIN(1) AS synalog_value
   FROM
-    logica_test.A_sn_full AS A_sn_full
+    synalog_test.A_sn_full AS A_sn_full
   WHERE
     (A_sn_full.y = A_sn_step.y)) IS NULL)
 GROUP BY 1;
 
-INSERT INTO logica_test.A_sn_full SELECT * FROM logica_test.A_sn_new;
+INSERT INTO synalog_test.A_sn_full SELECT * FROM synalog_test.A_sn_new;
 
-DROP TABLE IF EXISTS logica_test.B_sn_new;
-CREATE TABLE logica_test.B_sn_new AS WITH t_1_B_MultBodyAggAux_f12 AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_test.B_sn_new;
+CREATE TABLE synalog_test.B_sn_new AS WITH t_1_B_MultBodyAggAux_f12 AS (SELECT * FROM (
   
     SELECT
       0 AS y
@@ -1027,7 +1027,7 @@ CREATE TABLE logica_test.B_sn_new AS WITH t_1_B_MultBodyAggAux_f12 AS (SELECT * 
     SELECT
       ((x_9) + (1)) AS y
     FROM
-      logica_test.B_sn_delta AS B_sn_delta, LATERAL (SELECT explode(FILTER(SEQUENCE(0, CAST(100 AS BIGINT)), x -> x < 100)) AS x_9) AS pushkin
+      synalog_test.B_sn_delta AS B_sn_delta, LATERAL (SELECT explode(FILTER(SEQUENCE(0, CAST(100 AS BIGINT)), x -> x < 100)) AS x_9) AS pushkin
     WHERE
       (B_sn_delta.y = x_9)
   
@@ -1043,17 +1043,17 @@ FROM
   t_0_B_sn_step AS B_sn_step
 WHERE
   ((SELECT
-    MIN(1) AS logica_value
+    MIN(1) AS synalog_value
   FROM
-    logica_test.B_sn_full AS B_sn_full
+    synalog_test.B_sn_full AS B_sn_full
   WHERE
     (B_sn_full.y = B_sn_step.y)) IS NULL)
 GROUP BY 1;
 
-INSERT INTO logica_test.B_sn_full SELECT * FROM logica_test.B_sn_new;
+INSERT INTO synalog_test.B_sn_full SELECT * FROM synalog_test.B_sn_new;
 
-DROP TABLE IF EXISTS logica_test.B_sn_delta;
-CREATE TABLE logica_test.B_sn_delta AS WITH t_1_B_MultBodyAggAux_f7 AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_test.B_sn_delta;
+CREATE TABLE synalog_test.B_sn_delta AS WITH t_1_B_MultBodyAggAux_f7 AS (SELECT * FROM (
   
     SELECT
       0 AS y
@@ -1062,7 +1062,7 @@ CREATE TABLE logica_test.B_sn_delta AS WITH t_1_B_MultBodyAggAux_f7 AS (SELECT *
     SELECT
       ((x_9) + (1)) AS y
     FROM
-      logica_test.B_sn_new AS B_sn_new, LATERAL (SELECT explode(FILTER(SEQUENCE(0, CAST(100 AS BIGINT)), x -> x < 100)) AS x_9) AS pushkin
+      synalog_test.B_sn_new AS B_sn_new, LATERAL (SELECT explode(FILTER(SEQUENCE(0, CAST(100 AS BIGINT)), x -> x < 100)) AS x_9) AS pushkin
     WHERE
       (B_sn_new.y = x_9)
   
@@ -1078,17 +1078,17 @@ FROM
   t_0_B_sn_back_step AS B_sn_back_step
 WHERE
   ((SELECT
-    MIN(1) AS logica_value
+    MIN(1) AS synalog_value
   FROM
-    logica_test.B_sn_full AS B_sn_full
+    synalog_test.B_sn_full AS B_sn_full
   WHERE
     (B_sn_full.y = B_sn_back_step.y)) IS NULL)
 GROUP BY 1;
 
-INSERT INTO logica_test.B_sn_full SELECT * FROM logica_test.B_sn_delta;
+INSERT INTO synalog_test.B_sn_full SELECT * FROM synalog_test.B_sn_delta;
 
-DROP TABLE IF EXISTS logica_test.B_sn_new;
-CREATE TABLE logica_test.B_sn_new AS WITH t_1_B_MultBodyAggAux_f12 AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_test.B_sn_new;
+CREATE TABLE synalog_test.B_sn_new AS WITH t_1_B_MultBodyAggAux_f12 AS (SELECT * FROM (
   
     SELECT
       0 AS y
@@ -1097,7 +1097,7 @@ CREATE TABLE logica_test.B_sn_new AS WITH t_1_B_MultBodyAggAux_f12 AS (SELECT * 
     SELECT
       ((x_9) + (1)) AS y
     FROM
-      logica_test.B_sn_delta AS B_sn_delta, LATERAL (SELECT explode(FILTER(SEQUENCE(0, CAST(100 AS BIGINT)), x -> x < 100)) AS x_9) AS pushkin
+      synalog_test.B_sn_delta AS B_sn_delta, LATERAL (SELECT explode(FILTER(SEQUENCE(0, CAST(100 AS BIGINT)), x -> x < 100)) AS x_9) AS pushkin
     WHERE
       (B_sn_delta.y = x_9)
   
@@ -1113,17 +1113,17 @@ FROM
   t_0_B_sn_step AS B_sn_step
 WHERE
   ((SELECT
-    MIN(1) AS logica_value
+    MIN(1) AS synalog_value
   FROM
-    logica_test.B_sn_full AS B_sn_full
+    synalog_test.B_sn_full AS B_sn_full
   WHERE
     (B_sn_full.y = B_sn_step.y)) IS NULL)
 GROUP BY 1;
 
-INSERT INTO logica_test.B_sn_full SELECT * FROM logica_test.B_sn_new;
+INSERT INTO synalog_test.B_sn_full SELECT * FROM synalog_test.B_sn_new;
 
-DROP TABLE IF EXISTS logica_test.B_sn_delta;
-CREATE TABLE logica_test.B_sn_delta AS WITH t_1_B_MultBodyAggAux_f7 AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_test.B_sn_delta;
+CREATE TABLE synalog_test.B_sn_delta AS WITH t_1_B_MultBodyAggAux_f7 AS (SELECT * FROM (
   
     SELECT
       0 AS y
@@ -1132,7 +1132,7 @@ CREATE TABLE logica_test.B_sn_delta AS WITH t_1_B_MultBodyAggAux_f7 AS (SELECT *
     SELECT
       ((x_9) + (1)) AS y
     FROM
-      logica_test.B_sn_new AS B_sn_new, LATERAL (SELECT explode(FILTER(SEQUENCE(0, CAST(100 AS BIGINT)), x -> x < 100)) AS x_9) AS pushkin
+      synalog_test.B_sn_new AS B_sn_new, LATERAL (SELECT explode(FILTER(SEQUENCE(0, CAST(100 AS BIGINT)), x -> x < 100)) AS x_9) AS pushkin
     WHERE
       (B_sn_new.y = x_9)
   
@@ -1148,17 +1148,17 @@ FROM
   t_0_B_sn_back_step AS B_sn_back_step
 WHERE
   ((SELECT
-    MIN(1) AS logica_value
+    MIN(1) AS synalog_value
   FROM
-    logica_test.B_sn_full AS B_sn_full
+    synalog_test.B_sn_full AS B_sn_full
   WHERE
     (B_sn_full.y = B_sn_back_step.y)) IS NULL)
 GROUP BY 1;
 
-INSERT INTO logica_test.B_sn_full SELECT * FROM logica_test.B_sn_delta;
+INSERT INTO synalog_test.B_sn_full SELECT * FROM synalog_test.B_sn_delta;
 
-DROP TABLE IF EXISTS logica_test.B_sn_new;
-CREATE TABLE logica_test.B_sn_new AS WITH t_1_B_MultBodyAggAux_f12 AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_test.B_sn_new;
+CREATE TABLE synalog_test.B_sn_new AS WITH t_1_B_MultBodyAggAux_f12 AS (SELECT * FROM (
   
     SELECT
       0 AS y
@@ -1167,7 +1167,7 @@ CREATE TABLE logica_test.B_sn_new AS WITH t_1_B_MultBodyAggAux_f12 AS (SELECT * 
     SELECT
       ((x_9) + (1)) AS y
     FROM
-      logica_test.B_sn_delta AS B_sn_delta, LATERAL (SELECT explode(FILTER(SEQUENCE(0, CAST(100 AS BIGINT)), x -> x < 100)) AS x_9) AS pushkin
+      synalog_test.B_sn_delta AS B_sn_delta, LATERAL (SELECT explode(FILTER(SEQUENCE(0, CAST(100 AS BIGINT)), x -> x < 100)) AS x_9) AS pushkin
     WHERE
       (B_sn_delta.y = x_9)
   
@@ -1183,17 +1183,17 @@ FROM
   t_0_B_sn_step AS B_sn_step
 WHERE
   ((SELECT
-    MIN(1) AS logica_value
+    MIN(1) AS synalog_value
   FROM
-    logica_test.B_sn_full AS B_sn_full
+    synalog_test.B_sn_full AS B_sn_full
   WHERE
     (B_sn_full.y = B_sn_step.y)) IS NULL)
 GROUP BY 1;
 
-INSERT INTO logica_test.B_sn_full SELECT * FROM logica_test.B_sn_new;
+INSERT INTO synalog_test.B_sn_full SELECT * FROM synalog_test.B_sn_new;
 
-DROP TABLE IF EXISTS logica_test.B_sn_delta;
-CREATE TABLE logica_test.B_sn_delta AS WITH t_1_B_MultBodyAggAux_f7 AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_test.B_sn_delta;
+CREATE TABLE synalog_test.B_sn_delta AS WITH t_1_B_MultBodyAggAux_f7 AS (SELECT * FROM (
   
     SELECT
       0 AS y
@@ -1202,7 +1202,7 @@ CREATE TABLE logica_test.B_sn_delta AS WITH t_1_B_MultBodyAggAux_f7 AS (SELECT *
     SELECT
       ((x_9) + (1)) AS y
     FROM
-      logica_test.B_sn_new AS B_sn_new, LATERAL (SELECT explode(FILTER(SEQUENCE(0, CAST(100 AS BIGINT)), x -> x < 100)) AS x_9) AS pushkin
+      synalog_test.B_sn_new AS B_sn_new, LATERAL (SELECT explode(FILTER(SEQUENCE(0, CAST(100 AS BIGINT)), x -> x < 100)) AS x_9) AS pushkin
     WHERE
       (B_sn_new.y = x_9)
   
@@ -1218,17 +1218,17 @@ FROM
   t_0_B_sn_back_step AS B_sn_back_step
 WHERE
   ((SELECT
-    MIN(1) AS logica_value
+    MIN(1) AS synalog_value
   FROM
-    logica_test.B_sn_full AS B_sn_full
+    synalog_test.B_sn_full AS B_sn_full
   WHERE
     (B_sn_full.y = B_sn_back_step.y)) IS NULL)
 GROUP BY 1;
 
-INSERT INTO logica_test.B_sn_full SELECT * FROM logica_test.B_sn_delta;
+INSERT INTO synalog_test.B_sn_full SELECT * FROM synalog_test.B_sn_delta;
 
-DROP TABLE IF EXISTS logica_test.B_sn_new;
-CREATE TABLE logica_test.B_sn_new AS WITH t_1_B_MultBodyAggAux_f12 AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_test.B_sn_new;
+CREATE TABLE synalog_test.B_sn_new AS WITH t_1_B_MultBodyAggAux_f12 AS (SELECT * FROM (
   
     SELECT
       0 AS y
@@ -1237,7 +1237,7 @@ CREATE TABLE logica_test.B_sn_new AS WITH t_1_B_MultBodyAggAux_f12 AS (SELECT * 
     SELECT
       ((x_9) + (1)) AS y
     FROM
-      logica_test.B_sn_delta AS B_sn_delta, LATERAL (SELECT explode(FILTER(SEQUENCE(0, CAST(100 AS BIGINT)), x -> x < 100)) AS x_9) AS pushkin
+      synalog_test.B_sn_delta AS B_sn_delta, LATERAL (SELECT explode(FILTER(SEQUENCE(0, CAST(100 AS BIGINT)), x -> x < 100)) AS x_9) AS pushkin
     WHERE
       (B_sn_delta.y = x_9)
   
@@ -1253,17 +1253,17 @@ FROM
   t_0_B_sn_step AS B_sn_step
 WHERE
   ((SELECT
-    MIN(1) AS logica_value
+    MIN(1) AS synalog_value
   FROM
-    logica_test.B_sn_full AS B_sn_full
+    synalog_test.B_sn_full AS B_sn_full
   WHERE
     (B_sn_full.y = B_sn_step.y)) IS NULL)
 GROUP BY 1;
 
-INSERT INTO logica_test.B_sn_full SELECT * FROM logica_test.B_sn_new;
+INSERT INTO synalog_test.B_sn_full SELECT * FROM synalog_test.B_sn_new;
 
-DROP TABLE IF EXISTS logica_test.B_sn_delta;
-CREATE TABLE logica_test.B_sn_delta AS WITH t_1_B_MultBodyAggAux_f7 AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_test.B_sn_delta;
+CREATE TABLE synalog_test.B_sn_delta AS WITH t_1_B_MultBodyAggAux_f7 AS (SELECT * FROM (
   
     SELECT
       0 AS y
@@ -1272,7 +1272,7 @@ CREATE TABLE logica_test.B_sn_delta AS WITH t_1_B_MultBodyAggAux_f7 AS (SELECT *
     SELECT
       ((x_9) + (1)) AS y
     FROM
-      logica_test.B_sn_new AS B_sn_new, LATERAL (SELECT explode(FILTER(SEQUENCE(0, CAST(100 AS BIGINT)), x -> x < 100)) AS x_9) AS pushkin
+      synalog_test.B_sn_new AS B_sn_new, LATERAL (SELECT explode(FILTER(SEQUENCE(0, CAST(100 AS BIGINT)), x -> x < 100)) AS x_9) AS pushkin
     WHERE
       (B_sn_new.y = x_9)
   
@@ -1288,17 +1288,17 @@ FROM
   t_0_B_sn_back_step AS B_sn_back_step
 WHERE
   ((SELECT
-    MIN(1) AS logica_value
+    MIN(1) AS synalog_value
   FROM
-    logica_test.B_sn_full AS B_sn_full
+    synalog_test.B_sn_full AS B_sn_full
   WHERE
     (B_sn_full.y = B_sn_back_step.y)) IS NULL)
 GROUP BY 1;
 
-INSERT INTO logica_test.B_sn_full SELECT * FROM logica_test.B_sn_delta;
+INSERT INTO synalog_test.B_sn_full SELECT * FROM synalog_test.B_sn_delta;
 
-DROP TABLE IF EXISTS logica_test.B_sn_new;
-CREATE TABLE logica_test.B_sn_new AS WITH t_1_B_MultBodyAggAux_f12 AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_test.B_sn_new;
+CREATE TABLE synalog_test.B_sn_new AS WITH t_1_B_MultBodyAggAux_f12 AS (SELECT * FROM (
   
     SELECT
       0 AS y
@@ -1307,7 +1307,7 @@ CREATE TABLE logica_test.B_sn_new AS WITH t_1_B_MultBodyAggAux_f12 AS (SELECT * 
     SELECT
       ((x_9) + (1)) AS y
     FROM
-      logica_test.B_sn_delta AS B_sn_delta, LATERAL (SELECT explode(FILTER(SEQUENCE(0, CAST(100 AS BIGINT)), x -> x < 100)) AS x_9) AS pushkin
+      synalog_test.B_sn_delta AS B_sn_delta, LATERAL (SELECT explode(FILTER(SEQUENCE(0, CAST(100 AS BIGINT)), x -> x < 100)) AS x_9) AS pushkin
     WHERE
       (B_sn_delta.y = x_9)
   
@@ -1323,17 +1323,17 @@ FROM
   t_0_B_sn_step AS B_sn_step
 WHERE
   ((SELECT
-    MIN(1) AS logica_value
+    MIN(1) AS synalog_value
   FROM
-    logica_test.B_sn_full AS B_sn_full
+    synalog_test.B_sn_full AS B_sn_full
   WHERE
     (B_sn_full.y = B_sn_step.y)) IS NULL)
 GROUP BY 1;
 
-INSERT INTO logica_test.B_sn_full SELECT * FROM logica_test.B_sn_new;
+INSERT INTO synalog_test.B_sn_full SELECT * FROM synalog_test.B_sn_new;
 
-DROP TABLE IF EXISTS logica_test.B_sn_delta;
-CREATE TABLE logica_test.B_sn_delta AS WITH t_1_B_MultBodyAggAux_f7 AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_test.B_sn_delta;
+CREATE TABLE synalog_test.B_sn_delta AS WITH t_1_B_MultBodyAggAux_f7 AS (SELECT * FROM (
   
     SELECT
       0 AS y
@@ -1342,7 +1342,7 @@ CREATE TABLE logica_test.B_sn_delta AS WITH t_1_B_MultBodyAggAux_f7 AS (SELECT *
     SELECT
       ((x_9) + (1)) AS y
     FROM
-      logica_test.B_sn_new AS B_sn_new, LATERAL (SELECT explode(FILTER(SEQUENCE(0, CAST(100 AS BIGINT)), x -> x < 100)) AS x_9) AS pushkin
+      synalog_test.B_sn_new AS B_sn_new, LATERAL (SELECT explode(FILTER(SEQUENCE(0, CAST(100 AS BIGINT)), x -> x < 100)) AS x_9) AS pushkin
     WHERE
       (B_sn_new.y = x_9)
   
@@ -1358,17 +1358,17 @@ FROM
   t_0_B_sn_back_step AS B_sn_back_step
 WHERE
   ((SELECT
-    MIN(1) AS logica_value
+    MIN(1) AS synalog_value
   FROM
-    logica_test.B_sn_full AS B_sn_full
+    synalog_test.B_sn_full AS B_sn_full
   WHERE
     (B_sn_full.y = B_sn_back_step.y)) IS NULL)
 GROUP BY 1;
 
-INSERT INTO logica_test.B_sn_full SELECT * FROM logica_test.B_sn_delta;
+INSERT INTO synalog_test.B_sn_full SELECT * FROM synalog_test.B_sn_delta;
 
-DROP TABLE IF EXISTS logica_test.B_sn_new;
-CREATE TABLE logica_test.B_sn_new AS WITH t_1_B_MultBodyAggAux_f12 AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_test.B_sn_new;
+CREATE TABLE synalog_test.B_sn_new AS WITH t_1_B_MultBodyAggAux_f12 AS (SELECT * FROM (
   
     SELECT
       0 AS y
@@ -1377,7 +1377,7 @@ CREATE TABLE logica_test.B_sn_new AS WITH t_1_B_MultBodyAggAux_f12 AS (SELECT * 
     SELECT
       ((x_9) + (1)) AS y
     FROM
-      logica_test.B_sn_delta AS B_sn_delta, LATERAL (SELECT explode(FILTER(SEQUENCE(0, CAST(100 AS BIGINT)), x -> x < 100)) AS x_9) AS pushkin
+      synalog_test.B_sn_delta AS B_sn_delta, LATERAL (SELECT explode(FILTER(SEQUENCE(0, CAST(100 AS BIGINT)), x -> x < 100)) AS x_9) AS pushkin
     WHERE
       (B_sn_delta.y = x_9)
   
@@ -1393,17 +1393,17 @@ FROM
   t_0_B_sn_step AS B_sn_step
 WHERE
   ((SELECT
-    MIN(1) AS logica_value
+    MIN(1) AS synalog_value
   FROM
-    logica_test.B_sn_full AS B_sn_full
+    synalog_test.B_sn_full AS B_sn_full
   WHERE
     (B_sn_full.y = B_sn_step.y)) IS NULL)
 GROUP BY 1;
 
-INSERT INTO logica_test.B_sn_full SELECT * FROM logica_test.B_sn_new;
+INSERT INTO synalog_test.B_sn_full SELECT * FROM synalog_test.B_sn_new;
 
-DROP TABLE IF EXISTS logica_test.B_sn_delta;
-CREATE TABLE logica_test.B_sn_delta AS WITH t_1_B_MultBodyAggAux_f7 AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_test.B_sn_delta;
+CREATE TABLE synalog_test.B_sn_delta AS WITH t_1_B_MultBodyAggAux_f7 AS (SELECT * FROM (
   
     SELECT
       0 AS y
@@ -1412,7 +1412,7 @@ CREATE TABLE logica_test.B_sn_delta AS WITH t_1_B_MultBodyAggAux_f7 AS (SELECT *
     SELECT
       ((x_9) + (1)) AS y
     FROM
-      logica_test.B_sn_new AS B_sn_new, LATERAL (SELECT explode(FILTER(SEQUENCE(0, CAST(100 AS BIGINT)), x -> x < 100)) AS x_9) AS pushkin
+      synalog_test.B_sn_new AS B_sn_new, LATERAL (SELECT explode(FILTER(SEQUENCE(0, CAST(100 AS BIGINT)), x -> x < 100)) AS x_9) AS pushkin
     WHERE
       (B_sn_new.y = x_9)
   
@@ -1428,17 +1428,17 @@ FROM
   t_0_B_sn_back_step AS B_sn_back_step
 WHERE
   ((SELECT
-    MIN(1) AS logica_value
+    MIN(1) AS synalog_value
   FROM
-    logica_test.B_sn_full AS B_sn_full
+    synalog_test.B_sn_full AS B_sn_full
   WHERE
     (B_sn_full.y = B_sn_back_step.y)) IS NULL)
 GROUP BY 1;
 
-INSERT INTO logica_test.B_sn_full SELECT * FROM logica_test.B_sn_delta;
+INSERT INTO synalog_test.B_sn_full SELECT * FROM synalog_test.B_sn_delta;
 
-DROP TABLE IF EXISTS logica_test.B_sn_new;
-CREATE TABLE logica_test.B_sn_new AS WITH t_1_B_MultBodyAggAux_f12 AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_test.B_sn_new;
+CREATE TABLE synalog_test.B_sn_new AS WITH t_1_B_MultBodyAggAux_f12 AS (SELECT * FROM (
   
     SELECT
       0 AS y
@@ -1447,7 +1447,7 @@ CREATE TABLE logica_test.B_sn_new AS WITH t_1_B_MultBodyAggAux_f12 AS (SELECT * 
     SELECT
       ((x_9) + (1)) AS y
     FROM
-      logica_test.B_sn_delta AS B_sn_delta, LATERAL (SELECT explode(FILTER(SEQUENCE(0, CAST(100 AS BIGINT)), x -> x < 100)) AS x_9) AS pushkin
+      synalog_test.B_sn_delta AS B_sn_delta, LATERAL (SELECT explode(FILTER(SEQUENCE(0, CAST(100 AS BIGINT)), x -> x < 100)) AS x_9) AS pushkin
     WHERE
       (B_sn_delta.y = x_9)
   
@@ -1463,17 +1463,17 @@ FROM
   t_0_B_sn_step AS B_sn_step
 WHERE
   ((SELECT
-    MIN(1) AS logica_value
+    MIN(1) AS synalog_value
   FROM
-    logica_test.B_sn_full AS B_sn_full
+    synalog_test.B_sn_full AS B_sn_full
   WHERE
     (B_sn_full.y = B_sn_step.y)) IS NULL)
 GROUP BY 1;
 
-INSERT INTO logica_test.B_sn_full SELECT * FROM logica_test.B_sn_new;
+INSERT INTO synalog_test.B_sn_full SELECT * FROM synalog_test.B_sn_new;
 
-DROP TABLE IF EXISTS logica_test.B_sn_delta;
-CREATE TABLE logica_test.B_sn_delta AS WITH t_1_B_MultBodyAggAux_f7 AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_test.B_sn_delta;
+CREATE TABLE synalog_test.B_sn_delta AS WITH t_1_B_MultBodyAggAux_f7 AS (SELECT * FROM (
   
     SELECT
       0 AS y
@@ -1482,7 +1482,7 @@ CREATE TABLE logica_test.B_sn_delta AS WITH t_1_B_MultBodyAggAux_f7 AS (SELECT *
     SELECT
       ((x_9) + (1)) AS y
     FROM
-      logica_test.B_sn_new AS B_sn_new, LATERAL (SELECT explode(FILTER(SEQUENCE(0, CAST(100 AS BIGINT)), x -> x < 100)) AS x_9) AS pushkin
+      synalog_test.B_sn_new AS B_sn_new, LATERAL (SELECT explode(FILTER(SEQUENCE(0, CAST(100 AS BIGINT)), x -> x < 100)) AS x_9) AS pushkin
     WHERE
       (B_sn_new.y = x_9)
   
@@ -1498,17 +1498,17 @@ FROM
   t_0_B_sn_back_step AS B_sn_back_step
 WHERE
   ((SELECT
-    MIN(1) AS logica_value
+    MIN(1) AS synalog_value
   FROM
-    logica_test.B_sn_full AS B_sn_full
+    synalog_test.B_sn_full AS B_sn_full
   WHERE
     (B_sn_full.y = B_sn_back_step.y)) IS NULL)
 GROUP BY 1;
 
-INSERT INTO logica_test.B_sn_full SELECT * FROM logica_test.B_sn_delta;
+INSERT INTO synalog_test.B_sn_full SELECT * FROM synalog_test.B_sn_delta;
 
-DROP TABLE IF EXISTS logica_test.B_sn_new;
-CREATE TABLE logica_test.B_sn_new AS WITH t_1_B_MultBodyAggAux_f12 AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_test.B_sn_new;
+CREATE TABLE synalog_test.B_sn_new AS WITH t_1_B_MultBodyAggAux_f12 AS (SELECT * FROM (
   
     SELECT
       0 AS y
@@ -1517,7 +1517,7 @@ CREATE TABLE logica_test.B_sn_new AS WITH t_1_B_MultBodyAggAux_f12 AS (SELECT * 
     SELECT
       ((x_9) + (1)) AS y
     FROM
-      logica_test.B_sn_delta AS B_sn_delta, LATERAL (SELECT explode(FILTER(SEQUENCE(0, CAST(100 AS BIGINT)), x -> x < 100)) AS x_9) AS pushkin
+      synalog_test.B_sn_delta AS B_sn_delta, LATERAL (SELECT explode(FILTER(SEQUENCE(0, CAST(100 AS BIGINT)), x -> x < 100)) AS x_9) AS pushkin
     WHERE
       (B_sn_delta.y = x_9)
   
@@ -1533,17 +1533,17 @@ FROM
   t_0_B_sn_step AS B_sn_step
 WHERE
   ((SELECT
-    MIN(1) AS logica_value
+    MIN(1) AS synalog_value
   FROM
-    logica_test.B_sn_full AS B_sn_full
+    synalog_test.B_sn_full AS B_sn_full
   WHERE
     (B_sn_full.y = B_sn_step.y)) IS NULL)
 GROUP BY 1;
 
-INSERT INTO logica_test.B_sn_full SELECT * FROM logica_test.B_sn_new;
+INSERT INTO synalog_test.B_sn_full SELECT * FROM synalog_test.B_sn_new;
 
-DROP TABLE IF EXISTS logica_test.B_sn_delta;
-CREATE TABLE logica_test.B_sn_delta AS WITH t_1_B_MultBodyAggAux_f7 AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_test.B_sn_delta;
+CREATE TABLE synalog_test.B_sn_delta AS WITH t_1_B_MultBodyAggAux_f7 AS (SELECT * FROM (
   
     SELECT
       0 AS y
@@ -1552,7 +1552,7 @@ CREATE TABLE logica_test.B_sn_delta AS WITH t_1_B_MultBodyAggAux_f7 AS (SELECT *
     SELECT
       ((x_9) + (1)) AS y
     FROM
-      logica_test.B_sn_new AS B_sn_new, LATERAL (SELECT explode(FILTER(SEQUENCE(0, CAST(100 AS BIGINT)), x -> x < 100)) AS x_9) AS pushkin
+      synalog_test.B_sn_new AS B_sn_new, LATERAL (SELECT explode(FILTER(SEQUENCE(0, CAST(100 AS BIGINT)), x -> x < 100)) AS x_9) AS pushkin
     WHERE
       (B_sn_new.y = x_9)
   
@@ -1568,17 +1568,17 @@ FROM
   t_0_B_sn_back_step AS B_sn_back_step
 WHERE
   ((SELECT
-    MIN(1) AS logica_value
+    MIN(1) AS synalog_value
   FROM
-    logica_test.B_sn_full AS B_sn_full
+    synalog_test.B_sn_full AS B_sn_full
   WHERE
     (B_sn_full.y = B_sn_back_step.y)) IS NULL)
 GROUP BY 1;
 
-INSERT INTO logica_test.B_sn_full SELECT * FROM logica_test.B_sn_delta;
+INSERT INTO synalog_test.B_sn_full SELECT * FROM synalog_test.B_sn_delta;
 
-DROP TABLE IF EXISTS logica_test.B_sn_new;
-CREATE TABLE logica_test.B_sn_new AS WITH t_1_B_MultBodyAggAux_f12 AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_test.B_sn_new;
+CREATE TABLE synalog_test.B_sn_new AS WITH t_1_B_MultBodyAggAux_f12 AS (SELECT * FROM (
   
     SELECT
       0 AS y
@@ -1587,7 +1587,7 @@ CREATE TABLE logica_test.B_sn_new AS WITH t_1_B_MultBodyAggAux_f12 AS (SELECT * 
     SELECT
       ((x_9) + (1)) AS y
     FROM
-      logica_test.B_sn_delta AS B_sn_delta, LATERAL (SELECT explode(FILTER(SEQUENCE(0, CAST(100 AS BIGINT)), x -> x < 100)) AS x_9) AS pushkin
+      synalog_test.B_sn_delta AS B_sn_delta, LATERAL (SELECT explode(FILTER(SEQUENCE(0, CAST(100 AS BIGINT)), x -> x < 100)) AS x_9) AS pushkin
     WHERE
       (B_sn_delta.y = x_9)
   
@@ -1603,17 +1603,17 @@ FROM
   t_0_B_sn_step AS B_sn_step
 WHERE
   ((SELECT
-    MIN(1) AS logica_value
+    MIN(1) AS synalog_value
   FROM
-    logica_test.B_sn_full AS B_sn_full
+    synalog_test.B_sn_full AS B_sn_full
   WHERE
     (B_sn_full.y = B_sn_step.y)) IS NULL)
 GROUP BY 1;
 
-INSERT INTO logica_test.B_sn_full SELECT * FROM logica_test.B_sn_new;
+INSERT INTO synalog_test.B_sn_full SELECT * FROM synalog_test.B_sn_new;
 
-DROP TABLE IF EXISTS logica_test.B_sn_delta;
-CREATE TABLE logica_test.B_sn_delta AS WITH t_1_B_MultBodyAggAux_f7 AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_test.B_sn_delta;
+CREATE TABLE synalog_test.B_sn_delta AS WITH t_1_B_MultBodyAggAux_f7 AS (SELECT * FROM (
   
     SELECT
       0 AS y
@@ -1622,7 +1622,7 @@ CREATE TABLE logica_test.B_sn_delta AS WITH t_1_B_MultBodyAggAux_f7 AS (SELECT *
     SELECT
       ((x_9) + (1)) AS y
     FROM
-      logica_test.B_sn_new AS B_sn_new, LATERAL (SELECT explode(FILTER(SEQUENCE(0, CAST(100 AS BIGINT)), x -> x < 100)) AS x_9) AS pushkin
+      synalog_test.B_sn_new AS B_sn_new, LATERAL (SELECT explode(FILTER(SEQUENCE(0, CAST(100 AS BIGINT)), x -> x < 100)) AS x_9) AS pushkin
     WHERE
       (B_sn_new.y = x_9)
   
@@ -1638,17 +1638,17 @@ FROM
   t_0_B_sn_back_step AS B_sn_back_step
 WHERE
   ((SELECT
-    MIN(1) AS logica_value
+    MIN(1) AS synalog_value
   FROM
-    logica_test.B_sn_full AS B_sn_full
+    synalog_test.B_sn_full AS B_sn_full
   WHERE
     (B_sn_full.y = B_sn_back_step.y)) IS NULL)
 GROUP BY 1;
 
-INSERT INTO logica_test.B_sn_full SELECT * FROM logica_test.B_sn_delta;
+INSERT INTO synalog_test.B_sn_full SELECT * FROM synalog_test.B_sn_delta;
 
-DROP TABLE IF EXISTS logica_test.B_sn_new;
-CREATE TABLE logica_test.B_sn_new AS WITH t_1_B_MultBodyAggAux_f12 AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_test.B_sn_new;
+CREATE TABLE synalog_test.B_sn_new AS WITH t_1_B_MultBodyAggAux_f12 AS (SELECT * FROM (
   
     SELECT
       0 AS y
@@ -1657,7 +1657,7 @@ CREATE TABLE logica_test.B_sn_new AS WITH t_1_B_MultBodyAggAux_f12 AS (SELECT * 
     SELECT
       ((x_9) + (1)) AS y
     FROM
-      logica_test.B_sn_delta AS B_sn_delta, LATERAL (SELECT explode(FILTER(SEQUENCE(0, CAST(100 AS BIGINT)), x -> x < 100)) AS x_9) AS pushkin
+      synalog_test.B_sn_delta AS B_sn_delta, LATERAL (SELECT explode(FILTER(SEQUENCE(0, CAST(100 AS BIGINT)), x -> x < 100)) AS x_9) AS pushkin
     WHERE
       (B_sn_delta.y = x_9)
   
@@ -1673,17 +1673,17 @@ FROM
   t_0_B_sn_step AS B_sn_step
 WHERE
   ((SELECT
-    MIN(1) AS logica_value
+    MIN(1) AS synalog_value
   FROM
-    logica_test.B_sn_full AS B_sn_full
+    synalog_test.B_sn_full AS B_sn_full
   WHERE
     (B_sn_full.y = B_sn_step.y)) IS NULL)
 GROUP BY 1;
 
-INSERT INTO logica_test.B_sn_full SELECT * FROM logica_test.B_sn_new;
+INSERT INTO synalog_test.B_sn_full SELECT * FROM synalog_test.B_sn_new;
 
-DROP TABLE IF EXISTS logica_test.B_sn_delta;
-CREATE TABLE logica_test.B_sn_delta AS WITH t_1_B_MultBodyAggAux_f7 AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_test.B_sn_delta;
+CREATE TABLE synalog_test.B_sn_delta AS WITH t_1_B_MultBodyAggAux_f7 AS (SELECT * FROM (
   
     SELECT
       0 AS y
@@ -1692,7 +1692,7 @@ CREATE TABLE logica_test.B_sn_delta AS WITH t_1_B_MultBodyAggAux_f7 AS (SELECT *
     SELECT
       ((x_9) + (1)) AS y
     FROM
-      logica_test.B_sn_new AS B_sn_new, LATERAL (SELECT explode(FILTER(SEQUENCE(0, CAST(100 AS BIGINT)), x -> x < 100)) AS x_9) AS pushkin
+      synalog_test.B_sn_new AS B_sn_new, LATERAL (SELECT explode(FILTER(SEQUENCE(0, CAST(100 AS BIGINT)), x -> x < 100)) AS x_9) AS pushkin
     WHERE
       (B_sn_new.y = x_9)
   
@@ -1708,17 +1708,17 @@ FROM
   t_0_B_sn_back_step AS B_sn_back_step
 WHERE
   ((SELECT
-    MIN(1) AS logica_value
+    MIN(1) AS synalog_value
   FROM
-    logica_test.B_sn_full AS B_sn_full
+    synalog_test.B_sn_full AS B_sn_full
   WHERE
     (B_sn_full.y = B_sn_back_step.y)) IS NULL)
 GROUP BY 1;
 
-INSERT INTO logica_test.B_sn_full SELECT * FROM logica_test.B_sn_delta;
+INSERT INTO synalog_test.B_sn_full SELECT * FROM synalog_test.B_sn_delta;
 
-DROP TABLE IF EXISTS logica_test.B_sn_new;
-CREATE TABLE logica_test.B_sn_new AS WITH t_1_B_MultBodyAggAux_f12 AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_test.B_sn_new;
+CREATE TABLE synalog_test.B_sn_new AS WITH t_1_B_MultBodyAggAux_f12 AS (SELECT * FROM (
   
     SELECT
       0 AS y
@@ -1727,7 +1727,7 @@ CREATE TABLE logica_test.B_sn_new AS WITH t_1_B_MultBodyAggAux_f12 AS (SELECT * 
     SELECT
       ((x_9) + (1)) AS y
     FROM
-      logica_test.B_sn_delta AS B_sn_delta, LATERAL (SELECT explode(FILTER(SEQUENCE(0, CAST(100 AS BIGINT)), x -> x < 100)) AS x_9) AS pushkin
+      synalog_test.B_sn_delta AS B_sn_delta, LATERAL (SELECT explode(FILTER(SEQUENCE(0, CAST(100 AS BIGINT)), x -> x < 100)) AS x_9) AS pushkin
     WHERE
       (B_sn_delta.y = x_9)
   
@@ -1743,17 +1743,17 @@ FROM
   t_0_B_sn_step AS B_sn_step
 WHERE
   ((SELECT
-    MIN(1) AS logica_value
+    MIN(1) AS synalog_value
   FROM
-    logica_test.B_sn_full AS B_sn_full
+    synalog_test.B_sn_full AS B_sn_full
   WHERE
     (B_sn_full.y = B_sn_step.y)) IS NULL)
 GROUP BY 1;
 
-INSERT INTO logica_test.B_sn_full SELECT * FROM logica_test.B_sn_new;
+INSERT INTO synalog_test.B_sn_full SELECT * FROM synalog_test.B_sn_new;
 
-DROP TABLE IF EXISTS logica_test.B_sn_delta;
-CREATE TABLE logica_test.B_sn_delta AS WITH t_1_B_MultBodyAggAux_f7 AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_test.B_sn_delta;
+CREATE TABLE synalog_test.B_sn_delta AS WITH t_1_B_MultBodyAggAux_f7 AS (SELECT * FROM (
   
     SELECT
       0 AS y
@@ -1762,7 +1762,7 @@ CREATE TABLE logica_test.B_sn_delta AS WITH t_1_B_MultBodyAggAux_f7 AS (SELECT *
     SELECT
       ((x_9) + (1)) AS y
     FROM
-      logica_test.B_sn_new AS B_sn_new, LATERAL (SELECT explode(FILTER(SEQUENCE(0, CAST(100 AS BIGINT)), x -> x < 100)) AS x_9) AS pushkin
+      synalog_test.B_sn_new AS B_sn_new, LATERAL (SELECT explode(FILTER(SEQUENCE(0, CAST(100 AS BIGINT)), x -> x < 100)) AS x_9) AS pushkin
     WHERE
       (B_sn_new.y = x_9)
   
@@ -1778,17 +1778,17 @@ FROM
   t_0_B_sn_back_step AS B_sn_back_step
 WHERE
   ((SELECT
-    MIN(1) AS logica_value
+    MIN(1) AS synalog_value
   FROM
-    logica_test.B_sn_full AS B_sn_full
+    synalog_test.B_sn_full AS B_sn_full
   WHERE
     (B_sn_full.y = B_sn_back_step.y)) IS NULL)
 GROUP BY 1;
 
-INSERT INTO logica_test.B_sn_full SELECT * FROM logica_test.B_sn_delta;
+INSERT INTO synalog_test.B_sn_full SELECT * FROM synalog_test.B_sn_delta;
 
 SELECT
   MAX(A_sn_full.y) AS a,
   MAX(B_sn_full.y) AS b
 FROM
-  logica_test.A_sn_full AS A_sn_full, logica_test.B_sn_full AS B_sn_full;
+  synalog_test.A_sn_full AS A_sn_full, synalog_test.B_sn_full AS B_sn_full;

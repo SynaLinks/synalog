@@ -62,7 +62,7 @@ FROM
   t_0_Person AS Person
 WHERE
   ((SELECT
-    MIN(1) AS logica_value
+    MIN(1) AS synalog_value
   FROM
     UNNEST(TRANSFORM(ARRAY['gold', 'green'], synalog_e -> ROW(synalog_e))) as pushkin(x_5)
   WHERE

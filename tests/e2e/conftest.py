@@ -93,7 +93,7 @@ def fixture_names(engine: str) -> list[str]:
 
 
 def same_program_as_duckdb(engine: str, name: str) -> bool:
-    """True when the fixture is the same Logica program as DuckDB's version.
+    """True when the fixture is the same Synalog program as DuckDB's version.
 
     A few fixtures are per-engine override variants (the full feature is
     not supported by that engine's upstream dialect) and compute different

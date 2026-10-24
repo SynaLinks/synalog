@@ -7,7 +7,7 @@ SELECT
   V.g AS g,
   V.x AS x,
   (SELECT
-  MAX(t_0_V.x) AS logica_value
+  MAX(t_0_V.x) AS synalog_value
 FROM
   t_1_V AS t_0_V
 WHERE

@@ -44,12 +44,12 @@ WITH t_0_O AS (SELECT * FROM (
 ) AS UNUSED_TABLE_NAME  )
 SELECT
   (SELECT
-  SUM(MagicalEntangle(O.amt, x_5.value)) AS logica_value
+  SUM(MagicalEntangle(O.amt, x_5.value)) AS synalog_value
 FROM
   t_0_O AS O, JSON_EACH(JSON_ARRAY(0)) as x_5
 WHERE
   ((SELECT
-    MIN(MagicalEntangle(1, x_8.value)) AS logica_value
+    MIN(MagicalEntangle(1, x_8.value)) AS synalog_value
   FROM
     JSON_EACH(JSON_ARRAY(0)) as x_8
   WHERE

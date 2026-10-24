@@ -1,5 +1,5 @@
-DROP TABLE IF EXISTS logica_test.A;
-CREATE TABLE logica_test.A AS WITH t_0_B AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_test.A;
+CREATE TABLE synalog_test.A AS WITH t_0_B AS (SELECT * FROM (
   
     SELECT
       1 AS id,
@@ -70,13 +70,13 @@ SELECT
 FROM
   t_0_B AS B;
 
--- Interacting with table logica_test.A
+-- Interacting with table synalog_test.A
 
 SELECT
   t_0_A.id AS a,
   t_1_A.id AS b
 FROM
-  logica_test.A AS t_0_A, logica_test.A AS t_1_A
+  synalog_test.A AS t_0_A, synalog_test.A AS t_1_A
 WHERE
   (t_0_A.id < t_1_A.id) AND
   (t_1_A.r = t_0_A.r) ORDER BY a, b;

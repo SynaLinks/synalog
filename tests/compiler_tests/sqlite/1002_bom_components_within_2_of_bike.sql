@@ -59,7 +59,7 @@ t_1_Down_RecursiveCte AS (SELECT * FROM (
     
       SELECT
         Uses.component AS component,
-        0 AS logica_step
+        0 AS synalog_step
       FROM
         t_2_Uses AS Uses
       WHERE
@@ -68,7 +68,7 @@ t_1_Down_RecursiveCte AS (SELECT * FROM (
     
       SELECT
         t_3_Uses.component AS component,
-        ((0) + (1)) AS logica_step
+        ((0) + (1)) AS synalog_step
       FROM
         t_2_Uses AS t_5_Uses, t_2_Uses AS t_3_Uses
       WHERE
@@ -80,7 +80,7 @@ t_1_Down_RecursiveCte AS (SELECT * FROM (
     
       SELECT
         t_7_Uses.component AS component,
-        ((((0) + (1))) + (1)) AS logica_step
+        ((((0) + (1))) + (1)) AS synalog_step
       FROM
         t_2_Uses AS t_11_Uses, t_2_Uses AS t_9_Uses, t_2_Uses AS t_7_Uses
       WHERE
@@ -94,7 +94,7 @@ t_1_Down_RecursiveCte AS (SELECT * FROM (
     
       SELECT
         t_13_Uses.component AS component,
-        ((((((0) + (1))) + (1))) + (1)) AS logica_step
+        ((((((0) + (1))) + (1))) + (1)) AS synalog_step
       FROM
         t_2_Uses AS t_19_Uses, t_2_Uses AS t_17_Uses, t_2_Uses AS t_15_Uses, t_2_Uses AS t_13_Uses
       WHERE
@@ -112,11 +112,11 @@ t_1_Down_RecursiveCte AS (SELECT * FROM (
 UNION
 SELECT
   t_21_Uses.component AS component,
-  ((t_20_Down_RecursiveCte.logica_step) + (1)) AS logica_step
+  ((t_20_Down_RecursiveCte.synalog_step) + (1)) AS synalog_step
 FROM
   t_1_Down_RecursiveCte AS t_20_Down_RecursiveCte, t_2_Uses AS t_21_Uses
 WHERE
-  (t_20_Down_RecursiveCte.logica_step < 2) AND
+  (t_20_Down_RecursiveCte.synalog_step < 2) AND
   (t_21_Uses.part = t_20_Down_RecursiveCte.component)),
 t_0_Down AS (SELECT
   Down_RecursiveCte.component AS component

@@ -44,7 +44,7 @@ WITH t_1_O AS (SELECT * FROM (
 ) AS UNUSED_TABLE_NAME  )
 SELECT
   MIN((CAST(O.amt AS REAL) / NULLIF((SELECT
-  SUM(MagicalEntangle(t_0_O.amt, x_6.value)) AS logica_value
+  SUM(MagicalEntangle(t_0_O.amt, x_6.value)) AS synalog_value
 FROM
   t_1_O AS t_0_O, JSON_EACH(JSON_ARRAY(0)) as x_6
 WHERE

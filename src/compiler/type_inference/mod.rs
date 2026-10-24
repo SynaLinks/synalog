@@ -2,13 +2,13 @@
 
 //! Type inference system for Logica.
 //!
-//! This module provides type inference capabilities for Logica programs,
+//! This module provides type inference capabilities for Synalog programs,
 //! ported from the Python implementation in `type_inference/`.
 //!
 //! # Overview
 //!
 //! The type inference system works by:
-//! 1. Building a type graph from parsed Logica rules using `TypesGraphBuilder`
+//! 1. Building a type graph from parsed Synalog rules using `TypesGraphBuilder`
 //! 2. Connecting expressions with edges based on their relationships
 //! 3. Running fixed-point inference to propagate types through the graph
 //!

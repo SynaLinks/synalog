@@ -13,7 +13,7 @@ FROM
   t_0_Person AS Person
 WHERE
   ((SELECT
-    MIN(1) AS logica_value
+    MIN(1) AS synalog_value
   FROM
     LATERAL (SELECT explode(ARRAY("red", "blue")) AS x_5) AS pushkin
   WHERE

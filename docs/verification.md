@@ -16,6 +16,7 @@ This matters most for AI agents: it prevents producing programs that parse corre
 | **Recursion** | Missing base cases, trivial loops, unbounded recursion without `@Recursive` |
 | **Reserved names** | Rules that redefine a built-in library predicate (`Num`, `Str`, `ArgMin`, `Today`, `Now`, ...), or a function named like a built-in one (`Upper(s) = ...`) |
 | **Unsafe `SqlExpr`** | User rules that reach for the raw-SQL escape hatch, or read a table whose name is not one (`` `(SELECT 1)` ``) |
+| **Unsafe `Cast` type** | A `Cast`/`TryCast` whose type name is not a plain type name (`TEXT`, `DECIMAL(38, 2)`, `ARRAY<INT64>`): the type is pasted into `CAST(… AS …)` unquoted, so anything else could inject SQL |
 | **Ordering** | A file whose front matter names a predicate, without an `@OrderBy` for it |
 | **Front matter** | A file with front matter but no `name`, or no `description` (or an empty one) |
 | **Functors** | A functor naming a predicate that does not exist, or an argument the applied predicate does not depend on: `F := Count(Nope: Odd)` when `Count` never reads `Nope` |
@@ -29,7 +30,7 @@ This matters most for AI agents: it prevents producing programs that parse corre
 
 ### Unsafe `SqlExpr`
 
-`SqlExpr("...", {...})` injects a raw SQL string straight into the compiled query: unparsed, untyped, unverified and rarely portable across engines, defeating the guarantees Synalog exists to provide. It is reserved for the built-in library (which uses it for `ArgMin`/`ArgMax`/regex/...); user programs that call it are rejected:
+`SqlExpr("...", {...})` injects a raw SQL string straight into the compiled query: unparsed, untyped, unverified and rarely portable across engines, defeating the guarantees Synalog exists to provide. It is reserved for the built-in library (which uses it for `ArgMin`/`ArgMax`/regex/...); user programs that call it are rejected, by the compiler as well as the verifier, so compiling without verifying is safe too:
 
 ```python
 errors, warnings = synalog.check('''
@@ -41,6 +42,10 @@ errors, warnings = synalog.check('''
 ```
 
 The safe alternative is to express the logic in Synalog. For date/time math, stay on the string→int pipeline (`Substr` → `ToInt64` → `ToString`); see [temporal data](language/temporal.md#relative-dates-and-times).
+
+### Unsafe `Cast` type
+
+`Cast(expr, "TYPE")` and `TryCast(expr, "TYPE")` paste `TYPE` into the query as `CAST(expr AS TYPE)`, unquoted. A type name is accepted only when it is a string literal of type characters (letters, digits, `_`, spaces and balanced `()`, `<>`, `,`) — `TEXT`, `DECIMAL(38, 2)`, `ARRAY<INT64>`. Anything else (`Cast(1, "TEXT) AS x; DROP TABLE t; --")`, or a non-literal like `Cast(1, Upper("text"))`) is refused, by the compiler as well as the verifier. The accepted grammar is proved (see [Proved algorithms](#proved-algorithms)) to hold no character that could end the `CAST(...)` or start anything after it.
 
 ### Ordering
 
@@ -63,12 +68,13 @@ A program's text reaches SQL only as values or as checked names, so no string ca
 - every string (a fact, a pattern for `Like` or `search`, a `Format`) is a literal in the engine's own escapes; on Databricks and BigQuery, whose literals take backslash escapes, a quote of the value is written `\u0022`, so a literal holds no quote but its own two, and whatever splits a script into statements finds its end;
 - on PostgreSQL, a string with a backslash is an `E'...'` literal, read the same whatever `standard_conforming_strings` says;
 - names (predicates, columns, fields) are identifiers, quoted when they are keywords; `@OrderBy` takes columns, `@Limit` a number, `@Dataset` a schema name of letters, digits, `_` and `-`: anything else is refused;
+- `Cast(expr, "TYPE")` pastes `TYPE` into the query unquoted; only a plain type name (`TEXT`, `DECIMAL(38, 2)`, `ARRAY<INT64>`) is accepted, nothing that could end the cast or add a statement;
 - `SqlExpr`, raw SQL, is refused in a program, and so is a table name that is not one: a table the program reads is a dotted path of names, or one in backticks whose parts may hold any letter, spaces and ``-'&#@+%:()`` (`` `my-project.sales.Ventes (2024)` ``), each part quoted for the engine — never what could end the quoting (`"`, a backtick, `\`), make a path or a URL (`/`, `*`, `?`) or name a variable (`$`); on Databricks, where Spark reads `format.path` as a file (`text.secret`), a two-part name whose first part is a file format (`text`, `csv`, `json`, `parquet`, ...) is refused: such a table is named with its catalog;
 - `${...}` in a string is text, also on Databricks, whose Spark substitutes `${var}` in a statement's text before parsing it (`${env:HOME}`): there a dollar in a string is written `\u0024`, and a name holds none; a flag is read with `FlagValue("name")`, which gives its value as a string;
 - a program reaches no file, process or service: there is no `ReadFile`, `WriteFile` or `Intelligence`, no `@AttachDatabase`, no `copy_to_file`, and a table name opens none: once the files given to `execute` are loaded, its DuckDB session reads no file, installs no extension and takes no Python variable for a table (`secret.csv`, `"secret"."parquet"`), which DuckDB otherwise does (`tests/cli/test_file_access.py`);
 - a grounded table lives in Synalog's dataset, also when `@Ground` names it: a program cannot drop or replace a table elsewhere.
 
-`tests/programs/injection` holds the attempts this is checked against, on every engine.
+`tests/programs/injection` holds the attempts this is checked against, on every engine. The quoting of strings and identifiers is also proved (see [Proved algorithms](#proved-algorithms)): for any text, the engine's lexer reads it back exactly and ends the literal at its closing quote.
 
 ### Contradictions
 
@@ -93,6 +99,27 @@ TopCustomers(customer_id:) :- customer_id in Range(3);
 ''')
 # errors: ["The front matter has no description for 'TopCustomers': say what its rows are — in the words someone would search for (description: ...)"]
 ```
+
+## Proved algorithms
+
+The algorithms behind the stratification and recursion checks, the compiler's choice of how to unfold a mutual recursion, the order a compiled program's tables run in, the contradiction warning, pagination, quoting and the `Cast` type-name check are written in [Verus](https://github.com/verus-lang/verus): each algorithm carries a specification that Verus proves it meets, for every input:
+
+| Algorithm | Proved |
+|-----------|--------|
+| **Reachability** | A predicate is marked as reaching another exactly when a chain of dependencies leads from one to the other |
+| **Components** | Two predicates share a component exactly when each depends, through some chain, on the other |
+| **Recursion** | A predicate is recursive exactly when a chain leads from it back to itself, that is when its component has another predicate or it calls itself |
+| **Stratification** | The check finds a negative dependency `P -> ~Q` exactly when `Q` leads back to `P` |
+| **Cut of a mutual recursion** | A predicate cuts the recursion exactly when no cycle is left among the others once it is removed |
+| **Execution plan** | A program with `@Iteration` loops runs every table once, each after the tables it reads (a table of a semi-naive loop runs in that loop, with the rest of it), a table that reads an iteration after that iteration's loop, and a plain iteration's loop once, after all its tables |
+| **Contradictions** | A rule reported as contradictory has no values satisfying its comparisons: the warning is never wrong |
+| **Pagination** | A page keeps exactly the rows asked for (`limit` rows after `offset`, no more than `@Limit`), whatever the numbers, and never writes one a `BIGINT` cannot hold |
+| **Cast type** | A `Cast`/`TryCast` type name the validator accepts holds no character that could end the `CAST(...)` or start a statement after it, and keeps its brackets balanced, so it stays inside the cast |
+| **Quoting** | A string or an identifier quoted for any engine is read back by the engine's lexer exactly, ending at its closing quote whatever SQL follows: doubled quotes (`'it''s'`), backslash escapes (BigQuery, Spark), PostgreSQL's `E'...'` read alike whatever `standard_conforming_strings` says; on BigQuery and Spark a string holds no quote but its own two, and on Spark no `$` |
+
+The type inference's intersection of two types runs too often to convert its types for a proved version: Verus proves a reference intersection the greatest common refinement of two types (it refines both, every type refining both refines it, and when there is none no type refines both), and a test checks the type inference agrees with it on 20,000 random pairs of types (`cargo test --test type_intersection`).
+
+The proofs live in the `verified/` crate and run with the test suite (`cargo test --test verus_proofs`).
 
 ## Assertions
 

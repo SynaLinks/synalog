@@ -1,5 +1,5 @@
-DROP TABLE IF EXISTS logica_test.Person;
-CREATE TABLE logica_test.Person AS WITH t_1_Order AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_test.Person;
+CREATE TABLE synalog_test.Person AS WITH t_1_Order AS (SELECT * FROM (
   
     SELECT
       1 AS id,
@@ -87,10 +87,10 @@ FROM
   t_1_Order AS t_0_Order
 GROUP BY 1;
 
--- Interacting with table logica_test.Person
+-- Interacting with table synalog_test.Person
 
-DROP TABLE IF EXISTS logica_test.Tier;
-CREATE TABLE logica_test.Tier AS WITH t_1_Order AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_test.Tier;
+CREATE TABLE synalog_test.Tier AS WITH t_1_Order AS (SELECT * FROM (
   
     SELECT
       1 AS id,
@@ -204,26 +204,26 @@ SELECT
 FROM
   t_0_Spend AS Spend;
 
--- Interacting with table logica_test.Tier
+-- Interacting with table synalog_test.Tier
 
 WITH t_0_NoTier AS (SELECT
   t_1_Person.who AS who
 FROM
-  logica_test.Person AS t_1_Person
+  synalog_test.Person AS t_1_Person
 WHERE
   ((SELECT
-    MIN(1) AS logica_value
+    MIN(1) AS synalog_value
   FROM
-    logica_test.Tier AS t_2_Tier
+    synalog_test.Tier AS t_2_Tier
   WHERE
     (t_2_Tier.who = t_1_Person.who)) IS NULL))
 SELECT
   1 AS ok
 FROM
-  logica_test.Person AS Person
+  synalog_test.Person AS Person
 WHERE
   ((SELECT
-    MIN(1) AS logica_value
+    MIN(1) AS synalog_value
   FROM
     t_0_NoTier AS NoTier
   WHERE

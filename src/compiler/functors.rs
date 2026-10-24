@@ -17,7 +17,7 @@ use crate::parser::Json;
 use crate::compiler::CompileResult;
 use crate::compiler::CompileError;
 
-/// Parse Logica source text into rules, converting parse errors to CompileError.
+/// Parse Synalog source text into rules, converting parse errors to CompileError.
 fn parse_rules(text: &str) -> CompileResult<Vec<Json>> {
     let parsed = crate::parser::parse_file(text, None, &[]).map_err(|e| {
         CompileError::new(format!("Failed to parse generated program: {}", e.show_message()), "")
@@ -400,7 +400,7 @@ impl Functors {
         if let Some(name) = self.constant_literal_function.get(key) {
             return name.clone();
         }
-        let name = format!("LogicaCompilerConstant{}", self.constant_literal_function.len());
+        let name = format!("SynalogCompilerConstant{}", self.constant_literal_function.len());
         self.constant_literal_function.insert(key.to_string(), name.clone());
         name
     }
@@ -924,26 +924,27 @@ impl Functors {
     }
 
     /// Check if `p` is a cut of the cover leaf — removing p prevents cycles among remaining members.
-    /// Matches Python's IsCutOfCover using DFS with visited tracking.
+    /// Matches Python's IsCutOfCover: following the cover's edges from `p`,
+    /// and never back into `p`, reaches no cycle. The search is
+    /// `synalog_verified`'s, proved correct with Verus.
     fn is_cut_of_cover(&self, p: &str, cover: &HashSet<String>) -> bool {
-        // DFS: starting from p, follow cover edges (excluding p itself from traversal).
-        // If we can reach a node we already visited without going through p, there's a cycle.
-        let mut stack: Vec<(&str, HashSet<String>)> = vec![(p, HashSet::new())];
-        while let Some((t, visited)) = stack.pop() {
-            if visited.contains(t) {
-                return false; // Cycle found without going through p
-            }
-            if let Some(direct) = self.direct_args_of.get(t) {
-                for x in direct {
-                    if cover.contains(x) && x.as_str() != p {
-                        let mut new_visited = visited.clone();
-                        new_visited.insert(t.to_string());
-                        stack.push((x, new_visited));
-                    }
-                }
-            }
-        }
-        true
+        // The node 0 is `p`.
+        let names: Vec<&str> = std::iter::once(p).chain(cover.iter().map(|s| s.as_str()).filter(|s| *s != p)).collect();
+        let index: HashMap<&str, usize> = names.iter().enumerate().map(|(i, name)| (*name, i)).collect();
+        let successors: Vec<Vec<usize>> = names
+            .iter()
+            .map(|t| {
+                self.direct_args_of
+                    .get(*t)
+                    .into_iter()
+                    .flatten()
+                    .filter_map(|x| index.get(x.as_str()).copied().filter(|&i| i != 0))
+                    .collect()
+            })
+            .collect();
+        let reach = synalog_verified::reachability(&successors);
+        let on_cycle = synalog_verified::cycles(&successors, &reach);
+        !synalog_verified::reaches_cycle(&successors, &reach, &on_cycle, 0)
     }
 
     /// Unfold recursive predicates (vertical style).
@@ -1134,7 +1135,7 @@ impl Functors {
     /// it applied; otherwise `rules` are left as they were.
     ///
     /// `P_RecursiveCte` holds the rows, each numbered with the step that
-    /// derived it (`logica_step`): a step reads the rows numbered below the
+    /// derived it (`synalog_step`): a step reads the rows numbered below the
     /// depth, so the query stops where the unrolled steps stop, even when the
     /// rows never repeat (a count of hops round a cycle). `P` is its rows
     /// without the number, distinct. Its first rows (`_init`) come with the
@@ -1437,8 +1438,8 @@ pub fn recursive_cte_name(name: &str) -> Option<(&str, &str)> {
 
 /// The column numbering the rows of a recursive query by the step that
 /// derived them, and the variable a step reads it into.
-const CTE_STEP_FIELD: &str = "logica_step";
-const CTE_STEP_VARIABLE: &str = "logica_cte_step";
+const CTE_STEP_FIELD: &str = "synalog_step";
+const CTE_STEP_VARIABLE: &str = "synalog_cte_step";
 
 /// How many calls of `predicate` `json` holds.
 fn count_references(json: &Json, predicate: &str) -> usize {
@@ -1511,7 +1512,7 @@ fn semi_naive_fields(cover: &HashSet<String>, visible: &BTreeSet<String>, rules:
                 return None;
             }
             let field = &fv["field"];
-            if field.is_string() && field.as_str() == "logica_value" {
+            if field.is_string() && field.as_str() == "synalog_value" {
                 return None;
             }
             keys.push(field.clone());
@@ -1686,7 +1687,8 @@ fn get_flat_iterative_recursion_functor(
         .chain(iterate_over_lower_half)
         .collect();
     let iterate_over_str = iterate_over.join(", ");
-    let repetitions = (depth + 1 - ignition_steps) / 2 + 1;
+    // `depth >= ignition_steps`: no overflow, `depth` up to `i64::MAX`.
+    let repetitions = (depth - ignition_steps + 1) / 2 + 1;
     let min_cover = cover.iter().next().unwrap();
 
     let mut iteration_line = format!(

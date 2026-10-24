@@ -83,13 +83,13 @@ WITH t_0_Ship AS (SELECT * FROM (
 ) AS UNUSED_TABLE_NAME  )
 SELECT
   (SELECT
-  SUM(MagicalEntangle(Ship.kg, x_6.value)) AS logica_value
+  SUM(MagicalEntangle(Ship.kg, x_6.value)) AS synalog_value
 FROM
   t_0_Ship AS Ship, JSON_EACH(JSON_ARRAY(0)) as x_6
 WHERE
   (Ship.client = 'cora')) AS t,
   (SELECT
-  SUM(MagicalEntangle(1, x_9.value)) AS logica_value
+  SUM(MagicalEntangle(1, x_9.value)) AS synalog_value
 FROM
   t_0_Ship AS t_1_Ship, JSON_EACH(JSON_ARRAY(0)) as x_9
 WHERE

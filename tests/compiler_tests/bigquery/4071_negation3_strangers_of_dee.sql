@@ -84,7 +84,7 @@ FROM
 WHERE
   (t_0_U.u != "dee") AND
   ((SELECT
-    MIN(1) AS logica_value
+    MIN(1) AS synalog_value
   FROM
     t_2_F AS F
   WHERE

@@ -1,19 +1,19 @@
 -- Initializing PostgreSQL environment.
 set client_min_messages to warning;
-create schema if not exists logica_home;
--- Empty logica type: logicarecord893574736;
-DO $$ BEGIN if not exists (select 'I(am) :- I(think)' from pg_type where typname = 'logicarecord893574736') then create type logicarecord893574736 as (nirvana numeric); end if; END $$;
+create schema if not exists synalog_home;
+-- Empty synalog type: synalogrecord893574736;
+DO $$ BEGIN if not exists (select 'I(am) :- I(think)' from pg_type where typname = 'synalogrecord893574736') then create type synalogrecord893574736 as (nirvana numeric); end if; END $$;
 
 
 DO $$
 BEGIN
--- Logica type: logicarecord481217614
-if not exists (select 'I(am) :- I(think)' from pg_type where typname = 'logicarecord481217614') then create type logicarecord481217614 as (r logicarecord893574736); end if;
--- Logica type: logicarecord86796764
-if not exists (select 'I(am) :- I(think)' from pg_type where typname = 'logicarecord86796764') then create type logicarecord86796764 as (s text); end if;
+-- Synalog type: synalogrecord481217614
+if not exists (select 'I(am) :- I(think)' from pg_type where typname = 'synalogrecord481217614') then create type synalogrecord481217614 as (r synalogrecord893574736); end if;
+-- Synalog type: synalogrecord86796764
+if not exists (select 'I(am) :- I(think)' from pg_type where typname = 'synalogrecord86796764') then create type synalogrecord86796764 as (s text); end if;
 END $$;
-DROP TABLE IF EXISTS logica_home.QuarterTotals CASCADE;
-CREATE TABLE logica_home.QuarterTotals AS WITH t_0_Sales AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_home.QuarterTotals CASCADE;
+CREATE TABLE synalog_home.QuarterTotals AS WITH t_0_Sales AS (SELECT * FROM (
   
     SELECT
       'Q1' AS col0,
@@ -58,10 +58,10 @@ FROM
   t_0_Sales AS Sales
 GROUP BY Sales.col0;
 
--- Interacting with table logica_home.QuarterTotals
+-- Interacting with table synalog_home.QuarterTotals
 
 SELECT
   QuarterTotals.col0 AS quarter,
   QuarterTotals.total AS total
 FROM
-  logica_home.QuarterTotals AS QuarterTotals ORDER BY quarter;
+  synalog_home.QuarterTotals AS QuarterTotals ORDER BY quarter;

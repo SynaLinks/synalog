@@ -25,7 +25,7 @@ SELECT * FROM (
       UNNEST(GENERATE_ARRAY(0, 10 - 1)) as x_5
     WHERE
       ((SELECT
-        MIN(1) AS logica_value
+        MIN(1) AS synalog_value
       FROM
         UNNEST(GENERATE_ARRAY(0, 10 - 1)) as x_10
       WHERE
@@ -41,7 +41,7 @@ SELECT * FROM (
     WHERE
       (x_5 > 1) AND
       ((SELECT
-        MIN(1) AS logica_value
+        MIN(1) AS synalog_value
       FROM
         t_0_Prime AS Prime
       WHERE
@@ -55,7 +55,7 @@ SELECT * FROM (
       UNNEST(GENERATE_ARRAY(0, 10 - 1)) as x_7
     WHERE
       ((SELECT
-        MIN(1) AS logica_value
+        MIN(1) AS synalog_value
       FROM
         t_0_Prime AS Prime
       WHERE

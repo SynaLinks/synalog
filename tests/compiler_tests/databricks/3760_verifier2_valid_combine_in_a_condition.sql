@@ -13,7 +13,7 @@ FROM
   t_1_N AS t_0_N
 WHERE
   ((SELECT
-    SUM(1) AS logica_value
+    SUM(1) AS synalog_value
   FROM
     t_2_E AS E
   WHERE

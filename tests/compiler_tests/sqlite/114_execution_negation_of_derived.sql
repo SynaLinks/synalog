@@ -16,13 +16,13 @@ t_1_Reach_RecursiveCte AS (SELECT * FROM (
       SELECT
         'a' AS x,
         'a' AS y,
-        0 AS logica_step
+        0 AS synalog_step
      UNION ALL
     
       SELECT
         'a' AS x,
         Edge.y AS y,
-        ((0) + (1)) AS logica_step
+        ((0) + (1)) AS synalog_step
       FROM
         t_3_Edge AS Edge
       WHERE
@@ -34,7 +34,7 @@ t_1_Reach_RecursiveCte AS (SELECT * FROM (
       SELECT
         'a' AS x,
         t_5_Edge.y AS y,
-        ((((0) + (1))) + (1)) AS logica_step
+        ((((0) + (1))) + (1)) AS synalog_step
       FROM
         t_3_Edge AS t_7_Edge, t_3_Edge AS t_5_Edge
       WHERE
@@ -48,7 +48,7 @@ t_1_Reach_RecursiveCte AS (SELECT * FROM (
       SELECT
         'a' AS x,
         t_10_Edge.y AS y,
-        ((((((0) + (1))) + (1))) + (1)) AS logica_step
+        ((((((0) + (1))) + (1))) + (1)) AS synalog_step
       FROM
         t_3_Edge AS t_14_Edge, t_3_Edge AS t_12_Edge, t_3_Edge AS t_10_Edge
       WHERE
@@ -64,7 +64,7 @@ t_1_Reach_RecursiveCte AS (SELECT * FROM (
       SELECT
         'a' AS x,
         t_17_Edge.y AS y,
-        ((((((((0) + (1))) + (1))) + (1))) + (1)) AS logica_step
+        ((((((((0) + (1))) + (1))) + (1))) + (1)) AS synalog_step
       FROM
         t_3_Edge AS t_23_Edge, t_3_Edge AS t_21_Edge, t_3_Edge AS t_19_Edge, t_3_Edge AS t_17_Edge
       WHERE
@@ -82,7 +82,7 @@ t_1_Reach_RecursiveCte AS (SELECT * FROM (
       SELECT
         'a' AS x,
         t_26_Edge.y AS y,
-        ((((((((((0) + (1))) + (1))) + (1))) + (1))) + (1)) AS logica_step
+        ((((((((((0) + (1))) + (1))) + (1))) + (1))) + (1)) AS synalog_step
       FROM
         t_3_Edge AS t_34_Edge, t_3_Edge AS t_32_Edge, t_3_Edge AS t_30_Edge, t_3_Edge AS t_28_Edge, t_3_Edge AS t_26_Edge
       WHERE
@@ -104,11 +104,11 @@ UNION
 SELECT
   t_36_Reach_RecursiveCte.x AS x,
   t_37_Edge.y AS y,
-  ((t_36_Reach_RecursiveCte.logica_step) + (1)) AS logica_step
+  ((t_36_Reach_RecursiveCte.synalog_step) + (1)) AS synalog_step
 FROM
   t_1_Reach_RecursiveCte AS t_36_Reach_RecursiveCte, t_3_Edge AS t_37_Edge
 WHERE
-  (t_36_Reach_RecursiveCte.logica_step < 10) AND
+  (t_36_Reach_RecursiveCte.synalog_step < 10) AND
   (t_37_Edge.x = t_36_Reach_RecursiveCte.y)),
 t_0_Reach AS (SELECT
   Reach_RecursiveCte.x AS x,
@@ -122,7 +122,7 @@ FROM
   JSON_EACH(JSON_ARRAY('a', 'b', 'c', 'e')) as x_3
 WHERE
   ((SELECT
-    MIN(MagicalEntangle(1, x_7.value)) AS logica_value
+    MIN(MagicalEntangle(1, x_7.value)) AS synalog_value
   FROM
     t_0_Reach AS Reach, JSON_EACH(JSON_ARRAY(0)) as x_7
   WHERE

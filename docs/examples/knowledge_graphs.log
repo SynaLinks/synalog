@@ -3,9 +3,9 @@ No errors found.
 
 $ synalog.compile('knowledge_graphs.l', 'Person')
 -- Initializing DuckDB environment.
-create schema if not exists logica_home;
+create schema if not exists synalog_home;
 -- Empty record, has to have a field by DuckDB syntax.
-drop type if exists logicarecord893574736 cascade; create type logicarecord893574736 as struct(nirvana numeric);
+drop type if exists synalogrecord893574736 cascade; create type synalogrecord893574736 as struct(nirvana numeric);
 create sequence if not exists eternal_logical_sequence;
 
 WITH t_0_Employees AS (SELECT * FROM (
@@ -49,9 +49,9 @@ GROUP BY Employees.person_id, Employees.name, Employees.role ORDER BY person_id;
 
 $ synalog.compile('knowledge_graphs.l', 'Team')
 -- Initializing DuckDB environment.
-create schema if not exists logica_home;
+create schema if not exists synalog_home;
 -- Empty record, has to have a field by DuckDB syntax.
-drop type if exists logicarecord893574736 cascade; create type logicarecord893574736 as struct(nirvana numeric);
+drop type if exists synalogrecord893574736 cascade; create type synalogrecord893574736 as struct(nirvana numeric);
 create sequence if not exists eternal_logical_sequence;
 
 WITH t_0_TeamAssignments AS (SELECT * FROM (
@@ -86,9 +86,9 @@ GROUP BY TeamAssignments.team_id ORDER BY team_id;
 
 $ synalog.compile('knowledge_graphs.l', 'Client')
 -- Initializing DuckDB environment.
-create schema if not exists logica_home;
+create schema if not exists synalog_home;
 -- Empty record, has to have a field by DuckDB syntax.
-drop type if exists logicarecord893574736 cascade; create type logicarecord893574736 as struct(nirvana numeric);
+drop type if exists synalogrecord893574736 cascade; create type synalogrecord893574736 as struct(nirvana numeric);
 create sequence if not exists eternal_logical_sequence;
 
 WITH t_0_Engagements AS (SELECT * FROM (
@@ -121,9 +121,9 @@ GROUP BY Engagements.client_id, Engagements.website ORDER BY client_id;
 
 $ synalog.compile('knowledge_graphs.l', 'MemberOf')
 -- Initializing DuckDB environment.
-create schema if not exists logica_home;
+create schema if not exists synalog_home;
 -- Empty record, has to have a field by DuckDB syntax.
-drop type if exists logicarecord893574736 cascade; create type logicarecord893574736 as struct(nirvana numeric);
+drop type if exists synalogrecord893574736 cascade; create type synalogrecord893574736 as struct(nirvana numeric);
 create sequence if not exists eternal_logical_sequence;
 
 WITH t_1_Employees AS (SELECT * FROM (
@@ -198,9 +198,9 @@ GROUP BY Person.person_id, Team.team_id ORDER BY person_id;
 
 $ synalog.compile('knowledge_graphs.l', 'EngagedWith')
 -- Initializing DuckDB environment.
-create schema if not exists logica_home;
+create schema if not exists synalog_home;
 -- Empty record, has to have a field by DuckDB syntax.
-drop type if exists logicarecord893574736 cascade; create type logicarecord893574736 as struct(nirvana numeric);
+drop type if exists synalogrecord893574736 cascade; create type synalogrecord893574736 as struct(nirvana numeric);
 create sequence if not exists eternal_logical_sequence;
 
 WITH t_1_TeamAssignments AS (SELECT * FROM (
@@ -264,9 +264,9 @@ GROUP BY Team.team_id, Client.client_id ORDER BY team_id;
 
 $ synalog.compile('knowledge_graphs.l', 'WorksWithClient')
 -- Initializing DuckDB environment.
-create schema if not exists logica_home;
+create schema if not exists synalog_home;
 -- Empty record, has to have a field by DuckDB syntax.
-drop type if exists logicarecord893574736 cascade; create type logicarecord893574736 as struct(nirvana numeric);
+drop type if exists synalogrecord893574736 cascade; create type synalogrecord893574736 as struct(nirvana numeric);
 create sequence if not exists eternal_logical_sequence;
 
 WITH t_2_Employees AS (SELECT * FROM (
@@ -378,9 +378,9 @@ GROUP BY MemberOf.person_id, EngagedWith.client_id ORDER BY person_id;
 
 $ synalog.compile('knowledge_graphs.l', 'ReportsTo')
 -- Initializing DuckDB environment.
-create schema if not exists logica_home;
+create schema if not exists synalog_home;
 -- Empty record, has to have a field by DuckDB syntax.
-drop type if exists logicarecord893574736 cascade; create type logicarecord893574736 as struct(nirvana numeric);
+drop type if exists synalogrecord893574736 cascade; create type synalogrecord893574736 as struct(nirvana numeric);
 create sequence if not exists eternal_logical_sequence;
 
 WITH t_3_Employees AS (SELECT * FROM (

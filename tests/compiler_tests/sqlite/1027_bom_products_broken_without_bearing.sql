@@ -70,7 +70,7 @@ t_2_Contains_RecursiveCte AS (SELECT * FROM (
       SELECT
         Uses.part AS part,
         Uses.component AS component,
-        0 AS logica_step
+        0 AS synalog_step
       FROM
         t_3_Uses AS Uses
      UNION ALL
@@ -78,7 +78,7 @@ t_2_Contains_RecursiveCte AS (SELECT * FROM (
       SELECT
         t_6_Uses.part AS part,
         t_4_Uses.component AS component,
-        ((0) + (1)) AS logica_step
+        ((0) + (1)) AS synalog_step
       FROM
         t_3_Uses AS t_6_Uses, t_3_Uses AS t_4_Uses
       WHERE
@@ -90,7 +90,7 @@ t_2_Contains_RecursiveCte AS (SELECT * FROM (
       SELECT
         t_12_Uses.part AS part,
         t_8_Uses.component AS component,
-        ((((0) + (1))) + (1)) AS logica_step
+        ((((0) + (1))) + (1)) AS synalog_step
       FROM
         t_3_Uses AS t_12_Uses, t_3_Uses AS t_10_Uses, t_3_Uses AS t_8_Uses
       WHERE
@@ -104,7 +104,7 @@ t_2_Contains_RecursiveCte AS (SELECT * FROM (
       SELECT
         t_20_Uses.part AS part,
         t_14_Uses.component AS component,
-        ((((((0) + (1))) + (1))) + (1)) AS logica_step
+        ((((((0) + (1))) + (1))) + (1)) AS synalog_step
       FROM
         t_3_Uses AS t_20_Uses, t_3_Uses AS t_18_Uses, t_3_Uses AS t_16_Uses, t_3_Uses AS t_14_Uses
       WHERE
@@ -120,7 +120,7 @@ t_2_Contains_RecursiveCte AS (SELECT * FROM (
       SELECT
         t_30_Uses.part AS part,
         t_22_Uses.component AS component,
-        ((((((((0) + (1))) + (1))) + (1))) + (1)) AS logica_step
+        ((((((((0) + (1))) + (1))) + (1))) + (1)) AS synalog_step
       FROM
         t_3_Uses AS t_30_Uses, t_3_Uses AS t_28_Uses, t_3_Uses AS t_26_Uses, t_3_Uses AS t_24_Uses, t_3_Uses AS t_22_Uses
       WHERE
@@ -138,7 +138,7 @@ t_2_Contains_RecursiveCte AS (SELECT * FROM (
       SELECT
         t_42_Uses.part AS part,
         t_32_Uses.component AS component,
-        ((((((((((0) + (1))) + (1))) + (1))) + (1))) + (1)) AS logica_step
+        ((((((((((0) + (1))) + (1))) + (1))) + (1))) + (1)) AS synalog_step
       FROM
         t_3_Uses AS t_42_Uses, t_3_Uses AS t_40_Uses, t_3_Uses AS t_38_Uses, t_3_Uses AS t_36_Uses, t_3_Uses AS t_34_Uses, t_3_Uses AS t_32_Uses
       WHERE
@@ -160,11 +160,11 @@ UNION
 SELECT
   t_43_Contains_RecursiveCte.part AS part,
   t_44_Uses.component AS component,
-  ((t_43_Contains_RecursiveCte.logica_step) + (1)) AS logica_step
+  ((t_43_Contains_RecursiveCte.synalog_step) + (1)) AS synalog_step
 FROM
   t_2_Contains_RecursiveCte AS t_43_Contains_RecursiveCte, t_3_Uses AS t_44_Uses
 WHERE
-  (t_43_Contains_RecursiveCte.logica_step < 6) AND
+  (t_43_Contains_RecursiveCte.synalog_step < 6) AND
   (t_44_Uses.part = t_43_Contains_RecursiveCte.component)),
 t_1_Contains AS (SELECT
   Contains_RecursiveCte.part AS part,

@@ -1,5 +1,5 @@
-DROP TABLE IF EXISTS logica_test.F;
-CREATE TABLE logica_test.F AS WITH t_0_Sale AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_test.F;
+CREATE TABLE synalog_test.F AS WITH t_0_Sale AS (SELECT * FROM (
   
     SELECT
       1 AS id,
@@ -65,16 +65,16 @@ FROM
 WHERE
   (Sale.product = 'tea');
 
--- Interacting with table logica_test.F
+-- Interacting with table synalog_test.F
 
 WITH t_0_R1 AS (SELECT
   SUM(F.amount) AS t
 FROM
-  logica_test.F AS F),
+  synalog_test.F AS F),
 t_1_R2 AS (SELECT
   SUM(t_2_F.amount) AS t
 FROM
-  logica_test.F AS t_2_F)
+  synalog_test.F AS t_2_F)
 SELECT
   1 AS x
 FROM

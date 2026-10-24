@@ -6,7 +6,7 @@
 //! SQL dialects — port of Python's `compiler/dialects.py`.
 //!
 //! Each dialect defines built-in function templates, infix operator overrides,
-//! subscript access, a Logica standard library program string, and various SQL
+//! subscript access, a Synalog standard library program string, and various SQL
 //! formatting helpers.
 
 // NOTE: Python's DecorateCombineRule(rule, var) free function is implemented in
@@ -19,15 +19,22 @@ use std::hash::{Hash, Hasher};
 use crate::compiler::CompileError;
 use crate::compiler::type_inference::Type;
 
+/// `s` quoted by one of `synalog_verified::quote`'s quotings, which Verus
+/// proves the engine reads back as `s`, the literal ending at its closing
+/// quote whatever SQL follows.
+pub(crate) fn quoted(s: &str, quote: impl Fn(&Vec<char>) -> Vec<char>) -> String {
+    quote(&s.chars().collect()).into_iter().collect()
+}
+
 /// A double-quoted string literal for engines whose literals take backslash
 /// escapes (Spark, BigQuery). A quote of the value is written `\u0022`, never
 /// `\"`: the literal then holds no quote but its own two, so whatever splits a
 /// script into statements at semicolons outside quotes, knowing these escapes
 /// or not, never ends it early (`"\"; DROP TABLE t; --"` would end at the
-/// escaped quote for one that does not, and run `DROP TABLE t`).
-pub fn backslash_escaped_literal(s: &str) -> String {
-    let escaped = s.replace('\\', "\\\\").replace('"', "\\u0022");
-    format!("\"{}\"", escaped)
+/// escaped quote for one that does not, and run `DROP TABLE t`). With
+/// `dollar`, a dollar is `\u0024` (Spark substitutes `${var}` first).
+fn backslash_escaped_literal(s: &str, dollar: bool) -> String {
+    quoted(s, |s| synalog_verified::quote::backslashed(s, '"', true, dollar))
 }
 
 /// Deterministic composite-type name for a record shape.
@@ -36,7 +43,7 @@ pub fn backslash_escaped_literal(s: &str) -> String {
 /// can only expose *named* record fields through a declared composite type. The
 /// name is content-addressed from the record's canonical shape (`Type`'s Display
 /// sorts fields), so the `ROW(…)::name` literal and the `CREATE TYPE name …`
-/// preamble agree without any shared state. Prefixed `logicarecord` so the
+/// preamble agree without any shared state. Prefixed `synalogrecord` so the
 /// golden-test normalizer strips the generated DDL like the existing placeholder.
 ///
 /// The name hashes the type's columns as declared (`psql_record_columns`), not
@@ -45,7 +52,7 @@ pub fn backslash_escaped_literal(s: &str) -> String {
 pub fn record_type_name(ty: &Type) -> String {
     let mut hasher = DefaultHasher::new();
     psql_record_columns(ty).hash(&mut hasher);
-    format!("logicarecord{}", hasher.finish())
+    format!("synalogrecord{}", hasher.finish())
 }
 
 /// The columns of a record's PostgreSQL composite type, in canonical (sorted)
@@ -68,7 +75,7 @@ pub fn psql_record_columns(ty: &Type) -> String {
     items.iter()
         // Quoted, so a reserved word (`left`) is a field; a lowercase name
         // folds as an unquoted field access does.
-        .map(|(k, t)| format!("\"{}\" {}", k, column_type(t)))
+        .map(|(k, t)| format!("{} {}", quoted(k, |s| synalog_verified::quote::doubled(s, '"')), column_type(t)))
         .collect::<Vec<_>>()
         .join(", ")
 }
@@ -133,7 +140,7 @@ pub fn sql_column(field: &str, dialect: &dyn Dialect) -> String {
 pub trait Dialect {
     fn name(&self) -> &'static str;
 
-    /// Additional built-in functions: Logica name → SQL template.
+    /// Additional built-in functions: Synalog name → SQL template.
     /// Templates use `%s` for single-arg or `{0}`, `{1}` for multi-arg.
     fn built_in_functions(&self) -> HashMap<&'static str, &'static str>;
 
@@ -230,7 +237,7 @@ pub trait Dialect {
         clause
     }
 
-    /// Infix operator overrides: Logica operator → SQL template.
+    /// Infix operator overrides: Synalog operator → SQL template.
     fn infix_operators(&self) -> HashMap<&'static str, &'static str>;
 
     /// Field/subscript access on a record or table.
@@ -249,7 +256,7 @@ pub trait Dialect {
         }
     }
 
-    /// Logica source code for the dialect's standard library.
+    /// Synalog source code for the dialect's standard library.
     fn library_program(&self) -> &'static str;
 
     /// UNNEST phrase template with `{0}` for array, `{1}` for alias.
@@ -294,7 +301,7 @@ pub trait Dialect {
 
     /// `name` quoted as an identifier (standard SQL: double quotes).
     fn quote_identifier(&self, name: &str) -> String {
-        format!("\"{}\"", name.replace('"', "\"\""))
+        quoted(name, |s| synalog_verified::quote::doubled(s, '"'))
     }
 
     /// Whether table materialization uses `CREATE OR REPLACE TABLE` instead
@@ -362,8 +369,7 @@ pub trait Dialect {
 
     /// String literal formatting.
     fn str_literal(&self, s: &str) -> String {
-        let escaped = s.replace('\'', "''");
-        format!("'{}'", escaped)
+        quoted(s, |s| synalog_verified::quote::doubled(s, '\''))
     }
 
     /// Whether combine rules should be decorated with MagicalEntangle.
@@ -454,7 +460,7 @@ impl Dialect for BigQueryDialect {
     fn quote_identifier(&self, name: &str) -> String {
         // Double quotes make a string here: identifiers take backticks,
         // with a string's backslash escapes.
-        format!("`{}`", name.replace('\\', "\\\\").replace('`', "\\`"))
+        quoted(name, |s| synalog_verified::quote::backslashed(s, '`', false, false))
     }
 
     fn name(&self) -> &'static str { "bigquery" }
@@ -477,7 +483,7 @@ impl Dialect for BigQueryDialect {
 
     fn str_literal(&self, s: &str) -> String {
         // BigQuery uses double-quoted string literals (matching Python's json.dumps).
-        backslash_escaped_literal(s)
+        backslash_escaped_literal(s, false)
     }
 
     fn subscript(&self, record: &str, subscript: &str, _record_is_table: bool) -> String {
@@ -720,7 +726,7 @@ Char(code) = SqlExpr("CHAR({code})", {code:});
 
     fn record_literal(&self, fields: &[(&str, &str, &Type)]) -> String {
         let pairs: Vec<String> = fields.iter()
-            .map(|(k, v, _)| format!("'{}', {}", k, v)).collect();
+            .map(|(k, v, _)| format!("{}, {}", self.str_literal(k), v)).collect();
         format!("JSON_OBJECT({})", pairs.join(", "))
     }
 
@@ -754,12 +760,7 @@ impl Dialect for PostgreSqlDialect {
         // A server with standard_conforming_strings off reads a backslash in
         // '...' as an escape, which could end the literal: E'...' reads it as
         // one whatever the setting, so a backslash is written doubled there.
-        let escaped = s.replace('\'', "''");
-        if s.contains('\\') {
-            format!("E'{}'", escaped.replace('\\', "\\\\"))
-        } else {
-            format!("'{}'", escaped)
-        }
+        quoted(s, synalog_verified::quote::postgres)
     }
     fn int64_of_text(&self) -> Option<&'static str> {
         Some("CAST({0} AS BIGINT)")
@@ -1228,7 +1229,7 @@ impl Dialect for DatabricksDialect {
     fn quote_identifier(&self, name: &str) -> String {
         // Double quotes make a string here: identifiers take backticks,
         // a backtick inside doubled.
-        format!("`{}`", name.replace('`', "``"))
+        quoted(name, |s| synalog_verified::quote::doubled(s, '`'))
     }
 
     fn name(&self) -> &'static str { "databricks" }
@@ -1358,7 +1359,7 @@ Array(a) = SqlExpr(
     fn str_literal(&self, s: &str) -> String {
         // Spark substitutes `${var}` in a statement's text before it parses
         // it, inside literals too (`"${env:HOME}"`): a dollar is `\u0024`.
-        backslash_escaped_literal(s).replace('$', "\\u0024")
+        backslash_escaped_literal(s, true)
     }
 }
 
@@ -1379,12 +1380,12 @@ impl Dialect for DuckDbDialect {
         // DOUBLE, as a number with a point is on the other engines.
         if text.contains(['e', 'E']) { text.to_string() } else { format!("{}E0", text) }
     }
-    fn bind_value(&self) -> &'static str { "list_transform([{0}], synalog_v -> {body})[1]" }
+    fn bind_value(&self) -> &'static str { "list_transform([{0}], lambda synalog_v: {body})[1]" }
     // DuckDB rounds a DECIMAL to a constant number of digits only: a double
     // is formatted to the digits it needs, a large number built from its
     // exponent form.
     fn number_to_string(&self) -> Option<&'static str> {
-        Some("list_transform([{0}], synalog_v -> (CASE WHEN synalog_v IS NULL THEN NULL WHEN ABS(synalog_v) < 0.0000000000000005 THEN '0' WHEN synalog_v = FLOOR(synalog_v) AND ABS(synalog_v) < 1e18 THEN CAST(CAST(synalog_v AS BIGINT) AS VARCHAR) WHEN ABS(synalog_v) >= 1e38 THEN CAST(synalog_v AS VARCHAR) WHEN ABS(synalog_v) < 1 THEN TRIM(TRAILING '.' FROM TRIM(TRAILING '0' FROM CAST(CAST(ROUND(CAST(CAST(synalog_v AS VARCHAR) AS DECIMAL(38,35)), 15) AS DECIMAL(38,35)) AS VARCHAR))) WHEN ABS(synalog_v) < 1e18 THEN list_transform([CAST(CAST(synalog_v AS VARCHAR) AS DECIMAL(38,20))], synalog_t -> TRIM(TRAILING '.' FROM TRIM(TRAILING '0' FROM CAST(CASE LENGTH(CAST(CAST(FLOOR(ABS(synalog_t)) AS BIGINT) AS VARCHAR)) WHEN 1 THEN CAST(ROUND(synalog_t, 14) AS DECIMAL(38,20)) WHEN 2 THEN CAST(ROUND(synalog_t, 13) AS DECIMAL(38,20)) WHEN 3 THEN CAST(ROUND(synalog_t, 12) AS DECIMAL(38,20)) WHEN 4 THEN CAST(ROUND(synalog_t, 11) AS DECIMAL(38,20)) WHEN 5 THEN CAST(ROUND(synalog_t, 10) AS DECIMAL(38,20)) WHEN 6 THEN CAST(ROUND(synalog_t, 9) AS DECIMAL(38,20)) WHEN 7 THEN CAST(ROUND(synalog_t, 8) AS DECIMAL(38,20)) WHEN 8 THEN CAST(ROUND(synalog_t, 7) AS DECIMAL(38,20)) WHEN 9 THEN CAST(ROUND(synalog_t, 6) AS DECIMAL(38,20)) WHEN 10 THEN CAST(ROUND(synalog_t, 5) AS DECIMAL(38,20)) WHEN 11 THEN CAST(ROUND(synalog_t, 4) AS DECIMAL(38,20)) WHEN 12 THEN CAST(ROUND(synalog_t, 3) AS DECIMAL(38,20)) WHEN 13 THEN CAST(ROUND(synalog_t, 2) AS DECIMAL(38,20)) WHEN 14 THEN CAST(ROUND(synalog_t, 1) AS DECIMAL(38,20)) WHEN 15 THEN CAST(ROUND(synalog_t, 0) AS DECIMAL(38,20)) WHEN 16 THEN CAST(ROUND(synalog_t, -1) AS DECIMAL(38,20)) WHEN 17 THEN CAST(ROUND(synalog_t, -2) AS DECIMAL(38,20)) WHEN 18 THEN CAST(ROUND(synalog_t, -3) AS DECIMAL(38,20)) END AS VARCHAR))))[1] ELSE list_transform([CAST(CAST(synalog_v AS VARCHAR) AS DECIMAL(38,0))], synalog_t -> CAST(CASE LENGTH(CAST(ABS(synalog_t) AS VARCHAR)) WHEN 19 THEN CAST(ROUND(synalog_t, -4) AS DECIMAL(38,0)) WHEN 20 THEN CAST(ROUND(synalog_t, -5) AS DECIMAL(38,0)) WHEN 21 THEN CAST(ROUND(synalog_t, -6) AS DECIMAL(38,0)) WHEN 22 THEN CAST(ROUND(synalog_t, -7) AS DECIMAL(38,0)) WHEN 23 THEN CAST(ROUND(synalog_t, -8) AS DECIMAL(38,0)) WHEN 24 THEN CAST(ROUND(synalog_t, -9) AS DECIMAL(38,0)) WHEN 25 THEN CAST(ROUND(synalog_t, -10) AS DECIMAL(38,0)) WHEN 26 THEN CAST(ROUND(synalog_t, -11) AS DECIMAL(38,0)) WHEN 27 THEN CAST(ROUND(synalog_t, -12) AS DECIMAL(38,0)) WHEN 28 THEN CAST(ROUND(synalog_t, -13) AS DECIMAL(38,0)) WHEN 29 THEN CAST(ROUND(synalog_t, -14) AS DECIMAL(38,0)) WHEN 30 THEN CAST(ROUND(synalog_t, -15) AS DECIMAL(38,0)) WHEN 31 THEN CAST(ROUND(synalog_t, -16) AS DECIMAL(38,0)) WHEN 32 THEN CAST(ROUND(synalog_t, -17) AS DECIMAL(38,0)) WHEN 33 THEN CAST(ROUND(synalog_t, -18) AS DECIMAL(38,0)) WHEN 34 THEN CAST(ROUND(synalog_t, -19) AS DECIMAL(38,0)) WHEN 35 THEN CAST(ROUND(synalog_t, -20) AS DECIMAL(38,0)) WHEN 36 THEN CAST(ROUND(synalog_t, -21) AS DECIMAL(38,0)) WHEN 37 THEN CAST(ROUND(synalog_t, -22) AS DECIMAL(38,0)) WHEN 38 THEN CAST(ROUND(synalog_t, -23) AS DECIMAL(38,0)) END AS VARCHAR))[1] END))[1]")
+        Some("list_transform([{0}], lambda synalog_v: (CASE WHEN synalog_v IS NULL THEN NULL WHEN ABS(synalog_v) < 0.0000000000000005 THEN '0' WHEN synalog_v = FLOOR(synalog_v) AND ABS(synalog_v) < 1e18 THEN CAST(CAST(synalog_v AS BIGINT) AS VARCHAR) WHEN ABS(synalog_v) >= 1e38 THEN CAST(synalog_v AS VARCHAR) WHEN ABS(synalog_v) < 1 THEN TRIM(TRAILING '.' FROM TRIM(TRAILING '0' FROM CAST(CAST(ROUND(CAST(CAST(synalog_v AS VARCHAR) AS DECIMAL(38,35)), 15) AS DECIMAL(38,35)) AS VARCHAR))) WHEN ABS(synalog_v) < 1e18 THEN list_transform([CAST(CAST(synalog_v AS VARCHAR) AS DECIMAL(38,20))], lambda synalog_t: TRIM(TRAILING '.' FROM TRIM(TRAILING '0' FROM CAST(CASE LENGTH(CAST(CAST(FLOOR(ABS(synalog_t)) AS BIGINT) AS VARCHAR)) WHEN 1 THEN CAST(ROUND(synalog_t, 14) AS DECIMAL(38,20)) WHEN 2 THEN CAST(ROUND(synalog_t, 13) AS DECIMAL(38,20)) WHEN 3 THEN CAST(ROUND(synalog_t, 12) AS DECIMAL(38,20)) WHEN 4 THEN CAST(ROUND(synalog_t, 11) AS DECIMAL(38,20)) WHEN 5 THEN CAST(ROUND(synalog_t, 10) AS DECIMAL(38,20)) WHEN 6 THEN CAST(ROUND(synalog_t, 9) AS DECIMAL(38,20)) WHEN 7 THEN CAST(ROUND(synalog_t, 8) AS DECIMAL(38,20)) WHEN 8 THEN CAST(ROUND(synalog_t, 7) AS DECIMAL(38,20)) WHEN 9 THEN CAST(ROUND(synalog_t, 6) AS DECIMAL(38,20)) WHEN 10 THEN CAST(ROUND(synalog_t, 5) AS DECIMAL(38,20)) WHEN 11 THEN CAST(ROUND(synalog_t, 4) AS DECIMAL(38,20)) WHEN 12 THEN CAST(ROUND(synalog_t, 3) AS DECIMAL(38,20)) WHEN 13 THEN CAST(ROUND(synalog_t, 2) AS DECIMAL(38,20)) WHEN 14 THEN CAST(ROUND(synalog_t, 1) AS DECIMAL(38,20)) WHEN 15 THEN CAST(ROUND(synalog_t, 0) AS DECIMAL(38,20)) WHEN 16 THEN CAST(ROUND(synalog_t, -1) AS DECIMAL(38,20)) WHEN 17 THEN CAST(ROUND(synalog_t, -2) AS DECIMAL(38,20)) WHEN 18 THEN CAST(ROUND(synalog_t, -3) AS DECIMAL(38,20)) END AS VARCHAR))))[1] ELSE list_transform([CAST(CAST(synalog_v AS VARCHAR) AS DECIMAL(38,0))], lambda synalog_t: CAST(CASE LENGTH(CAST(ABS(synalog_t) AS VARCHAR)) WHEN 19 THEN CAST(ROUND(synalog_t, -4) AS DECIMAL(38,0)) WHEN 20 THEN CAST(ROUND(synalog_t, -5) AS DECIMAL(38,0)) WHEN 21 THEN CAST(ROUND(synalog_t, -6) AS DECIMAL(38,0)) WHEN 22 THEN CAST(ROUND(synalog_t, -7) AS DECIMAL(38,0)) WHEN 23 THEN CAST(ROUND(synalog_t, -8) AS DECIMAL(38,0)) WHEN 24 THEN CAST(ROUND(synalog_t, -9) AS DECIMAL(38,0)) WHEN 25 THEN CAST(ROUND(synalog_t, -10) AS DECIMAL(38,0)) WHEN 26 THEN CAST(ROUND(synalog_t, -11) AS DECIMAL(38,0)) WHEN 27 THEN CAST(ROUND(synalog_t, -12) AS DECIMAL(38,0)) WHEN 28 THEN CAST(ROUND(synalog_t, -13) AS DECIMAL(38,0)) WHEN 29 THEN CAST(ROUND(synalog_t, -14) AS DECIMAL(38,0)) WHEN 30 THEN CAST(ROUND(synalog_t, -15) AS DECIMAL(38,0)) WHEN 31 THEN CAST(ROUND(synalog_t, -16) AS DECIMAL(38,0)) WHEN 32 THEN CAST(ROUND(synalog_t, -17) AS DECIMAL(38,0)) WHEN 33 THEN CAST(ROUND(synalog_t, -18) AS DECIMAL(38,0)) WHEN 34 THEN CAST(ROUND(synalog_t, -19) AS DECIMAL(38,0)) WHEN 35 THEN CAST(ROUND(synalog_t, -20) AS DECIMAL(38,0)) WHEN 36 THEN CAST(ROUND(synalog_t, -21) AS DECIMAL(38,0)) WHEN 37 THEN CAST(ROUND(synalog_t, -22) AS DECIMAL(38,0)) WHEN 38 THEN CAST(ROUND(synalog_t, -23) AS DECIMAL(38,0)) END AS VARCHAR))[1] END))[1]")
     }
     fn name(&self) -> &'static str { "duckdb" }
     fn int64_of_text(&self) -> Option<&'static str> {

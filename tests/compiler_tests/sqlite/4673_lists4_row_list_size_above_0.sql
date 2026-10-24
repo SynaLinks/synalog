@@ -28,7 +28,7 @@ WITH t_1_L AS (SELECT * FROM (
 SELECT
   t_0_L.k AS k,
   JSON_ARRAY_LENGTH((SELECT
-  (CASE WHEN COUNT(*) = 0 THEN NULL ELSE JSON_GROUP_ARRAY(MagicalEntangle(x_5.value, x_6.value)) END) AS logica_value
+  (CASE WHEN COUNT(*) = 0 THEN NULL ELSE JSON_GROUP_ARRAY(MagicalEntangle(x_5.value, x_6.value)) END) AS synalog_value
 FROM
   JSON_EACH(t_0_L.l) as x_5, JSON_EACH(JSON_ARRAY(0)) as x_6
 WHERE

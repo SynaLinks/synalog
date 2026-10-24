@@ -92,7 +92,7 @@ FROM
   t_1_Client AS t_0_Client
 WHERE
   ((SELECT
-    MIN(MagicalEntangle(t_3_Ship.kg, x_8.value)) AS logica_value
+    MIN(MagicalEntangle(t_3_Ship.kg, x_8.value)) AS synalog_value
   FROM
     t_2_Ship AS t_3_Ship, JSON_EACH(JSON_ARRAY(0)) as x_8
   WHERE

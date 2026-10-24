@@ -1,5 +1,5 @@
-DROP TABLE IF EXISTS logica_test.Path_sn_delta;
-CREATE TABLE logica_test.Path_sn_delta AS WITH t_1_Edge AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_test.Path_sn_delta;
+CREATE TABLE synalog_test.Path_sn_delta AS WITH t_1_Edge AS (SELECT * FROM (
   
     SELECT
       1 AS a,
@@ -39,22 +39,22 @@ FROM
   t_0_Path_MultBodyAggAux_f2 AS Path_MultBodyAggAux_f2
 GROUP BY 1, 2, 3;
 
--- Interacting with table logica_test.Path_sn_delta
+-- Interacting with table synalog_test.Path_sn_delta
 
-DROP TABLE IF EXISTS logica_test.Path_sn_t0;
-CREATE TABLE logica_test.Path_sn_t0 AS SELECT
+DROP TABLE IF EXISTS synalog_test.Path_sn_t0;
+CREATE TABLE synalog_test.Path_sn_t0 AS SELECT
   Path_sn_delta.a AS a,
   Path_sn_delta.b AS b,
   Path_sn_delta.n AS n
 FROM
-  logica_test.Path_sn_delta AS Path_sn_delta
+  synalog_test.Path_sn_delta AS Path_sn_delta
 WHERE
   (1 = 0);
 
--- Interacting with table logica_test.Path_sn_t0
+-- Interacting with table synalog_test.Path_sn_t0
 
-DROP TABLE IF EXISTS logica_test.Path_sn_t1;
-CREATE TABLE logica_test.Path_sn_t1 AS WITH t_1_Edge AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_test.Path_sn_t1;
+CREATE TABLE synalog_test.Path_sn_t1 AS WITH t_1_Edge AS (SELECT * FROM (
   
     SELECT
       1 AS a,
@@ -91,7 +91,7 @@ t_1_Path_MultBodyAggAux_f3 AS (SELECT * FROM (
       t_2_Edge.b AS b,
       ((Path_sn_t0.n) + (1)) AS n
     FROM
-      logica_test.Path_sn_t0 AS Path_sn_t0, t_1_Edge AS t_2_Edge
+      synalog_test.Path_sn_t0 AS Path_sn_t0, t_1_Edge AS t_2_Edge
     WHERE
       (Path_sn_t0.n < 3) AND
       (t_2_Edge.a = Path_sn_t0.b)
@@ -113,10 +113,10 @@ FROM
 WHERE
   (1 = 0);
 
--- Interacting with table logica_test.Path_sn_t1
+-- Interacting with table synalog_test.Path_sn_t1
 
-DROP TABLE IF EXISTS logica_test.Path_sn_t2;
-CREATE TABLE logica_test.Path_sn_t2 AS WITH t_1_Edge AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_test.Path_sn_t2;
+CREATE TABLE synalog_test.Path_sn_t2 AS WITH t_1_Edge AS (SELECT * FROM (
   
     SELECT
       1 AS a,
@@ -153,7 +153,7 @@ t_1_Path_MultBodyAggAux_f4 AS (SELECT * FROM (
       t_2_Edge.b AS b,
       ((Path_sn_t1.n) + (1)) AS n
     FROM
-      logica_test.Path_sn_t1 AS Path_sn_t1, t_1_Edge AS t_2_Edge
+      synalog_test.Path_sn_t1 AS Path_sn_t1, t_1_Edge AS t_2_Edge
     WHERE
       (Path_sn_t1.n < 3) AND
       (t_2_Edge.a = Path_sn_t1.b)
@@ -175,10 +175,10 @@ FROM
 WHERE
   (1 = 0);
 
--- Interacting with table logica_test.Path_sn_t2
+-- Interacting with table synalog_test.Path_sn_t2
 
-DROP TABLE IF EXISTS logica_test.Path_sn_t3;
-CREATE TABLE logica_test.Path_sn_t3 AS WITH t_1_Edge AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_test.Path_sn_t3;
+CREATE TABLE synalog_test.Path_sn_t3 AS WITH t_1_Edge AS (SELECT * FROM (
   
     SELECT
       1 AS a,
@@ -215,7 +215,7 @@ t_1_Path_MultBodyAggAux_f5 AS (SELECT * FROM (
       t_2_Edge.b AS b,
       ((Path_sn_t2.n) + (1)) AS n
     FROM
-      logica_test.Path_sn_t2 AS Path_sn_t2, t_1_Edge AS t_2_Edge
+      synalog_test.Path_sn_t2 AS Path_sn_t2, t_1_Edge AS t_2_Edge
     WHERE
       (Path_sn_t2.n < 3) AND
       (t_2_Edge.a = Path_sn_t2.b)
@@ -237,10 +237,10 @@ FROM
 WHERE
   (1 = 0);
 
--- Interacting with table logica_test.Path_sn_t3
+-- Interacting with table synalog_test.Path_sn_t3
 
-DROP TABLE IF EXISTS logica_test.Path_sn_t4;
-CREATE TABLE logica_test.Path_sn_t4 AS WITH t_1_Edge AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_test.Path_sn_t4;
+CREATE TABLE synalog_test.Path_sn_t4 AS WITH t_1_Edge AS (SELECT * FROM (
   
     SELECT
       1 AS a,
@@ -277,7 +277,7 @@ t_1_Path_MultBodyAggAux_f6 AS (SELECT * FROM (
       t_2_Edge.b AS b,
       ((Path_sn_t3.n) + (1)) AS n
     FROM
-      logica_test.Path_sn_t3 AS Path_sn_t3, t_1_Edge AS t_2_Edge
+      synalog_test.Path_sn_t3 AS Path_sn_t3, t_1_Edge AS t_2_Edge
     WHERE
       (Path_sn_t3.n < 3) AND
       (t_2_Edge.a = Path_sn_t3.b)
@@ -299,10 +299,10 @@ FROM
 WHERE
   (1 = 0);
 
--- Interacting with table logica_test.Path_sn_t4
+-- Interacting with table synalog_test.Path_sn_t4
 
-DROP TABLE IF EXISTS logica_test.Path_sn_t5;
-CREATE TABLE logica_test.Path_sn_t5 AS WITH t_1_Edge AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_test.Path_sn_t5;
+CREATE TABLE synalog_test.Path_sn_t5 AS WITH t_1_Edge AS (SELECT * FROM (
   
     SELECT
       1 AS a,
@@ -339,7 +339,7 @@ t_1_Path_MultBodyAggAux_f7 AS (SELECT * FROM (
       t_2_Edge.b AS b,
       ((Path_sn_t4.n) + (1)) AS n
     FROM
-      logica_test.Path_sn_t4 AS Path_sn_t4, t_1_Edge AS t_2_Edge
+      synalog_test.Path_sn_t4 AS Path_sn_t4, t_1_Edge AS t_2_Edge
     WHERE
       (Path_sn_t4.n < 3) AND
       (t_2_Edge.a = Path_sn_t4.b)
@@ -361,10 +361,10 @@ FROM
 WHERE
   (1 = 0);
 
--- Interacting with table logica_test.Path_sn_t5
+-- Interacting with table synalog_test.Path_sn_t5
 
-DROP TABLE IF EXISTS logica_test.Path_sn_t6;
-CREATE TABLE logica_test.Path_sn_t6 AS WITH t_1_Edge AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_test.Path_sn_t6;
+CREATE TABLE synalog_test.Path_sn_t6 AS WITH t_1_Edge AS (SELECT * FROM (
   
     SELECT
       1 AS a,
@@ -401,7 +401,7 @@ t_1_Path_MultBodyAggAux_f8 AS (SELECT * FROM (
       t_2_Edge.b AS b,
       ((Path_sn_t5.n) + (1)) AS n
     FROM
-      logica_test.Path_sn_t5 AS Path_sn_t5, t_1_Edge AS t_2_Edge
+      synalog_test.Path_sn_t5 AS Path_sn_t5, t_1_Edge AS t_2_Edge
     WHERE
       (Path_sn_t5.n < 3) AND
       (t_2_Edge.a = Path_sn_t5.b)
@@ -423,10 +423,10 @@ FROM
 WHERE
   (1 = 0);
 
--- Interacting with table logica_test.Path_sn_t6
+-- Interacting with table synalog_test.Path_sn_t6
 
-DROP TABLE IF EXISTS logica_test.Path_sn_t7;
-CREATE TABLE logica_test.Path_sn_t7 AS WITH t_1_Edge AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_test.Path_sn_t7;
+CREATE TABLE synalog_test.Path_sn_t7 AS WITH t_1_Edge AS (SELECT * FROM (
   
     SELECT
       1 AS a,
@@ -463,7 +463,7 @@ t_1_Path_MultBodyAggAux_f9 AS (SELECT * FROM (
       t_2_Edge.b AS b,
       ((Path_sn_t6.n) + (1)) AS n
     FROM
-      logica_test.Path_sn_t6 AS Path_sn_t6, t_1_Edge AS t_2_Edge
+      synalog_test.Path_sn_t6 AS Path_sn_t6, t_1_Edge AS t_2_Edge
     WHERE
       (Path_sn_t6.n < 3) AND
       (t_2_Edge.a = Path_sn_t6.b)
@@ -485,17 +485,17 @@ FROM
 WHERE
   (1 = 0);
 
--- Interacting with table logica_test.Path_sn_t7
+-- Interacting with table synalog_test.Path_sn_t7
 
-DROP TABLE IF EXISTS logica_test.Path_sn_full;
-CREATE TABLE logica_test.Path_sn_full AS SELECT * FROM (
+DROP TABLE IF EXISTS synalog_test.Path_sn_full;
+CREATE TABLE synalog_test.Path_sn_full AS SELECT * FROM (
   
     SELECT
       Path_sn_delta.a AS a,
       Path_sn_delta.b AS b,
       Path_sn_delta.n AS n
     FROM
-      logica_test.Path_sn_delta AS Path_sn_delta
+      synalog_test.Path_sn_delta AS Path_sn_delta
    UNION ALL
   
     SELECT
@@ -503,7 +503,7 @@ CREATE TABLE logica_test.Path_sn_full AS SELECT * FROM (
       Path_sn_t1.b AS b,
       Path_sn_t1.n AS n
     FROM
-      logica_test.Path_sn_t1 AS Path_sn_t1
+      synalog_test.Path_sn_t1 AS Path_sn_t1
    UNION ALL
   
     SELECT
@@ -511,7 +511,7 @@ CREATE TABLE logica_test.Path_sn_full AS SELECT * FROM (
       Path_sn_t2.b AS b,
       Path_sn_t2.n AS n
     FROM
-      logica_test.Path_sn_t2 AS Path_sn_t2
+      synalog_test.Path_sn_t2 AS Path_sn_t2
    UNION ALL
   
     SELECT
@@ -519,7 +519,7 @@ CREATE TABLE logica_test.Path_sn_full AS SELECT * FROM (
       Path_sn_t3.b AS b,
       Path_sn_t3.n AS n
     FROM
-      logica_test.Path_sn_t3 AS Path_sn_t3
+      synalog_test.Path_sn_t3 AS Path_sn_t3
    UNION ALL
   
     SELECT
@@ -527,7 +527,7 @@ CREATE TABLE logica_test.Path_sn_full AS SELECT * FROM (
       Path_sn_t4.b AS b,
       Path_sn_t4.n AS n
     FROM
-      logica_test.Path_sn_t4 AS Path_sn_t4
+      synalog_test.Path_sn_t4 AS Path_sn_t4
    UNION ALL
   
     SELECT
@@ -535,7 +535,7 @@ CREATE TABLE logica_test.Path_sn_full AS SELECT * FROM (
       Path_sn_t5.b AS b,
       Path_sn_t5.n AS n
     FROM
-      logica_test.Path_sn_t5 AS Path_sn_t5
+      synalog_test.Path_sn_t5 AS Path_sn_t5
    UNION ALL
   
     SELECT
@@ -543,7 +543,7 @@ CREATE TABLE logica_test.Path_sn_full AS SELECT * FROM (
       Path_sn_t6.b AS b,
       Path_sn_t6.n AS n
     FROM
-      logica_test.Path_sn_t6 AS Path_sn_t6
+      synalog_test.Path_sn_t6 AS Path_sn_t6
    UNION ALL
   
     SELECT
@@ -551,14 +551,14 @@ CREATE TABLE logica_test.Path_sn_full AS SELECT * FROM (
       Path_sn_t7.b AS b,
       Path_sn_t7.n AS n
     FROM
-      logica_test.Path_sn_t7 AS Path_sn_t7
+      synalog_test.Path_sn_t7 AS Path_sn_t7
   
 ) AS UNUSED_TABLE_NAME  ;
 
--- Interacting with table logica_test.Path_sn_full
+-- Interacting with table synalog_test.Path_sn_full
 
-DROP TABLE IF EXISTS logica_test.Path_sn_new;
-CREATE TABLE logica_test.Path_sn_new AS WITH t_1_Edge AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_test.Path_sn_new;
+CREATE TABLE synalog_test.Path_sn_new AS WITH t_1_Edge AS (SELECT * FROM (
   
     SELECT
       1 AS a,
@@ -595,7 +595,7 @@ t_1_Path_MultBodyAggAux_f10 AS (SELECT * FROM (
       t_2_Edge.b AS b,
       ((Path_sn_delta.n) + (1)) AS n
     FROM
-      logica_test.Path_sn_delta AS Path_sn_delta, t_1_Edge AS t_2_Edge
+      synalog_test.Path_sn_delta AS Path_sn_delta, t_1_Edge AS t_2_Edge
     WHERE
       (Path_sn_delta.n < 3) AND
       (t_2_Edge.a = Path_sn_delta.b)
@@ -616,19 +616,19 @@ FROM
   t_0_Path_sn_step AS Path_sn_step
 WHERE
   ((SELECT
-    MIN(1) AS logica_value
+    MIN(1) AS synalog_value
   FROM
-    logica_test.Path_sn_full AS Path_sn_full
+    synalog_test.Path_sn_full AS Path_sn_full
   WHERE
     (Path_sn_full.a = Path_sn_step.a) AND
     (Path_sn_full.b = Path_sn_step.b) AND
     (Path_sn_full.n = Path_sn_step.n)) IS NULL)
 GROUP BY 1, 2, 3;
 
-INSERT INTO logica_test.Path_sn_full SELECT * FROM logica_test.Path_sn_new;
+INSERT INTO synalog_test.Path_sn_full SELECT * FROM synalog_test.Path_sn_new;
 
-DROP TABLE IF EXISTS logica_test.Path_sn_delta;
-CREATE TABLE logica_test.Path_sn_delta AS WITH t_1_Edge AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_test.Path_sn_delta;
+CREATE TABLE synalog_test.Path_sn_delta AS WITH t_1_Edge AS (SELECT * FROM (
   
     SELECT
       1 AS a,
@@ -665,7 +665,7 @@ t_1_Path_MultBodyAggAux_f1 AS (SELECT * FROM (
       t_2_Edge.b AS b,
       ((Path_sn_new.n) + (1)) AS n
     FROM
-      logica_test.Path_sn_new AS Path_sn_new, t_1_Edge AS t_2_Edge
+      synalog_test.Path_sn_new AS Path_sn_new, t_1_Edge AS t_2_Edge
     WHERE
       (Path_sn_new.n < 3) AND
       (t_2_Edge.a = Path_sn_new.b)
@@ -686,19 +686,19 @@ FROM
   t_0_Path_sn_back_step AS Path_sn_back_step
 WHERE
   ((SELECT
-    MIN(1) AS logica_value
+    MIN(1) AS synalog_value
   FROM
-    logica_test.Path_sn_full AS Path_sn_full
+    synalog_test.Path_sn_full AS Path_sn_full
   WHERE
     (Path_sn_full.a = Path_sn_back_step.a) AND
     (Path_sn_full.b = Path_sn_back_step.b) AND
     (Path_sn_full.n = Path_sn_back_step.n)) IS NULL)
 GROUP BY 1, 2, 3;
 
-INSERT INTO logica_test.Path_sn_full SELECT * FROM logica_test.Path_sn_delta;
+INSERT INTO synalog_test.Path_sn_full SELECT * FROM synalog_test.Path_sn_delta;
 
-DROP TABLE IF EXISTS logica_test.Path_sn_new;
-CREATE TABLE logica_test.Path_sn_new AS WITH t_1_Edge AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_test.Path_sn_new;
+CREATE TABLE synalog_test.Path_sn_new AS WITH t_1_Edge AS (SELECT * FROM (
   
     SELECT
       1 AS a,
@@ -735,7 +735,7 @@ t_1_Path_MultBodyAggAux_f10 AS (SELECT * FROM (
       t_2_Edge.b AS b,
       ((Path_sn_delta.n) + (1)) AS n
     FROM
-      logica_test.Path_sn_delta AS Path_sn_delta, t_1_Edge AS t_2_Edge
+      synalog_test.Path_sn_delta AS Path_sn_delta, t_1_Edge AS t_2_Edge
     WHERE
       (Path_sn_delta.n < 3) AND
       (t_2_Edge.a = Path_sn_delta.b)
@@ -756,19 +756,19 @@ FROM
   t_0_Path_sn_step AS Path_sn_step
 WHERE
   ((SELECT
-    MIN(1) AS logica_value
+    MIN(1) AS synalog_value
   FROM
-    logica_test.Path_sn_full AS Path_sn_full
+    synalog_test.Path_sn_full AS Path_sn_full
   WHERE
     (Path_sn_full.a = Path_sn_step.a) AND
     (Path_sn_full.b = Path_sn_step.b) AND
     (Path_sn_full.n = Path_sn_step.n)) IS NULL)
 GROUP BY 1, 2, 3;
 
-INSERT INTO logica_test.Path_sn_full SELECT * FROM logica_test.Path_sn_new;
+INSERT INTO synalog_test.Path_sn_full SELECT * FROM synalog_test.Path_sn_new;
 
-DROP TABLE IF EXISTS logica_test.Path_sn_delta;
-CREATE TABLE logica_test.Path_sn_delta AS WITH t_1_Edge AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_test.Path_sn_delta;
+CREATE TABLE synalog_test.Path_sn_delta AS WITH t_1_Edge AS (SELECT * FROM (
   
     SELECT
       1 AS a,
@@ -805,7 +805,7 @@ t_1_Path_MultBodyAggAux_f1 AS (SELECT * FROM (
       t_2_Edge.b AS b,
       ((Path_sn_new.n) + (1)) AS n
     FROM
-      logica_test.Path_sn_new AS Path_sn_new, t_1_Edge AS t_2_Edge
+      synalog_test.Path_sn_new AS Path_sn_new, t_1_Edge AS t_2_Edge
     WHERE
       (Path_sn_new.n < 3) AND
       (t_2_Edge.a = Path_sn_new.b)
@@ -826,19 +826,19 @@ FROM
   t_0_Path_sn_back_step AS Path_sn_back_step
 WHERE
   ((SELECT
-    MIN(1) AS logica_value
+    MIN(1) AS synalog_value
   FROM
-    logica_test.Path_sn_full AS Path_sn_full
+    synalog_test.Path_sn_full AS Path_sn_full
   WHERE
     (Path_sn_full.a = Path_sn_back_step.a) AND
     (Path_sn_full.b = Path_sn_back_step.b) AND
     (Path_sn_full.n = Path_sn_back_step.n)) IS NULL)
 GROUP BY 1, 2, 3;
 
-INSERT INTO logica_test.Path_sn_full SELECT * FROM logica_test.Path_sn_delta;
+INSERT INTO synalog_test.Path_sn_full SELECT * FROM synalog_test.Path_sn_delta;
 
-DROP TABLE IF EXISTS logica_test.Path_sn_new;
-CREATE TABLE logica_test.Path_sn_new AS WITH t_1_Edge AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_test.Path_sn_new;
+CREATE TABLE synalog_test.Path_sn_new AS WITH t_1_Edge AS (SELECT * FROM (
   
     SELECT
       1 AS a,
@@ -875,7 +875,7 @@ t_1_Path_MultBodyAggAux_f10 AS (SELECT * FROM (
       t_2_Edge.b AS b,
       ((Path_sn_delta.n) + (1)) AS n
     FROM
-      logica_test.Path_sn_delta AS Path_sn_delta, t_1_Edge AS t_2_Edge
+      synalog_test.Path_sn_delta AS Path_sn_delta, t_1_Edge AS t_2_Edge
     WHERE
       (Path_sn_delta.n < 3) AND
       (t_2_Edge.a = Path_sn_delta.b)
@@ -896,19 +896,19 @@ FROM
   t_0_Path_sn_step AS Path_sn_step
 WHERE
   ((SELECT
-    MIN(1) AS logica_value
+    MIN(1) AS synalog_value
   FROM
-    logica_test.Path_sn_full AS Path_sn_full
+    synalog_test.Path_sn_full AS Path_sn_full
   WHERE
     (Path_sn_full.a = Path_sn_step.a) AND
     (Path_sn_full.b = Path_sn_step.b) AND
     (Path_sn_full.n = Path_sn_step.n)) IS NULL)
 GROUP BY 1, 2, 3;
 
-INSERT INTO logica_test.Path_sn_full SELECT * FROM logica_test.Path_sn_new;
+INSERT INTO synalog_test.Path_sn_full SELECT * FROM synalog_test.Path_sn_new;
 
-DROP TABLE IF EXISTS logica_test.Path_sn_delta;
-CREATE TABLE logica_test.Path_sn_delta AS WITH t_1_Edge AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_test.Path_sn_delta;
+CREATE TABLE synalog_test.Path_sn_delta AS WITH t_1_Edge AS (SELECT * FROM (
   
     SELECT
       1 AS a,
@@ -945,7 +945,7 @@ t_1_Path_MultBodyAggAux_f1 AS (SELECT * FROM (
       t_2_Edge.b AS b,
       ((Path_sn_new.n) + (1)) AS n
     FROM
-      logica_test.Path_sn_new AS Path_sn_new, t_1_Edge AS t_2_Edge
+      synalog_test.Path_sn_new AS Path_sn_new, t_1_Edge AS t_2_Edge
     WHERE
       (Path_sn_new.n < 3) AND
       (t_2_Edge.a = Path_sn_new.b)
@@ -966,19 +966,19 @@ FROM
   t_0_Path_sn_back_step AS Path_sn_back_step
 WHERE
   ((SELECT
-    MIN(1) AS logica_value
+    MIN(1) AS synalog_value
   FROM
-    logica_test.Path_sn_full AS Path_sn_full
+    synalog_test.Path_sn_full AS Path_sn_full
   WHERE
     (Path_sn_full.a = Path_sn_back_step.a) AND
     (Path_sn_full.b = Path_sn_back_step.b) AND
     (Path_sn_full.n = Path_sn_back_step.n)) IS NULL)
 GROUP BY 1, 2, 3;
 
-INSERT INTO logica_test.Path_sn_full SELECT * FROM logica_test.Path_sn_delta;
+INSERT INTO synalog_test.Path_sn_full SELECT * FROM synalog_test.Path_sn_delta;
 
-DROP TABLE IF EXISTS logica_test.Path_sn_new;
-CREATE TABLE logica_test.Path_sn_new AS WITH t_1_Edge AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_test.Path_sn_new;
+CREATE TABLE synalog_test.Path_sn_new AS WITH t_1_Edge AS (SELECT * FROM (
   
     SELECT
       1 AS a,
@@ -1015,7 +1015,7 @@ t_1_Path_MultBodyAggAux_f10 AS (SELECT * FROM (
       t_2_Edge.b AS b,
       ((Path_sn_delta.n) + (1)) AS n
     FROM
-      logica_test.Path_sn_delta AS Path_sn_delta, t_1_Edge AS t_2_Edge
+      synalog_test.Path_sn_delta AS Path_sn_delta, t_1_Edge AS t_2_Edge
     WHERE
       (Path_sn_delta.n < 3) AND
       (t_2_Edge.a = Path_sn_delta.b)
@@ -1036,19 +1036,19 @@ FROM
   t_0_Path_sn_step AS Path_sn_step
 WHERE
   ((SELECT
-    MIN(1) AS logica_value
+    MIN(1) AS synalog_value
   FROM
-    logica_test.Path_sn_full AS Path_sn_full
+    synalog_test.Path_sn_full AS Path_sn_full
   WHERE
     (Path_sn_full.a = Path_sn_step.a) AND
     (Path_sn_full.b = Path_sn_step.b) AND
     (Path_sn_full.n = Path_sn_step.n)) IS NULL)
 GROUP BY 1, 2, 3;
 
-INSERT INTO logica_test.Path_sn_full SELECT * FROM logica_test.Path_sn_new;
+INSERT INTO synalog_test.Path_sn_full SELECT * FROM synalog_test.Path_sn_new;
 
-DROP TABLE IF EXISTS logica_test.Path_sn_delta;
-CREATE TABLE logica_test.Path_sn_delta AS WITH t_1_Edge AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_test.Path_sn_delta;
+CREATE TABLE synalog_test.Path_sn_delta AS WITH t_1_Edge AS (SELECT * FROM (
   
     SELECT
       1 AS a,
@@ -1085,7 +1085,7 @@ t_1_Path_MultBodyAggAux_f1 AS (SELECT * FROM (
       t_2_Edge.b AS b,
       ((Path_sn_new.n) + (1)) AS n
     FROM
-      logica_test.Path_sn_new AS Path_sn_new, t_1_Edge AS t_2_Edge
+      synalog_test.Path_sn_new AS Path_sn_new, t_1_Edge AS t_2_Edge
     WHERE
       (Path_sn_new.n < 3) AND
       (t_2_Edge.a = Path_sn_new.b)
@@ -1106,19 +1106,19 @@ FROM
   t_0_Path_sn_back_step AS Path_sn_back_step
 WHERE
   ((SELECT
-    MIN(1) AS logica_value
+    MIN(1) AS synalog_value
   FROM
-    logica_test.Path_sn_full AS Path_sn_full
+    synalog_test.Path_sn_full AS Path_sn_full
   WHERE
     (Path_sn_full.a = Path_sn_back_step.a) AND
     (Path_sn_full.b = Path_sn_back_step.b) AND
     (Path_sn_full.n = Path_sn_back_step.n)) IS NULL)
 GROUP BY 1, 2, 3;
 
-INSERT INTO logica_test.Path_sn_full SELECT * FROM logica_test.Path_sn_delta;
+INSERT INTO synalog_test.Path_sn_full SELECT * FROM synalog_test.Path_sn_delta;
 
-DROP TABLE IF EXISTS logica_test.Path_sn_new;
-CREATE TABLE logica_test.Path_sn_new AS WITH t_1_Edge AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_test.Path_sn_new;
+CREATE TABLE synalog_test.Path_sn_new AS WITH t_1_Edge AS (SELECT * FROM (
   
     SELECT
       1 AS a,
@@ -1155,7 +1155,7 @@ t_1_Path_MultBodyAggAux_f10 AS (SELECT * FROM (
       t_2_Edge.b AS b,
       ((Path_sn_delta.n) + (1)) AS n
     FROM
-      logica_test.Path_sn_delta AS Path_sn_delta, t_1_Edge AS t_2_Edge
+      synalog_test.Path_sn_delta AS Path_sn_delta, t_1_Edge AS t_2_Edge
     WHERE
       (Path_sn_delta.n < 3) AND
       (t_2_Edge.a = Path_sn_delta.b)
@@ -1176,19 +1176,19 @@ FROM
   t_0_Path_sn_step AS Path_sn_step
 WHERE
   ((SELECT
-    MIN(1) AS logica_value
+    MIN(1) AS synalog_value
   FROM
-    logica_test.Path_sn_full AS Path_sn_full
+    synalog_test.Path_sn_full AS Path_sn_full
   WHERE
     (Path_sn_full.a = Path_sn_step.a) AND
     (Path_sn_full.b = Path_sn_step.b) AND
     (Path_sn_full.n = Path_sn_step.n)) IS NULL)
 GROUP BY 1, 2, 3;
 
-INSERT INTO logica_test.Path_sn_full SELECT * FROM logica_test.Path_sn_new;
+INSERT INTO synalog_test.Path_sn_full SELECT * FROM synalog_test.Path_sn_new;
 
-DROP TABLE IF EXISTS logica_test.Path_sn_delta;
-CREATE TABLE logica_test.Path_sn_delta AS WITH t_1_Edge AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_test.Path_sn_delta;
+CREATE TABLE synalog_test.Path_sn_delta AS WITH t_1_Edge AS (SELECT * FROM (
   
     SELECT
       1 AS a,
@@ -1225,7 +1225,7 @@ t_1_Path_MultBodyAggAux_f1 AS (SELECT * FROM (
       t_2_Edge.b AS b,
       ((Path_sn_new.n) + (1)) AS n
     FROM
-      logica_test.Path_sn_new AS Path_sn_new, t_1_Edge AS t_2_Edge
+      synalog_test.Path_sn_new AS Path_sn_new, t_1_Edge AS t_2_Edge
     WHERE
       (Path_sn_new.n < 3) AND
       (t_2_Edge.a = Path_sn_new.b)
@@ -1246,19 +1246,19 @@ FROM
   t_0_Path_sn_back_step AS Path_sn_back_step
 WHERE
   ((SELECT
-    MIN(1) AS logica_value
+    MIN(1) AS synalog_value
   FROM
-    logica_test.Path_sn_full AS Path_sn_full
+    synalog_test.Path_sn_full AS Path_sn_full
   WHERE
     (Path_sn_full.a = Path_sn_back_step.a) AND
     (Path_sn_full.b = Path_sn_back_step.b) AND
     (Path_sn_full.n = Path_sn_back_step.n)) IS NULL)
 GROUP BY 1, 2, 3;
 
-INSERT INTO logica_test.Path_sn_full SELECT * FROM logica_test.Path_sn_delta;
+INSERT INTO synalog_test.Path_sn_full SELECT * FROM synalog_test.Path_sn_delta;
 
-DROP TABLE IF EXISTS logica_test.Path_sn_new;
-CREATE TABLE logica_test.Path_sn_new AS WITH t_1_Edge AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_test.Path_sn_new;
+CREATE TABLE synalog_test.Path_sn_new AS WITH t_1_Edge AS (SELECT * FROM (
   
     SELECT
       1 AS a,
@@ -1295,7 +1295,7 @@ t_1_Path_MultBodyAggAux_f10 AS (SELECT * FROM (
       t_2_Edge.b AS b,
       ((Path_sn_delta.n) + (1)) AS n
     FROM
-      logica_test.Path_sn_delta AS Path_sn_delta, t_1_Edge AS t_2_Edge
+      synalog_test.Path_sn_delta AS Path_sn_delta, t_1_Edge AS t_2_Edge
     WHERE
       (Path_sn_delta.n < 3) AND
       (t_2_Edge.a = Path_sn_delta.b)
@@ -1316,19 +1316,19 @@ FROM
   t_0_Path_sn_step AS Path_sn_step
 WHERE
   ((SELECT
-    MIN(1) AS logica_value
+    MIN(1) AS synalog_value
   FROM
-    logica_test.Path_sn_full AS Path_sn_full
+    synalog_test.Path_sn_full AS Path_sn_full
   WHERE
     (Path_sn_full.a = Path_sn_step.a) AND
     (Path_sn_full.b = Path_sn_step.b) AND
     (Path_sn_full.n = Path_sn_step.n)) IS NULL)
 GROUP BY 1, 2, 3;
 
-INSERT INTO logica_test.Path_sn_full SELECT * FROM logica_test.Path_sn_new;
+INSERT INTO synalog_test.Path_sn_full SELECT * FROM synalog_test.Path_sn_new;
 
-DROP TABLE IF EXISTS logica_test.Path_sn_delta;
-CREATE TABLE logica_test.Path_sn_delta AS WITH t_1_Edge AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_test.Path_sn_delta;
+CREATE TABLE synalog_test.Path_sn_delta AS WITH t_1_Edge AS (SELECT * FROM (
   
     SELECT
       1 AS a,
@@ -1365,7 +1365,7 @@ t_1_Path_MultBodyAggAux_f1 AS (SELECT * FROM (
       t_2_Edge.b AS b,
       ((Path_sn_new.n) + (1)) AS n
     FROM
-      logica_test.Path_sn_new AS Path_sn_new, t_1_Edge AS t_2_Edge
+      synalog_test.Path_sn_new AS Path_sn_new, t_1_Edge AS t_2_Edge
     WHERE
       (Path_sn_new.n < 3) AND
       (t_2_Edge.a = Path_sn_new.b)
@@ -1386,19 +1386,19 @@ FROM
   t_0_Path_sn_back_step AS Path_sn_back_step
 WHERE
   ((SELECT
-    MIN(1) AS logica_value
+    MIN(1) AS synalog_value
   FROM
-    logica_test.Path_sn_full AS Path_sn_full
+    synalog_test.Path_sn_full AS Path_sn_full
   WHERE
     (Path_sn_full.a = Path_sn_back_step.a) AND
     (Path_sn_full.b = Path_sn_back_step.b) AND
     (Path_sn_full.n = Path_sn_back_step.n)) IS NULL)
 GROUP BY 1, 2, 3;
 
-INSERT INTO logica_test.Path_sn_full SELECT * FROM logica_test.Path_sn_delta;
+INSERT INTO synalog_test.Path_sn_full SELECT * FROM synalog_test.Path_sn_delta;
 
-DROP TABLE IF EXISTS logica_test.Path_sn_new;
-CREATE TABLE logica_test.Path_sn_new AS WITH t_1_Edge AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_test.Path_sn_new;
+CREATE TABLE synalog_test.Path_sn_new AS WITH t_1_Edge AS (SELECT * FROM (
   
     SELECT
       1 AS a,
@@ -1435,7 +1435,7 @@ t_1_Path_MultBodyAggAux_f10 AS (SELECT * FROM (
       t_2_Edge.b AS b,
       ((Path_sn_delta.n) + (1)) AS n
     FROM
-      logica_test.Path_sn_delta AS Path_sn_delta, t_1_Edge AS t_2_Edge
+      synalog_test.Path_sn_delta AS Path_sn_delta, t_1_Edge AS t_2_Edge
     WHERE
       (Path_sn_delta.n < 3) AND
       (t_2_Edge.a = Path_sn_delta.b)
@@ -1456,19 +1456,19 @@ FROM
   t_0_Path_sn_step AS Path_sn_step
 WHERE
   ((SELECT
-    MIN(1) AS logica_value
+    MIN(1) AS synalog_value
   FROM
-    logica_test.Path_sn_full AS Path_sn_full
+    synalog_test.Path_sn_full AS Path_sn_full
   WHERE
     (Path_sn_full.a = Path_sn_step.a) AND
     (Path_sn_full.b = Path_sn_step.b) AND
     (Path_sn_full.n = Path_sn_step.n)) IS NULL)
 GROUP BY 1, 2, 3;
 
-INSERT INTO logica_test.Path_sn_full SELECT * FROM logica_test.Path_sn_new;
+INSERT INTO synalog_test.Path_sn_full SELECT * FROM synalog_test.Path_sn_new;
 
-DROP TABLE IF EXISTS logica_test.Path_sn_delta;
-CREATE TABLE logica_test.Path_sn_delta AS WITH t_1_Edge AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_test.Path_sn_delta;
+CREATE TABLE synalog_test.Path_sn_delta AS WITH t_1_Edge AS (SELECT * FROM (
   
     SELECT
       1 AS a,
@@ -1505,7 +1505,7 @@ t_1_Path_MultBodyAggAux_f1 AS (SELECT * FROM (
       t_2_Edge.b AS b,
       ((Path_sn_new.n) + (1)) AS n
     FROM
-      logica_test.Path_sn_new AS Path_sn_new, t_1_Edge AS t_2_Edge
+      synalog_test.Path_sn_new AS Path_sn_new, t_1_Edge AS t_2_Edge
     WHERE
       (Path_sn_new.n < 3) AND
       (t_2_Edge.a = Path_sn_new.b)
@@ -1526,19 +1526,19 @@ FROM
   t_0_Path_sn_back_step AS Path_sn_back_step
 WHERE
   ((SELECT
-    MIN(1) AS logica_value
+    MIN(1) AS synalog_value
   FROM
-    logica_test.Path_sn_full AS Path_sn_full
+    synalog_test.Path_sn_full AS Path_sn_full
   WHERE
     (Path_sn_full.a = Path_sn_back_step.a) AND
     (Path_sn_full.b = Path_sn_back_step.b) AND
     (Path_sn_full.n = Path_sn_back_step.n)) IS NULL)
 GROUP BY 1, 2, 3;
 
-INSERT INTO logica_test.Path_sn_full SELECT * FROM logica_test.Path_sn_delta;
+INSERT INTO synalog_test.Path_sn_full SELECT * FROM synalog_test.Path_sn_delta;
 
-DROP TABLE IF EXISTS logica_test.Path_sn_new;
-CREATE TABLE logica_test.Path_sn_new AS WITH t_1_Edge AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_test.Path_sn_new;
+CREATE TABLE synalog_test.Path_sn_new AS WITH t_1_Edge AS (SELECT * FROM (
   
     SELECT
       1 AS a,
@@ -1575,7 +1575,7 @@ t_1_Path_MultBodyAggAux_f10 AS (SELECT * FROM (
       t_2_Edge.b AS b,
       ((Path_sn_delta.n) + (1)) AS n
     FROM
-      logica_test.Path_sn_delta AS Path_sn_delta, t_1_Edge AS t_2_Edge
+      synalog_test.Path_sn_delta AS Path_sn_delta, t_1_Edge AS t_2_Edge
     WHERE
       (Path_sn_delta.n < 3) AND
       (t_2_Edge.a = Path_sn_delta.b)
@@ -1596,19 +1596,19 @@ FROM
   t_0_Path_sn_step AS Path_sn_step
 WHERE
   ((SELECT
-    MIN(1) AS logica_value
+    MIN(1) AS synalog_value
   FROM
-    logica_test.Path_sn_full AS Path_sn_full
+    synalog_test.Path_sn_full AS Path_sn_full
   WHERE
     (Path_sn_full.a = Path_sn_step.a) AND
     (Path_sn_full.b = Path_sn_step.b) AND
     (Path_sn_full.n = Path_sn_step.n)) IS NULL)
 GROUP BY 1, 2, 3;
 
-INSERT INTO logica_test.Path_sn_full SELECT * FROM logica_test.Path_sn_new;
+INSERT INTO synalog_test.Path_sn_full SELECT * FROM synalog_test.Path_sn_new;
 
-DROP TABLE IF EXISTS logica_test.Path_sn_delta;
-CREATE TABLE logica_test.Path_sn_delta AS WITH t_1_Edge AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_test.Path_sn_delta;
+CREATE TABLE synalog_test.Path_sn_delta AS WITH t_1_Edge AS (SELECT * FROM (
   
     SELECT
       1 AS a,
@@ -1645,7 +1645,7 @@ t_1_Path_MultBodyAggAux_f1 AS (SELECT * FROM (
       t_2_Edge.b AS b,
       ((Path_sn_new.n) + (1)) AS n
     FROM
-      logica_test.Path_sn_new AS Path_sn_new, t_1_Edge AS t_2_Edge
+      synalog_test.Path_sn_new AS Path_sn_new, t_1_Edge AS t_2_Edge
     WHERE
       (Path_sn_new.n < 3) AND
       (t_2_Edge.a = Path_sn_new.b)
@@ -1666,19 +1666,19 @@ FROM
   t_0_Path_sn_back_step AS Path_sn_back_step
 WHERE
   ((SELECT
-    MIN(1) AS logica_value
+    MIN(1) AS synalog_value
   FROM
-    logica_test.Path_sn_full AS Path_sn_full
+    synalog_test.Path_sn_full AS Path_sn_full
   WHERE
     (Path_sn_full.a = Path_sn_back_step.a) AND
     (Path_sn_full.b = Path_sn_back_step.b) AND
     (Path_sn_full.n = Path_sn_back_step.n)) IS NULL)
 GROUP BY 1, 2, 3;
 
-INSERT INTO logica_test.Path_sn_full SELECT * FROM logica_test.Path_sn_delta;
+INSERT INTO synalog_test.Path_sn_full SELECT * FROM synalog_test.Path_sn_delta;
 
-DROP TABLE IF EXISTS logica_test.Path_sn_new;
-CREATE TABLE logica_test.Path_sn_new AS WITH t_1_Edge AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_test.Path_sn_new;
+CREATE TABLE synalog_test.Path_sn_new AS WITH t_1_Edge AS (SELECT * FROM (
   
     SELECT
       1 AS a,
@@ -1715,7 +1715,7 @@ t_1_Path_MultBodyAggAux_f10 AS (SELECT * FROM (
       t_2_Edge.b AS b,
       ((Path_sn_delta.n) + (1)) AS n
     FROM
-      logica_test.Path_sn_delta AS Path_sn_delta, t_1_Edge AS t_2_Edge
+      synalog_test.Path_sn_delta AS Path_sn_delta, t_1_Edge AS t_2_Edge
     WHERE
       (Path_sn_delta.n < 3) AND
       (t_2_Edge.a = Path_sn_delta.b)
@@ -1736,19 +1736,19 @@ FROM
   t_0_Path_sn_step AS Path_sn_step
 WHERE
   ((SELECT
-    MIN(1) AS logica_value
+    MIN(1) AS synalog_value
   FROM
-    logica_test.Path_sn_full AS Path_sn_full
+    synalog_test.Path_sn_full AS Path_sn_full
   WHERE
     (Path_sn_full.a = Path_sn_step.a) AND
     (Path_sn_full.b = Path_sn_step.b) AND
     (Path_sn_full.n = Path_sn_step.n)) IS NULL)
 GROUP BY 1, 2, 3;
 
-INSERT INTO logica_test.Path_sn_full SELECT * FROM logica_test.Path_sn_new;
+INSERT INTO synalog_test.Path_sn_full SELECT * FROM synalog_test.Path_sn_new;
 
-DROP TABLE IF EXISTS logica_test.Path_sn_delta;
-CREATE TABLE logica_test.Path_sn_delta AS WITH t_1_Edge AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_test.Path_sn_delta;
+CREATE TABLE synalog_test.Path_sn_delta AS WITH t_1_Edge AS (SELECT * FROM (
   
     SELECT
       1 AS a,
@@ -1785,7 +1785,7 @@ t_1_Path_MultBodyAggAux_f1 AS (SELECT * FROM (
       t_2_Edge.b AS b,
       ((Path_sn_new.n) + (1)) AS n
     FROM
-      logica_test.Path_sn_new AS Path_sn_new, t_1_Edge AS t_2_Edge
+      synalog_test.Path_sn_new AS Path_sn_new, t_1_Edge AS t_2_Edge
     WHERE
       (Path_sn_new.n < 3) AND
       (t_2_Edge.a = Path_sn_new.b)
@@ -1806,19 +1806,19 @@ FROM
   t_0_Path_sn_back_step AS Path_sn_back_step
 WHERE
   ((SELECT
-    MIN(1) AS logica_value
+    MIN(1) AS synalog_value
   FROM
-    logica_test.Path_sn_full AS Path_sn_full
+    synalog_test.Path_sn_full AS Path_sn_full
   WHERE
     (Path_sn_full.a = Path_sn_back_step.a) AND
     (Path_sn_full.b = Path_sn_back_step.b) AND
     (Path_sn_full.n = Path_sn_back_step.n)) IS NULL)
 GROUP BY 1, 2, 3;
 
-INSERT INTO logica_test.Path_sn_full SELECT * FROM logica_test.Path_sn_delta;
+INSERT INTO synalog_test.Path_sn_full SELECT * FROM synalog_test.Path_sn_delta;
 
-DROP TABLE IF EXISTS logica_test.Path_sn_new;
-CREATE TABLE logica_test.Path_sn_new AS WITH t_1_Edge AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_test.Path_sn_new;
+CREATE TABLE synalog_test.Path_sn_new AS WITH t_1_Edge AS (SELECT * FROM (
   
     SELECT
       1 AS a,
@@ -1855,7 +1855,7 @@ t_1_Path_MultBodyAggAux_f10 AS (SELECT * FROM (
       t_2_Edge.b AS b,
       ((Path_sn_delta.n) + (1)) AS n
     FROM
-      logica_test.Path_sn_delta AS Path_sn_delta, t_1_Edge AS t_2_Edge
+      synalog_test.Path_sn_delta AS Path_sn_delta, t_1_Edge AS t_2_Edge
     WHERE
       (Path_sn_delta.n < 3) AND
       (t_2_Edge.a = Path_sn_delta.b)
@@ -1876,19 +1876,19 @@ FROM
   t_0_Path_sn_step AS Path_sn_step
 WHERE
   ((SELECT
-    MIN(1) AS logica_value
+    MIN(1) AS synalog_value
   FROM
-    logica_test.Path_sn_full AS Path_sn_full
+    synalog_test.Path_sn_full AS Path_sn_full
   WHERE
     (Path_sn_full.a = Path_sn_step.a) AND
     (Path_sn_full.b = Path_sn_step.b) AND
     (Path_sn_full.n = Path_sn_step.n)) IS NULL)
 GROUP BY 1, 2, 3;
 
-INSERT INTO logica_test.Path_sn_full SELECT * FROM logica_test.Path_sn_new;
+INSERT INTO synalog_test.Path_sn_full SELECT * FROM synalog_test.Path_sn_new;
 
-DROP TABLE IF EXISTS logica_test.Path_sn_delta;
-CREATE TABLE logica_test.Path_sn_delta AS WITH t_1_Edge AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_test.Path_sn_delta;
+CREATE TABLE synalog_test.Path_sn_delta AS WITH t_1_Edge AS (SELECT * FROM (
   
     SELECT
       1 AS a,
@@ -1925,7 +1925,7 @@ t_1_Path_MultBodyAggAux_f1 AS (SELECT * FROM (
       t_2_Edge.b AS b,
       ((Path_sn_new.n) + (1)) AS n
     FROM
-      logica_test.Path_sn_new AS Path_sn_new, t_1_Edge AS t_2_Edge
+      synalog_test.Path_sn_new AS Path_sn_new, t_1_Edge AS t_2_Edge
     WHERE
       (Path_sn_new.n < 3) AND
       (t_2_Edge.a = Path_sn_new.b)
@@ -1946,19 +1946,19 @@ FROM
   t_0_Path_sn_back_step AS Path_sn_back_step
 WHERE
   ((SELECT
-    MIN(1) AS logica_value
+    MIN(1) AS synalog_value
   FROM
-    logica_test.Path_sn_full AS Path_sn_full
+    synalog_test.Path_sn_full AS Path_sn_full
   WHERE
     (Path_sn_full.a = Path_sn_back_step.a) AND
     (Path_sn_full.b = Path_sn_back_step.b) AND
     (Path_sn_full.n = Path_sn_back_step.n)) IS NULL)
 GROUP BY 1, 2, 3;
 
-INSERT INTO logica_test.Path_sn_full SELECT * FROM logica_test.Path_sn_delta;
+INSERT INTO synalog_test.Path_sn_full SELECT * FROM synalog_test.Path_sn_delta;
 
-DROP TABLE IF EXISTS logica_test.Path_sn_new;
-CREATE TABLE logica_test.Path_sn_new AS WITH t_1_Edge AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_test.Path_sn_new;
+CREATE TABLE synalog_test.Path_sn_new AS WITH t_1_Edge AS (SELECT * FROM (
   
     SELECT
       1 AS a,
@@ -1995,7 +1995,7 @@ t_1_Path_MultBodyAggAux_f10 AS (SELECT * FROM (
       t_2_Edge.b AS b,
       ((Path_sn_delta.n) + (1)) AS n
     FROM
-      logica_test.Path_sn_delta AS Path_sn_delta, t_1_Edge AS t_2_Edge
+      synalog_test.Path_sn_delta AS Path_sn_delta, t_1_Edge AS t_2_Edge
     WHERE
       (Path_sn_delta.n < 3) AND
       (t_2_Edge.a = Path_sn_delta.b)
@@ -2016,19 +2016,19 @@ FROM
   t_0_Path_sn_step AS Path_sn_step
 WHERE
   ((SELECT
-    MIN(1) AS logica_value
+    MIN(1) AS synalog_value
   FROM
-    logica_test.Path_sn_full AS Path_sn_full
+    synalog_test.Path_sn_full AS Path_sn_full
   WHERE
     (Path_sn_full.a = Path_sn_step.a) AND
     (Path_sn_full.b = Path_sn_step.b) AND
     (Path_sn_full.n = Path_sn_step.n)) IS NULL)
 GROUP BY 1, 2, 3;
 
-INSERT INTO logica_test.Path_sn_full SELECT * FROM logica_test.Path_sn_new;
+INSERT INTO synalog_test.Path_sn_full SELECT * FROM synalog_test.Path_sn_new;
 
-DROP TABLE IF EXISTS logica_test.Path_sn_delta;
-CREATE TABLE logica_test.Path_sn_delta AS WITH t_1_Edge AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_test.Path_sn_delta;
+CREATE TABLE synalog_test.Path_sn_delta AS WITH t_1_Edge AS (SELECT * FROM (
   
     SELECT
       1 AS a,
@@ -2065,7 +2065,7 @@ t_1_Path_MultBodyAggAux_f1 AS (SELECT * FROM (
       t_2_Edge.b AS b,
       ((Path_sn_new.n) + (1)) AS n
     FROM
-      logica_test.Path_sn_new AS Path_sn_new, t_1_Edge AS t_2_Edge
+      synalog_test.Path_sn_new AS Path_sn_new, t_1_Edge AS t_2_Edge
     WHERE
       (Path_sn_new.n < 3) AND
       (t_2_Edge.a = Path_sn_new.b)
@@ -2086,19 +2086,19 @@ FROM
   t_0_Path_sn_back_step AS Path_sn_back_step
 WHERE
   ((SELECT
-    MIN(1) AS logica_value
+    MIN(1) AS synalog_value
   FROM
-    logica_test.Path_sn_full AS Path_sn_full
+    synalog_test.Path_sn_full AS Path_sn_full
   WHERE
     (Path_sn_full.a = Path_sn_back_step.a) AND
     (Path_sn_full.b = Path_sn_back_step.b) AND
     (Path_sn_full.n = Path_sn_back_step.n)) IS NULL)
 GROUP BY 1, 2, 3;
 
-INSERT INTO logica_test.Path_sn_full SELECT * FROM logica_test.Path_sn_delta;
+INSERT INTO synalog_test.Path_sn_full SELECT * FROM synalog_test.Path_sn_delta;
 
-DROP TABLE IF EXISTS logica_test.Path_sn_new;
-CREATE TABLE logica_test.Path_sn_new AS WITH t_1_Edge AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_test.Path_sn_new;
+CREATE TABLE synalog_test.Path_sn_new AS WITH t_1_Edge AS (SELECT * FROM (
   
     SELECT
       1 AS a,
@@ -2135,7 +2135,7 @@ t_1_Path_MultBodyAggAux_f10 AS (SELECT * FROM (
       t_2_Edge.b AS b,
       ((Path_sn_delta.n) + (1)) AS n
     FROM
-      logica_test.Path_sn_delta AS Path_sn_delta, t_1_Edge AS t_2_Edge
+      synalog_test.Path_sn_delta AS Path_sn_delta, t_1_Edge AS t_2_Edge
     WHERE
       (Path_sn_delta.n < 3) AND
       (t_2_Edge.a = Path_sn_delta.b)
@@ -2156,19 +2156,19 @@ FROM
   t_0_Path_sn_step AS Path_sn_step
 WHERE
   ((SELECT
-    MIN(1) AS logica_value
+    MIN(1) AS synalog_value
   FROM
-    logica_test.Path_sn_full AS Path_sn_full
+    synalog_test.Path_sn_full AS Path_sn_full
   WHERE
     (Path_sn_full.a = Path_sn_step.a) AND
     (Path_sn_full.b = Path_sn_step.b) AND
     (Path_sn_full.n = Path_sn_step.n)) IS NULL)
 GROUP BY 1, 2, 3;
 
-INSERT INTO logica_test.Path_sn_full SELECT * FROM logica_test.Path_sn_new;
+INSERT INTO synalog_test.Path_sn_full SELECT * FROM synalog_test.Path_sn_new;
 
-DROP TABLE IF EXISTS logica_test.Path_sn_delta;
-CREATE TABLE logica_test.Path_sn_delta AS WITH t_1_Edge AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_test.Path_sn_delta;
+CREATE TABLE synalog_test.Path_sn_delta AS WITH t_1_Edge AS (SELECT * FROM (
   
     SELECT
       1 AS a,
@@ -2205,7 +2205,7 @@ t_1_Path_MultBodyAggAux_f1 AS (SELECT * FROM (
       t_2_Edge.b AS b,
       ((Path_sn_new.n) + (1)) AS n
     FROM
-      logica_test.Path_sn_new AS Path_sn_new, t_1_Edge AS t_2_Edge
+      synalog_test.Path_sn_new AS Path_sn_new, t_1_Edge AS t_2_Edge
     WHERE
       (Path_sn_new.n < 3) AND
       (t_2_Edge.a = Path_sn_new.b)
@@ -2226,19 +2226,19 @@ FROM
   t_0_Path_sn_back_step AS Path_sn_back_step
 WHERE
   ((SELECT
-    MIN(1) AS logica_value
+    MIN(1) AS synalog_value
   FROM
-    logica_test.Path_sn_full AS Path_sn_full
+    synalog_test.Path_sn_full AS Path_sn_full
   WHERE
     (Path_sn_full.a = Path_sn_back_step.a) AND
     (Path_sn_full.b = Path_sn_back_step.b) AND
     (Path_sn_full.n = Path_sn_back_step.n)) IS NULL)
 GROUP BY 1, 2, 3;
 
-INSERT INTO logica_test.Path_sn_full SELECT * FROM logica_test.Path_sn_delta;
+INSERT INTO synalog_test.Path_sn_full SELECT * FROM synalog_test.Path_sn_delta;
 
-DROP TABLE IF EXISTS logica_test.Path_sn_new;
-CREATE TABLE logica_test.Path_sn_new AS WITH t_1_Edge AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_test.Path_sn_new;
+CREATE TABLE synalog_test.Path_sn_new AS WITH t_1_Edge AS (SELECT * FROM (
   
     SELECT
       1 AS a,
@@ -2275,7 +2275,7 @@ t_1_Path_MultBodyAggAux_f10 AS (SELECT * FROM (
       t_2_Edge.b AS b,
       ((Path_sn_delta.n) + (1)) AS n
     FROM
-      logica_test.Path_sn_delta AS Path_sn_delta, t_1_Edge AS t_2_Edge
+      synalog_test.Path_sn_delta AS Path_sn_delta, t_1_Edge AS t_2_Edge
     WHERE
       (Path_sn_delta.n < 3) AND
       (t_2_Edge.a = Path_sn_delta.b)
@@ -2296,19 +2296,19 @@ FROM
   t_0_Path_sn_step AS Path_sn_step
 WHERE
   ((SELECT
-    MIN(1) AS logica_value
+    MIN(1) AS synalog_value
   FROM
-    logica_test.Path_sn_full AS Path_sn_full
+    synalog_test.Path_sn_full AS Path_sn_full
   WHERE
     (Path_sn_full.a = Path_sn_step.a) AND
     (Path_sn_full.b = Path_sn_step.b) AND
     (Path_sn_full.n = Path_sn_step.n)) IS NULL)
 GROUP BY 1, 2, 3;
 
-INSERT INTO logica_test.Path_sn_full SELECT * FROM logica_test.Path_sn_new;
+INSERT INTO synalog_test.Path_sn_full SELECT * FROM synalog_test.Path_sn_new;
 
-DROP TABLE IF EXISTS logica_test.Path_sn_delta;
-CREATE TABLE logica_test.Path_sn_delta AS WITH t_1_Edge AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_test.Path_sn_delta;
+CREATE TABLE synalog_test.Path_sn_delta AS WITH t_1_Edge AS (SELECT * FROM (
   
     SELECT
       1 AS a,
@@ -2345,7 +2345,7 @@ t_1_Path_MultBodyAggAux_f1 AS (SELECT * FROM (
       t_2_Edge.b AS b,
       ((Path_sn_new.n) + (1)) AS n
     FROM
-      logica_test.Path_sn_new AS Path_sn_new, t_1_Edge AS t_2_Edge
+      synalog_test.Path_sn_new AS Path_sn_new, t_1_Edge AS t_2_Edge
     WHERE
       (Path_sn_new.n < 3) AND
       (t_2_Edge.a = Path_sn_new.b)
@@ -2366,19 +2366,19 @@ FROM
   t_0_Path_sn_back_step AS Path_sn_back_step
 WHERE
   ((SELECT
-    MIN(1) AS logica_value
+    MIN(1) AS synalog_value
   FROM
-    logica_test.Path_sn_full AS Path_sn_full
+    synalog_test.Path_sn_full AS Path_sn_full
   WHERE
     (Path_sn_full.a = Path_sn_back_step.a) AND
     (Path_sn_full.b = Path_sn_back_step.b) AND
     (Path_sn_full.n = Path_sn_back_step.n)) IS NULL)
 GROUP BY 1, 2, 3;
 
-INSERT INTO logica_test.Path_sn_full SELECT * FROM logica_test.Path_sn_delta;
+INSERT INTO synalog_test.Path_sn_full SELECT * FROM synalog_test.Path_sn_delta;
 
-DROP TABLE IF EXISTS logica_test.Path_sn_new;
-CREATE TABLE logica_test.Path_sn_new AS WITH t_1_Edge AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_test.Path_sn_new;
+CREATE TABLE synalog_test.Path_sn_new AS WITH t_1_Edge AS (SELECT * FROM (
   
     SELECT
       1 AS a,
@@ -2415,7 +2415,7 @@ t_1_Path_MultBodyAggAux_f10 AS (SELECT * FROM (
       t_2_Edge.b AS b,
       ((Path_sn_delta.n) + (1)) AS n
     FROM
-      logica_test.Path_sn_delta AS Path_sn_delta, t_1_Edge AS t_2_Edge
+      synalog_test.Path_sn_delta AS Path_sn_delta, t_1_Edge AS t_2_Edge
     WHERE
       (Path_sn_delta.n < 3) AND
       (t_2_Edge.a = Path_sn_delta.b)
@@ -2436,19 +2436,19 @@ FROM
   t_0_Path_sn_step AS Path_sn_step
 WHERE
   ((SELECT
-    MIN(1) AS logica_value
+    MIN(1) AS synalog_value
   FROM
-    logica_test.Path_sn_full AS Path_sn_full
+    synalog_test.Path_sn_full AS Path_sn_full
   WHERE
     (Path_sn_full.a = Path_sn_step.a) AND
     (Path_sn_full.b = Path_sn_step.b) AND
     (Path_sn_full.n = Path_sn_step.n)) IS NULL)
 GROUP BY 1, 2, 3;
 
-INSERT INTO logica_test.Path_sn_full SELECT * FROM logica_test.Path_sn_new;
+INSERT INTO synalog_test.Path_sn_full SELECT * FROM synalog_test.Path_sn_new;
 
-DROP TABLE IF EXISTS logica_test.Path_sn_delta;
-CREATE TABLE logica_test.Path_sn_delta AS WITH t_1_Edge AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_test.Path_sn_delta;
+CREATE TABLE synalog_test.Path_sn_delta AS WITH t_1_Edge AS (SELECT * FROM (
   
     SELECT
       1 AS a,
@@ -2485,7 +2485,7 @@ t_1_Path_MultBodyAggAux_f1 AS (SELECT * FROM (
       t_2_Edge.b AS b,
       ((Path_sn_new.n) + (1)) AS n
     FROM
-      logica_test.Path_sn_new AS Path_sn_new, t_1_Edge AS t_2_Edge
+      synalog_test.Path_sn_new AS Path_sn_new, t_1_Edge AS t_2_Edge
     WHERE
       (Path_sn_new.n < 3) AND
       (t_2_Edge.a = Path_sn_new.b)
@@ -2506,19 +2506,19 @@ FROM
   t_0_Path_sn_back_step AS Path_sn_back_step
 WHERE
   ((SELECT
-    MIN(1) AS logica_value
+    MIN(1) AS synalog_value
   FROM
-    logica_test.Path_sn_full AS Path_sn_full
+    synalog_test.Path_sn_full AS Path_sn_full
   WHERE
     (Path_sn_full.a = Path_sn_back_step.a) AND
     (Path_sn_full.b = Path_sn_back_step.b) AND
     (Path_sn_full.n = Path_sn_back_step.n)) IS NULL)
 GROUP BY 1, 2, 3;
 
-INSERT INTO logica_test.Path_sn_full SELECT * FROM logica_test.Path_sn_delta;
+INSERT INTO synalog_test.Path_sn_full SELECT * FROM synalog_test.Path_sn_delta;
 
-DROP TABLE IF EXISTS logica_test.Path_sn_new;
-CREATE TABLE logica_test.Path_sn_new AS WITH t_1_Edge AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_test.Path_sn_new;
+CREATE TABLE synalog_test.Path_sn_new AS WITH t_1_Edge AS (SELECT * FROM (
   
     SELECT
       1 AS a,
@@ -2555,7 +2555,7 @@ t_1_Path_MultBodyAggAux_f10 AS (SELECT * FROM (
       t_2_Edge.b AS b,
       ((Path_sn_delta.n) + (1)) AS n
     FROM
-      logica_test.Path_sn_delta AS Path_sn_delta, t_1_Edge AS t_2_Edge
+      synalog_test.Path_sn_delta AS Path_sn_delta, t_1_Edge AS t_2_Edge
     WHERE
       (Path_sn_delta.n < 3) AND
       (t_2_Edge.a = Path_sn_delta.b)
@@ -2576,19 +2576,19 @@ FROM
   t_0_Path_sn_step AS Path_sn_step
 WHERE
   ((SELECT
-    MIN(1) AS logica_value
+    MIN(1) AS synalog_value
   FROM
-    logica_test.Path_sn_full AS Path_sn_full
+    synalog_test.Path_sn_full AS Path_sn_full
   WHERE
     (Path_sn_full.a = Path_sn_step.a) AND
     (Path_sn_full.b = Path_sn_step.b) AND
     (Path_sn_full.n = Path_sn_step.n)) IS NULL)
 GROUP BY 1, 2, 3;
 
-INSERT INTO logica_test.Path_sn_full SELECT * FROM logica_test.Path_sn_new;
+INSERT INTO synalog_test.Path_sn_full SELECT * FROM synalog_test.Path_sn_new;
 
-DROP TABLE IF EXISTS logica_test.Path_sn_delta;
-CREATE TABLE logica_test.Path_sn_delta AS WITH t_1_Edge AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_test.Path_sn_delta;
+CREATE TABLE synalog_test.Path_sn_delta AS WITH t_1_Edge AS (SELECT * FROM (
   
     SELECT
       1 AS a,
@@ -2625,7 +2625,7 @@ t_1_Path_MultBodyAggAux_f1 AS (SELECT * FROM (
       t_2_Edge.b AS b,
       ((Path_sn_new.n) + (1)) AS n
     FROM
-      logica_test.Path_sn_new AS Path_sn_new, t_1_Edge AS t_2_Edge
+      synalog_test.Path_sn_new AS Path_sn_new, t_1_Edge AS t_2_Edge
     WHERE
       (Path_sn_new.n < 3) AND
       (t_2_Edge.a = Path_sn_new.b)
@@ -2646,19 +2646,19 @@ FROM
   t_0_Path_sn_back_step AS Path_sn_back_step
 WHERE
   ((SELECT
-    MIN(1) AS logica_value
+    MIN(1) AS synalog_value
   FROM
-    logica_test.Path_sn_full AS Path_sn_full
+    synalog_test.Path_sn_full AS Path_sn_full
   WHERE
     (Path_sn_full.a = Path_sn_back_step.a) AND
     (Path_sn_full.b = Path_sn_back_step.b) AND
     (Path_sn_full.n = Path_sn_back_step.n)) IS NULL)
 GROUP BY 1, 2, 3;
 
-INSERT INTO logica_test.Path_sn_full SELECT * FROM logica_test.Path_sn_delta;
+INSERT INTO synalog_test.Path_sn_full SELECT * FROM synalog_test.Path_sn_delta;
 
 SELECT
   Path_sn_full.n AS n
 FROM
-  logica_test.Path_sn_full AS Path_sn_full
+  synalog_test.Path_sn_full AS Path_sn_full
 GROUP BY 1 ORDER BY n;

@@ -1,11 +1,11 @@
 -- Initializing PostgreSQL environment.
 set client_min_messages to warning;
-create schema if not exists logica_home;
--- Empty logica type: logicarecord893574736;
-DO $$ BEGIN if not exists (select 'I(am) :- I(think)' from pg_type where typname = 'logicarecord893574736') then create type logicarecord893574736 as (nirvana numeric); end if; END $$;
+create schema if not exists synalog_home;
+-- Empty synalog type: synalogrecord893574736;
+DO $$ BEGIN if not exists (select 'I(am) :- I(think)' from pg_type where typname = 'synalogrecord893574736') then create type synalogrecord893574736 as (nirvana numeric); end if; END $$;
 
-DROP TABLE IF EXISTS logica_home.Spend CASCADE;
-CREATE TABLE logica_home.Spend AS WITH t_1_Order AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_home.Spend CASCADE;
+CREATE TABLE synalog_home.Spend AS WITH t_1_Order AS (SELECT * FROM (
   
     SELECT
       1 AS id,
@@ -114,15 +114,15 @@ WHERE
   (Price.item = t_0_Order.item)
 GROUP BY t_0_Order.who;
 
--- Interacting with table logica_home.Spend
+-- Interacting with table synalog_home.Spend
 
 WITH t_1_A AS (SELECT
   AVG(t_2_Spend.total) AS a
 FROM
-  logica_home.Spend AS t_2_Spend)
+  synalog_home.Spend AS t_2_Spend)
 SELECT
   Spend.who AS who
 FROM
-  logica_home.Spend AS Spend, t_1_A AS t_0_A
+  synalog_home.Spend AS Spend, t_1_A AS t_0_A
 WHERE
   (Spend.total > t_0_A.a) ORDER BY who;

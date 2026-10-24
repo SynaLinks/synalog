@@ -54,7 +54,7 @@ t_1_Vip AS (SELECT * FROM (
 ) AS UNUSED_TABLE_NAME  )
 SELECT
   (SELECT
-  SUM(MagicalEntangle(O.amt, x_6.value)) AS logica_value
+  SUM(MagicalEntangle(O.amt, x_6.value)) AS synalog_value
 FROM
   t_0_O AS O, t_1_Vip AS Vip, JSON_EACH(JSON_ARRAY(0)) as x_6
 WHERE

@@ -28,7 +28,7 @@ WITH t_2_L AS (SELECT * FROM (
 SELECT
   t_0_L.k AS k,
   (SELECT
-  ARRAY_AGG(x_6 order by [ABS(((((x_6) * (x_6))) - (20)))][offset(0)] limit 1)[OFFSET(0)] AS logica_value
+  ARRAY_AGG(x_6 order by [ABS(((((x_6) * (x_6))) - (20)))][offset(0)] limit 1)[OFFSET(0)] AS synalog_value
 FROM
   UNNEST(t_0_L.l) as x_6) AS v
 FROM

@@ -6,9 +6,9 @@
 //! Port of Python's `compiler/universe.py`.
 //!
 //! Contains:
-//! - `Logica` — Predicate execution accumulated state (defines, exports, dependency graph).
+//! - `Execution` — Predicate execution accumulated state (defines, exports, dependency graph).
 //! - `UniverseAnnotations` — Full annotation parsing (Preamble, AttachedDatabases, UDFs, etc.).
-//! - `LogicaProgram` — Representing a Logica program; produces SQL for predicates.
+//! - `SynalogProgram` — Representing a Synalog program; produces SQL for predicates.
 //! - `UniverseSubqueryTranslator` — Table/rule translation with grounding, WITH clauses, exports.
 //! - Helper functions: `format_sql`, `indent2`, `inject_structure`, `field_values_as_list`.
 
@@ -177,11 +177,9 @@ pub fn is_table_name(table: &str) -> bool {
 ///
 /// Stores DEFINE TABLE, EXPORT DATA, dependency edges, and universe annotations
 /// that accumulate during a single predicate's compilation.
-pub struct Logica {
+pub struct Execution {
     /// DEFINE TABLE statements.
     pub defines: Vec<String>,
-    /// EXPORT DATA statements.
-    pub export_statements: Vec<String>,
     /// Combined defines and exports in order.
     pub defines_and_exports: Vec<String>,
     /// Predicate → allocated CTE table name.
@@ -203,8 +201,6 @@ pub struct Logica {
     pub data_dependency_edges: Vec<(String, String)>,
     /// Predicate → full export SQL.
     pub table_to_export_map: HashMap<String, String>,
-    /// SQL of the main predicate being compiled.
-    pub main_predicate_sql: Option<String>,
     /// Query preamble (engine init, type defs, etc.).
     pub preamble: String,
     /// Workflow stack: inverse path from final to current predicate.
@@ -221,8 +217,6 @@ pub struct Logica {
     pub custom_udf_definitions: IndexMap<String, String>,
     /// Custom aggregation semigroups: aggregation → semigroup function.
     pub custom_aggregation_semigroup: HashMap<String, String>,
-    /// Main predicate name.
-    pub main_predicate: Option<String>,
     /// Predicates used by the main predicate (from functors).
     pub used_predicates: Vec<String>,
     /// Predicate → transitive dependencies (from functors).
@@ -238,7 +232,7 @@ pub struct Logica {
 }
 
 /// Definition of an @Iteration block.
-/// One step of a plan (see `LogicaProgram::formatted_predicate_plan`).
+/// One step of a plan (see `SynalogProgram::formatted_predicate_plan`).
 #[derive(Debug, Clone, PartialEq)]
 pub enum PlanStep {
     /// The engine's setup (schema, types, functions): a script of its own.
@@ -251,6 +245,12 @@ pub enum PlanStep {
     /// returns 0.
     Loop { body: Vec<String>, repetitions: i64, changed: String },
 }
+
+/// Authorship and license banner prepended to every compiled query.
+const QUERY_HEADER: &str = "\
+-- Compiled by SynaLog — logic programming for AI agents (https://github.com/synalinks/synalog).\n\
+-- Copyright 2025-2026 Yoan Sallami (Synalinks Team).\n\
+-- SPDX-License-Identifier: Apache-2.0\n";
 
 /// Most repetitions a script writes out: past this, it would be huge.
 const MAX_SCRIPT_REPETITIONS: i64 = 1000;
@@ -265,7 +265,7 @@ pub fn script_of(plan: &[PlanStep]) -> CompileResult<String> {
             PlanStep::Setup(sql) => setup.push_str(sql),
             PlanStep::Sql(sql) => statements.push(sql.clone()),
             PlanStep::Loop { body, repetitions, .. } => {
-                if *repetitions + 1 > MAX_SCRIPT_REPETITIONS {
+                if *repetitions >= MAX_SCRIPT_REPETITIONS {
                     return Err(CompileError::new(
                         format!(
                             "This recursion takes more steps than a SQL script can hold (about {} at most): \
@@ -283,7 +283,9 @@ pub fn script_of(plan: &[PlanStep]) -> CompileResult<String> {
         }
     }
     let last = statements.pop().unwrap_or_default();
-    let mut script = setup;
+    let mut script = String::from(QUERY_HEADER);
+    script.push('\n');
+    script.push_str(&setup);
     if !statements.is_empty() {
         script.push_str(&statements.join("\n\n"));
         script.push_str("\n\n");
@@ -303,17 +305,16 @@ pub struct IterationDef {
     pub accumulate: Option<String>,
 }
 
-impl Default for Logica {
+impl Default for Execution {
     fn default() -> Self {
         Self::new()
     }
 }
 
-impl Logica {
+impl Execution {
     pub fn new() -> Self {
-        Logica {
+        Execution {
             defines: Vec::new(),
-            export_statements: Vec::new(),
             defines_and_exports: Vec::new(),
             table_to_defined_table_map: HashMap::new(),
             table_to_with_sql_map: HashMap::new(),
@@ -324,7 +325,6 @@ impl Logica {
             dependency_edges: Vec::new(),
             data_dependency_edges: Vec::new(),
             table_to_export_map: HashMap::new(),
-            main_predicate_sql: None,
             preamble: String::new(),
             workflow_predicates_stack: Vec::new(),
             flags_comment: String::new(),
@@ -333,7 +333,6 @@ impl Logica {
             custom_udfs: IndexMap::new(),
             custom_udf_definitions: IndexMap::new(),
             custom_aggregation_semigroup: HashMap::new(),
-            main_predicate: None,
             used_predicates: Vec::new(),
             dependencies_of: HashMap::new(),
             iterations: HashMap::new(),
@@ -518,11 +517,11 @@ fn emit_record_type(
 // LogicaProgram — full program compilation (Python's `class LogicaProgram`)
 // ---------------------------------------------------------------------------
 
-/// Representing a Logica program. Can produce SQL for predicates.
+/// Representing a Synalog program. Can produce SQL for predicates.
 ///
-/// This is the full-featured version matching Python's `LogicaProgram`,
+/// This is the full-featured version matching Python's `SynalogProgram`,
 /// including execution state, UDFs, grounding, exports, and flag substitution.
-pub struct LogicaProgram {
+pub struct SynalogProgram {
     /// Raw rules before functor expansion.
     pub raw_rules: Vec<Json>,
     /// Pre-parsed rules (after recursion unfolding, before Make).
@@ -549,7 +548,7 @@ pub struct LogicaProgram {
     /// Custom UDF CREATE FUNCTION SQL.
     pub custom_udf_definitions: IndexMap<String, String>,
     /// Execution state (set during `formatted_predicate_sql`).
-    pub execution: RefCell<Option<Logica>>,
+    pub execution: RefCell<Option<Execution>>,
     /// The column names of the program, lowercase, which table aliases avoid.
     pub column_names: HashSet<String>,
     /// The functions the program defines, which shadow built-ins of their name.
@@ -573,10 +572,10 @@ pub struct LogicaProgram {
     pub built_record_types: RefCell<IndexMap<String, Type>>,
 }
 
-impl LogicaProgram {
+impl SynalogProgram {
     /// Create a new program from parsed JSON output and user configuration.
     ///
-    /// Matches Python's `LogicaProgram.__init__`:
+    /// Matches Python's `SynalogProgram.__init__`:
     /// 1. Unfold recursion
     /// 2. Run @Make functors
     /// 3. Add library rules
@@ -626,6 +625,18 @@ impl LogicaProgram {
         // Step 2: Run @Make functors
         let (extended_rules, functors_args_of) =
             crate::compiler::functors::run_makes_with_deps(&unfolded_rules)?;
+
+        // The raw-SQL escape hatches are refused before the library is
+        // merged in, so `compile` is safe even when a host skips `check`.
+        // (The library itself uses `SqlExpr` deliberately; it is injected
+        // below, after this gate, and so never reaches it.) `Cast`/`TryCast`
+        // type names are refused at their translation site instead.
+        {
+            let user: Vec<&Json> = extended_rules.iter().collect();
+            if let Some(e) = crate::verifier::check_sqlexpr(&user).into_iter().next() {
+                return Err(CompileError::new(e.to_string(), ""));
+            }
+        }
 
         // Step 3: Add library program rules
         let dialect = dialects::get(&engine)?;
@@ -713,7 +724,7 @@ impl LogicaProgram {
                 r.as_object().get("field_value").is_some_and(|fvs| {
                     fvs.as_array().iter().any(|fv| {
                         let f = &fv.as_object()["field"];
-                        f.is_string() && f.as_str() == "logica_value"
+                        f.is_string() && f.as_str() == "synalog_value"
                     })
                 })
             });
@@ -725,7 +736,7 @@ impl LogicaProgram {
         allocator.reserved_aliases = column_names.clone();
         allocator.defined_functions = defined_functions.clone();
 
-        Ok(LogicaProgram {
+        Ok(SynalogProgram {
             raw_rules: raw_rule_list,
             preparsed_rules: unfolded_rules.clone(),
             rules,
@@ -819,7 +830,7 @@ impl LogicaProgram {
         }
 
         // TODO: Implement proper type definition generation for DuckDB/PostgreSQL
-        // (typing preamble of `create type logicarecord...` definitions): requires
+        // (typing preamble of `create type synalogrecord...` definitions): requires
         // matching Python's type-name hash function and ordering. Not needed for
         // the compiler golden tests, which strip the preamble.
         let typing_preamble = String::new();
@@ -971,15 +982,14 @@ impl LogicaProgram {
 
     /// Initialize execution state for compiling a main predicate.
     /// Matches Python's `InitializeExecution`.
-    fn initialize_execution(&self, main_predicate: &str) -> CompileResult<Logica> {
-        let mut exec = Logica::new();
+    fn initialize_execution(&self, main_predicate: &str) -> CompileResult<Execution> {
+        let mut exec = Execution::new();
         exec.workflow_predicates_stack
             .push(main_predicate.to_string());
         exec.annotations = Some(self.annotations.clone());
         exec.custom_udfs = self.custom_udfs.clone();
         exec.custom_udf_definitions = self.custom_udf_definitions.clone();
         exec.custom_aggregation_semigroup = self.custom_aggregation_semigroup.clone();
-        exec.main_predicate = Some(main_predicate.to_string());
         exec.used_predicates = self
             .functors_args_of
             .get(main_predicate)
@@ -1433,13 +1443,13 @@ impl LogicaProgram {
     /// PostgreSQL composite-type DDL for every record shape in the program.
     ///
     /// psql exposes named record fields only through declared composite types,
-    /// so each `ROW(…)::logicarecordNNN` literal emitted by `record_literal`
+    /// so each `ROW(…)::synalogrecordNNN` literal emitted by `record_literal`
     /// needs a matching `CREATE TYPE`. We scan every record node in the program
     /// (over-collecting head/argument records is harmless: the DDL is idempotent
     /// and unreferenced types are simply never used), then emit dependency types
     /// before the types that nest them. Names are content-addressed
     /// (`dialects::record_type_name`), so they line up with the casts without any
-    /// shared state. Emitted as single-line `DO $$ … logicarecord … END $$;`
+    /// shared state. Emitted as single-line `DO $$ … synalogrecord … END $$;`
     /// blocks, which the golden-test normalizer strips like the placeholder type.
     fn record_type_definitions(&self, dialect: &dyn Dialect, body_sql: &str) -> String {
         let mut types: IndexMap<String, Type> = IndexMap::new();
@@ -1660,7 +1670,7 @@ impl LogicaProgram {
     /// after the tables it reads, the iteration's loop after its first run, and
     /// anything reading the iteration after its loop. Without iterations, the
     /// order is the compiler's.
-    fn plan_statements(&self, exec: &Logica) -> CompileResult<Vec<PlanStep>> {
+    fn plan_statements(&self, exec: &Execution) -> CompileResult<Vec<PlanStep>> {
         let exports = &exec.table_to_export_map;
         let mut iterations: Vec<(String, IterationDef)> = self
             .annotations
@@ -1688,79 +1698,54 @@ impl LogicaProgram {
                 },
             }
         }
-        let table_set: HashSet<&String> = tables.iter().collect();
-        let mut requires: HashMap<&String, HashSet<&String>> = HashMap::new();
+        // The tables are the nodes `0..n`, in the compiler's order, planned
+        // by `synalog_verified::plan::schedule`, proved correct with Verus.
+        let index: HashMap<&String, usize> = tables.iter().enumerate().map(|(t, table)| (table, t)).collect();
+        let mut requires: Vec<Vec<usize>> = vec![Vec::new(); tables.len()];
         for (source, target) in exec.dependency_edges.iter().chain(exec.data_dependency_edges.iter()) {
-            if let (Some(s), Some(t)) = (table_set.get(source), table_set.get(target)) {
+            if let (Some(&s), Some(&t)) = (index.get(source), index.get(target)) {
                 if s != t {
-                    requires.entry(*t).or_default().insert(*s);
+                    requires[t].push(s);
                 }
             }
         }
-        let iteration_of: HashMap<&String, usize> = iterations
-            .iter()
-            .enumerate()
-            .flat_map(|(i, (_, it))| it.predicates.iter().chain(it.accumulate.iter()).map(move |p| (p, i)))
-            .filter_map(|(p, i)| table_set.get(p).map(|t| (*t, i)))
-            .collect();
-        // A semi-naive iteration's predicates run only inside its loop.
-        let loop_only: HashSet<&String> = iterations
-            .iter()
-            .filter(|(_, it)| it.accumulate.is_some())
-            .flat_map(|(_, it)| it.predicates.iter())
-            .filter_map(|p| table_set.get(p).copied())
-            .collect();
+        let mut iteration_of: Vec<Option<usize>> = vec![None; tables.len()];
+        for (i, (_, it)) in iterations.iter().enumerate() {
+            for p in it.predicates.iter().chain(it.accumulate.iter()) {
+                if let Some(&t) = index.get(p) {
+                    iteration_of[t] = Some(i);
+                }
+            }
+        }
+        let graph = synalog_verified::plan::PlanGraph {
+            requires,
+            iteration_of,
+            members: iterations.iter().map(|(_, it)| it.predicates.iter().filter_map(|p| index.get(p).copied()).collect()).collect(),
+            semi_naive: iterations.iter().map(|(_, it)| it.accumulate.is_some()).collect(),
+        };
+        let Some(steps) = synalog_verified::plan::schedule(&graph) else {
+            // A cycle the dependencies do not resolve: keep the compiler's order.
+            return Ok(as_steps(&exec.defines_and_exports));
+        };
 
         let mut order: Vec<PlanStep> = as_steps(&leading);
-        let mut done: HashSet<&String> = HashSet::new();
-        // Iterations whose every table ran once, and whose loop is planned.
-        let mut finished: HashSet<usize> = HashSet::new();
-        while done.len() < tables.len() {
-            let ready = tables.iter().find(|t| {
-                !done.contains(t)
-                    && requires.get(t).is_none_or(|reqs| {
-                        reqs.iter().all(|r| {
-                            done.contains(r)
-                                // Outside an iteration, its tables are ready
-                                // once its loop is planned.
-                                && match (iteration_of.get(r), iteration_of.get(t)) {
-                                    (Some(i), Some(j)) if i == j => true,
-                                    (Some(i), _) => finished.contains(i),
-                                    _ => true,
-                                }
-                        })
-                    })
-            });
-            let Some(table) = ready else {
-                // A cycle the dependencies do not resolve: keep the compiler's order.
-                return Ok(as_steps(&exec.defines_and_exports));
-            };
-            if loop_only.contains(table) {
-                let i = iteration_of[table];
-                let iteration = &iterations[i].1;
-                order.extend(self.semi_naive_loop(iteration, exports)?);
-                for p in &iteration.predicates {
-                    if let Some(t) = table_set.get(p) {
-                        done.insert(*t);
-                    }
+        for step in steps {
+            match step {
+                synalog_verified::plan::Step::Table(t) => {
+                    order.push(PlanStep::Sql(exports[&tables[t]].clone()));
+                    order.extend(as_steps(&trailing.get(&tables[t]).cloned().unwrap_or_default()));
                 }
-                finished.insert(i);
-                continue;
-            }
-            done.insert(table);
-            order.push(PlanStep::Sql(exports[table].clone()));
-            order.extend(as_steps(&trailing.get(table).cloned().unwrap_or_default()));
-            if let Some(&i) = iteration_of.get(table) {
-                let iteration = &iterations[i].1;
-                if iteration.accumulate.is_none()
-                    && iteration.predicates.iter().all(|p| table_set.get(p).is_some_and(|t| done.contains(t)))
-                {
-                    order.push(PlanStep::Loop {
-                        body: iteration.predicates.iter().map(|p| exports[p].clone()).collect(),
-                        repetitions: iteration.repetitions - 1,
-                        changed: self.iteration_changed_query(&iteration.predicates)?,
-                    });
-                    finished.insert(i);
+                synalog_verified::plan::Step::Loop(i) => {
+                    let iteration = &iterations[i].1;
+                    if iteration.accumulate.is_some() {
+                        order.extend(self.semi_naive_loop(iteration, exports)?);
+                    } else {
+                        order.push(PlanStep::Loop {
+                            body: iteration.predicates.iter().map(|p| exports[p].clone()).collect(),
+                            repetitions: iteration.repetitions - 1,
+                            changed: self.iteration_changed_query(&iteration.predicates)?,
+                        });
+                    }
                 }
             }
         }
@@ -1856,14 +1841,10 @@ impl LogicaProgram {
     /// `query`, so a caller limit is combined with them via min() and a
     /// bare @Limit needs no wrapping at all.
     fn paginate_query(&self, name: &str, query: String, pagination: &Pagination) -> String {
-        let annotation_limit = self.annotations.limit_of(name);
-        let effective_limit = match (pagination.limit, annotation_limit) {
-            (Some(pl), Some(al)) => Some(pl.min(al as u64)),
-            (Some(pl), None) => Some(pl),
-            (None, _) => None,
-        };
-
-        let offset = pagination.offset.filter(|o| *o > 0);
+        // The limit (no more than @Limit) and offset, and the page's last row:
+        // `synalog_verified::page::page`, proved to keep the rows asked for.
+        let page = synalog_verified::page::page(pagination.limit, self.annotations.limit_of(name), pagination.offset);
+        let (effective_limit, offset) = (page.limit, page.offset);
         if effective_limit.is_none() && offset.is_none() {
             return query;
         }
@@ -1878,7 +1859,7 @@ impl LogicaProgram {
                     .map(|c| dialects::sql_column(c, d.as_ref()))
                     .collect();
                 let order = self.annotations.order_by_clause(name);
-                let upto = effective_limit.map(|l| format!(" AND synalog_row <= {}", skip + l)).unwrap_or_default();
+                let upto = page.last_row.map(|last| format!(" AND synalog_row <= {}", last)).unwrap_or_default();
                 return format!(
                     "SELECT {cols} FROM (\nSELECT *, ROW_NUMBER() OVER ({order}) AS synalog_row FROM (\n{query}\n) AS _numbered\n) AS _paginated\nWHERE synalog_row > {skip}{upto}\nORDER BY synalog_row",
                     cols = columns.join(", "),
@@ -2348,7 +2329,6 @@ impl LogicaProgram {
                 exec_ref
                     .table_to_export_map
                     .insert(table.to_string(), stmt.clone());
-                exec_ref.export_statements.push(stmt.clone());
                 export_statement = Some(stmt);
             }
         }
@@ -2445,13 +2425,13 @@ impl LogicaProgram {
 }
 
 // ---------------------------------------------------------------------------
-// SubqueryTranslator impl for LogicaProgram
+// SubqueryTranslator impl for SynalogProgram
 // ---------------------------------------------------------------------------
 
-/// Subquery translator backed by a full `LogicaProgram`.
+/// Subquery translator backed by a full `SynalogProgram`.
 /// Matches Python's `SubqueryTranslator` class from universe.py.
 pub struct UniverseSubqueryTranslator<'a> {
-    pub program: &'a LogicaProgram,
+    pub program: &'a SynalogProgram,
 }
 
 impl<'a> SubqueryTranslator for UniverseSubqueryTranslator<'a> {
@@ -2576,7 +2556,7 @@ fn select_as_record(select: &IndexMap<String, Json>) -> Json {
     let mut field_values = Vec::new();
     for (field, expr) in select {
         // Skip internal value field (both modes)
-        if field == "logica_value" || field == "synalog_value" {
+        if field == "synalog_value" || field == "synalog_value" {
             continue;
         }
         field_values.push(Json::Object({

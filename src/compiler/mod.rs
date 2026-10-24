@@ -1,12 +1,10 @@
 // License Apache 2.0: (c) 2025-2026 Yoan Sallami (Synalinks Team)
 
 pub mod annotations;
-pub mod concertina;
 pub mod dialects;
 pub mod expr_translate;
 pub mod functors;
 pub mod rule_translate;
-pub mod program;
 pub mod type_inference;
 pub mod universe;
 
@@ -14,12 +12,12 @@ use std::fmt;
 
 /// The "home" schema name (where user predicates materialize).
 pub fn home_schema() -> &'static str {
-    "logica_home"
+    "synalog_home"
 }
 
 /// The "test" schema name (in-memory schema for `@Ground` on SQLite).
 pub fn test_schema() -> &'static str {
-    "logica_test"
+    "synalog_test"
 }
 
 /// Compilation error with source context (legacy type).

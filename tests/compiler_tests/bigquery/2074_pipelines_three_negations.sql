@@ -126,13 +126,13 @@ FROM
   t_0_Spend AS Spend
 WHERE
   ((SELECT
-    MIN(1) AS logica_value
+    MIN(1) AS synalog_value
   FROM
     t_4_Ref AS Ref
   WHERE
     (Ref.who = Spend.who)) IS NULL) AND
   ((SELECT
-    MIN(1) AS logica_value
+    MIN(1) AS synalog_value
   FROM
     t_6_Pen AS Pen
   WHERE

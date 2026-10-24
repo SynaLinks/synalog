@@ -1,7 +1,7 @@
 -- Initializing DuckDB environment.
-create schema if not exists logica_home;
+create schema if not exists synalog_home;
 -- Empty record, has to have a field by DuckDB syntax.
-drop type if exists logicarecord893574736 cascade; create type logicarecord893574736 as struct(nirvana numeric);
+drop type if exists synalogrecord893574736 cascade; create type synalogrecord893574736 as struct(nirvana numeric);
 create sequence if not exists eternal_logical_sequence;
 
 WITH RECURSIVE t_3_A_RecursiveCte AS (SELECT * FROM (
@@ -9,12 +9,12 @@ WITH RECURSIVE t_3_A_RecursiveCte AS (SELECT * FROM (
     
       SELECT
         0 AS y,
-        0 AS logica_step
+        0 AS synalog_step
      UNION ALL
     
       SELECT
         ((x_22.unnested_pod) + (1)) AS y,
-        ((0) + (1)) AS logica_step
+        ((0) + (1)) AS synalog_step
       FROM
         (select unnest(Range(100)) as unnested_pod) as x_22
       WHERE
@@ -25,7 +25,7 @@ WITH RECURSIVE t_3_A_RecursiveCte AS (SELECT * FROM (
     
       SELECT
         ((x_38.unnested_pod) + (1)) AS y,
-        ((((0) + (1))) + (1)) AS logica_step
+        ((((0) + (1))) + (1)) AS synalog_step
       FROM
         (select unnest(Range(100)) as unnested_pod) as x_38, (select unnest(Range(100)) as unnested_pod) as x_44
       WHERE
@@ -38,7 +38,7 @@ WITH RECURSIVE t_3_A_RecursiveCte AS (SELECT * FROM (
     
       SELECT
         ((x_60.unnested_pod) + (1)) AS y,
-        ((((((0) + (1))) + (1))) + (1)) AS logica_step
+        ((((((0) + (1))) + (1))) + (1)) AS synalog_step
       FROM
         (select unnest(Range(100)) as unnested_pod) as x_60, (select unnest(Range(100)) as unnested_pod) as x_67, (select unnest(Range(100)) as unnested_pod) as x_73
       WHERE
@@ -55,11 +55,11 @@ WITH RECURSIVE t_3_A_RecursiveCte AS (SELECT * FROM (
 UNION
 SELECT
   ((x_80.unnested_pod) + (1)) AS y,
-  ((t_17_A_RecursiveCte.logica_step) + (1)) AS logica_step
+  ((t_17_A_RecursiveCte.synalog_step) + (1)) AS synalog_step
 FROM
   t_3_A_RecursiveCte AS t_17_A_RecursiveCte, (select unnest(Range(100)) as unnested_pod) as x_80
 WHERE
-  (t_17_A_RecursiveCte.logica_step < 21) AND
+  (t_17_A_RecursiveCte.synalog_step < 21) AND
   (t_17_A_RecursiveCte.y = x_80.unnested_pod)),
 t_2_A AS (SELECT
   A_RecursiveCte.y AS y
@@ -71,12 +71,12 @@ t_20_B_RecursiveCte AS (SELECT * FROM (
     
       SELECT
         0 AS y,
-        0 AS logica_step
+        0 AS synalog_step
      UNION ALL
     
       SELECT
         ((x_101.unnested_pod) + (1)) AS y,
-        ((0) + (1)) AS logica_step
+        ((0) + (1)) AS synalog_step
       FROM
         (select unnest(Range(100)) as unnested_pod) as x_101
       WHERE
@@ -87,7 +87,7 @@ t_20_B_RecursiveCte AS (SELECT * FROM (
     
       SELECT
         ((x_117.unnested_pod) + (1)) AS y,
-        ((((0) + (1))) + (1)) AS logica_step
+        ((((0) + (1))) + (1)) AS synalog_step
       FROM
         (select unnest(Range(100)) as unnested_pod) as x_117, (select unnest(Range(100)) as unnested_pod) as x_123
       WHERE
@@ -100,7 +100,7 @@ t_20_B_RecursiveCte AS (SELECT * FROM (
     
       SELECT
         ((x_139.unnested_pod) + (1)) AS y,
-        ((((((0) + (1))) + (1))) + (1)) AS logica_step
+        ((((((0) + (1))) + (1))) + (1)) AS synalog_step
       FROM
         (select unnest(Range(100)) as unnested_pod) as x_139, (select unnest(Range(100)) as unnested_pod) as x_146, (select unnest(Range(100)) as unnested_pod) as x_152
       WHERE
@@ -117,11 +117,11 @@ t_20_B_RecursiveCte AS (SELECT * FROM (
 UNION
 SELECT
   ((x_159.unnested_pod) + (1)) AS y,
-  ((t_35_B_RecursiveCte.logica_step) + (1)) AS logica_step
+  ((t_35_B_RecursiveCte.synalog_step) + (1)) AS synalog_step
 FROM
   t_20_B_RecursiveCte AS t_35_B_RecursiveCte, (select unnest(Range(100)) as unnested_pod) as x_159
 WHERE
-  (t_35_B_RecursiveCte.logica_step < 22) AND
+  (t_35_B_RecursiveCte.synalog_step < 22) AND
   (t_35_B_RecursiveCte.y = x_159.unnested_pod)),
 t_19_B AS (SELECT
   B_RecursiveCte.y AS y

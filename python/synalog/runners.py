@@ -705,7 +705,7 @@ def run_plan(steps: list[dict], s: Session) -> Result:
 # The tables a plan computes into synalog's own schemas: the steps of a
 # recursion, grounded predicates. A @Ground into a table the program names
 # elsewhere is the user's, and is kept.
-_WORKING_TABLE = re.compile(r"CREATE TABLE ((?:logica_home|logica_test)\.\w+)", re.IGNORECASE)
+_WORKING_TABLE = re.compile(r"CREATE TABLE ((?:synalog_home|synalog_test)\.\w+)", re.IGNORECASE)
 
 
 def _drop_working_tables(steps: list[dict], s: Session) -> None:

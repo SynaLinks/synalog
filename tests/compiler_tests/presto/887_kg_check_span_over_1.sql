@@ -1,5 +1,5 @@
-DROP TABLE IF EXISTS logica_test.Person;
-CREATE TABLE logica_test.Person AS WITH t_0_Employees AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_test.Person;
+CREATE TABLE synalog_test.Person AS WITH t_0_Employees AS (SELECT * FROM (
   
     SELECT
       1 AS person_id,
@@ -54,7 +54,7 @@ FROM
   t_0_Employees AS Employees
 GROUP BY 1, 2, 3 ORDER BY person_id;
 
--- Interacting with table logica_test.Person
+-- Interacting with table synalog_test.Person
 
 WITH t_3_Management AS (SELECT * FROM (
   
@@ -82,7 +82,7 @@ t_1_Manages AS (SELECT
   Person.person_id AS manager_id,
   t_2_Person.person_id AS employee_id
 FROM
-  logica_test.Person AS Person, logica_test.Person AS t_2_Person, t_3_Management AS Management
+  synalog_test.Person AS Person, synalog_test.Person AS t_2_Person, t_3_Management AS Management
 WHERE
   (Management.manager_id = Person.person_id) AND
   (Management.employee_id = t_2_Person.person_id)

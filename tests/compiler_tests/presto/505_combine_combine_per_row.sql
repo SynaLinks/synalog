@@ -23,7 +23,7 @@ GROUP BY 1)
 SELECT
   t_0_G.g AS g,
   (SELECT
-  SUM(V.x) AS logica_value
+  SUM(V.x) AS synalog_value
 FROM
   t_1_V AS V
 WHERE

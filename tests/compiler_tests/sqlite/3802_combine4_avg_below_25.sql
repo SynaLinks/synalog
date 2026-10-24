@@ -63,7 +63,7 @@ t_2_C AS (SELECT * FROM (
 SELECT
   t_0_C.c AS c,
   (SELECT
-  AVG(MagicalEntangle(O.amt, x_6.value)) AS logica_value
+  AVG(MagicalEntangle(O.amt, x_6.value)) AS synalog_value
 FROM
   t_1_O AS O, JSON_EACH(JSON_ARRAY(0)) as x_6
 WHERE

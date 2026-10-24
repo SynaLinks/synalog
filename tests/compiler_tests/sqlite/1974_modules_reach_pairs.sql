@@ -26,7 +26,7 @@ t_1_Graph_Reach_RecursiveCte_f1 AS (SELECT * FROM (
       SELECT
         Local.a AS a,
         Local.b AS b,
-        0 AS logica_step
+        0 AS synalog_step
       FROM
         t_2_Local AS Local
      UNION ALL
@@ -34,7 +34,7 @@ t_1_Graph_Reach_RecursiveCte_f1 AS (SELECT * FROM (
       SELECT
         t_5_Local.a AS a,
         t_3_Local.b AS b,
-        ((0) + (1)) AS logica_step
+        ((0) + (1)) AS synalog_step
       FROM
         t_2_Local AS t_5_Local, t_2_Local AS t_3_Local
       WHERE
@@ -46,7 +46,7 @@ t_1_Graph_Reach_RecursiveCte_f1 AS (SELECT * FROM (
       SELECT
         t_11_Local.a AS a,
         t_7_Local.b AS b,
-        ((((0) + (1))) + (1)) AS logica_step
+        ((((0) + (1))) + (1)) AS synalog_step
       FROM
         t_2_Local AS t_11_Local, t_2_Local AS t_9_Local, t_2_Local AS t_7_Local
       WHERE
@@ -60,7 +60,7 @@ t_1_Graph_Reach_RecursiveCte_f1 AS (SELECT * FROM (
       SELECT
         t_19_Local.a AS a,
         t_13_Local.b AS b,
-        ((((((0) + (1))) + (1))) + (1)) AS logica_step
+        ((((((0) + (1))) + (1))) + (1)) AS synalog_step
       FROM
         t_2_Local AS t_19_Local, t_2_Local AS t_17_Local, t_2_Local AS t_15_Local, t_2_Local AS t_13_Local
       WHERE
@@ -76,7 +76,7 @@ t_1_Graph_Reach_RecursiveCte_f1 AS (SELECT * FROM (
       SELECT
         t_29_Local.a AS a,
         t_21_Local.b AS b,
-        ((((((((0) + (1))) + (1))) + (1))) + (1)) AS logica_step
+        ((((((((0) + (1))) + (1))) + (1))) + (1)) AS synalog_step
       FROM
         t_2_Local AS t_29_Local, t_2_Local AS t_27_Local, t_2_Local AS t_25_Local, t_2_Local AS t_23_Local, t_2_Local AS t_21_Local
       WHERE
@@ -94,7 +94,7 @@ t_1_Graph_Reach_RecursiveCte_f1 AS (SELECT * FROM (
       SELECT
         t_41_Local.a AS a,
         t_31_Local.b AS b,
-        ((((((((((0) + (1))) + (1))) + (1))) + (1))) + (1)) AS logica_step
+        ((((((((((0) + (1))) + (1))) + (1))) + (1))) + (1)) AS synalog_step
       FROM
         t_2_Local AS t_41_Local, t_2_Local AS t_39_Local, t_2_Local AS t_37_Local, t_2_Local AS t_35_Local, t_2_Local AS t_33_Local, t_2_Local AS t_31_Local
       WHERE
@@ -116,11 +116,11 @@ UNION
 SELECT
   t_42_Graph_Reach_RecursiveCte_f1.a AS a,
   t_43_Local.b AS b,
-  ((t_42_Graph_Reach_RecursiveCte_f1.logica_step) + (1)) AS logica_step
+  ((t_42_Graph_Reach_RecursiveCte_f1.synalog_step) + (1)) AS synalog_step
 FROM
   t_1_Graph_Reach_RecursiveCte_f1 AS t_42_Graph_Reach_RecursiveCte_f1, t_2_Local AS t_43_Local
 WHERE
-  (t_42_Graph_Reach_RecursiveCte_f1.logica_step < 8) AND
+  (t_42_Graph_Reach_RecursiveCte_f1.synalog_step < 8) AND
   (t_43_Local.a = t_42_Graph_Reach_RecursiveCte_f1.b)),
 t_0_R AS (SELECT
   Graph_Reach_RecursiveCte_f1.a AS a,

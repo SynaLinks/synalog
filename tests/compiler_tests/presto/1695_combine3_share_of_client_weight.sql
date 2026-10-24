@@ -84,7 +84,7 @@ WITH t_1_Ship AS (SELECT * FROM (
 SELECT
   Ship.id AS id,
   element_at(transform(ARRAY[((100) * ((CAST(Ship.kg AS DOUBLE) / NULLIF((SELECT
-  SUM(t_0_Ship.kg) AS logica_value
+  SUM(t_0_Ship.kg) AS synalog_value
 FROM
   t_1_Ship AS t_0_Ship
 WHERE

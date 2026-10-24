@@ -4,7 +4,7 @@ FROM
   providers
 WHERE
   ((SELECT
-    MIN(1) AS logica_value
+    MIN(1) AS synalog_value
   FROM
     ground_truth
   WHERE

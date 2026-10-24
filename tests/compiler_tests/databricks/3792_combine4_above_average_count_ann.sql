@@ -13,7 +13,7 @@ FROM
   t_0_O AS O
 WHERE
   (O.amt > (SELECT
-    AVG(t_1_O.amt) AS logica_value
+    AVG(t_1_O.amt) AS synalog_value
   FROM
     t_0_O AS t_1_O
   WHERE

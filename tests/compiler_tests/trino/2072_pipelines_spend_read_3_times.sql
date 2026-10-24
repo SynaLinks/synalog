@@ -1,5 +1,5 @@
-DROP TABLE IF EXISTS logica_test.Spend;
-CREATE TABLE logica_test.Spend AS WITH t_1_Order AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_test.Spend;
+CREATE TABLE synalog_test.Spend AS WITH t_1_Order AS (SELECT * FROM (
   
     SELECT
       1 AS id,
@@ -108,14 +108,14 @@ WHERE
   (Price.item = t_0_Order.item)
 GROUP BY 1;
 
--- Interacting with table logica_test.Spend
+-- Interacting with table synalog_test.Spend
 
 WITH t_0_S AS (SELECT
   Spend.who AS w0,
   t_1_Spend.who AS w1,
   t_2_Spend.who AS w2
 FROM
-  logica_test.Spend AS Spend, logica_test.Spend AS t_1_Spend, logica_test.Spend AS t_2_Spend
+  synalog_test.Spend AS Spend, synalog_test.Spend AS t_1_Spend, synalog_test.Spend AS t_2_Spend
 WHERE
   (Spend.who < t_1_Spend.who) AND
   (t_1_Spend.who < t_2_Spend.who)

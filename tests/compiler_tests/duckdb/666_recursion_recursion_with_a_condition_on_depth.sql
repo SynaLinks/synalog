@@ -1,7 +1,7 @@
 -- Initializing DuckDB environment.
-create schema if not exists logica_home;
+create schema if not exists synalog_home;
 -- Empty record, has to have a field by DuckDB syntax.
-drop type if exists logicarecord893574736 cascade; create type logicarecord893574736 as struct(nirvana numeric);
+drop type if exists synalogrecord893574736 cascade; create type synalogrecord893574736 as struct(nirvana numeric);
 create sequence if not exists eternal_logical_sequence;
 
 WITH RECURSIVE t_0_R_RecursiveCte AS (SELECT * FROM (
@@ -9,12 +9,12 @@ WITH RECURSIVE t_0_R_RecursiveCte AS (SELECT * FROM (
     
       SELECT
         1 AS x,
-        0 AS logica_step
+        0 AS synalog_step
      UNION ALL
     
       SELECT
         ((1) * (2)) AS x,
-        ((0) + (1)) AS logica_step
+        ((0) + (1)) AS synalog_step
       FROM
         (SELECT 'singleton' as s) as unused_singleton
       WHERE
@@ -25,7 +25,7 @@ WITH RECURSIVE t_0_R_RecursiveCte AS (SELECT * FROM (
     
       SELECT
         ((((1) * (2))) * (2)) AS x,
-        ((((0) + (1))) + (1)) AS logica_step
+        ((((0) + (1))) + (1)) AS synalog_step
       FROM
         (SELECT 'singleton' as s) as unused_singleton
       WHERE
@@ -38,7 +38,7 @@ WITH RECURSIVE t_0_R_RecursiveCte AS (SELECT * FROM (
     
       SELECT
         ((((((1) * (2))) * (2))) * (2)) AS x,
-        ((((((0) + (1))) + (1))) + (1)) AS logica_step
+        ((((((0) + (1))) + (1))) + (1)) AS synalog_step
       FROM
         (SELECT 'singleton' as s) as unused_singleton
       WHERE
@@ -55,12 +55,12 @@ WITH RECURSIVE t_0_R_RecursiveCte AS (SELECT * FROM (
 UNION
 SELECT
   ((t_9_R_RecursiveCte.x) * (2)) AS x,
-  ((t_9_R_RecursiveCte.logica_step) + (1)) AS logica_step
+  ((t_9_R_RecursiveCte.synalog_step) + (1)) AS synalog_step
 FROM
   t_0_R_RecursiveCte AS t_9_R_RecursiveCte
 WHERE
   (t_9_R_RecursiveCte.x < 8) AND
-  (t_9_R_RecursiveCte.logica_step < 10))
+  (t_9_R_RecursiveCte.synalog_step < 10))
 SELECT
   R_RecursiveCte.x AS x
 FROM

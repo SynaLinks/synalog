@@ -1,8 +1,8 @@
 -- Initializing PostgreSQL environment.
 set client_min_messages to warning;
-create schema if not exists logica_home;
--- Empty logica type: logicarecord893574736;
-DO $$ BEGIN if not exists (select 'I(am) :- I(think)' from pg_type where typname = 'logicarecord893574736') then create type logicarecord893574736 as (nirvana numeric); end if; END $$;
+create schema if not exists synalog_home;
+-- Empty synalog type: synalogrecord893574736;
+DO $$ BEGIN if not exists (select 'I(am) :- I(think)' from pg_type where typname = 'synalogrecord893574736') then create type synalogrecord893574736 as (nirvana numeric); end if; END $$;
 
 WITH RECURSIVE t_10_Employees AS (SELECT * FROM (
   
@@ -96,7 +96,7 @@ t_1_PathTo_RecursiveCte AS (SELECT * FROM (
         Manages.manager_id AS source,
         Manages.employee_id AS target,
         ((t_4_Person.name || ' > ') || t_5_Person.name) AS path,
-        0 AS logica_step
+        0 AS synalog_step
       FROM
         t_6_Manages AS Manages, t_9_Person AS t_4_Person, t_9_Person AS t_5_Person
       WHERE
@@ -108,7 +108,7 @@ t_1_PathTo_RecursiveCte AS (SELECT * FROM (
         t_17_Manages.manager_id AS source,
         t_13_Manages.employee_id AS target,
         ((((t_20_Person.name || ' > ') || t_21_Person.name) || ' > ') || t_16_Person.name) AS path,
-        ((0) + (1)) AS logica_step
+        ((0) + (1)) AS synalog_step
       FROM
         t_6_Manages AS t_17_Manages, t_9_Person AS t_20_Person, t_9_Person AS t_21_Person, t_6_Manages AS t_13_Manages, t_9_Person AS t_16_Person
       WHERE
@@ -124,7 +124,7 @@ t_1_PathTo_RecursiveCte AS (SELECT * FROM (
         t_34_Manages.manager_id AS source,
         t_26_Manages.employee_id AS target,
         ((((((t_37_Person.name || ' > ') || t_38_Person.name) || ' > ') || t_33_Person.name) || ' > ') || t_31_Person.name) AS path,
-        ((((0) + (1))) + (1)) AS logica_step
+        ((((0) + (1))) + (1)) AS synalog_step
       FROM
         t_6_Manages AS t_34_Manages, t_9_Person AS t_37_Person, t_9_Person AS t_38_Person, t_6_Manages AS t_29_Manages, t_9_Person AS t_33_Person, t_6_Manages AS t_26_Manages, t_9_Person AS t_31_Person
       WHERE
@@ -143,7 +143,7 @@ t_1_PathTo_RecursiveCte AS (SELECT * FROM (
         t_52_Manages.manager_id AS source,
         t_40_Manages.employee_id AS target,
         ((((((((t_55_Person.name || ' > ') || t_56_Person.name) || ' > ') || t_51_Person.name) || ' > ') || t_49_Person.name) || ' > ') || t_45_Person.name) AS path,
-        ((((((0) + (1))) + (1))) + (1)) AS logica_step
+        ((((((0) + (1))) + (1))) + (1)) AS synalog_step
       FROM
         t_6_Manages AS t_52_Manages, t_9_Person AS t_55_Person, t_9_Person AS t_56_Person, t_6_Manages AS t_47_Manages, t_9_Person AS t_51_Person, t_6_Manages AS t_43_Manages, t_9_Person AS t_49_Person, t_6_Manages AS t_40_Manages, t_9_Person AS t_45_Person
       WHERE
@@ -165,7 +165,7 @@ t_1_PathTo_RecursiveCte AS (SELECT * FROM (
         t_74_Manages.manager_id AS source,
         t_58_Manages.employee_id AS target,
         ((((((((((t_77_Person.name || ' > ') || t_78_Person.name) || ' > ') || t_73_Person.name) || ' > ') || t_71_Person.name) || ' > ') || t_67_Person.name) || ' > ') || t_63_Person.name) AS path,
-        ((((((((0) + (1))) + (1))) + (1))) + (1)) AS logica_step
+        ((((((((0) + (1))) + (1))) + (1))) + (1)) AS synalog_step
       FROM
         t_6_Manages AS t_74_Manages, t_9_Person AS t_77_Person, t_9_Person AS t_78_Person, t_6_Manages AS t_69_Manages, t_9_Person AS t_73_Person, t_6_Manages AS t_65_Manages, t_9_Person AS t_71_Person, t_6_Manages AS t_61_Manages, t_9_Person AS t_67_Person, t_6_Manages AS t_58_Manages, t_9_Person AS t_63_Person
       WHERE
@@ -190,7 +190,7 @@ t_1_PathTo_RecursiveCte AS (SELECT * FROM (
         t_100_Manages.manager_id AS source,
         t_80_Manages.employee_id AS target,
         ((((((((((((t_103_Person.name || ' > ') || t_104_Person.name) || ' > ') || t_99_Person.name) || ' > ') || t_97_Person.name) || ' > ') || t_93_Person.name) || ' > ') || t_89_Person.name) || ' > ') || t_85_Person.name) AS path,
-        ((((((((((0) + (1))) + (1))) + (1))) + (1))) + (1)) AS logica_step
+        ((((((((((0) + (1))) + (1))) + (1))) + (1))) + (1)) AS synalog_step
       FROM
         t_6_Manages AS t_100_Manages, t_9_Person AS t_103_Person, t_9_Person AS t_104_Person, t_6_Manages AS t_95_Manages, t_9_Person AS t_99_Person, t_6_Manages AS t_91_Manages, t_9_Person AS t_97_Person, t_6_Manages AS t_87_Manages, t_9_Person AS t_93_Person, t_6_Manages AS t_83_Manages, t_9_Person AS t_89_Person, t_6_Manages AS t_80_Manages, t_9_Person AS t_85_Person
       WHERE
@@ -218,7 +218,7 @@ t_1_PathTo_RecursiveCte AS (SELECT * FROM (
         t_130_Manages.manager_id AS source,
         t_106_Manages.employee_id AS target,
         ((((((((((((((t_133_Person.name || ' > ') || t_134_Person.name) || ' > ') || t_129_Person.name) || ' > ') || t_127_Person.name) || ' > ') || t_123_Person.name) || ' > ') || t_119_Person.name) || ' > ') || t_115_Person.name) || ' > ') || t_111_Person.name) AS path,
-        ((((((((((((0) + (1))) + (1))) + (1))) + (1))) + (1))) + (1)) AS logica_step
+        ((((((((((((0) + (1))) + (1))) + (1))) + (1))) + (1))) + (1)) AS synalog_step
       FROM
         t_6_Manages AS t_130_Manages, t_9_Person AS t_133_Person, t_9_Person AS t_134_Person, t_6_Manages AS t_125_Manages, t_9_Person AS t_129_Person, t_6_Manages AS t_121_Manages, t_9_Person AS t_127_Person, t_6_Manages AS t_117_Manages, t_9_Person AS t_123_Person, t_6_Manages AS t_113_Manages, t_9_Person AS t_119_Person, t_6_Manages AS t_109_Manages, t_9_Person AS t_115_Person, t_6_Manages AS t_106_Manages, t_9_Person AS t_111_Person
       WHERE
@@ -249,7 +249,7 @@ t_1_PathTo_RecursiveCte AS (SELECT * FROM (
         t_164_Manages.manager_id AS source,
         t_136_Manages.employee_id AS target,
         ((((((((((((((((t_167_Person.name || ' > ') || t_168_Person.name) || ' > ') || t_163_Person.name) || ' > ') || t_161_Person.name) || ' > ') || t_157_Person.name) || ' > ') || t_153_Person.name) || ' > ') || t_149_Person.name) || ' > ') || t_145_Person.name) || ' > ') || t_141_Person.name) AS path,
-        ((x_717) + (1)) AS logica_step
+        ((x_717) + (1)) AS synalog_step
       FROM
         t_6_Manages AS t_164_Manages, t_9_Person AS t_167_Person, t_9_Person AS t_168_Person, t_6_Manages AS t_159_Manages, t_9_Person AS t_163_Person, t_6_Manages AS t_155_Manages, t_9_Person AS t_161_Person, t_6_Manages AS t_151_Manages, t_9_Person AS t_157_Person, t_6_Manages AS t_147_Manages, t_9_Person AS t_153_Person, t_6_Manages AS t_143_Manages, t_9_Person AS t_149_Person, t_6_Manages AS t_139_Manages, t_9_Person AS t_145_Person, t_6_Manages AS t_136_Manages, t_9_Person AS t_141_Person, UNNEST(ARRAY[((((((((((((0) + (1))) + (1))) + (1))) + (1))) + (1))) + (1))]) as x_717
       WHERE
@@ -285,11 +285,11 @@ SELECT
   t_169_PathTo_RecursiveCte.source AS source,
   t_170_Manages.employee_id AS target,
   ((t_169_PathTo_RecursiveCte.path || ' > ') || t_172_Person.name) AS path,
-  ((t_169_PathTo_RecursiveCte.logica_step) + (1)) AS logica_step
+  ((t_169_PathTo_RecursiveCte.synalog_step) + (1)) AS synalog_step
 FROM
   t_1_PathTo_RecursiveCte AS t_169_PathTo_RecursiveCte, t_6_Manages AS t_170_Manages, t_9_Person AS t_172_Person
 WHERE
-  (t_169_PathTo_RecursiveCte.logica_step < 4) AND
+  (t_169_PathTo_RecursiveCte.synalog_step < 4) AND
   (t_170_Manages.manager_id = t_169_PathTo_RecursiveCte.target) AND
   (t_170_Manages.employee_id = t_172_Person.person_id)),
 t_0_PathTo AS (SELECT

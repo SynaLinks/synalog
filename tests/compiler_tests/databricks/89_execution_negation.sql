@@ -8,7 +8,7 @@ FROM
   LATERAL (SELECT explode(ARRAY("a", "b", "c")) AS x_3) AS pushkin
 WHERE
   ((SELECT
-    MIN(1) AS logica_value
+    MIN(1) AS synalog_value
   FROM
     t_0_Friend AS Friend
   WHERE

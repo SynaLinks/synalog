@@ -26,7 +26,27 @@ cargo test --test compiler_tests        # compiler golden tests (all engines)
 cargo test --test parser_tests          # parser golden tests (all engines)
 cargo test --test verifier_tests        # verifier tests (all engines)
 cargo test --test search_tests          # search feature tests (all engines)
+cargo test --test verus_proofs          # the Verus proofs of verified/
+cargo test --test type_intersection     # the type inference against the proved intersection
 ```
+
+### Verified algorithms
+
+The graph algorithms of the verifier and the compiler (which predicates are
+recursive, which recursion goes through a negation, which predicate cuts a
+mutual recursion, the order a program's tables and loops run in), the
+contradiction warning, pagination, quoting and the `Cast` type-name check live in the `verified/` crate, written in
+[Verus](https://github.com/verus-lang/verus): each function carries a
+specification that Verus proves it meets. A plain `cargo build` erases the
+proofs, so building synalog needs no Verus. Checking them does:
+
+```bash
+shell/install-verus.sh                  # the Verus release, and the Rust toolchain it requires
+export PATH="$HOME/.verus/verus-arm64-macos:$PATH"   # the line the script prints
+cargo test --test verus_proofs          # or: cd verified && cargo verus verify
+```
+
+`cargo test` runs `verus_proofs`, so it fails without Verus installed.
 
 The repository also ships a `shell/test.sh` orchestrator (run it from anywhere; it cd's to the repo root):
 
@@ -61,17 +81,16 @@ src/
   errors.rs               # Unified error types with help messages
   python.rs               # PyO3 bindings (the _synalog extension module)
   parser/
-    parse.rs              # Logica syntax -> JSON AST
+    parse.rs              # Synalog syntax -> JSON AST
     rewrite.rs            # AST rewrites (aggregation, multi-body)
     json.rs               # Custom JSON implementation
   compiler/
-    universe.rs           # LogicaProgram: AST -> SQL compilation
+    universe.rs           # SynalogProgram: AST -> SQL compilation
     annotations.rs        # @OrderBy, @Limit, @Recursive, etc.
     dialects.rs           # Engine-specific SQL generation
     expr_translate.rs     # Expression -> SQL translation
     rule_translate.rs     # Rule -> SQL translation
     functors.rs           # Functor expansion (@Make)
-    concertina.rs         # Multi-predicate execution orchestration
     type_inference/       # Type checking subsystem
   verifier/
     mod.rs                # Validation entry point
@@ -80,6 +99,7 @@ src/
     arity.rs              # Argument count consistency
     recursion.rs          # Recursion safety checks
     reserved.rs           # Reserved predicate name check
+verified/                 # Algorithms proved correct with Verus
 python/
   synalog/__init__.py     # Python package wrapper
   synalog/cli.py          # The synalog command (one-shot + REPL)

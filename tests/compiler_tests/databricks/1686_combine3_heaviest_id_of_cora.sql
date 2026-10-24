@@ -11,7 +11,7 @@ WITH t_1_Ship AS (SELECT * FROM VALUES
 AS UNUSED_TABLE_NAME(id, client, src, dst, kg, carrier))
 SELECT
   (SELECT
-  SORT_ARRAY(COLLECT_LIST(STRUCT(Ship.kg AS value, Ship.id AS arg)), false)[0].arg AS logica_value
+  SORT_ARRAY(COLLECT_LIST(STRUCT(Ship.kg AS value, Ship.id AS arg)), false)[0].arg AS synalog_value
 FROM
   t_1_Ship AS Ship
 WHERE

@@ -22,6 +22,6 @@ WITH t_0_V AS (SELECT * FROM (
 ) AS UNUSED_TABLE_NAME  )
 SELECT
   (SELECT
-  SUM(V.s) AS logica_value
+  SUM(V.s) AS synalog_value
 FROM
   t_0_V AS V) AS t;

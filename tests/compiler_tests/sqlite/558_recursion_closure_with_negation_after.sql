@@ -15,12 +15,12 @@ t_1_R_RecursiveCte AS (SELECT * FROM (
     
       SELECT
         1 AS x,
-        0 AS logica_step
+        0 AS synalog_step
      UNION ALL
     
       SELECT
         E.b AS x,
-        ((0) + (1)) AS logica_step
+        ((0) + (1)) AS synalog_step
       FROM
         t_3_E AS E
       WHERE
@@ -31,7 +31,7 @@ t_1_R_RecursiveCte AS (SELECT * FROM (
     
       SELECT
         t_5_E.b AS x,
-        ((((0) + (1))) + (1)) AS logica_step
+        ((((0) + (1))) + (1)) AS synalog_step
       FROM
         t_3_E AS t_7_E, t_3_E AS t_5_E
       WHERE
@@ -44,7 +44,7 @@ t_1_R_RecursiveCte AS (SELECT * FROM (
     
       SELECT
         t_10_E.b AS x,
-        ((((((0) + (1))) + (1))) + (1)) AS logica_step
+        ((((((0) + (1))) + (1))) + (1)) AS synalog_step
       FROM
         t_3_E AS t_14_E, t_3_E AS t_12_E, t_3_E AS t_10_E
       WHERE
@@ -61,11 +61,11 @@ t_1_R_RecursiveCte AS (SELECT * FROM (
 UNION
 SELECT
   t_17_E.b AS x,
-  ((t_16_R_RecursiveCte.logica_step) + (1)) AS logica_step
+  ((t_16_R_RecursiveCte.synalog_step) + (1)) AS synalog_step
 FROM
   t_1_R_RecursiveCte AS t_16_R_RecursiveCte, t_3_E AS t_17_E
 WHERE
-  (t_16_R_RecursiveCte.logica_step < 5) AND
+  (t_16_R_RecursiveCte.synalog_step < 5) AND
   (t_17_E.a = t_16_R_RecursiveCte.x)),
 t_0_R AS (SELECT
   R_RecursiveCte.x AS x
@@ -78,7 +78,7 @@ FROM
   JSON_EACH(JSON_ARRAY(1, 2, 3, 5)) as x_3
 WHERE
   ((SELECT
-    MIN(MagicalEntangle(1, x_6.value)) AS logica_value
+    MIN(MagicalEntangle(1, x_6.value)) AS synalog_value
   FROM
     t_0_R AS R, JSON_EACH(JSON_ARRAY(0)) as x_6
   WHERE

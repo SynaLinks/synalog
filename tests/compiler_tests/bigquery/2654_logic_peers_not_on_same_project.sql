@@ -114,7 +114,7 @@ FROM
 WHERE
   (Person.id < t_0_Person.id) AND
   ((SELECT
-    MIN(1) AS logica_value
+    MIN(1) AS synalog_value
   FROM
     t_4_A AS t_2_A, t_4_A AS t_3_A
   WHERE

@@ -87,7 +87,7 @@ FROM
   t_0_Ship AS Ship
 WHERE
   (Ship.kg = (SELECT
-    MAX(t_1_Ship.kg) AS logica_value
+    MAX(t_1_Ship.kg) AS synalog_value
   FROM
     t_0_Ship AS t_1_Ship
   WHERE

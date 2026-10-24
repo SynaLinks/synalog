@@ -1,10 +1,10 @@
 -- Initializing PostgreSQL environment.
 set client_min_messages to warning;
-create schema if not exists logica_home;
--- Empty logica type: logicarecord893574736;
-DO $$ BEGIN if not exists (select 'I(am) :- I(think)' from pg_type where typname = 'logicarecord893574736') then create type logicarecord893574736 as (nirvana numeric); end if; END $$;
+create schema if not exists synalog_home;
+-- Empty synalog type: synalogrecord893574736;
+DO $$ BEGIN if not exists (select 'I(am) :- I(think)' from pg_type where typname = 'synalogrecord893574736') then create type synalogrecord893574736 as (nirvana numeric); end if; END $$;
 
-DO $$ BEGIN if not exists (select 1 from pg_type where typname = 'logicarecord15014184063026700746') then create type logicarecord15014184063026700746 as ("arg" numeric, "value" numeric); end if; END $$;
+DO $$ BEGIN if not exists (select 1 from pg_type where typname = 'synalogrecord15014184063026700746') then create type synalogrecord15014184063026700746 as ("arg" numeric, "value" numeric); end if; END $$;
 WITH t_2_L AS (SELECT * FROM (
   
     SELECT
@@ -35,7 +35,7 @@ WITH t_2_L AS (SELECT * FROM (
 SELECT
   t_0_L.k AS k,
   (SELECT
-  (ARRAY_AGG(((CASE WHEN x_8 = 0 THEN ROW(x_7, (t_0_L.l)[x_7 + 1])::logicarecord15014184063026700746 ELSE NULL END)).arg order by ((CASE WHEN x_8 = 0 THEN ROW(x_7, (t_0_L.l)[x_7 + 1])::logicarecord15014184063026700746 ELSE NULL END)).value desc nulls last))[1] AS logica_value
+  (ARRAY_AGG(((CASE WHEN x_8 = 0 THEN ROW(x_7, (t_0_L.l)[x_7 + 1])::synalogrecord15014184063026700746 ELSE NULL END)).arg order by ((CASE WHEN x_8 = 0 THEN ROW(x_7, (t_0_L.l)[x_7 + 1])::synalogrecord15014184063026700746 ELSE NULL END)).value desc nulls last))[1] AS synalog_value
 FROM
   UNNEST(COALESCE((SELECT ARRAY_AGG(x) FROM GENERATE_SERIES(0, CARDINALITY(t_0_L.l) - 1) as x), '{}')) as x_7, UNNEST(ARRAY[0]) as x_8) AS v
 FROM

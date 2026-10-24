@@ -3,12 +3,12 @@ WITH RECURSIVE t_0_W_RecursiveCte AS (SELECT * FROM (
     
       SELECT
         'a' AS w,
-        0 AS logica_step
+        0 AS synalog_step
      UNION ALL
     
       SELECT
         (('a') || ('a')) AS w,
-        ((0) + (1)) AS logica_step
+        ((0) + (1)) AS synalog_step
       FROM
         (SELECT 'singleton' as s) as unused_singleton
       WHERE
@@ -19,7 +19,7 @@ WITH RECURSIVE t_0_W_RecursiveCte AS (SELECT * FROM (
     
       SELECT
         (((('a') || ('a'))) || ('a')) AS w,
-        ((((0) + (1))) + (1)) AS logica_step
+        ((((0) + (1))) + (1)) AS synalog_step
       FROM
         (SELECT 'singleton' as s) as unused_singleton
       WHERE
@@ -32,7 +32,7 @@ WITH RECURSIVE t_0_W_RecursiveCte AS (SELECT * FROM (
     
       SELECT
         (((((('a') || ('a'))) || ('a'))) || ('a')) AS w,
-        ((((((0) + (1))) + (1))) + (1)) AS logica_step
+        ((((((0) + (1))) + (1))) + (1)) AS synalog_step
       FROM
         (SELECT 'singleton' as s) as unused_singleton
       WHERE
@@ -49,12 +49,12 @@ WITH RECURSIVE t_0_W_RecursiveCte AS (SELECT * FROM (
 UNION
 SELECT
   ((t_9_W_RecursiveCte.w) || ('a')) AS w,
-  ((t_9_W_RecursiveCte.logica_step) + (1)) AS logica_step
+  ((t_9_W_RecursiveCte.synalog_step) + (1)) AS synalog_step
 FROM
   t_0_W_RecursiveCte AS t_9_W_RecursiveCte
 WHERE
   (LENGTH(t_9_W_RecursiveCte.w) < 3) AND
-  (t_9_W_RecursiveCte.logica_step < 5))
+  (t_9_W_RecursiveCte.synalog_step < 5))
 SELECT
   W_RecursiveCte.w AS w
 FROM

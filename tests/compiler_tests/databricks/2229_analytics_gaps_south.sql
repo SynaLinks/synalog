@@ -33,7 +33,7 @@ FROM
 WHERE
   (x_3 > B.lo) AND
   ((SELECT
-    MIN(1) AS logica_value
+    MIN(1) AS synalog_value
   FROM
     t_2_D AS t_4_D
   WHERE

@@ -85,14 +85,14 @@ FROM
 WHERE
   (t_0_U.u < t_1_U.u) AND
   ((SELECT
-    MIN(MagicalEntangle(1, x_7.value)) AS logica_value
+    MIN(MagicalEntangle(1, x_7.value)) AS synalog_value
   FROM
     t_3_F AS F, JSON_EACH(JSON_ARRAY(0)) as x_7
   WHERE
     (F.a = t_0_U.u) AND
     (F.b = t_1_U.u)) IS NULL) AND
   ((SELECT
-    MIN(MagicalEntangle(1, x_11.value)) AS logica_value
+    MIN(MagicalEntangle(1, x_11.value)) AS synalog_value
   FROM
     t_3_F AS t_4_F, JSON_EACH(JSON_ARRAY(0)) as x_11
   WHERE

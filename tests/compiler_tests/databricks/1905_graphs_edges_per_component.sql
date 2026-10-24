@@ -1,5 +1,5 @@
-DROP TABLE IF EXISTS logica_test.Conn_sn_delta;
-CREATE TABLE logica_test.Conn_sn_delta AS WITH t_0_E AS (SELECT * FROM VALUES
+DROP TABLE IF EXISTS synalog_test.Conn_sn_delta;
+CREATE TABLE synalog_test.Conn_sn_delta AS WITH t_0_E AS (SELECT * FROM VALUES
   (1, 2),
   (2, 3),
   (3, 1),
@@ -49,21 +49,21 @@ FROM
   t_0_Conn_MultBodyAggAux_f2 AS Conn_MultBodyAggAux_f2
 GROUP BY 1, 2;
 
--- Interacting with table logica_test.Conn_sn_delta
+-- Interacting with table synalog_test.Conn_sn_delta
 
-DROP TABLE IF EXISTS logica_test.Conn_sn_t0;
-CREATE TABLE logica_test.Conn_sn_t0 AS SELECT
+DROP TABLE IF EXISTS synalog_test.Conn_sn_t0;
+CREATE TABLE synalog_test.Conn_sn_t0 AS SELECT
   Conn_sn_delta.a AS a,
   Conn_sn_delta.b AS b
 FROM
-  logica_test.Conn_sn_delta AS Conn_sn_delta
+  synalog_test.Conn_sn_delta AS Conn_sn_delta
 WHERE
   (1 = 0);
 
--- Interacting with table logica_test.Conn_sn_t0
+-- Interacting with table synalog_test.Conn_sn_t0
 
-DROP TABLE IF EXISTS logica_test.Conn_sn_t1;
-CREATE TABLE logica_test.Conn_sn_t1 AS WITH t_0_E AS (SELECT * FROM VALUES
+DROP TABLE IF EXISTS synalog_test.Conn_sn_t1;
+CREATE TABLE synalog_test.Conn_sn_t1 AS WITH t_0_E AS (SELECT * FROM VALUES
   (1, 2),
   (2, 3),
   (3, 1),
@@ -110,7 +110,7 @@ t_1_Conn_MultBodyAggAux_f3 AS (SELECT * FROM (
       Conn_sn_t0.a AS a,
       t_3_U.b AS b
     FROM
-      logica_test.Conn_sn_t0 AS Conn_sn_t0, t_1_U AS t_3_U
+      synalog_test.Conn_sn_t0 AS Conn_sn_t0, t_1_U AS t_3_U
     WHERE
       (t_3_U.a = Conn_sn_t0.b)
   
@@ -129,10 +129,10 @@ FROM
 WHERE
   (1 = 0);
 
--- Interacting with table logica_test.Conn_sn_t1
+-- Interacting with table synalog_test.Conn_sn_t1
 
-DROP TABLE IF EXISTS logica_test.Conn_sn_t2;
-CREATE TABLE logica_test.Conn_sn_t2 AS WITH t_0_E AS (SELECT * FROM VALUES
+DROP TABLE IF EXISTS synalog_test.Conn_sn_t2;
+CREATE TABLE synalog_test.Conn_sn_t2 AS WITH t_0_E AS (SELECT * FROM VALUES
   (1, 2),
   (2, 3),
   (3, 1),
@@ -179,7 +179,7 @@ t_1_Conn_MultBodyAggAux_f4 AS (SELECT * FROM (
       Conn_sn_t1.a AS a,
       t_3_U.b AS b
     FROM
-      logica_test.Conn_sn_t1 AS Conn_sn_t1, t_1_U AS t_3_U
+      synalog_test.Conn_sn_t1 AS Conn_sn_t1, t_1_U AS t_3_U
     WHERE
       (t_3_U.a = Conn_sn_t1.b)
   
@@ -198,10 +198,10 @@ FROM
 WHERE
   (1 = 0);
 
--- Interacting with table logica_test.Conn_sn_t2
+-- Interacting with table synalog_test.Conn_sn_t2
 
-DROP TABLE IF EXISTS logica_test.Conn_sn_t3;
-CREATE TABLE logica_test.Conn_sn_t3 AS WITH t_0_E AS (SELECT * FROM VALUES
+DROP TABLE IF EXISTS synalog_test.Conn_sn_t3;
+CREATE TABLE synalog_test.Conn_sn_t3 AS WITH t_0_E AS (SELECT * FROM VALUES
   (1, 2),
   (2, 3),
   (3, 1),
@@ -248,7 +248,7 @@ t_1_Conn_MultBodyAggAux_f5 AS (SELECT * FROM (
       Conn_sn_t2.a AS a,
       t_3_U.b AS b
     FROM
-      logica_test.Conn_sn_t2 AS Conn_sn_t2, t_1_U AS t_3_U
+      synalog_test.Conn_sn_t2 AS Conn_sn_t2, t_1_U AS t_3_U
     WHERE
       (t_3_U.a = Conn_sn_t2.b)
   
@@ -267,10 +267,10 @@ FROM
 WHERE
   (1 = 0);
 
--- Interacting with table logica_test.Conn_sn_t3
+-- Interacting with table synalog_test.Conn_sn_t3
 
-DROP TABLE IF EXISTS logica_test.Conn_sn_t4;
-CREATE TABLE logica_test.Conn_sn_t4 AS WITH t_0_E AS (SELECT * FROM VALUES
+DROP TABLE IF EXISTS synalog_test.Conn_sn_t4;
+CREATE TABLE synalog_test.Conn_sn_t4 AS WITH t_0_E AS (SELECT * FROM VALUES
   (1, 2),
   (2, 3),
   (3, 1),
@@ -317,7 +317,7 @@ t_1_Conn_MultBodyAggAux_f6 AS (SELECT * FROM (
       Conn_sn_t3.a AS a,
       t_3_U.b AS b
     FROM
-      logica_test.Conn_sn_t3 AS Conn_sn_t3, t_1_U AS t_3_U
+      synalog_test.Conn_sn_t3 AS Conn_sn_t3, t_1_U AS t_3_U
     WHERE
       (t_3_U.a = Conn_sn_t3.b)
   
@@ -336,10 +336,10 @@ FROM
 WHERE
   (1 = 0);
 
--- Interacting with table logica_test.Conn_sn_t4
+-- Interacting with table synalog_test.Conn_sn_t4
 
-DROP TABLE IF EXISTS logica_test.Conn_sn_t5;
-CREATE TABLE logica_test.Conn_sn_t5 AS WITH t_0_E AS (SELECT * FROM VALUES
+DROP TABLE IF EXISTS synalog_test.Conn_sn_t5;
+CREATE TABLE synalog_test.Conn_sn_t5 AS WITH t_0_E AS (SELECT * FROM VALUES
   (1, 2),
   (2, 3),
   (3, 1),
@@ -386,7 +386,7 @@ t_1_Conn_MultBodyAggAux_f7 AS (SELECT * FROM (
       Conn_sn_t4.a AS a,
       t_3_U.b AS b
     FROM
-      logica_test.Conn_sn_t4 AS Conn_sn_t4, t_1_U AS t_3_U
+      synalog_test.Conn_sn_t4 AS Conn_sn_t4, t_1_U AS t_3_U
     WHERE
       (t_3_U.a = Conn_sn_t4.b)
   
@@ -405,58 +405,58 @@ FROM
 WHERE
   (1 = 0);
 
--- Interacting with table logica_test.Conn_sn_t5
+-- Interacting with table synalog_test.Conn_sn_t5
 
-DROP TABLE IF EXISTS logica_test.Conn_sn_full;
-CREATE TABLE logica_test.Conn_sn_full AS SELECT * FROM (
+DROP TABLE IF EXISTS synalog_test.Conn_sn_full;
+CREATE TABLE synalog_test.Conn_sn_full AS SELECT * FROM (
   
     SELECT
       Conn_sn_delta.a AS a,
       Conn_sn_delta.b AS b
     FROM
-      logica_test.Conn_sn_delta AS Conn_sn_delta
+      synalog_test.Conn_sn_delta AS Conn_sn_delta
    UNION ALL
   
     SELECT
       Conn_sn_t1.a AS a,
       Conn_sn_t1.b AS b
     FROM
-      logica_test.Conn_sn_t1 AS Conn_sn_t1
+      synalog_test.Conn_sn_t1 AS Conn_sn_t1
    UNION ALL
   
     SELECT
       Conn_sn_t2.a AS a,
       Conn_sn_t2.b AS b
     FROM
-      logica_test.Conn_sn_t2 AS Conn_sn_t2
+      synalog_test.Conn_sn_t2 AS Conn_sn_t2
    UNION ALL
   
     SELECT
       Conn_sn_t3.a AS a,
       Conn_sn_t3.b AS b
     FROM
-      logica_test.Conn_sn_t3 AS Conn_sn_t3
+      synalog_test.Conn_sn_t3 AS Conn_sn_t3
    UNION ALL
   
     SELECT
       Conn_sn_t4.a AS a,
       Conn_sn_t4.b AS b
     FROM
-      logica_test.Conn_sn_t4 AS Conn_sn_t4
+      synalog_test.Conn_sn_t4 AS Conn_sn_t4
    UNION ALL
   
     SELECT
       Conn_sn_t5.a AS a,
       Conn_sn_t5.b AS b
     FROM
-      logica_test.Conn_sn_t5 AS Conn_sn_t5
+      synalog_test.Conn_sn_t5 AS Conn_sn_t5
   
 ) AS UNUSED_TABLE_NAME  ;
 
--- Interacting with table logica_test.Conn_sn_full
+-- Interacting with table synalog_test.Conn_sn_full
 
-DROP TABLE IF EXISTS logica_test.Conn_sn_new;
-CREATE TABLE logica_test.Conn_sn_new AS WITH t_0_E AS (SELECT * FROM VALUES
+DROP TABLE IF EXISTS synalog_test.Conn_sn_new;
+CREATE TABLE synalog_test.Conn_sn_new AS WITH t_0_E AS (SELECT * FROM VALUES
   (1, 2),
   (2, 3),
   (3, 1),
@@ -503,7 +503,7 @@ t_1_Conn_MultBodyAggAux_f8 AS (SELECT * FROM (
       Conn_sn_delta.a AS a,
       t_3_U.b AS b
     FROM
-      logica_test.Conn_sn_delta AS Conn_sn_delta, t_1_U AS t_3_U
+      synalog_test.Conn_sn_delta AS Conn_sn_delta, t_1_U AS t_3_U
     WHERE
       (t_3_U.a = Conn_sn_delta.b)
   
@@ -521,18 +521,18 @@ FROM
   t_0_Conn_sn_step AS Conn_sn_step
 WHERE
   ((SELECT
-    MIN(1) AS logica_value
+    MIN(1) AS synalog_value
   FROM
-    logica_test.Conn_sn_full AS Conn_sn_full
+    synalog_test.Conn_sn_full AS Conn_sn_full
   WHERE
     (Conn_sn_full.a = Conn_sn_step.a) AND
     (Conn_sn_full.b = Conn_sn_step.b)) IS NULL)
 GROUP BY 1, 2;
 
-INSERT INTO logica_test.Conn_sn_full SELECT * FROM logica_test.Conn_sn_new;
+INSERT INTO synalog_test.Conn_sn_full SELECT * FROM synalog_test.Conn_sn_new;
 
-DROP TABLE IF EXISTS logica_test.Conn_sn_delta;
-CREATE TABLE logica_test.Conn_sn_delta AS WITH t_0_E AS (SELECT * FROM VALUES
+DROP TABLE IF EXISTS synalog_test.Conn_sn_delta;
+CREATE TABLE synalog_test.Conn_sn_delta AS WITH t_0_E AS (SELECT * FROM VALUES
   (1, 2),
   (2, 3),
   (3, 1),
@@ -579,7 +579,7 @@ t_1_Conn_MultBodyAggAux_f1 AS (SELECT * FROM (
       Conn_sn_new.a AS a,
       t_3_U.b AS b
     FROM
-      logica_test.Conn_sn_new AS Conn_sn_new, t_1_U AS t_3_U
+      synalog_test.Conn_sn_new AS Conn_sn_new, t_1_U AS t_3_U
     WHERE
       (t_3_U.a = Conn_sn_new.b)
   
@@ -597,18 +597,18 @@ FROM
   t_0_Conn_sn_back_step AS Conn_sn_back_step
 WHERE
   ((SELECT
-    MIN(1) AS logica_value
+    MIN(1) AS synalog_value
   FROM
-    logica_test.Conn_sn_full AS Conn_sn_full
+    synalog_test.Conn_sn_full AS Conn_sn_full
   WHERE
     (Conn_sn_full.a = Conn_sn_back_step.a) AND
     (Conn_sn_full.b = Conn_sn_back_step.b)) IS NULL)
 GROUP BY 1, 2;
 
-INSERT INTO logica_test.Conn_sn_full SELECT * FROM logica_test.Conn_sn_delta;
+INSERT INTO synalog_test.Conn_sn_full SELECT * FROM synalog_test.Conn_sn_delta;
 
-DROP TABLE IF EXISTS logica_test.Conn_sn_new;
-CREATE TABLE logica_test.Conn_sn_new AS WITH t_0_E AS (SELECT * FROM VALUES
+DROP TABLE IF EXISTS synalog_test.Conn_sn_new;
+CREATE TABLE synalog_test.Conn_sn_new AS WITH t_0_E AS (SELECT * FROM VALUES
   (1, 2),
   (2, 3),
   (3, 1),
@@ -655,7 +655,7 @@ t_1_Conn_MultBodyAggAux_f8 AS (SELECT * FROM (
       Conn_sn_delta.a AS a,
       t_3_U.b AS b
     FROM
-      logica_test.Conn_sn_delta AS Conn_sn_delta, t_1_U AS t_3_U
+      synalog_test.Conn_sn_delta AS Conn_sn_delta, t_1_U AS t_3_U
     WHERE
       (t_3_U.a = Conn_sn_delta.b)
   
@@ -673,18 +673,18 @@ FROM
   t_0_Conn_sn_step AS Conn_sn_step
 WHERE
   ((SELECT
-    MIN(1) AS logica_value
+    MIN(1) AS synalog_value
   FROM
-    logica_test.Conn_sn_full AS Conn_sn_full
+    synalog_test.Conn_sn_full AS Conn_sn_full
   WHERE
     (Conn_sn_full.a = Conn_sn_step.a) AND
     (Conn_sn_full.b = Conn_sn_step.b)) IS NULL)
 GROUP BY 1, 2;
 
-INSERT INTO logica_test.Conn_sn_full SELECT * FROM logica_test.Conn_sn_new;
+INSERT INTO synalog_test.Conn_sn_full SELECT * FROM synalog_test.Conn_sn_new;
 
-DROP TABLE IF EXISTS logica_test.Conn_sn_delta;
-CREATE TABLE logica_test.Conn_sn_delta AS WITH t_0_E AS (SELECT * FROM VALUES
+DROP TABLE IF EXISTS synalog_test.Conn_sn_delta;
+CREATE TABLE synalog_test.Conn_sn_delta AS WITH t_0_E AS (SELECT * FROM VALUES
   (1, 2),
   (2, 3),
   (3, 1),
@@ -731,7 +731,7 @@ t_1_Conn_MultBodyAggAux_f1 AS (SELECT * FROM (
       Conn_sn_new.a AS a,
       t_3_U.b AS b
     FROM
-      logica_test.Conn_sn_new AS Conn_sn_new, t_1_U AS t_3_U
+      synalog_test.Conn_sn_new AS Conn_sn_new, t_1_U AS t_3_U
     WHERE
       (t_3_U.a = Conn_sn_new.b)
   
@@ -749,18 +749,18 @@ FROM
   t_0_Conn_sn_back_step AS Conn_sn_back_step
 WHERE
   ((SELECT
-    MIN(1) AS logica_value
+    MIN(1) AS synalog_value
   FROM
-    logica_test.Conn_sn_full AS Conn_sn_full
+    synalog_test.Conn_sn_full AS Conn_sn_full
   WHERE
     (Conn_sn_full.a = Conn_sn_back_step.a) AND
     (Conn_sn_full.b = Conn_sn_back_step.b)) IS NULL)
 GROUP BY 1, 2;
 
-INSERT INTO logica_test.Conn_sn_full SELECT * FROM logica_test.Conn_sn_delta;
+INSERT INTO synalog_test.Conn_sn_full SELECT * FROM synalog_test.Conn_sn_delta;
 
-DROP TABLE IF EXISTS logica_test.Conn_sn_new;
-CREATE TABLE logica_test.Conn_sn_new AS WITH t_0_E AS (SELECT * FROM VALUES
+DROP TABLE IF EXISTS synalog_test.Conn_sn_new;
+CREATE TABLE synalog_test.Conn_sn_new AS WITH t_0_E AS (SELECT * FROM VALUES
   (1, 2),
   (2, 3),
   (3, 1),
@@ -807,7 +807,7 @@ t_1_Conn_MultBodyAggAux_f8 AS (SELECT * FROM (
       Conn_sn_delta.a AS a,
       t_3_U.b AS b
     FROM
-      logica_test.Conn_sn_delta AS Conn_sn_delta, t_1_U AS t_3_U
+      synalog_test.Conn_sn_delta AS Conn_sn_delta, t_1_U AS t_3_U
     WHERE
       (t_3_U.a = Conn_sn_delta.b)
   
@@ -825,18 +825,18 @@ FROM
   t_0_Conn_sn_step AS Conn_sn_step
 WHERE
   ((SELECT
-    MIN(1) AS logica_value
+    MIN(1) AS synalog_value
   FROM
-    logica_test.Conn_sn_full AS Conn_sn_full
+    synalog_test.Conn_sn_full AS Conn_sn_full
   WHERE
     (Conn_sn_full.a = Conn_sn_step.a) AND
     (Conn_sn_full.b = Conn_sn_step.b)) IS NULL)
 GROUP BY 1, 2;
 
-INSERT INTO logica_test.Conn_sn_full SELECT * FROM logica_test.Conn_sn_new;
+INSERT INTO synalog_test.Conn_sn_full SELECT * FROM synalog_test.Conn_sn_new;
 
-DROP TABLE IF EXISTS logica_test.Conn_sn_delta;
-CREATE TABLE logica_test.Conn_sn_delta AS WITH t_0_E AS (SELECT * FROM VALUES
+DROP TABLE IF EXISTS synalog_test.Conn_sn_delta;
+CREATE TABLE synalog_test.Conn_sn_delta AS WITH t_0_E AS (SELECT * FROM VALUES
   (1, 2),
   (2, 3),
   (3, 1),
@@ -883,7 +883,7 @@ t_1_Conn_MultBodyAggAux_f1 AS (SELECT * FROM (
       Conn_sn_new.a AS a,
       t_3_U.b AS b
     FROM
-      logica_test.Conn_sn_new AS Conn_sn_new, t_1_U AS t_3_U
+      synalog_test.Conn_sn_new AS Conn_sn_new, t_1_U AS t_3_U
     WHERE
       (t_3_U.a = Conn_sn_new.b)
   
@@ -901,18 +901,18 @@ FROM
   t_0_Conn_sn_back_step AS Conn_sn_back_step
 WHERE
   ((SELECT
-    MIN(1) AS logica_value
+    MIN(1) AS synalog_value
   FROM
-    logica_test.Conn_sn_full AS Conn_sn_full
+    synalog_test.Conn_sn_full AS Conn_sn_full
   WHERE
     (Conn_sn_full.a = Conn_sn_back_step.a) AND
     (Conn_sn_full.b = Conn_sn_back_step.b)) IS NULL)
 GROUP BY 1, 2;
 
-INSERT INTO logica_test.Conn_sn_full SELECT * FROM logica_test.Conn_sn_delta;
+INSERT INTO synalog_test.Conn_sn_full SELECT * FROM synalog_test.Conn_sn_delta;
 
-DROP TABLE IF EXISTS logica_test.Conn_sn_new;
-CREATE TABLE logica_test.Conn_sn_new AS WITH t_0_E AS (SELECT * FROM VALUES
+DROP TABLE IF EXISTS synalog_test.Conn_sn_new;
+CREATE TABLE synalog_test.Conn_sn_new AS WITH t_0_E AS (SELECT * FROM VALUES
   (1, 2),
   (2, 3),
   (3, 1),
@@ -959,7 +959,7 @@ t_1_Conn_MultBodyAggAux_f8 AS (SELECT * FROM (
       Conn_sn_delta.a AS a,
       t_3_U.b AS b
     FROM
-      logica_test.Conn_sn_delta AS Conn_sn_delta, t_1_U AS t_3_U
+      synalog_test.Conn_sn_delta AS Conn_sn_delta, t_1_U AS t_3_U
     WHERE
       (t_3_U.a = Conn_sn_delta.b)
   
@@ -977,18 +977,18 @@ FROM
   t_0_Conn_sn_step AS Conn_sn_step
 WHERE
   ((SELECT
-    MIN(1) AS logica_value
+    MIN(1) AS synalog_value
   FROM
-    logica_test.Conn_sn_full AS Conn_sn_full
+    synalog_test.Conn_sn_full AS Conn_sn_full
   WHERE
     (Conn_sn_full.a = Conn_sn_step.a) AND
     (Conn_sn_full.b = Conn_sn_step.b)) IS NULL)
 GROUP BY 1, 2;
 
-INSERT INTO logica_test.Conn_sn_full SELECT * FROM logica_test.Conn_sn_new;
+INSERT INTO synalog_test.Conn_sn_full SELECT * FROM synalog_test.Conn_sn_new;
 
-DROP TABLE IF EXISTS logica_test.Conn_sn_delta;
-CREATE TABLE logica_test.Conn_sn_delta AS WITH t_0_E AS (SELECT * FROM VALUES
+DROP TABLE IF EXISTS synalog_test.Conn_sn_delta;
+CREATE TABLE synalog_test.Conn_sn_delta AS WITH t_0_E AS (SELECT * FROM VALUES
   (1, 2),
   (2, 3),
   (3, 1),
@@ -1035,7 +1035,7 @@ t_1_Conn_MultBodyAggAux_f1 AS (SELECT * FROM (
       Conn_sn_new.a AS a,
       t_3_U.b AS b
     FROM
-      logica_test.Conn_sn_new AS Conn_sn_new, t_1_U AS t_3_U
+      synalog_test.Conn_sn_new AS Conn_sn_new, t_1_U AS t_3_U
     WHERE
       (t_3_U.a = Conn_sn_new.b)
   
@@ -1053,18 +1053,18 @@ FROM
   t_0_Conn_sn_back_step AS Conn_sn_back_step
 WHERE
   ((SELECT
-    MIN(1) AS logica_value
+    MIN(1) AS synalog_value
   FROM
-    logica_test.Conn_sn_full AS Conn_sn_full
+    synalog_test.Conn_sn_full AS Conn_sn_full
   WHERE
     (Conn_sn_full.a = Conn_sn_back_step.a) AND
     (Conn_sn_full.b = Conn_sn_back_step.b)) IS NULL)
 GROUP BY 1, 2;
 
-INSERT INTO logica_test.Conn_sn_full SELECT * FROM logica_test.Conn_sn_delta;
+INSERT INTO synalog_test.Conn_sn_full SELECT * FROM synalog_test.Conn_sn_delta;
 
-DROP TABLE IF EXISTS logica_test.Conn_sn_new;
-CREATE TABLE logica_test.Conn_sn_new AS WITH t_0_E AS (SELECT * FROM VALUES
+DROP TABLE IF EXISTS synalog_test.Conn_sn_new;
+CREATE TABLE synalog_test.Conn_sn_new AS WITH t_0_E AS (SELECT * FROM VALUES
   (1, 2),
   (2, 3),
   (3, 1),
@@ -1111,7 +1111,7 @@ t_1_Conn_MultBodyAggAux_f8 AS (SELECT * FROM (
       Conn_sn_delta.a AS a,
       t_3_U.b AS b
     FROM
-      logica_test.Conn_sn_delta AS Conn_sn_delta, t_1_U AS t_3_U
+      synalog_test.Conn_sn_delta AS Conn_sn_delta, t_1_U AS t_3_U
     WHERE
       (t_3_U.a = Conn_sn_delta.b)
   
@@ -1129,18 +1129,18 @@ FROM
   t_0_Conn_sn_step AS Conn_sn_step
 WHERE
   ((SELECT
-    MIN(1) AS logica_value
+    MIN(1) AS synalog_value
   FROM
-    logica_test.Conn_sn_full AS Conn_sn_full
+    synalog_test.Conn_sn_full AS Conn_sn_full
   WHERE
     (Conn_sn_full.a = Conn_sn_step.a) AND
     (Conn_sn_full.b = Conn_sn_step.b)) IS NULL)
 GROUP BY 1, 2;
 
-INSERT INTO logica_test.Conn_sn_full SELECT * FROM logica_test.Conn_sn_new;
+INSERT INTO synalog_test.Conn_sn_full SELECT * FROM synalog_test.Conn_sn_new;
 
-DROP TABLE IF EXISTS logica_test.Conn_sn_delta;
-CREATE TABLE logica_test.Conn_sn_delta AS WITH t_0_E AS (SELECT * FROM VALUES
+DROP TABLE IF EXISTS synalog_test.Conn_sn_delta;
+CREATE TABLE synalog_test.Conn_sn_delta AS WITH t_0_E AS (SELECT * FROM VALUES
   (1, 2),
   (2, 3),
   (3, 1),
@@ -1187,7 +1187,7 @@ t_1_Conn_MultBodyAggAux_f1 AS (SELECT * FROM (
       Conn_sn_new.a AS a,
       t_3_U.b AS b
     FROM
-      logica_test.Conn_sn_new AS Conn_sn_new, t_1_U AS t_3_U
+      synalog_test.Conn_sn_new AS Conn_sn_new, t_1_U AS t_3_U
     WHERE
       (t_3_U.a = Conn_sn_new.b)
   
@@ -1205,18 +1205,18 @@ FROM
   t_0_Conn_sn_back_step AS Conn_sn_back_step
 WHERE
   ((SELECT
-    MIN(1) AS logica_value
+    MIN(1) AS synalog_value
   FROM
-    logica_test.Conn_sn_full AS Conn_sn_full
+    synalog_test.Conn_sn_full AS Conn_sn_full
   WHERE
     (Conn_sn_full.a = Conn_sn_back_step.a) AND
     (Conn_sn_full.b = Conn_sn_back_step.b)) IS NULL)
 GROUP BY 1, 2;
 
-INSERT INTO logica_test.Conn_sn_full SELECT * FROM logica_test.Conn_sn_delta;
+INSERT INTO synalog_test.Conn_sn_full SELECT * FROM synalog_test.Conn_sn_delta;
 
-DROP TABLE IF EXISTS logica_test.Conn_sn_new;
-CREATE TABLE logica_test.Conn_sn_new AS WITH t_0_E AS (SELECT * FROM VALUES
+DROP TABLE IF EXISTS synalog_test.Conn_sn_new;
+CREATE TABLE synalog_test.Conn_sn_new AS WITH t_0_E AS (SELECT * FROM VALUES
   (1, 2),
   (2, 3),
   (3, 1),
@@ -1263,7 +1263,7 @@ t_1_Conn_MultBodyAggAux_f8 AS (SELECT * FROM (
       Conn_sn_delta.a AS a,
       t_3_U.b AS b
     FROM
-      logica_test.Conn_sn_delta AS Conn_sn_delta, t_1_U AS t_3_U
+      synalog_test.Conn_sn_delta AS Conn_sn_delta, t_1_U AS t_3_U
     WHERE
       (t_3_U.a = Conn_sn_delta.b)
   
@@ -1281,18 +1281,18 @@ FROM
   t_0_Conn_sn_step AS Conn_sn_step
 WHERE
   ((SELECT
-    MIN(1) AS logica_value
+    MIN(1) AS synalog_value
   FROM
-    logica_test.Conn_sn_full AS Conn_sn_full
+    synalog_test.Conn_sn_full AS Conn_sn_full
   WHERE
     (Conn_sn_full.a = Conn_sn_step.a) AND
     (Conn_sn_full.b = Conn_sn_step.b)) IS NULL)
 GROUP BY 1, 2;
 
-INSERT INTO logica_test.Conn_sn_full SELECT * FROM logica_test.Conn_sn_new;
+INSERT INTO synalog_test.Conn_sn_full SELECT * FROM synalog_test.Conn_sn_new;
 
-DROP TABLE IF EXISTS logica_test.Conn_sn_delta;
-CREATE TABLE logica_test.Conn_sn_delta AS WITH t_0_E AS (SELECT * FROM VALUES
+DROP TABLE IF EXISTS synalog_test.Conn_sn_delta;
+CREATE TABLE synalog_test.Conn_sn_delta AS WITH t_0_E AS (SELECT * FROM VALUES
   (1, 2),
   (2, 3),
   (3, 1),
@@ -1339,7 +1339,7 @@ t_1_Conn_MultBodyAggAux_f1 AS (SELECT * FROM (
       Conn_sn_new.a AS a,
       t_3_U.b AS b
     FROM
-      logica_test.Conn_sn_new AS Conn_sn_new, t_1_U AS t_3_U
+      synalog_test.Conn_sn_new AS Conn_sn_new, t_1_U AS t_3_U
     WHERE
       (t_3_U.a = Conn_sn_new.b)
   
@@ -1357,15 +1357,15 @@ FROM
   t_0_Conn_sn_back_step AS Conn_sn_back_step
 WHERE
   ((SELECT
-    MIN(1) AS logica_value
+    MIN(1) AS synalog_value
   FROM
-    logica_test.Conn_sn_full AS Conn_sn_full
+    synalog_test.Conn_sn_full AS Conn_sn_full
   WHERE
     (Conn_sn_full.a = Conn_sn_back_step.a) AND
     (Conn_sn_full.b = Conn_sn_back_step.b)) IS NULL)
 GROUP BY 1, 2;
 
-INSERT INTO logica_test.Conn_sn_full SELECT * FROM logica_test.Conn_sn_delta;
+INSERT INTO synalog_test.Conn_sn_full SELECT * FROM synalog_test.Conn_sn_delta;
 
 WITH t_0_E AS (SELECT * FROM VALUES
   (1, 2),
@@ -1399,7 +1399,7 @@ t_2_Comp_MultBodyAggAux AS (SELECT * FROM (
       Node.n AS n,
       Conn_sn_full.b AS c
     FROM
-      t_3_Node AS Node, logica_test.Conn_sn_full AS Conn_sn_full
+      t_3_Node AS Node, synalog_test.Conn_sn_full AS Conn_sn_full
     WHERE
       (Node.n = Conn_sn_full.a)
    UNION ALL

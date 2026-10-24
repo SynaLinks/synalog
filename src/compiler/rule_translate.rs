@@ -854,7 +854,7 @@ fn build_built_in_function_names() -> HashSet<String> {
 
 /// Inline predicate value calls in expressions.
 /// Converts calls to user-defined predicates in value position into body table references.
-/// E.g., `F() = T1()` → `F(logica_value: x) :- T1(logica_value: x)`
+/// E.g., `F() = T1()` → `F(synalog_value: x) :- T1(synalog_value: x)`
 pub fn inline_predicate_values(rule: &mut Json, allocator: &mut NamesAllocator) {
     // A function the program defines is not a built-in, even of a built-in's
     // name: checked where a call is met (see inline_predicate_values_recursive).
@@ -913,14 +913,14 @@ fn inline_predicate_values_recursive(
                     // Convert to body table reference
                     let aux_var = allocator.alloc_var();
 
-                    // Create body predicate with logica_value field
+                    // Create body predicate with synalog_value field
                     let mut pred_call = o.get("call").unwrap().clone();
                     let record = pred_call.as_object_mut()
                         .get_mut("record").unwrap()
                         .as_object_mut()
                         .get_mut("field_value").unwrap();
                     record.as_array_mut().push(crate::json_obj!(
-                        "field" => "logica_value",
+                        "field" => "synalog_value",
                         "value" => crate::json_obj!(
                             "expression" => make_var_expr(&aux_var)
                         )

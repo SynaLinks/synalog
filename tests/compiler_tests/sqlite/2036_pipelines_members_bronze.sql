@@ -1,7 +1,7 @@
-ATTACH DATABASE ':memory:' AS logica_test;
+ATTACH DATABASE ':memory:' AS synalog_test;
 
-DROP TABLE IF EXISTS logica_test.Tier;
-CREATE TABLE logica_test.Tier AS WITH t_2_Order AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_test.Tier;
+CREATE TABLE synalog_test.Tier AS WITH t_2_Order AS (SELECT * FROM (
   
     SELECT
       1 AS id,
@@ -115,11 +115,11 @@ SELECT
 FROM
   t_0_Spend AS Spend;
 
--- Interacting with table logica_test.Tier
+-- Interacting with table synalog_test.Tier
 
 SELECT
   t_0_Tier.who AS who
 FROM
-  logica_test.Tier AS t_0_Tier
+  synalog_test.Tier AS t_0_Tier
 WHERE
   (t_0_Tier.tier = 'bronze') ORDER BY who NULLS LAST;

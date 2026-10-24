@@ -729,6 +729,26 @@ fn test_recursive_single_predicate_is_cut() {
     assert!(result.len() > rules.len());
 }
 
+#[test]
+fn test_is_cut_of_cover_mutual_recursion() {
+    // Two cycles, A -> B -> C -> A and B -> B: only B is on both.
+    let source = r#"
+        Base(1);
+        A(x) :- B(x);
+        B(x) :- C(x);
+        B(x) :- B(x), Base(x);
+        C(x) :- A(x);
+        C(x) :- Base(x);
+    "#;
+    let parsed = parse_file(source, None, &[]).unwrap();
+    let rules = parsed.as_object()["rule"].as_array().to_vec();
+    let f = Functors::new(&rules);
+    let cover: std::collections::HashSet<String> = ["A", "B", "C"].iter().map(|s| s.to_string()).collect();
+    assert!(!f.is_cut_of_cover("A", &cover), "B calls itself without going through A");
+    assert!(f.is_cut_of_cover("B", &cover));
+    assert!(!f.is_cut_of_cover("C", &cover));
+}
+
 // ── Mutual recursion (horizontal unfolding) ──
 
 #[test]

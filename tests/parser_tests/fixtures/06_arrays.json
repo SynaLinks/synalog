@@ -33,7 +33,7 @@
         "record": {
           "field_value": [
             {
-              "field": "logica_value",
+              "field": "synalog_value",
               "value": {
                 "expression": {
                   "expression_heritage": "[\"red\", \"green\", \"blue\"]",
@@ -127,7 +127,7 @@
         "record": {
           "field_value": [
             {
-              "field": "logica_value",
+              "field": "synalog_value",
               "value": {
                 "expression": {
                   "call": {
@@ -179,7 +179,7 @@
         "record": {
           "field_value": [
             {
-              "field": "logica_value",
+              "field": "synalog_value",
               "value": {
                 "expression": {
                   "call": {

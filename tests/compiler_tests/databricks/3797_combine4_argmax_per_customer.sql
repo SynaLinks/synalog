@@ -16,7 +16,7 @@ AS UNUSED_TABLE_NAME(c))
 SELECT
   t_0_C.c AS c,
   (SELECT
-  SORT_ARRAY(COLLECT_LIST(STRUCT(O.amt AS value, O.id AS arg)), false)[0].arg AS logica_value
+  SORT_ARRAY(COLLECT_LIST(STRUCT(O.amt AS value, O.id AS arg)), false)[0].arg AS synalog_value
 FROM
   t_2_O AS O
 WHERE

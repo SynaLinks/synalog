@@ -1,11 +1,11 @@
 -- Initializing DuckDB environment.
-create schema if not exists logica_home;
+create schema if not exists synalog_home;
 -- Empty record, has to have a field by DuckDB syntax.
-drop type if exists logicarecord893574736 cascade; create type logicarecord893574736 as struct(nirvana numeric);
+drop type if exists synalogrecord893574736 cascade; create type synalogrecord893574736 as struct(nirvana numeric);
 create sequence if not exists eternal_logical_sequence;
 
-DROP TABLE IF EXISTS logica_home.Paid;
-CREATE TABLE logica_home.Paid AS WITH t_1_Order AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_home.Paid;
+CREATE TABLE synalog_home.Paid AS WITH t_1_Order AS (SELECT * FROM (
   
     SELECT
       1 AS id,
@@ -97,21 +97,21 @@ FROM
 WHERE
   (t_0_Order.state = 'paid');
 
--- Interacting with table logica_home.Paid
+-- Interacting with table synalog_home.Paid
 
-DROP TABLE IF EXISTS logica_home.Units;
-CREATE TABLE logica_home.Units AS SELECT
+DROP TABLE IF EXISTS synalog_home.Units;
+CREATE TABLE synalog_home.Units AS SELECT
   Paid.item AS item,
   SUM(Paid.n) AS u
 FROM
-  logica_home.Paid AS Paid
+  synalog_home.Paid AS Paid
 GROUP BY Paid.item;
 
--- Interacting with table logica_home.Units
+-- Interacting with table synalog_home.Units
 
 SELECT
   Units.u AS u
 FROM
-  logica_home.Units AS Units
+  synalog_home.Units AS Units
 WHERE
   (Units.item = 'tea');

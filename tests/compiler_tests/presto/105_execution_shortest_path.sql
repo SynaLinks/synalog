@@ -1,5 +1,5 @@
-DROP TABLE IF EXISTS logica_test.Dist_ifr0;
-CREATE TABLE logica_test.Dist_ifr0 AS WITH t_0_Dist_MultBodyAggAux_f1 AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_test.Dist_ifr0;
+CREATE TABLE synalog_test.Dist_ifr0 AS WITH t_0_Dist_MultBodyAggAux_f1 AS (SELECT * FROM (
   
     SELECT
       'a' AS node,
@@ -13,10 +13,10 @@ FROM
   t_0_Dist_MultBodyAggAux_f1 AS Dist_MultBodyAggAux_f1
 GROUP BY 1;
 
--- Interacting with table logica_test.Dist_ifr0
+-- Interacting with table synalog_test.Dist_ifr0
 
-DROP TABLE IF EXISTS logica_test.Dist_ifr1;
-CREATE TABLE logica_test.Dist_ifr1 AS WITH t_1_Edge AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_test.Dist_ifr1;
+CREATE TABLE synalog_test.Dist_ifr1 AS WITH t_1_Edge AS (SELECT * FROM (
   
     SELECT
       'a' AS x,
@@ -49,7 +49,7 @@ t_0_Dist_MultBodyAggAux_f2 AS (SELECT * FROM (
       Edge.y AS node,
       ((Dist_ifr0.d) + (1)) AS d
     FROM
-      logica_test.Dist_ifr0 AS Dist_ifr0, t_1_Edge AS Edge
+      synalog_test.Dist_ifr0 AS Dist_ifr0, t_1_Edge AS Edge
     WHERE
       (Edge.x = Dist_ifr0.node)
   
@@ -61,10 +61,10 @@ FROM
   t_0_Dist_MultBodyAggAux_f2 AS Dist_MultBodyAggAux_f2
 GROUP BY 1;
 
--- Interacting with table logica_test.Dist_ifr1
+-- Interacting with table synalog_test.Dist_ifr1
 
-DROP TABLE IF EXISTS logica_test.Dist_ifr2;
-CREATE TABLE logica_test.Dist_ifr2 AS WITH t_1_Edge AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_test.Dist_ifr2;
+CREATE TABLE synalog_test.Dist_ifr2 AS WITH t_1_Edge AS (SELECT * FROM (
   
     SELECT
       'a' AS x,
@@ -97,7 +97,7 @@ t_0_Dist_MultBodyAggAux_f3 AS (SELECT * FROM (
       Edge.y AS node,
       ((Dist_ifr1.d) + (1)) AS d
     FROM
-      logica_test.Dist_ifr1 AS Dist_ifr1, t_1_Edge AS Edge
+      synalog_test.Dist_ifr1 AS Dist_ifr1, t_1_Edge AS Edge
     WHERE
       (Edge.x = Dist_ifr1.node)
   
@@ -109,10 +109,10 @@ FROM
   t_0_Dist_MultBodyAggAux_f3 AS Dist_MultBodyAggAux_f3
 GROUP BY 1;
 
--- Interacting with table logica_test.Dist_ifr2
+-- Interacting with table synalog_test.Dist_ifr2
 
-DROP TABLE IF EXISTS logica_test.Dist_ifr1;
-CREATE TABLE logica_test.Dist_ifr1 AS WITH t_1_Edge AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_test.Dist_ifr1;
+CREATE TABLE synalog_test.Dist_ifr1 AS WITH t_1_Edge AS (SELECT * FROM (
   
     SELECT
       'a' AS x,
@@ -145,7 +145,7 @@ t_0_Dist_MultBodyAggAux_f4 AS (SELECT * FROM (
       Edge.y AS node,
       ((Dist_ifr2.d) + (1)) AS d
     FROM
-      logica_test.Dist_ifr2 AS Dist_ifr2, t_1_Edge AS Edge
+      synalog_test.Dist_ifr2 AS Dist_ifr2, t_1_Edge AS Edge
     WHERE
       (Edge.x = Dist_ifr2.node)
   
@@ -157,10 +157,10 @@ FROM
   t_0_Dist_MultBodyAggAux_f4 AS Dist_MultBodyAggAux_f4
 GROUP BY 1;
 
--- Interacting with table logica_test.Dist_ifr1
+-- Interacting with table synalog_test.Dist_ifr1
 
-DROP TABLE IF EXISTS logica_test.Dist_ifr2;
-CREATE TABLE logica_test.Dist_ifr2 AS WITH t_1_Edge AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_test.Dist_ifr2;
+CREATE TABLE synalog_test.Dist_ifr2 AS WITH t_1_Edge AS (SELECT * FROM (
   
     SELECT
       'a' AS x,
@@ -193,7 +193,7 @@ t_0_Dist_MultBodyAggAux_f3 AS (SELECT * FROM (
       Edge.y AS node,
       ((Dist_ifr1.d) + (1)) AS d
     FROM
-      logica_test.Dist_ifr1 AS Dist_ifr1, t_1_Edge AS Edge
+      synalog_test.Dist_ifr1 AS Dist_ifr1, t_1_Edge AS Edge
     WHERE
       (Edge.x = Dist_ifr1.node)
   
@@ -205,8 +205,8 @@ FROM
   t_0_Dist_MultBodyAggAux_f3 AS Dist_MultBodyAggAux_f3
 GROUP BY 1;
 
-DROP TABLE IF EXISTS logica_test.Dist_ifr1;
-CREATE TABLE logica_test.Dist_ifr1 AS WITH t_1_Edge AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_test.Dist_ifr1;
+CREATE TABLE synalog_test.Dist_ifr1 AS WITH t_1_Edge AS (SELECT * FROM (
   
     SELECT
       'a' AS x,
@@ -239,7 +239,7 @@ t_0_Dist_MultBodyAggAux_f4 AS (SELECT * FROM (
       Edge.y AS node,
       ((Dist_ifr2.d) + (1)) AS d
     FROM
-      logica_test.Dist_ifr2 AS Dist_ifr2, t_1_Edge AS Edge
+      synalog_test.Dist_ifr2 AS Dist_ifr2, t_1_Edge AS Edge
     WHERE
       (Edge.x = Dist_ifr2.node)
   
@@ -251,8 +251,8 @@ FROM
   t_0_Dist_MultBodyAggAux_f4 AS Dist_MultBodyAggAux_f4
 GROUP BY 1;
 
-DROP TABLE IF EXISTS logica_test.Dist_ifr2;
-CREATE TABLE logica_test.Dist_ifr2 AS WITH t_1_Edge AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_test.Dist_ifr2;
+CREATE TABLE synalog_test.Dist_ifr2 AS WITH t_1_Edge AS (SELECT * FROM (
   
     SELECT
       'a' AS x,
@@ -285,7 +285,7 @@ t_0_Dist_MultBodyAggAux_f3 AS (SELECT * FROM (
       Edge.y AS node,
       ((Dist_ifr1.d) + (1)) AS d
     FROM
-      logica_test.Dist_ifr1 AS Dist_ifr1, t_1_Edge AS Edge
+      synalog_test.Dist_ifr1 AS Dist_ifr1, t_1_Edge AS Edge
     WHERE
       (Edge.x = Dist_ifr1.node)
   
@@ -297,8 +297,8 @@ FROM
   t_0_Dist_MultBodyAggAux_f3 AS Dist_MultBodyAggAux_f3
 GROUP BY 1;
 
-DROP TABLE IF EXISTS logica_test.Dist_ifr1;
-CREATE TABLE logica_test.Dist_ifr1 AS WITH t_1_Edge AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_test.Dist_ifr1;
+CREATE TABLE synalog_test.Dist_ifr1 AS WITH t_1_Edge AS (SELECT * FROM (
   
     SELECT
       'a' AS x,
@@ -331,7 +331,7 @@ t_0_Dist_MultBodyAggAux_f4 AS (SELECT * FROM (
       Edge.y AS node,
       ((Dist_ifr2.d) + (1)) AS d
     FROM
-      logica_test.Dist_ifr2 AS Dist_ifr2, t_1_Edge AS Edge
+      synalog_test.Dist_ifr2 AS Dist_ifr2, t_1_Edge AS Edge
     WHERE
       (Edge.x = Dist_ifr2.node)
   
@@ -343,8 +343,8 @@ FROM
   t_0_Dist_MultBodyAggAux_f4 AS Dist_MultBodyAggAux_f4
 GROUP BY 1;
 
-DROP TABLE IF EXISTS logica_test.Dist_ifr2;
-CREATE TABLE logica_test.Dist_ifr2 AS WITH t_1_Edge AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_test.Dist_ifr2;
+CREATE TABLE synalog_test.Dist_ifr2 AS WITH t_1_Edge AS (SELECT * FROM (
   
     SELECT
       'a' AS x,
@@ -377,7 +377,7 @@ t_0_Dist_MultBodyAggAux_f3 AS (SELECT * FROM (
       Edge.y AS node,
       ((Dist_ifr1.d) + (1)) AS d
     FROM
-      logica_test.Dist_ifr1 AS Dist_ifr1, t_1_Edge AS Edge
+      synalog_test.Dist_ifr1 AS Dist_ifr1, t_1_Edge AS Edge
     WHERE
       (Edge.x = Dist_ifr1.node)
   
@@ -389,8 +389,8 @@ FROM
   t_0_Dist_MultBodyAggAux_f3 AS Dist_MultBodyAggAux_f3
 GROUP BY 1;
 
-DROP TABLE IF EXISTS logica_test.Dist_ifr1;
-CREATE TABLE logica_test.Dist_ifr1 AS WITH t_1_Edge AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_test.Dist_ifr1;
+CREATE TABLE synalog_test.Dist_ifr1 AS WITH t_1_Edge AS (SELECT * FROM (
   
     SELECT
       'a' AS x,
@@ -423,7 +423,7 @@ t_0_Dist_MultBodyAggAux_f4 AS (SELECT * FROM (
       Edge.y AS node,
       ((Dist_ifr2.d) + (1)) AS d
     FROM
-      logica_test.Dist_ifr2 AS Dist_ifr2, t_1_Edge AS Edge
+      synalog_test.Dist_ifr2 AS Dist_ifr2, t_1_Edge AS Edge
     WHERE
       (Edge.x = Dist_ifr2.node)
   
@@ -468,7 +468,7 @@ t_0_Dist_MultBodyAggAux_f5 AS (SELECT * FROM (
       Edge.y AS node,
       ((Dist_ifr3.d) + (1)) AS d
     FROM
-      logica_test.Dist_ifr1 AS Dist_ifr3, t_1_Edge AS Edge
+      synalog_test.Dist_ifr1 AS Dist_ifr3, t_1_Edge AS Edge
     WHERE
       (Edge.x = Dist_ifr3.node)
   

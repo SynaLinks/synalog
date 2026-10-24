@@ -1,7 +1,7 @@
 -- Initializing DuckDB environment.
-create schema if not exists logica_home;
+create schema if not exists synalog_home;
 -- Empty record, has to have a field by DuckDB syntax.
-drop type if exists logicarecord893574736 cascade; create type logicarecord893574736 as struct(nirvana numeric);
+drop type if exists synalogrecord893574736 cascade; create type synalogrecord893574736 as struct(nirvana numeric);
 create sequence if not exists eternal_logical_sequence;
 
 WITH RECURSIVE t_0_R_RecursiveCte AS (SELECT * FROM (
@@ -9,7 +9,7 @@ WITH RECURSIVE t_0_R_RecursiveCte AS (SELECT * FROM (
     
       SELECT
         x_7.unnested_pod AS x,
-        0 AS logica_step
+        0 AS synalog_step
       FROM
         (select unnest([1]) as unnested_pod) as x_7
       WHERE
@@ -18,7 +18,7 @@ WITH RECURSIVE t_0_R_RecursiveCte AS (SELECT * FROM (
     
       SELECT
         2 AS x,
-        ((0) + (1)) AS logica_step
+        ((0) + (1)) AS synalog_step
       FROM
         (select unnest([1]) as unnested_pod) as x_22
       WHERE
@@ -30,7 +30,7 @@ WITH RECURSIVE t_0_R_RecursiveCte AS (SELECT * FROM (
     
       SELECT
         2 AS x,
-        ((((0) + (1))) + (1)) AS logica_step
+        ((((0) + (1))) + (1)) AS synalog_step
       FROM
         (select unnest([1]) as unnested_pod) as x_42
       WHERE
@@ -44,7 +44,7 @@ WITH RECURSIVE t_0_R_RecursiveCte AS (SELECT * FROM (
     
       SELECT
         2 AS x,
-        ((((((0) + (1))) + (1))) + (1)) AS logica_step
+        ((((((0) + (1))) + (1))) + (1)) AS synalog_step
       FROM
         (select unnest([1]) as unnested_pod) as x_67
       WHERE
@@ -61,11 +61,11 @@ WITH RECURSIVE t_0_R_RecursiveCte AS (SELECT * FROM (
 UNION
 SELECT
   2 AS x,
-  ((t_14_R_RecursiveCte.logica_step) + (1)) AS logica_step
+  ((t_14_R_RecursiveCte.synalog_step) + (1)) AS synalog_step
 FROM
   t_0_R_RecursiveCte AS t_14_R_RecursiveCte
 WHERE
-  (t_14_R_RecursiveCte.logica_step < 5) AND
+  (t_14_R_RecursiveCte.synalog_step < 5) AND
   (t_14_R_RecursiveCte.x = 1))
 SELECT
   R_RecursiveCte.x AS x

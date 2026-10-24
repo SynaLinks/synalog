@@ -1,22 +1,22 @@
 -- Initializing PostgreSQL environment.
 set client_min_messages to warning;
-create schema if not exists logica_home;
--- Empty logica type: logicarecord893574736;
-DO $$ BEGIN if not exists (select 'I(am) :- I(think)' from pg_type where typname = 'logicarecord893574736') then create type logicarecord893574736 as (nirvana numeric); end if; END $$;
+create schema if not exists synalog_home;
+-- Empty synalog type: synalogrecord893574736;
+DO $$ BEGIN if not exists (select 'I(am) :- I(think)' from pg_type where typname = 'synalogrecord893574736') then create type synalogrecord893574736 as (nirvana numeric); end if; END $$;
 
 
 DO $$
 BEGIN
--- Logica type: logicarecord481217614
-if not exists (select 'I(am) :- I(think)' from pg_type where typname = 'logicarecord481217614') then create type logicarecord481217614 as (r logicarecord893574736); end if;
--- Logica type: logicarecord86796764
-if not exists (select 'I(am) :- I(think)' from pg_type where typname = 'logicarecord86796764') then create type logicarecord86796764 as (s text); end if;
--- Logica type: logicarecord613101336
-if not exists (select 'I(am) :- I(think)' from pg_type where typname = 'logicarecord613101336') then create type logicarecord613101336 as (city text, dept text); end if;
--- Logica type: logicarecord8501448
-if not exists (select 'I(am) :- I(think)' from pg_type where typname = 'logicarecord8501448') then create type logicarecord8501448 as (base numeric, bonus numeric); end if;
--- Logica type: logicarecord433926068
-if not exists (select 'I(am) :- I(think)' from pg_type where typname = 'logicarecord433926068') then create type logicarecord433926068 as (pay logicarecord8501448, place logicarecord613101336); end if;
+-- Synalog type: synalogrecord481217614
+if not exists (select 'I(am) :- I(think)' from pg_type where typname = 'synalogrecord481217614') then create type synalogrecord481217614 as (r synalogrecord893574736); end if;
+-- Synalog type: synalogrecord86796764
+if not exists (select 'I(am) :- I(think)' from pg_type where typname = 'synalogrecord86796764') then create type synalogrecord86796764 as (s text); end if;
+-- Synalog type: synalogrecord613101336
+if not exists (select 'I(am) :- I(think)' from pg_type where typname = 'synalogrecord613101336') then create type synalogrecord613101336 as (city text, dept text); end if;
+-- Synalog type: synalogrecord8501448
+if not exists (select 'I(am) :- I(think)' from pg_type where typname = 'synalogrecord8501448') then create type synalogrecord8501448 as (base numeric, bonus numeric); end if;
+-- Synalog type: synalogrecord433926068
+if not exists (select 'I(am) :- I(think)' from pg_type where typname = 'synalogrecord433926068') then create type synalogrecord433926068 as (pay synalogrecord8501448, place synalogrecord613101336); end if;
 END $$;
 WITH t_0_Emp AS (SELECT * FROM (
   
@@ -81,4 +81,4 @@ SELECT
 FROM
   t_0_Emp AS Emp
 WHERE
-  ((ROW(Emp.salary, ((Emp.salary) - (1000)))::logicarecord8501448).bonus > 4000) ORDER BY name;
+  ((ROW(Emp.salary, ((Emp.salary) - (1000)))::synalogrecord8501448).bonus > 4000) ORDER BY name;

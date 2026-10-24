@@ -74,5 +74,5 @@ def test_a_run_leaves_no_working_tables():
     s = runners.session("sqlite")
     rows = runners.run_plan(synalog.plan(source, "D", engine="sqlite"), s)[1]
     assert sorted(rows) == [(1, 0), (2, 1), (3, 2)]
-    left = s.run("SELECT name FROM logica_test.sqlite_master WHERE type = 'table'")[1]
+    left = s.run("SELECT name FROM synalog_test.sqlite_master WHERE type = 'table'")[1]
     assert left == []

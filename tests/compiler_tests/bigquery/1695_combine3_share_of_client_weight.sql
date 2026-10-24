@@ -84,7 +84,7 @@ WITH t_1_Ship AS (SELECT * FROM (
 SELECT
   Ship.id AS id,
   (SELECT (CASE WHEN synalog_v IS NULL OR 4 IS NULL THEN NULL WHEN CAST(synalog_v AS FLOAT64) = 0 THEN CAST(synalog_v AS FLOAT64) WHEN FLOOR(LOG10(ABS(CAST(synalog_v AS FLOAT64)))) - 14 + 4 >= 0 THEN (CASE WHEN CAST(synalog_v AS FLOAT64) < 0 THEN -1 ELSE 1 END) * FLOOR(ABS(CAST(synalog_v AS FLOAT64)) / POWER(10, FLOOR(LOG10(ABS(CAST(synalog_v AS FLOAT64)))) - 14) + 0.5) * POWER(10, FLOOR(LOG10(ABS(CAST(synalog_v AS FLOAT64)))) - 14) + 0 ELSE (CASE WHEN CAST(synalog_v AS FLOAT64) < 0 THEN -1 ELSE 1 END) * FLOOR(ABS(CAST(synalog_v AS FLOAT64)) * POWER(10, 4) + 0.5 + 0.5 * POWER(10, FLOOR(LOG10(ABS(CAST(synalog_v AS FLOAT64)))) - 14 + 4)) / POWER(10, 4) + 0 END) FROM UNNEST([((100) * (((Ship.kg) / NULLIF((SELECT
-  SUM(t_0_Ship.kg) AS logica_value
+  SUM(t_0_Ship.kg) AS synalog_value
 FROM
   t_1_Ship AS t_0_Ship
 WHERE

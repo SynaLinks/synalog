@@ -200,6 +200,10 @@ pub enum VerifyError {
     #[error("Invalid table name in rule '{predicate}': '{table}' is not a table name: write names of letters, digits and '_', joined by '.'")]
     InvalidTableName { predicate: String, table: String },
 
+    /// A `Cast`/`TryCast` whose type name is not a plain type name.
+    #[error("Unsafe Cast type in rule '{predicate}': '{type_name}' is not a type name — write a type of letters, digits, '_', spaces and balanced '()<>' (`TEXT`, `DECIMAL(38, 2)`, `ARRAY<INT64>`)")]
+    UnsafeCastType { predicate: String, type_name: String },
+
     /// A database table read outside the rule that declares it.
     #[error("'{table}' is a database table: read it through {}, not directly, in: {rule}", match declared_as {
         Some(p) => format!("'{}', the predicate that declares it", p),

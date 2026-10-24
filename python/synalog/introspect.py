@@ -37,7 +37,7 @@ from .runners import RunnerUnavailable, run_sql
 # `pg_catalog` system schema alongside it.
 # Synalog's own schemas, where it stores the tables a run computes (the steps
 # of a recursion, grounded predicates): never the user's tables.
-_SYNALOG_SCHEMAS = ("logica_home", "logica_test")
+_SYNALOG_SCHEMAS = ("synalog_home", "synalog_test")
 _NOT_SYNALOG = f"table_schema NOT IN ({', '.join(repr(s) for s in _SYNALOG_SCHEMAS)})"
 
 _INFO_SCHEMA_WHERE = {
@@ -138,10 +138,10 @@ def _catalog_rows(engine: str, fetch, connection: Mapping | None) -> list[tuple]
 
 
 # ---------------------------------------------------------------------------
-# Formatting catalog rows into Logica predicates
+# Formatting catalog rows into Synalog predicates
 # ---------------------------------------------------------------------------
 
-_PLAIN = re.compile(r"[a-z_][a-z0-9_]*")  # usable verbatim as a Logica field/var
+_PLAIN = re.compile(r"[a-z_][a-z0-9_]*")  # usable verbatim as a Synalog field/var
 _IDENT = re.compile(r"[A-Za-z_][A-Za-z0-9_]*")  # usable as an explicit field name
 _WORD_BOUNDARY = re.compile(r"(?<=[a-z0-9])(?=[A-Z])|(?<=[A-Z])(?=[A-Z][a-z])")
 

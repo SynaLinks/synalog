@@ -89,7 +89,7 @@ FROM
   t_0_Person AS Person
 WHERE
   ((SELECT
-    MIN(MagicalEntangle(1, x_10.value)) AS logica_value
+    MIN(MagicalEntangle(1, x_10.value)) AS synalog_value
   FROM
     t_2_Manages AS Manages, JSON_EACH(JSON_ARRAY(0)) as x_10
   WHERE

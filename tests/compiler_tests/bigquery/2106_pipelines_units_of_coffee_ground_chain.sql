@@ -1,5 +1,5 @@
-DROP TABLE IF EXISTS logica_test.Paid;
-CREATE TABLE logica_test.Paid AS WITH t_1_Order AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_test.Paid;
+CREATE TABLE synalog_test.Paid AS WITH t_1_Order AS (SELECT * FROM (
   
     SELECT
       1 AS id,
@@ -91,21 +91,21 @@ FROM
 WHERE
   (t_0_Order.state = "paid");
 
--- Interacting with table logica_test.Paid
+-- Interacting with table synalog_test.Paid
 
-DROP TABLE IF EXISTS logica_test.Units;
-CREATE TABLE logica_test.Units AS SELECT
+DROP TABLE IF EXISTS synalog_test.Units;
+CREATE TABLE synalog_test.Units AS SELECT
   Paid.item AS item,
   SUM(Paid.n) AS u
 FROM
-  logica_test.Paid AS Paid
+  synalog_test.Paid AS Paid
 GROUP BY item;
 
--- Interacting with table logica_test.Units
+-- Interacting with table synalog_test.Units
 
 SELECT
   Units.u AS u
 FROM
-  logica_test.Units AS Units
+  synalog_test.Units AS Units
 WHERE
   (Units.item = "coffee");

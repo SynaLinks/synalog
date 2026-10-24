@@ -1,6 +1,6 @@
 // License Apache 2.0: (c) 2025-2026 Yoan Sallami (Synalinks Team)
 
-//! Variable safety checks for Logica rules.
+//! Variable safety checks for Synalog rules.
 //!
 //! Mirrors the Lean 4 specification:
 //! - All head variables must appear in body (range restriction)
@@ -270,7 +270,7 @@ fn check_aggregates_outside(rules: &[&Json]) -> Vec<SafetyError> {
             let Some(fvs) = head.get("record").and_then(|r| r.as_object().get("field_value")) else { continue };
             for fv in fvs.as_array() {
                 let f = &fv.as_object()["field"];
-                if f.is_string() && f.as_str() == "logica_value" {
+                if f.is_string() && f.as_str() == "synalog_value" {
                     if call_of(value_of(fv)).is_some_and(|(n, _)| aggregates.contains(n)) {
                         aggregates.insert(head["predicate_name"].as_str().to_string());
                     }
@@ -327,7 +327,7 @@ fn check_aggregates_outside(rules: &[&Json]) -> Vec<SafetyError> {
             for fv in fvs.as_array() {
                 let f = &fv.as_object()["field"];
                 // A function's value may be an aggregate: it names one.
-                if !(f.is_string() && f.as_str() == "logica_value") {
+                if !(f.is_string() && f.as_str() == "synalog_value") {
                     walk(&fv.as_object()["value"], &aggregates, &mut found);
                 }
             }
@@ -381,7 +381,7 @@ fn check_functions_as_conditions(rules: &[&Json]) -> Vec<SafetyError> {
         record.as_object().get("field_value").is_some_and(|fvs| {
             fvs.as_array().iter().any(|fv| {
                 let field = &fv.as_object()["field"];
-                field.is_string() && field.as_str() == "logica_value"
+                field.is_string() && field.as_str() == "synalog_value"
             })
         })
     };

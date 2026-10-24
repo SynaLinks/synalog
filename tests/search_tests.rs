@@ -4,7 +4,7 @@
 
 use std::collections::HashMap;
 
-use synalog::compiler::universe::{LogicaProgram, Pagination};
+use synalog::compiler::universe::{SynalogProgram, Pagination};
 use synalog::parser::parse_file;
 
 const ALL_ENGINES: &[&str] = &[
@@ -17,11 +17,11 @@ const ALL_ENGINES: &[&str] = &[
     "databricks",
 ];
 
-/// Helper: compile a program in Logica mode and return search SQL for a predicate.
+/// Helper: compile a program in fact mode and return search SQL for a predicate.
 fn search_sql(source: &str, predicate: &str, pattern: &str) -> String {
     let parsed = parse_file(source, None, &[]).expect("parse should succeed");
     let program =
-        LogicaProgram::new(&parsed, HashMap::new(), HashMap::new())
+        SynalogProgram::new(&parsed, HashMap::new(), HashMap::new())
             .expect("compile should succeed");
     let pagination = Pagination {
         limit: None,
@@ -42,7 +42,7 @@ fn search_sql_with_pagination(
 ) -> String {
     let parsed = parse_file(source, None, &[]).expect("parse should succeed");
     let program =
-        LogicaProgram::new(&parsed, HashMap::new(), HashMap::new())
+        SynalogProgram::new(&parsed, HashMap::new(), HashMap::new())
             .expect("compile should succeed");
     let pagination = Pagination { limit, offset };
     program
@@ -58,7 +58,7 @@ fn search_sql_result(
 ) -> Result<String, String> {
     let parsed = parse_file(source, None, &[]).expect("parse should succeed");
     let program =
-        LogicaProgram::new(&parsed, HashMap::new(), HashMap::new())
+        SynalogProgram::new(&parsed, HashMap::new(), HashMap::new())
             .expect("compile should succeed");
     let pagination = Pagination {
         limit: None,
@@ -69,7 +69,7 @@ fn search_sql_result(
         .map_err(|e| e.to_string())
 }
 
-// Programs that define facts (Logica mode) so they compile as self-contained queries.
+// Programs that define facts (fact mode) so they compile as self-contained queries.
 
 fn program_for(engine: &str) -> String {
     format!(

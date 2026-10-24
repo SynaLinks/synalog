@@ -3,7 +3,7 @@
 // Original work: Copyright 2020 Google LLC, licensed under the Apache License, Version 2.0.
 // Modifications: Copyright 2025-2026 Yoan Sallami (Synalinks Team), licensed under the Apache License, Version 2.0.
 
-//! Type definitions for the Logica type inference system.
+//! Type definitions for the Synalog type inference system.
 //!
 //! Ported from Python: type_inference/types/variable_types.py
 
@@ -11,7 +11,7 @@ use std::collections::HashMap;
 use std::fmt;
 use std::hash::{Hash, Hasher};
 
-/// Base trait for all Logica types.
+/// Base trait for all Synalog types.
 #[derive(Debug, Clone)]
 pub enum Type {
     Any,

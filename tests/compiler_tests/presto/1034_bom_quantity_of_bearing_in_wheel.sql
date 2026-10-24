@@ -1,5 +1,5 @@
-DROP TABLE IF EXISTS logica_test.Need_sn_delta;
-CREATE TABLE logica_test.Need_sn_delta AS WITH t_2_Uses AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_test.Need_sn_delta;
+CREATE TABLE synalog_test.Need_sn_delta AS WITH t_2_Uses AS (SELECT * FROM (
   
     SELECT
       'bike' AS part,
@@ -75,23 +75,23 @@ FROM
   t_0_Need_MultBodyAggAux_f2 AS Need_MultBodyAggAux_f2
 GROUP BY 1, 2, 3, 4;
 
--- Interacting with table logica_test.Need_sn_delta
+-- Interacting with table synalog_test.Need_sn_delta
 
-DROP TABLE IF EXISTS logica_test.Need_sn_t0;
-CREATE TABLE logica_test.Need_sn_t0 AS SELECT
+DROP TABLE IF EXISTS synalog_test.Need_sn_t0;
+CREATE TABLE synalog_test.Need_sn_t0 AS SELECT
   Need_sn_delta.part AS part,
   Need_sn_delta.component AS component,
   Need_sn_delta.path_id AS path_id,
   Need_sn_delta.n AS n
 FROM
-  logica_test.Need_sn_delta AS Need_sn_delta
+  synalog_test.Need_sn_delta AS Need_sn_delta
 WHERE
   (1 = 0);
 
--- Interacting with table logica_test.Need_sn_t0
+-- Interacting with table synalog_test.Need_sn_t0
 
-DROP TABLE IF EXISTS logica_test.Need_sn_t1;
-CREATE TABLE logica_test.Need_sn_t1 AS WITH t_2_Uses AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_test.Need_sn_t1;
+CREATE TABLE synalog_test.Need_sn_t1 AS WITH t_2_Uses AS (SELECT * FROM (
   
     SELECT
       'bike' AS part,
@@ -155,7 +155,7 @@ t_1_Need_MultBodyAggAux_f3 AS (SELECT * FROM (
       (CONCAT((CONCAT(Need_sn_t0.path_id, '/')), Uses.component)) AS path_id,
       ((Need_sn_t0.n) * (Uses.qty)) AS n
     FROM
-      logica_test.Need_sn_t0 AS Need_sn_t0, t_2_Uses AS Uses
+      synalog_test.Need_sn_t0 AS Need_sn_t0, t_2_Uses AS Uses
     WHERE
       (Uses.part = Need_sn_t0.component)
    UNION ALL
@@ -187,10 +187,10 @@ FROM
 WHERE
   (1 = 0);
 
--- Interacting with table logica_test.Need_sn_t1
+-- Interacting with table synalog_test.Need_sn_t1
 
-DROP TABLE IF EXISTS logica_test.Need_sn_t2;
-CREATE TABLE logica_test.Need_sn_t2 AS WITH t_2_Uses AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_test.Need_sn_t2;
+CREATE TABLE synalog_test.Need_sn_t2 AS WITH t_2_Uses AS (SELECT * FROM (
   
     SELECT
       'bike' AS part,
@@ -254,7 +254,7 @@ t_1_Need_MultBodyAggAux_f4 AS (SELECT * FROM (
       (CONCAT((CONCAT(Need_sn_t1.path_id, '/')), Uses.component)) AS path_id,
       ((Need_sn_t1.n) * (Uses.qty)) AS n
     FROM
-      logica_test.Need_sn_t1 AS Need_sn_t1, t_2_Uses AS Uses
+      synalog_test.Need_sn_t1 AS Need_sn_t1, t_2_Uses AS Uses
     WHERE
       (Uses.part = Need_sn_t1.component)
    UNION ALL
@@ -286,10 +286,10 @@ FROM
 WHERE
   (1 = 0);
 
--- Interacting with table logica_test.Need_sn_t2
+-- Interacting with table synalog_test.Need_sn_t2
 
-DROP TABLE IF EXISTS logica_test.Need_sn_t3;
-CREATE TABLE logica_test.Need_sn_t3 AS WITH t_2_Uses AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_test.Need_sn_t3;
+CREATE TABLE synalog_test.Need_sn_t3 AS WITH t_2_Uses AS (SELECT * FROM (
   
     SELECT
       'bike' AS part,
@@ -353,7 +353,7 @@ t_1_Need_MultBodyAggAux_f5 AS (SELECT * FROM (
       (CONCAT((CONCAT(Need_sn_t2.path_id, '/')), Uses.component)) AS path_id,
       ((Need_sn_t2.n) * (Uses.qty)) AS n
     FROM
-      logica_test.Need_sn_t2 AS Need_sn_t2, t_2_Uses AS Uses
+      synalog_test.Need_sn_t2 AS Need_sn_t2, t_2_Uses AS Uses
     WHERE
       (Uses.part = Need_sn_t2.component)
    UNION ALL
@@ -385,10 +385,10 @@ FROM
 WHERE
   (1 = 0);
 
--- Interacting with table logica_test.Need_sn_t3
+-- Interacting with table synalog_test.Need_sn_t3
 
-DROP TABLE IF EXISTS logica_test.Need_sn_t4;
-CREATE TABLE logica_test.Need_sn_t4 AS WITH t_2_Uses AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_test.Need_sn_t4;
+CREATE TABLE synalog_test.Need_sn_t4 AS WITH t_2_Uses AS (SELECT * FROM (
   
     SELECT
       'bike' AS part,
@@ -452,7 +452,7 @@ t_1_Need_MultBodyAggAux_f6 AS (SELECT * FROM (
       (CONCAT((CONCAT(Need_sn_t3.path_id, '/')), Uses.component)) AS path_id,
       ((Need_sn_t3.n) * (Uses.qty)) AS n
     FROM
-      logica_test.Need_sn_t3 AS Need_sn_t3, t_2_Uses AS Uses
+      synalog_test.Need_sn_t3 AS Need_sn_t3, t_2_Uses AS Uses
     WHERE
       (Uses.part = Need_sn_t3.component)
    UNION ALL
@@ -484,10 +484,10 @@ FROM
 WHERE
   (1 = 0);
 
--- Interacting with table logica_test.Need_sn_t4
+-- Interacting with table synalog_test.Need_sn_t4
 
-DROP TABLE IF EXISTS logica_test.Need_sn_t5;
-CREATE TABLE logica_test.Need_sn_t5 AS WITH t_2_Uses AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_test.Need_sn_t5;
+CREATE TABLE synalog_test.Need_sn_t5 AS WITH t_2_Uses AS (SELECT * FROM (
   
     SELECT
       'bike' AS part,
@@ -551,7 +551,7 @@ t_1_Need_MultBodyAggAux_f7 AS (SELECT * FROM (
       (CONCAT((CONCAT(Need_sn_t4.path_id, '/')), Uses.component)) AS path_id,
       ((Need_sn_t4.n) * (Uses.qty)) AS n
     FROM
-      logica_test.Need_sn_t4 AS Need_sn_t4, t_2_Uses AS Uses
+      synalog_test.Need_sn_t4 AS Need_sn_t4, t_2_Uses AS Uses
     WHERE
       (Uses.part = Need_sn_t4.component)
    UNION ALL
@@ -583,10 +583,10 @@ FROM
 WHERE
   (1 = 0);
 
--- Interacting with table logica_test.Need_sn_t5
+-- Interacting with table synalog_test.Need_sn_t5
 
-DROP TABLE IF EXISTS logica_test.Need_sn_t6;
-CREATE TABLE logica_test.Need_sn_t6 AS WITH t_2_Uses AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_test.Need_sn_t6;
+CREATE TABLE synalog_test.Need_sn_t6 AS WITH t_2_Uses AS (SELECT * FROM (
   
     SELECT
       'bike' AS part,
@@ -650,7 +650,7 @@ t_1_Need_MultBodyAggAux_f8 AS (SELECT * FROM (
       (CONCAT((CONCAT(Need_sn_t5.path_id, '/')), Uses.component)) AS path_id,
       ((Need_sn_t5.n) * (Uses.qty)) AS n
     FROM
-      logica_test.Need_sn_t5 AS Need_sn_t5, t_2_Uses AS Uses
+      synalog_test.Need_sn_t5 AS Need_sn_t5, t_2_Uses AS Uses
     WHERE
       (Uses.part = Need_sn_t5.component)
    UNION ALL
@@ -682,10 +682,10 @@ FROM
 WHERE
   (1 = 0);
 
--- Interacting with table logica_test.Need_sn_t6
+-- Interacting with table synalog_test.Need_sn_t6
 
-DROP TABLE IF EXISTS logica_test.Need_sn_t7;
-CREATE TABLE logica_test.Need_sn_t7 AS WITH t_2_Uses AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_test.Need_sn_t7;
+CREATE TABLE synalog_test.Need_sn_t7 AS WITH t_2_Uses AS (SELECT * FROM (
   
     SELECT
       'bike' AS part,
@@ -749,7 +749,7 @@ t_1_Need_MultBodyAggAux_f9 AS (SELECT * FROM (
       (CONCAT((CONCAT(Need_sn_t6.path_id, '/')), Uses.component)) AS path_id,
       ((Need_sn_t6.n) * (Uses.qty)) AS n
     FROM
-      logica_test.Need_sn_t6 AS Need_sn_t6, t_2_Uses AS Uses
+      synalog_test.Need_sn_t6 AS Need_sn_t6, t_2_Uses AS Uses
     WHERE
       (Uses.part = Need_sn_t6.component)
    UNION ALL
@@ -781,10 +781,10 @@ FROM
 WHERE
   (1 = 0);
 
--- Interacting with table logica_test.Need_sn_t7
+-- Interacting with table synalog_test.Need_sn_t7
 
-DROP TABLE IF EXISTS logica_test.Need_sn_t8;
-CREATE TABLE logica_test.Need_sn_t8 AS WITH t_2_Uses AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_test.Need_sn_t8;
+CREATE TABLE synalog_test.Need_sn_t8 AS WITH t_2_Uses AS (SELECT * FROM (
   
     SELECT
       'bike' AS part,
@@ -848,7 +848,7 @@ t_1_Need_MultBodyAggAux_f10 AS (SELECT * FROM (
       (CONCAT((CONCAT(Need_sn_t7.path_id, '/')), Uses.component)) AS path_id,
       ((Need_sn_t7.n) * (Uses.qty)) AS n
     FROM
-      logica_test.Need_sn_t7 AS Need_sn_t7, t_2_Uses AS Uses
+      synalog_test.Need_sn_t7 AS Need_sn_t7, t_2_Uses AS Uses
     WHERE
       (Uses.part = Need_sn_t7.component)
    UNION ALL
@@ -880,10 +880,10 @@ FROM
 WHERE
   (1 = 0);
 
--- Interacting with table logica_test.Need_sn_t8
+-- Interacting with table synalog_test.Need_sn_t8
 
-DROP TABLE IF EXISTS logica_test.Need_sn_t9;
-CREATE TABLE logica_test.Need_sn_t9 AS WITH t_2_Uses AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_test.Need_sn_t9;
+CREATE TABLE synalog_test.Need_sn_t9 AS WITH t_2_Uses AS (SELECT * FROM (
   
     SELECT
       'bike' AS part,
@@ -947,7 +947,7 @@ t_1_Need_MultBodyAggAux_f11 AS (SELECT * FROM (
       (CONCAT((CONCAT(Need_sn_t8.path_id, '/')), Uses.component)) AS path_id,
       ((Need_sn_t8.n) * (Uses.qty)) AS n
     FROM
-      logica_test.Need_sn_t8 AS Need_sn_t8, t_2_Uses AS Uses
+      synalog_test.Need_sn_t8 AS Need_sn_t8, t_2_Uses AS Uses
     WHERE
       (Uses.part = Need_sn_t8.component)
    UNION ALL
@@ -979,10 +979,10 @@ FROM
 WHERE
   (1 = 0);
 
--- Interacting with table logica_test.Need_sn_t9
+-- Interacting with table synalog_test.Need_sn_t9
 
-DROP TABLE IF EXISTS logica_test.Need_sn_full;
-CREATE TABLE logica_test.Need_sn_full AS SELECT * FROM (
+DROP TABLE IF EXISTS synalog_test.Need_sn_full;
+CREATE TABLE synalog_test.Need_sn_full AS SELECT * FROM (
   
     SELECT
       Need_sn_delta.part AS part,
@@ -990,7 +990,7 @@ CREATE TABLE logica_test.Need_sn_full AS SELECT * FROM (
       Need_sn_delta.path_id AS path_id,
       Need_sn_delta.n AS n
     FROM
-      logica_test.Need_sn_delta AS Need_sn_delta
+      synalog_test.Need_sn_delta AS Need_sn_delta
    UNION ALL
   
     SELECT
@@ -999,7 +999,7 @@ CREATE TABLE logica_test.Need_sn_full AS SELECT * FROM (
       Need_sn_t1.path_id AS path_id,
       Need_sn_t1.n AS n
     FROM
-      logica_test.Need_sn_t1 AS Need_sn_t1
+      synalog_test.Need_sn_t1 AS Need_sn_t1
    UNION ALL
   
     SELECT
@@ -1008,7 +1008,7 @@ CREATE TABLE logica_test.Need_sn_full AS SELECT * FROM (
       Need_sn_t2.path_id AS path_id,
       Need_sn_t2.n AS n
     FROM
-      logica_test.Need_sn_t2 AS Need_sn_t2
+      synalog_test.Need_sn_t2 AS Need_sn_t2
    UNION ALL
   
     SELECT
@@ -1017,7 +1017,7 @@ CREATE TABLE logica_test.Need_sn_full AS SELECT * FROM (
       Need_sn_t3.path_id AS path_id,
       Need_sn_t3.n AS n
     FROM
-      logica_test.Need_sn_t3 AS Need_sn_t3
+      synalog_test.Need_sn_t3 AS Need_sn_t3
    UNION ALL
   
     SELECT
@@ -1026,7 +1026,7 @@ CREATE TABLE logica_test.Need_sn_full AS SELECT * FROM (
       Need_sn_t4.path_id AS path_id,
       Need_sn_t4.n AS n
     FROM
-      logica_test.Need_sn_t4 AS Need_sn_t4
+      synalog_test.Need_sn_t4 AS Need_sn_t4
    UNION ALL
   
     SELECT
@@ -1035,7 +1035,7 @@ CREATE TABLE logica_test.Need_sn_full AS SELECT * FROM (
       Need_sn_t5.path_id AS path_id,
       Need_sn_t5.n AS n
     FROM
-      logica_test.Need_sn_t5 AS Need_sn_t5
+      synalog_test.Need_sn_t5 AS Need_sn_t5
    UNION ALL
   
     SELECT
@@ -1044,7 +1044,7 @@ CREATE TABLE logica_test.Need_sn_full AS SELECT * FROM (
       Need_sn_t6.path_id AS path_id,
       Need_sn_t6.n AS n
     FROM
-      logica_test.Need_sn_t6 AS Need_sn_t6
+      synalog_test.Need_sn_t6 AS Need_sn_t6
    UNION ALL
   
     SELECT
@@ -1053,7 +1053,7 @@ CREATE TABLE logica_test.Need_sn_full AS SELECT * FROM (
       Need_sn_t7.path_id AS path_id,
       Need_sn_t7.n AS n
     FROM
-      logica_test.Need_sn_t7 AS Need_sn_t7
+      synalog_test.Need_sn_t7 AS Need_sn_t7
    UNION ALL
   
     SELECT
@@ -1062,7 +1062,7 @@ CREATE TABLE logica_test.Need_sn_full AS SELECT * FROM (
       Need_sn_t8.path_id AS path_id,
       Need_sn_t8.n AS n
     FROM
-      logica_test.Need_sn_t8 AS Need_sn_t8
+      synalog_test.Need_sn_t8 AS Need_sn_t8
    UNION ALL
   
     SELECT
@@ -1071,14 +1071,14 @@ CREATE TABLE logica_test.Need_sn_full AS SELECT * FROM (
       Need_sn_t9.path_id AS path_id,
       Need_sn_t9.n AS n
     FROM
-      logica_test.Need_sn_t9 AS Need_sn_t9
+      synalog_test.Need_sn_t9 AS Need_sn_t9
   
 ) AS UNUSED_TABLE_NAME  ;
 
--- Interacting with table logica_test.Need_sn_full
+-- Interacting with table synalog_test.Need_sn_full
 
-DROP TABLE IF EXISTS logica_test.Need_sn_new;
-CREATE TABLE logica_test.Need_sn_new AS WITH t_2_Uses AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_test.Need_sn_new;
+CREATE TABLE synalog_test.Need_sn_new AS WITH t_2_Uses AS (SELECT * FROM (
   
     SELECT
       'bike' AS part,
@@ -1142,7 +1142,7 @@ t_1_Need_MultBodyAggAux_f12 AS (SELECT * FROM (
       (CONCAT((CONCAT(Need_sn_delta.path_id, '/')), Uses.component)) AS path_id,
       ((Need_sn_delta.n) * (Uses.qty)) AS n
     FROM
-      logica_test.Need_sn_delta AS Need_sn_delta, t_2_Uses AS Uses
+      synalog_test.Need_sn_delta AS Need_sn_delta, t_2_Uses AS Uses
     WHERE
       (Uses.part = Need_sn_delta.component)
    UNION ALL
@@ -1173,9 +1173,9 @@ FROM
   t_0_Need_sn_step AS Need_sn_step
 WHERE
   ((SELECT
-    MIN(1) AS logica_value
+    MIN(1) AS synalog_value
   FROM
-    logica_test.Need_sn_full AS Need_sn_full
+    synalog_test.Need_sn_full AS Need_sn_full
   WHERE
     (Need_sn_full.part = Need_sn_step.part) AND
     (Need_sn_full.component = Need_sn_step.component) AND
@@ -1183,10 +1183,10 @@ WHERE
     (Need_sn_full.n = Need_sn_step.n)) IS NULL)
 GROUP BY 1, 2, 3, 4;
 
-INSERT INTO logica_test.Need_sn_full SELECT * FROM logica_test.Need_sn_new;
+INSERT INTO synalog_test.Need_sn_full SELECT * FROM synalog_test.Need_sn_new;
 
-DROP TABLE IF EXISTS logica_test.Need_sn_delta;
-CREATE TABLE logica_test.Need_sn_delta AS WITH t_2_Uses AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_test.Need_sn_delta;
+CREATE TABLE synalog_test.Need_sn_delta AS WITH t_2_Uses AS (SELECT * FROM (
   
     SELECT
       'bike' AS part,
@@ -1250,7 +1250,7 @@ t_1_Need_MultBodyAggAux_f1 AS (SELECT * FROM (
       (CONCAT((CONCAT(Need_sn_new.path_id, '/')), Uses.component)) AS path_id,
       ((Need_sn_new.n) * (Uses.qty)) AS n
     FROM
-      logica_test.Need_sn_new AS Need_sn_new, t_2_Uses AS Uses
+      synalog_test.Need_sn_new AS Need_sn_new, t_2_Uses AS Uses
     WHERE
       (Uses.part = Need_sn_new.component)
    UNION ALL
@@ -1281,9 +1281,9 @@ FROM
   t_0_Need_sn_back_step AS Need_sn_back_step
 WHERE
   ((SELECT
-    MIN(1) AS logica_value
+    MIN(1) AS synalog_value
   FROM
-    logica_test.Need_sn_full AS Need_sn_full
+    synalog_test.Need_sn_full AS Need_sn_full
   WHERE
     (Need_sn_full.part = Need_sn_back_step.part) AND
     (Need_sn_full.component = Need_sn_back_step.component) AND
@@ -1291,10 +1291,10 @@ WHERE
     (Need_sn_full.n = Need_sn_back_step.n)) IS NULL)
 GROUP BY 1, 2, 3, 4;
 
-INSERT INTO logica_test.Need_sn_full SELECT * FROM logica_test.Need_sn_delta;
+INSERT INTO synalog_test.Need_sn_full SELECT * FROM synalog_test.Need_sn_delta;
 
-DROP TABLE IF EXISTS logica_test.Need_sn_new;
-CREATE TABLE logica_test.Need_sn_new AS WITH t_2_Uses AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_test.Need_sn_new;
+CREATE TABLE synalog_test.Need_sn_new AS WITH t_2_Uses AS (SELECT * FROM (
   
     SELECT
       'bike' AS part,
@@ -1358,7 +1358,7 @@ t_1_Need_MultBodyAggAux_f12 AS (SELECT * FROM (
       (CONCAT((CONCAT(Need_sn_delta.path_id, '/')), Uses.component)) AS path_id,
       ((Need_sn_delta.n) * (Uses.qty)) AS n
     FROM
-      logica_test.Need_sn_delta AS Need_sn_delta, t_2_Uses AS Uses
+      synalog_test.Need_sn_delta AS Need_sn_delta, t_2_Uses AS Uses
     WHERE
       (Uses.part = Need_sn_delta.component)
    UNION ALL
@@ -1389,9 +1389,9 @@ FROM
   t_0_Need_sn_step AS Need_sn_step
 WHERE
   ((SELECT
-    MIN(1) AS logica_value
+    MIN(1) AS synalog_value
   FROM
-    logica_test.Need_sn_full AS Need_sn_full
+    synalog_test.Need_sn_full AS Need_sn_full
   WHERE
     (Need_sn_full.part = Need_sn_step.part) AND
     (Need_sn_full.component = Need_sn_step.component) AND
@@ -1399,10 +1399,10 @@ WHERE
     (Need_sn_full.n = Need_sn_step.n)) IS NULL)
 GROUP BY 1, 2, 3, 4;
 
-INSERT INTO logica_test.Need_sn_full SELECT * FROM logica_test.Need_sn_new;
+INSERT INTO synalog_test.Need_sn_full SELECT * FROM synalog_test.Need_sn_new;
 
-DROP TABLE IF EXISTS logica_test.Need_sn_delta;
-CREATE TABLE logica_test.Need_sn_delta AS WITH t_2_Uses AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_test.Need_sn_delta;
+CREATE TABLE synalog_test.Need_sn_delta AS WITH t_2_Uses AS (SELECT * FROM (
   
     SELECT
       'bike' AS part,
@@ -1466,7 +1466,7 @@ t_1_Need_MultBodyAggAux_f1 AS (SELECT * FROM (
       (CONCAT((CONCAT(Need_sn_new.path_id, '/')), Uses.component)) AS path_id,
       ((Need_sn_new.n) * (Uses.qty)) AS n
     FROM
-      logica_test.Need_sn_new AS Need_sn_new, t_2_Uses AS Uses
+      synalog_test.Need_sn_new AS Need_sn_new, t_2_Uses AS Uses
     WHERE
       (Uses.part = Need_sn_new.component)
    UNION ALL
@@ -1497,9 +1497,9 @@ FROM
   t_0_Need_sn_back_step AS Need_sn_back_step
 WHERE
   ((SELECT
-    MIN(1) AS logica_value
+    MIN(1) AS synalog_value
   FROM
-    logica_test.Need_sn_full AS Need_sn_full
+    synalog_test.Need_sn_full AS Need_sn_full
   WHERE
     (Need_sn_full.part = Need_sn_back_step.part) AND
     (Need_sn_full.component = Need_sn_back_step.component) AND
@@ -1507,10 +1507,10 @@ WHERE
     (Need_sn_full.n = Need_sn_back_step.n)) IS NULL)
 GROUP BY 1, 2, 3, 4;
 
-INSERT INTO logica_test.Need_sn_full SELECT * FROM logica_test.Need_sn_delta;
+INSERT INTO synalog_test.Need_sn_full SELECT * FROM synalog_test.Need_sn_delta;
 
-DROP TABLE IF EXISTS logica_test.Need_sn_new;
-CREATE TABLE logica_test.Need_sn_new AS WITH t_2_Uses AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_test.Need_sn_new;
+CREATE TABLE synalog_test.Need_sn_new AS WITH t_2_Uses AS (SELECT * FROM (
   
     SELECT
       'bike' AS part,
@@ -1574,7 +1574,7 @@ t_1_Need_MultBodyAggAux_f12 AS (SELECT * FROM (
       (CONCAT((CONCAT(Need_sn_delta.path_id, '/')), Uses.component)) AS path_id,
       ((Need_sn_delta.n) * (Uses.qty)) AS n
     FROM
-      logica_test.Need_sn_delta AS Need_sn_delta, t_2_Uses AS Uses
+      synalog_test.Need_sn_delta AS Need_sn_delta, t_2_Uses AS Uses
     WHERE
       (Uses.part = Need_sn_delta.component)
    UNION ALL
@@ -1605,9 +1605,9 @@ FROM
   t_0_Need_sn_step AS Need_sn_step
 WHERE
   ((SELECT
-    MIN(1) AS logica_value
+    MIN(1) AS synalog_value
   FROM
-    logica_test.Need_sn_full AS Need_sn_full
+    synalog_test.Need_sn_full AS Need_sn_full
   WHERE
     (Need_sn_full.part = Need_sn_step.part) AND
     (Need_sn_full.component = Need_sn_step.component) AND
@@ -1615,10 +1615,10 @@ WHERE
     (Need_sn_full.n = Need_sn_step.n)) IS NULL)
 GROUP BY 1, 2, 3, 4;
 
-INSERT INTO logica_test.Need_sn_full SELECT * FROM logica_test.Need_sn_new;
+INSERT INTO synalog_test.Need_sn_full SELECT * FROM synalog_test.Need_sn_new;
 
-DROP TABLE IF EXISTS logica_test.Need_sn_delta;
-CREATE TABLE logica_test.Need_sn_delta AS WITH t_2_Uses AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_test.Need_sn_delta;
+CREATE TABLE synalog_test.Need_sn_delta AS WITH t_2_Uses AS (SELECT * FROM (
   
     SELECT
       'bike' AS part,
@@ -1682,7 +1682,7 @@ t_1_Need_MultBodyAggAux_f1 AS (SELECT * FROM (
       (CONCAT((CONCAT(Need_sn_new.path_id, '/')), Uses.component)) AS path_id,
       ((Need_sn_new.n) * (Uses.qty)) AS n
     FROM
-      logica_test.Need_sn_new AS Need_sn_new, t_2_Uses AS Uses
+      synalog_test.Need_sn_new AS Need_sn_new, t_2_Uses AS Uses
     WHERE
       (Uses.part = Need_sn_new.component)
    UNION ALL
@@ -1713,9 +1713,9 @@ FROM
   t_0_Need_sn_back_step AS Need_sn_back_step
 WHERE
   ((SELECT
-    MIN(1) AS logica_value
+    MIN(1) AS synalog_value
   FROM
-    logica_test.Need_sn_full AS Need_sn_full
+    synalog_test.Need_sn_full AS Need_sn_full
   WHERE
     (Need_sn_full.part = Need_sn_back_step.part) AND
     (Need_sn_full.component = Need_sn_back_step.component) AND
@@ -1723,12 +1723,12 @@ WHERE
     (Need_sn_full.n = Need_sn_back_step.n)) IS NULL)
 GROUP BY 1, 2, 3, 4;
 
-INSERT INTO logica_test.Need_sn_full SELECT * FROM logica_test.Need_sn_delta;
+INSERT INTO synalog_test.Need_sn_full SELECT * FROM synalog_test.Need_sn_delta;
 
 SELECT
   SUM(Need_sn_full.n) AS q
 FROM
-  logica_test.Need_sn_full AS Need_sn_full
+  synalog_test.Need_sn_full AS Need_sn_full
 WHERE
   ('wheel' = Need_sn_full.part) AND
   ('bearing' = Need_sn_full.component);

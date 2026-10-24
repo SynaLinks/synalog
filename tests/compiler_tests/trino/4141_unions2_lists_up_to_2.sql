@@ -1,5 +1,5 @@
-DROP TABLE IF EXISTS logica_test.L;
-CREATE TABLE logica_test.L AS WITH t_1_A AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_test.L;
+CREATE TABLE synalog_test.L AS WITH t_1_A AS (SELECT * FROM (
   
     SELECT
       1 AS x
@@ -74,7 +74,7 @@ FROM
   t_0_L_MultBodyAggAux AS L_MultBodyAggAux
 GROUP BY 1;
 
--- Interacting with table logica_test.L
+-- Interacting with table synalog_test.L
 
 WITH t_3_M AS (SELECT * FROM (
   
@@ -94,7 +94,7 @@ t_1_All AS (SELECT * FROM (
       t_2_L.src AS src,
       t_2_L.l AS l
     FROM
-      logica_test.L AS t_2_L
+      synalog_test.L AS t_2_L
    UNION ALL
   
     SELECT
@@ -104,9 +104,9 @@ t_1_All AS (SELECT * FROM (
       t_3_M AS M
     WHERE
       ((SELECT
-        MIN(1) AS logica_value
+        MIN(1) AS synalog_value
       FROM
-        logica_test.L AS t_4_L
+        synalog_test.L AS t_4_L
       WHERE
         (t_4_L.src = M.src)) IS NULL)
   

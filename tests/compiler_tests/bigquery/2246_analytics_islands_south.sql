@@ -99,13 +99,13 @@ FROM
 WHERE
   (t_2_D.d >= t_1_D.d) AND
   ((SELECT
-    MIN(1) AS logica_value
+    MIN(1) AS synalog_value
   FROM
     t_3_D AS t_6_D
   WHERE
     (t_6_D.d = ((t_1_D.d) - (1)))) IS NULL) AND
   ((SELECT
-    MIN(1) AS logica_value
+    MIN(1) AS synalog_value
   FROM
     t_3_D AS t_7_D
   WHERE

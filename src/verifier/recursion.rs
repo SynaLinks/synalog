@@ -150,7 +150,7 @@ fn collect_expr_predicates(expr: &Json, preds: &mut HashSet<String>) {
 
 /// Check for recursive predicates without base cases (handles mutual recursion).
 pub fn check_base_cases(rules: &[&Json]) -> Vec<RecursionError> {
-    use super::stratification::{build_dep_graph, find_sccs};
+    use super::stratification::{build_dep_graph, recursive_sccs};
 
     let mut errors = Vec::new();
 
@@ -163,19 +163,8 @@ pub fn check_base_cases(rules: &[&Json]) -> Vec<RecursionError> {
         }
     }
 
-    // Build dependency graph and find SCCs for mutual recursion detection
-    let graph = build_dep_graph(rules);
-    let sccs = find_sccs(&graph);
-
-    // Check each SCC for base cases
-    for scc in sccs {
-        let is_recursive_scc = scc.len() > 1 ||
-            graph.get(&scc[0]).map_or(false, |adj| adj.iter().any(|(to, _)| to == &scc[0]));
-
-        if !is_recursive_scc {
-            continue;
-        }
-
+    // Check each recursive SCC (mutual recursion included) for base cases
+    for scc in recursive_sccs(&build_dep_graph(rules)) {
         // Base-case-ness is a property of the SCC as a whole: the recursion is
         // well-founded as long as ANY member has a base case (a rule that calls
         // no predicate in the SCC). A predicate that only projects another SCC
@@ -394,13 +383,11 @@ fn collect_recursive_annotations(all_rules: &[&Json]) -> HashSet<String> {
 
 /// Find all recursive predicates (direct and mutual) using dependency graph SCCs.
 fn find_recursive_predicates(rules: &[&Json]) -> HashMap<String, String> {
-    use super::stratification::{build_dep_graph, find_sccs};
+    use super::stratification::{build_dep_graph, recursive_sccs};
 
     let mut recursive = HashMap::new();
 
-    // Build dependency graph and find SCCs
-    let graph = build_dep_graph(rules);
-    let sccs = find_sccs(&graph);
+    let sccs = recursive_sccs(&build_dep_graph(rules));
 
     // Collect first rule text for each predicate
     let mut rule_texts: HashMap<String, String> = HashMap::new();
@@ -411,17 +398,10 @@ fn find_recursive_predicates(rules: &[&Json]) -> HashMap<String, String> {
         }
     }
 
-    // Any predicate in an SCC with >1 member, or with a self-loop, is recursive
-    for scc in sccs {
-        let is_recursive_scc = scc.len() > 1 ||
-            graph.get(&scc[0]).map_or(false, |adj| adj.iter().any(|(to, _)| to == &scc[0]));
-
-        if is_recursive_scc {
-            for pred in scc {
-                if let Some(rule_txt) = rule_texts.get(&pred) {
-                    recursive.insert(pred, rule_txt.clone());
-                }
-            }
+    // Any predicate in a recursive SCC is recursive
+    for pred in sccs.into_iter().flatten() {
+        if let Some(rule_txt) = rule_texts.get(&pred) {
+            recursive.insert(pred, rule_txt.clone());
         }
     }
 

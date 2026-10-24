@@ -1,8 +1,8 @@
 -- Initializing PostgreSQL environment.
 set client_min_messages to warning;
-create schema if not exists logica_home;
--- Empty logica type: logicarecord893574736;
-DO $$ BEGIN if not exists (select 'I(am) :- I(think)' from pg_type where typname = 'logicarecord893574736') then create type logicarecord893574736 as (nirvana numeric); end if; END $$;
+create schema if not exists synalog_home;
+-- Empty synalog type: synalogrecord893574736;
+DO $$ BEGIN if not exists (select 'I(am) :- I(think)' from pg_type where typname = 'synalogrecord893574736') then create type synalogrecord893574736 as (nirvana numeric); end if; END $$;
 
 WITH RECURSIVE t_2_E AS (SELECT * FROM (
   
@@ -26,14 +26,14 @@ t_0_R_RecursiveCte AS (SELECT * FROM (
     
       SELECT
         x_7 AS x,
-        0 AS logica_step
+        0 AS synalog_step
       FROM
         UNNEST(ARRAY[1, 10]) as x_7
      UNION ALL
     
       SELECT
         E.b AS x,
-        ((0) + (1)) AS logica_step
+        ((0) + (1)) AS synalog_step
       FROM
         t_2_E AS E, UNNEST(ARRAY[1, 10]) as x_22
       WHERE
@@ -44,7 +44,7 @@ t_0_R_RecursiveCte AS (SELECT * FROM (
     
       SELECT
         t_4_E.b AS x,
-        ((((0) + (1))) + (1)) AS logica_step
+        ((((0) + (1))) + (1)) AS synalog_step
       FROM
         t_2_E AS t_6_E, t_2_E AS t_4_E, UNNEST(ARRAY[1, 10]) as x_42
       WHERE
@@ -57,7 +57,7 @@ t_0_R_RecursiveCte AS (SELECT * FROM (
     
       SELECT
         t_9_E.b AS x,
-        ((((((0) + (1))) + (1))) + (1)) AS logica_step
+        ((((((0) + (1))) + (1))) + (1)) AS synalog_step
       FROM
         t_2_E AS t_13_E, t_2_E AS t_11_E, t_2_E AS t_9_E, UNNEST(ARRAY[1, 10]) as x_67
       WHERE
@@ -74,11 +74,11 @@ t_0_R_RecursiveCte AS (SELECT * FROM (
 UNION
 SELECT
   t_16_E.b AS x,
-  ((t_15_R_RecursiveCte.logica_step) + (1)) AS logica_step
+  ((t_15_R_RecursiveCte.synalog_step) + (1)) AS synalog_step
 FROM
   t_0_R_RecursiveCte AS t_15_R_RecursiveCte, t_2_E AS t_16_E
 WHERE
-  (t_15_R_RecursiveCte.logica_step < 5) AND
+  (t_15_R_RecursiveCte.synalog_step < 5) AND
   (t_16_E.a = t_15_R_RecursiveCte.x))
 SELECT
   R_RecursiveCte.x AS x

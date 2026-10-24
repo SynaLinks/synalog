@@ -1,50 +1,50 @@
 -- Initializing PostgreSQL environment.
 set client_min_messages to warning;
-create schema if not exists logica_home;
--- Empty logica type: logicarecord893574736;
-DO $$ BEGIN if not exists (select 'I(am) :- I(think)' from pg_type where typname = 'logicarecord893574736') then create type logicarecord893574736 as (nirvana numeric); end if; END $$;
+create schema if not exists synalog_home;
+-- Empty synalog type: synalogrecord893574736;
+DO $$ BEGIN if not exists (select 'I(am) :- I(think)' from pg_type where typname = 'synalogrecord893574736') then create type synalogrecord893574736 as (nirvana numeric); end if; END $$;
 
 
 DO $$
 BEGIN
--- Logica type: logicarecord481217614
-if not exists (select 'I(am) :- I(think)' from pg_type where typname = 'logicarecord481217614') then create type logicarecord481217614 as (r logicarecord893574736); end if;
--- Logica type: logicarecord86796764
-if not exists (select 'I(am) :- I(think)' from pg_type where typname = 'logicarecord86796764') then create type logicarecord86796764 as (s text); end if;
+-- Synalog type: synalogrecord481217614
+if not exists (select 'I(am) :- I(think)' from pg_type where typname = 'synalogrecord481217614') then create type synalogrecord481217614 as (r synalogrecord893574736); end if;
+-- Synalog type: synalogrecord86796764
+if not exists (select 'I(am) :- I(think)' from pg_type where typname = 'synalogrecord86796764') then create type synalogrecord86796764 as (s text); end if;
 END $$;
-DROP TABLE IF EXISTS logica_home.C0 CASCADE;
-CREATE TABLE logica_home.C0 AS SELECT
+DROP TABLE IF EXISTS synalog_home.C0 CASCADE;
+CREATE TABLE synalog_home.C0 AS SELECT
   x_15 AS x
 FROM
   UNNEST(ARRAY[1, 2, 3, 4, 5, 6, 7, 8]::numeric[]) as x_15;
 
--- Interacting with table logica_home.C0
+-- Interacting with table synalog_home.C0
 
-DROP TABLE IF EXISTS logica_home.C3 CASCADE;
-CREATE TABLE logica_home.C3 AS SELECT
+DROP TABLE IF EXISTS synalog_home.C3 CASCADE;
+CREATE TABLE synalog_home.C3 AS SELECT
   C0.x AS x
 FROM
-  logica_home.C0 AS C0
+  synalog_home.C0 AS C0
 WHERE
   (C0.x != 3) AND
   (C0.x != 2) AND
   (C0.x != 1);
 
--- Interacting with table logica_home.C3
+-- Interacting with table synalog_home.C3
 
-DROP TABLE IF EXISTS logica_home.C6 CASCADE;
-CREATE TABLE logica_home.C6 AS SELECT
+DROP TABLE IF EXISTS synalog_home.C6 CASCADE;
+CREATE TABLE synalog_home.C6 AS SELECT
   C3.x AS x
 FROM
-  logica_home.C3 AS C3
+  synalog_home.C3 AS C3
 WHERE
   (C3.x != 6) AND
   (C3.x != 5) AND
   (C3.x != 4);
 
--- Interacting with table logica_home.C6
+-- Interacting with table synalog_home.C6
 
 SELECT
   C6.x AS x
 FROM
-  logica_home.C6 AS C6 ORDER BY x;
+  synalog_home.C6 AS C6 ORDER BY x;

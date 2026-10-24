@@ -26,7 +26,7 @@ t_1_Above_RecursiveCte AS (SELECT * FROM (
       SELECT
         ApproverOf.approver AS approver,
         ApproverOf.requester AS requester,
-        0 AS logica_step
+        0 AS synalog_step
       FROM
         t_2_ApproverOf AS ApproverOf
      UNION ALL
@@ -34,7 +34,7 @@ t_1_Above_RecursiveCte AS (SELECT * FROM (
       SELECT
         t_3_ApproverOf.approver AS approver,
         t_5_ApproverOf.requester AS requester,
-        ((0) + (1)) AS logica_step
+        ((0) + (1)) AS synalog_step
       FROM
         t_2_ApproverOf AS t_5_ApproverOf, t_2_ApproverOf AS t_3_ApproverOf
       WHERE
@@ -46,7 +46,7 @@ t_1_Above_RecursiveCte AS (SELECT * FROM (
       SELECT
         t_7_ApproverOf.approver AS approver,
         t_11_ApproverOf.requester AS requester,
-        ((((0) + (1))) + (1)) AS logica_step
+        ((((0) + (1))) + (1)) AS synalog_step
       FROM
         t_2_ApproverOf AS t_11_ApproverOf, t_2_ApproverOf AS t_9_ApproverOf, t_2_ApproverOf AS t_7_ApproverOf
       WHERE
@@ -60,7 +60,7 @@ t_1_Above_RecursiveCte AS (SELECT * FROM (
       SELECT
         t_13_ApproverOf.approver AS approver,
         t_19_ApproverOf.requester AS requester,
-        ((((((0) + (1))) + (1))) + (1)) AS logica_step
+        ((((((0) + (1))) + (1))) + (1)) AS synalog_step
       FROM
         t_2_ApproverOf AS t_19_ApproverOf, t_2_ApproverOf AS t_17_ApproverOf, t_2_ApproverOf AS t_15_ApproverOf, t_2_ApproverOf AS t_13_ApproverOf
       WHERE
@@ -76,7 +76,7 @@ t_1_Above_RecursiveCte AS (SELECT * FROM (
       SELECT
         t_21_ApproverOf.approver AS approver,
         t_29_ApproverOf.requester AS requester,
-        ((((((((0) + (1))) + (1))) + (1))) + (1)) AS logica_step
+        ((((((((0) + (1))) + (1))) + (1))) + (1)) AS synalog_step
       FROM
         t_2_ApproverOf AS t_29_ApproverOf, t_2_ApproverOf AS t_27_ApproverOf, t_2_ApproverOf AS t_25_ApproverOf, t_2_ApproverOf AS t_23_ApproverOf, t_2_ApproverOf AS t_21_ApproverOf
       WHERE
@@ -94,7 +94,7 @@ t_1_Above_RecursiveCte AS (SELECT * FROM (
       SELECT
         t_31_ApproverOf.approver AS approver,
         t_41_ApproverOf.requester AS requester,
-        ((((((((((0) + (1))) + (1))) + (1))) + (1))) + (1)) AS logica_step
+        ((((((((((0) + (1))) + (1))) + (1))) + (1))) + (1)) AS synalog_step
       FROM
         t_2_ApproverOf AS t_41_ApproverOf, t_2_ApproverOf AS t_39_ApproverOf, t_2_ApproverOf AS t_37_ApproverOf, t_2_ApproverOf AS t_35_ApproverOf, t_2_ApproverOf AS t_33_ApproverOf, t_2_ApproverOf AS t_31_ApproverOf
       WHERE
@@ -116,11 +116,11 @@ UNION
 SELECT
   t_43_ApproverOf.approver AS approver,
   t_42_Above_RecursiveCte.requester AS requester,
-  ((t_42_Above_RecursiveCte.logica_step) + (1)) AS logica_step
+  ((t_42_Above_RecursiveCte.synalog_step) + (1)) AS synalog_step
 FROM
   t_1_Above_RecursiveCte AS t_42_Above_RecursiveCte, t_2_ApproverOf AS t_43_ApproverOf
 WHERE
-  (t_42_Above_RecursiveCte.logica_step < 6) AND
+  (t_42_Above_RecursiveCte.synalog_step < 6) AND
   (t_43_ApproverOf.requester = t_42_Above_RecursiveCte.approver)),
 t_0_Above AS (SELECT
   Above_RecursiveCte.approver AS approver,

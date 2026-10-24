@@ -86,7 +86,7 @@ SELECT * FROM (
       t_0_E AS E
     WHERE
       ((SELECT
-        MIN(1) AS logica_value
+        MIN(1) AS synalog_value
       FROM
         t_0_E, t_1_D AS D
       WHERE

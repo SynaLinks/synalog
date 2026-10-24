@@ -135,7 +135,7 @@ FROM
   t_0_Trouble AS Trouble
 WHERE
   ((SELECT
-    MIN(MagicalEntangle(1, x_12.value)) AS logica_value
+    MIN(MagicalEntangle(1, x_12.value)) AS synalog_value
   FROM
     t_5_Spend AS Spend, JSON_EACH(JSON_ARRAY(0)) as x_12
   WHERE

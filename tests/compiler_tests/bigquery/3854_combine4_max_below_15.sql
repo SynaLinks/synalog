@@ -63,7 +63,7 @@ t_2_C AS (SELECT * FROM (
 SELECT
   t_0_C.c AS c,
   (SELECT
-  MAX(O.amt) AS logica_value
+  MAX(O.amt) AS synalog_value
 FROM
   t_1_O AS O
 WHERE

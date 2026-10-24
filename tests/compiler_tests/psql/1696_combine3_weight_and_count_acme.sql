@@ -1,16 +1,16 @@
 -- Initializing PostgreSQL environment.
 set client_min_messages to warning;
-create schema if not exists logica_home;
--- Empty logica type: logicarecord893574736;
-DO $$ BEGIN if not exists (select 'I(am) :- I(think)' from pg_type where typname = 'logicarecord893574736') then create type logicarecord893574736 as (nirvana numeric); end if; END $$;
+create schema if not exists synalog_home;
+-- Empty synalog type: synalogrecord893574736;
+DO $$ BEGIN if not exists (select 'I(am) :- I(think)' from pg_type where typname = 'synalogrecord893574736') then create type synalogrecord893574736 as (nirvana numeric); end if; END $$;
 
 
 DO $$
 BEGIN
--- Logica type: logicarecord481217614
-if not exists (select 'I(am) :- I(think)' from pg_type where typname = 'logicarecord481217614') then create type logicarecord481217614 as (r logicarecord893574736); end if;
--- Logica type: logicarecord86796764
-if not exists (select 'I(am) :- I(think)' from pg_type where typname = 'logicarecord86796764') then create type logicarecord86796764 as (s text); end if;
+-- Synalog type: synalogrecord481217614
+if not exists (select 'I(am) :- I(think)' from pg_type where typname = 'synalogrecord481217614') then create type synalogrecord481217614 as (r synalogrecord893574736); end if;
+-- Synalog type: synalogrecord86796764
+if not exists (select 'I(am) :- I(think)' from pg_type where typname = 'synalogrecord86796764') then create type synalogrecord86796764 as (s text); end if;
 END $$;
 WITH t_0_Ship AS (SELECT * FROM (
   
@@ -97,13 +97,13 @@ WITH t_0_Ship AS (SELECT * FROM (
 ) AS UNUSED_TABLE_NAME  )
 SELECT
   CAST((SELECT
-  SUM((CASE WHEN x_6 = 0 THEN Ship.kg ELSE NULL END)) AS logica_value
+  SUM((CASE WHEN x_6 = 0 THEN Ship.kg ELSE NULL END)) AS synalog_value
 FROM
   t_0_Ship AS Ship, UNNEST(ARRAY[0]::numeric[]) as x_6
 WHERE
   (Ship.client = 'acme')) AS numeric) AS t,
   CAST((SELECT
-  SUM((CASE WHEN x_9 = 0 THEN 1 ELSE NULL END)) AS logica_value
+  SUM((CASE WHEN x_9 = 0 THEN 1 ELSE NULL END)) AS synalog_value
 FROM
   t_0_Ship AS t_1_Ship, UNNEST(ARRAY[0]::numeric[]) as x_9
 WHERE

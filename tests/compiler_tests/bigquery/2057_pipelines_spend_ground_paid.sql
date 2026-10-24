@@ -1,5 +1,5 @@
-DROP TABLE IF EXISTS logica_test.Paid;
-CREATE TABLE logica_test.Paid AS WITH t_1_Order AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_test.Paid;
+CREATE TABLE synalog_test.Paid AS WITH t_1_Order AS (SELECT * FROM (
   
     SELECT
       1 AS id,
@@ -91,7 +91,7 @@ FROM
 WHERE
   (t_0_Order.state = "paid");
 
--- Interacting with table logica_test.Paid
+-- Interacting with table synalog_test.Paid
 
 WITH t_1_Price AS (SELECT * FROM (
   
@@ -114,7 +114,7 @@ t_0_Spend AS (SELECT
   Paid.who AS who,
   SUM(((Paid.n) * (Price.p))) AS total
 FROM
-  logica_test.Paid AS Paid, t_1_Price AS Price
+  synalog_test.Paid AS Paid, t_1_Price AS Price
 WHERE
   (Price.item = Paid.item)
 GROUP BY who)

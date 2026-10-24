@@ -15,12 +15,12 @@ t_2_Select_RecursiveCte AS (SELECT * FROM (
     
       SELECT
         1 AS x,
-        0 AS logica_step
+        0 AS synalog_step
      UNION ALL
     
       SELECT
         Edge.b AS x,
-        ((0) + (1)) AS logica_step
+        ((0) + (1)) AS synalog_step
       FROM
         t_4_Edge AS Edge
       WHERE
@@ -31,7 +31,7 @@ t_2_Select_RecursiveCte AS (SELECT * FROM (
     
       SELECT
         t_6_Edge.b AS x,
-        ((((0) + (1))) + (1)) AS logica_step
+        ((((0) + (1))) + (1)) AS synalog_step
       FROM
         t_4_Edge AS t_8_Edge, t_4_Edge AS t_6_Edge
       WHERE
@@ -44,7 +44,7 @@ t_2_Select_RecursiveCte AS (SELECT * FROM (
     
       SELECT
         t_11_Edge.b AS x,
-        ((((((0) + (1))) + (1))) + (1)) AS logica_step
+        ((((((0) + (1))) + (1))) + (1)) AS synalog_step
       FROM
         t_4_Edge AS t_15_Edge, t_4_Edge AS t_13_Edge, t_4_Edge AS t_11_Edge
       WHERE
@@ -61,11 +61,11 @@ t_2_Select_RecursiveCte AS (SELECT * FROM (
 UNION
 SELECT
   t_18_Edge.b AS x,
-  ((t_17_Select_RecursiveCte.logica_step) + (1)) AS logica_step
+  ((t_17_Select_RecursiveCte.synalog_step) + (1)) AS synalog_step
 FROM
   t_2_Select_RecursiveCte AS t_17_Select_RecursiveCte, t_4_Edge AS t_18_Edge
 WHERE
-  (t_17_Select_RecursiveCte.logica_step < 5) AND
+  (t_17_Select_RecursiveCte.synalog_step < 5) AND
   (t_18_Edge.a = t_17_Select_RecursiveCte.x)),
 t_1_Select AS (SELECT
   Select_RecursiveCte.x AS x

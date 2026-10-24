@@ -83,7 +83,7 @@ FROM
   t_1_U AS t_5_U
 WHERE
   ((SELECT
-    MIN(1) AS logica_value
+    MIN(1) AS synalog_value
   FROM
     t_6_F AS F
   WHERE
@@ -95,7 +95,7 @@ FROM
   t_1_U AS t_3_U
 WHERE
   ((SELECT
-    MIN(1) AS logica_value
+    MIN(1) AS synalog_value
   FROM
     t_4_N1 AS N1
   WHERE
@@ -106,7 +106,7 @@ FROM
   t_1_U AS t_0_U
 WHERE
   ((SELECT
-    MIN(1) AS logica_value
+    MIN(1) AS synalog_value
   FROM
     t_2_N2 AS N2
   WHERE

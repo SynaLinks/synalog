@@ -18,7 +18,7 @@ FROM
 WHERE
   (t_0_Follows.b != "dan") AND
   ((SELECT
-    MIN(1) AS logica_value
+    MIN(1) AS synalog_value
   FROM
     t_1_Follows AS t_2_Follows
   WHERE

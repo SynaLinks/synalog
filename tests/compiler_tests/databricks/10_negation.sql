@@ -13,7 +13,7 @@ SELECT * FROM (
       LATERAL (SELECT explode(FILTER(SEQUENCE(0, CAST(10 AS BIGINT)), x -> x < 10)) AS x_5) AS pushkin
     WHERE
       ((SELECT
-        MIN(1) AS logica_value
+        MIN(1) AS synalog_value
       FROM
         LATERAL (SELECT explode(FILTER(SEQUENCE(0, CAST(10 AS BIGINT)), x -> x < 10)) AS x_10) AS pushkin
       WHERE
@@ -29,7 +29,7 @@ SELECT * FROM (
     WHERE
       (x_5 > 1) AND
       ((SELECT
-        MIN(1) AS logica_value
+        MIN(1) AS synalog_value
       FROM
         t_0_Prime AS Prime
       WHERE
@@ -43,7 +43,7 @@ SELECT * FROM (
       LATERAL (SELECT explode(FILTER(SEQUENCE(0, CAST(10 AS BIGINT)), x -> x < 10)) AS x_7) AS pushkin
     WHERE
       ((SELECT
-        MIN(1) AS logica_value
+        MIN(1) AS synalog_value
       FROM
         t_0_Prime AS Prime
       WHERE

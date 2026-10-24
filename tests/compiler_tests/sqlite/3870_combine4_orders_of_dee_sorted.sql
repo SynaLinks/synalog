@@ -44,12 +44,12 @@ WITH t_2_O AS (SELECT * FROM (
 ) AS UNUSED_TABLE_NAME  )
 SELECT
   (CASE WHEN (SELECT
-  ArgMin(JSON_EXTRACT(MagicalEntangle(JSON_OBJECT('arg', O.id, 'value', SYNALOG_NUMBER_TEXT(O.amt)), x_8.value), "$.value"), JSON_EXTRACT(MagicalEntangle(JSON_OBJECT('arg', O.id, 'value', SYNALOG_NUMBER_TEXT(O.amt)), x_8.value), "$.arg"), null) AS logica_value
+  ArgMin(JSON_EXTRACT(MagicalEntangle(JSON_OBJECT('arg', O.id, 'value', SYNALOG_NUMBER_TEXT(O.amt)), x_8.value), "$.value"), JSON_EXTRACT(MagicalEntangle(JSON_OBJECT('arg', O.id, 'value', SYNALOG_NUMBER_TEXT(O.amt)), x_8.value), "$.arg"), null) AS synalog_value
 FROM
   t_2_O AS O, JSON_EACH(JSON_ARRAY(0)) as x_8
 WHERE
   (O.c = 'dee')) IS NULL OR ';' IS NULL THEN NULL ELSE COALESCE((SELECT GROUP_CONCAT(value, ';') FROM (SELECT value FROM JSON_EACH((SELECT
-  ArgMin(JSON_EXTRACT(MagicalEntangle(JSON_OBJECT('arg', O.id, 'value', SYNALOG_NUMBER_TEXT(O.amt)), x_8.value), "$.value"), JSON_EXTRACT(MagicalEntangle(JSON_OBJECT('arg', O.id, 'value', SYNALOG_NUMBER_TEXT(O.amt)), x_8.value), "$.arg"), null) AS logica_value
+  ArgMin(JSON_EXTRACT(MagicalEntangle(JSON_OBJECT('arg', O.id, 'value', SYNALOG_NUMBER_TEXT(O.amt)), x_8.value), "$.value"), JSON_EXTRACT(MagicalEntangle(JSON_OBJECT('arg', O.id, 'value', SYNALOG_NUMBER_TEXT(O.amt)), x_8.value), "$.arg"), null) AS synalog_value
 FROM
   t_2_O AS O, JSON_EACH(JSON_ARRAY(0)) as x_8
 WHERE

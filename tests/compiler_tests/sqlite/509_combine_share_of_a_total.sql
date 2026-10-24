@@ -1,7 +1,7 @@
 SELECT
   x_4.value AS x,
   (CAST(x_4.value AS REAL) / NULLIF((SELECT
-  SUM(MagicalEntangle(x_9.value, x_7.value)) AS logica_value
+  SUM(MagicalEntangle(x_9.value, x_7.value)) AS synalog_value
 FROM
   JSON_EACH(JSON_ARRAY(0)) as x_7, JSON_EACH(JSON_ARRAY(1, 3)) as x_9), 0)) AS s
 FROM

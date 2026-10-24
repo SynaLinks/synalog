@@ -207,7 +207,7 @@ fn test_decorate_combine_rule() {
             !name.starts_with('@')
         })
         .unwrap();
-    let decorated = decorate_combine_rule(rule, "logica_var_0");
+    let decorated = decorate_combine_rule(rule, "synalog_var_0");
     assert!(decorated.is_object());
 }
 

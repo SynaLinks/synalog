@@ -13,7 +13,7 @@ uvx synalog program.l run Total      # on duckdb, the default engine
 
 ## One-shot commands
 
-The argument order follows `logica`: the program file first, then the command.
+The program file comes first, then the command.
 
 ```bash
 synalog program.l print Predicate ...      # print compiled SQL

@@ -4,7 +4,7 @@ FROM
   UNNEST(ARRAY[1, 2]) as x_8
 WHERE
   ((SELECT
-    MIN(1) AS logica_value
+    MIN(1) AS synalog_value
   FROM
     (SELECT 'singleton' as s) as unused_singleton
   WHERE
@@ -15,7 +15,7 @@ FROM
   UNNEST(ARRAY[1, 2]) as x_3
 WHERE
   ((SELECT
-    MIN(1) AS logica_value
+    MIN(1) AS synalog_value
   FROM
     t_0_NotB AS NotB
   WHERE

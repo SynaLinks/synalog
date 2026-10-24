@@ -100,7 +100,7 @@ FROM
   t_0_Day AS t_3_Day, t_5_Region AS Region
 WHERE
   ((SELECT
-    MIN(MagicalEntangle(1, x_17.value)) AS logica_value
+    MIN(MagicalEntangle(1, x_17.value)) AS synalog_value
   FROM
     t_1_S AS t_7_S, JSON_EACH(JSON_ARRAY(0)) as x_17
   WHERE
@@ -113,7 +113,7 @@ FROM
   t_0_Day AS Day
 WHERE
   ((SELECT
-    MIN(MagicalEntangle(1, x_6.value)) AS logica_value
+    MIN(MagicalEntangle(1, x_6.value)) AS synalog_value
   FROM
     t_2_Missing AS Missing, JSON_EACH(JSON_ARRAY(0)) as x_6
   WHERE

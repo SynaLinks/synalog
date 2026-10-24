@@ -28,7 +28,7 @@ FROM
   t_1_K AS t_0_K
 WHERE
   ((SELECT
-    MIN(1) AS logica_value
+    MIN(1) AS synalog_value
   FROM
     t_3_Loud AS Loud
   WHERE

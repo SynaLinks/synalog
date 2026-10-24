@@ -4,7 +4,7 @@ WITH RECURSIVE t_1_Reach_RecursiveCte AS (SELECT * FROM (
       SELECT
         x_15.value AS x,
         ((x_15.value) + (1)) AS y,
-        0 AS logica_step
+        0 AS synalog_step
       FROM
         JSON_EACH((select json_group_array(n) from (with recursive t as(select 0 as n union all select n + 1 as n from t where n + 1 < 4) select n from t) where n < 4)) as x_15
      UNION ALL
@@ -12,7 +12,7 @@ WITH RECURSIVE t_1_Reach_RecursiveCte AS (SELECT * FROM (
       SELECT
         x_42.value AS x,
         ((x_36.value) + (1)) AS y,
-        ((0) + (1)) AS logica_step
+        ((0) + (1)) AS synalog_step
       FROM
         JSON_EACH((select json_group_array(n) from (with recursive t as(select 0 as n union all select n + 1 as n from t where n + 1 < 4) select n from t) where n < 4)) as x_36, JSON_EACH((select json_group_array(n) from (with recursive t as(select 0 as n union all select n + 1 as n from t where n + 1 < 4) select n from t) where n < 4)) as x_42
       WHERE
@@ -24,7 +24,7 @@ WITH RECURSIVE t_1_Reach_RecursiveCte AS (SELECT * FROM (
       SELECT
         x_78.value AS x,
         ((x_64.value) + (1)) AS y,
-        ((((0) + (1))) + (1)) AS logica_step
+        ((((0) + (1))) + (1)) AS synalog_step
       FROM
         JSON_EACH((select json_group_array(n) from (with recursive t as(select 0 as n union all select n + 1 as n from t where n + 1 < 4) select n from t) where n < 4)) as x_64, JSON_EACH((select json_group_array(n) from (with recursive t as(select 0 as n union all select n + 1 as n from t where n + 1 < 4) select n from t) where n < 4)) as x_72, JSON_EACH((select json_group_array(n) from (with recursive t as(select 0 as n union all select n + 1 as n from t where n + 1 < 4) select n from t) where n < 4)) as x_78
       WHERE
@@ -38,7 +38,7 @@ WITH RECURSIVE t_1_Reach_RecursiveCte AS (SELECT * FROM (
       SELECT
         x_123.value AS x,
         ((x_100.value) + (1)) AS y,
-        ((((((0) + (1))) + (1))) + (1)) AS logica_step
+        ((((((0) + (1))) + (1))) + (1)) AS synalog_step
       FROM
         JSON_EACH((select json_group_array(n) from (with recursive t as(select 0 as n union all select n + 1 as n from t where n + 1 < 4) select n from t) where n < 4)) as x_100, JSON_EACH((select json_group_array(n) from (with recursive t as(select 0 as n union all select n + 1 as n from t where n + 1 < 4) select n from t) where n < 4)) as x_109, JSON_EACH((select json_group_array(n) from (with recursive t as(select 0 as n union all select n + 1 as n from t where n + 1 < 4) select n from t) where n < 4)) as x_117, JSON_EACH((select json_group_array(n) from (with recursive t as(select 0 as n union all select n + 1 as n from t where n + 1 < 4) select n from t) where n < 4)) as x_123
       WHERE
@@ -54,7 +54,7 @@ WITH RECURSIVE t_1_Reach_RecursiveCte AS (SELECT * FROM (
       SELECT
         x_177.value AS x,
         ((x_145.value) + (1)) AS y,
-        ((((((((0) + (1))) + (1))) + (1))) + (1)) AS logica_step
+        ((((((((0) + (1))) + (1))) + (1))) + (1)) AS synalog_step
       FROM
         JSON_EACH((select json_group_array(n) from (with recursive t as(select 0 as n union all select n + 1 as n from t where n + 1 < 4) select n from t) where n < 4)) as x_145, JSON_EACH((select json_group_array(n) from (with recursive t as(select 0 as n union all select n + 1 as n from t where n + 1 < 4) select n from t) where n < 4)) as x_154, JSON_EACH((select json_group_array(n) from (with recursive t as(select 0 as n union all select n + 1 as n from t where n + 1 < 4) select n from t) where n < 4)) as x_163, JSON_EACH((select json_group_array(n) from (with recursive t as(select 0 as n union all select n + 1 as n from t where n + 1 < 4) select n from t) where n < 4)) as x_171, JSON_EACH((select json_group_array(n) from (with recursive t as(select 0 as n union all select n + 1 as n from t where n + 1 < 4) select n from t) where n < 4)) as x_177
       WHERE
@@ -72,7 +72,7 @@ WITH RECURSIVE t_1_Reach_RecursiveCte AS (SELECT * FROM (
       SELECT
         x_240.value AS x,
         ((x_199.value) + (1)) AS y,
-        ((((((((((0) + (1))) + (1))) + (1))) + (1))) + (1)) AS logica_step
+        ((((((((((0) + (1))) + (1))) + (1))) + (1))) + (1)) AS synalog_step
       FROM
         JSON_EACH((select json_group_array(n) from (with recursive t as(select 0 as n union all select n + 1 as n from t where n + 1 < 4) select n from t) where n < 4)) as x_199, JSON_EACH((select json_group_array(n) from (with recursive t as(select 0 as n union all select n + 1 as n from t where n + 1 < 4) select n from t) where n < 4)) as x_208, JSON_EACH((select json_group_array(n) from (with recursive t as(select 0 as n union all select n + 1 as n from t where n + 1 < 4) select n from t) where n < 4)) as x_217, JSON_EACH((select json_group_array(n) from (with recursive t as(select 0 as n union all select n + 1 as n from t where n + 1 < 4) select n from t) where n < 4)) as x_226, JSON_EACH((select json_group_array(n) from (with recursive t as(select 0 as n union all select n + 1 as n from t where n + 1 < 4) select n from t) where n < 4)) as x_234, JSON_EACH((select json_group_array(n) from (with recursive t as(select 0 as n union all select n + 1 as n from t where n + 1 < 4) select n from t) where n < 4)) as x_240
       WHERE
@@ -94,11 +94,11 @@ UNION
 SELECT
   t_41_Reach_RecursiveCte.x AS x,
   ((x_249.value) + (1)) AS y,
-  ((t_41_Reach_RecursiveCte.logica_step) + (1)) AS logica_step
+  ((t_41_Reach_RecursiveCte.synalog_step) + (1)) AS synalog_step
 FROM
   t_1_Reach_RecursiveCte AS t_41_Reach_RecursiveCte, JSON_EACH((select json_group_array(n) from (with recursive t as(select 0 as n union all select n + 1 as n from t where n + 1 < 4) select n from t) where n < 4)) as x_249
 WHERE
-  (t_41_Reach_RecursiveCte.logica_step < 25) AND
+  (t_41_Reach_RecursiveCte.synalog_step < 25) AND
   (t_41_Reach_RecursiveCte.y = x_249.value)),
 t_0_Reach AS (SELECT
   Reach_RecursiveCte.x AS x,

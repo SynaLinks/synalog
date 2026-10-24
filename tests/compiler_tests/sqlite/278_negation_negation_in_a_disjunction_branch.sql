@@ -16,7 +16,7 @@ t_0_Out_MultBodyAggAux AS (SELECT * FROM (
       JSON_EACH(JSON_ARRAY(1, 2, 3)) as x_5
     WHERE
       ((SELECT
-        MIN(MagicalEntangle(1, x_8.value)) AS logica_value
+        MIN(MagicalEntangle(1, x_8.value)) AS synalog_value
       FROM
         t_1_Banned AS Banned, JSON_EACH(JSON_ARRAY(0)) as x_8
       WHERE

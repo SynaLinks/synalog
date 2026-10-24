@@ -1,11 +1,11 @@
 -- Initializing DuckDB environment.
-create schema if not exists logica_home;
+create schema if not exists synalog_home;
 -- Empty record, has to have a field by DuckDB syntax.
-drop type if exists logicarecord893574736 cascade; create type logicarecord893574736 as struct(nirvana numeric);
+drop type if exists synalogrecord893574736 cascade; create type synalogrecord893574736 as struct(nirvana numeric);
 create sequence if not exists eternal_logical_sequence;
 
-DROP TABLE IF EXISTS logica_home.Spend;
-CREATE TABLE logica_home.Spend AS WITH t_1_Order AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_home.Spend;
+CREATE TABLE synalog_home.Spend AS WITH t_1_Order AS (SELECT * FROM (
   
     SELECT
       1 AS id,
@@ -114,13 +114,13 @@ WHERE
   (Price.item = t_0_Order.item)
 GROUP BY t_0_Order.who;
 
--- Interacting with table logica_home.Spend
+-- Interacting with table synalog_home.Spend
 
 WITH t_0_TierCount AS (SELECT
   CASE WHEN (Spend.total >= 40) THEN 'gold' WHEN (Spend.total >= 15) THEN 'silver' ELSE 'bronze' END AS tier,
   SUM(1) AS n
 FROM
-  logica_home.Spend AS Spend
+  synalog_home.Spend AS Spend
 GROUP BY CASE WHEN (Spend.total >= 40) THEN 'gold' WHEN (Spend.total >= 15) THEN 'silver' ELSE 'bronze' END)
 SELECT
   TierCount.tier AS tier,

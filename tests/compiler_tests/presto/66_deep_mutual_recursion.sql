@@ -1,5 +1,5 @@
-DROP TABLE IF EXISTS logica_test.Even_ifr1;
-CREATE TABLE logica_test.Even_ifr1 AS WITH t_0_Even_MultBodyAggAux_f4 AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_test.Even_ifr1;
+CREATE TABLE synalog_test.Even_ifr1 AS WITH t_0_Even_MultBodyAggAux_f4 AS (SELECT * FROM (
   
     SELECT
       0 AS n
@@ -11,26 +11,26 @@ FROM
   t_0_Even_MultBodyAggAux_f4 AS Even_MultBodyAggAux_f4
 GROUP BY 1;
 
--- Interacting with table logica_test.Even_ifr1
+-- Interacting with table synalog_test.Even_ifr1
 
-DROP TABLE IF EXISTS logica_test.Odd_ifr2;
-CREATE TABLE logica_test.Odd_ifr2 AS SELECT
+DROP TABLE IF EXISTS synalog_test.Odd_ifr2;
+CREATE TABLE synalog_test.Odd_ifr2 AS SELECT
   ((Even_ifr1.n) + (1)) AS n
 FROM
-  logica_test.Even_ifr1 AS Even_ifr1
+  synalog_test.Even_ifr1 AS Even_ifr1
 WHERE
   (Even_ifr1.n < 100)
 GROUP BY 1;
 
--- Interacting with table logica_test.Odd_ifr2
+-- Interacting with table synalog_test.Odd_ifr2
 
-DROP TABLE IF EXISTS logica_test.Even_ifr3;
-CREATE TABLE logica_test.Even_ifr3 AS WITH t_0_Even_MultBodyAggAux_f8 AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_test.Even_ifr3;
+CREATE TABLE synalog_test.Even_ifr3 AS WITH t_0_Even_MultBodyAggAux_f8 AS (SELECT * FROM (
   
     SELECT
       ((Odd_ifr2.n) + (1)) AS n
     FROM
-      logica_test.Odd_ifr2 AS Odd_ifr2
+      synalog_test.Odd_ifr2 AS Odd_ifr2
     WHERE
       (Odd_ifr2.n < 100)
    UNION ALL
@@ -45,21 +45,21 @@ FROM
   t_0_Even_MultBodyAggAux_f8 AS Even_MultBodyAggAux_f8
 GROUP BY 1;
 
--- Interacting with table logica_test.Even_ifr3
+-- Interacting with table synalog_test.Even_ifr3
 
-DROP TABLE IF EXISTS logica_test.Odd_ifr2;
-CREATE TABLE logica_test.Odd_ifr2 AS SELECT
+DROP TABLE IF EXISTS synalog_test.Odd_ifr2;
+CREATE TABLE synalog_test.Odd_ifr2 AS SELECT
   ((Even_ifr3.n) + (1)) AS n
 FROM
-  logica_test.Even_ifr3 AS Even_ifr3
+  synalog_test.Even_ifr3 AS Even_ifr3
 WHERE
   (Even_ifr3.n < 100)
 GROUP BY 1;
 
--- Interacting with table logica_test.Odd_ifr2
+-- Interacting with table synalog_test.Odd_ifr2
 
-DROP TABLE IF EXISTS logica_test.Even_ifr0;
-CREATE TABLE logica_test.Even_ifr0 AS WITH t_0_Even_MultBodyAggAux_f1 AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_test.Even_ifr0;
+CREATE TABLE synalog_test.Even_ifr0 AS WITH t_0_Even_MultBodyAggAux_f1 AS (SELECT * FROM (
   
     SELECT
       0 AS n
@@ -71,26 +71,26 @@ FROM
   t_0_Even_MultBodyAggAux_f1 AS Even_MultBodyAggAux_f1
 GROUP BY 1;
 
--- Interacting with table logica_test.Even_ifr0
+-- Interacting with table synalog_test.Even_ifr0
 
-DROP TABLE IF EXISTS logica_test.Odd_ifr1;
-CREATE TABLE logica_test.Odd_ifr1 AS SELECT
+DROP TABLE IF EXISTS synalog_test.Odd_ifr1;
+CREATE TABLE synalog_test.Odd_ifr1 AS SELECT
   ((Even_ifr0.n) + (1)) AS n
 FROM
-  logica_test.Even_ifr0 AS Even_ifr0
+  synalog_test.Even_ifr0 AS Even_ifr0
 WHERE
   (Even_ifr0.n < 100)
 GROUP BY 1;
 
--- Interacting with table logica_test.Odd_ifr1
+-- Interacting with table synalog_test.Odd_ifr1
 
-DROP TABLE IF EXISTS logica_test.Even_ifr2;
-CREATE TABLE logica_test.Even_ifr2 AS WITH t_0_Even_MultBodyAggAux_f5 AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_test.Even_ifr2;
+CREATE TABLE synalog_test.Even_ifr2 AS WITH t_0_Even_MultBodyAggAux_f5 AS (SELECT * FROM (
   
     SELECT
       ((Odd_ifr1.n) + (1)) AS n
     FROM
-      logica_test.Odd_ifr1 AS Odd_ifr1
+      synalog_test.Odd_ifr1 AS Odd_ifr1
     WHERE
       (Odd_ifr1.n < 100)
    UNION ALL
@@ -105,26 +105,26 @@ FROM
   t_0_Even_MultBodyAggAux_f5 AS Even_MultBodyAggAux_f5
 GROUP BY 1;
 
--- Interacting with table logica_test.Even_ifr2
+-- Interacting with table synalog_test.Even_ifr2
 
-DROP TABLE IF EXISTS logica_test.Odd_ifr3;
-CREATE TABLE logica_test.Odd_ifr3 AS SELECT
+DROP TABLE IF EXISTS synalog_test.Odd_ifr3;
+CREATE TABLE synalog_test.Odd_ifr3 AS SELECT
   ((Even_ifr2.n) + (1)) AS n
 FROM
-  logica_test.Even_ifr2 AS Even_ifr2
+  synalog_test.Even_ifr2 AS Even_ifr2
 WHERE
   (Even_ifr2.n < 100)
 GROUP BY 1;
 
--- Interacting with table logica_test.Odd_ifr3
+-- Interacting with table synalog_test.Odd_ifr3
 
-DROP TABLE IF EXISTS logica_test.Even_ifr2;
-CREATE TABLE logica_test.Even_ifr2 AS WITH t_0_Even_MultBodyAggAux_f9 AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_test.Even_ifr2;
+CREATE TABLE synalog_test.Even_ifr2 AS WITH t_0_Even_MultBodyAggAux_f9 AS (SELECT * FROM (
   
     SELECT
       ((Odd_ifr3.n) + (1)) AS n
     FROM
-      logica_test.Odd_ifr3 AS Odd_ifr3
+      synalog_test.Odd_ifr3 AS Odd_ifr3
     WHERE
       (Odd_ifr3.n < 100)
    UNION ALL
@@ -139,15 +139,15 @@ FROM
   t_0_Even_MultBodyAggAux_f9 AS Even_MultBodyAggAux_f9
 GROUP BY 1;
 
--- Interacting with table logica_test.Even_ifr2
+-- Interacting with table synalog_test.Even_ifr2
 
-DROP TABLE IF EXISTS logica_test.Even_ifr3;
-CREATE TABLE logica_test.Even_ifr3 AS WITH t_0_Even_MultBodyAggAux_f8 AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_test.Even_ifr3;
+CREATE TABLE synalog_test.Even_ifr3 AS WITH t_0_Even_MultBodyAggAux_f8 AS (SELECT * FROM (
   
     SELECT
       ((Odd_ifr2.n) + (1)) AS n
     FROM
-      logica_test.Odd_ifr2 AS Odd_ifr2
+      synalog_test.Odd_ifr2 AS Odd_ifr2
     WHERE
       (Odd_ifr2.n < 100)
    UNION ALL
@@ -162,22 +162,22 @@ FROM
   t_0_Even_MultBodyAggAux_f8 AS Even_MultBodyAggAux_f8
 GROUP BY 1;
 
-DROP TABLE IF EXISTS logica_test.Odd_ifr3;
-CREATE TABLE logica_test.Odd_ifr3 AS SELECT
+DROP TABLE IF EXISTS synalog_test.Odd_ifr3;
+CREATE TABLE synalog_test.Odd_ifr3 AS SELECT
   ((Even_ifr2.n) + (1)) AS n
 FROM
-  logica_test.Even_ifr2 AS Even_ifr2
+  synalog_test.Even_ifr2 AS Even_ifr2
 WHERE
   (Even_ifr2.n < 100)
 GROUP BY 1;
 
-DROP TABLE IF EXISTS logica_test.Even_ifr2;
-CREATE TABLE logica_test.Even_ifr2 AS WITH t_0_Even_MultBodyAggAux_f9 AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_test.Even_ifr2;
+CREATE TABLE synalog_test.Even_ifr2 AS WITH t_0_Even_MultBodyAggAux_f9 AS (SELECT * FROM (
   
     SELECT
       ((Odd_ifr3.n) + (1)) AS n
     FROM
-      logica_test.Odd_ifr3 AS Odd_ifr3
+      synalog_test.Odd_ifr3 AS Odd_ifr3
     WHERE
       (Odd_ifr3.n < 100)
    UNION ALL
@@ -192,22 +192,22 @@ FROM
   t_0_Even_MultBodyAggAux_f9 AS Even_MultBodyAggAux_f9
 GROUP BY 1;
 
-DROP TABLE IF EXISTS logica_test.Odd_ifr2;
-CREATE TABLE logica_test.Odd_ifr2 AS SELECT
+DROP TABLE IF EXISTS synalog_test.Odd_ifr2;
+CREATE TABLE synalog_test.Odd_ifr2 AS SELECT
   ((Even_ifr3.n) + (1)) AS n
 FROM
-  logica_test.Even_ifr3 AS Even_ifr3
+  synalog_test.Even_ifr3 AS Even_ifr3
 WHERE
   (Even_ifr3.n < 100)
 GROUP BY 1;
 
-DROP TABLE IF EXISTS logica_test.Even_ifr3;
-CREATE TABLE logica_test.Even_ifr3 AS WITH t_0_Even_MultBodyAggAux_f8 AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_test.Even_ifr3;
+CREATE TABLE synalog_test.Even_ifr3 AS WITH t_0_Even_MultBodyAggAux_f8 AS (SELECT * FROM (
   
     SELECT
       ((Odd_ifr2.n) + (1)) AS n
     FROM
-      logica_test.Odd_ifr2 AS Odd_ifr2
+      synalog_test.Odd_ifr2 AS Odd_ifr2
     WHERE
       (Odd_ifr2.n < 100)
    UNION ALL
@@ -222,22 +222,22 @@ FROM
   t_0_Even_MultBodyAggAux_f8 AS Even_MultBodyAggAux_f8
 GROUP BY 1;
 
-DROP TABLE IF EXISTS logica_test.Odd_ifr3;
-CREATE TABLE logica_test.Odd_ifr3 AS SELECT
+DROP TABLE IF EXISTS synalog_test.Odd_ifr3;
+CREATE TABLE synalog_test.Odd_ifr3 AS SELECT
   ((Even_ifr2.n) + (1)) AS n
 FROM
-  logica_test.Even_ifr2 AS Even_ifr2
+  synalog_test.Even_ifr2 AS Even_ifr2
 WHERE
   (Even_ifr2.n < 100)
 GROUP BY 1;
 
-DROP TABLE IF EXISTS logica_test.Even_ifr2;
-CREATE TABLE logica_test.Even_ifr2 AS WITH t_0_Even_MultBodyAggAux_f9 AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_test.Even_ifr2;
+CREATE TABLE synalog_test.Even_ifr2 AS WITH t_0_Even_MultBodyAggAux_f9 AS (SELECT * FROM (
   
     SELECT
       ((Odd_ifr3.n) + (1)) AS n
     FROM
-      logica_test.Odd_ifr3 AS Odd_ifr3
+      synalog_test.Odd_ifr3 AS Odd_ifr3
     WHERE
       (Odd_ifr3.n < 100)
    UNION ALL
@@ -252,22 +252,22 @@ FROM
   t_0_Even_MultBodyAggAux_f9 AS Even_MultBodyAggAux_f9
 GROUP BY 1;
 
-DROP TABLE IF EXISTS logica_test.Odd_ifr2;
-CREATE TABLE logica_test.Odd_ifr2 AS SELECT
+DROP TABLE IF EXISTS synalog_test.Odd_ifr2;
+CREATE TABLE synalog_test.Odd_ifr2 AS SELECT
   ((Even_ifr3.n) + (1)) AS n
 FROM
-  logica_test.Even_ifr3 AS Even_ifr3
+  synalog_test.Even_ifr3 AS Even_ifr3
 WHERE
   (Even_ifr3.n < 100)
 GROUP BY 1;
 
-DROP TABLE IF EXISTS logica_test.Even_ifr3;
-CREATE TABLE logica_test.Even_ifr3 AS WITH t_0_Even_MultBodyAggAux_f8 AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_test.Even_ifr3;
+CREATE TABLE synalog_test.Even_ifr3 AS WITH t_0_Even_MultBodyAggAux_f8 AS (SELECT * FROM (
   
     SELECT
       ((Odd_ifr2.n) + (1)) AS n
     FROM
-      logica_test.Odd_ifr2 AS Odd_ifr2
+      synalog_test.Odd_ifr2 AS Odd_ifr2
     WHERE
       (Odd_ifr2.n < 100)
    UNION ALL
@@ -282,22 +282,22 @@ FROM
   t_0_Even_MultBodyAggAux_f8 AS Even_MultBodyAggAux_f8
 GROUP BY 1;
 
-DROP TABLE IF EXISTS logica_test.Odd_ifr3;
-CREATE TABLE logica_test.Odd_ifr3 AS SELECT
+DROP TABLE IF EXISTS synalog_test.Odd_ifr3;
+CREATE TABLE synalog_test.Odd_ifr3 AS SELECT
   ((Even_ifr2.n) + (1)) AS n
 FROM
-  logica_test.Even_ifr2 AS Even_ifr2
+  synalog_test.Even_ifr2 AS Even_ifr2
 WHERE
   (Even_ifr2.n < 100)
 GROUP BY 1;
 
-DROP TABLE IF EXISTS logica_test.Even_ifr2;
-CREATE TABLE logica_test.Even_ifr2 AS WITH t_0_Even_MultBodyAggAux_f9 AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_test.Even_ifr2;
+CREATE TABLE synalog_test.Even_ifr2 AS WITH t_0_Even_MultBodyAggAux_f9 AS (SELECT * FROM (
   
     SELECT
       ((Odd_ifr3.n) + (1)) AS n
     FROM
-      logica_test.Odd_ifr3 AS Odd_ifr3
+      synalog_test.Odd_ifr3 AS Odd_ifr3
     WHERE
       (Odd_ifr3.n < 100)
    UNION ALL
@@ -312,22 +312,22 @@ FROM
   t_0_Even_MultBodyAggAux_f9 AS Even_MultBodyAggAux_f9
 GROUP BY 1;
 
-DROP TABLE IF EXISTS logica_test.Odd_ifr2;
-CREATE TABLE logica_test.Odd_ifr2 AS SELECT
+DROP TABLE IF EXISTS synalog_test.Odd_ifr2;
+CREATE TABLE synalog_test.Odd_ifr2 AS SELECT
   ((Even_ifr3.n) + (1)) AS n
 FROM
-  logica_test.Even_ifr3 AS Even_ifr3
+  synalog_test.Even_ifr3 AS Even_ifr3
 WHERE
   (Even_ifr3.n < 100)
 GROUP BY 1;
 
-DROP TABLE IF EXISTS logica_test.Even_ifr3;
-CREATE TABLE logica_test.Even_ifr3 AS WITH t_0_Even_MultBodyAggAux_f8 AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_test.Even_ifr3;
+CREATE TABLE synalog_test.Even_ifr3 AS WITH t_0_Even_MultBodyAggAux_f8 AS (SELECT * FROM (
   
     SELECT
       ((Odd_ifr2.n) + (1)) AS n
     FROM
-      logica_test.Odd_ifr2 AS Odd_ifr2
+      synalog_test.Odd_ifr2 AS Odd_ifr2
     WHERE
       (Odd_ifr2.n < 100)
    UNION ALL
@@ -342,22 +342,22 @@ FROM
   t_0_Even_MultBodyAggAux_f8 AS Even_MultBodyAggAux_f8
 GROUP BY 1;
 
-DROP TABLE IF EXISTS logica_test.Odd_ifr3;
-CREATE TABLE logica_test.Odd_ifr3 AS SELECT
+DROP TABLE IF EXISTS synalog_test.Odd_ifr3;
+CREATE TABLE synalog_test.Odd_ifr3 AS SELECT
   ((Even_ifr2.n) + (1)) AS n
 FROM
-  logica_test.Even_ifr2 AS Even_ifr2
+  synalog_test.Even_ifr2 AS Even_ifr2
 WHERE
   (Even_ifr2.n < 100)
 GROUP BY 1;
 
-DROP TABLE IF EXISTS logica_test.Even_ifr2;
-CREATE TABLE logica_test.Even_ifr2 AS WITH t_0_Even_MultBodyAggAux_f9 AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_test.Even_ifr2;
+CREATE TABLE synalog_test.Even_ifr2 AS WITH t_0_Even_MultBodyAggAux_f9 AS (SELECT * FROM (
   
     SELECT
       ((Odd_ifr3.n) + (1)) AS n
     FROM
-      logica_test.Odd_ifr3 AS Odd_ifr3
+      synalog_test.Odd_ifr3 AS Odd_ifr3
     WHERE
       (Odd_ifr3.n < 100)
    UNION ALL
@@ -372,22 +372,22 @@ FROM
   t_0_Even_MultBodyAggAux_f9 AS Even_MultBodyAggAux_f9
 GROUP BY 1;
 
-DROP TABLE IF EXISTS logica_test.Odd_ifr2;
-CREATE TABLE logica_test.Odd_ifr2 AS SELECT
+DROP TABLE IF EXISTS synalog_test.Odd_ifr2;
+CREATE TABLE synalog_test.Odd_ifr2 AS SELECT
   ((Even_ifr3.n) + (1)) AS n
 FROM
-  logica_test.Even_ifr3 AS Even_ifr3
+  synalog_test.Even_ifr3 AS Even_ifr3
 WHERE
   (Even_ifr3.n < 100)
 GROUP BY 1;
 
-DROP TABLE IF EXISTS logica_test.Even_ifr3;
-CREATE TABLE logica_test.Even_ifr3 AS WITH t_0_Even_MultBodyAggAux_f8 AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_test.Even_ifr3;
+CREATE TABLE synalog_test.Even_ifr3 AS WITH t_0_Even_MultBodyAggAux_f8 AS (SELECT * FROM (
   
     SELECT
       ((Odd_ifr2.n) + (1)) AS n
     FROM
-      logica_test.Odd_ifr2 AS Odd_ifr2
+      synalog_test.Odd_ifr2 AS Odd_ifr2
     WHERE
       (Odd_ifr2.n < 100)
    UNION ALL
@@ -402,22 +402,22 @@ FROM
   t_0_Even_MultBodyAggAux_f8 AS Even_MultBodyAggAux_f8
 GROUP BY 1;
 
-DROP TABLE IF EXISTS logica_test.Odd_ifr3;
-CREATE TABLE logica_test.Odd_ifr3 AS SELECT
+DROP TABLE IF EXISTS synalog_test.Odd_ifr3;
+CREATE TABLE synalog_test.Odd_ifr3 AS SELECT
   ((Even_ifr2.n) + (1)) AS n
 FROM
-  logica_test.Even_ifr2 AS Even_ifr2
+  synalog_test.Even_ifr2 AS Even_ifr2
 WHERE
   (Even_ifr2.n < 100)
 GROUP BY 1;
 
-DROP TABLE IF EXISTS logica_test.Even_ifr2;
-CREATE TABLE logica_test.Even_ifr2 AS WITH t_0_Even_MultBodyAggAux_f9 AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_test.Even_ifr2;
+CREATE TABLE synalog_test.Even_ifr2 AS WITH t_0_Even_MultBodyAggAux_f9 AS (SELECT * FROM (
   
     SELECT
       ((Odd_ifr3.n) + (1)) AS n
     FROM
-      logica_test.Odd_ifr3 AS Odd_ifr3
+      synalog_test.Odd_ifr3 AS Odd_ifr3
     WHERE
       (Odd_ifr3.n < 100)
    UNION ALL
@@ -432,22 +432,22 @@ FROM
   t_0_Even_MultBodyAggAux_f9 AS Even_MultBodyAggAux_f9
 GROUP BY 1;
 
-DROP TABLE IF EXISTS logica_test.Odd_ifr2;
-CREATE TABLE logica_test.Odd_ifr2 AS SELECT
+DROP TABLE IF EXISTS synalog_test.Odd_ifr2;
+CREATE TABLE synalog_test.Odd_ifr2 AS SELECT
   ((Even_ifr3.n) + (1)) AS n
 FROM
-  logica_test.Even_ifr3 AS Even_ifr3
+  synalog_test.Even_ifr3 AS Even_ifr3
 WHERE
   (Even_ifr3.n < 100)
 GROUP BY 1;
 
-DROP TABLE IF EXISTS logica_test.Even_ifr3;
-CREATE TABLE logica_test.Even_ifr3 AS WITH t_0_Even_MultBodyAggAux_f8 AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_test.Even_ifr3;
+CREATE TABLE synalog_test.Even_ifr3 AS WITH t_0_Even_MultBodyAggAux_f8 AS (SELECT * FROM (
   
     SELECT
       ((Odd_ifr2.n) + (1)) AS n
     FROM
-      logica_test.Odd_ifr2 AS Odd_ifr2
+      synalog_test.Odd_ifr2 AS Odd_ifr2
     WHERE
       (Odd_ifr2.n < 100)
    UNION ALL
@@ -462,22 +462,22 @@ FROM
   t_0_Even_MultBodyAggAux_f8 AS Even_MultBodyAggAux_f8
 GROUP BY 1;
 
-DROP TABLE IF EXISTS logica_test.Odd_ifr3;
-CREATE TABLE logica_test.Odd_ifr3 AS SELECT
+DROP TABLE IF EXISTS synalog_test.Odd_ifr3;
+CREATE TABLE synalog_test.Odd_ifr3 AS SELECT
   ((Even_ifr2.n) + (1)) AS n
 FROM
-  logica_test.Even_ifr2 AS Even_ifr2
+  synalog_test.Even_ifr2 AS Even_ifr2
 WHERE
   (Even_ifr2.n < 100)
 GROUP BY 1;
 
-DROP TABLE IF EXISTS logica_test.Even_ifr2;
-CREATE TABLE logica_test.Even_ifr2 AS WITH t_0_Even_MultBodyAggAux_f9 AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_test.Even_ifr2;
+CREATE TABLE synalog_test.Even_ifr2 AS WITH t_0_Even_MultBodyAggAux_f9 AS (SELECT * FROM (
   
     SELECT
       ((Odd_ifr3.n) + (1)) AS n
     FROM
-      logica_test.Odd_ifr3 AS Odd_ifr3
+      synalog_test.Odd_ifr3 AS Odd_ifr3
     WHERE
       (Odd_ifr3.n < 100)
    UNION ALL
@@ -492,22 +492,22 @@ FROM
   t_0_Even_MultBodyAggAux_f9 AS Even_MultBodyAggAux_f9
 GROUP BY 1;
 
-DROP TABLE IF EXISTS logica_test.Odd_ifr2;
-CREATE TABLE logica_test.Odd_ifr2 AS SELECT
+DROP TABLE IF EXISTS synalog_test.Odd_ifr2;
+CREATE TABLE synalog_test.Odd_ifr2 AS SELECT
   ((Even_ifr3.n) + (1)) AS n
 FROM
-  logica_test.Even_ifr3 AS Even_ifr3
+  synalog_test.Even_ifr3 AS Even_ifr3
 WHERE
   (Even_ifr3.n < 100)
 GROUP BY 1;
 
-DROP TABLE IF EXISTS logica_test.Even_ifr3;
-CREATE TABLE logica_test.Even_ifr3 AS WITH t_0_Even_MultBodyAggAux_f8 AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_test.Even_ifr3;
+CREATE TABLE synalog_test.Even_ifr3 AS WITH t_0_Even_MultBodyAggAux_f8 AS (SELECT * FROM (
   
     SELECT
       ((Odd_ifr2.n) + (1)) AS n
     FROM
-      logica_test.Odd_ifr2 AS Odd_ifr2
+      synalog_test.Odd_ifr2 AS Odd_ifr2
     WHERE
       (Odd_ifr2.n < 100)
    UNION ALL
@@ -522,22 +522,22 @@ FROM
   t_0_Even_MultBodyAggAux_f8 AS Even_MultBodyAggAux_f8
 GROUP BY 1;
 
-DROP TABLE IF EXISTS logica_test.Odd_ifr3;
-CREATE TABLE logica_test.Odd_ifr3 AS SELECT
+DROP TABLE IF EXISTS synalog_test.Odd_ifr3;
+CREATE TABLE synalog_test.Odd_ifr3 AS SELECT
   ((Even_ifr2.n) + (1)) AS n
 FROM
-  logica_test.Even_ifr2 AS Even_ifr2
+  synalog_test.Even_ifr2 AS Even_ifr2
 WHERE
   (Even_ifr2.n < 100)
 GROUP BY 1;
 
-DROP TABLE IF EXISTS logica_test.Even_ifr2;
-CREATE TABLE logica_test.Even_ifr2 AS WITH t_0_Even_MultBodyAggAux_f9 AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_test.Even_ifr2;
+CREATE TABLE synalog_test.Even_ifr2 AS WITH t_0_Even_MultBodyAggAux_f9 AS (SELECT * FROM (
   
     SELECT
       ((Odd_ifr3.n) + (1)) AS n
     FROM
-      logica_test.Odd_ifr3 AS Odd_ifr3
+      synalog_test.Odd_ifr3 AS Odd_ifr3
     WHERE
       (Odd_ifr3.n < 100)
    UNION ALL
@@ -552,22 +552,22 @@ FROM
   t_0_Even_MultBodyAggAux_f9 AS Even_MultBodyAggAux_f9
 GROUP BY 1;
 
-DROP TABLE IF EXISTS logica_test.Odd_ifr2;
-CREATE TABLE logica_test.Odd_ifr2 AS SELECT
+DROP TABLE IF EXISTS synalog_test.Odd_ifr2;
+CREATE TABLE synalog_test.Odd_ifr2 AS SELECT
   ((Even_ifr3.n) + (1)) AS n
 FROM
-  logica_test.Even_ifr3 AS Even_ifr3
+  synalog_test.Even_ifr3 AS Even_ifr3
 WHERE
   (Even_ifr3.n < 100)
 GROUP BY 1;
 
-DROP TABLE IF EXISTS logica_test.Even_ifr3;
-CREATE TABLE logica_test.Even_ifr3 AS WITH t_0_Even_MultBodyAggAux_f8 AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_test.Even_ifr3;
+CREATE TABLE synalog_test.Even_ifr3 AS WITH t_0_Even_MultBodyAggAux_f8 AS (SELECT * FROM (
   
     SELECT
       ((Odd_ifr2.n) + (1)) AS n
     FROM
-      logica_test.Odd_ifr2 AS Odd_ifr2
+      synalog_test.Odd_ifr2 AS Odd_ifr2
     WHERE
       (Odd_ifr2.n < 100)
    UNION ALL
@@ -582,22 +582,22 @@ FROM
   t_0_Even_MultBodyAggAux_f8 AS Even_MultBodyAggAux_f8
 GROUP BY 1;
 
-DROP TABLE IF EXISTS logica_test.Odd_ifr3;
-CREATE TABLE logica_test.Odd_ifr3 AS SELECT
+DROP TABLE IF EXISTS synalog_test.Odd_ifr3;
+CREATE TABLE synalog_test.Odd_ifr3 AS SELECT
   ((Even_ifr2.n) + (1)) AS n
 FROM
-  logica_test.Even_ifr2 AS Even_ifr2
+  synalog_test.Even_ifr2 AS Even_ifr2
 WHERE
   (Even_ifr2.n < 100)
 GROUP BY 1;
 
-DROP TABLE IF EXISTS logica_test.Even_ifr2;
-CREATE TABLE logica_test.Even_ifr2 AS WITH t_0_Even_MultBodyAggAux_f9 AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_test.Even_ifr2;
+CREATE TABLE synalog_test.Even_ifr2 AS WITH t_0_Even_MultBodyAggAux_f9 AS (SELECT * FROM (
   
     SELECT
       ((Odd_ifr3.n) + (1)) AS n
     FROM
-      logica_test.Odd_ifr3 AS Odd_ifr3
+      synalog_test.Odd_ifr3 AS Odd_ifr3
     WHERE
       (Odd_ifr3.n < 100)
    UNION ALL
@@ -612,22 +612,22 @@ FROM
   t_0_Even_MultBodyAggAux_f9 AS Even_MultBodyAggAux_f9
 GROUP BY 1;
 
-DROP TABLE IF EXISTS logica_test.Odd_ifr2;
-CREATE TABLE logica_test.Odd_ifr2 AS SELECT
+DROP TABLE IF EXISTS synalog_test.Odd_ifr2;
+CREATE TABLE synalog_test.Odd_ifr2 AS SELECT
   ((Even_ifr3.n) + (1)) AS n
 FROM
-  logica_test.Even_ifr3 AS Even_ifr3
+  synalog_test.Even_ifr3 AS Even_ifr3
 WHERE
   (Even_ifr3.n < 100)
 GROUP BY 1;
 
-DROP TABLE IF EXISTS logica_test.Even_ifr3;
-CREATE TABLE logica_test.Even_ifr3 AS WITH t_0_Even_MultBodyAggAux_f8 AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_test.Even_ifr3;
+CREATE TABLE synalog_test.Even_ifr3 AS WITH t_0_Even_MultBodyAggAux_f8 AS (SELECT * FROM (
   
     SELECT
       ((Odd_ifr2.n) + (1)) AS n
     FROM
-      logica_test.Odd_ifr2 AS Odd_ifr2
+      synalog_test.Odd_ifr2 AS Odd_ifr2
     WHERE
       (Odd_ifr2.n < 100)
    UNION ALL
@@ -642,22 +642,22 @@ FROM
   t_0_Even_MultBodyAggAux_f8 AS Even_MultBodyAggAux_f8
 GROUP BY 1;
 
-DROP TABLE IF EXISTS logica_test.Odd_ifr3;
-CREATE TABLE logica_test.Odd_ifr3 AS SELECT
+DROP TABLE IF EXISTS synalog_test.Odd_ifr3;
+CREATE TABLE synalog_test.Odd_ifr3 AS SELECT
   ((Even_ifr2.n) + (1)) AS n
 FROM
-  logica_test.Even_ifr2 AS Even_ifr2
+  synalog_test.Even_ifr2 AS Even_ifr2
 WHERE
   (Even_ifr2.n < 100)
 GROUP BY 1;
 
-DROP TABLE IF EXISTS logica_test.Even_ifr2;
-CREATE TABLE logica_test.Even_ifr2 AS WITH t_0_Even_MultBodyAggAux_f9 AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_test.Even_ifr2;
+CREATE TABLE synalog_test.Even_ifr2 AS WITH t_0_Even_MultBodyAggAux_f9 AS (SELECT * FROM (
   
     SELECT
       ((Odd_ifr3.n) + (1)) AS n
     FROM
-      logica_test.Odd_ifr3 AS Odd_ifr3
+      synalog_test.Odd_ifr3 AS Odd_ifr3
     WHERE
       (Odd_ifr3.n < 100)
    UNION ALL
@@ -672,22 +672,22 @@ FROM
   t_0_Even_MultBodyAggAux_f9 AS Even_MultBodyAggAux_f9
 GROUP BY 1;
 
-DROP TABLE IF EXISTS logica_test.Odd_ifr2;
-CREATE TABLE logica_test.Odd_ifr2 AS SELECT
+DROP TABLE IF EXISTS synalog_test.Odd_ifr2;
+CREATE TABLE synalog_test.Odd_ifr2 AS SELECT
   ((Even_ifr3.n) + (1)) AS n
 FROM
-  logica_test.Even_ifr3 AS Even_ifr3
+  synalog_test.Even_ifr3 AS Even_ifr3
 WHERE
   (Even_ifr3.n < 100)
 GROUP BY 1;
 
-DROP TABLE IF EXISTS logica_test.Even_ifr3;
-CREATE TABLE logica_test.Even_ifr3 AS WITH t_0_Even_MultBodyAggAux_f8 AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_test.Even_ifr3;
+CREATE TABLE synalog_test.Even_ifr3 AS WITH t_0_Even_MultBodyAggAux_f8 AS (SELECT * FROM (
   
     SELECT
       ((Odd_ifr2.n) + (1)) AS n
     FROM
-      logica_test.Odd_ifr2 AS Odd_ifr2
+      synalog_test.Odd_ifr2 AS Odd_ifr2
     WHERE
       (Odd_ifr2.n < 100)
    UNION ALL
@@ -702,22 +702,22 @@ FROM
   t_0_Even_MultBodyAggAux_f8 AS Even_MultBodyAggAux_f8
 GROUP BY 1;
 
-DROP TABLE IF EXISTS logica_test.Odd_ifr3;
-CREATE TABLE logica_test.Odd_ifr3 AS SELECT
+DROP TABLE IF EXISTS synalog_test.Odd_ifr3;
+CREATE TABLE synalog_test.Odd_ifr3 AS SELECT
   ((Even_ifr2.n) + (1)) AS n
 FROM
-  logica_test.Even_ifr2 AS Even_ifr2
+  synalog_test.Even_ifr2 AS Even_ifr2
 WHERE
   (Even_ifr2.n < 100)
 GROUP BY 1;
 
-DROP TABLE IF EXISTS logica_test.Even_ifr2;
-CREATE TABLE logica_test.Even_ifr2 AS WITH t_0_Even_MultBodyAggAux_f9 AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_test.Even_ifr2;
+CREATE TABLE synalog_test.Even_ifr2 AS WITH t_0_Even_MultBodyAggAux_f9 AS (SELECT * FROM (
   
     SELECT
       ((Odd_ifr3.n) + (1)) AS n
     FROM
-      logica_test.Odd_ifr3 AS Odd_ifr3
+      synalog_test.Odd_ifr3 AS Odd_ifr3
     WHERE
       (Odd_ifr3.n < 100)
    UNION ALL
@@ -732,22 +732,22 @@ FROM
   t_0_Even_MultBodyAggAux_f9 AS Even_MultBodyAggAux_f9
 GROUP BY 1;
 
-DROP TABLE IF EXISTS logica_test.Odd_ifr2;
-CREATE TABLE logica_test.Odd_ifr2 AS SELECT
+DROP TABLE IF EXISTS synalog_test.Odd_ifr2;
+CREATE TABLE synalog_test.Odd_ifr2 AS SELECT
   ((Even_ifr3.n) + (1)) AS n
 FROM
-  logica_test.Even_ifr3 AS Even_ifr3
+  synalog_test.Even_ifr3 AS Even_ifr3
 WHERE
   (Even_ifr3.n < 100)
 GROUP BY 1;
 
-DROP TABLE IF EXISTS logica_test.Even;
-CREATE TABLE logica_test.Even AS WITH t_0_Even_MultBodyAggAux_f12 AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_test.Even;
+CREATE TABLE synalog_test.Even AS WITH t_0_Even_MultBodyAggAux_f12 AS (SELECT * FROM (
   
     SELECT
       ((Odd_ifr4.n) + (1)) AS n
     FROM
-      logica_test.Odd_ifr2 AS Odd_ifr4
+      synalog_test.Odd_ifr2 AS Odd_ifr4
     WHERE
       (Odd_ifr4.n < 100)
    UNION ALL
@@ -762,31 +762,31 @@ FROM
   t_0_Even_MultBodyAggAux_f12 AS Even_MultBodyAggAux_f12
 GROUP BY 1;
 
--- Interacting with table logica_test.Even
+-- Interacting with table synalog_test.Even
 
-DROP TABLE IF EXISTS logica_test.Odd;
-CREATE TABLE logica_test.Odd AS SELECT
+DROP TABLE IF EXISTS synalog_test.Odd;
+CREATE TABLE synalog_test.Odd AS SELECT
   ((Even_ifr4.n) + (1)) AS n
 FROM
-  logica_test.Even_ifr2 AS Even_ifr4
+  synalog_test.Even_ifr2 AS Even_ifr4
 WHERE
   (Even_ifr4.n < 100)
 GROUP BY 1;
 
--- Interacting with table logica_test.Odd
+-- Interacting with table synalog_test.Odd
 
 WITH t_0_Test_MultBodyAggAux AS (SELECT * FROM (
   
     SELECT
       Even.n AS t
     FROM
-      logica_test.Even AS Even
+      synalog_test.Even AS Even
    UNION ALL
   
     SELECT
       Odd.n AS t
     FROM
-      logica_test.Odd AS Odd
+      synalog_test.Odd AS Odd
   
 ) AS UNUSED_TABLE_NAME  )
 SELECT

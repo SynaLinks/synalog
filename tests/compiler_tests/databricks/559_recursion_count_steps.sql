@@ -1,5 +1,5 @@
-DROP TABLE IF EXISTS logica_test.S_fr0;
-CREATE TABLE logica_test.S_fr0 AS WITH t_0_S_MultBodyAggAux_f1 AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_test.S_fr0;
+CREATE TABLE synalog_test.S_fr0 AS WITH t_0_S_MultBodyAggAux_f1 AS (SELECT * FROM (
   
     SELECT
       1 AS x,
@@ -13,10 +13,10 @@ FROM
   t_0_S_MultBodyAggAux_f1 AS S_MultBodyAggAux_f1
 GROUP BY 1;
 
--- Interacting with table logica_test.S_fr0
+-- Interacting with table synalog_test.S_fr0
 
-DROP TABLE IF EXISTS logica_test.S_fr1;
-CREATE TABLE logica_test.S_fr1 AS WITH t_1_E AS (SELECT * FROM VALUES
+DROP TABLE IF EXISTS synalog_test.S_fr1;
+CREATE TABLE synalog_test.S_fr1 AS WITH t_1_E AS (SELECT * FROM VALUES
   (1, 2),
   (2, 3)
 AS UNUSED_TABLE_NAME(a, b)),
@@ -31,7 +31,7 @@ t_0_S_MultBodyAggAux_f2 AS (SELECT * FROM (
       E.b AS x,
       ((S_fr0.s) + (1)) AS s
     FROM
-      logica_test.S_fr0 AS S_fr0, t_1_E AS E
+      synalog_test.S_fr0 AS S_fr0, t_1_E AS E
     WHERE
       (E.a = S_fr0.x)
   
@@ -43,10 +43,10 @@ FROM
   t_0_S_MultBodyAggAux_f2 AS S_MultBodyAggAux_f2
 GROUP BY 1;
 
--- Interacting with table logica_test.S_fr1
+-- Interacting with table synalog_test.S_fr1
 
-DROP TABLE IF EXISTS logica_test.S_fr2;
-CREATE TABLE logica_test.S_fr2 AS WITH t_1_E AS (SELECT * FROM VALUES
+DROP TABLE IF EXISTS synalog_test.S_fr2;
+CREATE TABLE synalog_test.S_fr2 AS WITH t_1_E AS (SELECT * FROM VALUES
   (1, 2),
   (2, 3)
 AS UNUSED_TABLE_NAME(a, b)),
@@ -61,7 +61,7 @@ t_0_S_MultBodyAggAux_f3 AS (SELECT * FROM (
       E.b AS x,
       ((S_fr1.s) + (1)) AS s
     FROM
-      logica_test.S_fr1 AS S_fr1, t_1_E AS E
+      synalog_test.S_fr1 AS S_fr1, t_1_E AS E
     WHERE
       (E.a = S_fr1.x)
   
@@ -73,10 +73,10 @@ FROM
   t_0_S_MultBodyAggAux_f3 AS S_MultBodyAggAux_f3
 GROUP BY 1;
 
--- Interacting with table logica_test.S_fr2
+-- Interacting with table synalog_test.S_fr2
 
-DROP TABLE IF EXISTS logica_test.S_fr3;
-CREATE TABLE logica_test.S_fr3 AS WITH t_1_E AS (SELECT * FROM VALUES
+DROP TABLE IF EXISTS synalog_test.S_fr3;
+CREATE TABLE synalog_test.S_fr3 AS WITH t_1_E AS (SELECT * FROM VALUES
   (1, 2),
   (2, 3)
 AS UNUSED_TABLE_NAME(a, b)),
@@ -91,7 +91,7 @@ t_0_S_MultBodyAggAux_f4 AS (SELECT * FROM (
       E.b AS x,
       ((S_fr2.s) + (1)) AS s
     FROM
-      logica_test.S_fr2 AS S_fr2, t_1_E AS E
+      synalog_test.S_fr2 AS S_fr2, t_1_E AS E
     WHERE
       (E.a = S_fr2.x)
   
@@ -103,10 +103,10 @@ FROM
   t_0_S_MultBodyAggAux_f4 AS S_MultBodyAggAux_f4
 GROUP BY 1;
 
--- Interacting with table logica_test.S_fr3
+-- Interacting with table synalog_test.S_fr3
 
-DROP TABLE IF EXISTS logica_test.S_fr4;
-CREATE TABLE logica_test.S_fr4 AS WITH t_1_E AS (SELECT * FROM VALUES
+DROP TABLE IF EXISTS synalog_test.S_fr4;
+CREATE TABLE synalog_test.S_fr4 AS WITH t_1_E AS (SELECT * FROM VALUES
   (1, 2),
   (2, 3)
 AS UNUSED_TABLE_NAME(a, b)),
@@ -121,7 +121,7 @@ t_0_S_MultBodyAggAux_f5 AS (SELECT * FROM (
       E.b AS x,
       ((S_fr3.s) + (1)) AS s
     FROM
-      logica_test.S_fr3 AS S_fr3, t_1_E AS E
+      synalog_test.S_fr3 AS S_fr3, t_1_E AS E
     WHERE
       (E.a = S_fr3.x)
   
@@ -133,7 +133,7 @@ FROM
   t_0_S_MultBodyAggAux_f5 AS S_MultBodyAggAux_f5
 GROUP BY 1;
 
--- Interacting with table logica_test.S_fr4
+-- Interacting with table synalog_test.S_fr4
 
 WITH t_1_E AS (SELECT * FROM VALUES
   (1, 2),
@@ -150,7 +150,7 @@ t_0_S_MultBodyAggAux_f6 AS (SELECT * FROM (
       E.b AS x,
       ((S_fr4.s) + (1)) AS s
     FROM
-      logica_test.S_fr4 AS S_fr4, t_1_E AS E
+      synalog_test.S_fr4 AS S_fr4, t_1_E AS E
     WHERE
       (E.a = S_fr4.x)
   
