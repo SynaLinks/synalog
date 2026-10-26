@@ -454,7 +454,10 @@ fn plan(
         };
         let parsed = parse_source(&source, None, import_root)?;
         let names = PredicateNames::of(&parsed);
-        let program = build_program(&parsed, engine)?;
+        let mut program = build_program(&parsed, engine)?;
+        // The tables a plan computes are its run's: concurrent runs of programs
+        // grounding the same predicate must not share them.
+        program.annotations.session_tables = true;
         let pagination = Pagination { limit, offset };
         program
             .formatted_predicate_plan(&names.internal(&predicate), Some(&pagination), pattern)

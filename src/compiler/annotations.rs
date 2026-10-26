@@ -38,6 +38,10 @@ pub struct Annotations {
     pub bare_aggregation: HashMap<String, String>,
     /// Engine sub-keys (motherduck, threads, type_checking).
     pub engine_options: HashMap<String, Json>,
+    /// The program's grounded tables are its session's own (a plan that
+    /// Synalog runs): on PostgreSQL they are temporary tables, which no
+    /// other session sees, and which need no schema to be created.
+    pub session_tables: bool,
 }
 
 #[derive(Debug, Clone)]
@@ -383,6 +387,7 @@ impl Annotations {
             compile_as_tvf,
             bare_aggregation,
             engine_options,
+            session_tables: false,
         })
     }
 
@@ -477,6 +482,7 @@ impl Annotations {
         let home = home_schema();
         let test = test_schema();
         match self.engine.as_str() {
+            "psql" if self.session_tables => "pg_temp".to_string(),
             "psql" | "duckdb" => home.to_string(),
             _ => test.to_string(),
         }
@@ -520,16 +526,24 @@ impl Annotations {
         let home = home_schema();
         match self.engine.as_str() {
             "psql" => {
+                // A plan's tables are temporary, in no schema to create, and
+                // its type is created when the session may: a read-only
+                // session runs every query that writes no table.
+                let (schema, tolerate) = if self.session_tables {
+                    (String::new(), "EXCEPTION WHEN read_only_sql_transaction OR insufficient_privilege THEN NULL; ")
+                } else {
+                    (format!("create schema if not exists {};\n", home), "")
+                };
                 preamble.push_str(&format!(
                     "-- Initializing PostgreSQL environment.\n\
                      set client_min_messages to warning;\n\
-                     create schema if not exists {};\n\
+                     {}\
                      -- Empty synalog type: synalogrecord893574736;\n\
                      DO $$ BEGIN if not exists (select 'I(am) :- I(think)' from pg_type \
                      where typname = 'synalogrecord893574736') then \
                      create type synalogrecord893574736 as (nirvana numeric); \
-                     end if; END $$;\n\n",
-                    home
+                     end if; {}END $$;\n\n",
+                    schema, tolerate
                 ));
             }
             "duckdb" => {

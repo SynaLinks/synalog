@@ -34,6 +34,7 @@ installs without it; a missing driver raises ``RunnerUnavailable`` with the
 
 from __future__ import annotations
 
+import contextlib
 import csv
 import decimal
 import json
@@ -224,6 +225,15 @@ class Session:
     def close(self) -> None:
         pass
 
+    def snapshot(self):
+        """A context in which the statements of a plan read one state of the
+        database (a transaction, on an engine that has them)."""
+        return contextlib.nullcontext()
+
+    def savepoint(self):
+        """A context whose failure leaves the snapshot usable."""
+        return contextlib.nullcontext()
+
     def __enter__(self):
         return self
 
@@ -410,11 +420,13 @@ class DuckDbSession(Session):
 # `ARRAY_CONCAT_AGG` for `++=`, created once per database. Two sessions
 # replacing it at once collide ("tuple concurrently updated"), so it is created
 # only when missing, and one created meanwhile by another session is as good.
+# A session that may not create it (read-only) runs the queries without `++=`.
 PSQL_ARRAY_CONCAT_AGG = """DO $$ BEGIN
   IF NOT EXISTS (SELECT 1 FROM pg_proc WHERE proname = 'array_concat_agg') THEN
     CREATE AGGREGATE ARRAY_CONCAT_AGG(anycompatiblearray) (SFUNC = array_cat, STYPE = anycompatiblearray);
   END IF;
-EXCEPTION WHEN duplicate_function OR unique_violation THEN NULL;
+EXCEPTION WHEN duplicate_function OR unique_violation
+  OR read_only_sql_transaction OR insufficient_privilege THEN NULL;
 END $$"""
 
 class PsqlSession(Session):
@@ -444,6 +456,9 @@ class PsqlSession(Session):
         )
         self.cur = self.conn.cursor()
         self.cur.execute(PSQL_ARRAY_CONCAT_AGG)
+        # A plan's statements read one snapshot: a source changed between two
+        # of them is not read in both of its versions.
+        self.conn.isolation_level = psycopg.IsolationLevel.REPEATABLE_READ
 
     def run(self, script: str) -> Result:
         # PostgreSQL runs a whole script in one call; keep the last result set.
@@ -461,6 +476,13 @@ class PsqlSession(Session):
     def execute(self, statement: str) -> Result | None:
         columns, rows = self.run(statement)
         return (columns, rows) if columns else None
+
+    def snapshot(self):
+        return self.conn.transaction()
+
+    def savepoint(self):
+        # Within the snapshot's transaction, a nested one is a savepoint.
+        return self.conn.transaction() if self.conn.info.transaction_status else contextlib.nullcontext()
 
     def close(self) -> None:
         self.conn.close()
@@ -675,7 +697,17 @@ def run_plan(steps: list[dict], s: Session) -> Result:
     bounded depth runs every repetition instead: slower, the same rows; one
     that recurses until nothing changes (``-1``) cannot, and raises the
     engine's error.
+
+    The steps read one state of the database (``Session.snapshot``): a
+    source changed while the plan runs is read in one version only.
     """
+    # A duck-typed session of the caller's has no snapshot: its statements
+    # run as they come.
+    with getattr(s, "snapshot", contextlib.nullcontext)():
+        return _run_steps(steps, s)
+
+
+def _run_steps(steps: list[dict], s: Session) -> Result:
     result: Result = ([], [])
     try:
         for step in steps:
@@ -687,7 +719,8 @@ def run_plan(steps: list[dict], s: Session) -> Result:
                 for _ in range(step["repetitions"]):
                     if check:
                         try:
-                            changed = s.run(step["changed"])[1]
+                            with getattr(s, "savepoint", contextlib.nullcontext)():
+                                changed = s.run(step["changed"])[1]
                         except Exception:  # noqa: BLE001 - see the docstring
                             if step["repetitions"] > UNROLLED_REPETITIONS:
                                 raise
@@ -702,10 +735,10 @@ def run_plan(steps: list[dict], s: Session) -> Result:
     return result
 
 
-# The tables a plan computes into synalog's own schemas: the steps of a
-# recursion, grounded predicates. A @Ground into a table the program names
-# elsewhere is the user's, and is kept.
-_WORKING_TABLE = re.compile(r"CREATE TABLE ((?:synalog_home|synalog_test)\.\w+)", re.IGNORECASE)
+# The tables a plan computes into synalog's own schemas (temporary tables on
+# PostgreSQL): the steps of a recursion, grounded predicates. A @Ground into a
+# table the program names elsewhere is the user's, and is kept.
+_WORKING_TABLE = re.compile(r"CREATE TABLE ((?:synalog_home|synalog_test|pg_temp)\.\w+)", re.IGNORECASE)
 
 
 def _drop_working_tables(steps: list[dict], s: Session) -> None:

@@ -156,6 +156,7 @@ columns, rows = synalog.execute(source, "TopCustomers", limit=20)
 - `pattern` keeps the rows where some column matches it, as [`search`](#search); `limit`/`offset` paginate as in `compile`.
 - `assertion` returns the counterexamples of the assertion of that name of `predicate` instead of its rows.
 - `loads` is a sequence of `(table, path)` pairs: csv/tsv/json/jsonl/parquet files loaded as tables first (duckdb and sqlite).
+- On PostgreSQL the plan runs in one `REPEATABLE READ` transaction, so every step reads the same state of the database; its tables are temporary tables, which no other session sees (two runs at once grounding the same predicate do not share them); and a session that may only read runs every query that writes no table.
 
 ## `plan`
 
@@ -171,7 +172,7 @@ The steps that compute a predicate, for a host that runs them itself. Each step 
 | `{"kind": "sql", "sql": ...}` | a statement; the last step's rows are the predicate's |
 | `{"kind": "loop", "body": [...], "repetitions": n, "changed": ...}` | a recursion: run `changed`, a query returning one number; while it is not 0, run the `body` statements, `n` times at most |
 
-All the steps run in one connection: the loops write tables the later steps read. `synalog.runners.run_plan(steps, session)` runs a plan in a [`synalog.runners.session`](cli.md#executing-locally).
+All the steps run in one connection: the loops write tables the later steps read. On PostgreSQL, those tables are the connection's temporary tables (`pg_temp`): run the steps in one transaction for them to read one snapshot. `synalog.runners.run_plan(steps, session)` runs a plan in a [`synalog.runners.session`](cli.md#executing-locally).
 
 ## `reserved_predicates`
 
