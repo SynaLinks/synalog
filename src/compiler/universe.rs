@@ -1815,6 +1815,11 @@ impl SynalogProgram {
     /// When every upper table holds the rows of its lower one, the step
     /// changes nothing: the recursion has converged, and further repetitions
     /// would recompute the same tables.
+    ///
+    /// A predicate that is not `distinct` holds a multiset: its tables are the
+    /// same when each row occurs as many times in both, so its rows are
+    /// compared with their counts (a set comparison would stop a recursion
+    /// whose rows repeat, as `P(x: 1); P(x:) :- P(x:);` does at every step).
     fn iteration_changed_query(&self, predicates: &[String]) -> CompileResult<String> {
         let dialect = dialects::get(self.annotations.engine())?;
         let except = dialect.except_distinct();
@@ -1827,18 +1832,36 @@ impl SynalogProgram {
         let (upper, lower) = predicates.split_at(predicates.len() / 2);
         let mut counts = Vec::new();
         for (u, l) in upper.iter().zip(lower) {
+            let rows = match self.multiset_columns(u) {
+                Some(columns) => {
+                    let columns = columns.iter().map(|c| dialects::sql_column(c, dialect.as_ref())).collect::<Vec<_>>().join(", ");
+                    format!("SELECT {columns}, COUNT(*) AS synalog_multiplicity FROM {{}} GROUP BY {columns}")
+                }
+                None => "SELECT * FROM {}".to_string(),
+            };
             let (u, l) = (table(u)?, table(l)?);
             for (a, b) in [(&u, &l), (&l, &u)] {
                 counts.push(format!(
-                    "(SELECT COUNT(*) FROM (SELECT * FROM {} {} SELECT * FROM {}) AS synalog_changed_{})",
-                    a,
+                    "(SELECT COUNT(*) FROM ({} {} {}) AS synalog_changed_{})",
+                    rows.replace("{}", a),
                     except,
-                    b,
+                    rows.replace("{}", b),
                     counts.len()
                 ));
             }
         }
         Ok(format!("SELECT {} AS changed", counts.join(" + ")))
+    }
+
+    /// The columns of a predicate whose rules are not all `distinct`, whose
+    /// rows are then a multiset; None for a set.
+    fn multiset_columns(&self, predicate: &str) -> Option<Vec<String>> {
+        let rules = self.get_predicate_rules(predicate);
+        if rules.iter().all(|r| r.as_object().contains_key("distinct_denoted")) {
+            return None;
+        }
+        let columns = self.predicate_columns(predicate);
+        (!columns.is_empty() && !columns.iter().any(|c| c == "*")).then_some(columns)
     }
 
     /// Print top-level formatted SQL with pagination.
