@@ -148,7 +148,15 @@ def get_last_predicate(source: str) -> str:
 def benchmark_file(filepath: Path, roots: list, engine: str) -> dict:
     """Benchmark a single test file for one engine."""
     raw = filepath.read_text()
-    predicate = get_last_predicate(raw)
+    # Predicate extraction leans on Python Logica's own parser. When Logica
+    # cannot parse a fixture (e.g. its stricter handling of `distinct` or
+    # keyword-like names), there is no Logica baseline to compare against, so
+    # skip it just like a fixture with no user predicate — a Logica limitation
+    # must not abort the whole run.
+    try:
+        predicate = get_last_predicate(raw)
+    except Exception:
+        return None
 
     if not predicate:
         return None
