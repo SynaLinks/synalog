@@ -1687,3 +1687,17 @@ fn test_recursion_as_deep_as_an_integer_goes() {
     let err = p.formatted_predicate_sql("P").unwrap_err().to_string();
     assert!(err.contains("more steps than a SQL script can hold"), "{err}");
 }
+
+// ── multi-rule predicates: UNION ALL matches columns by position ──
+
+#[test]
+fn test_rules_naming_fields_in_different_orders_select_them_in_one_order() {
+    let program = make_universe_program(r#"
+        @Engine("sqlite");
+        P(a: 1, b: 2);
+        P(b: 3, a: 4);
+    "#);
+    let sql = compile_predicate(&program, "P").unwrap();
+    assert!(sql.contains("4 AS a,\n      3 AS b"), "SQL: {}", sql);
+}
+

@@ -1173,6 +1173,24 @@ impl SynalogProgram {
         self.run_injections(&mut s)?;
         rule_translate::finalize_rule_structure(&mut s);
         s.sort_unnestings()?;
+        // The rules of a predicate are combined by UNION ALL, which matches
+        // columns by position, not by name: every rule selects its columns in
+        // the order of the first rule's head, whatever order it names them in.
+        if !is_combine {
+            let rules = self.get_predicate_rules(&s.this_predicate_name);
+            if rules.len() > 1 {
+                let columns = rule_translate::all_record_fields(&rules[0].as_object()["head"].as_object()["record"]);
+                let mut select = std::mem::take(&mut s.select);
+                let mut ordered = IndexMap::with_capacity(select.len());
+                for column in &columns {
+                    if let Some(expression) = select.shift_remove(column) {
+                        ordered.insert(column.clone(), expression);
+                    }
+                }
+                ordered.extend(select);
+                s.select = ordered;
+            }
+        }
 
         // Check for nil tables or nil calls in unnestings or select expressions
         fn contains_nil_predicate(json: &Json) -> bool {
@@ -1888,13 +1906,7 @@ impl SynalogProgram {
         if rules.is_empty() {
             return Vec::new();
         }
-        let head = &rules[0].as_object()["head"];
-        let record = &head.as_object()["record"];
-        record.as_object()["field_value"]
-            .as_array()
-            .iter()
-            .map(|fv| fv.as_object()["field"].as_str().to_string())
-            .collect()
+        rule_translate::all_record_fields(&rules[0].as_object()["head"].as_object()["record"])
     }
 
     /// Produce SQL for a predicate filtered by a regex pattern across all columns.
