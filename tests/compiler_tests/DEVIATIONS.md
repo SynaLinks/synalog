@@ -867,3 +867,13 @@ Facts on Databricks are the rows of one `VALUES` (see "Engine functions");
 a typed null (`CAST(null AS ARRAY<DOUBLE>)`) no longer keeps them a union of
 `SELECT`s, which Spark fails to correlate. `Range` of a number Spark types as
 a double casts it to an integer for `SEQUENCE`.
+
+## An expression equal to itself
+
+`x == x` is a condition, as `x == y` is: false where `x` is null, since SQL's
+`=` makes null equal to nothing (the null keys of a join do not join either).
+`null == null` and a call equal to itself (`Random() == Random()`) are
+conditions too; only two equal number, string or boolean literals are dropped,
+always true. Upstream drops every expression equal to itself, so that a null
+equalled itself. The goldens of `549_nulls_null_not_equal_to_itself` are
+synalog's.

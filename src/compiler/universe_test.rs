@@ -1701,3 +1701,26 @@ fn test_rules_naming_fields_in_different_orders_select_them_in_one_order() {
     assert!(sql.contains("4 AS a,\n      3 AS b"), "SQL: {}", sql);
 }
 
+// ── equality of an expression with itself ──
+
+#[test]
+fn test_null_equal_to_null_is_a_condition() {
+    let program = make_universe_program(r#"
+        @Engine("sqlite");
+        Q(ok: true) :- null == null;
+    "#);
+    let sql = compile_predicate(&program, "Q").unwrap();
+    assert!(sql.contains("WHERE"), "SQL: {}", sql);
+}
+
+#[test]
+fn test_variable_equal_to_itself_is_a_condition() {
+    let program = make_universe_program(r#"
+        @Engine("sqlite");
+        A(x: 1);
+        Q(x:) :- A(x:), x == x;
+    "#);
+    let sql = compile_predicate(&program, "Q").unwrap();
+    // A is inlined: x is its value, 1.
+    assert!(sql.contains("WHERE\n  (1 = 1)"), "SQL: {}", sql);
+}
