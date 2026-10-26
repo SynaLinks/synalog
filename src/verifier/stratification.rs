@@ -47,20 +47,24 @@ struct DepEdge {
     negated: bool,
 }
 
-/// Extract dependency edges from a rule.
+/// Extract dependency edges from a rule: every predicate its body and head
+/// read, wherever they read it (a conjunct, or a `combine` subquery in any
+/// expression, nested at any depth), negated when a negation encloses it.
 fn extract_deps(rule: &Json) -> Vec<DepEdge> {
-    let head_pred = rule.as_object()["head"].as_object()["predicate_name"].as_str().to_string();
-
-    let Some(body) = rule.as_object().get("body") else {
-        return vec![];
-    };
+    let head = rule.as_object()["head"].as_object();
+    let head_pred = head["predicate_name"].as_str().to_string();
 
     let mut edges = Vec::new();
-    collect_deps_from_conjunction(body, &head_pred, &mut edges);
+    if let Some(body) = rule.as_object().get("body") {
+        collect_deps_from_conjunction(body, &head_pred, false, &mut edges);
+    }
+    if let Some(record) = head.get("record") {
+        collect_deps_from_expr(record, &head_pred, false, &mut edges);
+    }
     edges
 }
 
-fn collect_deps_from_conjunction(body: &Json, head_pred: &str, edges: &mut Vec<DepEdge>) {
+fn collect_deps_from_conjunction(body: &Json, head_pred: &str, negated: bool, edges: &mut Vec<DepEdge>) {
     let Some(conj) = body.as_object().get("conjunction") else {
         return;
     };
@@ -69,90 +73,71 @@ fn collect_deps_from_conjunction(body: &Json, head_pred: &str, edges: &mut Vec<D
     };
 
     for c in conjuncts.as_array() {
-        collect_deps_from_conjunct(c, head_pred, edges);
+        collect_deps_from_conjunct(c, head_pred, negated, edges);
     }
 }
 
-fn collect_deps_from_conjunct(conjunct: &Json, head_pred: &str, edges: &mut Vec<DepEdge>) {
+fn collect_deps_from_conjunct(conjunct: &Json, head_pred: &str, negated: bool, edges: &mut Vec<DepEdge>) {
     let obj = conjunct.as_object();
 
-    // Positive predicate
     if let Some(pred) = obj.get("predicate") {
         let pred_name = pred.as_object()["predicate_name"].as_str();
-
-        // Check if this is IsNull wrapping a combine (negation)
+        // A negation `~P(...)` is `IsNull(combine ...)`: its argument's
+        // predicates are read negated.
         if pred_name == "IsNull" {
             if let Some(record) = pred.as_object().get("record") {
-                if let Some(fv_arr) = record.as_object().get("field_value") {
-                    for fv in fv_arr.as_array() {
-                        if let Some(expr) = fv.as_object().get("value")
-                            .and_then(|v| v.as_object().get("expression"))
-                        {
-                            if let Some(combine) = expr.as_object().get("combine") {
-                                // This is negation - the actual negated predicates are in the body
-                                if let Some(inner_body) = combine.as_object().get("body") {
-                                    collect_deps_from_conjunction_negated(inner_body, head_pred, edges);
-                                }
-                            }
-                        }
-                    }
-                }
+                collect_deps_from_expr(record, head_pred, true, edges);
             }
         } else {
-            // Regular positive predicate
             edges.push(DepEdge {
                 from: head_pred.to_string(),
                 to: pred_name.to_string(),
-                negated: false,
+                negated,
             });
+            if let Some(record) = pred.as_object().get("record") {
+                collect_deps_from_expr(record, head_pred, negated, edges);
+            }
         }
         return;
     }
 
-    // Disjunction
     if let Some(disj) = obj.get("disjunction") {
         if let Some(branches) = disj.as_object().get("disjunct") {
             for branch in branches.as_array() {
-                collect_deps_from_conjunction(branch, head_pred, edges);
+                collect_deps_from_conjunction(branch, head_pred, negated, edges);
             }
         }
+        return;
     }
+
+    // A unification, an inclusion, ...: the subqueries in its expressions.
+    collect_deps_from_expr(conjunct, head_pred, negated, edges);
 }
 
-fn collect_deps_from_conjunction_negated(body: &Json, head_pred: &str, edges: &mut Vec<DepEdge>) {
-    let Some(conj) = body.as_object().get("conjunction") else {
-        return;
-    };
-    let Some(conjuncts) = conj.as_object().get("conjunct") else {
-        return;
-    };
-
-    for c in conjuncts.as_array() {
-        collect_conjunct_deps_negated(c, head_pred, edges);
-    }
-}
-
-fn collect_conjunct_deps_negated(conjunct: &Json, head_pred: &str, edges: &mut Vec<DepEdge>) {
-    let obj = conjunct.as_object();
-
-    // Predicate call inside negation
-    if let Some(pred) = obj.get("predicate") {
-        let pred_name = pred.as_object()["predicate_name"].as_str();
-        edges.push(DepEdge {
-            from: head_pred.to_string(),
-            to: pred_name.to_string(),
-            negated: true,
-        });
-        return;
-    }
-
-    // Disjunction inside negation - recurse into branches
-    if let Some(disj) = obj.get("disjunction") {
-        if let Some(branches) = disj.as_object().get("disjunct") {
-            for branch in branches.as_array() {
-                collect_deps_from_conjunction_negated(branch, head_pred, edges);
+/// The predicates the `combine` subqueries of an expression read.
+fn collect_deps_from_expr(expr: &Json, head_pred: &str, negated: bool, edges: &mut Vec<DepEdge>) {
+    match expr {
+        Json::Object(obj) => {
+            if let Some(combine) = obj.get("combine") {
+                for (key, value) in combine.as_object().iter() {
+                    if key == "body" {
+                        collect_deps_from_conjunction(value, head_pred, negated, edges);
+                    } else {
+                        collect_deps_from_expr(value, head_pred, negated, edges);
+                    }
+                }
+                return;
+            }
+            // `IsNull(combine ...)` in an expression is a negation too.
+            let negates = obj
+                .get("call")
+                .is_some_and(|call| call.as_object().get("predicate_name").is_some_and(|n| n.is_string() && n.as_str() == "IsNull"));
+            for (_, value) in obj.iter() {
+                collect_deps_from_expr(value, head_pred, negated || negates, edges);
             }
         }
+        Json::Array(items) => items.iter().for_each(|item| collect_deps_from_expr(item, head_pred, negated, edges)),
+        _ => {}
     }
 }
 
@@ -313,6 +298,28 @@ mod tests {
         assert!(check_stratification(&rules).is_err());
         let (edges, n) = signed_edges(&rules);
         assert!(synalog_verified::strata::strata(&edges, n).is_none());
+    }
+
+    #[test]
+    fn test_negation_in_a_nested_subquery_is_a_negative_cycle() {
+        let parsed = parse(r#"
+            @Recursive(P, 4);
+            P(x: 1);
+            P(x: 2) :- n == (combine += 1 :- ~P(x: 2)), n is not null;
+        "#);
+        let rules: Vec<&Json> = parsed.as_object()["rule"].as_array().iter().collect();
+        let err = check_stratification(&rules).unwrap_err();
+        assert_eq!(err.cycle, vec!["P"]);
+    }
+
+    #[test]
+    fn test_negation_in_a_head_subquery_is_a_negative_cycle() {
+        let parsed = parse(r#"
+            A(x: 1);
+            A(x:, y: (combine += 1 :- ~A(x: 2))) :- B(x:);
+        "#);
+        let rules: Vec<&Json> = parsed.as_object()["rule"].as_array().iter().collect();
+        assert!(check_stratification(&rules).is_err());
     }
 
     #[test]
