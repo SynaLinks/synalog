@@ -20,7 +20,7 @@
 # Synalog
 ## Logic programming for AI agents: Datalog-family language compiling to optimized SQL
 
-Synalog is a logic programming language from the [Datalog](https://en.wikipedia.org/wiki/Datalog) family, a fork of [Logica](https://logica.dev/) with the entire engine (parser, compiler and verifier) **rewritten in Rust**. It compiles to optimized **SQL** and ships as a Python package built on [PyO3](https://pyo3.rs/): parsing is **~86.7x faster** and compilation **~13.7x faster** than the original Python implementation, so validating and compiling a program is effectively instant.
+Synalog is a logic programming language from the [Datalog](https://en.wikipedia.org/wiki/Datalog) family, a fork of [Logica](https://logica.dev/) with the entire engine (parser, compiler and verifier) **rewritten in Rust**. It compiles to optimized **SQL** and ships as a Python package built on [PyO3](https://pyo3.rs/): parsing is **~52x faster** and compilation **~51x faster** than the original Python implementation, so validating and compiling a program is effectively instant.
 
 Synalog was built for the AI agents era. The main idea is to give an agent a **dynamic semantic layer** over its data: a layer of named concepts and rules that the agent both reads from *and writes to* at inference time. Unlike a traditional BI semantic layer, which is modeled once by humans and frozen, Synalog's layer is authored on the fly: the agent extracts entities and relationships into **knowledge graphs**, derives meaning with composable **logical rules**, and reasons over time with **temporal reasoning**: accumulating all of it as structured, reusable memory.
 
@@ -534,19 +534,19 @@ Each engine has its own SQL dialect for string literals, array syntax, GROUP BY 
 
 ## Benchmark
 
-The Rust core is benchmarked against the original Python Logica implementation on every program of the compiler test suite (504 programs across 6 engines). Both run **in-process**: Synalog through the same PyO3 extension that `pip install synalog` ships, so the numbers measure exactly what a Python caller gets:
+The Rust core is benchmarked against the original Python Logica implementation on every program of the compiler test suite (28,614 programs across 6 engines). Both run **in-process**: Synalog through the same PyO3 extension that `pip install synalog` ships, so the numbers measure exactly what a Python caller gets:
 
 | | Python Logica | Synalog (Rust) | Speedup |
 |---|---|---|---|
-| Parse | 13.4 s | 0.15 s | **87x** |
-| Compile | 61.3 s | 5.2 s | **13x** |
-| Verify | n/a | 0.16 s | Rust-only |
+| Parse | 230.5 s | 4.1 s | **52x** |
+| Compile | 1117.7 s | 25.7 s | **51x** |
+| Verify | n/a | 12.1 s | Rust-only |
 
 <p align="center">
   <img src="https://raw.githubusercontent.com/synalinks/synalog/main/docs/benchmark/speedup_by_engine.png" alt="Synalog vs Python Logica: speedup by SQL engine" width="820">
 </p>
 
-Speedup is the geometric mean of per-program speedups (every program weighted equally). Parsing is uniformly ~85x to ~88x faster; compilation ranges from ~11x (trino, presto) to ~19x (duckdb). Verification (safety, stratification, recursion and reserved-name checks) is a Synalog-specific pass with no standalone Python equivalent. Per-engine tables and methodology are on the [Benchmark](https://synalinks.github.io/synalog/benchmark/) page; reproduce with `python3 benchmark.py`.
+Speedup is the geometric mean of per-program speedups (every program weighted equally). Parsing is uniformly ~52x faster; compilation ranges from ~38x (trino, presto) to ~102x (duckdb). Verification (safety, stratification, recursion and reserved-name checks) is a Synalog-specific pass with no standalone Python equivalent. Per-engine tables and methodology are on the [Benchmark](https://synalinks.github.io/synalog/benchmark/) page; reproduce with `python3 benchmark.py`.
 
 ## Verification
 
