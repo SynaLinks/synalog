@@ -67,7 +67,7 @@ t_1_ReachedBy_MultBodyAggAux_f3 AS (SELECT * FROM (
       synalog_test.ReachedBy_sn_t0 AS ReachedBy_sn_t0, t_1_HandedOver AS t_2_HandedOver
     WHERE
       (CASE WHEN (ReachedBy_sn_t0.valid_from > t_2_HandedOver.valid_from) THEN ReachedBy_sn_t0.valid_from ELSE t_2_HandedOver.valid_from END < CASE WHEN (ReachedBy_sn_t0.valid_to < t_2_HandedOver.valid_to) THEN ReachedBy_sn_t0.valid_to ELSE t_2_HandedOver.valid_to END) AND
-      (t_2_HandedOver.source = ReachedBy_sn_t0.target)
+      (t_2_HandedOver.source <=> ReachedBy_sn_t0.target)
   
 ) AS UNUSED_TABLE_NAME  ),
 t_0_ReachedBy_sn_r1 AS (SELECT
@@ -117,7 +117,7 @@ t_1_ReachedBy_MultBodyAggAux_f4 AS (SELECT * FROM (
       synalog_test.ReachedBy_sn_t1 AS ReachedBy_sn_t1, t_1_HandedOver AS t_2_HandedOver
     WHERE
       (CASE WHEN (ReachedBy_sn_t1.valid_from > t_2_HandedOver.valid_from) THEN ReachedBy_sn_t1.valid_from ELSE t_2_HandedOver.valid_from END < CASE WHEN (ReachedBy_sn_t1.valid_to < t_2_HandedOver.valid_to) THEN ReachedBy_sn_t1.valid_to ELSE t_2_HandedOver.valid_to END) AND
-      (t_2_HandedOver.source = ReachedBy_sn_t1.target)
+      (t_2_HandedOver.source <=> ReachedBy_sn_t1.target)
   
 ) AS UNUSED_TABLE_NAME  ),
 t_0_ReachedBy_sn_r2 AS (SELECT
@@ -167,7 +167,7 @@ t_1_ReachedBy_MultBodyAggAux_f5 AS (SELECT * FROM (
       synalog_test.ReachedBy_sn_t2 AS ReachedBy_sn_t2, t_1_HandedOver AS t_2_HandedOver
     WHERE
       (CASE WHEN (ReachedBy_sn_t2.valid_from > t_2_HandedOver.valid_from) THEN ReachedBy_sn_t2.valid_from ELSE t_2_HandedOver.valid_from END < CASE WHEN (ReachedBy_sn_t2.valid_to < t_2_HandedOver.valid_to) THEN ReachedBy_sn_t2.valid_to ELSE t_2_HandedOver.valid_to END) AND
-      (t_2_HandedOver.source = ReachedBy_sn_t2.target)
+      (t_2_HandedOver.source <=> ReachedBy_sn_t2.target)
   
 ) AS UNUSED_TABLE_NAME  ),
 t_0_ReachedBy_sn_r3 AS (SELECT
@@ -217,7 +217,7 @@ t_1_ReachedBy_MultBodyAggAux_f6 AS (SELECT * FROM (
       synalog_test.ReachedBy_sn_t3 AS ReachedBy_sn_t3, t_1_HandedOver AS t_2_HandedOver
     WHERE
       (CASE WHEN (ReachedBy_sn_t3.valid_from > t_2_HandedOver.valid_from) THEN ReachedBy_sn_t3.valid_from ELSE t_2_HandedOver.valid_from END < CASE WHEN (ReachedBy_sn_t3.valid_to < t_2_HandedOver.valid_to) THEN ReachedBy_sn_t3.valid_to ELSE t_2_HandedOver.valid_to END) AND
-      (t_2_HandedOver.source = ReachedBy_sn_t3.target)
+      (t_2_HandedOver.source <=> ReachedBy_sn_t3.target)
   
 ) AS UNUSED_TABLE_NAME  ),
 t_0_ReachedBy_sn_r4 AS (SELECT
@@ -267,7 +267,7 @@ t_1_ReachedBy_MultBodyAggAux_f7 AS (SELECT * FROM (
       synalog_test.ReachedBy_sn_t4 AS ReachedBy_sn_t4, t_1_HandedOver AS t_2_HandedOver
     WHERE
       (CASE WHEN (ReachedBy_sn_t4.valid_from > t_2_HandedOver.valid_from) THEN ReachedBy_sn_t4.valid_from ELSE t_2_HandedOver.valid_from END < CASE WHEN (ReachedBy_sn_t4.valid_to < t_2_HandedOver.valid_to) THEN ReachedBy_sn_t4.valid_to ELSE t_2_HandedOver.valid_to END) AND
-      (t_2_HandedOver.source = ReachedBy_sn_t4.target)
+      (t_2_HandedOver.source <=> ReachedBy_sn_t4.target)
   
 ) AS UNUSED_TABLE_NAME  ),
 t_0_ReachedBy_sn_r5 AS (SELECT
@@ -317,7 +317,7 @@ t_1_ReachedBy_MultBodyAggAux_f8 AS (SELECT * FROM (
       synalog_test.ReachedBy_sn_t5 AS ReachedBy_sn_t5, t_1_HandedOver AS t_2_HandedOver
     WHERE
       (CASE WHEN (ReachedBy_sn_t5.valid_from > t_2_HandedOver.valid_from) THEN ReachedBy_sn_t5.valid_from ELSE t_2_HandedOver.valid_from END < CASE WHEN (ReachedBy_sn_t5.valid_to < t_2_HandedOver.valid_to) THEN ReachedBy_sn_t5.valid_to ELSE t_2_HandedOver.valid_to END) AND
-      (t_2_HandedOver.source = ReachedBy_sn_t5.target)
+      (t_2_HandedOver.source <=> ReachedBy_sn_t5.target)
   
 ) AS UNUSED_TABLE_NAME  ),
 t_0_ReachedBy_sn_r6 AS (SELECT
@@ -367,7 +367,7 @@ t_1_ReachedBy_MultBodyAggAux_f9 AS (SELECT * FROM (
       synalog_test.ReachedBy_sn_t6 AS ReachedBy_sn_t6, t_1_HandedOver AS t_2_HandedOver
     WHERE
       (CASE WHEN (ReachedBy_sn_t6.valid_from > t_2_HandedOver.valid_from) THEN ReachedBy_sn_t6.valid_from ELSE t_2_HandedOver.valid_from END < CASE WHEN (ReachedBy_sn_t6.valid_to < t_2_HandedOver.valid_to) THEN ReachedBy_sn_t6.valid_to ELSE t_2_HandedOver.valid_to END) AND
-      (t_2_HandedOver.source = ReachedBy_sn_t6.target)
+      (t_2_HandedOver.source <=> ReachedBy_sn_t6.target)
   
 ) AS UNUSED_TABLE_NAME  ),
 t_0_ReachedBy_sn_r7 AS (SELECT
@@ -417,7 +417,7 @@ t_1_ReachedBy_MultBodyAggAux_f10 AS (SELECT * FROM (
       synalog_test.ReachedBy_sn_t7 AS ReachedBy_sn_t7, t_1_HandedOver AS t_2_HandedOver
     WHERE
       (CASE WHEN (ReachedBy_sn_t7.valid_from > t_2_HandedOver.valid_from) THEN ReachedBy_sn_t7.valid_from ELSE t_2_HandedOver.valid_from END < CASE WHEN (ReachedBy_sn_t7.valid_to < t_2_HandedOver.valid_to) THEN ReachedBy_sn_t7.valid_to ELSE t_2_HandedOver.valid_to END) AND
-      (t_2_HandedOver.source = ReachedBy_sn_t7.target)
+      (t_2_HandedOver.source <=> ReachedBy_sn_t7.target)
   
 ) AS UNUSED_TABLE_NAME  ),
 t_0_ReachedBy_sn_r8 AS (SELECT
@@ -467,7 +467,7 @@ t_1_ReachedBy_MultBodyAggAux_f11 AS (SELECT * FROM (
       synalog_test.ReachedBy_sn_t8 AS ReachedBy_sn_t8, t_1_HandedOver AS t_2_HandedOver
     WHERE
       (CASE WHEN (ReachedBy_sn_t8.valid_from > t_2_HandedOver.valid_from) THEN ReachedBy_sn_t8.valid_from ELSE t_2_HandedOver.valid_from END < CASE WHEN (ReachedBy_sn_t8.valid_to < t_2_HandedOver.valid_to) THEN ReachedBy_sn_t8.valid_to ELSE t_2_HandedOver.valid_to END) AND
-      (t_2_HandedOver.source = ReachedBy_sn_t8.target)
+      (t_2_HandedOver.source <=> ReachedBy_sn_t8.target)
   
 ) AS UNUSED_TABLE_NAME  ),
 t_0_ReachedBy_sn_r9 AS (SELECT
@@ -613,7 +613,7 @@ t_1_ReachedBy_MultBodyAggAux_f12 AS (SELECT * FROM (
       synalog_test.ReachedBy_sn_delta AS ReachedBy_sn_delta, t_1_HandedOver AS t_2_HandedOver
     WHERE
       (CASE WHEN (ReachedBy_sn_delta.valid_from > t_2_HandedOver.valid_from) THEN ReachedBy_sn_delta.valid_from ELSE t_2_HandedOver.valid_from END < CASE WHEN (ReachedBy_sn_delta.valid_to < t_2_HandedOver.valid_to) THEN ReachedBy_sn_delta.valid_to ELSE t_2_HandedOver.valid_to END) AND
-      (t_2_HandedOver.source = ReachedBy_sn_delta.target)
+      (t_2_HandedOver.source <=> ReachedBy_sn_delta.target)
   
 ) AS UNUSED_TABLE_NAME  ),
 t_0_ReachedBy_sn_step AS (SELECT
@@ -637,10 +637,10 @@ WHERE
   FROM
     synalog_test.ReachedBy_sn_full AS ReachedBy_sn_full
   WHERE
-    (ReachedBy_sn_full.source = ReachedBy_sn_step.source) AND
-    (ReachedBy_sn_full.target = ReachedBy_sn_step.target) AND
-    (ReachedBy_sn_full.valid_from = ReachedBy_sn_step.valid_from) AND
-    (ReachedBy_sn_full.valid_to = ReachedBy_sn_step.valid_to)) IS NULL)
+    (ReachedBy_sn_full.source <=> ReachedBy_sn_step.source) AND
+    (ReachedBy_sn_full.target <=> ReachedBy_sn_step.target) AND
+    (ReachedBy_sn_full.valid_from <=> ReachedBy_sn_step.valid_from) AND
+    (ReachedBy_sn_full.valid_to <=> ReachedBy_sn_step.valid_to)) IS NULL)
 GROUP BY 1, 2, 3, 4;
 
 INSERT INTO synalog_test.ReachedBy_sn_full SELECT * FROM synalog_test.ReachedBy_sn_new;
@@ -672,7 +672,7 @@ t_1_ReachedBy_MultBodyAggAux_f1 AS (SELECT * FROM (
       synalog_test.ReachedBy_sn_new AS ReachedBy_sn_new, t_1_HandedOver AS t_2_HandedOver
     WHERE
       (CASE WHEN (ReachedBy_sn_new.valid_from > t_2_HandedOver.valid_from) THEN ReachedBy_sn_new.valid_from ELSE t_2_HandedOver.valid_from END < CASE WHEN (ReachedBy_sn_new.valid_to < t_2_HandedOver.valid_to) THEN ReachedBy_sn_new.valid_to ELSE t_2_HandedOver.valid_to END) AND
-      (t_2_HandedOver.source = ReachedBy_sn_new.target)
+      (t_2_HandedOver.source <=> ReachedBy_sn_new.target)
   
 ) AS UNUSED_TABLE_NAME  ),
 t_0_ReachedBy_sn_back_step AS (SELECT
@@ -696,10 +696,10 @@ WHERE
   FROM
     synalog_test.ReachedBy_sn_full AS ReachedBy_sn_full
   WHERE
-    (ReachedBy_sn_full.source = ReachedBy_sn_back_step.source) AND
-    (ReachedBy_sn_full.target = ReachedBy_sn_back_step.target) AND
-    (ReachedBy_sn_full.valid_from = ReachedBy_sn_back_step.valid_from) AND
-    (ReachedBy_sn_full.valid_to = ReachedBy_sn_back_step.valid_to)) IS NULL)
+    (ReachedBy_sn_full.source <=> ReachedBy_sn_back_step.source) AND
+    (ReachedBy_sn_full.target <=> ReachedBy_sn_back_step.target) AND
+    (ReachedBy_sn_full.valid_from <=> ReachedBy_sn_back_step.valid_from) AND
+    (ReachedBy_sn_full.valid_to <=> ReachedBy_sn_back_step.valid_to)) IS NULL)
 GROUP BY 1, 2, 3, 4;
 
 INSERT INTO synalog_test.ReachedBy_sn_full SELECT * FROM synalog_test.ReachedBy_sn_delta;
@@ -731,7 +731,7 @@ t_1_ReachedBy_MultBodyAggAux_f12 AS (SELECT * FROM (
       synalog_test.ReachedBy_sn_delta AS ReachedBy_sn_delta, t_1_HandedOver AS t_2_HandedOver
     WHERE
       (CASE WHEN (ReachedBy_sn_delta.valid_from > t_2_HandedOver.valid_from) THEN ReachedBy_sn_delta.valid_from ELSE t_2_HandedOver.valid_from END < CASE WHEN (ReachedBy_sn_delta.valid_to < t_2_HandedOver.valid_to) THEN ReachedBy_sn_delta.valid_to ELSE t_2_HandedOver.valid_to END) AND
-      (t_2_HandedOver.source = ReachedBy_sn_delta.target)
+      (t_2_HandedOver.source <=> ReachedBy_sn_delta.target)
   
 ) AS UNUSED_TABLE_NAME  ),
 t_0_ReachedBy_sn_step AS (SELECT
@@ -755,10 +755,10 @@ WHERE
   FROM
     synalog_test.ReachedBy_sn_full AS ReachedBy_sn_full
   WHERE
-    (ReachedBy_sn_full.source = ReachedBy_sn_step.source) AND
-    (ReachedBy_sn_full.target = ReachedBy_sn_step.target) AND
-    (ReachedBy_sn_full.valid_from = ReachedBy_sn_step.valid_from) AND
-    (ReachedBy_sn_full.valid_to = ReachedBy_sn_step.valid_to)) IS NULL)
+    (ReachedBy_sn_full.source <=> ReachedBy_sn_step.source) AND
+    (ReachedBy_sn_full.target <=> ReachedBy_sn_step.target) AND
+    (ReachedBy_sn_full.valid_from <=> ReachedBy_sn_step.valid_from) AND
+    (ReachedBy_sn_full.valid_to <=> ReachedBy_sn_step.valid_to)) IS NULL)
 GROUP BY 1, 2, 3, 4;
 
 INSERT INTO synalog_test.ReachedBy_sn_full SELECT * FROM synalog_test.ReachedBy_sn_new;
@@ -790,7 +790,7 @@ t_1_ReachedBy_MultBodyAggAux_f1 AS (SELECT * FROM (
       synalog_test.ReachedBy_sn_new AS ReachedBy_sn_new, t_1_HandedOver AS t_2_HandedOver
     WHERE
       (CASE WHEN (ReachedBy_sn_new.valid_from > t_2_HandedOver.valid_from) THEN ReachedBy_sn_new.valid_from ELSE t_2_HandedOver.valid_from END < CASE WHEN (ReachedBy_sn_new.valid_to < t_2_HandedOver.valid_to) THEN ReachedBy_sn_new.valid_to ELSE t_2_HandedOver.valid_to END) AND
-      (t_2_HandedOver.source = ReachedBy_sn_new.target)
+      (t_2_HandedOver.source <=> ReachedBy_sn_new.target)
   
 ) AS UNUSED_TABLE_NAME  ),
 t_0_ReachedBy_sn_back_step AS (SELECT
@@ -814,10 +814,10 @@ WHERE
   FROM
     synalog_test.ReachedBy_sn_full AS ReachedBy_sn_full
   WHERE
-    (ReachedBy_sn_full.source = ReachedBy_sn_back_step.source) AND
-    (ReachedBy_sn_full.target = ReachedBy_sn_back_step.target) AND
-    (ReachedBy_sn_full.valid_from = ReachedBy_sn_back_step.valid_from) AND
-    (ReachedBy_sn_full.valid_to = ReachedBy_sn_back_step.valid_to)) IS NULL)
+    (ReachedBy_sn_full.source <=> ReachedBy_sn_back_step.source) AND
+    (ReachedBy_sn_full.target <=> ReachedBy_sn_back_step.target) AND
+    (ReachedBy_sn_full.valid_from <=> ReachedBy_sn_back_step.valid_from) AND
+    (ReachedBy_sn_full.valid_to <=> ReachedBy_sn_back_step.valid_to)) IS NULL)
 GROUP BY 1, 2, 3, 4;
 
 INSERT INTO synalog_test.ReachedBy_sn_full SELECT * FROM synalog_test.ReachedBy_sn_delta;
@@ -849,7 +849,7 @@ t_1_ReachedBy_MultBodyAggAux_f12 AS (SELECT * FROM (
       synalog_test.ReachedBy_sn_delta AS ReachedBy_sn_delta, t_1_HandedOver AS t_2_HandedOver
     WHERE
       (CASE WHEN (ReachedBy_sn_delta.valid_from > t_2_HandedOver.valid_from) THEN ReachedBy_sn_delta.valid_from ELSE t_2_HandedOver.valid_from END < CASE WHEN (ReachedBy_sn_delta.valid_to < t_2_HandedOver.valid_to) THEN ReachedBy_sn_delta.valid_to ELSE t_2_HandedOver.valid_to END) AND
-      (t_2_HandedOver.source = ReachedBy_sn_delta.target)
+      (t_2_HandedOver.source <=> ReachedBy_sn_delta.target)
   
 ) AS UNUSED_TABLE_NAME  ),
 t_0_ReachedBy_sn_step AS (SELECT
@@ -873,10 +873,10 @@ WHERE
   FROM
     synalog_test.ReachedBy_sn_full AS ReachedBy_sn_full
   WHERE
-    (ReachedBy_sn_full.source = ReachedBy_sn_step.source) AND
-    (ReachedBy_sn_full.target = ReachedBy_sn_step.target) AND
-    (ReachedBy_sn_full.valid_from = ReachedBy_sn_step.valid_from) AND
-    (ReachedBy_sn_full.valid_to = ReachedBy_sn_step.valid_to)) IS NULL)
+    (ReachedBy_sn_full.source <=> ReachedBy_sn_step.source) AND
+    (ReachedBy_sn_full.target <=> ReachedBy_sn_step.target) AND
+    (ReachedBy_sn_full.valid_from <=> ReachedBy_sn_step.valid_from) AND
+    (ReachedBy_sn_full.valid_to <=> ReachedBy_sn_step.valid_to)) IS NULL)
 GROUP BY 1, 2, 3, 4;
 
 INSERT INTO synalog_test.ReachedBy_sn_full SELECT * FROM synalog_test.ReachedBy_sn_new;
@@ -908,7 +908,7 @@ t_1_ReachedBy_MultBodyAggAux_f1 AS (SELECT * FROM (
       synalog_test.ReachedBy_sn_new AS ReachedBy_sn_new, t_1_HandedOver AS t_2_HandedOver
     WHERE
       (CASE WHEN (ReachedBy_sn_new.valid_from > t_2_HandedOver.valid_from) THEN ReachedBy_sn_new.valid_from ELSE t_2_HandedOver.valid_from END < CASE WHEN (ReachedBy_sn_new.valid_to < t_2_HandedOver.valid_to) THEN ReachedBy_sn_new.valid_to ELSE t_2_HandedOver.valid_to END) AND
-      (t_2_HandedOver.source = ReachedBy_sn_new.target)
+      (t_2_HandedOver.source <=> ReachedBy_sn_new.target)
   
 ) AS UNUSED_TABLE_NAME  ),
 t_0_ReachedBy_sn_back_step AS (SELECT
@@ -932,10 +932,10 @@ WHERE
   FROM
     synalog_test.ReachedBy_sn_full AS ReachedBy_sn_full
   WHERE
-    (ReachedBy_sn_full.source = ReachedBy_sn_back_step.source) AND
-    (ReachedBy_sn_full.target = ReachedBy_sn_back_step.target) AND
-    (ReachedBy_sn_full.valid_from = ReachedBy_sn_back_step.valid_from) AND
-    (ReachedBy_sn_full.valid_to = ReachedBy_sn_back_step.valid_to)) IS NULL)
+    (ReachedBy_sn_full.source <=> ReachedBy_sn_back_step.source) AND
+    (ReachedBy_sn_full.target <=> ReachedBy_sn_back_step.target) AND
+    (ReachedBy_sn_full.valid_from <=> ReachedBy_sn_back_step.valid_from) AND
+    (ReachedBy_sn_full.valid_to <=> ReachedBy_sn_back_step.valid_to)) IS NULL)
 GROUP BY 1, 2, 3, 4;
 
 INSERT INTO synalog_test.ReachedBy_sn_full SELECT * FROM synalog_test.ReachedBy_sn_delta;
@@ -967,7 +967,7 @@ t_1_ReachedBy_MultBodyAggAux_f12 AS (SELECT * FROM (
       synalog_test.ReachedBy_sn_delta AS ReachedBy_sn_delta, t_1_HandedOver AS t_2_HandedOver
     WHERE
       (CASE WHEN (ReachedBy_sn_delta.valid_from > t_2_HandedOver.valid_from) THEN ReachedBy_sn_delta.valid_from ELSE t_2_HandedOver.valid_from END < CASE WHEN (ReachedBy_sn_delta.valid_to < t_2_HandedOver.valid_to) THEN ReachedBy_sn_delta.valid_to ELSE t_2_HandedOver.valid_to END) AND
-      (t_2_HandedOver.source = ReachedBy_sn_delta.target)
+      (t_2_HandedOver.source <=> ReachedBy_sn_delta.target)
   
 ) AS UNUSED_TABLE_NAME  ),
 t_0_ReachedBy_sn_step AS (SELECT
@@ -991,10 +991,10 @@ WHERE
   FROM
     synalog_test.ReachedBy_sn_full AS ReachedBy_sn_full
   WHERE
-    (ReachedBy_sn_full.source = ReachedBy_sn_step.source) AND
-    (ReachedBy_sn_full.target = ReachedBy_sn_step.target) AND
-    (ReachedBy_sn_full.valid_from = ReachedBy_sn_step.valid_from) AND
-    (ReachedBy_sn_full.valid_to = ReachedBy_sn_step.valid_to)) IS NULL)
+    (ReachedBy_sn_full.source <=> ReachedBy_sn_step.source) AND
+    (ReachedBy_sn_full.target <=> ReachedBy_sn_step.target) AND
+    (ReachedBy_sn_full.valid_from <=> ReachedBy_sn_step.valid_from) AND
+    (ReachedBy_sn_full.valid_to <=> ReachedBy_sn_step.valid_to)) IS NULL)
 GROUP BY 1, 2, 3, 4;
 
 INSERT INTO synalog_test.ReachedBy_sn_full SELECT * FROM synalog_test.ReachedBy_sn_new;
@@ -1026,7 +1026,7 @@ t_1_ReachedBy_MultBodyAggAux_f1 AS (SELECT * FROM (
       synalog_test.ReachedBy_sn_new AS ReachedBy_sn_new, t_1_HandedOver AS t_2_HandedOver
     WHERE
       (CASE WHEN (ReachedBy_sn_new.valid_from > t_2_HandedOver.valid_from) THEN ReachedBy_sn_new.valid_from ELSE t_2_HandedOver.valid_from END < CASE WHEN (ReachedBy_sn_new.valid_to < t_2_HandedOver.valid_to) THEN ReachedBy_sn_new.valid_to ELSE t_2_HandedOver.valid_to END) AND
-      (t_2_HandedOver.source = ReachedBy_sn_new.target)
+      (t_2_HandedOver.source <=> ReachedBy_sn_new.target)
   
 ) AS UNUSED_TABLE_NAME  ),
 t_0_ReachedBy_sn_back_step AS (SELECT
@@ -1050,10 +1050,10 @@ WHERE
   FROM
     synalog_test.ReachedBy_sn_full AS ReachedBy_sn_full
   WHERE
-    (ReachedBy_sn_full.source = ReachedBy_sn_back_step.source) AND
-    (ReachedBy_sn_full.target = ReachedBy_sn_back_step.target) AND
-    (ReachedBy_sn_full.valid_from = ReachedBy_sn_back_step.valid_from) AND
-    (ReachedBy_sn_full.valid_to = ReachedBy_sn_back_step.valid_to)) IS NULL)
+    (ReachedBy_sn_full.source <=> ReachedBy_sn_back_step.source) AND
+    (ReachedBy_sn_full.target <=> ReachedBy_sn_back_step.target) AND
+    (ReachedBy_sn_full.valid_from <=> ReachedBy_sn_back_step.valid_from) AND
+    (ReachedBy_sn_full.valid_to <=> ReachedBy_sn_back_step.valid_to)) IS NULL)
 GROUP BY 1, 2, 3, 4;
 
 INSERT INTO synalog_test.ReachedBy_sn_full SELECT * FROM synalog_test.ReachedBy_sn_delta;
@@ -1085,7 +1085,7 @@ t_1_ReachedBy_MultBodyAggAux_f12 AS (SELECT * FROM (
       synalog_test.ReachedBy_sn_delta AS ReachedBy_sn_delta, t_1_HandedOver AS t_2_HandedOver
     WHERE
       (CASE WHEN (ReachedBy_sn_delta.valid_from > t_2_HandedOver.valid_from) THEN ReachedBy_sn_delta.valid_from ELSE t_2_HandedOver.valid_from END < CASE WHEN (ReachedBy_sn_delta.valid_to < t_2_HandedOver.valid_to) THEN ReachedBy_sn_delta.valid_to ELSE t_2_HandedOver.valid_to END) AND
-      (t_2_HandedOver.source = ReachedBy_sn_delta.target)
+      (t_2_HandedOver.source <=> ReachedBy_sn_delta.target)
   
 ) AS UNUSED_TABLE_NAME  ),
 t_0_ReachedBy_sn_step AS (SELECT
@@ -1109,10 +1109,10 @@ WHERE
   FROM
     synalog_test.ReachedBy_sn_full AS ReachedBy_sn_full
   WHERE
-    (ReachedBy_sn_full.source = ReachedBy_sn_step.source) AND
-    (ReachedBy_sn_full.target = ReachedBy_sn_step.target) AND
-    (ReachedBy_sn_full.valid_from = ReachedBy_sn_step.valid_from) AND
-    (ReachedBy_sn_full.valid_to = ReachedBy_sn_step.valid_to)) IS NULL)
+    (ReachedBy_sn_full.source <=> ReachedBy_sn_step.source) AND
+    (ReachedBy_sn_full.target <=> ReachedBy_sn_step.target) AND
+    (ReachedBy_sn_full.valid_from <=> ReachedBy_sn_step.valid_from) AND
+    (ReachedBy_sn_full.valid_to <=> ReachedBy_sn_step.valid_to)) IS NULL)
 GROUP BY 1, 2, 3, 4;
 
 INSERT INTO synalog_test.ReachedBy_sn_full SELECT * FROM synalog_test.ReachedBy_sn_new;
@@ -1144,7 +1144,7 @@ t_1_ReachedBy_MultBodyAggAux_f1 AS (SELECT * FROM (
       synalog_test.ReachedBy_sn_new AS ReachedBy_sn_new, t_1_HandedOver AS t_2_HandedOver
     WHERE
       (CASE WHEN (ReachedBy_sn_new.valid_from > t_2_HandedOver.valid_from) THEN ReachedBy_sn_new.valid_from ELSE t_2_HandedOver.valid_from END < CASE WHEN (ReachedBy_sn_new.valid_to < t_2_HandedOver.valid_to) THEN ReachedBy_sn_new.valid_to ELSE t_2_HandedOver.valid_to END) AND
-      (t_2_HandedOver.source = ReachedBy_sn_new.target)
+      (t_2_HandedOver.source <=> ReachedBy_sn_new.target)
   
 ) AS UNUSED_TABLE_NAME  ),
 t_0_ReachedBy_sn_back_step AS (SELECT
@@ -1168,10 +1168,10 @@ WHERE
   FROM
     synalog_test.ReachedBy_sn_full AS ReachedBy_sn_full
   WHERE
-    (ReachedBy_sn_full.source = ReachedBy_sn_back_step.source) AND
-    (ReachedBy_sn_full.target = ReachedBy_sn_back_step.target) AND
-    (ReachedBy_sn_full.valid_from = ReachedBy_sn_back_step.valid_from) AND
-    (ReachedBy_sn_full.valid_to = ReachedBy_sn_back_step.valid_to)) IS NULL)
+    (ReachedBy_sn_full.source <=> ReachedBy_sn_back_step.source) AND
+    (ReachedBy_sn_full.target <=> ReachedBy_sn_back_step.target) AND
+    (ReachedBy_sn_full.valid_from <=> ReachedBy_sn_back_step.valid_from) AND
+    (ReachedBy_sn_full.valid_to <=> ReachedBy_sn_back_step.valid_to)) IS NULL)
 GROUP BY 1, 2, 3, 4;
 
 INSERT INTO synalog_test.ReachedBy_sn_full SELECT * FROM synalog_test.ReachedBy_sn_delta;

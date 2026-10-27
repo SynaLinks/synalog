@@ -47,4 +47,4 @@ WHERE
   WHERE
     (t_3_U.age >= 0) AND
     (t_3_U.age <= 100) AND
-    (t_0_U.u = t_3_U.u)) IS NULL) ORDER BY u;
+    (t_0_U.u IS NOT DISTINCT FROM t_3_U.u)) IS NULL) ORDER BY u;

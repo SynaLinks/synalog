@@ -17,4 +17,4 @@ WHERE
   FROM
     LATERAL (SELECT explode(ARRAY("red")) AS x_5) AS pushkin
   WHERE
-    (Person.team = x_5)) IS NULL) ORDER BY id NULLS LAST;
+    (Person.team <=> x_5)) IS NULL) ORDER BY id NULLS LAST;

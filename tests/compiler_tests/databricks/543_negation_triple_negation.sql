@@ -19,7 +19,7 @@ WHERE
   FROM
     t_2_NotA AS NotA
   WHERE
-    (NotA.x = x_8)) IS NULL))
+    (NotA.x <=> x_8)) IS NULL))
 SELECT
   x_3 AS x
 FROM
@@ -30,4 +30,4 @@ WHERE
   FROM
     t_0_NotNotA AS NotNotA
   WHERE
-    (NotNotA.x = x_3)) IS NULL);
+    (NotNotA.x <=> x_3)) IS NULL);

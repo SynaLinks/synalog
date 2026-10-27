@@ -32,5 +32,5 @@ SELECT
 FROM
   t_1_W AS t_0_W, UNNEST((CASE WHEN t_0_W.s = '' THEN ARRAY[''] ELSE STRING_TO_ARRAY(t_0_W.s, ' ') END)) as x_2
 WHERE
-  (x_2 != '')
+  (x_2 IS DISTINCT FROM '')
 GROUP BY x_2 ORDER BY w, n;

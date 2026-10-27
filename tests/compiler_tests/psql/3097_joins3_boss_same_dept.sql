@@ -53,5 +53,5 @@ SELECT
 FROM
   t_1_E AS E, t_1_E AS t_0_E
 WHERE
-  (t_0_E.id = E.boss) AND
-  (t_0_E.dept = E.dept);
+  (COALESCE(t_0_E.id, 0) = COALESCE(E.boss, 0) AND (t_0_E.id IS NULL) = (E.boss IS NULL)) AND
+  (COALESCE(t_0_E.dept, 0) = COALESCE(E.dept, 0) AND (t_0_E.dept IS NULL) = (E.dept IS NULL));

@@ -64,4 +64,4 @@ SELECT
 FROM
   t_0_V AS V, t_1_Rate AS Rate
 WHERE
-  (V.s = Rate.s);
+  (COALESCE(V.s, '') = COALESCE(Rate.s, '') AND (V.s IS NULL) = (Rate.s IS NULL));

@@ -4,15 +4,6 @@ create schema if not exists synalog_home;
 drop type if exists synalogrecord893574736 cascade; create type synalogrecord893574736 as struct(nirvana numeric);
 create sequence if not exists eternal_logical_sequence;
 
-
--- Synalog type: synalogrecord481217614
-drop type if exists synalogrecord481217614 cascade; create type synalogrecord481217614 as struct(r synalogrecord893574736);
-
--- Synalog type: synalogrecord383307722
-drop type if exists synalogrecord383307722 cascade; create type synalogrecord383307722 as struct(a timestamp);
-
--- Synalog type: synalogrecord519939597
-drop type if exists synalogrecord519939597 cascade; create type synalogrecord519939597 as struct(args text[], predicate text);
 WITH t_2_HasPhone AS (SELECT * FROM (
   
     SELECT
@@ -61,8 +52,8 @@ t_0_Shares AS (SELECT
 FROM
   t_2_HasPhone AS HasPhone, t_2_HasPhone AS t_1_HasPhone
 WHERE
-  (HasPhone.account != t_1_HasPhone.account) AND
-  (t_1_HasPhone.phone = HasPhone.phone)
+  (HasPhone.account IS DISTINCT FROM t_1_HasPhone.account) AND
+  (t_1_HasPhone.phone IS NOT DISTINCT FROM HasPhone.phone)
 GROUP BY HasPhone.account, t_1_HasPhone.account)
 SELECT
   Shares.b AS b

@@ -13,4 +13,4 @@ SELECT
 FROM
   t_0_Emp AS Emp
 WHERE
-  (STRUCT("eng" AS dept, 7000 AS salary, "paris" AS city) = STRUCT(Emp.dept AS dept, Emp.salary AS salary, Emp.city AS city));
+  (STRUCT("eng" AS dept, 7000 AS salary, "paris" AS city) <=> STRUCT(Emp.dept AS dept, Emp.salary AS salary, Emp.city AS city));

@@ -53,4 +53,4 @@ WHERE
   WHERE
     (t_3_U.age >= 30) AND
     (t_3_U.age <= 45) AND
-    (t_0_U.u = t_3_U.u)) AS numeric) IS NULL) ORDER BY u;
+    (COALESCE(t_0_U.u, '') = COALESCE(t_3_U.u, '') AND (t_0_U.u IS NULL) = (t_3_U.u IS NULL))) AS numeric) IS NULL) ORDER BY u;

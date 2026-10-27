@@ -58,4 +58,4 @@ SELECT
 FROM
   t_0_V AS V, t_1_Rate AS Rate
 WHERE
-  (V.s = Rate.s);
+  (V.s IS Rate.s);

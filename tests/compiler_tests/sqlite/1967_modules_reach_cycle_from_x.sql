@@ -35,7 +35,7 @@ t_1_Graph_Reach_RecursiveCte_f1 AS (SELECT * FROM (
       WHERE
         (0 < 8) AND
         (1 = 0) AND
-        (t_3_Loop.a = t_5_Loop.b)
+        (t_3_Loop.a IS t_5_Loop.b)
      UNION ALL
     
       SELECT
@@ -48,8 +48,8 @@ t_1_Graph_Reach_RecursiveCte_f1 AS (SELECT * FROM (
         (((0) + (1)) < 8) AND
         (0 < 8) AND
         (1 = 0) AND
-        (t_7_Loop.a = t_9_Loop.b) AND
-        (t_9_Loop.a = t_11_Loop.b)
+        (t_7_Loop.a IS t_9_Loop.b) AND
+        (t_9_Loop.a IS t_11_Loop.b)
      UNION ALL
     
       SELECT
@@ -63,9 +63,9 @@ t_1_Graph_Reach_RecursiveCte_f1 AS (SELECT * FROM (
         (((0) + (1)) < 8) AND
         (0 < 8) AND
         (1 = 0) AND
-        (t_13_Loop.a = t_15_Loop.b) AND
-        (t_15_Loop.a = t_17_Loop.b) AND
-        (t_17_Loop.a = t_19_Loop.b)
+        (t_13_Loop.a IS t_15_Loop.b) AND
+        (t_15_Loop.a IS t_17_Loop.b) AND
+        (t_17_Loop.a IS t_19_Loop.b)
      UNION ALL
     
       SELECT
@@ -80,10 +80,10 @@ t_1_Graph_Reach_RecursiveCte_f1 AS (SELECT * FROM (
         (((0) + (1)) < 8) AND
         (0 < 8) AND
         (1 = 0) AND
-        (t_21_Loop.a = t_23_Loop.b) AND
-        (t_23_Loop.a = t_25_Loop.b) AND
-        (t_25_Loop.a = t_27_Loop.b) AND
-        (t_27_Loop.a = t_29_Loop.b)
+        (t_21_Loop.a IS t_23_Loop.b) AND
+        (t_23_Loop.a IS t_25_Loop.b) AND
+        (t_25_Loop.a IS t_27_Loop.b) AND
+        (t_27_Loop.a IS t_29_Loop.b)
      UNION ALL
     
       SELECT
@@ -99,11 +99,11 @@ t_1_Graph_Reach_RecursiveCte_f1 AS (SELECT * FROM (
         (((0) + (1)) < 8) AND
         (0 < 8) AND
         (1 = 0) AND
-        (t_31_Loop.a = t_33_Loop.b) AND
-        (t_33_Loop.a = t_35_Loop.b) AND
-        (t_35_Loop.a = t_37_Loop.b) AND
-        (t_37_Loop.a = t_39_Loop.b) AND
-        (t_39_Loop.a = t_41_Loop.b)
+        (t_31_Loop.a IS t_33_Loop.b) AND
+        (t_33_Loop.a IS t_35_Loop.b) AND
+        (t_35_Loop.a IS t_37_Loop.b) AND
+        (t_37_Loop.a IS t_39_Loop.b) AND
+        (t_39_Loop.a IS t_41_Loop.b)
     
   ) AS UNUSED_TABLE_NAME  
 ) AS UNUSED_TABLE_NAME
@@ -116,7 +116,7 @@ FROM
   t_1_Graph_Reach_RecursiveCte_f1 AS t_42_Graph_Reach_RecursiveCte_f1, t_2_Loop AS t_43_Loop
 WHERE
   (t_42_Graph_Reach_RecursiveCte_f1.synalog_step < 8) AND
-  (t_43_Loop.a = t_42_Graph_Reach_RecursiveCte_f1.b)),
+  (t_43_Loop.a IS t_42_Graph_Reach_RecursiveCte_f1.b)),
 t_0_R AS (SELECT
   Graph_Reach_RecursiveCte_f1.a AS a,
   Graph_Reach_RecursiveCte_f1.b AS b

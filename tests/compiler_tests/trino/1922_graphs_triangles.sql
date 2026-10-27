@@ -85,7 +85,7 @@ FROM
 WHERE
   (U.a < U.b) AND
   (U.b < t_0_U.b) AND
-  (t_0_U.a = U.b) AND
-  (t_1_U.a = t_0_U.b) AND
-  (t_1_U.b = U.a)
+  (t_0_U.a IS NOT DISTINCT FROM U.b) AND
+  (t_1_U.a IS NOT DISTINCT FROM t_0_U.b) AND
+  (t_1_U.b IS NOT DISTINCT FROM U.a)
 GROUP BY 1, 2, 3 ORDER BY a, b, c;

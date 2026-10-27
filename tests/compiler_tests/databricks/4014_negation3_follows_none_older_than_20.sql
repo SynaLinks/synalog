@@ -28,5 +28,5 @@ WHERE
     t_3_F AS F, t_1_U AS t_2_U
   WHERE
     (t_2_U.age > 20) AND
-    (F.a = t_0_U.u) AND
-    (t_2_U.u = F.b)) IS NULL) ORDER BY u NULLS LAST;
+    (F.a <=> t_0_U.u) AND
+    (t_2_U.u <=> F.b)) IS NULL) ORDER BY u NULLS LAST;

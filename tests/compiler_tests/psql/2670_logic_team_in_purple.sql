@@ -67,4 +67,4 @@ SELECT
 FROM
   t_0_Person AS Person, UNNEST(ARRAY['purple']) as x_3
 WHERE
-  (Person.team = x_3);
+  (COALESCE(Person.team, '') = COALESCE(x_3, '') AND (Person.team IS NULL) = (x_3 IS NULL));

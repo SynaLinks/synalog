@@ -4,14 +4,6 @@ create schema if not exists synalog_home;
 -- Empty synalog type: synalogrecord893574736;
 DO $$ BEGIN if not exists (select 'I(am) :- I(think)' from pg_type where typname = 'synalogrecord893574736') then create type synalogrecord893574736 as (nirvana numeric); end if; END $$;
 
-
-DO $$
-BEGIN
--- Synalog type: synalogrecord481217614
-if not exists (select 'I(am) :- I(think)' from pg_type where typname = 'synalogrecord481217614') then create type synalogrecord481217614 as (r synalogrecord893574736); end if;
--- Synalog type: synalogrecord86796764
-if not exists (select 'I(am) :- I(think)' from pg_type where typname = 'synalogrecord86796764') then create type synalogrecord86796764 as (s text); end if;
-END $$;
 WITH t_2_Reading AS (SELECT * FROM (
   
     SELECT
@@ -81,5 +73,5 @@ FROM
 WHERE
   (Reading.value > t_0_Reading.value) AND
   (Reading.value > t_1_Reading.value) AND
-  (t_0_Reading.day = ((Reading.day) - (1))) AND
-  (t_1_Reading.day = ((Reading.day) + (1))) ORDER BY day;
+  (COALESCE(t_0_Reading.day, 0) = COALESCE(((Reading.day) - (1)), 0) AND (t_0_Reading.day IS NULL) = (((Reading.day) - (1)) IS NULL)) AND
+  (COALESCE(t_1_Reading.day, 0) = COALESCE(((Reading.day) + (1)), 0) AND (t_1_Reading.day IS NULL) = (((Reading.day) + (1)) IS NULL)) ORDER BY day;

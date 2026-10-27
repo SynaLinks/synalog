@@ -95,5 +95,5 @@ SELECT
 FROM
   t_1_E AS E, t_2_D AS t_0_D
 WHERE
-  (t_0_D.dn != 'tech') AND
-  (t_0_D.d = E.d) ORDER BY n NULLS LAST;
+  (t_0_D.dn IS NOT 'tech') AND
+  (t_0_D.d IS E.d) ORDER BY n NULLS LAST;

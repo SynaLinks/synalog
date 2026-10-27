@@ -1,5 +1,5 @@
 # Who shares employee 1's boss.
-# Expect: rows Q = []
+# Expect: rows Q = [('gus',)]
 E(id: 1, n: "ann", boss: null, d: 10, pay: 5000);
 E(id: 2, n: "bob", boss: 1, d: 10, pay: 4000);
 E(id: 3, n: "cid", boss: 1, d: 20, pay: 4200);

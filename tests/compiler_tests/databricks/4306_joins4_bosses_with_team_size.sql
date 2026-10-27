@@ -20,4 +20,4 @@ SELECT
 FROM
   t_0_T AS T, t_2_E AS E
 WHERE
-  (E.id = T.b) ORDER BY name NULLS LAST;
+  (E.id <=> T.b) ORDER BY name NULLS LAST;

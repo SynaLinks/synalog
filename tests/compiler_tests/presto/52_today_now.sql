@@ -3,4 +3,4 @@ SELECT
 FROM
   (SELECT CAST(CAST(current_timestamp AT TIME ZONE 'UTC' AS DATE) AS VARCHAR) AS date) AS Today, (SELECT CAST(current_timestamp AT TIME ZONE 'UTC' AS TIMESTAMP) AS timestamp) AS Now
 WHERE
-  (SUBSTR(CAST(Now.timestamp AS VARCHAR), 1, 10) = Today.date) ORDER BY n;
+  (SUBSTR(CAST(Now.timestamp AS VARCHAR), 1, 10) IS NOT DISTINCT FROM Today.date) ORDER BY n;

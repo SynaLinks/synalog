@@ -87,4 +87,4 @@ FROM
   t_0_Stock AS Stock, t_1_Price AS Price
 WHERE
   (Stock.warehouse = "east") AND
-  (Price.item = Stock.item);
+  (Price.item IS NOT DISTINCT FROM Stock.item);

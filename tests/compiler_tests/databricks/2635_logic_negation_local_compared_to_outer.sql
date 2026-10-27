@@ -13,4 +13,4 @@ WHERE
     t_0_E AS E
   WHERE
     (E.b < x_4) AND
-    (E.a = x_4)) IS NULL);
+    (E.a <=> x_4)) IS NULL);

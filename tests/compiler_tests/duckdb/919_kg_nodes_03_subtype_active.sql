@@ -4,15 +4,6 @@ create schema if not exists synalog_home;
 drop type if exists synalogrecord893574736 cascade; create type synalogrecord893574736 as struct(nirvana numeric);
 create sequence if not exists eternal_logical_sequence;
 
-
--- Synalog type: synalogrecord481217614
-drop type if exists synalogrecord481217614 cascade; create type synalogrecord481217614 as struct(r synalogrecord893574736);
-
--- Synalog type: synalogrecord383307722
-drop type if exists synalogrecord383307722 cascade; create type synalogrecord383307722 as struct(a timestamp);
-
--- Synalog type: synalogrecord519939597
-drop type if exists synalogrecord519939597 cascade; create type synalogrecord519939597 as struct(args text[], predicate text);
 WITH t_2_Employees AS (SELECT * FROM (
   
     SELECT
@@ -73,6 +64,6 @@ SELECT
 FROM
   t_0_Person AS Person, t_2_Employees AS Employees
 WHERE
-  (Employees.person_id = Person.person_id) AND
+  (Employees.person_id IS NOT DISTINCT FROM Person.person_id) AND
   (Employees.status = 'active')
 GROUP BY Person.person_id, Person.name ORDER BY person_id;

@@ -86,8 +86,8 @@ t_0_AssignmentPerson AS (SELECT
 FROM
   t_1_Assignment AS Assignment, t_4_Person AS Person, t_3_Assignments AS Assignments
 WHERE
-  (Assignments.assignment_id = Assignment.assignment_id) AND
-  (Assignments.person_id = Person.person_id)
+  (COALESCE(Assignments.assignment_id, 0) = COALESCE(Assignment.assignment_id, 0) AND (Assignments.assignment_id IS NULL) = (Assignment.assignment_id IS NULL)) AND
+  (COALESCE(Assignments.person_id, 0) = COALESCE(Person.person_id, 0) AND (Assignments.person_id IS NULL) = (Person.person_id IS NULL))
 GROUP BY Assignment.assignment_id, Person.person_id),
 t_12_Teams AS (SELECT * FROM (
   
@@ -118,8 +118,8 @@ t_6_AssignmentTeam AS (SELECT
 FROM
   t_1_Assignment AS t_7_Assignment, t_11_Team AS t_8_Team, t_3_Assignments AS t_9_Assignments
 WHERE
-  (t_9_Assignments.assignment_id = t_7_Assignment.assignment_id) AND
-  (t_9_Assignments.team_id = t_8_Team.team_id)
+  (COALESCE(t_9_Assignments.assignment_id, 0) = COALESCE(t_7_Assignment.assignment_id, 0) AND (t_9_Assignments.assignment_id IS NULL) = (t_7_Assignment.assignment_id IS NULL)) AND
+  (COALESCE(t_9_Assignments.team_id, 0) = COALESCE(t_8_Team.team_id, 0) AND (t_9_Assignments.team_id IS NULL) = (t_8_Team.team_id IS NULL))
 GROUP BY t_7_Assignment.assignment_id, t_8_Team.team_id)
 SELECT
   AssignmentPerson.assignment_id AS assignment_id,
@@ -128,4 +128,4 @@ SELECT
 FROM
   t_0_AssignmentPerson AS AssignmentPerson, t_6_AssignmentTeam AS AssignmentTeam
 WHERE
-  (AssignmentTeam.assignment_id = AssignmentPerson.assignment_id) ORDER BY assignment_id;
+  (COALESCE(AssignmentTeam.assignment_id, 0) = COALESCE(AssignmentPerson.assignment_id, 0) AND (AssignmentTeam.assignment_id IS NULL) = (AssignmentPerson.assignment_id IS NULL)) ORDER BY assignment_id;

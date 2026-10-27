@@ -35,7 +35,7 @@ CREATE TABLE synalog_test.Reach_sn_t1 AS WITH t_1_Reach_MultBodyAggAux_f3 AS (SE
     FROM
       synalog_test.Reach_sn_t0 AS Reach_sn_t0, LATERAL (SELECT explode(FILTER(SEQUENCE(0, CAST(100 AS BIGINT)), x -> x < 100)) AS x_9) AS pushkin
     WHERE
-      (Reach_sn_t0.`to` = x_9)
+      (Reach_sn_t0.`to` <=> x_9)
   
 ) AS UNUSED_TABLE_NAME  ),
 t_0_Reach_sn_r1 AS (SELECT
@@ -64,7 +64,7 @@ CREATE TABLE synalog_test.Reach_sn_t2 AS WITH t_1_Reach_MultBodyAggAux_f4 AS (SE
     FROM
       synalog_test.Reach_sn_t1 AS Reach_sn_t1, LATERAL (SELECT explode(FILTER(SEQUENCE(0, CAST(100 AS BIGINT)), x -> x < 100)) AS x_9) AS pushkin
     WHERE
-      (Reach_sn_t1.`to` = x_9)
+      (Reach_sn_t1.`to` <=> x_9)
   
 ) AS UNUSED_TABLE_NAME  ),
 t_0_Reach_sn_r2 AS (SELECT
@@ -93,7 +93,7 @@ CREATE TABLE synalog_test.Reach_sn_t3 AS WITH t_1_Reach_MultBodyAggAux_f5 AS (SE
     FROM
       synalog_test.Reach_sn_t2 AS Reach_sn_t2, LATERAL (SELECT explode(FILTER(SEQUENCE(0, CAST(100 AS BIGINT)), x -> x < 100)) AS x_9) AS pushkin
     WHERE
-      (Reach_sn_t2.`to` = x_9)
+      (Reach_sn_t2.`to` <=> x_9)
   
 ) AS UNUSED_TABLE_NAME  ),
 t_0_Reach_sn_r3 AS (SELECT
@@ -152,7 +152,7 @@ CREATE TABLE synalog_test.Reach_sn_new AS WITH t_1_Reach_MultBodyAggAux_f6 AS (S
     FROM
       synalog_test.Reach_sn_delta AS Reach_sn_delta, LATERAL (SELECT explode(FILTER(SEQUENCE(0, CAST(100 AS BIGINT)), x -> x < 100)) AS x_9) AS pushkin
     WHERE
-      (Reach_sn_delta.`to` = x_9)
+      (Reach_sn_delta.`to` <=> x_9)
   
 ) AS UNUSED_TABLE_NAME  ),
 t_0_Reach_sn_step AS (SELECT
@@ -170,7 +170,7 @@ WHERE
   FROM
     synalog_test.Reach_sn_full AS Reach_sn_full
   WHERE
-    (Reach_sn_full.`to` = Reach_sn_step.`to`)) IS NULL)
+    (Reach_sn_full.`to` <=> Reach_sn_step.`to`)) IS NULL)
 GROUP BY 1;
 
 INSERT INTO synalog_test.Reach_sn_full SELECT * FROM synalog_test.Reach_sn_new;
@@ -187,7 +187,7 @@ CREATE TABLE synalog_test.Reach_sn_delta AS WITH t_1_Reach_MultBodyAggAux_f1 AS 
     FROM
       synalog_test.Reach_sn_new AS Reach_sn_new, LATERAL (SELECT explode(FILTER(SEQUENCE(0, CAST(100 AS BIGINT)), x -> x < 100)) AS x_9) AS pushkin
     WHERE
-      (Reach_sn_new.`to` = x_9)
+      (Reach_sn_new.`to` <=> x_9)
   
 ) AS UNUSED_TABLE_NAME  ),
 t_0_Reach_sn_back_step AS (SELECT
@@ -205,7 +205,7 @@ WHERE
   FROM
     synalog_test.Reach_sn_full AS Reach_sn_full
   WHERE
-    (Reach_sn_full.`to` = Reach_sn_back_step.`to`)) IS NULL)
+    (Reach_sn_full.`to` <=> Reach_sn_back_step.`to`)) IS NULL)
 GROUP BY 1;
 
 INSERT INTO synalog_test.Reach_sn_full SELECT * FROM synalog_test.Reach_sn_delta;
@@ -222,7 +222,7 @@ CREATE TABLE synalog_test.Reach_sn_new AS WITH t_1_Reach_MultBodyAggAux_f6 AS (S
     FROM
       synalog_test.Reach_sn_delta AS Reach_sn_delta, LATERAL (SELECT explode(FILTER(SEQUENCE(0, CAST(100 AS BIGINT)), x -> x < 100)) AS x_9) AS pushkin
     WHERE
-      (Reach_sn_delta.`to` = x_9)
+      (Reach_sn_delta.`to` <=> x_9)
   
 ) AS UNUSED_TABLE_NAME  ),
 t_0_Reach_sn_step AS (SELECT
@@ -240,7 +240,7 @@ WHERE
   FROM
     synalog_test.Reach_sn_full AS Reach_sn_full
   WHERE
-    (Reach_sn_full.`to` = Reach_sn_step.`to`)) IS NULL)
+    (Reach_sn_full.`to` <=> Reach_sn_step.`to`)) IS NULL)
 GROUP BY 1;
 
 INSERT INTO synalog_test.Reach_sn_full SELECT * FROM synalog_test.Reach_sn_new;
@@ -257,7 +257,7 @@ CREATE TABLE synalog_test.Reach_sn_delta AS WITH t_1_Reach_MultBodyAggAux_f1 AS 
     FROM
       synalog_test.Reach_sn_new AS Reach_sn_new, LATERAL (SELECT explode(FILTER(SEQUENCE(0, CAST(100 AS BIGINT)), x -> x < 100)) AS x_9) AS pushkin
     WHERE
-      (Reach_sn_new.`to` = x_9)
+      (Reach_sn_new.`to` <=> x_9)
   
 ) AS UNUSED_TABLE_NAME  ),
 t_0_Reach_sn_back_step AS (SELECT
@@ -275,7 +275,7 @@ WHERE
   FROM
     synalog_test.Reach_sn_full AS Reach_sn_full
   WHERE
-    (Reach_sn_full.`to` = Reach_sn_back_step.`to`)) IS NULL)
+    (Reach_sn_full.`to` <=> Reach_sn_back_step.`to`)) IS NULL)
 GROUP BY 1;
 
 INSERT INTO synalog_test.Reach_sn_full SELECT * FROM synalog_test.Reach_sn_delta;
@@ -292,7 +292,7 @@ CREATE TABLE synalog_test.Reach_sn_new AS WITH t_1_Reach_MultBodyAggAux_f6 AS (S
     FROM
       synalog_test.Reach_sn_delta AS Reach_sn_delta, LATERAL (SELECT explode(FILTER(SEQUENCE(0, CAST(100 AS BIGINT)), x -> x < 100)) AS x_9) AS pushkin
     WHERE
-      (Reach_sn_delta.`to` = x_9)
+      (Reach_sn_delta.`to` <=> x_9)
   
 ) AS UNUSED_TABLE_NAME  ),
 t_0_Reach_sn_step AS (SELECT
@@ -310,7 +310,7 @@ WHERE
   FROM
     synalog_test.Reach_sn_full AS Reach_sn_full
   WHERE
-    (Reach_sn_full.`to` = Reach_sn_step.`to`)) IS NULL)
+    (Reach_sn_full.`to` <=> Reach_sn_step.`to`)) IS NULL)
 GROUP BY 1;
 
 INSERT INTO synalog_test.Reach_sn_full SELECT * FROM synalog_test.Reach_sn_new;
@@ -327,7 +327,7 @@ CREATE TABLE synalog_test.Reach_sn_delta AS WITH t_1_Reach_MultBodyAggAux_f1 AS 
     FROM
       synalog_test.Reach_sn_new AS Reach_sn_new, LATERAL (SELECT explode(FILTER(SEQUENCE(0, CAST(100 AS BIGINT)), x -> x < 100)) AS x_9) AS pushkin
     WHERE
-      (Reach_sn_new.`to` = x_9)
+      (Reach_sn_new.`to` <=> x_9)
   
 ) AS UNUSED_TABLE_NAME  ),
 t_0_Reach_sn_back_step AS (SELECT
@@ -345,7 +345,7 @@ WHERE
   FROM
     synalog_test.Reach_sn_full AS Reach_sn_full
   WHERE
-    (Reach_sn_full.`to` = Reach_sn_back_step.`to`)) IS NULL)
+    (Reach_sn_full.`to` <=> Reach_sn_back_step.`to`)) IS NULL)
 GROUP BY 1;
 
 INSERT INTO synalog_test.Reach_sn_full SELECT * FROM synalog_test.Reach_sn_delta;
@@ -362,7 +362,7 @@ CREATE TABLE synalog_test.Reach_sn_new AS WITH t_1_Reach_MultBodyAggAux_f6 AS (S
     FROM
       synalog_test.Reach_sn_delta AS Reach_sn_delta, LATERAL (SELECT explode(FILTER(SEQUENCE(0, CAST(100 AS BIGINT)), x -> x < 100)) AS x_9) AS pushkin
     WHERE
-      (Reach_sn_delta.`to` = x_9)
+      (Reach_sn_delta.`to` <=> x_9)
   
 ) AS UNUSED_TABLE_NAME  ),
 t_0_Reach_sn_step AS (SELECT
@@ -380,7 +380,7 @@ WHERE
   FROM
     synalog_test.Reach_sn_full AS Reach_sn_full
   WHERE
-    (Reach_sn_full.`to` = Reach_sn_step.`to`)) IS NULL)
+    (Reach_sn_full.`to` <=> Reach_sn_step.`to`)) IS NULL)
 GROUP BY 1;
 
 INSERT INTO synalog_test.Reach_sn_full SELECT * FROM synalog_test.Reach_sn_new;
@@ -397,7 +397,7 @@ CREATE TABLE synalog_test.Reach_sn_delta AS WITH t_1_Reach_MultBodyAggAux_f1 AS 
     FROM
       synalog_test.Reach_sn_new AS Reach_sn_new, LATERAL (SELECT explode(FILTER(SEQUENCE(0, CAST(100 AS BIGINT)), x -> x < 100)) AS x_9) AS pushkin
     WHERE
-      (Reach_sn_new.`to` = x_9)
+      (Reach_sn_new.`to` <=> x_9)
   
 ) AS UNUSED_TABLE_NAME  ),
 t_0_Reach_sn_back_step AS (SELECT
@@ -415,7 +415,7 @@ WHERE
   FROM
     synalog_test.Reach_sn_full AS Reach_sn_full
   WHERE
-    (Reach_sn_full.`to` = Reach_sn_back_step.`to`)) IS NULL)
+    (Reach_sn_full.`to` <=> Reach_sn_back_step.`to`)) IS NULL)
 GROUP BY 1;
 
 INSERT INTO synalog_test.Reach_sn_full SELECT * FROM synalog_test.Reach_sn_delta;
@@ -432,7 +432,7 @@ CREATE TABLE synalog_test.Reach_sn_new AS WITH t_1_Reach_MultBodyAggAux_f6 AS (S
     FROM
       synalog_test.Reach_sn_delta AS Reach_sn_delta, LATERAL (SELECT explode(FILTER(SEQUENCE(0, CAST(100 AS BIGINT)), x -> x < 100)) AS x_9) AS pushkin
     WHERE
-      (Reach_sn_delta.`to` = x_9)
+      (Reach_sn_delta.`to` <=> x_9)
   
 ) AS UNUSED_TABLE_NAME  ),
 t_0_Reach_sn_step AS (SELECT
@@ -450,7 +450,7 @@ WHERE
   FROM
     synalog_test.Reach_sn_full AS Reach_sn_full
   WHERE
-    (Reach_sn_full.`to` = Reach_sn_step.`to`)) IS NULL)
+    (Reach_sn_full.`to` <=> Reach_sn_step.`to`)) IS NULL)
 GROUP BY 1;
 
 INSERT INTO synalog_test.Reach_sn_full SELECT * FROM synalog_test.Reach_sn_new;
@@ -467,7 +467,7 @@ CREATE TABLE synalog_test.Reach_sn_delta AS WITH t_1_Reach_MultBodyAggAux_f1 AS 
     FROM
       synalog_test.Reach_sn_new AS Reach_sn_new, LATERAL (SELECT explode(FILTER(SEQUENCE(0, CAST(100 AS BIGINT)), x -> x < 100)) AS x_9) AS pushkin
     WHERE
-      (Reach_sn_new.`to` = x_9)
+      (Reach_sn_new.`to` <=> x_9)
   
 ) AS UNUSED_TABLE_NAME  ),
 t_0_Reach_sn_back_step AS (SELECT
@@ -485,7 +485,7 @@ WHERE
   FROM
     synalog_test.Reach_sn_full AS Reach_sn_full
   WHERE
-    (Reach_sn_full.`to` = Reach_sn_back_step.`to`)) IS NULL)
+    (Reach_sn_full.`to` <=> Reach_sn_back_step.`to`)) IS NULL)
 GROUP BY 1;
 
 INSERT INTO synalog_test.Reach_sn_full SELECT * FROM synalog_test.Reach_sn_delta;
@@ -502,7 +502,7 @@ CREATE TABLE synalog_test.Reach_sn_new AS WITH t_1_Reach_MultBodyAggAux_f6 AS (S
     FROM
       synalog_test.Reach_sn_delta AS Reach_sn_delta, LATERAL (SELECT explode(FILTER(SEQUENCE(0, CAST(100 AS BIGINT)), x -> x < 100)) AS x_9) AS pushkin
     WHERE
-      (Reach_sn_delta.`to` = x_9)
+      (Reach_sn_delta.`to` <=> x_9)
   
 ) AS UNUSED_TABLE_NAME  ),
 t_0_Reach_sn_step AS (SELECT
@@ -520,7 +520,7 @@ WHERE
   FROM
     synalog_test.Reach_sn_full AS Reach_sn_full
   WHERE
-    (Reach_sn_full.`to` = Reach_sn_step.`to`)) IS NULL)
+    (Reach_sn_full.`to` <=> Reach_sn_step.`to`)) IS NULL)
 GROUP BY 1;
 
 INSERT INTO synalog_test.Reach_sn_full SELECT * FROM synalog_test.Reach_sn_new;
@@ -537,7 +537,7 @@ CREATE TABLE synalog_test.Reach_sn_delta AS WITH t_1_Reach_MultBodyAggAux_f1 AS 
     FROM
       synalog_test.Reach_sn_new AS Reach_sn_new, LATERAL (SELECT explode(FILTER(SEQUENCE(0, CAST(100 AS BIGINT)), x -> x < 100)) AS x_9) AS pushkin
     WHERE
-      (Reach_sn_new.`to` = x_9)
+      (Reach_sn_new.`to` <=> x_9)
   
 ) AS UNUSED_TABLE_NAME  ),
 t_0_Reach_sn_back_step AS (SELECT
@@ -555,7 +555,7 @@ WHERE
   FROM
     synalog_test.Reach_sn_full AS Reach_sn_full
   WHERE
-    (Reach_sn_full.`to` = Reach_sn_back_step.`to`)) IS NULL)
+    (Reach_sn_full.`to` <=> Reach_sn_back_step.`to`)) IS NULL)
 GROUP BY 1;
 
 INSERT INTO synalog_test.Reach_sn_full SELECT * FROM synalog_test.Reach_sn_delta;
@@ -572,7 +572,7 @@ CREATE TABLE synalog_test.Reach_sn_new AS WITH t_1_Reach_MultBodyAggAux_f6 AS (S
     FROM
       synalog_test.Reach_sn_delta AS Reach_sn_delta, LATERAL (SELECT explode(FILTER(SEQUENCE(0, CAST(100 AS BIGINT)), x -> x < 100)) AS x_9) AS pushkin
     WHERE
-      (Reach_sn_delta.`to` = x_9)
+      (Reach_sn_delta.`to` <=> x_9)
   
 ) AS UNUSED_TABLE_NAME  ),
 t_0_Reach_sn_step AS (SELECT
@@ -590,7 +590,7 @@ WHERE
   FROM
     synalog_test.Reach_sn_full AS Reach_sn_full
   WHERE
-    (Reach_sn_full.`to` = Reach_sn_step.`to`)) IS NULL)
+    (Reach_sn_full.`to` <=> Reach_sn_step.`to`)) IS NULL)
 GROUP BY 1;
 
 INSERT INTO synalog_test.Reach_sn_full SELECT * FROM synalog_test.Reach_sn_new;
@@ -607,7 +607,7 @@ CREATE TABLE synalog_test.Reach_sn_delta AS WITH t_1_Reach_MultBodyAggAux_f1 AS 
     FROM
       synalog_test.Reach_sn_new AS Reach_sn_new, LATERAL (SELECT explode(FILTER(SEQUENCE(0, CAST(100 AS BIGINT)), x -> x < 100)) AS x_9) AS pushkin
     WHERE
-      (Reach_sn_new.`to` = x_9)
+      (Reach_sn_new.`to` <=> x_9)
   
 ) AS UNUSED_TABLE_NAME  ),
 t_0_Reach_sn_back_step AS (SELECT
@@ -625,7 +625,7 @@ WHERE
   FROM
     synalog_test.Reach_sn_full AS Reach_sn_full
   WHERE
-    (Reach_sn_full.`to` = Reach_sn_back_step.`to`)) IS NULL)
+    (Reach_sn_full.`to` <=> Reach_sn_back_step.`to`)) IS NULL)
 GROUP BY 1;
 
 INSERT INTO synalog_test.Reach_sn_full SELECT * FROM synalog_test.Reach_sn_delta;
@@ -642,7 +642,7 @@ CREATE TABLE synalog_test.Reach_sn_new AS WITH t_1_Reach_MultBodyAggAux_f6 AS (S
     FROM
       synalog_test.Reach_sn_delta AS Reach_sn_delta, LATERAL (SELECT explode(FILTER(SEQUENCE(0, CAST(100 AS BIGINT)), x -> x < 100)) AS x_9) AS pushkin
     WHERE
-      (Reach_sn_delta.`to` = x_9)
+      (Reach_sn_delta.`to` <=> x_9)
   
 ) AS UNUSED_TABLE_NAME  ),
 t_0_Reach_sn_step AS (SELECT
@@ -660,7 +660,7 @@ WHERE
   FROM
     synalog_test.Reach_sn_full AS Reach_sn_full
   WHERE
-    (Reach_sn_full.`to` = Reach_sn_step.`to`)) IS NULL)
+    (Reach_sn_full.`to` <=> Reach_sn_step.`to`)) IS NULL)
 GROUP BY 1;
 
 INSERT INTO synalog_test.Reach_sn_full SELECT * FROM synalog_test.Reach_sn_new;
@@ -677,7 +677,7 @@ CREATE TABLE synalog_test.Reach_sn_delta AS WITH t_1_Reach_MultBodyAggAux_f1 AS 
     FROM
       synalog_test.Reach_sn_new AS Reach_sn_new, LATERAL (SELECT explode(FILTER(SEQUENCE(0, CAST(100 AS BIGINT)), x -> x < 100)) AS x_9) AS pushkin
     WHERE
-      (Reach_sn_new.`to` = x_9)
+      (Reach_sn_new.`to` <=> x_9)
   
 ) AS UNUSED_TABLE_NAME  ),
 t_0_Reach_sn_back_step AS (SELECT
@@ -695,7 +695,7 @@ WHERE
   FROM
     synalog_test.Reach_sn_full AS Reach_sn_full
   WHERE
-    (Reach_sn_full.`to` = Reach_sn_back_step.`to`)) IS NULL)
+    (Reach_sn_full.`to` <=> Reach_sn_back_step.`to`)) IS NULL)
 GROUP BY 1;
 
 INSERT INTO synalog_test.Reach_sn_full SELECT * FROM synalog_test.Reach_sn_delta;
@@ -712,7 +712,7 @@ CREATE TABLE synalog_test.Reach_sn_new AS WITH t_1_Reach_MultBodyAggAux_f6 AS (S
     FROM
       synalog_test.Reach_sn_delta AS Reach_sn_delta, LATERAL (SELECT explode(FILTER(SEQUENCE(0, CAST(100 AS BIGINT)), x -> x < 100)) AS x_9) AS pushkin
     WHERE
-      (Reach_sn_delta.`to` = x_9)
+      (Reach_sn_delta.`to` <=> x_9)
   
 ) AS UNUSED_TABLE_NAME  ),
 t_0_Reach_sn_step AS (SELECT
@@ -730,7 +730,7 @@ WHERE
   FROM
     synalog_test.Reach_sn_full AS Reach_sn_full
   WHERE
-    (Reach_sn_full.`to` = Reach_sn_step.`to`)) IS NULL)
+    (Reach_sn_full.`to` <=> Reach_sn_step.`to`)) IS NULL)
 GROUP BY 1;
 
 INSERT INTO synalog_test.Reach_sn_full SELECT * FROM synalog_test.Reach_sn_new;
@@ -747,7 +747,7 @@ CREATE TABLE synalog_test.Reach_sn_delta AS WITH t_1_Reach_MultBodyAggAux_f1 AS 
     FROM
       synalog_test.Reach_sn_new AS Reach_sn_new, LATERAL (SELECT explode(FILTER(SEQUENCE(0, CAST(100 AS BIGINT)), x -> x < 100)) AS x_9) AS pushkin
     WHERE
-      (Reach_sn_new.`to` = x_9)
+      (Reach_sn_new.`to` <=> x_9)
   
 ) AS UNUSED_TABLE_NAME  ),
 t_0_Reach_sn_back_step AS (SELECT
@@ -765,7 +765,7 @@ WHERE
   FROM
     synalog_test.Reach_sn_full AS Reach_sn_full
   WHERE
-    (Reach_sn_full.`to` = Reach_sn_back_step.`to`)) IS NULL)
+    (Reach_sn_full.`to` <=> Reach_sn_back_step.`to`)) IS NULL)
 GROUP BY 1;
 
 INSERT INTO synalog_test.Reach_sn_full SELECT * FROM synalog_test.Reach_sn_delta;
@@ -782,7 +782,7 @@ CREATE TABLE synalog_test.Reach_sn_new AS WITH t_1_Reach_MultBodyAggAux_f6 AS (S
     FROM
       synalog_test.Reach_sn_delta AS Reach_sn_delta, LATERAL (SELECT explode(FILTER(SEQUENCE(0, CAST(100 AS BIGINT)), x -> x < 100)) AS x_9) AS pushkin
     WHERE
-      (Reach_sn_delta.`to` = x_9)
+      (Reach_sn_delta.`to` <=> x_9)
   
 ) AS UNUSED_TABLE_NAME  ),
 t_0_Reach_sn_step AS (SELECT
@@ -800,7 +800,7 @@ WHERE
   FROM
     synalog_test.Reach_sn_full AS Reach_sn_full
   WHERE
-    (Reach_sn_full.`to` = Reach_sn_step.`to`)) IS NULL)
+    (Reach_sn_full.`to` <=> Reach_sn_step.`to`)) IS NULL)
 GROUP BY 1;
 
 INSERT INTO synalog_test.Reach_sn_full SELECT * FROM synalog_test.Reach_sn_new;
@@ -817,7 +817,7 @@ CREATE TABLE synalog_test.Reach_sn_delta AS WITH t_1_Reach_MultBodyAggAux_f1 AS 
     FROM
       synalog_test.Reach_sn_new AS Reach_sn_new, LATERAL (SELECT explode(FILTER(SEQUENCE(0, CAST(100 AS BIGINT)), x -> x < 100)) AS x_9) AS pushkin
     WHERE
-      (Reach_sn_new.`to` = x_9)
+      (Reach_sn_new.`to` <=> x_9)
   
 ) AS UNUSED_TABLE_NAME  ),
 t_0_Reach_sn_back_step AS (SELECT
@@ -835,7 +835,7 @@ WHERE
   FROM
     synalog_test.Reach_sn_full AS Reach_sn_full
   WHERE
-    (Reach_sn_full.`to` = Reach_sn_back_step.`to`)) IS NULL)
+    (Reach_sn_full.`to` <=> Reach_sn_back_step.`to`)) IS NULL)
 GROUP BY 1;
 
 INSERT INTO synalog_test.Reach_sn_full SELECT * FROM synalog_test.Reach_sn_delta;
@@ -852,7 +852,7 @@ CREATE TABLE synalog_test.Reach_sn_new AS WITH t_1_Reach_MultBodyAggAux_f6 AS (S
     FROM
       synalog_test.Reach_sn_delta AS Reach_sn_delta, LATERAL (SELECT explode(FILTER(SEQUENCE(0, CAST(100 AS BIGINT)), x -> x < 100)) AS x_9) AS pushkin
     WHERE
-      (Reach_sn_delta.`to` = x_9)
+      (Reach_sn_delta.`to` <=> x_9)
   
 ) AS UNUSED_TABLE_NAME  ),
 t_0_Reach_sn_step AS (SELECT
@@ -870,7 +870,7 @@ WHERE
   FROM
     synalog_test.Reach_sn_full AS Reach_sn_full
   WHERE
-    (Reach_sn_full.`to` = Reach_sn_step.`to`)) IS NULL)
+    (Reach_sn_full.`to` <=> Reach_sn_step.`to`)) IS NULL)
 GROUP BY 1;
 
 INSERT INTO synalog_test.Reach_sn_full SELECT * FROM synalog_test.Reach_sn_new;
@@ -887,7 +887,7 @@ CREATE TABLE synalog_test.Reach_sn_delta AS WITH t_1_Reach_MultBodyAggAux_f1 AS 
     FROM
       synalog_test.Reach_sn_new AS Reach_sn_new, LATERAL (SELECT explode(FILTER(SEQUENCE(0, CAST(100 AS BIGINT)), x -> x < 100)) AS x_9) AS pushkin
     WHERE
-      (Reach_sn_new.`to` = x_9)
+      (Reach_sn_new.`to` <=> x_9)
   
 ) AS UNUSED_TABLE_NAME  ),
 t_0_Reach_sn_back_step AS (SELECT
@@ -905,7 +905,7 @@ WHERE
   FROM
     synalog_test.Reach_sn_full AS Reach_sn_full
   WHERE
-    (Reach_sn_full.`to` = Reach_sn_back_step.`to`)) IS NULL)
+    (Reach_sn_full.`to` <=> Reach_sn_back_step.`to`)) IS NULL)
 GROUP BY 1;
 
 INSERT INTO synalog_test.Reach_sn_full SELECT * FROM synalog_test.Reach_sn_delta;
@@ -922,7 +922,7 @@ CREATE TABLE synalog_test.Reach_sn_new AS WITH t_1_Reach_MultBodyAggAux_f6 AS (S
     FROM
       synalog_test.Reach_sn_delta AS Reach_sn_delta, LATERAL (SELECT explode(FILTER(SEQUENCE(0, CAST(100 AS BIGINT)), x -> x < 100)) AS x_9) AS pushkin
     WHERE
-      (Reach_sn_delta.`to` = x_9)
+      (Reach_sn_delta.`to` <=> x_9)
   
 ) AS UNUSED_TABLE_NAME  ),
 t_0_Reach_sn_step AS (SELECT
@@ -940,7 +940,7 @@ WHERE
   FROM
     synalog_test.Reach_sn_full AS Reach_sn_full
   WHERE
-    (Reach_sn_full.`to` = Reach_sn_step.`to`)) IS NULL)
+    (Reach_sn_full.`to` <=> Reach_sn_step.`to`)) IS NULL)
 GROUP BY 1;
 
 INSERT INTO synalog_test.Reach_sn_full SELECT * FROM synalog_test.Reach_sn_new;
@@ -957,7 +957,7 @@ CREATE TABLE synalog_test.Reach_sn_delta AS WITH t_1_Reach_MultBodyAggAux_f1 AS 
     FROM
       synalog_test.Reach_sn_new AS Reach_sn_new, LATERAL (SELECT explode(FILTER(SEQUENCE(0, CAST(100 AS BIGINT)), x -> x < 100)) AS x_9) AS pushkin
     WHERE
-      (Reach_sn_new.`to` = x_9)
+      (Reach_sn_new.`to` <=> x_9)
   
 ) AS UNUSED_TABLE_NAME  ),
 t_0_Reach_sn_back_step AS (SELECT
@@ -975,7 +975,7 @@ WHERE
   FROM
     synalog_test.Reach_sn_full AS Reach_sn_full
   WHERE
-    (Reach_sn_full.`to` = Reach_sn_back_step.`to`)) IS NULL)
+    (Reach_sn_full.`to` <=> Reach_sn_back_step.`to`)) IS NULL)
 GROUP BY 1;
 
 INSERT INTO synalog_test.Reach_sn_full SELECT * FROM synalog_test.Reach_sn_delta;
@@ -992,7 +992,7 @@ CREATE TABLE synalog_test.Reach_sn_new AS WITH t_1_Reach_MultBodyAggAux_f6 AS (S
     FROM
       synalog_test.Reach_sn_delta AS Reach_sn_delta, LATERAL (SELECT explode(FILTER(SEQUENCE(0, CAST(100 AS BIGINT)), x -> x < 100)) AS x_9) AS pushkin
     WHERE
-      (Reach_sn_delta.`to` = x_9)
+      (Reach_sn_delta.`to` <=> x_9)
   
 ) AS UNUSED_TABLE_NAME  ),
 t_0_Reach_sn_step AS (SELECT
@@ -1010,7 +1010,7 @@ WHERE
   FROM
     synalog_test.Reach_sn_full AS Reach_sn_full
   WHERE
-    (Reach_sn_full.`to` = Reach_sn_step.`to`)) IS NULL)
+    (Reach_sn_full.`to` <=> Reach_sn_step.`to`)) IS NULL)
 GROUP BY 1;
 
 INSERT INTO synalog_test.Reach_sn_full SELECT * FROM synalog_test.Reach_sn_new;

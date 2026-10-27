@@ -63,4 +63,4 @@ WHERE
     t_1_Shop_Stock AS Shop_Stock
   WHERE
     (Shop_Stock.qty > 0) AND
-    (Shop_Product.sku = Shop_Stock.sku)) IS NULL) ORDER BY sku;
+    (Shop_Product.sku IS NOT DISTINCT FROM Shop_Stock.sku)) IS NULL) ORDER BY sku;

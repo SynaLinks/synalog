@@ -136,8 +136,8 @@ t_0_MemberOf AS (SELECT
 FROM
   synalog_test.Person AS Person, synalog_test.Team AS t_1_Team, t_0_Employees AS Employees
 WHERE
-  (Employees.person_id = Person.person_id) AND
-  (Employees.team_id = t_1_Team.team_id)
+  (Employees.person_id IS NOT DISTINCT FROM Person.person_id) AND
+  (Employees.team_id IS NOT DISTINCT FROM t_1_Team.team_id)
 GROUP BY 1, 2),
 t_6_Clients AS (SELECT * FROM (
   
@@ -180,8 +180,8 @@ t_2_EngagedWith AS (SELECT
 FROM
   synalog_test.Team AS t_3_Team, t_5_Client AS t_4_Client, t_7_Engagements AS Engagements
 WHERE
-  (Engagements.team_id = t_3_Team.team_id) AND
-  (Engagements.client_id = t_4_Client.client_id)
+  (Engagements.team_id IS NOT DISTINCT FROM t_3_Team.team_id) AND
+  (Engagements.client_id IS NOT DISTINCT FROM t_4_Client.client_id)
 GROUP BY 1, 2)
 SELECT
   EngagedWith.client_id AS client_id,
@@ -189,5 +189,5 @@ SELECT
 FROM
   t_0_MemberOf AS MemberOf, t_2_EngagedWith AS EngagedWith
 WHERE
-  (EngagedWith.team_id = MemberOf.team_id)
+  (EngagedWith.team_id IS NOT DISTINCT FROM MemberOf.team_id)
 GROUP BY 1 ORDER BY client_id;

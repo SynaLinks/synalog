@@ -87,8 +87,8 @@ t_3_MemberOf AS (SELECT
 FROM
   t_6_Person AS t_4_Person, t_1_Team AS t_5_Team, t_8_Employees AS Employees
 WHERE
-  (Employees.person_id = t_4_Person.person_id) AND
-  (Employees.team_id = t_5_Team.team_id)
+  (COALESCE(Employees.person_id, 0) = COALESCE(t_4_Person.person_id, 0) AND (Employees.person_id IS NULL) = (t_4_Person.person_id IS NULL)) AND
+  (COALESCE(Employees.team_id, 0) = COALESCE(t_5_Team.team_id, 0) AND (Employees.team_id IS NULL) = (t_5_Team.team_id IS NULL))
 GROUP BY t_4_Person.person_id, t_5_Team.team_id)
 SELECT
   MemberOf.person_id AS person_id,
@@ -98,5 +98,5 @@ FROM
 WHERE
   (t_0_Team.team_id = 30) AND
   (MemberOf.team_id = 30) AND
-  (Person.person_id = MemberOf.person_id)
+  (COALESCE(Person.person_id, 0) = COALESCE(MemberOf.person_id, 0) AND (Person.person_id IS NULL) = (MemberOf.person_id IS NULL))
 GROUP BY MemberOf.person_id, Person.name ORDER BY person_id;

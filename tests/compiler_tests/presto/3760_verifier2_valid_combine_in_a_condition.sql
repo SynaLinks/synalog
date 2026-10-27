@@ -37,4 +37,4 @@ WHERE
   FROM
     t_2_E AS E
   WHERE
-    (E.a = t_0_N.n)) = 1) ORDER BY n;
+    (E.a IS NOT DISTINCT FROM t_0_N.n)) = 1) ORDER BY n;

@@ -32,7 +32,7 @@ WITH RECURSIVE t_3_A_RecursiveCte AS (SELECT * FROM (
         (((0) + (1)) < 21) AND
         (0 < 21) AND
         (1 = 0) AND
-        (x_38.unnested_pod = ((x_44.unnested_pod) + (1))) AND
+        (x_38.unnested_pod IS NOT DISTINCT FROM ((x_44.unnested_pod) + (1))) AND
         (x_44.unnested_pod = 0)
      UNION ALL
     
@@ -46,8 +46,8 @@ WITH RECURSIVE t_3_A_RecursiveCte AS (SELECT * FROM (
         (((0) + (1)) < 21) AND
         (0 < 21) AND
         (1 = 0) AND
-        (x_60.unnested_pod = ((x_67.unnested_pod) + (1))) AND
-        (x_67.unnested_pod = ((x_73.unnested_pod) + (1))) AND
+        (x_60.unnested_pod IS NOT DISTINCT FROM ((x_67.unnested_pod) + (1))) AND
+        (x_67.unnested_pod IS NOT DISTINCT FROM ((x_73.unnested_pod) + (1))) AND
         (x_73.unnested_pod = 0)
     
   ) AS UNUSED_TABLE_NAME  
@@ -60,7 +60,7 @@ FROM
   t_3_A_RecursiveCte AS t_17_A_RecursiveCte, (select unnest(Range(100)) as unnested_pod) as x_80
 WHERE
   (t_17_A_RecursiveCte.synalog_step < 21) AND
-  (t_17_A_RecursiveCte.y = x_80.unnested_pod)),
+  (t_17_A_RecursiveCte.y IS NOT DISTINCT FROM x_80.unnested_pod)),
 t_2_A AS (SELECT
   A_RecursiveCte.y AS y
 FROM
@@ -94,7 +94,7 @@ t_20_B_RecursiveCte AS (SELECT * FROM (
         (((0) + (1)) < 22) AND
         (0 < 22) AND
         (1 = 0) AND
-        (x_117.unnested_pod = ((x_123.unnested_pod) + (1))) AND
+        (x_117.unnested_pod IS NOT DISTINCT FROM ((x_123.unnested_pod) + (1))) AND
         (x_123.unnested_pod = 0)
      UNION ALL
     
@@ -108,8 +108,8 @@ t_20_B_RecursiveCte AS (SELECT * FROM (
         (((0) + (1)) < 22) AND
         (0 < 22) AND
         (1 = 0) AND
-        (x_139.unnested_pod = ((x_146.unnested_pod) + (1))) AND
-        (x_146.unnested_pod = ((x_152.unnested_pod) + (1))) AND
+        (x_139.unnested_pod IS NOT DISTINCT FROM ((x_146.unnested_pod) + (1))) AND
+        (x_146.unnested_pod IS NOT DISTINCT FROM ((x_152.unnested_pod) + (1))) AND
         (x_152.unnested_pod = 0)
     
   ) AS UNUSED_TABLE_NAME  
@@ -122,7 +122,7 @@ FROM
   t_20_B_RecursiveCte AS t_35_B_RecursiveCte, (select unnest(Range(100)) as unnested_pod) as x_159
 WHERE
   (t_35_B_RecursiveCte.synalog_step < 22) AND
-  (t_35_B_RecursiveCte.y = x_159.unnested_pod)),
+  (t_35_B_RecursiveCte.y IS NOT DISTINCT FROM x_159.unnested_pod)),
 t_19_B AS (SELECT
   B_RecursiveCte.y AS y
 FROM

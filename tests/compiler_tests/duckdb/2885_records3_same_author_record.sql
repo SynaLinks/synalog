@@ -76,4 +76,4 @@ FROM
   t_4_B AS t_2_B, t_4_B AS t_3_B
 WHERE
   (t_2_B.id < t_3_B.id) AND
-  ({author: t_3_B.author} = {author: t_2_B.author}) ORDER BY a, b;
+  ({author: t_3_B.author} IS NOT DISTINCT FROM {author: t_2_B.author}) ORDER BY a, b;

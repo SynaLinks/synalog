@@ -19,4 +19,4 @@ WHERE
     t_0_Sale AS t_1_Sale
   WHERE
     (t_1_Sale.amount < 60) AND
-    (Sale.id = t_1_Sale.id)) IS NULL);
+    (Sale.id <=> t_1_Sale.id)) IS NULL);

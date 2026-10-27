@@ -72,4 +72,4 @@ WHERE
   FROM
     t_0_R AS R, UNNEST(ARRAY[0]) as x_5
   WHERE
-    (R.x = x_2)) AS numeric) IS NULL);
+    (COALESCE(R.x, 0) = COALESCE(x_2, 0) AND (R.x IS NULL) = (x_2 IS NULL))) AS numeric) IS NULL);

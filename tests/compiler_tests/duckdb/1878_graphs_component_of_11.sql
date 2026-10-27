@@ -148,7 +148,7 @@ t_4_Conn_RecursiveCte AS (SELECT * FROM (
       WHERE
         (0 < 12) AND
         (1 = 0) AND
-        (t_9_U.a = t_11_U.b)
+        (t_9_U.a IS NOT DISTINCT FROM t_11_U.b)
      UNION ALL
     
       SELECT
@@ -161,8 +161,8 @@ t_4_Conn_RecursiveCte AS (SELECT * FROM (
         (((0) + (1)) < 12) AND
         (0 < 12) AND
         (1 = 0) AND
-        (t_16_U.a = t_18_U.b) AND
-        (t_18_U.a = t_20_U.b)
+        (t_16_U.a IS NOT DISTINCT FROM t_18_U.b) AND
+        (t_18_U.a IS NOT DISTINCT FROM t_20_U.b)
      UNION ALL
     
       SELECT
@@ -176,9 +176,9 @@ t_4_Conn_RecursiveCte AS (SELECT * FROM (
         (((0) + (1)) < 12) AND
         (0 < 12) AND
         (1 = 0) AND
-        (t_22_U.a = t_24_U.b) AND
-        (t_24_U.a = t_26_U.b) AND
-        (t_26_U.a = t_28_U.b)
+        (t_22_U.a IS NOT DISTINCT FROM t_24_U.b) AND
+        (t_24_U.a IS NOT DISTINCT FROM t_26_U.b) AND
+        (t_26_U.a IS NOT DISTINCT FROM t_28_U.b)
      UNION ALL
     
       SELECT
@@ -193,10 +193,10 @@ t_4_Conn_RecursiveCte AS (SELECT * FROM (
         (((0) + (1)) < 12) AND
         (0 < 12) AND
         (1 = 0) AND
-        (t_30_U.a = t_32_U.b) AND
-        (t_32_U.a = t_34_U.b) AND
-        (t_34_U.a = t_36_U.b) AND
-        (t_36_U.a = t_38_U.b)
+        (t_30_U.a IS NOT DISTINCT FROM t_32_U.b) AND
+        (t_32_U.a IS NOT DISTINCT FROM t_34_U.b) AND
+        (t_34_U.a IS NOT DISTINCT FROM t_36_U.b) AND
+        (t_36_U.a IS NOT DISTINCT FROM t_38_U.b)
      UNION ALL
     
       SELECT
@@ -212,11 +212,11 @@ t_4_Conn_RecursiveCte AS (SELECT * FROM (
         (((0) + (1)) < 12) AND
         (0 < 12) AND
         (1 = 0) AND
-        (t_40_U.a = t_42_U.b) AND
-        (t_42_U.a = t_44_U.b) AND
-        (t_44_U.a = t_46_U.b) AND
-        (t_46_U.a = t_48_U.b) AND
-        (t_48_U.a = t_50_U.b)
+        (t_40_U.a IS NOT DISTINCT FROM t_42_U.b) AND
+        (t_42_U.a IS NOT DISTINCT FROM t_44_U.b) AND
+        (t_44_U.a IS NOT DISTINCT FROM t_46_U.b) AND
+        (t_46_U.a IS NOT DISTINCT FROM t_48_U.b) AND
+        (t_48_U.a IS NOT DISTINCT FROM t_50_U.b)
     
   ) AS UNUSED_TABLE_NAME  
 ) AS UNUSED_TABLE_NAME
@@ -229,7 +229,7 @@ FROM
   t_4_Conn_RecursiveCte AS t_51_Conn_RecursiveCte, t_5_U AS t_52_U
 WHERE
   (t_51_Conn_RecursiveCte.synalog_step < 12) AND
-  (t_52_U.a = t_51_Conn_RecursiveCte.b)),
+  (t_52_U.a IS NOT DISTINCT FROM t_51_Conn_RecursiveCte.b)),
 t_3_Conn AS (SELECT
   Conn_RecursiveCte.a AS a,
   Conn_RecursiveCte.b AS b
@@ -244,7 +244,7 @@ t_1_Comp_MultBodyAggAux AS (SELECT * FROM (
     FROM
       t_2_Node AS Node, t_3_Conn AS Conn
     WHERE
-      (Conn.a = Node.n)
+      (Conn.a IS NOT DISTINCT FROM Node.n)
    UNION ALL
   
     SELECT

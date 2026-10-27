@@ -48,7 +48,7 @@ t_0_Q_MultBodyAggAux AS (SELECT * FROM (
     FROM
       t_1_E AS E, t_2_F AS F
     WHERE
-      (E.g = F.g)
+      (E.g IS NOT DISTINCT FROM F.g)
    UNION ALL
   
     SELECT
@@ -63,4 +63,4 @@ SELECT
   Q_MultBodyAggAux.id AS id
 FROM
   t_0_Q_MultBodyAggAux AS Q_MultBodyAggAux
-GROUP BY id ORDER BY id;
+GROUP BY id ORDER BY id NULLS LAST;

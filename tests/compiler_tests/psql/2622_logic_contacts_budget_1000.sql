@@ -160,7 +160,7 @@ t_0_Q_MultBodyAggAux AS (SELECT * FROM (
       t_2_A AS A, t_3_Proj AS Proj
     WHERE
       (Proj.budget > 1000) AND
-      (Proj.pid = A.pid)
+      (COALESCE(Proj.pid, 0) = COALESCE(A.pid, 0) AND (Proj.pid IS NULL) = (A.pid IS NULL))
   
 ) AS UNUSED_TABLE_NAME  )
 SELECT

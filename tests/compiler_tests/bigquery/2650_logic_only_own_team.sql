@@ -148,6 +148,6 @@ WHERE
   FROM
     t_1_A AS A, t_2_Proj AS Proj
   WHERE
-    (Proj.team != Person.team) AND
-    (A.id = Person.id) AND
-    (Proj.pid = A.pid)) IS NULL) ORDER BY id;
+    (Proj.team IS DISTINCT FROM Person.team) AND
+    (A.id IS NOT DISTINCT FROM Person.id) AND
+    (Proj.pid IS NOT DISTINCT FROM A.pid)) IS NULL) ORDER BY id NULLS LAST;

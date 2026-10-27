@@ -43,4 +43,4 @@ WHERE
   FROM
     t_3_Big AS Big, (select unnest([0]) as unnested_pod) as x_6
   WHERE
-    (Big.g = t_0_G.g)) IS NULL);
+    (Big.g IS NOT DISTINCT FROM t_0_G.g)) IS NULL);

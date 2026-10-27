@@ -97,5 +97,5 @@ SELECT
 FROM
   t_0_E AS E, t_1_D AS D, t_2_Pr AS Pr
 WHERE
-  (D.dept = E.dept) AND
-  (Pr.dept = E.dept) ORDER BY name, dname, pid;
+  (D.dept IS NOT DISTINCT FROM E.dept) AND
+  (Pr.dept IS NOT DISTINCT FROM E.dept) ORDER BY name NULLS LAST, dname NULLS LAST, pid NULLS LAST;

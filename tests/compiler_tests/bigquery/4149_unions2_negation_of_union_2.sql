@@ -93,4 +93,4 @@ WHERE
   FROM
     t_5_Pick AS Pick
   WHERE
-    (Pick.x = t_0_All.x)) IS NULL) ORDER BY x NULLS LAST;
+    (Pick.x IS NOT DISTINCT FROM t_0_All.x)) IS NULL) ORDER BY x NULLS LAST;

@@ -20,4 +20,4 @@ WHERE
   (Loan.book < t_0_Loan.book) AND
   (Loan.out < t_0_Loan.back) AND
   (t_0_Loan.out < Loan.back) AND
-  (t_0_Loan.member = Loan.member);
+  (t_0_Loan.member <=> Loan.member);

@@ -57,8 +57,8 @@ t_3_Shares AS (SELECT
 FROM
   t_2_HasPhone AS t_4_HasPhone, t_2_HasPhone AS t_5_HasPhone
 WHERE
-  (t_4_HasPhone.account != t_5_HasPhone.account) AND
-  (t_5_HasPhone.phone = t_4_HasPhone.phone)
+  (t_4_HasPhone.account IS DISTINCT FROM t_5_HasPhone.account) AND
+  (COALESCE(t_5_HasPhone.phone, '') = COALESCE(t_4_HasPhone.phone, '') AND (t_5_HasPhone.phone IS NULL) = (t_4_HasPhone.phone IS NULL))
 GROUP BY t_4_HasPhone.account, t_5_HasPhone.account)
 SELECT
   t_0_Account.account AS account
@@ -70,4 +70,4 @@ WHERE
   FROM
     t_3_Shares AS Shares, UNNEST(ARRAY[0]) as x_6
   WHERE
-    (Shares.a = t_0_Account.account)) AS numeric) IS NULL) ORDER BY account;
+    (COALESCE(Shares.a, '') = COALESCE(t_0_Account.account, '') AND (Shares.a IS NULL) = (t_0_Account.account IS NULL))) AS numeric) IS NULL) ORDER BY account;

@@ -4,16 +4,7 @@ create schema if not exists synalog_home;
 -- Empty synalog type: synalogrecord893574736;
 DO $$ BEGIN if not exists (select 'I(am) :- I(think)' from pg_type where typname = 'synalogrecord893574736') then create type synalogrecord893574736 as (nirvana numeric); end if; END $$;
 
-
-DO $$
-BEGIN
--- Synalog type: synalogrecord481217614
-if not exists (select 'I(am) :- I(think)' from pg_type where typname = 'synalogrecord481217614') then create type synalogrecord481217614 as (r synalogrecord893574736); end if;
--- Synalog type: synalogrecord86796764
-if not exists (select 'I(am) :- I(think)' from pg_type where typname = 'synalogrecord86796764') then create type synalogrecord86796764 as (s text); end if;
--- Synalog type: synalogrecord613101336
-if not exists (select 'I(am) :- I(think)' from pg_type where typname = 'synalogrecord613101336') then create type synalogrecord613101336 as (city text, dept text); end if;
-END $$;
+DO $$ BEGIN if not exists (select 1 from pg_type where typname = 'synalogrecord16259613564541650646') then create type synalogrecord16259613564541650646 as ("city" text, "dept" text); end if; END $$;
 WITH t_2_Emp AS (SELECT * FROM (
   
     SELECT
@@ -79,4 +70,4 @@ FROM
   t_2_Emp AS Emp, t_2_Emp AS t_1_Emp
 WHERE
   (Emp.name < t_1_Emp.name) AND
-  (ROW(t_1_Emp.city, t_1_Emp.dept)::synalogrecord613101336 = ROW(Emp.city, Emp.dept)::synalogrecord613101336);
+  (ARRAY[ROW(ROW(t_1_Emp.city, t_1_Emp.dept)::synalogrecord16259613564541650646)] = ARRAY[ROW(ROW(Emp.city, Emp.dept)::synalogrecord16259613564541650646)]);

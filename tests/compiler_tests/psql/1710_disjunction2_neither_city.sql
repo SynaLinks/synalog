@@ -4,14 +4,6 @@ create schema if not exists synalog_home;
 -- Empty synalog type: synalogrecord893574736;
 DO $$ BEGIN if not exists (select 'I(am) :- I(think)' from pg_type where typname = 'synalogrecord893574736') then create type synalogrecord893574736 as (nirvana numeric); end if; END $$;
 
-
-DO $$
-BEGIN
--- Synalog type: synalogrecord481217614
-if not exists (select 'I(am) :- I(think)' from pg_type where typname = 'synalogrecord481217614') then create type synalogrecord481217614 as (r synalogrecord893574736); end if;
--- Synalog type: synalogrecord86796764
-if not exists (select 'I(am) :- I(think)' from pg_type where typname = 'synalogrecord86796764') then create type synalogrecord86796764 as (s text); end if;
-END $$;
 WITH t_0_Ship AS (SELECT * FROM (
   
     SELECT
@@ -100,17 +92,17 @@ t_2_T_MultBodyAggAux AS (SELECT * FROM (
     SELECT
       t_3_Ship.id AS id
     FROM
-      t_0_Ship AS t_3_Ship, UNNEST(ARRAY['paris', 'nice']::text[]) as x_10
+      t_0_Ship AS t_3_Ship, UNNEST(ARRAY['paris', 'nice']) as x_10
     WHERE
-      (t_3_Ship.src = x_10)
+      (COALESCE(t_3_Ship.src, '') = COALESCE(x_10, '') AND (t_3_Ship.src IS NULL) = (x_10 IS NULL))
    UNION ALL
   
     SELECT
       t_4_Ship.id AS id
     FROM
-      t_0_Ship AS t_4_Ship, UNNEST(ARRAY['paris', 'nice']::text[]) as x_14
+      t_0_Ship AS t_4_Ship, UNNEST(ARRAY['paris', 'nice']) as x_14
     WHERE
-      (t_4_Ship.dst = x_14)
+      (COALESCE(t_4_Ship.dst, '') = COALESCE(x_14, '') AND (t_4_Ship.dst IS NULL) = (x_14 IS NULL))
   
 ) AS UNUSED_TABLE_NAME  ),
 t_1_T AS (SELECT
@@ -126,6 +118,6 @@ WHERE
   (CAST((SELECT
     MIN((CASE WHEN x_4 = 0 THEN 1 ELSE NULL END)) AS synalog_value
   FROM
-    t_1_T AS T, UNNEST(ARRAY[0]::numeric[]) as x_4
+    t_1_T AS T, UNNEST(ARRAY[0]) as x_4
   WHERE
-    (T.id = Ship.id)) AS numeric) IS NULL);
+    (COALESCE(T.id, 0) = COALESCE(Ship.id, 0) AND (T.id IS NULL) = (Ship.id IS NULL))) AS numeric) IS NULL);

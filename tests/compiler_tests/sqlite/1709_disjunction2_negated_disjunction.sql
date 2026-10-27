@@ -114,4 +114,4 @@ WHERE
   FROM
     t_1_Excluded AS Excluded, JSON_EACH(JSON_ARRAY(0)) as x_4
   WHERE
-    (Excluded.id = Ship.id)) IS NULL) ORDER BY id;
+    (Excluded.id IS Ship.id)) IS NULL) ORDER BY id NULLS LAST;

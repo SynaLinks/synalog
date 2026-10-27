@@ -26,7 +26,7 @@ WITH RECURSIVE t_3_A_RecursiveCte AS (SELECT * FROM (
         (((0) + (1)) < 21) AND
         (0 < 21) AND
         (1 = 0) AND
-        (x_38.value = ((x_44.value) + (1))) AND
+        (x_38.value IS ((x_44.value) + (1))) AND
         (x_44.value = 0)
      UNION ALL
     
@@ -40,8 +40,8 @@ WITH RECURSIVE t_3_A_RecursiveCte AS (SELECT * FROM (
         (((0) + (1)) < 21) AND
         (0 < 21) AND
         (1 = 0) AND
-        (x_60.value = ((x_67.value) + (1))) AND
-        (x_67.value = ((x_73.value) + (1))) AND
+        (x_60.value IS ((x_67.value) + (1))) AND
+        (x_67.value IS ((x_73.value) + (1))) AND
         (x_73.value = 0)
     
   ) AS UNUSED_TABLE_NAME  
@@ -54,7 +54,7 @@ FROM
   t_3_A_RecursiveCte AS t_17_A_RecursiveCte, JSON_EACH((select json_group_array(n) from (with recursive t as(select 0 as n union all select n + 1 as n from t where n + 1 < 100) select n from t) where n < 100)) as x_80
 WHERE
   (t_17_A_RecursiveCte.synalog_step < 21) AND
-  (t_17_A_RecursiveCte.y = x_80.value)),
+  (t_17_A_RecursiveCte.y IS x_80.value)),
 t_2_A AS (SELECT
   A_RecursiveCte.y AS y
 FROM
@@ -88,7 +88,7 @@ t_20_B_RecursiveCte AS (SELECT * FROM (
         (((0) + (1)) < 22) AND
         (0 < 22) AND
         (1 = 0) AND
-        (x_117.value = ((x_123.value) + (1))) AND
+        (x_117.value IS ((x_123.value) + (1))) AND
         (x_123.value = 0)
      UNION ALL
     
@@ -102,8 +102,8 @@ t_20_B_RecursiveCte AS (SELECT * FROM (
         (((0) + (1)) < 22) AND
         (0 < 22) AND
         (1 = 0) AND
-        (x_139.value = ((x_146.value) + (1))) AND
-        (x_146.value = ((x_152.value) + (1))) AND
+        (x_139.value IS ((x_146.value) + (1))) AND
+        (x_146.value IS ((x_152.value) + (1))) AND
         (x_152.value = 0)
     
   ) AS UNUSED_TABLE_NAME  
@@ -116,7 +116,7 @@ FROM
   t_20_B_RecursiveCte AS t_35_B_RecursiveCte, JSON_EACH((select json_group_array(n) from (with recursive t as(select 0 as n union all select n + 1 as n from t where n + 1 < 100) select n from t) where n < 100)) as x_159
 WHERE
   (t_35_B_RecursiveCte.synalog_step < 22) AND
-  (t_35_B_RecursiveCte.y = x_159.value)),
+  (t_35_B_RecursiveCte.y IS x_159.value)),
 t_19_B AS (SELECT
   B_RecursiveCte.y AS y
 FROM

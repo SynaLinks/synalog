@@ -18,4 +18,4 @@ SELECT
 FROM
   t_1_Reading AS Reading, t_1_Reading AS t_0_Reading
 WHERE
-  (t_0_Reading.day = ((Reading.day) - (1))) ORDER BY day NULLS LAST, total NULLS LAST;
+  (t_0_Reading.day <=> ((Reading.day) - (1))) ORDER BY day NULLS LAST, total NULLS LAST;

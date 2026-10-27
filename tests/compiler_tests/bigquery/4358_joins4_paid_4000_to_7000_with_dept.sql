@@ -98,4 +98,4 @@ FROM
 WHERE
   (E.pay >= 4000) AND
   (E.pay <= 7000) AND
-  (t_0_D.d = E.d) ORDER BY n NULLS LAST;
+  (t_0_D.d IS NOT DISTINCT FROM E.d) ORDER BY n NULLS LAST;

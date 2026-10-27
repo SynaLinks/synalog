@@ -113,9 +113,9 @@ t_1_Lower AS (SELECT * FROM (
     WHERE
       (t_3_S.v >= t_2_S.v) AND
       (t_2_S.r = 'south') AND
-      (t_2_S.d = Prev.d) AND
+      (t_2_S.d IS NOT DISTINCT FROM Prev.d) AND
       (t_3_S.r = 'south') AND
-      (t_3_S.d = Prev.p)
+      (t_3_S.d IS NOT DISTINCT FROM Prev.p)
    UNION ALL
   
     SELECT
@@ -125,9 +125,9 @@ t_1_Lower AS (SELECT * FROM (
     WHERE
       (t_8_S.v >= t_7_S.v) AND
       (t_7_S.r = 'south') AND
-      (t_7_S.d = Next.d) AND
+      (t_7_S.d IS NOT DISTINCT FROM Next.d) AND
       (t_8_S.r = 'south') AND
-      (t_8_S.d = Next.n)
+      (t_8_S.d IS NOT DISTINCT FROM Next.n)
   
 ) AS UNUSED_TABLE_NAME  )
 SELECT

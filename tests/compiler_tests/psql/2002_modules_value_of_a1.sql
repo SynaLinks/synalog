@@ -63,5 +63,5 @@ SELECT
 FROM
   t_0_Shop_Product AS Shop_Product, t_1_Shop_Stock AS Shop_Stock
 WHERE
-  (Shop_Stock.sku = Shop_Product.sku) AND
+  (COALESCE(Shop_Stock.sku, '') = COALESCE(Shop_Product.sku, '') AND (Shop_Stock.sku IS NULL) = (Shop_Product.sku IS NULL)) AND
   ('a1' = Shop_Product.sku);

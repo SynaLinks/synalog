@@ -61,4 +61,4 @@ SELECT
 FROM
   t_0_Person AS Person, UNNEST(ARRAY[7]) as x_3
 WHERE
-  (Person.age = x_3);
+  (Person.age IS NOT DISTINCT FROM x_3);

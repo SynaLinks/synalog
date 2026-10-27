@@ -75,6 +75,6 @@ SELECT
 FROM
   t_1_E AS E, t_1_E AS t_0_E
 WHERE
-  (t_0_E.id != 2) AND
+  (t_0_E.id IS DISTINCT FROM 2) AND
   (E.id = 2) AND
-  (t_0_E.d = E.d);
+  (COALESCE(t_0_E.d, 0) = COALESCE(E.d, 0) AND (t_0_E.d IS NULL) = (E.d IS NULL));

@@ -154,5 +154,5 @@ FROM
   t_1_Loan AS Loan, t_2_Book AS t_0_Book
 WHERE
   (Loan.member = 'ben') AND
-  (t_0_Book.id = Loan.book)
+  (COALESCE(t_0_Book.id, 0) = COALESCE(Loan.book, 0) AND (t_0_Book.id IS NULL) = (Loan.book IS NULL))
 GROUP BY t_0_Book.title ORDER BY title;

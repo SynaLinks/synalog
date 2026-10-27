@@ -4,14 +4,6 @@ create schema if not exists synalog_home;
 -- Empty synalog type: synalogrecord893574736;
 DO $$ BEGIN if not exists (select 'I(am) :- I(think)' from pg_type where typname = 'synalogrecord893574736') then create type synalogrecord893574736 as (nirvana numeric); end if; END $$;
 
-
-DO $$
-BEGIN
--- Synalog type: synalogrecord481217614
-if not exists (select 'I(am) :- I(think)' from pg_type where typname = 'synalogrecord481217614') then create type synalogrecord481217614 as (r synalogrecord893574736); end if;
--- Synalog type: synalogrecord86796764
-if not exists (select 'I(am) :- I(think)' from pg_type where typname = 'synalogrecord86796764') then create type synalogrecord86796764 as (s text); end if;
-END $$;
 WITH t_1_Follows AS (SELECT * FROM (
   
     SELECT
@@ -75,5 +67,5 @@ SELECT
 FROM
   t_1_Follows AS Follows, t_1_Follows AS t_0_Follows
 WHERE
-  (t_0_Follows.a = Follows.b) AND
-  (t_0_Follows.b = Follows.a) ORDER BY a, b;
+  (COALESCE(t_0_Follows.a, '') = COALESCE(Follows.b, '') AND (t_0_Follows.a IS NULL) = (Follows.b IS NULL)) AND
+  (COALESCE(t_0_Follows.b, '') = COALESCE(Follows.a, '') AND (t_0_Follows.b IS NULL) = (Follows.a IS NULL)) ORDER BY a, b;

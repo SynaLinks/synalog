@@ -15,5 +15,5 @@ SELECT
 FROM
   t_0_E AS E, t_1_F AS F
 WHERE
-  (F.g = E.g)
+  (F.g <=> E.g)
 GROUP BY 1 ORDER BY g NULLS LAST;

@@ -4,14 +4,6 @@ create schema if not exists synalog_home;
 -- Empty synalog type: synalogrecord893574736;
 DO $$ BEGIN if not exists (select 'I(am) :- I(think)' from pg_type where typname = 'synalogrecord893574736') then create type synalogrecord893574736 as (nirvana numeric); end if; END $$;
 
-
-DO $$
-BEGIN
--- Synalog type: synalogrecord481217614
-if not exists (select 'I(am) :- I(think)' from pg_type where typname = 'synalogrecord481217614') then create type synalogrecord481217614 as (r synalogrecord893574736); end if;
--- Synalog type: synalogrecord86796764
-if not exists (select 'I(am) :- I(think)' from pg_type where typname = 'synalogrecord86796764') then create type synalogrecord86796764 as (s text); end if;
-END $$;
 WITH t_1_S AS (SELECT * FROM (
   
     SELECT
@@ -116,10 +108,10 @@ WHERE
   (CAST((SELECT
     MIN((CASE WHEN x_17 = 0 THEN 1 ELSE NULL END)) AS synalog_value
   FROM
-    t_1_S AS t_7_S, UNNEST(ARRAY[0]::numeric[]) as x_17
+    t_1_S AS t_7_S, UNNEST(ARRAY[0]) as x_17
   WHERE
-    (t_7_S.r = Region.r) AND
-    (t_7_S.d = t_3_Day.d)) AS numeric) IS NULL)
+    (COALESCE(t_7_S.r, '') = COALESCE(Region.r, '') AND (t_7_S.r IS NULL) = (Region.r IS NULL)) AND
+    (COALESCE(t_7_S.d, 0) = COALESCE(t_3_Day.d, 0) AND (t_7_S.d IS NULL) = (t_3_Day.d IS NULL))) AS numeric) IS NULL)
 GROUP BY t_3_Day.d)
 SELECT
   Day.d AS d
@@ -129,6 +121,6 @@ WHERE
   (CAST((SELECT
     MIN((CASE WHEN x_6 = 0 THEN 1 ELSE NULL END)) AS synalog_value
   FROM
-    t_2_Missing AS Missing, UNNEST(ARRAY[0]::numeric[]) as x_6
+    t_2_Missing AS Missing, UNNEST(ARRAY[0]) as x_6
   WHERE
-    (Missing.d = Day.d)) AS numeric) IS NULL) ORDER BY d;
+    (COALESCE(Missing.d, 0) = COALESCE(Day.d, 0) AND (Missing.d IS NULL) = (Day.d IS NULL))) AS numeric) IS NULL) ORDER BY d;

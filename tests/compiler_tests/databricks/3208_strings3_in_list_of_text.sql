@@ -7,4 +7,4 @@ SELECT
 FROM
   t_0_V AS V, LATERAL (SELECT explode(ARRAY("a", "b")) AS x_2) AS pushkin
 WHERE
-  (V.w = x_2);
+  (V.w <=> x_2);

@@ -4,15 +4,6 @@ create schema if not exists synalog_home;
 drop type if exists synalogrecord893574736 cascade; create type synalogrecord893574736 as struct(nirvana numeric);
 create sequence if not exists eternal_logical_sequence;
 
-
--- Synalog type: synalogrecord481217614
-drop type if exists synalogrecord481217614 cascade; create type synalogrecord481217614 as struct(r synalogrecord893574736);
-
--- Synalog type: synalogrecord383307722
-drop type if exists synalogrecord383307722 cascade; create type synalogrecord383307722 as struct(a timestamp);
-
--- Synalog type: synalogrecord519939597
-drop type if exists synalogrecord519939597 cascade; create type synalogrecord519939597 as struct(args text[], predicate text);
 WITH t_8_Employees AS (SELECT * FROM (
   
     SELECT
@@ -95,8 +86,8 @@ t_5_Manages AS (SELECT
 FROM
   t_7_Person AS Person, t_7_Person AS t_6_Person, t_10_Management AS Management
 WHERE
-  (Management.manager_id = Person.person_id) AND
-  (Management.employee_id = t_6_Person.person_id)
+  (Management.manager_id IS NOT DISTINCT FROM Person.person_id) AND
+  (Management.employee_id IS NOT DISTINCT FROM t_6_Person.person_id)
 GROUP BY Person.person_id, t_6_Person.person_id),
 t_14_Mentoring AS (SELECT * FROM (
   
@@ -116,8 +107,8 @@ t_11_Mentors AS (SELECT
 FROM
   t_7_Person AS t_12_Person, t_7_Person AS t_13_Person, t_14_Mentoring AS Mentoring
 WHERE
-  (Mentoring.mentor_id = t_12_Person.person_id) AND
-  (Mentoring.mentee_id = t_13_Person.person_id)
+  (Mentoring.mentor_id IS NOT DISTINCT FROM t_12_Person.person_id) AND
+  (Mentoring.mentee_id IS NOT DISTINCT FROM t_13_Person.person_id)
 GROUP BY t_12_Person.person_id, t_13_Person.person_id),
 t_4_Related_MultBodyAggAux AS (SELECT * FROM (
   
@@ -170,7 +161,7 @@ t_0_Near_MultBodyAggAux AS (SELECT * FROM (
     FROM
       t_1_Link AS Link
     WHERE
-      (Link.b != 1) AND
+      (Link.b IS DISTINCT FROM 1) AND
       (Link.a = 1)
    UNION ALL
   
@@ -179,9 +170,9 @@ t_0_Near_MultBodyAggAux AS (SELECT * FROM (
     FROM
       t_1_Link AS t_25_Link, t_1_Link AS t_26_Link
     WHERE
-      (t_26_Link.b != 1) AND
+      (t_26_Link.b IS DISTINCT FROM 1) AND
       (t_25_Link.a = 1) AND
-      (t_26_Link.a = t_25_Link.b)
+      (t_26_Link.a IS NOT DISTINCT FROM t_25_Link.b)
   
 ) AS UNUSED_TABLE_NAME  )
 SELECT

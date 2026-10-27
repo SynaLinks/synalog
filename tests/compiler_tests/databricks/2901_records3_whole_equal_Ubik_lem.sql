@@ -12,4 +12,4 @@ SELECT
 FROM
   t_0_B AS B
 WHERE
-  (STRUCT("Ubik" AS title, "lem" AS author) = STRUCT(B.title AS title, B.author AS author));
+  (STRUCT("Ubik" AS title, "lem" AS author) <=> STRUCT(B.title AS title, B.author AS author));

@@ -104,7 +104,7 @@ FROM
   t_2_Order AS t_1_Order, t_3_Price AS Price
 WHERE
   (t_1_Order.state = 'paid') AND
-  (Price.item = t_1_Order.item)
+  (Price.item IS NOT DISTINCT FROM t_1_Order.item)
 GROUP BY 1),
 t_5_Trouble_MultBodyAggAux AS (SELECT * FROM (
   
@@ -139,4 +139,4 @@ WHERE
   FROM
     t_4_Trouble AS Trouble
   WHERE
-    (Trouble.who = Spend.who)) IS NULL) ORDER BY who;
+    (Trouble.who IS NOT DISTINCT FROM Spend.who)) IS NULL) ORDER BY who;

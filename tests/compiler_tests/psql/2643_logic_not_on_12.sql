@@ -122,5 +122,5 @@ WHERE
   FROM
     t_1_A AS A, UNNEST(ARRAY[0]) as x_5
   WHERE
-    (A.id = Person.id) AND
+    (COALESCE(A.id, 0) = COALESCE(Person.id, 0) AND (A.id IS NULL) = (Person.id IS NULL)) AND
     (A.pid = 12)) AS numeric) IS NULL) ORDER BY id;

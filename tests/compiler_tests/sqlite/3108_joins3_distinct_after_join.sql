@@ -23,7 +23,7 @@ t_0_J AS (SELECT
 FROM
   t_1_A AS A, t_2_B AS B
 WHERE
-  (B.k = A.k)
+  (B.k IS A.k)
 GROUP BY A.k)
 SELECT
   SUM(1) AS n

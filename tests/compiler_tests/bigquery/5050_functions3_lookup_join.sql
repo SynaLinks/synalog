@@ -61,5 +61,5 @@ FROM
   t_2_V AS V, t_3_Rate AS Rate, t_3_Rate AS t_1_Rate
 WHERE
   (Rate.r IS NOT null) AND
-  (V.s = Rate.s) AND
-  (V.s = t_1_Rate.s) ORDER BY k;
+  (V.s IS NOT DISTINCT FROM Rate.s) AND
+  (V.s IS NOT DISTINCT FROM t_1_Rate.s) ORDER BY k NULLS LAST;

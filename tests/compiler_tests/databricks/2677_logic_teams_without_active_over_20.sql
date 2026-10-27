@@ -30,4 +30,4 @@ WHERE
   FROM
     t_3_Senior AS Senior
   WHERE
-    (Senior.team = t_0_Team.team)) IS NULL) ORDER BY team NULLS LAST;
+    (Senior.team <=> t_0_Team.team)) IS NULL) ORDER BY team NULLS LAST;

@@ -110,7 +110,7 @@ t_1_All AS (SELECT * FROM (
       FROM
         t_3_L AS t_8_L, (select unnest([0]) as unnested_pod) as x_20
       WHERE
-        (t_8_L.src = M.src)) IS NULL)
+        (t_8_L.src IS NOT DISTINCT FROM M.src)) IS NULL)
   
 ) AS UNUSED_TABLE_NAME  )
 SELECT

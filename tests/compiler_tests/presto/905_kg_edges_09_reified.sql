@@ -131,8 +131,8 @@ t_0_AssignmentPerson AS (SELECT
 FROM
   synalog_test.Assignment AS Assignment, synalog_test.Person AS Person, t_0_Assignments AS Assignments
 WHERE
-  (Assignments.assignment_id = Assignment.assignment_id) AND
-  (Assignments.person_id = Person.person_id)
+  (Assignments.assignment_id IS NOT DISTINCT FROM Assignment.assignment_id) AND
+  (Assignments.person_id IS NOT DISTINCT FROM Person.person_id)
 GROUP BY 1, 2),
 t_1_AssignmentTeam AS (SELECT
   t_2_Assignment.assignment_id AS assignment_id,
@@ -140,8 +140,8 @@ t_1_AssignmentTeam AS (SELECT
 FROM
   synalog_test.Assignment AS t_2_Assignment, synalog_test.Team AS t_3_Team, t_0_Assignments AS t_4_Assignments
 WHERE
-  (t_4_Assignments.assignment_id = t_2_Assignment.assignment_id) AND
-  (t_4_Assignments.team_id = t_3_Team.team_id)
+  (t_4_Assignments.assignment_id IS NOT DISTINCT FROM t_2_Assignment.assignment_id) AND
+  (t_4_Assignments.team_id IS NOT DISTINCT FROM t_3_Team.team_id)
 GROUP BY 1, 2)
 SELECT
   AssignmentPerson.assignment_id AS assignment_id,
@@ -150,4 +150,4 @@ SELECT
 FROM
   t_0_AssignmentPerson AS AssignmentPerson, t_1_AssignmentTeam AS AssignmentTeam
 WHERE
-  (AssignmentTeam.assignment_id = AssignmentPerson.assignment_id) ORDER BY assignment_id;
+  (AssignmentTeam.assignment_id IS NOT DISTINCT FROM AssignmentPerson.assignment_id) ORDER BY assignment_id;

@@ -46,7 +46,7 @@ t_14_Dist_MultBodyAggAux_recursive_head_f2 AS (SELECT * FROM (
     FROM
       t_16_Dist_r0 AS Dist_r0, t_19_E AS t_15_E
     WHERE
-      (t_15_E.a = Dist_r0.n)
+      (t_15_E.a IS NOT DISTINCT FROM Dist_r0.n)
   
 ) AS UNUSED_TABLE_NAME  ),
 t_13_Dist_r1 AS (SELECT
@@ -68,7 +68,7 @@ t_11_Dist_MultBodyAggAux_recursive_head_f3 AS (SELECT * FROM (
     FROM
       t_13_Dist_r1 AS Dist_r1, t_19_E AS t_12_E
     WHERE
-      (t_12_E.a = Dist_r1.n)
+      (t_12_E.a IS NOT DISTINCT FROM Dist_r1.n)
   
 ) AS UNUSED_TABLE_NAME  ),
 t_10_Dist_r2 AS (SELECT
@@ -90,7 +90,7 @@ t_8_Dist_MultBodyAggAux_recursive_head_f4 AS (SELECT * FROM (
     FROM
       t_10_Dist_r2 AS Dist_r2, t_19_E AS t_9_E
     WHERE
-      (t_9_E.a = Dist_r2.n)
+      (t_9_E.a IS NOT DISTINCT FROM Dist_r2.n)
   
 ) AS UNUSED_TABLE_NAME  ),
 t_7_Dist_r3 AS (SELECT
@@ -112,7 +112,7 @@ t_5_Dist_MultBodyAggAux_recursive_head_f5 AS (SELECT * FROM (
     FROM
       t_7_Dist_r3 AS Dist_r3, t_19_E AS t_6_E
     WHERE
-      (t_6_E.a = Dist_r3.n)
+      (t_6_E.a IS NOT DISTINCT FROM Dist_r3.n)
   
 ) AS UNUSED_TABLE_NAME  ),
 t_4_Dist_r4 AS (SELECT
@@ -134,7 +134,7 @@ t_2_Dist_MultBodyAggAux_recursive_head_f6 AS (SELECT * FROM (
     FROM
       t_4_Dist_r4 AS Dist_r4, t_19_E AS t_3_E
     WHERE
-      (t_3_E.a = Dist_r4.n)
+      (t_3_E.a IS NOT DISTINCT FROM Dist_r4.n)
   
 ) AS UNUSED_TABLE_NAME  ),
 t_1_Dist_r5 AS (SELECT
@@ -156,7 +156,7 @@ t_0_Dist_MultBodyAggAux_recursive_head_f7 AS (SELECT * FROM (
     FROM
       t_1_Dist_r5 AS Dist_r5, t_19_E AS E
     WHERE
-      (E.a = Dist_r5.n)
+      (E.a IS NOT DISTINCT FROM Dist_r5.n)
   
 ) AS UNUSED_TABLE_NAME  )
 SELECT
@@ -164,4 +164,4 @@ SELECT
   MIN(Dist_MultBodyAggAux_recursive_head_f7.d) AS d
 FROM
   t_0_Dist_MultBodyAggAux_recursive_head_f7 AS Dist_MultBodyAggAux_recursive_head_f7
-GROUP BY n ORDER BY n;
+GROUP BY n ORDER BY n NULLS LAST;

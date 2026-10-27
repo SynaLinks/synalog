@@ -98,5 +98,5 @@ WHERE
   FROM
     t_1_Cake AS Cake, JSON_EACH(JSON_ARRAY(0)) as x_6
   WHERE
-    (Cake.region = Sale.region)) IS NULL)
+    (Cake.region IS Sale.region)) IS NULL)
 GROUP BY Sale.region;

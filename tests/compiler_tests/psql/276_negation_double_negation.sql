@@ -25,4 +25,4 @@ WHERE
   FROM
     t_0_Missing AS Missing, UNNEST(ARRAY[0]) as x_6
   WHERE
-    (Missing.x = x_3)) AS numeric) IS NULL) ORDER BY x;
+    (COALESCE(Missing.x, 0) = COALESCE(x_3, 0) AND (Missing.x IS NULL) = (x_3 IS NULL))) AS numeric) IS NULL) ORDER BY x;

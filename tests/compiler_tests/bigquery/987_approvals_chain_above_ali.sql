@@ -50,7 +50,7 @@ t_21_Above_MultBodyAggAux_recursive_head_f2 AS (SELECT * FROM (
     FROM
       t_24_Above_r0 AS Above_r0, t_2_ApproverOf AS t_23_ApproverOf
     WHERE
-      (t_23_ApproverOf.requester = Above_r0.approver)
+      (t_23_ApproverOf.requester IS NOT DISTINCT FROM Above_r0.approver)
   
 ) AS UNUSED_TABLE_NAME  ),
 t_20_Above_r1 AS (SELECT
@@ -74,7 +74,7 @@ t_17_Above_MultBodyAggAux_recursive_head_f3 AS (SELECT * FROM (
     FROM
       t_20_Above_r1 AS Above_r1, t_2_ApproverOf AS t_19_ApproverOf
     WHERE
-      (t_19_ApproverOf.requester = Above_r1.approver)
+      (t_19_ApproverOf.requester IS NOT DISTINCT FROM Above_r1.approver)
   
 ) AS UNUSED_TABLE_NAME  ),
 t_16_Above_r2 AS (SELECT
@@ -98,7 +98,7 @@ t_13_Above_MultBodyAggAux_recursive_head_f4 AS (SELECT * FROM (
     FROM
       t_16_Above_r2 AS Above_r2, t_2_ApproverOf AS t_15_ApproverOf
     WHERE
-      (t_15_ApproverOf.requester = Above_r2.approver)
+      (t_15_ApproverOf.requester IS NOT DISTINCT FROM Above_r2.approver)
   
 ) AS UNUSED_TABLE_NAME  ),
 t_12_Above_r3 AS (SELECT
@@ -122,7 +122,7 @@ t_9_Above_MultBodyAggAux_recursive_head_f5 AS (SELECT * FROM (
     FROM
       t_12_Above_r3 AS Above_r3, t_2_ApproverOf AS t_11_ApproverOf
     WHERE
-      (t_11_ApproverOf.requester = Above_r3.approver)
+      (t_11_ApproverOf.requester IS NOT DISTINCT FROM Above_r3.approver)
   
 ) AS UNUSED_TABLE_NAME  ),
 t_8_Above_r4 AS (SELECT
@@ -146,7 +146,7 @@ t_5_Above_MultBodyAggAux_recursive_head_f6 AS (SELECT * FROM (
     FROM
       t_8_Above_r4 AS Above_r4, t_2_ApproverOf AS t_7_ApproverOf
     WHERE
-      (t_7_ApproverOf.requester = Above_r4.approver)
+      (t_7_ApproverOf.requester IS NOT DISTINCT FROM Above_r4.approver)
   
 ) AS UNUSED_TABLE_NAME  ),
 t_4_Above_r5 AS (SELECT
@@ -170,7 +170,7 @@ t_1_Above_MultBodyAggAux_recursive_head_f7 AS (SELECT * FROM (
     FROM
       t_4_Above_r5 AS Above_r5, t_2_ApproverOf AS t_3_ApproverOf
     WHERE
-      (t_3_ApproverOf.requester = Above_r5.approver)
+      (t_3_ApproverOf.requester IS NOT DISTINCT FROM Above_r5.approver)
   
 ) AS UNUSED_TABLE_NAME  ),
 t_0_Above AS (SELECT
@@ -185,4 +185,4 @@ FROM
   t_0_Above AS Above
 WHERE
   (Above.requester = "ali")
-GROUP BY approver ORDER BY approver;
+GROUP BY approver ORDER BY approver NULLS LAST;

@@ -32,7 +32,7 @@ WITH RECURSIVE t_3_A_RecursiveCte AS (SELECT * FROM (
         (((0) + (1)) < 21) AND
         (0 < 21) AND
         (1 = 0) AND
-        (x_38 = ((x_44) + (1))) AND
+        (COALESCE(x_38, 0) = COALESCE(((x_44) + (1)), 0) AND (x_38 IS NULL) = (((x_44) + (1)) IS NULL)) AND
         (x_44 = 0)
      UNION ALL
     
@@ -46,8 +46,8 @@ WITH RECURSIVE t_3_A_RecursiveCte AS (SELECT * FROM (
         (((0) + (1)) < 21) AND
         (0 < 21) AND
         (1 = 0) AND
-        (x_60 = ((x_67) + (1))) AND
-        (x_67 = ((x_73) + (1))) AND
+        (COALESCE(x_60, 0) = COALESCE(((x_67) + (1)), 0) AND (x_60 IS NULL) = (((x_67) + (1)) IS NULL)) AND
+        (COALESCE(x_67, 0) = COALESCE(((x_73) + (1)), 0) AND (x_67 IS NULL) = (((x_73) + (1)) IS NULL)) AND
         (x_73 = 0)
     
   ) AS UNUSED_TABLE_NAME  
@@ -60,7 +60,7 @@ FROM
   t_3_A_RecursiveCte AS t_17_A_RecursiveCte, UNNEST(COALESCE((SELECT ARRAY_AGG(x) FROM GENERATE_SERIES(0, 100 - 1) as x), '{}')) as x_80
 WHERE
   (t_17_A_RecursiveCte.synalog_step < 21) AND
-  (t_17_A_RecursiveCte.y = x_80)),
+  (COALESCE(t_17_A_RecursiveCte.y, 0) = COALESCE(x_80, 0) AND (t_17_A_RecursiveCte.y IS NULL) = (x_80 IS NULL))),
 t_2_A AS (SELECT
   A_RecursiveCte.y AS y
 FROM
@@ -94,7 +94,7 @@ t_20_B_RecursiveCte AS (SELECT * FROM (
         (((0) + (1)) < 22) AND
         (0 < 22) AND
         (1 = 0) AND
-        (x_117 = ((x_123) + (1))) AND
+        (COALESCE(x_117, 0) = COALESCE(((x_123) + (1)), 0) AND (x_117 IS NULL) = (((x_123) + (1)) IS NULL)) AND
         (x_123 = 0)
      UNION ALL
     
@@ -108,8 +108,8 @@ t_20_B_RecursiveCte AS (SELECT * FROM (
         (((0) + (1)) < 22) AND
         (0 < 22) AND
         (1 = 0) AND
-        (x_139 = ((x_146) + (1))) AND
-        (x_146 = ((x_152) + (1))) AND
+        (COALESCE(x_139, 0) = COALESCE(((x_146) + (1)), 0) AND (x_139 IS NULL) = (((x_146) + (1)) IS NULL)) AND
+        (COALESCE(x_146, 0) = COALESCE(((x_152) + (1)), 0) AND (x_146 IS NULL) = (((x_152) + (1)) IS NULL)) AND
         (x_152 = 0)
     
   ) AS UNUSED_TABLE_NAME  
@@ -122,7 +122,7 @@ FROM
   t_20_B_RecursiveCte AS t_35_B_RecursiveCte, UNNEST(COALESCE((SELECT ARRAY_AGG(x) FROM GENERATE_SERIES(0, 100 - 1) as x), '{}')) as x_159
 WHERE
   (t_35_B_RecursiveCte.synalog_step < 22) AND
-  (t_35_B_RecursiveCte.y = x_159)),
+  (COALESCE(t_35_B_RecursiveCte.y, 0) = COALESCE(x_159, 0) AND (t_35_B_RecursiveCte.y IS NULL) = (x_159 IS NULL))),
 t_19_B AS (SELECT
   B_RecursiveCte.y AS y
 FROM

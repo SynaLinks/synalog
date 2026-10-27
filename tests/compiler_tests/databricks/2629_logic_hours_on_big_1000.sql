@@ -21,5 +21,5 @@ SELECT
 FROM
   t_0_A AS A, t_1_Proj AS Proj
 WHERE
-  (Proj.pid = A.pid)
+  (Proj.pid <=> A.pid)
 GROUP BY 1 ORDER BY id NULLS LAST, h NULLS LAST;

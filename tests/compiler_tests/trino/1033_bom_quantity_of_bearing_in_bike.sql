@@ -157,7 +157,7 @@ t_1_Need_MultBodyAggAux_f3 AS (SELECT * FROM (
     FROM
       synalog_test.Need_sn_t0 AS Need_sn_t0, t_2_Uses AS Uses
     WHERE
-      (Uses.part = Need_sn_t0.component)
+      (Uses.part IS NOT DISTINCT FROM Need_sn_t0.component)
    UNION ALL
   
     SELECT
@@ -256,7 +256,7 @@ t_1_Need_MultBodyAggAux_f4 AS (SELECT * FROM (
     FROM
       synalog_test.Need_sn_t1 AS Need_sn_t1, t_2_Uses AS Uses
     WHERE
-      (Uses.part = Need_sn_t1.component)
+      (Uses.part IS NOT DISTINCT FROM Need_sn_t1.component)
    UNION ALL
   
     SELECT
@@ -355,7 +355,7 @@ t_1_Need_MultBodyAggAux_f5 AS (SELECT * FROM (
     FROM
       synalog_test.Need_sn_t2 AS Need_sn_t2, t_2_Uses AS Uses
     WHERE
-      (Uses.part = Need_sn_t2.component)
+      (Uses.part IS NOT DISTINCT FROM Need_sn_t2.component)
    UNION ALL
   
     SELECT
@@ -454,7 +454,7 @@ t_1_Need_MultBodyAggAux_f6 AS (SELECT * FROM (
     FROM
       synalog_test.Need_sn_t3 AS Need_sn_t3, t_2_Uses AS Uses
     WHERE
-      (Uses.part = Need_sn_t3.component)
+      (Uses.part IS NOT DISTINCT FROM Need_sn_t3.component)
    UNION ALL
   
     SELECT
@@ -553,7 +553,7 @@ t_1_Need_MultBodyAggAux_f7 AS (SELECT * FROM (
     FROM
       synalog_test.Need_sn_t4 AS Need_sn_t4, t_2_Uses AS Uses
     WHERE
-      (Uses.part = Need_sn_t4.component)
+      (Uses.part IS NOT DISTINCT FROM Need_sn_t4.component)
    UNION ALL
   
     SELECT
@@ -652,7 +652,7 @@ t_1_Need_MultBodyAggAux_f8 AS (SELECT * FROM (
     FROM
       synalog_test.Need_sn_t5 AS Need_sn_t5, t_2_Uses AS Uses
     WHERE
-      (Uses.part = Need_sn_t5.component)
+      (Uses.part IS NOT DISTINCT FROM Need_sn_t5.component)
    UNION ALL
   
     SELECT
@@ -751,7 +751,7 @@ t_1_Need_MultBodyAggAux_f9 AS (SELECT * FROM (
     FROM
       synalog_test.Need_sn_t6 AS Need_sn_t6, t_2_Uses AS Uses
     WHERE
-      (Uses.part = Need_sn_t6.component)
+      (Uses.part IS NOT DISTINCT FROM Need_sn_t6.component)
    UNION ALL
   
     SELECT
@@ -850,7 +850,7 @@ t_1_Need_MultBodyAggAux_f10 AS (SELECT * FROM (
     FROM
       synalog_test.Need_sn_t7 AS Need_sn_t7, t_2_Uses AS Uses
     WHERE
-      (Uses.part = Need_sn_t7.component)
+      (Uses.part IS NOT DISTINCT FROM Need_sn_t7.component)
    UNION ALL
   
     SELECT
@@ -949,7 +949,7 @@ t_1_Need_MultBodyAggAux_f11 AS (SELECT * FROM (
     FROM
       synalog_test.Need_sn_t8 AS Need_sn_t8, t_2_Uses AS Uses
     WHERE
-      (Uses.part = Need_sn_t8.component)
+      (Uses.part IS NOT DISTINCT FROM Need_sn_t8.component)
    UNION ALL
   
     SELECT
@@ -1144,7 +1144,7 @@ t_1_Need_MultBodyAggAux_f12 AS (SELECT * FROM (
     FROM
       synalog_test.Need_sn_delta AS Need_sn_delta, t_2_Uses AS Uses
     WHERE
-      (Uses.part = Need_sn_delta.component)
+      (Uses.part IS NOT DISTINCT FROM Need_sn_delta.component)
    UNION ALL
   
     SELECT
@@ -1177,10 +1177,10 @@ WHERE
   FROM
     synalog_test.Need_sn_full AS Need_sn_full
   WHERE
-    (Need_sn_full.part = Need_sn_step.part) AND
-    (Need_sn_full.component = Need_sn_step.component) AND
-    (Need_sn_full.path_id = Need_sn_step.path_id) AND
-    (Need_sn_full.n = Need_sn_step.n)) IS NULL)
+    (Need_sn_full.part IS NOT DISTINCT FROM Need_sn_step.part) AND
+    (Need_sn_full.component IS NOT DISTINCT FROM Need_sn_step.component) AND
+    (Need_sn_full.path_id IS NOT DISTINCT FROM Need_sn_step.path_id) AND
+    (Need_sn_full.n IS NOT DISTINCT FROM Need_sn_step.n)) IS NULL)
 GROUP BY 1, 2, 3, 4;
 
 INSERT INTO synalog_test.Need_sn_full SELECT * FROM synalog_test.Need_sn_new;
@@ -1252,7 +1252,7 @@ t_1_Need_MultBodyAggAux_f1 AS (SELECT * FROM (
     FROM
       synalog_test.Need_sn_new AS Need_sn_new, t_2_Uses AS Uses
     WHERE
-      (Uses.part = Need_sn_new.component)
+      (Uses.part IS NOT DISTINCT FROM Need_sn_new.component)
    UNION ALL
   
     SELECT
@@ -1285,10 +1285,10 @@ WHERE
   FROM
     synalog_test.Need_sn_full AS Need_sn_full
   WHERE
-    (Need_sn_full.part = Need_sn_back_step.part) AND
-    (Need_sn_full.component = Need_sn_back_step.component) AND
-    (Need_sn_full.path_id = Need_sn_back_step.path_id) AND
-    (Need_sn_full.n = Need_sn_back_step.n)) IS NULL)
+    (Need_sn_full.part IS NOT DISTINCT FROM Need_sn_back_step.part) AND
+    (Need_sn_full.component IS NOT DISTINCT FROM Need_sn_back_step.component) AND
+    (Need_sn_full.path_id IS NOT DISTINCT FROM Need_sn_back_step.path_id) AND
+    (Need_sn_full.n IS NOT DISTINCT FROM Need_sn_back_step.n)) IS NULL)
 GROUP BY 1, 2, 3, 4;
 
 INSERT INTO synalog_test.Need_sn_full SELECT * FROM synalog_test.Need_sn_delta;
@@ -1360,7 +1360,7 @@ t_1_Need_MultBodyAggAux_f12 AS (SELECT * FROM (
     FROM
       synalog_test.Need_sn_delta AS Need_sn_delta, t_2_Uses AS Uses
     WHERE
-      (Uses.part = Need_sn_delta.component)
+      (Uses.part IS NOT DISTINCT FROM Need_sn_delta.component)
    UNION ALL
   
     SELECT
@@ -1393,10 +1393,10 @@ WHERE
   FROM
     synalog_test.Need_sn_full AS Need_sn_full
   WHERE
-    (Need_sn_full.part = Need_sn_step.part) AND
-    (Need_sn_full.component = Need_sn_step.component) AND
-    (Need_sn_full.path_id = Need_sn_step.path_id) AND
-    (Need_sn_full.n = Need_sn_step.n)) IS NULL)
+    (Need_sn_full.part IS NOT DISTINCT FROM Need_sn_step.part) AND
+    (Need_sn_full.component IS NOT DISTINCT FROM Need_sn_step.component) AND
+    (Need_sn_full.path_id IS NOT DISTINCT FROM Need_sn_step.path_id) AND
+    (Need_sn_full.n IS NOT DISTINCT FROM Need_sn_step.n)) IS NULL)
 GROUP BY 1, 2, 3, 4;
 
 INSERT INTO synalog_test.Need_sn_full SELECT * FROM synalog_test.Need_sn_new;
@@ -1468,7 +1468,7 @@ t_1_Need_MultBodyAggAux_f1 AS (SELECT * FROM (
     FROM
       synalog_test.Need_sn_new AS Need_sn_new, t_2_Uses AS Uses
     WHERE
-      (Uses.part = Need_sn_new.component)
+      (Uses.part IS NOT DISTINCT FROM Need_sn_new.component)
    UNION ALL
   
     SELECT
@@ -1501,10 +1501,10 @@ WHERE
   FROM
     synalog_test.Need_sn_full AS Need_sn_full
   WHERE
-    (Need_sn_full.part = Need_sn_back_step.part) AND
-    (Need_sn_full.component = Need_sn_back_step.component) AND
-    (Need_sn_full.path_id = Need_sn_back_step.path_id) AND
-    (Need_sn_full.n = Need_sn_back_step.n)) IS NULL)
+    (Need_sn_full.part IS NOT DISTINCT FROM Need_sn_back_step.part) AND
+    (Need_sn_full.component IS NOT DISTINCT FROM Need_sn_back_step.component) AND
+    (Need_sn_full.path_id IS NOT DISTINCT FROM Need_sn_back_step.path_id) AND
+    (Need_sn_full.n IS NOT DISTINCT FROM Need_sn_back_step.n)) IS NULL)
 GROUP BY 1, 2, 3, 4;
 
 INSERT INTO synalog_test.Need_sn_full SELECT * FROM synalog_test.Need_sn_delta;
@@ -1576,7 +1576,7 @@ t_1_Need_MultBodyAggAux_f12 AS (SELECT * FROM (
     FROM
       synalog_test.Need_sn_delta AS Need_sn_delta, t_2_Uses AS Uses
     WHERE
-      (Uses.part = Need_sn_delta.component)
+      (Uses.part IS NOT DISTINCT FROM Need_sn_delta.component)
    UNION ALL
   
     SELECT
@@ -1609,10 +1609,10 @@ WHERE
   FROM
     synalog_test.Need_sn_full AS Need_sn_full
   WHERE
-    (Need_sn_full.part = Need_sn_step.part) AND
-    (Need_sn_full.component = Need_sn_step.component) AND
-    (Need_sn_full.path_id = Need_sn_step.path_id) AND
-    (Need_sn_full.n = Need_sn_step.n)) IS NULL)
+    (Need_sn_full.part IS NOT DISTINCT FROM Need_sn_step.part) AND
+    (Need_sn_full.component IS NOT DISTINCT FROM Need_sn_step.component) AND
+    (Need_sn_full.path_id IS NOT DISTINCT FROM Need_sn_step.path_id) AND
+    (Need_sn_full.n IS NOT DISTINCT FROM Need_sn_step.n)) IS NULL)
 GROUP BY 1, 2, 3, 4;
 
 INSERT INTO synalog_test.Need_sn_full SELECT * FROM synalog_test.Need_sn_new;
@@ -1684,7 +1684,7 @@ t_1_Need_MultBodyAggAux_f1 AS (SELECT * FROM (
     FROM
       synalog_test.Need_sn_new AS Need_sn_new, t_2_Uses AS Uses
     WHERE
-      (Uses.part = Need_sn_new.component)
+      (Uses.part IS NOT DISTINCT FROM Need_sn_new.component)
    UNION ALL
   
     SELECT
@@ -1717,10 +1717,10 @@ WHERE
   FROM
     synalog_test.Need_sn_full AS Need_sn_full
   WHERE
-    (Need_sn_full.part = Need_sn_back_step.part) AND
-    (Need_sn_full.component = Need_sn_back_step.component) AND
-    (Need_sn_full.path_id = Need_sn_back_step.path_id) AND
-    (Need_sn_full.n = Need_sn_back_step.n)) IS NULL)
+    (Need_sn_full.part IS NOT DISTINCT FROM Need_sn_back_step.part) AND
+    (Need_sn_full.component IS NOT DISTINCT FROM Need_sn_back_step.component) AND
+    (Need_sn_full.path_id IS NOT DISTINCT FROM Need_sn_back_step.path_id) AND
+    (Need_sn_full.n IS NOT DISTINCT FROM Need_sn_back_step.n)) IS NULL)
 GROUP BY 1, 2, 3, 4;
 
 INSERT INTO synalog_test.Need_sn_full SELECT * FROM synalog_test.Need_sn_delta;

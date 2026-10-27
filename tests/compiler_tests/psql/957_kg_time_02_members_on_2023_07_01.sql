@@ -121,7 +121,7 @@ FROM
   t_7_Events AS t_9_Events, t_7_Events AS t_10_Events
 WHERE
   (t_10_Events.changed_at > t_9_Events.changed_at) AND
-  (t_10_Events.person_id = t_9_Events.person_id)
+  (COALESCE(t_10_Events.person_id, 0) = COALESCE(t_9_Events.person_id, 0) AND (t_10_Events.person_id IS NULL) = (t_9_Events.person_id IS NULL))
 GROUP BY t_9_Events.person_id, t_9_Events.changed_at),
 t_1_Member_MultBodyAggAux AS (SELECT * FROM (
   
@@ -133,10 +133,10 @@ t_1_Member_MultBodyAggAux AS (SELECT * FROM (
     FROM
       t_3_Person AS Person, t_5_Team AS t_2_Team, t_7_Events AS Events, t_8_NextChange AS NextChange
     WHERE
-      (Events.person_id = Person.person_id) AND
-      (Events.team_id = t_2_Team.team_id) AND
-      (NextChange.person_id = Person.person_id) AND
-      (NextChange.changed_at = Events.changed_at)
+      (COALESCE(Events.person_id, 0) = COALESCE(Person.person_id, 0) AND (Events.person_id IS NULL) = (Person.person_id IS NULL)) AND
+      (COALESCE(Events.team_id, 0) = COALESCE(t_2_Team.team_id, 0) AND (Events.team_id IS NULL) = (t_2_Team.team_id IS NULL)) AND
+      (COALESCE(NextChange.person_id, 0) = COALESCE(Person.person_id, 0) AND (NextChange.person_id IS NULL) = (Person.person_id IS NULL)) AND
+      (COALESCE(NextChange.changed_at, '') = COALESCE(Events.changed_at, '') AND (NextChange.changed_at IS NULL) = (Events.changed_at IS NULL))
    UNION ALL
   
     SELECT
@@ -152,10 +152,10 @@ t_1_Member_MultBodyAggAux AS (SELECT * FROM (
       FROM
         t_8_NextChange AS t_16_NextChange, UNNEST(ARRAY[0]) as x_64
       WHERE
-        (t_16_NextChange.person_id = t_11_Person.person_id) AND
-        (t_16_NextChange.changed_at = t_13_Events.changed_at)) AS numeric) IS NULL) AND
-      (t_13_Events.person_id = t_11_Person.person_id) AND
-      (t_13_Events.team_id = t_12_Team.team_id)
+        (COALESCE(t_16_NextChange.person_id, 0) = COALESCE(t_11_Person.person_id, 0) AND (t_16_NextChange.person_id IS NULL) = (t_11_Person.person_id IS NULL)) AND
+        (COALESCE(t_16_NextChange.changed_at, '') = COALESCE(t_13_Events.changed_at, '') AND (t_16_NextChange.changed_at IS NULL) = (t_13_Events.changed_at IS NULL))) AS numeric) IS NULL) AND
+      (COALESCE(t_13_Events.person_id, 0) = COALESCE(t_11_Person.person_id, 0) AND (t_13_Events.person_id IS NULL) = (t_11_Person.person_id IS NULL)) AND
+      (COALESCE(t_13_Events.team_id, 0) = COALESCE(t_12_Team.team_id, 0) AND (t_13_Events.team_id IS NULL) = (t_12_Team.team_id IS NULL))
   
 ) AS UNUSED_TABLE_NAME  ),
 t_0_Member AS (SELECT

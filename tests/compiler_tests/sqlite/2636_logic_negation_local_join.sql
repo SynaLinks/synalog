@@ -30,5 +30,5 @@ WHERE
   FROM
     t_0_E AS E, t_1_L AS L, JSON_EACH(JSON_ARRAY(0)) as x_9
   WHERE
-    (E.a = x_4.value) AND
-    (L.b = E.b)) IS NULL) ORDER BY x;
+    (E.a IS x_4.value) AND
+    (L.b IS E.b)) IS NULL) ORDER BY x NULLS LAST;

@@ -38,4 +38,4 @@ WHERE
     t_2_E AS E
   WHERE
     (E.b > 2) AND
-    (E.a = t_0_N.n)) IS NULL) ORDER BY n;
+    (E.a IS NOT DISTINCT FROM t_0_N.n)) IS NULL) ORDER BY n;

@@ -82,18 +82,18 @@ SELECT
 FROM
   t_1_U AS t_0_U
 WHERE
-  (t_0_U.u != 'bob') AND
+  (t_0_U.u IS NOT 'bob') AND
   ((SELECT
     MIN(MagicalEntangle(1, x_5.value)) AS synalog_value
   FROM
     t_2_F AS F, JSON_EACH(JSON_ARRAY(0)) as x_5
   WHERE
     (F.a = 'bob') AND
-    (F.b = t_0_U.u)) IS NULL) AND
+    (F.b IS t_0_U.u)) IS NULL) AND
   ((SELECT
     MIN(MagicalEntangle(1, x_9.value)) AS synalog_value
   FROM
     t_2_F AS t_3_F, JSON_EACH(JSON_ARRAY(0)) as x_9
   WHERE
-    (t_3_F.a = t_0_U.u) AND
+    (t_3_F.a IS t_0_U.u) AND
     (t_3_F.b = 'bob')) IS NULL) ORDER BY v NULLS LAST;

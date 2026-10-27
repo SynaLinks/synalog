@@ -21,4 +21,4 @@ SELECT
 FROM
   t_1_M AS t_0_M, t_4_S AS S
 WHERE
-  (S.g = t_0_M.g) ORDER BY g NULLS LAST;
+  (S.g <=> t_0_M.g) ORDER BY g NULLS LAST;

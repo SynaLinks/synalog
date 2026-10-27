@@ -68,4 +68,4 @@ WHERE
   FROM
     t_1_Shop_Stock AS Shop_Stock, (select unnest([0]) as unnested_pod) as x_4
   WHERE
-    (Shop_Stock.sku = Shop_Product.sku)) IS NULL);
+    (Shop_Stock.sku IS NOT DISTINCT FROM Shop_Product.sku)) IS NULL);

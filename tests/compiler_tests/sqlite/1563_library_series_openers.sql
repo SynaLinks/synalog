@@ -35,5 +35,5 @@ WHERE
   FROM
     t_1_IsSequel AS IsSequel, JSON_EACH(JSON_ARRAY(0)) as x_4
   WHERE
-    (IsSequel.book = Sequel.book)) IS NULL)
-GROUP BY Sequel.book ORDER BY book;
+    (IsSequel.book IS Sequel.book)) IS NULL)
+GROUP BY Sequel.book ORDER BY book NULLS LAST;

@@ -34,7 +34,7 @@ t_0_Spend AS (SELECT
 FROM
   synalog_test.Paid AS Paid, t_1_Price AS Price
 WHERE
-  (Price.item = Paid.item)
+  (Price.item <=> Paid.item)
 GROUP BY 1)
 SELECT
   Spend.who AS who,

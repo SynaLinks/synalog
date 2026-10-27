@@ -62,8 +62,8 @@ t_3_EngagedWith AS (SELECT
 FROM
   t_1_Team AS t_4_Team, t_7_Client AS t_5_Client, t_9_Engagements AS Engagements
 WHERE
-  (Engagements.team_id = t_4_Team.team_id) AND
-  (Engagements.client_id = t_5_Client.client_id)
+  (Engagements.team_id IS NOT DISTINCT FROM t_4_Team.team_id) AND
+  (Engagements.client_id IS NOT DISTINCT FROM t_5_Client.client_id)
 GROUP BY team_id, client_id)
 SELECT
   t_0_Team.team_id AS team_id
@@ -75,4 +75,4 @@ WHERE
   FROM
     t_3_EngagedWith AS EngagedWith
   WHERE
-    (EngagedWith.team_id = t_0_Team.team_id)) IS NULL) ORDER BY team_id NULLS LAST;
+    (EngagedWith.team_id IS NOT DISTINCT FROM t_0_Team.team_id)) IS NULL) ORDER BY team_id NULLS LAST;

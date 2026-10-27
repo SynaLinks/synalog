@@ -51,7 +51,7 @@ t_2_Person AS (SELECT
   Employees.url AS url
 FROM
   t_3_Employees AS Employees
-GROUP BY person_id, name, url ORDER BY person_id),
+GROUP BY person_id, name, url ORDER BY person_id NULLS LAST),
 t_5_Mentoring AS (SELECT * FROM (
   
     SELECT
@@ -70,8 +70,8 @@ t_0_Mentors AS (SELECT
 FROM
   t_2_Person AS Person, t_2_Person AS t_1_Person, t_5_Mentoring AS Mentoring
 WHERE
-  (Mentoring.mentor_id = Person.person_id) AND
-  (Mentoring.mentee_id = t_1_Person.person_id)
+  (Mentoring.mentor_id IS NOT DISTINCT FROM Person.person_id) AND
+  (Mentoring.mentee_id IS NOT DISTINCT FROM t_1_Person.person_id)
 GROUP BY mentor_id, mentee_id)
 SELECT
   Mentors.mentee_id AS mentee_id
@@ -79,4 +79,4 @@ FROM
   t_0_Mentors AS Mentors
 WHERE
   (Mentors.mentor_id = 5)
-GROUP BY mentee_id ORDER BY mentee_id;
+GROUP BY mentee_id ORDER BY mentee_id NULLS LAST;

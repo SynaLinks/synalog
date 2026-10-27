@@ -19,5 +19,5 @@ FROM
 WHERE
   (Reading.value > t_0_Reading.value) AND
   (Reading.value > t_1_Reading.value) AND
-  (t_0_Reading.day = ((Reading.day) - (1))) AND
-  (t_1_Reading.day = ((Reading.day) + (1))) ORDER BY day NULLS LAST;
+  (t_0_Reading.day <=> ((Reading.day) - (1))) AND
+  (t_1_Reading.day <=> ((Reading.day) + (1))) ORDER BY day NULLS LAST;

@@ -21,4 +21,4 @@ WHERE
     t_0_E AS E
   WHERE
     (E.b > 5) AND
-    (E.a = x_4)) IS NULL) ORDER BY x;
+    (E.a IS NOT DISTINCT FROM x_4)) IS NULL) ORDER BY x NULLS LAST;

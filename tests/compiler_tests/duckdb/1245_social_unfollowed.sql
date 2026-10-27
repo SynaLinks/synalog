@@ -95,4 +95,4 @@ WHERE
   FROM
     t_5_Followed AS Followed, (select unnest([0]) as unnested_pod) as x_10
   WHERE
-    (Followed.u = t_0_User.u)) IS NULL);
+    (Followed.u IS NOT DISTINCT FROM t_0_User.u)) IS NULL);

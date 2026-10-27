@@ -138,4 +138,4 @@ WHERE
   FROM
     t_1_U AS U, (select unnest([0]) as unnested_pod) as x_4
   WHERE
-    (U.a = Node.n)), 0) >= 3) ORDER BY n;
+    (U.a IS NOT DISTINCT FROM Node.n)), 0) >= 3) ORDER BY n;

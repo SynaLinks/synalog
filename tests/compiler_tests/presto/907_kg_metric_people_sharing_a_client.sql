@@ -137,8 +137,8 @@ t_0_MemberOf AS (SELECT
 FROM
   synalog_test.Person AS Person, synalog_test.Team AS Team, t_0_Employees AS Employees
 WHERE
-  (Employees.person_id = Person.person_id) AND
-  (Employees.team_id = Team.team_id)
+  (Employees.person_id IS NOT DISTINCT FROM Person.person_id) AND
+  (Employees.team_id IS NOT DISTINCT FROM Team.team_id)
 GROUP BY 1, 2),
 t_4_Clients AS (SELECT * FROM (
   
@@ -181,8 +181,8 @@ t_1_EngagedWith AS (SELECT
 FROM
   synalog_test.Team AS t_2_Team, t_3_Client AS Client, t_5_Engagements AS Engagements
 WHERE
-  (Engagements.team_id = t_2_Team.team_id) AND
-  (Engagements.client_id = Client.client_id)
+  (Engagements.team_id IS NOT DISTINCT FROM t_2_Team.team_id) AND
+  (Engagements.client_id IS NOT DISTINCT FROM Client.client_id)
 GROUP BY 1, 2)
 SELECT
   MemberOf.person_id AS person_id,
@@ -190,7 +190,7 @@ SELECT
 FROM
   t_0_MemberOf AS MemberOf, t_1_EngagedWith AS EngagedWith
 WHERE
-  (EngagedWith.team_id = MemberOf.team_id)
+  (EngagedWith.team_id IS NOT DISTINCT FROM MemberOf.team_id)
 GROUP BY 1, 2;
 
 -- Interacting with table synalog_test.Serves
@@ -202,5 +202,5 @@ FROM
   synalog_test.Serves AS Serves, synalog_test.Serves AS t_0_Serves
 WHERE
   (Serves.person_id < t_0_Serves.person_id) AND
-  (t_0_Serves.client_id = Serves.client_id)
+  (t_0_Serves.client_id IS NOT DISTINCT FROM Serves.client_id)
 GROUP BY 1, 2 ORDER BY a, b;

@@ -50,7 +50,7 @@ t_1_L AS (SELECT * FROM (
       FROM
         synalog_test.C AS t_4_C
       WHERE
-        (t_4_C.g = t_2_G.g)) IS NULL)
+        (t_4_C.g IS NOT DISTINCT FROM t_2_G.g)) IS NULL)
   
 ) AS UNUSED_TABLE_NAME  )
 SELECT

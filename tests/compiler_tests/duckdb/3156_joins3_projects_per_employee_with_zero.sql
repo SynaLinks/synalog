@@ -77,6 +77,6 @@ SELECT
 FROM
   t_0_Pr AS Pr, (select unnest([0]) as unnested_pod) as x_5
 WHERE
-  (Pr.dept = E.dept)), 0) AS n
+  (Pr.dept IS NOT DISTINCT FROM E.dept)), 0) AS n
 FROM
   t_1_E AS E ORDER BY name, n;

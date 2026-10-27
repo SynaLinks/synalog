@@ -12,4 +12,4 @@ WHERE
   FROM
     t_0_U AS U
   WHERE
-    (U.x = x_3)) IS NULL);
+    (U.x <=> x_3)) IS NULL);

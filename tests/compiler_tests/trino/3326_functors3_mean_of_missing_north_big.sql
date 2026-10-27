@@ -67,6 +67,6 @@ WHERE
     t_1_Sale AS t_2_Sale
   WHERE
     (t_2_Sale.amount > 100) AND
-    (Sale.id = t_2_Sale.id)) IS NULL) AND
+    (Sale.id IS NOT DISTINCT FROM t_2_Sale.id)) IS NULL) AND
   (t_0_Sale.region = 'north') AND
-  (Sale.id = t_0_Sale.id);
+  (Sale.id IS NOT DISTINCT FROM t_0_Sale.id);

@@ -122,5 +122,5 @@ WHERE
   (Event.kind = 'buy') AND
   (Event."user" = 'ana') AND
   (Price."user" = 'ana') AND
-  (Price.month = SUBSTR(Event."at", 1, 7))
+  (COALESCE(Price.month, '') = COALESCE(SUBSTR(Event."at", 1, 7), '') AND (Price.month IS NULL) = (SUBSTR(Event."at", 1, 7) IS NULL))
 GROUP BY Event.id ORDER BY id;

@@ -60,4 +60,4 @@ FROM
   t_0_V AS V, t_1_L AS L
 WHERE
   (V.x IS NOT null) AND
-  (L.g = CASE WHEN (V.x > 0) THEN 1 WHEN (V.x < 0) THEN -1 ELSE 0 END) ORDER BY k;
+  (L.g IS CASE WHEN (V.x > 0) THEN 1 WHEN (V.x < 0) THEN -1 ELSE 0 END) ORDER BY k NULLS LAST;

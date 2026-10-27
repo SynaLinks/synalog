@@ -86,9 +86,9 @@ SELECT
 FROM
   t_0_Ship AS Ship
 WHERE
-  (Ship.kg = (SELECT
+  (Ship.kg IS (SELECT
     MAX(MagicalEntangle(t_1_Ship.kg, x_8.value)) AS synalog_value
   FROM
     t_0_Ship AS t_1_Ship, JSON_EACH(JSON_ARRAY(0)) as x_8
   WHERE
-    (t_1_Ship.client = Ship.client))) ORDER BY id;
+    (t_1_Ship.client IS Ship.client))) ORDER BY id NULLS LAST;

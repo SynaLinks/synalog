@@ -26,7 +26,7 @@ WITH RECURSIVE t_1_Reach_RecursiveCte AS (SELECT * FROM (
         (((0) + (1)) < 8) AND
         (0 < 8) AND
         (1 = 0) AND
-        (x_37.value = ((x_43.value) + (1))) AND
+        (x_37.value IS ((x_43.value) + (1))) AND
         (x_43.value = 0)
      UNION ALL
     
@@ -40,8 +40,8 @@ WITH RECURSIVE t_1_Reach_RecursiveCte AS (SELECT * FROM (
         (((0) + (1)) < 8) AND
         (0 < 8) AND
         (1 = 0) AND
-        (x_59.value = ((x_66.value) + (1))) AND
-        (x_66.value = ((x_72.value) + (1))) AND
+        (x_59.value IS ((x_66.value) + (1))) AND
+        (x_66.value IS ((x_72.value) + (1))) AND
         (x_72.value = 0)
     
   ) AS UNUSED_TABLE_NAME  
@@ -54,7 +54,7 @@ FROM
   t_1_Reach_RecursiveCte AS t_15_Reach_RecursiveCte, JSON_EACH((select json_group_array(n) from (with recursive t as(select 0 as n union all select n + 1 as n from t where n + 1 < 20) select n from t) where n < 20)) as x_79
 WHERE
   (t_15_Reach_RecursiveCte.synalog_step < 8) AND
-  (t_15_Reach_RecursiveCte.y = x_79.value)),
+  (t_15_Reach_RecursiveCte.y IS x_79.value)),
 t_0_Reach AS (SELECT
   Reach_RecursiveCte.y AS y
 FROM

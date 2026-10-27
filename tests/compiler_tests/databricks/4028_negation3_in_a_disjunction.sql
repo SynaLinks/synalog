@@ -29,7 +29,7 @@ t_0_Q_MultBodyAggAux AS (SELECT * FROM (
       FROM
         t_3_F AS F
       WHERE
-        (F.b = t_1_U.u)) IS NULL)
+        (F.b <=> t_1_U.u)) IS NULL)
    UNION ALL
   
     SELECT

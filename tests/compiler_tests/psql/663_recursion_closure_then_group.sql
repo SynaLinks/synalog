@@ -36,7 +36,7 @@ t_3_P_RecursiveCte AS (SELECT * FROM (
       WHERE
         (0 < 5) AND
         (1 = 0) AND
-        (t_5_E.a = t_7_E.b)
+        (COALESCE(t_5_E.a, '') = COALESCE(t_7_E.b, '') AND (t_5_E.a IS NULL) = (t_7_E.b IS NULL))
      UNION ALL
     
       SELECT
@@ -49,8 +49,8 @@ t_3_P_RecursiveCte AS (SELECT * FROM (
         (((0) + (1)) < 5) AND
         (0 < 5) AND
         (1 = 0) AND
-        (t_9_E.a = t_11_E.b) AND
-        (t_11_E.a = t_13_E.b)
+        (COALESCE(t_9_E.a, '') = COALESCE(t_11_E.b, '') AND (t_9_E.a IS NULL) = (t_11_E.b IS NULL)) AND
+        (COALESCE(t_11_E.a, '') = COALESCE(t_13_E.b, '') AND (t_11_E.a IS NULL) = (t_13_E.b IS NULL))
      UNION ALL
     
       SELECT
@@ -64,9 +64,9 @@ t_3_P_RecursiveCte AS (SELECT * FROM (
         (((0) + (1)) < 5) AND
         (0 < 5) AND
         (1 = 0) AND
-        (t_15_E.a = t_17_E.b) AND
-        (t_17_E.a = t_19_E.b) AND
-        (t_19_E.a = t_21_E.b)
+        (COALESCE(t_15_E.a, '') = COALESCE(t_17_E.b, '') AND (t_15_E.a IS NULL) = (t_17_E.b IS NULL)) AND
+        (COALESCE(t_17_E.a, '') = COALESCE(t_19_E.b, '') AND (t_17_E.a IS NULL) = (t_19_E.b IS NULL)) AND
+        (COALESCE(t_19_E.a, '') = COALESCE(t_21_E.b, '') AND (t_19_E.a IS NULL) = (t_21_E.b IS NULL))
      UNION ALL
     
       SELECT
@@ -81,10 +81,10 @@ t_3_P_RecursiveCte AS (SELECT * FROM (
         (((0) + (1)) < 5) AND
         (0 < 5) AND
         (1 = 0) AND
-        (t_23_E.a = t_25_E.b) AND
-        (t_25_E.a = t_27_E.b) AND
-        (t_27_E.a = t_29_E.b) AND
-        (t_29_E.a = t_31_E.b)
+        (COALESCE(t_23_E.a, '') = COALESCE(t_25_E.b, '') AND (t_23_E.a IS NULL) = (t_25_E.b IS NULL)) AND
+        (COALESCE(t_25_E.a, '') = COALESCE(t_27_E.b, '') AND (t_25_E.a IS NULL) = (t_27_E.b IS NULL)) AND
+        (COALESCE(t_27_E.a, '') = COALESCE(t_29_E.b, '') AND (t_27_E.a IS NULL) = (t_29_E.b IS NULL)) AND
+        (COALESCE(t_29_E.a, '') = COALESCE(t_31_E.b, '') AND (t_29_E.a IS NULL) = (t_31_E.b IS NULL))
      UNION ALL
     
       SELECT
@@ -100,11 +100,11 @@ t_3_P_RecursiveCte AS (SELECT * FROM (
         (((0) + (1)) < 5) AND
         (0 < 5) AND
         (1 = 0) AND
-        (t_33_E.a = t_35_E.b) AND
-        (t_35_E.a = t_37_E.b) AND
-        (t_37_E.a = t_39_E.b) AND
-        (t_39_E.a = t_41_E.b) AND
-        (t_41_E.a = t_43_E.b)
+        (COALESCE(t_33_E.a, '') = COALESCE(t_35_E.b, '') AND (t_33_E.a IS NULL) = (t_35_E.b IS NULL)) AND
+        (COALESCE(t_35_E.a, '') = COALESCE(t_37_E.b, '') AND (t_35_E.a IS NULL) = (t_37_E.b IS NULL)) AND
+        (COALESCE(t_37_E.a, '') = COALESCE(t_39_E.b, '') AND (t_37_E.a IS NULL) = (t_39_E.b IS NULL)) AND
+        (COALESCE(t_39_E.a, '') = COALESCE(t_41_E.b, '') AND (t_39_E.a IS NULL) = (t_41_E.b IS NULL)) AND
+        (COALESCE(t_41_E.a, '') = COALESCE(t_43_E.b, '') AND (t_41_E.a IS NULL) = (t_43_E.b IS NULL))
     
   ) AS UNUSED_TABLE_NAME  
 ) AS UNUSED_TABLE_NAME
@@ -117,7 +117,7 @@ FROM
   t_3_P_RecursiveCte AS t_44_P_RecursiveCte, t_4_E AS t_45_E
 WHERE
   (t_44_P_RecursiveCte.synalog_step < 5) AND
-  (t_45_E.a = t_44_P_RecursiveCte.t)),
+  (COALESCE(t_45_E.a, '') = COALESCE(t_44_P_RecursiveCte.t, '') AND (t_45_E.a IS NULL) = (t_44_P_RecursiveCte.t IS NULL))),
 t_2_P AS (SELECT
   P_RecursiveCte.s AS s,
   P_RecursiveCte.t AS t

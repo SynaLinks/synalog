@@ -98,4 +98,4 @@ WHERE
     t_1_L AS t_5_L, JSON_EACH(JSON_ARRAY(0)) as x_25, JSON_EACH(t_5_L.l) as x_29
   WHERE
     ('ink' = x_29.value) AND
-    (t_0_L."order" = t_5_L."order")) IS NULL) ORDER BY "order" NULLS LAST;
+    (t_0_L."order" IS t_5_L."order")) IS NULL) ORDER BY "order" NULLS LAST;

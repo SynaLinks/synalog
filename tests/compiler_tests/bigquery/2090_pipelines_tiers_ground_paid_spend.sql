@@ -117,7 +117,7 @@ SELECT
 FROM
   synalog_test.Paid AS Paid, t_0_Price AS Price
 WHERE
-  (Price.item = Paid.item)
+  (Price.item IS NOT DISTINCT FROM Paid.item)
 GROUP BY who;
 
 -- Interacting with table synalog_test.Spend

@@ -15,4 +15,4 @@ SELECT
 FROM
   t_0_C AS C
 WHERE
-  (UPPER(C.last) = C.last);
+  (UPPER(C.last) IS NOT DISTINCT FROM C.last);

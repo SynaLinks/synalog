@@ -18,4 +18,4 @@ WHERE
   FROM
     t_1_X AS t_0_X, JSON_EACH(JSON_ARRAY(0)) as x_6
   WHERE
-    (t_0_X.x = x_3.value)) IS NULL) ORDER BY x NULLS LAST;
+    (t_0_X.x IS x_3.value)) IS NULL) ORDER BY x NULLS LAST;

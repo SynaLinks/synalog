@@ -106,7 +106,7 @@ t_2_Better_MultBodyAggAux AS (SELECT * FROM (
       (t_6_S.d < t_5_S.d) AND
       (t_5_S.r = 'north') AND
       (t_6_S.r = 'north') AND
-      (t_6_S.v = t_5_S.v)
+      (t_6_S.v IS t_5_S.v)
   
 ) AS UNUSED_TABLE_NAME  ),
 t_1_Better AS (SELECT
@@ -122,5 +122,5 @@ FROM
   t_0_S AS S, t_1_Better AS Better
 WHERE
   (S.r = 'north') AND
-  (Better.d = S.d) AND
+  (Better.d IS S.d) AND
   (Better.n = 1);

@@ -110,7 +110,7 @@ t_9_Before_MultBodyAggAux AS (SELECT * FROM (
       t_4_S AS t_16_S, t_4_S AS t_17_S
     WHERE
       (t_17_S.d < t_16_S.d) AND
-      (t_17_S.v = t_16_S.v) AND
+      (t_17_S.v IS NOT DISTINCT FROM t_16_S.v) AND
       (t_16_S.r = "south") AND
       (t_17_S.r = "south")
   
@@ -133,7 +133,7 @@ t_0_Mid AS (SELECT * FROM (
       FROM
         t_8_Before AS Before
       WHERE
-        (Before.d = S.d)), 0)))) + (1)) = t_2_N.n) AND
+        (Before.d IS NOT DISTINCT FROM S.d)), 0)))) + (1)) IS NOT DISTINCT FROM t_2_N.n) AND
       (S.r = "south")
    UNION ALL
   
@@ -147,7 +147,7 @@ t_0_Mid AS (SELECT * FROM (
       FROM
         t_8_Before AS t_24_Before
       WHERE
-        (t_24_Before.d = t_21_S.d)), 0))) = t_19_N.n) AND
+        (t_24_Before.d IS NOT DISTINCT FROM t_21_S.d)), 0))) IS NOT DISTINCT FROM t_19_N.n) AND
       (t_21_S.r = "south")
    UNION ALL
   
@@ -161,7 +161,7 @@ t_0_Mid AS (SELECT * FROM (
       FROM
         t_8_Before AS t_38_Before
       WHERE
-        (t_38_Before.d = t_37_S.d)), 0)))) + (2)) = t_35_N.n) AND
+        (t_38_Before.d IS NOT DISTINCT FROM t_37_S.d)), 0)))) + (2)) IS NOT DISTINCT FROM t_35_N.n) AND
       (t_37_S.r = "south")
   
 ) AS UNUSED_TABLE_NAME  )

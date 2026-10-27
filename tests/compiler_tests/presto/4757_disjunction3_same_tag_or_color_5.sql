@@ -56,9 +56,9 @@ t_0_Q_MultBodyAggAux AS (SELECT * FROM (
     FROM
       t_2_I AS I, t_2_I AS t_1_I
     WHERE
-      (t_1_I.id != 5) AND
+      (t_1_I.id IS DISTINCT FROM 5) AND
       (I.id = 5) AND
-      (t_1_I.c = I.c)
+      (t_1_I.c IS NOT DISTINCT FROM I.c)
    UNION ALL
   
     SELECT
@@ -66,9 +66,9 @@ t_0_Q_MultBodyAggAux AS (SELECT * FROM (
     FROM
       t_2_I AS t_3_I, t_2_I AS t_4_I
     WHERE
-      (t_4_I.id != 5) AND
+      (t_4_I.id IS DISTINCT FROM 5) AND
       (t_3_I.id = 5) AND
-      (t_4_I.t = t_3_I.t)
+      (t_4_I.t IS NOT DISTINCT FROM t_3_I.t)
   
 ) AS UNUSED_TABLE_NAME  )
 SELECT

@@ -20,6 +20,6 @@ SELECT
 FROM
   t_2_O AS O
 WHERE
-  (O.c = t_1_C.c))) AS synalog_value
+  (O.c <=> t_1_C.c))) AS synalog_value
 FROM
   t_3_C AS t_1_C) AS m;

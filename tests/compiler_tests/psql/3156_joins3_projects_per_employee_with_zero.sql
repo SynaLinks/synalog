@@ -77,6 +77,6 @@ SELECT
 FROM
   t_0_Pr AS Pr, UNNEST(ARRAY[0]) as x_5
 WHERE
-  (Pr.dept = E.dept)) AS numeric), 0) AS n
+  (COALESCE(Pr.dept, 0) = COALESCE(E.dept, 0) AND (Pr.dept IS NULL) = (E.dept IS NULL))) AS numeric), 0) AS n
 FROM
   t_1_E AS E ORDER BY name, n;

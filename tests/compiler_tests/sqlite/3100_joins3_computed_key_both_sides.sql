@@ -74,4 +74,4 @@ SELECT
 FROM
   t_0_E AS E, t_1_D AS D
 WHERE
-  (((E.dept) * (2)) = ((D.dept) + (0))) ORDER BY name, dname;
+  (((E.dept) * (2)) IS ((D.dept) + (0))) ORDER BY name NULLS LAST, dname NULLS LAST;

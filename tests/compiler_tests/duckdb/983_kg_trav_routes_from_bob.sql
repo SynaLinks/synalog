@@ -86,8 +86,8 @@ t_6_Manages AS (SELECT
 FROM
   t_9_Person AS t_7_Person, t_9_Person AS t_8_Person, t_12_Management AS Management
 WHERE
-  (Management.manager_id = t_7_Person.person_id) AND
-  (Management.employee_id = t_8_Person.person_id)
+  (Management.manager_id IS NOT DISTINCT FROM t_7_Person.person_id) AND
+  (Management.employee_id IS NOT DISTINCT FROM t_8_Person.person_id)
 GROUP BY t_7_Person.person_id, t_8_Person.person_id),
 t_1_PathTo_RecursiveCte AS (SELECT * FROM (
   SELECT * FROM (
@@ -100,8 +100,8 @@ t_1_PathTo_RecursiveCte AS (SELECT * FROM (
       FROM
         t_6_Manages AS Manages, t_9_Person AS t_4_Person, t_9_Person AS t_5_Person
       WHERE
-        (Manages.manager_id = t_4_Person.person_id) AND
-        (Manages.employee_id = t_5_Person.person_id)
+        (Manages.manager_id IS NOT DISTINCT FROM t_4_Person.person_id) AND
+        (Manages.employee_id IS NOT DISTINCT FROM t_5_Person.person_id)
      UNION ALL
     
       SELECT
@@ -114,10 +114,10 @@ t_1_PathTo_RecursiveCte AS (SELECT * FROM (
       WHERE
         (0 < 4) AND
         (1 = 0) AND
-        (t_13_Manages.employee_id = t_16_Person.person_id) AND
-        (t_13_Manages.manager_id = t_17_Manages.employee_id) AND
-        (t_17_Manages.manager_id = t_20_Person.person_id) AND
-        (t_17_Manages.employee_id = t_21_Person.person_id)
+        (t_13_Manages.employee_id IS NOT DISTINCT FROM t_16_Person.person_id) AND
+        (t_13_Manages.manager_id IS NOT DISTINCT FROM t_17_Manages.employee_id) AND
+        (t_17_Manages.manager_id IS NOT DISTINCT FROM t_20_Person.person_id) AND
+        (t_17_Manages.employee_id IS NOT DISTINCT FROM t_21_Person.person_id)
      UNION ALL
     
       SELECT
@@ -131,12 +131,12 @@ t_1_PathTo_RecursiveCte AS (SELECT * FROM (
         (((0) + (1)) < 4) AND
         (0 < 4) AND
         (1 = 0) AND
-        (t_26_Manages.manager_id = t_29_Manages.employee_id) AND
-        (t_26_Manages.employee_id = t_31_Person.person_id) AND
-        (t_29_Manages.employee_id = t_33_Person.person_id) AND
-        (t_29_Manages.manager_id = t_34_Manages.employee_id) AND
-        (t_34_Manages.manager_id = t_37_Person.person_id) AND
-        (t_34_Manages.employee_id = t_38_Person.person_id)
+        (t_26_Manages.manager_id IS NOT DISTINCT FROM t_29_Manages.employee_id) AND
+        (t_26_Manages.employee_id IS NOT DISTINCT FROM t_31_Person.person_id) AND
+        (t_29_Manages.employee_id IS NOT DISTINCT FROM t_33_Person.person_id) AND
+        (t_29_Manages.manager_id IS NOT DISTINCT FROM t_34_Manages.employee_id) AND
+        (t_34_Manages.manager_id IS NOT DISTINCT FROM t_37_Person.person_id) AND
+        (t_34_Manages.employee_id IS NOT DISTINCT FROM t_38_Person.person_id)
      UNION ALL
     
       SELECT
@@ -151,14 +151,14 @@ t_1_PathTo_RecursiveCte AS (SELECT * FROM (
         (((0) + (1)) < 4) AND
         (0 < 4) AND
         (1 = 0) AND
-        (t_40_Manages.manager_id = t_43_Manages.employee_id) AND
-        (t_40_Manages.employee_id = t_45_Person.person_id) AND
-        (t_43_Manages.manager_id = t_47_Manages.employee_id) AND
-        (t_43_Manages.employee_id = t_49_Person.person_id) AND
-        (t_47_Manages.employee_id = t_51_Person.person_id) AND
-        (t_47_Manages.manager_id = t_52_Manages.employee_id) AND
-        (t_52_Manages.manager_id = t_55_Person.person_id) AND
-        (t_52_Manages.employee_id = t_56_Person.person_id)
+        (t_40_Manages.manager_id IS NOT DISTINCT FROM t_43_Manages.employee_id) AND
+        (t_40_Manages.employee_id IS NOT DISTINCT FROM t_45_Person.person_id) AND
+        (t_43_Manages.manager_id IS NOT DISTINCT FROM t_47_Manages.employee_id) AND
+        (t_43_Manages.employee_id IS NOT DISTINCT FROM t_49_Person.person_id) AND
+        (t_47_Manages.employee_id IS NOT DISTINCT FROM t_51_Person.person_id) AND
+        (t_47_Manages.manager_id IS NOT DISTINCT FROM t_52_Manages.employee_id) AND
+        (t_52_Manages.manager_id IS NOT DISTINCT FROM t_55_Person.person_id) AND
+        (t_52_Manages.employee_id IS NOT DISTINCT FROM t_56_Person.person_id)
      UNION ALL
     
       SELECT
@@ -174,16 +174,16 @@ t_1_PathTo_RecursiveCte AS (SELECT * FROM (
         (((0) + (1)) < 4) AND
         (0 < 4) AND
         (1 = 0) AND
-        (t_58_Manages.manager_id = t_61_Manages.employee_id) AND
-        (t_58_Manages.employee_id = t_63_Person.person_id) AND
-        (t_61_Manages.manager_id = t_65_Manages.employee_id) AND
-        (t_61_Manages.employee_id = t_67_Person.person_id) AND
-        (t_65_Manages.manager_id = t_69_Manages.employee_id) AND
-        (t_65_Manages.employee_id = t_71_Person.person_id) AND
-        (t_69_Manages.employee_id = t_73_Person.person_id) AND
-        (t_69_Manages.manager_id = t_74_Manages.employee_id) AND
-        (t_74_Manages.manager_id = t_77_Person.person_id) AND
-        (t_74_Manages.employee_id = t_78_Person.person_id)
+        (t_58_Manages.manager_id IS NOT DISTINCT FROM t_61_Manages.employee_id) AND
+        (t_58_Manages.employee_id IS NOT DISTINCT FROM t_63_Person.person_id) AND
+        (t_61_Manages.manager_id IS NOT DISTINCT FROM t_65_Manages.employee_id) AND
+        (t_61_Manages.employee_id IS NOT DISTINCT FROM t_67_Person.person_id) AND
+        (t_65_Manages.manager_id IS NOT DISTINCT FROM t_69_Manages.employee_id) AND
+        (t_65_Manages.employee_id IS NOT DISTINCT FROM t_71_Person.person_id) AND
+        (t_69_Manages.employee_id IS NOT DISTINCT FROM t_73_Person.person_id) AND
+        (t_69_Manages.manager_id IS NOT DISTINCT FROM t_74_Manages.employee_id) AND
+        (t_74_Manages.manager_id IS NOT DISTINCT FROM t_77_Person.person_id) AND
+        (t_74_Manages.employee_id IS NOT DISTINCT FROM t_78_Person.person_id)
      UNION ALL
     
       SELECT
@@ -200,18 +200,18 @@ t_1_PathTo_RecursiveCte AS (SELECT * FROM (
         (((0) + (1)) < 4) AND
         (0 < 4) AND
         (1 = 0) AND
-        (t_80_Manages.manager_id = t_83_Manages.employee_id) AND
-        (t_80_Manages.employee_id = t_85_Person.person_id) AND
-        (t_83_Manages.manager_id = t_87_Manages.employee_id) AND
-        (t_83_Manages.employee_id = t_89_Person.person_id) AND
-        (t_87_Manages.manager_id = t_91_Manages.employee_id) AND
-        (t_87_Manages.employee_id = t_93_Person.person_id) AND
-        (t_91_Manages.manager_id = t_95_Manages.employee_id) AND
-        (t_91_Manages.employee_id = t_97_Person.person_id) AND
-        (t_95_Manages.employee_id = t_99_Person.person_id) AND
-        (t_95_Manages.manager_id = t_100_Manages.employee_id) AND
-        (t_100_Manages.manager_id = t_103_Person.person_id) AND
-        (t_100_Manages.employee_id = t_104_Person.person_id)
+        (t_80_Manages.manager_id IS NOT DISTINCT FROM t_83_Manages.employee_id) AND
+        (t_80_Manages.employee_id IS NOT DISTINCT FROM t_85_Person.person_id) AND
+        (t_83_Manages.manager_id IS NOT DISTINCT FROM t_87_Manages.employee_id) AND
+        (t_83_Manages.employee_id IS NOT DISTINCT FROM t_89_Person.person_id) AND
+        (t_87_Manages.manager_id IS NOT DISTINCT FROM t_91_Manages.employee_id) AND
+        (t_87_Manages.employee_id IS NOT DISTINCT FROM t_93_Person.person_id) AND
+        (t_91_Manages.manager_id IS NOT DISTINCT FROM t_95_Manages.employee_id) AND
+        (t_91_Manages.employee_id IS NOT DISTINCT FROM t_97_Person.person_id) AND
+        (t_95_Manages.employee_id IS NOT DISTINCT FROM t_99_Person.person_id) AND
+        (t_95_Manages.manager_id IS NOT DISTINCT FROM t_100_Manages.employee_id) AND
+        (t_100_Manages.manager_id IS NOT DISTINCT FROM t_103_Person.person_id) AND
+        (t_100_Manages.employee_id IS NOT DISTINCT FROM t_104_Person.person_id)
      UNION ALL
     
       SELECT
@@ -229,20 +229,20 @@ t_1_PathTo_RecursiveCte AS (SELECT * FROM (
         (((0) + (1)) < 4) AND
         (0 < 4) AND
         (1 = 0) AND
-        (t_106_Manages.manager_id = t_109_Manages.employee_id) AND
-        (t_106_Manages.employee_id = t_111_Person.person_id) AND
-        (t_109_Manages.manager_id = t_113_Manages.employee_id) AND
-        (t_109_Manages.employee_id = t_115_Person.person_id) AND
-        (t_113_Manages.manager_id = t_117_Manages.employee_id) AND
-        (t_113_Manages.employee_id = t_119_Person.person_id) AND
-        (t_117_Manages.manager_id = t_121_Manages.employee_id) AND
-        (t_117_Manages.employee_id = t_123_Person.person_id) AND
-        (t_121_Manages.manager_id = t_125_Manages.employee_id) AND
-        (t_121_Manages.employee_id = t_127_Person.person_id) AND
-        (t_125_Manages.employee_id = t_129_Person.person_id) AND
-        (t_125_Manages.manager_id = t_130_Manages.employee_id) AND
-        (t_130_Manages.manager_id = t_133_Person.person_id) AND
-        (t_130_Manages.employee_id = t_134_Person.person_id)
+        (t_106_Manages.manager_id IS NOT DISTINCT FROM t_109_Manages.employee_id) AND
+        (t_106_Manages.employee_id IS NOT DISTINCT FROM t_111_Person.person_id) AND
+        (t_109_Manages.manager_id IS NOT DISTINCT FROM t_113_Manages.employee_id) AND
+        (t_109_Manages.employee_id IS NOT DISTINCT FROM t_115_Person.person_id) AND
+        (t_113_Manages.manager_id IS NOT DISTINCT FROM t_117_Manages.employee_id) AND
+        (t_113_Manages.employee_id IS NOT DISTINCT FROM t_119_Person.person_id) AND
+        (t_117_Manages.manager_id IS NOT DISTINCT FROM t_121_Manages.employee_id) AND
+        (t_117_Manages.employee_id IS NOT DISTINCT FROM t_123_Person.person_id) AND
+        (t_121_Manages.manager_id IS NOT DISTINCT FROM t_125_Manages.employee_id) AND
+        (t_121_Manages.employee_id IS NOT DISTINCT FROM t_127_Person.person_id) AND
+        (t_125_Manages.employee_id IS NOT DISTINCT FROM t_129_Person.person_id) AND
+        (t_125_Manages.manager_id IS NOT DISTINCT FROM t_130_Manages.employee_id) AND
+        (t_130_Manages.manager_id IS NOT DISTINCT FROM t_133_Person.person_id) AND
+        (t_130_Manages.employee_id IS NOT DISTINCT FROM t_134_Person.person_id)
      UNION ALL
     
       SELECT
@@ -261,22 +261,22 @@ t_1_PathTo_RecursiveCte AS (SELECT * FROM (
         (((0) + (1)) < 4) AND
         (0 < 4) AND
         (1 = 0) AND
-        (t_136_Manages.manager_id = t_139_Manages.employee_id) AND
-        (t_136_Manages.employee_id = t_141_Person.person_id) AND
-        (t_139_Manages.manager_id = t_143_Manages.employee_id) AND
-        (t_139_Manages.employee_id = t_145_Person.person_id) AND
-        (t_143_Manages.manager_id = t_147_Manages.employee_id) AND
-        (t_143_Manages.employee_id = t_149_Person.person_id) AND
-        (t_147_Manages.manager_id = t_151_Manages.employee_id) AND
-        (t_147_Manages.employee_id = t_153_Person.person_id) AND
-        (t_151_Manages.manager_id = t_155_Manages.employee_id) AND
-        (t_151_Manages.employee_id = t_157_Person.person_id) AND
-        (t_155_Manages.manager_id = t_159_Manages.employee_id) AND
-        (t_155_Manages.employee_id = t_161_Person.person_id) AND
-        (t_159_Manages.employee_id = t_163_Person.person_id) AND
-        (t_159_Manages.manager_id = t_164_Manages.employee_id) AND
-        (t_164_Manages.manager_id = t_167_Person.person_id) AND
-        (t_164_Manages.employee_id = t_168_Person.person_id)
+        (t_136_Manages.manager_id IS NOT DISTINCT FROM t_139_Manages.employee_id) AND
+        (t_136_Manages.employee_id IS NOT DISTINCT FROM t_141_Person.person_id) AND
+        (t_139_Manages.manager_id IS NOT DISTINCT FROM t_143_Manages.employee_id) AND
+        (t_139_Manages.employee_id IS NOT DISTINCT FROM t_145_Person.person_id) AND
+        (t_143_Manages.manager_id IS NOT DISTINCT FROM t_147_Manages.employee_id) AND
+        (t_143_Manages.employee_id IS NOT DISTINCT FROM t_149_Person.person_id) AND
+        (t_147_Manages.manager_id IS NOT DISTINCT FROM t_151_Manages.employee_id) AND
+        (t_147_Manages.employee_id IS NOT DISTINCT FROM t_153_Person.person_id) AND
+        (t_151_Manages.manager_id IS NOT DISTINCT FROM t_155_Manages.employee_id) AND
+        (t_151_Manages.employee_id IS NOT DISTINCT FROM t_157_Person.person_id) AND
+        (t_155_Manages.manager_id IS NOT DISTINCT FROM t_159_Manages.employee_id) AND
+        (t_155_Manages.employee_id IS NOT DISTINCT FROM t_161_Person.person_id) AND
+        (t_159_Manages.employee_id IS NOT DISTINCT FROM t_163_Person.person_id) AND
+        (t_159_Manages.manager_id IS NOT DISTINCT FROM t_164_Manages.employee_id) AND
+        (t_164_Manages.manager_id IS NOT DISTINCT FROM t_167_Person.person_id) AND
+        (t_164_Manages.employee_id IS NOT DISTINCT FROM t_168_Person.person_id)
     
   ) AS UNUSED_TABLE_NAME  
 ) AS UNUSED_TABLE_NAME
@@ -290,8 +290,8 @@ FROM
   t_1_PathTo_RecursiveCte AS t_169_PathTo_RecursiveCte, t_6_Manages AS t_170_Manages, t_9_Person AS t_172_Person
 WHERE
   (t_169_PathTo_RecursiveCte.synalog_step < 4) AND
-  (t_170_Manages.manager_id = t_169_PathTo_RecursiveCte.target) AND
-  (t_170_Manages.employee_id = t_172_Person.person_id)),
+  (t_170_Manages.manager_id IS NOT DISTINCT FROM t_169_PathTo_RecursiveCte.target) AND
+  (t_170_Manages.employee_id IS NOT DISTINCT FROM t_172_Person.person_id)),
 t_0_PathTo AS (SELECT
   PathTo_RecursiveCte.source AS source,
   PathTo_RecursiveCte.target AS target,
@@ -306,5 +306,5 @@ FROM
   t_0_PathTo AS PathTo, t_9_Person AS Person
 WHERE
   (PathTo.source = 2) AND
-  (PathTo.target = Person.person_id)
+  (PathTo.target IS NOT DISTINCT FROM Person.person_id)
 GROUP BY Person.name, PathTo.path ORDER BY target, path;

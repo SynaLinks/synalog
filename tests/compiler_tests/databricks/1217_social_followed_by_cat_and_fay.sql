@@ -18,4 +18,4 @@ FROM
 WHERE
   (Follows.a = "cat") AND
   (t_0_Follows.a = "fay") AND
-  (t_0_Follows.b = Follows.b);
+  (t_0_Follows.b <=> Follows.b);

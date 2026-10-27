@@ -86,7 +86,7 @@ FROM
   t_2_S AS S, t_2_S AS t_0_S, t_3_E AS E, t_3_E AS t_1_E
 WHERE
   (S.id < t_0_S.id) AND
-  (t_0_S.skill = S.skill) AND
-  (E.id = S.id) AND
-  (t_1_E.id = t_0_S.id)
-GROUP BY E.name, t_1_E.name ORDER BY a, b;
+  (t_0_S.skill IS S.skill) AND
+  (E.id IS S.id) AND
+  (t_1_E.id IS t_0_S.id)
+GROUP BY E.name, t_1_E.name ORDER BY a NULLS LAST, b NULLS LAST;

@@ -25,8 +25,8 @@ t_3_Manages AS (SELECT
 FROM
   t_6_Person AS t_4_Person, t_6_Person AS t_5_Person, t_9_Management AS Management
 WHERE
-  (Management.manager_id = t_4_Person.person_id) AND
-  (Management.employee_id = t_5_Person.person_id)
+  (Management.manager_id <=> t_4_Person.person_id) AND
+  (Management.employee_id <=> t_5_Person.person_id)
 GROUP BY 1, 2),
 t_0_PathTo_MultBodyAggAux_f2 AS (SELECT * FROM (
   
@@ -37,8 +37,8 @@ t_0_PathTo_MultBodyAggAux_f2 AS (SELECT * FROM (
     FROM
       t_3_Manages AS Manages, t_6_Person AS Person, t_6_Person AS t_2_Person
     WHERE
-      (Manages.manager_id = Person.person_id) AND
-      (Manages.employee_id = t_2_Person.person_id)
+      (Manages.manager_id <=> Person.person_id) AND
+      (Manages.employee_id <=> t_2_Person.person_id)
   
 ) AS UNUSED_TABLE_NAME  )
 SELECT
@@ -90,8 +90,8 @@ t_3_Manages AS (SELECT
 FROM
   t_6_Person AS t_4_Person, t_6_Person AS t_5_Person, t_9_Management AS Management
 WHERE
-  (Management.manager_id = t_4_Person.person_id) AND
-  (Management.employee_id = t_5_Person.person_id)
+  (Management.manager_id <=> t_4_Person.person_id) AND
+  (Management.employee_id <=> t_5_Person.person_id)
 GROUP BY 1, 2),
 t_1_PathTo_MultBodyAggAux_f3 AS (SELECT * FROM (
   
@@ -102,8 +102,8 @@ t_1_PathTo_MultBodyAggAux_f3 AS (SELECT * FROM (
     FROM
       t_3_Manages AS Manages, t_6_Person AS Person, t_6_Person AS t_3_Person
     WHERE
-      (Manages.manager_id = Person.person_id) AND
-      (Manages.employee_id = t_3_Person.person_id)
+      (Manages.manager_id <=> Person.person_id) AND
+      (Manages.employee_id <=> t_3_Person.person_id)
    UNION ALL
   
     SELECT
@@ -113,8 +113,8 @@ t_1_PathTo_MultBodyAggAux_f3 AS (SELECT * FROM (
     FROM
       synalog_test.PathTo_sn_t0 AS PathTo_sn_t0, t_3_Manages AS t_6_Manages, t_6_Person AS t_8_Person
     WHERE
-      (t_6_Manages.manager_id = PathTo_sn_t0.target) AND
-      (t_6_Manages.employee_id = t_8_Person.person_id)
+      (t_6_Manages.manager_id <=> PathTo_sn_t0.target) AND
+      (t_6_Manages.employee_id <=> t_8_Person.person_id)
   
 ) AS UNUSED_TABLE_NAME  ),
 t_0_PathTo_sn_r1 AS (SELECT
@@ -162,8 +162,8 @@ t_3_Manages AS (SELECT
 FROM
   t_6_Person AS t_4_Person, t_6_Person AS t_5_Person, t_9_Management AS Management
 WHERE
-  (Management.manager_id = t_4_Person.person_id) AND
-  (Management.employee_id = t_5_Person.person_id)
+  (Management.manager_id <=> t_4_Person.person_id) AND
+  (Management.employee_id <=> t_5_Person.person_id)
 GROUP BY 1, 2),
 t_1_PathTo_MultBodyAggAux_f4 AS (SELECT * FROM (
   
@@ -174,8 +174,8 @@ t_1_PathTo_MultBodyAggAux_f4 AS (SELECT * FROM (
     FROM
       t_3_Manages AS Manages, t_6_Person AS Person, t_6_Person AS t_3_Person
     WHERE
-      (Manages.manager_id = Person.person_id) AND
-      (Manages.employee_id = t_3_Person.person_id)
+      (Manages.manager_id <=> Person.person_id) AND
+      (Manages.employee_id <=> t_3_Person.person_id)
    UNION ALL
   
     SELECT
@@ -185,8 +185,8 @@ t_1_PathTo_MultBodyAggAux_f4 AS (SELECT * FROM (
     FROM
       synalog_test.PathTo_sn_t1 AS PathTo_sn_t1, t_3_Manages AS t_6_Manages, t_6_Person AS t_8_Person
     WHERE
-      (t_6_Manages.manager_id = PathTo_sn_t1.target) AND
-      (t_6_Manages.employee_id = t_8_Person.person_id)
+      (t_6_Manages.manager_id <=> PathTo_sn_t1.target) AND
+      (t_6_Manages.employee_id <=> t_8_Person.person_id)
   
 ) AS UNUSED_TABLE_NAME  ),
 t_0_PathTo_sn_r2 AS (SELECT
@@ -234,8 +234,8 @@ t_3_Manages AS (SELECT
 FROM
   t_6_Person AS t_4_Person, t_6_Person AS t_5_Person, t_9_Management AS Management
 WHERE
-  (Management.manager_id = t_4_Person.person_id) AND
-  (Management.employee_id = t_5_Person.person_id)
+  (Management.manager_id <=> t_4_Person.person_id) AND
+  (Management.employee_id <=> t_5_Person.person_id)
 GROUP BY 1, 2),
 t_1_PathTo_MultBodyAggAux_f5 AS (SELECT * FROM (
   
@@ -246,8 +246,8 @@ t_1_PathTo_MultBodyAggAux_f5 AS (SELECT * FROM (
     FROM
       t_3_Manages AS Manages, t_6_Person AS Person, t_6_Person AS t_3_Person
     WHERE
-      (Manages.manager_id = Person.person_id) AND
-      (Manages.employee_id = t_3_Person.person_id)
+      (Manages.manager_id <=> Person.person_id) AND
+      (Manages.employee_id <=> t_3_Person.person_id)
    UNION ALL
   
     SELECT
@@ -257,8 +257,8 @@ t_1_PathTo_MultBodyAggAux_f5 AS (SELECT * FROM (
     FROM
       synalog_test.PathTo_sn_t2 AS PathTo_sn_t2, t_3_Manages AS t_6_Manages, t_6_Person AS t_8_Person
     WHERE
-      (t_6_Manages.manager_id = PathTo_sn_t2.target) AND
-      (t_6_Manages.employee_id = t_8_Person.person_id)
+      (t_6_Manages.manager_id <=> PathTo_sn_t2.target) AND
+      (t_6_Manages.employee_id <=> t_8_Person.person_id)
   
 ) AS UNUSED_TABLE_NAME  ),
 t_0_PathTo_sn_r3 AS (SELECT
@@ -306,8 +306,8 @@ t_3_Manages AS (SELECT
 FROM
   t_6_Person AS t_4_Person, t_6_Person AS t_5_Person, t_9_Management AS Management
 WHERE
-  (Management.manager_id = t_4_Person.person_id) AND
-  (Management.employee_id = t_5_Person.person_id)
+  (Management.manager_id <=> t_4_Person.person_id) AND
+  (Management.employee_id <=> t_5_Person.person_id)
 GROUP BY 1, 2),
 t_1_PathTo_MultBodyAggAux_f6 AS (SELECT * FROM (
   
@@ -318,8 +318,8 @@ t_1_PathTo_MultBodyAggAux_f6 AS (SELECT * FROM (
     FROM
       t_3_Manages AS Manages, t_6_Person AS Person, t_6_Person AS t_3_Person
     WHERE
-      (Manages.manager_id = Person.person_id) AND
-      (Manages.employee_id = t_3_Person.person_id)
+      (Manages.manager_id <=> Person.person_id) AND
+      (Manages.employee_id <=> t_3_Person.person_id)
    UNION ALL
   
     SELECT
@@ -329,8 +329,8 @@ t_1_PathTo_MultBodyAggAux_f6 AS (SELECT * FROM (
     FROM
       synalog_test.PathTo_sn_t3 AS PathTo_sn_t3, t_3_Manages AS t_6_Manages, t_6_Person AS t_8_Person
     WHERE
-      (t_6_Manages.manager_id = PathTo_sn_t3.target) AND
-      (t_6_Manages.employee_id = t_8_Person.person_id)
+      (t_6_Manages.manager_id <=> PathTo_sn_t3.target) AND
+      (t_6_Manages.employee_id <=> t_8_Person.person_id)
   
 ) AS UNUSED_TABLE_NAME  ),
 t_0_PathTo_sn_r4 AS (SELECT
@@ -378,8 +378,8 @@ t_3_Manages AS (SELECT
 FROM
   t_6_Person AS t_4_Person, t_6_Person AS t_5_Person, t_9_Management AS Management
 WHERE
-  (Management.manager_id = t_4_Person.person_id) AND
-  (Management.employee_id = t_5_Person.person_id)
+  (Management.manager_id <=> t_4_Person.person_id) AND
+  (Management.employee_id <=> t_5_Person.person_id)
 GROUP BY 1, 2),
 t_1_PathTo_MultBodyAggAux_f7 AS (SELECT * FROM (
   
@@ -390,8 +390,8 @@ t_1_PathTo_MultBodyAggAux_f7 AS (SELECT * FROM (
     FROM
       t_3_Manages AS Manages, t_6_Person AS Person, t_6_Person AS t_3_Person
     WHERE
-      (Manages.manager_id = Person.person_id) AND
-      (Manages.employee_id = t_3_Person.person_id)
+      (Manages.manager_id <=> Person.person_id) AND
+      (Manages.employee_id <=> t_3_Person.person_id)
    UNION ALL
   
     SELECT
@@ -401,8 +401,8 @@ t_1_PathTo_MultBodyAggAux_f7 AS (SELECT * FROM (
     FROM
       synalog_test.PathTo_sn_t4 AS PathTo_sn_t4, t_3_Manages AS t_6_Manages, t_6_Person AS t_8_Person
     WHERE
-      (t_6_Manages.manager_id = PathTo_sn_t4.target) AND
-      (t_6_Manages.employee_id = t_8_Person.person_id)
+      (t_6_Manages.manager_id <=> PathTo_sn_t4.target) AND
+      (t_6_Manages.employee_id <=> t_8_Person.person_id)
   
 ) AS UNUSED_TABLE_NAME  ),
 t_0_PathTo_sn_r5 AS (SELECT
@@ -450,8 +450,8 @@ t_3_Manages AS (SELECT
 FROM
   t_6_Person AS t_4_Person, t_6_Person AS t_5_Person, t_9_Management AS Management
 WHERE
-  (Management.manager_id = t_4_Person.person_id) AND
-  (Management.employee_id = t_5_Person.person_id)
+  (Management.manager_id <=> t_4_Person.person_id) AND
+  (Management.employee_id <=> t_5_Person.person_id)
 GROUP BY 1, 2),
 t_1_PathTo_MultBodyAggAux_f8 AS (SELECT * FROM (
   
@@ -462,8 +462,8 @@ t_1_PathTo_MultBodyAggAux_f8 AS (SELECT * FROM (
     FROM
       t_3_Manages AS Manages, t_6_Person AS Person, t_6_Person AS t_3_Person
     WHERE
-      (Manages.manager_id = Person.person_id) AND
-      (Manages.employee_id = t_3_Person.person_id)
+      (Manages.manager_id <=> Person.person_id) AND
+      (Manages.employee_id <=> t_3_Person.person_id)
    UNION ALL
   
     SELECT
@@ -473,8 +473,8 @@ t_1_PathTo_MultBodyAggAux_f8 AS (SELECT * FROM (
     FROM
       synalog_test.PathTo_sn_t5 AS PathTo_sn_t5, t_3_Manages AS t_6_Manages, t_6_Person AS t_8_Person
     WHERE
-      (t_6_Manages.manager_id = PathTo_sn_t5.target) AND
-      (t_6_Manages.employee_id = t_8_Person.person_id)
+      (t_6_Manages.manager_id <=> PathTo_sn_t5.target) AND
+      (t_6_Manages.employee_id <=> t_8_Person.person_id)
   
 ) AS UNUSED_TABLE_NAME  ),
 t_0_PathTo_sn_r6 AS (SELECT
@@ -522,8 +522,8 @@ t_3_Manages AS (SELECT
 FROM
   t_6_Person AS t_4_Person, t_6_Person AS t_5_Person, t_9_Management AS Management
 WHERE
-  (Management.manager_id = t_4_Person.person_id) AND
-  (Management.employee_id = t_5_Person.person_id)
+  (Management.manager_id <=> t_4_Person.person_id) AND
+  (Management.employee_id <=> t_5_Person.person_id)
 GROUP BY 1, 2),
 t_1_PathTo_MultBodyAggAux_f9 AS (SELECT * FROM (
   
@@ -534,8 +534,8 @@ t_1_PathTo_MultBodyAggAux_f9 AS (SELECT * FROM (
     FROM
       t_3_Manages AS Manages, t_6_Person AS Person, t_6_Person AS t_3_Person
     WHERE
-      (Manages.manager_id = Person.person_id) AND
-      (Manages.employee_id = t_3_Person.person_id)
+      (Manages.manager_id <=> Person.person_id) AND
+      (Manages.employee_id <=> t_3_Person.person_id)
    UNION ALL
   
     SELECT
@@ -545,8 +545,8 @@ t_1_PathTo_MultBodyAggAux_f9 AS (SELECT * FROM (
     FROM
       synalog_test.PathTo_sn_t6 AS PathTo_sn_t6, t_3_Manages AS t_6_Manages, t_6_Person AS t_8_Person
     WHERE
-      (t_6_Manages.manager_id = PathTo_sn_t6.target) AND
-      (t_6_Manages.employee_id = t_8_Person.person_id)
+      (t_6_Manages.manager_id <=> PathTo_sn_t6.target) AND
+      (t_6_Manages.employee_id <=> t_8_Person.person_id)
   
 ) AS UNUSED_TABLE_NAME  ),
 t_0_PathTo_sn_r7 AS (SELECT
@@ -664,8 +664,8 @@ t_3_Manages AS (SELECT
 FROM
   t_6_Person AS t_4_Person, t_6_Person AS t_5_Person, t_9_Management AS Management
 WHERE
-  (Management.manager_id = t_4_Person.person_id) AND
-  (Management.employee_id = t_5_Person.person_id)
+  (Management.manager_id <=> t_4_Person.person_id) AND
+  (Management.employee_id <=> t_5_Person.person_id)
 GROUP BY 1, 2),
 t_1_PathTo_MultBodyAggAux_f10 AS (SELECT * FROM (
   
@@ -676,8 +676,8 @@ t_1_PathTo_MultBodyAggAux_f10 AS (SELECT * FROM (
     FROM
       t_3_Manages AS Manages, t_6_Person AS Person, t_6_Person AS t_3_Person
     WHERE
-      (Manages.manager_id = Person.person_id) AND
-      (Manages.employee_id = t_3_Person.person_id)
+      (Manages.manager_id <=> Person.person_id) AND
+      (Manages.employee_id <=> t_3_Person.person_id)
    UNION ALL
   
     SELECT
@@ -687,8 +687,8 @@ t_1_PathTo_MultBodyAggAux_f10 AS (SELECT * FROM (
     FROM
       synalog_test.PathTo_sn_delta AS PathTo_sn_delta, t_3_Manages AS t_6_Manages, t_6_Person AS t_8_Person
     WHERE
-      (t_6_Manages.manager_id = PathTo_sn_delta.target) AND
-      (t_6_Manages.employee_id = t_8_Person.person_id)
+      (t_6_Manages.manager_id <=> PathTo_sn_delta.target) AND
+      (t_6_Manages.employee_id <=> t_8_Person.person_id)
   
 ) AS UNUSED_TABLE_NAME  ),
 t_0_PathTo_sn_step AS (SELECT
@@ -710,9 +710,9 @@ WHERE
   FROM
     synalog_test.PathTo_sn_full AS PathTo_sn_full
   WHERE
-    (PathTo_sn_full.source = PathTo_sn_step.source) AND
-    (PathTo_sn_full.target = PathTo_sn_step.target) AND
-    (PathTo_sn_full.path = PathTo_sn_step.path)) IS NULL)
+    (PathTo_sn_full.source <=> PathTo_sn_step.source) AND
+    (PathTo_sn_full.target <=> PathTo_sn_step.target) AND
+    (PathTo_sn_full.path <=> PathTo_sn_step.path)) IS NULL)
 GROUP BY 1, 2, 3;
 
 INSERT INTO synalog_test.PathTo_sn_full SELECT * FROM synalog_test.PathTo_sn_new;
@@ -744,8 +744,8 @@ t_3_Manages AS (SELECT
 FROM
   t_6_Person AS t_4_Person, t_6_Person AS t_5_Person, t_9_Management AS Management
 WHERE
-  (Management.manager_id = t_4_Person.person_id) AND
-  (Management.employee_id = t_5_Person.person_id)
+  (Management.manager_id <=> t_4_Person.person_id) AND
+  (Management.employee_id <=> t_5_Person.person_id)
 GROUP BY 1, 2),
 t_1_PathTo_MultBodyAggAux_f1 AS (SELECT * FROM (
   
@@ -756,8 +756,8 @@ t_1_PathTo_MultBodyAggAux_f1 AS (SELECT * FROM (
     FROM
       t_3_Manages AS Manages, t_6_Person AS Person, t_6_Person AS t_3_Person
     WHERE
-      (Manages.manager_id = Person.person_id) AND
-      (Manages.employee_id = t_3_Person.person_id)
+      (Manages.manager_id <=> Person.person_id) AND
+      (Manages.employee_id <=> t_3_Person.person_id)
    UNION ALL
   
     SELECT
@@ -767,8 +767,8 @@ t_1_PathTo_MultBodyAggAux_f1 AS (SELECT * FROM (
     FROM
       synalog_test.PathTo_sn_new AS PathTo_sn_new, t_3_Manages AS t_6_Manages, t_6_Person AS t_8_Person
     WHERE
-      (t_6_Manages.manager_id = PathTo_sn_new.target) AND
-      (t_6_Manages.employee_id = t_8_Person.person_id)
+      (t_6_Manages.manager_id <=> PathTo_sn_new.target) AND
+      (t_6_Manages.employee_id <=> t_8_Person.person_id)
   
 ) AS UNUSED_TABLE_NAME  ),
 t_0_PathTo_sn_back_step AS (SELECT
@@ -790,9 +790,9 @@ WHERE
   FROM
     synalog_test.PathTo_sn_full AS PathTo_sn_full
   WHERE
-    (PathTo_sn_full.source = PathTo_sn_back_step.source) AND
-    (PathTo_sn_full.target = PathTo_sn_back_step.target) AND
-    (PathTo_sn_full.path = PathTo_sn_back_step.path)) IS NULL)
+    (PathTo_sn_full.source <=> PathTo_sn_back_step.source) AND
+    (PathTo_sn_full.target <=> PathTo_sn_back_step.target) AND
+    (PathTo_sn_full.path <=> PathTo_sn_back_step.path)) IS NULL)
 GROUP BY 1, 2, 3;
 
 INSERT INTO synalog_test.PathTo_sn_full SELECT * FROM synalog_test.PathTo_sn_delta;
@@ -824,8 +824,8 @@ t_3_Manages AS (SELECT
 FROM
   t_6_Person AS t_4_Person, t_6_Person AS t_5_Person, t_9_Management AS Management
 WHERE
-  (Management.manager_id = t_4_Person.person_id) AND
-  (Management.employee_id = t_5_Person.person_id)
+  (Management.manager_id <=> t_4_Person.person_id) AND
+  (Management.employee_id <=> t_5_Person.person_id)
 GROUP BY 1, 2),
 t_1_PathTo_MultBodyAggAux_f10 AS (SELECT * FROM (
   
@@ -836,8 +836,8 @@ t_1_PathTo_MultBodyAggAux_f10 AS (SELECT * FROM (
     FROM
       t_3_Manages AS Manages, t_6_Person AS Person, t_6_Person AS t_3_Person
     WHERE
-      (Manages.manager_id = Person.person_id) AND
-      (Manages.employee_id = t_3_Person.person_id)
+      (Manages.manager_id <=> Person.person_id) AND
+      (Manages.employee_id <=> t_3_Person.person_id)
    UNION ALL
   
     SELECT
@@ -847,8 +847,8 @@ t_1_PathTo_MultBodyAggAux_f10 AS (SELECT * FROM (
     FROM
       synalog_test.PathTo_sn_delta AS PathTo_sn_delta, t_3_Manages AS t_6_Manages, t_6_Person AS t_8_Person
     WHERE
-      (t_6_Manages.manager_id = PathTo_sn_delta.target) AND
-      (t_6_Manages.employee_id = t_8_Person.person_id)
+      (t_6_Manages.manager_id <=> PathTo_sn_delta.target) AND
+      (t_6_Manages.employee_id <=> t_8_Person.person_id)
   
 ) AS UNUSED_TABLE_NAME  ),
 t_0_PathTo_sn_step AS (SELECT
@@ -870,9 +870,9 @@ WHERE
   FROM
     synalog_test.PathTo_sn_full AS PathTo_sn_full
   WHERE
-    (PathTo_sn_full.source = PathTo_sn_step.source) AND
-    (PathTo_sn_full.target = PathTo_sn_step.target) AND
-    (PathTo_sn_full.path = PathTo_sn_step.path)) IS NULL)
+    (PathTo_sn_full.source <=> PathTo_sn_step.source) AND
+    (PathTo_sn_full.target <=> PathTo_sn_step.target) AND
+    (PathTo_sn_full.path <=> PathTo_sn_step.path)) IS NULL)
 GROUP BY 1, 2, 3;
 
 INSERT INTO synalog_test.PathTo_sn_full SELECT * FROM synalog_test.PathTo_sn_new;
@@ -904,8 +904,8 @@ t_3_Manages AS (SELECT
 FROM
   t_6_Person AS t_4_Person, t_6_Person AS t_5_Person, t_9_Management AS Management
 WHERE
-  (Management.manager_id = t_4_Person.person_id) AND
-  (Management.employee_id = t_5_Person.person_id)
+  (Management.manager_id <=> t_4_Person.person_id) AND
+  (Management.employee_id <=> t_5_Person.person_id)
 GROUP BY 1, 2),
 t_1_PathTo_MultBodyAggAux_f1 AS (SELECT * FROM (
   
@@ -916,8 +916,8 @@ t_1_PathTo_MultBodyAggAux_f1 AS (SELECT * FROM (
     FROM
       t_3_Manages AS Manages, t_6_Person AS Person, t_6_Person AS t_3_Person
     WHERE
-      (Manages.manager_id = Person.person_id) AND
-      (Manages.employee_id = t_3_Person.person_id)
+      (Manages.manager_id <=> Person.person_id) AND
+      (Manages.employee_id <=> t_3_Person.person_id)
    UNION ALL
   
     SELECT
@@ -927,8 +927,8 @@ t_1_PathTo_MultBodyAggAux_f1 AS (SELECT * FROM (
     FROM
       synalog_test.PathTo_sn_new AS PathTo_sn_new, t_3_Manages AS t_6_Manages, t_6_Person AS t_8_Person
     WHERE
-      (t_6_Manages.manager_id = PathTo_sn_new.target) AND
-      (t_6_Manages.employee_id = t_8_Person.person_id)
+      (t_6_Manages.manager_id <=> PathTo_sn_new.target) AND
+      (t_6_Manages.employee_id <=> t_8_Person.person_id)
   
 ) AS UNUSED_TABLE_NAME  ),
 t_0_PathTo_sn_back_step AS (SELECT
@@ -950,9 +950,9 @@ WHERE
   FROM
     synalog_test.PathTo_sn_full AS PathTo_sn_full
   WHERE
-    (PathTo_sn_full.source = PathTo_sn_back_step.source) AND
-    (PathTo_sn_full.target = PathTo_sn_back_step.target) AND
-    (PathTo_sn_full.path = PathTo_sn_back_step.path)) IS NULL)
+    (PathTo_sn_full.source <=> PathTo_sn_back_step.source) AND
+    (PathTo_sn_full.target <=> PathTo_sn_back_step.target) AND
+    (PathTo_sn_full.path <=> PathTo_sn_back_step.path)) IS NULL)
 GROUP BY 1, 2, 3;
 
 INSERT INTO synalog_test.PathTo_sn_full SELECT * FROM synalog_test.PathTo_sn_delta;
@@ -977,6 +977,6 @@ SELECT
 FROM
   synalog_test.PathTo_sn_full AS PathTo_sn_full, t_6_Person AS Person
 WHERE
-  (Person.person_id = PathTo_sn_full.target) AND
+  (Person.person_id <=> PathTo_sn_full.target) AND
   (1 = PathTo_sn_full.source)
 GROUP BY 1, 2 ORDER BY target NULLS LAST, path NULLS LAST;

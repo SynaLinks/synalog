@@ -18,7 +18,7 @@ SELECT * FROM (
         LATERAL (SELECT explode(FILTER(SEQUENCE(0, CAST(10 AS BIGINT)), x -> x < 10)) AS x_10) AS pushkin
       WHERE
         ((MOD(x_5, NULLIF(2, 0))) = 0) AND
-        (x_5 = x_10)) IS NULL)
+        (x_5 <=> x_10)) IS NULL)
    UNION ALL
   
     SELECT
@@ -33,7 +33,7 @@ SELECT * FROM (
       FROM
         t_0_Prime AS Prime
       WHERE
-        (Prime.col0 = x_5)) IS NULL)
+        (Prime.col0 <=> x_5)) IS NULL)
    UNION ALL
   
     SELECT
@@ -47,7 +47,7 @@ SELECT * FROM (
       FROM
         t_0_Prime AS Prime
       WHERE
-        (Prime.col0 = x_7)) IS NULL) AND
+        (Prime.col0 <=> x_7)) IS NULL) AND
       ((MOD(x_7, NULLIF(2, 0))) = 0)
   
 ) AS UNUSED_TABLE_NAME  ORDER BY test_name NULLS LAST, x NULLS LAST ;

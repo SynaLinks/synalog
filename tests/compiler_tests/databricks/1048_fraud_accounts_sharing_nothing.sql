@@ -19,8 +19,8 @@ t_3_Shares AS (SELECT
 FROM
   t_2_HasPhone AS t_4_HasPhone, t_2_HasPhone AS t_5_HasPhone
 WHERE
-  (t_4_HasPhone.account != t_5_HasPhone.account) AND
-  (t_5_HasPhone.phone = t_4_HasPhone.phone)
+  (NOT (t_4_HasPhone.account <=> t_5_HasPhone.account)) AND
+  (t_5_HasPhone.phone <=> t_4_HasPhone.phone)
 GROUP BY 1, 2)
 SELECT
   t_0_Account.account AS account
@@ -32,4 +32,4 @@ WHERE
   FROM
     t_3_Shares AS Shares
   WHERE
-    (Shares.a = t_0_Account.account)) IS NULL) ORDER BY account NULLS LAST;
+    (Shares.a <=> t_0_Account.account)) IS NULL) ORDER BY account NULLS LAST;

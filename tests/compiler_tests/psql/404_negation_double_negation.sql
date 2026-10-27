@@ -25,4 +25,4 @@ WHERE
   FROM
     t_0_NotB AS NotB, UNNEST(ARRAY[0]) as x_6
   WHERE
-    (NotB.x = x_3)) AS numeric) IS NULL);
+    (COALESCE(NotB.x, 0) = COALESCE(x_3, 0) AND (NotB.x IS NULL) = (x_3 IS NULL))) AS numeric) IS NULL);

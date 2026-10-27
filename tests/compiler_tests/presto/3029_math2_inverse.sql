@@ -56,4 +56,4 @@ SELECT
 FROM
   t_1_V AS t_0_V
 WHERE
-  (t_0_V.x != 0) ORDER BY id;
+  (t_0_V.x IS DISTINCT FROM 0) ORDER BY id;

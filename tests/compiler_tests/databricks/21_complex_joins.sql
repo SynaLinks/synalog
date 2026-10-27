@@ -14,4 +14,4 @@ SELECT
 FROM
   t_0_Users AS Users, t_1_Departments AS Departments
 WHERE
-  (Departments.id = Users.dept) ORDER BY user_name NULLS LAST;
+  (Departments.id <=> Users.dept) ORDER BY user_name NULLS LAST;

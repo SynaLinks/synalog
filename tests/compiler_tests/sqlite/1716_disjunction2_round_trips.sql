@@ -88,6 +88,6 @@ FROM
   t_1_Ship AS Ship, t_1_Ship AS t_0_Ship
 WHERE
   (Ship.src < Ship.dst) AND
-  (t_0_Ship.src = Ship.dst) AND
-  (t_0_Ship.dst = Ship.src)
-GROUP BY Ship.src, Ship.dst ORDER BY a, b;
+  (t_0_Ship.src IS Ship.dst) AND
+  (t_0_Ship.dst IS Ship.src)
+GROUP BY Ship.src, Ship.dst ORDER BY a NULLS LAST, b NULLS LAST;

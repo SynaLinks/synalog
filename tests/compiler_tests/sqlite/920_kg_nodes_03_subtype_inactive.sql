@@ -51,13 +51,13 @@ t_0_Person AS (SELECT
   t_1_Employees.url AS url
 FROM
   t_2_Employees AS t_1_Employees
-GROUP BY t_1_Employees.person_id, t_1_Employees.name, t_1_Employees.url ORDER BY person_id)
+GROUP BY t_1_Employees.person_id, t_1_Employees.name, t_1_Employees.url ORDER BY person_id NULLS LAST)
 SELECT
   Person.person_id AS person_id,
   Person.name AS name
 FROM
   t_0_Person AS Person, t_2_Employees AS Employees
 WHERE
-  (Employees.person_id = Person.person_id) AND
+  (Employees.person_id IS Person.person_id) AND
   (Employees.status = 'inactive')
-GROUP BY Person.person_id, Person.name ORDER BY person_id;
+GROUP BY Person.person_id, Person.name ORDER BY person_id NULLS LAST;

@@ -55,4 +55,4 @@ FROM
 WHERE
   (E.v > 15) AND
   (F.w < 2) AND
-  (F.g = E.g);
+  (COALESCE(F.g, '') = COALESCE(E.g, '') AND (F.g IS NULL) = (E.g IS NULL));

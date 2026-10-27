@@ -14,7 +14,7 @@ SELECT
 FROM
   t_1_Ship AS Ship, t_1_Ship AS t_0_Ship
 WHERE
-  (t_0_Ship.carrier != "fedex") AND
+  (NOT (t_0_Ship.carrier <=> "fedex")) AND
   (Ship.carrier = "fedex") AND
-  (t_0_Ship.src = Ship.src)
+  (t_0_Ship.src <=> Ship.src)
 GROUP BY 1;

@@ -13,4 +13,4 @@ SELECT
 FROM
   t_0_V AS V, JSON_EACH(JSON_ARRAY(1, 2)) as x_2
 WHERE
-  (V.x = x_2.value);
+  (V.x IS x_2.value);

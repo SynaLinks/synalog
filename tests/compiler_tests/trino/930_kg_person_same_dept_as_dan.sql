@@ -115,8 +115,8 @@ SELECT
 FROM
   synalog_test.Person AS Person, t_0_Dept AS Dept, t_0_Employees AS Employees
 WHERE
-  (Employees.person_id = Person.person_id) AND
-  (Employees.dept = Dept.dept)
+  (Employees.person_id IS NOT DISTINCT FROM Person.person_id) AND
+  (Employees.dept IS NOT DISTINCT FROM Dept.dept)
 GROUP BY 1, 2;
 
 -- Interacting with table synalog_test.InDept
@@ -126,7 +126,7 @@ SELECT
 FROM
   synalog_test.InDept AS InDept, synalog_test.InDept AS t_0_InDept
 WHERE
-  (t_0_InDept.person_id != 4) AND
+  (t_0_InDept.person_id IS DISTINCT FROM 4) AND
   (InDept.person_id = 4) AND
-  (t_0_InDept.dept = InDept.dept)
+  (t_0_InDept.dept IS NOT DISTINCT FROM InDept.dept)
 GROUP BY 1 ORDER BY person_id;

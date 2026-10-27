@@ -104,4 +104,4 @@ WHERE
   FROM
     t_1_InLima AS InLima, (select unnest([0]) as unnested_pod) as x_4
   WHERE
-    (InLima.product = S.product)) IS NULL);
+    (InLima.product IS NOT DISTINCT FROM S.product)) IS NULL);

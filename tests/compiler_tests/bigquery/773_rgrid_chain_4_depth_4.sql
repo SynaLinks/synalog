@@ -20,7 +20,7 @@ t_8_R_MultBodyAggAux_recursive_head_f2 AS (SELECT * FROM (
     FROM
       t_10_R_r0 AS R_r0, UNNEST(GENERATE_ARRAY(0, 4 - 1)) as x_31
     WHERE
-      (R_r0.x = x_31)
+      (R_r0.x IS NOT DISTINCT FROM x_31)
   
 ) AS UNUSED_TABLE_NAME  ),
 t_7_R_r1 AS (SELECT
@@ -39,7 +39,7 @@ t_5_R_MultBodyAggAux_recursive_head_f3 AS (SELECT * FROM (
     FROM
       t_7_R_r1 AS R_r1, UNNEST(GENERATE_ARRAY(0, 4 - 1)) as x_23
     WHERE
-      (R_r1.x = x_23)
+      (R_r1.x IS NOT DISTINCT FROM x_23)
   
 ) AS UNUSED_TABLE_NAME  ),
 t_4_R_r2 AS (SELECT
@@ -58,7 +58,7 @@ t_2_R_MultBodyAggAux_recursive_head_f4 AS (SELECT * FROM (
     FROM
       t_4_R_r2 AS R_r2, UNNEST(GENERATE_ARRAY(0, 4 - 1)) as x_15
     WHERE
-      (R_r2.x = x_15)
+      (R_r2.x IS NOT DISTINCT FROM x_15)
   
 ) AS UNUSED_TABLE_NAME  ),
 t_1_R_r3 AS (SELECT
@@ -77,7 +77,7 @@ t_0_R_MultBodyAggAux_recursive_head_f5 AS (SELECT * FROM (
     FROM
       t_1_R_r3 AS R_r3, UNNEST(GENERATE_ARRAY(0, 4 - 1)) as x_7
     WHERE
-      (R_r3.x = x_7)
+      (R_r3.x IS NOT DISTINCT FROM x_7)
   
 ) AS UNUSED_TABLE_NAME  )
 SELECT

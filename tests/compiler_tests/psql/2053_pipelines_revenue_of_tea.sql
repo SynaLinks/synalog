@@ -112,7 +112,7 @@ FROM
   t_1_Order AS t_0_Order, t_2_Price AS Price
 WHERE
   (t_0_Order.state = 'paid') AND
-  (Price.item = t_0_Order.item);
+  (COALESCE(Price.item, '') = COALESCE(t_0_Order.item, '') AND (Price.item IS NULL) = (t_0_Order.item IS NULL));
 
 -- Interacting with table synalog_home.Line
 
@@ -203,5 +203,5 @@ SELECT
 FROM
   synalog_home.Line AS Line, t_1_Order
 WHERE
-  (Line.id = t_1_Order.id) AND
+  (COALESCE(Line.id, 0) = COALESCE(t_1_Order.id, 0) AND (Line.id IS NULL) = (t_1_Order.id IS NULL)) AND
   ('tea' = t_1_Order.item);

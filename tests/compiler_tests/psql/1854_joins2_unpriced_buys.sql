@@ -130,6 +130,6 @@ WHERE
   FROM
     t_1_Priced AS Priced, UNNEST(ARRAY[0]) as x_8
   WHERE
-    (Priced."user" = Event."user") AND
-    (Priced.month = SUBSTR(Event."at", 1, 7))) AS numeric) IS NULL) AND
+    (COALESCE(Priced."user", '') = COALESCE(Event."user", '') AND (Priced."user" IS NULL) = (Event."user" IS NULL)) AND
+    (COALESCE(Priced.month, '') = COALESCE(SUBSTR(Event."at", 1, 7), '') AND (Priced.month IS NULL) = (SUBSTR(Event."at", 1, 7) IS NULL))) AS numeric) IS NULL) AND
   (Event.kind = 'buy');

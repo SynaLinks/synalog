@@ -32,4 +32,4 @@ WHERE
   FROM
     t_1_Heavy AS Heavy
   WHERE
-    (Heavy.pid = Proj.pid)) IS NULL) ORDER BY pid NULLS LAST;
+    (Heavy.pid <=> Proj.pid)) IS NULL) ORDER BY pid NULLS LAST;

@@ -81,9 +81,9 @@ FROM
 WHERE
   (U.a < U.b) AND
   (U.b < t_1_U.b) AND
-  (t_1_U.a = U.b) AND
-  (t_2_U.a = t_1_U.b) AND
-  (t_2_U.b = U.a)
+  (t_1_U.a IS U.b) AND
+  (t_2_U.a IS t_1_U.b) AND
+  (t_2_U.b IS U.a)
 GROUP BY U.a, U.b, t_1_U.b)
 SELECT
   SUM(1) AS n

@@ -27,6 +27,6 @@ SELECT
 FROM
   t_1_V AS V, JSON_EACH(JSON_ARRAY(0)) as x_7
 WHERE
-  (V.g = t_0_G.g)) AS t
+  (V.g IS t_0_G.g)) AS t
 FROM
   t_2_G AS t_0_G ORDER BY g NULLS LAST;

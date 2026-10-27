@@ -76,7 +76,7 @@ t_3_Down_MultBodyAggAux_recursive_head_f2 AS (SELECT * FROM (
     FROM
       t_5_Down_r0 AS Down_r0, t_9_Uses AS t_4_Uses
     WHERE
-      (t_4_Uses.part = Down_r0.component)
+      (t_4_Uses.part IS NOT DISTINCT FROM Down_r0.component)
    UNION ALL
   
     SELECT
@@ -99,7 +99,7 @@ t_1_Down_MultBodyAggAux_recursive_head_f3 AS (SELECT * FROM (
     FROM
       t_2_Down_r1 AS Down_r1, t_9_Uses AS Uses
     WHERE
-      (Uses.part = Down_r1.component)
+      (Uses.part IS NOT DISTINCT FROM Down_r1.component)
    UNION ALL
   
     SELECT
@@ -119,4 +119,4 @@ SELECT
   Down.component AS component
 FROM
   t_0_Down AS Down
-GROUP BY component ORDER BY component;
+GROUP BY component ORDER BY component NULLS LAST;

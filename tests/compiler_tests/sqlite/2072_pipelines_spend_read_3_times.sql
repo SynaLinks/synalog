@@ -104,7 +104,7 @@ FROM
   t_5_Order AS t_4_Order, t_6_Price AS Price
 WHERE
   (t_4_Order.state = 'paid') AND
-  (Price.item = t_4_Order.item)
+  (Price.item IS t_4_Order.item)
 GROUP BY t_4_Order.who),
 t_0_S AS (SELECT
   Spend.who AS w0,

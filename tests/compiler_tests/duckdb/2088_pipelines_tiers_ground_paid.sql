@@ -122,7 +122,7 @@ t_2_Spend AS (SELECT
 FROM
   synalog_home.Paid AS Paid, t_3_Price AS Price
 WHERE
-  (Price.item = Paid.item)
+  (Price.item IS NOT DISTINCT FROM Paid.item)
 GROUP BY Paid.who),
 t_0_TierCount AS (SELECT
   CASE WHEN (Spend.total >= 40) THEN 'gold' WHEN (Spend.total >= 15) THEN 'silver' ELSE 'bronze' END AS tier,

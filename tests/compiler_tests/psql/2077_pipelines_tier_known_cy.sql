@@ -111,7 +111,7 @@ FROM
   t_2_Order AS t_1_Order, t_2_Price AS Price
 WHERE
   (t_1_Order.state = 'paid') AND
-  (Price.item = t_1_Order.item)
+  (COALESCE(Price.item, '') = COALESCE(t_1_Order.item, '') AND (Price.item IS NULL) = (t_1_Order.item IS NULL))
 GROUP BY t_1_Order.who)
 SELECT
   Spend.who AS who,
@@ -218,7 +218,7 @@ WHERE
   FROM
     synalog_home.Tier AS t_6_Tier, UNNEST(ARRAY[0]) as x_12
   WHERE
-    (t_6_Tier.who = t_4_Person.who)) AS numeric) IS NULL))
+    (COALESCE(t_6_Tier.who, '') = COALESCE(t_4_Person.who, '') AND (t_6_Tier.who IS NULL) = (t_4_Person.who IS NULL))) AS numeric) IS NULL))
 SELECT
   1 AS ok
 FROM

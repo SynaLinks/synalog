@@ -773,16 +773,47 @@ fn make_infix(op: &str, left_var: &str, right_var: &str) -> Json {
 
 #[test]
 fn test_infix_equal() {
+    // A null equals a null.
     let ql = make_translator();
     let result = ql.convert_to_sql(&make_infix("==", "x", "y")).unwrap();
-    assert!(result.contains("="), "Got: {}", result);
+    assert_eq!(result, "(t_0.col0 IS t_0.col1)");
 }
 
 #[test]
 fn test_infix_not_equal() {
     let ql = make_translator();
     let result = ql.convert_to_sql(&make_infix("!=", "x", "y")).unwrap();
-    assert!(result.contains("!="), "Got: {}", result);
+    assert_eq!(result, "(t_0.col0 IS NOT t_0.col1)");
+}
+
+fn with_right(op: &str, literal: Json) -> Json {
+    let mut e = make_infix(op, "x", "y");
+    let call = e.as_object_mut().get_mut("call").unwrap().as_object_mut();
+    let fvs = call.get_mut("record").unwrap().as_object_mut().get_mut("field_value").unwrap();
+    let Json::Array(items) = fvs else { unreachable!() };
+    items[1] = crate::json_obj!(
+        "field" => Json::Int(1),
+        "value" => crate::json_obj!("expression" => crate::json_obj!("literal" => literal))
+    );
+    e
+}
+
+#[test]
+fn test_equal_to_a_literal_is_sql_equality() {
+    // Neither side is null where they are equal: SQL's `=`, which an index serves.
+    let ql = make_bigquery_translator();
+    let one = crate::json_obj!("the_number" => crate::json_obj!("number" => "1"));
+    assert_eq!(ql.convert_to_sql(&with_right("==", one.clone())).unwrap(), "(t_0.col0 = 1)");
+    // A null differs from 1.
+    assert_eq!(ql.convert_to_sql(&with_right("!=", one)).unwrap(), "(t_0.col0 IS DISTINCT FROM 1)");
+}
+
+#[test]
+fn test_equal_to_null_is_a_null_test() {
+    let ql = make_bigquery_translator();
+    let null = crate::json_obj!("the_null" => Json::Null);
+    assert_eq!(ql.convert_to_sql(&with_right("==", null.clone())).unwrap(), "(t_0.col0 IS NULL)");
+    assert_eq!(ql.convert_to_sql(&with_right("!=", null)).unwrap(), "(t_0.col0 IS NOT NULL)");
 }
 
 #[test]

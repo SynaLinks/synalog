@@ -72,4 +72,4 @@ WHERE
   FROM
     t_3_Effective AS Effective, UNNEST(ARRAY[0]) as x_6
   WHERE
-    (Effective.requester = t_0_Requester.requester)) AS numeric) IS NULL) ORDER BY requester;
+    (COALESCE(Effective.requester, '') = COALESCE(t_0_Requester.requester, '') AND (Effective.requester IS NULL) = (t_0_Requester.requester IS NULL))) AS numeric) IS NULL) ORDER BY requester;

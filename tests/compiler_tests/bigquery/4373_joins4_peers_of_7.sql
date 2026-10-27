@@ -69,6 +69,6 @@ SELECT
 FROM
   t_1_E AS E, t_1_E AS t_0_E
 WHERE
-  (t_0_E.id != 7) AND
+  (t_0_E.id IS DISTINCT FROM 7) AND
   (E.id = 7) AND
-  (t_0_E.boss = E.boss) ORDER BY n;
+  (t_0_E.boss IS NOT DISTINCT FROM E.boss) ORDER BY n NULLS LAST;

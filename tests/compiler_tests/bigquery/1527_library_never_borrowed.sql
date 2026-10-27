@@ -157,4 +157,4 @@ WHERE
   FROM
     t_2_Borrowed AS Borrowed
   WHERE
-    (Borrowed.book = t_0_Book.id)) IS NULL);
+    (Borrowed.book IS NOT DISTINCT FROM t_0_Book.id)) IS NULL);

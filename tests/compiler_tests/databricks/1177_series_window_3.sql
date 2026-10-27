@@ -18,5 +18,5 @@ SELECT
 FROM
   t_2_Reading AS Reading, t_2_Reading AS t_0_Reading, t_2_Reading AS t_1_Reading
 WHERE
-  (t_0_Reading.day = ((Reading.day) - (1))) AND
-  (t_1_Reading.day = ((Reading.day) - (2))) ORDER BY day NULLS LAST, total NULLS LAST;
+  (t_0_Reading.day <=> ((Reading.day) - (1))) AND
+  (t_1_Reading.day <=> ((Reading.day) - (2))) ORDER BY day NULLS LAST, total NULLS LAST;

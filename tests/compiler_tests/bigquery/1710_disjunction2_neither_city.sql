@@ -86,17 +86,17 @@ t_2_T_MultBodyAggAux AS (SELECT * FROM (
     SELECT
       t_3_Ship.id AS id
     FROM
-      t_0_Ship AS t_3_Ship, UNNEST(ARRAY["paris", "nice"]) as x_9
+      t_0_Ship AS t_3_Ship, UNNEST(ARRAY["paris", "nice"]) as x_8
     WHERE
-      (t_3_Ship.src = x_9)
+      (t_3_Ship.src IS NOT DISTINCT FROM x_8)
    UNION ALL
   
     SELECT
       t_4_Ship.id AS id
     FROM
-      t_0_Ship AS t_4_Ship, UNNEST(ARRAY["paris", "nice"]) as x_13
+      t_0_Ship AS t_4_Ship, UNNEST(ARRAY["paris", "nice"]) as x_12
     WHERE
-      (t_4_Ship.dst = x_13)
+      (t_4_Ship.dst IS NOT DISTINCT FROM x_12)
   
 ) AS UNUSED_TABLE_NAME  ),
 t_1_T AS (SELECT
@@ -114,4 +114,4 @@ WHERE
   FROM
     t_1_T AS T
   WHERE
-    (T.id = Ship.id)) IS NULL);
+    (T.id IS NOT DISTINCT FROM Ship.id)) IS NULL);

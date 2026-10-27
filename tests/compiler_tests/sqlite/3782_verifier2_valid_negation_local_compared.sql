@@ -38,4 +38,4 @@ WHERE
     t_2_E AS E, JSON_EACH(JSON_ARRAY(0)) as x_6
   WHERE
     (E.b > 2) AND
-    (E.a = t_0_N.n)) IS NULL) ORDER BY n NULLS LAST;
+    (E.a IS t_0_N.n)) IS NULL) ORDER BY n NULLS LAST;

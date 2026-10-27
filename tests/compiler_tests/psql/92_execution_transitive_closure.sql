@@ -41,7 +41,7 @@ t_0_Reach_RecursiveCte AS (SELECT * FROM (
       WHERE
         (0 < 10) AND
         (1 = 0) AND
-        (t_2_Edge.x = t_4_Edge.y)
+        (COALESCE(t_2_Edge.x, '') = COALESCE(t_4_Edge.y, '') AND (t_2_Edge.x IS NULL) = (t_4_Edge.y IS NULL))
      UNION ALL
     
       SELECT
@@ -54,8 +54,8 @@ t_0_Reach_RecursiveCte AS (SELECT * FROM (
         (((0) + (1)) < 10) AND
         (0 < 10) AND
         (1 = 0) AND
-        (t_6_Edge.x = t_8_Edge.y) AND
-        (t_8_Edge.x = t_10_Edge.y)
+        (COALESCE(t_6_Edge.x, '') = COALESCE(t_8_Edge.y, '') AND (t_6_Edge.x IS NULL) = (t_8_Edge.y IS NULL)) AND
+        (COALESCE(t_8_Edge.x, '') = COALESCE(t_10_Edge.y, '') AND (t_8_Edge.x IS NULL) = (t_10_Edge.y IS NULL))
      UNION ALL
     
       SELECT
@@ -69,9 +69,9 @@ t_0_Reach_RecursiveCte AS (SELECT * FROM (
         (((0) + (1)) < 10) AND
         (0 < 10) AND
         (1 = 0) AND
-        (t_12_Edge.x = t_14_Edge.y) AND
-        (t_14_Edge.x = t_16_Edge.y) AND
-        (t_16_Edge.x = t_18_Edge.y)
+        (COALESCE(t_12_Edge.x, '') = COALESCE(t_14_Edge.y, '') AND (t_12_Edge.x IS NULL) = (t_14_Edge.y IS NULL)) AND
+        (COALESCE(t_14_Edge.x, '') = COALESCE(t_16_Edge.y, '') AND (t_14_Edge.x IS NULL) = (t_16_Edge.y IS NULL)) AND
+        (COALESCE(t_16_Edge.x, '') = COALESCE(t_18_Edge.y, '') AND (t_16_Edge.x IS NULL) = (t_18_Edge.y IS NULL))
      UNION ALL
     
       SELECT
@@ -86,10 +86,10 @@ t_0_Reach_RecursiveCte AS (SELECT * FROM (
         (((0) + (1)) < 10) AND
         (0 < 10) AND
         (1 = 0) AND
-        (t_20_Edge.x = t_22_Edge.y) AND
-        (t_22_Edge.x = t_24_Edge.y) AND
-        (t_24_Edge.x = t_26_Edge.y) AND
-        (t_26_Edge.x = t_28_Edge.y)
+        (COALESCE(t_20_Edge.x, '') = COALESCE(t_22_Edge.y, '') AND (t_20_Edge.x IS NULL) = (t_22_Edge.y IS NULL)) AND
+        (COALESCE(t_22_Edge.x, '') = COALESCE(t_24_Edge.y, '') AND (t_22_Edge.x IS NULL) = (t_24_Edge.y IS NULL)) AND
+        (COALESCE(t_24_Edge.x, '') = COALESCE(t_26_Edge.y, '') AND (t_24_Edge.x IS NULL) = (t_26_Edge.y IS NULL)) AND
+        (COALESCE(t_26_Edge.x, '') = COALESCE(t_28_Edge.y, '') AND (t_26_Edge.x IS NULL) = (t_28_Edge.y IS NULL))
      UNION ALL
     
       SELECT
@@ -105,11 +105,11 @@ t_0_Reach_RecursiveCte AS (SELECT * FROM (
         (((0) + (1)) < 10) AND
         (0 < 10) AND
         (1 = 0) AND
-        (t_30_Edge.x = t_32_Edge.y) AND
-        (t_32_Edge.x = t_34_Edge.y) AND
-        (t_34_Edge.x = t_36_Edge.y) AND
-        (t_36_Edge.x = t_38_Edge.y) AND
-        (t_38_Edge.x = t_40_Edge.y)
+        (COALESCE(t_30_Edge.x, '') = COALESCE(t_32_Edge.y, '') AND (t_30_Edge.x IS NULL) = (t_32_Edge.y IS NULL)) AND
+        (COALESCE(t_32_Edge.x, '') = COALESCE(t_34_Edge.y, '') AND (t_32_Edge.x IS NULL) = (t_34_Edge.y IS NULL)) AND
+        (COALESCE(t_34_Edge.x, '') = COALESCE(t_36_Edge.y, '') AND (t_34_Edge.x IS NULL) = (t_36_Edge.y IS NULL)) AND
+        (COALESCE(t_36_Edge.x, '') = COALESCE(t_38_Edge.y, '') AND (t_36_Edge.x IS NULL) = (t_38_Edge.y IS NULL)) AND
+        (COALESCE(t_38_Edge.x, '') = COALESCE(t_40_Edge.y, '') AND (t_38_Edge.x IS NULL) = (t_40_Edge.y IS NULL))
     
   ) AS UNUSED_TABLE_NAME  
 ) AS UNUSED_TABLE_NAME
@@ -122,7 +122,7 @@ FROM
   t_0_Reach_RecursiveCte AS t_41_Reach_RecursiveCte, t_1_Edge AS t_42_Edge
 WHERE
   (t_41_Reach_RecursiveCte.synalog_step < 10) AND
-  (t_42_Edge.x = t_41_Reach_RecursiveCte.y))
+  (COALESCE(t_42_Edge.x, '') = COALESCE(t_41_Reach_RecursiveCte.y, '') AND (t_42_Edge.x IS NULL) = (t_41_Reach_RecursiveCte.y IS NULL)))
 SELECT
   Reach_RecursiveCte.x AS x,
   Reach_RecursiveCte.y AS y

@@ -25,7 +25,7 @@ WHERE
   FROM
     t_2_NotA AS NotA, (select unnest([0]) as unnested_pod) as x_13
   WHERE
-    (NotA.x = x_10.unnested_pod)) IS NULL))
+    (NotA.x IS NOT DISTINCT FROM x_10.unnested_pod)) IS NULL))
 SELECT
   x_3.unnested_pod AS x
 FROM
@@ -36,4 +36,4 @@ WHERE
   FROM
     t_0_NotNotA AS NotNotA, (select unnest([0]) as unnested_pod) as x_6
   WHERE
-    (NotNotA.x = x_3.unnested_pod)) IS NULL);
+    (NotNotA.x IS NOT DISTINCT FROM x_3.unnested_pod)) IS NULL);

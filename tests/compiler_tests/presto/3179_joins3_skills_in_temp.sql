@@ -110,7 +110,7 @@ SELECT
 FROM
   t_0_S AS S, t_1_E AS E, t_2_D AS D
 WHERE
-  (E.id = S.id) AND
-  (D.dept = E.dept) AND
+  (E.id IS NOT DISTINCT FROM S.id) AND
+  (D.dept IS NOT DISTINCT FROM E.dept) AND
   (D.dname = 'temp')
 GROUP BY 1;

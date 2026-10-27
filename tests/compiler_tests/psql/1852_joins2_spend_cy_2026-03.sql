@@ -122,5 +122,5 @@ WHERE
   (Event.kind = 'buy') AND
   (Event."user" = 'cy') AND
   (Price."user" = 'cy') AND
-  (Price.month = SUBSTR(Event."at", 1, 7)) AND
+  (COALESCE(Price.month, '') = COALESCE(SUBSTR(Event."at", 1, 7), '') AND (Price.month IS NULL) = (SUBSTR(Event."at", 1, 7) IS NULL)) AND
   ('2026-03' = SUBSTR(Event."at", 1, 7));

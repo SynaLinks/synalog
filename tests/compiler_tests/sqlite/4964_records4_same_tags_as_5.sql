@@ -30,6 +30,6 @@ SELECT
 FROM
   t_1_P AS P, t_1_P AS t_0_P
 WHERE
-  (t_0_P.id != 5) AND
-  (JSON_EXTRACT(t_0_P.r, "$.tags") = JSON_EXTRACT(P.r, "$.tags")) AND
-  (P.id = 5) ORDER BY id;
+  (t_0_P.id IS NOT 5) AND
+  (P.id = 5) AND
+  (JSON_EXTRACT(t_0_P.r, "$.tags") IS JSON_EXTRACT(P.r, "$.tags")) ORDER BY id NULLS LAST;

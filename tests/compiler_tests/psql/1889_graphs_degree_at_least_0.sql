@@ -138,4 +138,4 @@ WHERE
   FROM
     t_1_U AS U, UNNEST(ARRAY[0]) as x_4
   WHERE
-    (U.a = Node.n)) AS numeric), 0) >= 0) ORDER BY n;
+    (COALESCE(U.a, 0) = COALESCE(Node.n, 0) AND (U.a IS NULL) = (Node.n IS NULL))) AS numeric), 0) >= 0) ORDER BY n;

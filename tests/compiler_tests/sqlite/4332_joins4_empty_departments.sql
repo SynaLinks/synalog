@@ -100,4 +100,4 @@ WHERE
   FROM
     t_2_E AS E, JSON_EACH(JSON_ARRAY(0)) as x_5
   WHERE
-    (E.d = t_0_D.d)) IS NULL) ORDER BY dn NULLS LAST;
+    (E.d IS t_0_D.d)) IS NULL) ORDER BY dn NULLS LAST;

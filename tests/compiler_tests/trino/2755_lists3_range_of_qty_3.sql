@@ -105,4 +105,4 @@ SELECT
 FROM
   synalog_test.R AS t_0_R, t_2_T AS t_1_T
 WHERE
-  (t_1_T.pos = t_0_R.pos) ORDER BY pos, n, t;
+  (t_1_T.pos IS NOT DISTINCT FROM t_0_R.pos) ORDER BY pos, n, t;

@@ -93,7 +93,7 @@ FROM
 WHERE
   (t_1_S.v > t_0_S.v) AND
   (t_0_S.r = 'south') AND
-  (t_0_S.d = S.d) AND
+  (t_0_S.d IS NOT DISTINCT FROM S.d) AND
   (t_1_S.r = 'south')), 0))) AS rank
 FROM
   t_2_S AS S

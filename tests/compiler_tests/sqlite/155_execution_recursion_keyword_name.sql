@@ -38,7 +38,7 @@ t_2_Select_RecursiveCte AS (SELECT * FROM (
         (((0) + (1)) < 5) AND
         (0 < 5) AND
         (1 = 0) AND
-        (t_6_Edge.a = t_8_Edge.b) AND
+        (t_6_Edge.a IS t_8_Edge.b) AND
         (t_8_Edge.a = 1)
      UNION ALL
     
@@ -52,8 +52,8 @@ t_2_Select_RecursiveCte AS (SELECT * FROM (
         (((0) + (1)) < 5) AND
         (0 < 5) AND
         (1 = 0) AND
-        (t_11_Edge.a = t_13_Edge.b) AND
-        (t_13_Edge.a = t_15_Edge.b) AND
+        (t_11_Edge.a IS t_13_Edge.b) AND
+        (t_13_Edge.a IS t_15_Edge.b) AND
         (t_15_Edge.a = 1)
     
   ) AS UNUSED_TABLE_NAME  
@@ -66,7 +66,7 @@ FROM
   t_2_Select_RecursiveCte AS t_17_Select_RecursiveCte, t_4_Edge AS t_18_Edge
 WHERE
   (t_17_Select_RecursiveCte.synalog_step < 5) AND
-  (t_18_Edge.a = t_17_Select_RecursiveCte.x)),
+  (t_18_Edge.a IS t_17_Select_RecursiveCte.x)),
 t_1_Select AS (SELECT
   Select_RecursiveCte.x AS x
 FROM

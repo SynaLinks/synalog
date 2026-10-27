@@ -95,12 +95,12 @@ WHERE
   FROM
     t_3_F AS F, UNNEST(ARRAY[0]) as x_7
   WHERE
-    (F.a = t_0_U.u) AND
-    (F.b = t_1_U.u)) AS numeric) IS NULL) AND
+    (COALESCE(F.a, '') = COALESCE(t_0_U.u, '') AND (F.a IS NULL) = (t_0_U.u IS NULL)) AND
+    (COALESCE(F.b, '') = COALESCE(t_1_U.u, '') AND (F.b IS NULL) = (t_1_U.u IS NULL))) AS numeric) IS NULL) AND
   (CAST((SELECT
     MIN((CASE WHEN x_11 = 0 THEN 1 ELSE NULL END)) AS synalog_value
   FROM
     t_3_F AS t_4_F, UNNEST(ARRAY[0]) as x_11
   WHERE
-    (t_4_F.a = t_1_U.u) AND
-    (t_4_F.b = t_0_U.u)) AS numeric) IS NULL) ORDER BY a, b;
+    (COALESCE(t_4_F.a, '') = COALESCE(t_1_U.u, '') AND (t_4_F.a IS NULL) = (t_1_U.u IS NULL)) AND
+    (COALESCE(t_4_F.b, '') = COALESCE(t_0_U.u, '') AND (t_4_F.b IS NULL) = (t_0_U.u IS NULL))) AS numeric) IS NULL) ORDER BY a, b;

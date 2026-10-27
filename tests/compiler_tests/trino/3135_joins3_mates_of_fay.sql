@@ -47,6 +47,6 @@ SELECT
 FROM
   t_1_E AS E, t_1_E AS t_0_E
 WHERE
-  (t_0_E.name != 'fay') AND
+  (t_0_E.name IS DISTINCT FROM 'fay') AND
   (E.name = 'fay') AND
-  (t_0_E.dept = E.dept);
+  (t_0_E.dept IS NOT DISTINCT FROM E.dept);

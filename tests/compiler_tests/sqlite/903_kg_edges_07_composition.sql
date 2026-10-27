@@ -81,8 +81,8 @@ t_0_MemberOf AS (SELECT
 FROM
   t_2_Person AS Person, t_5_Team AS t_1_Team, t_4_Employees AS Employees
 WHERE
-  (Employees.person_id = Person.person_id) AND
-  (Employees.team_id = t_1_Team.team_id)
+  (Employees.person_id IS Person.person_id) AND
+  (Employees.team_id IS t_1_Team.team_id)
 GROUP BY Person.person_id, t_1_Team.team_id),
 t_12_Clients AS (SELECT * FROM (
   
@@ -125,8 +125,8 @@ t_7_EngagedWith AS (SELECT
 FROM
   t_5_Team AS t_8_Team, t_11_Client AS t_9_Client, t_13_Engagements AS Engagements
 WHERE
-  (Engagements.team_id = t_8_Team.team_id) AND
-  (Engagements.client_id = t_9_Client.client_id)
+  (Engagements.team_id IS t_8_Team.team_id) AND
+  (Engagements.client_id IS t_9_Client.client_id)
 GROUP BY t_8_Team.team_id, t_9_Client.client_id)
 SELECT
   MemberOf.person_id AS person_id,
@@ -134,5 +134,5 @@ SELECT
 FROM
   t_0_MemberOf AS MemberOf, t_7_EngagedWith AS EngagedWith
 WHERE
-  (EngagedWith.team_id = MemberOf.team_id)
+  (EngagedWith.team_id IS MemberOf.team_id)
 GROUP BY MemberOf.person_id, EngagedWith.client_id ORDER BY person_id NULLS LAST, client_id NULLS LAST;

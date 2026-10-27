@@ -108,4 +108,4 @@ SELECT
 FROM
   t_1_S AS S, t_3_D AS t_0_D
 WHERE
-  (t_0_D.d = S.d) ORDER BY dn;
+  (t_0_D.d IS NOT DISTINCT FROM S.d) ORDER BY dn;

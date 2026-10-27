@@ -88,7 +88,7 @@ t_2_T_MultBodyAggAux AS (SELECT * FROM (
     FROM
       t_0_Ship AS t_3_Ship, JSON_EACH(JSON_ARRAY('paris', 'nice')) as x_10
     WHERE
-      (t_3_Ship.src = x_10.value)
+      (t_3_Ship.src IS x_10.value)
    UNION ALL
   
     SELECT
@@ -96,7 +96,7 @@ t_2_T_MultBodyAggAux AS (SELECT * FROM (
     FROM
       t_0_Ship AS t_4_Ship, JSON_EACH(JSON_ARRAY('paris', 'nice')) as x_14
     WHERE
-      (t_4_Ship.dst = x_14.value)
+      (t_4_Ship.dst IS x_14.value)
   
 ) AS UNUSED_TABLE_NAME  ),
 t_1_T AS (SELECT
@@ -114,4 +114,4 @@ WHERE
   FROM
     t_1_T AS T, JSON_EACH(JSON_ARRAY(0)) as x_4
   WHERE
-    (T.id = Ship.id)) IS NULL);
+    (T.id IS Ship.id)) IS NULL);

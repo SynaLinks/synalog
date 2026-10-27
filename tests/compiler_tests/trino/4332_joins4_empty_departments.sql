@@ -100,4 +100,4 @@ WHERE
   FROM
     t_2_E AS E
   WHERE
-    (E.d = t_0_D.d)) IS NULL) ORDER BY dn;
+    (E.d IS NOT DISTINCT FROM t_0_D.d)) IS NULL) ORDER BY dn;

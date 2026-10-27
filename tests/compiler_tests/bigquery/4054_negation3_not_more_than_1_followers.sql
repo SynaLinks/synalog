@@ -100,4 +100,4 @@ WHERE
   FROM
     t_2_Popular AS Popular
   WHERE
-    (Popular.u = t_0_U.u)) IS NULL) ORDER BY u NULLS LAST;
+    (Popular.u IS NOT DISTINCT FROM t_0_U.u)) IS NULL) ORDER BY u NULLS LAST;

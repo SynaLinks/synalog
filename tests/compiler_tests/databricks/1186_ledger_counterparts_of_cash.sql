@@ -16,7 +16,7 @@ SELECT
 FROM
   t_1_Entry AS Entry, t_1_Entry AS t_0_Entry
 WHERE
-  (t_0_Entry.account != "cash") AND
+  (NOT (t_0_Entry.account <=> "cash")) AND
   (Entry.account = "cash") AND
-  (t_0_Entry.txn = Entry.txn)
+  (t_0_Entry.txn <=> Entry.txn)
 GROUP BY 1 ORDER BY account NULLS LAST;

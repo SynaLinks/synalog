@@ -69,6 +69,6 @@ SELECT
 FROM
   t_1_E AS E, t_1_E AS t_0_E
 WHERE
-  (t_0_E.id != 8) AND
+  (t_0_E.id IS NOT 8) AND
   (E.id = 8) AND
-  (t_0_E.d = E.d);
+  (t_0_E.d IS E.d);

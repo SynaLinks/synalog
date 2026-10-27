@@ -30,6 +30,6 @@ SELECT
 FROM
   t_1_P AS P, t_1_P AS t_0_P
 WHERE
-  (t_0_P.id != 1) AND
+  (t_0_P.id IS DISTINCT FROM 1) AND
   (P.id = 1) AND
-  (t_0_P.r.tags = P.r.tags) ORDER BY id;
+  (t_0_P.r.tags IS NOT DISTINCT FROM P.r.tags) ORDER BY id;

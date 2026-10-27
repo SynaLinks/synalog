@@ -77,4 +77,4 @@ FROM
   t_1_E AS E, t_1_E AS t_0_E
 WHERE
   (E.n < t_0_E.n) AND
-  (t_0_E.d = E.d) ORDER BY a, b;
+  (COALESCE(t_0_E.d, 0) = COALESCE(E.d, 0) AND (t_0_E.d IS NULL) = (E.d IS NULL)) ORDER BY a, b;

@@ -43,7 +43,7 @@ t_15_After_MultBodyAggAux_recursive_head_f2 AS (SELECT * FROM (
     FROM
       t_17_After_r0 AS After_r0, t_21_Sequel AS t_16_Sequel
     WHERE
-      (t_16_Sequel.book = After_r0.next)
+      (t_16_Sequel.book IS NOT DISTINCT FROM After_r0.next)
    UNION ALL
   
     SELECT
@@ -67,7 +67,7 @@ t_12_After_MultBodyAggAux_recursive_head_f3 AS (SELECT * FROM (
     FROM
       t_14_After_r1 AS After_r1, t_21_Sequel AS t_13_Sequel
     WHERE
-      (t_13_Sequel.book = After_r1.next)
+      (t_13_Sequel.book IS NOT DISTINCT FROM After_r1.next)
    UNION ALL
   
     SELECT
@@ -91,7 +91,7 @@ t_9_After_MultBodyAggAux_recursive_head_f4 AS (SELECT * FROM (
     FROM
       t_11_After_r2 AS After_r2, t_21_Sequel AS t_10_Sequel
     WHERE
-      (t_10_Sequel.book = After_r2.next)
+      (t_10_Sequel.book IS NOT DISTINCT FROM After_r2.next)
    UNION ALL
   
     SELECT
@@ -115,7 +115,7 @@ t_6_After_MultBodyAggAux_recursive_head_f5 AS (SELECT * FROM (
     FROM
       t_8_After_r3 AS After_r3, t_21_Sequel AS t_7_Sequel
     WHERE
-      (t_7_Sequel.book = After_r3.next)
+      (t_7_Sequel.book IS NOT DISTINCT FROM After_r3.next)
    UNION ALL
   
     SELECT
@@ -139,7 +139,7 @@ t_3_After_MultBodyAggAux_recursive_head_f6 AS (SELECT * FROM (
     FROM
       t_5_After_r4 AS After_r4, t_21_Sequel AS t_4_Sequel
     WHERE
-      (t_4_Sequel.book = After_r4.next)
+      (t_4_Sequel.book IS NOT DISTINCT FROM After_r4.next)
    UNION ALL
   
     SELECT
@@ -163,7 +163,7 @@ t_1_After_MultBodyAggAux_recursive_head_f7 AS (SELECT * FROM (
     FROM
       t_2_After_r5 AS After_r5, t_21_Sequel AS Sequel
     WHERE
-      (Sequel.book = After_r5.next)
+      (Sequel.book IS NOT DISTINCT FROM After_r5.next)
    UNION ALL
   
     SELECT
@@ -184,4 +184,4 @@ SELECT
 FROM
   t_0_After AS After
 WHERE
-  (After.book = 1) ORDER BY next;
+  (After.book = 1) ORDER BY next NULLS LAST;

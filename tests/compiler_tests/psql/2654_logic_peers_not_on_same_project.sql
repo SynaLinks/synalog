@@ -124,7 +124,7 @@ WHERE
   FROM
     t_4_A AS t_2_A, t_4_A AS t_3_A, UNNEST(ARRAY[0]) as x_12
   WHERE
-    (t_2_A.id = Person.id) AND
-    (t_3_A.id = t_0_Person.id) AND
-    (t_3_A.pid = t_2_A.pid)) AS numeric) IS NULL) AND
-  (t_0_Person.team = Person.team);
+    (COALESCE(t_2_A.id, 0) = COALESCE(Person.id, 0) AND (t_2_A.id IS NULL) = (Person.id IS NULL)) AND
+    (COALESCE(t_3_A.id, 0) = COALESCE(t_0_Person.id, 0) AND (t_3_A.id IS NULL) = (t_0_Person.id IS NULL)) AND
+    (COALESCE(t_3_A.pid, 0) = COALESCE(t_2_A.pid, 0) AND (t_3_A.pid IS NULL) = (t_2_A.pid IS NULL))) AS numeric) IS NULL) AND
+  (COALESCE(t_0_Person.team, '') = COALESCE(Person.team, '') AND (t_0_Person.team IS NULL) = (Person.team IS NULL));

@@ -40,5 +40,5 @@ FROM
   t_1_P AS P, t_1_P AS t_0_P, UNNEST((P.r).tags) as x_6, UNNEST((t_0_P.r).tags) as x_7
 WHERE
   (P.id < t_0_P.id) AND
-  (x_6 = x_7)
+  (COALESCE(x_6, '') = COALESCE(x_7, '') AND (x_6 IS NULL) = (x_7 IS NULL))
 GROUP BY P.id, t_0_P.id ORDER BY a, b;

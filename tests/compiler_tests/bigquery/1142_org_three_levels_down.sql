@@ -68,7 +68,7 @@ t_23_Under_MultBodyAggAux_recursive_head_f2 AS (SELECT * FROM (
     FROM
       t_25_Under_r0 AS Under_r0, t_29_Manages AS t_24_Manages
     WHERE
-      (t_24_Manages.boss = Under_r0.report)
+      (t_24_Manages.boss IS NOT DISTINCT FROM Under_r0.report)
    UNION ALL
   
     SELECT
@@ -92,7 +92,7 @@ t_20_Under_MultBodyAggAux_recursive_head_f3 AS (SELECT * FROM (
     FROM
       t_22_Under_r1 AS Under_r1, t_29_Manages AS t_21_Manages
     WHERE
-      (t_21_Manages.boss = Under_r1.report)
+      (t_21_Manages.boss IS NOT DISTINCT FROM Under_r1.report)
    UNION ALL
   
     SELECT
@@ -116,7 +116,7 @@ t_17_Under_MultBodyAggAux_recursive_head_f4 AS (SELECT * FROM (
     FROM
       t_19_Under_r2 AS Under_r2, t_29_Manages AS t_18_Manages
     WHERE
-      (t_18_Manages.boss = Under_r2.report)
+      (t_18_Manages.boss IS NOT DISTINCT FROM Under_r2.report)
    UNION ALL
   
     SELECT
@@ -140,7 +140,7 @@ t_14_Under_MultBodyAggAux_recursive_head_f5 AS (SELECT * FROM (
     FROM
       t_16_Under_r3 AS Under_r3, t_29_Manages AS t_15_Manages
     WHERE
-      (t_15_Manages.boss = Under_r3.report)
+      (t_15_Manages.boss IS NOT DISTINCT FROM Under_r3.report)
    UNION ALL
   
     SELECT
@@ -164,7 +164,7 @@ t_11_Under_MultBodyAggAux_recursive_head_f6 AS (SELECT * FROM (
     FROM
       t_13_Under_r4 AS Under_r4, t_29_Manages AS t_12_Manages
     WHERE
-      (t_12_Manages.boss = Under_r4.report)
+      (t_12_Manages.boss IS NOT DISTINCT FROM Under_r4.report)
    UNION ALL
   
     SELECT
@@ -188,7 +188,7 @@ t_8_Under_MultBodyAggAux_recursive_head_f7 AS (SELECT * FROM (
     FROM
       t_10_Under_r5 AS Under_r5, t_29_Manages AS t_9_Manages
     WHERE
-      (t_9_Manages.boss = Under_r5.report)
+      (t_9_Manages.boss IS NOT DISTINCT FROM Under_r5.report)
    UNION ALL
   
     SELECT
@@ -212,7 +212,7 @@ t_5_Under_MultBodyAggAux_recursive_head_f8 AS (SELECT * FROM (
     FROM
       t_7_Under_r6 AS Under_r6, t_29_Manages AS t_6_Manages
     WHERE
-      (t_6_Manages.boss = Under_r6.report)
+      (t_6_Manages.boss IS NOT DISTINCT FROM Under_r6.report)
    UNION ALL
   
     SELECT
@@ -236,7 +236,7 @@ t_3_Under_MultBodyAggAux_recursive_head_f9 AS (SELECT * FROM (
     FROM
       t_4_Under_r7 AS Under_r7, t_29_Manages AS Manages
     WHERE
-      (Manages.boss = Under_r7.report)
+      (Manages.boss IS NOT DISTINCT FROM Under_r7.report)
    UNION ALL
   
     SELECT

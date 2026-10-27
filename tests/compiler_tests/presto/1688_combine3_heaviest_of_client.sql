@@ -86,9 +86,9 @@ SELECT
 FROM
   t_0_Ship AS Ship
 WHERE
-  (Ship.kg = (SELECT
+  (Ship.kg IS NOT DISTINCT FROM (SELECT
     MAX(t_1_Ship.kg) AS synalog_value
   FROM
     t_0_Ship AS t_1_Ship
   WHERE
-    (t_1_Ship.client = Ship.client))) ORDER BY id;
+    (t_1_Ship.client IS NOT DISTINCT FROM Ship.client))) ORDER BY id;

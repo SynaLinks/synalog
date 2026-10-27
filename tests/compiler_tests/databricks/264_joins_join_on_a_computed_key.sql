@@ -8,4 +8,4 @@ SELECT
 FROM
   t_2_B AS t_1_B
 WHERE
-  (t_1_B.k = ((1) + (1)));
+  (t_1_B.k <=> ((1) + (1)));

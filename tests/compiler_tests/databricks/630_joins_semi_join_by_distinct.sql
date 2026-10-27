@@ -11,5 +11,5 @@ SELECT
 FROM
   t_0_A AS A, t_1_B AS B
 WHERE
-  (B.x = A.x)
+  (B.x <=> A.x)
 GROUP BY 1;

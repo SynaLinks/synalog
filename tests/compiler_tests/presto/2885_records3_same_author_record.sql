@@ -79,4 +79,4 @@ FROM
   synalog_test.A AS t_0_A, synalog_test.A AS t_1_A
 WHERE
   (t_0_A.id < t_1_A.id) AND
-  (t_1_A.r = t_0_A.r) ORDER BY a, b;
+  (t_1_A.r IS NOT DISTINCT FROM t_0_A.r) ORDER BY a, b;

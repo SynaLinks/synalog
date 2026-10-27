@@ -45,7 +45,7 @@ t_17_Reach_MultBodyAggAux_recursive_head_f2 AS (SELECT * FROM (
     FROM
       t_20_Reach_r0 AS Reach_r0, t_2_E AS t_19_E
     WHERE
-      (t_19_E.a = Reach_r0.t)
+      (t_19_E.a IS NOT DISTINCT FROM Reach_r0.t)
   
 ) AS UNUSED_TABLE_NAME  ),
 t_16_Reach_r1 AS (SELECT
@@ -69,7 +69,7 @@ t_13_Reach_MultBodyAggAux_recursive_head_f3 AS (SELECT * FROM (
     FROM
       t_16_Reach_r1 AS Reach_r1, t_2_E AS t_15_E
     WHERE
-      (t_15_E.a = Reach_r1.t)
+      (t_15_E.a IS NOT DISTINCT FROM Reach_r1.t)
   
 ) AS UNUSED_TABLE_NAME  ),
 t_12_Reach_r2 AS (SELECT
@@ -93,7 +93,7 @@ t_9_Reach_MultBodyAggAux_recursive_head_f4 AS (SELECT * FROM (
     FROM
       t_12_Reach_r2 AS Reach_r2, t_2_E AS t_11_E
     WHERE
-      (t_11_E.a = Reach_r2.t)
+      (t_11_E.a IS NOT DISTINCT FROM Reach_r2.t)
   
 ) AS UNUSED_TABLE_NAME  ),
 t_8_Reach_r3 AS (SELECT
@@ -117,7 +117,7 @@ t_5_Reach_MultBodyAggAux_recursive_head_f5 AS (SELECT * FROM (
     FROM
       t_8_Reach_r3 AS Reach_r3, t_2_E AS t_7_E
     WHERE
-      (t_7_E.a = Reach_r3.t)
+      (t_7_E.a IS NOT DISTINCT FROM Reach_r3.t)
   
 ) AS UNUSED_TABLE_NAME  ),
 t_4_Reach_r4 AS (SELECT
@@ -141,7 +141,7 @@ t_1_Reach_MultBodyAggAux_recursive_head_f6 AS (SELECT * FROM (
     FROM
       t_4_Reach_r4 AS Reach_r4, t_2_E AS t_3_E
     WHERE
-      (t_3_E.a = Reach_r4.t)
+      (t_3_E.a IS NOT DISTINCT FROM Reach_r4.t)
   
 ) AS UNUSED_TABLE_NAME  ),
 t_0_Reach AS (SELECT
@@ -155,4 +155,4 @@ SELECT
   SUM(1) AS n
 FROM
   t_0_Reach AS Reach
-GROUP BY s ORDER BY s;
+GROUP BY s ORDER BY s NULLS LAST;

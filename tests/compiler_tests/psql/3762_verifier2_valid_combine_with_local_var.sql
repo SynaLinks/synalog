@@ -40,6 +40,6 @@ SELECT
 FROM
   t_1_E AS E, UNNEST(ARRAY[0]) as x_6
 WHERE
-  (E.a = t_0_N.n)) AS numeric) AS m
+  (COALESCE(E.a, 0) = COALESCE(t_0_N.n, 0) AND (E.a IS NULL) = (t_0_N.n IS NULL))) AS numeric) AS m
 FROM
   t_2_N AS t_0_N ORDER BY n;

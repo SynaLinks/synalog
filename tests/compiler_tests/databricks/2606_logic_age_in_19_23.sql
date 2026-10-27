@@ -12,4 +12,4 @@ SELECT
 FROM
   t_0_Person AS Person, LATERAL (SELECT explode(ARRAY(19, 23)) AS x_3) AS pushkin
 WHERE
-  (Person.age = x_3) ORDER BY id NULLS LAST;
+  (Person.age <=> x_3) ORDER BY id NULLS LAST;

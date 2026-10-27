@@ -81,4 +81,4 @@ WHERE
   WHERE
     t_1_B.sf AND
     (t_1_B.year > 1965) AND
-    (B.id = t_1_B.id)) AS numeric) IS NULL) ORDER BY id;
+    (COALESCE(B.id, 0) = COALESCE(t_1_B.id, 0) AND (B.id IS NULL) = (t_1_B.id IS NULL))) AS numeric) IS NULL) ORDER BY id;

@@ -103,6 +103,6 @@ SELECT
 FROM
   t_1_Person AS Person, t_3_Client AS t_0_Client, t_5_Orders AS Orders
 WHERE
-  (Orders.person_id = Person.person_id) AND
-  (Orders.client_id = t_0_Client.client_id)
+  (Orders.person_id IS Person.person_id) AND
+  (Orders.client_id IS t_0_Client.client_id)
 GROUP BY Person.person_id, t_0_Client.client_id ORDER BY person_id NULLS LAST, client_id NULLS LAST;

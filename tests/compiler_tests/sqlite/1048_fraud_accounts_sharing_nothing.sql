@@ -51,8 +51,8 @@ t_3_Shares AS (SELECT
 FROM
   t_2_HasPhone AS t_4_HasPhone, t_2_HasPhone AS t_5_HasPhone
 WHERE
-  (t_4_HasPhone.account != t_5_HasPhone.account) AND
-  (t_5_HasPhone.phone = t_4_HasPhone.phone)
+  (t_4_HasPhone.account IS NOT t_5_HasPhone.account) AND
+  (t_5_HasPhone.phone IS t_4_HasPhone.phone)
 GROUP BY t_4_HasPhone.account, t_5_HasPhone.account)
 SELECT
   t_0_Account.account AS account
@@ -64,4 +64,4 @@ WHERE
   FROM
     t_3_Shares AS Shares, JSON_EACH(JSON_ARRAY(0)) as x_6
   WHERE
-    (Shares.a = t_0_Account.account)) IS NULL) ORDER BY account NULLS LAST;
+    (Shares.a IS t_0_Account.account)) IS NULL) ORDER BY account NULLS LAST;

@@ -76,7 +76,7 @@ SELECT * FROM (
     FROM
       t_0_E AS E, t_1_D AS D
     WHERE
-      (D.dept = E.dept)
+      (D.dept IS E.dept)
    UNION ALL
   
     SELECT
@@ -90,7 +90,7 @@ SELECT * FROM (
       FROM
         t_0_E, t_1_D AS D, JSON_EACH(JSON_ARRAY(0)) as x_4
       WHERE
-        (D.dept = t_0_E.dept) AND
-        (E.name = t_0_E.name)) IS NULL)
+        (D.dept IS t_0_E.dept) AND
+        (E.name IS t_0_E.name)) IS NULL)
   
-) AS UNUSED_TABLE_NAME  ORDER BY name, dname ;
+) AS UNUSED_TABLE_NAME  ORDER BY name NULLS LAST, dname NULLS LAST ;

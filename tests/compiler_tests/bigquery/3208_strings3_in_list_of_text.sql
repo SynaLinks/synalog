@@ -13,4 +13,4 @@ SELECT
 FROM
   t_0_V AS V, UNNEST(ARRAY["a", "b"]) as x_2
 WHERE
-  (V.w = x_2);
+  (V.w IS NOT DISTINCT FROM x_2);

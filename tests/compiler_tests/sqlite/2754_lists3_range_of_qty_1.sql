@@ -96,5 +96,5 @@ SELECT
 FROM
   t_2_I AS I, t_3_T AS t_1_T
 WHERE
-  (I.pos = t_1_T.pos) AND
+  (I.pos IS t_1_T.pos) AND
   (I."order" = 1) ORDER BY pos NULLS LAST, n NULLS LAST, t NULLS LAST;

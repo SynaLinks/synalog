@@ -67,7 +67,7 @@ t_36_ReachedBy_MultBodyAggAux_recursive_head_f2 AS (SELECT * FROM (
       t_39_ReachedBy_r0 AS ReachedBy_r0, t_1_HandedOver AS t_38_HandedOver
     WHERE
       (CASE WHEN (ReachedBy_r0.valid_from > t_38_HandedOver.valid_from) THEN ReachedBy_r0.valid_from ELSE t_38_HandedOver.valid_from END < CASE WHEN (ReachedBy_r0.valid_to < t_38_HandedOver.valid_to) THEN ReachedBy_r0.valid_to ELSE t_38_HandedOver.valid_to END) AND
-      (t_38_HandedOver.source = ReachedBy_r0.target)
+      (t_38_HandedOver.source IS NOT DISTINCT FROM ReachedBy_r0.target)
   
 ) AS UNUSED_TABLE_NAME  ),
 t_35_ReachedBy_r1 AS (SELECT
@@ -98,7 +98,7 @@ t_32_ReachedBy_MultBodyAggAux_recursive_head_f3 AS (SELECT * FROM (
       t_35_ReachedBy_r1 AS ReachedBy_r1, t_1_HandedOver AS t_34_HandedOver
     WHERE
       (CASE WHEN (ReachedBy_r1.valid_from > t_34_HandedOver.valid_from) THEN ReachedBy_r1.valid_from ELSE t_34_HandedOver.valid_from END < CASE WHEN (ReachedBy_r1.valid_to < t_34_HandedOver.valid_to) THEN ReachedBy_r1.valid_to ELSE t_34_HandedOver.valid_to END) AND
-      (t_34_HandedOver.source = ReachedBy_r1.target)
+      (t_34_HandedOver.source IS NOT DISTINCT FROM ReachedBy_r1.target)
   
 ) AS UNUSED_TABLE_NAME  ),
 t_31_ReachedBy_r2 AS (SELECT
@@ -129,7 +129,7 @@ t_28_ReachedBy_MultBodyAggAux_recursive_head_f4 AS (SELECT * FROM (
       t_31_ReachedBy_r2 AS ReachedBy_r2, t_1_HandedOver AS t_30_HandedOver
     WHERE
       (CASE WHEN (ReachedBy_r2.valid_from > t_30_HandedOver.valid_from) THEN ReachedBy_r2.valid_from ELSE t_30_HandedOver.valid_from END < CASE WHEN (ReachedBy_r2.valid_to < t_30_HandedOver.valid_to) THEN ReachedBy_r2.valid_to ELSE t_30_HandedOver.valid_to END) AND
-      (t_30_HandedOver.source = ReachedBy_r2.target)
+      (t_30_HandedOver.source IS NOT DISTINCT FROM ReachedBy_r2.target)
   
 ) AS UNUSED_TABLE_NAME  ),
 t_27_ReachedBy_r3 AS (SELECT
@@ -160,7 +160,7 @@ t_24_ReachedBy_MultBodyAggAux_recursive_head_f5 AS (SELECT * FROM (
       t_27_ReachedBy_r3 AS ReachedBy_r3, t_1_HandedOver AS t_26_HandedOver
     WHERE
       (CASE WHEN (ReachedBy_r3.valid_from > t_26_HandedOver.valid_from) THEN ReachedBy_r3.valid_from ELSE t_26_HandedOver.valid_from END < CASE WHEN (ReachedBy_r3.valid_to < t_26_HandedOver.valid_to) THEN ReachedBy_r3.valid_to ELSE t_26_HandedOver.valid_to END) AND
-      (t_26_HandedOver.source = ReachedBy_r3.target)
+      (t_26_HandedOver.source IS NOT DISTINCT FROM ReachedBy_r3.target)
   
 ) AS UNUSED_TABLE_NAME  ),
 t_23_ReachedBy_r4 AS (SELECT
@@ -191,7 +191,7 @@ t_20_ReachedBy_MultBodyAggAux_recursive_head_f6 AS (SELECT * FROM (
       t_23_ReachedBy_r4 AS ReachedBy_r4, t_1_HandedOver AS t_22_HandedOver
     WHERE
       (CASE WHEN (ReachedBy_r4.valid_from > t_22_HandedOver.valid_from) THEN ReachedBy_r4.valid_from ELSE t_22_HandedOver.valid_from END < CASE WHEN (ReachedBy_r4.valid_to < t_22_HandedOver.valid_to) THEN ReachedBy_r4.valid_to ELSE t_22_HandedOver.valid_to END) AND
-      (t_22_HandedOver.source = ReachedBy_r4.target)
+      (t_22_HandedOver.source IS NOT DISTINCT FROM ReachedBy_r4.target)
   
 ) AS UNUSED_TABLE_NAME  ),
 t_19_ReachedBy_r5 AS (SELECT
@@ -222,7 +222,7 @@ t_16_ReachedBy_MultBodyAggAux_recursive_head_f7 AS (SELECT * FROM (
       t_19_ReachedBy_r5 AS ReachedBy_r5, t_1_HandedOver AS t_18_HandedOver
     WHERE
       (CASE WHEN (ReachedBy_r5.valid_from > t_18_HandedOver.valid_from) THEN ReachedBy_r5.valid_from ELSE t_18_HandedOver.valid_from END < CASE WHEN (ReachedBy_r5.valid_to < t_18_HandedOver.valid_to) THEN ReachedBy_r5.valid_to ELSE t_18_HandedOver.valid_to END) AND
-      (t_18_HandedOver.source = ReachedBy_r5.target)
+      (t_18_HandedOver.source IS NOT DISTINCT FROM ReachedBy_r5.target)
   
 ) AS UNUSED_TABLE_NAME  ),
 t_15_ReachedBy_r6 AS (SELECT
@@ -253,7 +253,7 @@ t_12_ReachedBy_MultBodyAggAux_recursive_head_f8 AS (SELECT * FROM (
       t_15_ReachedBy_r6 AS ReachedBy_r6, t_1_HandedOver AS t_14_HandedOver
     WHERE
       (CASE WHEN (ReachedBy_r6.valid_from > t_14_HandedOver.valid_from) THEN ReachedBy_r6.valid_from ELSE t_14_HandedOver.valid_from END < CASE WHEN (ReachedBy_r6.valid_to < t_14_HandedOver.valid_to) THEN ReachedBy_r6.valid_to ELSE t_14_HandedOver.valid_to END) AND
-      (t_14_HandedOver.source = ReachedBy_r6.target)
+      (t_14_HandedOver.source IS NOT DISTINCT FROM ReachedBy_r6.target)
   
 ) AS UNUSED_TABLE_NAME  ),
 t_11_ReachedBy_r7 AS (SELECT
@@ -284,7 +284,7 @@ t_8_ReachedBy_MultBodyAggAux_recursive_head_f9 AS (SELECT * FROM (
       t_11_ReachedBy_r7 AS ReachedBy_r7, t_1_HandedOver AS t_10_HandedOver
     WHERE
       (CASE WHEN (ReachedBy_r7.valid_from > t_10_HandedOver.valid_from) THEN ReachedBy_r7.valid_from ELSE t_10_HandedOver.valid_from END < CASE WHEN (ReachedBy_r7.valid_to < t_10_HandedOver.valid_to) THEN ReachedBy_r7.valid_to ELSE t_10_HandedOver.valid_to END) AND
-      (t_10_HandedOver.source = ReachedBy_r7.target)
+      (t_10_HandedOver.source IS NOT DISTINCT FROM ReachedBy_r7.target)
   
 ) AS UNUSED_TABLE_NAME  ),
 t_7_ReachedBy_r8 AS (SELECT
@@ -315,7 +315,7 @@ t_4_ReachedBy_MultBodyAggAux_recursive_head_f10 AS (SELECT * FROM (
       t_7_ReachedBy_r8 AS ReachedBy_r8, t_1_HandedOver AS t_6_HandedOver
     WHERE
       (CASE WHEN (ReachedBy_r8.valid_from > t_6_HandedOver.valid_from) THEN ReachedBy_r8.valid_from ELSE t_6_HandedOver.valid_from END < CASE WHEN (ReachedBy_r8.valid_to < t_6_HandedOver.valid_to) THEN ReachedBy_r8.valid_to ELSE t_6_HandedOver.valid_to END) AND
-      (t_6_HandedOver.source = ReachedBy_r8.target)
+      (t_6_HandedOver.source IS NOT DISTINCT FROM ReachedBy_r8.target)
   
 ) AS UNUSED_TABLE_NAME  ),
 t_3_ReachedBy_r9 AS (SELECT
@@ -346,7 +346,7 @@ t_0_ReachedBy_MultBodyAggAux_recursive_head_f11 AS (SELECT * FROM (
       t_3_ReachedBy_r9 AS ReachedBy_r9, t_1_HandedOver AS t_2_HandedOver
     WHERE
       (CASE WHEN (ReachedBy_r9.valid_from > t_2_HandedOver.valid_from) THEN ReachedBy_r9.valid_from ELSE t_2_HandedOver.valid_from END < CASE WHEN (ReachedBy_r9.valid_to < t_2_HandedOver.valid_to) THEN ReachedBy_r9.valid_to ELSE t_2_HandedOver.valid_to END) AND
-      (t_2_HandedOver.source = ReachedBy_r9.target)
+      (t_2_HandedOver.source IS NOT DISTINCT FROM ReachedBy_r9.target)
   
 ) AS UNUSED_TABLE_NAME  )
 SELECT

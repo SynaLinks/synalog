@@ -15,4 +15,4 @@ SELECT
 FROM
   t_0_Edge AS Edge
 WHERE
-  (Edge.y = Edge.x);
+  (Edge.y IS NOT DISTINCT FROM Edge.x);

@@ -12,5 +12,5 @@ WHERE
   FROM
     t_0_B AS B
   WHERE
-    (B.x = x_3) AND
+    (B.x <=> x_3) AND
     (x_3 = 2)) IS NULL) ORDER BY x NULLS LAST;

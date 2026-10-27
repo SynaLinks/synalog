@@ -142,7 +142,7 @@ t_5_Conn_RecursiveCte AS (SELECT * FROM (
       WHERE
         (0 < 12) AND
         (1 = 0) AND
-        (t_10_U.a = t_12_U.b)
+        (t_10_U.a IS t_12_U.b)
      UNION ALL
     
       SELECT
@@ -155,8 +155,8 @@ t_5_Conn_RecursiveCte AS (SELECT * FROM (
         (((0) + (1)) < 12) AND
         (0 < 12) AND
         (1 = 0) AND
-        (t_17_U.a = t_19_U.b) AND
-        (t_19_U.a = t_21_U.b)
+        (t_17_U.a IS t_19_U.b) AND
+        (t_19_U.a IS t_21_U.b)
      UNION ALL
     
       SELECT
@@ -170,9 +170,9 @@ t_5_Conn_RecursiveCte AS (SELECT * FROM (
         (((0) + (1)) < 12) AND
         (0 < 12) AND
         (1 = 0) AND
-        (t_23_U.a = t_25_U.b) AND
-        (t_25_U.a = t_27_U.b) AND
-        (t_27_U.a = t_29_U.b)
+        (t_23_U.a IS t_25_U.b) AND
+        (t_25_U.a IS t_27_U.b) AND
+        (t_27_U.a IS t_29_U.b)
      UNION ALL
     
       SELECT
@@ -187,10 +187,10 @@ t_5_Conn_RecursiveCte AS (SELECT * FROM (
         (((0) + (1)) < 12) AND
         (0 < 12) AND
         (1 = 0) AND
-        (t_31_U.a = t_33_U.b) AND
-        (t_33_U.a = t_35_U.b) AND
-        (t_35_U.a = t_37_U.b) AND
-        (t_37_U.a = t_39_U.b)
+        (t_31_U.a IS t_33_U.b) AND
+        (t_33_U.a IS t_35_U.b) AND
+        (t_35_U.a IS t_37_U.b) AND
+        (t_37_U.a IS t_39_U.b)
      UNION ALL
     
       SELECT
@@ -206,11 +206,11 @@ t_5_Conn_RecursiveCte AS (SELECT * FROM (
         (((0) + (1)) < 12) AND
         (0 < 12) AND
         (1 = 0) AND
-        (t_41_U.a = t_43_U.b) AND
-        (t_43_U.a = t_45_U.b) AND
-        (t_45_U.a = t_47_U.b) AND
-        (t_47_U.a = t_49_U.b) AND
-        (t_49_U.a = t_51_U.b)
+        (t_41_U.a IS t_43_U.b) AND
+        (t_43_U.a IS t_45_U.b) AND
+        (t_45_U.a IS t_47_U.b) AND
+        (t_47_U.a IS t_49_U.b) AND
+        (t_49_U.a IS t_51_U.b)
     
   ) AS UNUSED_TABLE_NAME  
 ) AS UNUSED_TABLE_NAME
@@ -223,7 +223,7 @@ FROM
   t_5_Conn_RecursiveCte AS t_52_Conn_RecursiveCte, t_6_U AS t_53_U
 WHERE
   (t_52_Conn_RecursiveCte.synalog_step < 12) AND
-  (t_53_U.a = t_52_Conn_RecursiveCte.b)),
+  (t_53_U.a IS t_52_Conn_RecursiveCte.b)),
 t_4_Conn AS (SELECT
   Conn_RecursiveCte.a AS a,
   Conn_RecursiveCte.b AS b
@@ -238,7 +238,7 @@ t_2_Comp_MultBodyAggAux AS (SELECT * FROM (
     FROM
       t_3_Node AS Node, t_4_Conn AS Conn
     WHERE
-      (Conn.a = Node.n)
+      (Conn.a IS Node.n)
    UNION ALL
   
     SELECT
@@ -260,4 +260,4 @@ FROM
   t_1_Comp AS Comp, t_1_Comp AS t_0_Comp
 WHERE
   (Comp.n = 2) AND
-  (t_0_Comp.c = Comp.c) ORDER BY m NULLS LAST;
+  (t_0_Comp.c IS Comp.c) ORDER BY m NULLS LAST;

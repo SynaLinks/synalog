@@ -51,7 +51,7 @@ t_9_Person AS (SELECT
   Employees.url AS url
 FROM
   t_10_Employees AS Employees
-GROUP BY person_id, name, url ORDER BY person_id),
+GROUP BY person_id, name, url ORDER BY person_id NULLS LAST),
 t_12_Management AS (SELECT * FROM (
   
     SELECT
@@ -80,8 +80,8 @@ t_6_Manages AS (SELECT
 FROM
   t_9_Person AS t_7_Person, t_9_Person AS t_8_Person, t_12_Management AS Management
 WHERE
-  (Management.manager_id = t_7_Person.person_id) AND
-  (Management.employee_id = t_8_Person.person_id)
+  (Management.manager_id IS NOT DISTINCT FROM t_7_Person.person_id) AND
+  (Management.employee_id IS NOT DISTINCT FROM t_8_Person.person_id)
 GROUP BY manager_id, employee_id),
 t_50_PathTo_MultBodyAggAux_recursive_head_f1 AS (SELECT * FROM (
   
@@ -92,8 +92,8 @@ t_50_PathTo_MultBodyAggAux_recursive_head_f1 AS (SELECT * FROM (
     FROM
       t_6_Manages AS t_51_Manages, t_9_Person AS t_54_Person, t_9_Person AS t_55_Person
     WHERE
-      (t_51_Manages.manager_id = t_54_Person.person_id) AND
-      (t_51_Manages.employee_id = t_55_Person.person_id)
+      (t_51_Manages.manager_id IS NOT DISTINCT FROM t_54_Person.person_id) AND
+      (t_51_Manages.employee_id IS NOT DISTINCT FROM t_55_Person.person_id)
   
 ) AS UNUSED_TABLE_NAME  ),
 t_49_PathTo_r0 AS (SELECT
@@ -112,8 +112,8 @@ t_40_PathTo_MultBodyAggAux_recursive_head_f2 AS (SELECT * FROM (
     FROM
       t_6_Manages AS t_41_Manages, t_9_Person AS t_44_Person, t_9_Person AS t_45_Person
     WHERE
-      (t_41_Manages.manager_id = t_44_Person.person_id) AND
-      (t_41_Manages.employee_id = t_45_Person.person_id)
+      (t_41_Manages.manager_id IS NOT DISTINCT FROM t_44_Person.person_id) AND
+      (t_41_Manages.employee_id IS NOT DISTINCT FROM t_45_Person.person_id)
    UNION ALL
   
     SELECT
@@ -123,8 +123,8 @@ t_40_PathTo_MultBodyAggAux_recursive_head_f2 AS (SELECT * FROM (
     FROM
       t_49_PathTo_r0 AS PathTo_r0, t_6_Manages AS t_46_Manages, t_9_Person AS t_48_Person
     WHERE
-      (t_46_Manages.manager_id = PathTo_r0.target) AND
-      (t_46_Manages.employee_id = t_48_Person.person_id)
+      (t_46_Manages.manager_id IS NOT DISTINCT FROM PathTo_r0.target) AND
+      (t_46_Manages.employee_id IS NOT DISTINCT FROM t_48_Person.person_id)
   
 ) AS UNUSED_TABLE_NAME  ),
 t_39_PathTo_r1 AS (SELECT
@@ -143,8 +143,8 @@ t_30_PathTo_MultBodyAggAux_recursive_head_f3 AS (SELECT * FROM (
     FROM
       t_6_Manages AS t_31_Manages, t_9_Person AS t_34_Person, t_9_Person AS t_35_Person
     WHERE
-      (t_31_Manages.manager_id = t_34_Person.person_id) AND
-      (t_31_Manages.employee_id = t_35_Person.person_id)
+      (t_31_Manages.manager_id IS NOT DISTINCT FROM t_34_Person.person_id) AND
+      (t_31_Manages.employee_id IS NOT DISTINCT FROM t_35_Person.person_id)
    UNION ALL
   
     SELECT
@@ -154,8 +154,8 @@ t_30_PathTo_MultBodyAggAux_recursive_head_f3 AS (SELECT * FROM (
     FROM
       t_39_PathTo_r1 AS PathTo_r1, t_6_Manages AS t_36_Manages, t_9_Person AS t_38_Person
     WHERE
-      (t_36_Manages.manager_id = PathTo_r1.target) AND
-      (t_36_Manages.employee_id = t_38_Person.person_id)
+      (t_36_Manages.manager_id IS NOT DISTINCT FROM PathTo_r1.target) AND
+      (t_36_Manages.employee_id IS NOT DISTINCT FROM t_38_Person.person_id)
   
 ) AS UNUSED_TABLE_NAME  ),
 t_29_PathTo_r2 AS (SELECT
@@ -174,8 +174,8 @@ t_17_PathTo_MultBodyAggAux_recursive_head_f4 AS (SELECT * FROM (
     FROM
       t_6_Manages AS t_18_Manages, t_9_Person AS t_21_Person, t_9_Person AS t_22_Person
     WHERE
-      (t_18_Manages.manager_id = t_21_Person.person_id) AND
-      (t_18_Manages.employee_id = t_22_Person.person_id)
+      (t_18_Manages.manager_id IS NOT DISTINCT FROM t_21_Person.person_id) AND
+      (t_18_Manages.employee_id IS NOT DISTINCT FROM t_22_Person.person_id)
    UNION ALL
   
     SELECT
@@ -185,8 +185,8 @@ t_17_PathTo_MultBodyAggAux_recursive_head_f4 AS (SELECT * FROM (
     FROM
       t_29_PathTo_r2 AS PathTo_r2, t_6_Manages AS t_26_Manages, t_9_Person AS t_28_Person
     WHERE
-      (t_26_Manages.manager_id = PathTo_r2.target) AND
-      (t_26_Manages.employee_id = t_28_Person.person_id)
+      (t_26_Manages.manager_id IS NOT DISTINCT FROM PathTo_r2.target) AND
+      (t_26_Manages.employee_id IS NOT DISTINCT FROM t_28_Person.person_id)
   
 ) AS UNUSED_TABLE_NAME  ),
 t_16_PathTo_r3 AS (SELECT
@@ -205,8 +205,8 @@ t_1_PathTo_MultBodyAggAux_recursive_head_f5 AS (SELECT * FROM (
     FROM
       t_6_Manages AS Manages, t_9_Person AS t_4_Person, t_9_Person AS t_5_Person
     WHERE
-      (Manages.manager_id = t_4_Person.person_id) AND
-      (Manages.employee_id = t_5_Person.person_id)
+      (Manages.manager_id IS NOT DISTINCT FROM t_4_Person.person_id) AND
+      (Manages.employee_id IS NOT DISTINCT FROM t_5_Person.person_id)
    UNION ALL
   
     SELECT
@@ -216,8 +216,8 @@ t_1_PathTo_MultBodyAggAux_recursive_head_f5 AS (SELECT * FROM (
     FROM
       t_16_PathTo_r3 AS PathTo_r3, t_6_Manages AS t_13_Manages, t_9_Person AS t_15_Person
     WHERE
-      (t_13_Manages.manager_id = PathTo_r3.target) AND
-      (t_13_Manages.employee_id = t_15_Person.person_id)
+      (t_13_Manages.manager_id IS NOT DISTINCT FROM PathTo_r3.target) AND
+      (t_13_Manages.employee_id IS NOT DISTINCT FROM t_15_Person.person_id)
   
 ) AS UNUSED_TABLE_NAME  ),
 t_0_PathTo AS (SELECT
@@ -234,5 +234,5 @@ FROM
   t_0_PathTo AS PathTo, t_9_Person AS Person
 WHERE
   (PathTo.source = 1) AND
-  (PathTo.target = Person.person_id)
-GROUP BY target, path ORDER BY target, path;
+  (PathTo.target IS NOT DISTINCT FROM Person.person_id)
+GROUP BY target, path ORDER BY target NULLS LAST, path NULLS LAST;

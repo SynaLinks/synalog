@@ -19,5 +19,5 @@ WHERE
   FROM
     t_0_F AS t_1_F
   WHERE
-    (t_1_F.a = F.b) AND
-    (t_1_F.b = F.a)) IS NULL) ORDER BY a NULLS LAST, b NULLS LAST;
+    (t_1_F.a <=> F.b) AND
+    (t_1_F.b <=> F.a)) IS NULL) ORDER BY a NULLS LAST, b NULLS LAST;

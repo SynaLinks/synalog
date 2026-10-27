@@ -33,6 +33,6 @@ SELECT
 FROM
   t_1_V AS V, UNNEST(ARRAY[0]) as x_7
 WHERE
-  (V.g = t_0_G.g)) AS numeric) AS t
+  (COALESCE(V.g, '') = COALESCE(t_0_G.g, '') AND (V.g IS NULL) = (t_0_G.g IS NULL))) AS numeric) AS t
 FROM
   t_2_G AS t_0_G ORDER BY g;

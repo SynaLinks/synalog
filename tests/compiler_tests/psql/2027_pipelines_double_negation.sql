@@ -115,7 +115,7 @@ FROM
   t_2_Order AS t_7_Order, t_8_Price AS Price
 WHERE
   (t_7_Order.state = 'paid') AND
-  (Price.item = t_7_Order.item)
+  (COALESCE(Price.item, '') = COALESCE(t_7_Order.item, '') AND (Price.item IS NULL) = (t_7_Order.item IS NULL))
 GROUP BY t_7_Order.who),
 t_3_Never AS (SELECT
   t_4_Person.who AS who
@@ -127,7 +127,7 @@ WHERE
   FROM
     t_6_Spend AS Spend, UNNEST(ARRAY[0]) as x_13
   WHERE
-    (Spend.who = t_4_Person.who)) AS numeric) IS NULL))
+    (COALESCE(Spend.who, '') = COALESCE(t_4_Person.who, '') AND (Spend.who IS NULL) = (t_4_Person.who IS NULL))) AS numeric) IS NULL))
 SELECT
   Person.who AS who
 FROM
@@ -138,4 +138,4 @@ WHERE
   FROM
     t_3_Never AS Never, UNNEST(ARRAY[0]) as x_6
   WHERE
-    (Never.who = Person.who)) AS numeric) IS NULL) ORDER BY who;
+    (COALESCE(Never.who, '') = COALESCE(Person.who, '') AND (Never.who IS NULL) = (Person.who IS NULL))) AS numeric) IS NULL) ORDER BY who;

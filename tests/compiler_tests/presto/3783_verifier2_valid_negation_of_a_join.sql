@@ -37,5 +37,5 @@ WHERE
   FROM
     t_3_E AS E, t_1_N AS t_2_N
   WHERE
-    (E.a = t_0_N.n) AND
-    (t_2_N.n = E.b)) IS NULL);
+    (E.a IS NOT DISTINCT FROM t_0_N.n) AND
+    (t_2_N.n IS NOT DISTINCT FROM E.b)) IS NULL);

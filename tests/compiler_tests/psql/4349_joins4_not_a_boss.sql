@@ -80,4 +80,4 @@ WHERE
   FROM
     t_0_E AS t_1_E, UNNEST(ARRAY[0]) as x_5
   WHERE
-    (t_1_E.boss = E.id)) AS numeric) IS NULL) ORDER BY n;
+    (COALESCE(t_1_E.boss, 0) = COALESCE(E.id, 0) AND (t_1_E.boss IS NULL) = (E.id IS NULL))) AS numeric) IS NULL) ORDER BY n;

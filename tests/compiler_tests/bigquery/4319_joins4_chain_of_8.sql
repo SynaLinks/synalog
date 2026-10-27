@@ -94,7 +94,7 @@ t_38_Up_MultBodyAggAux_recursive_head_f2 AS (SELECT * FROM (
     FROM
       t_41_Up_r0 AS Up_r0, t_3_E AS t_40_E
     WHERE
-      (t_40_E.id = Up_r0.id)
+      (t_40_E.id IS NOT DISTINCT FROM Up_r0.id)
   
 ) AS UNUSED_TABLE_NAME  ),
 t_37_Up_r1 AS (SELECT
@@ -117,7 +117,7 @@ t_34_Up_MultBodyAggAux_recursive_head_f3 AS (SELECT * FROM (
     FROM
       t_37_Up_r1 AS Up_r1, t_3_E AS t_36_E
     WHERE
-      (t_36_E.id = Up_r1.id)
+      (t_36_E.id IS NOT DISTINCT FROM Up_r1.id)
   
 ) AS UNUSED_TABLE_NAME  ),
 t_33_Up_r2 AS (SELECT
@@ -140,7 +140,7 @@ t_30_Up_MultBodyAggAux_recursive_head_f4 AS (SELECT * FROM (
     FROM
       t_33_Up_r2 AS Up_r2, t_3_E AS t_32_E
     WHERE
-      (t_32_E.id = Up_r2.id)
+      (t_32_E.id IS NOT DISTINCT FROM Up_r2.id)
   
 ) AS UNUSED_TABLE_NAME  ),
 t_29_Up_r3 AS (SELECT
@@ -163,7 +163,7 @@ t_26_Up_MultBodyAggAux_recursive_head_f5 AS (SELECT * FROM (
     FROM
       t_29_Up_r3 AS Up_r3, t_3_E AS t_28_E
     WHERE
-      (t_28_E.id = Up_r3.id)
+      (t_28_E.id IS NOT DISTINCT FROM Up_r3.id)
   
 ) AS UNUSED_TABLE_NAME  ),
 t_25_Up_r4 AS (SELECT
@@ -186,7 +186,7 @@ t_22_Up_MultBodyAggAux_recursive_head_f6 AS (SELECT * FROM (
     FROM
       t_25_Up_r4 AS Up_r4, t_3_E AS t_24_E
     WHERE
-      (t_24_E.id = Up_r4.id)
+      (t_24_E.id IS NOT DISTINCT FROM Up_r4.id)
   
 ) AS UNUSED_TABLE_NAME  ),
 t_21_Up_r5 AS (SELECT
@@ -209,7 +209,7 @@ t_18_Up_MultBodyAggAux_recursive_head_f7 AS (SELECT * FROM (
     FROM
       t_21_Up_r5 AS Up_r5, t_3_E AS t_20_E
     WHERE
-      (t_20_E.id = Up_r5.id)
+      (t_20_E.id IS NOT DISTINCT FROM Up_r5.id)
   
 ) AS UNUSED_TABLE_NAME  ),
 t_17_Up_r6 AS (SELECT
@@ -232,7 +232,7 @@ t_14_Up_MultBodyAggAux_recursive_head_f8 AS (SELECT * FROM (
     FROM
       t_17_Up_r6 AS Up_r6, t_3_E AS t_16_E
     WHERE
-      (t_16_E.id = Up_r6.id)
+      (t_16_E.id IS NOT DISTINCT FROM Up_r6.id)
   
 ) AS UNUSED_TABLE_NAME  ),
 t_13_Up_r7 AS (SELECT
@@ -255,7 +255,7 @@ t_10_Up_MultBodyAggAux_recursive_head_f9 AS (SELECT * FROM (
     FROM
       t_13_Up_r7 AS Up_r7, t_3_E AS t_12_E
     WHERE
-      (t_12_E.id = Up_r7.id)
+      (t_12_E.id IS NOT DISTINCT FROM Up_r7.id)
   
 ) AS UNUSED_TABLE_NAME  ),
 t_9_Up_r8 AS (SELECT
@@ -278,7 +278,7 @@ t_6_Up_MultBodyAggAux_recursive_head_f10 AS (SELECT * FROM (
     FROM
       t_9_Up_r8 AS Up_r8, t_3_E AS t_8_E
     WHERE
-      (t_8_E.id = Up_r8.id)
+      (t_8_E.id IS NOT DISTINCT FROM Up_r8.id)
   
 ) AS UNUSED_TABLE_NAME  ),
 t_5_Up_r9 AS (SELECT
@@ -301,7 +301,7 @@ t_1_Up_MultBodyAggAux_recursive_head_f11 AS (SELECT * FROM (
     FROM
       t_5_Up_r9 AS Up_r9, t_3_E AS t_4_E
     WHERE
-      (t_4_E.id = Up_r9.id)
+      (t_4_E.id IS NOT DISTINCT FROM Up_r9.id)
   
 ) AS UNUSED_TABLE_NAME  ),
 t_0_Up AS (SELECT
@@ -314,4 +314,4 @@ SELECT
 FROM
   t_0_Up AS Up, t_3_E AS E
 WHERE
-  (E.id = Up.id) ORDER BY n;
+  (E.id IS NOT DISTINCT FROM Up.id) ORDER BY n NULLS LAST;

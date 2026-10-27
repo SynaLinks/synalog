@@ -35,7 +35,7 @@ t_1_Reach_RecursiveCte AS (SELECT * FROM (
       WHERE
         (0 < 10) AND
         (1 = 0) AND
-        (t_3_Edge.x = t_5_Edge.y)
+        (t_3_Edge.x IS t_5_Edge.y)
      UNION ALL
     
       SELECT
@@ -48,8 +48,8 @@ t_1_Reach_RecursiveCte AS (SELECT * FROM (
         (((0) + (1)) < 10) AND
         (0 < 10) AND
         (1 = 0) AND
-        (t_7_Edge.x = t_9_Edge.y) AND
-        (t_9_Edge.x = t_11_Edge.y)
+        (t_7_Edge.x IS t_9_Edge.y) AND
+        (t_9_Edge.x IS t_11_Edge.y)
      UNION ALL
     
       SELECT
@@ -63,9 +63,9 @@ t_1_Reach_RecursiveCte AS (SELECT * FROM (
         (((0) + (1)) < 10) AND
         (0 < 10) AND
         (1 = 0) AND
-        (t_13_Edge.x = t_15_Edge.y) AND
-        (t_15_Edge.x = t_17_Edge.y) AND
-        (t_17_Edge.x = t_19_Edge.y)
+        (t_13_Edge.x IS t_15_Edge.y) AND
+        (t_15_Edge.x IS t_17_Edge.y) AND
+        (t_17_Edge.x IS t_19_Edge.y)
      UNION ALL
     
       SELECT
@@ -80,10 +80,10 @@ t_1_Reach_RecursiveCte AS (SELECT * FROM (
         (((0) + (1)) < 10) AND
         (0 < 10) AND
         (1 = 0) AND
-        (t_21_Edge.x = t_23_Edge.y) AND
-        (t_23_Edge.x = t_25_Edge.y) AND
-        (t_25_Edge.x = t_27_Edge.y) AND
-        (t_27_Edge.x = t_29_Edge.y)
+        (t_21_Edge.x IS t_23_Edge.y) AND
+        (t_23_Edge.x IS t_25_Edge.y) AND
+        (t_25_Edge.x IS t_27_Edge.y) AND
+        (t_27_Edge.x IS t_29_Edge.y)
      UNION ALL
     
       SELECT
@@ -99,11 +99,11 @@ t_1_Reach_RecursiveCte AS (SELECT * FROM (
         (((0) + (1)) < 10) AND
         (0 < 10) AND
         (1 = 0) AND
-        (t_31_Edge.x = t_33_Edge.y) AND
-        (t_33_Edge.x = t_35_Edge.y) AND
-        (t_35_Edge.x = t_37_Edge.y) AND
-        (t_37_Edge.x = t_39_Edge.y) AND
-        (t_39_Edge.x = t_41_Edge.y)
+        (t_31_Edge.x IS t_33_Edge.y) AND
+        (t_33_Edge.x IS t_35_Edge.y) AND
+        (t_35_Edge.x IS t_37_Edge.y) AND
+        (t_37_Edge.x IS t_39_Edge.y) AND
+        (t_39_Edge.x IS t_41_Edge.y)
     
   ) AS UNUSED_TABLE_NAME  
 ) AS UNUSED_TABLE_NAME
@@ -116,7 +116,7 @@ FROM
   t_1_Reach_RecursiveCte AS t_42_Reach_RecursiveCte, t_2_Edge AS t_43_Edge
 WHERE
   (t_42_Reach_RecursiveCte.synalog_step < 10) AND
-  (t_43_Edge.x = t_42_Reach_RecursiveCte.y)),
+  (t_43_Edge.x IS t_42_Reach_RecursiveCte.y)),
 t_0_Reach AS (SELECT
   Reach_RecursiveCte.x AS x,
   Reach_RecursiveCte.y AS y

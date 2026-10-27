@@ -51,4 +51,4 @@ SELECT
 FROM
   t_1_Manages AS Manages, t_1_Manages AS t_0_Manages
 WHERE
-  (t_0_Manages.boss = Manages.report) ORDER BY boss, report;
+  (t_0_Manages.boss IS NOT DISTINCT FROM Manages.report) ORDER BY boss, report;

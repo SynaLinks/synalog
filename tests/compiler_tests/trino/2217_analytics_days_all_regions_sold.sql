@@ -194,8 +194,8 @@ WHERE
   FROM
     t_0_S AS t_3_S
   WHERE
-    (t_3_S.r = Region.r) AND
-    (t_3_S.d = t_1_Day.d)) IS NULL)
+    (t_3_S.r IS NOT DISTINCT FROM Region.r) AND
+    (t_3_S.d IS NOT DISTINCT FROM t_1_Day.d)) IS NULL)
 GROUP BY 1)
 SELECT
   Day.d AS d
@@ -207,4 +207,4 @@ WHERE
   FROM
     t_0_Missing AS Missing
   WHERE
-    (Missing.d = Day.d)) IS NULL) ORDER BY d;
+    (Missing.d IS NOT DISTINCT FROM Day.d)) IS NULL) ORDER BY d;

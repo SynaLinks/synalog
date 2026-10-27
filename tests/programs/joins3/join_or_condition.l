@@ -1,5 +1,5 @@
 # A disjunction of join conditions.
-# Expect: rows Q = [(1,), (2,), (3,)]
+# Expect: rows Q = [(1,), (2,), (3,), (4,)]
 E(id: 1, g: "a", v: 10);
 E(id: 2, g: "a", v: 20);
 E(id: 3, g: "b", v: null);

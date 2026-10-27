@@ -111,4 +111,4 @@ WHERE
   FROM
     synalog_test.D AS t_2_D
   WHERE
-    (t_2_D.d = x_3)) IS NULL);
+    (t_2_D.d IS NOT DISTINCT FROM x_3)) IS NULL);

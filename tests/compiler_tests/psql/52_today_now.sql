@@ -9,4 +9,4 @@ SELECT
 FROM
   (SELECT to_char(current_timestamp AT TIME ZONE 'UTC', 'YYYY-MM-DD') AS date) AS Today, (SELECT current_timestamp AT TIME ZONE 'UTC' AS timestamp) AS Now
 WHERE
-  (SUBSTR(CAST(Now.timestamp AS TEXT), 1, 10) = Today.date) ORDER BY n;
+  (COALESCE(SUBSTR(CAST(Now.timestamp AS TEXT), 1, 10), '') = COALESCE(Today.date, '') AND (SUBSTR(CAST(Now.timestamp AS TEXT), 1, 10) IS NULL) = (Today.date IS NULL)) ORDER BY n;

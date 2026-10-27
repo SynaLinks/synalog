@@ -1,5 +1,5 @@
-# Null names join nothing.
-# Expect: rows Q = [(1, 'admin'), (3, 'user')]
+# Null names join null names.
+# Expect: rows Q = [(1, 'admin'), (3, 'user'), (4, 'ghost')]
 Person(id: 1, name: "ann", age: 30);
 Person(id: 2, name: "bob", age: null);
 Person(id: 3, name: "cid", age: 25);

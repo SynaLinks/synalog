@@ -30,7 +30,7 @@ t_0_ManagerPairs AS (SELECT
 FROM
   t_3_Employee AS t_1_Employee, t_3_Employee AS t_2_Employee
 WHERE
-  (t_2_Employee.id = t_1_Employee.manager_id) ORDER BY employee NULLS LAST)
+  (t_2_Employee.id IS NOT DISTINCT FROM t_1_Employee.manager_id) ORDER BY employee NULLS LAST)
 SELECT
   ManagerPairs.employee AS employee,
   ManagerPairs.manager AS manager

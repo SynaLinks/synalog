@@ -29,8 +29,8 @@ t_2_MemberOf AS (SELECT
 FROM
   t_4_Person AS Person, t_7_Team AS t_3_Team, t_6_Employees AS Employees
 WHERE
-  (Employees.person_id = Person.person_id) AND
-  (Employees.team_id = t_3_Team.team_id)
+  (Employees.person_id <=> Person.person_id) AND
+  (Employees.team_id <=> t_3_Team.team_id)
 GROUP BY 1, 2),
 t_14_Clients AS (SELECT * FROM VALUES
   (100, "acme"),
@@ -53,8 +53,8 @@ t_9_EngagedWith AS (SELECT
 FROM
   t_7_Team AS t_10_Team, t_13_Client AS t_11_Client, t_15_Engagements AS Engagements
 WHERE
-  (Engagements.team_id = t_10_Team.team_id) AND
-  (Engagements.client_id = t_11_Client.client_id)
+  (Engagements.team_id <=> t_10_Team.team_id) AND
+  (Engagements.client_id <=> t_11_Client.client_id)
 GROUP BY 1, 2),
 t_1_Serves AS (SELECT
   MemberOf.person_id AS person_id,
@@ -62,7 +62,7 @@ t_1_Serves AS (SELECT
 FROM
   t_2_MemberOf AS MemberOf, t_9_EngagedWith AS EngagedWith
 WHERE
-  (EngagedWith.team_id = MemberOf.team_id)
+  (EngagedWith.team_id <=> MemberOf.team_id)
 GROUP BY 1, 2)
 SELECT
   Serves.person_id AS a,
@@ -71,5 +71,5 @@ FROM
   t_1_Serves AS Serves, t_1_Serves AS t_0_Serves
 WHERE
   (Serves.person_id < t_0_Serves.person_id) AND
-  (t_0_Serves.client_id = Serves.client_id)
+  (t_0_Serves.client_id <=> Serves.client_id)
 GROUP BY 1, 2 ORDER BY a NULLS LAST, b NULLS LAST;

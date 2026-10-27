@@ -58,4 +58,4 @@ SELECT
 FROM
   t_0_O AS O, t_1_Vip AS Vip
 WHERE
-  (Vip.c = O.c)) AS t;
+  (Vip.c IS NOT DISTINCT FROM O.c)) AS t;

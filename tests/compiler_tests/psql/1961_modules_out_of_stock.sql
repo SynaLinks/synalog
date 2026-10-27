@@ -69,4 +69,4 @@ WHERE
     t_1_Shop_Stock AS Shop_Stock, UNNEST(ARRAY[0]) as x_4
   WHERE
     (Shop_Stock.qty > 0) AND
-    (Shop_Product.sku = Shop_Stock.sku)) AS numeric) IS NULL) ORDER BY sku;
+    (COALESCE(Shop_Product.sku, '') = COALESCE(Shop_Stock.sku, '') AND (Shop_Product.sku IS NULL) = (Shop_Stock.sku IS NULL))) AS numeric) IS NULL) ORDER BY sku;

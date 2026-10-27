@@ -1,5 +1,5 @@
 # Each employee's department name, or "none": a left join with two rules.
-# Expect: rows Q = [('ann', 'eng'), ('bob', 'eng'), ('cid', 'ops'), ('dee', 'none'), ('eve', 'none'), ('fay', 'ops')]
+# Expect: rows Q = [('ann', 'eng'), ('bob', 'eng'), ('cid', 'ops'), ('dee', 'temp'), ('eve', 'none'), ('fay', 'ops')]
 E(id: 1, name: "ann", dept: 10, boss: null);
 E(id: 2, name: "bob", dept: 10, boss: 1);
 E(id: 3, name: "cid", dept: 20, boss: 1);

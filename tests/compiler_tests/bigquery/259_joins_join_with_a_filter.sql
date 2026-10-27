@@ -17,4 +17,4 @@ FROM
   t_0_B AS B, UNNEST(ARRAY[1, 2]) as x_6
 WHERE
   (B.id > 1) AND
-  (x_6 = B.id);
+  (x_6 IS NOT DISTINCT FROM B.id);

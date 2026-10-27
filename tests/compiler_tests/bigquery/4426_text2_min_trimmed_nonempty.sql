@@ -45,4 +45,4 @@ SELECT
 FROM
   t_0_W AS W
 WHERE
-  (TRIM(W.s) != "");
+  (TRIM(W.s) IS DISTINCT FROM "");

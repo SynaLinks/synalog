@@ -110,7 +110,7 @@ t_1_Reach_RecursiveCte_f1 AS (SELECT * FROM (
         (0 < 6) AND
         (1 = 0) AND
         (t_5_Ship.carrier = 'fedex') AND
-        (t_5_Ship.src = t_7_Ship.dst) AND
+        (COALESCE(t_5_Ship.src, '') = COALESCE(t_7_Ship.dst, '') AND (t_5_Ship.src IS NULL) = (t_7_Ship.dst IS NULL)) AND
         (t_7_Ship.carrier = 'fedex')
      UNION ALL
     
@@ -124,10 +124,10 @@ t_1_Reach_RecursiveCte_f1 AS (SELECT * FROM (
         (((0) + (1)) < 6) AND
         (0 < 6) AND
         (1 = 0) AND
-        (t_12_Ship.src = t_14_Ship.dst) AND
+        (COALESCE(t_12_Ship.src, '') = COALESCE(t_14_Ship.dst, '') AND (t_12_Ship.src IS NULL) = (t_14_Ship.dst IS NULL)) AND
         (t_12_Ship.carrier = 'fedex') AND
         (t_14_Ship.carrier = 'fedex') AND
-        (t_14_Ship.src = t_16_Ship.dst) AND
+        (COALESCE(t_14_Ship.src, '') = COALESCE(t_16_Ship.dst, '') AND (t_14_Ship.src IS NULL) = (t_16_Ship.dst IS NULL)) AND
         (t_16_Ship.carrier = 'fedex')
      UNION ALL
     
@@ -142,12 +142,12 @@ t_1_Reach_RecursiveCte_f1 AS (SELECT * FROM (
         (((0) + (1)) < 6) AND
         (0 < 6) AND
         (1 = 0) AND
-        (t_21_Ship.src = t_24_Ship.dst) AND
+        (COALESCE(t_21_Ship.src, '') = COALESCE(t_24_Ship.dst, '') AND (t_21_Ship.src IS NULL) = (t_24_Ship.dst IS NULL)) AND
         (t_21_Ship.carrier = 'fedex') AND
-        (t_24_Ship.src = t_26_Ship.dst) AND
+        (COALESCE(t_24_Ship.src, '') = COALESCE(t_26_Ship.dst, '') AND (t_24_Ship.src IS NULL) = (t_26_Ship.dst IS NULL)) AND
         (t_24_Ship.carrier = 'fedex') AND
         (t_26_Ship.carrier = 'fedex') AND
-        (t_26_Ship.src = t_28_Ship.dst) AND
+        (COALESCE(t_26_Ship.src, '') = COALESCE(t_28_Ship.dst, '') AND (t_26_Ship.src IS NULL) = (t_28_Ship.dst IS NULL)) AND
         (t_28_Ship.carrier = 'fedex')
      UNION ALL
     
@@ -163,14 +163,14 @@ t_1_Reach_RecursiveCte_f1 AS (SELECT * FROM (
         (((0) + (1)) < 6) AND
         (0 < 6) AND
         (1 = 0) AND
-        (t_33_Ship.src = t_36_Ship.dst) AND
+        (COALESCE(t_33_Ship.src, '') = COALESCE(t_36_Ship.dst, '') AND (t_33_Ship.src IS NULL) = (t_36_Ship.dst IS NULL)) AND
         (t_33_Ship.carrier = 'fedex') AND
-        (t_36_Ship.src = t_39_Ship.dst) AND
+        (COALESCE(t_36_Ship.src, '') = COALESCE(t_39_Ship.dst, '') AND (t_36_Ship.src IS NULL) = (t_39_Ship.dst IS NULL)) AND
         (t_36_Ship.carrier = 'fedex') AND
-        (t_39_Ship.src = t_41_Ship.dst) AND
+        (COALESCE(t_39_Ship.src, '') = COALESCE(t_41_Ship.dst, '') AND (t_39_Ship.src IS NULL) = (t_41_Ship.dst IS NULL)) AND
         (t_39_Ship.carrier = 'fedex') AND
         (t_41_Ship.carrier = 'fedex') AND
-        (t_41_Ship.src = t_43_Ship.dst) AND
+        (COALESCE(t_41_Ship.src, '') = COALESCE(t_43_Ship.dst, '') AND (t_41_Ship.src IS NULL) = (t_43_Ship.dst IS NULL)) AND
         (t_43_Ship.carrier = 'fedex')
      UNION ALL
     
@@ -187,16 +187,16 @@ t_1_Reach_RecursiveCte_f1 AS (SELECT * FROM (
         (((0) + (1)) < 6) AND
         (0 < 6) AND
         (1 = 0) AND
-        (t_48_Ship.src = t_51_Ship.dst) AND
+        (COALESCE(t_48_Ship.src, '') = COALESCE(t_51_Ship.dst, '') AND (t_48_Ship.src IS NULL) = (t_51_Ship.dst IS NULL)) AND
         (t_48_Ship.carrier = 'fedex') AND
-        (t_51_Ship.src = t_54_Ship.dst) AND
+        (COALESCE(t_51_Ship.src, '') = COALESCE(t_54_Ship.dst, '') AND (t_51_Ship.src IS NULL) = (t_54_Ship.dst IS NULL)) AND
         (t_51_Ship.carrier = 'fedex') AND
-        (t_54_Ship.src = t_57_Ship.dst) AND
+        (COALESCE(t_54_Ship.src, '') = COALESCE(t_57_Ship.dst, '') AND (t_54_Ship.src IS NULL) = (t_57_Ship.dst IS NULL)) AND
         (t_54_Ship.carrier = 'fedex') AND
-        (t_57_Ship.src = t_59_Ship.dst) AND
+        (COALESCE(t_57_Ship.src, '') = COALESCE(t_59_Ship.dst, '') AND (t_57_Ship.src IS NULL) = (t_59_Ship.dst IS NULL)) AND
         (t_57_Ship.carrier = 'fedex') AND
         (t_59_Ship.carrier = 'fedex') AND
-        (t_59_Ship.src = t_61_Ship.dst) AND
+        (COALESCE(t_59_Ship.src, '') = COALESCE(t_61_Ship.dst, '') AND (t_59_Ship.src IS NULL) = (t_61_Ship.dst IS NULL)) AND
         (t_61_Ship.carrier = 'fedex')
     
   ) AS UNUSED_TABLE_NAME  
@@ -211,7 +211,7 @@ FROM
 WHERE
   (t_62_Reach_RecursiveCte_f1.synalog_step < 6) AND
   (t_64_Ship.carrier = 'fedex') AND
-  (t_62_Reach_RecursiveCte_f1.b = t_64_Ship.src)),
+  (COALESCE(t_62_Reach_RecursiveCte_f1.b, '') = COALESCE(t_64_Ship.src, '') AND (t_62_Reach_RecursiveCte_f1.b IS NULL) = (t_64_Ship.src IS NULL))),
 t_0_R AS (SELECT
   Reach_RecursiveCte_f1.a AS a,
   Reach_RecursiveCte_f1.b AS b

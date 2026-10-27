@@ -62,8 +62,8 @@ t_3_Shares AS (SELECT
 FROM
   t_5_HasPhone AS HasPhone, t_5_HasPhone AS t_4_HasPhone
 WHERE
-  (HasPhone.account != t_4_HasPhone.account) AND
-  (t_4_HasPhone.phone = HasPhone.phone)
+  (HasPhone.account IS DISTINCT FROM t_4_HasPhone.account) AND
+  (COALESCE(t_4_HasPhone.phone, '') = COALESCE(HasPhone.phone, '') AND (t_4_HasPhone.phone IS NULL) = (HasPhone.phone IS NULL))
 GROUP BY HasPhone.account, t_4_HasPhone.account),
 t_2_Linked_RecursiveCte AS (SELECT * FROM (
   SELECT * FROM (
@@ -85,7 +85,7 @@ t_2_Linked_RecursiveCte AS (SELECT * FROM (
       WHERE
         (0 < 8) AND
         (1 = 0) AND
-        (t_6_Shares.a = t_8_Shares.b)
+        (COALESCE(t_6_Shares.a, '') = COALESCE(t_8_Shares.b, '') AND (t_6_Shares.a IS NULL) = (t_8_Shares.b IS NULL))
      UNION ALL
     
       SELECT
@@ -98,8 +98,8 @@ t_2_Linked_RecursiveCte AS (SELECT * FROM (
         (((0) + (1)) < 8) AND
         (0 < 8) AND
         (1 = 0) AND
-        (t_12_Shares.a = t_14_Shares.b) AND
-        (t_14_Shares.a = t_16_Shares.b)
+        (COALESCE(t_12_Shares.a, '') = COALESCE(t_14_Shares.b, '') AND (t_12_Shares.a IS NULL) = (t_14_Shares.b IS NULL)) AND
+        (COALESCE(t_14_Shares.a, '') = COALESCE(t_16_Shares.b, '') AND (t_14_Shares.a IS NULL) = (t_16_Shares.b IS NULL))
      UNION ALL
     
       SELECT
@@ -113,9 +113,9 @@ t_2_Linked_RecursiveCte AS (SELECT * FROM (
         (((0) + (1)) < 8) AND
         (0 < 8) AND
         (1 = 0) AND
-        (t_18_Shares.a = t_20_Shares.b) AND
-        (t_20_Shares.a = t_22_Shares.b) AND
-        (t_22_Shares.a = t_24_Shares.b)
+        (COALESCE(t_18_Shares.a, '') = COALESCE(t_20_Shares.b, '') AND (t_18_Shares.a IS NULL) = (t_20_Shares.b IS NULL)) AND
+        (COALESCE(t_20_Shares.a, '') = COALESCE(t_22_Shares.b, '') AND (t_20_Shares.a IS NULL) = (t_22_Shares.b IS NULL)) AND
+        (COALESCE(t_22_Shares.a, '') = COALESCE(t_24_Shares.b, '') AND (t_22_Shares.a IS NULL) = (t_24_Shares.b IS NULL))
      UNION ALL
     
       SELECT
@@ -130,10 +130,10 @@ t_2_Linked_RecursiveCte AS (SELECT * FROM (
         (((0) + (1)) < 8) AND
         (0 < 8) AND
         (1 = 0) AND
-        (t_26_Shares.a = t_28_Shares.b) AND
-        (t_28_Shares.a = t_30_Shares.b) AND
-        (t_30_Shares.a = t_32_Shares.b) AND
-        (t_32_Shares.a = t_34_Shares.b)
+        (COALESCE(t_26_Shares.a, '') = COALESCE(t_28_Shares.b, '') AND (t_26_Shares.a IS NULL) = (t_28_Shares.b IS NULL)) AND
+        (COALESCE(t_28_Shares.a, '') = COALESCE(t_30_Shares.b, '') AND (t_28_Shares.a IS NULL) = (t_30_Shares.b IS NULL)) AND
+        (COALESCE(t_30_Shares.a, '') = COALESCE(t_32_Shares.b, '') AND (t_30_Shares.a IS NULL) = (t_32_Shares.b IS NULL)) AND
+        (COALESCE(t_32_Shares.a, '') = COALESCE(t_34_Shares.b, '') AND (t_32_Shares.a IS NULL) = (t_34_Shares.b IS NULL))
      UNION ALL
     
       SELECT
@@ -149,11 +149,11 @@ t_2_Linked_RecursiveCte AS (SELECT * FROM (
         (((0) + (1)) < 8) AND
         (0 < 8) AND
         (1 = 0) AND
-        (t_36_Shares.a = t_38_Shares.b) AND
-        (t_38_Shares.a = t_40_Shares.b) AND
-        (t_40_Shares.a = t_42_Shares.b) AND
-        (t_42_Shares.a = t_44_Shares.b) AND
-        (t_44_Shares.a = t_46_Shares.b)
+        (COALESCE(t_36_Shares.a, '') = COALESCE(t_38_Shares.b, '') AND (t_36_Shares.a IS NULL) = (t_38_Shares.b IS NULL)) AND
+        (COALESCE(t_38_Shares.a, '') = COALESCE(t_40_Shares.b, '') AND (t_38_Shares.a IS NULL) = (t_40_Shares.b IS NULL)) AND
+        (COALESCE(t_40_Shares.a, '') = COALESCE(t_42_Shares.b, '') AND (t_40_Shares.a IS NULL) = (t_42_Shares.b IS NULL)) AND
+        (COALESCE(t_42_Shares.a, '') = COALESCE(t_44_Shares.b, '') AND (t_42_Shares.a IS NULL) = (t_44_Shares.b IS NULL)) AND
+        (COALESCE(t_44_Shares.a, '') = COALESCE(t_46_Shares.b, '') AND (t_44_Shares.a IS NULL) = (t_46_Shares.b IS NULL))
     
   ) AS UNUSED_TABLE_NAME  
 ) AS UNUSED_TABLE_NAME
@@ -166,7 +166,7 @@ FROM
   t_2_Linked_RecursiveCte AS t_47_Linked_RecursiveCte, t_3_Shares AS t_48_Shares
 WHERE
   (t_47_Linked_RecursiveCte.synalog_step < 8) AND
-  (t_48_Shares.a = t_47_Linked_RecursiveCte.b)),
+  (COALESCE(t_48_Shares.a, '') = COALESCE(t_47_Linked_RecursiveCte.b, '') AND (t_48_Shares.a IS NULL) = (t_47_Linked_RecursiveCte.b IS NULL))),
 t_1_Linked AS (SELECT
   Linked_RecursiveCte.a AS a,
   Linked_RecursiveCte.b AS b
@@ -183,6 +183,6 @@ WHERE
   FROM
     t_0_Flagged AS t_49_Flagged, UNNEST(ARRAY[0]) as x_224
   WHERE
-    (t_49_Flagged.account = Linked.b)) AS numeric) IS NULL) AND
-  (Linked.a = Flagged.account)
+    (COALESCE(t_49_Flagged.account, '') = COALESCE(Linked.b, '') AND (t_49_Flagged.account IS NULL) = (Linked.b IS NULL))) AS numeric) IS NULL) AND
+  (COALESCE(Linked.a, '') = COALESCE(Flagged.account, '') AND (Linked.a IS NULL) = (Flagged.account IS NULL))
 GROUP BY Linked.b ORDER BY account;

@@ -149,9 +149,9 @@ WHERE
   FROM
     t_4_A AS A, JSON_EACH(JSON_ARRAY(0)) as x_15
   WHERE
-    (A.id = t_2_Person.id) AND
-    (A.pid = Proj.pid)) IS NULL) AND
-  (Proj.team = t_2_Person.team))
+    (A.id IS t_2_Person.id) AND
+    (A.pid IS Proj.pid)) IS NULL) AND
+  (Proj.team IS t_2_Person.team))
 SELECT
   Person.id AS id
 FROM
@@ -162,5 +162,5 @@ WHERE
   FROM
     t_1_Missing AS Missing, JSON_EACH(JSON_ARRAY(0)) as x_5
   WHERE
-    (Missing.id = Person.id)) IS NULL) AND
+    (Missing.id IS Person.id)) IS NULL) AND
   (Person.team = 'red');

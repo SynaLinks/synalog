@@ -62,6 +62,6 @@ FROM
   t_2_Sale AS t_0_Sale, t_2_Sale AS t_1_Sale, t_2_Sale AS Sale
 WHERE
   (t_1_Sale.amount > 100) AND
-  (t_1_Sale.id = Sale.id) AND
+  (t_1_Sale.id IS NOT DISTINCT FROM Sale.id) AND
   (t_0_Sale.product = 'tea') AND
-  (Sale.id = t_0_Sale.id);
+  (Sale.id IS NOT DISTINCT FROM t_0_Sale.id);

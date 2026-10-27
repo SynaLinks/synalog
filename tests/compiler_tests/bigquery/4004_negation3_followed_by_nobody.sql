@@ -87,4 +87,4 @@ WHERE
   FROM
     t_2_F AS F
   WHERE
-    (F.b = t_0_U.u)) IS NULL) ORDER BY u NULLS LAST;
+    (F.b IS NOT DISTINCT FROM t_0_U.u)) IS NULL) ORDER BY u NULLS LAST;

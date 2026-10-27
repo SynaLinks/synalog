@@ -23,7 +23,7 @@ FROM
 WHERE
   (t_1_S.v > t_0_S.v) AND
   (t_0_S.r = "east") AND
-  (t_0_S.d = S.d) AND
+  (t_0_S.d <=> S.d) AND
   (t_1_S.r = "east")), 0))) AS rank
 FROM
   t_2_S AS S

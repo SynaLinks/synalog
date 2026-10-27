@@ -97,6 +97,6 @@ SELECT
 FROM
   t_1_E AS E, JSON_EACH(JSON_ARRAY(0)) as x_5
 WHERE
-  (E.d = t_0_D.d)), 0) AS n
+  (E.d IS t_0_D.d)), 0) AS n
 FROM
   t_2_D AS t_0_D ORDER BY dn NULLS LAST;

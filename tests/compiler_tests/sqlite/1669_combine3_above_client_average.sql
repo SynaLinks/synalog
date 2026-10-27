@@ -91,4 +91,4 @@ WHERE
   FROM
     t_0_Ship AS t_1_Ship, JSON_EACH(JSON_ARRAY(0)) as x_8
   WHERE
-    (t_1_Ship.client = Ship.client))) ORDER BY id;
+    (t_1_Ship.client IS Ship.client))) ORDER BY id NULLS LAST;

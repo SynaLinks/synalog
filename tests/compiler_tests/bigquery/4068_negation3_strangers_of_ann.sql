@@ -82,11 +82,11 @@ SELECT
 FROM
   t_1_U AS t_0_U
 WHERE
-  (t_0_U.u != "ann") AND
+  (t_0_U.u IS DISTINCT FROM "ann") AND
   ((SELECT
     MIN(1) AS synalog_value
   FROM
     t_2_F AS F
   WHERE
     (F.a = "ann") AND
-    (F.b = t_0_U.u)) IS NULL) ORDER BY v NULLS LAST;
+    (F.b IS NOT DISTINCT FROM t_0_U.u)) IS NULL) ORDER BY v NULLS LAST;

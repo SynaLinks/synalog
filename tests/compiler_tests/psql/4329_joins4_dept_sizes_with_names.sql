@@ -108,4 +108,4 @@ SELECT
 FROM
   t_1_S AS S, t_3_D AS t_0_D
 WHERE
-  (t_0_D.d = S.d) ORDER BY dn;
+  (COALESCE(t_0_D.d, 0) = COALESCE(S.d, 0) AND (t_0_D.d IS NULL) = (S.d IS NULL)) ORDER BY dn;

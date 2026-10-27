@@ -85,8 +85,8 @@ SELECT
 FROM
   synalog_test.Person AS Person, synalog_test.Person AS t_0_Person, t_1_Management AS Management
 WHERE
-  (Management.manager_id = Person.person_id) AND
-  (Management.employee_id = t_0_Person.person_id)
+  (Management.manager_id IS NOT DISTINCT FROM Person.person_id) AND
+  (Management.employee_id IS NOT DISTINCT FROM t_0_Person.person_id)
 GROUP BY 1, 2;
 
 -- Interacting with table synalog_test.Manages
@@ -130,7 +130,7 @@ CREATE TABLE synalog_test.Chain_sn_t1 AS WITH t_1_Chain_MultBodyAggAux_f3 AS (SE
     FROM
       synalog_test.Chain_sn_t0 AS Chain_sn_t0, synalog_test.Manages AS Manages
     WHERE
-      (Manages.employee_id = Chain_sn_t0.manager_id)
+      (Manages.employee_id IS NOT DISTINCT FROM Chain_sn_t0.manager_id)
    UNION ALL
   
     SELECT
@@ -165,7 +165,7 @@ CREATE TABLE synalog_test.Chain_sn_t2 AS WITH t_1_Chain_MultBodyAggAux_f4 AS (SE
     FROM
       synalog_test.Chain_sn_t1 AS Chain_sn_t1, synalog_test.Manages AS Manages
     WHERE
-      (Manages.employee_id = Chain_sn_t1.manager_id)
+      (Manages.employee_id IS NOT DISTINCT FROM Chain_sn_t1.manager_id)
    UNION ALL
   
     SELECT
@@ -200,7 +200,7 @@ CREATE TABLE synalog_test.Chain_sn_t3 AS WITH t_1_Chain_MultBodyAggAux_f5 AS (SE
     FROM
       synalog_test.Chain_sn_t2 AS Chain_sn_t2, synalog_test.Manages AS Manages
     WHERE
-      (Manages.employee_id = Chain_sn_t2.manager_id)
+      (Manages.employee_id IS NOT DISTINCT FROM Chain_sn_t2.manager_id)
    UNION ALL
   
     SELECT
@@ -235,7 +235,7 @@ CREATE TABLE synalog_test.Chain_sn_t4 AS WITH t_1_Chain_MultBodyAggAux_f6 AS (SE
     FROM
       synalog_test.Chain_sn_t3 AS Chain_sn_t3, synalog_test.Manages AS Manages
     WHERE
-      (Manages.employee_id = Chain_sn_t3.manager_id)
+      (Manages.employee_id IS NOT DISTINCT FROM Chain_sn_t3.manager_id)
    UNION ALL
   
     SELECT
@@ -270,7 +270,7 @@ CREATE TABLE synalog_test.Chain_sn_t5 AS WITH t_1_Chain_MultBodyAggAux_f7 AS (SE
     FROM
       synalog_test.Chain_sn_t4 AS Chain_sn_t4, synalog_test.Manages AS Manages
     WHERE
-      (Manages.employee_id = Chain_sn_t4.manager_id)
+      (Manages.employee_id IS NOT DISTINCT FROM Chain_sn_t4.manager_id)
    UNION ALL
   
     SELECT
@@ -353,7 +353,7 @@ CREATE TABLE synalog_test.Chain_sn_new AS WITH t_1_Chain_MultBodyAggAux_f8 AS (S
     FROM
       synalog_test.Chain_sn_delta AS Chain_sn_delta, synalog_test.Manages AS Manages
     WHERE
-      (Manages.employee_id = Chain_sn_delta.manager_id)
+      (Manages.employee_id IS NOT DISTINCT FROM Chain_sn_delta.manager_id)
    UNION ALL
   
     SELECT
@@ -380,8 +380,8 @@ WHERE
   FROM
     synalog_test.Chain_sn_full AS Chain_sn_full
   WHERE
-    (Chain_sn_full.employee_id = Chain_sn_step.employee_id) AND
-    (Chain_sn_full.manager_id = Chain_sn_step.manager_id)) IS NULL)
+    (Chain_sn_full.employee_id IS NOT DISTINCT FROM Chain_sn_step.employee_id) AND
+    (Chain_sn_full.manager_id IS NOT DISTINCT FROM Chain_sn_step.manager_id)) IS NULL)
 GROUP BY 1, 2;
 
 INSERT INTO synalog_test.Chain_sn_full SELECT * FROM synalog_test.Chain_sn_new;
@@ -395,7 +395,7 @@ CREATE TABLE synalog_test.Chain_sn_delta AS WITH t_1_Chain_MultBodyAggAux_f1 AS 
     FROM
       synalog_test.Chain_sn_new AS Chain_sn_new, synalog_test.Manages AS Manages
     WHERE
-      (Manages.employee_id = Chain_sn_new.manager_id)
+      (Manages.employee_id IS NOT DISTINCT FROM Chain_sn_new.manager_id)
    UNION ALL
   
     SELECT
@@ -422,8 +422,8 @@ WHERE
   FROM
     synalog_test.Chain_sn_full AS Chain_sn_full
   WHERE
-    (Chain_sn_full.employee_id = Chain_sn_back_step.employee_id) AND
-    (Chain_sn_full.manager_id = Chain_sn_back_step.manager_id)) IS NULL)
+    (Chain_sn_full.employee_id IS NOT DISTINCT FROM Chain_sn_back_step.employee_id) AND
+    (Chain_sn_full.manager_id IS NOT DISTINCT FROM Chain_sn_back_step.manager_id)) IS NULL)
 GROUP BY 1, 2;
 
 INSERT INTO synalog_test.Chain_sn_full SELECT * FROM synalog_test.Chain_sn_delta;
@@ -437,7 +437,7 @@ CREATE TABLE synalog_test.Chain_sn_new AS WITH t_1_Chain_MultBodyAggAux_f8 AS (S
     FROM
       synalog_test.Chain_sn_delta AS Chain_sn_delta, synalog_test.Manages AS Manages
     WHERE
-      (Manages.employee_id = Chain_sn_delta.manager_id)
+      (Manages.employee_id IS NOT DISTINCT FROM Chain_sn_delta.manager_id)
    UNION ALL
   
     SELECT
@@ -464,8 +464,8 @@ WHERE
   FROM
     synalog_test.Chain_sn_full AS Chain_sn_full
   WHERE
-    (Chain_sn_full.employee_id = Chain_sn_step.employee_id) AND
-    (Chain_sn_full.manager_id = Chain_sn_step.manager_id)) IS NULL)
+    (Chain_sn_full.employee_id IS NOT DISTINCT FROM Chain_sn_step.employee_id) AND
+    (Chain_sn_full.manager_id IS NOT DISTINCT FROM Chain_sn_step.manager_id)) IS NULL)
 GROUP BY 1, 2;
 
 INSERT INTO synalog_test.Chain_sn_full SELECT * FROM synalog_test.Chain_sn_new;
@@ -479,7 +479,7 @@ CREATE TABLE synalog_test.Chain_sn_delta AS WITH t_1_Chain_MultBodyAggAux_f1 AS 
     FROM
       synalog_test.Chain_sn_new AS Chain_sn_new, synalog_test.Manages AS Manages
     WHERE
-      (Manages.employee_id = Chain_sn_new.manager_id)
+      (Manages.employee_id IS NOT DISTINCT FROM Chain_sn_new.manager_id)
    UNION ALL
   
     SELECT
@@ -506,8 +506,8 @@ WHERE
   FROM
     synalog_test.Chain_sn_full AS Chain_sn_full
   WHERE
-    (Chain_sn_full.employee_id = Chain_sn_back_step.employee_id) AND
-    (Chain_sn_full.manager_id = Chain_sn_back_step.manager_id)) IS NULL)
+    (Chain_sn_full.employee_id IS NOT DISTINCT FROM Chain_sn_back_step.employee_id) AND
+    (Chain_sn_full.manager_id IS NOT DISTINCT FROM Chain_sn_back_step.manager_id)) IS NULL)
 GROUP BY 1, 2;
 
 INSERT INTO synalog_test.Chain_sn_full SELECT * FROM synalog_test.Chain_sn_delta;
@@ -521,7 +521,7 @@ CREATE TABLE synalog_test.Chain_sn_new AS WITH t_1_Chain_MultBodyAggAux_f8 AS (S
     FROM
       synalog_test.Chain_sn_delta AS Chain_sn_delta, synalog_test.Manages AS Manages
     WHERE
-      (Manages.employee_id = Chain_sn_delta.manager_id)
+      (Manages.employee_id IS NOT DISTINCT FROM Chain_sn_delta.manager_id)
    UNION ALL
   
     SELECT
@@ -548,8 +548,8 @@ WHERE
   FROM
     synalog_test.Chain_sn_full AS Chain_sn_full
   WHERE
-    (Chain_sn_full.employee_id = Chain_sn_step.employee_id) AND
-    (Chain_sn_full.manager_id = Chain_sn_step.manager_id)) IS NULL)
+    (Chain_sn_full.employee_id IS NOT DISTINCT FROM Chain_sn_step.employee_id) AND
+    (Chain_sn_full.manager_id IS NOT DISTINCT FROM Chain_sn_step.manager_id)) IS NULL)
 GROUP BY 1, 2;
 
 INSERT INTO synalog_test.Chain_sn_full SELECT * FROM synalog_test.Chain_sn_new;
@@ -563,7 +563,7 @@ CREATE TABLE synalog_test.Chain_sn_delta AS WITH t_1_Chain_MultBodyAggAux_f1 AS 
     FROM
       synalog_test.Chain_sn_new AS Chain_sn_new, synalog_test.Manages AS Manages
     WHERE
-      (Manages.employee_id = Chain_sn_new.manager_id)
+      (Manages.employee_id IS NOT DISTINCT FROM Chain_sn_new.manager_id)
    UNION ALL
   
     SELECT
@@ -590,8 +590,8 @@ WHERE
   FROM
     synalog_test.Chain_sn_full AS Chain_sn_full
   WHERE
-    (Chain_sn_full.employee_id = Chain_sn_back_step.employee_id) AND
-    (Chain_sn_full.manager_id = Chain_sn_back_step.manager_id)) IS NULL)
+    (Chain_sn_full.employee_id IS NOT DISTINCT FROM Chain_sn_back_step.employee_id) AND
+    (Chain_sn_full.manager_id IS NOT DISTINCT FROM Chain_sn_back_step.manager_id)) IS NULL)
 GROUP BY 1, 2;
 
 INSERT INTO synalog_test.Chain_sn_full SELECT * FROM synalog_test.Chain_sn_delta;

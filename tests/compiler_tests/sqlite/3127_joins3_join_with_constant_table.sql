@@ -47,4 +47,4 @@ SELECT
 FROM
   t_0_E AS E, JSON_EACH(JSON_ARRAY(1, 2, 7)) as x_3
 WHERE
-  (E.id = x_3.value) ORDER BY name;
+  (E.id IS x_3.value) ORDER BY name NULLS LAST;

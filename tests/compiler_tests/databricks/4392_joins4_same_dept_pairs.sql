@@ -15,4 +15,4 @@ FROM
   t_1_E AS E, t_1_E AS t_0_E
 WHERE
   (E.n < t_0_E.n) AND
-  (t_0_E.d = E.d) ORDER BY a NULLS LAST, b NULLS LAST;
+  (t_0_E.d <=> E.d) ORDER BY a NULLS LAST, b NULLS LAST;

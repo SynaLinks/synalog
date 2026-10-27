@@ -43,5 +43,5 @@ WHERE
   FROM
     t_2_E AS E, (select unnest([0]) as unnested_pod) as x_5
   WHERE
-    (E.a = t_0_N.n) AND
+    (E.a IS NOT DISTINCT FROM t_0_N.n) AND
     (E.b = 3)) IS NULL) ORDER BY n;

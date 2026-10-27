@@ -32,7 +32,7 @@ t_1_L AS (SELECT * FROM (
       FROM
         t_2_C AS t_6_C
       WHERE
-        (t_6_C.g = t_4_G.g)) IS NULL)
+        (t_6_C.g <=> t_4_G.g)) IS NULL)
   
 ) AS UNUSED_TABLE_NAME  )
 SELECT

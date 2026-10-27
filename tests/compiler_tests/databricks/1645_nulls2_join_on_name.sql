@@ -16,4 +16,4 @@ SELECT
 FROM
   t_1_Person AS Person, t_2_Role AS t_0_Role
 WHERE
-  (t_0_Role.name = Person.name) ORDER BY id NULLS LAST, role NULLS LAST;
+  (t_0_Role.name <=> Person.name) ORDER BY id NULLS LAST, role NULLS LAST;

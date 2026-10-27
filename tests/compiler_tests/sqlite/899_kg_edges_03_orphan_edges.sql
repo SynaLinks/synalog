@@ -73,7 +73,7 @@ t_1_Person AS (SELECT
   Employees.url AS url
 FROM
   t_2_Employees AS Employees
-GROUP BY Employees.person_id, Employees.name, Employees.url ORDER BY person_id)
+GROUP BY Employees.person_id, Employees.name, Employees.url ORDER BY person_id NULLS LAST)
 SELECT
   Management.employee_id AS employee_id
 FROM
@@ -84,5 +84,5 @@ WHERE
   FROM
     t_1_Person AS Person, JSON_EACH(JSON_ARRAY(0)) as x_4
   WHERE
-    (Person.person_id = Management.employee_id)) IS NULL)
+    (Person.person_id IS Management.employee_id)) IS NULL)
 GROUP BY Management.employee_id;

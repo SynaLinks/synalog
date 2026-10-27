@@ -3,4 +3,4 @@ SELECT
 FROM
   (SELECT 'singleton' as s) as unused_singleton
 WHERE
-  (null = null);
+  (null IS NULL);

@@ -84,7 +84,7 @@ t_1_Need_RecursiveCte AS (SELECT * FROM (
       WHERE
         (0 < 6) AND
         (1 = 0) AND
-        (t_3_Uses.part = t_5_Uses.component)
+        (COALESCE(t_3_Uses.part, '') = COALESCE(t_5_Uses.component, '') AND (t_3_Uses.part IS NULL) = (t_5_Uses.component IS NULL))
      UNION ALL
     
       SELECT
@@ -99,8 +99,8 @@ t_1_Need_RecursiveCte AS (SELECT * FROM (
         (((0) + (1)) < 6) AND
         (0 < 6) AND
         (1 = 0) AND
-        (t_7_Uses.part = t_9_Uses.component) AND
-        (t_9_Uses.part = t_11_Uses.component)
+        (COALESCE(t_7_Uses.part, '') = COALESCE(t_9_Uses.component, '') AND (t_7_Uses.part IS NULL) = (t_9_Uses.component IS NULL)) AND
+        (COALESCE(t_9_Uses.part, '') = COALESCE(t_11_Uses.component, '') AND (t_9_Uses.part IS NULL) = (t_11_Uses.component IS NULL))
      UNION ALL
     
       SELECT
@@ -116,9 +116,9 @@ t_1_Need_RecursiveCte AS (SELECT * FROM (
         (((0) + (1)) < 6) AND
         (0 < 6) AND
         (1 = 0) AND
-        (t_13_Uses.part = t_15_Uses.component) AND
-        (t_15_Uses.part = t_17_Uses.component) AND
-        (t_17_Uses.part = t_19_Uses.component)
+        (COALESCE(t_13_Uses.part, '') = COALESCE(t_15_Uses.component, '') AND (t_13_Uses.part IS NULL) = (t_15_Uses.component IS NULL)) AND
+        (COALESCE(t_15_Uses.part, '') = COALESCE(t_17_Uses.component, '') AND (t_15_Uses.part IS NULL) = (t_17_Uses.component IS NULL)) AND
+        (COALESCE(t_17_Uses.part, '') = COALESCE(t_19_Uses.component, '') AND (t_17_Uses.part IS NULL) = (t_19_Uses.component IS NULL))
      UNION ALL
     
       SELECT
@@ -135,10 +135,10 @@ t_1_Need_RecursiveCte AS (SELECT * FROM (
         (((0) + (1)) < 6) AND
         (0 < 6) AND
         (1 = 0) AND
-        (t_21_Uses.part = t_23_Uses.component) AND
-        (t_23_Uses.part = t_25_Uses.component) AND
-        (t_25_Uses.part = t_27_Uses.component) AND
-        (t_27_Uses.part = t_29_Uses.component)
+        (COALESCE(t_21_Uses.part, '') = COALESCE(t_23_Uses.component, '') AND (t_21_Uses.part IS NULL) = (t_23_Uses.component IS NULL)) AND
+        (COALESCE(t_23_Uses.part, '') = COALESCE(t_25_Uses.component, '') AND (t_23_Uses.part IS NULL) = (t_25_Uses.component IS NULL)) AND
+        (COALESCE(t_25_Uses.part, '') = COALESCE(t_27_Uses.component, '') AND (t_25_Uses.part IS NULL) = (t_27_Uses.component IS NULL)) AND
+        (COALESCE(t_27_Uses.part, '') = COALESCE(t_29_Uses.component, '') AND (t_27_Uses.part IS NULL) = (t_29_Uses.component IS NULL))
      UNION ALL
     
       SELECT
@@ -156,11 +156,11 @@ t_1_Need_RecursiveCte AS (SELECT * FROM (
         (((0) + (1)) < 6) AND
         (0 < 6) AND
         (1 = 0) AND
-        (t_31_Uses.part = t_33_Uses.component) AND
-        (t_33_Uses.part = t_35_Uses.component) AND
-        (t_35_Uses.part = t_37_Uses.component) AND
-        (t_37_Uses.part = t_39_Uses.component) AND
-        (t_39_Uses.part = t_41_Uses.component)
+        (COALESCE(t_31_Uses.part, '') = COALESCE(t_33_Uses.component, '') AND (t_31_Uses.part IS NULL) = (t_33_Uses.component IS NULL)) AND
+        (COALESCE(t_33_Uses.part, '') = COALESCE(t_35_Uses.component, '') AND (t_33_Uses.part IS NULL) = (t_35_Uses.component IS NULL)) AND
+        (COALESCE(t_35_Uses.part, '') = COALESCE(t_37_Uses.component, '') AND (t_35_Uses.part IS NULL) = (t_37_Uses.component IS NULL)) AND
+        (COALESCE(t_37_Uses.part, '') = COALESCE(t_39_Uses.component, '') AND (t_37_Uses.part IS NULL) = (t_39_Uses.component IS NULL)) AND
+        (COALESCE(t_39_Uses.part, '') = COALESCE(t_41_Uses.component, '') AND (t_39_Uses.part IS NULL) = (t_41_Uses.component IS NULL))
      UNION ALL
     
       SELECT
@@ -179,12 +179,12 @@ t_1_Need_RecursiveCte AS (SELECT * FROM (
         (((0) + (1)) < 6) AND
         (0 < 6) AND
         (1 = 0) AND
-        (t_43_Uses.part = t_45_Uses.component) AND
-        (t_45_Uses.part = t_47_Uses.component) AND
-        (t_47_Uses.part = t_49_Uses.component) AND
-        (t_49_Uses.part = t_51_Uses.component) AND
-        (t_51_Uses.part = t_53_Uses.component) AND
-        (t_53_Uses.part = t_55_Uses.component)
+        (COALESCE(t_43_Uses.part, '') = COALESCE(t_45_Uses.component, '') AND (t_43_Uses.part IS NULL) = (t_45_Uses.component IS NULL)) AND
+        (COALESCE(t_45_Uses.part, '') = COALESCE(t_47_Uses.component, '') AND (t_45_Uses.part IS NULL) = (t_47_Uses.component IS NULL)) AND
+        (COALESCE(t_47_Uses.part, '') = COALESCE(t_49_Uses.component, '') AND (t_47_Uses.part IS NULL) = (t_49_Uses.component IS NULL)) AND
+        (COALESCE(t_49_Uses.part, '') = COALESCE(t_51_Uses.component, '') AND (t_49_Uses.part IS NULL) = (t_51_Uses.component IS NULL)) AND
+        (COALESCE(t_51_Uses.part, '') = COALESCE(t_53_Uses.component, '') AND (t_51_Uses.part IS NULL) = (t_53_Uses.component IS NULL)) AND
+        (COALESCE(t_53_Uses.part, '') = COALESCE(t_55_Uses.component, '') AND (t_53_Uses.part IS NULL) = (t_55_Uses.component IS NULL))
      UNION ALL
     
       SELECT
@@ -204,13 +204,13 @@ t_1_Need_RecursiveCte AS (SELECT * FROM (
         (((0) + (1)) < 6) AND
         (0 < 6) AND
         (1 = 0) AND
-        (t_57_Uses.part = t_59_Uses.component) AND
-        (t_59_Uses.part = t_61_Uses.component) AND
-        (t_61_Uses.part = t_63_Uses.component) AND
-        (t_63_Uses.part = t_65_Uses.component) AND
-        (t_65_Uses.part = t_67_Uses.component) AND
-        (t_67_Uses.part = t_69_Uses.component) AND
-        (t_69_Uses.part = t_71_Uses.component)
+        (COALESCE(t_57_Uses.part, '') = COALESCE(t_59_Uses.component, '') AND (t_57_Uses.part IS NULL) = (t_59_Uses.component IS NULL)) AND
+        (COALESCE(t_59_Uses.part, '') = COALESCE(t_61_Uses.component, '') AND (t_59_Uses.part IS NULL) = (t_61_Uses.component IS NULL)) AND
+        (COALESCE(t_61_Uses.part, '') = COALESCE(t_63_Uses.component, '') AND (t_61_Uses.part IS NULL) = (t_63_Uses.component IS NULL)) AND
+        (COALESCE(t_63_Uses.part, '') = COALESCE(t_65_Uses.component, '') AND (t_63_Uses.part IS NULL) = (t_65_Uses.component IS NULL)) AND
+        (COALESCE(t_65_Uses.part, '') = COALESCE(t_67_Uses.component, '') AND (t_65_Uses.part IS NULL) = (t_67_Uses.component IS NULL)) AND
+        (COALESCE(t_67_Uses.part, '') = COALESCE(t_69_Uses.component, '') AND (t_67_Uses.part IS NULL) = (t_69_Uses.component IS NULL)) AND
+        (COALESCE(t_69_Uses.part, '') = COALESCE(t_71_Uses.component, '') AND (t_69_Uses.part IS NULL) = (t_71_Uses.component IS NULL))
      UNION ALL
     
       SELECT
@@ -231,14 +231,14 @@ t_1_Need_RecursiveCte AS (SELECT * FROM (
         (((0) + (1)) < 6) AND
         (0 < 6) AND
         (1 = 0) AND
-        (t_73_Uses.part = t_75_Uses.component) AND
-        (t_75_Uses.part = t_77_Uses.component) AND
-        (t_77_Uses.part = t_79_Uses.component) AND
-        (t_79_Uses.part = t_81_Uses.component) AND
-        (t_81_Uses.part = t_83_Uses.component) AND
-        (t_83_Uses.part = t_85_Uses.component) AND
-        (t_85_Uses.part = t_87_Uses.component) AND
-        (t_87_Uses.part = t_89_Uses.component)
+        (COALESCE(t_73_Uses.part, '') = COALESCE(t_75_Uses.component, '') AND (t_73_Uses.part IS NULL) = (t_75_Uses.component IS NULL)) AND
+        (COALESCE(t_75_Uses.part, '') = COALESCE(t_77_Uses.component, '') AND (t_75_Uses.part IS NULL) = (t_77_Uses.component IS NULL)) AND
+        (COALESCE(t_77_Uses.part, '') = COALESCE(t_79_Uses.component, '') AND (t_77_Uses.part IS NULL) = (t_79_Uses.component IS NULL)) AND
+        (COALESCE(t_79_Uses.part, '') = COALESCE(t_81_Uses.component, '') AND (t_79_Uses.part IS NULL) = (t_81_Uses.component IS NULL)) AND
+        (COALESCE(t_81_Uses.part, '') = COALESCE(t_83_Uses.component, '') AND (t_81_Uses.part IS NULL) = (t_83_Uses.component IS NULL)) AND
+        (COALESCE(t_83_Uses.part, '') = COALESCE(t_85_Uses.component, '') AND (t_83_Uses.part IS NULL) = (t_85_Uses.component IS NULL)) AND
+        (COALESCE(t_85_Uses.part, '') = COALESCE(t_87_Uses.component, '') AND (t_85_Uses.part IS NULL) = (t_87_Uses.component IS NULL)) AND
+        (COALESCE(t_87_Uses.part, '') = COALESCE(t_89_Uses.component, '') AND (t_87_Uses.part IS NULL) = (t_89_Uses.component IS NULL))
      UNION ALL
     
       SELECT
@@ -260,15 +260,15 @@ t_1_Need_RecursiveCte AS (SELECT * FROM (
         (((0) + (1)) < 6) AND
         (0 < 6) AND
         (1 = 0) AND
-        (t_91_Uses.part = t_93_Uses.component) AND
-        (t_93_Uses.part = t_95_Uses.component) AND
-        (t_95_Uses.part = t_97_Uses.component) AND
-        (t_97_Uses.part = t_99_Uses.component) AND
-        (t_99_Uses.part = t_101_Uses.component) AND
-        (t_101_Uses.part = t_103_Uses.component) AND
-        (t_103_Uses.part = t_105_Uses.component) AND
-        (t_105_Uses.part = t_107_Uses.component) AND
-        (t_107_Uses.part = t_109_Uses.component)
+        (COALESCE(t_91_Uses.part, '') = COALESCE(t_93_Uses.component, '') AND (t_91_Uses.part IS NULL) = (t_93_Uses.component IS NULL)) AND
+        (COALESCE(t_93_Uses.part, '') = COALESCE(t_95_Uses.component, '') AND (t_93_Uses.part IS NULL) = (t_95_Uses.component IS NULL)) AND
+        (COALESCE(t_95_Uses.part, '') = COALESCE(t_97_Uses.component, '') AND (t_95_Uses.part IS NULL) = (t_97_Uses.component IS NULL)) AND
+        (COALESCE(t_97_Uses.part, '') = COALESCE(t_99_Uses.component, '') AND (t_97_Uses.part IS NULL) = (t_99_Uses.component IS NULL)) AND
+        (COALESCE(t_99_Uses.part, '') = COALESCE(t_101_Uses.component, '') AND (t_99_Uses.part IS NULL) = (t_101_Uses.component IS NULL)) AND
+        (COALESCE(t_101_Uses.part, '') = COALESCE(t_103_Uses.component, '') AND (t_101_Uses.part IS NULL) = (t_103_Uses.component IS NULL)) AND
+        (COALESCE(t_103_Uses.part, '') = COALESCE(t_105_Uses.component, '') AND (t_103_Uses.part IS NULL) = (t_105_Uses.component IS NULL)) AND
+        (COALESCE(t_105_Uses.part, '') = COALESCE(t_107_Uses.component, '') AND (t_105_Uses.part IS NULL) = (t_107_Uses.component IS NULL)) AND
+        (COALESCE(t_107_Uses.part, '') = COALESCE(t_109_Uses.component, '') AND (t_107_Uses.part IS NULL) = (t_109_Uses.component IS NULL))
     
   ) AS UNUSED_TABLE_NAME  
 ) AS UNUSED_TABLE_NAME
@@ -283,7 +283,7 @@ FROM
   t_1_Need_RecursiveCte AS t_110_Need_RecursiveCte, t_2_Uses AS t_111_Uses
 WHERE
   (t_110_Need_RecursiveCte.synalog_step < 6) AND
-  (t_111_Uses.part = t_110_Need_RecursiveCte.component)),
+  (COALESCE(t_111_Uses.part, '') = COALESCE(t_110_Need_RecursiveCte.component, '') AND (t_111_Uses.part IS NULL) = (t_110_Need_RecursiveCte.component IS NULL))),
 t_0_Need AS (SELECT
   Need_RecursiveCte.part AS part,
   Need_RecursiveCte.component AS component,

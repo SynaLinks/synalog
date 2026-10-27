@@ -38,4 +38,4 @@ WHERE
   FROM
     t_3_Loud AS Loud, (select unnest([0]) as unnested_pod) as x_6
   WHERE
-    (Loud.k = t_0_K.k)) IS NULL) ORDER BY k;
+    (Loud.k IS NOT DISTINCT FROM t_0_K.k)) IS NULL) ORDER BY k;

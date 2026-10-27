@@ -17,5 +17,5 @@ SELECT
 FROM
   t_1_Follows AS Follows, t_1_Follows AS t_0_Follows
 WHERE
-  (t_0_Follows.a = Follows.b) AND
-  (t_0_Follows.b = Follows.a) ORDER BY a NULLS LAST, b NULLS LAST;
+  (t_0_Follows.a <=> Follows.b) AND
+  (t_0_Follows.b <=> Follows.a) ORDER BY a NULLS LAST, b NULLS LAST;

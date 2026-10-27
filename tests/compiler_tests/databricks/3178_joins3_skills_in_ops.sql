@@ -26,7 +26,7 @@ SELECT
 FROM
   t_0_S AS S, t_1_E AS E, t_2_D AS D
 WHERE
-  (E.id = S.id) AND
-  (D.dept = E.dept) AND
+  (E.id <=> S.id) AND
+  (D.dept <=> E.dept) AND
   (D.dname = "ops")
 GROUP BY 1 ORDER BY skill NULLS LAST;

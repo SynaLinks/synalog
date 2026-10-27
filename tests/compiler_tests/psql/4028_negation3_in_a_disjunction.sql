@@ -95,7 +95,7 @@ t_0_Q_MultBodyAggAux AS (SELECT * FROM (
       FROM
         t_3_F AS F, UNNEST(ARRAY[0]) as x_7
       WHERE
-        (F.b = t_1_U.u)) AS numeric) IS NULL)
+        (COALESCE(F.b, '') = COALESCE(t_1_U.u, '') AND (F.b IS NULL) = (t_1_U.u IS NULL))) AS numeric) IS NULL)
    UNION ALL
   
     SELECT

@@ -49,7 +49,7 @@ SELECT
 FROM
   t_1_O AS t_0_O, JSON_EACH(JSON_ARRAY(0)) as x_7
 WHERE
-  (t_0_O.c = O.c)), 0))) AS s
+  (t_0_O.c IS O.c)), 0))) AS s
 FROM
   t_1_O AS O
 GROUP BY O.c ORDER BY c NULLS LAST;

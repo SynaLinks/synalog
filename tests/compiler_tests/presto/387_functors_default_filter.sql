@@ -26,5 +26,5 @@ SELECT
 FROM
   t_0_Filter AS Filter, t_2_Orders AS Orders
 WHERE
-  (Orders.customer_name = Filter.customer_name)
+  (Orders.customer_name IS NOT DISTINCT FROM Filter.customer_name)
 GROUP BY 1 ORDER BY customer_name;

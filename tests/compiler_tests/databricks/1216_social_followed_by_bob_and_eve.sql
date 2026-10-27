@@ -18,4 +18,4 @@ FROM
 WHERE
   (Follows.a = "bob") AND
   (t_0_Follows.a = "eve") AND
-  (t_0_Follows.b = Follows.b) ORDER BY b NULLS LAST;
+  (t_0_Follows.b <=> Follows.b) ORDER BY b NULLS LAST;

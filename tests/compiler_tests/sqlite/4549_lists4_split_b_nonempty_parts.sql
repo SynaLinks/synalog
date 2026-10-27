@@ -36,4 +36,4 @@ SELECT
 FROM
   t_0_T AS T, JSON_EACH(SPLIT(T.s, 'b')) as x_4
 WHERE
-  (x_4.value != '') ORDER BY k, x;
+  (x_4.value IS NOT '') ORDER BY k NULLS LAST, x NULLS LAST;

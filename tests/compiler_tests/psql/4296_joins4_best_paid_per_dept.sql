@@ -108,6 +108,6 @@ SELECT
 FROM
   t_2_M AS t_0_M, t_4_E AS E, t_5_D AS t_1_D
 WHERE
-  (E.d = t_0_M.d) AND
-  (E.pay = t_0_M.m) AND
-  (t_1_D.d = t_0_M.d) ORDER BY dn;
+  (COALESCE(E.d, 0) = COALESCE(t_0_M.d, 0) AND (E.d IS NULL) = (t_0_M.d IS NULL)) AND
+  (COALESCE(E.pay, 0) = COALESCE(t_0_M.m, 0) AND (E.pay IS NULL) = (t_0_M.m IS NULL)) AND
+  (COALESCE(t_1_D.d, 0) = COALESCE(t_0_M.d, 0) AND (t_1_D.d IS NULL) = (t_0_M.d IS NULL)) ORDER BY dn;

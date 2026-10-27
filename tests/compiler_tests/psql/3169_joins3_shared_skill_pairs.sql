@@ -92,7 +92,7 @@ FROM
   t_2_S AS S, t_2_S AS t_0_S, t_3_E AS E, t_3_E AS t_1_E
 WHERE
   (S.id < t_0_S.id) AND
-  (t_0_S.skill = S.skill) AND
-  (E.id = S.id) AND
-  (t_1_E.id = t_0_S.id)
+  (COALESCE(t_0_S.skill, '') = COALESCE(S.skill, '') AND (t_0_S.skill IS NULL) = (S.skill IS NULL)) AND
+  (COALESCE(E.id, 0) = COALESCE(S.id, 0) AND (E.id IS NULL) = (S.id IS NULL)) AND
+  (COALESCE(t_1_E.id, 0) = COALESCE(t_0_S.id, 0) AND (t_1_E.id IS NULL) = (t_0_S.id IS NULL))
 GROUP BY E.name, t_1_E.name ORDER BY a, b;

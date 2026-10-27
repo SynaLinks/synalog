@@ -32,4 +32,4 @@ FROM
   t_1_P AS P, t_1_P AS t_0_P
 WHERE
   (P.id < t_0_P.id) AND
-  (JSON_EXTRACT(JSON_EXTRACT(P.r, "$.home"), "$.city") = JSON_EXTRACT(JSON_EXTRACT(t_0_P.r, "$.home"), "$.city")) ORDER BY a, b;
+  (JSON_EXTRACT(JSON_EXTRACT(P.r, "$.home"), "$.city") IS JSON_EXTRACT(JSON_EXTRACT(t_0_P.r, "$.home"), "$.city")) ORDER BY a NULLS LAST, b NULLS LAST;

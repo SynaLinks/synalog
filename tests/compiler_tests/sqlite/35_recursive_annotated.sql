@@ -54,7 +54,7 @@ t_27_Reachable_r1 AS (SELECT * FROM (
     FROM
       t_30_Reachable_r0 AS Reachable_r0, t_1_Edge AS t_29_Edge
     WHERE
-      (t_29_Edge.col0 = Reachable_r0.col1)
+      (t_29_Edge.col0 IS Reachable_r0.col1)
   
 ) AS UNUSED_TABLE_NAME  ),
 t_24_Reachable_r2 AS (SELECT * FROM (
@@ -72,7 +72,7 @@ t_24_Reachable_r2 AS (SELECT * FROM (
     FROM
       t_27_Reachable_r1 AS Reachable_r1, t_1_Edge AS t_26_Edge
     WHERE
-      (t_26_Edge.col0 = Reachable_r1.col1)
+      (t_26_Edge.col0 IS Reachable_r1.col1)
   
 ) AS UNUSED_TABLE_NAME  ),
 t_21_Reachable_r3 AS (SELECT * FROM (
@@ -90,7 +90,7 @@ t_21_Reachable_r3 AS (SELECT * FROM (
     FROM
       t_24_Reachable_r2 AS Reachable_r2, t_1_Edge AS t_23_Edge
     WHERE
-      (t_23_Edge.col0 = Reachable_r2.col1)
+      (t_23_Edge.col0 IS Reachable_r2.col1)
   
 ) AS UNUSED_TABLE_NAME  ),
 t_18_Reachable_r4 AS (SELECT * FROM (
@@ -108,7 +108,7 @@ t_18_Reachable_r4 AS (SELECT * FROM (
     FROM
       t_21_Reachable_r3 AS Reachable_r3, t_1_Edge AS t_20_Edge
     WHERE
-      (t_20_Edge.col0 = Reachable_r3.col1)
+      (t_20_Edge.col0 IS Reachable_r3.col1)
   
 ) AS UNUSED_TABLE_NAME  ),
 t_15_Reachable_r5 AS (SELECT * FROM (
@@ -126,7 +126,7 @@ t_15_Reachable_r5 AS (SELECT * FROM (
     FROM
       t_18_Reachable_r4 AS Reachable_r4, t_1_Edge AS t_17_Edge
     WHERE
-      (t_17_Edge.col0 = Reachable_r4.col1)
+      (t_17_Edge.col0 IS Reachable_r4.col1)
   
 ) AS UNUSED_TABLE_NAME  ),
 t_12_Reachable_r6 AS (SELECT * FROM (
@@ -144,7 +144,7 @@ t_12_Reachable_r6 AS (SELECT * FROM (
     FROM
       t_15_Reachable_r5 AS Reachable_r5, t_1_Edge AS t_14_Edge
     WHERE
-      (t_14_Edge.col0 = Reachable_r5.col1)
+      (t_14_Edge.col0 IS Reachable_r5.col1)
   
 ) AS UNUSED_TABLE_NAME  ),
 t_9_Reachable_r7 AS (SELECT * FROM (
@@ -162,7 +162,7 @@ t_9_Reachable_r7 AS (SELECT * FROM (
     FROM
       t_12_Reachable_r6 AS Reachable_r6, t_1_Edge AS t_11_Edge
     WHERE
-      (t_11_Edge.col0 = Reachable_r6.col1)
+      (t_11_Edge.col0 IS Reachable_r6.col1)
   
 ) AS UNUSED_TABLE_NAME  ),
 t_6_Reachable_r8 AS (SELECT * FROM (
@@ -180,7 +180,7 @@ t_6_Reachable_r8 AS (SELECT * FROM (
     FROM
       t_9_Reachable_r7 AS Reachable_r7, t_1_Edge AS t_8_Edge
     WHERE
-      (t_8_Edge.col0 = Reachable_r7.col1)
+      (t_8_Edge.col0 IS Reachable_r7.col1)
   
 ) AS UNUSED_TABLE_NAME  ),
 t_3_Reachable_r9 AS (SELECT * FROM (
@@ -198,7 +198,7 @@ t_3_Reachable_r9 AS (SELECT * FROM (
     FROM
       t_6_Reachable_r8 AS Reachable_r8, t_1_Edge AS t_5_Edge
     WHERE
-      (t_5_Edge.col0 = Reachable_r8.col1)
+      (t_5_Edge.col0 IS Reachable_r8.col1)
   
 ) AS UNUSED_TABLE_NAME  ),
 t_0_Reachable AS (SELECT * FROM (
@@ -216,11 +216,11 @@ t_0_Reachable AS (SELECT * FROM (
     FROM
       t_3_Reachable_r9 AS Reachable_r9, t_1_Edge AS t_2_Edge
     WHERE
-      (t_2_Edge.col0 = Reachable_r9.col1)
+      (t_2_Edge.col0 IS Reachable_r9.col1)
   
 ) AS UNUSED_TABLE_NAME  )
 SELECT
   Reachable.col0 AS x,
   Reachable.col1 AS y
 FROM
-  t_0_Reachable AS Reachable ORDER BY x, y;
+  t_0_Reachable AS Reachable ORDER BY x NULLS LAST, y NULLS LAST;

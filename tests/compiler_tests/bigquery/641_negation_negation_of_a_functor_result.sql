@@ -6,6 +6,6 @@ WHERE
   ((SELECT
     MIN(1) AS synalog_value
   FROM
-    UNNEST(ARRAY[1, 2]) as x_9
+    UNNEST(ARRAY[1, 2]) as x_8
   WHERE
-    (x_3 = x_9)) IS NULL);
+    (x_3 IS NOT DISTINCT FROM x_8)) IS NULL);

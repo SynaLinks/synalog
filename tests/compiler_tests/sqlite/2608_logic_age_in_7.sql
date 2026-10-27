@@ -61,4 +61,4 @@ SELECT
 FROM
   t_0_Person AS Person, JSON_EACH(JSON_ARRAY(7)) as x_3
 WHERE
-  (Person.age = x_3.value);
+  (Person.age IS x_3.value);

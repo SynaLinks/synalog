@@ -136,8 +136,8 @@ t_0_MemberOf AS (SELECT
 FROM
   synalog_test.Person AS Person, synalog_test.Team AS t_1_Team, t_0_Employees AS Employees
 WHERE
-  (Employees.person_id = Person.person_id) AND
-  (Employees.team_id = t_1_Team.team_id)
+  (Employees.person_id IS NOT DISTINCT FROM Person.person_id) AND
+  (Employees.team_id IS NOT DISTINCT FROM t_1_Team.team_id)
 GROUP BY 1, 2)
 SELECT
   MemberOf.person_id AS person_id,

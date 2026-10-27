@@ -4,15 +4,6 @@ create schema if not exists synalog_home;
 drop type if exists synalogrecord893574736 cascade; create type synalogrecord893574736 as struct(nirvana numeric);
 create sequence if not exists eternal_logical_sequence;
 
-
--- Synalog type: synalogrecord481217614
-drop type if exists synalogrecord481217614 cascade; create type synalogrecord481217614 as struct(r synalogrecord893574736);
-
--- Synalog type: synalogrecord383307722
-drop type if exists synalogrecord383307722 cascade; create type synalogrecord383307722 as struct(a timestamp);
-
--- Synalog type: synalogrecord519939597
-drop type if exists synalogrecord519939597 cascade; create type synalogrecord519939597 as struct(args text[], predicate text);
 WITH t_6_Employees AS (SELECT * FROM (
   
     SELECT
@@ -95,8 +86,8 @@ t_3_Manages AS (SELECT
 FROM
   t_5_Person AS Person, t_5_Person AS t_4_Person, t_8_Management AS Management
 WHERE
-  (Management.manager_id = Person.person_id) AND
-  (Management.employee_id = t_4_Person.person_id)
+  (Management.manager_id IS NOT DISTINCT FROM Person.person_id) AND
+  (Management.employee_id IS NOT DISTINCT FROM t_4_Person.person_id)
 GROUP BY Person.person_id, t_4_Person.person_id),
 t_12_Mentoring AS (SELECT * FROM (
   
@@ -116,8 +107,8 @@ t_9_Mentors AS (SELECT
 FROM
   t_5_Person AS t_10_Person, t_5_Person AS t_11_Person, t_12_Mentoring AS Mentoring
 WHERE
-  (Mentoring.mentor_id = t_10_Person.person_id) AND
-  (Mentoring.mentee_id = t_11_Person.person_id)
+  (Mentoring.mentor_id IS NOT DISTINCT FROM t_10_Person.person_id) AND
+  (Mentoring.mentee_id IS NOT DISTINCT FROM t_11_Person.person_id)
 GROUP BY t_10_Person.person_id, t_11_Person.person_id),
 t_2_Related_MultBodyAggAux AS (SELECT * FROM (
   

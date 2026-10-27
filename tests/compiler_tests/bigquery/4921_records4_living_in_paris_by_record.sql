@@ -30,4 +30,4 @@ SELECT
 FROM
   t_0_P AS P
 WHERE
-  (P.r.home = STRUCT("paris" AS city)) ORDER BY n;
+  (P.r.home IS NOT DISTINCT FROM STRUCT("paris" AS city)) ORDER BY n NULLS LAST;

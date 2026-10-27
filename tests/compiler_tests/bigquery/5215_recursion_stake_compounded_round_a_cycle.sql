@@ -47,7 +47,7 @@ t_8_C_MultBodyAggAux_recursive_head_f2 AS (SELECT * FROM (
     FROM
       t_10_C_r0 AS C_r0, t_14_Own AS t_9_Own
     WHERE
-      (t_9_Own.owner = C_r0.entity)
+      (t_9_Own.owner IS NOT DISTINCT FROM C_r0.entity)
    UNION ALL
   
     SELECT
@@ -77,7 +77,7 @@ t_5_C_MultBodyAggAux_recursive_head_f3 AS (SELECT * FROM (
     FROM
       t_7_C_r1 AS C_r1, t_14_Own AS t_6_Own
     WHERE
-      (t_6_Own.owner = C_r1.entity)
+      (t_6_Own.owner IS NOT DISTINCT FROM C_r1.entity)
    UNION ALL
   
     SELECT
@@ -107,7 +107,7 @@ t_2_C_MultBodyAggAux_recursive_head_f4 AS (SELECT * FROM (
     FROM
       t_4_C_r2 AS C_r2, t_14_Own AS t_3_Own
     WHERE
-      (t_3_Own.owner = C_r2.entity)
+      (t_3_Own.owner IS NOT DISTINCT FROM C_r2.entity)
    UNION ALL
   
     SELECT
@@ -137,7 +137,7 @@ t_0_C_MultBodyAggAux_recursive_head_f5 AS (SELECT * FROM (
     FROM
       t_1_C_r3 AS C_r3, t_14_Own AS Own
     WHERE
-      (Own.owner = C_r3.entity)
+      (Own.owner IS NOT DISTINCT FROM C_r3.entity)
    UNION ALL
   
     SELECT

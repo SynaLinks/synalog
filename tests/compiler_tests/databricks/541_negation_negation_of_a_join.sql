@@ -12,5 +12,5 @@ WHERE
   FROM
     t_0_P AS t_1_P
   WHERE
-    (P.n = t_1_P.n) AND
+    (P.n <=> t_1_P.n) AND
     (t_1_P.k = 1)) IS NULL);

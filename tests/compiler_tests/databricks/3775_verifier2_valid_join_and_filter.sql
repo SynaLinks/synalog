@@ -8,4 +8,4 @@ SELECT
 FROM
   t_1_E AS E, t_1_E AS t_0_E
 WHERE
-  (t_0_E.a = E.b);
+  (t_0_E.a <=> E.b);

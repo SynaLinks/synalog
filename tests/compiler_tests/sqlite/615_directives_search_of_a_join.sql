@@ -16,4 +16,4 @@ SELECT
 FROM
   t_0_A AS A, JSON_EACH(JSON_ARRAY(1, 2)) as x_6
 WHERE
-  (A.k = x_6.value) ORDER BY k;
+  (A.k IS x_6.value) ORDER BY k NULLS LAST;

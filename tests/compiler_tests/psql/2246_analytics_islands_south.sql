@@ -109,11 +109,11 @@ WHERE
   FROM
     t_3_D AS t_6_D, UNNEST(ARRAY[0]) as x_15
   WHERE
-    (t_6_D.d = ((t_1_D.d) - (1)))) AS numeric) IS NULL) AND
+    (COALESCE(t_6_D.d, 0) = COALESCE(((t_1_D.d) - (1)), 0) AND (t_6_D.d IS NULL) = (((t_1_D.d) - (1)) IS NULL))) AS numeric) IS NULL) AND
   (CAST((SELECT
     MIN((CASE WHEN x_18 = 0 THEN 1 ELSE NULL END)) AS synalog_value
   FROM
     t_3_D AS t_7_D, UNNEST(ARRAY[0]) as x_18
   WHERE
-    (t_7_D.d = ((t_2_D.d) + (1)))) AS numeric) IS NULL)
+    (COALESCE(t_7_D.d, 0) = COALESCE(((t_2_D.d) + (1)), 0) AND (t_7_D.d IS NULL) = (((t_2_D.d) + (1)) IS NULL))) AS numeric) IS NULL)
 GROUP BY t_1_D.d ORDER BY first, last;

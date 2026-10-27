@@ -78,4 +78,4 @@ WHERE
   FROM
     t_1_Beaten AS Beaten, JSON_EACH(JSON_ARRAY(0)) as x_4
   WHERE
-    (Beaten.day = Reading.day)) IS NULL) ORDER BY day;
+    (Beaten.day IS Reading.day)) IS NULL) ORDER BY day NULLS LAST;

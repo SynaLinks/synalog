@@ -111,7 +111,7 @@ t_30_Reach_MultBodyAggAux_recursive_head_f2_f10 AS (SELECT * FROM (
     FROM
       t_35_Reach_r0_f10 AS Reach_r0_f10, t_2_Ship AS t_34_Ship
     WHERE
-      (Reach_r0_f10.b = t_34_Ship.src)
+      (Reach_r0_f10.b IS NOT DISTINCT FROM t_34_Ship.src)
   
 ) AS UNUSED_TABLE_NAME  ),
 t_29_Reach_r1_f10 AS (SELECT
@@ -135,7 +135,7 @@ t_24_Reach_MultBodyAggAux_recursive_head_f3_f10 AS (SELECT * FROM (
     FROM
       t_29_Reach_r1_f10 AS Reach_r1_f10, t_2_Ship AS t_28_Ship
     WHERE
-      (Reach_r1_f10.b = t_28_Ship.src)
+      (Reach_r1_f10.b IS NOT DISTINCT FROM t_28_Ship.src)
   
 ) AS UNUSED_TABLE_NAME  ),
 t_23_Reach_r2_f10 AS (SELECT
@@ -159,7 +159,7 @@ t_18_Reach_MultBodyAggAux_recursive_head_f4_f10 AS (SELECT * FROM (
     FROM
       t_23_Reach_r2_f10 AS Reach_r2_f10, t_2_Ship AS t_22_Ship
     WHERE
-      (Reach_r2_f10.b = t_22_Ship.src)
+      (Reach_r2_f10.b IS NOT DISTINCT FROM t_22_Ship.src)
   
 ) AS UNUSED_TABLE_NAME  ),
 t_17_Reach_r3_f10 AS (SELECT
@@ -183,7 +183,7 @@ t_12_Reach_MultBodyAggAux_recursive_head_f5_f10 AS (SELECT * FROM (
     FROM
       t_17_Reach_r3_f10 AS Reach_r3_f10, t_2_Ship AS t_16_Ship
     WHERE
-      (Reach_r3_f10.b = t_16_Ship.src)
+      (Reach_r3_f10.b IS NOT DISTINCT FROM t_16_Ship.src)
   
 ) AS UNUSED_TABLE_NAME  ),
 t_11_Reach_r4_f10 AS (SELECT
@@ -207,7 +207,7 @@ t_6_Reach_MultBodyAggAux_recursive_head_f6_f10 AS (SELECT * FROM (
     FROM
       t_11_Reach_r4_f10 AS Reach_r4_f10, t_2_Ship AS t_10_Ship
     WHERE
-      (Reach_r4_f10.b = t_10_Ship.src)
+      (Reach_r4_f10.b IS NOT DISTINCT FROM t_10_Ship.src)
   
 ) AS UNUSED_TABLE_NAME  ),
 t_5_Reach_r5_f10 AS (SELECT
@@ -231,7 +231,7 @@ t_1_Reach_MultBodyAggAux_recursive_head_f7_f10 AS (SELECT * FROM (
     FROM
       t_5_Reach_r5_f10 AS Reach_r5_f10, t_2_Ship AS t_4_Ship
     WHERE
-      (Reach_r5_f10.b = t_4_Ship.src)
+      (Reach_r5_f10.b IS NOT DISTINCT FROM t_4_Ship.src)
   
 ) AS UNUSED_TABLE_NAME  ),
 t_0_R AS (SELECT
@@ -245,4 +245,4 @@ SELECT
 FROM
   t_0_R AS R
 WHERE
-  (R.a = "rome") ORDER BY b;
+  (R.a = "rome") ORDER BY b NULLS LAST;

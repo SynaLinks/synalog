@@ -43,5 +43,5 @@ WHERE
   FROM
     t_2_E AS E, UNNEST(ARRAY[0]) as x_5
   WHERE
-    (E.a = t_0_N.n) AND
+    (COALESCE(E.a, 0) = COALESCE(t_0_N.n, 0) AND (E.a IS NULL) = (t_0_N.n IS NULL)) AND
     (E.b = 3)) AS numeric) IS NULL) ORDER BY n;

@@ -18,4 +18,4 @@ WHERE
   FROM
     t_0_U AS U, JSON_EACH(JSON_ARRAY(0)) as x_6
   WHERE
-    (U.x = x_3.value)) IS NULL);
+    (U.x IS x_3.value)) IS NULL);

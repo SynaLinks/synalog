@@ -26,5 +26,5 @@ SELECT
 FROM
   t_1_W AS t_0_W, JSON_EACH(SPLIT(t_0_W.s, ' ')) as x_2
 WHERE
-  (x_2.value != '')
+  (x_2.value IS NOT '')
 GROUP BY x_2.value ORDER BY w NULLS LAST, n NULLS LAST;

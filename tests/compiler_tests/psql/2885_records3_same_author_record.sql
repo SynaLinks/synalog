@@ -77,4 +77,4 @@ FROM
   t_4_B AS t_2_B, t_4_B AS t_3_B
 WHERE
   (t_2_B.id < t_3_B.id) AND
-  (ROW(t_3_B.author)::synalogrecord1790657755071105979 = ROW(t_2_B.author)::synalogrecord1790657755071105979) ORDER BY a, b;
+  (ARRAY[ROW(ROW(t_3_B.author)::synalogrecord1790657755071105979)] = ARRAY[ROW(ROW(t_2_B.author)::synalogrecord1790657755071105979)]) ORDER BY a, b;

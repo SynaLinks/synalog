@@ -157,4 +157,4 @@ WHERE
   FROM
     t_2_Tag AS t_1_Tag, UNNEST(ARRAY[0]) as x_4
   WHERE
-    (t_1_Tag.id = Person.id)) AS numeric) IS NULL) ORDER BY id;
+    (COALESCE(t_1_Tag.id, 0) = COALESCE(Person.id, 0) AND (t_1_Tag.id IS NULL) = (Person.id IS NULL))) AS numeric) IS NULL) ORDER BY id;

@@ -61,7 +61,7 @@ SELECT
 FROM
   t_2_Sale AS t_0_Sale, t_2_Sale AS t_1_Sale, t_2_Sale AS Sale
 WHERE
-  (t_1_Sale.id = Sale.id) AND
+  (t_1_Sale.id IS Sale.id) AND
   (t_0_Sale.product = 'coffee') AND
-  (Sale.id = t_0_Sale.id) AND
+  (Sale.id IS t_0_Sale.id) AND
   (t_1_Sale.region = 'north');

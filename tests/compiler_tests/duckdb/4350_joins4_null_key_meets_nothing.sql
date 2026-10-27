@@ -113,4 +113,4 @@ SELECT
 FROM
   t_1_E AS E, t_2_Any AS t_0_Any
 WHERE
-  (t_0_Any.d = E.d);
+  (t_0_Any.d IS NOT DISTINCT FROM E.d);

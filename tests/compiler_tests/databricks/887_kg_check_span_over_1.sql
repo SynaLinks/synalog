@@ -24,8 +24,8 @@ t_1_Manages AS (SELECT
 FROM
   t_3_Person AS Person, t_3_Person AS t_2_Person, t_6_Management AS Management
 WHERE
-  (Management.manager_id = Person.person_id) AND
-  (Management.employee_id = t_2_Person.person_id)
+  (Management.manager_id <=> Person.person_id) AND
+  (Management.employee_id <=> t_2_Person.person_id)
 GROUP BY 1, 2),
 t_0_Span AS (SELECT
   Manages.manager_id AS manager_id,

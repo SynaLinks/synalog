@@ -82,7 +82,7 @@ SELECT * FROM (
     FROM
       t_0_E AS E, t_1_D AS D
     WHERE
-      (D.dept = E.dept)
+      (COALESCE(D.dept, 0) = COALESCE(E.dept, 0) AND (D.dept IS NULL) = (E.dept IS NULL))
    UNION ALL
   
     SELECT
@@ -96,7 +96,7 @@ SELECT * FROM (
       FROM
         t_0_E, t_1_D AS D, UNNEST(ARRAY[0]) as x_4
       WHERE
-        (D.dept = t_0_E.dept) AND
-        (E.name = t_0_E.name)) AS numeric) IS NULL)
+        (COALESCE(D.dept, 0) = COALESCE(t_0_E.dept, 0) AND (D.dept IS NULL) = (t_0_E.dept IS NULL)) AND
+        (COALESCE(E.name, '') = COALESCE(t_0_E.name, '') AND (E.name IS NULL) = (t_0_E.name IS NULL))) AS numeric) IS NULL)
   
 ) AS UNUSED_TABLE_NAME  ORDER BY name, dname ;

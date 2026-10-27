@@ -14,7 +14,7 @@ t_0_Q_MultBodyAggAux AS (SELECT * FROM (
     FROM
       t_1_I AS I
     WHERE
-      (I.c != "red")
+      (NOT (I.c <=> "red"))
    UNION ALL
   
     SELECT

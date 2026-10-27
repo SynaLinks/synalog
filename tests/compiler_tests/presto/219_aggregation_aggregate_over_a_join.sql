@@ -33,5 +33,5 @@ SELECT
 FROM
   t_0_P AS P, t_1_O AS O
 WHERE
-  (O.pid = P.id)
+  (O.pid IS NOT DISTINCT FROM P.id)
 GROUP BY 1 ORDER BY name;

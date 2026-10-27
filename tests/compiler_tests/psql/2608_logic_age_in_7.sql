@@ -67,4 +67,4 @@ SELECT
 FROM
   t_0_Person AS Person, UNNEST(ARRAY[7]) as x_3
 WHERE
-  (Person.age = x_3);
+  (COALESCE(Person.age, 0) = COALESCE(x_3, 0) AND (Person.age IS NULL) = (x_3 IS NULL));

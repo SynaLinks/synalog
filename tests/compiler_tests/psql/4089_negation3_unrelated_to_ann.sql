@@ -88,18 +88,18 @@ SELECT
 FROM
   t_1_U AS t_0_U
 WHERE
-  (t_0_U.u != 'ann') AND
+  (t_0_U.u IS DISTINCT FROM 'ann') AND
   (CAST((SELECT
     MIN((CASE WHEN x_5 = 0 THEN 1 ELSE NULL END)) AS synalog_value
   FROM
     t_2_F AS F, UNNEST(ARRAY[0]) as x_5
   WHERE
     (F.a = 'ann') AND
-    (F.b = t_0_U.u)) AS numeric) IS NULL) AND
+    (COALESCE(F.b, '') = COALESCE(t_0_U.u, '') AND (F.b IS NULL) = (t_0_U.u IS NULL))) AS numeric) IS NULL) AND
   (CAST((SELECT
     MIN((CASE WHEN x_9 = 0 THEN 1 ELSE NULL END)) AS synalog_value
   FROM
     t_2_F AS t_3_F, UNNEST(ARRAY[0]) as x_9
   WHERE
-    (t_3_F.a = t_0_U.u) AND
+    (COALESCE(t_3_F.a, '') = COALESCE(t_0_U.u, '') AND (t_3_F.a IS NULL) = (t_0_U.u IS NULL)) AND
     (t_3_F.b = 'ann')) AS numeric) IS NULL) ORDER BY v;

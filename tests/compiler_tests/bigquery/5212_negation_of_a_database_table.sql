@@ -8,5 +8,5 @@ WHERE
   FROM
     ground_truth
   WHERE
-    (providers.npi = ground_truth.npi) AND
-    (providers.scheme = ground_truth.scheme)) IS NULL);
+    (providers.npi IS NOT DISTINCT FROM ground_truth.npi) AND
+    (providers.scheme IS NOT DISTINCT FROM ground_truth.scheme)) IS NULL);

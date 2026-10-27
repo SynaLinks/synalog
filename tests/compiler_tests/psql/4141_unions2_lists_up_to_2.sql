@@ -110,7 +110,7 @@ t_1_All AS (SELECT * FROM (
       FROM
         t_3_L AS t_8_L, UNNEST(ARRAY[0]) as x_20
       WHERE
-        (t_8_L.src = M.src)) AS numeric) IS NULL)
+        (COALESCE(t_8_L.src, '') = COALESCE(M.src, '') AND (t_8_L.src IS NULL) = (M.src IS NULL))) AS numeric) IS NULL)
   
 ) AS UNUSED_TABLE_NAME  )
 SELECT

@@ -89,5 +89,5 @@ WHERE
   FROM
     t_1_S AS S, JSON_EACH(JSON_ARRAY(0)) as x_6
   WHERE
-    (S.id = E.id) AND
-    (S.skill = 'sql')) IS NULL) ORDER BY name;
+    (S.id IS E.id) AND
+    (S.skill = 'sql')) IS NULL) ORDER BY name NULLS LAST;

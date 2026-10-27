@@ -71,7 +71,7 @@ t_2_Under_RecursiveCte AS (SELECT * FROM (
       WHERE
         (0 < 8) AND
         (1 = 0) AND
-        (t_4_Manages.boss = t_6_Manages.report)
+        (t_4_Manages.boss IS NOT DISTINCT FROM t_6_Manages.report)
      UNION ALL
     
       SELECT
@@ -84,8 +84,8 @@ t_2_Under_RecursiveCte AS (SELECT * FROM (
         (((0) + (1)) < 8) AND
         (0 < 8) AND
         (1 = 0) AND
-        (t_8_Manages.boss = t_10_Manages.report) AND
-        (t_10_Manages.boss = t_12_Manages.report)
+        (t_8_Manages.boss IS NOT DISTINCT FROM t_10_Manages.report) AND
+        (t_10_Manages.boss IS NOT DISTINCT FROM t_12_Manages.report)
      UNION ALL
     
       SELECT
@@ -99,9 +99,9 @@ t_2_Under_RecursiveCte AS (SELECT * FROM (
         (((0) + (1)) < 8) AND
         (0 < 8) AND
         (1 = 0) AND
-        (t_14_Manages.boss = t_16_Manages.report) AND
-        (t_16_Manages.boss = t_18_Manages.report) AND
-        (t_18_Manages.boss = t_20_Manages.report)
+        (t_14_Manages.boss IS NOT DISTINCT FROM t_16_Manages.report) AND
+        (t_16_Manages.boss IS NOT DISTINCT FROM t_18_Manages.report) AND
+        (t_18_Manages.boss IS NOT DISTINCT FROM t_20_Manages.report)
      UNION ALL
     
       SELECT
@@ -116,10 +116,10 @@ t_2_Under_RecursiveCte AS (SELECT * FROM (
         (((0) + (1)) < 8) AND
         (0 < 8) AND
         (1 = 0) AND
-        (t_22_Manages.boss = t_24_Manages.report) AND
-        (t_24_Manages.boss = t_26_Manages.report) AND
-        (t_26_Manages.boss = t_28_Manages.report) AND
-        (t_28_Manages.boss = t_30_Manages.report)
+        (t_22_Manages.boss IS NOT DISTINCT FROM t_24_Manages.report) AND
+        (t_24_Manages.boss IS NOT DISTINCT FROM t_26_Manages.report) AND
+        (t_26_Manages.boss IS NOT DISTINCT FROM t_28_Manages.report) AND
+        (t_28_Manages.boss IS NOT DISTINCT FROM t_30_Manages.report)
      UNION ALL
     
       SELECT
@@ -135,11 +135,11 @@ t_2_Under_RecursiveCte AS (SELECT * FROM (
         (((0) + (1)) < 8) AND
         (0 < 8) AND
         (1 = 0) AND
-        (t_32_Manages.boss = t_34_Manages.report) AND
-        (t_34_Manages.boss = t_36_Manages.report) AND
-        (t_36_Manages.boss = t_38_Manages.report) AND
-        (t_38_Manages.boss = t_40_Manages.report) AND
-        (t_40_Manages.boss = t_42_Manages.report)
+        (t_32_Manages.boss IS NOT DISTINCT FROM t_34_Manages.report) AND
+        (t_34_Manages.boss IS NOT DISTINCT FROM t_36_Manages.report) AND
+        (t_36_Manages.boss IS NOT DISTINCT FROM t_38_Manages.report) AND
+        (t_38_Manages.boss IS NOT DISTINCT FROM t_40_Manages.report) AND
+        (t_40_Manages.boss IS NOT DISTINCT FROM t_42_Manages.report)
     
   ) AS UNUSED_TABLE_NAME  
 ) AS UNUSED_TABLE_NAME
@@ -152,7 +152,7 @@ FROM
   t_2_Under_RecursiveCte AS t_43_Under_RecursiveCte, t_3_Manages AS t_44_Manages
 WHERE
   (t_43_Under_RecursiveCte.synalog_step < 8) AND
-  (t_44_Manages.boss = t_43_Under_RecursiveCte.report)),
+  (t_44_Manages.boss IS NOT DISTINCT FROM t_43_Under_RecursiveCte.report)),
 t_1_Under AS (SELECT
   Under_RecursiveCte.boss AS boss,
   Under_RecursiveCte.report AS report
@@ -165,5 +165,5 @@ FROM
   t_1_Under AS Under, t_1_Under AS t_0_Under
 WHERE
   (Under.report = 'sre1') AND
-  (t_0_Under.boss = Under.boss) AND
+  (t_0_Under.boss IS NOT DISTINCT FROM Under.boss) AND
   (t_0_Under.report = 'sre2') ORDER BY boss;

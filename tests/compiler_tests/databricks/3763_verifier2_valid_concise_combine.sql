@@ -13,5 +13,5 @@ SELECT
 FROM
   t_1_N AS t_0_N, t_2_E AS E
 WHERE
-  (E.a = t_0_N.n)
+  (E.a <=> t_0_N.n)
 GROUP BY 1 ORDER BY n NULLS LAST;

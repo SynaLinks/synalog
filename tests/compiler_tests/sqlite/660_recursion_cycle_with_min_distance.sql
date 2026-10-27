@@ -41,7 +41,7 @@ t_26_D_MultBodyAggAux_recursive_head_f2 AS (SELECT * FROM (
     FROM
       t_28_D_r0 AS D_r0, t_31_E AS t_27_E
     WHERE
-      (t_27_E.a = D_r0.n)
+      (t_27_E.a IS D_r0.n)
   
 ) AS UNUSED_TABLE_NAME  ),
 t_25_D_r1 AS (SELECT
@@ -63,7 +63,7 @@ t_23_D_MultBodyAggAux_recursive_head_f3 AS (SELECT * FROM (
     FROM
       t_25_D_r1 AS D_r1, t_31_E AS t_24_E
     WHERE
-      (t_24_E.a = D_r1.n)
+      (t_24_E.a IS D_r1.n)
   
 ) AS UNUSED_TABLE_NAME  ),
 t_22_D_r2 AS (SELECT
@@ -85,7 +85,7 @@ t_20_D_MultBodyAggAux_recursive_head_f4 AS (SELECT * FROM (
     FROM
       t_22_D_r2 AS D_r2, t_31_E AS t_21_E
     WHERE
-      (t_21_E.a = D_r2.n)
+      (t_21_E.a IS D_r2.n)
   
 ) AS UNUSED_TABLE_NAME  ),
 t_19_D_r3 AS (SELECT
@@ -107,7 +107,7 @@ t_17_D_MultBodyAggAux_recursive_head_f5 AS (SELECT * FROM (
     FROM
       t_19_D_r3 AS D_r3, t_31_E AS t_18_E
     WHERE
-      (t_18_E.a = D_r3.n)
+      (t_18_E.a IS D_r3.n)
   
 ) AS UNUSED_TABLE_NAME  ),
 t_16_D_r4 AS (SELECT
@@ -129,7 +129,7 @@ t_14_D_MultBodyAggAux_recursive_head_f6 AS (SELECT * FROM (
     FROM
       t_16_D_r4 AS D_r4, t_31_E AS t_15_E
     WHERE
-      (t_15_E.a = D_r4.n)
+      (t_15_E.a IS D_r4.n)
   
 ) AS UNUSED_TABLE_NAME  ),
 t_13_D_r5 AS (SELECT
@@ -151,7 +151,7 @@ t_11_D_MultBodyAggAux_recursive_head_f7 AS (SELECT * FROM (
     FROM
       t_13_D_r5 AS D_r5, t_31_E AS t_12_E
     WHERE
-      (t_12_E.a = D_r5.n)
+      (t_12_E.a IS D_r5.n)
   
 ) AS UNUSED_TABLE_NAME  ),
 t_10_D_r6 AS (SELECT
@@ -173,7 +173,7 @@ t_8_D_MultBodyAggAux_recursive_head_f8 AS (SELECT * FROM (
     FROM
       t_10_D_r6 AS D_r6, t_31_E AS t_9_E
     WHERE
-      (t_9_E.a = D_r6.n)
+      (t_9_E.a IS D_r6.n)
   
 ) AS UNUSED_TABLE_NAME  ),
 t_7_D_r7 AS (SELECT
@@ -195,7 +195,7 @@ t_5_D_MultBodyAggAux_recursive_head_f9 AS (SELECT * FROM (
     FROM
       t_7_D_r7 AS D_r7, t_31_E AS t_6_E
     WHERE
-      (t_6_E.a = D_r7.n)
+      (t_6_E.a IS D_r7.n)
   
 ) AS UNUSED_TABLE_NAME  ),
 t_4_D_r8 AS (SELECT
@@ -217,7 +217,7 @@ t_2_D_MultBodyAggAux_recursive_head_f10 AS (SELECT * FROM (
     FROM
       t_4_D_r8 AS D_r8, t_31_E AS t_3_E
     WHERE
-      (t_3_E.a = D_r8.n)
+      (t_3_E.a IS D_r8.n)
   
 ) AS UNUSED_TABLE_NAME  ),
 t_1_D_r9 AS (SELECT
@@ -239,7 +239,7 @@ t_0_D_MultBodyAggAux_recursive_head_f11 AS (SELECT * FROM (
     FROM
       t_1_D_r9 AS D_r9, t_31_E AS E
     WHERE
-      (E.a = D_r9.n)
+      (E.a IS D_r9.n)
   
 ) AS UNUSED_TABLE_NAME  )
 SELECT

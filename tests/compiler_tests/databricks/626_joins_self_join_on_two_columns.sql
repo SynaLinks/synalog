@@ -11,4 +11,4 @@ FROM
   t_1_V AS V, t_1_V AS t_0_V
 WHERE
   (V.x < t_0_V.x) AND
-  (t_0_V.g = V.g);
+  (t_0_V.g <=> V.g);

@@ -102,5 +102,5 @@ SELECT
 FROM
   t_2_I AS I, t_3_T AS t_1_T
 WHERE
-  (I.pos = t_1_T.pos) AND
+  (COALESCE(I.pos, 0) = COALESCE(t_1_T.pos, 0) AND (I.pos IS NULL) = (t_1_T.pos IS NULL)) AND
   (I."order" = 3) ORDER BY pos, n, t;

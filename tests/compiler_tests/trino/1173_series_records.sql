@@ -78,4 +78,4 @@ WHERE
   FROM
     t_1_Beaten AS Beaten
   WHERE
-    (Beaten.day = Reading.day)) IS NULL) ORDER BY day;
+    (Beaten.day IS NOT DISTINCT FROM Reading.day)) IS NULL) ORDER BY day;

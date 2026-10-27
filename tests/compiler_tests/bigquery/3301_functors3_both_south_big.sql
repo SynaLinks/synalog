@@ -62,5 +62,5 @@ FROM
   t_1_Sale AS Sale, t_1_Sale AS t_0_Sale
 WHERE
   (t_0_Sale.amount > 100) AND
-  (t_0_Sale.id = Sale.id) AND
-  (Sale.region = "south") ORDER BY id;
+  (t_0_Sale.id IS NOT DISTINCT FROM Sale.id) AND
+  (Sale.region = "south") ORDER BY id NULLS LAST;

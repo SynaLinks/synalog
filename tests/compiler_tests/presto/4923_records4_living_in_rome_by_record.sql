@@ -30,4 +30,4 @@ SELECT
 FROM
   t_0_P AS P
 WHERE
-  (P.r.home = CAST(ROW('rome') AS ROW(city varchar))) ORDER BY n;
+  (P.r.home IS NOT DISTINCT FROM CAST(ROW('rome') AS ROW(city varchar))) ORDER BY n;

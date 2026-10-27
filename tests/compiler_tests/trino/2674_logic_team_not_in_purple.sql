@@ -66,4 +66,4 @@ WHERE
   FROM
     UNNEST(TRANSFORM(ARRAY['purple'], synalog_e -> ROW(synalog_e))) as pushkin(x_5)
   WHERE
-    (Person.team = x_5)) IS NULL) ORDER BY id;
+    (Person.team IS NOT DISTINCT FROM x_5)) IS NULL) ORDER BY id;

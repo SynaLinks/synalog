@@ -14,6 +14,6 @@ SELECT
 FROM
   t_1_O AS t_0_O
 WHERE
-  (t_0_O.c = O.c)), 0)) AS s
+  (t_0_O.c <=> O.c)), 0)) AS s
 FROM
   t_1_O AS O ORDER BY id NULLS LAST;

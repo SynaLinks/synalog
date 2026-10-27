@@ -33,7 +33,7 @@ t_0_D_MultBodyAggAux_f2 AS (SELECT * FROM (
     FROM
       synalog_test.D_ifr0 AS D_ifr0, t_1_E AS E
     WHERE
-      (E.a = D_ifr0.n)
+      (E.a <=> D_ifr0.n)
   
 ) AS UNUSED_TABLE_NAME  )
 SELECT
@@ -63,7 +63,7 @@ t_0_D_MultBodyAggAux_f3 AS (SELECT * FROM (
     FROM
       synalog_test.D_ifr1 AS D_ifr1, t_1_E AS E
     WHERE
-      (E.a = D_ifr1.n)
+      (E.a <=> D_ifr1.n)
   
 ) AS UNUSED_TABLE_NAME  )
 SELECT
@@ -93,7 +93,7 @@ t_0_D_MultBodyAggAux_f4 AS (SELECT * FROM (
     FROM
       synalog_test.D_ifr2 AS D_ifr2, t_1_E AS E
     WHERE
-      (E.a = D_ifr2.n)
+      (E.a <=> D_ifr2.n)
   
 ) AS UNUSED_TABLE_NAME  )
 SELECT
@@ -123,7 +123,7 @@ t_0_D_MultBodyAggAux_f3 AS (SELECT * FROM (
     FROM
       synalog_test.D_ifr1 AS D_ifr1, t_1_E AS E
     WHERE
-      (E.a = D_ifr1.n)
+      (E.a <=> D_ifr1.n)
   
 ) AS UNUSED_TABLE_NAME  )
 SELECT
@@ -151,7 +151,7 @@ t_0_D_MultBodyAggAux_f4 AS (SELECT * FROM (
     FROM
       synalog_test.D_ifr2 AS D_ifr2, t_1_E AS E
     WHERE
-      (E.a = D_ifr2.n)
+      (E.a <=> D_ifr2.n)
   
 ) AS UNUSED_TABLE_NAME  )
 SELECT
@@ -179,7 +179,7 @@ t_0_D_MultBodyAggAux_f3 AS (SELECT * FROM (
     FROM
       synalog_test.D_ifr1 AS D_ifr1, t_1_E AS E
     WHERE
-      (E.a = D_ifr1.n)
+      (E.a <=> D_ifr1.n)
   
 ) AS UNUSED_TABLE_NAME  )
 SELECT
@@ -207,7 +207,7 @@ t_0_D_MultBodyAggAux_f4 AS (SELECT * FROM (
     FROM
       synalog_test.D_ifr2 AS D_ifr2, t_1_E AS E
     WHERE
-      (E.a = D_ifr2.n)
+      (E.a <=> D_ifr2.n)
   
 ) AS UNUSED_TABLE_NAME  )
 SELECT
@@ -234,7 +234,7 @@ t_0_D_MultBodyAggAux_f5 AS (SELECT * FROM (
     FROM
       synalog_test.D_ifr1 AS D_ifr3, t_1_E AS E
     WHERE
-      (E.a = D_ifr3.n)
+      (E.a <=> D_ifr3.n)
   
 ) AS UNUSED_TABLE_NAME  )
 SELECT

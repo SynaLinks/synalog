@@ -135,7 +135,7 @@ t_0_Active AS (SELECT
 FROM
   synalog_test.Person AS Person, t_0_Employees AS Employees
 WHERE
-  (Employees.person_id = Person.person_id) AND
+  (Employees.person_id IS NOT DISTINCT FROM Person.person_id) AND
   (Employees.status = 'active')
 GROUP BY 1),
 t_1_MemberOf AS (SELECT
@@ -144,14 +144,14 @@ t_1_MemberOf AS (SELECT
 FROM
   synalog_test.Person AS t_2_Person, synalog_test.Team AS t_3_Team, t_0_Employees AS t_4_Employees
 WHERE
-  (t_4_Employees.person_id = t_2_Person.person_id) AND
-  (t_4_Employees.team_id = t_3_Team.team_id)
+  (t_4_Employees.person_id IS NOT DISTINCT FROM t_2_Person.person_id) AND
+  (t_4_Employees.team_id IS NOT DISTINCT FROM t_3_Team.team_id)
 GROUP BY 1, 2)
 SELECT
   Active.person_id AS person_id
 FROM
   t_0_Active AS Active, t_1_MemberOf AS MemberOf
 WHERE
-  (MemberOf.person_id = Active.person_id) AND
+  (MemberOf.person_id IS NOT DISTINCT FROM Active.person_id) AND
   (MemberOf.team_id = 20)
 GROUP BY 1 ORDER BY person_id;

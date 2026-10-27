@@ -95,7 +95,7 @@ t_0_Q_MultBodyAggAux AS (SELECT * FROM (
       FROM
         t_3_F AS F, (select unnest([0]) as unnested_pod) as x_7
       WHERE
-        (F.b = t_1_U.u)) IS NULL)
+        (F.b IS NOT DISTINCT FROM t_1_U.u)) IS NULL)
    UNION ALL
   
     SELECT

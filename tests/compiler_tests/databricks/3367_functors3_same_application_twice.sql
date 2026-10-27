@@ -25,4 +25,4 @@ SELECT
 FROM
   t_0_R1 AS R1, t_2_R2 AS R2
 WHERE
-  (R1.t = R2.t);
+  (R1.t <=> R2.t);

@@ -39,5 +39,5 @@ SELECT
 FROM
   t_1_N AS t_0_N, t_2_E AS E
 WHERE
-  (E.a = t_0_N.n)
+  (E.a IS NOT DISTINCT FROM t_0_N.n)
 GROUP BY t_0_N.n ORDER BY n;

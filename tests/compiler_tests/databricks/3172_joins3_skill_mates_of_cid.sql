@@ -20,9 +20,9 @@ SELECT
 FROM
   t_2_E AS E, t_3_S AS S, t_3_S AS t_0_S, t_2_E AS t_1_E
 WHERE
-  (t_0_S.id != E.id) AND
+  (NOT (t_0_S.id <=> E.id)) AND
   (E.name = "cid") AND
-  (S.id = E.id) AND
-  (t_0_S.skill = S.skill) AND
-  (t_1_E.id = t_0_S.id)
+  (S.id <=> E.id) AND
+  (t_0_S.skill <=> S.skill) AND
+  (t_1_E.id <=> t_0_S.id)
 GROUP BY 1;

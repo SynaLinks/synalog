@@ -136,8 +136,8 @@ t_0_MemberOf AS (SELECT
 FROM
   synalog_test.Person AS Person, synalog_test.Team AS t_1_Team, t_0_Employees AS Employees
 WHERE
-  (Employees.person_id = Person.person_id) AND
-  (Employees.team_id = t_1_Team.team_id)
+  (Employees.person_id IS NOT DISTINCT FROM Person.person_id) AND
+  (Employees.team_id IS NOT DISTINCT FROM t_1_Team.team_id)
 GROUP BY 1, 2),
 t_5_Management AS (SELECT * FROM (
   
@@ -167,8 +167,8 @@ t_2_Manages AS (SELECT
 FROM
   synalog_test.Person AS t_3_Person, synalog_test.Person AS t_4_Person, t_5_Management AS Management
 WHERE
-  (Management.manager_id = t_3_Person.person_id) AND
-  (Management.employee_id = t_4_Person.person_id)
+  (Management.manager_id IS NOT DISTINCT FROM t_3_Person.person_id) AND
+  (Management.employee_id IS NOT DISTINCT FROM t_4_Person.person_id)
 GROUP BY 1, 2)
 SELECT
   Manages.manager_id AS manager_id
@@ -176,5 +176,5 @@ FROM
   t_0_MemberOf AS MemberOf, t_2_Manages AS Manages
 WHERE
   (MemberOf.team_id = 20) AND
-  (Manages.employee_id = MemberOf.person_id)
+  (Manages.employee_id IS NOT DISTINCT FROM MemberOf.person_id)
 GROUP BY 1 ORDER BY manager_id;

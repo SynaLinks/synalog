@@ -31,7 +31,7 @@ t_0_Reach_RecursiveCte AS (SELECT * FROM (
         (0 < 5) AND
         (1 = 0) AND
         (t_4_Edge."from" = 1) AND
-        (t_2_Edge."from" = t_4_Edge."to")
+        (t_2_Edge."from" IS t_4_Edge."to")
      UNION ALL
     
       SELECT
@@ -43,9 +43,9 @@ t_0_Reach_RecursiveCte AS (SELECT * FROM (
         (((0) + (1)) < 5) AND
         (0 < 5) AND
         (1 = 0) AND
-        (t_6_Edge."from" = t_8_Edge."to") AND
+        (t_6_Edge."from" IS t_8_Edge."to") AND
         (t_10_Edge."from" = 1) AND
-        (t_8_Edge."from" = t_10_Edge."to")
+        (t_8_Edge."from" IS t_10_Edge."to")
      UNION ALL
     
       SELECT
@@ -58,10 +58,10 @@ t_0_Reach_RecursiveCte AS (SELECT * FROM (
         (((0) + (1)) < 5) AND
         (0 < 5) AND
         (1 = 0) AND
-        (t_12_Edge."from" = t_14_Edge."to") AND
-        (t_14_Edge."from" = t_16_Edge."to") AND
+        (t_12_Edge."from" IS t_14_Edge."to") AND
+        (t_14_Edge."from" IS t_16_Edge."to") AND
         (t_18_Edge."from" = 1) AND
-        (t_16_Edge."from" = t_18_Edge."to")
+        (t_16_Edge."from" IS t_18_Edge."to")
     
   ) AS UNUSED_TABLE_NAME  
 ) AS UNUSED_TABLE_NAME
@@ -73,7 +73,7 @@ FROM
   t_0_Reach_RecursiveCte AS t_19_Reach_RecursiveCte, t_1_Edge AS t_20_Edge
 WHERE
   (t_19_Reach_RecursiveCte.synalog_step < 5) AND
-  (t_20_Edge."from" = t_19_Reach_RecursiveCte."to"))
+  (t_20_Edge."from" IS t_19_Reach_RecursiveCte."to"))
 SELECT
   Reach_RecursiveCte."to" AS "to"
 FROM

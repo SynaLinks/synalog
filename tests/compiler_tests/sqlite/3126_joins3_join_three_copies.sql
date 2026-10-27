@@ -17,4 +17,4 @@ SELECT
 FROM
   t_3_N AS t_0_N, t_3_N AS t_1_N, t_3_N AS t_2_N
 WHERE
-  (((t_0_N.n) + (t_1_N.n)) = t_2_N.n);
+  (((t_0_N.n) + (t_1_N.n)) IS t_2_N.n);

@@ -46,7 +46,7 @@ t_2_After_RecursiveCte AS (SELECT * FROM (
       WHERE
         (0 < 6) AND
         (1 = 0) AND
-        (t_4_Sequel.book = t_6_Sequel.next)
+        (COALESCE(t_4_Sequel.book, 0) = COALESCE(t_6_Sequel.next, 0) AND (t_4_Sequel.book IS NULL) = (t_6_Sequel.next IS NULL))
      UNION ALL
     
       SELECT
@@ -59,8 +59,8 @@ t_2_After_RecursiveCte AS (SELECT * FROM (
         (((0) + (1)) < 6) AND
         (0 < 6) AND
         (1 = 0) AND
-        (t_8_Sequel.book = t_10_Sequel.next) AND
-        (t_10_Sequel.book = t_12_Sequel.next)
+        (COALESCE(t_8_Sequel.book, 0) = COALESCE(t_10_Sequel.next, 0) AND (t_8_Sequel.book IS NULL) = (t_10_Sequel.next IS NULL)) AND
+        (COALESCE(t_10_Sequel.book, 0) = COALESCE(t_12_Sequel.next, 0) AND (t_10_Sequel.book IS NULL) = (t_12_Sequel.next IS NULL))
      UNION ALL
     
       SELECT
@@ -74,9 +74,9 @@ t_2_After_RecursiveCte AS (SELECT * FROM (
         (((0) + (1)) < 6) AND
         (0 < 6) AND
         (1 = 0) AND
-        (t_14_Sequel.book = t_16_Sequel.next) AND
-        (t_16_Sequel.book = t_18_Sequel.next) AND
-        (t_18_Sequel.book = t_20_Sequel.next)
+        (COALESCE(t_14_Sequel.book, 0) = COALESCE(t_16_Sequel.next, 0) AND (t_14_Sequel.book IS NULL) = (t_16_Sequel.next IS NULL)) AND
+        (COALESCE(t_16_Sequel.book, 0) = COALESCE(t_18_Sequel.next, 0) AND (t_16_Sequel.book IS NULL) = (t_18_Sequel.next IS NULL)) AND
+        (COALESCE(t_18_Sequel.book, 0) = COALESCE(t_20_Sequel.next, 0) AND (t_18_Sequel.book IS NULL) = (t_20_Sequel.next IS NULL))
      UNION ALL
     
       SELECT
@@ -91,10 +91,10 @@ t_2_After_RecursiveCte AS (SELECT * FROM (
         (((0) + (1)) < 6) AND
         (0 < 6) AND
         (1 = 0) AND
-        (t_22_Sequel.book = t_24_Sequel.next) AND
-        (t_24_Sequel.book = t_26_Sequel.next) AND
-        (t_26_Sequel.book = t_28_Sequel.next) AND
-        (t_28_Sequel.book = t_30_Sequel.next)
+        (COALESCE(t_22_Sequel.book, 0) = COALESCE(t_24_Sequel.next, 0) AND (t_22_Sequel.book IS NULL) = (t_24_Sequel.next IS NULL)) AND
+        (COALESCE(t_24_Sequel.book, 0) = COALESCE(t_26_Sequel.next, 0) AND (t_24_Sequel.book IS NULL) = (t_26_Sequel.next IS NULL)) AND
+        (COALESCE(t_26_Sequel.book, 0) = COALESCE(t_28_Sequel.next, 0) AND (t_26_Sequel.book IS NULL) = (t_28_Sequel.next IS NULL)) AND
+        (COALESCE(t_28_Sequel.book, 0) = COALESCE(t_30_Sequel.next, 0) AND (t_28_Sequel.book IS NULL) = (t_30_Sequel.next IS NULL))
      UNION ALL
     
       SELECT
@@ -110,11 +110,11 @@ t_2_After_RecursiveCte AS (SELECT * FROM (
         (((0) + (1)) < 6) AND
         (0 < 6) AND
         (1 = 0) AND
-        (t_32_Sequel.book = t_34_Sequel.next) AND
-        (t_34_Sequel.book = t_36_Sequel.next) AND
-        (t_36_Sequel.book = t_38_Sequel.next) AND
-        (t_38_Sequel.book = t_40_Sequel.next) AND
-        (t_40_Sequel.book = t_42_Sequel.next)
+        (COALESCE(t_32_Sequel.book, 0) = COALESCE(t_34_Sequel.next, 0) AND (t_32_Sequel.book IS NULL) = (t_34_Sequel.next IS NULL)) AND
+        (COALESCE(t_34_Sequel.book, 0) = COALESCE(t_36_Sequel.next, 0) AND (t_34_Sequel.book IS NULL) = (t_36_Sequel.next IS NULL)) AND
+        (COALESCE(t_36_Sequel.book, 0) = COALESCE(t_38_Sequel.next, 0) AND (t_36_Sequel.book IS NULL) = (t_38_Sequel.next IS NULL)) AND
+        (COALESCE(t_38_Sequel.book, 0) = COALESCE(t_40_Sequel.next, 0) AND (t_38_Sequel.book IS NULL) = (t_40_Sequel.next IS NULL)) AND
+        (COALESCE(t_40_Sequel.book, 0) = COALESCE(t_42_Sequel.next, 0) AND (t_40_Sequel.book IS NULL) = (t_42_Sequel.next IS NULL))
     
   ) AS UNUSED_TABLE_NAME  
 ) AS UNUSED_TABLE_NAME
@@ -127,7 +127,7 @@ FROM
   t_2_After_RecursiveCte AS t_43_After_RecursiveCte, t_3_Sequel AS t_44_Sequel
 WHERE
   (t_43_After_RecursiveCte.synalog_step < 6) AND
-  (t_44_Sequel.book = t_43_After_RecursiveCte.next)),
+  (COALESCE(t_44_Sequel.book, 0) = COALESCE(t_43_After_RecursiveCte.next, 0) AND (t_44_Sequel.book IS NULL) = (t_43_After_RecursiveCte.next IS NULL))),
 t_1_After AS (SELECT
   After_RecursiveCte.book AS book,
   After_RecursiveCte.next AS next
@@ -150,7 +150,7 @@ WHERE
   FROM
     t_45_IsSequel AS IsSequel, UNNEST(ARRAY[0]) as x_213
   WHERE
-    (IsSequel.book = After.book)) AS numeric) IS NULL)
+    (COALESCE(IsSequel.book, 0) = COALESCE(After.book, 0) AND (IsSequel.book IS NULL) = (After.book IS NULL))) AS numeric) IS NULL)
 GROUP BY After.book)
 SELECT
   C.book AS book,

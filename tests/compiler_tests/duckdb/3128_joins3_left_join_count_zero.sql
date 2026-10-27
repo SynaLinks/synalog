@@ -51,6 +51,6 @@ SELECT
 FROM
   t_1_E AS E, (select unnest([0]) as unnested_pod) as x_4
 WHERE
-  (E.g = t_0_G.g)), 0) AS n
+  (E.g IS NOT DISTINCT FROM t_0_G.g)), 0) AS n
 FROM
   t_2_G AS t_0_G ORDER BY g;

@@ -51,7 +51,7 @@ t_3_Person AS (SELECT
   Employees.url AS url
 FROM
   t_4_Employees AS Employees
-GROUP BY Employees.person_id, Employees.name, Employees.url ORDER BY person_id),
+GROUP BY Employees.person_id, Employees.name, Employees.url ORDER BY person_id NULLS LAST),
 t_6_Management AS (SELECT * FROM (
   
     SELECT
@@ -80,8 +80,8 @@ t_1_Manages AS (SELECT
 FROM
   t_3_Person AS Person, t_3_Person AS t_2_Person, t_6_Management AS Management
 WHERE
-  (Management.manager_id = Person.person_id) AND
-  (Management.employee_id = t_2_Person.person_id)
+  (Management.manager_id IS Person.person_id) AND
+  (Management.employee_id IS t_2_Person.person_id)
 GROUP BY Person.person_id, t_2_Person.person_id),
 t_10_Mentoring AS (SELECT * FROM (
   
@@ -101,8 +101,8 @@ t_7_Mentors AS (SELECT
 FROM
   t_3_Person AS t_8_Person, t_3_Person AS t_9_Person, t_10_Mentoring AS Mentoring
 WHERE
-  (Mentoring.mentor_id = t_8_Person.person_id) AND
-  (Mentoring.mentee_id = t_9_Person.person_id)
+  (Mentoring.mentor_id IS t_8_Person.person_id) AND
+  (Mentoring.mentee_id IS t_9_Person.person_id)
 GROUP BY t_8_Person.person_id, t_9_Person.person_id),
 t_0_Related_MultBodyAggAux AS (SELECT * FROM (
   
@@ -128,4 +128,4 @@ SELECT
   Related_MultBodyAggAux.type AS type
 FROM
   t_0_Related_MultBodyAggAux AS Related_MultBodyAggAux
-GROUP BY Related_MultBodyAggAux.source_id, Related_MultBodyAggAux.target_id, Related_MultBodyAggAux.type ORDER BY source_id, target_id, type;
+GROUP BY Related_MultBodyAggAux.source_id, Related_MultBodyAggAux.target_id, Related_MultBodyAggAux.type ORDER BY source_id NULLS LAST, target_id NULLS LAST, type NULLS LAST;

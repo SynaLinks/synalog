@@ -35,5 +35,5 @@ WHERE
   FROM
     t_1_IsSequel AS IsSequel
   WHERE
-    (IsSequel.book = Sequel.book)) IS NULL)
-GROUP BY book ORDER BY book;
+    (IsSequel.book IS NOT DISTINCT FROM Sequel.book)) IS NULL)
+GROUP BY book ORDER BY book NULLS LAST;

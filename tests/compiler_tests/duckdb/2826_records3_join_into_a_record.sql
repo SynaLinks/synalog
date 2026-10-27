@@ -102,4 +102,4 @@ SELECT
 FROM
   t_0_B AS B, t_1_Au AS Au
 WHERE
-  (Au.author = B.author) ORDER BY title, "by";
+  (Au.author IS NOT DISTINCT FROM B.author) ORDER BY title, "by";

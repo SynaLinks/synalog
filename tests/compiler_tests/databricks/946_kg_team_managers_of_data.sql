@@ -29,8 +29,8 @@ t_0_MemberOf AS (SELECT
 FROM
   t_2_Person AS Person, t_5_Team AS t_1_Team, t_4_Employees AS Employees
 WHERE
-  (Employees.person_id = Person.person_id) AND
-  (Employees.team_id = t_1_Team.team_id)
+  (Employees.person_id <=> Person.person_id) AND
+  (Employees.team_id <=> t_1_Team.team_id)
 GROUP BY 1, 2),
 t_11_Management AS (SELECT * FROM VALUES
   (1, 2),
@@ -44,8 +44,8 @@ t_7_Manages AS (SELECT
 FROM
   t_2_Person AS t_8_Person, t_2_Person AS t_9_Person, t_11_Management AS Management
 WHERE
-  (Management.manager_id = t_8_Person.person_id) AND
-  (Management.employee_id = t_9_Person.person_id)
+  (Management.manager_id <=> t_8_Person.person_id) AND
+  (Management.employee_id <=> t_9_Person.person_id)
 GROUP BY 1, 2)
 SELECT
   Manages.manager_id AS manager_id
@@ -53,5 +53,5 @@ FROM
   t_0_MemberOf AS MemberOf, t_7_Manages AS Manages
 WHERE
   (MemberOf.team_id = 30) AND
-  (Manages.employee_id = MemberOf.person_id)
+  (Manages.employee_id <=> MemberOf.person_id)
 GROUP BY 1 ORDER BY manager_id NULLS LAST;

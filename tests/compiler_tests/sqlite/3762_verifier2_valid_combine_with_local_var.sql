@@ -34,6 +34,6 @@ SELECT
 FROM
   t_1_E AS E, JSON_EACH(JSON_ARRAY(0)) as x_6
 WHERE
-  (E.a = t_0_N.n)) AS m
+  (E.a IS t_0_N.n)) AS m
 FROM
   t_2_N AS t_0_N ORDER BY n NULLS LAST;

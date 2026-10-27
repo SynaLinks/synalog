@@ -59,4 +59,4 @@ WHERE
   FROM
     t_2_Boss AS t_1_Boss, JSON_EACH(JSON_ARRAY(0)) as x_5
   WHERE
-    (t_1_Boss.id = E.id)) IS NULL) ORDER BY name NULLS LAST;
+    (t_1_Boss.id IS E.id)) IS NULL) ORDER BY name NULLS LAST;

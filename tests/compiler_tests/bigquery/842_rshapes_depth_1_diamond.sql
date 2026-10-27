@@ -42,7 +42,7 @@ t_0_R_MultBodyAggAux_recursive_head_f2 AS (SELECT * FROM (
     FROM
       t_1_R_r0 AS R_r0, t_4_E AS E
     WHERE
-      (E.a = R_r0.x)
+      (E.a IS NOT DISTINCT FROM R_r0.x)
   
 ) AS UNUSED_TABLE_NAME  )
 SELECT

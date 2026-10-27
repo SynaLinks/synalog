@@ -4,14 +4,6 @@ create schema if not exists synalog_home;
 -- Empty synalog type: synalogrecord893574736;
 DO $$ BEGIN if not exists (select 'I(am) :- I(think)' from pg_type where typname = 'synalogrecord893574736') then create type synalogrecord893574736 as (nirvana numeric); end if; END $$;
 
-
-DO $$
-BEGIN
--- Synalog type: synalogrecord481217614
-if not exists (select 'I(am) :- I(think)' from pg_type where typname = 'synalogrecord481217614') then create type synalogrecord481217614 as (r synalogrecord893574736); end if;
--- Synalog type: synalogrecord86796764
-if not exists (select 'I(am) :- I(think)' from pg_type where typname = 'synalogrecord86796764') then create type synalogrecord86796764 as (s text); end if;
-END $$;
 WITH t_4_Employees AS (SELECT * FROM (
   
     SELECT
@@ -94,8 +86,8 @@ t_1_Manages AS (SELECT
 FROM
   t_3_Person AS Person, t_3_Person AS t_2_Person, t_6_Management AS Management
 WHERE
-  (Management.manager_id = Person.person_id) AND
-  (Management.employee_id = t_2_Person.person_id)
+  (COALESCE(Management.manager_id, 0) = COALESCE(Person.person_id, 0) AND (Management.manager_id IS NULL) = (Person.person_id IS NULL)) AND
+  (COALESCE(Management.employee_id, 0) = COALESCE(t_2_Person.person_id, 0) AND (Management.employee_id IS NULL) = (t_2_Person.person_id IS NULL))
 GROUP BY Person.person_id, t_2_Person.person_id),
 t_10_Mentoring AS (SELECT * FROM (
   
@@ -115,8 +107,8 @@ t_7_Mentors AS (SELECT
 FROM
   t_3_Person AS t_8_Person, t_3_Person AS t_9_Person, t_10_Mentoring AS Mentoring
 WHERE
-  (Mentoring.mentor_id = t_8_Person.person_id) AND
-  (Mentoring.mentee_id = t_9_Person.person_id)
+  (COALESCE(Mentoring.mentor_id, 0) = COALESCE(t_8_Person.person_id, 0) AND (Mentoring.mentor_id IS NULL) = (t_8_Person.person_id IS NULL)) AND
+  (COALESCE(Mentoring.mentee_id, 0) = COALESCE(t_9_Person.person_id, 0) AND (Mentoring.mentee_id IS NULL) = (t_9_Person.person_id IS NULL))
 GROUP BY t_8_Person.person_id, t_9_Person.person_id),
 t_0_Related_MultBodyAggAux AS (SELECT * FROM (
   

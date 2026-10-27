@@ -104,4 +104,4 @@ WHERE
     t_1_L AS t_5_L, (select unnest([0]) as unnested_pod) as x_18, (select unnest(t_5_L.l) as unnested_pod) as x_22
   WHERE
     ('ink' = x_22.unnested_pod) AND
-    (t_0_L."order" = t_5_L."order")) IS NULL) ORDER BY "order";
+    (t_0_L."order" IS NOT DISTINCT FROM t_5_L."order")) IS NULL) ORDER BY "order";

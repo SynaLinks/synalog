@@ -16,4 +16,4 @@ SELECT
 FROM
   t_1_V AS t_0_V
 WHERE
-  (FLOOR(t_0_V.x) = t_0_V.x) ORDER BY id NULLS LAST;
+  (FLOOR(t_0_V.x) <=> t_0_V.x) ORDER BY id NULLS LAST;

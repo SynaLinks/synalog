@@ -20,6 +20,6 @@ SELECT
 FROM
   t_1_O AS O
 WHERE
-  (O.c = t_0_C.c)) AS v
+  (O.c <=> t_0_C.c)) AS v
 FROM
   t_2_C AS t_0_C ORDER BY c NULLS LAST;

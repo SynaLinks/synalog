@@ -36,4 +36,4 @@ SELECT
 FROM
   t_0_T AS T, UNNEST(TRANSFORM(SPLIT(T.s, ';'), synalog_e -> ROW(synalog_e))) as pushkin(x_4)
 WHERE
-  (x_4 != '') ORDER BY k, x;
+  (x_4 IS DISTINCT FROM '') ORDER BY k, x;

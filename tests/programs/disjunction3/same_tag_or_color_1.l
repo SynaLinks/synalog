@@ -1,5 +1,5 @@
-# Items sharing item 1's tag or color; a null shares nothing.
-# Expect: rows Q = [(3,)]
+# Items sharing item 1's tag or color; a null is shared with a null.
+# Expect: rows Q = [(3,), (4,)]
 I(id: 1, c: "red", p: 10, t: null);
 I(id: 2, c: "blue", p: 25, t: "x");
 I(id: 3, c: "red", p: 40, t: "y");

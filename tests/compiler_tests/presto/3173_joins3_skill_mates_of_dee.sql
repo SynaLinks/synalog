@@ -84,9 +84,9 @@ SELECT
 FROM
   t_2_E AS E, t_3_S AS S, t_3_S AS t_0_S, t_2_E AS t_1_E
 WHERE
-  (t_0_S.id != E.id) AND
+  (t_0_S.id IS DISTINCT FROM E.id) AND
   (E.name = 'dee') AND
-  (S.id = E.id) AND
-  (t_0_S.skill = S.skill) AND
-  (t_1_E.id = t_0_S.id)
+  (S.id IS NOT DISTINCT FROM E.id) AND
+  (t_0_S.skill IS NOT DISTINCT FROM S.skill) AND
+  (t_1_E.id IS NOT DISTINCT FROM t_0_S.id)
 GROUP BY 1;

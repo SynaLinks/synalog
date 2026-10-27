@@ -72,4 +72,4 @@ FROM
   t_2_Reading AS Reading, t_2_Reading AS t_1_Reading
 WHERE
   (((Reading.value) - (t_1_Reading.value)) < 0) AND
-  (t_1_Reading.day = ((Reading.day) - (1)));
+  (COALESCE(t_1_Reading.day, 0) = COALESCE(((Reading.day) - (1)), 0) AND (t_1_Reading.day IS NULL) = (((Reading.day) - (1)) IS NULL));

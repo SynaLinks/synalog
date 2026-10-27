@@ -1,5 +1,5 @@
-# The spread of pr per r: the greatest less the least; a null r meets no null in the join.
-# Expect: rows Q = [('east', 0.0), ('north', 6.0), ('south', 9.0), ('west', 0.0)]
+# The spread of pr per r: the greatest less the least; the null r meets itself in the join.
+# Expect: rows Q = [('east', 0.0), ('north', 6.0), ('south', 9.0), ('west', 0.0), (None, 8.0)]
 S(id: 1, r: "north", p: "ax", q: 3, pr: 10.0);
 S(id: 2, r: "north", p: "ax", q: null, pr: 10.0);
 S(id: 3, r: "north", p: "bo", q: 5, pr: 4.0);

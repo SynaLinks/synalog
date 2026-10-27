@@ -62,7 +62,7 @@ FROM
   t_2_Sale AS t_0_Sale, t_2_Sale AS t_1_Sale, t_2_Sale AS Sale
 WHERE
   (Sale.amount < 60) AND
-  (t_1_Sale.id = t_0_Sale.id) AND
-  (Sale.id = t_0_Sale.id) AND
+  (t_1_Sale.id IS NOT DISTINCT FROM t_0_Sale.id) AND
+  (Sale.id IS NOT DISTINCT FROM t_0_Sale.id) AND
   (t_0_Sale.region = "south") AND
-  (t_1_Sale.product = "cake") ORDER BY id;
+  (t_1_Sale.product = "cake") ORDER BY id NULLS LAST;

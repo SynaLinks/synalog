@@ -170,8 +170,8 @@ WHERE
   FROM
     t_6_Loan AS Loan
   WHERE
-    (Loan.member = t_3_Member.name) AND
-    (Loan.book = t_4_Book.id)) IS NULL) AND
+    (Loan.member IS NOT DISTINCT FROM t_3_Member.name) AND
+    (Loan.book IS NOT DISTINCT FROM t_4_Book.id)) IS NULL) AND
   (t_4_Book.author = 'asimov')
 GROUP BY 1)
 SELECT
@@ -184,4 +184,4 @@ WHERE
   FROM
     t_2_Missed AS Missed
   WHERE
-    (Missed.name = t_0_Member.name)) IS NULL);
+    (Missed.name IS NOT DISTINCT FROM t_0_Member.name)) IS NULL);

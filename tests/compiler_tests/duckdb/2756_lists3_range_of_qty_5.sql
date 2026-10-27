@@ -102,5 +102,5 @@ SELECT
 FROM
   t_2_I AS I, t_3_T AS t_1_T
 WHERE
-  (I.pos = t_1_T.pos) AND
+  (I.pos IS NOT DISTINCT FROM t_1_T.pos) AND
   (I."order" = 5) ORDER BY pos, n, t;

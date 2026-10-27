@@ -102,4 +102,4 @@ SELECT
 FROM
   t_0_B AS B, t_1_Au AS Au
 WHERE
-  (Au.author = B.author) ORDER BY title, "by";
+  (COALESCE(Au.author, '') = COALESCE(B.author, '') AND (Au.author IS NULL) = (B.author IS NULL)) ORDER BY title, "by";

@@ -4,14 +4,6 @@ create schema if not exists synalog_home;
 -- Empty synalog type: synalogrecord893574736;
 DO $$ BEGIN if not exists (select 'I(am) :- I(think)' from pg_type where typname = 'synalogrecord893574736') then create type synalogrecord893574736 as (nirvana numeric); end if; END $$;
 
-
-DO $$
-BEGIN
--- Synalog type: synalogrecord481217614
-if not exists (select 'I(am) :- I(think)' from pg_type where typname = 'synalogrecord481217614') then create type synalogrecord481217614 as (r synalogrecord893574736); end if;
--- Synalog type: synalogrecord86796764
-if not exists (select 'I(am) :- I(think)' from pg_type where typname = 'synalogrecord86796764') then create type synalogrecord86796764 as (s text); end if;
-END $$;
 WITH t_5_E AS (SELECT * FROM (
   
     SELECT
@@ -95,9 +87,9 @@ FROM
 WHERE
   (U.a < U.b) AND
   (U.b < t_1_U.b) AND
-  (t_1_U.a = U.b) AND
-  (t_2_U.a = t_1_U.b) AND
-  (t_2_U.b = U.a)
+  (COALESCE(t_1_U.a, 0) = COALESCE(U.b, 0) AND (t_1_U.a IS NULL) = (U.b IS NULL)) AND
+  (COALESCE(t_2_U.a, 0) = COALESCE(t_1_U.b, 0) AND (t_2_U.a IS NULL) = (t_1_U.b IS NULL)) AND
+  (COALESCE(t_2_U.b, 0) = COALESCE(U.a, 0) AND (t_2_U.b IS NULL) = (U.a IS NULL))
 GROUP BY U.a, U.b, t_1_U.b)
 SELECT
   SUM(1) AS n

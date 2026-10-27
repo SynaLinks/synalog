@@ -44,7 +44,7 @@ t_1_R_RecursiveCte AS (SELECT * FROM (
         (((0) + (1)) < 5) AND
         (0 < 5) AND
         (1 = 0) AND
-        (t_5_E.a = t_7_E.b) AND
+        (t_5_E.a IS NOT DISTINCT FROM t_7_E.b) AND
         (t_7_E.a = 1)
      UNION ALL
     
@@ -58,8 +58,8 @@ t_1_R_RecursiveCte AS (SELECT * FROM (
         (((0) + (1)) < 5) AND
         (0 < 5) AND
         (1 = 0) AND
-        (t_10_E.a = t_12_E.b) AND
-        (t_12_E.a = t_14_E.b) AND
+        (t_10_E.a IS NOT DISTINCT FROM t_12_E.b) AND
+        (t_12_E.a IS NOT DISTINCT FROM t_14_E.b) AND
         (t_14_E.a = 1)
     
   ) AS UNUSED_TABLE_NAME  
@@ -72,7 +72,7 @@ FROM
   t_1_R_RecursiveCte AS t_16_R_RecursiveCte, t_3_E AS t_17_E
 WHERE
   (t_16_R_RecursiveCte.synalog_step < 5) AND
-  (t_17_E.a = t_16_R_RecursiveCte.x)),
+  (t_17_E.a IS NOT DISTINCT FROM t_16_R_RecursiveCte.x)),
 t_0_R AS (SELECT
   R_RecursiveCte.x AS x
 FROM
@@ -88,4 +88,4 @@ WHERE
   FROM
     t_0_R AS R, (select unnest([0]) as unnested_pod) as x_6
   WHERE
-    (R.x = x_3.unnested_pod)) IS NULL);
+    (R.x IS NOT DISTINCT FROM x_3.unnested_pod)) IS NULL);

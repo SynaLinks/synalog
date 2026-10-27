@@ -73,12 +73,12 @@ SELECT
 FROM
   t_1_O AS O, (select unnest([0]) as unnested_pod) as x_6
 WHERE
-  (O.c = t_0_C.c)) AS t,
+  (O.c IS NOT DISTINCT FROM t_0_C.c)) AS t,
   (SELECT
   SUM((CASE WHEN x_9.unnested_pod = 0 THEN 1 ELSE NULL END)) AS synalog_value
 FROM
   t_1_O AS t_2_O, (select unnest([0]) as unnested_pod) as x_9
 WHERE
-  (t_2_O.c = t_0_C.c)) AS n
+  (t_2_O.c IS NOT DISTINCT FROM t_0_C.c)) AS n
 FROM
   t_3_C AS t_0_C ORDER BY c;

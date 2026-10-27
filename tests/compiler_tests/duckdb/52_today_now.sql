@@ -9,4 +9,4 @@ SELECT
 FROM
   (SELECT strftime(current_timestamp AT TIME ZONE 'UTC', '%Y-%m-%d') AS date) AS Today, (SELECT current_timestamp AT TIME ZONE 'UTC' AS timestamp) AS Now
 WHERE
-  (SUBSTR(CAST(Now.timestamp AS TEXT), 1, 10) = Today.date) ORDER BY n;
+  (SUBSTR(CAST(Now.timestamp AS TEXT), 1, 10) IS NOT DISTINCT FROM Today.date) ORDER BY n;

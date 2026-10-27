@@ -48,7 +48,7 @@ t_0_C_RecursiveCte AS (SELECT * FROM (
       WHERE
         (0 < 4) AND
         (1 = 0) AND
-        (t_2_Own.owner = t_4_Own.owned)
+        (COALESCE(t_2_Own.owner, '') = COALESCE(t_4_Own.owned, '') AND (t_2_Own.owner IS NULL) = (t_4_Own.owned IS NULL))
      UNION ALL
     
       SELECT
@@ -63,8 +63,8 @@ t_0_C_RecursiveCte AS (SELECT * FROM (
         (((0) + (1)) < 4) AND
         (0 < 4) AND
         (1 = 0) AND
-        (t_6_Own.owner = t_8_Own.owned) AND
-        (t_8_Own.owner = t_10_Own.owned)
+        (COALESCE(t_6_Own.owner, '') = COALESCE(t_8_Own.owned, '') AND (t_6_Own.owner IS NULL) = (t_8_Own.owned IS NULL)) AND
+        (COALESCE(t_8_Own.owner, '') = COALESCE(t_10_Own.owned, '') AND (t_8_Own.owner IS NULL) = (t_10_Own.owned IS NULL))
      UNION ALL
     
       SELECT
@@ -80,9 +80,9 @@ t_0_C_RecursiveCte AS (SELECT * FROM (
         (((0) + (1)) < 4) AND
         (0 < 4) AND
         (1 = 0) AND
-        (t_12_Own.owner = t_14_Own.owned) AND
-        (t_14_Own.owner = t_16_Own.owned) AND
-        (t_16_Own.owner = t_18_Own.owned)
+        (COALESCE(t_12_Own.owner, '') = COALESCE(t_14_Own.owned, '') AND (t_12_Own.owner IS NULL) = (t_14_Own.owned IS NULL)) AND
+        (COALESCE(t_14_Own.owner, '') = COALESCE(t_16_Own.owned, '') AND (t_14_Own.owner IS NULL) = (t_16_Own.owned IS NULL)) AND
+        (COALESCE(t_16_Own.owner, '') = COALESCE(t_18_Own.owned, '') AND (t_16_Own.owner IS NULL) = (t_18_Own.owned IS NULL))
      UNION ALL
     
       SELECT
@@ -99,10 +99,10 @@ t_0_C_RecursiveCte AS (SELECT * FROM (
         (((0) + (1)) < 4) AND
         (0 < 4) AND
         (1 = 0) AND
-        (t_20_Own.owner = t_22_Own.owned) AND
-        (t_22_Own.owner = t_24_Own.owned) AND
-        (t_24_Own.owner = t_26_Own.owned) AND
-        (t_26_Own.owner = t_28_Own.owned)
+        (COALESCE(t_20_Own.owner, '') = COALESCE(t_22_Own.owned, '') AND (t_20_Own.owner IS NULL) = (t_22_Own.owned IS NULL)) AND
+        (COALESCE(t_22_Own.owner, '') = COALESCE(t_24_Own.owned, '') AND (t_22_Own.owner IS NULL) = (t_24_Own.owned IS NULL)) AND
+        (COALESCE(t_24_Own.owner, '') = COALESCE(t_26_Own.owned, '') AND (t_24_Own.owner IS NULL) = (t_26_Own.owned IS NULL)) AND
+        (COALESCE(t_26_Own.owner, '') = COALESCE(t_28_Own.owned, '') AND (t_26_Own.owner IS NULL) = (t_28_Own.owned IS NULL))
      UNION ALL
     
       SELECT
@@ -120,11 +120,11 @@ t_0_C_RecursiveCte AS (SELECT * FROM (
         (((0) + (1)) < 4) AND
         (0 < 4) AND
         (1 = 0) AND
-        (t_30_Own.owner = t_32_Own.owned) AND
-        (t_32_Own.owner = t_34_Own.owned) AND
-        (t_34_Own.owner = t_36_Own.owned) AND
-        (t_36_Own.owner = t_38_Own.owned) AND
-        (t_38_Own.owner = t_40_Own.owned)
+        (COALESCE(t_30_Own.owner, '') = COALESCE(t_32_Own.owned, '') AND (t_30_Own.owner IS NULL) = (t_32_Own.owned IS NULL)) AND
+        (COALESCE(t_32_Own.owner, '') = COALESCE(t_34_Own.owned, '') AND (t_32_Own.owner IS NULL) = (t_34_Own.owned IS NULL)) AND
+        (COALESCE(t_34_Own.owner, '') = COALESCE(t_36_Own.owned, '') AND (t_34_Own.owner IS NULL) = (t_36_Own.owned IS NULL)) AND
+        (COALESCE(t_36_Own.owner, '') = COALESCE(t_38_Own.owned, '') AND (t_36_Own.owner IS NULL) = (t_38_Own.owned IS NULL)) AND
+        (COALESCE(t_38_Own.owner, '') = COALESCE(t_40_Own.owned, '') AND (t_38_Own.owner IS NULL) = (t_40_Own.owned IS NULL))
      UNION ALL
     
       SELECT
@@ -143,12 +143,12 @@ t_0_C_RecursiveCte AS (SELECT * FROM (
         (((0) + (1)) < 4) AND
         (0 < 4) AND
         (1 = 0) AND
-        (t_42_Own.owner = t_44_Own.owned) AND
-        (t_44_Own.owner = t_46_Own.owned) AND
-        (t_46_Own.owner = t_48_Own.owned) AND
-        (t_48_Own.owner = t_50_Own.owned) AND
-        (t_50_Own.owner = t_52_Own.owned) AND
-        (t_52_Own.owner = t_54_Own.owned)
+        (COALESCE(t_42_Own.owner, '') = COALESCE(t_44_Own.owned, '') AND (t_42_Own.owner IS NULL) = (t_44_Own.owned IS NULL)) AND
+        (COALESCE(t_44_Own.owner, '') = COALESCE(t_46_Own.owned, '') AND (t_44_Own.owner IS NULL) = (t_46_Own.owned IS NULL)) AND
+        (COALESCE(t_46_Own.owner, '') = COALESCE(t_48_Own.owned, '') AND (t_46_Own.owner IS NULL) = (t_48_Own.owned IS NULL)) AND
+        (COALESCE(t_48_Own.owner, '') = COALESCE(t_50_Own.owned, '') AND (t_48_Own.owner IS NULL) = (t_50_Own.owned IS NULL)) AND
+        (COALESCE(t_50_Own.owner, '') = COALESCE(t_52_Own.owned, '') AND (t_50_Own.owner IS NULL) = (t_52_Own.owned IS NULL)) AND
+        (COALESCE(t_52_Own.owner, '') = COALESCE(t_54_Own.owned, '') AND (t_52_Own.owner IS NULL) = (t_54_Own.owned IS NULL))
      UNION ALL
     
       SELECT
@@ -168,13 +168,13 @@ t_0_C_RecursiveCte AS (SELECT * FROM (
         (((0) + (1)) < 4) AND
         (0 < 4) AND
         (1 = 0) AND
-        (t_56_Own.owner = t_58_Own.owned) AND
-        (t_58_Own.owner = t_60_Own.owned) AND
-        (t_60_Own.owner = t_62_Own.owned) AND
-        (t_62_Own.owner = t_64_Own.owned) AND
-        (t_64_Own.owner = t_66_Own.owned) AND
-        (t_66_Own.owner = t_68_Own.owned) AND
-        (t_68_Own.owner = t_70_Own.owned)
+        (COALESCE(t_56_Own.owner, '') = COALESCE(t_58_Own.owned, '') AND (t_56_Own.owner IS NULL) = (t_58_Own.owned IS NULL)) AND
+        (COALESCE(t_58_Own.owner, '') = COALESCE(t_60_Own.owned, '') AND (t_58_Own.owner IS NULL) = (t_60_Own.owned IS NULL)) AND
+        (COALESCE(t_60_Own.owner, '') = COALESCE(t_62_Own.owned, '') AND (t_60_Own.owner IS NULL) = (t_62_Own.owned IS NULL)) AND
+        (COALESCE(t_62_Own.owner, '') = COALESCE(t_64_Own.owned, '') AND (t_62_Own.owner IS NULL) = (t_64_Own.owned IS NULL)) AND
+        (COALESCE(t_64_Own.owner, '') = COALESCE(t_66_Own.owned, '') AND (t_64_Own.owner IS NULL) = (t_66_Own.owned IS NULL)) AND
+        (COALESCE(t_66_Own.owner, '') = COALESCE(t_68_Own.owned, '') AND (t_66_Own.owner IS NULL) = (t_68_Own.owned IS NULL)) AND
+        (COALESCE(t_68_Own.owner, '') = COALESCE(t_70_Own.owned, '') AND (t_68_Own.owner IS NULL) = (t_70_Own.owned IS NULL))
      UNION ALL
     
       SELECT
@@ -195,14 +195,14 @@ t_0_C_RecursiveCte AS (SELECT * FROM (
         (((0) + (1)) < 4) AND
         (0 < 4) AND
         (1 = 0) AND
-        (t_72_Own.owner = t_74_Own.owned) AND
-        (t_74_Own.owner = t_76_Own.owned) AND
-        (t_76_Own.owner = t_78_Own.owned) AND
-        (t_78_Own.owner = t_80_Own.owned) AND
-        (t_80_Own.owner = t_82_Own.owned) AND
-        (t_82_Own.owner = t_84_Own.owned) AND
-        (t_84_Own.owner = t_86_Own.owned) AND
-        (t_86_Own.owner = t_88_Own.owned)
+        (COALESCE(t_72_Own.owner, '') = COALESCE(t_74_Own.owned, '') AND (t_72_Own.owner IS NULL) = (t_74_Own.owned IS NULL)) AND
+        (COALESCE(t_74_Own.owner, '') = COALESCE(t_76_Own.owned, '') AND (t_74_Own.owner IS NULL) = (t_76_Own.owned IS NULL)) AND
+        (COALESCE(t_76_Own.owner, '') = COALESCE(t_78_Own.owned, '') AND (t_76_Own.owner IS NULL) = (t_78_Own.owned IS NULL)) AND
+        (COALESCE(t_78_Own.owner, '') = COALESCE(t_80_Own.owned, '') AND (t_78_Own.owner IS NULL) = (t_80_Own.owned IS NULL)) AND
+        (COALESCE(t_80_Own.owner, '') = COALESCE(t_82_Own.owned, '') AND (t_80_Own.owner IS NULL) = (t_82_Own.owned IS NULL)) AND
+        (COALESCE(t_82_Own.owner, '') = COALESCE(t_84_Own.owned, '') AND (t_82_Own.owner IS NULL) = (t_84_Own.owned IS NULL)) AND
+        (COALESCE(t_84_Own.owner, '') = COALESCE(t_86_Own.owned, '') AND (t_84_Own.owner IS NULL) = (t_86_Own.owned IS NULL)) AND
+        (COALESCE(t_86_Own.owner, '') = COALESCE(t_88_Own.owned, '') AND (t_86_Own.owner IS NULL) = (t_88_Own.owned IS NULL))
      UNION ALL
     
       SELECT
@@ -224,15 +224,15 @@ t_0_C_RecursiveCte AS (SELECT * FROM (
         (((0) + (1)) < 4) AND
         (0 < 4) AND
         (1 = 0) AND
-        (t_90_Own.owner = t_92_Own.owned) AND
-        (t_92_Own.owner = t_94_Own.owned) AND
-        (t_94_Own.owner = t_96_Own.owned) AND
-        (t_96_Own.owner = t_98_Own.owned) AND
-        (t_98_Own.owner = t_100_Own.owned) AND
-        (t_100_Own.owner = t_102_Own.owned) AND
-        (t_102_Own.owner = t_104_Own.owned) AND
-        (t_104_Own.owner = t_106_Own.owned) AND
-        (t_106_Own.owner = t_108_Own.owned)
+        (COALESCE(t_90_Own.owner, '') = COALESCE(t_92_Own.owned, '') AND (t_90_Own.owner IS NULL) = (t_92_Own.owned IS NULL)) AND
+        (COALESCE(t_92_Own.owner, '') = COALESCE(t_94_Own.owned, '') AND (t_92_Own.owner IS NULL) = (t_94_Own.owned IS NULL)) AND
+        (COALESCE(t_94_Own.owner, '') = COALESCE(t_96_Own.owned, '') AND (t_94_Own.owner IS NULL) = (t_96_Own.owned IS NULL)) AND
+        (COALESCE(t_96_Own.owner, '') = COALESCE(t_98_Own.owned, '') AND (t_96_Own.owner IS NULL) = (t_98_Own.owned IS NULL)) AND
+        (COALESCE(t_98_Own.owner, '') = COALESCE(t_100_Own.owned, '') AND (t_98_Own.owner IS NULL) = (t_100_Own.owned IS NULL)) AND
+        (COALESCE(t_100_Own.owner, '') = COALESCE(t_102_Own.owned, '') AND (t_100_Own.owner IS NULL) = (t_102_Own.owned IS NULL)) AND
+        (COALESCE(t_102_Own.owner, '') = COALESCE(t_104_Own.owned, '') AND (t_102_Own.owner IS NULL) = (t_104_Own.owned IS NULL)) AND
+        (COALESCE(t_104_Own.owner, '') = COALESCE(t_106_Own.owned, '') AND (t_104_Own.owner IS NULL) = (t_106_Own.owned IS NULL)) AND
+        (COALESCE(t_106_Own.owner, '') = COALESCE(t_108_Own.owned, '') AND (t_106_Own.owner IS NULL) = (t_108_Own.owned IS NULL))
     
   ) AS UNUSED_TABLE_NAME  
 ) AS UNUSED_TABLE_NAME
@@ -247,7 +247,7 @@ FROM
   t_0_C_RecursiveCte AS t_109_C_RecursiveCte, t_1_Own AS t_110_Own
 WHERE
   (t_109_C_RecursiveCte.synalog_step < 4) AND
-  (t_110_Own.owner = t_109_C_RecursiveCte.entity))
+  (COALESCE(t_110_Own.owner, '') = COALESCE(t_109_C_RecursiveCte.entity, '') AND (t_110_Own.owner IS NULL) = (t_109_C_RecursiveCte.entity IS NULL)))
 SELECT
   C_RecursiveCte.owner AS owner,
   C_RecursiveCte.entity AS entity,

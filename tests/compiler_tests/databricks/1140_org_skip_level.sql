@@ -15,4 +15,4 @@ SELECT
 FROM
   t_1_Manages AS Manages, t_1_Manages AS t_0_Manages
 WHERE
-  (t_0_Manages.boss = Manages.report) ORDER BY boss NULLS LAST, report NULLS LAST;
+  (t_0_Manages.boss <=> Manages.report) ORDER BY boss NULLS LAST, report NULLS LAST;

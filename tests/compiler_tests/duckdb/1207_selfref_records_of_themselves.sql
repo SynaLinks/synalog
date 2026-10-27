@@ -9,4 +9,4 @@ SELECT
 FROM
   (select unnest([0, 1, 2, 4]) as unnested_pod) as x_3
 WHERE
-  (x_3.unnested_pod = ((x_3.unnested_pod) * (x_3.unnested_pod))) ORDER BY x;
+  (x_3.unnested_pod IS NOT DISTINCT FROM ((x_3.unnested_pod) * (x_3.unnested_pod))) ORDER BY x;

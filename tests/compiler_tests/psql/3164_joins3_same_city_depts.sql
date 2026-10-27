@@ -37,4 +37,4 @@ FROM
   t_1_D AS D, t_1_D AS t_0_D
 WHERE
   (D.dname < t_0_D.dname) AND
-  (t_0_D.city = D.city);
+  (COALESCE(t_0_D.city, '') = COALESCE(D.city, '') AND (t_0_D.city IS NULL) = (D.city IS NULL));

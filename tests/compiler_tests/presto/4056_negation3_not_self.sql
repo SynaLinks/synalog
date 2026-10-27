@@ -46,4 +46,4 @@ SELECT
 FROM
   t_0_F AS F
 WHERE
-  (F.a != F.b) ORDER BY a, b;
+  (F.a IS DISTINCT FROM F.b) ORDER BY a, b;

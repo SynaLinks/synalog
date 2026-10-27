@@ -37,5 +37,5 @@ WHERE
   FROM
     t_2_E AS E
   WHERE
-    (E.a = t_0_N.n) AND
+    (E.a IS NOT DISTINCT FROM t_0_N.n) AND
     (E.b = 3)) IS NULL) ORDER BY n NULLS LAST;

@@ -4,4 +4,4 @@ SELECT
 FROM
   UNNEST(TRANSFORM(ARRAY['a', 'b'], synalog_e -> ROW(synalog_e))) as pushkin(x_5), UNNEST(TRANSFORM(ARRAY['a', 'b'], synalog_e -> ROW(synalog_e))) as pushkin(x_7)
 WHERE
-  (x_5 != x_7) ORDER BY a, b;
+  (x_5 IS DISTINCT FROM x_7) ORDER BY a, b;

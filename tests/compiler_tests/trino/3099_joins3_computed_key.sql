@@ -74,4 +74,4 @@ SELECT
 FROM
   t_0_E AS E, t_1_D AS D
 WHERE
-  (D.dept = ((E.dept) + (10))) ORDER BY name, dname;
+  (D.dept IS NOT DISTINCT FROM ((E.dept) + (10))) ORDER BY name, dname;

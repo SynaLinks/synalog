@@ -94,5 +94,5 @@ WHERE
       t_3_F AS F, JSON_EACH(JSON_ARRAY(0)) as x_11
     WHERE
       (F.a = 'eve') AND
-      (F.b = t_2_U.u)) IS NULL)) IS NULL) AND
+      (F.b IS t_2_U.u)) IS NULL)) IS NULL) AND
   (t_0_U.u = 'eve');

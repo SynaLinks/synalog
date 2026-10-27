@@ -3,4 +3,4 @@ SELECT
 FROM
   (SELECT date('now') AS date) AS Today, (SELECT datetime('now') AS timestamp) AS Now
 WHERE
-  (SUBSTR(CAST(Now.timestamp AS TEXT), 1, 10) = Today.date) ORDER BY n;
+  (SUBSTR(CAST(Now.timestamp AS TEXT), 1, 10) IS Today.date) ORDER BY n NULLS LAST;

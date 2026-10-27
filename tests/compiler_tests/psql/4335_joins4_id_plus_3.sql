@@ -76,4 +76,4 @@ SELECT
 FROM
   t_1_E AS E, t_1_E AS t_0_E
 WHERE
-  (t_0_E.id = ((E.id) + (3))) ORDER BY a;
+  (COALESCE(t_0_E.id, 0) = COALESCE(((E.id) + (3)), 0) AND (t_0_E.id IS NULL) = (((E.id) + (3)) IS NULL)) ORDER BY a;

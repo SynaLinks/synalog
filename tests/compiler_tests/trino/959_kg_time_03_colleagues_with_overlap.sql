@@ -124,7 +124,7 @@ FROM
   t_1_Events AS Events, t_1_Events AS t_0_Events
 WHERE
   (t_0_Events.changed_at > Events.changed_at) AND
-  (t_0_Events.person_id = Events.person_id)
+  (t_0_Events.person_id IS NOT DISTINCT FROM Events.person_id)
 GROUP BY 1, 2;
 
 -- Interacting with table synalog_test.NextChange
@@ -172,10 +172,10 @@ t_0_Member_MultBodyAggAux AS (SELECT * FROM (
     FROM
       synalog_test.Person AS Person, synalog_test.Team AS Team, t_1_Events AS Events, synalog_test.NextChange AS NextChange
     WHERE
-      (Events.person_id = Person.person_id) AND
-      (Events.team_id = Team.team_id) AND
-      (NextChange.person_id = Person.person_id) AND
-      (NextChange.changed_at = Events.changed_at)
+      (Events.person_id IS NOT DISTINCT FROM Person.person_id) AND
+      (Events.team_id IS NOT DISTINCT FROM Team.team_id) AND
+      (NextChange.person_id IS NOT DISTINCT FROM Person.person_id) AND
+      (NextChange.changed_at IS NOT DISTINCT FROM Events.changed_at)
    UNION ALL
   
     SELECT
@@ -191,10 +191,10 @@ t_0_Member_MultBodyAggAux AS (SELECT * FROM (
       FROM
         synalog_test.NextChange AS t_5_NextChange
       WHERE
-        (t_5_NextChange.person_id = t_2_Person.person_id) AND
-        (t_5_NextChange.changed_at = t_4_Events.changed_at)) IS NULL) AND
-      (t_4_Events.person_id = t_2_Person.person_id) AND
-      (t_4_Events.team_id = t_3_Team.team_id)
+        (t_5_NextChange.person_id IS NOT DISTINCT FROM t_2_Person.person_id) AND
+        (t_5_NextChange.changed_at IS NOT DISTINCT FROM t_4_Events.changed_at)) IS NULL) AND
+      (t_4_Events.person_id IS NOT DISTINCT FROM t_2_Person.person_id) AND
+      (t_4_Events.team_id IS NOT DISTINCT FROM t_3_Team.team_id)
   
 ) AS UNUSED_TABLE_NAME  )
 SELECT
@@ -219,5 +219,5 @@ FROM
 WHERE
   (Member.person_id < t_0_Member.person_id) AND
   (CASE WHEN (Member.valid_from > t_0_Member.valid_from) THEN Member.valid_from ELSE t_0_Member.valid_from END < CASE WHEN (Member.valid_to < t_0_Member.valid_to) THEN Member.valid_to ELSE t_0_Member.valid_to END) AND
-  (t_0_Member.team_id = Member.team_id)
+  (t_0_Member.team_id IS NOT DISTINCT FROM Member.team_id)
 GROUP BY 1, 2, 3, 4, 5 ORDER BY person_a, person_b, valid_from;

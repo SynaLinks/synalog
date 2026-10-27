@@ -56,4 +56,4 @@ WHERE
   FROM
     t_1_D AS D, JSON_EACH(JSON_ARRAY(0)) as x_5
   WHERE
-    (D.dept = Pr.dept)) IS NULL);
+    (D.dept IS Pr.dept)) IS NULL);

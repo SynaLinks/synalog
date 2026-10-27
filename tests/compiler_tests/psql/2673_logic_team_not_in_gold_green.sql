@@ -72,4 +72,4 @@ WHERE
   FROM
     UNNEST(ARRAY[0]) as x_5, UNNEST(ARRAY['gold', 'green']) as x_7
   WHERE
-    (Person.team = x_7)) AS numeric) IS NULL) ORDER BY id;
+    (COALESCE(Person.team, '') = COALESCE(x_7, '') AND (Person.team IS NULL) = (x_7 IS NULL))) AS numeric) IS NULL) ORDER BY id;

@@ -23,4 +23,4 @@ WHERE
   FROM
     t_2_Boss AS t_1_Boss
   WHERE
-    (t_1_Boss.id = E.id)) IS NULL) ORDER BY name NULLS LAST;
+    (t_1_Boss.id <=> E.id)) IS NULL) ORDER BY name NULLS LAST;

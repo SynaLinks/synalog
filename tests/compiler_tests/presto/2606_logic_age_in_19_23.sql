@@ -61,4 +61,4 @@ SELECT
 FROM
   t_0_Person AS Person, UNNEST(TRANSFORM(ARRAY[19, 23], synalog_e -> ROW(synalog_e))) as pushkin(x_3)
 WHERE
-  (Person.age = x_3) ORDER BY id;
+  (Person.age IS NOT DISTINCT FROM x_3) ORDER BY id;

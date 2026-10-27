@@ -47,7 +47,7 @@ t_1_Hop_MultBodyAggAux_f3 AS (SELECT * FROM (
       synalog_test.Hop_sn_t0 AS Hop_sn_t0, t_2_Edge AS Edge
     WHERE
       (Hop_sn_t0.d < 5) AND
-      (Edge.a = Hop_sn_t0.node)
+      (Edge.a <=> Hop_sn_t0.node)
   
 ) AS UNUSED_TABLE_NAME  ),
 t_0_Hop_sn_r1 AS (SELECT
@@ -87,7 +87,7 @@ t_1_Hop_MultBodyAggAux_f4 AS (SELECT * FROM (
       synalog_test.Hop_sn_t1 AS Hop_sn_t1, t_2_Edge AS Edge
     WHERE
       (Hop_sn_t1.d < 5) AND
-      (Edge.a = Hop_sn_t1.node)
+      (Edge.a <=> Hop_sn_t1.node)
   
 ) AS UNUSED_TABLE_NAME  ),
 t_0_Hop_sn_r2 AS (SELECT
@@ -127,7 +127,7 @@ t_1_Hop_MultBodyAggAux_f5 AS (SELECT * FROM (
       synalog_test.Hop_sn_t2 AS Hop_sn_t2, t_2_Edge AS Edge
     WHERE
       (Hop_sn_t2.d < 5) AND
-      (Edge.a = Hop_sn_t2.node)
+      (Edge.a <=> Hop_sn_t2.node)
   
 ) AS UNUSED_TABLE_NAME  ),
 t_0_Hop_sn_r3 AS (SELECT
@@ -167,7 +167,7 @@ t_1_Hop_MultBodyAggAux_f6 AS (SELECT * FROM (
       synalog_test.Hop_sn_t3 AS Hop_sn_t3, t_2_Edge AS Edge
     WHERE
       (Hop_sn_t3.d < 5) AND
-      (Edge.a = Hop_sn_t3.node)
+      (Edge.a <=> Hop_sn_t3.node)
   
 ) AS UNUSED_TABLE_NAME  ),
 t_0_Hop_sn_r4 AS (SELECT
@@ -207,7 +207,7 @@ t_1_Hop_MultBodyAggAux_f7 AS (SELECT * FROM (
       synalog_test.Hop_sn_t4 AS Hop_sn_t4, t_2_Edge AS Edge
     WHERE
       (Hop_sn_t4.d < 5) AND
-      (Edge.a = Hop_sn_t4.node)
+      (Edge.a <=> Hop_sn_t4.node)
   
 ) AS UNUSED_TABLE_NAME  ),
 t_0_Hop_sn_r5 AS (SELECT
@@ -295,7 +295,7 @@ t_1_Hop_MultBodyAggAux_f8 AS (SELECT * FROM (
       synalog_test.Hop_sn_delta AS Hop_sn_delta, t_2_Edge AS Edge
     WHERE
       (Hop_sn_delta.d < 5) AND
-      (Edge.a = Hop_sn_delta.node)
+      (Edge.a <=> Hop_sn_delta.node)
   
 ) AS UNUSED_TABLE_NAME  ),
 t_0_Hop_sn_step AS (SELECT
@@ -315,8 +315,8 @@ WHERE
   FROM
     synalog_test.Hop_sn_full AS Hop_sn_full
   WHERE
-    (Hop_sn_full.node = Hop_sn_step.node) AND
-    (Hop_sn_full.d = Hop_sn_step.d)) IS NULL)
+    (Hop_sn_full.node <=> Hop_sn_step.node) AND
+    (Hop_sn_full.d <=> Hop_sn_step.d)) IS NULL)
 GROUP BY 1, 2;
 
 INSERT INTO synalog_test.Hop_sn_full SELECT * FROM synalog_test.Hop_sn_new;
@@ -342,7 +342,7 @@ t_1_Hop_MultBodyAggAux_f1 AS (SELECT * FROM (
       synalog_test.Hop_sn_new AS Hop_sn_new, t_2_Edge AS Edge
     WHERE
       (Hop_sn_new.d < 5) AND
-      (Edge.a = Hop_sn_new.node)
+      (Edge.a <=> Hop_sn_new.node)
   
 ) AS UNUSED_TABLE_NAME  ),
 t_0_Hop_sn_back_step AS (SELECT
@@ -362,8 +362,8 @@ WHERE
   FROM
     synalog_test.Hop_sn_full AS Hop_sn_full
   WHERE
-    (Hop_sn_full.node = Hop_sn_back_step.node) AND
-    (Hop_sn_full.d = Hop_sn_back_step.d)) IS NULL)
+    (Hop_sn_full.node <=> Hop_sn_back_step.node) AND
+    (Hop_sn_full.d <=> Hop_sn_back_step.d)) IS NULL)
 GROUP BY 1, 2;
 
 INSERT INTO synalog_test.Hop_sn_full SELECT * FROM synalog_test.Hop_sn_delta;
@@ -389,7 +389,7 @@ t_1_Hop_MultBodyAggAux_f8 AS (SELECT * FROM (
       synalog_test.Hop_sn_delta AS Hop_sn_delta, t_2_Edge AS Edge
     WHERE
       (Hop_sn_delta.d < 5) AND
-      (Edge.a = Hop_sn_delta.node)
+      (Edge.a <=> Hop_sn_delta.node)
   
 ) AS UNUSED_TABLE_NAME  ),
 t_0_Hop_sn_step AS (SELECT
@@ -409,8 +409,8 @@ WHERE
   FROM
     synalog_test.Hop_sn_full AS Hop_sn_full
   WHERE
-    (Hop_sn_full.node = Hop_sn_step.node) AND
-    (Hop_sn_full.d = Hop_sn_step.d)) IS NULL)
+    (Hop_sn_full.node <=> Hop_sn_step.node) AND
+    (Hop_sn_full.d <=> Hop_sn_step.d)) IS NULL)
 GROUP BY 1, 2;
 
 INSERT INTO synalog_test.Hop_sn_full SELECT * FROM synalog_test.Hop_sn_new;
@@ -436,7 +436,7 @@ t_1_Hop_MultBodyAggAux_f1 AS (SELECT * FROM (
       synalog_test.Hop_sn_new AS Hop_sn_new, t_2_Edge AS Edge
     WHERE
       (Hop_sn_new.d < 5) AND
-      (Edge.a = Hop_sn_new.node)
+      (Edge.a <=> Hop_sn_new.node)
   
 ) AS UNUSED_TABLE_NAME  ),
 t_0_Hop_sn_back_step AS (SELECT
@@ -456,8 +456,8 @@ WHERE
   FROM
     synalog_test.Hop_sn_full AS Hop_sn_full
   WHERE
-    (Hop_sn_full.node = Hop_sn_back_step.node) AND
-    (Hop_sn_full.d = Hop_sn_back_step.d)) IS NULL)
+    (Hop_sn_full.node <=> Hop_sn_back_step.node) AND
+    (Hop_sn_full.d <=> Hop_sn_back_step.d)) IS NULL)
 GROUP BY 1, 2;
 
 INSERT INTO synalog_test.Hop_sn_full SELECT * FROM synalog_test.Hop_sn_delta;
@@ -483,7 +483,7 @@ t_1_Hop_MultBodyAggAux_f8 AS (SELECT * FROM (
       synalog_test.Hop_sn_delta AS Hop_sn_delta, t_2_Edge AS Edge
     WHERE
       (Hop_sn_delta.d < 5) AND
-      (Edge.a = Hop_sn_delta.node)
+      (Edge.a <=> Hop_sn_delta.node)
   
 ) AS UNUSED_TABLE_NAME  ),
 t_0_Hop_sn_step AS (SELECT
@@ -503,8 +503,8 @@ WHERE
   FROM
     synalog_test.Hop_sn_full AS Hop_sn_full
   WHERE
-    (Hop_sn_full.node = Hop_sn_step.node) AND
-    (Hop_sn_full.d = Hop_sn_step.d)) IS NULL)
+    (Hop_sn_full.node <=> Hop_sn_step.node) AND
+    (Hop_sn_full.d <=> Hop_sn_step.d)) IS NULL)
 GROUP BY 1, 2;
 
 INSERT INTO synalog_test.Hop_sn_full SELECT * FROM synalog_test.Hop_sn_new;
@@ -530,7 +530,7 @@ t_1_Hop_MultBodyAggAux_f1 AS (SELECT * FROM (
       synalog_test.Hop_sn_new AS Hop_sn_new, t_2_Edge AS Edge
     WHERE
       (Hop_sn_new.d < 5) AND
-      (Edge.a = Hop_sn_new.node)
+      (Edge.a <=> Hop_sn_new.node)
   
 ) AS UNUSED_TABLE_NAME  ),
 t_0_Hop_sn_back_step AS (SELECT
@@ -550,8 +550,8 @@ WHERE
   FROM
     synalog_test.Hop_sn_full AS Hop_sn_full
   WHERE
-    (Hop_sn_full.node = Hop_sn_back_step.node) AND
-    (Hop_sn_full.d = Hop_sn_back_step.d)) IS NULL)
+    (Hop_sn_full.node <=> Hop_sn_back_step.node) AND
+    (Hop_sn_full.d <=> Hop_sn_back_step.d)) IS NULL)
 GROUP BY 1, 2;
 
 INSERT INTO synalog_test.Hop_sn_full SELECT * FROM synalog_test.Hop_sn_delta;
@@ -577,7 +577,7 @@ t_1_Hop_MultBodyAggAux_f8 AS (SELECT * FROM (
       synalog_test.Hop_sn_delta AS Hop_sn_delta, t_2_Edge AS Edge
     WHERE
       (Hop_sn_delta.d < 5) AND
-      (Edge.a = Hop_sn_delta.node)
+      (Edge.a <=> Hop_sn_delta.node)
   
 ) AS UNUSED_TABLE_NAME  ),
 t_0_Hop_sn_step AS (SELECT
@@ -597,8 +597,8 @@ WHERE
   FROM
     synalog_test.Hop_sn_full AS Hop_sn_full
   WHERE
-    (Hop_sn_full.node = Hop_sn_step.node) AND
-    (Hop_sn_full.d = Hop_sn_step.d)) IS NULL)
+    (Hop_sn_full.node <=> Hop_sn_step.node) AND
+    (Hop_sn_full.d <=> Hop_sn_step.d)) IS NULL)
 GROUP BY 1, 2;
 
 INSERT INTO synalog_test.Hop_sn_full SELECT * FROM synalog_test.Hop_sn_new;
@@ -624,7 +624,7 @@ t_1_Hop_MultBodyAggAux_f1 AS (SELECT * FROM (
       synalog_test.Hop_sn_new AS Hop_sn_new, t_2_Edge AS Edge
     WHERE
       (Hop_sn_new.d < 5) AND
-      (Edge.a = Hop_sn_new.node)
+      (Edge.a <=> Hop_sn_new.node)
   
 ) AS UNUSED_TABLE_NAME  ),
 t_0_Hop_sn_back_step AS (SELECT
@@ -644,8 +644,8 @@ WHERE
   FROM
     synalog_test.Hop_sn_full AS Hop_sn_full
   WHERE
-    (Hop_sn_full.node = Hop_sn_back_step.node) AND
-    (Hop_sn_full.d = Hop_sn_back_step.d)) IS NULL)
+    (Hop_sn_full.node <=> Hop_sn_back_step.node) AND
+    (Hop_sn_full.d <=> Hop_sn_back_step.d)) IS NULL)
 GROUP BY 1, 2;
 
 INSERT INTO synalog_test.Hop_sn_full SELECT * FROM synalog_test.Hop_sn_delta;
@@ -671,7 +671,7 @@ t_1_Hop_MultBodyAggAux_f8 AS (SELECT * FROM (
       synalog_test.Hop_sn_delta AS Hop_sn_delta, t_2_Edge AS Edge
     WHERE
       (Hop_sn_delta.d < 5) AND
-      (Edge.a = Hop_sn_delta.node)
+      (Edge.a <=> Hop_sn_delta.node)
   
 ) AS UNUSED_TABLE_NAME  ),
 t_0_Hop_sn_step AS (SELECT
@@ -691,8 +691,8 @@ WHERE
   FROM
     synalog_test.Hop_sn_full AS Hop_sn_full
   WHERE
-    (Hop_sn_full.node = Hop_sn_step.node) AND
-    (Hop_sn_full.d = Hop_sn_step.d)) IS NULL)
+    (Hop_sn_full.node <=> Hop_sn_step.node) AND
+    (Hop_sn_full.d <=> Hop_sn_step.d)) IS NULL)
 GROUP BY 1, 2;
 
 INSERT INTO synalog_test.Hop_sn_full SELECT * FROM synalog_test.Hop_sn_new;
@@ -718,7 +718,7 @@ t_1_Hop_MultBodyAggAux_f1 AS (SELECT * FROM (
       synalog_test.Hop_sn_new AS Hop_sn_new, t_2_Edge AS Edge
     WHERE
       (Hop_sn_new.d < 5) AND
-      (Edge.a = Hop_sn_new.node)
+      (Edge.a <=> Hop_sn_new.node)
   
 ) AS UNUSED_TABLE_NAME  ),
 t_0_Hop_sn_back_step AS (SELECT
@@ -738,8 +738,8 @@ WHERE
   FROM
     synalog_test.Hop_sn_full AS Hop_sn_full
   WHERE
-    (Hop_sn_full.node = Hop_sn_back_step.node) AND
-    (Hop_sn_full.d = Hop_sn_back_step.d)) IS NULL)
+    (Hop_sn_full.node <=> Hop_sn_back_step.node) AND
+    (Hop_sn_full.d <=> Hop_sn_back_step.d)) IS NULL)
 GROUP BY 1, 2;
 
 INSERT INTO synalog_test.Hop_sn_full SELECT * FROM synalog_test.Hop_sn_delta;
@@ -765,7 +765,7 @@ t_1_Hop_MultBodyAggAux_f8 AS (SELECT * FROM (
       synalog_test.Hop_sn_delta AS Hop_sn_delta, t_2_Edge AS Edge
     WHERE
       (Hop_sn_delta.d < 5) AND
-      (Edge.a = Hop_sn_delta.node)
+      (Edge.a <=> Hop_sn_delta.node)
   
 ) AS UNUSED_TABLE_NAME  ),
 t_0_Hop_sn_step AS (SELECT
@@ -785,8 +785,8 @@ WHERE
   FROM
     synalog_test.Hop_sn_full AS Hop_sn_full
   WHERE
-    (Hop_sn_full.node = Hop_sn_step.node) AND
-    (Hop_sn_full.d = Hop_sn_step.d)) IS NULL)
+    (Hop_sn_full.node <=> Hop_sn_step.node) AND
+    (Hop_sn_full.d <=> Hop_sn_step.d)) IS NULL)
 GROUP BY 1, 2;
 
 INSERT INTO synalog_test.Hop_sn_full SELECT * FROM synalog_test.Hop_sn_new;
@@ -812,7 +812,7 @@ t_1_Hop_MultBodyAggAux_f1 AS (SELECT * FROM (
       synalog_test.Hop_sn_new AS Hop_sn_new, t_2_Edge AS Edge
     WHERE
       (Hop_sn_new.d < 5) AND
-      (Edge.a = Hop_sn_new.node)
+      (Edge.a <=> Hop_sn_new.node)
   
 ) AS UNUSED_TABLE_NAME  ),
 t_0_Hop_sn_back_step AS (SELECT
@@ -832,8 +832,8 @@ WHERE
   FROM
     synalog_test.Hop_sn_full AS Hop_sn_full
   WHERE
-    (Hop_sn_full.node = Hop_sn_back_step.node) AND
-    (Hop_sn_full.d = Hop_sn_back_step.d)) IS NULL)
+    (Hop_sn_full.node <=> Hop_sn_back_step.node) AND
+    (Hop_sn_full.d <=> Hop_sn_back_step.d)) IS NULL)
 GROUP BY 1, 2;
 
 INSERT INTO synalog_test.Hop_sn_full SELECT * FROM synalog_test.Hop_sn_delta;
@@ -859,7 +859,7 @@ t_1_Hop_MultBodyAggAux_f8 AS (SELECT * FROM (
       synalog_test.Hop_sn_delta AS Hop_sn_delta, t_2_Edge AS Edge
     WHERE
       (Hop_sn_delta.d < 5) AND
-      (Edge.a = Hop_sn_delta.node)
+      (Edge.a <=> Hop_sn_delta.node)
   
 ) AS UNUSED_TABLE_NAME  ),
 t_0_Hop_sn_step AS (SELECT
@@ -879,8 +879,8 @@ WHERE
   FROM
     synalog_test.Hop_sn_full AS Hop_sn_full
   WHERE
-    (Hop_sn_full.node = Hop_sn_step.node) AND
-    (Hop_sn_full.d = Hop_sn_step.d)) IS NULL)
+    (Hop_sn_full.node <=> Hop_sn_step.node) AND
+    (Hop_sn_full.d <=> Hop_sn_step.d)) IS NULL)
 GROUP BY 1, 2;
 
 INSERT INTO synalog_test.Hop_sn_full SELECT * FROM synalog_test.Hop_sn_new;
@@ -906,7 +906,7 @@ t_1_Hop_MultBodyAggAux_f1 AS (SELECT * FROM (
       synalog_test.Hop_sn_new AS Hop_sn_new, t_2_Edge AS Edge
     WHERE
       (Hop_sn_new.d < 5) AND
-      (Edge.a = Hop_sn_new.node)
+      (Edge.a <=> Hop_sn_new.node)
   
 ) AS UNUSED_TABLE_NAME  ),
 t_0_Hop_sn_back_step AS (SELECT
@@ -926,8 +926,8 @@ WHERE
   FROM
     synalog_test.Hop_sn_full AS Hop_sn_full
   WHERE
-    (Hop_sn_full.node = Hop_sn_back_step.node) AND
-    (Hop_sn_full.d = Hop_sn_back_step.d)) IS NULL)
+    (Hop_sn_full.node <=> Hop_sn_back_step.node) AND
+    (Hop_sn_full.d <=> Hop_sn_back_step.d)) IS NULL)
 GROUP BY 1, 2;
 
 INSERT INTO synalog_test.Hop_sn_full SELECT * FROM synalog_test.Hop_sn_delta;
@@ -953,7 +953,7 @@ t_1_Hop_MultBodyAggAux_f8 AS (SELECT * FROM (
       synalog_test.Hop_sn_delta AS Hop_sn_delta, t_2_Edge AS Edge
     WHERE
       (Hop_sn_delta.d < 5) AND
-      (Edge.a = Hop_sn_delta.node)
+      (Edge.a <=> Hop_sn_delta.node)
   
 ) AS UNUSED_TABLE_NAME  ),
 t_0_Hop_sn_step AS (SELECT
@@ -973,8 +973,8 @@ WHERE
   FROM
     synalog_test.Hop_sn_full AS Hop_sn_full
   WHERE
-    (Hop_sn_full.node = Hop_sn_step.node) AND
-    (Hop_sn_full.d = Hop_sn_step.d)) IS NULL)
+    (Hop_sn_full.node <=> Hop_sn_step.node) AND
+    (Hop_sn_full.d <=> Hop_sn_step.d)) IS NULL)
 GROUP BY 1, 2;
 
 INSERT INTO synalog_test.Hop_sn_full SELECT * FROM synalog_test.Hop_sn_new;
@@ -1000,7 +1000,7 @@ t_1_Hop_MultBodyAggAux_f1 AS (SELECT * FROM (
       synalog_test.Hop_sn_new AS Hop_sn_new, t_2_Edge AS Edge
     WHERE
       (Hop_sn_new.d < 5) AND
-      (Edge.a = Hop_sn_new.node)
+      (Edge.a <=> Hop_sn_new.node)
   
 ) AS UNUSED_TABLE_NAME  ),
 t_0_Hop_sn_back_step AS (SELECT
@@ -1020,8 +1020,8 @@ WHERE
   FROM
     synalog_test.Hop_sn_full AS Hop_sn_full
   WHERE
-    (Hop_sn_full.node = Hop_sn_back_step.node) AND
-    (Hop_sn_full.d = Hop_sn_back_step.d)) IS NULL)
+    (Hop_sn_full.node <=> Hop_sn_back_step.node) AND
+    (Hop_sn_full.d <=> Hop_sn_back_step.d)) IS NULL)
 GROUP BY 1, 2;
 
 INSERT INTO synalog_test.Hop_sn_full SELECT * FROM synalog_test.Hop_sn_delta;
@@ -1047,7 +1047,7 @@ t_1_Hop_MultBodyAggAux_f8 AS (SELECT * FROM (
       synalog_test.Hop_sn_delta AS Hop_sn_delta, t_2_Edge AS Edge
     WHERE
       (Hop_sn_delta.d < 5) AND
-      (Edge.a = Hop_sn_delta.node)
+      (Edge.a <=> Hop_sn_delta.node)
   
 ) AS UNUSED_TABLE_NAME  ),
 t_0_Hop_sn_step AS (SELECT
@@ -1067,8 +1067,8 @@ WHERE
   FROM
     synalog_test.Hop_sn_full AS Hop_sn_full
   WHERE
-    (Hop_sn_full.node = Hop_sn_step.node) AND
-    (Hop_sn_full.d = Hop_sn_step.d)) IS NULL)
+    (Hop_sn_full.node <=> Hop_sn_step.node) AND
+    (Hop_sn_full.d <=> Hop_sn_step.d)) IS NULL)
 GROUP BY 1, 2;
 
 INSERT INTO synalog_test.Hop_sn_full SELECT * FROM synalog_test.Hop_sn_new;
@@ -1094,7 +1094,7 @@ t_1_Hop_MultBodyAggAux_f1 AS (SELECT * FROM (
       synalog_test.Hop_sn_new AS Hop_sn_new, t_2_Edge AS Edge
     WHERE
       (Hop_sn_new.d < 5) AND
-      (Edge.a = Hop_sn_new.node)
+      (Edge.a <=> Hop_sn_new.node)
   
 ) AS UNUSED_TABLE_NAME  ),
 t_0_Hop_sn_back_step AS (SELECT
@@ -1114,8 +1114,8 @@ WHERE
   FROM
     synalog_test.Hop_sn_full AS Hop_sn_full
   WHERE
-    (Hop_sn_full.node = Hop_sn_back_step.node) AND
-    (Hop_sn_full.d = Hop_sn_back_step.d)) IS NULL)
+    (Hop_sn_full.node <=> Hop_sn_back_step.node) AND
+    (Hop_sn_full.d <=> Hop_sn_back_step.d)) IS NULL)
 GROUP BY 1, 2;
 
 INSERT INTO synalog_test.Hop_sn_full SELECT * FROM synalog_test.Hop_sn_delta;
@@ -1141,7 +1141,7 @@ t_1_Hop_MultBodyAggAux_f8 AS (SELECT * FROM (
       synalog_test.Hop_sn_delta AS Hop_sn_delta, t_2_Edge AS Edge
     WHERE
       (Hop_sn_delta.d < 5) AND
-      (Edge.a = Hop_sn_delta.node)
+      (Edge.a <=> Hop_sn_delta.node)
   
 ) AS UNUSED_TABLE_NAME  ),
 t_0_Hop_sn_step AS (SELECT
@@ -1161,8 +1161,8 @@ WHERE
   FROM
     synalog_test.Hop_sn_full AS Hop_sn_full
   WHERE
-    (Hop_sn_full.node = Hop_sn_step.node) AND
-    (Hop_sn_full.d = Hop_sn_step.d)) IS NULL)
+    (Hop_sn_full.node <=> Hop_sn_step.node) AND
+    (Hop_sn_full.d <=> Hop_sn_step.d)) IS NULL)
 GROUP BY 1, 2;
 
 INSERT INTO synalog_test.Hop_sn_full SELECT * FROM synalog_test.Hop_sn_new;
@@ -1188,7 +1188,7 @@ t_1_Hop_MultBodyAggAux_f1 AS (SELECT * FROM (
       synalog_test.Hop_sn_new AS Hop_sn_new, t_2_Edge AS Edge
     WHERE
       (Hop_sn_new.d < 5) AND
-      (Edge.a = Hop_sn_new.node)
+      (Edge.a <=> Hop_sn_new.node)
   
 ) AS UNUSED_TABLE_NAME  ),
 t_0_Hop_sn_back_step AS (SELECT
@@ -1208,8 +1208,8 @@ WHERE
   FROM
     synalog_test.Hop_sn_full AS Hop_sn_full
   WHERE
-    (Hop_sn_full.node = Hop_sn_back_step.node) AND
-    (Hop_sn_full.d = Hop_sn_back_step.d)) IS NULL)
+    (Hop_sn_full.node <=> Hop_sn_back_step.node) AND
+    (Hop_sn_full.d <=> Hop_sn_back_step.d)) IS NULL)
 GROUP BY 1, 2;
 
 INSERT INTO synalog_test.Hop_sn_full SELECT * FROM synalog_test.Hop_sn_delta;
@@ -1235,7 +1235,7 @@ t_1_Hop_MultBodyAggAux_f8 AS (SELECT * FROM (
       synalog_test.Hop_sn_delta AS Hop_sn_delta, t_2_Edge AS Edge
     WHERE
       (Hop_sn_delta.d < 5) AND
-      (Edge.a = Hop_sn_delta.node)
+      (Edge.a <=> Hop_sn_delta.node)
   
 ) AS UNUSED_TABLE_NAME  ),
 t_0_Hop_sn_step AS (SELECT
@@ -1255,8 +1255,8 @@ WHERE
   FROM
     synalog_test.Hop_sn_full AS Hop_sn_full
   WHERE
-    (Hop_sn_full.node = Hop_sn_step.node) AND
-    (Hop_sn_full.d = Hop_sn_step.d)) IS NULL)
+    (Hop_sn_full.node <=> Hop_sn_step.node) AND
+    (Hop_sn_full.d <=> Hop_sn_step.d)) IS NULL)
 GROUP BY 1, 2;
 
 INSERT INTO synalog_test.Hop_sn_full SELECT * FROM synalog_test.Hop_sn_new;
@@ -1282,7 +1282,7 @@ t_1_Hop_MultBodyAggAux_f1 AS (SELECT * FROM (
       synalog_test.Hop_sn_new AS Hop_sn_new, t_2_Edge AS Edge
     WHERE
       (Hop_sn_new.d < 5) AND
-      (Edge.a = Hop_sn_new.node)
+      (Edge.a <=> Hop_sn_new.node)
   
 ) AS UNUSED_TABLE_NAME  ),
 t_0_Hop_sn_back_step AS (SELECT
@@ -1302,8 +1302,8 @@ WHERE
   FROM
     synalog_test.Hop_sn_full AS Hop_sn_full
   WHERE
-    (Hop_sn_full.node = Hop_sn_back_step.node) AND
-    (Hop_sn_full.d = Hop_sn_back_step.d)) IS NULL)
+    (Hop_sn_full.node <=> Hop_sn_back_step.node) AND
+    (Hop_sn_full.d <=> Hop_sn_back_step.d)) IS NULL)
 GROUP BY 1, 2;
 
 INSERT INTO synalog_test.Hop_sn_full SELECT * FROM synalog_test.Hop_sn_delta;
@@ -1329,7 +1329,7 @@ t_1_Hop_MultBodyAggAux_f8 AS (SELECT * FROM (
       synalog_test.Hop_sn_delta AS Hop_sn_delta, t_2_Edge AS Edge
     WHERE
       (Hop_sn_delta.d < 5) AND
-      (Edge.a = Hop_sn_delta.node)
+      (Edge.a <=> Hop_sn_delta.node)
   
 ) AS UNUSED_TABLE_NAME  ),
 t_0_Hop_sn_step AS (SELECT
@@ -1349,8 +1349,8 @@ WHERE
   FROM
     synalog_test.Hop_sn_full AS Hop_sn_full
   WHERE
-    (Hop_sn_full.node = Hop_sn_step.node) AND
-    (Hop_sn_full.d = Hop_sn_step.d)) IS NULL)
+    (Hop_sn_full.node <=> Hop_sn_step.node) AND
+    (Hop_sn_full.d <=> Hop_sn_step.d)) IS NULL)
 GROUP BY 1, 2;
 
 INSERT INTO synalog_test.Hop_sn_full SELECT * FROM synalog_test.Hop_sn_new;
@@ -1376,7 +1376,7 @@ t_1_Hop_MultBodyAggAux_f1 AS (SELECT * FROM (
       synalog_test.Hop_sn_new AS Hop_sn_new, t_2_Edge AS Edge
     WHERE
       (Hop_sn_new.d < 5) AND
-      (Edge.a = Hop_sn_new.node)
+      (Edge.a <=> Hop_sn_new.node)
   
 ) AS UNUSED_TABLE_NAME  ),
 t_0_Hop_sn_back_step AS (SELECT
@@ -1396,8 +1396,8 @@ WHERE
   FROM
     synalog_test.Hop_sn_full AS Hop_sn_full
   WHERE
-    (Hop_sn_full.node = Hop_sn_back_step.node) AND
-    (Hop_sn_full.d = Hop_sn_back_step.d)) IS NULL)
+    (Hop_sn_full.node <=> Hop_sn_back_step.node) AND
+    (Hop_sn_full.d <=> Hop_sn_back_step.d)) IS NULL)
 GROUP BY 1, 2;
 
 INSERT INTO synalog_test.Hop_sn_full SELECT * FROM synalog_test.Hop_sn_delta;
@@ -1423,7 +1423,7 @@ t_1_Hop_MultBodyAggAux_f8 AS (SELECT * FROM (
       synalog_test.Hop_sn_delta AS Hop_sn_delta, t_2_Edge AS Edge
     WHERE
       (Hop_sn_delta.d < 5) AND
-      (Edge.a = Hop_sn_delta.node)
+      (Edge.a <=> Hop_sn_delta.node)
   
 ) AS UNUSED_TABLE_NAME  ),
 t_0_Hop_sn_step AS (SELECT
@@ -1443,8 +1443,8 @@ WHERE
   FROM
     synalog_test.Hop_sn_full AS Hop_sn_full
   WHERE
-    (Hop_sn_full.node = Hop_sn_step.node) AND
-    (Hop_sn_full.d = Hop_sn_step.d)) IS NULL)
+    (Hop_sn_full.node <=> Hop_sn_step.node) AND
+    (Hop_sn_full.d <=> Hop_sn_step.d)) IS NULL)
 GROUP BY 1, 2;
 
 INSERT INTO synalog_test.Hop_sn_full SELECT * FROM synalog_test.Hop_sn_new;

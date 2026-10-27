@@ -27,6 +27,6 @@ SELECT
 FROM
   t_1_Loan AS Loan, t_2_Book AS t_0_Book
 WHERE
-  (t_0_Book.id = Loan.book) AND
+  (t_0_Book.id <=> Loan.book) AND
   (t_0_Book.author = "tolkien")
 GROUP BY 1;

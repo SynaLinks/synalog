@@ -119,4 +119,4 @@ FROM
   t_0_A AS A, t_1_Person AS Person
 WHERE
   (Person.age > 100) AND
-  (A.id = Person.id);
+  (COALESCE(A.id, 0) = COALESCE(Person.id, 0) AND (A.id IS NULL) = (Person.id IS NULL));

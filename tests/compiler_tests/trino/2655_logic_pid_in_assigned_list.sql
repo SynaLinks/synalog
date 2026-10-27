@@ -92,5 +92,5 @@ SELECT
 FROM
   t_0_Projects AS Projects, t_2_Proj AS Proj, UNNEST(TRANSFORM(Projects.l, synalog_e -> ROW(synalog_e))) as pushkin(x_4)
 WHERE
-  (Proj.pid = x_4)
+  (Proj.pid IS NOT DISTINCT FROM x_4)
 GROUP BY 1 ORDER BY id, n;

@@ -54,5 +54,5 @@ SELECT
 FROM
   t_2_E AS E, t_2_E AS t_0_E, t_2_E AS t_1_E
 WHERE
-  (t_0_E.id = E.boss) AND
-  (t_1_E.id = t_0_E.boss) ORDER BY name, top;
+  (COALESCE(t_0_E.id, 0) = COALESCE(E.boss, 0) AND (t_0_E.id IS NULL) = (E.boss IS NULL)) AND
+  (COALESCE(t_1_E.id, 0) = COALESCE(t_0_E.boss, 0) AND (t_1_E.id IS NULL) = (t_0_E.boss IS NULL)) ORDER BY name, top;

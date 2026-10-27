@@ -15,4 +15,4 @@ WHERE
     (select unnest([1, 2, 3]) as unnested_pod) as x_10, (select unnest([0]) as unnested_pod) as x_6
   WHERE
     (((x_3.unnested_pod) % NULLIF(2, 0)) = 0) AND
-    (x_3.unnested_pod = x_10.unnested_pod)) IS NULL) ORDER BY x;
+    (x_3.unnested_pod IS NOT DISTINCT FROM x_10.unnested_pod)) IS NULL) ORDER BY x;

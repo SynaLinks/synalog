@@ -49,7 +49,7 @@ t_1_After_MultBodyAggAux_f3 AS (SELECT * FROM (
     FROM
       synalog_test.After_sn_t0 AS After_sn_t0, t_2_Sequel AS Sequel
     WHERE
-      (Sequel.book = After_sn_t0.next)
+      (Sequel.book <=> After_sn_t0.next)
    UNION ALL
   
     SELECT
@@ -90,7 +90,7 @@ t_1_After_MultBodyAggAux_f4 AS (SELECT * FROM (
     FROM
       synalog_test.After_sn_t1 AS After_sn_t1, t_2_Sequel AS Sequel
     WHERE
-      (Sequel.book = After_sn_t1.next)
+      (Sequel.book <=> After_sn_t1.next)
    UNION ALL
   
     SELECT
@@ -131,7 +131,7 @@ t_1_After_MultBodyAggAux_f5 AS (SELECT * FROM (
     FROM
       synalog_test.After_sn_t2 AS After_sn_t2, t_2_Sequel AS Sequel
     WHERE
-      (Sequel.book = After_sn_t2.next)
+      (Sequel.book <=> After_sn_t2.next)
    UNION ALL
   
     SELECT
@@ -172,7 +172,7 @@ t_1_After_MultBodyAggAux_f6 AS (SELECT * FROM (
     FROM
       synalog_test.After_sn_t3 AS After_sn_t3, t_2_Sequel AS Sequel
     WHERE
-      (Sequel.book = After_sn_t3.next)
+      (Sequel.book <=> After_sn_t3.next)
    UNION ALL
   
     SELECT
@@ -213,7 +213,7 @@ t_1_After_MultBodyAggAux_f7 AS (SELECT * FROM (
     FROM
       synalog_test.After_sn_t4 AS After_sn_t4, t_2_Sequel AS Sequel
     WHERE
-      (Sequel.book = After_sn_t4.next)
+      (Sequel.book <=> After_sn_t4.next)
    UNION ALL
   
     SELECT
@@ -302,7 +302,7 @@ t_1_After_MultBodyAggAux_f8 AS (SELECT * FROM (
     FROM
       synalog_test.After_sn_delta AS After_sn_delta, t_2_Sequel AS Sequel
     WHERE
-      (Sequel.book = After_sn_delta.next)
+      (Sequel.book <=> After_sn_delta.next)
    UNION ALL
   
     SELECT
@@ -329,8 +329,8 @@ WHERE
   FROM
     synalog_test.After_sn_full AS After_sn_full
   WHERE
-    (After_sn_full.book = After_sn_step.book) AND
-    (After_sn_full.next = After_sn_step.next)) IS NULL)
+    (After_sn_full.book <=> After_sn_step.book) AND
+    (After_sn_full.next <=> After_sn_step.next)) IS NULL)
 GROUP BY 1, 2;
 
 INSERT INTO synalog_test.After_sn_full SELECT * FROM synalog_test.After_sn_new;
@@ -350,7 +350,7 @@ t_1_After_MultBodyAggAux_f1 AS (SELECT * FROM (
     FROM
       synalog_test.After_sn_new AS After_sn_new, t_2_Sequel AS Sequel
     WHERE
-      (Sequel.book = After_sn_new.next)
+      (Sequel.book <=> After_sn_new.next)
    UNION ALL
   
     SELECT
@@ -377,8 +377,8 @@ WHERE
   FROM
     synalog_test.After_sn_full AS After_sn_full
   WHERE
-    (After_sn_full.book = After_sn_back_step.book) AND
-    (After_sn_full.next = After_sn_back_step.next)) IS NULL)
+    (After_sn_full.book <=> After_sn_back_step.book) AND
+    (After_sn_full.next <=> After_sn_back_step.next)) IS NULL)
 GROUP BY 1, 2;
 
 INSERT INTO synalog_test.After_sn_full SELECT * FROM synalog_test.After_sn_delta;
@@ -398,7 +398,7 @@ t_1_After_MultBodyAggAux_f8 AS (SELECT * FROM (
     FROM
       synalog_test.After_sn_delta AS After_sn_delta, t_2_Sequel AS Sequel
     WHERE
-      (Sequel.book = After_sn_delta.next)
+      (Sequel.book <=> After_sn_delta.next)
    UNION ALL
   
     SELECT
@@ -425,8 +425,8 @@ WHERE
   FROM
     synalog_test.After_sn_full AS After_sn_full
   WHERE
-    (After_sn_full.book = After_sn_step.book) AND
-    (After_sn_full.next = After_sn_step.next)) IS NULL)
+    (After_sn_full.book <=> After_sn_step.book) AND
+    (After_sn_full.next <=> After_sn_step.next)) IS NULL)
 GROUP BY 1, 2;
 
 INSERT INTO synalog_test.After_sn_full SELECT * FROM synalog_test.After_sn_new;
@@ -446,7 +446,7 @@ t_1_After_MultBodyAggAux_f1 AS (SELECT * FROM (
     FROM
       synalog_test.After_sn_new AS After_sn_new, t_2_Sequel AS Sequel
     WHERE
-      (Sequel.book = After_sn_new.next)
+      (Sequel.book <=> After_sn_new.next)
    UNION ALL
   
     SELECT
@@ -473,8 +473,8 @@ WHERE
   FROM
     synalog_test.After_sn_full AS After_sn_full
   WHERE
-    (After_sn_full.book = After_sn_back_step.book) AND
-    (After_sn_full.next = After_sn_back_step.next)) IS NULL)
+    (After_sn_full.book <=> After_sn_back_step.book) AND
+    (After_sn_full.next <=> After_sn_back_step.next)) IS NULL)
 GROUP BY 1, 2;
 
 INSERT INTO synalog_test.After_sn_full SELECT * FROM synalog_test.After_sn_delta;
@@ -494,7 +494,7 @@ t_1_After_MultBodyAggAux_f8 AS (SELECT * FROM (
     FROM
       synalog_test.After_sn_delta AS After_sn_delta, t_2_Sequel AS Sequel
     WHERE
-      (Sequel.book = After_sn_delta.next)
+      (Sequel.book <=> After_sn_delta.next)
    UNION ALL
   
     SELECT
@@ -521,8 +521,8 @@ WHERE
   FROM
     synalog_test.After_sn_full AS After_sn_full
   WHERE
-    (After_sn_full.book = After_sn_step.book) AND
-    (After_sn_full.next = After_sn_step.next)) IS NULL)
+    (After_sn_full.book <=> After_sn_step.book) AND
+    (After_sn_full.next <=> After_sn_step.next)) IS NULL)
 GROUP BY 1, 2;
 
 INSERT INTO synalog_test.After_sn_full SELECT * FROM synalog_test.After_sn_new;
@@ -542,7 +542,7 @@ t_1_After_MultBodyAggAux_f1 AS (SELECT * FROM (
     FROM
       synalog_test.After_sn_new AS After_sn_new, t_2_Sequel AS Sequel
     WHERE
-      (Sequel.book = After_sn_new.next)
+      (Sequel.book <=> After_sn_new.next)
    UNION ALL
   
     SELECT
@@ -569,8 +569,8 @@ WHERE
   FROM
     synalog_test.After_sn_full AS After_sn_full
   WHERE
-    (After_sn_full.book = After_sn_back_step.book) AND
-    (After_sn_full.next = After_sn_back_step.next)) IS NULL)
+    (After_sn_full.book <=> After_sn_back_step.book) AND
+    (After_sn_full.next <=> After_sn_back_step.next)) IS NULL)
 GROUP BY 1, 2;
 
 INSERT INTO synalog_test.After_sn_full SELECT * FROM synalog_test.After_sn_delta;

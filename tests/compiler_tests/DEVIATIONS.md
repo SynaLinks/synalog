@@ -735,14 +735,23 @@ every engine: the divisor is `NULLIF(y, 0)`. SQLite's `%` truncated both sides
 to integers (`7.5 % 2` was 1): it is the remainder of the quotient truncated
 toward zero there. PostgreSQL has no `MOD` of doubles: it takes numerics.
 
-## A null meets no null
+## Null is a value
 
-Two facts with a null key, `A(k: null)` and `B(k: null)`, joined on `k`: the
-facts are inlined and both sides become the literal `null`, and the
-unification `null == null`, two identical expressions, was dropped as
-trivially true, so the join had a row. A null equals nothing in SQL: an
-equality holding a null stays (`WHERE null = null`, no row). A variable
-unified with itself (`x == x`) still holds.
+A null equals a null and differs from every other value, as a constant of
+Datalog equals itself: `P(k:), Q(k:)` joins `P(k: null)` with `Q(k: null)`,
+`~Q(k:)` finds `Q(k: null)`, `x == x` holds and `null != 1` holds. Upstream
+compiles `==` and `!=` to SQL's `=` and `!=`, which hold of no null, so
+`DISTINCT`, `GROUP BY` and `EXCEPT` (where SQL's nulls are equal) disagreed
+with joins and negations. Synalog compiles them null-safe:
+`IS NOT DISTINCT FROM` and `IS DISTINCT FROM`; `IS` and `IS NOT` on SQLite;
+`<=>` on Databricks. PostgreSQL joins on `IS NOT DISTINCT FROM` only by a
+nested loop, so there an equality is one it hashes and merges: of a number,
+a string or a boolean, `COALESCE(a, 0) = COALESCE(b, 0) AND (a IS NULL) =
+(b IS NULL)` (a null's stand-in, `0`, `''` or `false`, is told apart from
+the value by the flag); of a value of another type, or of no type known,
+`ARRAY[ROW(a)] = ARRAY[ROW(b)]` (an array of arrays drops a null array).
+An equality with a literal other than null stays `=`, which an index serves;
+with `null`, it is `IS NULL`.
 
 ## Types across predicates
 

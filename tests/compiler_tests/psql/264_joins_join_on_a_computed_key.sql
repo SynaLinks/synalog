@@ -20,4 +20,4 @@ SELECT
 FROM
   t_2_B AS t_1_B
 WHERE
-  (t_1_B.k = ((1) + (1)));
+  (COALESCE(t_1_B.k, 0) = COALESCE(((1) + (1)), 0) AND (t_1_B.k IS NULL) = (((1) + (1)) IS NULL));

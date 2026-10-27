@@ -67,4 +67,4 @@ WHERE
     t_0_Sale AS t_1_Sale
   WHERE
     (t_1_Sale.product = "cake") AND
-    (Sale.id = t_1_Sale.id)) IS NULL);
+    (Sale.id IS NOT DISTINCT FROM t_1_Sale.id)) IS NULL);

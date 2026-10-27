@@ -16,4 +16,4 @@ SELECT
 FROM
   t_0_Orders AS Orders, t_1_Customers AS Customers
 WHERE
-  (Customers.customer_id = Orders.customer_id) ORDER BY oid NULLS LAST;
+  (Customers.customer_id <=> Orders.customer_id) ORDER BY oid NULLS LAST;

@@ -61,5 +61,5 @@ SELECT
 FROM
   t_1_Sale AS Sale, t_1_Sale AS t_0_Sale
 WHERE
-  (t_0_Sale.id = Sale.id) AND
+  (t_0_Sale.id IS NOT DISTINCT FROM Sale.id) AND
   (t_0_Sale.product = 'coffee');

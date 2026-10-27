@@ -16,6 +16,6 @@ SELECT
 FROM
   t_1_E AS E
 WHERE
-  (E.g = t_0_G.g)) AS m
+  (E.g <=> t_0_G.g)) AS m
 FROM
   t_2_G AS t_0_G ORDER BY g NULLS LAST;

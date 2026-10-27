@@ -44,7 +44,7 @@ t_0_Below_RecursiveCte AS (SELECT * FROM (
       WHERE
         (1 = 0) AND
         (t_4_Child.p = 'root') AND
-        (t_2_Child.p = t_4_Child.c)
+        (COALESCE(t_2_Child.p, '') = COALESCE(t_4_Child.c, '') AND (t_2_Child.p IS NULL) = (t_4_Child.c IS NULL))
      UNION ALL
     
       SELECT
@@ -53,9 +53,9 @@ t_0_Below_RecursiveCte AS (SELECT * FROM (
         t_1_Child AS t_10_Child, t_1_Child AS t_8_Child, t_1_Child AS t_6_Child
       WHERE
         (1 = 0) AND
-        (t_6_Child.p = t_8_Child.c) AND
+        (COALESCE(t_6_Child.p, '') = COALESCE(t_8_Child.c, '') AND (t_6_Child.p IS NULL) = (t_8_Child.c IS NULL)) AND
         (t_10_Child.p = 'root') AND
-        (t_8_Child.p = t_10_Child.c)
+        (COALESCE(t_8_Child.p, '') = COALESCE(t_10_Child.c, '') AND (t_8_Child.p IS NULL) = (t_10_Child.c IS NULL))
      UNION ALL
     
       SELECT
@@ -64,10 +64,10 @@ t_0_Below_RecursiveCte AS (SELECT * FROM (
         t_1_Child AS t_18_Child, t_1_Child AS t_16_Child, t_1_Child AS t_14_Child, t_1_Child AS t_12_Child
       WHERE
         (1 = 0) AND
-        (t_12_Child.p = t_14_Child.c) AND
-        (t_14_Child.p = t_16_Child.c) AND
+        (COALESCE(t_12_Child.p, '') = COALESCE(t_14_Child.c, '') AND (t_12_Child.p IS NULL) = (t_14_Child.c IS NULL)) AND
+        (COALESCE(t_14_Child.p, '') = COALESCE(t_16_Child.c, '') AND (t_14_Child.p IS NULL) = (t_16_Child.c IS NULL)) AND
         (t_18_Child.p = 'root') AND
-        (t_16_Child.p = t_18_Child.c)
+        (COALESCE(t_16_Child.p, '') = COALESCE(t_18_Child.c, '') AND (t_16_Child.p IS NULL) = (t_18_Child.c IS NULL))
     
   ) AS UNUSED_TABLE_NAME  
 ) AS UNUSED_TABLE_NAME
@@ -77,7 +77,7 @@ SELECT
 FROM
   t_0_Below_RecursiveCte AS t_19_Below_RecursiveCte, t_1_Child AS t_20_Child
 WHERE
-  (t_20_Child.p = t_19_Below_RecursiveCte.n))
+  (COALESCE(t_20_Child.p, '') = COALESCE(t_19_Below_RecursiveCte.n, '') AND (t_20_Child.p IS NULL) = (t_19_Below_RecursiveCte.n IS NULL)))
 SELECT
   Below_RecursiveCte.n AS n
 FROM

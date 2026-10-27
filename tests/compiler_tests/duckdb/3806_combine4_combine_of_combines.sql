@@ -73,6 +73,6 @@ SELECT
 FROM
   t_2_O AS O, (select unnest([0]) as unnested_pod) as x_10
 WHERE
-  (O.c = t_1_C.c)) ELSE NULL END)) AS synalog_value
+  (O.c IS NOT DISTINCT FROM t_1_C.c)) ELSE NULL END)) AS synalog_value
 FROM
   t_3_C AS t_1_C, (select unnest([0]) as unnested_pod) as x_3) AS m;

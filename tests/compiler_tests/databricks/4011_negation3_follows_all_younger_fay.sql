@@ -34,5 +34,5 @@ WHERE
       t_3_F AS F
     WHERE
       (F.a = "fay") AND
-      (F.b = t_2_U.u)) IS NULL)) IS NULL) AND
+      (F.b <=> t_2_U.u)) IS NULL)) IS NULL) AND
   (t_0_U.u = "fay");

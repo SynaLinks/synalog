@@ -32,4 +32,4 @@ WHERE
   FROM
     t_3_Loud AS Loud, JSON_EACH(JSON_ARRAY(0)) as x_6
   WHERE
-    (Loud.k = t_0_K.k)) IS NULL) ORDER BY k NULLS LAST;
+    (Loud.k IS t_0_K.k)) IS NULL) ORDER BY k NULLS LAST;

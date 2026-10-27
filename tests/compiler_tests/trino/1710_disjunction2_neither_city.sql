@@ -88,7 +88,7 @@ t_2_T_MultBodyAggAux AS (SELECT * FROM (
     FROM
       t_0_Ship AS t_3_Ship, UNNEST(TRANSFORM(ARRAY['paris', 'nice'], synalog_e -> ROW(synalog_e))) as pushkin(x_8)
     WHERE
-      (t_3_Ship.src = x_8)
+      (t_3_Ship.src IS NOT DISTINCT FROM x_8)
    UNION ALL
   
     SELECT
@@ -96,7 +96,7 @@ t_2_T_MultBodyAggAux AS (SELECT * FROM (
     FROM
       t_0_Ship AS t_4_Ship, UNNEST(TRANSFORM(ARRAY['paris', 'nice'], synalog_e -> ROW(synalog_e))) as pushkin(x_12)
     WHERE
-      (t_4_Ship.dst = x_12)
+      (t_4_Ship.dst IS NOT DISTINCT FROM x_12)
   
 ) AS UNUSED_TABLE_NAME  ),
 t_1_T AS (SELECT
@@ -114,4 +114,4 @@ WHERE
   FROM
     t_1_T AS T
   WHERE
-    (T.id = Ship.id)) IS NULL);
+    (T.id IS NOT DISTINCT FROM Ship.id)) IS NULL);

@@ -96,4 +96,4 @@ WHERE
   FROM
     t_2_Ship AS t_3_Ship, JSON_EACH(JSON_ARRAY(0)) as x_8
   WHERE
-    (t_3_Ship.client = t_0_Client.client)) > 10);
+    (t_3_Ship.client IS t_0_Client.client)) > 10);

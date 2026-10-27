@@ -70,5 +70,5 @@ FROM
   t_2_E AS E, t_2_E AS t_0_E, t_2_E AS t_1_E
 WHERE
   (E.id = 1) AND
-  (t_1_E.id = t_0_E.boss) AND
-  (t_1_E.n = E.n) ORDER BY n;
+  (t_1_E.id IS NOT DISTINCT FROM t_0_E.boss) AND
+  (t_1_E.n IS NOT DISTINCT FROM E.n) ORDER BY n;

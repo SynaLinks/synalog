@@ -73,6 +73,6 @@ SELECT
 FROM
   t_2_O AS O, (select unnest([0]) as unnested_pod) as x_10
 WHERE
-  (O.c = t_0_C.c)) AS best
+  (O.c IS NOT DISTINCT FROM t_0_C.c)) AS best
 FROM
   t_3_C AS t_0_C ORDER BY c;

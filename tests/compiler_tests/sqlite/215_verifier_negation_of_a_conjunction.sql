@@ -18,5 +18,5 @@ WHERE
   FROM
     t_0_B AS B, JSON_EACH(JSON_ARRAY(0)) as x_7
   WHERE
-    (B.x = x_3.value) AND
-    (x_3.value = 2)) IS NULL) ORDER BY x;
+    (B.x IS x_3.value) AND
+    (x_3.value = 2)) IS NULL) ORDER BY x NULLS LAST;

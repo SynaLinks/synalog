@@ -12,9 +12,9 @@ CREATE TABLE synalog_test.C3 AS SELECT
 FROM
   synalog_test.C0 AS C0
 WHERE
-  (C0.x != 3) AND
-  (C0.x != 2) AND
-  (C0.x != 1);
+  (C0.x IS DISTINCT FROM 3) AND
+  (C0.x IS DISTINCT FROM 2) AND
+  (C0.x IS DISTINCT FROM 1);
 
 -- Interacting with table synalog_test.C3
 
@@ -24,9 +24,9 @@ CREATE TABLE synalog_test.C6 AS SELECT
 FROM
   synalog_test.C3 AS C3
 WHERE
-  (C3.x != 6) AND
-  (C3.x != 5) AND
-  (C3.x != 4);
+  (C3.x IS DISTINCT FROM 6) AND
+  (C3.x IS DISTINCT FROM 5) AND
+  (C3.x IS DISTINCT FROM 4);
 
 -- Interacting with table synalog_test.C6
 

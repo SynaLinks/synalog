@@ -21,7 +21,7 @@ SELECT * FROM (
     FROM
       UNNEST(COALESCE((SELECT ARRAY_AGG(x) FROM GENERATE_SERIES(0, 10 - 1) as x), '{}')) as x_5
     WHERE
-      (x_5 != 5)
+      (x_5 IS DISTINCT FROM 5)
    UNION ALL
   
     SELECT

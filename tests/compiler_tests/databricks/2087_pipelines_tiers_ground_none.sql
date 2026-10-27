@@ -22,7 +22,7 @@ FROM
   t_4_Order AS t_3_Order, t_5_Price AS Price
 WHERE
   (t_3_Order.state = "paid") AND
-  (Price.item = t_3_Order.item)
+  (Price.item <=> t_3_Order.item)
 GROUP BY 1),
 t_0_TierCount AS (SELECT
   CASE WHEN (Spend.total >= 40) THEN "gold" WHEN (Spend.total >= 15) THEN "silver" ELSE "bronze" END AS tier,

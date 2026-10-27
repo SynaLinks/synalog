@@ -4,18 +4,6 @@ create schema if not exists synalog_home;
 drop type if exists synalogrecord893574736 cascade; create type synalogrecord893574736 as struct(nirvana numeric);
 create sequence if not exists eternal_logical_sequence;
 
-
--- Synalog type: synalogrecord481217614
-drop type if exists synalogrecord481217614 cascade; create type synalogrecord481217614 as struct(r synalogrecord893574736);
-
--- Synalog type: synalogrecord383307722
-drop type if exists synalogrecord383307722 cascade; create type synalogrecord383307722 as struct(a timestamp);
-
--- Synalog type: synalogrecord6083990
-drop type if exists synalogrecord6083990 cascade; create type synalogrecord6083990 as struct(x numeric, y numeric);
-
--- Synalog type: synalogrecord519939597
-drop type if exists synalogrecord519939597 cascade; create type synalogrecord519939597 as struct(args text[], predicate text);
 WITH t_2_V AS (SELECT * FROM (
   
     SELECT
@@ -79,5 +67,5 @@ FROM
   t_2_V AS V, t_3_Rate AS Rate, t_3_Rate AS t_1_Rate
 WHERE
   (Rate.r IS NOT null) AND
-  (V.s = Rate.s) AND
-  (V.s = t_1_Rate.s) ORDER BY k;
+  (V.s IS NOT DISTINCT FROM Rate.s) AND
+  (V.s IS NOT DISTINCT FROM t_1_Rate.s) ORDER BY k;

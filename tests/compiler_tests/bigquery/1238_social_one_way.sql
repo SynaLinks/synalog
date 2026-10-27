@@ -66,5 +66,5 @@ WHERE
   FROM
     t_0_Follows AS t_1_Follows
   WHERE
-    (t_1_Follows.a = Follows.b) AND
-    (t_1_Follows.b = Follows.a)) IS NULL) ORDER BY a, b;
+    (t_1_Follows.a IS NOT DISTINCT FROM Follows.b) AND
+    (t_1_Follows.b IS NOT DISTINCT FROM Follows.a)) IS NULL) ORDER BY a NULLS LAST, b NULLS LAST;

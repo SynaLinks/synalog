@@ -9,4 +9,4 @@ WHERE
     UNNEST(TRANSFORM(ARRAY[0], synalog_e -> ROW(synalog_e))) as pushkin(x_6)
   WHERE
     (x_6 > 1) AND
-    (x_3 = x_6)) IS NULL) ORDER BY x;
+    (x_3 IS NOT DISTINCT FROM x_6)) IS NULL) ORDER BY x;

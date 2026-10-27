@@ -74,6 +74,6 @@ SELECT
 FROM
   t_2_O AS O, UNNEST(ARRAY[0]) as x_10
 WHERE
-  (O.c = t_0_C.c)) AS best
+  (COALESCE(O.c, '') = COALESCE(t_0_C.c, '') AND (O.c IS NULL) = (t_0_C.c IS NULL))) AS best
 FROM
   t_3_C AS t_0_C ORDER BY c;

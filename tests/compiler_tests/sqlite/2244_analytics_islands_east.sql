@@ -103,11 +103,11 @@ WHERE
   FROM
     t_3_D AS t_6_D, JSON_EACH(JSON_ARRAY(0)) as x_15
   WHERE
-    (t_6_D.d = ((t_1_D.d) - (1)))) IS NULL) AND
+    (t_6_D.d IS ((t_1_D.d) - (1)))) IS NULL) AND
   ((SELECT
     MIN(MagicalEntangle(1, x_18.value)) AS synalog_value
   FROM
     t_3_D AS t_7_D, JSON_EACH(JSON_ARRAY(0)) as x_18
   WHERE
-    (t_7_D.d = ((t_2_D.d) + (1)))) IS NULL)
+    (t_7_D.d IS ((t_2_D.d) + (1)))) IS NULL)
 GROUP BY t_1_D.d ORDER BY first NULLS LAST, last NULLS LAST;

@@ -95,4 +95,4 @@ WHERE
   FROM
     t_5_Followed AS Followed, UNNEST(ARRAY[0]) as x_10
   WHERE
-    (Followed.u = t_0_User.u)) AS numeric) IS NULL);
+    (COALESCE(Followed.u, '') = COALESCE(t_0_User.u, '') AND (Followed.u IS NULL) = (t_0_User.u IS NULL))) AS numeric) IS NULL);

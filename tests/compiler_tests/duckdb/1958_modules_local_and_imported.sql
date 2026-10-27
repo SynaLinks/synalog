@@ -54,4 +54,4 @@ SELECT
 FROM
   t_1_Shop_Product AS Shop_Product, t_2_Color AS t_0_Color
 WHERE
-  (t_0_Color.sku = Shop_Product.sku) ORDER BY name, color;
+  (t_0_Color.sku IS NOT DISTINCT FROM Shop_Product.sku) ORDER BY name, color;

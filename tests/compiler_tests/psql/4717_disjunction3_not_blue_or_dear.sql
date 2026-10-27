@@ -62,7 +62,7 @@ t_0_Q_MultBodyAggAux AS (SELECT * FROM (
     FROM
       t_1_I AS I
     WHERE
-      (I.c != 'blue')
+      (I.c IS DISTINCT FROM 'blue')
    UNION ALL
   
     SELECT

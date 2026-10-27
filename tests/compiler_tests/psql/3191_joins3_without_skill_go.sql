@@ -95,5 +95,5 @@ WHERE
   FROM
     t_1_S AS S, UNNEST(ARRAY[0]) as x_6
   WHERE
-    (S.id = E.id) AND
+    (COALESCE(S.id, 0) = COALESCE(E.id, 0) AND (S.id IS NULL) = (E.id IS NULL)) AND
     (S.skill = 'go')) AS numeric) IS NULL) ORDER BY name;

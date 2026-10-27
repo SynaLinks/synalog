@@ -86,7 +86,7 @@ SELECT
 FROM
   t_1_Ship AS Ship, t_1_Ship AS t_0_Ship
 WHERE
-  (t_0_Ship.carrier != 'ups') AND
+  (t_0_Ship.carrier IS NOT 'ups') AND
   (Ship.carrier = 'ups') AND
-  (t_0_Ship.src = Ship.src)
+  (t_0_Ship.src IS Ship.src)
 GROUP BY t_0_Ship.carrier;

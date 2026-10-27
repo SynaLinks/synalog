@@ -22,5 +22,5 @@ WHERE
   FROM
     t_0_Follows AS t_1_Follows
   WHERE
-    (t_1_Follows.a = Follows.b) AND
-    (t_1_Follows.b = Follows.a)) IS NULL) ORDER BY a NULLS LAST, b NULLS LAST;
+    (t_1_Follows.a <=> Follows.b) AND
+    (t_1_Follows.b <=> Follows.a)) IS NULL) ORDER BY a NULLS LAST, b NULLS LAST;

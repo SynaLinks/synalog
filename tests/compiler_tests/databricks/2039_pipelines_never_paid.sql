@@ -27,7 +27,7 @@ FROM
   t_2_Order AS t_4_Order, t_5_Price AS Price
 WHERE
   (t_4_Order.state = "paid") AND
-  (Price.item = t_4_Order.item)
+  (Price.item <=> t_4_Order.item)
 GROUP BY 1)
 SELECT
   Person.who AS who
@@ -39,4 +39,4 @@ WHERE
   FROM
     t_3_Spend AS Spend
   WHERE
-    (Spend.who = Person.who)) IS NULL);
+    (Spend.who <=> Person.who)) IS NULL);

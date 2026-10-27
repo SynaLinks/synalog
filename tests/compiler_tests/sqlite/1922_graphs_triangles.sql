@@ -81,7 +81,7 @@ FROM
 WHERE
   (U.a < U.b) AND
   (U.b < t_0_U.b) AND
-  (t_0_U.a = U.b) AND
-  (t_1_U.a = t_0_U.b) AND
-  (t_1_U.b = U.a)
-GROUP BY U.a, U.b, t_0_U.b ORDER BY a, b, c;
+  (t_0_U.a IS U.b) AND
+  (t_1_U.a IS t_0_U.b) AND
+  (t_1_U.b IS U.a)
+GROUP BY U.a, U.b, t_0_U.b ORDER BY a NULLS LAST, b NULLS LAST, c NULLS LAST;

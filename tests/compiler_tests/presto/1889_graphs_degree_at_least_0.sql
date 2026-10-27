@@ -136,4 +136,4 @@ WHERE
   FROM
     synalog_test.U AS U
   WHERE
-    (U.a = Node.n)), 0) >= 0) ORDER BY n;
+    (U.a IS NOT DISTINCT FROM Node.n)), 0) >= 0) ORDER BY n;

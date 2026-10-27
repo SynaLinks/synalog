@@ -27,6 +27,6 @@ SELECT
 FROM
   t_1_V AS V
 WHERE
-  (V.g = t_0_G.g)) AS t
+  (V.g IS NOT DISTINCT FROM t_0_G.g)) AS t
 FROM
   t_2_G AS t_0_G ORDER BY g NULLS LAST;

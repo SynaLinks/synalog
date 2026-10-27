@@ -68,8 +68,8 @@ t_3_EngagedWith AS (SELECT
 FROM
   t_1_Team AS t_4_Team, t_7_Client AS t_5_Client, t_9_Engagements AS Engagements
 WHERE
-  (Engagements.team_id = t_4_Team.team_id) AND
-  (Engagements.client_id = t_5_Client.client_id)
+  (COALESCE(Engagements.team_id, 0) = COALESCE(t_4_Team.team_id, 0) AND (Engagements.team_id IS NULL) = (t_4_Team.team_id IS NULL)) AND
+  (COALESCE(Engagements.client_id, 0) = COALESCE(t_5_Client.client_id, 0) AND (Engagements.client_id IS NULL) = (t_5_Client.client_id IS NULL))
 GROUP BY t_4_Team.team_id, t_5_Client.client_id)
 SELECT
   t_0_Team.team_id AS team_id
@@ -81,4 +81,4 @@ WHERE
   FROM
     t_3_EngagedWith AS EngagedWith, UNNEST(ARRAY[0]) as x_8
   WHERE
-    (EngagedWith.team_id = t_0_Team.team_id)) AS numeric) IS NULL) ORDER BY team_id;
+    (COALESCE(EngagedWith.team_id, 0) = COALESCE(t_0_Team.team_id, 0) AND (EngagedWith.team_id IS NULL) = (t_0_Team.team_id IS NULL))) AS numeric) IS NULL) ORDER BY team_id;

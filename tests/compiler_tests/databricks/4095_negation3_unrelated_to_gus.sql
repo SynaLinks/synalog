@@ -22,18 +22,18 @@ SELECT
 FROM
   t_1_U AS t_0_U
 WHERE
-  (t_0_U.u != "gus") AND
+  (NOT (t_0_U.u <=> "gus")) AND
   ((SELECT
     MIN(1) AS synalog_value
   FROM
     t_2_F AS F
   WHERE
     (F.a = "gus") AND
-    (F.b = t_0_U.u)) IS NULL) AND
+    (F.b <=> t_0_U.u)) IS NULL) AND
   ((SELECT
     MIN(1) AS synalog_value
   FROM
     t_2_F AS t_3_F
   WHERE
-    (t_3_F.a = t_0_U.u) AND
+    (t_3_F.a <=> t_0_U.u) AND
     (t_3_F.b = "gus")) IS NULL) ORDER BY v NULLS LAST;

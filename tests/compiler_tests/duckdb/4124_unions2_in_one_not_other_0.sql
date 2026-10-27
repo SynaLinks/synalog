@@ -82,5 +82,5 @@ WHERE
   FROM
     t_2_A AS t_5_A, t_3_B AS t_6_B, (select unnest([0]) as unnested_pod) as x_10
   WHERE
-    (t_6_B.x = t_5_A.x) AND
-    (U.x = t_5_A.x)) IS NULL) ORDER BY x;
+    (t_6_B.x IS NOT DISTINCT FROM t_5_A.x) AND
+    (U.x IS NOT DISTINCT FROM t_5_A.x)) IS NULL) ORDER BY x;

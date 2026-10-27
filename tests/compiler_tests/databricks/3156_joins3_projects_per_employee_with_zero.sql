@@ -19,6 +19,6 @@ SELECT
 FROM
   t_0_Pr AS Pr
 WHERE
-  (Pr.dept = E.dept)), 0) AS n
+  (Pr.dept <=> E.dept)), 0) AS n
 FROM
   t_1_E AS E ORDER BY name NULLS LAST, n NULLS LAST;

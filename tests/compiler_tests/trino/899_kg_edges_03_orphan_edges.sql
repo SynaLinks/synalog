@@ -88,5 +88,5 @@ WHERE
   FROM
     synalog_test.Person AS Person
   WHERE
-    (Person.person_id = Management.employee_id)) IS NULL)
+    (Person.person_id IS NOT DISTINCT FROM Management.employee_id)) IS NULL)
 GROUP BY 1;

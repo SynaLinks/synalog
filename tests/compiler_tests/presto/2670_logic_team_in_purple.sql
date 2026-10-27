@@ -61,4 +61,4 @@ SELECT
 FROM
   t_0_Person AS Person, UNNEST(TRANSFORM(ARRAY['purple'], synalog_e -> ROW(synalog_e))) as pushkin(x_3)
 WHERE
-  (Person.team = x_3);
+  (Person.team IS NOT DISTINCT FROM x_3);

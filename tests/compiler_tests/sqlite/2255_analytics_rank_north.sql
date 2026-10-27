@@ -93,9 +93,9 @@ FROM
 WHERE
   (t_1_S.v > t_0_S.v) AND
   (t_0_S.r = 'north') AND
-  (t_0_S.d = S.d) AND
+  (t_0_S.d IS S.d) AND
   (t_1_S.r = 'north')), 0))) AS rank
 FROM
   t_2_S AS S
 WHERE
-  (S.r = 'north') ORDER BY d, rank;
+  (S.r = 'north') ORDER BY d NULLS LAST, rank NULLS LAST;

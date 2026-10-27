@@ -12,4 +12,4 @@ SELECT
 FROM
   t_0_Person AS Person, LATERAL (SELECT explode(ARRAY(7)) AS x_3) AS pushkin
 WHERE
-  (Person.age = x_3);
+  (Person.age <=> x_3);

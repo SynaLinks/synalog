@@ -7,4 +7,4 @@ SELECT
 FROM
   t_1_L AS t_0_L, LATERAL (SELECT explode(t_0_L.l) AS x_3) AS pushkin, LATERAL (SELECT explode(ARRAY(1, 2, 3)) AS x_5) AS pushkin
 WHERE
-  (x_5 = x_3) ORDER BY x NULLS LAST;
+  (x_5 <=> x_3) ORDER BY x NULLS LAST;

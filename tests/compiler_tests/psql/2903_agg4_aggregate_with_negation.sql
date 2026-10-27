@@ -104,4 +104,4 @@ WHERE
   FROM
     t_1_InLima AS InLima, UNNEST(ARRAY[0]) as x_4
   WHERE
-    (InLima.product = S.product)) AS numeric) IS NULL);
+    (COALESCE(InLima.product, '') = COALESCE(S.product, '') AND (InLima.product IS NULL) = (S.product IS NULL))) AS numeric) IS NULL);

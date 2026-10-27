@@ -20,4 +20,4 @@ SELECT
 FROM
   t_1_N AS t_0_N, JSON_EACH(JSON_ARRAY(1, 3)) as x_2
 WHERE
-  (t_0_N.n = x_2.value) ORDER BY n NULLS LAST;
+  (t_0_N.n IS x_2.value) ORDER BY n NULLS LAST;

@@ -65,5 +65,5 @@ SELECT
 FROM
   t_2_Reading AS Reading, t_2_Reading AS t_1_Reading
 WHERE
-  (t_1_Reading.day = ((Reading.day) - (1))) AND
+  (t_1_Reading.day IS NOT DISTINCT FROM ((Reading.day) - (1))) AND
   (0 = ((Reading.value) - (t_1_Reading.value))) ORDER BY day NULLS LAST;

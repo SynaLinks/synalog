@@ -33,4 +33,4 @@ SELECT
 FROM
   t_1_Person AS Person, t_2_City AS t_0_City
 WHERE
-  (t_0_City.city_id = Person.city_id) ORDER BY name NULLS LAST;
+  (t_0_City.city_id IS Person.city_id) ORDER BY name NULLS LAST;

@@ -14,9 +14,9 @@ SELECT
 FROM
   t_0_Ship AS Ship
 WHERE
-  (Ship.kg = (SELECT
+  (Ship.kg <=> (SELECT
     MAX(t_1_Ship.kg) AS synalog_value
   FROM
     t_0_Ship AS t_1_Ship
   WHERE
-    (t_1_Ship.client = Ship.client))) ORDER BY id NULLS LAST;
+    (t_1_Ship.client <=> Ship.client))) ORDER BY id NULLS LAST;

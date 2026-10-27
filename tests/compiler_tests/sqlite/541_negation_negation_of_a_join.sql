@@ -20,5 +20,5 @@ WHERE
   FROM
     t_0_P AS t_1_P, JSON_EACH(JSON_ARRAY(0)) as x_4
   WHERE
-    (P.n = t_1_P.n) AND
+    (P.n IS t_1_P.n) AND
     (t_1_P.k = 1)) IS NULL);

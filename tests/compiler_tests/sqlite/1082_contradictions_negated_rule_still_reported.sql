@@ -10,4 +10,4 @@ WHERE
   WHERE
     (x_3.value > 5) AND
     (x_3.value < 3) AND
-    (x_3.value = x_10.value)) IS NULL) ORDER BY x;
+    (x_3.value IS x_10.value)) IS NULL) ORDER BY x NULLS LAST;

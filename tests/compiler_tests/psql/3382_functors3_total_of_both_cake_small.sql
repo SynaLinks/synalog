@@ -4,16 +4,6 @@ create schema if not exists synalog_home;
 -- Empty synalog type: synalogrecord893574736;
 DO $$ BEGIN if not exists (select 'I(am) :- I(think)' from pg_type where typname = 'synalogrecord893574736') then create type synalogrecord893574736 as (nirvana numeric); end if; END $$;
 
-
-DO $$
-BEGIN
--- Synalog type: synalogrecord481217614
-if not exists (select 'I(am) :- I(think)' from pg_type where typname = 'synalogrecord481217614') then create type synalogrecord481217614 as (r synalogrecord893574736); end if;
--- Synalog type: synalogrecord86796764
-if not exists (select 'I(am) :- I(think)' from pg_type where typname = 'synalogrecord86796764') then create type synalogrecord86796764 as (s text); end if;
--- Synalog type: synalogrecord884343024
-if not exists (select 'I(am) :- I(think)' from pg_type where typname = 'synalogrecord884343024') then create type synalogrecord884343024 as (arg numeric, value numeric); end if;
-END $$;
 WITH t_2_Sale AS (SELECT * FROM (
   
     SELECT
@@ -78,6 +68,6 @@ FROM
   t_2_Sale AS t_0_Sale, t_2_Sale AS t_1_Sale, t_2_Sale AS Sale
 WHERE
   (t_1_Sale.amount < 60) AND
-  (t_1_Sale.id = Sale.id) AND
+  (COALESCE(t_1_Sale.id, 0) = COALESCE(Sale.id, 0) AND (t_1_Sale.id IS NULL) = (Sale.id IS NULL)) AND
   (t_0_Sale.product = 'cake') AND
-  (Sale.id = t_0_Sale.id);
+  (COALESCE(Sale.id, 0) = COALESCE(t_0_Sale.id, 0) AND (Sale.id IS NULL) = (t_0_Sale.id IS NULL));

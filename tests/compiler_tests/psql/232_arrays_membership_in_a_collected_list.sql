@@ -13,4 +13,4 @@ SELECT
 FROM
   t_1_L AS t_0_L, UNNEST(t_0_L.l) as x_3, UNNEST(ARRAY[1, 2, 3]) as x_5
 WHERE
-  (x_5 = x_3) ORDER BY x;
+  (COALESCE(x_5, 0) = COALESCE(x_3, 0) AND (x_5 IS NULL) = (x_3 IS NULL)) ORDER BY x;

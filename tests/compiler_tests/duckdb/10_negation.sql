@@ -36,7 +36,7 @@ SELECT * FROM (
         (select unnest(Range(10)) as unnested_pod) as x_12, (select unnest([0]) as unnested_pod) as x_8
       WHERE
         (((x_5.unnested_pod) % NULLIF(2, 0)) = 0) AND
-        (x_5.unnested_pod = x_12.unnested_pod)) IS NULL)
+        (x_5.unnested_pod IS NOT DISTINCT FROM x_12.unnested_pod)) IS NULL)
    UNION ALL
   
     SELECT
@@ -51,7 +51,7 @@ SELECT * FROM (
       FROM
         t_0_Prime AS Prime, (select unnest([0]) as unnested_pod) as x_8
       WHERE
-        (Prime.col0 = x_5.unnested_pod)) IS NULL)
+        (Prime.col0 IS NOT DISTINCT FROM x_5.unnested_pod)) IS NULL)
    UNION ALL
   
     SELECT
@@ -65,7 +65,7 @@ SELECT * FROM (
       FROM
         t_0_Prime AS Prime, (select unnest([0]) as unnested_pod) as x_10
       WHERE
-        (Prime.col0 = x_7.unnested_pod)) IS NULL) AND
+        (Prime.col0 IS NOT DISTINCT FROM x_7.unnested_pod)) IS NULL) AND
       (((x_7.unnested_pod) % NULLIF(2, 0)) = 0)
   
 ) AS UNUSED_TABLE_NAME  ORDER BY test_name, x ;

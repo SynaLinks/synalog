@@ -68,4 +68,4 @@ SELECT
 FROM
   t_0_B AS B
 WHERE
-  (STRUCT("Ubik" AS title, "dick" AS author) = STRUCT(B.title AS title, B.author AS author));
+  (STRUCT("Ubik" AS title, "dick" AS author) IS NOT DISTINCT FROM STRUCT(B.title AS title, B.author AS author));

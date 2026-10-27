@@ -8,4 +8,4 @@ WHERE
   FROM
     UNNEST(TRANSFORM(ARRAY[1, 2], synalog_e -> ROW(synalog_e))) as pushkin(x_8)
   WHERE
-    (x_3 = x_8)) IS NULL);
+    (x_3 IS NOT DISTINCT FROM x_8)) IS NULL);

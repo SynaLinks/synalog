@@ -7,4 +7,4 @@ SELECT
 FROM
   t_0_C AS C
 WHERE
-  (UPPER(C.last) = C.last);
+  (UPPER(C.last) <=> C.last);

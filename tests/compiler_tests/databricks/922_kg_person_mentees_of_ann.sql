@@ -22,8 +22,8 @@ t_0_Mentors AS (SELECT
 FROM
   t_2_Person AS Person, t_2_Person AS t_1_Person, t_5_Mentoring AS Mentoring
 WHERE
-  (Mentoring.mentor_id = Person.person_id) AND
-  (Mentoring.mentee_id = t_1_Person.person_id)
+  (Mentoring.mentor_id <=> Person.person_id) AND
+  (Mentoring.mentee_id <=> t_1_Person.person_id)
 GROUP BY 1, 2)
 SELECT
   Mentors.mentee_id AS mentee_id

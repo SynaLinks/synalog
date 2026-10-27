@@ -28,4 +28,4 @@ SELECT
 FROM
   t_0_Total AS Total, t_2_Reorder AS Reorder
 WHERE
-  (Reorder.item = Total.item) ORDER BY item NULLS LAST, status NULLS LAST;
+  (Reorder.item <=> Total.item) ORDER BY item NULLS LAST, status NULLS LAST;

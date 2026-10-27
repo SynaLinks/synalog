@@ -89,4 +89,4 @@ WHERE
   FROM
     t_3_Uses AS t_5_Uses, UNNEST(ARRAY[0]) as x_10
   WHERE
-    (t_5_Uses.component = t_0_Part.part)) AS numeric) IS NULL) ORDER BY part;
+    (COALESCE(t_5_Uses.component, '') = COALESCE(t_0_Part.part, '') AND (t_5_Uses.component IS NULL) = (t_0_Part.part IS NULL))) AS numeric) IS NULL) ORDER BY part;

@@ -107,4 +107,4 @@ WHERE
   FROM
     t_2_D AS t_4_D, JSON_EACH(JSON_ARRAY(0)) as x_10
   WHERE
-    (t_4_D.d = x_3.value)) IS NULL);
+    (t_4_D.d IS x_3.value)) IS NULL);

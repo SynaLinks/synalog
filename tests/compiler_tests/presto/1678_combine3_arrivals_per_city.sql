@@ -107,6 +107,6 @@ SELECT
 FROM
   t_0_Ship AS Ship
 WHERE
-  (Ship.dst = City.c)), 0) AS n
+  (Ship.dst IS NOT DISTINCT FROM City.c)), 0) AS n
 FROM
   t_1_City AS City ORDER BY c, n;

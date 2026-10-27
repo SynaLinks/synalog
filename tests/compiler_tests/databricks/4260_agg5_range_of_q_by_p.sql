@@ -30,4 +30,4 @@ SELECT
 FROM
   t_0_Hi AS Hi, t_2_Lo AS Lo
 WHERE
-  (Lo.k = Hi.k) ORDER BY k NULLS LAST;
+  (Lo.k <=> Hi.k) ORDER BY k NULLS LAST;

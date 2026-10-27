@@ -28,4 +28,4 @@ WHERE
     t_1_A AS A
   WHERE
     (A.hours > 5) AND
-    (A.id = Person.id)) IS NULL) ORDER BY id NULLS LAST;
+    (A.id <=> Person.id)) IS NULL) ORDER BY id NULLS LAST;

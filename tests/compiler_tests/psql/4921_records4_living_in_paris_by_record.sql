@@ -38,4 +38,4 @@ SELECT
 FROM
   t_0_P AS P
 WHERE
-  ((P.r).home = ROW('paris')::synalogrecord10283957592820413579) ORDER BY n;
+  (ARRAY[ROW((P.r).home)] = ARRAY[ROW(ROW('paris')::synalogrecord10283957592820413579)]) ORDER BY n;

@@ -69,15 +69,15 @@ t_1_InDept AS (SELECT
 FROM
   t_3_Person AS Person, t_6_Dept AS t_2_Dept, t_5_Employees AS Employees
 WHERE
-  (Employees.person_id = Person.person_id) AND
-  (Employees.dept = t_2_Dept.dept)
+  (COALESCE(Employees.person_id, 0) = COALESCE(Person.person_id, 0) AND (Employees.person_id IS NULL) = (Person.person_id IS NULL)) AND
+  (COALESCE(Employees.dept, '') = COALESCE(t_2_Dept.dept, '') AND (Employees.dept IS NULL) = (t_2_Dept.dept IS NULL))
 GROUP BY Person.person_id, t_2_Dept.dept)
 SELECT
   t_0_InDept.person_id AS person_id
 FROM
   t_1_InDept AS InDept, t_1_InDept AS t_0_InDept
 WHERE
-  (t_0_InDept.person_id != 1) AND
+  (t_0_InDept.person_id IS DISTINCT FROM 1) AND
   (InDept.person_id = 1) AND
-  (t_0_InDept.dept = InDept.dept)
+  (COALESCE(t_0_InDept.dept, '') = COALESCE(InDept.dept, '') AND (t_0_InDept.dept IS NULL) = (InDept.dept IS NULL))
 GROUP BY t_0_InDept.person_id ORDER BY person_id;

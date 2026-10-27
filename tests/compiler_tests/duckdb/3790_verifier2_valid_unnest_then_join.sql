@@ -27,4 +27,4 @@ SELECT
 FROM
   t_1_N AS t_0_N, (select unnest([2, 3]) as unnested_pod) as x_2
 WHERE
-  (t_0_N.n = x_2.unnested_pod) ORDER BY n;
+  (t_0_N.n IS NOT DISTINCT FROM x_2.unnested_pod) ORDER BY n;

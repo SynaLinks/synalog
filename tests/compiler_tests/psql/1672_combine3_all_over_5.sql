@@ -102,4 +102,4 @@ WHERE
   FROM
     t_2_Ship AS t_3_Ship, UNNEST(ARRAY[0]) as x_8
   WHERE
-    (t_3_Ship.client = t_0_Client.client)) AS numeric) > 5) ORDER BY client;
+    (COALESCE(t_3_Ship.client, '') = COALESCE(t_0_Client.client, '') AND (t_3_Ship.client IS NULL) = (t_0_Client.client IS NULL))) AS numeric) > 5) ORDER BY client;

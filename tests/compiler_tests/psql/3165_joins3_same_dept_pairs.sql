@@ -55,4 +55,4 @@ FROM
   t_1_E AS E, t_1_E AS t_0_E
 WHERE
   (E.id < t_0_E.id) AND
-  (t_0_E.dept = E.dept) ORDER BY a, b;
+  (COALESCE(t_0_E.dept, 0) = COALESCE(E.dept, 0) AND (t_0_E.dept IS NULL) = (E.dept IS NULL)) ORDER BY a, b;

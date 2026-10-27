@@ -11,6 +11,6 @@ SELECT
 FROM
   t_1_E AS E, t_1_E AS t_0_E
 WHERE
-  (t_0_E.name != "cid") AND
+  (NOT (t_0_E.name <=> "cid")) AND
   (E.name = "cid") AND
-  (t_0_E.dept = E.dept);
+  (t_0_E.dept <=> E.dept);

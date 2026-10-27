@@ -117,6 +117,6 @@ SELECT
 FROM
   t_0_S AS S, t_1_E AS E, t_2_D AS D
 WHERE
-  (E.id = S.id) AND
-  (D.dept = E.dept)
+  (COALESCE(E.id, 0) = COALESCE(S.id, 0) AND (E.id IS NULL) = (S.id IS NULL)) AND
+  (COALESCE(D.dept, 0) = COALESCE(E.dept, 0) AND (D.dept IS NULL) = (E.dept IS NULL))
 GROUP BY D.city ORDER BY city, n;

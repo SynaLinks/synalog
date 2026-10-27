@@ -58,6 +58,6 @@ WITH t_1_V AS (SELECT * FROM (
 ) AS UNUSED_TABLE_NAME  )
 SELECT
   V.id AS id,
-  ((((MOD(CAST(CAST(SUBSTR(V.d, 1, 4) AS BIGINT) AS numeric), NULLIF(CAST(4 AS numeric), 0))) = 0) AND ((MOD(CAST(CAST(SUBSTR(V.d, 1, 4) AS BIGINT) AS numeric), NULLIF(CAST(100 AS numeric), 0))) != 0)) OR ((MOD(CAST(CAST(SUBSTR(V.d, 1, 4) AS BIGINT) AS numeric), NULLIF(CAST(400 AS numeric), 0))) = 0)) AS leap
+  ((((MOD(CAST(CAST(SUBSTR(V.d, 1, 4) AS BIGINT) AS numeric), NULLIF(CAST(4 AS numeric), 0))) = 0) AND ((MOD(CAST(CAST(SUBSTR(V.d, 1, 4) AS BIGINT) AS numeric), NULLIF(CAST(100 AS numeric), 0))) IS DISTINCT FROM 0)) OR ((MOD(CAST(CAST(SUBSTR(V.d, 1, 4) AS BIGINT) AS numeric), NULLIF(CAST(400 AS numeric), 0))) = 0)) AS leap
 FROM
   t_1_V AS V ORDER BY id;

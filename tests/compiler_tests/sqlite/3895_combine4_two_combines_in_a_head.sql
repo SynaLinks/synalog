@@ -67,12 +67,12 @@ SELECT
 FROM
   t_1_O AS O, JSON_EACH(JSON_ARRAY(0)) as x_6
 WHERE
-  (O.c = t_0_C.c)) AS t,
+  (O.c IS t_0_C.c)) AS t,
   (SELECT
   SUM(MagicalEntangle(1, x_9.value)) AS synalog_value
 FROM
   t_1_O AS t_2_O, JSON_EACH(JSON_ARRAY(0)) as x_9
 WHERE
-  (t_2_O.c = t_0_C.c)) AS n
+  (t_2_O.c IS t_0_C.c)) AS n
 FROM
   t_3_C AS t_0_C ORDER BY c NULLS LAST;

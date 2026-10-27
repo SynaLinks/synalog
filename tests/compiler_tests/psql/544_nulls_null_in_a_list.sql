@@ -19,4 +19,4 @@ SELECT
 FROM
   t_0_V AS V, UNNEST(ARRAY[1, 2]) as x_2
 WHERE
-  (V.x = x_2);
+  (COALESCE(V.x, 0) = COALESCE(x_2, 0) AND (V.x IS NULL) = (x_2 IS NULL));

@@ -33,5 +33,5 @@ SELECT
 FROM
   t_0_P AS P, t_1_O AS O
 WHERE
-  (O.pid = P.id)
-GROUP BY name ORDER BY name;
+  (O.pid IS NOT DISTINCT FROM P.id)
+GROUP BY name ORDER BY name NULLS LAST;

@@ -157,4 +157,4 @@ WHERE
   FROM
     t_2_Tag AS t_1_Tag, (select unnest([0]) as unnested_pod) as x_4
   WHERE
-    (t_1_Tag.id = Person.id)) IS NULL) ORDER BY id;
+    (t_1_Tag.id IS NOT DISTINCT FROM Person.id)) IS NULL) ORDER BY id;

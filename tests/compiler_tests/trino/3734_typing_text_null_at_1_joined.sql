@@ -35,4 +35,4 @@ SELECT
 FROM
   t_2_K AS t_0_K, t_3_V AS t_1_V
 WHERE
-  (t_1_V.k = t_0_K.k) ORDER BY k;
+  (t_1_V.k IS NOT DISTINCT FROM t_0_K.k) ORDER BY k;

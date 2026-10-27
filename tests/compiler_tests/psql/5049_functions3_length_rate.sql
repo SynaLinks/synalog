@@ -65,4 +65,4 @@ SELECT
 FROM
   t_1_V AS t_0_V, t_2_Rate AS Rate
 WHERE
-  (t_0_V.s = Rate.s) ORDER BY k;
+  (COALESCE(t_0_V.s, '') = COALESCE(Rate.s, '') AND (t_0_V.s IS NULL) = (Rate.s IS NULL)) ORDER BY k;

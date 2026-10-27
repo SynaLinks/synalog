@@ -51,7 +51,7 @@ t_7_Person AS (SELECT
   Employees.url AS url
 FROM
   t_8_Employees AS Employees
-GROUP BY person_id, name, url ORDER BY person_id),
+GROUP BY person_id, name, url ORDER BY person_id NULLS LAST),
 t_10_Management AS (SELECT * FROM (
   
     SELECT
@@ -80,8 +80,8 @@ t_5_Manages AS (SELECT
 FROM
   t_7_Person AS Person, t_7_Person AS t_6_Person, t_10_Management AS Management
 WHERE
-  (Management.manager_id = Person.person_id) AND
-  (Management.employee_id = t_6_Person.person_id)
+  (Management.manager_id IS NOT DISTINCT FROM Person.person_id) AND
+  (Management.employee_id IS NOT DISTINCT FROM t_6_Person.person_id)
 GROUP BY manager_id, employee_id),
 t_14_Mentoring AS (SELECT * FROM (
   
@@ -101,8 +101,8 @@ t_11_Mentors AS (SELECT
 FROM
   t_7_Person AS t_12_Person, t_7_Person AS t_13_Person, t_14_Mentoring AS Mentoring
 WHERE
-  (Mentoring.mentor_id = t_12_Person.person_id) AND
-  (Mentoring.mentee_id = t_13_Person.person_id)
+  (Mentoring.mentor_id IS NOT DISTINCT FROM t_12_Person.person_id) AND
+  (Mentoring.mentee_id IS NOT DISTINCT FROM t_13_Person.person_id)
 GROUP BY mentor_id, mentee_id),
 t_4_Related_MultBodyAggAux AS (SELECT * FROM (
   
@@ -155,7 +155,7 @@ t_0_Near_MultBodyAggAux AS (SELECT * FROM (
     FROM
       t_1_Link AS Link
     WHERE
-      (Link.b != 3) AND
+      (Link.b IS DISTINCT FROM 3) AND
       (Link.a = 3)
    UNION ALL
   
@@ -164,13 +164,13 @@ t_0_Near_MultBodyAggAux AS (SELECT * FROM (
     FROM
       t_1_Link AS t_25_Link, t_1_Link AS t_26_Link
     WHERE
-      (t_26_Link.b != 3) AND
+      (t_26_Link.b IS DISTINCT FROM 3) AND
       (t_25_Link.a = 3) AND
-      (t_26_Link.a = t_25_Link.b)
+      (t_26_Link.a IS NOT DISTINCT FROM t_25_Link.b)
   
 ) AS UNUSED_TABLE_NAME  )
 SELECT
   Near_MultBodyAggAux.person_id AS person_id
 FROM
   t_0_Near_MultBodyAggAux AS Near_MultBodyAggAux
-GROUP BY person_id ORDER BY person_id;
+GROUP BY person_id ORDER BY person_id NULLS LAST;

@@ -127,7 +127,7 @@ FROM
   t_3_Order AS t_6_Order, t_7_Price AS Price
 WHERE
   (t_6_Order.state = 'paid') AND
-  (Price.item = t_6_Order.item)
+  (Price.item IS t_6_Order.item)
 GROUP BY t_6_Order.who)
 SELECT
   Trouble.who AS who
@@ -139,4 +139,4 @@ WHERE
   FROM
     t_5_Spend AS Spend, JSON_EACH(JSON_ARRAY(0)) as x_12
   WHERE
-    (Spend.who = Trouble.who)) IS NULL);
+    (Spend.who IS Trouble.who)) IS NULL);

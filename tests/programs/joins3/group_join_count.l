@@ -1,5 +1,5 @@
 # Rows per group that has a weight.
-# Expect: rows Q = [("a", 2), ("b", 1)]
+# Expect: rows Q = [('a', 2), ('b', 1), (None, 1)]
 E(id: 1, g: "a", v: 10);
 E(id: 2, g: "a", v: 20);
 E(id: 3, g: "b", v: null);

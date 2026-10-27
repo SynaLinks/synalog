@@ -56,4 +56,4 @@ WHERE
   FROM
     t_1_U AS U
   WHERE
-    (U.a = Node.n)), 0) >= 3) ORDER BY n NULLS LAST;
+    (U.a <=> Node.n)), 0) >= 3) ORDER BY n NULLS LAST;

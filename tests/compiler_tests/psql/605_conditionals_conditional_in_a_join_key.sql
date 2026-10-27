@@ -22,4 +22,4 @@ SELECT
 FROM
   t_0_Name AS Name, UNNEST(ARRAY[1, 2]) as x_6
 WHERE
-  (Name.p = CASE WHEN ((MOD(CAST(x_6 AS numeric), NULLIF(CAST(2 AS numeric), 0))) = 0) THEN 0 ELSE 1 END) ORDER BY x;
+  (COALESCE(Name.p, 0) = COALESCE(CASE WHEN ((MOD(CAST(x_6 AS numeric), NULLIF(CAST(2 AS numeric), 0))) = 0) THEN 0 ELSE 1 END, 0) AND (Name.p IS NULL) = (CASE WHEN ((MOD(CAST(x_6 AS numeric), NULLIF(CAST(2 AS numeric), 0))) = 0) THEN 0 ELSE 1 END IS NULL)) ORDER BY x;

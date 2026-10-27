@@ -51,7 +51,7 @@ t_23_Person AS (SELECT
   Employees.url AS url
 FROM
   t_24_Employees AS Employees
-GROUP BY person_id, name, url ORDER BY person_id),
+GROUP BY person_id, name, url ORDER BY person_id NULLS LAST),
 t_26_Management AS (SELECT * FROM (
   
     SELECT
@@ -80,8 +80,8 @@ t_21_Manages AS (SELECT
 FROM
   t_23_Person AS Person, t_23_Person AS t_22_Person, t_26_Management AS Management
 WHERE
-  (Management.manager_id = Person.person_id) AND
-  (Management.employee_id = t_22_Person.person_id)
+  (Management.manager_id IS NOT DISTINCT FROM Person.person_id) AND
+  (Management.employee_id IS NOT DISTINCT FROM t_22_Person.person_id)
 GROUP BY manager_id, employee_id),
 t_18_Chain_MultBodyAggAux_recursive_head_f1 AS (SELECT * FROM (
   
@@ -106,7 +106,7 @@ t_15_Chain_MultBodyAggAux_recursive_head_f2 AS (SELECT * FROM (
     FROM
       t_17_Chain_r0 AS Chain_r0, t_21_Manages AS t_16_Manages
     WHERE
-      (t_16_Manages.employee_id = Chain_r0.manager_id)
+      (t_16_Manages.employee_id IS NOT DISTINCT FROM Chain_r0.manager_id)
    UNION ALL
   
     SELECT
@@ -130,7 +130,7 @@ t_12_Chain_MultBodyAggAux_recursive_head_f3 AS (SELECT * FROM (
     FROM
       t_14_Chain_r1 AS Chain_r1, t_21_Manages AS t_13_Manages
     WHERE
-      (t_13_Manages.employee_id = Chain_r1.manager_id)
+      (t_13_Manages.employee_id IS NOT DISTINCT FROM Chain_r1.manager_id)
    UNION ALL
   
     SELECT
@@ -154,7 +154,7 @@ t_9_Chain_MultBodyAggAux_recursive_head_f4 AS (SELECT * FROM (
     FROM
       t_11_Chain_r2 AS Chain_r2, t_21_Manages AS t_10_Manages
     WHERE
-      (t_10_Manages.employee_id = Chain_r2.manager_id)
+      (t_10_Manages.employee_id IS NOT DISTINCT FROM Chain_r2.manager_id)
    UNION ALL
   
     SELECT
@@ -178,7 +178,7 @@ t_6_Chain_MultBodyAggAux_recursive_head_f5 AS (SELECT * FROM (
     FROM
       t_8_Chain_r3 AS Chain_r3, t_21_Manages AS t_7_Manages
     WHERE
-      (t_7_Manages.employee_id = Chain_r3.manager_id)
+      (t_7_Manages.employee_id IS NOT DISTINCT FROM Chain_r3.manager_id)
    UNION ALL
   
     SELECT
@@ -202,7 +202,7 @@ t_3_Chain_MultBodyAggAux_recursive_head_f6 AS (SELECT * FROM (
     FROM
       t_5_Chain_r4 AS Chain_r4, t_21_Manages AS t_4_Manages
     WHERE
-      (t_4_Manages.employee_id = Chain_r4.manager_id)
+      (t_4_Manages.employee_id IS NOT DISTINCT FROM Chain_r4.manager_id)
    UNION ALL
   
     SELECT
@@ -226,7 +226,7 @@ t_1_Chain_MultBodyAggAux_recursive_head_f7 AS (SELECT * FROM (
     FROM
       t_2_Chain_r5 AS Chain_r5, t_21_Manages AS Manages
     WHERE
-      (Manages.employee_id = Chain_r5.manager_id)
+      (Manages.employee_id IS NOT DISTINCT FROM Chain_r5.manager_id)
    UNION ALL
   
     SELECT
@@ -248,4 +248,4 @@ FROM
   t_0_Chain AS Chain
 WHERE
   (Chain.employee_id = 2)
-GROUP BY manager_id ORDER BY manager_id;
+GROUP BY manager_id ORDER BY manager_id NULLS LAST;

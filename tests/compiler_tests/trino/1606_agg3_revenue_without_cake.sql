@@ -98,5 +98,5 @@ WHERE
   FROM
     t_1_Cake AS Cake
   WHERE
-    (Cake.region = Sale.region)) IS NULL)
+    (Cake.region IS NOT DISTINCT FROM Sale.region)) IS NULL)
 GROUP BY 1;

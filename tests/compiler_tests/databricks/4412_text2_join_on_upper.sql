@@ -15,4 +15,4 @@ FROM
   t_1_W AS W, t_1_W AS t_0_W
 WHERE
   (W.k < t_0_W.k) AND
-  (UPPER(W.s) = UPPER(t_0_W.s)) ORDER BY a NULLS LAST, b NULLS LAST;
+  (UPPER(W.s) <=> UPPER(t_0_W.s)) ORDER BY a NULLS LAST, b NULLS LAST;

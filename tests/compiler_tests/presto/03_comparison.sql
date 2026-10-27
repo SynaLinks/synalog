@@ -15,7 +15,7 @@ SELECT * FROM (
     FROM
       UNNEST(TRANSFORM(FILTER(SEQUENCE(0, 10), x -> x < 10), synalog_e -> ROW(synalog_e))) as pushkin(x_5)
     WHERE
-      (x_5 != 5)
+      (x_5 IS DISTINCT FROM 5)
    UNION ALL
   
     SELECT

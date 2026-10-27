@@ -29,7 +29,7 @@ WITH RECURSIVE t_3_R_RecursiveCte AS (SELECT * FROM (
         (((x_45.value) + (2)) < 25) AND
         (0 < 30) AND
         (1 = 0) AND
-        (x_39.value = ((x_45.value) + (2))) AND
+        (x_39.value IS ((x_45.value) + (2))) AND
         (x_45.value = 0)
      UNION ALL
     
@@ -46,8 +46,8 @@ WITH RECURSIVE t_3_R_RecursiveCte AS (SELECT * FROM (
         (((x_74.value) + (2)) < 25) AND
         (0 < 30) AND
         (1 = 0) AND
-        (x_61.value = ((x_68.value) + (2))) AND
-        (x_68.value = ((x_74.value) + (2))) AND
+        (x_61.value IS ((x_68.value) + (2))) AND
+        (x_68.value IS ((x_74.value) + (2))) AND
         (x_74.value = 0)
     
   ) AS UNUSED_TABLE_NAME  
@@ -61,7 +61,7 @@ FROM
 WHERE
   (((x_81.value) + (2)) < 25) AND
   (t_17_R_RecursiveCte.synalog_step < 30) AND
-  (t_17_R_RecursiveCte.y = x_81.value)),
+  (t_17_R_RecursiveCte.y IS x_81.value)),
 t_2_R AS (SELECT
   R_RecursiveCte.y AS y
 FROM

@@ -118,7 +118,7 @@ WHERE
   FROM
     t_4_A AS t_2_A, t_4_A AS t_3_A
   WHERE
-    (t_2_A.id = Person.id) AND
-    (t_3_A.id = t_0_Person.id) AND
-    (t_3_A.pid = t_2_A.pid)) IS NULL) AND
-  (t_0_Person.team = Person.team);
+    (t_2_A.id IS NOT DISTINCT FROM Person.id) AND
+    (t_3_A.id IS NOT DISTINCT FROM t_0_Person.id) AND
+    (t_3_A.pid IS NOT DISTINCT FROM t_2_A.pid)) IS NULL) AND
+  (t_0_Person.team IS NOT DISTINCT FROM Person.team);

@@ -51,5 +51,5 @@ WHERE
     t_0_F AS t_1_F
   WHERE
     (t_1_F.a = "ann") AND
-    (t_1_F.b = F.a)) IS NULL) AND
-  (F.b = "ann") ORDER BY v;
+    (t_1_F.b IS NOT DISTINCT FROM F.a)) IS NULL) AND
+  (F.b = "ann") ORDER BY v NULLS LAST;

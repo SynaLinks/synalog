@@ -15,4 +15,4 @@ SELECT
 FROM
   t_0_Event AS Event, LATERAL (SELECT explode(ARRAY("28", "30", "31")) AS x_3) AS pushkin
 WHERE
-  (SUBSTR(Event.`at`, 9, 2) = x_3) ORDER BY id NULLS LAST;
+  (SUBSTR(Event.`at`, 9, 2) <=> x_3) ORDER BY id NULLS LAST;

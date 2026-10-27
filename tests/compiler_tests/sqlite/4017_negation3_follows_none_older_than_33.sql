@@ -88,5 +88,5 @@ WHERE
     t_3_F AS F, t_1_U AS t_2_U, JSON_EACH(JSON_ARRAY(0)) as x_9
   WHERE
     (t_2_U.age > 33) AND
-    (F.a = t_0_U.u) AND
-    (t_2_U.u = F.b)) IS NULL) ORDER BY u NULLS LAST;
+    (F.a IS t_0_U.u) AND
+    (t_2_U.u IS F.b)) IS NULL) ORDER BY u NULLS LAST;

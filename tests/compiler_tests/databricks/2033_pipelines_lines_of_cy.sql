@@ -34,5 +34,5 @@ SELECT
 FROM
   synalog_test.Paid AS Paid, t_0_Price AS Price
 WHERE
-  (Price.item = Paid.item) AND
+  (Price.item <=> Paid.item) AND
   ("cy" = Paid.who) ORDER BY id NULLS LAST, amount NULLS LAST;

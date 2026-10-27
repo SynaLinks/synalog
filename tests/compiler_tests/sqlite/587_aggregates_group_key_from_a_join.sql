@@ -38,5 +38,5 @@ SELECT
 FROM
   t_0_Sale AS Sale, t_1_Region AS Region
 WHERE
-  (Region.c = Sale.c)
-GROUP BY Region.r ORDER BY r;
+  (Region.c IS Sale.c)
+GROUP BY Region.r ORDER BY r NULLS LAST;

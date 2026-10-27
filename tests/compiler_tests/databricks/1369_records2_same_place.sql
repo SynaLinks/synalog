@@ -15,4 +15,4 @@ FROM
   t_2_Emp AS Emp, t_2_Emp AS t_1_Emp
 WHERE
   (Emp.name < t_1_Emp.name) AND
-  (STRUCT(t_1_Emp.dept AS dept, t_1_Emp.city AS city) = STRUCT(Emp.dept AS dept, Emp.city AS city));
+  (STRUCT(t_1_Emp.dept AS dept, t_1_Emp.city AS city) <=> STRUCT(Emp.dept AS dept, Emp.city AS city));

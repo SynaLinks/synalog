@@ -58,4 +58,4 @@ WHERE
   FROM
     t_1_Used AS Used
   WHERE
-    (Used.g = F.g)) IS NULL);
+    (Used.g IS NOT DISTINCT FROM F.g)) IS NULL);

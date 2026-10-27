@@ -114,4 +114,4 @@ WHERE
   FROM
     t_0_R AS R
   WHERE
-    (R.x = x_2)) IS NULL);
+    (R.x IS NOT DISTINCT FROM x_2)) IS NULL);

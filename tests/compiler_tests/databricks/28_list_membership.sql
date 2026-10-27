@@ -11,4 +11,4 @@ SELECT
 FROM
   t_0_Items AS Items, LATERAL (SELECT explode(ARRAY("fruit", "vegetable")) AS x_9) AS pushkin
 WHERE
-  (Items.col1 = x_9) ORDER BY name NULLS LAST;
+  (Items.col1 <=> x_9) ORDER BY name NULLS LAST;

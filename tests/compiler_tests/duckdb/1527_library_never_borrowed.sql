@@ -163,4 +163,4 @@ WHERE
   FROM
     t_2_Borrowed AS Borrowed, (select unnest([0]) as unnested_pod) as x_5
   WHERE
-    (Borrowed.book = t_0_Book.id)) IS NULL);
+    (Borrowed.book IS NOT DISTINCT FROM t_0_Book.id)) IS NULL);

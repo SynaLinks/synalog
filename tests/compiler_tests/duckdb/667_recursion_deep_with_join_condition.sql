@@ -35,7 +35,7 @@ WITH RECURSIVE t_3_R_RecursiveCte AS (SELECT * FROM (
         (((x_45.unnested_pod) + (2)) < 25) AND
         (0 < 30) AND
         (1 = 0) AND
-        (x_39.unnested_pod = ((x_45.unnested_pod) + (2))) AND
+        (x_39.unnested_pod IS NOT DISTINCT FROM ((x_45.unnested_pod) + (2))) AND
         (x_45.unnested_pod = 0)
      UNION ALL
     
@@ -52,8 +52,8 @@ WITH RECURSIVE t_3_R_RecursiveCte AS (SELECT * FROM (
         (((x_74.unnested_pod) + (2)) < 25) AND
         (0 < 30) AND
         (1 = 0) AND
-        (x_61.unnested_pod = ((x_68.unnested_pod) + (2))) AND
-        (x_68.unnested_pod = ((x_74.unnested_pod) + (2))) AND
+        (x_61.unnested_pod IS NOT DISTINCT FROM ((x_68.unnested_pod) + (2))) AND
+        (x_68.unnested_pod IS NOT DISTINCT FROM ((x_74.unnested_pod) + (2))) AND
         (x_74.unnested_pod = 0)
     
   ) AS UNUSED_TABLE_NAME  
@@ -67,7 +67,7 @@ FROM
 WHERE
   (((x_81.unnested_pod) + (2)) < 25) AND
   (t_17_R_RecursiveCte.synalog_step < 30) AND
-  (t_17_R_RecursiveCte.y = x_81.unnested_pod)),
+  (t_17_R_RecursiveCte.y IS NOT DISTINCT FROM x_81.unnested_pod)),
 t_2_R AS (SELECT
   R_RecursiveCte.y AS y
 FROM

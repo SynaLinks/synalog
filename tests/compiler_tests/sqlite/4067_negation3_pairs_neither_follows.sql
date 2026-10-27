@@ -89,12 +89,12 @@ WHERE
   FROM
     t_3_F AS F, JSON_EACH(JSON_ARRAY(0)) as x_7
   WHERE
-    (F.a = t_0_U.u) AND
-    (F.b = t_1_U.u)) IS NULL) AND
+    (F.a IS t_0_U.u) AND
+    (F.b IS t_1_U.u)) IS NULL) AND
   ((SELECT
     MIN(MagicalEntangle(1, x_11.value)) AS synalog_value
   FROM
     t_3_F AS t_4_F, JSON_EACH(JSON_ARRAY(0)) as x_11
   WHERE
-    (t_4_F.a = t_1_U.u) AND
-    (t_4_F.b = t_0_U.u)) IS NULL) ORDER BY a NULLS LAST, b NULLS LAST;
+    (t_4_F.a IS t_1_U.u) AND
+    (t_4_F.b IS t_0_U.u)) IS NULL) ORDER BY a NULLS LAST, b NULLS LAST;

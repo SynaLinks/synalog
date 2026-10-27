@@ -104,4 +104,4 @@ WHERE
     t_1_L AS t_5_L, UNNEST(ARRAY[0]) as x_18, UNNEST(t_5_L.l) as x_22
   WHERE
     ('ink' = x_22) AND
-    (t_0_L."order" = t_5_L."order")) AS numeric) IS NULL) ORDER BY "order";
+    (COALESCE(t_0_L."order", 0) = COALESCE(t_5_L."order", 0) AND (t_0_L."order" IS NULL) = (t_5_L."order" IS NULL))) AS numeric) IS NULL) ORDER BY "order";

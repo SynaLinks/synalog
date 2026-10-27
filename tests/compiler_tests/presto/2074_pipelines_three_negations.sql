@@ -104,7 +104,7 @@ FROM
   t_2_Order AS t_1_Order, t_3_Price AS Price
 WHERE
   (t_1_Order.state = 'paid') AND
-  (Price.item = t_1_Order.item)
+  (Price.item IS NOT DISTINCT FROM t_1_Order.item)
 GROUP BY 1),
 t_4_Ref AS (SELECT
   t_5_Order.who AS who
@@ -130,10 +130,10 @@ WHERE
   FROM
     t_4_Ref AS Ref
   WHERE
-    (Ref.who = Spend.who)) IS NULL) AND
+    (Ref.who IS NOT DISTINCT FROM Spend.who)) IS NULL) AND
   ((SELECT
     MIN(1) AS synalog_value
   FROM
     t_6_Pen AS Pen
   WHERE
-    (Pen.who = Spend.who)) IS NULL) ORDER BY who;
+    (Pen.who IS NOT DISTINCT FROM Spend.who)) IS NULL) ORDER BY who;

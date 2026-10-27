@@ -129,7 +129,7 @@ t_0_I AS (SELECT
 FROM
   t_1_Sale AS Sale, synalog_test.F AS F
 WHERE
-  (F.id = Sale.id)),
+  (F.id IS NOT DISTINCT FROM Sale.id)),
 t_2_O AS (SELECT
   SUM(t_3_Sale.amount) AS t
 FROM
@@ -140,7 +140,7 @@ WHERE
   FROM
     synalog_test.F AS t_4_F
   WHERE
-    (t_4_F.id = t_3_Sale.id)) IS NULL))
+    (t_4_F.id IS NOT DISTINCT FROM t_3_Sale.id)) IS NULL))
 SELECT
   I.t AS inside,
   O.t AS outside

@@ -99,4 +99,4 @@ WHERE
   FROM
     t_5_Pick AS Pick, (select unnest([0]) as unnested_pod) as x_10
   WHERE
-    (Pick.x = t_0_All.x)) IS NULL) ORDER BY x;
+    (Pick.x IS NOT DISTINCT FROM t_0_All.x)) IS NULL) ORDER BY x;

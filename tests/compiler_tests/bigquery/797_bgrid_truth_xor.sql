@@ -4,4 +4,4 @@ SELECT
 FROM
   UNNEST(ARRAY[0, 1]) as x_5, UNNEST(ARRAY[0, 1]) as x_7
 WHERE
-  ((x_5 = 1) != (x_7 = 1)) ORDER BY x, y;
+  ((x_5 = 1) IS DISTINCT FROM (x_7 = 1)) ORDER BY x NULLS LAST, y NULLS LAST;

@@ -24,8 +24,8 @@ t_3_Manages AS (SELECT
 FROM
   t_5_Person AS Person, t_5_Person AS t_4_Person, t_8_Management AS Management
 WHERE
-  (Management.manager_id = Person.person_id) AND
-  (Management.employee_id = t_4_Person.person_id)
+  (Management.manager_id <=> Person.person_id) AND
+  (Management.employee_id <=> t_4_Person.person_id)
 GROUP BY 1, 2),
 t_12_Mentoring AS (SELECT * FROM VALUES
   (2, 5),
@@ -37,8 +37,8 @@ t_9_Mentors AS (SELECT
 FROM
   t_5_Person AS t_10_Person, t_5_Person AS t_11_Person, t_12_Mentoring AS Mentoring
 WHERE
-  (Mentoring.mentor_id = t_10_Person.person_id) AND
-  (Mentoring.mentee_id = t_11_Person.person_id)
+  (Mentoring.mentor_id <=> t_10_Person.person_id) AND
+  (Mentoring.mentee_id <=> t_11_Person.person_id)
 GROUP BY 1, 2),
 t_2_Related_MultBodyAggAux AS (SELECT * FROM (
   

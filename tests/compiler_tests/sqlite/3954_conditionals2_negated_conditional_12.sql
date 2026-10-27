@@ -47,4 +47,4 @@ WHERE
     t_0_V AS t_1_V, JSON_EACH(JSON_ARRAY(0)) as x_4
   WHERE
     (CASE WHEN (t_1_V.x > 12) THEN true ELSE false END = true) AND
-    (V.k = t_1_V.k)) IS NULL) ORDER BY k;
+    (V.k IS t_1_V.k)) IS NULL) ORDER BY k NULLS LAST;

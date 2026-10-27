@@ -106,7 +106,7 @@ t_3_Better_MultBodyAggAux AS (SELECT * FROM (
       (t_7_S.d < t_6_S.d) AND
       (t_6_S.r = 'north') AND
       (t_7_S.r = 'north') AND
-      (t_7_S.v = t_6_S.v)
+      (t_7_S.v IS t_6_S.v)
   
 ) AS UNUSED_TABLE_NAME  ),
 t_2_Better AS (SELECT
@@ -128,7 +128,7 @@ t_0_Q_MultBodyAggAux AS (SELECT * FROM (
       FROM
         t_2_Better AS Better, JSON_EACH(JSON_ARRAY(0)) as x_11
       WHERE
-        (Better.d = S.d)) IS NULL) AND
+        (Better.d IS S.d)) IS NULL) AND
       (S.r = 'north')
    UNION ALL
   
@@ -140,7 +140,7 @@ t_0_Q_MultBodyAggAux AS (SELECT * FROM (
     WHERE
       (t_9_Better.n < 1) AND
       (t_8_S.r = 'north') AND
-      (t_9_Better.d = t_8_S.d)
+      (t_9_Better.d IS t_8_S.d)
   
 ) AS UNUSED_TABLE_NAME  )
 SELECT

@@ -115,7 +115,7 @@ t_0_Q_MultBodyAggAux AS (SELECT * FROM (
       FROM
         t_3_Paired AS Paired, JSON_EACH(JSON_ARRAY(0)) as x_10
       WHERE
-        (Paired.x = t_2_I.id)) IS NULL)
+        (Paired.x IS t_2_I.id)) IS NULL)
   
 ) AS UNUSED_TABLE_NAME  )
 SELECT

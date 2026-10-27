@@ -106,7 +106,7 @@ t_3_Better_MultBodyAggAux AS (SELECT * FROM (
       (t_7_S.d < t_6_S.d) AND
       (t_6_S.r = "east") AND
       (t_7_S.r = "east") AND
-      (t_7_S.v = t_6_S.v)
+      (t_7_S.v IS NOT DISTINCT FROM t_6_S.v)
   
 ) AS UNUSED_TABLE_NAME  ),
 t_2_Better AS (SELECT
@@ -128,7 +128,7 @@ t_0_Q_MultBodyAggAux AS (SELECT * FROM (
       FROM
         t_2_Better AS Better
       WHERE
-        (Better.d = S.d)) IS NULL) AND
+        (Better.d IS NOT DISTINCT FROM S.d)) IS NULL) AND
       (S.r = "east")
    UNION ALL
   
@@ -140,7 +140,7 @@ t_0_Q_MultBodyAggAux AS (SELECT * FROM (
     WHERE
       (t_9_Better.n < 3) AND
       (t_8_S.r = "east") AND
-      (t_9_Better.d = t_8_S.d)
+      (t_9_Better.d IS NOT DISTINCT FROM t_8_S.d)
   
 ) AS UNUSED_TABLE_NAME  )
 SELECT
@@ -148,4 +148,4 @@ SELECT
   Q_MultBodyAggAux.v AS v
 FROM
   t_0_Q_MultBodyAggAux AS Q_MultBodyAggAux
-GROUP BY d, v ORDER BY d, v;
+GROUP BY d, v ORDER BY d NULLS LAST, v NULLS LAST;

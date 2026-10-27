@@ -90,6 +90,6 @@ SELECT
 FROM
   t_1_F AS F, UNNEST(ARRAY[0]) as x_9
 WHERE
-  (F.a = t_0_U.u)) AS bool), true) AS l
+  (COALESCE(F.a, '') = COALESCE(t_0_U.u, '') AND (F.a IS NULL) = (t_0_U.u IS NULL))) AS bool), true) AS l
 FROM
   t_2_U AS t_0_U ORDER BY u;

@@ -13,6 +13,6 @@ SELECT
 FROM
   t_1_E AS E, t_1_E AS t_0_E
 WHERE
-  (t_0_E.id != 6) AND
+  (NOT (t_0_E.id <=> 6)) AND
   (E.id = 6) AND
-  (t_0_E.d = E.d);
+  (t_0_E.d <=> E.d);

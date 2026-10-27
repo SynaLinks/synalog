@@ -107,6 +107,6 @@ SELECT
 FROM
   t_0_Ship AS Ship, JSON_EACH(JSON_ARRAY(0)) as x_4
 WHERE
-  (Ship.src = City.c)), 0) AS n
+  (Ship.src IS City.c)), 0) AS n
 FROM
-  t_1_City AS City ORDER BY c, n;
+  t_1_City AS City ORDER BY c NULLS LAST, n NULLS LAST;

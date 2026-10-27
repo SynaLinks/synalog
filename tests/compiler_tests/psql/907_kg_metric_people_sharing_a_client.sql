@@ -87,8 +87,8 @@ t_2_MemberOf AS (SELECT
 FROM
   t_4_Person AS Person, t_7_Team AS t_3_Team, t_6_Employees AS Employees
 WHERE
-  (Employees.person_id = Person.person_id) AND
-  (Employees.team_id = t_3_Team.team_id)
+  (COALESCE(Employees.person_id, 0) = COALESCE(Person.person_id, 0) AND (Employees.person_id IS NULL) = (Person.person_id IS NULL)) AND
+  (COALESCE(Employees.team_id, 0) = COALESCE(t_3_Team.team_id, 0) AND (Employees.team_id IS NULL) = (t_3_Team.team_id IS NULL))
 GROUP BY Person.person_id, t_3_Team.team_id),
 t_14_Clients AS (SELECT * FROM (
   
@@ -131,8 +131,8 @@ t_9_EngagedWith AS (SELECT
 FROM
   t_7_Team AS t_10_Team, t_13_Client AS t_11_Client, t_15_Engagements AS Engagements
 WHERE
-  (Engagements.team_id = t_10_Team.team_id) AND
-  (Engagements.client_id = t_11_Client.client_id)
+  (COALESCE(Engagements.team_id, 0) = COALESCE(t_10_Team.team_id, 0) AND (Engagements.team_id IS NULL) = (t_10_Team.team_id IS NULL)) AND
+  (COALESCE(Engagements.client_id, 0) = COALESCE(t_11_Client.client_id, 0) AND (Engagements.client_id IS NULL) = (t_11_Client.client_id IS NULL))
 GROUP BY t_10_Team.team_id, t_11_Client.client_id),
 t_1_Serves AS (SELECT
   MemberOf.person_id AS person_id,
@@ -140,7 +140,7 @@ t_1_Serves AS (SELECT
 FROM
   t_2_MemberOf AS MemberOf, t_9_EngagedWith AS EngagedWith
 WHERE
-  (EngagedWith.team_id = MemberOf.team_id)
+  (COALESCE(EngagedWith.team_id, 0) = COALESCE(MemberOf.team_id, 0) AND (EngagedWith.team_id IS NULL) = (MemberOf.team_id IS NULL))
 GROUP BY MemberOf.person_id, EngagedWith.client_id)
 SELECT
   Serves.person_id AS a,
@@ -149,5 +149,5 @@ FROM
   t_1_Serves AS Serves, t_1_Serves AS t_0_Serves
 WHERE
   (Serves.person_id < t_0_Serves.person_id) AND
-  (t_0_Serves.client_id = Serves.client_id)
+  (COALESCE(t_0_Serves.client_id, 0) = COALESCE(Serves.client_id, 0) AND (t_0_Serves.client_id IS NULL) = (Serves.client_id IS NULL))
 GROUP BY Serves.person_id, t_0_Serves.person_id ORDER BY a, b;

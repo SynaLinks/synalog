@@ -16,4 +16,4 @@ SELECT
 FROM
   synalog_test.G AS G, t_0_N AS N
 WHERE
-  (N.k = G.k);
+  (N.k <=> G.k);

@@ -111,6 +111,6 @@ FROM
   t_0_S AS S, t_1_E AS E, t_2_D AS D
 WHERE
   (S.skill = 'go') AND
-  (E.id = S.id) AND
-  (D.dept = E.dept) AND
+  (E.id IS S.id) AND
+  (D.dept IS E.dept) AND
   (D.dname = 'eng');

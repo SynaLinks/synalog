@@ -25,4 +25,4 @@ WHERE
   FROM
     t_0_NotB AS NotB, (select unnest([0]) as unnested_pod) as x_6
   WHERE
-    (NotB.x = x_3.unnested_pod)) IS NULL);
+    (NotB.x IS NOT DISTINCT FROM x_3.unnested_pod)) IS NULL);

@@ -11,4 +11,4 @@ SELECT
 FROM
   UNNEST(ARRAY[2, -3]) as x_11, UNNEST(ARRAY[2, -3]) as x_7
 WHERE
-  (x_7 = x_11) ORDER BY x;
+  (COALESCE(x_7, 0) = COALESCE(x_11, 0) AND (x_7 IS NULL) = (x_11 IS NULL)) ORDER BY x;

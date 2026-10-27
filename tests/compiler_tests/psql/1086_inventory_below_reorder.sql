@@ -4,14 +4,6 @@ create schema if not exists synalog_home;
 -- Empty synalog type: synalogrecord893574736;
 DO $$ BEGIN if not exists (select 'I(am) :- I(think)' from pg_type where typname = 'synalogrecord893574736') then create type synalogrecord893574736 as (nirvana numeric); end if; END $$;
 
-
-DO $$
-BEGIN
--- Synalog type: synalogrecord481217614
-if not exists (select 'I(am) :- I(think)' from pg_type where typname = 'synalogrecord481217614') then create type synalogrecord481217614 as (r synalogrecord893574736); end if;
--- Synalog type: synalogrecord86796764
-if not exists (select 'I(am) :- I(think)' from pg_type where typname = 'synalogrecord86796764') then create type synalogrecord86796764 as (s text); end if;
-END $$;
 WITH t_1_Stock AS (SELECT * FROM (
   
     SELECT
@@ -107,4 +99,4 @@ FROM
   t_0_Total AS Total, t_2_Reorder AS Reorder
 WHERE
   (Total.n < Reorder.level) AND
-  (Reorder.item = Total.item) ORDER BY item;
+  (COALESCE(Reorder.item, '') = COALESCE(Total.item, '') AND (Reorder.item IS NULL) = (Total.item IS NULL)) ORDER BY item;

@@ -27,5 +27,5 @@ WHERE
   FROM
     t_1_A AS A
   WHERE
-    (A.id = Person.id) AND
+    (A.id <=> Person.id) AND
     (A.pid = 13)) IS NULL) ORDER BY id NULLS LAST;

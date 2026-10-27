@@ -106,4 +106,4 @@ WHERE
   FROM
     t_2_Popular AS Popular, (select unnest([0]) as unnested_pod) as x_4
   WHERE
-    (Popular.u = t_0_U.u)) IS NULL) ORDER BY u;
+    (Popular.u IS NOT DISTINCT FROM t_0_U.u)) IS NULL) ORDER BY u;

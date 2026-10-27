@@ -3,4 +3,4 @@ SELECT
 FROM
   UNNEST(ARRAY["a", "B", "c"]) as x_1
 WHERE
-  (x_1 = LOWER(x_1)) ORDER BY s;
+  (x_1 IS NOT DISTINCT FROM LOWER(x_1)) ORDER BY s NULLS LAST;

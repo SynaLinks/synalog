@@ -8,5 +8,5 @@ WHERE
   FROM
     ground_truth, JSON_EACH(JSON_ARRAY(0)) as x_10
   WHERE
-    (providers.npi = ground_truth.npi) AND
-    (providers.scheme = ground_truth.scheme)) IS NULL);
+    (providers.npi IS ground_truth.npi) AND
+    (providers.scheme IS ground_truth.scheme)) IS NULL);

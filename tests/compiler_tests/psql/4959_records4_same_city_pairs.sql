@@ -40,4 +40,4 @@ FROM
   t_1_P AS P, t_1_P AS t_0_P
 WHERE
   (P.id < t_0_P.id) AND
-  (((P.r).home).city = ((t_0_P.r).home).city) ORDER BY a, b;
+  (COALESCE(((P.r).home).city, '') = COALESCE(((t_0_P.r).home).city, '') AND (((P.r).home).city IS NULL) = (((t_0_P.r).home).city IS NULL)) ORDER BY a, b;

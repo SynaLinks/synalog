@@ -86,8 +86,8 @@ t_2_Manages AS (SELECT
 FROM
   t_4_Person AS Person, t_4_Person AS t_3_Person, t_7_Management AS Management
 WHERE
-  (Management.manager_id = Person.person_id) AND
-  (Management.employee_id = t_3_Person.person_id)
+  (COALESCE(Management.manager_id, 0) = COALESCE(Person.person_id, 0) AND (Management.manager_id IS NULL) = (Person.person_id IS NULL)) AND
+  (COALESCE(Management.employee_id, 0) = COALESCE(t_3_Person.person_id, 0) AND (Management.employee_id IS NULL) = (t_3_Person.person_id IS NULL))
 GROUP BY Person.person_id, t_3_Person.person_id),
 t_1_Below_RecursiveCte AS (SELECT * FROM (
   SELECT * FROM (
@@ -109,7 +109,7 @@ t_1_Below_RecursiveCte AS (SELECT * FROM (
       WHERE
         (0 < 6) AND
         (1 = 0) AND
-        (t_8_Manages.manager_id = t_10_Manages.employee_id)
+        (COALESCE(t_8_Manages.manager_id, 0) = COALESCE(t_10_Manages.employee_id, 0) AND (t_8_Manages.manager_id IS NULL) = (t_10_Manages.employee_id IS NULL))
      UNION ALL
     
       SELECT
@@ -122,8 +122,8 @@ t_1_Below_RecursiveCte AS (SELECT * FROM (
         (((0) + (1)) < 6) AND
         (0 < 6) AND
         (1 = 0) AND
-        (t_15_Manages.manager_id = t_17_Manages.employee_id) AND
-        (t_17_Manages.manager_id = t_19_Manages.employee_id)
+        (COALESCE(t_15_Manages.manager_id, 0) = COALESCE(t_17_Manages.employee_id, 0) AND (t_15_Manages.manager_id IS NULL) = (t_17_Manages.employee_id IS NULL)) AND
+        (COALESCE(t_17_Manages.manager_id, 0) = COALESCE(t_19_Manages.employee_id, 0) AND (t_17_Manages.manager_id IS NULL) = (t_19_Manages.employee_id IS NULL))
      UNION ALL
     
       SELECT
@@ -137,9 +137,9 @@ t_1_Below_RecursiveCte AS (SELECT * FROM (
         (((0) + (1)) < 6) AND
         (0 < 6) AND
         (1 = 0) AND
-        (t_21_Manages.manager_id = t_23_Manages.employee_id) AND
-        (t_23_Manages.manager_id = t_25_Manages.employee_id) AND
-        (t_25_Manages.manager_id = t_27_Manages.employee_id)
+        (COALESCE(t_21_Manages.manager_id, 0) = COALESCE(t_23_Manages.employee_id, 0) AND (t_21_Manages.manager_id IS NULL) = (t_23_Manages.employee_id IS NULL)) AND
+        (COALESCE(t_23_Manages.manager_id, 0) = COALESCE(t_25_Manages.employee_id, 0) AND (t_23_Manages.manager_id IS NULL) = (t_25_Manages.employee_id IS NULL)) AND
+        (COALESCE(t_25_Manages.manager_id, 0) = COALESCE(t_27_Manages.employee_id, 0) AND (t_25_Manages.manager_id IS NULL) = (t_27_Manages.employee_id IS NULL))
      UNION ALL
     
       SELECT
@@ -154,10 +154,10 @@ t_1_Below_RecursiveCte AS (SELECT * FROM (
         (((0) + (1)) < 6) AND
         (0 < 6) AND
         (1 = 0) AND
-        (t_29_Manages.manager_id = t_31_Manages.employee_id) AND
-        (t_31_Manages.manager_id = t_33_Manages.employee_id) AND
-        (t_33_Manages.manager_id = t_35_Manages.employee_id) AND
-        (t_35_Manages.manager_id = t_37_Manages.employee_id)
+        (COALESCE(t_29_Manages.manager_id, 0) = COALESCE(t_31_Manages.employee_id, 0) AND (t_29_Manages.manager_id IS NULL) = (t_31_Manages.employee_id IS NULL)) AND
+        (COALESCE(t_31_Manages.manager_id, 0) = COALESCE(t_33_Manages.employee_id, 0) AND (t_31_Manages.manager_id IS NULL) = (t_33_Manages.employee_id IS NULL)) AND
+        (COALESCE(t_33_Manages.manager_id, 0) = COALESCE(t_35_Manages.employee_id, 0) AND (t_33_Manages.manager_id IS NULL) = (t_35_Manages.employee_id IS NULL)) AND
+        (COALESCE(t_35_Manages.manager_id, 0) = COALESCE(t_37_Manages.employee_id, 0) AND (t_35_Manages.manager_id IS NULL) = (t_37_Manages.employee_id IS NULL))
      UNION ALL
     
       SELECT
@@ -173,11 +173,11 @@ t_1_Below_RecursiveCte AS (SELECT * FROM (
         (((0) + (1)) < 6) AND
         (0 < 6) AND
         (1 = 0) AND
-        (t_39_Manages.manager_id = t_41_Manages.employee_id) AND
-        (t_41_Manages.manager_id = t_43_Manages.employee_id) AND
-        (t_43_Manages.manager_id = t_45_Manages.employee_id) AND
-        (t_45_Manages.manager_id = t_47_Manages.employee_id) AND
-        (t_47_Manages.manager_id = t_49_Manages.employee_id)
+        (COALESCE(t_39_Manages.manager_id, 0) = COALESCE(t_41_Manages.employee_id, 0) AND (t_39_Manages.manager_id IS NULL) = (t_41_Manages.employee_id IS NULL)) AND
+        (COALESCE(t_41_Manages.manager_id, 0) = COALESCE(t_43_Manages.employee_id, 0) AND (t_41_Manages.manager_id IS NULL) = (t_43_Manages.employee_id IS NULL)) AND
+        (COALESCE(t_43_Manages.manager_id, 0) = COALESCE(t_45_Manages.employee_id, 0) AND (t_43_Manages.manager_id IS NULL) = (t_45_Manages.employee_id IS NULL)) AND
+        (COALESCE(t_45_Manages.manager_id, 0) = COALESCE(t_47_Manages.employee_id, 0) AND (t_45_Manages.manager_id IS NULL) = (t_47_Manages.employee_id IS NULL)) AND
+        (COALESCE(t_47_Manages.manager_id, 0) = COALESCE(t_49_Manages.employee_id, 0) AND (t_47_Manages.manager_id IS NULL) = (t_49_Manages.employee_id IS NULL))
     
   ) AS UNUSED_TABLE_NAME  
 ) AS UNUSED_TABLE_NAME
@@ -190,7 +190,7 @@ FROM
   t_1_Below_RecursiveCte AS t_50_Below_RecursiveCte, t_2_Manages AS t_51_Manages
 WHERE
   (t_50_Below_RecursiveCte.synalog_step < 6) AND
-  (t_51_Manages.manager_id = t_50_Below_RecursiveCte.employee_id)),
+  (COALESCE(t_51_Manages.manager_id, 0) = COALESCE(t_50_Below_RecursiveCte.employee_id, 0) AND (t_51_Manages.manager_id IS NULL) = (t_50_Below_RecursiveCte.employee_id IS NULL))),
 t_0_Below AS (SELECT
   Below_RecursiveCte.manager_id AS manager_id,
   Below_RecursiveCte.employee_id AS employee_id

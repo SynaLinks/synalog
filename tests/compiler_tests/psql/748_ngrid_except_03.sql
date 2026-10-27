@@ -24,4 +24,4 @@ WHERE
   FROM
     t_1_X AS t_0_X, UNNEST(ARRAY[0]) as x_6
   WHERE
-    (t_0_X.x = x_3)) AS numeric) IS NULL) ORDER BY x;
+    (COALESCE(t_0_X.x, 0) = COALESCE(x_3, 0) AND (t_0_X.x IS NULL) = (x_3 IS NULL))) AS numeric) IS NULL) ORDER BY x;

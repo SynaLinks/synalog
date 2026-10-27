@@ -72,4 +72,4 @@ WHERE
   FROM
     t_3_Effective AS Effective, (select unnest([0]) as unnested_pod) as x_6
   WHERE
-    (Effective.requester = t_0_Requester.requester)) IS NULL) ORDER BY requester;
+    (Effective.requester IS NOT DISTINCT FROM t_0_Requester.requester)) IS NULL) ORDER BY requester;

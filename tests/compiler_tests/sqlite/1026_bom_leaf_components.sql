@@ -83,4 +83,4 @@ WHERE
   FROM
     t_3_Uses AS t_5_Uses, JSON_EACH(JSON_ARRAY(0)) as x_10
   WHERE
-    (t_5_Uses.part = t_0_Part.part)) IS NULL) ORDER BY part NULLS LAST;
+    (t_5_Uses.part IS t_0_Part.part)) IS NULL) ORDER BY part NULLS LAST;

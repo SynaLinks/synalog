@@ -20,4 +20,4 @@ WHERE
   FROM
     t_1_D AS D
   WHERE
-    (D.dept = Pr.dept)) IS NULL);
+    (D.dept <=> Pr.dept)) IS NULL);

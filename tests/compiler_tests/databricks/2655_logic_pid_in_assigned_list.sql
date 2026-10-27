@@ -27,5 +27,5 @@ SELECT
 FROM
   t_0_Projects AS Projects, t_2_Proj AS Proj, LATERAL (SELECT explode(Projects.l) AS x_4) AS pushkin
 WHERE
-  (Proj.pid = x_4)
+  (Proj.pid <=> x_4)
 GROUP BY 1 ORDER BY id NULLS LAST, n NULLS LAST;

@@ -122,5 +122,5 @@ SELECT
 FROM
   synalog_home.Paid AS Paid, t_0_Price AS Price
 WHERE
-  (Price.item = Paid.item) AND
+  (COALESCE(Price.item, '') = COALESCE(Paid.item, '') AND (Price.item IS NULL) = (Paid.item IS NULL)) AND
   ('ann' = Paid.who);

@@ -28,5 +28,5 @@ FROM
   t_1_Loan AS Loan, t_2_Book AS t_0_Book
 WHERE
   (Loan.member = "dee") AND
-  (t_0_Book.id = Loan.book)
+  (t_0_Book.id <=> Loan.book)
 GROUP BY 1;

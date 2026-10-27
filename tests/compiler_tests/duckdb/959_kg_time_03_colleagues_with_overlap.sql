@@ -121,7 +121,7 @@ FROM
   t_8_Events AS t_10_Events, t_8_Events AS t_11_Events
 WHERE
   (t_11_Events.changed_at > t_10_Events.changed_at) AND
-  (t_11_Events.person_id = t_10_Events.person_id)
+  (t_11_Events.person_id IS NOT DISTINCT FROM t_10_Events.person_id)
 GROUP BY t_10_Events.person_id, t_10_Events.changed_at),
 t_2_Member_MultBodyAggAux AS (SELECT * FROM (
   
@@ -133,10 +133,10 @@ t_2_Member_MultBodyAggAux AS (SELECT * FROM (
     FROM
       t_4_Person AS Person, t_6_Team AS t_3_Team, t_8_Events AS Events, t_9_NextChange AS NextChange
     WHERE
-      (Events.person_id = Person.person_id) AND
-      (Events.team_id = t_3_Team.team_id) AND
-      (NextChange.person_id = Person.person_id) AND
-      (NextChange.changed_at = Events.changed_at)
+      (Events.person_id IS NOT DISTINCT FROM Person.person_id) AND
+      (Events.team_id IS NOT DISTINCT FROM t_3_Team.team_id) AND
+      (NextChange.person_id IS NOT DISTINCT FROM Person.person_id) AND
+      (NextChange.changed_at IS NOT DISTINCT FROM Events.changed_at)
    UNION ALL
   
     SELECT
@@ -152,10 +152,10 @@ t_2_Member_MultBodyAggAux AS (SELECT * FROM (
       FROM
         t_9_NextChange AS t_17_NextChange, (select unnest([0]) as unnested_pod) as x_71
       WHERE
-        (t_17_NextChange.person_id = t_12_Person.person_id) AND
-        (t_17_NextChange.changed_at = t_14_Events.changed_at)) IS NULL) AND
-      (t_14_Events.person_id = t_12_Person.person_id) AND
-      (t_14_Events.team_id = t_13_Team.team_id)
+        (t_17_NextChange.person_id IS NOT DISTINCT FROM t_12_Person.person_id) AND
+        (t_17_NextChange.changed_at IS NOT DISTINCT FROM t_14_Events.changed_at)) IS NULL) AND
+      (t_14_Events.person_id IS NOT DISTINCT FROM t_12_Person.person_id) AND
+      (t_14_Events.team_id IS NOT DISTINCT FROM t_13_Team.team_id)
   
 ) AS UNUSED_TABLE_NAME  ),
 t_1_Member AS (SELECT
@@ -177,5 +177,5 @@ FROM
 WHERE
   (Member.person_id < t_0_Member.person_id) AND
   (CASE WHEN (Member.valid_from > t_0_Member.valid_from) THEN Member.valid_from ELSE t_0_Member.valid_from END < CASE WHEN (Member.valid_to < t_0_Member.valid_to) THEN Member.valid_to ELSE t_0_Member.valid_to END) AND
-  (t_0_Member.team_id = Member.team_id)
+  (t_0_Member.team_id IS NOT DISTINCT FROM Member.team_id)
 GROUP BY Member.person_id, t_0_Member.person_id, Member.team_id, CASE WHEN (Member.valid_from > t_0_Member.valid_from) THEN Member.valid_from ELSE t_0_Member.valid_from END, CASE WHEN (Member.valid_to < t_0_Member.valid_to) THEN Member.valid_to ELSE t_0_Member.valid_to END ORDER BY person_a, person_b, valid_from;

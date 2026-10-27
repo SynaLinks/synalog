@@ -71,4 +71,4 @@ FROM
 WHERE
   (t_0_E.pay > E.pay) AND
   (E.id = 4) AND
-  (t_0_E.d = E.d) ORDER BY n;
+  (t_0_E.d IS E.d) ORDER BY n NULLS LAST;

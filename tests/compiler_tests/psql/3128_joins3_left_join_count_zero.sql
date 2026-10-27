@@ -51,6 +51,6 @@ SELECT
 FROM
   t_1_E AS E, UNNEST(ARRAY[0]) as x_4
 WHERE
-  (E.g = t_0_G.g)) AS numeric), 0) AS n
+  (COALESCE(E.g, '') = COALESCE(t_0_G.g, '') AND (E.g IS NULL) = (t_0_G.g IS NULL))) AS numeric), 0) AS n
 FROM
   t_2_G AS t_0_G ORDER BY g;

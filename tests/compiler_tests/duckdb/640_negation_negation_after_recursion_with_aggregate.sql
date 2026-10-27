@@ -72,4 +72,4 @@ WHERE
   FROM
     t_0_R AS R, (select unnest([0]) as unnested_pod) as x_5
   WHERE
-    (R.x = x_2.unnested_pod)) IS NULL);
+    (R.x IS NOT DISTINCT FROM x_2.unnested_pod)) IS NULL);

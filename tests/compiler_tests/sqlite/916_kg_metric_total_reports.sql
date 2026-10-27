@@ -80,8 +80,8 @@ t_2_Manages AS (SELECT
 FROM
   t_4_Person AS Person, t_4_Person AS t_3_Person, t_7_Management AS Management
 WHERE
-  (Management.manager_id = Person.person_id) AND
-  (Management.employee_id = t_3_Person.person_id)
+  (Management.manager_id IS Person.person_id) AND
+  (Management.employee_id IS t_3_Person.person_id)
 GROUP BY Person.person_id, t_3_Person.person_id),
 t_1_Below_RecursiveCte AS (SELECT * FROM (
   SELECT * FROM (
@@ -103,7 +103,7 @@ t_1_Below_RecursiveCte AS (SELECT * FROM (
       WHERE
         (0 < 6) AND
         (1 = 0) AND
-        (t_8_Manages.manager_id = t_10_Manages.employee_id)
+        (t_8_Manages.manager_id IS t_10_Manages.employee_id)
      UNION ALL
     
       SELECT
@@ -116,8 +116,8 @@ t_1_Below_RecursiveCte AS (SELECT * FROM (
         (((0) + (1)) < 6) AND
         (0 < 6) AND
         (1 = 0) AND
-        (t_15_Manages.manager_id = t_17_Manages.employee_id) AND
-        (t_17_Manages.manager_id = t_19_Manages.employee_id)
+        (t_15_Manages.manager_id IS t_17_Manages.employee_id) AND
+        (t_17_Manages.manager_id IS t_19_Manages.employee_id)
      UNION ALL
     
       SELECT
@@ -131,9 +131,9 @@ t_1_Below_RecursiveCte AS (SELECT * FROM (
         (((0) + (1)) < 6) AND
         (0 < 6) AND
         (1 = 0) AND
-        (t_21_Manages.manager_id = t_23_Manages.employee_id) AND
-        (t_23_Manages.manager_id = t_25_Manages.employee_id) AND
-        (t_25_Manages.manager_id = t_27_Manages.employee_id)
+        (t_21_Manages.manager_id IS t_23_Manages.employee_id) AND
+        (t_23_Manages.manager_id IS t_25_Manages.employee_id) AND
+        (t_25_Manages.manager_id IS t_27_Manages.employee_id)
      UNION ALL
     
       SELECT
@@ -148,10 +148,10 @@ t_1_Below_RecursiveCte AS (SELECT * FROM (
         (((0) + (1)) < 6) AND
         (0 < 6) AND
         (1 = 0) AND
-        (t_29_Manages.manager_id = t_31_Manages.employee_id) AND
-        (t_31_Manages.manager_id = t_33_Manages.employee_id) AND
-        (t_33_Manages.manager_id = t_35_Manages.employee_id) AND
-        (t_35_Manages.manager_id = t_37_Manages.employee_id)
+        (t_29_Manages.manager_id IS t_31_Manages.employee_id) AND
+        (t_31_Manages.manager_id IS t_33_Manages.employee_id) AND
+        (t_33_Manages.manager_id IS t_35_Manages.employee_id) AND
+        (t_35_Manages.manager_id IS t_37_Manages.employee_id)
      UNION ALL
     
       SELECT
@@ -167,11 +167,11 @@ t_1_Below_RecursiveCte AS (SELECT * FROM (
         (((0) + (1)) < 6) AND
         (0 < 6) AND
         (1 = 0) AND
-        (t_39_Manages.manager_id = t_41_Manages.employee_id) AND
-        (t_41_Manages.manager_id = t_43_Manages.employee_id) AND
-        (t_43_Manages.manager_id = t_45_Manages.employee_id) AND
-        (t_45_Manages.manager_id = t_47_Manages.employee_id) AND
-        (t_47_Manages.manager_id = t_49_Manages.employee_id)
+        (t_39_Manages.manager_id IS t_41_Manages.employee_id) AND
+        (t_41_Manages.manager_id IS t_43_Manages.employee_id) AND
+        (t_43_Manages.manager_id IS t_45_Manages.employee_id) AND
+        (t_45_Manages.manager_id IS t_47_Manages.employee_id) AND
+        (t_47_Manages.manager_id IS t_49_Manages.employee_id)
     
   ) AS UNUSED_TABLE_NAME  
 ) AS UNUSED_TABLE_NAME
@@ -184,7 +184,7 @@ FROM
   t_1_Below_RecursiveCte AS t_50_Below_RecursiveCte, t_2_Manages AS t_51_Manages
 WHERE
   (t_50_Below_RecursiveCte.synalog_step < 6) AND
-  (t_51_Manages.manager_id = t_50_Below_RecursiveCte.employee_id)),
+  (t_51_Manages.manager_id IS t_50_Below_RecursiveCte.employee_id)),
 t_0_Below AS (SELECT
   Below_RecursiveCte.manager_id AS manager_id,
   Below_RecursiveCte.employee_id AS employee_id

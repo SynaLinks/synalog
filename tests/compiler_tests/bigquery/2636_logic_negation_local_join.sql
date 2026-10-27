@@ -30,5 +30,5 @@ WHERE
   FROM
     t_0_E AS E, t_1_L AS L
   WHERE
-    (E.a = x_4) AND
-    (L.b = E.b)) IS NULL) ORDER BY x;
+    (E.a IS NOT DISTINCT FROM x_4) AND
+    (L.b IS NOT DISTINCT FROM E.b)) IS NULL) ORDER BY x NULLS LAST;

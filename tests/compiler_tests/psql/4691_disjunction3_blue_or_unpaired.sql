@@ -121,7 +121,7 @@ t_0_Q_MultBodyAggAux AS (SELECT * FROM (
       FROM
         t_3_Paired AS Paired, UNNEST(ARRAY[0]) as x_10
       WHERE
-        (Paired.x = t_2_I.id)) AS numeric) IS NULL)
+        (COALESCE(Paired.x, 0) = COALESCE(t_2_I.id, 0) AND (Paired.x IS NULL) = (t_2_I.id IS NULL))) AS numeric) IS NULL)
   
 ) AS UNUSED_TABLE_NAME  )
 SELECT

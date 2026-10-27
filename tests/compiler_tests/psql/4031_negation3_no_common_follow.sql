@@ -95,6 +95,6 @@ WHERE
   FROM
     t_4_F AS F, t_4_F AS t_3_F, UNNEST(ARRAY[0]) as x_10
   WHERE
-    (F.a = t_0_U.u) AND
-    (t_3_F.a = t_1_U.u) AND
-    (t_3_F.b = F.b)) AS numeric) IS NULL) ORDER BY a, b;
+    (COALESCE(F.a, '') = COALESCE(t_0_U.u, '') AND (F.a IS NULL) = (t_0_U.u IS NULL)) AND
+    (COALESCE(t_3_F.a, '') = COALESCE(t_1_U.u, '') AND (t_3_F.a IS NULL) = (t_1_U.u IS NULL)) AND
+    (COALESCE(t_3_F.b, '') = COALESCE(F.b, '') AND (t_3_F.b IS NULL) = (F.b IS NULL))) AS numeric) IS NULL) ORDER BY a, b;

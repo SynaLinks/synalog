@@ -13,4 +13,4 @@ SELECT
 FROM
   t_0_W AS W
 WHERE
-  (TRIM(W.s) != "");
+  (NOT (TRIM(W.s) <=> ""));

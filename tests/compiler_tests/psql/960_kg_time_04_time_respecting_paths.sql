@@ -59,7 +59,7 @@ t_0_ReachedBy_RecursiveCte AS (SELECT * FROM (
         (CASE WHEN (t_4_HandedOver.valid_from > t_2_HandedOver.valid_from) THEN t_4_HandedOver.valid_from ELSE t_2_HandedOver.valid_from END < CASE WHEN (t_4_HandedOver.valid_to < t_2_HandedOver.valid_to) THEN t_4_HandedOver.valid_to ELSE t_2_HandedOver.valid_to END) AND
         (0 < 10) AND
         (1 = 0) AND
-        (t_2_HandedOver.source = t_4_HandedOver.target)
+        (COALESCE(t_2_HandedOver.source, '') = COALESCE(t_4_HandedOver.target, '') AND (t_2_HandedOver.source IS NULL) = (t_4_HandedOver.target IS NULL))
      UNION ALL
     
       SELECT
@@ -76,8 +76,8 @@ t_0_ReachedBy_RecursiveCte AS (SELECT * FROM (
         (CASE WHEN (t_10_HandedOver.valid_from > t_8_HandedOver.valid_from) THEN t_10_HandedOver.valid_from ELSE t_8_HandedOver.valid_from END < CASE WHEN (t_10_HandedOver.valid_to < t_8_HandedOver.valid_to) THEN t_10_HandedOver.valid_to ELSE t_8_HandedOver.valid_to END) AND
         (0 < 10) AND
         (1 = 0) AND
-        (t_6_HandedOver.source = t_8_HandedOver.target) AND
-        (t_8_HandedOver.source = t_10_HandedOver.target)
+        (COALESCE(t_6_HandedOver.source, '') = COALESCE(t_8_HandedOver.target, '') AND (t_6_HandedOver.source IS NULL) = (t_8_HandedOver.target IS NULL)) AND
+        (COALESCE(t_8_HandedOver.source, '') = COALESCE(t_10_HandedOver.target, '') AND (t_8_HandedOver.source IS NULL) = (t_10_HandedOver.target IS NULL))
      UNION ALL
     
       SELECT
@@ -96,9 +96,9 @@ t_0_ReachedBy_RecursiveCte AS (SELECT * FROM (
         (CASE WHEN (t_18_HandedOver.valid_from > t_16_HandedOver.valid_from) THEN t_18_HandedOver.valid_from ELSE t_16_HandedOver.valid_from END < CASE WHEN (t_18_HandedOver.valid_to < t_16_HandedOver.valid_to) THEN t_18_HandedOver.valid_to ELSE t_16_HandedOver.valid_to END) AND
         (0 < 10) AND
         (1 = 0) AND
-        (t_12_HandedOver.source = t_14_HandedOver.target) AND
-        (t_14_HandedOver.source = t_16_HandedOver.target) AND
-        (t_16_HandedOver.source = t_18_HandedOver.target)
+        (COALESCE(t_12_HandedOver.source, '') = COALESCE(t_14_HandedOver.target, '') AND (t_12_HandedOver.source IS NULL) = (t_14_HandedOver.target IS NULL)) AND
+        (COALESCE(t_14_HandedOver.source, '') = COALESCE(t_16_HandedOver.target, '') AND (t_14_HandedOver.source IS NULL) = (t_16_HandedOver.target IS NULL)) AND
+        (COALESCE(t_16_HandedOver.source, '') = COALESCE(t_18_HandedOver.target, '') AND (t_16_HandedOver.source IS NULL) = (t_18_HandedOver.target IS NULL))
      UNION ALL
     
       SELECT
@@ -119,10 +119,10 @@ t_0_ReachedBy_RecursiveCte AS (SELECT * FROM (
         (CASE WHEN (t_28_HandedOver.valid_from > t_26_HandedOver.valid_from) THEN t_28_HandedOver.valid_from ELSE t_26_HandedOver.valid_from END < CASE WHEN (t_28_HandedOver.valid_to < t_26_HandedOver.valid_to) THEN t_28_HandedOver.valid_to ELSE t_26_HandedOver.valid_to END) AND
         (0 < 10) AND
         (1 = 0) AND
-        (t_20_HandedOver.source = t_22_HandedOver.target) AND
-        (t_22_HandedOver.source = t_24_HandedOver.target) AND
-        (t_24_HandedOver.source = t_26_HandedOver.target) AND
-        (t_26_HandedOver.source = t_28_HandedOver.target)
+        (COALESCE(t_20_HandedOver.source, '') = COALESCE(t_22_HandedOver.target, '') AND (t_20_HandedOver.source IS NULL) = (t_22_HandedOver.target IS NULL)) AND
+        (COALESCE(t_22_HandedOver.source, '') = COALESCE(t_24_HandedOver.target, '') AND (t_22_HandedOver.source IS NULL) = (t_24_HandedOver.target IS NULL)) AND
+        (COALESCE(t_24_HandedOver.source, '') = COALESCE(t_26_HandedOver.target, '') AND (t_24_HandedOver.source IS NULL) = (t_26_HandedOver.target IS NULL)) AND
+        (COALESCE(t_26_HandedOver.source, '') = COALESCE(t_28_HandedOver.target, '') AND (t_26_HandedOver.source IS NULL) = (t_28_HandedOver.target IS NULL))
      UNION ALL
     
       SELECT
@@ -145,11 +145,11 @@ t_0_ReachedBy_RecursiveCte AS (SELECT * FROM (
         (CASE WHEN (t_40_HandedOver.valid_from > t_38_HandedOver.valid_from) THEN t_40_HandedOver.valid_from ELSE t_38_HandedOver.valid_from END < CASE WHEN (t_40_HandedOver.valid_to < t_38_HandedOver.valid_to) THEN t_40_HandedOver.valid_to ELSE t_38_HandedOver.valid_to END) AND
         (0 < 10) AND
         (1 = 0) AND
-        (t_30_HandedOver.source = t_32_HandedOver.target) AND
-        (t_32_HandedOver.source = t_34_HandedOver.target) AND
-        (t_34_HandedOver.source = t_36_HandedOver.target) AND
-        (t_36_HandedOver.source = t_38_HandedOver.target) AND
-        (t_38_HandedOver.source = t_40_HandedOver.target)
+        (COALESCE(t_30_HandedOver.source, '') = COALESCE(t_32_HandedOver.target, '') AND (t_30_HandedOver.source IS NULL) = (t_32_HandedOver.target IS NULL)) AND
+        (COALESCE(t_32_HandedOver.source, '') = COALESCE(t_34_HandedOver.target, '') AND (t_32_HandedOver.source IS NULL) = (t_34_HandedOver.target IS NULL)) AND
+        (COALESCE(t_34_HandedOver.source, '') = COALESCE(t_36_HandedOver.target, '') AND (t_34_HandedOver.source IS NULL) = (t_36_HandedOver.target IS NULL)) AND
+        (COALESCE(t_36_HandedOver.source, '') = COALESCE(t_38_HandedOver.target, '') AND (t_36_HandedOver.source IS NULL) = (t_38_HandedOver.target IS NULL)) AND
+        (COALESCE(t_38_HandedOver.source, '') = COALESCE(t_40_HandedOver.target, '') AND (t_38_HandedOver.source IS NULL) = (t_40_HandedOver.target IS NULL))
      UNION ALL
     
       SELECT
@@ -174,12 +174,12 @@ t_0_ReachedBy_RecursiveCte AS (SELECT * FROM (
         (CASE WHEN (t_54_HandedOver.valid_from > t_52_HandedOver.valid_from) THEN t_54_HandedOver.valid_from ELSE t_52_HandedOver.valid_from END < CASE WHEN (t_54_HandedOver.valid_to < t_52_HandedOver.valid_to) THEN t_54_HandedOver.valid_to ELSE t_52_HandedOver.valid_to END) AND
         (0 < 10) AND
         (1 = 0) AND
-        (t_42_HandedOver.source = t_44_HandedOver.target) AND
-        (t_44_HandedOver.source = t_46_HandedOver.target) AND
-        (t_46_HandedOver.source = t_48_HandedOver.target) AND
-        (t_48_HandedOver.source = t_50_HandedOver.target) AND
-        (t_50_HandedOver.source = t_52_HandedOver.target) AND
-        (t_52_HandedOver.source = t_54_HandedOver.target)
+        (COALESCE(t_42_HandedOver.source, '') = COALESCE(t_44_HandedOver.target, '') AND (t_42_HandedOver.source IS NULL) = (t_44_HandedOver.target IS NULL)) AND
+        (COALESCE(t_44_HandedOver.source, '') = COALESCE(t_46_HandedOver.target, '') AND (t_44_HandedOver.source IS NULL) = (t_46_HandedOver.target IS NULL)) AND
+        (COALESCE(t_46_HandedOver.source, '') = COALESCE(t_48_HandedOver.target, '') AND (t_46_HandedOver.source IS NULL) = (t_48_HandedOver.target IS NULL)) AND
+        (COALESCE(t_48_HandedOver.source, '') = COALESCE(t_50_HandedOver.target, '') AND (t_48_HandedOver.source IS NULL) = (t_50_HandedOver.target IS NULL)) AND
+        (COALESCE(t_50_HandedOver.source, '') = COALESCE(t_52_HandedOver.target, '') AND (t_50_HandedOver.source IS NULL) = (t_52_HandedOver.target IS NULL)) AND
+        (COALESCE(t_52_HandedOver.source, '') = COALESCE(t_54_HandedOver.target, '') AND (t_52_HandedOver.source IS NULL) = (t_54_HandedOver.target IS NULL))
      UNION ALL
     
       SELECT
@@ -206,13 +206,13 @@ t_0_ReachedBy_RecursiveCte AS (SELECT * FROM (
         (CASE WHEN (t_70_HandedOver.valid_from > t_68_HandedOver.valid_from) THEN t_70_HandedOver.valid_from ELSE t_68_HandedOver.valid_from END < CASE WHEN (t_70_HandedOver.valid_to < t_68_HandedOver.valid_to) THEN t_70_HandedOver.valid_to ELSE t_68_HandedOver.valid_to END) AND
         (0 < 10) AND
         (1 = 0) AND
-        (t_56_HandedOver.source = t_58_HandedOver.target) AND
-        (t_58_HandedOver.source = t_60_HandedOver.target) AND
-        (t_60_HandedOver.source = t_62_HandedOver.target) AND
-        (t_62_HandedOver.source = t_64_HandedOver.target) AND
-        (t_64_HandedOver.source = t_66_HandedOver.target) AND
-        (t_66_HandedOver.source = t_68_HandedOver.target) AND
-        (t_68_HandedOver.source = t_70_HandedOver.target)
+        (COALESCE(t_56_HandedOver.source, '') = COALESCE(t_58_HandedOver.target, '') AND (t_56_HandedOver.source IS NULL) = (t_58_HandedOver.target IS NULL)) AND
+        (COALESCE(t_58_HandedOver.source, '') = COALESCE(t_60_HandedOver.target, '') AND (t_58_HandedOver.source IS NULL) = (t_60_HandedOver.target IS NULL)) AND
+        (COALESCE(t_60_HandedOver.source, '') = COALESCE(t_62_HandedOver.target, '') AND (t_60_HandedOver.source IS NULL) = (t_62_HandedOver.target IS NULL)) AND
+        (COALESCE(t_62_HandedOver.source, '') = COALESCE(t_64_HandedOver.target, '') AND (t_62_HandedOver.source IS NULL) = (t_64_HandedOver.target IS NULL)) AND
+        (COALESCE(t_64_HandedOver.source, '') = COALESCE(t_66_HandedOver.target, '') AND (t_64_HandedOver.source IS NULL) = (t_66_HandedOver.target IS NULL)) AND
+        (COALESCE(t_66_HandedOver.source, '') = COALESCE(t_68_HandedOver.target, '') AND (t_66_HandedOver.source IS NULL) = (t_68_HandedOver.target IS NULL)) AND
+        (COALESCE(t_68_HandedOver.source, '') = COALESCE(t_70_HandedOver.target, '') AND (t_68_HandedOver.source IS NULL) = (t_70_HandedOver.target IS NULL))
      UNION ALL
     
       SELECT
@@ -241,14 +241,14 @@ t_0_ReachedBy_RecursiveCte AS (SELECT * FROM (
         (CASE WHEN (t_88_HandedOver.valid_from > t_86_HandedOver.valid_from) THEN t_88_HandedOver.valid_from ELSE t_86_HandedOver.valid_from END < CASE WHEN (t_88_HandedOver.valid_to < t_86_HandedOver.valid_to) THEN t_88_HandedOver.valid_to ELSE t_86_HandedOver.valid_to END) AND
         (0 < 10) AND
         (1 = 0) AND
-        (t_72_HandedOver.source = t_74_HandedOver.target) AND
-        (t_74_HandedOver.source = t_76_HandedOver.target) AND
-        (t_76_HandedOver.source = t_78_HandedOver.target) AND
-        (t_78_HandedOver.source = t_80_HandedOver.target) AND
-        (t_80_HandedOver.source = t_82_HandedOver.target) AND
-        (t_82_HandedOver.source = t_84_HandedOver.target) AND
-        (t_84_HandedOver.source = t_86_HandedOver.target) AND
-        (t_86_HandedOver.source = t_88_HandedOver.target)
+        (COALESCE(t_72_HandedOver.source, '') = COALESCE(t_74_HandedOver.target, '') AND (t_72_HandedOver.source IS NULL) = (t_74_HandedOver.target IS NULL)) AND
+        (COALESCE(t_74_HandedOver.source, '') = COALESCE(t_76_HandedOver.target, '') AND (t_74_HandedOver.source IS NULL) = (t_76_HandedOver.target IS NULL)) AND
+        (COALESCE(t_76_HandedOver.source, '') = COALESCE(t_78_HandedOver.target, '') AND (t_76_HandedOver.source IS NULL) = (t_78_HandedOver.target IS NULL)) AND
+        (COALESCE(t_78_HandedOver.source, '') = COALESCE(t_80_HandedOver.target, '') AND (t_78_HandedOver.source IS NULL) = (t_80_HandedOver.target IS NULL)) AND
+        (COALESCE(t_80_HandedOver.source, '') = COALESCE(t_82_HandedOver.target, '') AND (t_80_HandedOver.source IS NULL) = (t_82_HandedOver.target IS NULL)) AND
+        (COALESCE(t_82_HandedOver.source, '') = COALESCE(t_84_HandedOver.target, '') AND (t_82_HandedOver.source IS NULL) = (t_84_HandedOver.target IS NULL)) AND
+        (COALESCE(t_84_HandedOver.source, '') = COALESCE(t_86_HandedOver.target, '') AND (t_84_HandedOver.source IS NULL) = (t_86_HandedOver.target IS NULL)) AND
+        (COALESCE(t_86_HandedOver.source, '') = COALESCE(t_88_HandedOver.target, '') AND (t_86_HandedOver.source IS NULL) = (t_88_HandedOver.target IS NULL))
      UNION ALL
     
       SELECT
@@ -279,15 +279,15 @@ t_0_ReachedBy_RecursiveCte AS (SELECT * FROM (
         (CASE WHEN (t_108_HandedOver.valid_from > t_106_HandedOver.valid_from) THEN t_108_HandedOver.valid_from ELSE t_106_HandedOver.valid_from END < CASE WHEN (t_108_HandedOver.valid_to < t_106_HandedOver.valid_to) THEN t_108_HandedOver.valid_to ELSE t_106_HandedOver.valid_to END) AND
         (0 < 10) AND
         (1 = 0) AND
-        (t_90_HandedOver.source = t_92_HandedOver.target) AND
-        (t_92_HandedOver.source = t_94_HandedOver.target) AND
-        (t_94_HandedOver.source = t_96_HandedOver.target) AND
-        (t_96_HandedOver.source = t_98_HandedOver.target) AND
-        (t_98_HandedOver.source = t_100_HandedOver.target) AND
-        (t_100_HandedOver.source = t_102_HandedOver.target) AND
-        (t_102_HandedOver.source = t_104_HandedOver.target) AND
-        (t_104_HandedOver.source = t_106_HandedOver.target) AND
-        (t_106_HandedOver.source = t_108_HandedOver.target)
+        (COALESCE(t_90_HandedOver.source, '') = COALESCE(t_92_HandedOver.target, '') AND (t_90_HandedOver.source IS NULL) = (t_92_HandedOver.target IS NULL)) AND
+        (COALESCE(t_92_HandedOver.source, '') = COALESCE(t_94_HandedOver.target, '') AND (t_92_HandedOver.source IS NULL) = (t_94_HandedOver.target IS NULL)) AND
+        (COALESCE(t_94_HandedOver.source, '') = COALESCE(t_96_HandedOver.target, '') AND (t_94_HandedOver.source IS NULL) = (t_96_HandedOver.target IS NULL)) AND
+        (COALESCE(t_96_HandedOver.source, '') = COALESCE(t_98_HandedOver.target, '') AND (t_96_HandedOver.source IS NULL) = (t_98_HandedOver.target IS NULL)) AND
+        (COALESCE(t_98_HandedOver.source, '') = COALESCE(t_100_HandedOver.target, '') AND (t_98_HandedOver.source IS NULL) = (t_100_HandedOver.target IS NULL)) AND
+        (COALESCE(t_100_HandedOver.source, '') = COALESCE(t_102_HandedOver.target, '') AND (t_100_HandedOver.source IS NULL) = (t_102_HandedOver.target IS NULL)) AND
+        (COALESCE(t_102_HandedOver.source, '') = COALESCE(t_104_HandedOver.target, '') AND (t_102_HandedOver.source IS NULL) = (t_104_HandedOver.target IS NULL)) AND
+        (COALESCE(t_104_HandedOver.source, '') = COALESCE(t_106_HandedOver.target, '') AND (t_104_HandedOver.source IS NULL) = (t_106_HandedOver.target IS NULL)) AND
+        (COALESCE(t_106_HandedOver.source, '') = COALESCE(t_108_HandedOver.target, '') AND (t_106_HandedOver.source IS NULL) = (t_108_HandedOver.target IS NULL))
     
   ) AS UNUSED_TABLE_NAME  
 ) AS UNUSED_TABLE_NAME
@@ -303,7 +303,7 @@ FROM
 WHERE
   (CASE WHEN (t_109_ReachedBy_RecursiveCte.valid_from > t_110_HandedOver.valid_from) THEN t_109_ReachedBy_RecursiveCte.valid_from ELSE t_110_HandedOver.valid_from END < CASE WHEN (t_109_ReachedBy_RecursiveCte.valid_to < t_110_HandedOver.valid_to) THEN t_109_ReachedBy_RecursiveCte.valid_to ELSE t_110_HandedOver.valid_to END) AND
   (t_109_ReachedBy_RecursiveCte.synalog_step < 10) AND
-  (t_110_HandedOver.source = t_109_ReachedBy_RecursiveCte.target))
+  (COALESCE(t_110_HandedOver.source, '') = COALESCE(t_109_ReachedBy_RecursiveCte.target, '') AND (t_110_HandedOver.source IS NULL) = (t_109_ReachedBy_RecursiveCte.target IS NULL)))
 SELECT
   ReachedBy_RecursiveCte.source AS source,
   ReachedBy_RecursiveCte.target AS target,

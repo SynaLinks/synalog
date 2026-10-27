@@ -61,4 +61,4 @@ SELECT
 FROM
   t_0_Person AS Person, JSON_EACH(JSON_ARRAY('purple')) as x_3
 WHERE
-  (Person.team = x_3.value);
+  (Person.team IS x_3.value);

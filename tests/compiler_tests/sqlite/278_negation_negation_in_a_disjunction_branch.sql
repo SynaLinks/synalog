@@ -20,7 +20,7 @@ t_0_Out_MultBodyAggAux AS (SELECT * FROM (
       FROM
         t_1_Banned AS Banned, JSON_EACH(JSON_ARRAY(0)) as x_8
       WHERE
-        (Banned.x = x_5.value)) IS NULL)
+        (Banned.x IS x_5.value)) IS NULL)
    UNION ALL
   
     SELECT
@@ -35,4 +35,4 @@ SELECT
   Out_MultBodyAggAux.x AS x
 FROM
   t_0_Out_MultBodyAggAux AS Out_MultBodyAggAux
-GROUP BY Out_MultBodyAggAux.x ORDER BY x;
+GROUP BY Out_MultBodyAggAux.x ORDER BY x NULLS LAST;

@@ -66,4 +66,4 @@ WHERE
   FROM
     JSON_EACH(JSON_ARRAY(0)) as x_5, JSON_EACH(JSON_ARRAY('purple')) as x_7
   WHERE
-    (Person.team = x_7.value)) IS NULL) ORDER BY id;
+    (Person.team IS x_7.value)) IS NULL) ORDER BY id NULLS LAST;

@@ -76,5 +76,5 @@ SELECT
 FROM
   t_0_E AS E, t_1_Pr AS Pr
 WHERE
-  (Pr.dept = E.dept)
+  (COALESCE(Pr.dept, 0) = COALESCE(E.dept, 0) AND (Pr.dept IS NULL) = (E.dept IS NULL))
 GROUP BY E.name ORDER BY name, n;

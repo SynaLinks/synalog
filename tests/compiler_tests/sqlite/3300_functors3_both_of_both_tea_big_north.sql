@@ -62,7 +62,7 @@ FROM
   t_2_Sale AS t_0_Sale, t_2_Sale AS t_1_Sale, t_2_Sale AS Sale
 WHERE
   (t_1_Sale.amount > 100) AND
-  (t_1_Sale.id = t_0_Sale.id) AND
-  (Sale.id = t_0_Sale.id) AND
+  (t_1_Sale.id IS t_0_Sale.id) AND
+  (Sale.id IS t_0_Sale.id) AND
   (Sale.region = 'north') AND
-  (t_0_Sale.product = 'tea') ORDER BY id;
+  (t_0_Sale.product = 'tea') ORDER BY id NULLS LAST;

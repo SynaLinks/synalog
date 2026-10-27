@@ -79,4 +79,4 @@ SELECT
 FROM
   t_0_U AS U, t_3_V AS V
 WHERE
-  (V.y = U.x);
+  (V.y IS NOT DISTINCT FROM U.x);

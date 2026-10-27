@@ -43,7 +43,7 @@ t_16_After_MultBodyAggAux_recursive_head_f2 AS (SELECT * FROM (
     FROM
       t_18_After_r0 AS After_r0, t_22_Sequel AS t_17_Sequel
     WHERE
-      (t_17_Sequel.book = After_r0.next)
+      (t_17_Sequel.book IS NOT DISTINCT FROM After_r0.next)
    UNION ALL
   
     SELECT
@@ -67,7 +67,7 @@ t_13_After_MultBodyAggAux_recursive_head_f3 AS (SELECT * FROM (
     FROM
       t_15_After_r1 AS After_r1, t_22_Sequel AS t_14_Sequel
     WHERE
-      (t_14_Sequel.book = After_r1.next)
+      (t_14_Sequel.book IS NOT DISTINCT FROM After_r1.next)
    UNION ALL
   
     SELECT
@@ -91,7 +91,7 @@ t_10_After_MultBodyAggAux_recursive_head_f4 AS (SELECT * FROM (
     FROM
       t_12_After_r2 AS After_r2, t_22_Sequel AS t_11_Sequel
     WHERE
-      (t_11_Sequel.book = After_r2.next)
+      (t_11_Sequel.book IS NOT DISTINCT FROM After_r2.next)
    UNION ALL
   
     SELECT
@@ -115,7 +115,7 @@ t_7_After_MultBodyAggAux_recursive_head_f5 AS (SELECT * FROM (
     FROM
       t_9_After_r3 AS After_r3, t_22_Sequel AS t_8_Sequel
     WHERE
-      (t_8_Sequel.book = After_r3.next)
+      (t_8_Sequel.book IS NOT DISTINCT FROM After_r3.next)
    UNION ALL
   
     SELECT
@@ -139,7 +139,7 @@ t_4_After_MultBodyAggAux_recursive_head_f6 AS (SELECT * FROM (
     FROM
       t_6_After_r4 AS After_r4, t_22_Sequel AS t_5_Sequel
     WHERE
-      (t_5_Sequel.book = After_r4.next)
+      (t_5_Sequel.book IS NOT DISTINCT FROM After_r4.next)
    UNION ALL
   
     SELECT
@@ -163,7 +163,7 @@ t_2_After_MultBodyAggAux_recursive_head_f7 AS (SELECT * FROM (
     FROM
       t_3_After_r5 AS After_r5, t_22_Sequel AS Sequel
     WHERE
-      (Sequel.book = After_r5.next)
+      (Sequel.book IS NOT DISTINCT FROM After_r5.next)
    UNION ALL
   
     SELECT
@@ -195,10 +195,10 @@ WHERE
   FROM
     t_29_IsSequel AS IsSequel
   WHERE
-    (IsSequel.book = After.book)) IS NULL)
+    (IsSequel.book IS NOT DISTINCT FROM After.book)) IS NULL)
 GROUP BY book)
 SELECT
   C.book AS book,
   ((C.n) + (1)) AS n
 FROM
-  t_0_C AS C ORDER BY book, n;
+  t_0_C AS C ORDER BY book NULLS LAST, n NULLS LAST;

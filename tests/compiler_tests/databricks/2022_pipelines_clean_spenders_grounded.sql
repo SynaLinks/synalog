@@ -61,7 +61,7 @@ FROM
   t_2_Order AS t_1_Order, t_3_Price AS Price
 WHERE
   (t_1_Order.state = "paid") AND
-  (Price.item = t_1_Order.item)
+  (Price.item <=> t_1_Order.item)
 GROUP BY 1)
 SELECT
   Spend.who AS who
@@ -73,4 +73,4 @@ WHERE
   FROM
     synalog_test.Trouble AS Trouble
   WHERE
-    (Trouble.who = Spend.who)) IS NULL) ORDER BY who NULLS LAST;
+    (Trouble.who <=> Spend.who)) IS NULL) ORDER BY who NULLS LAST;

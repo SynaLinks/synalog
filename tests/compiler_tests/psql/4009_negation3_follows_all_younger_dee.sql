@@ -100,5 +100,5 @@ WHERE
       t_3_F AS F, UNNEST(ARRAY[0]) as x_11
     WHERE
       (F.a = 'dee') AND
-      (F.b = t_2_U.u)) AS numeric) IS NULL)) AS numeric) IS NULL) AND
+      (COALESCE(F.b, '') = COALESCE(t_2_U.u, '') AND (F.b IS NULL) = (t_2_U.u IS NULL))) AS numeric) IS NULL)) AS numeric) IS NULL) AND
   (t_0_U.u = 'dee');

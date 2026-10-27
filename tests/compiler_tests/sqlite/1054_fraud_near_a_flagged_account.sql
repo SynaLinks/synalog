@@ -56,8 +56,8 @@ t_3_Shares AS (SELECT
 FROM
   t_5_HasPhone AS HasPhone, t_5_HasPhone AS t_4_HasPhone
 WHERE
-  (HasPhone.account != t_4_HasPhone.account) AND
-  (t_4_HasPhone.phone = HasPhone.phone)
+  (HasPhone.account IS NOT t_4_HasPhone.account) AND
+  (t_4_HasPhone.phone IS HasPhone.phone)
 GROUP BY HasPhone.account, t_4_HasPhone.account),
 t_2_Linked_RecursiveCte AS (SELECT * FROM (
   SELECT * FROM (
@@ -79,7 +79,7 @@ t_2_Linked_RecursiveCte AS (SELECT * FROM (
       WHERE
         (0 < 8) AND
         (1 = 0) AND
-        (t_6_Shares.a = t_8_Shares.b)
+        (t_6_Shares.a IS t_8_Shares.b)
      UNION ALL
     
       SELECT
@@ -92,8 +92,8 @@ t_2_Linked_RecursiveCte AS (SELECT * FROM (
         (((0) + (1)) < 8) AND
         (0 < 8) AND
         (1 = 0) AND
-        (t_12_Shares.a = t_14_Shares.b) AND
-        (t_14_Shares.a = t_16_Shares.b)
+        (t_12_Shares.a IS t_14_Shares.b) AND
+        (t_14_Shares.a IS t_16_Shares.b)
      UNION ALL
     
       SELECT
@@ -107,9 +107,9 @@ t_2_Linked_RecursiveCte AS (SELECT * FROM (
         (((0) + (1)) < 8) AND
         (0 < 8) AND
         (1 = 0) AND
-        (t_18_Shares.a = t_20_Shares.b) AND
-        (t_20_Shares.a = t_22_Shares.b) AND
-        (t_22_Shares.a = t_24_Shares.b)
+        (t_18_Shares.a IS t_20_Shares.b) AND
+        (t_20_Shares.a IS t_22_Shares.b) AND
+        (t_22_Shares.a IS t_24_Shares.b)
      UNION ALL
     
       SELECT
@@ -124,10 +124,10 @@ t_2_Linked_RecursiveCte AS (SELECT * FROM (
         (((0) + (1)) < 8) AND
         (0 < 8) AND
         (1 = 0) AND
-        (t_26_Shares.a = t_28_Shares.b) AND
-        (t_28_Shares.a = t_30_Shares.b) AND
-        (t_30_Shares.a = t_32_Shares.b) AND
-        (t_32_Shares.a = t_34_Shares.b)
+        (t_26_Shares.a IS t_28_Shares.b) AND
+        (t_28_Shares.a IS t_30_Shares.b) AND
+        (t_30_Shares.a IS t_32_Shares.b) AND
+        (t_32_Shares.a IS t_34_Shares.b)
      UNION ALL
     
       SELECT
@@ -143,11 +143,11 @@ t_2_Linked_RecursiveCte AS (SELECT * FROM (
         (((0) + (1)) < 8) AND
         (0 < 8) AND
         (1 = 0) AND
-        (t_36_Shares.a = t_38_Shares.b) AND
-        (t_38_Shares.a = t_40_Shares.b) AND
-        (t_40_Shares.a = t_42_Shares.b) AND
-        (t_42_Shares.a = t_44_Shares.b) AND
-        (t_44_Shares.a = t_46_Shares.b)
+        (t_36_Shares.a IS t_38_Shares.b) AND
+        (t_38_Shares.a IS t_40_Shares.b) AND
+        (t_40_Shares.a IS t_42_Shares.b) AND
+        (t_42_Shares.a IS t_44_Shares.b) AND
+        (t_44_Shares.a IS t_46_Shares.b)
     
   ) AS UNUSED_TABLE_NAME  
 ) AS UNUSED_TABLE_NAME
@@ -160,7 +160,7 @@ FROM
   t_2_Linked_RecursiveCte AS t_47_Linked_RecursiveCte, t_3_Shares AS t_48_Shares
 WHERE
   (t_47_Linked_RecursiveCte.synalog_step < 8) AND
-  (t_48_Shares.a = t_47_Linked_RecursiveCte.b)),
+  (t_48_Shares.a IS t_47_Linked_RecursiveCte.b)),
 t_1_Linked AS (SELECT
   Linked_RecursiveCte.a AS a,
   Linked_RecursiveCte.b AS b
@@ -177,6 +177,6 @@ WHERE
   FROM
     t_0_Flagged AS t_49_Flagged, JSON_EACH(JSON_ARRAY(0)) as x_224
   WHERE
-    (t_49_Flagged.account = Linked.b)) IS NULL) AND
-  (Linked.a = Flagged.account)
+    (t_49_Flagged.account IS Linked.b)) IS NULL) AND
+  (Linked.a IS Flagged.account)
 GROUP BY Linked.b ORDER BY account NULLS LAST;

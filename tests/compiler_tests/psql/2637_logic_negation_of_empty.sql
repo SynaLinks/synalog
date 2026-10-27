@@ -73,4 +73,4 @@ WHERE
     t_0_Person AS t_1_Person, UNNEST(ARRAY[0]) as x_4
   WHERE
     (t_1_Person.age > 100) AND
-    (Person.id = t_1_Person.id)) AS numeric) IS NULL) ORDER BY id;
+    (COALESCE(Person.id, 0) = COALESCE(t_1_Person.id, 0) AND (Person.id IS NULL) = (t_1_Person.id IS NULL))) AS numeric) IS NULL) ORDER BY id;

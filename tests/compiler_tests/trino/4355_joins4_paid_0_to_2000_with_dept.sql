@@ -98,4 +98,4 @@ FROM
 WHERE
   (E.pay >= 0) AND
   (E.pay <= 2000) AND
-  (t_0_D.d = E.d) ORDER BY n;
+  (t_0_D.d IS NOT DISTINCT FROM E.d) ORDER BY n;

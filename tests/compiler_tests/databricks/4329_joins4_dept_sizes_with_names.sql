@@ -26,4 +26,4 @@ SELECT
 FROM
   t_1_S AS S, t_3_D AS t_0_D
 WHERE
-  (t_0_D.d = S.d) ORDER BY dn NULLS LAST;
+  (t_0_D.d <=> S.d) ORDER BY dn NULLS LAST;

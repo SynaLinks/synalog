@@ -102,4 +102,4 @@ WHERE
     synalog_test.L AS t_1_L, UNNEST(TRANSFORM(t_1_L.l, synalog_e -> ROW(synalog_e))) as pushkin(x_6)
   WHERE
     ('ink' = x_6) AND
-    (t_0_L."order" = t_1_L."order")) IS NULL) ORDER BY "order";
+    (t_0_L."order" IS NOT DISTINCT FROM t_1_L."order")) IS NULL) ORDER BY "order";

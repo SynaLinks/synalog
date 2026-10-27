@@ -176,8 +176,8 @@ WHERE
   FROM
     t_6_Loan AS Loan, (select unnest([0]) as unnested_pod) as x_12
   WHERE
-    (Loan.member = t_3_Member.name) AND
-    (Loan.book = t_4_Book.id)) IS NULL) AND
+    (Loan.member IS NOT DISTINCT FROM t_3_Member.name) AND
+    (Loan.book IS NOT DISTINCT FROM t_4_Book.id)) IS NULL) AND
   (t_4_Book.author = 'asimov')
 GROUP BY t_3_Member.name)
 SELECT
@@ -190,4 +190,4 @@ WHERE
   FROM
     t_2_Missed AS Missed, (select unnest([0]) as unnested_pod) as x_4
   WHERE
-    (Missed.name = t_0_Member.name)) IS NULL);
+    (Missed.name IS NOT DISTINCT FROM t_0_Member.name)) IS NULL);

@@ -56,7 +56,7 @@ t_0_Q_MultBodyAggAux AS (SELECT * FROM (
     FROM
       t_1_I AS I
     WHERE
-      (I.c != "red")
+      (I.c IS DISTINCT FROM "red")
    UNION ALL
   
     SELECT
@@ -71,4 +71,4 @@ SELECT
   Q_MultBodyAggAux.id AS id
 FROM
   t_0_Q_MultBodyAggAux AS Q_MultBodyAggAux
-GROUP BY id ORDER BY id;
+GROUP BY id ORDER BY id NULLS LAST;

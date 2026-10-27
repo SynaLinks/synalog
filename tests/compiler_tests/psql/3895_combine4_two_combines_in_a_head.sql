@@ -73,12 +73,12 @@ SELECT
 FROM
   t_1_O AS O, UNNEST(ARRAY[0]) as x_6
 WHERE
-  (O.c = t_0_C.c)) AS numeric) AS t,
+  (COALESCE(O.c, '') = COALESCE(t_0_C.c, '') AND (O.c IS NULL) = (t_0_C.c IS NULL))) AS numeric) AS t,
   CAST((SELECT
   SUM((CASE WHEN x_9 = 0 THEN 1 ELSE NULL END)) AS synalog_value
 FROM
   t_1_O AS t_2_O, UNNEST(ARRAY[0]) as x_9
 WHERE
-  (t_2_O.c = t_0_C.c)) AS numeric) AS n
+  (COALESCE(t_2_O.c, '') = COALESCE(t_0_C.c, '') AND (t_2_O.c IS NULL) = (t_0_C.c IS NULL))) AS numeric) AS n
 FROM
   t_3_C AS t_0_C ORDER BY c;

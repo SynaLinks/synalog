@@ -18,4 +18,4 @@ WHERE
     t_2_E AS E
   WHERE
     (E.b > 2) AND
-    (E.a = t_0_N.n)) IS NULL) ORDER BY n NULLS LAST;
+    (E.a <=> t_0_N.n)) IS NULL) ORDER BY n NULLS LAST;

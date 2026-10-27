@@ -4,15 +4,6 @@ create schema if not exists synalog_home;
 drop type if exists synalogrecord893574736 cascade; create type synalogrecord893574736 as struct(nirvana numeric);
 create sequence if not exists eternal_logical_sequence;
 
-
--- Synalog type: synalogrecord481217614
-drop type if exists synalogrecord481217614 cascade; create type synalogrecord481217614 as struct(r synalogrecord893574736);
-
--- Synalog type: synalogrecord383307722
-drop type if exists synalogrecord383307722 cascade; create type synalogrecord383307722 as struct(a timestamp);
-
--- Synalog type: synalogrecord519939597
-drop type if exists synalogrecord519939597 cascade; create type synalogrecord519939597 as struct(args text[], predicate text);
 WITH t_1_S AS (SELECT * FROM (
   
     SELECT
@@ -121,7 +112,7 @@ t_3_Better_MultBodyAggAux AS (SELECT * FROM (
       (t_7_S.d < t_6_S.d) AND
       (t_6_S.r = 'east') AND
       (t_7_S.r = 'east') AND
-      (t_7_S.v = t_6_S.v)
+      (t_7_S.v IS NOT DISTINCT FROM t_6_S.v)
   
 ) AS UNUSED_TABLE_NAME  ),
 t_2_Better AS (SELECT
@@ -141,9 +132,9 @@ t_0_Q_MultBodyAggAux AS (SELECT * FROM (
       ((SELECT
         MIN((CASE WHEN x_11.unnested_pod = 0 THEN 1 ELSE NULL END)) AS synalog_value
       FROM
-        t_2_Better AS Better, (select unnest([0]::numeric[]) as unnested_pod) as x_11
+        t_2_Better AS Better, (select unnest([0]) as unnested_pod) as x_11
       WHERE
-        (Better.d = S.d)) IS NULL) AND
+        (Better.d IS NOT DISTINCT FROM S.d)) IS NULL) AND
       (S.r = 'east')
    UNION ALL
   
@@ -155,7 +146,7 @@ t_0_Q_MultBodyAggAux AS (SELECT * FROM (
     WHERE
       (t_9_Better.n < 2) AND
       (t_8_S.r = 'east') AND
-      (t_9_Better.d = t_8_S.d)
+      (t_9_Better.d IS NOT DISTINCT FROM t_8_S.d)
   
 ) AS UNUSED_TABLE_NAME  )
 SELECT

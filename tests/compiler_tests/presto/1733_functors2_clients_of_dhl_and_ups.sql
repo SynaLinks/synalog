@@ -100,4 +100,4 @@ SELECT
 FROM
   t_0_X AS X, t_2_Y AS Y
 WHERE
-  (Y.client = X.client) ORDER BY client;
+  (Y.client IS NOT DISTINCT FROM X.client) ORDER BY client;

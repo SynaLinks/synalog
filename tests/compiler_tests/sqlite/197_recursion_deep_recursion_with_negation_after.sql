@@ -26,7 +26,7 @@ WITH RECURSIVE t_1_Reach_RecursiveCte AS (SELECT * FROM (
         (((0) + (1)) < 22) AND
         (0 < 22) AND
         (1 = 0) AND
-        (x_43.value = ((x_49.value) + (1))) AND
+        (x_43.value IS ((x_49.value) + (1))) AND
         (x_49.value = 0)
      UNION ALL
     
@@ -40,8 +40,8 @@ WITH RECURSIVE t_1_Reach_RecursiveCte AS (SELECT * FROM (
         (((0) + (1)) < 22) AND
         (0 < 22) AND
         (1 = 0) AND
-        (x_65.value = ((x_72.value) + (1))) AND
-        (x_72.value = ((x_78.value) + (1))) AND
+        (x_65.value IS ((x_72.value) + (1))) AND
+        (x_72.value IS ((x_78.value) + (1))) AND
         (x_78.value = 0)
     
   ) AS UNUSED_TABLE_NAME  
@@ -54,7 +54,7 @@ FROM
   t_1_Reach_RecursiveCte AS t_15_Reach_RecursiveCte, JSON_EACH((select json_group_array(n) from (with recursive t as(select 0 as n union all select n + 1 as n from t where n + 1 < 100) select n from t) where n < 100)) as x_85
 WHERE
   (t_15_Reach_RecursiveCte.synalog_step < 22) AND
-  (t_15_Reach_RecursiveCte.y = x_85.value)),
+  (t_15_Reach_RecursiveCte.y IS x_85.value)),
 t_0_Reach AS (SELECT
   Reach_RecursiveCte.y AS y
 FROM
@@ -70,4 +70,4 @@ WHERE
   FROM
     t_0_Reach AS Reach, JSON_EACH(JSON_ARRAY(0)) as x_6
   WHERE
-    (Reach.y = x_3.value)) IS NULL) ORDER BY x NULLS LAST;
+    (Reach.y IS x_3.value)) IS NULL) ORDER BY x NULLS LAST;

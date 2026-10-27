@@ -22,4 +22,4 @@ SELECT
 FROM
   t_0_Name AS Name, (select unnest([1, 2]) as unnested_pod) as x_6
 WHERE
-  (Name.p = CASE WHEN (((x_6.unnested_pod) % NULLIF(2, 0)) = 0) THEN 0 ELSE 1 END) ORDER BY x;
+  (Name.p IS NOT DISTINCT FROM CASE WHEN (((x_6.unnested_pod) % NULLIF(2, 0)) = 0) THEN 0 ELSE 1 END) ORDER BY x;

@@ -68,8 +68,8 @@ t_1_EngagedWith AS (SELECT
 FROM
   t_4_Team AS t_2_Team, t_6_Client AS t_3_Client, t_8_Engagements AS Engagements
 WHERE
-  (Engagements.team_id = t_2_Team.team_id) AND
-  (Engagements.client_id = t_3_Client.client_id)
+  (COALESCE(Engagements.team_id, 0) = COALESCE(t_2_Team.team_id, 0) AND (Engagements.team_id IS NULL) = (t_2_Team.team_id IS NULL)) AND
+  (COALESCE(Engagements.client_id, 0) = COALESCE(t_3_Client.client_id, 0) AND (Engagements.client_id IS NULL) = (t_3_Client.client_id IS NULL))
 GROUP BY t_2_Team.team_id, t_3_Client.client_id),
 t_13_Employees AS (SELECT * FROM (
   
@@ -131,8 +131,8 @@ t_9_MemberOf AS (SELECT
 FROM
   t_11_Person AS Person, t_4_Team AS t_10_Team, t_13_Employees AS Employees
 WHERE
-  (Employees.person_id = Person.person_id) AND
-  (Employees.team_id = t_10_Team.team_id)
+  (COALESCE(Employees.person_id, 0) = COALESCE(Person.person_id, 0) AND (Employees.person_id IS NULL) = (Person.person_id IS NULL)) AND
+  (COALESCE(Employees.team_id, 0) = COALESCE(t_10_Team.team_id, 0) AND (Employees.team_id IS NULL) = (t_10_Team.team_id IS NULL))
 GROUP BY Person.person_id, t_10_Team.team_id),
 t_0_Serves AS (SELECT
   MemberOf.person_id AS person_id
@@ -140,7 +140,7 @@ FROM
   t_1_EngagedWith AS EngagedWith, t_9_MemberOf AS MemberOf
 WHERE
   (EngagedWith.client_id = 100) AND
-  (MemberOf.team_id = EngagedWith.team_id)
+  (COALESCE(MemberOf.team_id, 0) = COALESCE(EngagedWith.team_id, 0) AND (MemberOf.team_id IS NULL) = (EngagedWith.team_id IS NULL))
 GROUP BY MemberOf.person_id)
 SELECT
   SUM(1) AS n

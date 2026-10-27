@@ -20,7 +20,7 @@ FROM
 WHERE
   (Follows.a < Follows.b) AND
   (Follows.a < t_0_Follows.b) AND
-  (t_0_Follows.a = Follows.b) AND
-  (t_1_Follows.a = t_0_Follows.b) AND
-  (t_1_Follows.b = Follows.a)
+  (t_0_Follows.a <=> Follows.b) AND
+  (t_1_Follows.a <=> t_0_Follows.b) AND
+  (t_1_Follows.b <=> Follows.a)
 GROUP BY 1, 2, 3;

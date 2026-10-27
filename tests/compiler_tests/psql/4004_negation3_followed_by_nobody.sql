@@ -93,4 +93,4 @@ WHERE
   FROM
     t_2_F AS F, UNNEST(ARRAY[0]) as x_4
   WHERE
-    (F.b = t_0_U.u)) AS numeric) IS NULL) ORDER BY u;
+    (COALESCE(F.b, '') = COALESCE(t_0_U.u, '') AND (F.b IS NULL) = (t_0_U.u IS NULL))) AS numeric) IS NULL) ORDER BY u;

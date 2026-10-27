@@ -84,8 +84,8 @@ t_0_Manages AS (SELECT
 FROM
   synalog_test.Person AS Person, synalog_test.Person AS t_1_Person, t_2_Management AS Management
 WHERE
-  (Management.manager_id = Person.person_id) AND
-  (Management.employee_id = t_1_Person.person_id)
+  (Management.manager_id IS NOT DISTINCT FROM Person.person_id) AND
+  (Management.employee_id IS NOT DISTINCT FROM t_1_Person.person_id)
 GROUP BY 1, 2)
 SELECT
   Manages.manager_id AS manager_id,

@@ -19,7 +19,7 @@ WHERE
   FROM
     t_2_NotA AS NotA, JSON_EACH(JSON_ARRAY(0)) as x_13
   WHERE
-    (NotA.x = x_10.value)) IS NULL))
+    (NotA.x IS x_10.value)) IS NULL))
 SELECT
   x_3.value AS x
 FROM
@@ -30,4 +30,4 @@ WHERE
   FROM
     t_0_NotNotA AS NotNotA, JSON_EACH(JSON_ARRAY(0)) as x_6
   WHERE
-    (NotNotA.x = x_3.value)) IS NULL);
+    (NotNotA.x IS x_3.value)) IS NULL);

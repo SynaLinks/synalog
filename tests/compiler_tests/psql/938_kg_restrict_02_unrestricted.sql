@@ -92,8 +92,8 @@ t_4_MemberOf AS (SELECT
 FROM
   t_2_Person AS t_5_Person, t_9_Team AS t_6_Team, t_3_Employees AS t_7_Employees
 WHERE
-  (t_7_Employees.person_id = t_5_Person.person_id) AND
-  (t_7_Employees.team_id = t_6_Team.team_id)
+  (COALESCE(t_7_Employees.person_id, 0) = COALESCE(t_5_Person.person_id, 0) AND (t_7_Employees.person_id IS NULL) = (t_5_Person.person_id IS NULL)) AND
+  (COALESCE(t_7_Employees.team_id, 0) = COALESCE(t_6_Team.team_id, 0) AND (t_7_Employees.team_id IS NULL) = (t_6_Team.team_id IS NULL))
 GROUP BY t_5_Person.person_id, t_6_Team.team_id),
 t_16_Clients AS (SELECT * FROM (
   
@@ -136,8 +136,8 @@ t_11_EngagedWith AS (SELECT
 FROM
   t_9_Team AS t_12_Team, t_15_Client AS t_13_Client, t_17_Engagements AS Engagements
 WHERE
-  (Engagements.team_id = t_12_Team.team_id) AND
-  (Engagements.client_id = t_13_Client.client_id)
+  (COALESCE(Engagements.team_id, 0) = COALESCE(t_12_Team.team_id, 0) AND (Engagements.team_id IS NULL) = (t_12_Team.team_id IS NULL)) AND
+  (COALESCE(Engagements.client_id, 0) = COALESCE(t_13_Client.client_id, 0) AND (Engagements.client_id IS NULL) = (t_13_Client.client_id IS NULL))
 GROUP BY t_12_Team.team_id, t_13_Client.client_id),
 t_0_Reach AS (SELECT
   Who.person_id AS person_id,
@@ -145,8 +145,8 @@ t_0_Reach AS (SELECT
 FROM
   t_1_Who AS Who, t_4_MemberOf AS MemberOf, t_11_EngagedWith AS EngagedWith
 WHERE
-  (MemberOf.person_id = Who.person_id) AND
-  (EngagedWith.team_id = MemberOf.team_id)
+  (COALESCE(MemberOf.person_id, 0) = COALESCE(Who.person_id, 0) AND (MemberOf.person_id IS NULL) = (Who.person_id IS NULL)) AND
+  (COALESCE(EngagedWith.team_id, 0) = COALESCE(MemberOf.team_id, 0) AND (EngagedWith.team_id IS NULL) = (MemberOf.team_id IS NULL))
 GROUP BY Who.person_id, EngagedWith.client_id)
 SELECT
   Reach.person_id AS person_id,

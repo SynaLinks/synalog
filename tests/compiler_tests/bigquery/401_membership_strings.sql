@@ -3,4 +3,4 @@ SELECT
 FROM
   UNNEST(ARRAY["b", "c"]) as x_2, UNNEST(ARRAY["a", "b"]) as x_4
 WHERE
-  (x_4 = x_2);
+  (x_4 IS NOT DISTINCT FROM x_2);

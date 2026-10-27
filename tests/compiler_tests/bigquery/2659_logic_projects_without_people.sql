@@ -90,4 +90,4 @@ WHERE
   FROM
     t_1_A AS A
   WHERE
-    (A.pid = Proj.pid)) IS NULL);
+    (A.pid IS NOT DISTINCT FROM Proj.pid)) IS NULL);

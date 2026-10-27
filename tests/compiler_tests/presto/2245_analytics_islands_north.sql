@@ -107,11 +107,11 @@ WHERE
   FROM
     synalog_test.D AS t_3_D
   WHERE
-    (t_3_D.d = ((t_1_D.d) - (1)))) IS NULL) AND
+    (t_3_D.d IS NOT DISTINCT FROM ((t_1_D.d) - (1)))) IS NULL) AND
   ((SELECT
     MIN(1) AS synalog_value
   FROM
     synalog_test.D AS t_4_D
   WHERE
-    (t_4_D.d = ((t_2_D.d) + (1)))) IS NULL)
+    (t_4_D.d IS NOT DISTINCT FROM ((t_2_D.d) + (1)))) IS NULL)
 GROUP BY 1 ORDER BY first, last;

@@ -1,5 +1,5 @@
-# Employees with their department: a null key matches nothing.
-# Expect: rows Q = [('ann', 'eng'), ('bob', 'eng'), ('cid', 'ops'), ('fay', 'ops')]
+# Employees with their department: a null key matches the null key.
+# Expect: rows Q = [('ann', 'eng'), ('bob', 'eng'), ('cid', 'ops'), ('dee', 'temp'), ('fay', 'ops')]
 E(id: 1, name: "ann", dept: 10, boss: null);
 E(id: 2, name: "bob", dept: 10, boss: 1);
 E(id: 3, name: "cid", dept: 20, boss: 1);

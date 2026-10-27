@@ -51,8 +51,8 @@ t_9_Shares AS (SELECT
 FROM
   t_6_HasPhone AS t_10_HasPhone, t_6_HasPhone AS t_11_HasPhone
 WHERE
-  (t_10_HasPhone.account != t_11_HasPhone.account) AND
-  (t_11_HasPhone.phone = t_10_HasPhone.phone)
+  (t_10_HasPhone.account IS DISTINCT FROM t_11_HasPhone.account) AND
+  (t_11_HasPhone.phone IS NOT DISTINCT FROM t_10_HasPhone.phone)
 GROUP BY a, b),
 t_44_Linked_MultBodyAggAux_recursive_head_f1 AS (SELECT * FROM (
   
@@ -84,7 +84,7 @@ t_40_Linked_MultBodyAggAux_recursive_head_f2 AS (SELECT * FROM (
     FROM
       t_43_Linked_r0 AS Linked_r0, t_9_Shares AS t_42_Shares
     WHERE
-      (t_42_Shares.a = Linked_r0.b)
+      (t_42_Shares.a IS NOT DISTINCT FROM Linked_r0.b)
   
 ) AS UNUSED_TABLE_NAME  ),
 t_39_Linked_r1 AS (SELECT
@@ -108,7 +108,7 @@ t_36_Linked_MultBodyAggAux_recursive_head_f3 AS (SELECT * FROM (
     FROM
       t_39_Linked_r1 AS Linked_r1, t_9_Shares AS t_38_Shares
     WHERE
-      (t_38_Shares.a = Linked_r1.b)
+      (t_38_Shares.a IS NOT DISTINCT FROM Linked_r1.b)
   
 ) AS UNUSED_TABLE_NAME  ),
 t_35_Linked_r2 AS (SELECT
@@ -132,7 +132,7 @@ t_32_Linked_MultBodyAggAux_recursive_head_f4 AS (SELECT * FROM (
     FROM
       t_35_Linked_r2 AS Linked_r2, t_9_Shares AS t_34_Shares
     WHERE
-      (t_34_Shares.a = Linked_r2.b)
+      (t_34_Shares.a IS NOT DISTINCT FROM Linked_r2.b)
   
 ) AS UNUSED_TABLE_NAME  ),
 t_31_Linked_r3 AS (SELECT
@@ -156,7 +156,7 @@ t_28_Linked_MultBodyAggAux_recursive_head_f5 AS (SELECT * FROM (
     FROM
       t_31_Linked_r3 AS Linked_r3, t_9_Shares AS t_30_Shares
     WHERE
-      (t_30_Shares.a = Linked_r3.b)
+      (t_30_Shares.a IS NOT DISTINCT FROM Linked_r3.b)
   
 ) AS UNUSED_TABLE_NAME  ),
 t_27_Linked_r4 AS (SELECT
@@ -180,7 +180,7 @@ t_24_Linked_MultBodyAggAux_recursive_head_f6 AS (SELECT * FROM (
     FROM
       t_27_Linked_r4 AS Linked_r4, t_9_Shares AS t_26_Shares
     WHERE
-      (t_26_Shares.a = Linked_r4.b)
+      (t_26_Shares.a IS NOT DISTINCT FROM Linked_r4.b)
   
 ) AS UNUSED_TABLE_NAME  ),
 t_23_Linked_r5 AS (SELECT
@@ -204,7 +204,7 @@ t_20_Linked_MultBodyAggAux_recursive_head_f7 AS (SELECT * FROM (
     FROM
       t_23_Linked_r5 AS Linked_r5, t_9_Shares AS t_22_Shares
     WHERE
-      (t_22_Shares.a = Linked_r5.b)
+      (t_22_Shares.a IS NOT DISTINCT FROM Linked_r5.b)
   
 ) AS UNUSED_TABLE_NAME  ),
 t_19_Linked_r6 AS (SELECT
@@ -228,7 +228,7 @@ t_14_Linked_MultBodyAggAux_recursive_head_f8 AS (SELECT * FROM (
     FROM
       t_19_Linked_r6 AS Linked_r6, t_9_Shares AS t_18_Shares
     WHERE
-      (t_18_Shares.a = Linked_r6.b)
+      (t_18_Shares.a IS NOT DISTINCT FROM Linked_r6.b)
   
 ) AS UNUSED_TABLE_NAME  ),
 t_13_Linked_r7 AS (SELECT
@@ -252,7 +252,7 @@ t_8_Linked_MultBodyAggAux_recursive_head_f9 AS (SELECT * FROM (
     FROM
       t_13_Linked_r7 AS Linked_r7, t_9_Shares AS t_12_Shares
     WHERE
-      (t_12_Shares.a = Linked_r7.b)
+      (t_12_Shares.a IS NOT DISTINCT FROM Linked_r7.b)
   
 ) AS UNUSED_TABLE_NAME  ),
 t_7_Linked AS (SELECT

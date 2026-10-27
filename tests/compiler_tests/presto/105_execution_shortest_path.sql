@@ -51,7 +51,7 @@ t_0_Dist_MultBodyAggAux_f2 AS (SELECT * FROM (
     FROM
       synalog_test.Dist_ifr0 AS Dist_ifr0, t_1_Edge AS Edge
     WHERE
-      (Edge.x = Dist_ifr0.node)
+      (Edge.x IS NOT DISTINCT FROM Dist_ifr0.node)
   
 ) AS UNUSED_TABLE_NAME  )
 SELECT
@@ -99,7 +99,7 @@ t_0_Dist_MultBodyAggAux_f3 AS (SELECT * FROM (
     FROM
       synalog_test.Dist_ifr1 AS Dist_ifr1, t_1_Edge AS Edge
     WHERE
-      (Edge.x = Dist_ifr1.node)
+      (Edge.x IS NOT DISTINCT FROM Dist_ifr1.node)
   
 ) AS UNUSED_TABLE_NAME  )
 SELECT
@@ -147,7 +147,7 @@ t_0_Dist_MultBodyAggAux_f4 AS (SELECT * FROM (
     FROM
       synalog_test.Dist_ifr2 AS Dist_ifr2, t_1_Edge AS Edge
     WHERE
-      (Edge.x = Dist_ifr2.node)
+      (Edge.x IS NOT DISTINCT FROM Dist_ifr2.node)
   
 ) AS UNUSED_TABLE_NAME  )
 SELECT
@@ -195,7 +195,7 @@ t_0_Dist_MultBodyAggAux_f3 AS (SELECT * FROM (
     FROM
       synalog_test.Dist_ifr1 AS Dist_ifr1, t_1_Edge AS Edge
     WHERE
-      (Edge.x = Dist_ifr1.node)
+      (Edge.x IS NOT DISTINCT FROM Dist_ifr1.node)
   
 ) AS UNUSED_TABLE_NAME  )
 SELECT
@@ -241,7 +241,7 @@ t_0_Dist_MultBodyAggAux_f4 AS (SELECT * FROM (
     FROM
       synalog_test.Dist_ifr2 AS Dist_ifr2, t_1_Edge AS Edge
     WHERE
-      (Edge.x = Dist_ifr2.node)
+      (Edge.x IS NOT DISTINCT FROM Dist_ifr2.node)
   
 ) AS UNUSED_TABLE_NAME  )
 SELECT
@@ -287,7 +287,7 @@ t_0_Dist_MultBodyAggAux_f3 AS (SELECT * FROM (
     FROM
       synalog_test.Dist_ifr1 AS Dist_ifr1, t_1_Edge AS Edge
     WHERE
-      (Edge.x = Dist_ifr1.node)
+      (Edge.x IS NOT DISTINCT FROM Dist_ifr1.node)
   
 ) AS UNUSED_TABLE_NAME  )
 SELECT
@@ -333,7 +333,7 @@ t_0_Dist_MultBodyAggAux_f4 AS (SELECT * FROM (
     FROM
       synalog_test.Dist_ifr2 AS Dist_ifr2, t_1_Edge AS Edge
     WHERE
-      (Edge.x = Dist_ifr2.node)
+      (Edge.x IS NOT DISTINCT FROM Dist_ifr2.node)
   
 ) AS UNUSED_TABLE_NAME  )
 SELECT
@@ -379,7 +379,7 @@ t_0_Dist_MultBodyAggAux_f3 AS (SELECT * FROM (
     FROM
       synalog_test.Dist_ifr1 AS Dist_ifr1, t_1_Edge AS Edge
     WHERE
-      (Edge.x = Dist_ifr1.node)
+      (Edge.x IS NOT DISTINCT FROM Dist_ifr1.node)
   
 ) AS UNUSED_TABLE_NAME  )
 SELECT
@@ -425,7 +425,7 @@ t_0_Dist_MultBodyAggAux_f4 AS (SELECT * FROM (
     FROM
       synalog_test.Dist_ifr2 AS Dist_ifr2, t_1_Edge AS Edge
     WHERE
-      (Edge.x = Dist_ifr2.node)
+      (Edge.x IS NOT DISTINCT FROM Dist_ifr2.node)
   
 ) AS UNUSED_TABLE_NAME  )
 SELECT
@@ -470,7 +470,7 @@ t_0_Dist_MultBodyAggAux_f5 AS (SELECT * FROM (
     FROM
       synalog_test.Dist_ifr1 AS Dist_ifr3, t_1_Edge AS Edge
     WHERE
-      (Edge.x = Dist_ifr3.node)
+      (Edge.x IS NOT DISTINCT FROM Dist_ifr3.node)
   
 ) AS UNUSED_TABLE_NAME  )
 SELECT

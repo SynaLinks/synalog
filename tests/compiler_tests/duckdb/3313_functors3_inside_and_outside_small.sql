@@ -4,15 +4,6 @@ create schema if not exists synalog_home;
 drop type if exists synalogrecord893574736 cascade; create type synalogrecord893574736 as struct(nirvana numeric);
 create sequence if not exists eternal_logical_sequence;
 
-
--- Synalog type: synalogrecord481217614
-drop type if exists synalogrecord481217614 cascade; create type synalogrecord481217614 as struct(r synalogrecord893574736);
-
--- Synalog type: synalogrecord383307722
-drop type if exists synalogrecord383307722 cascade; create type synalogrecord383307722 as struct(a timestamp);
-
--- Synalog type: synalogrecord519939597
-drop type if exists synalogrecord519939597 cascade; create type synalogrecord519939597 as struct(args text[], predicate text);
 WITH t_2_Sale AS (SELECT * FROM (
   
     SELECT
@@ -77,7 +68,7 @@ FROM
   t_2_Sale AS Sale, t_2_Sale AS t_1_Sale
 WHERE
   (t_1_Sale.amount < 60) AND
-  (Sale.id = t_1_Sale.id)),
+  (Sale.id IS NOT DISTINCT FROM t_1_Sale.id)),
 t_3_O AS (SELECT
   SUM(t_4_Sale.amount) AS t
 FROM
@@ -86,10 +77,10 @@ WHERE
   ((SELECT
     MIN((CASE WHEN x_14.unnested_pod = 0 THEN 1 ELSE NULL END)) AS synalog_value
   FROM
-    t_2_Sale AS t_6_Sale, (select unnest([0]::numeric[]) as unnested_pod) as x_14
+    t_2_Sale AS t_6_Sale, (select unnest([0]) as unnested_pod) as x_14
   WHERE
     (t_6_Sale.amount < 60) AND
-    (t_4_Sale.id = t_6_Sale.id)) IS NULL))
+    (t_4_Sale.id IS NOT DISTINCT FROM t_6_Sale.id)) IS NULL))
 SELECT
   I.t AS inside,
   O.t AS outside

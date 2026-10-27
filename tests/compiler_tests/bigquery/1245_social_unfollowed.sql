@@ -89,4 +89,4 @@ WHERE
   FROM
     t_5_Followed AS Followed
   WHERE
-    (Followed.u = t_0_User.u)) IS NULL);
+    (Followed.u IS NOT DISTINCT FROM t_0_User.u)) IS NULL);

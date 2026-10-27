@@ -88,5 +88,5 @@ WHERE
     t_3_F AS F, t_1_U AS t_2_U
   WHERE
     (t_2_U.age < 35) AND
-    (F.b = t_0_U.u) AND
-    (t_2_U.u = F.a)) IS NULL) ORDER BY u;
+    (F.b IS NOT DISTINCT FROM t_0_U.u) AND
+    (t_2_U.u IS NOT DISTINCT FROM F.a)) IS NULL) ORDER BY u;

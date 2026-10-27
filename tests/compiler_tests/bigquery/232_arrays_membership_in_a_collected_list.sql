@@ -7,4 +7,4 @@ SELECT
 FROM
   t_1_L AS t_0_L, UNNEST(t_0_L.l) as x_3, UNNEST(ARRAY[1, 2, 3]) as x_5
 WHERE
-  (x_5 = x_3) ORDER BY x NULLS LAST;
+  (x_5 IS NOT DISTINCT FROM x_3) ORDER BY x NULLS LAST;

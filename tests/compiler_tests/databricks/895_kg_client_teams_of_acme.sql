@@ -30,8 +30,8 @@ t_0_EngagedWith AS (SELECT
 FROM
   t_3_Team AS t_1_Team, t_5_Client AS t_2_Client, t_7_Engagements AS Engagements
 WHERE
-  (Engagements.team_id = t_1_Team.team_id) AND
-  (Engagements.client_id = t_2_Client.client_id)
+  (Engagements.team_id <=> t_1_Team.team_id) AND
+  (Engagements.client_id <=> t_2_Client.client_id)
 GROUP BY 1, 2)
 SELECT
   EngagedWith.team_id AS team_id

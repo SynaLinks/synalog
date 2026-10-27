@@ -9,4 +9,4 @@ SELECT
 FROM
   UNNEST(ARRAY[E'\\''; DROP TABLE t; --', 'other']) as x_1
 WHERE
-  (x_1 != 'other');
+  (x_1 IS DISTINCT FROM 'other');

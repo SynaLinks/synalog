@@ -85,4 +85,4 @@ WHERE
   FROM
     t_1_Staffed AS Staffed, JSON_EACH(JSON_ARRAY(0)) as x_5
   WHERE
-    (Staffed.dept = D.dept)) IS NULL) ORDER BY dname;
+    (Staffed.dept IS D.dept)) IS NULL) ORDER BY dname NULLS LAST;

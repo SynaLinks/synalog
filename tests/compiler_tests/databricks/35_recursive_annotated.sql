@@ -43,7 +43,7 @@ SELECT * FROM (
     FROM
       synalog_test.Reachable_ifr0 AS Reachable_ifr0, t_0_Edge
     WHERE
-      (t_0_Edge.col0 = Reachable_ifr0.col1)
+      (t_0_Edge.col0 <=> Reachable_ifr0.col1)
   
 ) AS UNUSED_TABLE_NAME  ;
 
@@ -73,7 +73,7 @@ SELECT * FROM (
     FROM
       synalog_test.Reachable_ifr1 AS Reachable_ifr1, t_0_Edge
     WHERE
-      (t_0_Edge.col0 = Reachable_ifr1.col1)
+      (t_0_Edge.col0 <=> Reachable_ifr1.col1)
   
 ) AS UNUSED_TABLE_NAME  ;
 
@@ -103,7 +103,7 @@ SELECT * FROM (
     FROM
       synalog_test.Reachable_ifr2 AS Reachable_ifr2, t_0_Edge
     WHERE
-      (t_0_Edge.col0 = Reachable_ifr2.col1)
+      (t_0_Edge.col0 <=> Reachable_ifr2.col1)
   
 ) AS UNUSED_TABLE_NAME  ;
 
@@ -133,7 +133,7 @@ SELECT * FROM (
     FROM
       synalog_test.Reachable_ifr1 AS Reachable_ifr1, t_0_Edge
     WHERE
-      (t_0_Edge.col0 = Reachable_ifr1.col1)
+      (t_0_Edge.col0 <=> Reachable_ifr1.col1)
   
 ) AS UNUSED_TABLE_NAME  ;
 
@@ -161,7 +161,7 @@ SELECT * FROM (
     FROM
       synalog_test.Reachable_ifr2 AS Reachable_ifr2, t_0_Edge
     WHERE
-      (t_0_Edge.col0 = Reachable_ifr2.col1)
+      (t_0_Edge.col0 <=> Reachable_ifr2.col1)
   
 ) AS UNUSED_TABLE_NAME  ;
 
@@ -189,7 +189,7 @@ SELECT * FROM (
     FROM
       synalog_test.Reachable_ifr1 AS Reachable_ifr1, t_0_Edge
     WHERE
-      (t_0_Edge.col0 = Reachable_ifr1.col1)
+      (t_0_Edge.col0 <=> Reachable_ifr1.col1)
   
 ) AS UNUSED_TABLE_NAME  ;
 
@@ -217,7 +217,7 @@ SELECT * FROM (
     FROM
       synalog_test.Reachable_ifr2 AS Reachable_ifr2, t_0_Edge
     WHERE
-      (t_0_Edge.col0 = Reachable_ifr2.col1)
+      (t_0_Edge.col0 <=> Reachable_ifr2.col1)
   
 ) AS UNUSED_TABLE_NAME  ;
 
@@ -245,7 +245,7 @@ SELECT * FROM (
     FROM
       synalog_test.Reachable_ifr1 AS Reachable_ifr1, t_0_Edge
     WHERE
-      (t_0_Edge.col0 = Reachable_ifr1.col1)
+      (t_0_Edge.col0 <=> Reachable_ifr1.col1)
   
 ) AS UNUSED_TABLE_NAME  ;
 
@@ -273,7 +273,7 @@ SELECT * FROM (
     FROM
       synalog_test.Reachable_ifr2 AS Reachable_ifr2, t_0_Edge
     WHERE
-      (t_0_Edge.col0 = Reachable_ifr2.col1)
+      (t_0_Edge.col0 <=> Reachable_ifr2.col1)
   
 ) AS UNUSED_TABLE_NAME  ;
 
@@ -301,7 +301,7 @@ SELECT * FROM (
     FROM
       synalog_test.Reachable_ifr1 AS Reachable_ifr3, t_0_Edge AS t_1_Edge
     WHERE
-      (t_1_Edge.col0 = Reachable_ifr3.col1)
+      (t_1_Edge.col0 <=> Reachable_ifr3.col1)
   
 ) AS UNUSED_TABLE_NAME  ;
 

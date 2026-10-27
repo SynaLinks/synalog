@@ -54,7 +54,7 @@ t_0_Q_MultBodyAggAux AS (SELECT * FROM (
     FROM
       t_1_E AS E, t_2_F AS F
     WHERE
-      (E.g = F.g)
+      (COALESCE(E.g, '') = COALESCE(F.g, '') AND (E.g IS NULL) = (F.g IS NULL))
    UNION ALL
   
     SELECT

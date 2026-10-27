@@ -102,4 +102,4 @@ WHERE
   FROM
     t_2_Ship AS t_3_Ship, (select unnest([0]) as unnested_pod) as x_8
   WHERE
-    (t_3_Ship.client = t_0_Client.client)) > 20);
+    (t_3_Ship.client IS NOT DISTINCT FROM t_0_Client.client)) > 20);

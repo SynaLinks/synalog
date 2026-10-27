@@ -83,5 +83,5 @@ SELECT
 FROM
   t_1_Emp AS Emp, t_2_Floor AS t_0_Floor
 WHERE
-  (t_0_Floor.dept = Emp.dept) AND
+  (t_0_Floor.dept IS Emp.dept) AND
   (t_0_Floor.floor = 3) ORDER BY name NULLS LAST;

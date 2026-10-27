@@ -121,7 +121,7 @@ t_0_Q_MultBodyAggAux AS (SELECT * FROM (
       FROM
         t_3_Paired AS Paired, (select unnest([0]) as unnested_pod) as x_10
       WHERE
-        (Paired.x = t_2_I.id)) IS NULL)
+        (Paired.x IS NOT DISTINCT FROM t_2_I.id)) IS NULL)
   
 ) AS UNUSED_TABLE_NAME  )
 SELECT

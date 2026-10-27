@@ -157,4 +157,4 @@ WHERE
   FROM
     t_2_Borrowed AS Borrowed, JSON_EACH(JSON_ARRAY(0)) as x_5
   WHERE
-    (Borrowed.book = t_0_Book.id)) IS NULL);
+    (Borrowed.book IS t_0_Book.id)) IS NULL);

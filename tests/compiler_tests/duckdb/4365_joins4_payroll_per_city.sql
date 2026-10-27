@@ -102,5 +102,5 @@ SELECT
 FROM
   t_1_E AS E, t_2_D AS t_0_D
 WHERE
-  (t_0_D.d = E.d)
+  (t_0_D.d IS NOT DISTINCT FROM E.d)
 GROUP BY t_0_D.city ORDER BY city;

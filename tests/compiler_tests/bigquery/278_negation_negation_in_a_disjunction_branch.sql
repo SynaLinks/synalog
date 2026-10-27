@@ -20,19 +20,19 @@ t_0_Out_MultBodyAggAux AS (SELECT * FROM (
       FROM
         t_1_Banned AS Banned
       WHERE
-        (Banned.x = x_5)) IS NULL)
+        (Banned.x IS NOT DISTINCT FROM x_5)) IS NULL)
    UNION ALL
   
     SELECT
       3 AS x
     FROM
-      UNNEST(ARRAY[1, 2, 3]) as x_11
+      UNNEST(ARRAY[1, 2, 3]) as x_10
     WHERE
-      (x_11 = 3)
+      (x_10 = 3)
   
 ) AS UNUSED_TABLE_NAME  )
 SELECT
   Out_MultBodyAggAux.x AS x
 FROM
   t_0_Out_MultBodyAggAux AS Out_MultBodyAggAux
-GROUP BY x ORDER BY x;
+GROUP BY x ORDER BY x NULLS LAST;

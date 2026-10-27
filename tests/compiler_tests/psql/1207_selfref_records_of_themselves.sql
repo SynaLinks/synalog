@@ -9,4 +9,4 @@ SELECT
 FROM
   UNNEST(ARRAY[0, 1, 2, 4]) as x_3
 WHERE
-  (x_3 = ((x_3) * (x_3))) ORDER BY x;
+  (COALESCE(x_3, 0) = COALESCE(((x_3) * (x_3)), 0) AND (x_3 IS NULL) = (((x_3) * (x_3)) IS NULL)) ORDER BY x;

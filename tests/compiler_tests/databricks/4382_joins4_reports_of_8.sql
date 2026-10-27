@@ -14,5 +14,5 @@ FROM
   t_2_E AS E, t_2_E AS t_0_E, t_2_E AS t_1_E
 WHERE
   (E.id = 8) AND
-  (t_1_E.id = t_0_E.boss) AND
-  (t_1_E.n = E.n) ORDER BY n NULLS LAST;
+  (t_1_E.id <=> t_0_E.boss) AND
+  (t_1_E.n <=> E.n) ORDER BY n NULLS LAST;

@@ -3,12 +3,12 @@ SELECT
 FROM
   UNNEST(ARRAY[1, 2, 3, 4, 5, 6, 7, 8]) as x_21
 WHERE
-  (x_21 != 9) AND
-  (x_21 != 8) AND
-  (x_21 != 7) AND
-  (x_21 != 6) AND
-  (x_21 != 5) AND
-  (x_21 != 4) AND
-  (x_21 != 3) AND
-  (x_21 != 2) AND
-  (x_21 != 1);
+  (x_21 IS DISTINCT FROM 9) AND
+  (x_21 IS DISTINCT FROM 8) AND
+  (x_21 IS DISTINCT FROM 7) AND
+  (x_21 IS DISTINCT FROM 6) AND
+  (x_21 IS DISTINCT FROM 5) AND
+  (x_21 IS DISTINCT FROM 4) AND
+  (x_21 IS DISTINCT FROM 3) AND
+  (x_21 IS DISTINCT FROM 2) AND
+  (x_21 IS DISTINCT FROM 1);

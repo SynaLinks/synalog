@@ -27,6 +27,6 @@ SELECT
 FROM
   t_0_S AS S, t_1_E AS E, t_2_D AS D
 WHERE
-  (E.id = S.id) AND
-  (D.dept = E.dept)
+  (E.id <=> S.id) AND
+  (D.dept <=> E.dept)
 GROUP BY 1 ORDER BY city NULLS LAST, n NULLS LAST;

@@ -15,7 +15,7 @@ SELECT * FROM (
     FROM
       JSON_EACH((select json_group_array(n) from (with recursive t as(select 0 as n union all select n + 1 as n from t where n + 1 < 10) select n from t) where n < 10)) as x_5
     WHERE
-      (x_5.value != 5)
+      (x_5.value IS NOT 5)
    UNION ALL
   
     SELECT
@@ -36,4 +36,4 @@ SELECT * FROM (
       (x_5.value >= 3) AND
       (x_5.value <= 7)
   
-) AS UNUSED_TABLE_NAME  ORDER BY test_name, x ;
+) AS UNUSED_TABLE_NAME  ORDER BY test_name NULLS LAST, x NULLS LAST ;

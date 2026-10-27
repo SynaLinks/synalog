@@ -5,4 +5,4 @@ FROM
 WHERE
   (x_4.value <= x_6.value) AND
   (x_6.value <= x_4.value) AND
-  (x_4.value != x_6.value);
+  (x_4.value IS NOT x_6.value);

@@ -94,5 +94,5 @@ WHERE
     t_3_F AS F, t_1_U AS t_2_U, (select unnest([0]) as unnested_pod) as x_9
   WHERE
     (t_2_U.age > 20) AND
-    (F.a = t_0_U.u) AND
-    (t_2_U.u = F.b)) IS NULL) ORDER BY u;
+    (F.a IS NOT DISTINCT FROM t_0_U.u) AND
+    (t_2_U.u IS NOT DISTINCT FROM F.b)) IS NULL) ORDER BY u;

@@ -35,4 +35,4 @@ WHERE
     t_0_V AS t_1_V, UNNEST(ARRAY[0]) as x_6
   WHERE
     t_1_V.b AND
-    (t_1_V.x = V.x)) AS numeric) IS NULL) ORDER BY x;
+    (COALESCE(t_1_V.x, 0) = COALESCE(V.x, 0) AND (t_1_V.x IS NULL) = (V.x IS NULL))) AS numeric) IS NULL) ORDER BY x;

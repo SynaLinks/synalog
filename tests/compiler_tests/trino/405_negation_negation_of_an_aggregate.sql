@@ -37,4 +37,4 @@ WHERE
   FROM
     t_3_Big AS Big
   WHERE
-    (Big.g = t_0_G.g)) IS NULL);
+    (Big.g IS NOT DISTINCT FROM t_0_G.g)) IS NULL);

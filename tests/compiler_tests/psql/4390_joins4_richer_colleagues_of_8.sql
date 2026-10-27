@@ -77,4 +77,4 @@ FROM
 WHERE
   (t_0_E.pay > E.pay) AND
   (E.id = 8) AND
-  (t_0_E.d = E.d) ORDER BY n;
+  (COALESCE(t_0_E.d, 0) = COALESCE(E.d, 0) AND (t_0_E.d IS NULL) = (E.d IS NULL)) ORDER BY n;

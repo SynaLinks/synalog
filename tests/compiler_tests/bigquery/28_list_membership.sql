@@ -36,4 +36,4 @@ SELECT
 FROM
   t_0_Items AS Items, UNNEST(ARRAY["fruit", "vegetable"]) as x_9
 WHERE
-  (Items.col1 = x_9) ORDER BY name;
+  (Items.col1 IS NOT DISTINCT FROM x_9) ORDER BY name NULLS LAST;

@@ -26,4 +26,4 @@ WHERE
   FROM
     t_1_Used AS Used
   WHERE
-    (Used.g = F.g)) IS NULL);
+    (Used.g <=> F.g)) IS NULL);

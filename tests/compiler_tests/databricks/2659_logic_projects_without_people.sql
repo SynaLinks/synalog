@@ -25,4 +25,4 @@ WHERE
   FROM
     t_1_A AS A
   WHERE
-    (A.pid = Proj.pid)) IS NULL);
+    (A.pid <=> Proj.pid)) IS NULL);

@@ -75,4 +75,4 @@ SELECT
 FROM
   t_0_Event AS Event, JSON_EACH(JSON_ARRAY('28', '30', '31')) as x_3
 WHERE
-  (SUBSTR(Event."at", 9, 2) = x_3.value) ORDER BY id NULLS LAST;
+  (SUBSTR(Event."at", 9, 2) IS x_3.value) ORDER BY id NULLS LAST;

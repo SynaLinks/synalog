@@ -14,7 +14,7 @@ FROM
   t_2_Sale AS Sale, t_2_Sale AS t_1_Sale
 WHERE
   (t_1_Sale.product = "cake") AND
-  (Sale.id = t_1_Sale.id)),
+  (Sale.id <=> t_1_Sale.id)),
 t_3_O AS (SELECT
   SUM(t_4_Sale.amount) AS t
 FROM
@@ -26,7 +26,7 @@ WHERE
     t_2_Sale AS t_6_Sale
   WHERE
     (t_6_Sale.product = "cake") AND
-    (t_4_Sale.id = t_6_Sale.id)) IS NULL))
+    (t_4_Sale.id <=> t_6_Sale.id)) IS NULL))
 SELECT
   I.t AS inside,
   O.t AS outside

@@ -12,9 +12,9 @@ CREATE TABLE synalog_test.C3 AS SELECT
 FROM
   synalog_test.C0 AS C0
 WHERE
-  (C0.x != 3) AND
-  (C0.x != 2) AND
-  (C0.x != 1);
+  (NOT (C0.x <=> 3)) AND
+  (NOT (C0.x <=> 2)) AND
+  (NOT (C0.x <=> 1));
 
 -- Interacting with table synalog_test.C3
 

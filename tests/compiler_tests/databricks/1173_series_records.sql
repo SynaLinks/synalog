@@ -30,4 +30,4 @@ WHERE
   FROM
     t_1_Beaten AS Beaten
   WHERE
-    (Beaten.day = Reading.day)) IS NULL) ORDER BY day NULLS LAST;
+    (Beaten.day <=> Reading.day)) IS NULL) ORDER BY day NULLS LAST;

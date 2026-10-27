@@ -88,7 +88,7 @@ WHERE
     t_4_F AS F, JSON_EACH(JSON_ARRAY(0)) as x_10
   WHERE
     (F.a = 'ann') AND
-    (F.b = t_3_U.u)) IS NULL))
+    (F.b IS t_3_U.u)) IS NULL))
 SELECT
   t_0_U.u AS v
 FROM
@@ -99,4 +99,4 @@ WHERE
   FROM
     t_2_NotF AS NotF, JSON_EACH(JSON_ARRAY(0)) as x_4
   WHERE
-    (NotF.v = t_0_U.u)) IS NULL) ORDER BY v NULLS LAST;
+    (NotF.v IS t_0_U.u)) IS NULL) ORDER BY v NULLS LAST;

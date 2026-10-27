@@ -79,4 +79,4 @@ WHERE
   FROM
     t_5_Boss AS t_4_Boss
   WHERE
-    (t_4_Boss.name = Person.name)) IS NULL) ORDER BY name;
+    (t_4_Boss.name IS NOT DISTINCT FROM Person.name)) IS NULL) ORDER BY name;

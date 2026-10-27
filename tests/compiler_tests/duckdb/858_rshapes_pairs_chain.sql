@@ -41,7 +41,7 @@ t_0_P_RecursiveCte AS (SELECT * FROM (
       WHERE
         (0 < 8) AND
         (1 = 0) AND
-        (t_2_E.a = t_4_E.b)
+        (t_2_E.a IS NOT DISTINCT FROM t_4_E.b)
      UNION ALL
     
       SELECT
@@ -54,8 +54,8 @@ t_0_P_RecursiveCte AS (SELECT * FROM (
         (((0) + (1)) < 8) AND
         (0 < 8) AND
         (1 = 0) AND
-        (t_6_E.a = t_8_E.b) AND
-        (t_8_E.a = t_10_E.b)
+        (t_6_E.a IS NOT DISTINCT FROM t_8_E.b) AND
+        (t_8_E.a IS NOT DISTINCT FROM t_10_E.b)
      UNION ALL
     
       SELECT
@@ -69,9 +69,9 @@ t_0_P_RecursiveCte AS (SELECT * FROM (
         (((0) + (1)) < 8) AND
         (0 < 8) AND
         (1 = 0) AND
-        (t_12_E.a = t_14_E.b) AND
-        (t_14_E.a = t_16_E.b) AND
-        (t_16_E.a = t_18_E.b)
+        (t_12_E.a IS NOT DISTINCT FROM t_14_E.b) AND
+        (t_14_E.a IS NOT DISTINCT FROM t_16_E.b) AND
+        (t_16_E.a IS NOT DISTINCT FROM t_18_E.b)
      UNION ALL
     
       SELECT
@@ -86,10 +86,10 @@ t_0_P_RecursiveCte AS (SELECT * FROM (
         (((0) + (1)) < 8) AND
         (0 < 8) AND
         (1 = 0) AND
-        (t_20_E.a = t_22_E.b) AND
-        (t_22_E.a = t_24_E.b) AND
-        (t_24_E.a = t_26_E.b) AND
-        (t_26_E.a = t_28_E.b)
+        (t_20_E.a IS NOT DISTINCT FROM t_22_E.b) AND
+        (t_22_E.a IS NOT DISTINCT FROM t_24_E.b) AND
+        (t_24_E.a IS NOT DISTINCT FROM t_26_E.b) AND
+        (t_26_E.a IS NOT DISTINCT FROM t_28_E.b)
      UNION ALL
     
       SELECT
@@ -105,11 +105,11 @@ t_0_P_RecursiveCte AS (SELECT * FROM (
         (((0) + (1)) < 8) AND
         (0 < 8) AND
         (1 = 0) AND
-        (t_30_E.a = t_32_E.b) AND
-        (t_32_E.a = t_34_E.b) AND
-        (t_34_E.a = t_36_E.b) AND
-        (t_36_E.a = t_38_E.b) AND
-        (t_38_E.a = t_40_E.b)
+        (t_30_E.a IS NOT DISTINCT FROM t_32_E.b) AND
+        (t_32_E.a IS NOT DISTINCT FROM t_34_E.b) AND
+        (t_34_E.a IS NOT DISTINCT FROM t_36_E.b) AND
+        (t_36_E.a IS NOT DISTINCT FROM t_38_E.b) AND
+        (t_38_E.a IS NOT DISTINCT FROM t_40_E.b)
     
   ) AS UNUSED_TABLE_NAME  
 ) AS UNUSED_TABLE_NAME
@@ -122,7 +122,7 @@ FROM
   t_0_P_RecursiveCte AS t_41_P_RecursiveCte, t_1_E AS t_42_E
 WHERE
   (t_41_P_RecursiveCte.synalog_step < 8) AND
-  (t_42_E.a = t_41_P_RecursiveCte.b))
+  (t_42_E.a IS NOT DISTINCT FROM t_41_P_RecursiveCte.b))
 SELECT
   P_RecursiveCte.a AS a,
   P_RecursiveCte.b AS b

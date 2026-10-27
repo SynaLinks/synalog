@@ -4,14 +4,6 @@ create schema if not exists synalog_home;
 -- Empty synalog type: synalogrecord893574736;
 DO $$ BEGIN if not exists (select 'I(am) :- I(think)' from pg_type where typname = 'synalogrecord893574736') then create type synalogrecord893574736 as (nirvana numeric); end if; END $$;
 
-
-DO $$
-BEGIN
--- Synalog type: synalogrecord481217614
-if not exists (select 'I(am) :- I(think)' from pg_type where typname = 'synalogrecord481217614') then create type synalogrecord481217614 as (r synalogrecord893574736); end if;
--- Synalog type: synalogrecord86796764
-if not exists (select 'I(am) :- I(think)' from pg_type where typname = 'synalogrecord86796764') then create type synalogrecord86796764 as (s text); end if;
-END $$;
 WITH t_0_S AS (SELECT * FROM (
   
     SELECT
@@ -120,7 +112,7 @@ t_2_Better_MultBodyAggAux AS (SELECT * FROM (
       (t_6_S.d < t_5_S.d) AND
       (t_5_S.r = 'east') AND
       (t_6_S.r = 'east') AND
-      (t_6_S.v = t_5_S.v)
+      (COALESCE(t_6_S.v, 0) = COALESCE(t_5_S.v, 0) AND (t_6_S.v IS NULL) = (t_5_S.v IS NULL))
   
 ) AS UNUSED_TABLE_NAME  ),
 t_1_Better AS (SELECT
@@ -136,5 +128,5 @@ FROM
   t_0_S AS S, t_1_Better AS Better
 WHERE
   (S.r = 'east') AND
-  (Better.d = S.d) AND
+  (COALESCE(Better.d, 0) = COALESCE(S.d, 0) AND (Better.d IS NULL) = (S.d IS NULL)) AND
   (Better.n = 1);

@@ -154,6 +154,6 @@ WHERE
   FROM
     t_1_A AS A, t_2_Proj AS Proj, UNNEST(ARRAY[0]) as x_10
   WHERE
-    (Proj.team != Person.team) AND
-    (A.id = Person.id) AND
-    (Proj.pid = A.pid)) AS numeric) IS NULL) ORDER BY id;
+    (Proj.team IS DISTINCT FROM Person.team) AND
+    (COALESCE(A.id, 0) = COALESCE(Person.id, 0) AND (A.id IS NULL) = (Person.id IS NULL)) AND
+    (COALESCE(Proj.pid, 0) = COALESCE(A.pid, 0) AND (Proj.pid IS NULL) = (A.pid IS NULL))) AS numeric) IS NULL) ORDER BY id;

@@ -82,4 +82,4 @@ FROM
   t_1_E AS E, t_2_A AS t_0_A
 WHERE
   (E.pay > t_0_A.a) AND
-  (t_0_A.d = E.d) ORDER BY n;
+  (COALESCE(t_0_A.d, 0) = COALESCE(E.d, 0) AND (t_0_A.d IS NULL) = (E.d IS NULL)) ORDER BY n;

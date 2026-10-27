@@ -67,6 +67,6 @@ WHERE
     t_1_Sale AS t_2_Sale, JSON_EACH(JSON_ARRAY(0)) as x_14
   WHERE
     (t_2_Sale.product = 'cake') AND
-    (Sale.id = t_2_Sale.id)) IS NULL) AND
+    (Sale.id IS t_2_Sale.id)) IS NULL) AND
   (t_0_Sale.region = 'east') AND
-  (Sale.id = t_0_Sale.id);
+  (Sale.id IS t_0_Sale.id);

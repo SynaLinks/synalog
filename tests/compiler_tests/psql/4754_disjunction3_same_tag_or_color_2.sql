@@ -62,9 +62,9 @@ t_0_Q_MultBodyAggAux AS (SELECT * FROM (
     FROM
       t_2_I AS I, t_2_I AS t_1_I
     WHERE
-      (t_1_I.id != 2) AND
+      (t_1_I.id IS DISTINCT FROM 2) AND
       (I.id = 2) AND
-      (t_1_I.c = I.c)
+      (COALESCE(t_1_I.c, '') = COALESCE(I.c, '') AND (t_1_I.c IS NULL) = (I.c IS NULL))
    UNION ALL
   
     SELECT
@@ -72,9 +72,9 @@ t_0_Q_MultBodyAggAux AS (SELECT * FROM (
     FROM
       t_2_I AS t_3_I, t_2_I AS t_4_I
     WHERE
-      (t_4_I.id != 2) AND
+      (t_4_I.id IS DISTINCT FROM 2) AND
       (t_3_I.id = 2) AND
-      (t_4_I.t = t_3_I.t)
+      (COALESCE(t_4_I.t, '') = COALESCE(t_3_I.t, '') AND (t_4_I.t IS NULL) = (t_3_I.t IS NULL))
   
 ) AS UNUSED_TABLE_NAME  )
 SELECT

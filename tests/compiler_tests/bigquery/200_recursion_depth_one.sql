@@ -32,11 +32,11 @@ t_0_Reach_MultBodyAggAux_recursive_head_f2 AS (SELECT * FROM (
     FROM
       t_1_Reach_r0 AS Reach_r0, t_4_Edge AS Edge
     WHERE
-      (Edge.a = Reach_r0.x)
+      (Edge.a IS NOT DISTINCT FROM Reach_r0.x)
   
 ) AS UNUSED_TABLE_NAME  )
 SELECT
   Reach_MultBodyAggAux_recursive_head_f2.x AS x
 FROM
   t_0_Reach_MultBodyAggAux_recursive_head_f2 AS Reach_MultBodyAggAux_recursive_head_f2
-GROUP BY x ORDER BY x;
+GROUP BY x ORDER BY x NULLS LAST;

@@ -122,7 +122,7 @@ CREATE TABLE synalog_test.Conn_sn_t1 AS WITH t_1_Conn_MultBodyAggAux_f3 AS (SELE
     FROM
       synalog_test.Conn_sn_t0 AS Conn_sn_t0, synalog_test.U AS t_2_U
     WHERE
-      (t_2_U.a = Conn_sn_t0.b)
+      (t_2_U.a IS NOT DISTINCT FROM Conn_sn_t0.b)
   
 ) AS UNUSED_TABLE_NAME  ),
 t_0_Conn_sn_r1 AS (SELECT
@@ -157,7 +157,7 @@ CREATE TABLE synalog_test.Conn_sn_t2 AS WITH t_1_Conn_MultBodyAggAux_f4 AS (SELE
     FROM
       synalog_test.Conn_sn_t1 AS Conn_sn_t1, synalog_test.U AS t_2_U
     WHERE
-      (t_2_U.a = Conn_sn_t1.b)
+      (t_2_U.a IS NOT DISTINCT FROM Conn_sn_t1.b)
   
 ) AS UNUSED_TABLE_NAME  ),
 t_0_Conn_sn_r2 AS (SELECT
@@ -192,7 +192,7 @@ CREATE TABLE synalog_test.Conn_sn_t3 AS WITH t_1_Conn_MultBodyAggAux_f5 AS (SELE
     FROM
       synalog_test.Conn_sn_t2 AS Conn_sn_t2, synalog_test.U AS t_2_U
     WHERE
-      (t_2_U.a = Conn_sn_t2.b)
+      (t_2_U.a IS NOT DISTINCT FROM Conn_sn_t2.b)
   
 ) AS UNUSED_TABLE_NAME  ),
 t_0_Conn_sn_r3 AS (SELECT
@@ -227,7 +227,7 @@ CREATE TABLE synalog_test.Conn_sn_t4 AS WITH t_1_Conn_MultBodyAggAux_f6 AS (SELE
     FROM
       synalog_test.Conn_sn_t3 AS Conn_sn_t3, synalog_test.U AS t_2_U
     WHERE
-      (t_2_U.a = Conn_sn_t3.b)
+      (t_2_U.a IS NOT DISTINCT FROM Conn_sn_t3.b)
   
 ) AS UNUSED_TABLE_NAME  ),
 t_0_Conn_sn_r4 AS (SELECT
@@ -262,7 +262,7 @@ CREATE TABLE synalog_test.Conn_sn_t5 AS WITH t_1_Conn_MultBodyAggAux_f7 AS (SELE
     FROM
       synalog_test.Conn_sn_t4 AS Conn_sn_t4, synalog_test.U AS t_2_U
     WHERE
-      (t_2_U.a = Conn_sn_t4.b)
+      (t_2_U.a IS NOT DISTINCT FROM Conn_sn_t4.b)
   
 ) AS UNUSED_TABLE_NAME  ),
 t_0_Conn_sn_r5 AS (SELECT
@@ -345,7 +345,7 @@ CREATE TABLE synalog_test.Conn_sn_new AS WITH t_1_Conn_MultBodyAggAux_f8 AS (SEL
     FROM
       synalog_test.Conn_sn_delta AS Conn_sn_delta, synalog_test.U AS t_2_U
     WHERE
-      (t_2_U.a = Conn_sn_delta.b)
+      (t_2_U.a IS NOT DISTINCT FROM Conn_sn_delta.b)
   
 ) AS UNUSED_TABLE_NAME  ),
 t_0_Conn_sn_step AS (SELECT
@@ -365,8 +365,8 @@ WHERE
   FROM
     synalog_test.Conn_sn_full AS Conn_sn_full
   WHERE
-    (Conn_sn_full.a = Conn_sn_step.a) AND
-    (Conn_sn_full.b = Conn_sn_step.b)) IS NULL)
+    (Conn_sn_full.a IS NOT DISTINCT FROM Conn_sn_step.a) AND
+    (Conn_sn_full.b IS NOT DISTINCT FROM Conn_sn_step.b)) IS NULL)
 GROUP BY 1, 2;
 
 INSERT INTO synalog_test.Conn_sn_full SELECT * FROM synalog_test.Conn_sn_new;
@@ -387,7 +387,7 @@ CREATE TABLE synalog_test.Conn_sn_delta AS WITH t_1_Conn_MultBodyAggAux_f1 AS (S
     FROM
       synalog_test.Conn_sn_new AS Conn_sn_new, synalog_test.U AS t_2_U
     WHERE
-      (t_2_U.a = Conn_sn_new.b)
+      (t_2_U.a IS NOT DISTINCT FROM Conn_sn_new.b)
   
 ) AS UNUSED_TABLE_NAME  ),
 t_0_Conn_sn_back_step AS (SELECT
@@ -407,8 +407,8 @@ WHERE
   FROM
     synalog_test.Conn_sn_full AS Conn_sn_full
   WHERE
-    (Conn_sn_full.a = Conn_sn_back_step.a) AND
-    (Conn_sn_full.b = Conn_sn_back_step.b)) IS NULL)
+    (Conn_sn_full.a IS NOT DISTINCT FROM Conn_sn_back_step.a) AND
+    (Conn_sn_full.b IS NOT DISTINCT FROM Conn_sn_back_step.b)) IS NULL)
 GROUP BY 1, 2;
 
 INSERT INTO synalog_test.Conn_sn_full SELECT * FROM synalog_test.Conn_sn_delta;
@@ -429,7 +429,7 @@ CREATE TABLE synalog_test.Conn_sn_new AS WITH t_1_Conn_MultBodyAggAux_f8 AS (SEL
     FROM
       synalog_test.Conn_sn_delta AS Conn_sn_delta, synalog_test.U AS t_2_U
     WHERE
-      (t_2_U.a = Conn_sn_delta.b)
+      (t_2_U.a IS NOT DISTINCT FROM Conn_sn_delta.b)
   
 ) AS UNUSED_TABLE_NAME  ),
 t_0_Conn_sn_step AS (SELECT
@@ -449,8 +449,8 @@ WHERE
   FROM
     synalog_test.Conn_sn_full AS Conn_sn_full
   WHERE
-    (Conn_sn_full.a = Conn_sn_step.a) AND
-    (Conn_sn_full.b = Conn_sn_step.b)) IS NULL)
+    (Conn_sn_full.a IS NOT DISTINCT FROM Conn_sn_step.a) AND
+    (Conn_sn_full.b IS NOT DISTINCT FROM Conn_sn_step.b)) IS NULL)
 GROUP BY 1, 2;
 
 INSERT INTO synalog_test.Conn_sn_full SELECT * FROM synalog_test.Conn_sn_new;
@@ -471,7 +471,7 @@ CREATE TABLE synalog_test.Conn_sn_delta AS WITH t_1_Conn_MultBodyAggAux_f1 AS (S
     FROM
       synalog_test.Conn_sn_new AS Conn_sn_new, synalog_test.U AS t_2_U
     WHERE
-      (t_2_U.a = Conn_sn_new.b)
+      (t_2_U.a IS NOT DISTINCT FROM Conn_sn_new.b)
   
 ) AS UNUSED_TABLE_NAME  ),
 t_0_Conn_sn_back_step AS (SELECT
@@ -491,8 +491,8 @@ WHERE
   FROM
     synalog_test.Conn_sn_full AS Conn_sn_full
   WHERE
-    (Conn_sn_full.a = Conn_sn_back_step.a) AND
-    (Conn_sn_full.b = Conn_sn_back_step.b)) IS NULL)
+    (Conn_sn_full.a IS NOT DISTINCT FROM Conn_sn_back_step.a) AND
+    (Conn_sn_full.b IS NOT DISTINCT FROM Conn_sn_back_step.b)) IS NULL)
 GROUP BY 1, 2;
 
 INSERT INTO synalog_test.Conn_sn_full SELECT * FROM synalog_test.Conn_sn_delta;
@@ -513,7 +513,7 @@ CREATE TABLE synalog_test.Conn_sn_new AS WITH t_1_Conn_MultBodyAggAux_f8 AS (SEL
     FROM
       synalog_test.Conn_sn_delta AS Conn_sn_delta, synalog_test.U AS t_2_U
     WHERE
-      (t_2_U.a = Conn_sn_delta.b)
+      (t_2_U.a IS NOT DISTINCT FROM Conn_sn_delta.b)
   
 ) AS UNUSED_TABLE_NAME  ),
 t_0_Conn_sn_step AS (SELECT
@@ -533,8 +533,8 @@ WHERE
   FROM
     synalog_test.Conn_sn_full AS Conn_sn_full
   WHERE
-    (Conn_sn_full.a = Conn_sn_step.a) AND
-    (Conn_sn_full.b = Conn_sn_step.b)) IS NULL)
+    (Conn_sn_full.a IS NOT DISTINCT FROM Conn_sn_step.a) AND
+    (Conn_sn_full.b IS NOT DISTINCT FROM Conn_sn_step.b)) IS NULL)
 GROUP BY 1, 2;
 
 INSERT INTO synalog_test.Conn_sn_full SELECT * FROM synalog_test.Conn_sn_new;
@@ -555,7 +555,7 @@ CREATE TABLE synalog_test.Conn_sn_delta AS WITH t_1_Conn_MultBodyAggAux_f1 AS (S
     FROM
       synalog_test.Conn_sn_new AS Conn_sn_new, synalog_test.U AS t_2_U
     WHERE
-      (t_2_U.a = Conn_sn_new.b)
+      (t_2_U.a IS NOT DISTINCT FROM Conn_sn_new.b)
   
 ) AS UNUSED_TABLE_NAME  ),
 t_0_Conn_sn_back_step AS (SELECT
@@ -575,8 +575,8 @@ WHERE
   FROM
     synalog_test.Conn_sn_full AS Conn_sn_full
   WHERE
-    (Conn_sn_full.a = Conn_sn_back_step.a) AND
-    (Conn_sn_full.b = Conn_sn_back_step.b)) IS NULL)
+    (Conn_sn_full.a IS NOT DISTINCT FROM Conn_sn_back_step.a) AND
+    (Conn_sn_full.b IS NOT DISTINCT FROM Conn_sn_back_step.b)) IS NULL)
 GROUP BY 1, 2;
 
 INSERT INTO synalog_test.Conn_sn_full SELECT * FROM synalog_test.Conn_sn_delta;
@@ -597,7 +597,7 @@ CREATE TABLE synalog_test.Conn_sn_new AS WITH t_1_Conn_MultBodyAggAux_f8 AS (SEL
     FROM
       synalog_test.Conn_sn_delta AS Conn_sn_delta, synalog_test.U AS t_2_U
     WHERE
-      (t_2_U.a = Conn_sn_delta.b)
+      (t_2_U.a IS NOT DISTINCT FROM Conn_sn_delta.b)
   
 ) AS UNUSED_TABLE_NAME  ),
 t_0_Conn_sn_step AS (SELECT
@@ -617,8 +617,8 @@ WHERE
   FROM
     synalog_test.Conn_sn_full AS Conn_sn_full
   WHERE
-    (Conn_sn_full.a = Conn_sn_step.a) AND
-    (Conn_sn_full.b = Conn_sn_step.b)) IS NULL)
+    (Conn_sn_full.a IS NOT DISTINCT FROM Conn_sn_step.a) AND
+    (Conn_sn_full.b IS NOT DISTINCT FROM Conn_sn_step.b)) IS NULL)
 GROUP BY 1, 2;
 
 INSERT INTO synalog_test.Conn_sn_full SELECT * FROM synalog_test.Conn_sn_new;
@@ -639,7 +639,7 @@ CREATE TABLE synalog_test.Conn_sn_delta AS WITH t_1_Conn_MultBodyAggAux_f1 AS (S
     FROM
       synalog_test.Conn_sn_new AS Conn_sn_new, synalog_test.U AS t_2_U
     WHERE
-      (t_2_U.a = Conn_sn_new.b)
+      (t_2_U.a IS NOT DISTINCT FROM Conn_sn_new.b)
   
 ) AS UNUSED_TABLE_NAME  ),
 t_0_Conn_sn_back_step AS (SELECT
@@ -659,8 +659,8 @@ WHERE
   FROM
     synalog_test.Conn_sn_full AS Conn_sn_full
   WHERE
-    (Conn_sn_full.a = Conn_sn_back_step.a) AND
-    (Conn_sn_full.b = Conn_sn_back_step.b)) IS NULL)
+    (Conn_sn_full.a IS NOT DISTINCT FROM Conn_sn_back_step.a) AND
+    (Conn_sn_full.b IS NOT DISTINCT FROM Conn_sn_back_step.b)) IS NULL)
 GROUP BY 1, 2;
 
 INSERT INTO synalog_test.Conn_sn_full SELECT * FROM synalog_test.Conn_sn_delta;
@@ -681,7 +681,7 @@ CREATE TABLE synalog_test.Conn_sn_new AS WITH t_1_Conn_MultBodyAggAux_f8 AS (SEL
     FROM
       synalog_test.Conn_sn_delta AS Conn_sn_delta, synalog_test.U AS t_2_U
     WHERE
-      (t_2_U.a = Conn_sn_delta.b)
+      (t_2_U.a IS NOT DISTINCT FROM Conn_sn_delta.b)
   
 ) AS UNUSED_TABLE_NAME  ),
 t_0_Conn_sn_step AS (SELECT
@@ -701,8 +701,8 @@ WHERE
   FROM
     synalog_test.Conn_sn_full AS Conn_sn_full
   WHERE
-    (Conn_sn_full.a = Conn_sn_step.a) AND
-    (Conn_sn_full.b = Conn_sn_step.b)) IS NULL)
+    (Conn_sn_full.a IS NOT DISTINCT FROM Conn_sn_step.a) AND
+    (Conn_sn_full.b IS NOT DISTINCT FROM Conn_sn_step.b)) IS NULL)
 GROUP BY 1, 2;
 
 INSERT INTO synalog_test.Conn_sn_full SELECT * FROM synalog_test.Conn_sn_new;
@@ -723,7 +723,7 @@ CREATE TABLE synalog_test.Conn_sn_delta AS WITH t_1_Conn_MultBodyAggAux_f1 AS (S
     FROM
       synalog_test.Conn_sn_new AS Conn_sn_new, synalog_test.U AS t_2_U
     WHERE
-      (t_2_U.a = Conn_sn_new.b)
+      (t_2_U.a IS NOT DISTINCT FROM Conn_sn_new.b)
   
 ) AS UNUSED_TABLE_NAME  ),
 t_0_Conn_sn_back_step AS (SELECT
@@ -743,8 +743,8 @@ WHERE
   FROM
     synalog_test.Conn_sn_full AS Conn_sn_full
   WHERE
-    (Conn_sn_full.a = Conn_sn_back_step.a) AND
-    (Conn_sn_full.b = Conn_sn_back_step.b)) IS NULL)
+    (Conn_sn_full.a IS NOT DISTINCT FROM Conn_sn_back_step.a) AND
+    (Conn_sn_full.b IS NOT DISTINCT FROM Conn_sn_back_step.b)) IS NULL)
 GROUP BY 1, 2;
 
 INSERT INTO synalog_test.Conn_sn_full SELECT * FROM synalog_test.Conn_sn_delta;
@@ -765,7 +765,7 @@ CREATE TABLE synalog_test.Conn_sn_new AS WITH t_1_Conn_MultBodyAggAux_f8 AS (SEL
     FROM
       synalog_test.Conn_sn_delta AS Conn_sn_delta, synalog_test.U AS t_2_U
     WHERE
-      (t_2_U.a = Conn_sn_delta.b)
+      (t_2_U.a IS NOT DISTINCT FROM Conn_sn_delta.b)
   
 ) AS UNUSED_TABLE_NAME  ),
 t_0_Conn_sn_step AS (SELECT
@@ -785,8 +785,8 @@ WHERE
   FROM
     synalog_test.Conn_sn_full AS Conn_sn_full
   WHERE
-    (Conn_sn_full.a = Conn_sn_step.a) AND
-    (Conn_sn_full.b = Conn_sn_step.b)) IS NULL)
+    (Conn_sn_full.a IS NOT DISTINCT FROM Conn_sn_step.a) AND
+    (Conn_sn_full.b IS NOT DISTINCT FROM Conn_sn_step.b)) IS NULL)
 GROUP BY 1, 2;
 
 INSERT INTO synalog_test.Conn_sn_full SELECT * FROM synalog_test.Conn_sn_new;
@@ -807,7 +807,7 @@ CREATE TABLE synalog_test.Conn_sn_delta AS WITH t_1_Conn_MultBodyAggAux_f1 AS (S
     FROM
       synalog_test.Conn_sn_new AS Conn_sn_new, synalog_test.U AS t_2_U
     WHERE
-      (t_2_U.a = Conn_sn_new.b)
+      (t_2_U.a IS NOT DISTINCT FROM Conn_sn_new.b)
   
 ) AS UNUSED_TABLE_NAME  ),
 t_0_Conn_sn_back_step AS (SELECT
@@ -827,8 +827,8 @@ WHERE
   FROM
     synalog_test.Conn_sn_full AS Conn_sn_full
   WHERE
-    (Conn_sn_full.a = Conn_sn_back_step.a) AND
-    (Conn_sn_full.b = Conn_sn_back_step.b)) IS NULL)
+    (Conn_sn_full.a IS NOT DISTINCT FROM Conn_sn_back_step.a) AND
+    (Conn_sn_full.b IS NOT DISTINCT FROM Conn_sn_back_step.b)) IS NULL)
 GROUP BY 1, 2;
 
 INSERT INTO synalog_test.Conn_sn_full SELECT * FROM synalog_test.Conn_sn_delta;
@@ -892,7 +892,7 @@ t_0_Comp_MultBodyAggAux AS (SELECT * FROM (
     FROM
       t_1_Node AS Node, synalog_test.Conn_sn_full AS Conn_sn_full
     WHERE
-      (Node.n = Conn_sn_full.a)
+      (Node.n IS NOT DISTINCT FROM Conn_sn_full.a)
    UNION ALL
   
     SELECT
@@ -917,4 +917,4 @@ FROM
   synalog_test.Comp AS Comp, synalog_test.Comp AS t_0_Comp
 WHERE
   (Comp.n = 11) AND
-  (t_0_Comp.c = Comp.c);
+  (t_0_Comp.c IS NOT DISTINCT FROM Comp.c);

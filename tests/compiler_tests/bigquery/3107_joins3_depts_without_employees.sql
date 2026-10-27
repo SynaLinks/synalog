@@ -85,4 +85,4 @@ WHERE
   FROM
     t_1_Staffed AS Staffed
   WHERE
-    (Staffed.dept = D.dept)) IS NULL) ORDER BY dname;
+    (Staffed.dept IS NOT DISTINCT FROM D.dept)) IS NULL) ORDER BY dname NULLS LAST;

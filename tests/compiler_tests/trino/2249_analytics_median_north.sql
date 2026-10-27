@@ -114,7 +114,7 @@ CREATE TABLE synalog_test.Pos AS WITH t_1_Before_MultBodyAggAux AS (SELECT * FRO
       synalog_test.V AS t_4_V, synalog_test.V AS t_5_V
     WHERE
       (t_5_V.d < t_4_V.d) AND
-      (t_5_V.v = t_4_V.v)
+      (t_5_V.v IS NOT DISTINCT FROM t_4_V.v)
   
 ) AS UNUSED_TABLE_NAME  ),
 t_0_Before AS (SELECT
@@ -131,7 +131,7 @@ SELECT
 FROM
   t_0_Before AS Before
 WHERE
-  (Before.d = V.d)), 0) AS pos
+  (Before.d IS NOT DISTINCT FROM V.d)), 0) AS pos
 FROM
   synalog_test.V AS V;
 
@@ -152,7 +152,7 @@ WITH t_0_Mid AS (SELECT * FROM (
     FROM
       synalog_test.Pos AS t_1_Pos, synalog_test.N AS t_2_N
     WHERE
-      (((((2) * (t_1_Pos.pos))) + (1)) = t_2_N.n)
+      (((((2) * (t_1_Pos.pos))) + (1)) IS NOT DISTINCT FROM t_2_N.n)
    UNION ALL
   
     SELECT
@@ -160,7 +160,7 @@ WITH t_0_Mid AS (SELECT * FROM (
     FROM
       synalog_test.Pos AS t_3_Pos, synalog_test.N AS t_4_N
     WHERE
-      (((2) * (t_3_Pos.pos)) = t_4_N.n)
+      (((2) * (t_3_Pos.pos)) IS NOT DISTINCT FROM t_4_N.n)
    UNION ALL
   
     SELECT
@@ -168,7 +168,7 @@ WITH t_0_Mid AS (SELECT * FROM (
     FROM
       synalog_test.Pos AS t_5_Pos, synalog_test.N AS t_6_N
     WHERE
-      (((((2) * (t_5_Pos.pos))) + (2)) = t_6_N.n)
+      (((((2) * (t_5_Pos.pos))) + (2)) IS NOT DISTINCT FROM t_6_N.n)
   
 ) AS UNUSED_TABLE_NAME  )
 SELECT

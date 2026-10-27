@@ -99,4 +99,4 @@ WHERE
   FROM
     t_5_Pick AS Pick, UNNEST(ARRAY[0]) as x_10
   WHERE
-    (Pick.x = t_0_All.x)) AS numeric) IS NULL) ORDER BY x;
+    (COALESCE(Pick.x, 0) = COALESCE(t_0_All.x, 0) AND (Pick.x IS NULL) = (t_0_All.x IS NULL))) AS numeric) IS NULL) ORDER BY x;

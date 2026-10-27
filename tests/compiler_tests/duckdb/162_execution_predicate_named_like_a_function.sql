@@ -11,4 +11,4 @@ SELECT
 FROM
   (select unnest([2, -3]) as unnested_pod) as x_11, (select unnest([2, -3]) as unnested_pod) as x_7
 WHERE
-  (x_7.unnested_pod = x_11.unnested_pod) ORDER BY x;
+  (x_7.unnested_pod IS NOT DISTINCT FROM x_11.unnested_pod) ORDER BY x;

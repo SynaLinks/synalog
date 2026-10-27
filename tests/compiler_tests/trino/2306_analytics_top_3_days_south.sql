@@ -107,7 +107,7 @@ t_0_Better_MultBodyAggAux AS (SELECT * FROM (
       (t_3_S.d < t_2_S.d) AND
       (t_2_S.r = 'south') AND
       (t_3_S.r = 'south') AND
-      (t_3_S.v = t_2_S.v)
+      (t_3_S.v IS NOT DISTINCT FROM t_2_S.v)
   
 ) AS UNUSED_TABLE_NAME  )
 SELECT
@@ -218,7 +218,7 @@ t_0_Q_MultBodyAggAux AS (SELECT * FROM (
       FROM
         synalog_test.Better AS Better
       WHERE
-        (Better.d = S.d)) IS NULL) AND
+        (Better.d IS NOT DISTINCT FROM S.d)) IS NULL) AND
       (S.r = 'south')
    UNION ALL
   
@@ -230,7 +230,7 @@ t_0_Q_MultBodyAggAux AS (SELECT * FROM (
     WHERE
       (t_3_Better.n < 3) AND
       (t_2_S.r = 'south') AND
-      (t_3_Better.d = t_2_S.d)
+      (t_3_Better.d IS NOT DISTINCT FROM t_2_S.d)
   
 ) AS UNUSED_TABLE_NAME  )
 SELECT

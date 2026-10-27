@@ -15,5 +15,5 @@ SELECT
 FROM
   t_1_V AS V, t_2_M AS t_0_M
 WHERE
-  (t_0_M.g = V.g) AND
-  (t_0_M.m = V.x) ORDER BY g NULLS LAST;
+  (t_0_M.g <=> V.g) AND
+  (t_0_M.m <=> V.x) ORDER BY g NULLS LAST;

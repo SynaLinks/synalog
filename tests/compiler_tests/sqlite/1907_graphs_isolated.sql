@@ -137,4 +137,4 @@ WHERE
   FROM
     t_1_Linked AS Linked, JSON_EACH(JSON_ARRAY(0)) as x_4
   WHERE
-    (Linked.n = Node.n)) IS NULL) ORDER BY n;
+    (Linked.n IS Node.n)) IS NULL) ORDER BY n NULLS LAST;

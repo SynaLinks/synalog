@@ -19,6 +19,6 @@ WHERE
     t_1_Sale AS t_2_Sale
   WHERE
     (t_2_Sale.product = "coffee") AND
-    (Sale.id = t_2_Sale.id)) IS NULL) AND
+    (Sale.id <=> t_2_Sale.id)) IS NULL) AND
   (t_0_Sale.region = "south") AND
-  (Sale.id = t_0_Sale.id);
+  (Sale.id <=> t_0_Sale.id);

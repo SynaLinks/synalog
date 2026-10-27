@@ -104,8 +104,8 @@ WHERE
   FROM
     t_1_S AS t_7_S, JSON_EACH(JSON_ARRAY(0)) as x_17
   WHERE
-    (t_7_S.r = Region.r) AND
-    (t_7_S.d = t_3_Day.d)) IS NULL)
+    (t_7_S.r IS Region.r) AND
+    (t_7_S.d IS t_3_Day.d)) IS NULL)
 GROUP BY t_3_Day.d)
 SELECT
   Day.d AS d
@@ -117,4 +117,4 @@ WHERE
   FROM
     t_2_Missing AS Missing, JSON_EACH(JSON_ARRAY(0)) as x_6
   WHERE
-    (Missing.d = Day.d)) IS NULL) ORDER BY d;
+    (Missing.d IS Day.d)) IS NULL) ORDER BY d NULLS LAST;

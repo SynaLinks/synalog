@@ -88,18 +88,18 @@ SELECT
 FROM
   t_1_U AS t_0_U
 WHERE
-  (t_0_U.u != 'fay') AND
+  (t_0_U.u IS DISTINCT FROM 'fay') AND
   ((SELECT
     MIN((CASE WHEN x_5.unnested_pod = 0 THEN 1 ELSE NULL END)) AS synalog_value
   FROM
     t_2_F AS F, (select unnest([0]) as unnested_pod) as x_5
   WHERE
     (F.a = 'fay') AND
-    (F.b = t_0_U.u)) IS NULL) AND
+    (F.b IS NOT DISTINCT FROM t_0_U.u)) IS NULL) AND
   ((SELECT
     MIN((CASE WHEN x_9.unnested_pod = 0 THEN 1 ELSE NULL END)) AS synalog_value
   FROM
     t_2_F AS t_3_F, (select unnest([0]) as unnested_pod) as x_9
   WHERE
-    (t_3_F.a = t_0_U.u) AND
+    (t_3_F.a IS NOT DISTINCT FROM t_0_U.u) AND
     (t_3_F.b = 'fay')) IS NULL) ORDER BY v;

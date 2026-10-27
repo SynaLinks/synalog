@@ -76,5 +76,5 @@ WHERE
   FROM
     t_2_A AS t_5_A, t_3_B AS t_6_B, JSON_EACH(JSON_ARRAY(0)) as x_10
   WHERE
-    (t_6_B.x = t_5_A.x) AND
-    (U.x = t_5_A.x)) IS NULL) ORDER BY x NULLS LAST;
+    (t_6_B.x IS t_5_A.x) AND
+    (U.x IS t_5_A.x)) IS NULL) ORDER BY x NULLS LAST;

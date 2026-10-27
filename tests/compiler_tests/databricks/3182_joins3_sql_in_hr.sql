@@ -27,6 +27,6 @@ FROM
   t_0_S AS S, t_1_E AS E, t_2_D AS D
 WHERE
   (S.skill = "sql") AND
-  (E.id = S.id) AND
-  (D.dept = E.dept) AND
+  (E.id <=> S.id) AND
+  (D.dept <=> E.dept) AND
   (D.dname = "hr");

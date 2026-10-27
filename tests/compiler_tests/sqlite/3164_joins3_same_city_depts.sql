@@ -31,4 +31,4 @@ FROM
   t_1_D AS D, t_1_D AS t_0_D
 WHERE
   (D.dname < t_0_D.dname) AND
-  (t_0_D.city = D.city);
+  (t_0_D.city IS D.city);

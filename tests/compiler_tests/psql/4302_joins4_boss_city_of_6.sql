@@ -102,5 +102,5 @@ FROM
   t_2_E AS E, t_2_E AS t_0_E, t_3_D AS t_1_D
 WHERE
   (E.id = 6) AND
-  (t_0_E.id = E.boss) AND
-  (t_1_D.d = t_0_E.d);
+  (COALESCE(t_0_E.id, 0) = COALESCE(E.boss, 0) AND (t_0_E.id IS NULL) = (E.boss IS NULL)) AND
+  (COALESCE(t_1_D.d, 0) = COALESCE(t_0_E.d, 0) AND (t_1_D.d IS NULL) = (t_0_E.d IS NULL));

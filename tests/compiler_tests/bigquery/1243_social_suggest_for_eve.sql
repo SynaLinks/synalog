@@ -60,14 +60,14 @@ SELECT
 FROM
   t_1_Follows AS Follows, t_1_Follows AS t_0_Follows
 WHERE
-  (t_0_Follows.b != "eve") AND
+  (t_0_Follows.b IS DISTINCT FROM "eve") AND
   ((SELECT
     MIN(1) AS synalog_value
   FROM
     t_1_Follows AS t_2_Follows
   WHERE
     (t_2_Follows.a = "eve") AND
-    (t_2_Follows.b = t_0_Follows.b)) IS NULL) AND
+    (t_2_Follows.b IS NOT DISTINCT FROM t_0_Follows.b)) IS NULL) AND
   (Follows.a = "eve") AND
-  (t_0_Follows.a = Follows.b)
+  (t_0_Follows.a IS NOT DISTINCT FROM Follows.b)
 GROUP BY c;

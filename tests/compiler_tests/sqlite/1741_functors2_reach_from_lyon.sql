@@ -101,7 +101,7 @@ t_1_Reach_RecursiveCte_f1 AS (SELECT * FROM (
       WHERE
         (0 < 6) AND
         (1 = 0) AND
-        (t_5_Ship.src = t_7_Ship.dst)
+        (t_5_Ship.src IS t_7_Ship.dst)
      UNION ALL
     
       SELECT
@@ -114,8 +114,8 @@ t_1_Reach_RecursiveCte_f1 AS (SELECT * FROM (
         (((0) + (1)) < 6) AND
         (0 < 6) AND
         (1 = 0) AND
-        (t_12_Ship.src = t_14_Ship.dst) AND
-        (t_14_Ship.src = t_16_Ship.dst)
+        (t_12_Ship.src IS t_14_Ship.dst) AND
+        (t_14_Ship.src IS t_16_Ship.dst)
      UNION ALL
     
       SELECT
@@ -129,9 +129,9 @@ t_1_Reach_RecursiveCte_f1 AS (SELECT * FROM (
         (((0) + (1)) < 6) AND
         (0 < 6) AND
         (1 = 0) AND
-        (t_21_Ship.src = t_24_Ship.dst) AND
-        (t_24_Ship.src = t_26_Ship.dst) AND
-        (t_26_Ship.src = t_28_Ship.dst)
+        (t_21_Ship.src IS t_24_Ship.dst) AND
+        (t_24_Ship.src IS t_26_Ship.dst) AND
+        (t_26_Ship.src IS t_28_Ship.dst)
      UNION ALL
     
       SELECT
@@ -146,10 +146,10 @@ t_1_Reach_RecursiveCte_f1 AS (SELECT * FROM (
         (((0) + (1)) < 6) AND
         (0 < 6) AND
         (1 = 0) AND
-        (t_33_Ship.src = t_36_Ship.dst) AND
-        (t_36_Ship.src = t_39_Ship.dst) AND
-        (t_39_Ship.src = t_41_Ship.dst) AND
-        (t_41_Ship.src = t_43_Ship.dst)
+        (t_33_Ship.src IS t_36_Ship.dst) AND
+        (t_36_Ship.src IS t_39_Ship.dst) AND
+        (t_39_Ship.src IS t_41_Ship.dst) AND
+        (t_41_Ship.src IS t_43_Ship.dst)
      UNION ALL
     
       SELECT
@@ -165,11 +165,11 @@ t_1_Reach_RecursiveCte_f1 AS (SELECT * FROM (
         (((0) + (1)) < 6) AND
         (0 < 6) AND
         (1 = 0) AND
-        (t_48_Ship.src = t_51_Ship.dst) AND
-        (t_51_Ship.src = t_54_Ship.dst) AND
-        (t_54_Ship.src = t_57_Ship.dst) AND
-        (t_57_Ship.src = t_59_Ship.dst) AND
-        (t_59_Ship.src = t_61_Ship.dst)
+        (t_48_Ship.src IS t_51_Ship.dst) AND
+        (t_51_Ship.src IS t_54_Ship.dst) AND
+        (t_54_Ship.src IS t_57_Ship.dst) AND
+        (t_57_Ship.src IS t_59_Ship.dst) AND
+        (t_59_Ship.src IS t_61_Ship.dst)
     
   ) AS UNUSED_TABLE_NAME  
 ) AS UNUSED_TABLE_NAME
@@ -182,7 +182,7 @@ FROM
   t_1_Reach_RecursiveCte_f1 AS t_62_Reach_RecursiveCte_f1, t_2_Ship AS t_64_Ship
 WHERE
   (t_62_Reach_RecursiveCte_f1.synalog_step < 6) AND
-  (t_62_Reach_RecursiveCte_f1.b = t_64_Ship.src)),
+  (t_62_Reach_RecursiveCte_f1.b IS t_64_Ship.src)),
 t_0_R AS (SELECT
   Reach_RecursiveCte_f1.a AS a,
   Reach_RecursiveCte_f1.b AS b

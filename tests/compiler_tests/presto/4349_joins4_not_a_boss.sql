@@ -74,4 +74,4 @@ WHERE
   FROM
     t_0_E AS t_1_E
   WHERE
-    (t_1_E.boss = E.id)) IS NULL) ORDER BY n;
+    (t_1_E.boss IS NOT DISTINCT FROM E.id)) IS NULL) ORDER BY n;

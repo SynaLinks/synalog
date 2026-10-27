@@ -62,5 +62,5 @@ WHERE
   FROM
     t_1_Shop_Stock AS Shop_Stock
   WHERE
-    (Shop_Stock.sku = Shop_Product.sku)) IS NULL) AND
+    (Shop_Stock.sku IS NOT DISTINCT FROM Shop_Product.sku)) IS NULL) AND
   (SUBSTR(Shop_Product.sku, 1, 1) = "b");

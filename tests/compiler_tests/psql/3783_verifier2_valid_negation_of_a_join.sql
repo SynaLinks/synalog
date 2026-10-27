@@ -43,5 +43,5 @@ WHERE
   FROM
     t_3_E AS E, t_1_N AS t_2_N, UNNEST(ARRAY[0]) as x_7
   WHERE
-    (E.a = t_0_N.n) AND
-    (t_2_N.n = E.b)) AS numeric) IS NULL);
+    (COALESCE(E.a, 0) = COALESCE(t_0_N.n, 0) AND (E.a IS NULL) = (t_0_N.n IS NULL)) AND
+    (COALESCE(t_2_N.n, 0) = COALESCE(E.b, 0) AND (t_2_N.n IS NULL) = (E.b IS NULL))) AS numeric) IS NULL);

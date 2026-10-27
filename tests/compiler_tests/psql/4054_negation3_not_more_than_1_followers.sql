@@ -106,4 +106,4 @@ WHERE
   FROM
     t_2_Popular AS Popular, UNNEST(ARRAY[0]) as x_4
   WHERE
-    (Popular.u = t_0_U.u)) AS numeric) IS NULL) ORDER BY u;
+    (COALESCE(Popular.u, '') = COALESCE(t_0_U.u, '') AND (Popular.u IS NULL) = (t_0_U.u IS NULL))) AS numeric) IS NULL) ORDER BY u;

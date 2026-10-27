@@ -20,4 +20,4 @@ WHERE
   FROM
     t_0_Friend AS Friend, JSON_EACH(JSON_ARRAY(0)) as x_6
   WHERE
-    (Friend.a = x_3.value)) IS NULL) ORDER BY name;
+    (Friend.a IS x_3.value)) IS NULL) ORDER BY name NULLS LAST;

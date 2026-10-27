@@ -37,4 +37,4 @@ WHERE
   FROM
     t_2_D AS t_4_D
   WHERE
-    (t_4_D.d = x_3)) IS NULL);
+    (t_4_D.d <=> x_3)) IS NULL);

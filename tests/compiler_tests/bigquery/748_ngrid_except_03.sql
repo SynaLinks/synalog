@@ -18,4 +18,4 @@ WHERE
   FROM
     t_1_X AS t_0_X
   WHERE
-    (t_0_X.x = x_3)) IS NULL) ORDER BY x NULLS LAST;
+    (t_0_X.x IS NOT DISTINCT FROM x_3)) IS NULL) ORDER BY x NULLS LAST;

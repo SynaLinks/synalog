@@ -32,7 +32,7 @@ t_0_Q_MultBodyAggAux AS (SELECT * FROM (
     WHERE
       (t_3_I.c IS NOT null) AND
       (t_2_P.a = 1) AND
-      (t_3_I.id = t_2_P.b)
+      (t_3_I.id <=> t_2_P.b)
   
 ) AS UNUSED_TABLE_NAME  )
 SELECT

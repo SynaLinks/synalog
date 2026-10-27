@@ -71,7 +71,7 @@ SELECT
 FROM
   t_1_Entry AS Entry, t_1_Entry AS t_0_Entry
 WHERE
-  (t_0_Entry.account != 'cash') AND
+  (t_0_Entry.account IS NOT 'cash') AND
   (Entry.account = 'cash') AND
-  (t_0_Entry.txn = Entry.txn)
-GROUP BY t_0_Entry.account ORDER BY account;
+  (t_0_Entry.txn IS Entry.txn)
+GROUP BY t_0_Entry.account ORDER BY account NULLS LAST;

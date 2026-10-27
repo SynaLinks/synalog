@@ -170,8 +170,8 @@ WHERE
   FROM
     t_6_Loan AS Loan, JSON_EACH(JSON_ARRAY(0)) as x_12
   WHERE
-    (Loan.member = t_3_Member.name) AND
-    (Loan.book = t_4_Book.id)) IS NULL) AND
+    (Loan.member IS t_3_Member.name) AND
+    (Loan.book IS t_4_Book.id)) IS NULL) AND
   (t_4_Book.author = 'gibson')
 GROUP BY t_3_Member.name)
 SELECT
@@ -184,4 +184,4 @@ WHERE
   FROM
     t_2_Missed AS Missed, JSON_EACH(JSON_ARRAY(0)) as x_4
   WHERE
-    (Missed.name = t_0_Member.name)) IS NULL);
+    (Missed.name IS t_0_Member.name)) IS NULL);

@@ -20,4 +20,4 @@ WHERE
   FROM
     t_1_Orders AS Orders
   WHERE
-    (Orders.col0 = Users.col0)) IS NULL) ORDER BY id NULLS LAST;
+    (Orders.col0 <=> Users.col0)) IS NULL) ORDER BY id NULLS LAST;

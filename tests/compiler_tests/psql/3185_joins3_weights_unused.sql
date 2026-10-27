@@ -64,4 +64,4 @@ WHERE
   FROM
     t_1_Used AS Used, UNNEST(ARRAY[0]) as x_5
   WHERE
-    (Used.g = F.g)) AS numeric) IS NULL);
+    (COALESCE(Used.g, '') = COALESCE(F.g, '') AND (Used.g IS NULL) = (F.g IS NULL))) AS numeric) IS NULL);

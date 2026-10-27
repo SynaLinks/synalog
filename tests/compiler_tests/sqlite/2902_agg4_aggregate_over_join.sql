@@ -104,5 +104,5 @@ SELECT
 FROM
   t_0_S AS S, t_1_R AS R
 WHERE
-  (R.shop = S.shop)
-GROUP BY R.region ORDER BY region, u;
+  (R.shop IS S.shop)
+GROUP BY R.region ORDER BY region NULLS LAST, u NULLS LAST;

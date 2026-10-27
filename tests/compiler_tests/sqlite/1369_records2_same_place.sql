@@ -63,4 +63,4 @@ FROM
   t_2_Emp AS Emp, t_2_Emp AS t_1_Emp
 WHERE
   (Emp.name < t_1_Emp.name) AND
-  (JSON_OBJECT('dept', t_1_Emp.dept, 'city', t_1_Emp.city) = JSON_OBJECT('dept', Emp.dept, 'city', Emp.city));
+  (JSON_OBJECT('dept', t_1_Emp.dept, 'city', t_1_Emp.city) IS JSON_OBJECT('dept', Emp.dept, 'city', Emp.city));

@@ -43,4 +43,4 @@ WHERE
   FROM
     t_3_Big AS Big, UNNEST(ARRAY[0]) as x_6
   WHERE
-    (Big.g = t_0_G.g)) AS numeric) IS NULL);
+    (COALESCE(Big.g, '') = COALESCE(t_0_G.g, '') AND (Big.g IS NULL) = (t_0_G.g IS NULL))) AS numeric) IS NULL);

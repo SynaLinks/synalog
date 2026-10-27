@@ -4,14 +4,6 @@ create schema if not exists synalog_home;
 -- Empty synalog type: synalogrecord893574736;
 DO $$ BEGIN if not exists (select 'I(am) :- I(think)' from pg_type where typname = 'synalogrecord893574736') then create type synalogrecord893574736 as (nirvana numeric); end if; END $$;
 
-
-DO $$
-BEGIN
--- Synalog type: synalogrecord481217614
-if not exists (select 'I(am) :- I(think)' from pg_type where typname = 'synalogrecord481217614') then create type synalogrecord481217614 as (r synalogrecord893574736); end if;
--- Synalog type: synalogrecord86796764
-if not exists (select 'I(am) :- I(think)' from pg_type where typname = 'synalogrecord86796764') then create type synalogrecord86796764 as (s text); end if;
-END $$;
 WITH t_0_S AS (SELECT * FROM (
   
     SELECT
@@ -127,9 +119,9 @@ t_1_Lower AS (SELECT * FROM (
     WHERE
       (t_3_S.v >= t_2_S.v) AND
       (t_2_S.r = 'east') AND
-      (t_2_S.d = Prev.d) AND
+      (COALESCE(t_2_S.d, 0) = COALESCE(Prev.d, 0) AND (t_2_S.d IS NULL) = (Prev.d IS NULL)) AND
       (t_3_S.r = 'east') AND
-      (t_3_S.d = Prev.p)
+      (COALESCE(t_3_S.d, 0) = COALESCE(Prev.p, 0) AND (t_3_S.d IS NULL) = (Prev.p IS NULL))
    UNION ALL
   
     SELECT
@@ -139,9 +131,9 @@ t_1_Lower AS (SELECT * FROM (
     WHERE
       (t_8_S.v >= t_7_S.v) AND
       (t_7_S.r = 'east') AND
-      (t_7_S.d = Next.d) AND
+      (COALESCE(t_7_S.d, 0) = COALESCE(Next.d, 0) AND (t_7_S.d IS NULL) = (Next.d IS NULL)) AND
       (t_8_S.r = 'east') AND
-      (t_8_S.d = Next.n)
+      (COALESCE(t_8_S.d, 0) = COALESCE(Next.n, 0) AND (t_8_S.d IS NULL) = (Next.n IS NULL))
   
 ) AS UNUSED_TABLE_NAME  )
 SELECT
@@ -152,7 +144,7 @@ WHERE
   (CAST((SELECT
     MIN((CASE WHEN x_4 = 0 THEN 1 ELSE NULL END)) AS synalog_value
   FROM
-    t_1_Lower AS Lower, UNNEST(ARRAY[0]::numeric[]) as x_4
+    t_1_Lower AS Lower, UNNEST(ARRAY[0]) as x_4
   WHERE
     (Lower.d = 4)) AS numeric) IS NULL) AND
   (S.r = 'east') AND

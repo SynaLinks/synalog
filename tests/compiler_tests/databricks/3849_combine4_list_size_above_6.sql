@@ -21,6 +21,6 @@ FROM
   t_1_O AS O
 WHERE
   (O.amt > 6) AND
-  (O.c = t_0_C.c))) AS n
+  (O.c <=> t_0_C.c))) AS n
 FROM
   t_2_C AS t_0_C ORDER BY c NULLS LAST;

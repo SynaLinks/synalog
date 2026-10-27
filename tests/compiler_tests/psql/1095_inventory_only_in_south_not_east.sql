@@ -77,5 +77,5 @@ WHERE
     t_1_In AS t_3_In, UNNEST(ARRAY[0]) as x_10
   WHERE
     (t_3_In.warehouse = 'east') AND
-    (t_3_In.item = t_0_In.item)) AS numeric) IS NULL) AND
+    (COALESCE(t_3_In.item, '') = COALESCE(t_0_In.item, '') AND (t_3_In.item IS NULL) = (t_0_In.item IS NULL))) AS numeric) IS NULL) AND
   (t_0_In.warehouse = 'south') ORDER BY item;

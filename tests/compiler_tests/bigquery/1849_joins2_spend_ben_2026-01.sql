@@ -116,5 +116,5 @@ WHERE
   (Event.kind = "buy") AND
   (Event.`user` = "ben") AND
   (Price.`user` = "ben") AND
-  (Price.month = SUBSTR(Event.`at`, 1, 7)) AND
+  (Price.month IS NOT DISTINCT FROM SUBSTR(Event.`at`, 1, 7)) AND
   ("2026-01" = SUBSTR(Event.`at`, 1, 7));

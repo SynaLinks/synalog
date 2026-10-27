@@ -49,4 +49,4 @@ FROM
 WHERE
   (E.v > 15) AND
   (F.w < 2) AND
-  (F.g = E.g);
+  (F.g IS NOT DISTINCT FROM E.g);

@@ -72,4 +72,4 @@ FROM
   synalog_test.Place AS Place, synalog_test.Place AS t_0_Place
 WHERE
   (Place.name < t_0_Place.name) AND
-  (t_0_Place.p = Place.p);
+  (t_0_Place.p IS NOT DISTINCT FROM Place.p);

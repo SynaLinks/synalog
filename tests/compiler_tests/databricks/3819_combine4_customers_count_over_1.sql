@@ -23,4 +23,4 @@ WHERE
   FROM
     t_2_O AS O
   WHERE
-    (O.c = t_0_C.c)) > 1) ORDER BY c NULLS LAST;
+    (O.c <=> t_0_C.c)) > 1) ORDER BY c NULLS LAST;

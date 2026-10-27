@@ -629,6 +629,9 @@ impl<'a> ExprTranslator<'a> {
             Template(String),
             /// Apply a SQL template and wrap result in parentheses (infix operators).
             TemplateParens(String),
+            /// `==` (true) or `!=` (false) of two values that may be null, by
+            /// a template of `{0}` and `{1}`; of a side that is `null`, a null test.
+            Equality(bool, String),
             /// Format as array literal.
             ArrayLiteral(String),
             /// Format as record/struct literal with given (field name, type) pairs.
@@ -1295,6 +1298,20 @@ impl<'a> ExprTranslator<'a> {
                                 tasks.push(Task::Eval(e));
                             }
                             continue;
+                        } else if num_args == 2 && (pred_name == "==" || pred_name == "!=") {
+                            let operand = |name: &str, i: i64| {
+                                named.iter().find(|(n, _)| *n == name).map(|(_, e)| *e).or_else(|| indexed.iter().find(|(j, _)| *j == i).map(|(_, e)| *e))
+                            };
+                            let (Some(left), Some(right)) = (operand("left", 0), operand("right", 1)) else {
+                                return Err(CompileError::new(format!("{} takes left and right", pred_name), ""));
+                            };
+                            tasks.push(Task::Combine(match self.null_safe_equality(pred_name, left, right) {
+                                Some(tmpl) => CK::Equality(pred_name == "==", tmpl),
+                                None => CK::TemplateParens(self.built_in_infix_operators[pred_name].clone()),
+                            }, 2));
+                            tasks.push(Task::Eval(right));
+                            tasks.push(Task::Eval(left));
+                            continue;
                         } else if num_args == 2 && self.built_in_infix_operators.contains_key(pred_name) {
                             // When we have exactly 2 args and the predicate is an infix operator,
                             // prefer the infix template (e.g. `-` with left/right should be
@@ -1506,6 +1523,17 @@ impl<'a> ExprTranslator<'a> {
                     match kind {
                         CK::Template(template) => {
                             results.push(apply_template(&template, &args));
+                        }
+                        CK::Equality(equal, template) => {
+                            // A side may be null by its SQL only (a null field
+                            // of a record inlined), which PostgreSQL can't
+                            // put in an array.
+                            let null_test = if equal { "IS NULL" } else { "IS NOT NULL" };
+                            let r = match args.iter().position(|a| a == "null") {
+                                Some(i) => format!("{} {}", args[1 - i], null_test),
+                                None => apply_template(&template, &args),
+                            };
+                            results.push(format!("({})", r));
                         }
                         CK::TemplateParens(template) => {
                             let r = if template.contains("{left}") || template.contains("{right}") {
@@ -2259,6 +2287,28 @@ mod format_tests {
 }
 
 impl<'a> ExprTranslator<'a> {
+    /// The template of `left == right` or `left != right`, `{0}` and `{1}`,
+    /// when SQL's `=` or `!=` would not do. Synalog's null is a value: it
+    /// equals a null, and differs from any other value. Against a literal
+    /// other than null, SQL's `=` already says so, and an engine uses an
+    /// index on it.
+    fn null_safe_equality(&self, op: &str, left: &Json, right: &Json) -> Option<String> {
+        let is_value = |e: &Json| {
+            e.is_object()
+                && e.as_object().get("literal").is_some_and(|l| {
+                    l.is_object() && ["the_number", "the_string", "the_bool"].iter().any(|k| l.as_object().contains_key(*k))
+                })
+        };
+        if is_value(left) && is_value(right) || op == "==" && (is_value(left) || is_value(right)) {
+            None
+        } else if op == "==" {
+            let ty = [self.value_type(left), self.value_type(right)].into_iter().find(|t| *t != Type::Any).unwrap_or(Type::Any);
+            Some(self.dialect.equal_values(&ty).to_string())
+        } else {
+            Some(self.dialect.distinct_values().to_string())
+        }
+    }
+
     /// The type of a value, from its form and the types of the rule's
     /// variables: a typed dialect declares a record's field types
     /// (`CAST(ROW(x) AS ROW(a double))`), and a number declared text comes

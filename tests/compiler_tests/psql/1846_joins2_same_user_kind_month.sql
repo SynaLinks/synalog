@@ -83,6 +83,6 @@ FROM
   t_1_Event AS Event, t_1_Event AS t_0_Event
 WHERE
   (Event.id < t_0_Event.id) AND
-  (t_0_Event.kind = Event.kind) AND
-  (t_0_Event."user" = Event."user") AND
-  (SUBSTR(Event."at", 1, 7) = SUBSTR(t_0_Event."at", 1, 7));
+  (COALESCE(t_0_Event.kind, '') = COALESCE(Event.kind, '') AND (t_0_Event.kind IS NULL) = (Event.kind IS NULL)) AND
+  (COALESCE(t_0_Event."user", '') = COALESCE(Event."user", '') AND (t_0_Event."user" IS NULL) = (Event."user" IS NULL)) AND
+  (COALESCE(SUBSTR(Event."at", 1, 7), '') = COALESCE(SUBSTR(t_0_Event."at", 1, 7), '') AND (SUBSTR(Event."at", 1, 7) IS NULL) = (SUBSTR(t_0_Event."at", 1, 7) IS NULL));

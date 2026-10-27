@@ -68,8 +68,8 @@ t_0_EngagedWith AS (SELECT
 FROM
   t_3_Team AS t_1_Team, t_5_Client AS t_2_Client, t_7_Engagements AS Engagements
 WHERE
-  (Engagements.team_id = t_1_Team.team_id) AND
-  (Engagements.client_id = t_2_Client.client_id)
+  (COALESCE(Engagements.team_id, 0) = COALESCE(t_1_Team.team_id, 0) AND (Engagements.team_id IS NULL) = (t_1_Team.team_id IS NULL)) AND
+  (COALESCE(Engagements.client_id, 0) = COALESCE(t_2_Client.client_id, 0) AND (Engagements.client_id IS NULL) = (t_2_Client.client_id IS NULL))
 GROUP BY t_1_Team.team_id, t_2_Client.client_id)
 SELECT
   EngagedWith.client_id AS client_id,

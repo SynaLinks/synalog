@@ -28,5 +28,5 @@ WHERE
   FROM
     t_1_Person AS Person
   WHERE
-    (Person.person_id = Management.employee_id)) IS NULL)
+    (Person.person_id <=> Management.employee_id)) IS NULL)
 GROUP BY 1;

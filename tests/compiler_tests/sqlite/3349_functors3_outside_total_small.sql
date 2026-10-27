@@ -67,4 +67,4 @@ WHERE
     t_0_Sale AS t_1_Sale, JSON_EACH(JSON_ARRAY(0)) as x_4
   WHERE
     (t_1_Sale.amount < 60) AND
-    (Sale.id = t_1_Sale.id)) IS NULL);
+    (Sale.id IS t_1_Sale.id)) IS NULL);

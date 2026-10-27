@@ -3,5 +3,5 @@ SELECT
 FROM
   LATERAL (SELECT explode(ARRAY(1, 2, 3)) AS x_3) AS pushkin
 WHERE
-  (x_3 != 1) AND
-  (x_3 != 2);
+  (NOT (x_3 <=> 1)) AND
+  (NOT (x_3 <=> 2));

@@ -70,4 +70,4 @@ WHERE
   FROM
     t_2_O AS O
   WHERE
-    (O.c = t_0_C.c)) > 5) ORDER BY c;
+    (O.c IS NOT DISTINCT FROM t_0_C.c)) > 5) ORDER BY c;

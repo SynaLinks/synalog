@@ -141,4 +141,4 @@ WHERE
   FROM
     t_1_Linked AS Linked
   WHERE
-    (Linked.n = Node.n)) IS NULL) ORDER BY n;
+    (Linked.n IS NOT DISTINCT FROM Node.n)) IS NULL) ORDER BY n;

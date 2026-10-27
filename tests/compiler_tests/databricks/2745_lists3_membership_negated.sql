@@ -26,4 +26,4 @@ WHERE
     t_1_L AS t_5_L, LATERAL (SELECT explode(t_5_L.l) AS x_20) AS pushkin
   WHERE
     ("ink" = x_20) AND
-    (t_0_L.`order` = t_5_L.`order`)) IS NULL) ORDER BY `order` NULLS LAST;
+    (t_0_L.`order` <=> t_5_L.`order`)) IS NULL) ORDER BY `order` NULLS LAST;

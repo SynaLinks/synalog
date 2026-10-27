@@ -79,5 +79,5 @@ SELECT
 FROM
   t_0_E AS E, t_1_D AS D
 WHERE
-  (D.dept = E.dept) AND
+  (COALESCE(D.dept, 0) = COALESCE(E.dept, 0) AND (D.dept IS NULL) = (E.dept IS NULL)) AND
   (D.dname = 'ops');

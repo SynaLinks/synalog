@@ -116,5 +116,5 @@ WHERE
   (Event.kind = 'buy') AND
   (Event."user" = 'cy') AND
   (Price."user" = 'cy') AND
-  (Price.month = SUBSTR(Event."at", 1, 7))
+  (Price.month IS SUBSTR(Event."at", 1, 7))
 GROUP BY Event.id;

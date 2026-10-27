@@ -32,7 +32,7 @@ WITH RECURSIVE t_1_Reach_RecursiveCte AS (SELECT * FROM (
         (((0) + (1)) < 22) AND
         (0 < 22) AND
         (1 = 0) AND
-        (x_37 = ((x_43) + (1))) AND
+        (COALESCE(x_37, 0) = COALESCE(((x_43) + (1)), 0) AND (x_37 IS NULL) = (((x_43) + (1)) IS NULL)) AND
         (x_43 = 0)
      UNION ALL
     
@@ -46,8 +46,8 @@ WITH RECURSIVE t_1_Reach_RecursiveCte AS (SELECT * FROM (
         (((0) + (1)) < 22) AND
         (0 < 22) AND
         (1 = 0) AND
-        (x_59 = ((x_66) + (1))) AND
-        (x_66 = ((x_72) + (1))) AND
+        (COALESCE(x_59, 0) = COALESCE(((x_66) + (1)), 0) AND (x_59 IS NULL) = (((x_66) + (1)) IS NULL)) AND
+        (COALESCE(x_66, 0) = COALESCE(((x_72) + (1)), 0) AND (x_66 IS NULL) = (((x_72) + (1)) IS NULL)) AND
         (x_72 = 0)
     
   ) AS UNUSED_TABLE_NAME  
@@ -60,7 +60,7 @@ FROM
   t_1_Reach_RecursiveCte AS t_15_Reach_RecursiveCte, UNNEST(COALESCE((SELECT ARRAY_AGG(x) FROM GENERATE_SERIES(0, 200 - 1) as x), '{}')) as x_79
 WHERE
   (t_15_Reach_RecursiveCte.synalog_step < 22) AND
-  (t_15_Reach_RecursiveCte.y = x_79)),
+  (COALESCE(t_15_Reach_RecursiveCte.y, 0) = COALESCE(x_79, 0) AND (t_15_Reach_RecursiveCte.y IS NULL) = (x_79 IS NULL))),
 t_0_Reach AS (SELECT
   Reach_RecursiveCte.y AS y
 FROM

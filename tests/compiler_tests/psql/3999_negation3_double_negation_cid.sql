@@ -94,7 +94,7 @@ WHERE
     t_4_F AS F, UNNEST(ARRAY[0]) as x_10
   WHERE
     (F.a = 'cid') AND
-    (F.b = t_3_U.u)) AS numeric) IS NULL))
+    (COALESCE(F.b, '') = COALESCE(t_3_U.u, '') AND (F.b IS NULL) = (t_3_U.u IS NULL))) AS numeric) IS NULL))
 SELECT
   t_0_U.u AS v
 FROM
@@ -105,4 +105,4 @@ WHERE
   FROM
     t_2_NotF AS NotF, UNNEST(ARRAY[0]) as x_4
   WHERE
-    (NotF.v = t_0_U.u)) AS numeric) IS NULL) ORDER BY v;
+    (COALESCE(NotF.v, '') = COALESCE(t_0_U.u, '') AND (NotF.v IS NULL) = (t_0_U.u IS NULL))) AS numeric) IS NULL) ORDER BY v;

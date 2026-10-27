@@ -5,8 +5,4 @@ drop type if exists synalogrecord893574736 cascade; create type synalogrecord893
 create sequence if not exists eternal_logical_sequence;
 
 SELECT
-  1 AS a
-FROM
-  (SELECT 'singleton' as s) as unused_singleton
-WHERE
-  (null = null);
+  1 AS a;

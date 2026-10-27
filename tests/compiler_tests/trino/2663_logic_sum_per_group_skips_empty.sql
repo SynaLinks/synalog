@@ -112,5 +112,5 @@ SELECT
 FROM
   t_0_A AS A, t_1_Person AS Person
 WHERE
-  (Person.id = A.id)
+  (Person.id IS NOT DISTINCT FROM A.id)
 GROUP BY 1 ORDER BY team, h;

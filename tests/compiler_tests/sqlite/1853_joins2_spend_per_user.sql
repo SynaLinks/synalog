@@ -115,6 +115,6 @@ FROM
   t_0_Event AS Event, t_1_Price AS Price
 WHERE
   (Event.kind = 'buy') AND
-  (Price."user" = Event."user") AND
-  (Price.month = SUBSTR(Event."at", 1, 7))
+  (Price."user" IS Event."user") AND
+  (Price.month IS SUBSTR(Event."at", 1, 7))
 GROUP BY Event."user" ORDER BY "user" NULLS LAST, s NULLS LAST;

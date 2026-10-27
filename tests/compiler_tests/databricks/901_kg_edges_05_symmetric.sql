@@ -22,8 +22,8 @@ t_1_Mentors AS (SELECT
 FROM
   t_3_Person AS Person, t_3_Person AS t_2_Person, t_6_Mentoring AS Mentoring
 WHERE
-  (Mentoring.mentor_id = Person.person_id) AND
-  (Mentoring.mentee_id = t_2_Person.person_id)
+  (Mentoring.mentor_id <=> Person.person_id) AND
+  (Mentoring.mentee_id <=> t_2_Person.person_id)
 GROUP BY 1, 2),
 t_0_Pair_MultBodyAggAux AS (SELECT * FROM (
   

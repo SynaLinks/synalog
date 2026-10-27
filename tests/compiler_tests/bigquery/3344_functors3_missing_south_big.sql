@@ -67,5 +67,5 @@ WHERE
     t_0_Sale AS t_1_Sale
   WHERE
     (t_1_Sale.amount > 100) AND
-    (Sale.id = t_1_Sale.id)) IS NULL) AND
-  (Sale.region = "south") ORDER BY id;
+    (Sale.id IS NOT DISTINCT FROM t_1_Sale.id)) IS NULL) AND
+  (Sale.region = "south") ORDER BY id NULLS LAST;

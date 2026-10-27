@@ -110,7 +110,7 @@ FROM
   t_2_Order AS t_1_Order, t_3_Price AS Price
 WHERE
   (t_1_Order.state = 'paid') AND
-  (Price.item = t_1_Order.item)
+  (Price.item IS NOT DISTINCT FROM t_1_Order.item)
 GROUP BY t_1_Order.who)
 SELECT
   Spend.who AS who,

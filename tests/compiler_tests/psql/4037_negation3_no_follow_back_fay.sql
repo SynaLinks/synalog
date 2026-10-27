@@ -94,6 +94,6 @@ WHERE
     t_3_F AS F, t_3_F AS t_2_F, UNNEST(ARRAY[0]) as x_7
   WHERE
     (F.a = 'fay') AND
-    (t_2_F.a = F.b) AND
+    (COALESCE(t_2_F.a, '') = COALESCE(F.b, '') AND (t_2_F.a IS NULL) = (F.b IS NULL)) AND
     (t_2_F.b = 'fay')) AS numeric) IS NULL) AND
   (t_0_U.u = 'fay');

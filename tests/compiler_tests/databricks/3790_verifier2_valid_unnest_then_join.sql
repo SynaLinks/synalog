@@ -9,4 +9,4 @@ SELECT
 FROM
   t_1_N AS t_0_N, LATERAL (SELECT explode(ARRAY(2, 3)) AS x_2) AS pushkin
 WHERE
-  (t_0_N.n = x_2) ORDER BY n NULLS LAST;
+  (t_0_N.n <=> x_2) ORDER BY n NULLS LAST;

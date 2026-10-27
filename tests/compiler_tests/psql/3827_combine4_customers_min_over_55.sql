@@ -76,4 +76,4 @@ WHERE
   FROM
     t_2_O AS O, UNNEST(ARRAY[0]) as x_6
   WHERE
-    (O.c = t_0_C.c)) AS numeric) > 55) ORDER BY c;
+    (COALESCE(O.c, '') = COALESCE(t_0_C.c, '') AND (O.c IS NULL) = (t_0_C.c IS NULL))) AS numeric) > 55) ORDER BY c;

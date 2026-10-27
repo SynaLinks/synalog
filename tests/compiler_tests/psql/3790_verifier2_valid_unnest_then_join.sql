@@ -27,4 +27,4 @@ SELECT
 FROM
   t_1_N AS t_0_N, UNNEST(ARRAY[2, 3]) as x_2
 WHERE
-  (t_0_N.n = x_2) ORDER BY n;
+  (COALESCE(t_0_N.n, 0) = COALESCE(x_2, 0) AND (t_0_N.n IS NULL) = (x_2 IS NULL)) ORDER BY n;

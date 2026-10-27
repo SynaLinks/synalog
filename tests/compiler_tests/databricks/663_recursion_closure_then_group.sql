@@ -45,7 +45,7 @@ t_1_P_MultBodyAggAux_f3 AS (SELECT * FROM (
     FROM
       synalog_test.P_sn_t0 AS P_sn_t0, t_2_E AS E
     WHERE
-      (E.a = P_sn_t0.t)
+      (E.a <=> P_sn_t0.t)
    UNION ALL
   
     SELECT
@@ -84,7 +84,7 @@ t_1_P_MultBodyAggAux_f4 AS (SELECT * FROM (
     FROM
       synalog_test.P_sn_t1 AS P_sn_t1, t_2_E AS E
     WHERE
-      (E.a = P_sn_t1.t)
+      (E.a <=> P_sn_t1.t)
    UNION ALL
   
     SELECT
@@ -123,7 +123,7 @@ t_1_P_MultBodyAggAux_f5 AS (SELECT * FROM (
     FROM
       synalog_test.P_sn_t2 AS P_sn_t2, t_2_E AS E
     WHERE
-      (E.a = P_sn_t2.t)
+      (E.a <=> P_sn_t2.t)
    UNION ALL
   
     SELECT
@@ -162,7 +162,7 @@ t_1_P_MultBodyAggAux_f6 AS (SELECT * FROM (
     FROM
       synalog_test.P_sn_t3 AS P_sn_t3, t_2_E AS E
     WHERE
-      (E.a = P_sn_t3.t)
+      (E.a <=> P_sn_t3.t)
    UNION ALL
   
     SELECT
@@ -201,7 +201,7 @@ t_1_P_MultBodyAggAux_f7 AS (SELECT * FROM (
     FROM
       synalog_test.P_sn_t4 AS P_sn_t4, t_2_E AS E
     WHERE
-      (E.a = P_sn_t4.t)
+      (E.a <=> P_sn_t4.t)
    UNION ALL
   
     SELECT
@@ -288,7 +288,7 @@ t_1_P_MultBodyAggAux_f8 AS (SELECT * FROM (
     FROM
       synalog_test.P_sn_delta AS P_sn_delta, t_2_E AS E
     WHERE
-      (E.a = P_sn_delta.t)
+      (E.a <=> P_sn_delta.t)
    UNION ALL
   
     SELECT
@@ -315,8 +315,8 @@ WHERE
   FROM
     synalog_test.P_sn_full AS P_sn_full
   WHERE
-    (P_sn_full.s = P_sn_step.s) AND
-    (P_sn_full.t = P_sn_step.t)) IS NULL)
+    (P_sn_full.s <=> P_sn_step.s) AND
+    (P_sn_full.t <=> P_sn_step.t)) IS NULL)
 GROUP BY 1, 2;
 
 INSERT INTO synalog_test.P_sn_full SELECT * FROM synalog_test.P_sn_new;
@@ -334,7 +334,7 @@ t_1_P_MultBodyAggAux_f1 AS (SELECT * FROM (
     FROM
       synalog_test.P_sn_new AS P_sn_new, t_2_E AS E
     WHERE
-      (E.a = P_sn_new.t)
+      (E.a <=> P_sn_new.t)
    UNION ALL
   
     SELECT
@@ -361,8 +361,8 @@ WHERE
   FROM
     synalog_test.P_sn_full AS P_sn_full
   WHERE
-    (P_sn_full.s = P_sn_back_step.s) AND
-    (P_sn_full.t = P_sn_back_step.t)) IS NULL)
+    (P_sn_full.s <=> P_sn_back_step.s) AND
+    (P_sn_full.t <=> P_sn_back_step.t)) IS NULL)
 GROUP BY 1, 2;
 
 INSERT INTO synalog_test.P_sn_full SELECT * FROM synalog_test.P_sn_delta;
@@ -380,7 +380,7 @@ t_1_P_MultBodyAggAux_f8 AS (SELECT * FROM (
     FROM
       synalog_test.P_sn_delta AS P_sn_delta, t_2_E AS E
     WHERE
-      (E.a = P_sn_delta.t)
+      (E.a <=> P_sn_delta.t)
    UNION ALL
   
     SELECT
@@ -407,8 +407,8 @@ WHERE
   FROM
     synalog_test.P_sn_full AS P_sn_full
   WHERE
-    (P_sn_full.s = P_sn_step.s) AND
-    (P_sn_full.t = P_sn_step.t)) IS NULL)
+    (P_sn_full.s <=> P_sn_step.s) AND
+    (P_sn_full.t <=> P_sn_step.t)) IS NULL)
 GROUP BY 1, 2;
 
 INSERT INTO synalog_test.P_sn_full SELECT * FROM synalog_test.P_sn_new;
@@ -426,7 +426,7 @@ t_1_P_MultBodyAggAux_f1 AS (SELECT * FROM (
     FROM
       synalog_test.P_sn_new AS P_sn_new, t_2_E AS E
     WHERE
-      (E.a = P_sn_new.t)
+      (E.a <=> P_sn_new.t)
    UNION ALL
   
     SELECT
@@ -453,8 +453,8 @@ WHERE
   FROM
     synalog_test.P_sn_full AS P_sn_full
   WHERE
-    (P_sn_full.s = P_sn_back_step.s) AND
-    (P_sn_full.t = P_sn_back_step.t)) IS NULL)
+    (P_sn_full.s <=> P_sn_back_step.s) AND
+    (P_sn_full.t <=> P_sn_back_step.t)) IS NULL)
 GROUP BY 1, 2;
 
 INSERT INTO synalog_test.P_sn_full SELECT * FROM synalog_test.P_sn_delta;
@@ -472,7 +472,7 @@ t_1_P_MultBodyAggAux_f8 AS (SELECT * FROM (
     FROM
       synalog_test.P_sn_delta AS P_sn_delta, t_2_E AS E
     WHERE
-      (E.a = P_sn_delta.t)
+      (E.a <=> P_sn_delta.t)
    UNION ALL
   
     SELECT
@@ -499,8 +499,8 @@ WHERE
   FROM
     synalog_test.P_sn_full AS P_sn_full
   WHERE
-    (P_sn_full.s = P_sn_step.s) AND
-    (P_sn_full.t = P_sn_step.t)) IS NULL)
+    (P_sn_full.s <=> P_sn_step.s) AND
+    (P_sn_full.t <=> P_sn_step.t)) IS NULL)
 GROUP BY 1, 2;
 
 INSERT INTO synalog_test.P_sn_full SELECT * FROM synalog_test.P_sn_new;

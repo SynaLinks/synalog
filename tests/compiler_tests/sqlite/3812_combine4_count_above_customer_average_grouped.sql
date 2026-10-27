@@ -53,5 +53,5 @@ WHERE
   FROM
     t_0_O AS t_1_O, JSON_EACH(JSON_ARRAY(0)) as x_7
   WHERE
-    (t_1_O.c = O.c)))
-GROUP BY O.c ORDER BY c;
+    (t_1_O.c IS O.c)))
+GROUP BY O.c ORDER BY c NULLS LAST;

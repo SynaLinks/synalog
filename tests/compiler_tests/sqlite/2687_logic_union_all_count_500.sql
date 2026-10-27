@@ -154,7 +154,7 @@ t_0_U AS (SELECT * FROM (
       t_2_A AS A, t_3_Proj AS Proj
     WHERE
       (Proj.budget > 500) AND
-      (Proj.pid = A.pid)
+      (Proj.pid IS A.pid)
   
 ) AS UNUSED_TABLE_NAME  )
 SELECT

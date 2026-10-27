@@ -48,7 +48,7 @@ t_2_R_MultBodyAggAux_recursive_head_f2 AS (SELECT * FROM (
     FROM
       t_4_R_r0 AS R_r0, t_9_E AS t_3_E
     WHERE
-      (t_3_E.b = R_r0.x)
+      (COALESCE(t_3_E.b, 0) = COALESCE(R_r0.x, 0) AND (t_3_E.b IS NULL) = (R_r0.x IS NULL))
    UNION ALL
   
     SELECT
@@ -56,7 +56,7 @@ t_2_R_MultBodyAggAux_recursive_head_f2 AS (SELECT * FROM (
     FROM
       t_4_R_r0 AS t_10_R_r0, t_9_E AS t_11_E
     WHERE
-      (t_11_E.a = t_10_R_r0.x)
+      (COALESCE(t_11_E.a, 0) = COALESCE(t_10_R_r0.x, 0) AND (t_11_E.a IS NULL) = (t_10_R_r0.x IS NULL))
   
 ) AS UNUSED_TABLE_NAME  ),
 t_1_R_r1 AS (SELECT
@@ -75,7 +75,7 @@ t_0_R_MultBodyAggAux_recursive_head_f3 AS (SELECT * FROM (
     FROM
       t_1_R_r1 AS R_r1, t_9_E AS E
     WHERE
-      (E.b = R_r1.x)
+      (COALESCE(E.b, 0) = COALESCE(R_r1.x, 0) AND (E.b IS NULL) = (R_r1.x IS NULL))
    UNION ALL
   
     SELECT
@@ -83,7 +83,7 @@ t_0_R_MultBodyAggAux_recursive_head_f3 AS (SELECT * FROM (
     FROM
       t_1_R_r1 AS t_17_R_r1, t_9_E AS t_18_E
     WHERE
-      (t_18_E.a = t_17_R_r1.x)
+      (COALESCE(t_18_E.a, 0) = COALESCE(t_17_R_r1.x, 0) AND (t_18_E.a IS NULL) = (t_17_R_r1.x IS NULL))
   
 ) AS UNUSED_TABLE_NAME  )
 SELECT

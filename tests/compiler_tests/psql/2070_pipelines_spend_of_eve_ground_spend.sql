@@ -111,7 +111,7 @@ FROM
   t_1_Order AS t_0_Order, t_2_Price AS Price
 WHERE
   (t_0_Order.state = 'paid') AND
-  (Price.item = t_0_Order.item)
+  (COALESCE(Price.item, '') = COALESCE(t_0_Order.item, '') AND (Price.item IS NULL) = (t_0_Order.item IS NULL))
 GROUP BY t_0_Order.who;
 
 -- Interacting with table synalog_home.Spend

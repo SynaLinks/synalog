@@ -45,7 +45,7 @@ t_29_Graph_Reach_MultBodyAggAux_recursive_head_f2_f12 AS (SELECT * FROM (
     FROM
       t_32_Graph_Reach_r0_f12 AS Graph_Reach_r0_f12, t_2_Loop AS t_31_Loop
     WHERE
-      (t_31_Loop.a = Graph_Reach_r0_f12.b)
+      (t_31_Loop.a IS NOT DISTINCT FROM Graph_Reach_r0_f12.b)
   
 ) AS UNUSED_TABLE_NAME  ),
 t_28_Graph_Reach_r1_f12 AS (SELECT
@@ -69,7 +69,7 @@ t_25_Graph_Reach_MultBodyAggAux_recursive_head_f3_f12 AS (SELECT * FROM (
     FROM
       t_28_Graph_Reach_r1_f12 AS Graph_Reach_r1_f12, t_2_Loop AS t_27_Loop
     WHERE
-      (t_27_Loop.a = Graph_Reach_r1_f12.b)
+      (t_27_Loop.a IS NOT DISTINCT FROM Graph_Reach_r1_f12.b)
   
 ) AS UNUSED_TABLE_NAME  ),
 t_24_Graph_Reach_r2_f12 AS (SELECT
@@ -93,7 +93,7 @@ t_21_Graph_Reach_MultBodyAggAux_recursive_head_f4_f12 AS (SELECT * FROM (
     FROM
       t_24_Graph_Reach_r2_f12 AS Graph_Reach_r2_f12, t_2_Loop AS t_23_Loop
     WHERE
-      (t_23_Loop.a = Graph_Reach_r2_f12.b)
+      (t_23_Loop.a IS NOT DISTINCT FROM Graph_Reach_r2_f12.b)
   
 ) AS UNUSED_TABLE_NAME  ),
 t_20_Graph_Reach_r3_f12 AS (SELECT
@@ -117,7 +117,7 @@ t_17_Graph_Reach_MultBodyAggAux_recursive_head_f5_f12 AS (SELECT * FROM (
     FROM
       t_20_Graph_Reach_r3_f12 AS Graph_Reach_r3_f12, t_2_Loop AS t_19_Loop
     WHERE
-      (t_19_Loop.a = Graph_Reach_r3_f12.b)
+      (t_19_Loop.a IS NOT DISTINCT FROM Graph_Reach_r3_f12.b)
   
 ) AS UNUSED_TABLE_NAME  ),
 t_16_Graph_Reach_r4_f12 AS (SELECT
@@ -141,7 +141,7 @@ t_13_Graph_Reach_MultBodyAggAux_recursive_head_f6_f12 AS (SELECT * FROM (
     FROM
       t_16_Graph_Reach_r4_f12 AS Graph_Reach_r4_f12, t_2_Loop AS t_15_Loop
     WHERE
-      (t_15_Loop.a = Graph_Reach_r4_f12.b)
+      (t_15_Loop.a IS NOT DISTINCT FROM Graph_Reach_r4_f12.b)
   
 ) AS UNUSED_TABLE_NAME  ),
 t_12_Graph_Reach_r5_f12 AS (SELECT
@@ -165,7 +165,7 @@ t_9_Graph_Reach_MultBodyAggAux_recursive_head_f7_f12 AS (SELECT * FROM (
     FROM
       t_12_Graph_Reach_r5_f12 AS Graph_Reach_r5_f12, t_2_Loop AS t_11_Loop
     WHERE
-      (t_11_Loop.a = Graph_Reach_r5_f12.b)
+      (t_11_Loop.a IS NOT DISTINCT FROM Graph_Reach_r5_f12.b)
   
 ) AS UNUSED_TABLE_NAME  ),
 t_8_Graph_Reach_r6_f12 AS (SELECT
@@ -189,7 +189,7 @@ t_5_Graph_Reach_MultBodyAggAux_recursive_head_f8_f12 AS (SELECT * FROM (
     FROM
       t_8_Graph_Reach_r6_f12 AS Graph_Reach_r6_f12, t_2_Loop AS t_7_Loop
     WHERE
-      (t_7_Loop.a = Graph_Reach_r6_f12.b)
+      (t_7_Loop.a IS NOT DISTINCT FROM Graph_Reach_r6_f12.b)
   
 ) AS UNUSED_TABLE_NAME  ),
 t_4_Graph_Reach_r7_f12 AS (SELECT
@@ -213,7 +213,7 @@ t_1_Graph_Reach_MultBodyAggAux_recursive_head_f9_f12 AS (SELECT * FROM (
     FROM
       t_4_Graph_Reach_r7_f12 AS Graph_Reach_r7_f12, t_2_Loop AS t_3_Loop
     WHERE
-      (t_3_Loop.a = Graph_Reach_r7_f12.b)
+      (t_3_Loop.a IS NOT DISTINCT FROM Graph_Reach_r7_f12.b)
   
 ) AS UNUSED_TABLE_NAME  ),
 t_0_R AS (SELECT

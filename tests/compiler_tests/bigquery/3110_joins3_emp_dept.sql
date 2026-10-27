@@ -74,4 +74,4 @@ SELECT
 FROM
   t_0_E AS E, t_1_D AS D
 WHERE
-  (D.dept = E.dept) ORDER BY name, dname;
+  (D.dept IS NOT DISTINCT FROM E.dept) ORDER BY name NULLS LAST, dname NULLS LAST;

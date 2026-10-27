@@ -21,7 +21,7 @@ t_1_Pick_MultBodyAggAux AS (SELECT * FROM (
     FROM
       t_4_E AS t_2_E, t_5_D AS t_3_D
     WHERE
-      (t_3_D.d = t_2_E.d) AND
+      (t_3_D.d <=> t_2_E.d) AND
       (t_3_D.city = "paris")
    UNION ALL
   
@@ -43,4 +43,4 @@ SELECT
 FROM
   t_0_Pick AS Pick, t_4_E AS E
 WHERE
-  (E.id = Pick.id) ORDER BY n NULLS LAST;
+  (E.id <=> Pick.id) ORDER BY n NULLS LAST;

@@ -3,4 +3,4 @@ SELECT
 FROM
   UNNEST(ARRAY[0, 1, 2, 4]) as x_3
 WHERE
-  (x_3 = ((((2) * (x_3))) - (x_3))) ORDER BY x;
+  (x_3 IS NOT DISTINCT FROM ((((2) * (x_3))) - (x_3))) ORDER BY x NULLS LAST;

@@ -115,7 +115,7 @@ FROM
   t_2_Order AS t_4_Order, t_5_Price AS Price
 WHERE
   (t_4_Order.state = 'paid') AND
-  (Price.item = t_4_Order.item)
+  (Price.item IS NOT DISTINCT FROM t_4_Order.item)
 GROUP BY t_4_Order.who)
 SELECT
   Person.who AS who
@@ -127,4 +127,4 @@ WHERE
   FROM
     t_3_Spend AS Spend, (select unnest([0]) as unnested_pod) as x_6
   WHERE
-    (Spend.who = Person.who)) IS NULL);
+    (Spend.who IS NOT DISTINCT FROM Person.who)) IS NULL);

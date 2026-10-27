@@ -1,5 +1,5 @@
 # A join on keys computed on both sides.
-# Expect: rows Q = [('ann', 'ops'), ('bob', 'ops'), ('cid', 'hr'), ('fay', 'hr')]
+# Expect: rows Q = [('ann', 'ops'), ('bob', 'ops'), ('cid', 'hr'), ('dee', 'temp'), ('fay', 'hr')]
 E(id: 1, name: "ann", dept: 10, boss: null);
 E(id: 2, name: "bob", dept: 10, boss: 1);
 E(id: 3, name: "cid", dept: 20, boss: 1);

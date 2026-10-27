@@ -67,4 +67,4 @@ WHERE
     t_0_Person AS t_1_Person
   WHERE
     (t_1_Person.age > 100) AND
-    (Person.id = t_1_Person.id)) IS NULL) ORDER BY id;
+    (Person.id IS NOT DISTINCT FROM t_1_Person.id)) IS NULL) ORDER BY id;

@@ -29,4 +29,4 @@ WHERE
     t_0_V AS t_1_V
   WHERE
     t_1_V.b AND
-    (t_1_V.x = V.x)) IS NULL) ORDER BY x NULLS LAST;
+    (t_1_V.x IS NOT DISTINCT FROM V.x)) IS NULL) ORDER BY x NULLS LAST;

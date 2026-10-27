@@ -99,6 +99,6 @@ SELECT
 FROM
   t_1_Ship AS Ship, UNNEST(ARRAY[0]) as x_7
 WHERE
-  (Ship.client = t_0_Client.client)) AS numeric) AS t
+  (COALESCE(Ship.client, '') = COALESCE(t_0_Client.client, '') AND (Ship.client IS NULL) = (t_0_Client.client IS NULL))) AS numeric) AS t
 FROM
   t_2_Client AS t_0_Client ORDER BY client, t;

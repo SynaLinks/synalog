@@ -110,7 +110,7 @@ FROM
   t_3_Order AS t_2_Order, t_4_Price AS Price
 WHERE
   (t_2_Order.state = 'paid') AND
-  (Price.item = t_2_Order.item)
+  (COALESCE(Price.item, '') = COALESCE(t_2_Order.item, '') AND (Price.item IS NULL) = (t_2_Order.item IS NULL))
 GROUP BY t_2_Order.who)
 SELECT
   Spend.who AS a,

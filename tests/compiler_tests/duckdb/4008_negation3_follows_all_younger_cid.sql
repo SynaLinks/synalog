@@ -100,5 +100,5 @@ WHERE
       t_3_F AS F, (select unnest([0]) as unnested_pod) as x_11
     WHERE
       (F.a = 'cid') AND
-      (F.b = t_2_U.u)) IS NULL)) IS NULL) AND
+      (F.b IS NOT DISTINCT FROM t_2_U.u)) IS NULL)) IS NULL) AND
   (t_0_U.u = 'cid');

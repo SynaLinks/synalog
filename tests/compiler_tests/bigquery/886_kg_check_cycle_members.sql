@@ -43,7 +43,7 @@ t_21_Anc_MultBodyAggAux_recursive_head_f2 AS (SELECT * FROM (
     FROM
       t_23_Anc_r0 AS Anc_r0, t_27_ParentOf AS t_22_ParentOf
     WHERE
-      (t_22_ParentOf.parent_id = Anc_r0.d)
+      (t_22_ParentOf.parent_id IS NOT DISTINCT FROM Anc_r0.d)
    UNION ALL
   
     SELECT
@@ -67,7 +67,7 @@ t_18_Anc_MultBodyAggAux_recursive_head_f3 AS (SELECT * FROM (
     FROM
       t_20_Anc_r1 AS Anc_r1, t_27_ParentOf AS t_19_ParentOf
     WHERE
-      (t_19_ParentOf.parent_id = Anc_r1.d)
+      (t_19_ParentOf.parent_id IS NOT DISTINCT FROM Anc_r1.d)
    UNION ALL
   
     SELECT
@@ -91,7 +91,7 @@ t_15_Anc_MultBodyAggAux_recursive_head_f4 AS (SELECT * FROM (
     FROM
       t_17_Anc_r2 AS Anc_r2, t_27_ParentOf AS t_16_ParentOf
     WHERE
-      (t_16_ParentOf.parent_id = Anc_r2.d)
+      (t_16_ParentOf.parent_id IS NOT DISTINCT FROM Anc_r2.d)
    UNION ALL
   
     SELECT
@@ -115,7 +115,7 @@ t_12_Anc_MultBodyAggAux_recursive_head_f5 AS (SELECT * FROM (
     FROM
       t_14_Anc_r3 AS Anc_r3, t_27_ParentOf AS t_13_ParentOf
     WHERE
-      (t_13_ParentOf.parent_id = Anc_r3.d)
+      (t_13_ParentOf.parent_id IS NOT DISTINCT FROM Anc_r3.d)
    UNION ALL
   
     SELECT
@@ -139,7 +139,7 @@ t_9_Anc_MultBodyAggAux_recursive_head_f6 AS (SELECT * FROM (
     FROM
       t_11_Anc_r4 AS Anc_r4, t_27_ParentOf AS t_10_ParentOf
     WHERE
-      (t_10_ParentOf.parent_id = Anc_r4.d)
+      (t_10_ParentOf.parent_id IS NOT DISTINCT FROM Anc_r4.d)
    UNION ALL
   
     SELECT
@@ -163,7 +163,7 @@ t_6_Anc_MultBodyAggAux_recursive_head_f7 AS (SELECT * FROM (
     FROM
       t_8_Anc_r5 AS Anc_r5, t_27_ParentOf AS t_7_ParentOf
     WHERE
-      (t_7_ParentOf.parent_id = Anc_r5.d)
+      (t_7_ParentOf.parent_id IS NOT DISTINCT FROM Anc_r5.d)
    UNION ALL
   
     SELECT
@@ -187,7 +187,7 @@ t_3_Anc_MultBodyAggAux_recursive_head_f8 AS (SELECT * FROM (
     FROM
       t_5_Anc_r6 AS Anc_r6, t_27_ParentOf AS t_4_ParentOf
     WHERE
-      (t_4_ParentOf.parent_id = Anc_r6.d)
+      (t_4_ParentOf.parent_id IS NOT DISTINCT FROM Anc_r6.d)
    UNION ALL
   
     SELECT
@@ -211,7 +211,7 @@ t_1_Anc_MultBodyAggAux_recursive_head_f9 AS (SELECT * FROM (
     FROM
       t_2_Anc_r7 AS Anc_r7, t_27_ParentOf AS ParentOf
     WHERE
-      (ParentOf.parent_id = Anc_r7.d)
+      (ParentOf.parent_id IS NOT DISTINCT FROM Anc_r7.d)
    UNION ALL
   
     SELECT
@@ -232,5 +232,5 @@ SELECT
 FROM
   t_0_Anc AS Anc
 WHERE
-  (Anc.d = Anc.a)
-GROUP BY n ORDER BY n;
+  (Anc.d IS NOT DISTINCT FROM Anc.a)
+GROUP BY n ORDER BY n NULLS LAST;

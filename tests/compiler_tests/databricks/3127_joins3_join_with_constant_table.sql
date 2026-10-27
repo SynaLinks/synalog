@@ -11,4 +11,4 @@ SELECT
 FROM
   t_0_E AS E, LATERAL (SELECT explode(ARRAY(1, 2, 7)) AS x_3) AS pushkin
 WHERE
-  (E.id = x_3) ORDER BY name NULLS LAST;
+  (E.id <=> x_3) ORDER BY name NULLS LAST;

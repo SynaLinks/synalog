@@ -4,15 +4,6 @@ create schema if not exists synalog_home;
 drop type if exists synalogrecord893574736 cascade; create type synalogrecord893574736 as struct(nirvana numeric);
 create sequence if not exists eternal_logical_sequence;
 
-
--- Synalog type: synalogrecord481217614
-drop type if exists synalogrecord481217614 cascade; create type synalogrecord481217614 as struct(r synalogrecord893574736);
-
--- Synalog type: synalogrecord383307722
-drop type if exists synalogrecord383307722 cascade; create type synalogrecord383307722 as struct(a timestamp);
-
--- Synalog type: synalogrecord519939597
-drop type if exists synalogrecord519939597 cascade; create type synalogrecord519939597 as struct(args text[], predicate text);
 WITH t_0_S AS (SELECT * FROM (
   
     SELECT
@@ -128,9 +119,9 @@ t_1_Lower AS (SELECT * FROM (
     WHERE
       (t_3_S.v >= t_2_S.v) AND
       (t_2_S.r = 'north') AND
-      (t_2_S.d = Prev.d) AND
+      (t_2_S.d IS NOT DISTINCT FROM Prev.d) AND
       (t_3_S.r = 'north') AND
-      (t_3_S.d = Prev.p)
+      (t_3_S.d IS NOT DISTINCT FROM Prev.p)
    UNION ALL
   
     SELECT
@@ -140,9 +131,9 @@ t_1_Lower AS (SELECT * FROM (
     WHERE
       (t_8_S.v >= t_7_S.v) AND
       (t_7_S.r = 'north') AND
-      (t_7_S.d = Next.d) AND
+      (t_7_S.d IS NOT DISTINCT FROM Next.d) AND
       (t_8_S.r = 'north') AND
-      (t_8_S.d = Next.n)
+      (t_8_S.d IS NOT DISTINCT FROM Next.n)
   
 ) AS UNUSED_TABLE_NAME  )
 SELECT
@@ -153,7 +144,7 @@ WHERE
   ((SELECT
     MIN((CASE WHEN x_4.unnested_pod = 0 THEN 1 ELSE NULL END)) AS synalog_value
   FROM
-    t_1_Lower AS Lower, (select unnest([0]::numeric[]) as unnested_pod) as x_4
+    t_1_Lower AS Lower, (select unnest([0]) as unnested_pod) as x_4
   WHERE
     (Lower.d = 2)) IS NULL) AND
   (S.r = 'north') AND

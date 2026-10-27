@@ -92,5 +92,5 @@ SELECT
 FROM
   t_0_Projects AS Projects, t_2_Proj AS Proj, JSON_EACH(Projects.l) as x_4
 WHERE
-  (Proj.pid = x_4.value)
+  (Proj.pid IS x_4.value)
 GROUP BY Projects.id ORDER BY id NULLS LAST, n NULLS LAST;

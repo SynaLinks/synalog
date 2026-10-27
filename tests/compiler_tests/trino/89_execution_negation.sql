@@ -20,4 +20,4 @@ WHERE
   FROM
     t_0_Friend AS Friend
   WHERE
-    (Friend.a = x_3)) IS NULL) ORDER BY name;
+    (Friend.a IS NOT DISTINCT FROM x_3)) IS NULL) ORDER BY name;

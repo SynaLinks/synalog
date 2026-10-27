@@ -75,8 +75,8 @@ SELECT
 FROM
   synalog_test.Person AS Person, synalog_test.Person AS t_0_Person, t_1_Mentoring AS Mentoring
 WHERE
-  (Mentoring.mentor_id = Person.person_id) AND
-  (Mentoring.mentee_id = t_0_Person.person_id)
+  (Mentoring.mentor_id IS NOT DISTINCT FROM Person.person_id) AND
+  (Mentoring.mentee_id IS NOT DISTINCT FROM t_0_Person.person_id)
 GROUP BY 1, 2;
 
 -- Interacting with table synalog_test.Mentors

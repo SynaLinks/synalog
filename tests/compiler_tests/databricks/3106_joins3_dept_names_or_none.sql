@@ -20,7 +20,7 @@ SELECT * FROM (
     FROM
       t_0_E AS E, t_1_D AS D
     WHERE
-      (D.dept = E.dept)
+      (D.dept <=> E.dept)
    UNION ALL
   
     SELECT
@@ -34,7 +34,7 @@ SELECT * FROM (
       FROM
         t_0_E, t_1_D AS D
       WHERE
-        (D.dept = t_0_E.dept) AND
-        (E.name = t_0_E.name)) IS NULL)
+        (D.dept <=> t_0_E.dept) AND
+        (E.name <=> t_0_E.name)) IS NULL)
   
 ) AS UNUSED_TABLE_NAME  ORDER BY name NULLS LAST, dname NULLS LAST ;

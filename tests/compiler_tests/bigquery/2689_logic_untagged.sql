@@ -151,4 +151,4 @@ WHERE
   FROM
     t_2_Tag AS t_1_Tag
   WHERE
-    (t_1_Tag.id = Person.id)) IS NULL) ORDER BY id NULLS LAST;
+    (t_1_Tag.id IS NOT DISTINCT FROM Person.id)) IS NULL) ORDER BY id NULLS LAST;

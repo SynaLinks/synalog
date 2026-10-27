@@ -4,18 +4,6 @@ create schema if not exists synalog_home;
 drop type if exists synalogrecord893574736 cascade; create type synalogrecord893574736 as struct(nirvana numeric);
 create sequence if not exists eternal_logical_sequence;
 
-
--- Synalog type: synalogrecord481217614
-drop type if exists synalogrecord481217614 cascade; create type synalogrecord481217614 as struct(r synalogrecord893574736);
-
--- Synalog type: synalogrecord383307722
-drop type if exists synalogrecord383307722 cascade; create type synalogrecord383307722 as struct(a timestamp);
-
--- Synalog type: synalogrecord884343024
-drop type if exists synalogrecord884343024 cascade; create type synalogrecord884343024 as struct(arg numeric, value numeric);
-
--- Synalog type: synalogrecord519939597
-drop type if exists synalogrecord519939597 cascade; create type synalogrecord519939597 as struct(args text[], predicate text);
 WITH t_2_Sale AS (SELECT * FROM (
   
     SELECT
@@ -80,6 +68,6 @@ FROM
   t_2_Sale AS t_0_Sale, t_2_Sale AS t_1_Sale, t_2_Sale AS Sale
 WHERE
   (t_1_Sale.amount < 60) AND
-  (t_1_Sale.id = Sale.id) AND
+  (t_1_Sale.id IS NOT DISTINCT FROM Sale.id) AND
   (t_0_Sale.product = 'cake') AND
-  (Sale.id = t_0_Sale.id);
+  (Sale.id IS NOT DISTINCT FROM t_0_Sale.id);

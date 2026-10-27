@@ -11,4 +11,4 @@ SELECT
 FROM
   t_0_Customer AS Customer
 WHERE
-  (Customer.last = UPPER(Customer.last));
+  (Customer.last <=> UPPER(Customer.last));

@@ -88,7 +88,7 @@ WHERE
     t_6_F AS F
   WHERE
     (F.a = 'eve') AND
-    (F.b = t_5_U.u)) IS NULL)),
+    (F.b IS NOT DISTINCT FROM t_5_U.u)) IS NULL)),
 t_2_N2 AS (SELECT
   t_3_U.u AS v
 FROM
@@ -99,7 +99,7 @@ WHERE
   FROM
     t_4_N1 AS N1
   WHERE
-    (N1.v = t_3_U.u)) IS NULL))
+    (N1.v IS NOT DISTINCT FROM t_3_U.u)) IS NULL))
 SELECT
   t_0_U.u AS v
 FROM
@@ -110,4 +110,4 @@ WHERE
   FROM
     t_2_N2 AS N2
   WHERE
-    (N2.v = t_0_U.u)) IS NULL) ORDER BY v;
+    (N2.v IS NOT DISTINCT FROM t_0_U.u)) IS NULL) ORDER BY v;

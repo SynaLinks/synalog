@@ -68,4 +68,4 @@ SELECT
 FROM
   t_0_B AS B
 WHERE
-  (CAST(ROW('dick', 'Ubik') AS ROW(author varchar, title varchar)) = CAST(ROW(B.author, B.title) AS ROW(author varchar, title varchar)));
+  (CAST(ROW('dick', 'Ubik') AS ROW(author varchar, title varchar)) IS NOT DISTINCT FROM CAST(ROW(B.author, B.title) AS ROW(author varchar, title varchar)));

@@ -149,7 +149,7 @@ t_1_Contains_MultBodyAggAux_f3 AS (SELECT * FROM (
     FROM
       synalog_test.Contains_sn_t0 AS Contains_sn_t0, t_2_Uses AS Uses
     WHERE
-      (Uses.part = Contains_sn_t0.component)
+      (Uses.part IS NOT DISTINCT FROM Contains_sn_t0.component)
    UNION ALL
   
     SELECT
@@ -240,7 +240,7 @@ t_1_Contains_MultBodyAggAux_f4 AS (SELECT * FROM (
     FROM
       synalog_test.Contains_sn_t1 AS Contains_sn_t1, t_2_Uses AS Uses
     WHERE
-      (Uses.part = Contains_sn_t1.component)
+      (Uses.part IS NOT DISTINCT FROM Contains_sn_t1.component)
    UNION ALL
   
     SELECT
@@ -331,7 +331,7 @@ t_1_Contains_MultBodyAggAux_f5 AS (SELECT * FROM (
     FROM
       synalog_test.Contains_sn_t2 AS Contains_sn_t2, t_2_Uses AS Uses
     WHERE
-      (Uses.part = Contains_sn_t2.component)
+      (Uses.part IS NOT DISTINCT FROM Contains_sn_t2.component)
    UNION ALL
   
     SELECT
@@ -422,7 +422,7 @@ t_1_Contains_MultBodyAggAux_f6 AS (SELECT * FROM (
     FROM
       synalog_test.Contains_sn_t3 AS Contains_sn_t3, t_2_Uses AS Uses
     WHERE
-      (Uses.part = Contains_sn_t3.component)
+      (Uses.part IS NOT DISTINCT FROM Contains_sn_t3.component)
    UNION ALL
   
     SELECT
@@ -513,7 +513,7 @@ t_1_Contains_MultBodyAggAux_f7 AS (SELECT * FROM (
     FROM
       synalog_test.Contains_sn_t4 AS Contains_sn_t4, t_2_Uses AS Uses
     WHERE
-      (Uses.part = Contains_sn_t4.component)
+      (Uses.part IS NOT DISTINCT FROM Contains_sn_t4.component)
    UNION ALL
   
     SELECT
@@ -652,7 +652,7 @@ t_1_Contains_MultBodyAggAux_f8 AS (SELECT * FROM (
     FROM
       synalog_test.Contains_sn_delta AS Contains_sn_delta, t_2_Uses AS Uses
     WHERE
-      (Uses.part = Contains_sn_delta.component)
+      (Uses.part IS NOT DISTINCT FROM Contains_sn_delta.component)
    UNION ALL
   
     SELECT
@@ -679,8 +679,8 @@ WHERE
   FROM
     synalog_test.Contains_sn_full AS Contains_sn_full
   WHERE
-    (Contains_sn_full.part = Contains_sn_step.part) AND
-    (Contains_sn_full.component = Contains_sn_step.component)) IS NULL)
+    (Contains_sn_full.part IS NOT DISTINCT FROM Contains_sn_step.part) AND
+    (Contains_sn_full.component IS NOT DISTINCT FROM Contains_sn_step.component)) IS NULL)
 GROUP BY 1, 2;
 
 INSERT INTO synalog_test.Contains_sn_full SELECT * FROM synalog_test.Contains_sn_new;
@@ -750,7 +750,7 @@ t_1_Contains_MultBodyAggAux_f1 AS (SELECT * FROM (
     FROM
       synalog_test.Contains_sn_new AS Contains_sn_new, t_2_Uses AS Uses
     WHERE
-      (Uses.part = Contains_sn_new.component)
+      (Uses.part IS NOT DISTINCT FROM Contains_sn_new.component)
    UNION ALL
   
     SELECT
@@ -777,8 +777,8 @@ WHERE
   FROM
     synalog_test.Contains_sn_full AS Contains_sn_full
   WHERE
-    (Contains_sn_full.part = Contains_sn_back_step.part) AND
-    (Contains_sn_full.component = Contains_sn_back_step.component)) IS NULL)
+    (Contains_sn_full.part IS NOT DISTINCT FROM Contains_sn_back_step.part) AND
+    (Contains_sn_full.component IS NOT DISTINCT FROM Contains_sn_back_step.component)) IS NULL)
 GROUP BY 1, 2;
 
 INSERT INTO synalog_test.Contains_sn_full SELECT * FROM synalog_test.Contains_sn_delta;
@@ -848,7 +848,7 @@ t_1_Contains_MultBodyAggAux_f8 AS (SELECT * FROM (
     FROM
       synalog_test.Contains_sn_delta AS Contains_sn_delta, t_2_Uses AS Uses
     WHERE
-      (Uses.part = Contains_sn_delta.component)
+      (Uses.part IS NOT DISTINCT FROM Contains_sn_delta.component)
    UNION ALL
   
     SELECT
@@ -875,8 +875,8 @@ WHERE
   FROM
     synalog_test.Contains_sn_full AS Contains_sn_full
   WHERE
-    (Contains_sn_full.part = Contains_sn_step.part) AND
-    (Contains_sn_full.component = Contains_sn_step.component)) IS NULL)
+    (Contains_sn_full.part IS NOT DISTINCT FROM Contains_sn_step.part) AND
+    (Contains_sn_full.component IS NOT DISTINCT FROM Contains_sn_step.component)) IS NULL)
 GROUP BY 1, 2;
 
 INSERT INTO synalog_test.Contains_sn_full SELECT * FROM synalog_test.Contains_sn_new;
@@ -946,7 +946,7 @@ t_1_Contains_MultBodyAggAux_f1 AS (SELECT * FROM (
     FROM
       synalog_test.Contains_sn_new AS Contains_sn_new, t_2_Uses AS Uses
     WHERE
-      (Uses.part = Contains_sn_new.component)
+      (Uses.part IS NOT DISTINCT FROM Contains_sn_new.component)
    UNION ALL
   
     SELECT
@@ -973,8 +973,8 @@ WHERE
   FROM
     synalog_test.Contains_sn_full AS Contains_sn_full
   WHERE
-    (Contains_sn_full.part = Contains_sn_back_step.part) AND
-    (Contains_sn_full.component = Contains_sn_back_step.component)) IS NULL)
+    (Contains_sn_full.part IS NOT DISTINCT FROM Contains_sn_back_step.part) AND
+    (Contains_sn_full.component IS NOT DISTINCT FROM Contains_sn_back_step.component)) IS NULL)
 GROUP BY 1, 2;
 
 INSERT INTO synalog_test.Contains_sn_full SELECT * FROM synalog_test.Contains_sn_delta;
@@ -1044,7 +1044,7 @@ t_1_Contains_MultBodyAggAux_f8 AS (SELECT * FROM (
     FROM
       synalog_test.Contains_sn_delta AS Contains_sn_delta, t_2_Uses AS Uses
     WHERE
-      (Uses.part = Contains_sn_delta.component)
+      (Uses.part IS NOT DISTINCT FROM Contains_sn_delta.component)
    UNION ALL
   
     SELECT
@@ -1071,8 +1071,8 @@ WHERE
   FROM
     synalog_test.Contains_sn_full AS Contains_sn_full
   WHERE
-    (Contains_sn_full.part = Contains_sn_step.part) AND
-    (Contains_sn_full.component = Contains_sn_step.component)) IS NULL)
+    (Contains_sn_full.part IS NOT DISTINCT FROM Contains_sn_step.part) AND
+    (Contains_sn_full.component IS NOT DISTINCT FROM Contains_sn_step.component)) IS NULL)
 GROUP BY 1, 2;
 
 INSERT INTO synalog_test.Contains_sn_full SELECT * FROM synalog_test.Contains_sn_new;
@@ -1142,7 +1142,7 @@ t_1_Contains_MultBodyAggAux_f1 AS (SELECT * FROM (
     FROM
       synalog_test.Contains_sn_new AS Contains_sn_new, t_2_Uses AS Uses
     WHERE
-      (Uses.part = Contains_sn_new.component)
+      (Uses.part IS NOT DISTINCT FROM Contains_sn_new.component)
    UNION ALL
   
     SELECT
@@ -1169,8 +1169,8 @@ WHERE
   FROM
     synalog_test.Contains_sn_full AS Contains_sn_full
   WHERE
-    (Contains_sn_full.part = Contains_sn_back_step.part) AND
-    (Contains_sn_full.component = Contains_sn_back_step.component)) IS NULL)
+    (Contains_sn_full.part IS NOT DISTINCT FROM Contains_sn_back_step.part) AND
+    (Contains_sn_full.component IS NOT DISTINCT FROM Contains_sn_back_step.component)) IS NULL)
 GROUP BY 1, 2;
 
 INSERT INTO synalog_test.Contains_sn_full SELECT * FROM synalog_test.Contains_sn_delta;
@@ -1190,6 +1190,6 @@ SELECT
 FROM
   t_0_Product AS Product, synalog_test.Contains_sn_full AS Contains_sn_full
 WHERE
-  (Product.part = Contains_sn_full.part) AND
+  (Product.part IS NOT DISTINCT FROM Contains_sn_full.part) AND
   ('bearing' = Contains_sn_full.component)
 GROUP BY 1 ORDER BY part;

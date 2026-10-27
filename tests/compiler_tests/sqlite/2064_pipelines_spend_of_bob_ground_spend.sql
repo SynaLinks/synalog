@@ -107,7 +107,7 @@ FROM
   t_1_Order AS t_0_Order, t_2_Price AS Price
 WHERE
   (t_0_Order.state = 'paid') AND
-  (Price.item = t_0_Order.item)
+  (Price.item IS t_0_Order.item)
 GROUP BY t_0_Order.who;
 
 -- Interacting with table synalog_test.Spend

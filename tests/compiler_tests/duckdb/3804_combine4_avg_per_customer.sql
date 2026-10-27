@@ -73,6 +73,6 @@ SELECT
 FROM
   t_1_O AS O, (select unnest([0]) as unnested_pod) as x_6
 WHERE
-  (O.c = t_0_C.c)) AS v
+  (O.c IS NOT DISTINCT FROM t_0_C.c)) AS v
 FROM
   t_2_C AS t_0_C ORDER BY c;

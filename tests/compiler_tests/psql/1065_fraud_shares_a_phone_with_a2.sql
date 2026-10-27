@@ -4,14 +4,6 @@ create schema if not exists synalog_home;
 -- Empty synalog type: synalogrecord893574736;
 DO $$ BEGIN if not exists (select 'I(am) :- I(think)' from pg_type where typname = 'synalogrecord893574736') then create type synalogrecord893574736 as (nirvana numeric); end if; END $$;
 
-
-DO $$
-BEGIN
--- Synalog type: synalogrecord481217614
-if not exists (select 'I(am) :- I(think)' from pg_type where typname = 'synalogrecord481217614') then create type synalogrecord481217614 as (r synalogrecord893574736); end if;
--- Synalog type: synalogrecord86796764
-if not exists (select 'I(am) :- I(think)' from pg_type where typname = 'synalogrecord86796764') then create type synalogrecord86796764 as (s text); end if;
-END $$;
 WITH t_2_HasPhone AS (SELECT * FROM (
   
     SELECT
@@ -60,8 +52,8 @@ t_0_Shares AS (SELECT
 FROM
   t_2_HasPhone AS HasPhone, t_2_HasPhone AS t_1_HasPhone
 WHERE
-  (HasPhone.account != t_1_HasPhone.account) AND
-  (t_1_HasPhone.phone = HasPhone.phone)
+  (HasPhone.account IS DISTINCT FROM t_1_HasPhone.account) AND
+  (COALESCE(t_1_HasPhone.phone, '') = COALESCE(HasPhone.phone, '') AND (t_1_HasPhone.phone IS NULL) = (HasPhone.phone IS NULL))
 GROUP BY HasPhone.account, t_1_HasPhone.account)
 SELECT
   Shares.b AS b

@@ -61,6 +61,6 @@ SELECT
 FROM
   t_1_Follows AS Follows, t_1_Follows AS t_0_Follows
 WHERE
-  (t_0_Follows.a = Follows.b) AND
-  (t_0_Follows.b = Follows.a)
-GROUP BY a ORDER BY a, n;
+  (t_0_Follows.a IS NOT DISTINCT FROM Follows.b) AND
+  (t_0_Follows.b IS NOT DISTINCT FROM Follows.a)
+GROUP BY a ORDER BY a NULLS LAST, n NULLS LAST;

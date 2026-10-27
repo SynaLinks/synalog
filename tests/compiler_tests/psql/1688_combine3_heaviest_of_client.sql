@@ -4,14 +4,6 @@ create schema if not exists synalog_home;
 -- Empty synalog type: synalogrecord893574736;
 DO $$ BEGIN if not exists (select 'I(am) :- I(think)' from pg_type where typname = 'synalogrecord893574736') then create type synalogrecord893574736 as (nirvana numeric); end if; END $$;
 
-
-DO $$
-BEGIN
--- Synalog type: synalogrecord481217614
-if not exists (select 'I(am) :- I(think)' from pg_type where typname = 'synalogrecord481217614') then create type synalogrecord481217614 as (r synalogrecord893574736); end if;
--- Synalog type: synalogrecord86796764
-if not exists (select 'I(am) :- I(think)' from pg_type where typname = 'synalogrecord86796764') then create type synalogrecord86796764 as (s text); end if;
-END $$;
 WITH t_0_Ship AS (SELECT * FROM (
   
     SELECT
@@ -100,9 +92,14 @@ SELECT
 FROM
   t_0_Ship AS Ship
 WHERE
-  (Ship.kg = CAST((SELECT
+  (COALESCE(Ship.kg, 0) = COALESCE(CAST((SELECT
     MAX((CASE WHEN x_8 = 0 THEN t_1_Ship.kg ELSE NULL END)) AS synalog_value
   FROM
-    t_0_Ship AS t_1_Ship, UNNEST(ARRAY[0]::numeric[]) as x_8
+    t_0_Ship AS t_1_Ship, UNNEST(ARRAY[0]) as x_8
   WHERE
-    (t_1_Ship.client = Ship.client)) AS numeric)) ORDER BY id;
+    (COALESCE(t_1_Ship.client, '') = COALESCE(Ship.client, '') AND (t_1_Ship.client IS NULL) = (Ship.client IS NULL))) AS numeric), 0) AND (Ship.kg IS NULL) = (CAST((SELECT
+    MAX((CASE WHEN x_8 = 0 THEN t_1_Ship.kg ELSE NULL END)) AS synalog_value
+  FROM
+    t_0_Ship AS t_1_Ship, UNNEST(ARRAY[0]) as x_8
+  WHERE
+    (COALESCE(t_1_Ship.client, '') = COALESCE(Ship.client, '') AND (t_1_Ship.client IS NULL) = (Ship.client IS NULL))) AS numeric) IS NULL)) ORDER BY id;

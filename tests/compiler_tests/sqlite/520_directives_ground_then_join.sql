@@ -2,9 +2,9 @@ ATTACH DATABASE ':memory:' AS synalog_test;
 
 DROP TABLE IF EXISTS synalog_test.G;
 CREATE TABLE synalog_test.G AS SELECT
-  x_6.value AS k
+  x_1.value AS k
 FROM
-  JSON_EACH(JSON_ARRAY(1)) as x_6;
+  JSON_EACH(JSON_ARRAY(1)) as x_1;
 
 -- Interacting with table synalog_test.G
 
@@ -26,4 +26,4 @@ SELECT
 FROM
   synalog_test.G AS G, t_0_N AS N
 WHERE
-  (N.k = G.k);
+  (N.k IS G.k);

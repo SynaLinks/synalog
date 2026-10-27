@@ -194,7 +194,7 @@ TopRegion(region:, total:) :- TotalByRegion(region:, total:);
 - One predicate per file, in `tables/`, `concepts/` or `rules/`, with front matter (`name`, `description`): see *Project structure*.
 - `@OrderBy` is **mandatory** on every predicate; without it pagination is non-deterministic.
 - Arguments are always **named**: `Predicate(column: variable)`. LEFT = column of the predicate, RIGHT = your variable. `Orders(amount:)` is shorthand when both share the name. `Orders(total: amount)` is WRONG (looks for a column named `total`).
-- Null tests: `x is null` / `x is not null`. **Never** `x != null` (silently broken).
+- Null tests: `x is null` / `x is not null`. A null equals a null: null keys join, and `~P(k:)` finds a null `k`. Add `k is not null` where null keys must not meet.
 - Count with `count? += 1`. **Never** `Count()`.
 - Reuse predicates: before adding a file, read the project and import existing predicates instead of recomputing (define `CustomerRevenue` once; `TopCustomers` imports it).
 - For categorical columns (`status`, `type`, `tier`, ...), extract the distinct values as a concept first, then write rules over it.

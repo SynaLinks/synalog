@@ -29,15 +29,15 @@ t_1_MemberOf AS (SELECT
 FROM
   t_3_Person AS Person, t_6_Team AS t_2_Team, t_5_Employees AS Employees
 WHERE
-  (Employees.person_id = Person.person_id) AND
-  (Employees.team_id = t_2_Team.team_id)
+  (Employees.person_id <=> Person.person_id) AND
+  (Employees.team_id <=> t_2_Team.team_id)
 GROUP BY 1, 2)
 SELECT
   t_0_MemberOf.person_id AS person_id
 FROM
   t_1_MemberOf AS MemberOf, t_1_MemberOf AS t_0_MemberOf
 WHERE
-  (t_0_MemberOf.person_id != 1) AND
+  (NOT (t_0_MemberOf.person_id <=> 1)) AND
   (MemberOf.person_id = 1) AND
-  (t_0_MemberOf.team_id = MemberOf.team_id)
+  (t_0_MemberOf.team_id <=> MemberOf.team_id)
 GROUP BY 1 ORDER BY person_id NULLS LAST;

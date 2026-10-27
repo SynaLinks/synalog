@@ -64,4 +64,4 @@ FROM
   t_0_Emp AS Emp
 WHERE
   (Emp.salary < 4500) AND
-  (CAST(ROW(Emp.city, Emp.dept, Emp.salary) AS ROW(city varchar, dept varchar, salary double)) = CAST(ROW(Emp.city, Emp.dept, Emp.salary) AS ROW(city varchar, dept varchar, salary double))) ORDER BY name, dept, salary;
+  (CAST(ROW(Emp.city, Emp.dept, Emp.salary) AS ROW(city varchar, dept varchar, salary double)) IS NOT DISTINCT FROM CAST(ROW(Emp.city, Emp.dept, Emp.salary) AS ROW(city varchar, dept varchar, salary double))) ORDER BY name, dept, salary;

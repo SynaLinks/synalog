@@ -20,5 +20,5 @@ FROM
   t_2_E AS E, t_2_E AS t_0_E, t_3_D AS t_1_D
 WHERE
   (E.id = 4) AND
-  (t_0_E.id = E.boss) AND
-  (t_1_D.d = t_0_E.d);
+  (t_0_E.id <=> E.boss) AND
+  (t_1_D.d <=> t_0_E.d);

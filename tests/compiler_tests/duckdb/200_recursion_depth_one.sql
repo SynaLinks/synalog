@@ -44,7 +44,7 @@ t_0_Reach_RecursiveCte AS (SELECT * FROM (
         (((0) + (1)) < 1) AND
         (0 < 1) AND
         (1 = 0) AND
-        (t_4_Edge.a = t_6_Edge.b) AND
+        (t_4_Edge.a IS NOT DISTINCT FROM t_6_Edge.b) AND
         (t_6_Edge.a = 1)
      UNION ALL
     
@@ -58,8 +58,8 @@ t_0_Reach_RecursiveCte AS (SELECT * FROM (
         (((0) + (1)) < 1) AND
         (0 < 1) AND
         (1 = 0) AND
-        (t_9_Edge.a = t_11_Edge.b) AND
-        (t_11_Edge.a = t_13_Edge.b) AND
+        (t_9_Edge.a IS NOT DISTINCT FROM t_11_Edge.b) AND
+        (t_11_Edge.a IS NOT DISTINCT FROM t_13_Edge.b) AND
         (t_13_Edge.a = 1)
     
   ) AS UNUSED_TABLE_NAME  
@@ -72,7 +72,7 @@ FROM
   t_0_Reach_RecursiveCte AS t_15_Reach_RecursiveCte, t_2_Edge AS t_16_Edge
 WHERE
   (t_15_Reach_RecursiveCte.synalog_step < 1) AND
-  (t_16_Edge.a = t_15_Reach_RecursiveCte.x))
+  (t_16_Edge.a IS NOT DISTINCT FROM t_15_Reach_RecursiveCte.x))
 SELECT
   Reach_RecursiveCte.x AS x
 FROM

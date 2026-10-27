@@ -24,7 +24,7 @@ WITH RECURSIVE t_1_Reach_RecursiveCte AS (SELECT * FROM (
       WHERE
         (0 < 21) AND
         (1 = 0) AND
-        (x_36 = ((x_42) + (1)))
+        (COALESCE(x_36, 0) = COALESCE(((x_42) + (1)), 0) AND (x_36 IS NULL) = (((x_42) + (1)) IS NULL))
      UNION ALL
     
       SELECT
@@ -37,8 +37,8 @@ WITH RECURSIVE t_1_Reach_RecursiveCte AS (SELECT * FROM (
         (((0) + (1)) < 21) AND
         (0 < 21) AND
         (1 = 0) AND
-        (x_64 = ((x_72) + (1))) AND
-        (x_72 = ((x_78) + (1)))
+        (COALESCE(x_64, 0) = COALESCE(((x_72) + (1)), 0) AND (x_64 IS NULL) = (((x_72) + (1)) IS NULL)) AND
+        (COALESCE(x_72, 0) = COALESCE(((x_78) + (1)), 0) AND (x_72 IS NULL) = (((x_78) + (1)) IS NULL))
      UNION ALL
     
       SELECT
@@ -52,9 +52,9 @@ WITH RECURSIVE t_1_Reach_RecursiveCte AS (SELECT * FROM (
         (((0) + (1)) < 21) AND
         (0 < 21) AND
         (1 = 0) AND
-        (x_100 = ((x_109) + (1))) AND
-        (x_109 = ((x_117) + (1))) AND
-        (x_117 = ((x_123) + (1)))
+        (COALESCE(x_100, 0) = COALESCE(((x_109) + (1)), 0) AND (x_100 IS NULL) = (((x_109) + (1)) IS NULL)) AND
+        (COALESCE(x_109, 0) = COALESCE(((x_117) + (1)), 0) AND (x_109 IS NULL) = (((x_117) + (1)) IS NULL)) AND
+        (COALESCE(x_117, 0) = COALESCE(((x_123) + (1)), 0) AND (x_117 IS NULL) = (((x_123) + (1)) IS NULL))
      UNION ALL
     
       SELECT
@@ -69,10 +69,10 @@ WITH RECURSIVE t_1_Reach_RecursiveCte AS (SELECT * FROM (
         (((0) + (1)) < 21) AND
         (0 < 21) AND
         (1 = 0) AND
-        (x_145 = ((x_154) + (1))) AND
-        (x_154 = ((x_163) + (1))) AND
-        (x_163 = ((x_171) + (1))) AND
-        (x_171 = ((x_177) + (1)))
+        (COALESCE(x_145, 0) = COALESCE(((x_154) + (1)), 0) AND (x_145 IS NULL) = (((x_154) + (1)) IS NULL)) AND
+        (COALESCE(x_154, 0) = COALESCE(((x_163) + (1)), 0) AND (x_154 IS NULL) = (((x_163) + (1)) IS NULL)) AND
+        (COALESCE(x_163, 0) = COALESCE(((x_171) + (1)), 0) AND (x_163 IS NULL) = (((x_171) + (1)) IS NULL)) AND
+        (COALESCE(x_171, 0) = COALESCE(((x_177) + (1)), 0) AND (x_171 IS NULL) = (((x_177) + (1)) IS NULL))
      UNION ALL
     
       SELECT
@@ -88,11 +88,11 @@ WITH RECURSIVE t_1_Reach_RecursiveCte AS (SELECT * FROM (
         (((0) + (1)) < 21) AND
         (0 < 21) AND
         (1 = 0) AND
-        (x_199 = ((x_208) + (1))) AND
-        (x_208 = ((x_217) + (1))) AND
-        (x_217 = ((x_226) + (1))) AND
-        (x_226 = ((x_234) + (1))) AND
-        (x_234 = ((x_240) + (1)))
+        (COALESCE(x_199, 0) = COALESCE(((x_208) + (1)), 0) AND (x_199 IS NULL) = (((x_208) + (1)) IS NULL)) AND
+        (COALESCE(x_208, 0) = COALESCE(((x_217) + (1)), 0) AND (x_208 IS NULL) = (((x_217) + (1)) IS NULL)) AND
+        (COALESCE(x_217, 0) = COALESCE(((x_226) + (1)), 0) AND (x_217 IS NULL) = (((x_226) + (1)) IS NULL)) AND
+        (COALESCE(x_226, 0) = COALESCE(((x_234) + (1)), 0) AND (x_226 IS NULL) = (((x_234) + (1)) IS NULL)) AND
+        (COALESCE(x_234, 0) = COALESCE(((x_240) + (1)), 0) AND (x_234 IS NULL) = (((x_240) + (1)) IS NULL))
     
   ) AS UNUSED_TABLE_NAME  
 ) AS UNUSED_TABLE_NAME
@@ -105,7 +105,7 @@ FROM
   t_1_Reach_RecursiveCte AS t_41_Reach_RecursiveCte, UNNEST(COALESCE((SELECT ARRAY_AGG(x) FROM GENERATE_SERIES(0, 4 - 1) as x), '{}')) as x_249
 WHERE
   (t_41_Reach_RecursiveCte.synalog_step < 21) AND
-  (t_41_Reach_RecursiveCte.y = x_249)),
+  (COALESCE(t_41_Reach_RecursiveCte.y, 0) = COALESCE(x_249, 0) AND (t_41_Reach_RecursiveCte.y IS NULL) = (x_249 IS NULL))),
 t_0_Reach AS (SELECT
   Reach_RecursiveCte.x AS x,
   Reach_RecursiveCte.y AS y

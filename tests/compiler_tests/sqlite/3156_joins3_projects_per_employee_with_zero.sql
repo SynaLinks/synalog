@@ -71,6 +71,6 @@ SELECT
 FROM
   t_0_Pr AS Pr, JSON_EACH(JSON_ARRAY(0)) as x_5
 WHERE
-  (Pr.dept = E.dept)), 0) AS n
+  (Pr.dept IS E.dept)), 0) AS n
 FROM
   t_1_E AS E ORDER BY name NULLS LAST, n NULLS LAST;

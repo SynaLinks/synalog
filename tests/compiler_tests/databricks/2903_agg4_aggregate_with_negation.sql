@@ -26,4 +26,4 @@ WHERE
   FROM
     t_1_InLima AS InLima
   WHERE
-    (InLima.product = S.product)) IS NULL);
+    (InLima.product <=> S.product)) IS NULL);

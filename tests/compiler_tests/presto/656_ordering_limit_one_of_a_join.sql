@@ -16,4 +16,4 @@ SELECT
 FROM
   t_0_A AS A, UNNEST(TRANSFORM(ARRAY[1, 2], synalog_e -> ROW(synalog_e))) as pushkin(x_6)
 WHERE
-  (A.k = x_6) ORDER BY k LIMIT 1;
+  (A.k IS NOT DISTINCT FROM x_6) ORDER BY k LIMIT 1;

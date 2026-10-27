@@ -64,4 +64,4 @@ FROM
   t_0_Emp AS Emp
 WHERE
   (Emp.salary < 4500) AND
-  (STRUCT(Emp.dept AS dept, Emp.salary AS salary, Emp.city AS city) = STRUCT(Emp.dept AS dept, Emp.salary AS salary, Emp.city AS city)) ORDER BY name, dept, salary;
+  (STRUCT(Emp.dept AS dept, Emp.salary AS salary, Emp.city AS city) IS NOT DISTINCT FROM STRUCT(Emp.dept AS dept, Emp.salary AS salary, Emp.city AS city)) ORDER BY name NULLS LAST, dept NULLS LAST, salary NULLS LAST;

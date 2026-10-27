@@ -102,6 +102,6 @@ SELECT
 FROM
   t_2_M AS t_0_M, t_4_E AS E, t_5_D AS t_1_D
 WHERE
-  (E.d = t_0_M.d) AND
-  (E.pay = t_0_M.m) AND
-  (t_1_D.d = t_0_M.d) ORDER BY dn;
+  (E.d IS NOT DISTINCT FROM t_0_M.d) AND
+  (E.pay IS NOT DISTINCT FROM t_0_M.m) AND
+  (t_1_D.d IS NOT DISTINCT FROM t_0_M.d) ORDER BY dn;

@@ -101,5 +101,5 @@ SELECT
 FROM
   t_1_E AS E, t_2_D AS t_0_D
 WHERE
-  (t_0_D.d = E.d) AND
+  (COALESCE(t_0_D.d, 0) = COALESCE(E.d, 0) AND (t_0_D.d IS NULL) = (E.d IS NULL)) AND
   (t_0_D.city = 'paris') ORDER BY n;

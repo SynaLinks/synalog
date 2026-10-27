@@ -46,7 +46,7 @@ t_1_Above_RecursiveCte AS (SELECT * FROM (
       WHERE
         (0 < 6) AND
         (1 = 0) AND
-        (t_3_ApproverOf.requester = t_5_ApproverOf.approver)
+        (t_3_ApproverOf.requester IS NOT DISTINCT FROM t_5_ApproverOf.approver)
      UNION ALL
     
       SELECT
@@ -59,8 +59,8 @@ t_1_Above_RecursiveCte AS (SELECT * FROM (
         (((0) + (1)) < 6) AND
         (0 < 6) AND
         (1 = 0) AND
-        (t_7_ApproverOf.requester = t_9_ApproverOf.approver) AND
-        (t_9_ApproverOf.requester = t_11_ApproverOf.approver)
+        (t_7_ApproverOf.requester IS NOT DISTINCT FROM t_9_ApproverOf.approver) AND
+        (t_9_ApproverOf.requester IS NOT DISTINCT FROM t_11_ApproverOf.approver)
      UNION ALL
     
       SELECT
@@ -74,9 +74,9 @@ t_1_Above_RecursiveCte AS (SELECT * FROM (
         (((0) + (1)) < 6) AND
         (0 < 6) AND
         (1 = 0) AND
-        (t_13_ApproverOf.requester = t_15_ApproverOf.approver) AND
-        (t_15_ApproverOf.requester = t_17_ApproverOf.approver) AND
-        (t_17_ApproverOf.requester = t_19_ApproverOf.approver)
+        (t_13_ApproverOf.requester IS NOT DISTINCT FROM t_15_ApproverOf.approver) AND
+        (t_15_ApproverOf.requester IS NOT DISTINCT FROM t_17_ApproverOf.approver) AND
+        (t_17_ApproverOf.requester IS NOT DISTINCT FROM t_19_ApproverOf.approver)
      UNION ALL
     
       SELECT
@@ -91,10 +91,10 @@ t_1_Above_RecursiveCte AS (SELECT * FROM (
         (((0) + (1)) < 6) AND
         (0 < 6) AND
         (1 = 0) AND
-        (t_21_ApproverOf.requester = t_23_ApproverOf.approver) AND
-        (t_23_ApproverOf.requester = t_25_ApproverOf.approver) AND
-        (t_25_ApproverOf.requester = t_27_ApproverOf.approver) AND
-        (t_27_ApproverOf.requester = t_29_ApproverOf.approver)
+        (t_21_ApproverOf.requester IS NOT DISTINCT FROM t_23_ApproverOf.approver) AND
+        (t_23_ApproverOf.requester IS NOT DISTINCT FROM t_25_ApproverOf.approver) AND
+        (t_25_ApproverOf.requester IS NOT DISTINCT FROM t_27_ApproverOf.approver) AND
+        (t_27_ApproverOf.requester IS NOT DISTINCT FROM t_29_ApproverOf.approver)
      UNION ALL
     
       SELECT
@@ -110,11 +110,11 @@ t_1_Above_RecursiveCte AS (SELECT * FROM (
         (((0) + (1)) < 6) AND
         (0 < 6) AND
         (1 = 0) AND
-        (t_31_ApproverOf.requester = t_33_ApproverOf.approver) AND
-        (t_33_ApproverOf.requester = t_35_ApproverOf.approver) AND
-        (t_35_ApproverOf.requester = t_37_ApproverOf.approver) AND
-        (t_37_ApproverOf.requester = t_39_ApproverOf.approver) AND
-        (t_39_ApproverOf.requester = t_41_ApproverOf.approver)
+        (t_31_ApproverOf.requester IS NOT DISTINCT FROM t_33_ApproverOf.approver) AND
+        (t_33_ApproverOf.requester IS NOT DISTINCT FROM t_35_ApproverOf.approver) AND
+        (t_35_ApproverOf.requester IS NOT DISTINCT FROM t_37_ApproverOf.approver) AND
+        (t_37_ApproverOf.requester IS NOT DISTINCT FROM t_39_ApproverOf.approver) AND
+        (t_39_ApproverOf.requester IS NOT DISTINCT FROM t_41_ApproverOf.approver)
     
   ) AS UNUSED_TABLE_NAME  
 ) AS UNUSED_TABLE_NAME
@@ -127,7 +127,7 @@ FROM
   t_1_Above_RecursiveCte AS t_42_Above_RecursiveCte, t_2_ApproverOf AS t_43_ApproverOf
 WHERE
   (t_42_Above_RecursiveCte.synalog_step < 6) AND
-  (t_43_ApproverOf.requester = t_42_Above_RecursiveCte.approver)),
+  (t_43_ApproverOf.requester IS NOT DISTINCT FROM t_42_Above_RecursiveCte.approver)),
 t_0_Above AS (SELECT
   Above_RecursiveCte.approver AS approver,
   Above_RecursiveCte.requester AS requester

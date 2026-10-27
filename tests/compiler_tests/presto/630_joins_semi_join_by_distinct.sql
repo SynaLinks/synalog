@@ -23,5 +23,5 @@ SELECT
 FROM
   t_0_A AS A, t_1_B AS B
 WHERE
-  (B.x = A.x)
+  (B.x IS NOT DISTINCT FROM A.x)
 GROUP BY 1;

@@ -89,4 +89,4 @@ WHERE
   FROM
     t_3_Uses AS t_5_Uses, (select unnest([0]) as unnested_pod) as x_10
   WHERE
-    (t_5_Uses.part = t_0_Part.part)) IS NULL) ORDER BY part;
+    (t_5_Uses.part IS NOT DISTINCT FROM t_0_Part.part)) IS NULL) ORDER BY part;

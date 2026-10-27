@@ -16,14 +16,14 @@ SELECT
 FROM
   t_1_Follows AS Follows, t_1_Follows AS t_0_Follows
 WHERE
-  (t_0_Follows.b != "cat") AND
+  (NOT (t_0_Follows.b <=> "cat")) AND
   ((SELECT
     MIN(1) AS synalog_value
   FROM
     t_1_Follows AS t_2_Follows
   WHERE
     (t_2_Follows.a = "cat") AND
-    (t_2_Follows.b = t_0_Follows.b)) IS NULL) AND
+    (t_2_Follows.b <=> t_0_Follows.b)) IS NULL) AND
   (Follows.a = "cat") AND
-  (t_0_Follows.a = Follows.b)
+  (t_0_Follows.a <=> Follows.b)
 GROUP BY 1;

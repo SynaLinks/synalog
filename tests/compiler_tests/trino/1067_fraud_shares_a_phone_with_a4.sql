@@ -46,8 +46,8 @@ t_0_Shares AS (SELECT
 FROM
   t_2_HasPhone AS HasPhone, t_2_HasPhone AS t_1_HasPhone
 WHERE
-  (HasPhone.account != t_1_HasPhone.account) AND
-  (t_1_HasPhone.phone = HasPhone.phone)
+  (HasPhone.account IS DISTINCT FROM t_1_HasPhone.account) AND
+  (t_1_HasPhone.phone IS NOT DISTINCT FROM HasPhone.phone)
 GROUP BY 1, 2)
 SELECT
   Shares.b AS b

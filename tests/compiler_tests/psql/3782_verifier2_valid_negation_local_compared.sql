@@ -44,4 +44,4 @@ WHERE
     t_2_E AS E, UNNEST(ARRAY[0]) as x_6
   WHERE
     (E.b > 2) AND
-    (E.a = t_0_N.n)) AS numeric) IS NULL) ORDER BY n;
+    (COALESCE(E.a, 0) = COALESCE(t_0_N.n, 0) AND (E.a IS NULL) = (t_0_N.n IS NULL))) AS numeric) IS NULL) ORDER BY n;

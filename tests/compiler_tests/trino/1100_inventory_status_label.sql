@@ -93,4 +93,4 @@ SELECT
 FROM
   t_0_Total AS Total, t_2_Reorder AS Reorder
 WHERE
-  (Reorder.item = Total.item) ORDER BY item, status;
+  (Reorder.item IS NOT DISTINCT FROM Total.item) ORDER BY item, status;

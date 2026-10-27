@@ -10,4 +10,4 @@ WHERE
   WHERE
     (x_3 > 5) AND
     (x_3 < 3) AND
-    (x_3 = x_8)) IS NULL) ORDER BY x;
+    (x_3 IS NOT DISTINCT FROM x_8)) IS NULL) ORDER BY x;

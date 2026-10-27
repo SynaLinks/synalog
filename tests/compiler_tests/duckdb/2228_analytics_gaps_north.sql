@@ -113,4 +113,4 @@ WHERE
   FROM
     t_2_D AS t_4_D, (select unnest([0]) as unnested_pod) as x_10
   WHERE
-    (t_4_D.d = x_3.unnested_pod)) IS NULL);
+    (t_4_D.d IS NOT DISTINCT FROM x_3.unnested_pod)) IS NULL);

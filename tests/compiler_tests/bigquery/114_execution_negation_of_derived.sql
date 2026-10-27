@@ -36,7 +36,7 @@ t_27_Reach_MultBodyAggAux_recursive_head_f2 AS (SELECT * FROM (
     FROM
       t_29_Reach_r0 AS Reach_r0, t_32_Edge AS t_28_Edge
     WHERE
-      (t_28_Edge.x = Reach_r0.y)
+      (t_28_Edge.x IS NOT DISTINCT FROM Reach_r0.y)
   
 ) AS UNUSED_TABLE_NAME  ),
 t_26_Reach_r1 AS (SELECT
@@ -58,7 +58,7 @@ t_24_Reach_MultBodyAggAux_recursive_head_f3 AS (SELECT * FROM (
     FROM
       t_26_Reach_r1 AS Reach_r1, t_32_Edge AS t_25_Edge
     WHERE
-      (t_25_Edge.x = Reach_r1.y)
+      (t_25_Edge.x IS NOT DISTINCT FROM Reach_r1.y)
   
 ) AS UNUSED_TABLE_NAME  ),
 t_23_Reach_r2 AS (SELECT
@@ -80,7 +80,7 @@ t_21_Reach_MultBodyAggAux_recursive_head_f4 AS (SELECT * FROM (
     FROM
       t_23_Reach_r2 AS Reach_r2, t_32_Edge AS t_22_Edge
     WHERE
-      (t_22_Edge.x = Reach_r2.y)
+      (t_22_Edge.x IS NOT DISTINCT FROM Reach_r2.y)
   
 ) AS UNUSED_TABLE_NAME  ),
 t_20_Reach_r3 AS (SELECT
@@ -102,7 +102,7 @@ t_18_Reach_MultBodyAggAux_recursive_head_f5 AS (SELECT * FROM (
     FROM
       t_20_Reach_r3 AS Reach_r3, t_32_Edge AS t_19_Edge
     WHERE
-      (t_19_Edge.x = Reach_r3.y)
+      (t_19_Edge.x IS NOT DISTINCT FROM Reach_r3.y)
   
 ) AS UNUSED_TABLE_NAME  ),
 t_17_Reach_r4 AS (SELECT
@@ -124,7 +124,7 @@ t_15_Reach_MultBodyAggAux_recursive_head_f6 AS (SELECT * FROM (
     FROM
       t_17_Reach_r4 AS Reach_r4, t_32_Edge AS t_16_Edge
     WHERE
-      (t_16_Edge.x = Reach_r4.y)
+      (t_16_Edge.x IS NOT DISTINCT FROM Reach_r4.y)
   
 ) AS UNUSED_TABLE_NAME  ),
 t_14_Reach_r5 AS (SELECT
@@ -146,7 +146,7 @@ t_12_Reach_MultBodyAggAux_recursive_head_f7 AS (SELECT * FROM (
     FROM
       t_14_Reach_r5 AS Reach_r5, t_32_Edge AS t_13_Edge
     WHERE
-      (t_13_Edge.x = Reach_r5.y)
+      (t_13_Edge.x IS NOT DISTINCT FROM Reach_r5.y)
   
 ) AS UNUSED_TABLE_NAME  ),
 t_11_Reach_r6 AS (SELECT
@@ -168,7 +168,7 @@ t_9_Reach_MultBodyAggAux_recursive_head_f8 AS (SELECT * FROM (
     FROM
       t_11_Reach_r6 AS Reach_r6, t_32_Edge AS t_10_Edge
     WHERE
-      (t_10_Edge.x = Reach_r6.y)
+      (t_10_Edge.x IS NOT DISTINCT FROM Reach_r6.y)
   
 ) AS UNUSED_TABLE_NAME  ),
 t_8_Reach_r7 AS (SELECT
@@ -190,7 +190,7 @@ t_6_Reach_MultBodyAggAux_recursive_head_f9 AS (SELECT * FROM (
     FROM
       t_8_Reach_r7 AS Reach_r7, t_32_Edge AS t_7_Edge
     WHERE
-      (t_7_Edge.x = Reach_r7.y)
+      (t_7_Edge.x IS NOT DISTINCT FROM Reach_r7.y)
   
 ) AS UNUSED_TABLE_NAME  ),
 t_5_Reach_r8 AS (SELECT
@@ -212,7 +212,7 @@ t_3_Reach_MultBodyAggAux_recursive_head_f10 AS (SELECT * FROM (
     FROM
       t_5_Reach_r8 AS Reach_r8, t_32_Edge AS t_4_Edge
     WHERE
-      (t_4_Edge.x = Reach_r8.y)
+      (t_4_Edge.x IS NOT DISTINCT FROM Reach_r8.y)
   
 ) AS UNUSED_TABLE_NAME  ),
 t_2_Reach_r9 AS (SELECT
@@ -234,7 +234,7 @@ t_1_Reach_MultBodyAggAux_recursive_head_f11 AS (SELECT * FROM (
     FROM
       t_2_Reach_r9 AS Reach_r9, t_32_Edge AS Edge
     WHERE
-      (Edge.x = Reach_r9.y)
+      (Edge.x IS NOT DISTINCT FROM Reach_r9.y)
   
 ) AS UNUSED_TABLE_NAME  ),
 t_0_Reach AS (SELECT
@@ -254,4 +254,4 @@ WHERE
     t_0_Reach AS Reach
   WHERE
     (Reach.x = "a") AND
-    (Reach.y = x_3)) IS NULL) ORDER BY n;
+    (Reach.y IS NOT DISTINCT FROM x_3)) IS NULL) ORDER BY n NULLS LAST;

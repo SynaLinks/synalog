@@ -85,4 +85,4 @@ WHERE
   FROM
     t_5_Boss AS t_4_Boss, UNNEST(ARRAY[0]) as x_10
   WHERE
-    (t_4_Boss.name = Person.name)) AS numeric) IS NULL) ORDER BY name;
+    (COALESCE(t_4_Boss.name, '') = COALESCE(Person.name, '') AND (t_4_Boss.name IS NULL) = (Person.name IS NULL))) AS numeric) IS NULL) ORDER BY name;

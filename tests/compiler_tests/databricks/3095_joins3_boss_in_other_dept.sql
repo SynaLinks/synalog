@@ -11,5 +11,5 @@ SELECT
 FROM
   t_1_E AS E, t_1_E AS t_0_E
 WHERE
-  (E.dept != t_0_E.dept) AND
-  (t_0_E.id = E.boss) ORDER BY name NULLS LAST;
+  (NOT (E.dept <=> t_0_E.dept)) AND
+  (t_0_E.id <=> E.boss) ORDER BY name NULLS LAST;

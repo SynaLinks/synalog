@@ -68,5 +68,5 @@ WHERE
   FROM
     t_1_Shop_Stock AS Shop_Stock, UNNEST(ARRAY[0]) as x_4
   WHERE
-    (Shop_Stock.sku = Shop_Product.sku)) AS numeric) IS NULL) AND
+    (COALESCE(Shop_Stock.sku, '') = COALESCE(Shop_Product.sku, '') AND (Shop_Stock.sku IS NULL) = (Shop_Product.sku IS NULL))) AS numeric) IS NULL) AND
   (SUBSTR(Shop_Product.sku, 1, 1) = 'a');

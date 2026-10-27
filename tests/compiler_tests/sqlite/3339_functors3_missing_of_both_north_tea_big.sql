@@ -67,7 +67,7 @@ WHERE
     t_1_Sale AS t_2_Sale, JSON_EACH(JSON_ARRAY(0)) as x_17
   WHERE
     (t_2_Sale.amount > 100) AND
-    (Sale.id = t_2_Sale.id)) IS NULL) AND
-  (t_0_Sale.id = Sale.id) AND
+    (Sale.id IS t_2_Sale.id)) IS NULL) AND
+  (t_0_Sale.id IS Sale.id) AND
   (Sale.region = 'north') AND
-  (t_0_Sale.product = 'tea') ORDER BY id;
+  (t_0_Sale.product = 'tea') ORDER BY id NULLS LAST;

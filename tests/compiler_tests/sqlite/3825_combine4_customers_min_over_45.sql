@@ -70,4 +70,4 @@ WHERE
   FROM
     t_2_O AS O, JSON_EACH(JSON_ARRAY(0)) as x_6
   WHERE
-    (O.c = t_0_C.c)) > 45) ORDER BY c NULLS LAST;
+    (O.c IS t_0_C.c)) > 45) ORDER BY c NULLS LAST;

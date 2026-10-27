@@ -40,7 +40,7 @@ t_0_EnterpriseRevenue AS (SELECT
 FROM
   t_1_Enterprise AS Enterprise, t_3_Segments_Order AS Segments_Order
 WHERE
-  (Segments_Order.customer_id = Enterprise.customer_id))
+  (COALESCE(Segments_Order.customer_id, 0) = COALESCE(Enterprise.customer_id, 0) AND (Segments_Order.customer_id IS NULL) = (Enterprise.customer_id IS NULL)))
 SELECT
   EnterpriseRevenue.revenue AS revenue
 FROM

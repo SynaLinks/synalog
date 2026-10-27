@@ -137,8 +137,8 @@ SELECT
 FROM
   synalog_test.Person AS Person, synalog_test.Team AS Team, t_0_Employees AS Employees
 WHERE
-  (Employees.person_id = Person.person_id) AND
-  (Employees.team_id = Team.team_id)
+  (Employees.person_id IS NOT DISTINCT FROM Person.person_id) AND
+  (Employees.team_id IS NOT DISTINCT FROM Team.team_id)
 GROUP BY 1, 2;
 
 -- Interacting with table synalog_test.MemberOf
@@ -185,8 +185,8 @@ SELECT
 FROM
   synalog_test.Team AS Team, t_0_Client AS Client, t_2_Engagements AS Engagements
 WHERE
-  (Engagements.team_id = Team.team_id) AND
-  (Engagements.client_id = Client.client_id)
+  (Engagements.team_id IS NOT DISTINCT FROM Team.team_id) AND
+  (Engagements.client_id IS NOT DISTINCT FROM Client.client_id)
 GROUP BY 1, 2;
 
 -- Interacting with table synalog_test.EngagedWith
@@ -243,7 +243,7 @@ t_1_Active AS (SELECT
 FROM
   synalog_test.Person AS Person, t_0_Employees AS Employees
 WHERE
-  (Employees.person_id = Person.person_id) AND
+  (Employees.person_id IS NOT DISTINCT FROM Person.person_id) AND
   (Employees.status = 'active')
 GROUP BY 1),
 t_0_ActiveReach AS (SELECT
@@ -252,8 +252,8 @@ t_0_ActiveReach AS (SELECT
 FROM
   t_1_Active AS Active, synalog_test.MemberOf AS MemberOf, synalog_test.EngagedWith AS EngagedWith
 WHERE
-  (MemberOf.person_id = Active.person_id) AND
-  (EngagedWith.team_id = MemberOf.team_id)
+  (MemberOf.person_id IS NOT DISTINCT FROM Active.person_id) AND
+  (EngagedWith.team_id IS NOT DISTINCT FROM MemberOf.team_id)
 GROUP BY 1, 2)
 SELECT
   ActiveReach.person_id AS person_id,

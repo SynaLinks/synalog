@@ -45,6 +45,6 @@ SELECT
 FROM
   t_1_E AS E
 WHERE
-  (E.g = t_0_G.g)), 0) AS n
+  (E.g IS NOT DISTINCT FROM t_0_G.g)), 0) AS n
 FROM
   t_2_G AS t_0_G ORDER BY g;

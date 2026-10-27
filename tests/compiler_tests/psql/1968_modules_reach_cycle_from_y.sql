@@ -41,7 +41,7 @@ t_1_Graph_Reach_RecursiveCte_f1 AS (SELECT * FROM (
       WHERE
         (0 < 8) AND
         (1 = 0) AND
-        (t_3_Loop.a = t_5_Loop.b)
+        (COALESCE(t_3_Loop.a, '') = COALESCE(t_5_Loop.b, '') AND (t_3_Loop.a IS NULL) = (t_5_Loop.b IS NULL))
      UNION ALL
     
       SELECT
@@ -54,8 +54,8 @@ t_1_Graph_Reach_RecursiveCte_f1 AS (SELECT * FROM (
         (((0) + (1)) < 8) AND
         (0 < 8) AND
         (1 = 0) AND
-        (t_7_Loop.a = t_9_Loop.b) AND
-        (t_9_Loop.a = t_11_Loop.b)
+        (COALESCE(t_7_Loop.a, '') = COALESCE(t_9_Loop.b, '') AND (t_7_Loop.a IS NULL) = (t_9_Loop.b IS NULL)) AND
+        (COALESCE(t_9_Loop.a, '') = COALESCE(t_11_Loop.b, '') AND (t_9_Loop.a IS NULL) = (t_11_Loop.b IS NULL))
      UNION ALL
     
       SELECT
@@ -69,9 +69,9 @@ t_1_Graph_Reach_RecursiveCte_f1 AS (SELECT * FROM (
         (((0) + (1)) < 8) AND
         (0 < 8) AND
         (1 = 0) AND
-        (t_13_Loop.a = t_15_Loop.b) AND
-        (t_15_Loop.a = t_17_Loop.b) AND
-        (t_17_Loop.a = t_19_Loop.b)
+        (COALESCE(t_13_Loop.a, '') = COALESCE(t_15_Loop.b, '') AND (t_13_Loop.a IS NULL) = (t_15_Loop.b IS NULL)) AND
+        (COALESCE(t_15_Loop.a, '') = COALESCE(t_17_Loop.b, '') AND (t_15_Loop.a IS NULL) = (t_17_Loop.b IS NULL)) AND
+        (COALESCE(t_17_Loop.a, '') = COALESCE(t_19_Loop.b, '') AND (t_17_Loop.a IS NULL) = (t_19_Loop.b IS NULL))
      UNION ALL
     
       SELECT
@@ -86,10 +86,10 @@ t_1_Graph_Reach_RecursiveCte_f1 AS (SELECT * FROM (
         (((0) + (1)) < 8) AND
         (0 < 8) AND
         (1 = 0) AND
-        (t_21_Loop.a = t_23_Loop.b) AND
-        (t_23_Loop.a = t_25_Loop.b) AND
-        (t_25_Loop.a = t_27_Loop.b) AND
-        (t_27_Loop.a = t_29_Loop.b)
+        (COALESCE(t_21_Loop.a, '') = COALESCE(t_23_Loop.b, '') AND (t_21_Loop.a IS NULL) = (t_23_Loop.b IS NULL)) AND
+        (COALESCE(t_23_Loop.a, '') = COALESCE(t_25_Loop.b, '') AND (t_23_Loop.a IS NULL) = (t_25_Loop.b IS NULL)) AND
+        (COALESCE(t_25_Loop.a, '') = COALESCE(t_27_Loop.b, '') AND (t_25_Loop.a IS NULL) = (t_27_Loop.b IS NULL)) AND
+        (COALESCE(t_27_Loop.a, '') = COALESCE(t_29_Loop.b, '') AND (t_27_Loop.a IS NULL) = (t_29_Loop.b IS NULL))
      UNION ALL
     
       SELECT
@@ -105,11 +105,11 @@ t_1_Graph_Reach_RecursiveCte_f1 AS (SELECT * FROM (
         (((0) + (1)) < 8) AND
         (0 < 8) AND
         (1 = 0) AND
-        (t_31_Loop.a = t_33_Loop.b) AND
-        (t_33_Loop.a = t_35_Loop.b) AND
-        (t_35_Loop.a = t_37_Loop.b) AND
-        (t_37_Loop.a = t_39_Loop.b) AND
-        (t_39_Loop.a = t_41_Loop.b)
+        (COALESCE(t_31_Loop.a, '') = COALESCE(t_33_Loop.b, '') AND (t_31_Loop.a IS NULL) = (t_33_Loop.b IS NULL)) AND
+        (COALESCE(t_33_Loop.a, '') = COALESCE(t_35_Loop.b, '') AND (t_33_Loop.a IS NULL) = (t_35_Loop.b IS NULL)) AND
+        (COALESCE(t_35_Loop.a, '') = COALESCE(t_37_Loop.b, '') AND (t_35_Loop.a IS NULL) = (t_37_Loop.b IS NULL)) AND
+        (COALESCE(t_37_Loop.a, '') = COALESCE(t_39_Loop.b, '') AND (t_37_Loop.a IS NULL) = (t_39_Loop.b IS NULL)) AND
+        (COALESCE(t_39_Loop.a, '') = COALESCE(t_41_Loop.b, '') AND (t_39_Loop.a IS NULL) = (t_41_Loop.b IS NULL))
     
   ) AS UNUSED_TABLE_NAME  
 ) AS UNUSED_TABLE_NAME
@@ -122,7 +122,7 @@ FROM
   t_1_Graph_Reach_RecursiveCte_f1 AS t_42_Graph_Reach_RecursiveCte_f1, t_2_Loop AS t_43_Loop
 WHERE
   (t_42_Graph_Reach_RecursiveCte_f1.synalog_step < 8) AND
-  (t_43_Loop.a = t_42_Graph_Reach_RecursiveCte_f1.b)),
+  (COALESCE(t_43_Loop.a, '') = COALESCE(t_42_Graph_Reach_RecursiveCte_f1.b, '') AND (t_43_Loop.a IS NULL) = (t_42_Graph_Reach_RecursiveCte_f1.b IS NULL))),
 t_0_R AS (SELECT
   Graph_Reach_RecursiveCte_f1.a AS a,
   Graph_Reach_RecursiveCte_f1.b AS b

@@ -109,11 +109,11 @@ WHERE
   FROM
     t_3_D AS t_6_D, (select unnest([0]) as unnested_pod) as x_15
   WHERE
-    (t_6_D.d = ((t_1_D.d) - (1)))) IS NULL) AND
+    (t_6_D.d IS NOT DISTINCT FROM ((t_1_D.d) - (1)))) IS NULL) AND
   ((SELECT
     MIN((CASE WHEN x_18.unnested_pod = 0 THEN 1 ELSE NULL END)) AS synalog_value
   FROM
     t_3_D AS t_7_D, (select unnest([0]) as unnested_pod) as x_18
   WHERE
-    (t_7_D.d = ((t_2_D.d) + (1)))) IS NULL)
+    (t_7_D.d IS NOT DISTINCT FROM ((t_2_D.d) + (1)))) IS NULL)
 GROUP BY t_1_D.d ORDER BY first, last;

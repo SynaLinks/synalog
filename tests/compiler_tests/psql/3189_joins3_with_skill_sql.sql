@@ -90,5 +90,5 @@ SELECT
 FROM
   t_0_E AS E, t_1_S AS S
 WHERE
-  (S.id = E.id) AND
+  (COALESCE(S.id, 0) = COALESCE(E.id, 0) AND (S.id IS NULL) = (E.id IS NULL)) AND
   (S.skill = 'sql') ORDER BY name;

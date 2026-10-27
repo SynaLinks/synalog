@@ -41,4 +41,4 @@ SELECT
 FROM
   t_2_K AS t_0_K, t_3_V AS t_1_V
 WHERE
-  (t_1_V.k = t_0_K.k) ORDER BY k;
+  (COALESCE(t_1_V.k, 0) = COALESCE(t_0_K.k, 0) AND (t_1_V.k IS NULL) = (t_0_K.k IS NULL)) ORDER BY k;

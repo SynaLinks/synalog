@@ -61,4 +61,4 @@ SELECT
 FROM
   t_0_Person AS Person, JSON_EACH(JSON_ARRAY('red')) as x_3
 WHERE
-  (Person.team = x_3.value) ORDER BY id;
+  (Person.team IS x_3.value) ORDER BY id NULLS LAST;

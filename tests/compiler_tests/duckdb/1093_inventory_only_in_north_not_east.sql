@@ -77,5 +77,5 @@ WHERE
     t_1_In AS t_3_In, (select unnest([0]) as unnested_pod) as x_10
   WHERE
     (t_3_In.warehouse = 'east') AND
-    (t_3_In.item = t_0_In.item)) IS NULL) AND
+    (t_3_In.item IS NOT DISTINCT FROM t_0_In.item)) IS NULL) AND
   (t_0_In.warehouse = 'north') ORDER BY item;

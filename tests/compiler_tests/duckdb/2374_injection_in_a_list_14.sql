@@ -9,4 +9,4 @@ SELECT
 FROM
   (select unnest(['\"', 'other']) as unnested_pod) as x_1
 WHERE
-  (x_1.unnested_pod != 'other');
+  (x_1.unnested_pod IS DISTINCT FROM 'other');

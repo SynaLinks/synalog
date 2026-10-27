@@ -35,7 +35,7 @@ t_1_P_RecursiveCte AS (SELECT * FROM (
       WHERE
         (0 < 8) AND
         (1 = 0) AND
-        (t_3_E.a = t_5_E.b)
+        (t_3_E.a IS t_5_E.b)
      UNION ALL
     
       SELECT
@@ -48,8 +48,8 @@ t_1_P_RecursiveCte AS (SELECT * FROM (
         (((0) + (1)) < 8) AND
         (0 < 8) AND
         (1 = 0) AND
-        (t_7_E.a = t_9_E.b) AND
-        (t_9_E.a = t_11_E.b)
+        (t_7_E.a IS t_9_E.b) AND
+        (t_9_E.a IS t_11_E.b)
      UNION ALL
     
       SELECT
@@ -63,9 +63,9 @@ t_1_P_RecursiveCte AS (SELECT * FROM (
         (((0) + (1)) < 8) AND
         (0 < 8) AND
         (1 = 0) AND
-        (t_13_E.a = t_15_E.b) AND
-        (t_15_E.a = t_17_E.b) AND
-        (t_17_E.a = t_19_E.b)
+        (t_13_E.a IS t_15_E.b) AND
+        (t_15_E.a IS t_17_E.b) AND
+        (t_17_E.a IS t_19_E.b)
      UNION ALL
     
       SELECT
@@ -80,10 +80,10 @@ t_1_P_RecursiveCte AS (SELECT * FROM (
         (((0) + (1)) < 8) AND
         (0 < 8) AND
         (1 = 0) AND
-        (t_21_E.a = t_23_E.b) AND
-        (t_23_E.a = t_25_E.b) AND
-        (t_25_E.a = t_27_E.b) AND
-        (t_27_E.a = t_29_E.b)
+        (t_21_E.a IS t_23_E.b) AND
+        (t_23_E.a IS t_25_E.b) AND
+        (t_25_E.a IS t_27_E.b) AND
+        (t_27_E.a IS t_29_E.b)
      UNION ALL
     
       SELECT
@@ -99,11 +99,11 @@ t_1_P_RecursiveCte AS (SELECT * FROM (
         (((0) + (1)) < 8) AND
         (0 < 8) AND
         (1 = 0) AND
-        (t_31_E.a = t_33_E.b) AND
-        (t_33_E.a = t_35_E.b) AND
-        (t_35_E.a = t_37_E.b) AND
-        (t_37_E.a = t_39_E.b) AND
-        (t_39_E.a = t_41_E.b)
+        (t_31_E.a IS t_33_E.b) AND
+        (t_33_E.a IS t_35_E.b) AND
+        (t_35_E.a IS t_37_E.b) AND
+        (t_37_E.a IS t_39_E.b) AND
+        (t_39_E.a IS t_41_E.b)
     
   ) AS UNUSED_TABLE_NAME  
 ) AS UNUSED_TABLE_NAME
@@ -116,7 +116,7 @@ FROM
   t_1_P_RecursiveCte AS t_42_P_RecursiveCte, t_2_E AS t_43_E
 WHERE
   (t_42_P_RecursiveCte.synalog_step < 8) AND
-  (t_43_E.a = t_42_P_RecursiveCte.b)),
+  (t_43_E.a IS t_42_P_RecursiveCte.b)),
 t_0_P AS (SELECT
   P_RecursiveCte.a AS a,
   P_RecursiveCte.b AS b

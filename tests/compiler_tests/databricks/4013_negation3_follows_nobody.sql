@@ -27,4 +27,4 @@ WHERE
   FROM
     t_2_F AS F
   WHERE
-    (F.a = t_0_U.u)) IS NULL) ORDER BY u NULLS LAST;
+    (F.a <=> t_0_U.u)) IS NULL) ORDER BY u NULLS LAST;

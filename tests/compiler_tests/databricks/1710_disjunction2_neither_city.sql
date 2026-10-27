@@ -16,7 +16,7 @@ t_2_T_MultBodyAggAux AS (SELECT * FROM (
     FROM
       t_0_Ship AS t_3_Ship, LATERAL (SELECT explode(ARRAY("paris", "nice")) AS x_8) AS pushkin
     WHERE
-      (t_3_Ship.src = x_8)
+      (t_3_Ship.src <=> x_8)
    UNION ALL
   
     SELECT
@@ -24,7 +24,7 @@ t_2_T_MultBodyAggAux AS (SELECT * FROM (
     FROM
       t_0_Ship AS t_4_Ship, LATERAL (SELECT explode(ARRAY("paris", "nice")) AS x_12) AS pushkin
     WHERE
-      (t_4_Ship.dst = x_12)
+      (t_4_Ship.dst <=> x_12)
   
 ) AS UNUSED_TABLE_NAME  ),
 t_1_T AS (SELECT
@@ -42,4 +42,4 @@ WHERE
   FROM
     t_1_T AS T
   WHERE
-    (T.id = Ship.id)) IS NULL);
+    (T.id <=> Ship.id)) IS NULL);

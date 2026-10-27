@@ -93,4 +93,4 @@ WHERE
   FROM
     t_2_F AS F, UNNEST(ARRAY[0]) as x_3
   WHERE
-    (F.a = t_0_U.u)) AS numeric) IS NULL);
+    (COALESCE(F.a, '') = COALESCE(t_0_U.u, '') AND (F.a IS NULL) = (t_0_U.u IS NULL))) AS numeric) IS NULL);

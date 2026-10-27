@@ -116,7 +116,7 @@ t_9_Before_MultBodyAggAux AS (SELECT * FROM (
       t_4_S AS t_16_S, t_4_S AS t_17_S
     WHERE
       (t_17_S.d < t_16_S.d) AND
-      (t_17_S.v = t_16_S.v) AND
+      (COALESCE(t_17_S.v, 0) = COALESCE(t_16_S.v, 0) AND (t_17_S.v IS NULL) = (t_16_S.v IS NULL)) AND
       (t_16_S.r = 'north') AND
       (t_17_S.r = 'north')
   
@@ -134,12 +134,17 @@ t_0_Mid AS (SELECT * FROM (
     FROM
       t_4_S AS S, t_5_N AS t_2_N
     WHERE
-      (((((2) * (COALESCE(CAST((SELECT
+      (COALESCE(((((2) * (COALESCE(CAST((SELECT
         SUM((CASE WHEN x_24 = 0 THEN 1 ELSE NULL END)) AS synalog_value
       FROM
         t_8_Before AS Before, UNNEST(ARRAY[0]) as x_24
       WHERE
-        (Before.d = S.d)) AS numeric), 0)))) + (1)) = t_2_N.n) AND
+        (COALESCE(Before.d, 0) = COALESCE(S.d, 0) AND (Before.d IS NULL) = (S.d IS NULL))) AS numeric), 0)))) + (1)), 0) = COALESCE(t_2_N.n, 0) AND (((((2) * (COALESCE(CAST((SELECT
+        SUM((CASE WHEN x_24 = 0 THEN 1 ELSE NULL END)) AS synalog_value
+      FROM
+        t_8_Before AS Before, UNNEST(ARRAY[0]) as x_24
+      WHERE
+        (COALESCE(Before.d, 0) = COALESCE(S.d, 0) AND (Before.d IS NULL) = (S.d IS NULL))) AS numeric), 0)))) + (1)) IS NULL) = (t_2_N.n IS NULL)) AND
       (S.r = 'north')
    UNION ALL
   
@@ -148,12 +153,17 @@ t_0_Mid AS (SELECT * FROM (
     FROM
       t_4_S AS t_21_S, t_5_N AS t_19_N
     WHERE
-      (((2) * (COALESCE(CAST((SELECT
+      (COALESCE(((2) * (COALESCE(CAST((SELECT
         SUM((CASE WHEN x_84 = 0 THEN 1 ELSE NULL END)) AS synalog_value
       FROM
         t_8_Before AS t_24_Before, UNNEST(ARRAY[0]) as x_84
       WHERE
-        (t_24_Before.d = t_21_S.d)) AS numeric), 0))) = t_19_N.n) AND
+        (COALESCE(t_24_Before.d, 0) = COALESCE(t_21_S.d, 0) AND (t_24_Before.d IS NULL) = (t_21_S.d IS NULL))) AS numeric), 0))), 0) = COALESCE(t_19_N.n, 0) AND (((2) * (COALESCE(CAST((SELECT
+        SUM((CASE WHEN x_84 = 0 THEN 1 ELSE NULL END)) AS synalog_value
+      FROM
+        t_8_Before AS t_24_Before, UNNEST(ARRAY[0]) as x_84
+      WHERE
+        (COALESCE(t_24_Before.d, 0) = COALESCE(t_21_S.d, 0) AND (t_24_Before.d IS NULL) = (t_21_S.d IS NULL))) AS numeric), 0))) IS NULL) = (t_19_N.n IS NULL)) AND
       (t_21_S.r = 'north')
    UNION ALL
   
@@ -162,12 +172,17 @@ t_0_Mid AS (SELECT * FROM (
     FROM
       t_4_S AS t_37_S, t_5_N AS t_35_N
     WHERE
-      (((((2) * (COALESCE(CAST((SELECT
+      (COALESCE(((((2) * (COALESCE(CAST((SELECT
         SUM((CASE WHEN x_138 = 0 THEN 1 ELSE NULL END)) AS synalog_value
       FROM
         t_8_Before AS t_38_Before, UNNEST(ARRAY[0]) as x_138
       WHERE
-        (t_38_Before.d = t_37_S.d)) AS numeric), 0)))) + (2)) = t_35_N.n) AND
+        (COALESCE(t_38_Before.d, 0) = COALESCE(t_37_S.d, 0) AND (t_38_Before.d IS NULL) = (t_37_S.d IS NULL))) AS numeric), 0)))) + (2)), 0) = COALESCE(t_35_N.n, 0) AND (((((2) * (COALESCE(CAST((SELECT
+        SUM((CASE WHEN x_138 = 0 THEN 1 ELSE NULL END)) AS synalog_value
+      FROM
+        t_8_Before AS t_38_Before, UNNEST(ARRAY[0]) as x_138
+      WHERE
+        (COALESCE(t_38_Before.d, 0) = COALESCE(t_37_S.d, 0) AND (t_38_Before.d IS NULL) = (t_37_S.d IS NULL))) AS numeric), 0)))) + (2)) IS NULL) = (t_35_N.n IS NULL)) AND
       (t_37_S.r = 'north')
   
 ) AS UNUSED_TABLE_NAME  )

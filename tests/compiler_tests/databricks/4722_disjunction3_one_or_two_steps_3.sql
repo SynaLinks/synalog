@@ -21,7 +21,7 @@ t_0_Q_MultBodyAggAux AS (SELECT * FROM (
       t_2_P AS t_3_P, t_2_P AS t_4_P
     WHERE
       (t_3_P.a = 3) AND
-      (t_4_P.a = t_3_P.b)
+      (t_4_P.a <=> t_3_P.b)
   
 ) AS UNUSED_TABLE_NAME  )
 SELECT

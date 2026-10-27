@@ -45,4 +45,4 @@ WHERE
   FROM
     t_1_Other AS Other, JSON_EACH(JSON_ARRAY(0)) as x_4
   WHERE
-    (Other.x = V.x)) IS NULL);
+    (Other.x IS V.x)) IS NULL);

@@ -155,9 +155,9 @@ WHERE
   FROM
     t_4_A AS A, UNNEST(ARRAY[0]) as x_15
   WHERE
-    (A.id = t_2_Person.id) AND
-    (A.pid = Proj.pid)) AS numeric) IS NULL) AND
-  (Proj.team = t_2_Person.team))
+    (COALESCE(A.id, 0) = COALESCE(t_2_Person.id, 0) AND (A.id IS NULL) = (t_2_Person.id IS NULL)) AND
+    (COALESCE(A.pid, 0) = COALESCE(Proj.pid, 0) AND (A.pid IS NULL) = (Proj.pid IS NULL))) AS numeric) IS NULL) AND
+  (COALESCE(Proj.team, '') = COALESCE(t_2_Person.team, '') AND (Proj.team IS NULL) = (t_2_Person.team IS NULL)))
 SELECT
   Person.id AS id
 FROM
@@ -168,5 +168,5 @@ WHERE
   FROM
     t_1_Missing AS Missing, UNNEST(ARRAY[0]) as x_5
   WHERE
-    (Missing.id = Person.id)) AS numeric) IS NULL) AND
+    (COALESCE(Missing.id, 0) = COALESCE(Person.id, 0) AND (Missing.id IS NULL) = (Person.id IS NULL))) AS numeric) IS NULL) AND
   (Person.team = 'gold');

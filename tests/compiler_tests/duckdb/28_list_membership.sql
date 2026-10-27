@@ -42,4 +42,4 @@ SELECT
 FROM
   t_0_Items AS Items, (select unnest(['fruit', 'vegetable']) as unnested_pod) as x_9
 WHERE
-  (Items.col1 = x_9.unnested_pod) ORDER BY name;
+  (Items.col1 IS NOT DISTINCT FROM x_9.unnested_pod) ORDER BY name;

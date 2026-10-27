@@ -65,4 +65,4 @@ SELECT
 FROM
   t_1_V AS t_0_V, t_2_Rate AS Rate
 WHERE
-  (t_0_V.s = Rate.s) ORDER BY k;
+  (t_0_V.s IS NOT DISTINCT FROM Rate.s) ORDER BY k;

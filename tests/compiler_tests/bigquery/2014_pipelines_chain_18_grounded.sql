@@ -1,8 +1,8 @@
 DROP TABLE IF EXISTS synalog_test.C0;
 CREATE TABLE synalog_test.C0 AS SELECT
-  x_39 AS x
+  x_1 AS x
 FROM
-  UNNEST(ARRAY[1, 2, 3, 4, 5, 6, 7, 8]) as x_39;
+  UNNEST(ARRAY[1, 2, 3, 4, 5, 6, 7, 8]) as x_1;
 
 -- Interacting with table synalog_test.C0
 
@@ -12,9 +12,9 @@ CREATE TABLE synalog_test.C3 AS SELECT
 FROM
   synalog_test.C0 AS C0
 WHERE
-  (C0.x != 3) AND
-  (C0.x != 2) AND
-  (C0.x != 1);
+  (C0.x IS DISTINCT FROM 3) AND
+  (C0.x IS DISTINCT FROM 2) AND
+  (C0.x IS DISTINCT FROM 1);
 
 -- Interacting with table synalog_test.C3
 
@@ -24,9 +24,9 @@ CREATE TABLE synalog_test.C6 AS SELECT
 FROM
   synalog_test.C3 AS C3
 WHERE
-  (C3.x != 6) AND
-  (C3.x != 5) AND
-  (C3.x != 4);
+  (C3.x IS DISTINCT FROM 6) AND
+  (C3.x IS DISTINCT FROM 5) AND
+  (C3.x IS DISTINCT FROM 4);
 
 -- Interacting with table synalog_test.C6
 
@@ -36,9 +36,9 @@ CREATE TABLE synalog_test.C9 AS SELECT
 FROM
   synalog_test.C6 AS C6
 WHERE
-  (C6.x != 9) AND
-  (C6.x != 8) AND
-  (C6.x != 7);
+  (C6.x IS DISTINCT FROM 9) AND
+  (C6.x IS DISTINCT FROM 8) AND
+  (C6.x IS DISTINCT FROM 7);
 
 -- Interacting with table synalog_test.C9
 
@@ -48,9 +48,9 @@ CREATE TABLE synalog_test.C12 AS SELECT
 FROM
   synalog_test.C9 AS C9
 WHERE
-  (C9.x != 12) AND
-  (C9.x != 11) AND
-  (C9.x != 10);
+  (C9.x IS DISTINCT FROM 12) AND
+  (C9.x IS DISTINCT FROM 11) AND
+  (C9.x IS DISTINCT FROM 10);
 
 -- Interacting with table synalog_test.C12
 
@@ -60,9 +60,9 @@ CREATE TABLE synalog_test.C15 AS SELECT
 FROM
   synalog_test.C12 AS C12
 WHERE
-  (C12.x != 15) AND
-  (C12.x != 14) AND
-  (C12.x != 13);
+  (C12.x IS DISTINCT FROM 15) AND
+  (C12.x IS DISTINCT FROM 14) AND
+  (C12.x IS DISTINCT FROM 13);
 
 -- Interacting with table synalog_test.C15
 
@@ -72,9 +72,9 @@ CREATE TABLE synalog_test.C18 AS SELECT
 FROM
   synalog_test.C15 AS C15
 WHERE
-  (C15.x != 18) AND
-  (C15.x != 17) AND
-  (C15.x != 16);
+  (C15.x IS DISTINCT FROM 18) AND
+  (C15.x IS DISTINCT FROM 17) AND
+  (C15.x IS DISTINCT FROM 16);
 
 -- Interacting with table synalog_test.C18
 

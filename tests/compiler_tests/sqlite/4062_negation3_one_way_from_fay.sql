@@ -50,6 +50,6 @@ WHERE
   FROM
     t_0_F AS t_1_F, JSON_EACH(JSON_ARRAY(0)) as x_6
   WHERE
-    (t_1_F.a = F.b) AND
+    (t_1_F.a IS F.b) AND
     (t_1_F.b = 'fay')) IS NULL) AND
-  (F.a = 'fay') ORDER BY v;
+  (F.a = 'fay') ORDER BY v NULLS LAST;

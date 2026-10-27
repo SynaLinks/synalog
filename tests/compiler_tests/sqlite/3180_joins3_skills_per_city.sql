@@ -111,6 +111,6 @@ SELECT
 FROM
   t_0_S AS S, t_1_E AS E, t_2_D AS D
 WHERE
-  (E.id = S.id) AND
-  (D.dept = E.dept)
-GROUP BY D.city ORDER BY city, n;
+  (E.id IS S.id) AND
+  (D.dept IS E.dept)
+GROUP BY D.city ORDER BY city NULLS LAST, n NULLS LAST;

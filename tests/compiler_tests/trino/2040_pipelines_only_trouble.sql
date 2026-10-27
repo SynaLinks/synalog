@@ -127,7 +127,7 @@ FROM
   t_3_Order AS t_6_Order, t_7_Price AS Price
 WHERE
   (t_6_Order.state = 'paid') AND
-  (Price.item = t_6_Order.item)
+  (Price.item IS NOT DISTINCT FROM t_6_Order.item)
 GROUP BY 1)
 SELECT
   Trouble.who AS who
@@ -139,4 +139,4 @@ WHERE
   FROM
     t_5_Spend AS Spend
   WHERE
-    (Spend.who = Trouble.who)) IS NULL);
+    (Spend.who IS NOT DISTINCT FROM Trouble.who)) IS NULL);

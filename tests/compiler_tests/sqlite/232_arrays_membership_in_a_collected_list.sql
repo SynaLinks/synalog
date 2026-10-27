@@ -7,4 +7,4 @@ SELECT
 FROM
   t_1_L AS t_0_L, JSON_EACH(t_0_L.l) as x_3, JSON_EACH(JSON_ARRAY(1, 2, 3)) as x_5
 WHERE
-  (x_5.value = x_3.value) ORDER BY x NULLS LAST;
+  (x_5.value IS x_3.value) ORDER BY x NULLS LAST;

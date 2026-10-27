@@ -123,4 +123,4 @@ WHERE
     t_1_A AS A, UNNEST(ARRAY[0]) as x_6
   WHERE
     (A.hours > 5) AND
-    (A.id = Person.id)) AS numeric) IS NULL) ORDER BY id;
+    (COALESCE(A.id, 0) = COALESCE(Person.id, 0) AND (A.id IS NULL) = (Person.id IS NULL))) AS numeric) IS NULL) ORDER BY id;

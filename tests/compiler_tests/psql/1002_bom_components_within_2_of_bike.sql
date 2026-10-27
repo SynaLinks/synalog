@@ -81,7 +81,7 @@ t_1_Down_RecursiveCte AS (SELECT * FROM (
         (0 < 2) AND
         (1 = 0) AND
         (t_5_Uses.part = 'bike') AND
-        (t_3_Uses.part = t_5_Uses.component)
+        (COALESCE(t_3_Uses.part, '') = COALESCE(t_5_Uses.component, '') AND (t_3_Uses.part IS NULL) = (t_5_Uses.component IS NULL))
      UNION ALL
     
       SELECT
@@ -93,9 +93,9 @@ t_1_Down_RecursiveCte AS (SELECT * FROM (
         (((0) + (1)) < 2) AND
         (0 < 2) AND
         (1 = 0) AND
-        (t_7_Uses.part = t_9_Uses.component) AND
+        (COALESCE(t_7_Uses.part, '') = COALESCE(t_9_Uses.component, '') AND (t_7_Uses.part IS NULL) = (t_9_Uses.component IS NULL)) AND
         (t_11_Uses.part = 'bike') AND
-        (t_9_Uses.part = t_11_Uses.component)
+        (COALESCE(t_9_Uses.part, '') = COALESCE(t_11_Uses.component, '') AND (t_9_Uses.part IS NULL) = (t_11_Uses.component IS NULL))
      UNION ALL
     
       SELECT
@@ -108,10 +108,10 @@ t_1_Down_RecursiveCte AS (SELECT * FROM (
         (((0) + (1)) < 2) AND
         (0 < 2) AND
         (1 = 0) AND
-        (t_13_Uses.part = t_15_Uses.component) AND
-        (t_15_Uses.part = t_17_Uses.component) AND
+        (COALESCE(t_13_Uses.part, '') = COALESCE(t_15_Uses.component, '') AND (t_13_Uses.part IS NULL) = (t_15_Uses.component IS NULL)) AND
+        (COALESCE(t_15_Uses.part, '') = COALESCE(t_17_Uses.component, '') AND (t_15_Uses.part IS NULL) = (t_17_Uses.component IS NULL)) AND
         (t_19_Uses.part = 'bike') AND
-        (t_17_Uses.part = t_19_Uses.component)
+        (COALESCE(t_17_Uses.part, '') = COALESCE(t_19_Uses.component, '') AND (t_17_Uses.part IS NULL) = (t_19_Uses.component IS NULL))
     
   ) AS UNUSED_TABLE_NAME  
 ) AS UNUSED_TABLE_NAME
@@ -123,7 +123,7 @@ FROM
   t_1_Down_RecursiveCte AS t_20_Down_RecursiveCte, t_2_Uses AS t_21_Uses
 WHERE
   (t_20_Down_RecursiveCte.synalog_step < 2) AND
-  (t_21_Uses.part = t_20_Down_RecursiveCte.component)),
+  (COALESCE(t_21_Uses.part, '') = COALESCE(t_20_Down_RecursiveCte.component, '') AND (t_21_Uses.part IS NULL) = (t_20_Down_RecursiveCte.component IS NULL))),
 t_0_Down AS (SELECT
   Down_RecursiveCte.component AS component
 FROM

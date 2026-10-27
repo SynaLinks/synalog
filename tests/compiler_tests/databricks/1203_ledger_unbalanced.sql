@@ -23,4 +23,4 @@ SELECT
 FROM
   t_0_Sum AS Sum
 WHERE
-  (Sum.s != 0);
+  (NOT (Sum.s <=> 0));

@@ -47,4 +47,4 @@ SELECT
 FROM
   t_0_E AS E, UNNEST(TRANSFORM(ARRAY[1, 2, 7], synalog_e -> ROW(synalog_e))) as pushkin(x_3)
 WHERE
-  (E.id = x_3) ORDER BY name;
+  (E.id IS NOT DISTINCT FROM x_3) ORDER BY name;

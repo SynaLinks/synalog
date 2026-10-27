@@ -25,7 +25,7 @@ WHERE
   FROM
     t_2_NotA AS NotA, UNNEST(ARRAY[0]) as x_13
   WHERE
-    (NotA.x = x_10)) AS numeric) IS NULL))
+    (COALESCE(NotA.x, 0) = COALESCE(x_10, 0) AND (NotA.x IS NULL) = (x_10 IS NULL))) AS numeric) IS NULL))
 SELECT
   x_3 AS x
 FROM
@@ -36,4 +36,4 @@ WHERE
   FROM
     t_0_NotNotA AS NotNotA, UNNEST(ARRAY[0]) as x_6
   WHERE
-    (NotNotA.x = x_3)) AS numeric) IS NULL);
+    (COALESCE(NotNotA.x, 0) = COALESCE(x_3, 0) AND (NotNotA.x IS NULL) = (x_3 IS NULL))) AS numeric) IS NULL);

@@ -103,6 +103,6 @@ FROM
   t_3_E AS E, t_3_E AS t_0_E, t_4_D AS t_1_D, t_4_D AS t_2_D
 WHERE
   (E.n < t_0_E.n) AND
-  (t_1_D.d = E.d) AND
-  (t_2_D.d = t_0_E.d) AND
-  (t_2_D.city = t_1_D.city) ORDER BY a, b;
+  (t_1_D.d IS NOT DISTINCT FROM E.d) AND
+  (t_2_D.d IS NOT DISTINCT FROM t_0_E.d) AND
+  (t_2_D.city IS NOT DISTINCT FROM t_1_D.city) ORDER BY a, b;

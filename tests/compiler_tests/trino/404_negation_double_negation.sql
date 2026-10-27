@@ -19,4 +19,4 @@ WHERE
   FROM
     t_0_NotB AS NotB
   WHERE
-    (NotB.x = x_3)) IS NULL);
+    (NotB.x IS NOT DISTINCT FROM x_3)) IS NULL);

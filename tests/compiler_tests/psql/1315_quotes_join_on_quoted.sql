@@ -64,4 +64,4 @@ SELECT
 FROM
   t_2_W AS t_0_W, t_3_Kind AS t_1_Kind
 WHERE
-  (t_1_Kind.w = t_0_W.w) ORDER BY id, kind;
+  (COALESCE(t_1_Kind.w, '') = COALESCE(t_0_W.w, '') AND (t_1_Kind.w IS NULL) = (t_0_W.w IS NULL)) ORDER BY id, kind;

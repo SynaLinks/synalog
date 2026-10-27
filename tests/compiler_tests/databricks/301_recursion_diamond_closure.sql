@@ -56,7 +56,7 @@ t_1_Reach_MultBodyAggAux_f3 AS (SELECT * FROM (
     FROM
       synalog_test.Reach_sn_t0 AS Reach_sn_t0, t_1_Edge AS t_2_Edge
     WHERE
-      (t_2_Edge.a = Reach_sn_t0.b)
+      (t_2_Edge.a <=> Reach_sn_t0.b)
   
 ) AS UNUSED_TABLE_NAME  ),
 t_0_Reach_sn_r1 AS (SELECT
@@ -97,7 +97,7 @@ t_1_Reach_MultBodyAggAux_f4 AS (SELECT * FROM (
     FROM
       synalog_test.Reach_sn_t1 AS Reach_sn_t1, t_1_Edge AS t_2_Edge
     WHERE
-      (t_2_Edge.a = Reach_sn_t1.b)
+      (t_2_Edge.a <=> Reach_sn_t1.b)
   
 ) AS UNUSED_TABLE_NAME  ),
 t_0_Reach_sn_r2 AS (SELECT
@@ -138,7 +138,7 @@ t_1_Reach_MultBodyAggAux_f5 AS (SELECT * FROM (
     FROM
       synalog_test.Reach_sn_t2 AS Reach_sn_t2, t_1_Edge AS t_2_Edge
     WHERE
-      (t_2_Edge.a = Reach_sn_t2.b)
+      (t_2_Edge.a <=> Reach_sn_t2.b)
   
 ) AS UNUSED_TABLE_NAME  ),
 t_0_Reach_sn_r3 AS (SELECT
@@ -179,7 +179,7 @@ t_1_Reach_MultBodyAggAux_f6 AS (SELECT * FROM (
     FROM
       synalog_test.Reach_sn_t3 AS Reach_sn_t3, t_1_Edge AS t_2_Edge
     WHERE
-      (t_2_Edge.a = Reach_sn_t3.b)
+      (t_2_Edge.a <=> Reach_sn_t3.b)
   
 ) AS UNUSED_TABLE_NAME  ),
 t_0_Reach_sn_r4 AS (SELECT
@@ -220,7 +220,7 @@ t_1_Reach_MultBodyAggAux_f7 AS (SELECT * FROM (
     FROM
       synalog_test.Reach_sn_t4 AS Reach_sn_t4, t_1_Edge AS t_2_Edge
     WHERE
-      (t_2_Edge.a = Reach_sn_t4.b)
+      (t_2_Edge.a <=> Reach_sn_t4.b)
   
 ) AS UNUSED_TABLE_NAME  ),
 t_0_Reach_sn_r5 AS (SELECT
@@ -309,7 +309,7 @@ t_1_Reach_MultBodyAggAux_f8 AS (SELECT * FROM (
     FROM
       synalog_test.Reach_sn_delta AS Reach_sn_delta, t_1_Edge AS t_2_Edge
     WHERE
-      (t_2_Edge.a = Reach_sn_delta.b)
+      (t_2_Edge.a <=> Reach_sn_delta.b)
   
 ) AS UNUSED_TABLE_NAME  ),
 t_0_Reach_sn_step AS (SELECT
@@ -329,8 +329,8 @@ WHERE
   FROM
     synalog_test.Reach_sn_full AS Reach_sn_full
   WHERE
-    (Reach_sn_full.a = Reach_sn_step.a) AND
-    (Reach_sn_full.b = Reach_sn_step.b)) IS NULL)
+    (Reach_sn_full.a <=> Reach_sn_step.a) AND
+    (Reach_sn_full.b <=> Reach_sn_step.b)) IS NULL)
 GROUP BY 1, 2;
 
 INSERT INTO synalog_test.Reach_sn_full SELECT * FROM synalog_test.Reach_sn_new;
@@ -357,7 +357,7 @@ t_1_Reach_MultBodyAggAux_f1 AS (SELECT * FROM (
     FROM
       synalog_test.Reach_sn_new AS Reach_sn_new, t_1_Edge AS t_2_Edge
     WHERE
-      (t_2_Edge.a = Reach_sn_new.b)
+      (t_2_Edge.a <=> Reach_sn_new.b)
   
 ) AS UNUSED_TABLE_NAME  ),
 t_0_Reach_sn_back_step AS (SELECT
@@ -377,8 +377,8 @@ WHERE
   FROM
     synalog_test.Reach_sn_full AS Reach_sn_full
   WHERE
-    (Reach_sn_full.a = Reach_sn_back_step.a) AND
-    (Reach_sn_full.b = Reach_sn_back_step.b)) IS NULL)
+    (Reach_sn_full.a <=> Reach_sn_back_step.a) AND
+    (Reach_sn_full.b <=> Reach_sn_back_step.b)) IS NULL)
 GROUP BY 1, 2;
 
 INSERT INTO synalog_test.Reach_sn_full SELECT * FROM synalog_test.Reach_sn_delta;
@@ -405,7 +405,7 @@ t_1_Reach_MultBodyAggAux_f8 AS (SELECT * FROM (
     FROM
       synalog_test.Reach_sn_delta AS Reach_sn_delta, t_1_Edge AS t_2_Edge
     WHERE
-      (t_2_Edge.a = Reach_sn_delta.b)
+      (t_2_Edge.a <=> Reach_sn_delta.b)
   
 ) AS UNUSED_TABLE_NAME  ),
 t_0_Reach_sn_step AS (SELECT
@@ -425,8 +425,8 @@ WHERE
   FROM
     synalog_test.Reach_sn_full AS Reach_sn_full
   WHERE
-    (Reach_sn_full.a = Reach_sn_step.a) AND
-    (Reach_sn_full.b = Reach_sn_step.b)) IS NULL)
+    (Reach_sn_full.a <=> Reach_sn_step.a) AND
+    (Reach_sn_full.b <=> Reach_sn_step.b)) IS NULL)
 GROUP BY 1, 2;
 
 INSERT INTO synalog_test.Reach_sn_full SELECT * FROM synalog_test.Reach_sn_new;
@@ -453,7 +453,7 @@ t_1_Reach_MultBodyAggAux_f1 AS (SELECT * FROM (
     FROM
       synalog_test.Reach_sn_new AS Reach_sn_new, t_1_Edge AS t_2_Edge
     WHERE
-      (t_2_Edge.a = Reach_sn_new.b)
+      (t_2_Edge.a <=> Reach_sn_new.b)
   
 ) AS UNUSED_TABLE_NAME  ),
 t_0_Reach_sn_back_step AS (SELECT
@@ -473,8 +473,8 @@ WHERE
   FROM
     synalog_test.Reach_sn_full AS Reach_sn_full
   WHERE
-    (Reach_sn_full.a = Reach_sn_back_step.a) AND
-    (Reach_sn_full.b = Reach_sn_back_step.b)) IS NULL)
+    (Reach_sn_full.a <=> Reach_sn_back_step.a) AND
+    (Reach_sn_full.b <=> Reach_sn_back_step.b)) IS NULL)
 GROUP BY 1, 2;
 
 INSERT INTO synalog_test.Reach_sn_full SELECT * FROM synalog_test.Reach_sn_delta;
@@ -501,7 +501,7 @@ t_1_Reach_MultBodyAggAux_f8 AS (SELECT * FROM (
     FROM
       synalog_test.Reach_sn_delta AS Reach_sn_delta, t_1_Edge AS t_2_Edge
     WHERE
-      (t_2_Edge.a = Reach_sn_delta.b)
+      (t_2_Edge.a <=> Reach_sn_delta.b)
   
 ) AS UNUSED_TABLE_NAME  ),
 t_0_Reach_sn_step AS (SELECT
@@ -521,8 +521,8 @@ WHERE
   FROM
     synalog_test.Reach_sn_full AS Reach_sn_full
   WHERE
-    (Reach_sn_full.a = Reach_sn_step.a) AND
-    (Reach_sn_full.b = Reach_sn_step.b)) IS NULL)
+    (Reach_sn_full.a <=> Reach_sn_step.a) AND
+    (Reach_sn_full.b <=> Reach_sn_step.b)) IS NULL)
 GROUP BY 1, 2;
 
 INSERT INTO synalog_test.Reach_sn_full SELECT * FROM synalog_test.Reach_sn_new;
@@ -549,7 +549,7 @@ t_1_Reach_MultBodyAggAux_f1 AS (SELECT * FROM (
     FROM
       synalog_test.Reach_sn_new AS Reach_sn_new, t_1_Edge AS t_2_Edge
     WHERE
-      (t_2_Edge.a = Reach_sn_new.b)
+      (t_2_Edge.a <=> Reach_sn_new.b)
   
 ) AS UNUSED_TABLE_NAME  ),
 t_0_Reach_sn_back_step AS (SELECT
@@ -569,8 +569,8 @@ WHERE
   FROM
     synalog_test.Reach_sn_full AS Reach_sn_full
   WHERE
-    (Reach_sn_full.a = Reach_sn_back_step.a) AND
-    (Reach_sn_full.b = Reach_sn_back_step.b)) IS NULL)
+    (Reach_sn_full.a <=> Reach_sn_back_step.a) AND
+    (Reach_sn_full.b <=> Reach_sn_back_step.b)) IS NULL)
 GROUP BY 1, 2;
 
 INSERT INTO synalog_test.Reach_sn_full SELECT * FROM synalog_test.Reach_sn_delta;
@@ -597,7 +597,7 @@ t_1_Reach_MultBodyAggAux_f8 AS (SELECT * FROM (
     FROM
       synalog_test.Reach_sn_delta AS Reach_sn_delta, t_1_Edge AS t_2_Edge
     WHERE
-      (t_2_Edge.a = Reach_sn_delta.b)
+      (t_2_Edge.a <=> Reach_sn_delta.b)
   
 ) AS UNUSED_TABLE_NAME  ),
 t_0_Reach_sn_step AS (SELECT
@@ -617,8 +617,8 @@ WHERE
   FROM
     synalog_test.Reach_sn_full AS Reach_sn_full
   WHERE
-    (Reach_sn_full.a = Reach_sn_step.a) AND
-    (Reach_sn_full.b = Reach_sn_step.b)) IS NULL)
+    (Reach_sn_full.a <=> Reach_sn_step.a) AND
+    (Reach_sn_full.b <=> Reach_sn_step.b)) IS NULL)
 GROUP BY 1, 2;
 
 INSERT INTO synalog_test.Reach_sn_full SELECT * FROM synalog_test.Reach_sn_new;
@@ -645,7 +645,7 @@ t_1_Reach_MultBodyAggAux_f1 AS (SELECT * FROM (
     FROM
       synalog_test.Reach_sn_new AS Reach_sn_new, t_1_Edge AS t_2_Edge
     WHERE
-      (t_2_Edge.a = Reach_sn_new.b)
+      (t_2_Edge.a <=> Reach_sn_new.b)
   
 ) AS UNUSED_TABLE_NAME  ),
 t_0_Reach_sn_back_step AS (SELECT
@@ -665,8 +665,8 @@ WHERE
   FROM
     synalog_test.Reach_sn_full AS Reach_sn_full
   WHERE
-    (Reach_sn_full.a = Reach_sn_back_step.a) AND
-    (Reach_sn_full.b = Reach_sn_back_step.b)) IS NULL)
+    (Reach_sn_full.a <=> Reach_sn_back_step.a) AND
+    (Reach_sn_full.b <=> Reach_sn_back_step.b)) IS NULL)
 GROUP BY 1, 2;
 
 INSERT INTO synalog_test.Reach_sn_full SELECT * FROM synalog_test.Reach_sn_delta;
@@ -693,7 +693,7 @@ t_1_Reach_MultBodyAggAux_f8 AS (SELECT * FROM (
     FROM
       synalog_test.Reach_sn_delta AS Reach_sn_delta, t_1_Edge AS t_2_Edge
     WHERE
-      (t_2_Edge.a = Reach_sn_delta.b)
+      (t_2_Edge.a <=> Reach_sn_delta.b)
   
 ) AS UNUSED_TABLE_NAME  ),
 t_0_Reach_sn_step AS (SELECT
@@ -713,8 +713,8 @@ WHERE
   FROM
     synalog_test.Reach_sn_full AS Reach_sn_full
   WHERE
-    (Reach_sn_full.a = Reach_sn_step.a) AND
-    (Reach_sn_full.b = Reach_sn_step.b)) IS NULL)
+    (Reach_sn_full.a <=> Reach_sn_step.a) AND
+    (Reach_sn_full.b <=> Reach_sn_step.b)) IS NULL)
 GROUP BY 1, 2;
 
 INSERT INTO synalog_test.Reach_sn_full SELECT * FROM synalog_test.Reach_sn_new;
@@ -741,7 +741,7 @@ t_1_Reach_MultBodyAggAux_f1 AS (SELECT * FROM (
     FROM
       synalog_test.Reach_sn_new AS Reach_sn_new, t_1_Edge AS t_2_Edge
     WHERE
-      (t_2_Edge.a = Reach_sn_new.b)
+      (t_2_Edge.a <=> Reach_sn_new.b)
   
 ) AS UNUSED_TABLE_NAME  ),
 t_0_Reach_sn_back_step AS (SELECT
@@ -761,8 +761,8 @@ WHERE
   FROM
     synalog_test.Reach_sn_full AS Reach_sn_full
   WHERE
-    (Reach_sn_full.a = Reach_sn_back_step.a) AND
-    (Reach_sn_full.b = Reach_sn_back_step.b)) IS NULL)
+    (Reach_sn_full.a <=> Reach_sn_back_step.a) AND
+    (Reach_sn_full.b <=> Reach_sn_back_step.b)) IS NULL)
 GROUP BY 1, 2;
 
 INSERT INTO synalog_test.Reach_sn_full SELECT * FROM synalog_test.Reach_sn_delta;

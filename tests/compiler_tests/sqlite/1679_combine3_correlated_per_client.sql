@@ -93,6 +93,6 @@ SELECT
 FROM
   t_1_Ship AS Ship, JSON_EACH(JSON_ARRAY(0)) as x_7
 WHERE
-  (Ship.client = t_0_Client.client)) AS t
+  (Ship.client IS t_0_Client.client)) AS t
 FROM
   t_2_Client AS t_0_Client ORDER BY client NULLS LAST, t NULLS LAST;

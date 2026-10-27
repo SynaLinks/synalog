@@ -15,4 +15,4 @@ FROM
 WHERE
   (t_0_E.pay > E.pay) AND
   (E.id = 1) AND
-  (t_0_E.d = E.d) ORDER BY n NULLS LAST;
+  (t_0_E.d <=> E.d) ORDER BY n NULLS LAST;

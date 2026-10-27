@@ -41,9 +41,9 @@ FROM
 WHERE
   (U.a < U.b) AND
   (U.b < t_1_U.b) AND
-  (t_1_U.a = U.b) AND
-  (t_2_U.a = t_1_U.b) AND
-  (t_2_U.b = U.a)
+  (t_1_U.a <=> U.b) AND
+  (t_2_U.a <=> t_1_U.b) AND
+  (t_2_U.b <=> U.a)
 GROUP BY 1, 2, 3)
 SELECT
   SUM(1) AS n

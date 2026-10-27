@@ -31,4 +31,4 @@ SELECT
 FROM
   t_0_A AS A, t_1_B AS B
 WHERE
-  (B.k = A.k);
+  (COALESCE(B.k, 0) = COALESCE(A.k, 0) AND (B.k IS NULL) = (A.k IS NULL));

@@ -124,7 +124,7 @@ SELECT
 FROM
   synalog_home.Paid AS Paid, t_0_Price AS Price
 WHERE
-  (Price.item = Paid.item);
+  (Price.item IS NOT DISTINCT FROM Paid.item);
 
 -- Interacting with table synalog_home.Line
 

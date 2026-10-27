@@ -64,7 +64,7 @@ FROM
 WHERE
   (Follows.a < Follows.b) AND
   (Follows.a < t_0_Follows.b) AND
-  (t_0_Follows.a = Follows.b) AND
-  (t_1_Follows.a = t_0_Follows.b) AND
-  (t_1_Follows.b = Follows.a)
+  (t_0_Follows.a IS Follows.b) AND
+  (t_1_Follows.a IS t_0_Follows.b) AND
+  (t_1_Follows.b IS Follows.a)
 GROUP BY Follows.a, Follows.b, t_0_Follows.b;

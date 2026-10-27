@@ -63,4 +63,4 @@ SELECT
 FROM
   t_0_Shop_Product AS Shop_Product, t_1_Shop_Stock AS Shop_Stock
 WHERE
-  (Shop_Stock.sku = Shop_Product.sku);
+  (Shop_Stock.sku IS NOT DISTINCT FROM Shop_Product.sku);

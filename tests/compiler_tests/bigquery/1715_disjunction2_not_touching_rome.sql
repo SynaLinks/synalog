@@ -114,4 +114,4 @@ WHERE
   FROM
     t_1_T AS T
   WHERE
-    (T.id = Ship.id)) IS NULL) ORDER BY id;
+    (T.id IS NOT DISTINCT FROM Ship.id)) IS NULL) ORDER BY id NULLS LAST;

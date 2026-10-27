@@ -3,4 +3,4 @@ SELECT
 FROM
   LATERAL (SELECT explode(ARRAY(0, 1)) AS x_3) AS pushkin
 WHERE
-  (STRUCT(x_3 AS a) = STRUCT(x_3 AS a)) ORDER BY x NULLS LAST;
+  (STRUCT(x_3 AS a) <=> STRUCT(x_3 AS a)) ORDER BY x NULLS LAST;

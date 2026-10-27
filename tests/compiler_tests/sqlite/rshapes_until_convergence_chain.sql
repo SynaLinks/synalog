@@ -37,7 +37,7 @@ t_0_R_RecursiveCte AS (SELECT * FROM (
         t_2_E AS t_6_E, t_2_E AS t_4_E
       WHERE
         (1 = 0) AND
-        (t_4_E.a = t_6_E.b) AND
+        (t_4_E.a IS t_6_E.b) AND
         (t_6_E.a = 1)
      UNION ALL
     
@@ -47,8 +47,8 @@ t_0_R_RecursiveCte AS (SELECT * FROM (
         t_2_E AS t_13_E, t_2_E AS t_11_E, t_2_E AS t_9_E
       WHERE
         (1 = 0) AND
-        (t_9_E.a = t_11_E.b) AND
-        (t_11_E.a = t_13_E.b) AND
+        (t_9_E.a IS t_11_E.b) AND
+        (t_11_E.a IS t_13_E.b) AND
         (t_13_E.a = 1)
     
   ) AS UNUSED_TABLE_NAME  
@@ -59,7 +59,7 @@ SELECT
 FROM
   t_0_R_RecursiveCte AS t_15_R_RecursiveCte, t_2_E AS t_16_E
 WHERE
-  (t_16_E.a = t_15_R_RecursiveCte.x))
+  (t_16_E.a IS t_15_R_RecursiveCte.x))
 SELECT
   R_RecursiveCte.x AS x
 FROM

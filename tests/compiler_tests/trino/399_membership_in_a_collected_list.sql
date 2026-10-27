@@ -7,4 +7,4 @@ SELECT
 FROM
   t_1_L AS t_0_L, UNNEST(TRANSFORM(t_0_L.l, synalog_e -> ROW(synalog_e))) as pushkin(x_3), UNNEST(TRANSFORM(ARRAY[1, 3], synalog_e -> ROW(synalog_e))) as pushkin(x_5)
 WHERE
-  (x_5 = x_3);
+  (x_5 IS NOT DISTINCT FROM x_3);

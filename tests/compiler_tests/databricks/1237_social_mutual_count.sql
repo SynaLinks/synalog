@@ -17,6 +17,6 @@ SELECT
 FROM
   t_1_Follows AS Follows, t_1_Follows AS t_0_Follows
 WHERE
-  (t_0_Follows.a = Follows.b) AND
-  (t_0_Follows.b = Follows.a)
+  (t_0_Follows.a <=> Follows.b) AND
+  (t_0_Follows.b <=> Follows.a)
 GROUP BY 1 ORDER BY a NULLS LAST, n NULLS LAST;

@@ -73,6 +73,6 @@ SELECT
 FROM
   t_2_O AS O, UNNEST(ARRAY[0]) as x_10
 WHERE
-  (O.c = t_1_C.c)) AS numeric) ELSE NULL END)) AS synalog_value
+  (COALESCE(O.c, '') = COALESCE(t_1_C.c, '') AND (O.c IS NULL) = (t_1_C.c IS NULL))) AS numeric) ELSE NULL END)) AS synalog_value
 FROM
   t_3_C AS t_1_C, UNNEST(ARRAY[0]) as x_3) AS m;

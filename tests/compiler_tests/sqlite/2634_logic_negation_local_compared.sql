@@ -21,4 +21,4 @@ WHERE
     t_0_E AS E, JSON_EACH(JSON_ARRAY(0)) as x_8
   WHERE
     (E.b > 5) AND
-    (E.a = x_4.value)) IS NULL) ORDER BY x;
+    (E.a IS x_4.value)) IS NULL) ORDER BY x NULLS LAST;

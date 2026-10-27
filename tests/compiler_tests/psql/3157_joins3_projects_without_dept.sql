@@ -62,4 +62,4 @@ WHERE
   FROM
     t_1_D AS D, UNNEST(ARRAY[0]) as x_5
   WHERE
-    (D.dept = Pr.dept)) AS numeric) IS NULL);
+    (COALESCE(D.dept, 0) = COALESCE(Pr.dept, 0) AND (D.dept IS NULL) = (Pr.dept IS NULL))) AS numeric) IS NULL);

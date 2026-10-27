@@ -17,4 +17,4 @@ WHERE
   FROM
     t_0_O AS t_1_O
   WHERE
-    (t_1_O.c = O.c))) ORDER BY id NULLS LAST;
+    (t_1_O.c <=> O.c))) ORDER BY id NULLS LAST;

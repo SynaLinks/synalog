@@ -30,4 +30,4 @@ SELECT
 FROM
   t_0_P AS P
 WHERE
-  (P.r.home = STRUCT("rome" AS city)) ORDER BY n NULLS LAST;
+  (P.r.home <=> STRUCT("rome" AS city)) ORDER BY n NULLS LAST;

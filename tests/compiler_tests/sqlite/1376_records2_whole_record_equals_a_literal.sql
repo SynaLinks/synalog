@@ -61,4 +61,4 @@ SELECT
 FROM
   t_0_Emp AS Emp
 WHERE
-  (JSON_OBJECT('dept', 'eng', 'salary', 7000, 'city', 'paris') = JSON_OBJECT('dept', Emp.dept, 'salary', Emp.salary, 'city', Emp.city));
+  (JSON_OBJECT('dept', 'eng', 'salary', 7000, 'city', 'paris') IS JSON_OBJECT('dept', Emp.dept, 'salary', Emp.salary, 'city', Emp.city));

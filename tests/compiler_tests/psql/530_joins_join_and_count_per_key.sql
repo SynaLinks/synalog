@@ -24,5 +24,5 @@ SELECT
 FROM
   t_1_M AS M, UNNEST(ARRAY[1, 2]) as x_4
 WHERE
-  (x_4 = M.k)
+  (COALESCE(x_4, 0) = COALESCE(M.k, 0) AND (x_4 IS NULL) = (M.k IS NULL))
 GROUP BY M.k ORDER BY k;

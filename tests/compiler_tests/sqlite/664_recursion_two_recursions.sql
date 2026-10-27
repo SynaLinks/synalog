@@ -38,7 +38,7 @@ t_1_R_RecursiveCte AS (SELECT * FROM (
         (((0) + (1)) < 5) AND
         (0 < 5) AND
         (1 = 0) AND
-        (t_5_E.a = t_7_E.b) AND
+        (t_5_E.a IS t_7_E.b) AND
         (t_7_E.a = 1)
      UNION ALL
     
@@ -52,8 +52,8 @@ t_1_R_RecursiveCte AS (SELECT * FROM (
         (((0) + (1)) < 5) AND
         (0 < 5) AND
         (1 = 0) AND
-        (t_10_E.a = t_12_E.b) AND
-        (t_12_E.a = t_14_E.b) AND
+        (t_10_E.a IS t_12_E.b) AND
+        (t_12_E.a IS t_14_E.b) AND
         (t_14_E.a = 1)
     
   ) AS UNUSED_TABLE_NAME  
@@ -66,7 +66,7 @@ FROM
   t_1_R_RecursiveCte AS t_16_R_RecursiveCte, t_3_E AS t_17_E
 WHERE
   (t_16_R_RecursiveCte.synalog_step < 5) AND
-  (t_17_E.a = t_16_R_RecursiveCte.x)),
+  (t_17_E.a IS t_16_R_RecursiveCte.x)),
 t_0_R AS (SELECT
   R_RecursiveCte.x AS x
 FROM
@@ -100,7 +100,7 @@ t_19_S_RecursiveCte AS (SELECT * FROM (
         (((0) + (1)) < 5) AND
         (0 < 5) AND
         (1 = 0) AND
-        (t_23_E.b = t_25_E.a) AND
+        (t_23_E.b IS t_25_E.a) AND
         (t_25_E.b = 3)
      UNION ALL
     
@@ -114,8 +114,8 @@ t_19_S_RecursiveCte AS (SELECT * FROM (
         (((0) + (1)) < 5) AND
         (0 < 5) AND
         (1 = 0) AND
-        (t_28_E.b = t_30_E.a) AND
-        (t_30_E.b = t_32_E.a) AND
+        (t_28_E.b IS t_30_E.a) AND
+        (t_30_E.b IS t_32_E.a) AND
         (t_32_E.b = 3)
     
   ) AS UNUSED_TABLE_NAME  
@@ -128,7 +128,7 @@ FROM
   t_19_S_RecursiveCte AS t_34_S_RecursiveCte, t_3_E AS t_35_E
 WHERE
   (t_34_S_RecursiveCte.synalog_step < 5) AND
-  (t_35_E.b = t_34_S_RecursiveCte.x)),
+  (t_35_E.b IS t_34_S_RecursiveCte.x)),
 t_18_S AS (SELECT
   S_RecursiveCte.x AS x
 FROM
@@ -140,4 +140,4 @@ FROM
   t_0_R AS R, t_18_S AS S
 WHERE
   (R.x > 2) AND
-  (S.x = R.x);
+  (S.x IS R.x);

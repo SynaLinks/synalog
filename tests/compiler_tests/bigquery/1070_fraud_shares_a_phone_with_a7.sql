@@ -46,8 +46,8 @@ t_0_Shares AS (SELECT
 FROM
   t_2_HasPhone AS HasPhone, t_2_HasPhone AS t_1_HasPhone
 WHERE
-  (HasPhone.account != t_1_HasPhone.account) AND
-  (t_1_HasPhone.phone = HasPhone.phone)
+  (HasPhone.account IS DISTINCT FROM t_1_HasPhone.account) AND
+  (t_1_HasPhone.phone IS NOT DISTINCT FROM HasPhone.phone)
 GROUP BY a, b)
 SELECT
   Shares.b AS b
@@ -55,4 +55,4 @@ FROM
   t_0_Shares AS Shares
 WHERE
   (Shares.a = "a7")
-GROUP BY b ORDER BY b;
+GROUP BY b ORDER BY b NULLS LAST;

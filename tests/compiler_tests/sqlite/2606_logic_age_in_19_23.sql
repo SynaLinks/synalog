@@ -61,4 +61,4 @@ SELECT
 FROM
   t_0_Person AS Person, JSON_EACH(JSON_ARRAY(19, 23)) as x_3
 WHERE
-  (Person.age = x_3.value) ORDER BY id;
+  (Person.age IS x_3.value) ORDER BY id NULLS LAST;

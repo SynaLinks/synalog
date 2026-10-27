@@ -19,5 +19,5 @@ WHERE
     t_0_Sale AS t_1_Sale
   WHERE
     (t_1_Sale.region = "south") AND
-    (Sale.id = t_1_Sale.id)) IS NULL) AND
+    (Sale.id <=> t_1_Sale.id)) IS NULL) AND
   (Sale.amount > 100) ORDER BY id NULLS LAST;

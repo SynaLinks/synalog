@@ -32,5 +32,5 @@ FROM
   t_1_P AS P, t_1_P AS t_0_P, UNNEST(TRANSFORM(P.r.tags, synalog_e -> ROW(synalog_e))) as pushkin(x_6), UNNEST(TRANSFORM(t_0_P.r.tags, synalog_e -> ROW(synalog_e))) as pushkin(x_7)
 WHERE
   (P.id < t_0_P.id) AND
-  (x_6 = x_7)
+  (x_6 IS NOT DISTINCT FROM x_7)
 GROUP BY 1, 2 ORDER BY a, b;

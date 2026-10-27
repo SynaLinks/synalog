@@ -12,4 +12,4 @@ SELECT
 FROM
   t_2_A AS t_0_A, t_3_B AS t_1_B
 WHERE
-  (t_1_B.k = t_0_A.k);
+  (t_1_B.k <=> t_0_A.k);

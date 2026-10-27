@@ -103,6 +103,6 @@ SELECT
 FROM
   t_1_E AS E, UNNEST(ARRAY[0]) as x_5
 WHERE
-  (E.d = t_0_D.d)) AS numeric), 0) AS n
+  (COALESCE(E.d, 0) = COALESCE(t_0_D.d, 0) AND (E.d IS NULL) = (t_0_D.d IS NULL))) AS numeric), 0) AS n
 FROM
   t_2_D AS t_0_D ORDER BY dn;

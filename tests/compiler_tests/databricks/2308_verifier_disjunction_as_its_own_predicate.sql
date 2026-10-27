@@ -36,4 +36,4 @@ WHERE
   FROM
     t_1_Other AS Other
   WHERE
-    (Other.x = V.x)) IS NULL);
+    (Other.x <=> V.x)) IS NULL);

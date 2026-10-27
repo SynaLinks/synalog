@@ -40,7 +40,7 @@ t_0_EnterpriseRevenue AS (SELECT
 FROM
   t_1_Enterprise AS Enterprise, t_3_Segments_Order AS Segments_Order
 WHERE
-  (Segments_Order.customer_id = Enterprise.customer_id))
+  (Segments_Order.customer_id IS NOT DISTINCT FROM Enterprise.customer_id))
 SELECT
   EnterpriseRevenue.revenue AS revenue
 FROM

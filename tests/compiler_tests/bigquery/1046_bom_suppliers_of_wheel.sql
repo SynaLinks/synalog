@@ -77,7 +77,7 @@ t_16_Contains_MultBodyAggAux_recursive_head_f2 AS (SELECT * FROM (
     FROM
       t_18_Contains_r0 AS Contains_r0, t_22_Uses AS t_17_Uses
     WHERE
-      (t_17_Uses.part = Contains_r0.component)
+      (t_17_Uses.part IS NOT DISTINCT FROM Contains_r0.component)
    UNION ALL
   
     SELECT
@@ -101,7 +101,7 @@ t_13_Contains_MultBodyAggAux_recursive_head_f3 AS (SELECT * FROM (
     FROM
       t_15_Contains_r1 AS Contains_r1, t_22_Uses AS t_14_Uses
     WHERE
-      (t_14_Uses.part = Contains_r1.component)
+      (t_14_Uses.part IS NOT DISTINCT FROM Contains_r1.component)
    UNION ALL
   
     SELECT
@@ -125,7 +125,7 @@ t_10_Contains_MultBodyAggAux_recursive_head_f4 AS (SELECT * FROM (
     FROM
       t_12_Contains_r2 AS Contains_r2, t_22_Uses AS t_11_Uses
     WHERE
-      (t_11_Uses.part = Contains_r2.component)
+      (t_11_Uses.part IS NOT DISTINCT FROM Contains_r2.component)
    UNION ALL
   
     SELECT
@@ -149,7 +149,7 @@ t_7_Contains_MultBodyAggAux_recursive_head_f5 AS (SELECT * FROM (
     FROM
       t_9_Contains_r3 AS Contains_r3, t_22_Uses AS t_8_Uses
     WHERE
-      (t_8_Uses.part = Contains_r3.component)
+      (t_8_Uses.part IS NOT DISTINCT FROM Contains_r3.component)
    UNION ALL
   
     SELECT
@@ -173,7 +173,7 @@ t_4_Contains_MultBodyAggAux_recursive_head_f6 AS (SELECT * FROM (
     FROM
       t_6_Contains_r4 AS Contains_r4, t_22_Uses AS t_5_Uses
     WHERE
-      (t_5_Uses.part = Contains_r4.component)
+      (t_5_Uses.part IS NOT DISTINCT FROM Contains_r4.component)
    UNION ALL
   
     SELECT
@@ -197,7 +197,7 @@ t_2_Contains_MultBodyAggAux_recursive_head_f7 AS (SELECT * FROM (
     FROM
       t_3_Contains_r5 AS Contains_r5, t_22_Uses AS Uses
     WHERE
-      (Uses.part = Contains_r5.component)
+      (Uses.part IS NOT DISTINCT FROM Contains_r5.component)
    UNION ALL
   
     SELECT
@@ -253,7 +253,7 @@ t_0_S_MultBodyAggAux AS (SELECT * FROM (
       t_1_Contains AS Contains, t_29_Supplies AS Supplies
     WHERE
       (Contains.part = "wheel") AND
-      (Supplies.component = Contains.component)
+      (Supplies.component IS NOT DISTINCT FROM Contains.component)
    UNION ALL
   
     SELECT
@@ -268,4 +268,4 @@ SELECT
   S_MultBodyAggAux.supplier AS supplier
 FROM
   t_0_S_MultBodyAggAux AS S_MultBodyAggAux
-GROUP BY supplier ORDER BY supplier;
+GROUP BY supplier ORDER BY supplier NULLS LAST;

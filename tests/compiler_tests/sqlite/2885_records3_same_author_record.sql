@@ -70,4 +70,4 @@ FROM
   t_4_B AS t_2_B, t_4_B AS t_3_B
 WHERE
   (t_2_B.id < t_3_B.id) AND
-  (JSON_OBJECT('author', t_3_B.author) = JSON_OBJECT('author', t_2_B.author)) ORDER BY a NULLS LAST, b NULLS LAST;
+  (JSON_OBJECT('author', t_3_B.author) IS JSON_OBJECT('author', t_2_B.author)) ORDER BY a NULLS LAST, b NULLS LAST;

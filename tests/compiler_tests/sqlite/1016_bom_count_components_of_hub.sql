@@ -74,7 +74,7 @@ t_1_Contains_RecursiveCte AS (SELECT * FROM (
       WHERE
         (0 < 6) AND
         (1 = 0) AND
-        (t_3_Uses.part = t_5_Uses.component)
+        (t_3_Uses.part IS t_5_Uses.component)
      UNION ALL
     
       SELECT
@@ -87,8 +87,8 @@ t_1_Contains_RecursiveCte AS (SELECT * FROM (
         (((0) + (1)) < 6) AND
         (0 < 6) AND
         (1 = 0) AND
-        (t_7_Uses.part = t_9_Uses.component) AND
-        (t_9_Uses.part = t_11_Uses.component)
+        (t_7_Uses.part IS t_9_Uses.component) AND
+        (t_9_Uses.part IS t_11_Uses.component)
      UNION ALL
     
       SELECT
@@ -102,9 +102,9 @@ t_1_Contains_RecursiveCte AS (SELECT * FROM (
         (((0) + (1)) < 6) AND
         (0 < 6) AND
         (1 = 0) AND
-        (t_13_Uses.part = t_15_Uses.component) AND
-        (t_15_Uses.part = t_17_Uses.component) AND
-        (t_17_Uses.part = t_19_Uses.component)
+        (t_13_Uses.part IS t_15_Uses.component) AND
+        (t_15_Uses.part IS t_17_Uses.component) AND
+        (t_17_Uses.part IS t_19_Uses.component)
      UNION ALL
     
       SELECT
@@ -119,10 +119,10 @@ t_1_Contains_RecursiveCte AS (SELECT * FROM (
         (((0) + (1)) < 6) AND
         (0 < 6) AND
         (1 = 0) AND
-        (t_21_Uses.part = t_23_Uses.component) AND
-        (t_23_Uses.part = t_25_Uses.component) AND
-        (t_25_Uses.part = t_27_Uses.component) AND
-        (t_27_Uses.part = t_29_Uses.component)
+        (t_21_Uses.part IS t_23_Uses.component) AND
+        (t_23_Uses.part IS t_25_Uses.component) AND
+        (t_25_Uses.part IS t_27_Uses.component) AND
+        (t_27_Uses.part IS t_29_Uses.component)
      UNION ALL
     
       SELECT
@@ -138,11 +138,11 @@ t_1_Contains_RecursiveCte AS (SELECT * FROM (
         (((0) + (1)) < 6) AND
         (0 < 6) AND
         (1 = 0) AND
-        (t_31_Uses.part = t_33_Uses.component) AND
-        (t_33_Uses.part = t_35_Uses.component) AND
-        (t_35_Uses.part = t_37_Uses.component) AND
-        (t_37_Uses.part = t_39_Uses.component) AND
-        (t_39_Uses.part = t_41_Uses.component)
+        (t_31_Uses.part IS t_33_Uses.component) AND
+        (t_33_Uses.part IS t_35_Uses.component) AND
+        (t_35_Uses.part IS t_37_Uses.component) AND
+        (t_37_Uses.part IS t_39_Uses.component) AND
+        (t_39_Uses.part IS t_41_Uses.component)
     
   ) AS UNUSED_TABLE_NAME  
 ) AS UNUSED_TABLE_NAME
@@ -155,7 +155,7 @@ FROM
   t_1_Contains_RecursiveCte AS t_42_Contains_RecursiveCte, t_2_Uses AS t_43_Uses
 WHERE
   (t_42_Contains_RecursiveCte.synalog_step < 6) AND
-  (t_43_Uses.part = t_42_Contains_RecursiveCte.component)),
+  (t_43_Uses.part IS t_42_Contains_RecursiveCte.component)),
 t_0_Contains AS (SELECT
   Contains_RecursiveCte.part AS part,
   Contains_RecursiveCte.component AS component

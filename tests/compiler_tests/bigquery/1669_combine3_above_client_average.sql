@@ -91,4 +91,4 @@ WHERE
   FROM
     t_0_Ship AS t_1_Ship
   WHERE
-    (t_1_Ship.client = Ship.client))) ORDER BY id;
+    (t_1_Ship.client IS NOT DISTINCT FROM Ship.client))) ORDER BY id NULLS LAST;

@@ -4,14 +4,6 @@ create schema if not exists synalog_home;
 -- Empty synalog type: synalogrecord893574736;
 DO $$ BEGIN if not exists (select 'I(am) :- I(think)' from pg_type where typname = 'synalogrecord893574736') then create type synalogrecord893574736 as (nirvana numeric); end if; END $$;
 
-
-DO $$
-BEGIN
--- Synalog type: synalogrecord481217614
-if not exists (select 'I(am) :- I(think)' from pg_type where typname = 'synalogrecord481217614') then create type synalogrecord481217614 as (r synalogrecord893574736); end if;
--- Synalog type: synalogrecord86796764
-if not exists (select 'I(am) :- I(think)' from pg_type where typname = 'synalogrecord86796764') then create type synalogrecord86796764 as (s text); end if;
-END $$;
 WITH t_1_Edge AS (SELECT * FROM (
   
     SELECT
@@ -68,7 +60,7 @@ t_27_Reachable_r1 AS (SELECT * FROM (
     FROM
       t_30_Reachable_r0 AS Reachable_r0, t_1_Edge AS t_29_Edge
     WHERE
-      (t_29_Edge.col0 = Reachable_r0.col1)
+      (COALESCE(t_29_Edge.col0, 0) = COALESCE(Reachable_r0.col1, 0) AND (t_29_Edge.col0 IS NULL) = (Reachable_r0.col1 IS NULL))
   
 ) AS UNUSED_TABLE_NAME  ),
 t_24_Reachable_r2 AS (SELECT * FROM (
@@ -86,7 +78,7 @@ t_24_Reachable_r2 AS (SELECT * FROM (
     FROM
       t_27_Reachable_r1 AS Reachable_r1, t_1_Edge AS t_26_Edge
     WHERE
-      (t_26_Edge.col0 = Reachable_r1.col1)
+      (COALESCE(t_26_Edge.col0, 0) = COALESCE(Reachable_r1.col1, 0) AND (t_26_Edge.col0 IS NULL) = (Reachable_r1.col1 IS NULL))
   
 ) AS UNUSED_TABLE_NAME  ),
 t_21_Reachable_r3 AS (SELECT * FROM (
@@ -104,7 +96,7 @@ t_21_Reachable_r3 AS (SELECT * FROM (
     FROM
       t_24_Reachable_r2 AS Reachable_r2, t_1_Edge AS t_23_Edge
     WHERE
-      (t_23_Edge.col0 = Reachable_r2.col1)
+      (COALESCE(t_23_Edge.col0, 0) = COALESCE(Reachable_r2.col1, 0) AND (t_23_Edge.col0 IS NULL) = (Reachable_r2.col1 IS NULL))
   
 ) AS UNUSED_TABLE_NAME  ),
 t_18_Reachable_r4 AS (SELECT * FROM (
@@ -122,7 +114,7 @@ t_18_Reachable_r4 AS (SELECT * FROM (
     FROM
       t_21_Reachable_r3 AS Reachable_r3, t_1_Edge AS t_20_Edge
     WHERE
-      (t_20_Edge.col0 = Reachable_r3.col1)
+      (COALESCE(t_20_Edge.col0, 0) = COALESCE(Reachable_r3.col1, 0) AND (t_20_Edge.col0 IS NULL) = (Reachable_r3.col1 IS NULL))
   
 ) AS UNUSED_TABLE_NAME  ),
 t_15_Reachable_r5 AS (SELECT * FROM (
@@ -140,7 +132,7 @@ t_15_Reachable_r5 AS (SELECT * FROM (
     FROM
       t_18_Reachable_r4 AS Reachable_r4, t_1_Edge AS t_17_Edge
     WHERE
-      (t_17_Edge.col0 = Reachable_r4.col1)
+      (COALESCE(t_17_Edge.col0, 0) = COALESCE(Reachable_r4.col1, 0) AND (t_17_Edge.col0 IS NULL) = (Reachable_r4.col1 IS NULL))
   
 ) AS UNUSED_TABLE_NAME  ),
 t_12_Reachable_r6 AS (SELECT * FROM (
@@ -158,7 +150,7 @@ t_12_Reachable_r6 AS (SELECT * FROM (
     FROM
       t_15_Reachable_r5 AS Reachable_r5, t_1_Edge AS t_14_Edge
     WHERE
-      (t_14_Edge.col0 = Reachable_r5.col1)
+      (COALESCE(t_14_Edge.col0, 0) = COALESCE(Reachable_r5.col1, 0) AND (t_14_Edge.col0 IS NULL) = (Reachable_r5.col1 IS NULL))
   
 ) AS UNUSED_TABLE_NAME  ),
 t_9_Reachable_r7 AS (SELECT * FROM (
@@ -176,7 +168,7 @@ t_9_Reachable_r7 AS (SELECT * FROM (
     FROM
       t_12_Reachable_r6 AS Reachable_r6, t_1_Edge AS t_11_Edge
     WHERE
-      (t_11_Edge.col0 = Reachable_r6.col1)
+      (COALESCE(t_11_Edge.col0, 0) = COALESCE(Reachable_r6.col1, 0) AND (t_11_Edge.col0 IS NULL) = (Reachable_r6.col1 IS NULL))
   
 ) AS UNUSED_TABLE_NAME  ),
 t_6_Reachable_r8 AS (SELECT * FROM (
@@ -194,7 +186,7 @@ t_6_Reachable_r8 AS (SELECT * FROM (
     FROM
       t_9_Reachable_r7 AS Reachable_r7, t_1_Edge AS t_8_Edge
     WHERE
-      (t_8_Edge.col0 = Reachable_r7.col1)
+      (COALESCE(t_8_Edge.col0, 0) = COALESCE(Reachable_r7.col1, 0) AND (t_8_Edge.col0 IS NULL) = (Reachable_r7.col1 IS NULL))
   
 ) AS UNUSED_TABLE_NAME  ),
 t_3_Reachable_r9 AS (SELECT * FROM (
@@ -212,7 +204,7 @@ t_3_Reachable_r9 AS (SELECT * FROM (
     FROM
       t_6_Reachable_r8 AS Reachable_r8, t_1_Edge AS t_5_Edge
     WHERE
-      (t_5_Edge.col0 = Reachable_r8.col1)
+      (COALESCE(t_5_Edge.col0, 0) = COALESCE(Reachable_r8.col1, 0) AND (t_5_Edge.col0 IS NULL) = (Reachable_r8.col1 IS NULL))
   
 ) AS UNUSED_TABLE_NAME  ),
 t_0_Reachable AS (SELECT * FROM (
@@ -230,7 +222,7 @@ t_0_Reachable AS (SELECT * FROM (
     FROM
       t_3_Reachable_r9 AS Reachable_r9, t_1_Edge AS t_2_Edge
     WHERE
-      (t_2_Edge.col0 = Reachable_r9.col1)
+      (COALESCE(t_2_Edge.col0, 0) = COALESCE(Reachable_r9.col1, 0) AND (t_2_Edge.col0 IS NULL) = (Reachable_r9.col1 IS NULL))
   
 ) AS UNUSED_TABLE_NAME  )
 SELECT

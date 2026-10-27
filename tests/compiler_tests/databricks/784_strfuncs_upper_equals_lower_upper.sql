@@ -3,4 +3,4 @@ SELECT
 FROM
   LATERAL (SELECT explode(ARRAY("Apple", "kiwi", "Banana")) AS x_2) AS pushkin
 WHERE
-  (UPPER(LOWER(x_2)) = UPPER(x_2));
+  (UPPER(LOWER(x_2)) <=> UPPER(x_2));

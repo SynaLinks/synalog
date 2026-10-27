@@ -14,4 +14,4 @@ FROM
   t_1_E AS E, t_1_E AS t_0_E
 WHERE
   (E.pay > t_0_E.pay) AND
-  (t_0_E.id = E.boss) ORDER BY n NULLS LAST;
+  (t_0_E.id <=> E.boss) ORDER BY n NULLS LAST;

@@ -68,4 +68,4 @@ WHERE
   WHERE
     (t_1_Emp.dept = "eng") AND
     (t_1_Emp.city = "paris") AND
-    (Emp.name = t_1_Emp.name)) IS NULL) ORDER BY name;
+    (Emp.name IS NOT DISTINCT FROM t_1_Emp.name)) IS NULL) ORDER BY name NULLS LAST;

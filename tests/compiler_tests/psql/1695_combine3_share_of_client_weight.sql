@@ -94,6 +94,6 @@ SELECT
 FROM
   t_1_Ship AS t_0_Ship, UNNEST(ARRAY[0]) as x_8
 WHERE
-  (t_0_Ship.client = Ship.client)) AS numeric), 0)))) AS synalog_v) AS synalog_n) AS pct
+  (COALESCE(t_0_Ship.client, '') = COALESCE(Ship.client, '') AND (t_0_Ship.client IS NULL) = (Ship.client IS NULL))) AS numeric), 0)))) AS synalog_v) AS synalog_n) AS pct
 FROM
   t_1_Ship AS Ship ORDER BY id, pct;

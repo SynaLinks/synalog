@@ -25,5 +25,5 @@ WHERE
   FROM
     t_1_S AS S
   WHERE
-    (S.id = E.id) AND
+    (S.id <=> E.id) AND
     (S.skill = "rust")) IS NULL) ORDER BY name NULLS LAST;

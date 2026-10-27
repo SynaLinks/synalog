@@ -56,6 +56,6 @@ FROM
   t_1_O AS t_0_O, (select unnest([0]) as unnested_pod) as x_8
 WHERE
   (t_0_O.amt > O.amt) AND
-  (t_0_O.c = O.c)), 0))) AS r
+  (t_0_O.c IS NOT DISTINCT FROM O.c)), 0))) AS r
 FROM
   t_1_O AS O ORDER BY id;

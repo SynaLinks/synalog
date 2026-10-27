@@ -103,7 +103,7 @@ t_1_Pick_MultBodyAggAux AS (SELECT * FROM (
     FROM
       t_4_E AS t_2_E, t_5_D AS t_3_D
     WHERE
-      (t_3_D.d = t_2_E.d) AND
+      (COALESCE(t_3_D.d, 0) = COALESCE(t_2_E.d, 0) AND (t_3_D.d IS NULL) = (t_2_E.d IS NULL)) AND
       (t_3_D.city = 'paris')
    UNION ALL
   
@@ -125,4 +125,4 @@ SELECT
 FROM
   t_0_Pick AS Pick, t_4_E AS E
 WHERE
-  (E.id = Pick.id) ORDER BY n;
+  (COALESCE(E.id, 0) = COALESCE(Pick.id, 0) AND (E.id IS NULL) = (Pick.id IS NULL)) ORDER BY n;

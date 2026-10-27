@@ -22,5 +22,5 @@ FROM
   t_0_B AS B, UNNEST(ARRAY[1, 2, 3]) as x_6
 WHERE
   (B.k > 1) AND
-  (B.v != "c") AND
-  (x_6 = B.k);
+  (B.v IS DISTINCT FROM "c") AND
+  (x_6 IS NOT DISTINCT FROM B.k);

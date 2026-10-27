@@ -80,4 +80,4 @@ SELECT
 FROM
   t_0_E AS E, t_1_D AS D
 WHERE
-  (D.dept = E.dept) ORDER BY name, dname;
+  (COALESCE(D.dept, 0) = COALESCE(E.dept, 0) AND (D.dept IS NULL) = (E.dept IS NULL)) ORDER BY name, dname;

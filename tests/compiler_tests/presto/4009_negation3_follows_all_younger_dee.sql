@@ -94,5 +94,5 @@ WHERE
       t_3_F AS F
     WHERE
       (F.a = 'dee') AND
-      (F.b = t_2_U.u)) IS NULL)) IS NULL) AND
+      (F.b IS NOT DISTINCT FROM t_2_U.u)) IS NULL)) IS NULL) AND
   (t_0_U.u = 'dee');

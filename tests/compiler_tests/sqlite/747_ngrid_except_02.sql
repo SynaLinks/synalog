@@ -9,4 +9,4 @@ WHERE
     JSON_EACH(JSON_ARRAY(0)) as x_6, JSON_EACH(JSON_ARRAY(0)) as x_8
   WHERE
     (x_8.value > 1) AND
-    (x_3.value = x_8.value)) IS NULL) ORDER BY x;
+    (x_3.value IS x_8.value)) IS NULL) ORDER BY x NULLS LAST;

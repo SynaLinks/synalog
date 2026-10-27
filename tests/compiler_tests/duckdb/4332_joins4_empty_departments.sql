@@ -106,4 +106,4 @@ WHERE
   FROM
     t_2_E AS E, (select unnest([0]) as unnested_pod) as x_5
   WHERE
-    (E.d = t_0_D.d)) IS NULL) ORDER BY dn;
+    (E.d IS NOT DISTINCT FROM t_0_D.d)) IS NULL) ORDER BY dn;

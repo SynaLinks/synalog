@@ -38,7 +38,7 @@ FROM
   t_6_Events AS t_8_Events, t_6_Events AS t_9_Events
 WHERE
   (t_9_Events.changed_at > t_8_Events.changed_at) AND
-  (t_9_Events.person_id = t_8_Events.person_id)
+  (t_9_Events.person_id <=> t_8_Events.person_id)
 GROUP BY 1, 2),
 t_0_Member_MultBodyAggAux AS (SELECT * FROM (
   
@@ -50,10 +50,10 @@ t_0_Member_MultBodyAggAux AS (SELECT * FROM (
     FROM
       t_2_Person AS Person, t_4_Team AS t_1_Team, t_6_Events AS Events, t_7_NextChange AS NextChange
     WHERE
-      (Events.person_id = Person.person_id) AND
-      (Events.team_id = t_1_Team.team_id) AND
-      (NextChange.person_id = Person.person_id) AND
-      (NextChange.changed_at = Events.changed_at)
+      (Events.person_id <=> Person.person_id) AND
+      (Events.team_id <=> t_1_Team.team_id) AND
+      (NextChange.person_id <=> Person.person_id) AND
+      (NextChange.changed_at <=> Events.changed_at)
    UNION ALL
   
     SELECT
@@ -69,10 +69,10 @@ t_0_Member_MultBodyAggAux AS (SELECT * FROM (
       FROM
         t_7_NextChange AS t_15_NextChange
       WHERE
-        (t_15_NextChange.person_id = t_10_Person.person_id) AND
-        (t_15_NextChange.changed_at = t_12_Events.changed_at)) IS NULL) AND
-      (t_12_Events.person_id = t_10_Person.person_id) AND
-      (t_12_Events.team_id = t_11_Team.team_id)
+        (t_15_NextChange.person_id <=> t_10_Person.person_id) AND
+        (t_15_NextChange.changed_at <=> t_12_Events.changed_at)) IS NULL) AND
+      (t_12_Events.person_id <=> t_10_Person.person_id) AND
+      (t_12_Events.team_id <=> t_11_Team.team_id)
   
 ) AS UNUSED_TABLE_NAME  )
 SELECT

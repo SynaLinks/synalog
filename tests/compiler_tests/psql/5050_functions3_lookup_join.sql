@@ -67,5 +67,5 @@ FROM
   t_2_V AS V, t_3_Rate AS Rate, t_3_Rate AS t_1_Rate
 WHERE
   (Rate.r IS NOT null) AND
-  (V.s = Rate.s) AND
-  (V.s = t_1_Rate.s) ORDER BY k;
+  (COALESCE(V.s, '') = COALESCE(Rate.s, '') AND (V.s IS NULL) = (Rate.s IS NULL)) AND
+  (COALESCE(V.s, '') = COALESCE(t_1_Rate.s, '') AND (V.s IS NULL) = (t_1_Rate.s IS NULL)) ORDER BY k;

@@ -44,8 +44,8 @@ A string is written in double quotes, `"north"`, single quotes, `'north'`, or tr
 Quote(a: 'say "hi"', b: """say "hi" there""", c: 'it\'s');
 ```
 
-!!! danger "Never compare against null with `!=`"
-    `x != null` is silently broken (it follows SQL three-valued logic and never matches). Always use `x is null` / `x is not null`.
+!!! note "Null is a value"
+    `x == null` and `x != null` mean `x is null` and `x is not null`: a null equals a null and differs from every other value (see [Null handling](#null-handling) below).
 
 ## Logical operators
 
@@ -98,7 +98,7 @@ HasEmail(user_id:, email:) :- Users(user_id:, email:), email is not null;
 UserDisplay(user_id:, name:) :- Users(user_id:, full_name:), name == Coalesce(full_name, "Anonymous");
 ```
 
-A null equals nothing, another null included: a join on a column finds no row where the key is null (`A(k:), B(k:)` with both `k` null), and neither does a negation (`~B(k:)` holds). Replace a null key before joining when it should match (`B(k: Coalesce(k, 0))`).
+A null is a value, as a constant of Datalog is: it equals a null and differs from every other value. A join on a column meets a null key with a null key (`A(k:), B(k:)` with both `k` null gives a row), a negation finds it (`~B(k:)` does not hold), `x == x` always holds, and `x != 1` holds where `x` is null. Arithmetic on a null is null (`null + 1`), so computed keys that are null meet too. Order comparisons (`x < 1`) hold of no null. To keep null keys from meeting, say so: `A(k:), B(k:), k is not null`.
 
 ## Conditionals
 

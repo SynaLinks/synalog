@@ -89,5 +89,5 @@ WHERE
   WHERE
     (t_2_U.age <= t_0_U.age) AND
     (F.a = 'fay') AND
-    (t_2_U.u = F.b)) IS NULL) AND
+    (t_2_U.u IS F.b)) IS NULL) AND
   (t_0_U.u = 'fay');

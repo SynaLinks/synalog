@@ -73,7 +73,7 @@ t_1_Person AS (SELECT
   Employees.url AS url
 FROM
   t_2_Employees AS Employees
-GROUP BY person_id, name, url ORDER BY person_id)
+GROUP BY person_id, name, url ORDER BY person_id NULLS LAST)
 SELECT
   Management.employee_id AS employee_id
 FROM
@@ -84,5 +84,5 @@ WHERE
   FROM
     t_1_Person AS Person
   WHERE
-    (Person.person_id = Management.employee_id)) IS NULL)
+    (Person.person_id IS NOT DISTINCT FROM Management.employee_id)) IS NULL)
 GROUP BY employee_id;

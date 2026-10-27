@@ -52,7 +52,7 @@ t_1_L AS (SELECT * FROM (
       FROM
         t_2_C AS t_6_C, UNNEST(ARRAY[0]) as x_14
       WHERE
-        (t_6_C.g = t_4_G.g)) AS numeric) IS NULL)
+        (COALESCE(t_6_C.g, '') = COALESCE(t_4_G.g, '') AND (t_6_C.g IS NULL) = (t_4_G.g IS NULL))) AS numeric) IS NULL)
   
 ) AS UNUSED_TABLE_NAME  )
 SELECT

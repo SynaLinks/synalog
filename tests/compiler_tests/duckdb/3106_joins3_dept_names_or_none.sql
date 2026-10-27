@@ -4,15 +4,6 @@ create schema if not exists synalog_home;
 drop type if exists synalogrecord893574736 cascade; create type synalogrecord893574736 as struct(nirvana numeric);
 create sequence if not exists eternal_logical_sequence;
 
-
--- Synalog type: synalogrecord481217614
-drop type if exists synalogrecord481217614 cascade; create type synalogrecord481217614 as struct(r synalogrecord893574736);
-
--- Synalog type: synalogrecord383307722
-drop type if exists synalogrecord383307722 cascade; create type synalogrecord383307722 as struct(a timestamp);
-
--- Synalog type: synalogrecord519939597
-drop type if exists synalogrecord519939597 cascade; create type synalogrecord519939597 as struct(args text[], predicate text);
 WITH t_0_E AS (SELECT * FROM (
   
     SELECT
@@ -91,7 +82,7 @@ SELECT * FROM (
     FROM
       t_0_E AS E, t_1_D AS D
     WHERE
-      (D.dept = E.dept)
+      (D.dept IS NOT DISTINCT FROM E.dept)
    UNION ALL
   
     SELECT
@@ -103,9 +94,9 @@ SELECT * FROM (
       ((SELECT
         MIN((CASE WHEN x_4.unnested_pod = 0 THEN 1 ELSE NULL END)) AS synalog_value
       FROM
-        t_0_E, t_1_D AS D, (select unnest([0]::numeric[]) as unnested_pod) as x_4
+        t_0_E, t_1_D AS D, (select unnest([0]) as unnested_pod) as x_4
       WHERE
-        (D.dept = t_0_E.dept) AND
-        (E.name = t_0_E.name)) IS NULL)
+        (D.dept IS NOT DISTINCT FROM t_0_E.dept) AND
+        (E.name IS NOT DISTINCT FROM t_0_E.name)) IS NULL)
   
 ) AS UNUSED_TABLE_NAME  ORDER BY name, dname ;

@@ -110,7 +110,7 @@ FROM
   t_2_Order AS t_1_Order, t_3_Price AS Price
 WHERE
   (t_1_Order.state = 'paid') AND
-  (Price.item = t_1_Order.item)
+  (Price.item IS NOT DISTINCT FROM t_1_Order.item)
 GROUP BY t_1_Order.who),
 t_4_Ref AS (SELECT
   t_5_Order.who AS who
@@ -136,10 +136,10 @@ WHERE
   FROM
     t_4_Ref AS Ref, (select unnest([0]) as unnested_pod) as x_24
   WHERE
-    (Ref.who = Spend.who)) IS NULL) AND
+    (Ref.who IS NOT DISTINCT FROM Spend.who)) IS NULL) AND
   ((SELECT
     MIN((CASE WHEN x_30.unnested_pod = 0 THEN 1 ELSE NULL END)) AS synalog_value
   FROM
     t_6_Pen AS Pen, (select unnest([0]) as unnested_pod) as x_30
   WHERE
-    (Pen.who = Spend.who)) IS NULL) ORDER BY who;
+    (Pen.who IS NOT DISTINCT FROM Spend.who)) IS NULL) ORDER BY who;

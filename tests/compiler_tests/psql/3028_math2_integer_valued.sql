@@ -61,4 +61,4 @@ SELECT
 FROM
   t_0_V AS V
 WHERE
-  (FLOOR(V.x) = V.x) ORDER BY id;
+  (COALESCE(FLOOR(V.x), 0) = COALESCE(V.x, 0) AND (FLOOR(V.x) IS NULL) = (V.x IS NULL)) ORDER BY id;

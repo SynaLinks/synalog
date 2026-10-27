@@ -8,4 +8,4 @@ SELECT
 FROM
   t_1_Parent AS Parent, t_1_Parent AS t_0_Parent
 WHERE
-  (t_0_Parent.x = Parent.y);
+  (t_0_Parent.x <=> Parent.y);

@@ -3,4 +3,4 @@ SELECT
 FROM
   JSON_EACH(JSON_ARRAY('a', 'B', 'c')) as x_1
 WHERE
-  (x_1.value = LOWER(x_1.value)) ORDER BY s;
+  (x_1.value IS LOWER(x_1.value)) ORDER BY s NULLS LAST;

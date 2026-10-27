@@ -97,4 +97,4 @@ WHERE
   FROM
     t_1_Heavy AS Heavy, JSON_EACH(JSON_ARRAY(0)) as x_4
   WHERE
-    (Heavy.pid = Proj.pid)) IS NULL) ORDER BY pid;
+    (Heavy.pid IS Proj.pid)) IS NULL) ORDER BY pid NULLS LAST;

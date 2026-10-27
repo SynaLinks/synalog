@@ -18,6 +18,6 @@ SELECT
 FROM
   t_0_Person AS Person, t_2_Employees AS Employees
 WHERE
-  (Employees.person_id = Person.person_id) AND
+  (Employees.person_id <=> Person.person_id) AND
   (Employees.status = "inactive")
 GROUP BY 1, 2 ORDER BY person_id NULLS LAST;

@@ -3,4 +3,4 @@ SELECT
 FROM
   (SELECT 'singleton' as s) as unused_singleton
 WHERE
-  (COALESCE(null, 5) = COALESCE(null, 5));
+  (COALESCE(null, 5) IS COALESCE(null, 5));

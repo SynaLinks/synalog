@@ -39,4 +39,4 @@ SELECT
 FROM
   t_1_M AS t_0_M, t_4_S AS S
 WHERE
-  (S.g = t_0_M.g) ORDER BY g;
+  (COALESCE(S.g, '') = COALESCE(t_0_M.g, '') AND (S.g IS NULL) = (t_0_M.g IS NULL)) ORDER BY g;

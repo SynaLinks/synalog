@@ -5,4 +5,4 @@ FROM
 WHERE
   (x_4 <= x_6) AND
   (x_6 <= x_4) AND
-  (x_4 != x_6);
+  (x_4 IS DISTINCT FROM x_6);

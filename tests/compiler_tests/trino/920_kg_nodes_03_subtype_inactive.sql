@@ -109,6 +109,6 @@ SELECT
 FROM
   synalog_test.Person AS Person, t_0_Employees AS Employees
 WHERE
-  (Employees.person_id = Person.person_id) AND
+  (Employees.person_id IS NOT DISTINCT FROM Person.person_id) AND
   (Employees.status = 'inactive')
 GROUP BY 1, 2 ORDER BY person_id;

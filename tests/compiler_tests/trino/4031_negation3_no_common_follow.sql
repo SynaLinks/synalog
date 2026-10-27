@@ -89,6 +89,6 @@ WHERE
   FROM
     t_4_F AS F, t_4_F AS t_3_F
   WHERE
-    (F.a = t_0_U.u) AND
-    (t_3_F.a = t_1_U.u) AND
-    (t_3_F.b = F.b)) IS NULL) ORDER BY a, b;
+    (F.a IS NOT DISTINCT FROM t_0_U.u) AND
+    (t_3_F.a IS NOT DISTINCT FROM t_1_U.u) AND
+    (t_3_F.b IS NOT DISTINCT FROM F.b)) IS NULL) ORDER BY a, b;

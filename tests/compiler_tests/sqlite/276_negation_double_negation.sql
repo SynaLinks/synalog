@@ -19,4 +19,4 @@ WHERE
   FROM
     t_0_Missing AS Missing, JSON_EACH(JSON_ARRAY(0)) as x_6
   WHERE
-    (Missing.x = x_3.value)) IS NULL) ORDER BY x NULLS LAST;
+    (Missing.x IS x_3.value)) IS NULL) ORDER BY x NULLS LAST;

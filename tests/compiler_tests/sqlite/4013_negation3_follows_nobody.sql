@@ -87,4 +87,4 @@ WHERE
   FROM
     t_2_F AS F, JSON_EACH(JSON_ARRAY(0)) as x_4
   WHERE
-    (F.a = t_0_U.u)) IS NULL) ORDER BY u NULLS LAST;
+    (F.a IS t_0_U.u)) IS NULL) ORDER BY u NULLS LAST;

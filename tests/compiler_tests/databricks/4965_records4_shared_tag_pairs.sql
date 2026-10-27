@@ -32,5 +32,5 @@ FROM
   t_1_P AS P, t_1_P AS t_0_P, LATERAL (SELECT explode(P.r.tags) AS x_6) AS pushkin, LATERAL (SELECT explode(t_0_P.r.tags) AS x_7) AS pushkin
 WHERE
   (P.id < t_0_P.id) AND
-  (x_6 = x_7)
+  (x_6 <=> x_7)
 GROUP BY 1, 2 ORDER BY a NULLS LAST, b NULLS LAST;

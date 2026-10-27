@@ -116,4 +116,4 @@ WHERE
   FROM
     t_1_A AS A
   WHERE
-    (A.id = Person.id)) IS NULL);
+    (A.id IS NOT DISTINCT FROM Person.id)) IS NULL);

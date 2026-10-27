@@ -91,4 +91,4 @@ WHERE
   FROM
     t_1_Staffed AS Staffed, UNNEST(ARRAY[0]) as x_5
   WHERE
-    (Staffed.dept = D.dept)) AS numeric) IS NULL) ORDER BY dname;
+    (COALESCE(Staffed.dept, 0) = COALESCE(D.dept, 0) AND (Staffed.dept IS NULL) = (D.dept IS NULL))) AS numeric) IS NULL) ORDER BY dname;

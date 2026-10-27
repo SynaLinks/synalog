@@ -98,4 +98,4 @@ WHERE
   FROM
     t_1_InLima AS InLima
   WHERE
-    (InLima.product = S.product)) IS NULL);
+    (InLima.product IS NOT DISTINCT FROM S.product)) IS NULL);

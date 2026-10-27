@@ -47,5 +47,5 @@ SELECT
 FROM
   t_0_E AS E, t_1_F AS F
 WHERE
-  (F.g = E.g)
-GROUP BY E.g ORDER BY g;
+  (F.g IS E.g)
+GROUP BY E.g ORDER BY g NULLS LAST;

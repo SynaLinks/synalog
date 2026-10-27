@@ -41,7 +41,7 @@ FROM
 WHERE
   (U.a < U.b) AND
   (U.b < t_0_U.b) AND
-  (t_0_U.a = U.b) AND
-  (t_1_U.a = t_0_U.b) AND
-  (t_1_U.b = U.a)
+  (t_0_U.a <=> U.b) AND
+  (t_1_U.a <=> t_0_U.b) AND
+  (t_1_U.b <=> U.a)
 GROUP BY 1, 2, 3 ORDER BY a NULLS LAST, b NULLS LAST, c NULLS LAST;

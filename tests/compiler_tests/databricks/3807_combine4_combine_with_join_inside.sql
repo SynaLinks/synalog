@@ -17,4 +17,4 @@ SELECT
 FROM
   t_0_O AS O, t_1_Vip AS Vip
 WHERE
-  (Vip.c = O.c)) AS t;
+  (Vip.c <=> O.c)) AS t;

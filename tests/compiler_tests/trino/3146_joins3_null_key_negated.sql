@@ -6,6 +6,4 @@ WHERE
   ((SELECT
     MIN(1) AS synalog_value
   FROM
-    (SELECT 'singleton' as s) as unused_singleton
-  WHERE
-    (null = null)) IS NULL);
+    (SELECT 'singleton' as s) as unused_singleton) IS NULL);

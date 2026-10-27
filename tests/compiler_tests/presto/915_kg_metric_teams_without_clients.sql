@@ -66,8 +66,8 @@ t_1_EngagedWith AS (SELECT
 FROM
   synalog_test.Team AS t_2_Team, t_4_Client AS t_3_Client, t_6_Engagements AS Engagements
 WHERE
-  (Engagements.team_id = t_2_Team.team_id) AND
-  (Engagements.client_id = t_3_Client.client_id)
+  (Engagements.team_id IS NOT DISTINCT FROM t_2_Team.team_id) AND
+  (Engagements.client_id IS NOT DISTINCT FROM t_3_Client.client_id)
 GROUP BY 1, 2)
 SELECT
   t_0_Team.team_id AS team_id
@@ -79,4 +79,4 @@ WHERE
   FROM
     t_1_EngagedWith AS EngagedWith
   WHERE
-    (EngagedWith.team_id = t_0_Team.team_id)) IS NULL) ORDER BY team_id;
+    (EngagedWith.team_id IS NOT DISTINCT FROM t_0_Team.team_id)) IS NULL) ORDER BY team_id;

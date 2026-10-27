@@ -152,7 +152,7 @@ t_55_Conn_MultBodyAggAux_recursive_head_f2 AS (SELECT * FROM (
     FROM
       t_58_Conn_r0 AS Conn_r0, t_6_U AS t_57_U
     WHERE
-      (t_57_U.a = Conn_r0.b)
+      (t_57_U.a IS NOT DISTINCT FROM Conn_r0.b)
   
 ) AS UNUSED_TABLE_NAME  ),
 t_54_Conn_r1 AS (SELECT
@@ -176,7 +176,7 @@ t_51_Conn_MultBodyAggAux_recursive_head_f3 AS (SELECT * FROM (
     FROM
       t_54_Conn_r1 AS Conn_r1, t_6_U AS t_53_U
     WHERE
-      (t_53_U.a = Conn_r1.b)
+      (t_53_U.a IS NOT DISTINCT FROM Conn_r1.b)
   
 ) AS UNUSED_TABLE_NAME  ),
 t_50_Conn_r2 AS (SELECT
@@ -200,7 +200,7 @@ t_47_Conn_MultBodyAggAux_recursive_head_f4 AS (SELECT * FROM (
     FROM
       t_50_Conn_r2 AS Conn_r2, t_6_U AS t_49_U
     WHERE
-      (t_49_U.a = Conn_r2.b)
+      (t_49_U.a IS NOT DISTINCT FROM Conn_r2.b)
   
 ) AS UNUSED_TABLE_NAME  ),
 t_46_Conn_r3 AS (SELECT
@@ -224,7 +224,7 @@ t_43_Conn_MultBodyAggAux_recursive_head_f5 AS (SELECT * FROM (
     FROM
       t_46_Conn_r3 AS Conn_r3, t_6_U AS t_45_U
     WHERE
-      (t_45_U.a = Conn_r3.b)
+      (t_45_U.a IS NOT DISTINCT FROM Conn_r3.b)
   
 ) AS UNUSED_TABLE_NAME  ),
 t_42_Conn_r4 AS (SELECT
@@ -248,7 +248,7 @@ t_39_Conn_MultBodyAggAux_recursive_head_f6 AS (SELECT * FROM (
     FROM
       t_42_Conn_r4 AS Conn_r4, t_6_U AS t_41_U
     WHERE
-      (t_41_U.a = Conn_r4.b)
+      (t_41_U.a IS NOT DISTINCT FROM Conn_r4.b)
   
 ) AS UNUSED_TABLE_NAME  ),
 t_38_Conn_r5 AS (SELECT
@@ -272,7 +272,7 @@ t_35_Conn_MultBodyAggAux_recursive_head_f7 AS (SELECT * FROM (
     FROM
       t_38_Conn_r5 AS Conn_r5, t_6_U AS t_37_U
     WHERE
-      (t_37_U.a = Conn_r5.b)
+      (t_37_U.a IS NOT DISTINCT FROM Conn_r5.b)
   
 ) AS UNUSED_TABLE_NAME  ),
 t_34_Conn_r6 AS (SELECT
@@ -296,7 +296,7 @@ t_31_Conn_MultBodyAggAux_recursive_head_f8 AS (SELECT * FROM (
     FROM
       t_34_Conn_r6 AS Conn_r6, t_6_U AS t_33_U
     WHERE
-      (t_33_U.a = Conn_r6.b)
+      (t_33_U.a IS NOT DISTINCT FROM Conn_r6.b)
   
 ) AS UNUSED_TABLE_NAME  ),
 t_30_Conn_r7 AS (SELECT
@@ -320,7 +320,7 @@ t_27_Conn_MultBodyAggAux_recursive_head_f9 AS (SELECT * FROM (
     FROM
       t_30_Conn_r7 AS Conn_r7, t_6_U AS t_29_U
     WHERE
-      (t_29_U.a = Conn_r7.b)
+      (t_29_U.a IS NOT DISTINCT FROM Conn_r7.b)
   
 ) AS UNUSED_TABLE_NAME  ),
 t_26_Conn_r8 AS (SELECT
@@ -344,7 +344,7 @@ t_23_Conn_MultBodyAggAux_recursive_head_f10 AS (SELECT * FROM (
     FROM
       t_26_Conn_r8 AS Conn_r8, t_6_U AS t_25_U
     WHERE
-      (t_25_U.a = Conn_r8.b)
+      (t_25_U.a IS NOT DISTINCT FROM Conn_r8.b)
   
 ) AS UNUSED_TABLE_NAME  ),
 t_22_Conn_r9 AS (SELECT
@@ -368,7 +368,7 @@ t_19_Conn_MultBodyAggAux_recursive_head_f11 AS (SELECT * FROM (
     FROM
       t_22_Conn_r9 AS Conn_r9, t_6_U AS t_21_U
     WHERE
-      (t_21_U.a = Conn_r9.b)
+      (t_21_U.a IS NOT DISTINCT FROM Conn_r9.b)
   
 ) AS UNUSED_TABLE_NAME  ),
 t_18_Conn_r10 AS (SELECT
@@ -392,7 +392,7 @@ t_12_Conn_MultBodyAggAux_recursive_head_f12 AS (SELECT * FROM (
     FROM
       t_18_Conn_r10 AS Conn_r10, t_6_U AS t_17_U
     WHERE
-      (t_17_U.a = Conn_r10.b)
+      (t_17_U.a IS NOT DISTINCT FROM Conn_r10.b)
   
 ) AS UNUSED_TABLE_NAME  ),
 t_11_Conn_r11 AS (SELECT
@@ -416,7 +416,7 @@ t_5_Conn_MultBodyAggAux_recursive_head_f13 AS (SELECT * FROM (
     FROM
       t_11_Conn_r11 AS Conn_r11, t_6_U AS t_10_U
     WHERE
-      (t_10_U.a = Conn_r11.b)
+      (t_10_U.a IS NOT DISTINCT FROM Conn_r11.b)
   
 ) AS UNUSED_TABLE_NAME  ),
 t_4_Conn AS (SELECT
@@ -433,7 +433,7 @@ t_2_Comp_MultBodyAggAux AS (SELECT * FROM (
     FROM
       t_3_Node AS Node, t_4_Conn AS Conn
     WHERE
-      (Conn.a = Node.n)
+      (Conn.a IS NOT DISTINCT FROM Node.n)
    UNION ALL
   
     SELECT
@@ -455,4 +455,4 @@ FROM
   t_1_Comp AS Comp, t_1_Comp AS t_0_Comp
 WHERE
   (Comp.n = 6) AND
-  (t_0_Comp.c = Comp.c) ORDER BY m;
+  (t_0_Comp.c IS NOT DISTINCT FROM Comp.c) ORDER BY m NULLS LAST;

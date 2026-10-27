@@ -88,6 +88,6 @@ WHERE
     t_3_F AS F, t_3_F AS t_2_F, JSON_EACH(JSON_ARRAY(0)) as x_7
   WHERE
     (F.a = 'fay') AND
-    (t_2_F.a = F.b) AND
+    (t_2_F.a IS F.b) AND
     (t_2_F.b = 'fay')) IS NULL) AND
   (t_0_U.u = 'fay');

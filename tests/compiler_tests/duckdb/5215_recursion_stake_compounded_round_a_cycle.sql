@@ -48,7 +48,7 @@ t_0_C_RecursiveCte AS (SELECT * FROM (
       WHERE
         (0 < 4) AND
         (1 = 0) AND
-        (t_2_Own.owner = t_4_Own.owned)
+        (t_2_Own.owner IS NOT DISTINCT FROM t_4_Own.owned)
      UNION ALL
     
       SELECT
@@ -63,8 +63,8 @@ t_0_C_RecursiveCte AS (SELECT * FROM (
         (((0) + (1)) < 4) AND
         (0 < 4) AND
         (1 = 0) AND
-        (t_6_Own.owner = t_8_Own.owned) AND
-        (t_8_Own.owner = t_10_Own.owned)
+        (t_6_Own.owner IS NOT DISTINCT FROM t_8_Own.owned) AND
+        (t_8_Own.owner IS NOT DISTINCT FROM t_10_Own.owned)
      UNION ALL
     
       SELECT
@@ -80,9 +80,9 @@ t_0_C_RecursiveCte AS (SELECT * FROM (
         (((0) + (1)) < 4) AND
         (0 < 4) AND
         (1 = 0) AND
-        (t_12_Own.owner = t_14_Own.owned) AND
-        (t_14_Own.owner = t_16_Own.owned) AND
-        (t_16_Own.owner = t_18_Own.owned)
+        (t_12_Own.owner IS NOT DISTINCT FROM t_14_Own.owned) AND
+        (t_14_Own.owner IS NOT DISTINCT FROM t_16_Own.owned) AND
+        (t_16_Own.owner IS NOT DISTINCT FROM t_18_Own.owned)
      UNION ALL
     
       SELECT
@@ -99,10 +99,10 @@ t_0_C_RecursiveCte AS (SELECT * FROM (
         (((0) + (1)) < 4) AND
         (0 < 4) AND
         (1 = 0) AND
-        (t_20_Own.owner = t_22_Own.owned) AND
-        (t_22_Own.owner = t_24_Own.owned) AND
-        (t_24_Own.owner = t_26_Own.owned) AND
-        (t_26_Own.owner = t_28_Own.owned)
+        (t_20_Own.owner IS NOT DISTINCT FROM t_22_Own.owned) AND
+        (t_22_Own.owner IS NOT DISTINCT FROM t_24_Own.owned) AND
+        (t_24_Own.owner IS NOT DISTINCT FROM t_26_Own.owned) AND
+        (t_26_Own.owner IS NOT DISTINCT FROM t_28_Own.owned)
      UNION ALL
     
       SELECT
@@ -120,11 +120,11 @@ t_0_C_RecursiveCte AS (SELECT * FROM (
         (((0) + (1)) < 4) AND
         (0 < 4) AND
         (1 = 0) AND
-        (t_30_Own.owner = t_32_Own.owned) AND
-        (t_32_Own.owner = t_34_Own.owned) AND
-        (t_34_Own.owner = t_36_Own.owned) AND
-        (t_36_Own.owner = t_38_Own.owned) AND
-        (t_38_Own.owner = t_40_Own.owned)
+        (t_30_Own.owner IS NOT DISTINCT FROM t_32_Own.owned) AND
+        (t_32_Own.owner IS NOT DISTINCT FROM t_34_Own.owned) AND
+        (t_34_Own.owner IS NOT DISTINCT FROM t_36_Own.owned) AND
+        (t_36_Own.owner IS NOT DISTINCT FROM t_38_Own.owned) AND
+        (t_38_Own.owner IS NOT DISTINCT FROM t_40_Own.owned)
      UNION ALL
     
       SELECT
@@ -143,12 +143,12 @@ t_0_C_RecursiveCte AS (SELECT * FROM (
         (((0) + (1)) < 4) AND
         (0 < 4) AND
         (1 = 0) AND
-        (t_42_Own.owner = t_44_Own.owned) AND
-        (t_44_Own.owner = t_46_Own.owned) AND
-        (t_46_Own.owner = t_48_Own.owned) AND
-        (t_48_Own.owner = t_50_Own.owned) AND
-        (t_50_Own.owner = t_52_Own.owned) AND
-        (t_52_Own.owner = t_54_Own.owned)
+        (t_42_Own.owner IS NOT DISTINCT FROM t_44_Own.owned) AND
+        (t_44_Own.owner IS NOT DISTINCT FROM t_46_Own.owned) AND
+        (t_46_Own.owner IS NOT DISTINCT FROM t_48_Own.owned) AND
+        (t_48_Own.owner IS NOT DISTINCT FROM t_50_Own.owned) AND
+        (t_50_Own.owner IS NOT DISTINCT FROM t_52_Own.owned) AND
+        (t_52_Own.owner IS NOT DISTINCT FROM t_54_Own.owned)
      UNION ALL
     
       SELECT
@@ -168,13 +168,13 @@ t_0_C_RecursiveCte AS (SELECT * FROM (
         (((0) + (1)) < 4) AND
         (0 < 4) AND
         (1 = 0) AND
-        (t_56_Own.owner = t_58_Own.owned) AND
-        (t_58_Own.owner = t_60_Own.owned) AND
-        (t_60_Own.owner = t_62_Own.owned) AND
-        (t_62_Own.owner = t_64_Own.owned) AND
-        (t_64_Own.owner = t_66_Own.owned) AND
-        (t_66_Own.owner = t_68_Own.owned) AND
-        (t_68_Own.owner = t_70_Own.owned)
+        (t_56_Own.owner IS NOT DISTINCT FROM t_58_Own.owned) AND
+        (t_58_Own.owner IS NOT DISTINCT FROM t_60_Own.owned) AND
+        (t_60_Own.owner IS NOT DISTINCT FROM t_62_Own.owned) AND
+        (t_62_Own.owner IS NOT DISTINCT FROM t_64_Own.owned) AND
+        (t_64_Own.owner IS NOT DISTINCT FROM t_66_Own.owned) AND
+        (t_66_Own.owner IS NOT DISTINCT FROM t_68_Own.owned) AND
+        (t_68_Own.owner IS NOT DISTINCT FROM t_70_Own.owned)
      UNION ALL
     
       SELECT
@@ -195,14 +195,14 @@ t_0_C_RecursiveCte AS (SELECT * FROM (
         (((0) + (1)) < 4) AND
         (0 < 4) AND
         (1 = 0) AND
-        (t_72_Own.owner = t_74_Own.owned) AND
-        (t_74_Own.owner = t_76_Own.owned) AND
-        (t_76_Own.owner = t_78_Own.owned) AND
-        (t_78_Own.owner = t_80_Own.owned) AND
-        (t_80_Own.owner = t_82_Own.owned) AND
-        (t_82_Own.owner = t_84_Own.owned) AND
-        (t_84_Own.owner = t_86_Own.owned) AND
-        (t_86_Own.owner = t_88_Own.owned)
+        (t_72_Own.owner IS NOT DISTINCT FROM t_74_Own.owned) AND
+        (t_74_Own.owner IS NOT DISTINCT FROM t_76_Own.owned) AND
+        (t_76_Own.owner IS NOT DISTINCT FROM t_78_Own.owned) AND
+        (t_78_Own.owner IS NOT DISTINCT FROM t_80_Own.owned) AND
+        (t_80_Own.owner IS NOT DISTINCT FROM t_82_Own.owned) AND
+        (t_82_Own.owner IS NOT DISTINCT FROM t_84_Own.owned) AND
+        (t_84_Own.owner IS NOT DISTINCT FROM t_86_Own.owned) AND
+        (t_86_Own.owner IS NOT DISTINCT FROM t_88_Own.owned)
      UNION ALL
     
       SELECT
@@ -224,15 +224,15 @@ t_0_C_RecursiveCte AS (SELECT * FROM (
         (((0) + (1)) < 4) AND
         (0 < 4) AND
         (1 = 0) AND
-        (t_90_Own.owner = t_92_Own.owned) AND
-        (t_92_Own.owner = t_94_Own.owned) AND
-        (t_94_Own.owner = t_96_Own.owned) AND
-        (t_96_Own.owner = t_98_Own.owned) AND
-        (t_98_Own.owner = t_100_Own.owned) AND
-        (t_100_Own.owner = t_102_Own.owned) AND
-        (t_102_Own.owner = t_104_Own.owned) AND
-        (t_104_Own.owner = t_106_Own.owned) AND
-        (t_106_Own.owner = t_108_Own.owned)
+        (t_90_Own.owner IS NOT DISTINCT FROM t_92_Own.owned) AND
+        (t_92_Own.owner IS NOT DISTINCT FROM t_94_Own.owned) AND
+        (t_94_Own.owner IS NOT DISTINCT FROM t_96_Own.owned) AND
+        (t_96_Own.owner IS NOT DISTINCT FROM t_98_Own.owned) AND
+        (t_98_Own.owner IS NOT DISTINCT FROM t_100_Own.owned) AND
+        (t_100_Own.owner IS NOT DISTINCT FROM t_102_Own.owned) AND
+        (t_102_Own.owner IS NOT DISTINCT FROM t_104_Own.owned) AND
+        (t_104_Own.owner IS NOT DISTINCT FROM t_106_Own.owned) AND
+        (t_106_Own.owner IS NOT DISTINCT FROM t_108_Own.owned)
     
   ) AS UNUSED_TABLE_NAME  
 ) AS UNUSED_TABLE_NAME
@@ -247,7 +247,7 @@ FROM
   t_0_C_RecursiveCte AS t_109_C_RecursiveCte, t_1_Own AS t_110_Own
 WHERE
   (t_109_C_RecursiveCte.synalog_step < 4) AND
-  (t_110_Own.owner = t_109_C_RecursiveCte.entity))
+  (t_110_Own.owner IS NOT DISTINCT FROM t_109_C_RecursiveCte.entity))
 SELECT
   C_RecursiveCte.owner AS owner,
   C_RecursiveCte.entity AS entity,

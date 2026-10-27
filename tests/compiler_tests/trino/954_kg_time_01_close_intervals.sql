@@ -124,7 +124,7 @@ FROM
   t_2_Events AS Events, t_2_Events AS t_0_Events
 WHERE
   (t_0_Events.changed_at > Events.changed_at) AND
-  (t_0_Events.person_id = Events.person_id)
+  (t_0_Events.person_id IS NOT DISTINCT FROM Events.person_id)
 GROUP BY 1, 2;
 
 -- Interacting with table synalog_test.NextChange
@@ -171,10 +171,10 @@ t_0_Member_MultBodyAggAux AS (SELECT * FROM (
     FROM
       synalog_test.Person AS Person, synalog_test.Team AS t_1_Team, t_2_Events AS Events, synalog_test.NextChange AS NextChange
     WHERE
-      (Events.person_id = Person.person_id) AND
-      (Events.team_id = t_1_Team.team_id) AND
-      (NextChange.person_id = Person.person_id) AND
-      (NextChange.changed_at = Events.changed_at)
+      (Events.person_id IS NOT DISTINCT FROM Person.person_id) AND
+      (Events.team_id IS NOT DISTINCT FROM t_1_Team.team_id) AND
+      (NextChange.person_id IS NOT DISTINCT FROM Person.person_id) AND
+      (NextChange.changed_at IS NOT DISTINCT FROM Events.changed_at)
    UNION ALL
   
     SELECT
@@ -190,10 +190,10 @@ t_0_Member_MultBodyAggAux AS (SELECT * FROM (
       FROM
         synalog_test.NextChange AS t_6_NextChange
       WHERE
-        (t_6_NextChange.person_id = t_3_Person.person_id) AND
-        (t_6_NextChange.changed_at = t_5_Events.changed_at)) IS NULL) AND
-      (t_5_Events.person_id = t_3_Person.person_id) AND
-      (t_5_Events.team_id = t_4_Team.team_id)
+        (t_6_NextChange.person_id IS NOT DISTINCT FROM t_3_Person.person_id) AND
+        (t_6_NextChange.changed_at IS NOT DISTINCT FROM t_5_Events.changed_at)) IS NULL) AND
+      (t_5_Events.person_id IS NOT DISTINCT FROM t_3_Person.person_id) AND
+      (t_5_Events.team_id IS NOT DISTINCT FROM t_4_Team.team_id)
   
 ) AS UNUSED_TABLE_NAME  )
 SELECT

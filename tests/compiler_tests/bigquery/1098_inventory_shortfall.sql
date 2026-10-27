@@ -94,4 +94,4 @@ FROM
   t_0_Total AS Total, t_2_Reorder AS Reorder
 WHERE
   (Total.n < Reorder.level) AND
-  (Reorder.item = Total.item) ORDER BY item, missing;
+  (Reorder.item IS NOT DISTINCT FROM Total.item) ORDER BY item NULLS LAST, missing NULLS LAST;

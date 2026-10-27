@@ -53,5 +53,5 @@ WHERE
   FROM
     t_0_O AS t_1_O
   WHERE
-    (t_1_O.c = O.c)))
+    (t_1_O.c IS NOT DISTINCT FROM O.c)))
 GROUP BY 1 ORDER BY c;

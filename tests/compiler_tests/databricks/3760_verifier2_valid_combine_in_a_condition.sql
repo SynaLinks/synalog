@@ -17,4 +17,4 @@ WHERE
   FROM
     t_2_E AS E
   WHERE
-    (E.a = t_0_N.n)) = 1) ORDER BY n NULLS LAST;
+    (E.a <=> t_0_N.n)) = 1) ORDER BY n NULLS LAST;

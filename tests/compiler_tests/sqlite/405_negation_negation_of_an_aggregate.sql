@@ -37,4 +37,4 @@ WHERE
   FROM
     t_3_Big AS Big, JSON_EACH(JSON_ARRAY(0)) as x_6
   WHERE
-    (Big.g = t_0_G.g)) IS NULL);
+    (Big.g IS t_0_G.g)) IS NULL);

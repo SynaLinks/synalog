@@ -42,4 +42,4 @@ WHERE
   FROM
     t_1_Excluded AS Excluded
   WHERE
-    (Excluded.id = Ship.id)) IS NULL) ORDER BY id NULLS LAST;
+    (Excluded.id <=> Ship.id)) IS NULL) ORDER BY id NULLS LAST;

@@ -71,7 +71,7 @@ t_1_Under_RecursiveCte AS (SELECT * FROM (
       WHERE
         (0 < 8) AND
         (1 = 0) AND
-        (t_3_Manages.boss = t_5_Manages.report)
+        (COALESCE(t_3_Manages.boss, '') = COALESCE(t_5_Manages.report, '') AND (t_3_Manages.boss IS NULL) = (t_5_Manages.report IS NULL))
      UNION ALL
     
       SELECT
@@ -84,8 +84,8 @@ t_1_Under_RecursiveCte AS (SELECT * FROM (
         (((0) + (1)) < 8) AND
         (0 < 8) AND
         (1 = 0) AND
-        (t_7_Manages.boss = t_9_Manages.report) AND
-        (t_9_Manages.boss = t_11_Manages.report)
+        (COALESCE(t_7_Manages.boss, '') = COALESCE(t_9_Manages.report, '') AND (t_7_Manages.boss IS NULL) = (t_9_Manages.report IS NULL)) AND
+        (COALESCE(t_9_Manages.boss, '') = COALESCE(t_11_Manages.report, '') AND (t_9_Manages.boss IS NULL) = (t_11_Manages.report IS NULL))
      UNION ALL
     
       SELECT
@@ -99,9 +99,9 @@ t_1_Under_RecursiveCte AS (SELECT * FROM (
         (((0) + (1)) < 8) AND
         (0 < 8) AND
         (1 = 0) AND
-        (t_13_Manages.boss = t_15_Manages.report) AND
-        (t_15_Manages.boss = t_17_Manages.report) AND
-        (t_17_Manages.boss = t_19_Manages.report)
+        (COALESCE(t_13_Manages.boss, '') = COALESCE(t_15_Manages.report, '') AND (t_13_Manages.boss IS NULL) = (t_15_Manages.report IS NULL)) AND
+        (COALESCE(t_15_Manages.boss, '') = COALESCE(t_17_Manages.report, '') AND (t_15_Manages.boss IS NULL) = (t_17_Manages.report IS NULL)) AND
+        (COALESCE(t_17_Manages.boss, '') = COALESCE(t_19_Manages.report, '') AND (t_17_Manages.boss IS NULL) = (t_19_Manages.report IS NULL))
      UNION ALL
     
       SELECT
@@ -116,10 +116,10 @@ t_1_Under_RecursiveCte AS (SELECT * FROM (
         (((0) + (1)) < 8) AND
         (0 < 8) AND
         (1 = 0) AND
-        (t_21_Manages.boss = t_23_Manages.report) AND
-        (t_23_Manages.boss = t_25_Manages.report) AND
-        (t_25_Manages.boss = t_27_Manages.report) AND
-        (t_27_Manages.boss = t_29_Manages.report)
+        (COALESCE(t_21_Manages.boss, '') = COALESCE(t_23_Manages.report, '') AND (t_21_Manages.boss IS NULL) = (t_23_Manages.report IS NULL)) AND
+        (COALESCE(t_23_Manages.boss, '') = COALESCE(t_25_Manages.report, '') AND (t_23_Manages.boss IS NULL) = (t_25_Manages.report IS NULL)) AND
+        (COALESCE(t_25_Manages.boss, '') = COALESCE(t_27_Manages.report, '') AND (t_25_Manages.boss IS NULL) = (t_27_Manages.report IS NULL)) AND
+        (COALESCE(t_27_Manages.boss, '') = COALESCE(t_29_Manages.report, '') AND (t_27_Manages.boss IS NULL) = (t_29_Manages.report IS NULL))
      UNION ALL
     
       SELECT
@@ -135,11 +135,11 @@ t_1_Under_RecursiveCte AS (SELECT * FROM (
         (((0) + (1)) < 8) AND
         (0 < 8) AND
         (1 = 0) AND
-        (t_31_Manages.boss = t_33_Manages.report) AND
-        (t_33_Manages.boss = t_35_Manages.report) AND
-        (t_35_Manages.boss = t_37_Manages.report) AND
-        (t_37_Manages.boss = t_39_Manages.report) AND
-        (t_39_Manages.boss = t_41_Manages.report)
+        (COALESCE(t_31_Manages.boss, '') = COALESCE(t_33_Manages.report, '') AND (t_31_Manages.boss IS NULL) = (t_33_Manages.report IS NULL)) AND
+        (COALESCE(t_33_Manages.boss, '') = COALESCE(t_35_Manages.report, '') AND (t_33_Manages.boss IS NULL) = (t_35_Manages.report IS NULL)) AND
+        (COALESCE(t_35_Manages.boss, '') = COALESCE(t_37_Manages.report, '') AND (t_35_Manages.boss IS NULL) = (t_37_Manages.report IS NULL)) AND
+        (COALESCE(t_37_Manages.boss, '') = COALESCE(t_39_Manages.report, '') AND (t_37_Manages.boss IS NULL) = (t_39_Manages.report IS NULL)) AND
+        (COALESCE(t_39_Manages.boss, '') = COALESCE(t_41_Manages.report, '') AND (t_39_Manages.boss IS NULL) = (t_41_Manages.report IS NULL))
     
   ) AS UNUSED_TABLE_NAME  
 ) AS UNUSED_TABLE_NAME
@@ -152,7 +152,7 @@ FROM
   t_1_Under_RecursiveCte AS t_42_Under_RecursiveCte, t_2_Manages AS t_43_Manages
 WHERE
   (t_42_Under_RecursiveCte.synalog_step < 8) AND
-  (t_43_Manages.boss = t_42_Under_RecursiveCte.report)),
+  (COALESCE(t_43_Manages.boss, '') = COALESCE(t_42_Under_RecursiveCte.report, '') AND (t_43_Manages.boss IS NULL) = (t_42_Under_RecursiveCte.report IS NULL))),
 t_0_Under AS (SELECT
   Under_RecursiveCte.boss AS boss,
   Under_RecursiveCte.report AS report
@@ -170,5 +170,5 @@ WHERE
     t_0_Under AS t_44_Under, UNNEST(ARRAY[0]) as x_212
   WHERE
     (t_44_Under.boss = 'cto') AND
-    (t_44_Under.report = Under.report)) AS numeric) IS NULL) AND
+    (COALESCE(t_44_Under.report, '') = COALESCE(Under.report, '') AND (t_44_Under.report IS NULL) = (Under.report IS NULL))) AS numeric) IS NULL) AND
   (Under.boss = 'ceo') ORDER BY report;

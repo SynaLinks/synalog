@@ -116,5 +116,5 @@ WHERE
   FROM
     t_1_A AS A, JSON_EACH(JSON_ARRAY(0)) as x_5
   WHERE
-    (A.id = Person.id)) IS NULL) AND
+    (A.id IS Person.id)) IS NULL) AND
   (Person.team = 'green');

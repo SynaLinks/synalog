@@ -4,20 +4,11 @@ create schema if not exists synalog_home;
 drop type if exists synalogrecord893574736 cascade; create type synalogrecord893574736 as struct(nirvana numeric);
 create sequence if not exists eternal_logical_sequence;
 
-
--- Synalog type: synalogrecord481217614
-drop type if exists synalogrecord481217614 cascade; create type synalogrecord481217614 as struct(r synalogrecord893574736);
-
--- Synalog type: synalogrecord383307722
-drop type if exists synalogrecord383307722 cascade; create type synalogrecord383307722 as struct(a timestamp);
-
--- Synalog type: synalogrecord519939597
-drop type if exists synalogrecord519939597 cascade; create type synalogrecord519939597 as struct(args text[], predicate text);
 DROP TABLE IF EXISTS synalog_home.G;
 CREATE TABLE synalog_home.G AS SELECT
-  x_6.unnested_pod AS k
+  x_1.unnested_pod AS k
 FROM
-  (select unnest([1]::numeric[]) as unnested_pod) as x_6;
+  (select unnest([1]) as unnested_pod) as x_1;
 
 -- Interacting with table synalog_home.G
 
@@ -39,4 +30,4 @@ SELECT
 FROM
   synalog_home.G AS G, t_0_N AS N
 WHERE
-  (N.k = G.k);
+  (N.k IS NOT DISTINCT FROM G.k);

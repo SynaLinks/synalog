@@ -76,4 +76,4 @@ WHERE
   FROM
     t_2_O AS O, (select unnest([0]) as unnested_pod) as x_6
   WHERE
-    (O.c = t_0_C.c)) > 60) ORDER BY c;
+    (O.c IS NOT DISTINCT FROM t_0_C.c)) > 60) ORDER BY c;

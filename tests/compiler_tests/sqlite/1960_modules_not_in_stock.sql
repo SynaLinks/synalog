@@ -62,4 +62,4 @@ WHERE
   FROM
     t_1_Shop_Stock AS Shop_Stock, JSON_EACH(JSON_ARRAY(0)) as x_4
   WHERE
-    (Shop_Stock.sku = Shop_Product.sku)) IS NULL);
+    (Shop_Stock.sku IS Shop_Product.sku)) IS NULL);

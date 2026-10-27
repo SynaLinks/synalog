@@ -69,4 +69,4 @@ WHERE
     t_1_Shop_Stock AS Shop_Stock, (select unnest([0]) as unnested_pod) as x_4
   WHERE
     (Shop_Stock.qty > 0) AND
-    (Shop_Product.sku = Shop_Stock.sku)) IS NULL) ORDER BY sku;
+    (Shop_Product.sku IS NOT DISTINCT FROM Shop_Stock.sku)) IS NULL) ORDER BY sku;

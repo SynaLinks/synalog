@@ -22,4 +22,4 @@ FROM
   t_0_Stock AS Stock, t_1_Price AS Price
 WHERE
   (Stock.warehouse = "north") AND
-  (Price.item = Stock.item);
+  (Price.item <=> Stock.item);

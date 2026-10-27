@@ -94,6 +94,6 @@ WHERE
     t_3_F AS F, t_3_F AS t_2_F, (select unnest([0]) as unnested_pod) as x_7
   WHERE
     (F.a = 'bob') AND
-    (t_2_F.a = F.b) AND
+    (t_2_F.a IS NOT DISTINCT FROM F.b) AND
     (t_2_F.b = 'bob')) IS NULL) AND
   (t_0_U.u = 'bob');

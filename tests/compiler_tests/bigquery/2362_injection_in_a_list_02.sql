@@ -3,4 +3,4 @@ SELECT
 FROM
   UNNEST(ARRAY["x' OR '1'='1", "other"]) as x_1
 WHERE
-  (x_1 != "other");
+  (x_1 IS DISTINCT FROM "other");

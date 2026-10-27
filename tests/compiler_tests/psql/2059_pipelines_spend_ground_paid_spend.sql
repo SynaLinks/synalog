@@ -123,7 +123,7 @@ SELECT
 FROM
   synalog_home.Paid AS Paid, t_0_Price AS Price
 WHERE
-  (Price.item = Paid.item)
+  (COALESCE(Price.item, '') = COALESCE(Paid.item, '') AND (Price.item IS NULL) = (Paid.item IS NULL))
 GROUP BY Paid.who;
 
 -- Interacting with table synalog_home.Spend

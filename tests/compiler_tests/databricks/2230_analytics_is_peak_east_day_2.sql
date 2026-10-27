@@ -43,9 +43,9 @@ t_1_Lower AS (SELECT * FROM (
     WHERE
       (t_3_S.v >= t_2_S.v) AND
       (t_2_S.r = "east") AND
-      (t_2_S.d = Prev.d) AND
+      (t_2_S.d <=> Prev.d) AND
       (t_3_S.r = "east") AND
-      (t_3_S.d = Prev.p)
+      (t_3_S.d <=> Prev.p)
    UNION ALL
   
     SELECT
@@ -55,9 +55,9 @@ t_1_Lower AS (SELECT * FROM (
     WHERE
       (t_8_S.v >= t_7_S.v) AND
       (t_7_S.r = "east") AND
-      (t_7_S.d = Next.d) AND
+      (t_7_S.d <=> Next.d) AND
       (t_8_S.r = "east") AND
-      (t_8_S.d = Next.n)
+      (t_8_S.d <=> Next.n)
   
 ) AS UNUSED_TABLE_NAME  )
 SELECT

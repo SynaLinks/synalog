@@ -196,7 +196,7 @@ FROM
   t_1_Order, t_2_Price AS Price
 WHERE
   (t_1_Order.state = 'paid') AND
-  (Price.item = t_1_Order.item)
+  (Price.item IS NOT DISTINCT FROM t_1_Order.item)
 GROUP BY 1)
 SELECT
   Spend.who AS who,
@@ -216,7 +216,7 @@ WHERE
   FROM
     synalog_test.Tier AS t_2_Tier
   WHERE
-    (t_2_Tier.who = t_1_Person.who)) IS NULL))
+    (t_2_Tier.who IS NOT DISTINCT FROM t_1_Person.who)) IS NULL))
 SELECT
   1 AS ok
 FROM

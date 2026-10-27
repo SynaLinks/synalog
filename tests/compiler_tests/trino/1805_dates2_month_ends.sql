@@ -75,4 +75,4 @@ SELECT
 FROM
   t_0_Event AS Event, UNNEST(TRANSFORM(ARRAY['28', '30', '31'], synalog_e -> ROW(synalog_e))) as pushkin(x_3)
 WHERE
-  (SUBSTR(Event."at", 9, 2) = x_3) ORDER BY id;
+  (SUBSTR(Event."at", 9, 2) IS NOT DISTINCT FROM x_3) ORDER BY id;

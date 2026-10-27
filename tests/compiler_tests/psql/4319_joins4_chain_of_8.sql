@@ -91,7 +91,7 @@ t_1_Up_RecursiveCte AS (SELECT * FROM (
         (0 < 10) AND
         (1 = 0) AND
         (t_6_E.id = 8) AND
-        (t_4_E.id = t_6_E.boss)
+        (COALESCE(t_4_E.id, 0) = COALESCE(t_6_E.boss, 0) AND (t_4_E.id IS NULL) = (t_6_E.boss IS NULL))
      UNION ALL
     
       SELECT
@@ -103,9 +103,9 @@ t_1_Up_RecursiveCte AS (SELECT * FROM (
         (((0) + (1)) < 10) AND
         (0 < 10) AND
         (1 = 0) AND
-        (t_8_E.id = t_10_E.boss) AND
+        (COALESCE(t_8_E.id, 0) = COALESCE(t_10_E.boss, 0) AND (t_8_E.id IS NULL) = (t_10_E.boss IS NULL)) AND
         (t_12_E.id = 8) AND
-        (t_10_E.id = t_12_E.boss)
+        (COALESCE(t_10_E.id, 0) = COALESCE(t_12_E.boss, 0) AND (t_10_E.id IS NULL) = (t_12_E.boss IS NULL))
      UNION ALL
     
       SELECT
@@ -118,10 +118,10 @@ t_1_Up_RecursiveCte AS (SELECT * FROM (
         (((0) + (1)) < 10) AND
         (0 < 10) AND
         (1 = 0) AND
-        (t_14_E.id = t_16_E.boss) AND
-        (t_16_E.id = t_18_E.boss) AND
+        (COALESCE(t_14_E.id, 0) = COALESCE(t_16_E.boss, 0) AND (t_14_E.id IS NULL) = (t_16_E.boss IS NULL)) AND
+        (COALESCE(t_16_E.id, 0) = COALESCE(t_18_E.boss, 0) AND (t_16_E.id IS NULL) = (t_18_E.boss IS NULL)) AND
         (t_20_E.id = 8) AND
-        (t_18_E.id = t_20_E.boss)
+        (COALESCE(t_18_E.id, 0) = COALESCE(t_20_E.boss, 0) AND (t_18_E.id IS NULL) = (t_20_E.boss IS NULL))
     
   ) AS UNUSED_TABLE_NAME  
 ) AS UNUSED_TABLE_NAME
@@ -133,7 +133,7 @@ FROM
   t_1_Up_RecursiveCte AS t_21_Up_RecursiveCte, t_3_E AS t_22_E
 WHERE
   (t_21_Up_RecursiveCte.synalog_step < 10) AND
-  (t_22_E.id = t_21_Up_RecursiveCte.id)),
+  (COALESCE(t_22_E.id, 0) = COALESCE(t_21_Up_RecursiveCte.id, 0) AND (t_22_E.id IS NULL) = (t_21_Up_RecursiveCte.id IS NULL))),
 t_0_Up AS (SELECT
   Up_RecursiveCte.id AS id
 FROM
@@ -144,4 +144,4 @@ SELECT
 FROM
   t_0_Up AS Up, t_3_E AS E
 WHERE
-  (E.id = Up.id) ORDER BY n;
+  (COALESCE(E.id, 0) = COALESCE(Up.id, 0) AND (E.id IS NULL) = (Up.id IS NULL)) ORDER BY n;

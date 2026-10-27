@@ -86,7 +86,7 @@ SELECT
 FROM
   t_1_Ship AS Ship, t_1_Ship AS t_0_Ship
 WHERE
-  (t_0_Ship.carrier != 'dhl') AND
+  (t_0_Ship.carrier IS DISTINCT FROM 'dhl') AND
   (Ship.carrier = 'dhl') AND
-  (t_0_Ship.src = Ship.src)
+  (t_0_Ship.src IS NOT DISTINCT FROM Ship.src)
 GROUP BY 1;

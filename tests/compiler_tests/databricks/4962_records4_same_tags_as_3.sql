@@ -30,6 +30,6 @@ SELECT
 FROM
   t_1_P AS P, t_1_P AS t_0_P
 WHERE
-  (t_0_P.id != 3) AND
+  (NOT (t_0_P.id <=> 3)) AND
   (P.id = 3) AND
-  (t_0_P.r.tags = P.r.tags) ORDER BY id NULLS LAST;
+  (t_0_P.r.tags <=> P.r.tags) ORDER BY id NULLS LAST;

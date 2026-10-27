@@ -49,7 +49,7 @@ t_1_Path_RecursiveCte AS (SELECT * FROM (
         (1 < 3) AND
         (0 < 30) AND
         (1 = 0) AND
-        (t_3_Edge.a = t_5_Edge.b)
+        (t_3_Edge.a IS NOT DISTINCT FROM t_5_Edge.b)
      UNION ALL
     
       SELECT
@@ -65,8 +65,8 @@ t_1_Path_RecursiveCte AS (SELECT * FROM (
         (1 < 3) AND
         (0 < 30) AND
         (1 = 0) AND
-        (t_7_Edge.a = t_9_Edge.b) AND
-        (t_9_Edge.a = t_11_Edge.b)
+        (t_7_Edge.a IS NOT DISTINCT FROM t_9_Edge.b) AND
+        (t_9_Edge.a IS NOT DISTINCT FROM t_11_Edge.b)
      UNION ALL
     
       SELECT
@@ -84,9 +84,9 @@ t_1_Path_RecursiveCte AS (SELECT * FROM (
         (1 < 3) AND
         (0 < 30) AND
         (1 = 0) AND
-        (t_13_Edge.a = t_15_Edge.b) AND
-        (t_15_Edge.a = t_17_Edge.b) AND
-        (t_17_Edge.a = t_19_Edge.b)
+        (t_13_Edge.a IS NOT DISTINCT FROM t_15_Edge.b) AND
+        (t_15_Edge.a IS NOT DISTINCT FROM t_17_Edge.b) AND
+        (t_17_Edge.a IS NOT DISTINCT FROM t_19_Edge.b)
      UNION ALL
     
       SELECT
@@ -106,10 +106,10 @@ t_1_Path_RecursiveCte AS (SELECT * FROM (
         (1 < 3) AND
         (0 < 30) AND
         (1 = 0) AND
-        (t_21_Edge.a = t_23_Edge.b) AND
-        (t_23_Edge.a = t_25_Edge.b) AND
-        (t_25_Edge.a = t_27_Edge.b) AND
-        (t_27_Edge.a = t_29_Edge.b)
+        (t_21_Edge.a IS NOT DISTINCT FROM t_23_Edge.b) AND
+        (t_23_Edge.a IS NOT DISTINCT FROM t_25_Edge.b) AND
+        (t_25_Edge.a IS NOT DISTINCT FROM t_27_Edge.b) AND
+        (t_27_Edge.a IS NOT DISTINCT FROM t_29_Edge.b)
      UNION ALL
     
       SELECT
@@ -131,11 +131,11 @@ t_1_Path_RecursiveCte AS (SELECT * FROM (
         (1 < 3) AND
         (0 < 30) AND
         (1 = 0) AND
-        (t_31_Edge.a = t_33_Edge.b) AND
-        (t_33_Edge.a = t_35_Edge.b) AND
-        (t_35_Edge.a = t_37_Edge.b) AND
-        (t_37_Edge.a = t_39_Edge.b) AND
-        (t_39_Edge.a = t_41_Edge.b)
+        (t_31_Edge.a IS NOT DISTINCT FROM t_33_Edge.b) AND
+        (t_33_Edge.a IS NOT DISTINCT FROM t_35_Edge.b) AND
+        (t_35_Edge.a IS NOT DISTINCT FROM t_37_Edge.b) AND
+        (t_37_Edge.a IS NOT DISTINCT FROM t_39_Edge.b) AND
+        (t_39_Edge.a IS NOT DISTINCT FROM t_41_Edge.b)
      UNION ALL
     
       SELECT
@@ -159,12 +159,12 @@ t_1_Path_RecursiveCte AS (SELECT * FROM (
         (1 < 3) AND
         (0 < 30) AND
         (1 = 0) AND
-        (t_43_Edge.a = t_45_Edge.b) AND
-        (t_45_Edge.a = t_47_Edge.b) AND
-        (t_47_Edge.a = t_49_Edge.b) AND
-        (t_49_Edge.a = t_51_Edge.b) AND
-        (t_51_Edge.a = t_53_Edge.b) AND
-        (t_53_Edge.a = t_55_Edge.b)
+        (t_43_Edge.a IS NOT DISTINCT FROM t_45_Edge.b) AND
+        (t_45_Edge.a IS NOT DISTINCT FROM t_47_Edge.b) AND
+        (t_47_Edge.a IS NOT DISTINCT FROM t_49_Edge.b) AND
+        (t_49_Edge.a IS NOT DISTINCT FROM t_51_Edge.b) AND
+        (t_51_Edge.a IS NOT DISTINCT FROM t_53_Edge.b) AND
+        (t_53_Edge.a IS NOT DISTINCT FROM t_55_Edge.b)
      UNION ALL
     
       SELECT
@@ -190,13 +190,13 @@ t_1_Path_RecursiveCte AS (SELECT * FROM (
         (1 < 3) AND
         (0 < 30) AND
         (1 = 0) AND
-        (t_57_Edge.a = t_59_Edge.b) AND
-        (t_59_Edge.a = t_61_Edge.b) AND
-        (t_61_Edge.a = t_63_Edge.b) AND
-        (t_63_Edge.a = t_65_Edge.b) AND
-        (t_65_Edge.a = t_67_Edge.b) AND
-        (t_67_Edge.a = t_69_Edge.b) AND
-        (t_69_Edge.a = t_71_Edge.b)
+        (t_57_Edge.a IS NOT DISTINCT FROM t_59_Edge.b) AND
+        (t_59_Edge.a IS NOT DISTINCT FROM t_61_Edge.b) AND
+        (t_61_Edge.a IS NOT DISTINCT FROM t_63_Edge.b) AND
+        (t_63_Edge.a IS NOT DISTINCT FROM t_65_Edge.b) AND
+        (t_65_Edge.a IS NOT DISTINCT FROM t_67_Edge.b) AND
+        (t_67_Edge.a IS NOT DISTINCT FROM t_69_Edge.b) AND
+        (t_69_Edge.a IS NOT DISTINCT FROM t_71_Edge.b)
     
   ) AS UNUSED_TABLE_NAME  
 ) AS UNUSED_TABLE_NAME
@@ -211,7 +211,7 @@ FROM
 WHERE
   (t_72_Path_RecursiveCte.n < 3) AND
   (t_72_Path_RecursiveCte.synalog_step < 30) AND
-  (t_73_Edge.a = t_72_Path_RecursiveCte.b)),
+  (t_73_Edge.a IS NOT DISTINCT FROM t_72_Path_RecursiveCte.b)),
 t_0_Path AS (SELECT
   Path_RecursiveCte.a AS a,
   Path_RecursiveCte.b AS b,

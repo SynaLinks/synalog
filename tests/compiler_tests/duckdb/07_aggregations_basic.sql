@@ -4,15 +4,6 @@ create schema if not exists synalog_home;
 drop type if exists synalogrecord893574736 cascade; create type synalogrecord893574736 as struct(nirvana numeric);
 create sequence if not exists eternal_logical_sequence;
 
-
--- Synalog type: synalogrecord481217614
-drop type if exists synalogrecord481217614 cascade; create type synalogrecord481217614 as struct(r synalogrecord893574736);
-
--- Synalog type: synalogrecord383307722
-drop type if exists synalogrecord383307722 cascade; create type synalogrecord383307722 as struct(a timestamp);
-
--- Synalog type: synalogrecord519939597
-drop type if exists synalogrecord519939597 cascade; create type synalogrecord519939597 as struct(args text[], predicate text);
 WITH t_1_Sales AS (SELECT * FROM (
   
     SELECT
@@ -73,6 +64,6 @@ SELECT
 FROM
   t_0_TotalByProduct AS TotalByProduct, t_2_CountByProduct AS CountByProduct, t_4_MinByProduct AS MinByProduct, t_6_MaxByProduct AS MaxByProduct
 WHERE
-  (CountByProduct.product = TotalByProduct.product) AND
-  (MinByProduct.product = TotalByProduct.product) AND
-  (MaxByProduct.product = TotalByProduct.product) ORDER BY product;
+  (CountByProduct.product IS NOT DISTINCT FROM TotalByProduct.product) AND
+  (MinByProduct.product IS NOT DISTINCT FROM TotalByProduct.product) AND
+  (MaxByProduct.product IS NOT DISTINCT FROM TotalByProduct.product) ORDER BY product;

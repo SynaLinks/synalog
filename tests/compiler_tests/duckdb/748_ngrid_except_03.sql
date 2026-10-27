@@ -24,4 +24,4 @@ WHERE
   FROM
     t_1_X AS t_0_X, (select unnest([0]) as unnested_pod) as x_6
   WHERE
-    (t_0_X.x = x_3.unnested_pod)) IS NULL) ORDER BY x;
+    (t_0_X.x IS NOT DISTINCT FROM x_3.unnested_pod)) IS NULL) ORDER BY x;

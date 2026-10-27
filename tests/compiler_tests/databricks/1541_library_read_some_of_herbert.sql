@@ -27,6 +27,6 @@ SELECT
 FROM
   t_1_Loan AS Loan, t_2_Book AS t_0_Book
 WHERE
-  (t_0_Book.id = Loan.book) AND
+  (t_0_Book.id <=> Loan.book) AND
   (t_0_Book.author = "herbert")
 GROUP BY 1 ORDER BY name NULLS LAST;

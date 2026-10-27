@@ -118,5 +118,5 @@ SELECT
 FROM
   t_0_A AS A, t_1_Person AS Person
 WHERE
-  (Person.id = A.id)
+  (COALESCE(Person.id, 0) = COALESCE(A.id, 0) AND (Person.id IS NULL) = (A.id IS NULL))
 GROUP BY Person.team ORDER BY team, h;

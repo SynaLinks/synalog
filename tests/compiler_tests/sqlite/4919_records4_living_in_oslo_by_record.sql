@@ -30,4 +30,4 @@ SELECT
 FROM
   t_0_P AS P
 WHERE
-  (JSON_EXTRACT(P.r, "$.home") = JSON_OBJECT('city', 'oslo')) ORDER BY n;
+  (JSON_EXTRACT(P.r, "$.home") IS JSON_OBJECT('city', 'oslo')) ORDER BY n NULLS LAST;

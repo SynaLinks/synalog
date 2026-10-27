@@ -19,4 +19,4 @@ WHERE
   FROM
     t_0_Ship AS t_1_Ship
   WHERE
-    (t_1_Ship.client = Ship.client))) ORDER BY id NULLS LAST;
+    (t_1_Ship.client <=> Ship.client))) ORDER BY id NULLS LAST;

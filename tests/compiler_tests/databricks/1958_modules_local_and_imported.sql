@@ -15,4 +15,4 @@ SELECT
 FROM
   t_1_Shop_Product AS Shop_Product, t_2_Color AS t_0_Color
 WHERE
-  (t_0_Color.sku = Shop_Product.sku) ORDER BY name NULLS LAST, color NULLS LAST;
+  (t_0_Color.sku <=> Shop_Product.sku) ORDER BY name NULLS LAST, color NULLS LAST;

@@ -93,4 +93,4 @@ WHERE
   FROM
     t_2_F AS F, (select unnest([0]) as unnested_pod) as x_4
   WHERE
-    (F.a = t_0_U.u)) IS NULL) ORDER BY u;
+    (F.a IS NOT DISTINCT FROM t_0_U.u)) IS NULL) ORDER BY u;

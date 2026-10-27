@@ -29,6 +29,6 @@ WHERE
   FROM
     t_4_F AS F, t_4_F AS t_3_F
   WHERE
-    (F.a = t_0_U.u) AND
-    (t_3_F.a = t_1_U.u) AND
-    (t_3_F.b = F.b)) IS NULL) ORDER BY a NULLS LAST, b NULLS LAST;
+    (F.a <=> t_0_U.u) AND
+    (t_3_F.a <=> t_1_U.u) AND
+    (t_3_F.b <=> F.b)) IS NULL) ORDER BY a NULLS LAST, b NULLS LAST;

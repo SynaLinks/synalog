@@ -132,4 +132,4 @@ WHERE
   FROM
     t_1_U AS U, JSON_EACH(JSON_ARRAY(0)) as x_4
   WHERE
-    (U.a = Node.n)), 0) >= 3) ORDER BY n NULLS LAST;
+    (U.a IS Node.n)), 0) >= 3) ORDER BY n NULLS LAST;

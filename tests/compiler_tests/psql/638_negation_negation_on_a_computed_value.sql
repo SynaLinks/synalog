@@ -15,4 +15,4 @@ WHERE
     UNNEST(ARRAY[1, 2, 3]) as x_10, UNNEST(ARRAY[0]) as x_6
   WHERE
     ((MOD(CAST(x_3 AS numeric), NULLIF(CAST(2 AS numeric), 0))) = 0) AND
-    (x_3 = x_10)) AS numeric) IS NULL) ORDER BY x;
+    (COALESCE(x_3, 0) = COALESCE(x_10, 0) AND (x_3 IS NULL) = (x_10 IS NULL))) AS numeric) IS NULL) ORDER BY x;

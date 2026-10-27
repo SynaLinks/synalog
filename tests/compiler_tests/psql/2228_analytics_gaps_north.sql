@@ -113,4 +113,4 @@ WHERE
   FROM
     t_2_D AS t_4_D, UNNEST(ARRAY[0]) as x_10
   WHERE
-    (t_4_D.d = x_3)) AS numeric) IS NULL);
+    (COALESCE(t_4_D.d, 0) = COALESCE(x_3, 0) AND (t_4_D.d IS NULL) = (x_3 IS NULL))) AS numeric) IS NULL);

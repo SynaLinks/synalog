@@ -24,4 +24,4 @@ WHERE
   FROM
     t_3_Loud AS Loud
   WHERE
-    (Loud.k = t_0_K.k)) IS NULL) ORDER BY k NULLS LAST;
+    (Loud.k <=> t_0_K.k)) IS NULL) ORDER BY k NULLS LAST;

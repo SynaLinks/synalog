@@ -114,4 +114,4 @@ WHERE
   FROM
     t_1_T AS T, JSON_EACH(JSON_ARRAY(0)) as x_4
   WHERE
-    (T.id = Ship.id)) IS NULL) ORDER BY id;
+    (T.id IS Ship.id)) IS NULL) ORDER BY id NULLS LAST;

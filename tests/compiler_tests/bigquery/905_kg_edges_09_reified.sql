@@ -80,8 +80,8 @@ t_0_AssignmentPerson AS (SELECT
 FROM
   t_1_Assignment AS Assignment, t_4_Person AS Person, t_3_Assignments AS Assignments
 WHERE
-  (Assignments.assignment_id = Assignment.assignment_id) AND
-  (Assignments.person_id = Person.person_id)
+  (Assignments.assignment_id IS NOT DISTINCT FROM Assignment.assignment_id) AND
+  (Assignments.person_id IS NOT DISTINCT FROM Person.person_id)
 GROUP BY assignment_id, person_id),
 t_12_Teams AS (SELECT * FROM (
   
@@ -112,8 +112,8 @@ t_6_AssignmentTeam AS (SELECT
 FROM
   t_1_Assignment AS t_7_Assignment, t_11_Team AS t_8_Team, t_3_Assignments AS t_9_Assignments
 WHERE
-  (t_9_Assignments.assignment_id = t_7_Assignment.assignment_id) AND
-  (t_9_Assignments.team_id = t_8_Team.team_id)
+  (t_9_Assignments.assignment_id IS NOT DISTINCT FROM t_7_Assignment.assignment_id) AND
+  (t_9_Assignments.team_id IS NOT DISTINCT FROM t_8_Team.team_id)
 GROUP BY assignment_id, team_id)
 SELECT
   AssignmentPerson.assignment_id AS assignment_id,
@@ -122,4 +122,4 @@ SELECT
 FROM
   t_0_AssignmentPerson AS AssignmentPerson, t_6_AssignmentTeam AS AssignmentTeam
 WHERE
-  (AssignmentTeam.assignment_id = AssignmentPerson.assignment_id) ORDER BY assignment_id NULLS LAST;
+  (AssignmentTeam.assignment_id IS NOT DISTINCT FROM AssignmentPerson.assignment_id) ORDER BY assignment_id NULLS LAST;

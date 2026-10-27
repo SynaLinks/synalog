@@ -12,4 +12,4 @@ WHERE
   FROM
     t_0_Friend AS Friend
   WHERE
-    (Friend.a = x_3)) IS NULL) ORDER BY name NULLS LAST;
+    (Friend.a <=> x_3)) IS NULL) ORDER BY name NULLS LAST;

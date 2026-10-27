@@ -76,5 +76,5 @@ SELECT
 FROM
   t_1_E AS E, t_1_E AS t_0_E
 WHERE
-  (E.id != t_0_E.id) AND
-  (SUBSTR(E.n, ((LENGTH(E.n)) - (0)), 1) = SUBSTR(t_0_E.n, ((LENGTH(t_0_E.n)) - (0)), 1)) ORDER BY a, b;
+  (E.id IS DISTINCT FROM t_0_E.id) AND
+  (COALESCE(SUBSTR(E.n, ((LENGTH(E.n)) - (0)), 1), '') = COALESCE(SUBSTR(t_0_E.n, ((LENGTH(t_0_E.n)) - (0)), 1), '') AND (SUBSTR(E.n, ((LENGTH(E.n)) - (0)), 1) IS NULL) = (SUBSTR(t_0_E.n, ((LENGTH(t_0_E.n)) - (0)), 1) IS NULL)) ORDER BY a, b;

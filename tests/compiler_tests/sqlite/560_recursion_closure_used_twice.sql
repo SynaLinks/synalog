@@ -30,7 +30,7 @@ t_2_P_RecursiveCte AS (SELECT * FROM (
       WHERE
         (0 < 5) AND
         (1 = 0) AND
-        (t_4_E.a = t_6_E.b)
+        (t_4_E.a IS t_6_E.b)
      UNION ALL
     
       SELECT
@@ -43,8 +43,8 @@ t_2_P_RecursiveCte AS (SELECT * FROM (
         (((0) + (1)) < 5) AND
         (0 < 5) AND
         (1 = 0) AND
-        (t_8_E.a = t_10_E.b) AND
-        (t_10_E.a = t_12_E.b)
+        (t_8_E.a IS t_10_E.b) AND
+        (t_10_E.a IS t_12_E.b)
      UNION ALL
     
       SELECT
@@ -58,9 +58,9 @@ t_2_P_RecursiveCte AS (SELECT * FROM (
         (((0) + (1)) < 5) AND
         (0 < 5) AND
         (1 = 0) AND
-        (t_14_E.a = t_16_E.b) AND
-        (t_16_E.a = t_18_E.b) AND
-        (t_18_E.a = t_20_E.b)
+        (t_14_E.a IS t_16_E.b) AND
+        (t_16_E.a IS t_18_E.b) AND
+        (t_18_E.a IS t_20_E.b)
      UNION ALL
     
       SELECT
@@ -75,10 +75,10 @@ t_2_P_RecursiveCte AS (SELECT * FROM (
         (((0) + (1)) < 5) AND
         (0 < 5) AND
         (1 = 0) AND
-        (t_22_E.a = t_24_E.b) AND
-        (t_24_E.a = t_26_E.b) AND
-        (t_26_E.a = t_28_E.b) AND
-        (t_28_E.a = t_30_E.b)
+        (t_22_E.a IS t_24_E.b) AND
+        (t_24_E.a IS t_26_E.b) AND
+        (t_26_E.a IS t_28_E.b) AND
+        (t_28_E.a IS t_30_E.b)
      UNION ALL
     
       SELECT
@@ -94,11 +94,11 @@ t_2_P_RecursiveCte AS (SELECT * FROM (
         (((0) + (1)) < 5) AND
         (0 < 5) AND
         (1 = 0) AND
-        (t_32_E.a = t_34_E.b) AND
-        (t_34_E.a = t_36_E.b) AND
-        (t_36_E.a = t_38_E.b) AND
-        (t_38_E.a = t_40_E.b) AND
-        (t_40_E.a = t_42_E.b)
+        (t_32_E.a IS t_34_E.b) AND
+        (t_34_E.a IS t_36_E.b) AND
+        (t_36_E.a IS t_38_E.b) AND
+        (t_38_E.a IS t_40_E.b) AND
+        (t_40_E.a IS t_42_E.b)
     
   ) AS UNUSED_TABLE_NAME  
 ) AS UNUSED_TABLE_NAME
@@ -111,7 +111,7 @@ FROM
   t_2_P_RecursiveCte AS t_43_P_RecursiveCte, t_3_E AS t_44_E
 WHERE
   (t_43_P_RecursiveCte.synalog_step < 5) AND
-  (t_44_E.a = t_43_P_RecursiveCte.b)),
+  (t_44_E.a IS t_43_P_RecursiveCte.b)),
 t_1_P AS (SELECT
   P_RecursiveCte.a AS a,
   P_RecursiveCte.b AS b
@@ -124,4 +124,4 @@ SELECT
 FROM
   t_1_P AS P, t_1_P AS t_0_P
 WHERE
-  (t_0_P.a = P.b);
+  (t_0_P.a IS P.b);

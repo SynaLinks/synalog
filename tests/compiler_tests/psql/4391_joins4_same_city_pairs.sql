@@ -103,6 +103,6 @@ FROM
   t_3_E AS E, t_3_E AS t_0_E, t_4_D AS t_1_D, t_4_D AS t_2_D
 WHERE
   (E.n < t_0_E.n) AND
-  (t_1_D.d = E.d) AND
-  (t_2_D.d = t_0_E.d) AND
-  (t_2_D.city = t_1_D.city) ORDER BY a, b;
+  (COALESCE(t_1_D.d, 0) = COALESCE(E.d, 0) AND (t_1_D.d IS NULL) = (E.d IS NULL)) AND
+  (COALESCE(t_2_D.d, 0) = COALESCE(t_0_E.d, 0) AND (t_2_D.d IS NULL) = (t_0_E.d IS NULL)) AND
+  (COALESCE(t_2_D.city, '') = COALESCE(t_1_D.city, '') AND (t_2_D.city IS NULL) = (t_1_D.city IS NULL)) ORDER BY a, b;

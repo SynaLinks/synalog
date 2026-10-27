@@ -53,5 +53,5 @@ SELECT
 FROM
   t_0_E AS E, t_1_F AS F
 WHERE
-  (F.g = E.g)
+  (COALESCE(F.g, '') = COALESCE(E.g, '') AND (F.g IS NULL) = (E.g IS NULL))
 GROUP BY E.g ORDER BY g;

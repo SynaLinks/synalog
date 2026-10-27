@@ -32,5 +32,5 @@ SELECT
 FROM
   t_1_W AS t_0_W, (select unnest(SPLIT(t_0_W.s, ' ')) as unnested_pod) as x_2
 WHERE
-  (x_2.unnested_pod != '')
+  (x_2.unnested_pod IS DISTINCT FROM '')
 GROUP BY x_2.unnested_pod ORDER BY w, n;

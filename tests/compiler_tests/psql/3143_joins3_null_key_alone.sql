@@ -6,8 +6,4 @@ DO $$ BEGIN if not exists (select 'I(am) :- I(think)' from pg_type where typname
 
 SELECT
   1 AS a,
-  2 AS b
-FROM
-  (SELECT 'singleton' as s) as unused_singleton
-WHERE
-  (null = null);
+  2 AS b;

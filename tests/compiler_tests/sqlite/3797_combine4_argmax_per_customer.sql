@@ -67,6 +67,6 @@ SELECT
 FROM
   t_2_O AS O, JSON_EACH(JSON_ARRAY(0)) as x_10
 WHERE
-  (O.c = t_0_C.c)) AS best
+  (O.c IS t_0_C.c)) AS best
 FROM
   t_3_C AS t_0_C ORDER BY c NULLS LAST;

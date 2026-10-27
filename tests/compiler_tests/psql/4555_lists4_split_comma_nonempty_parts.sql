@@ -42,4 +42,4 @@ SELECT
 FROM
   t_0_T AS T, UNNEST((CASE WHEN T.s = '' THEN ARRAY[''] ELSE STRING_TO_ARRAY(T.s, ',') END)) as x_4
 WHERE
-  (x_4 != '') ORDER BY k, x;
+  (x_4 IS DISTINCT FROM '') ORDER BY k, x;

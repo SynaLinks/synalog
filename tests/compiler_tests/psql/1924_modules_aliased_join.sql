@@ -64,5 +64,5 @@ SELECT
 FROM
   t_1_Shop_Product AS Shop_Product, t_1_Shop_Product AS t_0_Shop_Product, t_2_Shop_Stock AS Shop_Stock
 WHERE
-  (Shop_Stock.sku = t_0_Shop_Product.sku) AND
-  (Shop_Product.sku = t_0_Shop_Product.sku) ORDER BY name, value;
+  (COALESCE(Shop_Stock.sku, '') = COALESCE(t_0_Shop_Product.sku, '') AND (Shop_Stock.sku IS NULL) = (t_0_Shop_Product.sku IS NULL)) AND
+  (COALESCE(Shop_Product.sku, '') = COALESCE(t_0_Shop_Product.sku, '') AND (Shop_Product.sku IS NULL) = (t_0_Shop_Product.sku IS NULL)) ORDER BY name, value;

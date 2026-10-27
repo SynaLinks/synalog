@@ -28,4 +28,4 @@ FROM
   t_0_Total AS Total, t_2_Reorder AS Reorder
 WHERE
   (Total.n < Reorder.level) AND
-  (Reorder.item = Total.item) ORDER BY item NULLS LAST;
+  (Reorder.item <=> Total.item) ORDER BY item NULLS LAST;

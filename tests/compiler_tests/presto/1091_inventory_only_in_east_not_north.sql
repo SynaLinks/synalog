@@ -75,5 +75,5 @@ WHERE
     synalog_test.In_table AS t_1_In
   WHERE
     (t_1_In.warehouse = 'north') AND
-    (t_1_In.item = t_0_In.item)) IS NULL) AND
+    (t_1_In.item IS NOT DISTINCT FROM t_0_In.item)) IS NULL) AND
   (t_0_In.warehouse = 'east') ORDER BY item;

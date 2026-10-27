@@ -81,4 +81,4 @@ WHERE
   WHERE
     t_1_B.sf AND
     (t_1_B.year > 1965) AND
-    (B.id = t_1_B.id)) IS NULL) ORDER BY id;
+    (B.id IS NOT DISTINCT FROM t_1_B.id)) IS NULL) ORDER BY id;

@@ -19,7 +19,7 @@ WHERE
     t_1_Sale AS t_2_Sale
   WHERE
     (t_2_Sale.region = "north") AND
-    (Sale.id = t_2_Sale.id)) IS NULL) AND
+    (Sale.id <=> t_2_Sale.id)) IS NULL) AND
   (t_0_Sale.amount > 100) AND
-  (t_0_Sale.id = Sale.id) AND
+  (t_0_Sale.id <=> Sale.id) AND
   (Sale.product = "tea") ORDER BY id NULLS LAST;

@@ -114,4 +114,4 @@ SELECT
 FROM
   t_0_Hi AS Hi, t_2_Lo AS Lo
 WHERE
-  (Lo.k = Hi.k) ORDER BY k;
+  (Lo.k IS NOT DISTINCT FROM Hi.k) ORDER BY k NULLS LAST;

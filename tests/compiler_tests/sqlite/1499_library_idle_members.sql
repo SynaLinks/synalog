@@ -103,4 +103,4 @@ WHERE
   FROM
     t_2_Active AS Active, JSON_EACH(JSON_ARRAY(0)) as x_4
   WHERE
-    (Active.name = t_0_Member.name)) IS NULL);
+    (Active.name IS t_0_Member.name)) IS NULL);

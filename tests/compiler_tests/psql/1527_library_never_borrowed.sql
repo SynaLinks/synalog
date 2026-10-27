@@ -163,4 +163,4 @@ WHERE
   FROM
     t_2_Borrowed AS Borrowed, UNNEST(ARRAY[0]) as x_5
   WHERE
-    (Borrowed.book = t_0_Book.id)) AS numeric) IS NULL);
+    (COALESCE(Borrowed.book, 0) = COALESCE(t_0_Book.id, 0) AND (Borrowed.book IS NULL) = (t_0_Book.id IS NULL))) AS numeric) IS NULL);

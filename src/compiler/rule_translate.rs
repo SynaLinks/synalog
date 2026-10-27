@@ -389,9 +389,9 @@ impl RuleStructure {
 
         loop {
             let mut done = true;
-            // A value unified with itself says nothing, unless it holds a null,
-            // which equals nothing (see `unifications_to_constraints`).
-            self.vars_unification.retain(|(l, r)| l != r || holds_null_literal(l));
+            // A value unified with itself says nothing: it equals itself, a
+            // null too.
+            self.vars_unification.retain(|(l, r)| l != r);
 
             // Iterate all unifications (Python iterates the live list; we iterate
             // by index to handle in-place modifications via replace_variable_everywhere).
@@ -591,10 +591,8 @@ impl RuleStructure {
     pub fn unifications_to_constraints(&mut self) {
         let unifs = std::mem::take(&mut self.vars_unification);
         for (left, right) in unifs {
-            // A value equals itself, so the constraint goes; but a null equals
-            // nothing, itself included (`A(k: null)`, `B(k: null)` joined on
-            // `k` have no row): a constraint with a null stays.
-            if left == right && !holds_null_literal(&left) {
+            // A value equals itself, a null too: the constraint goes.
+            if left == right {
                 continue;
             }
             let equality = make_equality(&left, &right);
@@ -1943,18 +1941,6 @@ fn count_variable(node: &Json, name: &str) -> usize {
         }
         Json::Array(items) => items.iter().map(|v| count_variable(v, name)).sum(),
         _ => 0,
-    }
-}
-
-/// Whether an expression holds a null literal anywhere.
-fn holds_null_literal(expr: &Json) -> bool {
-    match expr {
-        Json::Object(o) => {
-            o.get("literal").is_some_and(|l| l.is_object() && (l.as_object().contains_key("the_null") || l.as_object().contains_key("null")))
-                || o.values().any(holds_null_literal)
-        }
-        Json::Array(items) => items.iter().any(holds_null_literal),
-        _ => false,
     }
 }
 

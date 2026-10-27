@@ -98,4 +98,4 @@ WHERE
   FROM
     t_1_InLima AS InLima, JSON_EACH(JSON_ARRAY(0)) as x_4
   WHERE
-    (InLima.product = S.product)) IS NULL);
+    (InLima.product IS S.product)) IS NULL);

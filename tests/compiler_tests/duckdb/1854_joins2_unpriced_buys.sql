@@ -130,6 +130,6 @@ WHERE
   FROM
     t_1_Priced AS Priced, (select unnest([0]) as unnested_pod) as x_8
   WHERE
-    (Priced."user" = Event."user") AND
-    (Priced.month = SUBSTR(Event."at", 1, 7))) IS NULL) AND
+    (Priced."user" IS NOT DISTINCT FROM Event."user") AND
+    (Priced.month IS NOT DISTINCT FROM SUBSTR(Event."at", 1, 7))) IS NULL) AND
   (Event.kind = 'buy');

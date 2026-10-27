@@ -31,4 +31,4 @@ WHERE
   FROM
     t_2_Active AS Active
   WHERE
-    (Active.name = t_0_Member.name)) IS NULL);
+    (Active.name <=> t_0_Member.name)) IS NULL);

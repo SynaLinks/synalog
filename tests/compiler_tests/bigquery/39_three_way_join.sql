@@ -55,11 +55,11 @@ t_0_OrderDetails AS (SELECT
 FROM
   t_1_Orders AS Orders, t_2_Customers AS Customers, t_3_Products AS Products
 WHERE
-  (Customers.customer_id = Orders.customer_id) AND
-  (Products.product_id = Orders.product_id) ORDER BY order_id)
+  (Customers.customer_id IS NOT DISTINCT FROM Orders.customer_id) AND
+  (Products.product_id IS NOT DISTINCT FROM Orders.product_id) ORDER BY order_id NULLS LAST)
 SELECT
   OrderDetails.order_id AS order_id,
   OrderDetails.customer_name AS customer_name,
   OrderDetails.price AS price
 FROM
-  t_0_OrderDetails AS OrderDetails ORDER BY order_id;
+  t_0_OrderDetails AS OrderDetails ORDER BY order_id NULLS LAST;

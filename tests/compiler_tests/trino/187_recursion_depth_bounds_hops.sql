@@ -57,7 +57,7 @@ t_1_Reach_MultBodyAggAux_f3 AS (SELECT * FROM (
     FROM
       synalog_test.Reach_sn_t0 AS Reach_sn_t0, t_2_Edge AS Edge
     WHERE
-      (Edge.a = Reach_sn_t0.x)
+      (Edge.a IS NOT DISTINCT FROM Reach_sn_t0.x)
   
 ) AS UNUSED_TABLE_NAME  ),
 t_0_Reach_sn_r1 AS (SELECT
@@ -108,7 +108,7 @@ t_1_Reach_MultBodyAggAux_f4 AS (SELECT * FROM (
     FROM
       synalog_test.Reach_sn_t1 AS Reach_sn_t1, t_2_Edge AS Edge
     WHERE
-      (Edge.a = Reach_sn_t1.x)
+      (Edge.a IS NOT DISTINCT FROM Reach_sn_t1.x)
   
 ) AS UNUSED_TABLE_NAME  ),
 t_0_Reach_sn_r2 AS (SELECT
@@ -159,7 +159,7 @@ t_1_Reach_MultBodyAggAux_f5 AS (SELECT * FROM (
     FROM
       synalog_test.Reach_sn_t2 AS Reach_sn_t2, t_2_Edge AS Edge
     WHERE
-      (Edge.a = Reach_sn_t2.x)
+      (Edge.a IS NOT DISTINCT FROM Reach_sn_t2.x)
   
 ) AS UNUSED_TABLE_NAME  ),
 t_0_Reach_sn_r3 AS (SELECT
@@ -240,7 +240,7 @@ t_1_Reach_MultBodyAggAux_f6 AS (SELECT * FROM (
     FROM
       synalog_test.Reach_sn_delta AS Reach_sn_delta, t_2_Edge AS Edge
     WHERE
-      (Edge.a = Reach_sn_delta.x)
+      (Edge.a IS NOT DISTINCT FROM Reach_sn_delta.x)
   
 ) AS UNUSED_TABLE_NAME  ),
 t_0_Reach_sn_step AS (SELECT
@@ -258,7 +258,7 @@ WHERE
   FROM
     synalog_test.Reach_sn_full AS Reach_sn_full
   WHERE
-    (Reach_sn_full.x = Reach_sn_step.x)) IS NULL)
+    (Reach_sn_full.x IS NOT DISTINCT FROM Reach_sn_step.x)) IS NULL)
 GROUP BY 1;
 
 INSERT INTO synalog_test.Reach_sn_full SELECT * FROM synalog_test.Reach_sn_new;
@@ -297,7 +297,7 @@ t_1_Reach_MultBodyAggAux_f1 AS (SELECT * FROM (
     FROM
       synalog_test.Reach_sn_new AS Reach_sn_new, t_2_Edge AS Edge
     WHERE
-      (Edge.a = Reach_sn_new.x)
+      (Edge.a IS NOT DISTINCT FROM Reach_sn_new.x)
   
 ) AS UNUSED_TABLE_NAME  ),
 t_0_Reach_sn_back_step AS (SELECT
@@ -315,7 +315,7 @@ WHERE
   FROM
     synalog_test.Reach_sn_full AS Reach_sn_full
   WHERE
-    (Reach_sn_full.x = Reach_sn_back_step.x)) IS NULL)
+    (Reach_sn_full.x IS NOT DISTINCT FROM Reach_sn_back_step.x)) IS NULL)
 GROUP BY 1;
 
 INSERT INTO synalog_test.Reach_sn_full SELECT * FROM synalog_test.Reach_sn_delta;

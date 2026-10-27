@@ -68,6 +68,6 @@ FROM
   t_1_O AS O, JSON_EACH(JSON_ARRAY(0)) as x_6
 WHERE
   (O.amt > 10) AND
-  (O.c = t_0_C.c)) AS v
+  (O.c IS t_0_C.c)) AS v
 FROM
   t_2_C AS t_0_C ORDER BY c NULLS LAST;

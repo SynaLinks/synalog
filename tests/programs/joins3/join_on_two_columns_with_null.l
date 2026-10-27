@@ -1,5 +1,5 @@
-# A null in one of two join columns: no match.
-# Expect: rows Q = []
+# A null in one of two join columns: it matches the same null.
+# Expect: rows Q = [(1,)]
 E(id: 1, g: "a", v: 10);
 E(id: 2, g: "a", v: 20);
 E(id: 3, g: "b", v: null);

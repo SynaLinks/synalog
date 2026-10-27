@@ -18,4 +18,4 @@ FROM
   t_2_Reading AS Reading, t_2_Reading AS t_1_Reading
 WHERE
   (((Reading.value) - (t_1_Reading.value)) > 3) AND
-  (t_1_Reading.day = ((Reading.day) - (1))) ORDER BY day NULLS LAST;
+  (t_1_Reading.day <=> ((Reading.day) - (1))) ORDER BY day NULLS LAST;

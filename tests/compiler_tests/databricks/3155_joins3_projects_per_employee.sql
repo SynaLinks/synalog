@@ -18,5 +18,5 @@ SELECT
 FROM
   t_0_E AS E, t_1_Pr AS Pr
 WHERE
-  (Pr.dept = E.dept)
+  (Pr.dept <=> E.dept)
 GROUP BY 1 ORDER BY name NULLS LAST, n NULLS LAST;

@@ -86,5 +86,5 @@ SELECT
 FROM
   t_0_A AS A, t_1_Proj AS Proj
 WHERE
-  (Proj.pid = A.pid)
+  (Proj.pid IS NOT DISTINCT FROM A.pid)
 GROUP BY 1 ORDER BY id, h;

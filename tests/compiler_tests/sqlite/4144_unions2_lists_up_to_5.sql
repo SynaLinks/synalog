@@ -104,7 +104,7 @@ t_1_All AS (SELECT * FROM (
       FROM
         t_3_L AS t_8_L, JSON_EACH(JSON_ARRAY(0)) as x_20
       WHERE
-        (t_8_L.src = M.src)) IS NULL)
+        (t_8_L.src IS M.src)) IS NULL)
   
 ) AS UNUSED_TABLE_NAME  )
 SELECT

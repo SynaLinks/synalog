@@ -38,5 +38,5 @@ SELECT
 FROM
   t_0_Sale AS Sale, t_1_Region AS Region
 WHERE
-  (Region.c = Sale.c)
+  (Region.c IS NOT DISTINCT FROM Sale.c)
 GROUP BY 1 ORDER BY r;

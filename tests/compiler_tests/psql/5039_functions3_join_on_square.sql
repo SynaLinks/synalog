@@ -51,7 +51,7 @@ t_0_Q_MultBodyAggAux AS (SELECT * FROM (
       t_3_V AS V, t_3_V AS t_1_V
     WHERE
       (V.k < t_1_V.k) AND
-      (((V.x) * (V.x)) = ((((t_1_V.x) * (t_1_V.x))) + (7)))
+      (COALESCE(((V.x) * (V.x)), 0) = COALESCE(((((t_1_V.x) * (t_1_V.x))) + (7)), 0) AND (((V.x) * (V.x)) IS NULL) = (((((t_1_V.x) * (t_1_V.x))) + (7)) IS NULL))
    UNION ALL
   
     SELECT
@@ -61,7 +61,7 @@ t_0_Q_MultBodyAggAux AS (SELECT * FROM (
       t_3_V AS t_4_V, t_3_V AS t_5_V
     WHERE
       (t_4_V.k < t_5_V.k) AND
-      (((t_4_V.x) * (t_4_V.x)) = ((t_5_V.x) * (t_5_V.x)))
+      (COALESCE(((t_4_V.x) * (t_4_V.x)), 0) = COALESCE(((t_5_V.x) * (t_5_V.x)), 0) AND (((t_4_V.x) * (t_4_V.x)) IS NULL) = (((t_5_V.x) * (t_5_V.x)) IS NULL))
   
 ) AS UNUSED_TABLE_NAME  )
 SELECT

@@ -94,7 +94,7 @@ WHERE
     t_4_F AS F, (select unnest([0]) as unnested_pod) as x_10
   WHERE
     (F.a = 'dee') AND
-    (F.b = t_3_U.u)) IS NULL))
+    (F.b IS NOT DISTINCT FROM t_3_U.u)) IS NULL))
 SELECT
   t_0_U.u AS v
 FROM
@@ -105,4 +105,4 @@ WHERE
   FROM
     t_2_NotF AS NotF, (select unnest([0]) as unnested_pod) as x_4
   WHERE
-    (NotF.v = t_0_U.u)) IS NULL) ORDER BY v;
+    (NotF.v IS NOT DISTINCT FROM t_0_U.u)) IS NULL) ORDER BY v;

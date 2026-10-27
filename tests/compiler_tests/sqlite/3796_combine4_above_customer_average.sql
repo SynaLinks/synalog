@@ -52,4 +52,4 @@ WHERE
   FROM
     t_0_O AS t_1_O, JSON_EACH(JSON_ARRAY(0)) as x_8
   WHERE
-    (t_1_O.c = O.c))) ORDER BY id;
+    (t_1_O.c IS O.c))) ORDER BY id NULLS LAST;

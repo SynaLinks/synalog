@@ -20,4 +20,4 @@ FROM
   t_1_E AS E, t_2_A AS t_0_A
 WHERE
   (E.pay > t_0_A.a) AND
-  (t_0_A.d = E.d) ORDER BY n NULLS LAST;
+  (t_0_A.d <=> E.d) ORDER BY n NULLS LAST;

@@ -51,7 +51,7 @@ t_3_Person AS (SELECT
   Employees.url AS url
 FROM
   t_4_Employees AS Employees
-GROUP BY person_id, name, url ORDER BY person_id),
+GROUP BY person_id, name, url ORDER BY person_id NULLS LAST),
 t_6_Management AS (SELECT * FROM (
   
     SELECT
@@ -80,8 +80,8 @@ t_1_Manages AS (SELECT
 FROM
   t_3_Person AS Person, t_3_Person AS t_2_Person, t_6_Management AS Management
 WHERE
-  (Management.manager_id = Person.person_id) AND
-  (Management.employee_id = t_2_Person.person_id)
+  (Management.manager_id IS NOT DISTINCT FROM Person.person_id) AND
+  (Management.employee_id IS NOT DISTINCT FROM t_2_Person.person_id)
 GROUP BY manager_id, employee_id),
 t_0_Span AS (SELECT
   Manages.manager_id AS manager_id,
@@ -95,4 +95,4 @@ SELECT
 FROM
   t_0_Span AS Span
 WHERE
-  (Span.n > 1) ORDER BY manager_id;
+  (Span.n > 1) ORDER BY manager_id NULLS LAST;

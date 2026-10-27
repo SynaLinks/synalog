@@ -14,6 +14,6 @@ SELECT
 FROM
   t_1_E AS E
 WHERE
-  (E.a = t_0_N.n)) AS c
+  (E.a <=> t_0_N.n)) AS c
 FROM
   t_2_N AS t_0_N ORDER BY n NULLS LAST;

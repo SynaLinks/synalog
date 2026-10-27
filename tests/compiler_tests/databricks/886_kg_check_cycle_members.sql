@@ -49,7 +49,7 @@ t_1_Anc_MultBodyAggAux_f3 AS (SELECT * FROM (
     FROM
       synalog_test.Anc_sn_t0 AS Anc_sn_t0, t_2_ParentOf AS ParentOf
     WHERE
-      (ParentOf.parent_id = Anc_sn_t0.d)
+      (ParentOf.parent_id <=> Anc_sn_t0.d)
    UNION ALL
   
     SELECT
@@ -90,7 +90,7 @@ t_1_Anc_MultBodyAggAux_f4 AS (SELECT * FROM (
     FROM
       synalog_test.Anc_sn_t1 AS Anc_sn_t1, t_2_ParentOf AS ParentOf
     WHERE
-      (ParentOf.parent_id = Anc_sn_t1.d)
+      (ParentOf.parent_id <=> Anc_sn_t1.d)
    UNION ALL
   
     SELECT
@@ -131,7 +131,7 @@ t_1_Anc_MultBodyAggAux_f5 AS (SELECT * FROM (
     FROM
       synalog_test.Anc_sn_t2 AS Anc_sn_t2, t_2_ParentOf AS ParentOf
     WHERE
-      (ParentOf.parent_id = Anc_sn_t2.d)
+      (ParentOf.parent_id <=> Anc_sn_t2.d)
    UNION ALL
   
     SELECT
@@ -172,7 +172,7 @@ t_1_Anc_MultBodyAggAux_f6 AS (SELECT * FROM (
     FROM
       synalog_test.Anc_sn_t3 AS Anc_sn_t3, t_2_ParentOf AS ParentOf
     WHERE
-      (ParentOf.parent_id = Anc_sn_t3.d)
+      (ParentOf.parent_id <=> Anc_sn_t3.d)
    UNION ALL
   
     SELECT
@@ -213,7 +213,7 @@ t_1_Anc_MultBodyAggAux_f7 AS (SELECT * FROM (
     FROM
       synalog_test.Anc_sn_t4 AS Anc_sn_t4, t_2_ParentOf AS ParentOf
     WHERE
-      (ParentOf.parent_id = Anc_sn_t4.d)
+      (ParentOf.parent_id <=> Anc_sn_t4.d)
    UNION ALL
   
     SELECT
@@ -302,7 +302,7 @@ t_1_Anc_MultBodyAggAux_f8 AS (SELECT * FROM (
     FROM
       synalog_test.Anc_sn_delta AS Anc_sn_delta, t_2_ParentOf AS ParentOf
     WHERE
-      (ParentOf.parent_id = Anc_sn_delta.d)
+      (ParentOf.parent_id <=> Anc_sn_delta.d)
    UNION ALL
   
     SELECT
@@ -329,8 +329,8 @@ WHERE
   FROM
     synalog_test.Anc_sn_full AS Anc_sn_full
   WHERE
-    (Anc_sn_full.a = Anc_sn_step.a) AND
-    (Anc_sn_full.d = Anc_sn_step.d)) IS NULL)
+    (Anc_sn_full.a <=> Anc_sn_step.a) AND
+    (Anc_sn_full.d <=> Anc_sn_step.d)) IS NULL)
 GROUP BY 1, 2;
 
 INSERT INTO synalog_test.Anc_sn_full SELECT * FROM synalog_test.Anc_sn_new;
@@ -350,7 +350,7 @@ t_1_Anc_MultBodyAggAux_f1 AS (SELECT * FROM (
     FROM
       synalog_test.Anc_sn_new AS Anc_sn_new, t_2_ParentOf AS ParentOf
     WHERE
-      (ParentOf.parent_id = Anc_sn_new.d)
+      (ParentOf.parent_id <=> Anc_sn_new.d)
    UNION ALL
   
     SELECT
@@ -377,8 +377,8 @@ WHERE
   FROM
     synalog_test.Anc_sn_full AS Anc_sn_full
   WHERE
-    (Anc_sn_full.a = Anc_sn_back_step.a) AND
-    (Anc_sn_full.d = Anc_sn_back_step.d)) IS NULL)
+    (Anc_sn_full.a <=> Anc_sn_back_step.a) AND
+    (Anc_sn_full.d <=> Anc_sn_back_step.d)) IS NULL)
 GROUP BY 1, 2;
 
 INSERT INTO synalog_test.Anc_sn_full SELECT * FROM synalog_test.Anc_sn_delta;
@@ -398,7 +398,7 @@ t_1_Anc_MultBodyAggAux_f8 AS (SELECT * FROM (
     FROM
       synalog_test.Anc_sn_delta AS Anc_sn_delta, t_2_ParentOf AS ParentOf
     WHERE
-      (ParentOf.parent_id = Anc_sn_delta.d)
+      (ParentOf.parent_id <=> Anc_sn_delta.d)
    UNION ALL
   
     SELECT
@@ -425,8 +425,8 @@ WHERE
   FROM
     synalog_test.Anc_sn_full AS Anc_sn_full
   WHERE
-    (Anc_sn_full.a = Anc_sn_step.a) AND
-    (Anc_sn_full.d = Anc_sn_step.d)) IS NULL)
+    (Anc_sn_full.a <=> Anc_sn_step.a) AND
+    (Anc_sn_full.d <=> Anc_sn_step.d)) IS NULL)
 GROUP BY 1, 2;
 
 INSERT INTO synalog_test.Anc_sn_full SELECT * FROM synalog_test.Anc_sn_new;
@@ -446,7 +446,7 @@ t_1_Anc_MultBodyAggAux_f1 AS (SELECT * FROM (
     FROM
       synalog_test.Anc_sn_new AS Anc_sn_new, t_2_ParentOf AS ParentOf
     WHERE
-      (ParentOf.parent_id = Anc_sn_new.d)
+      (ParentOf.parent_id <=> Anc_sn_new.d)
    UNION ALL
   
     SELECT
@@ -473,8 +473,8 @@ WHERE
   FROM
     synalog_test.Anc_sn_full AS Anc_sn_full
   WHERE
-    (Anc_sn_full.a = Anc_sn_back_step.a) AND
-    (Anc_sn_full.d = Anc_sn_back_step.d)) IS NULL)
+    (Anc_sn_full.a <=> Anc_sn_back_step.a) AND
+    (Anc_sn_full.d <=> Anc_sn_back_step.d)) IS NULL)
 GROUP BY 1, 2;
 
 INSERT INTO synalog_test.Anc_sn_full SELECT * FROM synalog_test.Anc_sn_delta;
@@ -494,7 +494,7 @@ t_1_Anc_MultBodyAggAux_f8 AS (SELECT * FROM (
     FROM
       synalog_test.Anc_sn_delta AS Anc_sn_delta, t_2_ParentOf AS ParentOf
     WHERE
-      (ParentOf.parent_id = Anc_sn_delta.d)
+      (ParentOf.parent_id <=> Anc_sn_delta.d)
    UNION ALL
   
     SELECT
@@ -521,8 +521,8 @@ WHERE
   FROM
     synalog_test.Anc_sn_full AS Anc_sn_full
   WHERE
-    (Anc_sn_full.a = Anc_sn_step.a) AND
-    (Anc_sn_full.d = Anc_sn_step.d)) IS NULL)
+    (Anc_sn_full.a <=> Anc_sn_step.a) AND
+    (Anc_sn_full.d <=> Anc_sn_step.d)) IS NULL)
 GROUP BY 1, 2;
 
 INSERT INTO synalog_test.Anc_sn_full SELECT * FROM synalog_test.Anc_sn_new;
@@ -542,7 +542,7 @@ t_1_Anc_MultBodyAggAux_f1 AS (SELECT * FROM (
     FROM
       synalog_test.Anc_sn_new AS Anc_sn_new, t_2_ParentOf AS ParentOf
     WHERE
-      (ParentOf.parent_id = Anc_sn_new.d)
+      (ParentOf.parent_id <=> Anc_sn_new.d)
    UNION ALL
   
     SELECT
@@ -569,8 +569,8 @@ WHERE
   FROM
     synalog_test.Anc_sn_full AS Anc_sn_full
   WHERE
-    (Anc_sn_full.a = Anc_sn_back_step.a) AND
-    (Anc_sn_full.d = Anc_sn_back_step.d)) IS NULL)
+    (Anc_sn_full.a <=> Anc_sn_back_step.a) AND
+    (Anc_sn_full.d <=> Anc_sn_back_step.d)) IS NULL)
 GROUP BY 1, 2;
 
 INSERT INTO synalog_test.Anc_sn_full SELECT * FROM synalog_test.Anc_sn_delta;
@@ -590,7 +590,7 @@ t_1_Anc_MultBodyAggAux_f8 AS (SELECT * FROM (
     FROM
       synalog_test.Anc_sn_delta AS Anc_sn_delta, t_2_ParentOf AS ParentOf
     WHERE
-      (ParentOf.parent_id = Anc_sn_delta.d)
+      (ParentOf.parent_id <=> Anc_sn_delta.d)
    UNION ALL
   
     SELECT
@@ -617,8 +617,8 @@ WHERE
   FROM
     synalog_test.Anc_sn_full AS Anc_sn_full
   WHERE
-    (Anc_sn_full.a = Anc_sn_step.a) AND
-    (Anc_sn_full.d = Anc_sn_step.d)) IS NULL)
+    (Anc_sn_full.a <=> Anc_sn_step.a) AND
+    (Anc_sn_full.d <=> Anc_sn_step.d)) IS NULL)
 GROUP BY 1, 2;
 
 INSERT INTO synalog_test.Anc_sn_full SELECT * FROM synalog_test.Anc_sn_new;
@@ -638,7 +638,7 @@ t_1_Anc_MultBodyAggAux_f1 AS (SELECT * FROM (
     FROM
       synalog_test.Anc_sn_new AS Anc_sn_new, t_2_ParentOf AS ParentOf
     WHERE
-      (ParentOf.parent_id = Anc_sn_new.d)
+      (ParentOf.parent_id <=> Anc_sn_new.d)
    UNION ALL
   
     SELECT
@@ -665,8 +665,8 @@ WHERE
   FROM
     synalog_test.Anc_sn_full AS Anc_sn_full
   WHERE
-    (Anc_sn_full.a = Anc_sn_back_step.a) AND
-    (Anc_sn_full.d = Anc_sn_back_step.d)) IS NULL)
+    (Anc_sn_full.a <=> Anc_sn_back_step.a) AND
+    (Anc_sn_full.d <=> Anc_sn_back_step.d)) IS NULL)
 GROUP BY 1, 2;
 
 INSERT INTO synalog_test.Anc_sn_full SELECT * FROM synalog_test.Anc_sn_delta;
@@ -676,5 +676,5 @@ SELECT
 FROM
   synalog_test.Anc_sn_full AS Anc_sn_full
 WHERE
-  (Anc_sn_full.d = Anc_sn_full.a)
+  (Anc_sn_full.d <=> Anc_sn_full.a)
 GROUP BY 1 ORDER BY n NULLS LAST;

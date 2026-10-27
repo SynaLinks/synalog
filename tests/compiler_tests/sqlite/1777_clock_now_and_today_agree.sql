@@ -3,4 +3,4 @@ SELECT
 FROM
   (SELECT datetime('now') AS timestamp) AS Now, (SELECT date('now') AS date) AS Today
 WHERE
-  (SUBSTR(CAST(Now.timestamp AS TEXT), 1, 10) = Today.date);
+  (SUBSTR(CAST(Now.timestamp AS TEXT), 1, 10) IS Today.date);

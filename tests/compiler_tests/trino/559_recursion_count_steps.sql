@@ -41,7 +41,7 @@ t_0_S_MultBodyAggAux_f2 AS (SELECT * FROM (
     FROM
       synalog_test.S_fr0 AS S_fr0, t_1_E AS E
     WHERE
-      (E.a = S_fr0.x)
+      (E.a IS NOT DISTINCT FROM S_fr0.x)
   
 ) AS UNUSED_TABLE_NAME  )
 SELECT
@@ -79,7 +79,7 @@ t_0_S_MultBodyAggAux_f3 AS (SELECT * FROM (
     FROM
       synalog_test.S_fr1 AS S_fr1, t_1_E AS E
     WHERE
-      (E.a = S_fr1.x)
+      (E.a IS NOT DISTINCT FROM S_fr1.x)
   
 ) AS UNUSED_TABLE_NAME  )
 SELECT
@@ -117,7 +117,7 @@ t_0_S_MultBodyAggAux_f4 AS (SELECT * FROM (
     FROM
       synalog_test.S_fr2 AS S_fr2, t_1_E AS E
     WHERE
-      (E.a = S_fr2.x)
+      (E.a IS NOT DISTINCT FROM S_fr2.x)
   
 ) AS UNUSED_TABLE_NAME  )
 SELECT
@@ -155,7 +155,7 @@ t_0_S_MultBodyAggAux_f5 AS (SELECT * FROM (
     FROM
       synalog_test.S_fr3 AS S_fr3, t_1_E AS E
     WHERE
-      (E.a = S_fr3.x)
+      (E.a IS NOT DISTINCT FROM S_fr3.x)
   
 ) AS UNUSED_TABLE_NAME  )
 SELECT
@@ -192,7 +192,7 @@ t_0_S_MultBodyAggAux_f6 AS (SELECT * FROM (
     FROM
       synalog_test.S_fr4 AS S_fr4, t_1_E AS E
     WHERE
-      (E.a = S_fr4.x)
+      (E.a IS NOT DISTINCT FROM S_fr4.x)
   
 ) AS UNUSED_TABLE_NAME  )
 SELECT

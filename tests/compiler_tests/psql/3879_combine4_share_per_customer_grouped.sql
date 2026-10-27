@@ -55,7 +55,7 @@ SELECT
 FROM
   t_1_O AS t_0_O, UNNEST(ARRAY[0]) as x_7
 WHERE
-  (t_0_O.c = O.c)) AS numeric), 0))) AS s
+  (COALESCE(t_0_O.c, '') = COALESCE(O.c, '') AND (t_0_O.c IS NULL) = (O.c IS NULL))) AS numeric), 0))) AS s
 FROM
   t_1_O AS O
 GROUP BY O.c ORDER BY c;

@@ -87,8 +87,8 @@ t_0_MemberOf AS (SELECT
 FROM
   t_2_Person AS Person, t_5_Team AS t_1_Team, t_4_Employees AS Employees
 WHERE
-  (Employees.person_id = Person.person_id) AND
-  (Employees.team_id = t_1_Team.team_id)
+  (COALESCE(Employees.person_id, 0) = COALESCE(Person.person_id, 0) AND (Employees.person_id IS NULL) = (Person.person_id IS NULL)) AND
+  (COALESCE(Employees.team_id, 0) = COALESCE(t_1_Team.team_id, 0) AND (Employees.team_id IS NULL) = (t_1_Team.team_id IS NULL))
 GROUP BY Person.person_id, t_1_Team.team_id)
 SELECT
   SUM(1) AS n

@@ -77,7 +77,7 @@ t_15_Contains_MultBodyAggAux_recursive_head_f2 AS (SELECT * FROM (
     FROM
       t_17_Contains_r0 AS Contains_r0, t_21_Uses AS t_16_Uses
     WHERE
-      (t_16_Uses.part = Contains_r0.component)
+      (t_16_Uses.part IS NOT DISTINCT FROM Contains_r0.component)
    UNION ALL
   
     SELECT
@@ -101,7 +101,7 @@ t_12_Contains_MultBodyAggAux_recursive_head_f3 AS (SELECT * FROM (
     FROM
       t_14_Contains_r1 AS Contains_r1, t_21_Uses AS t_13_Uses
     WHERE
-      (t_13_Uses.part = Contains_r1.component)
+      (t_13_Uses.part IS NOT DISTINCT FROM Contains_r1.component)
    UNION ALL
   
     SELECT
@@ -125,7 +125,7 @@ t_9_Contains_MultBodyAggAux_recursive_head_f4 AS (SELECT * FROM (
     FROM
       t_11_Contains_r2 AS Contains_r2, t_21_Uses AS t_10_Uses
     WHERE
-      (t_10_Uses.part = Contains_r2.component)
+      (t_10_Uses.part IS NOT DISTINCT FROM Contains_r2.component)
    UNION ALL
   
     SELECT
@@ -149,7 +149,7 @@ t_6_Contains_MultBodyAggAux_recursive_head_f5 AS (SELECT * FROM (
     FROM
       t_8_Contains_r3 AS Contains_r3, t_21_Uses AS t_7_Uses
     WHERE
-      (t_7_Uses.part = Contains_r3.component)
+      (t_7_Uses.part IS NOT DISTINCT FROM Contains_r3.component)
    UNION ALL
   
     SELECT
@@ -173,7 +173,7 @@ t_3_Contains_MultBodyAggAux_recursive_head_f6 AS (SELECT * FROM (
     FROM
       t_5_Contains_r4 AS Contains_r4, t_21_Uses AS t_4_Uses
     WHERE
-      (t_4_Uses.part = Contains_r4.component)
+      (t_4_Uses.part IS NOT DISTINCT FROM Contains_r4.component)
    UNION ALL
   
     SELECT
@@ -197,7 +197,7 @@ t_1_Contains_MultBodyAggAux_recursive_head_f7 AS (SELECT * FROM (
     FROM
       t_2_Contains_r5 AS Contains_r5, t_21_Uses AS Uses
     WHERE
-      (Uses.part = Contains_r5.component)
+      (Uses.part IS NOT DISTINCT FROM Contains_r5.component)
    UNION ALL
   
     SELECT
@@ -219,4 +219,4 @@ FROM
   t_0_Contains AS Contains
 WHERE
   (Contains.part = "deck")
-GROUP BY component ORDER BY component;
+GROUP BY component ORDER BY component NULLS LAST;

@@ -94,5 +94,5 @@ WHERE
     t_3_F AS F, t_1_U AS t_2_U, UNNEST(ARRAY[0]) as x_9
   WHERE
     (t_2_U.age < 60) AND
-    (F.b = t_0_U.u) AND
-    (t_2_U.u = F.a)) AS numeric) IS NULL) ORDER BY u;
+    (COALESCE(F.b, '') = COALESCE(t_0_U.u, '') AND (F.b IS NULL) = (t_0_U.u IS NULL)) AND
+    (COALESCE(t_2_U.u, '') = COALESCE(F.a, '') AND (t_2_U.u IS NULL) = (F.a IS NULL))) AS numeric) IS NULL) ORDER BY u;

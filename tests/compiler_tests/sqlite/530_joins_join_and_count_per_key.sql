@@ -18,5 +18,5 @@ SELECT
 FROM
   t_1_M AS M, JSON_EACH(JSON_ARRAY(1, 2)) as x_4
 WHERE
-  (x_4.value = M.k)
+  (x_4.value IS M.k)
 GROUP BY M.k ORDER BY k NULLS LAST;

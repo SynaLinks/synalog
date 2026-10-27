@@ -32,7 +32,7 @@ t_12_R_MultBodyAggAux_recursive_head_f2 AS (SELECT * FROM (
     FROM
       t_14_R_r0 AS R_r0, t_17_E AS t_13_E
     WHERE
-      (t_13_E.a = R_r0.x)
+      (t_13_E.a IS NOT DISTINCT FROM R_r0.x)
   
 ) AS UNUSED_TABLE_NAME  ),
 t_11_R_r1 AS (SELECT
@@ -51,7 +51,7 @@ t_9_R_MultBodyAggAux_recursive_head_f3 AS (SELECT * FROM (
     FROM
       t_11_R_r1 AS R_r1, t_17_E AS t_10_E
     WHERE
-      (t_10_E.a = R_r1.x)
+      (t_10_E.a IS NOT DISTINCT FROM R_r1.x)
   
 ) AS UNUSED_TABLE_NAME  ),
 t_8_R_r2 AS (SELECT
@@ -70,7 +70,7 @@ t_6_R_MultBodyAggAux_recursive_head_f4 AS (SELECT * FROM (
     FROM
       t_8_R_r2 AS R_r2, t_17_E AS t_7_E
     WHERE
-      (t_7_E.a = R_r2.x)
+      (t_7_E.a IS NOT DISTINCT FROM R_r2.x)
   
 ) AS UNUSED_TABLE_NAME  ),
 t_5_R_r3 AS (SELECT
@@ -89,7 +89,7 @@ t_3_R_MultBodyAggAux_recursive_head_f5 AS (SELECT * FROM (
     FROM
       t_5_R_r3 AS R_r3, t_17_E AS t_4_E
     WHERE
-      (t_4_E.a = R_r3.x)
+      (t_4_E.a IS NOT DISTINCT FROM R_r3.x)
   
 ) AS UNUSED_TABLE_NAME  ),
 t_2_R_r4 AS (SELECT
@@ -108,7 +108,7 @@ t_1_R_MultBodyAggAux_recursive_head_f6 AS (SELECT * FROM (
     FROM
       t_2_R_r4 AS R_r4, t_17_E AS E
     WHERE
-      (E.a = R_r4.x)
+      (E.a IS NOT DISTINCT FROM R_r4.x)
   
 ) AS UNUSED_TABLE_NAME  ),
 t_0_R AS (SELECT
@@ -126,4 +126,4 @@ WHERE
   FROM
     t_0_R AS R
   WHERE
-    (R.x = x_3)) IS NULL);
+    (R.x IS NOT DISTINCT FROM x_3)) IS NULL);

@@ -98,4 +98,4 @@ WHERE
     t_1_L AS t_5_L, UNNEST(t_5_L.l) as x_20
   WHERE
     ("ink" = x_20) AND
-    (t_0_L.`order` = t_5_L.`order`)) IS NULL) ORDER BY `order` NULLS LAST;
+    (t_0_L.`order` IS NOT DISTINCT FROM t_5_L.`order`)) IS NULL) ORDER BY `order` NULLS LAST;

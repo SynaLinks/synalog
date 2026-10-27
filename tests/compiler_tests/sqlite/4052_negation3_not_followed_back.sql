@@ -51,5 +51,5 @@ WHERE
   FROM
     t_0_F AS t_1_F, JSON_EACH(JSON_ARRAY(0)) as x_7
   WHERE
-    (t_1_F.a = F.b) AND
-    (t_1_F.b = F.a)) IS NULL) ORDER BY a, b;
+    (t_1_F.a IS F.b) AND
+    (t_1_F.b IS F.a)) IS NULL) ORDER BY a NULLS LAST, b NULLS LAST;

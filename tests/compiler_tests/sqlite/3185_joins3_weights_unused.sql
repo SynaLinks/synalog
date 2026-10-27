@@ -58,4 +58,4 @@ WHERE
   FROM
     t_1_Used AS Used, JSON_EACH(JSON_ARRAY(0)) as x_5
   WHERE
-    (Used.g = F.g)) IS NULL);
+    (Used.g IS F.g)) IS NULL);

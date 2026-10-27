@@ -110,5 +110,5 @@ SELECT
 FROM
   t_0_Sales AS Sales, synalog_home.QuarterTotals AS QuarterTotals, synalog_home.RegionTotals AS RegionTotals
 WHERE
-  (QuarterTotals.col0 = Sales.col0) AND
-  (RegionTotals.col0 = Sales.col1) ORDER BY quarter, region;
+  (QuarterTotals.col0 IS NOT DISTINCT FROM Sales.col0) AND
+  (RegionTotals.col0 IS NOT DISTINCT FROM Sales.col1) ORDER BY quarter, region;

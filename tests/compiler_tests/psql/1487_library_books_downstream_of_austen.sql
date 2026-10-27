@@ -46,7 +46,7 @@ t_1_Down_RecursiveCte AS (SELECT * FROM (
       WHERE
         (0 < 6) AND
         (1 = 0) AND
-        (t_3_Influenced.a = t_5_Influenced.b)
+        (COALESCE(t_3_Influenced.a, '') = COALESCE(t_5_Influenced.b, '') AND (t_3_Influenced.a IS NULL) = (t_5_Influenced.b IS NULL))
      UNION ALL
     
       SELECT
@@ -59,8 +59,8 @@ t_1_Down_RecursiveCte AS (SELECT * FROM (
         (((0) + (1)) < 6) AND
         (0 < 6) AND
         (1 = 0) AND
-        (t_7_Influenced.a = t_9_Influenced.b) AND
-        (t_9_Influenced.a = t_11_Influenced.b)
+        (COALESCE(t_7_Influenced.a, '') = COALESCE(t_9_Influenced.b, '') AND (t_7_Influenced.a IS NULL) = (t_9_Influenced.b IS NULL)) AND
+        (COALESCE(t_9_Influenced.a, '') = COALESCE(t_11_Influenced.b, '') AND (t_9_Influenced.a IS NULL) = (t_11_Influenced.b IS NULL))
      UNION ALL
     
       SELECT
@@ -74,9 +74,9 @@ t_1_Down_RecursiveCte AS (SELECT * FROM (
         (((0) + (1)) < 6) AND
         (0 < 6) AND
         (1 = 0) AND
-        (t_13_Influenced.a = t_15_Influenced.b) AND
-        (t_15_Influenced.a = t_17_Influenced.b) AND
-        (t_17_Influenced.a = t_19_Influenced.b)
+        (COALESCE(t_13_Influenced.a, '') = COALESCE(t_15_Influenced.b, '') AND (t_13_Influenced.a IS NULL) = (t_15_Influenced.b IS NULL)) AND
+        (COALESCE(t_15_Influenced.a, '') = COALESCE(t_17_Influenced.b, '') AND (t_15_Influenced.a IS NULL) = (t_17_Influenced.b IS NULL)) AND
+        (COALESCE(t_17_Influenced.a, '') = COALESCE(t_19_Influenced.b, '') AND (t_17_Influenced.a IS NULL) = (t_19_Influenced.b IS NULL))
      UNION ALL
     
       SELECT
@@ -91,10 +91,10 @@ t_1_Down_RecursiveCte AS (SELECT * FROM (
         (((0) + (1)) < 6) AND
         (0 < 6) AND
         (1 = 0) AND
-        (t_21_Influenced.a = t_23_Influenced.b) AND
-        (t_23_Influenced.a = t_25_Influenced.b) AND
-        (t_25_Influenced.a = t_27_Influenced.b) AND
-        (t_27_Influenced.a = t_29_Influenced.b)
+        (COALESCE(t_21_Influenced.a, '') = COALESCE(t_23_Influenced.b, '') AND (t_21_Influenced.a IS NULL) = (t_23_Influenced.b IS NULL)) AND
+        (COALESCE(t_23_Influenced.a, '') = COALESCE(t_25_Influenced.b, '') AND (t_23_Influenced.a IS NULL) = (t_25_Influenced.b IS NULL)) AND
+        (COALESCE(t_25_Influenced.a, '') = COALESCE(t_27_Influenced.b, '') AND (t_25_Influenced.a IS NULL) = (t_27_Influenced.b IS NULL)) AND
+        (COALESCE(t_27_Influenced.a, '') = COALESCE(t_29_Influenced.b, '') AND (t_27_Influenced.a IS NULL) = (t_29_Influenced.b IS NULL))
      UNION ALL
     
       SELECT
@@ -110,11 +110,11 @@ t_1_Down_RecursiveCte AS (SELECT * FROM (
         (((0) + (1)) < 6) AND
         (0 < 6) AND
         (1 = 0) AND
-        (t_31_Influenced.a = t_33_Influenced.b) AND
-        (t_33_Influenced.a = t_35_Influenced.b) AND
-        (t_35_Influenced.a = t_37_Influenced.b) AND
-        (t_37_Influenced.a = t_39_Influenced.b) AND
-        (t_39_Influenced.a = t_41_Influenced.b)
+        (COALESCE(t_31_Influenced.a, '') = COALESCE(t_33_Influenced.b, '') AND (t_31_Influenced.a IS NULL) = (t_33_Influenced.b IS NULL)) AND
+        (COALESCE(t_33_Influenced.a, '') = COALESCE(t_35_Influenced.b, '') AND (t_33_Influenced.a IS NULL) = (t_35_Influenced.b IS NULL)) AND
+        (COALESCE(t_35_Influenced.a, '') = COALESCE(t_37_Influenced.b, '') AND (t_35_Influenced.a IS NULL) = (t_37_Influenced.b IS NULL)) AND
+        (COALESCE(t_37_Influenced.a, '') = COALESCE(t_39_Influenced.b, '') AND (t_37_Influenced.a IS NULL) = (t_39_Influenced.b IS NULL)) AND
+        (COALESCE(t_39_Influenced.a, '') = COALESCE(t_41_Influenced.b, '') AND (t_39_Influenced.a IS NULL) = (t_41_Influenced.b IS NULL))
     
   ) AS UNUSED_TABLE_NAME  
 ) AS UNUSED_TABLE_NAME
@@ -127,7 +127,7 @@ FROM
   t_1_Down_RecursiveCte AS t_42_Down_RecursiveCte, t_2_Influenced AS t_43_Influenced
 WHERE
   (t_42_Down_RecursiveCte.synalog_step < 6) AND
-  (t_43_Influenced.a = t_42_Down_RecursiveCte.b)),
+  (COALESCE(t_43_Influenced.a, '') = COALESCE(t_42_Down_RecursiveCte.b, '') AND (t_43_Influenced.a IS NULL) = (t_42_Down_RecursiveCte.b IS NULL))),
 t_0_Down AS (SELECT
   Down_RecursiveCte.a AS a,
   Down_RecursiveCte.b AS b
@@ -212,4 +212,4 @@ FROM
   t_0_Down AS Down, t_44_Book AS Book
 WHERE
   (Down.a = 'austen') AND
-  (Book.author = Down.b) ORDER BY title;
+  (COALESCE(Book.author, '') = COALESCE(Down.b, '') AND (Book.author IS NULL) = (Down.b IS NULL)) ORDER BY title;

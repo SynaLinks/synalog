@@ -9,4 +9,4 @@ WHERE
     LATERAL (SELECT explode(ARRAY(0)) AS x_6) AS pushkin
   WHERE
     (x_6 > 1) AND
-    (x_3 = x_6)) IS NULL) ORDER BY x NULLS LAST;
+    (x_3 <=> x_6)) IS NULL) ORDER BY x NULLS LAST;

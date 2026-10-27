@@ -103,5 +103,5 @@ SELECT
 FROM
   t_0_E AS E, t_1_D AS D, t_2_Pr AS Pr
 WHERE
-  (D.dept = E.dept) AND
-  (Pr.dept = E.dept) ORDER BY name, dname, pid;
+  (COALESCE(D.dept, 0) = COALESCE(E.dept, 0) AND (D.dept IS NULL) = (E.dept IS NULL)) AND
+  (COALESCE(Pr.dept, 0) = COALESCE(E.dept, 0) AND (Pr.dept IS NULL) = (E.dept IS NULL)) ORDER BY name, dname, pid;

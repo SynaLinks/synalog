@@ -89,6 +89,6 @@ WHERE
   FROM
     t_4_F AS F, t_4_F AS t_3_F, JSON_EACH(JSON_ARRAY(0)) as x_10
   WHERE
-    (F.a = t_0_U.u) AND
-    (t_3_F.a = t_1_U.u) AND
-    (t_3_F.b = F.b)) IS NULL) ORDER BY a NULLS LAST, b NULLS LAST;
+    (F.a IS t_0_U.u) AND
+    (t_3_F.a IS t_1_U.u) AND
+    (t_3_F.b IS F.b)) IS NULL) ORDER BY a NULLS LAST, b NULLS LAST;

@@ -3,4 +3,4 @@ SELECT
 FROM
   UNNEST(TRANSFORM(ARRAY['''; COMMIT; DROP TABLE t; --', 'other'], synalog_e -> ROW(synalog_e))) as pushkin(x_1)
 WHERE
-  (x_1 != 'other');
+  (x_1 IS DISTINCT FROM 'other');

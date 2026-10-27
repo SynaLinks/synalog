@@ -88,7 +88,7 @@ WHERE
     t_4_F AS F
   WHERE
     (F.a = "bob") AND
-    (F.b = t_3_U.u)) IS NULL))
+    (F.b IS NOT DISTINCT FROM t_3_U.u)) IS NULL))
 SELECT
   t_0_U.u AS v
 FROM
@@ -99,4 +99,4 @@ WHERE
   FROM
     t_2_NotF AS NotF
   WHERE
-    (NotF.v = t_0_U.u)) IS NULL) ORDER BY v NULLS LAST;
+    (NotF.v IS NOT DISTINCT FROM t_0_U.u)) IS NULL) ORDER BY v NULLS LAST;

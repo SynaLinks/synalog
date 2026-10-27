@@ -120,5 +120,5 @@ FROM
   t_0_Total AS Total, t_2_Reorder AS Reorder, t_3_Price AS Price
 WHERE
   (Total.n < Reorder.level) AND
-  (Reorder.item = Total.item) AND
-  (Price.item = Total.item);
+  (Reorder.item IS NOT DISTINCT FROM Total.item) AND
+  (Price.item IS NOT DISTINCT FROM Total.item);

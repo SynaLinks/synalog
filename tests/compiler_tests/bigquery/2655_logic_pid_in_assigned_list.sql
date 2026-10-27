@@ -92,5 +92,5 @@ SELECT
 FROM
   t_0_Projects AS Projects, t_2_Proj AS Proj, UNNEST(Projects.l) as x_4
 WHERE
-  (Proj.pid = x_4)
-GROUP BY id ORDER BY id, n;
+  (Proj.pid IS NOT DISTINCT FROM x_4)
+GROUP BY id ORDER BY id NULLS LAST, n NULLS LAST;

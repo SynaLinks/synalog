@@ -24,5 +24,5 @@ SELECT
 FROM
   t_1_M AS M, (select unnest([1, 2]) as unnested_pod) as x_4
 WHERE
-  (x_4.unnested_pod = M.k)
+  (x_4.unnested_pod IS NOT DISTINCT FROM M.k)
 GROUP BY M.k ORDER BY k;

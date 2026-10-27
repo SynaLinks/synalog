@@ -48,4 +48,4 @@ SELECT
 FROM
   t_1_E AS E, t_1_E AS t_0_E
 WHERE
-  (t_0_E.id = E.boss) ORDER BY name, boss_name;
+  (t_0_E.id IS NOT DISTINCT FROM E.boss) ORDER BY name NULLS LAST, boss_name NULLS LAST;

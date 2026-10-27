@@ -82,4 +82,4 @@ SELECT
 FROM
   t_0_T AS T, t_2_E AS E
 WHERE
-  (E.id = T.b) ORDER BY name;
+  (COALESCE(E.id, 0) = COALESCE(T.b, 0) AND (E.id IS NULL) = (T.b IS NULL)) ORDER BY name;

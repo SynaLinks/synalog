@@ -4,17 +4,9 @@ create schema if not exists synalog_home;
 -- Empty synalog type: synalogrecord893574736;
 DO $$ BEGIN if not exists (select 'I(am) :- I(think)' from pg_type where typname = 'synalogrecord893574736') then create type synalogrecord893574736 as (nirvana numeric); end if; END $$;
 
-
-DO $$
-BEGIN
--- Synalog type: synalogrecord481217614
-if not exists (select 'I(am) :- I(think)' from pg_type where typname = 'synalogrecord481217614') then create type synalogrecord481217614 as (r synalogrecord893574736); end if;
--- Synalog type: synalogrecord86796764
-if not exists (select 'I(am) :- I(think)' from pg_type where typname = 'synalogrecord86796764') then create type synalogrecord86796764 as (s text); end if;
-END $$;
 SELECT
   x_3 AS x
 FROM
-  UNNEST(ARRAY[0, 1, 2, 4]::numeric[]) as x_3
+  UNNEST(ARRAY[0, 1, 2, 4]) as x_3
 WHERE
-  (x_3 = ((x_3) * (x_3))) ORDER BY x;
+  (COALESCE(x_3, 0) = COALESCE(((x_3) * (x_3)), 0) AND (x_3 IS NULL) = (((x_3) * (x_3)) IS NULL)) ORDER BY x;

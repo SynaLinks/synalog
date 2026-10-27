@@ -22,5 +22,5 @@ FROM
   t_0_B AS B, JSON_EACH(JSON_ARRAY(1, 2, 3)) as x_6
 WHERE
   (B.k > 1) AND
-  (B.v != 'c') AND
-  (x_6.value = B.k);
+  (B.v IS NOT 'c') AND
+  (x_6.value IS B.k);

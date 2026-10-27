@@ -3,4 +3,4 @@ SELECT
 FROM
   (SELECT CURRENT_TIMESTAMP() AS timestamp) AS Now, (SELECT CAST(CURRENT_DATE() AS STRING) AS date) AS Today
 WHERE
-  (SUBSTR(CAST(Now.timestamp AS STRING), 1, 10) = Today.date);
+  (SUBSTR(CAST(Now.timestamp AS STRING), 1, 10) IS NOT DISTINCT FROM Today.date);

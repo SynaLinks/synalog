@@ -27,4 +27,4 @@ WHERE
   FROM
     t_1_A AS A
   WHERE
-    (A.id = Person.id)) IS NULL);
+    (A.id <=> Person.id)) IS NULL);

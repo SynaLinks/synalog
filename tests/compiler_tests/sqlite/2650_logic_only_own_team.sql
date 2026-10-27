@@ -148,6 +148,6 @@ WHERE
   FROM
     t_1_A AS A, t_2_Proj AS Proj, JSON_EACH(JSON_ARRAY(0)) as x_10
   WHERE
-    (Proj.team != Person.team) AND
-    (A.id = Person.id) AND
-    (Proj.pid = A.pid)) IS NULL) ORDER BY id;
+    (Proj.team IS NOT Person.team) AND
+    (A.id IS Person.id) AND
+    (Proj.pid IS A.pid)) IS NULL) ORDER BY id NULLS LAST;

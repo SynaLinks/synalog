@@ -42,4 +42,4 @@ SELECT
 FROM
   t_0_Items AS Items, UNNEST(ARRAY['fruit', 'vegetable']) as x_9
 WHERE
-  (Items.col1 = x_9) ORDER BY name;
+  (COALESCE(Items.col1, '') = COALESCE(x_9, '') AND (Items.col1 IS NULL) = (x_9 IS NULL)) ORDER BY name;

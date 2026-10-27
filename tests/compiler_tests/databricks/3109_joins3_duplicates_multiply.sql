@@ -11,4 +11,4 @@ SELECT
 FROM
   t_0_A AS A, t_1_B AS B
 WHERE
-  (B.k = A.k);
+  (B.k <=> A.k);

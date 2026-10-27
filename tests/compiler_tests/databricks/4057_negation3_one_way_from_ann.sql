@@ -18,6 +18,6 @@ WHERE
   FROM
     t_0_F AS t_1_F
   WHERE
-    (t_1_F.a = F.b) AND
+    (t_1_F.a <=> F.b) AND
     (t_1_F.b = "ann")) IS NULL) AND
   (F.a = "ann") ORDER BY v NULLS LAST;

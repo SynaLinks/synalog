@@ -109,4 +109,4 @@ WHERE
   FROM
     t_2_Active AS Active, UNNEST(ARRAY[0]) as x_4
   WHERE
-    (Active.name = t_0_Member.name)) AS numeric) IS NULL);
+    (COALESCE(Active.name, '') = COALESCE(t_0_Member.name, '') AND (Active.name IS NULL) = (t_0_Member.name IS NULL))) AS numeric) IS NULL);

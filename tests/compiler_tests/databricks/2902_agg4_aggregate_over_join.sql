@@ -20,5 +20,5 @@ SELECT
 FROM
   t_0_S AS S, t_1_R AS R
 WHERE
-  (R.shop = S.shop)
+  (R.shop <=> S.shop)
 GROUP BY 1 ORDER BY region NULLS LAST, u NULLS LAST;

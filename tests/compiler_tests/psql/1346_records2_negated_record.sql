@@ -4,16 +4,6 @@ create schema if not exists synalog_home;
 -- Empty synalog type: synalogrecord893574736;
 DO $$ BEGIN if not exists (select 'I(am) :- I(think)' from pg_type where typname = 'synalogrecord893574736') then create type synalogrecord893574736 as (nirvana numeric); end if; END $$;
 
-
-DO $$
-BEGIN
--- Synalog type: synalogrecord481217614
-if not exists (select 'I(am) :- I(think)' from pg_type where typname = 'synalogrecord481217614') then create type synalogrecord481217614 as (r synalogrecord893574736); end if;
--- Synalog type: synalogrecord86796764
-if not exists (select 'I(am) :- I(think)' from pg_type where typname = 'synalogrecord86796764') then create type synalogrecord86796764 as (s text); end if;
--- Synalog type: synalogrecord197515364
-if not exists (select 'I(am) :- I(think)' from pg_type where typname = 'synalogrecord197515364') then create type synalogrecord197515364 as (city text, dept text, salary numeric); end if;
-END $$;
 WITH t_0_Emp AS (SELECT * FROM (
   
     SELECT
@@ -80,8 +70,8 @@ WHERE
   (CAST((SELECT
     MIN((CASE WHEN x_4 = 0 THEN 1 ELSE NULL END)) AS synalog_value
   FROM
-    t_0_Emp AS t_1_Emp, UNNEST(ARRAY[0]::numeric[]) as x_4
+    t_0_Emp AS t_1_Emp, UNNEST(ARRAY[0]) as x_4
   WHERE
     (t_1_Emp.dept = 'eng') AND
     (t_1_Emp.city = 'paris') AND
-    (Emp.name = t_1_Emp.name)) AS numeric) IS NULL) ORDER BY name;
+    (COALESCE(Emp.name, '') = COALESCE(t_1_Emp.name, '') AND (Emp.name IS NULL) = (t_1_Emp.name IS NULL))) AS numeric) IS NULL) ORDER BY name;

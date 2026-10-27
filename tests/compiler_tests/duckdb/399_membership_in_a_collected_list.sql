@@ -13,4 +13,4 @@ SELECT
 FROM
   t_1_L AS t_0_L, (select unnest(t_0_L.l) as unnested_pod) as x_3, (select unnest([1, 3]) as unnested_pod) as x_5
 WHERE
-  (x_5.unnested_pod = x_3.unnested_pod);
+  (x_5.unnested_pod IS NOT DISTINCT FROM x_3.unnested_pod);

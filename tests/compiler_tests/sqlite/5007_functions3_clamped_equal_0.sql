@@ -41,4 +41,4 @@ SELECT
 FROM
   t_1_V AS V
 WHERE
-  (MAX(0, MIN(V.x, 5)) = MAX(0, MIN(0, 5))) ORDER BY k;
+  (MAX(0, MIN(V.x, 5)) IS MAX(0, MIN(0, 5))) ORDER BY k NULLS LAST;

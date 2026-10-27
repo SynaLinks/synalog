@@ -122,5 +122,5 @@ SELECT
 FROM
   synalog_home.Paid AS Paid, t_0_Price AS Price
 WHERE
-  (Price.item = Paid.item) AND
+  (Price.item IS NOT DISTINCT FROM Paid.item) AND
   ('cy' = Paid.who) ORDER BY id, amount;

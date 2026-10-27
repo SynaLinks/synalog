@@ -53,4 +53,4 @@ FROM
   t_1_W AS W, t_1_W AS t_0_W
 WHERE
   (W.k < t_0_W.k) AND
-  (UPPER(W.s) = UPPER(t_0_W.s)) ORDER BY a, b;
+  (COALESCE(UPPER(W.s), '') = COALESCE(UPPER(t_0_W.s), '') AND (UPPER(W.s) IS NULL) = (UPPER(t_0_W.s) IS NULL)) ORDER BY a, b;

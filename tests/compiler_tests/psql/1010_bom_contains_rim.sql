@@ -80,7 +80,7 @@ t_1_Contains_RecursiveCte AS (SELECT * FROM (
       WHERE
         (0 < 6) AND
         (1 = 0) AND
-        (t_3_Uses.part = t_5_Uses.component)
+        (COALESCE(t_3_Uses.part, '') = COALESCE(t_5_Uses.component, '') AND (t_3_Uses.part IS NULL) = (t_5_Uses.component IS NULL))
      UNION ALL
     
       SELECT
@@ -93,8 +93,8 @@ t_1_Contains_RecursiveCte AS (SELECT * FROM (
         (((0) + (1)) < 6) AND
         (0 < 6) AND
         (1 = 0) AND
-        (t_7_Uses.part = t_9_Uses.component) AND
-        (t_9_Uses.part = t_11_Uses.component)
+        (COALESCE(t_7_Uses.part, '') = COALESCE(t_9_Uses.component, '') AND (t_7_Uses.part IS NULL) = (t_9_Uses.component IS NULL)) AND
+        (COALESCE(t_9_Uses.part, '') = COALESCE(t_11_Uses.component, '') AND (t_9_Uses.part IS NULL) = (t_11_Uses.component IS NULL))
      UNION ALL
     
       SELECT
@@ -108,9 +108,9 @@ t_1_Contains_RecursiveCte AS (SELECT * FROM (
         (((0) + (1)) < 6) AND
         (0 < 6) AND
         (1 = 0) AND
-        (t_13_Uses.part = t_15_Uses.component) AND
-        (t_15_Uses.part = t_17_Uses.component) AND
-        (t_17_Uses.part = t_19_Uses.component)
+        (COALESCE(t_13_Uses.part, '') = COALESCE(t_15_Uses.component, '') AND (t_13_Uses.part IS NULL) = (t_15_Uses.component IS NULL)) AND
+        (COALESCE(t_15_Uses.part, '') = COALESCE(t_17_Uses.component, '') AND (t_15_Uses.part IS NULL) = (t_17_Uses.component IS NULL)) AND
+        (COALESCE(t_17_Uses.part, '') = COALESCE(t_19_Uses.component, '') AND (t_17_Uses.part IS NULL) = (t_19_Uses.component IS NULL))
      UNION ALL
     
       SELECT
@@ -125,10 +125,10 @@ t_1_Contains_RecursiveCte AS (SELECT * FROM (
         (((0) + (1)) < 6) AND
         (0 < 6) AND
         (1 = 0) AND
-        (t_21_Uses.part = t_23_Uses.component) AND
-        (t_23_Uses.part = t_25_Uses.component) AND
-        (t_25_Uses.part = t_27_Uses.component) AND
-        (t_27_Uses.part = t_29_Uses.component)
+        (COALESCE(t_21_Uses.part, '') = COALESCE(t_23_Uses.component, '') AND (t_21_Uses.part IS NULL) = (t_23_Uses.component IS NULL)) AND
+        (COALESCE(t_23_Uses.part, '') = COALESCE(t_25_Uses.component, '') AND (t_23_Uses.part IS NULL) = (t_25_Uses.component IS NULL)) AND
+        (COALESCE(t_25_Uses.part, '') = COALESCE(t_27_Uses.component, '') AND (t_25_Uses.part IS NULL) = (t_27_Uses.component IS NULL)) AND
+        (COALESCE(t_27_Uses.part, '') = COALESCE(t_29_Uses.component, '') AND (t_27_Uses.part IS NULL) = (t_29_Uses.component IS NULL))
      UNION ALL
     
       SELECT
@@ -144,11 +144,11 @@ t_1_Contains_RecursiveCte AS (SELECT * FROM (
         (((0) + (1)) < 6) AND
         (0 < 6) AND
         (1 = 0) AND
-        (t_31_Uses.part = t_33_Uses.component) AND
-        (t_33_Uses.part = t_35_Uses.component) AND
-        (t_35_Uses.part = t_37_Uses.component) AND
-        (t_37_Uses.part = t_39_Uses.component) AND
-        (t_39_Uses.part = t_41_Uses.component)
+        (COALESCE(t_31_Uses.part, '') = COALESCE(t_33_Uses.component, '') AND (t_31_Uses.part IS NULL) = (t_33_Uses.component IS NULL)) AND
+        (COALESCE(t_33_Uses.part, '') = COALESCE(t_35_Uses.component, '') AND (t_33_Uses.part IS NULL) = (t_35_Uses.component IS NULL)) AND
+        (COALESCE(t_35_Uses.part, '') = COALESCE(t_37_Uses.component, '') AND (t_35_Uses.part IS NULL) = (t_37_Uses.component IS NULL)) AND
+        (COALESCE(t_37_Uses.part, '') = COALESCE(t_39_Uses.component, '') AND (t_37_Uses.part IS NULL) = (t_39_Uses.component IS NULL)) AND
+        (COALESCE(t_39_Uses.part, '') = COALESCE(t_41_Uses.component, '') AND (t_39_Uses.part IS NULL) = (t_41_Uses.component IS NULL))
     
   ) AS UNUSED_TABLE_NAME  
 ) AS UNUSED_TABLE_NAME
@@ -161,7 +161,7 @@ FROM
   t_1_Contains_RecursiveCte AS t_42_Contains_RecursiveCte, t_2_Uses AS t_43_Uses
 WHERE
   (t_42_Contains_RecursiveCte.synalog_step < 6) AND
-  (t_43_Uses.part = t_42_Contains_RecursiveCte.component)),
+  (COALESCE(t_43_Uses.part, '') = COALESCE(t_42_Contains_RecursiveCte.component, '') AND (t_43_Uses.part IS NULL) = (t_42_Contains_RecursiveCte.component IS NULL))),
 t_0_Contains AS (SELECT
   Contains_RecursiveCte.part AS part,
   Contains_RecursiveCte.component AS component

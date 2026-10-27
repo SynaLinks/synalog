@@ -19,4 +19,4 @@ WHERE
   FROM
     t_0_Missing AS Missing
   WHERE
-    (Missing.x = x_3)) IS NULL) ORDER BY x;
+    (Missing.x IS NOT DISTINCT FROM x_3)) IS NULL) ORDER BY x;

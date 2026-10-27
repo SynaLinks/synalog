@@ -74,4 +74,4 @@ SELECT
 FROM
   t_0_E AS E, t_1_D AS D
 WHERE
-  (D.dept = COALESCE(E.dept, 40)) ORDER BY name, dname;
+  (D.dept IS NOT DISTINCT FROM COALESCE(E.dept, 40)) ORDER BY name, dname;

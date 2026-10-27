@@ -90,4 +90,4 @@ WHERE
   FROM
     t_1_A AS A, JSON_EACH(JSON_ARRAY(0)) as x_4
   WHERE
-    (A.pid = Proj.pid)) IS NULL);
+    (A.pid IS Proj.pid)) IS NULL);

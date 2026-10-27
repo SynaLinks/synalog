@@ -75,4 +75,4 @@ SELECT
 FROM
   t_0_Event AS Event, UNNEST(ARRAY["28", "30", "31"]) as x_3
 WHERE
-  (SUBSTR(Event.`at`, 9, 2) = x_3) ORDER BY id NULLS LAST;
+  (SUBSTR(Event.`at`, 9, 2) IS NOT DISTINCT FROM x_3) ORDER BY id NULLS LAST;

@@ -51,5 +51,5 @@ SELECT
 FROM
   t_0_Pr AS Pr, t_1_D AS D
 WHERE
-  (D.dept = Pr.dept) AND
-  (D.dname = 'eng') ORDER BY pid;
+  (D.dept IS Pr.dept) AND
+  (D.dname = 'eng') ORDER BY pid NULLS LAST;

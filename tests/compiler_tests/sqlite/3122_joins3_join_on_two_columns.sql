@@ -29,5 +29,5 @@ SELECT
 FROM
   t_0_A AS A, t_1_B AS B
 WHERE
-  (B.x = A.x) AND
-  (B.y = A.y);
+  (B.x IS A.x) AND
+  (B.y IS A.y);

@@ -44,5 +44,5 @@ SELECT
 FROM
   t_0_Sales AS Sales, synalog_test.QuarterTotals AS QuarterTotals, synalog_test.RegionTotals AS RegionTotals
 WHERE
-  (QuarterTotals.col0 = Sales.col0) AND
-  (RegionTotals.col0 = Sales.col1) ORDER BY quarter NULLS LAST, region NULLS LAST;
+  (QuarterTotals.col0 <=> Sales.col0) AND
+  (RegionTotals.col0 <=> Sales.col1) ORDER BY quarter NULLS LAST, region NULLS LAST;

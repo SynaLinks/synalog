@@ -103,7 +103,7 @@ t_2_Any_MultBodyAggAux AS (SELECT * FROM (
     FROM
       t_4_Order AS t_5_Order
     WHERE
-      (t_5_Order.state != 'paid')
+      (t_5_Order.state IS DISTINCT FROM 'paid')
   
 ) AS UNUSED_TABLE_NAME  ),
 t_1_Any AS (SELECT

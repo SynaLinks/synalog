@@ -16,6 +16,6 @@ FROM
   t_1_Ship AS Ship, t_1_Ship AS t_0_Ship
 WHERE
   (Ship.src < Ship.dst) AND
-  (t_0_Ship.src = Ship.dst) AND
-  (t_0_Ship.dst = Ship.src)
+  (t_0_Ship.src <=> Ship.dst) AND
+  (t_0_Ship.dst <=> Ship.src)
 GROUP BY 1, 2 ORDER BY a NULLS LAST, b NULLS LAST;

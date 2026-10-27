@@ -25,4 +25,4 @@ WHERE
   FROM
     t_0_Missing AS Missing, (select unnest([0]) as unnested_pod) as x_6
   WHERE
-    (Missing.x = x_3.unnested_pod)) IS NULL) ORDER BY x;
+    (Missing.x IS NOT DISTINCT FROM x_3.unnested_pod)) IS NULL) ORDER BY x;

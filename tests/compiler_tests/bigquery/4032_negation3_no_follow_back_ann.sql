@@ -88,6 +88,6 @@ WHERE
     t_3_F AS F, t_3_F AS t_2_F
   WHERE
     (F.a = "ann") AND
-    (t_2_F.a = F.b) AND
+    (t_2_F.a IS NOT DISTINCT FROM F.b) AND
     (t_2_F.b = "ann")) IS NULL) AND
   (t_0_U.u = "ann");

@@ -11,4 +11,4 @@ SELECT
 FROM
   t_0_A AS A, t_1_B AS B
 WHERE
-  (B.x = A.x) ORDER BY x NULLS LAST;
+  (B.x <=> A.x) ORDER BY x NULLS LAST;

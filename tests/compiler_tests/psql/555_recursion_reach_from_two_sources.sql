@@ -39,7 +39,7 @@ t_0_R_RecursiveCte AS (SELECT * FROM (
       WHERE
         (0 < 5) AND
         (1 = 0) AND
-        (E.a = x_22)
+        (COALESCE(E.a, 0) = COALESCE(x_22, 0) AND (E.a IS NULL) = (x_22 IS NULL))
      UNION ALL
     
       SELECT
@@ -51,8 +51,8 @@ t_0_R_RecursiveCte AS (SELECT * FROM (
         (((0) + (1)) < 5) AND
         (0 < 5) AND
         (1 = 0) AND
-        (t_4_E.a = t_6_E.b) AND
-        (t_6_E.a = x_42)
+        (COALESCE(t_4_E.a, 0) = COALESCE(t_6_E.b, 0) AND (t_4_E.a IS NULL) = (t_6_E.b IS NULL)) AND
+        (COALESCE(t_6_E.a, 0) = COALESCE(x_42, 0) AND (t_6_E.a IS NULL) = (x_42 IS NULL))
      UNION ALL
     
       SELECT
@@ -65,9 +65,9 @@ t_0_R_RecursiveCte AS (SELECT * FROM (
         (((0) + (1)) < 5) AND
         (0 < 5) AND
         (1 = 0) AND
-        (t_9_E.a = t_11_E.b) AND
-        (t_11_E.a = t_13_E.b) AND
-        (t_13_E.a = x_67)
+        (COALESCE(t_9_E.a, 0) = COALESCE(t_11_E.b, 0) AND (t_9_E.a IS NULL) = (t_11_E.b IS NULL)) AND
+        (COALESCE(t_11_E.a, 0) = COALESCE(t_13_E.b, 0) AND (t_11_E.a IS NULL) = (t_13_E.b IS NULL)) AND
+        (COALESCE(t_13_E.a, 0) = COALESCE(x_67, 0) AND (t_13_E.a IS NULL) = (x_67 IS NULL))
     
   ) AS UNUSED_TABLE_NAME  
 ) AS UNUSED_TABLE_NAME
@@ -79,7 +79,7 @@ FROM
   t_0_R_RecursiveCte AS t_15_R_RecursiveCte, t_2_E AS t_16_E
 WHERE
   (t_15_R_RecursiveCte.synalog_step < 5) AND
-  (t_16_E.a = t_15_R_RecursiveCte.x))
+  (COALESCE(t_16_E.a, 0) = COALESCE(t_15_R_RecursiveCte.x, 0) AND (t_16_E.a IS NULL) = (t_15_R_RecursiveCte.x IS NULL)))
 SELECT
   R_RecursiveCte.x AS x
 FROM

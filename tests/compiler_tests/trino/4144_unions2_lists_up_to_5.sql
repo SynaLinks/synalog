@@ -108,7 +108,7 @@ t_1_All AS (SELECT * FROM (
       FROM
         synalog_test.L AS t_4_L
       WHERE
-        (t_4_L.src = M.src)) IS NULL)
+        (t_4_L.src IS NOT DISTINCT FROM M.src)) IS NULL)
   
 ) AS UNUSED_TABLE_NAME  )
 SELECT

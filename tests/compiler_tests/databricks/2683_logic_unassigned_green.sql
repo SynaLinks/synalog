@@ -27,5 +27,5 @@ WHERE
   FROM
     t_1_A AS A
   WHERE
-    (A.id = Person.id)) IS NULL) AND
+    (A.id <=> Person.id)) IS NULL) AND
   (Person.team = "green");

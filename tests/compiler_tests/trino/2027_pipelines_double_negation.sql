@@ -195,7 +195,7 @@ FROM
   t_1_Order AS t_3_Order, t_4_Price AS Price
 WHERE
   (t_3_Order.state = 'paid') AND
-  (Price.item = t_3_Order.item)
+  (Price.item IS NOT DISTINCT FROM t_3_Order.item)
 GROUP BY 1),
 t_0_Never AS (SELECT
   t_1_Person.who AS who
@@ -207,7 +207,7 @@ WHERE
   FROM
     t_2_Spend AS Spend
   WHERE
-    (Spend.who = t_1_Person.who)) IS NULL))
+    (Spend.who IS NOT DISTINCT FROM t_1_Person.who)) IS NULL))
 SELECT
   Person.who AS who
 FROM
@@ -218,4 +218,4 @@ WHERE
   FROM
     t_0_Never AS Never
   WHERE
-    (Never.who = Person.who)) IS NULL) ORDER BY who;
+    (Never.who IS NOT DISTINCT FROM Person.who)) IS NULL) ORDER BY who;

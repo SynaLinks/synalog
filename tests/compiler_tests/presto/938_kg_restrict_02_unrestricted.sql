@@ -141,8 +141,8 @@ t_2_MemberOf AS (SELECT
 FROM
   synalog_test.Person AS t_3_Person, synalog_test.Team AS t_4_Team, t_0_Employees AS Employees
 WHERE
-  (Employees.person_id = t_3_Person.person_id) AND
-  (Employees.team_id = t_4_Team.team_id)
+  (Employees.person_id IS NOT DISTINCT FROM t_3_Person.person_id) AND
+  (Employees.team_id IS NOT DISTINCT FROM t_4_Team.team_id)
 GROUP BY 1, 2),
 t_9_Clients AS (SELECT * FROM (
   
@@ -185,8 +185,8 @@ t_5_EngagedWith AS (SELECT
 FROM
   synalog_test.Team AS t_6_Team, t_8_Client AS t_7_Client, t_10_Engagements AS Engagements
 WHERE
-  (Engagements.team_id = t_6_Team.team_id) AND
-  (Engagements.client_id = t_7_Client.client_id)
+  (Engagements.team_id IS NOT DISTINCT FROM t_6_Team.team_id) AND
+  (Engagements.client_id IS NOT DISTINCT FROM t_7_Client.client_id)
 GROUP BY 1, 2),
 t_0_Reach AS (SELECT
   Who.person_id AS person_id,
@@ -194,8 +194,8 @@ t_0_Reach AS (SELECT
 FROM
   t_1_Who AS Who, t_2_MemberOf AS MemberOf, t_5_EngagedWith AS EngagedWith
 WHERE
-  (MemberOf.person_id = Who.person_id) AND
-  (EngagedWith.team_id = MemberOf.team_id)
+  (MemberOf.person_id IS NOT DISTINCT FROM Who.person_id) AND
+  (EngagedWith.team_id IS NOT DISTINCT FROM MemberOf.team_id)
 GROUP BY 1, 2)
 SELECT
   Reach.person_id AS person_id,

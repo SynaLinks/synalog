@@ -28,7 +28,7 @@ CREATE TABLE synalog_test.Path_ifr1 AS WITH t_0_Path_MultBodyAggAux_f2 AS (SELEC
     FROM
       synalog_test.Path_ifr0 AS Path_ifr0, synalog_test.Path_ifr0 AS t_1_Path_ifr0
     WHERE
-      (t_1_Path_ifr0.a = Path_ifr0.b)
+      (t_1_Path_ifr0.a IS Path_ifr0.b)
    UNION ALL
   
     SELECT
@@ -56,7 +56,7 @@ CREATE TABLE synalog_test.Path_ifr2 AS WITH t_0_Path_MultBodyAggAux_f3 AS (SELEC
     FROM
       synalog_test.Path_ifr1 AS Path_ifr1, synalog_test.Path_ifr1 AS t_1_Path_ifr1
     WHERE
-      (t_1_Path_ifr1.a = Path_ifr1.b)
+      (t_1_Path_ifr1.a IS Path_ifr1.b)
    UNION ALL
   
     SELECT
@@ -84,7 +84,7 @@ CREATE TABLE synalog_test.Path_ifr3 AS WITH t_0_Path_MultBodyAggAux_f4 AS (SELEC
     FROM
       synalog_test.Path_ifr2 AS Path_ifr2, synalog_test.Path_ifr2 AS t_1_Path_ifr2
     WHERE
-      (t_1_Path_ifr2.a = Path_ifr2.b)
+      (t_1_Path_ifr2.a IS Path_ifr2.b)
    UNION ALL
   
     SELECT
@@ -112,7 +112,7 @@ CREATE TABLE synalog_test.Path_ifr2 AS WITH t_0_Path_MultBodyAggAux_f5 AS (SELEC
     FROM
       synalog_test.Path_ifr3 AS Path_ifr3, synalog_test.Path_ifr3 AS t_1_Path_ifr3
     WHERE
-      (t_1_Path_ifr3.a = Path_ifr3.b)
+      (t_1_Path_ifr3.a IS Path_ifr3.b)
    UNION ALL
   
     SELECT
@@ -140,7 +140,7 @@ CREATE TABLE synalog_test.Path_ifr3 AS WITH t_0_Path_MultBodyAggAux_f4 AS (SELEC
     FROM
       synalog_test.Path_ifr2 AS Path_ifr2, synalog_test.Path_ifr2 AS t_1_Path_ifr2
     WHERE
-      (t_1_Path_ifr2.a = Path_ifr2.b)
+      (t_1_Path_ifr2.a IS Path_ifr2.b)
    UNION ALL
   
     SELECT
@@ -166,7 +166,7 @@ CREATE TABLE synalog_test.Path_ifr2 AS WITH t_0_Path_MultBodyAggAux_f5 AS (SELEC
     FROM
       synalog_test.Path_ifr3 AS Path_ifr3, synalog_test.Path_ifr3 AS t_1_Path_ifr3
     WHERE
-      (t_1_Path_ifr3.a = Path_ifr3.b)
+      (t_1_Path_ifr3.a IS Path_ifr3.b)
    UNION ALL
   
     SELECT
@@ -192,7 +192,7 @@ CREATE TABLE synalog_test.Path_ifr3 AS WITH t_0_Path_MultBodyAggAux_f4 AS (SELEC
     FROM
       synalog_test.Path_ifr2 AS Path_ifr2, synalog_test.Path_ifr2 AS t_1_Path_ifr2
     WHERE
-      (t_1_Path_ifr2.a = Path_ifr2.b)
+      (t_1_Path_ifr2.a IS Path_ifr2.b)
    UNION ALL
   
     SELECT
@@ -218,7 +218,7 @@ CREATE TABLE synalog_test.Path_ifr2 AS WITH t_0_Path_MultBodyAggAux_f5 AS (SELEC
     FROM
       synalog_test.Path_ifr3 AS Path_ifr3, synalog_test.Path_ifr3 AS t_1_Path_ifr3
     WHERE
-      (t_1_Path_ifr3.a = Path_ifr3.b)
+      (t_1_Path_ifr3.a IS Path_ifr3.b)
    UNION ALL
   
     SELECT
@@ -244,7 +244,7 @@ CREATE TABLE synalog_test.Path_ifr3 AS WITH t_0_Path_MultBodyAggAux_f4 AS (SELEC
     FROM
       synalog_test.Path_ifr2 AS Path_ifr2, synalog_test.Path_ifr2 AS t_1_Path_ifr2
     WHERE
-      (t_1_Path_ifr2.a = Path_ifr2.b)
+      (t_1_Path_ifr2.a IS Path_ifr2.b)
    UNION ALL
   
     SELECT
@@ -270,7 +270,7 @@ CREATE TABLE synalog_test.Path_ifr2 AS WITH t_0_Path_MultBodyAggAux_f5 AS (SELEC
     FROM
       synalog_test.Path_ifr3 AS Path_ifr3, synalog_test.Path_ifr3 AS t_1_Path_ifr3
     WHERE
-      (t_1_Path_ifr3.a = Path_ifr3.b)
+      (t_1_Path_ifr3.a IS Path_ifr3.b)
    UNION ALL
   
     SELECT
@@ -296,7 +296,7 @@ CREATE TABLE synalog_test.Path_ifr3 AS WITH t_0_Path_MultBodyAggAux_f4 AS (SELEC
     FROM
       synalog_test.Path_ifr2 AS Path_ifr2, synalog_test.Path_ifr2 AS t_1_Path_ifr2
     WHERE
-      (t_1_Path_ifr2.a = Path_ifr2.b)
+      (t_1_Path_ifr2.a IS Path_ifr2.b)
    UNION ALL
   
     SELECT
@@ -322,7 +322,7 @@ CREATE TABLE synalog_test.Path_ifr2 AS WITH t_0_Path_MultBodyAggAux_f5 AS (SELEC
     FROM
       synalog_test.Path_ifr3 AS Path_ifr3, synalog_test.Path_ifr3 AS t_1_Path_ifr3
     WHERE
-      (t_1_Path_ifr3.a = Path_ifr3.b)
+      (t_1_Path_ifr3.a IS Path_ifr3.b)
    UNION ALL
   
     SELECT
@@ -348,7 +348,7 @@ CREATE TABLE synalog_test.Path_ifr3 AS WITH t_0_Path_MultBodyAggAux_f4 AS (SELEC
     FROM
       synalog_test.Path_ifr2 AS Path_ifr2, synalog_test.Path_ifr2 AS t_1_Path_ifr2
     WHERE
-      (t_1_Path_ifr2.a = Path_ifr2.b)
+      (t_1_Path_ifr2.a IS Path_ifr2.b)
    UNION ALL
   
     SELECT
@@ -374,7 +374,7 @@ CREATE TABLE synalog_test.Path_ifr2 AS WITH t_0_Path_MultBodyAggAux_f5 AS (SELEC
     FROM
       synalog_test.Path_ifr3 AS Path_ifr3, synalog_test.Path_ifr3 AS t_1_Path_ifr3
     WHERE
-      (t_1_Path_ifr3.a = Path_ifr3.b)
+      (t_1_Path_ifr3.a IS Path_ifr3.b)
    UNION ALL
   
     SELECT
@@ -400,7 +400,7 @@ CREATE TABLE synalog_test.Path_ifr3 AS WITH t_0_Path_MultBodyAggAux_f4 AS (SELEC
     FROM
       synalog_test.Path_ifr2 AS Path_ifr2, synalog_test.Path_ifr2 AS t_1_Path_ifr2
     WHERE
-      (t_1_Path_ifr2.a = Path_ifr2.b)
+      (t_1_Path_ifr2.a IS Path_ifr2.b)
    UNION ALL
   
     SELECT
@@ -426,7 +426,7 @@ CREATE TABLE synalog_test.Path_ifr2 AS WITH t_0_Path_MultBodyAggAux_f5 AS (SELEC
     FROM
       synalog_test.Path_ifr3 AS Path_ifr3, synalog_test.Path_ifr3 AS t_1_Path_ifr3
     WHERE
-      (t_1_Path_ifr3.a = Path_ifr3.b)
+      (t_1_Path_ifr3.a IS Path_ifr3.b)
    UNION ALL
   
     SELECT
@@ -452,7 +452,7 @@ CREATE TABLE synalog_test.Path_ifr3 AS WITH t_0_Path_MultBodyAggAux_f4 AS (SELEC
     FROM
       synalog_test.Path_ifr2 AS Path_ifr2, synalog_test.Path_ifr2 AS t_1_Path_ifr2
     WHERE
-      (t_1_Path_ifr2.a = Path_ifr2.b)
+      (t_1_Path_ifr2.a IS Path_ifr2.b)
    UNION ALL
   
     SELECT
@@ -478,7 +478,7 @@ CREATE TABLE synalog_test.Path_ifr2 AS WITH t_0_Path_MultBodyAggAux_f5 AS (SELEC
     FROM
       synalog_test.Path_ifr3 AS Path_ifr3, synalog_test.Path_ifr3 AS t_1_Path_ifr3
     WHERE
-      (t_1_Path_ifr3.a = Path_ifr3.b)
+      (t_1_Path_ifr3.a IS Path_ifr3.b)
    UNION ALL
   
     SELECT
@@ -504,7 +504,7 @@ CREATE TABLE synalog_test.Path_ifr3 AS WITH t_0_Path_MultBodyAggAux_f4 AS (SELEC
     FROM
       synalog_test.Path_ifr2 AS Path_ifr2, synalog_test.Path_ifr2 AS t_1_Path_ifr2
     WHERE
-      (t_1_Path_ifr2.a = Path_ifr2.b)
+      (t_1_Path_ifr2.a IS Path_ifr2.b)
    UNION ALL
   
     SELECT
@@ -530,7 +530,7 @@ CREATE TABLE synalog_test.Path_ifr2 AS WITH t_0_Path_MultBodyAggAux_f5 AS (SELEC
     FROM
       synalog_test.Path_ifr3 AS Path_ifr3, synalog_test.Path_ifr3 AS t_1_Path_ifr3
     WHERE
-      (t_1_Path_ifr3.a = Path_ifr3.b)
+      (t_1_Path_ifr3.a IS Path_ifr3.b)
    UNION ALL
   
     SELECT
@@ -556,7 +556,7 @@ CREATE TABLE synalog_test.Path_ifr3 AS WITH t_0_Path_MultBodyAggAux_f4 AS (SELEC
     FROM
       synalog_test.Path_ifr2 AS Path_ifr2, synalog_test.Path_ifr2 AS t_1_Path_ifr2
     WHERE
-      (t_1_Path_ifr2.a = Path_ifr2.b)
+      (t_1_Path_ifr2.a IS Path_ifr2.b)
    UNION ALL
   
     SELECT
@@ -582,7 +582,7 @@ CREATE TABLE synalog_test.Path_ifr2 AS WITH t_0_Path_MultBodyAggAux_f5 AS (SELEC
     FROM
       synalog_test.Path_ifr3 AS Path_ifr3, synalog_test.Path_ifr3 AS t_1_Path_ifr3
     WHERE
-      (t_1_Path_ifr3.a = Path_ifr3.b)
+      (t_1_Path_ifr3.a IS Path_ifr3.b)
    UNION ALL
   
     SELECT
@@ -608,7 +608,7 @@ CREATE TABLE synalog_test.Path_ifr3 AS WITH t_0_Path_MultBodyAggAux_f4 AS (SELEC
     FROM
       synalog_test.Path_ifr2 AS Path_ifr2, synalog_test.Path_ifr2 AS t_1_Path_ifr2
     WHERE
-      (t_1_Path_ifr2.a = Path_ifr2.b)
+      (t_1_Path_ifr2.a IS Path_ifr2.b)
    UNION ALL
   
     SELECT
@@ -634,7 +634,7 @@ CREATE TABLE synalog_test.Path_ifr2 AS WITH t_0_Path_MultBodyAggAux_f5 AS (SELEC
     FROM
       synalog_test.Path_ifr3 AS Path_ifr3, synalog_test.Path_ifr3 AS t_1_Path_ifr3
     WHERE
-      (t_1_Path_ifr3.a = Path_ifr3.b)
+      (t_1_Path_ifr3.a IS Path_ifr3.b)
    UNION ALL
   
     SELECT
@@ -660,7 +660,7 @@ CREATE TABLE synalog_test.Path AS WITH t_0_Path_MultBodyAggAux_f6 AS (SELECT * F
     FROM
       synalog_test.Path_ifr2 AS Path_ifr4, synalog_test.Path_ifr2 AS t_1_Path_ifr4
     WHERE
-      (t_1_Path_ifr4.a = Path_ifr4.b)
+      (t_1_Path_ifr4.a IS Path_ifr4.b)
    UNION ALL
   
     SELECT

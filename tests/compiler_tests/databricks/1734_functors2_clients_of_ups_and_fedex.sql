@@ -28,4 +28,4 @@ SELECT
 FROM
   t_0_X AS X, t_2_Y AS Y
 WHERE
-  (Y.client = X.client);
+  (Y.client <=> X.client);

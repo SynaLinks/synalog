@@ -1,5 +1,5 @@
-# Items of a known color other than blue, or priced over 50.
-# Expect: rows Q = [(1,), (3,), (4,), (5,), (7,)]
+# Items of a color other than blue (a null is not blue), or priced over 50.
+# Expect: rows Q = [(1,), (3,), (4,), (5,), (6,), (7,)]
 I(id: 1, c: "red", p: 10, t: null);
 I(id: 2, c: "blue", p: 25, t: "x");
 I(id: 3, c: "red", p: 40, t: "y");

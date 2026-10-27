@@ -51,5 +51,5 @@ WHERE
     t_0_F AS t_1_F, JSON_EACH(JSON_ARRAY(0)) as x_6
   WHERE
     (t_1_F.a = 'ann') AND
-    (t_1_F.b = F.a)) IS NULL) AND
-  (F.b = 'ann') ORDER BY v;
+    (t_1_F.b IS F.a)) IS NULL) AND
+  (F.b = 'ann') ORDER BY v NULLS LAST;

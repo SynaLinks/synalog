@@ -160,6 +160,19 @@ pub trait Dialect {
         false
     }
 
+    /// `left == right` of two values either of which may be null, `{0}` and
+    /// `{1}`, a value of type `ty` when it is known: a null equals a null, as
+    /// a Datalog constant equals itself (null keys join), and nothing else.
+    fn equal_values(&self, _ty: &Type) -> &'static str {
+        "{0} IS NOT DISTINCT FROM {1}"
+    }
+
+    /// `left != right` of two values either of which may be null: the
+    /// negation of `equal_values`.
+    fn distinct_values(&self) -> &'static str {
+        "{0} IS DISTINCT FROM {1}"
+    }
+
     /// `ToInt64` of an argument with no fraction by its form (text, a whole
     /// number written out), where the general `ToInt64` (which rounds a
     /// fraction) does not fit: SQLite before 3.46 has a fixed parser stack,
@@ -606,6 +619,12 @@ impl Dialect for SqLiteDialect {
     }
     fn nulls_first_by_default(&self, descending: bool) -> bool { !descending }
     fn name(&self) -> &'static str { "sqlite" }
+    fn equal_values(&self, _ty: &Type) -> &'static str {
+        "{0} IS {1}"
+    }
+    fn distinct_values(&self) -> &'static str {
+        "{0} IS NOT {1}"
+    }
     fn today_relation_sql(&self) -> String {
         "(SELECT date('now') AS date)".to_string()
     }
@@ -779,6 +798,19 @@ impl Dialect for PostgreSqlDialect {
     fn nulls_first_by_default(&self, descending: bool) -> bool { descending }
     fn format_uses_concat(&self) -> bool { true }
     fn name(&self) -> &'static str { "psql" }
+    fn equal_values(&self, ty: &Type) -> &'static str {
+        // PostgreSQL joins on `IS NOT DISTINCT FROM` only by a nested loop.
+        // These are equalities it hashes and merges: a null stands for a
+        // value of its type, which a null's flag tells apart from the value
+        // itself; or, of a value of no type known here, a one-element array
+        // (of a row: an array of arrays drops a null array, `{}` then).
+        match ty {
+            Type::Number => "COALESCE({0}, 0) = COALESCE({1}, 0) AND ({0} IS NULL) = ({1} IS NULL)",
+            Type::String => "COALESCE({0}, '') = COALESCE({1}, '') AND ({0} IS NULL) = ({1} IS NULL)",
+            Type::Bool => "COALESCE({0}, false) = COALESCE({1}, false) AND ({0} IS NULL) = ({1} IS NULL)",
+            _ => "ARRAY[ROW({0})] = ARRAY[ROW({1})]",
+        }
+    }
     fn today_relation_sql(&self) -> String {
         "(SELECT to_char(current_timestamp AT TIME ZONE 'UTC', 'YYYY-MM-DD') AS date)".to_string()
     }
@@ -1233,6 +1265,12 @@ impl Dialect for DatabricksDialect {
     }
 
     fn name(&self) -> &'static str { "databricks" }
+    fn equal_values(&self, _ty: &Type) -> &'static str {
+        "{0} <=> {1}"
+    }
+    fn distinct_values(&self) -> &'static str {
+        "NOT ({0} <=> {1})"
+    }
     fn string_cast(&self, expr: &str) -> String { format!("CAST({} AS STRING)", expr) }
     fn today_relation_sql(&self) -> String {
         "(SELECT CAST(to_date(to_utc_timestamp(current_timestamp(), current_timezone())) AS STRING) AS date)".to_string()

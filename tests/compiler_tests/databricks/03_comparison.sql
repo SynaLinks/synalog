@@ -15,7 +15,7 @@ SELECT * FROM (
     FROM
       LATERAL (SELECT explode(FILTER(SEQUENCE(0, CAST(10 AS BIGINT)), x -> x < 10)) AS x_5) AS pushkin
     WHERE
-      (x_5 != 5)
+      (NOT (x_5 <=> 5))
    UNION ALL
   
     SELECT

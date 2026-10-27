@@ -3,4 +3,4 @@ SELECT
 FROM
   JSON_EACH(JSON_ARRAY(2, 4, 6)) as x_2, JSON_EACH(JSON_ARRAY(1, 2, 3, 4)) as x_4
 WHERE
-  (x_4.value = x_2.value) ORDER BY x;
+  (x_4.value IS x_2.value) ORDER BY x NULLS LAST;

@@ -117,4 +117,4 @@ WHERE
     t_1_A AS A
   WHERE
     (A.hours > 10) AND
-    (A.id = Person.id)) IS NULL) ORDER BY id;
+    (A.id IS NOT DISTINCT FROM Person.id)) IS NULL) ORDER BY id;

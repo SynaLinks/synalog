@@ -23,7 +23,7 @@ FROM
   t_2_Order AS t_1_Order, t_2_Price AS Price
 WHERE
   (t_1_Order.state = "paid") AND
-  (Price.item = t_1_Order.item)
+  (Price.item <=> t_1_Order.item)
 GROUP BY 1)
 SELECT
   Spend.who AS who,
@@ -60,7 +60,7 @@ WHERE
   FROM
     synalog_test.Tier AS t_6_Tier
   WHERE
-    (t_6_Tier.who = t_4_Person.who)) IS NULL))
+    (t_6_Tier.who <=> t_4_Person.who)) IS NULL))
 SELECT
   1 AS ok
 FROM

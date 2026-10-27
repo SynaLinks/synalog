@@ -15,7 +15,7 @@ t_0_Q_MultBodyAggAux AS (SELECT * FROM (
       t_3_V AS V, t_3_V AS t_1_V
     WHERE
       (V.k < t_1_V.k) AND
-      (((V.x) * (V.x)) = ((((t_1_V.x) * (t_1_V.x))) + (7)))
+      (((V.x) * (V.x)) <=> ((((t_1_V.x) * (t_1_V.x))) + (7)))
    UNION ALL
   
     SELECT
@@ -25,7 +25,7 @@ t_0_Q_MultBodyAggAux AS (SELECT * FROM (
       t_3_V AS t_4_V, t_3_V AS t_5_V
     WHERE
       (t_4_V.k < t_5_V.k) AND
-      (((t_4_V.x) * (t_4_V.x)) = ((t_5_V.x) * (t_5_V.x)))
+      (((t_4_V.x) * (t_4_V.x)) <=> ((t_5_V.x) * (t_5_V.x)))
   
 ) AS UNUSED_TABLE_NAME  )
 SELECT

@@ -70,5 +70,5 @@ SELECT
 FROM
   t_0_E AS E, t_1_Pr AS Pr
 WHERE
-  (Pr.dept = E.dept)
-GROUP BY name ORDER BY name, n;
+  (Pr.dept IS NOT DISTINCT FROM E.dept)
+GROUP BY name ORDER BY name NULLS LAST, n NULLS LAST;

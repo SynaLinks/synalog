@@ -4,15 +4,6 @@ create schema if not exists synalog_home;
 drop type if exists synalogrecord893574736 cascade; create type synalogrecord893574736 as struct(nirvana numeric);
 create sequence if not exists eternal_logical_sequence;
 
-
--- Synalog type: synalogrecord481217614
-drop type if exists synalogrecord481217614 cascade; create type synalogrecord481217614 as struct(r synalogrecord893574736);
-
--- Synalog type: synalogrecord383307722
-drop type if exists synalogrecord383307722 cascade; create type synalogrecord383307722 as struct(a timestamp);
-
--- Synalog type: synalogrecord519939597
-drop type if exists synalogrecord519939597 cascade; create type synalogrecord519939597 as struct(args text[], predicate text);
 WITH t_0_Ship AS (SELECT * FROM (
   
     SELECT
@@ -101,17 +92,17 @@ t_2_T_MultBodyAggAux AS (SELECT * FROM (
     SELECT
       t_3_Ship.id AS id
     FROM
-      t_0_Ship AS t_3_Ship, (select unnest(['paris', 'nice']::text[]) as unnested_pod) as x_10
+      t_0_Ship AS t_3_Ship, (select unnest(['paris', 'nice']) as unnested_pod) as x_10
     WHERE
-      (t_3_Ship.src = x_10.unnested_pod)
+      (t_3_Ship.src IS NOT DISTINCT FROM x_10.unnested_pod)
    UNION ALL
   
     SELECT
       t_4_Ship.id AS id
     FROM
-      t_0_Ship AS t_4_Ship, (select unnest(['paris', 'nice']::text[]) as unnested_pod) as x_14
+      t_0_Ship AS t_4_Ship, (select unnest(['paris', 'nice']) as unnested_pod) as x_14
     WHERE
-      (t_4_Ship.dst = x_14.unnested_pod)
+      (t_4_Ship.dst IS NOT DISTINCT FROM x_14.unnested_pod)
   
 ) AS UNUSED_TABLE_NAME  ),
 t_1_T AS (SELECT
@@ -127,6 +118,6 @@ WHERE
   ((SELECT
     MIN((CASE WHEN x_4.unnested_pod = 0 THEN 1 ELSE NULL END)) AS synalog_value
   FROM
-    t_1_T AS T, (select unnest([0]::numeric[]) as unnested_pod) as x_4
+    t_1_T AS T, (select unnest([0]) as unnested_pod) as x_4
   WHERE
-    (T.id = Ship.id)) IS NULL);
+    (T.id IS NOT DISTINCT FROM Ship.id)) IS NULL);

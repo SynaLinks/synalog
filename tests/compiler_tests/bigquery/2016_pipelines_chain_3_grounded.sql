@@ -1,8 +1,8 @@
 DROP TABLE IF EXISTS synalog_test.C0;
 CREATE TABLE synalog_test.C0 AS SELECT
-  x_9 AS x
+  x_1 AS x
 FROM
-  UNNEST(ARRAY[1, 2, 3, 4, 5, 6, 7, 8]) as x_9;
+  UNNEST(ARRAY[1, 2, 3, 4, 5, 6, 7, 8]) as x_1;
 
 -- Interacting with table synalog_test.C0
 
@@ -12,13 +12,13 @@ CREATE TABLE synalog_test.C3 AS SELECT
 FROM
   synalog_test.C0 AS C0
 WHERE
-  (C0.x != 3) AND
-  (C0.x != 2) AND
-  (C0.x != 1);
+  (C0.x IS DISTINCT FROM 3) AND
+  (C0.x IS DISTINCT FROM 2) AND
+  (C0.x IS DISTINCT FROM 1);
 
 -- Interacting with table synalog_test.C3
 
 SELECT
   C3.x AS x
 FROM
-  synalog_test.C3 AS C3 ORDER BY x;
+  synalog_test.C3 AS C3 ORDER BY x NULLS LAST;

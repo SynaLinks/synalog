@@ -70,4 +70,4 @@ SELECT
 FROM
   t_1_E AS E, t_1_E AS t_0_E
 WHERE
-  (t_0_E.id = E.boss) ORDER BY n;
+  (t_0_E.id IS E.boss) ORDER BY n NULLS LAST;

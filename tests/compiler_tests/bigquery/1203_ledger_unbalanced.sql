@@ -78,4 +78,4 @@ SELECT
 FROM
   t_0_Sum AS Sum
 WHERE
-  (Sum.s != 0);
+  (Sum.s IS DISTINCT FROM 0);

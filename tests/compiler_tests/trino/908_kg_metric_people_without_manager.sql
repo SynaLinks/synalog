@@ -84,8 +84,8 @@ t_0_Manages AS (SELECT
 FROM
   synalog_test.Person AS t_1_Person, synalog_test.Person AS t_2_Person, t_3_Management AS Management
 WHERE
-  (Management.manager_id = t_1_Person.person_id) AND
-  (Management.employee_id = t_2_Person.person_id)
+  (Management.manager_id IS NOT DISTINCT FROM t_1_Person.person_id) AND
+  (Management.employee_id IS NOT DISTINCT FROM t_2_Person.person_id)
 GROUP BY 1, 2)
 SELECT
   Person.person_id AS person_id
@@ -97,4 +97,4 @@ WHERE
   FROM
     t_0_Manages AS Manages
   WHERE
-    (Manages.employee_id = Person.person_id)) IS NULL) ORDER BY person_id;
+    (Manages.employee_id IS NOT DISTINCT FROM Person.person_id)) IS NULL) ORDER BY person_id;

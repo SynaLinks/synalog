@@ -67,6 +67,6 @@ SELECT
 FROM
   t_2_O AS O, JSON_EACH(JSON_ARRAY(0)) as x_10
 WHERE
-  (O.c = t_1_C.c)), x_3.value)) AS synalog_value
+  (O.c IS t_1_C.c)), x_3.value)) AS synalog_value
 FROM
   t_3_C AS t_1_C, JSON_EACH(JSON_ARRAY(0)) as x_3) AS m;

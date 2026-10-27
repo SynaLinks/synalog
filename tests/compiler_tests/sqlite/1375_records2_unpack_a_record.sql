@@ -64,4 +64,4 @@ FROM
   t_0_Emp AS Emp
 WHERE
   (Emp.salary < 4500) AND
-  (JSON_OBJECT('dept', Emp.dept, 'salary', Emp.salary, 'city', Emp.city) = JSON_OBJECT('dept', Emp.dept, 'salary', Emp.salary, 'city', Emp.city)) ORDER BY name, dept, salary;
+  (JSON_OBJECT('dept', Emp.dept, 'salary', Emp.salary, 'city', Emp.city) IS JSON_OBJECT('dept', Emp.dept, 'salary', Emp.salary, 'city', Emp.city)) ORDER BY name NULLS LAST, dept NULLS LAST, salary NULLS LAST;

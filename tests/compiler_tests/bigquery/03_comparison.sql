@@ -15,7 +15,7 @@ SELECT * FROM (
     FROM
       UNNEST(GENERATE_ARRAY(0, 10 - 1)) as x_5
     WHERE
-      (x_5 != 5)
+      (x_5 IS DISTINCT FROM 5)
    UNION ALL
   
     SELECT
@@ -36,4 +36,4 @@ SELECT * FROM (
       (x_5 >= 3) AND
       (x_5 <= 7)
   
-) AS UNUSED_TABLE_NAME  ORDER BY test_name, x ;
+) AS UNUSED_TABLE_NAME  ORDER BY test_name NULLS LAST, x NULLS LAST ;

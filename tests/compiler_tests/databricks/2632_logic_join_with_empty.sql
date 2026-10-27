@@ -24,4 +24,4 @@ FROM
   t_0_A AS A, t_1_Person AS Person
 WHERE
   (Person.age > 100) AND
-  (A.id = Person.id);
+  (A.id <=> Person.id);

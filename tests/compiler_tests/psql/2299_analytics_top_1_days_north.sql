@@ -4,14 +4,6 @@ create schema if not exists synalog_home;
 -- Empty synalog type: synalogrecord893574736;
 DO $$ BEGIN if not exists (select 'I(am) :- I(think)' from pg_type where typname = 'synalogrecord893574736') then create type synalogrecord893574736 as (nirvana numeric); end if; END $$;
 
-
-DO $$
-BEGIN
--- Synalog type: synalogrecord481217614
-if not exists (select 'I(am) :- I(think)' from pg_type where typname = 'synalogrecord481217614') then create type synalogrecord481217614 as (r synalogrecord893574736); end if;
--- Synalog type: synalogrecord86796764
-if not exists (select 'I(am) :- I(think)' from pg_type where typname = 'synalogrecord86796764') then create type synalogrecord86796764 as (s text); end if;
-END $$;
 WITH t_1_S AS (SELECT * FROM (
   
     SELECT
@@ -120,7 +112,7 @@ t_3_Better_MultBodyAggAux AS (SELECT * FROM (
       (t_7_S.d < t_6_S.d) AND
       (t_6_S.r = 'north') AND
       (t_7_S.r = 'north') AND
-      (t_7_S.v = t_6_S.v)
+      (COALESCE(t_7_S.v, 0) = COALESCE(t_6_S.v, 0) AND (t_7_S.v IS NULL) = (t_6_S.v IS NULL))
   
 ) AS UNUSED_TABLE_NAME  ),
 t_2_Better AS (SELECT
@@ -140,9 +132,9 @@ t_0_Q_MultBodyAggAux AS (SELECT * FROM (
       (CAST((SELECT
         MIN((CASE WHEN x_11 = 0 THEN 1 ELSE NULL END)) AS synalog_value
       FROM
-        t_2_Better AS Better, UNNEST(ARRAY[0]::numeric[]) as x_11
+        t_2_Better AS Better, UNNEST(ARRAY[0]) as x_11
       WHERE
-        (Better.d = S.d)) AS numeric) IS NULL) AND
+        (COALESCE(Better.d, 0) = COALESCE(S.d, 0) AND (Better.d IS NULL) = (S.d IS NULL))) AS numeric) IS NULL) AND
       (S.r = 'north')
    UNION ALL
   
@@ -154,7 +146,7 @@ t_0_Q_MultBodyAggAux AS (SELECT * FROM (
     WHERE
       (t_9_Better.n < 1) AND
       (t_8_S.r = 'north') AND
-      (t_9_Better.d = t_8_S.d)
+      (COALESCE(t_9_Better.d, 0) = COALESCE(t_8_S.d, 0) AND (t_9_Better.d IS NULL) = (t_8_S.d IS NULL))
   
 ) AS UNUSED_TABLE_NAME  )
 SELECT

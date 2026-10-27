@@ -70,4 +70,4 @@ FROM
   t_4_B AS t_2_B, t_4_B AS t_3_B
 WHERE
   (t_2_B.id < t_3_B.id) AND
-  (STRUCT(t_3_B.author AS author) = STRUCT(t_2_B.author AS author)) ORDER BY a NULLS LAST, b NULLS LAST;
+  (STRUCT(t_3_B.author AS author) IS NOT DISTINCT FROM STRUCT(t_2_B.author AS author)) ORDER BY a NULLS LAST, b NULLS LAST;

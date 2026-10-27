@@ -58,4 +58,4 @@ SELECT
 FROM
   t_0_O AS O, t_1_Vip AS Vip, JSON_EACH(JSON_ARRAY(0)) as x_6
 WHERE
-  (Vip.c = O.c)) AS t;
+  (Vip.c IS O.c)) AS t;

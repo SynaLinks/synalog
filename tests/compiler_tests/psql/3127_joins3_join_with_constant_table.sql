@@ -53,4 +53,4 @@ SELECT
 FROM
   t_0_E AS E, UNNEST(ARRAY[1, 2, 7]) as x_3
 WHERE
-  (E.id = x_3) ORDER BY name;
+  (COALESCE(E.id, 0) = COALESCE(x_3, 0) AND (E.id IS NULL) = (x_3 IS NULL)) ORDER BY name;

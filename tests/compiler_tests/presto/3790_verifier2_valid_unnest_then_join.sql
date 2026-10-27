@@ -21,4 +21,4 @@ SELECT
 FROM
   t_1_N AS t_0_N, UNNEST(TRANSFORM(ARRAY[2, 3], synalog_e -> ROW(synalog_e))) as pushkin(x_2)
 WHERE
-  (t_0_N.n = x_2) ORDER BY n;
+  (t_0_N.n IS NOT DISTINCT FROM x_2) ORDER BY n;

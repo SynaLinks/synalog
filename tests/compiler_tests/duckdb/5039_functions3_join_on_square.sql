@@ -4,18 +4,6 @@ create schema if not exists synalog_home;
 drop type if exists synalogrecord893574736 cascade; create type synalogrecord893574736 as struct(nirvana numeric);
 create sequence if not exists eternal_logical_sequence;
 
-
--- Synalog type: synalogrecord481217614
-drop type if exists synalogrecord481217614 cascade; create type synalogrecord481217614 as struct(r synalogrecord893574736);
-
--- Synalog type: synalogrecord383307722
-drop type if exists synalogrecord383307722 cascade; create type synalogrecord383307722 as struct(a timestamp);
-
--- Synalog type: synalogrecord6083990
-drop type if exists synalogrecord6083990 cascade; create type synalogrecord6083990 as struct(x numeric, y numeric);
-
--- Synalog type: synalogrecord519939597
-drop type if exists synalogrecord519939597 cascade; create type synalogrecord519939597 as struct(args text[], predicate text);
 WITH t_3_V AS (SELECT * FROM (
   
     SELECT
@@ -63,7 +51,7 @@ t_0_Q_MultBodyAggAux AS (SELECT * FROM (
       t_3_V AS V, t_3_V AS t_1_V
     WHERE
       (V.k < t_1_V.k) AND
-      (((V.x) * (V.x)) = ((((t_1_V.x) * (t_1_V.x))) + (7)))
+      (((V.x) * (V.x)) IS NOT DISTINCT FROM ((((t_1_V.x) * (t_1_V.x))) + (7)))
    UNION ALL
   
     SELECT
@@ -73,7 +61,7 @@ t_0_Q_MultBodyAggAux AS (SELECT * FROM (
       t_3_V AS t_4_V, t_3_V AS t_5_V
     WHERE
       (t_4_V.k < t_5_V.k) AND
-      (((t_4_V.x) * (t_4_V.x)) = ((t_5_V.x) * (t_5_V.x)))
+      (((t_4_V.x) * (t_4_V.x)) IS NOT DISTINCT FROM ((t_5_V.x) * (t_5_V.x)))
   
 ) AS UNUSED_TABLE_NAME  )
 SELECT

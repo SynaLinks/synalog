@@ -104,7 +104,7 @@ FROM
   t_2_Order AS t_1_Order, t_3_Price AS Price
 WHERE
   (t_1_Order.state = 'paid') AND
-  (Price.item = t_1_Order.item)
+  (Price.item IS t_1_Order.item)
 GROUP BY t_1_Order.who),
 t_4_Ref AS (SELECT
   t_5_Order.who AS who
@@ -130,10 +130,10 @@ WHERE
   FROM
     t_4_Ref AS Ref, JSON_EACH(JSON_ARRAY(0)) as x_24
   WHERE
-    (Ref.who = Spend.who)) IS NULL) AND
+    (Ref.who IS Spend.who)) IS NULL) AND
   ((SELECT
     MIN(MagicalEntangle(1, x_30.value)) AS synalog_value
   FROM
     t_6_Pen AS Pen, JSON_EACH(JSON_ARRAY(0)) as x_30
   WHERE
-    (Pen.who = Spend.who)) IS NULL) ORDER BY who NULLS LAST;
+    (Pen.who IS Spend.who)) IS NULL) ORDER BY who NULLS LAST;

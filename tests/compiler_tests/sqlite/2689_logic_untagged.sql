@@ -151,4 +151,4 @@ WHERE
   FROM
     t_2_Tag AS t_1_Tag, JSON_EACH(JSON_ARRAY(0)) as x_4
   WHERE
-    (t_1_Tag.id = Person.id)) IS NULL) ORDER BY id NULLS LAST;
+    (t_1_Tag.id IS Person.id)) IS NULL) ORDER BY id NULLS LAST;

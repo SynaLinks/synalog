@@ -38,7 +38,7 @@ t_0_Below_RecursiveCte AS (SELECT * FROM (
       WHERE
         (1 = 0) AND
         (t_4_Child.p = 'root') AND
-        (t_2_Child.p = t_4_Child.c)
+        (t_2_Child.p IS t_4_Child.c)
      UNION ALL
     
       SELECT
@@ -47,9 +47,9 @@ t_0_Below_RecursiveCte AS (SELECT * FROM (
         t_1_Child AS t_10_Child, t_1_Child AS t_8_Child, t_1_Child AS t_6_Child
       WHERE
         (1 = 0) AND
-        (t_6_Child.p = t_8_Child.c) AND
+        (t_6_Child.p IS t_8_Child.c) AND
         (t_10_Child.p = 'root') AND
-        (t_8_Child.p = t_10_Child.c)
+        (t_8_Child.p IS t_10_Child.c)
      UNION ALL
     
       SELECT
@@ -58,10 +58,10 @@ t_0_Below_RecursiveCte AS (SELECT * FROM (
         t_1_Child AS t_18_Child, t_1_Child AS t_16_Child, t_1_Child AS t_14_Child, t_1_Child AS t_12_Child
       WHERE
         (1 = 0) AND
-        (t_12_Child.p = t_14_Child.c) AND
-        (t_14_Child.p = t_16_Child.c) AND
+        (t_12_Child.p IS t_14_Child.c) AND
+        (t_14_Child.p IS t_16_Child.c) AND
         (t_18_Child.p = 'root') AND
-        (t_16_Child.p = t_18_Child.c)
+        (t_16_Child.p IS t_18_Child.c)
     
   ) AS UNUSED_TABLE_NAME  
 ) AS UNUSED_TABLE_NAME
@@ -71,7 +71,7 @@ SELECT
 FROM
   t_0_Below_RecursiveCte AS t_19_Below_RecursiveCte, t_1_Child AS t_20_Child
 WHERE
-  (t_20_Child.p = t_19_Below_RecursiveCte.n))
+  (t_20_Child.p IS t_19_Below_RecursiveCte.n))
 SELECT
   Below_RecursiveCte.n AS n
 FROM

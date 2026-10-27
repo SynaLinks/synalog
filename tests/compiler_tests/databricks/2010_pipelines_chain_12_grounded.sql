@@ -12,9 +12,9 @@ CREATE TABLE synalog_test.C3 AS SELECT
 FROM
   synalog_test.C0 AS C0
 WHERE
-  (C0.x != 3) AND
-  (C0.x != 2) AND
-  (C0.x != 1);
+  (NOT (C0.x <=> 3)) AND
+  (NOT (C0.x <=> 2)) AND
+  (NOT (C0.x <=> 1));
 
 -- Interacting with table synalog_test.C3
 
@@ -24,9 +24,9 @@ CREATE TABLE synalog_test.C6 AS SELECT
 FROM
   synalog_test.C3 AS C3
 WHERE
-  (C3.x != 6) AND
-  (C3.x != 5) AND
-  (C3.x != 4);
+  (NOT (C3.x <=> 6)) AND
+  (NOT (C3.x <=> 5)) AND
+  (NOT (C3.x <=> 4));
 
 -- Interacting with table synalog_test.C6
 
@@ -36,9 +36,9 @@ CREATE TABLE synalog_test.C9 AS SELECT
 FROM
   synalog_test.C6 AS C6
 WHERE
-  (C6.x != 9) AND
-  (C6.x != 8) AND
-  (C6.x != 7);
+  (NOT (C6.x <=> 9)) AND
+  (NOT (C6.x <=> 8)) AND
+  (NOT (C6.x <=> 7));
 
 -- Interacting with table synalog_test.C9
 
@@ -48,9 +48,9 @@ CREATE TABLE synalog_test.C12 AS SELECT
 FROM
   synalog_test.C9 AS C9
 WHERE
-  (C9.x != 12) AND
-  (C9.x != 11) AND
-  (C9.x != 10);
+  (NOT (C9.x <=> 12)) AND
+  (NOT (C9.x <=> 11)) AND
+  (NOT (C9.x <=> 10));
 
 -- Interacting with table synalog_test.C12
 

@@ -66,4 +66,4 @@ WHERE
   FROM
     t_3_Effective AS Effective, JSON_EACH(JSON_ARRAY(0)) as x_6
   WHERE
-    (Effective.requester = t_0_Requester.requester)) IS NULL) ORDER BY requester NULLS LAST;
+    (Effective.requester IS t_0_Requester.requester)) IS NULL) ORDER BY requester NULLS LAST;

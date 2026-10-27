@@ -57,7 +57,7 @@ t_1_Active AS (SELECT
 FROM
   t_2_Person AS Person, t_4_Employees AS Employees
 WHERE
-  (Employees.person_id = Person.person_id) AND
+  (Employees.person_id IS NOT DISTINCT FROM Person.person_id) AND
   (Employees.status = "active")
 GROUP BY person_id),
 t_11_Teams AS (SELECT * FROM (
@@ -89,8 +89,8 @@ t_5_MemberOf AS (SELECT
 FROM
   t_2_Person AS t_6_Person, t_10_Team AS t_7_Team, t_4_Employees AS t_8_Employees
 WHERE
-  (t_8_Employees.person_id = t_6_Person.person_id) AND
-  (t_8_Employees.team_id = t_7_Team.team_id)
+  (t_8_Employees.person_id IS NOT DISTINCT FROM t_6_Person.person_id) AND
+  (t_8_Employees.team_id IS NOT DISTINCT FROM t_7_Team.team_id)
 GROUP BY person_id, team_id),
 t_17_Clients AS (SELECT * FROM (
   
@@ -133,8 +133,8 @@ t_12_EngagedWith AS (SELECT
 FROM
   t_10_Team AS t_13_Team, t_16_Client AS t_14_Client, t_18_Engagements AS Engagements
 WHERE
-  (Engagements.team_id = t_13_Team.team_id) AND
-  (Engagements.client_id = t_14_Client.client_id)
+  (Engagements.team_id IS NOT DISTINCT FROM t_13_Team.team_id) AND
+  (Engagements.client_id IS NOT DISTINCT FROM t_14_Client.client_id)
 GROUP BY team_id, client_id),
 t_0_ActiveReach AS (SELECT
   Active.person_id AS person_id,
@@ -142,8 +142,8 @@ t_0_ActiveReach AS (SELECT
 FROM
   t_1_Active AS Active, t_5_MemberOf AS MemberOf, t_12_EngagedWith AS EngagedWith
 WHERE
-  (MemberOf.person_id = Active.person_id) AND
-  (EngagedWith.team_id = MemberOf.team_id)
+  (MemberOf.person_id IS NOT DISTINCT FROM Active.person_id) AND
+  (EngagedWith.team_id IS NOT DISTINCT FROM MemberOf.team_id)
 GROUP BY person_id, client_id)
 SELECT
   ActiveReach.person_id AS person_id,

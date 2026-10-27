@@ -62,8 +62,8 @@ t_0_EngagedWith AS (SELECT
 FROM
   t_3_Team AS t_1_Team, t_5_Client AS t_2_Client, t_7_Engagements AS Engagements
 WHERE
-  (Engagements.team_id = t_1_Team.team_id) AND
-  (Engagements.client_id = t_2_Client.client_id)
+  (Engagements.team_id IS NOT DISTINCT FROM t_1_Team.team_id) AND
+  (Engagements.client_id IS NOT DISTINCT FROM t_2_Client.client_id)
 GROUP BY team_id, client_id),
 t_13_Employees AS (SELECT * FROM (
   
@@ -125,8 +125,8 @@ t_8_MemberOf AS (SELECT
 FROM
   t_11_Person AS t_9_Person, t_3_Team AS t_10_Team, t_13_Employees AS Employees
 WHERE
-  (Employees.person_id = t_9_Person.person_id) AND
-  (Employees.team_id = t_10_Team.team_id)
+  (Employees.person_id IS NOT DISTINCT FROM t_9_Person.person_id) AND
+  (Employees.team_id IS NOT DISTINCT FROM t_10_Team.team_id)
 GROUP BY person_id, team_id)
 SELECT
   Person.url AS url
@@ -134,6 +134,6 @@ FROM
   t_0_EngagedWith AS EngagedWith, t_8_MemberOf AS MemberOf, t_11_Person AS Person
 WHERE
   (EngagedWith.client_id = 200) AND
-  (MemberOf.team_id = EngagedWith.team_id) AND
-  (Person.person_id = MemberOf.person_id)
+  (MemberOf.team_id IS NOT DISTINCT FROM EngagedWith.team_id) AND
+  (Person.person_id IS NOT DISTINCT FROM MemberOf.person_id)
 GROUP BY url ORDER BY url NULLS LAST;

@@ -81,15 +81,15 @@ t_1_MemberOf AS (SELECT
 FROM
   t_3_Person AS Person, t_6_Team AS t_2_Team, t_5_Employees AS Employees
 WHERE
-  (Employees.person_id = Person.person_id) AND
-  (Employees.team_id = t_2_Team.team_id)
+  (Employees.person_id IS NOT DISTINCT FROM Person.person_id) AND
+  (Employees.team_id IS NOT DISTINCT FROM t_2_Team.team_id)
 GROUP BY person_id, team_id)
 SELECT
   t_0_MemberOf.person_id AS person_id
 FROM
   t_1_MemberOf AS MemberOf, t_1_MemberOf AS t_0_MemberOf
 WHERE
-  (t_0_MemberOf.person_id != 5) AND
+  (t_0_MemberOf.person_id IS DISTINCT FROM 5) AND
   (MemberOf.person_id = 5) AND
-  (t_0_MemberOf.team_id = MemberOf.team_id)
+  (t_0_MemberOf.team_id IS NOT DISTINCT FROM MemberOf.team_id)
 GROUP BY person_id ORDER BY person_id NULLS LAST;

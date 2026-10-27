@@ -45,7 +45,7 @@ t_28_P_MultBodyAggAux_recursive_head_f2 AS (SELECT * FROM (
     FROM
       t_31_P_r0 AS P_r0, t_1_E AS t_30_E
     WHERE
-      (t_30_E.a = P_r0.b)
+      (t_30_E.a IS NOT DISTINCT FROM P_r0.b)
   
 ) AS UNUSED_TABLE_NAME  ),
 t_27_P_r1 AS (SELECT
@@ -69,7 +69,7 @@ t_24_P_MultBodyAggAux_recursive_head_f3 AS (SELECT * FROM (
     FROM
       t_27_P_r1 AS P_r1, t_1_E AS t_26_E
     WHERE
-      (t_26_E.a = P_r1.b)
+      (t_26_E.a IS NOT DISTINCT FROM P_r1.b)
   
 ) AS UNUSED_TABLE_NAME  ),
 t_23_P_r2 AS (SELECT
@@ -93,7 +93,7 @@ t_20_P_MultBodyAggAux_recursive_head_f4 AS (SELECT * FROM (
     FROM
       t_23_P_r2 AS P_r2, t_1_E AS t_22_E
     WHERE
-      (t_22_E.a = P_r2.b)
+      (t_22_E.a IS NOT DISTINCT FROM P_r2.b)
   
 ) AS UNUSED_TABLE_NAME  ),
 t_19_P_r3 AS (SELECT
@@ -117,7 +117,7 @@ t_16_P_MultBodyAggAux_recursive_head_f5 AS (SELECT * FROM (
     FROM
       t_19_P_r3 AS P_r3, t_1_E AS t_18_E
     WHERE
-      (t_18_E.a = P_r3.b)
+      (t_18_E.a IS NOT DISTINCT FROM P_r3.b)
   
 ) AS UNUSED_TABLE_NAME  ),
 t_15_P_r4 AS (SELECT
@@ -141,7 +141,7 @@ t_12_P_MultBodyAggAux_recursive_head_f6 AS (SELECT * FROM (
     FROM
       t_15_P_r4 AS P_r4, t_1_E AS t_14_E
     WHERE
-      (t_14_E.a = P_r4.b)
+      (t_14_E.a IS NOT DISTINCT FROM P_r4.b)
   
 ) AS UNUSED_TABLE_NAME  ),
 t_11_P_r5 AS (SELECT
@@ -165,7 +165,7 @@ t_8_P_MultBodyAggAux_recursive_head_f7 AS (SELECT * FROM (
     FROM
       t_11_P_r5 AS P_r5, t_1_E AS t_10_E
     WHERE
-      (t_10_E.a = P_r5.b)
+      (t_10_E.a IS NOT DISTINCT FROM P_r5.b)
   
 ) AS UNUSED_TABLE_NAME  ),
 t_7_P_r6 AS (SELECT
@@ -189,7 +189,7 @@ t_4_P_MultBodyAggAux_recursive_head_f8 AS (SELECT * FROM (
     FROM
       t_7_P_r6 AS P_r6, t_1_E AS t_6_E
     WHERE
-      (t_6_E.a = P_r6.b)
+      (t_6_E.a IS NOT DISTINCT FROM P_r6.b)
   
 ) AS UNUSED_TABLE_NAME  ),
 t_3_P_r7 AS (SELECT
@@ -213,7 +213,7 @@ t_0_P_MultBodyAggAux_recursive_head_f9 AS (SELECT * FROM (
     FROM
       t_3_P_r7 AS P_r7, t_1_E AS t_2_E
     WHERE
-      (t_2_E.a = P_r7.b)
+      (t_2_E.a IS NOT DISTINCT FROM P_r7.b)
   
 ) AS UNUSED_TABLE_NAME  )
 SELECT

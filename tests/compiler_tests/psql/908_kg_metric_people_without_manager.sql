@@ -4,14 +4,6 @@ create schema if not exists synalog_home;
 -- Empty synalog type: synalogrecord893574736;
 DO $$ BEGIN if not exists (select 'I(am) :- I(think)' from pg_type where typname = 'synalogrecord893574736') then create type synalogrecord893574736 as (nirvana numeric); end if; END $$;
 
-
-DO $$
-BEGIN
--- Synalog type: synalogrecord481217614
-if not exists (select 'I(am) :- I(think)' from pg_type where typname = 'synalogrecord481217614') then create type synalogrecord481217614 as (r synalogrecord893574736); end if;
--- Synalog type: synalogrecord86796764
-if not exists (select 'I(am) :- I(think)' from pg_type where typname = 'synalogrecord86796764') then create type synalogrecord86796764 as (s text); end if;
-END $$;
 WITH t_1_Employees AS (SELECT * FROM (
   
     SELECT
@@ -94,8 +86,8 @@ t_2_Manages AS (SELECT
 FROM
   t_0_Person AS t_3_Person, t_0_Person AS t_4_Person, t_6_Management AS Management
 WHERE
-  (Management.manager_id = t_3_Person.person_id) AND
-  (Management.employee_id = t_4_Person.person_id)
+  (COALESCE(Management.manager_id, 0) = COALESCE(t_3_Person.person_id, 0) AND (Management.manager_id IS NULL) = (t_3_Person.person_id IS NULL)) AND
+  (COALESCE(Management.employee_id, 0) = COALESCE(t_4_Person.person_id, 0) AND (Management.employee_id IS NULL) = (t_4_Person.person_id IS NULL))
 GROUP BY t_3_Person.person_id, t_4_Person.person_id)
 SELECT
   Person.person_id AS person_id
@@ -105,6 +97,6 @@ WHERE
   (CAST((SELECT
     MIN((CASE WHEN x_10 = 0 THEN 1 ELSE NULL END)) AS synalog_value
   FROM
-    t_2_Manages AS Manages, UNNEST(ARRAY[0]::numeric[]) as x_10
+    t_2_Manages AS Manages, UNNEST(ARRAY[0]) as x_10
   WHERE
-    (Manages.employee_id = Person.person_id)) AS numeric) IS NULL) ORDER BY person_id;
+    (COALESCE(Manages.employee_id, 0) = COALESCE(Person.person_id, 0) AND (Manages.employee_id IS NULL) = (Person.person_id IS NULL))) AS numeric) IS NULL) ORDER BY person_id;

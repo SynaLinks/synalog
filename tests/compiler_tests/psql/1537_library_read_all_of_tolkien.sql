@@ -176,8 +176,8 @@ WHERE
   FROM
     t_6_Loan AS Loan, UNNEST(ARRAY[0]) as x_12
   WHERE
-    (Loan.member = t_3_Member.name) AND
-    (Loan.book = t_4_Book.id)) AS numeric) IS NULL) AND
+    (COALESCE(Loan.member, '') = COALESCE(t_3_Member.name, '') AND (Loan.member IS NULL) = (t_3_Member.name IS NULL)) AND
+    (COALESCE(Loan.book, 0) = COALESCE(t_4_Book.id, 0) AND (Loan.book IS NULL) = (t_4_Book.id IS NULL))) AS numeric) IS NULL) AND
   (t_4_Book.author = 'tolkien')
 GROUP BY t_3_Member.name)
 SELECT
@@ -190,4 +190,4 @@ WHERE
   FROM
     t_2_Missed AS Missed, UNNEST(ARRAY[0]) as x_4
   WHERE
-    (Missed.name = t_0_Member.name)) AS numeric) IS NULL);
+    (COALESCE(Missed.name, '') = COALESCE(t_0_Member.name, '') AND (Missed.name IS NULL) = (t_0_Member.name IS NULL))) AS numeric) IS NULL);

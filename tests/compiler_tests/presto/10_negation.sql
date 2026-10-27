@@ -39,7 +39,7 @@ SELECT * FROM (
       FROM
         synalog_test.Even AS Even
       WHERE
-        (Even.col0 = x_5)) IS NULL)
+        (Even.col0 IS NOT DISTINCT FROM x_5)) IS NULL)
    UNION ALL
   
     SELECT
@@ -54,7 +54,7 @@ SELECT * FROM (
       FROM
         t_0_Prime AS Prime
       WHERE
-        (Prime.col0 = x_5)) IS NULL)
+        (Prime.col0 IS NOT DISTINCT FROM x_5)) IS NULL)
    UNION ALL
   
     SELECT
@@ -68,6 +68,6 @@ SELECT * FROM (
       FROM
         t_0_Prime AS Prime
       WHERE
-        (Prime.col0 = Even.col0)) IS NULL)
+        (Prime.col0 IS NOT DISTINCT FROM Even.col0)) IS NULL)
   
 ) AS UNUSED_TABLE_NAME  ORDER BY test_name, x ;

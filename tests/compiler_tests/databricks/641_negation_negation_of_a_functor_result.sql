@@ -8,4 +8,4 @@ WHERE
   FROM
     LATERAL (SELECT explode(ARRAY(1, 2)) AS x_8) AS pushkin
   WHERE
-    (x_3 = x_8)) IS NULL);
+    (x_3 <=> x_8)) IS NULL);

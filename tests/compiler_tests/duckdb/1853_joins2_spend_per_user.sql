@@ -121,6 +121,6 @@ FROM
   t_0_Event AS Event, t_1_Price AS Price
 WHERE
   (Event.kind = 'buy') AND
-  (Price."user" = Event."user") AND
-  (Price.month = SUBSTR(Event."at", 1, 7))
+  (Price."user" IS NOT DISTINCT FROM Event."user") AND
+  (Price.month IS NOT DISTINCT FROM SUBSTR(Event."at", 1, 7))
 GROUP BY Event."user" ORDER BY "user", s;

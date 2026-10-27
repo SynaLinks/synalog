@@ -33,11 +33,11 @@ WHERE
   FROM
     t_3_D AS t_6_D
   WHERE
-    (t_6_D.d = ((t_1_D.d) - (1)))) IS NULL) AND
+    (t_6_D.d <=> ((t_1_D.d) - (1)))) IS NULL) AND
   ((SELECT
     MIN(1) AS synalog_value
   FROM
     t_3_D AS t_7_D
   WHERE
-    (t_7_D.d = ((t_2_D.d) + (1)))) IS NULL)
+    (t_7_D.d <=> ((t_2_D.d) + (1)))) IS NULL)
 GROUP BY 1 ORDER BY first NULLS LAST, last NULLS LAST;

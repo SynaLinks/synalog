@@ -68,4 +68,4 @@ SELECT
 FROM
   t_0_B AS B
 WHERE
-  (JSON_OBJECT('title', 'Ubik', 'author', 'dick') = JSON_OBJECT('title', B.title, 'author', B.author));
+  (JSON_OBJECT('title', 'Ubik', 'author', 'dick') IS JSON_OBJECT('title', B.title, 'author', B.author));

@@ -104,4 +104,4 @@ FROM
 WHERE
   (E.pay >= 3000) AND
   (E.pay <= 4500) AND
-  (t_0_D.d = E.d) ORDER BY n;
+  (COALESCE(t_0_D.d, 0) = COALESCE(E.d, 0) AND (t_0_D.d IS NULL) = (E.d IS NULL)) ORDER BY n;

@@ -109,6 +109,6 @@ SELECT
 FROM
   t_1_Person AS Person, t_3_Client AS t_0_Client, t_5_Orders AS Orders
 WHERE
-  (Orders.person_id = Person.person_id) AND
-  (Orders.client_id = t_0_Client.client_id)
+  (COALESCE(Orders.person_id, 0) = COALESCE(Person.person_id, 0) AND (Orders.person_id IS NULL) = (Person.person_id IS NULL)) AND
+  (COALESCE(Orders.client_id, 0) = COALESCE(t_0_Client.client_id, 0) AND (Orders.client_id IS NULL) = (t_0_Client.client_id IS NULL))
 GROUP BY Person.person_id, t_0_Client.client_id ORDER BY person_id, client_id;

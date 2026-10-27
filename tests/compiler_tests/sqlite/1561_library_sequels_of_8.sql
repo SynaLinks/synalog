@@ -40,7 +40,7 @@ t_1_After_RecursiveCte AS (SELECT * FROM (
       WHERE
         (0 < 6) AND
         (1 = 0) AND
-        (t_3_Sequel.book = t_5_Sequel.next)
+        (t_3_Sequel.book IS t_5_Sequel.next)
      UNION ALL
     
       SELECT
@@ -53,8 +53,8 @@ t_1_After_RecursiveCte AS (SELECT * FROM (
         (((0) + (1)) < 6) AND
         (0 < 6) AND
         (1 = 0) AND
-        (t_7_Sequel.book = t_9_Sequel.next) AND
-        (t_9_Sequel.book = t_11_Sequel.next)
+        (t_7_Sequel.book IS t_9_Sequel.next) AND
+        (t_9_Sequel.book IS t_11_Sequel.next)
      UNION ALL
     
       SELECT
@@ -68,9 +68,9 @@ t_1_After_RecursiveCte AS (SELECT * FROM (
         (((0) + (1)) < 6) AND
         (0 < 6) AND
         (1 = 0) AND
-        (t_13_Sequel.book = t_15_Sequel.next) AND
-        (t_15_Sequel.book = t_17_Sequel.next) AND
-        (t_17_Sequel.book = t_19_Sequel.next)
+        (t_13_Sequel.book IS t_15_Sequel.next) AND
+        (t_15_Sequel.book IS t_17_Sequel.next) AND
+        (t_17_Sequel.book IS t_19_Sequel.next)
      UNION ALL
     
       SELECT
@@ -85,10 +85,10 @@ t_1_After_RecursiveCte AS (SELECT * FROM (
         (((0) + (1)) < 6) AND
         (0 < 6) AND
         (1 = 0) AND
-        (t_21_Sequel.book = t_23_Sequel.next) AND
-        (t_23_Sequel.book = t_25_Sequel.next) AND
-        (t_25_Sequel.book = t_27_Sequel.next) AND
-        (t_27_Sequel.book = t_29_Sequel.next)
+        (t_21_Sequel.book IS t_23_Sequel.next) AND
+        (t_23_Sequel.book IS t_25_Sequel.next) AND
+        (t_25_Sequel.book IS t_27_Sequel.next) AND
+        (t_27_Sequel.book IS t_29_Sequel.next)
      UNION ALL
     
       SELECT
@@ -104,11 +104,11 @@ t_1_After_RecursiveCte AS (SELECT * FROM (
         (((0) + (1)) < 6) AND
         (0 < 6) AND
         (1 = 0) AND
-        (t_31_Sequel.book = t_33_Sequel.next) AND
-        (t_33_Sequel.book = t_35_Sequel.next) AND
-        (t_35_Sequel.book = t_37_Sequel.next) AND
-        (t_37_Sequel.book = t_39_Sequel.next) AND
-        (t_39_Sequel.book = t_41_Sequel.next)
+        (t_31_Sequel.book IS t_33_Sequel.next) AND
+        (t_33_Sequel.book IS t_35_Sequel.next) AND
+        (t_35_Sequel.book IS t_37_Sequel.next) AND
+        (t_37_Sequel.book IS t_39_Sequel.next) AND
+        (t_39_Sequel.book IS t_41_Sequel.next)
     
   ) AS UNUSED_TABLE_NAME  
 ) AS UNUSED_TABLE_NAME
@@ -121,7 +121,7 @@ FROM
   t_1_After_RecursiveCte AS t_42_After_RecursiveCte, t_2_Sequel AS t_43_Sequel
 WHERE
   (t_42_After_RecursiveCte.synalog_step < 6) AND
-  (t_43_Sequel.book = t_42_After_RecursiveCte.next)),
+  (t_43_Sequel.book IS t_42_After_RecursiveCte.next)),
 t_0_After AS (SELECT
   After_RecursiveCte.book AS book,
   After_RecursiveCte.next AS next

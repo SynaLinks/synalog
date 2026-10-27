@@ -97,4 +97,4 @@ WHERE
   FROM
     t_1_Heavy AS Heavy
   WHERE
-    (Heavy.pid = Proj.pid)) IS NULL) ORDER BY pid;
+    (Heavy.pid IS NOT DISTINCT FROM Proj.pid)) IS NULL) ORDER BY pid;

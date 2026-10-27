@@ -1,5 +1,5 @@
-# Sums joined to their group's weight: the null group meets no weight.
-# Expect: rows Q = [("a", 30, 1), ("b", None, 2)]
+# Sums joined to their group's weight: the null group meets the null group's weight.
+# Expect: rows Q = [('a', 30, 1), ('b', None, 2), (None, 5, 3)]
 E(id: 1, g: "a", v: 10);
 E(id: 2, g: "a", v: 20);
 E(id: 3, g: "b", v: null);

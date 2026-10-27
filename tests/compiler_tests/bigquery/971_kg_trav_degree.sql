@@ -51,7 +51,7 @@ t_5_Person AS (SELECT
   Employees.url AS url
 FROM
   t_6_Employees AS Employees
-GROUP BY person_id, name, url ORDER BY person_id),
+GROUP BY person_id, name, url ORDER BY person_id NULLS LAST),
 t_8_Management AS (SELECT * FROM (
   
     SELECT
@@ -80,8 +80,8 @@ t_3_Manages AS (SELECT
 FROM
   t_5_Person AS Person, t_5_Person AS t_4_Person, t_8_Management AS Management
 WHERE
-  (Management.manager_id = Person.person_id) AND
-  (Management.employee_id = t_4_Person.person_id)
+  (Management.manager_id IS NOT DISTINCT FROM Person.person_id) AND
+  (Management.employee_id IS NOT DISTINCT FROM t_4_Person.person_id)
 GROUP BY manager_id, employee_id),
 t_12_Mentoring AS (SELECT * FROM (
   
@@ -101,8 +101,8 @@ t_9_Mentors AS (SELECT
 FROM
   t_5_Person AS t_10_Person, t_5_Person AS t_11_Person, t_12_Mentoring AS Mentoring
 WHERE
-  (Mentoring.mentor_id = t_10_Person.person_id) AND
-  (Mentoring.mentee_id = t_11_Person.person_id)
+  (Mentoring.mentor_id IS NOT DISTINCT FROM t_10_Person.person_id) AND
+  (Mentoring.mentee_id IS NOT DISTINCT FROM t_11_Person.person_id)
 GROUP BY mentor_id, mentee_id),
 t_2_Related_MultBodyAggAux AS (SELECT * FROM (
   
@@ -154,4 +154,4 @@ SELECT
   SUM(1) AS n
 FROM
   t_0_Endpoint AS Endpoint
-GROUP BY node_id ORDER BY node_id;
+GROUP BY node_id ORDER BY node_id NULLS LAST;

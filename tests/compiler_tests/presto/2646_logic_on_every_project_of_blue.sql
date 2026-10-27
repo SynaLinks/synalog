@@ -149,9 +149,9 @@ WHERE
   FROM
     t_4_A AS A
   WHERE
-    (A.id = t_2_Person.id) AND
-    (A.pid = Proj.pid)) IS NULL) AND
-  (Proj.team = t_2_Person.team))
+    (A.id IS NOT DISTINCT FROM t_2_Person.id) AND
+    (A.pid IS NOT DISTINCT FROM Proj.pid)) IS NULL) AND
+  (Proj.team IS NOT DISTINCT FROM t_2_Person.team))
 SELECT
   Person.id AS id
 FROM
@@ -162,5 +162,5 @@ WHERE
   FROM
     t_1_Missing AS Missing
   WHERE
-    (Missing.id = Person.id)) IS NULL) AND
+    (Missing.id IS NOT DISTINCT FROM Person.id)) IS NULL) AND
   (Person.team = 'blue');

@@ -81,8 +81,8 @@ t_0_MemberOf AS (SELECT
 FROM
   t_2_Person AS Person, t_5_Team AS t_1_Team, t_4_Employees AS Employees
 WHERE
-  (Employees.person_id = Person.person_id) AND
-  (Employees.team_id = t_1_Team.team_id)
+  (Employees.person_id IS Person.person_id) AND
+  (Employees.team_id IS t_1_Team.team_id)
 GROUP BY Person.person_id, t_1_Team.team_id)
 SELECT
   SUM(1) AS n

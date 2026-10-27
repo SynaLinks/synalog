@@ -110,7 +110,7 @@ FROM
   t_2_Order AS t_1_Order, t_3_Price AS Price
 WHERE
   (t_1_Order.state = 'paid') AND
-  (Price.item = t_1_Order.item)
+  (COALESCE(Price.item, '') = COALESCE(t_1_Order.item, '') AND (Price.item IS NULL) = (t_1_Order.item IS NULL))
 GROUP BY t_1_Order.who),
 t_4_Ref AS (SELECT
   t_5_Order.who AS who
@@ -136,10 +136,10 @@ WHERE
   FROM
     t_4_Ref AS Ref, UNNEST(ARRAY[0]) as x_24
   WHERE
-    (Ref.who = Spend.who)) AS numeric) IS NULL) AND
+    (COALESCE(Ref.who, '') = COALESCE(Spend.who, '') AND (Ref.who IS NULL) = (Spend.who IS NULL))) AS numeric) IS NULL) AND
   (CAST((SELECT
     MIN((CASE WHEN x_30 = 0 THEN 1 ELSE NULL END)) AS synalog_value
   FROM
     t_6_Pen AS Pen, UNNEST(ARRAY[0]) as x_30
   WHERE
-    (Pen.who = Spend.who)) AS numeric) IS NULL) ORDER BY who;
+    (COALESCE(Pen.who, '') = COALESCE(Spend.who, '') AND (Pen.who IS NULL) = (Spend.who IS NULL))) AS numeric) IS NULL) ORDER BY who;

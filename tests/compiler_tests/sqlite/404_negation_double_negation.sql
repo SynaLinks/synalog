@@ -19,4 +19,4 @@ WHERE
   FROM
     t_0_NotB AS NotB, JSON_EACH(JSON_ARRAY(0)) as x_6
   WHERE
-    (NotB.x = x_3.value)) IS NULL);
+    (NotB.x IS x_3.value)) IS NULL);

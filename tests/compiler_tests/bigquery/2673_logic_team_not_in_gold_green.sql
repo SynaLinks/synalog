@@ -64,6 +64,6 @@ WHERE
   ((SELECT
     MIN(1) AS synalog_value
   FROM
-    UNNEST(ARRAY["gold", "green"]) as x_6
+    UNNEST(ARRAY["gold", "green"]) as x_5
   WHERE
-    (Person.team = x_6)) IS NULL) ORDER BY id;
+    (Person.team IS NOT DISTINCT FROM x_5)) IS NULL) ORDER BY id NULLS LAST;

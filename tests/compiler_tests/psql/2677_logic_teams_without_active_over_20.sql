@@ -85,4 +85,4 @@ WHERE
   FROM
     t_3_Senior AS Senior, UNNEST(ARRAY[0]) as x_6
   WHERE
-    (Senior.team = t_0_Team.team)) AS numeric) IS NULL) ORDER BY team;
+    (COALESCE(Senior.team, '') = COALESCE(t_0_Team.team, '') AND (Senior.team IS NULL) = (t_0_Team.team IS NULL))) AS numeric) IS NULL) ORDER BY team;

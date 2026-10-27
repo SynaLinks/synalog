@@ -18,4 +18,4 @@ WHERE
   FROM
     t_0_E AS t_1_E
   WHERE
-    (t_1_E.boss = E.id)) IS NULL) ORDER BY n NULLS LAST;
+    (t_1_E.boss <=> E.id)) IS NULL) ORDER BY n NULLS LAST;

@@ -53,7 +53,7 @@ t_0_Q_MultBodyAggAux AS (SELECT * FROM (
       FROM
         t_3_Paired AS Paired
       WHERE
-        (Paired.x = t_2_I.id)) IS NULL)
+        (Paired.x <=> t_2_I.id)) IS NULL)
   
 ) AS UNUSED_TABLE_NAME  )
 SELECT

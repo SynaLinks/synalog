@@ -3,4 +3,4 @@ SELECT
 FROM
   UNNEST(TRANSFORM(ARRAY[0, 1, 2, 4], synalog_e -> ROW(synalog_e))) as pushkin(x_3)
 WHERE
-  (x_3 = ((((2) * (x_3))) - (x_3))) ORDER BY x;
+  (x_3 IS NOT DISTINCT FROM ((((2) * (x_3))) - (x_3))) ORDER BY x;

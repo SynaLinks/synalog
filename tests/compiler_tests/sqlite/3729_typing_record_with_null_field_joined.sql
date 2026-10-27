@@ -26,4 +26,4 @@ FROM
   t_0_A AS A, t_1_B AS B
 WHERE
   (JSON_EXTRACT(A.r, "$.v") IS null) AND
-  (B.k = A.k);
+  (B.k IS A.k);

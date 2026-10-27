@@ -37,4 +37,4 @@ WHERE
   FROM
     t_2_E AS E, JSON_EACH(JSON_ARRAY(0)) as x_4
   WHERE
-    (E.a = t_0_N.n)) = 1) ORDER BY n NULLS LAST;
+    (E.a IS t_0_N.n)) = 1) ORDER BY n NULLS LAST;

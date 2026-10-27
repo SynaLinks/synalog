@@ -47,4 +47,4 @@ WHERE
     t_0_V AS t_1_V
   WHERE
     (CASE WHEN (t_1_V.x > 12) THEN true ELSE false END = true) AND
-    (V.k = t_1_V.k)) IS NULL) ORDER BY k;
+    (V.k IS NOT DISTINCT FROM t_1_V.k)) IS NULL) ORDER BY k NULLS LAST;

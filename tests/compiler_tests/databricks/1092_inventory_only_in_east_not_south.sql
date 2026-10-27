@@ -26,5 +26,5 @@ WHERE
     t_1_In AS t_3_In
   WHERE
     (t_3_In.warehouse = "south") AND
-    (t_3_In.item = t_0_In.item)) IS NULL) AND
+    (t_3_In.item <=> t_0_In.item)) IS NULL) AND
   (t_0_In.warehouse = "east") ORDER BY item NULLS LAST;

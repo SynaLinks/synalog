@@ -59,7 +59,7 @@ t_7_R_RecursiveCte_t2 AS (SELECT * FROM (
       t_1_R_RecursiveCte_t1 AS t_8_R_RecursiveCte_t1, t_3_E AS t_9_E
     WHERE
       (t_8_R_RecursiveCte_t1.synalog_step < 2) AND
-      (t_9_E.a = t_8_R_RecursiveCte_t1.x)
+      (t_9_E.a IS NOT DISTINCT FROM t_8_R_RecursiveCte_t1.x)
    UNION ALL
   
     SELECT
@@ -69,7 +69,7 @@ t_7_R_RecursiveCte_t2 AS (SELECT * FROM (
       t_1_R_RecursiveCte_t1 AS t_16_R_RecursiveCte_t1, t_3_E AS t_17_E
     WHERE
       (t_16_R_RecursiveCte_t1.synalog_step < 2) AND
-      (t_17_E.b = t_16_R_RecursiveCte_t1.x)
+      (t_17_E.b IS NOT DISTINCT FROM t_16_R_RecursiveCte_t1.x)
   
 ) AS UNUSED_TABLE_NAME  ),
 t_18_R_RecursiveCte_t3 AS (SELECT * FROM (
@@ -81,7 +81,7 @@ t_18_R_RecursiveCte_t3 AS (SELECT * FROM (
       t_7_R_RecursiveCte_t2 AS t_19_R_RecursiveCte_t2, t_3_E AS t_20_E
     WHERE
       (t_19_R_RecursiveCte_t2.synalog_step < 2) AND
-      (t_20_E.a = t_19_R_RecursiveCte_t2.x)
+      (t_20_E.a IS NOT DISTINCT FROM t_19_R_RecursiveCte_t2.x)
    UNION ALL
   
     SELECT
@@ -91,7 +91,7 @@ t_18_R_RecursiveCte_t3 AS (SELECT * FROM (
       t_7_R_RecursiveCte_t2 AS t_25_R_RecursiveCte_t2, t_3_E AS t_26_E
     WHERE
       (t_25_R_RecursiveCte_t2.synalog_step < 2) AND
-      (t_26_E.b = t_25_R_RecursiveCte_t2.x)
+      (t_26_E.b IS NOT DISTINCT FROM t_25_R_RecursiveCte_t2.x)
   
 ) AS UNUSED_TABLE_NAME  ),
 t_0_R_RecursiveCte AS (SELECT * FROM (
@@ -133,7 +133,7 @@ FROM
   t_0_R_RecursiveCte AS t_27_R_RecursiveCte, t_3_E AS t_28_E
 WHERE
   (t_27_R_RecursiveCte.synalog_step < 2) AND
-  (t_28_E.a = t_27_R_RecursiveCte.x)
+  (t_28_E.a IS NOT DISTINCT FROM t_27_R_RecursiveCte.x)
 UNION ALL
 SELECT
   t_30_E.a AS x,
@@ -142,7 +142,7 @@ FROM
   t_0_R_RecursiveCte AS t_29_R_RecursiveCte, t_3_E AS t_30_E
 WHERE
   (t_29_R_RecursiveCte.synalog_step < 2) AND
-  (t_30_E.b = t_29_R_RecursiveCte.x)
+  (t_30_E.b IS NOT DISTINCT FROM t_29_R_RecursiveCte.x)
 ))
 SELECT
   R_RecursiveCte.x AS x

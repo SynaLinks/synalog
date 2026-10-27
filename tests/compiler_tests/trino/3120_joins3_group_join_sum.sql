@@ -54,4 +54,4 @@ SELECT
 FROM
   t_1_S AS t_0_S, t_3_F AS F
 WHERE
-  (F.g = t_0_S.g) ORDER BY g;
+  (F.g IS NOT DISTINCT FROM t_0_S.g) ORDER BY g;

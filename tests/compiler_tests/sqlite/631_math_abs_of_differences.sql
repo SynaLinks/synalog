@@ -5,4 +5,4 @@ SELECT
 FROM
   JSON_EACH(JSON_ARRAY(1, 4)) as x_5, JSON_EACH(JSON_ARRAY(1, 4)) as x_7
 WHERE
-  (x_5.value != x_7.value) ORDER BY a;
+  (x_5.value IS NOT x_7.value) ORDER BY a NULLS LAST;

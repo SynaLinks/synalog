@@ -77,6 +77,6 @@ FROM
   t_1_Event AS Event, t_1_Event AS t_0_Event
 WHERE
   (Event.id < t_0_Event.id) AND
-  (t_0_Event.kind = Event.kind) AND
-  (t_0_Event."user" = Event."user") AND
-  (SUBSTR(Event."at", 1, 7) = SUBSTR(t_0_Event."at", 1, 7));
+  (t_0_Event.kind IS NOT DISTINCT FROM Event.kind) AND
+  (t_0_Event."user" IS NOT DISTINCT FROM Event."user") AND
+  (SUBSTR(Event."at", 1, 7) IS NOT DISTINCT FROM SUBSTR(t_0_Event."at", 1, 7));

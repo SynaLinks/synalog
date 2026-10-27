@@ -101,6 +101,6 @@ FROM
   t_1_Prev AS Prev, t_4_S AS S, t_4_S AS t_0_S
 WHERE
   (S.r = "north") AND
-  (S.d = Prev.d) AND
+  (S.d IS NOT DISTINCT FROM Prev.d) AND
   (t_0_S.r = "north") AND
-  (t_0_S.d = Prev.p) ORDER BY d, delta;
+  (t_0_S.d IS NOT DISTINCT FROM Prev.p) ORDER BY d NULLS LAST, delta NULLS LAST;

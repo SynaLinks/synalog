@@ -39,4 +39,4 @@ SELECT
 FROM
   t_1_Person AS Person, t_2_City AS t_0_City
 WHERE
-  (t_0_City.city_id = Person.city_id) ORDER BY name;
+  (COALESCE(t_0_City.city_id, 0) = COALESCE(Person.city_id, 0) AND (t_0_City.city_id IS NULL) = (Person.city_id IS NULL)) ORDER BY name;

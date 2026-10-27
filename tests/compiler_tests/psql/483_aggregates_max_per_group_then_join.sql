@@ -36,5 +36,5 @@ SELECT
 FROM
   t_1_V AS V, t_2_M AS t_0_M
 WHERE
-  (t_0_M.g = V.g) AND
-  (t_0_M.m = V.x) ORDER BY g;
+  (COALESCE(t_0_M.g, '') = COALESCE(V.g, '') AND (t_0_M.g IS NULL) = (V.g IS NULL)) AND
+  (COALESCE(t_0_M.m, 0) = COALESCE(V.x, 0) AND (t_0_M.m IS NULL) = (V.x IS NULL)) ORDER BY g;

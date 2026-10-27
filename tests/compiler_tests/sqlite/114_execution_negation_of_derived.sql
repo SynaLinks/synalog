@@ -41,7 +41,7 @@ t_1_Reach_RecursiveCte AS (SELECT * FROM (
         (((0) + (1)) < 10) AND
         (0 < 10) AND
         (1 = 0) AND
-        (t_5_Edge.x = t_7_Edge.y) AND
+        (t_5_Edge.x IS t_7_Edge.y) AND
         (t_7_Edge.x = 'a')
      UNION ALL
     
@@ -56,8 +56,8 @@ t_1_Reach_RecursiveCte AS (SELECT * FROM (
         (((0) + (1)) < 10) AND
         (0 < 10) AND
         (1 = 0) AND
-        (t_10_Edge.x = t_12_Edge.y) AND
-        (t_12_Edge.x = t_14_Edge.y) AND
+        (t_10_Edge.x IS t_12_Edge.y) AND
+        (t_12_Edge.x IS t_14_Edge.y) AND
         (t_14_Edge.x = 'a')
      UNION ALL
     
@@ -73,9 +73,9 @@ t_1_Reach_RecursiveCte AS (SELECT * FROM (
         (((0) + (1)) < 10) AND
         (0 < 10) AND
         (1 = 0) AND
-        (t_17_Edge.x = t_19_Edge.y) AND
-        (t_19_Edge.x = t_21_Edge.y) AND
-        (t_21_Edge.x = t_23_Edge.y) AND
+        (t_17_Edge.x IS t_19_Edge.y) AND
+        (t_19_Edge.x IS t_21_Edge.y) AND
+        (t_21_Edge.x IS t_23_Edge.y) AND
         (t_23_Edge.x = 'a')
      UNION ALL
     
@@ -92,10 +92,10 @@ t_1_Reach_RecursiveCte AS (SELECT * FROM (
         (((0) + (1)) < 10) AND
         (0 < 10) AND
         (1 = 0) AND
-        (t_26_Edge.x = t_28_Edge.y) AND
-        (t_28_Edge.x = t_30_Edge.y) AND
-        (t_30_Edge.x = t_32_Edge.y) AND
-        (t_32_Edge.x = t_34_Edge.y) AND
+        (t_26_Edge.x IS t_28_Edge.y) AND
+        (t_28_Edge.x IS t_30_Edge.y) AND
+        (t_30_Edge.x IS t_32_Edge.y) AND
+        (t_32_Edge.x IS t_34_Edge.y) AND
         (t_34_Edge.x = 'a')
     
   ) AS UNUSED_TABLE_NAME  
@@ -109,7 +109,7 @@ FROM
   t_1_Reach_RecursiveCte AS t_36_Reach_RecursiveCte, t_3_Edge AS t_37_Edge
 WHERE
   (t_36_Reach_RecursiveCte.synalog_step < 10) AND
-  (t_37_Edge.x = t_36_Reach_RecursiveCte.y)),
+  (t_37_Edge.x IS t_36_Reach_RecursiveCte.y)),
 t_0_Reach AS (SELECT
   Reach_RecursiveCte.x AS x,
   Reach_RecursiveCte.y AS y
@@ -127,4 +127,4 @@ WHERE
     t_0_Reach AS Reach, JSON_EACH(JSON_ARRAY(0)) as x_7
   WHERE
     (Reach.x = 'a') AND
-    (Reach.y = x_3.value)) IS NULL) ORDER BY n NULLS LAST;
+    (Reach.y IS x_3.value)) IS NULL) ORDER BY n NULLS LAST;

@@ -59,4 +59,4 @@ SELECT
 FROM
   t_1_Person AS Person, t_2_Role AS t_0_Role
 WHERE
-  (t_0_Role.name = Person.name) ORDER BY id, role;
+  (COALESCE(t_0_Role.name, '') = COALESCE(Person.name, '') AND (t_0_Role.name IS NULL) = (Person.name IS NULL)) ORDER BY id, role;

@@ -67,4 +67,4 @@ SELECT
 FROM
   t_0_Person AS Person, UNNEST(ARRAY['gold', 'green']) as x_3
 WHERE
-  (Person.team = x_3) ORDER BY id;
+  (COALESCE(Person.team, '') = COALESCE(x_3, '') AND (Person.team IS NULL) = (x_3 IS NULL)) ORDER BY id;

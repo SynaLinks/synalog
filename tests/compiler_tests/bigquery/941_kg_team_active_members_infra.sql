@@ -57,7 +57,7 @@ t_0_Active AS (SELECT
 FROM
   t_1_Person AS Person, t_3_Employees AS Employees
 WHERE
-  (Employees.person_id = Person.person_id) AND
+  (Employees.person_id IS NOT DISTINCT FROM Person.person_id) AND
   (Employees.status = "active")
 GROUP BY person_id),
 t_10_Teams AS (SELECT * FROM (
@@ -89,14 +89,14 @@ t_4_MemberOf AS (SELECT
 FROM
   t_1_Person AS t_5_Person, t_9_Team AS t_6_Team, t_3_Employees AS t_7_Employees
 WHERE
-  (t_7_Employees.person_id = t_5_Person.person_id) AND
-  (t_7_Employees.team_id = t_6_Team.team_id)
+  (t_7_Employees.person_id IS NOT DISTINCT FROM t_5_Person.person_id) AND
+  (t_7_Employees.team_id IS NOT DISTINCT FROM t_6_Team.team_id)
 GROUP BY person_id, team_id)
 SELECT
   Active.person_id AS person_id
 FROM
   t_0_Active AS Active, t_4_MemberOf AS MemberOf
 WHERE
-  (MemberOf.person_id = Active.person_id) AND
+  (MemberOf.person_id IS NOT DISTINCT FROM Active.person_id) AND
   (MemberOf.team_id = 20)
 GROUP BY person_id ORDER BY person_id NULLS LAST;

@@ -62,7 +62,7 @@ t_0_R_MultBodyAggAux AS (SELECT * FROM (
     FROM
       t_1_Follows AS Follows
     WHERE
-      (Follows.b != "cat") AND
+      (Follows.b IS DISTINCT FROM "cat") AND
       (Follows.a = "cat")
    UNION ALL
   
@@ -71,13 +71,13 @@ t_0_R_MultBodyAggAux AS (SELECT * FROM (
     FROM
       t_1_Follows AS t_2_Follows, t_1_Follows AS t_3_Follows
     WHERE
-      (t_3_Follows.b != "cat") AND
+      (t_3_Follows.b IS DISTINCT FROM "cat") AND
       (t_2_Follows.a = "cat") AND
-      (t_3_Follows.a = t_2_Follows.b)
+      (t_3_Follows.a IS NOT DISTINCT FROM t_2_Follows.b)
   
 ) AS UNUSED_TABLE_NAME  )
 SELECT
   R_MultBodyAggAux.b AS b
 FROM
   t_0_R_MultBodyAggAux AS R_MultBodyAggAux
-GROUP BY b ORDER BY b;
+GROUP BY b ORDER BY b NULLS LAST;

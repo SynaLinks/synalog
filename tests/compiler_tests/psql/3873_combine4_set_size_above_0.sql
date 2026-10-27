@@ -74,6 +74,6 @@ FROM
   t_1_O AS O, UNNEST(ARRAY[0]) as x_6
 WHERE
   (O.amt > 0) AND
-  (O.c = t_0_C.c)) AS numeric[])) AS n
+  (COALESCE(O.c, '') = COALESCE(t_0_C.c, '') AND (O.c IS NULL) = (t_0_C.c IS NULL))) AS numeric[])) AS n
 FROM
   t_2_C AS t_0_C ORDER BY c;

@@ -54,7 +54,7 @@ t_1_Hop_RecursiveCte AS (SELECT * FROM (
         (0 < 5) AND
         (0 < 25) AND
         (1 = 0) AND
-        (t_5_Edge.a = t_7_Edge.b) AND
+        (t_5_Edge.a IS t_7_Edge.b) AND
         (t_7_Edge.a = 0)
      UNION ALL
     
@@ -72,8 +72,8 @@ t_1_Hop_RecursiveCte AS (SELECT * FROM (
         (0 < 5) AND
         (0 < 25) AND
         (1 = 0) AND
-        (t_10_Edge.a = t_12_Edge.b) AND
-        (t_12_Edge.a = t_14_Edge.b) AND
+        (t_10_Edge.a IS t_12_Edge.b) AND
+        (t_12_Edge.a IS t_14_Edge.b) AND
         (t_14_Edge.a = 0)
      UNION ALL
     
@@ -93,9 +93,9 @@ t_1_Hop_RecursiveCte AS (SELECT * FROM (
         (0 < 5) AND
         (0 < 25) AND
         (1 = 0) AND
-        (t_17_Edge.a = t_19_Edge.b) AND
-        (t_19_Edge.a = t_21_Edge.b) AND
-        (t_21_Edge.a = t_23_Edge.b) AND
+        (t_17_Edge.a IS t_19_Edge.b) AND
+        (t_19_Edge.a IS t_21_Edge.b) AND
+        (t_21_Edge.a IS t_23_Edge.b) AND
         (t_23_Edge.a = 0)
      UNION ALL
     
@@ -117,10 +117,10 @@ t_1_Hop_RecursiveCte AS (SELECT * FROM (
         (0 < 5) AND
         (0 < 25) AND
         (1 = 0) AND
-        (t_26_Edge.a = t_28_Edge.b) AND
-        (t_28_Edge.a = t_30_Edge.b) AND
-        (t_30_Edge.a = t_32_Edge.b) AND
-        (t_32_Edge.a = t_34_Edge.b) AND
+        (t_26_Edge.a IS t_28_Edge.b) AND
+        (t_28_Edge.a IS t_30_Edge.b) AND
+        (t_30_Edge.a IS t_32_Edge.b) AND
+        (t_32_Edge.a IS t_34_Edge.b) AND
         (t_34_Edge.a = 0)
     
   ) AS UNUSED_TABLE_NAME  
@@ -135,7 +135,7 @@ FROM
 WHERE
   (t_36_Hop_RecursiveCte.d < 5) AND
   (t_36_Hop_RecursiveCte.synalog_step < 25) AND
-  (t_37_Edge.a = t_36_Hop_RecursiveCte.node)),
+  (t_37_Edge.a IS t_36_Hop_RecursiveCte.node)),
 t_0_Hop AS (SELECT
   Hop_RecursiveCte.node AS node,
   Hop_RecursiveCte.d AS d

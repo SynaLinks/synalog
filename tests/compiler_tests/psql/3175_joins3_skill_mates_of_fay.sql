@@ -90,9 +90,9 @@ SELECT
 FROM
   t_2_E AS E, t_3_S AS S, t_3_S AS t_0_S, t_2_E AS t_1_E
 WHERE
-  (t_0_S.id != E.id) AND
+  (t_0_S.id IS DISTINCT FROM E.id) AND
   (E.name = 'fay') AND
-  (S.id = E.id) AND
-  (t_0_S.skill = S.skill) AND
-  (t_1_E.id = t_0_S.id)
+  (COALESCE(S.id, 0) = COALESCE(E.id, 0) AND (S.id IS NULL) = (E.id IS NULL)) AND
+  (COALESCE(t_0_S.skill, '') = COALESCE(S.skill, '') AND (t_0_S.skill IS NULL) = (S.skill IS NULL)) AND
+  (COALESCE(t_1_E.id, 0) = COALESCE(t_0_S.id, 0) AND (t_1_E.id IS NULL) = (t_0_S.id IS NULL))
 GROUP BY t_1_E.name;

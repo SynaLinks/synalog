@@ -34,6 +34,6 @@ WHERE
   FROM
     t_1_A AS A, t_2_Proj AS Proj
   WHERE
-    (Proj.team != Person.team) AND
-    (A.id = Person.id) AND
-    (Proj.pid = A.pid)) IS NULL) ORDER BY id NULLS LAST;
+    (NOT (Proj.team <=> Person.team)) AND
+    (A.id <=> Person.id) AND
+    (Proj.pid <=> A.pid)) IS NULL) ORDER BY id NULLS LAST;

@@ -82,5 +82,5 @@ WHERE
   FROM
     t_2_A AS t_5_A, t_3_B AS t_6_B, UNNEST(ARRAY[0]) as x_10
   WHERE
-    (t_6_B.x = t_5_A.x) AND
-    (U.x = t_5_A.x)) AS numeric) IS NULL) ORDER BY x;
+    (COALESCE(t_6_B.x, 0) = COALESCE(t_5_A.x, 0) AND (t_6_B.x IS NULL) = (t_5_A.x IS NULL)) AND
+    (COALESCE(U.x, 0) = COALESCE(t_5_A.x, 0) AND (U.x IS NULL) = (t_5_A.x IS NULL))) AS numeric) IS NULL) ORDER BY x;

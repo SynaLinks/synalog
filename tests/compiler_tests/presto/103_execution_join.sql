@@ -33,4 +33,4 @@ SELECT
 FROM
   t_1_Person AS Person, t_2_City AS t_0_City
 WHERE
-  (t_0_City.city_id = Person.city_id) ORDER BY name;
+  (t_0_City.city_id IS NOT DISTINCT FROM Person.city_id) ORDER BY name;

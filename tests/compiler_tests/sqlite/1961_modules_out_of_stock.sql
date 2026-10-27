@@ -63,4 +63,4 @@ WHERE
     t_1_Shop_Stock AS Shop_Stock, JSON_EACH(JSON_ARRAY(0)) as x_4
   WHERE
     (Shop_Stock.qty > 0) AND
-    (Shop_Product.sku = Shop_Stock.sku)) IS NULL) ORDER BY sku NULLS LAST;
+    (Shop_Product.sku IS Shop_Stock.sku)) IS NULL) ORDER BY sku NULLS LAST;

@@ -38,4 +38,4 @@ WHERE
   FROM
     t_3_Loud AS Loud, UNNEST(ARRAY[0]) as x_6
   WHERE
-    (Loud.k = t_0_K.k)) AS numeric) IS NULL) ORDER BY k;
+    (COALESCE(Loud.k, '') = COALESCE(t_0_K.k, '') AND (Loud.k IS NULL) = (t_0_K.k IS NULL))) AS numeric) IS NULL) ORDER BY k;

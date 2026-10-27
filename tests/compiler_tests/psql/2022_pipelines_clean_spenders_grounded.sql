@@ -219,7 +219,7 @@ FROM
   t_2_Order AS t_1_Order, t_3_Price AS Price
 WHERE
   (t_1_Order.state = 'paid') AND
-  (Price.item = t_1_Order.item)
+  (COALESCE(Price.item, '') = COALESCE(t_1_Order.item, '') AND (Price.item IS NULL) = (t_1_Order.item IS NULL))
 GROUP BY t_1_Order.who)
 SELECT
   Spend.who AS who
@@ -231,4 +231,4 @@ WHERE
   FROM
     synalog_home.Trouble AS Trouble, UNNEST(ARRAY[0]) as x_24
   WHERE
-    (Trouble.who = Spend.who)) AS numeric) IS NULL) ORDER BY who;
+    (COALESCE(Trouble.who, '') = COALESCE(Spend.who, '') AND (Trouble.who IS NULL) = (Spend.who IS NULL))) AS numeric) IS NULL) ORDER BY who;

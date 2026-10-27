@@ -85,4 +85,4 @@ WHERE
   FROM
     t_3_Senior AS Senior, (select unnest([0]) as unnested_pod) as x_6
   WHERE
-    (Senior.team = t_0_Team.team)) IS NULL) ORDER BY team;
+    (Senior.team IS NOT DISTINCT FROM t_0_Team.team)) IS NULL) ORDER BY team;

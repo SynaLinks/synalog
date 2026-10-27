@@ -100,7 +100,7 @@ t_0_Q_MultBodyAggAux AS (SELECT * FROM (
     WHERE
       (t_3_I.c IS NOT null) AND
       (t_2_P.a = 2) AND
-      (t_3_I.id = t_2_P.b)
+      (COALESCE(t_3_I.id, 0) = COALESCE(t_2_P.b, 0) AND (t_3_I.id IS NULL) = (t_2_P.b IS NULL))
   
 ) AS UNUSED_TABLE_NAME  )
 SELECT

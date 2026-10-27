@@ -26,5 +26,5 @@ SELECT
 FROM
   t_1_W AS t_0_W, UNNEST(SPLIT(t_0_W.s, " ")) as x_2
 WHERE
-  (x_2 != "")
+  (x_2 IS DISTINCT FROM "")
 GROUP BY w ORDER BY w NULLS LAST, n NULLS LAST;

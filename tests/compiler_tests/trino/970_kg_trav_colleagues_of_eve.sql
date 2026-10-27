@@ -137,8 +137,8 @@ SELECT
 FROM
   synalog_test.Person AS Person, synalog_test.Team AS Team, t_0_Employees AS Employees
 WHERE
-  (Employees.person_id = Person.person_id) AND
-  (Employees.team_id = Team.team_id)
+  (Employees.person_id IS NOT DISTINCT FROM Person.person_id) AND
+  (Employees.team_id IS NOT DISTINCT FROM Team.team_id)
 GROUP BY 1, 2;
 
 -- Interacting with table synalog_test.MemberOf
@@ -148,7 +148,7 @@ SELECT
 FROM
   synalog_test.MemberOf AS MemberOf, synalog_test.MemberOf AS t_0_MemberOf
 WHERE
-  (t_0_MemberOf.person_id != 5) AND
+  (t_0_MemberOf.person_id IS DISTINCT FROM 5) AND
   (MemberOf.person_id = 5) AND
-  (t_0_MemberOf.team_id = MemberOf.team_id)
+  (t_0_MemberOf.team_id IS NOT DISTINCT FROM MemberOf.team_id)
 GROUP BY 1 ORDER BY person_id;

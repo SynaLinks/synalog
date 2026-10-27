@@ -18,5 +18,5 @@ SELECT
 FROM
   t_1_M AS M, UNNEST(TRANSFORM(ARRAY[1, 2], synalog_e -> ROW(synalog_e))) as pushkin(x_4)
 WHERE
-  (x_4 = M.k)
+  (x_4 IS NOT DISTINCT FROM M.k)
 GROUP BY 1 ORDER BY k;

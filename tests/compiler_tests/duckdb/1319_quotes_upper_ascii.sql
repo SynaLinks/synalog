@@ -52,5 +52,5 @@ SELECT
 FROM
   t_1_W AS t_0_W
 WHERE
-  (t_0_W.id != 3) AND
-  (t_0_W.id != 4) ORDER BY id, u;
+  (t_0_W.id IS DISTINCT FROM 3) AND
+  (t_0_W.id IS DISTINCT FROM 4) ORDER BY id, u;

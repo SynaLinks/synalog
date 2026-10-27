@@ -32,5 +32,5 @@ FROM
   t_1_P AS P, t_1_P AS t_0_P, JSON_EACH(JSON_EXTRACT(P.r, "$.tags")) as x_6, JSON_EACH(JSON_EXTRACT(t_0_P.r, "$.tags")) as x_7
 WHERE
   (P.id < t_0_P.id) AND
-  (x_6.value = x_7.value)
-GROUP BY P.id, t_0_P.id ORDER BY a, b;
+  (x_6.value IS x_7.value)
+GROUP BY P.id, t_0_P.id ORDER BY a NULLS LAST, b NULLS LAST;

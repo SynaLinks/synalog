@@ -30,7 +30,7 @@ SELECT * FROM (
         UNNEST(GENERATE_ARRAY(0, 10 - 1)) as x_10
       WHERE
         ((MOD(x_5, NULLIF(2, 0))) = 0) AND
-        (x_5 = x_10)) IS NULL)
+        (x_5 IS NOT DISTINCT FROM x_10)) IS NULL)
    UNION ALL
   
     SELECT
@@ -45,7 +45,7 @@ SELECT * FROM (
       FROM
         t_0_Prime AS Prime
       WHERE
-        (Prime.col0 = x_5)) IS NULL)
+        (Prime.col0 IS NOT DISTINCT FROM x_5)) IS NULL)
    UNION ALL
   
     SELECT
@@ -59,7 +59,7 @@ SELECT * FROM (
       FROM
         t_0_Prime AS Prime
       WHERE
-        (Prime.col0 = x_7)) IS NULL) AND
+        (Prime.col0 IS NOT DISTINCT FROM x_7)) IS NULL) AND
       ((MOD(x_7, NULLIF(2, 0))) = 0)
   
 ) AS UNUSED_TABLE_NAME  ORDER BY test_name NULLS LAST, x NULLS LAST ;

@@ -51,7 +51,7 @@ t_3_Person AS (SELECT
   Employees.url AS url
 FROM
   t_4_Employees AS Employees
-GROUP BY Employees.person_id, Employees.name, Employees.url ORDER BY person_id),
+GROUP BY Employees.person_id, Employees.name, Employees.url ORDER BY person_id NULLS LAST),
 t_6_Mentoring AS (SELECT * FROM (
   
     SELECT
@@ -70,8 +70,8 @@ t_1_Mentors AS (SELECT
 FROM
   t_3_Person AS Person, t_3_Person AS t_2_Person, t_6_Mentoring AS Mentoring
 WHERE
-  (Mentoring.mentor_id = Person.person_id) AND
-  (Mentoring.mentee_id = t_2_Person.person_id)
+  (Mentoring.mentor_id IS Person.person_id) AND
+  (Mentoring.mentee_id IS t_2_Person.person_id)
 GROUP BY Person.person_id, t_2_Person.person_id),
 t_0_Pair_MultBodyAggAux AS (SELECT * FROM (
   
@@ -94,4 +94,4 @@ SELECT
   Pair_MultBodyAggAux.b AS b
 FROM
   t_0_Pair_MultBodyAggAux AS Pair_MultBodyAggAux
-GROUP BY Pair_MultBodyAggAux.a, Pair_MultBodyAggAux.b ORDER BY a, b;
+GROUP BY Pair_MultBodyAggAux.a, Pair_MultBodyAggAux.b ORDER BY a NULLS LAST, b NULLS LAST;

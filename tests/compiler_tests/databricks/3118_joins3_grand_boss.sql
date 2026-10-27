@@ -12,5 +12,5 @@ SELECT
 FROM
   t_2_E AS E, t_2_E AS t_0_E, t_2_E AS t_1_E
 WHERE
-  (t_0_E.id = E.boss) AND
-  (t_1_E.id = t_0_E.boss) ORDER BY name NULLS LAST, top NULLS LAST;
+  (t_0_E.id <=> E.boss) AND
+  (t_1_E.id <=> t_0_E.boss) ORDER BY name NULLS LAST, top NULLS LAST;

@@ -97,6 +97,6 @@ SELECT
 FROM
   t_1_E AS E
 WHERE
-  (E.d = t_0_D.d)), 0) AS n
+  (E.d IS NOT DISTINCT FROM t_0_D.d)), 0) AS n
 FROM
   t_2_D AS t_0_D ORDER BY dn NULLS LAST;

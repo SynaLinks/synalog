@@ -15,5 +15,5 @@ SELECT
 FROM
   t_1_Manages AS Manages, t_1_Manages AS t_0_Manages
 WHERE
-  (Manages.report != t_0_Manages.report) AND
-  (t_0_Manages.boss = Manages.boss) ORDER BY a NULLS LAST, b NULLS LAST;
+  (NOT (Manages.report <=> t_0_Manages.report)) AND
+  (t_0_Manages.boss <=> Manages.boss) ORDER BY a NULLS LAST, b NULLS LAST;

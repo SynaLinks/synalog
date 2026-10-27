@@ -89,5 +89,5 @@ WHERE
   FROM
     t_1_S AS S
   WHERE
-    (S.id = E.id) AND
+    (S.id IS NOT DISTINCT FROM E.id) AND
     (S.skill = 'sql')) IS NULL) ORDER BY name;

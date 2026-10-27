@@ -108,7 +108,7 @@ FROM
   t_1_Order AS t_0_Order, t_2_Price AS Price
 WHERE
   (t_0_Order.state = 'paid') AND
-  (Price.item = t_0_Order.item);
+  (Price.item IS t_0_Order.item);
 
 -- Interacting with table synalog_test.Line
 
@@ -199,5 +199,5 @@ SELECT
 FROM
   synalog_test.Line AS Line, t_1_Order
 WHERE
-  (Line.id = t_1_Order.id) AND
+  (Line.id IS t_1_Order.id) AND
   ('tea' = t_1_Order.item);

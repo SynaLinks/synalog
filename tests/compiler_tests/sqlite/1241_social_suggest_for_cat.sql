@@ -60,14 +60,14 @@ SELECT
 FROM
   t_1_Follows AS Follows, t_1_Follows AS t_0_Follows
 WHERE
-  (t_0_Follows.b != 'cat') AND
+  (t_0_Follows.b IS NOT 'cat') AND
   ((SELECT
     MIN(MagicalEntangle(1, x_8.value)) AS synalog_value
   FROM
     t_1_Follows AS t_2_Follows, JSON_EACH(JSON_ARRAY(0)) as x_8
   WHERE
     (t_2_Follows.a = 'cat') AND
-    (t_2_Follows.b = t_0_Follows.b)) IS NULL) AND
+    (t_2_Follows.b IS t_0_Follows.b)) IS NULL) AND
   (Follows.a = 'cat') AND
-  (t_0_Follows.a = Follows.b)
+  (t_0_Follows.a IS Follows.b)
 GROUP BY t_0_Follows.b;

@@ -88,6 +88,6 @@ SELECT
 FROM
   t_1_Ship AS t_0_Ship
 WHERE
-  (t_0_Ship.client = Ship.client)), 0))))]) AS synalog_v) AS pct
+  (t_0_Ship.client IS NOT DISTINCT FROM Ship.client)), 0))))]) AS synalog_v) AS pct
 FROM
   t_1_Ship AS Ship ORDER BY id NULLS LAST, pct NULLS LAST;

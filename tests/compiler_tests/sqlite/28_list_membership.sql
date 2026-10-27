@@ -36,4 +36,4 @@ SELECT
 FROM
   t_0_Items AS Items, JSON_EACH(JSON_ARRAY('fruit', 'vegetable')) as x_9
 WHERE
-  (Items.col1 = x_9.value) ORDER BY name;
+  (Items.col1 IS x_9.value) ORDER BY name NULLS LAST;

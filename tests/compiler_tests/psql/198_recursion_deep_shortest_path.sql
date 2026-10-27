@@ -60,7 +60,7 @@ t_1_Hop_RecursiveCte AS (SELECT * FROM (
         (0 < 5) AND
         (0 < 25) AND
         (1 = 0) AND
-        (t_5_Edge.a = t_7_Edge.b) AND
+        (COALESCE(t_5_Edge.a, 0) = COALESCE(t_7_Edge.b, 0) AND (t_5_Edge.a IS NULL) = (t_7_Edge.b IS NULL)) AND
         (t_7_Edge.a = 0)
      UNION ALL
     
@@ -78,8 +78,8 @@ t_1_Hop_RecursiveCte AS (SELECT * FROM (
         (0 < 5) AND
         (0 < 25) AND
         (1 = 0) AND
-        (t_10_Edge.a = t_12_Edge.b) AND
-        (t_12_Edge.a = t_14_Edge.b) AND
+        (COALESCE(t_10_Edge.a, 0) = COALESCE(t_12_Edge.b, 0) AND (t_10_Edge.a IS NULL) = (t_12_Edge.b IS NULL)) AND
+        (COALESCE(t_12_Edge.a, 0) = COALESCE(t_14_Edge.b, 0) AND (t_12_Edge.a IS NULL) = (t_14_Edge.b IS NULL)) AND
         (t_14_Edge.a = 0)
      UNION ALL
     
@@ -99,9 +99,9 @@ t_1_Hop_RecursiveCte AS (SELECT * FROM (
         (0 < 5) AND
         (0 < 25) AND
         (1 = 0) AND
-        (t_17_Edge.a = t_19_Edge.b) AND
-        (t_19_Edge.a = t_21_Edge.b) AND
-        (t_21_Edge.a = t_23_Edge.b) AND
+        (COALESCE(t_17_Edge.a, 0) = COALESCE(t_19_Edge.b, 0) AND (t_17_Edge.a IS NULL) = (t_19_Edge.b IS NULL)) AND
+        (COALESCE(t_19_Edge.a, 0) = COALESCE(t_21_Edge.b, 0) AND (t_19_Edge.a IS NULL) = (t_21_Edge.b IS NULL)) AND
+        (COALESCE(t_21_Edge.a, 0) = COALESCE(t_23_Edge.b, 0) AND (t_21_Edge.a IS NULL) = (t_23_Edge.b IS NULL)) AND
         (t_23_Edge.a = 0)
      UNION ALL
     
@@ -123,10 +123,10 @@ t_1_Hop_RecursiveCte AS (SELECT * FROM (
         (0 < 5) AND
         (0 < 25) AND
         (1 = 0) AND
-        (t_26_Edge.a = t_28_Edge.b) AND
-        (t_28_Edge.a = t_30_Edge.b) AND
-        (t_30_Edge.a = t_32_Edge.b) AND
-        (t_32_Edge.a = t_34_Edge.b) AND
+        (COALESCE(t_26_Edge.a, 0) = COALESCE(t_28_Edge.b, 0) AND (t_26_Edge.a IS NULL) = (t_28_Edge.b IS NULL)) AND
+        (COALESCE(t_28_Edge.a, 0) = COALESCE(t_30_Edge.b, 0) AND (t_28_Edge.a IS NULL) = (t_30_Edge.b IS NULL)) AND
+        (COALESCE(t_30_Edge.a, 0) = COALESCE(t_32_Edge.b, 0) AND (t_30_Edge.a IS NULL) = (t_32_Edge.b IS NULL)) AND
+        (COALESCE(t_32_Edge.a, 0) = COALESCE(t_34_Edge.b, 0) AND (t_32_Edge.a IS NULL) = (t_34_Edge.b IS NULL)) AND
         (t_34_Edge.a = 0)
     
   ) AS UNUSED_TABLE_NAME  
@@ -141,7 +141,7 @@ FROM
 WHERE
   (t_36_Hop_RecursiveCte.d < 5) AND
   (t_36_Hop_RecursiveCte.synalog_step < 25) AND
-  (t_37_Edge.a = t_36_Hop_RecursiveCte.node)),
+  (COALESCE(t_37_Edge.a, 0) = COALESCE(t_36_Hop_RecursiveCte.node, 0) AND (t_37_Edge.a IS NULL) = (t_36_Hop_RecursiveCte.node IS NULL))),
 t_0_Hop AS (SELECT
   Hop_RecursiveCte.node AS node,
   Hop_RecursiveCte.d AS d

@@ -112,5 +112,5 @@ SELECT
 FROM
   t_0_A AS A, t_1_Person AS Person
 WHERE
-  (Person.id = A.id)
-GROUP BY team ORDER BY team, h;
+  (Person.id IS NOT DISTINCT FROM A.id)
+GROUP BY team ORDER BY team NULLS LAST, h NULLS LAST;

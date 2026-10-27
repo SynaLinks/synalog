@@ -24,4 +24,4 @@ WHERE
   FROM
     t_2_Ship AS t_3_Ship
   WHERE
-    (t_3_Ship.client = t_0_Client.client)) > 10);
+    (t_3_Ship.client <=> t_0_Client.client)) > 10);

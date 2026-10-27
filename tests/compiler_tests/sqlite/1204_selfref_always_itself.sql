@@ -3,4 +3,4 @@ SELECT
 FROM
   JSON_EACH(JSON_ARRAY(0, 1, 2, 4)) as x_3
 WHERE
-  (x_3.value = ((((2) * (x_3.value))) - (x_3.value))) ORDER BY x;
+  (x_3.value IS ((((2) * (x_3.value))) - (x_3.value))) ORDER BY x NULLS LAST;

@@ -4,14 +4,6 @@ create schema if not exists synalog_home;
 -- Empty synalog type: synalogrecord893574736;
 DO $$ BEGIN if not exists (select 'I(am) :- I(think)' from pg_type where typname = 'synalogrecord893574736') then create type synalogrecord893574736 as (nirvana numeric); end if; END $$;
 
-
-DO $$
-BEGIN
--- Synalog type: synalogrecord481217614
-if not exists (select 'I(am) :- I(think)' from pg_type where typname = 'synalogrecord481217614') then create type synalogrecord481217614 as (r synalogrecord893574736); end if;
--- Synalog type: synalogrecord86796764
-if not exists (select 'I(am) :- I(think)' from pg_type where typname = 'synalogrecord86796764') then create type synalogrecord86796764 as (s text); end if;
-END $$;
 WITH t_1_Follows AS (SELECT * FROM (
   
     SELECT
@@ -76,7 +68,7 @@ t_0_R_MultBodyAggAux AS (SELECT * FROM (
     FROM
       t_1_Follows AS Follows
     WHERE
-      (Follows.b != 'fay') AND
+      (Follows.b IS DISTINCT FROM 'fay') AND
       (Follows.a = 'fay')
    UNION ALL
   
@@ -85,9 +77,9 @@ t_0_R_MultBodyAggAux AS (SELECT * FROM (
     FROM
       t_1_Follows AS t_2_Follows, t_1_Follows AS t_3_Follows
     WHERE
-      (t_3_Follows.b != 'fay') AND
+      (t_3_Follows.b IS DISTINCT FROM 'fay') AND
       (t_2_Follows.a = 'fay') AND
-      (t_3_Follows.a = t_2_Follows.b)
+      (COALESCE(t_3_Follows.a, '') = COALESCE(t_2_Follows.b, '') AND (t_3_Follows.a IS NULL) = (t_2_Follows.b IS NULL))
   
 ) AS UNUSED_TABLE_NAME  )
 SELECT

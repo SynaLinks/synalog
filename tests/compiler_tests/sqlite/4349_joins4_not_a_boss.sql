@@ -74,4 +74,4 @@ WHERE
   FROM
     t_0_E AS t_1_E, JSON_EACH(JSON_ARRAY(0)) as x_5
   WHERE
-    (t_1_E.boss = E.id)) IS NULL) ORDER BY n;
+    (t_1_E.boss IS E.id)) IS NULL) ORDER BY n NULLS LAST;

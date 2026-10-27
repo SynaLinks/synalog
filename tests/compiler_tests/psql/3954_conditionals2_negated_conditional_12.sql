@@ -53,4 +53,4 @@ WHERE
     t_0_V AS t_1_V, UNNEST(ARRAY[0]) as x_4
   WHERE
     (CASE WHEN (t_1_V.x > 12) THEN true ELSE false END = true) AND
-    (V.k = t_1_V.k)) AS numeric) IS NULL) ORDER BY k;
+    (COALESCE(V.k, 0) = COALESCE(t_1_V.k, 0) AND (V.k IS NULL) = (t_1_V.k IS NULL))) AS numeric) IS NULL) ORDER BY k;

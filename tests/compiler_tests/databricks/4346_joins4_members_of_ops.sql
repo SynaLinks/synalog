@@ -21,4 +21,4 @@ FROM
   t_1_D AS t_0_D, t_2_E AS E
 WHERE
   (t_0_D.dn = "ops") AND
-  (E.d = t_0_D.d) ORDER BY n NULLS LAST;
+  (E.d <=> t_0_D.d) ORDER BY n NULLS LAST;

@@ -24,8 +24,8 @@ t_5_Manages AS (SELECT
 FROM
   t_7_Person AS Person, t_7_Person AS t_6_Person, t_10_Management AS Management
 WHERE
-  (Management.manager_id = Person.person_id) AND
-  (Management.employee_id = t_6_Person.person_id)
+  (Management.manager_id <=> Person.person_id) AND
+  (Management.employee_id <=> t_6_Person.person_id)
 GROUP BY 1, 2),
 t_14_Mentoring AS (SELECT * FROM VALUES
   (2, 5),
@@ -37,8 +37,8 @@ t_11_Mentors AS (SELECT
 FROM
   t_7_Person AS t_12_Person, t_7_Person AS t_13_Person, t_14_Mentoring AS Mentoring
 WHERE
-  (Mentoring.mentor_id = t_12_Person.person_id) AND
-  (Mentoring.mentee_id = t_13_Person.person_id)
+  (Mentoring.mentor_id <=> t_12_Person.person_id) AND
+  (Mentoring.mentee_id <=> t_13_Person.person_id)
 GROUP BY 1, 2),
 t_4_Related_MultBodyAggAux AS (SELECT * FROM (
   
@@ -91,7 +91,7 @@ t_0_Near_MultBodyAggAux AS (SELECT * FROM (
     FROM
       t_1_Link AS Link
     WHERE
-      (Link.b != 4) AND
+      (NOT (Link.b <=> 4)) AND
       (Link.a = 4)
    UNION ALL
   
@@ -100,9 +100,9 @@ t_0_Near_MultBodyAggAux AS (SELECT * FROM (
     FROM
       t_1_Link AS t_25_Link, t_1_Link AS t_26_Link
     WHERE
-      (t_26_Link.b != 4) AND
+      (NOT (t_26_Link.b <=> 4)) AND
       (t_25_Link.a = 4) AND
-      (t_26_Link.a = t_25_Link.b)
+      (t_26_Link.a <=> t_25_Link.b)
   
 ) AS UNUSED_TABLE_NAME  )
 SELECT

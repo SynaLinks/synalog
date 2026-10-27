@@ -89,5 +89,5 @@ WHERE
   WHERE
     (t_2_U.age <= t_0_U.age) AND
     (F.a = "cid") AND
-    (t_2_U.u = F.b)) IS NULL) AND
+    (t_2_U.u IS NOT DISTINCT FROM F.b)) IS NULL) AND
   (t_0_U.u = "cid");

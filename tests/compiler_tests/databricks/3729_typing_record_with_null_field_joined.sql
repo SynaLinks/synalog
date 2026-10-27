@@ -20,4 +20,4 @@ FROM
   t_0_A AS A, t_1_B AS B
 WHERE
   (A.r.v IS null) AND
-  (B.k = A.k);
+  (B.k <=> A.k);

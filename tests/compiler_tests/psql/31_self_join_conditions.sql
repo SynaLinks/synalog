@@ -36,7 +36,7 @@ t_0_ManagerPairs AS (SELECT
 FROM
   t_3_Employee AS t_1_Employee, t_3_Employee AS t_2_Employee
 WHERE
-  (t_2_Employee.id = t_1_Employee.manager_id) ORDER BY employee)
+  (COALESCE(t_2_Employee.id, 0) = COALESCE(t_1_Employee.manager_id, 0) AND (t_2_Employee.id IS NULL) = (t_1_Employee.manager_id IS NULL)) ORDER BY employee)
 SELECT
   ManagerPairs.employee AS employee,
   ManagerPairs.manager AS manager

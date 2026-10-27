@@ -4,18 +4,6 @@ create schema if not exists synalog_home;
 drop type if exists synalogrecord893574736 cascade; create type synalogrecord893574736 as struct(nirvana numeric);
 create sequence if not exists eternal_logical_sequence;
 
-
--- Synalog type: synalogrecord481217614
-drop type if exists synalogrecord481217614 cascade; create type synalogrecord481217614 as struct(r synalogrecord893574736);
-
--- Synalog type: synalogrecord383307722
-drop type if exists synalogrecord383307722 cascade; create type synalogrecord383307722 as struct(a timestamp);
-
--- Synalog type: synalogrecord884343024
-drop type if exists synalogrecord884343024 cascade; create type synalogrecord884343024 as struct(arg numeric, value numeric);
-
--- Synalog type: synalogrecord519939597
-drop type if exists synalogrecord519939597 cascade; create type synalogrecord519939597 as struct(args text[], predicate text);
 WITH t_0_Sale AS (SELECT * FROM (
   
     SELECT
@@ -82,8 +70,8 @@ WHERE
   ((SELECT
     MIN((CASE WHEN x_10.unnested_pod = 0 THEN 1 ELSE NULL END)) AS synalog_value
   FROM
-    t_0_Sale AS t_1_Sale, (select unnest([0]::numeric[]) as unnested_pod) as x_10
+    t_0_Sale AS t_1_Sale, (select unnest([0]) as unnested_pod) as x_10
   WHERE
     (t_1_Sale.amount < 60) AND
-    (Sale.id = t_1_Sale.id)) IS NULL) AND
+    (Sale.id IS NOT DISTINCT FROM t_1_Sale.id)) IS NULL) AND
   (Sale.region = 'east') ORDER BY id;

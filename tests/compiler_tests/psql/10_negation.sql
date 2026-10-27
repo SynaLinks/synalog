@@ -10,5 +10,5 @@ FROM
   UNNEST(COALESCE((SELECT ARRAY_AGG(x) FROM GENERATE_SERIES(0, 10 - 1) as x), '{}')) as x_10, UNNEST(COALESCE((SELECT ARRAY_AGG(x) FROM GENERATE_SERIES(0, 10 - 1) as x), '{}')) as x_12
 WHERE
   (x_12 > 5) AND
-  (x_12 = x_10) AND
+  (COALESCE(x_12, 0) = COALESCE(x_10, 0) AND (x_12 IS NULL) = (x_10 IS NULL)) AND
   ((MOD(CAST(x_10 AS numeric), NULLIF(CAST(2 AS numeric), 0))) = 0) ORDER BY col0;

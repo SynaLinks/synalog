@@ -67,12 +67,12 @@ SELECT
 FROM
   t_1_O AS O
 WHERE
-  (O.c = t_0_C.c)) AS t,
+  (O.c IS NOT DISTINCT FROM t_0_C.c)) AS t,
   (SELECT
   SUM(1) AS synalog_value
 FROM
   t_1_O AS t_2_O
 WHERE
-  (t_2_O.c = t_0_C.c)) AS n
+  (t_2_O.c IS NOT DISTINCT FROM t_0_C.c)) AS n
 FROM
   t_3_C AS t_0_C ORDER BY c;

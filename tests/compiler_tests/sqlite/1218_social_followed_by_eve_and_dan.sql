@@ -62,4 +62,4 @@ FROM
 WHERE
   (Follows.a = 'eve') AND
   (t_0_Follows.a = 'dan') AND
-  (t_0_Follows.b = Follows.b);
+  (t_0_Follows.b IS Follows.b);

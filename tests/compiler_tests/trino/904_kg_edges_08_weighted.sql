@@ -111,6 +111,6 @@ SELECT
 FROM
   synalog_test.Person AS Person, synalog_test.Client AS t_0_Client, t_1_Orders AS Orders
 WHERE
-  (Orders.person_id = Person.person_id) AND
-  (Orders.client_id = t_0_Client.client_id)
+  (Orders.person_id IS NOT DISTINCT FROM Person.person_id) AND
+  (Orders.client_id IS NOT DISTINCT FROM t_0_Client.client_id)
 GROUP BY 1, 2 ORDER BY person_id, client_id;

@@ -18,7 +18,7 @@ t_0_R_MultBodyAggAux AS (SELECT * FROM (
     FROM
       t_1_Follows AS Follows
     WHERE
-      (Follows.b != "eve") AND
+      (NOT (Follows.b <=> "eve")) AND
       (Follows.a = "eve")
    UNION ALL
   
@@ -27,9 +27,9 @@ t_0_R_MultBodyAggAux AS (SELECT * FROM (
     FROM
       t_1_Follows AS t_2_Follows, t_1_Follows AS t_3_Follows
     WHERE
-      (t_3_Follows.b != "eve") AND
+      (NOT (t_3_Follows.b <=> "eve")) AND
       (t_2_Follows.a = "eve") AND
-      (t_3_Follows.a = t_2_Follows.b)
+      (t_3_Follows.a <=> t_2_Follows.b)
   
 ) AS UNUSED_TABLE_NAME  )
 SELECT

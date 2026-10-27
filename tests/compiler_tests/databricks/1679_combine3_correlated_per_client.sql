@@ -21,6 +21,6 @@ SELECT
 FROM
   t_1_Ship AS Ship
 WHERE
-  (Ship.client = t_0_Client.client)) AS t
+  (Ship.client <=> t_0_Client.client)) AS t
 FROM
   t_2_Client AS t_0_Client ORDER BY client NULLS LAST, t NULLS LAST;

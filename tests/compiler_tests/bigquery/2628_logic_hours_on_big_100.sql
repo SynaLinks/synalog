@@ -86,5 +86,5 @@ SELECT
 FROM
   t_0_A AS A, t_1_Proj AS Proj
 WHERE
-  (Proj.pid = A.pid)
-GROUP BY id ORDER BY id, h;
+  (Proj.pid IS NOT DISTINCT FROM A.pid)
+GROUP BY id ORDER BY id NULLS LAST, h NULLS LAST;

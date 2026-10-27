@@ -84,6 +84,6 @@ SELECT
 FROM
   t_1_F AS F
 WHERE
-  (F.a = t_0_U.u)), true) AS l
+  (F.a IS NOT DISTINCT FROM t_0_U.u)), true) AS l
 FROM
   t_2_U AS t_0_U ORDER BY u NULLS LAST;

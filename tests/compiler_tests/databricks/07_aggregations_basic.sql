@@ -38,6 +38,6 @@ SELECT
 FROM
   t_0_TotalByProduct AS TotalByProduct, t_2_CountByProduct AS CountByProduct, t_4_MinByProduct AS MinByProduct, t_6_MaxByProduct AS MaxByProduct
 WHERE
-  (CountByProduct.product = TotalByProduct.product) AND
-  (MinByProduct.product = TotalByProduct.product) AND
-  (MaxByProduct.product = TotalByProduct.product) ORDER BY product NULLS LAST;
+  (CountByProduct.product <=> TotalByProduct.product) AND
+  (MinByProduct.product <=> TotalByProduct.product) AND
+  (MaxByProduct.product <=> TotalByProduct.product) ORDER BY product NULLS LAST;

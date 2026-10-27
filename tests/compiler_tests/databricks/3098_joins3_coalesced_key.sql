@@ -18,4 +18,4 @@ SELECT
 FROM
   t_0_E AS E, t_1_D AS D
 WHERE
-  (D.dept = COALESCE(E.dept, 40)) ORDER BY name NULLS LAST, dname NULLS LAST;
+  (D.dept <=> COALESCE(E.dept, 40)) ORDER BY name NULLS LAST, dname NULLS LAST;

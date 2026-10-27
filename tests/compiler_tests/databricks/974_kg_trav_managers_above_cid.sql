@@ -25,8 +25,8 @@ t_2_Manages AS (SELECT
 FROM
   t_4_Person AS Person, t_4_Person AS t_3_Person, t_7_Management AS Management
 WHERE
-  (Management.manager_id = Person.person_id) AND
-  (Management.employee_id = t_3_Person.person_id)
+  (Management.manager_id <=> Person.person_id) AND
+  (Management.employee_id <=> t_3_Person.person_id)
 GROUP BY 1, 2),
 t_0_Chain_MultBodyAggAux_f2 AS (SELECT * FROM (
   
@@ -84,8 +84,8 @@ t_2_Manages AS (SELECT
 FROM
   t_4_Person AS Person, t_4_Person AS t_3_Person, t_7_Management AS Management
 WHERE
-  (Management.manager_id = Person.person_id) AND
-  (Management.employee_id = t_3_Person.person_id)
+  (Management.manager_id <=> Person.person_id) AND
+  (Management.employee_id <=> t_3_Person.person_id)
 GROUP BY 1, 2),
 t_1_Chain_MultBodyAggAux_f3 AS (SELECT * FROM (
   
@@ -95,7 +95,7 @@ t_1_Chain_MultBodyAggAux_f3 AS (SELECT * FROM (
     FROM
       synalog_test.Chain_sn_t0 AS Chain_sn_t0, t_2_Manages AS Manages
     WHERE
-      (Manages.employee_id = Chain_sn_t0.manager_id)
+      (Manages.employee_id <=> Chain_sn_t0.manager_id)
    UNION ALL
   
     SELECT
@@ -148,8 +148,8 @@ t_2_Manages AS (SELECT
 FROM
   t_4_Person AS Person, t_4_Person AS t_3_Person, t_7_Management AS Management
 WHERE
-  (Management.manager_id = Person.person_id) AND
-  (Management.employee_id = t_3_Person.person_id)
+  (Management.manager_id <=> Person.person_id) AND
+  (Management.employee_id <=> t_3_Person.person_id)
 GROUP BY 1, 2),
 t_1_Chain_MultBodyAggAux_f4 AS (SELECT * FROM (
   
@@ -159,7 +159,7 @@ t_1_Chain_MultBodyAggAux_f4 AS (SELECT * FROM (
     FROM
       synalog_test.Chain_sn_t1 AS Chain_sn_t1, t_2_Manages AS Manages
     WHERE
-      (Manages.employee_id = Chain_sn_t1.manager_id)
+      (Manages.employee_id <=> Chain_sn_t1.manager_id)
    UNION ALL
   
     SELECT
@@ -212,8 +212,8 @@ t_2_Manages AS (SELECT
 FROM
   t_4_Person AS Person, t_4_Person AS t_3_Person, t_7_Management AS Management
 WHERE
-  (Management.manager_id = Person.person_id) AND
-  (Management.employee_id = t_3_Person.person_id)
+  (Management.manager_id <=> Person.person_id) AND
+  (Management.employee_id <=> t_3_Person.person_id)
 GROUP BY 1, 2),
 t_1_Chain_MultBodyAggAux_f5 AS (SELECT * FROM (
   
@@ -223,7 +223,7 @@ t_1_Chain_MultBodyAggAux_f5 AS (SELECT * FROM (
     FROM
       synalog_test.Chain_sn_t2 AS Chain_sn_t2, t_2_Manages AS Manages
     WHERE
-      (Manages.employee_id = Chain_sn_t2.manager_id)
+      (Manages.employee_id <=> Chain_sn_t2.manager_id)
    UNION ALL
   
     SELECT
@@ -276,8 +276,8 @@ t_2_Manages AS (SELECT
 FROM
   t_4_Person AS Person, t_4_Person AS t_3_Person, t_7_Management AS Management
 WHERE
-  (Management.manager_id = Person.person_id) AND
-  (Management.employee_id = t_3_Person.person_id)
+  (Management.manager_id <=> Person.person_id) AND
+  (Management.employee_id <=> t_3_Person.person_id)
 GROUP BY 1, 2),
 t_1_Chain_MultBodyAggAux_f6 AS (SELECT * FROM (
   
@@ -287,7 +287,7 @@ t_1_Chain_MultBodyAggAux_f6 AS (SELECT * FROM (
     FROM
       synalog_test.Chain_sn_t3 AS Chain_sn_t3, t_2_Manages AS Manages
     WHERE
-      (Manages.employee_id = Chain_sn_t3.manager_id)
+      (Manages.employee_id <=> Chain_sn_t3.manager_id)
    UNION ALL
   
     SELECT
@@ -340,8 +340,8 @@ t_2_Manages AS (SELECT
 FROM
   t_4_Person AS Person, t_4_Person AS t_3_Person, t_7_Management AS Management
 WHERE
-  (Management.manager_id = Person.person_id) AND
-  (Management.employee_id = t_3_Person.person_id)
+  (Management.manager_id <=> Person.person_id) AND
+  (Management.employee_id <=> t_3_Person.person_id)
 GROUP BY 1, 2),
 t_1_Chain_MultBodyAggAux_f7 AS (SELECT * FROM (
   
@@ -351,7 +351,7 @@ t_1_Chain_MultBodyAggAux_f7 AS (SELECT * FROM (
     FROM
       synalog_test.Chain_sn_t4 AS Chain_sn_t4, t_2_Manages AS Manages
     WHERE
-      (Manages.employee_id = Chain_sn_t4.manager_id)
+      (Manages.employee_id <=> Chain_sn_t4.manager_id)
    UNION ALL
   
     SELECT
@@ -452,8 +452,8 @@ t_2_Manages AS (SELECT
 FROM
   t_4_Person AS Person, t_4_Person AS t_3_Person, t_7_Management AS Management
 WHERE
-  (Management.manager_id = Person.person_id) AND
-  (Management.employee_id = t_3_Person.person_id)
+  (Management.manager_id <=> Person.person_id) AND
+  (Management.employee_id <=> t_3_Person.person_id)
 GROUP BY 1, 2),
 t_1_Chain_MultBodyAggAux_f8 AS (SELECT * FROM (
   
@@ -463,7 +463,7 @@ t_1_Chain_MultBodyAggAux_f8 AS (SELECT * FROM (
     FROM
       synalog_test.Chain_sn_delta AS Chain_sn_delta, t_2_Manages AS Manages
     WHERE
-      (Manages.employee_id = Chain_sn_delta.manager_id)
+      (Manages.employee_id <=> Chain_sn_delta.manager_id)
    UNION ALL
   
     SELECT
@@ -490,8 +490,8 @@ WHERE
   FROM
     synalog_test.Chain_sn_full AS Chain_sn_full
   WHERE
-    (Chain_sn_full.employee_id = Chain_sn_step.employee_id) AND
-    (Chain_sn_full.manager_id = Chain_sn_step.manager_id)) IS NULL)
+    (Chain_sn_full.employee_id <=> Chain_sn_step.employee_id) AND
+    (Chain_sn_full.manager_id <=> Chain_sn_step.manager_id)) IS NULL)
 GROUP BY 1, 2;
 
 INSERT INTO synalog_test.Chain_sn_full SELECT * FROM synalog_test.Chain_sn_new;
@@ -523,8 +523,8 @@ t_2_Manages AS (SELECT
 FROM
   t_4_Person AS Person, t_4_Person AS t_3_Person, t_7_Management AS Management
 WHERE
-  (Management.manager_id = Person.person_id) AND
-  (Management.employee_id = t_3_Person.person_id)
+  (Management.manager_id <=> Person.person_id) AND
+  (Management.employee_id <=> t_3_Person.person_id)
 GROUP BY 1, 2),
 t_1_Chain_MultBodyAggAux_f1 AS (SELECT * FROM (
   
@@ -534,7 +534,7 @@ t_1_Chain_MultBodyAggAux_f1 AS (SELECT * FROM (
     FROM
       synalog_test.Chain_sn_new AS Chain_sn_new, t_2_Manages AS Manages
     WHERE
-      (Manages.employee_id = Chain_sn_new.manager_id)
+      (Manages.employee_id <=> Chain_sn_new.manager_id)
    UNION ALL
   
     SELECT
@@ -561,8 +561,8 @@ WHERE
   FROM
     synalog_test.Chain_sn_full AS Chain_sn_full
   WHERE
-    (Chain_sn_full.employee_id = Chain_sn_back_step.employee_id) AND
-    (Chain_sn_full.manager_id = Chain_sn_back_step.manager_id)) IS NULL)
+    (Chain_sn_full.employee_id <=> Chain_sn_back_step.employee_id) AND
+    (Chain_sn_full.manager_id <=> Chain_sn_back_step.manager_id)) IS NULL)
 GROUP BY 1, 2;
 
 INSERT INTO synalog_test.Chain_sn_full SELECT * FROM synalog_test.Chain_sn_delta;
@@ -594,8 +594,8 @@ t_2_Manages AS (SELECT
 FROM
   t_4_Person AS Person, t_4_Person AS t_3_Person, t_7_Management AS Management
 WHERE
-  (Management.manager_id = Person.person_id) AND
-  (Management.employee_id = t_3_Person.person_id)
+  (Management.manager_id <=> Person.person_id) AND
+  (Management.employee_id <=> t_3_Person.person_id)
 GROUP BY 1, 2),
 t_1_Chain_MultBodyAggAux_f8 AS (SELECT * FROM (
   
@@ -605,7 +605,7 @@ t_1_Chain_MultBodyAggAux_f8 AS (SELECT * FROM (
     FROM
       synalog_test.Chain_sn_delta AS Chain_sn_delta, t_2_Manages AS Manages
     WHERE
-      (Manages.employee_id = Chain_sn_delta.manager_id)
+      (Manages.employee_id <=> Chain_sn_delta.manager_id)
    UNION ALL
   
     SELECT
@@ -632,8 +632,8 @@ WHERE
   FROM
     synalog_test.Chain_sn_full AS Chain_sn_full
   WHERE
-    (Chain_sn_full.employee_id = Chain_sn_step.employee_id) AND
-    (Chain_sn_full.manager_id = Chain_sn_step.manager_id)) IS NULL)
+    (Chain_sn_full.employee_id <=> Chain_sn_step.employee_id) AND
+    (Chain_sn_full.manager_id <=> Chain_sn_step.manager_id)) IS NULL)
 GROUP BY 1, 2;
 
 INSERT INTO synalog_test.Chain_sn_full SELECT * FROM synalog_test.Chain_sn_new;
@@ -665,8 +665,8 @@ t_2_Manages AS (SELECT
 FROM
   t_4_Person AS Person, t_4_Person AS t_3_Person, t_7_Management AS Management
 WHERE
-  (Management.manager_id = Person.person_id) AND
-  (Management.employee_id = t_3_Person.person_id)
+  (Management.manager_id <=> Person.person_id) AND
+  (Management.employee_id <=> t_3_Person.person_id)
 GROUP BY 1, 2),
 t_1_Chain_MultBodyAggAux_f1 AS (SELECT * FROM (
   
@@ -676,7 +676,7 @@ t_1_Chain_MultBodyAggAux_f1 AS (SELECT * FROM (
     FROM
       synalog_test.Chain_sn_new AS Chain_sn_new, t_2_Manages AS Manages
     WHERE
-      (Manages.employee_id = Chain_sn_new.manager_id)
+      (Manages.employee_id <=> Chain_sn_new.manager_id)
    UNION ALL
   
     SELECT
@@ -703,8 +703,8 @@ WHERE
   FROM
     synalog_test.Chain_sn_full AS Chain_sn_full
   WHERE
-    (Chain_sn_full.employee_id = Chain_sn_back_step.employee_id) AND
-    (Chain_sn_full.manager_id = Chain_sn_back_step.manager_id)) IS NULL)
+    (Chain_sn_full.employee_id <=> Chain_sn_back_step.employee_id) AND
+    (Chain_sn_full.manager_id <=> Chain_sn_back_step.manager_id)) IS NULL)
 GROUP BY 1, 2;
 
 INSERT INTO synalog_test.Chain_sn_full SELECT * FROM synalog_test.Chain_sn_delta;
@@ -736,8 +736,8 @@ t_2_Manages AS (SELECT
 FROM
   t_4_Person AS Person, t_4_Person AS t_3_Person, t_7_Management AS Management
 WHERE
-  (Management.manager_id = Person.person_id) AND
-  (Management.employee_id = t_3_Person.person_id)
+  (Management.manager_id <=> Person.person_id) AND
+  (Management.employee_id <=> t_3_Person.person_id)
 GROUP BY 1, 2),
 t_1_Chain_MultBodyAggAux_f8 AS (SELECT * FROM (
   
@@ -747,7 +747,7 @@ t_1_Chain_MultBodyAggAux_f8 AS (SELECT * FROM (
     FROM
       synalog_test.Chain_sn_delta AS Chain_sn_delta, t_2_Manages AS Manages
     WHERE
-      (Manages.employee_id = Chain_sn_delta.manager_id)
+      (Manages.employee_id <=> Chain_sn_delta.manager_id)
    UNION ALL
   
     SELECT
@@ -774,8 +774,8 @@ WHERE
   FROM
     synalog_test.Chain_sn_full AS Chain_sn_full
   WHERE
-    (Chain_sn_full.employee_id = Chain_sn_step.employee_id) AND
-    (Chain_sn_full.manager_id = Chain_sn_step.manager_id)) IS NULL)
+    (Chain_sn_full.employee_id <=> Chain_sn_step.employee_id) AND
+    (Chain_sn_full.manager_id <=> Chain_sn_step.manager_id)) IS NULL)
 GROUP BY 1, 2;
 
 INSERT INTO synalog_test.Chain_sn_full SELECT * FROM synalog_test.Chain_sn_new;
@@ -807,8 +807,8 @@ t_2_Manages AS (SELECT
 FROM
   t_4_Person AS Person, t_4_Person AS t_3_Person, t_7_Management AS Management
 WHERE
-  (Management.manager_id = Person.person_id) AND
-  (Management.employee_id = t_3_Person.person_id)
+  (Management.manager_id <=> Person.person_id) AND
+  (Management.employee_id <=> t_3_Person.person_id)
 GROUP BY 1, 2),
 t_1_Chain_MultBodyAggAux_f1 AS (SELECT * FROM (
   
@@ -818,7 +818,7 @@ t_1_Chain_MultBodyAggAux_f1 AS (SELECT * FROM (
     FROM
       synalog_test.Chain_sn_new AS Chain_sn_new, t_2_Manages AS Manages
     WHERE
-      (Manages.employee_id = Chain_sn_new.manager_id)
+      (Manages.employee_id <=> Chain_sn_new.manager_id)
    UNION ALL
   
     SELECT
@@ -845,8 +845,8 @@ WHERE
   FROM
     synalog_test.Chain_sn_full AS Chain_sn_full
   WHERE
-    (Chain_sn_full.employee_id = Chain_sn_back_step.employee_id) AND
-    (Chain_sn_full.manager_id = Chain_sn_back_step.manager_id)) IS NULL)
+    (Chain_sn_full.employee_id <=> Chain_sn_back_step.employee_id) AND
+    (Chain_sn_full.manager_id <=> Chain_sn_back_step.manager_id)) IS NULL)
 GROUP BY 1, 2;
 
 INSERT INTO synalog_test.Chain_sn_full SELECT * FROM synalog_test.Chain_sn_delta;

@@ -14,5 +14,5 @@ FROM
   t_1_Sale AS Sale, t_1_Sale AS t_0_Sale
 WHERE
   (t_0_Sale.amount < 60) AND
-  (t_0_Sale.id = Sale.id) AND
+  (t_0_Sale.id <=> Sale.id) AND
   (Sale.product = "cake") ORDER BY id NULLS LAST;

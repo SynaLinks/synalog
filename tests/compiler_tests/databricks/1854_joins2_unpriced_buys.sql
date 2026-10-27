@@ -34,6 +34,6 @@ WHERE
   FROM
     t_1_Priced AS Priced
   WHERE
-    (Priced.`user` = Event.`user`) AND
-    (Priced.month = SUBSTR(Event.`at`, 1, 7))) IS NULL) AND
+    (Priced.`user` <=> Event.`user`) AND
+    (Priced.month <=> SUBSTR(Event.`at`, 1, 7))) IS NULL) AND
   (Event.kind = "buy");

@@ -111,6 +111,6 @@ FROM
   t_0_S AS S, t_1_E AS E, t_2_D AS D
 WHERE
   (S.skill = "sql") AND
-  (E.id = S.id) AND
-  (D.dept = E.dept) AND
-  (D.dname = "eng") ORDER BY name;
+  (E.id IS NOT DISTINCT FROM S.id) AND
+  (D.dept IS NOT DISTINCT FROM E.dept) AND
+  (D.dname = "eng") ORDER BY name NULLS LAST;

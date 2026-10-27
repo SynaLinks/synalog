@@ -47,4 +47,4 @@ WHERE
   WHERE
     (t_3_U.age >= 20) AND
     (t_3_U.age <= 30) AND
-    (t_0_U.u = t_3_U.u)) IS NULL) ORDER BY u NULLS LAST;
+    (t_0_U.u IS t_3_U.u)) IS NULL) ORDER BY u NULLS LAST;

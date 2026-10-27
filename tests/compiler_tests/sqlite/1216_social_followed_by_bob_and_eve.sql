@@ -62,4 +62,4 @@ FROM
 WHERE
   (Follows.a = 'bob') AND
   (t_0_Follows.a = 'eve') AND
-  (t_0_Follows.b = Follows.b) ORDER BY b;
+  (t_0_Follows.b IS Follows.b) ORDER BY b NULLS LAST;

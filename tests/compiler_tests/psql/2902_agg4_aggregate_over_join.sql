@@ -110,5 +110,5 @@ SELECT
 FROM
   t_0_S AS S, t_1_R AS R
 WHERE
-  (R.shop = S.shop)
+  (COALESCE(R.shop, '') = COALESCE(S.shop, '') AND (R.shop IS NULL) = (S.shop IS NULL))
 GROUP BY R.region ORDER BY region, u;

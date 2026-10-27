@@ -103,4 +103,4 @@ FROM
   t_1_D AS t_0_D, t_2_E AS E
 WHERE
   (t_0_D.dn = 'tech') AND
-  (E.d = t_0_D.d) ORDER BY n;
+  (COALESCE(E.d, 0) = COALESCE(t_0_D.d, 0) AND (E.d IS NULL) = (t_0_D.d IS NULL)) ORDER BY n;

@@ -63,15 +63,15 @@ t_1_InDept AS (SELECT
 FROM
   t_3_Person AS Person, t_6_Dept AS t_2_Dept, t_5_Employees AS Employees
 WHERE
-  (Employees.person_id = Person.person_id) AND
-  (Employees.dept = t_2_Dept.dept)
+  (Employees.person_id IS Person.person_id) AND
+  (Employees.dept IS t_2_Dept.dept)
 GROUP BY Person.person_id, t_2_Dept.dept)
 SELECT
   t_0_InDept.person_id AS person_id
 FROM
   t_1_InDept AS InDept, t_1_InDept AS t_0_InDept
 WHERE
-  (t_0_InDept.person_id != 5) AND
+  (t_0_InDept.person_id IS NOT 5) AND
   (InDept.person_id = 5) AND
-  (t_0_InDept.dept = InDept.dept)
+  (t_0_InDept.dept IS InDept.dept)
 GROUP BY t_0_InDept.person_id ORDER BY person_id NULLS LAST;

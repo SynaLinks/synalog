@@ -136,8 +136,8 @@ t_1_MemberOf AS (SELECT
 FROM
   synalog_test.Person AS t_2_Person, synalog_test.Team AS t_3_Team, t_0_Employees AS Employees
 WHERE
-  (Employees.person_id = t_2_Person.person_id) AND
-  (Employees.team_id = t_3_Team.team_id)
+  (Employees.person_id IS NOT DISTINCT FROM t_2_Person.person_id) AND
+  (Employees.team_id IS NOT DISTINCT FROM t_3_Team.team_id)
 GROUP BY 1, 2)
 SELECT
   MemberOf.person_id AS person_id,
@@ -147,5 +147,5 @@ FROM
 WHERE
   (t_0_Team.team_id = 20) AND
   (MemberOf.team_id = 20) AND
-  (Person.person_id = MemberOf.person_id)
+  (Person.person_id IS NOT DISTINCT FROM MemberOf.person_id)
 GROUP BY 1, 2 ORDER BY person_id;

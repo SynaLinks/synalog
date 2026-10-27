@@ -71,5 +71,5 @@ WHERE
     t_1_In AS t_3_In, JSON_EACH(JSON_ARRAY(0)) as x_10
   WHERE
     (t_3_In.warehouse = 'east') AND
-    (t_3_In.item = t_0_In.item)) IS NULL) AND
+    (t_3_In.item IS t_0_In.item)) IS NULL) AND
   (t_0_In.warehouse = 'north') ORDER BY item NULLS LAST;

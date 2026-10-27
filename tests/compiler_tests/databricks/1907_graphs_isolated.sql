@@ -61,4 +61,4 @@ WHERE
   FROM
     t_1_Linked AS Linked
   WHERE
-    (Linked.n = Node.n)) IS NULL) ORDER BY n NULLS LAST;
+    (Linked.n <=> Node.n)) IS NULL) ORDER BY n NULLS LAST;

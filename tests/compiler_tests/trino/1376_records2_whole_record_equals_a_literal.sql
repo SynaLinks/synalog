@@ -61,4 +61,4 @@ SELECT
 FROM
   t_0_Emp AS Emp
 WHERE
-  (CAST(ROW('paris', 'eng', 7000) AS ROW(city varchar, dept varchar, salary double)) = CAST(ROW(Emp.city, Emp.dept, Emp.salary) AS ROW(city varchar, dept varchar, salary double)));
+  (CAST(ROW('paris', 'eng', 7000) AS ROW(city varchar, dept varchar, salary double)) IS NOT DISTINCT FROM CAST(ROW(Emp.city, Emp.dept, Emp.salary) AS ROW(city varchar, dept varchar, salary double)));

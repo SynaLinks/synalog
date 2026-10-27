@@ -66,4 +66,4 @@ WHERE
   FROM
     t_0_R AS R, JSON_EACH(JSON_ARRAY(0)) as x_5
   WHERE
-    (R.x = x_2.value)) IS NULL);
+    (R.x IS x_2.value)) IS NULL);

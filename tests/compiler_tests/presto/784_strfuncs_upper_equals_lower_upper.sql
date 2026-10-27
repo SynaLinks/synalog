@@ -3,4 +3,4 @@ SELECT
 FROM
   UNNEST(TRANSFORM(ARRAY['Apple', 'kiwi', 'Banana'], synalog_e -> ROW(synalog_e))) as pushkin(x_2)
 WHERE
-  (UPPER(LOWER(x_2)) = UPPER(x_2));
+  (UPPER(LOWER(x_2)) IS NOT DISTINCT FROM UPPER(x_2));

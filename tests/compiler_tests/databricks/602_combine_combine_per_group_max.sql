@@ -11,6 +11,6 @@ SELECT
 FROM
   t_1_V AS t_0_V
 WHERE
-  (t_0_V.g = V.g)) AS m
+  (t_0_V.g <=> V.g)) AS m
 FROM
   t_1_V AS V ORDER BY g NULLS LAST, x NULLS LAST;

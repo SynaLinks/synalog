@@ -51,5 +51,5 @@ WHERE
   FROM
     t_0_F AS t_1_F
   WHERE
-    (t_1_F.a = F.b) AND
-    (t_1_F.b = F.a)) IS NULL) ORDER BY a, b;
+    (t_1_F.a IS NOT DISTINCT FROM F.b) AND
+    (t_1_F.b IS NOT DISTINCT FROM F.a)) IS NULL) ORDER BY a NULLS LAST, b NULLS LAST;

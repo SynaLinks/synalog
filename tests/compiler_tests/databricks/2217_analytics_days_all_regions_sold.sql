@@ -34,8 +34,8 @@ WHERE
   FROM
     t_1_S AS t_7_S
   WHERE
-    (t_7_S.r = Region.r) AND
-    (t_7_S.d = t_3_Day.d)) IS NULL)
+    (t_7_S.r <=> Region.r) AND
+    (t_7_S.d <=> t_3_Day.d)) IS NULL)
 GROUP BY 1)
 SELECT
   Day.d AS d
@@ -47,4 +47,4 @@ WHERE
   FROM
     t_2_Missing AS Missing
   WHERE
-    (Missing.d = Day.d)) IS NULL) ORDER BY d NULLS LAST;
+    (Missing.d <=> Day.d)) IS NULL) ORDER BY d NULLS LAST;

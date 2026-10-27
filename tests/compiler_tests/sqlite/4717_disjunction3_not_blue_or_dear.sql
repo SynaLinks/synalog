@@ -56,7 +56,7 @@ t_0_Q_MultBodyAggAux AS (SELECT * FROM (
     FROM
       t_1_I AS I
     WHERE
-      (I.c != 'blue')
+      (I.c IS NOT 'blue')
    UNION ALL
   
     SELECT
@@ -71,4 +71,4 @@ SELECT
   Q_MultBodyAggAux.id AS id
 FROM
   t_0_Q_MultBodyAggAux AS Q_MultBodyAggAux
-GROUP BY Q_MultBodyAggAux.id ORDER BY id;
+GROUP BY Q_MultBodyAggAux.id ORDER BY id NULLS LAST;

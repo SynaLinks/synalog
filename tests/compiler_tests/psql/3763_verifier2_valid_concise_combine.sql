@@ -39,5 +39,5 @@ SELECT
 FROM
   t_1_N AS t_0_N, t_2_E AS E
 WHERE
-  (E.a = t_0_N.n)
+  (COALESCE(E.a, 0) = COALESCE(t_0_N.n, 0) AND (E.a IS NULL) = (t_0_N.n IS NULL))
 GROUP BY t_0_N.n ORDER BY n;

@@ -76,5 +76,5 @@ FROM
   t_2_E AS E, t_2_E AS t_0_E, t_2_E AS t_1_E
 WHERE
   (E.id = 6) AND
-  (t_1_E.id = t_0_E.boss) AND
-  (t_1_E.n = E.n) ORDER BY n;
+  (COALESCE(t_1_E.id, 0) = COALESCE(t_0_E.boss, 0) AND (t_1_E.id IS NULL) = (t_0_E.boss IS NULL)) AND
+  (COALESCE(t_1_E.n, '') = COALESCE(E.n, '') AND (t_1_E.n IS NULL) = (E.n IS NULL)) ORDER BY n;

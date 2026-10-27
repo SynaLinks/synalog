@@ -16,5 +16,5 @@ WHERE
   FROM
     t_0_E AS E, t_1_L AS L
   WHERE
-    (E.a = x_4) AND
-    (L.b = E.b)) IS NULL) ORDER BY x NULLS LAST;
+    (E.a <=> x_4) AND
+    (L.b <=> E.b)) IS NULL) ORDER BY x NULLS LAST;

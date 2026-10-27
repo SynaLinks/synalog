@@ -12,4 +12,4 @@ SELECT
 FROM
   t_0_Person AS Person, LATERAL (SELECT explode(ARRAY("purple")) AS x_3) AS pushkin
 WHERE
-  (Person.team = x_3);
+  (Person.team <=> x_3);

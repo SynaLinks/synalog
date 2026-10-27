@@ -29,4 +29,4 @@ WHERE
     t_0_V AS t_1_V, JSON_EACH(JSON_ARRAY(0)) as x_6
   WHERE
     t_1_V.b AND
-    (t_1_V.x = V.x)) IS NULL) ORDER BY x NULLS LAST;
+    (t_1_V.x IS V.x)) IS NULL) ORDER BY x NULLS LAST;

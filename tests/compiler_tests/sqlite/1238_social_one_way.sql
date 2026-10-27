@@ -66,5 +66,5 @@ WHERE
   FROM
     t_0_Follows AS t_1_Follows, JSON_EACH(JSON_ARRAY(0)) as x_7
   WHERE
-    (t_1_Follows.a = Follows.b) AND
-    (t_1_Follows.b = Follows.a)) IS NULL) ORDER BY a, b;
+    (t_1_Follows.a IS Follows.b) AND
+    (t_1_Follows.b IS Follows.a)) IS NULL) ORDER BY a NULLS LAST, b NULLS LAST;

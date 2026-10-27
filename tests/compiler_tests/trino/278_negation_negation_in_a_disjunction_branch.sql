@@ -20,7 +20,7 @@ t_0_Out_MultBodyAggAux AS (SELECT * FROM (
       FROM
         t_1_Banned AS Banned
       WHERE
-        (Banned.x = x_5)) IS NULL)
+        (Banned.x IS NOT DISTINCT FROM x_5)) IS NULL)
    UNION ALL
   
     SELECT

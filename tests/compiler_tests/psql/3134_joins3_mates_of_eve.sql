@@ -53,6 +53,6 @@ SELECT
 FROM
   t_1_E AS E, t_1_E AS t_0_E
 WHERE
-  (t_0_E.name != 'eve') AND
+  (t_0_E.name IS DISTINCT FROM 'eve') AND
   (E.name = 'eve') AND
-  (t_0_E.dept = E.dept);
+  (COALESCE(t_0_E.dept, 0) = COALESCE(E.dept, 0) AND (t_0_E.dept IS NULL) = (E.dept IS NULL));

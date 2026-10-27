@@ -16,4 +16,4 @@ SELECT
 FROM
   t_0_Name AS Name, UNNEST(TRANSFORM(ARRAY[1, 2], synalog_e -> ROW(synalog_e))) as pushkin(x_6)
 WHERE
-  (Name.p = CASE WHEN ((MOD(x_6, NULLIF(2, 0))) = 0) THEN 0 ELSE 1 END) ORDER BY x;
+  (Name.p IS NOT DISTINCT FROM CASE WHEN ((MOD(x_6, NULLIF(2, 0))) = 0) THEN 0 ELSE 1 END) ORDER BY x;
