@@ -32,7 +32,9 @@
 //!   * [`recursion::repetitions`]: enough repetitions, without overflow, to
 //!     unroll a recursion to its depth;
 //!   * [`membership::absent`]: which names a program uses but does not provide,
-//!     the decision behind the undefined-reference check.
+//!     the decision behind the undefined-reference and unknown-column checks;
+//!   * [`membership::first_duplicate`]: a repeated element, behind the
+//!     duplicate-column check.
 //!
 //! `cargo verus verify` checks the proofs. A plain `cargo build` erases them
 //! and compiles the code as is.

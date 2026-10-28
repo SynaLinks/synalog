@@ -290,18 +290,34 @@ pub fn check_consistent_definitions(rules: &[&Json]) -> Vec<ArityError> {
         let arity = count_head_args(head);
         let rule_txt = rule_text(rule);
 
-        let mut seen = HashSet::new();
+        // A head naming the same column twice — the first such repeat, found by
+        // the Verus-proved synalog_verified::membership::first_duplicate over
+        // the head's column names interned to u64 symbols.
+        let mut columns: Vec<&str> = Vec::new();
         if let Some(fvs) = head.as_object().get("record").and_then(|r| r.as_object().get("field_value")) {
             for fv in fvs.as_array() {
                 let field = &fv.as_object()["field"];
-                if field.is_string() && !seen.insert(field.as_str().to_string()) {
-                    errors.push(ArityError::DuplicateColumn {
-                        predicate: pred_name.to_string(),
-                        column: field.as_str().to_string(),
-                        rule: rule_txt.clone(),
-                    });
+                if field.is_string() {
+                    columns.push(field.as_str());
                 }
             }
+        }
+        let mut col_ids_map: HashMap<&str, u64> = HashMap::new();
+        let mut col_next: u64 = 0;
+        let col_ids: Vec<u64> = columns
+            .iter()
+            .map(|c| *col_ids_map.entry(c).or_insert_with(|| {
+                let id = col_next;
+                col_next += 1;
+                id
+            }))
+            .collect();
+        if let Some((_, j)) = synalog_verified::membership::first_duplicate(&col_ids) {
+            errors.push(ArityError::DuplicateColumn {
+                predicate: pred_name.to_string(),
+                column: columns[j].to_string(),
+                rule: rule_txt.clone(),
+            });
         }
 
         let id = match ids.get(pred_name) {

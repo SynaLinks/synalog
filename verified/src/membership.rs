@@ -95,6 +95,47 @@ fn contains(xs: &Vec<u64>, x: u64) -> (found: bool)
     false
 }
 
+/// The elements of `xs` are pairwise distinct.
+pub open spec fn distinct(xs: Seq<u64>) -> bool {
+    forall|i: int, j: int| 0 <= i < j < xs.len() ==> #[trigger] xs[i] != #[trigger] xs[j]
+}
+
+/// Two positions holding the same element, or `None` when all are distinct.
+/// Behind the head-column check: a head naming one column twice compiles to a
+/// row with two columns of that name, which SQL refuses.
+pub fn first_duplicate(xs: &Vec<u64>) -> (r: Option<(usize, usize)>)
+    ensures
+        match r {
+            Some((i, j)) => i < j && j < xs.len() && xs@[i as int] == xs@[j as int],
+            None => distinct(xs@),
+        },
+{
+    let mut j: usize = 0;
+    while j < xs.len()
+        invariant
+            j <= xs.len(),
+            forall|a: int, b: int| 0 <= a < b < j ==> #[trigger] xs@[a] != #[trigger] xs@[b],
+        decreases xs.len() - j,
+    {
+        let mut i: usize = 0;
+        while i < j
+            invariant
+                i <= j,
+                j < xs.len(),
+                forall|a: int| 0 <= a < i ==> xs@[a] != xs@[j as int],
+                forall|a: int, b: int| 0 <= a < b < j ==> #[trigger] xs@[a] != #[trigger] xs@[b],
+            decreases j - i,
+        {
+            if xs[i] == xs[j] {
+                return Some((i, j));
+            }
+            i += 1;
+        }
+        j += 1;
+    }
+    None
+}
+
 /// The guarantee: when [`absent`] reports nothing, every element of `xs` is in
 /// `allowed`.
 pub proof fn lemma_all_present_when_empty(xs: Seq<u64>, allowed: Seq<u64>, out: Seq<u64>)
