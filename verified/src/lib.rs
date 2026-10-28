@@ -30,7 +30,9 @@
 //!   * [`arity::first_arity_conflict`]: two definitions of a predicate that
 //!     disagree on arity, or a guarantee the definitions agree;
 //!   * [`recursion::repetitions`]: enough repetitions, without overflow, to
-//!     unroll a recursion to its depth.
+//!     unroll a recursion to its depth;
+//!   * [`membership::absent`]: which names a program uses but does not provide,
+//!     the decision behind the undefined-reference check.
 //!
 //! `cargo verus verify` checks the proofs. A plain `cargo build` erases them
 //! and compiles the code as is.
@@ -40,6 +42,7 @@ use vstd::prelude::*;
 pub mod arity;
 pub mod cast;
 pub mod contradiction;
+pub mod membership;
 pub mod page;
 pub mod plan;
 pub mod recursion;
