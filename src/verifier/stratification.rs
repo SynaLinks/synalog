@@ -268,6 +268,53 @@ mod tests {
         assert_eq!(err.cycle, vec!["A", "B", "C"]);
     }
 
+    /// The signed dependency edges `(from, to, negated)` over the predicates
+    /// `0..n`, and `n` — the shape `synalog_verified::strata` works on.
+    fn signed_edges(rules: &[&Json]) -> (Vec<(usize, usize, bool)>, usize) {
+        let deps: Vec<DepEdge> = rules.iter().flat_map(|r| extract_deps(r)).collect();
+        let graph = build_graph(&deps);
+        let (_, index, _) = index_graph(&graph);
+        let edges = deps
+            .iter()
+            .map(|e| (index[e.from.as_str()], index[e.to.as_str()], e.negated))
+            .collect();
+        (edges, index.len())
+    }
+
+    #[test]
+    fn test_stratified_program_has_a_stratum_numbering() {
+        // Negation, but no negative cycle: a valid stratum numbering exists,
+        // and the Verus-proved `strata` must produce one (validated by the
+        // proved `check_strata`).
+        let parsed = parse(r#"
+            A(x) :- B(x), ~C(x);
+            B(x) :- D(x);
+            C(x) :- D(x);
+            D(x) :- E(x);
+        "#);
+        let rules: Vec<&Json> = parsed.as_object()["rule"].as_array().iter().collect();
+        assert!(check_stratification(&rules).is_ok());
+        let (edges, n) = signed_edges(&rules);
+        let numbering = synalog_verified::strata::strata(&edges, n);
+        assert!(numbering.is_some(), "a stratified program must admit a stratum numbering");
+        assert!(synalog_verified::strata::check_strata(&edges, &numbering.unwrap()));
+    }
+
+    #[test]
+    fn test_negative_cycle_has_no_stratum_numbering() {
+        // A negation inside a recursion: no valid numbering, so `strata`
+        // returns None (and the verifier rejects the program).
+        let parsed = parse(r#"
+            A(x) :- B(x), ~C(x);
+            B(x) :- A(x);
+            C(x) :- A(x);
+        "#);
+        let rules: Vec<&Json> = parsed.as_object()["rule"].as_array().iter().collect();
+        assert!(check_stratification(&rules).is_err());
+        let (edges, n) = signed_edges(&rules);
+        assert!(synalog_verified::strata::strata(&edges, n).is_none());
+    }
+
     #[test]
     fn test_recursive_sccs() {
         let parsed = parse(r#"

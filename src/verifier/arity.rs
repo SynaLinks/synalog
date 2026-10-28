@@ -8,7 +8,7 @@
 //! - Named usages only reference columns that the definition provides
 //!   (referencing a subset of columns is valid and idiomatic)
 
-use std::collections::{BTreeSet, HashMap, HashSet};
+use std::collections::{HashMap, HashSet};
 use crate::parser::Json;
 use crate::errors::VerifyError;
 
@@ -130,12 +130,6 @@ impl From<ArityError> for crate::errors::SynalogError {
     }
 }
 
-/// Predicate info: arity and defining rule.
-#[derive(Debug, Clone)]
-struct PredicateInfo {
-    arity: usize,
-    rule_text: String,
-}
 
 /// Field shape of a predicate: positional argument count and named columns.
 #[derive(Debug, Clone, Default)]
@@ -225,15 +219,38 @@ fn check_call_shape(
         });
     }
 
-    let unknown: BTreeSet<&String> = shape
-        .named_fields
-        .iter()
-        .filter(|name| !def.named_fields.contains(*name))
-        .collect();
-    for name in unknown {
+    // The call's columns the definition does not provide, decided by the
+    // Verus-proved synalog_verified::membership::absent. Names are interned to
+    // u64 symbols (a column shared by call and definition gets one id), and the
+    // call's columns are sorted so the unknown ones are reported in order.
+    let mut call_cols: Vec<&String> = shape.named_fields.iter().collect();
+    call_cols.sort();
+    let mut ids: HashMap<&str, u64> = HashMap::new();
+    let mut next: u64 = 0;
+    let mut allowed_ids: Vec<u64> = Vec::with_capacity(def.named_fields.len());
+    for c in &def.named_fields {
+        let id = *ids.entry(c.as_str()).or_insert_with(|| {
+            let id = next;
+            next += 1;
+            id
+        });
+        allowed_ids.push(id);
+    }
+    let mut col_ids: Vec<u64> = Vec::with_capacity(call_cols.len());
+    let mut name_of: HashMap<u64, &str> = HashMap::new();
+    for c in &call_cols {
+        let id = *ids.entry(c.as_str()).or_insert_with(|| {
+            let id = next;
+            next += 1;
+            id
+        });
+        name_of.insert(id, c.as_str());
+        col_ids.push(id);
+    }
+    for id in synalog_verified::membership::absent(&col_ids, &allowed_ids) {
         errors.push(ArityError::UnknownColumn {
             predicate: pred_name.to_string(),
-            column: name.clone(),
+            column: name_of[&id].to_string(),
             rule: rule_txt.to_string(),
         });
     }
@@ -250,7 +267,15 @@ fn rule_text(rule: &Json) -> String {
 /// Check that all definitions of a predicate have the same arity.
 pub fn check_consistent_definitions(rules: &[&Json]) -> Vec<ArityError> {
     let mut errors = Vec::new();
-    let mut first_definition: HashMap<String, PredicateInfo> = HashMap::new();
+
+    // Collect each definition's (predicate, arity) in order, interning names to
+    // u64 symbols; the inconsistency decision is the Verus-proved
+    // synalog_verified::arity::first_arity_conflict.
+    let mut ids: HashMap<&str, u64> = HashMap::new();
+    let mut next: u64 = 0;
+    let mut defs: Vec<(u64, usize)> = Vec::new();
+    // Per definition, the data an InconsistentDefinition error needs.
+    let mut meta: Vec<(&str, usize, String)> = Vec::new();
 
     for rule in rules {
         let obj = rule.as_object();
@@ -265,39 +290,57 @@ pub fn check_consistent_definitions(rules: &[&Json]) -> Vec<ArityError> {
         let arity = count_head_args(head);
         let rule_txt = rule_text(rule);
 
-        let mut seen = HashSet::new();
+        // A head naming the same column twice — the first such repeat, found by
+        // the Verus-proved synalog_verified::membership::first_duplicate over
+        // the head's column names interned to u64 symbols.
+        let mut columns: Vec<&str> = Vec::new();
         if let Some(fvs) = head.as_object().get("record").and_then(|r| r.as_object().get("field_value")) {
             for fv in fvs.as_array() {
                 let field = &fv.as_object()["field"];
-                if field.is_string() && !seen.insert(field.as_str().to_string()) {
-                    errors.push(ArityError::DuplicateColumn {
-                        predicate: pred_name.to_string(),
-                        column: field.as_str().to_string(),
-                        rule: rule_txt.clone(),
-                    });
+                if field.is_string() {
+                    columns.push(field.as_str());
                 }
             }
         }
-
-        if let Some(first) = first_definition.get(pred_name) {
-            if first.arity != arity {
-                errors.push(ArityError::InconsistentDefinition {
-                    predicate: pred_name.to_string(),
-                    first_arity: first.arity,
-                    first_rule: first.rule_text.clone(),
-                    second_arity: arity,
-                    second_rule: rule_txt,
-                });
-            }
-        } else {
-            first_definition.insert(
-                pred_name.to_string(),
-                PredicateInfo {
-                    arity,
-                    rule_text: rule_txt,
-                },
-            );
+        let mut col_ids_map: HashMap<&str, u64> = HashMap::new();
+        let mut col_next: u64 = 0;
+        let col_ids: Vec<u64> = columns
+            .iter()
+            .map(|c| *col_ids_map.entry(c).or_insert_with(|| {
+                let id = col_next;
+                col_next += 1;
+                id
+            }))
+            .collect();
+        if let Some((_, j)) = synalog_verified::membership::first_duplicate(&col_ids) {
+            errors.push(ArityError::DuplicateColumn {
+                predicate: pred_name.to_string(),
+                column: columns[j].to_string(),
+                rule: rule_txt.clone(),
+            });
         }
+
+        let id = match ids.get(pred_name) {
+            Some(&id) => id,
+            None => {
+                let id = next;
+                next += 1;
+                ids.insert(pred_name, id);
+                id
+            }
+        };
+        defs.push((id, arity));
+        meta.push((pred_name, arity, rule_txt));
+    }
+
+    if let Some((i, j)) = synalog_verified::arity::first_arity_conflict(&defs) {
+        errors.push(ArityError::InconsistentDefinition {
+            predicate: meta[i].0.to_string(),
+            first_arity: meta[i].1,
+            first_rule: meta[i].2.clone(),
+            second_arity: meta[j].1,
+            second_rule: meta[j].2.clone(),
+        });
     }
 
     errors

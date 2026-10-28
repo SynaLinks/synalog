@@ -95,3 +95,28 @@ fn intersect_is_the_greatest_common_refinement() {
     // Both outcomes are exercised.
     assert!(intersecting > 1_000, "{intersecting}");
 }
+
+/// The intersection of `a` and `b`, if they intersect.
+fn inter(a: &Type, b: &Type) -> Option<Type> {
+    intersect(a.clone(), b.clone(), (0, 0)).ok()
+}
+
+/// The lattice laws Verus proves of `meet` (commutative, associative — both up
+/// to `equiv`, which `written` canonicalizes) hold of the runtime `intersect`.
+#[test]
+fn intersect_is_commutative_and_associative() {
+    let mut random = Random(0x5eed_dead_beef_0007);
+    for _ in 0..20_000 {
+        let (a, b, c) = (random.ty(3), random.ty(3), random.ty(3));
+
+        // a ∧ b == b ∧ a
+        let ab = inter(&a, &b).map(|t| written(&to_ty(&t)));
+        let ba = inter(&b, &a).map(|t| written(&to_ty(&t)));
+        assert_eq!(ab, ba, "commutativity: {a}, {b}");
+
+        // (a ∧ b) ∧ c == a ∧ (b ∧ c)
+        let left = inter(&a, &b).and_then(|ab| inter(&ab, &c)).map(|t| written(&to_ty(&t)));
+        let right = inter(&b, &c).and_then(|bc| inter(&a, &bc)).map(|t| written(&to_ty(&t)));
+        assert_eq!(left, right, "associativity: {a}, {b}, {c}");
+    }
+}

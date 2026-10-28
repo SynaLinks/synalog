@@ -7,7 +7,7 @@
 //! - Variables in negated predicates must appear positively
 //! - Variables in aggregations must be bound outside the aggregate
 
-use std::collections::HashSet;
+use std::collections::{HashMap, HashSet};
 
 use crate::parser::Json;
 use crate::errors::VerifyError;
@@ -126,53 +126,92 @@ fn is_fact(rule: &Json) -> bool {
     !rule.as_object().contains_key("body")
 }
 
-/// Check 1: All head variables must be positively bound in body.
+/// The variables of `vars` that `allowed` does not bind — the safety
+/// violations, in the order they appear in `vars`, with the wildcard `_`
+/// skipped.
 ///
-/// Variables are positively bound if they appear in:
-/// - A positive predicate call (not negated, not a comparison)
-/// - The left side of an inclusion (x in List)
-/// - A unification
+/// The decision is `synalog_verified::safety::unbound`, proved with Verus to
+/// report *exactly* the required-but-unbound variables (nothing safe flagged,
+/// nothing unsafe missed). Names are interned to `u64` symbols for the kernel,
+/// with `_` as the wildcard id `0`.
+fn unbound_vars<'a>(vars: &'a [String], allowed: &'a HashSet<String>) -> Vec<String> {
+    use std::collections::HashMap;
+
+    // Intern a name to its symbol, minting a fresh id the first time. A name in
+    // both `allowed` and `vars` interns to the same id, so the kernel's
+    // membership test matches string equality; `_` is always the wildcard. Keys
+    // borrow from `allowed`/`vars`, which outlive `ids`.
+    const WILDCARD: u64 = 0;
+    let mut ids: HashMap<&str, u64> = HashMap::new();
+    let mut next: u64 = 1;
+    let intern = |key: &'a str,
+                  ids: &mut HashMap<&'a str, u64>,
+                  next: &mut u64| -> u64 {
+        if key == "_" {
+            return WILDCARD;
+        }
+        match ids.get(key) {
+            Some(&id) => id,
+            None => {
+                let id = *next;
+                *next += 1;
+                ids.insert(key, id);
+                id
+            }
+        }
+    };
+
+    let mut allowed_ids: Vec<u64> = Vec::with_capacity(allowed.len());
+    for a in allowed {
+        allowed_ids.push(intern(a.as_str(), &mut ids, &mut next));
+    }
+    let mut var_ids: Vec<u64> = Vec::with_capacity(vars.len());
+    let mut name_of: HashMap<u64, &str> = HashMap::new();
+    for v in vars {
+        let id = intern(v.as_str(), &mut ids, &mut next);
+        name_of.insert(id, v.as_str());
+        var_ids.push(id);
+    }
+
+    synalog_verified::safety::unbound(&var_ids, &allowed_ids, WILDCARD)
+        .into_iter()
+        .map(|id| name_of[&id].to_string())
+        .collect()
+}
+
+/// The positively-bound variables of a rule: those a positive body literal
+/// binds, plus a value-function's input arguments (the caller binds those; the
+/// returned value still has to be body-bound).
+fn positive_vars(rule: &Json) -> HashSet<String> {
+    let mut positive = VarCollector::positive_vars(rule);
+    positive.extend(VarCollector::function_input_vars(rule));
+    positive
+}
+
+/// Check 1: All head variables must be positively bound in the body (range
+/// restriction).
 fn check_head_vars_bound(rule: &Json) -> Vec<SafetyError> {
     if is_fact(rule) {
         return vec![];
     }
-
     let text = rule_text(rule);
-    let head_vars = VarCollector::head_vars(rule);
-    let mut positive_vars = VarCollector::positive_vars(rule);
-    // A value-function's argument variables are inputs (bound by the caller),
-    // so they count as bound; the returned value still has to be body-bound.
-    positive_vars.extend(VarCollector::function_input_vars(rule));
-
-    head_vars
-        .iter()
-        .filter(|v| *v != "_" && !positive_vars.contains(*v))
-        .map(|v| SafetyError::UnboundHeadVar {
-            rule: text.clone(),
-            var: v.clone(),
-        })
+    let head: Vec<String> = VarCollector::head_vars(rule).into_iter().collect();
+    unbound_vars(&head, &positive_vars(rule))
+        .into_iter()
+        .map(|var| SafetyError::UnboundHeadVar { rule: text.clone(), var })
         .collect()
 }
-
 
 /// Check 2: Safe negation - negated variables must appear positively.
 fn check_safe_negation(rule: &Json) -> Vec<SafetyError> {
     if is_fact(rule) {
         return vec![];
     }
-
     let text = rule_text(rule);
-    let mut positive_vars = VarCollector::positive_vars(rule);
-    positive_vars.extend(VarCollector::function_input_vars(rule));
-    let negated_vars = VarCollector::negated_vars(rule);
-
-    negated_vars
-        .iter()
-        .filter(|v| *v != "_" && !positive_vars.contains(*v))
-        .map(|v| SafetyError::UnsafeNegation {
-            rule: text.clone(),
-            var: v.clone(),
-        })
+    let negated: Vec<String> = VarCollector::negated_vars(rule).into_iter().collect();
+    unbound_vars(&negated, &positive_vars(rule))
+        .into_iter()
+        .map(|var| SafetyError::UnsafeNegation { rule: text.clone(), var })
         .collect()
 }
 
@@ -181,39 +220,29 @@ fn check_safe_aggregation(rule: &Json) -> Vec<SafetyError> {
     if is_fact(rule) {
         return vec![];
     }
-
     let text = rule_text(rule);
-    let mut positive_vars = VarCollector::positive_vars(rule);
-    positive_vars.extend(VarCollector::function_input_vars(rule));
-    let agg_vars = VarCollector::aggregation_vars(rule);
-
-    agg_vars
-        .iter()
-        .filter(|v| *v != "_" && !positive_vars.contains(*v))
-        .map(|v| SafetyError::UnsafeAggregation {
-            rule: text.clone(),
-            var: v.clone(),
-        })
+    let agg: Vec<String> = VarCollector::aggregation_vars(rule).into_iter().collect();
+    unbound_vars(&agg, &positive_vars(rule))
+        .into_iter()
+        .map(|var| SafetyError::UnsafeAggregation { rule: text.clone(), var })
         .collect()
 }
 
 /// Check 4: a variable compared in the body (`x > 2`) must get its value from
-/// somewhere else in the body: a comparison filters, it does not bind.
+/// somewhere else in the body: a comparison filters, it does not bind. A head
+/// variable left unbound is already reported by check 1, so it is allowed here.
 fn check_compared_vars_bound(rule: &Json) -> Vec<SafetyError> {
     if is_fact(rule) {
         return vec![];
     }
     let text = rule_text(rule);
-    let mut positive_vars = VarCollector::positive_vars(rule);
-    positive_vars.extend(VarCollector::function_input_vars(rule));
-    // A head variable that is not bound is already reported, once.
-    let head_vars = VarCollector::head_vars(rule);
+    let mut allowed = positive_vars(rule);
+    allowed.extend(VarCollector::head_vars(rule));
     let mut compared: Vec<String> = VarCollector::compared_vars(rule).into_iter().collect();
     compared.sort();
-    compared
+    unbound_vars(&compared, &allowed)
         .into_iter()
-        .filter(|v| v != "_" && !positive_vars.contains(v) && !head_vars.contains(v))
-        .map(|v| SafetyError::UnboundComparedVar { rule: text.clone(), var: v })
+        .map(|var| SafetyError::UnboundComparedVar { rule: text.clone(), var })
         .collect()
 }
 
@@ -261,24 +290,55 @@ fn check_aggregates_outside(rules: &[&Json]) -> Vec<SafetyError> {
         let val = &fv.as_object()["value"];
         val.as_object().get("expression").unwrap_or(val)
     }
-    // The program's names for aggregates: functions whose value is one.
-    let mut aggregates: HashSet<String> = AGGREGATES.iter().map(|s| s.to_string()).collect();
-    loop {
-        let before = aggregates.len();
-        for rule in rules {
-            let head = rule.as_object()["head"].as_object();
-            let Some(fvs) = head.get("record").and_then(|r| r.as_object().get("field_value")) else { continue };
-            for fv in fvs.as_array() {
-                let f = &fv.as_object()["field"];
-                if f.is_string() && f.as_str() == "synalog_value" {
-                    if call_of(value_of(fv)).is_some_and(|(n, _)| aggregates.contains(n)) {
-                        aggregates.insert(head["predicate_name"].as_str().to_string());
-                    }
+    // The program's names for aggregates: a value-function whose value calls an
+    // aggregate is one, transitively. That monotone closure is reachability in
+    // the graph of value-calls (head -> the name its value calls) from the
+    // built-in aggregate names, computed with the Verus-proved graph kernels
+    // (`reachability` + `reaches_any`).
+    let mut index: HashMap<String, usize> = HashMap::new();
+    let mut names: Vec<String> = Vec::new();
+    let intern = |name: &str, index: &mut HashMap<String, usize>, names: &mut Vec<String>| -> usize {
+        match index.get(name) {
+            Some(&i) => i,
+            None => {
+                let i = names.len();
+                names.push(name.to_string());
+                index.insert(name.to_string(), i);
+                i
+            }
+        }
+    };
+    // The built-in aggregate names are the seeds.
+    for a in AGGREGATES {
+        intern(a, &mut index, &mut names);
+    }
+    let mut successors_edges: Vec<(usize, usize)> = Vec::new();
+    for rule in rules {
+        let head = rule.as_object()["head"].as_object();
+        let head_name = head["predicate_name"].as_str();
+        let Some(fvs) = head.get("record").and_then(|r| r.as_object().get("field_value")) else { continue };
+        for fv in fvs.as_array() {
+            let f = &fv.as_object()["field"];
+            if f.is_string() && f.as_str() == "synalog_value" {
+                if let Some((n, _)) = call_of(value_of(fv)) {
+                    let u = intern(head_name, &mut index, &mut names);
+                    let w = intern(n, &mut index, &mut names);
+                    successors_edges.push((u, w));
                 }
             }
         }
-        if aggregates.len() == before {
-            break;
+    }
+    let n = names.len();
+    let mut successors: Vec<Vec<usize>> = vec![Vec::new(); n];
+    for (u, w) in successors_edges {
+        successors[u].push(w);
+    }
+    let seed: Vec<bool> = names.iter().map(|nm| AGGREGATES.contains(&nm.as_str())).collect();
+    let reach = synalog_verified::reachability(&successors);
+    let mut aggregates: HashSet<String> = AGGREGATES.iter().map(|s| s.to_string()).collect();
+    for i in 0..n {
+        if synalog_verified::reaches_any(&successors, &reach, &seed, i) {
+            aggregates.insert(names[i].clone());
         }
     }
     fn walk(json: &Json, aggregates: &HashSet<String>, found: &mut Vec<String>) {

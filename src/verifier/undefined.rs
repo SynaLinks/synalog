@@ -193,66 +193,101 @@ pub fn check_undefined(rules: &[&Json]) -> Vec<UndefinedError> {
     // in predicate position — their own definitions and built-in library
     // predicates (`Today`, `Now`, `Num`, ...). Plain SQL functions are excluded;
     // suggesting `SUBSTR` for a relational typo would be noise.
-    let mut candidates = defined.clone();
-    candidates.extend(reserved.iter().cloned());
+    let mut pred_candidates = defined.clone();
+    pred_candidates.extend(reserved.iter().cloned());
+    // For a function call, suggest a documented function too.
+    let mut fn_candidates = defined.clone();
+    fn_candidates.extend(documented_functions().iter().map(|s| s.to_string()));
 
-    let mut errors = Vec::new();
+    // The predicate-like references to settle, first occurrence only, in the
+    // order they appear (a rule's body references before its value calls): each
+    // is undefined unless the program, the built-ins or the reserved names
+    // provide it. Which are missing is the Verus-proved
+    // `synalog_verified::membership::absent`.
     let mut seen = HashSet::new();
-
+    // (name, defining rule text, whether it was a value call).
+    let mut refs_to_check: Vec<(String, String, bool)> = Vec::new();
     for rule in rules {
         let rule_txt = rule_text(rule);
-        // The body's references, and those of a combine in the head.
+        let head_is_annotation = rule.as_object()["head"].as_object()["predicate_name"]
+            .as_str()
+            .starts_with('@');
+
+        // The body's references, and those of a combine in a non-annotation head.
         let mut refs = BTreeSet::new();
         if let Some(body) = rule.as_object().get("body") {
             collect_body_refs(body, &mut refs);
         }
-        if !rule.as_object()["head"].as_object()["predicate_name"].as_str().starts_with('@') {
+        if !head_is_annotation {
             if let Some(record) = rule.as_object()["head"].as_object().get("record") {
                 collect_expr_refs(record, &mut refs);
             }
         }
-        {
-            for name in refs {
-                if !looks_like_predicate(&name)
-                    || defined.contains(&name)
-                    || builtins.contains(&name)
-                    || reserved.contains(&name)
-                {
-                    continue;
-                }
-                if !seen.insert(name.clone()) {
-                    continue;
-                }
-                let suggestion = closest_match(&name, &candidates).cloned();
-                errors.push(UndefinedError {
-                    predicate: name,
-                    suggestion,
-                    rule: rule_txt.clone(),
-                    function: false,
-                });
+        for name in refs {
+            if looks_like_predicate(&name) && seen.insert(name.clone()) {
+                refs_to_check.push((name, rule_txt.clone(), false));
             }
         }
+
         // A function called in a value (`Left(s, 2)`) that nothing defines
         // compiles to a read of a table of that name: never what was meant.
-        if rule.as_object()["head"].as_object()["predicate_name"].as_str().starts_with('@') {
+        if head_is_annotation {
             continue;
         }
         let mut calls = BTreeSet::new();
         collect_calls(rule, &mut calls);
         for name in calls {
-            if !looks_like_predicate(&name)
-                || defined.contains(&name)
-                || builtins.contains(&name)
-                || reserved.contains(&name)
-                || !seen.insert(name.clone())
-            {
-                continue;
+            if looks_like_predicate(&name) && seen.insert(name.clone()) {
+                refs_to_check.push((name, rule_txt.clone(), true));
             }
-            let mut functions: HashSet<String> = defined.clone();
-            functions.extend(documented_functions().iter().map(|s| s.to_string()));
-            let suggestion = closest_match(&name, &functions).cloned();
-            errors.push(UndefinedError { predicate: name, suggestion, rule: rule_txt.clone(), function: true });
         }
+    }
+
+    // Intern names to u64 symbols: the allowed names (defined, built-in,
+    // reserved) and the references to check share one id per name, so the
+    // kernel's membership test matches string equality.
+    let mut ids: HashMap<&str, u64> = HashMap::new();
+    let mut next: u64 = 0;
+    let mut allowed_ids: Vec<u64> = Vec::new();
+    for name in defined.iter().chain(builtins.iter()).chain(reserved.iter()) {
+        let id = match ids.get(name.as_str()) {
+            Some(&id) => id,
+            None => {
+                let id = next;
+                next += 1;
+                ids.insert(name.as_str(), id);
+                id
+            }
+        };
+        allowed_ids.push(id);
+    }
+    let mut ref_ids: Vec<u64> = Vec::with_capacity(refs_to_check.len());
+    let mut index_of: HashMap<u64, usize> = HashMap::new();
+    for (idx, (name, _, _)) in refs_to_check.iter().enumerate() {
+        let id = match ids.get(name.as_str()) {
+            Some(&id) => id,
+            None => {
+                let id = next;
+                next += 1;
+                ids.insert(name.as_str(), id);
+                id
+            }
+        };
+        index_of.insert(id, idx);
+        ref_ids.push(id);
+    }
+
+    let mut errors = Vec::new();
+    for id in synalog_verified::membership::absent(&ref_ids, &allowed_ids) {
+        let (name, rule_txt, is_function) = &refs_to_check[index_of[&id]];
+        let candidates = if *is_function { &fn_candidates } else { &pred_candidates };
+        let suggestion = closest_match(name, candidates).cloned();
+        errors.push(UndefinedError {
+            predicate: name.clone(),
+            suggestion,
+            rule: rule_txt.clone(),
+            function: *is_function,
+        });
     }
 
     errors
