@@ -8,7 +8,7 @@
 //! - Named usages only reference columns that the definition provides
 //!   (referencing a subset of columns is valid and idiomatic)
 
-use std::collections::{BTreeSet, HashMap, HashSet};
+use std::collections::{HashMap, HashSet};
 use crate::parser::Json;
 use crate::errors::VerifyError;
 
@@ -219,15 +219,38 @@ fn check_call_shape(
         });
     }
 
-    let unknown: BTreeSet<&String> = shape
-        .named_fields
-        .iter()
-        .filter(|name| !def.named_fields.contains(*name))
-        .collect();
-    for name in unknown {
+    // The call's columns the definition does not provide, decided by the
+    // Verus-proved synalog_verified::membership::absent. Names are interned to
+    // u64 symbols (a column shared by call and definition gets one id), and the
+    // call's columns are sorted so the unknown ones are reported in order.
+    let mut call_cols: Vec<&String> = shape.named_fields.iter().collect();
+    call_cols.sort();
+    let mut ids: HashMap<&str, u64> = HashMap::new();
+    let mut next: u64 = 0;
+    let mut allowed_ids: Vec<u64> = Vec::with_capacity(def.named_fields.len());
+    for c in &def.named_fields {
+        let id = *ids.entry(c.as_str()).or_insert_with(|| {
+            let id = next;
+            next += 1;
+            id
+        });
+        allowed_ids.push(id);
+    }
+    let mut col_ids: Vec<u64> = Vec::with_capacity(call_cols.len());
+    let mut name_of: HashMap<u64, &str> = HashMap::new();
+    for c in &call_cols {
+        let id = *ids.entry(c.as_str()).or_insert_with(|| {
+            let id = next;
+            next += 1;
+            id
+        });
+        name_of.insert(id, c.as_str());
+        col_ids.push(id);
+    }
+    for id in synalog_verified::membership::absent(&col_ids, &allowed_ids) {
         errors.push(ArityError::UnknownColumn {
             predicate: pred_name.to_string(),
-            column: name.clone(),
+            column: name_of[&id].to_string(),
             rule: rule_txt.to_string(),
         });
     }
