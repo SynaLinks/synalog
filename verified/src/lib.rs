@@ -16,6 +16,8 @@
 //!     component with two nodes or more, or with a self-loop;
 //!   * [`first_negative_cycle`]: a negative edge some cycle goes through;
 //!   * [`reaches_cycle`]: whether a cycle can be reached from a node;
+//!   * [`reaches_any`]: whether a node reaches a seed — the verifier's
+//!     aggregate propagation as a reachability closure;
 //!   * [`plan::schedule`]: the order a compiled program's tables run in;
 //!   * [`contradiction::contradictory`]: comparisons that can never all hold;
 //!   * [`page::page`]: the rows a page of a predicate keeps;
@@ -612,6 +614,40 @@ pub fn first_negative_cycle(g: &Vec<Vec<usize>>, r: &Vec<Vec<bool>>, edges: &Vec
         i += 1;
     }
     None
+}
+
+/// Whether `p` reaches a seed node — `p` is in the least set that holds the
+/// seeds and every node with an edge into it. The verifier's aggregate
+/// propagation is this closure: a value-function is an aggregate when it
+/// reaches a built-in aggregate through its value-calls.
+// `g` only appears in the specification, which a plain build erases.
+#[allow(unused_variables)]
+pub fn reaches_any(g: &Vec<Vec<usize>>, r: &Vec<Vec<bool>>, seed: &Vec<bool>, p: usize) -> (b: bool)
+    requires
+        well_formed(g@),
+        is_reachability(g@, r@),
+        seed.len() == g.len(),
+        p < g.len(),
+    ensures b <==> exists|v: int| 0 <= v < g.len() && #[trigger] reaches(g@, p as int, v) && seed[v],
+{
+    let n = g.len();
+    let mut v: usize = 0;
+    while v < n
+        invariant
+            is_reachability(g@, r@),
+            seed.len() == n,
+            n == g.len(),
+            p < n,
+            v <= n,
+            forall|x: int| 0 <= x < v ==> !(#[trigger] reaches(g@, p as int, x) && seed[x]),
+        decreases n - v,
+    {
+        if r[p][v] && seed[v] {
+            return true;
+        }
+        v += 1;
+    }
+    false
 }
 
 /// Whether a cycle can be reached from `p`.

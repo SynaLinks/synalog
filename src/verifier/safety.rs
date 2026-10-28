@@ -7,7 +7,7 @@
 //! - Variables in negated predicates must appear positively
 //! - Variables in aggregations must be bound outside the aggregate
 
-use std::collections::HashSet;
+use std::collections::{HashMap, HashSet};
 
 use crate::parser::Json;
 use crate::errors::VerifyError;
@@ -290,24 +290,55 @@ fn check_aggregates_outside(rules: &[&Json]) -> Vec<SafetyError> {
         let val = &fv.as_object()["value"];
         val.as_object().get("expression").unwrap_or(val)
     }
-    // The program's names for aggregates: functions whose value is one.
-    let mut aggregates: HashSet<String> = AGGREGATES.iter().map(|s| s.to_string()).collect();
-    loop {
-        let before = aggregates.len();
-        for rule in rules {
-            let head = rule.as_object()["head"].as_object();
-            let Some(fvs) = head.get("record").and_then(|r| r.as_object().get("field_value")) else { continue };
-            for fv in fvs.as_array() {
-                let f = &fv.as_object()["field"];
-                if f.is_string() && f.as_str() == "synalog_value" {
-                    if call_of(value_of(fv)).is_some_and(|(n, _)| aggregates.contains(n)) {
-                        aggregates.insert(head["predicate_name"].as_str().to_string());
-                    }
+    // The program's names for aggregates: a value-function whose value calls an
+    // aggregate is one, transitively. That monotone closure is reachability in
+    // the graph of value-calls (head -> the name its value calls) from the
+    // built-in aggregate names, computed with the Verus-proved graph kernels
+    // (`reachability` + `reaches_any`).
+    let mut index: HashMap<String, usize> = HashMap::new();
+    let mut names: Vec<String> = Vec::new();
+    let intern = |name: &str, index: &mut HashMap<String, usize>, names: &mut Vec<String>| -> usize {
+        match index.get(name) {
+            Some(&i) => i,
+            None => {
+                let i = names.len();
+                names.push(name.to_string());
+                index.insert(name.to_string(), i);
+                i
+            }
+        }
+    };
+    // The built-in aggregate names are the seeds.
+    for a in AGGREGATES {
+        intern(a, &mut index, &mut names);
+    }
+    let mut successors_edges: Vec<(usize, usize)> = Vec::new();
+    for rule in rules {
+        let head = rule.as_object()["head"].as_object();
+        let head_name = head["predicate_name"].as_str();
+        let Some(fvs) = head.get("record").and_then(|r| r.as_object().get("field_value")) else { continue };
+        for fv in fvs.as_array() {
+            let f = &fv.as_object()["field"];
+            if f.is_string() && f.as_str() == "synalog_value" {
+                if let Some((n, _)) = call_of(value_of(fv)) {
+                    let u = intern(head_name, &mut index, &mut names);
+                    let w = intern(n, &mut index, &mut names);
+                    successors_edges.push((u, w));
                 }
             }
         }
-        if aggregates.len() == before {
-            break;
+    }
+    let n = names.len();
+    let mut successors: Vec<Vec<usize>> = vec![Vec::new(); n];
+    for (u, w) in successors_edges {
+        successors[u].push(w);
+    }
+    let seed: Vec<bool> = names.iter().map(|nm| AGGREGATES.contains(&nm.as_str())).collect();
+    let reach = synalog_verified::reachability(&successors);
+    let mut aggregates: HashSet<String> = AGGREGATES.iter().map(|s| s.to_string()).collect();
+    for i in 0..n {
+        if synalog_verified::reaches_any(&successors, &reach, &seed, i) {
+            aggregates.insert(names[i].clone());
         }
     }
     fn walk(json: &Json, aggregates: &HashSet<String>, found: &mut Vec<String>) {
