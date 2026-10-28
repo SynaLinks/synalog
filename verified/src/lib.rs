@@ -26,17 +26,23 @@
 //!   * [`safety::unbound`]: the variables a rule leaves unbound, the decision
 //!     at the heart of range restriction;
 //!   * [`strata::check_strata`]: a valid stratum numbering witnesses that no
-//!     negated dependency lies on a cycle.
+//!     negated dependency lies on a cycle;
+//!   * [`arity::first_arity_conflict`]: two definitions of a predicate that
+//!     disagree on arity, or a guarantee the definitions agree;
+//!   * [`recursion::repetitions`]: enough repetitions, without overflow, to
+//!     unroll a recursion to its depth.
 //!
 //! `cargo verus verify` checks the proofs. A plain `cargo build` erases them
 //! and compiles the code as is.
 
 use vstd::prelude::*;
 
+pub mod arity;
 pub mod cast;
 pub mod contradiction;
 pub mod page;
 pub mod plan;
+pub mod recursion;
 pub mod safety;
 pub mod strata;
 pub mod quote;

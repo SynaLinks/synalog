@@ -1687,8 +1687,9 @@ fn get_flat_iterative_recursion_functor(
         .chain(iterate_over_lower_half)
         .collect();
     let iterate_over_str = iterate_over.join(", ");
-    // `depth >= ignition_steps`: no overflow, `depth` up to `i64::MAX`.
-    let repetitions = (depth - ignition_steps + 1) / 2 + 1;
+    // Enough repetitions to reach `depth`, without overflow: proved by
+    // `synalog_verified::recursion::repetitions` with Verus.
+    let repetitions = synalog_verified::recursion::repetitions(depth, ignition_steps);
     let min_cover = cover.iter().next().unwrap();
 
     let mut iteration_line = format!(

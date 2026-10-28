@@ -130,12 +130,6 @@ impl From<ArityError> for crate::errors::SynalogError {
     }
 }
 
-/// Predicate info: arity and defining rule.
-#[derive(Debug, Clone)]
-struct PredicateInfo {
-    arity: usize,
-    rule_text: String,
-}
 
 /// Field shape of a predicate: positional argument count and named columns.
 #[derive(Debug, Clone, Default)]
@@ -250,7 +244,15 @@ fn rule_text(rule: &Json) -> String {
 /// Check that all definitions of a predicate have the same arity.
 pub fn check_consistent_definitions(rules: &[&Json]) -> Vec<ArityError> {
     let mut errors = Vec::new();
-    let mut first_definition: HashMap<String, PredicateInfo> = HashMap::new();
+
+    // Collect each definition's (predicate, arity) in order, interning names to
+    // u64 symbols; the inconsistency decision is the Verus-proved
+    // synalog_verified::arity::first_arity_conflict.
+    let mut ids: HashMap<&str, u64> = HashMap::new();
+    let mut next: u64 = 0;
+    let mut defs: Vec<(u64, usize)> = Vec::new();
+    // Per definition, the data an InconsistentDefinition error needs.
+    let mut meta: Vec<(&str, usize, String)> = Vec::new();
 
     for rule in rules {
         let obj = rule.as_object();
@@ -279,25 +281,27 @@ pub fn check_consistent_definitions(rules: &[&Json]) -> Vec<ArityError> {
             }
         }
 
-        if let Some(first) = first_definition.get(pred_name) {
-            if first.arity != arity {
-                errors.push(ArityError::InconsistentDefinition {
-                    predicate: pred_name.to_string(),
-                    first_arity: first.arity,
-                    first_rule: first.rule_text.clone(),
-                    second_arity: arity,
-                    second_rule: rule_txt,
-                });
+        let id = match ids.get(pred_name) {
+            Some(&id) => id,
+            None => {
+                let id = next;
+                next += 1;
+                ids.insert(pred_name, id);
+                id
             }
-        } else {
-            first_definition.insert(
-                pred_name.to_string(),
-                PredicateInfo {
-                    arity,
-                    rule_text: rule_txt,
-                },
-            );
-        }
+        };
+        defs.push((id, arity));
+        meta.push((pred_name, arity, rule_txt));
+    }
+
+    if let Some((i, j)) = synalog_verified::arity::first_arity_conflict(&defs) {
+        errors.push(ArityError::InconsistentDefinition {
+            predicate: meta[i].0.to_string(),
+            first_arity: meta[i].1,
+            first_rule: meta[i].2.clone(),
+            second_arity: meta[j].1,
+            second_rule: meta[j].2.clone(),
+        });
     }
 
     errors
