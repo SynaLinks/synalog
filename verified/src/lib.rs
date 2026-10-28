@@ -22,7 +22,11 @@
 //!   * [`quote`]: text quoted into SQL, read back exactly as it was;
 //!   * [`cast::accepts`]: a `Cast` type name that cannot escape `CAST(...)`;
 //!   * [`types::meet`]: the intersection of two types, the reference the
-//!     type inference is tested against.
+//!     type inference is tested against;
+//!   * [`safety::unbound`]: the variables a rule leaves unbound, the decision
+//!     at the heart of range restriction;
+//!   * [`strata::check_strata`]: a valid stratum numbering witnesses that no
+//!     negated dependency lies on a cycle.
 //!
 //! `cargo verus verify` checks the proofs. A plain `cargo build` erases them
 //! and compiles the code as is.
@@ -34,6 +38,7 @@ pub mod contradiction;
 pub mod page;
 pub mod plan;
 pub mod safety;
+pub mod strata;
 pub mod quote;
 pub mod types;
 
