@@ -33,6 +33,7 @@ pub mod cast;
 pub mod contradiction;
 pub mod page;
 pub mod plan;
+pub mod safety;
 pub mod quote;
 pub mod types;
 
