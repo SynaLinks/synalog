@@ -12,6 +12,12 @@
 //! and every type refining both refines it. When it returns `None`, no type
 //! refines both.
 //!
+//! Refinement is a preorder ([`lemma_le_refl`], [`lemma_le_trans`]), so the
+//! intersection is a meet-semilattice operation: idempotent, commutative,
+//! associative and monotone ([`lemma_meet_idem`], [`lemma_meet_comm`],
+//! [`lemma_meet_assoc`], [`lemma_meet_mono`]), with [`lemma_meet_lb`] its
+//! defining universal property.
+//!
 //! Field names are numbers here (the test names them).
 
 use vstd::prelude::*;
@@ -603,6 +609,190 @@ fn meet_records(fa: &Fields, open_a: bool, fb: &Fields, open_b: bool, Ghost(a): 
         }
     }
     Some(c)
+}
+
+// ---------------------------------------------------------------------------
+// The lattice laws
+// ---------------------------------------------------------------------------
+
+/// Refinement is transitive: `le` is a preorder (with [`lemma_le_refl`]).
+pub proof fn lemma_le_trans(a: Ty, b: Ty, c: Ty)
+    requires wf(a), wf(b), wf(c), le(a, b), le(b, c),
+    ensures le(a, c),
+    decreases size(c),
+{
+    match c {
+        Ty::List(ec) => {
+            if let (Ty::List(ea), Ty::List(eb)) = (a, b) {
+                lemma_le_trans(*ea, *eb, *ec);
+            }
+        },
+        Ty::Record(fc, open_c) => {
+            if let (Ty::Record(fa, open_a), Ty::Record(fb, _)) = (a, b) {
+                lemma_fields_le_record(a, b);
+                lemma_fields_le_record(b, c);
+                lemma_fields_le_record(a, c);
+                // Each field of `c` is a field of `b` (which refines it) and so
+                // a field of `a`, whose type refines `b`'s, hence `c`'s.
+                assert forall|k: u64| #[trigger] has_field(*fc, k) implies
+                    has_field(*fa, k) && le(get(*fa, k), get(*fc, k)) by {
+                    lemma_lookup_size(*fc, k);
+                    lemma_wf_get(*fa, k);
+                    lemma_wf_get(*fb, k);
+                    lemma_wf_get(*fc, k);
+                    lemma_le_trans(get(*fa, k), get(*fb, k), get(*fc, k));
+                }
+                // A closed `c` forced `b` closed with no extra fields, which
+                // forced `a` closed with no fields outside `b`'s, hence none
+                // outside `c`'s.
+                assert(open_c || (!open_a && forall|k: u64|
+                    #[trigger] has_field(*fa, k) ==> has_field(*fc, k)));
+            }
+        },
+        _ => {},
+    }
+}
+
+/// Two types refine each other: equal as far as refinement can tell.
+pub open spec fn equiv(a: Ty, b: Ty) -> bool {
+    le(a, b) && le(b, a)
+}
+
+/// What [`meet`] guarantees of its result — a greatest common refinement, or a
+/// proof that none exists. Stating the laws over this lets every caller of the
+/// proved `meet` inherit them.
+pub open spec fn is_meet(r: Option<Ty>, a: Ty, b: Ty) -> bool {
+    match r {
+        Some(c) => wf(c) && glb(c, a, b),
+        None => forall|d: Ty| !(#[trigger] le(d, a) && le(d, b)),
+    }
+}
+
+/// The greatest common refinement is unique up to `equiv`.
+pub proof fn lemma_glb_unique(c: Ty, c2: Ty, a: Ty, b: Ty)
+    requires glb(c, a, b), glb(c2, a, b),
+    ensures equiv(c, c2),
+{
+    assert(le(c, a) && le(c, b));
+    assert(le(c2, a) && le(c2, b));
+}
+
+/// Intersection is commutative: `meet(a, b)` and `meet(b, a)` agree on whether
+/// a common refinement exists, and it is the same type up to `equiv`.
+pub proof fn lemma_meet_comm(r1: Option<Ty>, r2: Option<Ty>, a: Ty, b: Ty)
+    requires is_meet(r1, a, b), is_meet(r2, b, a),
+    ensures
+        (r1 is Some) == (r2 is Some),
+        r1 matches Some(c1) ==> (r2 matches Some(c2) ==> equiv(c1, c2)),
+{
+    match r1 {
+        Some(c1) => {
+            // `c1` refines both, so `meet(b, a)` cannot report "none".
+            assert(le(c1, a) && le(c1, b));
+            match r2 {
+                Some(c2) => {
+                    // `meet(b, a)` makes c2 a glb of (b, a) — the same as (a, b).
+                    assert(glb(c2, a, b));
+                    lemma_glb_unique(c1, c2, a, b);
+                },
+                None => assert(!(le(c1, b) && le(c1, a))),
+            }
+        },
+        None => {
+            match r2 {
+                Some(c2) => {
+                    assert(le(c2, b) && le(c2, a));
+                    assert(!(le(c2, a) && le(c2, b)));
+                },
+                None => {},
+            }
+        },
+    }
+}
+
+/// Intersection is idempotent: `meet(a, a)` is `a` (up to `equiv`).
+pub proof fn lemma_meet_idem(r: Option<Ty>, a: Ty)
+    requires wf(a), is_meet(r, a, a),
+    ensures r is Some, r matches Some(c) ==> equiv(c, a),
+{
+    lemma_le_refl(a);
+    // `a` is a greatest common refinement of `a` with itself.
+    assert(glb(a, a, a));
+    if let Some(c) = r {
+        lemma_glb_unique(c, a, a, a);
+    }
+}
+
+/// A type refines an intersection exactly when it refines both sides. The
+/// defining universal property, specialized to the proved `meet`.
+pub proof fn lemma_meet_lb(c: Ty, a: Ty, b: Ty, x: Ty)
+    requires wf(a), wf(b), wf(c), wf(x), glb(c, a, b),
+    ensures le(x, c) <==> (le(x, a) && le(x, b)),
+{
+    if le(x, c) {
+        lemma_le_trans(x, c, a);
+        lemma_le_trans(x, c, b);
+    }
+}
+
+/// Intersection is monotone: refining one side refines the intersection.
+pub proof fn lemma_meet_mono(c1: Ty, c2: Ty, a1: Ty, a2: Ty, b: Ty)
+    requires
+        wf(a1), wf(a2), wf(b), wf(c1), wf(c2),
+        le(a1, a2), glb(c1, a1, b), glb(c2, a2, b),
+    ensures le(c1, c2),
+{
+    // `c1` refines `a1`, hence `a2`, and refines `b`: a common refinement of
+    // `a2` and `b`, so below their greatest, `c2`.
+    assert(le(c1, a1) && le(c1, b));
+    lemma_le_trans(c1, a1, a2);
+}
+
+/// Intersection is associative: `meet(meet(a, b), c)` and `meet(a, meet(b, c))`
+/// agree on existence and, when both exist, are equal up to `equiv` — both are
+/// the greatest refinement of all three.
+pub proof fn lemma_meet_assoc(
+    ab: Ty, bc: Ty, l: Option<Ty>, r: Option<Ty>, a: Ty, b: Ty, c: Ty,
+)
+    requires
+        wf(a), wf(b), wf(c), wf(ab), wf(bc),
+        glb(ab, a, b), glb(bc, b, c),
+        is_meet(l, ab, c), is_meet(r, a, bc),
+    ensures
+        (l is Some) == (r is Some),
+        l matches Some(cl) ==> (r matches Some(cr) ==> equiv(cl, cr)),
+{
+    // A lower bound of (ab, c) refines a, b and c, so it refines bc and is a
+    // lower bound of (a, bc) — and symmetrically. So neither side is empty
+    // without the other, and when both exist each is below the other.
+    match l {
+        Some(cl) => {
+            lemma_meet_lb(ab, a, b, cl);
+            lemma_meet_lb(bc, b, c, cl);
+            assert(le(cl, a) && le(cl, bc));
+            match r {
+                Some(cr) => {
+                    lemma_meet_lb(bc, b, c, cr);
+                    lemma_meet_lb(ab, a, b, cr);
+                    assert(le(cr, ab) && le(cr, c));
+                    assert(le(cl, cr));
+                    assert(le(cr, cl));
+                },
+                None => assert(!(le(cl, a) && le(cl, bc))),
+            }
+        },
+        None => {
+            match r {
+                Some(cr) => {
+                    lemma_meet_lb(bc, b, c, cr);
+                    lemma_meet_lb(ab, a, b, cr);
+                    assert(le(cr, ab) && le(cr, c));
+                    assert(!(le(cr, ab) && le(cr, c)));
+                },
+                None => {},
+            }
+        },
+    }
 }
 
 /// `le` for a record, field by field.
