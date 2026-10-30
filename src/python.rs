@@ -195,22 +195,25 @@ fn search(
 #[pyfunction]
 #[pyo3(signature = (source, engine=None, import_root=None))]
 fn compile_all(
+    py: Python<'_>,
     source: &str,
     engine: Option<&str>,
     import_root: Option<Vec<String>>,
 ) -> PyResult<HashMap<String, String>> {
-    check_engine(engine)?;
-    let parsed = parse_source(source, None, import_root)?;
-    let program = build_program(&parsed, engine)?;
-    let mut out = HashMap::new();
-    let pagination = Pagination { limit: None, offset: None };
-    for name in program.user_defined_predicates() {
-        let sql = program
-            .formatted_predicate_sql_with_pagination(&name, &pagination)
-            .map_err(map_err)?;
-        out.insert(name, sql);
-    }
-    Ok(out)
+    py.detach(|| {
+        check_engine(engine)?;
+        let parsed = parse_source(source, None, import_root)?;
+        let program = build_program(&parsed, engine)?;
+        let mut out = HashMap::new();
+        let pagination = Pagination { limit: None, offset: None };
+        for name in program.user_defined_predicates() {
+            let sql = program
+                .formatted_predicate_sql_with_pagination(&name, &pagination)
+                .map_err(map_err)?;
+            out.insert(name, sql);
+        }
+        Ok(out)
+    })
 }
 
 /// Validate a Synalog program; returns `(errors, warnings)`, two lists of
@@ -225,17 +228,20 @@ fn compile_all(
 #[pyfunction]
 #[pyo3(signature = (source, engine=None, import_root=None))]
 fn check(
+    py: Python<'_>,
     source: &str,
     engine: Option<&str>,
     import_root: Option<Vec<String>>,
 ) -> PyResult<(Vec<String>, Vec<String>)> {
-    check_engine(engine)?;
-    let parsed = parse_source(source, None, import_root)?;
-    let names = PredicateNames::of(&parsed);
-    let result = validate(&parsed);
-    let errors = result.errors.iter().map(|e| names.written(&e.to_string())).collect();
-    let warnings = result.warnings.iter().map(|w| names.written(w)).collect();
-    Ok((errors, warnings))
+    py.detach(|| {
+        check_engine(engine)?;
+        let parsed = parse_source(source, None, import_root)?;
+        let names = PredicateNames::of(&parsed);
+        let result = validate(&parsed);
+        let errors = result.errors.iter().map(|e| names.written(&e.to_string())).collect();
+        let warnings = result.warnings.iter().map(|w| names.written(w)).collect();
+        Ok((errors, warnings))
+    })
 }
 
 /// Every `@Assert` of a program and where it stands.
@@ -261,11 +267,12 @@ fn assertions(
     engine: Option<&str>,
     import_root: Option<Vec<String>>,
 ) -> PyResult<Vec<Py<PyAny>>> {
-    check_engine(engine)?;
-    let parsed = parse_source(source, None, import_root)?;
-    let names = PredicateNames::of(&parsed);
-    validate(&parsed)
-        .assertions
+    let (names, found) = py.detach(|| {
+        check_engine(engine)?;
+        let parsed = parse_source(source, None, import_root)?;
+        PyResult::Ok((PredicateNames::of(&parsed), validate(&parsed).assertions))
+    })?;
+    found
         .into_iter()
         .map(|assertion| {
             let dict = pyo3::types::PyDict::new(py);
@@ -291,18 +298,24 @@ fn assertions(
 /// from here. Raises ValueError on syntax errors.
 #[pyfunction]
 #[pyo3(signature = (source, import_root=None))]
-fn dependencies(source: &str, import_root: Option<Vec<String>>) -> PyResult<BTreeMap<String, Vec<String>>> {
-    let parsed = parse_source(source, None, import_root)?;
-    let names = PredicateNames::of(&parsed);
-    let rules: Vec<&Json> = parsed.as_object().get("rule").map(|r| r.as_array().iter().collect()).unwrap_or_default();
-    Ok(program_dependencies(&rules)
-        .into_iter()
-        .map(|(name, refs)| {
-            let mut refs: Vec<String> = refs.iter().map(|r| names.written(r)).collect();
-            refs.sort();
-            (names.written(&name), refs)
-        })
-        .collect())
+fn dependencies(
+    py: Python<'_>,
+    source: &str,
+    import_root: Option<Vec<String>>,
+) -> PyResult<BTreeMap<String, Vec<String>>> {
+    py.detach(|| {
+        let parsed = parse_source(source, None, import_root)?;
+        let names = PredicateNames::of(&parsed);
+        let rules: Vec<&Json> = parsed.as_object().get("rule").map(|r| r.as_array().iter().collect()).unwrap_or_default();
+        Ok(program_dependencies(&rules)
+            .into_iter()
+            .map(|(name, refs)| {
+                let mut refs: Vec<String> = refs.iter().map(|r| names.written(r)).collect();
+                refs.sort();
+                (names.written(&name), refs)
+            })
+            .collect())
+    })
 }
 
 /// Compile the search for the counterexamples of an assertion to SQL.
@@ -316,7 +329,9 @@ fn dependencies(source: &str, import_root: Option<Vec<String>>) -> PyResult<BTre
 /// checked, and on syntax or compilation errors.
 #[pyfunction]
 #[pyo3(signature = (source, predicate, name, limit=None, offset=None, engine=None, import_root=None))]
+#[allow(clippy::too_many_arguments)]
 fn counterexamples(
+    py: Python<'_>,
     source: &str,
     predicate: &str,
     name: &str,
@@ -325,19 +340,21 @@ fn counterexamples(
     engine: Option<&str>,
     import_root: Option<Vec<String>>,
 ) -> PyResult<String> {
-    check_engine(engine)?;
-    let parsed = parse_source(source, None, import_root.clone())?;
-    let names = PredicateNames::of(&parsed);
-    let rules: Vec<&Json> = parsed.as_object()["rule"].as_array().iter().collect();
-    let translation = assertion_check(&rules, &names.internal(predicate), name).map_err(written_err(&names))?;
-    // The counterexamples are a predicate of the program like any other.
-    let extended = format!("{}\n{}\n", source, translation.rules);
-    let parsed = parse_source(&extended, None, import_root)?;
-    let program = build_program(&parsed, engine)?;
-    let pagination = Pagination { limit, offset };
-    program
-        .formatted_predicate_sql_with_pagination(&translation.predicate, &pagination)
-        .map_err(map_err)
+    py.detach(|| {
+        check_engine(engine)?;
+        let parsed = parse_source(source, None, import_root.clone())?;
+        let names = PredicateNames::of(&parsed);
+        let rules: Vec<&Json> = parsed.as_object()["rule"].as_array().iter().collect();
+        let translation = assertion_check(&rules, &names.internal(predicate), name).map_err(written_err(&names))?;
+        // The counterexamples are a predicate of the program like any other.
+        let extended = format!("{}\n{}\n", source, translation.rules);
+        let parsed = parse_source(&extended, None, import_root)?;
+        let program = build_program(&parsed, engine)?;
+        let pagination = Pagination { limit, offset };
+        program
+            .formatted_predicate_sql_with_pagination(&translation.predicate, &pagination)
+            .map_err(map_err)
+    })
 }
 
 /// Compile the search for the counterexamples of several assertions to SQL;
@@ -353,6 +370,7 @@ fn counterexamples(
 #[pyfunction]
 #[pyo3(signature = (source, assertions=None, limit=None, offset=None, engine=None, import_root=None))]
 fn counterexamples_all(
+    py: Python<'_>,
     source: &str,
     assertions: Option<Vec<(String, String)>>,
     limit: Option<u64>,
@@ -360,37 +378,39 @@ fn counterexamples_all(
     engine: Option<&str>,
     import_root: Option<Vec<String>>,
 ) -> PyResult<HashMap<(String, String), String>> {
-    check_engine(engine)?;
-    let parsed = parse_source(source, None, import_root.clone())?;
-    let names = PredicateNames::of(&parsed);
-    let assertions = match assertions {
-        Some(assertions) => assertions,
-        None => validate(&parsed)
-            .assertions
+    py.detach(|| {
+        check_engine(engine)?;
+        let parsed = parse_source(source, None, import_root.clone())?;
+        let names = PredicateNames::of(&parsed);
+        let assertions = match assertions {
+            Some(assertions) => assertions,
+            None => validate(&parsed)
+                .assertions
+                .into_iter()
+                .filter(|assertion| assertion.status == AssertionStatus::Unchecked)
+                .map(|assertion| (names.written(&assertion.predicate), assertion.name))
+                .collect(),
+        };
+        let rules: Vec<&Json> = parsed.as_object()["rule"].as_array().iter().collect();
+        let mut extended = format!("{}\n", source);
+        let mut checks = Vec::new();
+        for (predicate, name) in assertions {
+            let translation = assertion_check(&rules, &names.internal(&predicate), &name).map_err(written_err(&names))?;
+            extended.push_str(&translation.rules);
+            extended.push('\n');
+            checks.push(((predicate, name), translation.predicate));
+        }
+        let parsed = parse_source(&extended, None, import_root)?;
+        let program = build_program(&parsed, engine)?;
+        let pagination = Pagination { limit, offset };
+        checks
             .into_iter()
-            .filter(|assertion| assertion.status == AssertionStatus::Unchecked)
-            .map(|assertion| (names.written(&assertion.predicate), assertion.name))
-            .collect(),
-    };
-    let rules: Vec<&Json> = parsed.as_object()["rule"].as_array().iter().collect();
-    let mut extended = format!("{}\n", source);
-    let mut checks = Vec::new();
-    for (predicate, name) in assertions {
-        let translation = assertion_check(&rules, &names.internal(&predicate), &name).map_err(written_err(&names))?;
-        extended.push_str(&translation.rules);
-        extended.push('\n');
-        checks.push(((predicate, name), translation.predicate));
-    }
-    let parsed = parse_source(&extended, None, import_root)?;
-    let program = build_program(&parsed, engine)?;
-    let pagination = Pagination { limit, offset };
-    checks
-        .into_iter()
-        .map(|(key, predicate)| {
-            let sql = program.formatted_predicate_sql_with_pagination(&predicate, &pagination).map_err(map_err)?;
-            Ok((key, sql))
-        })
-        .collect()
+            .map(|(key, predicate)| {
+                let sql = program.formatted_predicate_sql_with_pagination(&predicate, &pagination).map_err(map_err)?;
+                Ok((key, sql))
+            })
+            .collect()
+    })
 }
 
 /// The steps that compute a predicate, for a runner that executes them.
@@ -419,25 +439,27 @@ fn plan(
     pattern: Option<&str>,
     assertion: Option<&str>,
 ) -> PyResult<Vec<Py<PyAny>>> {
-    check_engine(engine)?;
-    let (source, predicate) = match assertion {
-        Some(name) => {
-            let parsed = parse_source(source, None, import_root.clone())?;
-            let names = PredicateNames::of(&parsed);
-            let rules: Vec<&Json> = parsed.as_object()["rule"].as_array().iter().collect();
-            let translation =
-                assertion_check(&rules, &names.internal(predicate), name).map_err(written_err(&names))?;
-            (format!("{}\n{}\n", source, translation.rules), translation.predicate)
-        }
-        None => (source.to_string(), predicate.to_string()),
-    };
-    let parsed = parse_source(&source, None, import_root)?;
-    let names = PredicateNames::of(&parsed);
-    let program = build_program(&parsed, engine)?;
-    let pagination = Pagination { limit, offset };
-    let steps = program
-        .formatted_predicate_plan(&names.internal(&predicate), Some(&pagination), pattern)
-        .map_err(written_err(&names))?;
+    let steps = py.detach(|| {
+        check_engine(engine)?;
+        let (source, predicate) = match assertion {
+            Some(name) => {
+                let parsed = parse_source(source, None, import_root.clone())?;
+                let names = PredicateNames::of(&parsed);
+                let rules: Vec<&Json> = parsed.as_object()["rule"].as_array().iter().collect();
+                let translation =
+                    assertion_check(&rules, &names.internal(predicate), name).map_err(written_err(&names))?;
+                (format!("{}\n{}\n", source, translation.rules), translation.predicate)
+            }
+            None => (source.to_string(), predicate.to_string()),
+        };
+        let parsed = parse_source(&source, None, import_root)?;
+        let names = PredicateNames::of(&parsed);
+        let program = build_program(&parsed, engine)?;
+        let pagination = Pagination { limit, offset };
+        program
+            .formatted_predicate_plan(&names.internal(&predicate), Some(&pagination), pattern)
+            .map_err(written_err(&names))
+    })?;
     steps
         .into_iter()
         .map(|step| {
