@@ -1,6 +1,6 @@
 [package]
 name = "synalog-verified"
-version = "2.4.0"
+version = "2.4.1"
 edition = "2024"
 description = "Synalog's graph algorithms, proved correct with Verus"
 license = "Apache-2.0"

@@ -300,7 +300,7 @@ dependencies = [
 
 [[package]]
 name = "synalog"
-version = "2.4.0"
+version = "2.4.1"
 dependencies = [
  "anyhow",
  "indexmap",
@@ -316,7 +316,7 @@ dependencies = [
 
 [[package]]
 name = "synalog-verified"
-version = "2.4.0"
+version = "2.4.1"
 dependencies = [
  "vstd",
 ]
