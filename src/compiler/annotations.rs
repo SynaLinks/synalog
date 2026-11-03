@@ -42,6 +42,11 @@ pub struct Annotations {
     /// Synalog runs): on PostgreSQL they are temporary tables, which no
     /// other session sees, and which need no schema to be created.
     pub session_tables: bool,
+    /// A name unique to the run, which suffixes the tables Synalog names
+    /// itself (a grounded predicate's, a recursion's steps') on an engine
+    /// whose schema every session shares (Trino, Presto, Databricks,
+    /// BigQuery): concurrent runs then compute into tables of their own.
+    pub run_tag: Option<String>,
 }
 
 #[derive(Debug, Clone)]
@@ -388,6 +393,7 @@ impl Annotations {
             bare_aggregation,
             engine_options,
             session_tables: false,
+            run_tag: None,
         })
     }
 
@@ -581,10 +587,25 @@ impl Annotations {
     /// name in the dataset, `_table` added to a name that is an SQL keyword
     /// (`synalog_home.Order` does not parse).
     fn default_table(&self, pred_name: &str) -> String {
-        if crate::compiler::dialects::is_sql_keyword(pred_name) {
-            format!("{}.{}_table", self.dataset(), pred_name)
+        let name = if crate::compiler::dialects::is_sql_keyword(pred_name) {
+            format!("{}_table", pred_name)
         } else {
-            format!("{}.{}", self.dataset(), pred_name)
+            pred_name.to_string()
+        };
+        match self.shared_schema_tag() {
+            Some(tag) => format!("{}.{}_{}", self.dataset(), name, tag),
+            None => format!("{}.{}", self.dataset(), name),
+        }
+    }
+
+    /// The run's tag, when the tables Synalog names itself are in a schema
+    /// other sessions see: SQLite and DuckDB compute into an in-memory
+    /// database of the session's, PostgreSQL into its temporary tables.
+    fn shared_schema_tag(&self) -> Option<&str> {
+        match self.engine.as_str() {
+            "sqlite" | "duckdb" | "psql" => None,
+            _ if self.session_tables => self.run_tag.as_deref(),
+            _ => None,
         }
     }
 

@@ -413,6 +413,31 @@ fn counterexamples_all(
     })
 }
 
+/// A name unique to a plan, among the plans of every process: the time, the
+/// process and a counter, in base 36.
+fn run_tag() -> String {
+    use std::sync::atomic::{AtomicU64, Ordering};
+    static COUNTER: AtomicU64 = AtomicU64::new(0);
+    fn base36(mut n: u128) -> String {
+        let digits = b"0123456789abcdefghijklmnopqrstuvwxyz";
+        let mut out = Vec::new();
+        loop {
+            out.push(digits[(n % 36) as usize]);
+            n /= 36;
+            if n == 0 {
+                break;
+            }
+        }
+        out.reverse();
+        String::from_utf8(out).unwrap()
+    }
+    let nanos = std::time::SystemTime::now()
+        .duration_since(std::time::UNIX_EPOCH)
+        .map_or(0, |d| d.as_nanos());
+    let unique = nanos ^ ((std::process::id() as u128) << 64) ^ ((COUNTER.fetch_add(1, Ordering::Relaxed) as u128) << 96);
+    format!("r{}", base36(unique))
+}
+
 /// The steps that compute a predicate, for a runner that executes them.
 ///
 /// Each step is a dict: `{"kind": "setup", "sql": ...}` (the engine's setup, a
@@ -458,6 +483,7 @@ fn plan(
         // The tables a plan computes are its run's: concurrent runs of programs
         // grounding the same predicate must not share them.
         program.annotations.session_tables = true;
+        program.annotations.run_tag = Some(run_tag());
         let pagination = Pagination { limit, offset };
         program
             .formatted_predicate_plan(&names.internal(&predicate), Some(&pagination), pattern)

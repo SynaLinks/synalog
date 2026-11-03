@@ -172,7 +172,7 @@ The steps that compute a predicate, for a host that runs them itself. Each step 
 | `{"kind": "sql", "sql": ...}` | a statement; the last step's rows are the predicate's |
 | `{"kind": "loop", "body": [...], "repetitions": n, "changed": ...}` | a recursion: run `changed`, a query returning one number; while it is not 0, run the `body` statements, `n` times at most |
 
-All the steps run in one connection: the loops write tables the later steps read. On PostgreSQL, those tables are the connection's temporary tables (`pg_temp`): run the steps in one transaction for them to read one snapshot. `synalog.runners.run_plan(steps, session)` runs a plan in a [`synalog.runners.session`](cli.md#executing-locally).
+All the steps run in one connection: the loops write tables the later steps read. They are the plan's own, so plans running at once never share them: on PostgreSQL the connection's temporary tables (`pg_temp`; run the steps in one transaction for them to read one snapshot), on Trino, Presto, Databricks and BigQuery tables whose names end with a tag unique to the plan (`synalog_test.Q_r…`). `synalog.runners.run_plan(steps, session)` runs a plan in a [`synalog.runners.session`](cli.md#executing-locally).
 
 ## `reserved_predicates`
 
