@@ -490,8 +490,8 @@ WHERE
   FROM
     synalog_test.Chain_sn_full AS Chain_sn_full
   WHERE
-    (Chain_sn_full.employee_id = Chain_sn_step.employee_id) AND
-    (Chain_sn_full.manager_id = Chain_sn_step.manager_id)) IS NULL)
+    (Chain_sn_full.employee_id <=> Chain_sn_step.employee_id) AND
+    (Chain_sn_full.manager_id <=> Chain_sn_step.manager_id)) IS NULL)
 GROUP BY 1, 2;
 
 INSERT INTO synalog_test.Chain_sn_full SELECT * FROM synalog_test.Chain_sn_new;
@@ -561,8 +561,8 @@ WHERE
   FROM
     synalog_test.Chain_sn_full AS Chain_sn_full
   WHERE
-    (Chain_sn_full.employee_id = Chain_sn_back_step.employee_id) AND
-    (Chain_sn_full.manager_id = Chain_sn_back_step.manager_id)) IS NULL)
+    (Chain_sn_full.employee_id <=> Chain_sn_back_step.employee_id) AND
+    (Chain_sn_full.manager_id <=> Chain_sn_back_step.manager_id)) IS NULL)
 GROUP BY 1, 2;
 
 INSERT INTO synalog_test.Chain_sn_full SELECT * FROM synalog_test.Chain_sn_delta;
@@ -632,8 +632,8 @@ WHERE
   FROM
     synalog_test.Chain_sn_full AS Chain_sn_full
   WHERE
-    (Chain_sn_full.employee_id = Chain_sn_step.employee_id) AND
-    (Chain_sn_full.manager_id = Chain_sn_step.manager_id)) IS NULL)
+    (Chain_sn_full.employee_id <=> Chain_sn_step.employee_id) AND
+    (Chain_sn_full.manager_id <=> Chain_sn_step.manager_id)) IS NULL)
 GROUP BY 1, 2;
 
 INSERT INTO synalog_test.Chain_sn_full SELECT * FROM synalog_test.Chain_sn_new;
@@ -703,8 +703,8 @@ WHERE
   FROM
     synalog_test.Chain_sn_full AS Chain_sn_full
   WHERE
-    (Chain_sn_full.employee_id = Chain_sn_back_step.employee_id) AND
-    (Chain_sn_full.manager_id = Chain_sn_back_step.manager_id)) IS NULL)
+    (Chain_sn_full.employee_id <=> Chain_sn_back_step.employee_id) AND
+    (Chain_sn_full.manager_id <=> Chain_sn_back_step.manager_id)) IS NULL)
 GROUP BY 1, 2;
 
 INSERT INTO synalog_test.Chain_sn_full SELECT * FROM synalog_test.Chain_sn_delta;
@@ -774,8 +774,8 @@ WHERE
   FROM
     synalog_test.Chain_sn_full AS Chain_sn_full
   WHERE
-    (Chain_sn_full.employee_id = Chain_sn_step.employee_id) AND
-    (Chain_sn_full.manager_id = Chain_sn_step.manager_id)) IS NULL)
+    (Chain_sn_full.employee_id <=> Chain_sn_step.employee_id) AND
+    (Chain_sn_full.manager_id <=> Chain_sn_step.manager_id)) IS NULL)
 GROUP BY 1, 2;
 
 INSERT INTO synalog_test.Chain_sn_full SELECT * FROM synalog_test.Chain_sn_new;
@@ -845,8 +845,8 @@ WHERE
   FROM
     synalog_test.Chain_sn_full AS Chain_sn_full
   WHERE
-    (Chain_sn_full.employee_id = Chain_sn_back_step.employee_id) AND
-    (Chain_sn_full.manager_id = Chain_sn_back_step.manager_id)) IS NULL)
+    (Chain_sn_full.employee_id <=> Chain_sn_back_step.employee_id) AND
+    (Chain_sn_full.manager_id <=> Chain_sn_back_step.manager_id)) IS NULL)
 GROUP BY 1, 2;
 
 INSERT INTO synalog_test.Chain_sn_full SELECT * FROM synalog_test.Chain_sn_delta;

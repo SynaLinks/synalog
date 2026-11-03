@@ -406,8 +406,8 @@ WHERE
   FROM
     synalog_test.Reach_sn_full AS Reach_sn_full
   WHERE
-    (Reach_sn_full.x = Reach_sn_step.x) AND
-    (Reach_sn_full.y = Reach_sn_step.y)) IS NULL)
+    (Reach_sn_full.x IS NOT DISTINCT FROM Reach_sn_step.x) AND
+    (Reach_sn_full.y IS NOT DISTINCT FROM Reach_sn_step.y)) IS NULL)
 GROUP BY 1, 2;
 
 INSERT INTO synalog_test.Reach_sn_full SELECT * FROM synalog_test.Reach_sn_new;
@@ -465,8 +465,8 @@ WHERE
   FROM
     synalog_test.Reach_sn_full AS Reach_sn_full
   WHERE
-    (Reach_sn_full.x = Reach_sn_back_step.x) AND
-    (Reach_sn_full.y = Reach_sn_back_step.y)) IS NULL)
+    (Reach_sn_full.x IS NOT DISTINCT FROM Reach_sn_back_step.x) AND
+    (Reach_sn_full.y IS NOT DISTINCT FROM Reach_sn_back_step.y)) IS NULL)
 GROUP BY 1, 2;
 
 INSERT INTO synalog_test.Reach_sn_full SELECT * FROM synalog_test.Reach_sn_delta;
@@ -524,8 +524,8 @@ WHERE
   FROM
     synalog_test.Reach_sn_full AS Reach_sn_full
   WHERE
-    (Reach_sn_full.x = Reach_sn_step.x) AND
-    (Reach_sn_full.y = Reach_sn_step.y)) IS NULL)
+    (Reach_sn_full.x IS NOT DISTINCT FROM Reach_sn_step.x) AND
+    (Reach_sn_full.y IS NOT DISTINCT FROM Reach_sn_step.y)) IS NULL)
 GROUP BY 1, 2;
 
 INSERT INTO synalog_test.Reach_sn_full SELECT * FROM synalog_test.Reach_sn_new;
@@ -583,8 +583,8 @@ WHERE
   FROM
     synalog_test.Reach_sn_full AS Reach_sn_full
   WHERE
-    (Reach_sn_full.x = Reach_sn_back_step.x) AND
-    (Reach_sn_full.y = Reach_sn_back_step.y)) IS NULL)
+    (Reach_sn_full.x IS NOT DISTINCT FROM Reach_sn_back_step.x) AND
+    (Reach_sn_full.y IS NOT DISTINCT FROM Reach_sn_back_step.y)) IS NULL)
 GROUP BY 1, 2;
 
 INSERT INTO synalog_test.Reach_sn_full SELECT * FROM synalog_test.Reach_sn_delta;
@@ -642,8 +642,8 @@ WHERE
   FROM
     synalog_test.Reach_sn_full AS Reach_sn_full
   WHERE
-    (Reach_sn_full.x = Reach_sn_step.x) AND
-    (Reach_sn_full.y = Reach_sn_step.y)) IS NULL)
+    (Reach_sn_full.x IS NOT DISTINCT FROM Reach_sn_step.x) AND
+    (Reach_sn_full.y IS NOT DISTINCT FROM Reach_sn_step.y)) IS NULL)
 GROUP BY 1, 2;
 
 INSERT INTO synalog_test.Reach_sn_full SELECT * FROM synalog_test.Reach_sn_new;
@@ -701,8 +701,8 @@ WHERE
   FROM
     synalog_test.Reach_sn_full AS Reach_sn_full
   WHERE
-    (Reach_sn_full.x = Reach_sn_back_step.x) AND
-    (Reach_sn_full.y = Reach_sn_back_step.y)) IS NULL)
+    (Reach_sn_full.x IS NOT DISTINCT FROM Reach_sn_back_step.x) AND
+    (Reach_sn_full.y IS NOT DISTINCT FROM Reach_sn_back_step.y)) IS NULL)
 GROUP BY 1, 2;
 
 INSERT INTO synalog_test.Reach_sn_full SELECT * FROM synalog_test.Reach_sn_delta;
@@ -760,8 +760,8 @@ WHERE
   FROM
     synalog_test.Reach_sn_full AS Reach_sn_full
   WHERE
-    (Reach_sn_full.x = Reach_sn_step.x) AND
-    (Reach_sn_full.y = Reach_sn_step.y)) IS NULL)
+    (Reach_sn_full.x IS NOT DISTINCT FROM Reach_sn_step.x) AND
+    (Reach_sn_full.y IS NOT DISTINCT FROM Reach_sn_step.y)) IS NULL)
 GROUP BY 1, 2;
 
 INSERT INTO synalog_test.Reach_sn_full SELECT * FROM synalog_test.Reach_sn_new;
@@ -819,8 +819,8 @@ WHERE
   FROM
     synalog_test.Reach_sn_full AS Reach_sn_full
   WHERE
-    (Reach_sn_full.x = Reach_sn_back_step.x) AND
-    (Reach_sn_full.y = Reach_sn_back_step.y)) IS NULL)
+    (Reach_sn_full.x IS NOT DISTINCT FROM Reach_sn_back_step.x) AND
+    (Reach_sn_full.y IS NOT DISTINCT FROM Reach_sn_back_step.y)) IS NULL)
 GROUP BY 1, 2;
 
 INSERT INTO synalog_test.Reach_sn_full SELECT * FROM synalog_test.Reach_sn_delta;
@@ -878,8 +878,8 @@ WHERE
   FROM
     synalog_test.Reach_sn_full AS Reach_sn_full
   WHERE
-    (Reach_sn_full.x = Reach_sn_step.x) AND
-    (Reach_sn_full.y = Reach_sn_step.y)) IS NULL)
+    (Reach_sn_full.x IS NOT DISTINCT FROM Reach_sn_step.x) AND
+    (Reach_sn_full.y IS NOT DISTINCT FROM Reach_sn_step.y)) IS NULL)
 GROUP BY 1, 2;
 
 INSERT INTO synalog_test.Reach_sn_full SELECT * FROM synalog_test.Reach_sn_new;
@@ -937,8 +937,8 @@ WHERE
   FROM
     synalog_test.Reach_sn_full AS Reach_sn_full
   WHERE
-    (Reach_sn_full.x = Reach_sn_back_step.x) AND
-    (Reach_sn_full.y = Reach_sn_back_step.y)) IS NULL)
+    (Reach_sn_full.x IS NOT DISTINCT FROM Reach_sn_back_step.x) AND
+    (Reach_sn_full.y IS NOT DISTINCT FROM Reach_sn_back_step.y)) IS NULL)
 GROUP BY 1, 2;
 
 INSERT INTO synalog_test.Reach_sn_full SELECT * FROM synalog_test.Reach_sn_delta;

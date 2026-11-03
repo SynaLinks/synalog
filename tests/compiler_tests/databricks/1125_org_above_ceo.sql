@@ -364,8 +364,8 @@ WHERE
   FROM
     synalog_test.Under_sn_full AS Under_sn_full
   WHERE
-    (Under_sn_full.boss = Under_sn_step.boss) AND
-    (Under_sn_full.report = Under_sn_step.report)) IS NULL)
+    (Under_sn_full.boss <=> Under_sn_step.boss) AND
+    (Under_sn_full.report <=> Under_sn_step.report)) IS NULL)
 GROUP BY 1, 2;
 
 INSERT INTO synalog_test.Under_sn_full SELECT * FROM synalog_test.Under_sn_new;
@@ -417,8 +417,8 @@ WHERE
   FROM
     synalog_test.Under_sn_full AS Under_sn_full
   WHERE
-    (Under_sn_full.boss = Under_sn_back_step.boss) AND
-    (Under_sn_full.report = Under_sn_back_step.report)) IS NULL)
+    (Under_sn_full.boss <=> Under_sn_back_step.boss) AND
+    (Under_sn_full.report <=> Under_sn_back_step.report)) IS NULL)
 GROUP BY 1, 2;
 
 INSERT INTO synalog_test.Under_sn_full SELECT * FROM synalog_test.Under_sn_delta;
@@ -470,8 +470,8 @@ WHERE
   FROM
     synalog_test.Under_sn_full AS Under_sn_full
   WHERE
-    (Under_sn_full.boss = Under_sn_step.boss) AND
-    (Under_sn_full.report = Under_sn_step.report)) IS NULL)
+    (Under_sn_full.boss <=> Under_sn_step.boss) AND
+    (Under_sn_full.report <=> Under_sn_step.report)) IS NULL)
 GROUP BY 1, 2;
 
 INSERT INTO synalog_test.Under_sn_full SELECT * FROM synalog_test.Under_sn_new;
@@ -523,8 +523,8 @@ WHERE
   FROM
     synalog_test.Under_sn_full AS Under_sn_full
   WHERE
-    (Under_sn_full.boss = Under_sn_back_step.boss) AND
-    (Under_sn_full.report = Under_sn_back_step.report)) IS NULL)
+    (Under_sn_full.boss <=> Under_sn_back_step.boss) AND
+    (Under_sn_full.report <=> Under_sn_back_step.report)) IS NULL)
 GROUP BY 1, 2;
 
 INSERT INTO synalog_test.Under_sn_full SELECT * FROM synalog_test.Under_sn_delta;
@@ -576,8 +576,8 @@ WHERE
   FROM
     synalog_test.Under_sn_full AS Under_sn_full
   WHERE
-    (Under_sn_full.boss = Under_sn_step.boss) AND
-    (Under_sn_full.report = Under_sn_step.report)) IS NULL)
+    (Under_sn_full.boss <=> Under_sn_step.boss) AND
+    (Under_sn_full.report <=> Under_sn_step.report)) IS NULL)
 GROUP BY 1, 2;
 
 INSERT INTO synalog_test.Under_sn_full SELECT * FROM synalog_test.Under_sn_new;
@@ -629,8 +629,8 @@ WHERE
   FROM
     synalog_test.Under_sn_full AS Under_sn_full
   WHERE
-    (Under_sn_full.boss = Under_sn_back_step.boss) AND
-    (Under_sn_full.report = Under_sn_back_step.report)) IS NULL)
+    (Under_sn_full.boss <=> Under_sn_back_step.boss) AND
+    (Under_sn_full.report <=> Under_sn_back_step.report)) IS NULL)
 GROUP BY 1, 2;
 
 INSERT INTO synalog_test.Under_sn_full SELECT * FROM synalog_test.Under_sn_delta;
@@ -682,8 +682,8 @@ WHERE
   FROM
     synalog_test.Under_sn_full AS Under_sn_full
   WHERE
-    (Under_sn_full.boss = Under_sn_step.boss) AND
-    (Under_sn_full.report = Under_sn_step.report)) IS NULL)
+    (Under_sn_full.boss <=> Under_sn_step.boss) AND
+    (Under_sn_full.report <=> Under_sn_step.report)) IS NULL)
 GROUP BY 1, 2;
 
 INSERT INTO synalog_test.Under_sn_full SELECT * FROM synalog_test.Under_sn_new;
@@ -735,8 +735,8 @@ WHERE
   FROM
     synalog_test.Under_sn_full AS Under_sn_full
   WHERE
-    (Under_sn_full.boss = Under_sn_back_step.boss) AND
-    (Under_sn_full.report = Under_sn_back_step.report)) IS NULL)
+    (Under_sn_full.boss <=> Under_sn_back_step.boss) AND
+    (Under_sn_full.report <=> Under_sn_back_step.report)) IS NULL)
 GROUP BY 1, 2;
 
 INSERT INTO synalog_test.Under_sn_full SELECT * FROM synalog_test.Under_sn_delta;

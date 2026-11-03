@@ -315,8 +315,8 @@ WHERE
   FROM
     synalog_test.Hop_sn_full AS Hop_sn_full
   WHERE
-    (Hop_sn_full.node = Hop_sn_step.node) AND
-    (Hop_sn_full.d = Hop_sn_step.d)) IS NULL)
+    (Hop_sn_full.node <=> Hop_sn_step.node) AND
+    (Hop_sn_full.d <=> Hop_sn_step.d)) IS NULL)
 GROUP BY 1, 2;
 
 INSERT INTO synalog_test.Hop_sn_full SELECT * FROM synalog_test.Hop_sn_new;
@@ -362,8 +362,8 @@ WHERE
   FROM
     synalog_test.Hop_sn_full AS Hop_sn_full
   WHERE
-    (Hop_sn_full.node = Hop_sn_back_step.node) AND
-    (Hop_sn_full.d = Hop_sn_back_step.d)) IS NULL)
+    (Hop_sn_full.node <=> Hop_sn_back_step.node) AND
+    (Hop_sn_full.d <=> Hop_sn_back_step.d)) IS NULL)
 GROUP BY 1, 2;
 
 INSERT INTO synalog_test.Hop_sn_full SELECT * FROM synalog_test.Hop_sn_delta;
@@ -409,8 +409,8 @@ WHERE
   FROM
     synalog_test.Hop_sn_full AS Hop_sn_full
   WHERE
-    (Hop_sn_full.node = Hop_sn_step.node) AND
-    (Hop_sn_full.d = Hop_sn_step.d)) IS NULL)
+    (Hop_sn_full.node <=> Hop_sn_step.node) AND
+    (Hop_sn_full.d <=> Hop_sn_step.d)) IS NULL)
 GROUP BY 1, 2;
 
 INSERT INTO synalog_test.Hop_sn_full SELECT * FROM synalog_test.Hop_sn_new;
@@ -456,8 +456,8 @@ WHERE
   FROM
     synalog_test.Hop_sn_full AS Hop_sn_full
   WHERE
-    (Hop_sn_full.node = Hop_sn_back_step.node) AND
-    (Hop_sn_full.d = Hop_sn_back_step.d)) IS NULL)
+    (Hop_sn_full.node <=> Hop_sn_back_step.node) AND
+    (Hop_sn_full.d <=> Hop_sn_back_step.d)) IS NULL)
 GROUP BY 1, 2;
 
 INSERT INTO synalog_test.Hop_sn_full SELECT * FROM synalog_test.Hop_sn_delta;
@@ -503,8 +503,8 @@ WHERE
   FROM
     synalog_test.Hop_sn_full AS Hop_sn_full
   WHERE
-    (Hop_sn_full.node = Hop_sn_step.node) AND
-    (Hop_sn_full.d = Hop_sn_step.d)) IS NULL)
+    (Hop_sn_full.node <=> Hop_sn_step.node) AND
+    (Hop_sn_full.d <=> Hop_sn_step.d)) IS NULL)
 GROUP BY 1, 2;
 
 INSERT INTO synalog_test.Hop_sn_full SELECT * FROM synalog_test.Hop_sn_new;
@@ -550,8 +550,8 @@ WHERE
   FROM
     synalog_test.Hop_sn_full AS Hop_sn_full
   WHERE
-    (Hop_sn_full.node = Hop_sn_back_step.node) AND
-    (Hop_sn_full.d = Hop_sn_back_step.d)) IS NULL)
+    (Hop_sn_full.node <=> Hop_sn_back_step.node) AND
+    (Hop_sn_full.d <=> Hop_sn_back_step.d)) IS NULL)
 GROUP BY 1, 2;
 
 INSERT INTO synalog_test.Hop_sn_full SELECT * FROM synalog_test.Hop_sn_delta;
@@ -597,8 +597,8 @@ WHERE
   FROM
     synalog_test.Hop_sn_full AS Hop_sn_full
   WHERE
-    (Hop_sn_full.node = Hop_sn_step.node) AND
-    (Hop_sn_full.d = Hop_sn_step.d)) IS NULL)
+    (Hop_sn_full.node <=> Hop_sn_step.node) AND
+    (Hop_sn_full.d <=> Hop_sn_step.d)) IS NULL)
 GROUP BY 1, 2;
 
 INSERT INTO synalog_test.Hop_sn_full SELECT * FROM synalog_test.Hop_sn_new;
@@ -644,8 +644,8 @@ WHERE
   FROM
     synalog_test.Hop_sn_full AS Hop_sn_full
   WHERE
-    (Hop_sn_full.node = Hop_sn_back_step.node) AND
-    (Hop_sn_full.d = Hop_sn_back_step.d)) IS NULL)
+    (Hop_sn_full.node <=> Hop_sn_back_step.node) AND
+    (Hop_sn_full.d <=> Hop_sn_back_step.d)) IS NULL)
 GROUP BY 1, 2;
 
 INSERT INTO synalog_test.Hop_sn_full SELECT * FROM synalog_test.Hop_sn_delta;
@@ -691,8 +691,8 @@ WHERE
   FROM
     synalog_test.Hop_sn_full AS Hop_sn_full
   WHERE
-    (Hop_sn_full.node = Hop_sn_step.node) AND
-    (Hop_sn_full.d = Hop_sn_step.d)) IS NULL)
+    (Hop_sn_full.node <=> Hop_sn_step.node) AND
+    (Hop_sn_full.d <=> Hop_sn_step.d)) IS NULL)
 GROUP BY 1, 2;
 
 INSERT INTO synalog_test.Hop_sn_full SELECT * FROM synalog_test.Hop_sn_new;
@@ -738,8 +738,8 @@ WHERE
   FROM
     synalog_test.Hop_sn_full AS Hop_sn_full
   WHERE
-    (Hop_sn_full.node = Hop_sn_back_step.node) AND
-    (Hop_sn_full.d = Hop_sn_back_step.d)) IS NULL)
+    (Hop_sn_full.node <=> Hop_sn_back_step.node) AND
+    (Hop_sn_full.d <=> Hop_sn_back_step.d)) IS NULL)
 GROUP BY 1, 2;
 
 INSERT INTO synalog_test.Hop_sn_full SELECT * FROM synalog_test.Hop_sn_delta;
@@ -785,8 +785,8 @@ WHERE
   FROM
     synalog_test.Hop_sn_full AS Hop_sn_full
   WHERE
-    (Hop_sn_full.node = Hop_sn_step.node) AND
-    (Hop_sn_full.d = Hop_sn_step.d)) IS NULL)
+    (Hop_sn_full.node <=> Hop_sn_step.node) AND
+    (Hop_sn_full.d <=> Hop_sn_step.d)) IS NULL)
 GROUP BY 1, 2;
 
 INSERT INTO synalog_test.Hop_sn_full SELECT * FROM synalog_test.Hop_sn_new;
@@ -832,8 +832,8 @@ WHERE
   FROM
     synalog_test.Hop_sn_full AS Hop_sn_full
   WHERE
-    (Hop_sn_full.node = Hop_sn_back_step.node) AND
-    (Hop_sn_full.d = Hop_sn_back_step.d)) IS NULL)
+    (Hop_sn_full.node <=> Hop_sn_back_step.node) AND
+    (Hop_sn_full.d <=> Hop_sn_back_step.d)) IS NULL)
 GROUP BY 1, 2;
 
 INSERT INTO synalog_test.Hop_sn_full SELECT * FROM synalog_test.Hop_sn_delta;
@@ -879,8 +879,8 @@ WHERE
   FROM
     synalog_test.Hop_sn_full AS Hop_sn_full
   WHERE
-    (Hop_sn_full.node = Hop_sn_step.node) AND
-    (Hop_sn_full.d = Hop_sn_step.d)) IS NULL)
+    (Hop_sn_full.node <=> Hop_sn_step.node) AND
+    (Hop_sn_full.d <=> Hop_sn_step.d)) IS NULL)
 GROUP BY 1, 2;
 
 INSERT INTO synalog_test.Hop_sn_full SELECT * FROM synalog_test.Hop_sn_new;
@@ -926,8 +926,8 @@ WHERE
   FROM
     synalog_test.Hop_sn_full AS Hop_sn_full
   WHERE
-    (Hop_sn_full.node = Hop_sn_back_step.node) AND
-    (Hop_sn_full.d = Hop_sn_back_step.d)) IS NULL)
+    (Hop_sn_full.node <=> Hop_sn_back_step.node) AND
+    (Hop_sn_full.d <=> Hop_sn_back_step.d)) IS NULL)
 GROUP BY 1, 2;
 
 INSERT INTO synalog_test.Hop_sn_full SELECT * FROM synalog_test.Hop_sn_delta;
@@ -973,8 +973,8 @@ WHERE
   FROM
     synalog_test.Hop_sn_full AS Hop_sn_full
   WHERE
-    (Hop_sn_full.node = Hop_sn_step.node) AND
-    (Hop_sn_full.d = Hop_sn_step.d)) IS NULL)
+    (Hop_sn_full.node <=> Hop_sn_step.node) AND
+    (Hop_sn_full.d <=> Hop_sn_step.d)) IS NULL)
 GROUP BY 1, 2;
 
 INSERT INTO synalog_test.Hop_sn_full SELECT * FROM synalog_test.Hop_sn_new;
@@ -1020,8 +1020,8 @@ WHERE
   FROM
     synalog_test.Hop_sn_full AS Hop_sn_full
   WHERE
-    (Hop_sn_full.node = Hop_sn_back_step.node) AND
-    (Hop_sn_full.d = Hop_sn_back_step.d)) IS NULL)
+    (Hop_sn_full.node <=> Hop_sn_back_step.node) AND
+    (Hop_sn_full.d <=> Hop_sn_back_step.d)) IS NULL)
 GROUP BY 1, 2;
 
 INSERT INTO synalog_test.Hop_sn_full SELECT * FROM synalog_test.Hop_sn_delta;
@@ -1067,8 +1067,8 @@ WHERE
   FROM
     synalog_test.Hop_sn_full AS Hop_sn_full
   WHERE
-    (Hop_sn_full.node = Hop_sn_step.node) AND
-    (Hop_sn_full.d = Hop_sn_step.d)) IS NULL)
+    (Hop_sn_full.node <=> Hop_sn_step.node) AND
+    (Hop_sn_full.d <=> Hop_sn_step.d)) IS NULL)
 GROUP BY 1, 2;
 
 INSERT INTO synalog_test.Hop_sn_full SELECT * FROM synalog_test.Hop_sn_new;
@@ -1114,8 +1114,8 @@ WHERE
   FROM
     synalog_test.Hop_sn_full AS Hop_sn_full
   WHERE
-    (Hop_sn_full.node = Hop_sn_back_step.node) AND
-    (Hop_sn_full.d = Hop_sn_back_step.d)) IS NULL)
+    (Hop_sn_full.node <=> Hop_sn_back_step.node) AND
+    (Hop_sn_full.d <=> Hop_sn_back_step.d)) IS NULL)
 GROUP BY 1, 2;
 
 INSERT INTO synalog_test.Hop_sn_full SELECT * FROM synalog_test.Hop_sn_delta;
@@ -1161,8 +1161,8 @@ WHERE
   FROM
     synalog_test.Hop_sn_full AS Hop_sn_full
   WHERE
-    (Hop_sn_full.node = Hop_sn_step.node) AND
-    (Hop_sn_full.d = Hop_sn_step.d)) IS NULL)
+    (Hop_sn_full.node <=> Hop_sn_step.node) AND
+    (Hop_sn_full.d <=> Hop_sn_step.d)) IS NULL)
 GROUP BY 1, 2;
 
 INSERT INTO synalog_test.Hop_sn_full SELECT * FROM synalog_test.Hop_sn_new;
@@ -1208,8 +1208,8 @@ WHERE
   FROM
     synalog_test.Hop_sn_full AS Hop_sn_full
   WHERE
-    (Hop_sn_full.node = Hop_sn_back_step.node) AND
-    (Hop_sn_full.d = Hop_sn_back_step.d)) IS NULL)
+    (Hop_sn_full.node <=> Hop_sn_back_step.node) AND
+    (Hop_sn_full.d <=> Hop_sn_back_step.d)) IS NULL)
 GROUP BY 1, 2;
 
 INSERT INTO synalog_test.Hop_sn_full SELECT * FROM synalog_test.Hop_sn_delta;
@@ -1255,8 +1255,8 @@ WHERE
   FROM
     synalog_test.Hop_sn_full AS Hop_sn_full
   WHERE
-    (Hop_sn_full.node = Hop_sn_step.node) AND
-    (Hop_sn_full.d = Hop_sn_step.d)) IS NULL)
+    (Hop_sn_full.node <=> Hop_sn_step.node) AND
+    (Hop_sn_full.d <=> Hop_sn_step.d)) IS NULL)
 GROUP BY 1, 2;
 
 INSERT INTO synalog_test.Hop_sn_full SELECT * FROM synalog_test.Hop_sn_new;
@@ -1302,8 +1302,8 @@ WHERE
   FROM
     synalog_test.Hop_sn_full AS Hop_sn_full
   WHERE
-    (Hop_sn_full.node = Hop_sn_back_step.node) AND
-    (Hop_sn_full.d = Hop_sn_back_step.d)) IS NULL)
+    (Hop_sn_full.node <=> Hop_sn_back_step.node) AND
+    (Hop_sn_full.d <=> Hop_sn_back_step.d)) IS NULL)
 GROUP BY 1, 2;
 
 INSERT INTO synalog_test.Hop_sn_full SELECT * FROM synalog_test.Hop_sn_delta;
@@ -1349,8 +1349,8 @@ WHERE
   FROM
     synalog_test.Hop_sn_full AS Hop_sn_full
   WHERE
-    (Hop_sn_full.node = Hop_sn_step.node) AND
-    (Hop_sn_full.d = Hop_sn_step.d)) IS NULL)
+    (Hop_sn_full.node <=> Hop_sn_step.node) AND
+    (Hop_sn_full.d <=> Hop_sn_step.d)) IS NULL)
 GROUP BY 1, 2;
 
 INSERT INTO synalog_test.Hop_sn_full SELECT * FROM synalog_test.Hop_sn_new;
@@ -1396,8 +1396,8 @@ WHERE
   FROM
     synalog_test.Hop_sn_full AS Hop_sn_full
   WHERE
-    (Hop_sn_full.node = Hop_sn_back_step.node) AND
-    (Hop_sn_full.d = Hop_sn_back_step.d)) IS NULL)
+    (Hop_sn_full.node <=> Hop_sn_back_step.node) AND
+    (Hop_sn_full.d <=> Hop_sn_back_step.d)) IS NULL)
 GROUP BY 1, 2;
 
 INSERT INTO synalog_test.Hop_sn_full SELECT * FROM synalog_test.Hop_sn_delta;
@@ -1443,8 +1443,8 @@ WHERE
   FROM
     synalog_test.Hop_sn_full AS Hop_sn_full
   WHERE
-    (Hop_sn_full.node = Hop_sn_step.node) AND
-    (Hop_sn_full.d = Hop_sn_step.d)) IS NULL)
+    (Hop_sn_full.node <=> Hop_sn_step.node) AND
+    (Hop_sn_full.d <=> Hop_sn_step.d)) IS NULL)
 GROUP BY 1, 2;
 
 INSERT INTO synalog_test.Hop_sn_full SELECT * FROM synalog_test.Hop_sn_new;

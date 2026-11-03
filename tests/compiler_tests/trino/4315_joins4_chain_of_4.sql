@@ -520,7 +520,7 @@ WHERE
   FROM
     synalog_test.Up_sn_full AS Up_sn_full
   WHERE
-    (Up_sn_full.id = Up_sn_step.id)) IS NULL)
+    (Up_sn_full.id IS NOT DISTINCT FROM Up_sn_step.id)) IS NULL)
 GROUP BY 1;
 
 INSERT INTO synalog_test.Up_sn_full SELECT * FROM synalog_test.Up_sn_new;
@@ -625,7 +625,7 @@ WHERE
   FROM
     synalog_test.Up_sn_full AS Up_sn_full
   WHERE
-    (Up_sn_full.id = Up_sn_back_step.id)) IS NULL)
+    (Up_sn_full.id IS NOT DISTINCT FROM Up_sn_back_step.id)) IS NULL)
 GROUP BY 1;
 
 INSERT INTO synalog_test.Up_sn_full SELECT * FROM synalog_test.Up_sn_delta;
@@ -730,7 +730,7 @@ WHERE
   FROM
     synalog_test.Up_sn_full AS Up_sn_full
   WHERE
-    (Up_sn_full.id = Up_sn_step.id)) IS NULL)
+    (Up_sn_full.id IS NOT DISTINCT FROM Up_sn_step.id)) IS NULL)
 GROUP BY 1;
 
 INSERT INTO synalog_test.Up_sn_full SELECT * FROM synalog_test.Up_sn_new;
@@ -835,7 +835,7 @@ WHERE
   FROM
     synalog_test.Up_sn_full AS Up_sn_full
   WHERE
-    (Up_sn_full.id = Up_sn_back_step.id)) IS NULL)
+    (Up_sn_full.id IS NOT DISTINCT FROM Up_sn_back_step.id)) IS NULL)
 GROUP BY 1;
 
 INSERT INTO synalog_test.Up_sn_full SELECT * FROM synalog_test.Up_sn_delta;
@@ -940,7 +940,7 @@ WHERE
   FROM
     synalog_test.Up_sn_full AS Up_sn_full
   WHERE
-    (Up_sn_full.id = Up_sn_step.id)) IS NULL)
+    (Up_sn_full.id IS NOT DISTINCT FROM Up_sn_step.id)) IS NULL)
 GROUP BY 1;
 
 INSERT INTO synalog_test.Up_sn_full SELECT * FROM synalog_test.Up_sn_new;
@@ -1045,7 +1045,7 @@ WHERE
   FROM
     synalog_test.Up_sn_full AS Up_sn_full
   WHERE
-    (Up_sn_full.id = Up_sn_back_step.id)) IS NULL)
+    (Up_sn_full.id IS NOT DISTINCT FROM Up_sn_back_step.id)) IS NULL)
 GROUP BY 1;
 
 INSERT INTO synalog_test.Up_sn_full SELECT * FROM synalog_test.Up_sn_delta;
@@ -1150,7 +1150,7 @@ WHERE
   FROM
     synalog_test.Up_sn_full AS Up_sn_full
   WHERE
-    (Up_sn_full.id = Up_sn_step.id)) IS NULL)
+    (Up_sn_full.id IS NOT DISTINCT FROM Up_sn_step.id)) IS NULL)
 GROUP BY 1;
 
 INSERT INTO synalog_test.Up_sn_full SELECT * FROM synalog_test.Up_sn_new;
@@ -1255,7 +1255,7 @@ WHERE
   FROM
     synalog_test.Up_sn_full AS Up_sn_full
   WHERE
-    (Up_sn_full.id = Up_sn_back_step.id)) IS NULL)
+    (Up_sn_full.id IS NOT DISTINCT FROM Up_sn_back_step.id)) IS NULL)
 GROUP BY 1;
 
 INSERT INTO synalog_test.Up_sn_full SELECT * FROM synalog_test.Up_sn_delta;
@@ -1360,7 +1360,7 @@ WHERE
   FROM
     synalog_test.Up_sn_full AS Up_sn_full
   WHERE
-    (Up_sn_full.id = Up_sn_step.id)) IS NULL)
+    (Up_sn_full.id IS NOT DISTINCT FROM Up_sn_step.id)) IS NULL)
 GROUP BY 1;
 
 INSERT INTO synalog_test.Up_sn_full SELECT * FROM synalog_test.Up_sn_new;
@@ -1465,7 +1465,7 @@ WHERE
   FROM
     synalog_test.Up_sn_full AS Up_sn_full
   WHERE
-    (Up_sn_full.id = Up_sn_back_step.id)) IS NULL)
+    (Up_sn_full.id IS NOT DISTINCT FROM Up_sn_back_step.id)) IS NULL)
 GROUP BY 1;
 
 INSERT INTO synalog_test.Up_sn_full SELECT * FROM synalog_test.Up_sn_delta;

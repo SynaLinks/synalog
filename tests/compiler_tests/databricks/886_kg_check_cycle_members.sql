@@ -329,8 +329,8 @@ WHERE
   FROM
     synalog_test.Anc_sn_full AS Anc_sn_full
   WHERE
-    (Anc_sn_full.a = Anc_sn_step.a) AND
-    (Anc_sn_full.d = Anc_sn_step.d)) IS NULL)
+    (Anc_sn_full.a <=> Anc_sn_step.a) AND
+    (Anc_sn_full.d <=> Anc_sn_step.d)) IS NULL)
 GROUP BY 1, 2;
 
 INSERT INTO synalog_test.Anc_sn_full SELECT * FROM synalog_test.Anc_sn_new;
@@ -377,8 +377,8 @@ WHERE
   FROM
     synalog_test.Anc_sn_full AS Anc_sn_full
   WHERE
-    (Anc_sn_full.a = Anc_sn_back_step.a) AND
-    (Anc_sn_full.d = Anc_sn_back_step.d)) IS NULL)
+    (Anc_sn_full.a <=> Anc_sn_back_step.a) AND
+    (Anc_sn_full.d <=> Anc_sn_back_step.d)) IS NULL)
 GROUP BY 1, 2;
 
 INSERT INTO synalog_test.Anc_sn_full SELECT * FROM synalog_test.Anc_sn_delta;
@@ -425,8 +425,8 @@ WHERE
   FROM
     synalog_test.Anc_sn_full AS Anc_sn_full
   WHERE
-    (Anc_sn_full.a = Anc_sn_step.a) AND
-    (Anc_sn_full.d = Anc_sn_step.d)) IS NULL)
+    (Anc_sn_full.a <=> Anc_sn_step.a) AND
+    (Anc_sn_full.d <=> Anc_sn_step.d)) IS NULL)
 GROUP BY 1, 2;
 
 INSERT INTO synalog_test.Anc_sn_full SELECT * FROM synalog_test.Anc_sn_new;
@@ -473,8 +473,8 @@ WHERE
   FROM
     synalog_test.Anc_sn_full AS Anc_sn_full
   WHERE
-    (Anc_sn_full.a = Anc_sn_back_step.a) AND
-    (Anc_sn_full.d = Anc_sn_back_step.d)) IS NULL)
+    (Anc_sn_full.a <=> Anc_sn_back_step.a) AND
+    (Anc_sn_full.d <=> Anc_sn_back_step.d)) IS NULL)
 GROUP BY 1, 2;
 
 INSERT INTO synalog_test.Anc_sn_full SELECT * FROM synalog_test.Anc_sn_delta;
@@ -521,8 +521,8 @@ WHERE
   FROM
     synalog_test.Anc_sn_full AS Anc_sn_full
   WHERE
-    (Anc_sn_full.a = Anc_sn_step.a) AND
-    (Anc_sn_full.d = Anc_sn_step.d)) IS NULL)
+    (Anc_sn_full.a <=> Anc_sn_step.a) AND
+    (Anc_sn_full.d <=> Anc_sn_step.d)) IS NULL)
 GROUP BY 1, 2;
 
 INSERT INTO synalog_test.Anc_sn_full SELECT * FROM synalog_test.Anc_sn_new;
@@ -569,8 +569,8 @@ WHERE
   FROM
     synalog_test.Anc_sn_full AS Anc_sn_full
   WHERE
-    (Anc_sn_full.a = Anc_sn_back_step.a) AND
-    (Anc_sn_full.d = Anc_sn_back_step.d)) IS NULL)
+    (Anc_sn_full.a <=> Anc_sn_back_step.a) AND
+    (Anc_sn_full.d <=> Anc_sn_back_step.d)) IS NULL)
 GROUP BY 1, 2;
 
 INSERT INTO synalog_test.Anc_sn_full SELECT * FROM synalog_test.Anc_sn_delta;
@@ -617,8 +617,8 @@ WHERE
   FROM
     synalog_test.Anc_sn_full AS Anc_sn_full
   WHERE
-    (Anc_sn_full.a = Anc_sn_step.a) AND
-    (Anc_sn_full.d = Anc_sn_step.d)) IS NULL)
+    (Anc_sn_full.a <=> Anc_sn_step.a) AND
+    (Anc_sn_full.d <=> Anc_sn_step.d)) IS NULL)
 GROUP BY 1, 2;
 
 INSERT INTO synalog_test.Anc_sn_full SELECT * FROM synalog_test.Anc_sn_new;
@@ -665,8 +665,8 @@ WHERE
   FROM
     synalog_test.Anc_sn_full AS Anc_sn_full
   WHERE
-    (Anc_sn_full.a = Anc_sn_back_step.a) AND
-    (Anc_sn_full.d = Anc_sn_back_step.d)) IS NULL)
+    (Anc_sn_full.a <=> Anc_sn_back_step.a) AND
+    (Anc_sn_full.d <=> Anc_sn_back_step.d)) IS NULL)
 GROUP BY 1, 2;
 
 INSERT INTO synalog_test.Anc_sn_full SELECT * FROM synalog_test.Anc_sn_delta;

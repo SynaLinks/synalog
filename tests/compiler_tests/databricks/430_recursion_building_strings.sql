@@ -170,7 +170,7 @@ WHERE
   FROM
     synalog_test.W_sn_full AS W_sn_full
   WHERE
-    (W_sn_full.w = W_sn_step.w)) IS NULL)
+    (W_sn_full.w <=> W_sn_step.w)) IS NULL)
 GROUP BY 1;
 
 INSERT INTO synalog_test.W_sn_full SELECT * FROM synalog_test.W_sn_new;
@@ -205,7 +205,7 @@ WHERE
   FROM
     synalog_test.W_sn_full AS W_sn_full
   WHERE
-    (W_sn_full.w = W_sn_back_step.w)) IS NULL)
+    (W_sn_full.w <=> W_sn_back_step.w)) IS NULL)
 GROUP BY 1;
 
 INSERT INTO synalog_test.W_sn_full SELECT * FROM synalog_test.W_sn_delta;
@@ -240,7 +240,7 @@ WHERE
   FROM
     synalog_test.W_sn_full AS W_sn_full
   WHERE
-    (W_sn_full.w = W_sn_step.w)) IS NULL)
+    (W_sn_full.w <=> W_sn_step.w)) IS NULL)
 GROUP BY 1;
 
 INSERT INTO synalog_test.W_sn_full SELECT * FROM synalog_test.W_sn_new;
@@ -275,7 +275,7 @@ WHERE
   FROM
     synalog_test.W_sn_full AS W_sn_full
   WHERE
-    (W_sn_full.w = W_sn_back_step.w)) IS NULL)
+    (W_sn_full.w <=> W_sn_back_step.w)) IS NULL)
 GROUP BY 1;
 
 INSERT INTO synalog_test.W_sn_full SELECT * FROM synalog_test.W_sn_delta;
@@ -310,7 +310,7 @@ WHERE
   FROM
     synalog_test.W_sn_full AS W_sn_full
   WHERE
-    (W_sn_full.w = W_sn_step.w)) IS NULL)
+    (W_sn_full.w <=> W_sn_step.w)) IS NULL)
 GROUP BY 1;
 
 INSERT INTO synalog_test.W_sn_full SELECT * FROM synalog_test.W_sn_new;

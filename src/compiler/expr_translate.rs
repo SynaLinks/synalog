@@ -629,6 +629,10 @@ impl<'a> ExprTranslator<'a> {
             Template(String),
             /// Apply a SQL template and wrap result in parentheses (infix operators).
             TemplateParens(String),
+            /// `is` (true) or `is not` (false) of two values, by the dialect's
+            /// null-safe template of `{0}` and `{1}`; of a side that is `null`,
+            /// SQL's null test.
+            NullSafe(bool, String),
             /// Format as array literal.
             ArrayLiteral(String),
             /// Format as record/struct literal with given (field name, type) pairs.
@@ -1295,6 +1299,21 @@ impl<'a> ExprTranslator<'a> {
                                 tasks.push(Task::Eval(e));
                             }
                             continue;
+                        } else if num_args == 2 && (pred_name == "is" || pred_name == "is not") {
+                            // `x is y` compares two values as values: a null
+                            // is a null, and differs from any other value
+                            // (`x is null` is SQL's null test). `==` keeps
+                            // SQL's meaning, under which a null equals nothing.
+                            let ty = named.iter().map(|(_, e)| *e).chain(indexed.iter().map(|(_, e)| *e))
+                                .map(|e| self.value_type(e))
+                                .find(|t| *t != Type::Any)
+                                .unwrap_or(Type::Any);
+                            let template = if pred_name == "is" {
+                                self.dialect.equal_values(&ty)
+                            } else {
+                                self.dialect.distinct_values()
+                            };
+                            tasks.push(Task::Combine(CK::NullSafe(pred_name == "is", template.to_string()), 2));
                         } else if num_args == 2 && self.built_in_infix_operators.contains_key(pred_name) {
                             // When we have exactly 2 args and the predicate is an infix operator,
                             // prefer the infix template (e.g. `-` with left/right should be
@@ -1506,6 +1525,17 @@ impl<'a> ExprTranslator<'a> {
                     match kind {
                         CK::Template(template) => {
                             results.push(apply_template(&template, &args));
+                        }
+                        CK::NullSafe(is, template) => {
+                            let r = if let Some(i) = args.iter().position(|a| a.eq_ignore_ascii_case("null")) {
+                                // `x is null`, `x is not null` (or `null is x`,
+                                // a null inlined): SQL's null test.
+                                let op = if is { "IS" } else { "IS NOT" };
+                                format!("{} {} {}", args[1 - i], op, args[i])
+                            } else {
+                                apply_template(&template, &args)
+                            };
+                            results.push(format!("({})", r));
                         }
                         CK::TemplateParens(template) => {
                             let r = if template.contains("{left}") || template.contains("{right}") {

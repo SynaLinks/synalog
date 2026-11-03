@@ -354,7 +354,11 @@ the loop out, up to the declared depth. A recursion of one `distinct`
 predicate, without aggregation, whose rules reference it at most once, is
 evaluated semi-naively: each step derives only the rows new at the previous
 step (`P_sn_delta`), adds them to the rows so far (`P_sn_full`, an `INSERT`),
-and the recursion has converged when a step adds nothing. Other recursions
+and the recursion has converged when a step adds nothing. A row is already
+found when `P_sn_full` holds a row equal to it with nulls matching (`w is v`,
+`IS NOT DISTINCT FROM`): under SQL's `=` a row holding a null was new at every
+step, and the recursion never converged (3 rows grew to 90 on Trino and
+Presto). Other recursions
 (mutual recursion, aggregation in the recursion) recompute every step. The
 deep-recursion fixtures (`65_deep_recursion`, `66_deep_mutual_recursion`,
 `148_` to `199_`) are generated from synalog on every engine.
@@ -877,3 +881,15 @@ conditions too; only two equal number, string or boolean literals are dropped,
 always true. Upstream drops every expression equal to itself, so that a null
 equalled itself. The goldens of `549_nulls_null_not_equal_to_itself` are
 synalog's.
+
+## `is` compares values
+
+`x is y` and `x is not y`, of two values neither of which is the literal
+`null`, compare them with nulls matching: `IS NOT DISTINCT FROM` and
+`IS DISTINCT FROM`; `IS` and `IS NOT` on SQLite; `<=>` on Databricks. On
+PostgreSQL, which joins on `IS NOT DISTINCT FROM` only by a nested loop, the
+equality is one it hashes: `COALESCE(a, 0) = COALESCE(b, 0) AND (a IS NULL) =
+(b IS NULL)` of a number (`''` of a string, `false` of a boolean), and
+`ARRAY[ROW(a)] = ARRAY[ROW(b)]` of a value of another or unknown type. Upstream
+writes `a IS b`, which only SQLite accepts. `x is null` stays SQL's null test,
+and `==` keeps SQL's `=`.

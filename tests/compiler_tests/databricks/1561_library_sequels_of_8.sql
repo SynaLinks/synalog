@@ -329,8 +329,8 @@ WHERE
   FROM
     synalog_test.After_sn_full AS After_sn_full
   WHERE
-    (After_sn_full.book = After_sn_step.book) AND
-    (After_sn_full.next = After_sn_step.next)) IS NULL)
+    (After_sn_full.book <=> After_sn_step.book) AND
+    (After_sn_full.next <=> After_sn_step.next)) IS NULL)
 GROUP BY 1, 2;
 
 INSERT INTO synalog_test.After_sn_full SELECT * FROM synalog_test.After_sn_new;
@@ -377,8 +377,8 @@ WHERE
   FROM
     synalog_test.After_sn_full AS After_sn_full
   WHERE
-    (After_sn_full.book = After_sn_back_step.book) AND
-    (After_sn_full.next = After_sn_back_step.next)) IS NULL)
+    (After_sn_full.book <=> After_sn_back_step.book) AND
+    (After_sn_full.next <=> After_sn_back_step.next)) IS NULL)
 GROUP BY 1, 2;
 
 INSERT INTO synalog_test.After_sn_full SELECT * FROM synalog_test.After_sn_delta;
@@ -425,8 +425,8 @@ WHERE
   FROM
     synalog_test.After_sn_full AS After_sn_full
   WHERE
-    (After_sn_full.book = After_sn_step.book) AND
-    (After_sn_full.next = After_sn_step.next)) IS NULL)
+    (After_sn_full.book <=> After_sn_step.book) AND
+    (After_sn_full.next <=> After_sn_step.next)) IS NULL)
 GROUP BY 1, 2;
 
 INSERT INTO synalog_test.After_sn_full SELECT * FROM synalog_test.After_sn_new;
@@ -473,8 +473,8 @@ WHERE
   FROM
     synalog_test.After_sn_full AS After_sn_full
   WHERE
-    (After_sn_full.book = After_sn_back_step.book) AND
-    (After_sn_full.next = After_sn_back_step.next)) IS NULL)
+    (After_sn_full.book <=> After_sn_back_step.book) AND
+    (After_sn_full.next <=> After_sn_back_step.next)) IS NULL)
 GROUP BY 1, 2;
 
 INSERT INTO synalog_test.After_sn_full SELECT * FROM synalog_test.After_sn_delta;
@@ -521,8 +521,8 @@ WHERE
   FROM
     synalog_test.After_sn_full AS After_sn_full
   WHERE
-    (After_sn_full.book = After_sn_step.book) AND
-    (After_sn_full.next = After_sn_step.next)) IS NULL)
+    (After_sn_full.book <=> After_sn_step.book) AND
+    (After_sn_full.next <=> After_sn_step.next)) IS NULL)
 GROUP BY 1, 2;
 
 INSERT INTO synalog_test.After_sn_full SELECT * FROM synalog_test.After_sn_new;
@@ -569,8 +569,8 @@ WHERE
   FROM
     synalog_test.After_sn_full AS After_sn_full
   WHERE
-    (After_sn_full.book = After_sn_back_step.book) AND
-    (After_sn_full.next = After_sn_back_step.next)) IS NULL)
+    (After_sn_full.book <=> After_sn_back_step.book) AND
+    (After_sn_full.next <=> After_sn_back_step.next)) IS NULL)
 GROUP BY 1, 2;
 
 INSERT INTO synalog_test.After_sn_full SELECT * FROM synalog_test.After_sn_delta;

@@ -406,8 +406,8 @@ WHERE
   FROM
     synalog_test.Graph_Reach_sn_full_f9 AS Graph_Reach_sn_full_f9
   WHERE
-    (Graph_Reach_sn_full_f9.a = Graph_Reach_sn_step_f9.a) AND
-    (Graph_Reach_sn_full_f9.b = Graph_Reach_sn_step_f9.b)) IS NULL)
+    (Graph_Reach_sn_full_f9.a IS NOT DISTINCT FROM Graph_Reach_sn_step_f9.a) AND
+    (Graph_Reach_sn_full_f9.b IS NOT DISTINCT FROM Graph_Reach_sn_step_f9.b)) IS NULL)
 GROUP BY 1, 2;
 
 INSERT INTO synalog_test.Graph_Reach_sn_full_f9 SELECT * FROM synalog_test.Graph_Reach_sn_new_f9;
@@ -465,8 +465,8 @@ WHERE
   FROM
     synalog_test.Graph_Reach_sn_full_f9 AS Graph_Reach_sn_full_f9
   WHERE
-    (Graph_Reach_sn_full_f9.a = Graph_Reach_sn_back_step_f9.a) AND
-    (Graph_Reach_sn_full_f9.b = Graph_Reach_sn_back_step_f9.b)) IS NULL)
+    (Graph_Reach_sn_full_f9.a IS NOT DISTINCT FROM Graph_Reach_sn_back_step_f9.a) AND
+    (Graph_Reach_sn_full_f9.b IS NOT DISTINCT FROM Graph_Reach_sn_back_step_f9.b)) IS NULL)
 GROUP BY 1, 2;
 
 INSERT INTO synalog_test.Graph_Reach_sn_full_f9 SELECT * FROM synalog_test.Graph_Reach_sn_delta_f9;
@@ -524,8 +524,8 @@ WHERE
   FROM
     synalog_test.Graph_Reach_sn_full_f9 AS Graph_Reach_sn_full_f9
   WHERE
-    (Graph_Reach_sn_full_f9.a = Graph_Reach_sn_step_f9.a) AND
-    (Graph_Reach_sn_full_f9.b = Graph_Reach_sn_step_f9.b)) IS NULL)
+    (Graph_Reach_sn_full_f9.a IS NOT DISTINCT FROM Graph_Reach_sn_step_f9.a) AND
+    (Graph_Reach_sn_full_f9.b IS NOT DISTINCT FROM Graph_Reach_sn_step_f9.b)) IS NULL)
 GROUP BY 1, 2;
 
 INSERT INTO synalog_test.Graph_Reach_sn_full_f9 SELECT * FROM synalog_test.Graph_Reach_sn_new_f9;
@@ -583,8 +583,8 @@ WHERE
   FROM
     synalog_test.Graph_Reach_sn_full_f9 AS Graph_Reach_sn_full_f9
   WHERE
-    (Graph_Reach_sn_full_f9.a = Graph_Reach_sn_back_step_f9.a) AND
-    (Graph_Reach_sn_full_f9.b = Graph_Reach_sn_back_step_f9.b)) IS NULL)
+    (Graph_Reach_sn_full_f9.a IS NOT DISTINCT FROM Graph_Reach_sn_back_step_f9.a) AND
+    (Graph_Reach_sn_full_f9.b IS NOT DISTINCT FROM Graph_Reach_sn_back_step_f9.b)) IS NULL)
 GROUP BY 1, 2;
 
 INSERT INTO synalog_test.Graph_Reach_sn_full_f9 SELECT * FROM synalog_test.Graph_Reach_sn_delta_f9;
@@ -642,8 +642,8 @@ WHERE
   FROM
     synalog_test.Graph_Reach_sn_full_f9 AS Graph_Reach_sn_full_f9
   WHERE
-    (Graph_Reach_sn_full_f9.a = Graph_Reach_sn_step_f9.a) AND
-    (Graph_Reach_sn_full_f9.b = Graph_Reach_sn_step_f9.b)) IS NULL)
+    (Graph_Reach_sn_full_f9.a IS NOT DISTINCT FROM Graph_Reach_sn_step_f9.a) AND
+    (Graph_Reach_sn_full_f9.b IS NOT DISTINCT FROM Graph_Reach_sn_step_f9.b)) IS NULL)
 GROUP BY 1, 2;
 
 INSERT INTO synalog_test.Graph_Reach_sn_full_f9 SELECT * FROM synalog_test.Graph_Reach_sn_new_f9;
@@ -701,8 +701,8 @@ WHERE
   FROM
     synalog_test.Graph_Reach_sn_full_f9 AS Graph_Reach_sn_full_f9
   WHERE
-    (Graph_Reach_sn_full_f9.a = Graph_Reach_sn_back_step_f9.a) AND
-    (Graph_Reach_sn_full_f9.b = Graph_Reach_sn_back_step_f9.b)) IS NULL)
+    (Graph_Reach_sn_full_f9.a IS NOT DISTINCT FROM Graph_Reach_sn_back_step_f9.a) AND
+    (Graph_Reach_sn_full_f9.b IS NOT DISTINCT FROM Graph_Reach_sn_back_step_f9.b)) IS NULL)
 GROUP BY 1, 2;
 
 INSERT INTO synalog_test.Graph_Reach_sn_full_f9 SELECT * FROM synalog_test.Graph_Reach_sn_delta_f9;
@@ -760,8 +760,8 @@ WHERE
   FROM
     synalog_test.Graph_Reach_sn_full_f9 AS Graph_Reach_sn_full_f9
   WHERE
-    (Graph_Reach_sn_full_f9.a = Graph_Reach_sn_step_f9.a) AND
-    (Graph_Reach_sn_full_f9.b = Graph_Reach_sn_step_f9.b)) IS NULL)
+    (Graph_Reach_sn_full_f9.a IS NOT DISTINCT FROM Graph_Reach_sn_step_f9.a) AND
+    (Graph_Reach_sn_full_f9.b IS NOT DISTINCT FROM Graph_Reach_sn_step_f9.b)) IS NULL)
 GROUP BY 1, 2;
 
 INSERT INTO synalog_test.Graph_Reach_sn_full_f9 SELECT * FROM synalog_test.Graph_Reach_sn_new_f9;
@@ -819,8 +819,8 @@ WHERE
   FROM
     synalog_test.Graph_Reach_sn_full_f9 AS Graph_Reach_sn_full_f9
   WHERE
-    (Graph_Reach_sn_full_f9.a = Graph_Reach_sn_back_step_f9.a) AND
-    (Graph_Reach_sn_full_f9.b = Graph_Reach_sn_back_step_f9.b)) IS NULL)
+    (Graph_Reach_sn_full_f9.a IS NOT DISTINCT FROM Graph_Reach_sn_back_step_f9.a) AND
+    (Graph_Reach_sn_full_f9.b IS NOT DISTINCT FROM Graph_Reach_sn_back_step_f9.b)) IS NULL)
 GROUP BY 1, 2;
 
 INSERT INTO synalog_test.Graph_Reach_sn_full_f9 SELECT * FROM synalog_test.Graph_Reach_sn_delta_f9;

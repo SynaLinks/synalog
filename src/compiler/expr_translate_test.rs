@@ -21,6 +21,7 @@ fn make_bigquery_translator() -> ExprTranslator<'static> {
         std::sync::LazyLock::new(HashMap::new);
     let mut vocab = HashMap::new();
     vocab.insert("x".to_string(), "t_0.col0".to_string());
+    vocab.insert("y".to_string(), "t_0.col1".to_string());
     ExprTranslator::new(vocab, &DIALECT, &FLAGS)
 }
 
@@ -30,6 +31,7 @@ fn make_duckdb_translator() -> ExprTranslator<'static> {
         std::sync::LazyLock::new(HashMap::new);
     let mut vocab = HashMap::new();
     vocab.insert("x".to_string(), "t_0.col0".to_string());
+    vocab.insert("y".to_string(), "t_0.col1".to_string());
     ExprTranslator::new(vocab, &DIALECT, &FLAGS)
 }
 
@@ -783,6 +785,22 @@ fn test_infix_not_equal() {
     let ql = make_translator();
     let result = ql.convert_to_sql(&make_infix("!=", "x", "y")).unwrap();
     assert!(result.contains("!="), "Got: {}", result);
+}
+
+#[test]
+fn test_equal_keeps_sql_equality() {
+    // `==` is SQL's `=`: a null equals nothing.
+    let ql = make_bigquery_translator();
+    assert_eq!(ql.convert_to_sql(&make_infix("==", "x", "y")).unwrap(), "(t_0.col0 = t_0.col1)");
+}
+
+#[test]
+fn test_is_compares_values_with_nulls_matching() {
+    let ql = make_bigquery_translator();
+    assert_eq!(ql.convert_to_sql(&make_infix("is", "x", "y")).unwrap(), "(t_0.col0 IS NOT DISTINCT FROM t_0.col1)");
+    assert_eq!(ql.convert_to_sql(&make_infix("is not", "x", "y")).unwrap(), "(t_0.col0 IS DISTINCT FROM t_0.col1)");
+    let ql = make_duckdb_translator();
+    assert_eq!(ql.convert_to_sql(&make_infix("is", "x", "y")).unwrap(), "(t_0.col0 IS NOT DISTINCT FROM t_0.col1)");
 }
 
 #[test]

@@ -406,8 +406,8 @@ WHERE
   FROM
     synalog_test.P_sn_full AS P_sn_full
   WHERE
-    (P_sn_full.a = P_sn_step.a) AND
-    (P_sn_full.b = P_sn_step.b)) IS NULL)
+    (P_sn_full.a IS NOT DISTINCT FROM P_sn_step.a) AND
+    (P_sn_full.b IS NOT DISTINCT FROM P_sn_step.b)) IS NULL)
 GROUP BY 1, 2;
 
 INSERT INTO synalog_test.P_sn_full SELECT * FROM synalog_test.P_sn_new;
@@ -465,8 +465,8 @@ WHERE
   FROM
     synalog_test.P_sn_full AS P_sn_full
   WHERE
-    (P_sn_full.a = P_sn_back_step.a) AND
-    (P_sn_full.b = P_sn_back_step.b)) IS NULL)
+    (P_sn_full.a IS NOT DISTINCT FROM P_sn_back_step.a) AND
+    (P_sn_full.b IS NOT DISTINCT FROM P_sn_back_step.b)) IS NULL)
 GROUP BY 1, 2;
 
 INSERT INTO synalog_test.P_sn_full SELECT * FROM synalog_test.P_sn_delta;
@@ -524,8 +524,8 @@ WHERE
   FROM
     synalog_test.P_sn_full AS P_sn_full
   WHERE
-    (P_sn_full.a = P_sn_step.a) AND
-    (P_sn_full.b = P_sn_step.b)) IS NULL)
+    (P_sn_full.a IS NOT DISTINCT FROM P_sn_step.a) AND
+    (P_sn_full.b IS NOT DISTINCT FROM P_sn_step.b)) IS NULL)
 GROUP BY 1, 2;
 
 INSERT INTO synalog_test.P_sn_full SELECT * FROM synalog_test.P_sn_new;
@@ -583,8 +583,8 @@ WHERE
   FROM
     synalog_test.P_sn_full AS P_sn_full
   WHERE
-    (P_sn_full.a = P_sn_back_step.a) AND
-    (P_sn_full.b = P_sn_back_step.b)) IS NULL)
+    (P_sn_full.a IS NOT DISTINCT FROM P_sn_back_step.a) AND
+    (P_sn_full.b IS NOT DISTINCT FROM P_sn_back_step.b)) IS NULL)
 GROUP BY 1, 2;
 
 INSERT INTO synalog_test.P_sn_full SELECT * FROM synalog_test.P_sn_delta;
@@ -642,8 +642,8 @@ WHERE
   FROM
     synalog_test.P_sn_full AS P_sn_full
   WHERE
-    (P_sn_full.a = P_sn_step.a) AND
-    (P_sn_full.b = P_sn_step.b)) IS NULL)
+    (P_sn_full.a IS NOT DISTINCT FROM P_sn_step.a) AND
+    (P_sn_full.b IS NOT DISTINCT FROM P_sn_step.b)) IS NULL)
 GROUP BY 1, 2;
 
 INSERT INTO synalog_test.P_sn_full SELECT * FROM synalog_test.P_sn_new;
@@ -701,8 +701,8 @@ WHERE
   FROM
     synalog_test.P_sn_full AS P_sn_full
   WHERE
-    (P_sn_full.a = P_sn_back_step.a) AND
-    (P_sn_full.b = P_sn_back_step.b)) IS NULL)
+    (P_sn_full.a IS NOT DISTINCT FROM P_sn_back_step.a) AND
+    (P_sn_full.b IS NOT DISTINCT FROM P_sn_back_step.b)) IS NULL)
 GROUP BY 1, 2;
 
 INSERT INTO synalog_test.P_sn_full SELECT * FROM synalog_test.P_sn_delta;
@@ -760,8 +760,8 @@ WHERE
   FROM
     synalog_test.P_sn_full AS P_sn_full
   WHERE
-    (P_sn_full.a = P_sn_step.a) AND
-    (P_sn_full.b = P_sn_step.b)) IS NULL)
+    (P_sn_full.a IS NOT DISTINCT FROM P_sn_step.a) AND
+    (P_sn_full.b IS NOT DISTINCT FROM P_sn_step.b)) IS NULL)
 GROUP BY 1, 2;
 
 INSERT INTO synalog_test.P_sn_full SELECT * FROM synalog_test.P_sn_new;
@@ -819,8 +819,8 @@ WHERE
   FROM
     synalog_test.P_sn_full AS P_sn_full
   WHERE
-    (P_sn_full.a = P_sn_back_step.a) AND
-    (P_sn_full.b = P_sn_back_step.b)) IS NULL)
+    (P_sn_full.a IS NOT DISTINCT FROM P_sn_back_step.a) AND
+    (P_sn_full.b IS NOT DISTINCT FROM P_sn_back_step.b)) IS NULL)
 GROUP BY 1, 2;
 
 INSERT INTO synalog_test.P_sn_full SELECT * FROM synalog_test.P_sn_delta;

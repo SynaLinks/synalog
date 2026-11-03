@@ -226,7 +226,7 @@ WHERE
   FROM
     synalog_test.R_sn_full AS R_sn_full
   WHERE
-    (R_sn_full.x = R_sn_step.x)) IS NULL)
+    (R_sn_full.x <=> R_sn_step.x)) IS NULL)
 GROUP BY 1;
 
 INSERT INTO synalog_test.R_sn_full SELECT * FROM synalog_test.R_sn_new;

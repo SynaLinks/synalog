@@ -616,10 +616,10 @@ WHERE
   FROM
     synalog_test.C_sn_full AS C_sn_full
   WHERE
-    (C_sn_full.owner = C_sn_step.owner) AND
-    (C_sn_full.entity = C_sn_step.entity) AND
-    (C_sn_full.hops = C_sn_step.hops) AND
-    (C_sn_full.stake = C_sn_step.stake)) IS NULL)
+    (C_sn_full.owner <=> C_sn_step.owner) AND
+    (C_sn_full.entity <=> C_sn_step.entity) AND
+    (C_sn_full.hops <=> C_sn_step.hops) AND
+    (C_sn_full.stake <=> C_sn_step.stake)) IS NULL)
 GROUP BY 1, 2, 3, 4;
 
 INSERT INTO synalog_test.C_sn_full SELECT * FROM synalog_test.C_sn_new;
@@ -673,10 +673,10 @@ WHERE
   FROM
     synalog_test.C_sn_full AS C_sn_full
   WHERE
-    (C_sn_full.owner = C_sn_back_step.owner) AND
-    (C_sn_full.entity = C_sn_back_step.entity) AND
-    (C_sn_full.hops = C_sn_back_step.hops) AND
-    (C_sn_full.stake = C_sn_back_step.stake)) IS NULL)
+    (C_sn_full.owner <=> C_sn_back_step.owner) AND
+    (C_sn_full.entity <=> C_sn_back_step.entity) AND
+    (C_sn_full.hops <=> C_sn_back_step.hops) AND
+    (C_sn_full.stake <=> C_sn_back_step.stake)) IS NULL)
 GROUP BY 1, 2, 3, 4;
 
 INSERT INTO synalog_test.C_sn_full SELECT * FROM synalog_test.C_sn_delta;
@@ -730,10 +730,10 @@ WHERE
   FROM
     synalog_test.C_sn_full AS C_sn_full
   WHERE
-    (C_sn_full.owner = C_sn_step.owner) AND
-    (C_sn_full.entity = C_sn_step.entity) AND
-    (C_sn_full.hops = C_sn_step.hops) AND
-    (C_sn_full.stake = C_sn_step.stake)) IS NULL)
+    (C_sn_full.owner <=> C_sn_step.owner) AND
+    (C_sn_full.entity <=> C_sn_step.entity) AND
+    (C_sn_full.hops <=> C_sn_step.hops) AND
+    (C_sn_full.stake <=> C_sn_step.stake)) IS NULL)
 GROUP BY 1, 2, 3, 4;
 
 INSERT INTO synalog_test.C_sn_full SELECT * FROM synalog_test.C_sn_new;
@@ -787,10 +787,10 @@ WHERE
   FROM
     synalog_test.C_sn_full AS C_sn_full
   WHERE
-    (C_sn_full.owner = C_sn_back_step.owner) AND
-    (C_sn_full.entity = C_sn_back_step.entity) AND
-    (C_sn_full.hops = C_sn_back_step.hops) AND
-    (C_sn_full.stake = C_sn_back_step.stake)) IS NULL)
+    (C_sn_full.owner <=> C_sn_back_step.owner) AND
+    (C_sn_full.entity <=> C_sn_back_step.entity) AND
+    (C_sn_full.hops <=> C_sn_back_step.hops) AND
+    (C_sn_full.stake <=> C_sn_back_step.stake)) IS NULL)
 GROUP BY 1, 2, 3, 4;
 
 INSERT INTO synalog_test.C_sn_full SELECT * FROM synalog_test.C_sn_delta;

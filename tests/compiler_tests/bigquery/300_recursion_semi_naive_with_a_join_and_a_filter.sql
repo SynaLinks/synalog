@@ -399,8 +399,8 @@ WHERE
   FROM
     synalog_test.Reach_sn_full AS Reach_sn_full
   WHERE
-    (Reach_sn_full.node = Reach_sn_step.node) AND
-    (Reach_sn_full.hops = Reach_sn_step.hops)) IS NULL)
+    (Reach_sn_full.node IS NOT DISTINCT FROM Reach_sn_step.node) AND
+    (Reach_sn_full.hops IS NOT DISTINCT FROM Reach_sn_step.hops)) IS NULL)
 GROUP BY node, hops;
 
 INSERT INTO synalog_test.Reach_sn_full SELECT * FROM synalog_test.Reach_sn_new;
@@ -460,8 +460,8 @@ WHERE
   FROM
     synalog_test.Reach_sn_full AS Reach_sn_full
   WHERE
-    (Reach_sn_full.node = Reach_sn_back_step.node) AND
-    (Reach_sn_full.hops = Reach_sn_back_step.hops)) IS NULL)
+    (Reach_sn_full.node IS NOT DISTINCT FROM Reach_sn_back_step.node) AND
+    (Reach_sn_full.hops IS NOT DISTINCT FROM Reach_sn_back_step.hops)) IS NULL)
 GROUP BY node, hops;
 
 INSERT INTO synalog_test.Reach_sn_full SELECT * FROM synalog_test.Reach_sn_delta;
@@ -521,8 +521,8 @@ WHERE
   FROM
     synalog_test.Reach_sn_full AS Reach_sn_full
   WHERE
-    (Reach_sn_full.node = Reach_sn_step.node) AND
-    (Reach_sn_full.hops = Reach_sn_step.hops)) IS NULL)
+    (Reach_sn_full.node IS NOT DISTINCT FROM Reach_sn_step.node) AND
+    (Reach_sn_full.hops IS NOT DISTINCT FROM Reach_sn_step.hops)) IS NULL)
 GROUP BY node, hops;
 
 INSERT INTO synalog_test.Reach_sn_full SELECT * FROM synalog_test.Reach_sn_new;
@@ -582,8 +582,8 @@ WHERE
   FROM
     synalog_test.Reach_sn_full AS Reach_sn_full
   WHERE
-    (Reach_sn_full.node = Reach_sn_back_step.node) AND
-    (Reach_sn_full.hops = Reach_sn_back_step.hops)) IS NULL)
+    (Reach_sn_full.node IS NOT DISTINCT FROM Reach_sn_back_step.node) AND
+    (Reach_sn_full.hops IS NOT DISTINCT FROM Reach_sn_back_step.hops)) IS NULL)
 GROUP BY node, hops;
 
 INSERT INTO synalog_test.Reach_sn_full SELECT * FROM synalog_test.Reach_sn_delta;
@@ -643,8 +643,8 @@ WHERE
   FROM
     synalog_test.Reach_sn_full AS Reach_sn_full
   WHERE
-    (Reach_sn_full.node = Reach_sn_step.node) AND
-    (Reach_sn_full.hops = Reach_sn_step.hops)) IS NULL)
+    (Reach_sn_full.node IS NOT DISTINCT FROM Reach_sn_step.node) AND
+    (Reach_sn_full.hops IS NOT DISTINCT FROM Reach_sn_step.hops)) IS NULL)
 GROUP BY node, hops;
 
 INSERT INTO synalog_test.Reach_sn_full SELECT * FROM synalog_test.Reach_sn_new;
@@ -704,8 +704,8 @@ WHERE
   FROM
     synalog_test.Reach_sn_full AS Reach_sn_full
   WHERE
-    (Reach_sn_full.node = Reach_sn_back_step.node) AND
-    (Reach_sn_full.hops = Reach_sn_back_step.hops)) IS NULL)
+    (Reach_sn_full.node IS NOT DISTINCT FROM Reach_sn_back_step.node) AND
+    (Reach_sn_full.hops IS NOT DISTINCT FROM Reach_sn_back_step.hops)) IS NULL)
 GROUP BY node, hops;
 
 INSERT INTO synalog_test.Reach_sn_full SELECT * FROM synalog_test.Reach_sn_delta;
@@ -765,8 +765,8 @@ WHERE
   FROM
     synalog_test.Reach_sn_full AS Reach_sn_full
   WHERE
-    (Reach_sn_full.node = Reach_sn_step.node) AND
-    (Reach_sn_full.hops = Reach_sn_step.hops)) IS NULL)
+    (Reach_sn_full.node IS NOT DISTINCT FROM Reach_sn_step.node) AND
+    (Reach_sn_full.hops IS NOT DISTINCT FROM Reach_sn_step.hops)) IS NULL)
 GROUP BY node, hops;
 
 INSERT INTO synalog_test.Reach_sn_full SELECT * FROM synalog_test.Reach_sn_new;
@@ -826,8 +826,8 @@ WHERE
   FROM
     synalog_test.Reach_sn_full AS Reach_sn_full
   WHERE
-    (Reach_sn_full.node = Reach_sn_back_step.node) AND
-    (Reach_sn_full.hops = Reach_sn_back_step.hops)) IS NULL)
+    (Reach_sn_full.node IS NOT DISTINCT FROM Reach_sn_back_step.node) AND
+    (Reach_sn_full.hops IS NOT DISTINCT FROM Reach_sn_back_step.hops)) IS NULL)
 GROUP BY node, hops;
 
 INSERT INTO synalog_test.Reach_sn_full SELECT * FROM synalog_test.Reach_sn_delta;
@@ -887,8 +887,8 @@ WHERE
   FROM
     synalog_test.Reach_sn_full AS Reach_sn_full
   WHERE
-    (Reach_sn_full.node = Reach_sn_step.node) AND
-    (Reach_sn_full.hops = Reach_sn_step.hops)) IS NULL)
+    (Reach_sn_full.node IS NOT DISTINCT FROM Reach_sn_step.node) AND
+    (Reach_sn_full.hops IS NOT DISTINCT FROM Reach_sn_step.hops)) IS NULL)
 GROUP BY node, hops;
 
 INSERT INTO synalog_test.Reach_sn_full SELECT * FROM synalog_test.Reach_sn_new;
@@ -948,8 +948,8 @@ WHERE
   FROM
     synalog_test.Reach_sn_full AS Reach_sn_full
   WHERE
-    (Reach_sn_full.node = Reach_sn_back_step.node) AND
-    (Reach_sn_full.hops = Reach_sn_back_step.hops)) IS NULL)
+    (Reach_sn_full.node IS NOT DISTINCT FROM Reach_sn_back_step.node) AND
+    (Reach_sn_full.hops IS NOT DISTINCT FROM Reach_sn_back_step.hops)) IS NULL)
 GROUP BY node, hops;
 
 INSERT INTO synalog_test.Reach_sn_full SELECT * FROM synalog_test.Reach_sn_delta;
@@ -1009,8 +1009,8 @@ WHERE
   FROM
     synalog_test.Reach_sn_full AS Reach_sn_full
   WHERE
-    (Reach_sn_full.node = Reach_sn_step.node) AND
-    (Reach_sn_full.hops = Reach_sn_step.hops)) IS NULL)
+    (Reach_sn_full.node IS NOT DISTINCT FROM Reach_sn_step.node) AND
+    (Reach_sn_full.hops IS NOT DISTINCT FROM Reach_sn_step.hops)) IS NULL)
 GROUP BY node, hops;
 
 INSERT INTO synalog_test.Reach_sn_full SELECT * FROM synalog_test.Reach_sn_new;
@@ -1070,8 +1070,8 @@ WHERE
   FROM
     synalog_test.Reach_sn_full AS Reach_sn_full
   WHERE
-    (Reach_sn_full.node = Reach_sn_back_step.node) AND
-    (Reach_sn_full.hops = Reach_sn_back_step.hops)) IS NULL)
+    (Reach_sn_full.node IS NOT DISTINCT FROM Reach_sn_back_step.node) AND
+    (Reach_sn_full.hops IS NOT DISTINCT FROM Reach_sn_back_step.hops)) IS NULL)
 GROUP BY node, hops;
 
 INSERT INTO synalog_test.Reach_sn_full SELECT * FROM synalog_test.Reach_sn_delta;
@@ -1131,8 +1131,8 @@ WHERE
   FROM
     synalog_test.Reach_sn_full AS Reach_sn_full
   WHERE
-    (Reach_sn_full.node = Reach_sn_step.node) AND
-    (Reach_sn_full.hops = Reach_sn_step.hops)) IS NULL)
+    (Reach_sn_full.node IS NOT DISTINCT FROM Reach_sn_step.node) AND
+    (Reach_sn_full.hops IS NOT DISTINCT FROM Reach_sn_step.hops)) IS NULL)
 GROUP BY node, hops;
 
 INSERT INTO synalog_test.Reach_sn_full SELECT * FROM synalog_test.Reach_sn_new;
@@ -1192,8 +1192,8 @@ WHERE
   FROM
     synalog_test.Reach_sn_full AS Reach_sn_full
   WHERE
-    (Reach_sn_full.node = Reach_sn_back_step.node) AND
-    (Reach_sn_full.hops = Reach_sn_back_step.hops)) IS NULL)
+    (Reach_sn_full.node IS NOT DISTINCT FROM Reach_sn_back_step.node) AND
+    (Reach_sn_full.hops IS NOT DISTINCT FROM Reach_sn_back_step.hops)) IS NULL)
 GROUP BY node, hops;
 
 INSERT INTO synalog_test.Reach_sn_full SELECT * FROM synalog_test.Reach_sn_delta;
@@ -1253,8 +1253,8 @@ WHERE
   FROM
     synalog_test.Reach_sn_full AS Reach_sn_full
   WHERE
-    (Reach_sn_full.node = Reach_sn_step.node) AND
-    (Reach_sn_full.hops = Reach_sn_step.hops)) IS NULL)
+    (Reach_sn_full.node IS NOT DISTINCT FROM Reach_sn_step.node) AND
+    (Reach_sn_full.hops IS NOT DISTINCT FROM Reach_sn_step.hops)) IS NULL)
 GROUP BY node, hops;
 
 INSERT INTO synalog_test.Reach_sn_full SELECT * FROM synalog_test.Reach_sn_new;
@@ -1314,8 +1314,8 @@ WHERE
   FROM
     synalog_test.Reach_sn_full AS Reach_sn_full
   WHERE
-    (Reach_sn_full.node = Reach_sn_back_step.node) AND
-    (Reach_sn_full.hops = Reach_sn_back_step.hops)) IS NULL)
+    (Reach_sn_full.node IS NOT DISTINCT FROM Reach_sn_back_step.node) AND
+    (Reach_sn_full.hops IS NOT DISTINCT FROM Reach_sn_back_step.hops)) IS NULL)
 GROUP BY node, hops;
 
 INSERT INTO synalog_test.Reach_sn_full SELECT * FROM synalog_test.Reach_sn_delta;
@@ -1375,8 +1375,8 @@ WHERE
   FROM
     synalog_test.Reach_sn_full AS Reach_sn_full
   WHERE
-    (Reach_sn_full.node = Reach_sn_step.node) AND
-    (Reach_sn_full.hops = Reach_sn_step.hops)) IS NULL)
+    (Reach_sn_full.node IS NOT DISTINCT FROM Reach_sn_step.node) AND
+    (Reach_sn_full.hops IS NOT DISTINCT FROM Reach_sn_step.hops)) IS NULL)
 GROUP BY node, hops;
 
 INSERT INTO synalog_test.Reach_sn_full SELECT * FROM synalog_test.Reach_sn_new;
@@ -1436,8 +1436,8 @@ WHERE
   FROM
     synalog_test.Reach_sn_full AS Reach_sn_full
   WHERE
-    (Reach_sn_full.node = Reach_sn_back_step.node) AND
-    (Reach_sn_full.hops = Reach_sn_back_step.hops)) IS NULL)
+    (Reach_sn_full.node IS NOT DISTINCT FROM Reach_sn_back_step.node) AND
+    (Reach_sn_full.hops IS NOT DISTINCT FROM Reach_sn_back_step.hops)) IS NULL)
 GROUP BY node, hops;
 
 INSERT INTO synalog_test.Reach_sn_full SELECT * FROM synalog_test.Reach_sn_delta;
@@ -1497,8 +1497,8 @@ WHERE
   FROM
     synalog_test.Reach_sn_full AS Reach_sn_full
   WHERE
-    (Reach_sn_full.node = Reach_sn_step.node) AND
-    (Reach_sn_full.hops = Reach_sn_step.hops)) IS NULL)
+    (Reach_sn_full.node IS NOT DISTINCT FROM Reach_sn_step.node) AND
+    (Reach_sn_full.hops IS NOT DISTINCT FROM Reach_sn_step.hops)) IS NULL)
 GROUP BY node, hops;
 
 INSERT INTO synalog_test.Reach_sn_full SELECT * FROM synalog_test.Reach_sn_new;
@@ -1558,8 +1558,8 @@ WHERE
   FROM
     synalog_test.Reach_sn_full AS Reach_sn_full
   WHERE
-    (Reach_sn_full.node = Reach_sn_back_step.node) AND
-    (Reach_sn_full.hops = Reach_sn_back_step.hops)) IS NULL)
+    (Reach_sn_full.node IS NOT DISTINCT FROM Reach_sn_back_step.node) AND
+    (Reach_sn_full.hops IS NOT DISTINCT FROM Reach_sn_back_step.hops)) IS NULL)
 GROUP BY node, hops;
 
 INSERT INTO synalog_test.Reach_sn_full SELECT * FROM synalog_test.Reach_sn_delta;
@@ -1619,8 +1619,8 @@ WHERE
   FROM
     synalog_test.Reach_sn_full AS Reach_sn_full
   WHERE
-    (Reach_sn_full.node = Reach_sn_step.node) AND
-    (Reach_sn_full.hops = Reach_sn_step.hops)) IS NULL)
+    (Reach_sn_full.node IS NOT DISTINCT FROM Reach_sn_step.node) AND
+    (Reach_sn_full.hops IS NOT DISTINCT FROM Reach_sn_step.hops)) IS NULL)
 GROUP BY node, hops;
 
 INSERT INTO synalog_test.Reach_sn_full SELECT * FROM synalog_test.Reach_sn_new;
@@ -1680,8 +1680,8 @@ WHERE
   FROM
     synalog_test.Reach_sn_full AS Reach_sn_full
   WHERE
-    (Reach_sn_full.node = Reach_sn_back_step.node) AND
-    (Reach_sn_full.hops = Reach_sn_back_step.hops)) IS NULL)
+    (Reach_sn_full.node IS NOT DISTINCT FROM Reach_sn_back_step.node) AND
+    (Reach_sn_full.hops IS NOT DISTINCT FROM Reach_sn_back_step.hops)) IS NULL)
 GROUP BY node, hops;
 
 INSERT INTO synalog_test.Reach_sn_full SELECT * FROM synalog_test.Reach_sn_delta;
@@ -1741,8 +1741,8 @@ WHERE
   FROM
     synalog_test.Reach_sn_full AS Reach_sn_full
   WHERE
-    (Reach_sn_full.node = Reach_sn_step.node) AND
-    (Reach_sn_full.hops = Reach_sn_step.hops)) IS NULL)
+    (Reach_sn_full.node IS NOT DISTINCT FROM Reach_sn_step.node) AND
+    (Reach_sn_full.hops IS NOT DISTINCT FROM Reach_sn_step.hops)) IS NULL)
 GROUP BY node, hops;
 
 INSERT INTO synalog_test.Reach_sn_full SELECT * FROM synalog_test.Reach_sn_new;
@@ -1802,8 +1802,8 @@ WHERE
   FROM
     synalog_test.Reach_sn_full AS Reach_sn_full
   WHERE
-    (Reach_sn_full.node = Reach_sn_back_step.node) AND
-    (Reach_sn_full.hops = Reach_sn_back_step.hops)) IS NULL)
+    (Reach_sn_full.node IS NOT DISTINCT FROM Reach_sn_back_step.node) AND
+    (Reach_sn_full.hops IS NOT DISTINCT FROM Reach_sn_back_step.hops)) IS NULL)
 GROUP BY node, hops;
 
 INSERT INTO synalog_test.Reach_sn_full SELECT * FROM synalog_test.Reach_sn_delta;
@@ -1863,8 +1863,8 @@ WHERE
   FROM
     synalog_test.Reach_sn_full AS Reach_sn_full
   WHERE
-    (Reach_sn_full.node = Reach_sn_step.node) AND
-    (Reach_sn_full.hops = Reach_sn_step.hops)) IS NULL)
+    (Reach_sn_full.node IS NOT DISTINCT FROM Reach_sn_step.node) AND
+    (Reach_sn_full.hops IS NOT DISTINCT FROM Reach_sn_step.hops)) IS NULL)
 GROUP BY node, hops;
 
 INSERT INTO synalog_test.Reach_sn_full SELECT * FROM synalog_test.Reach_sn_new;
@@ -1924,8 +1924,8 @@ WHERE
   FROM
     synalog_test.Reach_sn_full AS Reach_sn_full
   WHERE
-    (Reach_sn_full.node = Reach_sn_back_step.node) AND
-    (Reach_sn_full.hops = Reach_sn_back_step.hops)) IS NULL)
+    (Reach_sn_full.node IS NOT DISTINCT FROM Reach_sn_back_step.node) AND
+    (Reach_sn_full.hops IS NOT DISTINCT FROM Reach_sn_back_step.hops)) IS NULL)
 GROUP BY node, hops;
 
 INSERT INTO synalog_test.Reach_sn_full SELECT * FROM synalog_test.Reach_sn_delta;
@@ -1985,8 +1985,8 @@ WHERE
   FROM
     synalog_test.Reach_sn_full AS Reach_sn_full
   WHERE
-    (Reach_sn_full.node = Reach_sn_step.node) AND
-    (Reach_sn_full.hops = Reach_sn_step.hops)) IS NULL)
+    (Reach_sn_full.node IS NOT DISTINCT FROM Reach_sn_step.node) AND
+    (Reach_sn_full.hops IS NOT DISTINCT FROM Reach_sn_step.hops)) IS NULL)
 GROUP BY node, hops;
 
 INSERT INTO synalog_test.Reach_sn_full SELECT * FROM synalog_test.Reach_sn_new;
@@ -2046,8 +2046,8 @@ WHERE
   FROM
     synalog_test.Reach_sn_full AS Reach_sn_full
   WHERE
-    (Reach_sn_full.node = Reach_sn_back_step.node) AND
-    (Reach_sn_full.hops = Reach_sn_back_step.hops)) IS NULL)
+    (Reach_sn_full.node IS NOT DISTINCT FROM Reach_sn_back_step.node) AND
+    (Reach_sn_full.hops IS NOT DISTINCT FROM Reach_sn_back_step.hops)) IS NULL)
 GROUP BY node, hops;
 
 INSERT INTO synalog_test.Reach_sn_full SELECT * FROM synalog_test.Reach_sn_delta;
@@ -2107,8 +2107,8 @@ WHERE
   FROM
     synalog_test.Reach_sn_full AS Reach_sn_full
   WHERE
-    (Reach_sn_full.node = Reach_sn_step.node) AND
-    (Reach_sn_full.hops = Reach_sn_step.hops)) IS NULL)
+    (Reach_sn_full.node IS NOT DISTINCT FROM Reach_sn_step.node) AND
+    (Reach_sn_full.hops IS NOT DISTINCT FROM Reach_sn_step.hops)) IS NULL)
 GROUP BY node, hops;
 
 INSERT INTO synalog_test.Reach_sn_full SELECT * FROM synalog_test.Reach_sn_new;
@@ -2168,8 +2168,8 @@ WHERE
   FROM
     synalog_test.Reach_sn_full AS Reach_sn_full
   WHERE
-    (Reach_sn_full.node = Reach_sn_back_step.node) AND
-    (Reach_sn_full.hops = Reach_sn_back_step.hops)) IS NULL)
+    (Reach_sn_full.node IS NOT DISTINCT FROM Reach_sn_back_step.node) AND
+    (Reach_sn_full.hops IS NOT DISTINCT FROM Reach_sn_back_step.hops)) IS NULL)
 GROUP BY node, hops;
 
 INSERT INTO synalog_test.Reach_sn_full SELECT * FROM synalog_test.Reach_sn_delta;
@@ -2229,8 +2229,8 @@ WHERE
   FROM
     synalog_test.Reach_sn_full AS Reach_sn_full
   WHERE
-    (Reach_sn_full.node = Reach_sn_step.node) AND
-    (Reach_sn_full.hops = Reach_sn_step.hops)) IS NULL)
+    (Reach_sn_full.node IS NOT DISTINCT FROM Reach_sn_step.node) AND
+    (Reach_sn_full.hops IS NOT DISTINCT FROM Reach_sn_step.hops)) IS NULL)
 GROUP BY node, hops;
 
 INSERT INTO synalog_test.Reach_sn_full SELECT * FROM synalog_test.Reach_sn_new;
@@ -2290,8 +2290,8 @@ WHERE
   FROM
     synalog_test.Reach_sn_full AS Reach_sn_full
   WHERE
-    (Reach_sn_full.node = Reach_sn_back_step.node) AND
-    (Reach_sn_full.hops = Reach_sn_back_step.hops)) IS NULL)
+    (Reach_sn_full.node IS NOT DISTINCT FROM Reach_sn_back_step.node) AND
+    (Reach_sn_full.hops IS NOT DISTINCT FROM Reach_sn_back_step.hops)) IS NULL)
 GROUP BY node, hops;
 
 INSERT INTO synalog_test.Reach_sn_full SELECT * FROM synalog_test.Reach_sn_delta;
@@ -2351,8 +2351,8 @@ WHERE
   FROM
     synalog_test.Reach_sn_full AS Reach_sn_full
   WHERE
-    (Reach_sn_full.node = Reach_sn_step.node) AND
-    (Reach_sn_full.hops = Reach_sn_step.hops)) IS NULL)
+    (Reach_sn_full.node IS NOT DISTINCT FROM Reach_sn_step.node) AND
+    (Reach_sn_full.hops IS NOT DISTINCT FROM Reach_sn_step.hops)) IS NULL)
 GROUP BY node, hops;
 
 INSERT INTO synalog_test.Reach_sn_full SELECT * FROM synalog_test.Reach_sn_new;
@@ -2412,8 +2412,8 @@ WHERE
   FROM
     synalog_test.Reach_sn_full AS Reach_sn_full
   WHERE
-    (Reach_sn_full.node = Reach_sn_back_step.node) AND
-    (Reach_sn_full.hops = Reach_sn_back_step.hops)) IS NULL)
+    (Reach_sn_full.node IS NOT DISTINCT FROM Reach_sn_back_step.node) AND
+    (Reach_sn_full.hops IS NOT DISTINCT FROM Reach_sn_back_step.hops)) IS NULL)
 GROUP BY node, hops;
 
 INSERT INTO synalog_test.Reach_sn_full SELECT * FROM synalog_test.Reach_sn_delta;
@@ -2473,8 +2473,8 @@ WHERE
   FROM
     synalog_test.Reach_sn_full AS Reach_sn_full
   WHERE
-    (Reach_sn_full.node = Reach_sn_step.node) AND
-    (Reach_sn_full.hops = Reach_sn_step.hops)) IS NULL)
+    (Reach_sn_full.node IS NOT DISTINCT FROM Reach_sn_step.node) AND
+    (Reach_sn_full.hops IS NOT DISTINCT FROM Reach_sn_step.hops)) IS NULL)
 GROUP BY node, hops;
 
 INSERT INTO synalog_test.Reach_sn_full SELECT * FROM synalog_test.Reach_sn_new;
@@ -2534,8 +2534,8 @@ WHERE
   FROM
     synalog_test.Reach_sn_full AS Reach_sn_full
   WHERE
-    (Reach_sn_full.node = Reach_sn_back_step.node) AND
-    (Reach_sn_full.hops = Reach_sn_back_step.hops)) IS NULL)
+    (Reach_sn_full.node IS NOT DISTINCT FROM Reach_sn_back_step.node) AND
+    (Reach_sn_full.hops IS NOT DISTINCT FROM Reach_sn_back_step.hops)) IS NULL)
 GROUP BY node, hops;
 
 INSERT INTO synalog_test.Reach_sn_full SELECT * FROM synalog_test.Reach_sn_delta;
@@ -2595,8 +2595,8 @@ WHERE
   FROM
     synalog_test.Reach_sn_full AS Reach_sn_full
   WHERE
-    (Reach_sn_full.node = Reach_sn_step.node) AND
-    (Reach_sn_full.hops = Reach_sn_step.hops)) IS NULL)
+    (Reach_sn_full.node IS NOT DISTINCT FROM Reach_sn_step.node) AND
+    (Reach_sn_full.hops IS NOT DISTINCT FROM Reach_sn_step.hops)) IS NULL)
 GROUP BY node, hops;
 
 INSERT INTO synalog_test.Reach_sn_full SELECT * FROM synalog_test.Reach_sn_new;
@@ -2656,8 +2656,8 @@ WHERE
   FROM
     synalog_test.Reach_sn_full AS Reach_sn_full
   WHERE
-    (Reach_sn_full.node = Reach_sn_back_step.node) AND
-    (Reach_sn_full.hops = Reach_sn_back_step.hops)) IS NULL)
+    (Reach_sn_full.node IS NOT DISTINCT FROM Reach_sn_back_step.node) AND
+    (Reach_sn_full.hops IS NOT DISTINCT FROM Reach_sn_back_step.hops)) IS NULL)
 GROUP BY node, hops;
 
 INSERT INTO synalog_test.Reach_sn_full SELECT * FROM synalog_test.Reach_sn_delta;
@@ -2717,8 +2717,8 @@ WHERE
   FROM
     synalog_test.Reach_sn_full AS Reach_sn_full
   WHERE
-    (Reach_sn_full.node = Reach_sn_step.node) AND
-    (Reach_sn_full.hops = Reach_sn_step.hops)) IS NULL)
+    (Reach_sn_full.node IS NOT DISTINCT FROM Reach_sn_step.node) AND
+    (Reach_sn_full.hops IS NOT DISTINCT FROM Reach_sn_step.hops)) IS NULL)
 GROUP BY node, hops;
 
 INSERT INTO synalog_test.Reach_sn_full SELECT * FROM synalog_test.Reach_sn_new;
@@ -2778,8 +2778,8 @@ WHERE
   FROM
     synalog_test.Reach_sn_full AS Reach_sn_full
   WHERE
-    (Reach_sn_full.node = Reach_sn_back_step.node) AND
-    (Reach_sn_full.hops = Reach_sn_back_step.hops)) IS NULL)
+    (Reach_sn_full.node IS NOT DISTINCT FROM Reach_sn_back_step.node) AND
+    (Reach_sn_full.hops IS NOT DISTINCT FROM Reach_sn_back_step.hops)) IS NULL)
 GROUP BY node, hops;
 
 INSERT INTO synalog_test.Reach_sn_full SELECT * FROM synalog_test.Reach_sn_delta;
@@ -2839,8 +2839,8 @@ WHERE
   FROM
     synalog_test.Reach_sn_full AS Reach_sn_full
   WHERE
-    (Reach_sn_full.node = Reach_sn_step.node) AND
-    (Reach_sn_full.hops = Reach_sn_step.hops)) IS NULL)
+    (Reach_sn_full.node IS NOT DISTINCT FROM Reach_sn_step.node) AND
+    (Reach_sn_full.hops IS NOT DISTINCT FROM Reach_sn_step.hops)) IS NULL)
 GROUP BY node, hops;
 
 INSERT INTO synalog_test.Reach_sn_full SELECT * FROM synalog_test.Reach_sn_new;
@@ -2900,8 +2900,8 @@ WHERE
   FROM
     synalog_test.Reach_sn_full AS Reach_sn_full
   WHERE
-    (Reach_sn_full.node = Reach_sn_back_step.node) AND
-    (Reach_sn_full.hops = Reach_sn_back_step.hops)) IS NULL)
+    (Reach_sn_full.node IS NOT DISTINCT FROM Reach_sn_back_step.node) AND
+    (Reach_sn_full.hops IS NOT DISTINCT FROM Reach_sn_back_step.hops)) IS NULL)
 GROUP BY node, hops;
 
 INSERT INTO synalog_test.Reach_sn_full SELECT * FROM synalog_test.Reach_sn_delta;
@@ -2961,8 +2961,8 @@ WHERE
   FROM
     synalog_test.Reach_sn_full AS Reach_sn_full
   WHERE
-    (Reach_sn_full.node = Reach_sn_step.node) AND
-    (Reach_sn_full.hops = Reach_sn_step.hops)) IS NULL)
+    (Reach_sn_full.node IS NOT DISTINCT FROM Reach_sn_step.node) AND
+    (Reach_sn_full.hops IS NOT DISTINCT FROM Reach_sn_step.hops)) IS NULL)
 GROUP BY node, hops;
 
 INSERT INTO synalog_test.Reach_sn_full SELECT * FROM synalog_test.Reach_sn_new;
@@ -3022,8 +3022,8 @@ WHERE
   FROM
     synalog_test.Reach_sn_full AS Reach_sn_full
   WHERE
-    (Reach_sn_full.node = Reach_sn_back_step.node) AND
-    (Reach_sn_full.hops = Reach_sn_back_step.hops)) IS NULL)
+    (Reach_sn_full.node IS NOT DISTINCT FROM Reach_sn_back_step.node) AND
+    (Reach_sn_full.hops IS NOT DISTINCT FROM Reach_sn_back_step.hops)) IS NULL)
 GROUP BY node, hops;
 
 INSERT INTO synalog_test.Reach_sn_full SELECT * FROM synalog_test.Reach_sn_delta;
@@ -3083,8 +3083,8 @@ WHERE
   FROM
     synalog_test.Reach_sn_full AS Reach_sn_full
   WHERE
-    (Reach_sn_full.node = Reach_sn_step.node) AND
-    (Reach_sn_full.hops = Reach_sn_step.hops)) IS NULL)
+    (Reach_sn_full.node IS NOT DISTINCT FROM Reach_sn_step.node) AND
+    (Reach_sn_full.hops IS NOT DISTINCT FROM Reach_sn_step.hops)) IS NULL)
 GROUP BY node, hops;
 
 INSERT INTO synalog_test.Reach_sn_full SELECT * FROM synalog_test.Reach_sn_new;
@@ -3144,8 +3144,8 @@ WHERE
   FROM
     synalog_test.Reach_sn_full AS Reach_sn_full
   WHERE
-    (Reach_sn_full.node = Reach_sn_back_step.node) AND
-    (Reach_sn_full.hops = Reach_sn_back_step.hops)) IS NULL)
+    (Reach_sn_full.node IS NOT DISTINCT FROM Reach_sn_back_step.node) AND
+    (Reach_sn_full.hops IS NOT DISTINCT FROM Reach_sn_back_step.hops)) IS NULL)
 GROUP BY node, hops;
 
 INSERT INTO synalog_test.Reach_sn_full SELECT * FROM synalog_test.Reach_sn_delta;
@@ -3205,8 +3205,8 @@ WHERE
   FROM
     synalog_test.Reach_sn_full AS Reach_sn_full
   WHERE
-    (Reach_sn_full.node = Reach_sn_step.node) AND
-    (Reach_sn_full.hops = Reach_sn_step.hops)) IS NULL)
+    (Reach_sn_full.node IS NOT DISTINCT FROM Reach_sn_step.node) AND
+    (Reach_sn_full.hops IS NOT DISTINCT FROM Reach_sn_step.hops)) IS NULL)
 GROUP BY node, hops;
 
 INSERT INTO synalog_test.Reach_sn_full SELECT * FROM synalog_test.Reach_sn_new;
@@ -3266,8 +3266,8 @@ WHERE
   FROM
     synalog_test.Reach_sn_full AS Reach_sn_full
   WHERE
-    (Reach_sn_full.node = Reach_sn_back_step.node) AND
-    (Reach_sn_full.hops = Reach_sn_back_step.hops)) IS NULL)
+    (Reach_sn_full.node IS NOT DISTINCT FROM Reach_sn_back_step.node) AND
+    (Reach_sn_full.hops IS NOT DISTINCT FROM Reach_sn_back_step.hops)) IS NULL)
 GROUP BY node, hops;
 
 INSERT INTO synalog_test.Reach_sn_full SELECT * FROM synalog_test.Reach_sn_delta;
@@ -3327,8 +3327,8 @@ WHERE
   FROM
     synalog_test.Reach_sn_full AS Reach_sn_full
   WHERE
-    (Reach_sn_full.node = Reach_sn_step.node) AND
-    (Reach_sn_full.hops = Reach_sn_step.hops)) IS NULL)
+    (Reach_sn_full.node IS NOT DISTINCT FROM Reach_sn_step.node) AND
+    (Reach_sn_full.hops IS NOT DISTINCT FROM Reach_sn_step.hops)) IS NULL)
 GROUP BY node, hops;
 
 INSERT INTO synalog_test.Reach_sn_full SELECT * FROM synalog_test.Reach_sn_new;
@@ -3388,8 +3388,8 @@ WHERE
   FROM
     synalog_test.Reach_sn_full AS Reach_sn_full
   WHERE
-    (Reach_sn_full.node = Reach_sn_back_step.node) AND
-    (Reach_sn_full.hops = Reach_sn_back_step.hops)) IS NULL)
+    (Reach_sn_full.node IS NOT DISTINCT FROM Reach_sn_back_step.node) AND
+    (Reach_sn_full.hops IS NOT DISTINCT FROM Reach_sn_back_step.hops)) IS NULL)
 GROUP BY node, hops;
 
 INSERT INTO synalog_test.Reach_sn_full SELECT * FROM synalog_test.Reach_sn_delta;

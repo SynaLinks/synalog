@@ -1177,10 +1177,10 @@ WHERE
   FROM
     synalog_test.Need_sn_full AS Need_sn_full
   WHERE
-    (Need_sn_full.part = Need_sn_step.part) AND
-    (Need_sn_full.component = Need_sn_step.component) AND
-    (Need_sn_full.path_id = Need_sn_step.path_id) AND
-    (Need_sn_full.n = Need_sn_step.n)) IS NULL)
+    (Need_sn_full.part IS NOT DISTINCT FROM Need_sn_step.part) AND
+    (Need_sn_full.component IS NOT DISTINCT FROM Need_sn_step.component) AND
+    (Need_sn_full.path_id IS NOT DISTINCT FROM Need_sn_step.path_id) AND
+    (Need_sn_full.n IS NOT DISTINCT FROM Need_sn_step.n)) IS NULL)
 GROUP BY 1, 2, 3, 4;
 
 INSERT INTO synalog_test.Need_sn_full SELECT * FROM synalog_test.Need_sn_new;
@@ -1285,10 +1285,10 @@ WHERE
   FROM
     synalog_test.Need_sn_full AS Need_sn_full
   WHERE
-    (Need_sn_full.part = Need_sn_back_step.part) AND
-    (Need_sn_full.component = Need_sn_back_step.component) AND
-    (Need_sn_full.path_id = Need_sn_back_step.path_id) AND
-    (Need_sn_full.n = Need_sn_back_step.n)) IS NULL)
+    (Need_sn_full.part IS NOT DISTINCT FROM Need_sn_back_step.part) AND
+    (Need_sn_full.component IS NOT DISTINCT FROM Need_sn_back_step.component) AND
+    (Need_sn_full.path_id IS NOT DISTINCT FROM Need_sn_back_step.path_id) AND
+    (Need_sn_full.n IS NOT DISTINCT FROM Need_sn_back_step.n)) IS NULL)
 GROUP BY 1, 2, 3, 4;
 
 INSERT INTO synalog_test.Need_sn_full SELECT * FROM synalog_test.Need_sn_delta;
@@ -1393,10 +1393,10 @@ WHERE
   FROM
     synalog_test.Need_sn_full AS Need_sn_full
   WHERE
-    (Need_sn_full.part = Need_sn_step.part) AND
-    (Need_sn_full.component = Need_sn_step.component) AND
-    (Need_sn_full.path_id = Need_sn_step.path_id) AND
-    (Need_sn_full.n = Need_sn_step.n)) IS NULL)
+    (Need_sn_full.part IS NOT DISTINCT FROM Need_sn_step.part) AND
+    (Need_sn_full.component IS NOT DISTINCT FROM Need_sn_step.component) AND
+    (Need_sn_full.path_id IS NOT DISTINCT FROM Need_sn_step.path_id) AND
+    (Need_sn_full.n IS NOT DISTINCT FROM Need_sn_step.n)) IS NULL)
 GROUP BY 1, 2, 3, 4;
 
 INSERT INTO synalog_test.Need_sn_full SELECT * FROM synalog_test.Need_sn_new;
@@ -1501,10 +1501,10 @@ WHERE
   FROM
     synalog_test.Need_sn_full AS Need_sn_full
   WHERE
-    (Need_sn_full.part = Need_sn_back_step.part) AND
-    (Need_sn_full.component = Need_sn_back_step.component) AND
-    (Need_sn_full.path_id = Need_sn_back_step.path_id) AND
-    (Need_sn_full.n = Need_sn_back_step.n)) IS NULL)
+    (Need_sn_full.part IS NOT DISTINCT FROM Need_sn_back_step.part) AND
+    (Need_sn_full.component IS NOT DISTINCT FROM Need_sn_back_step.component) AND
+    (Need_sn_full.path_id IS NOT DISTINCT FROM Need_sn_back_step.path_id) AND
+    (Need_sn_full.n IS NOT DISTINCT FROM Need_sn_back_step.n)) IS NULL)
 GROUP BY 1, 2, 3, 4;
 
 INSERT INTO synalog_test.Need_sn_full SELECT * FROM synalog_test.Need_sn_delta;
@@ -1609,10 +1609,10 @@ WHERE
   FROM
     synalog_test.Need_sn_full AS Need_sn_full
   WHERE
-    (Need_sn_full.part = Need_sn_step.part) AND
-    (Need_sn_full.component = Need_sn_step.component) AND
-    (Need_sn_full.path_id = Need_sn_step.path_id) AND
-    (Need_sn_full.n = Need_sn_step.n)) IS NULL)
+    (Need_sn_full.part IS NOT DISTINCT FROM Need_sn_step.part) AND
+    (Need_sn_full.component IS NOT DISTINCT FROM Need_sn_step.component) AND
+    (Need_sn_full.path_id IS NOT DISTINCT FROM Need_sn_step.path_id) AND
+    (Need_sn_full.n IS NOT DISTINCT FROM Need_sn_step.n)) IS NULL)
 GROUP BY 1, 2, 3, 4;
 
 INSERT INTO synalog_test.Need_sn_full SELECT * FROM synalog_test.Need_sn_new;
@@ -1717,10 +1717,10 @@ WHERE
   FROM
     synalog_test.Need_sn_full AS Need_sn_full
   WHERE
-    (Need_sn_full.part = Need_sn_back_step.part) AND
-    (Need_sn_full.component = Need_sn_back_step.component) AND
-    (Need_sn_full.path_id = Need_sn_back_step.path_id) AND
-    (Need_sn_full.n = Need_sn_back_step.n)) IS NULL)
+    (Need_sn_full.part IS NOT DISTINCT FROM Need_sn_back_step.part) AND
+    (Need_sn_full.component IS NOT DISTINCT FROM Need_sn_back_step.component) AND
+    (Need_sn_full.path_id IS NOT DISTINCT FROM Need_sn_back_step.path_id) AND
+    (Need_sn_full.n IS NOT DISTINCT FROM Need_sn_back_step.n)) IS NULL)
 GROUP BY 1, 2, 3, 4;
 
 INSERT INTO synalog_test.Need_sn_full SELECT * FROM synalog_test.Need_sn_delta;

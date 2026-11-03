@@ -364,8 +364,8 @@ WHERE
   FROM
     synalog_test.Contains_sn_full AS Contains_sn_full
   WHERE
-    (Contains_sn_full.part = Contains_sn_step.part) AND
-    (Contains_sn_full.component = Contains_sn_step.component)) IS NULL)
+    (Contains_sn_full.part <=> Contains_sn_step.part) AND
+    (Contains_sn_full.component <=> Contains_sn_step.component)) IS NULL)
 GROUP BY 1, 2;
 
 INSERT INTO synalog_test.Contains_sn_full SELECT * FROM synalog_test.Contains_sn_new;
@@ -417,8 +417,8 @@ WHERE
   FROM
     synalog_test.Contains_sn_full AS Contains_sn_full
   WHERE
-    (Contains_sn_full.part = Contains_sn_back_step.part) AND
-    (Contains_sn_full.component = Contains_sn_back_step.component)) IS NULL)
+    (Contains_sn_full.part <=> Contains_sn_back_step.part) AND
+    (Contains_sn_full.component <=> Contains_sn_back_step.component)) IS NULL)
 GROUP BY 1, 2;
 
 INSERT INTO synalog_test.Contains_sn_full SELECT * FROM synalog_test.Contains_sn_delta;
@@ -470,8 +470,8 @@ WHERE
   FROM
     synalog_test.Contains_sn_full AS Contains_sn_full
   WHERE
-    (Contains_sn_full.part = Contains_sn_step.part) AND
-    (Contains_sn_full.component = Contains_sn_step.component)) IS NULL)
+    (Contains_sn_full.part <=> Contains_sn_step.part) AND
+    (Contains_sn_full.component <=> Contains_sn_step.component)) IS NULL)
 GROUP BY 1, 2;
 
 INSERT INTO synalog_test.Contains_sn_full SELECT * FROM synalog_test.Contains_sn_new;
@@ -523,8 +523,8 @@ WHERE
   FROM
     synalog_test.Contains_sn_full AS Contains_sn_full
   WHERE
-    (Contains_sn_full.part = Contains_sn_back_step.part) AND
-    (Contains_sn_full.component = Contains_sn_back_step.component)) IS NULL)
+    (Contains_sn_full.part <=> Contains_sn_back_step.part) AND
+    (Contains_sn_full.component <=> Contains_sn_back_step.component)) IS NULL)
 GROUP BY 1, 2;
 
 INSERT INTO synalog_test.Contains_sn_full SELECT * FROM synalog_test.Contains_sn_delta;
@@ -576,8 +576,8 @@ WHERE
   FROM
     synalog_test.Contains_sn_full AS Contains_sn_full
   WHERE
-    (Contains_sn_full.part = Contains_sn_step.part) AND
-    (Contains_sn_full.component = Contains_sn_step.component)) IS NULL)
+    (Contains_sn_full.part <=> Contains_sn_step.part) AND
+    (Contains_sn_full.component <=> Contains_sn_step.component)) IS NULL)
 GROUP BY 1, 2;
 
 INSERT INTO synalog_test.Contains_sn_full SELECT * FROM synalog_test.Contains_sn_new;
@@ -629,8 +629,8 @@ WHERE
   FROM
     synalog_test.Contains_sn_full AS Contains_sn_full
   WHERE
-    (Contains_sn_full.part = Contains_sn_back_step.part) AND
-    (Contains_sn_full.component = Contains_sn_back_step.component)) IS NULL)
+    (Contains_sn_full.part <=> Contains_sn_back_step.part) AND
+    (Contains_sn_full.component <=> Contains_sn_back_step.component)) IS NULL)
 GROUP BY 1, 2;
 
 INSERT INTO synalog_test.Contains_sn_full SELECT * FROM synalog_test.Contains_sn_delta;

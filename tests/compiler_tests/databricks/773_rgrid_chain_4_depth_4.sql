@@ -148,11 +148,11 @@ CREATE TABLE synalog_test.R_sn_new AS WITH t_1_R_MultBodyAggAux_f6 AS (SELECT * 
    UNION ALL
   
     SELECT
-      ((x_9) + (1)) AS x
+      ((x_10) + (1)) AS x
     FROM
-      synalog_test.R_sn_delta AS R_sn_delta, LATERAL (SELECT explode(FILTER(SEQUENCE(0, CAST(4 AS BIGINT)), x -> x < 4)) AS x_9) AS pushkin
+      synalog_test.R_sn_delta AS R_sn_delta, LATERAL (SELECT explode(FILTER(SEQUENCE(0, CAST(4 AS BIGINT)), x -> x < 4)) AS x_10) AS pushkin
     WHERE
-      (R_sn_delta.x = x_9)
+      (R_sn_delta.x = x_10)
   
 ) AS UNUSED_TABLE_NAME  ),
 t_0_R_sn_step AS (SELECT
@@ -170,7 +170,7 @@ WHERE
   FROM
     synalog_test.R_sn_full AS R_sn_full
   WHERE
-    (R_sn_full.x = R_sn_step.x)) IS NULL)
+    (R_sn_full.x <=> R_sn_step.x)) IS NULL)
 GROUP BY 1;
 
 INSERT INTO synalog_test.R_sn_full SELECT * FROM synalog_test.R_sn_new;
@@ -183,11 +183,11 @@ CREATE TABLE synalog_test.R_sn_delta AS WITH t_1_R_MultBodyAggAux_f1 AS (SELECT 
    UNION ALL
   
     SELECT
-      ((x_9) + (1)) AS x
+      ((x_10) + (1)) AS x
     FROM
-      synalog_test.R_sn_new AS R_sn_new, LATERAL (SELECT explode(FILTER(SEQUENCE(0, CAST(4 AS BIGINT)), x -> x < 4)) AS x_9) AS pushkin
+      synalog_test.R_sn_new AS R_sn_new, LATERAL (SELECT explode(FILTER(SEQUENCE(0, CAST(4 AS BIGINT)), x -> x < 4)) AS x_10) AS pushkin
     WHERE
-      (R_sn_new.x = x_9)
+      (R_sn_new.x = x_10)
   
 ) AS UNUSED_TABLE_NAME  ),
 t_0_R_sn_back_step AS (SELECT
@@ -205,7 +205,7 @@ WHERE
   FROM
     synalog_test.R_sn_full AS R_sn_full
   WHERE
-    (R_sn_full.x = R_sn_back_step.x)) IS NULL)
+    (R_sn_full.x <=> R_sn_back_step.x)) IS NULL)
 GROUP BY 1;
 
 INSERT INTO synalog_test.R_sn_full SELECT * FROM synalog_test.R_sn_delta;
@@ -218,11 +218,11 @@ CREATE TABLE synalog_test.R_sn_new AS WITH t_1_R_MultBodyAggAux_f6 AS (SELECT * 
    UNION ALL
   
     SELECT
-      ((x_9) + (1)) AS x
+      ((x_10) + (1)) AS x
     FROM
-      synalog_test.R_sn_delta AS R_sn_delta, LATERAL (SELECT explode(FILTER(SEQUENCE(0, CAST(4 AS BIGINT)), x -> x < 4)) AS x_9) AS pushkin
+      synalog_test.R_sn_delta AS R_sn_delta, LATERAL (SELECT explode(FILTER(SEQUENCE(0, CAST(4 AS BIGINT)), x -> x < 4)) AS x_10) AS pushkin
     WHERE
-      (R_sn_delta.x = x_9)
+      (R_sn_delta.x = x_10)
   
 ) AS UNUSED_TABLE_NAME  ),
 t_0_R_sn_step AS (SELECT
@@ -240,7 +240,7 @@ WHERE
   FROM
     synalog_test.R_sn_full AS R_sn_full
   WHERE
-    (R_sn_full.x = R_sn_step.x)) IS NULL)
+    (R_sn_full.x <=> R_sn_step.x)) IS NULL)
 GROUP BY 1;
 
 INSERT INTO synalog_test.R_sn_full SELECT * FROM synalog_test.R_sn_new;
@@ -253,11 +253,11 @@ CREATE TABLE synalog_test.R_sn_delta AS WITH t_1_R_MultBodyAggAux_f1 AS (SELECT 
    UNION ALL
   
     SELECT
-      ((x_9) + (1)) AS x
+      ((x_10) + (1)) AS x
     FROM
-      synalog_test.R_sn_new AS R_sn_new, LATERAL (SELECT explode(FILTER(SEQUENCE(0, CAST(4 AS BIGINT)), x -> x < 4)) AS x_9) AS pushkin
+      synalog_test.R_sn_new AS R_sn_new, LATERAL (SELECT explode(FILTER(SEQUENCE(0, CAST(4 AS BIGINT)), x -> x < 4)) AS x_10) AS pushkin
     WHERE
-      (R_sn_new.x = x_9)
+      (R_sn_new.x = x_10)
   
 ) AS UNUSED_TABLE_NAME  ),
 t_0_R_sn_back_step AS (SELECT
@@ -275,7 +275,7 @@ WHERE
   FROM
     synalog_test.R_sn_full AS R_sn_full
   WHERE
-    (R_sn_full.x = R_sn_back_step.x)) IS NULL)
+    (R_sn_full.x <=> R_sn_back_step.x)) IS NULL)
 GROUP BY 1;
 
 INSERT INTO synalog_test.R_sn_full SELECT * FROM synalog_test.R_sn_delta;
