@@ -42,6 +42,7 @@ import math
 import os
 import re
 import sqlite3
+import time
 from collections.abc import Mapping
 
 Result = tuple[list[str], list[tuple]]
@@ -701,6 +702,7 @@ def run_plan(steps: list[dict], s: Session) -> Result:
     The steps read one state of the database (``Session.snapshot``): a
     source changed while the plan runs is read in one version only.
     """
+    sweep_stale_tables(steps, s, getattr(s, "engine", ""))
     # A duck-typed session of the caller's has no snapshot: its statements
     # run as they come.
     with getattr(s, "snapshot", contextlib.nullcontext)():
@@ -739,6 +741,55 @@ def _run_steps(steps: list[dict], s: Session) -> Result:
 # PostgreSQL): the steps of a recursion, grounded predicates. A @Ground into a
 # table the program names elsewhere is the user's, and is kept.
 _WORKING_TABLE = re.compile(r"CREATE TABLE ((?:synalog_home|synalog_test|pg_temp)\.\w+)", re.IGNORECASE)
+
+
+# A table of a run, in a schema every session shares: its name ends with the
+# run's tag, `_r`, the time the run started (Unix seconds, 7 digits in base
+# 36) and 6 more digits (`run_tag` in src/python.rs).
+_TAGGED_TABLE = re.compile(r"^(?:\w+\.)?(\w+)_r([0-9a-z]{7})[0-9a-z]{6}$", re.IGNORECASE)
+
+# A run's tables are dropped when it ends; those of a run killed before its
+# end are dropped by a later run once they are this old (no run lasts a day).
+STALE_AFTER_SECONDS = 24 * 3600
+
+# The tables of a schema, by engine: their name is the first column (Spark
+# and Databricks list the schema first: `namespace`/`database`, `tableName`).
+_LIST_TABLES = {
+    "trino": ("SHOW TABLES FROM {schema}", 0),
+    "presto": ("SHOW TABLES FROM {schema}", 0),
+    "databricks": ("SHOW TABLES IN {schema}", 1),
+    "bigquery": ("SELECT table_name FROM {schema}.INFORMATION_SCHEMA.TABLES", 0),
+}
+
+
+def sweep_stale_tables(steps: list[dict], s: Session, engine: str, now: float | None = None) -> list[str]:
+    """Drop the tables killed runs left in the schemas this plan's tagged
+    tables go to, older than ``STALE_AFTER_SECONDS``; the tables dropped.
+
+    A run drops its own tables when it ends (``_drop_working_tables``); a run
+    killed first cannot. Best effort: a table it cannot list or drop stays,
+    and the plan runs regardless."""
+    if engine not in _LIST_TABLES:
+        return []
+    texts = [step.get("sql", "") for step in steps] + [b for step in steps for b in step.get("body", [])]
+    schemas = {t.split(".", 1)[0] for text in texts for t in _WORKING_TABLE.findall(text) if _TAGGED_TABLE.match(t)}
+    query, column = _LIST_TABLES[engine]
+    deadline = (time.time() if now is None else now) - STALE_AFTER_SECONDS
+    dropped = []
+    for schema in sorted(schemas):
+        try:
+            names = [row[column] for row in s.run(query.format(schema=schema))[1]]
+        except Exception:  # noqa: BLE001 - the schema may not exist yet
+            continue
+        for name in names:
+            m = _TAGGED_TABLE.match(str(name))
+            if m and int(m.group(2), 36) < deadline:
+                try:
+                    s.run(f"DROP TABLE IF EXISTS {schema}.{name}")
+                    dropped.append(f"{schema}.{name}")
+                except Exception:  # noqa: BLE001 - best effort
+                    pass
+    return dropped
 
 
 def _drop_working_tables(steps: list[dict], s: Session) -> None:

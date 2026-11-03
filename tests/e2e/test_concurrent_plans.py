@@ -62,3 +62,46 @@ def test_interleaved_plans_read_their_own_grounded_tables(runner_for, engine):
         second.close()
     assert [tuple(int(v) for v in row) for row in got_first] == [(3, 3)], engine
     assert [tuple(int(v) for v in row) for row in got_second] == [(5, 5)], engine
+
+
+def _tag(seconds: int) -> str:
+    digits = "0123456789abcdefghijklmnopqrstuvwxyz"
+    out = ""
+    for _ in range(7):
+        out = digits[seconds % 36] + out
+        seconds //= 36
+    return f"r{out}zzzzzz"
+
+
+@pytest.mark.parametrize("engine", [e for e in ENGINES if e in ("trino", "presto", "databricks")])
+def test_a_run_drops_the_tables_a_killed_run_left(runner_for, engine):
+    """A run killed before its end leaves its tables; a later run drops them
+    once they are a day old, and no other table."""
+    import time
+
+    import synalog
+    from synalog.runners import _drop_working_tables, sweep_stale_tables
+
+    runner = runner_for(engine)
+    now = int(time.time())
+    stale = f"synalog_test.left_{_tag(now - 2 * 24 * 3600)}"
+    recent = f"synalog_test.left_{_tag(now - 60)}"
+    untagged = "synalog_test.left_untagged"
+    steps = synalog.plan("@Ground(Q); Q(x: 1); R(x:) :- Q(x:);", "R", engine=engine)
+    s = runner.session()
+    try:
+        # The plan's first statements create the schema where it is missing.
+        s.run(next(step["sql"] for step in steps if "CREATE TABLE" in step.get("sql", "")))
+        for table in (stale, recent, untagged):
+            s.run(f"DROP TABLE IF EXISTS {table}")
+            s.run(f"CREATE TABLE {table} AS SELECT 1 AS x")
+        dropped = sweep_stale_tables(steps, s, engine)
+        listed = {str(row[1 if engine == "databricks" else 0]).lower() for row in s.run("SHOW TABLES IN synalog_test" if engine == "databricks" else "SHOW TABLES FROM synalog_test")[1]}
+        for table in (recent, untagged):
+            s.run(f"DROP TABLE IF EXISTS {table}")
+    finally:
+        _drop_working_tables(steps, s)
+        s.close()
+    assert [t.lower() for t in dropped] == [stale.lower()], dropped
+    assert stale.split(".")[1].lower() not in listed
+    assert {recent.split(".")[1].lower(), untagged.split(".")[1].lower()} <= listed

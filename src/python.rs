@@ -413,29 +413,31 @@ fn counterexamples_all(
     })
 }
 
-/// A name unique to a plan, among the plans of every process: the time, the
-/// process and a counter, in base 36.
+/// A name unique to a plan, among the plans of every process: `r`, the
+/// time it starts (Unix seconds, 7 digits in base 36), then 6 digits from the
+/// time's nanoseconds, the process and a counter. A runner reads the time
+/// back to drop the tables of a run long dead (`synalog.runners`).
 fn run_tag() -> String {
     use std::sync::atomic::{AtomicU64, Ordering};
     static COUNTER: AtomicU64 = AtomicU64::new(0);
-    fn base36(mut n: u128) -> String {
+    fn base36(mut n: u64, width: usize) -> String {
         let digits = b"0123456789abcdefghijklmnopqrstuvwxyz";
-        let mut out = Vec::new();
-        loop {
-            out.push(digits[(n % 36) as usize]);
+        let mut out = vec![b'0'; width];
+        for slot in out.iter_mut().rev() {
+            *slot = digits[(n % 36) as usize];
             n /= 36;
-            if n == 0 {
-                break;
-            }
         }
-        out.reverse();
         String::from_utf8(out).unwrap()
     }
-    let nanos = std::time::SystemTime::now()
+    let now = std::time::SystemTime::now()
         .duration_since(std::time::UNIX_EPOCH)
-        .map_or(0, |d| d.as_nanos());
-    let unique = nanos ^ ((std::process::id() as u128) << 64) ^ ((COUNTER.fetch_add(1, Ordering::Relaxed) as u128) << 96);
-    format!("r{}", base36(unique))
+        .unwrap_or_default();
+    let counter = COUNTER.fetch_add(1, Ordering::Relaxed);
+    let mixed = (now.subsec_nanos() as u64)
+        .wrapping_mul(0x9E37_79B9_7F4A_7C15)
+        ^ (std::process::id() as u64).wrapping_mul(0xC2B2_AE3D_27D4_EB4F)
+        ^ counter.wrapping_mul(0x1656_67B1_9E37_79F9);
+    format!("r{}{}", base36(now.as_secs(), 7), base36(mixed % 36u64.pow(6), 6))
 }
 
 /// The steps that compute a predicate, for a runner that executes them.
