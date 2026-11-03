@@ -4,13 +4,15 @@ on every engine.
 Each program states the rows a predicate returns (`# Expect: rows`, `page`,
 `search`); `tests/cli/test_programs.py` checks them on DuckDB and SQLite. Here
 the predicate's plan runs on each engine and must return the same rows, in the
-same order: a program orders what it expects.
+same order: a program orders what it expects. A program stating
+`# Expect: within <seconds>` must also return each in that time.
 """
 
 from __future__ import annotations
 
 import ast
 import re
+import time
 from pathlib import Path
 
 import pytest
@@ -20,6 +22,7 @@ from test_e2e import _normalize_value
 
 PROGRAMS = Path(__file__).resolve().parents[1] / "programs"
 EXPECT = re.compile(r"^#\s*Expect:\s*(rows|page|search)\s+(.*)$")
+WITHIN = re.compile(r"^#\s*Expect:\s*within\s+(\S+)\s*$", re.MULTILINE)
 
 
 def expectations():
@@ -64,7 +67,12 @@ def test_program_rows(runner_for, engine, path, kind, rest):
     else:
         predicate, pattern = spec.split(" ", 1)
         options = {"pattern": pattern}
-    steps = synalog.plan(path.read_text(), predicate, engine=engine, import_root=[str(path.parent)], **options)
+    source = path.read_text()
+    steps = synalog.plan(source, predicate, engine=engine, import_root=[str(path.parent)], **options)
+    started = time.monotonic()
     got = _normalize(runner.run_plan(steps))
+    elapsed = time.monotonic() - started
     want = _normalize(ast.literal_eval(literal))
     assert got == want, f"{predicate} on {engine}: got {got}, expected {want}"
+    if (within := WITHIN.search(source)) is not None:
+        assert elapsed <= float(within.group(1)), f"{predicate} on {engine}: {elapsed:.1f}s, past {within.group(1)}s"

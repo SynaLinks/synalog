@@ -19,6 +19,7 @@ DuckDB and SQLite with the facts it defines itself, executed by synalog
     # Expect: search <Pred> <pattern> = <rows>         search(pattern) returns <rows>
     # Expect: compile-error <Pred> <text>  compile() refuses <Pred> with an error containing <text>
     # Expect: run-error <Pred> <text>      running <Pred> fails on every engine with an error containing <text>
+    # Expect: within <seconds>             each `rows` expectation runs within <seconds> on each engine
 
 Run with: python -m pytest tests/cli/test_programs.py
 """
@@ -29,6 +30,7 @@ import ast
 import json
 import math
 import re
+import time
 from pathlib import Path
 
 import pytest
@@ -123,6 +125,7 @@ def test_program(path: Path):
     root = str(path.parent)
     expected = expectations(source)
     assert expected, f"{path.name} states no '# Expect:' line"
+    within = next((float(rest) for kind, rest in expected if kind == "within"), None)
     errors, warnings = check(source, root)
     for kind, rest in expected:
         if kind == "valid":
@@ -136,9 +139,14 @@ def test_program(path: Path):
         elif kind == "rows":
             predicate, literal = (part.strip() for part in rest.split("=", 1))
             assert errors == [], f"the program does not verify: {errors}"
+            started = time.monotonic()
             got = rows(source, root, predicate)
+            elapsed = time.monotonic() - started
             want = [tuple(row) for row in ast.literal_eval(literal)]
             assert same(got, want), f"{predicate}: got {got}, expected {want}"
+            if within is not None:
+                # `rows` runs the predicate on every engine.
+                assert elapsed <= within * len(ENGINES), f"{predicate}: {elapsed:.1f}s, past {within}s per engine"
         elif kind == "holds":
             assert errors == [], f"the program does not verify: {errors}"
             assert assertion(source, root, rest)["status"] == "unchecked"
@@ -196,6 +204,8 @@ def test_program(path: Path):
             predicate, literal = (part.strip() for part in rest.split("=", 1))
             got = synalog.dependencies(source, import_root=[root]).get(predicate)
             assert got == ast.literal_eval(literal), f"{predicate} depends on {got}"
+        elif kind == "within":
+            pass  # checked by each `rows` expectation
         else:
             raise AssertionError(f"unknown expectation {kind!r}")
 
