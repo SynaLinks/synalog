@@ -30,6 +30,7 @@ use crate::parser::{Json, JsonObject};
 use crate::compiler::{CompileResult, CompileError};
 use crate::compiler::annotations::{Annotations, Ground};
 use crate::compiler::dialects::{self, Dialect};
+use crate::compiler::functors;
 use crate::compiler::expr_translate::SubqueryTranslator;
 use crate::compiler::rule_translate::{self, NamesAllocator, RuleStructure};
 use crate::compiler::type_inference::{Type, TypesGraphBuilder, TypeInference};
@@ -1761,7 +1762,7 @@ impl SynalogProgram {
                         order.push(PlanStep::Loop {
                             body: iteration.predicates.iter().map(|p| exports[p].clone()).collect(),
                             repetitions: iteration.repetitions - 1,
-                            changed: self.iteration_changed_query(&iteration.predicates)?,
+                            changed: self.iteration_changed_query(&iteration.predicates, iteration.repetitions)?,
                         });
                     }
                 }
@@ -1820,7 +1821,16 @@ impl SynalogProgram {
     /// same when each row occurs as many times in both, so its rows are
     /// compared with their counts (a set comparison would stop a recursion
     /// whose rows repeat, as `P(x: 1); P(x:) :- P(x:);` does at every step).
-    fn iteration_changed_query(&self, predicates: &[String]) -> CompileResult<String> {
+    ///
+    /// An unbounded recursion (`@Recursive(P, -1)`) that is not `distinct`
+    /// is refused: a cycle in its data adds copies of rows at every step, so
+    /// its multiset never stops changing, and the loop would not end.
+    fn iteration_changed_query(&self, predicates: &[String], repetitions: i64) -> CompileResult<String> {
+        // `-1` is a depth of `functors::UNBOUNDED_DEPTH` steps, two per
+        // repetition after a few precomputed ones (`recursion::repetitions`);
+        // a depth written out, however deep, is bounded.
+        let half = functors::UNBOUNDED_DEPTH / 2;
+        let unbounded = (half - 1_000..=half + 1).contains(&repetitions);
         let dialect = dialects::get(self.annotations.engine())?;
         let except = dialect.except_distinct();
         let table = |p: &String| {
@@ -1833,6 +1843,17 @@ impl SynalogProgram {
         let mut counts = Vec::new();
         for (u, l) in upper.iter().zip(lower) {
             let rows = match self.multiset_columns(u) {
+                Some(_) if unbounded => {
+                    return Err(CompileError::new(
+                        format!(
+                            "@Recursive({0}, -1): {0} is not distinct, so it cannot recurse until nothing changes: \
+                             its rows are a multiset, which a cycle in the data grows at every step. \
+                             Make its rules distinct, or give it a depth.",
+                            u.rsplit_once("_ifr").map_or(u.as_str(), |(p, _)| p)
+                        ),
+                        u.rsplit_once("_ifr").map_or(u.as_str(), |(p, _)| p),
+                    ));
+                }
                 Some(columns) => {
                     let columns = columns.iter().map(|c| dialects::sql_column(c, dialect.as_ref())).collect::<Vec<_>>().join(", ");
                     format!("SELECT {columns}, COUNT(*) AS synalog_multiplicity FROM {{}} GROUP BY {columns}")

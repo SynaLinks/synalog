@@ -897,7 +897,7 @@ impl Functors {
 
             // Python: depth == -1 → 1000000000 (effectively infinite)
             if depth == -1 {
-                depth = 1_000_000_000;
+                depth = UNBOUNDED_DEPTH;
                 if let Some(m) = depth_map.get_mut(&p) {
                     m.insert("1".to_string(), SerdeLikeValue::Int(depth));
                 }
@@ -1204,7 +1204,7 @@ impl Functors {
         }
 
         let cte = format!("{}_RecursiveCte", p);
-        let bounded = depth < 1_000_000_000;
+        let bounded = depth < UNBOUNDED_DEPTH;
         // The number of a step, as rules: what the first rows, a step's head
         // and its read of `P` add, and the bound.
         let template = parse_rules(&format!(
@@ -1523,6 +1523,10 @@ fn semi_naive_fields(cover: &HashSet<String>, visible: &BTreeSet<String>, rules:
     }
     fields
 }
+
+/// The depth of a recursion without bound (`@Recursive(P, -1)`): it stops
+/// when a step changes nothing.
+pub const UNBOUNDED_DEPTH: i64 = 1_000_000_000;
 
 /// Generate semi-naive recursion functor program text.
 ///
