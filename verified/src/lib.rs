@@ -31,6 +31,8 @@
 //!     negated dependency lies on a cycle;
 //!   * [`arity::first_arity_conflict`]: two definitions of a predicate that
 //!     disagree on arity, or a guarantee the definitions agree;
+//!   * [`convergence`]: a semi-naive recursion converges when it compares
+//!     rows reflexively (`is`), and a multiset over a cycle never does;
 //!   * [`recursion::repetitions`]: enough repetitions, without overflow, to
 //!     unroll a recursion to its depth;
 //!   * [`membership::absent`]: which names a program uses but does not provide,
@@ -46,6 +48,7 @@ use vstd::prelude::*;
 pub mod arity;
 pub mod cast;
 pub mod contradiction;
+pub mod convergence;
 pub mod membership;
 pub mod page;
 pub mod plan;
