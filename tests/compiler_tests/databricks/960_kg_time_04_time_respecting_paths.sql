@@ -637,10 +637,10 @@ WHERE
   FROM
     synalog_test.ReachedBy_sn_full AS ReachedBy_sn_full
   WHERE
-    (ReachedBy_sn_full.source = ReachedBy_sn_step.source) AND
-    (ReachedBy_sn_full.target = ReachedBy_sn_step.target) AND
-    (ReachedBy_sn_full.valid_from = ReachedBy_sn_step.valid_from) AND
-    (ReachedBy_sn_full.valid_to = ReachedBy_sn_step.valid_to)) IS NULL)
+    (ReachedBy_sn_full.source <=> ReachedBy_sn_step.source) AND
+    (ReachedBy_sn_full.target <=> ReachedBy_sn_step.target) AND
+    (ReachedBy_sn_full.valid_from <=> ReachedBy_sn_step.valid_from) AND
+    (ReachedBy_sn_full.valid_to <=> ReachedBy_sn_step.valid_to)) IS NULL)
 GROUP BY 1, 2, 3, 4;
 
 INSERT INTO synalog_test.ReachedBy_sn_full SELECT * FROM synalog_test.ReachedBy_sn_new;
@@ -696,10 +696,10 @@ WHERE
   FROM
     synalog_test.ReachedBy_sn_full AS ReachedBy_sn_full
   WHERE
-    (ReachedBy_sn_full.source = ReachedBy_sn_back_step.source) AND
-    (ReachedBy_sn_full.target = ReachedBy_sn_back_step.target) AND
-    (ReachedBy_sn_full.valid_from = ReachedBy_sn_back_step.valid_from) AND
-    (ReachedBy_sn_full.valid_to = ReachedBy_sn_back_step.valid_to)) IS NULL)
+    (ReachedBy_sn_full.source <=> ReachedBy_sn_back_step.source) AND
+    (ReachedBy_sn_full.target <=> ReachedBy_sn_back_step.target) AND
+    (ReachedBy_sn_full.valid_from <=> ReachedBy_sn_back_step.valid_from) AND
+    (ReachedBy_sn_full.valid_to <=> ReachedBy_sn_back_step.valid_to)) IS NULL)
 GROUP BY 1, 2, 3, 4;
 
 INSERT INTO synalog_test.ReachedBy_sn_full SELECT * FROM synalog_test.ReachedBy_sn_delta;
@@ -755,10 +755,10 @@ WHERE
   FROM
     synalog_test.ReachedBy_sn_full AS ReachedBy_sn_full
   WHERE
-    (ReachedBy_sn_full.source = ReachedBy_sn_step.source) AND
-    (ReachedBy_sn_full.target = ReachedBy_sn_step.target) AND
-    (ReachedBy_sn_full.valid_from = ReachedBy_sn_step.valid_from) AND
-    (ReachedBy_sn_full.valid_to = ReachedBy_sn_step.valid_to)) IS NULL)
+    (ReachedBy_sn_full.source <=> ReachedBy_sn_step.source) AND
+    (ReachedBy_sn_full.target <=> ReachedBy_sn_step.target) AND
+    (ReachedBy_sn_full.valid_from <=> ReachedBy_sn_step.valid_from) AND
+    (ReachedBy_sn_full.valid_to <=> ReachedBy_sn_step.valid_to)) IS NULL)
 GROUP BY 1, 2, 3, 4;
 
 INSERT INTO synalog_test.ReachedBy_sn_full SELECT * FROM synalog_test.ReachedBy_sn_new;
@@ -814,10 +814,10 @@ WHERE
   FROM
     synalog_test.ReachedBy_sn_full AS ReachedBy_sn_full
   WHERE
-    (ReachedBy_sn_full.source = ReachedBy_sn_back_step.source) AND
-    (ReachedBy_sn_full.target = ReachedBy_sn_back_step.target) AND
-    (ReachedBy_sn_full.valid_from = ReachedBy_sn_back_step.valid_from) AND
-    (ReachedBy_sn_full.valid_to = ReachedBy_sn_back_step.valid_to)) IS NULL)
+    (ReachedBy_sn_full.source <=> ReachedBy_sn_back_step.source) AND
+    (ReachedBy_sn_full.target <=> ReachedBy_sn_back_step.target) AND
+    (ReachedBy_sn_full.valid_from <=> ReachedBy_sn_back_step.valid_from) AND
+    (ReachedBy_sn_full.valid_to <=> ReachedBy_sn_back_step.valid_to)) IS NULL)
 GROUP BY 1, 2, 3, 4;
 
 INSERT INTO synalog_test.ReachedBy_sn_full SELECT * FROM synalog_test.ReachedBy_sn_delta;
@@ -873,10 +873,10 @@ WHERE
   FROM
     synalog_test.ReachedBy_sn_full AS ReachedBy_sn_full
   WHERE
-    (ReachedBy_sn_full.source = ReachedBy_sn_step.source) AND
-    (ReachedBy_sn_full.target = ReachedBy_sn_step.target) AND
-    (ReachedBy_sn_full.valid_from = ReachedBy_sn_step.valid_from) AND
-    (ReachedBy_sn_full.valid_to = ReachedBy_sn_step.valid_to)) IS NULL)
+    (ReachedBy_sn_full.source <=> ReachedBy_sn_step.source) AND
+    (ReachedBy_sn_full.target <=> ReachedBy_sn_step.target) AND
+    (ReachedBy_sn_full.valid_from <=> ReachedBy_sn_step.valid_from) AND
+    (ReachedBy_sn_full.valid_to <=> ReachedBy_sn_step.valid_to)) IS NULL)
 GROUP BY 1, 2, 3, 4;
 
 INSERT INTO synalog_test.ReachedBy_sn_full SELECT * FROM synalog_test.ReachedBy_sn_new;
@@ -932,10 +932,10 @@ WHERE
   FROM
     synalog_test.ReachedBy_sn_full AS ReachedBy_sn_full
   WHERE
-    (ReachedBy_sn_full.source = ReachedBy_sn_back_step.source) AND
-    (ReachedBy_sn_full.target = ReachedBy_sn_back_step.target) AND
-    (ReachedBy_sn_full.valid_from = ReachedBy_sn_back_step.valid_from) AND
-    (ReachedBy_sn_full.valid_to = ReachedBy_sn_back_step.valid_to)) IS NULL)
+    (ReachedBy_sn_full.source <=> ReachedBy_sn_back_step.source) AND
+    (ReachedBy_sn_full.target <=> ReachedBy_sn_back_step.target) AND
+    (ReachedBy_sn_full.valid_from <=> ReachedBy_sn_back_step.valid_from) AND
+    (ReachedBy_sn_full.valid_to <=> ReachedBy_sn_back_step.valid_to)) IS NULL)
 GROUP BY 1, 2, 3, 4;
 
 INSERT INTO synalog_test.ReachedBy_sn_full SELECT * FROM synalog_test.ReachedBy_sn_delta;
@@ -991,10 +991,10 @@ WHERE
   FROM
     synalog_test.ReachedBy_sn_full AS ReachedBy_sn_full
   WHERE
-    (ReachedBy_sn_full.source = ReachedBy_sn_step.source) AND
-    (ReachedBy_sn_full.target = ReachedBy_sn_step.target) AND
-    (ReachedBy_sn_full.valid_from = ReachedBy_sn_step.valid_from) AND
-    (ReachedBy_sn_full.valid_to = ReachedBy_sn_step.valid_to)) IS NULL)
+    (ReachedBy_sn_full.source <=> ReachedBy_sn_step.source) AND
+    (ReachedBy_sn_full.target <=> ReachedBy_sn_step.target) AND
+    (ReachedBy_sn_full.valid_from <=> ReachedBy_sn_step.valid_from) AND
+    (ReachedBy_sn_full.valid_to <=> ReachedBy_sn_step.valid_to)) IS NULL)
 GROUP BY 1, 2, 3, 4;
 
 INSERT INTO synalog_test.ReachedBy_sn_full SELECT * FROM synalog_test.ReachedBy_sn_new;
@@ -1050,10 +1050,10 @@ WHERE
   FROM
     synalog_test.ReachedBy_sn_full AS ReachedBy_sn_full
   WHERE
-    (ReachedBy_sn_full.source = ReachedBy_sn_back_step.source) AND
-    (ReachedBy_sn_full.target = ReachedBy_sn_back_step.target) AND
-    (ReachedBy_sn_full.valid_from = ReachedBy_sn_back_step.valid_from) AND
-    (ReachedBy_sn_full.valid_to = ReachedBy_sn_back_step.valid_to)) IS NULL)
+    (ReachedBy_sn_full.source <=> ReachedBy_sn_back_step.source) AND
+    (ReachedBy_sn_full.target <=> ReachedBy_sn_back_step.target) AND
+    (ReachedBy_sn_full.valid_from <=> ReachedBy_sn_back_step.valid_from) AND
+    (ReachedBy_sn_full.valid_to <=> ReachedBy_sn_back_step.valid_to)) IS NULL)
 GROUP BY 1, 2, 3, 4;
 
 INSERT INTO synalog_test.ReachedBy_sn_full SELECT * FROM synalog_test.ReachedBy_sn_delta;
@@ -1109,10 +1109,10 @@ WHERE
   FROM
     synalog_test.ReachedBy_sn_full AS ReachedBy_sn_full
   WHERE
-    (ReachedBy_sn_full.source = ReachedBy_sn_step.source) AND
-    (ReachedBy_sn_full.target = ReachedBy_sn_step.target) AND
-    (ReachedBy_sn_full.valid_from = ReachedBy_sn_step.valid_from) AND
-    (ReachedBy_sn_full.valid_to = ReachedBy_sn_step.valid_to)) IS NULL)
+    (ReachedBy_sn_full.source <=> ReachedBy_sn_step.source) AND
+    (ReachedBy_sn_full.target <=> ReachedBy_sn_step.target) AND
+    (ReachedBy_sn_full.valid_from <=> ReachedBy_sn_step.valid_from) AND
+    (ReachedBy_sn_full.valid_to <=> ReachedBy_sn_step.valid_to)) IS NULL)
 GROUP BY 1, 2, 3, 4;
 
 INSERT INTO synalog_test.ReachedBy_sn_full SELECT * FROM synalog_test.ReachedBy_sn_new;
@@ -1168,10 +1168,10 @@ WHERE
   FROM
     synalog_test.ReachedBy_sn_full AS ReachedBy_sn_full
   WHERE
-    (ReachedBy_sn_full.source = ReachedBy_sn_back_step.source) AND
-    (ReachedBy_sn_full.target = ReachedBy_sn_back_step.target) AND
-    (ReachedBy_sn_full.valid_from = ReachedBy_sn_back_step.valid_from) AND
-    (ReachedBy_sn_full.valid_to = ReachedBy_sn_back_step.valid_to)) IS NULL)
+    (ReachedBy_sn_full.source <=> ReachedBy_sn_back_step.source) AND
+    (ReachedBy_sn_full.target <=> ReachedBy_sn_back_step.target) AND
+    (ReachedBy_sn_full.valid_from <=> ReachedBy_sn_back_step.valid_from) AND
+    (ReachedBy_sn_full.valid_to <=> ReachedBy_sn_back_step.valid_to)) IS NULL)
 GROUP BY 1, 2, 3, 4;
 
 INSERT INTO synalog_test.ReachedBy_sn_full SELECT * FROM synalog_test.ReachedBy_sn_delta;

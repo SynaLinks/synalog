@@ -329,8 +329,8 @@ WHERE
   FROM
     synalog_test.Above_sn_full AS Above_sn_full
   WHERE
-    (Above_sn_full.approver = Above_sn_step.approver) AND
-    (Above_sn_full.requester = Above_sn_step.requester)) IS NULL)
+    (Above_sn_full.approver <=> Above_sn_step.approver) AND
+    (Above_sn_full.requester <=> Above_sn_step.requester)) IS NULL)
 GROUP BY 1, 2;
 
 INSERT INTO synalog_test.Above_sn_full SELECT * FROM synalog_test.Above_sn_new;
@@ -377,8 +377,8 @@ WHERE
   FROM
     synalog_test.Above_sn_full AS Above_sn_full
   WHERE
-    (Above_sn_full.approver = Above_sn_back_step.approver) AND
-    (Above_sn_full.requester = Above_sn_back_step.requester)) IS NULL)
+    (Above_sn_full.approver <=> Above_sn_back_step.approver) AND
+    (Above_sn_full.requester <=> Above_sn_back_step.requester)) IS NULL)
 GROUP BY 1, 2;
 
 INSERT INTO synalog_test.Above_sn_full SELECT * FROM synalog_test.Above_sn_delta;
@@ -425,8 +425,8 @@ WHERE
   FROM
     synalog_test.Above_sn_full AS Above_sn_full
   WHERE
-    (Above_sn_full.approver = Above_sn_step.approver) AND
-    (Above_sn_full.requester = Above_sn_step.requester)) IS NULL)
+    (Above_sn_full.approver <=> Above_sn_step.approver) AND
+    (Above_sn_full.requester <=> Above_sn_step.requester)) IS NULL)
 GROUP BY 1, 2;
 
 INSERT INTO synalog_test.Above_sn_full SELECT * FROM synalog_test.Above_sn_new;
@@ -473,8 +473,8 @@ WHERE
   FROM
     synalog_test.Above_sn_full AS Above_sn_full
   WHERE
-    (Above_sn_full.approver = Above_sn_back_step.approver) AND
-    (Above_sn_full.requester = Above_sn_back_step.requester)) IS NULL)
+    (Above_sn_full.approver <=> Above_sn_back_step.approver) AND
+    (Above_sn_full.requester <=> Above_sn_back_step.requester)) IS NULL)
 GROUP BY 1, 2;
 
 INSERT INTO synalog_test.Above_sn_full SELECT * FROM synalog_test.Above_sn_delta;
@@ -521,8 +521,8 @@ WHERE
   FROM
     synalog_test.Above_sn_full AS Above_sn_full
   WHERE
-    (Above_sn_full.approver = Above_sn_step.approver) AND
-    (Above_sn_full.requester = Above_sn_step.requester)) IS NULL)
+    (Above_sn_full.approver <=> Above_sn_step.approver) AND
+    (Above_sn_full.requester <=> Above_sn_step.requester)) IS NULL)
 GROUP BY 1, 2;
 
 INSERT INTO synalog_test.Above_sn_full SELECT * FROM synalog_test.Above_sn_new;
@@ -569,8 +569,8 @@ WHERE
   FROM
     synalog_test.Above_sn_full AS Above_sn_full
   WHERE
-    (Above_sn_full.approver = Above_sn_back_step.approver) AND
-    (Above_sn_full.requester = Above_sn_back_step.requester)) IS NULL)
+    (Above_sn_full.approver <=> Above_sn_back_step.approver) AND
+    (Above_sn_full.requester <=> Above_sn_back_step.requester)) IS NULL)
 GROUP BY 1, 2;
 
 INSERT INTO synalog_test.Above_sn_full SELECT * FROM synalog_test.Above_sn_delta;

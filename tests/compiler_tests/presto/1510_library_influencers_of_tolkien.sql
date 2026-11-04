@@ -441,8 +441,8 @@ WHERE
   FROM
     synalog_test.Down_sn_full AS Down_sn_full
   WHERE
-    (Down_sn_full.a = Down_sn_step.a) AND
-    (Down_sn_full.b = Down_sn_step.b)) IS NULL)
+    (Down_sn_full.a IS NOT DISTINCT FROM Down_sn_step.a) AND
+    (Down_sn_full.b IS NOT DISTINCT FROM Down_sn_step.b)) IS NULL)
 GROUP BY 1, 2;
 
 INSERT INTO synalog_test.Down_sn_full SELECT * FROM synalog_test.Down_sn_new;
@@ -505,8 +505,8 @@ WHERE
   FROM
     synalog_test.Down_sn_full AS Down_sn_full
   WHERE
-    (Down_sn_full.a = Down_sn_back_step.a) AND
-    (Down_sn_full.b = Down_sn_back_step.b)) IS NULL)
+    (Down_sn_full.a IS NOT DISTINCT FROM Down_sn_back_step.a) AND
+    (Down_sn_full.b IS NOT DISTINCT FROM Down_sn_back_step.b)) IS NULL)
 GROUP BY 1, 2;
 
 INSERT INTO synalog_test.Down_sn_full SELECT * FROM synalog_test.Down_sn_delta;
@@ -569,8 +569,8 @@ WHERE
   FROM
     synalog_test.Down_sn_full AS Down_sn_full
   WHERE
-    (Down_sn_full.a = Down_sn_step.a) AND
-    (Down_sn_full.b = Down_sn_step.b)) IS NULL)
+    (Down_sn_full.a IS NOT DISTINCT FROM Down_sn_step.a) AND
+    (Down_sn_full.b IS NOT DISTINCT FROM Down_sn_step.b)) IS NULL)
 GROUP BY 1, 2;
 
 INSERT INTO synalog_test.Down_sn_full SELECT * FROM synalog_test.Down_sn_new;
@@ -633,8 +633,8 @@ WHERE
   FROM
     synalog_test.Down_sn_full AS Down_sn_full
   WHERE
-    (Down_sn_full.a = Down_sn_back_step.a) AND
-    (Down_sn_full.b = Down_sn_back_step.b)) IS NULL)
+    (Down_sn_full.a IS NOT DISTINCT FROM Down_sn_back_step.a) AND
+    (Down_sn_full.b IS NOT DISTINCT FROM Down_sn_back_step.b)) IS NULL)
 GROUP BY 1, 2;
 
 INSERT INTO synalog_test.Down_sn_full SELECT * FROM synalog_test.Down_sn_delta;
@@ -697,8 +697,8 @@ WHERE
   FROM
     synalog_test.Down_sn_full AS Down_sn_full
   WHERE
-    (Down_sn_full.a = Down_sn_step.a) AND
-    (Down_sn_full.b = Down_sn_step.b)) IS NULL)
+    (Down_sn_full.a IS NOT DISTINCT FROM Down_sn_step.a) AND
+    (Down_sn_full.b IS NOT DISTINCT FROM Down_sn_step.b)) IS NULL)
 GROUP BY 1, 2;
 
 INSERT INTO synalog_test.Down_sn_full SELECT * FROM synalog_test.Down_sn_new;
@@ -761,8 +761,8 @@ WHERE
   FROM
     synalog_test.Down_sn_full AS Down_sn_full
   WHERE
-    (Down_sn_full.a = Down_sn_back_step.a) AND
-    (Down_sn_full.b = Down_sn_back_step.b)) IS NULL)
+    (Down_sn_full.a IS NOT DISTINCT FROM Down_sn_back_step.a) AND
+    (Down_sn_full.b IS NOT DISTINCT FROM Down_sn_back_step.b)) IS NULL)
 GROUP BY 1, 2;
 
 INSERT INTO synalog_test.Down_sn_full SELECT * FROM synalog_test.Down_sn_delta;

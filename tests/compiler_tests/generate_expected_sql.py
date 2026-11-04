@@ -21847,6 +21847,9 @@ SYNALOG_GOLDENS = {
         "5215_recursion_stake_compounded_round_a_cycle",
         "5216_recursion_two_recursive_rules",
     ]),
+    # A variable equal to itself is a condition, false where it is null, as
+    # SQL's `=` (upstream drops `x == x`, and `null == null`): see DEVIATIONS.md.
+    *((engine, "549_nulls_null_not_equal_to_itself") for engine in ENGINES),
 }
 
 # Goldens intentionally absent because synalog lacks the subsystem

@@ -551,9 +551,9 @@ WHERE
   FROM
     synalog_test.PathTo_sn_full AS PathTo_sn_full
   WHERE
-    (PathTo_sn_full.source = PathTo_sn_step.source) AND
-    (PathTo_sn_full.target = PathTo_sn_step.target) AND
-    (PathTo_sn_full.path = PathTo_sn_step.path)) IS NULL)
+    (PathTo_sn_full.source IS NOT DISTINCT FROM PathTo_sn_step.source) AND
+    (PathTo_sn_full.target IS NOT DISTINCT FROM PathTo_sn_step.target) AND
+    (PathTo_sn_full.path IS NOT DISTINCT FROM PathTo_sn_step.path)) IS NULL)
 GROUP BY 1, 2, 3;
 
 INSERT INTO synalog_test.PathTo_sn_full SELECT * FROM synalog_test.PathTo_sn_new;
@@ -602,9 +602,9 @@ WHERE
   FROM
     synalog_test.PathTo_sn_full AS PathTo_sn_full
   WHERE
-    (PathTo_sn_full.source = PathTo_sn_back_step.source) AND
-    (PathTo_sn_full.target = PathTo_sn_back_step.target) AND
-    (PathTo_sn_full.path = PathTo_sn_back_step.path)) IS NULL)
+    (PathTo_sn_full.source IS NOT DISTINCT FROM PathTo_sn_back_step.source) AND
+    (PathTo_sn_full.target IS NOT DISTINCT FROM PathTo_sn_back_step.target) AND
+    (PathTo_sn_full.path IS NOT DISTINCT FROM PathTo_sn_back_step.path)) IS NULL)
 GROUP BY 1, 2, 3;
 
 INSERT INTO synalog_test.PathTo_sn_full SELECT * FROM synalog_test.PathTo_sn_delta;
@@ -653,9 +653,9 @@ WHERE
   FROM
     synalog_test.PathTo_sn_full AS PathTo_sn_full
   WHERE
-    (PathTo_sn_full.source = PathTo_sn_step.source) AND
-    (PathTo_sn_full.target = PathTo_sn_step.target) AND
-    (PathTo_sn_full.path = PathTo_sn_step.path)) IS NULL)
+    (PathTo_sn_full.source IS NOT DISTINCT FROM PathTo_sn_step.source) AND
+    (PathTo_sn_full.target IS NOT DISTINCT FROM PathTo_sn_step.target) AND
+    (PathTo_sn_full.path IS NOT DISTINCT FROM PathTo_sn_step.path)) IS NULL)
 GROUP BY 1, 2, 3;
 
 INSERT INTO synalog_test.PathTo_sn_full SELECT * FROM synalog_test.PathTo_sn_new;
@@ -704,9 +704,9 @@ WHERE
   FROM
     synalog_test.PathTo_sn_full AS PathTo_sn_full
   WHERE
-    (PathTo_sn_full.source = PathTo_sn_back_step.source) AND
-    (PathTo_sn_full.target = PathTo_sn_back_step.target) AND
-    (PathTo_sn_full.path = PathTo_sn_back_step.path)) IS NULL)
+    (PathTo_sn_full.source IS NOT DISTINCT FROM PathTo_sn_back_step.source) AND
+    (PathTo_sn_full.target IS NOT DISTINCT FROM PathTo_sn_back_step.target) AND
+    (PathTo_sn_full.path IS NOT DISTINCT FROM PathTo_sn_back_step.path)) IS NULL)
 GROUP BY 1, 2, 3;
 
 INSERT INTO synalog_test.PathTo_sn_full SELECT * FROM synalog_test.PathTo_sn_delta;

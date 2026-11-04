@@ -897,7 +897,7 @@ impl Functors {
 
             // Python: depth == -1 → 1000000000 (effectively infinite)
             if depth == -1 {
-                depth = 1_000_000_000;
+                depth = UNBOUNDED_DEPTH;
                 if let Some(m) = depth_map.get_mut(&p) {
                     m.insert("1".to_string(), SerdeLikeValue::Int(depth));
                 }
@@ -1204,7 +1204,7 @@ impl Functors {
         }
 
         let cte = format!("{}_RecursiveCte", p);
-        let bounded = depth < 1_000_000_000;
+        let bounded = depth < UNBOUNDED_DEPTH;
         // The number of a step, as rules: what the first rows, a step's head
         // and its read of `P` add, and the bound.
         let template = parse_rules(&format!(
@@ -1524,6 +1524,10 @@ fn semi_naive_fields(cover: &HashSet<String>, visible: &BTreeSet<String>, rules:
     fields
 }
 
+/// The depth of a recursion without bound (`@Recursive(P, -1)`): it stops
+/// when a step changes nothing.
+pub const UNBOUNDED_DEPTH: i64 = 1_000_000_000;
+
 /// Generate semi-naive recursion functor program text.
 ///
 /// `P_sn_delta` holds the rows the last step added (the base rows first),
@@ -1535,18 +1539,29 @@ fn semi_naive_fields(cover: &HashSet<String>, visible: &BTreeSet<String>, rules:
 /// is empty; `depth` repetitions at most compute the rows the full
 /// recomputation computes in `depth` steps.
 fn get_semi_naive_recursion_functor(depth: i64, p: &str, fields: &[Json]) -> String {
-    let args = fields
-        .iter()
-        .enumerate()
-        .map(|(i, field)| {
-            if field.is_string() {
-                format!("{}: v{}", field.as_str(), i)
-            } else {
-                format!("v{}", i)
-            }
-        })
-        .collect::<Vec<_>>()
-        .join(", ");
+    let args_of = |var: &str| {
+        fields
+            .iter()
+            .enumerate()
+            .map(|(i, field)| {
+                if field.is_string() {
+                    format!("{}: {}{}", field.as_str(), var, i)
+                } else {
+                    format!("{}{}", var, i)
+                }
+            })
+            .collect::<Vec<_>>()
+            .join(", ")
+    };
+    let args = args_of("v");
+    // A row is already found when `P_sn_full` holds a row equal to it as a
+    // value, nulls included (`is`): under SQL's `=` a row holding a null
+    // would be new at every step, and the recursion would never converge.
+    let found = format!(
+        "{p}_sn_full({}), {}",
+        args_of("w"),
+        (0..fields.len()).map(|i| format!("w{i} is v{i}")).collect::<Vec<_>>().join(", ")
+    );
     // A step's columns may be wider than its input's (an integer base, a
     // bigint `ToInt64(x) * 2`, then a sum of it), and a column widens at most
     // twice (integer, bigint, double), so the types stop changing within
@@ -1573,12 +1588,12 @@ fn get_semi_naive_recursion_functor(depth: i64, p: &str, fields: &[Json]) -> Str
         format!("{p}_sn_full({args}) :- {p}_sn_delta({args}){empties};"),
         format!("@Ground({p}_sn_full);"),
         format!("{p}_sn_step := {p}_ROne({p}_RZero: {p}_sn_delta);"),
-        format!("{p}_sn_new({args}) distinct :- {p}_sn_step({args}), ~{p}_sn_full({args});"),
+        format!("{p}_sn_new({args}) distinct :- {p}_sn_step({args}), ~({found});"),
         format!("@Ground({p}_sn_new);"),
         // The next step, from the new rows into the delta's table: the loop
         // alternates the two tables rather than copying one into the other.
         format!("{p}_sn_back_step := {p}_ROne({p}_RZero: {p}_sn_new);"),
-        format!("{p}_sn_back({args}) distinct :- {p}_sn_back_step({args}), ~{p}_sn_full({args});"),
+        format!("{p}_sn_back({args}) distinct :- {p}_sn_back_step({args}), ~({found});"),
         format!("@Ground({p}_sn_back, {p}_sn_delta);"),
         // A rule, not a copy (`:=`): it reads the table the loop adds to.
         format!("{p}({args}) :- {p}_sn_full({args});"),

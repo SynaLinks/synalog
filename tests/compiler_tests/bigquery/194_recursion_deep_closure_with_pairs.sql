@@ -255,19 +255,19 @@ DROP TABLE IF EXISTS synalog_test.Reach_sn_new;
 CREATE TABLE synalog_test.Reach_sn_new AS WITH t_1_Reach_MultBodyAggAux_f8 AS (SELECT * FROM (
   
     SELECT
-      x_13 AS x,
-      ((x_13) + (1)) AS y
+      x_15 AS x,
+      ((x_15) + (1)) AS y
     FROM
-      UNNEST(GENERATE_ARRAY(0, 4 - 1)) as x_13
+      UNNEST(GENERATE_ARRAY(0, 4 - 1)) as x_15
    UNION ALL
   
     SELECT
       Reach_sn_delta.x AS x,
-      ((x_21) + (1)) AS y
+      ((x_23) + (1)) AS y
     FROM
-      synalog_test.Reach_sn_delta AS Reach_sn_delta, UNNEST(GENERATE_ARRAY(0, 4 - 1)) as x_21
+      synalog_test.Reach_sn_delta AS Reach_sn_delta, UNNEST(GENERATE_ARRAY(0, 4 - 1)) as x_23
     WHERE
-      (Reach_sn_delta.y = x_21)
+      (Reach_sn_delta.y = x_23)
   
 ) AS UNUSED_TABLE_NAME  ),
 t_0_Reach_sn_step AS (SELECT
@@ -287,8 +287,8 @@ WHERE
   FROM
     synalog_test.Reach_sn_full AS Reach_sn_full
   WHERE
-    (Reach_sn_full.x = Reach_sn_step.x) AND
-    (Reach_sn_full.y = Reach_sn_step.y)) IS NULL)
+    (Reach_sn_full.x IS NOT DISTINCT FROM Reach_sn_step.x) AND
+    (Reach_sn_full.y IS NOT DISTINCT FROM Reach_sn_step.y)) IS NULL)
 GROUP BY x, y;
 
 INSERT INTO synalog_test.Reach_sn_full SELECT * FROM synalog_test.Reach_sn_new;
@@ -297,19 +297,19 @@ DROP TABLE IF EXISTS synalog_test.Reach_sn_delta;
 CREATE TABLE synalog_test.Reach_sn_delta AS WITH t_1_Reach_MultBodyAggAux_f1 AS (SELECT * FROM (
   
     SELECT
-      x_13 AS x,
-      ((x_13) + (1)) AS y
+      x_15 AS x,
+      ((x_15) + (1)) AS y
     FROM
-      UNNEST(GENERATE_ARRAY(0, 4 - 1)) as x_13
+      UNNEST(GENERATE_ARRAY(0, 4 - 1)) as x_15
    UNION ALL
   
     SELECT
       Reach_sn_new.x AS x,
-      ((x_21) + (1)) AS y
+      ((x_23) + (1)) AS y
     FROM
-      synalog_test.Reach_sn_new AS Reach_sn_new, UNNEST(GENERATE_ARRAY(0, 4 - 1)) as x_21
+      synalog_test.Reach_sn_new AS Reach_sn_new, UNNEST(GENERATE_ARRAY(0, 4 - 1)) as x_23
     WHERE
-      (Reach_sn_new.y = x_21)
+      (Reach_sn_new.y = x_23)
   
 ) AS UNUSED_TABLE_NAME  ),
 t_0_Reach_sn_back_step AS (SELECT
@@ -329,8 +329,8 @@ WHERE
   FROM
     synalog_test.Reach_sn_full AS Reach_sn_full
   WHERE
-    (Reach_sn_full.x = Reach_sn_back_step.x) AND
-    (Reach_sn_full.y = Reach_sn_back_step.y)) IS NULL)
+    (Reach_sn_full.x IS NOT DISTINCT FROM Reach_sn_back_step.x) AND
+    (Reach_sn_full.y IS NOT DISTINCT FROM Reach_sn_back_step.y)) IS NULL)
 GROUP BY x, y;
 
 INSERT INTO synalog_test.Reach_sn_full SELECT * FROM synalog_test.Reach_sn_delta;
@@ -339,19 +339,19 @@ DROP TABLE IF EXISTS synalog_test.Reach_sn_new;
 CREATE TABLE synalog_test.Reach_sn_new AS WITH t_1_Reach_MultBodyAggAux_f8 AS (SELECT * FROM (
   
     SELECT
-      x_13 AS x,
-      ((x_13) + (1)) AS y
+      x_15 AS x,
+      ((x_15) + (1)) AS y
     FROM
-      UNNEST(GENERATE_ARRAY(0, 4 - 1)) as x_13
+      UNNEST(GENERATE_ARRAY(0, 4 - 1)) as x_15
    UNION ALL
   
     SELECT
       Reach_sn_delta.x AS x,
-      ((x_21) + (1)) AS y
+      ((x_23) + (1)) AS y
     FROM
-      synalog_test.Reach_sn_delta AS Reach_sn_delta, UNNEST(GENERATE_ARRAY(0, 4 - 1)) as x_21
+      synalog_test.Reach_sn_delta AS Reach_sn_delta, UNNEST(GENERATE_ARRAY(0, 4 - 1)) as x_23
     WHERE
-      (Reach_sn_delta.y = x_21)
+      (Reach_sn_delta.y = x_23)
   
 ) AS UNUSED_TABLE_NAME  ),
 t_0_Reach_sn_step AS (SELECT
@@ -371,8 +371,8 @@ WHERE
   FROM
     synalog_test.Reach_sn_full AS Reach_sn_full
   WHERE
-    (Reach_sn_full.x = Reach_sn_step.x) AND
-    (Reach_sn_full.y = Reach_sn_step.y)) IS NULL)
+    (Reach_sn_full.x IS NOT DISTINCT FROM Reach_sn_step.x) AND
+    (Reach_sn_full.y IS NOT DISTINCT FROM Reach_sn_step.y)) IS NULL)
 GROUP BY x, y;
 
 INSERT INTO synalog_test.Reach_sn_full SELECT * FROM synalog_test.Reach_sn_new;
@@ -381,19 +381,19 @@ DROP TABLE IF EXISTS synalog_test.Reach_sn_delta;
 CREATE TABLE synalog_test.Reach_sn_delta AS WITH t_1_Reach_MultBodyAggAux_f1 AS (SELECT * FROM (
   
     SELECT
-      x_13 AS x,
-      ((x_13) + (1)) AS y
+      x_15 AS x,
+      ((x_15) + (1)) AS y
     FROM
-      UNNEST(GENERATE_ARRAY(0, 4 - 1)) as x_13
+      UNNEST(GENERATE_ARRAY(0, 4 - 1)) as x_15
    UNION ALL
   
     SELECT
       Reach_sn_new.x AS x,
-      ((x_21) + (1)) AS y
+      ((x_23) + (1)) AS y
     FROM
-      synalog_test.Reach_sn_new AS Reach_sn_new, UNNEST(GENERATE_ARRAY(0, 4 - 1)) as x_21
+      synalog_test.Reach_sn_new AS Reach_sn_new, UNNEST(GENERATE_ARRAY(0, 4 - 1)) as x_23
     WHERE
-      (Reach_sn_new.y = x_21)
+      (Reach_sn_new.y = x_23)
   
 ) AS UNUSED_TABLE_NAME  ),
 t_0_Reach_sn_back_step AS (SELECT
@@ -413,8 +413,8 @@ WHERE
   FROM
     synalog_test.Reach_sn_full AS Reach_sn_full
   WHERE
-    (Reach_sn_full.x = Reach_sn_back_step.x) AND
-    (Reach_sn_full.y = Reach_sn_back_step.y)) IS NULL)
+    (Reach_sn_full.x IS NOT DISTINCT FROM Reach_sn_back_step.x) AND
+    (Reach_sn_full.y IS NOT DISTINCT FROM Reach_sn_back_step.y)) IS NULL)
 GROUP BY x, y;
 
 INSERT INTO synalog_test.Reach_sn_full SELECT * FROM synalog_test.Reach_sn_delta;
@@ -423,19 +423,19 @@ DROP TABLE IF EXISTS synalog_test.Reach_sn_new;
 CREATE TABLE synalog_test.Reach_sn_new AS WITH t_1_Reach_MultBodyAggAux_f8 AS (SELECT * FROM (
   
     SELECT
-      x_13 AS x,
-      ((x_13) + (1)) AS y
+      x_15 AS x,
+      ((x_15) + (1)) AS y
     FROM
-      UNNEST(GENERATE_ARRAY(0, 4 - 1)) as x_13
+      UNNEST(GENERATE_ARRAY(0, 4 - 1)) as x_15
    UNION ALL
   
     SELECT
       Reach_sn_delta.x AS x,
-      ((x_21) + (1)) AS y
+      ((x_23) + (1)) AS y
     FROM
-      synalog_test.Reach_sn_delta AS Reach_sn_delta, UNNEST(GENERATE_ARRAY(0, 4 - 1)) as x_21
+      synalog_test.Reach_sn_delta AS Reach_sn_delta, UNNEST(GENERATE_ARRAY(0, 4 - 1)) as x_23
     WHERE
-      (Reach_sn_delta.y = x_21)
+      (Reach_sn_delta.y = x_23)
   
 ) AS UNUSED_TABLE_NAME  ),
 t_0_Reach_sn_step AS (SELECT
@@ -455,8 +455,8 @@ WHERE
   FROM
     synalog_test.Reach_sn_full AS Reach_sn_full
   WHERE
-    (Reach_sn_full.x = Reach_sn_step.x) AND
-    (Reach_sn_full.y = Reach_sn_step.y)) IS NULL)
+    (Reach_sn_full.x IS NOT DISTINCT FROM Reach_sn_step.x) AND
+    (Reach_sn_full.y IS NOT DISTINCT FROM Reach_sn_step.y)) IS NULL)
 GROUP BY x, y;
 
 INSERT INTO synalog_test.Reach_sn_full SELECT * FROM synalog_test.Reach_sn_new;
@@ -465,19 +465,19 @@ DROP TABLE IF EXISTS synalog_test.Reach_sn_delta;
 CREATE TABLE synalog_test.Reach_sn_delta AS WITH t_1_Reach_MultBodyAggAux_f1 AS (SELECT * FROM (
   
     SELECT
-      x_13 AS x,
-      ((x_13) + (1)) AS y
+      x_15 AS x,
+      ((x_15) + (1)) AS y
     FROM
-      UNNEST(GENERATE_ARRAY(0, 4 - 1)) as x_13
+      UNNEST(GENERATE_ARRAY(0, 4 - 1)) as x_15
    UNION ALL
   
     SELECT
       Reach_sn_new.x AS x,
-      ((x_21) + (1)) AS y
+      ((x_23) + (1)) AS y
     FROM
-      synalog_test.Reach_sn_new AS Reach_sn_new, UNNEST(GENERATE_ARRAY(0, 4 - 1)) as x_21
+      synalog_test.Reach_sn_new AS Reach_sn_new, UNNEST(GENERATE_ARRAY(0, 4 - 1)) as x_23
     WHERE
-      (Reach_sn_new.y = x_21)
+      (Reach_sn_new.y = x_23)
   
 ) AS UNUSED_TABLE_NAME  ),
 t_0_Reach_sn_back_step AS (SELECT
@@ -497,8 +497,8 @@ WHERE
   FROM
     synalog_test.Reach_sn_full AS Reach_sn_full
   WHERE
-    (Reach_sn_full.x = Reach_sn_back_step.x) AND
-    (Reach_sn_full.y = Reach_sn_back_step.y)) IS NULL)
+    (Reach_sn_full.x IS NOT DISTINCT FROM Reach_sn_back_step.x) AND
+    (Reach_sn_full.y IS NOT DISTINCT FROM Reach_sn_back_step.y)) IS NULL)
 GROUP BY x, y;
 
 INSERT INTO synalog_test.Reach_sn_full SELECT * FROM synalog_test.Reach_sn_delta;
@@ -507,19 +507,19 @@ DROP TABLE IF EXISTS synalog_test.Reach_sn_new;
 CREATE TABLE synalog_test.Reach_sn_new AS WITH t_1_Reach_MultBodyAggAux_f8 AS (SELECT * FROM (
   
     SELECT
-      x_13 AS x,
-      ((x_13) + (1)) AS y
+      x_15 AS x,
+      ((x_15) + (1)) AS y
     FROM
-      UNNEST(GENERATE_ARRAY(0, 4 - 1)) as x_13
+      UNNEST(GENERATE_ARRAY(0, 4 - 1)) as x_15
    UNION ALL
   
     SELECT
       Reach_sn_delta.x AS x,
-      ((x_21) + (1)) AS y
+      ((x_23) + (1)) AS y
     FROM
-      synalog_test.Reach_sn_delta AS Reach_sn_delta, UNNEST(GENERATE_ARRAY(0, 4 - 1)) as x_21
+      synalog_test.Reach_sn_delta AS Reach_sn_delta, UNNEST(GENERATE_ARRAY(0, 4 - 1)) as x_23
     WHERE
-      (Reach_sn_delta.y = x_21)
+      (Reach_sn_delta.y = x_23)
   
 ) AS UNUSED_TABLE_NAME  ),
 t_0_Reach_sn_step AS (SELECT
@@ -539,8 +539,8 @@ WHERE
   FROM
     synalog_test.Reach_sn_full AS Reach_sn_full
   WHERE
-    (Reach_sn_full.x = Reach_sn_step.x) AND
-    (Reach_sn_full.y = Reach_sn_step.y)) IS NULL)
+    (Reach_sn_full.x IS NOT DISTINCT FROM Reach_sn_step.x) AND
+    (Reach_sn_full.y IS NOT DISTINCT FROM Reach_sn_step.y)) IS NULL)
 GROUP BY x, y;
 
 INSERT INTO synalog_test.Reach_sn_full SELECT * FROM synalog_test.Reach_sn_new;
@@ -549,19 +549,19 @@ DROP TABLE IF EXISTS synalog_test.Reach_sn_delta;
 CREATE TABLE synalog_test.Reach_sn_delta AS WITH t_1_Reach_MultBodyAggAux_f1 AS (SELECT * FROM (
   
     SELECT
-      x_13 AS x,
-      ((x_13) + (1)) AS y
+      x_15 AS x,
+      ((x_15) + (1)) AS y
     FROM
-      UNNEST(GENERATE_ARRAY(0, 4 - 1)) as x_13
+      UNNEST(GENERATE_ARRAY(0, 4 - 1)) as x_15
    UNION ALL
   
     SELECT
       Reach_sn_new.x AS x,
-      ((x_21) + (1)) AS y
+      ((x_23) + (1)) AS y
     FROM
-      synalog_test.Reach_sn_new AS Reach_sn_new, UNNEST(GENERATE_ARRAY(0, 4 - 1)) as x_21
+      synalog_test.Reach_sn_new AS Reach_sn_new, UNNEST(GENERATE_ARRAY(0, 4 - 1)) as x_23
     WHERE
-      (Reach_sn_new.y = x_21)
+      (Reach_sn_new.y = x_23)
   
 ) AS UNUSED_TABLE_NAME  ),
 t_0_Reach_sn_back_step AS (SELECT
@@ -581,8 +581,8 @@ WHERE
   FROM
     synalog_test.Reach_sn_full AS Reach_sn_full
   WHERE
-    (Reach_sn_full.x = Reach_sn_back_step.x) AND
-    (Reach_sn_full.y = Reach_sn_back_step.y)) IS NULL)
+    (Reach_sn_full.x IS NOT DISTINCT FROM Reach_sn_back_step.x) AND
+    (Reach_sn_full.y IS NOT DISTINCT FROM Reach_sn_back_step.y)) IS NULL)
 GROUP BY x, y;
 
 INSERT INTO synalog_test.Reach_sn_full SELECT * FROM synalog_test.Reach_sn_delta;
@@ -591,19 +591,19 @@ DROP TABLE IF EXISTS synalog_test.Reach_sn_new;
 CREATE TABLE synalog_test.Reach_sn_new AS WITH t_1_Reach_MultBodyAggAux_f8 AS (SELECT * FROM (
   
     SELECT
-      x_13 AS x,
-      ((x_13) + (1)) AS y
+      x_15 AS x,
+      ((x_15) + (1)) AS y
     FROM
-      UNNEST(GENERATE_ARRAY(0, 4 - 1)) as x_13
+      UNNEST(GENERATE_ARRAY(0, 4 - 1)) as x_15
    UNION ALL
   
     SELECT
       Reach_sn_delta.x AS x,
-      ((x_21) + (1)) AS y
+      ((x_23) + (1)) AS y
     FROM
-      synalog_test.Reach_sn_delta AS Reach_sn_delta, UNNEST(GENERATE_ARRAY(0, 4 - 1)) as x_21
+      synalog_test.Reach_sn_delta AS Reach_sn_delta, UNNEST(GENERATE_ARRAY(0, 4 - 1)) as x_23
     WHERE
-      (Reach_sn_delta.y = x_21)
+      (Reach_sn_delta.y = x_23)
   
 ) AS UNUSED_TABLE_NAME  ),
 t_0_Reach_sn_step AS (SELECT
@@ -623,8 +623,8 @@ WHERE
   FROM
     synalog_test.Reach_sn_full AS Reach_sn_full
   WHERE
-    (Reach_sn_full.x = Reach_sn_step.x) AND
-    (Reach_sn_full.y = Reach_sn_step.y)) IS NULL)
+    (Reach_sn_full.x IS NOT DISTINCT FROM Reach_sn_step.x) AND
+    (Reach_sn_full.y IS NOT DISTINCT FROM Reach_sn_step.y)) IS NULL)
 GROUP BY x, y;
 
 INSERT INTO synalog_test.Reach_sn_full SELECT * FROM synalog_test.Reach_sn_new;
@@ -633,19 +633,19 @@ DROP TABLE IF EXISTS synalog_test.Reach_sn_delta;
 CREATE TABLE synalog_test.Reach_sn_delta AS WITH t_1_Reach_MultBodyAggAux_f1 AS (SELECT * FROM (
   
     SELECT
-      x_13 AS x,
-      ((x_13) + (1)) AS y
+      x_15 AS x,
+      ((x_15) + (1)) AS y
     FROM
-      UNNEST(GENERATE_ARRAY(0, 4 - 1)) as x_13
+      UNNEST(GENERATE_ARRAY(0, 4 - 1)) as x_15
    UNION ALL
   
     SELECT
       Reach_sn_new.x AS x,
-      ((x_21) + (1)) AS y
+      ((x_23) + (1)) AS y
     FROM
-      synalog_test.Reach_sn_new AS Reach_sn_new, UNNEST(GENERATE_ARRAY(0, 4 - 1)) as x_21
+      synalog_test.Reach_sn_new AS Reach_sn_new, UNNEST(GENERATE_ARRAY(0, 4 - 1)) as x_23
     WHERE
-      (Reach_sn_new.y = x_21)
+      (Reach_sn_new.y = x_23)
   
 ) AS UNUSED_TABLE_NAME  ),
 t_0_Reach_sn_back_step AS (SELECT
@@ -665,8 +665,8 @@ WHERE
   FROM
     synalog_test.Reach_sn_full AS Reach_sn_full
   WHERE
-    (Reach_sn_full.x = Reach_sn_back_step.x) AND
-    (Reach_sn_full.y = Reach_sn_back_step.y)) IS NULL)
+    (Reach_sn_full.x IS NOT DISTINCT FROM Reach_sn_back_step.x) AND
+    (Reach_sn_full.y IS NOT DISTINCT FROM Reach_sn_back_step.y)) IS NULL)
 GROUP BY x, y;
 
 INSERT INTO synalog_test.Reach_sn_full SELECT * FROM synalog_test.Reach_sn_delta;
@@ -675,19 +675,19 @@ DROP TABLE IF EXISTS synalog_test.Reach_sn_new;
 CREATE TABLE synalog_test.Reach_sn_new AS WITH t_1_Reach_MultBodyAggAux_f8 AS (SELECT * FROM (
   
     SELECT
-      x_13 AS x,
-      ((x_13) + (1)) AS y
+      x_15 AS x,
+      ((x_15) + (1)) AS y
     FROM
-      UNNEST(GENERATE_ARRAY(0, 4 - 1)) as x_13
+      UNNEST(GENERATE_ARRAY(0, 4 - 1)) as x_15
    UNION ALL
   
     SELECT
       Reach_sn_delta.x AS x,
-      ((x_21) + (1)) AS y
+      ((x_23) + (1)) AS y
     FROM
-      synalog_test.Reach_sn_delta AS Reach_sn_delta, UNNEST(GENERATE_ARRAY(0, 4 - 1)) as x_21
+      synalog_test.Reach_sn_delta AS Reach_sn_delta, UNNEST(GENERATE_ARRAY(0, 4 - 1)) as x_23
     WHERE
-      (Reach_sn_delta.y = x_21)
+      (Reach_sn_delta.y = x_23)
   
 ) AS UNUSED_TABLE_NAME  ),
 t_0_Reach_sn_step AS (SELECT
@@ -707,8 +707,8 @@ WHERE
   FROM
     synalog_test.Reach_sn_full AS Reach_sn_full
   WHERE
-    (Reach_sn_full.x = Reach_sn_step.x) AND
-    (Reach_sn_full.y = Reach_sn_step.y)) IS NULL)
+    (Reach_sn_full.x IS NOT DISTINCT FROM Reach_sn_step.x) AND
+    (Reach_sn_full.y IS NOT DISTINCT FROM Reach_sn_step.y)) IS NULL)
 GROUP BY x, y;
 
 INSERT INTO synalog_test.Reach_sn_full SELECT * FROM synalog_test.Reach_sn_new;
@@ -717,19 +717,19 @@ DROP TABLE IF EXISTS synalog_test.Reach_sn_delta;
 CREATE TABLE synalog_test.Reach_sn_delta AS WITH t_1_Reach_MultBodyAggAux_f1 AS (SELECT * FROM (
   
     SELECT
-      x_13 AS x,
-      ((x_13) + (1)) AS y
+      x_15 AS x,
+      ((x_15) + (1)) AS y
     FROM
-      UNNEST(GENERATE_ARRAY(0, 4 - 1)) as x_13
+      UNNEST(GENERATE_ARRAY(0, 4 - 1)) as x_15
    UNION ALL
   
     SELECT
       Reach_sn_new.x AS x,
-      ((x_21) + (1)) AS y
+      ((x_23) + (1)) AS y
     FROM
-      synalog_test.Reach_sn_new AS Reach_sn_new, UNNEST(GENERATE_ARRAY(0, 4 - 1)) as x_21
+      synalog_test.Reach_sn_new AS Reach_sn_new, UNNEST(GENERATE_ARRAY(0, 4 - 1)) as x_23
     WHERE
-      (Reach_sn_new.y = x_21)
+      (Reach_sn_new.y = x_23)
   
 ) AS UNUSED_TABLE_NAME  ),
 t_0_Reach_sn_back_step AS (SELECT
@@ -749,8 +749,8 @@ WHERE
   FROM
     synalog_test.Reach_sn_full AS Reach_sn_full
   WHERE
-    (Reach_sn_full.x = Reach_sn_back_step.x) AND
-    (Reach_sn_full.y = Reach_sn_back_step.y)) IS NULL)
+    (Reach_sn_full.x IS NOT DISTINCT FROM Reach_sn_back_step.x) AND
+    (Reach_sn_full.y IS NOT DISTINCT FROM Reach_sn_back_step.y)) IS NULL)
 GROUP BY x, y;
 
 INSERT INTO synalog_test.Reach_sn_full SELECT * FROM synalog_test.Reach_sn_delta;
@@ -759,19 +759,19 @@ DROP TABLE IF EXISTS synalog_test.Reach_sn_new;
 CREATE TABLE synalog_test.Reach_sn_new AS WITH t_1_Reach_MultBodyAggAux_f8 AS (SELECT * FROM (
   
     SELECT
-      x_13 AS x,
-      ((x_13) + (1)) AS y
+      x_15 AS x,
+      ((x_15) + (1)) AS y
     FROM
-      UNNEST(GENERATE_ARRAY(0, 4 - 1)) as x_13
+      UNNEST(GENERATE_ARRAY(0, 4 - 1)) as x_15
    UNION ALL
   
     SELECT
       Reach_sn_delta.x AS x,
-      ((x_21) + (1)) AS y
+      ((x_23) + (1)) AS y
     FROM
-      synalog_test.Reach_sn_delta AS Reach_sn_delta, UNNEST(GENERATE_ARRAY(0, 4 - 1)) as x_21
+      synalog_test.Reach_sn_delta AS Reach_sn_delta, UNNEST(GENERATE_ARRAY(0, 4 - 1)) as x_23
     WHERE
-      (Reach_sn_delta.y = x_21)
+      (Reach_sn_delta.y = x_23)
   
 ) AS UNUSED_TABLE_NAME  ),
 t_0_Reach_sn_step AS (SELECT
@@ -791,8 +791,8 @@ WHERE
   FROM
     synalog_test.Reach_sn_full AS Reach_sn_full
   WHERE
-    (Reach_sn_full.x = Reach_sn_step.x) AND
-    (Reach_sn_full.y = Reach_sn_step.y)) IS NULL)
+    (Reach_sn_full.x IS NOT DISTINCT FROM Reach_sn_step.x) AND
+    (Reach_sn_full.y IS NOT DISTINCT FROM Reach_sn_step.y)) IS NULL)
 GROUP BY x, y;
 
 INSERT INTO synalog_test.Reach_sn_full SELECT * FROM synalog_test.Reach_sn_new;
@@ -801,19 +801,19 @@ DROP TABLE IF EXISTS synalog_test.Reach_sn_delta;
 CREATE TABLE synalog_test.Reach_sn_delta AS WITH t_1_Reach_MultBodyAggAux_f1 AS (SELECT * FROM (
   
     SELECT
-      x_13 AS x,
-      ((x_13) + (1)) AS y
+      x_15 AS x,
+      ((x_15) + (1)) AS y
     FROM
-      UNNEST(GENERATE_ARRAY(0, 4 - 1)) as x_13
+      UNNEST(GENERATE_ARRAY(0, 4 - 1)) as x_15
    UNION ALL
   
     SELECT
       Reach_sn_new.x AS x,
-      ((x_21) + (1)) AS y
+      ((x_23) + (1)) AS y
     FROM
-      synalog_test.Reach_sn_new AS Reach_sn_new, UNNEST(GENERATE_ARRAY(0, 4 - 1)) as x_21
+      synalog_test.Reach_sn_new AS Reach_sn_new, UNNEST(GENERATE_ARRAY(0, 4 - 1)) as x_23
     WHERE
-      (Reach_sn_new.y = x_21)
+      (Reach_sn_new.y = x_23)
   
 ) AS UNUSED_TABLE_NAME  ),
 t_0_Reach_sn_back_step AS (SELECT
@@ -833,8 +833,8 @@ WHERE
   FROM
     synalog_test.Reach_sn_full AS Reach_sn_full
   WHERE
-    (Reach_sn_full.x = Reach_sn_back_step.x) AND
-    (Reach_sn_full.y = Reach_sn_back_step.y)) IS NULL)
+    (Reach_sn_full.x IS NOT DISTINCT FROM Reach_sn_back_step.x) AND
+    (Reach_sn_full.y IS NOT DISTINCT FROM Reach_sn_back_step.y)) IS NULL)
 GROUP BY x, y;
 
 INSERT INTO synalog_test.Reach_sn_full SELECT * FROM synalog_test.Reach_sn_delta;
@@ -843,19 +843,19 @@ DROP TABLE IF EXISTS synalog_test.Reach_sn_new;
 CREATE TABLE synalog_test.Reach_sn_new AS WITH t_1_Reach_MultBodyAggAux_f8 AS (SELECT * FROM (
   
     SELECT
-      x_13 AS x,
-      ((x_13) + (1)) AS y
+      x_15 AS x,
+      ((x_15) + (1)) AS y
     FROM
-      UNNEST(GENERATE_ARRAY(0, 4 - 1)) as x_13
+      UNNEST(GENERATE_ARRAY(0, 4 - 1)) as x_15
    UNION ALL
   
     SELECT
       Reach_sn_delta.x AS x,
-      ((x_21) + (1)) AS y
+      ((x_23) + (1)) AS y
     FROM
-      synalog_test.Reach_sn_delta AS Reach_sn_delta, UNNEST(GENERATE_ARRAY(0, 4 - 1)) as x_21
+      synalog_test.Reach_sn_delta AS Reach_sn_delta, UNNEST(GENERATE_ARRAY(0, 4 - 1)) as x_23
     WHERE
-      (Reach_sn_delta.y = x_21)
+      (Reach_sn_delta.y = x_23)
   
 ) AS UNUSED_TABLE_NAME  ),
 t_0_Reach_sn_step AS (SELECT
@@ -875,8 +875,8 @@ WHERE
   FROM
     synalog_test.Reach_sn_full AS Reach_sn_full
   WHERE
-    (Reach_sn_full.x = Reach_sn_step.x) AND
-    (Reach_sn_full.y = Reach_sn_step.y)) IS NULL)
+    (Reach_sn_full.x IS NOT DISTINCT FROM Reach_sn_step.x) AND
+    (Reach_sn_full.y IS NOT DISTINCT FROM Reach_sn_step.y)) IS NULL)
 GROUP BY x, y;
 
 INSERT INTO synalog_test.Reach_sn_full SELECT * FROM synalog_test.Reach_sn_new;
@@ -885,19 +885,19 @@ DROP TABLE IF EXISTS synalog_test.Reach_sn_delta;
 CREATE TABLE synalog_test.Reach_sn_delta AS WITH t_1_Reach_MultBodyAggAux_f1 AS (SELECT * FROM (
   
     SELECT
-      x_13 AS x,
-      ((x_13) + (1)) AS y
+      x_15 AS x,
+      ((x_15) + (1)) AS y
     FROM
-      UNNEST(GENERATE_ARRAY(0, 4 - 1)) as x_13
+      UNNEST(GENERATE_ARRAY(0, 4 - 1)) as x_15
    UNION ALL
   
     SELECT
       Reach_sn_new.x AS x,
-      ((x_21) + (1)) AS y
+      ((x_23) + (1)) AS y
     FROM
-      synalog_test.Reach_sn_new AS Reach_sn_new, UNNEST(GENERATE_ARRAY(0, 4 - 1)) as x_21
+      synalog_test.Reach_sn_new AS Reach_sn_new, UNNEST(GENERATE_ARRAY(0, 4 - 1)) as x_23
     WHERE
-      (Reach_sn_new.y = x_21)
+      (Reach_sn_new.y = x_23)
   
 ) AS UNUSED_TABLE_NAME  ),
 t_0_Reach_sn_back_step AS (SELECT
@@ -917,8 +917,8 @@ WHERE
   FROM
     synalog_test.Reach_sn_full AS Reach_sn_full
   WHERE
-    (Reach_sn_full.x = Reach_sn_back_step.x) AND
-    (Reach_sn_full.y = Reach_sn_back_step.y)) IS NULL)
+    (Reach_sn_full.x IS NOT DISTINCT FROM Reach_sn_back_step.x) AND
+    (Reach_sn_full.y IS NOT DISTINCT FROM Reach_sn_back_step.y)) IS NULL)
 GROUP BY x, y;
 
 INSERT INTO synalog_test.Reach_sn_full SELECT * FROM synalog_test.Reach_sn_delta;
@@ -927,19 +927,19 @@ DROP TABLE IF EXISTS synalog_test.Reach_sn_new;
 CREATE TABLE synalog_test.Reach_sn_new AS WITH t_1_Reach_MultBodyAggAux_f8 AS (SELECT * FROM (
   
     SELECT
-      x_13 AS x,
-      ((x_13) + (1)) AS y
+      x_15 AS x,
+      ((x_15) + (1)) AS y
     FROM
-      UNNEST(GENERATE_ARRAY(0, 4 - 1)) as x_13
+      UNNEST(GENERATE_ARRAY(0, 4 - 1)) as x_15
    UNION ALL
   
     SELECT
       Reach_sn_delta.x AS x,
-      ((x_21) + (1)) AS y
+      ((x_23) + (1)) AS y
     FROM
-      synalog_test.Reach_sn_delta AS Reach_sn_delta, UNNEST(GENERATE_ARRAY(0, 4 - 1)) as x_21
+      synalog_test.Reach_sn_delta AS Reach_sn_delta, UNNEST(GENERATE_ARRAY(0, 4 - 1)) as x_23
     WHERE
-      (Reach_sn_delta.y = x_21)
+      (Reach_sn_delta.y = x_23)
   
 ) AS UNUSED_TABLE_NAME  ),
 t_0_Reach_sn_step AS (SELECT
@@ -959,8 +959,8 @@ WHERE
   FROM
     synalog_test.Reach_sn_full AS Reach_sn_full
   WHERE
-    (Reach_sn_full.x = Reach_sn_step.x) AND
-    (Reach_sn_full.y = Reach_sn_step.y)) IS NULL)
+    (Reach_sn_full.x IS NOT DISTINCT FROM Reach_sn_step.x) AND
+    (Reach_sn_full.y IS NOT DISTINCT FROM Reach_sn_step.y)) IS NULL)
 GROUP BY x, y;
 
 INSERT INTO synalog_test.Reach_sn_full SELECT * FROM synalog_test.Reach_sn_new;
@@ -969,19 +969,19 @@ DROP TABLE IF EXISTS synalog_test.Reach_sn_delta;
 CREATE TABLE synalog_test.Reach_sn_delta AS WITH t_1_Reach_MultBodyAggAux_f1 AS (SELECT * FROM (
   
     SELECT
-      x_13 AS x,
-      ((x_13) + (1)) AS y
+      x_15 AS x,
+      ((x_15) + (1)) AS y
     FROM
-      UNNEST(GENERATE_ARRAY(0, 4 - 1)) as x_13
+      UNNEST(GENERATE_ARRAY(0, 4 - 1)) as x_15
    UNION ALL
   
     SELECT
       Reach_sn_new.x AS x,
-      ((x_21) + (1)) AS y
+      ((x_23) + (1)) AS y
     FROM
-      synalog_test.Reach_sn_new AS Reach_sn_new, UNNEST(GENERATE_ARRAY(0, 4 - 1)) as x_21
+      synalog_test.Reach_sn_new AS Reach_sn_new, UNNEST(GENERATE_ARRAY(0, 4 - 1)) as x_23
     WHERE
-      (Reach_sn_new.y = x_21)
+      (Reach_sn_new.y = x_23)
   
 ) AS UNUSED_TABLE_NAME  ),
 t_0_Reach_sn_back_step AS (SELECT
@@ -1001,8 +1001,8 @@ WHERE
   FROM
     synalog_test.Reach_sn_full AS Reach_sn_full
   WHERE
-    (Reach_sn_full.x = Reach_sn_back_step.x) AND
-    (Reach_sn_full.y = Reach_sn_back_step.y)) IS NULL)
+    (Reach_sn_full.x IS NOT DISTINCT FROM Reach_sn_back_step.x) AND
+    (Reach_sn_full.y IS NOT DISTINCT FROM Reach_sn_back_step.y)) IS NULL)
 GROUP BY x, y;
 
 INSERT INTO synalog_test.Reach_sn_full SELECT * FROM synalog_test.Reach_sn_delta;
@@ -1011,19 +1011,19 @@ DROP TABLE IF EXISTS synalog_test.Reach_sn_new;
 CREATE TABLE synalog_test.Reach_sn_new AS WITH t_1_Reach_MultBodyAggAux_f8 AS (SELECT * FROM (
   
     SELECT
-      x_13 AS x,
-      ((x_13) + (1)) AS y
+      x_15 AS x,
+      ((x_15) + (1)) AS y
     FROM
-      UNNEST(GENERATE_ARRAY(0, 4 - 1)) as x_13
+      UNNEST(GENERATE_ARRAY(0, 4 - 1)) as x_15
    UNION ALL
   
     SELECT
       Reach_sn_delta.x AS x,
-      ((x_21) + (1)) AS y
+      ((x_23) + (1)) AS y
     FROM
-      synalog_test.Reach_sn_delta AS Reach_sn_delta, UNNEST(GENERATE_ARRAY(0, 4 - 1)) as x_21
+      synalog_test.Reach_sn_delta AS Reach_sn_delta, UNNEST(GENERATE_ARRAY(0, 4 - 1)) as x_23
     WHERE
-      (Reach_sn_delta.y = x_21)
+      (Reach_sn_delta.y = x_23)
   
 ) AS UNUSED_TABLE_NAME  ),
 t_0_Reach_sn_step AS (SELECT
@@ -1043,8 +1043,8 @@ WHERE
   FROM
     synalog_test.Reach_sn_full AS Reach_sn_full
   WHERE
-    (Reach_sn_full.x = Reach_sn_step.x) AND
-    (Reach_sn_full.y = Reach_sn_step.y)) IS NULL)
+    (Reach_sn_full.x IS NOT DISTINCT FROM Reach_sn_step.x) AND
+    (Reach_sn_full.y IS NOT DISTINCT FROM Reach_sn_step.y)) IS NULL)
 GROUP BY x, y;
 
 INSERT INTO synalog_test.Reach_sn_full SELECT * FROM synalog_test.Reach_sn_new;
@@ -1053,19 +1053,19 @@ DROP TABLE IF EXISTS synalog_test.Reach_sn_delta;
 CREATE TABLE synalog_test.Reach_sn_delta AS WITH t_1_Reach_MultBodyAggAux_f1 AS (SELECT * FROM (
   
     SELECT
-      x_13 AS x,
-      ((x_13) + (1)) AS y
+      x_15 AS x,
+      ((x_15) + (1)) AS y
     FROM
-      UNNEST(GENERATE_ARRAY(0, 4 - 1)) as x_13
+      UNNEST(GENERATE_ARRAY(0, 4 - 1)) as x_15
    UNION ALL
   
     SELECT
       Reach_sn_new.x AS x,
-      ((x_21) + (1)) AS y
+      ((x_23) + (1)) AS y
     FROM
-      synalog_test.Reach_sn_new AS Reach_sn_new, UNNEST(GENERATE_ARRAY(0, 4 - 1)) as x_21
+      synalog_test.Reach_sn_new AS Reach_sn_new, UNNEST(GENERATE_ARRAY(0, 4 - 1)) as x_23
     WHERE
-      (Reach_sn_new.y = x_21)
+      (Reach_sn_new.y = x_23)
   
 ) AS UNUSED_TABLE_NAME  ),
 t_0_Reach_sn_back_step AS (SELECT
@@ -1085,8 +1085,8 @@ WHERE
   FROM
     synalog_test.Reach_sn_full AS Reach_sn_full
   WHERE
-    (Reach_sn_full.x = Reach_sn_back_step.x) AND
-    (Reach_sn_full.y = Reach_sn_back_step.y)) IS NULL)
+    (Reach_sn_full.x IS NOT DISTINCT FROM Reach_sn_back_step.x) AND
+    (Reach_sn_full.y IS NOT DISTINCT FROM Reach_sn_back_step.y)) IS NULL)
 GROUP BY x, y;
 
 INSERT INTO synalog_test.Reach_sn_full SELECT * FROM synalog_test.Reach_sn_delta;
@@ -1095,19 +1095,19 @@ DROP TABLE IF EXISTS synalog_test.Reach_sn_new;
 CREATE TABLE synalog_test.Reach_sn_new AS WITH t_1_Reach_MultBodyAggAux_f8 AS (SELECT * FROM (
   
     SELECT
-      x_13 AS x,
-      ((x_13) + (1)) AS y
+      x_15 AS x,
+      ((x_15) + (1)) AS y
     FROM
-      UNNEST(GENERATE_ARRAY(0, 4 - 1)) as x_13
+      UNNEST(GENERATE_ARRAY(0, 4 - 1)) as x_15
    UNION ALL
   
     SELECT
       Reach_sn_delta.x AS x,
-      ((x_21) + (1)) AS y
+      ((x_23) + (1)) AS y
     FROM
-      synalog_test.Reach_sn_delta AS Reach_sn_delta, UNNEST(GENERATE_ARRAY(0, 4 - 1)) as x_21
+      synalog_test.Reach_sn_delta AS Reach_sn_delta, UNNEST(GENERATE_ARRAY(0, 4 - 1)) as x_23
     WHERE
-      (Reach_sn_delta.y = x_21)
+      (Reach_sn_delta.y = x_23)
   
 ) AS UNUSED_TABLE_NAME  ),
 t_0_Reach_sn_step AS (SELECT
@@ -1127,8 +1127,8 @@ WHERE
   FROM
     synalog_test.Reach_sn_full AS Reach_sn_full
   WHERE
-    (Reach_sn_full.x = Reach_sn_step.x) AND
-    (Reach_sn_full.y = Reach_sn_step.y)) IS NULL)
+    (Reach_sn_full.x IS NOT DISTINCT FROM Reach_sn_step.x) AND
+    (Reach_sn_full.y IS NOT DISTINCT FROM Reach_sn_step.y)) IS NULL)
 GROUP BY x, y;
 
 INSERT INTO synalog_test.Reach_sn_full SELECT * FROM synalog_test.Reach_sn_new;

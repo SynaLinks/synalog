@@ -45,7 +45,7 @@ Quote(a: 'say "hi"', b: """say "hi" there""", c: 'it\'s');
 ```
 
 !!! danger "Never compare against null with `!=`"
-    `x != null` is silently broken (it follows SQL three-valued logic and never matches). Always use `x is null` / `x is not null`.
+    `x != null` is silently broken (it follows SQL three-valued logic and never matches). Always use `x is null` / `x is not null`; to compare two values with nulls matching, `x is y` / `x is not y` (see [Null handling](#null-handling)).
 
 ## Logical operators
 
@@ -98,7 +98,9 @@ HasEmail(user_id:, email:) :- Users(user_id:, email:), email is not null;
 UserDisplay(user_id:, name:) :- Users(user_id:, full_name:), name == Coalesce(full_name, "Anonymous");
 ```
 
-A null equals nothing, another null included: a join on a column finds no row where the key is null (`A(k:), B(k:)` with both `k` null), and neither does a negation (`~B(k:)` holds). Replace a null key before joining when it should match (`B(k: Coalesce(k, 0))`).
+Nulls follow SQL: a null equals nothing, another null included. A join on a column finds no row where the key is null (`A(k:), B(k:)` with both `k` null), neither does a negation (`~B(k:)` holds), and `x == x` does not hold where `x` is null.
+
+To compare two values as values, nulls included, use `is` and `is not`: `x is y` holds where both are null or both are equal, and `x is not y` is its negation. Null keys meet with `A(k:), B(k: j), k is j`, and a negation finds a null key with `~(B(k: j), j is k)`. It compiles to `IS NOT DISTINCT FROM` (`IS` on SQLite, `<=>` on Databricks); SQL's `=` remains faster where a null need not match, since an engine can use an index for it.
 
 ## Conditionals
 

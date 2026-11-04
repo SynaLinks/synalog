@@ -1572,6 +1572,13 @@ fn extract_unification(unif: &Json, s: &mut RuleStructure) -> CompileResult<()> 
         .or_else(|| uo.get("right"))
         .expect("unification missing right side");
 
+    // `x == x` binds nothing, and is a condition: false where x is null, as
+    // SQL's `=` is.
+    if left == right && left.as_object().contains_key("variable") {
+        s.constraints.push(make_equality(left, right));
+        return Ok(());
+    }
+
     // If either side has a variable or record, it's a unification;
     // otherwise it's a constraint (matches Python logic).
     if has_variable_deep(left) || has_variable_deep(right)
@@ -1579,7 +1586,9 @@ fn extract_unification(unif: &Json, s: &mut RuleStructure) -> CompileResult<()> 
     {
         s.vars_unification.push((left.clone(), right.clone()));
     } else {
-        if left != right {
+        // Only two equal constants are always equal: `null == null` is not
+        // (null is equal to nothing), nor is a call (`Random() == Random()`).
+        if left != right || !is_non_null_constant(left) {
             s.constraints.push(make_equality(left, right));
         }
     }
@@ -1997,6 +2006,14 @@ fn equated_with<'j>(constraint: &'j Json, var: &str) -> Option<&'j Json> {
         [l, r] if is_element(r) => Some(*l),
         _ => None,
     }
+}
+
+/// Whether an expression is a number, string or boolean literal.
+fn is_non_null_constant(e: &Json) -> bool {
+    e.as_object().get("literal").is_some_and(|l| {
+        let l = l.as_object();
+        l.contains_key("the_number") || l.contains_key("the_string") || l.contains_key("the_bool")
+    })
 }
 
 fn make_equality(left: &Json, right: &Json) -> Json {

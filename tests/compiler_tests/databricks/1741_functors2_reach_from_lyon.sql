@@ -364,8 +364,8 @@ WHERE
   FROM
     synalog_test.Reach_sn_full_f9 AS Reach_sn_full_f9
   WHERE
-    (Reach_sn_full_f9.a = Reach_sn_step_f9.a) AND
-    (Reach_sn_full_f9.b = Reach_sn_step_f9.b)) IS NULL)
+    (Reach_sn_full_f9.a <=> Reach_sn_step_f9.a) AND
+    (Reach_sn_full_f9.b <=> Reach_sn_step_f9.b)) IS NULL)
 GROUP BY 1, 2;
 
 INSERT INTO synalog_test.Reach_sn_full_f9 SELECT * FROM synalog_test.Reach_sn_new_f9;
@@ -417,8 +417,8 @@ WHERE
   FROM
     synalog_test.Reach_sn_full_f9 AS Reach_sn_full_f9
   WHERE
-    (Reach_sn_full_f9.a = Reach_sn_back_step_f9.a) AND
-    (Reach_sn_full_f9.b = Reach_sn_back_step_f9.b)) IS NULL)
+    (Reach_sn_full_f9.a <=> Reach_sn_back_step_f9.a) AND
+    (Reach_sn_full_f9.b <=> Reach_sn_back_step_f9.b)) IS NULL)
 GROUP BY 1, 2;
 
 INSERT INTO synalog_test.Reach_sn_full_f9 SELECT * FROM synalog_test.Reach_sn_delta_f9;
@@ -470,8 +470,8 @@ WHERE
   FROM
     synalog_test.Reach_sn_full_f9 AS Reach_sn_full_f9
   WHERE
-    (Reach_sn_full_f9.a = Reach_sn_step_f9.a) AND
-    (Reach_sn_full_f9.b = Reach_sn_step_f9.b)) IS NULL)
+    (Reach_sn_full_f9.a <=> Reach_sn_step_f9.a) AND
+    (Reach_sn_full_f9.b <=> Reach_sn_step_f9.b)) IS NULL)
 GROUP BY 1, 2;
 
 INSERT INTO synalog_test.Reach_sn_full_f9 SELECT * FROM synalog_test.Reach_sn_new_f9;
@@ -523,8 +523,8 @@ WHERE
   FROM
     synalog_test.Reach_sn_full_f9 AS Reach_sn_full_f9
   WHERE
-    (Reach_sn_full_f9.a = Reach_sn_back_step_f9.a) AND
-    (Reach_sn_full_f9.b = Reach_sn_back_step_f9.b)) IS NULL)
+    (Reach_sn_full_f9.a <=> Reach_sn_back_step_f9.a) AND
+    (Reach_sn_full_f9.b <=> Reach_sn_back_step_f9.b)) IS NULL)
 GROUP BY 1, 2;
 
 INSERT INTO synalog_test.Reach_sn_full_f9 SELECT * FROM synalog_test.Reach_sn_delta_f9;
@@ -576,8 +576,8 @@ WHERE
   FROM
     synalog_test.Reach_sn_full_f9 AS Reach_sn_full_f9
   WHERE
-    (Reach_sn_full_f9.a = Reach_sn_step_f9.a) AND
-    (Reach_sn_full_f9.b = Reach_sn_step_f9.b)) IS NULL)
+    (Reach_sn_full_f9.a <=> Reach_sn_step_f9.a) AND
+    (Reach_sn_full_f9.b <=> Reach_sn_step_f9.b)) IS NULL)
 GROUP BY 1, 2;
 
 INSERT INTO synalog_test.Reach_sn_full_f9 SELECT * FROM synalog_test.Reach_sn_new_f9;
@@ -629,8 +629,8 @@ WHERE
   FROM
     synalog_test.Reach_sn_full_f9 AS Reach_sn_full_f9
   WHERE
-    (Reach_sn_full_f9.a = Reach_sn_back_step_f9.a) AND
-    (Reach_sn_full_f9.b = Reach_sn_back_step_f9.b)) IS NULL)
+    (Reach_sn_full_f9.a <=> Reach_sn_back_step_f9.a) AND
+    (Reach_sn_full_f9.b <=> Reach_sn_back_step_f9.b)) IS NULL)
 GROUP BY 1, 2;
 
 INSERT INTO synalog_test.Reach_sn_full_f9 SELECT * FROM synalog_test.Reach_sn_delta_f9;

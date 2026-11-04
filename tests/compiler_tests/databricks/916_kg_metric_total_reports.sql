@@ -490,8 +490,8 @@ WHERE
   FROM
     synalog_test.Below_sn_full AS Below_sn_full
   WHERE
-    (Below_sn_full.manager_id = Below_sn_step.manager_id) AND
-    (Below_sn_full.employee_id = Below_sn_step.employee_id)) IS NULL)
+    (Below_sn_full.manager_id <=> Below_sn_step.manager_id) AND
+    (Below_sn_full.employee_id <=> Below_sn_step.employee_id)) IS NULL)
 GROUP BY 1, 2;
 
 INSERT INTO synalog_test.Below_sn_full SELECT * FROM synalog_test.Below_sn_new;
@@ -561,8 +561,8 @@ WHERE
   FROM
     synalog_test.Below_sn_full AS Below_sn_full
   WHERE
-    (Below_sn_full.manager_id = Below_sn_back_step.manager_id) AND
-    (Below_sn_full.employee_id = Below_sn_back_step.employee_id)) IS NULL)
+    (Below_sn_full.manager_id <=> Below_sn_back_step.manager_id) AND
+    (Below_sn_full.employee_id <=> Below_sn_back_step.employee_id)) IS NULL)
 GROUP BY 1, 2;
 
 INSERT INTO synalog_test.Below_sn_full SELECT * FROM synalog_test.Below_sn_delta;
@@ -632,8 +632,8 @@ WHERE
   FROM
     synalog_test.Below_sn_full AS Below_sn_full
   WHERE
-    (Below_sn_full.manager_id = Below_sn_step.manager_id) AND
-    (Below_sn_full.employee_id = Below_sn_step.employee_id)) IS NULL)
+    (Below_sn_full.manager_id <=> Below_sn_step.manager_id) AND
+    (Below_sn_full.employee_id <=> Below_sn_step.employee_id)) IS NULL)
 GROUP BY 1, 2;
 
 INSERT INTO synalog_test.Below_sn_full SELECT * FROM synalog_test.Below_sn_new;
@@ -703,8 +703,8 @@ WHERE
   FROM
     synalog_test.Below_sn_full AS Below_sn_full
   WHERE
-    (Below_sn_full.manager_id = Below_sn_back_step.manager_id) AND
-    (Below_sn_full.employee_id = Below_sn_back_step.employee_id)) IS NULL)
+    (Below_sn_full.manager_id <=> Below_sn_back_step.manager_id) AND
+    (Below_sn_full.employee_id <=> Below_sn_back_step.employee_id)) IS NULL)
 GROUP BY 1, 2;
 
 INSERT INTO synalog_test.Below_sn_full SELECT * FROM synalog_test.Below_sn_delta;
@@ -774,8 +774,8 @@ WHERE
   FROM
     synalog_test.Below_sn_full AS Below_sn_full
   WHERE
-    (Below_sn_full.manager_id = Below_sn_step.manager_id) AND
-    (Below_sn_full.employee_id = Below_sn_step.employee_id)) IS NULL)
+    (Below_sn_full.manager_id <=> Below_sn_step.manager_id) AND
+    (Below_sn_full.employee_id <=> Below_sn_step.employee_id)) IS NULL)
 GROUP BY 1, 2;
 
 INSERT INTO synalog_test.Below_sn_full SELECT * FROM synalog_test.Below_sn_new;
@@ -845,8 +845,8 @@ WHERE
   FROM
     synalog_test.Below_sn_full AS Below_sn_full
   WHERE
-    (Below_sn_full.manager_id = Below_sn_back_step.manager_id) AND
-    (Below_sn_full.employee_id = Below_sn_back_step.employee_id)) IS NULL)
+    (Below_sn_full.manager_id <=> Below_sn_back_step.manager_id) AND
+    (Below_sn_full.employee_id <=> Below_sn_back_step.employee_id)) IS NULL)
 GROUP BY 1, 2;
 
 INSERT INTO synalog_test.Below_sn_full SELECT * FROM synalog_test.Below_sn_delta;

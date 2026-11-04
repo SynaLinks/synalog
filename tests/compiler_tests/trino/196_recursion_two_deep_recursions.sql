@@ -290,11 +290,11 @@ CREATE TABLE synalog_test.A_sn_new AS WITH t_1_A_MultBodyAggAux_f6 AS (SELECT * 
    UNION ALL
   
     SELECT
-      ((x_9) + (1)) AS y
+      ((x_10) + (1)) AS y
     FROM
-      synalog_test.A_sn_delta AS A_sn_delta, UNNEST(TRANSFORM(FILTER(SEQUENCE(0, 100), x -> x < 100), synalog_e -> ROW(synalog_e))) as pushkin(x_9)
+      synalog_test.A_sn_delta AS A_sn_delta, UNNEST(TRANSFORM(FILTER(SEQUENCE(0, 100), x -> x < 100), synalog_e -> ROW(synalog_e))) as pushkin(x_10)
     WHERE
-      (A_sn_delta.y = x_9)
+      (A_sn_delta.y = x_10)
   
 ) AS UNUSED_TABLE_NAME  ),
 t_0_A_sn_step AS (SELECT
@@ -312,7 +312,7 @@ WHERE
   FROM
     synalog_test.A_sn_full AS A_sn_full
   WHERE
-    (A_sn_full.y = A_sn_step.y)) IS NULL)
+    (A_sn_full.y IS NOT DISTINCT FROM A_sn_step.y)) IS NULL)
 GROUP BY 1;
 
 INSERT INTO synalog_test.A_sn_full SELECT * FROM synalog_test.A_sn_new;
@@ -325,11 +325,11 @@ CREATE TABLE synalog_test.A_sn_delta AS WITH t_1_A_MultBodyAggAux_f1 AS (SELECT 
    UNION ALL
   
     SELECT
-      ((x_9) + (1)) AS y
+      ((x_10) + (1)) AS y
     FROM
-      synalog_test.A_sn_new AS A_sn_new, UNNEST(TRANSFORM(FILTER(SEQUENCE(0, 100), x -> x < 100), synalog_e -> ROW(synalog_e))) as pushkin(x_9)
+      synalog_test.A_sn_new AS A_sn_new, UNNEST(TRANSFORM(FILTER(SEQUENCE(0, 100), x -> x < 100), synalog_e -> ROW(synalog_e))) as pushkin(x_10)
     WHERE
-      (A_sn_new.y = x_9)
+      (A_sn_new.y = x_10)
   
 ) AS UNUSED_TABLE_NAME  ),
 t_0_A_sn_back_step AS (SELECT
@@ -347,7 +347,7 @@ WHERE
   FROM
     synalog_test.A_sn_full AS A_sn_full
   WHERE
-    (A_sn_full.y = A_sn_back_step.y)) IS NULL)
+    (A_sn_full.y IS NOT DISTINCT FROM A_sn_back_step.y)) IS NULL)
 GROUP BY 1;
 
 INSERT INTO synalog_test.A_sn_full SELECT * FROM synalog_test.A_sn_delta;
@@ -360,11 +360,11 @@ CREATE TABLE synalog_test.A_sn_new AS WITH t_1_A_MultBodyAggAux_f6 AS (SELECT * 
    UNION ALL
   
     SELECT
-      ((x_9) + (1)) AS y
+      ((x_10) + (1)) AS y
     FROM
-      synalog_test.A_sn_delta AS A_sn_delta, UNNEST(TRANSFORM(FILTER(SEQUENCE(0, 100), x -> x < 100), synalog_e -> ROW(synalog_e))) as pushkin(x_9)
+      synalog_test.A_sn_delta AS A_sn_delta, UNNEST(TRANSFORM(FILTER(SEQUENCE(0, 100), x -> x < 100), synalog_e -> ROW(synalog_e))) as pushkin(x_10)
     WHERE
-      (A_sn_delta.y = x_9)
+      (A_sn_delta.y = x_10)
   
 ) AS UNUSED_TABLE_NAME  ),
 t_0_A_sn_step AS (SELECT
@@ -382,7 +382,7 @@ WHERE
   FROM
     synalog_test.A_sn_full AS A_sn_full
   WHERE
-    (A_sn_full.y = A_sn_step.y)) IS NULL)
+    (A_sn_full.y IS NOT DISTINCT FROM A_sn_step.y)) IS NULL)
 GROUP BY 1;
 
 INSERT INTO synalog_test.A_sn_full SELECT * FROM synalog_test.A_sn_new;
@@ -395,11 +395,11 @@ CREATE TABLE synalog_test.A_sn_delta AS WITH t_1_A_MultBodyAggAux_f1 AS (SELECT 
    UNION ALL
   
     SELECT
-      ((x_9) + (1)) AS y
+      ((x_10) + (1)) AS y
     FROM
-      synalog_test.A_sn_new AS A_sn_new, UNNEST(TRANSFORM(FILTER(SEQUENCE(0, 100), x -> x < 100), synalog_e -> ROW(synalog_e))) as pushkin(x_9)
+      synalog_test.A_sn_new AS A_sn_new, UNNEST(TRANSFORM(FILTER(SEQUENCE(0, 100), x -> x < 100), synalog_e -> ROW(synalog_e))) as pushkin(x_10)
     WHERE
-      (A_sn_new.y = x_9)
+      (A_sn_new.y = x_10)
   
 ) AS UNUSED_TABLE_NAME  ),
 t_0_A_sn_back_step AS (SELECT
@@ -417,7 +417,7 @@ WHERE
   FROM
     synalog_test.A_sn_full AS A_sn_full
   WHERE
-    (A_sn_full.y = A_sn_back_step.y)) IS NULL)
+    (A_sn_full.y IS NOT DISTINCT FROM A_sn_back_step.y)) IS NULL)
 GROUP BY 1;
 
 INSERT INTO synalog_test.A_sn_full SELECT * FROM synalog_test.A_sn_delta;
@@ -430,11 +430,11 @@ CREATE TABLE synalog_test.A_sn_new AS WITH t_1_A_MultBodyAggAux_f6 AS (SELECT * 
    UNION ALL
   
     SELECT
-      ((x_9) + (1)) AS y
+      ((x_10) + (1)) AS y
     FROM
-      synalog_test.A_sn_delta AS A_sn_delta, UNNEST(TRANSFORM(FILTER(SEQUENCE(0, 100), x -> x < 100), synalog_e -> ROW(synalog_e))) as pushkin(x_9)
+      synalog_test.A_sn_delta AS A_sn_delta, UNNEST(TRANSFORM(FILTER(SEQUENCE(0, 100), x -> x < 100), synalog_e -> ROW(synalog_e))) as pushkin(x_10)
     WHERE
-      (A_sn_delta.y = x_9)
+      (A_sn_delta.y = x_10)
   
 ) AS UNUSED_TABLE_NAME  ),
 t_0_A_sn_step AS (SELECT
@@ -452,7 +452,7 @@ WHERE
   FROM
     synalog_test.A_sn_full AS A_sn_full
   WHERE
-    (A_sn_full.y = A_sn_step.y)) IS NULL)
+    (A_sn_full.y IS NOT DISTINCT FROM A_sn_step.y)) IS NULL)
 GROUP BY 1;
 
 INSERT INTO synalog_test.A_sn_full SELECT * FROM synalog_test.A_sn_new;
@@ -465,11 +465,11 @@ CREATE TABLE synalog_test.A_sn_delta AS WITH t_1_A_MultBodyAggAux_f1 AS (SELECT 
    UNION ALL
   
     SELECT
-      ((x_9) + (1)) AS y
+      ((x_10) + (1)) AS y
     FROM
-      synalog_test.A_sn_new AS A_sn_new, UNNEST(TRANSFORM(FILTER(SEQUENCE(0, 100), x -> x < 100), synalog_e -> ROW(synalog_e))) as pushkin(x_9)
+      synalog_test.A_sn_new AS A_sn_new, UNNEST(TRANSFORM(FILTER(SEQUENCE(0, 100), x -> x < 100), synalog_e -> ROW(synalog_e))) as pushkin(x_10)
     WHERE
-      (A_sn_new.y = x_9)
+      (A_sn_new.y = x_10)
   
 ) AS UNUSED_TABLE_NAME  ),
 t_0_A_sn_back_step AS (SELECT
@@ -487,7 +487,7 @@ WHERE
   FROM
     synalog_test.A_sn_full AS A_sn_full
   WHERE
-    (A_sn_full.y = A_sn_back_step.y)) IS NULL)
+    (A_sn_full.y IS NOT DISTINCT FROM A_sn_back_step.y)) IS NULL)
 GROUP BY 1;
 
 INSERT INTO synalog_test.A_sn_full SELECT * FROM synalog_test.A_sn_delta;
@@ -500,11 +500,11 @@ CREATE TABLE synalog_test.A_sn_new AS WITH t_1_A_MultBodyAggAux_f6 AS (SELECT * 
    UNION ALL
   
     SELECT
-      ((x_9) + (1)) AS y
+      ((x_10) + (1)) AS y
     FROM
-      synalog_test.A_sn_delta AS A_sn_delta, UNNEST(TRANSFORM(FILTER(SEQUENCE(0, 100), x -> x < 100), synalog_e -> ROW(synalog_e))) as pushkin(x_9)
+      synalog_test.A_sn_delta AS A_sn_delta, UNNEST(TRANSFORM(FILTER(SEQUENCE(0, 100), x -> x < 100), synalog_e -> ROW(synalog_e))) as pushkin(x_10)
     WHERE
-      (A_sn_delta.y = x_9)
+      (A_sn_delta.y = x_10)
   
 ) AS UNUSED_TABLE_NAME  ),
 t_0_A_sn_step AS (SELECT
@@ -522,7 +522,7 @@ WHERE
   FROM
     synalog_test.A_sn_full AS A_sn_full
   WHERE
-    (A_sn_full.y = A_sn_step.y)) IS NULL)
+    (A_sn_full.y IS NOT DISTINCT FROM A_sn_step.y)) IS NULL)
 GROUP BY 1;
 
 INSERT INTO synalog_test.A_sn_full SELECT * FROM synalog_test.A_sn_new;
@@ -535,11 +535,11 @@ CREATE TABLE synalog_test.A_sn_delta AS WITH t_1_A_MultBodyAggAux_f1 AS (SELECT 
    UNION ALL
   
     SELECT
-      ((x_9) + (1)) AS y
+      ((x_10) + (1)) AS y
     FROM
-      synalog_test.A_sn_new AS A_sn_new, UNNEST(TRANSFORM(FILTER(SEQUENCE(0, 100), x -> x < 100), synalog_e -> ROW(synalog_e))) as pushkin(x_9)
+      synalog_test.A_sn_new AS A_sn_new, UNNEST(TRANSFORM(FILTER(SEQUENCE(0, 100), x -> x < 100), synalog_e -> ROW(synalog_e))) as pushkin(x_10)
     WHERE
-      (A_sn_new.y = x_9)
+      (A_sn_new.y = x_10)
   
 ) AS UNUSED_TABLE_NAME  ),
 t_0_A_sn_back_step AS (SELECT
@@ -557,7 +557,7 @@ WHERE
   FROM
     synalog_test.A_sn_full AS A_sn_full
   WHERE
-    (A_sn_full.y = A_sn_back_step.y)) IS NULL)
+    (A_sn_full.y IS NOT DISTINCT FROM A_sn_back_step.y)) IS NULL)
 GROUP BY 1;
 
 INSERT INTO synalog_test.A_sn_full SELECT * FROM synalog_test.A_sn_delta;
@@ -570,11 +570,11 @@ CREATE TABLE synalog_test.A_sn_new AS WITH t_1_A_MultBodyAggAux_f6 AS (SELECT * 
    UNION ALL
   
     SELECT
-      ((x_9) + (1)) AS y
+      ((x_10) + (1)) AS y
     FROM
-      synalog_test.A_sn_delta AS A_sn_delta, UNNEST(TRANSFORM(FILTER(SEQUENCE(0, 100), x -> x < 100), synalog_e -> ROW(synalog_e))) as pushkin(x_9)
+      synalog_test.A_sn_delta AS A_sn_delta, UNNEST(TRANSFORM(FILTER(SEQUENCE(0, 100), x -> x < 100), synalog_e -> ROW(synalog_e))) as pushkin(x_10)
     WHERE
-      (A_sn_delta.y = x_9)
+      (A_sn_delta.y = x_10)
   
 ) AS UNUSED_TABLE_NAME  ),
 t_0_A_sn_step AS (SELECT
@@ -592,7 +592,7 @@ WHERE
   FROM
     synalog_test.A_sn_full AS A_sn_full
   WHERE
-    (A_sn_full.y = A_sn_step.y)) IS NULL)
+    (A_sn_full.y IS NOT DISTINCT FROM A_sn_step.y)) IS NULL)
 GROUP BY 1;
 
 INSERT INTO synalog_test.A_sn_full SELECT * FROM synalog_test.A_sn_new;
@@ -605,11 +605,11 @@ CREATE TABLE synalog_test.A_sn_delta AS WITH t_1_A_MultBodyAggAux_f1 AS (SELECT 
    UNION ALL
   
     SELECT
-      ((x_9) + (1)) AS y
+      ((x_10) + (1)) AS y
     FROM
-      synalog_test.A_sn_new AS A_sn_new, UNNEST(TRANSFORM(FILTER(SEQUENCE(0, 100), x -> x < 100), synalog_e -> ROW(synalog_e))) as pushkin(x_9)
+      synalog_test.A_sn_new AS A_sn_new, UNNEST(TRANSFORM(FILTER(SEQUENCE(0, 100), x -> x < 100), synalog_e -> ROW(synalog_e))) as pushkin(x_10)
     WHERE
-      (A_sn_new.y = x_9)
+      (A_sn_new.y = x_10)
   
 ) AS UNUSED_TABLE_NAME  ),
 t_0_A_sn_back_step AS (SELECT
@@ -627,7 +627,7 @@ WHERE
   FROM
     synalog_test.A_sn_full AS A_sn_full
   WHERE
-    (A_sn_full.y = A_sn_back_step.y)) IS NULL)
+    (A_sn_full.y IS NOT DISTINCT FROM A_sn_back_step.y)) IS NULL)
 GROUP BY 1;
 
 INSERT INTO synalog_test.A_sn_full SELECT * FROM synalog_test.A_sn_delta;
@@ -640,11 +640,11 @@ CREATE TABLE synalog_test.A_sn_new AS WITH t_1_A_MultBodyAggAux_f6 AS (SELECT * 
    UNION ALL
   
     SELECT
-      ((x_9) + (1)) AS y
+      ((x_10) + (1)) AS y
     FROM
-      synalog_test.A_sn_delta AS A_sn_delta, UNNEST(TRANSFORM(FILTER(SEQUENCE(0, 100), x -> x < 100), synalog_e -> ROW(synalog_e))) as pushkin(x_9)
+      synalog_test.A_sn_delta AS A_sn_delta, UNNEST(TRANSFORM(FILTER(SEQUENCE(0, 100), x -> x < 100), synalog_e -> ROW(synalog_e))) as pushkin(x_10)
     WHERE
-      (A_sn_delta.y = x_9)
+      (A_sn_delta.y = x_10)
   
 ) AS UNUSED_TABLE_NAME  ),
 t_0_A_sn_step AS (SELECT
@@ -662,7 +662,7 @@ WHERE
   FROM
     synalog_test.A_sn_full AS A_sn_full
   WHERE
-    (A_sn_full.y = A_sn_step.y)) IS NULL)
+    (A_sn_full.y IS NOT DISTINCT FROM A_sn_step.y)) IS NULL)
 GROUP BY 1;
 
 INSERT INTO synalog_test.A_sn_full SELECT * FROM synalog_test.A_sn_new;
@@ -675,11 +675,11 @@ CREATE TABLE synalog_test.A_sn_delta AS WITH t_1_A_MultBodyAggAux_f1 AS (SELECT 
    UNION ALL
   
     SELECT
-      ((x_9) + (1)) AS y
+      ((x_10) + (1)) AS y
     FROM
-      synalog_test.A_sn_new AS A_sn_new, UNNEST(TRANSFORM(FILTER(SEQUENCE(0, 100), x -> x < 100), synalog_e -> ROW(synalog_e))) as pushkin(x_9)
+      synalog_test.A_sn_new AS A_sn_new, UNNEST(TRANSFORM(FILTER(SEQUENCE(0, 100), x -> x < 100), synalog_e -> ROW(synalog_e))) as pushkin(x_10)
     WHERE
-      (A_sn_new.y = x_9)
+      (A_sn_new.y = x_10)
   
 ) AS UNUSED_TABLE_NAME  ),
 t_0_A_sn_back_step AS (SELECT
@@ -697,7 +697,7 @@ WHERE
   FROM
     synalog_test.A_sn_full AS A_sn_full
   WHERE
-    (A_sn_full.y = A_sn_back_step.y)) IS NULL)
+    (A_sn_full.y IS NOT DISTINCT FROM A_sn_back_step.y)) IS NULL)
 GROUP BY 1;
 
 INSERT INTO synalog_test.A_sn_full SELECT * FROM synalog_test.A_sn_delta;
@@ -710,11 +710,11 @@ CREATE TABLE synalog_test.A_sn_new AS WITH t_1_A_MultBodyAggAux_f6 AS (SELECT * 
    UNION ALL
   
     SELECT
-      ((x_9) + (1)) AS y
+      ((x_10) + (1)) AS y
     FROM
-      synalog_test.A_sn_delta AS A_sn_delta, UNNEST(TRANSFORM(FILTER(SEQUENCE(0, 100), x -> x < 100), synalog_e -> ROW(synalog_e))) as pushkin(x_9)
+      synalog_test.A_sn_delta AS A_sn_delta, UNNEST(TRANSFORM(FILTER(SEQUENCE(0, 100), x -> x < 100), synalog_e -> ROW(synalog_e))) as pushkin(x_10)
     WHERE
-      (A_sn_delta.y = x_9)
+      (A_sn_delta.y = x_10)
   
 ) AS UNUSED_TABLE_NAME  ),
 t_0_A_sn_step AS (SELECT
@@ -732,7 +732,7 @@ WHERE
   FROM
     synalog_test.A_sn_full AS A_sn_full
   WHERE
-    (A_sn_full.y = A_sn_step.y)) IS NULL)
+    (A_sn_full.y IS NOT DISTINCT FROM A_sn_step.y)) IS NULL)
 GROUP BY 1;
 
 INSERT INTO synalog_test.A_sn_full SELECT * FROM synalog_test.A_sn_new;
@@ -745,11 +745,11 @@ CREATE TABLE synalog_test.A_sn_delta AS WITH t_1_A_MultBodyAggAux_f1 AS (SELECT 
    UNION ALL
   
     SELECT
-      ((x_9) + (1)) AS y
+      ((x_10) + (1)) AS y
     FROM
-      synalog_test.A_sn_new AS A_sn_new, UNNEST(TRANSFORM(FILTER(SEQUENCE(0, 100), x -> x < 100), synalog_e -> ROW(synalog_e))) as pushkin(x_9)
+      synalog_test.A_sn_new AS A_sn_new, UNNEST(TRANSFORM(FILTER(SEQUENCE(0, 100), x -> x < 100), synalog_e -> ROW(synalog_e))) as pushkin(x_10)
     WHERE
-      (A_sn_new.y = x_9)
+      (A_sn_new.y = x_10)
   
 ) AS UNUSED_TABLE_NAME  ),
 t_0_A_sn_back_step AS (SELECT
@@ -767,7 +767,7 @@ WHERE
   FROM
     synalog_test.A_sn_full AS A_sn_full
   WHERE
-    (A_sn_full.y = A_sn_back_step.y)) IS NULL)
+    (A_sn_full.y IS NOT DISTINCT FROM A_sn_back_step.y)) IS NULL)
 GROUP BY 1;
 
 INSERT INTO synalog_test.A_sn_full SELECT * FROM synalog_test.A_sn_delta;
@@ -780,11 +780,11 @@ CREATE TABLE synalog_test.A_sn_new AS WITH t_1_A_MultBodyAggAux_f6 AS (SELECT * 
    UNION ALL
   
     SELECT
-      ((x_9) + (1)) AS y
+      ((x_10) + (1)) AS y
     FROM
-      synalog_test.A_sn_delta AS A_sn_delta, UNNEST(TRANSFORM(FILTER(SEQUENCE(0, 100), x -> x < 100), synalog_e -> ROW(synalog_e))) as pushkin(x_9)
+      synalog_test.A_sn_delta AS A_sn_delta, UNNEST(TRANSFORM(FILTER(SEQUENCE(0, 100), x -> x < 100), synalog_e -> ROW(synalog_e))) as pushkin(x_10)
     WHERE
-      (A_sn_delta.y = x_9)
+      (A_sn_delta.y = x_10)
   
 ) AS UNUSED_TABLE_NAME  ),
 t_0_A_sn_step AS (SELECT
@@ -802,7 +802,7 @@ WHERE
   FROM
     synalog_test.A_sn_full AS A_sn_full
   WHERE
-    (A_sn_full.y = A_sn_step.y)) IS NULL)
+    (A_sn_full.y IS NOT DISTINCT FROM A_sn_step.y)) IS NULL)
 GROUP BY 1;
 
 INSERT INTO synalog_test.A_sn_full SELECT * FROM synalog_test.A_sn_new;
@@ -815,11 +815,11 @@ CREATE TABLE synalog_test.A_sn_delta AS WITH t_1_A_MultBodyAggAux_f1 AS (SELECT 
    UNION ALL
   
     SELECT
-      ((x_9) + (1)) AS y
+      ((x_10) + (1)) AS y
     FROM
-      synalog_test.A_sn_new AS A_sn_new, UNNEST(TRANSFORM(FILTER(SEQUENCE(0, 100), x -> x < 100), synalog_e -> ROW(synalog_e))) as pushkin(x_9)
+      synalog_test.A_sn_new AS A_sn_new, UNNEST(TRANSFORM(FILTER(SEQUENCE(0, 100), x -> x < 100), synalog_e -> ROW(synalog_e))) as pushkin(x_10)
     WHERE
-      (A_sn_new.y = x_9)
+      (A_sn_new.y = x_10)
   
 ) AS UNUSED_TABLE_NAME  ),
 t_0_A_sn_back_step AS (SELECT
@@ -837,7 +837,7 @@ WHERE
   FROM
     synalog_test.A_sn_full AS A_sn_full
   WHERE
-    (A_sn_full.y = A_sn_back_step.y)) IS NULL)
+    (A_sn_full.y IS NOT DISTINCT FROM A_sn_back_step.y)) IS NULL)
 GROUP BY 1;
 
 INSERT INTO synalog_test.A_sn_full SELECT * FROM synalog_test.A_sn_delta;
@@ -850,11 +850,11 @@ CREATE TABLE synalog_test.A_sn_new AS WITH t_1_A_MultBodyAggAux_f6 AS (SELECT * 
    UNION ALL
   
     SELECT
-      ((x_9) + (1)) AS y
+      ((x_10) + (1)) AS y
     FROM
-      synalog_test.A_sn_delta AS A_sn_delta, UNNEST(TRANSFORM(FILTER(SEQUENCE(0, 100), x -> x < 100), synalog_e -> ROW(synalog_e))) as pushkin(x_9)
+      synalog_test.A_sn_delta AS A_sn_delta, UNNEST(TRANSFORM(FILTER(SEQUENCE(0, 100), x -> x < 100), synalog_e -> ROW(synalog_e))) as pushkin(x_10)
     WHERE
-      (A_sn_delta.y = x_9)
+      (A_sn_delta.y = x_10)
   
 ) AS UNUSED_TABLE_NAME  ),
 t_0_A_sn_step AS (SELECT
@@ -872,7 +872,7 @@ WHERE
   FROM
     synalog_test.A_sn_full AS A_sn_full
   WHERE
-    (A_sn_full.y = A_sn_step.y)) IS NULL)
+    (A_sn_full.y IS NOT DISTINCT FROM A_sn_step.y)) IS NULL)
 GROUP BY 1;
 
 INSERT INTO synalog_test.A_sn_full SELECT * FROM synalog_test.A_sn_new;
@@ -885,11 +885,11 @@ CREATE TABLE synalog_test.A_sn_delta AS WITH t_1_A_MultBodyAggAux_f1 AS (SELECT 
    UNION ALL
   
     SELECT
-      ((x_9) + (1)) AS y
+      ((x_10) + (1)) AS y
     FROM
-      synalog_test.A_sn_new AS A_sn_new, UNNEST(TRANSFORM(FILTER(SEQUENCE(0, 100), x -> x < 100), synalog_e -> ROW(synalog_e))) as pushkin(x_9)
+      synalog_test.A_sn_new AS A_sn_new, UNNEST(TRANSFORM(FILTER(SEQUENCE(0, 100), x -> x < 100), synalog_e -> ROW(synalog_e))) as pushkin(x_10)
     WHERE
-      (A_sn_new.y = x_9)
+      (A_sn_new.y = x_10)
   
 ) AS UNUSED_TABLE_NAME  ),
 t_0_A_sn_back_step AS (SELECT
@@ -907,7 +907,7 @@ WHERE
   FROM
     synalog_test.A_sn_full AS A_sn_full
   WHERE
-    (A_sn_full.y = A_sn_back_step.y)) IS NULL)
+    (A_sn_full.y IS NOT DISTINCT FROM A_sn_back_step.y)) IS NULL)
 GROUP BY 1;
 
 INSERT INTO synalog_test.A_sn_full SELECT * FROM synalog_test.A_sn_delta;
@@ -920,11 +920,11 @@ CREATE TABLE synalog_test.A_sn_new AS WITH t_1_A_MultBodyAggAux_f6 AS (SELECT * 
    UNION ALL
   
     SELECT
-      ((x_9) + (1)) AS y
+      ((x_10) + (1)) AS y
     FROM
-      synalog_test.A_sn_delta AS A_sn_delta, UNNEST(TRANSFORM(FILTER(SEQUENCE(0, 100), x -> x < 100), synalog_e -> ROW(synalog_e))) as pushkin(x_9)
+      synalog_test.A_sn_delta AS A_sn_delta, UNNEST(TRANSFORM(FILTER(SEQUENCE(0, 100), x -> x < 100), synalog_e -> ROW(synalog_e))) as pushkin(x_10)
     WHERE
-      (A_sn_delta.y = x_9)
+      (A_sn_delta.y = x_10)
   
 ) AS UNUSED_TABLE_NAME  ),
 t_0_A_sn_step AS (SELECT
@@ -942,7 +942,7 @@ WHERE
   FROM
     synalog_test.A_sn_full AS A_sn_full
   WHERE
-    (A_sn_full.y = A_sn_step.y)) IS NULL)
+    (A_sn_full.y IS NOT DISTINCT FROM A_sn_step.y)) IS NULL)
 GROUP BY 1;
 
 INSERT INTO synalog_test.A_sn_full SELECT * FROM synalog_test.A_sn_new;
@@ -955,11 +955,11 @@ CREATE TABLE synalog_test.A_sn_delta AS WITH t_1_A_MultBodyAggAux_f1 AS (SELECT 
    UNION ALL
   
     SELECT
-      ((x_9) + (1)) AS y
+      ((x_10) + (1)) AS y
     FROM
-      synalog_test.A_sn_new AS A_sn_new, UNNEST(TRANSFORM(FILTER(SEQUENCE(0, 100), x -> x < 100), synalog_e -> ROW(synalog_e))) as pushkin(x_9)
+      synalog_test.A_sn_new AS A_sn_new, UNNEST(TRANSFORM(FILTER(SEQUENCE(0, 100), x -> x < 100), synalog_e -> ROW(synalog_e))) as pushkin(x_10)
     WHERE
-      (A_sn_new.y = x_9)
+      (A_sn_new.y = x_10)
   
 ) AS UNUSED_TABLE_NAME  ),
 t_0_A_sn_back_step AS (SELECT
@@ -977,7 +977,7 @@ WHERE
   FROM
     synalog_test.A_sn_full AS A_sn_full
   WHERE
-    (A_sn_full.y = A_sn_back_step.y)) IS NULL)
+    (A_sn_full.y IS NOT DISTINCT FROM A_sn_back_step.y)) IS NULL)
 GROUP BY 1;
 
 INSERT INTO synalog_test.A_sn_full SELECT * FROM synalog_test.A_sn_delta;
@@ -990,11 +990,11 @@ CREATE TABLE synalog_test.A_sn_new AS WITH t_1_A_MultBodyAggAux_f6 AS (SELECT * 
    UNION ALL
   
     SELECT
-      ((x_9) + (1)) AS y
+      ((x_10) + (1)) AS y
     FROM
-      synalog_test.A_sn_delta AS A_sn_delta, UNNEST(TRANSFORM(FILTER(SEQUENCE(0, 100), x -> x < 100), synalog_e -> ROW(synalog_e))) as pushkin(x_9)
+      synalog_test.A_sn_delta AS A_sn_delta, UNNEST(TRANSFORM(FILTER(SEQUENCE(0, 100), x -> x < 100), synalog_e -> ROW(synalog_e))) as pushkin(x_10)
     WHERE
-      (A_sn_delta.y = x_9)
+      (A_sn_delta.y = x_10)
   
 ) AS UNUSED_TABLE_NAME  ),
 t_0_A_sn_step AS (SELECT
@@ -1012,7 +1012,7 @@ WHERE
   FROM
     synalog_test.A_sn_full AS A_sn_full
   WHERE
-    (A_sn_full.y = A_sn_step.y)) IS NULL)
+    (A_sn_full.y IS NOT DISTINCT FROM A_sn_step.y)) IS NULL)
 GROUP BY 1;
 
 INSERT INTO synalog_test.A_sn_full SELECT * FROM synalog_test.A_sn_new;
@@ -1025,11 +1025,11 @@ CREATE TABLE synalog_test.B_sn_new AS WITH t_1_B_MultBodyAggAux_f12 AS (SELECT *
    UNION ALL
   
     SELECT
-      ((x_9) + (1)) AS y
+      ((x_10) + (1)) AS y
     FROM
-      synalog_test.B_sn_delta AS B_sn_delta, UNNEST(TRANSFORM(FILTER(SEQUENCE(0, 100), x -> x < 100), synalog_e -> ROW(synalog_e))) as pushkin(x_9)
+      synalog_test.B_sn_delta AS B_sn_delta, UNNEST(TRANSFORM(FILTER(SEQUENCE(0, 100), x -> x < 100), synalog_e -> ROW(synalog_e))) as pushkin(x_10)
     WHERE
-      (B_sn_delta.y = x_9)
+      (B_sn_delta.y = x_10)
   
 ) AS UNUSED_TABLE_NAME  ),
 t_0_B_sn_step AS (SELECT
@@ -1047,7 +1047,7 @@ WHERE
   FROM
     synalog_test.B_sn_full AS B_sn_full
   WHERE
-    (B_sn_full.y = B_sn_step.y)) IS NULL)
+    (B_sn_full.y IS NOT DISTINCT FROM B_sn_step.y)) IS NULL)
 GROUP BY 1;
 
 INSERT INTO synalog_test.B_sn_full SELECT * FROM synalog_test.B_sn_new;
@@ -1060,11 +1060,11 @@ CREATE TABLE synalog_test.B_sn_delta AS WITH t_1_B_MultBodyAggAux_f7 AS (SELECT 
    UNION ALL
   
     SELECT
-      ((x_9) + (1)) AS y
+      ((x_10) + (1)) AS y
     FROM
-      synalog_test.B_sn_new AS B_sn_new, UNNEST(TRANSFORM(FILTER(SEQUENCE(0, 100), x -> x < 100), synalog_e -> ROW(synalog_e))) as pushkin(x_9)
+      synalog_test.B_sn_new AS B_sn_new, UNNEST(TRANSFORM(FILTER(SEQUENCE(0, 100), x -> x < 100), synalog_e -> ROW(synalog_e))) as pushkin(x_10)
     WHERE
-      (B_sn_new.y = x_9)
+      (B_sn_new.y = x_10)
   
 ) AS UNUSED_TABLE_NAME  ),
 t_0_B_sn_back_step AS (SELECT
@@ -1082,7 +1082,7 @@ WHERE
   FROM
     synalog_test.B_sn_full AS B_sn_full
   WHERE
-    (B_sn_full.y = B_sn_back_step.y)) IS NULL)
+    (B_sn_full.y IS NOT DISTINCT FROM B_sn_back_step.y)) IS NULL)
 GROUP BY 1;
 
 INSERT INTO synalog_test.B_sn_full SELECT * FROM synalog_test.B_sn_delta;
@@ -1095,11 +1095,11 @@ CREATE TABLE synalog_test.B_sn_new AS WITH t_1_B_MultBodyAggAux_f12 AS (SELECT *
    UNION ALL
   
     SELECT
-      ((x_9) + (1)) AS y
+      ((x_10) + (1)) AS y
     FROM
-      synalog_test.B_sn_delta AS B_sn_delta, UNNEST(TRANSFORM(FILTER(SEQUENCE(0, 100), x -> x < 100), synalog_e -> ROW(synalog_e))) as pushkin(x_9)
+      synalog_test.B_sn_delta AS B_sn_delta, UNNEST(TRANSFORM(FILTER(SEQUENCE(0, 100), x -> x < 100), synalog_e -> ROW(synalog_e))) as pushkin(x_10)
     WHERE
-      (B_sn_delta.y = x_9)
+      (B_sn_delta.y = x_10)
   
 ) AS UNUSED_TABLE_NAME  ),
 t_0_B_sn_step AS (SELECT
@@ -1117,7 +1117,7 @@ WHERE
   FROM
     synalog_test.B_sn_full AS B_sn_full
   WHERE
-    (B_sn_full.y = B_sn_step.y)) IS NULL)
+    (B_sn_full.y IS NOT DISTINCT FROM B_sn_step.y)) IS NULL)
 GROUP BY 1;
 
 INSERT INTO synalog_test.B_sn_full SELECT * FROM synalog_test.B_sn_new;
@@ -1130,11 +1130,11 @@ CREATE TABLE synalog_test.B_sn_delta AS WITH t_1_B_MultBodyAggAux_f7 AS (SELECT 
    UNION ALL
   
     SELECT
-      ((x_9) + (1)) AS y
+      ((x_10) + (1)) AS y
     FROM
-      synalog_test.B_sn_new AS B_sn_new, UNNEST(TRANSFORM(FILTER(SEQUENCE(0, 100), x -> x < 100), synalog_e -> ROW(synalog_e))) as pushkin(x_9)
+      synalog_test.B_sn_new AS B_sn_new, UNNEST(TRANSFORM(FILTER(SEQUENCE(0, 100), x -> x < 100), synalog_e -> ROW(synalog_e))) as pushkin(x_10)
     WHERE
-      (B_sn_new.y = x_9)
+      (B_sn_new.y = x_10)
   
 ) AS UNUSED_TABLE_NAME  ),
 t_0_B_sn_back_step AS (SELECT
@@ -1152,7 +1152,7 @@ WHERE
   FROM
     synalog_test.B_sn_full AS B_sn_full
   WHERE
-    (B_sn_full.y = B_sn_back_step.y)) IS NULL)
+    (B_sn_full.y IS NOT DISTINCT FROM B_sn_back_step.y)) IS NULL)
 GROUP BY 1;
 
 INSERT INTO synalog_test.B_sn_full SELECT * FROM synalog_test.B_sn_delta;
@@ -1165,11 +1165,11 @@ CREATE TABLE synalog_test.B_sn_new AS WITH t_1_B_MultBodyAggAux_f12 AS (SELECT *
    UNION ALL
   
     SELECT
-      ((x_9) + (1)) AS y
+      ((x_10) + (1)) AS y
     FROM
-      synalog_test.B_sn_delta AS B_sn_delta, UNNEST(TRANSFORM(FILTER(SEQUENCE(0, 100), x -> x < 100), synalog_e -> ROW(synalog_e))) as pushkin(x_9)
+      synalog_test.B_sn_delta AS B_sn_delta, UNNEST(TRANSFORM(FILTER(SEQUENCE(0, 100), x -> x < 100), synalog_e -> ROW(synalog_e))) as pushkin(x_10)
     WHERE
-      (B_sn_delta.y = x_9)
+      (B_sn_delta.y = x_10)
   
 ) AS UNUSED_TABLE_NAME  ),
 t_0_B_sn_step AS (SELECT
@@ -1187,7 +1187,7 @@ WHERE
   FROM
     synalog_test.B_sn_full AS B_sn_full
   WHERE
-    (B_sn_full.y = B_sn_step.y)) IS NULL)
+    (B_sn_full.y IS NOT DISTINCT FROM B_sn_step.y)) IS NULL)
 GROUP BY 1;
 
 INSERT INTO synalog_test.B_sn_full SELECT * FROM synalog_test.B_sn_new;
@@ -1200,11 +1200,11 @@ CREATE TABLE synalog_test.B_sn_delta AS WITH t_1_B_MultBodyAggAux_f7 AS (SELECT 
    UNION ALL
   
     SELECT
-      ((x_9) + (1)) AS y
+      ((x_10) + (1)) AS y
     FROM
-      synalog_test.B_sn_new AS B_sn_new, UNNEST(TRANSFORM(FILTER(SEQUENCE(0, 100), x -> x < 100), synalog_e -> ROW(synalog_e))) as pushkin(x_9)
+      synalog_test.B_sn_new AS B_sn_new, UNNEST(TRANSFORM(FILTER(SEQUENCE(0, 100), x -> x < 100), synalog_e -> ROW(synalog_e))) as pushkin(x_10)
     WHERE
-      (B_sn_new.y = x_9)
+      (B_sn_new.y = x_10)
   
 ) AS UNUSED_TABLE_NAME  ),
 t_0_B_sn_back_step AS (SELECT
@@ -1222,7 +1222,7 @@ WHERE
   FROM
     synalog_test.B_sn_full AS B_sn_full
   WHERE
-    (B_sn_full.y = B_sn_back_step.y)) IS NULL)
+    (B_sn_full.y IS NOT DISTINCT FROM B_sn_back_step.y)) IS NULL)
 GROUP BY 1;
 
 INSERT INTO synalog_test.B_sn_full SELECT * FROM synalog_test.B_sn_delta;
@@ -1235,11 +1235,11 @@ CREATE TABLE synalog_test.B_sn_new AS WITH t_1_B_MultBodyAggAux_f12 AS (SELECT *
    UNION ALL
   
     SELECT
-      ((x_9) + (1)) AS y
+      ((x_10) + (1)) AS y
     FROM
-      synalog_test.B_sn_delta AS B_sn_delta, UNNEST(TRANSFORM(FILTER(SEQUENCE(0, 100), x -> x < 100), synalog_e -> ROW(synalog_e))) as pushkin(x_9)
+      synalog_test.B_sn_delta AS B_sn_delta, UNNEST(TRANSFORM(FILTER(SEQUENCE(0, 100), x -> x < 100), synalog_e -> ROW(synalog_e))) as pushkin(x_10)
     WHERE
-      (B_sn_delta.y = x_9)
+      (B_sn_delta.y = x_10)
   
 ) AS UNUSED_TABLE_NAME  ),
 t_0_B_sn_step AS (SELECT
@@ -1257,7 +1257,7 @@ WHERE
   FROM
     synalog_test.B_sn_full AS B_sn_full
   WHERE
-    (B_sn_full.y = B_sn_step.y)) IS NULL)
+    (B_sn_full.y IS NOT DISTINCT FROM B_sn_step.y)) IS NULL)
 GROUP BY 1;
 
 INSERT INTO synalog_test.B_sn_full SELECT * FROM synalog_test.B_sn_new;
@@ -1270,11 +1270,11 @@ CREATE TABLE synalog_test.B_sn_delta AS WITH t_1_B_MultBodyAggAux_f7 AS (SELECT 
    UNION ALL
   
     SELECT
-      ((x_9) + (1)) AS y
+      ((x_10) + (1)) AS y
     FROM
-      synalog_test.B_sn_new AS B_sn_new, UNNEST(TRANSFORM(FILTER(SEQUENCE(0, 100), x -> x < 100), synalog_e -> ROW(synalog_e))) as pushkin(x_9)
+      synalog_test.B_sn_new AS B_sn_new, UNNEST(TRANSFORM(FILTER(SEQUENCE(0, 100), x -> x < 100), synalog_e -> ROW(synalog_e))) as pushkin(x_10)
     WHERE
-      (B_sn_new.y = x_9)
+      (B_sn_new.y = x_10)
   
 ) AS UNUSED_TABLE_NAME  ),
 t_0_B_sn_back_step AS (SELECT
@@ -1292,7 +1292,7 @@ WHERE
   FROM
     synalog_test.B_sn_full AS B_sn_full
   WHERE
-    (B_sn_full.y = B_sn_back_step.y)) IS NULL)
+    (B_sn_full.y IS NOT DISTINCT FROM B_sn_back_step.y)) IS NULL)
 GROUP BY 1;
 
 INSERT INTO synalog_test.B_sn_full SELECT * FROM synalog_test.B_sn_delta;
@@ -1305,11 +1305,11 @@ CREATE TABLE synalog_test.B_sn_new AS WITH t_1_B_MultBodyAggAux_f12 AS (SELECT *
    UNION ALL
   
     SELECT
-      ((x_9) + (1)) AS y
+      ((x_10) + (1)) AS y
     FROM
-      synalog_test.B_sn_delta AS B_sn_delta, UNNEST(TRANSFORM(FILTER(SEQUENCE(0, 100), x -> x < 100), synalog_e -> ROW(synalog_e))) as pushkin(x_9)
+      synalog_test.B_sn_delta AS B_sn_delta, UNNEST(TRANSFORM(FILTER(SEQUENCE(0, 100), x -> x < 100), synalog_e -> ROW(synalog_e))) as pushkin(x_10)
     WHERE
-      (B_sn_delta.y = x_9)
+      (B_sn_delta.y = x_10)
   
 ) AS UNUSED_TABLE_NAME  ),
 t_0_B_sn_step AS (SELECT
@@ -1327,7 +1327,7 @@ WHERE
   FROM
     synalog_test.B_sn_full AS B_sn_full
   WHERE
-    (B_sn_full.y = B_sn_step.y)) IS NULL)
+    (B_sn_full.y IS NOT DISTINCT FROM B_sn_step.y)) IS NULL)
 GROUP BY 1;
 
 INSERT INTO synalog_test.B_sn_full SELECT * FROM synalog_test.B_sn_new;
@@ -1340,11 +1340,11 @@ CREATE TABLE synalog_test.B_sn_delta AS WITH t_1_B_MultBodyAggAux_f7 AS (SELECT 
    UNION ALL
   
     SELECT
-      ((x_9) + (1)) AS y
+      ((x_10) + (1)) AS y
     FROM
-      synalog_test.B_sn_new AS B_sn_new, UNNEST(TRANSFORM(FILTER(SEQUENCE(0, 100), x -> x < 100), synalog_e -> ROW(synalog_e))) as pushkin(x_9)
+      synalog_test.B_sn_new AS B_sn_new, UNNEST(TRANSFORM(FILTER(SEQUENCE(0, 100), x -> x < 100), synalog_e -> ROW(synalog_e))) as pushkin(x_10)
     WHERE
-      (B_sn_new.y = x_9)
+      (B_sn_new.y = x_10)
   
 ) AS UNUSED_TABLE_NAME  ),
 t_0_B_sn_back_step AS (SELECT
@@ -1362,7 +1362,7 @@ WHERE
   FROM
     synalog_test.B_sn_full AS B_sn_full
   WHERE
-    (B_sn_full.y = B_sn_back_step.y)) IS NULL)
+    (B_sn_full.y IS NOT DISTINCT FROM B_sn_back_step.y)) IS NULL)
 GROUP BY 1;
 
 INSERT INTO synalog_test.B_sn_full SELECT * FROM synalog_test.B_sn_delta;
@@ -1375,11 +1375,11 @@ CREATE TABLE synalog_test.B_sn_new AS WITH t_1_B_MultBodyAggAux_f12 AS (SELECT *
    UNION ALL
   
     SELECT
-      ((x_9) + (1)) AS y
+      ((x_10) + (1)) AS y
     FROM
-      synalog_test.B_sn_delta AS B_sn_delta, UNNEST(TRANSFORM(FILTER(SEQUENCE(0, 100), x -> x < 100), synalog_e -> ROW(synalog_e))) as pushkin(x_9)
+      synalog_test.B_sn_delta AS B_sn_delta, UNNEST(TRANSFORM(FILTER(SEQUENCE(0, 100), x -> x < 100), synalog_e -> ROW(synalog_e))) as pushkin(x_10)
     WHERE
-      (B_sn_delta.y = x_9)
+      (B_sn_delta.y = x_10)
   
 ) AS UNUSED_TABLE_NAME  ),
 t_0_B_sn_step AS (SELECT
@@ -1397,7 +1397,7 @@ WHERE
   FROM
     synalog_test.B_sn_full AS B_sn_full
   WHERE
-    (B_sn_full.y = B_sn_step.y)) IS NULL)
+    (B_sn_full.y IS NOT DISTINCT FROM B_sn_step.y)) IS NULL)
 GROUP BY 1;
 
 INSERT INTO synalog_test.B_sn_full SELECT * FROM synalog_test.B_sn_new;
@@ -1410,11 +1410,11 @@ CREATE TABLE synalog_test.B_sn_delta AS WITH t_1_B_MultBodyAggAux_f7 AS (SELECT 
    UNION ALL
   
     SELECT
-      ((x_9) + (1)) AS y
+      ((x_10) + (1)) AS y
     FROM
-      synalog_test.B_sn_new AS B_sn_new, UNNEST(TRANSFORM(FILTER(SEQUENCE(0, 100), x -> x < 100), synalog_e -> ROW(synalog_e))) as pushkin(x_9)
+      synalog_test.B_sn_new AS B_sn_new, UNNEST(TRANSFORM(FILTER(SEQUENCE(0, 100), x -> x < 100), synalog_e -> ROW(synalog_e))) as pushkin(x_10)
     WHERE
-      (B_sn_new.y = x_9)
+      (B_sn_new.y = x_10)
   
 ) AS UNUSED_TABLE_NAME  ),
 t_0_B_sn_back_step AS (SELECT
@@ -1432,7 +1432,7 @@ WHERE
   FROM
     synalog_test.B_sn_full AS B_sn_full
   WHERE
-    (B_sn_full.y = B_sn_back_step.y)) IS NULL)
+    (B_sn_full.y IS NOT DISTINCT FROM B_sn_back_step.y)) IS NULL)
 GROUP BY 1;
 
 INSERT INTO synalog_test.B_sn_full SELECT * FROM synalog_test.B_sn_delta;
@@ -1445,11 +1445,11 @@ CREATE TABLE synalog_test.B_sn_new AS WITH t_1_B_MultBodyAggAux_f12 AS (SELECT *
    UNION ALL
   
     SELECT
-      ((x_9) + (1)) AS y
+      ((x_10) + (1)) AS y
     FROM
-      synalog_test.B_sn_delta AS B_sn_delta, UNNEST(TRANSFORM(FILTER(SEQUENCE(0, 100), x -> x < 100), synalog_e -> ROW(synalog_e))) as pushkin(x_9)
+      synalog_test.B_sn_delta AS B_sn_delta, UNNEST(TRANSFORM(FILTER(SEQUENCE(0, 100), x -> x < 100), synalog_e -> ROW(synalog_e))) as pushkin(x_10)
     WHERE
-      (B_sn_delta.y = x_9)
+      (B_sn_delta.y = x_10)
   
 ) AS UNUSED_TABLE_NAME  ),
 t_0_B_sn_step AS (SELECT
@@ -1467,7 +1467,7 @@ WHERE
   FROM
     synalog_test.B_sn_full AS B_sn_full
   WHERE
-    (B_sn_full.y = B_sn_step.y)) IS NULL)
+    (B_sn_full.y IS NOT DISTINCT FROM B_sn_step.y)) IS NULL)
 GROUP BY 1;
 
 INSERT INTO synalog_test.B_sn_full SELECT * FROM synalog_test.B_sn_new;
@@ -1480,11 +1480,11 @@ CREATE TABLE synalog_test.B_sn_delta AS WITH t_1_B_MultBodyAggAux_f7 AS (SELECT 
    UNION ALL
   
     SELECT
-      ((x_9) + (1)) AS y
+      ((x_10) + (1)) AS y
     FROM
-      synalog_test.B_sn_new AS B_sn_new, UNNEST(TRANSFORM(FILTER(SEQUENCE(0, 100), x -> x < 100), synalog_e -> ROW(synalog_e))) as pushkin(x_9)
+      synalog_test.B_sn_new AS B_sn_new, UNNEST(TRANSFORM(FILTER(SEQUENCE(0, 100), x -> x < 100), synalog_e -> ROW(synalog_e))) as pushkin(x_10)
     WHERE
-      (B_sn_new.y = x_9)
+      (B_sn_new.y = x_10)
   
 ) AS UNUSED_TABLE_NAME  ),
 t_0_B_sn_back_step AS (SELECT
@@ -1502,7 +1502,7 @@ WHERE
   FROM
     synalog_test.B_sn_full AS B_sn_full
   WHERE
-    (B_sn_full.y = B_sn_back_step.y)) IS NULL)
+    (B_sn_full.y IS NOT DISTINCT FROM B_sn_back_step.y)) IS NULL)
 GROUP BY 1;
 
 INSERT INTO synalog_test.B_sn_full SELECT * FROM synalog_test.B_sn_delta;
@@ -1515,11 +1515,11 @@ CREATE TABLE synalog_test.B_sn_new AS WITH t_1_B_MultBodyAggAux_f12 AS (SELECT *
    UNION ALL
   
     SELECT
-      ((x_9) + (1)) AS y
+      ((x_10) + (1)) AS y
     FROM
-      synalog_test.B_sn_delta AS B_sn_delta, UNNEST(TRANSFORM(FILTER(SEQUENCE(0, 100), x -> x < 100), synalog_e -> ROW(synalog_e))) as pushkin(x_9)
+      synalog_test.B_sn_delta AS B_sn_delta, UNNEST(TRANSFORM(FILTER(SEQUENCE(0, 100), x -> x < 100), synalog_e -> ROW(synalog_e))) as pushkin(x_10)
     WHERE
-      (B_sn_delta.y = x_9)
+      (B_sn_delta.y = x_10)
   
 ) AS UNUSED_TABLE_NAME  ),
 t_0_B_sn_step AS (SELECT
@@ -1537,7 +1537,7 @@ WHERE
   FROM
     synalog_test.B_sn_full AS B_sn_full
   WHERE
-    (B_sn_full.y = B_sn_step.y)) IS NULL)
+    (B_sn_full.y IS NOT DISTINCT FROM B_sn_step.y)) IS NULL)
 GROUP BY 1;
 
 INSERT INTO synalog_test.B_sn_full SELECT * FROM synalog_test.B_sn_new;
@@ -1550,11 +1550,11 @@ CREATE TABLE synalog_test.B_sn_delta AS WITH t_1_B_MultBodyAggAux_f7 AS (SELECT 
    UNION ALL
   
     SELECT
-      ((x_9) + (1)) AS y
+      ((x_10) + (1)) AS y
     FROM
-      synalog_test.B_sn_new AS B_sn_new, UNNEST(TRANSFORM(FILTER(SEQUENCE(0, 100), x -> x < 100), synalog_e -> ROW(synalog_e))) as pushkin(x_9)
+      synalog_test.B_sn_new AS B_sn_new, UNNEST(TRANSFORM(FILTER(SEQUENCE(0, 100), x -> x < 100), synalog_e -> ROW(synalog_e))) as pushkin(x_10)
     WHERE
-      (B_sn_new.y = x_9)
+      (B_sn_new.y = x_10)
   
 ) AS UNUSED_TABLE_NAME  ),
 t_0_B_sn_back_step AS (SELECT
@@ -1572,7 +1572,7 @@ WHERE
   FROM
     synalog_test.B_sn_full AS B_sn_full
   WHERE
-    (B_sn_full.y = B_sn_back_step.y)) IS NULL)
+    (B_sn_full.y IS NOT DISTINCT FROM B_sn_back_step.y)) IS NULL)
 GROUP BY 1;
 
 INSERT INTO synalog_test.B_sn_full SELECT * FROM synalog_test.B_sn_delta;
@@ -1585,11 +1585,11 @@ CREATE TABLE synalog_test.B_sn_new AS WITH t_1_B_MultBodyAggAux_f12 AS (SELECT *
    UNION ALL
   
     SELECT
-      ((x_9) + (1)) AS y
+      ((x_10) + (1)) AS y
     FROM
-      synalog_test.B_sn_delta AS B_sn_delta, UNNEST(TRANSFORM(FILTER(SEQUENCE(0, 100), x -> x < 100), synalog_e -> ROW(synalog_e))) as pushkin(x_9)
+      synalog_test.B_sn_delta AS B_sn_delta, UNNEST(TRANSFORM(FILTER(SEQUENCE(0, 100), x -> x < 100), synalog_e -> ROW(synalog_e))) as pushkin(x_10)
     WHERE
-      (B_sn_delta.y = x_9)
+      (B_sn_delta.y = x_10)
   
 ) AS UNUSED_TABLE_NAME  ),
 t_0_B_sn_step AS (SELECT
@@ -1607,7 +1607,7 @@ WHERE
   FROM
     synalog_test.B_sn_full AS B_sn_full
   WHERE
-    (B_sn_full.y = B_sn_step.y)) IS NULL)
+    (B_sn_full.y IS NOT DISTINCT FROM B_sn_step.y)) IS NULL)
 GROUP BY 1;
 
 INSERT INTO synalog_test.B_sn_full SELECT * FROM synalog_test.B_sn_new;
@@ -1620,11 +1620,11 @@ CREATE TABLE synalog_test.B_sn_delta AS WITH t_1_B_MultBodyAggAux_f7 AS (SELECT 
    UNION ALL
   
     SELECT
-      ((x_9) + (1)) AS y
+      ((x_10) + (1)) AS y
     FROM
-      synalog_test.B_sn_new AS B_sn_new, UNNEST(TRANSFORM(FILTER(SEQUENCE(0, 100), x -> x < 100), synalog_e -> ROW(synalog_e))) as pushkin(x_9)
+      synalog_test.B_sn_new AS B_sn_new, UNNEST(TRANSFORM(FILTER(SEQUENCE(0, 100), x -> x < 100), synalog_e -> ROW(synalog_e))) as pushkin(x_10)
     WHERE
-      (B_sn_new.y = x_9)
+      (B_sn_new.y = x_10)
   
 ) AS UNUSED_TABLE_NAME  ),
 t_0_B_sn_back_step AS (SELECT
@@ -1642,7 +1642,7 @@ WHERE
   FROM
     synalog_test.B_sn_full AS B_sn_full
   WHERE
-    (B_sn_full.y = B_sn_back_step.y)) IS NULL)
+    (B_sn_full.y IS NOT DISTINCT FROM B_sn_back_step.y)) IS NULL)
 GROUP BY 1;
 
 INSERT INTO synalog_test.B_sn_full SELECT * FROM synalog_test.B_sn_delta;
@@ -1655,11 +1655,11 @@ CREATE TABLE synalog_test.B_sn_new AS WITH t_1_B_MultBodyAggAux_f12 AS (SELECT *
    UNION ALL
   
     SELECT
-      ((x_9) + (1)) AS y
+      ((x_10) + (1)) AS y
     FROM
-      synalog_test.B_sn_delta AS B_sn_delta, UNNEST(TRANSFORM(FILTER(SEQUENCE(0, 100), x -> x < 100), synalog_e -> ROW(synalog_e))) as pushkin(x_9)
+      synalog_test.B_sn_delta AS B_sn_delta, UNNEST(TRANSFORM(FILTER(SEQUENCE(0, 100), x -> x < 100), synalog_e -> ROW(synalog_e))) as pushkin(x_10)
     WHERE
-      (B_sn_delta.y = x_9)
+      (B_sn_delta.y = x_10)
   
 ) AS UNUSED_TABLE_NAME  ),
 t_0_B_sn_step AS (SELECT
@@ -1677,7 +1677,7 @@ WHERE
   FROM
     synalog_test.B_sn_full AS B_sn_full
   WHERE
-    (B_sn_full.y = B_sn_step.y)) IS NULL)
+    (B_sn_full.y IS NOT DISTINCT FROM B_sn_step.y)) IS NULL)
 GROUP BY 1;
 
 INSERT INTO synalog_test.B_sn_full SELECT * FROM synalog_test.B_sn_new;
@@ -1690,11 +1690,11 @@ CREATE TABLE synalog_test.B_sn_delta AS WITH t_1_B_MultBodyAggAux_f7 AS (SELECT 
    UNION ALL
   
     SELECT
-      ((x_9) + (1)) AS y
+      ((x_10) + (1)) AS y
     FROM
-      synalog_test.B_sn_new AS B_sn_new, UNNEST(TRANSFORM(FILTER(SEQUENCE(0, 100), x -> x < 100), synalog_e -> ROW(synalog_e))) as pushkin(x_9)
+      synalog_test.B_sn_new AS B_sn_new, UNNEST(TRANSFORM(FILTER(SEQUENCE(0, 100), x -> x < 100), synalog_e -> ROW(synalog_e))) as pushkin(x_10)
     WHERE
-      (B_sn_new.y = x_9)
+      (B_sn_new.y = x_10)
   
 ) AS UNUSED_TABLE_NAME  ),
 t_0_B_sn_back_step AS (SELECT
@@ -1712,7 +1712,7 @@ WHERE
   FROM
     synalog_test.B_sn_full AS B_sn_full
   WHERE
-    (B_sn_full.y = B_sn_back_step.y)) IS NULL)
+    (B_sn_full.y IS NOT DISTINCT FROM B_sn_back_step.y)) IS NULL)
 GROUP BY 1;
 
 INSERT INTO synalog_test.B_sn_full SELECT * FROM synalog_test.B_sn_delta;
@@ -1725,11 +1725,11 @@ CREATE TABLE synalog_test.B_sn_new AS WITH t_1_B_MultBodyAggAux_f12 AS (SELECT *
    UNION ALL
   
     SELECT
-      ((x_9) + (1)) AS y
+      ((x_10) + (1)) AS y
     FROM
-      synalog_test.B_sn_delta AS B_sn_delta, UNNEST(TRANSFORM(FILTER(SEQUENCE(0, 100), x -> x < 100), synalog_e -> ROW(synalog_e))) as pushkin(x_9)
+      synalog_test.B_sn_delta AS B_sn_delta, UNNEST(TRANSFORM(FILTER(SEQUENCE(0, 100), x -> x < 100), synalog_e -> ROW(synalog_e))) as pushkin(x_10)
     WHERE
-      (B_sn_delta.y = x_9)
+      (B_sn_delta.y = x_10)
   
 ) AS UNUSED_TABLE_NAME  ),
 t_0_B_sn_step AS (SELECT
@@ -1747,7 +1747,7 @@ WHERE
   FROM
     synalog_test.B_sn_full AS B_sn_full
   WHERE
-    (B_sn_full.y = B_sn_step.y)) IS NULL)
+    (B_sn_full.y IS NOT DISTINCT FROM B_sn_step.y)) IS NULL)
 GROUP BY 1;
 
 INSERT INTO synalog_test.B_sn_full SELECT * FROM synalog_test.B_sn_new;
@@ -1760,11 +1760,11 @@ CREATE TABLE synalog_test.B_sn_delta AS WITH t_1_B_MultBodyAggAux_f7 AS (SELECT 
    UNION ALL
   
     SELECT
-      ((x_9) + (1)) AS y
+      ((x_10) + (1)) AS y
     FROM
-      synalog_test.B_sn_new AS B_sn_new, UNNEST(TRANSFORM(FILTER(SEQUENCE(0, 100), x -> x < 100), synalog_e -> ROW(synalog_e))) as pushkin(x_9)
+      synalog_test.B_sn_new AS B_sn_new, UNNEST(TRANSFORM(FILTER(SEQUENCE(0, 100), x -> x < 100), synalog_e -> ROW(synalog_e))) as pushkin(x_10)
     WHERE
-      (B_sn_new.y = x_9)
+      (B_sn_new.y = x_10)
   
 ) AS UNUSED_TABLE_NAME  ),
 t_0_B_sn_back_step AS (SELECT
@@ -1782,7 +1782,7 @@ WHERE
   FROM
     synalog_test.B_sn_full AS B_sn_full
   WHERE
-    (B_sn_full.y = B_sn_back_step.y)) IS NULL)
+    (B_sn_full.y IS NOT DISTINCT FROM B_sn_back_step.y)) IS NULL)
 GROUP BY 1;
 
 INSERT INTO synalog_test.B_sn_full SELECT * FROM synalog_test.B_sn_delta;

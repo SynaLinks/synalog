@@ -218,7 +218,7 @@ WHERE
   FROM
     synalog_test.Select_sn_full AS Select_sn_full
   WHERE
-    (Select_sn_full.x = Select_sn_step.x)) IS NULL)
+    (Select_sn_full.x IS NOT DISTINCT FROM Select_sn_step.x)) IS NULL)
 GROUP BY 1;
 
 INSERT INTO synalog_test.Select_sn_full SELECT * FROM synalog_test.Select_sn_new;
@@ -265,7 +265,7 @@ WHERE
   FROM
     synalog_test.Select_sn_full AS Select_sn_full
   WHERE
-    (Select_sn_full.x = Select_sn_back_step.x)) IS NULL)
+    (Select_sn_full.x IS NOT DISTINCT FROM Select_sn_back_step.x)) IS NULL)
 GROUP BY 1;
 
 INSERT INTO synalog_test.Select_sn_full SELECT * FROM synalog_test.Select_sn_delta;
@@ -312,7 +312,7 @@ WHERE
   FROM
     synalog_test.Select_sn_full AS Select_sn_full
   WHERE
-    (Select_sn_full.x = Select_sn_step.x)) IS NULL)
+    (Select_sn_full.x IS NOT DISTINCT FROM Select_sn_step.x)) IS NULL)
 GROUP BY 1;
 
 INSERT INTO synalog_test.Select_sn_full SELECT * FROM synalog_test.Select_sn_new;
@@ -359,7 +359,7 @@ WHERE
   FROM
     synalog_test.Select_sn_full AS Select_sn_full
   WHERE
-    (Select_sn_full.x = Select_sn_back_step.x)) IS NULL)
+    (Select_sn_full.x IS NOT DISTINCT FROM Select_sn_back_step.x)) IS NULL)
 GROUP BY 1;
 
 INSERT INTO synalog_test.Select_sn_full SELECT * FROM synalog_test.Select_sn_delta;
@@ -406,7 +406,7 @@ WHERE
   FROM
     synalog_test.Select_sn_full AS Select_sn_full
   WHERE
-    (Select_sn_full.x = Select_sn_step.x)) IS NULL)
+    (Select_sn_full.x IS NOT DISTINCT FROM Select_sn_step.x)) IS NULL)
 GROUP BY 1;
 
 INSERT INTO synalog_test.Select_sn_full SELECT * FROM synalog_test.Select_sn_new;

@@ -413,6 +413,33 @@ fn counterexamples_all(
     })
 }
 
+/// A name unique to a plan, among the plans of every process: `r`, the
+/// time it starts (Unix seconds, 7 digits in base 36), then 6 digits from the
+/// time's nanoseconds, the process and a counter. A runner reads the time
+/// back to drop the tables of a run long dead (`synalog.runners`).
+fn run_tag() -> String {
+    use std::sync::atomic::{AtomicU64, Ordering};
+    static COUNTER: AtomicU64 = AtomicU64::new(0);
+    fn base36(mut n: u64, width: usize) -> String {
+        let digits = b"0123456789abcdefghijklmnopqrstuvwxyz";
+        let mut out = vec![b'0'; width];
+        for slot in out.iter_mut().rev() {
+            *slot = digits[(n % 36) as usize];
+            n /= 36;
+        }
+        String::from_utf8(out).unwrap()
+    }
+    let now = std::time::SystemTime::now()
+        .duration_since(std::time::UNIX_EPOCH)
+        .unwrap_or_default();
+    let counter = COUNTER.fetch_add(1, Ordering::Relaxed);
+    let mixed = (now.subsec_nanos() as u64)
+        .wrapping_mul(0x9E37_79B9_7F4A_7C15)
+        ^ (std::process::id() as u64).wrapping_mul(0xC2B2_AE3D_27D4_EB4F)
+        ^ counter.wrapping_mul(0x1656_67B1_9E37_79F9);
+    format!("r{}{}", base36(now.as_secs(), 7), base36(mixed % 36u64.pow(6), 6))
+}
+
 /// The steps that compute a predicate, for a runner that executes them.
 ///
 /// Each step is a dict: `{"kind": "setup", "sql": ...}` (the engine's setup, a
@@ -454,7 +481,11 @@ fn plan(
         };
         let parsed = parse_source(&source, None, import_root)?;
         let names = PredicateNames::of(&parsed);
-        let program = build_program(&parsed, engine)?;
+        let mut program = build_program(&parsed, engine)?;
+        // The tables a plan computes are its run's: concurrent runs of programs
+        // grounding the same predicate must not share them.
+        program.annotations.session_tables = true;
+        program.annotations.run_tag = Some(run_tag());
         let pagination = Pagination { limit, offset };
         program
             .formatted_predicate_plan(&names.internal(&predicate), Some(&pagination), pattern)

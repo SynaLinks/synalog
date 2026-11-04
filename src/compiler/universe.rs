@@ -30,6 +30,7 @@ use crate::parser::{Json, JsonObject};
 use crate::compiler::{CompileResult, CompileError};
 use crate::compiler::annotations::{Annotations, Ground};
 use crate::compiler::dialects::{self, Dialect};
+use crate::compiler::functors;
 use crate::compiler::expr_translate::SubqueryTranslator;
 use crate::compiler::rule_translate::{self, NamesAllocator, RuleStructure};
 use crate::compiler::type_inference::{Type, TypesGraphBuilder, TypeInference};
@@ -1173,6 +1174,24 @@ impl SynalogProgram {
         self.run_injections(&mut s)?;
         rule_translate::finalize_rule_structure(&mut s);
         s.sort_unnestings()?;
+        // The rules of a predicate are combined by UNION ALL, which matches
+        // columns by position, not by name: every rule selects its columns in
+        // the order of the first rule's head, whatever order it names them in.
+        if !is_combine {
+            let rules = self.get_predicate_rules(&s.this_predicate_name);
+            if rules.len() > 1 {
+                let columns = rule_translate::all_record_fields(&rules[0].as_object()["head"].as_object()["record"]);
+                let mut select = std::mem::take(&mut s.select);
+                let mut ordered = IndexMap::with_capacity(select.len());
+                for column in &columns {
+                    if let Some(expression) = select.shift_remove(column) {
+                        ordered.insert(column.clone(), expression);
+                    }
+                }
+                ordered.extend(select);
+                s.select = ordered;
+            }
+        }
 
         // Check for nil tables or nil calls in unnestings or select expressions
         fn contains_nil_predicate(json: &Json) -> bool {
@@ -1743,7 +1762,7 @@ impl SynalogProgram {
                         order.push(PlanStep::Loop {
                             body: iteration.predicates.iter().map(|p| exports[p].clone()).collect(),
                             repetitions: iteration.repetitions - 1,
-                            changed: self.iteration_changed_query(&iteration.predicates)?,
+                            changed: self.iteration_changed_query(&iteration.predicates, iteration.repetitions)?,
                         });
                     }
                 }
@@ -1797,7 +1816,21 @@ impl SynalogProgram {
     /// When every upper table holds the rows of its lower one, the step
     /// changes nothing: the recursion has converged, and further repetitions
     /// would recompute the same tables.
-    fn iteration_changed_query(&self, predicates: &[String]) -> CompileResult<String> {
+    ///
+    /// A predicate that is not `distinct` holds a multiset: its tables are the
+    /// same when each row occurs as many times in both, so its rows are
+    /// compared with their counts (a set comparison would stop a recursion
+    /// whose rows repeat, as `P(x: 1); P(x:) :- P(x:);` does at every step).
+    ///
+    /// An unbounded recursion (`@Recursive(P, -1)`) that is not `distinct`
+    /// is refused: a cycle in its data adds copies of rows at every step, so
+    /// its multiset never stops changing, and the loop would not end.
+    fn iteration_changed_query(&self, predicates: &[String], repetitions: i64) -> CompileResult<String> {
+        // `-1` is a depth of `functors::UNBOUNDED_DEPTH` steps, two per
+        // repetition after a few precomputed ones (`recursion::repetitions`);
+        // a depth written out, however deep, is bounded.
+        let half = functors::UNBOUNDED_DEPTH / 2;
+        let unbounded = (half - 1_000..=half + 1).contains(&repetitions);
         let dialect = dialects::get(self.annotations.engine())?;
         let except = dialect.except_distinct();
         let table = |p: &String| {
@@ -1809,18 +1842,47 @@ impl SynalogProgram {
         let (upper, lower) = predicates.split_at(predicates.len() / 2);
         let mut counts = Vec::new();
         for (u, l) in upper.iter().zip(lower) {
+            let rows = match self.multiset_columns(u) {
+                Some(_) if unbounded => {
+                    return Err(CompileError::new(
+                        format!(
+                            "@Recursive({0}, -1): {0} is not distinct, so it cannot recurse until nothing changes: \
+                             its rows are a multiset, which a cycle in the data grows at every step. \
+                             Make its rules distinct, or give it a depth.",
+                            u.rsplit_once("_ifr").map_or(u.as_str(), |(p, _)| p)
+                        ),
+                        u.rsplit_once("_ifr").map_or(u.as_str(), |(p, _)| p),
+                    ));
+                }
+                Some(columns) => {
+                    let columns = columns.iter().map(|c| dialects::sql_column(c, dialect.as_ref())).collect::<Vec<_>>().join(", ");
+                    format!("SELECT {columns}, COUNT(*) AS synalog_multiplicity FROM {{}} GROUP BY {columns}")
+                }
+                None => "SELECT * FROM {}".to_string(),
+            };
             let (u, l) = (table(u)?, table(l)?);
             for (a, b) in [(&u, &l), (&l, &u)] {
                 counts.push(format!(
-                    "(SELECT COUNT(*) FROM (SELECT * FROM {} {} SELECT * FROM {}) AS synalog_changed_{})",
-                    a,
+                    "(SELECT COUNT(*) FROM ({} {} {}) AS synalog_changed_{})",
+                    rows.replace("{}", a),
                     except,
-                    b,
+                    rows.replace("{}", b),
                     counts.len()
                 ));
             }
         }
         Ok(format!("SELECT {} AS changed", counts.join(" + ")))
+    }
+
+    /// The columns of a predicate whose rules are not all `distinct`, whose
+    /// rows are then a multiset; None for a set.
+    fn multiset_columns(&self, predicate: &str) -> Option<Vec<String>> {
+        let rules = self.get_predicate_rules(predicate);
+        if rules.iter().all(|r| r.as_object().contains_key("distinct_denoted")) {
+            return None;
+        }
+        let columns = self.predicate_columns(predicate);
+        (!columns.is_empty() && !columns.iter().any(|c| c == "*")).then_some(columns)
     }
 
     /// Print top-level formatted SQL with pagination.
@@ -1888,13 +1950,7 @@ impl SynalogProgram {
         if rules.is_empty() {
             return Vec::new();
         }
-        let head = &rules[0].as_object()["head"];
-        let record = &head.as_object()["record"];
-        record.as_object()["field_value"]
-            .as_array()
-            .iter()
-            .map(|fv| fv.as_object()["field"].as_str().to_string())
-            .collect()
+        rule_translate::all_record_fields(&rules[0].as_object()["head"].as_object()["record"])
     }
 
     /// Produce SQL for a predicate filtered by a regex pattern across all columns.

@@ -470,7 +470,7 @@ WHERE
   FROM
     synalog_test.Down_sn_full AS Down_sn_full
   WHERE
-    (Down_sn_full.component = Down_sn_step.component)) IS NULL)
+    (Down_sn_full.component IS NOT DISTINCT FROM Down_sn_step.component)) IS NULL)
 GROUP BY 1;
 
 INSERT INTO synalog_test.Down_sn_full SELECT * FROM synalog_test.Down_sn_new;

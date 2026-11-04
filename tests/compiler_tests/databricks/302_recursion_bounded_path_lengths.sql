@@ -476,9 +476,9 @@ WHERE
   FROM
     synalog_test.Path_sn_full AS Path_sn_full
   WHERE
-    (Path_sn_full.a = Path_sn_step.a) AND
-    (Path_sn_full.b = Path_sn_step.b) AND
-    (Path_sn_full.n = Path_sn_step.n)) IS NULL)
+    (Path_sn_full.a <=> Path_sn_step.a) AND
+    (Path_sn_full.b <=> Path_sn_step.b) AND
+    (Path_sn_full.n <=> Path_sn_step.n)) IS NULL)
 GROUP BY 1, 2, 3;
 
 INSERT INTO synalog_test.Path_sn_full SELECT * FROM synalog_test.Path_sn_new;
@@ -530,9 +530,9 @@ WHERE
   FROM
     synalog_test.Path_sn_full AS Path_sn_full
   WHERE
-    (Path_sn_full.a = Path_sn_back_step.a) AND
-    (Path_sn_full.b = Path_sn_back_step.b) AND
-    (Path_sn_full.n = Path_sn_back_step.n)) IS NULL)
+    (Path_sn_full.a <=> Path_sn_back_step.a) AND
+    (Path_sn_full.b <=> Path_sn_back_step.b) AND
+    (Path_sn_full.n <=> Path_sn_back_step.n)) IS NULL)
 GROUP BY 1, 2, 3;
 
 INSERT INTO synalog_test.Path_sn_full SELECT * FROM synalog_test.Path_sn_delta;
@@ -584,9 +584,9 @@ WHERE
   FROM
     synalog_test.Path_sn_full AS Path_sn_full
   WHERE
-    (Path_sn_full.a = Path_sn_step.a) AND
-    (Path_sn_full.b = Path_sn_step.b) AND
-    (Path_sn_full.n = Path_sn_step.n)) IS NULL)
+    (Path_sn_full.a <=> Path_sn_step.a) AND
+    (Path_sn_full.b <=> Path_sn_step.b) AND
+    (Path_sn_full.n <=> Path_sn_step.n)) IS NULL)
 GROUP BY 1, 2, 3;
 
 INSERT INTO synalog_test.Path_sn_full SELECT * FROM synalog_test.Path_sn_new;
@@ -638,9 +638,9 @@ WHERE
   FROM
     synalog_test.Path_sn_full AS Path_sn_full
   WHERE
-    (Path_sn_full.a = Path_sn_back_step.a) AND
-    (Path_sn_full.b = Path_sn_back_step.b) AND
-    (Path_sn_full.n = Path_sn_back_step.n)) IS NULL)
+    (Path_sn_full.a <=> Path_sn_back_step.a) AND
+    (Path_sn_full.b <=> Path_sn_back_step.b) AND
+    (Path_sn_full.n <=> Path_sn_back_step.n)) IS NULL)
 GROUP BY 1, 2, 3;
 
 INSERT INTO synalog_test.Path_sn_full SELECT * FROM synalog_test.Path_sn_delta;
@@ -692,9 +692,9 @@ WHERE
   FROM
     synalog_test.Path_sn_full AS Path_sn_full
   WHERE
-    (Path_sn_full.a = Path_sn_step.a) AND
-    (Path_sn_full.b = Path_sn_step.b) AND
-    (Path_sn_full.n = Path_sn_step.n)) IS NULL)
+    (Path_sn_full.a <=> Path_sn_step.a) AND
+    (Path_sn_full.b <=> Path_sn_step.b) AND
+    (Path_sn_full.n <=> Path_sn_step.n)) IS NULL)
 GROUP BY 1, 2, 3;
 
 INSERT INTO synalog_test.Path_sn_full SELECT * FROM synalog_test.Path_sn_new;
@@ -746,9 +746,9 @@ WHERE
   FROM
     synalog_test.Path_sn_full AS Path_sn_full
   WHERE
-    (Path_sn_full.a = Path_sn_back_step.a) AND
-    (Path_sn_full.b = Path_sn_back_step.b) AND
-    (Path_sn_full.n = Path_sn_back_step.n)) IS NULL)
+    (Path_sn_full.a <=> Path_sn_back_step.a) AND
+    (Path_sn_full.b <=> Path_sn_back_step.b) AND
+    (Path_sn_full.n <=> Path_sn_back_step.n)) IS NULL)
 GROUP BY 1, 2, 3;
 
 INSERT INTO synalog_test.Path_sn_full SELECT * FROM synalog_test.Path_sn_delta;
@@ -800,9 +800,9 @@ WHERE
   FROM
     synalog_test.Path_sn_full AS Path_sn_full
   WHERE
-    (Path_sn_full.a = Path_sn_step.a) AND
-    (Path_sn_full.b = Path_sn_step.b) AND
-    (Path_sn_full.n = Path_sn_step.n)) IS NULL)
+    (Path_sn_full.a <=> Path_sn_step.a) AND
+    (Path_sn_full.b <=> Path_sn_step.b) AND
+    (Path_sn_full.n <=> Path_sn_step.n)) IS NULL)
 GROUP BY 1, 2, 3;
 
 INSERT INTO synalog_test.Path_sn_full SELECT * FROM synalog_test.Path_sn_new;
@@ -854,9 +854,9 @@ WHERE
   FROM
     synalog_test.Path_sn_full AS Path_sn_full
   WHERE
-    (Path_sn_full.a = Path_sn_back_step.a) AND
-    (Path_sn_full.b = Path_sn_back_step.b) AND
-    (Path_sn_full.n = Path_sn_back_step.n)) IS NULL)
+    (Path_sn_full.a <=> Path_sn_back_step.a) AND
+    (Path_sn_full.b <=> Path_sn_back_step.b) AND
+    (Path_sn_full.n <=> Path_sn_back_step.n)) IS NULL)
 GROUP BY 1, 2, 3;
 
 INSERT INTO synalog_test.Path_sn_full SELECT * FROM synalog_test.Path_sn_delta;
@@ -908,9 +908,9 @@ WHERE
   FROM
     synalog_test.Path_sn_full AS Path_sn_full
   WHERE
-    (Path_sn_full.a = Path_sn_step.a) AND
-    (Path_sn_full.b = Path_sn_step.b) AND
-    (Path_sn_full.n = Path_sn_step.n)) IS NULL)
+    (Path_sn_full.a <=> Path_sn_step.a) AND
+    (Path_sn_full.b <=> Path_sn_step.b) AND
+    (Path_sn_full.n <=> Path_sn_step.n)) IS NULL)
 GROUP BY 1, 2, 3;
 
 INSERT INTO synalog_test.Path_sn_full SELECT * FROM synalog_test.Path_sn_new;
@@ -962,9 +962,9 @@ WHERE
   FROM
     synalog_test.Path_sn_full AS Path_sn_full
   WHERE
-    (Path_sn_full.a = Path_sn_back_step.a) AND
-    (Path_sn_full.b = Path_sn_back_step.b) AND
-    (Path_sn_full.n = Path_sn_back_step.n)) IS NULL)
+    (Path_sn_full.a <=> Path_sn_back_step.a) AND
+    (Path_sn_full.b <=> Path_sn_back_step.b) AND
+    (Path_sn_full.n <=> Path_sn_back_step.n)) IS NULL)
 GROUP BY 1, 2, 3;
 
 INSERT INTO synalog_test.Path_sn_full SELECT * FROM synalog_test.Path_sn_delta;
@@ -1016,9 +1016,9 @@ WHERE
   FROM
     synalog_test.Path_sn_full AS Path_sn_full
   WHERE
-    (Path_sn_full.a = Path_sn_step.a) AND
-    (Path_sn_full.b = Path_sn_step.b) AND
-    (Path_sn_full.n = Path_sn_step.n)) IS NULL)
+    (Path_sn_full.a <=> Path_sn_step.a) AND
+    (Path_sn_full.b <=> Path_sn_step.b) AND
+    (Path_sn_full.n <=> Path_sn_step.n)) IS NULL)
 GROUP BY 1, 2, 3;
 
 INSERT INTO synalog_test.Path_sn_full SELECT * FROM synalog_test.Path_sn_new;
@@ -1070,9 +1070,9 @@ WHERE
   FROM
     synalog_test.Path_sn_full AS Path_sn_full
   WHERE
-    (Path_sn_full.a = Path_sn_back_step.a) AND
-    (Path_sn_full.b = Path_sn_back_step.b) AND
-    (Path_sn_full.n = Path_sn_back_step.n)) IS NULL)
+    (Path_sn_full.a <=> Path_sn_back_step.a) AND
+    (Path_sn_full.b <=> Path_sn_back_step.b) AND
+    (Path_sn_full.n <=> Path_sn_back_step.n)) IS NULL)
 GROUP BY 1, 2, 3;
 
 INSERT INTO synalog_test.Path_sn_full SELECT * FROM synalog_test.Path_sn_delta;
@@ -1124,9 +1124,9 @@ WHERE
   FROM
     synalog_test.Path_sn_full AS Path_sn_full
   WHERE
-    (Path_sn_full.a = Path_sn_step.a) AND
-    (Path_sn_full.b = Path_sn_step.b) AND
-    (Path_sn_full.n = Path_sn_step.n)) IS NULL)
+    (Path_sn_full.a <=> Path_sn_step.a) AND
+    (Path_sn_full.b <=> Path_sn_step.b) AND
+    (Path_sn_full.n <=> Path_sn_step.n)) IS NULL)
 GROUP BY 1, 2, 3;
 
 INSERT INTO synalog_test.Path_sn_full SELECT * FROM synalog_test.Path_sn_new;
@@ -1178,9 +1178,9 @@ WHERE
   FROM
     synalog_test.Path_sn_full AS Path_sn_full
   WHERE
-    (Path_sn_full.a = Path_sn_back_step.a) AND
-    (Path_sn_full.b = Path_sn_back_step.b) AND
-    (Path_sn_full.n = Path_sn_back_step.n)) IS NULL)
+    (Path_sn_full.a <=> Path_sn_back_step.a) AND
+    (Path_sn_full.b <=> Path_sn_back_step.b) AND
+    (Path_sn_full.n <=> Path_sn_back_step.n)) IS NULL)
 GROUP BY 1, 2, 3;
 
 INSERT INTO synalog_test.Path_sn_full SELECT * FROM synalog_test.Path_sn_delta;
@@ -1232,9 +1232,9 @@ WHERE
   FROM
     synalog_test.Path_sn_full AS Path_sn_full
   WHERE
-    (Path_sn_full.a = Path_sn_step.a) AND
-    (Path_sn_full.b = Path_sn_step.b) AND
-    (Path_sn_full.n = Path_sn_step.n)) IS NULL)
+    (Path_sn_full.a <=> Path_sn_step.a) AND
+    (Path_sn_full.b <=> Path_sn_step.b) AND
+    (Path_sn_full.n <=> Path_sn_step.n)) IS NULL)
 GROUP BY 1, 2, 3;
 
 INSERT INTO synalog_test.Path_sn_full SELECT * FROM synalog_test.Path_sn_new;
@@ -1286,9 +1286,9 @@ WHERE
   FROM
     synalog_test.Path_sn_full AS Path_sn_full
   WHERE
-    (Path_sn_full.a = Path_sn_back_step.a) AND
-    (Path_sn_full.b = Path_sn_back_step.b) AND
-    (Path_sn_full.n = Path_sn_back_step.n)) IS NULL)
+    (Path_sn_full.a <=> Path_sn_back_step.a) AND
+    (Path_sn_full.b <=> Path_sn_back_step.b) AND
+    (Path_sn_full.n <=> Path_sn_back_step.n)) IS NULL)
 GROUP BY 1, 2, 3;
 
 INSERT INTO synalog_test.Path_sn_full SELECT * FROM synalog_test.Path_sn_delta;
@@ -1340,9 +1340,9 @@ WHERE
   FROM
     synalog_test.Path_sn_full AS Path_sn_full
   WHERE
-    (Path_sn_full.a = Path_sn_step.a) AND
-    (Path_sn_full.b = Path_sn_step.b) AND
-    (Path_sn_full.n = Path_sn_step.n)) IS NULL)
+    (Path_sn_full.a <=> Path_sn_step.a) AND
+    (Path_sn_full.b <=> Path_sn_step.b) AND
+    (Path_sn_full.n <=> Path_sn_step.n)) IS NULL)
 GROUP BY 1, 2, 3;
 
 INSERT INTO synalog_test.Path_sn_full SELECT * FROM synalog_test.Path_sn_new;
@@ -1394,9 +1394,9 @@ WHERE
   FROM
     synalog_test.Path_sn_full AS Path_sn_full
   WHERE
-    (Path_sn_full.a = Path_sn_back_step.a) AND
-    (Path_sn_full.b = Path_sn_back_step.b) AND
-    (Path_sn_full.n = Path_sn_back_step.n)) IS NULL)
+    (Path_sn_full.a <=> Path_sn_back_step.a) AND
+    (Path_sn_full.b <=> Path_sn_back_step.b) AND
+    (Path_sn_full.n <=> Path_sn_back_step.n)) IS NULL)
 GROUP BY 1, 2, 3;
 
 INSERT INTO synalog_test.Path_sn_full SELECT * FROM synalog_test.Path_sn_delta;
@@ -1448,9 +1448,9 @@ WHERE
   FROM
     synalog_test.Path_sn_full AS Path_sn_full
   WHERE
-    (Path_sn_full.a = Path_sn_step.a) AND
-    (Path_sn_full.b = Path_sn_step.b) AND
-    (Path_sn_full.n = Path_sn_step.n)) IS NULL)
+    (Path_sn_full.a <=> Path_sn_step.a) AND
+    (Path_sn_full.b <=> Path_sn_step.b) AND
+    (Path_sn_full.n <=> Path_sn_step.n)) IS NULL)
 GROUP BY 1, 2, 3;
 
 INSERT INTO synalog_test.Path_sn_full SELECT * FROM synalog_test.Path_sn_new;
@@ -1502,9 +1502,9 @@ WHERE
   FROM
     synalog_test.Path_sn_full AS Path_sn_full
   WHERE
-    (Path_sn_full.a = Path_sn_back_step.a) AND
-    (Path_sn_full.b = Path_sn_back_step.b) AND
-    (Path_sn_full.n = Path_sn_back_step.n)) IS NULL)
+    (Path_sn_full.a <=> Path_sn_back_step.a) AND
+    (Path_sn_full.b <=> Path_sn_back_step.b) AND
+    (Path_sn_full.n <=> Path_sn_back_step.n)) IS NULL)
 GROUP BY 1, 2, 3;
 
 INSERT INTO synalog_test.Path_sn_full SELECT * FROM synalog_test.Path_sn_delta;
@@ -1556,9 +1556,9 @@ WHERE
   FROM
     synalog_test.Path_sn_full AS Path_sn_full
   WHERE
-    (Path_sn_full.a = Path_sn_step.a) AND
-    (Path_sn_full.b = Path_sn_step.b) AND
-    (Path_sn_full.n = Path_sn_step.n)) IS NULL)
+    (Path_sn_full.a <=> Path_sn_step.a) AND
+    (Path_sn_full.b <=> Path_sn_step.b) AND
+    (Path_sn_full.n <=> Path_sn_step.n)) IS NULL)
 GROUP BY 1, 2, 3;
 
 INSERT INTO synalog_test.Path_sn_full SELECT * FROM synalog_test.Path_sn_new;
@@ -1610,9 +1610,9 @@ WHERE
   FROM
     synalog_test.Path_sn_full AS Path_sn_full
   WHERE
-    (Path_sn_full.a = Path_sn_back_step.a) AND
-    (Path_sn_full.b = Path_sn_back_step.b) AND
-    (Path_sn_full.n = Path_sn_back_step.n)) IS NULL)
+    (Path_sn_full.a <=> Path_sn_back_step.a) AND
+    (Path_sn_full.b <=> Path_sn_back_step.b) AND
+    (Path_sn_full.n <=> Path_sn_back_step.n)) IS NULL)
 GROUP BY 1, 2, 3;
 
 INSERT INTO synalog_test.Path_sn_full SELECT * FROM synalog_test.Path_sn_delta;
@@ -1664,9 +1664,9 @@ WHERE
   FROM
     synalog_test.Path_sn_full AS Path_sn_full
   WHERE
-    (Path_sn_full.a = Path_sn_step.a) AND
-    (Path_sn_full.b = Path_sn_step.b) AND
-    (Path_sn_full.n = Path_sn_step.n)) IS NULL)
+    (Path_sn_full.a <=> Path_sn_step.a) AND
+    (Path_sn_full.b <=> Path_sn_step.b) AND
+    (Path_sn_full.n <=> Path_sn_step.n)) IS NULL)
 GROUP BY 1, 2, 3;
 
 INSERT INTO synalog_test.Path_sn_full SELECT * FROM synalog_test.Path_sn_new;
@@ -1718,9 +1718,9 @@ WHERE
   FROM
     synalog_test.Path_sn_full AS Path_sn_full
   WHERE
-    (Path_sn_full.a = Path_sn_back_step.a) AND
-    (Path_sn_full.b = Path_sn_back_step.b) AND
-    (Path_sn_full.n = Path_sn_back_step.n)) IS NULL)
+    (Path_sn_full.a <=> Path_sn_back_step.a) AND
+    (Path_sn_full.b <=> Path_sn_back_step.b) AND
+    (Path_sn_full.n <=> Path_sn_back_step.n)) IS NULL)
 GROUP BY 1, 2, 3;
 
 INSERT INTO synalog_test.Path_sn_full SELECT * FROM synalog_test.Path_sn_delta;
@@ -1772,9 +1772,9 @@ WHERE
   FROM
     synalog_test.Path_sn_full AS Path_sn_full
   WHERE
-    (Path_sn_full.a = Path_sn_step.a) AND
-    (Path_sn_full.b = Path_sn_step.b) AND
-    (Path_sn_full.n = Path_sn_step.n)) IS NULL)
+    (Path_sn_full.a <=> Path_sn_step.a) AND
+    (Path_sn_full.b <=> Path_sn_step.b) AND
+    (Path_sn_full.n <=> Path_sn_step.n)) IS NULL)
 GROUP BY 1, 2, 3;
 
 INSERT INTO synalog_test.Path_sn_full SELECT * FROM synalog_test.Path_sn_new;
@@ -1826,9 +1826,9 @@ WHERE
   FROM
     synalog_test.Path_sn_full AS Path_sn_full
   WHERE
-    (Path_sn_full.a = Path_sn_back_step.a) AND
-    (Path_sn_full.b = Path_sn_back_step.b) AND
-    (Path_sn_full.n = Path_sn_back_step.n)) IS NULL)
+    (Path_sn_full.a <=> Path_sn_back_step.a) AND
+    (Path_sn_full.b <=> Path_sn_back_step.b) AND
+    (Path_sn_full.n <=> Path_sn_back_step.n)) IS NULL)
 GROUP BY 1, 2, 3;
 
 INSERT INTO synalog_test.Path_sn_full SELECT * FROM synalog_test.Path_sn_delta;
@@ -1880,9 +1880,9 @@ WHERE
   FROM
     synalog_test.Path_sn_full AS Path_sn_full
   WHERE
-    (Path_sn_full.a = Path_sn_step.a) AND
-    (Path_sn_full.b = Path_sn_step.b) AND
-    (Path_sn_full.n = Path_sn_step.n)) IS NULL)
+    (Path_sn_full.a <=> Path_sn_step.a) AND
+    (Path_sn_full.b <=> Path_sn_step.b) AND
+    (Path_sn_full.n <=> Path_sn_step.n)) IS NULL)
 GROUP BY 1, 2, 3;
 
 INSERT INTO synalog_test.Path_sn_full SELECT * FROM synalog_test.Path_sn_new;
@@ -1934,9 +1934,9 @@ WHERE
   FROM
     synalog_test.Path_sn_full AS Path_sn_full
   WHERE
-    (Path_sn_full.a = Path_sn_back_step.a) AND
-    (Path_sn_full.b = Path_sn_back_step.b) AND
-    (Path_sn_full.n = Path_sn_back_step.n)) IS NULL)
+    (Path_sn_full.a <=> Path_sn_back_step.a) AND
+    (Path_sn_full.b <=> Path_sn_back_step.b) AND
+    (Path_sn_full.n <=> Path_sn_back_step.n)) IS NULL)
 GROUP BY 1, 2, 3;
 
 INSERT INTO synalog_test.Path_sn_full SELECT * FROM synalog_test.Path_sn_delta;
@@ -1988,9 +1988,9 @@ WHERE
   FROM
     synalog_test.Path_sn_full AS Path_sn_full
   WHERE
-    (Path_sn_full.a = Path_sn_step.a) AND
-    (Path_sn_full.b = Path_sn_step.b) AND
-    (Path_sn_full.n = Path_sn_step.n)) IS NULL)
+    (Path_sn_full.a <=> Path_sn_step.a) AND
+    (Path_sn_full.b <=> Path_sn_step.b) AND
+    (Path_sn_full.n <=> Path_sn_step.n)) IS NULL)
 GROUP BY 1, 2, 3;
 
 INSERT INTO synalog_test.Path_sn_full SELECT * FROM synalog_test.Path_sn_new;
@@ -2042,9 +2042,9 @@ WHERE
   FROM
     synalog_test.Path_sn_full AS Path_sn_full
   WHERE
-    (Path_sn_full.a = Path_sn_back_step.a) AND
-    (Path_sn_full.b = Path_sn_back_step.b) AND
-    (Path_sn_full.n = Path_sn_back_step.n)) IS NULL)
+    (Path_sn_full.a <=> Path_sn_back_step.a) AND
+    (Path_sn_full.b <=> Path_sn_back_step.b) AND
+    (Path_sn_full.n <=> Path_sn_back_step.n)) IS NULL)
 GROUP BY 1, 2, 3;
 
 INSERT INTO synalog_test.Path_sn_full SELECT * FROM synalog_test.Path_sn_delta;

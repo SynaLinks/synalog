@@ -38,6 +38,15 @@ pub struct Annotations {
     pub bare_aggregation: HashMap<String, String>,
     /// Engine sub-keys (motherduck, threads, type_checking).
     pub engine_options: HashMap<String, Json>,
+    /// The program's grounded tables are its session's own (a plan that
+    /// Synalog runs): on PostgreSQL they are temporary tables, which no
+    /// other session sees, and which need no schema to be created.
+    pub session_tables: bool,
+    /// A name unique to the run, which suffixes the tables Synalog names
+    /// itself (a grounded predicate's, a recursion's steps') on an engine
+    /// whose schema every session shares (Trino, Presto, Databricks,
+    /// BigQuery): concurrent runs then compute into tables of their own.
+    pub run_tag: Option<String>,
 }
 
 #[derive(Debug, Clone)]
@@ -383,6 +392,8 @@ impl Annotations {
             compile_as_tvf,
             bare_aggregation,
             engine_options,
+            session_tables: false,
+            run_tag: None,
         })
     }
 
@@ -477,6 +488,7 @@ impl Annotations {
         let home = home_schema();
         let test = test_schema();
         match self.engine.as_str() {
+            "psql" if self.session_tables => "pg_temp".to_string(),
             "psql" | "duckdb" => home.to_string(),
             _ => test.to_string(),
         }
@@ -520,16 +532,24 @@ impl Annotations {
         let home = home_schema();
         match self.engine.as_str() {
             "psql" => {
+                // A plan's tables are temporary, in no schema to create, and
+                // its type is created when the session may: a read-only
+                // session runs every query that writes no table.
+                let (schema, tolerate) = if self.session_tables {
+                    (String::new(), "EXCEPTION WHEN read_only_sql_transaction OR insufficient_privilege THEN NULL; ")
+                } else {
+                    (format!("create schema if not exists {};\n", home), "")
+                };
                 preamble.push_str(&format!(
                     "-- Initializing PostgreSQL environment.\n\
                      set client_min_messages to warning;\n\
-                     create schema if not exists {};\n\
+                     {}\
                      -- Empty synalog type: synalogrecord893574736;\n\
                      DO $$ BEGIN if not exists (select 'I(am) :- I(think)' from pg_type \
                      where typname = 'synalogrecord893574736') then \
                      create type synalogrecord893574736 as (nirvana numeric); \
-                     end if; END $$;\n\n",
-                    home
+                     end if; {}END $$;\n\n",
+                    schema, tolerate
                 ));
             }
             "duckdb" => {
@@ -567,10 +587,25 @@ impl Annotations {
     /// name in the dataset, `_table` added to a name that is an SQL keyword
     /// (`synalog_home.Order` does not parse).
     fn default_table(&self, pred_name: &str) -> String {
-        if crate::compiler::dialects::is_sql_keyword(pred_name) {
-            format!("{}.{}_table", self.dataset(), pred_name)
+        let name = if crate::compiler::dialects::is_sql_keyword(pred_name) {
+            format!("{}_table", pred_name)
         } else {
-            format!("{}.{}", self.dataset(), pred_name)
+            pred_name.to_string()
+        };
+        match self.shared_schema_tag() {
+            Some(tag) => format!("{}.{}_{}", self.dataset(), name, tag),
+            None => format!("{}.{}", self.dataset(), name),
+        }
+    }
+
+    /// The run's tag, when the tables Synalog names itself are in a schema
+    /// other sessions see: SQLite and DuckDB compute into an in-memory
+    /// database of the session's, PostgreSQL into its temporary tables.
+    fn shared_schema_tag(&self) -> Option<&str> {
+        match self.engine.as_str() {
+            "sqlite" | "duckdb" | "psql" => None,
+            _ if self.session_tables => self.run_tag.as_deref(),
+            _ => None,
         }
     }
 
