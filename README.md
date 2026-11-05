@@ -39,6 +39,7 @@ A raw table is just rows; an agent has to re-interpret what they *mean* on every
 - **Dynamic, not static**: the layer evolves as the agent learns. New rules extend the vocabulary at runtime; the rule base itself becomes the agent's long-term memory over structured data.
 - **Auditable reasoning**: every derived fact traces back through named rules, giving full lineage from answer to source tables.
 - **Compile-time verification**: a formal verifier catches structural errors before any SQL touches a database, so a self-authored rule that parses but is unsound is rejected up front. See [Verification](https://synalinks.github.io/synalog/verification/).
+- **Assertions in Lean, checked against the data**: state what a predicate must satisfy (a key, a reference, a bound, a total, transitivity) as a first-order statement written as a [Lean](https://lean-lang.org/) proposition, such as `∀ c r s, Revenue c r → Revenue c s → r = s`. Synalog compiles the search for counterexamples to SQL and runs it on the database: `run` refuses a program whose assertions are violated, and `verify` prints the rows that break them. The rule and its assertion state the same intent in two different notations, so a mistake made in one is unlikely to be repeated in the other. That makes assertions the contract an agent states first and writes its rules against. See [Assertions](#assertions).
 - **A fast Rust engine**: check and compile sit inside the agent's inner loop (every generated rule is validated, every query compiled, often several times per step). The Rust core makes that loop cost milliseconds instead of seconds. See [Benchmark](https://synalinks.github.io/synalog/benchmark/).
 
 Because SQL engines are better optimized than logic programming engines, Synalog compiles into *optimized SQL* that runs on **SQLite**, **DuckDB**, **BigQuery**, **PostgreSQL**, **Presto**, **Trino** and **Databricks**: efficiently scaling to *petabytes of data*. See [Supported engines](https://synalinks.github.io/synalog/engines/).
@@ -100,9 +101,10 @@ Installing the package also installs a `synalog` command (also available as `pyt
 synalog program.l print Predicate      # print compiled SQL
 synalog program.l run Predicate        # execute and print a table
 synalog program.l run Predicate --csv  # execute and print CSV
+synalog program.l verify               # check the @Assert statements against the data
 ```
 
-Both `print` and `run` validate the whole program first and exit 1 with the verifier's errors if it is invalid, so verification always happens before any SQL is produced or executed.
+`print`, `run` and `verify` validate the whole program first and exit 1 with the verifier's errors if it is invalid, so verification always happens before any SQL is produced or executed. `run` also checks the program's [assertions](#assertions) against the database, and exits 1 with a few counterexamples if one is violated; `print` stays offline.
 
 ```
 $ synalog program.l run EngineeringTeam
@@ -237,6 +239,24 @@ errors, warnings = synalog.check(source)
 if errors:
     for e in errors:
         print(e)
+```
+
+### `assertions(source, engine=None, import_root=None) -> list[dict]`
+
+Every `@Assert` of the program and where it stands, in source order: `predicate`, `name`, `statement` and `status` (`pending`, `unchecked` or `unsupported`), among other keys.
+
+```python
+for a in synalog.assertions(source):
+    print(f"{a['predicate']}.{a['name']}: {a['status']}")
+```
+
+### `counterexamples(source, predicate, name, limit=None, offset=None, engine=None, import_root=None) -> str`
+
+Compile the search for an assertion's counterexamples to SQL, to run anywhere. The assertion holds on a database when the query returns no row there.
+
+```python
+sql = synalog.counterexamples(source, "Revenue", "known_customer", limit=5)
+rows = duckdb.sql(sql).fetchall()   # [] when the assertion holds
 ```
 
 All of these functions accept an optional `engine` keyword that overrides the program's `@Engine` annotation (one of `sqlite`, `duckdb`, `bigquery`, `psql`, `presto`, `trino`, `databricks`; default `duckdb`) and an optional `import_root` keyword listing directories where `import` statements look up `.l` files (default: the current directory). They raise `ValueError` on syntax or compilation errors.
@@ -504,6 +524,52 @@ CurrentEmployment(person_id:, company_id:, role:) distinct :-
 
 Node and edge patterns, temporal modeling, point-in-time queries and time-respecting traversals are covered in [Knowledge graphs](https://synalinks.github.io/synalog/knowledge-graphs/).
 
+### Assertions
+
+A rule says how to compute a predicate; an assertion says what the result must satisfy. `@Assert` takes the predicate, then one named property per argument, each a first-order statement written as a [Lean](https://lean-lang.org/) proposition. In a statement, predicates take their arguments by position, as in Lean: applied to all its columns, `Revenue c r` is a relation, true when that row exists; applied to all but the last, `Revenue c` is a function returning the last column.
+
+```synalog
+Order(order_id:, customer_id:, amount:, status:) :- orders(order_id:, customer_id:, amount:, status:);
+Customer(customer_id:, country:) :- customers(customer_id:, country:);
+
+@Assert(Revenue,
+      one_row_per_customer: "∀ c r s, Revenue c r → Revenue c s → r = s",
+      known_customer:       "∀ c r, Revenue c r → ∃ k, Customer c k",
+      positive:             "∀ c, Revenue c > 0");
+@OrderBy(Revenue, "customer_id");
+Revenue(customer_id:, revenue? += amount) distinct :-
+  Order(customer_id:, amount:, status: "delivered");
+```
+
+Synalog compiles each statement into a search for its counterexamples, runs it on the database like any predicate, and reports the rows that break it. Here the data holds an order from customer 12, who is not in `customers`:
+
+```
+$ synalog shop.l verify
+✓ Revenue.one_row_per_customer holds
+✗ Revenue.known_customer is violated: ∀ c r, Revenue c r → ∃ k, Customer c k
+  1 counterexample:
++----+----+
+| c  | r  |
++----+----+
+| 12 | 20 |
++----+----+
+1 row
+✓ Revenue.positive holds
+```
+
+`run` refuses the program until the rule or the assertion is fixed. Every symbol has an ASCII spelling (`forall`, `exists`, `->`, `/\`, `\/`, `not`, `<=`, `!=`), and `∑ x, t` (`sum x, t`) states totals, such as `∑ c, Share c = 1`.
+
+| Property | Statement | Catches |
+|---|---|---|
+| A key | `∀ c r s, Revenue c r → Revenue c s → r = s` | a join that duplicates rows, a missing `distinct` |
+| A reference | `∀ c r, Revenue c r → ∃ k, Customer c k` | orphan rows, a filter applied on one side only |
+| A bound | `∀ c, 0 ≤ Share c ∧ Share c ≤ 1` | a wrong denominator, an integer division |
+| A total | `∑ c, Share c = 1` | rows lost or counted twice |
+| Transitivity | `∀ x y z, Ancestor x y → Ancestor y z → Ancestor x z` | a recursion that stops too early |
+| A period | `∀ p t f u, MemberOf p t f u → f < u` | an interval closed before it opens |
+
+An assertion is a check on the data it runs on, not a proof for all data: one that holds has no counterexample *there*. Run assertions on representative data. The statement language, what can be checked and the statuses are in [Assertions](https://synalinks.github.io/synalog/assertions/).
+
 ### Built-in functions
 
 **String:** `Substr`, `Length`, `Upper`, `Lower`, `Split`, `Join`, `Like`, `Format`
@@ -589,6 +655,10 @@ Synalog applies pagination at compile time via the `limit` and `offset` argument
 ### Compile-time verification
 
 Synalog embeds a formal verifier that catches structural errors before any SQL is generated. This prevents agents from producing programs that parse correctly but fail at execution time, a common failure mode when working with SQL directly.
+
+### Assertions, new in Synalog
+
+Neither Datalog nor Logica has them. `@Assert` states, as a Lean proposition, what a predicate must satisfy, and Synalog checks it against the data by searching for counterexamples. The verifier catches a rule that is malformed; an assertion catches a rule that is well-formed but computes the wrong thing. See [Assertions](#assertions).
 
 ## Building from source
 
