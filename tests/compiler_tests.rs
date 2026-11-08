@@ -216,11 +216,24 @@ fn fixture_source(engine_dir: &std::path::Path, stem: &str) -> PathBuf {
     }
 }
 
+/// Whether `SYNALOG_BLESS` (a comma list of engines, or `all`) names the
+/// engine: its goldens are then written from what synalog compiles, a fixture
+/// DuckDB has a golden of given one where it has none.
+fn blessed(engine: &str) -> bool {
+    std::env::var("SYNALOG_BLESS")
+        .map(|v| v.split(',').any(|e| e.trim() == engine || e.trim() == "all"))
+        .unwrap_or(false)
+}
+
 /// Run compiler tests for a specific engine (duckdb or psql).
 fn run_compiler_feature_tests(engine: &str) {
     let dir = compiler_tests_dir().join(engine);
     let known_fail = known_failures(engine);
+    let bless = blessed(engine);
 
+    if bless {
+        std::fs::create_dir_all(&dir).unwrap();
+    }
     if !dir.exists() {
         panic!("compiler_tests/{}/ directory not found", engine);
     }
@@ -238,14 +251,15 @@ fn run_compiler_feature_tests(engine: &str) {
         let stem = stem.as_str();
 
         let sql_path = dir.join(format!("{}.sql", stem));
-        if !sql_path.exists() {
+        let reference = compiler_tests_dir().join("duckdb").join(format!("{}.sql", stem));
+        if !sql_path.exists() && !(bless && reference.exists()) {
             missing_sql.push(stem.to_string());
             continue;
         }
 
         total += 1;
         let source = std::fs::read_to_string(fixture_source(&dir, stem)).unwrap();
-        let expected_sql = std::fs::read_to_string(&sql_path).unwrap();
+        let expected_sql = std::fs::read_to_string(&sql_path).unwrap_or_default();
 
         // Strip existing engine annotation and add the correct one
         let clean = strip_engine(&source);
@@ -283,7 +297,10 @@ fn run_compiler_feature_tests(engine: &str) {
                 let expected_normalized = normalize_sql_for_comparison(&expected_sql);
                 let got_normalized = normalize_sql_for_comparison(&sql);
 
-                if got_normalized == expected_normalized {
+                if bless && got_normalized != expected_normalized {
+                    std::fs::write(&sql_path, &sql).unwrap();
+                    matched += 1;
+                } else if got_normalized == expected_normalized {
                     matched += 1;
                     if is_known_fail {
                         eprintln!("[{} FIXED] {} - known failure now passes!", engine, stem);
@@ -524,4 +541,14 @@ fn compiler_feature_tests_databricks() {
 #[test]
 fn compiler_fail_tests_databricks() {
     run_compiler_fail_tests("databricks");
+}
+
+#[test]
+fn compiler_feature_tests_clickhouse() {
+    run_compiler_feature_tests("clickhouse");
+}
+
+#[test]
+fn compiler_fail_tests_clickhouse() {
+    run_compiler_fail_tests("clickhouse");
 }

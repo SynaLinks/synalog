@@ -15,6 +15,7 @@ const ALL_ENGINES: &[&str] = &[
     "trino",
     "presto",
     "databricks",
+    "clickhouse",
 ];
 
 /// Helper: compile a program in fact mode and return search SQL for a predicate.
@@ -226,6 +227,7 @@ fn string_type(engine: &str) -> &'static str {
     match engine {
         "trino" | "presto" => "VARCHAR",
         "bigquery" | "databricks" => "STRING",
+        "clickhouse" => "String",
         _ => "TEXT",
     }
 }

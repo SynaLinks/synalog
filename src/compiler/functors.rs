@@ -1794,7 +1794,8 @@ pub fn unfold_recursion(rules: &[Json], engine: &str) -> CompileResult<Vec<Json>
     // recursion three times copied its unrolled steps three times, past
     // Trino's limit of 150 stages (QUERY_HAS_TOO_MANY_STAGES). As a table,
     // a recursion is read like any other.
-    let default_iterative = engine == "presto" || engine == "databricks" || engine == "trino";
+    // ClickHouse inlines CTEs as Trino does.
+    let default_iterative = matches!(engine, "presto" | "databricks" | "trino" | "clickhouse");
     // Upstream's default is 32 steps on DuckDB; 8 everywhere here, so a
     // program means the same on every engine.
     let default_depth: i64 = 8;

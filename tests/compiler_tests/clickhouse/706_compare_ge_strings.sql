@@ -1,0 +1,20 @@
+-- Compiled by SynaLog — logic programming for AI agents (https://github.com/synalinks/synalog).
+-- Copyright 2025-2026 Yoan Sallami (Synalinks Team).
+-- SPDX-License-Identifier: Apache-2.0
+
+-- Initializing ClickHouse environment.
+SET join_use_nulls = 1;
+SET allow_experimental_correlated_subqueries = 1;
+SET aggregate_functions_null_for_empty = 1;
+SET cast_keep_nullable = 1;
+SET transform_null_in = 1;
+
+SELECT
+  x_5 AS a,
+  x_7 AS b
+FROM
+  (SELECT 'singleton' as s) as unused_singleton
+  ARRAY JOIN ['a', 'b'] AS x_5
+  ARRAY JOIN ['a', 'b'] AS x_7
+WHERE
+  (x_5 >= x_7) ORDER BY a, b;

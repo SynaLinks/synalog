@@ -686,6 +686,7 @@ impl RuleStructure {
         let vocabulary = self.vars_vocabulary(dialect);
         let mut ql = ExprTranslator::new(vocabulary, dialect, flag_values);
         ql.subquery_translator = Some(subquery_translator);
+        ql.within_correlated = self.external_vocabulary.as_ref().is_some_and(|v| !v.is_empty());
         // The types of the variables: the outer scope's in a combine, a
         // column has its predicate's, an element its list's.
         ql.variable_types = self.external_types.clone();
@@ -766,7 +767,17 @@ impl RuleStructure {
                 from_parts.push("(SELECT 'singleton' as s) as unused_singleton".to_string());
             }
 
-            let from_str = from_parts.join(", ");
+            // An unnesting that is a clause (`ARRAY JOIN`) follows the tables,
+            // a table of one row when the rule reads none.
+            let from_str = if dialect.unnest_is_clause() && !self.unnestings.is_empty() {
+                let clauses = from_parts.split_off(from_parts.len() - self.unnestings.len());
+                if from_parts.is_empty() {
+                    from_parts.push("(SELECT 'singleton' as s) as unused_singleton".to_string());
+                }
+                format!("{}\n{}", from_parts.join(", "), clauses.join("\n"))
+            } else {
+                from_parts.join(", ")
+            };
             // Indent the from_str (each line gets 2 spaces)
             let indented_from: String = from_str.lines()
                 .map(|l| format!("  {}", l))

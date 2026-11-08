@@ -1,8 +1,8 @@
 # Open-source SQL engines for synalog end-to-end tests.
 #
 # SQLite and DuckDB run in-process (no container needed); this file provides
-# the server-based engines: PostgreSQL, Trino, Presto and Spark (the
-# open-source stand-in for Databricks).
+# the server-based engines: PostgreSQL, Trino, Presto, Spark (the open-source
+# stand-in for Databricks) and ClickHouse.
 #
 # Usage:
 #   docker compose -f tests/e2e/docker-compose.yml up -d --wait
@@ -14,6 +14,7 @@
 #   Trino       ${SYNALOG_E2E_TRINO_PORT:-8080}
 #   Presto      ${SYNALOG_E2E_PRESTO_PORT:-8081}
 #   Spark       ${SYNALOG_E2E_SPARK_PORT:-10000}  (Thrift Server; Databricks stand-in)
+#   ClickHouse  ${SYNALOG_E2E_CLICKHOUSE_PORT:-8123}  (HTTP interface)
 
 services:
   postgres:
@@ -103,3 +104,22 @@ services:
       interval: 5s
       timeout: 10s
       retries: 60
+
+  clickhouse:
+    image: clickhouse/clickhouse-server:26.3
+    environment:
+      CLICKHOUSE_USER: synalog
+      CLICKHOUSE_PASSWORD: synalog
+      CLICKHOUSE_DB: synalog
+      CLICKHOUSE_DEFAULT_ACCESS_MANAGEMENT: "1"
+    ports:
+      - "${SYNALOG_E2E_CLICKHOUSE_PORT:-8123}:8123"
+    ulimits:
+      nofile:
+        soft: 262144
+        hard: 262144
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://localhost:8123/ping | grep -q Ok"]
+      interval: 2s
+      timeout: 5s
+      retries: 30

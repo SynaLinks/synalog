@@ -10,6 +10,14 @@ from synalog itself (verified by the e2e suite against live engines —
 When re-running `generate_expected_sql.py`, do not overwrite the fixtures
 listed here; regenerate their goldens with `synalog.compile` instead.
 
+## ClickHouse
+
+Upstream Logica has no ClickHouse dialect: every golden of `clickhouse/` is
+synalog's own, verified by the e2e suite on a ClickHouse server. Write them
+with `SYNALOG_BLESS=clickhouse cargo test --test compiler_tests`, which
+writes each golden that differs from what synalog compiles, and one for each
+fixture DuckDB has a golden of.
+
 ## Trino and Presto
 
 Upstream emits BigQuery-style constructs that do not exist on Trino/Presto:

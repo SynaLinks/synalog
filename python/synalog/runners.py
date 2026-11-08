@@ -10,7 +10,7 @@ jsonl/parquet files — is replayed on every connection before the script runs.
 
 Local, in-memory engines (``sqlite``, ``duckdb``) build the connection from
 ``loads``; remote engines (``psql``, ``trino``, ``presto``, ``databricks``,
-``bigquery``) connect over the network with the fields of the project's
+``bigquery``, ``clickhouse``) connect over the network with the fields of the project's
 ``[connection]`` (``synalog.project.resolve``: ``layer.toml``, its secrets
 from the environment). Remote engines cannot ingest local ``loads`` files —
 load those with your own tools.
@@ -606,6 +606,53 @@ def _databricks_session(connection: Mapping | None, loads) -> Session:
     return DbapiSession("databricks", conn)
 
 
+class ClickHouseSession(Session):
+    """ClickHouse over its HTTP interface (clickhouse-connect), in one server
+    session: the settings a script's preamble sets hold for its later
+    statements."""
+
+    engine = "clickhouse"
+
+    def __init__(self, connection: Mapping | None, loads=()):
+        _reject_loads(loads, "clickhouse")
+        c = _require_connection("clickhouse", connection)
+        try:
+            import clickhouse_connect
+        except ImportError:
+            raise RunnerUnavailable(
+                "The clickhouse engine needs the 'clickhouse-connect' package:"
+                " pip install clickhouse-connect"
+            ) from None
+        import uuid
+
+        secure = c.get("scheme", "http") == "https"
+        self.client = clickhouse_connect.get_client(
+            host=c["host"],
+            port=int(c.get("port", 8443 if secure else 8123)),
+            username=c.get("user", "default"),
+            password=c.get("password", ""),
+            database=c.get("database") or "default",
+            secure=secure,
+            session_id=f"synalog-{uuid.uuid4()}",
+        )
+
+    def execute(self, statement: str) -> Result | None:
+        if not _returns_rows(statement):
+            self.client.command(statement)
+            return None
+        result = self.client.query(statement)
+        return list(result.column_names), [tuple(row) for row in result.result_rows]
+
+    def close(self) -> None:
+        self.client.close()
+
+
+def _returns_rows(statement: str) -> bool:
+    """Whether a statement is a query: its first word, past comments."""
+    body = "\n".join(line for line in statement.splitlines() if not line.lstrip().startswith("--")).lstrip()
+    return body[:8].upper().startswith(("SELECT", "WITH", "VALUES", "SHOW", "DESC", "EXPLAIN", "("))
+
+
 class BigQuerySession(Session):
     """BigQuery through its client, which runs a multi-statement script as one
     job: the tables a script creates live in the dataset, so the steps of a
@@ -667,6 +714,8 @@ def session(engine: str, connection: Mapping | None = None, loads=()) -> Session
         return _databricks_session(connection, loads)
     if engine == "bigquery":
         return BigQuerySession(connection, loads)
+    if engine == "clickhouse":
+        return ClickHouseSession(connection, loads)
     raise RunnerUnavailable(
         f"Engine '{engine}' has no local runner. Use the 'print' command to get"
         " the SQL and run it with your own client."
@@ -759,6 +808,7 @@ _LIST_TABLES = {
     "presto": ("SHOW TABLES FROM {schema}", 0),
     "databricks": ("SHOW TABLES IN {schema}", 1),
     "bigquery": ("SELECT table_name FROM {schema}.INFORMATION_SCHEMA.TABLES", 0),
+    "clickhouse": ("SHOW TABLES FROM {schema}", 0),
 }
 
 

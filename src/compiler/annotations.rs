@@ -577,6 +577,28 @@ impl Annotations {
                     }
                 }
             }
+            "clickhouse" => {
+                // An outer join's missing side is null, as on every engine
+                // (ClickHouse fills in each type's default otherwise), a
+                // subquery may read the outer query's row (negation, combine),
+                // an aggregate of no rows is null (SUM's is 0 otherwise), a
+                // cast of a null is null (an error, or 0, otherwise), and a
+                // null is a member of a set holding one (negation, compiled
+                // as membership: `Dialect::negation_by_membership`).
+                preamble.push_str(
+                    "-- Initializing ClickHouse environment.\n\
+                     SET join_use_nulls = 1;\n\
+                     SET allow_experimental_correlated_subqueries = 1;\n\
+                     SET aggregate_functions_null_for_empty = 1;\n\
+                     SET cast_keep_nullable = 1;\n\
+                     SET transform_null_in = 1;\n",
+                );
+                // The database of the tables the program computes.
+                if !self.grounded_predicates().is_empty() && self.dataset_override.is_none() {
+                    preamble.push_str(&format!("CREATE DATABASE IF NOT EXISTS {};\n", test_schema()));
+                }
+                preamble.push('\n');
+            }
             _ => {}
         }
         preamble

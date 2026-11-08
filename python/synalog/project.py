@@ -112,6 +112,14 @@ ENGINES: dict[str, Engine] = {
         Field("catalog", required=True, default="main"),
         Field("schema"),
     )),
+    "clickhouse": Engine("ClickHouse", (
+        Field("host", required=True),
+        Field("port", "number", required=True, default=8123),
+        _HTTP,
+        Field("database", default="default"),
+        Field("user", required=True, default="default"),
+        Field("password", "password", secret=True),
+    )),
     "bigquery": Engine("BigQuery", (
         Field("project", required=True),
         Field("dataset", required=True),

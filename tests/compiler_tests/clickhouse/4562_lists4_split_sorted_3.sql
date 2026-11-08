@@ -1,0 +1,50 @@
+-- Compiled by SynaLog — logic programming for AI agents (https://github.com/synalinks/synalog).
+-- Copyright 2025-2026 Yoan Sallami (Synalinks Team).
+-- SPDX-License-Identifier: Apache-2.0
+
+-- Initializing ClickHouse environment.
+SET join_use_nulls = 1;
+SET allow_experimental_correlated_subqueries = 1;
+SET aggregate_functions_null_for_empty = 1;
+SET cast_keep_nullable = 1;
+SET transform_null_in = 1;
+
+WITH t_2_T AS (SELECT * FROM (
+  
+    SELECT
+      1 AS k,
+      'a,b,c' AS s
+   UNION ALL
+  
+    SELECT
+      2 AS k,
+      '' AS s
+   UNION ALL
+  
+    SELECT
+      3 AS k,
+      'abc' AS s
+   UNION ALL
+  
+    SELECT
+      4 AS k,
+      ',,' AS s
+   UNION ALL
+  
+    SELECT
+      5 AS k,
+      'x,' AS s
+   UNION ALL
+  
+    SELECT
+      6 AS k,
+      null AS s
+  
+) AS UNUSED_TABLE_NAME  )
+SELECT
+  arrayMap(t -> t.2, arraySort(t -> t.1, groupArray(tuple(x_4, x_4)))) AS a
+FROM
+  t_2_T AS T
+  ARRAY JOIN splitByString(',', ifNull(T.s, '')) AS x_4
+WHERE
+  (T.k = 3);

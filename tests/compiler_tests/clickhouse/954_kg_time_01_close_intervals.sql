@@ -1,0 +1,217 @@
+-- Compiled by SynaLog — logic programming for AI agents (https://github.com/synalinks/synalog).
+-- Copyright 2025-2026 Yoan Sallami (Synalinks Team).
+-- SPDX-License-Identifier: Apache-2.0
+
+-- Initializing ClickHouse environment.
+SET join_use_nulls = 1;
+SET allow_experimental_correlated_subqueries = 1;
+SET aggregate_functions_null_for_empty = 1;
+SET cast_keep_nullable = 1;
+SET transform_null_in = 1;
+CREATE DATABASE IF NOT EXISTS synalog_test;
+
+DROP TABLE IF EXISTS synalog_test.Person;
+CREATE TABLE synalog_test.Person ENGINE = Memory AS WITH t_0_Employees AS (SELECT * FROM (
+  
+    SELECT
+      1 AS person_id,
+      'ann' AS name,
+      'eng' AS dept,
+      10 AS team_id,
+      'active' AS status,
+      'https://x/ann' AS url
+   UNION ALL
+  
+    SELECT
+      2 AS person_id,
+      'bob' AS name,
+      'eng' AS dept,
+      10 AS team_id,
+      'active' AS status,
+      'https://x/bob' AS url
+   UNION ALL
+  
+    SELECT
+      3 AS person_id,
+      'cid' AS name,
+      'ops' AS dept,
+      20 AS team_id,
+      'inactive' AS status,
+      'https://x/cid' AS url
+   UNION ALL
+  
+    SELECT
+      4 AS person_id,
+      'dan' AS name,
+      'ops' AS dept,
+      20 AS team_id,
+      'active' AS status,
+      'https://x/dan' AS url
+   UNION ALL
+  
+    SELECT
+      5 AS person_id,
+      'eve' AS name,
+      'eng' AS dept,
+      30 AS team_id,
+      'active' AS status,
+      'https://x/eve' AS url
+  
+) AS UNUSED_TABLE_NAME  )
+SELECT
+  Employees.person_id AS person_id,
+  Employees.name AS name,
+  Employees.url AS url
+FROM
+  t_0_Employees AS Employees
+GROUP BY 1, 2, 3 ORDER BY person_id;
+
+-- Interacting with table synalog_test.Person
+
+DROP TABLE IF EXISTS synalog_test.Team;
+CREATE TABLE synalog_test.Team ENGINE = Memory AS WITH t_0_Teams AS (SELECT * FROM (
+  
+    SELECT
+      10 AS team_id,
+      'core' AS team
+   UNION ALL
+  
+    SELECT
+      20 AS team_id,
+      'infra' AS team
+   UNION ALL
+  
+    SELECT
+      30 AS team_id,
+      'data' AS team
+  
+) AS UNUSED_TABLE_NAME  )
+SELECT
+  Teams.team_id AS team_id,
+  Teams.team AS team
+FROM
+  t_0_Teams AS Teams
+GROUP BY 1, 2 ORDER BY team_id;
+
+-- Interacting with table synalog_test.Team
+
+DROP TABLE IF EXISTS synalog_test.NextChange;
+CREATE TABLE synalog_test.NextChange ENGINE = Memory AS WITH t_2_Events AS (SELECT * FROM (
+  
+    SELECT
+      1 AS person_id,
+      10 AS team_id,
+      '2022-01-01' AS changed_at
+   UNION ALL
+  
+    SELECT
+      1 AS person_id,
+      30 AS team_id,
+      '2023-06-01' AS changed_at
+   UNION ALL
+  
+    SELECT
+      2 AS person_id,
+      10 AS team_id,
+      '2021-03-01' AS changed_at
+   UNION ALL
+  
+    SELECT
+      4 AS person_id,
+      20 AS team_id,
+      '2020-01-01' AS changed_at
+   UNION ALL
+  
+    SELECT
+      4 AS person_id,
+      10 AS team_id,
+      '2024-02-01' AS changed_at
+  
+) AS UNUSED_TABLE_NAME  )
+SELECT
+  Events.person_id AS person_id,
+  Events.changed_at AS changed_at,
+  MIN(t_0_Events.changed_at) AS next
+FROM
+  t_2_Events AS Events, t_2_Events AS t_0_Events
+WHERE
+  (t_0_Events.changed_at > Events.changed_at) AND
+  (t_0_Events.person_id = Events.person_id)
+GROUP BY 1, 2;
+
+-- Interacting with table synalog_test.NextChange
+
+WITH t_2_Events AS (SELECT * FROM (
+  
+    SELECT
+      1 AS person_id,
+      10 AS team_id,
+      '2022-01-01' AS changed_at
+   UNION ALL
+  
+    SELECT
+      1 AS person_id,
+      30 AS team_id,
+      '2023-06-01' AS changed_at
+   UNION ALL
+  
+    SELECT
+      2 AS person_id,
+      10 AS team_id,
+      '2021-03-01' AS changed_at
+   UNION ALL
+  
+    SELECT
+      4 AS person_id,
+      20 AS team_id,
+      '2020-01-01' AS changed_at
+   UNION ALL
+  
+    SELECT
+      4 AS person_id,
+      10 AS team_id,
+      '2024-02-01' AS changed_at
+  
+) AS UNUSED_TABLE_NAME  ),
+t_0_Member_MultBodyAggAux AS (SELECT * FROM (
+  
+    SELECT
+      Person.person_id AS person_id,
+      t_1_Team.team_id AS team_id,
+      Events.changed_at AS valid_from,
+      NextChange.next AS valid_to
+    FROM
+      synalog_test.Person AS Person, synalog_test.Team AS t_1_Team, t_2_Events AS Events, synalog_test.NextChange AS NextChange
+    WHERE
+      (Events.person_id = Person.person_id) AND
+      (Events.team_id = t_1_Team.team_id) AND
+      (NextChange.person_id = Person.person_id) AND
+      (NextChange.changed_at = Events.changed_at)
+   UNION ALL
+  
+    SELECT
+      t_3_Person.person_id AS person_id,
+      t_4_Team.team_id AS team_id,
+      t_5_Events.changed_at AS valid_from,
+      '9999-12-31' AS valid_to
+    FROM
+      synalog_test.Person AS t_3_Person, synalog_test.Team AS t_4_Team, t_2_Events AS t_5_Events
+    WHERE
+      NOT (t_3_Person.person_id IS NOT NULL AND t_5_Events.changed_at IS NOT NULL AND (CAST(t_3_Person.person_id AS Nullable(String)), CAST(t_5_Events.changed_at AS Nullable(String))) IN (SELECT CAST(synalog_k0 AS Nullable(String)), CAST(synalog_k1 AS Nullable(String)) FROM (SELECT
+        t_6_NextChange.person_id AS synalog_k0,
+        t_6_NextChange.changed_at AS synalog_k1
+      FROM
+        synalog_test.NextChange AS t_6_NextChange
+      GROUP BY 1, 2) AS synalog_m)) AND
+      (t_5_Events.person_id = t_3_Person.person_id) AND
+      (t_5_Events.team_id = t_4_Team.team_id)
+  
+) AS UNUSED_TABLE_NAME  )
+SELECT
+  Member_MultBodyAggAux.person_id AS person_id,
+  Member_MultBodyAggAux.team_id AS team_id,
+  Member_MultBodyAggAux.valid_from AS valid_from,
+  Member_MultBodyAggAux.valid_to AS valid_to
+FROM
+  t_0_Member_MultBodyAggAux AS Member_MultBodyAggAux
+GROUP BY 1, 2, 3, 4 ORDER BY person_id, valid_from;

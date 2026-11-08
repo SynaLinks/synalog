@@ -5,7 +5,7 @@ Python API and executes the SQL against a real engine.
 
 Engine availability:
   - sqlite / duckdb run in-process and are always tested.
-  - psql / trino / presto need live servers (see docker-compose.yml here);
+  - psql / trino / presto / databricks / clickhouse need live servers (see docker-compose.yml here);
     their tests are skipped when the server is unreachable, unless
     SYNALOG_E2E_REQUIRE=psql,trino,presto is set (then unreachable = failure,
     used in CI so missing services can't silently skip).
@@ -29,6 +29,7 @@ import pytest
 
 sys.path.insert(0, str(Path(__file__).parent))
 from runners import make_runner
+from known_failures import KNOWN_FAILURES, test_key
 
 E2E_DIR = Path(__file__).parent
 FIXTURES_DIR = E2E_DIR.parent / "compiler_tests"
@@ -37,7 +38,7 @@ FIXTURES_DIR = E2E_DIR.parent / "compiler_tests"
 # Apache Spark Thrift Server as an open-source stand-in (the dialect targets
 # Spark SQL; see SparkRunner). bigquery stays compile-only — no comparable
 # open-source server.
-ENGINES = ["sqlite", "duckdb", "psql", "trino", "presto", "databricks"]
+ENGINES = ["sqlite", "duckdb", "psql", "trino", "presto", "databricks", "clickhouse"]
 
 # Fixtures that cannot be compiled through the Python API (none: imports
 # resolve through `import_root`, see plan_fixture).
@@ -251,6 +252,11 @@ def pytest_collection_modifyitems(config, items):
         engine = item_engine(item)
         if engine:
             item.add_marker(pytest.mark.xdist_group(engine))
+            # A test known to fail on the engine (known_failures.py) must
+            # fail: one that passes is reported, and leaves the list.
+            reason = KNOWN_FAILURES.get(engine, {}).get(test_key(item.name))
+            if reason:
+                item.add_marker(pytest.mark.xfail(reason=reason, strict=True))
 
 
 def pytest_runtest_logreport(report):

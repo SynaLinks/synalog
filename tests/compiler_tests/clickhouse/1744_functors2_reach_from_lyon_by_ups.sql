@@ -1,0 +1,611 @@
+-- Compiled by SynaLog — logic programming for AI agents (https://github.com/synalinks/synalog).
+-- Copyright 2025-2026 Yoan Sallami (Synalinks Team).
+-- SPDX-License-Identifier: Apache-2.0
+
+-- Initializing ClickHouse environment.
+SET join_use_nulls = 1;
+SET allow_experimental_correlated_subqueries = 1;
+SET aggregate_functions_null_for_empty = 1;
+SET cast_keep_nullable = 1;
+SET transform_null_in = 1;
+CREATE DATABASE IF NOT EXISTS synalog_test;
+
+DROP TABLE IF EXISTS synalog_test.Route;
+CREATE TABLE synalog_test.Route ENGINE = Memory AS WITH t_0_Ship AS (SELECT * FROM (
+  
+    SELECT
+      1 AS id,
+      'acme' AS client,
+      'paris' AS src,
+      'lyon' AS dst,
+      12 AS kg,
+      'dhl' AS carrier
+   UNION ALL
+  
+    SELECT
+      2 AS id,
+      'acme' AS client,
+      'lyon' AS src,
+      'nice' AS dst,
+      5 AS kg,
+      'ups' AS carrier
+   UNION ALL
+  
+    SELECT
+      3 AS id,
+      'bolt' AS client,
+      'paris' AS src,
+      'nice' AS dst,
+      30 AS kg,
+      'dhl' AS carrier
+   UNION ALL
+  
+    SELECT
+      4 AS id,
+      'bolt' AS client,
+      'nice' AS src,
+      'rome' AS dst,
+      8 AS kg,
+      'fedex' AS carrier
+   UNION ALL
+  
+    SELECT
+      5 AS id,
+      'cora' AS client,
+      'rome' AS src,
+      'milan' AS dst,
+      14 AS kg,
+      'ups' AS carrier
+   UNION ALL
+  
+    SELECT
+      6 AS id,
+      'cora' AS client,
+      'milan' AS src,
+      'paris' AS dst,
+      3 AS kg,
+      'dhl' AS carrier
+   UNION ALL
+  
+    SELECT
+      7 AS id,
+      'acme' AS client,
+      'paris' AS src,
+      'rome' AS dst,
+      22 AS kg,
+      'fedex' AS carrier
+   UNION ALL
+  
+    SELECT
+      8 AS id,
+      'dune' AS client,
+      'lyon' AS src,
+      'paris' AS dst,
+      9 AS kg,
+      'ups' AS carrier
+   UNION ALL
+  
+    SELECT
+      9 AS id,
+      'dune' AS client,
+      'nice' AS src,
+      'lyon' AS dst,
+      11 AS kg,
+      'dhl' AS carrier
+  
+) AS UNUSED_TABLE_NAME  )
+SELECT
+  Ship.src AS a,
+  Ship.dst AS b
+FROM
+  t_0_Ship AS Ship
+WHERE
+  (Ship.carrier = 'ups');
+
+-- Interacting with table synalog_test.Route
+
+DROP TABLE IF EXISTS synalog_test.Reach_sn_delta_f9;
+CREATE TABLE synalog_test.Reach_sn_delta_f9 ENGINE = Memory AS WITH t_0_Reach_MultBodyAggAux_f2_f9 AS (SELECT * FROM (
+  
+    SELECT
+      Route.a AS a,
+      Route.b AS b
+    FROM
+      synalog_test.Route AS Route
+  
+) AS UNUSED_TABLE_NAME  )
+SELECT
+  Reach_MultBodyAggAux_f2_f9.a AS a,
+  Reach_MultBodyAggAux_f2_f9.b AS b
+FROM
+  t_0_Reach_MultBodyAggAux_f2_f9 AS Reach_MultBodyAggAux_f2_f9
+GROUP BY 1, 2;
+
+-- Interacting with table synalog_test.Reach_sn_delta_f9
+
+DROP TABLE IF EXISTS synalog_test.Reach_sn_t0_f9;
+CREATE TABLE synalog_test.Reach_sn_t0_f9 ENGINE = Memory AS SELECT
+  Reach_sn_delta_f9.a AS a,
+  Reach_sn_delta_f9.b AS b
+FROM
+  synalog_test.Reach_sn_delta_f9 AS Reach_sn_delta_f9
+WHERE
+  (1 = 0);
+
+-- Interacting with table synalog_test.Reach_sn_t0_f9
+
+DROP TABLE IF EXISTS synalog_test.Reach_sn_t1_f9;
+CREATE TABLE synalog_test.Reach_sn_t1_f9 ENGINE = Memory AS WITH t_1_Reach_MultBodyAggAux_f3_f9 AS (SELECT * FROM (
+  
+    SELECT
+      Route.a AS a,
+      Route.b AS b
+    FROM
+      synalog_test.Route AS Route
+   UNION ALL
+  
+    SELECT
+      Reach_sn_t0_f9.a AS a,
+      t_2_Route.b AS b
+    FROM
+      synalog_test.Reach_sn_t0_f9 AS Reach_sn_t0_f9, synalog_test.Route AS t_2_Route
+    WHERE
+      (t_2_Route.a = Reach_sn_t0_f9.b)
+  
+) AS UNUSED_TABLE_NAME  ),
+t_0_Reach_sn_r1_f9 AS (SELECT
+  Reach_MultBodyAggAux_f3_f9.a AS a,
+  Reach_MultBodyAggAux_f3_f9.b AS b
+FROM
+  t_1_Reach_MultBodyAggAux_f3_f9 AS Reach_MultBodyAggAux_f3_f9
+GROUP BY 1, 2)
+SELECT
+  Reach_sn_r1_f9.a AS a,
+  Reach_sn_r1_f9.b AS b
+FROM
+  t_0_Reach_sn_r1_f9 AS Reach_sn_r1_f9
+WHERE
+  (1 = 0);
+
+-- Interacting with table synalog_test.Reach_sn_t1_f9
+
+DROP TABLE IF EXISTS synalog_test.Reach_sn_t2_f9;
+CREATE TABLE synalog_test.Reach_sn_t2_f9 ENGINE = Memory AS WITH t_1_Reach_MultBodyAggAux_f4_f9 AS (SELECT * FROM (
+  
+    SELECT
+      Route.a AS a,
+      Route.b AS b
+    FROM
+      synalog_test.Route AS Route
+   UNION ALL
+  
+    SELECT
+      Reach_sn_t1_f9.a AS a,
+      t_2_Route.b AS b
+    FROM
+      synalog_test.Reach_sn_t1_f9 AS Reach_sn_t1_f9, synalog_test.Route AS t_2_Route
+    WHERE
+      (t_2_Route.a = Reach_sn_t1_f9.b)
+  
+) AS UNUSED_TABLE_NAME  ),
+t_0_Reach_sn_r2_f9 AS (SELECT
+  Reach_MultBodyAggAux_f4_f9.a AS a,
+  Reach_MultBodyAggAux_f4_f9.b AS b
+FROM
+  t_1_Reach_MultBodyAggAux_f4_f9 AS Reach_MultBodyAggAux_f4_f9
+GROUP BY 1, 2)
+SELECT
+  Reach_sn_r2_f9.a AS a,
+  Reach_sn_r2_f9.b AS b
+FROM
+  t_0_Reach_sn_r2_f9 AS Reach_sn_r2_f9
+WHERE
+  (1 = 0);
+
+-- Interacting with table synalog_test.Reach_sn_t2_f9
+
+DROP TABLE IF EXISTS synalog_test.Reach_sn_t3_f9;
+CREATE TABLE synalog_test.Reach_sn_t3_f9 ENGINE = Memory AS WITH t_1_Reach_MultBodyAggAux_f5_f9 AS (SELECT * FROM (
+  
+    SELECT
+      Route.a AS a,
+      Route.b AS b
+    FROM
+      synalog_test.Route AS Route
+   UNION ALL
+  
+    SELECT
+      Reach_sn_t2_f9.a AS a,
+      t_2_Route.b AS b
+    FROM
+      synalog_test.Reach_sn_t2_f9 AS Reach_sn_t2_f9, synalog_test.Route AS t_2_Route
+    WHERE
+      (t_2_Route.a = Reach_sn_t2_f9.b)
+  
+) AS UNUSED_TABLE_NAME  ),
+t_0_Reach_sn_r3_f9 AS (SELECT
+  Reach_MultBodyAggAux_f5_f9.a AS a,
+  Reach_MultBodyAggAux_f5_f9.b AS b
+FROM
+  t_1_Reach_MultBodyAggAux_f5_f9 AS Reach_MultBodyAggAux_f5_f9
+GROUP BY 1, 2)
+SELECT
+  Reach_sn_r3_f9.a AS a,
+  Reach_sn_r3_f9.b AS b
+FROM
+  t_0_Reach_sn_r3_f9 AS Reach_sn_r3_f9
+WHERE
+  (1 = 0);
+
+-- Interacting with table synalog_test.Reach_sn_t3_f9
+
+DROP TABLE IF EXISTS synalog_test.Reach_sn_t4_f9;
+CREATE TABLE synalog_test.Reach_sn_t4_f9 ENGINE = Memory AS WITH t_1_Reach_MultBodyAggAux_f6_f9 AS (SELECT * FROM (
+  
+    SELECT
+      Route.a AS a,
+      Route.b AS b
+    FROM
+      synalog_test.Route AS Route
+   UNION ALL
+  
+    SELECT
+      Reach_sn_t3_f9.a AS a,
+      t_2_Route.b AS b
+    FROM
+      synalog_test.Reach_sn_t3_f9 AS Reach_sn_t3_f9, synalog_test.Route AS t_2_Route
+    WHERE
+      (t_2_Route.a = Reach_sn_t3_f9.b)
+  
+) AS UNUSED_TABLE_NAME  ),
+t_0_Reach_sn_r4_f9 AS (SELECT
+  Reach_MultBodyAggAux_f6_f9.a AS a,
+  Reach_MultBodyAggAux_f6_f9.b AS b
+FROM
+  t_1_Reach_MultBodyAggAux_f6_f9 AS Reach_MultBodyAggAux_f6_f9
+GROUP BY 1, 2)
+SELECT
+  Reach_sn_r4_f9.a AS a,
+  Reach_sn_r4_f9.b AS b
+FROM
+  t_0_Reach_sn_r4_f9 AS Reach_sn_r4_f9
+WHERE
+  (1 = 0);
+
+-- Interacting with table synalog_test.Reach_sn_t4_f9
+
+DROP TABLE IF EXISTS synalog_test.Reach_sn_t5_f9;
+CREATE TABLE synalog_test.Reach_sn_t5_f9 ENGINE = Memory AS WITH t_1_Reach_MultBodyAggAux_f7_f9 AS (SELECT * FROM (
+  
+    SELECT
+      Route.a AS a,
+      Route.b AS b
+    FROM
+      synalog_test.Route AS Route
+   UNION ALL
+  
+    SELECT
+      Reach_sn_t4_f9.a AS a,
+      t_2_Route.b AS b
+    FROM
+      synalog_test.Reach_sn_t4_f9 AS Reach_sn_t4_f9, synalog_test.Route AS t_2_Route
+    WHERE
+      (t_2_Route.a = Reach_sn_t4_f9.b)
+  
+) AS UNUSED_TABLE_NAME  ),
+t_0_Reach_sn_r5_f9 AS (SELECT
+  Reach_MultBodyAggAux_f7_f9.a AS a,
+  Reach_MultBodyAggAux_f7_f9.b AS b
+FROM
+  t_1_Reach_MultBodyAggAux_f7_f9 AS Reach_MultBodyAggAux_f7_f9
+GROUP BY 1, 2)
+SELECT
+  Reach_sn_r5_f9.a AS a,
+  Reach_sn_r5_f9.b AS b
+FROM
+  t_0_Reach_sn_r5_f9 AS Reach_sn_r5_f9
+WHERE
+  (1 = 0);
+
+-- Interacting with table synalog_test.Reach_sn_t5_f9
+
+DROP TABLE IF EXISTS synalog_test.Reach_sn_full_f9;
+CREATE TABLE synalog_test.Reach_sn_full_f9 ENGINE = Memory AS SELECT * FROM (
+  
+    SELECT
+      Reach_sn_delta_f9.a AS a,
+      Reach_sn_delta_f9.b AS b
+    FROM
+      synalog_test.Reach_sn_delta_f9 AS Reach_sn_delta_f9
+   UNION ALL
+  
+    SELECT
+      Reach_sn_t1_f9.a AS a,
+      Reach_sn_t1_f9.b AS b
+    FROM
+      synalog_test.Reach_sn_t1_f9 AS Reach_sn_t1_f9
+   UNION ALL
+  
+    SELECT
+      Reach_sn_t2_f9.a AS a,
+      Reach_sn_t2_f9.b AS b
+    FROM
+      synalog_test.Reach_sn_t2_f9 AS Reach_sn_t2_f9
+   UNION ALL
+  
+    SELECT
+      Reach_sn_t3_f9.a AS a,
+      Reach_sn_t3_f9.b AS b
+    FROM
+      synalog_test.Reach_sn_t3_f9 AS Reach_sn_t3_f9
+   UNION ALL
+  
+    SELECT
+      Reach_sn_t4_f9.a AS a,
+      Reach_sn_t4_f9.b AS b
+    FROM
+      synalog_test.Reach_sn_t4_f9 AS Reach_sn_t4_f9
+   UNION ALL
+  
+    SELECT
+      Reach_sn_t5_f9.a AS a,
+      Reach_sn_t5_f9.b AS b
+    FROM
+      synalog_test.Reach_sn_t5_f9 AS Reach_sn_t5_f9
+  
+) AS UNUSED_TABLE_NAME  ;
+
+-- Interacting with table synalog_test.Reach_sn_full_f9
+
+DROP TABLE IF EXISTS synalog_test.Reach_sn_new_f9;
+CREATE TABLE synalog_test.Reach_sn_new_f9 ENGINE = Memory AS WITH t_1_Reach_MultBodyAggAux_f8_f9 AS (SELECT * FROM (
+  
+    SELECT
+      Route.a AS a,
+      Route.b AS b
+    FROM
+      synalog_test.Route AS Route
+   UNION ALL
+  
+    SELECT
+      Reach_sn_delta_f9.a AS a,
+      t_2_Route.b AS b
+    FROM
+      synalog_test.Reach_sn_delta_f9 AS Reach_sn_delta_f9, synalog_test.Route AS t_2_Route
+    WHERE
+      (t_2_Route.a = Reach_sn_delta_f9.b)
+  
+) AS UNUSED_TABLE_NAME  ),
+t_0_Reach_sn_step_f9 AS (SELECT
+  Reach_MultBodyAggAux_f8_f9.a AS a,
+  Reach_MultBodyAggAux_f8_f9.b AS b
+FROM
+  t_1_Reach_MultBodyAggAux_f8_f9 AS Reach_MultBodyAggAux_f8_f9
+GROUP BY 1, 2)
+SELECT
+  Reach_sn_step_f9.a AS a,
+  Reach_sn_step_f9.b AS b
+FROM
+  t_0_Reach_sn_step_f9 AS Reach_sn_step_f9
+WHERE
+  NOT ((CAST(Reach_sn_step_f9.a AS Nullable(String)), CAST(Reach_sn_step_f9.b AS Nullable(String))) IN (SELECT CAST(synalog_k0 AS Nullable(String)), CAST(synalog_k1 AS Nullable(String)) FROM (SELECT
+    Reach_sn_full_f9.a AS synalog_k0,
+    Reach_sn_full_f9.b AS synalog_k1
+  FROM
+    synalog_test.Reach_sn_full_f9 AS Reach_sn_full_f9
+  GROUP BY 1, 2) AS synalog_m))
+GROUP BY 1, 2;
+
+INSERT INTO synalog_test.Reach_sn_full_f9 SELECT * FROM synalog_test.Reach_sn_new_f9;
+
+DROP TABLE IF EXISTS synalog_test.Reach_sn_delta_f9;
+CREATE TABLE synalog_test.Reach_sn_delta_f9 ENGINE = Memory AS WITH t_1_Reach_MultBodyAggAux_f1_f9 AS (SELECT * FROM (
+  
+    SELECT
+      Route.a AS a,
+      Route.b AS b
+    FROM
+      synalog_test.Route AS Route
+   UNION ALL
+  
+    SELECT
+      Reach_sn_new_f9.a AS a,
+      t_2_Route.b AS b
+    FROM
+      synalog_test.Reach_sn_new_f9 AS Reach_sn_new_f9, synalog_test.Route AS t_2_Route
+    WHERE
+      (t_2_Route.a = Reach_sn_new_f9.b)
+  
+) AS UNUSED_TABLE_NAME  ),
+t_0_Reach_sn_back_step_f9 AS (SELECT
+  Reach_MultBodyAggAux_f1_f9.a AS a,
+  Reach_MultBodyAggAux_f1_f9.b AS b
+FROM
+  t_1_Reach_MultBodyAggAux_f1_f9 AS Reach_MultBodyAggAux_f1_f9
+GROUP BY 1, 2)
+SELECT
+  Reach_sn_back_step_f9.a AS a,
+  Reach_sn_back_step_f9.b AS b
+FROM
+  t_0_Reach_sn_back_step_f9 AS Reach_sn_back_step_f9
+WHERE
+  NOT ((CAST(Reach_sn_back_step_f9.a AS Nullable(String)), CAST(Reach_sn_back_step_f9.b AS Nullable(String))) IN (SELECT CAST(synalog_k0 AS Nullable(String)), CAST(synalog_k1 AS Nullable(String)) FROM (SELECT
+    Reach_sn_full_f9.a AS synalog_k0,
+    Reach_sn_full_f9.b AS synalog_k1
+  FROM
+    synalog_test.Reach_sn_full_f9 AS Reach_sn_full_f9
+  GROUP BY 1, 2) AS synalog_m))
+GROUP BY 1, 2;
+
+INSERT INTO synalog_test.Reach_sn_full_f9 SELECT * FROM synalog_test.Reach_sn_delta_f9;
+
+DROP TABLE IF EXISTS synalog_test.Reach_sn_new_f9;
+CREATE TABLE synalog_test.Reach_sn_new_f9 ENGINE = Memory AS WITH t_1_Reach_MultBodyAggAux_f8_f9 AS (SELECT * FROM (
+  
+    SELECT
+      Route.a AS a,
+      Route.b AS b
+    FROM
+      synalog_test.Route AS Route
+   UNION ALL
+  
+    SELECT
+      Reach_sn_delta_f9.a AS a,
+      t_2_Route.b AS b
+    FROM
+      synalog_test.Reach_sn_delta_f9 AS Reach_sn_delta_f9, synalog_test.Route AS t_2_Route
+    WHERE
+      (t_2_Route.a = Reach_sn_delta_f9.b)
+  
+) AS UNUSED_TABLE_NAME  ),
+t_0_Reach_sn_step_f9 AS (SELECT
+  Reach_MultBodyAggAux_f8_f9.a AS a,
+  Reach_MultBodyAggAux_f8_f9.b AS b
+FROM
+  t_1_Reach_MultBodyAggAux_f8_f9 AS Reach_MultBodyAggAux_f8_f9
+GROUP BY 1, 2)
+SELECT
+  Reach_sn_step_f9.a AS a,
+  Reach_sn_step_f9.b AS b
+FROM
+  t_0_Reach_sn_step_f9 AS Reach_sn_step_f9
+WHERE
+  NOT ((CAST(Reach_sn_step_f9.a AS Nullable(String)), CAST(Reach_sn_step_f9.b AS Nullable(String))) IN (SELECT CAST(synalog_k0 AS Nullable(String)), CAST(synalog_k1 AS Nullable(String)) FROM (SELECT
+    Reach_sn_full_f9.a AS synalog_k0,
+    Reach_sn_full_f9.b AS synalog_k1
+  FROM
+    synalog_test.Reach_sn_full_f9 AS Reach_sn_full_f9
+  GROUP BY 1, 2) AS synalog_m))
+GROUP BY 1, 2;
+
+INSERT INTO synalog_test.Reach_sn_full_f9 SELECT * FROM synalog_test.Reach_sn_new_f9;
+
+DROP TABLE IF EXISTS synalog_test.Reach_sn_delta_f9;
+CREATE TABLE synalog_test.Reach_sn_delta_f9 ENGINE = Memory AS WITH t_1_Reach_MultBodyAggAux_f1_f9 AS (SELECT * FROM (
+  
+    SELECT
+      Route.a AS a,
+      Route.b AS b
+    FROM
+      synalog_test.Route AS Route
+   UNION ALL
+  
+    SELECT
+      Reach_sn_new_f9.a AS a,
+      t_2_Route.b AS b
+    FROM
+      synalog_test.Reach_sn_new_f9 AS Reach_sn_new_f9, synalog_test.Route AS t_2_Route
+    WHERE
+      (t_2_Route.a = Reach_sn_new_f9.b)
+  
+) AS UNUSED_TABLE_NAME  ),
+t_0_Reach_sn_back_step_f9 AS (SELECT
+  Reach_MultBodyAggAux_f1_f9.a AS a,
+  Reach_MultBodyAggAux_f1_f9.b AS b
+FROM
+  t_1_Reach_MultBodyAggAux_f1_f9 AS Reach_MultBodyAggAux_f1_f9
+GROUP BY 1, 2)
+SELECT
+  Reach_sn_back_step_f9.a AS a,
+  Reach_sn_back_step_f9.b AS b
+FROM
+  t_0_Reach_sn_back_step_f9 AS Reach_sn_back_step_f9
+WHERE
+  NOT ((CAST(Reach_sn_back_step_f9.a AS Nullable(String)), CAST(Reach_sn_back_step_f9.b AS Nullable(String))) IN (SELECT CAST(synalog_k0 AS Nullable(String)), CAST(synalog_k1 AS Nullable(String)) FROM (SELECT
+    Reach_sn_full_f9.a AS synalog_k0,
+    Reach_sn_full_f9.b AS synalog_k1
+  FROM
+    synalog_test.Reach_sn_full_f9 AS Reach_sn_full_f9
+  GROUP BY 1, 2) AS synalog_m))
+GROUP BY 1, 2;
+
+INSERT INTO synalog_test.Reach_sn_full_f9 SELECT * FROM synalog_test.Reach_sn_delta_f9;
+
+DROP TABLE IF EXISTS synalog_test.Reach_sn_new_f9;
+CREATE TABLE synalog_test.Reach_sn_new_f9 ENGINE = Memory AS WITH t_1_Reach_MultBodyAggAux_f8_f9 AS (SELECT * FROM (
+  
+    SELECT
+      Route.a AS a,
+      Route.b AS b
+    FROM
+      synalog_test.Route AS Route
+   UNION ALL
+  
+    SELECT
+      Reach_sn_delta_f9.a AS a,
+      t_2_Route.b AS b
+    FROM
+      synalog_test.Reach_sn_delta_f9 AS Reach_sn_delta_f9, synalog_test.Route AS t_2_Route
+    WHERE
+      (t_2_Route.a = Reach_sn_delta_f9.b)
+  
+) AS UNUSED_TABLE_NAME  ),
+t_0_Reach_sn_step_f9 AS (SELECT
+  Reach_MultBodyAggAux_f8_f9.a AS a,
+  Reach_MultBodyAggAux_f8_f9.b AS b
+FROM
+  t_1_Reach_MultBodyAggAux_f8_f9 AS Reach_MultBodyAggAux_f8_f9
+GROUP BY 1, 2)
+SELECT
+  Reach_sn_step_f9.a AS a,
+  Reach_sn_step_f9.b AS b
+FROM
+  t_0_Reach_sn_step_f9 AS Reach_sn_step_f9
+WHERE
+  NOT ((CAST(Reach_sn_step_f9.a AS Nullable(String)), CAST(Reach_sn_step_f9.b AS Nullable(String))) IN (SELECT CAST(synalog_k0 AS Nullable(String)), CAST(synalog_k1 AS Nullable(String)) FROM (SELECT
+    Reach_sn_full_f9.a AS synalog_k0,
+    Reach_sn_full_f9.b AS synalog_k1
+  FROM
+    synalog_test.Reach_sn_full_f9 AS Reach_sn_full_f9
+  GROUP BY 1, 2) AS synalog_m))
+GROUP BY 1, 2;
+
+INSERT INTO synalog_test.Reach_sn_full_f9 SELECT * FROM synalog_test.Reach_sn_new_f9;
+
+DROP TABLE IF EXISTS synalog_test.Reach_sn_delta_f9;
+CREATE TABLE synalog_test.Reach_sn_delta_f9 ENGINE = Memory AS WITH t_1_Reach_MultBodyAggAux_f1_f9 AS (SELECT * FROM (
+  
+    SELECT
+      Route.a AS a,
+      Route.b AS b
+    FROM
+      synalog_test.Route AS Route
+   UNION ALL
+  
+    SELECT
+      Reach_sn_new_f9.a AS a,
+      t_2_Route.b AS b
+    FROM
+      synalog_test.Reach_sn_new_f9 AS Reach_sn_new_f9, synalog_test.Route AS t_2_Route
+    WHERE
+      (t_2_Route.a = Reach_sn_new_f9.b)
+  
+) AS UNUSED_TABLE_NAME  ),
+t_0_Reach_sn_back_step_f9 AS (SELECT
+  Reach_MultBodyAggAux_f1_f9.a AS a,
+  Reach_MultBodyAggAux_f1_f9.b AS b
+FROM
+  t_1_Reach_MultBodyAggAux_f1_f9 AS Reach_MultBodyAggAux_f1_f9
+GROUP BY 1, 2)
+SELECT
+  Reach_sn_back_step_f9.a AS a,
+  Reach_sn_back_step_f9.b AS b
+FROM
+  t_0_Reach_sn_back_step_f9 AS Reach_sn_back_step_f9
+WHERE
+  NOT ((CAST(Reach_sn_back_step_f9.a AS Nullable(String)), CAST(Reach_sn_back_step_f9.b AS Nullable(String))) IN (SELECT CAST(synalog_k0 AS Nullable(String)), CAST(synalog_k1 AS Nullable(String)) FROM (SELECT
+    Reach_sn_full_f9.a AS synalog_k0,
+    Reach_sn_full_f9.b AS synalog_k1
+  FROM
+    synalog_test.Reach_sn_full_f9 AS Reach_sn_full_f9
+  GROUP BY 1, 2) AS synalog_m))
+GROUP BY 1, 2;
+
+INSERT INTO synalog_test.Reach_sn_full_f9 SELECT * FROM synalog_test.Reach_sn_delta_f9;
+
+SELECT
+  Reach_sn_full_f9.b AS b
+FROM
+  synalog_test.Reach_sn_full_f9 AS Reach_sn_full_f9
+WHERE
+  ('lyon' = Reach_sn_full_f9.a) ORDER BY b;

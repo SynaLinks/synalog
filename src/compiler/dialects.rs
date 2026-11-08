@@ -323,6 +323,34 @@ pub trait Dialect {
         false
     }
 
+    /// What follows `CREATE TABLE name` before `AS`: ClickHouse needs the
+    /// table's engine.
+    fn create_table_options(&self) -> &'static str {
+        ""
+    }
+
+    /// Whether a subquery counting the rows of the outer row reads null
+    /// where it counts none (ClickHouse decorrelates it into a join, whose
+    /// missing side is null): such a count is then read as 0.
+    fn correlated_count_may_be_null(&self) -> bool {
+        false
+    }
+
+    /// Whether a negation tied to the outer row by equalities is compiled
+    /// as an uncorrelated membership, `(keys) NOT IN (SELECT ...)`, instead
+    /// of a correlated subquery: ClickHouse decorrelates such a subquery into
+    /// a join that drops a null key (`IS NOT DISTINCT FROM` included). Its
+    /// session reads a null in `IN` as a value (`transform_null_in`).
+    fn negation_by_membership(&self) -> bool {
+        false
+    }
+
+    /// Whether an unnesting is a clause that follows the tables of the FROM
+    /// list (ClickHouse's `ARRAY JOIN`), instead of an item of the list.
+    fn unnest_is_clause(&self) -> bool {
+        false
+    }
+
     /// `array` (an empty array or a null) typed as an array of `element`,
     /// when the dialect writes one.
     fn typed_array(&self, _array: &str, _element: &Type) -> Option<String> {
@@ -429,7 +457,7 @@ pub trait Dialect {
 /// Single source of truth for valid engine names — keep in sync with the match
 /// arms in [`get`].
 pub const SUPPORTED_ENGINES: &[&str] = &[
-    "bigquery", "sqlite", "psql", "trino", "presto", "databricks", "duckdb",
+    "bigquery", "sqlite", "psql", "trino", "presto", "databricks", "duckdb", "clickhouse",
 ];
 
 /// Get a dialect by engine name.
@@ -442,6 +470,7 @@ pub fn get(engine: &str) -> Result<Box<dyn Dialect>, CompileError> {
         "presto" => Ok(Box::new(PrestoDialect)),
         "databricks" => Ok(Box::new(DatabricksDialect)),
         "duckdb" => Ok(Box::new(DuckDbDialect)),
+        "clickhouse" => Ok(Box::new(ClickHouseDialect)),
         _ => Err(CompileError::new(
             format!(
                 "Unsupported engine '{}'. Supported engines: {}.",
@@ -1564,6 +1593,228 @@ ProverChoice(slot, options:) = options[i] :-
         // The pattern is a string literal like any other: the dialect's own
         // escapes (a backslash ends a literal on Spark and BigQuery otherwise).
         format!("regexp_matches({}, {})", column_expr, self.str_literal(pattern))
+    }
+}
+
+// ---------------------------------------------------------------------------
+// ClickHouse
+// ---------------------------------------------------------------------------
+
+pub struct ClickHouseDialect;
+
+impl Dialect for ClickHouseDialect {
+    fn name(&self) -> &'static str { "clickhouse" }
+    fn double_type(&self) -> &'static str { "Float64" }
+    fn bind_value(&self) -> &'static str { "arrayElement(arrayMap(synalog_v -> {body}, [{0}]), 1)" }
+    fn string_cast(&self, expr: &str) -> String { format!("CAST({} AS String)", expr) }
+    fn create_table_options(&self) -> &'static str { " ENGINE = Memory" }
+    fn greatest_skips_nulls(&self) -> bool { true }
+    fn correlated_count_may_be_null(&self) -> bool { true }
+    fn negation_by_membership(&self) -> bool { true }
+    // A comparison is a UInt8 here, whose text is 1 or 0.
+    fn boolean_to_string(&self) -> Option<&'static str> {
+        Some("(CASE WHEN {0} THEN 'true' WHEN NOT {0} THEN 'false' END)")
+    }
+    // ROUND takes a constant number of digits only here: a double is rounded
+    // by the digits of its whole part, one case each, as on DuckDB and Spark.
+    fn number_to_string(&self) -> Option<&'static str> {
+        static TEMPLATE: std::sync::OnceLock<String> = std::sync::OnceLock::new();
+        Some(TEMPLATE.get_or_init(|| {
+            // Names `value` once (`name`) in `body`.
+            let bind = |value: &str, name: &str, body: &str| format!("arrayElement(arrayMap({} -> {}, [{}]), 1)", name, body, value);
+            // A decimal's text has no trailing zeros here, nor a point when
+            // it is whole: only a fraction is trimmed.
+            let trim = |e: &str| format!("arrayElement(arrayMap(synalog_s -> if(position(synalog_s, '.') > 0, TRIM(TRAILING '.' FROM TRIM(TRAILING '0' FROM synalog_s)), synalog_s), [{}]), 1)", e);
+            let fraction: String = (1..=18)
+                .map(|d| format!(" WHEN {} THEN CAST(ROUND(synalog_t, {}) AS DECIMAL(38,20))", d, 15 - d))
+                .collect();
+            let large: String = (19..=38)
+                .map(|d| format!(" WHEN {} THEN CAST(ROUND(synalog_t, {}) AS DECIMAL(38,0))", d, 15 - d))
+                .collect();
+            let below_one = trim("CAST(CAST(ROUND(CAST(CAST(synalog_v AS VARCHAR) AS DECIMAL(38,35)), 15) AS DECIMAL(38,35)) AS VARCHAR)");
+            let middle = bind(
+                "CAST(CAST(synalog_v AS VARCHAR) AS DECIMAL(38,20))",
+                "synalog_t",
+                &trim(&format!(
+                    "CAST(CASE LENGTH(CAST(CAST(FLOOR(ABS(synalog_t)) AS BIGINT) AS VARCHAR)){} END AS VARCHAR)",
+                    fraction
+                )),
+            );
+            // From 10^18 the double itself, whose text is in exponent form: its
+            // digits past the 15th are rounded away.
+            let high = bind(
+                "CAST(synalog_v AS DECIMAL(38,0))",
+                "synalog_t",
+                &format!("CAST(CASE LENGTH(CAST(ABS(synalog_t) AS VARCHAR)){} END AS VARCHAR)", large),
+            );
+            let body = format!(
+                "(CASE WHEN synalog_v IS NULL THEN NULL WHEN ABS(synalog_v) < 0.0000000000000005 THEN '0' \
+                 WHEN synalog_v = FLOOR(synalog_v) AND ABS(synalog_v) < 1e18 THEN CAST(CAST(synalog_v AS DECIMAL(38,0)) AS VARCHAR) \
+                 WHEN ABS(synalog_v) >= 1e38 THEN CAST(synalog_v AS VARCHAR) \
+                 WHEN ABS(synalog_v) < 1 THEN {} WHEN ABS(synalog_v) < 1e18 THEN {} ELSE {} END)",
+                below_one, middle, high
+            );
+            bind("{0}", "synalog_v", &body)
+        }).as_str())
+    }
+    fn int64_of_text(&self) -> Option<&'static str> { Some("CAST({0} AS Nullable(Int64))") }
+    fn typed_array(&self, _array: &str, element: &Type) -> Option<String> {
+        // An array has no null here (no Nullable(Array)): a null list is
+        // empty, and an empty one has the type of its elements, not Nothing.
+        if *element == Type::Any {
+            return None;
+        }
+        Some(format!("CAST([] AS Array({}))", self.row_field_type(element)))
+    }
+    fn unnest_is_clause(&self) -> bool { true }
+    fn except_distinct(&self) -> &'static str { "EXCEPT DISTINCT" }
+    fn today_relation_sql(&self) -> String {
+        "(SELECT toString(toDate(now('UTC'))) AS date)".to_string()
+    }
+    fn now_relation_sql(&self) -> String {
+        "(SELECT now64(3, 'UTC') AS timestamp)".to_string()
+    }
+
+    fn built_in_functions(&self) -> HashMap<&'static str, &'static str> {
+        let mut m = HashMap::new();
+        // Typed even of a null: a column of type Nothing holds in no table.
+        m.insert("ToString", "CAST(%s AS Nullable(String))");
+        m.insert("ToFloat64", "CAST(%s AS Nullable(Float64))");
+        // ROUND rounds half to even here: half away from zero, as elsewhere.
+        m.insert("ToInt64", "CAST(sign({0}) * floor(abs({0}) + 0.5) AS Nullable(Int64))");
+        m.insert("AnyValue", "any(%s)");
+        m.insert("RegexpContains", "match({0}, {1})");
+        m.insert("Upper", "upperUTF8(%s)");
+        m.insert("Lower", "lowerUTF8(%s)");
+        m.insert("Length", "lengthUTF8(%s)");
+        m.insert("Reverse", "reverseUTF8(%s)");
+        m.insert("Substr", "substringUTF8(%s)");
+        m.insert("Lpad", "(CASE WHEN {1} IS NULL THEN NULL ELSE leftPadUTF8({0}, toUInt64(greatest({1}, 0)), {2}) END)");
+        m.insert("Rpad", "(CASE WHEN {1} IS NULL THEN NULL ELSE rightPadUTF8({0}, toUInt64(greatest({1}, 0)), {2}) END)");
+        // ROUND rounds a double half to even here.
+        m.insert("Round", "(sign({0}) * floor(abs({0}) + 0.5) + 0)");
+        // A null's value is computed too, and an infinity fails a cast to an
+        // integer: never a division by zero.
+        m.insert("Div", "if({1} = 0, NULL, toInt64(trunc({0} / if({1} = 0, 1, {1}))))");
+        m.insert("Strpos", "positionUTF8({0}, {1})");
+        m.insert("Size", "length(%s)");
+        // An index past the end is the element type's default here: null.
+        m.insert("Element", "(CASE WHEN {1} < 0 OR {1} >= length({0}) THEN NULL ELSE arrayElement({0}, toInt64({1}) + 1) END)");
+        m.insert("Range", "arrayMap(x -> toInt64(x), range(toUInt64(greatest({0}, 0))))");
+        m.insert("Join", "arrayStringConcat({0}, {1})");
+        // An array is never null here (splitByString of a nullable text fails).
+        m.insert("Split", "splitByString({1}, ifNull({0}, ''))");
+        m.insert("ArrayConcat", "arrayConcat({0}, {1})");
+        // groupArray skips nulls: the values are collected in tuples.
+        m.insert("List", "arrayMap(t -> t.1, groupArray(tuple(%s)))");
+        m.insert("Set", "arraySort(groupUniqArray(%s))");
+        m.insert("Agg++", "arrayFlatten(groupArray(%s))");
+        m.insert("StringAgg", "(CASE WHEN count({0}) > 0 THEN arrayStringConcat(groupArray(toString({0})), ',') END)");
+        m.insert("Log", "log(%s)");
+        m.insert("Format", "printf(%s)");
+        // LIKE has no ESCAPE clause here: a backslash escapes already.
+        m.insert("Like", "({0} LIKE {1})");
+        m.insert("ILike", "({0} ILIKE {1})");
+        m.insert("RegexpExtract", "(CASE WHEN match({0}, {1}) THEN extract({0}, {1}) END)");
+        m.insert("RegexpReplace", "replaceRegexpAll({0}, {1}, {2})");
+        m
+    }
+
+    fn infix_operators(&self) -> HashMap<&'static str, &'static str> {
+        let mut m = HashMap::new();
+        m.insert("/", "{0} / NULLIF({1}, 0)");
+        m.insert("%", "({0}) % NULLIF({1}, 0)");
+        m.insert("++", "concat(%s, %s)");
+        m.insert("in", "has({1}, {0})");
+        m
+    }
+
+    fn subscript(&self, record: &str, subscript: &str, record_is_table: bool) -> String {
+        if record_is_table {
+            format!("{}.{}", record, self.record_field(subscript))
+        } else {
+            format!("tupleElement({}, {})", record, self.str_literal(subscript))
+        }
+    }
+
+    fn library_program(&self) -> &'static str {
+        r#"
+->(left:, right:) = {arg: left, value: right};
+`=`(left:, right:) = right :- left == right;
+
+ArgMin(a) = SqlExpr("argMin({arg}, {value})", {arg: a.arg, value: a.value});
+
+ArgMax(a) = SqlExpr("argMax({arg}, {value})", {arg: a.arg, value: a.value});
+
+ArgMaxK(a, l) = SqlExpr(
+  "arraySlice(arrayMap(t -> t.2, arrayReverseSort(t -> t.1, groupArray(tuple({value}, {arg})))), 1, {lim})",
+  {arg: a.arg, value: a.value, lim: l});
+
+ArgMinK(a, l) = SqlExpr(
+  "arraySlice(arrayMap(t -> t.2, arraySort(t -> t.1, groupArray(tuple({value}, {arg})))), 1, {lim})",
+  {arg: a.arg, value: a.value, lim: l});
+
+Array(a) = SqlExpr(
+  "arrayMap(t -> t.2, arraySort(t -> t.1, groupArray(tuple({arg}, {value}))))",
+  {arg: a.arg, value: a.value});
+"#
+    }
+
+    fn unnest_phrase(&self) -> &'static str { "ARRAY JOIN {0} AS {1}" }
+    fn array_phrase(&self) -> &'static str { "[%s]" }
+    fn group_by_spec_by(&self) -> GroupBySpec { GroupBySpec::Index }
+    fn decorate_combine_rule(&self) -> bool { false }
+
+    fn scalar_sql_type(&self, ty: &Type) -> String {
+        match ty {
+            Type::Number => "Nullable(Float64)".to_string(),
+            Type::Bool => "Nullable(Bool)".to_string(),
+            Type::List(inner) => format!("Array({})", self.scalar_sql_type(inner)),
+            _ => "Nullable(String)".to_string(),
+        }
+    }
+
+    fn row_field_type(&self, ty: &Type) -> String {
+        match ty {
+            Type::List(inner) if matches!(**inner, Type::Record { .. } | Type::List(_)) => {
+                format!("Array({})", self.row_field_type(inner))
+            }
+            Type::Record { fields, .. } => {
+                let mut items: Vec<(&String, &Type)> = fields.iter().collect();
+                items.sort_by(|a, b| a.0.cmp(b.0));
+                let parts: Vec<String> = items
+                    .iter()
+                    .map(|(k, t)| format!("{} {}", self.record_field(k), self.row_field_type(t)))
+                    .collect();
+                format!("Tuple({})", parts.join(", "))
+            }
+            _ => self.scalar_sql_type(ty),
+        }
+    }
+
+    fn record_literal(&self, fields: &[(&str, &str, &Type)]) -> String {
+        // A named tuple: the values cast to a tuple type of the fields,
+        // sorted, as `row_field_type` writes a nested record's.
+        let mut fs: Vec<(&str, &str, &Type)> = fields.to_vec();
+        fs.sort_by(|a, b| a.0.cmp(b.0));
+        let vals: Vec<&str> = fs.iter().map(|t| t.1).collect();
+        let types: Vec<String> = fs
+            .iter()
+            .map(|t| format!("{} {}", self.record_field(t.0), self.row_field_type(t.2)))
+            .collect();
+        format!("CAST(tuple({}) AS Tuple({}))", vals.join(", "), types.join(", "))
+    }
+
+    fn regex_match_condition(&self, column_expr: &str, pattern: &str) -> String {
+        format!("match({}, {})", column_expr, self.str_literal(pattern))
+    }
+
+    // `'...'` takes backslash escapes here: the body of PostgreSQL's escape
+    // string `E'...'`, which Verus proves that lexer reads back as `s` (`\\`
+    // a backslash, `''` a quote), the prefix dropped.
+    fn str_literal(&self, s: &str) -> String {
+        let literal = quoted(s, synalog_verified::quote::postgres);
+        literal.strip_prefix('E').map(str::to_string).unwrap_or(literal)
     }
 }
 

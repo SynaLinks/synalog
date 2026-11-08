@@ -1,0 +1,721 @@
+-- Compiled by SynaLog — logic programming for AI agents (https://github.com/synalinks/synalog).
+-- Copyright 2025-2026 Yoan Sallami (Synalinks Team).
+-- SPDX-License-Identifier: Apache-2.0
+
+-- Initializing ClickHouse environment.
+SET join_use_nulls = 1;
+SET allow_experimental_correlated_subqueries = 1;
+SET aggregate_functions_null_for_empty = 1;
+SET cast_keep_nullable = 1;
+SET transform_null_in = 1;
+CREATE DATABASE IF NOT EXISTS synalog_test;
+
+DROP TABLE IF EXISTS synalog_test.Path_ifr0;
+CREATE TABLE synalog_test.Path_ifr0 ENGINE = Memory AS WITH t_0_Path_MultBodyAggAux_f1 AS (SELECT * FROM (
+  
+    SELECT
+      x_15 AS a,
+      ((x_15) + (1)) AS b
+    FROM
+      (SELECT 'singleton' as s) as unused_singleton
+      ARRAY JOIN arrayMap(x -> toInt64(x), range(toUInt64(greatest(9, 0)))) AS x_15
+  
+) AS UNUSED_TABLE_NAME  )
+SELECT
+  Path_MultBodyAggAux_f1.a AS a,
+  Path_MultBodyAggAux_f1.b AS b
+FROM
+  t_0_Path_MultBodyAggAux_f1 AS Path_MultBodyAggAux_f1
+GROUP BY 1, 2;
+
+-- Interacting with table synalog_test.Path_ifr0
+
+DROP TABLE IF EXISTS synalog_test.Path_ifr1;
+CREATE TABLE synalog_test.Path_ifr1 ENGINE = Memory AS WITH t_0_Path_MultBodyAggAux_f2 AS (SELECT * FROM (
+  
+    SELECT
+      Path_ifr0.a AS a,
+      t_1_Path_ifr0.b AS b
+    FROM
+      synalog_test.Path_ifr0 AS Path_ifr0, synalog_test.Path_ifr0 AS t_1_Path_ifr0
+    WHERE
+      (t_1_Path_ifr0.a = Path_ifr0.b)
+   UNION ALL
+  
+    SELECT
+      x_15 AS a,
+      ((x_15) + (1)) AS b
+    FROM
+      (SELECT 'singleton' as s) as unused_singleton
+      ARRAY JOIN arrayMap(x -> toInt64(x), range(toUInt64(greatest(9, 0)))) AS x_15
+  
+) AS UNUSED_TABLE_NAME  )
+SELECT
+  Path_MultBodyAggAux_f2.a AS a,
+  Path_MultBodyAggAux_f2.b AS b
+FROM
+  t_0_Path_MultBodyAggAux_f2 AS Path_MultBodyAggAux_f2
+GROUP BY 1, 2;
+
+-- Interacting with table synalog_test.Path_ifr1
+
+DROP TABLE IF EXISTS synalog_test.Path_ifr2;
+CREATE TABLE synalog_test.Path_ifr2 ENGINE = Memory AS WITH t_0_Path_MultBodyAggAux_f3 AS (SELECT * FROM (
+  
+    SELECT
+      Path_ifr1.a AS a,
+      t_1_Path_ifr1.b AS b
+    FROM
+      synalog_test.Path_ifr1 AS Path_ifr1, synalog_test.Path_ifr1 AS t_1_Path_ifr1
+    WHERE
+      (t_1_Path_ifr1.a = Path_ifr1.b)
+   UNION ALL
+  
+    SELECT
+      x_15 AS a,
+      ((x_15) + (1)) AS b
+    FROM
+      (SELECT 'singleton' as s) as unused_singleton
+      ARRAY JOIN arrayMap(x -> toInt64(x), range(toUInt64(greatest(9, 0)))) AS x_15
+  
+) AS UNUSED_TABLE_NAME  )
+SELECT
+  Path_MultBodyAggAux_f3.a AS a,
+  Path_MultBodyAggAux_f3.b AS b
+FROM
+  t_0_Path_MultBodyAggAux_f3 AS Path_MultBodyAggAux_f3
+GROUP BY 1, 2;
+
+-- Interacting with table synalog_test.Path_ifr2
+
+DROP TABLE IF EXISTS synalog_test.Path_ifr3;
+CREATE TABLE synalog_test.Path_ifr3 ENGINE = Memory AS WITH t_0_Path_MultBodyAggAux_f4 AS (SELECT * FROM (
+  
+    SELECT
+      Path_ifr2.a AS a,
+      t_1_Path_ifr2.b AS b
+    FROM
+      synalog_test.Path_ifr2 AS Path_ifr2, synalog_test.Path_ifr2 AS t_1_Path_ifr2
+    WHERE
+      (t_1_Path_ifr2.a = Path_ifr2.b)
+   UNION ALL
+  
+    SELECT
+      x_15 AS a,
+      ((x_15) + (1)) AS b
+    FROM
+      (SELECT 'singleton' as s) as unused_singleton
+      ARRAY JOIN arrayMap(x -> toInt64(x), range(toUInt64(greatest(9, 0)))) AS x_15
+  
+) AS UNUSED_TABLE_NAME  )
+SELECT
+  Path_MultBodyAggAux_f4.a AS a,
+  Path_MultBodyAggAux_f4.b AS b
+FROM
+  t_0_Path_MultBodyAggAux_f4 AS Path_MultBodyAggAux_f4
+GROUP BY 1, 2;
+
+-- Interacting with table synalog_test.Path_ifr3
+
+DROP TABLE IF EXISTS synalog_test.Path_ifr2;
+CREATE TABLE synalog_test.Path_ifr2 ENGINE = Memory AS WITH t_0_Path_MultBodyAggAux_f5 AS (SELECT * FROM (
+  
+    SELECT
+      Path_ifr3.a AS a,
+      t_1_Path_ifr3.b AS b
+    FROM
+      synalog_test.Path_ifr3 AS Path_ifr3, synalog_test.Path_ifr3 AS t_1_Path_ifr3
+    WHERE
+      (t_1_Path_ifr3.a = Path_ifr3.b)
+   UNION ALL
+  
+    SELECT
+      x_15 AS a,
+      ((x_15) + (1)) AS b
+    FROM
+      (SELECT 'singleton' as s) as unused_singleton
+      ARRAY JOIN arrayMap(x -> toInt64(x), range(toUInt64(greatest(9, 0)))) AS x_15
+  
+) AS UNUSED_TABLE_NAME  )
+SELECT
+  Path_MultBodyAggAux_f5.a AS a,
+  Path_MultBodyAggAux_f5.b AS b
+FROM
+  t_0_Path_MultBodyAggAux_f5 AS Path_MultBodyAggAux_f5
+GROUP BY 1, 2;
+
+-- Interacting with table synalog_test.Path_ifr2
+
+DROP TABLE IF EXISTS synalog_test.Path_ifr3;
+CREATE TABLE synalog_test.Path_ifr3 ENGINE = Memory AS WITH t_0_Path_MultBodyAggAux_f4 AS (SELECT * FROM (
+  
+    SELECT
+      Path_ifr2.a AS a,
+      t_1_Path_ifr2.b AS b
+    FROM
+      synalog_test.Path_ifr2 AS Path_ifr2, synalog_test.Path_ifr2 AS t_1_Path_ifr2
+    WHERE
+      (t_1_Path_ifr2.a = Path_ifr2.b)
+   UNION ALL
+  
+    SELECT
+      x_15 AS a,
+      ((x_15) + (1)) AS b
+    FROM
+      (SELECT 'singleton' as s) as unused_singleton
+      ARRAY JOIN arrayMap(x -> toInt64(x), range(toUInt64(greatest(9, 0)))) AS x_15
+  
+) AS UNUSED_TABLE_NAME  )
+SELECT
+  Path_MultBodyAggAux_f4.a AS a,
+  Path_MultBodyAggAux_f4.b AS b
+FROM
+  t_0_Path_MultBodyAggAux_f4 AS Path_MultBodyAggAux_f4
+GROUP BY 1, 2;
+
+DROP TABLE IF EXISTS synalog_test.Path_ifr2;
+CREATE TABLE synalog_test.Path_ifr2 ENGINE = Memory AS WITH t_0_Path_MultBodyAggAux_f5 AS (SELECT * FROM (
+  
+    SELECT
+      Path_ifr3.a AS a,
+      t_1_Path_ifr3.b AS b
+    FROM
+      synalog_test.Path_ifr3 AS Path_ifr3, synalog_test.Path_ifr3 AS t_1_Path_ifr3
+    WHERE
+      (t_1_Path_ifr3.a = Path_ifr3.b)
+   UNION ALL
+  
+    SELECT
+      x_15 AS a,
+      ((x_15) + (1)) AS b
+    FROM
+      (SELECT 'singleton' as s) as unused_singleton
+      ARRAY JOIN arrayMap(x -> toInt64(x), range(toUInt64(greatest(9, 0)))) AS x_15
+  
+) AS UNUSED_TABLE_NAME  )
+SELECT
+  Path_MultBodyAggAux_f5.a AS a,
+  Path_MultBodyAggAux_f5.b AS b
+FROM
+  t_0_Path_MultBodyAggAux_f5 AS Path_MultBodyAggAux_f5
+GROUP BY 1, 2;
+
+DROP TABLE IF EXISTS synalog_test.Path_ifr3;
+CREATE TABLE synalog_test.Path_ifr3 ENGINE = Memory AS WITH t_0_Path_MultBodyAggAux_f4 AS (SELECT * FROM (
+  
+    SELECT
+      Path_ifr2.a AS a,
+      t_1_Path_ifr2.b AS b
+    FROM
+      synalog_test.Path_ifr2 AS Path_ifr2, synalog_test.Path_ifr2 AS t_1_Path_ifr2
+    WHERE
+      (t_1_Path_ifr2.a = Path_ifr2.b)
+   UNION ALL
+  
+    SELECT
+      x_15 AS a,
+      ((x_15) + (1)) AS b
+    FROM
+      (SELECT 'singleton' as s) as unused_singleton
+      ARRAY JOIN arrayMap(x -> toInt64(x), range(toUInt64(greatest(9, 0)))) AS x_15
+  
+) AS UNUSED_TABLE_NAME  )
+SELECT
+  Path_MultBodyAggAux_f4.a AS a,
+  Path_MultBodyAggAux_f4.b AS b
+FROM
+  t_0_Path_MultBodyAggAux_f4 AS Path_MultBodyAggAux_f4
+GROUP BY 1, 2;
+
+DROP TABLE IF EXISTS synalog_test.Path_ifr2;
+CREATE TABLE synalog_test.Path_ifr2 ENGINE = Memory AS WITH t_0_Path_MultBodyAggAux_f5 AS (SELECT * FROM (
+  
+    SELECT
+      Path_ifr3.a AS a,
+      t_1_Path_ifr3.b AS b
+    FROM
+      synalog_test.Path_ifr3 AS Path_ifr3, synalog_test.Path_ifr3 AS t_1_Path_ifr3
+    WHERE
+      (t_1_Path_ifr3.a = Path_ifr3.b)
+   UNION ALL
+  
+    SELECT
+      x_15 AS a,
+      ((x_15) + (1)) AS b
+    FROM
+      (SELECT 'singleton' as s) as unused_singleton
+      ARRAY JOIN arrayMap(x -> toInt64(x), range(toUInt64(greatest(9, 0)))) AS x_15
+  
+) AS UNUSED_TABLE_NAME  )
+SELECT
+  Path_MultBodyAggAux_f5.a AS a,
+  Path_MultBodyAggAux_f5.b AS b
+FROM
+  t_0_Path_MultBodyAggAux_f5 AS Path_MultBodyAggAux_f5
+GROUP BY 1, 2;
+
+DROP TABLE IF EXISTS synalog_test.Path_ifr3;
+CREATE TABLE synalog_test.Path_ifr3 ENGINE = Memory AS WITH t_0_Path_MultBodyAggAux_f4 AS (SELECT * FROM (
+  
+    SELECT
+      Path_ifr2.a AS a,
+      t_1_Path_ifr2.b AS b
+    FROM
+      synalog_test.Path_ifr2 AS Path_ifr2, synalog_test.Path_ifr2 AS t_1_Path_ifr2
+    WHERE
+      (t_1_Path_ifr2.a = Path_ifr2.b)
+   UNION ALL
+  
+    SELECT
+      x_15 AS a,
+      ((x_15) + (1)) AS b
+    FROM
+      (SELECT 'singleton' as s) as unused_singleton
+      ARRAY JOIN arrayMap(x -> toInt64(x), range(toUInt64(greatest(9, 0)))) AS x_15
+  
+) AS UNUSED_TABLE_NAME  )
+SELECT
+  Path_MultBodyAggAux_f4.a AS a,
+  Path_MultBodyAggAux_f4.b AS b
+FROM
+  t_0_Path_MultBodyAggAux_f4 AS Path_MultBodyAggAux_f4
+GROUP BY 1, 2;
+
+DROP TABLE IF EXISTS synalog_test.Path_ifr2;
+CREATE TABLE synalog_test.Path_ifr2 ENGINE = Memory AS WITH t_0_Path_MultBodyAggAux_f5 AS (SELECT * FROM (
+  
+    SELECT
+      Path_ifr3.a AS a,
+      t_1_Path_ifr3.b AS b
+    FROM
+      synalog_test.Path_ifr3 AS Path_ifr3, synalog_test.Path_ifr3 AS t_1_Path_ifr3
+    WHERE
+      (t_1_Path_ifr3.a = Path_ifr3.b)
+   UNION ALL
+  
+    SELECT
+      x_15 AS a,
+      ((x_15) + (1)) AS b
+    FROM
+      (SELECT 'singleton' as s) as unused_singleton
+      ARRAY JOIN arrayMap(x -> toInt64(x), range(toUInt64(greatest(9, 0)))) AS x_15
+  
+) AS UNUSED_TABLE_NAME  )
+SELECT
+  Path_MultBodyAggAux_f5.a AS a,
+  Path_MultBodyAggAux_f5.b AS b
+FROM
+  t_0_Path_MultBodyAggAux_f5 AS Path_MultBodyAggAux_f5
+GROUP BY 1, 2;
+
+DROP TABLE IF EXISTS synalog_test.Path_ifr3;
+CREATE TABLE synalog_test.Path_ifr3 ENGINE = Memory AS WITH t_0_Path_MultBodyAggAux_f4 AS (SELECT * FROM (
+  
+    SELECT
+      Path_ifr2.a AS a,
+      t_1_Path_ifr2.b AS b
+    FROM
+      synalog_test.Path_ifr2 AS Path_ifr2, synalog_test.Path_ifr2 AS t_1_Path_ifr2
+    WHERE
+      (t_1_Path_ifr2.a = Path_ifr2.b)
+   UNION ALL
+  
+    SELECT
+      x_15 AS a,
+      ((x_15) + (1)) AS b
+    FROM
+      (SELECT 'singleton' as s) as unused_singleton
+      ARRAY JOIN arrayMap(x -> toInt64(x), range(toUInt64(greatest(9, 0)))) AS x_15
+  
+) AS UNUSED_TABLE_NAME  )
+SELECT
+  Path_MultBodyAggAux_f4.a AS a,
+  Path_MultBodyAggAux_f4.b AS b
+FROM
+  t_0_Path_MultBodyAggAux_f4 AS Path_MultBodyAggAux_f4
+GROUP BY 1, 2;
+
+DROP TABLE IF EXISTS synalog_test.Path_ifr2;
+CREATE TABLE synalog_test.Path_ifr2 ENGINE = Memory AS WITH t_0_Path_MultBodyAggAux_f5 AS (SELECT * FROM (
+  
+    SELECT
+      Path_ifr3.a AS a,
+      t_1_Path_ifr3.b AS b
+    FROM
+      synalog_test.Path_ifr3 AS Path_ifr3, synalog_test.Path_ifr3 AS t_1_Path_ifr3
+    WHERE
+      (t_1_Path_ifr3.a = Path_ifr3.b)
+   UNION ALL
+  
+    SELECT
+      x_15 AS a,
+      ((x_15) + (1)) AS b
+    FROM
+      (SELECT 'singleton' as s) as unused_singleton
+      ARRAY JOIN arrayMap(x -> toInt64(x), range(toUInt64(greatest(9, 0)))) AS x_15
+  
+) AS UNUSED_TABLE_NAME  )
+SELECT
+  Path_MultBodyAggAux_f5.a AS a,
+  Path_MultBodyAggAux_f5.b AS b
+FROM
+  t_0_Path_MultBodyAggAux_f5 AS Path_MultBodyAggAux_f5
+GROUP BY 1, 2;
+
+DROP TABLE IF EXISTS synalog_test.Path_ifr3;
+CREATE TABLE synalog_test.Path_ifr3 ENGINE = Memory AS WITH t_0_Path_MultBodyAggAux_f4 AS (SELECT * FROM (
+  
+    SELECT
+      Path_ifr2.a AS a,
+      t_1_Path_ifr2.b AS b
+    FROM
+      synalog_test.Path_ifr2 AS Path_ifr2, synalog_test.Path_ifr2 AS t_1_Path_ifr2
+    WHERE
+      (t_1_Path_ifr2.a = Path_ifr2.b)
+   UNION ALL
+  
+    SELECT
+      x_15 AS a,
+      ((x_15) + (1)) AS b
+    FROM
+      (SELECT 'singleton' as s) as unused_singleton
+      ARRAY JOIN arrayMap(x -> toInt64(x), range(toUInt64(greatest(9, 0)))) AS x_15
+  
+) AS UNUSED_TABLE_NAME  )
+SELECT
+  Path_MultBodyAggAux_f4.a AS a,
+  Path_MultBodyAggAux_f4.b AS b
+FROM
+  t_0_Path_MultBodyAggAux_f4 AS Path_MultBodyAggAux_f4
+GROUP BY 1, 2;
+
+DROP TABLE IF EXISTS synalog_test.Path_ifr2;
+CREATE TABLE synalog_test.Path_ifr2 ENGINE = Memory AS WITH t_0_Path_MultBodyAggAux_f5 AS (SELECT * FROM (
+  
+    SELECT
+      Path_ifr3.a AS a,
+      t_1_Path_ifr3.b AS b
+    FROM
+      synalog_test.Path_ifr3 AS Path_ifr3, synalog_test.Path_ifr3 AS t_1_Path_ifr3
+    WHERE
+      (t_1_Path_ifr3.a = Path_ifr3.b)
+   UNION ALL
+  
+    SELECT
+      x_15 AS a,
+      ((x_15) + (1)) AS b
+    FROM
+      (SELECT 'singleton' as s) as unused_singleton
+      ARRAY JOIN arrayMap(x -> toInt64(x), range(toUInt64(greatest(9, 0)))) AS x_15
+  
+) AS UNUSED_TABLE_NAME  )
+SELECT
+  Path_MultBodyAggAux_f5.a AS a,
+  Path_MultBodyAggAux_f5.b AS b
+FROM
+  t_0_Path_MultBodyAggAux_f5 AS Path_MultBodyAggAux_f5
+GROUP BY 1, 2;
+
+DROP TABLE IF EXISTS synalog_test.Path_ifr3;
+CREATE TABLE synalog_test.Path_ifr3 ENGINE = Memory AS WITH t_0_Path_MultBodyAggAux_f4 AS (SELECT * FROM (
+  
+    SELECT
+      Path_ifr2.a AS a,
+      t_1_Path_ifr2.b AS b
+    FROM
+      synalog_test.Path_ifr2 AS Path_ifr2, synalog_test.Path_ifr2 AS t_1_Path_ifr2
+    WHERE
+      (t_1_Path_ifr2.a = Path_ifr2.b)
+   UNION ALL
+  
+    SELECT
+      x_15 AS a,
+      ((x_15) + (1)) AS b
+    FROM
+      (SELECT 'singleton' as s) as unused_singleton
+      ARRAY JOIN arrayMap(x -> toInt64(x), range(toUInt64(greatest(9, 0)))) AS x_15
+  
+) AS UNUSED_TABLE_NAME  )
+SELECT
+  Path_MultBodyAggAux_f4.a AS a,
+  Path_MultBodyAggAux_f4.b AS b
+FROM
+  t_0_Path_MultBodyAggAux_f4 AS Path_MultBodyAggAux_f4
+GROUP BY 1, 2;
+
+DROP TABLE IF EXISTS synalog_test.Path_ifr2;
+CREATE TABLE synalog_test.Path_ifr2 ENGINE = Memory AS WITH t_0_Path_MultBodyAggAux_f5 AS (SELECT * FROM (
+  
+    SELECT
+      Path_ifr3.a AS a,
+      t_1_Path_ifr3.b AS b
+    FROM
+      synalog_test.Path_ifr3 AS Path_ifr3, synalog_test.Path_ifr3 AS t_1_Path_ifr3
+    WHERE
+      (t_1_Path_ifr3.a = Path_ifr3.b)
+   UNION ALL
+  
+    SELECT
+      x_15 AS a,
+      ((x_15) + (1)) AS b
+    FROM
+      (SELECT 'singleton' as s) as unused_singleton
+      ARRAY JOIN arrayMap(x -> toInt64(x), range(toUInt64(greatest(9, 0)))) AS x_15
+  
+) AS UNUSED_TABLE_NAME  )
+SELECT
+  Path_MultBodyAggAux_f5.a AS a,
+  Path_MultBodyAggAux_f5.b AS b
+FROM
+  t_0_Path_MultBodyAggAux_f5 AS Path_MultBodyAggAux_f5
+GROUP BY 1, 2;
+
+DROP TABLE IF EXISTS synalog_test.Path_ifr3;
+CREATE TABLE synalog_test.Path_ifr3 ENGINE = Memory AS WITH t_0_Path_MultBodyAggAux_f4 AS (SELECT * FROM (
+  
+    SELECT
+      Path_ifr2.a AS a,
+      t_1_Path_ifr2.b AS b
+    FROM
+      synalog_test.Path_ifr2 AS Path_ifr2, synalog_test.Path_ifr2 AS t_1_Path_ifr2
+    WHERE
+      (t_1_Path_ifr2.a = Path_ifr2.b)
+   UNION ALL
+  
+    SELECT
+      x_15 AS a,
+      ((x_15) + (1)) AS b
+    FROM
+      (SELECT 'singleton' as s) as unused_singleton
+      ARRAY JOIN arrayMap(x -> toInt64(x), range(toUInt64(greatest(9, 0)))) AS x_15
+  
+) AS UNUSED_TABLE_NAME  )
+SELECT
+  Path_MultBodyAggAux_f4.a AS a,
+  Path_MultBodyAggAux_f4.b AS b
+FROM
+  t_0_Path_MultBodyAggAux_f4 AS Path_MultBodyAggAux_f4
+GROUP BY 1, 2;
+
+DROP TABLE IF EXISTS synalog_test.Path_ifr2;
+CREATE TABLE synalog_test.Path_ifr2 ENGINE = Memory AS WITH t_0_Path_MultBodyAggAux_f5 AS (SELECT * FROM (
+  
+    SELECT
+      Path_ifr3.a AS a,
+      t_1_Path_ifr3.b AS b
+    FROM
+      synalog_test.Path_ifr3 AS Path_ifr3, synalog_test.Path_ifr3 AS t_1_Path_ifr3
+    WHERE
+      (t_1_Path_ifr3.a = Path_ifr3.b)
+   UNION ALL
+  
+    SELECT
+      x_15 AS a,
+      ((x_15) + (1)) AS b
+    FROM
+      (SELECT 'singleton' as s) as unused_singleton
+      ARRAY JOIN arrayMap(x -> toInt64(x), range(toUInt64(greatest(9, 0)))) AS x_15
+  
+) AS UNUSED_TABLE_NAME  )
+SELECT
+  Path_MultBodyAggAux_f5.a AS a,
+  Path_MultBodyAggAux_f5.b AS b
+FROM
+  t_0_Path_MultBodyAggAux_f5 AS Path_MultBodyAggAux_f5
+GROUP BY 1, 2;
+
+DROP TABLE IF EXISTS synalog_test.Path_ifr3;
+CREATE TABLE synalog_test.Path_ifr3 ENGINE = Memory AS WITH t_0_Path_MultBodyAggAux_f4 AS (SELECT * FROM (
+  
+    SELECT
+      Path_ifr2.a AS a,
+      t_1_Path_ifr2.b AS b
+    FROM
+      synalog_test.Path_ifr2 AS Path_ifr2, synalog_test.Path_ifr2 AS t_1_Path_ifr2
+    WHERE
+      (t_1_Path_ifr2.a = Path_ifr2.b)
+   UNION ALL
+  
+    SELECT
+      x_15 AS a,
+      ((x_15) + (1)) AS b
+    FROM
+      (SELECT 'singleton' as s) as unused_singleton
+      ARRAY JOIN arrayMap(x -> toInt64(x), range(toUInt64(greatest(9, 0)))) AS x_15
+  
+) AS UNUSED_TABLE_NAME  )
+SELECT
+  Path_MultBodyAggAux_f4.a AS a,
+  Path_MultBodyAggAux_f4.b AS b
+FROM
+  t_0_Path_MultBodyAggAux_f4 AS Path_MultBodyAggAux_f4
+GROUP BY 1, 2;
+
+DROP TABLE IF EXISTS synalog_test.Path_ifr2;
+CREATE TABLE synalog_test.Path_ifr2 ENGINE = Memory AS WITH t_0_Path_MultBodyAggAux_f5 AS (SELECT * FROM (
+  
+    SELECT
+      Path_ifr3.a AS a,
+      t_1_Path_ifr3.b AS b
+    FROM
+      synalog_test.Path_ifr3 AS Path_ifr3, synalog_test.Path_ifr3 AS t_1_Path_ifr3
+    WHERE
+      (t_1_Path_ifr3.a = Path_ifr3.b)
+   UNION ALL
+  
+    SELECT
+      x_15 AS a,
+      ((x_15) + (1)) AS b
+    FROM
+      (SELECT 'singleton' as s) as unused_singleton
+      ARRAY JOIN arrayMap(x -> toInt64(x), range(toUInt64(greatest(9, 0)))) AS x_15
+  
+) AS UNUSED_TABLE_NAME  )
+SELECT
+  Path_MultBodyAggAux_f5.a AS a,
+  Path_MultBodyAggAux_f5.b AS b
+FROM
+  t_0_Path_MultBodyAggAux_f5 AS Path_MultBodyAggAux_f5
+GROUP BY 1, 2;
+
+DROP TABLE IF EXISTS synalog_test.Path_ifr3;
+CREATE TABLE synalog_test.Path_ifr3 ENGINE = Memory AS WITH t_0_Path_MultBodyAggAux_f4 AS (SELECT * FROM (
+  
+    SELECT
+      Path_ifr2.a AS a,
+      t_1_Path_ifr2.b AS b
+    FROM
+      synalog_test.Path_ifr2 AS Path_ifr2, synalog_test.Path_ifr2 AS t_1_Path_ifr2
+    WHERE
+      (t_1_Path_ifr2.a = Path_ifr2.b)
+   UNION ALL
+  
+    SELECT
+      x_15 AS a,
+      ((x_15) + (1)) AS b
+    FROM
+      (SELECT 'singleton' as s) as unused_singleton
+      ARRAY JOIN arrayMap(x -> toInt64(x), range(toUInt64(greatest(9, 0)))) AS x_15
+  
+) AS UNUSED_TABLE_NAME  )
+SELECT
+  Path_MultBodyAggAux_f4.a AS a,
+  Path_MultBodyAggAux_f4.b AS b
+FROM
+  t_0_Path_MultBodyAggAux_f4 AS Path_MultBodyAggAux_f4
+GROUP BY 1, 2;
+
+DROP TABLE IF EXISTS synalog_test.Path_ifr2;
+CREATE TABLE synalog_test.Path_ifr2 ENGINE = Memory AS WITH t_0_Path_MultBodyAggAux_f5 AS (SELECT * FROM (
+  
+    SELECT
+      Path_ifr3.a AS a,
+      t_1_Path_ifr3.b AS b
+    FROM
+      synalog_test.Path_ifr3 AS Path_ifr3, synalog_test.Path_ifr3 AS t_1_Path_ifr3
+    WHERE
+      (t_1_Path_ifr3.a = Path_ifr3.b)
+   UNION ALL
+  
+    SELECT
+      x_15 AS a,
+      ((x_15) + (1)) AS b
+    FROM
+      (SELECT 'singleton' as s) as unused_singleton
+      ARRAY JOIN arrayMap(x -> toInt64(x), range(toUInt64(greatest(9, 0)))) AS x_15
+  
+) AS UNUSED_TABLE_NAME  )
+SELECT
+  Path_MultBodyAggAux_f5.a AS a,
+  Path_MultBodyAggAux_f5.b AS b
+FROM
+  t_0_Path_MultBodyAggAux_f5 AS Path_MultBodyAggAux_f5
+GROUP BY 1, 2;
+
+DROP TABLE IF EXISTS synalog_test.Path_ifr3;
+CREATE TABLE synalog_test.Path_ifr3 ENGINE = Memory AS WITH t_0_Path_MultBodyAggAux_f4 AS (SELECT * FROM (
+  
+    SELECT
+      Path_ifr2.a AS a,
+      t_1_Path_ifr2.b AS b
+    FROM
+      synalog_test.Path_ifr2 AS Path_ifr2, synalog_test.Path_ifr2 AS t_1_Path_ifr2
+    WHERE
+      (t_1_Path_ifr2.a = Path_ifr2.b)
+   UNION ALL
+  
+    SELECT
+      x_15 AS a,
+      ((x_15) + (1)) AS b
+    FROM
+      (SELECT 'singleton' as s) as unused_singleton
+      ARRAY JOIN arrayMap(x -> toInt64(x), range(toUInt64(greatest(9, 0)))) AS x_15
+  
+) AS UNUSED_TABLE_NAME  )
+SELECT
+  Path_MultBodyAggAux_f4.a AS a,
+  Path_MultBodyAggAux_f4.b AS b
+FROM
+  t_0_Path_MultBodyAggAux_f4 AS Path_MultBodyAggAux_f4
+GROUP BY 1, 2;
+
+DROP TABLE IF EXISTS synalog_test.Path_ifr2;
+CREATE TABLE synalog_test.Path_ifr2 ENGINE = Memory AS WITH t_0_Path_MultBodyAggAux_f5 AS (SELECT * FROM (
+  
+    SELECT
+      Path_ifr3.a AS a,
+      t_1_Path_ifr3.b AS b
+    FROM
+      synalog_test.Path_ifr3 AS Path_ifr3, synalog_test.Path_ifr3 AS t_1_Path_ifr3
+    WHERE
+      (t_1_Path_ifr3.a = Path_ifr3.b)
+   UNION ALL
+  
+    SELECT
+      x_15 AS a,
+      ((x_15) + (1)) AS b
+    FROM
+      (SELECT 'singleton' as s) as unused_singleton
+      ARRAY JOIN arrayMap(x -> toInt64(x), range(toUInt64(greatest(9, 0)))) AS x_15
+  
+) AS UNUSED_TABLE_NAME  )
+SELECT
+  Path_MultBodyAggAux_f5.a AS a,
+  Path_MultBodyAggAux_f5.b AS b
+FROM
+  t_0_Path_MultBodyAggAux_f5 AS Path_MultBodyAggAux_f5
+GROUP BY 1, 2;
+
+DROP TABLE IF EXISTS synalog_test.Path;
+CREATE TABLE synalog_test.Path ENGINE = Memory AS WITH t_0_Path_MultBodyAggAux_f6 AS (SELECT * FROM (
+  
+    SELECT
+      Path_ifr4.a AS a,
+      t_1_Path_ifr4.b AS b
+    FROM
+      synalog_test.Path_ifr2 AS Path_ifr4, synalog_test.Path_ifr2 AS t_1_Path_ifr4
+    WHERE
+      (t_1_Path_ifr4.a = Path_ifr4.b)
+   UNION ALL
+  
+    SELECT
+      x_15 AS a,
+      ((x_15) + (1)) AS b
+    FROM
+      (SELECT 'singleton' as s) as unused_singleton
+      ARRAY JOIN arrayMap(x -> toInt64(x), range(toUInt64(greatest(9, 0)))) AS x_15
+  
+) AS UNUSED_TABLE_NAME  )
+SELECT
+  Path_MultBodyAggAux_f6.a AS a,
+  Path_MultBodyAggAux_f6.b AS b
+FROM
+  t_0_Path_MultBodyAggAux_f6 AS Path_MultBodyAggAux_f6
+GROUP BY 1, 2;
+
+-- Interacting with table synalog_test.Path
+
+SELECT
+  SUM(1) AS n
+FROM
+  synalog_test.Path AS Path;

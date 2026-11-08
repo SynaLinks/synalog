@@ -52,12 +52,14 @@ trino = ["trino"]
 presto = ["presto-python-client"]
 databricks = ["databricks-sql-connector"]
 bigquery = ["google-cloud-bigquery"]
+clickhouse = ["clickhouse-connect"]
 # Every engine driver at once.
 all-engines = [
     "trino",
     "presto-python-client",
     "databricks-sql-connector",
     "google-cloud-bigquery",
+    "clickhouse-connect",
 ]
 
 [dependency-groups]
@@ -65,9 +67,9 @@ all-engines = [
 # provides the sqlite runtime UDFs), benchmarks (logica, matplotlib), docs
 # (zensical builds the site, duckdb runs the examples). The remote-engine
 # drivers let the e2e suite reach the docker-compose servers instead of
-# skipping them: psycopg→PostgreSQL, trino→Trino, presto→Presto, and
+# skipping them: psycopg→PostgreSQL, trino→Trino, presto→Presto,
 # pyhive+thrift→the Spark Thrift Server (the open-source Databricks stand-in,
-# reached over NOSASL).
+# reached over NOSASL), and clickhouse-connect→ClickHouse.
 dev = [
     "pytest",
     "pytest-xdist",
@@ -80,6 +82,7 @@ dev = [
     "presto-python-client",
     "pyhive",
     "thrift",
+    "clickhouse-connect>=1.12.0",
 ]
 
 [tool.maturin]
