@@ -1,0 +1,143 @@
+-- Compiled by SynaLog — logic programming for AI agents (https://github.com/synalinks/synalog).
+-- Copyright 2025-2026 Yoan Sallami (Synalinks Team).
+-- SPDX-License-Identifier: Apache-2.0
+
+-- Initializing MySQL environment.
+SET SESSION sql_mode = 'ANSI_QUOTES,PIPES_AS_CONCAT,NO_BACKSLASH_ESCAPES';
+SET SESSION optimizer_switch = 'derived_condition_pushdown=off';
+SET NAMES utf8mb4 COLLATE utf8mb4_0900_bin;
+SET SESSION group_concat_max_len = 1073741824;
+
+WITH RECURSIVE t_4_E AS (SELECT * FROM (
+  
+    SELECT
+      'a' AS a,
+      'b' AS b
+   UNION ALL
+  
+    SELECT
+      'b' AS a,
+      'c' AS b
+  
+) AS UNUSED_TABLE_NAME  ),
+t_3_P_RecursiveCte AS (SELECT * FROM (
+  SELECT * FROM (
+    
+      SELECT
+        E.a AS s,
+        E.b AS t,
+        0 AS synalog_step
+      FROM
+        t_4_E AS E
+     UNION ALL
+    
+      SELECT
+        t_7_E.a AS s,
+        t_5_E.b AS t,
+        ((0) + (1)) AS synalog_step
+      FROM
+        t_4_E AS t_7_E, t_4_E AS t_5_E
+      WHERE
+        (0 < 5) AND
+        (1 = 0) AND
+        (t_5_E.a = t_7_E.b)
+     UNION ALL
+    
+      SELECT
+        t_13_E.a AS s,
+        t_9_E.b AS t,
+        ((((0) + (1))) + (1)) AS synalog_step
+      FROM
+        t_4_E AS t_13_E, t_4_E AS t_11_E, t_4_E AS t_9_E
+      WHERE
+        (((0) + (1)) < 5) AND
+        (0 < 5) AND
+        (1 = 0) AND
+        (t_9_E.a = t_11_E.b) AND
+        (t_11_E.a = t_13_E.b)
+     UNION ALL
+    
+      SELECT
+        t_21_E.a AS s,
+        t_15_E.b AS t,
+        ((((((0) + (1))) + (1))) + (1)) AS synalog_step
+      FROM
+        t_4_E AS t_21_E, t_4_E AS t_19_E, t_4_E AS t_17_E, t_4_E AS t_15_E
+      WHERE
+        (((((0) + (1))) + (1)) < 5) AND
+        (((0) + (1)) < 5) AND
+        (0 < 5) AND
+        (1 = 0) AND
+        (t_15_E.a = t_17_E.b) AND
+        (t_17_E.a = t_19_E.b) AND
+        (t_19_E.a = t_21_E.b)
+     UNION ALL
+    
+      SELECT
+        t_31_E.a AS s,
+        t_23_E.b AS t,
+        ((((((((0) + (1))) + (1))) + (1))) + (1)) AS synalog_step
+      FROM
+        t_4_E AS t_31_E, t_4_E AS t_29_E, t_4_E AS t_27_E, t_4_E AS t_25_E, t_4_E AS t_23_E
+      WHERE
+        (((((((0) + (1))) + (1))) + (1)) < 5) AND
+        (((((0) + (1))) + (1)) < 5) AND
+        (((0) + (1)) < 5) AND
+        (0 < 5) AND
+        (1 = 0) AND
+        (t_23_E.a = t_25_E.b) AND
+        (t_25_E.a = t_27_E.b) AND
+        (t_27_E.a = t_29_E.b) AND
+        (t_29_E.a = t_31_E.b)
+     UNION ALL
+    
+      SELECT
+        t_43_E.a AS s,
+        t_33_E.b AS t,
+        ((((((((((0) + (1))) + (1))) + (1))) + (1))) + (1)) AS synalog_step
+      FROM
+        t_4_E AS t_43_E, t_4_E AS t_41_E, t_4_E AS t_39_E, t_4_E AS t_37_E, t_4_E AS t_35_E, t_4_E AS t_33_E
+      WHERE
+        (((((((((0) + (1))) + (1))) + (1))) + (1)) < 5) AND
+        (((((((0) + (1))) + (1))) + (1)) < 5) AND
+        (((((0) + (1))) + (1)) < 5) AND
+        (((0) + (1)) < 5) AND
+        (0 < 5) AND
+        (1 = 0) AND
+        (t_33_E.a = t_35_E.b) AND
+        (t_35_E.a = t_37_E.b) AND
+        (t_37_E.a = t_39_E.b) AND
+        (t_39_E.a = t_41_E.b) AND
+        (t_41_E.a = t_43_E.b)
+    
+  ) AS UNUSED_TABLE_NAME  
+) AS UNUSED_TABLE_NAME
+UNION
+SELECT
+  t_44_P_RecursiveCte.s AS s,
+  t_45_E.b AS t,
+  ((t_44_P_RecursiveCte.synalog_step) + (1)) AS synalog_step
+FROM
+  t_3_P_RecursiveCte AS t_44_P_RecursiveCte, t_4_E AS t_45_E
+WHERE
+  (t_44_P_RecursiveCte.synalog_step < 5) AND
+  (t_45_E.a = t_44_P_RecursiveCte.t)),
+t_2_P AS (SELECT
+  P_RecursiveCte.s AS s,
+  P_RecursiveCte.t AS t
+FROM
+  t_3_P_RecursiveCte AS P_RecursiveCte
+GROUP BY 1, 2),
+t_1_L AS (SELECT
+  P.s AS s,
+  CAST(CONCAT('[', GROUP_CONCAT(DISTINCT JSON_EXTRACT(JSON_ARRAY(P.t), '$[0]') ORDER BY JSON_EXTRACT(JSON_ARRAY(P.t), '$[0]') SEPARATOR ','), ']') AS JSON) AS l
+FROM
+  t_2_P AS P
+GROUP BY 1)
+SELECT * FROM (
+SELECT
+  t_0_L.s AS s,
+  JSON_LENGTH(t_0_L.l) AS n
+FROM
+  t_1_L AS t_0_L
+) AS UNUSED_TABLE_NAME ORDER BY s IS NULL, s;

@@ -120,6 +120,13 @@ ENGINES: dict[str, Engine] = {
         Field("user", required=True, default="default"),
         Field("password", "password", secret=True),
     )),
+    "mysql": Engine("MySQL", (
+        Field("host", required=True),
+        Field("port", "number", required=True, default=3306),
+        Field("database", required=True),
+        Field("user", required=True),
+        Field("password", "password", secret=True),
+    )),
     "bigquery": Engine("BigQuery", (
         Field("project", required=True),
         Field("dataset", required=True),

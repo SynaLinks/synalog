@@ -31,6 +31,7 @@ XFAIL_EXECUTE: dict[str, dict[str, str]] = {
     "trino": {},
     "presto": {},
     "clickhouse": {},
+    "mysql": {},
 }
 
 
@@ -78,6 +79,7 @@ XFAIL_CROSS_ENGINE: dict[str, dict[str, str]] = {
     "trino": {},
     "presto": {},
     "clickhouse": {},
+    "mysql": {},
 }
 
 # Fixtures aggregating arrays without an element order (++= / ArrayConcatAgg):

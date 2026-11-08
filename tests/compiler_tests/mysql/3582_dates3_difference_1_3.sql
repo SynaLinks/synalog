@@ -1,0 +1,69 @@
+-- Compiled by SynaLog — logic programming for AI agents (https://github.com/synalinks/synalog).
+-- Copyright 2025-2026 Yoan Sallami (Synalinks Team).
+-- SPDX-License-Identifier: Apache-2.0
+
+-- Initializing MySQL environment.
+SET SESSION sql_mode = 'ANSI_QUOTES,PIPES_AS_CONCAT,NO_BACKSLASH_ESCAPES';
+SET SESSION optimizer_switch = 'derived_condition_pushdown=off';
+SET NAMES utf8mb4 COLLATE utf8mb4_0900_bin;
+SET SESSION group_concat_max_len = 1073741824;
+
+WITH t_7_V AS (SELECT * FROM (
+  
+    SELECT
+      1 AS id,
+      '2024-01-01' AS d
+   UNION ALL
+  
+    SELECT
+      2 AS id,
+      '2024-02-28' AS d
+   UNION ALL
+  
+    SELECT
+      3 AS id,
+      '2024-02-29' AS d
+   UNION ALL
+  
+    SELECT
+      4 AS id,
+      '2023-03-01' AS d
+   UNION ALL
+  
+    SELECT
+      5 AS id,
+      '2000-12-31' AS d
+   UNION ALL
+  
+    SELECT
+      6 AS id,
+      '1999-07-15' AS d
+   UNION ALL
+  
+    SELECT
+      7 AS id,
+      '2026-10-06' AS d
+   UNION ALL
+  
+    SELECT
+      8 AS id,
+      '1970-01-01' AS d
+   UNION ALL
+  
+    SELECT
+      9 AS id,
+      '2100-02-28' AS d
+   UNION ALL
+  
+    SELECT
+      10 AS id,
+      '2004-08-09' AS d
+  
+) AS UNUSED_TABLE_NAME  )
+SELECT
+  ((((((((((((((365) * (((CAST(SUBSTR(t_0_V.d, 1, 4) AS SIGNED)) - (1970))))) + (((CAST((CASE WHEN ((((CAST(SUBSTR(t_0_V.d, 1, 4) AS SIGNED)) - (1969))) < 0) <> ((4) < 0) THEN CEIL(CAST(((CAST(SUBSTR(t_0_V.d, 1, 4) AS SIGNED)) - (1969)) AS DOUBLE) / NULLIF(4, 0)) ELSE FLOOR(CAST(((CAST(SUBSTR(t_0_V.d, 1, 4) AS SIGNED)) - (1969)) AS DOUBLE) / NULLIF(4, 0)) END) AS SIGNED)) - (CAST((CASE WHEN ((((CAST(SUBSTR(t_0_V.d, 1, 4) AS SIGNED)) - (1901))) < 0) <> ((100) < 0) THEN CEIL(CAST(((CAST(SUBSTR(t_0_V.d, 1, 4) AS SIGNED)) - (1901)) AS DOUBLE) / NULLIF(100, 0)) ELSE FLOOR(CAST(((CAST(SUBSTR(t_0_V.d, 1, 4) AS SIGNED)) - (1901)) AS DOUBLE) / NULLIF(100, 0)) END) AS SIGNED)))))) + (CAST((CASE WHEN ((((CAST(SUBSTR(t_0_V.d, 1, 4) AS SIGNED)) - (1601))) < 0) <> ((400) < 0) THEN CEIL(CAST(((CAST(SUBSTR(t_0_V.d, 1, 4) AS SIGNED)) - (1601)) AS DOUBLE) / NULLIF(400, 0)) ELSE FLOOR(CAST(((CAST(SUBSTR(t_0_V.d, 1, 4) AS SIGNED)) - (1601)) AS DOUBLE) / NULLIF(400, 0)) END) AS SIGNED)))) + (CASE WHEN ((CAST(SUBSTR(t_0_V.d, 6, 2) AS SIGNED) > 2) AND ((((MOD(CAST(SUBSTR(t_0_V.d, 1, 4) AS SIGNED), NULLIF(4, 0))) = 0) AND ((MOD(CAST(SUBSTR(t_0_V.d, 1, 4) AS SIGNED), NULLIF(100, 0))) != 0)) OR ((MOD(CAST(SUBSTR(t_0_V.d, 1, 4) AS SIGNED), NULLIF(400, 0))) = 0))) THEN 1 ELSE 0 END))) + (JSON_VALUE((CASE WHEN ((CAST(SUBSTR(t_0_V.d, 6, 2) AS SIGNED)) - (1)) < 0 THEN NULL ELSE JSON_EXTRACT(JSON_ARRAY(0, 31, 59, 90, 120, 151, 181, 212, 243, 273, 304, 334), CONCAT('$[', ((CAST(SUBSTR(t_0_V.d, 6, 2) AS SIGNED)) - (1)), ']')) END), '$' RETURNING DOUBLE)))) + (((CAST(SUBSTR(t_0_V.d, 9, 2) AS SIGNED)) - (1))))) - (((((((((((((365) * (((CAST(SUBSTR(V.d, 1, 4) AS SIGNED)) - (1970))))) + (((CAST((CASE WHEN ((((CAST(SUBSTR(V.d, 1, 4) AS SIGNED)) - (1969))) < 0) <> ((4) < 0) THEN CEIL(CAST(((CAST(SUBSTR(V.d, 1, 4) AS SIGNED)) - (1969)) AS DOUBLE) / NULLIF(4, 0)) ELSE FLOOR(CAST(((CAST(SUBSTR(V.d, 1, 4) AS SIGNED)) - (1969)) AS DOUBLE) / NULLIF(4, 0)) END) AS SIGNED)) - (CAST((CASE WHEN ((((CAST(SUBSTR(V.d, 1, 4) AS SIGNED)) - (1901))) < 0) <> ((100) < 0) THEN CEIL(CAST(((CAST(SUBSTR(V.d, 1, 4) AS SIGNED)) - (1901)) AS DOUBLE) / NULLIF(100, 0)) ELSE FLOOR(CAST(((CAST(SUBSTR(V.d, 1, 4) AS SIGNED)) - (1901)) AS DOUBLE) / NULLIF(100, 0)) END) AS SIGNED)))))) + (CAST((CASE WHEN ((((CAST(SUBSTR(V.d, 1, 4) AS SIGNED)) - (1601))) < 0) <> ((400) < 0) THEN CEIL(CAST(((CAST(SUBSTR(V.d, 1, 4) AS SIGNED)) - (1601)) AS DOUBLE) / NULLIF(400, 0)) ELSE FLOOR(CAST(((CAST(SUBSTR(V.d, 1, 4) AS SIGNED)) - (1601)) AS DOUBLE) / NULLIF(400, 0)) END) AS SIGNED)))) + (CASE WHEN ((CAST(SUBSTR(V.d, 6, 2) AS SIGNED) > 2) AND ((((MOD(CAST(SUBSTR(V.d, 1, 4) AS SIGNED), NULLIF(4, 0))) = 0) AND ((MOD(CAST(SUBSTR(V.d, 1, 4) AS SIGNED), NULLIF(100, 0))) != 0)) OR ((MOD(CAST(SUBSTR(V.d, 1, 4) AS SIGNED), NULLIF(400, 0))) = 0))) THEN 1 ELSE 0 END))) + (JSON_VALUE((CASE WHEN ((CAST(SUBSTR(V.d, 6, 2) AS SIGNED)) - (1)) < 0 THEN NULL ELSE JSON_EXTRACT(JSON_ARRAY(0, 31, 59, 90, 120, 151, 181, 212, 243, 273, 304, 334), CONCAT('$[', ((CAST(SUBSTR(V.d, 6, 2) AS SIGNED)) - (1)), ']')) END), '$' RETURNING DOUBLE)))) + (((CAST(SUBSTR(V.d, 9, 2) AS SIGNED)) - (1)))))) AS n
+FROM
+  t_7_V AS V, t_7_V AS t_0_V
+WHERE
+  (V.id = 1) AND
+  (t_0_V.id = 3);

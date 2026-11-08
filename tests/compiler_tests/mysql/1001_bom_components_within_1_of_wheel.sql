@@ -1,0 +1,142 @@
+-- Compiled by SynaLog — logic programming for AI agents (https://github.com/synalinks/synalog).
+-- Copyright 2025-2026 Yoan Sallami (Synalinks Team).
+-- SPDX-License-Identifier: Apache-2.0
+
+-- Initializing MySQL environment.
+SET SESSION sql_mode = 'ANSI_QUOTES,PIPES_AS_CONCAT,NO_BACKSLASH_ESCAPES';
+SET SESSION optimizer_switch = 'derived_condition_pushdown=off';
+SET NAMES utf8mb4 COLLATE utf8mb4_0900_bin;
+SET SESSION group_concat_max_len = 1073741824;
+
+WITH RECURSIVE t_2_Uses AS (SELECT * FROM (
+  
+    SELECT
+      'bike' AS part,
+      'frame' AS component,
+      1 AS qty
+   UNION ALL
+  
+    SELECT
+      'bike' AS part,
+      'wheel' AS component,
+      2 AS qty
+   UNION ALL
+  
+    SELECT
+      'wheel' AS part,
+      'rim' AS component,
+      1 AS qty
+   UNION ALL
+  
+    SELECT
+      'wheel' AS part,
+      'spoke' AS component,
+      32 AS qty
+   UNION ALL
+  
+    SELECT
+      'wheel' AS part,
+      'hub' AS component,
+      1 AS qty
+   UNION ALL
+  
+    SELECT
+      'hub' AS part,
+      'bearing' AS component,
+      2 AS qty
+   UNION ALL
+  
+    SELECT
+      'frame' AS part,
+      'tube' AS component,
+      3 AS qty
+   UNION ALL
+  
+    SELECT
+      'scooter' AS part,
+      'wheel' AS component,
+      2 AS qty
+   UNION ALL
+  
+    SELECT
+      'scooter' AS part,
+      'deck' AS component,
+      1 AS qty
+  
+) AS UNUSED_TABLE_NAME  ),
+t_1_Down_RecursiveCte AS (SELECT * FROM (
+  SELECT * FROM (
+    
+      SELECT
+        Uses.component AS component,
+        0 AS synalog_step
+      FROM
+        t_2_Uses AS Uses
+      WHERE
+        (Uses.part = 'wheel')
+     UNION ALL
+    
+      SELECT
+        t_3_Uses.component AS component,
+        ((0) + (1)) AS synalog_step
+      FROM
+        t_2_Uses AS t_5_Uses, t_2_Uses AS t_3_Uses
+      WHERE
+        (0 < 1) AND
+        (1 = 0) AND
+        (t_5_Uses.part = 'wheel') AND
+        (t_3_Uses.part = t_5_Uses.component)
+     UNION ALL
+    
+      SELECT
+        t_7_Uses.component AS component,
+        ((((0) + (1))) + (1)) AS synalog_step
+      FROM
+        t_2_Uses AS t_11_Uses, t_2_Uses AS t_9_Uses, t_2_Uses AS t_7_Uses
+      WHERE
+        (((0) + (1)) < 1) AND
+        (0 < 1) AND
+        (1 = 0) AND
+        (t_7_Uses.part = t_9_Uses.component) AND
+        (t_11_Uses.part = 'wheel') AND
+        (t_9_Uses.part = t_11_Uses.component)
+     UNION ALL
+    
+      SELECT
+        t_13_Uses.component AS component,
+        ((((((0) + (1))) + (1))) + (1)) AS synalog_step
+      FROM
+        t_2_Uses AS t_19_Uses, t_2_Uses AS t_17_Uses, t_2_Uses AS t_15_Uses, t_2_Uses AS t_13_Uses
+      WHERE
+        (((((0) + (1))) + (1)) < 1) AND
+        (((0) + (1)) < 1) AND
+        (0 < 1) AND
+        (1 = 0) AND
+        (t_13_Uses.part = t_15_Uses.component) AND
+        (t_15_Uses.part = t_17_Uses.component) AND
+        (t_19_Uses.part = 'wheel') AND
+        (t_17_Uses.part = t_19_Uses.component)
+    
+  ) AS UNUSED_TABLE_NAME  
+) AS UNUSED_TABLE_NAME
+UNION
+SELECT
+  t_21_Uses.component AS component,
+  ((t_20_Down_RecursiveCte.synalog_step) + (1)) AS synalog_step
+FROM
+  t_1_Down_RecursiveCte AS t_20_Down_RecursiveCte, t_2_Uses AS t_21_Uses
+WHERE
+  (t_20_Down_RecursiveCte.synalog_step < 1) AND
+  (t_21_Uses.part = t_20_Down_RecursiveCte.component)),
+t_0_Down AS (SELECT
+  Down_RecursiveCte.component AS component
+FROM
+  t_1_Down_RecursiveCte AS Down_RecursiveCte
+GROUP BY 1)
+SELECT * FROM (
+SELECT
+  Down.component AS component
+FROM
+  t_0_Down AS Down
+GROUP BY 1
+) AS UNUSED_TABLE_NAME ORDER BY component IS NULL, component;

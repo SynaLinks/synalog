@@ -18,6 +18,12 @@ with `SYNALOG_BLESS=clickhouse cargo test --test compiler_tests`, which
 writes each golden that differs from what synalog compiles, and one for each
 fixture DuckDB has a golden of.
 
+## MySQL
+
+As for ClickHouse, upstream Logica has no MySQL dialect: every golden of
+`mysql/` is synalog's own, verified by the e2e suite on a MySQL server,
+written with `SYNALOG_BLESS=mysql cargo test --test compiler_tests`.
+
 ## Trino and Presto
 
 Upstream emits BigQuery-style constructs that do not exist on Trino/Presto:

@@ -46,6 +46,7 @@ _INFO_SCHEMA_WHERE = {
     "presto": f"table_schema <> 'information_schema' AND {_NOT_SYNALOG}",
     "databricks": f"table_schema <> 'information_schema' AND {_NOT_SYNALOG}",
     "clickhouse": f"table_schema NOT IN ('system', 'information_schema', 'INFORMATION_SCHEMA') AND {_NOT_SYNALOG}",
+    "mysql": f"table_schema NOT IN ('information_schema', 'mysql', 'performance_schema', 'sys') AND {_NOT_SYNALOG}",
 }
 
 # Engines this command can introspect (everything `synalog connect` supports).

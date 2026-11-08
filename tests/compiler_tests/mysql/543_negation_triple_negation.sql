@@ -1,0 +1,43 @@
+-- Compiled by SynaLog — logic programming for AI agents (https://github.com/synalinks/synalog).
+-- Copyright 2025-2026 Yoan Sallami (Synalinks Team).
+-- SPDX-License-Identifier: Apache-2.0
+
+-- Initializing MySQL environment.
+SET SESSION sql_mode = 'ANSI_QUOTES,PIPES_AS_CONCAT,NO_BACKSLASH_ESCAPES';
+SET SESSION optimizer_switch = 'derived_condition_pushdown=off';
+SET NAMES utf8mb4 COLLATE utf8mb4_0900_bin;
+SET SESSION group_concat_max_len = 1073741824;
+
+WITH t_2_NotA AS (SELECT
+  JSON_VALUE(x_13.value, '$' RETURNING DOUBLE) AS x
+FROM
+  LATERAL (SELECT synalog_u.value FROM (SELECT JSON_ARRAY(1, 2) AS synalog_a) AS synalog_s, JSON_TABLE(synalog_s.synalog_a, '$[*]' COLUMNS (value JSON PATH '$')) AS synalog_u) AS x_13
+WHERE
+  ((SELECT
+    MIN(1) AS synalog_value
+  FROM
+    (SELECT 'singleton' as s) as unused_singleton
+  WHERE
+    (JSON_VALUE(x_13.value, '$' RETURNING DOUBLE) = 1)) IS NULL)),
+t_0_NotNotA AS (SELECT
+  JSON_VALUE(x_8.value, '$' RETURNING DOUBLE) AS x
+FROM
+  LATERAL (SELECT synalog_u.value FROM (SELECT JSON_ARRAY(1, 2) AS synalog_a) AS synalog_s, JSON_TABLE(synalog_s.synalog_a, '$[*]' COLUMNS (value JSON PATH '$')) AS synalog_u) AS x_8
+WHERE
+  ((SELECT
+    MIN(1) AS synalog_value
+  FROM
+    t_2_NotA AS NotA
+  WHERE
+    (NotA.x = JSON_VALUE(x_8.value, '$' RETURNING DOUBLE))) IS NULL))
+SELECT
+  JSON_VALUE(x_3.value, '$' RETURNING DOUBLE) AS x
+FROM
+  LATERAL (SELECT synalog_u.value FROM (SELECT JSON_ARRAY(1, 2) AS synalog_a) AS synalog_s, JSON_TABLE(synalog_s.synalog_a, '$[*]' COLUMNS (value JSON PATH '$')) AS synalog_u) AS x_3
+WHERE
+  ((SELECT
+    MIN(1) AS synalog_value
+  FROM
+    t_0_NotNotA AS NotNotA
+  WHERE
+    (NotNotA.x = JSON_VALUE(x_3.value, '$' RETURNING DOUBLE))) IS NULL);

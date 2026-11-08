@@ -1,0 +1,30 @@
+-- Compiled by SynaLog — logic programming for AI agents (https://github.com/synalinks/synalog).
+-- Copyright 2025-2026 Yoan Sallami (Synalinks Team).
+-- SPDX-License-Identifier: Apache-2.0
+
+-- Initializing MySQL environment.
+SET SESSION sql_mode = 'ANSI_QUOTES,PIPES_AS_CONCAT,NO_BACKSLASH_ESCAPES';
+SET SESSION optimizer_switch = 'derived_condition_pushdown=off';
+SET NAMES utf8mb4 COLLATE utf8mb4_0900_bin;
+SET SESSION group_concat_max_len = 1073741824;
+
+WITH t_1_R AS (SELECT * FROM (
+  
+    SELECT
+      1 AS k,
+      JSON_OBJECT('n', 'a', 'l', JSON_ARRAY()) AS r
+   UNION ALL
+  
+    SELECT
+      2 AS k,
+      JSON_OBJECT('n', 'b', 'l', JSON_ARRAY(7, 8)) AS r
+  
+) AS UNUSED_TABLE_NAME  )
+SELECT * FROM (
+SELECT
+  t_0_R.k AS k,
+  (JSON_UNQUOTE(NULLIF(JSON_EXTRACT(t_0_R.r, '$."n"'), CAST('null' AS JSON))) COLLATE utf8mb4_0900_bin) AS n,
+  JSON_LENGTH(NULLIF(JSON_EXTRACT(t_0_R.r, '$."l"'), CAST('null' AS JSON))) AS c
+FROM
+  t_1_R AS t_0_R
+) AS UNUSED_TABLE_NAME ORDER BY k IS NULL, k;

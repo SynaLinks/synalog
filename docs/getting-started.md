@@ -195,7 +195,7 @@ The target SQL dialect is set with the `@Engine` annotation in the program, or o
 sql = synalog.compile(source, "EngineeringTeam", engine="psql")
 ```
 
-Valid engines: `sqlite`, `duckdb` (default), `bigquery`, `psql`, `presto`, `trino`, `databricks`, `clickhouse`. See [Supported engines](engines.md).
+Valid engines: `sqlite`, `duckdb` (default), `bigquery`, `psql`, `presto`, `trino`, `databricks`, `clickhouse`, `mysql`. See [Supported engines](engines.md).
 
 ## Complete example
 

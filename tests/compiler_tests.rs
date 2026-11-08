@@ -552,3 +552,13 @@ fn compiler_feature_tests_clickhouse() {
 fn compiler_fail_tests_clickhouse() {
     run_compiler_fail_tests("clickhouse");
 }
+
+#[test]
+fn compiler_feature_tests_mysql() {
+    run_compiler_feature_tests("mysql");
+}
+
+#[test]
+fn compiler_fail_tests_mysql() {
+    run_compiler_fail_tests("mysql");
+}

@@ -58,7 +58,7 @@ shell/test.sh e2e          # end-to-end tests against live SQL engines
 shell/test.sh quick        # unit + parser golden (no SQL compilation)
 ```
 
-Python steps run through `uv run`, so the project virtualenv supplies pytest and the engine drivers. The `e2e` step builds the extension into the venv and starts the server engines (PostgreSQL, Trino, Presto, a Spark Thrift Server standing in for Databricks, and ClickHouse) itself via Docker Compose. A test known to fail on an engine, by a limitation of the engine, is listed with its reason in `tests/e2e/known_failures.py`, as a strict xfail.
+Python steps run through `uv run`, so the project virtualenv supplies pytest and the engine drivers. The `e2e` step builds the extension into the venv and starts the server engines (PostgreSQL, Trino, Presto, a Spark Thrift Server standing in for Databricks, ClickHouse and MySQL) itself via Docker Compose. A test known to fail on an engine, by a limitation of the engine, is listed with its reason in `tests/e2e/known_failures.py`, as a strict xfail.
 
 `SYNALOG_E2E_ENGINES` runs the end-to-end tests of some engines only, a comma list (`SYNALOG_E2E_ENGINES=psql,trino uv run pytest tests/e2e`); CI runs each engine in a job of its own this way, in parallel, starting only that engine's server. `SYNALOG_E2E_SHARD=2/3` runs the second third of the selected tests, split by fixture: CI splits Trino, Presto and Spark, whose every query pays a fixed cost, into three jobs each.
 
@@ -73,7 +73,7 @@ cd tests/parser_tests && python3 generate_expected_json.py
 
 Requires `pip install logica`.
 
-Upstream Logica has no ClickHouse dialect: its goldens are synalog's own. `SYNALOG_BLESS=clickhouse cargo test --test compiler_tests` writes them (a comma list of engines, or `all`), then review the diff and run the e2e suite.
+Upstream Logica has no ClickHouse or MySQL dialect: their goldens are synalog's own. `SYNALOG_BLESS=clickhouse,mysql cargo test --test compiler_tests` writes them (a comma list of engines, or `all`), then review the diff and run the e2e suite.
 
 ## Project structure
 

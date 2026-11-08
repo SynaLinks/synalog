@@ -13,10 +13,10 @@ set -uo pipefail
 #
 # Python steps run through `uv run`, so the project virtualenv (.venv) provides
 # every dev dependency — pytest, logica's sqlite UDFs, and the remote-engine
-# drivers (psycopg/trino/presto/pyhive/clickhouse-connect) the e2e suite needs. The e2e step builds
+# drivers (psycopg/trino/presto/pyhive/clickhouse-connect/pymysql) the e2e suite needs. The e2e step builds
 # the extension into the venv and starts the engine containers via docker
 # compose (PostgreSQL, Trino, Presto, a Spark Thrift Server standing in for
-# Databricks, and ClickHouse); see tests/e2e/conftest.py.
+# Databricks, ClickHouse and MySQL); see tests/e2e/conftest.py.
 
 cd "$(dirname "$0")/.."
 
@@ -80,10 +80,10 @@ fi
 
 # ── End-to-end tests against live engines ────────────────
 if [[ "$MODE" == "all" || "$MODE" == "e2e" ]]; then
-    header "End-to-End Tests (sqlite, duckdb, psql, trino, presto, spark, clickhouse)"
+    header "End-to-End Tests (sqlite, duckdb, psql, trino, presto, spark, clickhouse, mysql)"
     run_step "build synalog" build_into_venv
     run_step "engines up" docker compose -f tests/e2e/docker-compose.yml up -d --wait
-    SYNALOG_E2E_REQUIRE="psql,trino,presto,databricks,clickhouse" \
+    SYNALOG_E2E_REQUIRE="psql,trino,presto,databricks,clickhouse,mysql" \
         run_step "pytest tests/e2e" uv run pytest tests/e2e -q
 fi
 

@@ -644,6 +644,9 @@ impl<'a> ExprTranslator<'a> {
             Record(Vec<(String, Type)>),
             /// Subscript access. sub_str=Some → pop 1; None → pop 2.
             Subscript { sub_str: Option<String>, record_is_table: bool },
+            /// A value read out of a list or a record, as the type it has,
+            /// where the dialect keeps them in JSON (`Dialect::json_scalar`).
+            JsonScalar(Type),
             /// Build CASE WHEN ... THEN ... ELSE ... END.
             Implication { has_otherwise: bool },
             /// SqlExpr: first arg is template, rest are substituted.
@@ -1367,6 +1370,9 @@ impl<'a> ExprTranslator<'a> {
                                     ));
                                 }
                             }
+                            if matches!(pred_name, "Element" | "ValueOfUnnested") {
+                                tasks.push(Task::Combine(CK::JsonScalar(self.value_type(expr)), 1));
+                            }
                             tasks.push(Task::Combine(CK::Template(tmpl.clone()), num_args));
                         } else if self.built_in_infix_operators.contains_key(pred_name) {
                             if pred_name.chars().next().map(|c| c.is_ascii_uppercase()).unwrap_or(false) {
@@ -1495,6 +1501,9 @@ impl<'a> ExprTranslator<'a> {
                             .map(|sql_ref| !sql_ref.contains('.'))
                             .unwrap_or(false);
 
+                        if !record_is_table {
+                            tasks.push(Task::Combine(CK::JsonScalar(self.value_type(expr)), 1));
+                        }
                         if sub_str.is_some() {
                             tasks.push(Task::Combine(CK::Subscript { sub_str, record_is_table }, 1));
                             tasks.push(Task::Eval(record_expr));
@@ -1513,11 +1522,29 @@ impl<'a> ExprTranslator<'a> {
                         let has_otherwise = io.contains_key("otherwise");
                         let num_args = 2 * conditions.len() + if has_otherwise { 1 } else { 0 };
                         tasks.push(Task::Combine(CK::Implication { has_otherwise }, num_args));
+                        // A branch reading a value of no known type out of a
+                        // list or a record reads it as the implication's type.
+                        let ty = self.value_type(expr);
+                        let reads_json = |e: &Json| -> bool {
+                            if ty == Type::Any || !e.is_object() {
+                                return false;
+                            }
+                            let eo = e.as_object();
+                            let element = eo.get("call").and_then(|c| c.as_object().get("predicate_name"))
+                                .is_some_and(|n| matches!(n.as_str(), "Element" | "ValueOfUnnested"));
+                            (element || eo.contains_key("subscript")) && self.value_type(e) == Type::Any
+                        };
                         if let Some(otherwise) = io.get("otherwise") {
+                            if reads_json(otherwise) {
+                                tasks.push(Task::Combine(CK::JsonScalar(ty.clone()), 1));
+                            }
                             tasks.push(Task::Eval(otherwise));
                         }
                         for ct in conditions.iter().rev() {
                             let cto = ct.as_object();
+                            if reads_json(&cto["consequence"]) {
+                                tasks.push(Task::Combine(CK::JsonScalar(ty.clone()), 1));
+                            }
                             tasks.push(Task::Eval(&cto["consequence"]));
                             tasks.push(Task::Eval(&cto["condition"]));
                         }
@@ -1613,6 +1640,10 @@ impl<'a> ExprTranslator<'a> {
                             };
                             results.push(self.dialect.subscript(record_sql, &sub_final, record_is_table));
                         }
+                        CK::JsonScalar(ty) => {
+                            let sql = &args[0];
+                            results.push(self.dialect.json_scalar(sql, &ty).unwrap_or_else(|| sql.clone()));
+                        }
                         CK::Implication { has_otherwise } => {
                             let mut sql = "CASE".to_string();
                             let cond_count = if has_otherwise { n - 1 } else { n };
@@ -1635,7 +1666,13 @@ impl<'a> ExprTranslator<'a> {
                             // un-quoting, so SqlExpr templates aren't treated as data literals.
                             let template_src = args[0].strip_prefix('E').unwrap_or(&args[0]);
                             let template = template_src.trim_matches('\'').trim_matches('"');
-                            let mut result = template.to_string();
+                            // A quote of the template, doubled in its literal
+                            // where the dialect escapes one so, is one quote.
+                            let mut result = if self.dialect.str_literal("'") == "''''" {
+                                template.replace("''", "'")
+                            } else {
+                                template.to_string()
+                            };
                             // Substitute positional args: {0}, {1}, ...
                             // args layout: [template, positional..., named...]
                             let positional_args = &args[1..1 + positional_count];
@@ -1663,6 +1700,7 @@ impl<'a> ExprTranslator<'a> {
                                 return Err(CompileError::new(
                                     format!("{}: '{}' is not a type name — write a type of letters, digits, '_', spaces and balanced '()<>'", func, type_name), ""));
                             }
+                            let type_name = self.dialect.cast_type(type_name);
                             results.push(if func == "TryCast" {
                                 format!("TRY_CAST({} AS {})", args[0], type_name)
                             } else {
@@ -1738,7 +1776,7 @@ impl<'a> ExprTranslator<'a> {
                                     FormatPiece::Text(text) => parts.push(self.dialect.str_literal(text)),
                                     FormatPiece::Spec { .. } => {
                                         let value = next.next().expect("counted");
-                                        parts.push(piece.render(value, |t| self.dialect.str_literal(t)));
+                                        parts.push(piece.render(value, self.dialect));
                                     }
                                 }
                             }
@@ -2442,16 +2480,18 @@ fn format_pieces(format: &str) -> Result<Vec<FormatPiece>, String> {
 
 impl FormatPiece {
     /// The SQL text of a placeholder applied to `value`.
-    fn render(&self, value: &str, literal: impl Fn(&str) -> String) -> String {
+    fn render(&self, value: &str, dialect: &dyn Dialect) -> String {
         let FormatPiece::Spec { left, zero, width, precision, conversion } = self else {
             return String::new();
         };
+        let literal = |t: &str| dialect.str_literal(t);
+        let (integer, text_type, length) = dialect.format_types();
         let text = match conversion {
-            'd' => format!("CAST(CAST({} AS BIGINT) AS VARCHAR)", value),
+            'd' => format!("CAST(CAST({} AS {}) AS {})", value, integer, text_type),
             'f' => {
                 let p = precision.unwrap_or(6);
                 // The cast rounds to the precision, and keeps its zeros.
-                format!("CAST(CAST({v} AS DECIMAL(38, {p})) AS VARCHAR)", v = value, p = p)
+                format!("CAST(CAST({v} AS DECIMAL(38, {p})) AS {t})", v = value, p = p, t = text_type)
             }
             _ => value.to_string(),
         };
@@ -2459,7 +2499,7 @@ impl FormatPiece {
             return text;
         }
         // Padded to the width, never cut: LPAD and RPAD truncate.
-        let pad = |padded: String| format!("(CASE WHEN LENGTH({t}) >= {w} THEN {t} ELSE {padded} END)", t = text, w = width, padded = padded);
+        let pad = |padded: String| format!("(CASE WHEN {l}({t}) >= {w} THEN {t} ELSE {padded} END)", l = length, t = text, w = width, padded = padded);
         if *left {
             pad(format!("RPAD({}, {}, {})", text, width, literal(" ")))
         } else if *zero && *conversion != 's' {
@@ -2538,6 +2578,7 @@ impl<'a> ExprTranslator<'a> {
         if let Some(sub) = o.get("subscript") {
             let so = sub.as_object();
             let field = so.get("subscript")
+                .filter(|s| s.is_object())
                 .and_then(|s| s.as_object().get("literal"))
                 .and_then(|l| l.as_object().get("the_symbol"))
                 .map(|s| s.as_object()["symbol"].as_str().to_string());

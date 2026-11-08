@@ -5,9 +5,9 @@ Python API and executes the SQL against a real engine.
 
 Engine availability:
   - sqlite / duckdb run in-process and are always tested.
-  - psql / trino / presto / databricks / clickhouse need live servers (see docker-compose.yml here);
+  - psql / trino / presto / databricks / clickhouse / mysql need live servers (see docker-compose.yml here);
     their tests are skipped when the server is unreachable, unless
-    SYNALOG_E2E_REQUIRE=psql,trino,presto is set (then unreachable = failure,
+    SYNALOG_E2E_REQUIRE=psql,trino,presto is set (a comma list of engines) (then unreachable = failure,
     used in CI so missing services can't silently skip).
 
 Engine selection: SYNALOG_E2E_ENGINES=psql (a comma list) runs only the tests
@@ -38,7 +38,7 @@ FIXTURES_DIR = E2E_DIR.parent / "compiler_tests"
 # Apache Spark Thrift Server as an open-source stand-in (the dialect targets
 # Spark SQL; see SparkRunner). bigquery stays compile-only — no comparable
 # open-source server.
-ENGINES = ["sqlite", "duckdb", "psql", "trino", "presto", "databricks", "clickhouse"]
+ENGINES = ["sqlite", "duckdb", "psql", "trino", "presto", "databricks", "clickhouse", "mysql"]
 
 # Fixtures that cannot be compiled through the Python API (none: imports
 # resolve through `import_root`, see plan_fixture).
