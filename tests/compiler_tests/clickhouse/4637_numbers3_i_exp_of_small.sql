@@ -53,7 +53,7 @@ WITH t_1_X AS (SELECT * FROM (
 ) AS UNUSED_TABLE_NAME  )
 SELECT
   t_0_X.k AS k,
-  EXP(t_0_X.x) AS v
+  if(t_0_X.x >= 0, sinh(t_0_X.x) + cosh(t_0_X.x), 1 / (sinh(-t_0_X.x) + cosh(-t_0_X.x))) AS v
 FROM
   t_1_X AS t_0_X
 WHERE

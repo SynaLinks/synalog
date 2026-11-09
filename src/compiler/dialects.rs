@@ -1710,7 +1710,12 @@ impl Dialect for ClickHouseDialect {
         m.insert("Set", "arraySort(groupUniqArray(%s))");
         m.insert("Agg++", "arrayFlatten(groupArray(%s))");
         m.insert("StringAgg", "(CASE WHEN count({0}) > 0 THEN arrayStringConcat(groupArray(toString({0})), ',') END)");
-        m.insert("Log", "log(%s)");
+        // On x86 ClickHouse computes log and exp with FastOps, which is off
+        // in the ninth digit (exp(log(1000000)) is 1000000.000213). log2,
+        // sinh and cosh are libm's, as on the other engines: e^x is
+        // sinh x + cosh x, its reciprocal for a negative x (no cancellation).
+        m.insert("Log", "(log2({0}) * 0.6931471805599453)");
+        m.insert("Exp", "if({0} >= 0, sinh({0}) + cosh({0}), 1 / (sinh(-{0}) + cosh(-{0})))");
         m.insert("Format", "printf(%s)");
         // LIKE has no ESCAPE clause here: a backslash escapes already.
         m.insert("Like", "({0} LIKE {1})");

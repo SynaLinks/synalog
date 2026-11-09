@@ -25,8 +25,8 @@ WITH t_1_Numbers AS (SELECT * FROM (
 ) AS UNUSED_TABLE_NAME  ),
 t_0_Computed AS (SELECT
   Numbers.x AS x,
-  EXP(CAST(Numbers.x AS Nullable(Float64))) AS e,
-  log(CAST(Numbers.x AS Nullable(Float64))) AS l,
+  if(CAST(Numbers.x AS Nullable(Float64)) >= 0, sinh(CAST(Numbers.x AS Nullable(Float64))) + cosh(CAST(Numbers.x AS Nullable(Float64))), 1 / (sinh(-CAST(Numbers.x AS Nullable(Float64))) + cosh(-CAST(Numbers.x AS Nullable(Float64))))) AS e,
+  (log2(CAST(Numbers.x AS Nullable(Float64))) * 0.6931471805599453) AS l,
   SIN(CAST(Numbers.x AS Nullable(Float64))) AS s,
   COS(CAST(Numbers.x AS Nullable(Float64))) AS c,
   POW(Numbers.x, 2) AS p

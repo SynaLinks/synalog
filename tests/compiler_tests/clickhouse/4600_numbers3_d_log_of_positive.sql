@@ -53,7 +53,7 @@ WITH t_1_X AS (SELECT * FROM (
 ) AS UNUSED_TABLE_NAME  )
 SELECT
   t_0_X.k AS k,
-  log(t_0_X.x) AS v
+  (log2(t_0_X.x) * 0.6931471805599453) AS v
 FROM
   t_1_X AS t_0_X
 WHERE

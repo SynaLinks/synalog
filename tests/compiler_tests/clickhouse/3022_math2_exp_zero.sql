@@ -10,4 +10,4 @@ SET cast_keep_nullable = 1;
 SET transform_null_in = 1;
 
 SELECT
-  EXP(0) AS v;
+  if(0 >= 0, sinh(0) + cosh(0), 1 / (sinh(-0) + cosh(-0))) AS v;

@@ -10,4 +10,4 @@ SET cast_keep_nullable = 1;
 SET transform_null_in = 1;
 
 SELECT
-  log(EXP(1)) AS v;
+  (log2(if(1 >= 0, sinh(1) + cosh(1), 1 / (sinh(-1) + cosh(-1)))) * 0.6931471805599453) AS v;
