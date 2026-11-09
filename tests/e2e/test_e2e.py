@@ -10,6 +10,7 @@ Two layers:
 from __future__ import annotations
 
 import functools
+import math
 from decimal import Decimal
 
 import pytest
@@ -109,6 +110,17 @@ def _normalize_value(v):
     return v
 
 
+def same_values(got, want) -> bool:
+    """Whether `got` is `want`, normalized values: a float within a relative
+    1e-8 of its expected value. An engine's `log` and `exp` need not round as
+    DuckDB's: ClickHouse's vectorized ones, on x86, differ in the ninth digit."""
+    if isinstance(got, float) and isinstance(want, float):
+        return math.isclose(got, want, rel_tol=1e-8, abs_tol=1e-6)
+    if isinstance(got, (list, tuple)) and isinstance(want, (list, tuple)):
+        return len(got) == len(want) and all(map(same_values, got, want))
+    return got == want
+
+
 def _sort_arrays(v):
     if isinstance(v, tuple):
         return tuple(sorted((_sort_arrays(x) for x in v), key=repr))
@@ -159,7 +171,8 @@ def _cross_engine_params():
 def test_matches_duckdb(runner_for, engine, name):
     runner_for(engine)  # skips when the engine is unavailable
     rows = _normalize_rows(_engine_rows(engine, name), name)
-    assert rows == _reference_rows(name)
+    want = _reference_rows(name)
+    assert same_values(rows, want), f"{rows} != {want}"
 
 
 # ---------------------------------------------------------------------------
@@ -192,4 +205,5 @@ def test_search_executes_and_filters(runner_for, engine):
     runner = runner_for(engine)
     sql = synalog.search(SEARCH_PROGRAM, "Customer", "Acme", engine=engine)
     rows = _normalize_rows(runner.run(sql))
-    assert rows == _normalize_rows(SEARCH_EXPECTED)
+    want = _normalize_rows(SEARCH_EXPECTED)
+    assert same_values(rows, want), f"{rows} != {want}"
