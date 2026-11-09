@@ -10,4 +10,4 @@ SET cast_keep_nullable = 1;
 SET transform_null_in = 1;
 
 SELECT
-  log(1) AS v;
+  (log2(1) * 0.6931471805599453) AS v;

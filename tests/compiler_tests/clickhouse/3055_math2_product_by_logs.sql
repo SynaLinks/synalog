@@ -62,12 +62,12 @@ WITH t_3_V AS (SELECT * FROM (
   
 ) AS UNUSED_TABLE_NAME  ),
 t_1_S AS (SELECT
-  SUM(log(t_2_V.x)) AS s
+  SUM((log2(t_2_V.x) * 0.6931471805599453)) AS s
 FROM
   t_3_V AS t_2_V
 WHERE
   (t_2_V.x > 0))
 SELECT
-  EXP(t_0_S.s) AS v
+  if(t_0_S.s >= 0, sinh(t_0_S.s) + cosh(t_0_S.s), 1 / (sinh(-t_0_S.s) + cosh(-t_0_S.s))) AS v
 FROM
   t_1_S AS t_0_S;

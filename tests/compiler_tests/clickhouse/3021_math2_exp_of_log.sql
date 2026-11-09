@@ -63,7 +63,7 @@ WITH t_1_V AS (SELECT * FROM (
 ) AS UNUSED_TABLE_NAME  )
 SELECT
   t_0_V.id AS id,
-  EXP(log(t_0_V.x)) AS v
+  if((log2(t_0_V.x) * 0.6931471805599453) >= 0, sinh((log2(t_0_V.x) * 0.6931471805599453)) + cosh((log2(t_0_V.x) * 0.6931471805599453)), 1 / (sinh(-(log2(t_0_V.x) * 0.6931471805599453)) + cosh(-(log2(t_0_V.x) * 0.6931471805599453)))) AS v
 FROM
   t_1_V AS t_0_V
 WHERE

@@ -18,7 +18,7 @@ from pathlib import Path
 import pytest
 
 from conftest import ENGINES
-from test_e2e import _normalize_value, same_values
+from test_e2e import _normalize_value
 
 PROGRAMS = Path(__file__).resolve().parents[1] / "programs"
 EXPECT = re.compile(r"^#\s*Expect:\s*(rows|page|search)\s+(.*)$")
@@ -77,6 +77,6 @@ def test_program_rows(runner_for, engine, path, kind, rest):
     got = _normalize(runner.run_plan(steps))
     elapsed = time.monotonic() - started
     want = _normalize(ast.literal_eval(literal))
-    assert same_values(got, want), f"{predicate} on {engine}: got {got}, expected {want}"
+    assert got == want, f"{predicate} on {engine}: got {got}, expected {want}"
     if (within := WITHIN.search(source)) is not None:
         assert elapsed <= float(within.group(1)), f"{predicate} on {engine}: {elapsed:.1f}s, past {within.group(1)}s"

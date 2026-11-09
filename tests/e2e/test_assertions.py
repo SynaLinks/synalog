@@ -16,7 +16,7 @@ from pathlib import Path
 import pytest
 
 from conftest import ENGINES
-from test_e2e import _normalize_rows, same_values
+from test_e2e import _normalize_rows
 
 PROGRAMS = Path(__file__).resolve().parents[1] / "programs"
 EXPECT = re.compile(r"^#\s*Expect:\s*(holds|violated|counterexamples)\s+(\S+)\s*(.*)$")
@@ -59,4 +59,4 @@ def test_assertion_counterexamples(runner_for, engine, path, ref, kind, rest):
         assert len(found) == int(rest), f"{ref}: {len(found)} counterexamples {found}, expected {rest}"
     else:
         want = _normalize_rows([tuple(row) for row in ast.literal_eval(rest.lstrip("= ").strip())])
-        assert same_values(found, want), f"{ref}: got {found}, expected {want}"
+        assert found == want, f"{ref}: got {found}, expected {want}"
