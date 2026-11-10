@@ -1815,7 +1815,8 @@ pub fn unfold_recursion(rules: &[Json], engine: &str) -> CompileResult<Vec<Json>
 fn recursive_cte_steps(engine: &str) -> usize {
     match engine {
         "duckdb" | "sqlite" => usize::MAX,
-        "psql" => 1,
+        // MySQL, as PostgreSQL, reads the recursion once in its step.
+        "psql" | "mysql" => 1,
         _ => 0,
     }
 }

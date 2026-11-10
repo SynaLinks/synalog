@@ -8,7 +8,7 @@ use super::*;
 fn test_get_all_engines() {
     let engines = [
         "bigquery", "sqlite", "psql", "trino",
-        "presto", "databricks", "duckdb", "clickhouse",
+        "presto", "databricks", "duckdb", "clickhouse", "mysql",
     ];
     for engine in &engines {
         let d = get(engine).unwrap();
@@ -27,7 +27,7 @@ fn test_get_unknown_engine() {
 fn test_library_program_non_empty() {
     let engines = [
         "bigquery", "sqlite", "psql", "trino",
-        "presto", "databricks", "duckdb", "clickhouse",
+        "presto", "databricks", "duckdb", "clickhouse", "mysql",
     ];
     for engine in &engines {
         let d = get(engine).unwrap();
@@ -45,7 +45,7 @@ fn test_library_program_non_empty() {
 fn test_library_program_parseable() {
     let engines = [
         "bigquery", "sqlite", "psql", "trino",
-        "presto", "databricks", "duckdb", "clickhouse",
+        "presto", "databricks", "duckdb", "clickhouse", "mysql",
     ];
     for engine in &engines {
         let d = get(engine).unwrap();
@@ -656,7 +656,7 @@ fn test_databricks_regex_match_condition() {
 fn test_regex_match_condition_escapes_single_quotes() {
     let engines = [
         "bigquery", "sqlite", "psql", "trino",
-        "presto", "databricks", "duckdb", "clickhouse",
+        "presto", "databricks", "duckdb", "clickhouse", "mysql",
     ];
     for engine in &engines {
         let d = get(engine).unwrap();
@@ -800,4 +800,38 @@ fn clickhouse_records_are_named_tuples() {
 fn clickhouse_reads_a_correlated_count_of_nothing_as_zero() {
     assert!(get("clickhouse").unwrap().correlated_count_may_be_null());
     assert!(!get("duckdb").unwrap().correlated_count_may_be_null());
+}
+
+#[test]
+fn mysql_orders_nulls_without_nulls_last() {
+    let d = get("mysql").unwrap();
+    assert!(!d.has_nulls_order());
+    assert_eq!(d.nulls_ordered("k DESC", "k", false), "k IS NULL, k DESC");
+    assert_eq!(d.nulls_ordered("k", "k", true), "k IS NOT NULL, k");
+    // Every other engine writes standard SQL.
+    assert_eq!(get("psql").unwrap().nulls_ordered("k", "k", false), "k NULLS LAST");
+}
+
+#[test]
+fn mysql_casts_to_its_own_type_names() {
+    let d = get("mysql").unwrap();
+    assert_eq!(d.cast_type("INTEGER"), "SIGNED");
+    assert_eq!(d.cast_type("text"), "CHAR");
+    assert_eq!(d.cast_type("DECIMAL(10, 2)"), "DECIMAL(10, 2)");
+    assert_eq!(get("trino").unwrap().cast_type("INTEGER"), "INTEGER");
+}
+
+#[test]
+fn mysql_quotes_its_reserved_words() {
+    let d = get("mysql").unwrap();
+    assert_eq!(sql_column("rank", d.as_ref()), "\"rank\"");
+    assert_eq!(sql_column("pages", d.as_ref()), "pages");
+    assert_eq!(sql_column("rank", get("duckdb").unwrap().as_ref()), "rank");
+}
+
+#[test]
+fn mysql_writes_a_decimal_literal_as_a_double() {
+    let d = get("mysql").unwrap();
+    assert_eq!(d.float_literal("1.5"), "1.5e0");
+    assert_eq!(d.float_literal("2e10"), "2e10");
 }

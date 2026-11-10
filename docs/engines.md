@@ -1,6 +1,6 @@
 # Supported engines
 
-Synalog compiles to eight SQL dialects. Select the target with the `@Engine` annotation in the program, or override it with the `engine` keyword of any [Python API](python-api.md) function.
+Synalog compiles to nine SQL dialects. Select the target with the `@Engine` annotation in the program, or override it with the `engine` keyword of any [Python API](python-api.md) function.
 
 | Engine | `@Engine` value | Notes |
 |--------|-----------------|-------|
@@ -12,6 +12,7 @@ Synalog compiles to eight SQL dialects. Select the target with the `@Engine` ann
 | Presto | `presto` | |
 | Databricks | `databricks` | Double-quoted string literals |
 | ClickHouse | `clickhouse` | 26.3 or later; a list is never null |
+| MySQL | `mysql` | 8.4 or later; lists and records are JSON |
 
 ```synalog
 @Engine("psql");
@@ -48,6 +49,17 @@ What ClickHouse cannot express:
 
 These are listed, with the tests they fail, in `tests/e2e/known_failures.py`.
 
+## MySQL
+
+Synalog needs MySQL 8.4 (the LTS release) or later: `EXCEPT`, `LATERAL` and `JSON_TABLE` are used throughout. Each script opens with the session settings it needs, so run its statements in one session, as `synalog … run` does:
+
+- `sql_mode` `ANSI_QUOTES,PIPES_AS_CONCAT,NO_BACKSLASH_ESCAPES`: standard SQL, where `"` quotes an identifier, `||` concatenates and a backslash is a character of a string.
+- `derived_condition_pushdown=off`: MySQL pushes a condition into a derived table by reprinting it with backslash escapes, which ends a literal holding a quote (`'a''b'`) early under `NO_BACKSLASH_ESCAPES`.
+- `utf8mb4_0900_bin`, a collation of no padding: texts compare by their characters, case and trailing spaces included, as on every engine. A column of your own tables keeps its collation in a comparison (a case-insensitive one compares so).
+- `group_concat_max_len`: an ordered aggregate (`Set`, `Array`, `ArgMax`) joins its values in a text longer than the default 1 KiB.
+
+MySQL has no arrays nor records: a list compiles to a JSON array, a record to a JSON object, and a value read out of one is cast to the type the compiler infers for it. An unnesting is `JSON_TABLE` in a `LATERAL` derived table, an ordered aggregate `GROUP_CONCAT` of the values' JSON. `Median` is not available.
+
 ## Scaling
 
-Because the heavy lifting is done by the SQL engine, Synalog inherits its performance characteristics: in-process analytics with DuckDB, embedded with SQLite, warehouse-scale with BigQuery, Trino, Presto, Databricks or ClickHouse, efficiently scaling to petabytes of data.
+Because the heavy lifting is done by the SQL engine, Synalog inherits its performance characteristics: in-process analytics with DuckDB, embedded with SQLite, warehouse-scale with BigQuery, Trino, Presto, Databricks, ClickHouse or MySQL, efficiently scaling to petabytes of data.

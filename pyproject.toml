@@ -53,6 +53,7 @@ presto = ["presto-python-client"]
 databricks = ["databricks-sql-connector"]
 bigquery = ["google-cloud-bigquery"]
 clickhouse = ["clickhouse-connect"]
+mysql = ["pymysql"]
 # Every engine driver at once.
 all-engines = [
     "trino",
@@ -60,6 +61,7 @@ all-engines = [
     "databricks-sql-connector",
     "google-cloud-bigquery",
     "clickhouse-connect",
+    "pymysql",
 ]
 
 [dependency-groups]
@@ -69,7 +71,7 @@ all-engines = [
 # drivers let the e2e suite reach the docker-compose servers instead of
 # skipping them: psycopg→PostgreSQL, trino→Trino, presto→Presto,
 # pyhive+thrift→the Spark Thrift Server (the open-source Databricks stand-in,
-# reached over NOSASL), and clickhouse-connect→ClickHouse.
+# reached over NOSASL), clickhouse-connect→ClickHouse, and pymysql→MySQL.
 dev = [
     "pytest",
     "pytest-xdist",
@@ -83,6 +85,7 @@ dev = [
     "pyhive",
     "thrift",
     "clickhouse-connect>=1.12.0",
+    "pymysql>=1.2.3",
 ]
 
 [tool.maturin]

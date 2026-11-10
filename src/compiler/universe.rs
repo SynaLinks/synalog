@@ -1052,6 +1052,13 @@ impl SynalogProgram {
             );
             let order_by = self.annotations.order_by_clause(name);
             let limit = self.annotations.limit_clause(name);
+            // An ORDER BY of expressions (`k IS NULL, k`) reads the output's
+            // columns where it follows the rule's own query.
+            let wrap = !order_by.is_empty()
+                && dialects::get(self.annotations.engine()).is_ok_and(|d| d.order_by_reads_tables());
+            if wrap {
+                return Ok(format!("SELECT * FROM (\n{}\n) AS UNUSED_TABLE_NAME{}{}", sql, order_by, limit));
+            }
             return Ok(format!("{}{}{}", sql, order_by, limit));
         }
 
@@ -2556,6 +2563,7 @@ impl<'a> SubqueryTranslator for UniverseSubqueryTranslator<'a> {
 fn engine_keywords(engine: &str) -> &'static [&'static str] {
     match engine {
         "clickhouse" => &["top", "final", "sample", "prewhere", "settings", "format", "global"],
+        "mysql" => dialects::MYSQL_RESERVED,
         _ => &[],
     }
 }

@@ -599,6 +599,32 @@ impl Annotations {
                 }
                 preamble.push('\n');
             }
+            "mysql" => {
+                // Standard SQL: `"` quotes an identifier, `||` concatenates,
+                // a backslash is a character in a string (the compiler writes
+                // literals so). Texts compare by their characters, case
+                // and trailing spaces included, as on every engine (a text
+                // read out of JSON is cast to the collation: JSON's,
+                // utf8mb4_bin, ignores trailing spaces); a condition is not pushed into a
+                // derived table, which MySQL does by reprinting its literals
+                // with backslash escapes (a quote, `'a''b'`, then ends the
+                // literal); a list joined into text
+                // (`Set`, `Sort`, `ArgMin`) is longer than 1 KiB.
+                preamble.push_str(
+                    "-- Initializing MySQL environment.\n\
+                     SET SESSION sql_mode = 'ANSI_QUOTES,PIPES_AS_CONCAT,NO_BACKSLASH_ESCAPES';\n\
+                     SET SESSION optimizer_switch = 'derived_condition_pushdown=off';\n\
+                     SET NAMES utf8mb4 COLLATE utf8mb4_0900_bin;\n\
+                     SET SESSION group_concat_max_len = 1073741824;\n",
+                );
+                if !self.grounded_predicates().is_empty() && self.dataset_override.is_none() {
+                    preamble.push_str(&format!(
+                        "CREATE DATABASE IF NOT EXISTS {} DEFAULT COLLATE utf8mb4_0900_bin;\n",
+                        test_schema()
+                    ));
+                }
+                preamble.push('\n');
+            }
             _ => {}
         }
         preamble
@@ -712,8 +738,15 @@ impl Annotations {
                     let lower = item.to_ascii_lowercase();
                     let descending = lower.split_whitespace().any(|w| w == "desc");
                     let first_by_default = dialect.as_ref().is_some_and(|d| d.nulls_first_by_default(descending));
-                    if first_by_default && !lower.split_whitespace().any(|w| w == "nulls") {
-                        format!("{} NULLS LAST", item)
+                    let words: Vec<&str> = item.split_whitespace().collect();
+                    let column = words.first().copied().unwrap_or_default();
+                    let nulls = words.iter().position(|w| w.eq_ignore_ascii_case("nulls"));
+                    if let (Some(at), Some(d)) = (nulls, dialect.as_ref().filter(|d| !d.has_nulls_order())) {
+                        // An order of nulls the engine cannot write.
+                        let first = words.get(at + 1).is_some_and(|w| w.eq_ignore_ascii_case("first"));
+                        d.nulls_ordered(&words[..at].join(" "), column, first)
+                    } else if first_by_default && nulls.is_none() {
+                        dialect.as_ref().map_or_else(|| format!("{} NULLS LAST", item), |d| d.nulls_ordered(&item, column, false))
                     } else {
                         item
                     }

@@ -13,7 +13,7 @@ its own connections:
   - duckdb: an ``ARRAY_CONCAT_AGG`` macro (flatten + list).
   - psql:   an ``ARRAY_CONCAT_AGG`` aggregate (array_cat).
 
-ClickHouse runs on its server (see docker-compose.yml here).
+ClickHouse and MySQL run on their servers (see docker-compose.yml here).
 
 The ``Today``/``Now`` built-in concepts no longer need a runtime table — the
 compiler inlines them per dialect.
@@ -398,6 +398,22 @@ class ClickHouseRunner(Runner):
         return Session()
 
 
+class MySQLRunner(Runner):
+    """MySQL through synalog's own session (``synalog.runners.MySQLSession``):
+    one connection per session, its JSON columns decoded."""
+
+    engine = "mysql"
+
+    def __init__(self, host: str, port: int, user: str, password: str):
+        self.connection = {"engine": "mysql", "host": host, "port": port, "user": user,
+                           "password": password, "database": "synalog"}
+
+    def session(self):
+        from synalog.runners import MySQLSession
+
+        return MySQLSession(self.connection)
+
+
 def make_runner(engine: str):
     """Build the runner for `engine`, reading connection info from env vars."""
     if engine == "sqlite":
@@ -433,5 +449,12 @@ def make_runner(engine: str):
             int(os.environ.get("SYNALOG_E2E_CLICKHOUSE_PORT", "8123")),
             os.environ.get("SYNALOG_E2E_CLICKHOUSE_USER", "synalog"),
             os.environ.get("SYNALOG_E2E_CLICKHOUSE_PASSWORD", "synalog"),
+        )
+    if engine == "mysql":
+        return MySQLRunner(
+            os.environ.get("SYNALOG_E2E_MYSQL_HOST", "127.0.0.1"),
+            int(os.environ.get("SYNALOG_E2E_MYSQL_PORT", "3307")),
+            os.environ.get("SYNALOG_E2E_MYSQL_USER", "root"),
+            os.environ.get("SYNALOG_E2E_MYSQL_PASSWORD", "synalog"),
         )
     raise ValueError(f"No e2e runner for engine '{engine}'")

@@ -1,0 +1,137 @@
+-- Compiled by SynaLog — logic programming for AI agents (https://github.com/synalinks/synalog).
+-- Copyright 2025-2026 Yoan Sallami (Synalinks Team).
+-- SPDX-License-Identifier: Apache-2.0
+
+-- Initializing MySQL environment.
+SET SESSION sql_mode = 'ANSI_QUOTES,PIPES_AS_CONCAT,NO_BACKSLASH_ESCAPES';
+SET SESSION optimizer_switch = 'derived_condition_pushdown=off';
+SET NAMES utf8mb4 COLLATE utf8mb4_0900_bin;
+SET SESSION group_concat_max_len = 1073741824;
+
+WITH RECURSIVE t_1_Edge AS (SELECT * FROM (
+  
+    SELECT
+      'a' AS x,
+      'b' AS y
+   UNION ALL
+  
+    SELECT
+      'b' AS x,
+      'c' AS y
+   UNION ALL
+  
+    SELECT
+      'c' AS x,
+      'd' AS y
+  
+) AS UNUSED_TABLE_NAME  ),
+t_0_Reach_RecursiveCte AS (SELECT * FROM (
+  SELECT * FROM (
+    
+      SELECT
+        Edge.x AS x,
+        Edge.y AS y,
+        0 AS synalog_step
+      FROM
+        t_1_Edge AS Edge
+     UNION ALL
+    
+      SELECT
+        t_4_Edge.x AS x,
+        t_2_Edge.y AS y,
+        ((0) + (1)) AS synalog_step
+      FROM
+        t_1_Edge AS t_4_Edge, t_1_Edge AS t_2_Edge
+      WHERE
+        (0 < 10) AND
+        (1 = 0) AND
+        (t_2_Edge.x = t_4_Edge.y)
+     UNION ALL
+    
+      SELECT
+        t_10_Edge.x AS x,
+        t_6_Edge.y AS y,
+        ((((0) + (1))) + (1)) AS synalog_step
+      FROM
+        t_1_Edge AS t_10_Edge, t_1_Edge AS t_8_Edge, t_1_Edge AS t_6_Edge
+      WHERE
+        (((0) + (1)) < 10) AND
+        (0 < 10) AND
+        (1 = 0) AND
+        (t_6_Edge.x = t_8_Edge.y) AND
+        (t_8_Edge.x = t_10_Edge.y)
+     UNION ALL
+    
+      SELECT
+        t_18_Edge.x AS x,
+        t_12_Edge.y AS y,
+        ((((((0) + (1))) + (1))) + (1)) AS synalog_step
+      FROM
+        t_1_Edge AS t_18_Edge, t_1_Edge AS t_16_Edge, t_1_Edge AS t_14_Edge, t_1_Edge AS t_12_Edge
+      WHERE
+        (((((0) + (1))) + (1)) < 10) AND
+        (((0) + (1)) < 10) AND
+        (0 < 10) AND
+        (1 = 0) AND
+        (t_12_Edge.x = t_14_Edge.y) AND
+        (t_14_Edge.x = t_16_Edge.y) AND
+        (t_16_Edge.x = t_18_Edge.y)
+     UNION ALL
+    
+      SELECT
+        t_28_Edge.x AS x,
+        t_20_Edge.y AS y,
+        ((((((((0) + (1))) + (1))) + (1))) + (1)) AS synalog_step
+      FROM
+        t_1_Edge AS t_28_Edge, t_1_Edge AS t_26_Edge, t_1_Edge AS t_24_Edge, t_1_Edge AS t_22_Edge, t_1_Edge AS t_20_Edge
+      WHERE
+        (((((((0) + (1))) + (1))) + (1)) < 10) AND
+        (((((0) + (1))) + (1)) < 10) AND
+        (((0) + (1)) < 10) AND
+        (0 < 10) AND
+        (1 = 0) AND
+        (t_20_Edge.x = t_22_Edge.y) AND
+        (t_22_Edge.x = t_24_Edge.y) AND
+        (t_24_Edge.x = t_26_Edge.y) AND
+        (t_26_Edge.x = t_28_Edge.y)
+     UNION ALL
+    
+      SELECT
+        t_40_Edge.x AS x,
+        t_30_Edge.y AS y,
+        ((((((((((0) + (1))) + (1))) + (1))) + (1))) + (1)) AS synalog_step
+      FROM
+        t_1_Edge AS t_40_Edge, t_1_Edge AS t_38_Edge, t_1_Edge AS t_36_Edge, t_1_Edge AS t_34_Edge, t_1_Edge AS t_32_Edge, t_1_Edge AS t_30_Edge
+      WHERE
+        (((((((((0) + (1))) + (1))) + (1))) + (1)) < 10) AND
+        (((((((0) + (1))) + (1))) + (1)) < 10) AND
+        (((((0) + (1))) + (1)) < 10) AND
+        (((0) + (1)) < 10) AND
+        (0 < 10) AND
+        (1 = 0) AND
+        (t_30_Edge.x = t_32_Edge.y) AND
+        (t_32_Edge.x = t_34_Edge.y) AND
+        (t_34_Edge.x = t_36_Edge.y) AND
+        (t_36_Edge.x = t_38_Edge.y) AND
+        (t_38_Edge.x = t_40_Edge.y)
+    
+  ) AS UNUSED_TABLE_NAME  
+) AS UNUSED_TABLE_NAME
+UNION
+SELECT
+  t_41_Reach_RecursiveCte.x AS x,
+  t_42_Edge.y AS y,
+  ((t_41_Reach_RecursiveCte.synalog_step) + (1)) AS synalog_step
+FROM
+  t_0_Reach_RecursiveCte AS t_41_Reach_RecursiveCte, t_1_Edge AS t_42_Edge
+WHERE
+  (t_41_Reach_RecursiveCte.synalog_step < 10) AND
+  (t_42_Edge.x = t_41_Reach_RecursiveCte.y))
+SELECT * FROM (
+SELECT
+  Reach_RecursiveCte.x AS x,
+  Reach_RecursiveCte.y AS y
+FROM
+  t_0_Reach_RecursiveCte AS Reach_RecursiveCte
+GROUP BY 1, 2
+) AS UNUSED_TABLE_NAME ORDER BY x IS NULL, x, y IS NULL, y;

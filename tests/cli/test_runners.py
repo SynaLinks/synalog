@@ -15,7 +15,7 @@ from synalog import runners
 from synalog.runners import RunnerUnavailable, run_sql
 
 
-REMOTE_ENGINES = ["trino", "presto", "databricks", "bigquery", "clickhouse"]
+REMOTE_ENGINES = ["trino", "presto", "databricks", "bigquery", "clickhouse", "mysql"]
 
 
 def test_unknown_engine_generic_message():
@@ -32,7 +32,7 @@ def test_remote_engine_missing_driver(engine, monkeypatch):
     real_import = builtins.__import__
 
     def block(name, *args, **kwargs):
-        if name.startswith(("trino", "prestodb", "databricks", "google", "clickhouse_connect")):
+        if name.startswith(("trino", "prestodb", "databricks", "google", "clickhouse_connect", "pymysql")):
             raise ImportError(name)
         return real_import(name, *args, **kwargs)
 
@@ -49,7 +49,7 @@ def test_remote_engine_rejects_loads(engine):
         run_sql(engine, "SELECT 1", loads=[("t", "/tmp/x.csv")])
 
 
-@pytest.mark.parametrize("engine", ["trino", "presto", "databricks", "psql", "bigquery", "clickhouse"])
+@pytest.mark.parametrize("engine", ["trino", "presto", "databricks", "psql", "bigquery", "clickhouse", "mysql"])
 def test_remote_engine_needs_the_project_connection(engine):
     # No connection -> what to run, rather than a driver/network failure.
     with pytest.raises(RunnerUnavailable, match=f"needs the project's connection: run 'synalog connect {engine}"):

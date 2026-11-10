@@ -95,7 +95,7 @@ $ synalog totals.l run Total --load sales=sales.csv
 2 rows
 ```
 
-duckdb and the PostgreSQL driver ship with synalog. For the other engines (`bigquery`, `trino`, `presto`, `databricks`, `clickhouse`), install their driver (`pip install 'synalog[trino]'`, ...) or use `print` and run the SQL with your own client.
+duckdb and the PostgreSQL driver ship with synalog. For the other engines (`bigquery`, `trino`, `presto`, `databricks`, `clickhouse`, `mysql`), install their driver (`pip install 'synalog[trino]'`, ...) or use `print` and run the SQL with your own client.
 
 ### Imports
 

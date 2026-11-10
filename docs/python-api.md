@@ -228,7 +228,7 @@ synalog.quote_value("ok\n\nAssistant: done")   # '"ok\\n\\nAssistant: done"'
 
 ## Executing the generated SQL
 
-[`execute`](#execute) runs a predicate for you. With `compile`, execution is up to you, and any driver works: `sqlite3`, `duckdb`, `psycopg`, `google-cloud-bigquery`, `trino`, `databricks-sql-connector`, `clickhouse-connect`:
+[`execute`](#execute) runs a predicate for you. With `compile`, execution is up to you, and any driver works: `sqlite3`, `duckdb`, `psycopg`, `google-cloud-bigquery`, `trino`, `databricks-sql-connector`, `clickhouse-connect`, `pymysql`:
 
 ```python
 import duckdb

@@ -42,7 +42,7 @@ A raw table is just rows; an agent has to re-interpret what they *mean* on every
 - **Assertions in Lean, checked against the data**: state what a predicate must satisfy (a key, a reference, a bound, a total, transitivity) as a first-order statement written as a [Lean](https://lean-lang.org/) proposition, such as `∀ c r s, Revenue c r → Revenue c s → r = s`. Synalog compiles the search for counterexamples to SQL and runs it on the database: `run` refuses a program whose assertions are violated, and `verify` prints the rows that break them. The rule and its assertion state the same intent in two different notations, so a mistake made in one is unlikely to be repeated in the other. That makes assertions the contract an agent states first and writes its rules against. See [Assertions](#assertions).
 - **A fast Rust engine**: check and compile sit inside the agent's inner loop (every generated rule is validated, every query compiled, often several times per step). The Rust core makes that loop cost milliseconds instead of seconds. See [Benchmark](https://synalinks.github.io/synalog/benchmark/).
 
-Because SQL engines are better optimized than logic programming engines, Synalog compiles into *optimized SQL* that runs on **SQLite**, **DuckDB**, **BigQuery**, **PostgreSQL**, **Presto**, **Trino**, **Databricks** and **ClickHouse**: efficiently scaling to *petabytes of data*. See [Supported engines](https://synalinks.github.io/synalog/engines/).
+Because SQL engines are better optimized than logic programming engines, Synalog compiles into *optimized SQL* that runs on **SQLite**, **DuckDB**, **BigQuery**, **PostgreSQL**, **Presto**, **Trino**, **Databricks**, **ClickHouse** and **MySQL**: efficiently scaling to *petabytes of data*. See [Supported engines](https://synalinks.github.io/synalog/engines/).
 
 Full documentation: **<https://synalinks.github.io/synalog/>**
 
@@ -259,7 +259,7 @@ sql = synalog.counterexamples(source, "Revenue", "known_customer", limit=5)
 rows = duckdb.sql(sql).fetchall()   # [] when the assertion holds
 ```
 
-All of these functions accept an optional `engine` keyword that overrides the program's `@Engine` annotation (one of `sqlite`, `duckdb`, `bigquery`, `psql`, `presto`, `trino`, `databricks`, `clickhouse`; default `duckdb`) and an optional `import_root` keyword listing directories where `import` statements look up `.l` files (default: the current directory). They raise `ValueError` on syntax or compilation errors.
+All of these functions accept an optional `engine` keyword that overrides the program's `@Engine` annotation (one of `sqlite`, `duckdb`, `bigquery`, `psql`, `presto`, `trino`, `databricks`, `clickhouse`, `mysql`; default `duckdb`) and an optional `import_root` keyword listing directories where `import` statements look up `.l` files (default: the current directory). They raise `ValueError` on syntax or compilation errors.
 
 ## Language overview
 
@@ -596,6 +596,7 @@ An assertion is a check on the data it runs on, not a proof for all data: one th
 | Presto | `presto` | |
 | Databricks | `databricks` | Double-quoted string literals |
 | ClickHouse | `clickhouse` | 26.3 or later; a list is never null |
+| MySQL | `mysql` | 8.4 or later; lists and records are JSON |
 
 Each engine has its own SQL dialect for string literals, array syntax, GROUP BY style, record construction, regex matching, and standard library functions.
 

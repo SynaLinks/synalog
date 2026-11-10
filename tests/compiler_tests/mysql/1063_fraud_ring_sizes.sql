@@ -1,0 +1,210 @@
+-- Compiled by SynaLog — logic programming for AI agents (https://github.com/synalinks/synalog).
+-- Copyright 2025-2026 Yoan Sallami (Synalinks Team).
+-- SPDX-License-Identifier: Apache-2.0
+
+-- Initializing MySQL environment.
+SET SESSION sql_mode = 'ANSI_QUOTES,PIPES_AS_CONCAT,NO_BACKSLASH_ESCAPES';
+SET SESSION optimizer_switch = 'derived_condition_pushdown=off';
+SET NAMES utf8mb4 COLLATE utf8mb4_0900_bin;
+SET SESSION group_concat_max_len = 1073741824;
+
+WITH RECURSIVE t_6_HasPhone AS (SELECT * FROM (
+  
+    SELECT
+      'a1' AS account,
+      '555-1' AS phone
+   UNION ALL
+  
+    SELECT
+      'a2' AS account,
+      '555-1' AS phone
+   UNION ALL
+  
+    SELECT
+      'a2' AS account,
+      '555-2' AS phone
+   UNION ALL
+  
+    SELECT
+      'a3' AS account,
+      '555-2' AS phone
+   UNION ALL
+  
+    SELECT
+      'a4' AS account,
+      '555-3' AS phone
+   UNION ALL
+  
+    SELECT
+      'a5' AS account,
+      '555-4' AS phone
+   UNION ALL
+  
+    SELECT
+      'a6' AS account,
+      '555-4' AS phone
+   UNION ALL
+  
+    SELECT
+      'a7' AS account,
+      '555-9' AS phone
+  
+) AS UNUSED_TABLE_NAME  ),
+t_5_Account AS (SELECT
+  HasPhone.account AS account
+FROM
+  t_6_HasPhone AS HasPhone
+GROUP BY 1),
+t_9_Shares AS (SELECT
+  t_10_HasPhone.account AS a,
+  t_11_HasPhone.account AS b
+FROM
+  t_6_HasPhone AS t_10_HasPhone, t_6_HasPhone AS t_11_HasPhone
+WHERE
+  (t_10_HasPhone.account != t_11_HasPhone.account) AND
+  (t_11_HasPhone.phone = t_10_HasPhone.phone)
+GROUP BY 1, 2),
+t_8_Linked_RecursiveCte AS (SELECT * FROM (
+  SELECT * FROM (
+    
+      SELECT
+        Shares.a AS a,
+        Shares.b AS b,
+        0 AS synalog_step
+      FROM
+        t_9_Shares AS Shares
+     UNION ALL
+    
+      SELECT
+        t_14_Shares.a AS a,
+        t_12_Shares.b AS b,
+        ((0) + (1)) AS synalog_step
+      FROM
+        t_9_Shares AS t_14_Shares, t_9_Shares AS t_12_Shares
+      WHERE
+        (0 < 8) AND
+        (1 = 0) AND
+        (t_12_Shares.a = t_14_Shares.b)
+     UNION ALL
+    
+      SELECT
+        t_22_Shares.a AS a,
+        t_18_Shares.b AS b,
+        ((((0) + (1))) + (1)) AS synalog_step
+      FROM
+        t_9_Shares AS t_22_Shares, t_9_Shares AS t_20_Shares, t_9_Shares AS t_18_Shares
+      WHERE
+        (((0) + (1)) < 8) AND
+        (0 < 8) AND
+        (1 = 0) AND
+        (t_18_Shares.a = t_20_Shares.b) AND
+        (t_20_Shares.a = t_22_Shares.b)
+     UNION ALL
+    
+      SELECT
+        t_30_Shares.a AS a,
+        t_24_Shares.b AS b,
+        ((((((0) + (1))) + (1))) + (1)) AS synalog_step
+      FROM
+        t_9_Shares AS t_30_Shares, t_9_Shares AS t_28_Shares, t_9_Shares AS t_26_Shares, t_9_Shares AS t_24_Shares
+      WHERE
+        (((((0) + (1))) + (1)) < 8) AND
+        (((0) + (1)) < 8) AND
+        (0 < 8) AND
+        (1 = 0) AND
+        (t_24_Shares.a = t_26_Shares.b) AND
+        (t_26_Shares.a = t_28_Shares.b) AND
+        (t_28_Shares.a = t_30_Shares.b)
+     UNION ALL
+    
+      SELECT
+        t_40_Shares.a AS a,
+        t_32_Shares.b AS b,
+        ((((((((0) + (1))) + (1))) + (1))) + (1)) AS synalog_step
+      FROM
+        t_9_Shares AS t_40_Shares, t_9_Shares AS t_38_Shares, t_9_Shares AS t_36_Shares, t_9_Shares AS t_34_Shares, t_9_Shares AS t_32_Shares
+      WHERE
+        (((((((0) + (1))) + (1))) + (1)) < 8) AND
+        (((((0) + (1))) + (1)) < 8) AND
+        (((0) + (1)) < 8) AND
+        (0 < 8) AND
+        (1 = 0) AND
+        (t_32_Shares.a = t_34_Shares.b) AND
+        (t_34_Shares.a = t_36_Shares.b) AND
+        (t_36_Shares.a = t_38_Shares.b) AND
+        (t_38_Shares.a = t_40_Shares.b)
+     UNION ALL
+    
+      SELECT
+        t_52_Shares.a AS a,
+        t_42_Shares.b AS b,
+        ((((((((((0) + (1))) + (1))) + (1))) + (1))) + (1)) AS synalog_step
+      FROM
+        t_9_Shares AS t_52_Shares, t_9_Shares AS t_50_Shares, t_9_Shares AS t_48_Shares, t_9_Shares AS t_46_Shares, t_9_Shares AS t_44_Shares, t_9_Shares AS t_42_Shares
+      WHERE
+        (((((((((0) + (1))) + (1))) + (1))) + (1)) < 8) AND
+        (((((((0) + (1))) + (1))) + (1)) < 8) AND
+        (((((0) + (1))) + (1)) < 8) AND
+        (((0) + (1)) < 8) AND
+        (0 < 8) AND
+        (1 = 0) AND
+        (t_42_Shares.a = t_44_Shares.b) AND
+        (t_44_Shares.a = t_46_Shares.b) AND
+        (t_46_Shares.a = t_48_Shares.b) AND
+        (t_48_Shares.a = t_50_Shares.b) AND
+        (t_50_Shares.a = t_52_Shares.b)
+    
+  ) AS UNUSED_TABLE_NAME  
+) AS UNUSED_TABLE_NAME
+UNION
+SELECT
+  t_53_Linked_RecursiveCte.a AS a,
+  t_54_Shares.b AS b,
+  ((t_53_Linked_RecursiveCte.synalog_step) + (1)) AS synalog_step
+FROM
+  t_8_Linked_RecursiveCte AS t_53_Linked_RecursiveCte, t_9_Shares AS t_54_Shares
+WHERE
+  (t_53_Linked_RecursiveCte.synalog_step < 8) AND
+  (t_54_Shares.a = t_53_Linked_RecursiveCte.b)),
+t_7_Linked AS (SELECT
+  Linked_RecursiveCte.a AS a,
+  Linked_RecursiveCte.b AS b
+FROM
+  t_8_Linked_RecursiveCte AS Linked_RecursiveCte
+GROUP BY 1, 2),
+t_3_Member_MultBodyAggAux AS (SELECT * FROM (
+  
+    SELECT
+      t_4_Account.account AS account,
+      t_4_Account.account AS other
+    FROM
+      t_5_Account AS t_4_Account
+   UNION ALL
+  
+    SELECT
+      Linked.a AS account,
+      Linked.b AS other
+    FROM
+      t_7_Linked AS Linked
+  
+) AS UNUSED_TABLE_NAME  ),
+t_2_Member AS (SELECT
+  Member_MultBodyAggAux.account AS account,
+  Member_MultBodyAggAux.other AS other
+FROM
+  t_3_Member_MultBodyAggAux AS Member_MultBodyAggAux
+GROUP BY 1, 2),
+t_1_Root AS (SELECT
+  Member.account AS account,
+  MIN(Member.other) AS root
+FROM
+  t_2_Member AS Member
+GROUP BY 1)
+SELECT * FROM (
+SELECT
+  t_0_Root.root AS root,
+  SUM(1) AS n
+FROM
+  t_1_Root AS t_0_Root
+GROUP BY 1
+) AS UNUSED_TABLE_NAME ORDER BY root IS NULL, root;

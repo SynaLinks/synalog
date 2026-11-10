@@ -1,0 +1,165 @@
+-- Compiled by SynaLog — logic programming for AI agents (https://github.com/synalinks/synalog).
+-- Copyright 2025-2026 Yoan Sallami (Synalinks Team).
+-- SPDX-License-Identifier: Apache-2.0
+
+-- Initializing MySQL environment.
+SET SESSION sql_mode = 'ANSI_QUOTES,PIPES_AS_CONCAT,NO_BACKSLASH_ESCAPES';
+SET SESSION optimizer_switch = 'derived_condition_pushdown=off';
+SET NAMES utf8mb4 COLLATE utf8mb4_0900_bin;
+SET SESSION group_concat_max_len = 1073741824;
+
+WITH RECURSIVE t_3_Sequel AS (SELECT * FROM (
+  
+    SELECT
+      2 AS book,
+      3 AS next
+   UNION ALL
+  
+    SELECT
+      4 AS book,
+      5 AS next
+   UNION ALL
+  
+    SELECT
+      8 AS book,
+      9 AS next
+   UNION ALL
+  
+    SELECT
+      1 AS book,
+      2 AS next
+  
+) AS UNUSED_TABLE_NAME  ),
+t_2_After_RecursiveCte AS (SELECT * FROM (
+  SELECT * FROM (
+    
+      SELECT
+        Sequel.book AS book,
+        Sequel.next AS next,
+        0 AS synalog_step
+      FROM
+        t_3_Sequel AS Sequel
+     UNION ALL
+    
+      SELECT
+        t_6_Sequel.book AS book,
+        t_4_Sequel.next AS next,
+        ((0) + (1)) AS synalog_step
+      FROM
+        t_3_Sequel AS t_6_Sequel, t_3_Sequel AS t_4_Sequel
+      WHERE
+        (0 < 6) AND
+        (1 = 0) AND
+        (t_4_Sequel.book = t_6_Sequel.next)
+     UNION ALL
+    
+      SELECT
+        t_12_Sequel.book AS book,
+        t_8_Sequel.next AS next,
+        ((((0) + (1))) + (1)) AS synalog_step
+      FROM
+        t_3_Sequel AS t_12_Sequel, t_3_Sequel AS t_10_Sequel, t_3_Sequel AS t_8_Sequel
+      WHERE
+        (((0) + (1)) < 6) AND
+        (0 < 6) AND
+        (1 = 0) AND
+        (t_8_Sequel.book = t_10_Sequel.next) AND
+        (t_10_Sequel.book = t_12_Sequel.next)
+     UNION ALL
+    
+      SELECT
+        t_20_Sequel.book AS book,
+        t_14_Sequel.next AS next,
+        ((((((0) + (1))) + (1))) + (1)) AS synalog_step
+      FROM
+        t_3_Sequel AS t_20_Sequel, t_3_Sequel AS t_18_Sequel, t_3_Sequel AS t_16_Sequel, t_3_Sequel AS t_14_Sequel
+      WHERE
+        (((((0) + (1))) + (1)) < 6) AND
+        (((0) + (1)) < 6) AND
+        (0 < 6) AND
+        (1 = 0) AND
+        (t_14_Sequel.book = t_16_Sequel.next) AND
+        (t_16_Sequel.book = t_18_Sequel.next) AND
+        (t_18_Sequel.book = t_20_Sequel.next)
+     UNION ALL
+    
+      SELECT
+        t_30_Sequel.book AS book,
+        t_22_Sequel.next AS next,
+        ((((((((0) + (1))) + (1))) + (1))) + (1)) AS synalog_step
+      FROM
+        t_3_Sequel AS t_30_Sequel, t_3_Sequel AS t_28_Sequel, t_3_Sequel AS t_26_Sequel, t_3_Sequel AS t_24_Sequel, t_3_Sequel AS t_22_Sequel
+      WHERE
+        (((((((0) + (1))) + (1))) + (1)) < 6) AND
+        (((((0) + (1))) + (1)) < 6) AND
+        (((0) + (1)) < 6) AND
+        (0 < 6) AND
+        (1 = 0) AND
+        (t_22_Sequel.book = t_24_Sequel.next) AND
+        (t_24_Sequel.book = t_26_Sequel.next) AND
+        (t_26_Sequel.book = t_28_Sequel.next) AND
+        (t_28_Sequel.book = t_30_Sequel.next)
+     UNION ALL
+    
+      SELECT
+        t_42_Sequel.book AS book,
+        t_32_Sequel.next AS next,
+        ((((((((((0) + (1))) + (1))) + (1))) + (1))) + (1)) AS synalog_step
+      FROM
+        t_3_Sequel AS t_42_Sequel, t_3_Sequel AS t_40_Sequel, t_3_Sequel AS t_38_Sequel, t_3_Sequel AS t_36_Sequel, t_3_Sequel AS t_34_Sequel, t_3_Sequel AS t_32_Sequel
+      WHERE
+        (((((((((0) + (1))) + (1))) + (1))) + (1)) < 6) AND
+        (((((((0) + (1))) + (1))) + (1)) < 6) AND
+        (((((0) + (1))) + (1)) < 6) AND
+        (((0) + (1)) < 6) AND
+        (0 < 6) AND
+        (1 = 0) AND
+        (t_32_Sequel.book = t_34_Sequel.next) AND
+        (t_34_Sequel.book = t_36_Sequel.next) AND
+        (t_36_Sequel.book = t_38_Sequel.next) AND
+        (t_38_Sequel.book = t_40_Sequel.next) AND
+        (t_40_Sequel.book = t_42_Sequel.next)
+    
+  ) AS UNUSED_TABLE_NAME  
+) AS UNUSED_TABLE_NAME
+UNION
+SELECT
+  t_43_After_RecursiveCte.book AS book,
+  t_44_Sequel.next AS next,
+  ((t_43_After_RecursiveCte.synalog_step) + (1)) AS synalog_step
+FROM
+  t_2_After_RecursiveCte AS t_43_After_RecursiveCte, t_3_Sequel AS t_44_Sequel
+WHERE
+  (t_43_After_RecursiveCte.synalog_step < 6) AND
+  (t_44_Sequel.book = t_43_After_RecursiveCte.next)),
+t_1_After AS (SELECT
+  After_RecursiveCte.book AS book,
+  After_RecursiveCte.next AS next
+FROM
+  t_2_After_RecursiveCte AS After_RecursiveCte
+GROUP BY 1, 2),
+t_45_IsSequel AS (SELECT
+  t_46_Sequel.next AS book
+FROM
+  t_3_Sequel AS t_46_Sequel
+GROUP BY 1),
+t_0_C AS (SELECT
+  After.book AS book,
+  SUM(1) AS n
+FROM
+  t_1_After AS After
+WHERE
+  ((SELECT
+    MIN(1) AS synalog_value
+  FROM
+    t_45_IsSequel AS IsSequel
+  WHERE
+    (IsSequel.book = After.book)) IS NULL)
+GROUP BY 1)
+SELECT * FROM (
+SELECT
+  C.book AS book,
+  ((C.n) + (1)) AS n
+FROM
+  t_0_C AS C
+) AS UNUSED_TABLE_NAME ORDER BY book IS NULL, book, n IS NULL, n;

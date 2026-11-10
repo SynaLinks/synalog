@@ -1,0 +1,96 @@
+-- Compiled by SynaLog — logic programming for AI agents (https://github.com/synalinks/synalog).
+-- Copyright 2025-2026 Yoan Sallami (Synalinks Team).
+-- SPDX-License-Identifier: Apache-2.0
+
+-- Initializing MySQL environment.
+SET SESSION sql_mode = 'ANSI_QUOTES,PIPES_AS_CONCAT,NO_BACKSLASH_ESCAPES';
+SET SESSION optimizer_switch = 'derived_condition_pushdown=off';
+SET NAMES utf8mb4 COLLATE utf8mb4_0900_bin;
+SET SESSION group_concat_max_len = 1073741824;
+
+WITH RECURSIVE t_2_Edge AS (SELECT * FROM (
+  
+    SELECT
+      1 AS a,
+      2 AS b
+   UNION ALL
+  
+    SELECT
+      2 AS a,
+      3 AS b
+   UNION ALL
+  
+    SELECT
+      3 AS a,
+      4 AS b
+   UNION ALL
+  
+    SELECT
+      4 AS a,
+      5 AS b
+  
+) AS UNUSED_TABLE_NAME  ),
+t_0_Reach_RecursiveCte AS (SELECT * FROM (
+  SELECT * FROM (
+    
+      SELECT
+        1 AS x,
+        0 AS synalog_step
+     UNION ALL
+    
+      SELECT
+        Edge.b AS x,
+        ((0) + (1)) AS synalog_step
+      FROM
+        t_2_Edge AS Edge
+      WHERE
+        (0 < 2) AND
+        (1 = 0) AND
+        (Edge.a = 1)
+     UNION ALL
+    
+      SELECT
+        t_4_Edge.b AS x,
+        ((((0) + (1))) + (1)) AS synalog_step
+      FROM
+        t_2_Edge AS t_6_Edge, t_2_Edge AS t_4_Edge
+      WHERE
+        (((0) + (1)) < 2) AND
+        (0 < 2) AND
+        (1 = 0) AND
+        (t_4_Edge.a = t_6_Edge.b) AND
+        (t_6_Edge.a = 1)
+     UNION ALL
+    
+      SELECT
+        t_9_Edge.b AS x,
+        ((((((0) + (1))) + (1))) + (1)) AS synalog_step
+      FROM
+        t_2_Edge AS t_13_Edge, t_2_Edge AS t_11_Edge, t_2_Edge AS t_9_Edge
+      WHERE
+        (((((0) + (1))) + (1)) < 2) AND
+        (((0) + (1)) < 2) AND
+        (0 < 2) AND
+        (1 = 0) AND
+        (t_9_Edge.a = t_11_Edge.b) AND
+        (t_11_Edge.a = t_13_Edge.b) AND
+        (t_13_Edge.a = 1)
+    
+  ) AS UNUSED_TABLE_NAME  
+) AS UNUSED_TABLE_NAME
+UNION
+SELECT
+  t_16_Edge.b AS x,
+  ((t_15_Reach_RecursiveCte.synalog_step) + (1)) AS synalog_step
+FROM
+  t_0_Reach_RecursiveCte AS t_15_Reach_RecursiveCte, t_2_Edge AS t_16_Edge
+WHERE
+  (t_15_Reach_RecursiveCte.synalog_step < 2) AND
+  (t_16_Edge.a = t_15_Reach_RecursiveCte.x))
+SELECT * FROM (
+SELECT
+  Reach_RecursiveCte.x AS x
+FROM
+  t_0_Reach_RecursiveCte AS Reach_RecursiveCte
+GROUP BY 1
+) AS UNUSED_TABLE_NAME ORDER BY x IS NULL, x;

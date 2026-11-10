@@ -117,6 +117,44 @@ const SQL_KEYWORDS: &[&str] = &[
     "SYMMETRIC", "VARIADIC",
 ];
 
+/// MySQL 8.4's reserved words (lowercase), which a name must be quoted to be:
+/// `rank`, `out`, `key`.
+pub const MYSQL_RESERVED: &[&str] = &[
+    "accessible", "add", "all", "alter", "analyze", "and", "as", "asc", "asensitive", "before",
+    "between", "bigint", "binary", "blob", "both", "by", "call", "cascade", "case", "change",
+    "char", "character", "check", "collate", "column", "condition", "constraint", "continue",
+    "convert", "create", "cross", "cube", "cume_dist", "current_date", "current_time",
+    "current_timestamp", "current_user", "cursor", "database", "databases", "day_hour",
+    "day_microsecond", "day_minute", "day_second", "dec", "decimal", "declare", "default",
+    "delayed", "delete", "dense_rank", "desc", "describe", "deterministic", "distinct",
+    "distinctrow", "div", "double", "drop", "dual", "each", "else", "elseif", "empty", "enclosed",
+    "escaped", "except", "exists", "exit", "explain", "false", "fetch", "first_value", "float",
+    "float4", "float8", "for", "force", "foreign", "from", "fulltext", "function", "generated",
+    "get", "grant", "group", "grouping", "groups", "having", "high_priority", "hour_microsecond",
+    "hour_minute", "hour_second", "if", "ignore", "in", "index", "infile", "inner", "inout",
+    "insensitive", "insert", "int", "int1", "int2", "int3", "int4", "int8", "integer", "intersect",
+    "interval", "into", "io_after_gtids", "io_before_gtids", "is", "iterate", "join", "json_table",
+    "key", "keys", "kill", "lag", "last_value", "lateral", "lead", "leading", "leave", "left",
+    "like", "limit", "linear", "lines", "load", "localtime", "localtimestamp", "lock", "long",
+    "longblob", "longtext", "loop", "low_priority", "master_bind", "master_ssl_verify_server_cert",
+    "match", "maxvalue", "mediumblob", "mediumint", "mediumtext", "middleint",
+    "minute_microsecond", "minute_second", "mod", "modifies", "natural", "not",
+    "no_write_to_binlog", "nth_value", "ntile", "null", "numeric", "of", "on", "optimize",
+    "optimizer_costs", "option", "optionally", "or", "order", "out", "outer", "outfile", "over",
+    "partition", "percent_rank", "precision", "primary", "procedure", "purge", "range", "rank",
+    "read", "reads", "read_write", "real", "recursive", "references", "regexp", "release",
+    "rename", "repeat", "replace", "require", "resignal", "restrict", "return", "revoke", "right",
+    "rlike", "row", "rows", "row_number", "schema", "schemas", "second_microsecond", "select",
+    "sensitive", "separator", "set", "show", "signal", "smallint", "spatial", "specific", "sql",
+    "sqlexception", "sqlstate", "sqlwarning", "sql_big_result", "sql_calc_found_rows",
+    "sql_small_result", "ssl", "starting", "stored", "straight_join", "system", "table",
+    "terminated", "then", "tinyblob", "tinyint", "tinytext", "to", "trailing", "trigger", "true",
+    "undo", "union", "unique", "unlock", "unsigned", "update", "usage", "use", "using", "utc_date",
+    "utc_time", "utc_timestamp", "values", "varbinary", "varchar", "varcharacter", "varying",
+    "virtual", "when", "where", "while", "window", "with", "write", "xor", "year_month",
+    "zerofill",
+];
+
 pub fn is_sql_keyword(name: &str) -> bool {
     SQL_KEYWORDS.iter().any(|k| k.eq_ignore_ascii_case(name))
 }
@@ -130,7 +168,7 @@ pub fn sql_column(field: &str, dialect: &dyn Dialect) -> String {
     let field = field.strip_prefix('`').and_then(|f| f.strip_suffix('`')).unwrap_or(field);
     let plain = field.chars().next().is_some_and(|c| c.is_ascii_lowercase() || c == '_')
         && field.chars().all(|c| c.is_ascii_lowercase() || c.is_ascii_digit() || c == '_');
-    if plain && !is_sql_keyword(field) {
+    if plain && !is_sql_keyword(field) && !dialect.reserves(field) {
         field.to_string()
     } else {
         dialect.quote_identifier(field)
@@ -151,6 +189,20 @@ pub trait Dialect {
     /// native formatting function.
     fn format_uses_concat(&self) -> bool {
         false
+    }
+
+    /// The names `Format` lowered to a concatenation (`format_uses_concat`)
+    /// writes: an integer's type, a text's, and the length of a text in
+    /// characters.
+    fn format_types(&self) -> (&'static str, &'static str, &'static str) {
+        ("BIGINT", "VARCHAR", "LENGTH")
+    }
+
+    /// The type a `Cast` to `name` (a type name, checked plain) casts to: the
+    /// name itself, or the engine's name for a standard type its CAST does
+    /// not take (MySQL casts to `SIGNED`, not `INTEGER`).
+    fn cast_type<'n>(&self, name: &'n str) -> std::borrow::Cow<'n, str> {
+        std::borrow::Cow::Borrowed(name)
     }
 
     /// Whether the engine sorts nulls first in this direction by default.
@@ -262,10 +314,33 @@ pub trait Dialect {
     fn record_field(&self, name: &str) -> String {
         let plain = name.chars().next().is_some_and(|c| c.is_ascii_alphabetic() || c == '_')
             && name.chars().all(|c| c.is_ascii_alphanumeric() || c == '_');
-        if name == "*" || (plain && !is_sql_keyword(name)) {
+        if name == "*" || (plain && !is_sql_keyword(name) && !self.reserves(name)) {
             name.to_string()
         } else {
             self.quote_identifier(name)
+        }
+    }
+
+    /// Whether the engine reserves a word that no other does (beyond
+    /// `SQL_KEYWORDS`), which a name must then be quoted to be.
+    fn reserves(&self, _name: &str) -> bool {
+        false
+    }
+
+    /// Whether the engine reads `NULLS FIRST` and `NULLS LAST` in an ORDER
+    /// BY; where it does not, `nulls_ordered` writes their order.
+    fn has_nulls_order(&self) -> bool {
+        true
+    }
+
+    /// `item` sorted with nulls first or last: standard SQL's `NULLS FIRST`
+    /// or `NULLS LAST`, a sort by whether `column` is null before it where
+    /// the engine has neither (MySQL).
+    fn nulls_ordered(&self, item: &str, column: &str, first: bool) -> String {
+        if self.has_nulls_order() {
+            format!("{} NULLS {}", item, if first { "FIRST" } else { "LAST" })
+        } else {
+            format!("{} IS {}NULL, {}", column, if first { "NOT " } else { "" }, item)
         }
     }
 
@@ -349,6 +424,21 @@ pub trait Dialect {
     /// list (ClickHouse's `ARRAY JOIN`), instead of an item of the list.
     fn unnest_is_clause(&self) -> bool {
         false
+    }
+
+    /// Whether a name in an expression of an ORDER BY (`k IS NULL`) reads
+    /// the columns of the query's tables before its output's (MySQL): an
+    /// ordered query is then wrapped, its ORDER BY reading the output.
+    fn order_by_reads_tables(&self) -> bool {
+        false
+    }
+
+    /// A value read out of a list or a record (`json`), as a value of type
+    /// `ty`, where the dialect keeps lists and records in JSON and a value
+    /// read out of one stays JSON (MySQL: a text is quoted, a null is JSON's
+    /// own). None to keep it as it is.
+    fn json_scalar(&self, _json: &str, _ty: &Type) -> Option<String> {
+        None
     }
 
     /// `array` (an empty array or a null) typed as an array of `element`,
@@ -457,7 +547,7 @@ pub trait Dialect {
 /// Single source of truth for valid engine names — keep in sync with the match
 /// arms in [`get`].
 pub const SUPPORTED_ENGINES: &[&str] = &[
-    "bigquery", "sqlite", "psql", "trino", "presto", "databricks", "duckdb", "clickhouse",
+    "bigquery", "sqlite", "psql", "trino", "presto", "databricks", "duckdb", "clickhouse", "mysql",
 ];
 
 /// Get a dialect by engine name.
@@ -471,6 +561,7 @@ pub fn get(engine: &str) -> Result<Box<dyn Dialect>, CompileError> {
         "databricks" => Ok(Box::new(DatabricksDialect)),
         "duckdb" => Ok(Box::new(DuckDbDialect)),
         "clickhouse" => Ok(Box::new(ClickHouseDialect)),
+        "mysql" => Ok(Box::new(MySqlDialect)),
         _ => Err(CompileError::new(
             format!(
                 "Unsupported engine '{}'. Supported engines: {}.",
@@ -1820,6 +1911,234 @@ Array(a) = SqlExpr(
     fn str_literal(&self, s: &str) -> String {
         let literal = quoted(s, synalog_verified::quote::postgres);
         literal.strip_prefix('E').map(str::to_string).unwrap_or(literal)
+    }
+}
+
+
+// ---------------------------------------------------------------------------
+// MySQL
+// ---------------------------------------------------------------------------
+
+/// MySQL 8.4 (the LTS release) or later. Its session reads standard SQL
+/// (`Annotations::preamble`): `"` quotes an identifier, `||` concatenates, a
+/// backslash is a character in a string. MySQL has no arrays nor records: a
+/// list is a JSON array, a record a JSON object, as on SQLite, and a value
+/// read out of one is cast to its type (`json_scalar`).
+pub struct MySqlDialect;
+
+// An ORDER BY of GROUP_CONCAT sorts nulls last: by `k IS NULL ASC, k ASC`
+// ascending (MySQL sorts a key without a direction in the last key's), by
+// `k DESC` alone descending, where a null is last already (after a key of
+// one value for every row, `k IS NULL ASC, k DESC` sorts ascending).
+impl Dialect for MySqlDialect {
+    fn name(&self) -> &'static str { "mysql" }
+    fn double_type(&self) -> &'static str { "DOUBLE" }
+    fn string_cast(&self, expr: &str) -> String { format!("CAST({} AS CHAR)", expr) }
+    // A number written with a point is a DECIMAL here: an exponent makes it
+    // a double, as elsewhere.
+    fn float_literal(&self, text: &str) -> String {
+        if text.contains(['e', 'E']) { text.to_string() } else { format!("{}e0", text) }
+    }
+    fn nulls_first_by_default(&self, descending: bool) -> bool { !descending }
+    fn has_nulls_order(&self) -> bool { false }
+    fn cast_type<'n>(&self, name: &'n str) -> std::borrow::Cow<'n, str> {
+        let standard = match name.to_ascii_uppercase().as_str() {
+            "INTEGER" | "INT" | "BIGINT" | "SMALLINT" | "TINYINT" | "INT64" | "BOOLEAN" | "BOOL" => "SIGNED",
+            "TEXT" | "VARCHAR" | "STRING" => "CHAR",
+            "FLOAT" | "REAL" | "FLOAT64" | "DOUBLE PRECISION" => "DOUBLE",
+            _ => return std::borrow::Cow::Borrowed(name),
+        };
+        std::borrow::Cow::Borrowed(standard)
+    }
+    fn reserves(&self, name: &str) -> bool {
+        MYSQL_RESERVED.iter().any(|w| w.eq_ignore_ascii_case(name))
+    }
+    fn order_by_reads_tables(&self) -> bool { true }
+    fn equal_values(&self, _ty: &Type) -> &'static str { "{0} <=> {1}" }
+    fn distinct_values(&self) -> &'static str { "NOT ({0} <=> {1})" }
+    fn greatest_skips_nulls(&self) -> bool { false }
+    fn format_uses_concat(&self) -> bool { true }
+    // LENGTH counts bytes here.
+    fn format_types(&self) -> (&'static str, &'static str, &'static str) {
+        ("SIGNED", "CHAR", "CHAR_LENGTH")
+    }
+    // A comparison is an integer here, whose text is 1 or 0.
+    fn boolean_to_string(&self) -> Option<&'static str> {
+        Some("(CASE WHEN {0} THEN 'true' WHEN NOT {0} THEN 'false' END)")
+    }
+    fn int64_of_text(&self) -> Option<&'static str> { Some("CAST({0} AS SIGNED)") }
+    // The number's shortest text (a double's CAST AS CHAR) read as a
+    // DECIMAL, rounded to 15 significant digits, as on BigQuery.
+    fn number_to_string(&self) -> Option<&'static str> {
+        static TEMPLATE: std::sync::OnceLock<String> = std::sync::OnceLock::new();
+        Some(TEMPLATE.get_or_init(|| {
+            let decimal = "CAST(CAST(synalog_v AS CHAR) AS DECIMAL(65,26))";
+            let trim = |e: &str| format!(
+                "(SELECT CASE WHEN LOCATE('.', synalog_s) > 0 THEN TRIM(TRAILING '.' FROM TRIM(TRAILING '0' FROM synalog_s)) ELSE synalog_s END FROM (SELECT {} AS synalog_s) AS synalog_m)",
+                e
+            );
+            let below_one = trim(&format!("CAST(ROUND({}, 15) AS CHAR)", decimal));
+            let other = trim(&format!(
+                "CAST(ROUND({0}, 15 - LENGTH(CAST(FLOOR(ABS({0})) AS CHAR))) AS CHAR)",
+                decimal
+            ));
+            format!(
+                "(SELECT CASE WHEN synalog_v IS NULL THEN NULL WHEN ABS(synalog_v) < 0.0000000000000005 THEN '0' \
+                 WHEN synalog_v = FLOOR(synalog_v) AND ABS(synalog_v) < 1e18 THEN CAST(CAST(synalog_v AS SIGNED) AS CHAR) \
+                 WHEN ABS(synalog_v) >= 1e38 THEN CAST(synalog_v AS CHAR) \
+                 WHEN ABS(synalog_v) < 1 THEN {} ELSE {} END FROM (SELECT {{0}} AS synalog_v) AS synalog_n)",
+                below_one, other
+            )
+        }).as_str())
+    }
+    fn except_distinct(&self) -> &'static str { "EXCEPT" }
+    fn today_relation_sql(&self) -> String {
+        "(SELECT CAST(UTC_DATE() AS CHAR) AS date)".to_string()
+    }
+    fn now_relation_sql(&self) -> String {
+        "(SELECT UTC_TIMESTAMP(3) AS timestamp)".to_string()
+    }
+
+    fn json_scalar(&self, json: &str, ty: &Type) -> Option<String> {
+        match ty {
+            Type::Number => Some(format!("JSON_VALUE({}, '$' RETURNING DOUBLE)", json)),
+            // JSON's null is no text: NULLIF makes it SQL's.
+            // In the session's collation: JSON's (utf8mb4_bin) ignores
+            // trailing spaces.
+            Type::String => Some(format!("(JSON_UNQUOTE(NULLIF({}, CAST('null' AS JSON))) COLLATE utf8mb4_0900_bin)", json)),
+            // JSON's true or false, or a comparison's 1 or 0 (a boolean is
+            // an integer here).
+            Type::Bool => Some(format!(
+                "(CASE WHEN {0} = CAST('true' AS JSON) THEN TRUE WHEN {0} = CAST('false' AS JSON) THEN FALSE ELSE JSON_VALUE({0}, '$' RETURNING SIGNED) <> 0 END)",
+                json
+            )),
+            // JSON's null is SQL's: a null list has no size.
+            Type::List(_) | Type::Record { .. } => Some(format!("NULLIF({}, CAST('null' AS JSON))", json)),
+            _ => None,
+        }
+    }
+
+    fn built_in_functions(&self) -> HashMap<&'static str, &'static str> {
+        let mut m = HashMap::new();
+        m.insert("ToString", "CAST(%s AS CHAR)");
+        m.insert("ToFloat64", "CAST(%s AS DOUBLE)");
+        // Half away from zero, as elsewhere.
+        m.insert("ToInt64", "CAST(SIGN({0}) * FLOOR(ABS({0}) + 0.5) AS SIGNED)");
+        m.insert("Round", "(SIGN({0}) * FLOOR(ABS({0}) + 0.5))");
+        m.insert("Div", "CAST((CASE WHEN (({0}) < 0) <> (({1}) < 0) THEN CEIL(CAST({0} AS DOUBLE) / NULLIF({1}, 0)) ELSE FLOOR(CAST({0} AS DOUBLE) / NULLIF({1}, 0)) END) AS SIGNED)");
+        // LENGTH counts bytes here.
+        m.insert("Length", "CHAR_LENGTH(%s)");
+        m.insert("StartsWith", "(SUBSTR({0}, 1, CHAR_LENGTH({1})) = {1})");
+        m.insert("EndsWith", "(CHAR_LENGTH({1}) <= CHAR_LENGTH({0}) AND SUBSTR({0}, CHAR_LENGTH({0}) - CHAR_LENGTH({1}) + 1, CHAR_LENGTH({1})) = {1})");
+        m.insert("Strpos", "LOCATE({1}, {0})");
+        m.insert("Log", "LN(%s)");
+        m.insert("DateDiffDay", "DATEDIFF({0}, {1})");
+        m.insert("AnyValue", "ANY_VALUE(%s)");
+        m.insert("RegexpExtract", "REGEXP_SUBSTR({0}, {1})");
+        m.insert("StringAgg", "GROUP_CONCAT(CAST({0} AS CHAR) SEPARATOR ',')");
+        // Lists are JSON arrays.
+        m.insert("Size", "JSON_LENGTH(%s)");
+        m.insert("Element", "(CASE WHEN {1} < 0 THEN NULL ELSE JSON_EXTRACT({0}, CONCAT('$[', {1}, ']')) END)");
+        m.insert("ValueOfUnnested", "{0}.value");
+        m.insert("List", "JSON_ARRAYAGG(%s)");
+        m.insert("Array", "JSON_ARRAYAGG(%s)");
+        // Distinct, in order: the values' JSON texts joined.
+        m.insert("Set", "CAST(CONCAT('[', GROUP_CONCAT(DISTINCT JSON_EXTRACT(JSON_ARRAY({0}), '$[0]') ORDER BY JSON_EXTRACT(JSON_ARRAY({0}), '$[0]') SEPARATOR ','), ']') AS JSON)");
+        // Lists of no element concatenated are an empty one; no list, null.
+        m.insert("Agg++", "(CASE WHEN COUNT({0}) > 0 THEN CAST(CONCAT('[', COALESCE(GROUP_CONCAT(NULLIF(SUBSTR(CAST({0} AS CHAR), 2, CHAR_LENGTH(CAST({0} AS CHAR)) - 2), '') SEPARATOR ','), ''), ']') AS JSON) END)");
+        m.insert("ArrayConcat", "JSON_MERGE_PRESERVE({0}, {1})");
+        m.insert("Concat", "JSON_MERGE_PRESERVE({0}, {1})");
+        m.insert("Range", "(SELECT COALESCE(CAST(CONCAT('[', GROUP_CONCAT(synalog_r.n - 1 ORDER BY synalog_r.n SEPARATOR ','), ']') AS JSON), JSON_ARRAY()) FROM JSON_TABLE(CONCAT('[', REPEAT('0,', GREATEST({0}, 0)), '0]'), '$[*]' COLUMNS (n FOR ORDINALITY)) AS synalog_r WHERE synalog_r.n <= {0})");
+        m.insert("Join", "(CASE WHEN {0} IS NULL OR {1} IS NULL THEN NULL ELSE COALESCE((SELECT GROUP_CONCAT(synalog_j.v ORDER BY synalog_j.i SEPARATOR {1}) FROM (SELECT {0} AS synalog_a) AS synalog_s, JSON_TABLE(synalog_s.synalog_a, '$[*]' COLUMNS (i FOR ORDINALITY, v TEXT COLLATE utf8mb4_0900_bin PATH '$')) AS synalog_j), '') END)");
+        // The text quoted as JSON, each separator the end of an element.
+        m.insert("Split", "CAST(CONCAT('[', REPLACE(JSON_QUOTE({0}), SUBSTR(JSON_QUOTE({1}), 2, CHAR_LENGTH(JSON_QUOTE({1})) - 2), '\",\"'), ']') AS JSON)");
+        m.insert("Sort", "(SELECT COALESCE(CAST(CONCAT('[', GROUP_CONCAT(CAST(synalog_e.v AS CHAR) ORDER BY synalog_e.v IS NULL ASC, synalog_e.v ASC SEPARATOR ','), ']') AS JSON), JSON_ARRAY()) FROM (SELECT {0} AS synalog_a) AS synalog_s, JSON_TABLE(synalog_s.synalog_a, '$[*]' COLUMNS (v JSON PATH '$')) AS synalog_e HAVING ANY_VALUE(synalog_s.synalog_a) IS NOT NULL)");
+        m.insert("Unique", "(SELECT COALESCE(CAST(CONCAT('[', GROUP_CONCAT(DISTINCT CAST(synalog_e.v AS CHAR) ORDER BY CAST(synalog_e.v AS CHAR) SEPARATOR ','), ']') AS JSON), JSON_ARRAY()) FROM (SELECT {0} AS synalog_a) AS synalog_s, JSON_TABLE(synalog_s.synalog_a, '$[*]' COLUMNS (v JSON PATH '$')) AS synalog_e HAVING ANY_VALUE(synalog_s.synalog_a) IS NOT NULL)");
+        m.insert("Median", "");
+        // The mean of integers is a DECIMAL of 4 decimals here.
+        m.insert("Avg", "AVG(CAST(%s AS DOUBLE))");
+        m
+    }
+
+    fn infix_operators(&self) -> HashMap<&'static str, &'static str> {
+        let mut m = HashMap::new();
+        // `/` divides exactly: a DECIMAL quotient here keeps 4 decimals.
+        m.insert("/", "CAST(%s AS DOUBLE) / NULLIF(%s, 0)");
+        m.insert("%", "MOD(%s, NULLIF(%s, 0))");
+        m.insert("in", "%s MEMBER OF (%s)");
+        m
+    }
+
+    fn subscript(&self, record: &str, subscript: &str, record_is_table: bool) -> String {
+        if record_is_table {
+            format!("{}.{}", record, self.record_field(subscript))
+        } else {
+            format!("JSON_EXTRACT({}, {})", record, self.str_literal(&format!("$.\"{}\"", subscript)))
+        }
+    }
+
+    fn library_program(&self) -> &'static str {
+        r#"
+->(left:, right:) = {arg: left, value: right};
+`=`(left:, right:) = right :- left == right;
+
+ArgMin(a) = SqlExpr(
+  "JSON_EXTRACT(CAST(CONCAT('[', GROUP_CONCAT(JSON_EXTRACT(JSON_ARRAY({arg}), '$[0]') ORDER BY {value} IS NULL ASC, {value} ASC SEPARATOR ','), ']') AS JSON), '$[0]')",
+  {arg: a.arg, value: a.value});
+
+ArgMax(a) = SqlExpr(
+  "JSON_EXTRACT(CAST(CONCAT('[', GROUP_CONCAT(JSON_EXTRACT(JSON_ARRAY({arg}), '$[0]') ORDER BY {value} DESC SEPARATOR ','), ']') AS JSON), '$[0]')",
+  {arg: a.arg, value: a.value});
+
+ArgMaxK(a, l) = SqlExpr(
+  "JSON_EXTRACT(CAST(CONCAT('[', GROUP_CONCAT(JSON_EXTRACT(JSON_ARRAY({arg}), '$[0]') ORDER BY {value} DESC SEPARATOR ','), ']') AS JSON), CONCAT('$[0 to ', {lim} - 1, ']'))",
+  {arg: a.arg, value: a.value, lim: l});
+
+ArgMinK(a, l) = SqlExpr(
+  "JSON_EXTRACT(CAST(CONCAT('[', GROUP_CONCAT(JSON_EXTRACT(JSON_ARRAY({arg}), '$[0]') ORDER BY {value} IS NULL ASC, {value} ASC SEPARATOR ','), ']') AS JSON), CONCAT('$[0 to ', {lim} - 1, ']'))",
+  {arg: a.arg, value: a.value, lim: l});
+
+Array(a) = SqlExpr(
+  "CAST(CONCAT('[', GROUP_CONCAT(JSON_EXTRACT(JSON_ARRAY({value}), '$[0]') ORDER BY {arg} IS NULL ASC, {arg} ASC SEPARATOR ','), ']') AS JSON)",
+  {arg: a.arg, value: a.value});
+"#
+    }
+
+    // JSON_TABLE takes no subquery (a list built by one, `Range`): the list
+    // is named in a derived table first, inside a LATERAL one, which reads
+    // the tables before it.
+    fn unnest_phrase(&self) -> &'static str {
+        "LATERAL (SELECT synalog_u.value FROM (SELECT {0} AS synalog_a) AS synalog_s, JSON_TABLE(synalog_s.synalog_a, '$[*]' COLUMNS (value JSON PATH '$')) AS synalog_u) AS {1}"
+    }
+    fn array_phrase(&self) -> &'static str { "JSON_ARRAY(%s)" }
+    fn group_by_spec_by(&self) -> GroupBySpec { GroupBySpec::Index }
+    fn decorate_combine_rule(&self) -> bool { false }
+
+    fn scalar_sql_type(&self, ty: &Type) -> String {
+        match ty {
+            Type::Number => "DOUBLE".to_string(),
+            Type::Bool => "SIGNED".to_string(),
+            Type::List(_) => "JSON".to_string(),
+            _ => "CHAR".to_string(),
+        }
+    }
+
+    fn row_field_type(&self, ty: &Type) -> String {
+        match ty {
+            Type::List(_) | Type::Record { .. } => "JSON".to_string(),
+            _ => self.scalar_sql_type(ty),
+        }
+    }
+
+    fn typed_array(&self, array: &str, _element: &Type) -> Option<String> {
+        // A null list stays null; an empty one is a JSON array.
+        if array.eq_ignore_ascii_case("null") { Some("CAST(NULL AS JSON)".to_string()) } else { None }
+    }
+
+    fn record_literal(&self, fields: &[(&str, &str, &Type)]) -> String {
+        let pairs: Vec<String> = fields.iter()
+            .map(|(k, v, _)| format!("{}, {}", self.str_literal(k), v)).collect();
+        format!("JSON_OBJECT({})", pairs.join(", "))
     }
 }
 
