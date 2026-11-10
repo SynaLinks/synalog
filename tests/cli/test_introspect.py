@@ -101,7 +101,7 @@ def test_predicate_name_collision_is_suffixed():
     assert "PublicUserRoles2(a:)" in text
 
 
-@pytest.mark.parametrize("engine", ["psql", "trino", "presto", "databricks"])
+@pytest.mark.parametrize("engine", ["psql", "trino", "presto", "databricks", "clickhouse", "mysql"])
 def test_info_schema_sql_shape(engine):
     sql = _introspect_sql(engine, None)
     assert "information_schema.columns" in sql

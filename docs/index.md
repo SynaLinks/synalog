@@ -22,7 +22,7 @@ A raw table is just rows; an agent has to re-interpret what they *mean* on every
 - **Auditable reasoning**: every derived fact traces back through named rules, giving full lineage from answer to source tables.
 - **Compile-time verification**: a formal verifier catches structural errors before any SQL touches a database, so a self-authored rule that parses but is unsound is rejected up front. See [Verification](verification.md).
 
-Because SQL engines are better optimized than logic programming engines, Synalog compiles into *optimized SQL* that runs on **SQLite**, **DuckDB**, **BigQuery**, **PostgreSQL**, **Presto**, **Trino** and **Databricks**, efficiently scaling to *petabytes of data*. See [Supported engines](engines.md).
+Because SQL engines are better optimized than logic programming engines, Synalog compiles into *optimized SQL* that runs on **SQLite**, **DuckDB**, **BigQuery**, **PostgreSQL**, **Presto**, **Trino**, **Databricks**, **ClickHouse** and **MySQL**, efficiently scaling to *petabytes of data*. See [Supported engines](engines.md).
 
 ## At a glance
 

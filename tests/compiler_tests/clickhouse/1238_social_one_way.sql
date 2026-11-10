@@ -1,0 +1,80 @@
+-- Compiled by SynaLog — logic programming for AI agents (https://github.com/synalinks/synalog).
+-- Copyright 2025-2026 Yoan Sallami (Synalinks Team).
+-- SPDX-License-Identifier: Apache-2.0
+
+-- Initializing ClickHouse environment.
+SET join_use_nulls = 1;
+SET allow_experimental_correlated_subqueries = 1;
+SET aggregate_functions_null_for_empty = 1;
+SET cast_keep_nullable = 1;
+SET transform_null_in = 1;
+
+WITH t_0_Follows AS (SELECT * FROM (
+  
+    SELECT
+      'ann' AS a,
+      'bob' AS b
+   UNION ALL
+  
+    SELECT
+      'bob' AS a,
+      'ann' AS b
+   UNION ALL
+  
+    SELECT
+      'ann' AS a,
+      'cat' AS b
+   UNION ALL
+  
+    SELECT
+      'cat' AS a,
+      'dan' AS b
+   UNION ALL
+  
+    SELECT
+      'dan' AS a,
+      'cat' AS b
+   UNION ALL
+  
+    SELECT
+      'bob' AS a,
+      'cat' AS b
+   UNION ALL
+  
+    SELECT
+      'eve' AS a,
+      'ann' AS b
+   UNION ALL
+  
+    SELECT
+      'eve' AS a,
+      'bob' AS b
+   UNION ALL
+  
+    SELECT
+      'eve' AS a,
+      'cat' AS b
+   UNION ALL
+  
+    SELECT
+      'dan' AS a,
+      'eve' AS b
+   UNION ALL
+  
+    SELECT
+      'fay' AS a,
+      'cat' AS b
+  
+) AS UNUSED_TABLE_NAME  )
+SELECT
+  Follows.a AS a,
+  Follows.b AS b
+FROM
+  t_0_Follows AS Follows
+WHERE
+  NOT (Follows.b IS NOT NULL AND Follows.a IS NOT NULL AND (CAST(Follows.b AS Nullable(String)), CAST(Follows.a AS Nullable(String))) IN (SELECT CAST(synalog_k0 AS Nullable(String)), CAST(synalog_k1 AS Nullable(String)) FROM (SELECT
+    t_1_Follows.a AS synalog_k0,
+    t_1_Follows.b AS synalog_k1
+  FROM
+    t_0_Follows AS t_1_Follows
+  GROUP BY 1, 2) AS synalog_m)) ORDER BY a, b;

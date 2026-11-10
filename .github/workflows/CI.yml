@@ -38,7 +38,7 @@ jobs:
           python-version: '3.12'
       - name: Install Python test dependencies
         run: |
-          pip install pytest pytest-xdist pytest-timeout duckdb "psycopg[binary]" trino presto-python-client pyhive thrift logica
+          pip install pytest pytest-xdist pytest-timeout duckdb "psycopg[binary]" trino presto-python-client pyhive thrift logica clickhouse-connect pymysql
       - name: Install Verus (checks the proofs of verified/)
         run: |
           shell/install-verus.sh
@@ -74,6 +74,8 @@ jobs:
           - { engine: databricks, service: spark, shard: "1/3" }
           - { engine: databricks, service: spark, shard: "2/3" }
           - { engine: databricks, service: spark, shard: "3/3" }
+          - { engine: clickhouse, service: clickhouse, shard: "1/1" }
+          - { engine: mysql, service: mysql, shard: "1/1" }
     name: e2e (${{ matrix.engine }} ${{ matrix.shard }})
     steps:
       - uses: actions/checkout@v6
@@ -84,7 +86,7 @@ jobs:
           python-version: '3.12'
       - name: Install Python test dependencies
         run: |
-          pip install pytest pytest-timeout duckdb "psycopg[binary]" trino presto-python-client pyhive thrift logica
+          pip install pytest pytest-timeout duckdb "psycopg[binary]" trino presto-python-client pyhive thrift logica clickhouse-connect pymysql
       - name: Build and install synalog wheel
         run: pip install .
       - name: Start the engine's server

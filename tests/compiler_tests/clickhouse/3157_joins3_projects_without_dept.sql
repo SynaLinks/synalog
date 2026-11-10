@@ -1,0 +1,69 @@
+-- Compiled by SynaLog — logic programming for AI agents (https://github.com/synalinks/synalog).
+-- Copyright 2025-2026 Yoan Sallami (Synalinks Team).
+-- SPDX-License-Identifier: Apache-2.0
+
+-- Initializing ClickHouse environment.
+SET join_use_nulls = 1;
+SET allow_experimental_correlated_subqueries = 1;
+SET aggregate_functions_null_for_empty = 1;
+SET cast_keep_nullable = 1;
+SET transform_null_in = 1;
+
+WITH t_0_Pr AS (SELECT * FROM (
+  
+    SELECT
+      100 AS pid,
+      10 AS dept
+   UNION ALL
+  
+    SELECT
+      101 AS pid,
+      10 AS dept
+   UNION ALL
+  
+    SELECT
+      102 AS pid,
+      20 AS dept
+   UNION ALL
+  
+    SELECT
+      103 AS pid,
+      50 AS dept
+  
+) AS UNUSED_TABLE_NAME  ),
+t_1_D AS (SELECT * FROM (
+  
+    SELECT
+      10 AS dept,
+      'eng' AS dname,
+      'paris' AS city
+   UNION ALL
+  
+    SELECT
+      20 AS dept,
+      'ops' AS dname,
+      'lyon' AS city
+   UNION ALL
+  
+    SELECT
+      40 AS dept,
+      'hr' AS dname,
+      'nice' AS city
+   UNION ALL
+  
+    SELECT
+      null AS dept,
+      'temp' AS dname,
+      'lyon' AS city
+  
+) AS UNUSED_TABLE_NAME  )
+SELECT
+  Pr.pid AS pid
+FROM
+  t_0_Pr AS Pr
+WHERE
+  NOT (Pr.dept IS NOT NULL AND CAST(Pr.dept AS Nullable(String)) IN (SELECT CAST(synalog_k0 AS Nullable(String)) FROM (SELECT
+    D.dept AS synalog_k0
+  FROM
+    t_1_D AS D
+  GROUP BY 1) AS synalog_m));

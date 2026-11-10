@@ -1,0 +1,493 @@
+-- Compiled by SynaLog — logic programming for AI agents (https://github.com/synalinks/synalog).
+-- Copyright 2025-2026 Yoan Sallami (Synalinks Team).
+-- SPDX-License-Identifier: Apache-2.0
+
+-- Initializing ClickHouse environment.
+SET join_use_nulls = 1;
+SET allow_experimental_correlated_subqueries = 1;
+SET aggregate_functions_null_for_empty = 1;
+SET cast_keep_nullable = 1;
+SET transform_null_in = 1;
+CREATE DATABASE IF NOT EXISTS synalog_test;
+
+DROP TABLE IF EXISTS synalog_test.Down_sn_delta;
+CREATE TABLE synalog_test.Down_sn_delta ENGINE = Memory AS WITH t_2_Uses AS (SELECT * FROM (
+  
+    SELECT
+      'bike' AS part,
+      'frame' AS component,
+      1 AS qty
+   UNION ALL
+  
+    SELECT
+      'bike' AS part,
+      'wheel' AS component,
+      2 AS qty
+   UNION ALL
+  
+    SELECT
+      'wheel' AS part,
+      'rim' AS component,
+      1 AS qty
+   UNION ALL
+  
+    SELECT
+      'wheel' AS part,
+      'spoke' AS component,
+      32 AS qty
+   UNION ALL
+  
+    SELECT
+      'wheel' AS part,
+      'hub' AS component,
+      1 AS qty
+   UNION ALL
+  
+    SELECT
+      'hub' AS part,
+      'bearing' AS component,
+      2 AS qty
+   UNION ALL
+  
+    SELECT
+      'frame' AS part,
+      'tube' AS component,
+      3 AS qty
+   UNION ALL
+  
+    SELECT
+      'scooter' AS part,
+      'wheel' AS component,
+      2 AS qty
+   UNION ALL
+  
+    SELECT
+      'scooter' AS part,
+      'deck' AS component,
+      1 AS qty
+  
+) AS UNUSED_TABLE_NAME  ),
+t_0_Down_MultBodyAggAux_f2 AS (SELECT * FROM (
+  
+    SELECT
+      t_1_Uses.component AS component
+    FROM
+      t_2_Uses AS t_1_Uses
+    WHERE
+      (t_1_Uses.part = 'scooter')
+  
+) AS UNUSED_TABLE_NAME  )
+SELECT
+  Down_MultBodyAggAux_f2.component AS component
+FROM
+  t_0_Down_MultBodyAggAux_f2 AS Down_MultBodyAggAux_f2
+GROUP BY 1;
+
+-- Interacting with table synalog_test.Down_sn_delta
+
+DROP TABLE IF EXISTS synalog_test.Down_sn_t0;
+CREATE TABLE synalog_test.Down_sn_t0 ENGINE = Memory AS SELECT
+  Down_sn_delta.component AS component
+FROM
+  synalog_test.Down_sn_delta AS Down_sn_delta
+WHERE
+  (1 = 0);
+
+-- Interacting with table synalog_test.Down_sn_t0
+
+DROP TABLE IF EXISTS synalog_test.Down_sn_t1;
+CREATE TABLE synalog_test.Down_sn_t1 ENGINE = Memory AS WITH t_2_Uses AS (SELECT * FROM (
+  
+    SELECT
+      'bike' AS part,
+      'frame' AS component,
+      1 AS qty
+   UNION ALL
+  
+    SELECT
+      'bike' AS part,
+      'wheel' AS component,
+      2 AS qty
+   UNION ALL
+  
+    SELECT
+      'wheel' AS part,
+      'rim' AS component,
+      1 AS qty
+   UNION ALL
+  
+    SELECT
+      'wheel' AS part,
+      'spoke' AS component,
+      32 AS qty
+   UNION ALL
+  
+    SELECT
+      'wheel' AS part,
+      'hub' AS component,
+      1 AS qty
+   UNION ALL
+  
+    SELECT
+      'hub' AS part,
+      'bearing' AS component,
+      2 AS qty
+   UNION ALL
+  
+    SELECT
+      'frame' AS part,
+      'tube' AS component,
+      3 AS qty
+   UNION ALL
+  
+    SELECT
+      'scooter' AS part,
+      'wheel' AS component,
+      2 AS qty
+   UNION ALL
+  
+    SELECT
+      'scooter' AS part,
+      'deck' AS component,
+      1 AS qty
+  
+) AS UNUSED_TABLE_NAME  ),
+t_1_Down_MultBodyAggAux_f3 AS (SELECT * FROM (
+  
+    SELECT
+      Uses.component AS component
+    FROM
+      synalog_test.Down_sn_t0 AS Down_sn_t0, t_2_Uses AS Uses
+    WHERE
+      (Uses.part = Down_sn_t0.component)
+   UNION ALL
+  
+    SELECT
+      t_2_Uses.component AS component
+    FROM
+      t_2_Uses
+    WHERE
+      (t_2_Uses.part = 'scooter')
+  
+) AS UNUSED_TABLE_NAME  ),
+t_0_Down_sn_r1 AS (SELECT
+  Down_MultBodyAggAux_f3.component AS component
+FROM
+  t_1_Down_MultBodyAggAux_f3 AS Down_MultBodyAggAux_f3
+GROUP BY 1)
+SELECT
+  Down_sn_r1.component AS component
+FROM
+  t_0_Down_sn_r1 AS Down_sn_r1
+WHERE
+  (1 = 0);
+
+-- Interacting with table synalog_test.Down_sn_t1
+
+DROP TABLE IF EXISTS synalog_test.Down_sn_t2;
+CREATE TABLE synalog_test.Down_sn_t2 ENGINE = Memory AS WITH t_2_Uses AS (SELECT * FROM (
+  
+    SELECT
+      'bike' AS part,
+      'frame' AS component,
+      1 AS qty
+   UNION ALL
+  
+    SELECT
+      'bike' AS part,
+      'wheel' AS component,
+      2 AS qty
+   UNION ALL
+  
+    SELECT
+      'wheel' AS part,
+      'rim' AS component,
+      1 AS qty
+   UNION ALL
+  
+    SELECT
+      'wheel' AS part,
+      'spoke' AS component,
+      32 AS qty
+   UNION ALL
+  
+    SELECT
+      'wheel' AS part,
+      'hub' AS component,
+      1 AS qty
+   UNION ALL
+  
+    SELECT
+      'hub' AS part,
+      'bearing' AS component,
+      2 AS qty
+   UNION ALL
+  
+    SELECT
+      'frame' AS part,
+      'tube' AS component,
+      3 AS qty
+   UNION ALL
+  
+    SELECT
+      'scooter' AS part,
+      'wheel' AS component,
+      2 AS qty
+   UNION ALL
+  
+    SELECT
+      'scooter' AS part,
+      'deck' AS component,
+      1 AS qty
+  
+) AS UNUSED_TABLE_NAME  ),
+t_1_Down_MultBodyAggAux_f4 AS (SELECT * FROM (
+  
+    SELECT
+      Uses.component AS component
+    FROM
+      synalog_test.Down_sn_t1 AS Down_sn_t1, t_2_Uses AS Uses
+    WHERE
+      (Uses.part = Down_sn_t1.component)
+   UNION ALL
+  
+    SELECT
+      t_2_Uses.component AS component
+    FROM
+      t_2_Uses
+    WHERE
+      (t_2_Uses.part = 'scooter')
+  
+) AS UNUSED_TABLE_NAME  ),
+t_0_Down_sn_r2 AS (SELECT
+  Down_MultBodyAggAux_f4.component AS component
+FROM
+  t_1_Down_MultBodyAggAux_f4 AS Down_MultBodyAggAux_f4
+GROUP BY 1)
+SELECT
+  Down_sn_r2.component AS component
+FROM
+  t_0_Down_sn_r2 AS Down_sn_r2
+WHERE
+  (1 = 0);
+
+-- Interacting with table synalog_test.Down_sn_t2
+
+DROP TABLE IF EXISTS synalog_test.Down_sn_t3;
+CREATE TABLE synalog_test.Down_sn_t3 ENGINE = Memory AS WITH t_2_Uses AS (SELECT * FROM (
+  
+    SELECT
+      'bike' AS part,
+      'frame' AS component,
+      1 AS qty
+   UNION ALL
+  
+    SELECT
+      'bike' AS part,
+      'wheel' AS component,
+      2 AS qty
+   UNION ALL
+  
+    SELECT
+      'wheel' AS part,
+      'rim' AS component,
+      1 AS qty
+   UNION ALL
+  
+    SELECT
+      'wheel' AS part,
+      'spoke' AS component,
+      32 AS qty
+   UNION ALL
+  
+    SELECT
+      'wheel' AS part,
+      'hub' AS component,
+      1 AS qty
+   UNION ALL
+  
+    SELECT
+      'hub' AS part,
+      'bearing' AS component,
+      2 AS qty
+   UNION ALL
+  
+    SELECT
+      'frame' AS part,
+      'tube' AS component,
+      3 AS qty
+   UNION ALL
+  
+    SELECT
+      'scooter' AS part,
+      'wheel' AS component,
+      2 AS qty
+   UNION ALL
+  
+    SELECT
+      'scooter' AS part,
+      'deck' AS component,
+      1 AS qty
+  
+) AS UNUSED_TABLE_NAME  ),
+t_1_Down_MultBodyAggAux_f5 AS (SELECT * FROM (
+  
+    SELECT
+      Uses.component AS component
+    FROM
+      synalog_test.Down_sn_t2 AS Down_sn_t2, t_2_Uses AS Uses
+    WHERE
+      (Uses.part = Down_sn_t2.component)
+   UNION ALL
+  
+    SELECT
+      t_2_Uses.component AS component
+    FROM
+      t_2_Uses
+    WHERE
+      (t_2_Uses.part = 'scooter')
+  
+) AS UNUSED_TABLE_NAME  ),
+t_0_Down_sn_r3 AS (SELECT
+  Down_MultBodyAggAux_f5.component AS component
+FROM
+  t_1_Down_MultBodyAggAux_f5 AS Down_MultBodyAggAux_f5
+GROUP BY 1)
+SELECT
+  Down_sn_r3.component AS component
+FROM
+  t_0_Down_sn_r3 AS Down_sn_r3
+WHERE
+  (1 = 0);
+
+-- Interacting with table synalog_test.Down_sn_t3
+
+DROP TABLE IF EXISTS synalog_test.Down_sn_full;
+CREATE TABLE synalog_test.Down_sn_full ENGINE = Memory AS SELECT * FROM (
+  
+    SELECT
+      Down_sn_delta.component AS component
+    FROM
+      synalog_test.Down_sn_delta AS Down_sn_delta
+   UNION ALL
+  
+    SELECT
+      Down_sn_t1.component AS component
+    FROM
+      synalog_test.Down_sn_t1 AS Down_sn_t1
+   UNION ALL
+  
+    SELECT
+      Down_sn_t2.component AS component
+    FROM
+      synalog_test.Down_sn_t2 AS Down_sn_t2
+   UNION ALL
+  
+    SELECT
+      Down_sn_t3.component AS component
+    FROM
+      synalog_test.Down_sn_t3 AS Down_sn_t3
+  
+) AS UNUSED_TABLE_NAME  ;
+
+-- Interacting with table synalog_test.Down_sn_full
+
+DROP TABLE IF EXISTS synalog_test.Down_sn_new;
+CREATE TABLE synalog_test.Down_sn_new ENGINE = Memory AS WITH t_2_Uses AS (SELECT * FROM (
+  
+    SELECT
+      'bike' AS part,
+      'frame' AS component,
+      1 AS qty
+   UNION ALL
+  
+    SELECT
+      'bike' AS part,
+      'wheel' AS component,
+      2 AS qty
+   UNION ALL
+  
+    SELECT
+      'wheel' AS part,
+      'rim' AS component,
+      1 AS qty
+   UNION ALL
+  
+    SELECT
+      'wheel' AS part,
+      'spoke' AS component,
+      32 AS qty
+   UNION ALL
+  
+    SELECT
+      'wheel' AS part,
+      'hub' AS component,
+      1 AS qty
+   UNION ALL
+  
+    SELECT
+      'hub' AS part,
+      'bearing' AS component,
+      2 AS qty
+   UNION ALL
+  
+    SELECT
+      'frame' AS part,
+      'tube' AS component,
+      3 AS qty
+   UNION ALL
+  
+    SELECT
+      'scooter' AS part,
+      'wheel' AS component,
+      2 AS qty
+   UNION ALL
+  
+    SELECT
+      'scooter' AS part,
+      'deck' AS component,
+      1 AS qty
+  
+) AS UNUSED_TABLE_NAME  ),
+t_1_Down_MultBodyAggAux_f6 AS (SELECT * FROM (
+  
+    SELECT
+      Uses.component AS component
+    FROM
+      synalog_test.Down_sn_delta AS Down_sn_delta, t_2_Uses AS Uses
+    WHERE
+      (Uses.part = Down_sn_delta.component)
+   UNION ALL
+  
+    SELECT
+      t_2_Uses.component AS component
+    FROM
+      t_2_Uses
+    WHERE
+      (t_2_Uses.part = 'scooter')
+  
+) AS UNUSED_TABLE_NAME  ),
+t_0_Down_sn_step AS (SELECT
+  Down_MultBodyAggAux_f6.component AS component
+FROM
+  t_1_Down_MultBodyAggAux_f6 AS Down_MultBodyAggAux_f6
+GROUP BY 1)
+SELECT
+  Down_sn_step.component AS component
+FROM
+  t_0_Down_sn_step AS Down_sn_step
+WHERE
+  NOT (CAST(Down_sn_step.component AS Nullable(String)) IN (SELECT CAST(synalog_k0 AS Nullable(String)) FROM (SELECT
+    Down_sn_full.component AS synalog_k0
+  FROM
+    synalog_test.Down_sn_full AS Down_sn_full
+  GROUP BY 1) AS synalog_m))
+GROUP BY 1;
+
+INSERT INTO synalog_test.Down_sn_full SELECT * FROM synalog_test.Down_sn_new;
+
+SELECT
+  Down_sn_full.component AS component
+FROM
+  synalog_test.Down_sn_full AS Down_sn_full
+GROUP BY 1 ORDER BY component;

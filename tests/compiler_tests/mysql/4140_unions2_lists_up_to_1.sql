@@ -1,0 +1,126 @@
+-- Compiled by SynaLog — logic programming for AI agents (https://github.com/synalinks/synalog).
+-- Copyright 2025-2026 Yoan Sallami (Synalinks Team).
+-- SPDX-License-Identifier: Apache-2.0
+
+-- Initializing MySQL environment.
+SET SESSION sql_mode = 'ANSI_QUOTES,PIPES_AS_CONCAT,NO_BACKSLASH_ESCAPES';
+SET SESSION optimizer_switch = 'derived_condition_pushdown=off';
+SET NAMES utf8mb4 COLLATE utf8mb4_0900_bin;
+SET SESSION group_concat_max_len = 1073741824;
+
+WITH t_5_A AS (SELECT * FROM (
+  
+    SELECT
+      1 AS x
+   UNION ALL
+  
+    SELECT
+      2 AS x
+   UNION ALL
+  
+    SELECT
+      3 AS x
+   UNION ALL
+  
+    SELECT
+      4 AS x
+   UNION ALL
+  
+    SELECT
+      5 AS x
+   UNION ALL
+  
+    SELECT
+      6 AS x
+  
+) AS UNUSED_TABLE_NAME  ),
+t_6_B AS (SELECT * FROM (
+  
+    SELECT
+      4 AS x
+   UNION ALL
+  
+    SELECT
+      5 AS x
+   UNION ALL
+  
+    SELECT
+      6 AS x
+   UNION ALL
+  
+    SELECT
+      7 AS x
+   UNION ALL
+  
+    SELECT
+      8 AS x
+  
+) AS UNUSED_TABLE_NAME  ),
+t_4_L_MultBodyAggAux AS (SELECT * FROM (
+  
+    SELECT
+      'a' AS src,
+      A.x AS l
+    FROM
+      t_5_A AS A
+    WHERE
+      (A.x <= 1)
+   UNION ALL
+  
+    SELECT
+      'b' AS src,
+      B.x AS l
+    FROM
+      t_6_B AS B
+    WHERE
+      (B.x <= 1)
+  
+) AS UNUSED_TABLE_NAME  ),
+t_3_L AS (SELECT
+  L_MultBodyAggAux.src AS src,
+  JSON_ARRAYAGG(L_MultBodyAggAux.l) AS l
+FROM
+  t_4_L_MultBodyAggAux AS L_MultBodyAggAux
+GROUP BY 1),
+t_7_M AS (SELECT * FROM (
+  
+    SELECT
+      'a' AS src,
+      JSON_ARRAY() AS l
+   UNION ALL
+  
+    SELECT
+      'b' AS src,
+      JSON_ARRAY() AS l
+  
+) AS UNUSED_TABLE_NAME  ),
+t_1_All AS (SELECT * FROM (
+  
+    SELECT
+      t_2_L.src AS src,
+      t_2_L.l AS l
+    FROM
+      t_3_L AS t_2_L
+   UNION ALL
+  
+    SELECT
+      M.src AS src,
+      M.l AS l
+    FROM
+      t_7_M AS M
+    WHERE
+      ((SELECT
+        MIN(1) AS synalog_value
+      FROM
+        t_3_L AS t_8_L
+      WHERE
+        (t_8_L.src = M.src)) IS NULL)
+  
+) AS UNUSED_TABLE_NAME  )
+SELECT * FROM (
+SELECT
+  t_0_All.src AS src,
+  JSON_LENGTH(t_0_All.l) AS n
+FROM
+  t_1_All AS t_0_All
+) AS UNUSED_TABLE_NAME ORDER BY src IS NULL, src;

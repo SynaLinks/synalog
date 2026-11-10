@@ -673,7 +673,7 @@ impl SynalogProgram {
         // the query passes their limit of stages (100 on Presto, 150 on
         // Trino), as edges joined through shared nodes do. A derived predicate
         // read more than once is materialized, as @Ground does.
-        if matches!(annotations.engine.as_str(), "presto" | "trino") {
+        if matches!(annotations.engine.as_str(), "presto" | "trino" | "clickhouse") {
             for name in reused_derived_predicates(&rules) {
                 let entry = annotations.annotations.entry(name.clone()).or_default();
                 entry.entry("ground".to_string()).or_insert(Json::Str(name));
@@ -735,6 +735,7 @@ impl SynalogProgram {
             value_rules.into_iter().filter(|(_, f)| *f).map(|(n, _)| n).collect();
         let mut allocator = NamesAllocator::new();
         allocator.reserved_aliases = column_names.clone();
+        allocator.reserved_aliases.extend(engine_keywords(annotations.engine.as_str()).iter().map(|k| k.to_string()));
         allocator.defined_functions = defined_functions.clone();
 
         Ok(SynalogProgram {
@@ -968,6 +969,7 @@ impl SynalogProgram {
             .collect();
         let mut allocator = NamesAllocator::with_custom_udfs(udfs);
         allocator.reserved_aliases = self.column_names.clone();
+        allocator.reserved_aliases.extend(engine_keywords(self.annotations.engine()).iter().map(|k| k.to_string()));
         allocator.defined_functions = self.defined_functions.clone();
         allocator
     }
@@ -1050,6 +1052,13 @@ impl SynalogProgram {
             );
             let order_by = self.annotations.order_by_clause(name);
             let limit = self.annotations.limit_clause(name);
+            // An ORDER BY of expressions (`k IS NULL, k`) reads the output's
+            // columns where it follows the rule's own query.
+            let wrap = !order_by.is_empty()
+                && dialects::get(self.annotations.engine()).is_ok_and(|d| d.order_by_reads_tables());
+            if wrap {
+                return Ok(format!("SELECT * FROM (\n{}\n) AS UNUSED_TABLE_NAME{}{}", sql, order_by, limit));
+            }
             return Ok(format!("{}{}{}", sql, order_by, limit));
         }
 
@@ -2373,10 +2382,16 @@ impl SynalogProgram {
                     String::new()
                 };
 
+                let options = exec_ref
+                    .dialect
+                    .as_ref()
+                    .map(|d| d.create_table_options())
+                    .unwrap_or("");
                 let create_statement = format!(
-                    "CREATE {}TABLE {} AS {}",
+                    "CREATE {}TABLE {}{} AS {}",
                     if create_or_replace { "OR REPLACE " } else { "" },
                     ground.table_name,
+                    options,
                     format_sql(&dependency_sql)
                 );
 
@@ -2542,6 +2557,16 @@ impl<'a> SubqueryTranslator for UniverseSubqueryTranslator<'a> {
 // ---------------------------------------------------------------------------
 // Combine type-inference helpers
 // ---------------------------------------------------------------------------
+
+/// The words an engine of its own reads as keywords where a table's alias
+/// goes, lowercase: ClickHouse's `SELECT Top.x` is `SELECT TOP`.
+fn engine_keywords(engine: &str) -> &'static [&'static str] {
+    match engine {
+        "clickhouse" => &["top", "final", "sample", "prewhere", "settings", "format", "global"],
+        "mysql" => dialects::MYSQL_RESERVED,
+        _ => &[],
+    }
+}
 
 /// Safely read a field from a JSON object node (None if not an object / absent).
 fn jget<'a>(node: &'a Json, key: &str) -> Option<&'a Json> {

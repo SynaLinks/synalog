@@ -1,0 +1,107 @@
+-- Compiled by SynaLog — logic programming for AI agents (https://github.com/synalinks/synalog).
+-- Copyright 2025-2026 Yoan Sallami (Synalinks Team).
+-- SPDX-License-Identifier: Apache-2.0
+
+-- Initializing ClickHouse environment.
+SET join_use_nulls = 1;
+SET allow_experimental_correlated_subqueries = 1;
+SET aggregate_functions_null_for_empty = 1;
+SET cast_keep_nullable = 1;
+SET transform_null_in = 1;
+CREATE DATABASE IF NOT EXISTS synalog_test;
+
+DROP TABLE IF EXISTS synalog_test.U;
+CREATE TABLE synalog_test.U ENGINE = Memory AS WITH t_1_E AS (SELECT * FROM (
+  
+    SELECT
+      1 AS a,
+      2 AS b
+   UNION ALL
+  
+    SELECT
+      2 AS a,
+      3 AS b
+   UNION ALL
+  
+    SELECT
+      3 AS a,
+      1 AS b
+   UNION ALL
+  
+    SELECT
+      3 AS a,
+      4 AS b
+   UNION ALL
+  
+    SELECT
+      5 AS a,
+      6 AS b
+   UNION ALL
+  
+    SELECT
+      6 AS a,
+      7 AS b
+   UNION ALL
+  
+    SELECT
+      7 AS a,
+      8 AS b
+   UNION ALL
+  
+    SELECT
+      8 AS a,
+      5 AS b
+   UNION ALL
+  
+    SELECT
+      9 AS a,
+      10 AS b
+   UNION ALL
+  
+    SELECT
+      4 AS a,
+      2 AS b
+  
+) AS UNUSED_TABLE_NAME  ),
+t_0_U_MultBodyAggAux AS (SELECT * FROM (
+  
+    SELECT
+      E.a AS a,
+      E.b AS b
+    FROM
+      t_1_E AS E
+   UNION ALL
+  
+    SELECT
+      t_2_E.b AS a,
+      t_2_E.a AS b
+    FROM
+      t_1_E AS t_2_E
+  
+) AS UNUSED_TABLE_NAME  )
+SELECT
+  U_MultBodyAggAux.a AS a,
+  U_MultBodyAggAux.b AS b
+FROM
+  t_0_U_MultBodyAggAux AS U_MultBodyAggAux
+GROUP BY 1, 2;
+
+-- Interacting with table synalog_test.U
+
+WITH t_0_T AS (SELECT
+  U.a AS a,
+  U.b AS b,
+  t_1_U.b AS c
+FROM
+  synalog_test.U AS U, synalog_test.U AS t_1_U, synalog_test.U AS t_2_U
+WHERE
+  (U.a < U.b) AND
+  (U.b < t_1_U.b) AND
+  (t_1_U.a = U.b) AND
+  (t_2_U.a = t_1_U.b) AND
+  (t_2_U.b = U.a)
+GROUP BY 1, 2, 3)
+SELECT
+  SUM(1) AS n
+FROM
+  t_0_T AS T;

@@ -1,0 +1,806 @@
+-- Compiled by SynaLog — logic programming for AI agents (https://github.com/synalinks/synalog).
+-- Copyright 2025-2026 Yoan Sallami (Synalinks Team).
+-- SPDX-License-Identifier: Apache-2.0
+
+-- Initializing MySQL environment.
+SET SESSION sql_mode = 'ANSI_QUOTES,PIPES_AS_CONCAT,NO_BACKSLASH_ESCAPES';
+SET SESSION optimizer_switch = 'derived_condition_pushdown=off';
+SET NAMES utf8mb4 COLLATE utf8mb4_0900_bin;
+SET SESSION group_concat_max_len = 1073741824;
+CREATE DATABASE IF NOT EXISTS synalog_test DEFAULT COLLATE utf8mb4_0900_bin;
+
+DROP TABLE IF EXISTS synalog_test.Even_ifr1;
+CREATE TABLE synalog_test.Even_ifr1 AS WITH t_0_Even_MultBodyAggAux_f4 AS (SELECT * FROM (
+  
+    SELECT
+      0 AS n
+  
+) AS UNUSED_TABLE_NAME  )
+SELECT
+  Even_MultBodyAggAux_f4.n AS n
+FROM
+  t_0_Even_MultBodyAggAux_f4 AS Even_MultBodyAggAux_f4
+GROUP BY 1;
+
+-- Interacting with table synalog_test.Even_ifr1
+
+DROP TABLE IF EXISTS synalog_test.Odd_ifr2;
+CREATE TABLE synalog_test.Odd_ifr2 AS SELECT
+  ((Even_ifr1.n) + (1)) AS n
+FROM
+  synalog_test.Even_ifr1 AS Even_ifr1
+WHERE
+  (Even_ifr1.n < 100)
+GROUP BY 1;
+
+-- Interacting with table synalog_test.Odd_ifr2
+
+DROP TABLE IF EXISTS synalog_test.Even_ifr3;
+CREATE TABLE synalog_test.Even_ifr3 AS WITH t_0_Even_MultBodyAggAux_f8 AS (SELECT * FROM (
+  
+    SELECT
+      ((Odd_ifr2.n) + (1)) AS n
+    FROM
+      synalog_test.Odd_ifr2 AS Odd_ifr2
+    WHERE
+      (Odd_ifr2.n < 100)
+   UNION ALL
+  
+    SELECT
+      0 AS n
+  
+) AS UNUSED_TABLE_NAME  )
+SELECT
+  Even_MultBodyAggAux_f8.n AS n
+FROM
+  t_0_Even_MultBodyAggAux_f8 AS Even_MultBodyAggAux_f8
+GROUP BY 1;
+
+-- Interacting with table synalog_test.Even_ifr3
+
+DROP TABLE IF EXISTS synalog_test.Odd_ifr2;
+CREATE TABLE synalog_test.Odd_ifr2 AS SELECT
+  ((Even_ifr3.n) + (1)) AS n
+FROM
+  synalog_test.Even_ifr3 AS Even_ifr3
+WHERE
+  (Even_ifr3.n < 100)
+GROUP BY 1;
+
+-- Interacting with table synalog_test.Odd_ifr2
+
+DROP TABLE IF EXISTS synalog_test.Even_ifr0;
+CREATE TABLE synalog_test.Even_ifr0 AS WITH t_0_Even_MultBodyAggAux_f1 AS (SELECT * FROM (
+  
+    SELECT
+      0 AS n
+  
+) AS UNUSED_TABLE_NAME  )
+SELECT
+  Even_MultBodyAggAux_f1.n AS n
+FROM
+  t_0_Even_MultBodyAggAux_f1 AS Even_MultBodyAggAux_f1
+GROUP BY 1;
+
+-- Interacting with table synalog_test.Even_ifr0
+
+DROP TABLE IF EXISTS synalog_test.Odd_ifr1;
+CREATE TABLE synalog_test.Odd_ifr1 AS SELECT
+  ((Even_ifr0.n) + (1)) AS n
+FROM
+  synalog_test.Even_ifr0 AS Even_ifr0
+WHERE
+  (Even_ifr0.n < 100)
+GROUP BY 1;
+
+-- Interacting with table synalog_test.Odd_ifr1
+
+DROP TABLE IF EXISTS synalog_test.Even_ifr2;
+CREATE TABLE synalog_test.Even_ifr2 AS WITH t_0_Even_MultBodyAggAux_f5 AS (SELECT * FROM (
+  
+    SELECT
+      ((Odd_ifr1.n) + (1)) AS n
+    FROM
+      synalog_test.Odd_ifr1 AS Odd_ifr1
+    WHERE
+      (Odd_ifr1.n < 100)
+   UNION ALL
+  
+    SELECT
+      0 AS n
+  
+) AS UNUSED_TABLE_NAME  )
+SELECT
+  Even_MultBodyAggAux_f5.n AS n
+FROM
+  t_0_Even_MultBodyAggAux_f5 AS Even_MultBodyAggAux_f5
+GROUP BY 1;
+
+-- Interacting with table synalog_test.Even_ifr2
+
+DROP TABLE IF EXISTS synalog_test.Odd_ifr3;
+CREATE TABLE synalog_test.Odd_ifr3 AS SELECT
+  ((Even_ifr2.n) + (1)) AS n
+FROM
+  synalog_test.Even_ifr2 AS Even_ifr2
+WHERE
+  (Even_ifr2.n < 100)
+GROUP BY 1;
+
+-- Interacting with table synalog_test.Odd_ifr3
+
+DROP TABLE IF EXISTS synalog_test.Even_ifr2;
+CREATE TABLE synalog_test.Even_ifr2 AS WITH t_0_Even_MultBodyAggAux_f9 AS (SELECT * FROM (
+  
+    SELECT
+      ((Odd_ifr3.n) + (1)) AS n
+    FROM
+      synalog_test.Odd_ifr3 AS Odd_ifr3
+    WHERE
+      (Odd_ifr3.n < 100)
+   UNION ALL
+  
+    SELECT
+      0 AS n
+  
+) AS UNUSED_TABLE_NAME  )
+SELECT
+  Even_MultBodyAggAux_f9.n AS n
+FROM
+  t_0_Even_MultBodyAggAux_f9 AS Even_MultBodyAggAux_f9
+GROUP BY 1;
+
+-- Interacting with table synalog_test.Even_ifr2
+
+DROP TABLE IF EXISTS synalog_test.Even_ifr3;
+CREATE TABLE synalog_test.Even_ifr3 AS WITH t_0_Even_MultBodyAggAux_f8 AS (SELECT * FROM (
+  
+    SELECT
+      ((Odd_ifr2.n) + (1)) AS n
+    FROM
+      synalog_test.Odd_ifr2 AS Odd_ifr2
+    WHERE
+      (Odd_ifr2.n < 100)
+   UNION ALL
+  
+    SELECT
+      0 AS n
+  
+) AS UNUSED_TABLE_NAME  )
+SELECT
+  Even_MultBodyAggAux_f8.n AS n
+FROM
+  t_0_Even_MultBodyAggAux_f8 AS Even_MultBodyAggAux_f8
+GROUP BY 1;
+
+DROP TABLE IF EXISTS synalog_test.Odd_ifr3;
+CREATE TABLE synalog_test.Odd_ifr3 AS SELECT
+  ((Even_ifr2.n) + (1)) AS n
+FROM
+  synalog_test.Even_ifr2 AS Even_ifr2
+WHERE
+  (Even_ifr2.n < 100)
+GROUP BY 1;
+
+DROP TABLE IF EXISTS synalog_test.Even_ifr2;
+CREATE TABLE synalog_test.Even_ifr2 AS WITH t_0_Even_MultBodyAggAux_f9 AS (SELECT * FROM (
+  
+    SELECT
+      ((Odd_ifr3.n) + (1)) AS n
+    FROM
+      synalog_test.Odd_ifr3 AS Odd_ifr3
+    WHERE
+      (Odd_ifr3.n < 100)
+   UNION ALL
+  
+    SELECT
+      0 AS n
+  
+) AS UNUSED_TABLE_NAME  )
+SELECT
+  Even_MultBodyAggAux_f9.n AS n
+FROM
+  t_0_Even_MultBodyAggAux_f9 AS Even_MultBodyAggAux_f9
+GROUP BY 1;
+
+DROP TABLE IF EXISTS synalog_test.Odd_ifr2;
+CREATE TABLE synalog_test.Odd_ifr2 AS SELECT
+  ((Even_ifr3.n) + (1)) AS n
+FROM
+  synalog_test.Even_ifr3 AS Even_ifr3
+WHERE
+  (Even_ifr3.n < 100)
+GROUP BY 1;
+
+DROP TABLE IF EXISTS synalog_test.Even_ifr3;
+CREATE TABLE synalog_test.Even_ifr3 AS WITH t_0_Even_MultBodyAggAux_f8 AS (SELECT * FROM (
+  
+    SELECT
+      ((Odd_ifr2.n) + (1)) AS n
+    FROM
+      synalog_test.Odd_ifr2 AS Odd_ifr2
+    WHERE
+      (Odd_ifr2.n < 100)
+   UNION ALL
+  
+    SELECT
+      0 AS n
+  
+) AS UNUSED_TABLE_NAME  )
+SELECT
+  Even_MultBodyAggAux_f8.n AS n
+FROM
+  t_0_Even_MultBodyAggAux_f8 AS Even_MultBodyAggAux_f8
+GROUP BY 1;
+
+DROP TABLE IF EXISTS synalog_test.Odd_ifr3;
+CREATE TABLE synalog_test.Odd_ifr3 AS SELECT
+  ((Even_ifr2.n) + (1)) AS n
+FROM
+  synalog_test.Even_ifr2 AS Even_ifr2
+WHERE
+  (Even_ifr2.n < 100)
+GROUP BY 1;
+
+DROP TABLE IF EXISTS synalog_test.Even_ifr2;
+CREATE TABLE synalog_test.Even_ifr2 AS WITH t_0_Even_MultBodyAggAux_f9 AS (SELECT * FROM (
+  
+    SELECT
+      ((Odd_ifr3.n) + (1)) AS n
+    FROM
+      synalog_test.Odd_ifr3 AS Odd_ifr3
+    WHERE
+      (Odd_ifr3.n < 100)
+   UNION ALL
+  
+    SELECT
+      0 AS n
+  
+) AS UNUSED_TABLE_NAME  )
+SELECT
+  Even_MultBodyAggAux_f9.n AS n
+FROM
+  t_0_Even_MultBodyAggAux_f9 AS Even_MultBodyAggAux_f9
+GROUP BY 1;
+
+DROP TABLE IF EXISTS synalog_test.Odd_ifr2;
+CREATE TABLE synalog_test.Odd_ifr2 AS SELECT
+  ((Even_ifr3.n) + (1)) AS n
+FROM
+  synalog_test.Even_ifr3 AS Even_ifr3
+WHERE
+  (Even_ifr3.n < 100)
+GROUP BY 1;
+
+DROP TABLE IF EXISTS synalog_test.Even_ifr3;
+CREATE TABLE synalog_test.Even_ifr3 AS WITH t_0_Even_MultBodyAggAux_f8 AS (SELECT * FROM (
+  
+    SELECT
+      ((Odd_ifr2.n) + (1)) AS n
+    FROM
+      synalog_test.Odd_ifr2 AS Odd_ifr2
+    WHERE
+      (Odd_ifr2.n < 100)
+   UNION ALL
+  
+    SELECT
+      0 AS n
+  
+) AS UNUSED_TABLE_NAME  )
+SELECT
+  Even_MultBodyAggAux_f8.n AS n
+FROM
+  t_0_Even_MultBodyAggAux_f8 AS Even_MultBodyAggAux_f8
+GROUP BY 1;
+
+DROP TABLE IF EXISTS synalog_test.Odd_ifr3;
+CREATE TABLE synalog_test.Odd_ifr3 AS SELECT
+  ((Even_ifr2.n) + (1)) AS n
+FROM
+  synalog_test.Even_ifr2 AS Even_ifr2
+WHERE
+  (Even_ifr2.n < 100)
+GROUP BY 1;
+
+DROP TABLE IF EXISTS synalog_test.Even_ifr2;
+CREATE TABLE synalog_test.Even_ifr2 AS WITH t_0_Even_MultBodyAggAux_f9 AS (SELECT * FROM (
+  
+    SELECT
+      ((Odd_ifr3.n) + (1)) AS n
+    FROM
+      synalog_test.Odd_ifr3 AS Odd_ifr3
+    WHERE
+      (Odd_ifr3.n < 100)
+   UNION ALL
+  
+    SELECT
+      0 AS n
+  
+) AS UNUSED_TABLE_NAME  )
+SELECT
+  Even_MultBodyAggAux_f9.n AS n
+FROM
+  t_0_Even_MultBodyAggAux_f9 AS Even_MultBodyAggAux_f9
+GROUP BY 1;
+
+DROP TABLE IF EXISTS synalog_test.Odd_ifr2;
+CREATE TABLE synalog_test.Odd_ifr2 AS SELECT
+  ((Even_ifr3.n) + (1)) AS n
+FROM
+  synalog_test.Even_ifr3 AS Even_ifr3
+WHERE
+  (Even_ifr3.n < 100)
+GROUP BY 1;
+
+DROP TABLE IF EXISTS synalog_test.Even_ifr3;
+CREATE TABLE synalog_test.Even_ifr3 AS WITH t_0_Even_MultBodyAggAux_f8 AS (SELECT * FROM (
+  
+    SELECT
+      ((Odd_ifr2.n) + (1)) AS n
+    FROM
+      synalog_test.Odd_ifr2 AS Odd_ifr2
+    WHERE
+      (Odd_ifr2.n < 100)
+   UNION ALL
+  
+    SELECT
+      0 AS n
+  
+) AS UNUSED_TABLE_NAME  )
+SELECT
+  Even_MultBodyAggAux_f8.n AS n
+FROM
+  t_0_Even_MultBodyAggAux_f8 AS Even_MultBodyAggAux_f8
+GROUP BY 1;
+
+DROP TABLE IF EXISTS synalog_test.Odd_ifr3;
+CREATE TABLE synalog_test.Odd_ifr3 AS SELECT
+  ((Even_ifr2.n) + (1)) AS n
+FROM
+  synalog_test.Even_ifr2 AS Even_ifr2
+WHERE
+  (Even_ifr2.n < 100)
+GROUP BY 1;
+
+DROP TABLE IF EXISTS synalog_test.Even_ifr2;
+CREATE TABLE synalog_test.Even_ifr2 AS WITH t_0_Even_MultBodyAggAux_f9 AS (SELECT * FROM (
+  
+    SELECT
+      ((Odd_ifr3.n) + (1)) AS n
+    FROM
+      synalog_test.Odd_ifr3 AS Odd_ifr3
+    WHERE
+      (Odd_ifr3.n < 100)
+   UNION ALL
+  
+    SELECT
+      0 AS n
+  
+) AS UNUSED_TABLE_NAME  )
+SELECT
+  Even_MultBodyAggAux_f9.n AS n
+FROM
+  t_0_Even_MultBodyAggAux_f9 AS Even_MultBodyAggAux_f9
+GROUP BY 1;
+
+DROP TABLE IF EXISTS synalog_test.Odd_ifr2;
+CREATE TABLE synalog_test.Odd_ifr2 AS SELECT
+  ((Even_ifr3.n) + (1)) AS n
+FROM
+  synalog_test.Even_ifr3 AS Even_ifr3
+WHERE
+  (Even_ifr3.n < 100)
+GROUP BY 1;
+
+DROP TABLE IF EXISTS synalog_test.Even_ifr3;
+CREATE TABLE synalog_test.Even_ifr3 AS WITH t_0_Even_MultBodyAggAux_f8 AS (SELECT * FROM (
+  
+    SELECT
+      ((Odd_ifr2.n) + (1)) AS n
+    FROM
+      synalog_test.Odd_ifr2 AS Odd_ifr2
+    WHERE
+      (Odd_ifr2.n < 100)
+   UNION ALL
+  
+    SELECT
+      0 AS n
+  
+) AS UNUSED_TABLE_NAME  )
+SELECT
+  Even_MultBodyAggAux_f8.n AS n
+FROM
+  t_0_Even_MultBodyAggAux_f8 AS Even_MultBodyAggAux_f8
+GROUP BY 1;
+
+DROP TABLE IF EXISTS synalog_test.Odd_ifr3;
+CREATE TABLE synalog_test.Odd_ifr3 AS SELECT
+  ((Even_ifr2.n) + (1)) AS n
+FROM
+  synalog_test.Even_ifr2 AS Even_ifr2
+WHERE
+  (Even_ifr2.n < 100)
+GROUP BY 1;
+
+DROP TABLE IF EXISTS synalog_test.Even_ifr2;
+CREATE TABLE synalog_test.Even_ifr2 AS WITH t_0_Even_MultBodyAggAux_f9 AS (SELECT * FROM (
+  
+    SELECT
+      ((Odd_ifr3.n) + (1)) AS n
+    FROM
+      synalog_test.Odd_ifr3 AS Odd_ifr3
+    WHERE
+      (Odd_ifr3.n < 100)
+   UNION ALL
+  
+    SELECT
+      0 AS n
+  
+) AS UNUSED_TABLE_NAME  )
+SELECT
+  Even_MultBodyAggAux_f9.n AS n
+FROM
+  t_0_Even_MultBodyAggAux_f9 AS Even_MultBodyAggAux_f9
+GROUP BY 1;
+
+DROP TABLE IF EXISTS synalog_test.Odd_ifr2;
+CREATE TABLE synalog_test.Odd_ifr2 AS SELECT
+  ((Even_ifr3.n) + (1)) AS n
+FROM
+  synalog_test.Even_ifr3 AS Even_ifr3
+WHERE
+  (Even_ifr3.n < 100)
+GROUP BY 1;
+
+DROP TABLE IF EXISTS synalog_test.Even_ifr3;
+CREATE TABLE synalog_test.Even_ifr3 AS WITH t_0_Even_MultBodyAggAux_f8 AS (SELECT * FROM (
+  
+    SELECT
+      ((Odd_ifr2.n) + (1)) AS n
+    FROM
+      synalog_test.Odd_ifr2 AS Odd_ifr2
+    WHERE
+      (Odd_ifr2.n < 100)
+   UNION ALL
+  
+    SELECT
+      0 AS n
+  
+) AS UNUSED_TABLE_NAME  )
+SELECT
+  Even_MultBodyAggAux_f8.n AS n
+FROM
+  t_0_Even_MultBodyAggAux_f8 AS Even_MultBodyAggAux_f8
+GROUP BY 1;
+
+DROP TABLE IF EXISTS synalog_test.Odd_ifr3;
+CREATE TABLE synalog_test.Odd_ifr3 AS SELECT
+  ((Even_ifr2.n) + (1)) AS n
+FROM
+  synalog_test.Even_ifr2 AS Even_ifr2
+WHERE
+  (Even_ifr2.n < 100)
+GROUP BY 1;
+
+DROP TABLE IF EXISTS synalog_test.Even_ifr2;
+CREATE TABLE synalog_test.Even_ifr2 AS WITH t_0_Even_MultBodyAggAux_f9 AS (SELECT * FROM (
+  
+    SELECT
+      ((Odd_ifr3.n) + (1)) AS n
+    FROM
+      synalog_test.Odd_ifr3 AS Odd_ifr3
+    WHERE
+      (Odd_ifr3.n < 100)
+   UNION ALL
+  
+    SELECT
+      0 AS n
+  
+) AS UNUSED_TABLE_NAME  )
+SELECT
+  Even_MultBodyAggAux_f9.n AS n
+FROM
+  t_0_Even_MultBodyAggAux_f9 AS Even_MultBodyAggAux_f9
+GROUP BY 1;
+
+DROP TABLE IF EXISTS synalog_test.Odd_ifr2;
+CREATE TABLE synalog_test.Odd_ifr2 AS SELECT
+  ((Even_ifr3.n) + (1)) AS n
+FROM
+  synalog_test.Even_ifr3 AS Even_ifr3
+WHERE
+  (Even_ifr3.n < 100)
+GROUP BY 1;
+
+DROP TABLE IF EXISTS synalog_test.Even_ifr3;
+CREATE TABLE synalog_test.Even_ifr3 AS WITH t_0_Even_MultBodyAggAux_f8 AS (SELECT * FROM (
+  
+    SELECT
+      ((Odd_ifr2.n) + (1)) AS n
+    FROM
+      synalog_test.Odd_ifr2 AS Odd_ifr2
+    WHERE
+      (Odd_ifr2.n < 100)
+   UNION ALL
+  
+    SELECT
+      0 AS n
+  
+) AS UNUSED_TABLE_NAME  )
+SELECT
+  Even_MultBodyAggAux_f8.n AS n
+FROM
+  t_0_Even_MultBodyAggAux_f8 AS Even_MultBodyAggAux_f8
+GROUP BY 1;
+
+DROP TABLE IF EXISTS synalog_test.Odd_ifr3;
+CREATE TABLE synalog_test.Odd_ifr3 AS SELECT
+  ((Even_ifr2.n) + (1)) AS n
+FROM
+  synalog_test.Even_ifr2 AS Even_ifr2
+WHERE
+  (Even_ifr2.n < 100)
+GROUP BY 1;
+
+DROP TABLE IF EXISTS synalog_test.Even_ifr2;
+CREATE TABLE synalog_test.Even_ifr2 AS WITH t_0_Even_MultBodyAggAux_f9 AS (SELECT * FROM (
+  
+    SELECT
+      ((Odd_ifr3.n) + (1)) AS n
+    FROM
+      synalog_test.Odd_ifr3 AS Odd_ifr3
+    WHERE
+      (Odd_ifr3.n < 100)
+   UNION ALL
+  
+    SELECT
+      0 AS n
+  
+) AS UNUSED_TABLE_NAME  )
+SELECT
+  Even_MultBodyAggAux_f9.n AS n
+FROM
+  t_0_Even_MultBodyAggAux_f9 AS Even_MultBodyAggAux_f9
+GROUP BY 1;
+
+DROP TABLE IF EXISTS synalog_test.Odd_ifr2;
+CREATE TABLE synalog_test.Odd_ifr2 AS SELECT
+  ((Even_ifr3.n) + (1)) AS n
+FROM
+  synalog_test.Even_ifr3 AS Even_ifr3
+WHERE
+  (Even_ifr3.n < 100)
+GROUP BY 1;
+
+DROP TABLE IF EXISTS synalog_test.Even_ifr3;
+CREATE TABLE synalog_test.Even_ifr3 AS WITH t_0_Even_MultBodyAggAux_f8 AS (SELECT * FROM (
+  
+    SELECT
+      ((Odd_ifr2.n) + (1)) AS n
+    FROM
+      synalog_test.Odd_ifr2 AS Odd_ifr2
+    WHERE
+      (Odd_ifr2.n < 100)
+   UNION ALL
+  
+    SELECT
+      0 AS n
+  
+) AS UNUSED_TABLE_NAME  )
+SELECT
+  Even_MultBodyAggAux_f8.n AS n
+FROM
+  t_0_Even_MultBodyAggAux_f8 AS Even_MultBodyAggAux_f8
+GROUP BY 1;
+
+DROP TABLE IF EXISTS synalog_test.Odd_ifr3;
+CREATE TABLE synalog_test.Odd_ifr3 AS SELECT
+  ((Even_ifr2.n) + (1)) AS n
+FROM
+  synalog_test.Even_ifr2 AS Even_ifr2
+WHERE
+  (Even_ifr2.n < 100)
+GROUP BY 1;
+
+DROP TABLE IF EXISTS synalog_test.Even_ifr2;
+CREATE TABLE synalog_test.Even_ifr2 AS WITH t_0_Even_MultBodyAggAux_f9 AS (SELECT * FROM (
+  
+    SELECT
+      ((Odd_ifr3.n) + (1)) AS n
+    FROM
+      synalog_test.Odd_ifr3 AS Odd_ifr3
+    WHERE
+      (Odd_ifr3.n < 100)
+   UNION ALL
+  
+    SELECT
+      0 AS n
+  
+) AS UNUSED_TABLE_NAME  )
+SELECT
+  Even_MultBodyAggAux_f9.n AS n
+FROM
+  t_0_Even_MultBodyAggAux_f9 AS Even_MultBodyAggAux_f9
+GROUP BY 1;
+
+DROP TABLE IF EXISTS synalog_test.Odd_ifr2;
+CREATE TABLE synalog_test.Odd_ifr2 AS SELECT
+  ((Even_ifr3.n) + (1)) AS n
+FROM
+  synalog_test.Even_ifr3 AS Even_ifr3
+WHERE
+  (Even_ifr3.n < 100)
+GROUP BY 1;
+
+DROP TABLE IF EXISTS synalog_test.Even_ifr3;
+CREATE TABLE synalog_test.Even_ifr3 AS WITH t_0_Even_MultBodyAggAux_f8 AS (SELECT * FROM (
+  
+    SELECT
+      ((Odd_ifr2.n) + (1)) AS n
+    FROM
+      synalog_test.Odd_ifr2 AS Odd_ifr2
+    WHERE
+      (Odd_ifr2.n < 100)
+   UNION ALL
+  
+    SELECT
+      0 AS n
+  
+) AS UNUSED_TABLE_NAME  )
+SELECT
+  Even_MultBodyAggAux_f8.n AS n
+FROM
+  t_0_Even_MultBodyAggAux_f8 AS Even_MultBodyAggAux_f8
+GROUP BY 1;
+
+DROP TABLE IF EXISTS synalog_test.Odd_ifr3;
+CREATE TABLE synalog_test.Odd_ifr3 AS SELECT
+  ((Even_ifr2.n) + (1)) AS n
+FROM
+  synalog_test.Even_ifr2 AS Even_ifr2
+WHERE
+  (Even_ifr2.n < 100)
+GROUP BY 1;
+
+DROP TABLE IF EXISTS synalog_test.Even_ifr2;
+CREATE TABLE synalog_test.Even_ifr2 AS WITH t_0_Even_MultBodyAggAux_f9 AS (SELECT * FROM (
+  
+    SELECT
+      ((Odd_ifr3.n) + (1)) AS n
+    FROM
+      synalog_test.Odd_ifr3 AS Odd_ifr3
+    WHERE
+      (Odd_ifr3.n < 100)
+   UNION ALL
+  
+    SELECT
+      0 AS n
+  
+) AS UNUSED_TABLE_NAME  )
+SELECT
+  Even_MultBodyAggAux_f9.n AS n
+FROM
+  t_0_Even_MultBodyAggAux_f9 AS Even_MultBodyAggAux_f9
+GROUP BY 1;
+
+DROP TABLE IF EXISTS synalog_test.Odd_ifr2;
+CREATE TABLE synalog_test.Odd_ifr2 AS SELECT
+  ((Even_ifr3.n) + (1)) AS n
+FROM
+  synalog_test.Even_ifr3 AS Even_ifr3
+WHERE
+  (Even_ifr3.n < 100)
+GROUP BY 1;
+
+DROP TABLE IF EXISTS synalog_test.Even_ifr3;
+CREATE TABLE synalog_test.Even_ifr3 AS WITH t_0_Even_MultBodyAggAux_f8 AS (SELECT * FROM (
+  
+    SELECT
+      ((Odd_ifr2.n) + (1)) AS n
+    FROM
+      synalog_test.Odd_ifr2 AS Odd_ifr2
+    WHERE
+      (Odd_ifr2.n < 100)
+   UNION ALL
+  
+    SELECT
+      0 AS n
+  
+) AS UNUSED_TABLE_NAME  )
+SELECT
+  Even_MultBodyAggAux_f8.n AS n
+FROM
+  t_0_Even_MultBodyAggAux_f8 AS Even_MultBodyAggAux_f8
+GROUP BY 1;
+
+DROP TABLE IF EXISTS synalog_test.Odd_ifr3;
+CREATE TABLE synalog_test.Odd_ifr3 AS SELECT
+  ((Even_ifr2.n) + (1)) AS n
+FROM
+  synalog_test.Even_ifr2 AS Even_ifr2
+WHERE
+  (Even_ifr2.n < 100)
+GROUP BY 1;
+
+DROP TABLE IF EXISTS synalog_test.Even_ifr2;
+CREATE TABLE synalog_test.Even_ifr2 AS WITH t_0_Even_MultBodyAggAux_f9 AS (SELECT * FROM (
+  
+    SELECT
+      ((Odd_ifr3.n) + (1)) AS n
+    FROM
+      synalog_test.Odd_ifr3 AS Odd_ifr3
+    WHERE
+      (Odd_ifr3.n < 100)
+   UNION ALL
+  
+    SELECT
+      0 AS n
+  
+) AS UNUSED_TABLE_NAME  )
+SELECT
+  Even_MultBodyAggAux_f9.n AS n
+FROM
+  t_0_Even_MultBodyAggAux_f9 AS Even_MultBodyAggAux_f9
+GROUP BY 1;
+
+DROP TABLE IF EXISTS synalog_test.Odd_ifr2;
+CREATE TABLE synalog_test.Odd_ifr2 AS SELECT
+  ((Even_ifr3.n) + (1)) AS n
+FROM
+  synalog_test.Even_ifr3 AS Even_ifr3
+WHERE
+  (Even_ifr3.n < 100)
+GROUP BY 1;
+
+DROP TABLE IF EXISTS synalog_test.Even;
+CREATE TABLE synalog_test.Even AS WITH t_0_Even_MultBodyAggAux_f12 AS (SELECT * FROM (
+  
+    SELECT
+      ((Odd_ifr4.n) + (1)) AS n
+    FROM
+      synalog_test.Odd_ifr2 AS Odd_ifr4
+    WHERE
+      (Odd_ifr4.n < 100)
+   UNION ALL
+  
+    SELECT
+      0 AS n
+  
+) AS UNUSED_TABLE_NAME  )
+SELECT
+  Even_MultBodyAggAux_f12.n AS n
+FROM
+  t_0_Even_MultBodyAggAux_f12 AS Even_MultBodyAggAux_f12
+GROUP BY 1;
+
+-- Interacting with table synalog_test.Even
+
+DROP TABLE IF EXISTS synalog_test.Odd;
+CREATE TABLE synalog_test.Odd AS SELECT
+  ((Even_ifr4.n) + (1)) AS n
+FROM
+  synalog_test.Even_ifr2 AS Even_ifr4
+WHERE
+  (Even_ifr4.n < 100)
+GROUP BY 1;
+
+-- Interacting with table synalog_test.Odd
+
+WITH t_0_Test_MultBodyAggAux AS (SELECT * FROM (
+  
+    SELECT
+      Even.n AS t
+    FROM
+      synalog_test.Even AS Even
+   UNION ALL
+  
+    SELECT
+      Odd.n AS t
+    FROM
+      synalog_test.Odd AS Odd
+  
+) AS UNUSED_TABLE_NAME  )
+SELECT
+  MAX(Test_MultBodyAggAux.t) AS t
+FROM
+  t_0_Test_MultBodyAggAux AS Test_MultBodyAggAux;

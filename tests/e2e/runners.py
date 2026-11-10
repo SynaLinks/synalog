@@ -13,6 +13,8 @@ its own connections:
   - duckdb: an ``ARRAY_CONCAT_AGG`` macro (flatten + list).
   - psql:   an ``ARRAY_CONCAT_AGG`` aggregate (array_cat).
 
+ClickHouse and MySQL run on their servers (see docker-compose.yml here).
+
 The ``Today``/``Now`` built-in concepts no longer need a runtime table — the
 compiler inlines them per dialect.
 """
@@ -352,6 +354,66 @@ class SparkRunner(Runner):
         return decoded
 
 
+class ClickHouseRunner(Runner):
+    """ClickHouse over its HTTP interface (clickhouse-connect). A session is
+    one server session, so the settings a script's preamble sets hold for
+    its later statements."""
+
+    engine = "clickhouse"
+
+    def __init__(self, host: str, port: int, user: str, password: str):
+        self.host = host
+        self.port = port
+        self.user = user
+        self.password = password
+
+    def session(self):
+        import uuid
+
+        import clickhouse_connect
+
+        client = clickhouse_connect.get_client(
+            host=self.host,
+            port=self.port,
+            username=self.user,
+            password=self.password,
+            database="synalog",
+            session_id=f"synalog-e2e-{uuid.uuid4()}",
+            # A recursion's script is long: the server's default bounds a
+            # query's text at 256 KiB.
+            settings={"max_query_size": 100_000_000},
+        )
+
+        class Session(_Session):
+            def execute(self, statement):
+                if not SparkRunner._produces_rows(statement):
+                    client.command(statement)
+                    return None
+                result = client.query(statement)
+                return list(result.column_names), [tuple(r) for r in result.result_rows]
+
+            def close(self):
+                client.close()
+
+        return Session()
+
+
+class MySQLRunner(Runner):
+    """MySQL through synalog's own session (``synalog.runners.MySQLSession``):
+    one connection per session, its JSON columns decoded."""
+
+    engine = "mysql"
+
+    def __init__(self, host: str, port: int, user: str, password: str):
+        self.connection = {"engine": "mysql", "host": host, "port": port, "user": user,
+                           "password": password, "database": "synalog"}
+
+    def session(self):
+        from synalog.runners import MySQLSession
+
+        return MySQLSession(self.connection)
+
+
 def make_runner(engine: str):
     """Build the runner for `engine`, reading connection info from env vars."""
     if engine == "sqlite":
@@ -380,5 +442,19 @@ def make_runner(engine: str):
         return SparkRunner(
             os.environ.get("SYNALOG_E2E_SPARK_HOST", "localhost"),
             int(os.environ.get("SYNALOG_E2E_SPARK_PORT", "10000")),
+        )
+    if engine == "clickhouse":
+        return ClickHouseRunner(
+            os.environ.get("SYNALOG_E2E_CLICKHOUSE_HOST", "localhost"),
+            int(os.environ.get("SYNALOG_E2E_CLICKHOUSE_PORT", "8123")),
+            os.environ.get("SYNALOG_E2E_CLICKHOUSE_USER", "synalog"),
+            os.environ.get("SYNALOG_E2E_CLICKHOUSE_PASSWORD", "synalog"),
+        )
+    if engine == "mysql":
+        return MySQLRunner(
+            os.environ.get("SYNALOG_E2E_MYSQL_HOST", "127.0.0.1"),
+            int(os.environ.get("SYNALOG_E2E_MYSQL_PORT", "3307")),
+            os.environ.get("SYNALOG_E2E_MYSQL_USER", "root"),
+            os.environ.get("SYNALOG_E2E_MYSQL_PASSWORD", "synalog"),
         )
     raise ValueError(f"No e2e runner for engine '{engine}'")

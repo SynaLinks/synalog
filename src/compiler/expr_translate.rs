@@ -583,6 +583,10 @@ pub struct ExprTranslator<'a> {
     /// written, by the address of its node: an empty list has no type of its
     /// own (`[]`), nor a record holding one.
     type_hints: std::cell::RefCell<HashMap<usize, Type>>,
+    /// Whether the expression is of a subquery that reads the row of the
+    /// query around it (a correlated combine): a negation in it stays a
+    /// subquery (ClickHouse plans no `IN` set inside a correlated subquery).
+    pub within_correlated: bool,
 }
 
 impl<'a> ExprTranslator<'a> {
@@ -611,6 +615,7 @@ impl<'a> ExprTranslator<'a> {
             flag_values,
             subquery_translator: None,
             value_field,
+            within_correlated: false,
         }
     }
 
@@ -639,6 +644,9 @@ impl<'a> ExprTranslator<'a> {
             Record(Vec<(String, Type)>),
             /// Subscript access. sub_str=Some → pop 1; None → pop 2.
             Subscript { sub_str: Option<String>, record_is_table: bool },
+            /// A value read out of a list or a record, as the type it has,
+            /// where the dialect keeps them in JSON (`Dialect::json_scalar`).
+            JsonScalar(Type),
             /// Build CASE WHEN ... THEN ... ELSE ... END.
             Implication { has_otherwise: bool },
             /// SqlExpr: first arg is template, rest are substituted.
@@ -788,6 +796,19 @@ impl<'a> ExprTranslator<'a> {
                     if let Some(call) = obj.get("call") {
                         let co = call.as_object();
                         let pred_name = co["predicate_name"].as_str();
+
+                        // A negation as an uncorrelated membership, where the dialect asks.
+                        if pred_name == "IsNull" && self.dialect.negation_by_membership() {
+                            let arg = co["record"].as_object()["field_value"].as_array().first()
+                                .and_then(|fv| fv.as_object()["value"].as_object().get("expression"))
+                                .and_then(|e| e.as_object().get("combine"));
+                            if let Some(combine) = arg {
+                                if let Some(sql) = self.negation_by_membership(combine)? {
+                                    results.push(sql);
+                                    continue;
+                                }
+                            }
+                        }
 
                         // Text (by its form or its column's type) or a whole number to
                         // an integer: no fraction to round.
@@ -1286,6 +1307,18 @@ impl<'a> ExprTranslator<'a> {
                                     };
                                     results.push(result_sql);
                                     continue;
+                                } else if dialect_name == "clickhouse" {
+                                    // groupArray skips nulls: the pairs are collected
+                                    // in tuples, sorted by their key.
+                                    let result_sql = if pred_name == "Array" {
+                                        format!("arrayMap(synalog_t -> synalog_t.2, arraySort(synalog_t -> synalog_t.1, groupArray(tuple({}, {}))))", arg_sql, value_sql)
+                                    } else if pred_name == "ArgMin" {
+                                        format!("argMin({}, {})", arg_sql, value_sql)
+                                    } else {
+                                        format!("argMax({}, {})", arg_sql, value_sql)
+                                    };
+                                    results.push(result_sql);
+                                    continue;
                                 }
                                 // Fall through for other dialects
                             }
@@ -1336,6 +1369,9 @@ impl<'a> ExprTranslator<'a> {
                                         "",
                                     ));
                                 }
+                            }
+                            if matches!(pred_name, "Element" | "ValueOfUnnested") {
+                                tasks.push(Task::Combine(CK::JsonScalar(self.value_type(expr)), 1));
                             }
                             tasks.push(Task::Combine(CK::Template(tmpl.clone()), num_args));
                         } else if self.built_in_infix_operators.contains_key(pred_name) {
@@ -1465,6 +1501,9 @@ impl<'a> ExprTranslator<'a> {
                             .map(|sql_ref| !sql_ref.contains('.'))
                             .unwrap_or(false);
 
+                        if !record_is_table {
+                            tasks.push(Task::Combine(CK::JsonScalar(self.value_type(expr)), 1));
+                        }
                         if sub_str.is_some() {
                             tasks.push(Task::Combine(CK::Subscript { sub_str, record_is_table }, 1));
                             tasks.push(Task::Eval(record_expr));
@@ -1483,11 +1522,29 @@ impl<'a> ExprTranslator<'a> {
                         let has_otherwise = io.contains_key("otherwise");
                         let num_args = 2 * conditions.len() + if has_otherwise { 1 } else { 0 };
                         tasks.push(Task::Combine(CK::Implication { has_otherwise }, num_args));
+                        // A branch reading a value of no known type out of a
+                        // list or a record reads it as the implication's type.
+                        let ty = self.value_type(expr);
+                        let reads_json = |e: &Json| -> bool {
+                            if ty == Type::Any || !e.is_object() {
+                                return false;
+                            }
+                            let eo = e.as_object();
+                            let element = eo.get("call").and_then(|c| c.as_object().get("predicate_name"))
+                                .is_some_and(|n| matches!(n.as_str(), "Element" | "ValueOfUnnested"));
+                            (element || eo.contains_key("subscript")) && self.value_type(e) == Type::Any
+                        };
                         if let Some(otherwise) = io.get("otherwise") {
+                            if reads_json(otherwise) {
+                                tasks.push(Task::Combine(CK::JsonScalar(ty.clone()), 1));
+                            }
                             tasks.push(Task::Eval(otherwise));
                         }
                         for ct in conditions.iter().rev() {
                             let cto = ct.as_object();
+                            if reads_json(&cto["consequence"]) {
+                                tasks.push(Task::Combine(CK::JsonScalar(ty.clone()), 1));
+                            }
                             tasks.push(Task::Eval(&cto["consequence"]));
                             tasks.push(Task::Eval(&cto["condition"]));
                         }
@@ -1583,6 +1640,10 @@ impl<'a> ExprTranslator<'a> {
                             };
                             results.push(self.dialect.subscript(record_sql, &sub_final, record_is_table));
                         }
+                        CK::JsonScalar(ty) => {
+                            let sql = &args[0];
+                            results.push(self.dialect.json_scalar(sql, &ty).unwrap_or_else(|| sql.clone()));
+                        }
                         CK::Implication { has_otherwise } => {
                             let mut sql = "CASE".to_string();
                             let cond_count = if has_otherwise { n - 1 } else { n };
@@ -1605,7 +1666,13 @@ impl<'a> ExprTranslator<'a> {
                             // un-quoting, so SqlExpr templates aren't treated as data literals.
                             let template_src = args[0].strip_prefix('E').unwrap_or(&args[0]);
                             let template = template_src.trim_matches('\'').trim_matches('"');
-                            let mut result = template.to_string();
+                            // A quote of the template, doubled in its literal
+                            // where the dialect escapes one so, is one quote.
+                            let mut result = if self.dialect.str_literal("'") == "''''" {
+                                template.replace("''", "'")
+                            } else {
+                                template.to_string()
+                            };
                             // Substitute positional args: {0}, {1}, ...
                             // args layout: [template, positional..., named...]
                             let positional_args = &args[1..1 + positional_count];
@@ -1633,6 +1700,7 @@ impl<'a> ExprTranslator<'a> {
                                 return Err(CompileError::new(
                                     format!("{}: '{}' is not a type name — write a type of letters, digits, '_', spaces and balanced '()<>'", func, type_name), ""));
                             }
+                            let type_name = self.dialect.cast_type(type_name);
                             results.push(if func == "TryCast" {
                                 format!("TRY_CAST({} AS {})", args[0], type_name)
                             } else {
@@ -1708,7 +1776,7 @@ impl<'a> ExprTranslator<'a> {
                                     FormatPiece::Text(text) => parts.push(self.dialect.str_literal(text)),
                                     FormatPiece::Spec { .. } => {
                                         let value = next.next().expect("counted");
-                                        parts.push(piece.render(value, |t| self.dialect.str_literal(t)));
+                                        parts.push(piece.render(value, self.dialect));
                                     }
                                 }
                             }
@@ -1764,12 +1832,179 @@ impl<'a> ExprTranslator<'a> {
             return Ok(sql);
         }
         let sql = translator.translate_rule(combine, &self.vocabulary, &self.variable_types, true)?;
+        if self.dialect.correlated_count_may_be_null() && combine_aggregate(combine).is_some_and(|a| a == "Count" || a == "ExactCount") {
+            return Ok(format!("coalesce(({}), 0)", sql));
+        }
         if self.dialect.name() == "psql" {
             if let Some(ty) = translator.combine_psql_type(combine) {
                 return Ok(format!("CAST(({}) AS {})", sql, ty));
             }
         }
         Ok(format!("({})", sql))
+    }
+
+    /// A negation (`IsNull` of `combine Min= 1 :- body`) as an uncorrelated
+    /// membership (`Dialect::negation_by_membership`): the outer values the
+    /// body reads are keys, `(keys) NOT IN (SELECT ...)` of the body's rows.
+    /// A key is the inner side of an `is` or `==` conjunct whose other side
+    /// is an outer variable, or an outer variable the body reads elsewhere,
+    /// renamed to a variable of the body's own. A key compared by `=` (not
+    /// `is`) matches no null, as `=` does: the outer value is not null. None
+    /// when the body reads no outer value, or reads one it does not bind
+    /// (`w > v`): the subquery stays correlated.
+    fn negation_by_membership(&self, combine: &Json) -> CompileResult<Option<String>> {
+        let Some(translator) = self.subquery_translator else { return Ok(None) };
+        if self.within_correlated || combine_aggregate(combine).as_deref() != Some("Min") {
+            return Ok(None);
+        }
+        let co = combine.as_object();
+        let Some(conjuncts) = co.get("body")
+            .and_then(|b| b.as_object().get("conjunction"))
+            .and_then(|c| c.as_object().get("conjunct")) else { return Ok(None) };
+        // A body of conditions only, on values of the outer row (`~IsNull(x)`):
+        // their negation, a condition that is null being false, as no row.
+        // A condition is a comparison: a function's name may be a predicate's.
+        const CONDITIONS: &[&str] = &["IsNull", "<", "<=", ">", ">=", "==", "!=", "is", "is not"];
+        let conditions: Option<Vec<Json>> = conjuncts.as_array().iter().map(|c| {
+            c.as_object().get("predicate")
+                .filter(|p| CONDITIONS.contains(&p.as_object()["predicate_name"].as_str()))
+                .map(|p| crate::json_obj! { "call" => p.clone() })
+        }).collect();
+        if let Some(conditions) = conditions.filter(|c| !c.is_empty()) {
+            let sql: CompileResult<Vec<String>> = conditions.iter().map(|c| self.convert_to_sql(c)).collect();
+            if let Ok(sql) = sql {
+                return Ok(Some(format!("NOT coalesce(({}), false)", sql.join(") AND ("))));
+            }
+        }
+        let outer = |e: &Json| -> Option<Json> { self.outer_value(e).then(|| e.clone()) };
+        // (inner expression, outer value, null-safe)
+        let mut keys: Vec<(Json, Json, bool)> = Vec::new();
+        let mut renamed: Vec<(Json, String)> = Vec::new();
+        let mut body: Vec<Json> = Vec::new();
+        for conjunct in conjuncts.as_array().iter() {
+            let pair = conjunct.as_object().get("predicate")
+                .filter(|p| matches!(p.as_object()["predicate_name"].as_str(), "is" | "=="))
+                .and_then(|p| {
+                    let fvs = p.as_object()["record"].as_object()["field_value"].as_array();
+                    let side = |i: usize| fvs.get(i).and_then(|fv| fv.as_object()["value"].as_object().get("expression")).cloned();
+                    Some((p.as_object()["predicate_name"].as_str() == "is", side(0)?, side(1)?))
+                });
+            if let Some((is, left, right)) = pair {
+                let found = match (outer(&left), outer(&right)) {
+                    (None, Some(v)) if !self.mentions_vocabulary(&left) => Some((left, v)),
+                    (Some(v), None) if !self.mentions_vocabulary(&right) => Some((right, v)),
+                    _ => None,
+                };
+                if let Some((inner, variable)) = found {
+                    keys.push((inner, variable, is));
+                    continue;
+                }
+            }
+            body.push(self.rename_vocabulary(conjunct, &mut renamed));
+        }
+        for (value, name) in &renamed {
+            let inner = crate::json_obj! { "variable" => crate::json_obj! { "var_name" => name.clone() } };
+            keys.push((inner, value.clone(), false));
+        }
+        if keys.is_empty() {
+            return Ok(None);
+        }
+        let fields: Vec<Json> = keys.iter().enumerate().map(|(i, (inner, _, _))| crate::json_obj! {
+            "field" => format!("synalog_k{}", i),
+            "value" => crate::json_obj! { "expression" => inner.clone() },
+        }).collect();
+        let mut rule = co.clone();
+        rule.insert("head".into(), crate::json_obj! {
+            "predicate_name" => "Combine",
+            "record" => crate::json_obj! { "field_value" => Json::Array(fields.into()) },
+        });
+        rule.insert("body".into(), crate::json_obj! {
+            "conjunction" => crate::json_obj! { "conjunct" => Json::Array(body.into()) },
+        });
+        let Ok(sql) = translator.translate_rule(&Json::Object(rule), &HashMap::new(), &self.variable_types, true) else {
+            return Ok(None);
+        };
+        let mut values: Vec<String> = Vec::new();
+        for (_, value, _) in &keys {
+            values.push(self.convert_to_sql(value)?);
+        }
+        let guards: Vec<String> = keys.iter().zip(&values)
+            .filter(|((_, _, is), _)| !is)
+            .map(|(_, v)| format!("{} IS NOT NULL", v))
+            .collect();
+        // A key is compared as its text: `IN` converts the set's values to
+        // the type of the outer one, which fails for a narrower type (UInt16
+        // to UInt8) or a column of nulls only (Nothing). A number's text is
+        // the same whatever its type (1 of UInt8, 1.0 of Float64: `1`).
+        let text = |v: &str| format!("CAST({} AS Nullable(String))", v);
+        let outer: Vec<String> = values.iter().map(|v| text(v)).collect();
+        let inner: Vec<String> = (0..keys.len()).map(|i| text(&format!("synalog_k{}", i))).collect();
+        let tuple = if outer.len() == 1 { outer[0].clone() } else { format!("({})", outer.join(", ")) };
+        let member = format!("{} IN (SELECT {} FROM ({}) AS synalog_m)", tuple, inner.join(", "), sql);
+        Ok(Some(if guards.is_empty() {
+            format!("NOT ({})", member)
+        } else {
+            format!("NOT ({} AND {})", guards.join(" AND "), member)
+        }))
+    }
+
+    /// Whether an expression is a value of the outer row: a variable of the
+    /// vocabulary, or an element it unnests (`ValueOfUnnested(x)`).
+    fn outer_value(&self, expr: &Json) -> bool {
+        let Json::Object(o) = expr else { return false };
+        if let Some(v) = o.get("variable") {
+            return self.vocabulary.contains_key(v.as_object()["var_name"].as_str());
+        }
+        o.get("call")
+            .filter(|c| c.as_object()["predicate_name"].as_str() == "ValueOfUnnested")
+            .and_then(|c| c.as_object()["record"].as_object()["field_value"].as_array().first().cloned())
+            .and_then(|fv| fv.as_object()["value"].as_object().get("expression").cloned())
+            .is_some_and(|e| self.outer_value(&e))
+    }
+
+    /// Whether an expression reads a variable of the vocabulary (the outer row's).
+    fn mentions_vocabulary(&self, expr: &Json) -> bool {
+        match expr {
+            Json::Object(o) => {
+                if let Some(v) = o.get("variable") {
+                    if self.vocabulary.contains_key(v.as_object()["var_name"].as_str()) {
+                        return true;
+                    }
+                }
+                o.values().any(|v| self.mentions_vocabulary(v))
+            }
+            Json::Array(a) => a.iter().any(|v| self.mentions_vocabulary(v)),
+            _ => false,
+        }
+    }
+
+    /// `expr` with each value of the outer row (`outer_value`) renamed to a
+    /// variable of its own (`synalog_o0`, ...), the renamings added to
+    /// `renamed`.
+    fn rename_vocabulary(&self, expr: &Json, renamed: &mut Vec<(Json, String)>) -> Json {
+        match expr {
+            Json::Object(o) => {
+                if self.outer_value(expr) {
+                    let key = expr.to_string_fmt(false);
+                    let fresh = match renamed.iter().find(|(v, _)| v.to_string_fmt(false) == key) {
+                        Some((_, f)) => f.clone(),
+                        None => {
+                            let f = format!("synalog_o{}", renamed.len());
+                            renamed.push((expr.clone(), f.clone()));
+                            f
+                        }
+                    };
+                    return crate::json_obj! { "variable" => crate::json_obj! { "var_name" => fresh } };
+                }
+                let mut copy = o.clone();
+                for (k, v) in o.iter() {
+                    copy.insert(k.clone(), self.rename_vocabulary(v, renamed));
+                }
+                Json::Object(copy)
+            }
+            Json::Array(a) => Json::Array(a.iter().map(|v| self.rename_vocabulary(v, renamed)).collect::<Vec<_>>().into()),
+            _ => expr.clone(),
+        }
     }
 
     /// This translator with variables of a lambda added to its vocabulary.
@@ -1788,6 +2023,7 @@ impl<'a> ExprTranslator<'a> {
             flag_values: self.flag_values,
             subquery_translator: self.subquery_translator,
             value_field: self.value_field,
+            within_correlated: self.within_correlated,
         }
     }
 
@@ -1805,7 +2041,7 @@ impl<'a> ExprTranslator<'a> {
     /// when the combine reads a table or aggregates otherwise.
     fn combine_of_lists(&self, combine: &Json) -> CompileResult<Option<String>> {
         let engine = self.dialect.name();
-        if engine != "trino" && engine != "presto" && engine != "databricks" {
+        if engine != "trino" && engine != "presto" && engine != "databricks" && engine != "clickhouse" {
             return Ok(None);
         }
         let co = combine.as_object();
@@ -1882,6 +2118,15 @@ impl<'a> ExprTranslator<'a> {
             condition_sql.push(scoped.convert_to_sql(condition)?);
         }
         let n = lists.len();
+        if engine == "clickhouse" {
+            return Ok(Some(clickhouse_combine_of_lists(&aggregate, &names, &list_sql, &condition_sql, &{
+                let mut parts_sql = Vec::new();
+                for part in &parts {
+                    parts_sql.push(scoped.convert_to_sql(part)?);
+                }
+                parts_sql
+            })));
+        }
         let spark = engine == "databricks";
         let array = |items: &str| if spark { format!("ARRAY({})", items) } else { format!("ARRAY[{}]", items) };
         let empty = array("");
@@ -2235,16 +2480,18 @@ fn format_pieces(format: &str) -> Result<Vec<FormatPiece>, String> {
 
 impl FormatPiece {
     /// The SQL text of a placeholder applied to `value`.
-    fn render(&self, value: &str, literal: impl Fn(&str) -> String) -> String {
+    fn render(&self, value: &str, dialect: &dyn Dialect) -> String {
         let FormatPiece::Spec { left, zero, width, precision, conversion } = self else {
             return String::new();
         };
+        let literal = |t: &str| dialect.str_literal(t);
+        let (integer, text_type, length) = dialect.format_types();
         let text = match conversion {
-            'd' => format!("CAST(CAST({} AS BIGINT) AS VARCHAR)", value),
+            'd' => format!("CAST(CAST({} AS {}) AS {})", value, integer, text_type),
             'f' => {
                 let p = precision.unwrap_or(6);
                 // The cast rounds to the precision, and keeps its zeros.
-                format!("CAST(CAST({v} AS DECIMAL(38, {p})) AS VARCHAR)", v = value, p = p)
+                format!("CAST(CAST({v} AS DECIMAL(38, {p})) AS {t})", v = value, p = p, t = text_type)
             }
             _ => value.to_string(),
         };
@@ -2252,7 +2499,7 @@ impl FormatPiece {
             return text;
         }
         // Padded to the width, never cut: LPAD and RPAD truncate.
-        let pad = |padded: String| format!("(CASE WHEN LENGTH({t}) >= {w} THEN {t} ELSE {padded} END)", t = text, w = width, padded = padded);
+        let pad = |padded: String| format!("(CASE WHEN {l}({t}) >= {w} THEN {t} ELSE {padded} END)", l = length, t = text, w = width, padded = padded);
         if *left {
             pad(format!("RPAD({}, {}, {})", text, width, literal(" ")))
         } else if *zero && *conversion != 's' {
@@ -2331,6 +2578,7 @@ impl<'a> ExprTranslator<'a> {
         if let Some(sub) = o.get("subscript") {
             let so = sub.as_object();
             let field = so.get("subscript")
+                .filter(|s| s.is_object())
                 .and_then(|s| s.as_object().get("literal"))
                 .and_then(|l| l.as_object().get("the_symbol"))
                 .map(|s| s.as_object()["symbol"].as_str().to_string());
@@ -2573,4 +2821,68 @@ fn is_text_expression(expr: &Json) -> bool {
             | "Replace" | "Trim" | "Lpad" | "Rpad" | "Repeat"
             | "RegexpExtract" | "RegexpReplace" | "FlagValue")
     })
+}
+
+/// The aggregate of a combine's single value (`combine Count= x :- ...`).
+fn combine_aggregate(combine: &Json) -> Option<String> {
+    let head = combine.as_object().get("head")?.as_object();
+    let fields = head.get("record")?.as_object().get("field_value")?.as_array();
+    let value = fields.first()?.as_object().get("value")?.as_object();
+    let call = value.get("aggregation")?.as_object().get("expression")?.as_object().get("call")?;
+    Some(call.as_object()["predicate_name"].as_str().to_string())
+}
+
+/// `combine_of_lists` on ClickHouse, which decorrelates no subquery that
+/// unnests a column of the outer row: the values are an array built with
+/// lambdas (`arrayFilter` for the conditions, `arrayMap` for the values,
+/// `arrayFlatten` for several lists), aggregated with array functions. An
+/// array is never null here: the list of no values is empty.
+fn clickhouse_combine_of_lists(
+    aggregate: &str,
+    names: &[(String, String)],
+    lists: &[String],
+    conditions: &[String],
+    parts: &[String],
+) -> String {
+    let n = lists.len();
+    let values = |value: &str| -> String {
+        let last = &names[n - 1].1;
+        let filtered = if conditions.is_empty() {
+            lists[n - 1].clone()
+        } else {
+            format!("arrayFilter({} -> {}, {})", last, conditions.join(" AND "), lists[n - 1])
+        };
+        let mut sql = format!("arrayMap({} -> {}, {})", last, value, filtered);
+        for i in (0..n - 1).rev() {
+            sql = format!("arrayFlatten(arrayMap({} -> {}, {}))", names[i].1, sql, lists[i]);
+        }
+        sql
+    };
+    let arrays: Vec<String> = parts.iter().map(|p| values(p)).collect();
+    let bind = |items: &str, name: &str, body: String| -> String {
+        format!("arrayElement(arrayMap({} -> {}, [{}]), 1)", name, body, items)
+    };
+    // The values known, of a type that is not nullable (arraySum and arrayAvg take no other).
+    let known = |array: &str| format!("arrayMap(synalog_v -> assumeNotNull(synalog_v), arrayFilter(synalog_v -> synalog_v IS NOT NULL, {}))", array);
+    let of_known = |f: &str| bind(&known(&arrays[0]), "synalog_a", format!("if(length(synalog_a) = 0, NULL, {}(synalog_a))", f));
+    match aggregate {
+        "Agg+" => of_known("arraySum"),
+        "Avg" => of_known("arrayAvg"),
+        "Max" => of_known("arrayMax"),
+        "Min" => of_known("arrayMin"),
+        "Count" => format!("length(arrayDistinct({}))", known(&arrays[0])),
+        "List" => arrays[0].clone(),
+        "Set" => format!("arraySort(arrayDistinct({}))", arrays[0]),
+        _ => {
+            // The values sorted by their keys (nulls last), descending for ArgMax.
+            let (keys, vals) = if aggregate == "Array" { (&arrays[0], &arrays[1]) } else { (&arrays[1], &arrays[0]) };
+            let sort = if aggregate == "ArgMax" { "arrayReverseSort" } else { "arraySort" };
+            let sorted = format!("{}((synalog_x, synalog_k) -> synalog_k, {}, {})", sort, vals, keys);
+            if aggregate == "Array" {
+                sorted
+            } else {
+                bind(&sorted, "synalog_a", "if(length(synalog_a) = 0, NULL, arrayElement(synalog_a, 1))".to_string())
+            }
+        }
+    }
 }

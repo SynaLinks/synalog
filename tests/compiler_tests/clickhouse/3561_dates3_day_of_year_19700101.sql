@@ -1,0 +1,13 @@
+-- Compiled by SynaLog — logic programming for AI agents (https://github.com/synalinks/synalog).
+-- Copyright 2025-2026 Yoan Sallami (Synalinks Team).
+-- SPDX-License-Identifier: Apache-2.0
+
+-- Initializing ClickHouse environment.
+SET join_use_nulls = 1;
+SET allow_experimental_correlated_subqueries = 1;
+SET aggregate_functions_null_for_empty = 1;
+SET cast_keep_nullable = 1;
+SET transform_null_in = 1;
+
+SELECT
+  ((((((((((((((((365) * (((CAST(substringUTF8('1970-01-01', 1, 4) AS Nullable(Int64))) - (1970))))) + (((if(4 = 0, NULL, toInt64(trunc(((CAST(substringUTF8('1970-01-01', 1, 4) AS Nullable(Int64))) - (1969)) / if(4 = 0, 1, 4))))) - (if(100 = 0, NULL, toInt64(trunc(((CAST(substringUTF8('1970-01-01', 1, 4) AS Nullable(Int64))) - (1901)) / if(100 = 0, 1, 100))))))))) + (if(400 = 0, NULL, toInt64(trunc(((CAST(substringUTF8('1970-01-01', 1, 4) AS Nullable(Int64))) - (1601)) / if(400 = 0, 1, 400))))))) + (CASE WHEN ((CAST(substringUTF8('1970-01-01', 6, 2) AS Nullable(Int64)) > 2) AND (((((CAST(substringUTF8('1970-01-01', 1, 4) AS Nullable(Int64))) % NULLIF(4, 0)) = 0) AND (((CAST(substringUTF8('1970-01-01', 1, 4) AS Nullable(Int64))) % NULLIF(100, 0)) != 0)) OR (((CAST(substringUTF8('1970-01-01', 1, 4) AS Nullable(Int64))) % NULLIF(400, 0)) = 0))) THEN 1 ELSE 0 END))) + ((CASE WHEN ((CAST(substringUTF8('1970-01-01', 6, 2) AS Nullable(Int64))) - (1)) < 0 OR ((CAST(substringUTF8('1970-01-01', 6, 2) AS Nullable(Int64))) - (1)) >= length([0, 31, 59, 90, 120, 151, 181, 212, 243, 273, 304, 334]) THEN NULL ELSE arrayElement([0, 31, 59, 90, 120, 151, 181, 212, 243, 273, 304, 334], toInt64(((CAST(substringUTF8('1970-01-01', 6, 2) AS Nullable(Int64))) - (1))) + 1) END)))) + (((CAST(substringUTF8('1970-01-01', 9, 2) AS Nullable(Int64))) - (1))))) - (((((((((((((365) * (((1970) - (1970))))) + (((if(4 = 0, NULL, toInt64(trunc(((1970) - (1969)) / if(4 = 0, 1, 4))))) - (if(100 = 0, NULL, toInt64(trunc(((1970) - (1901)) / if(100 = 0, 1, 100))))))))) + (if(400 = 0, NULL, toInt64(trunc(((1970) - (1601)) / if(400 = 0, 1, 400))))))) + (CASE WHEN ((1 > 2) AND (((((1970) % NULLIF(4, 0)) = 0) AND (((1970) % NULLIF(100, 0)) != 0)) OR (((1970) % NULLIF(400, 0)) = 0))) THEN 1 ELSE 0 END))) + ((CASE WHEN ((1) - (1)) < 0 OR ((1) - (1)) >= length([0, 31, 59, 90, 120, 151, 181, 212, 243, 273, 304, 334]) THEN NULL ELSE arrayElement([0, 31, 59, 90, 120, 151, 181, 212, 243, 273, 304, 334], toInt64(((1) - (1))) + 1) END)))) + (((1) - (1))))))) + (1)) AS n;

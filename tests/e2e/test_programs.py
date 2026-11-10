@@ -39,9 +39,13 @@ def expectations():
 
 
 def _params():
+    # An expectation is numbered within its program: its name stays when
+    # other programs are added (tests/e2e/known_failures.py names it).
     params = []
     for engine in ENGINES:
-        for i, (path, kind, rest) in enumerate(expectations()):
+        seen: dict[Path, int] = {}
+        for path, kind, rest in expectations():
+            i = seen[path] = seen.get(path, -1) + 1
             params.append(
                 pytest.param(engine, path, kind, rest, id=f"{engine}-{path.parent.name}/{path.stem}-{kind}-{i}")
             )

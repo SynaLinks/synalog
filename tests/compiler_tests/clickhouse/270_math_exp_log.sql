@@ -1,0 +1,14 @@
+-- Compiled by SynaLog — logic programming for AI agents (https://github.com/synalinks/synalog).
+-- Copyright 2025-2026 Yoan Sallami (Synalinks Team).
+-- SPDX-License-Identifier: Apache-2.0
+
+-- Initializing ClickHouse environment.
+SET join_use_nulls = 1;
+SET allow_experimental_correlated_subqueries = 1;
+SET aggregate_functions_null_for_empty = 1;
+SET cast_keep_nullable = 1;
+SET transform_null_in = 1;
+
+SELECT
+  if(0 >= 0, sinh(0) + cosh(0), 1 / (sinh(-0) + cosh(-0))) AS e,
+  (log2(1) * 0.6931471805599453) AS l;
