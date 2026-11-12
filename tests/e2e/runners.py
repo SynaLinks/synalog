@@ -144,6 +144,13 @@ class SqliteRunner(Runner):
             return sqlite3.SQLITE_OK if arg1 == ":memory:" else sqlite3.SQLITE_DENY
         if action == sqlite3.SQLITE_DETACH:
             return sqlite3.SQLITE_DENY
+        # An older SQLite (3.37, Ubuntu 22.04's) asks, as it connects `json_each`, whether its
+        # schema table may be updated; a statement may not update it (SQLite
+        # refuses) unless `writable_schema` is on, which is refused here.
+        if action == sqlite3.SQLITE_UPDATE and arg1 == "sqlite_master":
+            return sqlite3.SQLITE_OK
+        if action == sqlite3.SQLITE_PRAGMA and (arg1 or "").lower() == "writable_schema":
+            return sqlite3.SQLITE_DENY
         at = SqliteRunner.WRITES.get(action)
         if at is None:
             return sqlite3.SQLITE_OK
