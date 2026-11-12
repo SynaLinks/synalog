@@ -1,8 +1,27 @@
 //! The proofs of `synalog_verified` hold: Verus checks them, the graph
 //! algorithms the verifier and the compiler call included.
 //!
-//! Needs Verus on the PATH: `shell/install-verus.sh` installs it.
+//! Needs Verus: on the PATH, or where `shell/install-verus.sh` installs it
+//! (`$VERUS_DIR`, by default `~/.verus`), which is then put first on it.
+use std::path::PathBuf;
 use std::process::Command;
+
+/// The PATH, with the Verus releases `shell/install-verus.sh` installed
+/// first on it: a release found without a shell profile naming it.
+fn path_with_verus() -> std::ffi::OsString {
+    let dir = std::env::var_os("VERUS_DIR")
+        .map(PathBuf::from)
+        .or_else(|| std::env::var_os("HOME").map(|home| PathBuf::from(home).join(".verus")));
+    let mut paths: Vec<PathBuf> = dir
+        .and_then(|dir| std::fs::read_dir(dir).ok())
+        .into_iter()
+        .flatten()
+        .filter_map(|entry| entry.ok().map(|e| e.path()))
+        .filter(|release| release.join("verus").exists() || release.join("cargo-verus").exists())
+        .collect();
+    paths.extend(std::env::split_paths(&std::env::var_os("PATH").unwrap_or_default()));
+    std::env::join_paths(paths).expect("a PATH")
+}
 
 #[test]
 fn verus_proofs_hold() {
@@ -16,6 +35,7 @@ fn verus_proofs_hold() {
             .args(cargo_args)
             .args(["--manifest-path", manifest])
             .args(verus_args)
+            .env("PATH", path_with_verus())
             .env("CARGO_TARGET_DIR", concat!(env!("CARGO_MANIFEST_DIR"), "/target/verus"))
             .env_remove("RUSTUP_TOOLCHAIN")
             .env_remove("RUSTC")

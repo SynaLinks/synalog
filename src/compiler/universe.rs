@@ -1520,7 +1520,43 @@ impl SynalogProgram {
     /// A runner that executes the plan stops each loop as soon as it changes
     /// nothing, so a recursion costs the steps its data needs, whatever its
     /// declared depth; `formatted_predicate_sql` writes the loops out instead.
+    ///
+    /// Every statement of it writes in synalog_home only, or the plan is
+    /// refused (`home_guard`, its decision proved by
+    /// `synalog_verified::home::writes_in_home`).
     pub fn formatted_predicate_plan(
+        &self,
+        name: &str,
+        pagination: Option<&Pagination>,
+        search: Option<&str>,
+    ) -> CompileResult<Vec<PlanStep>> {
+        let plan = self.unchecked_plan(name, pagination, search)?;
+        let engine = self.annotations.engine();
+        let scripts = plan.iter().flat_map(|step| match step {
+            PlanStep::Setup(sql) | PlanStep::Sql(sql) => vec![sql.as_str()],
+            PlanStep::Loop { body, changed, .. } => body.iter().map(String::as_str).chain([changed.as_str()]).collect(),
+        });
+        if !super::home_guard::writes_only_in_home(scripts, engine) {
+            let statement = plan
+                .iter()
+                .flat_map(|step| match step {
+                    PlanStep::Setup(sql) | PlanStep::Sql(sql) => vec![sql.clone()],
+                    PlanStep::Loop { body, changed, .. } => body.iter().cloned().chain([changed.clone()]).collect(),
+                })
+                .find_map(|sql| super::home_guard::first_outside(&sql, engine))
+                .unwrap_or_default();
+            return Err(CompileError::new(
+                format!(
+                    "synalog refused to return SQL that would write outside synalog_home ({statement}): \
+                     this is a bug in synalog, please report it"
+                ),
+                "",
+            ));
+        }
+        Ok(plan)
+    }
+
+    fn unchecked_plan(
         &self,
         name: &str,
         pagination: Option<&Pagination>,

@@ -637,27 +637,16 @@ impl Annotations {
         let v = a.get("ground")?;
         let raw = v.as_str().to_string();
 
-        // If the stored ground name equals the predicate name (no explicit table given),
-        // prepend the default dataset. Matches Python:
-        //   table_name = annotation.get('1', self.Dataset() + '.' + predicate_name)
+        // Named after the predicate, after the table another grounded
+        // predicate named here is stored in, or as given: in Synalog's
+        // dataset each time, so grounding never drops or replaces a table
+        // elsewhere.
         let table_name = if raw == pred_name {
             self.default_table(&raw)
         } else {
-            // Could be another predicate reference — check if it's grounded
-            if let Some(other_ground) = self.annotations
-                .get(&raw)
-                .and_then(|ann| ann.get("ground"))
-            {
-                let other_raw = other_ground.as_str().to_string();
-                if other_raw == raw {
-                    self.default_table(&other_raw)
-                } else {
-                    other_raw
-                }
-            } else {
-                // A table named in @Ground lives in Synalog's dataset too:
-                // grounding never drops or replaces a table elsewhere.
-                self.default_table(&raw)
+            match self.annotations.get(&raw).and_then(|ann| ann.get("ground")) {
+                Some(other) => self.default_table(other.as_str()),
+                None => self.default_table(&raw),
             }
         };
 

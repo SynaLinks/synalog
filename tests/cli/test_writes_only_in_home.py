@@ -48,6 +48,38 @@ def test_everything_synalog_compiles_writes_in_home_only(engine):
     assert compiled > 4000
 
 
+
+#: Every form of @Ground: its table is in synalog_home whatever it is named.
+GROUNDS = {
+    "plain": "@Ground(P);",
+    "named": "@Ground(P, Stored);",
+    "a string": '@Ground(P, "shop.orders");',
+    "a customer table's name": "@Ground(P, edges);",
+    "an SQL keyword": "@Ground(P, Order);",
+    "another grounded predicate": "@Ground(Q); @Ground(P, Q);",
+    # Q's table, named otherwise: it was written without a schema, so in
+    # the customer's (`DROP TABLE IF EXISTS R CASCADE` on PostgreSQL).
+    "another grounded predicate, named": "@Ground(Q, R); @Ground(P, Q);",
+    "not overwritten": "@Ground(P, overwrite: false);",
+}
+
+
+@pytest.mark.parametrize("engine", ENGINES)
+@pytest.mark.parametrize("ground", GROUNDS.values(), ids=GROUNDS.keys())
+def test_a_grounded_predicate_is_stored_in_home(ground, engine):
+    import synalog
+
+    source = (
+        f"{ground}\nE(a:, b:) :- edges(a:, b:);\nQ(a:, b:) :- E(a:, b:);\n"
+        "P(a:, b:) :- E(a:, b:);\nOut(a:) :- P(a:, b:), P(a: b, b: a), Q(a:, b:);"
+    )
+    steps = synalog.plan(source, "Out", engine=engine)
+    sqls = [synalog.compile(source, "Out", engine=engine), *(st.get("sql", "") for st in steps),
+            *(b for st in steps for b in st.get("body", []))]
+    assert any("CREATE TABLE" in sql for sql in sqls)
+    assert [found for sql in sqls for found in writes_outside_home(sql, engine)] == []
+
+
 @pytest.mark.parametrize(
     ("sql", "engine", "outside"),
     [

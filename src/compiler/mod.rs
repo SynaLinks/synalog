@@ -4,6 +4,7 @@ pub mod annotations;
 pub mod dialects;
 pub mod expr_translate;
 pub mod functors;
+pub mod home_guard;
 pub mod rule_translate;
 pub mod type_inference;
 pub mod universe;

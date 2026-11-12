@@ -23,6 +23,8 @@
 //!   * [`page::page`]: the rows a page of a predicate keeps;
 //!   * [`quote`]: text quoted into SQL, read back exactly as it was;
 //!   * [`cast::accepts`]: a `Cast` type name that cannot escape `CAST(...)`;
+//!   * [`home::writes_in_home`]: the statements a plan returns write in
+//!     `synalog_home` only;
 //!   * [`types::meet`]: the intersection of two types, the reference the
 //!     type inference is tested against;
 //!   * [`safety::unbound`]: the variables a rule leaves unbound, the decision
@@ -47,6 +49,7 @@ use vstd::prelude::*;
 
 pub mod arity;
 pub mod cast;
+pub mod home;
 pub mod contradiction;
 pub mod convergence;
 pub mod membership;
