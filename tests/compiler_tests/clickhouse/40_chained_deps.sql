@@ -8,10 +8,10 @@ SET allow_experimental_correlated_subqueries = 1;
 SET aggregate_functions_null_for_empty = 1;
 SET cast_keep_nullable = 1;
 SET transform_null_in = 1;
-CREATE DATABASE IF NOT EXISTS synalog_test;
+CREATE DATABASE IF NOT EXISTS synalog_home;
 
-DROP TABLE IF EXISTS synalog_test.Filtered;
-CREATE TABLE synalog_test.Filtered ENGINE = Memory AS WITH t_0_RawData AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_home.Filtered;
+CREATE TABLE synalog_home.Filtered ENGINE = Memory AS WITH t_0_RawData AS (SELECT * FROM (
   
     SELECT
       1 AS col0,
@@ -46,20 +46,20 @@ FROM
 WHERE
   (RawData.col1 > 15);
 
--- Interacting with table synalog_test.Filtered
+-- Interacting with table synalog_home.Filtered
 
-DROP TABLE IF EXISTS synalog_test.Aggregated;
-CREATE TABLE synalog_test.Aggregated ENGINE = Memory AS SELECT
+DROP TABLE IF EXISTS synalog_home.Aggregated;
+CREATE TABLE synalog_home.Aggregated ENGINE = Memory AS SELECT
   SUM(((Filtered.col1) * (2))) AS total,
   SUM(1) AS count
 FROM
-  synalog_test.Filtered AS Filtered;
+  synalog_home.Filtered AS Filtered;
 
--- Interacting with table synalog_test.Aggregated
+-- Interacting with table synalog_home.Aggregated
 
 SELECT
   Aggregated.total AS total,
   Aggregated.count AS count,
   (Aggregated.total / NULLIF(Aggregated.count, 0)) AS avg
 FROM
-  synalog_test.Aggregated AS Aggregated ORDER BY total;
+  synalog_home.Aggregated AS Aggregated ORDER BY total;

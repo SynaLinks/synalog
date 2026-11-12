@@ -1,7 +1,7 @@
-ATTACH DATABASE ':memory:' AS synalog_test;
+ATTACH DATABASE ':memory:' AS synalog_home;
 
-DROP TABLE IF EXISTS synalog_test.Spend;
-CREATE TABLE synalog_test.Spend AS WITH t_1_Order AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_home.Spend;
+CREATE TABLE synalog_home.Spend AS WITH t_1_Order AS (SELECT * FROM (
   
     SELECT
       1 AS id,
@@ -110,10 +110,10 @@ WHERE
   (Price.item = t_0_Order.item)
 GROUP BY t_0_Order.who;
 
--- Interacting with table synalog_test.Spend
+-- Interacting with table synalog_home.Spend
 
 SELECT
   Spend.who AS who,
   Spend.total AS total
 FROM
-  synalog_test.Spend AS Spend ORDER BY total desc, who NULLS LAST LIMIT 3;
+  synalog_home.Spend AS Spend ORDER BY total desc, who NULLS LAST LIMIT 3;

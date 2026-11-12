@@ -8,10 +8,10 @@ SET allow_experimental_correlated_subqueries = 1;
 SET aggregate_functions_null_for_empty = 1;
 SET cast_keep_nullable = 1;
 SET transform_null_in = 1;
-CREATE DATABASE IF NOT EXISTS synalog_test;
+CREATE DATABASE IF NOT EXISTS synalog_home;
 
-DROP TABLE IF EXISTS synalog_test.Even;
-CREATE TABLE synalog_test.Even ENGINE = Memory AS SELECT
+DROP TABLE IF EXISTS synalog_home.Even;
+CREATE TABLE synalog_home.Even ENGINE = Memory AS SELECT
   x_3 AS col0
 FROM
   (SELECT 'singleton' as s) as unused_singleton
@@ -19,10 +19,10 @@ FROM
 WHERE
   (((x_3) % NULLIF(2, 0)) = 0);
 
--- Interacting with table synalog_test.Even
+-- Interacting with table synalog_home.Even
 
-DROP TABLE IF EXISTS synalog_test.Odd;
-CREATE TABLE synalog_test.Odd ENGINE = Memory AS SELECT
+DROP TABLE IF EXISTS synalog_home.Odd;
+CREATE TABLE synalog_home.Odd ENGINE = Memory AS SELECT
   x_3 AS col0
 FROM
   (SELECT 'singleton' as s) as unused_singleton
@@ -30,7 +30,7 @@ FROM
 WHERE
   (((x_3) % NULLIF(2, 0)) = 1);
 
--- Interacting with table synalog_test.Odd
+-- Interacting with table synalog_home.Odd
 
 WITH t_0_AllSquares AS (SELECT * FROM (
   
@@ -39,7 +39,7 @@ WITH t_0_AllSquares AS (SELECT * FROM (
       ((Even.col0) * (Even.col0)) AS sq,
       'even' AS type
     FROM
-      synalog_test.Even AS Even
+      synalog_home.Even AS Even
    UNION ALL
   
     SELECT
@@ -47,7 +47,7 @@ WITH t_0_AllSquares AS (SELECT * FROM (
       ((Odd.col0) * (Odd.col0)) AS sq,
       'odd' AS type
     FROM
-      synalog_test.Odd AS Odd
+      synalog_home.Odd AS Odd
   
 ) AS UNUSED_TABLE_NAME  )
 SELECT

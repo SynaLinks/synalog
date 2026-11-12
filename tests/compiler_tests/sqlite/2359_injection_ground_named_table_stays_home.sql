@@ -1,7 +1,7 @@
-ATTACH DATABASE ':memory:' AS synalog_test;
+ATTACH DATABASE ':memory:' AS synalog_home;
 
-DROP TABLE IF EXISTS synalog_test.Users;
-CREATE TABLE synalog_test.Users AS WITH t_0_V AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_home.Users;
+CREATE TABLE synalog_home.Users AS WITH t_0_V AS (SELECT * FROM (
   
     SELECT
       1 AS x
@@ -16,9 +16,9 @@ SELECT
 FROM
   t_0_V AS V;
 
--- Interacting with table synalog_test.Users
+-- Interacting with table synalog_home.Users
 
 SELECT
   Q.x AS x
 FROM
-  synalog_test.Users AS Q ORDER BY x NULLS LAST;
+  synalog_home.Users AS Q ORDER BY x NULLS LAST;

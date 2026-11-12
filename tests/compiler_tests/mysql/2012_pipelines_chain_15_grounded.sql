@@ -7,77 +7,77 @@ SET SESSION sql_mode = 'ANSI_QUOTES,PIPES_AS_CONCAT,NO_BACKSLASH_ESCAPES';
 SET SESSION optimizer_switch = 'derived_condition_pushdown=off';
 SET NAMES utf8mb4 COLLATE utf8mb4_0900_bin;
 SET SESSION group_concat_max_len = 1073741824;
-CREATE DATABASE IF NOT EXISTS synalog_test DEFAULT COLLATE utf8mb4_0900_bin;
+CREATE DATABASE IF NOT EXISTS synalog_home DEFAULT COLLATE utf8mb4_0900_bin;
 
-DROP TABLE IF EXISTS synalog_test.C0;
-CREATE TABLE synalog_test.C0 AS SELECT
+DROP TABLE IF EXISTS synalog_home.C0;
+CREATE TABLE synalog_home.C0 AS SELECT
   JSON_VALUE(x_1.value, '$' RETURNING DOUBLE) AS x
 FROM
   LATERAL (SELECT synalog_u.value FROM (SELECT JSON_ARRAY(1, 2, 3, 4, 5, 6, 7, 8) AS synalog_a) AS synalog_s, JSON_TABLE(synalog_s.synalog_a, '$[*]' COLUMNS (value JSON PATH '$')) AS synalog_u) AS x_1;
 
--- Interacting with table synalog_test.C0
+-- Interacting with table synalog_home.C0
 
-DROP TABLE IF EXISTS synalog_test.C3;
-CREATE TABLE synalog_test.C3 AS SELECT
+DROP TABLE IF EXISTS synalog_home.C3;
+CREATE TABLE synalog_home.C3 AS SELECT
   C0.x AS x
 FROM
-  synalog_test.C0 AS C0
+  synalog_home.C0 AS C0
 WHERE
   (C0.x != 3) AND
   (C0.x != 2) AND
   (C0.x != 1);
 
--- Interacting with table synalog_test.C3
+-- Interacting with table synalog_home.C3
 
-DROP TABLE IF EXISTS synalog_test.C6;
-CREATE TABLE synalog_test.C6 AS SELECT
+DROP TABLE IF EXISTS synalog_home.C6;
+CREATE TABLE synalog_home.C6 AS SELECT
   C3.x AS x
 FROM
-  synalog_test.C3 AS C3
+  synalog_home.C3 AS C3
 WHERE
   (C3.x != 6) AND
   (C3.x != 5) AND
   (C3.x != 4);
 
--- Interacting with table synalog_test.C6
+-- Interacting with table synalog_home.C6
 
-DROP TABLE IF EXISTS synalog_test.C9;
-CREATE TABLE synalog_test.C9 AS SELECT
+DROP TABLE IF EXISTS synalog_home.C9;
+CREATE TABLE synalog_home.C9 AS SELECT
   C6.x AS x
 FROM
-  synalog_test.C6 AS C6
+  synalog_home.C6 AS C6
 WHERE
   (C6.x != 9) AND
   (C6.x != 8) AND
   (C6.x != 7);
 
--- Interacting with table synalog_test.C9
+-- Interacting with table synalog_home.C9
 
-DROP TABLE IF EXISTS synalog_test.C12;
-CREATE TABLE synalog_test.C12 AS SELECT
+DROP TABLE IF EXISTS synalog_home.C12;
+CREATE TABLE synalog_home.C12 AS SELECT
   C9.x AS x
 FROM
-  synalog_test.C9 AS C9
+  synalog_home.C9 AS C9
 WHERE
   (C9.x != 12) AND
   (C9.x != 11) AND
   (C9.x != 10);
 
--- Interacting with table synalog_test.C12
+-- Interacting with table synalog_home.C12
 
-DROP TABLE IF EXISTS synalog_test.C15;
-CREATE TABLE synalog_test.C15 AS SELECT
+DROP TABLE IF EXISTS synalog_home.C15;
+CREATE TABLE synalog_home.C15 AS SELECT
   C12.x AS x
 FROM
-  synalog_test.C12 AS C12
+  synalog_home.C12 AS C12
 WHERE
   (C12.x != 15) AND
   (C12.x != 14) AND
   (C12.x != 13);
 
--- Interacting with table synalog_test.C15
+-- Interacting with table synalog_home.C15
 
 SELECT
   C15.x AS x
 FROM
-  synalog_test.C15 AS C15;
+  synalog_home.C15 AS C15;

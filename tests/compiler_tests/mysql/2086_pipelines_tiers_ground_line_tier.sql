@@ -7,10 +7,10 @@ SET SESSION sql_mode = 'ANSI_QUOTES,PIPES_AS_CONCAT,NO_BACKSLASH_ESCAPES';
 SET SESSION optimizer_switch = 'derived_condition_pushdown=off';
 SET NAMES utf8mb4 COLLATE utf8mb4_0900_bin;
 SET SESSION group_concat_max_len = 1073741824;
-CREATE DATABASE IF NOT EXISTS synalog_test DEFAULT COLLATE utf8mb4_0900_bin;
+CREATE DATABASE IF NOT EXISTS synalog_home DEFAULT COLLATE utf8mb4_0900_bin;
 
-DROP TABLE IF EXISTS synalog_test.Line;
-CREATE TABLE synalog_test.Line AS WITH t_1_Order AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_home.Line;
+CREATE TABLE synalog_home.Line AS WITH t_1_Order AS (SELECT * FROM (
   
     SELECT
       1 AS id,
@@ -119,14 +119,14 @@ WHERE
   (t_0_Order.state = 'paid') AND
   (Price.item = t_0_Order.item);
 
--- Interacting with table synalog_test.Line
+-- Interacting with table synalog_home.Line
 
-DROP TABLE IF EXISTS synalog_test.Tier;
-CREATE TABLE synalog_test.Tier AS WITH t_0_Spend AS (SELECT
+DROP TABLE IF EXISTS synalog_home.Tier;
+CREATE TABLE synalog_home.Tier AS WITH t_0_Spend AS (SELECT
   Line.who AS who,
   SUM(Line.amount) AS total
 FROM
-  synalog_test.Line AS Line
+  synalog_home.Line AS Line
 GROUP BY 1)
 SELECT
   Spend.who AS who,
@@ -134,13 +134,13 @@ SELECT
 FROM
   t_0_Spend AS Spend;
 
--- Interacting with table synalog_test.Tier
+-- Interacting with table synalog_home.Tier
 
 WITH t_0_TierCount AS (SELECT
   t_1_Tier.tier AS tier,
   SUM(1) AS n
 FROM
-  synalog_test.Tier AS t_1_Tier
+  synalog_home.Tier AS t_1_Tier
 GROUP BY 1)
 SELECT * FROM (
 SELECT

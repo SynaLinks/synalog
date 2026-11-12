@@ -507,8 +507,10 @@ fn emit_record_type(
             emit_record_type(&dialects::record_type_name(r), types, dialect, emitted, out);
         }
     }
+    let (schema, bare) = name.split_once('.').unwrap_or(("public", name));
     out.push_str(&format!(
-        "DO $$ BEGIN if not exists (select 1 from pg_type where typname = '{name}') \
+        "DO $$ BEGIN if not exists (select 1 from pg_type where typname = '{bare}' \
+         and typnamespace = (select oid from pg_namespace where nspname = '{schema}')) \
          then create type {name} as ({}); end if; END $$;\n",
         dialects::psql_record_columns(&types[name])
     ));

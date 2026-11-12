@@ -8,10 +8,10 @@ SET allow_experimental_correlated_subqueries = 1;
 SET aggregate_functions_null_for_empty = 1;
 SET cast_keep_nullable = 1;
 SET transform_null_in = 1;
-CREATE DATABASE IF NOT EXISTS synalog_test;
+CREATE DATABASE IF NOT EXISTS synalog_home;
 
-DROP TABLE IF EXISTS synalog_test.P_sn_delta;
-CREATE TABLE synalog_test.P_sn_delta ENGINE = Memory AS WITH t_0_P_MultBodyAggAux_f2 AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_home.P_sn_delta;
+CREATE TABLE synalog_home.P_sn_delta ENGINE = Memory AS WITH t_0_P_MultBodyAggAux_f2 AS (SELECT * FROM (
   
     SELECT
       1 AS n,
@@ -25,21 +25,21 @@ FROM
   t_0_P_MultBodyAggAux_f2 AS P_MultBodyAggAux_f2
 GROUP BY 1, 2;
 
--- Interacting with table synalog_test.P_sn_delta
+-- Interacting with table synalog_home.P_sn_delta
 
-DROP TABLE IF EXISTS synalog_test.P_sn_t0;
-CREATE TABLE synalog_test.P_sn_t0 ENGINE = Memory AS SELECT
+DROP TABLE IF EXISTS synalog_home.P_sn_t0;
+CREATE TABLE synalog_home.P_sn_t0 ENGINE = Memory AS SELECT
   P_sn_delta.n AS n,
   P_sn_delta.h AS h
 FROM
-  synalog_test.P_sn_delta AS P_sn_delta
+  synalog_home.P_sn_delta AS P_sn_delta
 WHERE
   (1 = 0);
 
--- Interacting with table synalog_test.P_sn_t0
+-- Interacting with table synalog_home.P_sn_t0
 
-DROP TABLE IF EXISTS synalog_test.P_sn_t1;
-CREATE TABLE synalog_test.P_sn_t1 ENGINE = Memory AS WITH t_2_E AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_home.P_sn_t1;
+CREATE TABLE synalog_home.P_sn_t1 ENGINE = Memory AS WITH t_2_E AS (SELECT * FROM (
   
     SELECT
       1 AS a,
@@ -67,7 +67,7 @@ t_1_P_MultBodyAggAux_f3 AS (SELECT * FROM (
       E.b AS n,
       ((P_sn_t0.h) + (1)) AS h
     FROM
-      synalog_test.P_sn_t0 AS P_sn_t0, t_2_E AS E
+      synalog_home.P_sn_t0 AS P_sn_t0, t_2_E AS E
     WHERE
       (E.a = P_sn_t0.n)
   
@@ -86,10 +86,10 @@ FROM
 WHERE
   (1 = 0);
 
--- Interacting with table synalog_test.P_sn_t1
+-- Interacting with table synalog_home.P_sn_t1
 
-DROP TABLE IF EXISTS synalog_test.P_sn_t2;
-CREATE TABLE synalog_test.P_sn_t2 ENGINE = Memory AS WITH t_2_E AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_home.P_sn_t2;
+CREATE TABLE synalog_home.P_sn_t2 ENGINE = Memory AS WITH t_2_E AS (SELECT * FROM (
   
     SELECT
       1 AS a,
@@ -117,7 +117,7 @@ t_1_P_MultBodyAggAux_f4 AS (SELECT * FROM (
       E.b AS n,
       ((P_sn_t1.h) + (1)) AS h
     FROM
-      synalog_test.P_sn_t1 AS P_sn_t1, t_2_E AS E
+      synalog_home.P_sn_t1 AS P_sn_t1, t_2_E AS E
     WHERE
       (E.a = P_sn_t1.n)
   
@@ -136,10 +136,10 @@ FROM
 WHERE
   (1 = 0);
 
--- Interacting with table synalog_test.P_sn_t2
+-- Interacting with table synalog_home.P_sn_t2
 
-DROP TABLE IF EXISTS synalog_test.P_sn_t3;
-CREATE TABLE synalog_test.P_sn_t3 ENGINE = Memory AS WITH t_2_E AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_home.P_sn_t3;
+CREATE TABLE synalog_home.P_sn_t3 ENGINE = Memory AS WITH t_2_E AS (SELECT * FROM (
   
     SELECT
       1 AS a,
@@ -167,7 +167,7 @@ t_1_P_MultBodyAggAux_f5 AS (SELECT * FROM (
       E.b AS n,
       ((P_sn_t2.h) + (1)) AS h
     FROM
-      synalog_test.P_sn_t2 AS P_sn_t2, t_2_E AS E
+      synalog_home.P_sn_t2 AS P_sn_t2, t_2_E AS E
     WHERE
       (E.a = P_sn_t2.n)
   
@@ -186,10 +186,10 @@ FROM
 WHERE
   (1 = 0);
 
--- Interacting with table synalog_test.P_sn_t3
+-- Interacting with table synalog_home.P_sn_t3
 
-DROP TABLE IF EXISTS synalog_test.P_sn_t4;
-CREATE TABLE synalog_test.P_sn_t4 ENGINE = Memory AS WITH t_2_E AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_home.P_sn_t4;
+CREATE TABLE synalog_home.P_sn_t4 ENGINE = Memory AS WITH t_2_E AS (SELECT * FROM (
   
     SELECT
       1 AS a,
@@ -217,7 +217,7 @@ t_1_P_MultBodyAggAux_f6 AS (SELECT * FROM (
       E.b AS n,
       ((P_sn_t3.h) + (1)) AS h
     FROM
-      synalog_test.P_sn_t3 AS P_sn_t3, t_2_E AS E
+      synalog_home.P_sn_t3 AS P_sn_t3, t_2_E AS E
     WHERE
       (E.a = P_sn_t3.n)
   
@@ -236,10 +236,10 @@ FROM
 WHERE
   (1 = 0);
 
--- Interacting with table synalog_test.P_sn_t4
+-- Interacting with table synalog_home.P_sn_t4
 
-DROP TABLE IF EXISTS synalog_test.P_sn_t5;
-CREATE TABLE synalog_test.P_sn_t5 ENGINE = Memory AS WITH t_2_E AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_home.P_sn_t5;
+CREATE TABLE synalog_home.P_sn_t5 ENGINE = Memory AS WITH t_2_E AS (SELECT * FROM (
   
     SELECT
       1 AS a,
@@ -267,7 +267,7 @@ t_1_P_MultBodyAggAux_f7 AS (SELECT * FROM (
       E.b AS n,
       ((P_sn_t4.h) + (1)) AS h
     FROM
-      synalog_test.P_sn_t4 AS P_sn_t4, t_2_E AS E
+      synalog_home.P_sn_t4 AS P_sn_t4, t_2_E AS E
     WHERE
       (E.a = P_sn_t4.n)
   
@@ -286,58 +286,58 @@ FROM
 WHERE
   (1 = 0);
 
--- Interacting with table synalog_test.P_sn_t5
+-- Interacting with table synalog_home.P_sn_t5
 
-DROP TABLE IF EXISTS synalog_test.P_sn_full;
-CREATE TABLE synalog_test.P_sn_full ENGINE = Memory AS SELECT * FROM (
+DROP TABLE IF EXISTS synalog_home.P_sn_full;
+CREATE TABLE synalog_home.P_sn_full ENGINE = Memory AS SELECT * FROM (
   
     SELECT
       P_sn_delta.n AS n,
       P_sn_delta.h AS h
     FROM
-      synalog_test.P_sn_delta AS P_sn_delta
+      synalog_home.P_sn_delta AS P_sn_delta
    UNION ALL
   
     SELECT
       P_sn_t1.n AS n,
       P_sn_t1.h AS h
     FROM
-      synalog_test.P_sn_t1 AS P_sn_t1
+      synalog_home.P_sn_t1 AS P_sn_t1
    UNION ALL
   
     SELECT
       P_sn_t2.n AS n,
       P_sn_t2.h AS h
     FROM
-      synalog_test.P_sn_t2 AS P_sn_t2
+      synalog_home.P_sn_t2 AS P_sn_t2
    UNION ALL
   
     SELECT
       P_sn_t3.n AS n,
       P_sn_t3.h AS h
     FROM
-      synalog_test.P_sn_t3 AS P_sn_t3
+      synalog_home.P_sn_t3 AS P_sn_t3
    UNION ALL
   
     SELECT
       P_sn_t4.n AS n,
       P_sn_t4.h AS h
     FROM
-      synalog_test.P_sn_t4 AS P_sn_t4
+      synalog_home.P_sn_t4 AS P_sn_t4
    UNION ALL
   
     SELECT
       P_sn_t5.n AS n,
       P_sn_t5.h AS h
     FROM
-      synalog_test.P_sn_t5 AS P_sn_t5
+      synalog_home.P_sn_t5 AS P_sn_t5
   
 ) AS UNUSED_TABLE_NAME  ;
 
--- Interacting with table synalog_test.P_sn_full
+-- Interacting with table synalog_home.P_sn_full
 
-DROP TABLE IF EXISTS synalog_test.P_sn_new;
-CREATE TABLE synalog_test.P_sn_new ENGINE = Memory AS WITH t_2_E AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_home.P_sn_new;
+CREATE TABLE synalog_home.P_sn_new ENGINE = Memory AS WITH t_2_E AS (SELECT * FROM (
   
     SELECT
       1 AS a,
@@ -365,7 +365,7 @@ t_1_P_MultBodyAggAux_f8 AS (SELECT * FROM (
       E.b AS n,
       ((P_sn_delta.h) + (1)) AS h
     FROM
-      synalog_test.P_sn_delta AS P_sn_delta, t_2_E AS E
+      synalog_home.P_sn_delta AS P_sn_delta, t_2_E AS E
     WHERE
       (E.a = P_sn_delta.n)
   
@@ -386,14 +386,14 @@ WHERE
     P_sn_full.n AS synalog_k0,
     P_sn_full.h AS synalog_k1
   FROM
-    synalog_test.P_sn_full AS P_sn_full
+    synalog_home.P_sn_full AS P_sn_full
   GROUP BY 1, 2) AS synalog_m))
 GROUP BY 1, 2;
 
-INSERT INTO synalog_test.P_sn_full SELECT * FROM synalog_test.P_sn_new;
+INSERT INTO synalog_home.P_sn_full SELECT * FROM synalog_home.P_sn_new;
 
-DROP TABLE IF EXISTS synalog_test.P_sn_delta;
-CREATE TABLE synalog_test.P_sn_delta ENGINE = Memory AS WITH t_2_E AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_home.P_sn_delta;
+CREATE TABLE synalog_home.P_sn_delta ENGINE = Memory AS WITH t_2_E AS (SELECT * FROM (
   
     SELECT
       1 AS a,
@@ -421,7 +421,7 @@ t_1_P_MultBodyAggAux_f1 AS (SELECT * FROM (
       E.b AS n,
       ((P_sn_new.h) + (1)) AS h
     FROM
-      synalog_test.P_sn_new AS P_sn_new, t_2_E AS E
+      synalog_home.P_sn_new AS P_sn_new, t_2_E AS E
     WHERE
       (E.a = P_sn_new.n)
   
@@ -442,14 +442,14 @@ WHERE
     P_sn_full.n AS synalog_k0,
     P_sn_full.h AS synalog_k1
   FROM
-    synalog_test.P_sn_full AS P_sn_full
+    synalog_home.P_sn_full AS P_sn_full
   GROUP BY 1, 2) AS synalog_m))
 GROUP BY 1, 2;
 
-INSERT INTO synalog_test.P_sn_full SELECT * FROM synalog_test.P_sn_delta;
+INSERT INTO synalog_home.P_sn_full SELECT * FROM synalog_home.P_sn_delta;
 
-DROP TABLE IF EXISTS synalog_test.P_sn_new;
-CREATE TABLE synalog_test.P_sn_new ENGINE = Memory AS WITH t_2_E AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_home.P_sn_new;
+CREATE TABLE synalog_home.P_sn_new ENGINE = Memory AS WITH t_2_E AS (SELECT * FROM (
   
     SELECT
       1 AS a,
@@ -477,7 +477,7 @@ t_1_P_MultBodyAggAux_f8 AS (SELECT * FROM (
       E.b AS n,
       ((P_sn_delta.h) + (1)) AS h
     FROM
-      synalog_test.P_sn_delta AS P_sn_delta, t_2_E AS E
+      synalog_home.P_sn_delta AS P_sn_delta, t_2_E AS E
     WHERE
       (E.a = P_sn_delta.n)
   
@@ -498,14 +498,14 @@ WHERE
     P_sn_full.n AS synalog_k0,
     P_sn_full.h AS synalog_k1
   FROM
-    synalog_test.P_sn_full AS P_sn_full
+    synalog_home.P_sn_full AS P_sn_full
   GROUP BY 1, 2) AS synalog_m))
 GROUP BY 1, 2;
 
-INSERT INTO synalog_test.P_sn_full SELECT * FROM synalog_test.P_sn_new;
+INSERT INTO synalog_home.P_sn_full SELECT * FROM synalog_home.P_sn_new;
 
-DROP TABLE IF EXISTS synalog_test.P_sn_delta;
-CREATE TABLE synalog_test.P_sn_delta ENGINE = Memory AS WITH t_2_E AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_home.P_sn_delta;
+CREATE TABLE synalog_home.P_sn_delta ENGINE = Memory AS WITH t_2_E AS (SELECT * FROM (
   
     SELECT
       1 AS a,
@@ -533,7 +533,7 @@ t_1_P_MultBodyAggAux_f1 AS (SELECT * FROM (
       E.b AS n,
       ((P_sn_new.h) + (1)) AS h
     FROM
-      synalog_test.P_sn_new AS P_sn_new, t_2_E AS E
+      synalog_home.P_sn_new AS P_sn_new, t_2_E AS E
     WHERE
       (E.a = P_sn_new.n)
   
@@ -554,14 +554,14 @@ WHERE
     P_sn_full.n AS synalog_k0,
     P_sn_full.h AS synalog_k1
   FROM
-    synalog_test.P_sn_full AS P_sn_full
+    synalog_home.P_sn_full AS P_sn_full
   GROUP BY 1, 2) AS synalog_m))
 GROUP BY 1, 2;
 
-INSERT INTO synalog_test.P_sn_full SELECT * FROM synalog_test.P_sn_delta;
+INSERT INTO synalog_home.P_sn_full SELECT * FROM synalog_home.P_sn_delta;
 
-DROP TABLE IF EXISTS synalog_test.P_sn_new;
-CREATE TABLE synalog_test.P_sn_new ENGINE = Memory AS WITH t_2_E AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_home.P_sn_new;
+CREATE TABLE synalog_home.P_sn_new ENGINE = Memory AS WITH t_2_E AS (SELECT * FROM (
   
     SELECT
       1 AS a,
@@ -589,7 +589,7 @@ t_1_P_MultBodyAggAux_f8 AS (SELECT * FROM (
       E.b AS n,
       ((P_sn_delta.h) + (1)) AS h
     FROM
-      synalog_test.P_sn_delta AS P_sn_delta, t_2_E AS E
+      synalog_home.P_sn_delta AS P_sn_delta, t_2_E AS E
     WHERE
       (E.a = P_sn_delta.n)
   
@@ -610,14 +610,14 @@ WHERE
     P_sn_full.n AS synalog_k0,
     P_sn_full.h AS synalog_k1
   FROM
-    synalog_test.P_sn_full AS P_sn_full
+    synalog_home.P_sn_full AS P_sn_full
   GROUP BY 1, 2) AS synalog_m))
 GROUP BY 1, 2;
 
-INSERT INTO synalog_test.P_sn_full SELECT * FROM synalog_test.P_sn_new;
+INSERT INTO synalog_home.P_sn_full SELECT * FROM synalog_home.P_sn_new;
 
 SELECT
   P_sn_full.n AS n,
   P_sn_full.h AS h
 FROM
-  synalog_test.P_sn_full AS P_sn_full ORDER BY h;
+  synalog_home.P_sn_full AS P_sn_full ORDER BY h;

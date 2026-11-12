@@ -1,5 +1,5 @@
-DROP TABLE IF EXISTS synalog_test.Person;
-CREATE TABLE synalog_test.Person AS WITH t_0_Employees AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_home.synalog_home.Person;
+CREATE TABLE synalog_home.synalog_home.Person AS WITH t_0_Employees AS (SELECT * FROM (
   
     SELECT
       1 AS person_id,
@@ -54,10 +54,10 @@ FROM
   t_0_Employees AS Employees
 GROUP BY 1, 2, 3 ORDER BY person_id;
 
--- Interacting with table synalog_test.Person
+-- Interacting with table synalog_home.synalog_home.Person
 
-DROP TABLE IF EXISTS synalog_test.Team;
-CREATE TABLE synalog_test.Team AS WITH t_0_Teams AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_home.synalog_home.Team;
+CREATE TABLE synalog_home.synalog_home.Team AS WITH t_0_Teams AS (SELECT * FROM (
   
     SELECT
       10 AS team_id,
@@ -81,10 +81,10 @@ FROM
   t_0_Teams AS Teams
 GROUP BY 1, 2 ORDER BY team_id;
 
--- Interacting with table synalog_test.Team
+-- Interacting with table synalog_home.synalog_home.Team
 
-DROP TABLE IF EXISTS synalog_test.MemberOf;
-CREATE TABLE synalog_test.MemberOf AS WITH t_0_Employees AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_home.synalog_home.MemberOf;
+CREATE TABLE synalog_home.synalog_home.MemberOf AS WITH t_0_Employees AS (SELECT * FROM (
   
     SELECT
       1 AS person_id,
@@ -135,18 +135,18 @@ SELECT
   Person.person_id AS person_id,
   Team.team_id AS team_id
 FROM
-  synalog_test.Person AS Person, synalog_test.Team AS Team, t_0_Employees AS Employees
+  synalog_home.synalog_home.Person AS Person, synalog_home.synalog_home.Team AS Team, t_0_Employees AS Employees
 WHERE
   (Employees.person_id = Person.person_id) AND
   (Employees.team_id = Team.team_id)
 GROUP BY 1, 2;
 
--- Interacting with table synalog_test.MemberOf
+-- Interacting with table synalog_home.synalog_home.MemberOf
 
 SELECT
   t_0_MemberOf.person_id AS person_id
 FROM
-  synalog_test.MemberOf AS MemberOf, synalog_test.MemberOf AS t_0_MemberOf
+  synalog_home.synalog_home.MemberOf AS MemberOf, synalog_home.synalog_home.MemberOf AS t_0_MemberOf
 WHERE
   (t_0_MemberOf.person_id != 3) AND
   (MemberOf.person_id = 3) AND

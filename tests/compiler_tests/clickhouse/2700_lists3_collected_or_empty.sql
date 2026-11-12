@@ -8,10 +8,10 @@ SET allow_experimental_correlated_subqueries = 1;
 SET aggregate_functions_null_for_empty = 1;
 SET cast_keep_nullable = 1;
 SET transform_null_in = 1;
-CREATE DATABASE IF NOT EXISTS synalog_test;
+CREATE DATABASE IF NOT EXISTS synalog_home;
 
-DROP TABLE IF EXISTS synalog_test.C;
-CREATE TABLE synalog_test.C ENGINE = Memory AS WITH t_0_V AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_home.C;
+CREATE TABLE synalog_home.C ENGINE = Memory AS WITH t_0_V AS (SELECT * FROM (
   
     SELECT
       'a' AS g,
@@ -30,7 +30,7 @@ FROM
   t_0_V AS V
 GROUP BY 1;
 
--- Interacting with table synalog_test.C
+-- Interacting with table synalog_home.C
 
 WITH t_3_G AS (SELECT * FROM (
   
@@ -48,7 +48,7 @@ t_1_L AS (SELECT * FROM (
       C.g AS g,
       C.l AS l
     FROM
-      synalog_test.C AS C
+      synalog_home.C AS C
    UNION ALL
   
     SELECT
@@ -60,7 +60,7 @@ t_1_L AS (SELECT * FROM (
       NOT (t_2_G.g IS NOT NULL AND CAST(t_2_G.g AS Nullable(String)) IN (SELECT CAST(synalog_k0 AS Nullable(String)) FROM (SELECT
         t_4_C.g AS synalog_k0
       FROM
-        synalog_test.C AS t_4_C
+        synalog_home.C AS t_4_C
       GROUP BY 1) AS synalog_m))
   
 ) AS UNUSED_TABLE_NAME  )

@@ -7,10 +7,10 @@ SET SESSION sql_mode = 'ANSI_QUOTES,PIPES_AS_CONCAT,NO_BACKSLASH_ESCAPES';
 SET SESSION optimizer_switch = 'derived_condition_pushdown=off';
 SET NAMES utf8mb4 COLLATE utf8mb4_0900_bin;
 SET SESSION group_concat_max_len = 1073741824;
-CREATE DATABASE IF NOT EXISTS synalog_test DEFAULT COLLATE utf8mb4_0900_bin;
+CREATE DATABASE IF NOT EXISTS synalog_home DEFAULT COLLATE utf8mb4_0900_bin;
 
-DROP TABLE IF EXISTS synalog_test.Paid;
-CREATE TABLE synalog_test.Paid AS WITH t_1_Order AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_home.Paid;
+CREATE TABLE synalog_home.Paid AS WITH t_1_Order AS (SELECT * FROM (
   
     SELECT
       1 AS id,
@@ -102,10 +102,10 @@ FROM
 WHERE
   (t_0_Order.state = 'paid');
 
--- Interacting with table synalog_test.Paid
+-- Interacting with table synalog_home.Paid
 
-DROP TABLE IF EXISTS synalog_test.Spend;
-CREATE TABLE synalog_test.Spend AS WITH t_0_Price AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_home.Spend;
+CREATE TABLE synalog_home.Spend AS WITH t_0_Price AS (SELECT * FROM (
   
     SELECT
       'tea' AS item,
@@ -126,18 +126,18 @@ SELECT
   Paid.who AS who,
   SUM(((Paid.n) * (Price.p))) AS total
 FROM
-  synalog_test.Paid AS Paid, t_0_Price AS Price
+  synalog_home.Paid AS Paid, t_0_Price AS Price
 WHERE
   (Price.item = Paid.item)
 GROUP BY 1;
 
--- Interacting with table synalog_test.Spend
+-- Interacting with table synalog_home.Spend
 
 WITH t_0_TierCount AS (SELECT
   CASE WHEN (Spend.total >= 40) THEN 'gold' WHEN (Spend.total >= 15) THEN 'silver' ELSE 'bronze' END AS tier,
   SUM(1) AS n
 FROM
-  synalog_test.Spend AS Spend
+  synalog_home.Spend AS Spend
 GROUP BY 1)
 SELECT * FROM (
 SELECT

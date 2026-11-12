@@ -1,5 +1,5 @@
-DROP TABLE IF EXISTS synalog_test.U;
-CREATE TABLE synalog_test.U AS WITH t_1_E AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_home.synalog_home.U;
+CREATE TABLE synalog_home.synalog_home.U AS WITH t_1_E AS (SELECT * FROM (
   
     SELECT
       1 AS a,
@@ -74,7 +74,7 @@ FROM
   t_0_U_MultBodyAggAux AS U_MultBodyAggAux
 GROUP BY 1, 2;
 
--- Interacting with table synalog_test.U
+-- Interacting with table synalog_home.synalog_home.U
 
 WITH t_0_Node AS (SELECT * FROM (
   
@@ -129,7 +129,7 @@ WITH t_0_Node AS (SELECT * FROM (
 t_1_Linked AS (SELECT
   U.a AS n
 FROM
-  synalog_test.U AS U
+  synalog_home.synalog_home.U AS U
 GROUP BY 1)
 SELECT
   Node.n AS n

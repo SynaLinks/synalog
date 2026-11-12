@@ -92,7 +92,7 @@ fn normalize_sql_for_comparison(sql: &str) -> String {
     // per-type hash, and the prefix was renamed `logicarecord` -> `synalogrecord`;
     // collapse both to a single token so the comparison is about query logic,
     // not the type identifier (definitions are already stripped above).
-    let composite_re = regex::Regex::new(r"(logica|synalog)record\d+").unwrap();
+    let composite_re = regex::Regex::new(r"(synalog_home\.)?(logica|synalog)record\d+").unwrap();
     let no_casts = composite_re.replace_all(&no_casts, "rec").to_string();
     let no_casts = no_casts.replace("::rec", "rec");
 

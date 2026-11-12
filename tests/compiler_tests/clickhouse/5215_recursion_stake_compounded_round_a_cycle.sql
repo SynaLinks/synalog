@@ -8,10 +8,10 @@ SET allow_experimental_correlated_subqueries = 1;
 SET aggregate_functions_null_for_empty = 1;
 SET cast_keep_nullable = 1;
 SET transform_null_in = 1;
-CREATE DATABASE IF NOT EXISTS synalog_test;
+CREATE DATABASE IF NOT EXISTS synalog_home;
 
-DROP TABLE IF EXISTS synalog_test.C_sn_delta;
-CREATE TABLE synalog_test.C_sn_delta ENGINE = Memory AS WITH t_2_Own AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_home.C_sn_delta;
+CREATE TABLE synalog_home.C_sn_delta ENGINE = Memory AS WITH t_2_Own AS (SELECT * FROM (
   
     SELECT
       'a' AS owner,
@@ -51,23 +51,23 @@ FROM
   t_0_C_MultBodyAggAux_f2 AS C_MultBodyAggAux_f2
 GROUP BY 1, 2, 3, 4;
 
--- Interacting with table synalog_test.C_sn_delta
+-- Interacting with table synalog_home.C_sn_delta
 
-DROP TABLE IF EXISTS synalog_test.C_sn_t0;
-CREATE TABLE synalog_test.C_sn_t0 ENGINE = Memory AS SELECT
+DROP TABLE IF EXISTS synalog_home.C_sn_t0;
+CREATE TABLE synalog_home.C_sn_t0 ENGINE = Memory AS SELECT
   C_sn_delta.owner AS owner,
   C_sn_delta.entity AS entity,
   C_sn_delta.hops AS hops,
   C_sn_delta.stake AS stake
 FROM
-  synalog_test.C_sn_delta AS C_sn_delta
+  synalog_home.C_sn_delta AS C_sn_delta
 WHERE
   (1 = 0);
 
--- Interacting with table synalog_test.C_sn_t0
+-- Interacting with table synalog_home.C_sn_t0
 
-DROP TABLE IF EXISTS synalog_test.C_sn_t1;
-CREATE TABLE synalog_test.C_sn_t1 ENGINE = Memory AS WITH t_2_Own AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_home.C_sn_t1;
+CREATE TABLE synalog_home.C_sn_t1 ENGINE = Memory AS WITH t_2_Own AS (SELECT * FROM (
   
     SELECT
       'a' AS owner,
@@ -95,7 +95,7 @@ t_1_C_MultBodyAggAux_f3 AS (SELECT * FROM (
       ((C_sn_t0.hops) + (1)) AS hops,
       ((C_sn_t0.stake) * ((Own.percent / NULLIF(100, 0)))) AS stake
     FROM
-      synalog_test.C_sn_t0 AS C_sn_t0, t_2_Own AS Own
+      synalog_home.C_sn_t0 AS C_sn_t0, t_2_Own AS Own
     WHERE
       (Own.owner = C_sn_t0.entity)
    UNION ALL
@@ -127,10 +127,10 @@ FROM
 WHERE
   (1 = 0);
 
--- Interacting with table synalog_test.C_sn_t1
+-- Interacting with table synalog_home.C_sn_t1
 
-DROP TABLE IF EXISTS synalog_test.C_sn_t2;
-CREATE TABLE synalog_test.C_sn_t2 ENGINE = Memory AS WITH t_2_Own AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_home.C_sn_t2;
+CREATE TABLE synalog_home.C_sn_t2 ENGINE = Memory AS WITH t_2_Own AS (SELECT * FROM (
   
     SELECT
       'a' AS owner,
@@ -158,7 +158,7 @@ t_1_C_MultBodyAggAux_f4 AS (SELECT * FROM (
       ((C_sn_t1.hops) + (1)) AS hops,
       ((C_sn_t1.stake) * ((Own.percent / NULLIF(100, 0)))) AS stake
     FROM
-      synalog_test.C_sn_t1 AS C_sn_t1, t_2_Own AS Own
+      synalog_home.C_sn_t1 AS C_sn_t1, t_2_Own AS Own
     WHERE
       (Own.owner = C_sn_t1.entity)
    UNION ALL
@@ -190,10 +190,10 @@ FROM
 WHERE
   (1 = 0);
 
--- Interacting with table synalog_test.C_sn_t2
+-- Interacting with table synalog_home.C_sn_t2
 
-DROP TABLE IF EXISTS synalog_test.C_sn_t3;
-CREATE TABLE synalog_test.C_sn_t3 ENGINE = Memory AS WITH t_2_Own AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_home.C_sn_t3;
+CREATE TABLE synalog_home.C_sn_t3 ENGINE = Memory AS WITH t_2_Own AS (SELECT * FROM (
   
     SELECT
       'a' AS owner,
@@ -221,7 +221,7 @@ t_1_C_MultBodyAggAux_f5 AS (SELECT * FROM (
       ((C_sn_t2.hops) + (1)) AS hops,
       ((C_sn_t2.stake) * ((Own.percent / NULLIF(100, 0)))) AS stake
     FROM
-      synalog_test.C_sn_t2 AS C_sn_t2, t_2_Own AS Own
+      synalog_home.C_sn_t2 AS C_sn_t2, t_2_Own AS Own
     WHERE
       (Own.owner = C_sn_t2.entity)
    UNION ALL
@@ -253,10 +253,10 @@ FROM
 WHERE
   (1 = 0);
 
--- Interacting with table synalog_test.C_sn_t3
+-- Interacting with table synalog_home.C_sn_t3
 
-DROP TABLE IF EXISTS synalog_test.C_sn_t4;
-CREATE TABLE synalog_test.C_sn_t4 ENGINE = Memory AS WITH t_2_Own AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_home.C_sn_t4;
+CREATE TABLE synalog_home.C_sn_t4 ENGINE = Memory AS WITH t_2_Own AS (SELECT * FROM (
   
     SELECT
       'a' AS owner,
@@ -284,7 +284,7 @@ t_1_C_MultBodyAggAux_f6 AS (SELECT * FROM (
       ((C_sn_t3.hops) + (1)) AS hops,
       ((C_sn_t3.stake) * ((Own.percent / NULLIF(100, 0)))) AS stake
     FROM
-      synalog_test.C_sn_t3 AS C_sn_t3, t_2_Own AS Own
+      synalog_home.C_sn_t3 AS C_sn_t3, t_2_Own AS Own
     WHERE
       (Own.owner = C_sn_t3.entity)
    UNION ALL
@@ -316,10 +316,10 @@ FROM
 WHERE
   (1 = 0);
 
--- Interacting with table synalog_test.C_sn_t4
+-- Interacting with table synalog_home.C_sn_t4
 
-DROP TABLE IF EXISTS synalog_test.C_sn_t5;
-CREATE TABLE synalog_test.C_sn_t5 ENGINE = Memory AS WITH t_2_Own AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_home.C_sn_t5;
+CREATE TABLE synalog_home.C_sn_t5 ENGINE = Memory AS WITH t_2_Own AS (SELECT * FROM (
   
     SELECT
       'a' AS owner,
@@ -347,7 +347,7 @@ t_1_C_MultBodyAggAux_f7 AS (SELECT * FROM (
       ((C_sn_t4.hops) + (1)) AS hops,
       ((C_sn_t4.stake) * ((Own.percent / NULLIF(100, 0)))) AS stake
     FROM
-      synalog_test.C_sn_t4 AS C_sn_t4, t_2_Own AS Own
+      synalog_home.C_sn_t4 AS C_sn_t4, t_2_Own AS Own
     WHERE
       (Own.owner = C_sn_t4.entity)
    UNION ALL
@@ -379,10 +379,10 @@ FROM
 WHERE
   (1 = 0);
 
--- Interacting with table synalog_test.C_sn_t5
+-- Interacting with table synalog_home.C_sn_t5
 
-DROP TABLE IF EXISTS synalog_test.C_sn_t6;
-CREATE TABLE synalog_test.C_sn_t6 ENGINE = Memory AS WITH t_2_Own AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_home.C_sn_t6;
+CREATE TABLE synalog_home.C_sn_t6 ENGINE = Memory AS WITH t_2_Own AS (SELECT * FROM (
   
     SELECT
       'a' AS owner,
@@ -410,7 +410,7 @@ t_1_C_MultBodyAggAux_f8 AS (SELECT * FROM (
       ((C_sn_t5.hops) + (1)) AS hops,
       ((C_sn_t5.stake) * ((Own.percent / NULLIF(100, 0)))) AS stake
     FROM
-      synalog_test.C_sn_t5 AS C_sn_t5, t_2_Own AS Own
+      synalog_home.C_sn_t5 AS C_sn_t5, t_2_Own AS Own
     WHERE
       (Own.owner = C_sn_t5.entity)
    UNION ALL
@@ -442,10 +442,10 @@ FROM
 WHERE
   (1 = 0);
 
--- Interacting with table synalog_test.C_sn_t6
+-- Interacting with table synalog_home.C_sn_t6
 
-DROP TABLE IF EXISTS synalog_test.C_sn_t7;
-CREATE TABLE synalog_test.C_sn_t7 ENGINE = Memory AS WITH t_2_Own AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_home.C_sn_t7;
+CREATE TABLE synalog_home.C_sn_t7 ENGINE = Memory AS WITH t_2_Own AS (SELECT * FROM (
   
     SELECT
       'a' AS owner,
@@ -473,7 +473,7 @@ t_1_C_MultBodyAggAux_f9 AS (SELECT * FROM (
       ((C_sn_t6.hops) + (1)) AS hops,
       ((C_sn_t6.stake) * ((Own.percent / NULLIF(100, 0)))) AS stake
     FROM
-      synalog_test.C_sn_t6 AS C_sn_t6, t_2_Own AS Own
+      synalog_home.C_sn_t6 AS C_sn_t6, t_2_Own AS Own
     WHERE
       (Own.owner = C_sn_t6.entity)
    UNION ALL
@@ -505,10 +505,10 @@ FROM
 WHERE
   (1 = 0);
 
--- Interacting with table synalog_test.C_sn_t7
+-- Interacting with table synalog_home.C_sn_t7
 
-DROP TABLE IF EXISTS synalog_test.C_sn_t8;
-CREATE TABLE synalog_test.C_sn_t8 ENGINE = Memory AS WITH t_2_Own AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_home.C_sn_t8;
+CREATE TABLE synalog_home.C_sn_t8 ENGINE = Memory AS WITH t_2_Own AS (SELECT * FROM (
   
     SELECT
       'a' AS owner,
@@ -536,7 +536,7 @@ t_1_C_MultBodyAggAux_f10 AS (SELECT * FROM (
       ((C_sn_t7.hops) + (1)) AS hops,
       ((C_sn_t7.stake) * ((Own.percent / NULLIF(100, 0)))) AS stake
     FROM
-      synalog_test.C_sn_t7 AS C_sn_t7, t_2_Own AS Own
+      synalog_home.C_sn_t7 AS C_sn_t7, t_2_Own AS Own
     WHERE
       (Own.owner = C_sn_t7.entity)
    UNION ALL
@@ -568,10 +568,10 @@ FROM
 WHERE
   (1 = 0);
 
--- Interacting with table synalog_test.C_sn_t8
+-- Interacting with table synalog_home.C_sn_t8
 
-DROP TABLE IF EXISTS synalog_test.C_sn_t9;
-CREATE TABLE synalog_test.C_sn_t9 ENGINE = Memory AS WITH t_2_Own AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_home.C_sn_t9;
+CREATE TABLE synalog_home.C_sn_t9 ENGINE = Memory AS WITH t_2_Own AS (SELECT * FROM (
   
     SELECT
       'a' AS owner,
@@ -599,7 +599,7 @@ t_1_C_MultBodyAggAux_f11 AS (SELECT * FROM (
       ((C_sn_t8.hops) + (1)) AS hops,
       ((C_sn_t8.stake) * ((Own.percent / NULLIF(100, 0)))) AS stake
     FROM
-      synalog_test.C_sn_t8 AS C_sn_t8, t_2_Own AS Own
+      synalog_home.C_sn_t8 AS C_sn_t8, t_2_Own AS Own
     WHERE
       (Own.owner = C_sn_t8.entity)
    UNION ALL
@@ -631,10 +631,10 @@ FROM
 WHERE
   (1 = 0);
 
--- Interacting with table synalog_test.C_sn_t9
+-- Interacting with table synalog_home.C_sn_t9
 
-DROP TABLE IF EXISTS synalog_test.C_sn_full;
-CREATE TABLE synalog_test.C_sn_full ENGINE = Memory AS SELECT * FROM (
+DROP TABLE IF EXISTS synalog_home.C_sn_full;
+CREATE TABLE synalog_home.C_sn_full ENGINE = Memory AS SELECT * FROM (
   
     SELECT
       C_sn_delta.owner AS owner,
@@ -642,7 +642,7 @@ CREATE TABLE synalog_test.C_sn_full ENGINE = Memory AS SELECT * FROM (
       C_sn_delta.hops AS hops,
       C_sn_delta.stake AS stake
     FROM
-      synalog_test.C_sn_delta AS C_sn_delta
+      synalog_home.C_sn_delta AS C_sn_delta
    UNION ALL
   
     SELECT
@@ -651,7 +651,7 @@ CREATE TABLE synalog_test.C_sn_full ENGINE = Memory AS SELECT * FROM (
       C_sn_t1.hops AS hops,
       C_sn_t1.stake AS stake
     FROM
-      synalog_test.C_sn_t1 AS C_sn_t1
+      synalog_home.C_sn_t1 AS C_sn_t1
    UNION ALL
   
     SELECT
@@ -660,7 +660,7 @@ CREATE TABLE synalog_test.C_sn_full ENGINE = Memory AS SELECT * FROM (
       C_sn_t2.hops AS hops,
       C_sn_t2.stake AS stake
     FROM
-      synalog_test.C_sn_t2 AS C_sn_t2
+      synalog_home.C_sn_t2 AS C_sn_t2
    UNION ALL
   
     SELECT
@@ -669,7 +669,7 @@ CREATE TABLE synalog_test.C_sn_full ENGINE = Memory AS SELECT * FROM (
       C_sn_t3.hops AS hops,
       C_sn_t3.stake AS stake
     FROM
-      synalog_test.C_sn_t3 AS C_sn_t3
+      synalog_home.C_sn_t3 AS C_sn_t3
    UNION ALL
   
     SELECT
@@ -678,7 +678,7 @@ CREATE TABLE synalog_test.C_sn_full ENGINE = Memory AS SELECT * FROM (
       C_sn_t4.hops AS hops,
       C_sn_t4.stake AS stake
     FROM
-      synalog_test.C_sn_t4 AS C_sn_t4
+      synalog_home.C_sn_t4 AS C_sn_t4
    UNION ALL
   
     SELECT
@@ -687,7 +687,7 @@ CREATE TABLE synalog_test.C_sn_full ENGINE = Memory AS SELECT * FROM (
       C_sn_t5.hops AS hops,
       C_sn_t5.stake AS stake
     FROM
-      synalog_test.C_sn_t5 AS C_sn_t5
+      synalog_home.C_sn_t5 AS C_sn_t5
    UNION ALL
   
     SELECT
@@ -696,7 +696,7 @@ CREATE TABLE synalog_test.C_sn_full ENGINE = Memory AS SELECT * FROM (
       C_sn_t6.hops AS hops,
       C_sn_t6.stake AS stake
     FROM
-      synalog_test.C_sn_t6 AS C_sn_t6
+      synalog_home.C_sn_t6 AS C_sn_t6
    UNION ALL
   
     SELECT
@@ -705,7 +705,7 @@ CREATE TABLE synalog_test.C_sn_full ENGINE = Memory AS SELECT * FROM (
       C_sn_t7.hops AS hops,
       C_sn_t7.stake AS stake
     FROM
-      synalog_test.C_sn_t7 AS C_sn_t7
+      synalog_home.C_sn_t7 AS C_sn_t7
    UNION ALL
   
     SELECT
@@ -714,7 +714,7 @@ CREATE TABLE synalog_test.C_sn_full ENGINE = Memory AS SELECT * FROM (
       C_sn_t8.hops AS hops,
       C_sn_t8.stake AS stake
     FROM
-      synalog_test.C_sn_t8 AS C_sn_t8
+      synalog_home.C_sn_t8 AS C_sn_t8
    UNION ALL
   
     SELECT
@@ -723,14 +723,14 @@ CREATE TABLE synalog_test.C_sn_full ENGINE = Memory AS SELECT * FROM (
       C_sn_t9.hops AS hops,
       C_sn_t9.stake AS stake
     FROM
-      synalog_test.C_sn_t9 AS C_sn_t9
+      synalog_home.C_sn_t9 AS C_sn_t9
   
 ) AS UNUSED_TABLE_NAME  ;
 
--- Interacting with table synalog_test.C_sn_full
+-- Interacting with table synalog_home.C_sn_full
 
-DROP TABLE IF EXISTS synalog_test.C_sn_new;
-CREATE TABLE synalog_test.C_sn_new ENGINE = Memory AS WITH t_2_Own AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_home.C_sn_new;
+CREATE TABLE synalog_home.C_sn_new ENGINE = Memory AS WITH t_2_Own AS (SELECT * FROM (
   
     SELECT
       'a' AS owner,
@@ -758,7 +758,7 @@ t_1_C_MultBodyAggAux_f12 AS (SELECT * FROM (
       ((C_sn_delta.hops) + (1)) AS hops,
       ((C_sn_delta.stake) * ((Own.percent / NULLIF(100, 0)))) AS stake
     FROM
-      synalog_test.C_sn_delta AS C_sn_delta, t_2_Own AS Own
+      synalog_home.C_sn_delta AS C_sn_delta, t_2_Own AS Own
     WHERE
       (Own.owner = C_sn_delta.entity)
    UNION ALL
@@ -794,14 +794,14 @@ WHERE
     C_sn_full.hops AS synalog_k2,
     C_sn_full.stake AS synalog_k3
   FROM
-    synalog_test.C_sn_full AS C_sn_full
+    synalog_home.C_sn_full AS C_sn_full
   GROUP BY 1, 2, 3, 4) AS synalog_m))
 GROUP BY 1, 2, 3, 4;
 
-INSERT INTO synalog_test.C_sn_full SELECT * FROM synalog_test.C_sn_new;
+INSERT INTO synalog_home.C_sn_full SELECT * FROM synalog_home.C_sn_new;
 
-DROP TABLE IF EXISTS synalog_test.C_sn_delta;
-CREATE TABLE synalog_test.C_sn_delta ENGINE = Memory AS WITH t_2_Own AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_home.C_sn_delta;
+CREATE TABLE synalog_home.C_sn_delta ENGINE = Memory AS WITH t_2_Own AS (SELECT * FROM (
   
     SELECT
       'a' AS owner,
@@ -829,7 +829,7 @@ t_1_C_MultBodyAggAux_f1 AS (SELECT * FROM (
       ((C_sn_new.hops) + (1)) AS hops,
       ((C_sn_new.stake) * ((Own.percent / NULLIF(100, 0)))) AS stake
     FROM
-      synalog_test.C_sn_new AS C_sn_new, t_2_Own AS Own
+      synalog_home.C_sn_new AS C_sn_new, t_2_Own AS Own
     WHERE
       (Own.owner = C_sn_new.entity)
    UNION ALL
@@ -865,14 +865,14 @@ WHERE
     C_sn_full.hops AS synalog_k2,
     C_sn_full.stake AS synalog_k3
   FROM
-    synalog_test.C_sn_full AS C_sn_full
+    synalog_home.C_sn_full AS C_sn_full
   GROUP BY 1, 2, 3, 4) AS synalog_m))
 GROUP BY 1, 2, 3, 4;
 
-INSERT INTO synalog_test.C_sn_full SELECT * FROM synalog_test.C_sn_delta;
+INSERT INTO synalog_home.C_sn_full SELECT * FROM synalog_home.C_sn_delta;
 
-DROP TABLE IF EXISTS synalog_test.C_sn_new;
-CREATE TABLE synalog_test.C_sn_new ENGINE = Memory AS WITH t_2_Own AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_home.C_sn_new;
+CREATE TABLE synalog_home.C_sn_new ENGINE = Memory AS WITH t_2_Own AS (SELECT * FROM (
   
     SELECT
       'a' AS owner,
@@ -900,7 +900,7 @@ t_1_C_MultBodyAggAux_f12 AS (SELECT * FROM (
       ((C_sn_delta.hops) + (1)) AS hops,
       ((C_sn_delta.stake) * ((Own.percent / NULLIF(100, 0)))) AS stake
     FROM
-      synalog_test.C_sn_delta AS C_sn_delta, t_2_Own AS Own
+      synalog_home.C_sn_delta AS C_sn_delta, t_2_Own AS Own
     WHERE
       (Own.owner = C_sn_delta.entity)
    UNION ALL
@@ -936,14 +936,14 @@ WHERE
     C_sn_full.hops AS synalog_k2,
     C_sn_full.stake AS synalog_k3
   FROM
-    synalog_test.C_sn_full AS C_sn_full
+    synalog_home.C_sn_full AS C_sn_full
   GROUP BY 1, 2, 3, 4) AS synalog_m))
 GROUP BY 1, 2, 3, 4;
 
-INSERT INTO synalog_test.C_sn_full SELECT * FROM synalog_test.C_sn_new;
+INSERT INTO synalog_home.C_sn_full SELECT * FROM synalog_home.C_sn_new;
 
-DROP TABLE IF EXISTS synalog_test.C_sn_delta;
-CREATE TABLE synalog_test.C_sn_delta ENGINE = Memory AS WITH t_2_Own AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_home.C_sn_delta;
+CREATE TABLE synalog_home.C_sn_delta ENGINE = Memory AS WITH t_2_Own AS (SELECT * FROM (
   
     SELECT
       'a' AS owner,
@@ -971,7 +971,7 @@ t_1_C_MultBodyAggAux_f1 AS (SELECT * FROM (
       ((C_sn_new.hops) + (1)) AS hops,
       ((C_sn_new.stake) * ((Own.percent / NULLIF(100, 0)))) AS stake
     FROM
-      synalog_test.C_sn_new AS C_sn_new, t_2_Own AS Own
+      synalog_home.C_sn_new AS C_sn_new, t_2_Own AS Own
     WHERE
       (Own.owner = C_sn_new.entity)
    UNION ALL
@@ -1007,11 +1007,11 @@ WHERE
     C_sn_full.hops AS synalog_k2,
     C_sn_full.stake AS synalog_k3
   FROM
-    synalog_test.C_sn_full AS C_sn_full
+    synalog_home.C_sn_full AS C_sn_full
   GROUP BY 1, 2, 3, 4) AS synalog_m))
 GROUP BY 1, 2, 3, 4;
 
-INSERT INTO synalog_test.C_sn_full SELECT * FROM synalog_test.C_sn_delta;
+INSERT INTO synalog_home.C_sn_full SELECT * FROM synalog_home.C_sn_delta;
 
 SELECT
   C_sn_full.owner AS owner,
@@ -1019,4 +1019,4 @@ SELECT
   C_sn_full.hops AS hops,
   C_sn_full.stake AS stake
 FROM
-  synalog_test.C_sn_full AS C_sn_full ORDER BY hops, owner, entity;
+  synalog_home.C_sn_full AS C_sn_full ORDER BY hops, owner, entity;

@@ -8,10 +8,10 @@ SET allow_experimental_correlated_subqueries = 1;
 SET aggregate_functions_null_for_empty = 1;
 SET cast_keep_nullable = 1;
 SET transform_null_in = 1;
-CREATE DATABASE IF NOT EXISTS synalog_test;
+CREATE DATABASE IF NOT EXISTS synalog_home;
 
-DROP TABLE IF EXISTS synalog_test.D;
-CREATE TABLE synalog_test.D ENGINE = Memory AS WITH t_0_S AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_home.D;
+CREATE TABLE synalog_home.D ENGINE = Memory AS WITH t_0_S AS (SELECT * FROM (
   
     SELECT
       'north' AS r,
@@ -105,13 +105,13 @@ WHERE
   (S.r = 'east')
 GROUP BY 1;
 
--- Interacting with table synalog_test.D
+-- Interacting with table synalog_home.D
 
 WITH t_0_B AS (SELECT
   MIN(t_1_D.d) AS lo,
   MAX(t_1_D.d) AS hi
 FROM
-  synalog_test.D AS t_1_D)
+  synalog_home.D AS t_1_D)
 SELECT
   x_3 AS d
 FROM
@@ -122,5 +122,5 @@ WHERE
   NOT (x_3 IS NOT NULL AND CAST(x_3 AS Nullable(String)) IN (SELECT CAST(synalog_k0 AS Nullable(String)) FROM (SELECT
     t_2_D.d AS synalog_k0
   FROM
-    synalog_test.D AS t_2_D
+    synalog_home.D AS t_2_D
   GROUP BY 1) AS synalog_m));

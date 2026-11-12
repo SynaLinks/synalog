@@ -8,10 +8,10 @@ SET allow_experimental_correlated_subqueries = 1;
 SET aggregate_functions_null_for_empty = 1;
 SET cast_keep_nullable = 1;
 SET transform_null_in = 1;
-CREATE DATABASE IF NOT EXISTS synalog_test;
+CREATE DATABASE IF NOT EXISTS synalog_home;
 
-DROP TABLE IF EXISTS synalog_test.U;
-CREATE TABLE synalog_test.U ENGINE = Memory AS WITH t_0_S AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_home.U;
+CREATE TABLE synalog_home.U ENGINE = Memory AS WITH t_0_S AS (SELECT * FROM (
   
     SELECT
       1 AS id,
@@ -101,15 +101,15 @@ FROM
   t_0_S AS S
 GROUP BY 1;
 
--- Interacting with table synalog_test.U
+-- Interacting with table synalog_home.U
 
 WITH t_2_A AS (SELECT
   AVG(t_3_U.u) AS a
 FROM
-  synalog_test.U AS t_3_U)
+  synalog_home.U AS t_3_U)
 SELECT
   t_0_U.shop AS shop
 FROM
-  synalog_test.U AS t_0_U, t_2_A AS t_1_A
+  synalog_home.U AS t_0_U, t_2_A AS t_1_A
 WHERE
   (t_0_U.u > t_1_A.a) ORDER BY shop;

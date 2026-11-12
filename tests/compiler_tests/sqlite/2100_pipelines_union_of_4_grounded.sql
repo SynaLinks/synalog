@@ -1,7 +1,7 @@
-ATTACH DATABASE ':memory:' AS synalog_test;
+ATTACH DATABASE ':memory:' AS synalog_home;
 
-DROP TABLE IF EXISTS synalog_test.W;
-CREATE TABLE synalog_test.W AS WITH t_0_W_MultBodyAggAux AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_home.W;
+CREATE TABLE synalog_home.W AS WITH t_0_W_MultBodyAggAux AS (SELECT * FROM (
   
     SELECT
       x_4.value AS x
@@ -33,9 +33,9 @@ FROM
   t_0_W_MultBodyAggAux AS W_MultBodyAggAux
 GROUP BY W_MultBodyAggAux.x;
 
--- Interacting with table synalog_test.W
+-- Interacting with table synalog_home.W
 
 SELECT
   SUM(1) AS n
 FROM
-  synalog_test.W AS W;
+  synalog_home.W AS W;

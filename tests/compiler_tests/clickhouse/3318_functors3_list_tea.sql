@@ -8,10 +8,10 @@ SET allow_experimental_correlated_subqueries = 1;
 SET aggregate_functions_null_for_empty = 1;
 SET cast_keep_nullable = 1;
 SET transform_null_in = 1;
-CREATE DATABASE IF NOT EXISTS synalog_test;
+CREATE DATABASE IF NOT EXISTS synalog_home;
 
-DROP TABLE IF EXISTS synalog_test.R;
-CREATE TABLE synalog_test.R ENGINE = Memory AS WITH t_0_Sale AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_home.R;
+CREATE TABLE synalog_home.R ENGINE = Memory AS WITH t_0_Sale AS (SELECT * FROM (
   
     SELECT
       1 AS id,
@@ -76,15 +76,15 @@ FROM
 WHERE
   (Sale.product = 'tea');
 
--- Interacting with table synalog_test.R
+-- Interacting with table synalog_home.R
 
 WITH t_1_T AS (SELECT
   SUM(x_4) AS t
 FROM
-  synalog_test.R AS t_2_R
+  synalog_home.R AS t_2_R
   ARRAY JOIN t_2_R.l AS x_4)
 SELECT
   length(R.l) AS n,
   t_0_T.t AS t
 FROM
-  synalog_test.R AS R, t_1_T AS t_0_T;
+  synalog_home.R AS R, t_1_T AS t_0_T;

@@ -7,10 +7,10 @@ SET SESSION sql_mode = 'ANSI_QUOTES,PIPES_AS_CONCAT,NO_BACKSLASH_ESCAPES';
 SET SESSION optimizer_switch = 'derived_condition_pushdown=off';
 SET NAMES utf8mb4 COLLATE utf8mb4_0900_bin;
 SET SESSION group_concat_max_len = 1073741824;
-CREATE DATABASE IF NOT EXISTS synalog_test DEFAULT COLLATE utf8mb4_0900_bin;
+CREATE DATABASE IF NOT EXISTS synalog_home DEFAULT COLLATE utf8mb4_0900_bin;
 
-DROP TABLE IF EXISTS synalog_test.Spend;
-CREATE TABLE synalog_test.Spend AS WITH t_1_Order AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_home.Spend;
+CREATE TABLE synalog_home.Spend AS WITH t_1_Order AS (SELECT * FROM (
   
     SELECT
       1 AS id,
@@ -119,11 +119,11 @@ WHERE
   (Price.item = t_0_Order.item)
 GROUP BY 1;
 
--- Interacting with table synalog_test.Spend
+-- Interacting with table synalog_home.Spend
 
 SELECT
   Spend.total AS total
 FROM
-  synalog_test.Spend AS Spend
+  synalog_home.Spend AS Spend
 WHERE
   (Spend.who = 'dee');

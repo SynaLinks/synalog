@@ -8,13 +8,13 @@ use crate::parser::Json;
 use crate::compiler::CompileResult;
 use crate::compiler::CompileError;
 use crate::compiler::universe::IterationDef;
-use crate::compiler::{home_schema, test_schema};
+use crate::compiler::home_schema;
 
 /// Known annotating predicates (matches Python's ANNOTATING_PREDICATES).
 const ANNOTATING_PREDICATES: &[&str] = &[
     "@Limit", "@OrderBy", "@Ground", "@Flag", "@DefineFlag",
     "@NoInject", "@Make", "@CompileAsTvf", "@With", "@NoWith",
-    "@CompileAsUdf", "@ResetFlagValue", "@Dataset", "@AttachDatabase",
+    "@CompileAsUdf", "@ResetFlagValue",
     "@Engine", "@Recursive", "@Iteration", "@BareAggregation",
     "@Assert",
 ];
@@ -28,8 +28,6 @@ pub struct Annotations {
     pub flag_values: HashMap<String, String>,
     /// Default engine name.
     pub engine: String,
-    /// @Dataset override (None = use engine default).
-    pub dataset_override: Option<String>,
     /// @CompileAsUdf predicate names.
     pub compile_as_udf: HashSet<String>,
     /// @CompileAsTvf entries: predicate_name → list of argument names.
@@ -144,18 +142,11 @@ impl Annotations {
             if !name.starts_with('@') { continue; }
 
             // Validate annotation name
-            if !ANNOTATING_PREDICATES.contains(&name) {
+            if let Some(message) = unknown_directive(name) {
                 let full_text = ro.get("full_text")
                     .map(|ft| ft.as_str().to_string())
                     .unwrap_or_default();
-                return Err(CompileError::new(
-                    format!(
-                        "Only {} and {} special predicates are allowed.",
-                        ANNOTATING_PREDICATES[..ANNOTATING_PREDICATES.len()-1].join(", "),
-                        ANNOTATING_PREDICATES[ANNOTATING_PREDICATES.len()-1]
-                    ),
-                    &full_text,
-                ));
+                return Err(CompileError::new(message, &full_text));
             }
 
             let ann_name = &name[1..];
@@ -212,7 +203,6 @@ impl Annotations {
         // ── Pass 2: Extract all other annotations ──
 
         let mut per_predicate: HashMap<String, HashMap<String, Json>> = HashMap::new();
-        let mut dataset_override: Option<String> = None;
         let mut compile_as_udf: HashSet<String> = HashSet::new();
         let mut compile_as_tvf: HashMap<String, Vec<String>> = HashMap::new();
         let mut bare_aggregation: HashMap<String, String> = HashMap::new();
@@ -310,31 +300,6 @@ impl Annotations {
                         entry.insert("no_inject".into(), Json::Bool(true));
                     }
                 }
-                "Dataset" => {
-                    // @Dataset("name") — singleton, first positional arg is the dataset name
-                    if let Some((_, val)) = fvs.iter().find(|(k, _)| k == "0") {
-                        let name = extract_string_literal(val).or_else(|| Self::extract_predicate_name(val));
-                        if let Some(name) = name {
-                            // It is written into the SQL as a schema: a name,
-                            // never text that could end the statement.
-                            if !is_schema_name(&name) {
-                                return Err(CompileError::new(
-                                    format!("@Dataset: '{}' is not a schema name: write names of letters, digits, '_' and '-', joined by '.'", name),
-                                    "@Dataset",
-                                ));
-                            }
-                            dataset_override = Some(name);
-                        }
-                    }
-                }
-                "AttachDatabase" => {
-                    // A program reads the database it runs on: it opens no
-                    // file of its own.
-                    return Err(CompileError::new(
-                        "@AttachDatabase is not supported: a program reads the tables of the database it runs on, not files".to_string(),
-                        "@AttachDatabase",
-                    ));
-                }
                 "CompileAsUdf" => {
                     if let Some(target) = Self::predicate_name_from_field(&fvs, "0") {
                         compile_as_udf.insert(target);
@@ -387,7 +352,6 @@ impl Annotations {
             annotations: per_predicate,
             flag_values,
             engine,
-            dataset_override,
             compile_as_udf,
             compile_as_tvf,
             bare_aggregation,
@@ -479,28 +443,27 @@ impl Annotations {
         true
     }
 
-    /// Get the default dataset name based on engine and @Dataset annotation.
-    /// Matches Python's `Annotations.Dataset()`.
+    /// The schema of the tables the program computes: synalog's own, on
+    /// every engine (a plan's temporary tables on PostgreSQL). On Trino and
+    /// Presto it is in a catalog of the same name: their access control
+    /// makes a whole catalog read-only, so the customer's catalog, the
+    /// session's, may be one synalog cannot write, and a table named without
+    /// a catalog is refused rather than written there.
     pub fn dataset(&self) -> String {
-        if let Some(ref ds) = self.dataset_override {
-            return ds.clone();
-        }
         let home = home_schema();
-        let test = test_schema();
         match self.engine.as_str() {
             "psql" if self.session_tables => "pg_temp".to_string(),
-            "psql" | "duckdb" => home.to_string(),
-            _ => test.to_string(),
+            "trino" | "presto" => format!("{home}.{home}"),
+            _ => home.to_string(),
         }
     }
 
     /// The databases to attach: SQLite keeps grounded tables in an
-    /// in-memory database named as the test schema.
+    /// in-memory database named as the home schema.
     pub fn attached_databases(&self) -> Vec<(String, String)> {
         let mut result: Vec<(String, String)> = Vec::new();
-        let test = test_schema();
         if self.engine == "sqlite" && !self.grounded_predicates().is_empty() {
-            result.push((test.to_string(), ":memory:".to_string()));
+            result.push((home_schema().to_string(), ":memory:".to_string()));
         }
         result
     }
@@ -532,39 +495,51 @@ impl Annotations {
         let home = home_schema();
         match self.engine.as_str() {
             "psql" => {
-                // A plan's tables are temporary, in no schema to create, and
-                // its type is created when the session may: a read-only
-                // session runs every query that writes no table.
-                let (schema, tolerate) = if self.session_tables {
-                    (String::new(), "EXCEPTION WHEN read_only_sql_transaction OR insufficient_privilege THEN NULL; ")
+                // A plan's tables are temporary, and its schema and types
+                // (synalog's, as everything a program creates) are created
+                // when the session may: a read-only session runs every query
+                // that writes no table. The schema is created only where it
+                // is missing: `if not exists` needs the right to create one,
+                // which a user given the schema has no need of.
+                let create_schema = format!(
+                    "if not exists (select 1 from pg_namespace where nspname = '{home}') \
+                     then create schema {home}; end if; "
+                );
+                let (schema, in_block, tolerate) = if self.session_tables {
+                    (
+                        String::new(),
+                        create_schema,
+                        "EXCEPTION WHEN read_only_sql_transaction OR insufficient_privilege THEN NULL; ",
+                    )
                 } else {
-                    (format!("create schema if not exists {};\n", home), "")
+                    (format!("DO $$ BEGIN {create_schema}END $$;\n"), String::new(), "")
                 };
                 preamble.push_str(&format!(
                     "-- Initializing PostgreSQL environment.\n\
                      set client_min_messages to warning;\n\
-                     {}\
+                     {schema}\
                      -- Empty synalog type: synalogrecord893574736;\n\
-                     DO $$ BEGIN if not exists (select 'I(am) :- I(think)' from pg_type \
-                     where typname = 'synalogrecord893574736') then \
-                     create type synalogrecord893574736 as (nirvana numeric); \
-                     end if; {}END $$;\n\n",
-                    schema, tolerate
+                     DO $$ BEGIN {in_block}if not exists (select 'I(am) :- I(think)' from pg_type \
+                     where typname = 'synalogrecord893574736' and typnamespace = \
+                     (select oid from pg_namespace where nspname = '{home}')) then \
+                     create type {home}.synalogrecord893574736 as (nirvana numeric); \
+                     end if; {tolerate}END $$;\n\n",
                 ));
             }
             "duckdb" => {
                 let home_attachment = format!("create schema if not exists {};\n", home);
                 preamble.push_str("-- Initializing DuckDB environment.\n");
                 preamble.push_str(&home_attachment);
-                preamble.push_str(
+                // In synalog's schema, as everything a program creates.
+                preamble.push_str(&format!(
                     "-- Empty record, has to have a field by DuckDB syntax.\n\
-                     drop type if exists synalogrecord893574736 cascade; \
-                     create type synalogrecord893574736 as struct(nirvana numeric);\n"
-                );
+                     drop type if exists {home}.synalogrecord893574736 cascade; \
+                     create type {home}.synalogrecord893574736 as struct(nirvana numeric);\n"
+                ));
                 if self.is_motherduck() {
                     preamble.push('\n'); // Sequences not supported in MotherDuck
                 } else {
-                    preamble.push_str("create sequence if not exists eternal_logical_sequence;\n\n");
+                    preamble.push_str(&format!("create sequence if not exists {home}.eternal_logical_sequence;\n\n"));
                 }
                 // Thread count
                 if let Some(threads_val) = self.engine_options.get("threads") {
@@ -594,8 +569,8 @@ impl Annotations {
                      SET transform_null_in = 1;\n",
                 );
                 // The database of the tables the program computes.
-                if !self.grounded_predicates().is_empty() && self.dataset_override.is_none() {
-                    preamble.push_str(&format!("CREATE DATABASE IF NOT EXISTS {};\n", test_schema()));
+                if !self.grounded_predicates().is_empty() {
+                    preamble.push_str(&format!("CREATE DATABASE IF NOT EXISTS {};\n", home));
                 }
                 preamble.push('\n');
             }
@@ -617,10 +592,10 @@ impl Annotations {
                      SET NAMES utf8mb4 COLLATE utf8mb4_0900_bin;\n\
                      SET SESSION group_concat_max_len = 1073741824;\n",
                 );
-                if !self.grounded_predicates().is_empty() && self.dataset_override.is_none() {
+                if !self.grounded_predicates().is_empty() {
                     preamble.push_str(&format!(
                         "CREATE DATABASE IF NOT EXISTS {} DEFAULT COLLATE utf8mb4_0900_bin;\n",
-                        test_schema()
+                        home
                     ));
                 }
                 preamble.push('\n');
@@ -926,13 +901,16 @@ impl Annotations {
 #[path = "annotations_test.rs"]
 mod annotations_test;
 
-/// Whether `name` can be written into SQL as a schema (or a BigQuery
-/// `project.dataset`): names of letters, digits, `_` and `-`, joined by `.`.
-pub fn is_schema_name(name: &str) -> bool {
-    !name.is_empty()
-        && name.split('.').all(|part| {
-            !part.is_empty()
-                && part.chars().next().is_some_and(|c| c.is_ascii_alphanumeric() || c == '_')
-                && part.chars().all(|c| c.is_ascii_alphanumeric() || c == '_' || c == '-')
-        })
+/// Why `name` (an `@` predicate) is refused, when it is no directive:
+/// `@Dataset` and `@AttachDatabase`, upstream's, are none, so a program
+/// writes in `synalog_home` only and opens no other database.
+pub fn unknown_directive(name: &str) -> Option<String> {
+    (!ANNOTATING_PREDICATES.contains(&name)).then(|| {
+        format!(
+            "Only {} and {} special predicates are allowed.",
+            ANNOTATING_PREDICATES[..ANNOTATING_PREDICATES.len() - 1].join(", "),
+            ANNOTATING_PREDICATES[ANNOTATING_PREDICATES.len() - 1]
+        )
+    })
 }
+

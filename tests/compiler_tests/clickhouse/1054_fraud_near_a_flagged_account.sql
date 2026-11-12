@@ -8,10 +8,10 @@ SET allow_experimental_correlated_subqueries = 1;
 SET aggregate_functions_null_for_empty = 1;
 SET cast_keep_nullable = 1;
 SET transform_null_in = 1;
-CREATE DATABASE IF NOT EXISTS synalog_test;
+CREATE DATABASE IF NOT EXISTS synalog_home;
 
-DROP TABLE IF EXISTS synalog_test.Shares;
-CREATE TABLE synalog_test.Shares ENGINE = Memory AS WITH t_1_HasPhone AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_home.Shares;
+CREATE TABLE synalog_home.Shares ENGINE = Memory AS WITH t_1_HasPhone AS (SELECT * FROM (
   
     SELECT
       'a1' AS account,
@@ -63,16 +63,16 @@ WHERE
   (t_0_HasPhone.phone = HasPhone.phone)
 GROUP BY 1, 2;
 
--- Interacting with table synalog_test.Shares
+-- Interacting with table synalog_home.Shares
 
-DROP TABLE IF EXISTS synalog_test.Linked_sn_delta;
-CREATE TABLE synalog_test.Linked_sn_delta ENGINE = Memory AS WITH t_0_Linked_MultBodyAggAux_f2 AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_home.Linked_sn_delta;
+CREATE TABLE synalog_home.Linked_sn_delta ENGINE = Memory AS WITH t_0_Linked_MultBodyAggAux_f2 AS (SELECT * FROM (
   
     SELECT
       Shares.a AS a,
       Shares.b AS b
     FROM
-      synalog_test.Shares AS Shares
+      synalog_home.Shares AS Shares
   
 ) AS UNUSED_TABLE_NAME  )
 SELECT
@@ -82,34 +82,34 @@ FROM
   t_0_Linked_MultBodyAggAux_f2 AS Linked_MultBodyAggAux_f2
 GROUP BY 1, 2;
 
--- Interacting with table synalog_test.Linked_sn_delta
+-- Interacting with table synalog_home.Linked_sn_delta
 
-DROP TABLE IF EXISTS synalog_test.Linked_sn_t0;
-CREATE TABLE synalog_test.Linked_sn_t0 ENGINE = Memory AS SELECT
+DROP TABLE IF EXISTS synalog_home.Linked_sn_t0;
+CREATE TABLE synalog_home.Linked_sn_t0 ENGINE = Memory AS SELECT
   Linked_sn_delta.a AS a,
   Linked_sn_delta.b AS b
 FROM
-  synalog_test.Linked_sn_delta AS Linked_sn_delta
+  synalog_home.Linked_sn_delta AS Linked_sn_delta
 WHERE
   (1 = 0);
 
--- Interacting with table synalog_test.Linked_sn_t0
+-- Interacting with table synalog_home.Linked_sn_t0
 
-DROP TABLE IF EXISTS synalog_test.Linked_sn_t1;
-CREATE TABLE synalog_test.Linked_sn_t1 ENGINE = Memory AS WITH t_1_Linked_MultBodyAggAux_f3 AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_home.Linked_sn_t1;
+CREATE TABLE synalog_home.Linked_sn_t1 ENGINE = Memory AS WITH t_1_Linked_MultBodyAggAux_f3 AS (SELECT * FROM (
   
     SELECT
       Shares.a AS a,
       Shares.b AS b
     FROM
-      synalog_test.Shares AS Shares
+      synalog_home.Shares AS Shares
    UNION ALL
   
     SELECT
       Linked_sn_t0.a AS a,
       t_2_Shares.b AS b
     FROM
-      synalog_test.Linked_sn_t0 AS Linked_sn_t0, synalog_test.Shares AS t_2_Shares
+      synalog_home.Linked_sn_t0 AS Linked_sn_t0, synalog_home.Shares AS t_2_Shares
     WHERE
       (t_2_Shares.a = Linked_sn_t0.b)
   
@@ -128,23 +128,23 @@ FROM
 WHERE
   (1 = 0);
 
--- Interacting with table synalog_test.Linked_sn_t1
+-- Interacting with table synalog_home.Linked_sn_t1
 
-DROP TABLE IF EXISTS synalog_test.Linked_sn_t2;
-CREATE TABLE synalog_test.Linked_sn_t2 ENGINE = Memory AS WITH t_1_Linked_MultBodyAggAux_f4 AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_home.Linked_sn_t2;
+CREATE TABLE synalog_home.Linked_sn_t2 ENGINE = Memory AS WITH t_1_Linked_MultBodyAggAux_f4 AS (SELECT * FROM (
   
     SELECT
       Shares.a AS a,
       Shares.b AS b
     FROM
-      synalog_test.Shares AS Shares
+      synalog_home.Shares AS Shares
    UNION ALL
   
     SELECT
       Linked_sn_t1.a AS a,
       t_2_Shares.b AS b
     FROM
-      synalog_test.Linked_sn_t1 AS Linked_sn_t1, synalog_test.Shares AS t_2_Shares
+      synalog_home.Linked_sn_t1 AS Linked_sn_t1, synalog_home.Shares AS t_2_Shares
     WHERE
       (t_2_Shares.a = Linked_sn_t1.b)
   
@@ -163,23 +163,23 @@ FROM
 WHERE
   (1 = 0);
 
--- Interacting with table synalog_test.Linked_sn_t2
+-- Interacting with table synalog_home.Linked_sn_t2
 
-DROP TABLE IF EXISTS synalog_test.Linked_sn_t3;
-CREATE TABLE synalog_test.Linked_sn_t3 ENGINE = Memory AS WITH t_1_Linked_MultBodyAggAux_f5 AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_home.Linked_sn_t3;
+CREATE TABLE synalog_home.Linked_sn_t3 ENGINE = Memory AS WITH t_1_Linked_MultBodyAggAux_f5 AS (SELECT * FROM (
   
     SELECT
       Shares.a AS a,
       Shares.b AS b
     FROM
-      synalog_test.Shares AS Shares
+      synalog_home.Shares AS Shares
    UNION ALL
   
     SELECT
       Linked_sn_t2.a AS a,
       t_2_Shares.b AS b
     FROM
-      synalog_test.Linked_sn_t2 AS Linked_sn_t2, synalog_test.Shares AS t_2_Shares
+      synalog_home.Linked_sn_t2 AS Linked_sn_t2, synalog_home.Shares AS t_2_Shares
     WHERE
       (t_2_Shares.a = Linked_sn_t2.b)
   
@@ -198,23 +198,23 @@ FROM
 WHERE
   (1 = 0);
 
--- Interacting with table synalog_test.Linked_sn_t3
+-- Interacting with table synalog_home.Linked_sn_t3
 
-DROP TABLE IF EXISTS synalog_test.Linked_sn_t4;
-CREATE TABLE synalog_test.Linked_sn_t4 ENGINE = Memory AS WITH t_1_Linked_MultBodyAggAux_f6 AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_home.Linked_sn_t4;
+CREATE TABLE synalog_home.Linked_sn_t4 ENGINE = Memory AS WITH t_1_Linked_MultBodyAggAux_f6 AS (SELECT * FROM (
   
     SELECT
       Shares.a AS a,
       Shares.b AS b
     FROM
-      synalog_test.Shares AS Shares
+      synalog_home.Shares AS Shares
    UNION ALL
   
     SELECT
       Linked_sn_t3.a AS a,
       t_2_Shares.b AS b
     FROM
-      synalog_test.Linked_sn_t3 AS Linked_sn_t3, synalog_test.Shares AS t_2_Shares
+      synalog_home.Linked_sn_t3 AS Linked_sn_t3, synalog_home.Shares AS t_2_Shares
     WHERE
       (t_2_Shares.a = Linked_sn_t3.b)
   
@@ -233,23 +233,23 @@ FROM
 WHERE
   (1 = 0);
 
--- Interacting with table synalog_test.Linked_sn_t4
+-- Interacting with table synalog_home.Linked_sn_t4
 
-DROP TABLE IF EXISTS synalog_test.Linked_sn_t5;
-CREATE TABLE synalog_test.Linked_sn_t5 ENGINE = Memory AS WITH t_1_Linked_MultBodyAggAux_f7 AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_home.Linked_sn_t5;
+CREATE TABLE synalog_home.Linked_sn_t5 ENGINE = Memory AS WITH t_1_Linked_MultBodyAggAux_f7 AS (SELECT * FROM (
   
     SELECT
       Shares.a AS a,
       Shares.b AS b
     FROM
-      synalog_test.Shares AS Shares
+      synalog_home.Shares AS Shares
    UNION ALL
   
     SELECT
       Linked_sn_t4.a AS a,
       t_2_Shares.b AS b
     FROM
-      synalog_test.Linked_sn_t4 AS Linked_sn_t4, synalog_test.Shares AS t_2_Shares
+      synalog_home.Linked_sn_t4 AS Linked_sn_t4, synalog_home.Shares AS t_2_Shares
     WHERE
       (t_2_Shares.a = Linked_sn_t4.b)
   
@@ -268,71 +268,71 @@ FROM
 WHERE
   (1 = 0);
 
--- Interacting with table synalog_test.Linked_sn_t5
+-- Interacting with table synalog_home.Linked_sn_t5
 
-DROP TABLE IF EXISTS synalog_test.Linked_sn_full;
-CREATE TABLE synalog_test.Linked_sn_full ENGINE = Memory AS SELECT * FROM (
+DROP TABLE IF EXISTS synalog_home.Linked_sn_full;
+CREATE TABLE synalog_home.Linked_sn_full ENGINE = Memory AS SELECT * FROM (
   
     SELECT
       Linked_sn_delta.a AS a,
       Linked_sn_delta.b AS b
     FROM
-      synalog_test.Linked_sn_delta AS Linked_sn_delta
+      synalog_home.Linked_sn_delta AS Linked_sn_delta
    UNION ALL
   
     SELECT
       Linked_sn_t1.a AS a,
       Linked_sn_t1.b AS b
     FROM
-      synalog_test.Linked_sn_t1 AS Linked_sn_t1
+      synalog_home.Linked_sn_t1 AS Linked_sn_t1
    UNION ALL
   
     SELECT
       Linked_sn_t2.a AS a,
       Linked_sn_t2.b AS b
     FROM
-      synalog_test.Linked_sn_t2 AS Linked_sn_t2
+      synalog_home.Linked_sn_t2 AS Linked_sn_t2
    UNION ALL
   
     SELECT
       Linked_sn_t3.a AS a,
       Linked_sn_t3.b AS b
     FROM
-      synalog_test.Linked_sn_t3 AS Linked_sn_t3
+      synalog_home.Linked_sn_t3 AS Linked_sn_t3
    UNION ALL
   
     SELECT
       Linked_sn_t4.a AS a,
       Linked_sn_t4.b AS b
     FROM
-      synalog_test.Linked_sn_t4 AS Linked_sn_t4
+      synalog_home.Linked_sn_t4 AS Linked_sn_t4
    UNION ALL
   
     SELECT
       Linked_sn_t5.a AS a,
       Linked_sn_t5.b AS b
     FROM
-      synalog_test.Linked_sn_t5 AS Linked_sn_t5
+      synalog_home.Linked_sn_t5 AS Linked_sn_t5
   
 ) AS UNUSED_TABLE_NAME  ;
 
--- Interacting with table synalog_test.Linked_sn_full
+-- Interacting with table synalog_home.Linked_sn_full
 
-DROP TABLE IF EXISTS synalog_test.Linked_sn_new;
-CREATE TABLE synalog_test.Linked_sn_new ENGINE = Memory AS WITH t_1_Linked_MultBodyAggAux_f8 AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_home.Linked_sn_new;
+CREATE TABLE synalog_home.Linked_sn_new ENGINE = Memory AS WITH t_1_Linked_MultBodyAggAux_f8 AS (SELECT * FROM (
   
     SELECT
       Shares.a AS a,
       Shares.b AS b
     FROM
-      synalog_test.Shares AS Shares
+      synalog_home.Shares AS Shares
    UNION ALL
   
     SELECT
       Linked_sn_delta.a AS a,
       t_2_Shares.b AS b
     FROM
-      synalog_test.Linked_sn_delta AS Linked_sn_delta, synalog_test.Shares AS t_2_Shares
+      synalog_home.Linked_sn_delta AS Linked_sn_delta, synalog_home.Shares AS t_2_Shares
     WHERE
       (t_2_Shares.a = Linked_sn_delta.b)
   
@@ -353,27 +353,27 @@ WHERE
     Linked_sn_full.a AS synalog_k0,
     Linked_sn_full.b AS synalog_k1
   FROM
-    synalog_test.Linked_sn_full AS Linked_sn_full
+    synalog_home.Linked_sn_full AS Linked_sn_full
   GROUP BY 1, 2) AS synalog_m))
 GROUP BY 1, 2;
 
-INSERT INTO synalog_test.Linked_sn_full SELECT * FROM synalog_test.Linked_sn_new;
+INSERT INTO synalog_home.Linked_sn_full SELECT * FROM synalog_home.Linked_sn_new;
 
-DROP TABLE IF EXISTS synalog_test.Linked_sn_delta;
-CREATE TABLE synalog_test.Linked_sn_delta ENGINE = Memory AS WITH t_1_Linked_MultBodyAggAux_f1 AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_home.Linked_sn_delta;
+CREATE TABLE synalog_home.Linked_sn_delta ENGINE = Memory AS WITH t_1_Linked_MultBodyAggAux_f1 AS (SELECT * FROM (
   
     SELECT
       Shares.a AS a,
       Shares.b AS b
     FROM
-      synalog_test.Shares AS Shares
+      synalog_home.Shares AS Shares
    UNION ALL
   
     SELECT
       Linked_sn_new.a AS a,
       t_2_Shares.b AS b
     FROM
-      synalog_test.Linked_sn_new AS Linked_sn_new, synalog_test.Shares AS t_2_Shares
+      synalog_home.Linked_sn_new AS Linked_sn_new, synalog_home.Shares AS t_2_Shares
     WHERE
       (t_2_Shares.a = Linked_sn_new.b)
   
@@ -394,27 +394,27 @@ WHERE
     Linked_sn_full.a AS synalog_k0,
     Linked_sn_full.b AS synalog_k1
   FROM
-    synalog_test.Linked_sn_full AS Linked_sn_full
+    synalog_home.Linked_sn_full AS Linked_sn_full
   GROUP BY 1, 2) AS synalog_m))
 GROUP BY 1, 2;
 
-INSERT INTO synalog_test.Linked_sn_full SELECT * FROM synalog_test.Linked_sn_delta;
+INSERT INTO synalog_home.Linked_sn_full SELECT * FROM synalog_home.Linked_sn_delta;
 
-DROP TABLE IF EXISTS synalog_test.Linked_sn_new;
-CREATE TABLE synalog_test.Linked_sn_new ENGINE = Memory AS WITH t_1_Linked_MultBodyAggAux_f8 AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_home.Linked_sn_new;
+CREATE TABLE synalog_home.Linked_sn_new ENGINE = Memory AS WITH t_1_Linked_MultBodyAggAux_f8 AS (SELECT * FROM (
   
     SELECT
       Shares.a AS a,
       Shares.b AS b
     FROM
-      synalog_test.Shares AS Shares
+      synalog_home.Shares AS Shares
    UNION ALL
   
     SELECT
       Linked_sn_delta.a AS a,
       t_2_Shares.b AS b
     FROM
-      synalog_test.Linked_sn_delta AS Linked_sn_delta, synalog_test.Shares AS t_2_Shares
+      synalog_home.Linked_sn_delta AS Linked_sn_delta, synalog_home.Shares AS t_2_Shares
     WHERE
       (t_2_Shares.a = Linked_sn_delta.b)
   
@@ -435,27 +435,27 @@ WHERE
     Linked_sn_full.a AS synalog_k0,
     Linked_sn_full.b AS synalog_k1
   FROM
-    synalog_test.Linked_sn_full AS Linked_sn_full
+    synalog_home.Linked_sn_full AS Linked_sn_full
   GROUP BY 1, 2) AS synalog_m))
 GROUP BY 1, 2;
 
-INSERT INTO synalog_test.Linked_sn_full SELECT * FROM synalog_test.Linked_sn_new;
+INSERT INTO synalog_home.Linked_sn_full SELECT * FROM synalog_home.Linked_sn_new;
 
-DROP TABLE IF EXISTS synalog_test.Linked_sn_delta;
-CREATE TABLE synalog_test.Linked_sn_delta ENGINE = Memory AS WITH t_1_Linked_MultBodyAggAux_f1 AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_home.Linked_sn_delta;
+CREATE TABLE synalog_home.Linked_sn_delta ENGINE = Memory AS WITH t_1_Linked_MultBodyAggAux_f1 AS (SELECT * FROM (
   
     SELECT
       Shares.a AS a,
       Shares.b AS b
     FROM
-      synalog_test.Shares AS Shares
+      synalog_home.Shares AS Shares
    UNION ALL
   
     SELECT
       Linked_sn_new.a AS a,
       t_2_Shares.b AS b
     FROM
-      synalog_test.Linked_sn_new AS Linked_sn_new, synalog_test.Shares AS t_2_Shares
+      synalog_home.Linked_sn_new AS Linked_sn_new, synalog_home.Shares AS t_2_Shares
     WHERE
       (t_2_Shares.a = Linked_sn_new.b)
   
@@ -476,27 +476,27 @@ WHERE
     Linked_sn_full.a AS synalog_k0,
     Linked_sn_full.b AS synalog_k1
   FROM
-    synalog_test.Linked_sn_full AS Linked_sn_full
+    synalog_home.Linked_sn_full AS Linked_sn_full
   GROUP BY 1, 2) AS synalog_m))
 GROUP BY 1, 2;
 
-INSERT INTO synalog_test.Linked_sn_full SELECT * FROM synalog_test.Linked_sn_delta;
+INSERT INTO synalog_home.Linked_sn_full SELECT * FROM synalog_home.Linked_sn_delta;
 
-DROP TABLE IF EXISTS synalog_test.Linked_sn_new;
-CREATE TABLE synalog_test.Linked_sn_new ENGINE = Memory AS WITH t_1_Linked_MultBodyAggAux_f8 AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_home.Linked_sn_new;
+CREATE TABLE synalog_home.Linked_sn_new ENGINE = Memory AS WITH t_1_Linked_MultBodyAggAux_f8 AS (SELECT * FROM (
   
     SELECT
       Shares.a AS a,
       Shares.b AS b
     FROM
-      synalog_test.Shares AS Shares
+      synalog_home.Shares AS Shares
    UNION ALL
   
     SELECT
       Linked_sn_delta.a AS a,
       t_2_Shares.b AS b
     FROM
-      synalog_test.Linked_sn_delta AS Linked_sn_delta, synalog_test.Shares AS t_2_Shares
+      synalog_home.Linked_sn_delta AS Linked_sn_delta, synalog_home.Shares AS t_2_Shares
     WHERE
       (t_2_Shares.a = Linked_sn_delta.b)
   
@@ -517,27 +517,27 @@ WHERE
     Linked_sn_full.a AS synalog_k0,
     Linked_sn_full.b AS synalog_k1
   FROM
-    synalog_test.Linked_sn_full AS Linked_sn_full
+    synalog_home.Linked_sn_full AS Linked_sn_full
   GROUP BY 1, 2) AS synalog_m))
 GROUP BY 1, 2;
 
-INSERT INTO synalog_test.Linked_sn_full SELECT * FROM synalog_test.Linked_sn_new;
+INSERT INTO synalog_home.Linked_sn_full SELECT * FROM synalog_home.Linked_sn_new;
 
-DROP TABLE IF EXISTS synalog_test.Linked_sn_delta;
-CREATE TABLE synalog_test.Linked_sn_delta ENGINE = Memory AS WITH t_1_Linked_MultBodyAggAux_f1 AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_home.Linked_sn_delta;
+CREATE TABLE synalog_home.Linked_sn_delta ENGINE = Memory AS WITH t_1_Linked_MultBodyAggAux_f1 AS (SELECT * FROM (
   
     SELECT
       Shares.a AS a,
       Shares.b AS b
     FROM
-      synalog_test.Shares AS Shares
+      synalog_home.Shares AS Shares
    UNION ALL
   
     SELECT
       Linked_sn_new.a AS a,
       t_2_Shares.b AS b
     FROM
-      synalog_test.Linked_sn_new AS Linked_sn_new, synalog_test.Shares AS t_2_Shares
+      synalog_home.Linked_sn_new AS Linked_sn_new, synalog_home.Shares AS t_2_Shares
     WHERE
       (t_2_Shares.a = Linked_sn_new.b)
   
@@ -558,27 +558,27 @@ WHERE
     Linked_sn_full.a AS synalog_k0,
     Linked_sn_full.b AS synalog_k1
   FROM
-    synalog_test.Linked_sn_full AS Linked_sn_full
+    synalog_home.Linked_sn_full AS Linked_sn_full
   GROUP BY 1, 2) AS synalog_m))
 GROUP BY 1, 2;
 
-INSERT INTO synalog_test.Linked_sn_full SELECT * FROM synalog_test.Linked_sn_delta;
+INSERT INTO synalog_home.Linked_sn_full SELECT * FROM synalog_home.Linked_sn_delta;
 
-DROP TABLE IF EXISTS synalog_test.Linked_sn_new;
-CREATE TABLE synalog_test.Linked_sn_new ENGINE = Memory AS WITH t_1_Linked_MultBodyAggAux_f8 AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_home.Linked_sn_new;
+CREATE TABLE synalog_home.Linked_sn_new ENGINE = Memory AS WITH t_1_Linked_MultBodyAggAux_f8 AS (SELECT * FROM (
   
     SELECT
       Shares.a AS a,
       Shares.b AS b
     FROM
-      synalog_test.Shares AS Shares
+      synalog_home.Shares AS Shares
    UNION ALL
   
     SELECT
       Linked_sn_delta.a AS a,
       t_2_Shares.b AS b
     FROM
-      synalog_test.Linked_sn_delta AS Linked_sn_delta, synalog_test.Shares AS t_2_Shares
+      synalog_home.Linked_sn_delta AS Linked_sn_delta, synalog_home.Shares AS t_2_Shares
     WHERE
       (t_2_Shares.a = Linked_sn_delta.b)
   
@@ -599,27 +599,27 @@ WHERE
     Linked_sn_full.a AS synalog_k0,
     Linked_sn_full.b AS synalog_k1
   FROM
-    synalog_test.Linked_sn_full AS Linked_sn_full
+    synalog_home.Linked_sn_full AS Linked_sn_full
   GROUP BY 1, 2) AS synalog_m))
 GROUP BY 1, 2;
 
-INSERT INTO synalog_test.Linked_sn_full SELECT * FROM synalog_test.Linked_sn_new;
+INSERT INTO synalog_home.Linked_sn_full SELECT * FROM synalog_home.Linked_sn_new;
 
-DROP TABLE IF EXISTS synalog_test.Linked_sn_delta;
-CREATE TABLE synalog_test.Linked_sn_delta ENGINE = Memory AS WITH t_1_Linked_MultBodyAggAux_f1 AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_home.Linked_sn_delta;
+CREATE TABLE synalog_home.Linked_sn_delta ENGINE = Memory AS WITH t_1_Linked_MultBodyAggAux_f1 AS (SELECT * FROM (
   
     SELECT
       Shares.a AS a,
       Shares.b AS b
     FROM
-      synalog_test.Shares AS Shares
+      synalog_home.Shares AS Shares
    UNION ALL
   
     SELECT
       Linked_sn_new.a AS a,
       t_2_Shares.b AS b
     FROM
-      synalog_test.Linked_sn_new AS Linked_sn_new, synalog_test.Shares AS t_2_Shares
+      synalog_home.Linked_sn_new AS Linked_sn_new, synalog_home.Shares AS t_2_Shares
     WHERE
       (t_2_Shares.a = Linked_sn_new.b)
   
@@ -640,11 +640,11 @@ WHERE
     Linked_sn_full.a AS synalog_k0,
     Linked_sn_full.b AS synalog_k1
   FROM
-    synalog_test.Linked_sn_full AS Linked_sn_full
+    synalog_home.Linked_sn_full AS Linked_sn_full
   GROUP BY 1, 2) AS synalog_m))
 GROUP BY 1, 2;
 
-INSERT INTO synalog_test.Linked_sn_full SELECT * FROM synalog_test.Linked_sn_delta;
+INSERT INTO synalog_home.Linked_sn_full SELECT * FROM synalog_home.Linked_sn_delta;
 
 WITH t_0_Flagged AS (SELECT * FROM (
   
@@ -659,7 +659,7 @@ WITH t_0_Flagged AS (SELECT * FROM (
 SELECT
   Linked_sn_full.b AS account
 FROM
-  t_0_Flagged AS Flagged, synalog_test.Linked_sn_full AS Linked_sn_full
+  t_0_Flagged AS Flagged, synalog_home.Linked_sn_full AS Linked_sn_full
 WHERE
   NOT (Linked_sn_full.b IS NOT NULL AND CAST(Linked_sn_full.b AS Nullable(String)) IN (SELECT CAST(synalog_k0 AS Nullable(String)) FROM (SELECT
     t_1_Flagged.account AS synalog_k0

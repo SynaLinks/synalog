@@ -1,5 +1,5 @@
-DROP TABLE IF EXISTS synalog_test.Paid;
-CREATE TABLE synalog_test.Paid AS WITH t_1_Order AS (SELECT * FROM VALUES
+DROP TABLE IF EXISTS synalog_home.Paid;
+CREATE TABLE synalog_home.Paid AS WITH t_1_Order AS (SELECT * FROM VALUES
   (1, "ann", "tea", 3, "paid"),
   (2, "bob", "cake", 1, "paid"),
   (3, "ann", "cake", 2, "refunded"),
@@ -21,21 +21,21 @@ FROM
 WHERE
   (t_0_Order.state = "paid");
 
--- Interacting with table synalog_test.Paid
+-- Interacting with table synalog_home.Paid
 
-DROP TABLE IF EXISTS synalog_test.Units;
-CREATE TABLE synalog_test.Units AS SELECT
+DROP TABLE IF EXISTS synalog_home.Units;
+CREATE TABLE synalog_home.Units AS SELECT
   Paid.item AS item,
   SUM(Paid.n) AS u
 FROM
-  synalog_test.Paid AS Paid
+  synalog_home.Paid AS Paid
 GROUP BY 1;
 
--- Interacting with table synalog_test.Units
+-- Interacting with table synalog_home.Units
 
 SELECT
   Units.u AS u
 FROM
-  synalog_test.Units AS Units
+  synalog_home.Units AS Units
 WHERE
   (Units.item = "tea");

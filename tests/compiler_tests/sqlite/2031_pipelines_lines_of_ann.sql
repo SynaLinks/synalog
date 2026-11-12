@@ -1,7 +1,7 @@
-ATTACH DATABASE ':memory:' AS synalog_test;
+ATTACH DATABASE ':memory:' AS synalog_home;
 
-DROP TABLE IF EXISTS synalog_test.Paid;
-CREATE TABLE synalog_test.Paid AS WITH t_1_Order AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_home.Paid;
+CREATE TABLE synalog_home.Paid AS WITH t_1_Order AS (SELECT * FROM (
   
     SELECT
       1 AS id,
@@ -93,7 +93,7 @@ FROM
 WHERE
   (t_0_Order.state = 'paid');
 
--- Interacting with table synalog_test.Paid
+-- Interacting with table synalog_home.Paid
 
 WITH t_0_Price AS (SELECT * FROM (
   
@@ -116,7 +116,7 @@ SELECT
   Paid.id AS id,
   ((Paid.n) * (Price.p)) AS amount
 FROM
-  synalog_test.Paid AS Paid, t_0_Price AS Price
+  synalog_home.Paid AS Paid, t_0_Price AS Price
 WHERE
   (Price.item = Paid.item) AND
   ('ann' = Paid.who);

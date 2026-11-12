@@ -8,10 +8,10 @@ SET allow_experimental_correlated_subqueries = 1;
 SET aggregate_functions_null_for_empty = 1;
 SET cast_keep_nullable = 1;
 SET transform_null_in = 1;
-CREATE DATABASE IF NOT EXISTS synalog_test;
+CREATE DATABASE IF NOT EXISTS synalog_home;
 
-DROP TABLE IF EXISTS synalog_test.Person;
-CREATE TABLE synalog_test.Person ENGINE = Memory AS WITH t_0_Employees AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_home.Person;
+CREATE TABLE synalog_home.Person ENGINE = Memory AS WITH t_0_Employees AS (SELECT * FROM (
   
     SELECT
       1 AS person_id,
@@ -66,10 +66,10 @@ FROM
   t_0_Employees AS Employees
 GROUP BY 1, 2, 3 ORDER BY person_id;
 
--- Interacting with table synalog_test.Person
+-- Interacting with table synalog_home.Person
 
-DROP TABLE IF EXISTS synalog_test.Related;
-CREATE TABLE synalog_test.Related ENGINE = Memory AS WITH t_3_Management AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_home.Related;
+CREATE TABLE synalog_home.Related ENGINE = Memory AS WITH t_3_Management AS (SELECT * FROM (
   
     SELECT
       1 AS manager_id,
@@ -95,7 +95,7 @@ t_1_Manages AS (SELECT
   Person.person_id AS manager_id,
   t_2_Person.person_id AS employee_id
 FROM
-  synalog_test.Person AS Person, synalog_test.Person AS t_2_Person, t_3_Management AS Management
+  synalog_home.Person AS Person, synalog_home.Person AS t_2_Person, t_3_Management AS Management
 WHERE
   (Management.manager_id = Person.person_id) AND
   (Management.employee_id = t_2_Person.person_id)
@@ -116,7 +116,7 @@ t_4_Mentors AS (SELECT
   t_5_Person.person_id AS mentor_id,
   t_6_Person.person_id AS mentee_id
 FROM
-  synalog_test.Person AS t_5_Person, synalog_test.Person AS t_6_Person, t_7_Mentoring AS Mentoring
+  synalog_home.Person AS t_5_Person, synalog_home.Person AS t_6_Person, t_7_Mentoring AS Mentoring
 WHERE
   (Mentoring.mentor_id = t_5_Person.person_id) AND
   (Mentoring.mentee_id = t_6_Person.person_id)
@@ -147,7 +147,7 @@ FROM
   t_0_Related_MultBodyAggAux AS Related_MultBodyAggAux
 GROUP BY 1, 2, 3;
 
--- Interacting with table synalog_test.Related
+-- Interacting with table synalog_home.Related
 
 WITH t_0_Endpoint AS (SELECT * FROM (
   
@@ -157,7 +157,7 @@ WITH t_0_Endpoint AS (SELECT * FROM (
       Related.target_id AS target_id,
       Related.type AS type
     FROM
-      synalog_test.Related AS Related
+      synalog_home.Related AS Related
    UNION ALL
   
     SELECT
@@ -166,7 +166,7 @@ WITH t_0_Endpoint AS (SELECT * FROM (
       t_1_Related.target_id AS target_id,
       t_1_Related.type AS type
     FROM
-      synalog_test.Related AS t_1_Related
+      synalog_home.Related AS t_1_Related
   
 ) AS UNUSED_TABLE_NAME  )
 SELECT

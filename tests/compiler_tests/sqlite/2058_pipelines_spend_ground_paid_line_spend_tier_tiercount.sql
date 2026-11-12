@@ -1,7 +1,7 @@
-ATTACH DATABASE ':memory:' AS synalog_test;
+ATTACH DATABASE ':memory:' AS synalog_home;
 
-DROP TABLE IF EXISTS synalog_test.Paid;
-CREATE TABLE synalog_test.Paid AS WITH t_1_Order AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_home.Paid;
+CREATE TABLE synalog_home.Paid AS WITH t_1_Order AS (SELECT * FROM (
   
     SELECT
       1 AS id,
@@ -93,10 +93,10 @@ FROM
 WHERE
   (t_0_Order.state = 'paid');
 
--- Interacting with table synalog_test.Paid
+-- Interacting with table synalog_home.Paid
 
-DROP TABLE IF EXISTS synalog_test.Line;
-CREATE TABLE synalog_test.Line AS WITH t_0_Price AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_home.Line;
+CREATE TABLE synalog_home.Line AS WITH t_0_Price AS (SELECT * FROM (
   
     SELECT
       'tea' AS item,
@@ -118,24 +118,24 @@ SELECT
   Paid.who AS who,
   ((Paid.n) * (Price.p)) AS amount
 FROM
-  synalog_test.Paid AS Paid, t_0_Price AS Price
+  synalog_home.Paid AS Paid, t_0_Price AS Price
 WHERE
   (Price.item = Paid.item);
 
--- Interacting with table synalog_test.Line
+-- Interacting with table synalog_home.Line
 
-DROP TABLE IF EXISTS synalog_test.Spend;
-CREATE TABLE synalog_test.Spend AS SELECT
+DROP TABLE IF EXISTS synalog_home.Spend;
+CREATE TABLE synalog_home.Spend AS SELECT
   Line.who AS who,
   SUM(Line.amount) AS total
 FROM
-  synalog_test.Line AS Line
+  synalog_home.Line AS Line
 GROUP BY Line.who;
 
--- Interacting with table synalog_test.Spend
+-- Interacting with table synalog_home.Spend
 
 SELECT
   Spend.who AS who,
   Spend.total AS total
 FROM
-  synalog_test.Spend AS Spend ORDER BY who NULLS LAST, total NULLS LAST;
+  synalog_home.Spend AS Spend ORDER BY who NULLS LAST, total NULLS LAST;

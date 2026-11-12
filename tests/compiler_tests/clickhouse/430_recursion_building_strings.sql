@@ -8,10 +8,10 @@ SET allow_experimental_correlated_subqueries = 1;
 SET aggregate_functions_null_for_empty = 1;
 SET cast_keep_nullable = 1;
 SET transform_null_in = 1;
-CREATE DATABASE IF NOT EXISTS synalog_test;
+CREATE DATABASE IF NOT EXISTS synalog_home;
 
-DROP TABLE IF EXISTS synalog_test.W_sn_delta;
-CREATE TABLE synalog_test.W_sn_delta ENGINE = Memory AS WITH t_0_W_MultBodyAggAux_f2 AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_home.W_sn_delta;
+CREATE TABLE synalog_home.W_sn_delta ENGINE = Memory AS WITH t_0_W_MultBodyAggAux_f2 AS (SELECT * FROM (
   
     SELECT
       'a' AS w
@@ -23,25 +23,25 @@ FROM
   t_0_W_MultBodyAggAux_f2 AS W_MultBodyAggAux_f2
 GROUP BY 1;
 
--- Interacting with table synalog_test.W_sn_delta
+-- Interacting with table synalog_home.W_sn_delta
 
-DROP TABLE IF EXISTS synalog_test.W_sn_t0;
-CREATE TABLE synalog_test.W_sn_t0 ENGINE = Memory AS SELECT
+DROP TABLE IF EXISTS synalog_home.W_sn_t0;
+CREATE TABLE synalog_home.W_sn_t0 ENGINE = Memory AS SELECT
   W_sn_delta.w AS w
 FROM
-  synalog_test.W_sn_delta AS W_sn_delta
+  synalog_home.W_sn_delta AS W_sn_delta
 WHERE
   (1 = 0);
 
--- Interacting with table synalog_test.W_sn_t0
+-- Interacting with table synalog_home.W_sn_t0
 
-DROP TABLE IF EXISTS synalog_test.W_sn_t1;
-CREATE TABLE synalog_test.W_sn_t1 ENGINE = Memory AS WITH t_1_W_MultBodyAggAux_f3 AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_home.W_sn_t1;
+CREATE TABLE synalog_home.W_sn_t1 ENGINE = Memory AS WITH t_1_W_MultBodyAggAux_f3 AS (SELECT * FROM (
   
     SELECT
       (concat(W_sn_t0.w, 'a')) AS w
     FROM
-      synalog_test.W_sn_t0 AS W_sn_t0
+      synalog_home.W_sn_t0 AS W_sn_t0
     WHERE
       (lengthUTF8(W_sn_t0.w) < 3)
    UNION ALL
@@ -62,15 +62,15 @@ FROM
 WHERE
   (1 = 0);
 
--- Interacting with table synalog_test.W_sn_t1
+-- Interacting with table synalog_home.W_sn_t1
 
-DROP TABLE IF EXISTS synalog_test.W_sn_t2;
-CREATE TABLE synalog_test.W_sn_t2 ENGINE = Memory AS WITH t_1_W_MultBodyAggAux_f4 AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_home.W_sn_t2;
+CREATE TABLE synalog_home.W_sn_t2 ENGINE = Memory AS WITH t_1_W_MultBodyAggAux_f4 AS (SELECT * FROM (
   
     SELECT
       (concat(W_sn_t1.w, 'a')) AS w
     FROM
-      synalog_test.W_sn_t1 AS W_sn_t1
+      synalog_home.W_sn_t1 AS W_sn_t1
     WHERE
       (lengthUTF8(W_sn_t1.w) < 3)
    UNION ALL
@@ -91,15 +91,15 @@ FROM
 WHERE
   (1 = 0);
 
--- Interacting with table synalog_test.W_sn_t2
+-- Interacting with table synalog_home.W_sn_t2
 
-DROP TABLE IF EXISTS synalog_test.W_sn_t3;
-CREATE TABLE synalog_test.W_sn_t3 ENGINE = Memory AS WITH t_1_W_MultBodyAggAux_f5 AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_home.W_sn_t3;
+CREATE TABLE synalog_home.W_sn_t3 ENGINE = Memory AS WITH t_1_W_MultBodyAggAux_f5 AS (SELECT * FROM (
   
     SELECT
       (concat(W_sn_t2.w, 'a')) AS w
     FROM
-      synalog_test.W_sn_t2 AS W_sn_t2
+      synalog_home.W_sn_t2 AS W_sn_t2
     WHERE
       (lengthUTF8(W_sn_t2.w) < 3)
    UNION ALL
@@ -120,45 +120,45 @@ FROM
 WHERE
   (1 = 0);
 
--- Interacting with table synalog_test.W_sn_t3
+-- Interacting with table synalog_home.W_sn_t3
 
-DROP TABLE IF EXISTS synalog_test.W_sn_full;
-CREATE TABLE synalog_test.W_sn_full ENGINE = Memory AS SELECT * FROM (
+DROP TABLE IF EXISTS synalog_home.W_sn_full;
+CREATE TABLE synalog_home.W_sn_full ENGINE = Memory AS SELECT * FROM (
   
     SELECT
       W_sn_delta.w AS w
     FROM
-      synalog_test.W_sn_delta AS W_sn_delta
+      synalog_home.W_sn_delta AS W_sn_delta
    UNION ALL
   
     SELECT
       W_sn_t1.w AS w
     FROM
-      synalog_test.W_sn_t1 AS W_sn_t1
+      synalog_home.W_sn_t1 AS W_sn_t1
    UNION ALL
   
     SELECT
       W_sn_t2.w AS w
     FROM
-      synalog_test.W_sn_t2 AS W_sn_t2
+      synalog_home.W_sn_t2 AS W_sn_t2
    UNION ALL
   
     SELECT
       W_sn_t3.w AS w
     FROM
-      synalog_test.W_sn_t3 AS W_sn_t3
+      synalog_home.W_sn_t3 AS W_sn_t3
   
 ) AS UNUSED_TABLE_NAME  ;
 
--- Interacting with table synalog_test.W_sn_full
+-- Interacting with table synalog_home.W_sn_full
 
-DROP TABLE IF EXISTS synalog_test.W_sn_new;
-CREATE TABLE synalog_test.W_sn_new ENGINE = Memory AS WITH t_1_W_MultBodyAggAux_f6 AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_home.W_sn_new;
+CREATE TABLE synalog_home.W_sn_new ENGINE = Memory AS WITH t_1_W_MultBodyAggAux_f6 AS (SELECT * FROM (
   
     SELECT
       (concat(W_sn_delta.w, 'a')) AS w
     FROM
-      synalog_test.W_sn_delta AS W_sn_delta
+      synalog_home.W_sn_delta AS W_sn_delta
     WHERE
       (lengthUTF8(W_sn_delta.w) < 3)
    UNION ALL
@@ -180,19 +180,19 @@ WHERE
   NOT (CAST(W_sn_step.w AS Nullable(String)) IN (SELECT CAST(synalog_k0 AS Nullable(String)) FROM (SELECT
     W_sn_full.w AS synalog_k0
   FROM
-    synalog_test.W_sn_full AS W_sn_full
+    synalog_home.W_sn_full AS W_sn_full
   GROUP BY 1) AS synalog_m))
 GROUP BY 1;
 
-INSERT INTO synalog_test.W_sn_full SELECT * FROM synalog_test.W_sn_new;
+INSERT INTO synalog_home.W_sn_full SELECT * FROM synalog_home.W_sn_new;
 
-DROP TABLE IF EXISTS synalog_test.W_sn_delta;
-CREATE TABLE synalog_test.W_sn_delta ENGINE = Memory AS WITH t_1_W_MultBodyAggAux_f1 AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_home.W_sn_delta;
+CREATE TABLE synalog_home.W_sn_delta ENGINE = Memory AS WITH t_1_W_MultBodyAggAux_f1 AS (SELECT * FROM (
   
     SELECT
       (concat(W_sn_new.w, 'a')) AS w
     FROM
-      synalog_test.W_sn_new AS W_sn_new
+      synalog_home.W_sn_new AS W_sn_new
     WHERE
       (lengthUTF8(W_sn_new.w) < 3)
    UNION ALL
@@ -214,19 +214,19 @@ WHERE
   NOT (CAST(W_sn_back_step.w AS Nullable(String)) IN (SELECT CAST(synalog_k0 AS Nullable(String)) FROM (SELECT
     W_sn_full.w AS synalog_k0
   FROM
-    synalog_test.W_sn_full AS W_sn_full
+    synalog_home.W_sn_full AS W_sn_full
   GROUP BY 1) AS synalog_m))
 GROUP BY 1;
 
-INSERT INTO synalog_test.W_sn_full SELECT * FROM synalog_test.W_sn_delta;
+INSERT INTO synalog_home.W_sn_full SELECT * FROM synalog_home.W_sn_delta;
 
-DROP TABLE IF EXISTS synalog_test.W_sn_new;
-CREATE TABLE synalog_test.W_sn_new ENGINE = Memory AS WITH t_1_W_MultBodyAggAux_f6 AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_home.W_sn_new;
+CREATE TABLE synalog_home.W_sn_new ENGINE = Memory AS WITH t_1_W_MultBodyAggAux_f6 AS (SELECT * FROM (
   
     SELECT
       (concat(W_sn_delta.w, 'a')) AS w
     FROM
-      synalog_test.W_sn_delta AS W_sn_delta
+      synalog_home.W_sn_delta AS W_sn_delta
     WHERE
       (lengthUTF8(W_sn_delta.w) < 3)
    UNION ALL
@@ -248,19 +248,19 @@ WHERE
   NOT (CAST(W_sn_step.w AS Nullable(String)) IN (SELECT CAST(synalog_k0 AS Nullable(String)) FROM (SELECT
     W_sn_full.w AS synalog_k0
   FROM
-    synalog_test.W_sn_full AS W_sn_full
+    synalog_home.W_sn_full AS W_sn_full
   GROUP BY 1) AS synalog_m))
 GROUP BY 1;
 
-INSERT INTO synalog_test.W_sn_full SELECT * FROM synalog_test.W_sn_new;
+INSERT INTO synalog_home.W_sn_full SELECT * FROM synalog_home.W_sn_new;
 
-DROP TABLE IF EXISTS synalog_test.W_sn_delta;
-CREATE TABLE synalog_test.W_sn_delta ENGINE = Memory AS WITH t_1_W_MultBodyAggAux_f1 AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_home.W_sn_delta;
+CREATE TABLE synalog_home.W_sn_delta ENGINE = Memory AS WITH t_1_W_MultBodyAggAux_f1 AS (SELECT * FROM (
   
     SELECT
       (concat(W_sn_new.w, 'a')) AS w
     FROM
-      synalog_test.W_sn_new AS W_sn_new
+      synalog_home.W_sn_new AS W_sn_new
     WHERE
       (lengthUTF8(W_sn_new.w) < 3)
    UNION ALL
@@ -282,19 +282,19 @@ WHERE
   NOT (CAST(W_sn_back_step.w AS Nullable(String)) IN (SELECT CAST(synalog_k0 AS Nullable(String)) FROM (SELECT
     W_sn_full.w AS synalog_k0
   FROM
-    synalog_test.W_sn_full AS W_sn_full
+    synalog_home.W_sn_full AS W_sn_full
   GROUP BY 1) AS synalog_m))
 GROUP BY 1;
 
-INSERT INTO synalog_test.W_sn_full SELECT * FROM synalog_test.W_sn_delta;
+INSERT INTO synalog_home.W_sn_full SELECT * FROM synalog_home.W_sn_delta;
 
-DROP TABLE IF EXISTS synalog_test.W_sn_new;
-CREATE TABLE synalog_test.W_sn_new ENGINE = Memory AS WITH t_1_W_MultBodyAggAux_f6 AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_home.W_sn_new;
+CREATE TABLE synalog_home.W_sn_new ENGINE = Memory AS WITH t_1_W_MultBodyAggAux_f6 AS (SELECT * FROM (
   
     SELECT
       (concat(W_sn_delta.w, 'a')) AS w
     FROM
-      synalog_test.W_sn_delta AS W_sn_delta
+      synalog_home.W_sn_delta AS W_sn_delta
     WHERE
       (lengthUTF8(W_sn_delta.w) < 3)
    UNION ALL
@@ -316,13 +316,13 @@ WHERE
   NOT (CAST(W_sn_step.w AS Nullable(String)) IN (SELECT CAST(synalog_k0 AS Nullable(String)) FROM (SELECT
     W_sn_full.w AS synalog_k0
   FROM
-    synalog_test.W_sn_full AS W_sn_full
+    synalog_home.W_sn_full AS W_sn_full
   GROUP BY 1) AS synalog_m))
 GROUP BY 1;
 
-INSERT INTO synalog_test.W_sn_full SELECT * FROM synalog_test.W_sn_new;
+INSERT INTO synalog_home.W_sn_full SELECT * FROM synalog_home.W_sn_new;
 
 SELECT
   W_sn_full.w AS w
 FROM
-  synalog_test.W_sn_full AS W_sn_full ORDER BY w;
+  synalog_home.W_sn_full AS W_sn_full ORDER BY w;

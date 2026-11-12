@@ -2,7 +2,7 @@
 create schema if not exists synalog_home;
 -- Empty record, has to have a field by DuckDB syntax.
 drop type if exists synalogrecord893574736 cascade; create type synalogrecord893574736 as struct(nirvana numeric);
-create sequence if not exists eternal_logical_sequence;
+create sequence if not exists synalog_home.eternal_logical_sequence;
 
 SELECT
   CASE WHEN (2 = 2) THEN ((28) + (CASE WHEN ((((2024) % NULLIF(4, 0)) = 0) AND ((((2024) % NULLIF(100, 0)) != 0) OR (((2024) % NULLIF(400, 0)) = 0))) THEN 1 ELSE 0 END)) WHEN ((((2 = 4) OR (2 = 6)) OR (2 = 9)) OR (2 = 11)) THEN 30 ELSE 31 END AS a,

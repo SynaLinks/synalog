@@ -8,10 +8,10 @@ SET allow_experimental_correlated_subqueries = 1;
 SET aggregate_functions_null_for_empty = 1;
 SET cast_keep_nullable = 1;
 SET transform_null_in = 1;
-CREATE DATABASE IF NOT EXISTS synalog_test;
+CREATE DATABASE IF NOT EXISTS synalog_home;
 
-DROP TABLE IF EXISTS synalog_test.CustomerStats;
-CREATE TABLE synalog_test.CustomerStats ENGINE = Memory AS WITH t_0_Transactions AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_home.CustomerStats;
+CREATE TABLE synalog_home.CustomerStats ENGINE = Memory AS WITH t_0_Transactions AS (SELECT * FROM (
   
     SELECT
       'Alice' AS col0,
@@ -72,7 +72,7 @@ FROM
   t_0_Transactions AS Transactions
 GROUP BY 1;
 
--- Interacting with table synalog_test.CustomerStats
+-- Interacting with table synalog_home.CustomerStats
 
 SELECT
   CustomerStats.col0 AS customer,
@@ -80,4 +80,4 @@ SELECT
   CustomerStats.count AS count,
   CustomerStats.max_txn AS max_txn
 FROM
-  synalog_test.CustomerStats AS CustomerStats ORDER BY customer;
+  synalog_home.CustomerStats AS CustomerStats ORDER BY customer;

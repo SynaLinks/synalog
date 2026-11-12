@@ -8,10 +8,10 @@ SET allow_experimental_correlated_subqueries = 1;
 SET aggregate_functions_null_for_empty = 1;
 SET cast_keep_nullable = 1;
 SET transform_null_in = 1;
-CREATE DATABASE IF NOT EXISTS synalog_test;
+CREATE DATABASE IF NOT EXISTS synalog_home;
 
-DROP TABLE IF EXISTS synalog_test.Person;
-CREATE TABLE synalog_test.Person ENGINE = Memory AS WITH t_0_Employees AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_home.Person;
+CREATE TABLE synalog_home.Person ENGINE = Memory AS WITH t_0_Employees AS (SELECT * FROM (
   
     SELECT
       1 AS person_id,
@@ -66,10 +66,10 @@ FROM
   t_0_Employees AS Employees
 GROUP BY 1, 2, 3 ORDER BY person_id;
 
--- Interacting with table synalog_test.Person
+-- Interacting with table synalog_home.Person
 
-DROP TABLE IF EXISTS synalog_test.Mentors;
-CREATE TABLE synalog_test.Mentors ENGINE = Memory AS WITH t_1_Mentoring AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_home.Mentors;
+CREATE TABLE synalog_home.Mentors ENGINE = Memory AS WITH t_1_Mentoring AS (SELECT * FROM (
   
     SELECT
       2 AS mentor_id,
@@ -85,13 +85,13 @@ SELECT
   Person.person_id AS mentor_id,
   t_0_Person.person_id AS mentee_id
 FROM
-  synalog_test.Person AS Person, synalog_test.Person AS t_0_Person, t_1_Mentoring AS Mentoring
+  synalog_home.Person AS Person, synalog_home.Person AS t_0_Person, t_1_Mentoring AS Mentoring
 WHERE
   (Mentoring.mentor_id = Person.person_id) AND
   (Mentoring.mentee_id = t_0_Person.person_id)
 GROUP BY 1, 2;
 
--- Interacting with table synalog_test.Mentors
+-- Interacting with table synalog_home.Mentors
 
 WITH t_0_Pair_MultBodyAggAux AS (SELECT * FROM (
   
@@ -99,14 +99,14 @@ WITH t_0_Pair_MultBodyAggAux AS (SELECT * FROM (
       Mentors.mentor_id AS a,
       Mentors.mentee_id AS b
     FROM
-      synalog_test.Mentors AS Mentors
+      synalog_home.Mentors AS Mentors
    UNION ALL
   
     SELECT
       t_1_Mentors.mentee_id AS a,
       t_1_Mentors.mentor_id AS b
     FROM
-      synalog_test.Mentors AS t_1_Mentors
+      synalog_home.Mentors AS t_1_Mentors
   
 ) AS UNUSED_TABLE_NAME  )
 SELECT

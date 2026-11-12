@@ -21937,7 +21937,7 @@ _HEADER = (
 
 def _rebrand(sql, engine=None):
     for a, b in (("logicarecord", "synalogrecord"), ("logica_home", "synalog_home"),
-                 ("logica_test", "synalog_test"), ("logica_value", "synalog_value"),
+                 ("logica_test", "synalog_home"), ("logica_value", "synalog_value"),
                  ("logica_step", "synalog_step"), ("-- Logica type:", "-- Synalog type:")):
         sql = sql.replace(a, b)
     if engine == "duckdb":

@@ -8,10 +8,10 @@ SET allow_experimental_correlated_subqueries = 1;
 SET aggregate_functions_null_for_empty = 1;
 SET cast_keep_nullable = 1;
 SET transform_null_in = 1;
-CREATE DATABASE IF NOT EXISTS synalog_test;
+CREATE DATABASE IF NOT EXISTS synalog_home;
 
-DROP TABLE IF EXISTS synalog_test.Team;
-CREATE TABLE synalog_test.Team ENGINE = Memory AS WITH t_0_Teams AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_home.Team;
+CREATE TABLE synalog_home.Team ENGINE = Memory AS WITH t_0_Teams AS (SELECT * FROM (
   
     SELECT
       10 AS team_id,
@@ -35,7 +35,7 @@ FROM
   t_0_Teams AS Teams
 GROUP BY 1, 2 ORDER BY team_id;
 
--- Interacting with table synalog_test.Team
+-- Interacting with table synalog_home.Team
 
 WITH t_5_Clients AS (SELECT * FROM (
   
@@ -76,7 +76,7 @@ t_1_EngagedWith AS (SELECT
   t_2_Team.team_id AS team_id,
   t_3_Client.client_id AS client_id
 FROM
-  synalog_test.Team AS t_2_Team, t_4_Client AS t_3_Client, t_6_Engagements AS Engagements
+  synalog_home.Team AS t_2_Team, t_4_Client AS t_3_Client, t_6_Engagements AS Engagements
 WHERE
   (Engagements.team_id = t_2_Team.team_id) AND
   (Engagements.client_id = t_3_Client.client_id)
@@ -84,7 +84,7 @@ GROUP BY 1, 2)
 SELECT
   t_0_Team.team_id AS team_id
 FROM
-  synalog_test.Team AS t_0_Team
+  synalog_home.Team AS t_0_Team
 WHERE
   NOT (t_0_Team.team_id IS NOT NULL AND CAST(t_0_Team.team_id AS Nullable(String)) IN (SELECT CAST(synalog_k0 AS Nullable(String)) FROM (SELECT
     EngagedWith.team_id AS synalog_k0

@@ -8,10 +8,10 @@ SET allow_experimental_correlated_subqueries = 1;
 SET aggregate_functions_null_for_empty = 1;
 SET cast_keep_nullable = 1;
 SET transform_null_in = 1;
-CREATE DATABASE IF NOT EXISTS synalog_test;
+CREATE DATABASE IF NOT EXISTS synalog_home;
 
-DROP TABLE IF EXISTS synalog_test.W;
-CREATE TABLE synalog_test.W ENGINE = Memory AS WITH t_0_W_MultBodyAggAux AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_home.W;
+CREATE TABLE synalog_home.W ENGINE = Memory AS WITH t_0_W_MultBodyAggAux AS (SELECT * FROM (
   
     SELECT
       x_3 AS x
@@ -61,9 +61,9 @@ FROM
   t_0_W_MultBodyAggAux AS W_MultBodyAggAux
 GROUP BY 1;
 
--- Interacting with table synalog_test.W
+-- Interacting with table synalog_home.W
 
 SELECT
   SUM(1) AS n
 FROM
-  synalog_test.W AS W;
+  synalog_home.W AS W;

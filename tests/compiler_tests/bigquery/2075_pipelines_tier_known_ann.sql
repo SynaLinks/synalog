@@ -1,5 +1,5 @@
-DROP TABLE IF EXISTS synalog_test.Tier;
-CREATE TABLE synalog_test.Tier AS WITH t_2_Order AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_home.Tier;
+CREATE TABLE synalog_home.Tier AS WITH t_2_Order AS (SELECT * FROM (
   
     SELECT
       1 AS id,
@@ -113,7 +113,7 @@ SELECT
 FROM
   t_0_Spend AS Spend;
 
--- Interacting with table synalog_test.Tier
+-- Interacting with table synalog_home.Tier
 
 WITH t_2_Order AS (SELECT * FROM (
   
@@ -210,7 +210,7 @@ WHERE
   ((SELECT
     MIN(1) AS synalog_value
   FROM
-    synalog_test.Tier AS t_6_Tier
+    synalog_home.Tier AS t_6_Tier
   WHERE
     (t_6_Tier.who = t_4_Person.who)) IS NULL))
 SELECT

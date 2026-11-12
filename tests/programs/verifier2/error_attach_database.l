@@ -1,5 +1,5 @@
-# Refused: attach database.
-# Expect: error @AttachDatabase is not supported
+# Refused: @AttachDatabase is no directive.
+# Expect: error special predicates are allowed
 E(a: 1, b: 2);
 E(a: 2, b: 3);
 N(n: 1, s: "x");

@@ -8,10 +8,10 @@ SET allow_experimental_correlated_subqueries = 1;
 SET aggregate_functions_null_for_empty = 1;
 SET cast_keep_nullable = 1;
 SET transform_null_in = 1;
-CREATE DATABASE IF NOT EXISTS synalog_test;
+CREATE DATABASE IF NOT EXISTS synalog_home;
 
-DROP TABLE IF EXISTS synalog_test.L;
-CREATE TABLE synalog_test.L ENGINE = Memory AS WITH t_1_I AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_home.L;
+CREATE TABLE synalog_home.L ENGINE = Memory AS WITH t_1_I AS (SELECT * FROM (
   
     SELECT
       1 AS "order",
@@ -101,17 +101,17 @@ FROM
   t_1_I AS I
 GROUP BY 1;
 
--- Interacting with table synalog_test.L
+-- Interacting with table synalog_home.L
 
 SELECT
   t_0_L."order" AS "order"
 FROM
-  synalog_test.L AS t_0_L
+  synalog_home.L AS t_0_L
 WHERE
   NOT (t_0_L."order" IS NOT NULL AND CAST(t_0_L."order" AS Nullable(String)) IN (SELECT CAST(synalog_k0 AS Nullable(String)) FROM (SELECT
     t_1_L."order" AS synalog_k0
   FROM
-    synalog_test.L AS t_1_L
+    synalog_home.L AS t_1_L
     ARRAY JOIN t_1_L.l AS x_7
   WHERE
     ('ink' = x_7)

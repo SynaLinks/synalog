@@ -8,10 +8,10 @@ SET allow_experimental_correlated_subqueries = 1;
 SET aggregate_functions_null_for_empty = 1;
 SET cast_keep_nullable = 1;
 SET transform_null_in = 1;
-CREATE DATABASE IF NOT EXISTS synalog_test;
+CREATE DATABASE IF NOT EXISTS synalog_home;
 
-DROP TABLE IF EXISTS synalog_test.A;
-CREATE TABLE synalog_test.A ENGINE = Memory AS WITH t_0_I AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_home.A;
+CREATE TABLE synalog_home.A ENGINE = Memory AS WITH t_0_I AS (SELECT * FROM (
   
     SELECT
       1 AS "order",
@@ -101,13 +101,13 @@ FROM
   t_0_I AS I
 GROUP BY 1;
 
--- Interacting with table synalog_test.A
+-- Interacting with table synalog_home.A
 
 SELECT
   length(arrayConcat(A.l, t_0_A.l)) AS n,
   (has(arrayConcat(A.l, t_0_A.l), 'cap')) AS has_cap
 FROM
-  synalog_test.A AS A, synalog_test.A AS t_0_A
+  synalog_home.A AS A, synalog_home.A AS t_0_A
 WHERE
   (A.customer = 'ann') AND
   (t_0_A.customer = 'cid');

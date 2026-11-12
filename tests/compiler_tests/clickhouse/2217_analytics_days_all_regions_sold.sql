@@ -8,10 +8,10 @@ SET allow_experimental_correlated_subqueries = 1;
 SET aggregate_functions_null_for_empty = 1;
 SET cast_keep_nullable = 1;
 SET transform_null_in = 1;
-CREATE DATABASE IF NOT EXISTS synalog_test;
+CREATE DATABASE IF NOT EXISTS synalog_home;
 
-DROP TABLE IF EXISTS synalog_test.Day;
-CREATE TABLE synalog_test.Day ENGINE = Memory AS WITH t_0_S AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_home.Day;
+CREATE TABLE synalog_home.Day ENGINE = Memory AS WITH t_0_S AS (SELECT * FROM (
   
     SELECT
       'north' AS r,
@@ -103,7 +103,7 @@ FROM
   t_0_S AS S
 GROUP BY 1;
 
--- Interacting with table synalog_test.Day
+-- Interacting with table synalog_home.Day
 
 WITH t_0_S AS (SELECT * FROM (
   
@@ -199,7 +199,7 @@ GROUP BY 1),
 t_0_Missing AS (SELECT
   t_1_Day.d AS d
 FROM
-  synalog_test.Day AS t_1_Day, t_2_Region AS Region
+  synalog_home.Day AS t_1_Day, t_2_Region AS Region
 WHERE
   NOT (Region.r IS NOT NULL AND t_1_Day.d IS NOT NULL AND (CAST(Region.r AS Nullable(String)), CAST(t_1_Day.d AS Nullable(String))) IN (SELECT CAST(synalog_k0 AS Nullable(String)), CAST(synalog_k1 AS Nullable(String)) FROM (SELECT
     t_3_S.r AS synalog_k0,
@@ -211,7 +211,7 @@ GROUP BY 1)
 SELECT
   Day.d AS d
 FROM
-  synalog_test.Day AS Day
+  synalog_home.Day AS Day
 WHERE
   NOT (Day.d IS NOT NULL AND CAST(Day.d AS Nullable(String)) IN (SELECT CAST(synalog_k0 AS Nullable(String)) FROM (SELECT
     Missing.d AS synalog_k0

@@ -7,10 +7,10 @@ SET SESSION sql_mode = 'ANSI_QUOTES,PIPES_AS_CONCAT,NO_BACKSLASH_ESCAPES';
 SET SESSION optimizer_switch = 'derived_condition_pushdown=off';
 SET NAMES utf8mb4 COLLATE utf8mb4_0900_bin;
 SET SESSION group_concat_max_len = 1073741824;
-CREATE DATABASE IF NOT EXISTS synalog_test DEFAULT COLLATE utf8mb4_0900_bin;
+CREATE DATABASE IF NOT EXISTS synalog_home DEFAULT COLLATE utf8mb4_0900_bin;
 
-DROP TABLE IF EXISTS synalog_test.Line;
-CREATE TABLE synalog_test.Line AS WITH t_1_Order AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_home.Line;
+CREATE TABLE synalog_home.Line AS WITH t_1_Order AS (SELECT * FROM (
   
     SELECT
       1 AS id,
@@ -119,13 +119,13 @@ WHERE
   (t_0_Order.state = 'paid') AND
   (Price.item = t_0_Order.item);
 
--- Interacting with table synalog_test.Line
+-- Interacting with table synalog_home.Line
 
 WITH t_2_Spend AS (SELECT
   Line.who AS who,
   SUM(Line.amount) AS total
 FROM
-  synalog_test.Line AS Line
+  synalog_home.Line AS Line
 GROUP BY 1),
 t_0_TierCount AS (SELECT
   CASE WHEN (Spend.total >= 40) THEN 'gold' WHEN (Spend.total >= 15) THEN 'silver' ELSE 'bronze' END AS tier,

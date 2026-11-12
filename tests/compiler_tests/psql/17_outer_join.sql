@@ -1,6 +1,6 @@
 -- Initializing PostgreSQL environment.
 set client_min_messages to warning;
-create schema if not exists synalog_home;
+DO $$ BEGIN if not exists (select 1 from pg_namespace where nspname = 'synalog_home') then create schema synalog_home; end if; END $$;
 -- Empty synalog type: synalogrecord893574736;
 DO $$ BEGIN if not exists (select 'I(am) :- I(think)' from pg_type where typname = 'synalogrecord893574736') then create type synalogrecord893574736 as (nirvana numeric); end if; END $$;
 
@@ -48,8 +48,8 @@ t_1_ContactInfo_MultBodyAggAux AS (SELECT * FROM (
 ) AS UNUSED_TABLE_NAME  ),
 t_0_ContactInfo AS (SELECT
   ContactInfo_MultBodyAggAux.person AS person,
-  ARRAY_CONCAT_AGG(ContactInfo_MultBodyAggAux.phones) AS phones,
-  ARRAY_CONCAT_AGG(ContactInfo_MultBodyAggAux.emails) AS emails
+  synalog_home.ARRAY_CONCAT_AGG(ContactInfo_MultBodyAggAux.phones) AS phones,
+  synalog_home.ARRAY_CONCAT_AGG(ContactInfo_MultBodyAggAux.emails) AS emails
 FROM
   t_1_ContactInfo_MultBodyAggAux AS ContactInfo_MultBodyAggAux
 GROUP BY ContactInfo_MultBodyAggAux.person ORDER BY person)

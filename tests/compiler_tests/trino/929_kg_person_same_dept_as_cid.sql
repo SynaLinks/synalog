@@ -1,5 +1,5 @@
-DROP TABLE IF EXISTS synalog_test.Person;
-CREATE TABLE synalog_test.Person AS WITH t_0_Employees AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_home.synalog_home.Person;
+CREATE TABLE synalog_home.synalog_home.Person AS WITH t_0_Employees AS (SELECT * FROM (
   
     SELECT
       1 AS person_id,
@@ -54,10 +54,10 @@ FROM
   t_0_Employees AS Employees
 GROUP BY 1, 2, 3 ORDER BY person_id;
 
--- Interacting with table synalog_test.Person
+-- Interacting with table synalog_home.synalog_home.Person
 
-DROP TABLE IF EXISTS synalog_test.InDept;
-CREATE TABLE synalog_test.InDept AS WITH t_0_Employees AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_home.synalog_home.InDept;
+CREATE TABLE synalog_home.synalog_home.InDept AS WITH t_0_Employees AS (SELECT * FROM (
   
     SELECT
       1 AS person_id,
@@ -113,18 +113,18 @@ SELECT
   Person.person_id AS person_id,
   Dept.dept AS dept
 FROM
-  synalog_test.Person AS Person, t_0_Dept AS Dept, t_0_Employees AS Employees
+  synalog_home.synalog_home.Person AS Person, t_0_Dept AS Dept, t_0_Employees AS Employees
 WHERE
   (Employees.person_id = Person.person_id) AND
   (Employees.dept = Dept.dept)
 GROUP BY 1, 2;
 
--- Interacting with table synalog_test.InDept
+-- Interacting with table synalog_home.synalog_home.InDept
 
 SELECT
   t_0_InDept.person_id AS person_id
 FROM
-  synalog_test.InDept AS InDept, synalog_test.InDept AS t_0_InDept
+  synalog_home.synalog_home.InDept AS InDept, synalog_home.synalog_home.InDept AS t_0_InDept
 WHERE
   (t_0_InDept.person_id != 3) AND
   (InDept.person_id = 3) AND

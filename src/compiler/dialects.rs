@@ -48,11 +48,12 @@ fn backslash_escaped_literal(s: &str, dollar: bool) -> String {
 ///
 /// The name hashes the type's columns as declared (`psql_record_columns`), not
 /// only its shape: a declaration is created once per database (`if not
-/// exists`), so a type declared differently must have another name.
+/// exists`), so a type declared differently must have another name. It is in
+/// synalog's schema, where a program writes everything it creates.
 pub fn record_type_name(ty: &Type) -> String {
     let mut hasher = DefaultHasher::new();
     psql_record_columns(ty).hash(&mut hasher);
-    format!("synalogrecord{}", hasher.finish())
+    format!("{}.synalogrecord{}", crate::compiler::home_schema(), hasher.finish())
 }
 
 /// The columns of a record's PostgreSQL composite type, in canonical (sorted)
@@ -941,6 +942,9 @@ impl Dialect for PostgreSqlDialect {
     fn built_in_functions(&self) -> HashMap<&'static str, &'static str> {
         let mut m = HashMap::new();
         m.insert("RegexpContains", "({0} ~ {1})");
+        // The session's aggregate (`synalog.runners.PSQL_ARRAY_CONCAT_AGG`),
+        // in synalog's schema, as everything synalog creates.
+        m.insert("Agg++", "synalog_home.ARRAY_CONCAT_AGG(%s)");
         m.insert("RegexpReplace", "regexp_replace({0}, {1}, {2}, 'g')");
         m.insert("RegexpExtract", "SUBSTRING({0} FROM {1})");
         m.insert("Div", "CAST((CASE WHEN (({0}) < 0) <> (({1}) < 0) THEN CEIL(CAST({0} AS double precision) / NULLIF({1}, 0)) ELSE FLOOR(CAST({0} AS double precision) / NULLIF({1}, 0)) END) AS BIGINT)");
@@ -1651,10 +1655,10 @@ NaturalHash(x) = ToInt64(SqlExpr("hash(cast({x} as string)) // cast(2 as ubigint
 # This is unsafe to use because due to the way Logica compiles this number
 # will be unique for each use of the variable, which can be a pain to debug.
 # It is OK to use it as long as you undertand and are OK with the difficulty.
-UnsafeToUseUniqueNumber() = SqlExpr("nextval('eternal_logical_sequence')", {});
+UnsafeToUseUniqueNumber() = SqlExpr("nextval('synalog_home.eternal_logical_sequence')", {});
 
 # Danger is immanent to life.
-UniqueNumber() = SqlExpr("nextval('eternal_logical_sequence')", {});
+UniqueNumber() = SqlExpr("nextval('synalog_home.eternal_logical_sequence')", {});
 
 # Aggregation that concatenates list.
 # Doing via SqlExpr as Logica for now prohibits list of lists.

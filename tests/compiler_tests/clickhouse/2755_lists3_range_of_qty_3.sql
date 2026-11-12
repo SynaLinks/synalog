@@ -8,10 +8,10 @@ SET allow_experimental_correlated_subqueries = 1;
 SET aggregate_functions_null_for_empty = 1;
 SET cast_keep_nullable = 1;
 SET transform_null_in = 1;
-CREATE DATABASE IF NOT EXISTS synalog_test;
+CREATE DATABASE IF NOT EXISTS synalog_home;
 
-DROP TABLE IF EXISTS synalog_test.R;
-CREATE TABLE synalog_test.R ENGINE = Memory AS WITH t_0_I AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_home.R;
+CREATE TABLE synalog_home.R ENGINE = Memory AS WITH t_0_I AS (SELECT * FROM (
   
     SELECT
       1 AS "order",
@@ -102,13 +102,13 @@ FROM
 WHERE
   (I."order" = 3);
 
--- Interacting with table synalog_test.R
+-- Interacting with table synalog_home.R
 
 WITH t_2_T AS (SELECT
   t_3_R.pos AS pos,
   SUM(x_9) AS t
 FROM
-  synalog_test.R AS t_3_R
+  synalog_home.R AS t_3_R
   ARRAY JOIN t_3_R.r AS x_9
 GROUP BY 1)
 SELECT
@@ -116,6 +116,6 @@ SELECT
   length(t_0_R.r) AS n,
   t_1_T.t AS t
 FROM
-  synalog_test.R AS t_0_R, t_2_T AS t_1_T
+  synalog_home.R AS t_0_R, t_2_T AS t_1_T
 WHERE
   (t_1_T.pos = t_0_R.pos) ORDER BY pos, n, t;

@@ -645,8 +645,15 @@ A program's text reaches SQL as literals and checked names only
 - PostgreSQL: a string with a backslash is `E'...'`, read the same whatever
   `standard_conforming_strings` says.
 - `search()` writes its pattern as such a literal; upstream doubled quotes only.
-- `@Dataset` takes a schema name; a table named in `@Ground` lives in Synalog's
-  dataset.
+- A program writes in `synalog_home` only, on every engine: upstream's
+  `@Dataset`, which moved its tables to any schema (and dropped one of the
+  same name there), is gone, and so is `@AttachDatabase`. A table named in
+  `@Ground` lives in `synalog_home` too, and so do the types and the sequence
+  the PostgreSQL and DuckDB preambles create (upstream's are in the default
+  schema). On Trino and Presto the schema is in a catalog of the same name
+  (`synalog_home.synalog_home.Q`): their access control makes a catalog
+  read-only, not a schema, so the customer's catalog can be one synalog's user
+  may only read.
 - A table the program reads is a name: upstream wrote `` `(SELECT ...)` `` into
   the SQL as such, and any backquoted name verbatim. A backquoted path is
   quoted part by part (whole on BigQuery).
@@ -654,8 +661,7 @@ A program's text reaches SQL as literals and checked names only
   literals too); `FlagValue("flag")` gives a flag as a string literal.
 - A program reaches no file, process or service: the library's `ReadFile`,
   `ReadJson`, `WriteFile`, `PrintToConsole`, `Intelligence` and Clingo
-  functions are gone, and `@AttachDatabase` and `@Ground(..., copy_to_file:)`
-  are refused.
+  functions are gone, and `@Ground(..., copy_to_file:)` is refused.
 - Databricks quotes an identifier's backtick by doubling it (upstream wrote
   `` \` ``, which Spark does not read); BigQuery escapes a backslash in one.
 

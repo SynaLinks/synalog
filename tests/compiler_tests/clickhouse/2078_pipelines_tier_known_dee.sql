@@ -8,10 +8,10 @@ SET allow_experimental_correlated_subqueries = 1;
 SET aggregate_functions_null_for_empty = 1;
 SET cast_keep_nullable = 1;
 SET transform_null_in = 1;
-CREATE DATABASE IF NOT EXISTS synalog_test;
+CREATE DATABASE IF NOT EXISTS synalog_home;
 
-DROP TABLE IF EXISTS synalog_test.Person;
-CREATE TABLE synalog_test.Person ENGINE = Memory AS WITH t_1_Order AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_home.Person;
+CREATE TABLE synalog_home.Person ENGINE = Memory AS WITH t_1_Order AS (SELECT * FROM (
   
     SELECT
       1 AS id,
@@ -99,10 +99,10 @@ FROM
   t_1_Order AS t_0_Order
 GROUP BY 1;
 
--- Interacting with table synalog_test.Person
+-- Interacting with table synalog_home.Person
 
-DROP TABLE IF EXISTS synalog_test.Tier;
-CREATE TABLE synalog_test.Tier ENGINE = Memory AS WITH t_1_Order AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_home.Tier;
+CREATE TABLE synalog_home.Tier ENGINE = Memory AS WITH t_1_Order AS (SELECT * FROM (
   
     SELECT
       1 AS id,
@@ -216,22 +216,22 @@ SELECT
 FROM
   t_0_Spend AS Spend;
 
--- Interacting with table synalog_test.Tier
+-- Interacting with table synalog_home.Tier
 
 WITH t_0_NoTier AS (SELECT
   t_1_Person.who AS who
 FROM
-  synalog_test.Person AS t_1_Person
+  synalog_home.Person AS t_1_Person
 WHERE
   NOT (t_1_Person.who IS NOT NULL AND CAST(t_1_Person.who AS Nullable(String)) IN (SELECT CAST(synalog_k0 AS Nullable(String)) FROM (SELECT
     t_2_Tier.who AS synalog_k0
   FROM
-    synalog_test.Tier AS t_2_Tier
+    synalog_home.Tier AS t_2_Tier
   GROUP BY 1) AS synalog_m)))
 SELECT
   1 AS ok
 FROM
-  synalog_test.Person AS Person
+  synalog_home.Person AS Person
 WHERE
   ((SELECT
     MIN(1) AS synalog_value

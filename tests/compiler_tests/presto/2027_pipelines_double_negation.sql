@@ -1,5 +1,5 @@
-DROP TABLE IF EXISTS synalog_test.Person;
-CREATE TABLE synalog_test.Person AS WITH t_1_Order AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_home.synalog_home.Person;
+CREATE TABLE synalog_home.synalog_home.Person AS WITH t_1_Order AS (SELECT * FROM (
   
     SELECT
       1 AS id,
@@ -87,7 +87,7 @@ FROM
   t_1_Order AS t_0_Order
 GROUP BY 1;
 
--- Interacting with table synalog_test.Person
+-- Interacting with table synalog_home.synalog_home.Person
 
 WITH t_1_Order AS (SELECT * FROM (
   
@@ -200,7 +200,7 @@ GROUP BY 1),
 t_0_Never AS (SELECT
   t_1_Person.who AS who
 FROM
-  synalog_test.Person AS t_1_Person
+  synalog_home.synalog_home.Person AS t_1_Person
 WHERE
   ((SELECT
     MIN(1) AS synalog_value
@@ -211,7 +211,7 @@ WHERE
 SELECT
   Person.who AS who
 FROM
-  synalog_test.Person AS Person
+  synalog_home.synalog_home.Person AS Person
 WHERE
   ((SELECT
     MIN(1) AS synalog_value

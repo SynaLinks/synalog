@@ -1,5 +1,5 @@
-DROP TABLE IF EXISTS synalog_test.D;
-CREATE TABLE synalog_test.D AS WITH t_0_S AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_home.synalog_home.D;
+CREATE TABLE synalog_home.synalog_home.D AS WITH t_0_S AS (SELECT * FROM (
   
     SELECT
       'north' AS r,
@@ -93,13 +93,13 @@ WHERE
   (S.r = 'east')
 GROUP BY 1;
 
--- Interacting with table synalog_test.D
+-- Interacting with table synalog_home.synalog_home.D
 
 WITH t_0_B AS (SELECT
   MIN(t_1_D.d) AS lo,
   MAX(t_1_D.d) AS hi
 FROM
-  synalog_test.D AS t_1_D)
+  synalog_home.synalog_home.D AS t_1_D)
 SELECT
   x_3 AS d
 FROM
@@ -109,6 +109,6 @@ WHERE
   ((SELECT
     MIN(1) AS synalog_value
   FROM
-    synalog_test.D AS t_2_D
+    synalog_home.synalog_home.D AS t_2_D
   WHERE
     (t_2_D.d = x_3)) IS NULL);

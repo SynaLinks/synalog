@@ -8,10 +8,10 @@ SET allow_experimental_correlated_subqueries = 1;
 SET aggregate_functions_null_for_empty = 1;
 SET cast_keep_nullable = 1;
 SET transform_null_in = 1;
-CREATE DATABASE IF NOT EXISTS synalog_test;
+CREATE DATABASE IF NOT EXISTS synalog_home;
 
-DROP TABLE IF EXISTS synalog_test.In_table;
-CREATE TABLE synalog_test.In_table ENGINE = Memory AS WITH t_0_Stock AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_home.In_table;
+CREATE TABLE synalog_home.In_table ENGINE = Memory AS WITH t_0_Stock AS (SELECT * FROM (
   
     SELECT
       'north' AS warehouse,
@@ -74,17 +74,17 @@ FROM
   t_0_Stock AS Stock
 GROUP BY 1, 2;
 
--- Interacting with table synalog_test.In_table
+-- Interacting with table synalog_home.In_table
 
 SELECT
   t_0_In.item AS item
 FROM
-  synalog_test.In_table AS t_0_In
+  synalog_home.In_table AS t_0_In
 WHERE
   NOT (t_0_In.item IS NOT NULL AND CAST(t_0_In.item AS Nullable(String)) IN (SELECT CAST(synalog_k0 AS Nullable(String)) FROM (SELECT
     t_1_In.item AS synalog_k0
   FROM
-    synalog_test.In_table AS t_1_In
+    synalog_home.In_table AS t_1_In
   WHERE
     (t_1_In.warehouse = 'south')
   GROUP BY 1) AS synalog_m)) AND

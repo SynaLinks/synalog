@@ -1,5 +1,5 @@
-# Refused: dataset not a name.
-# Expect: error is not a schema name
+# Refused: @Dataset is no directive.
+# Expect: error special predicates are allowed
 E(a: 1, b: 2);
 E(a: 2, b: 3);
 N(n: 1, s: "x");

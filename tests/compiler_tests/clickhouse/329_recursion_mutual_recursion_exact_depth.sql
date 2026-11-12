@@ -8,10 +8,10 @@ SET allow_experimental_correlated_subqueries = 1;
 SET aggregate_functions_null_for_empty = 1;
 SET cast_keep_nullable = 1;
 SET transform_null_in = 1;
-CREATE DATABASE IF NOT EXISTS synalog_test;
+CREATE DATABASE IF NOT EXISTS synalog_home;
 
-DROP TABLE IF EXISTS synalog_test.Even_fr1;
-CREATE TABLE synalog_test.Even_fr1 ENGINE = Memory AS WITH t_0_Even_MultBodyAggAux_f4 AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_home.Even_fr1;
+CREATE TABLE synalog_home.Even_fr1 ENGINE = Memory AS WITH t_0_Even_MultBodyAggAux_f4 AS (SELECT * FROM (
   
     SELECT
       0 AS x
@@ -23,24 +23,24 @@ FROM
   t_0_Even_MultBodyAggAux_f4 AS Even_MultBodyAggAux_f4
 GROUP BY 1;
 
--- Interacting with table synalog_test.Even_fr1
+-- Interacting with table synalog_home.Even_fr1
 
-DROP TABLE IF EXISTS synalog_test.Odd_fr2;
-CREATE TABLE synalog_test.Odd_fr2 ENGINE = Memory AS SELECT
+DROP TABLE IF EXISTS synalog_home.Odd_fr2;
+CREATE TABLE synalog_home.Odd_fr2 ENGINE = Memory AS SELECT
   ((Even_fr1.x) + (1)) AS x
 FROM
-  synalog_test.Even_fr1 AS Even_fr1
+  synalog_home.Even_fr1 AS Even_fr1
 GROUP BY 1;
 
--- Interacting with table synalog_test.Odd_fr2
+-- Interacting with table synalog_home.Odd_fr2
 
-DROP TABLE IF EXISTS synalog_test.Even_fr3;
-CREATE TABLE synalog_test.Even_fr3 ENGINE = Memory AS WITH t_0_Even_MultBodyAggAux_f8 AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_home.Even_fr3;
+CREATE TABLE synalog_home.Even_fr3 ENGINE = Memory AS WITH t_0_Even_MultBodyAggAux_f8 AS (SELECT * FROM (
   
     SELECT
       ((Odd_fr2.x) + (1)) AS x
     FROM
-      synalog_test.Odd_fr2 AS Odd_fr2
+      synalog_home.Odd_fr2 AS Odd_fr2
    UNION ALL
   
     SELECT
@@ -53,23 +53,23 @@ FROM
   t_0_Even_MultBodyAggAux_f8 AS Even_MultBodyAggAux_f8
 GROUP BY 1;
 
--- Interacting with table synalog_test.Even_fr3
+-- Interacting with table synalog_home.Even_fr3
 
-DROP TABLE IF EXISTS synalog_test.Odd_fr4;
-CREATE TABLE synalog_test.Odd_fr4 ENGINE = Memory AS SELECT
+DROP TABLE IF EXISTS synalog_home.Odd_fr4;
+CREATE TABLE synalog_home.Odd_fr4 ENGINE = Memory AS SELECT
   ((Even_fr3.x) + (1)) AS x
 FROM
-  synalog_test.Even_fr3 AS Even_fr3
+  synalog_home.Even_fr3 AS Even_fr3
 GROUP BY 1;
 
--- Interacting with table synalog_test.Odd_fr4
+-- Interacting with table synalog_home.Odd_fr4
 
 WITH t_0_Even_MultBodyAggAux_f12 AS (SELECT * FROM (
   
     SELECT
       ((Odd_fr4.x) + (1)) AS x
     FROM
-      synalog_test.Odd_fr4 AS Odd_fr4
+      synalog_home.Odd_fr4 AS Odd_fr4
    UNION ALL
   
     SELECT

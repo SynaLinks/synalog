@@ -8,10 +8,10 @@ SET allow_experimental_correlated_subqueries = 1;
 SET aggregate_functions_null_for_empty = 1;
 SET cast_keep_nullable = 1;
 SET transform_null_in = 1;
-CREATE DATABASE IF NOT EXISTS synalog_test;
+CREATE DATABASE IF NOT EXISTS synalog_home;
 
-DROP TABLE IF EXISTS synalog_test.C_fr0;
-CREATE TABLE synalog_test.C_fr0 ENGINE = Memory AS WITH t_0_C_MultBodyAggAux_f1 AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_home.C_fr0;
+CREATE TABLE synalog_home.C_fr0 ENGINE = Memory AS WITH t_0_C_MultBodyAggAux_f1 AS (SELECT * FROM (
   
     SELECT
       1 AS n
@@ -22,15 +22,15 @@ SELECT
 FROM
   t_0_C_MultBodyAggAux_f1 AS C_MultBodyAggAux_f1;
 
--- Interacting with table synalog_test.C_fr0
+-- Interacting with table synalog_home.C_fr0
 
-DROP TABLE IF EXISTS synalog_test.C_fr1;
-CREATE TABLE synalog_test.C_fr1 ENGINE = Memory AS WITH t_0_C_MultBodyAggAux_f2 AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_home.C_fr1;
+CREATE TABLE synalog_home.C_fr1 ENGINE = Memory AS WITH t_0_C_MultBodyAggAux_f2 AS (SELECT * FROM (
   
     SELECT
       ((C_fr0.n) + (1)) AS n
     FROM
-      synalog_test.C_fr0 AS C_fr0
+      synalog_home.C_fr0 AS C_fr0
     WHERE
       (C_fr0.n < 3)
    UNION ALL
@@ -44,15 +44,15 @@ SELECT
 FROM
   t_0_C_MultBodyAggAux_f2 AS C_MultBodyAggAux_f2;
 
--- Interacting with table synalog_test.C_fr1
+-- Interacting with table synalog_home.C_fr1
 
-DROP TABLE IF EXISTS synalog_test.C_fr2;
-CREATE TABLE synalog_test.C_fr2 ENGINE = Memory AS WITH t_0_C_MultBodyAggAux_f3 AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_home.C_fr2;
+CREATE TABLE synalog_home.C_fr2 ENGINE = Memory AS WITH t_0_C_MultBodyAggAux_f3 AS (SELECT * FROM (
   
     SELECT
       ((C_fr1.n) + (1)) AS n
     FROM
-      synalog_test.C_fr1 AS C_fr1
+      synalog_home.C_fr1 AS C_fr1
     WHERE
       (C_fr1.n < 3)
    UNION ALL
@@ -66,14 +66,14 @@ SELECT
 FROM
   t_0_C_MultBodyAggAux_f3 AS C_MultBodyAggAux_f3;
 
--- Interacting with table synalog_test.C_fr2
+-- Interacting with table synalog_home.C_fr2
 
 WITH t_0_C_MultBodyAggAux_f4 AS (SELECT * FROM (
   
     SELECT
       ((C_fr2.n) + (1)) AS n
     FROM
-      synalog_test.C_fr2 AS C_fr2
+      synalog_home.C_fr2 AS C_fr2
     WHERE
       (C_fr2.n < 3)
    UNION ALL

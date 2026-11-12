@@ -8,10 +8,10 @@ SET allow_experimental_correlated_subqueries = 1;
 SET aggregate_functions_null_for_empty = 1;
 SET cast_keep_nullable = 1;
 SET transform_null_in = 1;
-CREATE DATABASE IF NOT EXISTS synalog_test;
+CREATE DATABASE IF NOT EXISTS synalog_home;
 
-DROP TABLE IF EXISTS synalog_test.Trouble;
-CREATE TABLE synalog_test.Trouble ENGINE = Memory AS WITH t_2_Order AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_home.Trouble;
+CREATE TABLE synalog_home.Trouble ENGINE = Memory AS WITH t_2_Order AS (SELECT * FROM (
   
     SELECT
       1 AS id,
@@ -117,7 +117,7 @@ FROM
   t_0_Trouble_MultBodyAggAux AS Trouble_MultBodyAggAux
 GROUP BY 1;
 
--- Interacting with table synalog_test.Trouble
+-- Interacting with table synalog_home.Trouble
 
 WITH t_2_Order AS (SELECT * FROM (
   
@@ -235,5 +235,5 @@ WHERE
   NOT (Spend.who IS NOT NULL AND CAST(Spend.who AS Nullable(String)) IN (SELECT CAST(synalog_k0 AS Nullable(String)) FROM (SELECT
     Trouble.who AS synalog_k0
   FROM
-    synalog_test.Trouble AS Trouble
+    synalog_home.Trouble AS Trouble
   GROUP BY 1) AS synalog_m)) ORDER BY who;

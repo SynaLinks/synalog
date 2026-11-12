@@ -8,10 +8,10 @@ SET allow_experimental_correlated_subqueries = 1;
 SET aggregate_functions_null_for_empty = 1;
 SET cast_keep_nullable = 1;
 SET transform_null_in = 1;
-CREATE DATABASE IF NOT EXISTS synalog_test;
+CREATE DATABASE IF NOT EXISTS synalog_home;
 
-DROP TABLE IF EXISTS synalog_test.Person;
-CREATE TABLE synalog_test.Person ENGINE = Memory AS WITH t_1_Order AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_home.Person;
+CREATE TABLE synalog_home.Person ENGINE = Memory AS WITH t_1_Order AS (SELECT * FROM (
   
     SELECT
       1 AS id,
@@ -99,7 +99,7 @@ FROM
   t_1_Order AS t_0_Order
 GROUP BY 1;
 
--- Interacting with table synalog_test.Person
+-- Interacting with table synalog_home.Person
 
 WITH t_1_Order AS (SELECT * FROM (
   
@@ -212,12 +212,12 @@ GROUP BY 1)
 SELECT
   Person.who AS who
 FROM
-  synalog_test.Person AS Person
+  synalog_home.Person AS Person
 WHERE
   NOT (Person.who IS NOT NULL AND CAST(Person.who AS Nullable(String)) IN (SELECT CAST(synalog_k0 AS Nullable(String)) FROM (SELECT
     t_0_Person.who AS synalog_k0
   FROM
-    synalog_test.Person AS t_0_Person
+    synalog_home.Person AS t_0_Person
   WHERE
     NOT (t_0_Person.who IS NOT NULL AND CAST(t_0_Person.who AS Nullable(String)) IN (SELECT CAST(synalog_k0 AS Nullable(String)) FROM (SELECT
       Spend.who AS synalog_k0

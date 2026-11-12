@@ -8,10 +8,10 @@ SET allow_experimental_correlated_subqueries = 1;
 SET aggregate_functions_null_for_empty = 1;
 SET cast_keep_nullable = 1;
 SET transform_null_in = 1;
-CREATE DATABASE IF NOT EXISTS synalog_test;
+CREATE DATABASE IF NOT EXISTS synalog_home;
 
-DROP TABLE IF EXISTS synalog_test.Person;
-CREATE TABLE synalog_test.Person ENGINE = Memory AS WITH t_0_Employees AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_home.Person;
+CREATE TABLE synalog_home.Person ENGINE = Memory AS WITH t_0_Employees AS (SELECT * FROM (
   
     SELECT
       1 AS person_id,
@@ -66,10 +66,10 @@ FROM
   t_0_Employees AS Employees
 GROUP BY 1, 2, 3 ORDER BY person_id;
 
--- Interacting with table synalog_test.Person
+-- Interacting with table synalog_home.Person
 
-DROP TABLE IF EXISTS synalog_test.Team;
-CREATE TABLE synalog_test.Team ENGINE = Memory AS WITH t_0_Teams AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_home.Team;
+CREATE TABLE synalog_home.Team ENGINE = Memory AS WITH t_0_Teams AS (SELECT * FROM (
   
     SELECT
       10 AS team_id,
@@ -93,10 +93,10 @@ FROM
   t_0_Teams AS Teams
 GROUP BY 1, 2 ORDER BY team_id;
 
--- Interacting with table synalog_test.Team
+-- Interacting with table synalog_home.Team
 
-DROP TABLE IF EXISTS synalog_test.NextChange;
-CREATE TABLE synalog_test.NextChange ENGINE = Memory AS WITH t_1_Events AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_home.NextChange;
+CREATE TABLE synalog_home.NextChange ENGINE = Memory AS WITH t_1_Events AS (SELECT * FROM (
   
     SELECT
       1 AS person_id,
@@ -139,10 +139,10 @@ WHERE
   (t_0_Events.person_id = Events.person_id)
 GROUP BY 1, 2;
 
--- Interacting with table synalog_test.NextChange
+-- Interacting with table synalog_home.NextChange
 
-DROP TABLE IF EXISTS synalog_test.Member;
-CREATE TABLE synalog_test.Member ENGINE = Memory AS WITH t_1_Events AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_home.Member;
+CREATE TABLE synalog_home.Member ENGINE = Memory AS WITH t_1_Events AS (SELECT * FROM (
   
     SELECT
       1 AS person_id,
@@ -182,7 +182,7 @@ t_0_Member_MultBodyAggAux AS (SELECT * FROM (
       Events.changed_at AS valid_from,
       NextChange.next AS valid_to
     FROM
-      synalog_test.Person AS Person, synalog_test.Team AS Team, t_1_Events AS Events, synalog_test.NextChange AS NextChange
+      synalog_home.Person AS Person, synalog_home.Team AS Team, t_1_Events AS Events, synalog_home.NextChange AS NextChange
     WHERE
       (Events.person_id = Person.person_id) AND
       (Events.team_id = Team.team_id) AND
@@ -196,13 +196,13 @@ t_0_Member_MultBodyAggAux AS (SELECT * FROM (
       t_4_Events.changed_at AS valid_from,
       '9999-12-31' AS valid_to
     FROM
-      synalog_test.Person AS t_2_Person, synalog_test.Team AS t_3_Team, t_1_Events AS t_4_Events
+      synalog_home.Person AS t_2_Person, synalog_home.Team AS t_3_Team, t_1_Events AS t_4_Events
     WHERE
       NOT (t_2_Person.person_id IS NOT NULL AND t_4_Events.changed_at IS NOT NULL AND (CAST(t_2_Person.person_id AS Nullable(String)), CAST(t_4_Events.changed_at AS Nullable(String))) IN (SELECT CAST(synalog_k0 AS Nullable(String)), CAST(synalog_k1 AS Nullable(String)) FROM (SELECT
         t_5_NextChange.person_id AS synalog_k0,
         t_5_NextChange.changed_at AS synalog_k1
       FROM
-        synalog_test.NextChange AS t_5_NextChange
+        synalog_home.NextChange AS t_5_NextChange
       GROUP BY 1, 2) AS synalog_m)) AND
       (t_4_Events.person_id = t_2_Person.person_id) AND
       (t_4_Events.team_id = t_3_Team.team_id)
@@ -217,7 +217,7 @@ FROM
   t_0_Member_MultBodyAggAux AS Member_MultBodyAggAux
 GROUP BY 1, 2, 3, 4;
 
--- Interacting with table synalog_test.Member
+-- Interacting with table synalog_home.Member
 
 SELECT
   Member.person_id AS person_a,
@@ -226,7 +226,7 @@ SELECT
   CASE WHEN (Member.valid_from > t_0_Member.valid_from) THEN Member.valid_from ELSE t_0_Member.valid_from END AS valid_from,
   CASE WHEN (Member.valid_to < t_0_Member.valid_to) THEN Member.valid_to ELSE t_0_Member.valid_to END AS valid_to
 FROM
-  synalog_test.Member AS Member, synalog_test.Member AS t_0_Member
+  synalog_home.Member AS Member, synalog_home.Member AS t_0_Member
 WHERE
   (Member.person_id < t_0_Member.person_id) AND
   (CASE WHEN (Member.valid_from > t_0_Member.valid_from) THEN Member.valid_from ELSE t_0_Member.valid_from END < CASE WHEN (Member.valid_to < t_0_Member.valid_to) THEN Member.valid_to ELSE t_0_Member.valid_to END) AND
