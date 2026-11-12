@@ -10,10 +10,8 @@ it. `tests/cli/test_writes_only_in_home.py` reads everything synalog compiles.
 from __future__ import annotations
 
 import pytest
-
 from conftest import ENGINES
-from writes import HOME
-from writes import home
+from synalog.writes import HOME, home
 from writes import WriteOutsideHome
 
 # Spark has no access control: there, only the check of each statement guards.

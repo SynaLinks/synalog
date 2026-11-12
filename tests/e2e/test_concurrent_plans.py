@@ -82,7 +82,7 @@ def test_a_run_drops_the_tables_a_killed_run_left(runner_for, engine):
     import synalog
     from synalog.runners import _drop_working_tables, sweep_stale_tables
 
-    from writes import home
+    from synalog.writes import home
 
     runner = runner_for(engine)
     now = int(time.time())

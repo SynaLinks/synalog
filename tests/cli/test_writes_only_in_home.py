@@ -1,21 +1,18 @@
 """synalog writes in `synalog_home` only, on every engine: everything it
-compiles is read for its writes (`tests/e2e/writes.py`, the check the e2e
-suite applies to every statement before it runs, where the engines also
-refuse any other write: `tests/e2e/test_writes_only_in_home.py`).
+compiles is read for its writes (`synalog.writes`, the check the e2e suite
+applies to every statement before it runs, where the engines also refuse any
+other write: `tests/e2e/test_writes_only_in_home.py`).
 """
 
 from __future__ import annotations
 
 import importlib.util
-import sys
 from pathlib import Path
 
 import pytest
+from synalog.writes import writes_outside_home
 
 E2E_DIR = Path(__file__).resolve().parents[1] / "e2e"
-sys.path.insert(0, str(E2E_DIR))
-
-from writes import writes_outside_home  # noqa: E402
 
 # The e2e suite's fixture helpers (which fixtures an engine compiles, and
 # their predicate), loaded as a plain module: not as this folder's conftest.

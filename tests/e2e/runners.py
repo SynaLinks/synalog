@@ -38,7 +38,7 @@ import sqlite3
 
 from synalog.runners import run_plan as _run_plan
 from synalog.runners import split_statements as _split_statements
-from writes import HOME
+from synalog.writes import HOME
 from writes import Audited
 
 # The user synalog's SQL runs as: it reads everything, writes in synalog_home only.
