@@ -8,10 +8,10 @@ SET allow_experimental_correlated_subqueries = 1;
 SET aggregate_functions_null_for_empty = 1;
 SET cast_keep_nullable = 1;
 SET transform_null_in = 1;
-CREATE DATABASE IF NOT EXISTS synalog_test;
+CREATE DATABASE IF NOT EXISTS synalog_home;
 
-DROP TABLE IF EXISTS synalog_test.R;
-CREATE TABLE synalog_test.R ENGINE = Memory AS WITH t_0_Sale AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_home.R;
+CREATE TABLE synalog_home.R ENGINE = Memory AS WITH t_0_Sale AS (SELECT * FROM (
   
     SELECT
       1 AS id,
@@ -100,14 +100,14 @@ FROM
   t_0_Sale AS Sale
 GROUP BY 1;
 
--- Interacting with table synalog_test.R
+-- Interacting with table synalog_home.R
 
 WITH t_0_T AS (SELECT
   SUM(t_1_R.revenue) AS total
 FROM
-  synalog_test.R AS t_1_R)
+  synalog_home.R AS t_1_R)
 SELECT
   R.region AS region,
   arrayElement(arrayMap(synalog_v -> (CASE WHEN synalog_v IS NULL OR 6 IS NULL THEN NULL WHEN CAST(synalog_v AS Float64) = 0 THEN CAST(synalog_v AS Float64) WHEN FLOOR(LOG10(ABS(CAST(synalog_v AS Float64)))) - 14 + 6 >= 0 THEN (CASE WHEN CAST(synalog_v AS Float64) < 0 THEN -1 ELSE 1 END) * FLOOR(ABS(CAST(synalog_v AS Float64)) / POWER(10, FLOOR(LOG10(ABS(CAST(synalog_v AS Float64)))) - 14) + 0.5) * POWER(10, FLOOR(LOG10(ABS(CAST(synalog_v AS Float64)))) - 14) + 0 ELSE (CASE WHEN CAST(synalog_v AS Float64) < 0 THEN -1 ELSE 1 END) * FLOOR(ABS(CAST(synalog_v AS Float64)) * POWER(10, 6) + 0.5 + 0.5 * POWER(10, FLOOR(LOG10(ABS(CAST(synalog_v AS Float64)))) - 14 + 6)) / POWER(10, 6) + 0 END), [((100) * ((R.revenue / NULLIF(T.total, 0))))]), 1) AS pct
 FROM
-  synalog_test.R AS R, t_0_T AS T ORDER BY region, pct;
+  synalog_home.R AS R, t_0_T AS T ORDER BY region, pct;

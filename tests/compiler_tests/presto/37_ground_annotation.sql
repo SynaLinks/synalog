@@ -1,5 +1,5 @@
-DROP TABLE IF EXISTS synalog_test.QuarterTotals;
-CREATE TABLE synalog_test.QuarterTotals AS WITH t_0_Sales AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_home.synalog_home.QuarterTotals;
+CREATE TABLE synalog_home.synalog_home.QuarterTotals AS WITH t_0_Sales AS (SELECT * FROM (
   
     SELECT
       'Q1' AS col0,
@@ -44,10 +44,10 @@ FROM
   t_0_Sales AS Sales
 GROUP BY 1;
 
--- Interacting with table synalog_test.QuarterTotals
+-- Interacting with table synalog_home.synalog_home.QuarterTotals
 
 SELECT
   QuarterTotals.col0 AS quarter,
   QuarterTotals.total AS total
 FROM
-  synalog_test.QuarterTotals AS QuarterTotals ORDER BY quarter;
+  synalog_home.synalog_home.QuarterTotals AS QuarterTotals ORDER BY quarter;

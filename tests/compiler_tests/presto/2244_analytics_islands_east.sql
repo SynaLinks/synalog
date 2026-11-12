@@ -1,5 +1,5 @@
-DROP TABLE IF EXISTS synalog_test.D;
-CREATE TABLE synalog_test.D AS WITH t_0_S AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_home.synalog_home.D;
+CREATE TABLE synalog_home.synalog_home.D AS WITH t_0_S AS (SELECT * FROM (
   
     SELECT
       'north' AS r,
@@ -93,25 +93,25 @@ WHERE
   (S.r = 'east')
 GROUP BY 1;
 
--- Interacting with table synalog_test.D
+-- Interacting with table synalog_home.synalog_home.D
 
 SELECT
   t_1_D.d AS first,
   MIN(t_2_D.d) AS last
 FROM
-  synalog_test.D AS t_1_D, synalog_test.D AS t_2_D
+  synalog_home.synalog_home.D AS t_1_D, synalog_home.synalog_home.D AS t_2_D
 WHERE
   (t_2_D.d >= t_1_D.d) AND
   ((SELECT
     MIN(1) AS synalog_value
   FROM
-    synalog_test.D AS t_3_D
+    synalog_home.synalog_home.D AS t_3_D
   WHERE
     (t_3_D.d = ((t_1_D.d) - (1)))) IS NULL) AND
   ((SELECT
     MIN(1) AS synalog_value
   FROM
-    synalog_test.D AS t_4_D
+    synalog_home.synalog_home.D AS t_4_D
   WHERE
     (t_4_D.d = ((t_2_D.d) + (1)))) IS NULL)
 GROUP BY 1 ORDER BY first, last;

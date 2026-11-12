@@ -7,10 +7,10 @@ SET SESSION sql_mode = 'ANSI_QUOTES,PIPES_AS_CONCAT,NO_BACKSLASH_ESCAPES';
 SET SESSION optimizer_switch = 'derived_condition_pushdown=off';
 SET NAMES utf8mb4 COLLATE utf8mb4_0900_bin;
 SET SESSION group_concat_max_len = 1073741824;
-CREATE DATABASE IF NOT EXISTS synalog_test DEFAULT COLLATE utf8mb4_0900_bin;
+CREATE DATABASE IF NOT EXISTS synalog_home DEFAULT COLLATE utf8mb4_0900_bin;
 
-DROP TABLE IF EXISTS synalog_test.QuarterTotals;
-CREATE TABLE synalog_test.QuarterTotals AS WITH t_0_Sales AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_home.QuarterTotals;
+CREATE TABLE synalog_home.QuarterTotals AS WITH t_0_Sales AS (SELECT * FROM (
   
     SELECT
       'Q1' AS col0,
@@ -55,12 +55,12 @@ FROM
   t_0_Sales AS Sales
 GROUP BY 1;
 
--- Interacting with table synalog_test.QuarterTotals
+-- Interacting with table synalog_home.QuarterTotals
 
 SELECT * FROM (
 SELECT
   QuarterTotals.col0 AS quarter,
   QuarterTotals.total AS total
 FROM
-  synalog_test.QuarterTotals AS QuarterTotals
+  synalog_home.QuarterTotals AS QuarterTotals
 ) AS UNUSED_TABLE_NAME ORDER BY quarter IS NULL, quarter;

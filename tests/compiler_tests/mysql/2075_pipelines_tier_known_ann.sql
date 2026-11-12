@@ -7,10 +7,10 @@ SET SESSION sql_mode = 'ANSI_QUOTES,PIPES_AS_CONCAT,NO_BACKSLASH_ESCAPES';
 SET SESSION optimizer_switch = 'derived_condition_pushdown=off';
 SET NAMES utf8mb4 COLLATE utf8mb4_0900_bin;
 SET SESSION group_concat_max_len = 1073741824;
-CREATE DATABASE IF NOT EXISTS synalog_test DEFAULT COLLATE utf8mb4_0900_bin;
+CREATE DATABASE IF NOT EXISTS synalog_home DEFAULT COLLATE utf8mb4_0900_bin;
 
-DROP TABLE IF EXISTS synalog_test.Tier;
-CREATE TABLE synalog_test.Tier AS WITH t_2_Order AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_home.Tier;
+CREATE TABLE synalog_home.Tier AS WITH t_2_Order AS (SELECT * FROM (
   
     SELECT
       1 AS id,
@@ -124,7 +124,7 @@ SELECT
 FROM
   t_0_Spend AS Spend;
 
--- Interacting with table synalog_test.Tier
+-- Interacting with table synalog_home.Tier
 
 WITH t_2_Order AS (SELECT * FROM (
   
@@ -221,7 +221,7 @@ WHERE
   ((SELECT
     MIN(1) AS synalog_value
   FROM
-    synalog_test.Tier AS t_6_Tier
+    synalog_home.Tier AS t_6_Tier
   WHERE
     (t_6_Tier.who = t_4_Person.who)) IS NULL))
 SELECT

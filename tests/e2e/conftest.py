@@ -56,14 +56,15 @@ FIXTURE_TABLES: dict[str, dict[str, tuple[str, list[tuple]]]] = {
 
 
 def _table_steps(name: str) -> list[dict]:
-    """The steps that create a fixture's tables, run first in its session."""
+    """The steps that create a fixture's tables: the customer's data, created
+    by the administrator before synalog's user runs the plan."""
     steps = []
     for table, (columns, rows) in FIXTURE_TABLES.get(name, {}).items():
         values = ", ".join("(" + ", ".join(repr(v) for v in row) + ")" for row in rows)
         steps += [
-            {"kind": "sql", "sql": f"DROP TABLE IF EXISTS {table}"},
-            {"kind": "sql", "sql": f"CREATE TABLE {table} ({columns})"},
-            {"kind": "sql", "sql": f"INSERT INTO {table} VALUES {values}"},
+            {"kind": "sql", "sql": f"DROP TABLE IF EXISTS {table}", "admin": True},
+            {"kind": "sql", "sql": f"CREATE TABLE {table} ({columns})", "admin": True},
+            {"kind": "sql", "sql": f"INSERT INTO {table} VALUES {values}", "admin": True},
         ]
     return steps
 

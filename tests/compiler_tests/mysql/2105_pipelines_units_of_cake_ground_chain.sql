@@ -7,10 +7,10 @@ SET SESSION sql_mode = 'ANSI_QUOTES,PIPES_AS_CONCAT,NO_BACKSLASH_ESCAPES';
 SET SESSION optimizer_switch = 'derived_condition_pushdown=off';
 SET NAMES utf8mb4 COLLATE utf8mb4_0900_bin;
 SET SESSION group_concat_max_len = 1073741824;
-CREATE DATABASE IF NOT EXISTS synalog_test DEFAULT COLLATE utf8mb4_0900_bin;
+CREATE DATABASE IF NOT EXISTS synalog_home DEFAULT COLLATE utf8mb4_0900_bin;
 
-DROP TABLE IF EXISTS synalog_test.Paid;
-CREATE TABLE synalog_test.Paid AS WITH t_1_Order AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_home.Paid;
+CREATE TABLE synalog_home.Paid AS WITH t_1_Order AS (SELECT * FROM (
   
     SELECT
       1 AS id,
@@ -102,21 +102,21 @@ FROM
 WHERE
   (t_0_Order.state = 'paid');
 
--- Interacting with table synalog_test.Paid
+-- Interacting with table synalog_home.Paid
 
-DROP TABLE IF EXISTS synalog_test.Units;
-CREATE TABLE synalog_test.Units AS SELECT
+DROP TABLE IF EXISTS synalog_home.Units;
+CREATE TABLE synalog_home.Units AS SELECT
   Paid.item AS item,
   SUM(Paid.n) AS u
 FROM
-  synalog_test.Paid AS Paid
+  synalog_home.Paid AS Paid
 GROUP BY 1;
 
--- Interacting with table synalog_test.Units
+-- Interacting with table synalog_home.Units
 
 SELECT
   Units.u AS u
 FROM
-  synalog_test.Units AS Units
+  synalog_home.Units AS Units
 WHERE
   (Units.item = 'cake');

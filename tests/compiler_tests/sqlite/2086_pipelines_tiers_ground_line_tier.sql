@@ -1,7 +1,7 @@
-ATTACH DATABASE ':memory:' AS synalog_test;
+ATTACH DATABASE ':memory:' AS synalog_home;
 
-DROP TABLE IF EXISTS synalog_test.Line;
-CREATE TABLE synalog_test.Line AS WITH t_1_Order AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_home.Line;
+CREATE TABLE synalog_home.Line AS WITH t_1_Order AS (SELECT * FROM (
   
     SELECT
       1 AS id,
@@ -110,14 +110,14 @@ WHERE
   (t_0_Order.state = 'paid') AND
   (Price.item = t_0_Order.item);
 
--- Interacting with table synalog_test.Line
+-- Interacting with table synalog_home.Line
 
-DROP TABLE IF EXISTS synalog_test.Tier;
-CREATE TABLE synalog_test.Tier AS WITH t_0_Spend AS (SELECT
+DROP TABLE IF EXISTS synalog_home.Tier;
+CREATE TABLE synalog_home.Tier AS WITH t_0_Spend AS (SELECT
   Line.who AS who,
   SUM(Line.amount) AS total
 FROM
-  synalog_test.Line AS Line
+  synalog_home.Line AS Line
 GROUP BY Line.who)
 SELECT
   Spend.who AS who,
@@ -125,13 +125,13 @@ SELECT
 FROM
   t_0_Spend AS Spend;
 
--- Interacting with table synalog_test.Tier
+-- Interacting with table synalog_home.Tier
 
 WITH t_0_TierCount AS (SELECT
   t_1_Tier.tier AS tier,
   SUM(1) AS n
 FROM
-  synalog_test.Tier AS t_1_Tier
+  synalog_home.Tier AS t_1_Tier
 GROUP BY t_1_Tier.tier)
 SELECT
   TierCount.tier AS tier,

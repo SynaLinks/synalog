@@ -379,7 +379,8 @@ class DuckDbSession(Session):
                 "The duckdb engine needs the 'duckdb' package: pip install duckdb"
             ) from None
         self.conn = duckdb.connect(":memory:")
-        self.conn.execute("CREATE MACRO ARRAY_CONCAT_AGG(x) AS flatten(list(x))")
+        # Temporary: the session's own, never stored in the database.
+        self.conn.execute("CREATE TEMP MACRO ARRAY_CONCAT_AGG(x) AS flatten(list(x))")
         for table, path in loads:
             reader = _DUCKDB_READERS[_extension(path)]
             self.conn.execute(
@@ -418,13 +419,19 @@ class DuckDbSession(Session):
 
 
 
-# `ARRAY_CONCAT_AGG` for `++=`, created once per database. Two sessions
-# replacing it at once collide ("tuple concurrently updated"), so it is created
-# only when missing, and one created meanwhile by another session is as good.
-# A session that may not create it (read-only) runs the queries without `++=`.
+# `ARRAY_CONCAT_AGG` for `++=`, created once per database, in synalog's schema
+# (`synalog_home`), as everything synalog creates. Two sessions replacing it at
+# once collide ("tuple concurrently updated"), so it is created only when
+# missing, and one created meanwhile by another session is as good. A session
+# that may not create it (read-only) runs the queries without `++=`.
 PSQL_ARRAY_CONCAT_AGG = """DO $$ BEGIN
-  IF NOT EXISTS (SELECT 1 FROM pg_proc WHERE proname = 'array_concat_agg') THEN
-    CREATE AGGREGATE ARRAY_CONCAT_AGG(anycompatiblearray) (SFUNC = array_cat, STYPE = anycompatiblearray);
+  -- Created only where missing: `IF NOT EXISTS` needs the right to create one.
+  IF NOT EXISTS (SELECT 1 FROM pg_namespace WHERE nspname = 'synalog_home') THEN
+    CREATE SCHEMA synalog_home;
+  END IF;
+  IF NOT EXISTS (SELECT 1 FROM pg_proc WHERE proname = 'array_concat_agg'
+                 AND pronamespace = 'synalog_home'::regnamespace) THEN
+    CREATE AGGREGATE synalog_home.ARRAY_CONCAT_AGG(anycompatiblearray) (SFUNC = array_cat, STYPE = anycompatiblearray);
   END IF;
 EXCEPTION WHEN duplicate_function OR unique_violation
   OR read_only_sql_transaction OR insufficient_privilege THEN NULL;
@@ -843,15 +850,15 @@ def _run_steps(steps: list[dict], s: Session) -> Result:
 
 
 # The tables a plan computes into synalog's own schemas (temporary tables on
-# PostgreSQL): the steps of a recursion, grounded predicates. A @Ground into a
-# table the program names elsewhere is the user's, and is kept.
-_WORKING_TABLE = re.compile(r"CREATE TABLE ((?:synalog_home|synalog_test|pg_temp)\.\w+)", re.IGNORECASE)
+# PostgreSQL; on Trino and Presto, `synalog_home` is in a catalog of the same
+# name): the steps of a recursion, grounded predicates.
+_WORKING_TABLE = re.compile(r"CREATE TABLE ((?:synalog_home\.)?(?:synalog_home|pg_temp)\.\w+)", re.IGNORECASE)
 
 
 # A table of a run, in a schema every session shares: its name ends with the
 # run's tag, `_r`, the time the run started (Unix seconds, 7 digits in base
 # 36) and 6 more digits (`run_tag` in src/python.rs).
-_TAGGED_TABLE = re.compile(r"^(?:\w+\.)?(\w+)_r([0-9a-z]{7})[0-9a-z]{6}$", re.IGNORECASE)
+_TAGGED_TABLE = re.compile(r"^(?:\w+\.)*(\w+)_r([0-9a-z]{7})[0-9a-z]{6}$", re.IGNORECASE)
 
 # A run's tables are dropped when it ends; those of a run killed before its
 # end are dropped by a later run once they are this old (no run lasts a day).
@@ -879,7 +886,7 @@ def sweep_stale_tables(steps: list[dict], s: Session, engine: str, now: float | 
     if engine not in _LIST_TABLES:
         return []
     texts = [step.get("sql", "") for step in steps] + [b for step in steps for b in step.get("body", [])]
-    schemas = {t.split(".", 1)[0] for text in texts for t in _WORKING_TABLE.findall(text) if _TAGGED_TABLE.match(t)}
+    schemas = {t.rsplit(".", 1)[0] for text in texts for t in _WORKING_TABLE.findall(text) if _TAGGED_TABLE.match(t)}
     query, column = _LIST_TABLES[engine]
     deadline = (time.time() if now is None else now) - STALE_AFTER_SECONDS
     dropped = []

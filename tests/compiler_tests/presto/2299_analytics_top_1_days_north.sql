@@ -1,5 +1,5 @@
-DROP TABLE IF EXISTS synalog_test.Better;
-CREATE TABLE synalog_test.Better AS WITH t_1_S AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_home.synalog_home.Better;
+CREATE TABLE synalog_home.synalog_home.Better AS WITH t_1_S AS (SELECT * FROM (
   
     SELECT
       'north' AS r,
@@ -117,7 +117,7 @@ FROM
   t_0_Better_MultBodyAggAux AS Better_MultBodyAggAux
 GROUP BY 1;
 
--- Interacting with table synalog_test.Better
+-- Interacting with table synalog_home.synalog_home.Better
 
 WITH t_1_S AS (SELECT * FROM (
   
@@ -216,7 +216,7 @@ t_0_Q_MultBodyAggAux AS (SELECT * FROM (
       ((SELECT
         MIN(1) AS synalog_value
       FROM
-        synalog_test.Better AS Better
+        synalog_home.synalog_home.Better AS Better
       WHERE
         (Better.d = S.d)) IS NULL) AND
       (S.r = 'north')
@@ -226,7 +226,7 @@ t_0_Q_MultBodyAggAux AS (SELECT * FROM (
       t_2_S.d AS d,
       t_2_S.v AS v
     FROM
-      t_1_S AS t_2_S, synalog_test.Better AS t_3_Better
+      t_1_S AS t_2_S, synalog_home.synalog_home.Better AS t_3_Better
     WHERE
       (t_3_Better.n < 1) AND
       (t_2_S.r = 'north') AND

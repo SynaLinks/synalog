@@ -1,5 +1,5 @@
-DROP TABLE IF EXISTS synalog_test.Line;
-CREATE TABLE synalog_test.Line AS WITH t_1_Order AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_home.synalog_home.Line;
+CREATE TABLE synalog_home.synalog_home.Line AS WITH t_1_Order AS (SELECT * FROM (
   
     SELECT
       1 AS id,
@@ -108,20 +108,20 @@ WHERE
   (t_0_Order.state = 'paid') AND
   (Price.item = t_0_Order.item);
 
--- Interacting with table synalog_test.Line
+-- Interacting with table synalog_home.synalog_home.Line
 
-DROP TABLE IF EXISTS synalog_test.Spend;
-CREATE TABLE synalog_test.Spend AS SELECT
+DROP TABLE IF EXISTS synalog_home.synalog_home.Spend;
+CREATE TABLE synalog_home.synalog_home.Spend AS SELECT
   Line.who AS who,
   SUM(Line.amount) AS total
 FROM
-  synalog_test.Line AS Line
+  synalog_home.synalog_home.Line AS Line
 GROUP BY 1;
 
--- Interacting with table synalog_test.Spend
+-- Interacting with table synalog_home.synalog_home.Spend
 
 SELECT
   Spend.who AS who,
   Spend.total AS total
 FROM
-  synalog_test.Spend AS Spend ORDER BY who, total;
+  synalog_home.synalog_home.Spend AS Spend ORDER BY who, total;

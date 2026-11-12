@@ -8,10 +8,10 @@ SET allow_experimental_correlated_subqueries = 1;
 SET aggregate_functions_null_for_empty = 1;
 SET cast_keep_nullable = 1;
 SET transform_null_in = 1;
-CREATE DATABASE IF NOT EXISTS synalog_test;
+CREATE DATABASE IF NOT EXISTS synalog_home;
 
-DROP TABLE IF EXISTS synalog_test.U;
-CREATE TABLE synalog_test.U ENGINE = Memory AS WITH t_1_E AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_home.U;
+CREATE TABLE synalog_home.U ENGINE = Memory AS WITH t_1_E AS (SELECT * FROM (
   
     SELECT
       1 AS a,
@@ -86,14 +86,14 @@ FROM
   t_0_U_MultBodyAggAux AS U_MultBodyAggAux
 GROUP BY 1, 2;
 
--- Interacting with table synalog_test.U
+-- Interacting with table synalog_home.U
 
 WITH t_0_T AS (SELECT
   U.a AS a,
   U.b AS b,
   t_1_U.b AS c
 FROM
-  synalog_test.U AS U, synalog_test.U AS t_1_U, synalog_test.U AS t_2_U
+  synalog_home.U AS U, synalog_home.U AS t_1_U, synalog_home.U AS t_2_U
 WHERE
   (U.a < U.b) AND
   (U.b < t_1_U.b) AND

@@ -8,10 +8,10 @@ SET allow_experimental_correlated_subqueries = 1;
 SET aggregate_functions_null_for_empty = 1;
 SET cast_keep_nullable = 1;
 SET transform_null_in = 1;
-CREATE DATABASE IF NOT EXISTS synalog_test;
+CREATE DATABASE IF NOT EXISTS synalog_home;
 
-DROP TABLE IF EXISTS synalog_test.Person;
-CREATE TABLE synalog_test.Person ENGINE = Memory AS WITH t_0_Employees AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_home.Person;
+CREATE TABLE synalog_home.Person ENGINE = Memory AS WITH t_0_Employees AS (SELECT * FROM (
   
     SELECT
       1 AS person_id,
@@ -66,10 +66,10 @@ FROM
   t_0_Employees AS Employees
 GROUP BY 1, 2, 3 ORDER BY person_id;
 
--- Interacting with table synalog_test.Person
+-- Interacting with table synalog_home.Person
 
-DROP TABLE IF EXISTS synalog_test.Team;
-CREATE TABLE synalog_test.Team ENGINE = Memory AS WITH t_0_Teams AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_home.Team;
+CREATE TABLE synalog_home.Team ENGINE = Memory AS WITH t_0_Teams AS (SELECT * FROM (
   
     SELECT
       10 AS team_id,
@@ -93,12 +93,12 @@ FROM
   t_0_Teams AS Teams
 GROUP BY 1, 2 ORDER BY team_id;
 
--- Interacting with table synalog_test.Team
+-- Interacting with table synalog_home.Team
 
 WITH t_1_Who AS (SELECT
   Person.person_id AS person_id
 FROM
-  synalog_test.Person AS Person
+  synalog_home.Person AS Person
 GROUP BY 1),
 t_0_Employees AS (SELECT * FROM (
   
@@ -151,7 +151,7 @@ t_2_MemberOf AS (SELECT
   t_3_Person.person_id AS person_id,
   t_4_Team.team_id AS team_id
 FROM
-  synalog_test.Person AS t_3_Person, synalog_test.Team AS t_4_Team, t_0_Employees AS Employees
+  synalog_home.Person AS t_3_Person, synalog_home.Team AS t_4_Team, t_0_Employees AS Employees
 WHERE
   (Employees.person_id = t_3_Person.person_id) AND
   (Employees.team_id = t_4_Team.team_id)
@@ -195,7 +195,7 @@ t_5_EngagedWith AS (SELECT
   t_6_Team.team_id AS team_id,
   t_7_Client.client_id AS client_id
 FROM
-  synalog_test.Team AS t_6_Team, t_8_Client AS t_7_Client, t_10_Engagements AS Engagements
+  synalog_home.Team AS t_6_Team, t_8_Client AS t_7_Client, t_10_Engagements AS Engagements
 WHERE
   (Engagements.team_id = t_6_Team.team_id) AND
   (Engagements.client_id = t_7_Client.client_id)

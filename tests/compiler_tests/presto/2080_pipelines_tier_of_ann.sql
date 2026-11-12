@@ -1,5 +1,5 @@
-DROP TABLE IF EXISTS synalog_test.Spend;
-CREATE TABLE synalog_test.Spend AS WITH t_1_Order AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_home.synalog_home.Spend;
+CREATE TABLE synalog_home.synalog_home.Spend AS WITH t_1_Order AS (SELECT * FROM (
   
     SELECT
       1 AS id,
@@ -108,11 +108,11 @@ WHERE
   (Price.item = t_0_Order.item)
 GROUP BY 1;
 
--- Interacting with table synalog_test.Spend
+-- Interacting with table synalog_home.synalog_home.Spend
 
 SELECT
   CASE WHEN (Spend.total >= 40) THEN 'gold' WHEN (Spend.total >= 15) THEN 'silver' ELSE 'bronze' END AS tier
 FROM
-  synalog_test.Spend AS Spend
+  synalog_home.synalog_home.Spend AS Spend
 WHERE
   ('ann' = Spend.who);

@@ -8,10 +8,10 @@ SET allow_experimental_correlated_subqueries = 1;
 SET aggregate_functions_null_for_empty = 1;
 SET cast_keep_nullable = 1;
 SET transform_null_in = 1;
-CREATE DATABASE IF NOT EXISTS synalog_test;
+CREATE DATABASE IF NOT EXISTS synalog_home;
 
-DROP TABLE IF EXISTS synalog_test.ReachedBy_sn_delta;
-CREATE TABLE synalog_test.ReachedBy_sn_delta ENGINE = Memory AS WITH t_1_HandedOver AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_home.ReachedBy_sn_delta;
+CREATE TABLE synalog_home.ReachedBy_sn_delta ENGINE = Memory AS WITH t_1_HandedOver AS (SELECT * FROM (
   
     SELECT
       'a' AS source,
@@ -61,23 +61,23 @@ FROM
   t_0_ReachedBy_MultBodyAggAux_f2 AS ReachedBy_MultBodyAggAux_f2
 GROUP BY 1, 2, 3, 4;
 
--- Interacting with table synalog_test.ReachedBy_sn_delta
+-- Interacting with table synalog_home.ReachedBy_sn_delta
 
-DROP TABLE IF EXISTS synalog_test.ReachedBy_sn_t0;
-CREATE TABLE synalog_test.ReachedBy_sn_t0 ENGINE = Memory AS SELECT
+DROP TABLE IF EXISTS synalog_home.ReachedBy_sn_t0;
+CREATE TABLE synalog_home.ReachedBy_sn_t0 ENGINE = Memory AS SELECT
   ReachedBy_sn_delta.source AS source,
   ReachedBy_sn_delta.target AS target,
   ReachedBy_sn_delta.valid_from AS valid_from,
   ReachedBy_sn_delta.valid_to AS valid_to
 FROM
-  synalog_test.ReachedBy_sn_delta AS ReachedBy_sn_delta
+  synalog_home.ReachedBy_sn_delta AS ReachedBy_sn_delta
 WHERE
   (1 = 0);
 
--- Interacting with table synalog_test.ReachedBy_sn_t0
+-- Interacting with table synalog_home.ReachedBy_sn_t0
 
-DROP TABLE IF EXISTS synalog_test.ReachedBy_sn_t1;
-CREATE TABLE synalog_test.ReachedBy_sn_t1 ENGINE = Memory AS WITH t_1_HandedOver AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_home.ReachedBy_sn_t1;
+CREATE TABLE synalog_home.ReachedBy_sn_t1 ENGINE = Memory AS WITH t_1_HandedOver AS (SELECT * FROM (
   
     SELECT
       'a' AS source,
@@ -124,7 +124,7 @@ t_1_ReachedBy_MultBodyAggAux_f3 AS (SELECT * FROM (
       CASE WHEN (ReachedBy_sn_t0.valid_from > t_2_HandedOver.valid_from) THEN ReachedBy_sn_t0.valid_from ELSE t_2_HandedOver.valid_from END AS valid_from,
       CASE WHEN (ReachedBy_sn_t0.valid_to < t_2_HandedOver.valid_to) THEN ReachedBy_sn_t0.valid_to ELSE t_2_HandedOver.valid_to END AS valid_to
     FROM
-      synalog_test.ReachedBy_sn_t0 AS ReachedBy_sn_t0, t_1_HandedOver AS t_2_HandedOver
+      synalog_home.ReachedBy_sn_t0 AS ReachedBy_sn_t0, t_1_HandedOver AS t_2_HandedOver
     WHERE
       (CASE WHEN (ReachedBy_sn_t0.valid_from > t_2_HandedOver.valid_from) THEN ReachedBy_sn_t0.valid_from ELSE t_2_HandedOver.valid_from END < CASE WHEN (ReachedBy_sn_t0.valid_to < t_2_HandedOver.valid_to) THEN ReachedBy_sn_t0.valid_to ELSE t_2_HandedOver.valid_to END) AND
       (t_2_HandedOver.source = ReachedBy_sn_t0.target)
@@ -148,10 +148,10 @@ FROM
 WHERE
   (1 = 0);
 
--- Interacting with table synalog_test.ReachedBy_sn_t1
+-- Interacting with table synalog_home.ReachedBy_sn_t1
 
-DROP TABLE IF EXISTS synalog_test.ReachedBy_sn_t2;
-CREATE TABLE synalog_test.ReachedBy_sn_t2 ENGINE = Memory AS WITH t_1_HandedOver AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_home.ReachedBy_sn_t2;
+CREATE TABLE synalog_home.ReachedBy_sn_t2 ENGINE = Memory AS WITH t_1_HandedOver AS (SELECT * FROM (
   
     SELECT
       'a' AS source,
@@ -198,7 +198,7 @@ t_1_ReachedBy_MultBodyAggAux_f4 AS (SELECT * FROM (
       CASE WHEN (ReachedBy_sn_t1.valid_from > t_2_HandedOver.valid_from) THEN ReachedBy_sn_t1.valid_from ELSE t_2_HandedOver.valid_from END AS valid_from,
       CASE WHEN (ReachedBy_sn_t1.valid_to < t_2_HandedOver.valid_to) THEN ReachedBy_sn_t1.valid_to ELSE t_2_HandedOver.valid_to END AS valid_to
     FROM
-      synalog_test.ReachedBy_sn_t1 AS ReachedBy_sn_t1, t_1_HandedOver AS t_2_HandedOver
+      synalog_home.ReachedBy_sn_t1 AS ReachedBy_sn_t1, t_1_HandedOver AS t_2_HandedOver
     WHERE
       (CASE WHEN (ReachedBy_sn_t1.valid_from > t_2_HandedOver.valid_from) THEN ReachedBy_sn_t1.valid_from ELSE t_2_HandedOver.valid_from END < CASE WHEN (ReachedBy_sn_t1.valid_to < t_2_HandedOver.valid_to) THEN ReachedBy_sn_t1.valid_to ELSE t_2_HandedOver.valid_to END) AND
       (t_2_HandedOver.source = ReachedBy_sn_t1.target)
@@ -222,10 +222,10 @@ FROM
 WHERE
   (1 = 0);
 
--- Interacting with table synalog_test.ReachedBy_sn_t2
+-- Interacting with table synalog_home.ReachedBy_sn_t2
 
-DROP TABLE IF EXISTS synalog_test.ReachedBy_sn_t3;
-CREATE TABLE synalog_test.ReachedBy_sn_t3 ENGINE = Memory AS WITH t_1_HandedOver AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_home.ReachedBy_sn_t3;
+CREATE TABLE synalog_home.ReachedBy_sn_t3 ENGINE = Memory AS WITH t_1_HandedOver AS (SELECT * FROM (
   
     SELECT
       'a' AS source,
@@ -272,7 +272,7 @@ t_1_ReachedBy_MultBodyAggAux_f5 AS (SELECT * FROM (
       CASE WHEN (ReachedBy_sn_t2.valid_from > t_2_HandedOver.valid_from) THEN ReachedBy_sn_t2.valid_from ELSE t_2_HandedOver.valid_from END AS valid_from,
       CASE WHEN (ReachedBy_sn_t2.valid_to < t_2_HandedOver.valid_to) THEN ReachedBy_sn_t2.valid_to ELSE t_2_HandedOver.valid_to END AS valid_to
     FROM
-      synalog_test.ReachedBy_sn_t2 AS ReachedBy_sn_t2, t_1_HandedOver AS t_2_HandedOver
+      synalog_home.ReachedBy_sn_t2 AS ReachedBy_sn_t2, t_1_HandedOver AS t_2_HandedOver
     WHERE
       (CASE WHEN (ReachedBy_sn_t2.valid_from > t_2_HandedOver.valid_from) THEN ReachedBy_sn_t2.valid_from ELSE t_2_HandedOver.valid_from END < CASE WHEN (ReachedBy_sn_t2.valid_to < t_2_HandedOver.valid_to) THEN ReachedBy_sn_t2.valid_to ELSE t_2_HandedOver.valid_to END) AND
       (t_2_HandedOver.source = ReachedBy_sn_t2.target)
@@ -296,10 +296,10 @@ FROM
 WHERE
   (1 = 0);
 
--- Interacting with table synalog_test.ReachedBy_sn_t3
+-- Interacting with table synalog_home.ReachedBy_sn_t3
 
-DROP TABLE IF EXISTS synalog_test.ReachedBy_sn_t4;
-CREATE TABLE synalog_test.ReachedBy_sn_t4 ENGINE = Memory AS WITH t_1_HandedOver AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_home.ReachedBy_sn_t4;
+CREATE TABLE synalog_home.ReachedBy_sn_t4 ENGINE = Memory AS WITH t_1_HandedOver AS (SELECT * FROM (
   
     SELECT
       'a' AS source,
@@ -346,7 +346,7 @@ t_1_ReachedBy_MultBodyAggAux_f6 AS (SELECT * FROM (
       CASE WHEN (ReachedBy_sn_t3.valid_from > t_2_HandedOver.valid_from) THEN ReachedBy_sn_t3.valid_from ELSE t_2_HandedOver.valid_from END AS valid_from,
       CASE WHEN (ReachedBy_sn_t3.valid_to < t_2_HandedOver.valid_to) THEN ReachedBy_sn_t3.valid_to ELSE t_2_HandedOver.valid_to END AS valid_to
     FROM
-      synalog_test.ReachedBy_sn_t3 AS ReachedBy_sn_t3, t_1_HandedOver AS t_2_HandedOver
+      synalog_home.ReachedBy_sn_t3 AS ReachedBy_sn_t3, t_1_HandedOver AS t_2_HandedOver
     WHERE
       (CASE WHEN (ReachedBy_sn_t3.valid_from > t_2_HandedOver.valid_from) THEN ReachedBy_sn_t3.valid_from ELSE t_2_HandedOver.valid_from END < CASE WHEN (ReachedBy_sn_t3.valid_to < t_2_HandedOver.valid_to) THEN ReachedBy_sn_t3.valid_to ELSE t_2_HandedOver.valid_to END) AND
       (t_2_HandedOver.source = ReachedBy_sn_t3.target)
@@ -370,10 +370,10 @@ FROM
 WHERE
   (1 = 0);
 
--- Interacting with table synalog_test.ReachedBy_sn_t4
+-- Interacting with table synalog_home.ReachedBy_sn_t4
 
-DROP TABLE IF EXISTS synalog_test.ReachedBy_sn_t5;
-CREATE TABLE synalog_test.ReachedBy_sn_t5 ENGINE = Memory AS WITH t_1_HandedOver AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_home.ReachedBy_sn_t5;
+CREATE TABLE synalog_home.ReachedBy_sn_t5 ENGINE = Memory AS WITH t_1_HandedOver AS (SELECT * FROM (
   
     SELECT
       'a' AS source,
@@ -420,7 +420,7 @@ t_1_ReachedBy_MultBodyAggAux_f7 AS (SELECT * FROM (
       CASE WHEN (ReachedBy_sn_t4.valid_from > t_2_HandedOver.valid_from) THEN ReachedBy_sn_t4.valid_from ELSE t_2_HandedOver.valid_from END AS valid_from,
       CASE WHEN (ReachedBy_sn_t4.valid_to < t_2_HandedOver.valid_to) THEN ReachedBy_sn_t4.valid_to ELSE t_2_HandedOver.valid_to END AS valid_to
     FROM
-      synalog_test.ReachedBy_sn_t4 AS ReachedBy_sn_t4, t_1_HandedOver AS t_2_HandedOver
+      synalog_home.ReachedBy_sn_t4 AS ReachedBy_sn_t4, t_1_HandedOver AS t_2_HandedOver
     WHERE
       (CASE WHEN (ReachedBy_sn_t4.valid_from > t_2_HandedOver.valid_from) THEN ReachedBy_sn_t4.valid_from ELSE t_2_HandedOver.valid_from END < CASE WHEN (ReachedBy_sn_t4.valid_to < t_2_HandedOver.valid_to) THEN ReachedBy_sn_t4.valid_to ELSE t_2_HandedOver.valid_to END) AND
       (t_2_HandedOver.source = ReachedBy_sn_t4.target)
@@ -444,10 +444,10 @@ FROM
 WHERE
   (1 = 0);
 
--- Interacting with table synalog_test.ReachedBy_sn_t5
+-- Interacting with table synalog_home.ReachedBy_sn_t5
 
-DROP TABLE IF EXISTS synalog_test.ReachedBy_sn_t6;
-CREATE TABLE synalog_test.ReachedBy_sn_t6 ENGINE = Memory AS WITH t_1_HandedOver AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_home.ReachedBy_sn_t6;
+CREATE TABLE synalog_home.ReachedBy_sn_t6 ENGINE = Memory AS WITH t_1_HandedOver AS (SELECT * FROM (
   
     SELECT
       'a' AS source,
@@ -494,7 +494,7 @@ t_1_ReachedBy_MultBodyAggAux_f8 AS (SELECT * FROM (
       CASE WHEN (ReachedBy_sn_t5.valid_from > t_2_HandedOver.valid_from) THEN ReachedBy_sn_t5.valid_from ELSE t_2_HandedOver.valid_from END AS valid_from,
       CASE WHEN (ReachedBy_sn_t5.valid_to < t_2_HandedOver.valid_to) THEN ReachedBy_sn_t5.valid_to ELSE t_2_HandedOver.valid_to END AS valid_to
     FROM
-      synalog_test.ReachedBy_sn_t5 AS ReachedBy_sn_t5, t_1_HandedOver AS t_2_HandedOver
+      synalog_home.ReachedBy_sn_t5 AS ReachedBy_sn_t5, t_1_HandedOver AS t_2_HandedOver
     WHERE
       (CASE WHEN (ReachedBy_sn_t5.valid_from > t_2_HandedOver.valid_from) THEN ReachedBy_sn_t5.valid_from ELSE t_2_HandedOver.valid_from END < CASE WHEN (ReachedBy_sn_t5.valid_to < t_2_HandedOver.valid_to) THEN ReachedBy_sn_t5.valid_to ELSE t_2_HandedOver.valid_to END) AND
       (t_2_HandedOver.source = ReachedBy_sn_t5.target)
@@ -518,10 +518,10 @@ FROM
 WHERE
   (1 = 0);
 
--- Interacting with table synalog_test.ReachedBy_sn_t6
+-- Interacting with table synalog_home.ReachedBy_sn_t6
 
-DROP TABLE IF EXISTS synalog_test.ReachedBy_sn_t7;
-CREATE TABLE synalog_test.ReachedBy_sn_t7 ENGINE = Memory AS WITH t_1_HandedOver AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_home.ReachedBy_sn_t7;
+CREATE TABLE synalog_home.ReachedBy_sn_t7 ENGINE = Memory AS WITH t_1_HandedOver AS (SELECT * FROM (
   
     SELECT
       'a' AS source,
@@ -568,7 +568,7 @@ t_1_ReachedBy_MultBodyAggAux_f9 AS (SELECT * FROM (
       CASE WHEN (ReachedBy_sn_t6.valid_from > t_2_HandedOver.valid_from) THEN ReachedBy_sn_t6.valid_from ELSE t_2_HandedOver.valid_from END AS valid_from,
       CASE WHEN (ReachedBy_sn_t6.valid_to < t_2_HandedOver.valid_to) THEN ReachedBy_sn_t6.valid_to ELSE t_2_HandedOver.valid_to END AS valid_to
     FROM
-      synalog_test.ReachedBy_sn_t6 AS ReachedBy_sn_t6, t_1_HandedOver AS t_2_HandedOver
+      synalog_home.ReachedBy_sn_t6 AS ReachedBy_sn_t6, t_1_HandedOver AS t_2_HandedOver
     WHERE
       (CASE WHEN (ReachedBy_sn_t6.valid_from > t_2_HandedOver.valid_from) THEN ReachedBy_sn_t6.valid_from ELSE t_2_HandedOver.valid_from END < CASE WHEN (ReachedBy_sn_t6.valid_to < t_2_HandedOver.valid_to) THEN ReachedBy_sn_t6.valid_to ELSE t_2_HandedOver.valid_to END) AND
       (t_2_HandedOver.source = ReachedBy_sn_t6.target)
@@ -592,10 +592,10 @@ FROM
 WHERE
   (1 = 0);
 
--- Interacting with table synalog_test.ReachedBy_sn_t7
+-- Interacting with table synalog_home.ReachedBy_sn_t7
 
-DROP TABLE IF EXISTS synalog_test.ReachedBy_sn_t8;
-CREATE TABLE synalog_test.ReachedBy_sn_t8 ENGINE = Memory AS WITH t_1_HandedOver AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_home.ReachedBy_sn_t8;
+CREATE TABLE synalog_home.ReachedBy_sn_t8 ENGINE = Memory AS WITH t_1_HandedOver AS (SELECT * FROM (
   
     SELECT
       'a' AS source,
@@ -642,7 +642,7 @@ t_1_ReachedBy_MultBodyAggAux_f10 AS (SELECT * FROM (
       CASE WHEN (ReachedBy_sn_t7.valid_from > t_2_HandedOver.valid_from) THEN ReachedBy_sn_t7.valid_from ELSE t_2_HandedOver.valid_from END AS valid_from,
       CASE WHEN (ReachedBy_sn_t7.valid_to < t_2_HandedOver.valid_to) THEN ReachedBy_sn_t7.valid_to ELSE t_2_HandedOver.valid_to END AS valid_to
     FROM
-      synalog_test.ReachedBy_sn_t7 AS ReachedBy_sn_t7, t_1_HandedOver AS t_2_HandedOver
+      synalog_home.ReachedBy_sn_t7 AS ReachedBy_sn_t7, t_1_HandedOver AS t_2_HandedOver
     WHERE
       (CASE WHEN (ReachedBy_sn_t7.valid_from > t_2_HandedOver.valid_from) THEN ReachedBy_sn_t7.valid_from ELSE t_2_HandedOver.valid_from END < CASE WHEN (ReachedBy_sn_t7.valid_to < t_2_HandedOver.valid_to) THEN ReachedBy_sn_t7.valid_to ELSE t_2_HandedOver.valid_to END) AND
       (t_2_HandedOver.source = ReachedBy_sn_t7.target)
@@ -666,10 +666,10 @@ FROM
 WHERE
   (1 = 0);
 
--- Interacting with table synalog_test.ReachedBy_sn_t8
+-- Interacting with table synalog_home.ReachedBy_sn_t8
 
-DROP TABLE IF EXISTS synalog_test.ReachedBy_sn_t9;
-CREATE TABLE synalog_test.ReachedBy_sn_t9 ENGINE = Memory AS WITH t_1_HandedOver AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_home.ReachedBy_sn_t9;
+CREATE TABLE synalog_home.ReachedBy_sn_t9 ENGINE = Memory AS WITH t_1_HandedOver AS (SELECT * FROM (
   
     SELECT
       'a' AS source,
@@ -716,7 +716,7 @@ t_1_ReachedBy_MultBodyAggAux_f11 AS (SELECT * FROM (
       CASE WHEN (ReachedBy_sn_t8.valid_from > t_2_HandedOver.valid_from) THEN ReachedBy_sn_t8.valid_from ELSE t_2_HandedOver.valid_from END AS valid_from,
       CASE WHEN (ReachedBy_sn_t8.valid_to < t_2_HandedOver.valid_to) THEN ReachedBy_sn_t8.valid_to ELSE t_2_HandedOver.valid_to END AS valid_to
     FROM
-      synalog_test.ReachedBy_sn_t8 AS ReachedBy_sn_t8, t_1_HandedOver AS t_2_HandedOver
+      synalog_home.ReachedBy_sn_t8 AS ReachedBy_sn_t8, t_1_HandedOver AS t_2_HandedOver
     WHERE
       (CASE WHEN (ReachedBy_sn_t8.valid_from > t_2_HandedOver.valid_from) THEN ReachedBy_sn_t8.valid_from ELSE t_2_HandedOver.valid_from END < CASE WHEN (ReachedBy_sn_t8.valid_to < t_2_HandedOver.valid_to) THEN ReachedBy_sn_t8.valid_to ELSE t_2_HandedOver.valid_to END) AND
       (t_2_HandedOver.source = ReachedBy_sn_t8.target)
@@ -740,10 +740,10 @@ FROM
 WHERE
   (1 = 0);
 
--- Interacting with table synalog_test.ReachedBy_sn_t9
+-- Interacting with table synalog_home.ReachedBy_sn_t9
 
-DROP TABLE IF EXISTS synalog_test.ReachedBy_sn_full;
-CREATE TABLE synalog_test.ReachedBy_sn_full ENGINE = Memory AS SELECT * FROM (
+DROP TABLE IF EXISTS synalog_home.ReachedBy_sn_full;
+CREATE TABLE synalog_home.ReachedBy_sn_full ENGINE = Memory AS SELECT * FROM (
   
     SELECT
       ReachedBy_sn_delta.source AS source,
@@ -751,7 +751,7 @@ CREATE TABLE synalog_test.ReachedBy_sn_full ENGINE = Memory AS SELECT * FROM (
       ReachedBy_sn_delta.valid_from AS valid_from,
       ReachedBy_sn_delta.valid_to AS valid_to
     FROM
-      synalog_test.ReachedBy_sn_delta AS ReachedBy_sn_delta
+      synalog_home.ReachedBy_sn_delta AS ReachedBy_sn_delta
    UNION ALL
   
     SELECT
@@ -760,7 +760,7 @@ CREATE TABLE synalog_test.ReachedBy_sn_full ENGINE = Memory AS SELECT * FROM (
       ReachedBy_sn_t1.valid_from AS valid_from,
       ReachedBy_sn_t1.valid_to AS valid_to
     FROM
-      synalog_test.ReachedBy_sn_t1 AS ReachedBy_sn_t1
+      synalog_home.ReachedBy_sn_t1 AS ReachedBy_sn_t1
    UNION ALL
   
     SELECT
@@ -769,7 +769,7 @@ CREATE TABLE synalog_test.ReachedBy_sn_full ENGINE = Memory AS SELECT * FROM (
       ReachedBy_sn_t2.valid_from AS valid_from,
       ReachedBy_sn_t2.valid_to AS valid_to
     FROM
-      synalog_test.ReachedBy_sn_t2 AS ReachedBy_sn_t2
+      synalog_home.ReachedBy_sn_t2 AS ReachedBy_sn_t2
    UNION ALL
   
     SELECT
@@ -778,7 +778,7 @@ CREATE TABLE synalog_test.ReachedBy_sn_full ENGINE = Memory AS SELECT * FROM (
       ReachedBy_sn_t3.valid_from AS valid_from,
       ReachedBy_sn_t3.valid_to AS valid_to
     FROM
-      synalog_test.ReachedBy_sn_t3 AS ReachedBy_sn_t3
+      synalog_home.ReachedBy_sn_t3 AS ReachedBy_sn_t3
    UNION ALL
   
     SELECT
@@ -787,7 +787,7 @@ CREATE TABLE synalog_test.ReachedBy_sn_full ENGINE = Memory AS SELECT * FROM (
       ReachedBy_sn_t4.valid_from AS valid_from,
       ReachedBy_sn_t4.valid_to AS valid_to
     FROM
-      synalog_test.ReachedBy_sn_t4 AS ReachedBy_sn_t4
+      synalog_home.ReachedBy_sn_t4 AS ReachedBy_sn_t4
    UNION ALL
   
     SELECT
@@ -796,7 +796,7 @@ CREATE TABLE synalog_test.ReachedBy_sn_full ENGINE = Memory AS SELECT * FROM (
       ReachedBy_sn_t5.valid_from AS valid_from,
       ReachedBy_sn_t5.valid_to AS valid_to
     FROM
-      synalog_test.ReachedBy_sn_t5 AS ReachedBy_sn_t5
+      synalog_home.ReachedBy_sn_t5 AS ReachedBy_sn_t5
    UNION ALL
   
     SELECT
@@ -805,7 +805,7 @@ CREATE TABLE synalog_test.ReachedBy_sn_full ENGINE = Memory AS SELECT * FROM (
       ReachedBy_sn_t6.valid_from AS valid_from,
       ReachedBy_sn_t6.valid_to AS valid_to
     FROM
-      synalog_test.ReachedBy_sn_t6 AS ReachedBy_sn_t6
+      synalog_home.ReachedBy_sn_t6 AS ReachedBy_sn_t6
    UNION ALL
   
     SELECT
@@ -814,7 +814,7 @@ CREATE TABLE synalog_test.ReachedBy_sn_full ENGINE = Memory AS SELECT * FROM (
       ReachedBy_sn_t7.valid_from AS valid_from,
       ReachedBy_sn_t7.valid_to AS valid_to
     FROM
-      synalog_test.ReachedBy_sn_t7 AS ReachedBy_sn_t7
+      synalog_home.ReachedBy_sn_t7 AS ReachedBy_sn_t7
    UNION ALL
   
     SELECT
@@ -823,7 +823,7 @@ CREATE TABLE synalog_test.ReachedBy_sn_full ENGINE = Memory AS SELECT * FROM (
       ReachedBy_sn_t8.valid_from AS valid_from,
       ReachedBy_sn_t8.valid_to AS valid_to
     FROM
-      synalog_test.ReachedBy_sn_t8 AS ReachedBy_sn_t8
+      synalog_home.ReachedBy_sn_t8 AS ReachedBy_sn_t8
    UNION ALL
   
     SELECT
@@ -832,14 +832,14 @@ CREATE TABLE synalog_test.ReachedBy_sn_full ENGINE = Memory AS SELECT * FROM (
       ReachedBy_sn_t9.valid_from AS valid_from,
       ReachedBy_sn_t9.valid_to AS valid_to
     FROM
-      synalog_test.ReachedBy_sn_t9 AS ReachedBy_sn_t9
+      synalog_home.ReachedBy_sn_t9 AS ReachedBy_sn_t9
   
 ) AS UNUSED_TABLE_NAME  ;
 
--- Interacting with table synalog_test.ReachedBy_sn_full
+-- Interacting with table synalog_home.ReachedBy_sn_full
 
-DROP TABLE IF EXISTS synalog_test.ReachedBy_sn_new;
-CREATE TABLE synalog_test.ReachedBy_sn_new ENGINE = Memory AS WITH t_1_HandedOver AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_home.ReachedBy_sn_new;
+CREATE TABLE synalog_home.ReachedBy_sn_new ENGINE = Memory AS WITH t_1_HandedOver AS (SELECT * FROM (
   
     SELECT
       'a' AS source,
@@ -886,7 +886,7 @@ t_1_ReachedBy_MultBodyAggAux_f12 AS (SELECT * FROM (
       CASE WHEN (ReachedBy_sn_delta.valid_from > t_2_HandedOver.valid_from) THEN ReachedBy_sn_delta.valid_from ELSE t_2_HandedOver.valid_from END AS valid_from,
       CASE WHEN (ReachedBy_sn_delta.valid_to < t_2_HandedOver.valid_to) THEN ReachedBy_sn_delta.valid_to ELSE t_2_HandedOver.valid_to END AS valid_to
     FROM
-      synalog_test.ReachedBy_sn_delta AS ReachedBy_sn_delta, t_1_HandedOver AS t_2_HandedOver
+      synalog_home.ReachedBy_sn_delta AS ReachedBy_sn_delta, t_1_HandedOver AS t_2_HandedOver
     WHERE
       (CASE WHEN (ReachedBy_sn_delta.valid_from > t_2_HandedOver.valid_from) THEN ReachedBy_sn_delta.valid_from ELSE t_2_HandedOver.valid_from END < CASE WHEN (ReachedBy_sn_delta.valid_to < t_2_HandedOver.valid_to) THEN ReachedBy_sn_delta.valid_to ELSE t_2_HandedOver.valid_to END) AND
       (t_2_HandedOver.source = ReachedBy_sn_delta.target)
@@ -914,14 +914,14 @@ WHERE
     ReachedBy_sn_full.valid_from AS synalog_k2,
     ReachedBy_sn_full.valid_to AS synalog_k3
   FROM
-    synalog_test.ReachedBy_sn_full AS ReachedBy_sn_full
+    synalog_home.ReachedBy_sn_full AS ReachedBy_sn_full
   GROUP BY 1, 2, 3, 4) AS synalog_m))
 GROUP BY 1, 2, 3, 4;
 
-INSERT INTO synalog_test.ReachedBy_sn_full SELECT * FROM synalog_test.ReachedBy_sn_new;
+INSERT INTO synalog_home.ReachedBy_sn_full SELECT * FROM synalog_home.ReachedBy_sn_new;
 
-DROP TABLE IF EXISTS synalog_test.ReachedBy_sn_delta;
-CREATE TABLE synalog_test.ReachedBy_sn_delta ENGINE = Memory AS WITH t_1_HandedOver AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_home.ReachedBy_sn_delta;
+CREATE TABLE synalog_home.ReachedBy_sn_delta ENGINE = Memory AS WITH t_1_HandedOver AS (SELECT * FROM (
   
     SELECT
       'a' AS source,
@@ -968,7 +968,7 @@ t_1_ReachedBy_MultBodyAggAux_f1 AS (SELECT * FROM (
       CASE WHEN (ReachedBy_sn_new.valid_from > t_2_HandedOver.valid_from) THEN ReachedBy_sn_new.valid_from ELSE t_2_HandedOver.valid_from END AS valid_from,
       CASE WHEN (ReachedBy_sn_new.valid_to < t_2_HandedOver.valid_to) THEN ReachedBy_sn_new.valid_to ELSE t_2_HandedOver.valid_to END AS valid_to
     FROM
-      synalog_test.ReachedBy_sn_new AS ReachedBy_sn_new, t_1_HandedOver AS t_2_HandedOver
+      synalog_home.ReachedBy_sn_new AS ReachedBy_sn_new, t_1_HandedOver AS t_2_HandedOver
     WHERE
       (CASE WHEN (ReachedBy_sn_new.valid_from > t_2_HandedOver.valid_from) THEN ReachedBy_sn_new.valid_from ELSE t_2_HandedOver.valid_from END < CASE WHEN (ReachedBy_sn_new.valid_to < t_2_HandedOver.valid_to) THEN ReachedBy_sn_new.valid_to ELSE t_2_HandedOver.valid_to END) AND
       (t_2_HandedOver.source = ReachedBy_sn_new.target)
@@ -996,14 +996,14 @@ WHERE
     ReachedBy_sn_full.valid_from AS synalog_k2,
     ReachedBy_sn_full.valid_to AS synalog_k3
   FROM
-    synalog_test.ReachedBy_sn_full AS ReachedBy_sn_full
+    synalog_home.ReachedBy_sn_full AS ReachedBy_sn_full
   GROUP BY 1, 2, 3, 4) AS synalog_m))
 GROUP BY 1, 2, 3, 4;
 
-INSERT INTO synalog_test.ReachedBy_sn_full SELECT * FROM synalog_test.ReachedBy_sn_delta;
+INSERT INTO synalog_home.ReachedBy_sn_full SELECT * FROM synalog_home.ReachedBy_sn_delta;
 
-DROP TABLE IF EXISTS synalog_test.ReachedBy_sn_new;
-CREATE TABLE synalog_test.ReachedBy_sn_new ENGINE = Memory AS WITH t_1_HandedOver AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_home.ReachedBy_sn_new;
+CREATE TABLE synalog_home.ReachedBy_sn_new ENGINE = Memory AS WITH t_1_HandedOver AS (SELECT * FROM (
   
     SELECT
       'a' AS source,
@@ -1050,7 +1050,7 @@ t_1_ReachedBy_MultBodyAggAux_f12 AS (SELECT * FROM (
       CASE WHEN (ReachedBy_sn_delta.valid_from > t_2_HandedOver.valid_from) THEN ReachedBy_sn_delta.valid_from ELSE t_2_HandedOver.valid_from END AS valid_from,
       CASE WHEN (ReachedBy_sn_delta.valid_to < t_2_HandedOver.valid_to) THEN ReachedBy_sn_delta.valid_to ELSE t_2_HandedOver.valid_to END AS valid_to
     FROM
-      synalog_test.ReachedBy_sn_delta AS ReachedBy_sn_delta, t_1_HandedOver AS t_2_HandedOver
+      synalog_home.ReachedBy_sn_delta AS ReachedBy_sn_delta, t_1_HandedOver AS t_2_HandedOver
     WHERE
       (CASE WHEN (ReachedBy_sn_delta.valid_from > t_2_HandedOver.valid_from) THEN ReachedBy_sn_delta.valid_from ELSE t_2_HandedOver.valid_from END < CASE WHEN (ReachedBy_sn_delta.valid_to < t_2_HandedOver.valid_to) THEN ReachedBy_sn_delta.valid_to ELSE t_2_HandedOver.valid_to END) AND
       (t_2_HandedOver.source = ReachedBy_sn_delta.target)
@@ -1078,14 +1078,14 @@ WHERE
     ReachedBy_sn_full.valid_from AS synalog_k2,
     ReachedBy_sn_full.valid_to AS synalog_k3
   FROM
-    synalog_test.ReachedBy_sn_full AS ReachedBy_sn_full
+    synalog_home.ReachedBy_sn_full AS ReachedBy_sn_full
   GROUP BY 1, 2, 3, 4) AS synalog_m))
 GROUP BY 1, 2, 3, 4;
 
-INSERT INTO synalog_test.ReachedBy_sn_full SELECT * FROM synalog_test.ReachedBy_sn_new;
+INSERT INTO synalog_home.ReachedBy_sn_full SELECT * FROM synalog_home.ReachedBy_sn_new;
 
-DROP TABLE IF EXISTS synalog_test.ReachedBy_sn_delta;
-CREATE TABLE synalog_test.ReachedBy_sn_delta ENGINE = Memory AS WITH t_1_HandedOver AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_home.ReachedBy_sn_delta;
+CREATE TABLE synalog_home.ReachedBy_sn_delta ENGINE = Memory AS WITH t_1_HandedOver AS (SELECT * FROM (
   
     SELECT
       'a' AS source,
@@ -1132,7 +1132,7 @@ t_1_ReachedBy_MultBodyAggAux_f1 AS (SELECT * FROM (
       CASE WHEN (ReachedBy_sn_new.valid_from > t_2_HandedOver.valid_from) THEN ReachedBy_sn_new.valid_from ELSE t_2_HandedOver.valid_from END AS valid_from,
       CASE WHEN (ReachedBy_sn_new.valid_to < t_2_HandedOver.valid_to) THEN ReachedBy_sn_new.valid_to ELSE t_2_HandedOver.valid_to END AS valid_to
     FROM
-      synalog_test.ReachedBy_sn_new AS ReachedBy_sn_new, t_1_HandedOver AS t_2_HandedOver
+      synalog_home.ReachedBy_sn_new AS ReachedBy_sn_new, t_1_HandedOver AS t_2_HandedOver
     WHERE
       (CASE WHEN (ReachedBy_sn_new.valid_from > t_2_HandedOver.valid_from) THEN ReachedBy_sn_new.valid_from ELSE t_2_HandedOver.valid_from END < CASE WHEN (ReachedBy_sn_new.valid_to < t_2_HandedOver.valid_to) THEN ReachedBy_sn_new.valid_to ELSE t_2_HandedOver.valid_to END) AND
       (t_2_HandedOver.source = ReachedBy_sn_new.target)
@@ -1160,14 +1160,14 @@ WHERE
     ReachedBy_sn_full.valid_from AS synalog_k2,
     ReachedBy_sn_full.valid_to AS synalog_k3
   FROM
-    synalog_test.ReachedBy_sn_full AS ReachedBy_sn_full
+    synalog_home.ReachedBy_sn_full AS ReachedBy_sn_full
   GROUP BY 1, 2, 3, 4) AS synalog_m))
 GROUP BY 1, 2, 3, 4;
 
-INSERT INTO synalog_test.ReachedBy_sn_full SELECT * FROM synalog_test.ReachedBy_sn_delta;
+INSERT INTO synalog_home.ReachedBy_sn_full SELECT * FROM synalog_home.ReachedBy_sn_delta;
 
-DROP TABLE IF EXISTS synalog_test.ReachedBy_sn_new;
-CREATE TABLE synalog_test.ReachedBy_sn_new ENGINE = Memory AS WITH t_1_HandedOver AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_home.ReachedBy_sn_new;
+CREATE TABLE synalog_home.ReachedBy_sn_new ENGINE = Memory AS WITH t_1_HandedOver AS (SELECT * FROM (
   
     SELECT
       'a' AS source,
@@ -1214,7 +1214,7 @@ t_1_ReachedBy_MultBodyAggAux_f12 AS (SELECT * FROM (
       CASE WHEN (ReachedBy_sn_delta.valid_from > t_2_HandedOver.valid_from) THEN ReachedBy_sn_delta.valid_from ELSE t_2_HandedOver.valid_from END AS valid_from,
       CASE WHEN (ReachedBy_sn_delta.valid_to < t_2_HandedOver.valid_to) THEN ReachedBy_sn_delta.valid_to ELSE t_2_HandedOver.valid_to END AS valid_to
     FROM
-      synalog_test.ReachedBy_sn_delta AS ReachedBy_sn_delta, t_1_HandedOver AS t_2_HandedOver
+      synalog_home.ReachedBy_sn_delta AS ReachedBy_sn_delta, t_1_HandedOver AS t_2_HandedOver
     WHERE
       (CASE WHEN (ReachedBy_sn_delta.valid_from > t_2_HandedOver.valid_from) THEN ReachedBy_sn_delta.valid_from ELSE t_2_HandedOver.valid_from END < CASE WHEN (ReachedBy_sn_delta.valid_to < t_2_HandedOver.valid_to) THEN ReachedBy_sn_delta.valid_to ELSE t_2_HandedOver.valid_to END) AND
       (t_2_HandedOver.source = ReachedBy_sn_delta.target)
@@ -1242,14 +1242,14 @@ WHERE
     ReachedBy_sn_full.valid_from AS synalog_k2,
     ReachedBy_sn_full.valid_to AS synalog_k3
   FROM
-    synalog_test.ReachedBy_sn_full AS ReachedBy_sn_full
+    synalog_home.ReachedBy_sn_full AS ReachedBy_sn_full
   GROUP BY 1, 2, 3, 4) AS synalog_m))
 GROUP BY 1, 2, 3, 4;
 
-INSERT INTO synalog_test.ReachedBy_sn_full SELECT * FROM synalog_test.ReachedBy_sn_new;
+INSERT INTO synalog_home.ReachedBy_sn_full SELECT * FROM synalog_home.ReachedBy_sn_new;
 
-DROP TABLE IF EXISTS synalog_test.ReachedBy_sn_delta;
-CREATE TABLE synalog_test.ReachedBy_sn_delta ENGINE = Memory AS WITH t_1_HandedOver AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_home.ReachedBy_sn_delta;
+CREATE TABLE synalog_home.ReachedBy_sn_delta ENGINE = Memory AS WITH t_1_HandedOver AS (SELECT * FROM (
   
     SELECT
       'a' AS source,
@@ -1296,7 +1296,7 @@ t_1_ReachedBy_MultBodyAggAux_f1 AS (SELECT * FROM (
       CASE WHEN (ReachedBy_sn_new.valid_from > t_2_HandedOver.valid_from) THEN ReachedBy_sn_new.valid_from ELSE t_2_HandedOver.valid_from END AS valid_from,
       CASE WHEN (ReachedBy_sn_new.valid_to < t_2_HandedOver.valid_to) THEN ReachedBy_sn_new.valid_to ELSE t_2_HandedOver.valid_to END AS valid_to
     FROM
-      synalog_test.ReachedBy_sn_new AS ReachedBy_sn_new, t_1_HandedOver AS t_2_HandedOver
+      synalog_home.ReachedBy_sn_new AS ReachedBy_sn_new, t_1_HandedOver AS t_2_HandedOver
     WHERE
       (CASE WHEN (ReachedBy_sn_new.valid_from > t_2_HandedOver.valid_from) THEN ReachedBy_sn_new.valid_from ELSE t_2_HandedOver.valid_from END < CASE WHEN (ReachedBy_sn_new.valid_to < t_2_HandedOver.valid_to) THEN ReachedBy_sn_new.valid_to ELSE t_2_HandedOver.valid_to END) AND
       (t_2_HandedOver.source = ReachedBy_sn_new.target)
@@ -1324,14 +1324,14 @@ WHERE
     ReachedBy_sn_full.valid_from AS synalog_k2,
     ReachedBy_sn_full.valid_to AS synalog_k3
   FROM
-    synalog_test.ReachedBy_sn_full AS ReachedBy_sn_full
+    synalog_home.ReachedBy_sn_full AS ReachedBy_sn_full
   GROUP BY 1, 2, 3, 4) AS synalog_m))
 GROUP BY 1, 2, 3, 4;
 
-INSERT INTO synalog_test.ReachedBy_sn_full SELECT * FROM synalog_test.ReachedBy_sn_delta;
+INSERT INTO synalog_home.ReachedBy_sn_full SELECT * FROM synalog_home.ReachedBy_sn_delta;
 
-DROP TABLE IF EXISTS synalog_test.ReachedBy_sn_new;
-CREATE TABLE synalog_test.ReachedBy_sn_new ENGINE = Memory AS WITH t_1_HandedOver AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_home.ReachedBy_sn_new;
+CREATE TABLE synalog_home.ReachedBy_sn_new ENGINE = Memory AS WITH t_1_HandedOver AS (SELECT * FROM (
   
     SELECT
       'a' AS source,
@@ -1378,7 +1378,7 @@ t_1_ReachedBy_MultBodyAggAux_f12 AS (SELECT * FROM (
       CASE WHEN (ReachedBy_sn_delta.valid_from > t_2_HandedOver.valid_from) THEN ReachedBy_sn_delta.valid_from ELSE t_2_HandedOver.valid_from END AS valid_from,
       CASE WHEN (ReachedBy_sn_delta.valid_to < t_2_HandedOver.valid_to) THEN ReachedBy_sn_delta.valid_to ELSE t_2_HandedOver.valid_to END AS valid_to
     FROM
-      synalog_test.ReachedBy_sn_delta AS ReachedBy_sn_delta, t_1_HandedOver AS t_2_HandedOver
+      synalog_home.ReachedBy_sn_delta AS ReachedBy_sn_delta, t_1_HandedOver AS t_2_HandedOver
     WHERE
       (CASE WHEN (ReachedBy_sn_delta.valid_from > t_2_HandedOver.valid_from) THEN ReachedBy_sn_delta.valid_from ELSE t_2_HandedOver.valid_from END < CASE WHEN (ReachedBy_sn_delta.valid_to < t_2_HandedOver.valid_to) THEN ReachedBy_sn_delta.valid_to ELSE t_2_HandedOver.valid_to END) AND
       (t_2_HandedOver.source = ReachedBy_sn_delta.target)
@@ -1406,14 +1406,14 @@ WHERE
     ReachedBy_sn_full.valid_from AS synalog_k2,
     ReachedBy_sn_full.valid_to AS synalog_k3
   FROM
-    synalog_test.ReachedBy_sn_full AS ReachedBy_sn_full
+    synalog_home.ReachedBy_sn_full AS ReachedBy_sn_full
   GROUP BY 1, 2, 3, 4) AS synalog_m))
 GROUP BY 1, 2, 3, 4;
 
-INSERT INTO synalog_test.ReachedBy_sn_full SELECT * FROM synalog_test.ReachedBy_sn_new;
+INSERT INTO synalog_home.ReachedBy_sn_full SELECT * FROM synalog_home.ReachedBy_sn_new;
 
-DROP TABLE IF EXISTS synalog_test.ReachedBy_sn_delta;
-CREATE TABLE synalog_test.ReachedBy_sn_delta ENGINE = Memory AS WITH t_1_HandedOver AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_home.ReachedBy_sn_delta;
+CREATE TABLE synalog_home.ReachedBy_sn_delta ENGINE = Memory AS WITH t_1_HandedOver AS (SELECT * FROM (
   
     SELECT
       'a' AS source,
@@ -1460,7 +1460,7 @@ t_1_ReachedBy_MultBodyAggAux_f1 AS (SELECT * FROM (
       CASE WHEN (ReachedBy_sn_new.valid_from > t_2_HandedOver.valid_from) THEN ReachedBy_sn_new.valid_from ELSE t_2_HandedOver.valid_from END AS valid_from,
       CASE WHEN (ReachedBy_sn_new.valid_to < t_2_HandedOver.valid_to) THEN ReachedBy_sn_new.valid_to ELSE t_2_HandedOver.valid_to END AS valid_to
     FROM
-      synalog_test.ReachedBy_sn_new AS ReachedBy_sn_new, t_1_HandedOver AS t_2_HandedOver
+      synalog_home.ReachedBy_sn_new AS ReachedBy_sn_new, t_1_HandedOver AS t_2_HandedOver
     WHERE
       (CASE WHEN (ReachedBy_sn_new.valid_from > t_2_HandedOver.valid_from) THEN ReachedBy_sn_new.valid_from ELSE t_2_HandedOver.valid_from END < CASE WHEN (ReachedBy_sn_new.valid_to < t_2_HandedOver.valid_to) THEN ReachedBy_sn_new.valid_to ELSE t_2_HandedOver.valid_to END) AND
       (t_2_HandedOver.source = ReachedBy_sn_new.target)
@@ -1488,14 +1488,14 @@ WHERE
     ReachedBy_sn_full.valid_from AS synalog_k2,
     ReachedBy_sn_full.valid_to AS synalog_k3
   FROM
-    synalog_test.ReachedBy_sn_full AS ReachedBy_sn_full
+    synalog_home.ReachedBy_sn_full AS ReachedBy_sn_full
   GROUP BY 1, 2, 3, 4) AS synalog_m))
 GROUP BY 1, 2, 3, 4;
 
-INSERT INTO synalog_test.ReachedBy_sn_full SELECT * FROM synalog_test.ReachedBy_sn_delta;
+INSERT INTO synalog_home.ReachedBy_sn_full SELECT * FROM synalog_home.ReachedBy_sn_delta;
 
-DROP TABLE IF EXISTS synalog_test.ReachedBy_sn_new;
-CREATE TABLE synalog_test.ReachedBy_sn_new ENGINE = Memory AS WITH t_1_HandedOver AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_home.ReachedBy_sn_new;
+CREATE TABLE synalog_home.ReachedBy_sn_new ENGINE = Memory AS WITH t_1_HandedOver AS (SELECT * FROM (
   
     SELECT
       'a' AS source,
@@ -1542,7 +1542,7 @@ t_1_ReachedBy_MultBodyAggAux_f12 AS (SELECT * FROM (
       CASE WHEN (ReachedBy_sn_delta.valid_from > t_2_HandedOver.valid_from) THEN ReachedBy_sn_delta.valid_from ELSE t_2_HandedOver.valid_from END AS valid_from,
       CASE WHEN (ReachedBy_sn_delta.valid_to < t_2_HandedOver.valid_to) THEN ReachedBy_sn_delta.valid_to ELSE t_2_HandedOver.valid_to END AS valid_to
     FROM
-      synalog_test.ReachedBy_sn_delta AS ReachedBy_sn_delta, t_1_HandedOver AS t_2_HandedOver
+      synalog_home.ReachedBy_sn_delta AS ReachedBy_sn_delta, t_1_HandedOver AS t_2_HandedOver
     WHERE
       (CASE WHEN (ReachedBy_sn_delta.valid_from > t_2_HandedOver.valid_from) THEN ReachedBy_sn_delta.valid_from ELSE t_2_HandedOver.valid_from END < CASE WHEN (ReachedBy_sn_delta.valid_to < t_2_HandedOver.valid_to) THEN ReachedBy_sn_delta.valid_to ELSE t_2_HandedOver.valid_to END) AND
       (t_2_HandedOver.source = ReachedBy_sn_delta.target)
@@ -1570,14 +1570,14 @@ WHERE
     ReachedBy_sn_full.valid_from AS synalog_k2,
     ReachedBy_sn_full.valid_to AS synalog_k3
   FROM
-    synalog_test.ReachedBy_sn_full AS ReachedBy_sn_full
+    synalog_home.ReachedBy_sn_full AS ReachedBy_sn_full
   GROUP BY 1, 2, 3, 4) AS synalog_m))
 GROUP BY 1, 2, 3, 4;
 
-INSERT INTO synalog_test.ReachedBy_sn_full SELECT * FROM synalog_test.ReachedBy_sn_new;
+INSERT INTO synalog_home.ReachedBy_sn_full SELECT * FROM synalog_home.ReachedBy_sn_new;
 
-DROP TABLE IF EXISTS synalog_test.ReachedBy_sn_delta;
-CREATE TABLE synalog_test.ReachedBy_sn_delta ENGINE = Memory AS WITH t_1_HandedOver AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_home.ReachedBy_sn_delta;
+CREATE TABLE synalog_home.ReachedBy_sn_delta ENGINE = Memory AS WITH t_1_HandedOver AS (SELECT * FROM (
   
     SELECT
       'a' AS source,
@@ -1624,7 +1624,7 @@ t_1_ReachedBy_MultBodyAggAux_f1 AS (SELECT * FROM (
       CASE WHEN (ReachedBy_sn_new.valid_from > t_2_HandedOver.valid_from) THEN ReachedBy_sn_new.valid_from ELSE t_2_HandedOver.valid_from END AS valid_from,
       CASE WHEN (ReachedBy_sn_new.valid_to < t_2_HandedOver.valid_to) THEN ReachedBy_sn_new.valid_to ELSE t_2_HandedOver.valid_to END AS valid_to
     FROM
-      synalog_test.ReachedBy_sn_new AS ReachedBy_sn_new, t_1_HandedOver AS t_2_HandedOver
+      synalog_home.ReachedBy_sn_new AS ReachedBy_sn_new, t_1_HandedOver AS t_2_HandedOver
     WHERE
       (CASE WHEN (ReachedBy_sn_new.valid_from > t_2_HandedOver.valid_from) THEN ReachedBy_sn_new.valid_from ELSE t_2_HandedOver.valid_from END < CASE WHEN (ReachedBy_sn_new.valid_to < t_2_HandedOver.valid_to) THEN ReachedBy_sn_new.valid_to ELSE t_2_HandedOver.valid_to END) AND
       (t_2_HandedOver.source = ReachedBy_sn_new.target)
@@ -1652,11 +1652,11 @@ WHERE
     ReachedBy_sn_full.valid_from AS synalog_k2,
     ReachedBy_sn_full.valid_to AS synalog_k3
   FROM
-    synalog_test.ReachedBy_sn_full AS ReachedBy_sn_full
+    synalog_home.ReachedBy_sn_full AS ReachedBy_sn_full
   GROUP BY 1, 2, 3, 4) AS synalog_m))
 GROUP BY 1, 2, 3, 4;
 
-INSERT INTO synalog_test.ReachedBy_sn_full SELECT * FROM synalog_test.ReachedBy_sn_delta;
+INSERT INTO synalog_home.ReachedBy_sn_full SELECT * FROM synalog_home.ReachedBy_sn_delta;
 
 SELECT
   ReachedBy_sn_full.source AS source,
@@ -1664,4 +1664,4 @@ SELECT
   ReachedBy_sn_full.valid_from AS valid_from,
   ReachedBy_sn_full.valid_to AS valid_to
 FROM
-  synalog_test.ReachedBy_sn_full AS ReachedBy_sn_full ORDER BY source, target, valid_from;
+  synalog_home.ReachedBy_sn_full AS ReachedBy_sn_full ORDER BY source, target, valid_from;

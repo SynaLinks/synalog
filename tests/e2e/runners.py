@@ -15,6 +15,17 @@ its own connections:
 
 ClickHouse and MySQL run on their servers (see docker-compose.yml here).
 
+synalog's SQL runs as a user that may read everything and write in
+`synalog_home` only (`APP_USER`), as SynaLemma connects to a customer's
+database: the engine itself refuses any other write. The tables a test reads
+(the customer's data) are created first, by another user (`setup`).
+  - PostgreSQL, MySQL, ClickHouse: the user's grants (`APP_GRANTS`).
+  - Trino, Presto: file-based access control (`access-control/` here).
+  - SQLite: an authorizer refusing any write outside `synalog_home`.
+  - DuckDB: the data is a database attached read-only.
+  - Spark has no access control: there, the statement check of `writes.py`,
+    which reads every statement on every engine before it runs, is the guard.
+
 The ``Today``/``Now`` built-in concepts no longer need a runtime table — the
 compiler inlines them per dialect.
 """
@@ -27,6 +38,42 @@ import sqlite3
 
 from synalog.runners import run_plan as _run_plan
 from synalog.runners import split_statements as _split_statements
+from writes import HOME
+from writes import Audited
+
+# The user synalog's SQL runs as: it reads everything, writes in synalog_home only.
+APP_USER = "synalog_app"
+APP_PASSWORD = "synalog_app"
+
+# Its grants, given by the administrator (each statement may run again).
+APP_GRANTS = {
+    "psql": [
+        f"""DO $$ BEGIN IF NOT EXISTS (SELECT 1 FROM pg_roles WHERE rolname = '{APP_USER}') THEN
+              CREATE ROLE {APP_USER} LOGIN PASSWORD '{APP_PASSWORD}'; END IF;
+            EXCEPTION WHEN duplicate_object OR unique_violation THEN NULL; END $$""",
+        # Its schema, and only it: what an earlier run left there as another
+        # user is dropped with it.
+        f"""DO $$ BEGIN IF EXISTS (SELECT 1 FROM pg_namespace WHERE nspname = '{HOME}'
+              AND nspowner <> (SELECT oid FROM pg_roles WHERE rolname = '{APP_USER}')) THEN
+              DROP SCHEMA {HOME} CASCADE; END IF; END $$""",
+        f"CREATE SCHEMA IF NOT EXISTS {HOME} AUTHORIZATION {APP_USER}",
+        "REVOKE CREATE ON SCHEMA public FROM PUBLIC",
+        "REVOKE CREATE ON DATABASE synalog FROM PUBLIC",
+        f"GRANT USAGE ON SCHEMA public, shop, analytics TO {APP_USER}",
+        f"GRANT SELECT ON ALL TABLES IN SCHEMA public, shop, analytics TO {APP_USER}",
+        f"ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT SELECT ON TABLES TO {APP_USER}",
+    ],
+    "mysql": [
+        f"CREATE USER IF NOT EXISTS '{APP_USER}'@'%' IDENTIFIED BY '{APP_PASSWORD}'",
+        f"GRANT SELECT ON synalog.* TO '{APP_USER}'@'%'",
+        f"GRANT ALL ON {HOME}.* TO '{APP_USER}'@'%'",
+    ],
+    "clickhouse": [
+        f"CREATE USER IF NOT EXISTS {APP_USER} IDENTIFIED BY '{APP_PASSWORD}'",
+        f"GRANT SELECT ON synalog.* TO {APP_USER}",
+        f"GRANT ALL ON {HOME}.* TO {APP_USER}",
+    ],
+}
 
 
 class Runner:
@@ -36,13 +83,24 @@ class Runner:
         return self.run_plan([{"kind": "sql", "sql": sql}])
 
     def run_plan(self, steps: list[dict]) -> list[tuple]:
-        session = self.session()
+        """Run a plan as synalog's user, after its steps marked `admin`
+        (the tables it reads) ran as the administrator."""
+        session = self.session([s["sql"] for s in steps if s.get("admin")])
         try:
-            return _run_plan(steps, session)[1]
+            return _run_plan([s for s in steps if not s.get("admin")], session)[1]
         finally:
             session.close()
 
-    def session(self):
+    def setup(self, *statements: str) -> None:
+        """Run `statements` as the administrator: the customer's data."""
+        self.session(list(statements)).close()
+
+    def session(self, setup=()):
+        """A session of synalog's user, after `setup` ran as the administrator;
+        each statement is read before it runs (`writes.Audited`)."""
+        return Audited(self.open(list(setup)), self.engine)
+
+    def open(self, setup: list[str]):
         raise NotImplementedError
 
 
@@ -66,7 +124,33 @@ class SqliteRunner(Runner):
 
     engine = "sqlite"
 
-    def session(self):
+    # The authorizer's codes of the actions that write (sqlite3.h), and which
+    # argument names the database: the third, the first for ALTER TABLE.
+    WRITES = {
+        sqlite3.SQLITE_CREATE_INDEX: 2, sqlite3.SQLITE_CREATE_TABLE: 2,
+        sqlite3.SQLITE_CREATE_TRIGGER: 2, sqlite3.SQLITE_CREATE_VIEW: 2,
+        sqlite3.SQLITE_DELETE: 2, sqlite3.SQLITE_DROP_INDEX: 2,
+        sqlite3.SQLITE_DROP_TABLE: 2, sqlite3.SQLITE_DROP_TRIGGER: 2,
+        sqlite3.SQLITE_DROP_VIEW: 2, sqlite3.SQLITE_INSERT: 2,
+        sqlite3.SQLITE_UPDATE: 2, sqlite3.SQLITE_ALTER_TABLE: 0,
+        sqlite3.SQLITE_CREATE_VTABLE: 2, sqlite3.SQLITE_DROP_VTABLE: 2,
+        sqlite3.SQLITE_REINDEX: 2, sqlite3.SQLITE_ANALYZE: 2,
+    }
+
+    @staticmethod
+    def home_only(action, arg1, arg2, database, trigger):
+        """Refuse a write outside synalog_home (and the session's `temp`)."""
+        if action == sqlite3.SQLITE_ATTACH:
+            return sqlite3.SQLITE_OK if arg1 == ":memory:" else sqlite3.SQLITE_DENY
+        if action == sqlite3.SQLITE_DETACH:
+            return sqlite3.SQLITE_DENY
+        at = SqliteRunner.WRITES.get(action)
+        if at is None:
+            return sqlite3.SQLITE_OK
+        target = (arg1, arg2, database)[at]
+        return sqlite3.SQLITE_OK if target in (HOME, "temp") else sqlite3.SQLITE_DENY
+
+    def open(self, setup):
         import re
 
         from logica.common import sqlite3_logica
@@ -84,6 +168,10 @@ class SqliteRunner(Runner):
         from synalog.runners import sqlite_semantics
 
         sqlite_semantics(conn)
+        for script in setup:
+            for statement in SqliteRunner._split(script):
+                conn.execute(statement)
+        conn.set_authorizer(SqliteRunner.home_only)
 
         class Session(_Session):
             split = staticmethod(SqliteRunner._split)
@@ -117,11 +205,24 @@ class DuckDbRunner(Runner):
 
     engine = "duckdb"
 
-    def session(self):
+    def open(self, setup):
+        import tempfile
+
         import duckdb
 
+        # The data is a database of its own, attached read-only, its tables
+        # read by name (`search_path`): synalog writes in the session's.
+        data = None
+        if setup:
+            data = os.path.join(tempfile.mkdtemp(prefix="synalog-e2e-"), "data.duckdb")
+            with duckdb.connect(data) as admin:
+                for script in setup:
+                    admin.execute(script)
         conn = duckdb.connect(":memory:")
-        conn.execute("CREATE MACRO ARRAY_CONCAT_AGG(x) AS flatten(list(x))")
+        if data:
+            conn.execute(f"ATTACH '{data}' AS customer (READ_ONLY)")
+            conn.execute("SET search_path = 'memory.main,customer.main'")
+        conn.execute("CREATE TEMP MACRO ARRAY_CONCAT_AGG(x) AS flatten(list(x))")
 
         class Session(_Session):
             def run(self, script):
@@ -133,6 +234,10 @@ class DuckDbRunner(Runner):
 
             def close(self):
                 conn.close()
+                if data:
+                    import shutil
+
+                    shutil.rmtree(os.path.dirname(data), ignore_errors=True)
 
         return Session()
 
@@ -143,13 +248,28 @@ class PostgresRunner(Runner):
 
     engine = "psql"
 
-    def __init__(self, dsn: str):
+    def __init__(self, dsn: str, app_dsn: str):
         self.dsn = dsn
+        self.app_dsn = app_dsn
 
-    def session(self):
+    def grant(self):
         import psycopg
 
-        conn = psycopg.connect(self.dsn, autocommit=True)
+        # One worker at a time: the first may drop a schema left by another user.
+        with psycopg.connect(self.dsn) as admin:
+            admin.execute("SELECT pg_advisory_xact_lock(715)")
+            for statement in APP_GRANTS["psql"]:
+                admin.execute(statement)
+
+    def open(self, setup):
+        import psycopg
+
+        _granted(self)
+        if setup:
+            with psycopg.connect(self.dsn, autocommit=True) as admin:
+                for script in setup:
+                    admin.execute(script)
+        conn = psycopg.connect(self.app_dsn, autocommit=True)
         cur = conn.cursor()
         from synalog.runners import PSQL_ARRAY_CONCAT_AGG
 
@@ -182,20 +302,29 @@ class TrinoRunner(Runner):
         self.host = host
         self.port = port
 
-    def connect(self):
+    def connect(self, user: str = APP_USER):
         import trino
 
         return trino.dbapi.connect(
-            host=self.host, port=self.port, user="e2e", catalog="memory", schema="default"
+            host=self.host, port=self.port, user=user, catalog="memory", schema="default"
         )
 
     # @Ground writes into this schema.
-    setup = "CREATE SCHEMA IF NOT EXISTS memory.synalog_test"
+    make_home = "CREATE SCHEMA IF NOT EXISTS synalog_home.synalog_home"
 
     def decode(self, rows, description) -> list[tuple]:
         return [tuple(r) for r in rows]
 
-    def session(self):
+    def open(self, setup):
+        if setup:
+            admin = self.connect("admin")
+            try:
+                for script in setup:
+                    cur = admin.cursor()
+                    cur.execute(script)
+                    cur.fetchall()
+            finally:
+                admin.close()
         conn = self.connect()
         cur = conn.cursor()
         runner = self
@@ -203,8 +332,8 @@ class TrinoRunner(Runner):
 
         class Session(_Session):
             def execute(self, statement):
-                if "synalog_test." in statement and not ready:
-                    cur.execute(runner.setup)
+                if "synalog_home." in statement and not ready:
+                    cur.execute(runner.make_home)
                     cur.fetchall()
                     ready.append(True)
                 cur.execute(statement)
@@ -229,7 +358,7 @@ class PrestoRunner(TrinoRunner):
 
     engine = "presto"
 
-    def connect(self):
+    def connect(self, user: str = APP_USER):
         import prestodb
 
         # One driver per task: the container's per-node memory (about 100MB)
@@ -238,7 +367,7 @@ class PrestoRunner(TrinoRunner):
         return prestodb.dbapi.connect(
             host=self.host,
             port=self.port,
-            user="e2e",
+            user=user,
             catalog="memory",
             schema="default",
             session_properties={"task_concurrency": "1"},
@@ -292,7 +421,7 @@ class SparkRunner(Runner):
         self.host = host
         self.port = port
 
-    def session(self):
+    def open(self, setup):
         from pyhive import hive
 
         from thrift.transport import TSocket, TTransport
@@ -305,12 +434,15 @@ class SparkRunner(Runner):
         sock.setTimeout(540_000)
         conn = hive.Connection(thrift_transport=TTransport.TBufferedTransport(sock), username="e2e")
         cur = conn.cursor()
+        # No access control on Spark: the data is created in the same session.
+        for script in setup:
+            cur.execute(script)
         ready = []
 
         class Session(_Session):
             def execute(self, statement):
-                if "synalog_test." in statement and not ready:  # @Ground writes into this database
-                    cur.execute("CREATE DATABASE IF NOT EXISTS synalog_test")
+                if "synalog_home." in statement and not ready:  # @Ground writes into this database
+                    cur.execute("CREATE DATABASE IF NOT EXISTS synalog_home")
                     ready.append(True)
                 cur.execute(statement)
                 # @Ground emits DDL (DROP/CREATE TABLE AS); those report a
@@ -367,22 +499,41 @@ class ClickHouseRunner(Runner):
         self.user = user
         self.password = password
 
-    def session(self):
+    def client(self, user: str, password: str):
         import uuid
 
         import clickhouse_connect
 
-        client = clickhouse_connect.get_client(
+        return clickhouse_connect.get_client(
             host=self.host,
             port=self.port,
-            username=self.user,
-            password=self.password,
+            username=user,
+            password=password,
             database="synalog",
             session_id=f"synalog-e2e-{uuid.uuid4()}",
             # A recursion's script is long: the server's default bounds a
             # query's text at 256 KiB.
             settings={"max_query_size": 100_000_000},
         )
+
+    def grant(self):
+        admin = self.client(self.user, self.password)
+        try:
+            for statement in APP_GRANTS["clickhouse"]:
+                admin.command(statement)
+        finally:
+            admin.close()
+
+    def open(self, setup):
+        _granted(self)
+        if setup:
+            admin = self.client(self.user, self.password)
+            try:
+                for script in setup:
+                    admin.command(script)
+            finally:
+                admin.close()
+        client = self.client(APP_USER, APP_PASSWORD)
 
         class Session(_Session):
             def execute(self, statement):
@@ -408,10 +559,38 @@ class MySQLRunner(Runner):
         self.connection = {"engine": "mysql", "host": host, "port": port, "user": user,
                            "password": password, "database": "synalog"}
 
-    def session(self):
+    def admin(self):
+        import pymysql
+
+        c = self.connection
+        return pymysql.connect(host=c["host"], port=c["port"], user=c["user"], password=c["password"],
+                               database=c["database"], autocommit=True)
+
+    def grant(self):
+        with self.admin() as admin, admin.cursor() as cur:
+            for statement in APP_GRANTS["mysql"]:
+                cur.execute(statement)
+
+    def open(self, setup):
         from synalog.runners import MySQLSession
 
-        return MySQLSession(self.connection)
+        _granted(self)
+        if setup:
+            with self.admin() as admin, admin.cursor() as cur:
+                for script in setup:
+                    cur.execute(script)
+        return MySQLSession(self.connection | {"user": APP_USER, "password": APP_PASSWORD})
+
+
+_GRANTED: set[tuple] = set()
+
+
+def _granted(runner) -> None:
+    """Give synalog's user its grants, once per process and server."""
+    key = (runner.engine, *sorted(map(str, vars(runner).values())))
+    if key not in _GRANTED:
+        runner.grant()
+        _GRANTED.add(key)
 
 
 def make_runner(engine: str):
@@ -427,7 +606,11 @@ def make_runner(engine: str):
                 os.environ.get("SYNALOG_E2E_PSQL_PORT", "5433")
             ),
         )
-        return PostgresRunner(dsn)
+        from urllib.parse import urlparse
+
+        url = urlparse(dsn)
+        app = url._replace(netloc=f"{APP_USER}:{APP_PASSWORD}@{url.hostname}:{url.port or 5432}")
+        return PostgresRunner(dsn, app.geturl())
     if engine == "trino":
         return TrinoRunner(
             os.environ.get("SYNALOG_E2E_TRINO_HOST", "localhost"),

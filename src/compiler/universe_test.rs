@@ -1499,11 +1499,11 @@ fn test_a_linear_distinct_recursion_is_semi_naive() {
     // row so far; until the delta is empty.
     assert_eq!(repetitions, 20);
     assert_eq!(body.len(), 4);
-    assert!(body[0].contains("CREATE TABLE synalog_test.Reach_sn_new"), "{}", body[0]);
-    assert!(body[1].starts_with("INSERT INTO synalog_test.Reach_sn_full SELECT * FROM synalog_test.Reach_sn_new"), "{}", body[1]);
-    assert!(body[2].contains("CREATE TABLE synalog_test.Reach_sn_delta"), "{}", body[2]);
-    assert!(body[3].starts_with("INSERT INTO synalog_test.Reach_sn_full SELECT * FROM synalog_test.Reach_sn_delta"), "{}", body[3]);
-    assert_eq!(changed, "SELECT COUNT(*) AS changed FROM synalog_test.Reach_sn_delta");
+    assert!(body[0].contains("CREATE TABLE synalog_home.Reach_sn_new"), "{}", body[0]);
+    assert!(body[1].starts_with("INSERT INTO synalog_home.Reach_sn_full SELECT * FROM synalog_home.Reach_sn_new"), "{}", body[1]);
+    assert!(body[2].contains("CREATE TABLE synalog_home.Reach_sn_delta"), "{}", body[2]);
+    assert!(body[3].starts_with("INSERT INTO synalog_home.Reach_sn_full SELECT * FROM synalog_home.Reach_sn_delta"), "{}", body[3]);
+    assert_eq!(changed, "SELECT COUNT(*) AS changed FROM synalog_home.Reach_sn_delta");
 }
 
 #[test]
@@ -1517,8 +1517,8 @@ fn test_an_odd_number_of_steps_ends_with_one_step() {
     // The 41st step, after the loop: the new rows from the delta, added.
     match (&plan[at + 1], &plan[at + 2]) {
         (PlanStep::Sql(step), PlanStep::Sql(add)) => {
-            assert!(step.contains("CREATE TABLE synalog_test.Reach_sn_new"), "{}", step);
-            assert!(add.starts_with("INSERT INTO synalog_test.Reach_sn_full SELECT * FROM synalog_test.Reach_sn_new"), "{}", add);
+            assert!(step.contains("CREATE TABLE synalog_home.Reach_sn_new"), "{}", step);
+            assert!(add.starts_with("INSERT INTO synalog_home.Reach_sn_full SELECT * FROM synalog_home.Reach_sn_new"), "{}", add);
         }
         other => panic!("{:?}", other),
     }
@@ -1551,7 +1551,7 @@ fn test_compile_writes_the_loop_out_and_refuses_one_too_long() {
     let parsed = crate::parser::parse_file(&source, None, &[]).unwrap();
     let program = SynalogProgram::new(&parsed, HashMap::new(), HashMap::new()).unwrap();
     let sql = program.formatted_predicate_sql("Reach").unwrap();
-    assert_eq!(sql.matches("INSERT INTO synalog_test.Reach_sn_full").count(), 30);
+    assert_eq!(sql.matches("INSERT INTO synalog_home.Reach_sn_full").count(), 30);
     let deep = source.replace("@Recursive(Reach, 30)", "@Recursive(Reach, -1)");
     let parsed = crate::parser::parse_file(&deep, None, &[]).unwrap();
     let program = SynalogProgram::new(&parsed, HashMap::new(), HashMap::new()).unwrap();

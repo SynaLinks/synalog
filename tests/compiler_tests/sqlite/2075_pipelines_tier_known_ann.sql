@@ -1,7 +1,7 @@
-ATTACH DATABASE ':memory:' AS synalog_test;
+ATTACH DATABASE ':memory:' AS synalog_home;
 
-DROP TABLE IF EXISTS synalog_test.Tier;
-CREATE TABLE synalog_test.Tier AS WITH t_2_Order AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_home.Tier;
+CREATE TABLE synalog_home.Tier AS WITH t_2_Order AS (SELECT * FROM (
   
     SELECT
       1 AS id,
@@ -115,7 +115,7 @@ SELECT
 FROM
   t_0_Spend AS Spend;
 
--- Interacting with table synalog_test.Tier
+-- Interacting with table synalog_home.Tier
 
 WITH t_2_Order AS (SELECT * FROM (
   
@@ -212,7 +212,7 @@ WHERE
   ((SELECT
     MIN(MagicalEntangle(1, x_12.value)) AS synalog_value
   FROM
-    synalog_test.Tier AS t_6_Tier, JSON_EACH(JSON_ARRAY(0)) as x_12
+    synalog_home.Tier AS t_6_Tier, JSON_EACH(JSON_ARRAY(0)) as x_12
   WHERE
     (t_6_Tier.who = t_4_Person.who)) IS NULL))
 SELECT

@@ -8,10 +8,10 @@ SET allow_experimental_correlated_subqueries = 1;
 SET aggregate_functions_null_for_empty = 1;
 SET cast_keep_nullable = 1;
 SET transform_null_in = 1;
-CREATE DATABASE IF NOT EXISTS synalog_test;
+CREATE DATABASE IF NOT EXISTS synalog_home;
 
-DROP TABLE IF EXISTS synalog_test.F;
-CREATE TABLE synalog_test.F ENGINE = Memory AS WITH t_1_Sale AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_home.F;
+CREATE TABLE synalog_home.F ENGINE = Memory AS WITH t_1_Sale AS (SELECT * FROM (
   
     SELECT
       1 AS id,
@@ -76,7 +76,7 @@ FROM
 WHERE
   (Sale.region = 'north');
 
--- Interacting with table synalog_test.F
+-- Interacting with table synalog_home.F
 
 WITH t_1_Sale AS (SELECT * FROM (
   
@@ -139,7 +139,7 @@ WITH t_1_Sale AS (SELECT * FROM (
 t_0_I AS (SELECT
   SUM(Sale.amount) AS t
 FROM
-  t_1_Sale AS Sale, synalog_test.F AS F
+  t_1_Sale AS Sale, synalog_home.F AS F
 WHERE
   (F.id = Sale.id)),
 t_2_O AS (SELECT
@@ -150,7 +150,7 @@ WHERE
   NOT (t_3_Sale.id IS NOT NULL AND CAST(t_3_Sale.id AS Nullable(String)) IN (SELECT CAST(synalog_k0 AS Nullable(String)) FROM (SELECT
     t_4_F.id AS synalog_k0
   FROM
-    synalog_test.F AS t_4_F
+    synalog_home.F AS t_4_F
   GROUP BY 1) AS synalog_m)))
 SELECT
   I.t AS inside,

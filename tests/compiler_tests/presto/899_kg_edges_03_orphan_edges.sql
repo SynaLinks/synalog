@@ -1,5 +1,5 @@
-DROP TABLE IF EXISTS synalog_test.Person;
-CREATE TABLE synalog_test.Person AS WITH t_0_Employees AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_home.synalog_home.Person;
+CREATE TABLE synalog_home.synalog_home.Person AS WITH t_0_Employees AS (SELECT * FROM (
   
     SELECT
       1 AS person_id,
@@ -54,7 +54,7 @@ FROM
   t_0_Employees AS Employees
 GROUP BY 1, 2, 3 ORDER BY person_id;
 
--- Interacting with table synalog_test.Person
+-- Interacting with table synalog_home.synalog_home.Person
 
 WITH t_0_Management AS (SELECT * FROM (
   
@@ -86,7 +86,7 @@ WHERE
   ((SELECT
     MIN(1) AS synalog_value
   FROM
-    synalog_test.Person AS Person
+    synalog_home.synalog_home.Person AS Person
   WHERE
     (Person.person_id = Management.employee_id)) IS NULL)
 GROUP BY 1;

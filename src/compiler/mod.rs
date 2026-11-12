@@ -10,14 +10,10 @@ pub mod universe;
 
 use std::fmt;
 
-/// The "home" schema name (where user predicates materialize).
+/// The schema synalog stores the tables a program computes in, on every
+/// engine (an in-memory database attached under this name on SQLite).
 pub fn home_schema() -> &'static str {
     "synalog_home"
-}
-
-/// The "test" schema name (in-memory schema for `@Ground` on SQLite).
-pub fn test_schema() -> &'static str {
-    "synalog_test"
 }
 
 /// Compilation error with source context (legacy type).

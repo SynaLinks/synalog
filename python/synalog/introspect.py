@@ -36,7 +36,8 @@ from .runners import RunnerUnavailable, run_sql
 # Databricks expose one `information_schema` per catalog; PostgreSQL adds the
 # `pg_catalog` system schema alongside it.
 # Synalog's own schemas, where it stores the tables a run computes (the steps
-# of a recursion, grounded predicates): never the user's tables.
+# of a recursion, grounded predicates): never the user's tables
+# (`synalog_test` is where earlier versions stored them on some engines).
 _SYNALOG_SCHEMAS = ("synalog_home", "synalog_test")
 _NOT_SYNALOG = f"table_schema NOT IN ({', '.join(repr(s) for s in _SYNALOG_SCHEMAS)})"
 

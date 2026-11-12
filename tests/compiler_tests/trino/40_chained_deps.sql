@@ -1,5 +1,5 @@
-DROP TABLE IF EXISTS synalog_test.Filtered;
-CREATE TABLE synalog_test.Filtered AS WITH t_0_RawData AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_home.synalog_home.Filtered;
+CREATE TABLE synalog_home.synalog_home.Filtered AS WITH t_0_RawData AS (SELECT * FROM (
   
     SELECT
       1 AS col0,
@@ -34,20 +34,20 @@ FROM
 WHERE
   (RawData.col1 > 15);
 
--- Interacting with table synalog_test.Filtered
+-- Interacting with table synalog_home.synalog_home.Filtered
 
-DROP TABLE IF EXISTS synalog_test.Aggregated;
-CREATE TABLE synalog_test.Aggregated AS SELECT
+DROP TABLE IF EXISTS synalog_home.synalog_home.Aggregated;
+CREATE TABLE synalog_home.synalog_home.Aggregated AS SELECT
   SUM(((Filtered.col1) * (2))) AS total,
   SUM(1) AS count
 FROM
-  synalog_test.Filtered AS Filtered;
+  synalog_home.synalog_home.Filtered AS Filtered;
 
--- Interacting with table synalog_test.Aggregated
+-- Interacting with table synalog_home.synalog_home.Aggregated
 
 SELECT
   Aggregated.total AS total,
   Aggregated.count AS count,
   (CAST(Aggregated.total AS DOUBLE) / NULLIF(Aggregated.count, 0)) AS avg
 FROM
-  synalog_test.Aggregated AS Aggregated ORDER BY total;
+  synalog_home.synalog_home.Aggregated AS Aggregated ORDER BY total;

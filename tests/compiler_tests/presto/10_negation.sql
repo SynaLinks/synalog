@@ -1,12 +1,12 @@
-DROP TABLE IF EXISTS synalog_test.Even;
-CREATE TABLE synalog_test.Even AS SELECT
+DROP TABLE IF EXISTS synalog_home.synalog_home.Even;
+CREATE TABLE synalog_home.synalog_home.Even AS SELECT
   x_3 AS col0
 FROM
   UNNEST(TRANSFORM(FILTER(SEQUENCE(0, 10), x -> x < 10), synalog_e -> ROW(synalog_e))) as pushkin(x_3)
 WHERE
   ((MOD(x_3, NULLIF(2, 0))) = 0);
 
--- Interacting with table synalog_test.Even
+-- Interacting with table synalog_home.synalog_home.Even
 
 WITH t_0_Prime AS (SELECT * FROM (
   
@@ -37,7 +37,7 @@ SELECT * FROM (
       ((SELECT
         MIN(1) AS synalog_value
       FROM
-        synalog_test.Even AS Even
+        synalog_home.synalog_home.Even AS Even
       WHERE
         (Even.col0 = x_5)) IS NULL)
    UNION ALL
@@ -61,7 +61,7 @@ SELECT * FROM (
       'even_not_prime' AS test_name,
       Even.col0 AS x
     FROM
-      synalog_test.Even AS Even
+      synalog_home.synalog_home.Even AS Even
     WHERE
       ((SELECT
         MIN(1) AS synalog_value

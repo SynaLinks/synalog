@@ -8,10 +8,10 @@ SET allow_experimental_correlated_subqueries = 1;
 SET aggregate_functions_null_for_empty = 1;
 SET cast_keep_nullable = 1;
 SET transform_null_in = 1;
-CREATE DATABASE IF NOT EXISTS synalog_test;
+CREATE DATABASE IF NOT EXISTS synalog_home;
 
-DROP TABLE IF EXISTS synalog_test.Anc_sn_delta;
-CREATE TABLE synalog_test.Anc_sn_delta ENGINE = Memory AS WITH t_2_ParentOf AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_home.Anc_sn_delta;
+CREATE TABLE synalog_home.Anc_sn_delta ENGINE = Memory AS WITH t_2_ParentOf AS (SELECT * FROM (
   
     SELECT
       1 AS parent_id,
@@ -49,21 +49,21 @@ FROM
   t_0_Anc_MultBodyAggAux_f2 AS Anc_MultBodyAggAux_f2
 GROUP BY 1, 2;
 
--- Interacting with table synalog_test.Anc_sn_delta
+-- Interacting with table synalog_home.Anc_sn_delta
 
-DROP TABLE IF EXISTS synalog_test.Anc_sn_t0;
-CREATE TABLE synalog_test.Anc_sn_t0 ENGINE = Memory AS SELECT
+DROP TABLE IF EXISTS synalog_home.Anc_sn_t0;
+CREATE TABLE synalog_home.Anc_sn_t0 ENGINE = Memory AS SELECT
   Anc_sn_delta.a AS a,
   Anc_sn_delta.d AS d
 FROM
-  synalog_test.Anc_sn_delta AS Anc_sn_delta
+  synalog_home.Anc_sn_delta AS Anc_sn_delta
 WHERE
   (1 = 0);
 
--- Interacting with table synalog_test.Anc_sn_t0
+-- Interacting with table synalog_home.Anc_sn_t0
 
-DROP TABLE IF EXISTS synalog_test.Anc_sn_t1;
-CREATE TABLE synalog_test.Anc_sn_t1 ENGINE = Memory AS WITH t_2_ParentOf AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_home.Anc_sn_t1;
+CREATE TABLE synalog_home.Anc_sn_t1 ENGINE = Memory AS WITH t_2_ParentOf AS (SELECT * FROM (
   
     SELECT
       1 AS parent_id,
@@ -91,7 +91,7 @@ t_1_Anc_MultBodyAggAux_f3 AS (SELECT * FROM (
       Anc_sn_t0.a AS a,
       ParentOf.child_id AS d
     FROM
-      synalog_test.Anc_sn_t0 AS Anc_sn_t0, t_2_ParentOf AS ParentOf
+      synalog_home.Anc_sn_t0 AS Anc_sn_t0, t_2_ParentOf AS ParentOf
     WHERE
       (ParentOf.parent_id = Anc_sn_t0.d)
    UNION ALL
@@ -117,10 +117,10 @@ FROM
 WHERE
   (1 = 0);
 
--- Interacting with table synalog_test.Anc_sn_t1
+-- Interacting with table synalog_home.Anc_sn_t1
 
-DROP TABLE IF EXISTS synalog_test.Anc_sn_t2;
-CREATE TABLE synalog_test.Anc_sn_t2 ENGINE = Memory AS WITH t_2_ParentOf AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_home.Anc_sn_t2;
+CREATE TABLE synalog_home.Anc_sn_t2 ENGINE = Memory AS WITH t_2_ParentOf AS (SELECT * FROM (
   
     SELECT
       1 AS parent_id,
@@ -148,7 +148,7 @@ t_1_Anc_MultBodyAggAux_f4 AS (SELECT * FROM (
       Anc_sn_t1.a AS a,
       ParentOf.child_id AS d
     FROM
-      synalog_test.Anc_sn_t1 AS Anc_sn_t1, t_2_ParentOf AS ParentOf
+      synalog_home.Anc_sn_t1 AS Anc_sn_t1, t_2_ParentOf AS ParentOf
     WHERE
       (ParentOf.parent_id = Anc_sn_t1.d)
    UNION ALL
@@ -174,10 +174,10 @@ FROM
 WHERE
   (1 = 0);
 
--- Interacting with table synalog_test.Anc_sn_t2
+-- Interacting with table synalog_home.Anc_sn_t2
 
-DROP TABLE IF EXISTS synalog_test.Anc_sn_t3;
-CREATE TABLE synalog_test.Anc_sn_t3 ENGINE = Memory AS WITH t_2_ParentOf AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_home.Anc_sn_t3;
+CREATE TABLE synalog_home.Anc_sn_t3 ENGINE = Memory AS WITH t_2_ParentOf AS (SELECT * FROM (
   
     SELECT
       1 AS parent_id,
@@ -205,7 +205,7 @@ t_1_Anc_MultBodyAggAux_f5 AS (SELECT * FROM (
       Anc_sn_t2.a AS a,
       ParentOf.child_id AS d
     FROM
-      synalog_test.Anc_sn_t2 AS Anc_sn_t2, t_2_ParentOf AS ParentOf
+      synalog_home.Anc_sn_t2 AS Anc_sn_t2, t_2_ParentOf AS ParentOf
     WHERE
       (ParentOf.parent_id = Anc_sn_t2.d)
    UNION ALL
@@ -231,10 +231,10 @@ FROM
 WHERE
   (1 = 0);
 
--- Interacting with table synalog_test.Anc_sn_t3
+-- Interacting with table synalog_home.Anc_sn_t3
 
-DROP TABLE IF EXISTS synalog_test.Anc_sn_t4;
-CREATE TABLE synalog_test.Anc_sn_t4 ENGINE = Memory AS WITH t_2_ParentOf AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_home.Anc_sn_t4;
+CREATE TABLE synalog_home.Anc_sn_t4 ENGINE = Memory AS WITH t_2_ParentOf AS (SELECT * FROM (
   
     SELECT
       1 AS parent_id,
@@ -262,7 +262,7 @@ t_1_Anc_MultBodyAggAux_f6 AS (SELECT * FROM (
       Anc_sn_t3.a AS a,
       ParentOf.child_id AS d
     FROM
-      synalog_test.Anc_sn_t3 AS Anc_sn_t3, t_2_ParentOf AS ParentOf
+      synalog_home.Anc_sn_t3 AS Anc_sn_t3, t_2_ParentOf AS ParentOf
     WHERE
       (ParentOf.parent_id = Anc_sn_t3.d)
    UNION ALL
@@ -288,10 +288,10 @@ FROM
 WHERE
   (1 = 0);
 
--- Interacting with table synalog_test.Anc_sn_t4
+-- Interacting with table synalog_home.Anc_sn_t4
 
-DROP TABLE IF EXISTS synalog_test.Anc_sn_t5;
-CREATE TABLE synalog_test.Anc_sn_t5 ENGINE = Memory AS WITH t_2_ParentOf AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_home.Anc_sn_t5;
+CREATE TABLE synalog_home.Anc_sn_t5 ENGINE = Memory AS WITH t_2_ParentOf AS (SELECT * FROM (
   
     SELECT
       1 AS parent_id,
@@ -319,7 +319,7 @@ t_1_Anc_MultBodyAggAux_f7 AS (SELECT * FROM (
       Anc_sn_t4.a AS a,
       ParentOf.child_id AS d
     FROM
-      synalog_test.Anc_sn_t4 AS Anc_sn_t4, t_2_ParentOf AS ParentOf
+      synalog_home.Anc_sn_t4 AS Anc_sn_t4, t_2_ParentOf AS ParentOf
     WHERE
       (ParentOf.parent_id = Anc_sn_t4.d)
    UNION ALL
@@ -345,58 +345,58 @@ FROM
 WHERE
   (1 = 0);
 
--- Interacting with table synalog_test.Anc_sn_t5
+-- Interacting with table synalog_home.Anc_sn_t5
 
-DROP TABLE IF EXISTS synalog_test.Anc_sn_full;
-CREATE TABLE synalog_test.Anc_sn_full ENGINE = Memory AS SELECT * FROM (
+DROP TABLE IF EXISTS synalog_home.Anc_sn_full;
+CREATE TABLE synalog_home.Anc_sn_full ENGINE = Memory AS SELECT * FROM (
   
     SELECT
       Anc_sn_delta.a AS a,
       Anc_sn_delta.d AS d
     FROM
-      synalog_test.Anc_sn_delta AS Anc_sn_delta
+      synalog_home.Anc_sn_delta AS Anc_sn_delta
    UNION ALL
   
     SELECT
       Anc_sn_t1.a AS a,
       Anc_sn_t1.d AS d
     FROM
-      synalog_test.Anc_sn_t1 AS Anc_sn_t1
+      synalog_home.Anc_sn_t1 AS Anc_sn_t1
    UNION ALL
   
     SELECT
       Anc_sn_t2.a AS a,
       Anc_sn_t2.d AS d
     FROM
-      synalog_test.Anc_sn_t2 AS Anc_sn_t2
+      synalog_home.Anc_sn_t2 AS Anc_sn_t2
    UNION ALL
   
     SELECT
       Anc_sn_t3.a AS a,
       Anc_sn_t3.d AS d
     FROM
-      synalog_test.Anc_sn_t3 AS Anc_sn_t3
+      synalog_home.Anc_sn_t3 AS Anc_sn_t3
    UNION ALL
   
     SELECT
       Anc_sn_t4.a AS a,
       Anc_sn_t4.d AS d
     FROM
-      synalog_test.Anc_sn_t4 AS Anc_sn_t4
+      synalog_home.Anc_sn_t4 AS Anc_sn_t4
    UNION ALL
   
     SELECT
       Anc_sn_t5.a AS a,
       Anc_sn_t5.d AS d
     FROM
-      synalog_test.Anc_sn_t5 AS Anc_sn_t5
+      synalog_home.Anc_sn_t5 AS Anc_sn_t5
   
 ) AS UNUSED_TABLE_NAME  ;
 
--- Interacting with table synalog_test.Anc_sn_full
+-- Interacting with table synalog_home.Anc_sn_full
 
-DROP TABLE IF EXISTS synalog_test.Anc_sn_new;
-CREATE TABLE synalog_test.Anc_sn_new ENGINE = Memory AS WITH t_2_ParentOf AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_home.Anc_sn_new;
+CREATE TABLE synalog_home.Anc_sn_new ENGINE = Memory AS WITH t_2_ParentOf AS (SELECT * FROM (
   
     SELECT
       1 AS parent_id,
@@ -424,7 +424,7 @@ t_1_Anc_MultBodyAggAux_f8 AS (SELECT * FROM (
       Anc_sn_delta.a AS a,
       ParentOf.child_id AS d
     FROM
-      synalog_test.Anc_sn_delta AS Anc_sn_delta, t_2_ParentOf AS ParentOf
+      synalog_home.Anc_sn_delta AS Anc_sn_delta, t_2_ParentOf AS ParentOf
     WHERE
       (ParentOf.parent_id = Anc_sn_delta.d)
    UNION ALL
@@ -452,14 +452,14 @@ WHERE
     Anc_sn_full.a AS synalog_k0,
     Anc_sn_full.d AS synalog_k1
   FROM
-    synalog_test.Anc_sn_full AS Anc_sn_full
+    synalog_home.Anc_sn_full AS Anc_sn_full
   GROUP BY 1, 2) AS synalog_m))
 GROUP BY 1, 2;
 
-INSERT INTO synalog_test.Anc_sn_full SELECT * FROM synalog_test.Anc_sn_new;
+INSERT INTO synalog_home.Anc_sn_full SELECT * FROM synalog_home.Anc_sn_new;
 
-DROP TABLE IF EXISTS synalog_test.Anc_sn_delta;
-CREATE TABLE synalog_test.Anc_sn_delta ENGINE = Memory AS WITH t_2_ParentOf AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_home.Anc_sn_delta;
+CREATE TABLE synalog_home.Anc_sn_delta ENGINE = Memory AS WITH t_2_ParentOf AS (SELECT * FROM (
   
     SELECT
       1 AS parent_id,
@@ -487,7 +487,7 @@ t_1_Anc_MultBodyAggAux_f1 AS (SELECT * FROM (
       Anc_sn_new.a AS a,
       ParentOf.child_id AS d
     FROM
-      synalog_test.Anc_sn_new AS Anc_sn_new, t_2_ParentOf AS ParentOf
+      synalog_home.Anc_sn_new AS Anc_sn_new, t_2_ParentOf AS ParentOf
     WHERE
       (ParentOf.parent_id = Anc_sn_new.d)
    UNION ALL
@@ -515,14 +515,14 @@ WHERE
     Anc_sn_full.a AS synalog_k0,
     Anc_sn_full.d AS synalog_k1
   FROM
-    synalog_test.Anc_sn_full AS Anc_sn_full
+    synalog_home.Anc_sn_full AS Anc_sn_full
   GROUP BY 1, 2) AS synalog_m))
 GROUP BY 1, 2;
 
-INSERT INTO synalog_test.Anc_sn_full SELECT * FROM synalog_test.Anc_sn_delta;
+INSERT INTO synalog_home.Anc_sn_full SELECT * FROM synalog_home.Anc_sn_delta;
 
-DROP TABLE IF EXISTS synalog_test.Anc_sn_new;
-CREATE TABLE synalog_test.Anc_sn_new ENGINE = Memory AS WITH t_2_ParentOf AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_home.Anc_sn_new;
+CREATE TABLE synalog_home.Anc_sn_new ENGINE = Memory AS WITH t_2_ParentOf AS (SELECT * FROM (
   
     SELECT
       1 AS parent_id,
@@ -550,7 +550,7 @@ t_1_Anc_MultBodyAggAux_f8 AS (SELECT * FROM (
       Anc_sn_delta.a AS a,
       ParentOf.child_id AS d
     FROM
-      synalog_test.Anc_sn_delta AS Anc_sn_delta, t_2_ParentOf AS ParentOf
+      synalog_home.Anc_sn_delta AS Anc_sn_delta, t_2_ParentOf AS ParentOf
     WHERE
       (ParentOf.parent_id = Anc_sn_delta.d)
    UNION ALL
@@ -578,14 +578,14 @@ WHERE
     Anc_sn_full.a AS synalog_k0,
     Anc_sn_full.d AS synalog_k1
   FROM
-    synalog_test.Anc_sn_full AS Anc_sn_full
+    synalog_home.Anc_sn_full AS Anc_sn_full
   GROUP BY 1, 2) AS synalog_m))
 GROUP BY 1, 2;
 
-INSERT INTO synalog_test.Anc_sn_full SELECT * FROM synalog_test.Anc_sn_new;
+INSERT INTO synalog_home.Anc_sn_full SELECT * FROM synalog_home.Anc_sn_new;
 
-DROP TABLE IF EXISTS synalog_test.Anc_sn_delta;
-CREATE TABLE synalog_test.Anc_sn_delta ENGINE = Memory AS WITH t_2_ParentOf AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_home.Anc_sn_delta;
+CREATE TABLE synalog_home.Anc_sn_delta ENGINE = Memory AS WITH t_2_ParentOf AS (SELECT * FROM (
   
     SELECT
       1 AS parent_id,
@@ -613,7 +613,7 @@ t_1_Anc_MultBodyAggAux_f1 AS (SELECT * FROM (
       Anc_sn_new.a AS a,
       ParentOf.child_id AS d
     FROM
-      synalog_test.Anc_sn_new AS Anc_sn_new, t_2_ParentOf AS ParentOf
+      synalog_home.Anc_sn_new AS Anc_sn_new, t_2_ParentOf AS ParentOf
     WHERE
       (ParentOf.parent_id = Anc_sn_new.d)
    UNION ALL
@@ -641,14 +641,14 @@ WHERE
     Anc_sn_full.a AS synalog_k0,
     Anc_sn_full.d AS synalog_k1
   FROM
-    synalog_test.Anc_sn_full AS Anc_sn_full
+    synalog_home.Anc_sn_full AS Anc_sn_full
   GROUP BY 1, 2) AS synalog_m))
 GROUP BY 1, 2;
 
-INSERT INTO synalog_test.Anc_sn_full SELECT * FROM synalog_test.Anc_sn_delta;
+INSERT INTO synalog_home.Anc_sn_full SELECT * FROM synalog_home.Anc_sn_delta;
 
-DROP TABLE IF EXISTS synalog_test.Anc_sn_new;
-CREATE TABLE synalog_test.Anc_sn_new ENGINE = Memory AS WITH t_2_ParentOf AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_home.Anc_sn_new;
+CREATE TABLE synalog_home.Anc_sn_new ENGINE = Memory AS WITH t_2_ParentOf AS (SELECT * FROM (
   
     SELECT
       1 AS parent_id,
@@ -676,7 +676,7 @@ t_1_Anc_MultBodyAggAux_f8 AS (SELECT * FROM (
       Anc_sn_delta.a AS a,
       ParentOf.child_id AS d
     FROM
-      synalog_test.Anc_sn_delta AS Anc_sn_delta, t_2_ParentOf AS ParentOf
+      synalog_home.Anc_sn_delta AS Anc_sn_delta, t_2_ParentOf AS ParentOf
     WHERE
       (ParentOf.parent_id = Anc_sn_delta.d)
    UNION ALL
@@ -704,14 +704,14 @@ WHERE
     Anc_sn_full.a AS synalog_k0,
     Anc_sn_full.d AS synalog_k1
   FROM
-    synalog_test.Anc_sn_full AS Anc_sn_full
+    synalog_home.Anc_sn_full AS Anc_sn_full
   GROUP BY 1, 2) AS synalog_m))
 GROUP BY 1, 2;
 
-INSERT INTO synalog_test.Anc_sn_full SELECT * FROM synalog_test.Anc_sn_new;
+INSERT INTO synalog_home.Anc_sn_full SELECT * FROM synalog_home.Anc_sn_new;
 
-DROP TABLE IF EXISTS synalog_test.Anc_sn_delta;
-CREATE TABLE synalog_test.Anc_sn_delta ENGINE = Memory AS WITH t_2_ParentOf AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_home.Anc_sn_delta;
+CREATE TABLE synalog_home.Anc_sn_delta ENGINE = Memory AS WITH t_2_ParentOf AS (SELECT * FROM (
   
     SELECT
       1 AS parent_id,
@@ -739,7 +739,7 @@ t_1_Anc_MultBodyAggAux_f1 AS (SELECT * FROM (
       Anc_sn_new.a AS a,
       ParentOf.child_id AS d
     FROM
-      synalog_test.Anc_sn_new AS Anc_sn_new, t_2_ParentOf AS ParentOf
+      synalog_home.Anc_sn_new AS Anc_sn_new, t_2_ParentOf AS ParentOf
     WHERE
       (ParentOf.parent_id = Anc_sn_new.d)
    UNION ALL
@@ -767,14 +767,14 @@ WHERE
     Anc_sn_full.a AS synalog_k0,
     Anc_sn_full.d AS synalog_k1
   FROM
-    synalog_test.Anc_sn_full AS Anc_sn_full
+    synalog_home.Anc_sn_full AS Anc_sn_full
   GROUP BY 1, 2) AS synalog_m))
 GROUP BY 1, 2;
 
-INSERT INTO synalog_test.Anc_sn_full SELECT * FROM synalog_test.Anc_sn_delta;
+INSERT INTO synalog_home.Anc_sn_full SELECT * FROM synalog_home.Anc_sn_delta;
 
-DROP TABLE IF EXISTS synalog_test.Anc_sn_new;
-CREATE TABLE synalog_test.Anc_sn_new ENGINE = Memory AS WITH t_2_ParentOf AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_home.Anc_sn_new;
+CREATE TABLE synalog_home.Anc_sn_new ENGINE = Memory AS WITH t_2_ParentOf AS (SELECT * FROM (
   
     SELECT
       1 AS parent_id,
@@ -802,7 +802,7 @@ t_1_Anc_MultBodyAggAux_f8 AS (SELECT * FROM (
       Anc_sn_delta.a AS a,
       ParentOf.child_id AS d
     FROM
-      synalog_test.Anc_sn_delta AS Anc_sn_delta, t_2_ParentOf AS ParentOf
+      synalog_home.Anc_sn_delta AS Anc_sn_delta, t_2_ParentOf AS ParentOf
     WHERE
       (ParentOf.parent_id = Anc_sn_delta.d)
    UNION ALL
@@ -830,14 +830,14 @@ WHERE
     Anc_sn_full.a AS synalog_k0,
     Anc_sn_full.d AS synalog_k1
   FROM
-    synalog_test.Anc_sn_full AS Anc_sn_full
+    synalog_home.Anc_sn_full AS Anc_sn_full
   GROUP BY 1, 2) AS synalog_m))
 GROUP BY 1, 2;
 
-INSERT INTO synalog_test.Anc_sn_full SELECT * FROM synalog_test.Anc_sn_new;
+INSERT INTO synalog_home.Anc_sn_full SELECT * FROM synalog_home.Anc_sn_new;
 
-DROP TABLE IF EXISTS synalog_test.Anc_sn_delta;
-CREATE TABLE synalog_test.Anc_sn_delta ENGINE = Memory AS WITH t_2_ParentOf AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_home.Anc_sn_delta;
+CREATE TABLE synalog_home.Anc_sn_delta ENGINE = Memory AS WITH t_2_ParentOf AS (SELECT * FROM (
   
     SELECT
       1 AS parent_id,
@@ -865,7 +865,7 @@ t_1_Anc_MultBodyAggAux_f1 AS (SELECT * FROM (
       Anc_sn_new.a AS a,
       ParentOf.child_id AS d
     FROM
-      synalog_test.Anc_sn_new AS Anc_sn_new, t_2_ParentOf AS ParentOf
+      synalog_home.Anc_sn_new AS Anc_sn_new, t_2_ParentOf AS ParentOf
     WHERE
       (ParentOf.parent_id = Anc_sn_new.d)
    UNION ALL
@@ -893,16 +893,16 @@ WHERE
     Anc_sn_full.a AS synalog_k0,
     Anc_sn_full.d AS synalog_k1
   FROM
-    synalog_test.Anc_sn_full AS Anc_sn_full
+    synalog_home.Anc_sn_full AS Anc_sn_full
   GROUP BY 1, 2) AS synalog_m))
 GROUP BY 1, 2;
 
-INSERT INTO synalog_test.Anc_sn_full SELECT * FROM synalog_test.Anc_sn_delta;
+INSERT INTO synalog_home.Anc_sn_full SELECT * FROM synalog_home.Anc_sn_delta;
 
 SELECT
   Anc_sn_full.a AS n
 FROM
-  synalog_test.Anc_sn_full AS Anc_sn_full
+  synalog_home.Anc_sn_full AS Anc_sn_full
 WHERE
   (Anc_sn_full.d = Anc_sn_full.a)
 GROUP BY 1 ORDER BY n;

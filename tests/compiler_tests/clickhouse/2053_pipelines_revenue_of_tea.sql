@@ -8,10 +8,10 @@ SET allow_experimental_correlated_subqueries = 1;
 SET aggregate_functions_null_for_empty = 1;
 SET cast_keep_nullable = 1;
 SET transform_null_in = 1;
-CREATE DATABASE IF NOT EXISTS synalog_test;
+CREATE DATABASE IF NOT EXISTS synalog_home;
 
-DROP TABLE IF EXISTS synalog_test.Line;
-CREATE TABLE synalog_test.Line ENGINE = Memory AS WITH t_1_Order AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_home.Line;
+CREATE TABLE synalog_home.Line ENGINE = Memory AS WITH t_1_Order AS (SELECT * FROM (
   
     SELECT
       1 AS id,
@@ -120,7 +120,7 @@ WHERE
   (t_0_Order.state = 'paid') AND
   (Price.item = t_0_Order.item);
 
--- Interacting with table synalog_test.Line
+-- Interacting with table synalog_home.Line
 
 WITH t_1_Order AS (SELECT * FROM (
   
@@ -207,7 +207,7 @@ WITH t_1_Order AS (SELECT * FROM (
 SELECT
   SUM(Line.amount) AS r
 FROM
-  synalog_test.Line AS Line, t_1_Order
+  synalog_home.Line AS Line, t_1_Order
 WHERE
   (Line.id = t_1_Order.id) AND
   ('tea' = t_1_Order.item);

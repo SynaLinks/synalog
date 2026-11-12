@@ -8,10 +8,10 @@ SET allow_experimental_correlated_subqueries = 1;
 SET aggregate_functions_null_for_empty = 1;
 SET cast_keep_nullable = 1;
 SET transform_null_in = 1;
-CREATE DATABASE IF NOT EXISTS synalog_test;
+CREATE DATABASE IF NOT EXISTS synalog_home;
 
-DROP TABLE IF EXISTS synalog_test.Path_ifr0;
-CREATE TABLE synalog_test.Path_ifr0 ENGINE = Memory AS SELECT * FROM (
+DROP TABLE IF EXISTS synalog_home.Path_ifr0;
+CREATE TABLE synalog_home.Path_ifr0 ENGINE = Memory AS SELECT * FROM (
   
     SELECT
       1 AS a,
@@ -19,10 +19,10 @@ CREATE TABLE synalog_test.Path_ifr0 ENGINE = Memory AS SELECT * FROM (
   
 ) AS UNUSED_TABLE_NAME  ;
 
--- Interacting with table synalog_test.Path_ifr0
+-- Interacting with table synalog_home.Path_ifr0
 
-DROP TABLE IF EXISTS synalog_test.Path_ifr1;
-CREATE TABLE synalog_test.Path_ifr1 ENGINE = Memory AS SELECT * FROM (
+DROP TABLE IF EXISTS synalog_home.Path_ifr1;
+CREATE TABLE synalog_home.Path_ifr1 ENGINE = Memory AS SELECT * FROM (
   
     SELECT
       1 AS a,
@@ -33,16 +33,16 @@ CREATE TABLE synalog_test.Path_ifr1 ENGINE = Memory AS SELECT * FROM (
       Path_ifr0.a AS a,
       2 AS b
     FROM
-      synalog_test.Path_ifr0 AS Path_ifr0
+      synalog_home.Path_ifr0 AS Path_ifr0
     WHERE
       (Path_ifr0.b = 1)
   
 ) AS UNUSED_TABLE_NAME  ;
 
--- Interacting with table synalog_test.Path_ifr1
+-- Interacting with table synalog_home.Path_ifr1
 
-DROP TABLE IF EXISTS synalog_test.Path_ifr2;
-CREATE TABLE synalog_test.Path_ifr2 ENGINE = Memory AS SELECT * FROM (
+DROP TABLE IF EXISTS synalog_home.Path_ifr2;
+CREATE TABLE synalog_home.Path_ifr2 ENGINE = Memory AS SELECT * FROM (
   
     SELECT
       1 AS a,
@@ -53,16 +53,16 @@ CREATE TABLE synalog_test.Path_ifr2 ENGINE = Memory AS SELECT * FROM (
       Path_ifr1.a AS a,
       2 AS b
     FROM
-      synalog_test.Path_ifr1 AS Path_ifr1
+      synalog_home.Path_ifr1 AS Path_ifr1
     WHERE
       (Path_ifr1.b = 1)
   
 ) AS UNUSED_TABLE_NAME  ;
 
--- Interacting with table synalog_test.Path_ifr2
+-- Interacting with table synalog_home.Path_ifr2
 
-DROP TABLE IF EXISTS synalog_test.Path_ifr1;
-CREATE TABLE synalog_test.Path_ifr1 ENGINE = Memory AS SELECT * FROM (
+DROP TABLE IF EXISTS synalog_home.Path_ifr1;
+CREATE TABLE synalog_home.Path_ifr1 ENGINE = Memory AS SELECT * FROM (
   
     SELECT
       1 AS a,
@@ -73,16 +73,16 @@ CREATE TABLE synalog_test.Path_ifr1 ENGINE = Memory AS SELECT * FROM (
       Path_ifr2.a AS a,
       2 AS b
     FROM
-      synalog_test.Path_ifr2 AS Path_ifr2
+      synalog_home.Path_ifr2 AS Path_ifr2
     WHERE
       (Path_ifr2.b = 1)
   
 ) AS UNUSED_TABLE_NAME  ;
 
--- Interacting with table synalog_test.Path_ifr1
+-- Interacting with table synalog_home.Path_ifr1
 
-DROP TABLE IF EXISTS synalog_test.Path_ifr2;
-CREATE TABLE synalog_test.Path_ifr2 ENGINE = Memory AS SELECT * FROM (
+DROP TABLE IF EXISTS synalog_home.Path_ifr2;
+CREATE TABLE synalog_home.Path_ifr2 ENGINE = Memory AS SELECT * FROM (
   
     SELECT
       1 AS a,
@@ -93,14 +93,14 @@ CREATE TABLE synalog_test.Path_ifr2 ENGINE = Memory AS SELECT * FROM (
       Path_ifr1.a AS a,
       2 AS b
     FROM
-      synalog_test.Path_ifr1 AS Path_ifr1
+      synalog_home.Path_ifr1 AS Path_ifr1
     WHERE
       (Path_ifr1.b = 1)
   
 ) AS UNUSED_TABLE_NAME  ;
 
-DROP TABLE IF EXISTS synalog_test.Path_ifr1;
-CREATE TABLE synalog_test.Path_ifr1 ENGINE = Memory AS SELECT * FROM (
+DROP TABLE IF EXISTS synalog_home.Path_ifr1;
+CREATE TABLE synalog_home.Path_ifr1 ENGINE = Memory AS SELECT * FROM (
   
     SELECT
       1 AS a,
@@ -111,14 +111,14 @@ CREATE TABLE synalog_test.Path_ifr1 ENGINE = Memory AS SELECT * FROM (
       Path_ifr2.a AS a,
       2 AS b
     FROM
-      synalog_test.Path_ifr2 AS Path_ifr2
+      synalog_home.Path_ifr2 AS Path_ifr2
     WHERE
       (Path_ifr2.b = 1)
   
 ) AS UNUSED_TABLE_NAME  ;
 
-DROP TABLE IF EXISTS synalog_test.Path_ifr2;
-CREATE TABLE synalog_test.Path_ifr2 ENGINE = Memory AS SELECT * FROM (
+DROP TABLE IF EXISTS synalog_home.Path_ifr2;
+CREATE TABLE synalog_home.Path_ifr2 ENGINE = Memory AS SELECT * FROM (
   
     SELECT
       1 AS a,
@@ -129,14 +129,14 @@ CREATE TABLE synalog_test.Path_ifr2 ENGINE = Memory AS SELECT * FROM (
       Path_ifr1.a AS a,
       2 AS b
     FROM
-      synalog_test.Path_ifr1 AS Path_ifr1
+      synalog_home.Path_ifr1 AS Path_ifr1
     WHERE
       (Path_ifr1.b = 1)
   
 ) AS UNUSED_TABLE_NAME  ;
 
-DROP TABLE IF EXISTS synalog_test.Path_ifr1;
-CREATE TABLE synalog_test.Path_ifr1 ENGINE = Memory AS SELECT * FROM (
+DROP TABLE IF EXISTS synalog_home.Path_ifr1;
+CREATE TABLE synalog_home.Path_ifr1 ENGINE = Memory AS SELECT * FROM (
   
     SELECT
       1 AS a,
@@ -147,14 +147,14 @@ CREATE TABLE synalog_test.Path_ifr1 ENGINE = Memory AS SELECT * FROM (
       Path_ifr2.a AS a,
       2 AS b
     FROM
-      synalog_test.Path_ifr2 AS Path_ifr2
+      synalog_home.Path_ifr2 AS Path_ifr2
     WHERE
       (Path_ifr2.b = 1)
   
 ) AS UNUSED_TABLE_NAME  ;
 
-DROP TABLE IF EXISTS synalog_test.Path_ifr2;
-CREATE TABLE synalog_test.Path_ifr2 ENGINE = Memory AS SELECT * FROM (
+DROP TABLE IF EXISTS synalog_home.Path_ifr2;
+CREATE TABLE synalog_home.Path_ifr2 ENGINE = Memory AS SELECT * FROM (
   
     SELECT
       1 AS a,
@@ -165,14 +165,14 @@ CREATE TABLE synalog_test.Path_ifr2 ENGINE = Memory AS SELECT * FROM (
       Path_ifr1.a AS a,
       2 AS b
     FROM
-      synalog_test.Path_ifr1 AS Path_ifr1
+      synalog_home.Path_ifr1 AS Path_ifr1
     WHERE
       (Path_ifr1.b = 1)
   
 ) AS UNUSED_TABLE_NAME  ;
 
-DROP TABLE IF EXISTS synalog_test.Path_ifr1;
-CREATE TABLE synalog_test.Path_ifr1 ENGINE = Memory AS SELECT * FROM (
+DROP TABLE IF EXISTS synalog_home.Path_ifr1;
+CREATE TABLE synalog_home.Path_ifr1 ENGINE = Memory AS SELECT * FROM (
   
     SELECT
       1 AS a,
@@ -183,7 +183,7 @@ CREATE TABLE synalog_test.Path_ifr1 ENGINE = Memory AS SELECT * FROM (
       Path_ifr2.a AS a,
       2 AS b
     FROM
-      synalog_test.Path_ifr2 AS Path_ifr2
+      synalog_home.Path_ifr2 AS Path_ifr2
     WHERE
       (Path_ifr2.b = 1)
   
@@ -200,7 +200,7 @@ SELECT * FROM (
       Path_ifr3.a AS a,
       2 AS b
     FROM
-      synalog_test.Path_ifr1 AS Path_ifr3
+      synalog_home.Path_ifr1 AS Path_ifr3
     WHERE
       (Path_ifr3.b = 1)
   

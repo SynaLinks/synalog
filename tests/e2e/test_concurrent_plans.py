@@ -82,11 +82,13 @@ def test_a_run_drops_the_tables_a_killed_run_left(runner_for, engine):
     import synalog
     from synalog.runners import _drop_working_tables, sweep_stale_tables
 
+    from writes import home
+
     runner = runner_for(engine)
     now = int(time.time())
-    stale = f"synalog_test.left_{_tag(now - 2 * 24 * 3600)}"
-    recent = f"synalog_test.left_{_tag(now - 60)}"
-    untagged = "synalog_test.left_untagged"
+    stale = f"{home(engine)}.left_{_tag(now - 2 * 24 * 3600)}"
+    recent = f"{home(engine)}.left_{_tag(now - 60)}"
+    untagged = f"{home(engine)}.left_untagged"
     steps = synalog.plan("@Ground(Q); Q(x: 1); R(x:) :- Q(x:);", "R", engine=engine)
     s = runner.session()
     try:
@@ -96,12 +98,12 @@ def test_a_run_drops_the_tables_a_killed_run_left(runner_for, engine):
             s.run(f"DROP TABLE IF EXISTS {table}")
             s.run(f"CREATE TABLE {table} AS SELECT 1 AS x")
         dropped = sweep_stale_tables(steps, s, engine)
-        listed = {str(row[1 if engine == "databricks" else 0]).lower() for row in s.run("SHOW TABLES IN synalog_test" if engine == "databricks" else "SHOW TABLES FROM synalog_test")[1]}
+        listed = {str(row[1 if engine == "databricks" else 0]).lower() for row in s.run(f"SHOW TABLES IN {home(engine)}" if engine == "databricks" else f"SHOW TABLES FROM {home(engine)}")[1]}
         for table in (recent, untagged):
             s.run(f"DROP TABLE IF EXISTS {table}")
     finally:
         _drop_working_tables(steps, s)
         s.close()
     assert [t.lower() for t in dropped] == [stale.lower()], dropped
-    assert stale.split(".")[1].lower() not in listed
-    assert {recent.split(".")[1].lower(), untagged.split(".")[1].lower()} <= listed
+    assert stale.split(".")[-1].lower() not in listed
+    assert {recent.split(".")[-1].lower(), untagged.split(".")[-1].lower()} <= listed

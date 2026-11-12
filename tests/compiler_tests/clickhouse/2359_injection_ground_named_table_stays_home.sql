@@ -8,10 +8,10 @@ SET allow_experimental_correlated_subqueries = 1;
 SET aggregate_functions_null_for_empty = 1;
 SET cast_keep_nullable = 1;
 SET transform_null_in = 1;
-CREATE DATABASE IF NOT EXISTS synalog_test;
+CREATE DATABASE IF NOT EXISTS synalog_home;
 
-DROP TABLE IF EXISTS synalog_test.Users;
-CREATE TABLE synalog_test.Users ENGINE = Memory AS WITH t_0_V AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_home.Users;
+CREATE TABLE synalog_home.Users ENGINE = Memory AS WITH t_0_V AS (SELECT * FROM (
   
     SELECT
       1 AS x
@@ -26,9 +26,9 @@ SELECT
 FROM
   t_0_V AS V;
 
--- Interacting with table synalog_test.Users
+-- Interacting with table synalog_home.Users
 
 SELECT
   Q.x AS x
 FROM
-  synalog_test.Users AS Q ORDER BY x;
+  synalog_home.Users AS Q ORDER BY x;

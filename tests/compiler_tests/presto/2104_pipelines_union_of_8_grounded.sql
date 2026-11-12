@@ -1,5 +1,5 @@
-DROP TABLE IF EXISTS synalog_test.W;
-CREATE TABLE synalog_test.W AS WITH t_0_W_MultBodyAggAux AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_home.synalog_home.W;
+CREATE TABLE synalog_home.synalog_home.W AS WITH t_0_W_MultBodyAggAux AS (SELECT * FROM (
   
     SELECT
       x_3 AS x
@@ -55,9 +55,9 @@ FROM
   t_0_W_MultBodyAggAux AS W_MultBodyAggAux
 GROUP BY 1;
 
--- Interacting with table synalog_test.W
+-- Interacting with table synalog_home.synalog_home.W
 
 SELECT
   SUM(1) AS n
 FROM
-  synalog_test.W AS W;
+  synalog_home.synalog_home.W AS W;

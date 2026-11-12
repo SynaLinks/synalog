@@ -8,10 +8,10 @@ SET allow_experimental_correlated_subqueries = 1;
 SET aggregate_functions_null_for_empty = 1;
 SET cast_keep_nullable = 1;
 SET transform_null_in = 1;
-CREATE DATABASE IF NOT EXISTS synalog_test;
+CREATE DATABASE IF NOT EXISTS synalog_home;
 
-DROP TABLE IF EXISTS synalog_test.Better;
-CREATE TABLE synalog_test.Better ENGINE = Memory AS WITH t_1_S AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_home.Better;
+CREATE TABLE synalog_home.Better ENGINE = Memory AS WITH t_1_S AS (SELECT * FROM (
   
     SELECT
       'north' AS r,
@@ -129,7 +129,7 @@ FROM
   t_0_Better_MultBodyAggAux AS Better_MultBodyAggAux
 GROUP BY 1;
 
--- Interacting with table synalog_test.Better
+-- Interacting with table synalog_home.Better
 
 WITH t_1_S AS (SELECT * FROM (
   
@@ -228,7 +228,7 @@ t_0_Q_MultBodyAggAux AS (SELECT * FROM (
       NOT (S.d IS NOT NULL AND CAST(S.d AS Nullable(String)) IN (SELECT CAST(synalog_k0 AS Nullable(String)) FROM (SELECT
         Better.d AS synalog_k0
       FROM
-        synalog_test.Better AS Better
+        synalog_home.Better AS Better
       GROUP BY 1) AS synalog_m)) AND
       (S.r = 'south')
    UNION ALL
@@ -237,7 +237,7 @@ t_0_Q_MultBodyAggAux AS (SELECT * FROM (
       t_2_S.d AS d,
       t_2_S.v AS v
     FROM
-      t_1_S AS t_2_S, synalog_test.Better AS t_3_Better
+      t_1_S AS t_2_S, synalog_home.Better AS t_3_Better
     WHERE
       (t_3_Better.n < 3) AND
       (t_2_S.r = 'south') AND

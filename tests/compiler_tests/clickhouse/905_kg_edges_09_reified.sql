@@ -8,10 +8,10 @@ SET allow_experimental_correlated_subqueries = 1;
 SET aggregate_functions_null_for_empty = 1;
 SET cast_keep_nullable = 1;
 SET transform_null_in = 1;
-CREATE DATABASE IF NOT EXISTS synalog_test;
+CREATE DATABASE IF NOT EXISTS synalog_home;
 
-DROP TABLE IF EXISTS synalog_test.Assignment;
-CREATE TABLE synalog_test.Assignment ENGINE = Memory AS WITH t_0_Assignments AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_home.Assignment;
+CREATE TABLE synalog_home.Assignment ENGINE = Memory AS WITH t_0_Assignments AS (SELECT * FROM (
   
     SELECT
       1 AS assignment_id,
@@ -34,10 +34,10 @@ FROM
   t_0_Assignments AS Assignments
 GROUP BY 1, 2;
 
--- Interacting with table synalog_test.Assignment
+-- Interacting with table synalog_home.Assignment
 
-DROP TABLE IF EXISTS synalog_test.Person;
-CREATE TABLE synalog_test.Person ENGINE = Memory AS WITH t_0_Employees AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_home.Person;
+CREATE TABLE synalog_home.Person ENGINE = Memory AS WITH t_0_Employees AS (SELECT * FROM (
   
     SELECT
       1 AS person_id,
@@ -92,10 +92,10 @@ FROM
   t_0_Employees AS Employees
 GROUP BY 1, 2, 3 ORDER BY person_id;
 
--- Interacting with table synalog_test.Person
+-- Interacting with table synalog_home.Person
 
-DROP TABLE IF EXISTS synalog_test.Team;
-CREATE TABLE synalog_test.Team ENGINE = Memory AS WITH t_0_Teams AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_home.Team;
+CREATE TABLE synalog_home.Team ENGINE = Memory AS WITH t_0_Teams AS (SELECT * FROM (
   
     SELECT
       10 AS team_id,
@@ -119,7 +119,7 @@ FROM
   t_0_Teams AS Teams
 GROUP BY 1, 2 ORDER BY team_id;
 
--- Interacting with table synalog_test.Team
+-- Interacting with table synalog_home.Team
 
 WITH t_0_Assignments AS (SELECT * FROM (
   
@@ -141,7 +141,7 @@ t_0_AssignmentPerson AS (SELECT
   Assignment.assignment_id AS assignment_id,
   Person.person_id AS person_id
 FROM
-  synalog_test.Assignment AS Assignment, synalog_test.Person AS Person, t_0_Assignments AS Assignments
+  synalog_home.Assignment AS Assignment, synalog_home.Person AS Person, t_0_Assignments AS Assignments
 WHERE
   (Assignments.assignment_id = Assignment.assignment_id) AND
   (Assignments.person_id = Person.person_id)
@@ -150,7 +150,7 @@ t_1_AssignmentTeam AS (SELECT
   t_2_Assignment.assignment_id AS assignment_id,
   t_3_Team.team_id AS team_id
 FROM
-  synalog_test.Assignment AS t_2_Assignment, synalog_test.Team AS t_3_Team, t_0_Assignments AS t_4_Assignments
+  synalog_home.Assignment AS t_2_Assignment, synalog_home.Team AS t_3_Team, t_0_Assignments AS t_4_Assignments
 WHERE
   (t_4_Assignments.assignment_id = t_2_Assignment.assignment_id) AND
   (t_4_Assignments.team_id = t_3_Team.team_id)

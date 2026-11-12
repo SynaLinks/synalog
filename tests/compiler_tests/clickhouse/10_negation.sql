@@ -8,10 +8,10 @@ SET allow_experimental_correlated_subqueries = 1;
 SET aggregate_functions_null_for_empty = 1;
 SET cast_keep_nullable = 1;
 SET transform_null_in = 1;
-CREATE DATABASE IF NOT EXISTS synalog_test;
+CREATE DATABASE IF NOT EXISTS synalog_home;
 
-DROP TABLE IF EXISTS synalog_test.Even;
-CREATE TABLE synalog_test.Even ENGINE = Memory AS SELECT
+DROP TABLE IF EXISTS synalog_home.Even;
+CREATE TABLE synalog_home.Even ENGINE = Memory AS SELECT
   x_3 AS col0
 FROM
   (SELECT 'singleton' as s) as unused_singleton
@@ -19,7 +19,7 @@ FROM
 WHERE
   (((x_3) % NULLIF(2, 0)) = 0);
 
--- Interacting with table synalog_test.Even
+-- Interacting with table synalog_home.Even
 
 WITH t_0_Prime AS (SELECT * FROM (
   
@@ -51,7 +51,7 @@ SELECT * FROM (
       NOT (x_5 IS NOT NULL AND CAST(x_5 AS Nullable(String)) IN (SELECT CAST(synalog_k0 AS Nullable(String)) FROM (SELECT
         Even.col0 AS synalog_k0
       FROM
-        synalog_test.Even AS Even
+        synalog_home.Even AS Even
       GROUP BY 1) AS synalog_m))
    UNION ALL
   
@@ -74,7 +74,7 @@ SELECT * FROM (
       'even_not_prime' AS test_name,
       Even.col0 AS x
     FROM
-      synalog_test.Even AS Even
+      synalog_home.Even AS Even
     WHERE
       NOT (Even.col0 IS NOT NULL AND CAST(Even.col0 AS Nullable(String)) IN (SELECT CAST(synalog_k0 AS Nullable(String)) FROM (SELECT
         Prime.col0 AS synalog_k0

@@ -1,5 +1,5 @@
-DROP TABLE IF EXISTS synalog_test.Person;
-CREATE TABLE synalog_test.Person AS WITH t_1_Order AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_home.synalog_home.Person;
+CREATE TABLE synalog_home.synalog_home.Person AS WITH t_1_Order AS (SELECT * FROM (
   
     SELECT
       1 AS id,
@@ -87,10 +87,10 @@ FROM
   t_1_Order AS t_0_Order
 GROUP BY 1;
 
--- Interacting with table synalog_test.Person
+-- Interacting with table synalog_home.synalog_home.Person
 
-DROP TABLE IF EXISTS synalog_test.Tier;
-CREATE TABLE synalog_test.Tier AS WITH t_1_Order AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_home.synalog_home.Tier;
+CREATE TABLE synalog_home.synalog_home.Tier AS WITH t_1_Order AS (SELECT * FROM (
   
     SELECT
       1 AS id,
@@ -204,23 +204,23 @@ SELECT
 FROM
   t_0_Spend AS Spend;
 
--- Interacting with table synalog_test.Tier
+-- Interacting with table synalog_home.synalog_home.Tier
 
 WITH t_0_NoTier AS (SELECT
   t_1_Person.who AS who
 FROM
-  synalog_test.Person AS t_1_Person
+  synalog_home.synalog_home.Person AS t_1_Person
 WHERE
   ((SELECT
     MIN(1) AS synalog_value
   FROM
-    synalog_test.Tier AS t_2_Tier
+    synalog_home.synalog_home.Tier AS t_2_Tier
   WHERE
     (t_2_Tier.who = t_1_Person.who)) IS NULL))
 SELECT
   1 AS ok
 FROM
-  synalog_test.Person AS Person
+  synalog_home.synalog_home.Person AS Person
 WHERE
   ((SELECT
     MIN(1) AS synalog_value

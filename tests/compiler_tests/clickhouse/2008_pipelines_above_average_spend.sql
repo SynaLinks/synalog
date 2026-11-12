@@ -8,10 +8,10 @@ SET allow_experimental_correlated_subqueries = 1;
 SET aggregate_functions_null_for_empty = 1;
 SET cast_keep_nullable = 1;
 SET transform_null_in = 1;
-CREATE DATABASE IF NOT EXISTS synalog_test;
+CREATE DATABASE IF NOT EXISTS synalog_home;
 
-DROP TABLE IF EXISTS synalog_test.Spend;
-CREATE TABLE synalog_test.Spend ENGINE = Memory AS WITH t_1_Order AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_home.Spend;
+CREATE TABLE synalog_home.Spend ENGINE = Memory AS WITH t_1_Order AS (SELECT * FROM (
   
     SELECT
       1 AS id,
@@ -120,15 +120,15 @@ WHERE
   (Price.item = t_0_Order.item)
 GROUP BY 1;
 
--- Interacting with table synalog_test.Spend
+-- Interacting with table synalog_home.Spend
 
 WITH t_1_A AS (SELECT
   AVG(t_2_Spend.total) AS a
 FROM
-  synalog_test.Spend AS t_2_Spend)
+  synalog_home.Spend AS t_2_Spend)
 SELECT
   Spend.who AS who
 FROM
-  synalog_test.Spend AS Spend, t_1_A AS t_0_A
+  synalog_home.Spend AS Spend, t_1_A AS t_0_A
 WHERE
   (Spend.total > t_0_A.a) ORDER BY who;

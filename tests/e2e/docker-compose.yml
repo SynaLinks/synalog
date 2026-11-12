@@ -46,14 +46,21 @@ services:
     # the other engines gets the container killed: 3 GB, as Presto.
     # A finished query stays in memory for 15 minutes by default, and the
     # suite runs thousands a minute: their history alone filled the heap.
+    # synalog's user (synalog_app) writes in the synalog_home catalog only,
+    # a memory catalog as the customer's (`memory`), which is read-only to it
+    # (access-control/trino.json); `admin` creates the data it reads.
     command:
       - sh
       - -c
       - |
         echo 'memory.enable-lazy-dynamic-filtering=false' >> /etc/trino/catalog/memory.properties
+        cp /etc/trino/catalog/memory.properties /etc/trino/catalog/synalog_home.properties
         echo 'query.min-expire-age=1m' >> /etc/trino/config.properties
+        printf 'access-control.name=file\nsecurity.config-file=/etc/synalog/rules.json\n' > /etc/trino/access-control.properties
         sed -i 's/-XX:InitialRAMPercentage=80/-Xms1G/; s/-XX:MaxRAMPercentage=80/-Xmx3G/' /etc/trino/jvm.config
         exec /usr/lib/trino/bin/run-trino
+    volumes:
+      - ./access-control/trino.json:/etc/synalog/rules.json:ro
     ports:
       - "${SYNALOG_E2E_TRINO_PORT:-8080}:8080"
     healthcheck:
@@ -68,13 +75,20 @@ services:
     # statements on Presto). The coordinator keeps each finished query's
     # details for 15 minutes by default, which filled its 1 GB heap until it
     # exited (OutOfMemoryError): keep them a minute, with a 2 GB heap.
+    # synalog's user (synalog_app) writes in the synalog_home catalog only,
+    # a memory catalog as the customer's (`memory`), which is read-only to it
+    # (access-control/presto.json); `admin` creates the data it reads.
     entrypoint:
       - sh
       - -c
       - |
         echo 'query.min-expire-age=1m' >> $$PRESTO_HOME/etc/config.properties
+        cp $$PRESTO_HOME/etc/catalog/memory.properties $$PRESTO_HOME/etc/catalog/synalog_home.properties
+        printf 'access-control.name=file\nsecurity.config-file=/etc/synalog/rules.json\n' > $$PRESTO_HOME/etc/access-control.properties
         sed -i 's/-Xmx1G/-Xmx2G/' $$PRESTO_HOME/etc/jvm.config
         exec /opt/entrypoint.sh
+    volumes:
+      - ./access-control/presto.json:/etc/synalog/rules.json:ro
     ports:
       - "${SYNALOG_E2E_PRESTO_PORT:-8081}:8080"
     healthcheck:

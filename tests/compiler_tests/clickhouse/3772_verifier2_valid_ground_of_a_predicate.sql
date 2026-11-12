@@ -8,10 +8,10 @@ SET allow_experimental_correlated_subqueries = 1;
 SET aggregate_functions_null_for_empty = 1;
 SET cast_keep_nullable = 1;
 SET transform_null_in = 1;
-CREATE DATABASE IF NOT EXISTS synalog_test;
+CREATE DATABASE IF NOT EXISTS synalog_home;
 
-DROP TABLE IF EXISTS synalog_test.G;
-CREATE TABLE synalog_test.G ENGINE = Memory AS WITH t_0_N AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_home.G;
+CREATE TABLE synalog_home.G ENGINE = Memory AS WITH t_0_N AS (SELECT * FROM (
   
     SELECT
       1 AS n,
@@ -35,9 +35,9 @@ FROM
 WHERE
   (N.n > 1);
 
--- Interacting with table synalog_test.G
+-- Interacting with table synalog_home.G
 
 SELECT
   SUM(1) AS c
 FROM
-  synalog_test.G AS G;
+  synalog_home.G AS G;

@@ -1,5 +1,5 @@
-DROP TABLE IF EXISTS synalog_test.Trouble;
-CREATE TABLE synalog_test.Trouble AS WITH t_2_Order AS (SELECT * FROM VALUES
+DROP TABLE IF EXISTS synalog_home.Trouble;
+CREATE TABLE synalog_home.Trouble AS WITH t_2_Order AS (SELECT * FROM VALUES
   (1, "ann", "tea", 3, "paid"),
   (2, "bob", "cake", 1, "paid"),
   (3, "ann", "cake", 2, "refunded"),
@@ -35,7 +35,7 @@ FROM
   t_0_Trouble_MultBodyAggAux AS Trouble_MultBodyAggAux
 GROUP BY 1;
 
--- Interacting with table synalog_test.Trouble
+-- Interacting with table synalog_home.Trouble
 
 WITH t_2_Order AS (SELECT * FROM VALUES
   (1, "ann", "tea", 3, "paid"),
@@ -71,6 +71,6 @@ WHERE
   ((SELECT
     MIN(1) AS synalog_value
   FROM
-    synalog_test.Trouble AS Trouble
+    synalog_home.Trouble AS Trouble
   WHERE
     (Trouble.who = Spend.who)) IS NULL) ORDER BY who NULLS LAST;

@@ -8,10 +8,10 @@ SET allow_experimental_correlated_subqueries = 1;
 SET aggregate_functions_null_for_empty = 1;
 SET cast_keep_nullable = 1;
 SET transform_null_in = 1;
-CREATE DATABASE IF NOT EXISTS synalog_test;
+CREATE DATABASE IF NOT EXISTS synalog_home;
 
-DROP TABLE IF EXISTS synalog_test.QuarterTotals;
-CREATE TABLE synalog_test.QuarterTotals ENGINE = Memory AS WITH t_0_Sales AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_home.QuarterTotals;
+CREATE TABLE synalog_home.QuarterTotals ENGINE = Memory AS WITH t_0_Sales AS (SELECT * FROM (
   
     SELECT
       'Q1' AS col0,
@@ -44,10 +44,10 @@ FROM
   t_0_Sales AS Sales
 GROUP BY 1;
 
--- Interacting with table synalog_test.QuarterTotals
+-- Interacting with table synalog_home.QuarterTotals
 
-DROP TABLE IF EXISTS synalog_test.RegionTotals;
-CREATE TABLE synalog_test.RegionTotals ENGINE = Memory AS WITH t_0_Sales AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_home.RegionTotals;
+CREATE TABLE synalog_home.RegionTotals ENGINE = Memory AS WITH t_0_Sales AS (SELECT * FROM (
   
     SELECT
       'Q1' AS col0,
@@ -80,7 +80,7 @@ FROM
   t_0_Sales AS Sales
 GROUP BY 1;
 
--- Interacting with table synalog_test.RegionTotals
+-- Interacting with table synalog_home.RegionTotals
 
 WITH t_0_Sales AS (SELECT * FROM (
   
@@ -114,7 +114,7 @@ SELECT
   QuarterTotals.total AS qtotal,
   RegionTotals.total AS rtotal
 FROM
-  t_0_Sales AS Sales, synalog_test.QuarterTotals AS QuarterTotals, synalog_test.RegionTotals AS RegionTotals
+  t_0_Sales AS Sales, synalog_home.QuarterTotals AS QuarterTotals, synalog_home.RegionTotals AS RegionTotals
 WHERE
   (QuarterTotals.col0 = Sales.col0) AND
   (RegionTotals.col0 = Sales.col1) ORDER BY quarter, region;

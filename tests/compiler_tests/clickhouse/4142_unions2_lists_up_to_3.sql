@@ -8,10 +8,10 @@ SET allow_experimental_correlated_subqueries = 1;
 SET aggregate_functions_null_for_empty = 1;
 SET cast_keep_nullable = 1;
 SET transform_null_in = 1;
-CREATE DATABASE IF NOT EXISTS synalog_test;
+CREATE DATABASE IF NOT EXISTS synalog_home;
 
-DROP TABLE IF EXISTS synalog_test.L;
-CREATE TABLE synalog_test.L ENGINE = Memory AS WITH t_1_A AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_home.L;
+CREATE TABLE synalog_home.L ENGINE = Memory AS WITH t_1_A AS (SELECT * FROM (
   
     SELECT
       1 AS x
@@ -86,7 +86,7 @@ FROM
   t_0_L_MultBodyAggAux AS L_MultBodyAggAux
 GROUP BY 1;
 
--- Interacting with table synalog_test.L
+-- Interacting with table synalog_home.L
 
 WITH t_3_M AS (SELECT * FROM (
   
@@ -106,7 +106,7 @@ t_1_All AS (SELECT * FROM (
       t_2_L.src AS src,
       t_2_L.l AS l
     FROM
-      synalog_test.L AS t_2_L
+      synalog_home.L AS t_2_L
    UNION ALL
   
     SELECT
@@ -118,7 +118,7 @@ t_1_All AS (SELECT * FROM (
       NOT (M.src IS NOT NULL AND CAST(M.src AS Nullable(String)) IN (SELECT CAST(synalog_k0 AS Nullable(String)) FROM (SELECT
         t_4_L.src AS synalog_k0
       FROM
-        synalog_test.L AS t_4_L
+        synalog_home.L AS t_4_L
       GROUP BY 1) AS synalog_m))
   
 ) AS UNUSED_TABLE_NAME  )

@@ -7,19 +7,19 @@ SET SESSION sql_mode = 'ANSI_QUOTES,PIPES_AS_CONCAT,NO_BACKSLASH_ESCAPES';
 SET SESSION optimizer_switch = 'derived_condition_pushdown=off';
 SET NAMES utf8mb4 COLLATE utf8mb4_0900_bin;
 SET SESSION group_concat_max_len = 1073741824;
-CREATE DATABASE IF NOT EXISTS synalog_test DEFAULT COLLATE utf8mb4_0900_bin;
+CREATE DATABASE IF NOT EXISTS synalog_home DEFAULT COLLATE utf8mb4_0900_bin;
 
-DROP TABLE IF EXISTS synalog_test.V;
-CREATE TABLE synalog_test.V AS SELECT
+DROP TABLE IF EXISTS synalog_home.V;
+CREATE TABLE synalog_home.V AS SELECT
   JSON_VALUE(x_1.value, '$' RETURNING DOUBLE) AS x
 FROM
   LATERAL (SELECT synalog_u.value FROM (SELECT JSON_ARRAY(1, 2) AS synalog_a) AS synalog_s, JSON_TABLE(synalog_s.synalog_a, '$[*]' COLUMNS (value JSON PATH '$')) AS synalog_u) AS x_1;
 
--- Interacting with table synalog_test.V
+-- Interacting with table synalog_home.V
 
 SELECT * FROM (
 SELECT
   ((V.x) * (2)) AS y
 FROM
-  synalog_test.V AS V
+  synalog_home.V AS V
 ) AS UNUSED_TABLE_NAME ORDER BY y IS NULL, y;

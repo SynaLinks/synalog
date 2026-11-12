@@ -7,10 +7,10 @@ SET SESSION sql_mode = 'ANSI_QUOTES,PIPES_AS_CONCAT,NO_BACKSLASH_ESCAPES';
 SET SESSION optimizer_switch = 'derived_condition_pushdown=off';
 SET NAMES utf8mb4 COLLATE utf8mb4_0900_bin;
 SET SESSION group_concat_max_len = 1073741824;
-CREATE DATABASE IF NOT EXISTS synalog_test DEFAULT COLLATE utf8mb4_0900_bin;
+CREATE DATABASE IF NOT EXISTS synalog_home DEFAULT COLLATE utf8mb4_0900_bin;
 
-DROP TABLE IF EXISTS synalog_test.W;
-CREATE TABLE synalog_test.W AS WITH t_0_W_MultBodyAggAux AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_home.W;
+CREATE TABLE synalog_home.W AS WITH t_0_W_MultBodyAggAux AS (SELECT * FROM (
   
     SELECT
       JSON_VALUE(x_3.value, '$' RETURNING DOUBLE) AS x
@@ -30,9 +30,9 @@ FROM
   t_0_W_MultBodyAggAux AS W_MultBodyAggAux
 GROUP BY 1;
 
--- Interacting with table synalog_test.W
+-- Interacting with table synalog_home.W
 
 SELECT
   SUM(1) AS n
 FROM
-  synalog_test.W AS W;
+  synalog_home.W AS W;

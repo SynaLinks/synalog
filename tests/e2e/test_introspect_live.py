@@ -21,6 +21,8 @@ import synalog
 from synalog import project
 from synalog.introspect import introspect
 
+from runners import APP_USER
+
 
 def _connect(folder, engine: str, fields: dict) -> dict:
     """The engine's connection, the only way synalog has one: a project's
@@ -39,7 +41,7 @@ def _trino_like(engine: str, folder) -> dict:
     default_port = "8080" if engine == "trino" else "8081"
     host = os.environ.get(f"SYNALOG_E2E_{engine.upper()}_HOST", "localhost")
     port = os.environ.get(f"SYNALOG_E2E_{engine.upper()}_PORT", default_port)
-    return _connect(folder, engine, {"host": host, "port": port, "catalog": "tpch", "user": "e2e"})
+    return _connect(folder, engine, {"host": host, "port": port, "catalog": "tpch", "user": APP_USER})
 
 
 @pytest.mark.engine("psql")
@@ -80,11 +82,14 @@ def test_introspect_databricks_via_spark_show_fallback(runner_for):
     # SHOW SCHEMAS / SHOW TABLES / DESCRIBE TABLE fallback against a live server.
     runner = runner_for("databricks")
     schema = "synalog_introspect_test"
-    runner.run(f"DROP SCHEMA IF EXISTS {schema} CASCADE")
-    runner.run(f"CREATE SCHEMA {schema}")
+    # The customer's data, the administrator's.
+    runner.setup(
+        f"DROP SCHEMA IF EXISTS {schema} CASCADE",
+        f"CREATE SCHEMA {schema}",
+        f"CREATE TABLE {schema}.customers (id INT, full_name STRING)",
+        f"CREATE TABLE {schema}.orders (id INT, amount DOUBLE)",
+    )
     try:
-        runner.run(f"CREATE TABLE {schema}.customers (id INT, full_name STRING)")
-        runner.run(f"CREATE TABLE {schema}.orders (id INT, amount DOUBLE)")
 
         # Drive introspection through the Spark runner (the production path would
         # connect to real Databricks via databricks-sql-connector).
@@ -101,4 +106,4 @@ def test_introspect_databricks_via_spark_show_fallback(runner_for):
         # Everything introspected compiles as databricks-dialect Synalog.
         assert synalog.check(text, engine="databricks")[0] == []
     finally:
-        runner.run(f"DROP SCHEMA IF EXISTS {schema} CASCADE")
+        runner.setup(f"DROP SCHEMA IF EXISTS {schema} CASCADE")

@@ -8,10 +8,10 @@ SET allow_experimental_correlated_subqueries = 1;
 SET aggregate_functions_null_for_empty = 1;
 SET cast_keep_nullable = 1;
 SET transform_null_in = 1;
-CREATE DATABASE IF NOT EXISTS synalog_test;
+CREATE DATABASE IF NOT EXISTS synalog_home;
 
-DROP TABLE IF EXISTS synalog_test.D_ifr0;
-CREATE TABLE synalog_test.D_ifr0 ENGINE = Memory AS WITH t_0_D_MultBodyAggAux_f1 AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_home.D_ifr0;
+CREATE TABLE synalog_home.D_ifr0 ENGINE = Memory AS WITH t_0_D_MultBodyAggAux_f1 AS (SELECT * FROM (
   
     SELECT
       1 AS n,
@@ -25,10 +25,10 @@ FROM
   t_0_D_MultBodyAggAux_f1 AS D_MultBodyAggAux_f1
 GROUP BY 1;
 
--- Interacting with table synalog_test.D_ifr0
+-- Interacting with table synalog_home.D_ifr0
 
-DROP TABLE IF EXISTS synalog_test.D_ifr1;
-CREATE TABLE synalog_test.D_ifr1 ENGINE = Memory AS WITH t_1_E AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_home.D_ifr1;
+CREATE TABLE synalog_home.D_ifr1 ENGINE = Memory AS WITH t_1_E AS (SELECT * FROM (
   
     SELECT
       1 AS a,
@@ -56,7 +56,7 @@ t_0_D_MultBodyAggAux_f2 AS (SELECT * FROM (
       E.b AS n,
       ((D_ifr0.d) + (1)) AS d
     FROM
-      synalog_test.D_ifr0 AS D_ifr0, t_1_E AS E
+      synalog_home.D_ifr0 AS D_ifr0, t_1_E AS E
     WHERE
       (E.a = D_ifr0.n)
   
@@ -68,10 +68,10 @@ FROM
   t_0_D_MultBodyAggAux_f2 AS D_MultBodyAggAux_f2
 GROUP BY 1;
 
--- Interacting with table synalog_test.D_ifr1
+-- Interacting with table synalog_home.D_ifr1
 
-DROP TABLE IF EXISTS synalog_test.D_ifr2;
-CREATE TABLE synalog_test.D_ifr2 ENGINE = Memory AS WITH t_1_E AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_home.D_ifr2;
+CREATE TABLE synalog_home.D_ifr2 ENGINE = Memory AS WITH t_1_E AS (SELECT * FROM (
   
     SELECT
       1 AS a,
@@ -99,7 +99,7 @@ t_0_D_MultBodyAggAux_f3 AS (SELECT * FROM (
       E.b AS n,
       ((D_ifr1.d) + (1)) AS d
     FROM
-      synalog_test.D_ifr1 AS D_ifr1, t_1_E AS E
+      synalog_home.D_ifr1 AS D_ifr1, t_1_E AS E
     WHERE
       (E.a = D_ifr1.n)
   
@@ -111,10 +111,10 @@ FROM
   t_0_D_MultBodyAggAux_f3 AS D_MultBodyAggAux_f3
 GROUP BY 1;
 
--- Interacting with table synalog_test.D_ifr2
+-- Interacting with table synalog_home.D_ifr2
 
-DROP TABLE IF EXISTS synalog_test.D_ifr1;
-CREATE TABLE synalog_test.D_ifr1 ENGINE = Memory AS WITH t_1_E AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_home.D_ifr1;
+CREATE TABLE synalog_home.D_ifr1 ENGINE = Memory AS WITH t_1_E AS (SELECT * FROM (
   
     SELECT
       1 AS a,
@@ -142,7 +142,7 @@ t_0_D_MultBodyAggAux_f4 AS (SELECT * FROM (
       E.b AS n,
       ((D_ifr2.d) + (1)) AS d
     FROM
-      synalog_test.D_ifr2 AS D_ifr2, t_1_E AS E
+      synalog_home.D_ifr2 AS D_ifr2, t_1_E AS E
     WHERE
       (E.a = D_ifr2.n)
   
@@ -154,10 +154,10 @@ FROM
   t_0_D_MultBodyAggAux_f4 AS D_MultBodyAggAux_f4
 GROUP BY 1;
 
--- Interacting with table synalog_test.D_ifr1
+-- Interacting with table synalog_home.D_ifr1
 
-DROP TABLE IF EXISTS synalog_test.D_ifr2;
-CREATE TABLE synalog_test.D_ifr2 ENGINE = Memory AS WITH t_1_E AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_home.D_ifr2;
+CREATE TABLE synalog_home.D_ifr2 ENGINE = Memory AS WITH t_1_E AS (SELECT * FROM (
   
     SELECT
       1 AS a,
@@ -185,7 +185,7 @@ t_0_D_MultBodyAggAux_f3 AS (SELECT * FROM (
       E.b AS n,
       ((D_ifr1.d) + (1)) AS d
     FROM
-      synalog_test.D_ifr1 AS D_ifr1, t_1_E AS E
+      synalog_home.D_ifr1 AS D_ifr1, t_1_E AS E
     WHERE
       (E.a = D_ifr1.n)
   
@@ -197,8 +197,8 @@ FROM
   t_0_D_MultBodyAggAux_f3 AS D_MultBodyAggAux_f3
 GROUP BY 1;
 
-DROP TABLE IF EXISTS synalog_test.D_ifr1;
-CREATE TABLE synalog_test.D_ifr1 ENGINE = Memory AS WITH t_1_E AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_home.D_ifr1;
+CREATE TABLE synalog_home.D_ifr1 ENGINE = Memory AS WITH t_1_E AS (SELECT * FROM (
   
     SELECT
       1 AS a,
@@ -226,7 +226,7 @@ t_0_D_MultBodyAggAux_f4 AS (SELECT * FROM (
       E.b AS n,
       ((D_ifr2.d) + (1)) AS d
     FROM
-      synalog_test.D_ifr2 AS D_ifr2, t_1_E AS E
+      synalog_home.D_ifr2 AS D_ifr2, t_1_E AS E
     WHERE
       (E.a = D_ifr2.n)
   
@@ -238,8 +238,8 @@ FROM
   t_0_D_MultBodyAggAux_f4 AS D_MultBodyAggAux_f4
 GROUP BY 1;
 
-DROP TABLE IF EXISTS synalog_test.D_ifr2;
-CREATE TABLE synalog_test.D_ifr2 ENGINE = Memory AS WITH t_1_E AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_home.D_ifr2;
+CREATE TABLE synalog_home.D_ifr2 ENGINE = Memory AS WITH t_1_E AS (SELECT * FROM (
   
     SELECT
       1 AS a,
@@ -267,7 +267,7 @@ t_0_D_MultBodyAggAux_f3 AS (SELECT * FROM (
       E.b AS n,
       ((D_ifr1.d) + (1)) AS d
     FROM
-      synalog_test.D_ifr1 AS D_ifr1, t_1_E AS E
+      synalog_home.D_ifr1 AS D_ifr1, t_1_E AS E
     WHERE
       (E.a = D_ifr1.n)
   
@@ -279,8 +279,8 @@ FROM
   t_0_D_MultBodyAggAux_f3 AS D_MultBodyAggAux_f3
 GROUP BY 1;
 
-DROP TABLE IF EXISTS synalog_test.D_ifr1;
-CREATE TABLE synalog_test.D_ifr1 ENGINE = Memory AS WITH t_1_E AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_home.D_ifr1;
+CREATE TABLE synalog_home.D_ifr1 ENGINE = Memory AS WITH t_1_E AS (SELECT * FROM (
   
     SELECT
       1 AS a,
@@ -308,7 +308,7 @@ t_0_D_MultBodyAggAux_f4 AS (SELECT * FROM (
       E.b AS n,
       ((D_ifr2.d) + (1)) AS d
     FROM
-      synalog_test.D_ifr2 AS D_ifr2, t_1_E AS E
+      synalog_home.D_ifr2 AS D_ifr2, t_1_E AS E
     WHERE
       (E.a = D_ifr2.n)
   
@@ -320,8 +320,8 @@ FROM
   t_0_D_MultBodyAggAux_f4 AS D_MultBodyAggAux_f4
 GROUP BY 1;
 
-DROP TABLE IF EXISTS synalog_test.D_ifr2;
-CREATE TABLE synalog_test.D_ifr2 ENGINE = Memory AS WITH t_1_E AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_home.D_ifr2;
+CREATE TABLE synalog_home.D_ifr2 ENGINE = Memory AS WITH t_1_E AS (SELECT * FROM (
   
     SELECT
       1 AS a,
@@ -349,7 +349,7 @@ t_0_D_MultBodyAggAux_f3 AS (SELECT * FROM (
       E.b AS n,
       ((D_ifr1.d) + (1)) AS d
     FROM
-      synalog_test.D_ifr1 AS D_ifr1, t_1_E AS E
+      synalog_home.D_ifr1 AS D_ifr1, t_1_E AS E
     WHERE
       (E.a = D_ifr1.n)
   
@@ -361,8 +361,8 @@ FROM
   t_0_D_MultBodyAggAux_f3 AS D_MultBodyAggAux_f3
 GROUP BY 1;
 
-DROP TABLE IF EXISTS synalog_test.D_ifr1;
-CREATE TABLE synalog_test.D_ifr1 ENGINE = Memory AS WITH t_1_E AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_home.D_ifr1;
+CREATE TABLE synalog_home.D_ifr1 ENGINE = Memory AS WITH t_1_E AS (SELECT * FROM (
   
     SELECT
       1 AS a,
@@ -390,7 +390,7 @@ t_0_D_MultBodyAggAux_f4 AS (SELECT * FROM (
       E.b AS n,
       ((D_ifr2.d) + (1)) AS d
     FROM
-      synalog_test.D_ifr2 AS D_ifr2, t_1_E AS E
+      synalog_home.D_ifr2 AS D_ifr2, t_1_E AS E
     WHERE
       (E.a = D_ifr2.n)
   
@@ -430,7 +430,7 @@ t_0_D_MultBodyAggAux_f5 AS (SELECT * FROM (
       E.b AS n,
       ((D_ifr3.d) + (1)) AS d
     FROM
-      synalog_test.D_ifr1 AS D_ifr3, t_1_E AS E
+      synalog_home.D_ifr1 AS D_ifr3, t_1_E AS E
     WHERE
       (E.a = D_ifr3.n)
   

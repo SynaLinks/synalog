@@ -57,7 +57,7 @@ Forces a predicate to be materialized before its dependents are evaluated, usefu
 @Ground(CustomerRevenue);
 ```
 
-The table is named after the predicate, in Synalog's schema (`CustomerRevenue`); a predicate named after an SQL keyword gets `_table` added (`Order_table`), since `Order` does not parse as a table name.
+The table is named after the predicate, in Synalog's schema, `synalog_home` on every engine (`synalog_home.CustomerRevenue`; on Trino and Presto in a catalog of the same name, `synalog_home.synalog_home.CustomerRevenue`, so the customer's catalog can be read-only to Synalog's user). A [plan](../python-api.md#plan) makes it its run's own: a temporary table on PostgreSQL, and on the engines whose schema other sessions see, a name ending with a tag unique to the run; a predicate named after an SQL keyword gets `_table` added (`Order_table`), since `Order` does not parse as a table name.
 
 ## `@Engine`
 

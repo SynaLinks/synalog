@@ -143,31 +143,9 @@ pub fn check_directives(rules: &[&Json]) -> Vec<DirectiveError> {
     }
     for rule in rules {
         let directive = rule.as_object()["head"].as_object()["predicate_name"].as_str();
-        // @Dataset is written into the SQL as a schema: a name, never text.
-        if directive == "@Dataset" {
-            let args = arguments(rule);
-            let name = args.first().map(|a| {
-                let o = a.as_object();
-                o.get("literal")
-                    .and_then(|l| l.as_object().get("the_string"))
-                    .map(|t| if t.is_object() { t.as_object()["the_string"].as_str().to_string() } else { t.as_str().to_string() })
-                    .unwrap_or_else(|| source_text(a))
-            });
-            if let Some(name) = name.filter(|n| !crate::compiler::annotations::is_schema_name(n)) {
-                errors.push(DirectiveError {
-                    message: format!(
-                        "@Dataset: '{}' is not a schema name: write names of letters, digits, '_' and '-', joined by '.'",
-                        name
-                    ),
-                });
-            }
-            continue;
-        }
-        // A program reads the database it runs on, and writes no file.
-        if directive == "@AttachDatabase" {
-            errors.push(DirectiveError {
-                message: "@AttachDatabase is not supported: a program reads the tables of the database it runs on, not files".to_string(),
-            });
+        let unknown = directive.starts_with('@').then(|| crate::compiler::annotations::unknown_directive(directive)).flatten();
+        if let Some(message) = unknown {
+            errors.push(DirectiveError { message });
             continue;
         }
         if directive == "@Ground" && has_field(rule, "copy_to_file") {
@@ -294,9 +272,6 @@ mod tests {
 
     #[test]
     fn files_are_refused() {
-        let errors = directive_errors("@AttachDatabase(other, \"/tmp/x.db\");\nV(x: 1);\n");
-        assert_eq!(errors.len(), 1);
-        assert!(errors[0].contains("@AttachDatabase is not supported"), "{}", errors[0]);
         let errors = directive_errors("@Ground(V, copy_to_file: \"/tmp/x.json\");\nV(x: 1);\n");
         assert_eq!(errors, vec!["@Ground: copy_to_file is not supported: a program writes no file".to_string()]);
     }

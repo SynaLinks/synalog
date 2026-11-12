@@ -1,7 +1,7 @@
-ATTACH DATABASE ':memory:' AS synalog_test;
+ATTACH DATABASE ':memory:' AS synalog_home;
 
-DROP TABLE IF EXISTS synalog_test.Trouble;
-CREATE TABLE synalog_test.Trouble AS WITH t_2_Order AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_home.Trouble;
+CREATE TABLE synalog_home.Trouble AS WITH t_2_Order AS (SELECT * FROM (
   
     SELECT
       1 AS id,
@@ -107,7 +107,7 @@ FROM
   t_0_Trouble_MultBodyAggAux AS Trouble_MultBodyAggAux
 GROUP BY Trouble_MultBodyAggAux.who;
 
--- Interacting with table synalog_test.Trouble
+-- Interacting with table synalog_home.Trouble
 
 WITH t_2_Order AS (SELECT * FROM (
   
@@ -225,6 +225,6 @@ WHERE
   ((SELECT
     MIN(MagicalEntangle(1, x_24.value)) AS synalog_value
   FROM
-    synalog_test.Trouble AS Trouble, JSON_EACH(JSON_ARRAY(0)) as x_24
+    synalog_home.Trouble AS Trouble, JSON_EACH(JSON_ARRAY(0)) as x_24
   WHERE
     (Trouble.who = Spend.who)) IS NULL) ORDER BY who NULLS LAST;

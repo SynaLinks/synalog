@@ -1,0 +1,8 @@
+{
+  "catalogs": [
+    {"user": "admin", "allow": "all"},
+    {"user": "synalog_app", "catalog": "synalog_home", "allow": "all"},
+    {"user": "synalog_app", "catalog": "(memory|system|tpch)", "allow": "read-only"},
+    {"allow": "none"}
+  ]
+}

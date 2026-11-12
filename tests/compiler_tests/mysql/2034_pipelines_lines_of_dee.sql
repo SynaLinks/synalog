@@ -7,10 +7,10 @@ SET SESSION sql_mode = 'ANSI_QUOTES,PIPES_AS_CONCAT,NO_BACKSLASH_ESCAPES';
 SET SESSION optimizer_switch = 'derived_condition_pushdown=off';
 SET NAMES utf8mb4 COLLATE utf8mb4_0900_bin;
 SET SESSION group_concat_max_len = 1073741824;
-CREATE DATABASE IF NOT EXISTS synalog_test DEFAULT COLLATE utf8mb4_0900_bin;
+CREATE DATABASE IF NOT EXISTS synalog_home DEFAULT COLLATE utf8mb4_0900_bin;
 
-DROP TABLE IF EXISTS synalog_test.Paid;
-CREATE TABLE synalog_test.Paid AS WITH t_1_Order AS (SELECT * FROM (
+DROP TABLE IF EXISTS synalog_home.Paid;
+CREATE TABLE synalog_home.Paid AS WITH t_1_Order AS (SELECT * FROM (
   
     SELECT
       1 AS id,
@@ -102,7 +102,7 @@ FROM
 WHERE
   (t_0_Order.state = 'paid');
 
--- Interacting with table synalog_test.Paid
+-- Interacting with table synalog_home.Paid
 
 WITH t_0_Price AS (SELECT * FROM (
   
@@ -125,7 +125,7 @@ SELECT
   Paid.id AS id,
   ((Paid.n) * (Price.p)) AS amount
 FROM
-  synalog_test.Paid AS Paid, t_0_Price AS Price
+  synalog_home.Paid AS Paid, t_0_Price AS Price
 WHERE
   (Price.item = Paid.item) AND
   ('dee' = Paid.who);
