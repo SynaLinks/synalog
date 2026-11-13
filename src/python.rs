@@ -504,6 +504,12 @@ fn plan(
                     dict.set_item("kind", "sql")?;
                     dict.set_item("sql", sql)?;
                 }
+                PlanStep::Keep { sql, tables } => {
+                    dict.set_item("kind", "keep")?;
+                    // One script, as a setup step's.
+                    dict.set_item("sql", sql.iter().map(|s| format!("{s};\n")).collect::<String>())?;
+                    dict.set_item("tables", tables)?;
+                }
                 PlanStep::Loop { body, repetitions, changed } => {
                     dict.set_item("kind", "loop")?;
                     dict.set_item("body", body)?;

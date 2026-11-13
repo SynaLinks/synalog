@@ -45,6 +45,11 @@ pub struct Annotations {
     /// whose schema every session shares (Trino, Presto, Databricks,
     /// BigQuery): concurrent runs then compute into tables of their own.
     pub run_tag: Option<String>,
+    /// The predicates the program's own `@Ground` grounds, not those the
+    /// compiler grounds itself (a recursion's steps, a predicate read
+    /// twice): their tables stay in synalog_home after a run
+    /// (`published_table`).
+    pub own_grounds: HashSet<String>,
 }
 
 #[derive(Debug, Clone)]
@@ -358,6 +363,7 @@ impl Annotations {
             engine_options,
             session_tables: false,
             run_tag: None,
+            own_grounds: HashSet::new(),
         })
     }
 
@@ -456,6 +462,33 @@ impl Annotations {
             "trino" | "presto" => format!("{home}.{home}"),
             _ => home.to_string(),
         }
+    }
+
+    /// The table a grounded predicate of the program's own `@Ground` stays
+    /// in after a run, as in Logica: named after the predicate, the table
+    /// `@Ground` names, or the table of the grounded predicate it names, in
+    /// synalog_home itself (on Trino and Presto in its catalog; on
+    /// PostgreSQL never the session's `pg_temp`), with no run's tag. None
+    /// for a predicate the program does not ground.
+    pub fn published_table(&self, pred_name: &str) -> Option<String> {
+        if !self.own_grounds.contains(pred_name) {
+            return None;
+        }
+        let raw = self.annotations.get(pred_name)?.get("ground")?.as_str().to_string();
+        let named = if raw == pred_name {
+            raw
+        } else {
+            match self.annotations.get(&raw).and_then(|ann| ann.get("ground")) {
+                Some(other) => other.as_str().to_string(),
+                None => raw,
+            }
+        };
+        let name = if crate::compiler::dialects::is_sql_keyword(&named) { format!("{named}_table") } else { named };
+        let home = home_schema();
+        Some(match self.engine.as_str() {
+            "trino" | "presto" => format!("{home}.{home}.{name}"),
+            _ => format!("{home}.{name}"),
+        })
     }
 
     /// The databases to attach: SQLite keeps grounded tables in an

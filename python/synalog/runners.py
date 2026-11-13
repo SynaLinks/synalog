@@ -828,6 +828,9 @@ def _run_steps(steps: list[dict], s: Session) -> Result:
             if step["kind"] in ("setup", "sql"):
                 if _has_code(step["sql"]):
                     result = s.run(step["sql"])
+            elif step["kind"] == "keep":
+                if _has_code(step["sql"]):
+                    _keep(step["sql"], s)
             else:
                 check = True
                 for _ in range(step["repetitions"]):
@@ -885,7 +888,7 @@ def sweep_stale_tables(steps: list[dict], s: Session, engine: str, now: float | 
     and the plan runs regardless."""
     if engine not in _LIST_TABLES:
         return []
-    texts = [step.get("sql", "") for step in steps] + [b for step in steps for b in step.get("body", [])]
+    texts = [t for step in steps for t in _texts(step)]
     schemas = {t.rsplit(".", 1)[0] for text in texts for t in _WORKING_TABLE.findall(text) if _TAGGED_TABLE.match(t)}
     query, column = _LIST_TABLES[engine]
     deadline = (time.time() if now is None else now) - STALE_AFTER_SECONDS
@@ -906,11 +909,41 @@ def sweep_stale_tables(steps: list[dict], s: Session, engine: str, now: float | 
     return dropped
 
 
+#: How many times a run copies its grounded tables to those that stay.
+KEEP_ATTEMPTS = 4
+
+
+def _keep(sql: str, s: Session) -> None:
+    """Copy a run's grounded tables to those that stay (a ``keep`` step).
+    Runs at once grounding the same predicate copy to the same table: one
+    may drop it while another creates it (`already exists`). The rows of
+    either are the predicate's, so the copy is made again, a few times, and
+    the engine's error raised past them."""
+    for attempt in range(KEEP_ATTEMPTS):
+        try:
+            with getattr(s, "savepoint", contextlib.nullcontext)():
+                s.run(sql)
+            return
+        except Exception:  # noqa: BLE001 - raised on the last attempt
+            if attempt == KEEP_ATTEMPTS - 1:
+                raise
+            time.sleep(0.05 * (attempt + 1))
+
+
+def _texts(step: dict) -> list[str]:
+    """The SQL of a step: its statements, a loop's body."""
+    return [step.get("sql", ""), *step.get("body", [])]
+
+
 def _drop_working_tables(steps: list[dict], s: Session) -> None:
     """Drop the tables the run created in synalog's schemas, so a run leaves
-    nothing behind (on Presto's memory connector they filled the heap)."""
-    texts = [step.get("sql", "") for step in steps] + [b for step in steps for b in step.get("body", [])]
+    nothing behind (on Presto's memory connector they filled the heap), but
+    those of the program's own `@Ground`, which stay (a ``keep`` step)."""
+    texts = [t for step in steps for t in _texts(step)]
+    kept = {t.lower() for step in steps if step["kind"] == "keep" for t in step["tables"]}
     for table in dict.fromkeys(t for text in texts for t in _WORKING_TABLE.findall(text)):
+        if table.lower() in kept:
+            continue
         try:
             s.run(f"DROP TABLE IF EXISTS {table}")
         except Exception:  # noqa: BLE001 - best effort: the rows are already read
