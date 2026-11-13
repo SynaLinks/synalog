@@ -102,7 +102,7 @@ GROUP BY 1;
 -- Interacting with table synalog_home.Person
 
 DROP TABLE IF EXISTS synalog_home.Tier;
-CREATE TABLE synalog_home.Tier ENGINE = Memory AS WITH t_1_Order AS (SELECT * FROM (
+CREATE TABLE synalog_home.Tier ENGINE = MergeTree ORDER BY tuple() AS WITH t_1_Order AS (SELECT * FROM (
   
     SELECT
       1 AS id,

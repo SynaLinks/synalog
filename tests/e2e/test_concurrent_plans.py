@@ -1,11 +1,14 @@
-"""Two plans running at once, grounding the same predicate, on every engine.
+"""Two plans running at once, computing the same predicates, on every engine.
 
-A plan computes its grounded predicates and its recursions' steps into
-tables: PostgreSQL's temporary tables, an in-memory database of the session's
-on SQLite and DuckDB, and elsewhere tables in a schema every session shares,
-which bear a name unique to the run. Two runs interleaved here (one computes
-its table, the other runs whole, then the first reads its table) each read
-their own rows, and neither's cleanup drops the other's table.
+A plan computes the tables synalog grounds itself (a recursion's steps, a
+predicate read twice) into tables of its run's own: PostgreSQL's temporary
+tables, and elsewhere names unique to the run. Two runs interleaved here (one
+computes its tables, the other runs whole, then the first reads its tables)
+each read their own rows, and neither's cleanup drops the other's tables.
+
+A table of the program's own `@Ground` is not the run's: it is built in place,
+under its name, as in Logica, and runs at once grounding the same predicate
+share it (`test_ground_stays.py`).
 """
 
 from __future__ import annotations
@@ -15,7 +18,6 @@ import pytest
 from conftest import ENGINES
 
 PROGRAM = """
-@Ground(Q);
 Q(x: {value});
 @Recursive(Reach, 30);
 Reach(x: 0) distinct;
@@ -41,7 +43,7 @@ def _run(session, statements):
 
 
 @pytest.mark.parametrize("engine", ENGINES)
-def test_interleaved_plans_read_their_own_grounded_tables(runner_for, engine):
+def test_interleaved_plans_read_their_own_tables(runner_for, engine):
     import synalog
     from synalog.runners import _drop_working_tables
 

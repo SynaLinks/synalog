@@ -321,16 +321,29 @@ impl<'a> Reader<'a> {
             }
             "table" => {
                 let mut end = self.target(WRITE, s, i);
-                // ClickHouse keeps the table in memory, nowhere else.
+                // ClickHouse keeps the table in memory, or a kept one in a
+                // MergeTree of its own: on the server, nowhere else.
                 if self.engine == "clickhouse"
                     && is_word(s.get(end), "engine")
                     && matches!(s.get(end + 1), Some(Raw::Sym('=')))
-                    && is_word(s.get(end + 2), "memory")
                 {
-                    for _ in 0..3 {
-                        self.push(OTHER);
+                    if is_word(s.get(end + 2), "memory") {
+                        for _ in 0..3 {
+                            self.push(OTHER);
+                        }
+                        end += 3;
+                    } else if is_word(s.get(end + 2), "mergetree")
+                        && is_word(s.get(end + 3), "order")
+                        && is_word(s.get(end + 4), "by")
+                        && is_word(s.get(end + 5), "tuple")
+                        && matches!(s.get(end + 6), Some(Raw::Open))
+                        && matches!(s.get(end + 7), Some(Raw::Sym(')')))
+                    {
+                        for _ in 0..8 {
+                            self.push(OTHER);
+                        }
+                        end += 8;
                     }
-                    end += 3;
                 }
                 if is_word(s.get(end), "as") {
                     self.push(OTHER);

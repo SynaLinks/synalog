@@ -11,7 +11,7 @@ SET transform_null_in = 1;
 CREATE DATABASE IF NOT EXISTS synalog_home;
 
 DROP TABLE IF EXISTS synalog_home.Paid;
-CREATE TABLE synalog_home.Paid ENGINE = Memory AS WITH t_1_Order AS (SELECT * FROM (
+CREATE TABLE synalog_home.Paid ENGINE = MergeTree ORDER BY tuple() AS WITH t_1_Order AS (SELECT * FROM (
   
     SELECT
       1 AS id,
@@ -106,7 +106,7 @@ WHERE
 -- Interacting with table synalog_home.Paid
 
 DROP TABLE IF EXISTS synalog_home.Spend;
-CREATE TABLE synalog_home.Spend ENGINE = Memory AS WITH t_0_Price AS (SELECT * FROM (
+CREATE TABLE synalog_home.Spend ENGINE = MergeTree ORDER BY tuple() AS WITH t_0_Price AS (SELECT * FROM (
   
     SELECT
       'tea' AS item,

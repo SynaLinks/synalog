@@ -11,7 +11,7 @@ SET transform_null_in = 1;
 CREATE DATABASE IF NOT EXISTS synalog_home;
 
 DROP TABLE IF EXISTS synalog_home.Paid;
-CREATE TABLE synalog_home.Paid ENGINE = Memory AS WITH t_1_Order AS (SELECT * FROM (
+CREATE TABLE synalog_home.Paid ENGINE = MergeTree ORDER BY tuple() AS WITH t_1_Order AS (SELECT * FROM (
   
     SELECT
       1 AS id,
@@ -106,7 +106,7 @@ WHERE
 -- Interacting with table synalog_home.Paid
 
 DROP TABLE IF EXISTS synalog_home.Line;
-CREATE TABLE synalog_home.Line ENGINE = Memory AS WITH t_0_Price AS (SELECT * FROM (
+CREATE TABLE synalog_home.Line ENGINE = MergeTree ORDER BY tuple() AS WITH t_0_Price AS (SELECT * FROM (
   
     SELECT
       'tea' AS item,
@@ -135,7 +135,7 @@ WHERE
 -- Interacting with table synalog_home.Line
 
 DROP TABLE IF EXISTS synalog_home.Spend;
-CREATE TABLE synalog_home.Spend ENGINE = Memory AS SELECT
+CREATE TABLE synalog_home.Spend ENGINE = MergeTree ORDER BY tuple() AS SELECT
   Line.who AS who,
   SUM(Line.amount) AS total
 FROM
@@ -145,7 +145,7 @@ GROUP BY 1;
 -- Interacting with table synalog_home.Spend
 
 DROP TABLE IF EXISTS synalog_home.Tier;
-CREATE TABLE synalog_home.Tier ENGINE = Memory AS SELECT
+CREATE TABLE synalog_home.Tier ENGINE = MergeTree ORDER BY tuple() AS SELECT
   Spend.who AS who,
   CASE WHEN (Spend.total >= 40) THEN 'gold' WHEN (Spend.total >= 15) THEN 'silver' ELSE 'bronze' END AS tier
 FROM
@@ -154,7 +154,7 @@ FROM
 -- Interacting with table synalog_home.Tier
 
 DROP TABLE IF EXISTS synalog_home.TierCount;
-CREATE TABLE synalog_home.TierCount ENGINE = Memory AS SELECT
+CREATE TABLE synalog_home.TierCount ENGINE = MergeTree ORDER BY tuple() AS SELECT
   Tier.tier AS tier,
   SUM(1) AS n
 FROM

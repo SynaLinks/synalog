@@ -877,16 +877,19 @@ _LIST_TABLES = {
 
 
 def sweep_stale_tables(steps: list[dict], s: Session, engine: str, now: float | None = None) -> list[str]:
-    """Drop the tables killed runs left in the schemas this plan's tagged
-    tables go to, older than ``STALE_AFTER_SECONDS``; the tables dropped.
+    """Drop the tables killed runs left in the schemas this plan writes its
+    tables in (a grounded table that stays included, PostgreSQL's temporary
+    ones not), older than ``STALE_AFTER_SECONDS``; the tables dropped.
 
     A run drops its own tables when it ends (``_drop_working_tables``); a run
     killed first cannot. Best effort: a table it cannot list or drop stays,
     and the plan runs regardless."""
     if engine not in _LIST_TABLES:
         return []
-    texts = [step.get("sql", "") for step in steps] + [b for step in steps for b in step.get("body", [])]
-    schemas = {t.rsplit(".", 1)[0] for text in texts for t in _WORKING_TABLE.findall(text) if _TAGGED_TABLE.match(t)}
+    texts = [t for step in steps for t in _texts(step)]
+    schemas = {
+        t.rsplit(".", 1)[0] for text in texts for t in _WORKING_TABLE.findall(text) if not t.lower().startswith("pg_temp.")
+    }
     query, column = _LIST_TABLES[engine]
     deadline = (time.time() if now is None else now) - STALE_AFTER_SECONDS
     dropped = []
@@ -906,11 +909,20 @@ def sweep_stale_tables(steps: list[dict], s: Session, engine: str, now: float | 
     return dropped
 
 
+def _texts(step: dict) -> list[str]:
+    """The SQL of a step: its statements, a loop's body."""
+    return [step.get("sql", ""), *step.get("body", [])]
+
+
 def _drop_working_tables(steps: list[dict], s: Session) -> None:
-    """Drop the tables the run created in synalog's schemas, so a run leaves
-    nothing behind (on Presto's memory connector they filled the heap)."""
-    texts = [step.get("sql", "") for step in steps] + [b for step in steps for b in step.get("body", [])]
+    """Drop the tables the run computed with in synalog's schemas, so a run
+    leaves nothing behind (on Presto's memory connector they filled the
+    heap): its own, named with its tag or PostgreSQL's temporary ones. A
+    table of the program's own `@Ground`, named after its predicate, stays."""
+    texts = [t for step in steps for t in _texts(step)]
     for table in dict.fromkeys(t for text in texts for t in _WORKING_TABLE.findall(text)):
+        if not (_TAGGED_TABLE.match(table) or table.lower().startswith("pg_temp.")):
+            continue
         try:
             s.run(f"DROP TABLE IF EXISTS {table}")
         except Exception:  # noqa: BLE001 - best effort: the rows are already read

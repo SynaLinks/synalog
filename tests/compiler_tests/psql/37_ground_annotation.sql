@@ -12,7 +12,7 @@ if not exists (select 'I(am) :- I(think)' from pg_type where typname = 'synalogr
 -- Synalog type: synalogrecord86796764
 if not exists (select 'I(am) :- I(think)' from pg_type where typname = 'synalogrecord86796764') then create type synalogrecord86796764 as (s text); end if;
 END $$;
-DROP TABLE IF EXISTS synalog_home.QuarterTotals CASCADE;
+DROP TABLE IF EXISTS synalog_home.QuarterTotals;
 CREATE TABLE synalog_home.QuarterTotals AS WITH t_0_Sales AS (SELECT * FROM (
   
     SELECT

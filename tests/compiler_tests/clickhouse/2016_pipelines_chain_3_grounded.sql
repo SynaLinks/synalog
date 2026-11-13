@@ -11,7 +11,7 @@ SET transform_null_in = 1;
 CREATE DATABASE IF NOT EXISTS synalog_home;
 
 DROP TABLE IF EXISTS synalog_home.C0;
-CREATE TABLE synalog_home.C0 ENGINE = Memory AS SELECT
+CREATE TABLE synalog_home.C0 ENGINE = MergeTree ORDER BY tuple() AS SELECT
   x_1 AS x
 FROM
   (SELECT 'singleton' as s) as unused_singleton
@@ -20,7 +20,7 @@ FROM
 -- Interacting with table synalog_home.C0
 
 DROP TABLE IF EXISTS synalog_home.C3;
-CREATE TABLE synalog_home.C3 ENGINE = Memory AS SELECT
+CREATE TABLE synalog_home.C3 ENGINE = MergeTree ORDER BY tuple() AS SELECT
   C0.x AS x
 FROM
   synalog_home.C0 AS C0

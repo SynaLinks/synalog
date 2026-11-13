@@ -664,6 +664,9 @@ impl SynalogProgram {
 
         // Extract annotations (recompute after functors added rules)
         let mut annotations = Annotations::extract(&rules)?;
+        // The program's own @Ground, read before the compiler grounds a
+        // recursion's steps: those tables stay after a run.
+        annotations.own_grounds = temp_annotations.grounded_predicates();
         // An explicit engine override wins over any `@Engine` annotation so that
         // dialect-dependent behavior (dataset selection, type-checking, SQLite
         // specifics) stays consistent with the dialect chosen above.
@@ -2410,11 +2413,14 @@ impl SynalogProgram {
                         .is_some_and(|d| d.supports_create_or_replace_table());
 
                 let maybe_drop = if ground.overwrite && !create_or_replace {
-                    let cascade = exec_ref
-                        .dialect
-                        .as_ref()
-                        .map(|d| d.cascading_deletion_word())
-                        .unwrap_or("");
+                    // A table that stays is dropped alone: a view of the
+                    // customer's built on it fails the drop, and is not
+                    // dropped with it.
+                    let cascade = if ground.stays {
+                        ""
+                    } else {
+                        exec_ref.dialect.as_ref().map(|d| d.cascading_deletion_word()).unwrap_or("")
+                    };
                     format!("DROP TABLE IF EXISTS {}{};\n", ground.table_name, cascade)
                 } else {
                     String::new()
@@ -2423,7 +2429,7 @@ impl SynalogProgram {
                 let options = exec_ref
                     .dialect
                     .as_ref()
-                    .map(|d| d.create_table_options())
+                    .map(|d| if ground.stays { d.lasting_table_options() } else { d.create_table_options() })
                     .unwrap_or("");
                 let create_statement = format!(
                     "CREATE {}TABLE {}{} AS {}",

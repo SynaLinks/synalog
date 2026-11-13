@@ -82,6 +82,8 @@ fn a_write_anywhere_else_is_refused() {
     assert!(!ok("ATTACH DATABASE 'customer.db' AS synalog_home", "sqlite"));
     assert!(!ok("ATTACH DATABASE ':memory:' AS other", "sqlite"));
     assert!(!ok("CREATE TABLE synalog_home.Q ENGINE = URL('http://x') AS SELECT 1", "clickhouse"));
+    assert!(ok("CREATE TABLE IF NOT EXISTS synalog_home.Q ENGINE = MergeTree ORDER BY tuple() AS SELECT 1", "clickhouse"));
+    assert!(!ok("CREATE TABLE synalog_home.Q ENGINE = MergeTree ORDER BY tuple() TTL now() TO DISK 's3' AS SELECT 1", "clickhouse"));
     assert!(!ok("SET ROLE admin", "psql"));
     assert!(!ok("DO $$ BEGIN EXECUTE 'DROP TABLE orders'; END $$", "psql"));
     assert!(!ok("DO $$ BEGIN DROP TABLE orders; END $$", "psql"));

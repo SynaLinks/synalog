@@ -11,7 +11,7 @@ SET transform_null_in = 1;
 CREATE DATABASE IF NOT EXISTS synalog_home;
 
 DROP TABLE IF EXISTS synalog_home.QuarterTotals;
-CREATE TABLE synalog_home.QuarterTotals ENGINE = Memory AS WITH t_0_Sales AS (SELECT * FROM (
+CREATE TABLE synalog_home.QuarterTotals ENGINE = MergeTree ORDER BY tuple() AS WITH t_0_Sales AS (SELECT * FROM (
   
     SELECT
       'Q1' AS col0,

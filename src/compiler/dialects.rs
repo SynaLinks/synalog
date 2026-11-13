@@ -405,6 +405,12 @@ pub trait Dialect {
         ""
     }
 
+    /// The options of a grounded table that stays after a run: as another,
+    /// but one that lasts (ClickHouse's `Memory` is lost when it restarts).
+    fn lasting_table_options(&self) -> &'static str {
+        self.create_table_options()
+    }
+
     /// Whether a subquery counting the rows of the outer row reads null
     /// where it counts none (ClickHouse decorrelates it into a join, whose
     /// missing side is null): such a count is then read as 0.
@@ -1703,6 +1709,7 @@ impl Dialect for ClickHouseDialect {
     fn bind_value(&self) -> &'static str { "arrayElement(arrayMap(synalog_v -> {body}, [{0}]), 1)" }
     fn string_cast(&self, expr: &str) -> String { format!("CAST({} AS String)", expr) }
     fn create_table_options(&self) -> &'static str { " ENGINE = Memory" }
+    fn lasting_table_options(&self) -> &'static str { " ENGINE = MergeTree ORDER BY tuple()" }
     fn greatest_skips_nulls(&self) -> bool { true }
     fn correlated_count_may_be_null(&self) -> bool { true }
     fn negation_by_membership(&self) -> bool { true }

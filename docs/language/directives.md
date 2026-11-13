@@ -57,7 +57,9 @@ Forces a predicate to be materialized before its dependents are evaluated, usefu
 @Ground(CustomerRevenue);
 ```
 
-The table is named after the predicate, in Synalog's schema, `synalog_home` on every engine (`synalog_home.CustomerRevenue`; on Trino and Presto in a catalog of the same name, `synalog_home.synalog_home.CustomerRevenue`, so the customer's catalog can be read-only to Synalog's user). A [plan](../python-api.md#plan) makes it its run's own: a temporary table on PostgreSQL, and on the engines whose schema other sessions see, a name ending with a tag unique to the run; a predicate named after an SQL keyword gets `_table` added (`Order_table`), since `Order` does not parse as a table name.
+The table is named after the predicate, in Synalog's schema, `synalog_home` on every engine (`synalog_home.CustomerRevenue`; on Trino and Presto in a catalog of the same name, `synalog_home.synalog_home.CustomerRevenue`, so the customer's catalog can be read-only to Synalog's user). A predicate named after an SQL keyword gets `_table` added (`Order_table`), since `Order` does not parse as a table name.
+
+As in Logica, the table is built in place under that name, dropped and created again by every run that needs it, from the data as it is then, and it stays after the run: it holds the predicate's rows of the last run, which other programs and tools can read. Runs at once that ground the same predicate build the same table, so one can read rows the other built, or fail. On PostgreSQL the table is dropped alone, never `CASCADE`: a view of yours built on it fails the drop and is not dropped with it. On ClickHouse it is a `MergeTree`, which a restart keeps; on SQLite, whose `synalog_home` is an in-memory database, it lasts as long as the connection. The tables synalog grounds itself (a recursion's steps, a predicate read twice) are a [plan](../python-api.md#plan)'s own (temporary tables on PostgreSQL, a name ending with a tag unique to the run elsewhere), dropped when it ends.
 
 ## `@Engine`
 

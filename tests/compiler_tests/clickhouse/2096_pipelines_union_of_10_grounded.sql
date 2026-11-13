@@ -11,7 +11,7 @@ SET transform_null_in = 1;
 CREATE DATABASE IF NOT EXISTS synalog_home;
 
 DROP TABLE IF EXISTS synalog_home.W;
-CREATE TABLE synalog_home.W ENGINE = Memory AS WITH t_0_W_MultBodyAggAux AS (SELECT * FROM (
+CREATE TABLE synalog_home.W ENGINE = MergeTree ORDER BY tuple() AS WITH t_0_W_MultBodyAggAux AS (SELECT * FROM (
   
     SELECT
       x_3 AS x
