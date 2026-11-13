@@ -877,8 +877,9 @@ _LIST_TABLES = {
 
 
 def sweep_stale_tables(steps: list[dict], s: Session, engine: str, now: float | None = None) -> list[str]:
-    """Drop the tables killed runs left in the schemas this plan's tagged
-    tables go to, older than ``STALE_AFTER_SECONDS``; the tables dropped.
+    """Drop the tables killed runs left in the schemas this plan writes its
+    tables in (a grounded table that stays included, PostgreSQL's temporary
+    ones not), older than ``STALE_AFTER_SECONDS``; the tables dropped.
 
     A run drops its own tables when it ends (``_drop_working_tables``); a run
     killed first cannot. Best effort: a table it cannot list or drop stays,
@@ -886,7 +887,9 @@ def sweep_stale_tables(steps: list[dict], s: Session, engine: str, now: float | 
     if engine not in _LIST_TABLES:
         return []
     texts = [t for step in steps for t in _texts(step)]
-    schemas = {t.rsplit(".", 1)[0] for text in texts for t in _WORKING_TABLE.findall(text) if _TAGGED_TABLE.match(t)}
+    schemas = {
+        t.rsplit(".", 1)[0] for text in texts for t in _WORKING_TABLE.findall(text) if not t.lower().startswith("pg_temp.")
+    }
     query, column = _LIST_TABLES[engine]
     deadline = (time.time() if now is None else now) - STALE_AFTER_SECONDS
     dropped = []
