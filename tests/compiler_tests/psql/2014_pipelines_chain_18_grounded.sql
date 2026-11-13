@@ -12,7 +12,7 @@ if not exists (select 'I(am) :- I(think)' from pg_type where typname = 'synalogr
 -- Synalog type: synalogrecord86796764
 if not exists (select 'I(am) :- I(think)' from pg_type where typname = 'synalogrecord86796764') then create type synalogrecord86796764 as (s text); end if;
 END $$;
-DROP TABLE IF EXISTS synalog_home.C0 CASCADE;
+DROP TABLE IF EXISTS synalog_home.C0;
 CREATE TABLE synalog_home.C0 AS SELECT
   x_39 AS x
 FROM
@@ -20,7 +20,7 @@ FROM
 
 -- Interacting with table synalog_home.C0
 
-DROP TABLE IF EXISTS synalog_home.C3 CASCADE;
+DROP TABLE IF EXISTS synalog_home.C3;
 CREATE TABLE synalog_home.C3 AS SELECT
   C0.x AS x
 FROM
@@ -32,7 +32,7 @@ WHERE
 
 -- Interacting with table synalog_home.C3
 
-DROP TABLE IF EXISTS synalog_home.C6 CASCADE;
+DROP TABLE IF EXISTS synalog_home.C6;
 CREATE TABLE synalog_home.C6 AS SELECT
   C3.x AS x
 FROM
@@ -44,7 +44,7 @@ WHERE
 
 -- Interacting with table synalog_home.C6
 
-DROP TABLE IF EXISTS synalog_home.C9 CASCADE;
+DROP TABLE IF EXISTS synalog_home.C9;
 CREATE TABLE synalog_home.C9 AS SELECT
   C6.x AS x
 FROM
@@ -56,7 +56,7 @@ WHERE
 
 -- Interacting with table synalog_home.C9
 
-DROP TABLE IF EXISTS synalog_home.C12 CASCADE;
+DROP TABLE IF EXISTS synalog_home.C12;
 CREATE TABLE synalog_home.C12 AS SELECT
   C9.x AS x
 FROM
@@ -68,7 +68,7 @@ WHERE
 
 -- Interacting with table synalog_home.C12
 
-DROP TABLE IF EXISTS synalog_home.C15 CASCADE;
+DROP TABLE IF EXISTS synalog_home.C15;
 CREATE TABLE synalog_home.C15 AS SELECT
   C12.x AS x
 FROM
@@ -80,7 +80,7 @@ WHERE
 
 -- Interacting with table synalog_home.C15
 
-DROP TABLE IF EXISTS synalog_home.C18 CASCADE;
+DROP TABLE IF EXISTS synalog_home.C18;
 CREATE TABLE synalog_home.C18 AS SELECT
   C15.x AS x
 FROM

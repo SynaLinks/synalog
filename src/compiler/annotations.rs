@@ -47,8 +47,8 @@ pub struct Annotations {
     pub run_tag: Option<String>,
     /// The predicates the program's own `@Ground` grounds, not those the
     /// compiler grounds itself (a recursion's steps, a predicate read
-    /// twice): their tables stay in synalog_home after a run
-    /// (`published_table`).
+    /// twice): their tables are built in place, under their names, and stay
+    /// in synalog_home after a run (`published_table`).
     pub own_grounds: HashSet<String>,
 }
 
@@ -56,6 +56,9 @@ pub struct Annotations {
 pub struct Ground {
     pub table_name: String,
     pub overwrite: bool,
+    /// A table of the program's own `@Ground`, built in place under its
+    /// name and staying in synalog_home after the run (`published_table`).
+    pub stays: bool,
 }
 
 /// Extract a string value from a Synalog expression literal.
@@ -464,8 +467,8 @@ impl Annotations {
         }
     }
 
-    /// The table a grounded predicate of the program's own `@Ground` stays
-    /// in after a run, as in Logica: named after the predicate, the table
+    /// The table a grounded predicate of the program's own `@Ground` is
+    /// built in, and stays in after a run, as in Logica: named after the predicate, the table
     /// `@Ground` names, or the table of the grounded predicate it names, in
     /// synalog_home itself (on Trino and Presto in its catalog; on
     /// PostgreSQL never the session's `pg_temp`), with no run's tag. None
@@ -659,7 +662,8 @@ impl Annotations {
     /// database of the session's, PostgreSQL into its temporary tables.
     fn shared_schema_tag(&self) -> Option<&str> {
         match self.engine.as_str() {
-            "sqlite" | "duckdb" | "psql" => None,
+            // PostgreSQL's are the session's temporary tables.
+            "psql" => None,
             _ if self.session_tables => self.run_tag.as_deref(),
             _ => None,
         }
@@ -691,7 +695,10 @@ impl Annotations {
             })
             .unwrap_or(true);
 
-        Some(Ground { table_name, overwrite })
+        // The program's own: built in place under its name, where it stays.
+        let stays = self.own_grounds.contains(pred_name);
+        let table_name = self.published_table(pred_name).unwrap_or(table_name);
+        Some(Ground { table_name, overwrite, stays })
     }
 
     /// Get ORDER BY columns for a predicate, if any.

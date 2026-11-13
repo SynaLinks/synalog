@@ -1,10 +1,8 @@
-"""A table of the program's own `@Ground` stays in synalog_home after the
-run, as in Logica, and the next run builds it again from the data as it is
-then; the tables synalog grounds itself do not stay.
+"""A table of the program's own `@Ground` is built in place, in synalog_home,
+and stays there after the run, as in Logica; the next run builds it again
+from the data as it is then. The tables synalog grounds itself do not stay.
 
-A plan computes into tables of its run's own and copies the grounded ones to
-the table that stays (its `keep` step): here, in one session as synalog's
-user, which may write in synalog_home only.
+In one session as synalog's user, which may write in synalog_home only.
 """
 
 from __future__ import annotations
@@ -45,8 +43,6 @@ def test_a_grounded_table_stays_and_is_built_again(runner_for, engine):
                 session = runner.session()
             source = PROGRAM.format(first=first, second=second)
             steps = synalog.plan(source, "Out", engine=engine)
-            (keep,) = [step for step in steps if step["kind"] == "keep"]
-            assert sorted(keep["tables"]) == [f"{home(engine)}.Kept", f"{home(engine)}.Twice"]
             got = sorted(_normalize_value(tuple(r)) for r in run_plan(steps, session)[1])
             assert got == [(first, 2 * first), (second, 2 * second)]
             # The tables stay, the last run's rows.

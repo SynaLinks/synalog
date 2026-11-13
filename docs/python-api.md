@@ -171,9 +171,8 @@ The steps that compute a predicate, for a host that runs them itself. Each step 
 | `{"kind": "setup", "sql": ...}` | the engine's setup: a script |
 | `{"kind": "sql", "sql": ...}` | a statement; the last step's rows are the predicate's |
 | `{"kind": "loop", "body": [...], "repetitions": n, "changed": ...}` | a recursion: run `changed`, a query returning one number; while it is not 0, run the `body` statements, `n` times at most |
-| `{"kind": "keep", "sql": ..., "tables": [...]}` | the tables of the program's own [`@Ground`](language/directives.md#ground) that stay after the run: run the script (it copies each from the run's table, and is empty when they are the same), and leave `tables` in place |
 
-All the steps run in one connection: the loops write tables the later steps read. They are the plan's own, so plans running at once never share them: on PostgreSQL the connection's temporary tables (`pg_temp`; run the steps in one transaction for them to read one snapshot), on Trino, Presto, Databricks and BigQuery tables whose names end with a tag unique to the plan (`synalog_home.Q_r…`, `synalog_home.synalog_home.Q_r…` on Trino and Presto). A host drops the plan's other tables when it ends. `synalog.runners.run_plan(steps, session)` runs a plan in a [`synalog.runners.session`](cli.md#executing-locally).
+All the steps run in one connection: the loops write tables the later steps read. They are the plan's own, so plans running at once never share them: on PostgreSQL the connection's temporary tables (`pg_temp`; run the steps in one transaction for them to read one snapshot), elsewhere tables whose names end with a tag unique to the plan (`synalog_home.Q_r…`, `synalog_home.synalog_home.Q_r…` on Trino and Presto). A host drops those tables when the plan ends; a table of the program's own [`@Ground`](language/directives.md#ground), named after its predicate with no tag, stays. `synalog.runners.run_plan(steps, session)` runs a plan in a [`synalog.runners.session`](cli.md#executing-locally).
 
 ## `writes_outside_home`
 

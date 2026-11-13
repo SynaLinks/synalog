@@ -4,7 +4,7 @@ DO $$ BEGIN if not exists (select 1 from pg_namespace where nspname = 'synalog_h
 -- Empty synalog type: synalogrecord893574736;
 DO $$ BEGIN if not exists (select 'I(am) :- I(think)' from pg_type where typname = 'synalogrecord893574736') then create type synalogrecord893574736 as (nirvana numeric); end if; END $$;
 
-DROP TABLE IF EXISTS synalog_home.QuarterTotals CASCADE;
+DROP TABLE IF EXISTS synalog_home.QuarterTotals;
 CREATE TABLE synalog_home.QuarterTotals AS WITH t_0_Sales AS (SELECT * FROM (
   
     SELECT
@@ -40,7 +40,7 @@ GROUP BY Sales.col0;
 
 -- Interacting with table synalog_home.QuarterTotals
 
-DROP TABLE IF EXISTS synalog_home.RegionTotals CASCADE;
+DROP TABLE IF EXISTS synalog_home.RegionTotals;
 CREATE TABLE synalog_home.RegionTotals AS WITH t_0_Sales AS (SELECT * FROM (
   
     SELECT

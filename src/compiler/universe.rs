@@ -245,10 +245,6 @@ pub enum PlanStep {
     /// `repetitions` times, until `changed` (a query returning one number)
     /// returns 0.
     Loop { body: Vec<String>, repetitions: i64, changed: String },
-    /// The tables of the program's own `@Ground` that stay after the run,
-    /// as in Logica (a runner drops the run's other tables): `sql` copies
-    /// each from the run's table, where it is not the same one.
-    Keep { sql: Vec<String>, tables: Vec<String> },
 }
 
 /// Authorship and license banner prepended to every compiled query.
@@ -269,7 +265,6 @@ pub fn script_of(plan: &[PlanStep]) -> CompileResult<String> {
         match step {
             PlanStep::Setup(sql) => setup.push_str(sql),
             PlanStep::Sql(sql) => statements.push(sql.clone()),
-            PlanStep::Keep { sql, .. } => statements.extend(sql.iter().cloned()),
             PlanStep::Loop { body, repetitions, .. } => {
                 if *repetitions >= MAX_SCRIPT_REPETITIONS {
                     return Err(CompileError::new(
@@ -1543,7 +1538,6 @@ impl SynalogProgram {
         let scripts = plan.iter().flat_map(|step| match step {
             PlanStep::Setup(sql) | PlanStep::Sql(sql) => vec![sql.as_str()],
             PlanStep::Loop { body, changed, .. } => body.iter().map(String::as_str).chain([changed.as_str()]).collect(),
-            PlanStep::Keep { sql, .. } => sql.iter().map(String::as_str).collect(),
         });
         if !super::home_guard::writes_only_in_home(scripts, engine) {
             let statement = plan
@@ -1551,7 +1545,6 @@ impl SynalogProgram {
                 .flat_map(|step| match step {
                     PlanStep::Setup(sql) | PlanStep::Sql(sql) => vec![sql.clone()],
                     PlanStep::Loop { body, changed, .. } => body.iter().cloned().chain([changed.clone()]).collect(),
-                    PlanStep::Keep { sql, .. } => sql.clone(),
                 })
                 .find_map(|sql| super::home_guard::first_outside(&sql, engine))
                 .unwrap_or_default();
@@ -1733,47 +1726,8 @@ impl SynalogProgram {
             steps.extend(self.plan_statements(exec_ref)?);
         }
 
-        if let Some(keep) = self.kept_tables(exec_ref)? {
-            steps.push(keep);
-        }
         steps.push(PlanStep::Sql(format_sql(&sql)));
         Ok(steps)
-    }
-
-    /// The tables of the program's own `@Ground` a plan built, which stay
-    /// after it under their names in synalog_home: a plan computes into
-    /// tables of its run's (a run's tag, PostgreSQL's `pg_temp`), each
-    /// copied then to the table that stays. None for a script, whose tables
-    /// are those already, or when the plan grounds none of them.
-    fn kept_tables(&self, exec: &Execution) -> CompileResult<Option<PlanStep>> {
-        if !self.annotations.session_tables {
-            return Ok(None);
-        }
-        let dialect = dialects::get(self.annotations.engine())?;
-        let mut built: Vec<&String> = exec.table_to_export_map.keys().collect();
-        built.sort();
-        let (mut sql, mut tables) = (Vec::new(), Vec::new());
-        for predicate in built {
-            let (Some(lasting), Some(run)) =
-                (self.annotations.published_table(predicate), exec.table_to_defined_table_map.get(predicate))
-            else {
-                continue;
-            };
-            if tables.contains(&lasting) {
-                continue;
-            }
-            // synalog_home is there already: PostgreSQL refuses even
-            // `CREATE SCHEMA IF NOT EXISTS` of a user who may not make one.
-            if &lasting != run {
-                sql.push(format!("DROP TABLE IF EXISTS {lasting}"));
-                sql.push(format!(
-                    "CREATE TABLE {lasting}{} AS SELECT * FROM {run}",
-                    dialect.lasting_table_options()
-                ));
-            }
-            tables.push(lasting);
-        }
-        Ok((!tables.is_empty()).then_some(PlanStep::Keep { sql, tables }))
     }
 
     /// The statements that create the program's tables, in an order they can
@@ -2459,11 +2413,14 @@ impl SynalogProgram {
                         .is_some_and(|d| d.supports_create_or_replace_table());
 
                 let maybe_drop = if ground.overwrite && !create_or_replace {
-                    let cascade = exec_ref
-                        .dialect
-                        .as_ref()
-                        .map(|d| d.cascading_deletion_word())
-                        .unwrap_or("");
+                    // A table that stays is dropped alone: a view of the
+                    // customer's built on it fails the drop, and is not
+                    // dropped with it.
+                    let cascade = if ground.stays {
+                        ""
+                    } else {
+                        exec_ref.dialect.as_ref().map(|d| d.cascading_deletion_word()).unwrap_or("")
+                    };
                     format!("DROP TABLE IF EXISTS {}{};\n", ground.table_name, cascade)
                 } else {
                     String::new()
@@ -2472,7 +2429,7 @@ impl SynalogProgram {
                 let options = exec_ref
                     .dialect
                     .as_ref()
-                    .map(|d| d.create_table_options())
+                    .map(|d| if ground.stays { d.lasting_table_options() } else { d.create_table_options() })
                     .unwrap_or("");
                 let create_statement = format!(
                     "CREATE {}TABLE {}{} AS {}",

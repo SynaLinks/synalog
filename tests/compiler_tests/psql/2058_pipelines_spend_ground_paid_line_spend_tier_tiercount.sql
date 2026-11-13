@@ -4,7 +4,7 @@ DO $$ BEGIN if not exists (select 1 from pg_namespace where nspname = 'synalog_h
 -- Empty synalog type: synalogrecord893574736;
 DO $$ BEGIN if not exists (select 'I(am) :- I(think)' from pg_type where typname = 'synalogrecord893574736') then create type synalogrecord893574736 as (nirvana numeric); end if; END $$;
 
-DROP TABLE IF EXISTS synalog_home.Paid CASCADE;
+DROP TABLE IF EXISTS synalog_home.Paid;
 CREATE TABLE synalog_home.Paid AS WITH t_1_Order AS (SELECT * FROM (
   
     SELECT
@@ -99,7 +99,7 @@ WHERE
 
 -- Interacting with table synalog_home.Paid
 
-DROP TABLE IF EXISTS synalog_home.Line CASCADE;
+DROP TABLE IF EXISTS synalog_home.Line;
 CREATE TABLE synalog_home.Line AS WITH t_0_Price AS (SELECT * FROM (
   
     SELECT
@@ -128,7 +128,7 @@ WHERE
 
 -- Interacting with table synalog_home.Line
 
-DROP TABLE IF EXISTS synalog_home.Spend CASCADE;
+DROP TABLE IF EXISTS synalog_home.Spend;
 CREATE TABLE synalog_home.Spend AS SELECT
   Line.who AS who,
   SUM(Line.amount) AS total
