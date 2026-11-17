@@ -125,6 +125,36 @@ pub fn translate(statement: &Expr, schema: &Schema, prefix: &str) -> Result<Tran
     // Unbound lowercase names are universally quantified too.
     columns.extend(resolver.implicit);
 
+    // A universal variable that no premise names has nothing to take its values
+    // from: the counterexamples hold the conclusion negated, and no rule added
+    // later changes that. Often meant as "some value" (∃ after →). Said in place
+    // of the bare "not bound" below, never over a more precise error (a wrong
+    // number of arguments) found while emitting.
+    let mut premises = Vec::new();
+    let mut conclusion = &body;
+    while let Expr::Binary(BinOp::Implies, premise, rest) = conclusion {
+        premises.push(premise.as_ref());
+        conclusion = rest;
+    }
+    let named: Vec<String> = premises.iter().flat_map(|p| free_vars(p)).collect();
+    let only_after: Vec<&str> = if premises.is_empty() {
+        Vec::new()
+    } else {
+        columns.iter().filter(|c| !named.contains(c)).map(String::as_str).collect()
+    };
+    let conclusion_only = (!only_after.is_empty()).then(|| {
+        TranslateError::Invalid(format!(
+            "'{}' appear{} only after '→', where nothing gives {} values to check: a name \
+             not bound before '→' means 'for every value'. To say 'some value', write \
+             '∃ {},' right after '→' (e.g. '… → ∃ {}, …')",
+            only_after.join("', '"),
+            if only_after.len() == 1 { "s" } else { "" },
+            if only_after.len() == 1 { "it" } else { "them" },
+            only_after.join(" "),
+            only_after.join(" "),
+        ))
+    });
+
     let violation = nnf(&body, true);
     let mut emitter = Emitter {
         schema,
@@ -140,7 +170,12 @@ pub fn translate(statement: &Expr, schema: &Schema, prefix: &str) -> Result<Tran
     };
     let mut rules = Vec::new();
     for conjunct in dnf(&violation)? {
-        let body = emitter.conjunct(&conjunct, &columns)?;
+        let body = match emitter.conjunct(&conjunct, &columns) {
+            Err(TranslateError::Unsupported(_)) if conclusion_only.is_some() => {
+                return Err(conclusion_only.unwrap());
+            }
+            body => body?,
+        };
         if body.is_empty() {
             return unsupported("the statement is false whatever the data");
         }
@@ -912,6 +947,24 @@ mod tests {
     }
 
     #[test]
+    fn a_universal_variable_only_the_conclusion_names_is_invalid() {
+        // The layer case: `p v` undeclared, named only after →.
+        let TranslateError::Invalid(reason) = error("∀ x y, Parent x y → Joint x y p ∧ p ≥ 1") else {
+            panic!("expected Invalid");
+        };
+        assert!(reason.contains("'p' appears only after '→'"), "{reason}");
+        assert!(reason.contains("'∃ p,'"), "{reason}");
+        // Declared by ∀ but named only after →: the same.
+        assert!(matches!(error("∀ x y z, Parent x y → Ancestor x z"), TranslateError::Invalid(_)));
+        // Named in a premise, even only in a comparison: checkable as before.
+        rules("∀ x y z, Parent x y → z = x → Ancestor z y");
+        // Said with ∃: checkable.
+        rules("∀ x y, Parent x y → ∃ p, Joint x y p ∧ p ≥ 1");
+        // No premise at all: unsupported as before, not this error.
+        assert!(matches!(error("∀ x, x > 0"), TranslateError::Unsupported(_)));
+    }
+
+    #[test]
     fn test_implication_chain() {
         assert_eq!(
             rules("∀ x y z, Ancestor x y → Ancestor y z → Ancestor x z"),
@@ -1030,11 +1083,13 @@ mod tests {
         };
         assert!(message.contains("variable 'x' is not bound"), "{message}");
 
-        // `y` ranges over nothing: there is no finite set of y to look at.
-        let TranslateError::Unsupported(message) = error("∀ x y, Ancestor x x → Parent x y") else {
-            panic!("expected an unsupported statement");
+        // `y` ranges over nothing, and only the conclusion names it: a mistake
+        // in the statement, reported as such (see
+        // `a_universal_variable_only_the_conclusion_names_is_invalid`).
+        let TranslateError::Invalid(message) = error("∀ x y, Ancestor x x → Parent x y") else {
+            panic!("expected an invalid statement");
         };
-        assert!(message.contains("variable 'y' is not bound"), "{message}");
+        assert!(message.contains("'y' appears only after '→'"), "{message}");
     }
 
     #[test]

@@ -194,6 +194,7 @@ Each assertion has a status, which `assertions()` reports:
 |-------|-------|-----|
 | `Invalid assertion 'P.name': …` | The statement does not parse, or applies a predicate to the wrong number of arguments | Fix the statement; count the predicate's columns |
 | `Invalid assertion 'P.name': variable 'v' is quantified by '∀' but never used …` | A `∀`, `∃` or `∑` names a variable its formula never uses | Remove the variable, or use it where it was meant to appear |
+| `Invalid assertion 'P.name': 'v' appears only after '→' …` | A variable meant for every value (after `∀`, or undeclared) is named only in the conclusion, so nothing gives it values | Say "some value" with `∃ v,` right after `→`, or name it in a premise |
 | `Duplicate assertion 'P.name': …` | The same name is stated twice for a predicate | Give each property its own name |
 | `Malformed @Assert: …` | The annotation is not `@Assert(Predicate, name: "statement", ...)` | One named argument per property |
 | `Assertion 'P.name' is violated: …` | The data holds a counterexample | Fix the rule, or the assertion if it was wrong |
