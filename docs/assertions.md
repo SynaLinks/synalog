@@ -193,6 +193,7 @@ Each assertion has a status, which `assertions()` reports:
 | Error | Cause | Fix |
 |-------|-------|-----|
 | `Invalid assertion 'P.name': …` | The statement does not parse, or applies a predicate to the wrong number of arguments | Fix the statement; count the predicate's columns |
+| `Invalid assertion 'P.name': variable 'v' is quantified by '∀' but never used …` | A `∀`, `∃` or `∑` names a variable its formula never uses | Remove the variable, or use it where it was meant to appear |
 | `Duplicate assertion 'P.name': …` | The same name is stated twice for a predicate | Give each property its own name |
 | `Malformed @Assert: …` | The annotation is not `@Assert(Predicate, name: "statement", ...)` | One named argument per property |
 | `Assertion 'P.name' is violated: …` | The data holds a counterexample | Fix the rule, or the assertion if it was wrong |
