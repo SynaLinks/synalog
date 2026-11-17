@@ -326,8 +326,7 @@ fn free_vars(expr: &Expr) -> Vec<String> {
 }
 
 /// The first variable a `∀`, `∃` or `∑` introduces that its body never names,
-/// with that quantifier. The parser leaves variables as bare names (`App` with
-/// no arguments).
+/// with that quantifier. The parser leaves variables as names (`App`).
 fn unused_quantified(expr: &Expr) -> Option<(&'static str, &str)> {
     fn names(expr: &Expr, var: &str) -> bool {
         match expr {
@@ -336,7 +335,8 @@ fn unused_quantified(expr: &Expr) -> Option<(&'static str, &str)> {
             }
             Expr::Not(inner) | Expr::Neg(inner) => names(inner, var),
             Expr::Binary(_, left, right) => names(left, var) || names(right, var),
-            Expr::App(name, args) => (args.is_empty() && name == var) || args.iter().any(|a| names(a, var)),
+            // Applied (`e x`) still names it: that misuse has its own, clearer error.
+            Expr::App(name, args) => name == var || args.iter().any(|a| names(a, var)),
             Expr::Var(name) => name == var,
             Expr::Num(_) | Expr::Str(_) => false,
         }
@@ -905,6 +905,8 @@ mod tests {
         assert!(matches!(error("∀ x y z, Parent x y → ∃ z, Parent y z"), TranslateError::Invalid(_)));
         // Reported before a missing predicate, which would only make it pending.
         assert!(matches!(error("∀ x y, Unknown x"), TranslateError::Invalid(_)));
+        // A variable applied as a function is used: its own error reports it.
+        assert!(!matches!(error("∀ x e, Parent x (e x)"), TranslateError::Invalid(r) if r.contains("never used")));
         // Every variable used: unchanged.
         rules("∀ x y1 y2, Parent x y1 ∧ Parent x y2 → y1 = y2");
     }
