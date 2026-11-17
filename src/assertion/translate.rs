@@ -95,6 +95,15 @@ enum Lit {
 /// Translate `statement` into the rules of its counterexamples. `prefix` names
 /// the counterexample predicate and prefixes its helpers.
 pub fn translate(statement: &Expr, schema: &Schema, prefix: &str) -> Result<Translation> {
+    // Checked first: no rule added later can make this statement checkable.
+    if let Some((quantifier, var)) = unused_quantified(statement) {
+        return Err(TranslateError::Invalid(format!(
+            "variable '{var}' is quantified by '{quantifier}' but never used in the statement, \
+             so it has no values to check; remove it from '{quantifier}', or use it where it was \
+             meant to appear (often a second predicate application that repeats the first one's \
+             variables instead)"
+        )));
+    }
     let missing: Vec<String> = predicates(statement).into_iter().filter(|p| !schema.contains_key(p)).collect();
     if !missing.is_empty() {
         return Err(TranslateError::Missing(missing));
@@ -314,6 +323,41 @@ fn free_vars(expr: &Expr) -> Vec<String> {
     let mut out = Vec::new();
     walk(expr, &mut Vec::new(), &mut out);
     out
+}
+
+/// The first variable a `∀`, `∃` or `∑` introduces that its body never names,
+/// with that quantifier. The parser leaves variables as names (`App`).
+fn unused_quantified(expr: &Expr) -> Option<(&'static str, &str)> {
+    fn names(expr: &Expr, var: &str) -> bool {
+        match expr {
+            Expr::Forall(vars, body) | Expr::Exists(vars, body) | Expr::Sum(vars, body) => {
+                !vars.iter().any(|v| v == var) && names(body, var)
+            }
+            Expr::Not(inner) | Expr::Neg(inner) => names(inner, var),
+            Expr::Binary(_, left, right) => names(left, var) || names(right, var),
+            // Applied (`e x`) still names it: that misuse has its own, clearer error.
+            Expr::App(name, args) => name == var || args.iter().any(|a| names(a, var)),
+            Expr::Var(name) => name == var,
+            Expr::Num(_) | Expr::Str(_) => false,
+        }
+    }
+    match expr {
+        Expr::Forall(vars, body) | Expr::Exists(vars, body) | Expr::Sum(vars, body) => {
+            let quantifier = match expr {
+                Expr::Forall(..) => "∀",
+                Expr::Exists(..) => "∃",
+                _ => "∑",
+            };
+            vars.iter()
+                .find(|v| !names(body, v))
+                .map(|v| (quantifier, v.as_str()))
+                .or_else(|| unused_quantified(body))
+        }
+        Expr::Not(inner) | Expr::Neg(inner) => unused_quantified(inner),
+        Expr::Binary(_, left, right) => unused_quantified(left).or_else(|| unused_quantified(right)),
+        Expr::App(_, args) => args.iter().find_map(unused_quantified),
+        Expr::Var(_) | Expr::Num(_) | Expr::Str(_) => None,
+    }
 }
 
 /// Negation normal form of `expr`, or of its negation when `negate`.
@@ -847,6 +891,24 @@ mod tests {
         assert!(matches!(error("∀ x, x > 0"), TranslateError::Unsupported(_)));
         // A variable bound nowhere is still refused.
         assert!(matches!(error("∀ x y, Parent x y → ∃ u, u ≠ x"), TranslateError::Unsupported(_)));
+    }
+
+    #[test]
+    fn a_quantified_variable_never_used_is_invalid() {
+        // The layer case: `m2 mm2` declared, the second atom reuses `m mm`.
+        let TranslateError::Invalid(reason) = error("∀ x y1 x2 y2, Parent x y1 ∧ Parent x y2 → y1 = y2") else {
+            panic!("expected Invalid");
+        };
+        assert!(reason.contains("variable 'x2' is quantified by '∀' but never used"), "{reason}");
+        assert!(matches!(error("∀ x y, Parent x y → ∃ w, Parent x y"), TranslateError::Invalid(_)));
+        // A variable shadowed by an inner quantifier is not a use of the outer one.
+        assert!(matches!(error("∀ x y z, Parent x y → ∃ z, Parent y z"), TranslateError::Invalid(_)));
+        // Reported before a missing predicate, which would only make it pending.
+        assert!(matches!(error("∀ x y, Unknown x"), TranslateError::Invalid(_)));
+        // A variable applied as a function is used: its own error reports it.
+        assert!(!matches!(error("∀ x e, Parent x (e x)"), TranslateError::Invalid(r) if r.contains("never used")));
+        // Every variable used: unchanged.
+        rules("∀ x y1 y2, Parent x y1 ∧ Parent x y2 → y1 = y2");
     }
 
     #[test]
