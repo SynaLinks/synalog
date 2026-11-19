@@ -336,8 +336,17 @@ impl TypesGraphBuilder {
                 bounds,
             ));
         }
+        let bounds = (total_min.unwrap_or(0), total_max.unwrap_or(0));
 
-        (total_min.unwrap_or(0), total_max.unwrap_or(0))
+        // Both sides of a comparison, as a condition or a value, are one type:
+        // `1 < name` is a number against text, which every engine but SQLite
+        // refuses at run time.
+        if matches!(predicate_name, "<" | ">" | "<=" | ">=" | "==" | "!=") {
+            let side = |field| Expression::predicate_addressing(predicate_name, field, predicate_id);
+            graph.connect(Edge::equality(side("left"), side("right"), bounds));
+        }
+
+        bounds
     }
 
     /// Convert a parsed expression to a typed expression.
@@ -665,5 +674,21 @@ mod tests {
     fn test_builder_new() {
         let builder = TypesGraphBuilder::new();
         assert!(builder.predicate_usages.is_empty());
+    }
+
+    fn infers(code: &str) -> bool {
+        let parsed = crate::parser::parse_file(code, None, &[]).unwrap();
+        let rules = parsed.as_object()["rule"].as_array();
+        super::super::TypeInference::new(TypesGraphBuilder::new().run_rules(rules.iter())).infer().is_ok()
+    }
+
+    #[test]
+    fn test_comparison_sides_are_one_type() {
+        let facts = r#"Card(bin: 4017, scheme: "GlobalCard");"#;
+        assert!(infers(&format!("{facts}\nHigh(bin:) :- Card(bin:), bin > 4000;")));
+        assert!(infers(&format!("{facts}\nNamed(scheme:) :- Card(scheme:), scheme != \"NexPay\";")));
+        // Text against a number: refused here, not by the database at run time.
+        assert!(!infers(&format!("{facts}\nOdd(scheme:) :- Card(scheme:), 1 <= scheme;")));
+        assert!(!infers(&format!("{facts}\nOdd(bin:) :- Card(bin:, scheme:), bin < scheme;")));
     }
 }

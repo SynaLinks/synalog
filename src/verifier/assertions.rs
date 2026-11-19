@@ -23,7 +23,8 @@
 //! ## What is checked
 //!
 //! Errors are reserved for assertions that can never become valid: a statement that
-//! does not parse or contradicts the program (wrong number of arguments), a
+//! does not parse or contradicts the program (wrong number of arguments, or
+//! terms of different types compared, often arguments in the wrong order), a
 //! name stated twice, and annotations that are not shaped as
 //! `(Predicate, name: "text", ...)`. A well-formed
 //! statement that cannot be checked on a database is a warning.
@@ -31,8 +32,9 @@
 use std::collections::{HashMap, HashSet};
 
 use crate::errors::VerifyError;
-use crate::parser::Json;
-use crate::assertion::{self, Schema, TranslateError, Translation};
+use crate::parser::{parse_file, Json};
+use crate::assertion::{self, Expr, Schema, TranslateError, Translation};
+use crate::compiler::type_inference::{Type, TypeInference, TypesGraphBuilder};
 
 use super::reserved::reserved_predicate_names;
 
@@ -175,6 +177,8 @@ pub fn check_assertions(rules: &[&Json]) -> (Vec<AssertionReport>, Vec<Assertion
 
     let mut reports: Vec<AssertionReport> = Vec::new();
     let mut index: HashMap<(String, String), usize> = HashMap::new();
+    // Typed once, and only when an assertion is there to check against it.
+    let types = (!assertions.is_empty()).then(|| program_types(rules)).flatten();
     for assertion in assertions {
         let key = (assertion.predicate.clone(), assertion.name.clone());
         if index.contains_key(&key) {
@@ -185,7 +189,13 @@ pub fn check_assertions(rules: &[&Json]) -> (Vec<AssertionReport>, Vec<Assertion
             continue;
         }
         index.insert(key, reports.len());
-        let (status, detail) = match translate_assertion(&assertion, &defined, &schema) {
+        let translated = translate_assertion(&assertion, &defined, &schema).and_then(|translation| {
+            match types.as_ref().and_then(|types| type_error(rules, &assertion, &translation, &schema, types)) {
+                Some(reason) => Err(TranslateError::Invalid(reason)),
+                None => Ok(translation),
+            }
+        });
+        let (status, detail) = match translated {
             Ok(_) => (AssertionStatus::Unchecked, None),
             Err(TranslateError::Missing(missing)) => (
                 AssertionStatus::Pending,
@@ -231,6 +241,93 @@ fn translate_assertion(
         return Err(TranslateError::Missing(vec![assertion.predicate.clone()]));
     }
     Ok(translation)
+}
+
+/// Column types of the program's predicates, or None when its own rules do
+/// not type-check (compiling it says why).
+fn program_types(rules: &[&Json]) -> Option<HashMap<String, HashMap<String, Type>>> {
+    let mut inference = TypeInference::new(TypesGraphBuilder::new().run_rules(rules.iter().copied()));
+    inference.infer().ok()?;
+    Some(inference.all_predicate_types())
+}
+
+/// Why the counterexample rules of `assertion` do not type-check, with what
+/// each of its variables stands for: terms of different types compared are
+/// most often arguments written in another order than the columns'.
+// shortcut: types the whole program again per assertion; type it once with
+// every translation, and only on a failure assertion by assertion, if a large
+// layer makes saving slow.
+fn type_error(
+    rules: &[&Json],
+    assertion: &Entry,
+    translation: &Translation,
+    schema: &Schema,
+    types: &HashMap<String, HashMap<String, Type>>,
+) -> Option<String> {
+    let parsed = parse_file(&translation.rules, None, &[]).ok()?;
+    let checks = parsed.as_object()["rule"].as_array();
+    let mut inference = TypeInference::new(TypesGraphBuilder::new().run_rules(rules.iter().copied().chain(checks.iter())));
+    let error = inference.infer().err()?;
+    let statement = assertion::parse(&assertion.text).ok()?;
+    let (mut stands, mut columns) = (Vec::new(), Vec::new());
+    bindings(&statement, schema, types, &mut stands, &mut columns);
+    // Inference meets the two sides in no particular order: name them sorted.
+    let mut sides = [error.left.to_string(), error.right.to_string()];
+    sides.sort();
+    Some(format!(
+        "it compares a {} and a {}. Its variables stand for {}. \
+         Arguments follow the order of the columns: {}",
+        sides[0],
+        sides[1],
+        stands.join(", "),
+        columns.join("; "),
+    ))
+}
+
+/// What each variable of `expr` stands for (`p = Sales.amount (number)`), and
+/// the columns of each predicate it applies, in order.
+fn bindings(
+    expr: &Expr,
+    schema: &Schema,
+    types: &HashMap<String, HashMap<String, Type>>,
+    stands: &mut Vec<String>,
+    columns: &mut Vec<String>,
+) {
+    match expr {
+        Expr::Forall(_, body) | Expr::Exists(_, body) | Expr::Sum(_, body) | Expr::Not(body) | Expr::Neg(body) => {
+            bindings(body, schema, types, stands, columns)
+        }
+        Expr::Binary(_, left, right) => {
+            bindings(left, schema, types, stands, columns);
+            bindings(right, schema, types, stands, columns);
+        }
+        Expr::App(predicate, args) => {
+            if let Some(names) = schema.get(predicate) {
+                let order = format!("{} ({})", predicate, names.join(", "));
+                if !columns.contains(&order) {
+                    columns.push(order);
+                }
+                for (arg, column) in args.iter().zip(names) {
+                    let Expr::App(var, none) = arg else { continue };
+                    if !none.is_empty() || !var.chars().next().is_some_and(char::is_lowercase) {
+                        continue;
+                    }
+                    let typed = match types.get(predicate).and_then(|t| t.get(column)) {
+                        Some(t @ (Type::Number | Type::String | Type::Bool)) => format!(" ({t})"),
+                        _ => String::new(),
+                    };
+                    let stand = format!("{var} = {predicate}.{column}{typed}");
+                    if !stands.contains(&stand) {
+                        stands.push(stand);
+                    }
+                }
+            }
+            for arg in args {
+                bindings(arg, schema, types, stands, columns);
+            }
+        }
+        Expr::Var(_) | Expr::Num(_) | Expr::Str(_) => {}
+    }
 }
 
 /// The rules that find the counterexamples of the assertion `name` of `predicate`:
@@ -594,5 +691,36 @@ mod tests {
                 "{code}: {errors:?}"
             );
         }
+    }
+
+    const DOMINANT: &str = r#"Dominant(card_bin: 4017, total: 10, scheme: "GlobalCard", top: 7);"#;
+
+    #[test]
+    fn test_arguments_out_of_column_order_are_an_error() {
+        // `p` lands on `scheme`, text, compared with 1: the columns are
+        // (card_bin, total, scheme, top), not (card_bin, scheme, top, total).
+        let (reports, errors) = check(&format!(
+            "{DOMINANT}\n{}",
+            r#"@Assert(Dominant, bounded: "∀ b s p c, Dominant b s p c → 1 ≤ p ∧ p ≤ c");"#
+        ));
+        let [AssertionError::Statement { predicate, name, reason }] = &errors[..] else {
+            panic!("{errors:?}")
+        };
+        assert_eq!((predicate.as_str(), name.as_str()), ("Dominant", "bounded"));
+        assert!(reason.contains("compares a"), "{reason}");
+        assert!(reason.contains("p = Dominant.scheme (string)"), "{reason}");
+        assert!(reason.contains("c = Dominant.top (number)"), "{reason}");
+        assert!(reason.contains("Dominant (card_bin, total, scheme, top)"), "{reason}");
+        assert_eq!(reports[0].status, AssertionStatus::Unsupported);
+    }
+
+    #[test]
+    fn test_arguments_in_column_order_type_check() {
+        let (reports, errors) = check(&format!(
+            "{DOMINANT}\n{}",
+            r#"@Assert(Dominant, bounded: "∀ b c s p, Dominant b c s p → 1 ≤ p ∧ p ≤ c");"#
+        ));
+        assert!(errors.is_empty(), "{errors:?}");
+        assert_eq!(reports[0].status, AssertionStatus::Unchecked);
     }
 }
