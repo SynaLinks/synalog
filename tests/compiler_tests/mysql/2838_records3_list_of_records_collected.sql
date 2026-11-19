@@ -38,6 +38,6 @@ SELECT
 FROM
   t_1_C AS t_0_C, LATERAL (SELECT synalog_u.value FROM (SELECT t_0_C.l AS synalog_a) AS synalog_s, JSON_TABLE(synalog_s.synalog_a, '$[*]' COLUMNS (value JSON PATH '$')) AS synalog_u) AS x_3
 WHERE
-  (JSON_EXTRACT(NULLIF(x_3.value, CAST('null' AS JSON)), '$."n"') > 0)
+  (JSON_VALUE(JSON_EXTRACT(NULLIF(x_3.value, CAST('null' AS JSON)), '$."n"'), '$' RETURNING DOUBLE) > 0)
 GROUP BY 1
 ) AS UNUSED_TABLE_NAME ORDER BY g IS NULL, g;
