@@ -294,9 +294,10 @@ jobs:
     name: Wheel tests (py${{ matrix.python-version }}, ${{ matrix.platform.artifact }})
     runs-on: ${{ matrix.platform.runner }}
     needs: [linux, macos]
-    # The suite takes a few minutes; a hang in a native driver otherwise runs
-    # to GitHub's 6h limit.
-    timeout-minutes: 45
+    # A job's timeout counts its queue time too: starved pools cancel a job
+    # before its first step. 120 covers queue + run, far under the 6h limit;
+    # the hang guard lives on the test step, which times execution only.
+    timeout-minutes: 120
     strategy:
       fail-fast: false
       matrix:
@@ -341,6 +342,8 @@ jobs:
           assert origin and '/wheels/' in origin, origin
           "
       - name: CLI tests
+        # A hang in a native driver dies here, in 45 minutes of execution.
+        timeout-minutes: 45
         run: pytest tests/cli -q
 
 # Publishing to PyPI happens in release.yml, triggered by `v*` tags.
