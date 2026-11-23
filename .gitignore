@@ -21,3 +21,5 @@ __pycache__/
 # CodeMirror bundle build dir (output committed under docs/playground/vendor/)
 /.cm-build/
 /docs/playground/vendor/.npmrc
+# Local agent session state
+task_tracker.json
