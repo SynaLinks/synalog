@@ -19,7 +19,7 @@ duckdb (the default engine), sqlite and PostgreSQL work out of the box: synalog 
 
 ## Your first program
 
-A Synalog project maps **tables** (the data), defines **concepts** (entities and relationships extracted from tables) and writes **rules** (what you want to know), one predicate per file (see [Program structure](language/index.md)). You compile a predicate to SQL and run it with any database driver. To start, a single program can hold its own data as facts:
+A Synalog project maps **tables** (the data), defines **entities** and **relationships** (extracted from tables) and writes **rules** (what you want to know), one predicate per file (see [Program structure](language/index.md)). You compile a predicate to SQL and run it with any database driver. To start, a single program can hold its own data as facts:
 
 ```python
 import synalog
@@ -105,7 +105,7 @@ $ npx skills add SynaLinks/synalog        # this project
 $ npx skills add SynaLinks/synalog -g     # user-wide, across all projects
 ```
 
-Then lay out the project as [tables, concepts and rules](language/index.md), one predicate per file. See [Add the skill to your coding agent](cli.md#add-the-skill-to-your-coding-agent) for the per-agent options.
+Then lay out the project as [tables, entities, relationships and rules](language/index.md), one predicate per file. See [Add the skill to your coding agent](cli.md#add-the-skill-to-your-coding-agent) for the per-agent options.
 
 ## Querying a CSV file
 
@@ -119,8 +119,8 @@ Real data lives in files or database tables, not inline facts. Here it is a smal
 smoke/
 ├── data/smoke_tests.csv
 ├── tables/smoke_tests.l
-├── concepts/device.l
-├── concepts/test_status.l
+├── entities/device.l
+├── entities/test_status.l
 ├── rules/failures_by_device.l
 ├── rules/runs_per_day.l
 └── layer.toml
@@ -132,10 +132,10 @@ The table file maps the database table `smoke_tests`, referenced by its lowercas
 --8<-- "docs/examples/smoke/tables/smoke_tests.l"
 ```
 
-A concept extracts the devices, and a rule counts the failures of each, importing both:
+An entity extracts the devices, and a rule counts the failures of each, importing both:
 
 ```synalog
---8<-- "docs/examples/smoke/concepts/device.l"
+--8<-- "docs/examples/smoke/entities/device.l"
 ```
 
 ```synalog

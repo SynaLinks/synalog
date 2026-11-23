@@ -270,6 +270,143 @@ def secrets(engine: str, details: dict) -> dict[str, str]:
     }
 
 
+# -- the init templates ----------------------------------------------------------
+
+#: Placeholders for connection fields without a default, by key.
+_PLACEHOLDERS = {
+    "host": "localhost",
+    "server_hostname": "workspace.azuredatabricks.net",
+    "http_path": "/sql/1.0/warehouses/<id>",
+    "database": "my_database",
+    "dataset": "my_dataset",
+    "project": "my-gcp-project",
+    "catalog": "my_catalog",
+    "schema": "my_schema",
+    "user": "analyst",
+    "location": "US",
+}
+
+
+def _placeholder(f: Field) -> str:
+    """A field's value in the template: its default, else a placeholder."""
+    if f.default is not None:
+        return _toml_value(f.default)
+    return _toml_value(_PLACEHOLDERS.get(f.key, f"my_{f.key}"))
+
+
+def _display(engine: str, spec: Engine) -> str:
+    """The header naming an engine in a template: its label and its key."""
+    return f"{spec.label} ({engine})" if spec.label else engine
+
+
+def template(name: str) -> str:
+    """The ``layer.toml`` written by ``synalog init``: the project's name,
+    then every engine's connection commented out, self-documenting — without
+    one the project runs in memory on DuckDB, the default. Generated from
+    ``ENGINES``: it cannot drift from what ``synalog connect`` accepts."""
+    lines = [
+        "# A logic layer: a folder of .l files with this layer.toml at its root.",
+        "#",
+        "# Without a [connection] table the project runs in memory on DuckDB — the",
+        "# default — loading files as tables with --load. To put it on a database,",
+        "# uncomment one of the blocks below and fill it in, or let",
+        "# `synalog connect <engine> key=value ...` write and test it for you.",
+        "#",
+        "# Secrets never go in this file (synalog refuses them): each comes from",
+        "# SYNALOG_<ENGINE>_<FIELD>, usually set in the project's .env.",
+        "",
+        "[project]",
+        f"name = {_toml_value(name)}",
+        'description = ""',
+    ]
+    for key, spec in ENGINES.items():
+        lines += [
+            "",
+            f"# --- {_display(key, spec)} ---",
+            "# [connection]",
+            f"# engine = {_toml_value(key)}",
+        ]
+        for f in spec.fields:
+            if f.secret:
+                lines.append(
+                    f"# {f.key} — secret: {secret_env(key, f.key)}"
+                    " (set it in .env, never here)"
+                )
+            else:
+                needed = "  # required" if f.required and f.default is None else ""
+                lines.append(f"# {f.key} = {_placeholder(f)}{needed}")
+    return "\n".join(lines) + "\n"
+
+
+def env_template() -> str:
+    """The ``.env.template`` written by ``synalog init``: every engine's
+    secrets, commented out, to copy to ``.env`` and fill in. Generated from
+    ``ENGINES``, in the same order and with the same names as ``template``."""
+    lines = [
+        "# Copy to .env and fill in: .env is loaded automatically (the real",
+        "# environment wins over it) and kept out of git; this template is",
+        "# committed. Non-secret fields (host, port, database...) live in",
+        "# layer.toml, not here.",
+    ]
+    for key, spec in ENGINES.items():
+        engine_secrets = [f for f in spec.fields if f.secret]
+        if not engine_secrets:
+            continue
+        lines += ["", f"# --- {_display(key, spec)} ---"]
+        for f in engine_secrets:
+            lines.append(f"# {secret_env(key, f.key)}=")
+    return "\n".join(lines) + "\n"
+
+
+def agents_md(name: str) -> str:
+    """The ``AGENTS.md`` written by ``synalog init``: what a logic layer is,
+    the layout init scaffolds, the conventions a file follows and the
+    commands to work it — for any coding agent working in the project."""
+    return f"""\
+# {name}
+
+A logic layer: a folder of Synalog predicates — named, verified logic that
+compiles to SQL — one predicate per file, answering questions with reusable
+logic instead of throwaway queries.
+
+## Layout
+
+```
+{name}/
+├── data/            local files; a CSV or parquet loads as a table with --load
+├── tables/          one file per database table (synalog introspect writes them)
+├── entities/        entities extracted from tables (Customer)
+├── relationships/   relationships joining entities (WorksIn)
+├── rules/           insights derived from entities and relationships
+├── layer.toml       the project's name, description and connection — commit it
+├── .env.template    the secrets: copy to .env and fill in (never committed)
+└── .gitignore       keeps .env out of git
+```
+
+## Conventions
+
+- One predicate per file, the file named after it: snake_case file,
+  PascalCase predicate (`rules/monthly_sales.l` defines `MonthlySales`).
+- Front matter opens the file: `name` (the predicate), `description` (what
+  its rows are), `keywords`.
+- Name the columns: `Customer(customer_id:)`, never `Customer(1)`.
+- Order every predicate with `@OrderBy`.
+- Import what you build on by folder, file and predicate:
+  `import entities.customer.Customer;`.
+- Guard invariants with `@Assert`; check them with `synalog <file> verify`.
+
+## Commands
+
+- `synalog <file> run <Predicate>` — execute and print the rows.
+- `synalog <file> print <Predicate>` — the compiled SQL.
+- `synalog <file> verify` — check the `@Assert` statements.
+- `synalog connect <engine> key=value ...` — connect the project's database
+  (the connection is tested before anything is written).
+- `synalog connect test` — test the connection as written.
+- `synalog introspect` — write `tables/` from the database's schema.
+"""
+
+
 # -- writing a project's connection ---------------------------------------------
 
 #: Written next to layer.toml by `write`, never committed.
@@ -311,14 +448,10 @@ def ensure_gitignore(folder: str | os.PathLike) -> None:
         path.write_text("".join(f"{line}\n" for line in [*lines, *missing]), encoding="utf-8")
 
 
-def write(folder: str | os.PathLike, engine: str, details: dict) -> Path:
-    """Give the project in ``folder`` a connection: its ``[connection]`` in
-    ``layer.toml`` (the file's other tables are kept), its secrets in
-    ``.env`` (other lines kept, owner-only), BigQuery's key — given as the
-    key's JSON — in a key file next to it, and both listed in ``.gitignore``.
-    Raises ``ProjectError`` for an unknown engine or field, or a missing
-    required field. Returns the project file's path."""
-    folder = Path(folder)
+def check(engine: str, details: dict) -> dict:
+    """``details`` for a connection to ``engine``, checked — a known engine,
+    known fields, the required ones present — with its empty values dropped.
+    Raises ``ProjectError``; nothing is written."""
     if engine not in ENGINES:
         raise ProjectError(f"engine must be one of {', '.join(ENGINES)}, not {engine!r}")
     keys = {f.key for f in ENGINES[engine].fields}
@@ -330,6 +463,18 @@ def write(folder: str | os.PathLike, engine: str, details: dict) -> Path:
     missing = [f.key for f in ENGINES[engine].fields if f.required and not f.secret and f.default is None and f.key not in details]
     if missing:
         raise ProjectError(f"the {engine} connection needs {', '.join(missing)}")
+    return details
+
+
+def write(folder: str | os.PathLike, engine: str, details: dict) -> Path:
+    """Give the project in ``folder`` a connection: its ``[connection]`` in
+    ``layer.toml`` (the file's other tables are kept), its secrets in
+    ``.env`` (other lines kept, owner-only), BigQuery's key — given as the
+    key's JSON — in a key file next to it, and both listed in ``.gitignore``.
+    Raises ``ProjectError`` for an unknown engine or field, or a missing
+    required field. Returns the project file's path."""
+    folder = Path(folder)
+    details = check(engine, details)
     folder.mkdir(parents=True, exist_ok=True)
     secrets_ = {}
     if isinstance(details.get("credentials"), dict):  # BigQuery's key, as JSON

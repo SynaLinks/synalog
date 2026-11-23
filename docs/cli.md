@@ -156,7 +156,7 @@ A failing program never produces partial output: `run` either prints the table o
 
 ## Projects: `layer.toml`
 
-A Synalog program is a [project](language/index.md): a folder with a `layer.toml`, its predicates in `tables/`, `concepts/` and `rules/`, one per file. The file names and describes the project, and its `[connection]` says which database it runs on, as plain fields — commit it:
+A Synalog program is a [project](language/index.md): a folder with a `layer.toml`, its predicates in `tables/`, `entities/`, `relationships/` and `rules/`, one per file. The file names and describes the project, and its `[connection]` says which database it runs on, as plain fields — commit it:
 
 ```toml
 [project]
@@ -174,20 +174,47 @@ schema = "public"
 
 Secrets never go in the file (synalog refuses it): each comes from the environment as `SYNALOG_<ENGINE>_<FIELD>` — `SYNALOG_PSQL_PASSWORD`, `SYNALOG_DATABRICKS_ACCESS_TOKEN`, or `GOOGLE_APPLICATION_CREDENTIALS` for BigQuery — usually from the project's `.env`, kept out of git. Anywhere in the project, `run`, `print`, `verify` and `introspect` use that engine and connection, and [imports](#imports) resolve from the project's folder. The project's file is the only place a connection comes from: `--engine` and an `@Engine` annotation choose the dialect, and a remote engine runs only through the project's connection to it. The fields of every engine are in `synalog.project.ENGINES`.
 
+### Init
+
+```console
+$ synalog init
+Initialized /path/to/sales (data, tables, entities, relationships, rules + layer.toml, .env.template, .gitignore, AGENTS.md, CLAUDE.md)
+```
+
+`synalog init [PATH]` scaffolds a layer project — here, or at the given path:
+
+```
+sales/
+├── data/
+├── tables/
+├── entities/
+├── relationships/
+├── rules/
+├── layer.toml
+├── .env.template
+├── .gitignore
+├── AGENTS.md
+└── CLAUDE.md -> AGENTS.md
+```
+
+Each folder gets a `.gitkeep`; `layer.toml` names the project after its folder and documents every engine's connection, commented out (without one the project runs in memory on DuckDB, the default); `.env.template` lists the engines' secrets, to copy to `.env` and fill in; `.gitignore` keeps `.env` out of git. `AGENTS.md` explains the layer — layout, conventions, commands — to any coding agent; `CLAUDE.md` links to it. An existing `layer.toml` is kept and refuses the command: nothing is overwritten.
+
 ### Connect
 
 ```console
 $ synalog connect psql host=db.example.com database=sales user=analyst password=...
-Connected /path/to/sales/layer.toml to psql (secrets in .env)
+Connected /path/to/sales/layer.toml to psql (secrets in .env, connection tested)
 $ synalog connect
 /path/to/sales/layer.toml
   engine = psql
   host = db.example.com
   ...
   password: SYNALOG_PSQL_PASSWORD set
+$ synalog connect test
+Connection to psql (db.example.com) works
 ```
 
-`synalog connect <engine> key=value ...` writes it — the non-secret fields to `layer.toml`, the secret ones to `.env` — `synalog connect` shows it (secrets hidden), `synalog connect clear` removes it. It runs in the project's folder — the nearest `layer.toml`'s, else the current directory — keeps the file's other tables, adds `.env` to `.gitignore`, and writes nothing when a required field is missing.
+`synalog connect <engine> key=value ...` writes it — the non-secret fields to `layer.toml`, the secret ones to `.env` — `synalog connect` shows it (secrets hidden), `synalog connect clear` removes it. It runs in the project's folder — the nearest `layer.toml`'s, else the current directory — keeps the file's other tables, adds `.env` to `.gitignore`, and writes nothing when a required field is missing. The connection is tested before it is written (a database that does not answer writes nothing), and `synalog connect test` re-tests it any time.
 
 ### Introspect
 
@@ -207,7 +234,7 @@ description: Orders.
 PublicOrders(order_id:, customer_id:, amount:, status:) :- public.orders(order_id:, customer_id:, amount:, status:);
 ```
 
-Run it again when the schema changes: the declarations are regenerated, and a file's front matter (its description, keywords, ...) is kept as written. A table the database no longer has keeps its file, since concepts may import it, and is listed. It needs a project connected to its database. PostgreSQL, Trino, Presto, Databricks and BigQuery can be introspected.
+Run it again when the schema changes: the declarations are regenerated, and a file's front matter (its description, keywords, ...) is kept as written. A table the database no longer has keeps its file, since entities and relationships may import it, and is listed. It needs a project connected to its database. PostgreSQL, Trino, Presto, Databricks and BigQuery can be introspected.
 
 ## Add the skill to your coding agent
 

@@ -13,7 +13,9 @@ Local, in-memory engines (``sqlite``, ``duckdb``) build the connection from
 ``bigquery``, ``clickhouse``, ``mysql``) connect over the network with the fields of the project's
 ``[connection]`` (``synalog.project.resolve``: ``layer.toml``, its secrets
 from the environment). Remote engines cannot ingest local ``loads`` files —
-load those with your own tools.
+load those with your own tools. ``probe`` opens such a connection only to run
+SELECT 1 and close — no session setup — testing it before or after it is
+written (``synalog connect``).
 
 Runners reproduce the runtime environment upstream Python Logica provides on
 its own connections:
@@ -437,6 +439,30 @@ EXCEPTION WHEN duplicate_function OR unique_violation
   OR read_only_sql_transaction OR insufficient_privilege THEN NULL;
 END $$"""
 
+def _psql_connect(c: Mapping, **kwargs):
+    """A psycopg connection from a ``psql`` connection's fields; ``kwargs``
+    are extra arguments to ``psycopg.connect`` (a probe's connect timeout)."""
+    try:
+        import psycopg
+    except ImportError as e:
+        # psycopg[binary] is a dependency of synalog; plain psycopg without the
+        # system's libpq fails here with "no pq wrapper available".
+        raise RunnerUnavailable(
+            f"The psql engine needs psycopg with its libpq ({e}): pip install 'psycopg[binary]'"
+        ) from None
+    return psycopg.connect(
+        host=c["host"],
+        port=c.get("port", 5432),
+        dbname=c["database"],
+        user=c["user"],
+        password=c.get("password"),
+        sslmode=c.get("sslmode", "prefer"),
+        options=f"-csearch_path={c['schema']}" if c.get("schema") else None,
+        autocommit=True,
+        **kwargs,
+    )
+
+
 class PsqlSession(Session):
     engine = "psql"
 
@@ -444,28 +470,13 @@ class PsqlSession(Session):
         _reject_loads(loads, "psql")
         # The connection first: without one, the driver is beside the point.
         c = _require_connection("psql", connection)
-        try:
-            import psycopg
-        except ImportError as e:
-            # psycopg[binary] is a dependency of synalog; plain psycopg without the
-            # system's libpq fails here with "no pq wrapper available".
-            raise RunnerUnavailable(
-                f"The psql engine needs psycopg with its libpq ({e}): pip install 'psycopg[binary]'"
-            ) from None
-        self.conn = psycopg.connect(
-            host=c["host"],
-            port=c.get("port", 5432),
-            dbname=c["database"],
-            user=c["user"],
-            password=c.get("password"),
-            sslmode=c.get("sslmode", "prefer"),
-            options=f"-csearch_path={c['schema']}" if c.get("schema") else None,
-            autocommit=True,
-        )
+        self.conn = _psql_connect(c)
         self.cur = self.conn.cursor()
         self.cur.execute(PSQL_ARRAY_CONCAT_AGG)
         # A plan's statements read one snapshot: a source changed between two
         # of them is not read in both of its versions.
+        import psycopg  # already imported by _psql_connect
+
         self.conn.isolation_level = psycopg.IsolationLevel.REPEATABLE_READ
 
     def run(self, script: str) -> Result:
@@ -538,9 +549,8 @@ class DbapiSession(Session):
         self.conn.close()
 
 
-def _trino_session(connection: Mapping | None, loads) -> Session:
-    _reject_loads(loads, "trino")
-    c = _require_connection("trino", connection)
+def _trino_connect(c: Mapping):
+    """A trino.dbapi connection from a ``trino`` connection's fields."""
     try:
         import trino
     except ImportError:
@@ -553,7 +563,7 @@ def _trino_session(connection: Mapping | None, loads) -> Session:
         auth = trino.auth.BasicAuthentication(c["user"], c.get("password", ""))
     elif c.get("auth") == "jwt":
         auth = trino.auth.JWTAuthentication(c.get("password", ""))
-    conn = trino.dbapi.connect(
+    return trino.dbapi.connect(
         host=c["host"],
         port=int(c.get("port", 8080)),
         user=c["user"],
@@ -563,12 +573,15 @@ def _trino_session(connection: Mapping | None, loads) -> Session:
         http_scheme="https" if auth else c.get("scheme", "http"),
         auth=auth,
     )
-    return DbapiSession("trino", conn)
 
 
-def _presto_session(connection: Mapping | None, loads) -> Session:
-    _reject_loads(loads, "presto")
-    c = _require_connection("presto", connection)
+def _trino_session(connection: Mapping | None, loads) -> Session:
+    _reject_loads(loads, "trino")
+    return DbapiSession("trino", _trino_connect(_require_connection("trino", connection)))
+
+
+def _presto_connect(c: Mapping):
+    """A prestodb.dbapi connection from a ``presto`` connection's fields."""
     try:
         import prestodb
     except ImportError:
@@ -580,7 +593,7 @@ def _presto_session(connection: Mapping | None, loads) -> Session:
     auth = None
     if c.get("auth") == "password":
         auth = prestodb.auth.BasicAuthentication(c["user"], c.get("password", ""))
-    conn = prestodb.dbapi.connect(
+    return prestodb.dbapi.connect(
         host=c["host"],
         port=int(c.get("port", 8080)),
         user=c["user"],
@@ -589,12 +602,15 @@ def _presto_session(connection: Mapping | None, loads) -> Session:
         http_scheme="https" if auth else c.get("scheme", "http"),
         auth=auth,
     )
-    return DbapiSession("presto", conn)
 
 
-def _databricks_session(connection: Mapping | None, loads) -> Session:
-    _reject_loads(loads, "databricks")
-    c = _require_connection("databricks", connection)
+def _presto_session(connection: Mapping | None, loads) -> Session:
+    _reject_loads(loads, "presto")
+    return DbapiSession("presto", _presto_connect(_require_connection("presto", connection)))
+
+
+def _databricks_connect(c: Mapping):
+    """A databricks.sql connection from a ``databricks`` connection's fields."""
     try:
         from databricks import sql as databricks_sql
     except ImportError:
@@ -603,14 +619,43 @@ def _databricks_session(connection: Mapping | None, loads) -> Session:
             " pip install databricks-sql-connector"
         ) from None
 
-    conn = databricks_sql.connect(
+    return databricks_sql.connect(
         server_hostname=c["server_hostname"],
         http_path=c["http_path"],
         access_token=c["access_token"],
         catalog=c.get("catalog"),
         schema=c.get("schema"),
     )
-    return DbapiSession("databricks", conn)
+
+
+def _databricks_session(connection: Mapping | None, loads) -> Session:
+    _reject_loads(loads, "databricks")
+    return DbapiSession(
+        "databricks", _databricks_connect(_require_connection("databricks", connection))
+    )
+
+
+def _clickhouse_client(c: Mapping):
+    """A clickhouse-connect client from a ``clickhouse`` connection's fields."""
+    try:
+        import clickhouse_connect
+    except ImportError:
+        raise RunnerUnavailable(
+            "The clickhouse engine needs the 'clickhouse-connect' package:"
+            " pip install clickhouse-connect"
+        ) from None
+    import uuid
+
+    secure = c.get("scheme", "http") == "https"
+    return clickhouse_connect.get_client(
+        host=c["host"],
+        port=int(c.get("port", 8443 if secure else 8123)),
+        username=c.get("user", "default"),
+        password=c.get("password", ""),
+        database=c.get("database") or "default",
+        secure=secure,
+        session_id=f"synalog-{uuid.uuid4()}",
+    )
 
 
 class ClickHouseSession(Session):
@@ -622,26 +667,7 @@ class ClickHouseSession(Session):
 
     def __init__(self, connection: Mapping | None, loads=()):
         _reject_loads(loads, "clickhouse")
-        c = _require_connection("clickhouse", connection)
-        try:
-            import clickhouse_connect
-        except ImportError:
-            raise RunnerUnavailable(
-                "The clickhouse engine needs the 'clickhouse-connect' package:"
-                " pip install clickhouse-connect"
-            ) from None
-        import uuid
-
-        secure = c.get("scheme", "http") == "https"
-        self.client = clickhouse_connect.get_client(
-            host=c["host"],
-            port=int(c.get("port", 8443 if secure else 8123)),
-            username=c.get("user", "default"),
-            password=c.get("password", ""),
-            database=c.get("database") or "default",
-            secure=secure,
-            session_id=f"synalog-{uuid.uuid4()}",
-        )
+        self.client = _clickhouse_client(_require_connection("clickhouse", connection))
 
     def execute(self, statement: str) -> Result | None:
         if not _returns_rows(statement):
@@ -660,6 +686,35 @@ def _returns_rows(statement: str) -> bool:
     return body[:8].upper().startswith(("SELECT", "WITH", "VALUES", "SHOW", "DESC", "EXPLAIN", "("))
 
 
+#: Run at connect time as the script's preamble: a step of a plan reads the
+#: same SQL. A probe runs none — it creates nothing, not even session state.
+_MYSQL_INIT_COMMAND = (
+    "SET SESSION sql_mode = 'ANSI_QUOTES,PIPES_AS_CONCAT,NO_BACKSLASH_ESCAPES',"
+    " optimizer_switch = 'derived_condition_pushdown=off'"
+)
+
+
+def _mysql_connect(c: Mapping, init_command: str | None = None):
+    """A pymysql connection from a ``mysql`` connection's fields."""
+    try:
+        import pymysql
+    except ImportError:
+        raise RunnerUnavailable(
+            "The mysql engine needs the 'pymysql' package: pip install pymysql"
+        ) from None
+    return pymysql.connect(
+        host=c["host"],
+        port=int(c.get("port", 3306)),
+        user=c["user"],
+        password=c.get("password", ""),
+        database=c["database"],
+        autocommit=True,
+        init_command=init_command,
+        charset="utf8mb4",
+        collation="utf8mb4_0900_bin",
+    )
+
+
 class MySQLSession(DbapiSession):
     """MySQL through PyMySQL, in one connection: the session settings a
     script's preamble sets (its SQL mode) hold for its later statements. A
@@ -668,28 +723,7 @@ class MySQLSession(DbapiSession):
     def __init__(self, connection: Mapping | None, loads=()):
         _reject_loads(loads, "mysql")
         c = _require_connection("mysql", connection)
-        try:
-            import pymysql
-        except ImportError:
-            raise RunnerUnavailable(
-                "The mysql engine needs the 'pymysql' package: pip install pymysql"
-            ) from None
-        conn = pymysql.connect(
-            host=c["host"],
-            port=int(c.get("port", 3306)),
-            user=c["user"],
-            password=c.get("password", ""),
-            database=c["database"],
-            autocommit=True,
-            # As the script's preamble: a step of a plan reads the same SQL.
-            init_command=(
-                "SET SESSION sql_mode = 'ANSI_QUOTES,PIPES_AS_CONCAT,NO_BACKSLASH_ESCAPES',"
-                " optimizer_switch = 'derived_condition_pushdown=off'"
-            ),
-            charset="utf8mb4",
-            collation="utf8mb4_0900_bin",
-        )
-        super().__init__("mysql", conn)
+        super().__init__("mysql", _mysql_connect(c, init_command=_MYSQL_INIT_COMMAND))
 
     def execute(self, statement: str) -> Result | None:
         result = super().execute(statement)
@@ -714,6 +748,31 @@ def decode_mysql_json(description, rows) -> list[tuple]:
     return decoded
 
 
+def _bigquery_client(c: Mapping):
+    """A BigQuery client from a ``bigquery`` connection's fields. The key file
+    is GOOGLE_APPLICATION_CREDENTIALS, which the client reads itself; the
+    connection names the project, dataset and location."""
+    try:
+        from google.cloud import bigquery
+    except ImportError:
+        raise RunnerUnavailable(
+            "The bigquery engine needs the 'google-cloud-bigquery' package:"
+            " pip install google-cloud-bigquery"
+        ) from None
+    project, location = c["project"], c.get("location")
+    default_dataset = f"{project}.{c['dataset']}" if c.get("dataset") else None
+    try:
+        return bigquery.Client(
+            project=project,
+            location=location,
+            default_query_job_config=(
+                bigquery.QueryJobConfig(default_dataset=default_dataset) if default_dataset else None
+            ),
+        )
+    except Exception as e:
+        raise RunnerUnavailable(f"bigquery error ({type(e).__name__}: {e})") from None
+
+
 class BigQuerySession(Session):
     """BigQuery through its client, which runs a multi-statement script as one
     job: the tables a script creates live in the dataset, so the steps of a
@@ -723,28 +782,7 @@ class BigQuerySession(Session):
 
     def __init__(self, connection: Mapping | None, loads=()):
         _reject_loads(loads, "bigquery")
-        c = _require_connection("bigquery", connection)
-        try:
-            from google.cloud import bigquery
-        except ImportError:
-            raise RunnerUnavailable(
-                "The bigquery engine needs the 'google-cloud-bigquery' package:"
-                " pip install google-cloud-bigquery"
-            ) from None
-        # The key file is GOOGLE_APPLICATION_CREDENTIALS, which the client
-        # reads itself; the connection names the project, dataset and location.
-        project, location = c["project"], c.get("location")
-        default_dataset = f"{project}.{c['dataset']}" if c.get("dataset") else None
-        try:
-            self.client = bigquery.Client(
-                project=project,
-                location=location,
-                default_query_job_config=(
-                    bigquery.QueryJobConfig(default_dataset=default_dataset) if default_dataset else None
-                ),
-            )
-        except Exception as e:
-            raise RunnerUnavailable(f"bigquery error ({type(e).__name__}: {e})") from None
+        self.client = _bigquery_client(_require_connection("bigquery", connection))
 
     def run(self, script: str) -> Result:
         return self.execute(script) or ([], [])
@@ -783,6 +821,48 @@ def session(engine: str, connection: Mapping | None = None, loads=()) -> Session
         f"Engine '{engine}' has no local runner. Use the 'print' command to get"
         " the SQL and run it with your own client."
     )
+
+
+def probe(engine: str, connection: Mapping) -> None:
+    """Prove the database answers: connect as the engine's session would — the
+    same driver called with the same arguments — run SELECT 1, and close. No
+    session setup (no aggregate, macro or session setting): a probe creates
+    nothing on the server. A missing driver raises ``RunnerUnavailable``;
+    driver and server errors propagate to the caller, which renders them."""
+    c = _require_connection(engine, connection)
+    if engine == "psql":
+        # A refused connection can otherwise hang for the TCP stack's timeout.
+        conn = _psql_connect(c, connect_timeout=10)
+        try:
+            conn.execute("SELECT 1")
+        finally:
+            conn.close()
+    elif engine in ("trino", "presto", "databricks", "mysql"):
+        connect = {
+            "trino": _trino_connect,
+            "presto": _presto_connect,
+            "databricks": _databricks_connect,
+            "mysql": _mysql_connect,
+        }[engine]
+        conn = connect(c)
+        try:
+            conn.cursor().execute("SELECT 1")
+        finally:
+            conn.close()
+    elif engine == "clickhouse":
+        client = _clickhouse_client(c)
+        try:
+            client.query("SELECT 1")
+        finally:
+            client.close()
+    elif engine == "bigquery":
+        client = _bigquery_client(c)
+        try:
+            client.query("SELECT 1").result()
+        finally:
+            client.close()
+    else:
+        raise RunnerUnavailable(f"Engine '{engine}' has no local runner.")
 
 
 def run_sql(engine: str, sql: str, connection: Mapping | None = None, loads=()) -> Result:

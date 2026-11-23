@@ -311,15 +311,31 @@ def test_unknown_engine_has_no_runner(tmp_path):
     assert result.returncode == 0, result.stderr
 
 
-def test_connect_writes_the_project_file(tmp_path):
+def test_connect_writes_the_project_file(tmp_path, monkeypatch, capsys):
     # The connection lives in layer.toml, its secret in .env: never elsewhere.
+    # Writing tests the connection first: in-process so the probe is mocked
+    # (a subprocess cannot be), and what it is given is what a run would open.
+    from unittest import mock
+
+    from synalog import cli
+
     assert "No connection" in synalog("connect", cwd=tmp_path).stdout
 
-    saved = synalog(
-        "connect", "trino", "host=host", "port=443", "catalog=hive", "user=alice",
-        "auth=password", "password=secret", cwd=tmp_path,
-    )
-    assert saved.returncode == 0, saved.stderr
+    monkeypatch.chdir(tmp_path)
+    with mock.patch("synalog.runners.probe") as probe:
+        assert cli.cmd_connect(
+            (
+                "trino", "host=host", "port=443", "catalog=hive", "user=alice",
+                "auth=password", "password=secret",
+            ),
+            None,
+        ) == 0
+    assert "connection tested" in capsys.readouterr().out
+    engine, candidate = probe.call_args.args
+    assert engine == "trino"
+    assert candidate["engine"] == "trino"
+    assert candidate["host"] == "host" and candidate["password"] == "secret"
+
     toml = tomllib.loads((tmp_path / "layer.toml").read_text())["connection"]
     assert toml["engine"] == "trino" and toml["host"] == "host" and "password" not in toml
     assert 'SYNALOG_TRINO_PASSWORD="secret"' in (tmp_path / ".env").read_text()
@@ -353,6 +369,66 @@ def test_connect_rejects_local_engine(tmp_path):
     assert "takes no connection" in result.stderr
 
 
+def test_connect_refuses_an_unreachable_database(tmp_path):
+    # psql to a closed port: the driver error, no traceback, nothing written.
+    result = synalog(
+        "connect", "psql", "host=127.0.0.1", "port=1", "database=x", "user=x",
+        "password=x", cwd=tmp_path,
+    )
+    assert result.returncode == 1
+    assert "OperationalError" in result.stderr
+    assert "Traceback" not in result.stderr
+    assert not (tmp_path / "layer.toml").exists()
+    assert not (tmp_path / ".env").exists()
+
+
+def test_connect_test_without_a_connection(tmp_path):
+    result = synalog("connect", "test", cwd=tmp_path)
+    assert result.returncode == 0
+    assert "No connection" in result.stdout and "duckdb" in result.stdout
+
+
+def test_connect_test_reports_the_driver_error(tmp_path):
+    (tmp_path / "layer.toml").write_text(
+        '[connection]\nengine = "psql"\nhost = "127.0.0.1"\nport = 1\n'
+        'database = "x"\nuser = "nobody"\n'
+    )
+    result = synalog("connect", "test", cwd=tmp_path)
+    assert result.returncode == 1
+    assert "OperationalError" in result.stderr
+    assert "Traceback" not in result.stderr
+
+
+def test_connect_test_takes_no_extra_argument(tmp_path):
+    result = synalog("connect", "test", "extra", cwd=tmp_path)
+    assert result.returncode == 2  # click usage error
+    assert "usage: synalog connect test" in result.stderr
+
+
+def test_connect_test_works(tmp_path, monkeypatch, capsys):
+    from unittest import mock
+
+    from synalog import cli, project
+
+    project.write(tmp_path, "psql", {"host": "db.example.com", "database": "d", "user": "u"})
+    monkeypatch.chdir(tmp_path)
+    with mock.patch("synalog.runners.probe") as probe:
+        assert cli.cmd_connect(("test",), tmp_path / "layer.toml") == 0
+    assert "Connection to psql (db.example.com) works" in capsys.readouterr().out
+    engine, candidate = probe.call_args.args
+    assert engine == "psql" and candidate["host"] == "db.example.com"
+
+
+def test_connect_test_names_a_missing_secret(tmp_path):
+    (tmp_path / "layer.toml").write_text(
+        '[connection]\nengine = "databricks"\nserver_hostname = "h"\nhttp_path = "/p"\n'
+    )
+    result = synalog("connect", "test", cwd=tmp_path)
+    assert result.returncode == 1
+    assert "SYNALOG_DATABRICKS_ACCESS_TOKEN" in result.stderr
+    assert "Traceback" not in result.stderr
+
+
 def test_remote_engine_without_a_project_says_how_to_connect(tmp_path):
     path = tmp_path / "p.l"
     path.write_text('@Engine("trino");\nGreeting(text: "hi");\n')
@@ -363,10 +439,11 @@ def test_remote_engine_without_a_project_says_how_to_connect(tmp_path):
 
 def test_connection_is_used_by_run(tmp_path):
     # The project's connection is consumed by `run`: to a server that is not
-    # there, it fails at the driver, not for want of a connection.
-    assert synalog(
-        "connect", "trino", "host=127.0.0.1", "port=1", "catalog=memory", "user=nobody", cwd=tmp_path
-    ).returncode == 0
+    # there, it fails at the driver, not for want of a connection. (Written
+    # directly: `synalog connect` would refuse the unreachable server.)
+    from synalog import project
+
+    project.write(tmp_path, "trino", {"host": "127.0.0.1", "port": 1, "catalog": "memory", "user": "nobody"})
     (tmp_path / "p.l").write_text('@Engine("trino");\nGreeting(text: "hi");\n')
     result = synalog("p.l", "run", "Greeting", cwd=tmp_path)
     assert result.returncode == 1
@@ -405,10 +482,11 @@ def test_introspect_takes_no_argument(tmp_path):
 
 
 def test_introspect_uses_the_project_connection(tmp_path):
-    # To a server that is not there: it fails at the driver.
-    assert synalog(
-        "connect", "psql", "host=127.0.0.1", "port=1", "database=none", "user=nobody", cwd=tmp_path
-    ).returncode == 0
+    # To a server that is not there: it fails at the driver. (Written
+    # directly: `synalog connect` would refuse the unreachable server.)
+    from synalog import project
+
+    project.write(tmp_path, "psql", {"host": "127.0.0.1", "port": 1, "database": "none", "user": "nobody"})
     result = synalog("introspect", cwd=tmp_path)
     assert result.returncode == 1
     assert "there is none" not in result.stderr
@@ -691,6 +769,177 @@ def test_repl_clear_drops_loaded_tables(employees_csv):
     result = synalog(stdin=session)
     assert result.returncode == 0
     assert "| Alice" not in result.stdout  # table gone, no rows produced
+
+
+# ---------------------------------------------------------------------------
+# init: scaffolding a project
+# ---------------------------------------------------------------------------
+
+
+def test_init_scaffolds_the_project(tmp_path):
+    result = synalog("init", cwd=tmp_path)
+    assert result.returncode == 0, result.stderr
+    for folder in ("data", "tables", "entities", "relationships", "rules"):
+        assert (tmp_path / folder / ".gitkeep").is_file()
+    toml = tomllib.loads((tmp_path / "layer.toml").read_text())
+    assert toml["project"] == {"name": tmp_path.name, "description": ""}
+    assert (tmp_path / ".env.template").is_file()
+    assert ".env" in (tmp_path / ".gitignore").read_text().splitlines()
+    assert (tmp_path / "AGENTS.md").is_file()
+    assert os.readlink(tmp_path / "CLAUDE.md") == "AGENTS.md"
+
+
+def test_init_scaffolds_a_relative_path(tmp_path):
+    result = synalog("init", "some/path", cwd=tmp_path)
+    assert result.returncode == 0, result.stderr
+    target = tmp_path / "some" / "path"
+    for folder in ("data", "tables", "entities", "relationships", "rules"):
+        assert (target / folder / ".gitkeep").is_file()
+    toml = tomllib.loads((target / "layer.toml").read_text())
+    assert toml["project"] == {"name": "path", "description": ""}
+    assert (target / ".env.template").is_file()
+    assert ".env" in (target / ".gitignore").read_text().splitlines()
+    assert (target / "AGENTS.md").is_file()
+    assert os.readlink(target / "CLAUDE.md") == "AGENTS.md"
+
+
+def test_init_keeps_an_existing_gitignore(tmp_path):
+    (tmp_path / ".gitignore").write_text("# sentinel: keep me\n")
+    result = synalog("init", cwd=tmp_path)
+    assert result.returncode == 0, result.stderr
+    assert (tmp_path / ".gitignore").read_text() == "# sentinel: keep me\n"
+
+
+def test_init_keeps_an_existing_agents_md(tmp_path):
+    (tmp_path / "AGENTS.md").write_text("# sentinel: keep me\n")
+    result = synalog("init", cwd=tmp_path)
+    assert result.returncode == 0, result.stderr
+    assert (tmp_path / "AGENTS.md").read_text() == "# sentinel: keep me\n"
+
+
+def test_init_refuses_to_overwrite_an_existing_project(tmp_path):
+    (tmp_path / "layer.toml").write_text("# sentinel: keep me\n")
+    result = synalog("init", cwd=tmp_path)
+    assert result.returncode == 1
+    assert "already exists" in result.stderr
+    assert (tmp_path / "layer.toml").read_text() == "# sentinel: keep me\n"
+    assert not (tmp_path / ".env.template").exists()
+    assert not (tmp_path / ".gitignore").exists()
+    assert not (tmp_path / "AGENTS.md").exists()
+    assert not (tmp_path / "CLAUDE.md").exists()
+
+
+def test_init_takes_at_most_one_path(tmp_path):
+    result = synalog("init", "a", "b", cwd=tmp_path)
+    assert result.returncode == 2  # click usage error
+    assert "usage: synalog init [PATH]" in result.stderr
+
+
+def test_init_layer_toml_has_only_the_project_table(tmp_path):
+    result = synalog("init", cwd=tmp_path)
+    assert result.returncode == 0, result.stderr
+    text = (tmp_path / "layer.toml").read_text()
+    data = tomllib.loads(text)
+    # A local engine (duckdb) takes no [connection]: the default is its absence.
+    assert set(data) == {"project"}
+    assert not any(line.startswith("[connection]") for line in text.splitlines())
+
+
+def test_init_layer_toml_documents_every_engine(tmp_path):
+    from synalog import project
+
+    result = synalog("init", cwd=tmp_path)
+    assert result.returncode == 0, result.stderr
+    text = (tmp_path / "layer.toml").read_text()
+    for key, spec in project.ENGINES.items():
+        assert f'# engine = "{key}"' in text
+        for f in spec.fields:
+            if not f.secret:
+                assert f"# {f.key} = " in text
+
+
+def test_init_layer_toml_assigns_no_secret(tmp_path):
+    from synalog import project
+
+    result = synalog("init", cwd=tmp_path)
+    assert result.returncode == 0, result.stderr
+    text = (tmp_path / "layer.toml").read_text()
+    uncommented = [
+        line for line in text.splitlines() if line.strip() and not line.startswith("#")
+    ]
+    for key, spec in project.ENGINES.items():
+        for f in spec.fields:
+            if f.secret:
+                # pointed at its variable, never given a value in the file
+                assert project.secret_env(key, f.key) in text
+                assert not any(f.key in line for line in uncommented)
+
+
+def test_init_layer_toml_defaults_to_duckdb_in_memory(tmp_path):
+    result = synalog("init", cwd=tmp_path)
+    assert result.returncode == 0, result.stderr
+    text = (tmp_path / "layer.toml").read_text()
+    assert "runs in memory on DuckDB" in text and "--load" in text
+
+
+def test_init_env_template_lists_every_secret(tmp_path):
+    from synalog import project
+
+    result = synalog("init", cwd=tmp_path)
+    assert result.returncode == 0, result.stderr
+    text = (tmp_path / ".env.template").read_text()
+    for key, spec in project.ENGINES.items():
+        for f in spec.fields:
+            if f.secret:
+                assert f"# {project.secret_env(key, f.key)}=" in text
+    # nothing is set: every line is a comment or blank
+    assert all(not line.strip() or line.startswith("#") for line in text.splitlines())
+
+
+def test_init_agents_md_explains_the_layer(tmp_path):
+    result = synalog("init", cwd=tmp_path)
+    assert result.returncode == 0, result.stderr
+    text = (tmp_path / "AGENTS.md").read_text()
+    assert text.startswith(f"# {tmp_path.name}\n")
+    assert "logic layer" in text and "compiles to SQL" in text
+    for folder in ("data/", "tables/", "entities/", "relationships/", "rules/"):
+        assert folder in text
+    for section in ("## Layout", "## Conventions", "## Commands"):
+        assert section in text
+
+
+def test_init_claude_md_links_to_agents_md(tmp_path):
+    result = synalog("init", cwd=tmp_path)
+    assert result.returncode == 0, result.stderr
+    claude_md = tmp_path / "CLAUDE.md"
+    assert claude_md.is_symlink() and os.readlink(claude_md) == "AGENTS.md"
+    assert claude_md.read_text() == (tmp_path / "AGENTS.md").read_text()
+
+
+def test_init_claude_md_falls_back_without_symlink(tmp_path, monkeypatch):
+    # In-process so os.symlink can be mocked (a subprocess cannot be).
+    from unittest import mock
+
+    from synalog import cli
+
+    monkeypatch.chdir(tmp_path)
+    with mock.patch("os.symlink", side_effect=OSError("operation not permitted")):
+        assert cli.cmd_init((), None) == 0
+    claude_md = tmp_path / "CLAUDE.md"
+    assert not claude_md.is_symlink()
+    assert claude_md.read_text() == "@AGENTS.md\n"
+    assert (tmp_path / "AGENTS.md").is_file()
+
+
+def test_init_is_deterministic(tmp_path):
+    first, second = tmp_path / "a" / "proj", tmp_path / "b" / "proj"
+    first.mkdir(parents=True)
+    second.mkdir(parents=True)
+    assert synalog("init", cwd=first).returncode == 0
+    assert synalog("init", cwd=second).returncode == 0
+    names = ("layer.toml", ".env.template", ".gitignore", "AGENTS.md", "CLAUDE.md")
+    for name in names:
+        assert (first / name).read_bytes() == (second / name).read_bytes()
 
 
 # ---------------------------------------------------------------------------

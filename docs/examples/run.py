@@ -2,7 +2,8 @@
 """Run every documentation example and capture its output.
 
 Each folder holding a ``layer.toml`` is a project, laid out as every
-Synalog project is: ``tables/``, ``concepts/`` and ``rules/``, one predicate per
+Synalog project is: ``tables/``, ``entities/``, ``relationships/`` and
+``rules/``, one predicate per
 file named in its front matter, and its data in ``data/<table>.csv``. Every file
 is checked, then its predicate runs on an in-memory DuckDB holding the data;
 the results go to ``<project>.log``.
@@ -109,7 +110,7 @@ def run_example(path: Path) -> None:
     path.with_suffix(".log").write_text("\n".join(out) + "\n")
 
 
-FOLDERS = ("tables", "concepts", "rules")
+FOLDERS = ("tables", "entities", "relationships", "rules")
 
 
 def run_project(folder: Path) -> None:

@@ -290,7 +290,7 @@ def write_tables(folder: str | Path, found: list[Table]) -> dict[str, list[str]]
     keywords, ``locked`` written by hand — and only its declaration is
     regenerated. Returns the tables ``written``, and the table files the
     database no longer has (``gone``, by file name): kept, since the project's
-    concepts may import them. A file named before the snake_case convention
+    entities and relationships may import them. A file named before the snake_case convention
     (``PublicOrders.l``) gives its front matter to its new one and goes.
     """
     folder = Path(folder)
