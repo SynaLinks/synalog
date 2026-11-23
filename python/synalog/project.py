@@ -399,14 +399,10 @@ def ensure_gitignore(folder: str | os.PathLike) -> None:
         path.write_text("".join(f"{line}\n" for line in [*lines, *missing]), encoding="utf-8")
 
 
-def write(folder: str | os.PathLike, engine: str, details: dict) -> Path:
-    """Give the project in ``folder`` a connection: its ``[connection]`` in
-    ``layer.toml`` (the file's other tables are kept), its secrets in
-    ``.env`` (other lines kept, owner-only), BigQuery's key — given as the
-    key's JSON — in a key file next to it, and both listed in ``.gitignore``.
-    Raises ``ProjectError`` for an unknown engine or field, or a missing
-    required field. Returns the project file's path."""
-    folder = Path(folder)
+def check(engine: str, details: dict) -> dict:
+    """``details`` for a connection to ``engine``, checked — a known engine,
+    known fields, the required ones present — with its empty values dropped.
+    Raises ``ProjectError``; nothing is written."""
     if engine not in ENGINES:
         raise ProjectError(f"engine must be one of {', '.join(ENGINES)}, not {engine!r}")
     keys = {f.key for f in ENGINES[engine].fields}
@@ -418,6 +414,18 @@ def write(folder: str | os.PathLike, engine: str, details: dict) -> Path:
     missing = [f.key for f in ENGINES[engine].fields if f.required and not f.secret and f.default is None and f.key not in details]
     if missing:
         raise ProjectError(f"the {engine} connection needs {', '.join(missing)}")
+    return details
+
+
+def write(folder: str | os.PathLike, engine: str, details: dict) -> Path:
+    """Give the project in ``folder`` a connection: its ``[connection]`` in
+    ``layer.toml`` (the file's other tables are kept), its secrets in
+    ``.env`` (other lines kept, owner-only), BigQuery's key — given as the
+    key's JSON — in a key file next to it, and both listed in ``.gitignore``.
+    Raises ``ProjectError`` for an unknown engine or field, or a missing
+    required field. Returns the project file's path."""
+    folder = Path(folder)
+    details = check(engine, details)
     folder.mkdir(parents=True, exist_ok=True)
     secrets_ = {}
     if isinstance(details.get("credentials"), dict):  # BigQuery's key, as JSON

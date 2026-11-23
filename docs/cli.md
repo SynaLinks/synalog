@@ -201,16 +201,18 @@ Each folder gets a `.gitkeep`; `layer.toml` names the project after its folder a
 
 ```console
 $ synalog connect psql host=db.example.com database=sales user=analyst password=...
-Connected /path/to/sales/layer.toml to psql (secrets in .env)
+Connected /path/to/sales/layer.toml to psql (secrets in .env, connection tested)
 $ synalog connect
 /path/to/sales/layer.toml
   engine = psql
   host = db.example.com
   ...
   password: SYNALOG_PSQL_PASSWORD set
+$ synalog connect test
+Connection to psql (db.example.com) works
 ```
 
-`synalog connect <engine> key=value ...` writes it — the non-secret fields to `layer.toml`, the secret ones to `.env` — `synalog connect` shows it (secrets hidden), `synalog connect clear` removes it. It runs in the project's folder — the nearest `layer.toml`'s, else the current directory — keeps the file's other tables, adds `.env` to `.gitignore`, and writes nothing when a required field is missing.
+`synalog connect <engine> key=value ...` writes it — the non-secret fields to `layer.toml`, the secret ones to `.env` — `synalog connect` shows it (secrets hidden), `synalog connect clear` removes it. It runs in the project's folder — the nearest `layer.toml`'s, else the current directory — keeps the file's other tables, adds `.env` to `.gitignore`, and writes nothing when a required field is missing. The connection is tested before it is written (a database that does not answer writes nothing), and `synalog connect test` re-tests it any time.
 
 ### Introspect
 

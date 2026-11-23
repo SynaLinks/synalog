@@ -25,6 +25,7 @@ options above also apply to the session.
 
 from __future__ import annotations
 
+import contextlib
 import csv
 import os
 import re
@@ -38,7 +39,7 @@ from rich.syntax import Syntax
 from rich.table import Table
 from rich.text import Text
 
-from . import __version__, project
+from . import __version__, project, runners
 from ._synalog import (
     SUPPORTED_ENGINES,
     check,
@@ -241,17 +242,49 @@ def _engine_fields() -> str:
     return "\n".join(lines)
 
 
+def _candidate(engine: str, fields: dict) -> tuple[dict, dict[str, str]]:
+    """The connection the given fields describe, resolved as it would be once
+    written — defaults filled, secrets taken from the fields first, then the
+    environment — and the fields' secrets named by variable: some drivers
+    (BigQuery's client) read only the environment."""
+    overlay = {
+        project.secret_env(engine, f.key): str(fields[f.key])
+        for f in project.ENGINES[engine].fields
+        if f.secret and fields.get(f.key) not in (None, "")
+    }
+    resolved = project.details({"engine": engine, **fields}, env={**os.environ, **overlay})
+    return {"engine": engine, **resolved}, overlay
+
+
+@contextlib.contextmanager
+def _env_overlaid(values: dict[str, str]):
+    """``values`` set in the process environment for the block, then restored."""
+    saved = {key: os.environ.get(key) for key in values}
+    os.environ.update(values)
+    try:
+        yield
+    finally:
+        for key, value in saved.items():
+            if value is None:
+                os.environ.pop(key, None)
+            else:
+                os.environ[key] = value
+
+
 def cmd_connect(args: tuple[str, ...], project_file: Path | None) -> int:
     """Give the project its database, in its layer.toml.
 
     \b
     synalog connect                            show the project's connection (secrets hidden)
     synalog connect <engine> key=value ...     connect the project: layer.toml, secrets in .env
+    synalog connect test                       test the project's connection
     synalog connect clear                      remove the connection (back to in-memory engines)
 
     The project is the folder of the nearest layer.toml, else the current
     directory. Secret fields (a password, a token) go to its .env, kept out
-    of git; the others to layer.toml, meant to be committed.
+    of git; the others to layer.toml, meant to be committed. The connection
+    is tested before it is written: a database that does not answer writes
+    nothing.
     """
     folder = project_file.parent if project_file is not None else Path.cwd()
     if not args:
@@ -273,14 +306,49 @@ def cmd_connect(args: tuple[str, ...], project_file: Path | None) -> int:
         project.clear(folder)
         click.echo(f"Removed the connection of {folder / project.PROJECT_FILE}")
         return 0
+    if args[0] == "test":
+        if len(args) != 1:
+            raise click.UsageError("usage: synalog connect test")
+        return _connect_test(project_file)
     engine, fields = args[0], _connection_fields(args[1:])
     if engine not in project.ENGINES:
         fail(f"'{engine}' takes no connection; engines that do: {', '.join(project.ENGINES)}\n" + _engine_fields())
     try:
-        path = project.write(folder, engine, fields)
+        fields = project.check(engine, fields)
+        candidate, overlay = _candidate(engine, fields)
     except project.ProjectError as e:
         fail(f"{e}\n" + _engine_fields())
-    click.echo(f"Connected {path} to {engine}" + (" (secrets in .env)" if project.secrets(engine, fields) else ""))
+    try:
+        with _env_overlaid(overlay):  # BigQuery's client reads the environment
+            runners.probe(engine, candidate)
+    except RunnerUnavailable as e:
+        fail(e)
+    except Exception as e:  # noqa: BLE001 - a driver or server error: report it, no traceback
+        fail(f"{type(e).__name__}: {e}")
+    # Checked and tested: the write cannot fail.
+    path = project.write(folder, engine, fields)
+    notes = ["secrets in .env"] if project.secrets(engine, fields) else []
+    click.echo(f"Connected {path} to {engine} ({', '.join([*notes, 'connection tested'])})")
+    return 0
+
+
+def _connect_test(project_file: Path | None) -> int:
+    """`synalog connect test`: probe the project's connection as written."""
+    try:
+        conn = project.resolve(project_file.parent) if project_file is not None else None
+    except project.ProjectError as e:
+        fail(e)
+    if conn is None:
+        click.echo("No connection: synalog runs in memory (duckdb). " + _CONNECT_USAGE)
+        return 0
+    try:
+        runners.probe(conn["engine"], conn)
+    except RunnerUnavailable as e:
+        fail(e)
+    except Exception as e:  # noqa: BLE001 - a driver or server error: report it, no traceback
+        fail(f"{type(e).__name__}: {e}")
+    where = conn.get("host") or conn.get("server_hostname") or conn.get("project")
+    click.echo(f"Connection to {conn['engine']} ({where}) works")
     return 0
 
 

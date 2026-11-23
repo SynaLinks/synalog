@@ -311,15 +311,31 @@ def test_unknown_engine_has_no_runner(tmp_path):
     assert result.returncode == 0, result.stderr
 
 
-def test_connect_writes_the_project_file(tmp_path):
+def test_connect_writes_the_project_file(tmp_path, monkeypatch, capsys):
     # The connection lives in layer.toml, its secret in .env: never elsewhere.
+    # Writing tests the connection first: in-process so the probe is mocked
+    # (a subprocess cannot be), and what it is given is what a run would open.
+    from unittest import mock
+
+    from synalog import cli
+
     assert "No connection" in synalog("connect", cwd=tmp_path).stdout
 
-    saved = synalog(
-        "connect", "trino", "host=host", "port=443", "catalog=hive", "user=alice",
-        "auth=password", "password=secret", cwd=tmp_path,
-    )
-    assert saved.returncode == 0, saved.stderr
+    monkeypatch.chdir(tmp_path)
+    with mock.patch("synalog.runners.probe") as probe:
+        assert cli.cmd_connect(
+            (
+                "trino", "host=host", "port=443", "catalog=hive", "user=alice",
+                "auth=password", "password=secret",
+            ),
+            None,
+        ) == 0
+    assert "connection tested" in capsys.readouterr().out
+    engine, candidate = probe.call_args.args
+    assert engine == "trino"
+    assert candidate["engine"] == "trino"
+    assert candidate["host"] == "host" and candidate["password"] == "secret"
+
     toml = tomllib.loads((tmp_path / "layer.toml").read_text())["connection"]
     assert toml["engine"] == "trino" and toml["host"] == "host" and "password" not in toml
     assert 'SYNALOG_TRINO_PASSWORD="secret"' in (tmp_path / ".env").read_text()
@@ -353,6 +369,66 @@ def test_connect_rejects_local_engine(tmp_path):
     assert "takes no connection" in result.stderr
 
 
+def test_connect_refuses_an_unreachable_database(tmp_path):
+    # psql to a closed port: the driver error, no traceback, nothing written.
+    result = synalog(
+        "connect", "psql", "host=127.0.0.1", "port=1", "database=x", "user=x",
+        "password=x", cwd=tmp_path,
+    )
+    assert result.returncode == 1
+    assert "OperationalError" in result.stderr
+    assert "Traceback" not in result.stderr
+    assert not (tmp_path / "layer.toml").exists()
+    assert not (tmp_path / ".env").exists()
+
+
+def test_connect_test_without_a_connection(tmp_path):
+    result = synalog("connect", "test", cwd=tmp_path)
+    assert result.returncode == 0
+    assert "No connection" in result.stdout and "duckdb" in result.stdout
+
+
+def test_connect_test_reports_the_driver_error(tmp_path):
+    (tmp_path / "layer.toml").write_text(
+        '[connection]\nengine = "psql"\nhost = "127.0.0.1"\nport = 1\n'
+        'database = "x"\nuser = "nobody"\n'
+    )
+    result = synalog("connect", "test", cwd=tmp_path)
+    assert result.returncode == 1
+    assert "OperationalError" in result.stderr
+    assert "Traceback" not in result.stderr
+
+
+def test_connect_test_takes_no_extra_argument(tmp_path):
+    result = synalog("connect", "test", "extra", cwd=tmp_path)
+    assert result.returncode == 2  # click usage error
+    assert "usage: synalog connect test" in result.stderr
+
+
+def test_connect_test_works(tmp_path, monkeypatch, capsys):
+    from unittest import mock
+
+    from synalog import cli, project
+
+    project.write(tmp_path, "psql", {"host": "db.example.com", "database": "d", "user": "u"})
+    monkeypatch.chdir(tmp_path)
+    with mock.patch("synalog.runners.probe") as probe:
+        assert cli.cmd_connect(("test",), tmp_path / "layer.toml") == 0
+    assert "Connection to psql (db.example.com) works" in capsys.readouterr().out
+    engine, candidate = probe.call_args.args
+    assert engine == "psql" and candidate["host"] == "db.example.com"
+
+
+def test_connect_test_names_a_missing_secret(tmp_path):
+    (tmp_path / "layer.toml").write_text(
+        '[connection]\nengine = "databricks"\nserver_hostname = "h"\nhttp_path = "/p"\n'
+    )
+    result = synalog("connect", "test", cwd=tmp_path)
+    assert result.returncode == 1
+    assert "SYNALOG_DATABRICKS_ACCESS_TOKEN" in result.stderr
+    assert "Traceback" not in result.stderr
+
+
 def test_remote_engine_without_a_project_says_how_to_connect(tmp_path):
     path = tmp_path / "p.l"
     path.write_text('@Engine("trino");\nGreeting(text: "hi");\n')
@@ -363,10 +439,11 @@ def test_remote_engine_without_a_project_says_how_to_connect(tmp_path):
 
 def test_connection_is_used_by_run(tmp_path):
     # The project's connection is consumed by `run`: to a server that is not
-    # there, it fails at the driver, not for want of a connection.
-    assert synalog(
-        "connect", "trino", "host=127.0.0.1", "port=1", "catalog=memory", "user=nobody", cwd=tmp_path
-    ).returncode == 0
+    # there, it fails at the driver, not for want of a connection. (Written
+    # directly: `synalog connect` would refuse the unreachable server.)
+    from synalog import project
+
+    project.write(tmp_path, "trino", {"host": "127.0.0.1", "port": 1, "catalog": "memory", "user": "nobody"})
     (tmp_path / "p.l").write_text('@Engine("trino");\nGreeting(text: "hi");\n')
     result = synalog("p.l", "run", "Greeting", cwd=tmp_path)
     assert result.returncode == 1
@@ -405,10 +482,11 @@ def test_introspect_takes_no_argument(tmp_path):
 
 
 def test_introspect_uses_the_project_connection(tmp_path):
-    # To a server that is not there: it fails at the driver.
-    assert synalog(
-        "connect", "psql", "host=127.0.0.1", "port=1", "database=none", "user=nobody", cwd=tmp_path
-    ).returncode == 0
+    # To a server that is not there: it fails at the driver. (Written
+    # directly: `synalog connect` would refuse the unreachable server.)
+    from synalog import project
+
+    project.write(tmp_path, "psql", {"host": "127.0.0.1", "port": 1, "database": "none", "user": "nobody"})
     result = synalog("introspect", cwd=tmp_path)
     assert result.returncode == 1
     assert "there is none" not in result.stderr
