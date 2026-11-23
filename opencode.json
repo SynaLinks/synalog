@@ -1,0 +1,87 @@
+{
+  "$schema": "https://opencode.ai/config.json",
+  "providers": {
+    "ollama": {
+      "name": "Ollama (local)",
+      "npm": "@ai-sdk/openai-compatible",
+      "options": {
+        "baseURL": "http://127.0.0.1:11434/v1",
+        "apiKey": "ollama"
+      },
+      "models": {
+        "qwen3.8:27b-mlx": {
+          "name": "qwen3.8:27b-mlx",
+          "settings": {
+            "reasoningEffort": "low"
+          }
+        }
+      }
+    }
+  },
+  "model": "openrouter/moonshotai/kimi-k3",
+  "compaction": {
+    "auto": true,
+    "keep": {
+      "tokens": 15000
+    }
+  },
+  "default_agent": "orchestrator",
+  "permissions": [
+    {
+      "action": "*",
+      "resource": "*",
+      "effect": "allow"
+    }
+  ],
+  "agents": {
+    "orchestrator": {
+      "mode": "primary",
+      "description": "Plans the task and delegates the work to local subagents",
+      "model": "openrouter/moonshotai/kimi-k3",
+      "system": "You are the orchestrator. Read AGENTS.md, break the task into scoped subtasks and delegate each to the `coder` subagent (edits, builds) or `explore` (searching). Give each subagent a self-contained brief: goal, files, constraints, how to verify. Review their reports and check the result yourself before finishing. You own git: once a subtask is verified, review the diff and commit it with a clear message. Subagents don't commit.",
+      "permissions": [
+        {
+          "action": "edit",
+          "resource": "*",
+          "effect": "deny"
+        },
+        {
+          "action": "shell",
+          "resource": "*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "git push*",
+          "effect": "ask"
+        },
+        {
+          "action": "subagent",
+          "resource": "*",
+          "effect": "deny"
+        },
+        {
+          "action": "subagent",
+          "resource": "coder",
+          "effect": "allow"
+        },
+        {
+          "action": "subagent",
+          "resource": "explore",
+          "effect": "allow"
+        }
+      ]
+    },
+    "coder": {
+      "mode": "subagent",
+      "description": "Implements one scoped change (edit files, run npm run build) and reports what it did",
+      "model": "openrouter/deepseek/deepseek-v4.1-flash-1017"
+    },
+    "explore": {
+      "model": "openrouter/deepseek/deepseek-v4.1-flash-1017"
+    },
+    "general": {
+      "model": "openrouter/deepseek/deepseek-v4.1-flash-1017"
+    }
+  }
+}
