@@ -156,7 +156,7 @@ A failing program never produces partial output: `run` either prints the table o
 
 ## Projects: `layer.toml`
 
-A Synalog program is a [project](language/index.md): a folder with a `layer.toml`, its predicates in `tables/`, `concepts/` and `rules/`, one per file. The file names and describes the project, and its `[connection]` says which database it runs on, as plain fields — commit it:
+A Synalog program is a [project](language/index.md): a folder with a `layer.toml`, its predicates in `tables/`, `entities/`, `relationships/` and `rules/`, one per file. The file names and describes the project, and its `[connection]` says which database it runs on, as plain fields — commit it:
 
 ```toml
 [project]
@@ -228,7 +228,7 @@ description: Orders.
 PublicOrders(order_id:, customer_id:, amount:, status:) :- public.orders(order_id:, customer_id:, amount:, status:);
 ```
 
-Run it again when the schema changes: the declarations are regenerated, and a file's front matter (its description, keywords, ...) is kept as written. A table the database no longer has keeps its file, since concepts may import it, and is listed. It needs a project connected to its database. PostgreSQL, Trino, Presto, Databricks and BigQuery can be introspected.
+Run it again when the schema changes: the declarations are regenerated, and a file's front matter (its description, keywords, ...) is kept as written. A table the database no longer has keeps its file, since entities and relationships may import it, and is listed. It needs a project connected to its database. PostgreSQL, Trino, Presto, Databricks and BigQuery can be introspected.
 
 ## Add the skill to your coding agent
 

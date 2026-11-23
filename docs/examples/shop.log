@@ -10,7 +10,7 @@ $ synalog tables/orders.l run Orders
 | 5        | 200         | 95     | shipped   |
 (5 rows)
 
-$ synalog concepts/customer.l run Customer
+$ synalog entities/customer.l run Customer
 | customer_id |
 |-------------|
 | 100         |
@@ -18,7 +18,7 @@ $ synalog concepts/customer.l run Customer
 | 300         |
 (3 rows)
 
-$ synalog concepts/order_status.l run OrderStatus
+$ synalog entities/order_status.l run OrderStatus
 | status    |
 |-----------|
 | cancelled |

@@ -263,13 +263,16 @@ All of these functions accept an optional `engine` keyword that overrides the pr
 
 ## Language overview
 
-A Synalog program is a **project**: a folder with a `layer.toml`, holding one predicate per file in three folders, the layout of [semantic layers](https://github.com/SynaLinks/semantic-layers):
+A Synalog program is a **project**: a folder with a `layer.toml`, holding one predicate per file in `tables/`, `entities/`, `relationships/` and `rules/`, the layout of [semantic layers](https://github.com/SynaLinks/semantic-layers):
 
 ```
 shop/
+├── data/orders.csv               # local data files, loaded with --load
 ├── tables/orders.l               # the data: one file per database table
-├── concepts/customer.l           # entities and relationships extracted from tables
-├── rules/customer_revenue.l       # insights derived from concepts
+├── entities/customer.l           # entities extracted from tables
+├── entities/order_status.l
+├── relationships/                # relationships join entities
+├── rules/customer_revenue.l      # insights derived from entities and relationships
 ├── rules/top_customers.l
 └── layer.toml                    # the project's name, description and database
 ```
@@ -288,7 +291,7 @@ Orders(order_id:, customer_id:, amount:, status:) :-
   orders(order_id:, customer_id:, amount:, status:);
 ```
 
-`concepts/customer.l`
+`entities/customer.l`
 
 ```synalog
 ---
@@ -308,7 +311,7 @@ Customer(customer_id:) distinct :- Orders(customer_id:);
 name: CustomerRevenue
 description: Total amount ordered by each customer, all statuses included.
 ---
-import concepts.customer.Customer;
+import entities.customer.Customer;
 import tables.orders.Orders;
 
 @OrderBy(CustomerRevenue, "customer_id");

@@ -3,9 +3,9 @@ name: TeamMate
 description: Two people who work in the same department, by name.
 keywords: [colleague, coworker, same team]
 ---
-import concepts.department.Department;
-import concepts.person.Person;
-import concepts.works_in.WorksIn;
+import entities.department.Department;
+import entities.person.Person;
+import relationships.works_in.WorksIn;
 
 # A traversal: two people in the same department, named for readability.
 @OrderBy(TeamMate, "person_name");

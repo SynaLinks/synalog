@@ -17,7 +17,7 @@ $ synalog tables/smoke_tests.l run SmokeTests
 | 12      | gateway  | passed | 1822        | 2026-06-11 20:00:22 |
 (12 rows)
 
-$ synalog concepts/device.l run Device
+$ synalog entities/device.l run Device
 | device   |
 |----------|
 | gateway  |
@@ -25,7 +25,7 @@ $ synalog concepts/device.l run Device
 | sensor-b |
 (3 rows)
 
-$ synalog concepts/test_status.l run TestStatus
+$ synalog entities/test_status.l run TestStatus
 | status |
 |--------|
 | failed |

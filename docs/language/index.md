@@ -1,14 +1,15 @@
 # Program structure
 
-A Synalog program is a **project**: a folder with a `layer.toml`, holding one predicate per file in three folders. This is the layout of [semantic layers](https://github.com/SynaLinks/semantic-layers), and the one this documentation follows.
+A Synalog program is a **project**: a folder with a `layer.toml`, holding one predicate per file in four folders. This is the layout of [semantic layers](https://github.com/SynaLinks/semantic-layers), and the one this documentation follows.
 
 ```
 shop/
 ├── tables/           # the data: one file per database table
 │   └── orders.l
-├── concepts/         # what the data is about: entities, relationships, clean views
+├── entities/         # what the data is about: one kind of thing per file
 │   ├── customer.l
 │   └── order_status.l
+├── relationships/    # what joins entities: one edge per file
 ├── rules/            # what you want to know: counts, rates, rankings
 │   ├── customer_revenue.l
 │   ├── orders_by_status.l
@@ -21,8 +22,9 @@ A predicate's kind is the folder it is in:
 | Folder | Holds |
 |---|---|
 | `tables/` | the data: each file maps one database table to a predicate |
-| `concepts/` | entities and relationships extracted from tables (`Customer`, `Purchased`), and views that filter tables or rename messy columns |
-| `rules/` | insights derived from concepts and other rules: counts, rates, rankings, trends |
+| `entities/` | entities extracted from tables (`Customer`, `OrderStatus`), and views that filter tables or rename messy columns |
+| `relationships/` | relationships joining entities (`Purchased`, `WorksIn`) |
+| `rules/` | insights derived from entities, relationships and other rules: counts, rates, rankings, trends |
 
 ## A file, a predicate
 
@@ -32,7 +34,7 @@ Each file is named after the predicate it defines, in snake_case: `<folder>/<nam
 2. one `import` per predicate it builds on, by folder, file and predicate: `import tables.orders.Orders;`;
 3. the predicate's rules, after its directives. Every predicate is ordered with [`@OrderBy`](directives.md#orderby): results are paginated, and without a stable order a page differs between calls.
 
-`rules/top_customers.l` builds on `rules/customer_revenue.l`, which builds on a concept and a table:
+`rules/top_customers.l` builds on `rules/customer_revenue.l`, which builds on an entity and a table:
 
 ```synalog
 --8<-- "docs/examples/shop/rules/customer_revenue.l"
@@ -54,22 +56,22 @@ A table file maps one database table, referenced by its database name (lowercase
 
 Table files are generated from the database's schema: [`synalog introspect`](../cli.md#introspect) writes one per table, ordered by its first column, with a description made from its name until someone writes a better one, and keeps the front matter written by hand when it runs again.
 
-### Concepts
+### Entities and relationships
 
-Concepts extract the entities and relationships hidden in tables:
+Entities and relationships extract what the data is about from tables, each kind in its folder:
 
-- Entity concepts are named after the entity: `Customer`, `Product`.
-- Relationship concepts are named after the relationship: `Purchased`, `WorksIn`.
+- Entities are named after the entity: `Customer`, `Product`.
+- Relationships are named after the relationship: `Purchased`, `WorksIn`.
 
 ```synalog
---8<-- "docs/examples/shop/concepts/customer.l"
+--8<-- "docs/examples/shop/entities/customer.l"
 ```
 
 See [Knowledge graphs](../knowledge-graphs.md) for the full modeling conventions.
 
 ### Rules
 
-Rules derive what you want to know from concepts and other rules. They carry no suffix: `CustomerRevenue`, `TopCustomers`.
+Rules derive what you want to know from entities, relationships and other rules. They carry no suffix: `CustomerRevenue`, `TopCustomers`.
 
 ## Running a project
 
@@ -112,7 +114,7 @@ Orders(order_id: 2, customer_id: 100, amount: 1200, status: "pending");
 Every file opens with YAML front matter, as in Markdown: a first line `---`, the YAML, and a closing `---` line. It says what the file is, and carries metadata for the tools around your project (keywords, ownership, ...). Synalog checks that it is well-formed YAML — a syntax error is reported on its line — and reads two keys, both required: `name` is the predicate the file is about — it must be one the file defines and orders with `@OrderBy` — and `description` says what its rows are, in the words someone would search for (see [verification](../verification.md#front-matter)). Other keys are left to the host (`keywords`, `locked`, ...), and the file parses as if the block were not there, so error line numbers stay those of the file. It must be the very first thing in the file; an opening `---` that is never closed is an error.
 
 ```synalog
---8<-- "docs/examples/shop/concepts/customer.l"
+--8<-- "docs/examples/shop/entities/customer.l"
 ```
 
 To read it from Python, use [`front_matter`](../python-api.md#front_matter).
@@ -126,7 +128,7 @@ The power of logic programming is composition: define a predicate once, in its o
 `import` brings one predicate of another file into scope: `import <folder>.<name>.<Name>;` reads the project's `<folder>/<name>.l` and names its predicate `<Name>`. One import statement names exactly one predicate; every import must be used.
 
 ```synalog
-import concepts.customer.Customer;
+import entities.customer.Customer;
 import tables.orders.Orders;
 ```
 
@@ -138,10 +140,10 @@ Imports resolve from the project's folder (the one holding `layer.toml`) in the 
 
 ## Extract categorical values first
 
-For columns like `status`, `type`, `tier`, `category` or `country`, extract the distinct values as a concept *before* writing rules over them. This gives consistency, reuse and discoverability:
+For columns like `status`, `type`, `tier`, `category` or `country`, extract the distinct values as an entity *before* writing rules over them. This gives consistency, reuse and discoverability:
 
 ```synalog
---8<-- "docs/examples/shop/concepts/order_status.l"
+--8<-- "docs/examples/shop/entities/order_status.l"
 ```
 
 ```synalog
