@@ -358,6 +358,55 @@ def env_template() -> str:
     return "\n".join(lines) + "\n"
 
 
+def agents_md(name: str) -> str:
+    """The ``AGENTS.md`` written by ``synalog init``: what a logic layer is,
+    the layout init scaffolds, the conventions a file follows and the
+    commands to work it — for any coding agent working in the project."""
+    return f"""\
+# {name}
+
+A logic layer: a folder of Synalog predicates — named, verified logic that
+compiles to SQL — one predicate per file, answering questions with reusable
+logic instead of throwaway queries.
+
+## Layout
+
+```
+{name}/
+├── data/            local files; a CSV or parquet loads as a table with --load
+├── tables/          one file per database table (synalog introspect writes them)
+├── entities/        entities extracted from tables (Customer)
+├── relationships/   relationships joining entities (WorksIn)
+├── rules/           insights derived from entities and relationships
+├── layer.toml       the project's name, description and connection — commit it
+├── .env.template    the secrets: copy to .env and fill in (never committed)
+└── .gitignore       keeps .env out of git
+```
+
+## Conventions
+
+- One predicate per file, the file named after it: snake_case file,
+  PascalCase predicate (`rules/monthly_sales.l` defines `MonthlySales`).
+- Front matter opens the file: `name` (the predicate), `description` (what
+  its rows are), `keywords`.
+- Name the columns: `Customer(customer_id:)`, never `Customer(1)`.
+- Order every predicate with `@OrderBy`.
+- Import what you build on by folder, file and predicate:
+  `import entities.customer.Customer;`.
+- Guard invariants with `@Assert`; check them with `synalog <file> verify`.
+
+## Commands
+
+- `synalog <file> run <Predicate>` — execute and print the rows.
+- `synalog <file> print <Predicate>` — the compiled SQL.
+- `synalog <file> verify` — check the `@Assert` statements.
+- `synalog connect <engine> key=value ...` — connect the project's database
+  (the connection is tested before anything is written).
+- `synalog connect test` — test the connection as written.
+- `synalog introspect` — write `tables/` from the database's schema.
+"""
+
+
 # -- writing a project's connection ---------------------------------------------
 
 #: Written next to layer.toml by `write`, never committed.

@@ -177,11 +177,12 @@ def cmd_init(args: tuple[str, ...], project_file: Path | None) -> int:
 
     The project is five folders — data/, tables/, entities/, relationships/,
     rules/ — a layer.toml naming it after its folder, a .env.template
-    listing every engine's secrets to copy to .env, and a .gitignore keeping
-    .env out of git. The layer.toml documents every engine's connection,
-    commented out — without one the project runs in memory on DuckDB, the
-    default. An existing layer.toml is kept and refuses the command: nothing
-    is overwritten.
+    listing every engine's secrets to copy to .env, a .gitignore keeping
+    .env out of git, and an AGENTS.md explaining the layer to coding agents
+    (CLAUDE.md links to it). The layer.toml documents every engine's
+    connection, commented out — without one the project runs in memory on
+    DuckDB, the default. An existing layer.toml is kept and refuses the
+    command: nothing is overwritten.
     """
     if len(args) > 1:
         raise click.UsageError("usage: synalog init [PATH]")
@@ -205,9 +206,18 @@ def cmd_init(args: tuple[str, ...], project_file: Path | None) -> int:
             " never commit .env.\n.env\n",
             encoding="utf-8",
         )
+    agents_md = target / "AGENTS.md"
+    if not agents_md.exists():
+        agents_md.write_text(project.agents_md(target.name), encoding="utf-8")
+    claude_md = target / "CLAUDE.md"
+    if not claude_md.exists():
+        try:
+            os.symlink("AGENTS.md", claude_md)
+        except (OSError, NotImplementedError):  # no symlink privilege
+            claude_md.write_text("@AGENTS.md\n", encoding="utf-8")
     click.echo(
         f"Initialized {target} (data, tables, entities, relationships, rules"
-        " + layer.toml, .env.template, .gitignore)"
+        " + layer.toml, .env.template, .gitignore, AGENTS.md, CLAUDE.md)"
     )
     return 0
 

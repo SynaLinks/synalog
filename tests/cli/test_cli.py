@@ -785,6 +785,8 @@ def test_init_scaffolds_the_project(tmp_path):
     assert toml["project"] == {"name": tmp_path.name, "description": ""}
     assert (tmp_path / ".env.template").is_file()
     assert ".env" in (tmp_path / ".gitignore").read_text().splitlines()
+    assert (tmp_path / "AGENTS.md").is_file()
+    assert os.readlink(tmp_path / "CLAUDE.md") == "AGENTS.md"
 
 
 def test_init_scaffolds_a_relative_path(tmp_path):
@@ -797,6 +799,8 @@ def test_init_scaffolds_a_relative_path(tmp_path):
     assert toml["project"] == {"name": "path", "description": ""}
     assert (target / ".env.template").is_file()
     assert ".env" in (target / ".gitignore").read_text().splitlines()
+    assert (target / "AGENTS.md").is_file()
+    assert os.readlink(target / "CLAUDE.md") == "AGENTS.md"
 
 
 def test_init_keeps_an_existing_gitignore(tmp_path):
@@ -804,6 +808,13 @@ def test_init_keeps_an_existing_gitignore(tmp_path):
     result = synalog("init", cwd=tmp_path)
     assert result.returncode == 0, result.stderr
     assert (tmp_path / ".gitignore").read_text() == "# sentinel: keep me\n"
+
+
+def test_init_keeps_an_existing_agents_md(tmp_path):
+    (tmp_path / "AGENTS.md").write_text("# sentinel: keep me\n")
+    result = synalog("init", cwd=tmp_path)
+    assert result.returncode == 0, result.stderr
+    assert (tmp_path / "AGENTS.md").read_text() == "# sentinel: keep me\n"
 
 
 def test_init_refuses_to_overwrite_an_existing_project(tmp_path):
@@ -814,6 +825,8 @@ def test_init_refuses_to_overwrite_an_existing_project(tmp_path):
     assert (tmp_path / "layer.toml").read_text() == "# sentinel: keep me\n"
     assert not (tmp_path / ".env.template").exists()
     assert not (tmp_path / ".gitignore").exists()
+    assert not (tmp_path / "AGENTS.md").exists()
+    assert not (tmp_path / "CLAUDE.md").exists()
 
 
 def test_init_takes_at_most_one_path(tmp_path):
@@ -883,13 +896,49 @@ def test_init_env_template_lists_every_secret(tmp_path):
     assert all(not line.strip() or line.startswith("#") for line in text.splitlines())
 
 
+def test_init_agents_md_explains_the_layer(tmp_path):
+    result = synalog("init", cwd=tmp_path)
+    assert result.returncode == 0, result.stderr
+    text = (tmp_path / "AGENTS.md").read_text()
+    assert text.startswith(f"# {tmp_path.name}\n")
+    assert "logic layer" in text and "compiles to SQL" in text
+    for folder in ("data/", "tables/", "entities/", "relationships/", "rules/"):
+        assert folder in text
+    for section in ("## Layout", "## Conventions", "## Commands"):
+        assert section in text
+
+
+def test_init_claude_md_links_to_agents_md(tmp_path):
+    result = synalog("init", cwd=tmp_path)
+    assert result.returncode == 0, result.stderr
+    claude_md = tmp_path / "CLAUDE.md"
+    assert claude_md.is_symlink() and os.readlink(claude_md) == "AGENTS.md"
+    assert claude_md.read_text() == (tmp_path / "AGENTS.md").read_text()
+
+
+def test_init_claude_md_falls_back_without_symlink(tmp_path, monkeypatch):
+    # In-process so os.symlink can be mocked (a subprocess cannot be).
+    from unittest import mock
+
+    from synalog import cli
+
+    monkeypatch.chdir(tmp_path)
+    with mock.patch("os.symlink", side_effect=OSError("operation not permitted")):
+        assert cli.cmd_init((), None) == 0
+    claude_md = tmp_path / "CLAUDE.md"
+    assert not claude_md.is_symlink()
+    assert claude_md.read_text() == "@AGENTS.md\n"
+    assert (tmp_path / "AGENTS.md").is_file()
+
+
 def test_init_is_deterministic(tmp_path):
     first, second = tmp_path / "a" / "proj", tmp_path / "b" / "proj"
     first.mkdir(parents=True)
     second.mkdir(parents=True)
     assert synalog("init", cwd=first).returncode == 0
     assert synalog("init", cwd=second).returncode == 0
-    for name in ("layer.toml", ".env.template", ".gitignore"):
+    names = ("layer.toml", ".env.template", ".gitignore", "AGENTS.md", "CLAUDE.md")
+    for name in names:
         assert (first / name).read_bytes() == (second / name).read_bytes()
 
 
