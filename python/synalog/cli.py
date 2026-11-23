@@ -164,6 +164,41 @@ def _load_callback(ctx, param, value):
 
 
 # ---------------------------------------------------------------------------
+# Project scaffolding (init)
+# ---------------------------------------------------------------------------
+
+
+def cmd_init(args: tuple[str, ...], project_file: Path | None) -> int:
+    """Scaffold a layer project: its folders and its layer.toml.
+
+    \b
+    synalog init [PATH]   create a layer project here (or at PATH)
+
+    The project is five folders — data/, tables/, entities/, relationships/,
+    rules/ — and a layer.toml naming it after its folder. An existing
+    layer.toml is kept and refuses the command: nothing is overwritten.
+    """
+    if len(args) > 1:
+        raise click.UsageError("usage: synalog init [PATH]")
+    target = Path(args[0]) if args else Path.cwd()
+    target.mkdir(parents=True, exist_ok=True)
+    if (target / "layer.toml").exists():
+        fail(f"{target / 'layer.toml'} already exists")
+    for folder in ("data", "tables", "entities", "relationships", "rules"):
+        (target / folder).mkdir(parents=True, exist_ok=True)
+        gitkeep = target / folder / ".gitkeep"
+        if not gitkeep.exists():
+            gitkeep.touch()
+    (target / "layer.toml").write_text(
+        f'[project]\nname = "{target.name}"\ndescription = ""\n'
+    )
+    click.echo(
+        f"Initialized {target} (data, tables, entities, relationships, rules + layer.toml)"
+    )
+    return 0
+
+
+# ---------------------------------------------------------------------------
 # The project's connection (connect)
 # ---------------------------------------------------------------------------
 
@@ -351,6 +386,7 @@ def main(args, inline, engine, limit, offset, as_csv, search_pattern,
       synalog program.l run Predicate ...     execute and print a table
       synalog program.l run Predicate --csv   execute and print CSV
       synalog program.l verify [Predicate ...] check the @Assert statements
+      synalog init [PATH]                     scaffold a layer project
       synalog connect ENGINE KEY=VALUE ...    connect the project to its database
       synalog introspect [ENGINE]             write a project's tables/ from its database
 
@@ -384,6 +420,8 @@ def main(args, inline, engine, limit, offset, as_csv, search_pattern,
     if project_file is not None:
         dirs.insert(1 if len(dirs) > 1 else 0, str(project_file.parent))
     config.load_dotenv(*dirs)
+    if args and args[0] == "init" and inline is None:
+        sys.exit(cmd_init(args[1:], project_file))
     if args and args[0] == "connect" and inline is None:
         sys.exit(cmd_connect(args[1:], project_file))
     if args and args[0] == "introspect" and inline is None:

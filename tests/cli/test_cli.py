@@ -694,6 +694,44 @@ def test_repl_clear_drops_loaded_tables(employees_csv):
 
 
 # ---------------------------------------------------------------------------
+# init: scaffolding a project
+# ---------------------------------------------------------------------------
+
+
+def test_init_scaffolds_the_project(tmp_path):
+    result = synalog("init", cwd=tmp_path)
+    assert result.returncode == 0, result.stderr
+    for folder in ("data", "tables", "entities", "relationships", "rules"):
+        assert (tmp_path / folder / ".gitkeep").is_file()
+    toml = tomllib.loads((tmp_path / "layer.toml").read_text())
+    assert toml["project"] == {"name": tmp_path.name, "description": ""}
+
+
+def test_init_scaffolds_a_relative_path(tmp_path):
+    result = synalog("init", "some/path", cwd=tmp_path)
+    assert result.returncode == 0, result.stderr
+    target = tmp_path / "some" / "path"
+    for folder in ("data", "tables", "entities", "relationships", "rules"):
+        assert (target / folder / ".gitkeep").is_file()
+    toml = tomllib.loads((target / "layer.toml").read_text())
+    assert toml["project"] == {"name": "path", "description": ""}
+
+
+def test_init_refuses_to_overwrite_an_existing_project(tmp_path):
+    (tmp_path / "layer.toml").write_text("# sentinel: keep me\n")
+    result = synalog("init", cwd=tmp_path)
+    assert result.returncode == 1
+    assert "already exists" in result.stderr
+    assert (tmp_path / "layer.toml").read_text() == "# sentinel: keep me\n"
+
+
+def test_init_takes_at_most_one_path(tmp_path):
+    result = synalog("init", "a", "b", cwd=tmp_path)
+    assert result.returncode == 2  # click usage error
+    assert "usage: synalog init [PATH]" in result.stderr
+
+
+# ---------------------------------------------------------------------------
 # layer.toml: the project's connection
 # ---------------------------------------------------------------------------
 

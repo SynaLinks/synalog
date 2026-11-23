@@ -174,6 +174,27 @@ schema = "public"
 
 Secrets never go in the file (synalog refuses it): each comes from the environment as `SYNALOG_<ENGINE>_<FIELD>` — `SYNALOG_PSQL_PASSWORD`, `SYNALOG_DATABRICKS_ACCESS_TOKEN`, or `GOOGLE_APPLICATION_CREDENTIALS` for BigQuery — usually from the project's `.env`, kept out of git. Anywhere in the project, `run`, `print`, `verify` and `introspect` use that engine and connection, and [imports](#imports) resolve from the project's folder. The project's file is the only place a connection comes from: `--engine` and an `@Engine` annotation choose the dialect, and a remote engine runs only through the project's connection to it. The fields of every engine are in `synalog.project.ENGINES`.
 
+### Init
+
+```console
+$ synalog init
+Initialized /path/to/sales (data, tables, entities, relationships, rules + layer.toml)
+```
+
+`synalog init [PATH]` scaffolds a layer project — here, or at the given path:
+
+```
+sales/
+├── data/
+├── tables/
+├── entities/
+├── relationships/
+├── rules/
+└── layer.toml
+```
+
+Each folder gets a `.gitkeep`; `layer.toml` names the project after its folder. An existing `layer.toml` is kept and refuses the command: nothing is overwritten.
+
 ### Connect
 
 ```console
