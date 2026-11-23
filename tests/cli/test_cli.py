@@ -705,6 +705,8 @@ def test_init_scaffolds_the_project(tmp_path):
         assert (tmp_path / folder / ".gitkeep").is_file()
     toml = tomllib.loads((tmp_path / "layer.toml").read_text())
     assert toml["project"] == {"name": tmp_path.name, "description": ""}
+    assert (tmp_path / ".env.template").is_file()
+    assert ".env" in (tmp_path / ".gitignore").read_text().splitlines()
 
 
 def test_init_scaffolds_a_relative_path(tmp_path):
@@ -715,6 +717,15 @@ def test_init_scaffolds_a_relative_path(tmp_path):
         assert (target / folder / ".gitkeep").is_file()
     toml = tomllib.loads((target / "layer.toml").read_text())
     assert toml["project"] == {"name": "path", "description": ""}
+    assert (target / ".env.template").is_file()
+    assert ".env" in (target / ".gitignore").read_text().splitlines()
+
+
+def test_init_keeps_an_existing_gitignore(tmp_path):
+    (tmp_path / ".gitignore").write_text("# sentinel: keep me\n")
+    result = synalog("init", cwd=tmp_path)
+    assert result.returncode == 0, result.stderr
+    assert (tmp_path / ".gitignore").read_text() == "# sentinel: keep me\n"
 
 
 def test_init_refuses_to_overwrite_an_existing_project(tmp_path):
@@ -723,12 +734,85 @@ def test_init_refuses_to_overwrite_an_existing_project(tmp_path):
     assert result.returncode == 1
     assert "already exists" in result.stderr
     assert (tmp_path / "layer.toml").read_text() == "# sentinel: keep me\n"
+    assert not (tmp_path / ".env.template").exists()
+    assert not (tmp_path / ".gitignore").exists()
 
 
 def test_init_takes_at_most_one_path(tmp_path):
     result = synalog("init", "a", "b", cwd=tmp_path)
     assert result.returncode == 2  # click usage error
     assert "usage: synalog init [PATH]" in result.stderr
+
+
+def test_init_layer_toml_has_only_the_project_table(tmp_path):
+    result = synalog("init", cwd=tmp_path)
+    assert result.returncode == 0, result.stderr
+    text = (tmp_path / "layer.toml").read_text()
+    data = tomllib.loads(text)
+    # A local engine (duckdb) takes no [connection]: the default is its absence.
+    assert set(data) == {"project"}
+    assert not any(line.startswith("[connection]") for line in text.splitlines())
+
+
+def test_init_layer_toml_documents_every_engine(tmp_path):
+    from synalog import project
+
+    result = synalog("init", cwd=tmp_path)
+    assert result.returncode == 0, result.stderr
+    text = (tmp_path / "layer.toml").read_text()
+    for key, spec in project.ENGINES.items():
+        assert f'# engine = "{key}"' in text
+        for f in spec.fields:
+            if not f.secret:
+                assert f"# {f.key} = " in text
+
+
+def test_init_layer_toml_assigns_no_secret(tmp_path):
+    from synalog import project
+
+    result = synalog("init", cwd=tmp_path)
+    assert result.returncode == 0, result.stderr
+    text = (tmp_path / "layer.toml").read_text()
+    uncommented = [
+        line for line in text.splitlines() if line.strip() and not line.startswith("#")
+    ]
+    for key, spec in project.ENGINES.items():
+        for f in spec.fields:
+            if f.secret:
+                # pointed at its variable, never given a value in the file
+                assert project.secret_env(key, f.key) in text
+                assert not any(f.key in line for line in uncommented)
+
+
+def test_init_layer_toml_defaults_to_duckdb_in_memory(tmp_path):
+    result = synalog("init", cwd=tmp_path)
+    assert result.returncode == 0, result.stderr
+    text = (tmp_path / "layer.toml").read_text()
+    assert "runs in memory on DuckDB" in text and "--load" in text
+
+
+def test_init_env_template_lists_every_secret(tmp_path):
+    from synalog import project
+
+    result = synalog("init", cwd=tmp_path)
+    assert result.returncode == 0, result.stderr
+    text = (tmp_path / ".env.template").read_text()
+    for key, spec in project.ENGINES.items():
+        for f in spec.fields:
+            if f.secret:
+                assert f"# {project.secret_env(key, f.key)}=" in text
+    # nothing is set: every line is a comment or blank
+    assert all(not line.strip() or line.startswith("#") for line in text.splitlines())
+
+
+def test_init_is_deterministic(tmp_path):
+    first, second = tmp_path / "a" / "proj", tmp_path / "b" / "proj"
+    first.mkdir(parents=True)
+    second.mkdir(parents=True)
+    assert synalog("init", cwd=first).returncode == 0
+    assert synalog("init", cwd=second).returncode == 0
+    for name in ("layer.toml", ".env.template", ".gitignore"):
+        assert (first / name).read_bytes() == (second / name).read_bytes()
 
 
 # ---------------------------------------------------------------------------

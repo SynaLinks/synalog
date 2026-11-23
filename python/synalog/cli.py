@@ -169,14 +169,18 @@ def _load_callback(ctx, param, value):
 
 
 def cmd_init(args: tuple[str, ...], project_file: Path | None) -> int:
-    """Scaffold a layer project: its folders and its layer.toml.
+    """Scaffold a layer project: its folders, layer.toml and .env.template.
 
     \b
     synalog init [PATH]   create a layer project here (or at PATH)
 
     The project is five folders — data/, tables/, entities/, relationships/,
-    rules/ — and a layer.toml naming it after its folder. An existing
-    layer.toml is kept and refuses the command: nothing is overwritten.
+    rules/ — a layer.toml naming it after its folder, a .env.template
+    listing every engine's secrets to copy to .env, and a .gitignore keeping
+    .env out of git. The layer.toml documents every engine's connection,
+    commented out — without one the project runs in memory on DuckDB, the
+    default. An existing layer.toml is kept and refuses the command: nothing
+    is overwritten.
     """
     if len(args) > 1:
         raise click.UsageError("usage: synalog init [PATH]")
@@ -189,11 +193,20 @@ def cmd_init(args: tuple[str, ...], project_file: Path | None) -> int:
         gitkeep = target / folder / ".gitkeep"
         if not gitkeep.exists():
             gitkeep.touch()
-    (target / "layer.toml").write_text(
-        f'[project]\nname = "{target.name}"\ndescription = ""\n'
-    )
+    (target / "layer.toml").write_text(project.template(target.name), encoding="utf-8")
+    env_template = target / ".env.template"
+    if not env_template.exists():
+        env_template.write_text(project.env_template(), encoding="utf-8")
+    gitignore = target / ".gitignore"
+    if not gitignore.exists():
+        gitignore.write_text(
+            "# Secrets — copy .env.template to .env and fill it in;"
+            " never commit .env.\n.env\n",
+            encoding="utf-8",
+        )
     click.echo(
-        f"Initialized {target} (data, tables, entities, relationships, rules + layer.toml)"
+        f"Initialized {target} (data, tables, entities, relationships, rules"
+        " + layer.toml, .env.template, .gitignore)"
     )
     return 0
 

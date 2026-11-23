@@ -178,7 +178,7 @@ Secrets never go in the file (synalog refuses it): each comes from the environme
 
 ```console
 $ synalog init
-Initialized /path/to/sales (data, tables, entities, relationships, rules + layer.toml)
+Initialized /path/to/sales (data, tables, entities, relationships, rules + layer.toml, .env.template, .gitignore)
 ```
 
 `synalog init [PATH]` scaffolds a layer project — here, or at the given path:
@@ -190,10 +190,12 @@ sales/
 ├── entities/
 ├── relationships/
 ├── rules/
-└── layer.toml
+├── layer.toml
+├── .env.template
+└── .gitignore
 ```
 
-Each folder gets a `.gitkeep`; `layer.toml` names the project after its folder. An existing `layer.toml` is kept and refuses the command: nothing is overwritten.
+Each folder gets a `.gitkeep`; `layer.toml` names the project after its folder and documents every engine's connection, commented out (without one the project runs in memory on DuckDB, the default); `.env.template` lists the engines' secrets, to copy to `.env` and fill in; `.gitignore` keeps `.env` out of git. An existing `layer.toml` is kept and refuses the command: nothing is overwritten.
 
 ### Connect
 

@@ -270,6 +270,94 @@ def secrets(engine: str, details: dict) -> dict[str, str]:
     }
 
 
+# -- the init templates ----------------------------------------------------------
+
+#: Placeholders for connection fields without a default, by key.
+_PLACEHOLDERS = {
+    "host": "localhost",
+    "server_hostname": "workspace.azuredatabricks.net",
+    "http_path": "/sql/1.0/warehouses/<id>",
+    "database": "my_database",
+    "dataset": "my_dataset",
+    "project": "my-gcp-project",
+    "catalog": "my_catalog",
+    "schema": "my_schema",
+    "user": "analyst",
+    "location": "US",
+}
+
+
+def _placeholder(f: Field) -> str:
+    """A field's value in the template: its default, else a placeholder."""
+    if f.default is not None:
+        return _toml_value(f.default)
+    return _toml_value(_PLACEHOLDERS.get(f.key, f"my_{f.key}"))
+
+
+def _display(engine: str, spec: Engine) -> str:
+    """The header naming an engine in a template: its label and its key."""
+    return f"{spec.label} ({engine})" if spec.label else engine
+
+
+def template(name: str) -> str:
+    """The ``layer.toml`` written by ``synalog init``: the project's name,
+    then every engine's connection commented out, self-documenting — without
+    one the project runs in memory on DuckDB, the default. Generated from
+    ``ENGINES``: it cannot drift from what ``synalog connect`` accepts."""
+    lines = [
+        "# A logic layer: a folder of .l files with this layer.toml at its root.",
+        "#",
+        "# Without a [connection] table the project runs in memory on DuckDB — the",
+        "# default — loading files as tables with --load. To put it on a database,",
+        "# uncomment one of the blocks below and fill it in, or let",
+        "# `synalog connect <engine> key=value ...` write and test it for you.",
+        "#",
+        "# Secrets never go in this file (synalog refuses them): each comes from",
+        "# SYNALOG_<ENGINE>_<FIELD>, usually set in the project's .env.",
+        "",
+        "[project]",
+        f"name = {_toml_value(name)}",
+        'description = ""',
+    ]
+    for key, spec in ENGINES.items():
+        lines += [
+            "",
+            f"# --- {_display(key, spec)} ---",
+            "# [connection]",
+            f"# engine = {_toml_value(key)}",
+        ]
+        for f in spec.fields:
+            if f.secret:
+                lines.append(
+                    f"# {f.key} — secret: {secret_env(key, f.key)}"
+                    " (set it in .env, never here)"
+                )
+            else:
+                needed = "  # required" if f.required and f.default is None else ""
+                lines.append(f"# {f.key} = {_placeholder(f)}{needed}")
+    return "\n".join(lines) + "\n"
+
+
+def env_template() -> str:
+    """The ``.env.template`` written by ``synalog init``: every engine's
+    secrets, commented out, to copy to ``.env`` and fill in. Generated from
+    ``ENGINES``, in the same order and with the same names as ``template``."""
+    lines = [
+        "# Copy to .env and fill in: .env is loaded automatically (the real",
+        "# environment wins over it) and kept out of git; this template is",
+        "# committed. Non-secret fields (host, port, database...) live in",
+        "# layer.toml, not here.",
+    ]
+    for key, spec in ENGINES.items():
+        engine_secrets = [f for f in spec.fields if f.secret]
+        if not engine_secrets:
+            continue
+        lines += ["", f"# --- {_display(key, spec)} ---"]
+        for f in engine_secrets:
+            lines.append(f"# {secret_env(key, f.key)}=")
+    return "\n".join(lines) + "\n"
+
+
 # -- writing a project's connection ---------------------------------------------
 
 #: Written next to layer.toml by `write`, never committed.
